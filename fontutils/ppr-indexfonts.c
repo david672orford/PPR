@@ -112,7 +112,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
 /*
 ** This function is used type parse lines from PostScript Type 1 fonts.
 */
-gu_boolean type1_line_process(struct FONT_INFO *fi, char *line)
+static gu_boolean type1_line_process(struct FONT_INFO *fi, char *line)
     {
     if(!fi->font_family && strncmp(line, "/FamilyName (", 13) == 0)
         {
@@ -365,6 +365,11 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 
     if(!(dirobj = opendir(dirname)))
     	{
+	if(errno == ENOENT)
+	    {
+	    printf("    -- Doesn't exist\n");
+	    return EXIT_OK;
+	    }
     	fprintf(stderr, "%s: diropen(\"%s\") failed, errno=%d (%s)\n", myname, dirname, errno, gu_strerror(errno));
     	return EXIT_INTERNAL;
     	}
@@ -379,6 +384,11 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 
 	if(stat(filename, &statbuf) == -1)
 	    {
+	    if(errno == ENOENT)
+		{
+		printf(" -- Broken symbolic link\n");
+		continue;
+		}
 	    fprintf(stderr, "%s: stat() failed on \"%s\", errno=%d (%s)\n", myname, filename, errno, gu_strerror(errno));
 	    return EXIT_INTERNAL;
 	    }
@@ -435,7 +445,7 @@ static const struct gu_getopt_opt option_words[] =
 /*
 ** Print help.
 */
-void help_switches(FILE *outfile)
+static void help_switches(FILE *outfile)
     {
     fputs(_("Valid switches:\n"), outfile);
 

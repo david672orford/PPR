@@ -1,7 +1,7 @@
 ==========================================================================
  mouse:~ppr/src/docs/misc/PORTING.txt
  mouse:~ppr/src/PORTING.txt (symbolic link)
- Last revised 16 February 2001.
+ Last revised 22 January 2003.
 ==========================================================================
 
 This document describes the PPR build process in more detail than INSTALL.txt
@@ -38,15 +38,15 @@ compiler which comes with the system.
 
 
 ==========================================================================
- makeprogs/global.mk
+ Makefile.conf
 ==========================================================================
 
-The file makeprogs/global.mk is included by each Makefile.  It is generated
+The file Makefile.conf is included by each Makefile.  It is generated
 by the shell script ./Configure.
 
 If you are making a new port, you should run Configure and select an
 operating system which you believe is similiar to yours.  You should
-then edit makeprogs/global.mk.
+then edit Makefile.conf.
 
 The first thing you should change is the definition of PORT_NAME at the
 top.  Its value is used to select a section in include/sysdep.h.
@@ -66,7 +66,7 @@ pre-processor on stdin and write the result to stdout.
 
 
 ==========================================================================
-include/sysdep.h
+ include/sysdep.h
 ==========================================================================
 
 The file include/sysdep.h is not modified by Configure.  If has a section

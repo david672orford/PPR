@@ -332,4 +332,10 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
+1.50, 22 January 2003--22 January 2003.
+
+* misc/PORTING.txt: changed references to makeprogs/global.mk to
+  Makefile.conf.
+
+
 

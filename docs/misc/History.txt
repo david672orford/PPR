@@ -8120,3 +8120,9 @@ line was being parsed twice.
 * Makefile: changed dist target to exclude CVS and docbook-*-* (using GNU
   Tar syntax).
 
+
+1.50b1, 22 January 2003--22 January 2003.
+
+* fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
+  supposed to skip broken symbolic links.  Added code to deal with
+  directories listed in ppr.conf which don't exist.
