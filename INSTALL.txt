@@ -263,14 +263,18 @@ the option of using the C compiler that comes with the operating system.
  Notes for SGI IRIX 6.3 and 6.5
 =============================================================================
 
+IRIX 6.5 includes Perl 5.004 which is a little to old to run the PPR web
+interface.  Install a newer version and make sure it is first in your
+path when you run Configure.
+
 Make sure you have Bash installed and that /bin/bash is a either Bash or
-a link to it.
+a link to it. 
 
 The make provided with IRIX has mysterious problems with some of the PPR
 makefiles.  Use Gmake instead.  The required commands are:
 
-$ gmake MAKE=gmake
-$ gmake MAKE=gmake install
+$ gmake
+$ gmake install
 
 If you want to use lprsrv, then you must make lpsched stop binding to the lpd
 port.  To do this, add -nobsd to the line in /etc/init.d/lp that starts

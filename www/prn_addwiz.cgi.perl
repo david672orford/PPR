@@ -138,9 +138,7 @@ $addprn_wizard_table = [
 
 				print "<p>", H_("Please select an interface program.  PPR uses an interface\n"
 						. "program to communicate with the printer.  There is an\n"
-						. "interface program for each communication method.  The\n"
-						. "interfaces whose names begin with \"gs\" pass PostScript jobs\n"
-						. "through Ghostscript before sending them to the printer."), "</p>\n";
+						. "interface program for each communication method."), "</p>\n";
 
 				print "<p><span class=\"label\">", H_("Interface Program:"), "</span><br>\n";
 
