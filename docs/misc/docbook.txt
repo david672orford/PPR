@@ -3,7 +3,7 @@ mouse:~ppr/src/docs/misc/docbook.txt
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
-PPR documentation.
+PPR documentation.  One should also refer to the LDP Author Guide.
 
 ==============================================================================
  Document Header
@@ -98,7 +98,8 @@ A category of error such as <ErrorClass>fatal</ErrorClass>.
 
 <Screen>
 
-This tag encloses block-formatted code samples.
+This is a varbatim environment for displaying text which a user might see on
+a computer screen.  It need not be enclosed in a paragraph.
 
 <Filename>
 
@@ -191,6 +192,21 @@ displayed.
 ==============================================================================
  Source Code
 ==============================================================================
+
+<programlisting>
+
+This is a verbatim environment for block formatted program code.
+
+<programlisting>
+<![CDATA[
+int main(int argc, char *argv[])
+    {
+    }
+]]>
+</programlisting>
+
+This is a verbatim environment for block formatted program code with
+markup recognition disabled.
 
 <FuncSynopsis>
 	<FuncPrototype>

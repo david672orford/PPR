@@ -5,7 +5,7 @@
 <Application>Samba</Application> you can use it to share PPR printers.  It
 is recomended that you use Samba version 1.9.18 or later.  For information
 about obtaining refer to <ULink
-URL="http://www.samba.org/">http://www.samba.org/</ULink>.</Para>
+url="http://www.samba.org/">http://www.samba.org/</ULink>.</Para>
 
 <Para>
 To share PPR printers through Samba, you must add a few lines to
@@ -49,7 +49,7 @@ This procedure will share all PPR printers through Samba.  If you want to
 exclude certain printers you should refer to the ppr2samba(8) man page.
 </Para>
 
-<Para>You should also refer to <ULink URL="../refman/ppr2samba.8.html">the
+<Para>You should also refer to <ULink url="../refman/ppr2samba.8.html">the
 ppr2samba(8) man page</ULink> if you want to set up special features for
 public access computers or if you want to set up Samba so it can offer
 printer drivers to <SystemItem class="OSname">Microsoft Windows

@@ -5,7 +5,7 @@
 program <Command>ppr</Command>. The LANMAN/X print processor script invokes
 <Command>ppr</Command> as do the Macintosh print server,
 <Command>papsrv</Command>, <ULink
-URL="http://www.samba.org"><Application>Samba</Application></ULink> and the
+url="http://www.samba.org"><Application>Samba</Application></ULink> and the
 LPR/LPD compatible server <Command>lprsrv</Command>.</Para>
 
 <Para>Unix users invoke <Command>ppr</Command> (the program, not the spooler
@@ -13,7 +13,7 @@ system) directly. To make this easier, <Filename class="SymLink">/usr/bin/ppr
 </Filename> is a symbolic link to
 <Filename>/usr/ppr/bin/ppr</Filename>.  For a complete description of
 <Command>ppr</Command>'s options, see the <ULink
-URL="../refman/ppr.1.html">ppr(1) man page</Ulink>.  A description of some
+url="../refman/ppr.1.html">ppr(1) man page</Ulink>.  A description of some
 of the more important ones follows.</Para>
 
 <Sect2>

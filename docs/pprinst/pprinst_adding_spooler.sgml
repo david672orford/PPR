@@ -404,10 +404,10 @@ If you can not find anything that is close, the printer manufacturer you may be
 able to supply a suitable PPD file. Very often it can be found on the Macintosh
 or MS-Windows driver diskettes which come with the printer. If not, you may be
 able to obtain a suitable file from <ULink
-URL="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  If you are
+url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  If you are
 really determined, you can obtain the PostScript Printer Description File
 Format Specification from <ULink
-URL="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  This document
+url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  This document
 together with a good printer manual will give you the information you need to
 write your own PPD file or to modify an existing one to work with your printer.
 Any new PPD files should be converted to Unix line termination (FTP will do

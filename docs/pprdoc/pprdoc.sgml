@@ -469,7 +469,7 @@ temporary file and then invoking <Command>ppr</Command>.  The
 tell <Command>ppr</Command> to delete the temporary file once it is done reading it.  It is
 advisable to append <Literal>&amp;</Literal> to the print command because for very large files
 which must be filtered, the client will time out before <Command>ppr</Command> exits.  Sample
-Samba print commands are given in <ULink URL="../refman/ppr2samba.8.html">the ppr2samba(8) man page</ULink>.
+Samba print commands are given in <ULink url="../refman/ppr2samba.8.html">the ppr2samba(8) man page</ULink>.
 </Para>
 
 </Sect2>
@@ -874,7 +874,7 @@ should be specified with the <Option>-r</Option> switch when
 ommitted, the default address, the name of the user who is invoking ppr will
 be used.  This address is suitable for the default responder,
 <Literal>write</Literal>.  A list of the supplied responders may be found in
-the <ULink URL="../refman/ppr.1.html">ppr(1) man page</ULink> in the section
+the <ULink url="../refman/ppr.1.html">ppr(1) man page</ULink> in the section
 which describes the <Option>-m</Option> switch. Instructions for writing a
 responder are found in Appendix <XRef LinkEnd="responders">. </Para>
 
@@ -1419,7 +1419,7 @@ that are coming.  If the communictions channel is in fact one-way it will
 never receive any control-D's and will wait forever. For this reason it is
 necessary to set the queue up corectly with the <Command>ppad
 feedback</Command> command.  See the <ULink
-URL="../refman/ppad.8.html">ppad(8) man page</ULink> for further information
+url="../refman/ppad.8.html">ppad(8) man page</ULink> for further information
 on this topic.</Para>
 
 <Para>The job break method <Literal>pjl</Literal> is the same as

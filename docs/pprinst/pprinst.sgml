@@ -42,11 +42,11 @@ This document is inteded to help you to get PPR up and running as quicly as
 possible.  It does not attempt to describe all of PPR's features or theory
 of operation.  More information can be found in
 
-<ULink URL="../pprdoc/pprdoc.html"><CiteTitle>PPR, a Print Spooler for PostScript</CiteTitle></ULink>,
+<ULink url="../pprdoc/pprdoc.html"><CiteTitle>PPR, a Print Spooler for PostScript</CiteTitle></ULink>,
 
-the <ULink URL="../refman/"><CiteTitle>PPR Reference Manual</CiteTitle></ULink>, 
+the <ULink url="../refman/"><CiteTitle>PPR Reference Manual</CiteTitle></ULink>, 
 
-and the <ULink URL="../pprhack/pprhack.html"><CiteTitle>PPR Hackers Guide</CiteTitle></ULink>.
+and the <ULink url="../pprhack/pprhack.html"><CiteTitle>PPR Hackers Guide</CiteTitle></ULink>.
 
 </para>
 
