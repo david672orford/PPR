@@ -1,8 +1,7 @@
 *PPD-Adobe: "4.3"
 *% =======================================================
 *% Printer Description File
-*% Copyright 1992-97 Hewlett-Packard Company
-*%    April 15, 1998
+*% Copyright 1992-99 Hewlett-Packard Company
 *%
 *% Permission is hereby granted, free of charge, to any person obtaining
 *% a copy of this software and associated documentation files (the
@@ -26,20 +25,20 @@
 *% [this is the MIT open source license -- see www.opensource.org]
 *%
 *%========================================================
-*% PPD for HP LaserJet 4000 Series
+*% PPD for HP LaserJet 4050 Series
 *%====================================================================
 *% === PPD File Version Information ====
-*FileVersion:      "1.20"
+*FileVersion:      "1.01"
 *FormatVersion:    "4.3"
 *LanguageEncoding: ISOLatin1
 *LanguageVersion:  English
-*PCFileName:       "HP4000_6.PPD"
+*PCFileName:       "HP4050_6.PPD"
 
 *% === Product Version Information ====
-*ModelName:     "HP LaserJet 4000 Series"
-*ShortNickName: "HP LaserJet 4000 Series PS"
-*NickName:      "HP LaserJet 4000 Series PS"
-*Product:       "(HP LaserJet 4000 Series)"
+*ModelName:     "HP LaserJet 4050 Series "
+*ShortNickName: "HP LaserJet 4050 Series PS"
+*NickName:      "HP LaserJet 4050 Series PS"
+*Product:       "(HP LaserJet 4050 Series )"
 *Manufacturer:  "HP"
 *PSVersion:     "(2014.108) 1"
 
@@ -78,35 +77,133 @@
 
 *PrintPSErrors: True
 
-*%=== Media Type ===========================
-*OpenUI *MediaType/Media Type: PickOne
-*OrderDependency: 50 AnySetup *MediaType
-*DefaultMediaType: None
-*MediaType None/None: ""
-*MediaType Plain/Plain: "<</MediaType (Plain)>> setpagedevice"
-*MediaType Preprinted/Preprinted: "<</MediaType (Preprinted)>> setpagedevice"
-*MediaType Letterhead/Letterhead: "<</MediaType (Letterhead)>> setpagedevice"
-*MediaType Transparency/Transparency: "<</MediaType (Transparency)>> setpagedevice"
-*MediaType Prepunched/Prepunched: "<</MediaType (Prepunched)>> setpagedevice"
-*MediaType Labels/Labels: "<</MediaType (Labels)>> setpagedevice"
-*MediaType Bond/Bond: "<</MediaType (Bond)>> setpagedevice"
-*MediaType Recycled/Recycled: "<</MediaType (Recycled)>> setpagedevice"
-*MediaType Color/Color: "<</MediaType (Color)>> setpagedevice"
-*MediaType Cardstock/Card Stock: "<</MediaType (Card Stock)>> setpagedevice"
-*MediaType Rough/Rough: "<</MediaType (Rough)>> setpagedevice"
-*?MediaType: "
-  save
-    currentpagedevice /InputAttributes get dup
-    /Priority get
-    0 get get
-    /MediaType get
-    (Rough) anchorsearch
-      {pop pop (Rough)} if  
-    = flush
-  restore
-"
-*End
-*CloseUI: *MediaType
+*%=== Proof and Hold =======================
+*JCLOpenUI *JCLRetention/Job Retention: PickOne
+*OrderDependency: 14 JCLSetup *JCLRetention
+*DefaultJCLRetention: JCLRetentionOff
+*JCLRetention JCLRetentionOff/Off: ""
+*JCLRetention JCLRetentionQuickCopy/Quick Copy: "@PJL SET HOLD = ON<0A>"
+*JCLRetention JCLRetentionProof/Proof and Hold: "@PJL SET HOLD = PROOF<0A>"
+*JCLRetention JCLRetentionPrivate/Private Job: "@PJL SET HOLD = ON<0A>@PJL SET HOLDTYPE = PRIVATE<0A>"
+*JCLRetention JCLRetentionStore/Stored Job: "@PJL SET HOLD = STORE<0A>"
+*JCLCloseUI: *JCLRetention
+
+*UIConstraints: *Option4 False *JCLRetention JCLRetentionQuickCopy
+*UIConstraints: *Option4 False *JCLRetention JCLRetentionProof
+*UIConstraints: *Option4 False *JCLRetention JCLRetentionPrivate
+*UIConstraints: *Option4 False *JCLRetention JCLRetentionStore
+
+*JCLOpenUI *JCLUser/User: PickOne
+*OrderDependency: 15 JCLSetup *JCLUser
+*DefaultJCLUser: UserSystem
+*JCLUser UserSystem/System Name (if available): ""
+*JCLUser User1/ 1: "@PJL SET USERNAME = <22> 1<220A>"
+*JCLUser User2/ 2: "@PJL SET USERNAME = <22> 2<220A>"
+*JCLUser User3/ 3: "@PJL SET USERNAME = <22> 3<220A>"
+*JCLUser User4/ 4: "@PJL SET USERNAME = <22> 4<220A>"
+*JCLUser User5/ 5: "@PJL SET USERNAME = <22> 5<220A>"
+*JCLUser User6/ 6: "@PJL SET USERNAME = <22> 6<220A>"
+*JCLUser User7/ 7: "@PJL SET USERNAME = <22> 7<220A>"
+*JCLUser User8/ 8: "@PJL SET USERNAME = <22> 8<220A>"
+*JCLUser User9/ 9: "@PJL SET USERNAME = <22> 9<220A>"
+*JCLUser User10/10: "@PJL SET USERNAME = <22>10<220A>"
+*JCLUser User11/11: "@PJL SET USERNAME = <22>11<220A>"
+*JCLUser User12/12: "@PJL SET USERNAME = <22>12<220A>"
+*JCLUser User13/13: "@PJL SET USERNAME = <22>13<220A>"
+*JCLUser User14/14: "@PJL SET USERNAME = <22>14<220A>"
+*JCLUser User15/15: "@PJL SET USERNAME = <22>15<220A>"
+*JCLUser User16/16: "@PJL SET USERNAME = <22>16<220A>"
+*JCLUser User17/17: "@PJL SET USERNAME = <22>17<220A>"
+*JCLUser User18/18: "@PJL SET USERNAME = <22>18<220A>"
+*JCLUser User19/19: "@PJL SET USERNAME = <22>19<220A>"
+*JCLUser User20/20: "@PJL SET USERNAME = <22>20<220A>"
+*JCLUser User21/21: "@PJL SET USERNAME = <22>21<220A>"
+*JCLUser User22/22: "@PJL SET USERNAME = <22>22<220A>"
+*JCLUser User23/23: "@PJL SET USERNAME = <22>23<220A>"
+*JCLUser User24/24: "@PJL SET USERNAME = <22>24<220A>"
+*JCLUser User25/25: "@PJL SET USERNAME = <22>25<220A>"
+*JCLUser User26/26: "@PJL SET USERNAME = <22>26<220A>"
+*JCLUser User27/27: "@PJL SET USERNAME = <22>27<220A>"
+*JCLUser User28/28: "@PJL SET USERNAME = <22>28<220A>"
+*JCLUser User29/29: "@PJL SET USERNAME = <22>29<220A>"
+*JCLUser User30/30: "@PJL SET USERNAME = <22>30<220A>"
+*JCLUser User31/31: "@PJL SET USERNAME = <22>31<220A>"
+*JCLUser User32/32: "@PJL SET USERNAME = <22>32<220A>"
+*JCLUser User33/33: "@PJL SET USERNAME = <22>33<220A>"
+*JCLUser User34/34: "@PJL SET USERNAME = <22>34<220A>"
+*JCLUser User35/35: "@PJL SET USERNAME = <22>35<220A>"
+*JCLUser User36/36: "@PJL SET USERNAME = <22>36<220A>"
+*JCLUser User37/37: "@PJL SET USERNAME = <22>37<220A>"
+*JCLUser User38/38: "@PJL SET USERNAME = <22>38<220A>"
+*JCLUser User39/39: "@PJL SET USERNAME = <22>39<220A>"
+*JCLUser User40/40: "@PJL SET USERNAME = <22>40<220A>"
+*JCLUser User41/41: "@PJL SET USERNAME = <22>41<220A>"
+*JCLUser User42/42: "@PJL SET USERNAME = <22>42<220A>"
+*JCLUser User43/43: "@PJL SET USERNAME = <22>43<220A>"
+*JCLUser User44/44: "@PJL SET USERNAME = <22>44<220A>"
+*JCLUser User45/45: "@PJL SET USERNAME = <22>45<220A>"
+*JCLUser User46/46: "@PJL SET USERNAME = <22>46<220A>"
+*JCLUser User47/47: "@PJL SET USERNAME = <22>47<220A>"
+*JCLUser User48/48: "@PJL SET USERNAME = <22>48<220A>"
+*JCLUser User49/49: "@PJL SET USERNAME = <22>49<220A>"
+*JCLUser User50/50: "@PJL SET USERNAME = <22>50<220A>"
+*JCLCloseUI: *JCLUser
+
+*JCLOpenUI *JCLHoldKey/PIN (for Private Job): PickOne
+*OrderDependency: 20 JCLSetup *JCLHoldKey
+*DefaultJCLHoldKey: HoldKeyNone
+*JCLHoldKey HoldKeyNone/None: "@PJL SET HOLDKEY = <22>0000<220A>"
+*JCLHoldKey HoldKey0067/0067: "@PJL SET HOLDKEY = <22>0067<220A>"
+*JCLHoldKey HoldKey0089/0089: "@PJL SET HOLDKEY = <22>0089<220A>"
+*JCLHoldKey HoldKey0403/0403: "@PJL SET HOLDKEY = <22>0403<220A>"
+*JCLHoldKey HoldKey0989/0989: "@PJL SET HOLDKEY = <22>0989<220A>"
+*JCLHoldKey HoldKey1073/1073: "@PJL SET HOLDKEY = <22>1073<220A>"
+*JCLHoldKey HoldKey1100/1100: "@PJL SET HOLDKEY = <22>1100<220A>"
+*JCLHoldKey HoldKey1117/1117: "@PJL SET HOLDKEY = <22>1117<220A>"
+*JCLHoldKey HoldKey1299/1299: "@PJL SET HOLDKEY = <22>1299<220A>"
+*JCLHoldKey HoldKey1362/1362: "@PJL SET HOLDKEY = <22>1362<220A>"
+*JCLHoldKey HoldKey1465/1465: "@PJL SET HOLDKEY = <22>1465<220A>"
+*JCLHoldKey HoldKey1518/1518: "@PJL SET HOLDKEY = <22>1518<220A>"
+*JCLHoldKey HoldKey1636/1636: "@PJL SET HOLDKEY = <22>1636<220A>"
+*JCLHoldKey HoldKey2065/2065: "@PJL SET HOLDKEY = <22>2065<220A>"
+*JCLHoldKey HoldKey2080/2080: "@PJL SET HOLDKEY = <22>2080<220A>"
+*JCLHoldKey HoldKey2213/2213: "@PJL SET HOLDKEY = <22>2213<220A>"
+*JCLHoldKey HoldKey2226/2226: "@PJL SET HOLDKEY = <22>2226<220A>"
+*JCLHoldKey HoldKey2377/2377: "@PJL SET HOLDKEY = <22>2377<220A>"
+*JCLHoldKey HoldKey2400/2400: "@PJL SET HOLDKEY = <22>2400<220A>"
+*JCLHoldKey HoldKey2486/2486: "@PJL SET HOLDKEY = <22>2486<220A>"
+*JCLHoldKey HoldKey2846/2846: "@PJL SET HOLDKEY = <22>2846<220A>"
+*JCLHoldKey HoldKey2951/2951: "@PJL SET HOLDKEY = <22>2951<220A>"
+*JCLHoldKey HoldKey3246/3246: "@PJL SET HOLDKEY = <22>3246<220A>"
+*JCLHoldKey HoldKey3429/3429: "@PJL SET HOLDKEY = <22>3429<220A>"
+*JCLHoldKey HoldKey3559/3559: "@PJL SET HOLDKEY = <22>3559<220A>"
+*JCLHoldKey HoldKey3767/3767: "@PJL SET HOLDKEY = <22>3767<220A>"
+*JCLHoldKey HoldKey4114/4114: "@PJL SET HOLDKEY = <22>4114<220A>"
+*JCLHoldKey HoldKey4447/4447: "@PJL SET HOLDKEY = <22>4447<220A>"
+*JCLHoldKey HoldKey4743/4743: "@PJL SET HOLDKEY = <22>4743<220A>"
+*JCLHoldKey HoldKey4757/4757: "@PJL SET HOLDKEY = <22>4757<220A>"
+*JCLHoldKey HoldKey5161/5161: "@PJL SET HOLDKEY = <22>5161<220A>"
+*JCLHoldKey HoldKey5200/5200: "@PJL SET HOLDKEY = <22>5200<220A>"
+*JCLHoldKey HoldKey5333/5333: "@PJL SET HOLDKEY = <22>5333<220A>"
+*JCLHoldKey HoldKey5696/5696: "@PJL SET HOLDKEY = <22>5696<220A>"
+*JCLHoldKey HoldKey5952/5952: "@PJL SET HOLDKEY = <22>5952<220A>"
+*JCLHoldKey HoldKey5975/5975: "@PJL SET HOLDKEY = <22>5975<220A>"
+*JCLHoldKey HoldKey6250/6250: "@PJL SET HOLDKEY = <22>6250<220A>"
+*JCLHoldKey HoldKey6582/6582: "@PJL SET HOLDKEY = <22>6582<220A>"
+*JCLHoldKey HoldKey7286/7286: "@PJL SET HOLDKEY = <22>7286<220A>"
+*JCLHoldKey HoldKey7846/7846: "@PJL SET HOLDKEY = <22>7846<220A>"
+*JCLHoldKey HoldKey7921/7921: "@PJL SET HOLDKEY = <22>7921<220A>"
+*JCLHoldKey HoldKey8455/8455: "@PJL SET HOLDKEY = <22>8455<220A>"
+*JCLHoldKey HoldKey8509/8509: "@PJL SET HOLDKEY = <22>8509<220A>"
+*JCLHoldKey HoldKey8601/8601: "@PJL SET HOLDKEY = <22>8601<220A>"
+*JCLHoldKey HoldKey8643/8643: "@PJL SET HOLDKEY = <22>8643<220A>"
+*JCLHoldKey HoldKey8865/8865: "@PJL SET HOLDKEY = <22>8865<220A>"
+*JCLHoldKey HoldKey8941/8941: "@PJL SET HOLDKEY = <22>8941<220A>"
+*JCLHoldKey HoldKey9531/9531: "@PJL SET HOLDKEY = <22>9531<220A>"
+*JCLHoldKey HoldKey9835/9835: "@PJL SET HOLDKEY = <22>9835<220A>"
+*JCLHoldKey HoldKey9890/9890: "@PJL SET HOLDKEY = <22>9890<220A>"
+*JCLHoldKey HoldKey9956/9956: "@PJL SET HOLDKEY = <22>9956<220A>"
+*JCLCloseUI: *JCLHoldKey
 
 *%=== N up Printing ========
 *OpenUI *HPNup/Pages per Sheet:  PickOne
@@ -133,15 +230,16 @@
     {initmatrix
      0 setgray 1 setlinewidth true setstrokeadjust 0 setlinejoin 0 setlinecap [] 0 setdash
      currentpagedevice /PageSize get aload pop 2 div exch 2 div exch translate
-     HPwmAngle rotate /HPwmFont HPwmSize selectfont
-     HPwmText stringwidth 2 div neg exch 2 div neg exch HPwmSize .25 mul sub moveto
+     HPwmAngle rotate /HPwmFont userdict /HPppScale known {HPwmSize HPppScale mul}{HPwmSize}ifelse selectfont
+     HPwmText stringwidth 2 div neg exch 2 div neg exch
+       userdict /HPppScale known {HPwmSize HPppScale mul}{HPwmSize}ifelse .25 mul sub moveto
      HPwmText false charpath userdict /HPwmStyle1 known
        {gsave 1 setgray HPwmStyle1 HPwmStyle add setlinewidth stroke grestore} if
      0 setgray HPwmStyle setlinewidth stroke
      HPwmLocation not {true setglobal HPwm /HPwmOn false put false setglobal} if
     } if
-  2 eq {pop false}{pop HPwm begin HPwmEOP end} ifelse
-  end } bind
+    2 eq {pop false}{pop HPwm begin HPwmEOP end} ifelse
+    end } bind
   >> setpagedevice"
 *End
 
@@ -166,22 +264,24 @@
     {initmatrix
      0 setgray 1 setlinewidth true setstrokeadjust 0 setlinejoin 0 setlinecap [] 0 setdash
      currentpagedevice /PageSize get aload pop 2 div exch 2 div exch translate
-     HPwmAngle 90 add rotate /HPwmFont HPwmSize selectfont
-     HPwmText stringwidth 2 div neg exch 2 div neg exch HPwmSize .25 mul sub moveto
+     HPwmAngle 90 add rotate /HPwmFont userdict /HPppScale known {HPwmSize HPppScale mul}{HPwmSize}ifelse selectfont
+     HPwmText stringwidth 2 div neg exch 2 div neg exch
+       userdict /HPppScale known {HPwmSize HPppScale mul}{HPwmSize}ifelse .25 mul sub moveto
      HPwmText false charpath userdict /HPwmStyle1 known
        {gsave 1 setgray HPwmStyle1 HPwmStyle add setlinewidth stroke grestore} if
      0 setgray HPwmStyle setlinewidth stroke
      HPwmLocation not {true setglobal HPwm /HPwmOn false put false setglobal} if
     } if
-  2 eq {pop false}{pop HPwm begin HPwmEOP end} ifelse
-  end } bind
+    2 eq {pop false}{pop HPwm begin HPwmEOP end} ifelse
+    end } bind
   >> setpagedevice"
 *End
 
 *HPNup TwoUp/2 (Portrait):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -228,22 +328,24 @@
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {2 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 2 mod 1 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup TwoUpL/2 (Landscape): "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -290,22 +392,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {2 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 2 mod 1 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup FourUp/4 (Portrait):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -357,22 +461,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {4 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 4 mod 3 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
 >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup FourUpL/4 (Landscape): "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -424,22 +530,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {4 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 4 mod 3 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup SixUp/6 (Portrait):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -488,22 +596,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {6 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 6 mod 5 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup SixUpL/6 (Landscape):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -552,22 +662,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {6 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 6 mod 5 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup NineUp/9 (Portrait):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -616,22 +728,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {9 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 9 mod 8 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup NineUpL/9 (Landscape):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -680,22 +794,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {9 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 9 mod 8 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup SixteenUp/16 (Portrait):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -744,22 +860,24 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {16 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 16 mod 15 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 
 *HPNup SixteenUpL/16 (Landscape):  "
 % Copyright (c) Hewlett-Packard Co 1997
   userdict begin
-  /HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def
+  userdict /HPwmPgWidth known not
+    {/HPwmPgWidth currentpagedevice /PageSize get aload pop /HPwmPgHeight exch def def} if
   /HPwmShWidth currentpagedevice /PageSize get aload pop /HPwmShHeight exch def def
 
   /HPwmCTM {
@@ -808,16 +926,17 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
     HPwm begin true setglobal
       /HPwmMatrix matrix currentmatrix def
     false setglobal end
-  end } bind
+    end } bind
  
   /EndPage {userdict begin
     HPwm begin HPwmMatrix setmatrix
     2 eq {16 mod 0 ne {HPwmEOP}{false}ifelse}{HPWaterMark 16 mod 15 eq {HPwmEOP}{false}ifelse} ifelse end
-  end } bind
+    end } bind
   >> setpagedevice
 
 /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
-HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice}if end} bind def"
+  HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>>
+  userdict /HPwmSPD known {HPwmSPD}{setpagedevice} ifelse}if end} bind def"
 *End
 *CloseUI: *HPNup
 
@@ -842,7 +961,6 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *HPwmText Sample/Sample: "userdict /HPwmText (Sample) put"
 *HPwmText TopSecret/Top Secret: "userdict /HPwmText (Top Secret) put"
 *HPwmText Urgent/Urgent: "userdict /HPwmText (Urgent) put"
-*End
 *CloseUI: *HPwmText
 
 *%=== WaterMark Font ========
@@ -976,6 +1094,13 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *JCLResolution 1200dpi/1200 dpi: "@PJL SET RESOLUTION = 1200<0A>"
 *JCLCloseUI: *JCLResolution
 
+*JCLOpenUI *JCLFastRes/FastRes 1200: Boolean
+*OrderDependency: 10 JCLSetup *JCLFastRes
+*DefaultJCLFastRes: True
+*JCLFastRes True/On: "@PJL SET BITSPERPIXEL = 2<0A>"
+*JCLFastRes False/Off: "@PJL SET BITSPERPIXEL = 1<0A>"
+*JCLCloseUI: *JCLFastRes
+
 *JCLOpenUI *JCLEconomode/EconoMode: Boolean
 *OrderDependency: 10 JCLSetup *JCLEconomode
 *DefaultJCLEconomode: False
@@ -986,31 +1111,18 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *%=== Installable Options ==========================
 *OpenGroup: InstallableOptions/Installed Options
 
-*OpenUI *Option1/Tray 3: Boolean
-*DefaultOption1: False
-*Option1 True/Installed: ""
-*Option1 False/Not Installed: ""
-*?Option1: "
-  save
-    currentpagedevice /InputAttributes get dup 1 known
-    {1 get null ne {(True)}{(False)} ifelse} {pop (False)} ifelse =
-  restore
-"
-*End
-*CloseUI: *Option1
-
-*OpenUI *Option2/Tray 4: Boolean
-*DefaultOption2: False
-*Option2 True/Installed: ""
-*Option2 False/Not Installed: ""
-*?Option2: "
-  save
-    currentpagedevice /InputAttributes get dup 4 known
-    {4 get null ne {(True)}{(False)} ifelse} {pop (False)} ifelse = flush
-  restore
-"
-*End
-*CloseUI: *Option2
+*OpenUI *OptionTrays/Number of Input Trays: PickOne
+*DefaultOptionTrays: 2Trays
+*OptionTrays 2Trays/ 2: ""
+*OptionTrays 3Trays/ 3: ""
+*OptionTrays 4Trays/ 4: ""
+*OptionTrays 5Trays/ 5: ""
+*OptionTrays 6Trays/ 6: ""
+*OptionTrays 7Trays/ 7: ""
+*OptionTrays 8Trays/ 8: ""
+*OptionTrays 9Trays/ 9: ""
+*OptionTrays 10Trays/10: ""
+*CloseUI: *OptionTrays
 
 *OpenUI *Option3/Duplex Unit: Boolean
 *DefaultOption3: False
@@ -1057,10 +1169,10 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *CloseUI: *Option5
 
 *OpenUI *InstalledMemory/Total Printer Memory: PickOne
-*DefaultInstalledMemory: 4MB
-*InstalledMemory 4MB/4 - 7 MB: ""
+*DefaultInstalledMemory: 8MB
 *InstalledMemory 8MB/8 - 11 MB: ""
-*InstalledMemory 12MB/12 - 19 MB: ""
+*InstalledMemory 12-15MB/12 - 15 MB: ""
+*InstalledMemory 16-19MB/16 - 19 MB: ""
 *InstalledMemory 20MB/20 - 27 MB: ""
 *InstalledMemory 28MB/28 - 35 MB: ""
 *InstalledMemory 36MB/36 MB or more: ""
@@ -1090,10 +1202,10 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *CloseUI: *InstalledMemory
 *CloseGroup: InstallableOptions
 
-*FreeVM: "2200000"
-*VMOption 4MB/4 - 7 MB: "2200000"
+*FreeVM: "6000000"
 *VMOption 8MB/8 - 11 MB: "6000000"
-*VMOption 12MB/12 - 19 MB: "9400000"
+*VMOption 12-15MB/12 - 15 MB: "9400000"
+*VMOption 16-19MB/16 - 19 MB: "13200000"
 *VMOption 20MB/20 - 27 MB: "17000000"
 *VMOption 28MB/28 - 35 MB: "24500000"
 *VMOption 36MB/36 MB or more: "32000000"
@@ -1101,25 +1213,66 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *%=== UI Constraints =============================
 *% If A than not B  (Also include the reverse constraints if appropriate)
 *%
-*% If optional 250/500 sheet trays are not installed, disable access to Lower and LargeCapacity Trays
-*UIConstraints: *Option1 False *InputSlot Lower
-*UIConstraints: *Option2 False *InputSlot LargeCapacity
+*% If 16MB is not installed contrain collate.
+*% NOTE: A disk and less than 16MB will collate, but cannot
+*%   be represented with the PPD constraint mechanism.
+*UIConstraints: *InstalledMemory 8MB *HPCollate True
+*UIConstraints: *InstalledMemory 12-15MB *HPCollate True
+
+*UIConstraints: *HPCollate True *InstalledMemory 8MB
+*UIConstraints: *HPCollate True *InstalledMemory 12-15MB
+
+*% Enable only the number of input trays the user specified
+*UIConstraints: *OptionTrays 2Trays *InputSlot Lower
+*UIConstraints: *OptionTrays 2Trays *InputSlot LargeCapacity
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray5
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray6
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray7
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 2Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 3Trays *InputSlot LargeCapacity
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray5
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray6
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray7
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 3Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray5
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray6
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray7
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 4Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 5Trays *InputSlot Tray6
+*UIConstraints: *OptionTrays 5Trays *InputSlot Tray7
+*UIConstraints: *OptionTrays 5Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 5Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 5Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 6Trays *InputSlot Tray7
+*UIConstraints: *OptionTrays 6Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 6Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 6Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 7Trays *InputSlot Tray8
+*UIConstraints: *OptionTrays 7Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 7Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 8Trays *InputSlot Tray9
+*UIConstraints: *OptionTrays 8Trays *InputSlot Tray10
+
+*UIConstraints: *OptionTrays 9Trays *InputSlot Tray10
 
 *% If the duplexer is not installed disable duplex modes.
 *UIConstraints: *Option3 False *Duplex DuplexNoTumble
 *UIConstraints: *Option3 False *Duplex DuplexTumble
 
-*% If the hard disk is not installed disable printer collation.
-*UIConstraints: *Option4 False *HPCollate True
-
 *% If the envelope feeder is not installed disable envelope slot.
 *UIConstraints: *Option5 False *InputSlot Envelope
-
-*% if Input slot is not Tray 1 then give warning for transparencies.
-*UIConstraints: *InputSlot Middle        *MediaType Transparency
-*UIConstraints: *InputSlot Lower         *MediaType Transparency
-*UIConstraints: *InputSlot LargeCapacity *MediaType Transparency
-*UIConstraints: *InputSlot Envelope      *MediaType Transparency
 
 *% Don't allow these paper sizes/types in the Envelope Feeder
 *UIConstraints: *PageSize Letter    *InputSlot Envelope
@@ -1128,6 +1281,8 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *UIConstraints: *PageSize A4        *InputSlot Envelope
 *UIConstraints: *PageSize A5        *InputSlot Envelope
 *UIConstraints: *PageSize B5        *InputSlot Envelope
+*UIConstraints: *PageSize w612h935  *InputSlot Envelope
+*UIConstraints: *PageSize w558h774  *InputSlot Envelope
 
 *UIConstraints: *PageRegion Letter    *InputSlot Envelope
 *UIConstraints: *PageRegion Executive *InputSlot Envelope
@@ -1135,6 +1290,8 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *UIConstraints: *PageRegion A4        *InputSlot Envelope
 *UIConstraints: *PageRegion A5        *InputSlot Envelope
 *UIConstraints: *PageRegion B5        *InputSlot Envelope
+*UIConstraints: *PageRegion w612h935  *InputSlot Envelope
+*UIConstraints: *PageRegion w558h774  *InputSlot Envelope
 
 *% If selected page size is an envelope disable access to paper trays 2, 3 and 4
 *UIConstraints: *PageSize Env10       *InputSlot Middle
@@ -1178,8 +1335,8 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *UIConstraints: *PageSize EnvC5      *Duplex DuplexNoTumble
 *UIConstraints: *PageSize EnvISOB5   *Duplex DuplexNoTumble
 
-*UIConstraints: *MediaType Transparency *Duplex DuplexNoTumble
-*UIConstraints: *MediaType Labels       *Duplex DuplexNoTumble
+*UIConstraints: *InputSlot Transparency *Duplex DuplexNoTumble
+*UIConstraints: *InputSlot Labels       *Duplex DuplexNoTumble
 
 *UIConstraints: *PageRegion A5         *Duplex DuplexNoTumble
 *UIConstraints: *PageRegion Env10      *Duplex DuplexNoTumble
@@ -1195,8 +1352,8 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *UIConstraints: *PageSize EnvC5      *Duplex DuplexTumble
 *UIConstraints: *PageSize EnvISOB5   *Duplex DuplexTumble
 
-*UIConstraints: *MediaType Transparency *Duplex DuplexTumble
-*UIConstraints: *MediaType Labels       *Duplex DuplexTumble
+*UIConstraints: *InputSlot Transparency *Duplex DuplexTumble
+*UIConstraints: *InputSlot Labels       *Duplex DuplexTumble
 
 *UIConstraints: *PageRegion A5         *Duplex DuplexTumble
 *UIConstraints: *PageRegion Env10      *Duplex DuplexTumble
@@ -1232,6 +1389,12 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *PageSize B5/B5 (JIS): "
   <</PageSize [516 729] /ImagingBBox null>> setpagedevice"
 *End
+*PageSize w612h935/Executive (JIS): "
+  <</PageSize [612 935] /ImagingBBox null>> setpagedevice"
+*End
+*PageSize w558h774/16K: "
+  <</PageSize [558 774] /ImagingBBox null>> setpagedevice"
+*End
 *PageSize Env10/Envelope #10: "
   <</PageSize [297 684] /ImagingBBox null>> setpagedevice"
 *End
@@ -1252,13 +1415,15 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
    currentpagedevice /PageSize get aload pop
    2 copy gt {exch} if 
    (Unknown) 
-   11 dict
+   13 dict
    dup [612 792]  (Letter) put
    dup [522 756]  (Executive) put
    dup [612 1008] (Legal) put
    dup [595 842]  (A4) put
    dup [420 595]  (A5) put
    dup [516 729]  (B5) put
+   dup [612 935]  (w612h935) put
+   dup [558 774]  (w558h774) put
    dup [297 684]  (Env10) put
    dup [279 540]  (EnvMonarch) put
    dup [312 624]  (EnvDL) put
@@ -1295,6 +1460,12 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *PageRegion B5/B5 (JIS): "
   <</PageSize [516 729] /ImagingBBox null>> setpagedevice"
 *End
+*PageRegion w612h935/Executive (JIS): "
+  <</PageSize [612 935] /ImagingBBox null>> setpagedevice"
+*End
+*PageRegion w558h774/16K: "
+  <</PageSize [558 774] /ImagingBBox null>> setpagedevice"
+*End
 *PageRegion Env10/Envelope #10: "
   <</PageSize [297 684] /ImagingBBox null>> setpagedevice"
 *End
@@ -1313,17 +1484,19 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *CloseUI: *PageRegion
 
 *DefaultImageableArea: Letter
-*ImageableArea Letter/Letter: "12.24 12.06 599.76 780.06"
-*ImageableArea Executive/Executive: "13.32 12.06 508.68 744.06"
-*ImageableArea Legal/Legal: "12.24 12.06 599.76 996.06"
-*ImageableArea A4/A4: "13.44 12.06 581.76 829.74"
-*ImageableArea A5/A5: "12.00 12.00 408.00 583.00"
-*ImageableArea B5/B5 (JIS): "12.50 12.50 503.50 716.50"
-*ImageableArea Env10/Envelope #10: "12.12 12.06 284.76 672.06"
-*ImageableArea EnvMonarch/Envelope Monarch: "12.72 12.06 266.16 528.06"
-*ImageableArea EnvDL/Envelope DL: "13.80 12.06 297.96 611.58"
-*ImageableArea EnvC5/Envelope C5: "12.60 12.06 446.52 637.02"
-*ImageableArea EnvISOB5/Envelope B5: "13.20 12.06 485.52 696.54"
+*ImageableArea Letter/Letter: "12.00 12.00 599.76 779.76"
+*ImageableArea Executive/Executive: "12.00 12.00 509.76 743.76"
+*ImageableArea Legal/Legal: "12.00 12.00 599.76 995.76"
+*ImageableArea A4/A4: "12.00 12.00 582.96 829.44"
+*ImageableArea A5/A5: "12.00 12.00 407.28 582.96"
+*ImageableArea B5/B5 (JIS): "12.00 12.00 503.52 716.16"
+*ImageableArea w612h935/Executive (JIS): "12.00 12.00 599.76 922.76"
+*ImageableArea w558h774/16K: "12.00 12.00 545.76 761.76"
+*ImageableArea Env10/Envelope #10: "12.00 12.00 284.64 671.76"
+*ImageableArea EnvMonarch/Envelope Monarch: "12.00 12.00 266.64 527.76"
+*ImageableArea EnvDL/Envelope DL: "12.00 12.00 299.52 611.28"
+*ImageableArea EnvC5/Envelope C5: "12.00 12.00 446.88 636.72"
+*ImageableArea EnvISOB5/Envelope B5: "12.00 12.00 486.48 696.24"
 *?ImageableArea: "
    save
    /cvp { (                ) cvs print ( ) print } bind def
@@ -1343,6 +1516,8 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *PaperDimension A4/A4: "595 842"
 *PaperDimension A5/A5: "420 595"
 *PaperDimension B5/B5 (JIS): "516 729"
+*PaperDimension w612h935/Executive (JIS): "612 935"
+*PaperDimension w558h774/16K: "558 774"
 *PaperDimension Env10/Envelope #10: "297 684"
 *PaperDimension EnvMonarch/Envelope Monarch: "279 540"
 *PaperDimension EnvDL/Envelope DL: "312 624"
@@ -1359,10 +1534,11 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *% Smallest = 3x5, Largest = 8.5 x 14
 *MaxMediaWidth:  "612"
 *MaxMediaHeight: "1008"
-*HWMargins:      16 16 16 16
+*HWMargins:      12 12 12 12
 *CustomPageSize True: "
   pop pop pop 
-  << /PageSize [ 5 -2 roll ] /ImagingBBox null >> setpagedevice
+  <</DeferredMediaSelection true /PageSize [ 7 -2 roll ] /ImagingBBox null >>
+  setpagedevice
 "
 *End
 
@@ -1370,7 +1546,7 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *ParamCustomPageSize Height:       2 points 360 1008
 *ParamCustomPageSize WidthOffset:  3 points 0 0
 *ParamCustomPageSize HeightOffset: 4 points 0 0
-*ParamCustomPageSize Orientation:  5 int 0 0
+*ParamCustomPageSize Orientation:  5 int 0 3
 
 *RequiresPageRegion All: True
 
@@ -1381,15 +1557,68 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *InputSlot Upper/ Tray 1: "<</ManualFeed false /MediaPosition 3>> setpagedevice"
 *InputSlot ManualFeed/ Tray 1 (Manual): "<</ManualFeed true /MediaPosition 3>> setpagedevice"
 *InputSlot Middle/ Tray 2: "<</ManualFeed false /MediaPosition 0>> setpagedevice"
-*InputSlot Lower/ Tray 3: "<</ManualFeed false /MediaPosition 1>> setpagedevice"
-*InputSlot LargeCapacity/ Tray 4: "<</ManualFeed false /MediaPosition 4>> setpagedevice"
+*InputSlot Lower/ Tray 3: "currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 1>> setpagedevice}
+  {currentpagedevice /InputAttributes get 5 known
+    {<</ManualFeed false /MediaPosition 5>> setpagedevice}if}ifelse"
+*End
+*InputSlot LargeCapacity/ Tray 4: "
+currentpagedevice /InputAttributes get 4 known
+  {<</ManualFeed false /MediaPosition 4>> setpagedevice}
+  {currentpagedevice /InputAttributes get 1 known
+    {<</ManualFeed false /MediaPosition 5>> setpagedevice}
+    {<</ManualFeed false /MediaPosition 6>> setpagedevice}ifelse}ifelse"
+*End
+*InputSlot Tray5/ Tray 5: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 6>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 7>> setpagedevice}ifelse"
+*End
+*InputSlot Tray6/ Tray 6: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 7>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 8>> setpagedevice}ifelse"
+*End
+*InputSlot Tray7/ Tray 7: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 8>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 9>> setpagedevice}ifelse"
+*End
+*InputSlot Tray8/ Tray 8: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 9>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 10>> setpagedevice}ifelse"
+*End
+*InputSlot Tray9/ Tray 9: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 10>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 11>> setpagedevice}ifelse"
+*End
+*InputSlot Tray10/ Tray 10: "
+currentpagedevice /InputAttributes get 1 known
+  {<</ManualFeed false /MediaPosition 11>> setpagedevice}
+  {<</ManualFeed false /MediaPosition 12>> setpagedevice}ifelse"
+*End
 *InputSlot Envelope/ Envelope Feeder: "<</ManualFeed false /MediaPosition 2>> setpagedevice"
+*InputSlot Plain/Plain: "<</ManualFeed false /MediaType (Plain)>> setpagedevice"
+*InputSlot Preprinted/Preprinted: "<</ManualFeed false /MediaType (Preprinted)>> setpagedevice"
+*InputSlot Letterhead/Letterhead: "<</ManualFeed false /MediaType (Letterhead)>> setpagedevice"
+*InputSlot Transparency/Transparency: "<</ManualFeed false /MediaType (Transparency)>> setpagedevice"
+*InputSlot Prepunched/Prepunched: "<</ManualFeed false /MediaType (Prepunched)>> setpagedevice"
+*InputSlot Labels/Labels: "<</ManualFeed false /MediaType (Labels)>> setpagedevice"
+*InputSlot Bond/Bond: "<</ManualFeed false /MediaType (Bond)>> setpagedevice"
+*InputSlot Recycled/Recycled: "<</ManualFeed false /MediaType (Recycled)>> setpagedevice"
+*InputSlot Color/Color: "<</ManualFeed false /MediaType (Color)>> setpagedevice"
+*InputSlot Cardstock/Card Stock: "<</ManualFeed false /MediaType (Card Stock)>> setpagedevice"
+*InputSlot Rough/Rough: "<</ManualFeed false /MediaType (Rough)>> setpagedevice"
 *?InputSlot: "
-   save
-      currentpagedevice /InputAttributes get /Priority get
-      aload pop pop pop pop
-      [(Middle) (Lower) (Envelope) (Upper) (LargeCapacity)] exch get = flush
-   restore
+ save
+   [(Middle) (Lower) (Envelope) (Upper) (Unknown) (LargeCapacity) (Tray5) (Tray6) (Tray7) (Tray8) (Tray9) (Tray10)]
+   statusdict /papertray get exec
+   {get exec} stopped { pop pop (Unknown) } if =
+   currentpagedevice /InputAttributes get dup
+   /Priority get 0 get get /MediaType get = flush
+ restore
 "
 *End
 *CloseUI: *InputSlot
@@ -1406,6 +1635,42 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *End
 *HPPaperPolicy NearestSizeNoAdjust/Nearest Size and Crop: "
    <</DeferredMediaSelection false /Policies << /PageSize 5 >> >> setpagedevice"
+*End
+*HPPaperPolicy Letter/Letter: "
+userdict begin
+  /HPppX1 0 def
+  /HPppY1 0 def
+  /HPppScale 1 def
+
+  <</DeferredMediaSelection true
+    /BeginPage {pop userdict begin HPppX1 HPppY1 translate HPppScale HPppScale scale end} bind>> setpagedevice
+
+  /HPwmSPD {setpagedevice} bind def
+  /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
+      /HPppScale 612 HPwmPgWidth div dup 792 HPwmPgHeight div dup 3 1 roll lt {pop} {exch pop} ifelse def
+      HPppScale 1 gt {/HPppScale 1 def}if
+      /HPppX1 612 HPwmPgWidth HPppScale mul sub 2 div def
+      /HPppY1 792 HPwmPgHeight HPppScale mul sub 2 div def
+      <</PageSize [612 792] /ImagingBBox null>> setpagedevice}{setpagedevice}ifelse end} bind def
+end"
+*End
+*HPPaperPolicy A4/A4: "
+userdict begin
+  /HPppX1 0 def
+  /HPppY1 0 def
+  /HPppScale 1 def
+
+  <</DeferredMediaSelection true
+    /BeginPage {pop userdict begin HPppX1 HPppY1 translate HPppScale HPppScale scale end} bind>> setpagedevice
+
+  /HPwmSPD {setpagedevice} bind def
+  /setpagedevice {userdict begin dup /PageSize known {/HPwmPgWidth exch /PageSize get aload pop /HPwmPgHeight exch def def
+      /HPppScale 595 HPwmPgWidth div dup 842 HPwmPgHeight div dup 3 1 roll lt {pop} {exch pop} ifelse def
+      HPppScale 1 gt {/HPppScale 1 def}if
+      /HPppX1 595 HPwmPgWidth HPppScale mul sub 2 div def
+      /HPppY1 842 HPwmPgHeight HPppScale mul sub 2 div def
+      <</PageSize [595 842] /ImagingBBox null>> setpagedevice}{setpagedevice}ifelse end} bind def
+end"
 *End
 *CloseUI: *HPPaperPolicy
 
@@ -1752,5 +2017,5 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
 *End
 
 *% =======================================
-*% For "HP LaserJet 4000 Series" version 2014.108
+*% For "HP LaserJet 4050 Series" version 2014.108
 *% =======================================

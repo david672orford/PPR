@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv_conf.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 28 February 2000.
+** Last modified 21 June 2001.
 */
 
 /*
@@ -193,7 +193,7 @@ static char *get_printer_ppd(const char name[], int entry_index)
 **
 ** This function returns the string in a newly allocated heap block.
 */
-const char *get_group_ppd(const char grname[])
+static const char *get_group_ppd(const char grname[])
     {
     FILE *gf;                   /* group file */
     char *line = NULL;
@@ -601,7 +601,7 @@ void read_conf(char *conf_fname)
 	    {
 	    if((thisadv->ForceAUFSSecurity = gu_torf(value)) == ANSWER_UNKNOWN)
 	    	fatal(0, _("\"ForceAUFSSecurity\" must be \"true\" or \"false\" (line %d)"), line_count);
-	    if(thisadv->ForceAUFSSecurity && aufs_security_dir == (char*)NULL)
+	    if(thisadv->ForceAUFSSecurity && !aufs_security_dir)
 	    	fatal(0, _("\"ForceAUFSSecurity\" option TRUE when no -X switch used"));
 	    continue;
 	    }

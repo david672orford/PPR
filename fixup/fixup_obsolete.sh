@@ -144,8 +144,7 @@ outdated $SHAREDIR/www/docs/rfc/index.html
 outdated $HOMEDIR/lib/ppr-commentary-httpd
 outdated_dir $SHAREDIR/www/docs/rfc
 outdated $SHAREDIR/www/html/docbrowse.html
-#outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# might be bad
-#outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 Series"	# might be bad
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 
 echo "Done."
 echo

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 June 2001.
+# Last modified 21 June 2001.
 #
 
 #
@@ -182,12 +182,15 @@ dist: docs distclean
 
 # CVS doesn't preserve symlinks.  If INSTALL.txt is missing, run the hidden
 # shell script in which they are preserved.
-symlinks:
+symlinks-restore:
 	if [ ! -f INSTALL.txt ]; then ./.restore_symlinks; fi
 
-# CVS on Sourceforge.
-cvs-import: veryclean
+# This creates the file that the symbolic links are restored from.
+symlinks-save:
 	./makeprogs/save_symlinks.sh
+
+# CVS on Sourceforge.
+cvs-import: veryclean symlinks-save
 	#CVS_RSH=ssh cvs -d:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr import ppr vendor start
 	cvs import ppr vendor start
 
