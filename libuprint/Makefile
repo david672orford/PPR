@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 5 August 2003.
 #
 
 include ../Makefile.conf
@@ -69,7 +69,7 @@ uprint-newconf$(DOTEXE): uprint-newconf.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o uprint-newconf$(DOTEXE) uprint-newconf.$(OBJ) $(USELIBS) $(INTLLIBS)
 
 uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
-	$(LD) $(LDFLAGS) -o uprint_rfc1179$(DOTEXE) uprint_rfc1179.$(OBJ) $(USELIBS) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o uprint_rfc1179$(DOTEXE) uprint_rfc1179.$(OBJ) $(USELIBS) $(INTLLIBS) $(SOCKLIBS)
 
 #=== Install ================================================================
 

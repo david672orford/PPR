@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--4 August 2003.
+1.52, 24 July 2003--5 August 2003.
 
 Bug Fixes
 
@@ -8652,6 +8652,13 @@ Bug Fixes
   seems that on some server the close operation takes a while on such large
   files.  Should it be a matter of concern that the -z option isn't
   documented?
+
+* libuprint/uprint_run_rfc1179.c: added #include <signal.h>.
+
+* libuprint/Makefile: added $(SOCKLIBS) to build line for uprint_rfc1179.
+
+* z_install_end/Makefile: added explicit rule for getservbyname so that
+  $(SOCKLIBS) could be included.
 
 Misc. Added Material
 
