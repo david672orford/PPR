@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 November 2002.
+# Last modified 6 December 2002.
 #
 
 use lib "?";
@@ -167,7 +167,7 @@ $printcap_wizard_table = [
 		isubmit("action", "Download", N_("_Download"), 'class="buttons"'); 
 		print "<p>", H_("This script must be run as root.  The command to run it is:"), "</p>\n";
 		print "<pre>\n";
-		print html("# sh setup_$localname.sh"), "\n";
+		print html("# ./setup_$localname.sh"), "\n";
 		print "</pre>\n";
 		},
 	'buttons' => [N_("_Close")]
@@ -193,7 +193,7 @@ sub gen_spooler_config
 
     print <<"EndHead";
 Content-Type: application/octet-stream; name=$script_filename
-Content-Disposition: inline; filename=$script_filename
+Content-Disposition: attachment; filename=$script_filename
 
 #! /bin/sh
 #
@@ -245,7 +245,7 @@ sub gen_kde_shortcut
 
     print <<"EndIcon";
 Content-Type: application/octet-stream; name=$filename
-Content-Disposition: inline; filename=$filename
+Content-Disposition: attachment; filename=$filename
 
 [Desktop Entry]
 Comment=$comment

@@ -1,6 +1,6 @@
 #! /usr/lib/ppr/bin/ppr-tclsh
 #
-# Last modified 5 September 2002.
+# Last modified 6 December 2002.
 #
 
 # Name the command line parameters.
@@ -80,6 +80,30 @@ proc probe_system {} {
 	}
     }
 
+#
+# This function opens and extracts information from a Linux /proc
+# autoprobe file.
+# 
+proc autoprobe {filename} {
+    set file [open $filename r]
+    set manufacturer ""
+    set model ""
+    while {[gets $file line] >= 0} {
+	#puts $line
+	regexp {^([^:]+):([^;]+);$} $line junk name value
+	switch -exact -- $name {
+	    MANUFACTURER {
+		set manufacturer $value
+		}
+	    MODEL {
+		set model $value
+		}
+	    }
+	}    
+    close $file
+    return "manufacturer=$manufacturer\nmodel=$model"
+    }
+
 # Detect the OS and OS version and define OS specific functions and
 # templates.
 probe_system
@@ -88,8 +112,11 @@ probe_system
 foreach port [ports_list] {
     puts "\[$port\]"
     puts "comment=Parallel Port $port"
-    set ap [format $autoprobe_template $port]
     set lp [format $dev_template $port]
+    set ap [format $autoprobe_template $port]
+    if {$ap != ""} {
+	puts [autoprobe $ap]
+	}
     puts "interface=simple,$lp"
     puts "interface=parallel,$lp"
     puts ""
