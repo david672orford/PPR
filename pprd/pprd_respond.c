@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_respond.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 March 2002.
+** Last modified 23 July 2003.
 */
 
 #include "before_system.h"
@@ -57,16 +57,20 @@ void responder_child_hook(pid_t pid, int wstat)
 void respond2(const char *destnode, const char *destname, int id, int subid, const char *homenode, int prnid, const char *prnname, int response_code)
 	{
 	const char function[] = "respond2";
-	char jobname[256];
+	char jobname_long[256];
+	char *jobname_short;
 	char filename[MAX_PPR_PATH];
 	int fd;
 	pid_t pid;									/* Process id of responder */
 
 	/* Format the job name as a string.  This will be the 1st parameter. */
-	snprintf(jobname, sizeof(jobname), "%s:%s-%d.%d(%s)", destnode, destname, id, subid, homenode);
+    jobname_short = remote_jobid(destnode, destname, id, subid, homenode);
+
+    /* Formate the job name is verbose format.  This will be used to build queue file names. */
+	snprintf(jobname_long, sizeof(jobname_long), "%s:%s-%d.%d(%s)", destnode, destname, id, subid, homenode);
 
 	/* Open the queue file before the fork since it may be deleted when we return. */
-	ppr_fnamef(filename, "%s/%s", QUEUEDIR, jobname);
+	ppr_fnamef(filename, "%s/%s", QUEUEDIR, jobname_long);
 	if((fd = open(filename, O_RDONLY)) == -1)
 		{
 		fprintf(stderr, "Can't open \"%s\", errno=%d (%s)\n", filename, errno, gu_strerror(errno));
@@ -94,7 +98,7 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 			}
 
 		/* Connect stdin to the job log file, and stdout and stderr to the pprd log file. */
-		ppr_fnamef(filename, "%s/%s-log", DATADIR, jobname);
+		ppr_fnamef(filename, "%s/%s-log", DATADIR, jobname_long);
 		child_stdin_stdout_stderr(filename, PPRD_LOGFILE);
 
 		/* The 2nd parameter is the response code number. */
@@ -112,7 +116,7 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 		/* Here we go! */
 		execl("lib/ppr-respond", "ppr-respond",
 				"pprd",
-				jobname,
+				jobname_short,
 				code_str,
 				prnname,
 				per_duplex_str,

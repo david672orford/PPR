@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 22 July 2003.
 */
 
 /*
@@ -206,7 +206,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	{
 	char *p;
 
-	/* This has something to do with elaborating on failt conditions. */
+	/* This has something to do with elaborating on fault conditions. */
 	if((p = lmatchp(line, "exit:")))
 		{
 		const char *cp;
@@ -238,7 +238,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			printf("status: %s, %s", device_status_string, printer_status_string);
 			return 1;
 			}
-		else
+		else if(verbose || printer_status != PRNSTATUS_IDLE)
 			{
 			PUTS(sep);
 			printf(_("Printer Status: %s, %s"), device_status_string, printer_status_string);

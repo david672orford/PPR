@@ -26,13 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 22 July 2003.
 #
 
 #
 # This script takes the translation files (.po files) and converts
 # them to index, machine dependent .mo files and installs them
 # in the locale directory.
+#
+# BUGS: doesn't set correct permissions if run as root!
 #
 
 lang="$1"
@@ -46,10 +48,10 @@ if [ -z "$instdir" -o -z "$lang" ]
 	fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
-  then
-  echo "The RPM_BUILD_ROOT \"$RPM_BUILD_ROOT\" does not exist!"
-  exit 1
-  fi
+	then
+	echo "The RPM_BUILD_ROOT \"$RPM_BUILD_ROOT\" does not exist!"
+	exit 1
+	fi
 
 full_instdir="$RPM_BUILD_ROOT$instdir"
 
@@ -87,7 +89,7 @@ for potfile in *.pot
 		then
 		echo -n " $division"
 		msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" || exit 1
-	echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
+		echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
 		else
 		echo -n " $division(missing)"
 		fi

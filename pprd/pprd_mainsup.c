@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 23 July 2003.
 */
 
 #include "before_system.h"
@@ -301,7 +301,7 @@ static const struct gu_getopt_opt option_words[] =
 
 static void help(FILE *out)
 	{
-	fputs("Usage: pprd [--version] [--help] [--foreground]\n", out);
+	fputs("Usage: pprd [--version] [--help] [--foreground] [--stop]\n", out);
 	}
 
 static int pprd_stop(void)

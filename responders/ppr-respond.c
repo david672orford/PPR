@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 23 July 2003.
 */
 
 /*
@@ -512,7 +512,7 @@ int main(int argc, char *argv[])
 				"",
 				rinfo.responder_options,
 				argv[3],						/* code number of message type */
-				rinfo.jobname,					/* full queue id of job */
+				rinfo.jobname,					/* queue id of job */
 				rinfo.extra,					/* name of printer or text of error message */
 				rinfo.Title,					/* title of job */
 				time_in_ascii,					/* time job was submitted */

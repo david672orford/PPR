@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--22 July 2003.
+1.51, 15 February 2003--23 July 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8652,4 +8652,11 @@ TODO
 
 * Decide how pprd should handle the matter of the hostname changing due
   to dial-up networking.
+
+* ppop/ppop_cmds_other.c: changed "ppop status" to suppress the display of
+  the basic SNMP-style status (such as "operational, idle") if the queue
+  is idle (since in such a case the current status of the actual printer
+  is unknown).
+
+* pprd/pprd_respond.c: changed jobname fed to responder to short format.
 
