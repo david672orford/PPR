@@ -7604,3 +7604,6 @@ line was being parsed twice.
 * pprpopup/: renamed icon files, renamed script to convert FIG files to Tcl
   image data, added "make images".
 
+* lprsrv/lprsrv.c: fixed "unrecognized command" code so that the ^A style
+  message is used only if the command byte is less than ASCII space.
+

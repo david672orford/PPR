@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 2 January 2001.
+** Last modified 28 March 2002.
 */
 
 /*
@@ -153,7 +153,7 @@ static const struct gu_getopt_opt option_words[] =
 /*
 ** Print how to use.  The argument will be either stdout or stderr.
 */
-void help(FILE *outfile)
+static void help(FILE *outfile)
     {
     fputs(_("Valid switches:\n"), outfile);
 
@@ -369,8 +369,13 @@ int main(int argc,char *argv[])
 		DODEBUG_MAIN(("remove: \"^E%s\"", line+1));
 		do_request_lprm(line, client_dns_name, &access_info);
 		break;
+	    case 0:
+	    	fatal(1, "empty command");
 	    default:				    /* what can we do? */
-		fatal(1, "unrecognized command: \"^%c%s\"", line[0]+'@', line+1);
+		if(line[0] < ' ')
+		    fatal(1, "unrecognized command: \"^%c%s\"", line[0]+'@', line+1);
+		else
+		    fatal(1, "unrecognized command: \"%s\"", line);
 	    }
 	} /* end of if fgets() worked */
     } /* end of line reading context */
