@@ -60,8 +60,10 @@
 /* We use this so we don't have to load the math library. */
 #define FABS(x) ((x) >= 0 ? (x) : -(x))
 
+#ifdef CRUFT_AUTH
 /* These are used when reading a PPR header for non-PostScript jobs. */
 extern char *AuthCode;
+#endif
 
 /* We will set these if we create a *-infile or *-barbar.
    We need to know this so that the file(s) can be deleted
@@ -70,6 +72,13 @@ extern char *AuthCode;
    */
 static gu_boolean keepinfile_file_created = FALSE;
 static gu_boolean barbar_file_created = FALSE;
+
+#define MAX_LAUNCHED_FILTERS 10
+static struct {
+	pid_t pid;
+	char *name;
+	} launched_filters[MAX_LAUNCHED_FILTERS];
+static int launched_filters_count = 0;
 
 /*
 ** structure used to analyze the input
@@ -1664,6 +1673,9 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 	*/
 	stubborn_rewind();
 
+	if(launched_filters_count >= MAX_LAUNCHED_FILTERS)
+		fatal(PPREXIT_OTHERERR, "%s(): launched_filters[] overflow", function);
+
 	/*
 	** Open a pipe which will be used to convey the filter's
 	** output back to this process.
@@ -1679,6 +1691,11 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 		close(pipefds[1]);				/* we won't use write end */
 		close(in_handle);				/* we won't read input file directly */
 		in_handle = pipefds[0];			/* henceforth we will read from pipe */
+
+		/* Record information for reapchild() in case the filter dies. */
+		launched_filters[launched_filters_count].name = gu_strdup(filter_path);
+		launched_filters[launched_filters_count].pid = pid;
+		launched_filters_count++;
 		}
 	else							/* child */
 		{
@@ -2016,6 +2033,7 @@ static const char *compressed(void)
 			#endif
 			return "gunzip";
 			}
+
 		/* Check for files compressed with Unix compress. */
 		if(in_ptr[0] == (unsigned char)0x1f && in_ptr[1] == (unsigned char)0x9d
 						&& in_ptr[2] == (unsigned char)0x90)
@@ -2028,6 +2046,17 @@ static const char *compressed(void)
 			no_filter("compressed files");
 			#endif
 			return "uncompress";
+			}
+		/* Check for files compressed with Bzip2. */
+		if(in_ptr[0] == (unsigned char)'B' && in_ptr[1] == (unsigned char)'Z'
+						&& in_ptr[2] == (unsigned char)'h')
+			{
+			#ifdef BUNZIP2
+			exec_filter(BUNZIP2, "bunzip2", "-c", (char*)NULL);
+			#else
+			no_filter("bzip2ed files");
+			#endif
+			return "bunzip2";
 			}
 		}
 
@@ -2610,6 +2639,20 @@ void infile_file_cleanup(void)
 		}
 
 	} /* end of infile_file_cleanup() */
+
+/*
+ * Given a PID, tell what filter it is.
+ */
+const char *infile_filter_name_by_pid(pid_t pid)
+	{
+	int i;
+	for(i = 0; i < launched_filters_count; i++)
+		{
+		if(launched_filters[i].pid == pid)
+			return launched_filters[i].name;
+		}
+	return "?";
+	}
 
 /* end of file */
 

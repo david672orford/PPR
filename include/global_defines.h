@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_defines.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 11 February 2004.
+** This file was last modified 12 May 2004.
 */
 
 /*
@@ -277,6 +277,7 @@
 
 #define PASS2
 #include "sysdep.h"
+#include "config.h"
 #undef PASS2
 
 /* A signed number of at least 16 bits: */

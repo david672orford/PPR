@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_respond.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 12 May 2004.
 */
 
 /*
 ** Routines by means of which the PPR job submission program
 ** tells users why their jobs didn't go thru.  (Yes, responders
 ** are used for other purposes, such as telling the user that
-** his job _did_ go thru, but this code is never called uppon
+** his job _did_ go thru, but this code is never called upon
 ** to perform any such pleasant task.)
 */
 
@@ -56,7 +56,7 @@
 #include "ppr_exits.h"
 
 /*
-** This do-nothing signal handler is intalled before
+** This do-nothing signal handler is installed before
 ** launching the responder.  If we left the normal
 ** SIGCHLD handler in place, it would report that
 ** a filter had failed.
@@ -78,7 +78,7 @@ static void empty_reapchild(int sig)
 ** always be zero and qentry.homenode will always be the value returned
 ** from ppr_get_nodename().
 **
-** This function returns 0 if it succedest, -1 if it fails.  The return
+** This function returns 0 if it suceeds, -1 if it fails.  The return
 ** code is used by ppr_infile.c.  If there is no filter to convert the file
 ** to PostScript and calling this function returns -1, it will use the
 ** hexdump filter to report the error.

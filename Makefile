@@ -215,6 +215,7 @@ veryclean: clean unconfigure
 
 unconfigure:
 	cp makeprogs/Makefile.conf.unconfigured Makefile.conf
+	cp makeprogs/config.h.unconfigured config.h
 
 # end of file
 

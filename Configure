@@ -1,8 +1,4 @@
 #! /bin/sh
-
-# The next line is to make Ultrix's lame /bin/sh bow out.
-#if false () { echo }; then unset false; else exec /bin/sh5 "$@"; fi
-
 #
 # mouse:~ppr/src/Configure
 # Copyright 1995--2004, Trinity College Computing Center.
@@ -30,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 May 2004.
+# Last modified 12 May 2004.
 #
 
 # Find an echo that will supports escapes.
@@ -51,18 +47,18 @@ findprog_prog_path ()
     {
     echo "Searching for $1" >&2
     for i in `echo $2 | tr ':' ' '`
-	do
-	if [ `echo $i | cut -c1` = '/' ]
-	    then
-	    # echo " Trying $i/$1" >&2
-	    if [ -x "$i/$1" ]
-		then
-		echo "  Found $i/$1" >&2
-		echo "$i/$1"
-		return
-		fi
-	    fi
-	done
+		do
+		if [ `echo $i | cut -c1` = '/' ]
+		    then
+		    # echo " Trying $i/$1" >&2
+		    if [ -x "$i/$1" ]
+				then
+				echo "  Found $i/$1" >&2
+				echo "$i/$1"
+				return
+				fi
+		    fi
+		done
     echo "Not found" >&2
     }
 
@@ -79,24 +75,27 @@ cat - <<EndOfHelp
 	--libdir=
 	--datadir=
 	--spooldir=
-	--x11bindir=		-- where is xterm?
-	--with-gcc		-- use GCC
-	--without-gcc		-- use native compiler
+	--x11bindir=        -- where is xterm?
+	--with-gcc		    -- use GCC
+	--without-gcc       -- use native compiler
 	--user-ppr=
 	--user-pprwww=
 	--group-ppr=
-	--with-gdbm		-- link with GDBM
+	--with-gdbm         -- link with GDBM
 	--without-gdbm
-	--with-tdb		-- link with TBD
+	--with-tdb          -- link with TBD
 	--without-tdb
-	--with-gettext		-- link with GNU Gettext
+	--with-gettext      -- link with GNU Gettext
 	--without-gettext
 	--help
 
 Environment variables heeded:
 
-PATH		used to search for programs such as perl
-CFLAGS		flags to pass to C compiler
+PATH        used to search for programs such as perl
+CFLAGS      flags to pass to C compiler
+GUNZIP      path to gunzip
+UNCOMPRESS  path to uncompress
+BUNZIP2     path to bunzip2
 
 EndOfHelp
 }
@@ -211,11 +210,11 @@ for opt in $*
 if [ -z "$opt_sysconfdir" ]
     then
     if [ "$opt_prefix" = "/usr" ]
-	then
-	opt_sysconfdir="/etc"
-	else
-	opt_sysconfdir="$opt_prefix/etc"
-	fi
+		then
+		opt_sysconfdir="/etc"
+		else
+		opt_sysconfdir="$opt_prefix/etc"
+		fi
     fi
 opt_bindir=${opt_bindir:-$opt_prefix/bin}
 opt_libdir=${opt_libdir:-$opt_prefix/lib}
@@ -229,106 +228,106 @@ opt_x11bindir=${opt_x11bindir:-/usr/bin/X11}
 echo "Detecting OS..."
 case `uname -s` in
     ATTWGS )			# dubious
-	SYSTEM="ATTWGS"
-	DESCRIPTION="AT&T WGS Unix"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    Linux )
-	SYSTEM="LINUX"
-	DESCRIPTION="Linux"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    FreeBSD )
-	SYSTEM="FREEBSD"
-	DESCRIPTION="FreeBSD 3.1R"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    SunOS )
-	major=`uname -r | cut -d. -f1`
-	minor=`uname -r | cut -d. -f2`
-	case $major in
-	    4 )
-		SYSTEM="SUNOS4"
-		DESCRIPTION="SunOS 4.1.3_U1"
+		SYSTEM="ATTWGS"
+		DESCRIPTION="AT&T WGS Unix"
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
-	    5 )
-		if [ $minor -lt 6 ]
-		    then
-		    SYSTEM="SUNOS_5"
-		    DESCRIPTION="SunOS 5.0 thru 5.5.1"
-		    CC_NATIVE=0
-		    CC_GCC=1
-		    else
-		    SYSTEM="SUNOS_5_6"
-		    DESCRIPTION="SunOS 5.6 thru 5.8"
-		    CC_NATIVE=0
-		    CC_GCC=1
-		    fi
+    Linux )
+		SYSTEM="LINUX"
+		DESCRIPTION="Linux"
+		CC_NATIVE=0
+		CC_GCC=1
 		;;
-	    * )
-		echo "Unrecognized SunOS major version $major."
+    FreeBSD )
+		SYSTEM="FREEBSD"
+		DESCRIPTION="FreeBSD 3.1R"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+    SunOS )
+		major=`uname -r | cut -d. -f1`
+		minor=`uname -r | cut -d. -f2`
+		case $major in
+		    4 )
+				SYSTEM="SUNOS4"
+				DESCRIPTION="SunOS 4.1.3_U1"
+				CC_NATIVE=0
+				CC_GCC=1
+				;;
+		    5 )
+				if [ $minor -lt 6 ]
+				    then
+				    SYSTEM="SUNOS_5"
+				    DESCRIPTION="SunOS 5.0 thru 5.5.1"
+				    CC_NATIVE=0
+				    CC_GCC=1
+				    else
+				    SYSTEM="SUNOS_5_6"
+				    DESCRIPTION="SunOS 5.6 thru 5.8"
+				    CC_NATIVE=0
+				    CC_GCC=1
+				    fi
+				;;
+		    * )
+				echo "Unrecognized SunOS major version $major."
+				exit 1
+				;;
+	    esac
+		;;
+    OSF1 )
+		SYSTEM="OSF1"
+		DESCRIPTION="OSF/1 3.2 or Digital Unix 4.0"
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+    IRIX )
+		SYSTEM="IRIX"
+		DESCRIPTION="IRIX 6.3"
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+    NetBSD )
+		SYSTEM="NETBSD"
+		DESCRIPTION="NetBSD 1.0"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+    Cygwin )
+		SYSTEM="CYGWIN"
+		DESCRIPTION="Cygwin 1.x"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+    UWIN )
+		SYSTEM="UWIN"
+		DESCRIPTION="UWIN 2.x"
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+    HP-UX )
+		SYSTEM="HPUX"
+		DESCRIPTION="HPUX 10.2"
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+    ULTRIX )
+		SYSTEM="ULTRIX"
+		DESCRIPTION="ULTRIX 4.4 RISC"
+		ACTUAL_SYSTEM=`uname -s | tr -d '-'`
+		CC_NATIVE=1
+		CC_GCC=0
+		;;
+    Darwin )
+		SYSTEM="DARWIN"
+		DESCRIPTION="Darwin (Mac OS X)"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+    * )
+		echo "No rule for OS `uname -s`.  Please fix this script or use ./Configure instead."
 		exit 1
 		;;
-	    esac
-	;;
-    OSF1 )
-	SYSTEM="OSF1"
-	DESCRIPTION="OSF/1 3.2 or Digital Unix 4.0"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    IRIX )
-	SYSTEM="IRIX"
-	DESCRIPTION="IRIX 6.3"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    NetBSD )
-	SYSTEM="NETBSD"
-	DESCRIPTION="NetBSD 1.0"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    Cygwin )
-	SYSTEM="CYGWIN"
-	DESCRIPTION="Cygwin 1.x"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    UWIN )
-	SYSTEM="UWIN"
-	DESCRIPTION="UWIN 2.x"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    HP-UX )
-	SYSTEM="HPUX"
-	DESCRIPTION="HPUX 10.2"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    ULTRIX )
-	SYSTEM="ULTRIX"
-	DESCRIPTION="ULTRIX 4.4 RISC"
-	ACTUAL_SYSTEM=`uname -s | tr -d '-'`
-	CC_NATIVE=1
-	CC_GCC=0
-	;;
-    Darwin )
-	SYSTEM="DARWIN"
-	DESCRIPTION="Darwin (Mac OS X)"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    * )
-	echo "No rule for OS `uname -s`.  Please fix this script or use ./Configure instead."
-	exit 1
-	;;
     esac
 
 echo "  OS is $SYSTEM."
@@ -341,37 +340,37 @@ if [ $opt_prompt_compiler -ne 0 -a $CC_GCC -ne 0 -a $CC_NATIVE -ne 0 ]
     then
     answer="?"
     while [ "$answer" = "?" ]
-	do
-	$EECHO "Use native cc? \c"
-	read answer
-	case "$answer" in
-	    [yY]* )
-		answer="yes"
-		;;
-	    [nN]* )
-		answer="no"
-		;;
-	    * )
-		answer="?";
-		;;
-	    esac
-	done
+		do
+		$EECHO "Use native cc? \c"
+		read answer
+		case "$answer" in
+		    [yY]* )
+				answer="yes"
+				;;
+		    [nN]* )
+				answer="no"
+				;;
+		    * )
+				answer="?";
+				;;
+		    esac
+		done
     NATIVE_CC=$answer
 
     else
 
     if [ $CC_GCC -ne 0 -a $opt_with_gcc -ne 0 ]
-	then
-	NATIVE_CC="no"
-	else
-	if [ $CC_NATIVE -ne 0 ]
-	    then
-	    NATIVE_CC="yes"
-	    else
-	    echo "No supported C compiler found."
-	    exit 1
-	    fi
-	fi
+		then
+		NATIVE_CC="no"
+		else
+		if [ $CC_NATIVE -ne 0 ]
+		    then
+		    NATIVE_CC="yes"
+		    else
+		    echo "No supported C compiler found."
+		    exit 1
+		    fi
+		fi
     fi
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -774,18 +773,20 @@ if [ "$ATALKTYPE" = "" ]
     fi
 
 #
-# See if we can find uncompress or gunzip
+# See if we can find uncompress, gunzip, bunzip2.
 #
 if [ -z "$GUNZIP" ]
     then
     GUNZIP=`findprog_prog_path gunzip $PATH`
-    if [ -z "$GUNZIP" ]
-	then
-	UNCOMPRESS=`findprog_prog_path uncompress`
-	else
-	UNCOMPRESS=""
 	fi
+if [ -z "$UNCOMPRESS" ]
+	then
+	UNCOMPRESS=`findprog_prog_path uncompress $PATH`
     fi
+if [ -z "$BUNZIP2" ]
+	then
+	BUNZIP2=`findprog_prog_path bunzip2 $PATH`
+	fi
 
 #
 # Find the Perl interpreter.
@@ -794,9 +795,9 @@ if [ -z "$PERL" ]
     then
     PERL=`findprog_prog_path perl $PATH`
     if [ -z "$PERL" ]
-	then
-	PERL="/usr/bin/perl"
-	fi
+		then
+		PERL="/usr/bin/perl"
+		fi
     fi
 
 #
@@ -826,57 +827,57 @@ if [ -n "$CFLAGS" ]
     CFLAGS="-O2"
 
     if [ $NATIVE_CC = "no" ]
-	then
-	echo "Selecting appropriate processor options for GCC."
-
-	PROCESSOR=`uname -m`
-	GCC_VERSION=`gcc --version | head -1`
-	GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
-
-	echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
-	echo "  Processor: $PROCESSOR"
-
-	# If this is an Intel platform and the gcc version
-	# is prior to 2.7.2.1 then add -fno-strength-reduce
-	case $PROCESSOR in
-	    i[3456789]86 )
-		case $GCC_VERSION_SHORT in
-		    2.7.2.[1-9] | 2.[89]* | [3456789].* )
-			;;
-		    * )
-			echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"
-			echo "    buggy strength-reduce optimization."
-			GCC_CFLAGS="$GCC_CFLAGS -fno-strength-reduce"
-			;;
+		then
+		echo "Selecting appropriate processor options for GCC."
+	
+		PROCESSOR=`uname -m`
+		GCC_VERSION=`gcc --version | head -1`
+		GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
+	
+		echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
+		echo "  Processor: $PROCESSOR"
+	
+		# If this is an Intel platform and the gcc version
+		# is prior to 2.7.2.1 then add -fno-strength-reduce
+		case $PROCESSOR in
+		    i[3456789]86 )
+			case $GCC_VERSION_SHORT in
+			    2.7.2.[1-9] | 2.[89]* | [3456789].* )
+				;;
+			    * )
+				echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"
+				echo "    buggy strength-reduce optimization."
+				GCC_CFLAGS="$GCC_CFLAGS -fno-strength-reduce"
+				;;
+			    esac
 		    esac
-	    esac
-
-	#
-	# Add additional options for certain CPUs.  Suggestions are welcome.
-	#
-	case $PROCESSOR in
-	    i386 )			# default anyway?
-		;;
-	    i486 )
-		echo "  Selecting i486 code generation."
-		GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
-		;;
-	    i[56]86 )
-		case $GCC_VERSION_SHORT in
-		    2.9* | [3456789].* )
-			echo "  Selecting $PROCESSOR code generation."
-			GCC_CFLAGS="$GCC_CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
-		        ;;
+	
+		#
+		# Add additional options for certain CPUs.  Suggestions are welcome.
+		#
+		case $PROCESSOR in
+		    i386 )			# default anyway?
+				;;
+		    i486 )
+				echo "  Selecting i486 code generation."
+				GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+				;;
+		    i[56]86 )
+				case $GCC_VERSION_SHORT in
+				    2.9* | [3456789].* )
+						echo "  Selecting $PROCESSOR code generation."
+						GCC_CFLAGS="$GCC_CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
+				        ;;
+				    * )
+						echo "  Selecting i486 code generation because $PROCESSOR may not be available."
+						GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+						;;
+				    esac
+				;;
 		    * )
-			echo "  Selecting i486 code generation because $PROCESSOR may not be available."
-			GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
-			;;
+				;;
 		    esac
-		;;
-	    * )
-		;;
-	    esac
-	fi
+		fi
     fi
 
 echo
@@ -885,8 +886,8 @@ echo
 # Start of Makefile.conf builder code.
 #========================================================================
 
-echo "Building Makefile.conf..."
-exec 3>Makefile.conf
+echo "Building Makefile.conf and config.h..."
+exec 3>Makefile.conf 4>config.h
 
 #========================================================================
 echo "  Building header..."
@@ -942,6 +943,17 @@ MANDIR=\$(SHAREDIR)/man
 CGI_BIN=\$(HOMEDIR)/cgi-bin
 
 ===EndOfHere10===
+
+cat >&4 <<===EndOfHere15===
+/*
+** ~ppr/src/config.h
+** Generated by Configure on `date`.
+**
+** You may want to change some of this if it doesn't work on
+** your system.
+*/
+
+===EndOfHere15===
 
 echo "# If all of the above have their default values then," >&3
 echo "# this line may be commented out." >&3
@@ -1011,20 +1023,27 @@ PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
 
 ===EndOfHere21===
 
-echo "# Programs for uncompressing files.  This variable is used when" >&3
-echo "# building ppr/ppr_infile.c." >&3
+echo "/* Programs for uncompressing files.  These variables are used when" >&4
+echo "   building ppr/ppr_infile.c. */" >&4
 if [ -n "$GUNZIP" ]
     then
-    echo "UNCOMPRESS_OPTS=-DGUNZIP=\\\"$GUNZIP\\\"" >&3
-    else
-    if [ -n "$UNCOMPRESS" ]
-	then
-	echo "UNCOMPRESS_OPTS=-DUNCOMPRESS=\\\"$UNCOMPRESS\\\"" >&3
+    echo "#define GUNZIP \"$GUNZIP\"" >&4
 	else
-	echo "UNCOMPRESS_OPTS=" >&3
+	echo "#undef GUNZIP" >&4
 	fi
+if [ -n "$UNCOMPRESS" ]
+	then
+	echo "#define UNCOMPRESS \"$UNCOMPRESS\"" >&4
+	else
+	echo "#undef UNCOMPRESS" >&4
     fi
-echo >&3
+if [ -n "$BUNZIP2" ]
+	then
+	echo "#define BUNZIP2 \"$BUNZIP2\"" >&4
+	else
+	echo "#undef BUNZIP2" >&4
+    fi
+echo >&4
 
 cat >&3 <<===EndOfHere25===
 # Echo programs that support -n and backslash escapes.
@@ -1666,7 +1685,7 @@ cat >&3 <<===EndEOF===
 #========================================================================
 
 echo
-echo "Done.  Take a look at Makefile.conf if you like, then run \"make\"."
+echo "Done.  Take a look at Makefile.conf and config.h if you like, then run \"make\"."
 echo
 
 exit 0

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 April 2004.
+** Last modified 12 May 2004.
 */
 
 /*
@@ -782,11 +782,15 @@ static void gallows_speach(int signum)
 static void reapchild(int signum)
 	{
 	const char function[] = "reapchild";
+	pid_t pid;
 	int wstat;			/* storage for child's exit status */
+	const char *filter_name;
 
 	/* Get the child's exit code. */
-	if(wait(&wstat) == -1)
+	if((pid = wait(&wstat)) == -1)
 		fatal(PPREXIT_OTHERERR, "%s(): wait() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+
+	filter_name = infile_filter_name_by_pid(pid);
 
 	if(WIFEXITED(wstat))
 		{
@@ -795,19 +799,19 @@ static void reapchild(int signum)
 			case 0:						/* Normal exit, */
 				return;					/* this signal handler need do nothing. */
 			case 242:
-				fatal(PPREXIT_OTHERERR, _("filter failed, exit code = 242 (exec() failed?)"));
+				fatal(PPREXIT_OTHERERR, _("%s failed, exit code = 242 (exec() failed?)"), filter_name);
 				break;
 			default:
-				fatal(PPREXIT_OTHERERR, _("filter failed, exit code = %d"), WEXITSTATUS(wstat));
+				fatal(PPREXIT_OTHERERR, _("%s failed, exit code = %d"), filter_name, WEXITSTATUS(wstat));
 				return;
 			}
 		}
 	else if(WIFSIGNALED(wstat))
 		{
 		if(WCOREDUMP(wstat))
-			fatal(PPREXIT_OTHERERR, _("filter died on receipt of signal %d, core dumped"), WTERMSIG(wstat));
+			fatal(PPREXIT_OTHERERR, _("%s died on receipt of signal %d, core dumped"), filter_name, WTERMSIG(wstat));
 		else
-			fatal(PPREXIT_OTHERERR, _("filter died on receipt of signal %d"), WTERMSIG(wstat));
+			fatal(PPREXIT_OTHERERR, _("%s died on receipt of signal %d"), filter_name, WTERMSIG(wstat));
 		}
 	else
 		{

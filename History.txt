@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--10 May 2004.
+1.53a2, 20 February 2004--12 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9176,6 +9176,18 @@ Internet Printing Protocol Work
 
 * papd/ppad_ali.c: changed at_reply_eoj() to send EOF on the last packet
   rather than in a separate empty packet.
+
+* ppr/ppr_infile.c: added code (tied into ppr_main.c:reapchild()) so that
+  the responder will print the name of the filter that failed.
+
+* ppr/ppr_infile.c: added support for automatically decompressing bzip2ed
+  files.
+
+* Configure: added code to create config.h so that we can begin to simply
+  the way Configure passes its results to C code.  Converted the GUNZIP,
+  COMPRESS, BUNZIP2 options to use it.  We include config.h in 
+  global_defines.h.
+
 
 TODO
 
