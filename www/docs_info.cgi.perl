@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 April 2002.
+# Last modified 18 April 2002.
 #
 
 #
@@ -31,7 +31,8 @@ require "docs_util.pl";
 defined($ENV{PATH} = $PPR::SAFE_PATH) || die;
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
-# This function search the INFOPATH.
+# This function searches the INFOPATH for a specified document and returns
+# the name of its file or undef if it can't find the document.
 sub search_infopath
     {
     my $infopath = shift;
@@ -41,14 +42,14 @@ sub search_infopath
 	{
 	next if(! -d $dir);		# skip directories that don't exist
 
-	    foreach my $compext ("", ".gz", ".bz2")
+	foreach my $compext ("", ".gz", ".bz2")
+	    {
+	    my $filename = "$dir/$name.info$compext";
+	    if(-f $filename)
 		{
-		my $filename = "$dir/$name.info$compext";
-		if(-f $filename)
-		    {
-		    return $filename;
-		    }
+		return $filename;
 		}
+	    }
 	}
 
     return undef;
@@ -68,11 +69,7 @@ if(defined(my $document = cgi_data_move("document", undef)))
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
 
-# Print the CGI header.
-print <<"EndHeader";
-Content-Type: text/html
-
-EndHeader
+print "Content-Type: text/html;charset=$charset\n";
 
 eval {
     my $path;
@@ -92,16 +89,108 @@ eval {
 	$path = $ENV{PATH_INFO};
 	}
 
-    my $cleaned_path = docs_open(DOC, $path);
-    docs_last_modified(DOC);
-
-    $/ = "";
-    while(<DOC>)
+    # Consume a list of files.  Files may be added to the end of the list
+    # as we go.
+    {
+    my @paths = ($path);
+    my $count = 0;
+    my $dirname;
+    my $dotext = "";
+    local($/) = "";
+    while(defined($path = shift @paths))
 	{
-	print "<p>", html($_), "</p>\n";
-	}
+	# Open the document
+	my $cleaned_path = docs_open(DOC, $path);
 
-    close(DOC) || die $!;
+	# We use the modification date of the first file to complete to 
+	# CGI header.
+	if($count++ == 0)
+	    {
+	    $dirname = $cleaned_path;
+	    $dirname =~ s#/[^/]+$##;
+	    if($cleaned_path =~ m#(\.[^/\.]+)$#)
+		{
+		$dotext = $1;
+		}
+	    docs_last_modified(DOC);
+	    print "\n";
+	    print "<html><head><title>", html($cleaned_path), "</title></head>\n<body><h1>", html($cleaned_path), "</h1>\n";
+	    }
+
+	my $state = "discard";
+	while(<DOC>)
+	    {
+	    s/\s+$//;			# Delete trailing newlines, etc.
+
+	     print STDERR ">>>", $_, "<<<\n";
+
+	    if(/^\x1f/)			# This character marks the start of
+		{			# non-text data
+		if(/^\x1f\nFile:/s)	# Navigation point
+		    {
+		    if(/\bNode:\s*(\S+)/)
+			{
+			print "<a name=\"$1\">\n";
+			}
+		    $state = "normal";
+		    next;
+		    }
+
+		if(/^\x1f\nIndirect:\n/s)		# include files
+		    {
+		    while(m/^([^:]+): +\d+$/mg)
+			{
+			push(@paths, "$dirname/$1$dotext");
+			}
+		    next;
+		    }
+
+		next;
+		}
+
+	    # We discard everthing before the first navigation point
+	    next if($state eq "discard");
+
+	    if($state eq "normal")
+		{
+		# Info format handles subheadings by underlining them
+		# with characters such as "*", "=", "-", and ".".
+		if(/^(.+)\n([\* ]+)\n/ && length($1) == length($2))
+		    {
+		    print "<h2>", html($1), "</h2>\n";
+		    next;
+		    }
+		if(/^(.+)\n([= ]+)\n/ && length($1) == length($2))
+		    {
+		    print "<h3>", html($1), "</h3>\n";
+		    next;
+		    }
+		if(/^(.+)\n([- ]+)\n/ && length($1) == length($2))
+		    {
+		    print "<h4>", html($1), "</h4>\n";
+		    next;
+		    }
+		if(/^(.+)\n([\. ]+)\n/ && length($1) == length($2))
+		    {
+		    print "<h4>", html($1), "</h4>\n";
+		    next;
+		    }
+
+
+
+
+
+		print "<p>", html($_), "</p>\n";
+		next;
+		}
+
+	    print "<!-- ", html($_), " -->\n";
+	    }
+
+	close(DOC) || die $!;
+	}
+    }
+
     };
 if($@)
     {
