@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_respond.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 November 2002.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -127,12 +127,24 @@ int respond(int response_code, const char extra[])
 	** because the responder often have to read secret files to get
 	** magic cookies that allow them access to the user's screen.
 	*/
-	seteuid(setuid_uid);
-	setegid(setgid_gid);
-	setreuid(setuid_uid, -1);
-	setregid(setgid_gid, -1);
+	if(setreuid(ppr_uid, ppr_uid) == -1)
+	    {
+	    fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
+	    exit(241);
+	    }	    
+	if(setregid(ppr_gid, ppr_uid) == -1)
+	    {
+	    fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
+	    exit(241);
+	    }	    
 
-	/* Execute the responder wrapper. */
+	/*
+	** Execute the responder wrapper.
+	**
+	** The responder wrapper command line is not a stable interface!
+	** That means that it will change between PPR versions, so don't
+	** write anything that uses it!
+	*/
 	execl("lib/ppr-respond", "ppr_respond",
 		"ppr",
 		qentry.destname,
@@ -157,7 +169,7 @@ int respond(int response_code, const char extra[])
 	{
 	if(wret == -1 && errno != EINTR)
 	    {
-	    fprintf(stderr, "%s(): wait() failed, errno=%d (%s)\n", function, errno, gu_strerror(errno) );
+	    fprintf(stderr, _("%s(): wait() failed, errno=%d (%s)\n"), function, errno, gu_strerror(errno) );
 	    return -1;
 	    }
 	}

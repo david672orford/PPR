@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint-newconf.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 7 May 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -26,11 +41,16 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "util_exits.h"
 #include "uprint.h"
 #include "uprint_conf.h"
+#include "version.h"
 
 static const char *const myname = "uprint-newconf";
 
+/*
+** These are the locations of the UPRINT substitute commands.
+*/
 #define BINDIR HOMEDIR"/bin"
 const char *path_uprint_lp = BINDIR"/uprint-lp";
 const char *path_uprint_cancel = BINDIR"/uprint-cancel";
@@ -193,6 +213,33 @@ static void uninstall_mainstream_link(const char linkname[], const char linkto[]
     }
 
 /*
+** Command line options:
+*/
+static const char *option_chars = "";
+static const struct gu_getopt_opt option_words[] =
+	{
+	{"help", 1000, FALSE},
+	{"version", 1001, FALSE},
+	{"remove", 1002, FALSE},
+	{"force", 1003, FALSE},
+	{(char*)NULL, 0, FALSE}
+	} ;
+
+/*
+** Print help.
+*/
+static void help_switches(FILE *outfile)
+    {
+    fputs(_("Valid switches:\n"), outfile);
+
+    fputs(_(    "\t--remove     back out changes\n"
+    		"\t--force      change system against advice\n"), outfile);
+
+    fputs(_(	"\t--version\n"
+		"\t--help\n"), outfile);
+    }
+
+/*
 ** We are linked into the guts of the uprint_conf.c code.
 ** We will move files and create symbolic links to make
 ** the file system conform to uprint.conf.
@@ -200,6 +247,7 @@ static void uninstall_mainstream_link(const char linkname[], const char linkto[]
 int main(int argc, char *argv[])
     {
     gu_boolean opt_remove = FALSE;
+    gu_boolean opt_force = FALSE;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -211,9 +259,47 @@ int main(int argc, char *argv[])
     if(getuid() != 0)
     	fatal(1, _("must be run by root"));
 
-    /* Temporary hack for command line parsing code. */
-    if(argv[1] && strcmp(argv[1], "--remove") == 0)
-    	opt_remove = TRUE;
+    /* Parse the options. */
+    {
+    struct gu_getopt_state getopt_state;
+    int optchar;
+    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
+    while((optchar = ppr_getopt(&getopt_state)) != -1)
+    	{
+    	switch(optchar)
+    	    {
+	    case 1000:			/* --help */
+	    	help_switches(stdout);
+	    	exit(EXIT_OK);
+
+	    case 1001:			/* --version */
+		puts(VERSION);
+		puts(COPYRIGHT);
+		puts(AUTHOR);
+	    	exit(EXIT_OK);
+
+	    case 1002:			/* --remove */
+	    	opt_remove = TRUE;
+	    	break;
+	    
+	    case 1003:			/* --force */
+	    	opt_force = TRUE;
+		break;
+
+	    default:			/* other getopt errors or missing case */
+		gu_getopt_default(myname, optchar, &getopt_state, stderr);
+	    	exit(EXIT_SYNTAX);
+		break;
+    	    }
+    	}
+    }
+
+    if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
+    	{
+	fprintf(stderr, _("This system uses /etc/alternatives.  Using uprint-newconf\n"
+			"is not advised and it will not run without --force or --remove.\n"));
+	return 1;
+    	}
 
     printf(_("Adjusting file system to conform to %s:\n"), UPRINTCONF);
     printf("\n");

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 November 2002.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -151,10 +151,10 @@ extern FILE *page_comments;	/* file for page level comments */
 extern FILE *text;		/* file for remainder of text */
 extern FILE *cache_file;	/* file to copy resource into */
 
-extern uid_t user_uid;		/* uid of person submitting the job */
-extern uid_t setuid_uid;	/* uid of spooler owner */
+extern uid_t user_uid;		/* uid/gid of person submitting the job */
 extern gid_t user_gid;
-extern gid_t setgid_gid;
+extern uid_t ppr_uid;		/* uid/gid of spooler owner */
+extern gid_t ppr_gid;
 
 extern int read_copies;			/* TRUE if should auto copies */
 extern int read_duplex;			/* TRUE for auto duplex */

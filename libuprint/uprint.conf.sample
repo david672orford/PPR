@@ -1,12 +1,21 @@
 #
 # uprint.conf.sample
-# Last modified 18 November 2002.
+# Last modified 19 February 2003. 
 #
-# This file defines the locations of the various programs which
-# comprise the LP and LPR spoolers.
+# This is the primary configuration file for PPR's UPRINT system.  The 
+# most important function of this file is to describe other print spoolers
+# which may be running on the same server as PPR.  See the UPRINT(8)
+# manpage for advice on setting up UPRINT.
 #
 
-# The normal locations for various spooler control programs on this OS.
+#==========================================================================
+# This section defines the well known locations for various spooler control
+# programs.  By "well known" locations we means the location paths that
+# applications are likely to use when they are trying to print.  When the
+# uprint-* substitutes are selected as the default commands, these will be
+# symbolic links to the uprint-* versions.  These locations are right
+# for most operating systems..
+#==========================================================================
 [well known]
   lp = /usr/bin/lp
   lpstat = /usr/bin/lpstat
@@ -14,9 +23,14 @@
   lpr = /usr/bin/lpr
   lpq = /usr/bin/lpq
   lprm = /usr/bin/lprm
+  lpc = /usr/bin/lpd
 
-# The locations we will move them to if we will be using the
-# uprint versions instead.
+#==========================================================================
+# These are the locations we will move the real BSD and SysV commands
+# to to get them out of the way of the symbolic links to the uprint-* 
+# verions.  Also, when we need to use one of them, we look for it at 
+# these locations.
+#==========================================================================
 [sidelined]
   lp = /usr/bin/real-lp
   lpstat = /usr/bin/real-lpstat
@@ -24,9 +38,31 @@
   lpr = /usr/bin/real-lpr
   lpq = /usr/bin/real-lpq
   lprm = /usr/bin/real-lprm
+  lpc = /usr/bin/real-lpd
 
-# Information about the real lp programs (as opposed to the uprint look-alikes).
+#==========================================================================
+# Debian GNU/Linux and Mandrake Linux use something called alternatives.
+# We are still working out how to deal with it, but this section is 
+# the first step.
+#==========================================================================
+[alternatives]
+  lp = /usr/bin/lp-lpd
+  lpstat = /usr/bin/lpstat-lpd
+  cancel = /usr/bin/cancel-lpd
+  lpr = /usr/bin/lpr-lpd
+  lpq = /usr/bin/lpq-lpd
+  lprm = /usr/bin/lprm-lpd
+  lpc = /usr/bin/lpc-lpd
+
+
+#==========================================================================
+# Information about the real lp System V print spooler programs (as opposed
+# to the uprint-* look-alikes).
+#==========================================================================
 [real lp]
+
+  # Is System V lp installed on this system?
+  installed = no
 
   # Should lp, lpstat, and cancel be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lp, uprint-lpstat, and uprint-cancel?
@@ -34,39 +70,64 @@
   # the lp programs to the new locations.
   sidelined = no
 
-  # Is System V lp installed on this system?
-  installed = no
-
   # Which variant of the System V spooler do we have?
-  flavor = solaris
+  # sysvr4 -- Generic System V release 4.0
+  # irix -- IRIX 6.3 (based on really old System V lp)
+  # solaris -- Solaris 2.0 or later
+  #flavor = solaris
 
   # What directory should we look in to see if a printer or a class exists?
-  # Solaris
+  # These this examples shows the locations for Solaris.
   #printers = /etc/lp/printers
   #classes = /etc/lp/classes
 
-# Information about the real lpr programs (as opposed to the uprint look-alikes).
+#==========================================================================
+# Information about BSD-lpr (or derivitive) spooler.  LPRng is a BSD-lpr
+# derivative.  CUPS is not.
+#==========================================================================
 [real lpr]
+
+  # Is BSD LPR (or a derivitive but not CUPS) installed on this system?
+  installed = yes
 
   # Should lpr, lpq, lprm, and lpc be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lpr, uprint-lpq, uprint-lprm, and uprint-lpc?
   # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
-  # the lpr programs to the new locations.
+  # the BSD lpr programs to the new locations.
   sidelined = no
-
-  # Is BSD LPR (or a derivitive) installed on this system?
-  installed = yes
 
   # What variant of LPR is installed?  The choices are:
   # bsd -- BSD 4.3
-  # osf -- OSF (Digital Unix)
-  # lprng -- LPR Next Generation
+  # osf -- OSF (Digital Unix) extensions
+  # lprng -- LPR Next Generation extensions
   flavor = bsd
 
-# If a user doesn't supply a -d switch for uprint-lp or a -P switch for
-# uprint-lpr and friends, which queue should be assumed?
+#==========================================================================
+# Information about CUPS.
+#==========================================================================
+[CUPS]
+
+  # Is CUPS installed on this server?
+  installed = yes
+
+#==========================================================================
+# System Default Destinations
+#
+# You must either change these or create a printer, group, or alias
+# called "lp".
+#
+# Note that these have no effect on the ppr command when invoked directly 
+# (as opposed to indirectly thru uprint-lpr or uprint-lp).  Its default 
+# destination is always "default".  Use "ppad alias forwhat default 
+# <queuename>" to deal with the system default destination issue as 
+# far as ppr is concerned.
+#==========================================================================
 [default destinations]
+
+  # For uprint-lp
   uprint-lp = lp
+
+  # For uprint-lpr, uprint-lpq, and uprint-lprm
   uprint-lpr = lp
 
 # end of file

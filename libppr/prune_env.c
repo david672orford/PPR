@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/prune_env.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 November 2002.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -43,7 +43,7 @@ void set_ppr_env()
     #ifdef HAVE_PUTENV
     putenv("PPR_VERSION=" SHORT_VERSION);
     putenv("PATH=" SAFE_PATH);
-    putenv("IFS= \t");
+    putenv("IFS= \t\n");
     putenv("SHELL=/bin/sh");
     putenv("HOME=" HOMEDIR);
     putenv("XAUTHORITY=" RUNDIR "/Xauthority");

@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
 
     parse_command_line(argc, argv, &option_foreground);
 
-    /* This may call root_create_directories() */
+    /* Switch all UIDs to USER_PPR, all GIDS to GROUP_PPR. */
     adjust_ids();
 
     /* If the --forground switch wasn't used, then dropt into background. */
@@ -340,9 +340,6 @@ int main(int argc, char *argv[])
 
     /* Change the home directory to the PPR home directory: */
     chdir(HOMEDIR);
-
-    /* Create and repair directories within /var/spool/ppr. */
-    create_work_directories();
 
     /* Create /var/spool/ppr/pprd.pid. */
     create_lock_file();

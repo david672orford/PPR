@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 5 December 2002.
+** Last revised 19 February 2003.
 */
 
 /*
@@ -81,9 +81,9 @@ static int spool_files_created = FALSE;	/* TRUE once we have created some files,
 
 /* Information used for determining privledges and such. */
 uid_t user_uid;				/* Unix user id of person submitting the job */
-uid_t setuid_uid;			/* uid of spooler owner (ppr) */
 gid_t user_gid;
-gid_t setgid_gid;
+uid_t ppr_uid;			/* uid of spooler owner (ppr) */
+gid_t ppr_gid;
 
 /* Command line option settings, static */
 static int warning_level = WARNING_SEVERE;	/* these and more serious allowed */
@@ -419,7 +419,7 @@ int write_queue_file(struct QFileEntry *qentry)
     assert_ok_value(qentry->responder, FALSE, FALSE, FALSE, "qentry->responder", FALSE);
     assert_ok_value(qentry->responder_address, FALSE, FALSE, FALSE, "qentry->responder_address", FALSE);
     assert_ok_value(qentry->responder_options, TRUE, TRUE, TRUE, "qentry->responder_options", FALSE);
-    assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE); 
+    assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE);
 
     if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
     	fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);
@@ -810,14 +810,16 @@ static void reapchild(int signum)
 
 /*
 ** Function to return true if the current user is a privledged
-** user.  A privledged user is defined as "root", "ppr", or a
-** member of the group called "pprprox".  The first
-** time this routine is called, it will cache the answer.
+** user.  A privledged user is defined as a a member of the
+** ACL called "pprprox".  The users USER_PPR and "root" are
+** non-removable members of that ACL.
 **
 ** The result of this routine determines whether the user is allowed
 ** to override his user name on headers with a new name in the
 ** "-f" switch or "%%For:" header line.  It also determines whether
 ** a user can use the "-A" switch.
+**
+** The first time this routine is called, it will cache the answer.
 **
 ** Don't change the 0's and 1's in this function to TRUE
 ** and FALSE because answer starts out with the value -1
@@ -829,20 +831,11 @@ static int privledged(void)
 
     if(answer == -1)		/* if undetermined */
     	{
-	answer = 0;		/* Start with 0 for "false". */
-
-	/*
-	** Of course, "ppr" is privledged, as is "root" (uid 0).
-	*/
-	if(user_uid == 0 || user_uid == setuid_uid)
-	    answer = 1;		/* Change to "true". */
-
-	/*
-	** As are all users who are members of the ACL list "pprprox".
-	*/
-	else if(user_acl_allows(qentry.username, "pprprox"))
+	if(user_acl_allows(qentry.username, "pprprox"))
 	    answer = 1;
-    	} /* end of if answer not determined yet */
+	else
+	    answer = 0;
+    	}
 
     return answer;
     } /* end of privledged() */
@@ -868,11 +861,11 @@ void become_user(void)
 */
 void unbecome_user(void)
     {
-    if(setegid(setgid_gid))
-	fatal(PPREXIT_OTHERERR, "unbecome_user(): can't setegid(%ld)", (long)setgid_gid);
+    if(setegid(ppr_gid))
+	fatal(PPREXIT_OTHERERR, "unbecome_user(): can't setegid(%ld)", (long)ppr_gid);
 
-    if(seteuid(setuid_uid))
-	fatal(PPREXIT_OTHERERR, "unbecome_user(): can't seteuid(%ld)", (long)setuid_uid);
+    if(seteuid(ppr_uid))
+	fatal(PPREXIT_OTHERERR, "unbecome_user(): can't seteuid(%ld)", (long)ppr_uid);
     }
 
 /*--------------------------------------------------------------------
@@ -1945,9 +1938,10 @@ int main(int argc, char *argv[])
     const char *function = "main";
     char *real_filename = (char*)NULL;		/* the file we read from if not stdin */
     struct gu_getopt_state getopt_state;	/* defined here because used to find filename */
-    struct passwd *pw;				/* to get information on invoking user */
     int x;					/* various very short term uses */
     char *ptr;					/* general use */
+    char *user_username;
+    char *user_realname;
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -1963,46 +1957,56 @@ int main(int argc, char *argv[])
        to useful and correct values. */
     set_ppr_env();
 
-    /*
-    ** Deduce the non-setuid user id and user name.
-    ** In other words, we want to know who is running it.
-    */
+    /* Since this is a setuid and setgid program, the effective
+       IDs will be those of the ppr user and group.  The real ones
+       will be those of the user.  We memorize all of these so that
+       we can switch to the PPR's IDs to open files in PPR's
+       directories and to the user's IDs to open the file to be
+       printed.
+       */
+    ppr_uid = geteuid();
+    ppr_gid = getegid();
     user_uid = getuid();
     user_gid = getgid();
-    if((pw = getpwuid(user_uid)) == (struct passwd *)NULL)
+
+    /*
+    ** Use the real UID to look up the username and realname of the
+    ** person who is running this command.
+    */
+    {
+    struct passwd *pw;
+    if(!(pw = getpwuid(user_uid)))
     	fatal(PPREXIT_OTHERERR, _("getpwuid() fails to find your account"));
-    if(pw->pw_name == (char*)NULL)
+    if(pw->pw_name == (char*)NULL || pw->pw_gecos == (char*)NULL)
     	fatal(PPREXIT_OTHERERR, "strange getpwuid() error, pw_name is NULL");
+    user_username = gu_strdup(pw->pw_name);
+    user_realname = gu_strdup(pw->pw_gecos);
+    }
 
     /*
-    ** Save the uid that is effective now.
-    ** (This will be ``ppr''.)
+    ** Make sure we are running setuid to the right user.
+    ** This check can be disabled for lame OSs such as Win95.
     */
-    setuid_uid = geteuid();
-    setgid_gid = getegid();
-
-    /*
-    ** If the real and effective UIDs are the same and they do
-    ** not correspond to the user "ppr", then we are not running
-    ** setuid.  We also make sure we are not being run by root
-    ** while setuid root or not setuid at all.
-    **
-    ** In other words, we only check the user name of our
-    ** effective uid if we have reason to be suspicious.
-    */
-#ifndef BROKEN_SETUID_BIT
-    if((setuid_uid == user_uid && strcmp(pw->pw_name, USER_PPR)) || setuid_uid == 0)
-	{
-	fprintf(stderr, "uid=%u(%s) euid=%u(%s)\n", (unsigned)user_uid, pw->pw_name, (unsigned)setuid_uid, pw->pw_name);
-	fatal(PPREXIT_OTHERERR, _("This program must be setuid and owned by \"%s\""), USER_PPR);
-	}
-#endif
+    #ifndef BROKEN_SETUID_BIT
+    {
+    struct passwd *pw;
+    if(!(pw = getpwnam(USER_PPR)))
+    	fatal(PPREXIT_OTHERERR, _("getpwnam(\"%s\") failed"), USER_PPR);
+    if(ppr_uid != pw->pw_uid)
+    	fatal(PPREXIT_OTHERERR, _("This program must be setuid and owned by \"%s\""), USER_PPR);
+    if(ppr_gid != pw->pw_gid)
+    	fprintf(stderr, _("%s: warning: either account \"%s\" or this program has the wrong group ID.\n"), myname, USER_PPR);
+    }
+    #endif
 
     /*
     ** Remember what directory we started in.  Some of the input filters
     ** need to know this.  This operation is complicated because of
-    ** the strange design of the POSIX getcwd() function.  It can't even tell
+    ** the poor design of the POSIX getcwd() function.  It can't even tell
     ** us how large a buffer it needs!
+    **
+    ** Notice that we must adopt the user identity while doing this as
+    ** the PPR user may not have permission to read the current directory.
     */
     become_user();
     {
@@ -2034,7 +2038,7 @@ int main(int argc, char *argv[])
     qentry.time = time((time_t*)NULL);			/* job submission time */
     qentry.priority = 20;				/* default priority */
     qentry.user = user_uid;				/* record real user id of submitter */
-    qentry.username = pw->pw_name;			/* fill in name associated with id */
+    qentry.username = user_username;			/* fill in name associated with id */
     qentry.For = (char*)NULL;				/* start with no %%For: line */
     qentry.charge_to = (char*)NULL;			/* ppuser account to charge to */
     qentry.Title = (char*)NULL;				/* start with no %%Title: line */
@@ -2332,16 +2336,16 @@ int main(int argc, char *argv[])
     ** to determine if the current value of qentry.For
     ** was set here.
     **
-    ** The setting controled by the the -u switch determines
-    ** if we try to use the password comment (gecos) field.
+    ** The setting controled by the the -u switch determines whether we try
+    ** to use the users realname (from the password comment (gecos) field).
     ** If the gecos field is empty we use the username anyway.
     */
     if(qentry.For == (char*)NULL || (! privledged() && ! use_authcode))
 	{
-	if(use_username || !pw->pw_gecos[0])
+	if(use_username || !user_realname[0])
 	    default_For = qentry.For = qentry.username;
 	else
-	    default_For = qentry.For = pw->pw_gecos;
+	    default_For = qentry.For = user_realname;
 	}
 
     /*===========================================================
@@ -2358,7 +2362,7 @@ int main(int argc, char *argv[])
     if(infile_open(real_filename))	/* If input file is of zero length, */
 	{				/* we have nothing to do. */
 	warning(WARNING_SEVERE, _("Input file is empty, nothing to print"));
-	goto zero_length_file;		
+	goto zero_length_file;
 	}
 
     /*

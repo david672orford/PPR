@@ -1687,10 +1687,27 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 	close(pipefds[1]);          /* we don't need origional handle */
 				    /* stderr goes to parent's */
 
-	/* Run under user's UID and GID.  Notice that
-	   this does not effect the saved UID and GID. */
-	seteuid(user_uid);
-	setegid(user_gid);
+	/*
+	** Run under user's UID and GID.
+	**
+	** Setting the real IDs would not seem to be necessary, but on Linux it
+	** results in the saved IDs being set too, which setting the effective
+	** IDs alone does not accomplish.  However Linux does set the saved
+	** IDs during execv().  This was verified by examining /proc/self/status.
+	** So even though setting both isn't necessary on Linux, it does seem
+	** to be stronger medicine and so may get results on some other systems
+	** which might not implement saved IDs some sanely.
+	*/
+	if(setreuid(user_uid, user_uid) == -1)
+	    {
+	    fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)user_uid, (long)user_uid, errno, gu_strerror(errno));
+	    exit(241);
+	    }
+	if(setregid(user_gid, user_gid) == -1)
+	    {
+	    fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)user_gid, (long)user_gid, errno, gu_strerror(errno));
+	    exit(241);
+	    }
 
 	/* Protect privacy of temporary files. */
 	umask(PPR_FILTER_UMASK);

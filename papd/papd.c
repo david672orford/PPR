@@ -500,7 +500,8 @@ int main(int argc, char *argv[])
     gid = getgid();		/* should be "ppr" or "root" */
     egid = getegid();		/* should be "ppop" */
 
-    /* If effective UID is root, either we are setuid root or not setuid and being run by root. */
+    /* If effective UID is root, either we are setuid root or not setuid and
+       being run by root.  We refuse to tolerate either! */
     if(euid == 0)
 	{
 	fprintf(stderr, "%s: this program must be setuid %s\n", USER_PPR);
@@ -512,14 +513,14 @@ int main(int argc, char *argv[])
 	setuid(0);		/* set all three group IDs to "root" */
 	setgid(0);		/* set all three group IDs to "root" (Is this necessary?) */
 
-	/* Make sure we don't keep "root" group */
+	/* Make sure we don't keep "root" group. */
 	if(setregid(egid, egid) == -1)
 	    {
 	    fprintf(stderr, "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)egid, (long)egid, errno, gu_strerror(errno));
 	    exit(EXIT_INTERNAL);
 	    }
 
-	/* now we may set all three UIDs to "ppr" */
+	/* Now we may set all three UIDs to "ppr". */
 	if(setreuid(euid, euid) == -1)
 	    {
 	    fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)euid, (long)euid, errno, gu_strerror(errno));

@@ -56,8 +56,13 @@ static const struct gu_getopt_opt option_words[] =
 /*
 ** Print help.
 */
-static void help_switches(FILE *outfile)
+static void help_useage(FILE *outfile)
     {
+    fputs(_("Usage: \n", outfile);
+
+    fputc('\n', outfile);
+
+
     fputs(_("Valid switches:\n"), outfile);
 
     fputs(_(	"\t--version\n"
@@ -83,7 +88,7 @@ int main(int argc, char *argv[])
     	switch(optchar)
     	    {
 	    case 1000:			/* --help */
-	    	help_switches(stdout);
+	    	help_usage(stdout);
 	    	exit(EXIT_OK);
 
 	    case 1001:			/* --version */

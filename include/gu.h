@@ -1,7 +1,6 @@
 /*
 ** mouse:~ppr/src/include/gu.h
-**
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 19 February 2003.
 */
 
 #ifndef _GU_H
@@ -60,6 +59,7 @@ typedef int gu_boolean;
 #define UNIX_755 (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
 #define UNIX_644 (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 #define UNIX_660 (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
+#define UNIX_640 (S_IRUSR | S_IWUSR | S_IRGRP)
 #define UNIX_600 (S_IRUSR | S_IWUSR)
 #define UNIX_022 (S_IWGRP | S_IWOTH)
 #define UNIX_077 (S_IRWXG | S_IRWXO)

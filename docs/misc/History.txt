@@ -8285,16 +8285,36 @@ line was being parsed twice.
   when asked to run lprsrv as root may run it under a gid that could allow
   excessive access.
 
-* Changed all calls to setuid() and setgid(), except setuid(0) to setreuid()
-  and setregid() respectively and made sure that the return value is checked
-  except for setuid(0) calls that just prepare the way for the important ones.
-  Added paranoid checks too.  (setuid() is bad because it does completely
-  different things depending on whether the EUID is 0 or not.)
-
 * include/sysdep.h: deleted all references to HAVE_LP, HAVE_LPR, 
   LP_PRINTERS_CONF.
 
 * papsrv/papsrv-kill.sh: removed, added to fixup/fixup_obsolete.sh.
 
+* pprd/: removed code to create /var/spool/ppr directories on startup.  It
+  wasn't being maintained (because it was forgotton).  It would be better 
+  combined with fixup_perms.sh or with the Init script.  Interestingly, 
+  this code was the source of a longstanding problem with the mode of the
+  log directory mysteriously changing from 775 to 755.
+
+* pprd/, papsrv/, papd/: Changed all calls to setuid() and setgid() (except
+  setuid(0)) to setreuid() and setregid() respectively and made sure that the
+  return value is checked except for those setuid(0) calls that just prepare 
+  the way for the important ones.  Added paranoid checks too.  (Using setuid() 
+  risks security bugs because it does completely different things depending on 
+  whether the EUID is 0 or not.  Thus it may not do what you want it to do but
+  it will indicate success.)
+
+* ppr/: renamed setuid_uid -> ppr_uid, setgid_gid -> ppr_gid; implified startup
+  checks which make sure it is running under the right uid.
+
+* ppr/ppr_infile.c: switch from seteuid()/setegid() to setreuid()/setregid()
+  for filter execution so that the saved ppr_uid/ppr_gid is dropt.  Added 
+  checks to make sure that the calls suceed.  Did a test to make sure this
+  works.  Verified that setting the effective ids left the saved ids
+  untouched on Linux but that the exec() changed the saved ids.
+
+* ppr/prune_env.c:set_ppr_env(): changed IFS from " \t" to " \t\n" because
+  that is what is recomended by "Secure Programming for Linux and Unix
+  HOWTO".
 
 

@@ -80,7 +80,14 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
     	{
 	if(gid != -1)
 	    {
+	    /* lprsrv calls this with gid != -1.  Setting euid to root 
+	       will allow us to select the chosen group (and later a 
+	       user) ID even if it is not root or USER_PPR.  The 
+	       uprint-* programs call this function with gid == -1,
+	       so they don't execute this alarming looking call.
+	       */
 	    seteuid(0);
+
 	    if(setregid(gid, gid) == -1)
 		{
 		fprintf(stderr, "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n", function, (long)gid, (long)gid, errno, gu_strerror(errno));

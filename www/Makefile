@@ -126,6 +126,9 @@ $(Q_ICONS_LAST):
 images_subdir:
 	( cd images && $(MAKE) )
 
+ppr-passwd$(DOTEXE): ppr-passwd.$(OBJ) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ ppr-passwd.$(OBJ) ../libgu.$(LIBEXT)
+
 #== Install ==================================================================
 
 install: install-progs install-libs install-styles install-html install-images

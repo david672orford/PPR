@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 January 2002.
+** Last modified 19 February 2002.
 */
 
 #include "before_system.h"
@@ -144,49 +144,10 @@ void rename_old_log_file(void)
     } /* end of rename_old_log_file() */
 
 /*
-** If we are started as root, this is called to
-** make sure the spool directories are present
-** and have the correct permissions.
-*/
-void root_create_directories(uid_t euid, gid_t egid)
-    {
-    /* Make our spool directory and set its permissions correctly. */
-    mkdir(VAR_SPOOL_PPR, S_IRWXU);
-    chown(VAR_SPOOL_PPR, euid, egid);
-    chmod(VAR_SPOOL_PPR, UNIX_755);
-
-    /*
-    ** If /var/spool/ppr/queue or /var/spool/ppr/data exist,
-    ** will fix their permissions.
-    */
-    chown(QUEUEDIR, euid, egid);
-    chown(DATADIR, euid, egid);
-    }
-
-/*
-** Create any directories which we expect to be
-** able to create as the user "ppr".  This should
-** be called after adjust_ids().
-*/
-void create_work_directories(void)
-    {
-    mkdir(QUEUEDIR, S_IRWXU);
-    chmod(QUEUEDIR, S_IRWXU);
-    mkdir(DATADIR, S_IRWXU);	/* This directory especially must */
-    chmod(DATADIR, S_IRWXU);	/* be private. */
-    mkdir(MOUNTEDDIR, S_IRWXU);
-    chmod(MOUNTEDDIR, S_IRWXU);
-    mkdir(ALERTDIR, S_IRWXU);
-    chmod(ALERTDIR, S_IRWXU);
-    mkdir(LOGDIR, UNIX_755);	/* Others should be able to read */
-    chmod(LOGDIR, UNIX_755);	/* the log directory. */
-    } /* end of ppr_create_directories() */
-
-/*
-** This rather complicated bit of code eventually makes
-** sure all the user IDs are "ppr" and all the group
-** IDs are "ppr".  This program should be setuid "ppr"
-** and setgid "ppr".
+** This funtions makes sure that all of the user IDs are "ppr" and all
+** the group IDs are "ppr".  For this to work, pprd must be setuid "ppr"
+** and setgid "ppr".  (Though of course it will also work if run by
+** with as ppr:ppr.)
 **
 ** This code must not call fatal(), fatal() should not be
 ** used until we are sure the permissions are right,
@@ -195,11 +156,11 @@ void create_work_directories(void)
 */
 void adjust_ids(void)
     {
-    uid_t uid, euid, correct_euid;
-    gid_t gid, egid, correct_egid;
+    uid_t uid, euid, ppr_uid;
+    gid_t gid, egid, ppr_gid;
 
     /*
-    ** Look up the correct uid and gid.
+    ** Look up the correct uid and gid we should be running under.
     */
     {
     struct passwd *pw;
@@ -217,86 +178,77 @@ void adjust_ids(void)
 	exit(1);
 	}
 
-    correct_euid = pw->pw_uid;
-    correct_egid = gp->gr_gid;
-
     if(pw->pw_gid != gp->gr_gid)
     	fprintf(stderr, _("%s: Warning: primary group for user \"%s\" is not \"%s\".\n"), myname, USER_PPR, GROUP_PPR);
+
+    ppr_uid = pw->pw_uid;
+    ppr_gid = gp->gr_gid;
     }
 
-    /* Read all 4 IDs. */
-    uid = getuid(); euid = geteuid(); gid = getgid(); egid = getegid();
+    /*
+    ** Read all 4 IDs.
+    */
+    uid = getuid();
+    euid = geteuid();
+    gid = getgid();
+    egid = getegid();
 
-#ifndef BROKEN_SETUID_BIT
-
-    /* If setuid root or run by root and not setuid, */
-    if(euid == 0 || euid != correct_euid)
+    /*
+    ** All this is the start of a block that can be disabled for
+    ** MS-Windows 95 any anything else that doesn't have real users
+    ** and groups.
+    */
+    #ifndef BROKEN_SETUID_BIT
+    
+    
+    /*
+    ** Make sure the permissions and setuid/setgid are right.
+    */
+    if(euid != ppr_uid)
 	{
-	fprintf(stderr, _("%s: Security problem: euid = %u\n"
-		"(This program should be setuid \"%s\".)\n"), myname, (unsigned)euid, USER_PPR);
+	fprintf(stderr, _("%s: Security problem: euid = %ld\n"
+		"(This program should be setuid %ld (%s).)\n"), myname, (long)euid, (long)ppr_uid, USER_PPR);
 	exit(1);
 	}
 
-    /* If setgid root or run with group root and not setgid, */
-    if(egid == 0 || egid != correct_egid)
+    if(egid != ppr_gid)
 	{
-	fprintf(stderr, _("%s: Security problem: egid = %u\n"
-		"(This program should be setgid \"%s\".)\n"), myname, (unsigned)egid, GROUP_PPR);
+	fprintf(stderr, _("%s: Security problem: egid = %ld\n"
+		"(This program should be setgid %ld (%s).)\n"), myname, (long)euid, (long)ppr_gid, GROUP_PPR);
 	exit(1);
 	}
 
     /*
-    ** If the real user id is initially root, it takes the
-    ** opportunity to create /var/spool/ppr if it does not exist.
+    ** Make sure the invoker is authorized.
     */
-    if(uid == 0)
+    if(uid != ppr_uid && uid != 0)
 	{
-	/*
-	** Set uid and euid to "root" for the next few operations.
-	** The uid of root should allow us to create any directories
-	** we want the the gid of root is for no good reason.
-	*/
-	setuid(0);
-	setgid(0);
-
-	/*
-	** Create various spool directories and give them
-	** the indicated ownership and group.
-	*/
-	root_create_directories(euid, egid);
-
-	/*
-	** Give up root privledges forever.  This sets all three user id's and
-	** all three group id's.  This is only possible because we executed
-	** setuid(0) and setgid(0) above.  (The man pages for various systems
-	** seem to contradict one another on whether setgid(0) is necessary.)
-	*/
-	setgid(egid);
-	setuid(euid);
+	fprintf(stderr, _("%s: Only \"%s\" or \"root\" may start %s.\n"), myname, USER_PPR, myname);
+	exit(1);
 	}
 
     /*
-    ** This daemon was not started by root.  Make sure it was
-    ** started by ppr.  (Actually, we make sure it was started
-    ** by the same user as it suid's to.)
+    ** Relinquish any root privledge we may have.
     */
-    else
+    if(setreuid(ppr_uid, -1) == -1)
 	{
-	if(uid != euid)
-	    {
-	    fprintf(stderr, _("%s: Only \"%s\" or \"root\" may start %s.\n"), myname, USER_PPR, myname);
-	    exit(1);
-	    }
-
-	if(gid != egid)
-	    {
-	    fprintf(stderr, _("%s: User \"%s\" may only start %s if group is \"%s\".\n"
-	    	"(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"), myname, USER_PPR, myname, GROUP_PPR, USER_PPR, (int)egid);
-	    exit(1);
-	    }
+	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
+	exit(1);
 	}
 
-#endif /* BROKEN_SETUID_BIT */
+    if(setregid(ppr_gid, -1) == -1)
+	{
+	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
+	exit(1);
+	}
+
+    if(setuid(0) != -1)
+	{
+	fprintf(stderr, _("%s: setuid(0) did not fail!\n"), myname);
+	exit(1);
+	}
+
+    #endif /* BROKEN_SETUID_BIT */
     } /* end of adjust_ids() */
 
 /*========================================================================
