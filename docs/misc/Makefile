@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/misc/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 25 October 2004.
 #
 
 # Pull in settings from Configure.
@@ -40,7 +40,6 @@ BUILT=\
 
 NOTBUILT=\
 	index.html \
-	ppr.lsm \
 	announce.txt \
 	LICENSE.txt \
 	INSTALL.txt \

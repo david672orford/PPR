@@ -9389,7 +9389,7 @@ no final tarball was released.
 * added uprint/uprint-lpc.c.
 
 
-1.53, 5 October 2004--22 October 2004
+1.53, 5 October 2004--25 October 2004
 
 * z_install_end/ppr.sh: added code it bail out if PPR is no longer installed.
   This is needed because initscripts are considered configuration files in
@@ -9402,10 +9402,8 @@ no final tarball was released.
 
 * docs/Makefile: changed "make" to "$(MAKE)".
 
-
-1.53, 22 October 2004
-
 * updated the German translation to curent CVS.
+
 
 TODO
 
