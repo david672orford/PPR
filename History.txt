@@ -9660,4 +9660,6 @@ no final tarball was released.
 
 * responders/Makefile: removed code to create link from mail to errmail.
 
+* removed everything previously marked with CRUFT_AUTH.
+
 

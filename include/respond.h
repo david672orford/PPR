@@ -40,7 +40,7 @@
 #define RESP_CANCELED_BADDEST 4				/** canceled because bad destination */
 #define RESP_CANCELED_REJECTING 5			/** destination is in reject mode */
 #define RESP_CANCELED_NOCHARGEACCT 6		/** user no charge account */
-#define RESP_CANCELED_BADAUTH 7				/** incorrect authcode */
+											/* no code 7 */
 #define RESP_CANCELED_OVERDRAWN 8			/** overdraft too large */
 #define RESP_STRANDED_PRINTER_INCAPABLE 9	/** exceeds printer capabilities */
 #define RESP_STRANDED_GROUP_INCAPABLE 10	/** exceeds capabilities of each member */

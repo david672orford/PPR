@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 /*
@@ -92,10 +92,6 @@ static int use_username = FALSE;				/* User username instead of comment as defau
 static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF */
 static gu_boolean option_show_jobid = FALSE;
 static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
-#ifdef CRUFT_AUTH
-static int use_authcode = FALSE;				/* true if using authcode line to id */
-static int preauthorized = FALSE;				/* set true by -A switch */
-#endif
 static const char *option_page_list = (char*)NULL;
 
 /* Command line option settings */
@@ -197,10 +193,6 @@ void ppr_abort(int exitval, const char *extra)
 		case PPREXIT_OVERDRAWN:
 			responder_code = RESP_CANCELED_OVERDRAWN;
 			template = "the account \"%s\" is overdrawn";
-			break;
-		case PPREXIT_BADAUTH:
-			responder_code = RESP_CANCELED_BADAUTH;
-			template = "bad authcode";
 			break;
 		case PPREXIT_NONCONFORMING:
 			responder_code = RESP_CANCELED_NONCONFORMING;
@@ -556,11 +548,7 @@ void submit_job(struct QEntryFile *qe, int subid)
 */
 static void authorization_charge(void)
 	{
-	if((auth_needed = (
-			#ifdef CRUFT_AUTH
-			use_authcode || 
-			#endif
-			destination_protected(qentry.destname))))
+	if((auth_needed = destination_protected(qentry.destname)))
 		{
 		struct userdb user;
 		int ret;
@@ -579,48 +567,23 @@ static void authorization_charge(void)
 		else
 			qentry.charge_to = qentry.username;
 
-		#ifdef CRUFT_AUTH
-		if(!preauthorized)						/* do user lookup only */
-			{									/* if not preauthorized */
-		#endif
-			ret = db_auth(&user, qentry.charge_to);		/* user lookup */
+		ret = db_auth(&user, qentry.charge_to);		/* user lookup */
 
-			if(ret == USER_ISNT)				/* If user not found, */
-				{								/* then, turn away. */
-				ppr_abort(PPREXIT_NOCHARGEACCT, qentry.charge_to);
-				}
+		if(ret == USER_ISNT)				/* If user not found, */
+			{								/* then, turn away. */
+			ppr_abort(PPREXIT_NOCHARGEACCT, qentry.charge_to);
+			}
 
-			else if(ret == USER_OVERDRAWN)		/* If account overdrawn, */
-				{								/* then, turn away. */
-				ppr_abort(PPREXIT_OVERDRAWN, qentry.charge_to);
-				}
+		else if(ret == USER_OVERDRAWN)		/* If account overdrawn, */
+			{								/* then, turn away. */
+			ppr_abort(PPREXIT_OVERDRAWN, qentry.charge_to);
+			}
 
-			/* We check for database error. */
-			else if(ret == USER_ERROR)
-				{
-				fatal(PPREXIT_OTHERERR, _("can't open printing charge database"));
-				}
-
-			#ifdef CRUFT_AUTH
-			/*
-			** If in authcode mode and "-u yes" has not been set
-			** then use the comment field from the user database
-			** as the For.
-			*/
-			if(use_authcode && !use_username)
-				qentry.For = gu_strdup(user.fullname);
-
-			/*
-			** If -a switch and an authcode is required for this user and
-			** no or wrong authcode, send a message and cancel the job.
-			*/
-			if(use_authcode && user.authcode[0] != '\0' &&
-						(AuthCode == (char*)NULL || strcmp(AuthCode, user.authcode)) )
-				{
-				ppr_abort(PPREXIT_BADAUTH, qentry.charge_to);
-				}
-			} /* end of if not preauthorized */
-			#endif
+		/* We check for database error. */
+		else if(ret == USER_ERROR)
+			{
+			fatal(PPREXIT_OTHERERR, _("can't open printing charge database"));
+			}
 
 		/* Do not allow jobs w/out page counts on cost per page printers. */
 		if(qentry.attr.pages < 0)
@@ -889,10 +852,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"auto-bin-select", 'B', TRUE},
 		{"read", 'R', TRUE},
 		{"require-eof", 'Z', TRUE},
-	#ifdef CRUFT_AUTH
-		{"authcode-mode", 'a', FALSE},
-		{"preauthorized", 'A', FALSE},
-	#endif
 		{"truetype", 'Q', TRUE},
 		{"keep-bad-features", 'K', TRUE},
 		{"filter-options", 'o', TRUE},
@@ -987,14 +946,6 @@ HELP(_(
 "\t-w stderr                  routes warnings to stderr (default)\n"
 "\t-w both                    routes warnings to stderr and log file\n"
 "\t-w {severe,peeve,none}     sets warning level\n"));
-
-#ifdef CRUFT_AUTH
-HELP(_(
-"\t-a                         turns on authcode mode\n"));
-
-HELP(_(
-"\t-A                         root or ppr has preauthorized\n"));
-#endif
 
 HELP(_(
 "\t--strip-fontindex true     strip out fonts listed in font index\n"
@@ -1443,15 +1394,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				fatal(PPREXIT_SYNTAX, _("invalid %s option"), true_option);
 			break;
 
-		case 'a':								/* authcode mode */
-			#ifdef CRUFT_AUTH
-			use_authcode = TRUE;
-			read_For = TRUE;
-			#else
-			fprintf(stderr, X_("%s: -a is obsolete and now a noop\n"), myname);
-			#endif
-			break;
-
 		case 'D':								/* set default media */
 			default_medium = optarg;
 			break;
@@ -1500,17 +1442,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 					fatal(PPREXIT_SYNTAX, _("Number of copies must be positive"));
 				read_copies = FALSE;
 				}
-			break;
-
-		case 'A':								/* a preauthorized job */
-			#ifdef CRUFT_AUTH
-			if( ! privileged() )
-				fatal(PPREXIT_SYNTAX, _("Only privledged users may use the %s switch"), true_option);
-			else
-				preauthorized = TRUE;
-			#else
-			fprintf(stderr, X_("%s: -A is obsolete and now a noop\n"), myname);
-			#endif
 			break;
 
 		case 'C':								/* default title */
@@ -1775,16 +1706,8 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1008:								/* --charge-to */
-			if(! privileged()
-					#ifdef CRUFT_AUTH
-					 && ! use_authcode
-					#endif
-					)
-		#ifdef CRUFT_AUTH
-				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s w/out -a"), true_option);
-		#else
+			if(! privileged())
 				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s"), true_option);
-		#endif
 			/* This is not copied into the queue structure unless it is needed. */
 			charge_to_switch_value = optarg;
 			break;
@@ -2185,14 +2108,6 @@ int main(int argc, char *argv[])
 	if(strchr(DEST_DISALLOWED_LEADING, (int)qentry.destname[0]))
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name starts with a disallowed character"));
 
-	#ifdef CRUFT_AUTH
-	/*
-	** Check for illegal combinations of options.
-	*/
-	if(use_authcode && preauthorized)
-		fatal(PPREXIT_SYNTAX, _("-a and -A are mutually exclusive"));
-	#endif
-
 	/*
 	** Do a crude test of the syntax of the -o option.
 	** (The -o option passes options to an input file filter.)
@@ -2276,11 +2191,7 @@ int main(int argc, char *argv[])
 	** to use the users realname (from the password comment (gecos) field).
 	** If the gecos field is empty we use the username anyway.
 	*/
-	if(qentry.For == (char*)NULL || (! privileged() 
-			#ifdef CRUFT_AUTH
-			&& ! use_authcode
-			#endif
-			))
+	if(!qentry.For || !privileged())
 		{
 		if(use_username || !user_realname[0])
 			default_For = qentry.For = qentry.username;
