@@ -1,12 +1,12 @@
 #
 # uprint.conf.sample
-# Last modified 9 February 2000.
+# Last modified 17 April 2002.
 #
 # This file defines the locations of the various programs which
 # comprise the LP and LPR spoolers.
 #
 
-# The normal locations for the programs on this system.
+# The normal locations for various spooler control programs on this OS.
 [well known]
   lp = /usr/bin/lp
   lpstat = /usr/bin/lpstat
@@ -27,19 +27,39 @@
 
 # Information about the real lp programs (as opposed to the uprint look-alikes).
 [real lp]
+  # Is System V lp installed on this system?
+  installed = no
+
   # Should lp, lpstat, and cancel be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lp, uprint-lpstat, and uprint-cancel?
   # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
   # the lp programs to the new locations.
   sidelined = no
 
+  # Which variant of the System V spooler do we have?
+  flavor = solaris
+
+  # What directory should we look in to see if a printer or a class exists?
+  # Solaris
+  #printers = /etc/lp/printers
+  #classes = /etc/lp/classes
+
 # Information about the real lpr programs (as opposed to the uprint look-alikes).
 [real lpr]
+  # Is BSD LPR (or a derivitive) installed on this system?
+  installed = yes
+
   # Should lpr, lpq, lprm, and lpc be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lpr, uprint-lpq, uprint-lprm, and uprint-lpc?
   # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
   # the lpr programs to the new locations.
   sidelined = no
+
+  # What variant of LPR is installed?  The choices are:
+  # bsd -- BSD 4.3
+  # osf -- OSF (Digital Unix)
+  # lprng -- LPR Next Generation
+  flavor = bsd
 
 # If a user doesn't supply a -d switch for uprint-lp or a -P switch for
 # uprint-lpr and friends, which queue should be assumed?
@@ -48,4 +68,3 @@
   uprint-lpr = lp
 
 # end of file
-

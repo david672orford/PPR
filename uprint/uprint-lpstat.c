@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/uprint/uprint-lpstat.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 30 July 1999.
+** Last modified 17 April 2002.
 */
 
 #include "before_system.h"
@@ -26,7 +26,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 extern char *optarg;
@@ -46,9 +45,16 @@ void uprint_error_callback(const char *format, ...)
     } /* end of uprint_error_callback() */
 
 /*
-** Temporary implementation of -a.
+** Implementation of -a
+
+$ real-lpstat -a x,y,z,dummy
+x: unknown printer
+y: unknown printer
+z: unknown printer
+dummy accepting requests since Apr 17 12:12 2002
+
 */
-static void temporary_a(const char list[])
+static void lpstat_a(const char list[])
     {
     FILE *f;
     if((f = fopen(UPRINTREMOTECONF, "r")) != (FILE*)NULL)
@@ -126,12 +132,12 @@ int main(int argc, char *argv[])
 	    case 'a':		/* acceptance status, optional argument */
 		if(optind < argc && argv[optind][0] != '-')
 		    {
-		    temporary_a(argv[optind]);
+		    lpstat_a(argv[optind]);
 		    optind++;
 		    }
 		else
 		    {
-		    temporary_a(NULL);
+		    lpstat_a(NULL);
 		    }
 		break;
 
@@ -143,9 +149,8 @@ int main(int argc, char *argv[])
 		break;
 
 	    case 'd':		/* report system default destination */
-		printf("no system default destination\n");
-		/* printf("system default destination: %s\n", "?"); */
-		break;
+		printf("system default destination: %s\n", uprint_default_destinations_lp());
+		return 0;
 
 	    case 'D':		/* include descriptions (-p) */
 		break;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/uprint/uprint-lpq.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 30 July 1999.
+** Last modified 16 April 2002.
 */
 
 #include "before_system.h"
@@ -24,7 +24,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 extern char *optarg;
@@ -100,7 +99,6 @@ int main(int argc, char *argv[])
     /* If the print destination has not yet been
        determined, determine it now. */
     if(queue == (const char *)NULL)
-	if((queue = getenv("PRINTER")) == (char*)NULL)
 	    queue = uprint_default_destinations_lpr();
 
     {
@@ -115,8 +113,7 @@ int main(int argc, char *argv[])
     else if(uprint_errno == UPE_UNDEST)
 	{
 	fprintf(stderr, _("%s: Print queue \"%s\" not found.\n"), myname, queue);
-	/* This is the exit code that BSD lpq uses for unknown queue: */
-	return_code = 1;
+	return_code = 1;	/* <-- exit code that BSD lpq uses for unknown queue */
 	}
     /* Command failed: */
     else

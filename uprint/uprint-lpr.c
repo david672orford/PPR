@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/uprint/uprint-lpr.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 30 July 1999.
+** Last modified 16 April 2002.
 */
 
 #include "before_system.h"
@@ -25,7 +25,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 extern char *optarg;
@@ -282,9 +281,8 @@ int main(int argc, char *argv[])
 
     /* If the print destination has not yet been
        determined, determine it now. */
-    if(uprint_get_dest(upr) == (char*)NULL)
-	if(uprint_set_dest(upr, getenv("PRINTER")) == (char*)NULL)
-	    uprint_set_dest(upr, uprint_default_destinations_lpr());
+    if(!uprint_get_dest(upr))
+	uprint_set_dest(upr, uprint_default_destinations_lpr());
 
     /* If there are file names, tell uprint about them: */
     if(argc > optind)

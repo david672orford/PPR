@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/uprint/uprint-lprm.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 16 April 2002.
 */
 
 #include "before_system.h"
@@ -25,7 +25,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 extern char *optarg;
@@ -108,9 +107,8 @@ int main(int argc, char *argv[])
 
     /* If the print destination has not yet been
        determined, determine it now. */
-    if(queue == (char*)NULL)
-	if((queue = getenv("PRINTER")) == (char*)NULL)
-	    queue = uprint_default_destinations_lp();
+    if(!queue)
+	queue = uprint_default_destinations_lpr();
 
     /* Handle that funny stuff with an argument of "-": */
     if(argc > optind && strcmp(argv[optind], "-") == 0)

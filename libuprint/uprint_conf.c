@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_conf.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 26 July 2000.
+** Last modified 16 April 2002.
 */
 
 #include "before_system.h"
@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_conf.h"
 
@@ -40,7 +39,7 @@ enum STATE { STATE_INIT, STATE_WELL_KNOWN, STATE_SIDELINED,
 ** Or maybe, I wanted it to call uprint_error_callback()
 ** in stead of fatal().
 */
-const char *uprint_strdup(const char *s)
+static const char *uprint_strdup(const char *s)
     {
     char *p;
 
@@ -299,16 +298,34 @@ const char *uprint_path_cancel(void)
     return conf.lp.sidelined ? conf.sidelined.cancel : conf.well_known.cancel;
     }
 
+/*
+** Return the default destination for lpr, lpq, and lprm.
+*/
 const char *uprint_default_destinations_lpr(void)
     {
+    char *p;
     uprint_read_conf();
-    return conf.default_destinations.lpr ? conf.default_destinations.lpr : "lp";
+    if(conf.default_destinations.lpr)			/* uprint.conf */
+    	return conf.default_destinations.lpr;
+    if((p = getenv("PRINTER")))				/* environment variable */
+    	return p;
+    return "lp";					/* last resort */
     }
 
+/*
+** Return the default destination for lp and lpstat.
+*/
 const char *uprint_default_destinations_lp(void)
     {
+    char *p;
     uprint_read_conf();
-    return conf.default_destinations.lp ? conf.default_destinations.lp : "lp";
+    if(conf.default_destinations.lp)			/* uprint.conf */
+    	return conf.default_destinations.lp;
+    if((p = getenv("LPDEST")))				/* lp's environment variable */
+	return p;
+    if((p = getenv("PRINTER")))				/* lpr's environment variable */
+    	return p;
+    return "lp";					/* last resort */
     }
 
 /* end of file */

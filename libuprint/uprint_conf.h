@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/uprint_conf.h
-** Copyright 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 2 December 1998.
+** Last modified 17 April 2002.
 */
 
 
@@ -24,6 +24,20 @@ struct PATH_SET
     const char *cancel;
     };
 
+enum LPR_FLAVORS
+    {
+    LPR_FLAVOR_BSD43,		/* BSD 4.3 */
+    LPR_FLAVOR_OSF,		/* DEC OSF, Digital Unix */
+    LPR_FLAVOR_LPRNG		/* LPRng */
+    };
+
+enum LP_FLAVORS
+    {
+    LP_FLAVOR_SYSVR4,		/* System V release 4.0 */
+    LP_FLAVOR_IRIX63,		/* IRIX 6.3 */
+    LP_FLAVOR_SOLARIS26		/* Solaris 2.6 */
+    };
+
 struct UPRINT_CONF
     {
     struct PATH_SET well_known;
@@ -31,11 +45,17 @@ struct UPRINT_CONF
 
     struct
     	{
+	gu_boolean installed;
     	gu_boolean sidelined;
+	const char *printers;
+	const char *classes;
+	enum LP_FLAVORS flavor;
     	} lp;
     struct
     	{
+	gu_boolean installed;
     	gu_boolean sidelined;
+	enum LPR_FLAVORS flavor;
     	} lpr;
 
     struct

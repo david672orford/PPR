@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2002.
+# Last modified 17 April 2002.
 #
 
 use lib "?";
@@ -54,7 +54,8 @@ $addprn_wizard_table = [
 		print "<p>\n";
 		my $default_pagesize = "Letter";
 		my $pagesize = cgi_data_move("pagesize", $default_pagesize);
-		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize, qw(Letter A4));
+		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize, 
+			qw(Letter Legal A4));
 		print "</p>\n";
 
 		print "<p>\n";
