@@ -25,18 +25,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 April 2004.
+# Last modified 16 April 2004.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BROWSERS=parallel atalk ip_scan_snmp
+BROWSERS=parallel ip_scan_snmp
 
 #=== Build ==================================================================
 
-all: $(BROWSERS)
+all: $(BROWSERS) $(ALL_ATALK)
+
+all-atalk: atalk$(DOTEXE) nbp_lookup$(DOTEXE)
+
+nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o nbp_lookup nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT) $(ATALKLIBS)
 
 ip_scan_snmp$(DOTEXE): ip_scan_snmp.$(OBJ) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o ip_scan_snmp$(DOTEXE) ip_scan_snmp.$(OBJ) \
@@ -44,8 +49,12 @@ ip_scan_snmp$(DOTEXE): ip_scan_snmp.$(OBJ) ../libgu.$(LIBEXT)
 
 #=== Install ================================================================
 
-install: $(BROWSERS)
+install: $(BROWSERS) $(INSTALL_ATALK)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/browsers $(BROWSERS)
+
+install-atalk: $(ATALK_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib nbp_lookup$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/browsers atalk$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

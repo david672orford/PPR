@@ -51,7 +51,7 @@
 #include "util_exits.h"
 #include "version.h"
 
-gu_boolean debug = 0;
+gu_boolean debug = FALSE;
 #define SNMP_ATTEMPTS 3
 #define MAX_ITEMS 4
 #define NSTEPS 2
@@ -73,6 +73,124 @@ struct QUERY_STEP {
 	int items_count;
 	int request_id;
 	};
+
+struct KNOWN_DEVICE_TYPES {
+	const char *match_string;
+	const char *interface;
+	const char *address_format;
+	const char *options;
+	const char *jobbreak;
+	const char *feedback;
+	const char *codes;
+	};
+
+static struct KNOWN_DEVICE_TYPES known_device_types[] = {
+	{
+	",JETDIRECT,",
+	"jetdirect",
+	"%s:9100",
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	",JETDIRECT,",
+	"lpr",
+	"LPT1@%s",
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	"Canon Network Multi-PDL Printer Board-H1",
+	"tcpip",
+	"%s:9100",
+	NULL,
+	NULL,
+	"false",	/* ??? */
+	NULL
+	},
+	{
+	"Canon Network Multi-PDL Printer Board-H1",
+	"lpr",
+	"print@%s",
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	"Canon Network Multi-PDL Printer Board-H1",
+	"smb",
+	"\\\\%s\\print",
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	"LANIER Network Printer",
+	"tcpip",	/* ??? */
+	"%s:9100",
+	NULL,
+	NULL,
+	"false",	/* ??? */
+	NULL
+	},
+	{
+	"LANIER Network Printer",
+	"lpr",
+	"LPT1@%s",	/* ??? */
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	"Lexmark",
+	"tcpip",	/* ??? */
+	"%s:9100",
+	NULL,
+	NULL,
+	"false",	/* ??? */
+	NULL
+	},
+	{
+	"Lexmark",
+	"lpr",
+	"LPT1@%s",	/* ??? */
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	},
+	{
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+	}
+};
+
+static const char *dns_lookup(unsigned int numberic_address)
+	{
+	struct in_addr address;
+	struct hostent *answer;
+	address.s_addr = htonl(numberic_address);
+	if((answer = gethostbyaddr((char*)&address, sizeof(address), AF_INET)))
+		{
+		return answer->h_name;
+		}
+	else
+		{
+		return inet_ntoa(address);
+		}
+	}
 
 static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 	{
@@ -240,9 +358,9 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 				case 0:
 					if(debug)
 						{
-						printf("sysName: %s\n", str[0]);
-						printf("sysDescr: %s\n", str[1]);
-						printf("sysLocation: %s\n", str[2]);
+						fprintf(stderr, "sysName: %s\n", str[0]);
+						fprintf(stderr, "sysDescr: %s\n", str[1]);
+						fprintf(stderr, "sysLocation: %s\n", str[2]);
 						}
 
 					states[responding_node_index].sysName = str[0];
@@ -251,7 +369,7 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 					break;
 				case 1:
 					if(debug)
-						printf("hrDeviceDesc: %s\n", str[0]);
+						fprintf(stderr, "hrDeviceDesc: %s\n", str[0]);
 					states[responding_node_index].hrDeviceDescr = str[0];
 					break;
 				}
@@ -277,33 +395,46 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 	 */
 	for(ip_index=0; ip_index < ip_count; ip_index++)
 		{
-		if(states[ip_index].sysName)
+		if(states[ip_index].sysDescr)
 			{
-			printf("[%s]\n", states[ip_index].sysName);
-			#if 0
-			if(states[ip_index].sysLocation)
-				printf("location=%s\n", states[ip_index].sysLocation);
-			if(states[ip_index].sysDescr)
-				printf("firmware=%s\n", states[ip_index].sysDescr);
-			#endif
-			if(states[ip_index].hrDeviceDescr)
-				printf("model=%s\n", states[ip_index].hrDeviceDescr);
-
-			/* HP Jetdirect */
-			if(states[ip_index].sysDescr && strstr(states[ip_index].sysDescr, "JETDIRECT"))
+			struct KNOWN_DEVICE_TYPES *device_type;
+			gu_boolean hit = FALSE;
+			for(device_type = known_device_types; device_type->match_string; device_type++)
 				{
-				if(states[ip_index].sysName)
+				if(strstr(states[ip_index].sysDescr, device_type->match_string))
 					{
-					printf("interface=jetdirect,%s\n", states[ip_index].sysName);
-					}
-				else
-					{
-					struct sockaddr_in target_node;
-					target_node.sin_addr.s_addr = htonl(first_ip + ip_index);
-					printf("interface=jetdirect,%s\n", inet_ntoa(target_node.sin_addr));
+					if(!hit)
+						{
+						const char *name;
+						
+						if(states[ip_index].sysLocation && states[ip_index].sysLocation[0])
+							name = states[ip_index].sysLocation;
+						else if(states[ip_index].sysName && states[ip_index].sysName[0])
+							name = states[ip_index].sysName;
+						else
+							name = "-- no description --";
+
+						printf("[%s]\n", name);
+
+						if(states[ip_index].hrDeviceDescr)
+							printf("manufacturer-model=%s\n", states[ip_index].hrDeviceDescr);
+
+						hit = TRUE;
+						}
+
+					printf("interface=%s,\"", device_type->interface);
+						printf(device_type->address_format, dns_lookup(first_ip + ip_index));
+						printf("\"");
+					printf(",\"%s\"", device_type->options ? device_type->options : "");
+					printf(",%s", device_type->jobbreak ? device_type->jobbreak : "");
+					printf(",%s", device_type->feedback ? device_type->feedback : "");
+					printf(",%s", device_type->codes ? device_type->codes : "");
+					printf("\n");
+						
 					}
 				}
-			printf("\n");
+			if(hit)
+				printf("\n");
 			}
 		}
 	} /* end of do_scan() */
@@ -323,6 +454,13 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
+	if(argc >= 2 && strcmp(argv[1], "--debug") == 0)
+		{
+		argv++;
+		argc--;
+		debug = TRUE;
+		}
+	
 	{
 	FILE *ppr_conf;
 	if(!(ppr_conf = fopen(PPR_CONF, "r")))

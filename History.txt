@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--15 April 2004.
+1.53a2, 20 February 2004--16 April 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9129,11 +9129,19 @@ Internet Printing Protocol Work
 * misc/ppr-testpage.c: changed printf() to gu_psprintf().
 
 * www/show_jobs.cgi.perl: renamed the [Cancel] button to [Delete] since that 
-  is more in accord with GUI conventions.
+  is more in accord with GUI conventions.  However, the old name is still
+  recognized in controls= lists.  Removed support for disabling Close and 
+  Refresh.  Added support for disabling the Tools and Window menus.  Added
+  POD documentation.
 
 * www/prn_addwiz.cgi.perl: split LPR and PROS screens, split JetDirect screen
   from all of the other tcpip variants.
 
+* removed: printdesk/ATChooser.pm, printdesk/ppr-chooser.perl, 
+  z_install_end/install_atalk_links.tcl
+
+* moved from printdesk/ to browsers/: nbp_lookup_cap.c,
+  nbp_lookup_ali.c
 
 +++++++++++++++++++++
 TODO

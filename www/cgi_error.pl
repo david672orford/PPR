@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2004.
+# Last modified 16 April 2004.
 #
 
 require 'cgi_intl.pl';
@@ -134,7 +134,7 @@ function html(text)
 	}
 var message_intro = ${\javascript_string($introduction)}; 
 var message_body = ${\javascript_string(join("\\n", @lines))};
-var w = window.open('', '_blank', 'width=600,height=$height');
+var w = window.open('', '_blank', 'width=600,height=$height,resizable');
 if(!w)
 	{
 	alert(message_intro + '\\n\\n' + message_body);
@@ -148,9 +148,12 @@ else
 		<head>
 		<title>Operation Failed</title>
 		<style type="text/css">
-		HTML { margin: 0 }
+		HTML {
+			margin: 0px;
+			}
 		BODY {
-			margin: 0;
+			margin: 0px;
+			padding: 0px;
 			background-color: #EEEEEE;
 			color: black;
 			}
@@ -183,6 +186,8 @@ else
 	d.write(html(message_body));
 	d.write(
 		>>>
+		</td>
+		</tr>
 		<tr>
 		<td>&nbsp;</td>
 		<td align="right">
@@ -190,6 +195,12 @@ else
 		</td>
 		</tr>
 		</table>
+		<script type="text/javascript">
+		if(document.width)
+			{
+			window.resizeTo(document.width + 25, document.height + 25);
+			}
+		</script>
 		</body>
 		</html>
 		<<<

@@ -26,8 +26,92 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 16 April 2004.
 #
+
+=pod
+
+=head1 show_jobs.cgi
+
+This CGI script displays a PPR queue listing.  Buttons are provided for
+deleting, modifying, rushing, etc. jobs.
+
+=head1 Query String Parameters
+
+=over 4
+
+=item controls=
+
+This is a space separated list of controls (such as buttons) which should be
+displayed.  Those not listed are hidden.  If this parameter is not set, then
+all controls will be displayed.  Controls are:
+
+=over 4
+
+=item View
+
+the [View] button or menu
+
+=item Tools
+
+the Tools menu
+
+=item Window
+
+the Window menu
+
+=item Help
+
+the [Help] button or menu
+
+=item Move
+
+the [Move] button
+
+=item Delete
+
+the [Delete] button
+
+=item Rush
+
+the [Rush] button
+
+=item Hold
+
+the [Hold] button
+
+=item Release
+
+the [Release] button
+
+=item Modify
+
+the [Modify] button
+
+=item Log
+
+the [Log] button
+
+=back
+
+=item name=
+
+the name of the queue
+
+=item type=
+
+the type of the queue.  Types are "alias", "group" and "printer".  If this
+parameter is omitted, the script will search for a queue in that order.
+
+=item fields=
+
+a space separated list of columns to display in the field listing.  See
+the documentation for the B<ppop qquery> command for a list of available
+fields.
+
+=back
+
+=cut
 
 use 5.005;
 use lib "?";
@@ -45,15 +129,15 @@ defined(%qquery_xlate) || die;
 # Should we dump the variables at the bottom?
 my $DEBUG = 0;
 
-# What ppop subcommand should we run on button presses?
+# This table maps GUI button names to ppop subcommands.
 my %ACTIONS = (
-		'Move' => 'move',
-		'Delete' => 'cancel',
-		'Rush' => 'rush',
-		'Hold' => 'hold',
-		'Release' => 'release',
-		'Refresh' => '',
-		'Done' => ''
+	N_("Move") => "move",
+	N_("Delete") => "cancel",
+	N_("Rush") => "rush",
+	N_("Hold") => "hold",
+	N_("Release") => "release",
+	N_("Refresh") => "",
+	N_("Done") => ""
 );
 
 # Initialize the internationalization libraries and determine the
@@ -68,7 +152,7 @@ my ($charset, $content_language) = cgi_intl_init();
 # Make a hash which represents the buttons that should be shown.
 if(!defined $data{controls})
 	{
-	$data{controls} = "Queue View Refresh Close Help Move Delete Rush Hold Release Modify Log";
+	$data{controls} = "View Tools Window Help Move Delete Rush Hold Release Modify Log";
 	}
 my %controls;
 foreach my $b (split(/ /, $data{controls}))
@@ -300,20 +384,23 @@ menu_start("m_file", _("File"));
 	menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
 menu_end();
 
-menu_start("m_view", _("View"));
-	menu_submit("action", "View", _("Preferences"));
-menu_end();
+if(defined $controls{View})
+	{
+	menu_start("m_view", _("View"));
+		menu_submit("action", "View", _("Preferences"));
+	menu_end();
+	}
 
 menu_start("m_refresh", _("Refresh"));
 	menu_submit("action", "Refresh", N_("Now"));
 	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
 menu_end();
 
-menu_tools();
+menu_tools() if(defined $controls{Tools});
 
-menu_window($queue_type, $queue_name);
+menu_window($queue_type, $queue_name) if(defined $controls{Window});
 
-menu_help();
+menu_help() if(defined $controls{Help});
 }
 
 # Old-style menu bar
@@ -324,8 +411,8 @@ labeled_entry("refresh_internal", _("Refresh Interval:"), $refresh_interval, 4,
 	_("This page will be reloaded at the indicated interval (in seconds)."),
 	'onchange="document.forms[0].submit()"'
 	);
-isubmit("action", "Refresh", _("Refresh")) if(defined $controls{Refresh});
-isubmit("action", "Close", _("Close"), _("Close this window."), "window.close()") if(defined $controls{Close});
+isubmit("action", "Refresh", _("Refresh"));
+isubmit("action", "Close", _("Close"), _("Close this window."), "window.close()");
 print "<span style='margin-left: 9cm'></span>\n";
 help_button("../help/", undef) if(defined $controls{Help})
 }
@@ -388,7 +475,7 @@ if(defined($action))
 		# If empty list of jobs to action on,
 		if((scalar @joblist) < 1)
 			{
-			push(@action_result, sprintf(_("You must select one or more jobs before pressing [%s]."), $action));
+			push(@action_result, sprintf(_("You must select one or more jobs before pressing [%s]."), _($action)));
 			}
 
 		# If action is to move jobs,
@@ -422,7 +509,7 @@ if(defined($action))
 	if((scalar @action_result) > 0)
 		{
 		require 'cgi_error.pl';
-		error_window(sprintf(_("[%s] Failed"), $action), @action_result);
+		error_window(sprintf(_("[%s] Failed"), _($action)), @action_result);
 		}
 	}
 }
@@ -565,7 +652,7 @@ QuoteMove90
 }
 
 # Create all of the other buttons.
-isubmit("action", "Delete", N_("_Delete"), _("Cancel selected jobs.")) if(defined $controls{Delete});
+isubmit("action", "Delete", N_("_Delete"), _("Cancel selected jobs.")) if(defined $controls{Delete} || defined $controls{Cancel});
 isubmit("action", "Rush", N_("R_ush"), _("Move selected jobs to the front of the queue.")) if(defined $controls{Rush});
 isubmit("action", "Hold", N_("_Hold"), _("Place selected jobs in the held state so that they won't print.")) if(defined $controls{Hold});
 isubmit("action", "Release", N_("_Release"), _("Release selected jobs which are held.")) if(defined $controls{Release});

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/templates/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 September 2003.
+# Last modified 16 April 2004.
 #
 
 include ../Makefile.conf
@@ -49,7 +49,6 @@ getservbyname$(DOTEXE): getservbyname.$(OBJ)
 install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./install_sample_config.sh
-	./install_atalk_links.tcl
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh

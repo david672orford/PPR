@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 16 April 2004.
 #
 
 #
@@ -230,9 +230,10 @@ $addprn_wizard_table = [
 				if($data{'int_tcpip_port'} eq '')
 					{ return _("You must fill in the TCP port number!") }
 				$data{address} = $data{int_tcpip_name} . ':' . $data{int_tcpip_port};
-				$data{options} = '';
-				$data{jobbreak} = 'default';
-				$data{feedback} = $data{'int_tcpip_feedback'};
+				$data{options} = "";
+				$data{jobbreak} = "default";
+				$data{feedback} = $data{int_tcpip_feedback};
+				$data{codes} = "default";
 
 				return undef;
 				},
@@ -286,9 +287,10 @@ $addprn_wizard_table = [
 				if($data{'int_jetdirect_port'} eq '')
 					{ return _("You must fill in the TCP port number!") }
 				$data{address} = $data{int_jetdirect_name} . ':' . $data{int_jetdirect_port};
-				$data{options} = '';
-				$data{jobbreak} = 'default';
-				$data{feedback} = $data{'int_jetdirect_feedback'};
+				$data{options} = "";
+				$data{jobbreak} = "default";
+				$data{feedback} = $data{int_jetdirect_feedback};
+				$data{codes} = "default";
 
 				return undef;
 				},
@@ -335,9 +337,10 @@ $addprn_wizard_table = [
 				if($data{int_lpr_printer} eq '')
 					{ return _("You must fill in the remote queue name!") }
 				$data{address} = $data{int_lpr_printer} . '@' . $data{int_lpr_host};
-				$data{options} = '';
-				$data{jobbreak} = 'default';
-				$data{feedback} = 'default';
+				$data{options} = "";
+				$data{jobbreak} = "default";
+				$data{feedback} = "default";
+				$data{codes} = "default";
 				return undef;
 				},
 		'getnext' => sub { return 'ppd' }
@@ -372,9 +375,10 @@ $addprn_wizard_table = [
 				if($data{int_pros_printer} eq '')
 					{ return _("You must fill in the remote queue name!") }
 				$data{address} = $data{int_pros_printer} . '@' . $data{int_pros_host};
-				$data{options} = '';
-				$data{jobbreak} = 'default';
-				$data{feedback} = 'default';
+				$data{options} = "";
+				$data{jobbreak} = "default";
+				$data{feedback} = "default";
+				$data{codes} = "default";
 				return undef;
 				},
 		'getnext' => sub { return 'ppd' }
@@ -430,8 +434,9 @@ $addprn_wizard_table = [
 					{ return _("You must enter an address for the printer!") }
 				$data{address} = $data{int_generic_address};
 				$data{options} = $data{int_generic_options};
-				$data{feedback} = $data{int_generic_feedback};
 				$data{jobbreak} = $data{int_generic_jobbreak};
+				$data{feedback} = $data{int_generic_feedback};
+				$data{codes} = "default";
 				return undef;
 				},
 		'getnext' => sub {
@@ -446,12 +451,13 @@ $addprn_wizard_table = [
 		'label' => 'browse_printers',
 		'title' => N_("PPR: Add a Printer: Browse Printers"),
 		'picture' => "wiz-newprn.jpg",
+		'dopage_returns_html' => 1,
 		'dopage' => sub {
 			require 'cgi_run.pl';
 			my $browser_zone = cgi_data_move("browser_zone", "");
 			opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
-			print '<p><label>', H_("Zones available for browsing:"), '<br>', "\n";
-			print '<select tabindex=1 name="browser_zone" size="21" style="min-width: 450px; max-width: 450px;">', "\n";
+			print '<p><label>', H_("Zones Available for Browsing"), '<br>', "\n";
+			print '<select tabindex=1 name="browser_zone" size="20" style="min-width: 450px; max-width: 450px;">', "\n";
 			while(my $browser = readdir(BROWSERS))
 				{
 				next if($browser =~ /^\./);
@@ -479,6 +485,7 @@ $addprn_wizard_table = [
 			print "</select>\n";
 			print "</span></p>\n";
 			closedir(BROWSERS) || die $!;
+			return H_("Up to a minute may be required to search some zones.");
 			},
 		'onnext' => sub {
 				if(! defined($data{browser_zone}) || $data{browser_zone} eq "")
@@ -502,8 +509,8 @@ $addprn_wizard_table = [
 			$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 			$browser = $1;
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
-			print '<p><label>', H_("Available Printers:"), '<br>', "\n";
-			print '<select tabindex=1 name="browser_printer" size="21" style="max-width: 450px; min-width: 450px">', "\n";
+			print '<p><label>', html(sprintf(_("Printers Available in Zone %s %s"), $browser, $zone)), '<br>', "\n";
+			print '<select tabindex=1 name="browser_printer" size="20" style="min-width: 450px; max-width: 550px;">', "\n";
 			my @browser_comments = ();
 			outer:
 			while(1)
@@ -511,6 +518,7 @@ $addprn_wizard_table = [
 				my $name = "";
 				my $manufacturer = "";
 				my $model = "";
+				my $manufacturer_model = "";
 				my @interfaces = ();
 				while(my $line = <PRINTERS>)
 					{
@@ -536,10 +544,21 @@ $addprn_wizard_table = [
 						{
 						$model = $1;
 						}
+					elsif($line =~ /^manufacturer-model=(.*)$/)
+						{
+						$manufacturer_model = $1;
+						}
 					elsif($line =~ /^$/)	# end of record
 						{
 						my $label = $name;
-						$label .= " ($manufacturer $model)" if($manufacturer ne "" && $model ne "");
+						if($manufacturer ne "" && $model ne "")
+							{
+							$label .= " ($manufacturer $model)";
+							}
+						elsif($manufacturer_model ne "")
+							{
+							$label .= " ($manufacturer_model)";
+							}
 						print "<optgroup label=", html_value($label), ">\n";
 						foreach my $interface (@interfaces)
 							{
@@ -574,13 +593,14 @@ $addprn_wizard_table = [
 				my $browser_printer = cgi_data_peek("browser_printer", undef);
 				if(! defined($browser_printer))
 					{ return _("You must choose a printer!") }
-				if($browser_printer !~ /^([^,]+),"([^"]+)"/)
+				if($browser_printer !~ /^([^,]+),"([^"]+)"(?:,"([^"]+)")(?:,([^,]+))(?:,([^,]+))(?:,([^,]+))$/)
 					{ return "internal error: browser_printer=$browser_printer" }
 				$data{interface} = $1;
 				$data{address} = $2;
-				$data{options} = "";
-				$data{feedback} = "default";
-				$data{jobbreak} = "default";
+				$data{options} = defined $3 ? $3 : "";
+				$data{jobbreak} = defined $4 ? $4 : "default";
+				$data{feedback} = defined $5 ? $5 : "default";
+				$data{codes} = defined $6 ? $6 : "default";
 				return undef;
 				}
 		},
@@ -780,9 +800,10 @@ $addprn_wizard_table = [
 				my $name = cgi_data_peek("name", "?");
 				run(@PPAD, 'interface', $name, $data{interface}, $data{address});
 				run(@PPAD, 'options', $name, cgi_data_peek("options", ""));
-				run(@PPAD, 'ppd', $name, $data{ppd});
-				run(@PPAD, 'feedback', $name, $data{feedback});
 				run(@PPAD, 'jobbreak', $name, $data{jobbreak});
+				run(@PPAD, 'feedback', $name, $data{feedback});
+				run(@PPAD, 'codes', $name, $data{codes});
+				run(@PPAD, 'ppd', $name, $data{ppd});
 				run(@PPAD, 'comment', $name, $data{comment});
 				if($data{location} ne '')
 					{ run(@PPAD, 'location', $name, $data{location}) }

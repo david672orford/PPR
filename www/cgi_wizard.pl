@@ -341,7 +341,7 @@ $data{wiz_stack} = join(' ', @stack);
 if(!cgi_data_peek("resized", 0))
 {
 print <<"Tail05";
-<script>
+<script type="text/javascript">
 if(document.width)
 		{
 		window.resizeTo(document.width, document.height);

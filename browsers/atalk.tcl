@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 16 April 2004.
 #
 
 set HOMEDIR "?"
@@ -35,8 +35,16 @@ set HOMEDIR "?"
 set domain [lindex $argv 0]
 set node [lindex $argv 1]
 
+# We need Netatalk's or CAP's getzones.  Find it.
+foreach dir {/usr/local/atalk/bin /usr/local/bin /usr/bin} {
+	if {![file executable $dir/getzones]} {
+		set getzones $dir/getzones
+		break
+		}
+	}
+
 # Assume that if there is no getzones command, there is no AppleTalk.
-if {![file executable $HOMEDIR/lib/getzones]} {
+if {![info exists getzones]} {
 	puts ";AppleTalk support not installed (can't find getzones)."
 	exit 0
 	}

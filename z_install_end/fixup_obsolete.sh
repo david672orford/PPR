@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 March 2004.
+# Last modified 16 April 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -159,5 +159,8 @@ outdated $HOMEDIR/cgi-bin/show_queues_nojs.cgi
 outdated_dir $SHAREDIR/locale/ru
 outdated_dir $SHAREDIR/locale/fr
 outdated $HOMEDIR/lib/olprsrv
+outdated $HOMEDIR/lib/PrintDesk/ATChooser.pm
+outdated $HOMEDIR/bin/ppr-chooser
+outdated $HOMEDIR/lib/getzones
 
 exit 0
