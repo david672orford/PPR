@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 April 2002.
+# Last modified 18 April 2002.
 #
 
 use lib "?";
@@ -103,10 +103,10 @@ Group
 
 elsif($type eq "alias")
 {
-$html_text .= <<"Group";
+$html_text .= <<"Alias";
 <tr><td><a href="alias_properties.cgi?$encoded_name;$encoded_HIST">${\H_("Alias Properties")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_HIST">${\H_("Delete Alias")}</a></td></tr>
-Group
+Alias
 }
 
 else

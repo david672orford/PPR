@@ -7645,7 +7645,11 @@ line was being parsed twice.
 * www/prn_testpage.cgi.perl: added choices of images and whether or not to
   have the various bars.
 
+* www/alias_addwiz.cgi.perl, alias_properties.cgi.perl: added
+
 * ppad/ppad_printer.c: ppad_show(): fixed bug which caused it to always
   display the PPD file RIP setting even if the RIP setting came from the
   printer's configuration file.
+
+* libppr/int_copy_job.c: added USE_SHUTDOWN stuff.
 

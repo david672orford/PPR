@@ -1,6 +1,6 @@
 #! /usr/bin/perl -wT
 #
-# mouse:~ppr/src/www/grp_properties.cgi.perl
+# mouse:~ppr/src/www/alias_properties.cgi.perl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -33,7 +33,7 @@ my $tabbed_table = [
 	'dopage' => sub {
 		my $comment = cgi_data_move('comment', '');
 
-		print "<p><span class=\"label\">", H_("Group Name:"), "</span> <span class=\"value\">", html($data{name}), "</span>\n";
+		print "<p><span class=\"label\">", H_("Alias Name:"), "</span> <span class=\"value\">", html($data{name}), "</span>\n";
 		print "</p>\n";
 
 		print "<p><span class=\"label\">", H_("Comment:"), "</span><br>\n";
@@ -43,7 +43,7 @@ my $tabbed_table = [
 	},
 
 	#====================================================
-	# Group membership list
+	# Alias for what?
 	#====================================================
 	{
 	'tabname' => 'Members',
@@ -51,19 +51,10 @@ my $tabbed_table = [
 	'valign' => 'top',
 	'cellpadding' => 20,
 	'dopage' => sub {
-		require 'cgi_membership.pl';
-
 		# For first time:
 		if(!defined($data{nonmembers}))
 		    {
 		    require 'cgi_run.pl';
-
-		    my %members_hash = ();
-		    my $member;
-		    foreach $member (split(/ /, $data{members}))
-		    	{
-		    	$members_hash{$member} = 1;
-		    	}
 
                     my @nonmembers = ();
                     opencmd(PPOP, $PPOP_PATH, "-M", "dest", "all") || die;
@@ -78,8 +69,6 @@ my $tabbed_table = [
 		    $data{nonmembers} = join(' ', sort(@nonmembers));
                     }
 
-		# Do double select box thing.
-		&cgi_membership(_("Members:"), "members", 10, _("Non-Members:"), "nonmembers", 15);
 		}
 	},
 
@@ -143,18 +132,6 @@ my $tabbed_table = [
 	{
 	'tabname' => N_("Other"),
 	'dopage' => sub {
-		print "<p><span class=\"label\">", H_("Rotate Through Members:"), "</span><br>\n";
-		my $selected_rotate = cgi_data_move('rotate', '');
-		my $rotate;
-		foreach $rotate (N_("yes"), N_("no"))
-		    {
-		    print "<input type=radio name=rotate value=", html_value($rotate);
-		    if($rotate eq $selected_rotate)
-		    	{ print " checked" }
-		    print "> ", H_($rotate);
-		    print "\n";
-		    }
-
 		print "<p><span class=\"label\">", H_("Passthru Printer Languages:"), "</span>\n";
 		print "<input type=text size=16 name=\"passthru\" value=", html_value(cgi_data_move('passthru', '')), ">\n";
 		print "</p>\n";
@@ -193,7 +170,7 @@ $data{switchset} =~ s/ -/\n-/g;
 #============================================
 # This function is called from do_tabbed().
 # It uses the ppad command to save the
-# changes to the group configuration.
+# changes to the printer configuration.
 #============================================
 sub save
 {
@@ -266,7 +243,7 @@ print "<script>window.opener.gentle_reload()</script>\n";
 
 &cgi_read_data();
 
-&do_tabbed($tabbed_table, sprintf(_("PPR: Group Properties: %s"), $data{name}), \&load, \&save, 9);
+&do_tabbed($tabbed_table, sprintf(_("PPR: Alias Properties: %s"), $data{name}), \&load, \&save, 9);
 
 exit 0;
 

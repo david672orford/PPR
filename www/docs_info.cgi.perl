@@ -262,9 +262,9 @@ eval {
 		{
 		s/\n[ \t]+/ /g;			# unwrap long lines
 		my @lines = split(/\n/);
-		my $title = shift;
-		print "<h1>", html($title), "</h1>\n";
-		print "<table border=1 cellspacing=0 cellpadding=3>\n";
+		my $title = shift @lines;
+		print "<h2>", html($title), "</h2>\n";
+		print "<table border=1 cellspacing=0 cellpadding=3 width="100%">\n";
 		print "<tr><th>Subject</th><th>Document</th><th>Section</th><th>Description</th></tr>\n";
 		foreach (@lines)
 		    {
@@ -274,10 +274,10 @@ eval {
 			my $escaped_section = $section;
 			$escaped_section =~ s/\s+/_/g;
 			print "<tr>";
-			print "<td><a href=\"$filename#$escaped_section\">", html($subject), "</a></td>\n";
+			print "<td><a href=\"$filename#$escaped_section\">", html($subject), "</a></td>";
 			print "<td>", html($filename), "</td>";
 			print "<td>", html_nb($section), "</td>";
-			print "<td>", html($description), "</td>\n";
+			print "<td>", html($description), "</td>";
 			print "</tr>\n";
 			}
 		    else
