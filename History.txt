@@ -9594,4 +9594,6 @@ no final tarball was released.
 
 * libgu/gu_pca.c: new "Perl compatible" array class
 
+* z_install_end/install_inetd_conf.sh: fixed broken Xinetd config file (merged into 1.54)
+
 

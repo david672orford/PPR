@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 27 February 2005.
 */
 
 /** \file
@@ -1468,7 +1468,7 @@ void ppop_dispatch(const char command[])
 			break;
 
 		case 'r':						/* release a job */
-			gu_pool_destroy(gu_pool_pop());
+			ppop_hold_release(ppop_command,1);
 			break;
 
 		case 'c':						/* cancel */
