@@ -145,7 +145,7 @@ int gu_ini_section_from_sample(const char filename[], const char section_name[])
 
 char *gu_getline(char *line, int *space_available, FILE *fstream);
 char *gu_strerror(int n);
-int ppr_wildmat(const char *text, const char *p);
+int gu_wildmat(const char *text, const char *p);
 int compile_string_escapes(char *s);
 char *gu_strsep(char **stringp, const char *delim);
 char *gu_strsep_quoted(char **stringp, const char *delim, const char *discard);

@@ -107,6 +107,13 @@ sub opencmd
 	{
 	my $handle = shift;
 	my @command_list = @_;
+	my $stderr_fate = ">&STDOUT";
+
+	if($command_list[0] eq "2>/dev/null")
+		{
+		$stderr_fate = ">/dev/null";
+		shift @command_list;
+		}
 
 	# Perl 5.8.0 spews warnings if exec() arguments are tainted.
 	run_detaint(\@command_list);
@@ -117,9 +124,8 @@ sub opencmd
 
 	return 1 if($pid != 0);				# if parent
 
-	# Make sure errors go the the web page rather than
-	# to the server error log.
-	open(STDERR, ">&STDOUT");
+	# Keep stderr output out of the server error log.
+	open(STDERR, $stderr_fate);
 
 	# If possible, clear the PATH to avoid problems with
 	# tainted PATHs.

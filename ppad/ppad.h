@@ -151,6 +151,7 @@ void deffiltopts_close(void);
 /* functions in ppad_ppd.c */
 int ppd_query_core(const char printer[], struct QUERY *q);
 int ppd_query(const char *argv[]);
+int ppd_list(const char *argv[]);
 
 /* end of file */
 

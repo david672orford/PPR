@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 5 November 2003.
 */
 
 /*==============================================================
@@ -1623,8 +1623,6 @@ int printer_ppd(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *ppdname = argv[1];
-	char ppdfname[MAX_PPR_PATH];
-	FILE *testopen;
 	int retval;
 
 	if( ! am_administrator() )
@@ -1647,21 +1645,19 @@ int printer_ppd(const char *argv[])
 		}
 
 	/* make sure the PPD file exists */
-	if(ppdname[0] == '/')
-		strcpy(ppdfname, ppdname);
-	else
-		ppr_fnamef(ppdfname, "%s/%s", PPDDIR, ppdname);
-
-	if((testopen = fopen(ppdfname,"r")) == (FILE*)NULL)
-		{
+	{
+	FILE *testopen;
+	char *ppdfname = ppd_find_file(ppdname);
+	if(!(testopen = fopen(ppdfname,"r")))
 		fprintf(errors, _("The PPD file \"%s\" does not exist.\n"), ppdname);
+	gu_free(ppdfname);
+	if(!testopen)
+		{
 		confabort();
 		return EXIT_NOTFOUND;
 		}
-	else
-		{
-		fclose(testopen);
-		}
+	fclose(testopen);
+	}
 
 	/* Get ready to collect information for a "DefFiltOpts:" line. */
 	deffiltopts_open();

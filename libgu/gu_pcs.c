@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 4 November 2003.
 */
 
 /*! \file
@@ -355,7 +355,7 @@ This function appends a C string the the PCS object.
 void gu_pcs_append_cstr(void **pcs, const char cstr[])
 	{
 	struct PCS *p = (struct PCS *)*pcs;
-	int new_length;
+	int cstr_len;
 
 	if(p->refcount > 1)
 		{
@@ -365,10 +365,10 @@ void gu_pcs_append_cstr(void **pcs, const char cstr[])
 		p = (struct PCS *)*pcs;
 		}
 
-	new_length = p->length + strlen(cstr);
-	gu_pcs_grow(pcs, new_length);
-	memcpy(p->storage + p->length, cstr, new_length + 1);
-	p->length = new_length;
+	cstr_len = strlen(cstr);
+	gu_pcs_grow(pcs, p->length + cstr_len);
+	memcpy(p->storage + p->length, cstr, cstr_len + 1);
+	p->length += cstr_len;
 	} /* end of gu_pcs_append_cstr() */
 
 /** append PCS to existing PCS
@@ -454,26 +454,47 @@ int main(int argc, char *argv[])
 	{
 	void *pcs_a, *pcs_b, *pcs_c;
 
+	printf("pcs_a initialized to string \"Hello, World!\".\n");
 	pcs_a = gu_pcs_new_cstr("Hello, World!");
 	gu_pcs_debug(&pcs_a, "pcs_a");
+	printf("length: %d\n", gu_pcs_length(&pcs_a));
+	printf("\n");
+
+	printf("pcs_b is a snapshot of pcs_a\n");
 	pcs_b = gu_pcs_snapshot(&pcs_a);
 	gu_pcs_debug(&pcs_a, "pcs_a");
 	gu_pcs_debug(&pcs_b, "pcs_b");
 	printf("\n");
 
+	printf("append to pcs_a shouldn't change pcs_b.\n");
 	gu_pcs_append_cstr(&pcs_a, "  What do you want to do today?");
 	gu_pcs_debug(&pcs_a, "pcs_a");
 	gu_pcs_debug(&pcs_b, "pcs_b");
 	printf("\n");
 
+	printf("create empty pcs_c\n");
 	pcs_c = gu_pcs_new();
+	gu_pcs_debug(&pcs_c, "pcs_c");
+	printf("Set it to a string...\n");
 	gu_pcs_set_cstr(&pcs_c, "The sky is blue.");
+	gu_pcs_debug(&pcs_c, "pcs_c");
+	printf("\n");
+
+	printf("Append a character to pcs_a...\n");
+	gu_pcs_append_char(&pcs_a, ' ');
+	gu_pcs_debug(&pcs_a, "pcs_a");
+	printf("Append a C string to pcs_a...\n");
+	gu_pcs_append_cstr(&pcs_a, "--");
+	gu_pcs_debug(&pcs_a, "pcs_a");
+
+	printf("Append pcs_c to pcs_a and pcs_b...\n");
 	gu_pcs_append_pcs(&pcs_a, &pcs_c);
 	gu_pcs_append_pcs(&pcs_b, &pcs_c);
 	gu_pcs_debug(&pcs_a, "pcs_a");
 	gu_pcs_debug(&pcs_b, "pcs_b");
 	printf("\n");
 
+	printf("Set pcs_a and pcs_b to pcs_c...\n");
 	gu_pcs_set_pcs(&pcs_a, &pcs_c);
 	gu_pcs_set_pcs(&pcs_b, &pcs_c);
 	gu_pcs_debug(&pcs_a, "pcs_a");
@@ -484,6 +505,7 @@ int main(int argc, char *argv[])
 	gu_pcs_free(&pcs_a);
 	gu_pcs_debug(&pcs_b, "pcs_b");
 	gu_pcs_free(&pcs_b);
+	printf("pcs_a=%p, pcs_b=%p, pcs_c=%p\n", pcs_a, pcs_b, pcs_c);
 
 	return 0;
 	}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 November 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -40,6 +40,8 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "ppad.h"
+
+#include "pstring.h"
 
 #if 0
 #define DEBUG 1
@@ -90,19 +92,18 @@ static gu_boolean very_fuzzy(char *a, char *b)
 static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	{
 	FILE *f;
-	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
 	char *line = NULL;
 	int line_len = 80;
 	int linenum = 0;
 	char *p;
-	char *f_description,
+	char *f_description,				/* probably ModelName, never empty */
 		*f_filename,
-		*f_vendor,
-		*f_modelname,
-		*f_nickname,
-		*f_shortnickname,
-		*f_product,
-		*f_psversion,
+		*f_manufacturer,						/* Manufacturer, possibly empty */
+		*f_modelname,					/* ModelName, possibly empty */
+		*f_nickname,					/* NickName, possibly empty */
+		*f_shortnickname,				/* ShortNickName, possibly empty */
+		*f_product,						/* Product, possibly empty */
+		*f_psversion,					/* PSVersion, possibly empty */
 		*f_deviceid_manufacturer,
 		*f_deviceid_model,
 		*f_pjl_id,
@@ -111,7 +112,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	struct {
 		char *name;
 		char **ptr;
-		char *beyond_vendor;
+		char *beyond_manufacturer;
 		} names[] =
 		{
 		{"ModelName", &f_modelname, NULL},
@@ -122,8 +123,8 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 		};
 	int count = 0;
 
-	if(!(f = fopen(filename, "r")))
-		gu_Throw("Can't open \"%s\", errno=%d (%s)", filename, errno, gu_strerror(errno));
+	if(!(f = fopen(PPD_INDEX, "r")))
+		gu_Throw("Can't open \"%s\", errno=%d (%s)", PPD_INDEX, errno, gu_strerror(errno));
 
 	while((line = gu_getline(line, &line_len, f)))
 		{
@@ -135,7 +136,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 		p = line;
 		if(!(f_description = gu_strsep(&p,":"))
 				|| !(f_filename = gu_strsep(&p,":"))
-				|| !(f_vendor = gu_strsep(&p,":"))
+				|| !(f_manufacturer = gu_strsep(&p,":"))
 				|| !(f_modelname = gu_strsep(&p,":"))
 				|| !(f_nickname = gu_strsep(&p,":"))
 				|| !(f_shortnickname = gu_strsep(&p,":"))
@@ -149,7 +150,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 				)
 			{
 			if(!machine_readable)
-				fprintf(stderr, "Too few fields at line %d in \"%s\".\n", linenum, filename);
+				fprintf(stderr, "Too few fields at line %d in \"%s\".\n", linenum, PPD_INDEX);
 			continue;
 			}
 		
@@ -158,12 +159,12 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 		for(i=0; names[i].name; i++)
 			{
 			char *name = *(names[i].ptr);
-			names[i].beyond_vendor = NULL;
-			if(*f_vendor && strncasecmp(name, f_vendor, strlen(f_vendor)) == 0
-					&& isspace(name[strlen(f_vendor)]))
+			names[i].beyond_manufacturer = NULL;
+			if(*f_manufacturer && strncasecmp(name, f_manufacturer, strlen(f_manufacturer)) == 0
+					&& isspace(name[strlen(f_manufacturer)]))
 				{
-				names[i].beyond_vendor = name + strlen(f_vendor);
-				names[i].beyond_vendor += strspn(names[i].beyond_vendor, " \t");
+				names[i].beyond_manufacturer = name + strlen(f_manufacturer);
+				names[i].beyond_manufacturer += strspn(names[i].beyond_manufacturer, " \t");
 				}
 			}
 		}
@@ -242,7 +243,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 					matched++; fuzzy++;
 					continue;
 					}
-				if((name = names[i].beyond_vendor))
+				if((name = names[i].beyond_manufacturer))
 					{
 					if(strcasecmp(name, facts->SNMP_hrDeviceDescr) == 0)
 						{
@@ -283,7 +284,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 					matched++; fuzzy++;
 					continue;
 					}
-				if((name = names[i].beyond_vendor))
+				if((name = names[i].beyond_manufacturer))
 					{
 					if(strcasecmp(name, facts->pjl_id) == 0)
 						{
@@ -311,9 +312,9 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 			char *name;
 			for(i=0; names[i].name; i++)
 				{
-				if(!(name = names[i].beyond_vendor))
+				if(!(name = names[i].beyond_manufacturer))
 					continue;
-				if(strcasecmp(facts->deviceid_manufacturer, f_vendor) == 0)
+				if(strcasecmp(facts->deviceid_manufacturer, f_manufacturer) == 0)
 					{
 					if(strcasecmp(name, facts->deviceid_model) == 0)
 						{
@@ -335,8 +336,10 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 			{
 			if(machine_readable)
 				{
+				count++;
+				
 				/* This is for the web front end which needs extra fields. */
-				printf("%s:%s:%s\n", f_description, f_filename, f_vendor);
+				printf("%s:%s\n", f_manufacturer, f_description);
 				}
 			else
 				{
@@ -481,7 +484,8 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 					}
 
 				/* Not a MODEL: line, but probably of interest. */
-				printf("    %s\n", line);
+				if(!machine_readable)
+					printf("    %s\n", line);
 				}
 			}
 		gu_Final
@@ -734,7 +738,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	} /* end of ppd_query_core() */
 
 /*
-** ppad query
+** ppad ppd query
 **
 ** Send a query to a printer using a specified interface and address and
 ** produce a list of suitable PPD files.
@@ -773,5 +777,70 @@ int ppd_query(const char *argv[])
 
 	return ret;
 	} /* end of ppd_query */
+
+/*
+ * ppad ppd list
+ *
+ * List PPD files matching a pattern.
+ */
+int ppd_list(const char *argv[])
+	{
+	const char *pattern;
+	gu_boolean wildcards;
+	char *pattern_lowered, *f_description_lowered;
+	FILE *f;
+	char *line = NULL;
+	int line_len = 80;
+	char *p;
+	char *f_description, *f_filename;
+
+	if(!(pattern = argv[0]) || argv[1])
+		{
+		fputs(
+			_("You must supply a search pattern.\n"),
+			errors
+			);
+		return EXIT_SYNTAX;
+		}
+
+	if(!(f = fopen(PPD_INDEX, "r")))
+		{
+		fprintf(errors, _("Can't open \"%s\", errno=%d (%s)\n"), PPD_INDEX, errno, gu_strerror(errno));
+		return EXIT_INTERNAL;
+		}
+
+	pattern_lowered = gu_strdup(pattern);
+	pstrlwr(pattern_lowered);
+	wildcards = strchr(pattern, '*') || strchr(pattern, '?');
+
+	while((line = gu_getline(line, &line_len, f)))
+		{
+		if(line[0] == '#')
+			continue;
+
+		p = line;
+		if(!(f_description = gu_strsep(&p,":"))
+				|| !(f_filename = gu_strsep(&p,":"))
+			)
+			{
+			continue;
+			}
+
+		f_description_lowered = gu_strdup(f_description);
+		pstrlwr(f_description_lowered);
+		
+		if((wildcards && gu_wildmat(f_description_lowered, pattern_lowered))
+				||
+			(!wildcards && strstr(f_description_lowered, pattern_lowered))
+			)
+				printf("\"%s\"\n", f_description);
+
+		gu_free(f_description_lowered);
+		}	
+
+	gu_free(pattern_lowered);
+
+	return EXIT_OK;
+	} /* end of ppd_list() */
 
 /* end of file */

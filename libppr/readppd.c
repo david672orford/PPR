@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 5 November 2003.
 */
 
 /*+ \file
@@ -39,6 +39,7 @@ files.  Includes are handled automatically.
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 #ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif
@@ -58,7 +59,50 @@ static gzFile f[MAX_PPD_NEST];
 static FILE *f[MAX_PPD_NEST];
 #endif
 
-static int _ppd_open(const char *name)
+char *ppd_find_file(const char ppdname[])
+	{
+	FILE *f;
+	char *line = NULL;
+	int line_len = 256;
+	char *p;
+	char *f_description, *f_filename;
+	char *filename = NULL;
+	
+	if(ppdname[0] == '/')
+		return gu_strdup(ppdname);
+
+	if(!(f = fopen(PPD_INDEX, "r")))
+		gu_Throw("Can't open \"%s\", errno=%d (%s)", PPD_INDEX, errno, gu_strerror(errno));
+
+	while((p = line = gu_getline(line, &line_len, f)))
+		{
+		if((f_description = gu_strsep(&p,":"))
+				&& (f_filename = gu_strsep(&p,":"))
+			)
+			{
+			if(strcmp(f_description, ppdname) == 0)
+				{
+				filename = gu_strdup(f_filename);
+				break;
+				}
+			}
+		}
+
+	if(line)
+		gu_free(line);
+	
+	if(filename)
+		return filename;
+
+	gu_asprintf(&filename, "%s/%s", PPDDIR, ppdname);
+	return filename;
+	}
+
+/*
+** This routine is called from ppd_open() and from ppd_readline()
+** whenever an "*Include:" line is encountered.
+*/
+static int _ppd_open(const char name[])
 	{
 	const char function[] = "_ppd_open";
 
@@ -91,35 +135,27 @@ static int _ppd_open(const char *name)
 		}
 	else
 		{
+		char *dirend;
+
 		if(nest == 0)
 			{
-			fname[nest] = (char*)gu_alloc(sizeof(PPDDIR) + 1 + strlen(name) + 1, sizeof(char));
-			ppr_fnamef(fname[nest], "%s/%s", PPDDIR, name);
+			if(saved_errors)
+				fprintf(saved_errors, "%s(): assertion failed\n", function);
+			return EXIT_INTERNAL;
 			}
-		else
+
+		/* Get the offset of the last "/" in the previous path.
+		   This should never fail.  If it does it is an
+		   internal error. */
+		if(!(dirend = strrchr(fname[nest-1], '/')))
 			{
-			char *dirend;
-			int dirlen, buflen;
-
-			/* Get the offset of the last "/" in the previous path.
-			   This should never fail.  If it does it is an
-			   internal error. */
-			if(!(dirend = strrchr(fname[nest-1], '/')))
-				{
-				if(saved_errors)
-					fprintf(saved_errors, "%s(): internal error\n", function);
-				return EXIT_INTERNAL;
-				}
-
-			/* Figure out how long the dirctory portion is and allocate
-			   enough space to hold the whole thing. */
-			dirlen = (dirend - fname[nest-1]);
-			buflen = (dirlen + 1 + strlen(name) + 1);
-			fname[nest] = (char*)gu_alloc(buflen, sizeof(char));
-
-			/* Build the new name in the newly allocated space. */
-			snprintf(fname[nest], buflen, "%.*s/%s", dirlen, fname[nest-1], name);
+			if(saved_errors)
+				fprintf(saved_errors, "%s(): internal error\n", function);
+			return EXIT_INTERNAL;
 			}
+
+		/* Build the path in malloced memory. */
+		gu_asprintf(&fname[nest], "%.*s/%s", (dirend - fname[nest-1]), fname[nest-1], name);
 		}
 
 	/* Open the PPD file for reading. */
@@ -151,18 +187,16 @@ This function opens the indicated PPD file and sets up internal structures so th
 be read by calling ppd_readline().  If we can't open it, print an error
 message and return an appropriate exit code.
 
-This routine is called from ppd_open() and from ppd_readline()
-whenever an "*Include:" line is encountered.
-
 The errors parameter is a stdio file object to write error messages to.  If it is NULL,
 none will be written.
 
 On success, EXIT_OK is returned.
 
 */
-int ppd_open(const char *name, FILE *errors)
+int ppd_open(const char ppdname[], FILE *errors)
 	{
 	const char function[] = "ppd_open";
+	char *filename;
 	int retval;
 
 	/*
@@ -176,11 +210,13 @@ int ppd_open(const char *name, FILE *errors)
 		return EXIT_INTERNAL;
 		}
 
-	saved_errors = errors;
+	saved_errors = errors;		/* for use by _ppd_open() */
 	nest = -1;
 
-	if((retval = _ppd_open(name)) == EXIT_OK)
+	filename = ppd_find_file(ppdname);
+	if((retval = _ppd_open(filename)) == EXIT_OK)
 		line = (char*)gu_alloc(MAX_PPD_LINE+2, sizeof(char));
+	gu_free(filename);
 
 	return retval;
 	} /* end of ppd_open() */

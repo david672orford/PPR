@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 5 November 2003.
 */
 
 /*
@@ -284,6 +284,7 @@ static void help_ppd(FILE *out)
 	const char *command_list[] =
 		{
 		N_("ppad ppd query <interface> <address> [<quoted_options_list>]"),
+		N_("ppad ppd list <pattern>"),
 		NULL
 		};
 
@@ -468,6 +469,8 @@ static int dispatch(const char *argv[])
 		{
 		if(gu_strcasecmp(argv[1], "query") == 0)
 			return ppd_query(&argv[2]);
+		if(gu_strcasecmp(argv[1], "list") == 0)
+			return ppd_list(&argv[2]);
 		}
 
 	/* printer commands */

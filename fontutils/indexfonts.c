@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -412,9 +412,9 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 			/* Skip obvious stuff. */
 			if(strcmp(fileobj->d_name, "fonts.dir") == 0
 				|| strcmp(fileobj->d_name, "fonts.scale") == 0
-				|| ppr_wildmat(fileobj->d_name, "*.pcf.gz")
-				|| ppr_wildmat(fileobj->d_name, "*.pcf")
-				|| ppr_wildmat(fileobj->d_name, "*.pfm")
+				|| gu_wildmat(fileobj->d_name, "*.pcf.gz")
+				|| gu_wildmat(fileobj->d_name, "*.pcf")
+				|| gu_wildmat(fileobj->d_name, "*.pfm")
 				)
 				continue;
 

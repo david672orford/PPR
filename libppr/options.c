@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 4 November 2003.
 */
 
 /*
@@ -103,7 +103,7 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
 		return -1;
 		}
 
-	gu_strlcpy(name, ptr, maxnamelen);	/* copy the name, */
+	strncpy(name, ptr, namelen);		/* copy the name, */
 	name[namelen] = '\0';				/* and NULL terminate it */
 
 	ptr += namelen;						/* move beyond name */
@@ -146,7 +146,8 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
 			}
 
 		/* Copy the value and NULL terminate it. */
-		gu_strlcpy(value, ptr, maxvaluelen);
+		strncpy(value, ptr, valuelen);
+		value[valuelen] = '\0';
 		}
 	else
 		{

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 5 November 2003.
 #
 
 use lib "?";
@@ -146,41 +146,46 @@ my $tabbed_table = [
 		'help' => "ppd",
 		'dopage' => sub {
 				require 'ppd_select.pl';
-				my $ppd = cgi_data_move('ppd', undef);
-				my $ppd_description = "";
-				my $ppd_select = cgi_data_move('ppd_select', "");
+				my $ppd = cgi_data_move('ppd', undef);				# select box
+				my $ppd_select = cgi_data_move('ppd_select', "");	# text entry box
 
-				if($ppd_select ne "" && $ppd_select ne cgi_data_peek("_ppd", ""))
-					{
-					$ppd = $ppd_select;
-					}
+				# The textbox wins if it isn't empty and it doesn't have its initial value.
+				$ppd = $ppd_select if($ppd_select ne "" && $ppd_select ne cgi_data_peek("_ppd", ""));
 
 				print "<table class=\"ppd\"><tr><td>\n";
-				print '<p><span class="label">', H_("Current PPD File (by filename):"), "</span><br>\n";
+				print '<p><span class="label">', H_("Current PPD File:"), "</span><br>\n";
 				print '<input tabindex=1 name="ppd" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
 				print "</p>\n";
 
+				{
+				my $probe = cgi_data_move("probe", "");
+				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
+				if($probe eq "probe")
+					{
+					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
+					}
+				elsif($probe eq "clear")
+					{
+					delete $data{ppd_probe_list};
+					}
+				}
+
 				# Print the HTML for a select box.
 				print '<p><span class="label">', H_("Available PPD Files (by printer description):"), "</span><br>\n";
-				print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px" onchange="forms[0].submit()">', "\n";
-				#print "<option>\n";
+				print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
 				my $lastgroup = "";
-				foreach my $item (ppd_list())
+				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
 					{
-					my($item_manufacturer, $item_description, $item_file) = @{$item};
+					my($item_manufacturer, $item_modelname) = @{$item};
 					if($item_manufacturer ne $lastgroup)
 						{
 						print "</optgroup>\n" if($lastgroup ne "");
 						print "<optgroup label=", html_value($item_manufacturer), ">\n";
 						$lastgroup = $item_manufacturer;
 						}
-					print "<option value=", html_value($item_file);
-					print " selected" if($item_file eq $ppd);
-					print ">", html($item_description), "\n";
-					if($item_file eq $ppd)
-						{
-						$ppd_description = $item_description;
-						}
+					print "<option value=", html_value($item_modelname);
+					print " selected" if($item_modelname eq $ppd);
+					print ">", html($item_modelname), "\n";
 					}
 				print "</optgroup>\n" if($lastgroup ne "");
 				print "</select>\n";
@@ -189,9 +194,18 @@ my $tabbed_table = [
 				print "</td><td>\n";
 
 				# Print a small table with a summary of what the PPD files says.
-				ppd_summary($ppd, $ppd_description);
+				ppd_summary($ppd);
 
 				print "</td></tr></table>\n";
+
+				if(cgi_data_peek("ppd_probe_list","") eq "")
+					{
+					isubmit("probe", "probe", N_("Auto Detect Printer Type"));
+					}
+				else
+					{
+					isubmit("probe", "clear", N_("Show All PPD Files"));
+					}
 				},
 		'onleave' => sub {
 				if($data{ppd} eq '')

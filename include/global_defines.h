@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 11 September 2003.
+** This file was last modified 5 November 2003.
 */
 
 /*
@@ -212,6 +212,7 @@
 #define CACHEDIR VAR_SPOOL_PPR"/cache"			/* directory for automatically cached files */
 #define ADDRESS_CACHE VAR_PRINTERS"/addr_cache" /* directory for cache of printer addresses */
 #define FONT_INDEX VAR_SPOOL_PPR"/fontindex.db"
+#define PPD_INDEX VAR_SPOOL_PPR"/ppdindex.db"
 
 /* The spooler state file for GUI interface: */
 #define STATE_UPDATE_FILE RUNDIR"/state_update"
@@ -485,7 +486,8 @@ const char *ppr_get_nodename(void)
 __attribute__ ((const))
 #endif
 ;
-int ppd_open(const char *name, FILE *errors);
+char *ppd_find_file(const char ppdname[]);
+int ppd_open(const char name[], FILE *errors);
 char *ppd_readline(void);
 void set_ppr_env(void);
 void prune_env(void);

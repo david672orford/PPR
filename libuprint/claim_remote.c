@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -136,7 +136,7 @@ gu_boolean printdest_claim_remote(const char dest[], struct REMOTEDEST *scratchp
 
 		/* Compare the destionation name to the shell
 		   pattern in this line. */
-		if(!ppr_wildmat(dest, line+1))
+		if(!gu_wildmat(dest, line+1))
 			continue;
 
 		/* All tests passed, it is a match! */

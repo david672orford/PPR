@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -202,17 +202,17 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 
 			if(strcmp(item, "creator") == 0)
 				{
-				if(!creator || !ppr_wildmat(creator, value))
+				if(!creator || !gu_wildmat(creator, value))
 					break;
 				}
 			else if(strcmp(item, "copyright") == 0)
 				{
-				if(!creator || !ppr_wildmat(copyright, value))
+				if(!creator || !gu_wildmat(copyright, value))
 					break;
 				}
 			else if(strcmp(item, "beginresource") == 0)
 				{
-				if(!creator || !ppr_wildmat(beginresource, value))
+				if(!creator || !gu_wildmat(beginresource, value))
 					break;
 				}
 			else

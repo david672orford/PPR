@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 5 November 2003.
 */
 
 /*
@@ -1337,18 +1337,9 @@ static void pprdrv_read_printer_conf(void)
 
 		else if(gu_sscanf(confline, "PPDFile: %A", &tptr) == 1)
 			{
-			if(printer.PPDFile) gu_free(printer.PPDFile);
-			if(tptr[0] == '/')					/* use absolute path */
-				{								/* directly */
-				printer.PPDFile = tptr;
-				}
-			else								/* prepend standard PPD file directory */
-				{								/* to relative paths */
-				char fname[MAX_PPR_PATH];
-				ppr_fnamef(fname, "%s/%s", PPDDIR, tptr);
-				gu_free(tptr);
-				printer.PPDFile = gu_strdup(fname);
-				}
+			if(printer.PPDFile)
+				gu_free(printer.PPDFile);
+			printer.PPDFile = tptr;
 			}
 
 		else if(lmatch(confline, "Commentator:"))

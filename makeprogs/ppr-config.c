@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -96,6 +96,9 @@ static void do_paths(char format[], char language[])
 	printf(format, "TAIL_STATUS_PATH", TAIL_STATUS_PATH);
 	/* printf(format, "PPJOB_PATH", PPJOB_PATH); */
 	printf(format, "SENDMAIL_PATH", SENDMAIL_PATH);
+
+	/* Indexes */
+	printf(format, "PPD_INDEX", PPD_INDEX);
 
 	/* Internationalization */
 	printf(format, "LOCALEDIR", LOCALEDIR);

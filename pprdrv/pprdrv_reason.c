@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 February 2003.
+** Last modified 5 November 2003.
 */
 
 /*===========================================================================
@@ -127,7 +127,7 @@ void describe_postscript_error(const char creator[], const char errormsg[], cons
 					continue;
 					}
 
-				if(ppr_wildmat(safe_creator, f1) && ppr_wildmat(errormsg, f2) && ppr_wildmat(command, f3))
+				if(gu_wildmat(safe_creator, f1) && gu_wildmat(errormsg, f2) && gu_wildmat(command, f3))
 					{
 					int i;
 

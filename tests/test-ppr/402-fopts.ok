@@ -1,5 +1,5 @@
 ====================================================================
-test:  -F 
+test: -F Duplex=None
 ====================================================================
 Queue ID        For                      Time      Pgs Status
 ----------------------------------------------------------------------------
@@ -17,7 +17,7 @@ Final filter options: "duplex=none level=2 colour=False resolution=600 freevm=67
 Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/filter_lp", "duplex=none level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour", "regression-test1", "", "/usr/local/src/ppr-X.XX/tests"}
 
 ====================================================================
-test:  -F 
+test: -F Duplex=DuplexNoTumble
 ====================================================================
 Queue ID        For                      Time      Pgs Status
 ----------------------------------------------------------------------------
@@ -35,7 +35,7 @@ Final filter options: "duplex=notumble level=2 colour=False resolution=600 freev
 Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/filter_lp", "duplex=notumble level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour", "regression-test1", "", "/usr/local/src/ppr-X.XX/tests"}
 
 ====================================================================
-test:  -F 
+test: -F Duplex=DuplexTumble
 ====================================================================
 Queue ID        For                      Time      Pgs Status
 ----------------------------------------------------------------------------

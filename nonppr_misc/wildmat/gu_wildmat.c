@@ -6,9 +6,9 @@
 **
 **	* changed arguments to const
 **	* added ANSI_CONTROLS_EXTENSION and the code it enables
-**	* renamed it to ppr_wildmat() to avoid conflicts
+**	* renamed it to gu_wildmat() to avoid conflicts
 **
-** Last PPR change: 10 July 1999
+** Last PPR change: 5 November 2003
 */
 #define ANSI_CONTROLS_EXTENSION
 
@@ -179,7 +179,7 @@ static int DoMatch(const char *text, const char *p)
 */
 int
 #ifdef ANSI_CONTROLS_EXTENSION
-ppr_wildmat
+gu_wildmat
 #else
 wildmat
 #endif

@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 4 November 2003.
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "libppr_font.h"
@@ -72,7 +73,7 @@ int encoding_to_font(const char encoding[], const char fontfamily[], const char 
 			int len = strlen(fontinfo->line);
 			while(--len >= 0 && isspace(fontinfo->line[len]))
 				fontinfo->line[len] = '\0';
-			if(len == 0)
+			if(len < 0)
 				continue;
 			}
 

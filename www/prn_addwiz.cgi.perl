@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 October 2003.
+# Last modified 5 November 2003.
 #
 
 #
@@ -560,7 +560,6 @@ $addprn_wizard_table = [
 
 				# PPD file, if any, selected on a previous pass through this form.
 				my $ppd = cgi_data_move('ppd', undef);
-				my $ppd_description = "";
 
 				print "<p><span class=\"label\">", H_("Please select a appropriate PostScript Printer\n"
 						. "Description (PPD) file for this printer:"), "</span><br><br>\n";
@@ -571,20 +570,16 @@ $addprn_wizard_table = [
 				my $lastgroup = "";
 				foreach my $item (ppd_list())
 					{
-					my($item_manufacturer, $item_description, $item_file) = @{$item};
+					my($item_manufacturer, $item_modelname) = @{$item};
 					if($item_manufacturer ne $lastgroup)
 						{
 						print "</optgroup>\n" if($lastgroup ne "");
 						print "<optgroup label=", html_value($item_manufacturer), ">\n";
 						$lastgroup = $item_manufacturer;
 						}
-					print "<option value=", html_value($item_file);
-					print " selected" if($item_file eq $ppd);
-					print ">", html($item_description), "\n";
-					if($item_file eq $ppd)
-						{
-						$ppd_description = $item_description;
-						}
+					print "<option value=", html_value($item_modelname);
+					print " selected" if($item_modelname eq $ppd);
+					print ">", html($item_modelname), "\n";
 					}
 				print "</select>\n";
 				print "</p>\n";
@@ -594,7 +589,7 @@ $addprn_wizard_table = [
 				# Print a small table with a summary of what the PPD files says.
 				if($ppd ne "")
 					{
-					ppd_summary($ppd, $ppd_description);
+					ppd_summary($ppd);
 					}
 
 				print "</td></tr></table>\n";

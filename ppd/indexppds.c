@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -54,7 +54,7 @@
 const char myname[] = "lib/indexppds";
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "ppds";
-const char ppdindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
+const char ppdindex_db[] = PPD_INDEX;
 
 /*==========================================================================
 ** Extra routines for PPD parsing 

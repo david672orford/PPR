@@ -25,42 +25,52 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 November 2003.
+# Last modified 5 November 2003.
 #
 
-defined($VAR_SPOOL_PPR) || die;
+defined($PPD_INDEX) || die;
 defined($PPDDIR) || die;
+defined($PPAD_PATH) || die;
+
+require 'cgi_run.pl';
 
 #
-# This returns a list of two item lists.  The first item of each pair is a
-# PPD file name.  The second item is the model name.
+# This returns a list of two item lists.  Items are Manufacturer and ModelName.
 #
 sub ppd_list
 	{
+	my $cached = shift;
 	my @list = ();
 
-	if(open(P, "$VAR_SPOOL_PPR/ppdindex.db"))
+	# If we have been passed an old list, just decode it and return it.
+	if(defined $cached && $cached ne "")
+		{
+		@list = ppd_list_decode($cached);
+		}
+
+	# Next try the PPD index.
+	elsif(open(P, $PPD_INDEX))
 		{
 		while(my $line = <P>)
 			{
 			next if($line =~ /^#/);
 			chomp $line;
-			my($description, $filename, $manufacturer) = (split(/:/, $line))[0 .. 2];
+			my($description, $manufacturer) = (split(/:/, $line))[0, 2];
 			next if($manufacturer eq "PPR");		# these aren't for printers
-			$filename =~ s#^$PPDDIR/##;				# reduce clutter by removing PPR PPD Directory name
-			push(@list, [$manufacturer, $description, $filename]);
+			push(@list, [$manufacturer, $description]);
 			}
 		close(P) || die $!;
 		}
 
+	# Finally, just use a directory listing.
 	else
 		{
 		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
 		while(my $file = readdir(P))
 			{
 			next if($file =~ /^\./);
-			next if($file =~ /^PPR Generic/);
-			push(@list, ["", $file, $file]);
+			next if($file =~ /^PPR Generic/);		# these aren't for printers
+			push(@list, ["", $file]);
 			}
 		closedir(P) || die $!;
 		}
@@ -76,7 +86,7 @@ sub ppd_list
 sub ppd_summary
 	{
 	require "readppd.pl";
-	my($filename, $description) = @_;
+	my($ppdname) = @_;
 
 	my $line;
 	my $fileversion = "?";
@@ -86,7 +96,7 @@ sub ppd_summary
 	my $ttrasterizer = "None";
 	my $rip = "Internal";
 
-	ppd_open($filename);
+	ppd_open($ppdname);
 
 	while(defined($line = ppd_readline()))
 		{
@@ -138,8 +148,7 @@ sub ppd_summary
 		}
 
 	print "<table class=\"lines\" cellspacing=0>\n";
-	print "<tr><th>", H_("PPD Filename"), "</th><td>", html($filename), "</td></tr>\n";
-	print "<tr><th>", H_("Printer Description"), "</th><td>", html($description), "</td></tr>\n";
+	print "<tr><th>", H_("PPD File"), "</th><td>", html($ppdname), "</td></tr>\n";
 	print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
 	print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
 	print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
@@ -147,6 +156,32 @@ sub ppd_summary
 	print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
 	print "<tr><th>", H_("RIP"), "</th><td>", html($rip), "</td></tr>\n";
 	print "</table>\n";
+	}
+
+sub ppd_probe
+	{
+	my($interface, $address, $options) = @_;
+	opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppd", "query", $interface, $address, $options);
+	my @list = ();
+	while(<RESULTS>)
+		{
+		chomp;
+		push(@list, $_);
+		}
+	close(RESULTS); # || die $!;
+	return join("\n", @list);
+	}
+
+sub ppd_list_decode
+	{
+	my $ppd_detect_list = shift;
+	my @list = ();
+	foreach my $i (split(/\n/, $ppd_detect_list))
+		{
+		my($mfg, $mdl) = split(/:/,$i);
+		push(@list, [$mfg, $mdl]);
+		}
+	return @list;
 	}
 
 1;

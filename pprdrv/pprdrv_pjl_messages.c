@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 5 November 2003.
 */
 
 #include "before_system.h"
@@ -95,7 +95,7 @@ int translate_pjl_message(int code, const char display[], int *value1, int *valu
 
 		/* DODEBUG_LW_MESSAGES(("%s(): f1=\"%s\"", function, f1)); */
 
-		if(ppr_wildmat(code_str, f1))
+		if(gu_wildmat(code_str, f1))
 			{
 			DODEBUG_LW_MESSAGES(("%s(): match on %s!", function, f1));
 

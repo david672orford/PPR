@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2003.
+# Last modified 5 November 2003.
 #
 
 =head1 NAME
@@ -1057,7 +1057,7 @@ This command writes a Borne shell script to stdout.  This shell script consists
 of a series of B<ppad media put> commands which will re-create the current
 media database.
 
-=item B<ppad media import> I<filename>]
+=item B<ppad media import> [I<filename>]
 
 This command imports a file in the format of those created by B<ppad media
 export>.
@@ -1069,7 +1069,31 @@ export>.
 
 =over 4
 
-=item B<ppad ppd query I<interface> I<address> [I<option>]
+=item B<ppad ppd list> I<pattern>
+
+This command displays the names of the PPD files which match I<pattern>.  If I<pattern> 
+contains the wildcard characters '*', '?', or '[', then pattern is understood to be a shell-style wildcard.  Any PPD files 
+whose names match the pattern are listed.  If no wildcard characters are present in I<pattern>, then 
+PPD files whose names which contain the substring I<pattern> are listed.  For example:
+
+	$ ppad ppd list laserwriter
+	"Apple LaserWriter v23.0"
+	"Apple LaserWriter II NT v47.0"
+	"Apple LaserWriter Plus v38.0"
+	"Apple LaserWriter Plus v42.2"
+	"Apple Personal LaserWriter NTR v2010.129"
+	"Apple LaserWriter Select 360 v2013.112"
+	"Apple Personal LaserWriter 320 v2013.112"
+
+	$ ppad ppd list ""HP*4m*"
+	"HP LaserJet 4M DSC"
+	"HP LaserJet 4M Plus DSC"
+	"HP LaserJet 4/4M PS 600 dpi"
+	"HP LaserJet 4ML PostScript"
+	"HP LaserJet 4P/4MP PS 600 dpi"
+	"HP LaserJet 4V/4MV PostScript"
+
+=item B<ppad ppd query> I<interface> I<address> [I<option>]
 
 This command uses the interface program I<interface> to connect to the printer
 at address I<address>.  The printer is probed in an attempt to determine its make,

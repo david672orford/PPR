@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 5 November 2003.
 #
 
 require "paths.ph";
@@ -35,6 +35,43 @@ package readppd;
 @nest_stack = ();
 $current_handle = undef;
 
+#
+# This function uses the PPD file index (if it exists) to convert a PPD name
+# to an actual file name.
+#
+sub _ppd_find_file
+	{
+	my $ppdname = shift;
+
+	if($ppdname =~ m#^/#)
+		{
+		return $ppdname;
+		}
+
+	if(open(INDEX, $main::PPD_INDEX))
+		{
+		my $filename = undef;
+		while(<INDEX>)
+			{
+			my($f_modelname, $f_filename) = (split(/:/))[0,1];
+			if($f_modelname eq $ppdname)
+				{
+				$filename = $f_filename;
+				last;
+				}
+			}
+		close(INDEX) || die $!;
+		return $filename if(defined $filename);
+		}
+
+	return "$main::PPDDIR/$filename";
+	}
+
+#
+# Open a PPD file.  The actual filename must be specified.  This is
+# called by ppd_open() after it has resolved the PPD name to a filename
+# and by ppd_readline() to handle include files.
+#
 sub _ppd_open
 	{
 	my $filename = shift;
@@ -45,16 +82,10 @@ sub _ppd_open
 
 		if($filename !~ /^\//)					# if doesn't begin with slash,
 			{
-			if(scalar @nest_stack == 0)			# if not an include file
-				{
-				$filename = "$main::PPDDIR/$filename";
-				}
-			else
-				{
-				my $dirname = $nest_stack[0]->[1];
-				$dirname =~ s#/[^/]+$##;
-				$filename = "$dirname/$filename";
-				}
+			(scalar @nest_stack > 0) || die;
+			my $dirname = $nest_stack[0]->[1];
+			$dirname =~ s#/[^/]+$##;
+			$filename = "$dirname/$filename";
 			}
 
 		$current_handle = "PPDFILE" . scalar @nest_stack;
@@ -88,13 +119,21 @@ sub _ppd_open
 	unshift @nest_stack, [$current_handle, $filename];
 	}
 
+#
+# This is the public function for opening a PPD file.  The file may be selected
+# by ModelName or by a path starting with slash.
+#
 sub main::ppd_open
 	{
-	my $filename = shift;
+	my $ppdname = shift;
 	(scalar @nest_stack == 0) || die;
-	_ppd_open($filename);
+	_ppd_open(_ppd_find_file($ppdname));
 	}
 
+#
+# This function gets the next line from the PPD file.  Include files are handled
+# transparently.
+# 
 sub main::ppd_readline
 	{
 	my $line;
