@@ -84,30 +84,29 @@ EndOfErrorDoc
 #
 sub error_window
 {
-my $introduction = html(shift);
+my $introduction = shift;
 my @lines = @_;
 
 #
 # This is for browsers which support JavaScript.
 #
 {
-my $intro2 = $introduction;
-$intro2 =~ s/'/\\'/g;
+my $intro_encoded = html($introduction);
+$intro_encoded =~ s/'/\\'/g;
 my $height = 150 + (25 * (scalar @lines));
-
 
 print <<"EndOfError1";
 <script>
 var w = window.open('', '_blank', 'width=600,height=$height');
 if(!w)
 	{
-	alert(${\javascript_string(join("\\n", @lines))});
+	alert(${\javascript_string(join("\\n", $introduction, "", @lines))});
 	}
 else
 	{
 	var di = w.document;
 	d.write('<html><head><title>Operation Failed<' + '/title><' + '/head><body>\\n');
-	d.write('<p>$intro2<br>\\n<pre>\\n');
+	d.write('<p>$intro_encoded<br>\\n<pre>\\n');
 EndOfError1
 
 foreach my $i (@lines)
@@ -133,7 +132,7 @@ EndOfError2
 {
 print <<"EndOfError3";
 <noscript>
-<p>$introduction<br>
+<p>${\html($introduction)}<br>
 <pre>
 EndOfError3
 
