@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 #
-# mouse:~ppr/src/init_and_cron/ppr-clean.perl
+# mouse:~ppr/src/cron/ppr-clean.perl
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,12 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 3 August 2003.
 #
 
 #
 # This program is run daily from Cron in order to remove temporary files which
-# the PPR programs have left lying around.	Of course, it would be better to 
+# the PPR programs have left lying around.  Of course, it would be better to 
 # eliminate this behaviour, but this program is actually a help toward that
 # end since it reports on infractions.
 #
@@ -179,7 +179,7 @@ if($opt_all_removable)
 	sweepdir("$VAR_SPOOL_PPR/run", undef, 0.0);
 
 	# Remove all of the indexes.
-	system("$HOMEDIR/bin/ppr-index --remove");
+	system("$HOMEDIR/bin/ppr-index --delete");
 
 	# Remove all of the converted PPD files.
 	#system("$HOMEDIR/bin/ppr2samba --remove");

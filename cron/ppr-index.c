@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 3 August 2003.
 */
 
 #include "before_system.h"
@@ -67,6 +67,8 @@ static void help_usage(FILE *outfile)
 	fputc('\n', outfile);
 
 	fputs(_("Valid switches:\n"), outfile);
+
+	fputs(_(	"\t--delete\n"), outfile);
 
 	fputs(_(	"\t--version\n"
 				"\t--help\n"), outfile);

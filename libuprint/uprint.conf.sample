@@ -1,6 +1,6 @@
 #
 # uprint.conf.sample
-# Last modified 19 February 2003. 
+# Last modified 3 August 2003. 
 #
 # This is the primary configuration file for PPR's UPRINT system.  The 
 # most important function of this file is to describe other print spoolers
@@ -43,7 +43,7 @@
 #==========================================================================
 # Debian GNU/Linux and Mandrake Linux use something called alternatives.
 # We are still working out how to deal with it, but this section is 
-# the first step.
+# the first step.  It doesn't do anything yet.
 #==========================================================================
 [alternatives]
   lp = /usr/bin/lp-lpd
@@ -53,7 +53,6 @@
   lpq = /usr/bin/lpq-lpd
   lprm = /usr/bin/lprm-lpd
   lpc = /usr/bin/lpc-lpd
-
 
 #==========================================================================
 # Information about the real lp System V print spooler programs (as opposed
@@ -103,7 +102,7 @@
   flavor = bsd
 
 #==========================================================================
-# Information about CUPS.
+# Information about CUPS.  This doesn't do anything yet.
 #==========================================================================
 [CUPS]
 

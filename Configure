@@ -91,7 +91,12 @@ cat - <<EndOfHelp
 	--without-tdb
 	--with-gettext
 	--without-gettext
-	--help )
+	--help
+
+Environment variables heeded:
+
+PATH		used to search for programs such as perl
+RPM_OPT_FLAGS	processor specific compiler options
 
 EndOfHelp
 }
@@ -771,21 +776,27 @@ if [ "$ATALKTYPE" = "" ]
 #
 # See if we can find uncompress or gunzip
 #
-GUNZIP=`findprog_prog_path gunzip $PATH`
 if [ -z "$GUNZIP" ]
     then
-    UNCOMPRESS=`findprog_prog_path uncompress`
-    else
-    UNCOMPRESS=""
+    GUNZIP=`findprog_prog_path gunzip $PATH`
+    if [ -z "$GUNZIP" ]
+	then
+	UNCOMPRESS=`findprog_prog_path uncompress`
+	else
+	UNCOMPRESS=""
+	fi
     fi
 
 #
 # Find the Perl interpreter.
 #
-PERL=`findprog_prog_path perl $PATH`
 if [ -z "$PERL" ]
     then
-    PERL="/usr/bin/perl"
+    PERL=`findprog_prog_path perl $PATH`
+    if [ -z "$PERL" ]
+	then
+	PERL="/usr/bin/perl"
+	fi
     fi
 
 echo
@@ -853,8 +864,8 @@ if [ $NATIVE_CC = "no" ]
 if [ -n "$RPM_OPT_FLAGS" ]
   then
   echo "Compiler flags from \$RPM_OPT_FLAGS override those selected above."
-  echo "Our choice: $GCC_CFLAGS"
-  echo "Replaced with: $RPM_OPT_FLAGS"
+  echo "  Our choice: $GCC_CFLAGS"
+  echo "  Replaced with: $RPM_OPT_FLAGS"
   GCC_CFLAGS="$RPM_OPT_FLAGS"
   echo
   fi

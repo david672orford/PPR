@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 3 August 2003.
 #
 
 #
@@ -63,7 +63,7 @@ while [ "$1" != "" ]
 
 		# This may fail during RPM build.
 		echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
-		chown $USER_PPR "$RPM_BUILD_ROOT$1" \
+		chown $USER_PPR "$RPM_BUILD_ROOT$1" 2>/dev/null \
 			&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1" 2>/dev/null
 
 		echo "  chmod 644 \"$1\""

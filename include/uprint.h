@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 3 August 2003.
 */
 
 /* Maximum lengths of control file fields. */
@@ -188,6 +188,7 @@ const char *uprint_default_destinations_lp(void);
 const char *uprint_path_lpr(void);
 const char *uprint_path_lpq(void);
 const char *uprint_path_lprm(void);
+const char *uprint_path_lpc(void);
 const char *uprint_path_lp(void);
 const char *uprint_path_lpstat(void);
 const char *uprint_path_cancel(void);

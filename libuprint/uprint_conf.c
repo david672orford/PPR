@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_conf.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2002.
+** Last modified 3 August 2003.
 */
 
 #include "before_system.h"
@@ -47,7 +47,8 @@ struct UPRINT_CONF conf;
 
 /* Parser states: */
 enum STATE { STATE_INIT, STATE_WELL_KNOWN, STATE_SIDELINED,
-		STATE_REAL_LP, STATE_REAL_LPR, STATE_PPR, STATE_DEFAULT_DESTINATIONS };
+		STATE_REAL_LP, STATE_REAL_LPR, STATE_PPR, STATE_DEFAULT_DESTINATIONS,
+		STATE_CUPS, STATE_ALTERNATIVES };
 
 /*
 ** I don't remember why uprint has its own strdup() function.
@@ -87,6 +88,7 @@ static void validate_path_set(const char *section, struct PATH_SET *p)
 	validate_variable(section, "lpr", p->lpr);
 	validate_variable(section, "lpq", p->lpq);
 	validate_variable(section, "lprm", p->lprm);
+	validate_variable(section, "lpc", p->lp);
 	validate_variable(section, "lp", p->lp);
 	validate_variable(section, "lpstat", p->lpstat);
 	validate_variable(section, "cancel", p->cancel);
@@ -117,12 +119,14 @@ void uprint_read_conf(void)
 	conf.well_known.lpr = 
 		conf.well_known.lpq =
 		conf.well_known.lprm =
+		conf.well_known.lpc =
 		conf.well_known.lp =
 		conf.well_known.lpstat =
 		conf.well_known.cancel =
 		conf.sidelined.lpr =
 		conf.sidelined.lpq =
 		conf.sidelined.lprm =
+		conf.sidelined.lpc =
 		conf.sidelined.lp =
 		conf.sidelined.lpstat =
 		conf.sidelined.cancel = (const char *)NULL;
@@ -186,6 +190,16 @@ void uprint_read_conf(void)
 				state = STATE_DEFAULT_DESTINATIONS;
 				continue;
 				}
+			else if(lmatch(line, "[cups]"))
+				{
+				state = STATE_CUPS;
+				continue;
+				}
+			else if(lmatch(line, "[alternatives]"))
+				{
+				state = STATE_ALTERNATIVES;
+				continue;
+				}
 			else				/* unrecognized will be caught below */
 				{
 				uprint_error_callback("Warning: \"%s\" line %d contains unrecognized section %s", UPRINTCONF, linenum, line);
@@ -230,6 +244,8 @@ void uprint_read_conf(void)
 					path_set->lpq = uprint_strdup(value);
 				else if(strcmp(name, "lprm") == 0)
 					path_set->lprm = uprint_strdup(value);
+				else if(strcmp(name, "lpc") == 0)
+					path_set->lpc = uprint_strdup(value);
 				else if(strcmp(name, "lp") == 0)
 					path_set->lp = uprint_strdup(value);
 				else if(strcmp(name, "lpstat") == 0)
@@ -369,6 +385,12 @@ const char *uprint_path_lprm(void)
 	{
 	uprint_read_conf();
 	return conf.lpr.sidelined ? conf.sidelined.lprm : conf.well_known.lprm;
+	}
+
+const char *uprint_path_lpc(void)
+	{
+	uprint_read_conf();
+	return conf.lpr.sidelined ? conf.sidelined.lpc : conf.well_known.lpc;
 	}
 
 const char *uprint_path_lp(void)

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 July 2003.
+# Last modified 3 August 2003.
 #
 
 #
@@ -79,7 +79,7 @@ if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 		then
 		if [ -f $MYDIR/../root.sh ]
 			then
-			echo "Writing link installation command to $MYDIR/../root.sh."
+			echo "    Writing link installation command to $MYDIR/../root.sh."
 			echo "rm -f \"$RPM_BUILD_ROOT$target\"; ln -s \"$source\" \"$RPM_BUILD_ROOT$target\"" >>$MYDIR/../root.sh
 			else
 			echo "============================================================================="

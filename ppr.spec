@@ -78,12 +78,10 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 #
 # Note: Configure will take the CFLAGS from $RPM_OPT_FLAGS in preference
 # to what it would have picked.
-#
-# Also note that we set the path so that Configure is less likely to pick
-# things from /usr/local/bin.
 #============================================================================
 %build
-PATH=/usr/bin:/bin:$PATH ./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --without-tdb
+PERL=/usr/bin/perl GUNZIP=/usr/bin/gunzip \
+	./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --without-tdb
 make
 
 #============================================================================
@@ -128,8 +126,8 @@ rm -rf $RPM_BUILD_ROOT
 
 # Create the PPR users and groups.
 /usr/sbin/groupadd ppr
-/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System -g ppr -G lp ppr
-/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System -g ppr pprwww
+/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System" -g ppr -G lp ppr
+/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System" -g ppr pprwww
 
 #============================================================================
 # This is run after unpacking the cpio archive from the binary .rpm file.
@@ -139,10 +137,15 @@ rm -rf $RPM_BUILD_ROOT
 
 # Any files in the PPR directories which aren't owned by root must be
 # supposed to be owned by the user ppr.  Make it so.
-find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -group 0 | xargs chown ppr:ppr
+find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr \
+	-not -user 0 -not -group 0 -print0 \
+    | xargs -0 chown ppr:ppr
 
 # Initialize the binary media database.
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
+
+# Index fonts, PPD files, etc.
+/usr/lib/ppr/bin/ppr-index >/dev/null
 
 # Install crontab.
 /usr/bin/crontab -u ppr - <<END
@@ -151,8 +154,8 @@ find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -grou
 17 * * * * /usr/lib/ppr/lib/cron_hourly
 END
 
-# Index fonts, PPD files, etc.
-/usr/lib/ppr/bin/ppr-index >/dev/null
+# Install Inetd config.
+# missing
 
 # Setup init scripts to start PPR daemons at boot.
 /sbin/chkconfig --add ppr
@@ -162,11 +165,6 @@ END
 
 #============================================================================
 # This is run before uninstalling.
-#
-# We have to remove a lot of stuff that PPR creates as it runs or that
-# is created by fixup.  There is probably a better solution, but we will
-# do it this way until the have fully described the problem by means of
-# this code.
 #============================================================================
 %preun
 
@@ -182,29 +180,32 @@ END
 # Remove the UPRINT symbolic links and put the native spooler programs back.
 /usr/lib/ppr/bin/uprint-newconf --remove
 
-# Remove PPR from /etc/inetd.conf (if it exists).
+# If PPR has lines in /etc/inetd.conf, remove them and tell Inetd to reload
+# its configuration file.
 if [ -f /etc/inetd.conf ]
     then
-    if grep /usr/lib/ppr/bin/ /etc/inetd.conf >/dev/null
+    if grep /usr/lib/ppr/lib/ /etc/inetd.conf >/dev/null
 	then
 	rm -f /etc/inetd.conf~
 	mv /etc/inetd.conf /etc/inetd.conf~
-	grep -v '/usr/lib/ppr/bin/' /etc/inetd.conf~ >/etc/inetd.conf
+	grep -v '/usr/lib/ppr/lib/' /etc/inetd.conf~ >/etc/inetd.conf
+	killall -HUP inetd 2>/dev/null
 	fi
     fi
 
-# Remove almost everything PPR ever generated.
+# Tell Xinetd to reload its configuration files.
+if [ -d /etc/xinetd.d ]
+    then
+    killall -HUP xinetd 2>/dev/null
+    fi
+
+# Remove almost everything PPR ever generated.  This includes the indexes.
 /usr/lib/ppr/bin/ppr-clean --all-removable
 
 #============================================================================
 # This is run after uninstalling.
 #============================================================================
 %postun
-
-# Let Inetd pick up the new configuration.  We don't know if Inetd or Xinetd
-# is being used, so we use the shotgun approach.
-killall -HUP inetd
-killall -HUP xinetd
 
 # Remove the PPR users and groups.
 /usr/sbin/userdel ppr

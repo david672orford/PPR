@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 3 August 2003.
 #
 
 #=============================================================================
@@ -95,6 +95,11 @@ for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	done 
 
+echo "%dir \"$HOMEDIR\"">>$fileslist
+echo "%dir \"$SHAREDIR\"">>$fileslist
+echo "%dir \"$CONFDIR\"">>$fileslist
+echo "%dir \"$VAR_SPOOL_PPR\"">>$fileslist
+
 # We have to be more careful with this one since it is probably the 
 # system-wide temporary directory and we don't want to mess up its
 # permissions.e
@@ -104,13 +109,8 @@ if [ ! -d $RPM_BUILD_ROOT$TEMPDIR ]
 	chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
 	chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
+	echo "%dir \"$TEMPDIR\"">>$fileslist
 	fi
-
-echo "%dir \"$HOMEDIR\"">>$fileslist
-echo "%dir \"$SHAREDIR\"">>$fileslist
-echo "%dir \"$CONFDIR\"">>$fileslist
-echo "%dir \"$VAR_SPOOL_PPR\"">>$fileslist
-echo "%dir \"$TEMPDIR\"">>$fileslist
 
 # It is necessary to create empty configuration
 # directories.

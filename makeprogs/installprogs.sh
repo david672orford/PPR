@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 3 August 2003.
 #
 
 #
@@ -104,7 +104,7 @@ while [ "$1" != "" ]
 		then
 		if [ -f $MYDIR/../root.sh ]
 			then
-			echo "Writing program permissions commands to $MYDIR/../root.sh."
+			echo "    Writing program permissions commands to $MYDIR/../root.sh."
 			echo "chown $USER \"$RPM_BUILD_ROOT$dest\" && chgrp $GROUP \"$RPM_BUILD_ROOT$dest\" && chmod $MODE \"$RPM_BUILD_ROOT$dest\" || exit $?" \
 				>>$MYDIR/../root.sh
 			else

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 3 August 2003.
 #
 
 include ../Makefile.conf
@@ -56,8 +56,8 @@ ppr_infile.$(OBJ): ppr_infile.c
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  711 $(HOMEDIR)/lib tbcp2bin$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin ppr$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib tbcp2bin$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

@@ -8645,6 +8645,11 @@ Bug Fixes
 * z_install_begin/, makeprogs/, z_install_end/: fixed sundry build problems
   which broke RPM building.
 
+* libuprint/uprint-newconf.c,uprint_conf.c,uprint_private.h,uprint_conf.h,
+  include/uprint.h: added code to ignore speculative lines in
+  uprint.conf.sample.  Added notes to uprint.conf.sample which explain that
+  the lines don't do anything.
+
 * interfaces/smb.sh: added "-z 600000" to the smbclient command line.  This
   changes the timeout used when waiting for the SMB server to respond.  That
   is 600,000 milliseconds (10 minutes).  The default is only 20 seconds
