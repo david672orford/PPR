@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2004.
+** Last modified 6 May 2004.
 */
 
 /*
@@ -107,7 +107,7 @@ static void write_logline(const char category[], const char message[])
 void debug(const char string[], ... )
 	{
 	va_list va;
-	char temp[100];
+	char temp[256];
 	va_start(va,string);
 	vsnprintf(temp, sizeof(temp), string, va);
 	write_logline("DEBUG", temp);
@@ -296,12 +296,18 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	const char function[] = "connexion_callback";
 	char *cptr;
 	void *queue_config;
+	struct USER user = {NULL, NULL};
 
 	debug("connexion to %s (%s) from %d:%d", this_adv->PPRname, this_adv->PAPname, net, node);
 	
 	/* Load more queue configuration information so we can answer queries. */
 	if(!(queue_config = queueinfo_new_load_config(this_adv->queue_type, this_adv->PPRname)))
 		gu_Throw("%s(): can't information about queue \"%s\"", function, this_adv->PPRname);
+
+	/* If so configured, see if there is a CAP AUFS session
+	 * from the same node and if so, accept its authenticated user.
+	 */
+	login_aufs(net, node, &user);
 
 	while(TRUE)									/* will loop until we break out */
 		{
@@ -318,21 +324,48 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 		/* If this is a query, */
 		if(strncmp(line, "%!PS-Adobe-", 11) == 0 && strncmp(cptr, "Query", 5) == 0)
 			{
-			DODEBUG_LOOP(("start of query: %s", line));
+			if(query_trace > 0)
+				debug("start of query: %s", line);
 
 			/* Note that query may be for login. */
 			answer_query(sesfd, queue_config);
 
-			DODEBUG_LOOP(("query processing complete"));
+			if(query_trace > 0)
+				debug("query processing complete");
 			}
+
 		/* Not a query, it must be a print job. */
 		else
 			{
-			DODEBUG_LOOP(("start of print job: \"%s\"", line));
+			if(query_trace > 0)
+				debug("start of print job: \"%s\"", line);
 
-			printjob(sesfd, this_adv, queue_config, net, node, LOGFILE);
+			/* If the user logged in using RBI (a feature of Apple's driver
+			 * LaserWriter 8.6 and later), then retrieve the username.
+			 */
+			if(!user.username)
+				login_rbi(&user);
 
-			DODEBUG_LOOP(("print job processing complete"));
+			/* If the above didn't produce a username and one is 
+			 * required (because there is a charge for printing
+			 * on this printer (even 0.00 currency units), then
+			 * reject the job.
+			 */
+			if(!user.username && queueinfo_chargeExists(queue_config))
+				{
+				/*at_reply(sesfd, "%%[ Error: Login required ]%%\r");*/
+				at_reply(sesfd,
+					"%%[ Error: SecurityError: SecurityViolation: Unknown user, incorrect password or log on is disabled ]%%\r"
+					);
+				postscript_stdin_flushfile(sesfd);
+				exit(5);
+				}
+
+			/* Launch ppr and feed it the job from the PAP socket. */
+			printjob(sesfd, this_adv, queue_config, net, node, &user, LOGFILE);
+
+			if(query_trace > 0)
+				debug("print job processing complete");
 			}
 		}
 

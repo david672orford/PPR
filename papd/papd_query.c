@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 10 May 2004.
 */
 
 /*
@@ -59,7 +59,7 @@
 ** 1 -- show queries, default replies, and actual replies
 ** 2 -- show queries, default replies, actual replies, and PostScript code
 */
-static int query_trace = 0;						/* debug level */
+int query_trace = 0;						/* debug level */
 
 /*
 ** This determines where we look to find things requested by resource queries.
@@ -93,10 +93,10 @@ void sigusr1_handler(int sig)
 ** A version of reply() which can be instructed print debugging
 ** information in the log file.
 */
-static void REPLY(int sesfd, char *ptr)
+void REPLY(int sesfd, const char *ptr)
 	{
 	if(query_trace)
-		debug("REPLY <-- %.*s", strcspn(ptr,"\n"), ptr);
+		debug("REPLY <-- %.*s", strlen(ptr) - 1, ptr);
 	at_reply(sesfd, ptr);
 	} /* end of REPLY() */
 
@@ -119,13 +119,13 @@ static void eat_query(int sesfd)
 				ptr = line;
 				ptr += strcspn(ptr, " ");
 				ptr += strspn(ptr, " ");
-				debug("DEFAULT --> %s", ptr);
+				debug("QUERY DEFAULT --> %s", ptr);
 				}
 			break;
 			}
 
-		if(query_trace > 1)										/* If level two query tracing */
-			debug("PS --> %.*s",strcspn(line,"\n"),line);		/* is enabled, print PostScript code. */
+		if(query_trace > 1)
+			debug("QUERY PS --> %.*s", strcspn(line,"\n"), line);
 		}
 	} /* end of eat_query() */
 
@@ -141,7 +141,7 @@ static void return_default(int sesfd)
 
 	DODEBUG_QUERY(("Returning default answer"));
 
-	if((ptr = strchr(line,':')) == (char*)NULL)
+	if(!(ptr = strchr(line, ':')))
 		{
 		gu_Throw("%s(): return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)", function, line);
 		}
@@ -150,11 +150,11 @@ static void return_default(int sesfd)
 	while(*ptr==' ')					/* eat up spaces */
 		ptr++;
 
-	DODEBUG_QUERY(("default answer: %s",ptr));	  /* we now have answer */
+	DODEBUG_QUERY(("default answer: %s", ptr));	  /* we now have answer */
 
-	strcat(line,"\n");					/* put the return back on */
+	strcat(line, "\n");			/* put the return back on */
 
-	REPLY(sesfd,ptr);
+	REPLY(sesfd, ptr);
 	} /* end of return_default() */
 
 /*
@@ -574,6 +574,15 @@ static void generic_query(int sesfd, void *qc)
 			}
 		}
 
+	/* RBI Query */
+#if 0
+	else if(lmatch(tokens[1], "RBI"))
+		{
+		if(rbi_query(sesfd, qc) == 0)
+			return;
+		}
+#endif
+
 	/* unrecognized generic query */
 	return_default(sesfd);
 	} /* end of generic_query() */
@@ -591,11 +600,8 @@ void answer_query(int sesfd, void *qc)
 		if(query_trace >= 2)
 			debug("QUERY --> %s", line);
 
-		/*
-		** If it was not claimed as a command above
-		** and it is not a query line, skip it.
-		*/
-		if(strncmp(line, "%%?", 3))
+		/* If it is not the start of a query, ignore it. */
+		if(strncmp(line, "%%?", 3) != 0)
 			continue;
 
 		/* If query trace mode is on, put the line in the log. */
@@ -631,7 +637,8 @@ void answer_query(int sesfd, void *qc)
 
 		} /* end of while(not end of file) */
 
-	at_reply_eoj(sesfd);				/* respond with end of job */
+	/* respond with end of job */
+	at_reply_eoj(sesfd);
 	} /* end of answer_query() */
 
 /* end of file */

@@ -501,12 +501,14 @@ more information about RIPs and *pprRIP:.
   and one should use papd instead.
 
 
-1.53a2, 20 February 2004--16 March 2004.
+1.53a2, 20 February 2004--6 May 2004.
 
 * uprint/uprint-lpr.1.pod, uprint-lp.1.pod: added ENVIRONMENT
   VARIABLES sections, expanded BUGS sections.
 
 * refman/olprsrv.8.pod: removed
+
+* index.html: added link to Apple IP Print Server Security Protocol
 
 
 TODO

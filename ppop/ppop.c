@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 November 2003.
+** Last modified 6 May 2004.
 */
 
 /*
@@ -919,6 +919,7 @@ static int main_help(FILE *out)
 			N_("Media commands:"),
 				N_("ppop media {<destination>, all}"),
 				N_("ppop mount <printer> <bin> <medium>"),
+			NULL
 			};
 			
 	for(i = 0; help_lines[i]; i++)
@@ -926,11 +927,11 @@ static int main_help(FILE *out)
 		const char *p = help_lines[i];
 		const char *pxlate = gettext(p);
 
-		if(lmatch(p, "ppop "))
+		if(!lmatch(p, "ppop "))		/* if is a heading, */
 			{
 			if(i == 0)
 				fputc('\n', out);
-			fputs(pxlate, out);
+			fprintf(out, "%s\n", pxlate);
 			}
 		else
 			{

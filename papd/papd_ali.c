@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 6 May 2004.
 */
 
 /*============================================================================
@@ -70,7 +70,7 @@ static int write_unit;					/* max size client will allow us to send */
 /*
 ** Place a string in the reply buffer.
 */
-void at_reply(int sesfd, char *s)
+void at_reply(int sesfd, const char *s)
 	{
 	const char function[] = "at_reply";
 	DODEBUG_WRITEBUF(("%s(sesfd=%d, s=\"%s\")", function, sesfd, debug_string(s) ));
@@ -96,7 +96,7 @@ void at_reply(int sesfd, char *s)
 ** This uses the global variables ocount, blocked, out[], writebuf[],
 ** write_unit, and tindex.
 */
-static void do_xmit(int sesfd)
+static void do_xmit(int sesfd, gu_boolean eoj)
 	{
 	const char function[] = "do_xmit";
 	static int wcnt = 0;		/* initialized to zero to satisfy GNU-C */
@@ -126,7 +126,7 @@ static void do_xmit(int sesfd)
 		** Send the packet on its way.
 		*/
 		DODEBUG_WRITEBUF(("%s(): writing %d bytes", function, wcnt));
-		if(pap_write(sesfd, writebuf, wcnt, 0, PAP_NOWAIT ) == -1)
+		if(pap_write(sesfd, writebuf, wcnt, eoj && ocount==0 ? 1 : 0, PAP_NOWAIT) == -1)
 			{
 			if(pap_errno==PAPBLOCKED)
 				{
@@ -158,9 +158,10 @@ void at_reply_eoj(int sesfd)
 		{						/* has been sent. */
 		DODEBUG_WRITEBUF(("%s(): draining output buffer first", function));
 		sleep(1);
-		do_xmit(sesfd);
+		do_xmit(sesfd, TRUE);
 		}
 
+	#if 0
 	if(pap_write(sesfd, "", 0, 1, PAP_WAIT))
 		{
 		if(pap_errno == PAPHANGUP)
@@ -169,12 +170,24 @@ void at_reply_eoj(int sesfd)
 			}
 		else
 			{
-			gu_Throw("%s(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
-				function,
-				pap_errno, pap_strerror(pap_errno),
-				errno, gu_strerror(errno));
+			/* During authentication, LaserWriter 8.6 sends an EOJ but doesn't
+			 * wait for a response.  The result is that pap_write() fails
+			 * with pap_errno == 
+			 */
+			if(pap_errno == PAPDATARECD)
+				{
+				debug("LaserWriter 8.x bug");
+				}
+			else
+				{
+				gu_Throw("%s(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
+					function,
+					pap_errno, pap_strerror(pap_errno),
+					errno, gu_strerror(errno));
+				}
 			}
 		}
+	#endif
 	} /* end of at_reply_eoj() */
 
 /*
@@ -221,7 +234,7 @@ void at_reset_buffer(void)		/* this resets the end of file stuff */
 ** is at end of job, in which case it will return -1.
 **
 ** This routine relies on the fact David Chappell's ALI library for
-** Netatalk defines _NATALI_PAP.  Current versions of this library have
+** Netatalk defines _NATALI_PAP.  Current versions of his library have
 ** dificiencies which require work-arounds.
 */
 int at_getc(int sesfd)
@@ -264,12 +277,12 @@ int at_getc(int sesfd)
 				return -1;
 
 			/* If data was received, break out */
-			else if( look_result == PAP_DATA_RECVD )
+			else if(look_result == PAP_DATA_RECVD)
 				break;
 
 			/* Time to try to write */
 			else if( (ocount || blocked) && (!blocked || look_result == PAP_WRITE_ENABLED) )
-				do_xmit(sesfd);
+				do_xmit(sesfd, FALSE);
 
 			/* Wait for something else to happen */
 			#ifdef _NATALI_PAP			/* If using NATALI, e mustn't let select() */

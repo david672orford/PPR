@@ -50,6 +50,8 @@ OBJS1=papd.$(OBJ) \
 	papd_conf.$(OBJ) \
 	papd_query.$(OBJ) \
 	papd_printjob.$(OBJ) \
+	papd_login_aufs.$(OBJ) \
+	papd_login_rbi.$(OBJ) \
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT) \
 	../libpprdb.$(LIBEXT)

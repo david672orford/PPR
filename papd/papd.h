@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 6 May 2004.
 */
 
 #include "queueinfo.h"
@@ -51,6 +51,7 @@
 /* #define DEBUG_WRITEBUF 1 */			/* debug output buffering */
 #define DEBUG_REAPCHILD 1				/* debug child daemon termination */
 /* #define DEBUG_PPD 1 */				/* PPD file parsing */
+#define DEBUG_AUTHORIZE 1	
 #endif
 
 /*============ end of stuff user might wish to modify ==============*/
@@ -113,6 +114,12 @@
 #define DODEBUG_PPD(a)
 #endif
 
+#ifdef DEBUG_AUTHORIZE
+#define DODEBUG_AUTHORIZE(a) debug a
+#else
+#define DODEBUG_AUTHORIZE(a)
+#endif
+
 enum ADV_TYPE { ADV_LAST, ADV_ACTIVE, ADV_RELOADING, ADV_DELETED };
 
 /* Structure which describes each advertised name. */
@@ -127,6 +134,13 @@ struct ADV
 
 extern char line[];				/* input line */
 
+/* Structure which describes a user account. */
+struct USER
+	{
+	char *username;
+	char *fullname;
+	};
+
 /* routines in papd.c */
 void debug(const char string[], ...);
 char *debug_string(char *s);
@@ -139,21 +153,31 @@ void at_service(struct ADV *adv);
 int	 at_printjob_copy(int sesfd, int pipe);
 int	 at_getc(int sesfd);
 void at_reset_buffer(void);
-void at_reply(int sesfd, char *string);
+void at_reply(int sesfd, const char *string);
 void at_reply_eoj(int sesfd);
 void at_close_reply(int sesfd);
 int	 at_add_name(const char papname[]);
 void at_remove_name(const char papname[], int fd);
 
 /* routines in papd_printjob.c */
-void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const char log_file_name[]);
+void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const struct USER *user, const char log_file_name[]);
 void printjob_abort(void);
 
 /* routines in papd_query.c */
+extern int query_trace;
 void answer_query(int sesfd, void *qc);
 void sigusr1_handler(int sig);
+void REPLY(int sesfd, const char *string);
 
 /* routines in papd_conf.c */
 struct ADV *conf_load(struct ADV *old_config);
+
+/* routines in papd_login_aufs.c */
+void login_aufs(int net, int node, struct USER *user);
+
+/* routines in papd_login_rbi.c */
+int rbi_query(int sesfd, void *qc);
+void login_rbi(struct USER *user);
+gu_boolean login_rbi_active(void);
 
 /* end of file */

@@ -55,10 +55,9 @@ static pid_t ppr_pid = (pid_t)0;
 ** at_printjob_copy() to copy the printjob from the AppleTalk PAP socket
 ** to the pipe connected to ppr.
 ===========================================================================*/
-void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const char log_file_name[])
+void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const struct USER *user, const char log_file_name[])
 	{
 	const char function[] = "printjob";
-	const char *username = NULL;
 	int pipefds[2];				/* a set of file descriptors for pipe to ppr */
 	int wstat;					/* wait status */
 	int error;
@@ -88,7 +87,7 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 
 	/* Turn the network and node numbers into a string. */
 	snprintf(netnode, sizeof(netnode), "%d.%d", net, node);
-	snprintf(proxy_for, sizeof(proxy_for), "%s@%s.atalk", username ? username : "?", netnode);
+	snprintf(proxy_for, sizeof(proxy_for), "%s@%s.atalk", user ? user->username : "?", netnode);
 
 	/*
 	** Fork and exec a copy of ppr and accept the job.
@@ -131,10 +130,10 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 		** If we have a username from "%Login", use it,
 		** otherwise, tell ppr to read "%%For:" comments.
 		**/
-		if(username)
+		if(user)
 			{
 			argv[x++] = "-f";
-			argv[x++] = username;
+			argv[x++] = user->fullname;
 			}
 		else
 			{

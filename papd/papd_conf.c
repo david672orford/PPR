@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2004.
+** Last modified 6 May 2004.
 */
 
 #include "before_system.h"
@@ -91,7 +91,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	*/
 	while((line = gu_getline(line, &line_available, f)))
 		{
-		if((p = lmatchp(line, "papname:")) && gu_sscanf(line, "%A", &p) == 1)
+		if((p = lmatchp(line, "papname:")) && gu_sscanf(p, "%A", &p) == 1)
 			{
 			if(papname)
 				gu_free(papname);
@@ -251,7 +251,7 @@ struct ADV *conf_load(struct ADV *adv)
 	
 	DODEBUG_STARTUP(("%s(%p)", function, adv));
 	debug("| Queue            | PAP Name");
-	debug("+==================+============================================");
+	debug("+==================+========================================");
 
 	if(!adv)
 		{
@@ -336,7 +336,7 @@ struct ADV *conf_load(struct ADV *adv)
 		closedir(dirobj);
 		}
 
-	debug("+==================+============================================");
+	debug("+==================+========================================");
 
 	/*
 	** Unadvertise any entries which were set to ADV_RELOADING above and 

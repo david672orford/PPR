@@ -10,3 +10,7 @@ papd_printjob.$(OBJ): papd_printjob.c ../include/before_system.h ../include/gu.h
 
 papd_query.$(OBJ): papd_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papd.h
 
+papd_login_rbi.$(OBJ): papd_login_rbi.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h ../include/version.h
+
+papd_login_aufs.$(OBJ): papd_login_aufs.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h
+

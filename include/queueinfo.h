@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2004.
+** Last modified 6 May 2004.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_SEARCH, QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
@@ -55,6 +55,7 @@ const char *queueinfo_resolution(void *p);				/* "300dpi", "600x300dpi" */
 gu_boolean  queueinfo_colorDevice(void *p);
 const char *queueinfo_faxSupport(void *p);				/* "Base" */
 const char *queueinfo_ttRasterizer(void *p);			/* "None", "Type42", "Accept68K" */
+gu_boolean  queueinfo_chargeExists(void *p);
 int         queueinfo_fontCount(void *p);
 const char *queueinfo_font(void *p, int index);
 gu_boolean  queueinfo_fontExists(void *p, const char name[]);

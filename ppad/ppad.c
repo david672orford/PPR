@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 May 2004.
+** Last modified 6 May 2004.
 */
 
 /*
@@ -172,7 +172,7 @@ static void help_media(FILE *out)
 	for(i = 0; command_list[i]; i++)
 		{
 		const char *p = gettext(command_list[i]);
-		fprintf(out, "\t%s\n", p);
+		fprintf(out, "    %s\n", p);
 		}
 	} /* end of help_media() */
 

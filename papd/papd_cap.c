@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 6 May 2004.
 */
 
 /*============================================================================
@@ -156,7 +156,7 @@ static int write_unit;					/* max size client will allow us to send */
 /*
 ** Place a string in the reply buffer.
 */
-void at_reply(int sesfd, char *s)
+void at_reply(int sesfd, const char *s)
 	{
 	const char function[] = "at_reply";
 	DODEBUG_WRITEBUF(("%s(sesfd=%d, s=%s)", function, s));

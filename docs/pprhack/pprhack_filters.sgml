@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_filters.sgml
-Last Modified: 22 Octoberber 2003
+Last Modified: 9 May 2004
 Last Proofread: never
 -->
 
@@ -115,7 +115,8 @@ The filter will be invoked like this:
 <para>
 
 <screen>
-filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX noisy=no noisy=yes' myprn 'picture.jpg' /home/me
+filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX \
+	noisy=no noisy=yes' myprn 'picture.jpg' /home/me
 </screen>
 
 </para>

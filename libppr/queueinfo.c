@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2004.
+** Last modified 6 May 2004.
 */
 
 /*+ \file
@@ -101,6 +101,7 @@ struct QUEUE_INFO {
 	vector printers;
 	gu_boolean common_fonts_found;
 	vector fontlist;		/* fonts held in common */
+	gu_boolean chargeExists;
 	};
 
 /*
@@ -460,6 +461,10 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 					pip->codes = atoi(p);
 					continue;
 					}
+				if((p = lmatchp(line, "Charge:")))
+					{
+					qip->chargeExists = TRUE;
+					}
 				break;
 			case 'F':
 				if((p = lmatchp(line, "Feedback:")))
@@ -652,6 +657,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	qip->printers = new_vector(qip->subpool, struct PRINTER_INFO*);
 	qip->common_fonts_found = FALSE;
 	qip->fontlist = new_vector(qip->subpool, char*);
+	qip->chargeExists = FALSE;
 	return (void*)qip;
 	} /* end of queueinfo_new() */
 
@@ -1124,6 +1130,15 @@ const char *queueinfo_ttRasterizer(void *p)
 	return answer;
 	}
 
+/** does it cost money to print on any of the printers?
+
+*/
+gu_boolean queueinfo_chargeExists(void *p)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	return qip->chargeExists;
+	}
+  
 /*
 ** Create a font list which includes all fonts which the printers hold in common.
 */
