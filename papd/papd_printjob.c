@@ -59,7 +59,7 @@ static jmp_buf printjob_env;
 void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[])
     {
     const char function[] = "printjob";
-    const char *username = "?";
+    const char *username = NULL;
     int pipefds[2];		/* a set of file descriptors for pipe to ppr */
     int wstat;			/* wait status */
     int error;
@@ -213,6 +213,8 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	    fatal(1, "%s(): print job was truncated", function);
 	DODEBUG_PRINTJOB(("%s(): at_printjob_copy() returned", function));
 
+	/* We will no longer be wanting to kill ppr, so we can forget its PID. */
+	ppr_pid = (pid_t)0;
 	} /* end of if(setjump()) */
 
     /*--------------------------------------------------------------*/
@@ -220,9 +222,6 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
     /* longjmp() is called from within the SIGCHLD handler.         */
     /*--------------------------------------------------------------*/
     DODEBUG_PRINTJOB(("%s(): after setjmp() clause", function));
-
-    /* We will no longer be wanting to kill ppr, so we can forget its PID. */
-    ppr_pid = (pid_t)0;
 
     /* Close the pipe to ppr.  (This tells ppr it has the whole job.) */
     DODEBUG_PRINTJOB(("%s(): closing pipe to ppr", function));
@@ -287,8 +286,8 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	}
 
     /*
-    ** If there was an error detected above, flush the
-    ** message out of the buffer and flush the job.
+    ** If there was an error detected above, flush the message out of
+    ** the buffer and flush the job and terminate this service process.
     */
     if(error)
 	{
@@ -300,6 +299,10 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
     at_reply_eoj(sesfd);
     } /* end of printjob() */
 
+/*
+** This will be called from fatal(), possibly as the result of receiving
+** a signal telling us to shut down.
+*/
 void printjob_abort(void)
     {
     if(ppr_pid)				/* If we have launched ppr, */
@@ -307,11 +310,18 @@ void printjob_abort(void)
     ppr_pid = (pid_t)0;			/* We won't do it twice. */
     } /* end of printjob_abort() */
 
+/*
+** This will be the SIGCHILD handler when printjob() is called.
+*/
 void printjob_reapchild(int sig)
     {
-    longjmp(printjob_env, 1);
+    if(ppr_pid)
+	longjmp(printjob_env, 1);
     }
 
+/*
+** This will be the SIGPIPE handler when printjob() is called.
+*/
 void printjob_sigpipe(int sig)
     {
     fatal(1, "SIGPIPE received");

@@ -90,7 +90,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
     */
     while((line = gu_getline(line, &line_available, f)))
 	{
-	if((p = lmatchp(line, "papd papname:")))
+	if((p = lmatchp(line, "papd-papname:")))
 	    {
 	    if(papname)
 	    	gu_free(papname);
@@ -125,7 +125,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		}
 	    if(c == '@')
 		{
-		zone = p + 1;
+		zone = p;
 		}
 	    }	    
 

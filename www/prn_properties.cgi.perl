@@ -453,11 +453,11 @@ my $tabbed_table = [
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
 		print "<span class=\"section_label\">";
-		labeled_checkbox("addon pprpapd", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon pprpapd", 0));
+		labeled_checkbox("addon papd", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon papd", 0));
 		print "</span>\n";
 
 		print "<p>";
-		labeled_entry("addon pprpapd-papname", _("Share As:"), cgi_data_move("addon pprpapd-papname", ""), 32);
+		labeled_entry("addon papd-papname", _("Share As:"), cgi_data_move("addon papd-papname", ""), 32);
 		print "</p>\n";
 
 		print "</div>\n";
