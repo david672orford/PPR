@@ -745,7 +745,7 @@ int job_permission_check(struct Jobname *job)
     if(!privledged() && strcmp(job_username, su_user))
 	{
 	fprintf(errors,
-		_("You may not perform this operation because the job \"%s\"\n"
+		_("You may not manipulate the job \"%s\" because it\n"
 		"does not belong to the user \"%s\".\n"),
 			remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
 			su_user);
@@ -774,10 +774,31 @@ int job_permission_check(struct Jobname *job)
 	/* If --proxy-for wasn't used when the job was submitted or it doesn't match, */
 	if(job_proxy_for[0] == '\0' || !proxy_for_match(job_proxy_for, proxy_for))
 	    {
+	    char *job_at_host, *pattern_at_host;
+	    gu_boolean show_hostnames;
+
+	    /* If both proxy-for strings contain a hostname and they are the same or the
+	       hostname from our command line is a *, then suppress both of them
+	       since they aren't what is at issue and will only serve to confuse 
+	       the user. */
+    	    if((job_at_host = strchr(job_proxy_for, '@')) && (pattern_at_host = strchr(proxy_for, '@'))
+		&& (strcmp(pattern_at_host, "@*") == 0 || strcmp(pattern_at_host, job_at_host) == 0)
+    	    	)
+	    	{
+		show_hostnames = FALSE;
+	    	}
+	    else
+		{	    
+		show_hostnames = TRUE;
+		}
+
+	    /* Print the error message with or without hostnames. */
 	    fprintf(errors,
 	    	_("You may not manipulate the job \"%s\" because it belongs to\n"
-	    	  "\"%s\", while you are \"%s\".\n"),
-		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode), job_proxy_for, proxy_for);
+	    	  "\"%.*s\", while you are \"%.*s\".\n"),
+		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
+		(int)(show_hostnames ? strlen(job_proxy_for) : strcspn(job_proxy_for, "@")), job_proxy_for,
+		(int)(show_hostnames ? strlen(proxy_for) : strcspn(proxy_for, "@")), proxy_for);
 
 	    return -1;
 	    }
