@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 April 2003.
+** Last modified 6 May 2003.
 */
 
 /*
@@ -889,7 +889,7 @@ static void ppop_lpq_banner(void)
 	**							 1234567890123456789012345678901234567890
 	**	  1st	 chappell	8021 entropy.tex						   100801 bytes
 	*/
-	puts("Rank	 Owner		Job	 Files								   Total Size");
+	puts("Rank   Owner      Job  Files                                 Total Size");
 
 	/* Suppress "no entries": */
 	lpqlist_banner_called = TRUE;
