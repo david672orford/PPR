@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 10 June 2004.
 */
 
 /*
@@ -417,7 +417,8 @@ int int_main(int argc, char *argv[])
 		status_function,
 		(void*)&portfd,
 		options.status_interval,
-		NULL);
+		NULL
+		);
 
 	DODEBUG(("closing port"));
 	parallel_port_cleanup(portfd);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_interface.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 10 June 2004.
 */
 
 /*
@@ -306,7 +306,12 @@ static void start_interface(const char *BarBarPDL)
 
 	/* Make sure we can execute the interface program. */
 	if(access(fname_ptr, X_OK) == -1)
-		fatal(EXIT_PRNERR_NORETRY, _("Interface \"%s\" does not exist or is not executable, errno=%d (%s)."), printer.Interface, errno, gu_strerror(errno));
+		{
+		if(errno == EEXIST)
+			fatal(EXIT_PRNERR_NORETRY, _("Interface program \"%s\" does not exist."), printer.Interface);
+		else
+			fatal(EXIT_PRNERR_NORETRY, _("access(\"%s\", X_OK) failed, errno=%d (%s)."), fname_ptr, errno, gu_strerror(errno));
+		}
 
 	/* Open a pipe to the interface. */
 	if(pipe(_stdin) < 0)

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_copy_job.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 10 June 2004.
 */
 
 #include "before_system.h"
@@ -196,7 +196,7 @@ void int_copy_job(int portfd,
 		{
 		if(runaway_detect > 10)
 			{
-			alert(int_cmdline.printer, TRUE, "Driver for \"%s\" is defective.", int_cmdline.address);
+			alert(int_cmdline.printer, TRUE, "OS driver for \"%s\" does not work in non-blocking mode.", int_cmdline.address);
 			int_exit(EXIT_PRNERR_NORETRY);
 			}
 			

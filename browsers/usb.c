@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 May 2004.
+** Last modified 10 June 2004.
 */
 
 #include "before_system.h"
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
 	if(argc < 2)
 		{
-		printf("USB LP Ports\n");
+		printf("USB LP Devices\n");
 		return 0;
 		}
 
@@ -106,7 +106,8 @@ int main(int argc, char *argv[])
 
 		if(get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
 			{
-			printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
+			if(errno != ENODEV)
+				printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
 			continue;
 			}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 June 2004.
+** Last modified 10 June 2004.
 */
 
 /*
@@ -106,7 +106,6 @@ static void format_time(char *timestr, size_t timestr_len, time_t time_to_format
 		{
 		if(!format_time || strftime(timestr, timestr_len, format_time, tm_time) == 0)
 			{
-			printf("fallback from %s\n", format_time);
 			if(strftime(timestr, timestr_len, "%p", tm_time) == 0)
 				strftime(timestr, timestr_len, "%H:%M", tm_time);
 			else

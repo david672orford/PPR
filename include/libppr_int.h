@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 10 June 2004.
 */
 
 #ifndef LIBPPR_INT_H
@@ -88,7 +88,13 @@ int int_main(int argc, char *argv[]);
 void int_cmdline_set(int argc, char *argv[]);
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[]);
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);
-void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*snmp_function)(void *address), void *address, int snmp_status_interval, const char *init_string);
+void int_copy_job(int portfd,
+	int idle_status_interval,
+	void (*fatal_prn_err)(int err),
+	void (*send_eoj_funct)(int fd),
+	void (*snmp_function)(void *address), void *address, int snmp_status_interval,
+	const char *init_string
+	);
 void print_pap_status(const unsigned char *status);
 void int_exit(int exitvalue)
 	#ifdef __GNUC__

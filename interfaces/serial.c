@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 10 June 2004.
 */
 
 /*
@@ -616,7 +616,13 @@ int int_main(int argc, char *argv[])
 
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
-	int_copy_job(portfd, options.idle_status_interval, printer_error, NULL, NULL, NULL, 0, NULL);
+	int_copy_job(portfd, 
+		options.idle_status_interval, 
+		printer_error, 
+		NULL, NULL, NULL,
+		0,
+		NULL
+		);
 
 	DODEBUG(("closing port"));
 	close(portfd);

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 May 2004.
+** Last modified 10 June 2004.
 */
 
 /*
@@ -313,7 +313,8 @@ static const char *find_usb_printer(const char address[])
 
 		if(get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
 			{
-			printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
+			if(errno != ENODEV)
+				printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
 			continue;
 			}
 
@@ -412,10 +413,23 @@ int int_main(int argc, char *argv[])
 		int_cmdline.feedback,
 		int_cmdline.codes));
 
+	/* If the address begins with a slash, it must be a device node name.
+	 * Otherwise, pass it to the function which looks thru the USB devices
+	 * and finds the one mathing the specified particulars.
+	 */
+	if(int_cmdline.address[0] == '/')
+		port = int_cmdline.address;
+	else if(!(port = find_usb_printer(int_cmdline.address)))
+		{
+		alert(int_cmdline.printer, TRUE,
+			_("No printer matching address \"%s\" is presently connected."), int_cmdline.address);
+		exit(EXIT_PRNERR);
+		}
+	
 	/* If the --probe option was used, */
 	if(int_cmdline.probe)
 		{
-		int retval = usb_port_probe(int_cmdline.address);
+		int retval = usb_port_probe(port);
 		switch(retval)
 			{
 			case EXIT_PRINTED:
@@ -424,13 +438,13 @@ int int_main(int argc, char *argv[])
 				fprintf(stderr, _("USB port probing not implemented on this OS.\n"));
 				break;
 			case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
-				fprintf(stderr, _("Probing not implemented for port \"%s\".\n"), int_cmdline.address);
+				fprintf(stderr, _("Probing not implemented for port \"%s\".\n"), port);
 				break;
 			case EXIT_PRNERR_NO_SUCH_ADDRESS:
-				fprintf(stderr, _("Port \"%s\" not found.\n"), int_cmdline.address);
+				fprintf(stderr, _("Port \"%s\" not found.\n"), port);
 				break;
 			case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
-				fprintf(stderr, _("Access to port \"%s\" denied.\n"), int_cmdline.address);
+				fprintf(stderr, _("Access to port \"%s\" denied.\n"), port);
 				break;
 			case EXIT_PRNERR:
 			default:
@@ -461,36 +475,26 @@ int int_main(int argc, char *argv[])
 		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
-	if(int_cmdline.address[0] == '/')
-		port = int_cmdline.address;
-	else if(!(port = find_usb_printer(int_cmdline.address)))
-		{
-		alert(int_cmdline.printer, TRUE,
-			_("No printer matching address \"%s\" is presently connected."), int_cmdline.address);
-		exit(EXIT_PRNERR);
-		}
-	
 	gu_write_string(1, "%%[ PPR connecting ]%%\n");
 
 	/* Open the printer port and esablish default settings: */
 	portfd = connect_usb(port);
 
+	gu_write_string(1, "%%[ PPR connected ]%%\n");
+
 	/* Parse printer_options and set struct OPTIONS and
 	   printer port apropriately: */
 	parse_options(portfd, &options);
-
-	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
 	/* Read the job data from stdin and send it to portfd. */
 	/*kill(getpid(), SIGSTOP);*/
 	int_copy_job(portfd,
 		options.idle_status_interval,
-		printer_error,
+		printer_error,					/* error callback function */
 		NULL,
-		status_function,
-		(void*)&portfd,
-		options.status_interval,
-		options.init);
+		status_function, (void*)&portfd, options.status_interval,
+		options.init					/* init string */
+		);
 
 	close(portfd);
 
