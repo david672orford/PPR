@@ -256,7 +256,11 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   "ppr --title".
 
 
-1.44, 5 June 2001--5 June 2001
+1.44, 5 June 2001--18 June 2001
+
+* Changed "signiture" to "signature" to conform to standard English spelling
+  (rather than standard English pronunciation).
+
 
 
 
