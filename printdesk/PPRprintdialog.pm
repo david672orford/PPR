@@ -201,6 +201,7 @@ sub Show
     if($self->{pressed} eq "Print")
 	{
 	push(@args, "-d", $self->{dest});
+	push(@args, "-e", "responder");
 	push(@args, "-n", $self->{copies});
 	push(@args, "--feature", "Duplex=$self->{duplex}");
 

@@ -25,8 +25,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2003.
+# Last modified 28 March 2003.
 #
+
+=head1 NAME PrintDesk::PPRstateupdate
+
+=head1 SYNOPSIS
+
+$updater = new PrintDesk::PPRstateupdate(I<$window>, I<$queue>);
+$updater->register(I<event>, I<$object>, I<method>);
+$updater->unregister(B<event>);
+$updater->destroy();
+
+=head1 DESCRIPTION
+
+This class can be used to monitor the PPR queue and printers.
+
+=over 4
+
+=cut
 
 package PrintDesk::PPRstateupdate;
 
@@ -45,10 +62,105 @@ $instances_count = 0;
 $unique_id = 0;
 $tail_status_launched = 0;
 
+=item $updater = new PrintDesk::PPRstateupdate(I<$widget>, I<$queue>)
+
+This function is used to create a new object for monitoring PPR printer
+status.
+
+=cut
+sub new
+    {
+    shift;
+    my $self = {};
+    bless $self;
+    $self->{widget} = shift;
+    $self->{queue} = shift;
+
+    print STDERR "PrintDesk::PPRstateupdate::new(): widget=$self->{widget}, queue=\"$self->{queue}\" " if($debug);
+
+    # Create a unique id so that we can later locate this instance
+    # in the array @instances.  This is necessary because its possition
+    # will change if other objects of this type created before it are
+    # destroyed.
+    $self->{unique_id} = $unique_id;
+    $unique_id++;
+
+    # Push this instance onto a list which will be searched whenever
+    # an event is detected.
+    push(@instances, $self);
+
+    # Start tail_status if it is not already started.
+    if(! $tail_status_launched)
+	{
+	open(UPDATES, "$PrintDesk::TAIL_STATUS_PATH |") || die;
+	fcntl(UPDATES, &F_SETFL, &O_NONBLOCK);
+	$self->{widget}->fileevent(UPDATES, 'readable', \&handler);
+	$tail_status_launched = 1;
+	}
+
+    # Keep track of how many we have.
+    $instances_count++;
+
+    print STDERR "\$instances_count = $instances_count\n" if($debug);
+
+    return $self;
+    }
+
+=item $updater->destroy()
+
+Destroy the object.  All of its event handlers are unregistered.
+
+=cut
+sub destroy
+    {
+    my $self = shift;
+    print STDERR "PrintDesk::PPRstateupdate::destroy(): " if($debug);
+
+    my $x;
+    print STDERR "\tSearching for this instance (unique_id = $self->{unique_id}) ... " if($debug);
+    for($x=0; $x < $instances_count; $x++)
+    	{
+	if($instances[$x]->{unique_id} == $self->{unique_id})
+	    {
+	    print STDERR "match at instance $x\n" if($debug);
+	    splice(@instances, $x, 1);
+	    last;
+	    }
+    	}
+    print STDERR "no match !!!\n" if($debug && $x >= $instances_count);
+
+    $instances_count--;
+    print STDERR "\$instances_count = $instances_count\n" if($debug);
+    }
+
+=item $updater->register(I<$event>, I<$object>, I<$method>)
+
+Register a hander for a specific type of event.  Method I<$method> will be
+called in object I<$object> whenever the event occurs.  The parameters
+passed to the callback function depend on the event type.
+
+=cut
+sub register
+    {
+    my($self, $event, $object, $method) = @_;
+    print STDERR "PPRstateupdate::register(\$self=$self, \$event=$event, \$object=$object, \$method=$method)\n" if($debug);
+    $self->{$event} = [$object, $method];
+    }
+
+=pod
+
+The valid event types are as follows:
+
+=over 4
+
+=cut
+
+#
 # Internal function
 #
 # This function is called whenever data is received over the pipe
 # from tail_status.
+#
 sub handler
     {
     my $instance;
@@ -62,11 +174,15 @@ sub handler
 	chomp;
 	print STDERR "> $_\n" if($debug);
 
-	#
-	# pprd messages:
-	#
+	#=====================
+	# pprd messages
+	#=====================
 
-	# New job
+=item queue
+
+New job
+
+=cut
 	if($_ =~ /^JOB ([^ ]+) ([0-9]+) ([0-9]+)/o)
 	    {
 	    my($jobname, $rank1, $rank2) = ($1, $2, $3);
@@ -87,7 +203,11 @@ sub handler
 	    next;
 	    }
 
-	# Job removed
+=item delete
+
+Job removed
+
+=cut
 	if($_ =~ /^DEL ([^ ]+)/)
 	    {
 	    my $jobname = $1;
@@ -104,7 +224,11 @@ sub handler
 	    next;
 	    }
 
-	# Job status changed
+=item newstatus
+
+Job status changed
+
+=cut
 	if($_ =~ /^JST ([^ ]+) (.*)/)
 	    {
 	    my ($jobname, $status) = ($1, $2);
@@ -144,7 +268,12 @@ sub handler
 		}
 	    }
 
-	# Rush a job.  (Move it to the head of the queue.)
+# Rush a job.  (Move it to the head of the queue.)
+=item move
+
+Change a job's position in the queue
+
+=cut
 	if($_ =~ /^RSH ([^-]+)-([^ ]+)/)
 	    {
 	    my($dest, $id) = ($1, $2);
@@ -162,7 +291,11 @@ sub handler
 		}
 	    }
 
-	# Printer status change
+=item pstatus
+
+Printer status change
+
+=cut
 	if($_ =~ /^PST (\S+) (.+)/)
 	    {
 	    my($printer, $status, $retry, $countdown) = ($1, $2, 0, 0);
@@ -193,12 +326,16 @@ sub handler
 
 	# add more pprd messages here
 
-	#
-	# pprdrv messages:
-	#
+	#=====================
+	# pprdrv messages
+	#=====================
 
-	# Start of page transmission
-	# PGSTA myprn 5
+# PGSTA myprn 5
+=item ppages
+
+Start of page transmission
+
+=cut
 	if($_ =~ /^PGSTA (\S+) (\d+)/)
 	    {
 	    foreach $instance (@instances)
@@ -213,8 +350,12 @@ sub handler
 		}
 	    }
 
-	# Page hit output tray
-	# PGFIN myprn 3
+# PGFIN myprn 3
+=item pfpages
+
+Page hit output tray
+
+=cut
 	elsif($_ =~ /^PGFIN (\S+) (\d+)/)
 	    {
 	    foreach $instance (@instances)
@@ -229,8 +370,12 @@ sub handler
 		}
 	    }
 
-	# total bytes sent
-	# BYTES myprn 10020 25040
+# BYTES myprn 10020 25040
+=item pbytes
+
+Update on total bytes sent
+
+=cut
 	elsif($_ =~ /^BYTES (\S+) (\d+) (\d+)/)
 	    {
 	    foreach $instance (@instances)
@@ -245,13 +390,37 @@ sub handler
 		}
 	    }
 
-	# Printer status message
-	# STATUS myprn off line
+# STATUS myprn off line
+=item pmessage
+
+Printer status message
+
+=cut
 	elsif($_ =~ /^STATUS (\S+) (.*)/)
 	    {
 	    foreach $instance (@instances)
 		{
 		if(defined($finfo=$instance->{pmessage}))
+		    {
+		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+			{
+			&{$finfo->[1]}($finfo->[0], $1, $2);
+			}
+		    }
+		}
+	    }
+
+# EXIT myprn EXIT_PRINTED
+=item exit
+
+Printer status message
+
+=cut
+	elsif($_ =~ /^PEXIT (\S+) (.*)/)
+	    {
+	    foreach $instance (@instances)
+		{
+		if(defined($finfo=$instance->{pexit}))
 		    {
 		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
 			{
@@ -267,86 +436,13 @@ sub handler
 
     } # end of handler()
 
-#
-# This function is used to create a new object for monitoring PPR printer
-# status.  The member function register()
-#
-sub new
-    {
-    shift;
-    my $self = {};
-    bless $self;
-    $self->{widget} = shift;
-    $self->{queue} = shift;
+=back
 
-    print STDERR "PrintDesk::PPRstateupdate::new(): widget=$self->{widget}, queue=\"$self->{queue}\" " if($debug);
+=item $updater->unregister(I<$event>)
 
-    # Create a unique id so that we can later locate this instance
-    # in the array @instances.  This is necessary because its possition
-    # will change if other objects of this type created before it are
-    # destroyed.
-    $self->{unique_id} = $unique_id;
-    $unique_id++;
+Remove an event handler.
 
-    # Push this instance onto a list which will be searched whenever
-    # an event is detected.
-    push(@instances, $self);
-
-    # Start tail_status if it is not already started.
-    if(! $tail_status_launched)
-	{
-	open(UPDATES, "$PrintDesk::TAIL_STATUS_PATH |") || die;
-	$self->{widget}->fileevent(UPDATES, 'readable', \&handler);
-	fcntl(UPDATES, &F_SETFL, &O_NONBLOCK);
-	$tail_status_launched = 1;
-	}
-
-    # Keep track of how many we have.
-    $instances_count++;
-
-    print STDERR "\$instances_count = $instances_count\n" if($debug);
-
-    return $self;
-    }
-
-#
-# Destroy the object.  All of its event handlers are unregistered.
-#
-sub destroy
-    {
-    my $self = shift;
-    print STDERR "PrintDesk::PPRstateupdate::destroy(): " if($debug);
-
-    my $x;
-    print STDERR "\tSearching for this instance (unique_id = $self->{unique_id}) ... " if($debug);
-    for($x=0; $x < $instances_count; $x++)
-    	{
-	if($instances[$x]->{unique_id} == $self->{unique_id})
-	    {
-	    print STDERR "match at instance $x\n" if($debug);
-	    splice(@instances, $x, 1);
-	    last;
-	    }
-    	}
-    print STDERR "no match !!!\n" if($debug && $x >= $instances_count);
-
-    $instances_count--;
-    print STDERR "\$instances_count = $instances_count\n" if($debug);
-    }
-
-#
-# Register a hander for a specific type of event.
-#
-sub register
-    {
-    my($self, $event, $object, $method) = @_;
-    print STDERR "PPRstateupdate::register(\$self=$self, \$event=$event, \$object=$object, \$method=$method)\n" if($debug);
-    $self->{$event} = [$object, $method];
-    }
-
-#
-# Remove an event handler.
-#
+=cut
 sub unregister
     {
     my($self, $event) = @_;
@@ -354,27 +450,14 @@ sub unregister
     undef($self->{$event});
     }
 
-1;
+=back
 
-__END__
-=head1 NAME PrintDesk::PPRstateupdate
+=HEAD1 BUGS
 
-=head1 SYNOPSIS
-
-$updater = new PrintDesk::PPRstateupdate($window, $queue);
-$updater->register("add", $object, $method);
-$updater->register("delete", $object, $method);
-$updater->register("newstatus", $object, $method);
-$updater->register("rename", $object, $method);
-$updater->register("move", $object, $method);
-$updater->register("pstatus", $object, $method);
-$updater->register("pmessage", $object, $method);
-$updater->register("pbytes", $object, $method);
-$updater->register("pfpages", $object, $method);
-$updater->destroy();
-
-=head1 DESCRIPTION
-
-This class can be used to monitor the PPR queue and printers.
+When the first instance of this class in instantiated, a copy of tail_status
+is launched.  However, it is not shut down when the last instance is
+destroyed.
 
 =cut
+
+1;

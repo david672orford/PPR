@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_commentary.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 28 March 2003.
 */
 
 #include "before_system.h"
@@ -421,6 +421,13 @@ void commentary_exit_hook(int rval, const char explain[])
     if(explain)
 	cooked = explain;
 
+    /* This is for ppr-panel. */
+    {
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "PEXIT %s %s\n", printer.Name, raw);
+    state_update_pprdrv_puts(buffer);
+    }
+    
     /*
     ** Feed the whole thing to the commentary function.
     ** Then, wait for the commentators to exit.

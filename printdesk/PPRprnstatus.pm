@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 March 2003.
+# Last modified 28 March 2003.
 #
 
 package PrintDesk::PPRprnstatus;
@@ -117,11 +117,17 @@ sub LabeledVariable
     my($parent, $description, $text, $width) = @_;
 
     my $frame = $parent->Frame();
-    my $label1 = $frame->Label(-text, $description);
-    my $label2 = $frame->Label(-relief, 'groove', -borderwidth, 2,
-	-textvariable, $text, -width, $width, -anchor, 'w');
-    $label1->pack(-side, 'left');
-    $label2->pack(-side, 'left');
+    $frame->Label(
+	-text, $description
+	)->pack(-side => 'left');
+    my $label2 = $frame->Label(
+	-relief => 'groove',
+	-borderwidth => 2,
+	-textvariable => $text,
+	-width => $width,
+	-anchor => 'w',
+	-background => 'white'
+	)->pack(-side => 'left');
 
     return $frame;
     }
@@ -177,16 +183,22 @@ sub Show
   $inner_window->Frame(-height, 5)->pack(-side, 'top');
 
   # A scrolling text box for printer alerts:
-  my $alerts_frame = $inner_window->Frame();
-  $alerts_frame->pack(-side, 'top', -anchor, 'w');
-  $alerts_frame->Label(-text, "Alert Messages:")->pack(-side, 'top', -anchor, 'w');
-  my $alerts_text_frame = $alerts_frame->Frame();
-  $alerts_text_frame->pack(-fill, 'both', -expand, 1);
-  my $scrollbar = $alerts_text_frame->Scrollbar();
-  $scrollbar->pack(-side, 'right', -fill, 'y');
-  my $alerts_text = $alerts_text_frame->ROText(-width, 75, -height, 7, -setgrid, 1,
-	-yscrollcommand, [$scrollbar, 'set']);
-  $alerts_text->pack(-side, 'left', -fill, 'both', -expand, 1);
+  my $alerts_frame = $inner_window->Frame(
+	)->pack(-side => 'top', -anchor => 'w');
+  $alerts_frame->Label(
+	-text => "Alert Messages:"
+	)->pack(-side => 'top', -anchor => 'w');
+  my $alerts_text_frame = $alerts_frame->Frame(
+	)->pack(-fill => 'both', -expand => 1);
+  my $scrollbar = $alerts_text_frame->Scrollbar(
+	)->pack(-side => 'right', -fill => 'y');
+  my $alerts_text = $alerts_text_frame->ROText(
+	-width => 75,
+	-height => 7,
+	-setgrid => 1,
+	-yscrollcommand => [$scrollbar, 'set'],
+	-background => 'white'
+	)->pack(-side => 'left', -fill => 'both', -expand => 1);
   $scrollbar->configure(-command, [$alerts_text, 'yview']);
   $self->{alerts_text} = $alerts_text;
 
@@ -215,6 +227,7 @@ sub Show
   $updater->register('pbytes', $self, \&pbytes);
   $updater->register('ppages', $self, \&ppages);
   $updater->register('pfpages', $self, \&pfpages);
+  $updater->register('pexit', $self, \&pexit);
   }
 
 #
@@ -230,33 +243,6 @@ sub do_tick
 	{
 	$self->{tick}->cancel();
 	undef $self->{tick};
-	}
-    }
-
-#
-# Callback function for printer status:
-#
-sub pstatus
-    {
-    my($self, $printer, $status, $retry, $countdown) = @_;
-    ($self->{status}, $self->{retry}, $self->{countdown}) = ($status, $retry, $countdown);
-    if($countdown > 0 && ! defined($self->{tick}))
-	{
-	$self->{tick} = $self->{window}->repeat(1000, [\&do_tick, $self]);
-	}
-
-    # Every status change also means that these are no longer valid.
-    if($status !~ /^printing/)
-	{
-	$self->{percent_sent} = "";
-	$self->{pages_started} = "";
-	$self->{pages_completed} = "";
-	}
-
-    # If the state is fault, update the alert window.
-    if($status =~ /^fault/)
-	{
-	$self->update_alerts();
 	}
     }
 
@@ -277,7 +263,39 @@ sub update_alerts
     }
 
 #
-# Callback function for the printer message:
+# Callback function for pprdrv exit
+#
+sub pexit
+    {
+    my $self = shift;
+    $self->{percent_sent} = "";
+    $self->{pages_started} = "";
+    $self->{pages_completed} = "";
+    }
+
+#
+# Callback function for printer status
+#
+sub pstatus
+    {
+    my($self, $printer, $status, $retry, $countdown) = @_;
+    ($self->{status}, $self->{retry}, $self->{countdown}) = ($status, $retry, $countdown);
+
+    # If there is a retry countdown, set a timer to tick it off.
+    if($countdown > 0 && ! defined($self->{tick}))
+	{
+	$self->{tick} = $self->{window}->repeat(1000, [\&do_tick, $self]);
+	}
+
+    # If the state is fault, update the alert window.
+    if($status =~ /^fault/)
+	{
+	$self->update_alerts();
+	}
+    }
+
+#
+# Callback function for the printer message
 #
 sub pmessage
     {
@@ -286,7 +304,7 @@ sub pmessage
     }
 
 #
-# Callback routines for the various progress fields:
+# Callback routines for the various progress fields
 #
 sub pbytes
     {

@@ -83,16 +83,37 @@ sub do_queue
     my $menuframe = $w->Frame(
 	)->pack(-side => 'top', -fill => 'x');
 
-    # Create the File menu.
-    my $menu_file = $menuframe->Menubutton(
-	-text => 'File',
+    # Create the Queue menu.
+    {
+    my $menu_queue = $menuframe->Menubutton(
+	-text => 'Queue',
 	-tearoff => 0
 	)->pack(-side => 'left');
-    $menu_file->command(
-	-label => 'Exit',
+    $menu_queue->command(
+	-label => 'Close',
 	-command => sub { $w->destroy() });
+    }
+
+    # Create the Printer menu
+    {
+    my $menu_printer = $menuframe->Menubutton(
+	-text => 'Printer',
+	-tearoff => 0
+	)->pack(-side => 'left');
+    my $ppr_control = new PPR::PPOP($queuename);
+    foreach my $printer ($ppr_control->list_members())
+	{
+	$menu_printer->command(-label => "Status of $printer",
+    		-command => sub{do_prnstatus($w, $printer)});
+	}
+    $ppr_control->destroy();
+    }
 
     # Create queue listing frame, divider and button frame.
+    $w->Frame(
+	-height => 1,
+	-bg => 'black'
+	)->pack(-side => 'top', -fill => 'x');
     my $queue_frame = $w->Frame(
 	)->pack(-side, 'top', -fill, 'both', -expand, 1);
     $w->Frame(
@@ -186,8 +207,7 @@ sub do_menu
     else
     	{
 	my $ppr_control = new PPR::PPOP($queuename);
-	my $printer;
-	foreach $printer ($ppr_control->list_members())
+	foreach my $printer ($ppr_control->list_members())
 	    {
 	    $menu->command(-label => "Status of $printer",
 	    	-command => sub{do_prnstatus($parent, $printer)});

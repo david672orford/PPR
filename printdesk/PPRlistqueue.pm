@@ -28,6 +28,23 @@
 # Last modified 26 March 2003.
 #
 
+=head1 NAME
+
+PrintDesk::PPRlistqueue
+
+=head1 SYNOPSIS
+
+$list = new PrintDesk::PPRlistqueue(I<$window>, I<$queue>);
+$list->Show();
+@selected_list = $list->getSelection();
+$list->destroy();
+
+=head1 DESCRIPTION
+
+This widget displays a PPR queue listing.
+
+=cut
+
 package PrintDesk::PPRlistqueue;
 
 use PPR::PPOP;
@@ -36,6 +53,11 @@ use PrintDesk::PPRstateupdate;
 require 5.003;
 use PrintDesk;
 
+=item new PrintDesk::PPRlistqueue(I<$window>, I<$queue>)
+
+Create a new queue widget.
+
+=cut
 sub new
   {
   my $self = {};
@@ -65,6 +87,20 @@ sub new
 
   return $self;
   }
+
+=item $list->destroy()
+
+Destroy this listqueue widget
+
+=cut
+sub destroy
+    {
+    my $self = shift;
+    #print "PrintDesk::PPRlistqueue::destroy()\n";
+    $self->{jobcontrol}->destroy();
+    $self->{updater}->destroy();
+    #$self->{window}->destroy();
+    }
 
 #
 # Return the job control object for use by the job control
@@ -138,9 +174,13 @@ sub Show
 	)->pack(-side, 'top', -anchor, 'nw', -fill, 'x');
 
     # Create the listbox which displays the rows for this column.
-    $field->{listbox} = $temp->Listbox(-width, $field->{-width}, -bd, 0, -setgrid, 1,
-	-exportselection, 0)->
-	pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
+    $field->{listbox} = $temp->Listbox(
+	-width => $field->{-width},
+	-bd => 0,
+	-setgrid => 1,
+	-exportselection => 0,
+	-background => 'white'
+	)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
 
     # Renounce all of the default bindings and
     # bind button on to the selection routine.
@@ -440,34 +480,4 @@ sub rename
 	}
     }
 
-#
-# Destroy this listqueue object:
-#
-sub destroy
-    {
-    my $self = shift;
-    #print "PrintDesk::PPRlistqueue::destroy()\n";
-    $self->{jobcontrol}->destroy();
-    $self->{updater}->destroy();
-    #$self->{window}->destroy();
-    }
-
 1;
-
-__END__
-=head1 NAME
-PrintDesk::PPRlistqueue
-
-=head1 SYNOPSIS
-
-$list = new PrintDesk::PPRlistqueue($window, $queue);
-$list->Show();
-@selected_list = $list->getSelection();
-$list->destroy();
-
-=head1 DESCRIPTION
-
-This widget displays a PPR queue listing.
-
-=cut
-

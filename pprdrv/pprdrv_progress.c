@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 March 2003.
+** Last modified 28 March 2003.
 */
 
 /*
@@ -45,6 +45,9 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
