@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2003.
+# Last modified 4 August 2003.
 #
 
 use lib "?";
@@ -79,6 +79,18 @@ sub humanify_printer_status
 		}
 
 	return $status;
+	}
+
+#
+# print a number of bytes, using kilobytes and megabytes for sufficiently 
+# large values.
+#
+sub bytes
+	{
+	my $count = shift;
+	return $count if($count < 8192);
+	return sprintf("%.1fK", $count / 1024) if($count < 1_048_576);
+	return sprintf("%.1fM", $count / 1_048_576);
 	}
 
 # Swap the real and effective user ids.
@@ -319,8 +331,8 @@ print <<"Form10";
 		</tr></table>
 
 		<table><tr>
-		<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_total&nbsp;</td>
-		<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_sent&nbsp;</td>
+		<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_total)}&nbsp;</td>
+		<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_sent)}&nbsp;</td>
 		<th>${\H_NB_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
 		</tr></table>
 
