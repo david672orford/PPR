@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 6 April 2001.
+# Last modified 30 October 2001.
 #
 
 use lib "?";
@@ -127,7 +127,7 @@ QUOTE10
 
 # List the printers with a checkbox next to each.
 eval {
-print "<p>", H_("To limit the commentary to certain printers, check one or "
+print "<p>", H_("To limit the commentary to certain printers, check one or\n"
 		. "more or the boxes below."), "\n";
 
 print <<"QUOTE30";

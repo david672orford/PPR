@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 3 October 2001.
+# Last modified 18 October 2001.
 #
 
 # Filled in by installscript:

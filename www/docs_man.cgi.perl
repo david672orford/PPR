@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2001.
+# Last modified 30 October 2001.
 #
 
 #
@@ -177,7 +177,7 @@ eval {
 if($@)
   {
   my $message = $@;
-  print "<p>", H_("Error: "), html($message), "</p>\n";
+  print "<p>", H_("Error:"), " ", html($message), "</p>\n";
   }
 
 print <<"EndOfTail";

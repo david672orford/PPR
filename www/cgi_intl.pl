@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 3 January 2001.
+# Last modified 18 October 2001.
 #
 
 require "paths.ph";
@@ -48,7 +48,7 @@ sub cgi_intl_init
 	    my @langs_available = grep(!/\./, readdir(LDIR));
 	    closedir(LDIR) || die $!;
 	    push(@langs_available, $UNTRANSLATED_LANGUAGE);
-	    #print STDERR "Available languages: ", join(", ", @langs_available), "\n";
+	    print STDERR "Available languages: ", join(", ", @langs_available), "\n";
 
 	    # Create a list of the user's language preferences.  Longer language
 	    # ranges will be sorted to the end of the list in order to conform to
@@ -68,7 +68,7 @@ sub cgi_intl_init
 		$x++;
                 }
 	    @lang_q_list = sort(@lang_q_list);
-	    #print STDERR "  Sorted language-ranges: ", join(", ", @lang_q_list), "\n";
+	    print STDERR "  Sorted language-ranges: ", join(", ", @lang_q_list), "\n";
 
 	    # Apply the sorted rankings to the languages available.
 	    my %lang_q_hash = ();
@@ -79,14 +79,14 @@ sub cgi_intl_init
 		my($lang, $q, $tiebreaker) = split(/ /, $language_range);
 		if($lang eq "*")
 		    {
-		    #print STDERR "    Default language q set to $q.\n";
+		    print STDERR "    Default language q set to $q.\n";
 		    $default_q = $q;
 		    next;
 		    }
-		#print STDERR "    Looking for matches for language range \"$lang\".\n";
+		print STDERR "    Looking for matches for language range \"$lang\".\n";
 		foreach my $matching_lang (grep(/^$lang(-.*)?$/, @langs_available))
 		    {
-		    #print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n";
+		    print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n";
 		    $lang_q_hash{$matching_lang} = $q;
 		    $lang_tiebreaker{$matching_lang} = $tiebreaker;
 		    }
@@ -99,7 +99,7 @@ sub cgi_intl_init
 	    	{
 		if(!defined($lang_q_hash{$lang}))
 		    {
-		    #print STDERR "    Language $lang gets default q of $default_q.\n";
+		    print STDERR "    Language $lang gets default q of $default_q.\n";
 		    $lang_q_hash{$lang} = $default_q;
 		    $lang_tiebreaker{$lang} = 1000;
 		    }
@@ -112,14 +112,14 @@ sub cgi_intl_init
 	    foreach my $lang (@langs_available)
 	    	{
 		my $q = $lang_q_hash{$lang};
-		#print STDERR "  Language $lang ranks $q";
+		print STDERR "  Language $lang ranks $q";
 
 		# If it has the highest quality ranking found so far,
 		# then choose this language.  But, a later language may
 		# displace this one.
 		if($q > $highest_q)
 		    {
-		    #print STDERR ", best so far";
+		    print STDERR ", best so far";
 		    $selected_lang = $lang;
 		    $highest_q = $q;
 		    $lowest_tiebreaker = $lang_tiebreaker{$lang};
@@ -133,33 +133,33 @@ sub cgi_intl_init
 		    {
 		    if($lang_tiebreaker{$lang} < $lowest_tiebreaker)
 		    	{
-		    	#print STDERR ", tie broken favourably";
+		    	print STDERR ", tie broken favourably";
 			$selected_lang = $lang;
 			$highest_q = $q;
 			$lowest_tiebreaker = $lang_tiebreaker{$lang};
 			}
 		    else
 		    	{
-		    	#print STDERR ", tie broken unfavourably";
+		    	print STDERR ", tie broken unfavourably";
 		    	}
 		    }
 
 		# Languages with a quality less than zero are not acceptable.
 		elsif($q < 0.0)
 		    {
-		    #print STDERR ", not acceptable";
+		    print STDERR ", not acceptable";
 		    }
 
 		# This language was acceptable, but it has already lost out
 		# to one with a higher quality value.
 		else
 		    {
-		    #print STDERR ", also ran";
+		    print STDERR ", also ran";
 		    }
-		#print STDERR ".\n";
+		print STDERR ".\n";
 	    	}
 
-	    #print STDERR "Selected language: ", defined($selected_lang) ? $selected_lang : "<default>", "\n";
+	    print STDERR "Selected language: ", defined($selected_lang) ? $selected_lang : "<default>", "\n";
 	    if(defined($selected_lang) && $selected_lang ne $UNTRANSLATED_LANGUAGE)
 		{
 		# Put the selection into the normal environment variable where
@@ -295,4 +295,3 @@ sub isubmit
     }
 
 1;
-

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2000.
+# Last modified 30 October 2001.
 #
 
 #
@@ -93,7 +93,7 @@ my $error = $@;
 print "</pre>\n";
 if($error)
     {
-    print "<p>", H_("Error: "), html($error), "</p>\n";
+    print "<p>", H_("Error:"), " ", html($error), "</p>\n";
     }
 
 print <<"EndOfTail";

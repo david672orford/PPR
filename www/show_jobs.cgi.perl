@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 10 May 2001.
+# Last modified 30 October 2001.
 #
 
 use 5.005;
@@ -430,7 +430,7 @@ print "<div class=\"menubar\">\n";
 # Create the move select box.
 {
 print <<"QuoteMove10";
-<b>${\&H_("Job Actions: ")}</b>
+<b>${\&H_("Job Actions:")}</b>
 <select name="move_to"
 	onchange="document.forms[0].submit()"
 	onmouseover="page_lock()"

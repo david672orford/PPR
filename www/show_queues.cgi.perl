@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 2 August 2001.
+# Last modified 18 October 2001.
 #
 
 use 5.005;
@@ -267,12 +267,9 @@ my $control = new PPR::PPOP("all");
 #    { $function = "list_destinations_comments_addresses" }
 
 # Get a list of all queues with a description for each.
-print STDERR "xxxxxx\n";
-print STDERR "\$control = $control\n";
 foreach my $row ($control->list_destinations_comments_addresses())
     {
     my($name, $type, $accepting, $protected, $comment, $address) = @$row;
-print STDERR "\$name = \"$name\"\n";
     my $icon = '';
 
     if($type eq 'printer')

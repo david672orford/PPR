@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_addwiz.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 29 June 2000.
+# Last modified 30 October 2001.
 #
 
 use lib "?";
@@ -57,7 +57,7 @@ my $addgrp_wizard_table = [
 		if($data{name} eq '')
 		    { return _("You must enter a name for the group!") }
 		if(-f "$CONFDIR/groups/$data{name}")
-		    { return _("The group \"$data{name}\" already exists!") }
+		    { return sprintf(_("The group \"%s\" already exists!"), $data{name}) }
 		return undef;
 		},
 	'buttons' => [N_("_Cancel"), N_("_Next")]
