@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 28 March 2005.
 */
 
 /*
@@ -282,7 +282,7 @@ void jobpatchfile(void);
 gu_boolean patchfile_query_callback(const char message[]);
 
 /* pprdrv_commentary.c: */
-void commentary(int category, const char cooked[], const char raw1[], const char raw2[], int severity);
+void commentary(int category, const char cooked[], const char raw1[], const char duration[], int severity);
 void commentary_exit_hook(int rval, const char explain[]);
 void commentator_wait(void);
 

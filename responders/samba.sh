@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 28 March 2005.
 #
 
 #
@@ -57,10 +57,10 @@ while [ $# -gt 0 ]
 			responder_options="$value"
 			;;
 		subject )
-			short_message="$value"
+			long_message="$value"
 			;;
-		short_message )
-			short_message="$value"
+		long_message )
+			long_message="$value"
 			;;
 		esac
 	shift
@@ -86,17 +86,15 @@ for opt in $responder_options
 #==============================
 
 # Break up the address:
-NBNAME=`echo $responder_address | cut -d'-' -f1`
-IP=`echo $responder_address | cut -d'-' -f2`
+nbname=`echo $responder_address | cut -d'-' -f1`
+ip=`echo $responder_address | cut -d'-' -f2`
 
 # Invoke smbclient to do the real work:
-if [ -n "$IP" ]
+if [ -n "$ip" ]
 	then
-	echo "$short_message" \
-		| $SMBCLIENT -U ppr -M $NBNAME -I $IP >/dev/null
+	echo "$long_message" | $SMBCLIENT -U ppr -M $nbname -I $ip >/dev/null
 	else
-	echo "$short_message" \
-		| $SMBCLIENT -U ppr -M $NBNAME >/dev/null
+	echo "$long_message" | $SMBCLIENT -U ppr -M $nbname >/dev/null
 	fi
 
 exit 0

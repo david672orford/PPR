@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2005.
+# Last modified 28 March 2005.
 #
 
 #
@@ -50,14 +50,14 @@ while [ $# -gt 0 ]
 		responder_address )
 			responder_address="$value"
 			;;
-		short_message )
-			short_message="$value"
+		long_message )
+			long_message="$value"
 			;;
 	esac
 	shift
 	done
 
-echo $short_message >&2
+echo $long_message >&2
 
 #==============================
 # Parse the responder options
@@ -126,7 +126,7 @@ $sender -display "$responder_address" \
 	-title "Message for $for" \
 	-bg skyblue -fg black \
 	<<EndOfMessage
-$short_message
+$long_message
 EndOfMessage
 
 exit 0

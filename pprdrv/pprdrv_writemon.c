@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 28 March 2005.
 */
 
 #include "config.h"
@@ -254,10 +254,10 @@ void writemon_unstalled(const char operation[])
 	/* If we previously announced that it was stalled, */
 	if(stack[stackp].stall_time_minutes_announced > 0)
 		{
-		char num_str[10];
+		char temp_duration[10];
 		int severity;
 
-		snprintf(num_str, sizeof(num_str), "-%d.%03d", (int)stack[stackp].stall_time.tv_sec, (int)(stack[stackp].stall_time.tv_usec / 1000));
+		snprintf(temp_duration, sizeof(temp_duration), "%d", (int)stack[stackp].stall_time.tv_sec);
 		severity = compute_severity(stack[stackp].stall_time_minutes_announced);
 
 		/*
@@ -270,10 +270,10 @@ void writemon_unstalled(const char operation[])
 			case 2:
 			case 3:
 			case 4:
-				commentary(COM_STALL, "wasn't stalled", stack[stackp].remembered_operation, num_str, severity);
+				commentary(COM_STALL, "wasn't stalled", stack[stackp].remembered_operation, temp_duration, severity);
 				break;
 			default:
-				commentary(COM_STALL, "is no longer stalled", stack[stackp].remembered_operation, num_str, severity);
+				commentary(COM_STALL, "is no longer stalled", stack[stackp].remembered_operation, temp_duration, severity);
 				break;
 			}
 		}
@@ -305,12 +305,12 @@ static void writemon_stalled(const struct timeval *time_stalled)
 
 	if(minutes > stack[stackp].stall_time_minutes_announced)
 		{
-		char num_str[10];
+		char temp_duration[10];
 		char temp[40];
 		int severity;
 
 		/* Format the seconds and milliseconds stalled as an ASCIIZ string. */
-		snprintf(num_str, sizeof(num_str), "%d.%03d", (int)time_stalled->tv_sec, (int)time_stalled->tv_usec / 1000);
+		snprintf(temp_duration, sizeof(temp_duration), "-%d", (int)time_stalled->tv_sec);
 
 		/* Rank the severity of this problem on a scale from 1 to 10. */
 		severity = compute_severity(minutes);
@@ -320,15 +320,15 @@ static void writemon_stalled(const struct timeval *time_stalled)
 			{
 			case 1:
 			case 2:
-				commentary(COM_STALL, "may be stalled", stack[stackp].remembered_operation, num_str, severity);
+				commentary(COM_STALL, "may be stalled", stack[stackp].remembered_operation, temp_duration, severity);
 				break;
 			case 3:
 			case 4:
-				commentary(COM_STALL, "is probably stalled", stack[stackp].remembered_operation, num_str, severity);
+				commentary(COM_STALL, "is probably stalled", stack[stackp].remembered_operation, temp_duration, severity);
 				break;
 			default:
 				snprintf(temp, sizeof(temp), "has been stalled for %d minutes", minutes);
-				commentary(COM_STALL, temp, stack[stackp].remembered_operation, num_str, severity);
+				commentary(COM_STALL, temp, stack[stackp].remembered_operation, temp_duration, severity);
 				break;
 			}
 

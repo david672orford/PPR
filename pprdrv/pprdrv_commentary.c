@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 28 March 2005.
 */
 
 #include "config.h"
@@ -81,13 +81,13 @@
 ** This is the function which is called by other parts of pprdrv when
 ** there is something interesting to report.
 */
-void commentary(int category, const char cooked[], const char raw1[], const char raw2[], int severity)
+void commentary(int category, const char cooked[], const char raw1[], const char duration[], int severity)
 	{
 	FUNCTION4DEBUG("commentary")
 	static int commentary_seq_number = 0;
 
-	DODEBUG_COMMENTARY(("%s(category=%d, cooked=\"%s\", raw1=\"%s\", raw2=\"%s\", severity=%d)",
-		function, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity));
+	DODEBUG_COMMENTARY(("%s(category=%d, cooked=\"%s\", raw1=\"%s\", duration=\"%s\", severity=%d)",
+		function, category, cooked, raw1 ? raw1 : "", duration ? duration : "", severity));
 
 	commentary_seq_number++;
 
@@ -118,8 +118,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	*/
 	if(test_mode)
 		{
-		fprintf(stderr, "commentary: category=%d, cooked=\"%s\", raw1=\"%s\", raw2=\"%s\"\n",
-				category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "");
+		fprintf(stderr, "commentary: category=%d, cooked=\"%s\", raw1=\"%s\", duration=\"%s\"\n",
+				category, cooked, raw1 ? raw1 : "", duration ? duration : "");
 		return;
 		}
 
@@ -161,8 +161,9 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 					gu_name_str_value("printer", printer.Name),
 					gu_name_str_value("commentary_cooked", cooked),
 					gu_name_str_value("commentary_raw1", raw1),
-					gu_name_str_value("commentary_raw2", raw2),
-					gu_name_str_value("commentary_severity", severity),
+					gu_name_str_value("commentary_duration", duration),
+					gu_name_int_value("commentary_severity", severity),
+					gu_name_int_value("commentary_seq_number", commentary_seq_number),
 					(char*)NULL
 					);
 				error("exec(\"%s\", ...) failed, errno=%d (%s)", LIBDIR"/ppr-respond", errno, gu_strerror(errno));
@@ -178,7 +179,7 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	{
 	char buffer[256];
 	snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d\n",
-		printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity);
+		printer.Name, category, cooked, raw1 ? raw1 : "", duration ? duration : "", severity);
 	state_update_pprdrv_puts(buffer);
 	}
 

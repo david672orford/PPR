@@ -79,6 +79,7 @@ void qentryfile_clear(struct QEntryFile *job)
 	job->Filters = (const char *)NULL;			/* optional */
 	job->PJL = (const char *)NULL;				/* not read by us */
 
+	job->page_list.count = -1;
 	job->page_list.mask = NULL;
 	job->draft_notice = (char*)NULL;			/* optional */
 	job->question = NULL;

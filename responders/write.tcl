@@ -1,6 +1,6 @@
-#! @SHELL@
+#! @PPR_TCLSH@
 #
-# mouse:~ppr/src/responders/mail.sh
+# mouse:~ppr/src/responders/write.tcl
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,41 +26,49 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2005.
+# Last modified 28 March 2005.
 #
 
 #
-# This responder sends a message to the user by means of electronic mail.
-# When installed, this responder is linked to "errmail" as well.
+# This responder attempts to send the message with the write
+# program.	If that fails, it invokes the mail responder.
 #
 
-while [ $# -gt 0 ]
-	do
-	name=`echo $1 | cut -d= -f1`
-	value=`echo $1 | cut -d= -f2`
-	case $name in
-		for )
-			for="$value"
-			;;
-		responder_address )
-			responder_address="$value"
-			;;
-		subject )
-			short_message="$value"
-			;;
-		short_message )
-			short_message="$value"
-			;;
-		esac
-	shift
-	done
+puts "x: $argv"
+foreach option $argv {
+	regexp {^([^=]+)=(.*)$} $option junk name value
+	switch -exact -- $name {
+		for {
+			set for $value
+			}
+		responder_address {
+			set responder_address $value
+			}
+		subject {
+			set subject $value
+			}
+		short_message {
+			set short_message $value
+			}
+		long_message {
+			set long_message $value
+			}
+		}
+	}
 
-@SENDMAIL_PATH@ $responder_address <<END
-From: PPR Spooler <@USER_PPR@>
-To: $for <$address>
-Subject: $subject
+# Send the message with write.
+set command [open "| write $responder_address  >@stdout 2>@stderr" w]
+puts $command "To: $for"
+puts $command "Subject: $subject"
+puts $command ""
+puts $command $short_message
+puts $command "======================================================"
+puts $command $long_message
+set result [catch { close $command } error ]
 
-$short_message
-END
+# If that didn't work, try the mail responder.
+if {$result != 0} {
+	eval exec @RESPONDERDIR@/mail $argv >@stdout 2>@stderr
+	}
 
 exit 0

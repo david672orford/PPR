@@ -1,39 +1,68 @@
 /*
-** mouse.trincoll.edu:~ppr/src/libppr/charge.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** mouse:~ppr/src/libppr/charge.c
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 July 1998.
+** Last modified 28 March 2005.
 */
+
+/*! \file */
 
 #include "config.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 
 #if 0
 #define DEBUG 1
+#define debug printf
 #endif
 
-/*
-** Given the required information, this function will compute the cost
-** of printing the job.  This function is complicated, that is why it
-** is now a function.  It is called from pprdrv when printing the banner
-** page and when debiting the account and from pprd when invoking the
-** responder.
-*/
-void compute_charge(struct COMPUTED_CHARGE *charge,
-		int per_duplex_sheet, int per_simplex_sheet,
-		int vpages, int n_up_n, int vpages_per_sheet,
-		int sigsheets, int sigpart, int copies)
+/** compute charge for printing
+ *
+ * Given the required information, this function will compute the price to be
+ * charged for printing the job.  This computation is complicated and is 
+ * needed in more than one place, that is why it is now a function.  It is 
+ * called from pprdrv when printing the banner page and when debiting the 
+ * account and from ppr-respond when invoking the responder.
+ *
+ * The result is not a single number but rather a receipt outlining how the
+ * total was arrived out.  The receipt is stored in the struct 
+ * COMPUTED_CHARGE charge.
+ */
+void compute_charge(
+		struct COMPUTED_CHARGE *charge,		/** results stored here */
+		int per_duplex_sheet,				/** price in cents of double-sided sheet */
+		int per_simplex_sheet,				/** price in cents of single-sided sheet */
+		int vpages,							/** number of unique page descriptions printed */
+		int n_up_n,							/** number of virtual pages per side */
+		int vpages_per_sheet,				/** number of page descriptions per sheet */
+		int sigsheets,						/** sheets in pseudo-signature, 0 if signature mode is off */
+		int sigpart,						/** fronts, backs, or both */
+		int copies							/** number of copies of document, -1 if unknown */
+		)
 	{
 	#ifdef DEBUG
 	debug("compute_charge(charge=?, per_duplex_sheet=%d, per_simplex_sheet=%d, vpages=%d, n_up_n=%d, vpages_per_sheet=%d, sigsheets=%d, sigpart=%d, copies=%d",
@@ -42,12 +71,11 @@ void compute_charge(struct COMPUTED_CHARGE *charge,
 		sigsheets, sigpart, copies);
 	#endif
 
+	/* store prices so that we can say things like "X simplex sheets @ $0.10 per" */
 	charge->per_duplex = per_duplex_sheet;
 	charge->per_simplex = per_simplex_sheet;
 
-	/*
-	** If doing signiture printing,
-	*/
+	/* If doing signiture printing, */
 	if(sigsheets != 0)
 		{
 		int pages_per_signiture = n_up_n * 2 * sigsheets;
@@ -83,9 +111,7 @@ void compute_charge(struct COMPUTED_CHARGE *charge,
 			}
 		}
 
-	/*
-	** If not doing signiture printing,
-	*/
+	/* If not doing signiture printing, */
 	else
 		{
 		int sides = (vpages + n_up_n - 1) / n_up_n;

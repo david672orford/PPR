@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 28 March 2005.
 */
 
 #include "config.h"
@@ -481,15 +481,15 @@ static void dispatch_commentary(void)
 		if(snmp_bits[x].start && (snmp_bits[x].last_commentary == 0 || (time_now - snmp_bits[x].last_commentary) >= 300))
 			{
 			const char *description; int severity;
-			char temp[10];
+			char temp_duration[10];
 			translate_snmp_error(x, &description, &severity);
 			if(!snmp_bits[x].shadowed)
 				{
-				snprintf(temp, sizeof(temp), "%d", (int)((time_now - snmp_bits[x].start) / 60));
+				snprintf(temp_duration, sizeof(temp_duration), "%d", (int)(time_now - snmp_bits[x].start));
 				commentary(COM_PRINTER_ERROR,
 						description,
 						snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL,
-						temp,
+						temp_duration,
 						severity);
 				if(severity > greatest_severity)
 					greatest_severity = severity;

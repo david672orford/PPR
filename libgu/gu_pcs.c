@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_pcs.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 November 2003.
+** Last modified 28 March 2005.
 */
 
 /*! \file
@@ -428,7 +428,7 @@ void gu_pcs_append_sprintf(void **pcs, const char format[], ...)
 		}
 
 	gu_pcs_grow(pcs, p->length + sprintf_len);
-	printf("yy: %d\n", gu_vsnprintf(p->storage + p->length, sprintf_len + 1, format, va));
+	gu_vsnprintf(p->storage + p->length, sprintf_len + 1, format, va);
 	p->length += sprintf_len;
 
 	va_end(va);

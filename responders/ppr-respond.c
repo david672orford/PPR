@@ -25,24 +25,17 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 28 March 2005.
 */
 
 /*
 ** This program is called by ppr, pprd, and pprdrv when they want to send a
 ** message to a user or system administrator.
 **
-** For messages about jobs, this ** program receives the job id (or if there
-** isn't one yet, just the destination id), the responder code number, and an
-** additional parameter (the meaning of which depends on the code number).  If
-** there is a queue file, it is opened and information is read from it.  A well
-** formed message is generated and then the responder program is run to
-** transmit the message to the user.
-**
-** Note that the calling conventions of this program will change as PPR
-** changes.  One goal of this program is to hide those calling convention
-** changes by keeping the interface to the responder scripts as unchanging
-** as possible.
+** This program receives most of its input as command-line parameters in the
+** form name=value.  Most of them are passed on the the responder program
+** unmodified.  The principal task of this program is to create the additional
+** localized parameters subject=, short_message=, and long_message=.
 **
 ** Since the program does its job and then exits, it blithely allocates
 ** memory without freeing it.
@@ -79,154 +72,442 @@ struct RESPONSE_INFO
 	char *extra;				/* extra parameter supplementing response_code */
 	char *commentary_cooked;
 	char *commentary_raw1;
-	char *commentary_raw2;
+	int commentary_duration;
 	int commentary_severity;
+	int commentary_seq_number;
+	int pages;
+	int charge_per_duplex;
+	int charge_per_simplex;
+	struct COMPUTED_CHARGE charge;
+	char *reason;
 	} ;
 
 static char *build_subject(struct RESPONSE_INFO *rinfo)
 	{
 	void *message;
+	const char *title;
 
-	message = gu_pcs_new_cstr("short_message=");
+	message = gu_pcs_new_cstr("subject=");
 	
+	if(!(title = rinfo->qentry.Title))
+		title = _("untitled");
+
 	switch(rinfo->response_code)
 		{
 		case RESP_FINISHED:
 			gu_pcs_append_sprintf(&message,
-				_("%s printed on %s"),
-				rinfo->job, rinfo->printer);
+				_("%s (%s) printed on %s"),
+				rinfo->job, title, rinfo->printer);
 			break;
 
 		case RESP_ARRESTED:
 			gu_pcs_append_sprintf(&message,
-				_("%s arrested while printing on %s"),
-				rinfo->job, rinfo->printer);
+				_("%s (%s) arrested while printing on %s"),
+				rinfo->job, title, rinfo->printer);
 			break;
 
 		case RESP_CANCELED:
 			gu_pcs_append_sprintf(&message,
-				_("%s canceled"),
-				rinfo->job);
+				_("%s (%s) canceled"),
+				rinfo->job, title);
 			break;
 
 		case RESP_CANCELED_PRINTING:
 			gu_pcs_append_sprintf(&message,
-				_("%s canceled while printing on %s"),
-				rinfo->job, rinfo->printer);
+				_("%s (%s) canceled while printing on %s"),
+				rinfo->job, title, rinfo->printer);
 			break;
 
 		case RESP_CANCELED_BADDEST:
 			gu_pcs_append_sprintf(&message,
-				_("%s canceled, destination unknown"),
-				rinfo->job);
+				_("%s (%s) canceled, destination unknown"),
+				rinfo->job, title);
 			break;
 
 		case RESP_CANCELED_REJECTING:
 			gu_pcs_append_sprintf(&message,
-				_("%s canceled, %s not acceping requests"),
-				rinfo->job, rinfo->destination);
+				_("%s (%s) rejected: %s set to reject"),
+				rinfo->job, title, rinfo->destination);
 			break;
 
 		case RESP_STRANDED_PRINTER_INCAPABLE:
 			gu_pcs_append_sprintf(&message,
-				_("%s stranded because %s can't print it"),
-				rinfo->job, rinfo->printer);
+				_("%s (%s) stranded: %s can't print it"),
+				rinfo->job, title, rinfo->printer);
 			break;
 
 		case RESP_STRANDED_GROUP_INCAPABLE:
 			gu_pcs_append_sprintf(&message,
-				_("%s stranded because no member of %s can print it"),
-				rinfo->job, rinfo->destination);
+				_("%s (%s) stranded: no member of %s can print it"),
+				rinfo->job, title, rinfo->destination);
 			break;
 
 		case RESP_CANCELED_NOCHARGEACCT:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected because %s doesn't have a charge account"),
-				rinfo->job, rinfo->extra);
+				_("job for %s rejected: %s doesn't have a charge account"),
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_OVERDRAWN:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected because account is overdrawn"),
-				rinfo->job);
+				_("job for %s rejected: account %s overdrawn"),
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_NONCONFORMING:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected due to lack of page demarcation"),
-				rinfo->job);
+				_("job for %s rejected: no page demarcation"),
+				rinfo->destination);
 			break;
 
 		case RESP_NOFILTER:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected because no filter for %s"),
-				rinfo->job, rinfo->extra);
+				_("job for %s rejected: no filter for %s"),
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_FATAL:
 			gu_pcs_append_sprintf(&message,
 				_("job for %s rejected: %s"),
-				rinfo->job, rinfo->extra);
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_NOSPOOLER:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s because pprd not running"),
-				rinfo->job);
+				_("job for %s: pprd not running"),
+				rinfo->destination);
 			break;
 
 		case RESP_BADMEDIA:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected because mediam not available"),
-				rinfo->job);
+				_("job for %s rejected: unrecognized medium"),
+				rinfo->destination);
 			break;
 
 		case RESP_BADPJLLANG:
 			gu_pcs_append_sprintf(&message,
 				_("job for %s rejected: PDL %s not recognized"),
-				rinfo->job, rinfo->extra);
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_FATAL_SYNTAX:
 			gu_pcs_append_sprintf(&message,
 				_("job for %s rejected: %s"),
-				rinfo->job, rinfo->extra);
+				rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_NOPAGES:
 			gu_pcs_append_sprintf(&message,
 				_("job for %s rejected: can't select pages from this job"), 
+				rinfo->destination);
+			break;
+
+		case RESP_CANCELED_ACL:
+			gu_pcs_append_sprintf(&message,
+				_("job for %s rejected: ACL does not allow %s access"),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
+			gu_pcs_append_sprintf(&message,
+				_("error on %s: %s while printing %s (%s)"),
+				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
+			gu_pcs_append_sprintf(&message,
+				_("status of %s: %s while printing %s (%s)"),
+				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_STALL:
+			gu_pcs_append_sprintf(&message,
+				_("problem on %s: %s while printing %s (%s)\n"),
+				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_EXIT:
+			gu_pcs_append_sprintf(&message,
+				_("%s: %s while printing %s (%s)"),
+				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+			break;
+
+		default:
+			gu_pcs_append_sprintf(&message,
+				_("undefined response code %d while printing %s (%s)"),
+				rinfo->response_code, rinfo->job, title);
+			break;
+		}
+
+	return gu_pcs_free_keep_cstr(&message);
+	} /* build_subject() */
+
+static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
+	{
+	void *message;
+	const char *title;
+
+	message = gu_pcs_new_cstr(long_format ? "long_message=" : "short_message=");
+
+	if(!(title = rinfo->qentry.Title))
+		title = _("untitled");
+	
+	switch(rinfo->response_code)
+		{
+		case RESP_FINISHED:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) has been printed on the printer %s."),
+				rinfo->job, title, rinfo->printer);
+			if(long_format)
+				{
+				if(rinfo->pages >= 0)
+					{
+					gu_pcs_append_char(&message, ' ');
+					gu_pcs_append_sprintf(&message,
+						_("The job is %d page(s) long."),
+						rinfo->pages
+						);
+					}
+				if(rinfo->qentry.opts.copies > 1)
+					{
+					gu_pcs_append_char(&message, ' ');
+					gu_pcs_append_sprintf(&message,
+						_("%d copies were printed."),
+						rinfo->qentry.opts.copies
+						);
+					}
+				if(rinfo->charge_per_duplex > 0 || rinfo->charge_per_simplex > 0)
+					{
+					gu_pcs_append_char(&message, ' ');
+					gu_pcs_append_sprintf(&message,
+						_("The charge for printing this job is %s."),
+						money(rinfo->charge.total)
+						);
+					}
+				}
+			break;
+
+		case RESP_ARRESTED:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) was arrested after an attempt\n"
+				"to print it on %s resulted in a job error."),
+				rinfo->job, title, rinfo->printer);
+			break;
+
+		case RESP_CANCELED:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) has been canceled."),
+				rinfo->job, title);
+			break;
+
+		case RESP_CANCELED_PRINTING:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) was canceled while printing on %s."),
+				rinfo->job, title, rinfo->printer);
+			break;
+
+		case RESP_CANCELED_BADDEST:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) was canceled because\n"
+				"\"%s\" is not a known destination."),
+				rinfo->job, title, rinfo->destination);
+			break;
+
+		case RESP_CANCELED_REJECTING:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) was canceled because\n"
+				"the destination %s is not acceping requests."),
+				rinfo->job, title, rinfo->destination);
+			break;
+
+		case RESP_STRANDED_PRINTER_INCAPABLE:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) is stranded because\n"
+				"the printer %s is incapable of printing it."),
+				rinfo->job, title, rinfo->printer);
+			break;
+
+		case RESP_STRANDED_GROUP_INCAPABLE:
+			gu_pcs_append_sprintf(&message,
+				_("Your print job %s (%s) is stranded because no\n"
+				"member of the group %s is capable of printing it."),
+				rinfo->job, title, rinfo->destination);
+			break;
+
+		case RESP_CANCELED_NOCHARGEACCT:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"the user %s does not have a charge account."),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_CANCELED_OVERDRAWN:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"the account %s is overdrawn."),
+				rinfo->job, rinfo->extra);
+			break;
+
+		case RESP_CANCELED_NONCONFORMING:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"it does not contain page boundary markers."),
+				rinfo->destination);
+			break;
+
+		case RESP_NOFILTER:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"no filter is available which can convert %s to PostScript."),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_FATAL:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"an error occured: %s."),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_NOSPOOLER:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was lost because pprd is not running."),
+				rinfo->destination);
+			break;
+
+		case RESP_BADMEDIA:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"it requires a medium (generally paper) of an unrecognized size or type."),
+				rinfo->destination);
+			break;
+
+		case RESP_BADPJLLANG:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"the PJL header requests an unrecognized printer language called \"%s\"."),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_FATAL_SYNTAX:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"the ppr command line contains an error:\n"
+				"\n"
+				"%s."),
+				rinfo->destination, rinfo->extra);
+			break;
+
+		case RESP_CANCELED_NOPAGES:
+			gu_pcs_append_sprintf(&message,
+				_("The print job which you just now sent to %s was rejected because\n"
+				"you requested printing of only selected pages but the job does not\n"
+				"contain page-boundary markers."),
 				rinfo->job);
 			break;
 
 		case RESP_CANCELED_ACL:
 			gu_pcs_append_sprintf(&message,
-				_("job for %s rejected: ACL forbids %s access"),
-				rinfo->job, rinfo->extra);
+				_("The print job which you just now sent to %s was rejected because\n"
+				"the access control list for %s does not grant %s access."),
+				rinfo->destination, rinfo->destination, rinfo->extra);
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
-			gu_pcs_append_sprintf(&message,
-				_("error on %s: %s"),
-				rinfo->printer, rinfo->commentary_cooked);	
+			if(rinfo->commentary_seq_number == 1 && rinfo->commentary_severity > 5)
+				{
+				gu_pcs_append_sprintf(&message,
+					_("The printer \"%s\" which could print your job \"%s\" cannot at present\n"
+					"due to the error condition \"%s\"."),
+					rinfo->printer, rinfo->job, rinfo->commentary_cooked);
+				}
+			else
+				{
+				gu_pcs_append_sprintf(&message,
+					_("The printer \"%s\" which is printing your job \"%s\" reports error\n"
+					"\"%s\"."),
+					rinfo->printer, rinfo->job, rinfo->commentary_cooked);
+				if(long_format)
+					{
+					gu_pcs_append_char(&message, ' ');
+					if(rinfo->commentary_severity > 5)
+						gu_pcs_append_cstr(&message, _("Printing has probably come to a halt."));
+					else
+						gu_pcs_append_cstr(&message, _("It is advisable to correct this condition before it worsens."));
+					if(rinfo->commentary_duration > 5)
+						{
+						gu_pcs_append_char(&message, ' ');
+						gu_pcs_append_sprintf(&message, _("This condition has persisted for %d minutes."), rinfo->commentary_duration);
+						}
+					}
+				}
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
 			gu_pcs_append_sprintf(&message,
-				_("status of %s: %s"),
-				rinfo->printer, rinfo->commentary_cooked);	
+				_("The printer \"%s\" which is printing your job \"%s\" reports status\n"
+				"\"%s\"."),
+				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_STALL:
-			gu_pcs_append_sprintf(&message,
-				_("%s: %s"),
-				rinfo->printer, rinfo->commentary_cooked);	
+			if(rinfo->commentary_duration > 0)
+				{
+				switch(rinfo->commentary_duration / 60)
+					{
+					case 1:
+					case 2:
+						gu_pcs_append_sprintf(&message,
+							_("The printer \"%s\" which is printing your job %s (%s) may be stalled."),
+							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+						break;
+					case 3:
+					case 4:
+						gu_pcs_append_sprintf(&message,
+							_("The printer \"%s\" which is printing your job %s (%s) is probably stalled."),
+							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+						break;
+					default:
+						gu_pcs_append_sprintf(&message,
+							_("The printer \"%s\" which is printing your job %s (%s) has been stalled for %d minutes."),
+							rinfo->printer, rinfo->job, rinfo->qentry.Title, rinfo->commentary_duration / 60);
+						break;
+					}
+				}
+			else
+				{
+				switch((0 - rinfo->commentary_duration) / 60)
+					{
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+						gu_pcs_append_sprintf(&message,
+							_("The printer \"%s\" which is printing your job %s (%s) was not stalled."),
+							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+						break;
+					default:
+						gu_pcs_append_sprintf(&message,
+							_("The printer \"%s\" which is printing your job %s (%s) is no longer stalled."),
+							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+						break;
+					}
+				}
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_EXIT:
-			gu_pcs_append_sprintf(&message,
-				_("%s: %s"),
-				rinfo->printer, rinfo->commentary_cooked);	
+			if(rinfo->commentary_severity > 5)
+				{
+				gu_pcs_append_sprintf(&message,
+					_("The printer \"%s\", which could print your job \"%s\" %s."),
+					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+				}
+			else
+				{
+				gu_pcs_append_sprintf(&message,
+					_("The printer \"%s\", completed an attempt to print your job \"%s\" with exit condition %s."),
+					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+				}
 			break;
 
 		default:
@@ -236,362 +517,13 @@ static char *build_subject(struct RESPONSE_INFO *rinfo)
 			break;
 		}
 
-	return gu_pcs_free_keep_cstr(&message);
-	}
-
-/*
-** Build a message in final_str, basing it upon the code "response" and inserting
-** particuliar information from the other arguments.
-*/
-static char *build_short_message(struct RESPONSE_INFO *rinfo)
-	{
-	void *message;
-
-	message = gu_pcs_new_cstr("short_message=");
-	
-	switch(rinfo->response_code)
+	if(long_format && rinfo->reason)
 		{
-		case RESP_FINISHED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" has been printed on \"%s\"."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_ARRESTED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was arrested after an attempt\n"
-				"to print it on \"%s\" resulted in a job error."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_CANCELED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" has been canceled."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_PRINTING:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled while printing on \"%s\"."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_CANCELED_BADDEST:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled because\n"
-				"\"%s\" is not a known destination."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_CANCELED_REJECTING:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled because\n"
-				"the destination \"%s\" is not acceping requests."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_STRANDED_PRINTER_INCAPABLE:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" is stranded because\n"
-				"the printer \"%s\" is incapable of printing it."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_STRANDED_GROUP_INCAPABLE:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" is stranded because no\n"
-				"member of the group \"%s\" is capable of printing it."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_CANCELED_NOCHARGEACCT:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"\"%s\" does not have a charge account."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_CANCELED_OVERDRAWN:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"your account is overdrawn."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_NONCONFORMING:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"it does not contain DSC page division information."),
-				rinfo->job);
-			break;
-
-		case RESP_NOFILTER:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because no filter\n"
-				"is available which can convert %s to PostScript."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_FATAL:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected by PPR because of a\n"
-				"fatal error: %s."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_NOSPOOLER:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been lost because PPRD is not running."),
-				rinfo->job);
-			break;
-
-		case RESP_BADMEDIA:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because it requires\n"
-				"a size and type of medium (paper) which is not available."),
-				rinfo->job);
-			break;
-
-		case RESP_BADPJLLANG:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because the\n"
-				"PJL header requests an unrecognized printer language \"%s\"."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_FATAL_SYNTAX:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because\n"
-				"the ppr command line contains an error:\n"
-				"\n"
-				"%s."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_CANCELED_NOPAGES:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because\n"
-				"you requested printing of only selected pages but the pages\n"
-				"are not marked by DSC comments."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_ACL:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job for \"%s\" has been rejected because the\n"
-				"PPR access control lists do not grant \"%s\" access to\n"
-				"that destination."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" reports error\n"
-				"\"%s\"."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" reports status\n"
-				"\"%s\"."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_STALL:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" %s\n"),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_EXIT:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" %s."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		default:
-			gu_pcs_append_sprintf(&message,
-				_("Undefined response code %d for job \"%s\"."),
-				rinfo->response_code, rinfo->job);
-			break;
-		}
-
-	return gu_pcs_free_keep_cstr(&message);
-	} /* end of respond_build_message() */
-
-static char *build_long_message(struct RESPONSE_INFO *rinfo)
-	{
-	void *message;
-
-	message = gu_pcs_new_cstr("short_message=");
-	
-	switch(rinfo->response_code)
-		{
-		case RESP_FINISHED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" has been printed on \"%s\"."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_ARRESTED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was arrested after an attempt\n"
-				"to print it on \"%s\" resulted in a job error."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_CANCELED:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" has been canceled."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_PRINTING:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled while printing on \"%s\"."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_CANCELED_BADDEST:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled because\n"
-				"\"%s\" is not a known destination."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_CANCELED_REJECTING:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" was canceled because\n"
-				"the destination \"%s\" is not acceping requests."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_STRANDED_PRINTER_INCAPABLE:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" is stranded because\n"
-				"the printer \"%s\" is incapable of printing it."),
-				rinfo->job, rinfo->printer);
-			break;
-
-		case RESP_STRANDED_GROUP_INCAPABLE:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job \"%s\" is stranded because no\n"
-				"member of the group \"%s\" is capable of printing it."),
-				rinfo->job, rinfo->destination);
-			break;
-
-		case RESP_CANCELED_NOCHARGEACCT:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"\"%s\" does not have a charge account."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_CANCELED_OVERDRAWN:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"your account is overdrawn."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_NONCONFORMING:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" was rejected because\n"
-				"it does not contain DSC page division information."),
-				rinfo->job);
-			break;
-
-		case RESP_NOFILTER:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because no filter\n"
-				"is available which can convert %s to PostScript."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_FATAL:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected by PPR because of a\n"
-				"fatal error: %s."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_NOSPOOLER:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been lost because PPRD is not running."),
-				rinfo->job);
-			break;
-
-		case RESP_BADMEDIA:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because it requires\n"
-				"a size and type of medium (paper) which is not available."),
-				rinfo->job);
-			break;
-
-		case RESP_BADPJLLANG:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because the\n"
-				"PJL header requests an unrecognized printer language \"%s\"."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_FATAL_SYNTAX:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because\n"
-				"the ppr command line contains an error:\n"
-				"\n"
-				"%s."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_CANCELED_NOPAGES:
-			gu_pcs_append_sprintf(&message,
-				_("Your new print job for \"%s\" has been rejected because\n"
-				"you requested printing of only selected pages but the pages\n"
-				"are not marked by DSC comments."),
-				rinfo->job);
-			break;
-
-		case RESP_CANCELED_ACL:
-			gu_pcs_append_sprintf(&message,
-				_("Your print job for \"%s\" has been rejected because the\n"
-				"PPR access control lists do not grant \"%s\" access to\n"
-				"that destination."),
-				rinfo->job, rinfo->extra);
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" reports error\n"
-				"\"%s\"."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" reports status\n"
-				"\"%s\"."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_STALL:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" %s\n"),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_EXIT:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing \"%s\" %s."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
-			break;
-
-		default:
-			gu_pcs_append_sprintf(&message,
-				_("Undefined response code %d for job \"%s\"."),
-				rinfo->response_code, rinfo->job);
-			break;
+		gu_pcs_append_char(&message, ' ');
+		gu_pcs_append_sprintf(&message,
+			_("Probably cause: %s."),
+			rinfo->reason
+			);
 		}
 
 	return gu_pcs_free_keep_cstr(&message);
@@ -656,77 +588,6 @@ static struct RESPONDER *followme(struct RESPONDER *responder)
 	return responder;
 	}
 
-
-#if 0
-	/*
-	** Prepare the canned message.
-	*/
-	{
-	const char *job_title = job.Title ? job.Title : job.lpqFileName ? job.lpqFileName : "untitled";
-	int duration = raw2 ? atoi(raw2) : 0;
-	canned_message[0] = '\0';
-
-	if(category & COM_PRINTER_ERROR)
-		{
-		snprintf(canned_message, sizeof(canned_message),
-				severity > 5
-					?
-					commentary_seq_number == 1
-						?
-						_("The printer \"%s\", which could print your job \"%s-%d\" (%s), "
-						"reports the error \"%s%s%s%s\".  This condition must be "
-						"corrected before your job can start.")
-						:
-						_("The printer \"%s\", which is printing your job \"%s-%d\" (%s), "
-						"reports the error \"%s%s%s%s\".  This condition must be "
-						"corrected before your job can continue.")
-					:
-					_("The printer \"%s\", which is printing your job \"%s-%d\" (%s), "
-					"reports the error \"%s%s%s%s\".  It may be to your benefit "
-					"to correct this condition."),
-				printer.Name,
-				job.destname, job.id,
-				job_title,
-				cooked,
-				raw1 ? " (" : "",
-				raw1 ? raw1 : "",
-				raw1 ? ")" : ""
-				);
-		if(duration > 1)
-			{
-			gu_snprintfcat(canned_message, sizeof(canned_message),
-				_("  This condition has persisted for %d minutes."),
-				duration);
-			}
-		}
-
-	if(category & COM_EXIT && severity > 5)
-		{
-		snprintf(canned_message, sizeof(canned_message),
-				_("The printer \"%s\" cannot start your job \"%s-%d\" (%s) "
-				"because of the error condition \"%s\"."),
-			printer.Name,
-			job.destname, job.id,
-			job_title,
-			cooked
-			);
-		}
-
-	if(category & COM_STALL)
-		{
-		snprintf(canned_message, sizeof(canned_message),
-				_("The printer \"%s\", which is printing your job \"%s-%d\" (%s), "
-				"%s."),
-			printer.Name,
-			job.destname, job.id,
-			job_title,
-			cooked
-			);
-		}
-
-	}
-#endif
-
 /*
 ** The command line interface of this program is not documented.  It will
 ** quite likely change with each version of PPR.  Different parameters
@@ -751,15 +612,31 @@ int main(int argc, char *argv[])
 	rinfo.extra = NULL;
 	rinfo.commentary_cooked = NULL;
 	rinfo.commentary_raw1 = NULL;
-	rinfo.commentary_raw2 = NULL;
+	rinfo.commentary_duration = 0;
 	rinfo.commentary_severity = -1;
+	rinfo.commentary_severity = -1;
+	rinfo.pages = -1;
+	rinfo.charge_per_duplex = 0;
+	rinfo.charge_per_simplex = 0;
+	rinfo.reason = NULL;
 
 	for(iii=1; iii < argc; iii++)
 		{
 		if(strcmp(argv[iii], "qfile_fd3") == 0)
 			{
 			FILE *f = fdopen(3, "r");
+			char *line = NULL;
+			int line_len = 80;
+			char *p;
 			qentryfile_load(&rinfo.qentry, f);
+			while((line = gu_getline(line, &line_len, f)))
+				{
+				if((p = lmatchp("Reason:", line)))
+					{
+					rinfo.reason = gu_strdup(p);
+					continue;
+					}
+				}
 			fclose(f);
 			}
 		else if((p = gu_name_matchp(argv[iii], "responder_name")))
@@ -802,24 +679,23 @@ int main(int argc, char *argv[])
 		else if((p = gu_name_matchp(argv[iii], "for")))
 			{
 			rinfo.qentry.For = p;
-			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "title")))
 			{
 			rinfo.qentry.Title = p;
-			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "lc_messages")))
 			{
 			rinfo.qentry.lc_messages = p;
-			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "charge_per_duplex")))
 			{
+			rinfo.charge_per_duplex = atoi(p);
 			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "charge_per_simplex")))
 			{
+			rinfo.charge_per_simplex = atoi(p);
 			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "commentary_cooked")))
@@ -832,14 +708,19 @@ int main(int argc, char *argv[])
 			rinfo.commentary_raw1 = p;
 			gu_pca_push(command, argv[iii]);
 			}
-		else if((p = gu_name_matchp(argv[iii], "commentary_raw2")))
+		else if((p = gu_name_matchp(argv[iii], "commentary_duration")))
 			{
-			rinfo.commentary_raw2 = p;
+			rinfo.commentary_duration = atoi(p);
 			gu_pca_push(command, argv[iii]);
 			}
 		else if((p = gu_name_matchp(argv[iii], "commentary_severity")))
 			{
 			rinfo.commentary_severity = atoi(p);
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_seq_number")))
+			{
+			rinfo.commentary_seq_number = atoi(p);
 			gu_pca_push(command, argv[iii]);
 			}
 		else
@@ -876,14 +757,18 @@ int main(int argc, char *argv[])
 				if(gu_torf_setBOOL(&yes, value) != -1 && !yes && (rinfo.response_code==RESP_CANCELED || rinfo.response_code==RESP_CANCELED_PRINTING))
 					return 0;
 				}
+			else if((value = gu_name_matchp(item, "severity_threshold")))
+				{
+				if(rinfo.commentary_severity >= 0)		/* if defined */
+					{
+					int temp = atoi(p);
+					if(temp < rinfo.commentary_severity)
+						return 0;
+					}
+				}
 			}
 		gu_free(temp);
 		}
-	
-	/* Add the (possibly modified) responder options to the command line. */
-	gu_pca_push(command, gu_name_str_value("responder_name", actual_responder->name));
-	gu_pca_push(command, gu_name_str_value("responder_address", actual_responder->address));
-	gu_pca_push(command, gu_name_str_value("responder_options", actual_responder->options));
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
@@ -892,30 +777,66 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
-	/* Add suggested messages */
-	gu_pca_push(command, build_subject(&rinfo));
-	gu_pca_push(command, build_short_message(&rinfo));
-	gu_pca_push(command, build_long_message(&rinfo));
-
 	/* Add job information from queue file */
 	if(rinfo.qentry.time > 0)
 		gu_pca_push(command, gu_name_long_value("time", rinfo.qentry.time));
+	if(rinfo.qentry.For)
+		gu_pca_push(command, gu_name_str_value("for", rinfo.qentry.For));
+	if(rinfo.qentry.Title)
+		gu_pca_push(command, gu_name_str_value("title", rinfo.qentry.Title));
+	if(rinfo.qentry.lc_messages)
+		gu_pca_push(command, gu_name_str_value("lc_messages", rinfo.qentry.lc_messages));
+	if(rinfo.reason)
+		gu_pca_push(command, gu_name_str_value("reason", rinfo.reason));
+
+	/* Extract page count and number of copies.  If a charge is in effect,
+	 * compute it.
+	 */
 	if(rinfo.qentry.attr.pages >= 0)
 		{
-		int pages = rinfo.qentry.attr.pages;
+		rinfo.pages = rinfo.qentry.attr.pages;
 		if(rinfo.qentry.page_list.count >= 0)
-			pages = rinfo.qentry.page_list.count;
-		pages = (pages + rinfo.qentry.N_Up.N - 1) / rinfo.qentry.N_Up.N;
+			rinfo.pages = rinfo.qentry.page_list.count; 
+		rinfo.pages = (rinfo.pages + rinfo.qentry.N_Up.N - 1) / rinfo.qentry.N_Up.N;
+		gu_pca_push(command, gu_name_int_value("pages", rinfo.pages));
+
 		if(rinfo.qentry.opts.copies >= 0)
-			pages *= rinfo.qentry.opts.copies;
-		gu_pca_push(command, gu_name_int_value("pages", pages));
+			gu_pca_push(command, gu_name_int_value("copies", rinfo.qentry.opts.copies));
+
+		if(rinfo.charge_per_duplex > 0 || rinfo.charge_per_simplex > 0)
+			{
+			compute_charge(&rinfo.charge,
+				rinfo.charge_per_duplex,
+				rinfo.charge_per_simplex,
+				rinfo.pages,
+				rinfo.qentry.N_Up.N,
+				rinfo.qentry.attr.pagefactor,
+				rinfo.qentry.N_Up.sigsheets,
+				rinfo.qentry.N_Up.sigpart,
+				rinfo.qentry.opts.copies
+				);
+			gu_pca_push(command, gu_name_int_value("charge_duplex_sheets", rinfo.charge.duplex_sheets));
+			gu_pca_push(command, gu_name_int_value("charge_simplex_sheets", rinfo.charge.simplex_sheets));
+			gu_pca_push(command, gu_name_str_value("charge_total", money(rinfo.charge.total)));
+			}
 		}
+
+	/* Add suggested messages */
+	gu_pca_push(command, build_subject(&rinfo));
+	gu_pca_push(command, build_message(&rinfo, FALSE));		/* short_message */
+	gu_pca_push(command, build_message(&rinfo, TRUE));		/* long_message */
+
+	/* Add the (possibly modified) responder options to the command line. */
+	gu_pca_push(command, gu_name_str_value("responder_name", actual_responder->name));
+	gu_pca_push(command, gu_name_str_value("responder_address", actual_responder->address));
+	gu_pca_push(command, gu_name_str_value("responder_options", actual_responder->options));
 
 	gu_asprintf(&p, "%s/%s", RESPONDERDIR, actual_responder->name);
 	gu_pca_unshift(command, p);		/* argv[0] */
+	fflush(stdout);
 	execv(p, gu_pca_ptr(command));
 
-	return 1;
+	gu_Throw(_("%s: execv(\"%s\", ...) failed, errno=%d (%s)"), argv[0], p, errno, gu_strerror(errno));
 	}
 
 /* end of file */
