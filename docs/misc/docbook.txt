@@ -205,6 +205,8 @@ These tags produce dictionary lists.
 </mediaobject>
 </figure>
 
+This displays an XFig image.
+
 <figure id="id-here">
 <title>title here</title>
 <screenshot>
@@ -214,7 +216,8 @@ These tags produce dictionary lists.
 </figure>
 
 This displays a screenshot image.  The contents of <screeninfo> are not
-displayed.
+displayed.  If you want to scale by a fixed factor, replace width= and
+scalefit= with scale=.
 
 ==============================================================================
  Source Code

@@ -8,7 +8,7 @@ http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.52.tar.gz
 
 ==========================================================================
 
-Version 1.52 of PPR has [not yet] been released.
+Version 1.52 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -27,8 +27,24 @@ by sending them to "ppr-list@mail.trincoll.edu".
  New in this Release (Since 1.51)
 ==========================================================================
 
-* Fixed bug which prevented installation of manpages.
+* Fixed numberous build and install problems, especially problems affecting
+  non-Linux systems.
 
+* Fixed the web-browser interface's popup menu in IE 6.
+
+* Cosmetic fixes to web interface for greater consistency between Mozilla
+  1.4 and IE 6.
+
+* Fixed problem editing switchsets in the web-browser interface.
+
+* Fixed command output spacing problems caused by the source code tab-width
+  conversion done in version 1.51.
+
+* Added code to the install to send SIGHUP to Inetd or Xinetd so that it
+  will load its new configuration.
+
+* Partial rewrite of "Installing and Using PPR" to include information about
+  the web-browser and Perl/Tk interfaces.
 
 ==========================================================================
  New in this Release (Since 1.50)

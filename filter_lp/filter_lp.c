@@ -251,7 +251,7 @@ void error(const char message[], ... )
 	vfprintf(stderr, message,va);
 	fputc('\n', stderr);
 	va_end(va);
-	} /* end of fatal() */
+	} /* end of error() */
 
 /*
 ** This function reads a line from standard input.  The line is
@@ -815,7 +815,7 @@ static void prolog(void)
 	** encoding and is in the requested font family.
 	**
 	** Note that if the user has already selected the font we will
-	** make the unwarranted assumtion that he knew what he was doing. :)
+	** make the unwarranted assumption that he knew what he was doing. :)
 	** If the user has selected the font, then we make no assumptions
 	** about its encoding and reencode it to our satisfaction.
 	*/

@@ -121,24 +121,27 @@ open(P, ">$tempname") || die $!;
 print P "normal: Зто по русски!\r\n";
 
 printf P "%c!%c", 27, 16;		# bold
-
 print P "bold: This is in English!\r\n";
 
 printf P "%c!%c", 27, 64;		# italic
-
 print P "italic: Зто по русски!\r\n";
 
 printf P "%c!%c", 27, (16 + 64);	# bold italic
-
 print P "bold italic: This is in English!\r\n";
 
 printf P "%c!%c", 27, (2);		# proportional
-
 print P "normal proportional: Зто по русски!\r\n";
 
 printf P "%c!%c", 27, (2 + 16);		# proportional bold
-
 print P "bold proportional: This is in English!\r\n";
+
+print P "\r\n";
+
+printf P "%c!%c", 27, 2;
+print P "Now is the time for all good men to come to the aid of the party.\r\n";
+
+printf P "%c!%c", 27, 0;
+print P "Now is the time for all good men to come to the aid of the party.\r\n";
 
 close(P) || die $!;
 

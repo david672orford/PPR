@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 13 September 2003.
 */
 
 /*
@@ -33,19 +33,6 @@
 ** printer code to PostScript.
 */
 
-#include "before_system.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#ifdef INTERNATIONAL
-#include <locale.h>
-#include <libintl.h>
-#endif
-#include "gu.h"
-#include "global_defines.h"
-#include "global_structs.h"
 #include "filter_dotmatrix.h"
 
 /* Name of this program, for error messages. */
@@ -64,7 +51,7 @@ static int initial_perfskip = 0;		/* measured in lines. */
 int level2 = FALSE;
 
 /* PostScript encoding we are currently using. */
-int encoding = ENCODING_CP437;
+const char *opt_charset = "CP437";
 
 /*
 ** These constants describe the horizontal and vertical spacing units.
@@ -160,10 +147,10 @@ int extra_dot_spacing;					/* Extra space added to char spacing */
 int print_colour;						/* Print colour */
 
 /* We use these to describe what has been propagated. */
-int omode_charmode;						/* What we have propagated */
-int omode_one_line_expanded=FALSE;		/* Have we propogated it to out_hscale? */
-int omode_simple_compressed=FALSE;		/* Have we propogated it to out_hscale? */
-int omode_script_mode=SCRIPT_NONE;		/* What select_font() has propogated */
+int omode_current_charmode = 0;			/* What we have propagated */
+int omode_one_line_expanded = FALSE;	/* Have we propogated it to out_hscale? */
+int omode_simple_compressed = FALSE;	/* Have we propogated it to out_hscale? */
+int omode_script_mode = SCRIPT_NONE;	/* What select_font() has propogated */
 
 /*
 ** The routine select_font() uses these to describe the
@@ -198,6 +185,21 @@ int auto_cr = TRUE;
 int auto_lf = FALSE;
 
 /*
+** Handle fatal errors.
+** Print a message and exit.
+*/
+void fatal(int exitval, const char message[], ... )
+	{
+	va_list va;
+	va_start(va, message);
+	fprintf(stderr, "%s: ", myname);
+	vfprintf(stderr, message,va);
+	fputc('\n', stderr);
+	va_end(va);
+	exit(exitval);
+	} /* end of fatal() */
+
+/*
 ** For non fatal errors (generally from libppr).
 */
 void error(const char message[], ... )
@@ -211,23 +213,40 @@ void error(const char message[], ... )
 	va_end(va);
 	} /* end of error() */
 
-/* Select the correct font if we don't have it already. */
+/*
+** Select the correct font if we don't have it already.
+** This is done my examining all of the variables that
+** reflect the dot-matrix printer state and condensing
+** them into:
+**
+**	out_style
+**	out_hscale, out_vscale
+**	current_character_spacing
+*/
 void select_font(void)
 	{
-	if( current_charmode!=omode_charmode
-				|| one_line_expanded!=omode_one_line_expanded
-				|| simple_compressed!=omode_simple_compressed
-				|| script_mode!=omode_script_mode )
+	#ifdef DEBUG_COMMENTS
+	printf("%% select_font(): current_charmode=%d, one_line_expanded=%s, simple_compressed=%s, script_mode=%d\n",
+		current_charmode,
+		one_line_expanded ? "TRUE" : "FALSE",
+		simple_compressed ? "TRUE" : "FALSE",
+		script_mode
+		);
+	#endif
+	if(current_charmode != omode_current_charmode
+			|| one_line_expanded != omode_one_line_expanded
+			|| simple_compressed != omode_simple_compressed
+			|| script_mode != omode_script_mode)
 		{
 		/* Establish the font style */
-		out_style=0;
-		if(current_charmode & (MODE_EMPHASIZED | MODE_DOUBLE_STRIKE) )
+		out_style = 0;
+		if(current_charmode & (MODE_EMPHASIZED | MODE_DOUBLE_STRIKE))
 			{					/* bold */
-			out_style|=OSTYLE_BOLD;
+			out_style |= OSTYLE_BOLD;
 			}
-		else if(current_charmode & MODE_ITALIC)
+		if(current_charmode & MODE_ITALIC)
 			{					/* italic */
-			out_style|=OSTYLE_OBLIQUE;
+			out_style |= OSTYLE_OBLIQUE;
 			}
 
 		/* Proportional spacing. */
@@ -235,31 +254,31 @@ void select_font(void)
 			out_style |= OSTYLE_PROPORTIONAL;
 
 		/* Horizontal scaling */
-		out_hscale=1.0;
+		out_hscale = 1.0;
 
 		if(current_charmode & MODE_ELITE)
-			out_hscale*=FACTOR_ELITE;
+			out_hscale *= FACTOR_ELITE;
 
 		if(current_charmode & MODE_15PITCH)		/* 15 pitch */
 			{									/* If compressed, is same as elite compressed */
-			if( (current_charmode & MODE_CONDENSED) || simple_compressed )
-				out_hscale*=FACTOR_ELITE;
+			if((current_charmode & MODE_CONDENSED) || simple_compressed)
+				out_hscale *= FACTOR_ELITE;
 			else
-				out_hscale*=FACTOR_15PITCH;
+				out_hscale *= FACTOR_15PITCH;
 			}
 
-		if( (current_charmode & MODE_EXPANDED) || one_line_expanded )
-			out_hscale*=FACTOR_EXPANDED;
+		if((current_charmode & MODE_EXPANDED) || one_line_expanded)
+			out_hscale *= FACTOR_EXPANDED;
 
 
-		if( current_charmode & MODE_3X_HORIZONTAL)
-			out_hscale*=3.0;
+		if(current_charmode & MODE_3X_HORIZONTAL)
+			out_hscale *= 3.0;
 
-		if( current_charmode & MODE_4X_HORIZONTAL)
-			out_hscale*=4.0;
+		if(current_charmode & MODE_4X_HORIZONTAL)
+			out_hscale *= 4.0;
 
 		if(current_charmode & MODE_CONDENSED)	/* condensed printing */
-			out_hscale*=FACTOR_CONDENSED;
+			out_hscale *= FACTOR_CONDENSED;
 
 		if(simple_compressed)					/* this one overrides */
 			out_hscale=FACTOR_CONDENSED;		/* others */
@@ -269,16 +288,16 @@ void select_font(void)
 
 		if(current_charmode & MODE_2X_VERTICAL)
 			{									/* double height */
-			out_vscale*=2.0;					/* lowered baseline */
+			out_vscale *= 2.0;					/* lowered baseline */
 			out_style |= OSTYLE_FULLDROP;
 			}
 		else if(current_charmode & MODE_2X_VERTICAL_BASELINE)
 			{									/* double height, */
-			out_vscale*=2.0;					/* normal baseline */
+			out_vscale *= 2.0;					/* normal baseline */
 			}
 		else if(current_charmode & MODE_4X_VERTICAL)
 			{									/* quadruple height */
-			out_vscale*=4.0;
+			out_vscale *= 4.0;
 			/* !!! what here? */
 			}
 
@@ -289,8 +308,8 @@ void select_font(void)
 			}
 		else if(script_mode == SCRIPT_SUPER)
 			{
-			out_vscale*=FACTOR_SCRIPT;
-			out_style|=OSTYLE_HALFRAISE;
+			out_vscale *= FACTOR_SCRIPT;
+			out_style |= OSTYLE_HALFRAISE;
 			}
 
 		/* Other special styles */
@@ -298,17 +317,17 @@ void select_font(void)
 			out_style |= OSTYLE_UNDERLINE;
 
 		/* Set variables so that we know this has gone thru. */
-		omode_charmode=current_charmode;
-		omode_one_line_expanded=one_line_expanded;
-		omode_simple_compressed=simple_compressed;
-		omode_script_mode=script_mode;
+		omode_current_charmode = current_charmode;
+		omode_one_line_expanded = one_line_expanded;
+		omode_simple_compressed = simple_compressed;
+		omode_script_mode = script_mode;
 
 		/* Set current_char_spacing properly */
 		current_char_spacing = (int)((double)(HORIZONTAL_UNITS / 10) * out_hscale + 0.5);
 		}
 
 	#ifdef DEBUG_COMMENTS
-	printf("%% out_style=%d, out_hscale=%f, out_vscale=%f\n",out_style,out_hscale,out_vscale);
+	printf("%% select_font(): out_style=%d, out_hscale=%f, out_vscale=%f\n",out_style,out_hscale,out_vscale);
 	#endif
 	} /* end of select_font() */
 
@@ -349,8 +368,8 @@ void reset(int hard)
 	reset_tabs();
 
 	/* Reset the form length */
-	page_length = (int)(phys_pu_height * INCH * (double)VERTICAL_UNITS + 0.5);
-	page_width = (int)(phys_pu_width * INCH * (double)HORIZONTAL_UNITS + 0.5);
+	page_length = (int)(phys_pu_height / INCH * (double)VERTICAL_UNITS + 0.5);
+	page_width = (int)(phys_pu_width / INCH * (double)HORIZONTAL_UNITS + 0.5);
 
 	/* Reset the spacing */
 	current_char_spacing = HORIZONTAL_UNITS/10; /* 10 CPI */
@@ -372,23 +391,22 @@ void reset(int hard)
 	} /* end of reset */
 
 /*
-** Reset at top of page.
-** The argument "consumed" is the amount of space already
-** eaten up at the start of the page by an uncompleted vertical
+** Reset at top of page. The argument "consumed" is the amount of space
+** already eaten up at the start of the page by an uncompleted vertical
 ** movement command.
 */
 static void page_reset(int consumed)
 	{
 	/* move to top of page */
 	if(top_margin==0)									/* If we don't use top margin, */
-		ypos=page_length - (perforation_skip/2);		/* top margin is half of perforation skip. */
+		ypos = page_length - (perforation_skip/2);		/* top margin is half of perforation skip. */
 	else												/* If explicit top magin, */
-		ypos=page_length - top_margin;					/* use it. */
+		ypos = page_length - top_margin;				/* use it. */
 
-	ypos-=consumed;
+	ypos -= consumed;
 
 	/* Move to left margin */
-	xpos=left_margin;
+	xpos = left_margin;
 	} /* end of page_reset() */
 
 /*
@@ -440,7 +458,7 @@ static void process_input(void)
 				#ifdef DEBUG_COMMENTS
 				puts("% backspace");
 				#endif
-				empty_buffer();			/* per epson manual */
+				empty_buffer();			/* <-- per epson manual */
 				xpos-=current_char_spacing;
 				if(xpos==0) xpos=0;
 				break;
@@ -448,7 +466,7 @@ static void process_input(void)
 				#ifdef DEBUG_COMMENTS
 				puts("% tab");
 				#endif
-				empty_buffer();			/* per epson manual */
+				empty_buffer();			/* <-- per epson manual */
 				horizontal_tab();
 				break;
 			case 10:					/* line feed */
@@ -463,20 +481,21 @@ static void process_input(void)
 				#ifdef DEBUG_COMMENTS
 				puts("% vertical tab");
 				#endif
-				empty_buffer();			/* per epson manual */
+				empty_buffer();			/* <-- per epson manual */
 				vertical_tab();
 				break;
 			case 12:					/* form feed */
 				#ifdef DEBUG_COMMENTS
 				puts("% form feed");
 				#endif
-				empty_buffer();			/* per epson manual */
-				if(!in_page) top_of_page();
+				empty_buffer();			/* <-- per epson manual */
+				if(!in_page)
+					top_of_page();
 				bottom_of_page();
-				in_page=FALSE;
+				in_page = FALSE;
 				page_reset(0);
 				break;
-			case 13:					/* carriage return */
+			case 13:					/* <-- carriage return */
 				#ifdef DEBUG_COMMENTS
 				puts("% carriage return");
 				#endif
@@ -528,7 +547,7 @@ static void process_input(void)
 				if(!in_page)
 					{
 					top_of_page();
-					in_page=TRUE;
+					in_page = TRUE;
 					}
 				buffer_add(c);
 				break;
@@ -676,7 +695,7 @@ int main(int argc, char *argv[])
 			else if(strcmp(name, "pagesize") == 0)
 				{
 				if(pagesize(value, &PageSize, &phys_pu_width, &phys_pu_height, NULL) == -1)
-					filter_options_error(1, &o, _("Value is among those allowed."));
+					filter_options_error(1, &o, _("Value is not among those allowed."));
 				}
 
 			/*-------------------------------------------
@@ -744,22 +763,7 @@ int main(int argc, char *argv[])
 			**--------------------------------------------*/
 			else if(strcmp(name, "charset") == 0)
 				{
-				if(gu_strcasecmp(value, "cp437") == 0)
-					{
-					encoding = ENCODING_CP437;
-					}
-				else if(gu_strcasecmp(value, "standard") == 0)
-					{
-					encoding = ENCODING_STANDARD;
-					}
-				else if(gu_strcasecmp(value, "isolatin1") == 0)
-					{
-					encoding = ENCODING_ISOLATIN1;
-					}
-				else
-					{
-					filter_options_error(1, &o, _("Legal charsets for the dotmatrix filter are \"standard\", \"ISOLatin1\", and \"cp437\"."));
-					}
+				opt_charset = gu_strdup(value);
 				}
 
 			/*---------------------------------------------

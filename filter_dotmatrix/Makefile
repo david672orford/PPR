@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/filter_dotmatrix/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2002.
+# Last modified 12 September 2003.
 #
 
 include ../Makefile.conf
@@ -52,9 +52,9 @@ filter_dotmatrix$(DOTEXE): $(FILTER_OBJS) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(CFLAGS) -o filter_dotmatrix$(DOTEXE) $(FILTER_OBJS) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # The file escape.c is compiled twice.  The general rules
-# work for one, but for this one we need to specify -DPASS1.
+# work for one, but for this one we need to specify -DCOMPILING_PASS1.
 escape_pass1.$(OBJ): escape.c filter_dotmatrix.h
-	$(CC) $(CFLAGS) -DPASS1 -o escape_pass1.$(OBJ) -c escape.c
+	$(CC) $(CFLAGS) -DCOMPILING_PASS1 -o escape_pass1.$(OBJ) -c escape.c
 
 escape_pass2.$(OBJ): escape.c filter_dotmatrix.h
 	$(CC) $(CFLAGS) -o escape_pass2.$(OBJ) -c escape.c

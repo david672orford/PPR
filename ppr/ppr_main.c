@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 August 2003.
+** Last modified 11 September 2003.
 */
 
 /*
@@ -1510,12 +1510,14 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				fatal(PPREXIT_SYNTAX, _("invalid %s option"), true_option);
 			break;
 
-#ifdef CRUFT_AUTH
 		case 'a':								/* authcode mode */
+			#ifdef CRUFT_AUTH
 			use_authcode = TRUE;
 			read_For = TRUE;
+			#else
+			fprintf(stderr, X_("%s: -a is obsolete and now a noop\n"), myname);
+			#endif
 			break;
-#endif
 
 		case 'D':								/* set default media */
 			default_medium = optarg;
@@ -1572,14 +1574,16 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				}
 			break;
 
-	#ifdef CRUFT_AUTH
 		case 'A':								/* a preauthorized job */
+			#ifdef CRUFT_AUTH
 			if( ! privileged() )
 				fatal(PPREXIT_SYNTAX, _("Only privledged users may use the %s switch"), true_option);
 			else
 				preauthorized = TRUE;
+			#else
+			fprintf(stderr, X_("%s: -A is obsolete and now a noop\n"), myname);
+			#endif
 			break;
-	#endif
 
 		case 'C':								/* default title */
 			assert_ok_value(optarg, FALSE, TRUE, FALSE, true_option, TRUE);

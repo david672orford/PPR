@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 30 August 2003.
+** This file was last modified 11 September 2003.
 */
 
 /*
@@ -105,7 +105,7 @@
 /*
 ** Include obsolete stuff?
 */
-/* #define CRUFT_AUTH 1 */
+#define CRUFT_AUTH 1
 
 /*======================================================================
 ** These are the default values for the PPR user and group names.  If

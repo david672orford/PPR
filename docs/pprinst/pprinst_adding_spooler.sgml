@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 8 September 2003
+Last Modified: 11 September 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -38,7 +38,7 @@ the Add Printer Wizard, go to the PPR Web Control Panel and click on the icon la
 <title>Choosing the Interface in the Add Printer Wizard</title>
 <screenshot>
 	<screeninfo>Mozilla 1.4, Linux</screeninfo>
-	<graphic fileref="web_prn_addwiz.png" format="png" width="7in" scalefit="1"/>
+	<graphic fileref="web_prn_addwiz.png" format="png"/>
 </screenshot>
 </figure>
 

@@ -1,28 +1,41 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/linebuf.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 June 1999.
+** Last modified 13 September 2003.
 */
 
 /*
-** This code has nothing to do with reading lines from the input file.
-** It implements an Epson line buffer which holds the current line of
-** output until it is complete.  Characters which enter the line buffer
-** may not actually get printed if the line buffer is canceled or if
-** backspace is used to erase them.
+** This code has nothing to do with reading lines from the input file. It
+** implements an Epson line buffer which holds the current line of output
+** until it is complete.  Characters which enter the line buffer may not
+** actually get printed if the line buffer is canceled or if backspace is
+** used to erase them.
 */
 
-#include <stdio.h>
-#include <ctype.h>
 #include "filter_dotmatrix.h"
 
 /* Tolerable horizontal spacing error. */
@@ -48,7 +61,7 @@ struct CHAR {
 		int colour;				/* desired colour */
 		} ;
 struct CHAR buffer[BUFFER_SIZE];
-int buffer_count=0;
+int buffer_count = 0;
 
 /* What we have instructed the PostScript engine to do. */
 static int postscript_out_style;
@@ -96,7 +109,7 @@ void buffer_delete(int howmuch)
 	} /* end of buffer_delete() */
 
 /*
-** Add a character to the line output buffer
+** Add a character to the line output buffer.
 */
 void buffer_add(int c)
 	{
@@ -105,7 +118,7 @@ void buffer_add(int c)
 
 	if(buffer_count < BUFFER_SIZE)
 		{
-		struct CHAR *p=&buffer[buffer_count++];
+		struct CHAR *p = &buffer[buffer_count++];
 
 		p->style = out_style;
 		p->hscale = out_hscale;
@@ -127,8 +140,8 @@ void buffer_add(int c)
 			p->width = current_char_spacing;
 
 		#ifdef DEBUG_COMMENTS
-		printf("%% buffer_add(), c='%c' (%d), xpos=%d, ypos=%d, width=%d, extra_space=%d\n",
-				c,c,xpos,ypos,p->width,p->extra_space);
+		printf("%% buffer_add(): c='%c' (%d), out_style=%d, xpos=%d, ypos=%d, width=%d, extra_space=%d\n",
+				c, c, out_style, xpos, ypos, p->width, p->extra_space);
 		#endif
 
 		/* Advance to next position. */
@@ -136,7 +149,7 @@ void buffer_add(int c)
 		xpos += p->extra_space;
 
 		/* Save this xpos for next time. */
-		predicted_xpos=xpos;
+		predicted_xpos = xpos;
 		}
 	} /* end of buffer_add() */
 
@@ -276,26 +289,26 @@ void empty_buffer(void)
 
 			/* Select proportional if appropriate. */
 			if(p->style & OSTYLE_PROPORTIONAL)
-				fputc('p',stdout);
+				fputc('p', stdout);
 
 			/* Select the correct style. */
-			fputc('f',stdout);					/* font */
+			fputc('f', stdout);					/* font */
 			if(p->style & OSTYLE_BOLD)			/* add bold? */
-				fputc('b',stdout);
+				fputc('b', stdout);
 			if(p->style & OSTYLE_OBLIQUE)		/* add italic? */
-				fputc('o',stdout);
+				fputc('o', stdout);
 
-			if(p->vscale == 1.0)		/* scale */
+			if(p->vscale == 1.0)				/* scale */
 				printf(" %2.2f sf\n",p->hscale);
 			else
 				printf(" %2.2f %2.2f sfh\n",p->hscale,p->vscale);
 
-			postscript_out_style=p->style;
-			postscript_out_hscale=p->hscale;
-			postscript_out_vscale=p->vscale;
-			postscript_blbias=blbias;
+			postscript_out_style = p->style;
+			postscript_out_hscale = p->hscale;
+			postscript_out_vscale = p->vscale;
+			postscript_blbias = blbias;
 
-			postscript_space_width=(double)(HORIZONTAL_UNITS/10) * p->hscale;
+			postscript_space_width = (double)(HORIZONTAL_UNITS/10) * p->hscale;
 			}
 
 		/* See if we must select a new colour. */
@@ -340,8 +353,8 @@ void empty_buffer(void)
 				while(rel > (postscript_space_width-TOLERR))
 					{
 					fputc(' ',stdout);
-					postscript_xpos+=postscript_space_width;
-					rel-=postscript_space_width;
+					postscript_xpos += postscript_space_width;
+					rel -= postscript_space_width;
 					}
 				acumulated_error=rel;
 

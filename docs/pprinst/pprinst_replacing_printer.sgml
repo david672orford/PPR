@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_replacing_printer.sgml
-Last Modified: 20 August 2003
+Last Modified: 11 September 2003
 Last Proofread: 
 -->
 
@@ -59,9 +59,10 @@ series of tabbed pages, as in figure <xref linkend="prn-properties1"/>.</para>
 
 <figure id="prn-properties1">
 <title>A Printer's Properties</title>
-<mediaobject>
-	<imageobject><imagedata fileref="web_prn_properties1.png" format="png"/></imageobject>
-</mediaobject>
+<screenshot>
+	<screeninfo>Mozilla 1.4, Linux, PPR 1.52</screeninfo>
+	<graphic fileref="web_prn_properties1.png" format="png"/>
+</screenshot>
 </figure>
 
 <para>

@@ -1,29 +1,57 @@
 /*
 ** mouse:~ppr/src/include/filter_dotmatrix.h
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 August 1999.
+** Last modified 13 September 2003.
 */
 
+#include "before_system.h"
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <errno.h>
+#ifdef INTERNATIONAL
+#include <locale.h>
+#include <libintl.h>
+#endif
+#include "gu.h"
+#include "global_defines.h"
+#include "global_structs.h"
+
 /* If defined, PostScript comments are included to assist in debuging. */
-/* #define DEBUG_COMMENTS 1 */
+#if 0
+#define DEBUG_COMMENTS 1
+#endif
 
+/* Units of measure expressed in PostScript units. */
 #define INCH 72.0
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE !FALSE
-#endif
 
 /* Possible duplex modes: */
 #define DUPLEX_UNDEF 0
@@ -36,22 +64,19 @@
 #define DOTMATRIXG1 "(TrinColl-PPR-Dotmatrix-G1) 1 0"
 #define DOTMATRIXG2 "(TrinColl-PPR-Dotmatrix-G2) 1 0"
 #define REENCODE "(TrinColl-PPR-ReEncode) 1.1 0"
-#define METRICSEPSON1 "(TrinColl-PPR-Dotmatrix-MetricsEpson1) 1 0"
-#define METRICSEPSON2 "(TrinColl-PPR-Dotmatrix-MetricsEpson2) 1 0"
-#define METRICSEPSON3 "(TrinColl-PPR-Dotmatrix-MetricsEpson3) 1 0"
-#define METRICSEPSON4 "(TrinColl-PPR-Dotmatrix-MetricsEpson4) 1 0"
 #define NEWMETRICS "(TrinColl-PPR-NewMetrics) 1 0"
+#define METRICSEPSON "(TrinColl-PPR-Dotmatrix-MetricsEpson%d) 1 0"
 #define COLOUR "(TrinColl-PPR-Dotmatrix-Colour) 1 0"
 
-/* Size of input buffer. */
+/* Size of input buffer in bytes. */
 #define INPUT_BUFFER_SIZE 8192
 
 /* These are the master mode select codes. */
-#define MODE_15PITCH 512		/* my hack */
-#define MODE_3X_HORIZONTAL 1024		/* my hack */
-#define MODE_4X_HORIZONTAL 2048		/* my hack */
-#define MODE_2X_VERTICAL 4096		/* my hack */
-#define MODE_4X_VERTICAL 8192		/* my hack */
+#define MODE_15PITCH 512				/* my hack */
+#define MODE_3X_HORIZONTAL 1024			/* my hack */
+#define MODE_4X_HORIZONTAL 2048			/* my hack */
+#define MODE_2X_VERTICAL 4096			/* my hack */
+#define MODE_4X_VERTICAL 8192			/* my hack */
 #define MODE_2X_VERTICAL_BASELINE 16384	/* my hack */
 #define MODE_UNDERLINE 128
 #define MODE_ITALIC 64
@@ -78,8 +103,9 @@
 #define SCRIPT_SUPER 1
 #define SCRIPT_SUB 2
 
-/* How wide are various modes? */
-/* All of these must be floating point numbers. */
+/*
+** How wide are various modes? All of these must be floating point numbers.
+*/
 #define FACTOR_ELITE (10.0/12.0)
 #define FACTOR_CONDENSED (10.0/17.0)
 #define FACTOR_EXPANDED 2.0
@@ -102,17 +128,20 @@
 #define PINS_8or24 0
 #define PINS_9 1
 
-/* Output style descriptions for communication between */
-/* main.c and linebuf.c */
+/*
+** Output style descriptions for communication between main.c and linebuf.c.
+*/
 #define OSTYLE_UNDERLINE 1		/* Underline */
 #define OSTYLE_OBLIQUE 2		/* Italic */
 #define OSTYLE_BOLD 4			/* for double strike and emphasized */
 #define OSTYLE_HALFRAISE 8		/* for superscript */
 #define OSTYLE_FULLDROP 16		/* for double height characters */
-#define OSTYLE_PROPORTIONAL 32		/* for proportional type */
+#define OSTYLE_PROPORTIONAL 32	/* for proportional type */
 
-/* Various printers we can emulate.  It may be ok to enable multiple */
-/* emulations to include features from several printers. */
+/*
+** Various printers we can emulate.  It may be ok to enable multiple
+** emulations to include features from several printers.
+*/
 #define EMULATION_CONFLICTING_IBM 1	/* Proprinter differences */
 #define EMULATION_P6_INTERPRETATION 4
 #define EMULATION_24PIN_UNITS 8
@@ -128,16 +157,12 @@
 #define COLOUR_GREEN 6
 #define COLOUR_BROWN 7
 
-/* PostScript encodings */
-#define ENCODING_STANDARD 0
-#define ENCODING_CP437 1
-#define ENCODING_ISOLATIN1 2
-
 /* Globals in main.c */
+extern const char myname[];
 extern int noisy;
 extern int colour_ok;
 extern int level2;
-extern int encoding;
+extern const char *opt_charset;
 extern int HORIZONTAL_UNITS;
 extern int VERTICAL_UNITS;
 extern int VFACTOR;
@@ -194,6 +219,8 @@ extern int auto_lf;
 extern int auto_cr;
 
 /* in main.c */
+void fatal(int exitval, const char message[], ... );
+void error(const char message[], ... );
 void achieve_position(void);
 void line_feed(int howfar);
 void reset(int hard);
@@ -250,10 +277,10 @@ extern int uses_normal;
 extern int uses_bold;
 extern int uses_oblique;
 extern int uses_boldoblique;
-extern int uses_nonascii_normal;
-extern int uses_nonascii_bold;
-extern int uses_nonascii_oblique;
-extern int uses_nonascii_boldoblique;
+extern gu_boolean uses_nonascii_normal;
+extern gu_boolean uses_nonascii_bold;
+extern gu_boolean uses_nonascii_oblique;
+extern gu_boolean uses_nonascii_boldoblique;
 void pass1(void);
 
 /* In prop.c */

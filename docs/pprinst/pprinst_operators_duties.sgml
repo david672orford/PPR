@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_operators_duties.sgml
-Last Modified: 20 August 2003
+Last Modified: 11 September 2003
 Last Proofread:
 -->
 
@@ -78,9 +78,8 @@ the command <command>ppad media show all</command>.
 <sect2>
 <title>Stopping and Starting Printers</title>
 
-<para>
-You can determine a printer's status with the <command>ppop status</command> command:
-</para>
+<para>You can determine a printer's status with the <command>ppop
+status</command> command:</para>
 
 <para>
 
@@ -145,7 +144,7 @@ mrhp3si       stopt
 <para> If the printer is in the middle of a job, it will be stopped when the
 job is done.  Until it stops, <command>ppop status</command> continues to
 display the name of the job being printed, but it also indicates that the
-printer is stopping: </para>
+printer is stopping:</para>
 
 <para>
 
@@ -174,16 +173,14 @@ mrhp3si       printing mrhp3si-3876 (stopping)
 
 </para>
 
-<para>
-If the printer was printing a job, it stops in the middle of the job and the
-job is returned to the queue.  If the job was submitted to a group of
-printers, it will be printed on the next member of the group to become idle.
-This means that the job may begin printing on another printer the moment you
-halt the printer on which it was origionally printing.
-</para>
+<para>If the printer was printing a job, it stops in the middle of the job
+and the job is returned to the queue.  If the job was submitted to a group
+of printers, it will be printed on the next member of the group to become
+idle. This means that the job may begin printing on another printer the
+moment you halt the printer on which it was origionally printing.</para>
 
-<para> If a printer is stopt or stopping, you can start it again with the
-<command>ppop start</command> command: </para>
+<para>If a printer is stopt or stopping, you can start it again with the
+<command>ppop start</command> command:</para>
 
 <para>
 
@@ -198,28 +195,32 @@ printer has stopt printing due to a fault.  In that case, the <command>ppop
 start</command> command will cause an immediate retry. Printer faults are
 discussed in section <xref linkend="printerfaults"/>.</para>
 
-<para>If you would rather, you can use the web interface to check a printer's status and stop
-and start it.  To do this, click on the printer's icon in the PPR Control Panel and choose <guimenuitem>
-Printer Control</guimenuitem>.  A window like that shown in figure <xref linkend="web-prn-control"/> will appear.
-</para>
+<para>If you would rather, you can use the web interface to check a
+printer's status and stop and start it.  To do this, click on the printer's
+icon in the PPR Control Panel and choose <guimenuitem>Printer
+Control</guimenuitem>.  A window like that shown in figure <xref
+linkend="web-prn-control"/> will appear.</para>
 
 <figure id="web-prn-control">
 <title>Printer Status and Control</title>
-<mediaobject>
-	<imageobject><imagedata fileref="web_prn_control.png" format="png"/></imageobject>
-</mediaobject>
+<screenshot>
+	<screeninfo>Mozilla 1.4, Linux, PPR 1.52</screeninfo>
+	<graphic fileref="web_prn_control.png" format="png"/>
+</screenshot>
 </figure>
 
-<para>Now instead of using commands such as <command>ppop stop</command> and <command>ppop start</command> you can
-simply press the coresponding buttons.</para>
+<para>Now instead of using commands such as <command>ppop stop</command> and
+<command>ppop start</command> you can simply press the coresponding
+buttons.</para>
 
 <para>A third option is to use the Perl/Tk interface.</para>
 
 <figure id="perltk-prn-status">
 <title>Printer Status as Displayed in the Perl/Tk Interface</title>
-<mediaobject>
-	<imageobject><imagedata fileref="perltk_prn_status.png" format="png"/></imageobject>
-</mediaobject>
+<screenshot>
+	<screeninfo>Linux, PPR 1.52</screeninfo>
+	<graphic fileref="perltk_prn_status.png" format="png"/>
+</screenshot>
 </figure>
 
 </sect2>
@@ -227,15 +228,14 @@ simply press the coresponding buttons.</para>
 <sect2>
 <title>More On Mounting Media</title>
 
-<para>The information in this section only applies if you have set the printer up
-for media management as described in section <xref linkend="adding-autobin"/>.</para>
+<para>The information in this section only applies if you have set the
+printer up for media management as described in section <xref
+linkend="adding-autobin"/>.</para>
 
-<para>
-Each job which enters the print queue requires one or more types of paper.
-Most jobs require only one.  If the required medium is not mounted, <command>ppop
-list</command> will indicate the types of media (generally various kinds of paper)
-that the job requires.  Here is an example:
-</para>
+<para>Each job which enters the print queue requires one or more types of
+paper. Most jobs require only one.  If the required medium is not mounted,
+<command>ppop list</command> will indicate the types of media (generally
+various kinds of paper) that the job requires.  Here is an example:</para>
 
 <para>
 
@@ -284,10 +284,9 @@ echo "Thank you."
 <title>Dealing With Printer Faults
 </title>
 
-<para>
-After most printer faults, PPR will try again soon.  You can use <command>ppop
-status printer</command> to check on the status of a printer:
-</para>
+<para>After most printer faults, PPR will try again soon.  You can use
+<command>ppop status printer</command> to check on the status of a
+printer:</para>
 
 <para>
 
@@ -462,13 +461,13 @@ other job, the administrators have a special command just for that purpose:
 
 </para>
 
-<para> The command above will delete all arrested jobs in the queues
+<para>The command above will delete all arrested jobs in the queues
 <literal>rat</literal> and <literal>adshp4m</literal>.  If we imagine that
 the command above acted on the jobs shown in the queue listing at the start
 of this section, then it deleted the jobs <literal>adshp4m-2719</literal>
 and <literal>rat-2717</literal> but left the job
 <literal>rat-2718</literal>.  The <command>ppop clean</command> command will
-only delete arrested jobs. </para>
+only delete arrested jobs.</para>
 
 <para>
 We can also could have deleted all arrested jobs in the system:

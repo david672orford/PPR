@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/escape.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 July 1999.
+** Last modified 12 September 2003.
 */
 
 /*
@@ -18,11 +33,9 @@
 ** This module is responsible for interpreting ESC and FS codes.
 **
 ** The functions in the module compile into two versions according to
-** whether PASS1 is defined or not.
+** whether COMPILING_PASS1 is defined or not.
 */
 
-#include <stdio.h>
-#include <ctype.h>
 #include "filter_dotmatrix.h"
 
 /*
@@ -33,7 +46,7 @@
 /*
 ** Handle escape codes.
 */
-#ifdef PASS1
+#ifdef COMPILING_PASS1
 void escape_pass1(void)
 #else
 void escape(void)
@@ -48,7 +61,7 @@ void escape(void)
 	switch(c)							/* act on it */
 		{
 		case 14:						/* NEC one line expanded */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% NEC one line expanded\n");
 			#endif
@@ -57,7 +70,7 @@ void escape(void)
 			#endif
 			break;
 		case 15:						/* NEC simple compressed */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% NEC simple compressed\n");
 			#endif
@@ -67,7 +80,7 @@ void escape(void)
 			break;
 		case 25:						/* Set cut-sheet option */
 			NEWC;						/* ignore */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% cut sheet option = %d (ignored)\n",c);
 			#endif
@@ -75,7 +88,7 @@ void escape(void)
 			break;
 		case 32:						/* set additional spacing */
 			NEWC;						/* (NEC P6) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% extra_dot_spacing=%d\n",c);
 			#endif
@@ -84,18 +97,18 @@ void escape(void)
 			break;
 		case '!':						/* Select Master Print mode */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% Master print mode: %d\n",c);
 			#endif
 			#endif
-			current_charmode=c;			/* both passes */
-			#ifndef PASS1
+			current_charmode = c;		/* both passes */
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case '#':						/* Cancel control of 8th bit */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% cancel control of 8th bit\n");
 			#endif
@@ -105,11 +118,11 @@ void escape(void)
 			break;
 		case '$':						/* move to absolute position */
 			NEWC;						/* get position in 60ths of an inch */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			length=c;
 			#endif
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			length+=c*256;
 			xpos=length * 6;
 
@@ -120,7 +133,7 @@ void escape(void)
 			#endif
 			break;
 		case '%':						/* Activate character set */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("%% Activate character set (ignored)");
 			#endif
@@ -130,7 +143,7 @@ void escape(void)
 			break;
 		case '&':						/* Define user characters */
 			NEWC;						/* eat zero */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% define user characters (ignored)\n");
 			#endif
@@ -147,7 +160,7 @@ void escape(void)
 			NEWC;
 			length+=c*256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(mode,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -158,7 +171,7 @@ void escape(void)
 			break;
 		case '+':				/* set line spacing to n/360ths of an inch */
 			NEWC;				/* (Panasonic PX-P1124) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% line spacing: %d/360ths inch (24 pin)\n",c);
 			#endif
@@ -167,7 +180,7 @@ void escape(void)
 			break;
 		case '-':						/* Underline on/off */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			switch(c)
 				{
 				case 0:
@@ -196,7 +209,7 @@ void escape(void)
 			break;
 		case '/':						/* Vertical tab channel */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% switch to vertical tab channel %d\n",c);
 			#endif
@@ -207,7 +220,7 @@ void escape(void)
 				fprintf(stderr,"Illegal value in ESC /\n");
 			break;
 		case '0':						/* 1/8 inch spacing */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% 1/8th inch line spacing");
 			#endif
@@ -215,7 +228,7 @@ void escape(void)
 			#endif
 			break;
 		case '1':						/* 7/72 inch spacing (what about NEC?) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% 7/72ths inch line spacing");
 			#endif
@@ -223,7 +236,7 @@ void escape(void)
 			#endif
 			break;
 		case '2':						/* 1/6 inch spacing */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% 1/6th inch line spacing");
 			#endif
@@ -232,7 +245,7 @@ void escape(void)
 			break;
 		case '3':						/* n/216 inch spacing */
 			NEWC;						/* or n/180 */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% %d/216th inch line spacing\n",c);
 			#endif
@@ -243,33 +256,33 @@ void escape(void)
 			#endif
 			break;
 		case '4':						/* Italic on */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% italic on");
 			#endif
 			#endif
 
-			current_charmode|=MODE_ITALIC; /* needed for both passes */
+			current_charmode |= MODE_ITALIC; /* needed for both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case '5':						/* Italic off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% italic off");
 			#endif
 			#endif
 
-			current_charmode&=(~MODE_ITALIC); /* needed for both passes */
+			current_charmode &= (~MODE_ITALIC); /* needed for both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case '6':						/* disable high bit controls */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% disable high bit controls");
 			#endif
@@ -277,21 +290,21 @@ void escape(void)
 			upper_controls=FALSE; /* (Epson FX-850, not LX-80 manual) */
 			break;
 		case '8':						/* disable paper out */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% disable paper out sensor (ignored)");
 			#endif
 			#endif
 			break;
 		case '9':						/* enable paper out */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% enable paper out sensor (ignored)");
 			#endif
 			#endif
 			break;						/* ignore */
 		case ':':						/* copy ROM characters to RAM */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% copy ROM characters to RAM (ignored)");
 			#endif
@@ -301,14 +314,14 @@ void escape(void)
 			NEWC;
 			break;
 		case '<':						/* one line unidirectional mode */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% one line unidirectional mode (ignored)");
 			#endif
 			#endif
 			break;
 		case '=':						/* set eight bit to 0 */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% set eight bit to 0");
 			#endif
@@ -317,7 +330,7 @@ void escape(void)
 			clear8th=0x7F;
 			break;
 		case '>':						/* set eight bit to 1 */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% set eight bit to 1");
 			#endif
@@ -327,7 +340,7 @@ void escape(void)
 			break;
 		case '?':						/* Define graphics modes */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 
 			#ifdef DEBUG_COMMENTS
 			puts("% re-define graphics mode");
@@ -360,7 +373,7 @@ void escape(void)
 			#endif
 			break;
 		case '@':						/* Reset printer */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% reset printer");
 			#endif
@@ -375,7 +388,7 @@ void escape(void)
 			break;
 		case 'A':						/* VMI to n/72ths (n/60ths, NEC) */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% VMI = %d/72ths\n",c);
 			#endif
@@ -383,7 +396,7 @@ void escape(void)
 			#endif
 			break;
 		case 'B':						/* set vertical tabs */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% set vertical tabs, channel 0");
 			#endif
@@ -394,7 +407,7 @@ void escape(void)
 			NEWC;						/* or N inches */
 			if(c)						/* if c is not zero */
 				{						/* it is lines */
-				#ifndef PASS1
+				#ifndef COMPILING_PASS1
 				if(c < 128)
 					page_length=current_line_spacing * c;
 				else
@@ -408,7 +421,7 @@ void escape(void)
 			else
 				{
 				NEWC;
-				#ifndef PASS1
+				#ifndef COMPILING_PASS1
 				if(c < 23)
 					page_length=c * VERTICAL_UNITS;
 				else
@@ -422,7 +435,7 @@ void escape(void)
 			/* we will not reset to top of form */
 			break;
 		case 'D':						/* set horizontal tabs */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% set horizontal tabs");
 			#endif
@@ -430,7 +443,7 @@ void escape(void)
 			horizontal_tabs_set();
 			break;
 		case 'E':						/* emphasized mode on (we will allow with elite and compressed) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% emphasized mode on");
 			#endif
@@ -438,12 +451,12 @@ void escape(void)
 
 			current_charmode|=MODE_EMPHASIZED;	/* needed for both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case 'F':						/* emphasized mode off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% emphasized mode off");
 			#endif
@@ -451,12 +464,12 @@ void escape(void)
 
 			current_charmode&=(~MODE_EMPHASIZED); /* needed for both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case 'G':						/* double strike mode on */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% double strike mode on");
 			#endif
@@ -464,12 +477,12 @@ void escape(void)
 
 			current_charmode|=MODE_DOUBLE_STRIKE;		/* both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case 'H':						/* double strike mode off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% double strike mode off");
 			#endif
@@ -477,13 +490,13 @@ void escape(void)
 
 			current_charmode&=(~MODE_DOUBLE_STRIKE);	/* both passes */
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			select_font();
 			#endif
 			break;
 		case 'J':						/* Immediate line feed of n/216ths */
 			NEWC;						/* or possibly, n/180ths inch */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% immediate line feed of %d/216ths inch\n",c);
 			#endif
@@ -500,7 +513,7 @@ void escape(void)
 			NEWC;
 			length+=c*256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(graphic_mode_K,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -515,7 +528,7 @@ void escape(void)
 			NEWC;
 			length+=c*256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(graphic_mode_L,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -525,7 +538,7 @@ void escape(void)
 			#endif
 			break;
 		case 'M':						/* elite mode */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% elite mode");
 			#endif
@@ -535,7 +548,7 @@ void escape(void)
 			break;
 		case 'N':				/* perforation skip to N lines */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% perforation skip: %d line(s)\n",c);
 			#endif
@@ -547,7 +560,7 @@ void escape(void)
 			#endif
 			break;
 		case 'O':				/* turns perforation skip mode off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% perforation skip off");
 			#endif
@@ -555,7 +568,7 @@ void escape(void)
 			#endif
 			break;
 		case 'P':				/* elite mode off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% Elite off");
 			#endif
@@ -565,7 +578,7 @@ void escape(void)
 			break;
 		case 'Q':				/* set right margin */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% right margin: %d\n",c);
 			#endif
@@ -574,7 +587,7 @@ void escape(void)
 			break;
 		case 'R':				/* set international character set */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% international character set: %d\n",c);
 			#endif
@@ -587,7 +600,7 @@ void escape(void)
 			break;
 		case 'S':				/* Turns script mode on */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% script mode: %c\n",c);
 			#endif
@@ -610,7 +623,7 @@ void escape(void)
 			#endif
 			break;
 		case 'T':				/* Turns script mode off */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% script mode off");
 			#endif
@@ -621,14 +634,14 @@ void escape(void)
 			break;
 		case 'U':				/* Turn unidirectional mode on or off */
 			NEWC;				/* ignore this command */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% unidirectional mode: %d (ignored)\n",c);
 			#endif
 			#endif
 			break;
 		case 'V':				/* repeats data in input buffer */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% repeat data (ignored)");
 			#endif
@@ -639,7 +652,7 @@ void escape(void)
 			break;
 		case 'W':				/* Turns expanded mode on or off */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% expanded mode: %d\n",c);
 			#endif
@@ -662,7 +675,7 @@ void escape(void)
 			NEWC;
 			length+=c * 256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(graphic_mode_Y,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -677,7 +690,7 @@ void escape(void)
 			NEWC;
 			length+=c * 256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(graphic_mode_Z,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -694,7 +707,7 @@ void escape(void)
 			NEWC;
 			length+=c * 256;
 
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			eat_graphic(mode,PINS_9,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -706,7 +719,7 @@ void escape(void)
 			break;
 		case 'a':				/* NLQ justification */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% NLQ justification: %d\n",c);
 			#endif
@@ -715,7 +728,7 @@ void escape(void)
 			break;
 		case 'b':				/* Set vertical tabs */
 			NEWC;				/* get channel number */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% set vertical tabs, channel %d\n",c);
 			#endif
@@ -726,7 +739,7 @@ void escape(void)
 				vertical_tabs_set(c);
 			break;
 		case 'e':				/* Set horizontal or vertical tab increments */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% set tab increments");
 			#endif
@@ -750,7 +763,7 @@ void escape(void)
 			break;
 		case 'f':				/* Print spaces or line feeds */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			if(c < 128)			/* spaces */
 				{
 				#ifdef DEBUG_COMMENTS
@@ -768,7 +781,7 @@ void escape(void)
 			#endif
 			break;
 		case 'g':				/* select 15 pitch (P6) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("15 pitch");
 			#endif
@@ -783,7 +796,7 @@ void escape(void)
 			break;;
 		case 'j':				/* reverse paper n/216ths or n/180ths inch */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% reverse paper %d units\n",c);
 			#endif
@@ -796,7 +809,7 @@ void escape(void)
 			break;
 		case 'k':				/* Select NLQ font */
 			NEWC;				/* (Epson 850, Star NX-1000) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% select NLQ font: %d\n",c);
 			#endif
@@ -806,7 +819,7 @@ void escape(void)
 			break;
 		case 'l':				/* Left margin */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% left margin: %d\n",c);
 			#endif
@@ -816,7 +829,7 @@ void escape(void)
 			break;
 		case 'm':				/* Upper controls */
 			NEWC;				/* (Epson LX-80, but not FX-850) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% upper controls (ESC m): %d\n",c);
 			#endif
@@ -837,7 +850,7 @@ void escape(void)
 			break;
 		case 'p':				/* sets or cancels proportional printing (P6) */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			switch(c)
 				{
 				case '0':
@@ -866,7 +879,7 @@ void escape(void)
 			break;
 		case 'r':				/* select print colour */
 			NEWC;
-			#ifdef PASS1
+			#ifdef COMPILING_PASS1
 			if(c != COLOUR_BLACK)
 				uses_colour=TRUE;
 			#else
@@ -881,7 +894,7 @@ void escape(void)
 			break;
 		case 's':				/* print speed */
 			NEWC;				/* ignore this command */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% print speed: %d\n",c);
 			#endif
@@ -889,27 +902,27 @@ void escape(void)
 			break;				/* (Epson LX-80, FX-850 manuals) */
 		case 't':				/* Select character set */
 			NEWC;				/* "0" and "1" cannot be used */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% select character set: %d\n",c);
 			#endif
 			switch(c)			/* (Epson FX-850 manual) */
 				{
 				case 0:			/* Italic */
-					charset=CHARSET_ITALIC;
+					charset = CHARSET_ITALIC;
 					break;
 				case 1:			/* Extended */
-					charset=CHARSET_EXTENDED;
+					charset = CHARSET_EXTENDED;
 					break;
 				default:
-					fprintf(stderr,"Invalid ESC s code\n");
+					fprintf(stderr, "Invalid ESC s code\n");
 					break;
 				}
 			#endif
 			break;
 		case 'w':				/* turn double high mode on/off */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% turn double high mode on/off: %d\n",c);
 			#endif
@@ -934,7 +947,7 @@ void escape(void)
 			break;
 		case 'x':				/* NLQ mode on/off */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			switch(c)
 				{
 				case 0:			/* draft mode */
@@ -975,11 +988,11 @@ void escape(void)
 			else
 				{
 				NEWC;							/* build number from */
-				#ifndef PASS1
+				#ifndef COMPILING_PASS1
 				length=c;						/* next two bytes */
 				#endif
 				NEWC;
-				#ifndef PASS1
+				#ifndef COMPILING_PASS1
 				length += 256 * c;
 
 				if(length > 32768)				/* undo two's complement */
@@ -1006,7 +1019,7 @@ void escape(void)
 				}
 			break;
 		default:
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			if(isprint(c))
 				{
 				#ifdef DEBUG_COMMENTS
@@ -1030,7 +1043,7 @@ void escape(void)
 /*
 ** NEC FS codes
 */
-#ifdef PASS1
+#ifdef COMPILING_PASS1
 void fs_pass1(void)
 #else
 void fs(void)
@@ -1039,7 +1052,7 @@ void fs(void)
 	int c;
 	int length;
 
-	#ifdef PASS1		/* P6 commands indicated 24 pin printer */
+	#ifdef COMPILING_PASS1		/* P6 commands indicated 24 pin printer */
 	uses_24pin_commands=TRUE;
 	#endif
 
@@ -1049,7 +1062,7 @@ void fs(void)
 		{
 		case '3':				/* set line spacing to n/360ths of an inch */
 			NEWC;				/* (NEC P6 and Panasonic KX-P1124) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% line spacing: %d/360ths inch\n",c);
 			#endif
@@ -1057,7 +1070,7 @@ void fs(void)
 			#endif
 			break;
 		case '@':				/* reset printer (total) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("%% NEC full reset");
 			#endif
@@ -1066,7 +1079,7 @@ void fs(void)
 			break;
 		case 'C':				/* sets optional font ROM */
 			NEWC;				/* (ignored) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% set optional font ROM: %d (ignored)\n",c);
 			#endif
@@ -1074,7 +1087,7 @@ void fs(void)
 			break;
 		case 'E':				/* sets double or triple width */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			switch(c)
 				{
 				case 0:
@@ -1116,7 +1129,7 @@ void fs(void)
 			#endif
 			break;
 		case 'F':				/* selects forward line feed */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% select forward line feed");
 			#endif
@@ -1130,7 +1143,7 @@ void fs(void)
 				{
 				case 0:
 				case '0':
-					#ifndef PASS1
+					#ifndef COMPILING_PASS1
 					#ifdef DEBUG_COMMENTS
 					puts("% select italic character set");
 					#endif
@@ -1139,7 +1152,7 @@ void fs(void)
 					break;
 				case 1:
 				case '1':
-					#ifndef PASS1
+					#ifndef COMPILING_PASS1
 					#ifdef DEBUG_COMMENTS
 					puts("% select IBM character set");
 					#endif
@@ -1147,7 +1160,7 @@ void fs(void)
 					charset=CHARSET_EXTENDED;
 					break;
 				default:
-					#ifndef PASS1
+					#ifndef COMPILING_PASS1
 					#ifdef DEBUG_COMMENTS
 					puts("% invalid FS I command");
 					#endif
@@ -1158,7 +1171,7 @@ void fs(void)
 
 			break;
 		case 'R':				/* selects reverse line feed */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% select reverse line feed");
 			#endif
@@ -1167,7 +1180,7 @@ void fs(void)
 			break;
 		case 'S':				/* selects 12 cpi high-speed mode */
 			NEWC;				/* (ignored) */
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% 12cpi high-speed mode: %d (ignored)\n",c);
 			#endif
@@ -1175,7 +1188,7 @@ void fs(void)
 			break;
 		case 'V':				/* selects double height printing */
 			NEWC;
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			switch(c)
 				{
 				case 0:			/* cancel vertical enlargement */
@@ -1211,7 +1224,7 @@ void fs(void)
 			NEWC;
 			length+=c*256;
 
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			eat_graphic(GRAPHICS_24_360,PINS_8or24,length);
 			#else
 			#ifdef DEBUG_COMMENTS
@@ -1221,7 +1234,7 @@ void fs(void)
 			#endif
 			break;
 		default:
-			#ifndef PASS1
+			#ifndef COMPILING_PASS1
 			if(isprint(c))
 				{
 				#ifdef DEBUG_COMMENTS

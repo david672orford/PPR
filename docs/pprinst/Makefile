@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2003.
+# Last modified 11 September 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -69,6 +69,7 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_replacing_printer.sgml \
 		pprinst_start_restart.sgml \
 		pprinst_user_notification.sgml \
+		pprinst_user_interfaces.sgml \
 		../shared/legal.sgml
 	touch pprinst.sgml
 

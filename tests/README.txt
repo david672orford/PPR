@@ -42,6 +42,10 @@ The tools/ subdirectory contains small utilities employed by the tests:
 
     dump_printer
 
+    test_rip
+
+    test_custom_hook
+
 The misc_old/ directory contains input files that were used at some point 
 in the past to diagnose problems but were never part of an automated test.
 

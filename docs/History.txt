@@ -446,7 +446,7 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.52, 24 July 2003--30 August 2003.
+1.52, 24 July 2003--12 September 2003.
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
@@ -466,7 +466,6 @@ more information about RIPs and *pprRIP:.
   anything and are slated for removal, provided more examples.
 
 * refman/ppr-panel.1.pod: expanded the section about desktop icons.
-
 
 TODO
 

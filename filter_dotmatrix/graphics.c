@@ -1,25 +1,38 @@
 /*
-** mouse.trincoll.edu:~ppr/src/dotmatrix/graphics.c
-** Copyright 1995, 1996, 1997, Trinity College Computing Center.
+** mouse:~ppr/src/dotmatrix/graphics.c
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 July 1996.
+** Last modified 12 September 2003.
 */
 
 /*
-** This file is part of PPR's dot matrix printer emulator.
-** This module is responsible for printing dotmatrix graphics.
+** This file is part of PPR's dot matrix printer emulator. This module is
+** responsible for printing dotmatrix graphics.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "filter_dotmatrix.h"
 
 /* Maximum bytes of graphics data. */
@@ -31,17 +44,37 @@
 /* Bytes of ASCII85 data per line, must be multiple of 4. */
 #define A85_BPL 60
 
-/* Graphics buffer. */
-unsigned char gbuffer[MAX_GBYTES];
+/*
+** Eat up a graphic.  This is used on the first pass.
+*/
+void eat_graphic(int mode, int pins, int length)
+	{
+	int countdown = 0;
 
-/* Buffer for the compressed graphic.  It is bigger because it is
-** theoretically possible to contrive data which will be bigger
-** when run length compressed. */
-/* unsigned char gbuffer2[MAX_GBYTES + ((MAX_GBYTES+127)/128)]; */
-unsigned char gbuffer2[20000];
+	/* Set flag to include graphics routines in PostScript prolog. */
+	uses_graphics = TRUE;						
 
+	if(mode > 7)								/* advanced graphics modes */
+		uses_24pin_commands = TRUE;				/* suggests target was a 24 pin printer */
+
+	if(pins == PINS_8or24 && mode < 32)			/* 8 pin */
+		countdown=length;
+	else if(pins == PINS_8or24)					/* 24 pin */
+		countdown=length*3;		
+	else if(pins == PINS_9)						/* 9 pin */
+		countdown=length*2;
+	
+	while(countdown-- && input()!=EOF)
+		{ /* no code */ }
+	} /* end of eat_graphic() */
+
+/*
+** Read the graphics bytes and emmit PostScript.  This is called
+** during the second pass.
+*/
 void graphic(int mode, int pins, int length)
 	{
+	unsigned char gbuffer[MAX_GBYTES];	/* Graphics buffer. */
 	int linelen;
 	int c;
 	unsigned int x;
@@ -49,8 +82,11 @@ void graphic(int mode, int pins, int length)
 	int density;
 	unsigned int countdown;
 	int true_pins;				/* 8, 9, or 24 */
-	int someblack=FALSE;
+	int someblack = FALSE;
 
+	/*
+	** Convert the graphics mode code into lines-per-inch.
+	*/
 	switch(mode)
 		{
 		case GRAPHICS_60:
@@ -86,29 +122,6 @@ void graphic(int mode, int pins, int length)
 			exit(1);	
 		}
 
-	/*
-	** We might not even be in a page yet, especially if we.
-	** are printing a screen dump.
-	*/
-	if(!in_page)
-		{
-		top_of_page();
-		in_page=TRUE;
-		}
-
-	/* Write any characters which are lingering in the line output buffer. */
-	empty_buffer();
-
-	/* Move to proper position for graphic. */
-	achieve_position();
-
-	/* Make sure we have the correct colour. */
-	if(print_colour != postscript_print_colour)
-		{
-		printf(" %d colour\n",print_colour);
-		postscript_print_colour=print_colour;
-		}
-
 	/* Issue the proper graphics command for the mode. */
 	if(pins == PINS_8or24 && mode < 32)			/* 8 pin */
 		{
@@ -127,40 +140,68 @@ void graphic(int mode, int pins, int length)
 		}
 	else
 		{
-		fprintf(stderr,"filter_dotmatrix: graphic(): unknown graphic mode\n");
+		fprintf(stderr, _("%s: graphic(): unknown graphic mode\n"), myname);
 		exit(10);
 		}
 		
 	/* See if the data is too big for our buffer. */
 	if(countdown > sizeof(gbuffer))
 		{
-		fprintf(stderr,"filter_dotmatrix: graphic too big\n");
+		fprintf(stderr, _("%s: graphic too big\n"), myname);
 		exit(1);
 		}
 
 	/* Read the data into the buffer. */
 	for(x=0; x < countdown; x++)
 		{
-		if( (c=input()) == EOF)
+		if((c=input()) == EOF)
 			{
 			if(!eof_noted)
 				{
-				fprintf(stderr,"End of file in graphic\n");
-				eof_noted=TRUE;
+				fprintf(stderr, _("%s: end of file in graphic\n"), myname);
+				eof_noted = TRUE;
 				}
-			c=0;
+			c = 0;
 			}
 
-		gbuffer[x]=c;
-		someblack=TRUE;
+		gbuffer[x] = c;
+
+		if(c != 0)
+			someblack = TRUE;
 		}
 
 	/* Only emmit the line if it makes marks. */
 	if(someblack)
 		{
+		/*
+		** We might not even have started the PostScrpt page yet, especially if
+		** we are printing a screen dump.
+		*/
+		if(!in_page)
+			{
+			top_of_page();
+			in_page = TRUE;
+			}
+
+		/* Write any characters which are lingering in the line output buffer. */
+		empty_buffer();
+
+		/* Move to proper position for graphic. */
+		achieve_position();
+
+		/* Make sure we have the correct colour set. */
+		if(print_colour != postscript_print_colour)
+			{
+			printf(" %d colour\n", print_colour);
+			postscript_print_colour = print_colour;
+			}
+
 		/* If level 2, compress the data. */
 		if(level2)
 			{
+			/* unsigned char gbuffer2[MAX_GBYTES + ((MAX_GBYTES+127)/128)]; */
+			unsigned char gbuffer2[20000];
+
 			int rlength;
 			int litlength;
 			int lastc,lastlastc;
@@ -169,10 +210,11 @@ void graphic(int mode, int pins, int length)
 			unsigned long int tuple;
 
 			/* 
-			** This loop runs once for each character and
+			** This loop runs once for each character of graphics data and
 			** then once more.
 			*/
-			unclaimed=litlength=rlength=di=0; lastlastc=lastc=-1;
+			unclaimed = litlength = rlength = di = 0;
+			lastlastc = lastc = -1;
 			countdown++;
 			for(x=0; countdown--; x++,lastlastc=lastc,lastc=c)
 				{
@@ -185,7 +227,7 @@ void graphic(int mode, int pins, int length)
 				
 				if(countdown && lastc==-1)		/* If no lastc exists, */
 					{
-					unclaimed++;				/* don't let anyone claim this on yet, */
+					unclaimed++;				/* don't let anyone claim this one yet, */
 					continue;					/* go back for another. */
 					}
 
@@ -200,8 +242,7 @@ void graphic(int mode, int pins, int length)
 					rlength=0;
 					}
 
-				/* If literal in progress, but */
-				/* we see a run starting, */
+				/* If literal in progress, but we see a run starting, */
 				if(litlength>=2 && c==lastc && c==lastlastc)
 					{
 					litlength-=2;				/* lastc should have been part of the run. */
@@ -330,8 +371,11 @@ void graphic(int mode, int pins, int length)
 			fputs("~>\n",stdout);				/* Terminate output */
 			}									/* end of if(level2) */
 
-		else									/* level one graphic */
-			{									/* emmit uncompressed hexadecimal */
+		/*
+		** PostScript level 1, emmit uncompressed hexadecimal.
+		*/
+		else									
+			{									
 			/* start the graphic */
 			printf("%%%%BeginData: %d Hex Lines\n",((countdown+HEX_BPL-1)/HEX_BPL)+1);
 			printf("%d %d graphic%d\n", density, length, true_pins);
@@ -346,42 +390,21 @@ void graphic(int mode, int pins, int length)
 					linelen=1;
 					}
 
-				printf("%2.2X",gbuffer[x]);
+				printf("%2.2X", gbuffer[x]);
 				}
 
-			fputc('\n',stdout);			/* terminate final line */
+			fputc('\n', stdout);				/* terminate final line */
 			}
 
 		/* End of graphics block */
 		fputs("%%EndData\n",stdout);
 		}								/* end of if black marks exist */
 	
-	/* Adjust xpos.	 (On a real dot matrix printer, a graphics */
-	/* command would move the cursor. */
+	/*
+	** Adjust xpos.  (Because on a real dot matrix printer, a graphics
+	** command would move the cursor.)
+	*/
 	xpos += (int)(((double)HORIZONTAL_UNITS/(double)density)*(double)length);
 	} /* end of graphic() */
 	
-/*
-** Eat up a graphic.
-*/
-void eat_graphic(int mode, int pins, int length)
-	{
-	int countdown=0;
-
-	uses_graphics=TRUE;							/* set flag to include graphics routines */
-
-	if(mode > 7)								/* advanced graphics modes */
-		uses_24pin_commands=TRUE;				/* suggest 24 pin printer */
-
-	if(pins == PINS_8or24 && mode < 32)			/* 8 pin */
-		countdown=length;
-	else if(pins == PINS_8or24)					/* 24 pin */
-		countdown=length*3;		
-	else if(pins == PINS_9)						/* 9 pin */
-		countdown=length*2;
-	
-	while(countdown-- && input()!=EOF)
-		{ /* no code */ }
-	} /* end of eat_graphic() */
-
 /* end of file */

@@ -22,7 +22,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "libppr_font.h"
 
 /*

@@ -35,7 +35,7 @@ DOCSDIR=$(WWWDIR)/docs
 POD2MAN=pod2man
 POD2HTML=pod2html
 FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$(PATH) fig2dev
-XSLTPROC=xsltproc
+XSLTPROC=/usr/bin/xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
 FOP=fop
@@ -77,10 +77,10 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 #============================================================================
 
 .html.ps:
-	-$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
+	-$(HTMLDOC) --no-toc --browserwidth 1024 -t ps --outfile $*.ps $*.html
 
 .html.pdf:
-	-$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
+	-$(HTMLDOC) --no-toc --browserwidth 1024 -t pdf12 --compression=9 --outfile $*.pdf $*.html
 
 #============================================================================
 # Rules to convert Docbook SGML to PostScript and PDF by way

@@ -29,7 +29,7 @@ Alert frequency: 7 (send alert every 7 errors)
   Alert method: mail
   Alert address: nobody@localhost
 Flags: no no (banners discouraged, trailers discouraged)
-Charge: none
+Charge: no charge
 Switchset: 
 ppad: 0
 

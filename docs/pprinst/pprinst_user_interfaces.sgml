@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_user_interfaces.sgml
-Last Modified: 11 September 2003
+Last Modified: 12 September 2003
 Last Proofread:
 -->
 
@@ -21,21 +21,36 @@ commands are <command>ppr</command>, <command>ppop</command>, and
 <command>ppad</command>.</para>
 
 <para>The <command>ppr</command> command is used to submit print jobs.  It
-works much like <command>lpr</command> or <command>lp</command>.
-If a filename is specified on the command line, it is printed,
-otherwise the data to be printed is ready from stdin.  The
-<option>-d</option> is used to specify the queue to which to submit the
-job.</para>
+works much like <command>lpr</command> or <command>lp</command>. If a
+filename is specified on the command line, it is printed, otherwise the data
+to be printed is ready from stdin.  The <option>-d</option> is used to
+specify the queue to which to submit the job.  Other options are available
+to control such things as multiple copies, duplexing, and user notification
+of the job's fate.</para>
 
 <para>The <command>ppop</command> command is the command which users and
-operators use to control the spooler.  With it they can list the queue,
-delete jobs, mount forms, and perform similiar tasks that don't alter the
-spooler configuration.</para>
+operators use to control the spooler.  All users can list queues delete,
+move, hold, etc. their own jobs.  Users who have been granted operator's
+rights can do the same to anyone's job.  They can also mount forms, start
+and stop printers, and perform similiar tasks that don't alter the spooler
+configuration.  A user can be granted operator access by adding his username
+to <filename>/etc/ppr/acl/ppop.allow</filename>. </para>
+
+<para>The <command>ppop</command> command is structured as a series of
+subcommands.  For example, <command>ppop list</command> will list a queue
+while <command>ppop cancel</command> will cancel a job.</para>
 
 <para>The <command>ppad</command> command is the one which the system
-administrator uses to alter the spooler's configuration.  Like the
-<command>ppop</command> command, the <command>ppad</command> command is a
-container for many subcommands.</para>
+administrator uses to alter the spooler's configuration.  Ordinary users 
+can use it to view but not alter the spooler configuration.  Users who have
+been granted spooler administrator access by adding their usernames to 
+<filename>/etc/ppr/acl/ppad.allow</filename> can alter the spooler
+configuration.  For example, they can add and delete printers.</para>
+
+<para>Like the <command>ppop</command> command, the <command>ppad</command>
+command is a container for many subcommands.  For example, <command>ppad
+show</command> will display the configuration of a printer while
+<command>ppad comment</command> will change its description.</para>
 
 <para>This manual will provide many examples of the use of these commands.
 Complete explanations of all of their options and subcommands can be found
@@ -59,8 +74,8 @@ below.</para>
 <figure id="web-start">
 <title>Opening the <application>PPR</application>Web-Browser Interface</title>
 <screenshot>
-	<screeninfo>Mozilla 1.4, Linux</screeninfo>
-	<graphic fileref="web_start.png" format="png" width="7in" scalefit="1"/>
+	<screeninfo>Mozilla 1.4, Linux, PPR 1.52</screeninfo>
+	<graphic fileref="web_start.png" format="png"/>
 </screenshot>
 </figure>
 
@@ -72,19 +87,44 @@ web-browser interface.  The web browser interface is shown in figure
 <figure id="web-control">
 <title><application>PPR</application>'s Web Control Panel</title>
 <screenshot>
-	<screeninfo>Mozilla 1.4, Linux</screeninfo>
-	<graphic fileref="web_control.png" format="png" width="7in" scalefit="1"/>
+	<screeninfo>Mozilla 1.4, Linux, PPR 1.52</screeninfo>
+	<graphic fileref="web_control.png" format="png"/>
 </screenshot>
 </figure>
 
-<para>Some of the operations which you can perform using the web interface require
-authentication and authorization.  If you are running the web browser on a Linux
-system and connecting to the same system using the address <literal>localhost</literal>,
-then <application>PPR</application> will be able to determine which user is on
-the other browser side of the connection.  Under any other circumstance, you will have to
-present a username and password.</para>
+<para>Some of the operations which you can perform using the web interface
+require authentication and authorization.  If you are running the web
+browser on a Linux system and connecting to the same system using the
+address <literal>localhost</literal>, then <application>PPR</application>
+will be able to determine which user is on the other browser side of the
+connection.  Under any other circumstance, you will have to present a
+username and password.</para>
 
-[missing]
+<para>The PPR web-browser interface will not accept your system password. 
+It could only do so if you were to send your password over the net where it
+would be succeptible to eavesdropping.  Instead it uses what is known as
+"digest" HTTP authentication.  In this sceme, your browser proves to the
+server that you have told it your password by treating it as a number and
+answering obscure questions about its mathmatical properties.  However, in
+order to participate in this game, the server needs to have your password
+encoded in a particular way.  The upshot is that you must use a special
+password setting program to set the password for the PPR web-browser
+interface.  Actually, the first time, a system administrator (root or
+someone listed in <filename>/etc/ppr/acl/passwd.allow</filename> must do
+this for you, like this:
+
+<screen>
+# ppr-passwd --add jjones
+</screen>
+
+</para>
+
+<para>All authenticated users have the same level of access that they would
+have at the command line.  This means that they can do things to their own
+jobs, but everthing else, such as the spooler configuration, is read-only
+for them.  A user can be granted a greater level of access by adding him to
+the access control lists for the <command>ppop</command> and
+<command>ppad</command> commands as described above.</para>
 
 </sect2>
 
@@ -95,14 +135,14 @@ present a username and password.</para>
 way to print files, view and manage queues, view printer status, and start
 and stop printers.  It does not provide any way to alter the spooler
 configuration.  There are also some gaps in the functions which it does
-provide.
-</para>
+provide.</para>
 
 <figure id="perltk-control">
 <title>The Perl/Tk Control Panel</title>
-<mediaobject>
-	<imageobject><imagedata fileref="perltk_control.png" format="png"/></imageobject>
-</mediaobject>
+<screenshot>
+	<screeninfo>Linux, PPR 1.52</screeninfo>
+	<graphic fileref="perltk_control.png" format="png"/>
+</screenshot>
 </figure>
 
 </sect2>

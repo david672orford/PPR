@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--11 September 2003.
+1.52, 24 July 2003--13 September 2003.
 
 Bug Fixes
 
@@ -8703,7 +8703,7 @@ Bug Fixes
 * ppr/ppr_main.c,libuprint/uprint-newconf.c: converted some tabs back into
   spaces in the --help output.
 
-* www/ppr-web.tcl: fixed the code that opens the printer control panel in
+* www/ppr-web.tcl: fixed the code which opens the printer control panel in
   Mozilla using a file in $HOME/.ppr/ to avoid the need for a singed script
   so that instead of simply assigning to window.location it uses
   window.open() with a 4th argument of true so that the control panel
@@ -8721,7 +8721,13 @@ Bug Fixes
 * www/cgi_intl.pl: added $debug to control debugging level (and thereby turn
   off a slew of debugging messages).
 
-* www/cliconf.cgi.perl: fixed wrong label on Perl/Tk icon generation page.
+* www/cliconf.cgi.perl: fixed wrong page jump label on Perl/Tk icon
+  generation page.
+
+* filter_dotmatrix/: serious bug magnified page dimensions 1440x leaving
+  cursor way off the page.  I guess no one is using this filter.  Also
+  fixed bug which prevented similtanious bold and italic from working.
+  See below for enhancements.
 
 Misc. Added Material
 
@@ -8750,6 +8756,8 @@ Misc. Removed Material
   hack.  Most of the drivers involved are probably long dead.
 
 * ppuser/ppuser.c: removed authcode subcommand.
+
+* tests/misc_old: removed several files.
 
 Misc. Enhancements
 
@@ -8784,11 +8792,19 @@ Misc. Enhancements
 
 * www/cgi_tabbed.pl,cgi_wizard.pl: enabled snap-to-size code after changing
   it to run only on the first time.  This should take care of the
-  a-few-pixels-at-a-time creap problems.
+  a-few-pixels-at-a-time creap problems which was why the code was disabled.
 
 * www/show_queus.cgi.perl: added target="_blank" to <a> tags that try to
   open a new window using JavaScript.  This makes the no-JavaScript behavior
   more like the behavior with JavaScript.
+
+* filter_dotmatrix: furthur i18n, omit all-blank graphics except as spacing
+
+* tests/test-filters/300-filter_dotmatrix.run,.ok: added
+
+* filter_dotmatrix/: added support for charsets.conf and fonts.conf.  All
+  character sets supported by filter_lp are now supported by
+  filter_dotmatrix too.
 
 Internet Printing Protocol Work
 
@@ -8815,6 +8831,8 @@ TODO
 
 * Convert SNMP code and tcpip interface to new exception handling, get rid
   of old exception handling
+
+* Use the query code.
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not

@@ -1,20 +1,35 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/postscript.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 August 1999.
+** Last modified 12 September 2003.
 */
 
-#include <stdio.h>
 #include "filter_dotmatrix.h"
+#include "libppr_font.h"
 
 /*
 ** These two variables are used for minimizing the amount
@@ -27,82 +42,114 @@ static int ls;
 static int lm;
 
 /*
-** The PostScript names of the four fonts
-** which will be at our disposal.  These
-** names are not fixed because sometimes it
-** will be necessary to use the IBM version
-** of Courier while at other times the Adobe
-** version will do.	 (The IBM version has more
-** characters though the extra ones are not
-** encoded in the standard encoding.)
-*/
-static char *font_normal;
-static char *font_bold;
-static char *font_oblique;
-static char *font_boldoblique;
-
-/*
-** The name of the PostScript encoding to use.  If
-** "StandardEncoding" is ok, this variable will
-** be set to a NULL.
+** The name of the PostScript encoding which we will use to achieve
+** the selected character set.  If the default encoding of all of the
+** fonts is OK, then this will be NULL.
 */
 static char *encoding_name;
 
+/*
+** Here are the font information structures which encoding_to_font()
+** will return.
+*/
+static struct FONT_INFO font_normal;
+static struct FONT_INFO font_bold;
+static struct FONT_INFO font_oblique;
+static struct FONT_INFO font_boldoblique;
+
+/*
+** This structure holds all of the information we need to choose 
+** appropriate fonts for the encoding and character useage patters.
+** Also, by putting this into a structure we have replace a lot
+** of cut-past-and-modify code with loops.
+*/
+struct FONTS {
+	const char *command;			/* command we define in setup section to select this font */
+	const char *weight;
+	const char *slant;
+	gu_boolean *uses;				/* value pointed to: does document use this font? */
+	gu_boolean *uses_nonascii;		/* value pointed to: does document non-ASCII characters out of this font? */
+	gu_boolean *uses_proportional;	/* value pointed to: is used converted to proportional spacing */
+	const char *prop_tbl_name;		/* proportional respacing table name */
+	struct FONT_INFO *font_info;
+   	};
+
+static struct FONTS fonts[4] =
+	{
+	/*
+	 cmd,	weight,		slant,	used,				non-ASCII,					uses propertional,		prop table, 			FONT_INFO */
+	{"f",	"medium",	"r", 	&uses_normal,		&uses_nonascii_normal,		&uses_proportional1,	"Courier",				&font_normal},
+	{"fb",	"bold",		"r", 	&uses_bold,			&uses_nonascii_bold,		&uses_proportional2,	"Courier-Bold",			&font_bold},
+	{"fo",	"medium",	"o", 	&uses_oblique,		&uses_nonascii_oblique, 	&uses_proportional3,	"Courier-Oblique",		&font_oblique},
+	{"fbo",	"bold",		"o", 	&uses_boldoblique,	&uses_nonascii_boldoblique,	&uses_proportional4,	"Courier-BoldOblique",	&font_boldoblique}
+   	};
+    
 /*
 ** This subroutine is called at the top of the document.
 */
 void top_of_document(void)
 	{
-	/*
-	** For each of the four fonts, if code page 437 encoding was
-	** selected, choose the IBM version of Courier only if pass1
-	** revealed that non-ASCII characters are required from that
-	** font.
-	*/
-	if(encoding==ENCODING_CP437 && uses_nonascii_normal)
-		font_normal="IBMCourier";
-	else
-		font_normal="Courier";
+	gu_boolean need_proportional_procset = FALSE;
+    {
+    int i;
+    struct ENCODING_INFO encoding;
 
-	if(encoding==ENCODING_CP437 && uses_nonascii_bold)
-		font_bold="IBMCourier-Bold";
-	else
-		font_bold="Courier-Bold";
+	/* Look up the selected charset in order to find the cooresponding
+	   PostScript encoding name.
+	   */
+	if(charset_to_encoding(opt_charset, &encoding) < 0)
+		fatal(10, _("charset \"%s\" is unknown"), opt_charset);
 
-	if(encoding==ENCODING_CP437 && uses_nonascii_oblique)
-		font_oblique="IBMCourier-Italic";
-	else
-		font_oblique="Courier-Oblique";
-
-	if(encoding==ENCODING_CP437 && uses_nonascii_boldoblique)
-		font_boldoblique="IBMCourier-BoldItalic";
-	else
-		font_boldoblique="Courier-BoldOblique";
-
-	/*
-	** Select the encoding we will use.  Don't use a special
-	** encoding unless it will actually be useful.
-	*/
-	if(encoding != ENCODING_STANDARD && (uses_nonascii_normal || uses_nonascii_bold
-				|| uses_nonascii_oblique || uses_nonascii_boldoblique) )
+	/* Here we find an encoding-appropriate font in each of the required
+	   styles.
+	   */
+    gu_boolean no_substitute = FALSE;
+    for(i=0; i<4; i++)
 		{
-		if(encoding == ENCODING_ISOLATIN1)
-			encoding_name = "ISOLatin1Encoding";
-		else if(encoding == ENCODING_CP437)
-			encoding_name = "PPR-CP437";
+		/* If this font is used at all, */
+		if(*fonts[i].uses)
+			{
+			if(encoding_to_font(encoding.encoding, "fixed", fonts[i].weight, fonts[i].slant, "normal", fonts[i].font_info) < 0)
+				fatal(10, _("no font available for charset %s, weight %s, slant %s"), opt_charset, fonts[i].weight, fonts[i].slant);
+
+			/* If the document needs one or more non-ASCII characters from this font
+			   or the font doesn't have a substitute for documents with only ASCII
+			   characters, then we will not substitute for any font.
+			   */
+			if(*fonts[i].uses_nonascii || !fonts[i].font_info->ascii_subst_font)
+				no_substitute = TRUE;
+
+			if(*fonts[i].uses_proportional)
+				need_proportional_procset = TRUE;
+			}
+		}
+
+	/* If we haven't decided we can't substitute and the encoding is ASCII compatible,
+	   then go with the ASCII substitutes.
+	   */
+	if(!no_substitute && encoding.encoding_ascii_compatible)
+		{
+		for(i=0; i<4; i++)
+			{
+			fonts[i].font_info->font_psname = fonts[i].font_info->ascii_subst_font;
+			}
+		encoding_name = NULL;
 		}
 	else
 		{
-		encoding_name = (char*)NULL;
+		encoding_name = gu_strdup(encoding.encoding);
 		}
-
+	}
+	
 	puts("%!PS-Adobe-3.0");
 	puts("%%Creator: PPR dotmatrix printer emulator");
 	puts("%%Pages: (atend)");
 	puts("%%DocumentData: Clean7Bit");
-	puts("%%DocumentNeededResources: procset "DOTMATRIX);
+	printf("%%%%DocumentNeededResources: procset %s\n", DOTMATRIX);
 
-	/* If we need graphics routines, say so. */
+	/* If we need graphics routines, mention the procedure sets that contain
+	   them.  We will show where to insert them later.
+	   */
 	if(uses_graphics)
 		{
 		if(level2)
@@ -111,37 +158,33 @@ void top_of_document(void)
 			fputs("%%+ procset "DOTMATRIXG1"\n",stdout);
 		}
 
-	/*
-	** If we will have to re-encode the font, mention the
-	** resources needed to do it.
-	*/
-	if(encoding_name != (char*)NULL)
+	/* If we will have to re-encode the font, mention the resources needed to do it.
+	   Again, we will say where to include them later.
+	   */
+	if(encoding_name)
 		{
-		puts("%%+ procset "REENCODE);
-		printf("%%%%+ encoding %s\n",encoding_name);
+		printf("%%%%+ procset %s\n", REENCODE);
+		printf("%%%%+ encoding %s\n", encoding_name);
 		}
 
-	/* Emmit comments for those fonts we will actually use. */
-	if(uses_normal)
-		printf("%%%%+ font %s\n",font_normal);
-	if(uses_bold)
-		printf("%%%%+ font %s\n",font_bold);
-	if(uses_oblique)
-		printf("%%%%+ font %s\n",font_oblique);
-	if(uses_boldoblique)
-		printf("%%%%+ font %s\n",font_boldoblique);
+	/* Do we need to proportional-spacing conversion procset? */
+	if(need_proportional_procset)
+		printf("%%%%+ procset %s\n", NEWMETRICS);
 
-	/* If we will use proportional spacing, mention those proceedure sets. */
-	if(uses_proportional1 || uses_proportional2 || uses_proportional3 || uses_proportional4)
-		puts("%%+ procset "NEWMETRICS);
-	if(uses_proportional1)
-		puts("%%+ procset "METRICSEPSON1);
-	if(uses_proportional2)
-		puts("%%+ procset "METRICSEPSON2);
-	if(uses_proportional3)
-		puts("%%+ procset "METRICSEPSON3);
-	if(uses_proportional4)
-		puts("%%+ procset "METRICSEPSON4);
+	/* Emmit requirement comments for those fonts we will actually use.
+	  */
+	{
+    int i;
+    for(i=0; i<4; i++)
+    	{
+		if(*fonts[i].uses)
+			printf("%%%%+ font %s\n", fonts[i].font_info->font_psname);
+
+		/* This will never be set if .uses isn't.  We are bug hunting. */
+		if(*fonts[i].uses_proportional)
+			printf("%%%%+ procset "METRICSEPSON"\n", i+1);			
+    	}
+	}
 
 	/* If colour required, name that proceedure set. */
 	if(uses_colour)
@@ -183,15 +226,15 @@ void top_of_document(void)
 	** printer emulation proceedures.
 	*/
 	puts("%%BeginProlog");
-	puts("%%IncludeResource: procset "DOTMATRIX);
+	printf("%%%%IncludeResource: procset %s\n", DOTMATRIX);
 
 	/* If we will be printing graphics, emmit the routines here. */
 	if(uses_graphics)
 		{
 		if(level2)
-			fputs("%%IncludeResource: procset "DOTMATRIXG2"\n",stdout);
+			printf("%%IncludeResource: procset %s\n", DOTMATRIXG2);
 		else
-			fputs("%%IncludeResource: procset "DOTMATRIXG1"\n",stdout);
+			printf("%%%%IncludeResource: procset %s\n", DOTMATRIXG1);
 		}
 
 	/*
@@ -200,30 +243,30 @@ void top_of_document(void)
 	** download the required encoding and a proceedure to re-encode
 	** a font.
 	*/
-	if(encoding_name != (char*)NULL )
+	if(encoding_name)
 		{
-		puts("%%IncludeResource: procset "REENCODE);
-		printf("%%%%IncludeResource: encoding %s\n",encoding_name);
+		printf("%%%%IncludeResource: procset %s\n", REENCODE);
+		printf("%%%%IncludeResource: encoding %s\n", encoding_name);
 		}
 
 	/*
 	** If we are using proportional spacing, download
 	** the proportional font metrics procedure sets.
 	*/
-	if(uses_proportional1 || uses_proportional2 || uses_proportional3 || uses_proportional4)
-		puts("%%IncludeResource: procset "NEWMETRICS);
-	if(uses_proportional1)
-		puts("%%IncludeResource: procset "METRICSEPSON1);
-	if(uses_proportional2)
-		puts("%%IncludeResource: procset "METRICSEPSON2);
-	if(uses_proportional3)
-		puts("%%IncludeResource: procset "METRICSEPSON3);
-	if(uses_proportional4)
-		puts("%%IncludeResource: procset "METRICSEPSON4);
+	if(need_proportional_procset)
+		printf("%%%%IncludeResource: procset %s\n", NEWMETRICS);
+	{
+    int i;
+    for(i=0; i<4; i++)
+    	{
+		if(*fonts[i].uses_proportional)
+			printf("%%%%IncludeResource: procset "METRICSEPSON"\n", i+1);
+    	}
+	}
 
 	/* If colour needed, download that proceedure set. */
 	if(uses_colour)
-		puts("%%IncludeResource: procset "COLOUR);
+		printf("%%%%IncludeResource: procset %s\n", COLOUR);
 
 	fputs("%%EndProlog\n\n",stdout);
 
@@ -273,83 +316,47 @@ void top_of_document(void)
 	** we must arrange to have things shifted 0.25
 	** inch to the right.
 	*/
-	if( emulation & EMULATION_8IN_LINE )
+	if(emulation & EMULATION_8IN_LINE)
 		puts("/xshift 0.25 inch def");
 
 	/*
 	** If an x or y shift has been specified, emmit it.
 	*/
-	if( xshift )
+	if(xshift)
 		printf("/xshift xshift %d add def\n", xshift);
-	if( yshift )
+	if(yshift)
 		printf("/yshift yshift %d add def\n", yshift);
 
+	printf("\n");
+
 	/* Download all the fonts we need. */
-	if(uses_normal)
-		printf("%%%%IncludeResource: font %s\n",font_normal);
-	if(uses_bold)
-		printf("%%%%IncludeResource: font %s\n",font_bold);
-	if(uses_oblique)
-		printf("%%%%IncludeResource: font %s\n",font_oblique);
-	if(uses_boldoblique)
-		printf("%%%%IncludeResource: font %s\n",font_boldoblique);
-
-	/* For each font, if we need non-ASCII characters, re-encode it. */
-	if(encoding_name != (char*)NULL)
+	{
+	int i;
+	for(i=0; i<4; i++)
 		{
-		if(uses_nonascii_normal)
-			printf("/%s /Courier /%s ReEncode\n", font_normal, encoding_name);
-
-		if(uses_nonascii_bold)
-			printf("/%s /Courier-Bold /%s ReEncode\n", font_bold, encoding_name);
-
-		if(uses_nonascii_oblique)
-			printf("/%s /Courier-Oblique /%s ReEncode\n", font_oblique, encoding_name);
-
-		if(uses_nonascii_boldoblique)
-			printf("/%s /Courier-BoldOblique /%s ReEncode\n", font_boldoblique, encoding_name);
+		if(*fonts[i].uses)
+			printf("%%%%IncludeResource: font %s\n", fonts[i].font_info->font_psname);
+		if(*fonts[i].uses_nonascii)
+			printf("/%s /%s /%s ReEncode\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, encoding_name);
+		if(*fonts[i].uses)
+			printf("/%s /%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
+		if(*fonts[i].uses_proportional)
+			{
+			printf("/%s /PS%s MetricsEpson_%s NewMetrics\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, fonts[i].prop_tbl_name);
+			printf("/p%s /PS%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
+			}
+		printf("\n");
 		}
-
-	/* Find and scale the fonts we will use. */
-	if(uses_normal)
-		fputs("/f /Courier findfont 12 scalefont def\n",stdout);
-	if(uses_bold)
-		fputs("/fb /Courier-Bold findfont 12 scalefont def\n",stdout);
-	if(uses_oblique)
-		fputs("/fo /Courier-Oblique findfont 12 scalefont def\n",stdout);
-	if(uses_boldoblique)
-		fputs("/fbo /Courier-BoldOblique findfont 12 scalefont def\n",stdout);
-
-	/* find and scale the proportional fonts we will use. */
-	if(uses_proportional1)
-		{
-		fputs("/Courier /PSCourier MetricsEpson_Courier NewMetrics\n",stdout);
-		fputs("/pf /PSCourier findfont 12 scalefont def\n",stdout);
-		}
-	if(uses_proportional2)
-		{
-		fputs("/Courier-Bold /PSCourier-Bold MetricsEpson_Courier-Bold NewMetrics\n",stdout);
-		fputs("/pfb /PSCourier-Bold findfont 12 scalefont def\n",stdout);
-		}
-	if(uses_proportional3)
-		{
-		fputs("/Courier-Oblique /PSCourier-Oblique MetricsEpson_Courier-Oblique NewMetrics\n",stdout);
-		fputs("/pfo /PSCourier-Oblique findfont 12 scalefont def\n",stdout);
-		}
-	if(uses_proportional4)
-		{
-		fputs("/Courier-BoldOblique /PSCourier-BoldOblique MetricsEpson_Courier-BoldOblique NewMetrics\n",stdout);
-		fputs("/pfbo /PSCourier-BoldOblique findfont 12 scalefont def\n",stdout);
-		}
-
+	}
+	
 	/*
 	** If there are any normal characters, it is ok to select
 	** normal characters as the default.
 	*/
 	if(uses_normal)
-		fputs("f 1 sf\n",stdout);
+		fputs("f 1 sf\n", stdout);
 
-	fputs("%%EndSetup\n\n",stdout);
+	fputs("%%EndSetup\n\n", stdout);
 	} /* end of top_of_document() */
 
 /*
@@ -372,7 +379,7 @@ void top_of_page(void)
 	current_page++;
 
 	/* current point has been lost */
-	postscript_xpos=postscript_ypos=-1;
+	postscript_xpos = postscript_ypos = -1;
 
 	/* Colour setting has been lost. */
 	postscript_print_colour=COLOUR_BLACK;
@@ -413,9 +420,10 @@ void achieve_position(void)
 	#endif
 
 	/* If both x and y must change, */
-	if( xpos != postscript_xpos && ypos != postscript_ypos )
+	if(xpos != postscript_xpos && ypos != postscript_ypos)
 		{
-		if(xpos==lm && ypos==(postscript_ypos-ls))
+		/* If it is a CRLF, */
+		if(xpos == lm && ypos == (postscript_ypos - ls))
 			{
 			fputs("n\n",stdout);
 			}

@@ -1,14 +1,15 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 7 August 2003.
+ Last revised 12 September 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
 README.txt to learn where the other documentation is.
 
-This document does not discuss installing PPR from an .rpm file.  The RPM
-version of PPR is still considered experimental.
+This document does not specificly discuss installing PPR from an .rpm file. 
+Obviously in such as case you will not have to compile it, but some of the
+information about other packages still applies.
 
 =============================================================================
  Table of Contents

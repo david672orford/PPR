@@ -25,10 +25,15 @@ pprdotmatrix_init
 /xfactor 360 72 div def
 /yfactor 360 72 div def
 /bunit 60 def
+
 %%IncludeResource: font Courier
-%%IncludeResource: font Courier-Oblique
 /f /Courier findfont 12 scalefont def
+
+
+%%IncludeResource: font Courier-Oblique
 /fo /Courier-Oblique findfont 12 scalefont def
+
+
 f 1 sf
 %%EndSetup
 
@@ -36,7 +41,7 @@ f 1 sf
 %%BeginPageSetup
 bp
 %%EndPageSetup
-0 20528640 mxy
+0 3960 mxy
 (This is)p
 fo 1.00 sf
 36 m
@@ -44,7 +49,7 @@ fo 1.00 sf
 f 1.00 sf
 36 m
 (text.)p
-0 20528580 mxy
+0 3900 mxy
 (THIS IS COLOUR 0)p
 1 colour
 n
@@ -69,13 +74,13 @@ n
 (THIS IS COLOUR 7)p
 f 2.00 sf
 0 colour
-0 20528040 mxy
+0 3360 mxy
 36.0 s (EXPANDED)p
 f 1.00 sf
 72 m
 (NORMAL)p
 f 2.00 sf
-0 20527980 mxy
+0 3300 mxy
 36.0 s (One  line  expanded)p
 f 1.00 sf
 n
@@ -91,7 +96,7 @@ f 2.00 2.00 sfh
 n
 36.0 s (THIS  IS  2X  VERT  &  2X  HORZ)p
 f 3.00 2.00 sfh
-0 20527620 mxy
+0 2940 mxy
 36.0 s (2X   VERT   &   3X   HORZ)p
 0 bb
 f 1.00 sf
@@ -100,7 +105,7 @@ n
 n
 (At this spacing \(n\) equals 0)p
 3 e
-0 20527320 mxy
+0 2640 mxy
 (At )p
 3 m
 (this )p
@@ -232,63 +237,63 @@ n
 0 e
 n
 (2/360 - inch line spacing)p
-0 20526718 mxy
+0 2038 mxy
 (4/360 - inch line spacing)p
-0 20526714 mxy
+0 2034 mxy
 (6/360 - inch line spacing)p
-0 20526708 mxy
+0 2028 mxy
 (8/360 - inch line spacing)p
-0 20526700 mxy
+0 2020 mxy
 (10/360 - inch line spacing)p
-0 20526690 mxy
+0 2010 mxy
 (12/360 - inch line spacing)p
-0 20526678 mxy
+0 1998 mxy
 (14/360 - inch line spacing)p
-0 20526664 mxy
+0 1984 mxy
 (16/360 - inch line spacing)p
-0 20526648 mxy
+0 1968 mxy
 (18/360 - inch line spacing)p
-0 20526630 mxy
+0 1950 mxy
 (20/360 - inch line spacing)p
-0 20526610 mxy
+0 1930 mxy
 (22/360 - inch line spacing)p
-0 20526588 mxy
+0 1908 mxy
 (24/360 - inch line spacing)p
-0 20526564 mxy
+0 1884 mxy
 (26/360 - inch line spacing)p
-0 20526538 mxy
+0 1858 mxy
 (28/360 - inch line spacing)p
-0 20526510 mxy
+0 1830 mxy
 (30/360 - inch line spacing)p
-0 20526480 mxy
+0 1800 mxy
 (32/360 - inch line spacing)p
-0 20526448 mxy
+0 1768 mxy
 (34/360 - inch line spacing)p
-0 20526414 mxy
+0 1734 mxy
 (36/360 - inch line spacing)p
-0 20526378 mxy
+0 1698 mxy
 (38/360 - inch line spacing)p
-0 20526340 mxy
+0 1660 mxy
 (40/360 - inch line spacing)p
-0 20526300 mxy
+0 1620 mxy
 (42/360 - inch line spacing)p
-0 20526258 mxy
+0 1578 mxy
 (44/360 - inch line spacing)p
-0 20526214 mxy
+0 1534 mxy
 (46/360 - inch line spacing)p
-0 20526168 mxy
+0 1488 mxy
 (48/360 - inch line spacing)p
-0 20526120 mxy
+0 1440 mxy
 (50/360 - inch line spacing)p
-0 20526070 mxy
+0 1390 mxy
 (52/360 - inch line spacing)p
-0 20526018 mxy
+0 1338 mxy
 (54/360 - inch line spacing)p
-0 20525964 mxy
+0 1284 mxy
 (56/360 - inch line spacing)p
-0 20525908 mxy
+0 1228 mxy
 (58/360 - inch line spacing)p
-0 20525850 mxy
+0 1170 mxy
 (60/360 - inch line spacing)p
 %%PageTrailer
 ep
@@ -297,7 +302,7 @@ ep
 %%BeginPageSetup
 bp
 %%EndPageSetup
-0 20528640 mxy
+0 3960 mxy
 (This is 8-pin grapics, M = 0)p
 1404 mx
 %%BeginData: 3 Hex Lines
@@ -305,7 +310,7 @@ bp
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 %%EndData
-0 20528520 mxy
+0 3840 mxy
 (This is 8-pin grapics, M = 1)p
 216 m
 %%BeginData: 3 Hex Lines
@@ -337,7 +342,7 @@ n
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 %%EndData
-0 20527980 mxy
+0 3300 mxy
 (This is 24-pin grapics, M = 32)p
 1476 mx
 %%BeginData: 6 Hex Lines
@@ -348,7 +353,7 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 %%EndData
-0 20527860 mxy
+0 3180 mxy
 (This is 24-pin grapics, M = 33)p
 216 m
 %%BeginData: 6 Hex Lines
@@ -417,7 +422,7 @@ end % pprdotmatrix
 
 %%BeginProlog
 %%IncludeResource: procset (TrinColl-PPR-Dotmatrix) 1 2
-%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-G2) 1 0
+%IncludeResource: procset (TrinColl-PPR-Dotmatrix-G2) 1 0
 %%IncludeResource: procset (TrinColl-PPR-Dotmatrix-Colour) 1 0
 %%EndProlog
 
@@ -428,10 +433,15 @@ pprdotmatrix_init
 /xfactor 360 72 div def
 /yfactor 360 72 div def
 /bunit 60 def
+
 %%IncludeResource: font Courier
-%%IncludeResource: font Courier-Oblique
 /f /Courier findfont 12 scalefont def
+
+
+%%IncludeResource: font Courier-Oblique
 /fo /Courier-Oblique findfont 12 scalefont def
+
+
 f 1 sf
 %%EndSetup
 
@@ -439,7 +449,7 @@ f 1 sf
 %%BeginPageSetup
 bp
 %%EndPageSetup
-0 20528640 mxy
+0 3960 mxy
 (This is)p
 fo 1.00 sf
 36 m
@@ -447,7 +457,7 @@ fo 1.00 sf
 f 1.00 sf
 36 m
 (text.)p
-0 20528580 mxy
+0 3900 mxy
 (THIS IS COLOUR 0)p
 1 colour
 n
@@ -472,13 +482,13 @@ n
 (THIS IS COLOUR 7)p
 f 2.00 sf
 0 colour
-0 20528040 mxy
+0 3360 mxy
 36.0 s (EXPANDED)p
 f 1.00 sf
 72 m
 (NORMAL)p
 f 2.00 sf
-0 20527980 mxy
+0 3300 mxy
 36.0 s (One  line  expanded)p
 f 1.00 sf
 n
@@ -494,7 +504,7 @@ f 2.00 2.00 sfh
 n
 36.0 s (THIS  IS  2X  VERT  &  2X  HORZ)p
 f 3.00 2.00 sfh
-0 20527620 mxy
+0 2940 mxy
 36.0 s (2X   VERT   &   3X   HORZ)p
 0 bb
 f 1.00 sf
@@ -503,7 +513,7 @@ n
 n
 (At this spacing \(n\) equals 0)p
 3 e
-0 20527320 mxy
+0 2640 mxy
 (At )p
 3 m
 (this )p
@@ -635,63 +645,63 @@ n
 0 e
 n
 (2/360 - inch line spacing)p
-0 20526718 mxy
+0 2038 mxy
 (4/360 - inch line spacing)p
-0 20526714 mxy
+0 2034 mxy
 (6/360 - inch line spacing)p
-0 20526708 mxy
+0 2028 mxy
 (8/360 - inch line spacing)p
-0 20526700 mxy
+0 2020 mxy
 (10/360 - inch line spacing)p
-0 20526690 mxy
+0 2010 mxy
 (12/360 - inch line spacing)p
-0 20526678 mxy
+0 1998 mxy
 (14/360 - inch line spacing)p
-0 20526664 mxy
+0 1984 mxy
 (16/360 - inch line spacing)p
-0 20526648 mxy
+0 1968 mxy
 (18/360 - inch line spacing)p
-0 20526630 mxy
+0 1950 mxy
 (20/360 - inch line spacing)p
-0 20526610 mxy
+0 1930 mxy
 (22/360 - inch line spacing)p
-0 20526588 mxy
+0 1908 mxy
 (24/360 - inch line spacing)p
-0 20526564 mxy
+0 1884 mxy
 (26/360 - inch line spacing)p
-0 20526538 mxy
+0 1858 mxy
 (28/360 - inch line spacing)p
-0 20526510 mxy
+0 1830 mxy
 (30/360 - inch line spacing)p
-0 20526480 mxy
+0 1800 mxy
 (32/360 - inch line spacing)p
-0 20526448 mxy
+0 1768 mxy
 (34/360 - inch line spacing)p
-0 20526414 mxy
+0 1734 mxy
 (36/360 - inch line spacing)p
-0 20526378 mxy
+0 1698 mxy
 (38/360 - inch line spacing)p
-0 20526340 mxy
+0 1660 mxy
 (40/360 - inch line spacing)p
-0 20526300 mxy
+0 1620 mxy
 (42/360 - inch line spacing)p
-0 20526258 mxy
+0 1578 mxy
 (44/360 - inch line spacing)p
-0 20526214 mxy
+0 1534 mxy
 (46/360 - inch line spacing)p
-0 20526168 mxy
+0 1488 mxy
 (48/360 - inch line spacing)p
-0 20526120 mxy
+0 1440 mxy
 (50/360 - inch line spacing)p
-0 20526070 mxy
+0 1390 mxy
 (52/360 - inch line spacing)p
-0 20526018 mxy
+0 1338 mxy
 (54/360 - inch line spacing)p
-0 20525964 mxy
+0 1284 mxy
 (56/360 - inch line spacing)p
-0 20525908 mxy
+0 1228 mxy
 (58/360 - inch line spacing)p
-0 20525850 mxy
+0 1170 mxy
 (60/360 - inch line spacing)p
 %%PageTrailer
 ep
@@ -700,14 +710,14 @@ ep
 %%BeginPageSetup
 bp
 %%EndPageSetup
-0 20528640 mxy
+0 3960 mxy
 (This is 8-pin grapics, M = 0)p
 1404 mx
 %%BeginData: 2 ASCII Lines
 60 60 cgraphic8
 `W#o<~>
 %%EndData
-0 20528520 mxy
+0 3840 mxy
 (This is 8-pin grapics, M = 1)p
 216 m
 %%BeginData: 2 ASCII Lines
@@ -735,14 +745,14 @@ n
 90 60 cgraphic8
 `W#o<~>
 %%EndData
-0 20527980 mxy
+0 3300 mxy
 (This is 24-pin grapics, M = 32)p
 1476 mx
 %%BeginData: 2 ASCII Lines
 60 60 cgraphic24
 JcF!p!!!~>
 %%EndData
-0 20527860 mxy
+0 3180 mxy
 (This is 24-pin grapics, M = 33)p
 216 m
 %%BeginData: 2 ASCII Lines
@@ -786,8 +796,11 @@ end % pprdotmatrix
 %%DocumentNeededResources: procset (TrinColl-PPR-Dotmatrix) 1 2
 %%+ procset (TrinColl-PPR-ReEncode) 1.1 0
 %%+ encoding PPR-KOI8-R
+%%+ procset (TrinColl-PPR-NewMetrics) 1 0
 %%+ font CourierISOC
+%%+ procset (TrinColl-PPR-Dotmatrix-MetricsEpson1) 1 0
 %%+ font CourierISOC-Bold
+%%+ procset (TrinColl-PPR-Dotmatrix-MetricsEpson2) 1 0
 %%+ font CourierISOC-Oblique
 %%+ font CourierISOC-BoldOblique
 %%Requirements:
@@ -797,23 +810,36 @@ end % pprdotmatrix
 
 %%BeginProlog
 %%IncludeResource: procset (TrinColl-PPR-Dotmatrix) 1 2
-%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0%%IncludeResource: encoding PPR-KOI8-R
+%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0
+%%IncludeResource: encoding PPR-KOI8-R
+%%IncludeResource: procset (TrinColl-PPR-NewMetrics) 1 0
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-MetricsEpson1) 1 0
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-MetricsEpson2) 1 0
 %%EndProlog
 
 %%BeginSetup
 %%IncludeFeature: *PageSize Letter
 pprdotmatrix begin
 pprdotmatrix_init
+
 %%IncludeResource: font CourierISOC
-%%IncludeResource: font CourierISOC-Bold
-%%IncludeResource: font CourierISOC-Oblique
-%%IncludeResource: font CourierISOC-BoldOblique
 /CourierISOC /CourierISOC /PPR-KOI8-R ReEncode
-/CourierISOC-Oblique /CourierISOC-Oblique /PPR-KOI8-R ReEncode
 /f /CourierISOC findfont 12 scalefont def
+/CourierISOC /PSCourierISOC MetricsEpson_Courier NewMetrics
+/pf /PSCourierISOC findfont 12 scalefont def
+
+%%IncludeResource: font CourierISOC-Bold
 /fb /CourierISOC-Bold findfont 12 scalefont def
+/CourierISOC-Bold /PSCourierISOC-Bold MetricsEpson_Courier-Bold NewMetrics
+/pfb /PSCourierISOC-Bold findfont 12 scalefont def
+
+%%IncludeResource: font CourierISOC-Oblique
+/CourierISOC-Oblique /CourierISOC-Oblique /PPR-KOI8-R ReEncode
 /fo /CourierISOC-Oblique findfont 12 scalefont def
+
+%%IncludeResource: font CourierISOC-BoldOblique
 /fbo /CourierISOC-BoldOblique findfont 12 scalefont def
+
 f 1 sf
 %%EndSetup
 
@@ -821,17 +847,29 @@ f 1 sf
 %%BeginPageSetup
 bp
 %%EndPageSetup
-0 12317184 mxy
+0 2376 mxy
 (normal: \372\324\317 \320\317 \322\325\323\323\313\311!)p
 fb 1.00 sf
-0 12317148 mxy
+0 2340 mxy
 (bold: This is in English!)p
 fo 1.00 sf
 n
 (italic: \372\324\317 \320\317 \322\325\323\323\313\311!)p
-fb 1.00 sf
+fbo 1.00 sf
 n
 (bold italic: This is in English!)p
+pf 1.00 sf
+n
+(normal proportional: \372\324\317 \320\317 \322\325\323\323\313\311!)p
+pfb 1.00 sf
+n
+(bold proportional: This is in English!)p
+pf 1.00 sf
+0 2124 mxy
+(Now is the time for all good men to come to the aid of the party.)p
+f 1.00 sf
+0 2088 mxy
+(Now is the time for all good men to come to the aid of the party.)p
 %%PageTrailer
 ep
 
