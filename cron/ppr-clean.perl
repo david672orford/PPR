@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/cron/ppr-clean.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 26 January 2004.
 #
 
 #
@@ -59,8 +59,20 @@ sub remove_if_old
 	{
 	$file = shift;
 	$reference_age = shift;
-	print "  remove_if_old(\"$file\", $reference_age)\n" if($opt_debug);
-	unlink($file) if(-M $file > $reference_age);
+	print "  remove_if_old(\"$file\", $reference_age):" if($opt_debug);
+	if(-M $file > $reference_age)
+		{
+		print " removing..." if($opt_debug);
+		if(!unlink($file))
+			{
+			print " $!";
+			}
+		print "\n" if($opt_debug);
+		}
+	else
+		{
+		print " not removed\n" if($opt_debug);
+		}
 	}
 
 # This calls either remove_if_old() or just remove(), depending
@@ -75,7 +87,7 @@ sub remove_switch
 		}
 	else
 		{
-		remove_if_old("$dir/$file", $reference_age);
+		remove_if_old($file, $reference_age);
 		}
 	}
 
@@ -83,16 +95,17 @@ sub remove_switch
 # an (optional) regular expression.
 sub sweepdir
 	{
-	$dir = shift;
-	$regexp = shift;
-	$reference_age = shift;
+	my $dir = shift;
+	my $regexp = shift;
+	my $reference_age = shift;
 
 	print "sweepdir(\"$dir\", /$regexp/, $reference_age)\n" if($opt_debug);
 
 	opendir(SWDIR, $dir) || die "Can't open diretory \"$dir\", $!";
+
 	if(defined($regexp))
 		{
-		while(defined($file = readdir(DIR)))
+		while(defined($file = readdir(SWDIR)))
 			{
 			next if(-d $file);
 			if($file =~ /$regexp/)
@@ -103,12 +116,13 @@ sub sweepdir
 		}
 	else
 		{
-		while(defined($file = readdir(DIR)))
+		while(defined($file = readdir(SWDIR)))
 			{
 			next if(-d $file);
 			remove_switch("$dir/$file", $reference_age);
 			}
 		}
+
 	closedir(SWDIR) || die $!;
 	}
 
@@ -172,7 +186,7 @@ if($opt_all_removable)
 	{
 	my $dir = "$VAR_SPOOL_PPR/cache";
 	opendir(CADIR, $dir) || die "Can't open diretory \"$dir\", $!";
-	while(defined($file = readdir(DIR)))
+	while(defined($file = readdir(CADIR)))
 		{
 		next if($file =~ /^\./);
 		next if(! -d "$dir/$file");
