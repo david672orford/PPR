@@ -3,23 +3,37 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 7 January 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 November 2002.
 */
 
 /*
-** AT&T/Apple AppleTalk Library Interface module.
+** AT&T/Apple AppleTalk Library Interface (ALI) module.
 **
-** This works with the AppleTalk Network Program which
-** comes with StarLAN LAN Manager.  It also works with
-** Netatalk and David Chappell's Netatalk ALI compatibility
-** library.
+** This works with the AppleTalk Network Program which comes with StarLAN LAN 
+** Manager.  It also works with Netatalk and David Chappell's Netatalk ALI 
+** compatibility library.
 */
 
 #include "before_system.h"
@@ -357,13 +371,12 @@ void add_name(int prnid)
     adv[prnid].fd = fd;
     } /* end of add_name() */
 
-/*========================================================
+/*===========================================================================
 ** AppleTalk dependent part of printjob()
 **
-** Copy the job to ppr.  We will not use the buffering
-** routines to do this, though we will use the buffer
-** and the buffering routine global variables.
-========================================================*/
+** Copy the job to ppr.  We will not use the buffering routines to do this, 
+** though we will use the buffer and the buffering routine global variables.
+===========================================================================*/
 int appletalk_dependent_printjob(int sesfd, int pipe)
     {
     int writelen;
@@ -409,10 +422,10 @@ int appletalk_dependent_printjob(int sesfd, int pipe)
     return eoj;
     } /* end of appletalk_dependent_printjob() */
 
-/*
+/*==========================================================================
 ** This is the daemon's main loop where we accept incoming connections.
 ** This loop never ends.
-*/
+==========================================================================*/
 void appletalk_dependent_daemon_main_loop(void)
     {
     int x;
@@ -534,13 +547,13 @@ void appletalk_dependent_daemon_main_loop(void)
 		/*
 		** Change SIGCHLD handler to the one for catching ppr termination.
 		*/
-		signal(SIGCHLD, printjob_reapchild);
+		signal(SIGCHLD, child_reapchild);
 
 		/*
 		** Set up a handler for SIGPIPE which may occur
 		** if PPR exits suddenly.
 		*/
-		signal(SIGPIPE,sigpipe_handler);
+		signal(SIGPIPE, sigpipe_handler);
 
 		/*
 		** Compute usable size of write buffer
@@ -583,8 +596,9 @@ void appletalk_dependent_daemon_main_loop(void)
 /*
 ** Cleanup routine.
 **
-** The AT&T ALI library automatically removes all names,
-** but the Netatalk ALI compatibility library does not.
+** The AT&T ALI library automatically removes all names when the process 
+** holding them exists, but the Netatalk ALI compatibility library does not,
+** so we use the ALI nbp_remove() function to remove them explicitly.
 */
 void appletalk_dependent_cleanup(void)
     {
@@ -605,6 +619,6 @@ void appletalk_dependent_cleanup(void)
 	    }
 	}
 
-    } /* end of appletalk_independent_cleanup() */
+    } /* end of appletalk_dependent_cleanup() */
 
 /* end of file */

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd.h
+** mouse:~ppr/src/ppr-papd.h
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -10,20 +10,14 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 January 2002.
+** Last modified 19 November 2002.
 */
 
-/*
-** Master include file for the Printer Access Protocol server.
-*/
-
-/* Default names for the configuration, pid, and log files. */
-#define DEFAULT_PAPSRV_CONFFILE CONFDIR"/papsrv.conf"
-#define DEFAULT_PAPSRV_PIDFILE RUNDIR"/papsrv.pid"
-#define DEFAULT_PAPSRV_LOGFILE LOGDIR"/papsrv"
+#define PIDFILE RUNDIR"/ppr-papd.pid"
+#define LOGFILE LOGDIR"/ppr-papd"
 #define PAPSRV_DEFAULT_ZONE_FILE CONFDIR"/papsrv_default_zone.conf"
 
-#define PAPSRV_MAX_NAMES 64			/* maximum number of advertized names */
+#define PPR_PAPD_MAX_NAMES 64			/* maximum number of advertized names */
 #define MAX_ARGV 25				/* max arg vector length for invoking ppr */
 
 /* These two timeouts may not be implemented: */
@@ -36,19 +30,18 @@
 #define MAX_REMOTE_QUANTUM 1 			/* don't increase this, Mac client can't take it! */
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
-#define DEBUG 1
+/* #define DEBUG 1 */
 
 #ifdef DEBUG
 #define DEBUG_STARTUP 1			/* reading config, adding names and such */
-#define DEBUG_QUERY 1			/* answering queries */
+/* #define DEBUG_QUERY 1 */		/* answering queries */
 #define DEBUG_LOOP 1 			/* debug main loop */
-#define DEBUG_PRINTJOB 1		/* debug printjob() */
-#define DEBUG_PRINTJOB_DETAILED 1	/* debug printjob() */
-#define DEBUG_PPR_ARGV 1		/* print argv[] when execting ppr */
-#define DEBUG_READBUF 1			/* debug input buffering */
-#define DEBUG_WRITEBUF 1		/* debug output buffering */
-#define DEBUG_REAPCHILD 1		/* debug child daemon termination */
-#define DEBUG_AUTHORIZE 1		/* debug authorization code */
+/* #define DEBUG_PRINTJOB 1 */		/* debug printjob() */
+/* #define DEBUG_PRINTJOB_DETAILED 1 */	/* debug printjob() */
+/* #define DEBUG_PPR_ARGV 1 */		/* print argv[] when execting ppr */
+/* #define DEBUG_READBUF 1 */		/* debug input buffering */
+/* #define DEBUG_WRITEBUF 1 */		/* debug output buffering */
+/* #define DEBUG_REAPCHILD 1 */		/* debug child daemon termination */
 /* #define DEBUG_PPD 1 */		/* PPD file parsing */
 #endif
 
@@ -134,7 +127,7 @@ void postscript_stdin_flushfile(int sesfd);
 void printjob_reapchild(int signum);
 void sigpipe_handler(int signum);
 void child_main_loop(int sesfd, int prnid, int net, int node);
-void printjob(int sesfd, int prnid, int net, int node, const char username[], int preauthorized);
+void printjob(int sesfd, int prnid, int net, int node);
 
 /* routines in papsrv_ali.c and papsrv_cap.c */
 void appletalk_dependent_daemon_main_loop(void);
@@ -152,13 +145,9 @@ void answer_query(int sesfd, int prnid, const char **username, int *preauthorize
 void REPLY(int sesfd, char *ptr);
 
 /* routines in papsrv_conf.c */
-void read_conf(char *conf_fname);
+void read_conf(void);
 SHORT_INT get_font_id(const char fontname[]);
 const char *get_font_name(SHORT_INT fontid);
-
-/* routines in papsrv_authorize.c */
-void preauthorize(int sesfd, int prnid, int net, int node, const char **user, int *preauthorized);
-void login_request(int sesfd, int destid, const char **username, int *preauthorized);
 
 /* Structure used to describe an *Option entry. */
 struct OPTION
@@ -197,17 +186,11 @@ struct ADV
     gu_boolean query_font_cache;
     } ;
 
-#define AUFSSECURITYNAME_DSC 0
-#define AUFSSECURITYNAME_USERNAME 1
-#define AUFSSECURITYNAME_REALNAME 2
-
-extern struct ADV adv[PAPSRV_MAX_NAMES];
+extern struct ADV adv[PPR_PAPD_MAX_NAMES];
 extern char line[];             /* input line */
 extern int name_count;          /* total advertised names */
-extern int preauthorized;       /* flag read by printjob() */
 extern int onebuffer;           /* buffer control flag */
 extern int children;		/* count of children */
-extern char *aufs_security_dir;	/* argument to -S switch */
 extern char *default_zone;	/* default zone for advertised names, initialy set to "*" */
 
 /*
@@ -216,9 +199,7 @@ extern char *default_zone;	/* default zone for advertised names, initialy set to
 #define MSG_NOCHARGEACCT "%%[ Error: you don't have a charge account ]%%\n"
 #define MSG_BADAUTH "%%[ Error: password incorrect ]%%\n"
 #define MSG_NOFOR "%%[ Error: No \"%%For:\" line in PostScript ]%%\n"
-#define MSG_NOVOL "%%[ Error: you don't have a volume mounted ]%%\n"
 #define MSG_OVERDRAWN "%%[ Error: account overdrawn ]%%\n"
-#define MSG_DBERR "%%[ Error: user charge account database error ]%%\n"
 #define MSG_NONCONFORMING "%%[ Error: insufficient DSC conformance ]%%\n"
 #define MSG_SYNTAX "%%[ Error: bad ppr invokation syntax ]%%\n"
 #define MSG_NOSPOOLER "%%[ Error: spooler is not running ]%%\n"

@@ -1,22 +1,37 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd_query.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 5 August 1999.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 November 2002.
 */
 
 /*
 ** PAP server query answering routines.  These routines answer questions
 ** put to the spooler by the Macintosh client.  The information in the PPD file
-** and the ppr-papd configuration file is used to answer these questions.
+** and the queue configuration file is used to answer these questions.
 */
 
 #include "before_system.h"
@@ -27,7 +42,6 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "ppr-papd.h"
 
 /*
@@ -59,7 +73,7 @@ static const enum RES_SEARCH other_search_list[] = { RES_SEARCH_CACHE, RES_SEARC
 ** A version of reply() which can be instructed print debugging
 ** information in the log file.
 */
-void REPLY(int sesfd, char *ptr)
+static void REPLY(int sesfd, char *ptr)
     {
     if(query_trace)
 	debug("REPLY <-- %.*s", strcspn(ptr,"\n"), ptr);
@@ -343,9 +357,9 @@ static void resource_query(int sesfd, int destid)
 /*
 ** Do we have a certain proceedure set?
 **
-** The problem with this is pre-8.0 LaserWriter drivers
-** query for "PatchPrep" but say they are looking for "AppleDict md",
-** therefor we generally comment this code out.
+** The problem with this is pre-8.0 LaserWriter drivers query for "PatchPrep" 
+** but say they are looking for "AppleDict md", so we have left this code 
+** commented out.
 */
 #ifdef UNTESTED
 void procset_query(int sesfd)
@@ -577,27 +591,6 @@ static void generic_query(int sesfd, int destid)
 	    }
 	}
 
-    /* University of Michigan list queue supported query. */
-    else if(strcmp(tokens[1], "UMICHListQueue") == 0)
-    	{
-    	REPLY(sesfd, "true\n");
-	return;
-    	}
-
-    /* University of Michigan cost per page. */
-    else if(strcmp(tokens[1], "UMICHCostPerPage") == 0)
-    	{
-    	REPLY(sesfd, "10\n");
-    	return;
-    	}
-
-    /* University of Michigan delete job supported query. */
-    else if(strcmp(tokens[1], "UMICHDeleteJob") == 0)
-    	{
-    	REPLY(sesfd,"true\n");
-    	return;
-    	}
-
     /* unrecognized generic query */
     return_default(sesfd);
     } /* end of generic_query() */
@@ -639,71 +632,15 @@ static void uamethods_query(int sesfd, int destid)
 
     eat_query(sesfd);
 
-    if( adv[destid].isprotected )
-	{
-	#ifdef KERBEROS
-	REPLY(sesfd,"CleartxtPasswrd\nUMICHKerberosIV\n*\n");
-	#else
-	REPLY(sesfd,"CleartxtPasswrd\n*\n");
-	#endif
-	}
-    else
-	{
-	REPLY(sesfd,"NoUserAuthent\n*\n");
-	}
+    REPLY(sesfd,"NoUserAuthent\n*\n");
     } /* end of uamethods_query() */
-
-/*
-** Do a University of Michigan list queue command.
-*/
-static void do_UMICHListQueue(int sesfd, int destid)
-    {
-    if(query_trace)
-    	debug("COMMAND --> %.*s", strcspn(line,"\n"), line);
-
-    REPLY(sesfd,"status: printing\n");
-    REPLY(sesfd,".\n");
-
-    REPLY(sesfd,"rank: active\n");
-    REPLY(sesfd,"owner: chappell\n");
-    REPLY(sesfd,"job: 1404\n");
-    REPLY(sesfd,"files: myfile.txt yourfile.txt\n");
-    REPLY(sesfd,"size: 123\n");
-    REPLY(sesfd,".\n");
-
-    REPLY(sesfd,"rank: 2nd\n");
-    REPLY(sesfd,"owner: chappell\n");
-    REPLY(sesfd,"job: 1404\n");
-    REPLY(sesfd,"files: myfile.txt yourfile.txt\n");
-    REPLY(sesfd,"size: 4096\n");
-    REPLY(sesfd,".\n");
-
-    REPLY(sesfd,"*\n");
-
-
-    } /* end of do_UMICHListQueue() */
-
-/*
-** Act on a University of Michigan delete job command.
-*/
-static void do_UMICHDeleteJob(int sesfd, int destid)
-    {
-    if(query_trace)
-    	debug("COMMAND --> %.*s", strcspn(line,"\n"), line);
-
-    REPLY(sesfd, "Failed\n");
-    /* REPLY(sesfd, "Ok\n"); */
-
-    } /* end of do_UMICHDeleteJob() */
 
 /*
 ** Read a query job from the client and answer it to the
 ** best of our ability.  This is called just after the line
 ** "%!PS-Adobe-x.x Query" is received.
-**
-** In addition to queries, we handle the "%%Login:" command.
 */
-void answer_query(int sesfd, int destid, const char **username, int *preauthorized)
+void answer_query(int sesfd, int destid)
     {
     while(pap_getline(sesfd))		/* `til end of job */
 	{
@@ -718,20 +655,6 @@ void answer_query(int sesfd, int destid, const char **username, int *preauthoriz
     		debug("COMMAND --> %.*s", strcspn(line,"\n"), line);
 
 	    login_request(sesfd, destid, username, preauthorized);
-	    continue;
-	    }
-
-	/* University of Michigan queue list command */
-	else if(strcmp(line, "%UMICHListQueue") == 0)
-	    {
-	    do_UMICHListQueue(sesfd, destid);
-	    continue;
-	    }
-
-	/* University of Michigan delete job. */
-	else if(strcmp(line, "%UMICHDeleteJob") == 0)
-	    {
-	    do_UMICHDeleteJob(sesfd, destid);
 	    continue;
 	    }
 
