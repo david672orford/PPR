@@ -26,17 +26,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 29 October 2004.
 */
 
 /*! \file
 
-These IPP constant names are from the CUPS documentation.  The values are from RFC 2565.
-The RFC 2565 names are noted in the comments.
+These IPP constant names are from the CUPS documentation.  The values are from
+RFC 2565.  The RFC 2565 names are noted in the comments.
 
-The structures too are intentionaly similiar to those used by CUPS.  This is to make the
-code easier to understand by those who are already programming using the CUPS API.  It
-also saved me the trouble of designing that part of the API.  :-)
+The structures too are intentionaly similiar to those used by CUPS.  This is to
+make the code easier to understand by those who are already programming using
+the CUPS API.  It also saved me the trouble of designing that part of the 
+API.  :-)
 
 */
 

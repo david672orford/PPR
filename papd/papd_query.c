@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 May 2004.
+** Last modified 9 November 2004.
 */
 
 /*
@@ -575,13 +575,11 @@ static void generic_query(int sesfd, void *qc)
 		}
 
 	/* RBI Query */
-#if 0
 	else if(lmatch(tokens[1], "RBI"))
 		{
 		if(rbi_query(sesfd, qc) == 0)
 			return;
 		}
-#endif
 
 	/* unrecognized generic query */
 	return_default(sesfd);

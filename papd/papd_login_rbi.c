@@ -25,12 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 9 November 2004.
 */
 
 /*
 ** This module contains support for the "RBI" authentication implemented
-** in LaserWriter 8.6.1 and later.
+** in LaserWriter 8.6.1 and later.  This protocol is described in
+** "AppleShare IP Print Server Security Protocol", an Apple Computer 
+** publication.
 */
 
 #include "before_system.h"
@@ -47,6 +49,13 @@
 static char user_username[16];
 static char user_fullname[64];
 
+/*
+ * Handler function for:
+ * %%?BeginQuery: RBISpoolerID
+ * %%?BeginQuery: RBIUMAListQuery
+ * %%?BeginQuery: RBILogin
+ * %%?BeginQuery: RBILoginCont
+*/
 int rbi_query(int sesfd, void *qc)
 	{
 	DODEBUG_AUTHORIZE(("rbi_query(), line=\"%s\"", line));
@@ -61,33 +70,39 @@ int rbi_query(int sesfd, void *qc)
 
 	else if(strcmp(tokens[1], "RBIUAMListQuery") == 0)
 		{
+		if(!queueinfo_chargeExists(qc))
+			REPLY(sesfd, "NoAuthUAM\n");
 		REPLY(sesfd, "ClearTxtUAM\n");
+		/* REPLY(sesfd, "TwoWayRandnumUAM\n"); */
 		REPLY(sesfd, "*\n");
 		return 0;
 		}
 
-	else if(strcmp(tokens[1], "RBILogin") == 0)
+	else if(strcmp(tokens[1], "RBILogin") == 0 && tokens[2])
 		{
-		if(tokens[2] && strcmp(tokens[2], "ClearTxtUAM") == 0 && tokens[3] && tokens[4])
+		char *username;
+		char *uamdata;
+		if(strcmp(tokens[2], "NoAuthUAM") == 0 && (username = tokens[3]))
 			{
-			char *username = tokens[3];
-			char *password = tokens[4];
-			if(strcmp(username, password) == 0)
+			gu_strlcpy(user_username, username, sizeof(user_username));
+			gu_strlcpy(user_fullname, username, sizeof(user_fullname));
+			}
+		else if(strcmp(tokens[2], "ClearTxtUAM") == 0 && (username = tokens[3]) && (uamdata = tokens[4]))
+			{
+			if(strcmp(username, uamdata) == 0)
 				{
 				gu_strlcpy(user_username, username, sizeof(user_username));
 				gu_strlcpy(user_fullname, username, sizeof(user_fullname));
-				/* REPLY(sesfd, "0\n"); */
+				REPLY(sesfd, "0\n");
 				}
 			else
 				{
 				REPLY(sesfd, "-1\n");
-				REPLY(sesfd,
-					"%%[ Error: SecurityError: SecurityViolation: Unknown user, incorrect password or log on is disabled ]%%\n"
-					);
-				postscript_stdin_flushfile(sesfd);
-				exit(5);
 				}
 			return 0;
+			}
+		else if(strcmp(tokens[2], "TwoWayRandnumUAM") == 0 && (username = tokens[3]) && (uamdata = tokens[4]))
+			{
 			}
 		}
 
@@ -98,6 +113,10 @@ int rbi_query(int sesfd, void *qc)
 	return -1;
 	} /* end of rbi_query() */
 
+/*
+ * This is called when processing a printjob to retrieve the username
+ * of the user who logged in using RBI.
+ */
 void login_rbi(struct USER *user)
 	{
 	if(strlen(user_username) > 0)
@@ -110,6 +129,6 @@ void login_rbi(struct USER *user)
 gu_boolean login_rbi_active(void)
 	{
 	return strlen(user_username) > 0 ? TRUE : FALSE;
-	}	
+	}
 
 /* end of file */

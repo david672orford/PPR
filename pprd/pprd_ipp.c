@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 9 November 2004.
 */
 
 /*
@@ -158,14 +158,14 @@ void ipp_dispatch(const char command[])
 	in_fd = out_fd = -1;
 	gu_Try
 		{
-		ppr_fnamef(fname_in, "%s/ppr-ipp-%ld-in", TEMPDIR, ipp_cgi_pid);
+		ppr_fnamef(fname_in, "%s/ppr-ipp/%ld-in", TEMPDIR, ipp_cgi_pid);
 		if((in_fd = open(fname_in, O_RDONLY)) == -1)
 			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_in, errno, gu_strerror(errno));
 		gu_set_cloexec(in_fd);
 		if(fstat(in_fd, &statbuf) == -1)
 			gu_Throw("fstat(%d, &statbuf) failed, errno=%d (%s)", in_fd, errno, gu_strerror(errno));
 
-		ppr_fnamef(fname_out, "%s/ppr-ipp-%ld-out", TEMPDIR, ipp_cgi_pid);
+		ppr_fnamef(fname_out, "%s/ppr-ipp/%ld-out", TEMPDIR, ipp_cgi_pid);
 		if((out_fd = open(fname_out, O_WRONLY | O_EXCL | O_CREAT, UNIX_660)) == -1)
 			gu_Throw("can't create \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
 		gu_set_cloexec(out_fd);

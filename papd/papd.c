@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 9 November 2004.
 */
 
 /*
@@ -309,6 +309,10 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	 */
 	login_aufs(net, node, &user);
 
+	/* In this loop we process a sequences of 'jobs'.  A job is 
+	 * either a series of queries to be answered or a document 
+	 * to be printed.
+	 */
 	while(TRUE)									/* will loop until we break out */
 		{
 		at_reset_buffer();						/* fully reset the input buffering code */
@@ -318,7 +322,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 
 		DODEBUG_LOOP(("first line: \"%s\"", line));
 
-		cptr = line+strcspn(line, " \t");		/* locate the 2nd word */
+		cptr = line + strcspn(line, " \t");		/* locate the 2nd word */
 		cptr += strspn(cptr, " \t");
 
 		/* If this is a query, */

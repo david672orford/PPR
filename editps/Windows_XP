@@ -1,4 +1,8 @@
 #! /usr/bin/perl -w
+#
+# This filter is for Microsoft Windows XP's PostScript driver.
+# For some reason, it omits the "%%Page:" comments.  We 
+# look for the proper context and insert them.
 
 my $page = 1;
 while(my $line = <STDIN>)

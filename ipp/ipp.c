@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2004.
+** Last modified 9 November 2004.
 */
 
 #include "before_system.h"
@@ -194,6 +194,7 @@ static void do_passthru(struct IPP *ipp)
 	int fifo = -1;
 	int fd = -1;
 	sigset_t set, oset;
+	char fname_dir[MAX_PPR_PATH];
 	char fname_in[MAX_PPR_PATH];
 	char fname_out[MAX_PPR_PATH];
 	long int pid;
@@ -201,8 +202,10 @@ static void do_passthru(struct IPP *ipp)
 	DEBUG(("do_passthru()"));
 
 	pid = (long int)getpid();
-	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/ppr-ipp-%ld-in",  TEMPDIR, pid);
-	gu_snprintf(fname_out, sizeof(fname_out), "%s/ppr-ipp-%ld-out", TEMPDIR, pid);
+	gu_snprintf(fname_dir, sizeof(fname_dir), "%s/ppr-ipp", TEMPDIR);
+	mkdir(fname_dir, UNIX_770);
+	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/%ld-in",  fname_dir, pid);
+	gu_snprintf(fname_out, sizeof(fname_out), "%s/%ld-out", fname_dir, pid);
 
 	gu_Try {
 		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)

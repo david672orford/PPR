@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 January 2004.
+# Last modified 9 November 2004.
 #
 
 #
@@ -146,6 +146,7 @@ foreach my $item (@ARGV)
 # Simple cases
 sweepdir($TEMPDIR, '^ppr-$', 0.5);
 sweepdir($TEMPDIR, '^uprint-$', 0.5);
+sweepdir("$TEMPDIR/ppr-ipp", undef, 0.5);
 sweepdir("$CONFDIR/printers", '^\.ppad\d+$', 0.5);
 sweepdir("$CONFDIR/groups", '^\.ppad\d+$', 0.5);
 sweepdir("$VAR_SPOOL_PPR/sambaspool", undef, 0.5);
