@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 March 2003.
+** Last modified 2 May 2003.
 */
 
 #ifndef _GU_H
@@ -175,6 +175,8 @@ int gu_vsnprintf (char *str, size_t count, const char *fmt, va_list args);
 int gu_snprintf(char *str, size_t count, const char *fmt, ...);
 int gu_vasprintf(char **ptr, const char *format, va_list ap);
 int gu_asprintf(char **ptr, const char *format, ...);
+size_t gu_strlcpy(char *dst, const char *src, size_t siz);
+size_t gu_strlcat(char *dst, const char *src, size_t siz);
 int gu_mkstemp(char *template);
 char *gu_strsignal(int signum);
 char *gu_StrCopyMax(char *target, size_t max, const char *source);
@@ -336,8 +338,15 @@ void *gu_pch_nextkey(void **pch);
 #ifndef HAVE_MKSTEMP
 #define mkstemp(template) gu_mkstemp(template)
 #endif
-
+#ifndef HAVE_STRLCPY
+#define strlcpy(a,b,c) gu_strlcpy(a,b,c)
+#endif
+#ifndef HAVE_STRLCAT
+#define strlcat(a,b,c) gu_strlcat(a,b,c)
+#endif
+#if 1
 #define strerror(err) gu_strerror(err)
+#endif
 
 #endif	/* _LIBGU */
 

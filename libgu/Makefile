@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2003.
+# Last modified 2 May 2003.
 #
 
 include ../Makefile.conf
@@ -46,6 +46,8 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	signal1.$(OBJ) \
 	signal2.$(OBJ) \
 	snprintf.$(OBJ) \
+	gu_strlcpy.$(OBJ) \
+	gu_strlcat.$(OBJ) \
 	torf.$(OBJ) \
 	gu_trim.$(OBJ) \
 	gu_strsignal.$(OBJ) \

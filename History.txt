@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--28 April 2003.
+1.51, 15 February 2003--2 May 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8575,6 +8575,11 @@ line was being parsed twice.
 * ppad/ppad_printer.c: changed human-readable ppad show output to better group 
   things by category and to indent second and subsequent lines of logical
   groups.
+
+* nonppr_misc/openbsd/strlcpy.c,strlcat.c,strlcpy.3,
+  gu/gu_strlcpy.c,gu_strlcat.c: added strlcpy() and strlcat(), the
+  safer fixed-length buffer functions from OpenBSD.  These will be used to 
+  replace calls to strcpy(), strcat(), strncpy(), and strncat().
 
 
 
