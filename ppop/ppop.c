@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 November 2001.
+** Last modified 14 December 2001.
 */
 
 /*
@@ -47,6 +47,7 @@ const char myname[] = "ppop";
 pid_t pid;						/* this process id */
 static char *su_user = (char*)NULL;			/* --su switch value */
 static const char *proxy_for = (const char*)NULL;	/* -X switch value */
+static const char *magic_cookie = (const char*)NULL;	/* --magic-cookie value */
 int arrest_interest_interval = -1;
 int machine_readable = FALSE;				/* machine readable mode */
 FILE *errors;						/* file we should send stderr type messages to */
@@ -662,6 +663,7 @@ int job_permission_check(struct Jobname *job)
     {
     char job_username[17];
     char job_proxy_for[127];
+    char job_magic_cookie[33];
 
     /*
     ** If the user is an operator (as modified by the --su switch) and
@@ -670,7 +672,7 @@ int job_permission_check(struct Jobname *job)
     ** job.  This will save us the time and trouble of opening the
     ** queue file to figure out whose job it is.
     */
-    if(privledged() && !proxy_for)
+    if(privledged() && !proxy_for && !magic_cookie)
 	return 0;
 
     /*
@@ -715,13 +717,16 @@ int job_permission_check(struct Jobname *job)
     /* Read the queue file and find the "User:" line. */
     job_username[0] = '\0';
     job_proxy_for[0] = '\0';
+    job_magic_cookie[0] = '\0';
     while((line = gu_getline(line, &line_space, f)))
 	{
 	if(gu_sscanf(line, "User: %ld %#s %#s",
 		&job_uid,
 		sizeof(job_username), job_username,
 		sizeof(job_proxy_for), job_proxy_for) >= 2)
-	    break;
+	    continue;
+	if(gu_sscanf(line, "MagicCookie: %#s", sizeof(job_magic_cookie), &job_magic_cookie) == 1)
+	    continue;
 	}
 
     /* Close the queue file. */
@@ -800,6 +805,18 @@ int job_permission_check(struct Jobname *job)
 		(int)(show_hostnames ? strlen(job_proxy_for) : strcspn(job_proxy_for, "@")), job_proxy_for,
 		(int)(show_hostnames ? strlen(proxy_for) : strcspn(proxy_for, "@")), proxy_for);
 
+	    return -1;
+	    }
+    	}
+
+    /*
+    ** If there was an --magic-cookie option,
+    */
+    if(magic_cookie)
+    	{
+	if(strcmp(magic_cookie, job_magic_cookie) != 0)
+	    {
+	    fprintf(errors, "Magic cookie doesn't match.\n");
 	    return -1;
 	    }
     	}
@@ -1141,6 +1158,7 @@ static const struct gu_getopt_opt option_words[] =
 	{"version", 1001, FALSE},
 	{"su", 1002, TRUE},
 	{"verbose", 1003, FALSE},
+	{"magic-cookie", 1004, TRUE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -1229,6 +1247,10 @@ int main(int argc, char *argv[])
 	    case 1003:			/* --verbose */
 		verbose = TRUE;
 		break;
+
+	    case 1004:			/* --magic-cookie */
+	    	magic_cookie = getopt_state.optarg;
+	    	break;
 
 	    default:
 		gu_getopt_default(myname, optchar, &getopt_state, errors);

@@ -3,11 +3,11 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 13 December 2001.
+# Last modified 19 December 2001.
 #
 
 # This is the server we should load from and register with.
-set ppr_root_url "http://mouse.trincoll.edu:15010/"
+set ppr_root_url "http://localhost:15010/"
 
 package require Tcl 8.3
 package require Tk 8.3

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 October 2001.
+# Last modified 18 December 2001.
 #
 
 # Filled in by installscript:
@@ -1543,6 +1543,26 @@ sub digest_nonce_hash
     return md5hex("$nonce_time:$domain:$SECRET");
     }
 
+#
+# This routine returns the value for a "WWW-Authenticate:" header
+# which makes a Digest challenge.
+#
+sub auth_challenge
+    {
+    my $domain = shift;
+    my $stale = shift;
+    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
+
+    my $nonce_time = time();
+    my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
+    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce_time:$nonce_hash\"";
+
+    if($stale)
+    	{ $challenge .= ",stale=true" }
+
+    return $challenge;
+    }
+
 # Find the user's entry (for the correct realm) in the private
 # password file.
 sub digest_getpw
@@ -1567,26 +1587,6 @@ sub digest_getpw
 
     return $answer if(defined($answer));
     die "User \"$sought_username\" not in \"$PWFILE\"\n";
-    }
-
-#
-# This routine returns the value for a "WWW-Authenticate:" header
-# which makes a Digest challenge.
-#
-sub auth_challenge
-    {
-    my $domain = shift;
-    my $stale = shift;
-    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
-
-    my $nonce_time = time();
-    my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
-    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce_time:$nonce_hash\"";
-
-    if($stale)
-    	{ $challenge .= ",stale=true" }
-
-    return $challenge;
     }
 
 #=========================================================================

@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 December 2001.
+# Last modified 19 December 2001.
 #
 
 #
@@ -21,15 +21,23 @@
 require 5.000;
 use lib "?";
 require 'pprpopup.pl';
+require 'cgi_data.pl';
+
+my $host_and_port = "mouse.trincoll.edu:15010";
 
 # Set a maximum time this script can run.
 alarm(30);
 
 # Split the arguments out into individually named variables.
-my($response_responder, $response_address, $response_options, $question, $jobname) = @ARGV;
+my($response_responder, $response_address, $response_options, $question, $jobname, $magic_cookie, $title) = @ARGV;
 
-# Do substitutions in the question.
-$question =~ s/%JOBNAME%/$jobname/g;
+# Construct the query string.
+my $query = join(';',
+	form_urlencoded("jobname", $jobname),
+	form_urlencoded("magic_cookie", $magic_cookie),
+	form_urlencoded("title", $title)
+	);
+print STDERR "\$query=\"$query\"\n";
 
 # Open a connexion to pprpopup
 open_connexion(SEND, $response_address) || exit(2);
@@ -38,11 +46,11 @@ open_connexion(SEND, $response_address) || exit(2);
 SEND->autoflush(1);
 
 # Add the job to the job queue.
-print SEND "JOB STATUS $jobname ?\n";
+print SEND "JOB STATUS $jobname title=\"$title\"\n";
 $result = <SEND>;
 
 # Send the message to open the web page.
-print SEND "HTML http://localhost:15010/$question 6i 2i\n";
+print SEND "QUESTION $jobname http://$host_and_port/$question?$query 6i 2i\n";
 $result = <SEND>;
 
 # Close the connexion to pprpopup.

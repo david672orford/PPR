@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 14 December 2001.
 */
 
 #include "before_system.h"
@@ -89,6 +89,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->For = (char*)NULL;
     job->proxy_for = (char*)NULL;		/* optional */
     job->priority = 20;
+    job->magic_cookie = (const char *)NULL;
     job->responder = (char*)NULL;
     job->responder_address = (char*)NULL;
     job->responder_options = (char*)NULL;	/* optional */
@@ -215,6 +216,10 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	    case 'l':
 		MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)
 		break;
+
+	    case 'M':
+	    	MATCH("MagicCookie: ", _2("%Z", &job->magic_cookie), !=1, found_other)
+	    	break;
 
 	    case 'N':
 		MATCH("N-Up: ", _5("%d %d %d %d",

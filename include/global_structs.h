@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 November 2001.
+** Last modified 14 December 2001.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -55,6 +55,7 @@ struct QFileEntry
 
     SHORT_INT status;			/* job status */
     short unsigned int flags;		/* job flags */
+    const char *magic_cookie;		/* secret about this job */
 
     int priority;			/* priority number (0-39) */
     long time;				/* time job was submitted (don't use time_t) */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 14 December 2001.
 */
 
 #include "before_system.h"
@@ -47,6 +47,8 @@ void destroy_struct_QFileEntry(struct QFileEntry *job)
     	gu_free_const(job->destname);
     if(job->homenode)
     	gu_free_const(job->homenode);
+    if(job->magic_cookie)
+    	gu_free_const(job->magic_cookie);
     if(job->username)
     	gu_free_const(job->username);
     if(job->proxy_for)

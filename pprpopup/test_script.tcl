@@ -1,8 +1,8 @@
 #! /usr/bin/expect
 
 #spawn telnet chappell-3.pc.trincoll.edu 15009
-#spawn telnet chappell-4.pc.trincoll.edu 15009
-spawn telnet localhost 15009
+spawn telnet chappell-4.pc.trincoll.edu 15009
+#spawn telnet localhost 15009
 expect "Escape"
 
 #send "MESSAGE David Chappell\n"

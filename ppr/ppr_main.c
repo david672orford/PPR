@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 6 December 2001.
+** Last revised 14 December 2001.
 */
 
 /*
@@ -326,6 +326,7 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 int write_queue_file(struct QFileEntry *qentry)
     {
     const char function[] = "write_queue_file";
+    char magic_cookie[16];
     char qfname[MAX_PPR_PATH];
     int fd;
     FILE *Qfile;
@@ -344,6 +345,10 @@ int write_queue_file(struct QFileEntry *qentry)
 
     if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
     	fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);
+
+    /* Create a new magic cookie. */
+    snprintf(magic_cookie, sizeof(magic_cookie), "%08X", rand());
+    qentry->magic_cookie = magic_cookie;
 
     /* Construct the queue file name. */
     ppr_fnamef(qfname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,

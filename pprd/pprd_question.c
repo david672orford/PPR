@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 December 2001.
+** Last modified 19 December 2001.
 */
 
 #include "before_system.h"
@@ -117,8 +117,8 @@ static int question_launch(struct QEntry *job)
         FILE *qfile;
         char *line = NULL;
         int line_available = 80;
-        char *question = NULL;
         char *response_responder = NULL, *response_address = NULL, *response_options = NULL;
+        char *question = NULL, *magic_cookie = NULL, *title = "";
 
 	child_unblock_all();
 	child_stdin_stdout_stderr("/dev/null", PPRD_LOGFILE);
@@ -143,6 +143,14 @@ static int question_launch(struct QEntry *job)
 		    if(gu_sscanf(line, "Response: %S %S %Z", &response_responder, &response_address, &response_options) >= 2)
 			continue;
 		    break;
+		case 'M':
+		    if(gu_sscanf(line, "MagicCookie: %Z", &magic_cookie) == 1)
+		    	continue;
+		    break;
+		case 'T':
+		    if(gu_sscanf(line, "Title: %Z", &title) == 1)
+		    	continue;
+		    break;
 		}
             }
         if(line)
@@ -153,7 +161,7 @@ static int question_launch(struct QEntry *job)
 	if(!question || !response_responder || !response_address)
 	    fatal(11, "child: %s(): required parameter missing", function);
 
-	execl("lib/pprd-question", "pprd-question", response_responder, response_address, response_options ? response_options : "", question, jobname, NULL);
+	execl("lib/pprd-question", "pprd-question", response_responder, response_address, response_options ? response_options : "", question, jobname, magic_cookie, title, NULL);
 	fatal(12, "child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	}
 

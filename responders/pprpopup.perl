@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 December 2001.
+# Last modified 18 December 2001.
 #
 
 #
@@ -50,11 +50,10 @@ $reason =~ s/[|]/ /g;
 
 # If a user is specified in the address,
 # break the address into user and machine.
-my $user = '';
-if($addr =~ /^([^\@]+)\@(.+)$/)
+my $user = "";
+if($addr =~ /^([^\@]+)\@.+$/)
     {
     $user = $1;
-    $addr = $2;
     }
 
 # Open a connexion to pprpopup
@@ -65,11 +64,17 @@ if(!open_connexion(SEND, $addr))
 my $result;
 
 # Remove the job from the list.
-SEND->autoflush(1);
-print SEND "JOB REMOVE $jobname\n";
+if(1)
+    {
+    my $jobname;
+    ($jobname = $jobid) =~ s/^(\S+) (\S+) (\d+) (\d+) (\S+)$/$1:$2-$3.$4($5)/;
+    print SEND "JOB REMOVE $jobname\n";
+    $result = <SEND>;
+    print "JOB REMOVE failed: $result\n" if(/^-ERR/);
+    }
+
+# Turn off autoflush because the message could be long.
 SEND->autoflush(0);
-$result = <SEND>;
-print "JOB REMOVE failed: $result\n" if(/^-ERR/);
 
 # Tell the other end that we are going to send
 # the message.  If the formal user name was specified,
@@ -116,9 +121,18 @@ if($code == $RESP_ARRESTED || $code == $RESP_STRANDED_PRINTER_INCAPABLE || $code
 # Mark end of message, flush it, and get the result.
 SEND->autoflush(1);
 print SEND ".\n";
-SEND->autoflush(0);
 $result = <SEND>;
 print "MESSAGE failed: $result\n" if(/^-ERR/);
+
+# Speak the message if possible.
+if(1)
+    {
+    my $spoken_msg = $msg;
+    $spoken_msg =~ s/("[^"]+")/$1 (entitled $title)/;
+    print SEND "SPEAK $spoken_msg\n";
+    $result = <SEND>;
+    print "SPEAK failed: $result\n" if(/^-ERR/);
+    }
 
 # Close the connexion to pprpopup.
 close(SEND);

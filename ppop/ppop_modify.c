@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 19 December 2001.
 */
 
 #include "before_system.h"
@@ -252,6 +252,7 @@ const struct DT commands[] =
     { "nupborders", modify_boolean, OFFSET(qentry.N_Up.borders) },
     { "draft-notice", modify_string, OFFSET(qentry.draft_notice) },
     { "page-list", modify_pagelist, 0 },
+    { "question", modify_string, OFFSET(qentry.question) },
     { NULL, NULL }
     };
 

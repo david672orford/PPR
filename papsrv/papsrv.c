@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 February 2001.
+** Last modified 19 December 2001.
 */
 
 /*
@@ -291,7 +291,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
     	}
 
     /* Turn the network and node numbers into a string. */
-    snprintf(netnode, sizeof(netnode), "%d:%d", net, node);
+    snprintf(netnode, sizeof(netnode), "%d.%d", net, node);
 
     /*
     ** Fork and exec a copy of ppr and accept the job.
@@ -343,7 +343,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 	    else
 	    	{ argv[x++] = "-R"; argv[x++] = "for"; }
 
-	    /* Proxy for whom */
+	    /* Indicate for whom the user "ppr" is acting as proxy. */
 	    argv[x++] = "-X"; argv[x++] = netnode;
 
 	    /* Answer for TTRasterizer query */
@@ -351,7 +351,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 	    	{ argv[x++] = "-Q"; argv[x++] = adv[prnid].TTRasterizer; }
 
 	    /* no responder */
-	    argv[x++] = "-m"; argv[x++] = "none";
+	    argv[x++] = "-m"; argv[x++] = "pprpopup";
 
 	    /* default response address */
 	    argv[x++] = "-r"; argv[x++] = netnode;

@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 5 September 2001.
+# Last modified 19 December 2001.
 #
 
 include ../makeprogs/global.mk
@@ -27,6 +27,7 @@ PROGS=ppr2samba$(DOTEXE) \
 all: $(PROGS)
 
 smb-protos.conf: smb-protos.conf.template
+	$(RMF) smb-protos.conf
 	sed -e 's!%HOMEDIR%!$(HOMEDIR)!g' -e 's!%VAR_SPOOL_PPR%!$(VAR_SPOOL_PPR)!g' \
 		-e 's!%USER_PPR%!$(USER_PPR)!g' -e 's!%GROUP_PPR%!$(GROUP_PPR)!g' \
 		-e 's!%CONFDIR%!$(CONFDIR)!g' \

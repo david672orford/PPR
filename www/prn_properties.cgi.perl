@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 30 August 2001.
+# Last modified 19 December 2001.
 #
 
 use lib "?";
@@ -387,6 +387,12 @@ my $tabbed_table = [
 		print "</span>\n";
 
 		print "<p>";
+		labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
+			"", cgi_data_move("addon ppr2samba-prototype", ""), 
+			"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
+		print "</p>\n";
+
+		print "<p>";
 		labeled_entry("addon ppr2samba-drivername", _("Override Win95 driver name:"), cgi_data_move("addon ppr2samba-drivername", ""), 20);
 		print "</p>\n";
 
@@ -398,8 +404,8 @@ my $tabbed_table = [
 
 		print "</div>\n";
 
-		print "<p>", _("Note that the Samba configuration must be edited appropriately\n"
-				. "before it will be able to share PPR print queues."), "</p>\n";
+		print "<p>", _("Note that if the Samba configuration file smb.conf has not been edited as described in\n"
+				. "the ppr2samba(8) manpage, the settings on this screen will have no effect."), "</p>\n";
 
 		},
 	'onleave' => sub {

@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 13 February 2001.
+# Last modified 18 December 2001.
 #
 
 #
@@ -143,6 +143,7 @@ directory $VAR_SPOOL_PPR/drivers/win95 755
 directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755
+directory $VAR_SPOOL_PPR/pprpopup.db 775
 
 # Make the directories for web documentation and managment tools
 directory $HOMEDIR/cgi-bin 755

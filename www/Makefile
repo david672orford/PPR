@@ -77,7 +77,7 @@ CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
 	login_cookie.cgi \
 	show_log.cgi show_printlog.cgi \
 	docs_cat.cgi docs_man.cgi docs_plain.cgi docs_rpm.cgi docs_rpms_list.cgi \
-	popup_register.cgi
+	pprpopup_register.cgi
 
 LIBS=cgi_data.pl qquery_xlate.pl cgi_wizard.pl cgi_run.pl cgi_tabbed.pl cgi_error.pl \
 	cgi_membership.pl cgi_time.pl cgi_auth.pl cgi_intl.pl cgi_back.pl cgi_redirect.pl \

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 14 December 2001.
 */
 
 #include "before_system.h"
@@ -45,6 +45,8 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
     /* This is so we will know when the job was submitted. */
     fprintf(Qfile, "Time: %ld\n", qentry->time);
+
+    fprintf(Qfile, "MagicCookie: %s\n", qentry->magic_cookie);
 
     fprintf(Qfile, "User: %ld %s %s\n",
     	qentry->user,					/* Unix user id */

@@ -4,14 +4,14 @@
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 14 December 2001.
+# Last revised 19 December 2001.
 #
 
-set register_url "${ppr_root_url}cgi-bin/popup_register.cgi"
+set register_url "${ppr_root_url}cgi-bin/pprpopup_register.cgi"
 set help_url "${ppr_root_url}docs/"
 
 set about_text "PPR Popup 1.50a1
-14 December 2001
+19 December 2001
 Copyright 1995--2001, Trinity College Computing Center
 Written by David Chappell"
 
@@ -36,17 +36,6 @@ option add *textBackground white
 # command names.
 set wserial 0
 
-# On MS-Windows and MacOS, there is a Tk console.  For those platforms we
-# define console_visibility to hid or unhide it.  For other platforms
-# it is a no-op.
-if {$tcl_platform(platform) == "windows" || $tcl_platform(platform) == "macintosh"} {
-   proc console_visibility {yes} {
-	if {$yes} { console show } else { console hide }
-	}
-    } else {
-    proc console_visibility {yes} {}
-    }
-
 # The MacOS Finder can hide applications.  On MacOS we define this function
 # to unhide this application.  On other plaforms it is a no-op.
 if {$tcl_platform(platform) == "macintosh"} {
@@ -61,13 +50,9 @@ switch -exact -- $tcl_platform(platform) {
     macintosh {
 	proc get_client_id {} {
 		package require Tclapplescript
-		return [AppleScript execute {
+		set id [AppleScript execute {
 tell application "Network Setup Scripting"
 	try
-		try
-			close database
-		on error
-		end try
 		open database
 		set con_set to current configuration set
 		set conAt to item 1 of AppleTalk configurations of con_set
@@ -82,14 +67,31 @@ tell application "Network Setup Scripting"
 	end try
 end tell
 }]
+		regsub {^"([^"]+)"$} $id {\1} id
+		return $id
 		}
 	}
     windows {
 	package require registry 1.0
-	proc get_client_id {} { return [registry get "HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\ComputerName" "ComputerName"] }
+	proc get_client_id {} {
+		if [catch { set computername [registry get "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\control\\ComputerName" "ComputerName"] } ] {
+		    if [catch { set computername [registry get "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\control\\ComputerName\\ComputerName" "ComputerName"] } ] {
+			alert "Can't find ComputerName in registry!"
+			exit 1
+			}
+		    }
+		return $computername
+		}
 	}
     unix {
-	proc get_client_id {} { return [exec uname -n] }
+	proc get_client_id {} {
+		global env
+		if { ! [info exists env(PPR_RESPONDER_ADDRESS)] } {
+		    alert "The environment variable PPR_RESPONDER_ADDRESS must be defined."
+		    exit 1
+		    }
+		return $env(PPR_RESPONDER_ADDRESS)
+		}
 	}
     }
 
@@ -125,7 +127,7 @@ proc window_reopen {win} {
 #
 # Command to ask the user for his name.
 #
-proc command_USER {file message} \
+proc command_USER {file} \
     {
     global result
     global wserial
@@ -141,32 +143,25 @@ proc command_USER {file message} \
     frame $w.padded
     pack $w.padded -padx 20 -pady 20
 
-    message $w.padded.message1 \
-	-text $message \
-	-fg red \
-	-width 300
-    pack $w.padded.message1 \
-	-side top \
-	-anchor w \
-	-padx 5 \
-	-pady 5
-
-    label $w.padded.message2 -text "Please enter your name:"
-    entry $w.padded.entry -width 40
+    label $w.padded.message -text "Please enter your name:"
+    entry $w.padded.entry -width 40 -background white
     bind $w.padded.entry <Return> [list $w.ok invoke]
-    pack $w.padded.message2 $w.padded.entry \
+    pack $w.padded.message $w.padded.entry \
 	-side top \
 	-anchor w \
 	-padx 5 -pady 5
 
+    frame $w.pad -width 15
     button $w.ok -text "OK" -command [list command_USER_ok $w]
     button $w.cancel -text "Cancel Job" -command "
 	set result {-ERR cancel job}
 	destroy $w"
-    pack $w.ok $w.cancel -side right
+    pack $w.pad -side right
+    pack $w.ok $w.cancel -side right -padx 5 -pady 5
 
     # Set the focus on the entry field and wait
     # for the window to be destroyed.
+    window_reopen $w
     focus $w.padded.entry
     tkwait window $w
 
@@ -229,7 +224,7 @@ proc command_MESSAGE {file for} {
 
     bind $w <Return> [list $w.dismiss invoke]
 
-    # Arange for a callback whenever data is available.
+    # Arrange for a callback whenever data is available.
     fileevent $file readable [list command_MESSAGE_datarecv $file $w]
     }
 
@@ -242,7 +237,7 @@ proc command_MESSAGE_datarecv {file w} {
     # If there is a line to be had,
     if {[gets $file line] >= 0} {
 
-	# If this is the last line,
+	# A single period indicates end-of-message.
 	if {$line == "."} {
 	    # Acknowledge the completed command.
 	    puts $file "+OK"
@@ -257,7 +252,7 @@ proc command_MESSAGE_datarecv {file w} {
 	    return
 	    }
 
-	# Not the last line, add this text.
+	# If not EOM, add this line as text.
 	$w.message.text insert end "$line\n"
 	}
 
@@ -332,6 +327,24 @@ proc command_JOB_REMOVE {file jobname} {
     }
 
 #
+# Macintosh supports speaking.
+#
+if {$tcl_platform(platform) == "macintosh"} {
+    package require Tclapplescript
+    proc command_SPEAK {file tosay} {
+	update idletasks
+	regsub -all {[^a-zA-Z0-9,.!:\(\)-]} $tosay " " cleaned_tosay
+	puts "cleaned_tosay: $cleaned_tosay"
+	AppleScript execute "say \"$cleaned_tosay\""
+	puts $file "+OK"
+	}
+    } else {
+    proc command_SPEAK {file tosay} {
+	puts $file "-ERR not implemented"
+	}
+    }
+
+#
 # This is the function which is called when a connexion
 # is made to this server.
 #
@@ -348,7 +361,6 @@ proc server_function {file cli_addr cli_port} \
 # one of the connected sockets.
 #
 proc server_reader {file} {
-
     # Get the next line from the socket.
     if {[set line [gets $file]] == "" && [eof $file]} {
 	set line "EOF"
@@ -358,12 +370,11 @@ proc server_reader {file} {
 
     # Act on the command received
     switch -glob -- $line {
-	"USER *" {
-	    if {[regexp {^USER (.+)$} $line junk prompt]} {
-		command_USER $file $prompt
-		} else {
-		puts $file "-ERR prompt missing
-		}
+	"COOKIE *" {
+	    puts $file "+OK"
+	    }
+	"USER" {
+	    command_USER $file
 	    }
 	"MESSAGE *" {
 	    if {[regexp {^MESSAGE (.+)$} $line junk for]} {
@@ -376,7 +387,7 @@ proc server_reader {file} {
 	    if {[regexp {^QUESTION ([^ ]+) ([^ ]+) ([^ ]+) ([^ ]+)$} $line junk jobname url width height]} {
 		command_QUESTION $file $jobname $url $width $height
 		} else {
-		puts $file "-ERR missing parameters"
+		puts $file "-ERR wrong number of parameters"
 		}
     	    }
 	"JOB *" {
@@ -390,13 +401,18 @@ proc server_reader {file} {
 		    }
 	    	}
 	    }
+	"SPEAK *" {
+	    regexp {^SPEAK (.+)$} $line junk tosay
+	    command_SPEAK $file $tosay
+	    }
+
 	EOF {
 	    catch { close $file }
 	    return
 	    }
 	QUIT {
             puts $file "+OK"
-	    catch { close $file }
+	    close $file
 	    return
             }
 	* {
@@ -404,9 +420,12 @@ proc server_reader {file} {
             }
 	}
 
-  # Push out the reply.
-  flush $file
-  }
+    # Push out the reply.
+    if [catch { flush $file }] {
+	alert "Unexepected disconnect by print server!"
+	catch { close $file }
+	}
+    }
 
 #========================================================================
 # This is what we use to register with the server.
@@ -460,11 +479,7 @@ proc register_callback {token} {
 # main and its support routines
 #========================================================================
 
-set menu_view_console_visibility 0
-
 proc main {} {
-    console_visibility 0
-
     # Create a URL fetching object which will be used for registration and for
     # fetching questions.
     urlfetch shared_urlfetch
@@ -481,7 +496,7 @@ proc main {} {
     .menubar.file add command -label Quit -command { menu_file_quit }
 
     .menubar add cascade -label "View" -menu [menu .menubar.view -tearoff 0 -border 1]
-    .menubar.view add check -variable menu_view_console_visibility -label "Tk Console" -command { console_visibility $menu_view_console_visibility }
+    .menubar.view add check -variable menu_view_console_visibility -label "Tk Console" -command { menu_view_console $menu_view_console_visibility }
 
     .menubar add cascade -label "Help" -menu [menu .menubar.help -tearoff 0 -border 1]
     .menubar.help add command -label "Help Contents" -command { menu_help_contents }
@@ -534,10 +549,11 @@ proc main {} {
 	exit 1
 	}
 
-    # Register with the server.
+    # Register with the server for the first time and schedual
+    # future registrations.
     do_register
 
-    # Show the main window.
+    # Set the main window size, title, and visibility.
     wm geometry . 600x200
     wm title . "PPR Popup"
     wm deiconify .
@@ -556,6 +572,15 @@ proc menu_file_quit {} {
         } else {
         destroy .quit_confirm
         }
+    }
+
+set menu_view_console_visibility 0
+proc menu_view_console {yes} {
+    if {$yes} {
+	catch { console show }
+	} else {
+	catch { console hide }
+	}
     }
 
 proc menu_help_contents {} {
