@@ -8,20 +8,20 @@
 		<FirstName>David</firstname>
 		<surname>Chappell</surname>
 		</Author>
-	<PubDate>16 January 2003</pubdate>
+	<PubDate>17 January 2003</pubdate>
 	<copyright>
 		<Year>1995--2003</Year>
 		<Holder>Trinity College Computing Center</Holder>
 		</copyright>
 </articleinfo>
 
-<ABSTRACT>
+<Abstract>
 
 <Para>This document is intended to describe <Application>PPR</Application>'s features and theory of
 operation more deaply than <CiteTitle>Installing and Using PPR</CiteTitle>
 does.  Unfortunately, this document has never been finished.</Para>
 
-</ABSTRACT>
+</Abstract>
 
 <Sect1>
 <Title>Introduction to <Application>PPR</Application></Title>

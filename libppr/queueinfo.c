@@ -25,10 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 January 2003.
+** Last modified 17 January 2003.
 */
 
 #include "before_system.h"
+#include <stdio.h>
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "queueinfo.h"
@@ -41,6 +43,48 @@ struct QI {
     gu_boolean transparent_mode;
 
     };
+
+static void do_printer(struct QI *qip, const char name[])
+    {
+    char fname[MAX_PPR_PATH];
+    FILE *pconf;
+    char *line = NULL;
+    int line_available = 80;
+    char *p;
+
+    ppr_fnamef(fname, "%s/%s", PRCONF, name);
+    if(!(pconf = fopen(fname, "r")))
+	libppr_throw(EXCEPTION_MISSING, "do_printer", "file not found");
+
+    while((line = gu_getline(line, &line_available, pconf)))
+	{
+	switch(line[0])
+	    {
+	    case 'C':
+	    	if((p = lmatchp(line, "Comment:")))
+	    	    {
+	    	    
+	    	    continue;
+	    	    }
+		break;
+	    case 'P':
+		if((p = lmatchp(line, "PPDFile:")))
+		    {
+
+		    continue;
+		    }
+		if((p = lmatchp(line, "PPDOpt:")))
+		    {
+	    
+		    continue;
+		    }
+		break;
+	    }
+
+	}
+
+    fclose(pconf);
+    }
 
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
     {
@@ -58,7 +102,20 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 
 	}
 
+    if(qit == QUEUEINFO_GROUP)
+	{
 
+	}
+
+    else if(qit == QUEUEINFO_PRINTER)
+	{
+	do_printer(qip, name);
+	}
+
+    else
+	{
+	libppr_throw(EXCEPTION_BADUSAGE, "queueinfo_new", "unknown queue type");
+	}
 
     return (void *)qip;
     }

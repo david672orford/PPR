@@ -16,7 +16,7 @@
 <!ENTITY section-backup SYSTEM "pprinst_backup.sgml">
 <!ENTITY section-removing SYSTEM "pprinst_removing.sgml">
 <!ENTITY section-replacing-printer SYSTEM "pprinst_replacing_printer.sgml">
-<!ENTITY section-legal SYSTEM "legal.sgml">
+<!ENTITY section-legal SYSTEM "../shared/legal.sgml">
 ]>
 
 <article>
@@ -27,7 +27,7 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>16 January 2003</pubdate>
+	<pubdate>17 January 2003</pubdate>
 	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>

@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--16 January 2003.
+1.50b1, 8 November 2002--17 January 2003.
 
 * Removed completed items from TODO.txt.
 
@@ -322,4 +322,5 @@ more information about RIPs and *pprRIP:.
 * pprinst/, pprdoc/, pprhack/: changed all remap= tags left over from automatic
   conversion from Linuxdoc formation to proper docbook tags.
 
+* pprinst/legal.sgml: moved to new directory shared/.
 
