@@ -185,9 +185,4 @@ cat - >&5 <<===EndHere90===
 # end of file
 ===EndHere90===
 
-echo
-
-chown $USER_PPR $SAMPLE
-chgrp $GROUP_PPR $SAMPLE
-
 exit 0
