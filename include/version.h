@@ -1,5 +1,5 @@
 #define SHORT_VERSION "1.53a2"
-#define REVISION_DATE "10 June 2004"
+#define REVISION_DATE "4 July 2004"
 #define COPYRIGHT_YEARS "1995--2004"
 
 #define VERSION "PPR version "SHORT_VERSION", "REVISION_DATE" (built "__DATE__", "__TIME__")."

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 4 July 2004.
 */
 
 #include "before_system.h"
@@ -147,6 +147,7 @@ void int_copy_job(int portfd,
 	time_t time_next_status = 0;		/* time of next schedualed status function call */
 	struct timeval *timeout, timeout_workspace;
 	int runaway_detect = 0;
+	gu_boolean runaway_plaint = FALSE;
 
 	DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
@@ -194,10 +195,15 @@ void int_copy_job(int portfd,
 				|| (send_eoj_funct && !recv_eoj)
 				)
 		{
-		if(runaway_detect > 10)
+		if(runaway_detect > 5)
 			{
-			alert(int_cmdline.printer, TRUE, "OS driver for \"%s\" does not work in non-blocking mode.", int_cmdline.address);
-			int_exit(EXIT_PRNERR_NORETRY);
+			if(!runaway_plaint)
+				{
+				alert(int_cmdline.printer, TRUE, "Driver for \"%s\" is defective.", int_cmdline.address);
+				runaway_plaint = TRUE;
+				}
+			/* int_exit(EXIT_PRNERR_NORETRY); */
+			sleep(1);
 			}
 			
 		FD_ZERO(&rfds);
