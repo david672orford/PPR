@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2004.
+** Last modified 4 January 2005.
 */
 
 /*
@@ -423,6 +423,7 @@ int write_queue_file(struct QFileEntry *qentry)
 	assert_ok_value(qentry->responder_address, FALSE, FALSE, FALSE, "qentry->responder_address", FALSE);
 	assert_ok_value(qentry->responder_options, TRUE, TRUE, TRUE, "qentry->responder_options", FALSE);
 	assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE);
+	assert_ok_value(qentry->lc_messages, TRUE, FALSE, FALSE, "LC_MESSAGES", FALSE);
 
 	if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
 		fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);

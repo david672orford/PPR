@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--17 December 2004
+2.00a1, 11 December 2004--22 December 2004
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9490,7 +9490,15 @@ no final tarball was released.
 
 * libscript/readppd.pl: added ppd_level().
 
+* interfaces/smb.sh: clarified error message about proper address format.
+
+* interfaces/smb.sh: switched from using smbclient's exit code (which is
+  appearently useless) to looking for patterns in its output as a way
+  to detect errors.
+
 * www/ppr-passwd.c: fixed --delete (merged into 1.54)
+
+* ppr/ppr_main.c:write_queue_file(): added check for lc_messages validity
 
 
 TODO
@@ -9533,4 +9541,9 @@ TODO
   to utf-8.  Add --dsc-charset to ppr.
 
 * Support banner page "news" messages.
+
+* pprdrv: separate output of RIP from output of the printer and the interface
+  so that "ERROR:" messages from smbclient won't be falsely ascribed to CUPS.
+
+* Stop printer control refresh during scrolling of alerts window
 
