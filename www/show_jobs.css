@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 5 April 2002.
+** Last modified 8 May 2002.
 */
 
 BODY {
@@ -43,7 +43,7 @@ TABLE.queue THEAD TH {
 	}
 
 TABLE.queue TBODY {
-	height: 7cm;
+	/* height: 7cm; */
 	overflow: auto;
 	}
 
