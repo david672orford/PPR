@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -602,6 +602,7 @@ int seteuid(uid_t);		/* not defined in header files */
 #ifdef PPR_DARWIN
 #ifdef PASS1
 #undef HAVE_STRSIGNAL
+#define HAVE_UNSETENV 1
 #endif
 
 #ifdef PASS2

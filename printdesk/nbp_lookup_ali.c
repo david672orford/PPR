@@ -26,8 +26,8 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>
-#include <at/appletalk.h>
-#include <at/nbp.h>
+#include <netat/appletalk.h>
+#include <netat/nbp.h>
 #include "gu.h"
 
 static int basic(char *argv[])

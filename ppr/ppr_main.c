@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -1981,7 +1981,6 @@ int main(int argc, char *argv[])
     	fatal(PPREXIT_OTHERERR, "strange getpwuid() error, pw_name is NULL");
     user_username = gu_strdup(pw->pw_name);
     user_realname = gu_strdup(pw->pw_gecos);
-printf("%ld \"%s\" \"%s\"\n", (long)user_uid, pw->pw_name, pw->pw_gecos);
     }
 
     /*
@@ -2104,12 +2103,15 @@ printf("%ld \"%s\" \"%s\"\n", (long)user_uid, pw->pw_name, pw->pw_gecos);
     */
     if(!(qentry.responder_address = getenv("PPR_RESPONDER_ADDRESS")))
 	{
-	if(!(qentry.responder_address = getenv("LOGNAME")))
+	char *p;
+	if((p = getenv("LOGNAME")) || (p = getenv("USER")))
 	    {
-	    if(!(qentry.responder_address = getenv("USER")))
-		{
-		qentry.responder_address = qentry.username;
-		}
+	    /* Duplicate because prune_env() may obliterate. */
+	    qentry.responder_address = gu_strdup(p);
+	    }
+	else
+	    {
+	    qentry.responder_address = qentry.username;
 	    }
 	}
 
