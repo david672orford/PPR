@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--9 January 2005
+2.00a1, 11 December 2004--11 January 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9503,7 +9503,12 @@ no final tarball was released.
 
 * ppr/ppr_main.c:write_queue_file(): added check for lc_messages validity
 
-* pprd/pprd_ipp.c:ipp_get_jobs(): fixed file-decriptor leak
+* pprd/pprd_ipp.c:ipp_get_jobs(): fixed file-decriptor leak, added code to 
+  select only jobs from the requested queue.
+
+* ipp/ipp.c: fixed incorrect data type for requesting-user-name, fixed to
+  ignore empty REMOTE_USER CGI environment variable.
+
 
 
 TODO

@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 December 2004.
+# Last modified 7 January 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -1097,6 +1097,7 @@ export PPR_PATH=$(HOMEDIR)/bin/ppr
 export TBCP2BIN_PATH=$(HOMEDIR)/lib/tbcp2bin
 export PPR2SAMBA_PATH=$(HOMEDIR)/bin/ppr2samba
 export TAIL_STATUS_PATH=$(HOMEDIR)/lib/tail_status
+export PPR_TCLSH=$(HOMEDIR)/bin/ppr-tclsh
 
 ===EndOfHere16===
 
@@ -1134,7 +1135,7 @@ MAKE_NEW_DIR=../makeprogs/make_new_dir.sh
 PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
 
 # Echo programs that support -n and backslash escapes.
-EECHO=$EECHO
+export EECHO=$EECHO
 
 # Locations of programs used by PPR
 export SENDMAIL_PATH=$SENDMAIL_PATH
@@ -1856,7 +1857,7 @@ cat >&3 <<'===MakeRules==='
 # Convert .perl files to Perl scripts.
 .perl:
 	#$(SCRIPTFIXUP) $*.perl $*
-	../makeprogs/script_convert.perl <$*.sh | ../subst_tool >$*
+	../makeprogs/script_convert.sh <$*.perl | ../subst_tool >$*
 
 # Convert .tcl files to Tcl scripts.
 .tcl:

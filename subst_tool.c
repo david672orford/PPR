@@ -54,6 +54,12 @@ int main(int argc, char *argv[])
 		{
 		linenum++;
 
+		/* If the line begins with:
+		 * #undef SYMBOL
+		 * and SYMBOL is a defined environment variable, replace
+		 * it with:
+		 * #define SYMBOL value
+		 */
 		if(strncmp(line, "#undef ", 7) == 0)
 			{
 			char *p2, *value;
@@ -77,30 +83,39 @@ int main(int argc, char *argv[])
 				}
 			}
 
+		/*
+		 * Print the line while replacing @SYMBOL@ where SYMBOL is a name
+		 * consisting exclusively of upper-case letters, digits, and 
+		 * underscore with the value of the environment variable of that name.
+		 * If the environment variable is not defined, abort.
+		 */
 		for(p=line; *p; p++)
 			{
-			if(*p != '@')
-				{
-				fputc(*p, stdout);
-				}
-			else
+			if(*p == '@')
 				{
 				char *end;
 				const char *value;
-				if(!(end = strchr(++p, '@')))
+				if((end = strchr(p+1, '@')))	/* if there is another @ sign, */
 					{
-					fprintf(stderr, "%s: unmatched @ in line %d\n", argv[0], linenum);
-					return 1;
+					*end = '\0';
+					if(strspn(p+1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_") == strlen(p+1))
+						{
+						if(!(value = getenv(p+1)))
+							{
+							fprintf(stderr, "%s: no %s in environment\n", argv[0], p+1);
+							return 1;
+							}
+						fputs(value, stdout);
+						p = end;
+						continue;
+						}
+					else
+						{
+						*end = '@';
+						}
 					}
-				*end = '\0';
-				if(!(value = getenv(p)))	
-					{
-					fprintf(stderr, "%s: no %s in environment\n", argv[0], p);
-					return 1;
-					}
-				fputs(value, stdout);
-				p = end;
 				}
+			fputc(*p, stdout);
 			}
 		}
 

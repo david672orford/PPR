@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/cron/ppr-index.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 December 2004.
+** Last modified 7 January 2005.
 */
 
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -50,19 +51,18 @@ const char *indexes[] = {
 	NULL
 	};
 
-static int do_index(const char name[], gu_boolean delete_index);
+static int do_index(const char name[], gu_boolean delete_index, gu_boolean skip_missing);
 
 /*
 ** Command line options:
 */
 static const char *option_chars = "";
-static const struct gu_getopt_opt option_words[] =
-		{
-		{"delete", 1000, FALSE},
-		{"help", 9000, FALSE},
-		{"version", 9001, FALSE},
-		{(char*)NULL, 0, FALSE}
-		} ;
+static const struct gu_getopt_opt option_words[] = {
+	{"delete", 1000, FALSE},
+	{"help", 9000, FALSE},
+	{"version", 9001, FALSE},
+	{(char*)NULL, 0, FALSE}
+	} ;
 
 /*
 ** Print help.
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 				ret = EXIT_BADDEST;
 				break;
 				}
-			if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
+			if((ret = do_index(argv[i], opt_delete, FALSE)) != EXIT_OK)
 				{
 				break;
 				}
@@ -151,8 +151,10 @@ int main(int argc, char *argv[])
 	else
 		{
 		for(i = 0; indexes[i]; i++)
-			if((ret = do_index(indexes[i], opt_delete)) != EXIT_OK)
+			{
+			if((ret = do_index(indexes[i], opt_delete, TRUE)) != EXIT_OK)
 				break;
+			}
 		}
 
 	if(ret == -1)
@@ -161,10 +163,15 @@ int main(int argc, char *argv[])
 		return ret;	   
 	} /* end of main() */
 
-static int do_index(const char name[], gu_boolean delete_index)
+static int do_index(const char name[], gu_boolean delete_index, gu_boolean skip_missing)
 	{
 	char fname[MAX_PPR_PATH];
 	ppr_fnamef(fname, "%s/lib/index%s", HOMEDIR, name);
+	if(skip_missing)
+		{
+		if(access(fname, X_OK) == -1)
+			return EXIT_OK;
+		}
 	return gu_runl(myname, stderr, fname, delete_index ? "--delete" : NULL, NULL);
 	}
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 7 January 2005.
 #
 
 #
@@ -79,6 +79,7 @@ SUBDIRS=\
 	papd \
 	lprsrv \
 	samba \
+	ipp \
 	pprpopup \
 	uprint \
 	unixuser \
@@ -93,7 +94,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests
+SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset tests
 
 #=== Build ==================================================================
 
