@@ -26,13 +26,17 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2003.
+** Last modified 7 April 2003.
 */
 
 /*! \file
 
 These IPP constant names are from the CUPS documentation.  The values are from RFC 2565.
 The RFC 2565 names are noted in the comments.
+
+The structures too are intentionaly similiar to those used by CUPS.  This is to make the
+code easier to understand by those who are already programming using the CUPS API.  It
+also saved me the trouble of designing that part of the API.
 
 */
 
@@ -69,39 +73,66 @@ The RFC 2565 names are noted in the comments.
 #define IPP_TAG_MIMETYPE 0x49			/* mimeMediaType */
 
 /* IPP Operations */
-#define IPP_PRINT_JOB
-#define IPP_PRINT_URI
-#define IPP_VALIDATE_JOB
-#define IPP_CREATE_JOB
-#define IPP_SEND_DOCUMENT
-#define IPP_SEND_URI
-#define IPP_CANCEL_JOB
-#define IPP_GET_JOB_ATTRIBUTES
-#define IPP_GET_JOBS
-#define IPP_GET_PRINTER_ATTRIBUTES
-#define IPP_HOLD_JOB
-#define IPP_RELEASE_JOB
-#define IPP_RESTART_JOB
-#define IPP_PAUSE_PRINTER
-#define IPP_RESUME_PRINTER
-#define IPP_PURGE_JOBS
-#define IPP_SET_PRINTER_ATTRIBUTES
-#define IPP_SET_JOB_ATTRIBUTES
-#define IPP_GET_PRINTER_SUPPORTED_VALUES
+#define IPP_PRINT_JOB 0x0002
+#define IPP_PRINT_URI 0x0003
+#define IPP_VALIDATE_JOB 0x0004
+#define IPP_CREATE_JOB 0x0005
+#define IPP_SEND_DOCUMENT 0x0006
+#define IPP_SEND_URI 0x0007
+#define IPP_CANCEL_JOB 0x0008
+#define IPP_GET_JOB_ATTRIBUTES 0x0009
+#define IPP_GET_JOBS 0x000a
+#define IPP_GET_PRINTER_ATTRIBUTES 0x000b
+#define IPP_HOLD_JOB 0x000c
+#define IPP_RELEASE_JOB 0x000d
+#define IPP_RESTART_JOB 0x000e
+#define IPP_PAUSE_PRINTER 0x0010
+#define IPP_RESUME_PRINTER 0x0011
+#define IPP_PURGE_JOBS 0x0012
+#define IPP_SET_PRINTER_ATTRIBUTES 0x0013
+#define IPP_SET_JOB_ATTRIBUTES 0x0014
+#define IPP_GET_PRINTER_SUPPORTED_VALUES 0x0015
 
 /* CUPS IPP Extension Operations */
-#define CUPS_GET_DEFAULT
-#define CUPS_GET_PRINTERS
-#define CUPS_ADD_PRINTER
-#define CUPS_DELETE_PRINTER
-#define CUPS_GET_CLASSES
-#define CUPS_ADD_CLASS
-#define CUPS_DELETE_CLASS
-#define CUPS_ACCEPT_JOBS
-#define CUPS_REJECT_JOBS
-#define CUPS_SET_DEFAULT
-#define CUPS_GET_DEVICES
-#define CUPS_GET_PPDS
-#define CUPS_MOVE_JOB
+#define CUPS_GET_DEFAULT 0x4001
+#define CUPS_GET_PRINTERS 0x4002
+#define CUPS_ADD_PRINTER 0x4003
+#define CUPS_DELETE_PRINTER 0x4004
+#define CUPS_GET_CLASSES 0x4005
+#define CUPS_ADD_CLASS 0x4006
+#define CUPS_DELETE_CLASS 0x4007
+#define CUPS_ACCEPT_JOBS 0x4008
+#define CUPS_REJECT_JOBS 0x4009
+#define CUPS_SET_DEFAULT 0x400a
+#define CUPS_GET_DEVICES 0x400b
+#define CUPS_GET_PPDS 0x400c
+#define CUPS_MOVE_JOB 0x400d
+
+/* This union holds any kind of IPP value. */
+typedef union
+	{
+	int integer;
+	gu_boolean boolean;
+	struct
+		{
+		char *language;
+		char *text;
+		} string;
+	struct
+		{
+		int length;
+		void *data;
+		} unknown;
+	} ipp_value_t;
+
+/* This structure holds any kind of IPP attribute. */
+typedef struct
+	{
+	struct ipp_attributes_s *next;
+	int group_tag;
+	char *name;
+	int num_values;
+	ipp_value_t values[1];
+	} ipp_attribute_t;
 
 /* end of file */
