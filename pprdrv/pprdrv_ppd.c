@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 November 2002.
+** Last modified 17 November 2002.
 */
 
 /*
@@ -513,9 +513,13 @@ static void feature_change(const char **featuretype, const char **option)
     } /* end of feature_change() */
 
 /*
-** Insert feature code, if we have it.  If not, insert an
-** "%%IncludeFeature:" comment so that a spooler furthur down
-** the line can insert it if it has it.
+** Insert the PostScript code for a given PPD-described feature, if the PPD
+** file contains such a description of it.  If not, insert an
+** "%%IncludeFeature:" comment so that a spooler furthur down the line can
+** insert it if it has it.
+**
+** The parameter featuretype[] might be "*Duplex" and option[] might
+** be "DuplexNoTumble".  It is possible for option[] to be NULL.
 **
 ** This function is called whenever an ``%%IncludeFeature:'' comment
 ** is encountered in the input file.  It is also called by
@@ -533,12 +537,16 @@ void include_feature(const char *featuretype, const char *option)
 	return;
 
     /* Check if I guessed wrong about interpretion of 2nd argument.
-       (It seems a non-NULL but empty option is not the right way to
-       represent a missing option.) */
+       (I think that a non-NULL but empty option is not the right way to
+       represent a missing option.)
+       */
     if(option && !option[0])
-    	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed", function);
+    	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed (featuretype[]=\"%s\" option[]=\"\")", function, featuretype);
 
-    /* Here we call feature_change() so it can tell us if we have to remove or change this feature. */
+    /* Here we call feature_change() so it can tell us if we have to 
+       remove or change this feature.  (One reasion why we might have
+       to do this if we are changing the bin selection.
+       */
     {
     const char *new_featuretype = featuretype, *new_option = option;
     feature_change(&new_featuretype, &new_option);
@@ -740,7 +748,10 @@ void begin_stopped(void)
 
 void end_stopped(const char *feature, const char *option)
     {
-    printer_printf("} stopped {(PPD error: %s %s failed\\n)print} if cleartomark %%PPR\n",feature,option);
+    printer_printf("} stopped {(PPD error: %s %s failed\\n)print} if cleartomark %%PPR\n",
+    	feature,
+    	option ? option : ""
+    	);
     } /* end of end_stopped() */
 
 /*
@@ -759,11 +770,16 @@ void end_stopped(const char *feature, const char *option)
 */
 void insert_features(FILE *qstream, int set)
     {
+    const char function[] = "insert_features";
     static char *duplex_code = (char*)NULL;
-    char fline[256];
-    char featuretype[32];
-    char option[32];
+    char *line = NULL;
+    int line_space = 80;
+    char *feature_type, *feature_option;
+    int len;
     gu_boolean set_strip_binselects = FALSE;
+
+    if(set < 1 || set > 2)
+	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed (set=%d)", function, set);
 
     if(set==2)		/* If this is set 2, insert the code for the */
 	{		/* remembered duplex feature. */
@@ -782,45 +798,66 @@ void insert_features(FILE *qstream, int set)
 	return;
 	}
 
+    /* Something is wrong if this isn't set 2 and set 1 has already been done. */
     if(duplex_code)
-    	fatal(EXIT_PRNERR_NORETRY, "insert_features(): assertion failed");
+    	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed (duplex_code[]=\"%s\")", function, duplex_code);
 
-    while(fgets(fline, sizeof(fline), qstream))
-	{                   /* work until end of file */
-	option[0] = '\0';
+    while((line = gu_getline(line, &line_space, qstream)))
+	{
+	feature_option = NULL;
 
 	if(strcmp(line, "EndSetups") == 0)
 	    break;
 
-	if(gu_sscanf(fline, "Feature: %#s %#s",
-			    sizeof(featuretype), featuretype,
-			    sizeof(option), option) == 0)
-	    continue;       /* skip non-"Feature:" lines */
-
 	/*
-	** If the code to be inserted is a duplex feature command,
-	** remember it for insertion during pass 2, otherwise,
-	** just insert it now.
+	** We are looking for lines like these:
+	**
+	**	Feature: *Duplex DuplexNoTumble
+	**	Feature: *Reset
 	*/
-	if(strcmp(featuretype, "*Duplex") == 0)
+	if((feature_type = lmatchp(line, "Feature:")))
 	    {
-	    duplex_code = gu_strdup(option);
-	    }
-	else
-	    {
-	    begin_stopped();
-	    include_feature(featuretype, option);
-	    end_stopped(featuretype, option);
+	    len = strcspn(feature_type, " \t");
+
+	    /* If the line doesn't end with the end of the feature_type, */
+	    if(feature_type[len])
+		{
+		feature_option = &feature_type[len + 1];	/* just beyond space */
+		feature_type[len] = '\0';
+		}
 
 	    /*
-	    ** New as of 1.30:  Explicitly selecting the input slot causes
-	    ** old bin select code to be stript out and PageSize code
-	    ** to be turned into PageRegion code.
+	    ** If the code to be inserted is a duplex feature command,
+	    ** remember it for insertion during pass 2,
 	    */
-	    if(strcmp(featuretype, "*InputSlot") == 0)
-	    	set_strip_binselects = TRUE;
+	    if(strcmp(feature_type, "*Duplex") == 0 && feature_option)
+		{
+		duplex_code = gu_strdup(feature_option);
+		}
+
+	    /*
+	    ** All other features get inserted right away.
+	    */
+	    else
+		{
+		begin_stopped();
+		include_feature(feature_type, feature_option);
+		end_stopped(feature_type, feature_option);
+
+		/*
+		** New as of 1.30:  Explicitly selecting the input slot causes
+		** old bin select code to be stript out and PageSize code
+		** to be turned into PageRegion code.
+		*/
+		if(strcmp(feature_type, "*InputSlot") == 0)
+		    set_strip_binselects = TRUE;
+	    	}
 	    }
+
 	} /* end of while loop which itemizes features to insert */
+
+    if(line)
+	gu_free(line);
 
     if(set_strip_binselects)
     	strip_binselects = TRUE;

@@ -1,12 +1,14 @@
 ==============================================================================
  mouse:~ppr/src/docs/misc/TODO.txt
  mouse:~ppr/src/TODO.txt (symbolic link)
- Last revised 28 March 2001
+ Last revised 17 November 2002
 ==============================================================================
 
 * Make more extensive use of lmatch() and lmatchp() macros.
 
-* Add queue aliases support to ppr2samba, papsrv, and the WWW interface.
+* Finish converting papsrv to ppr-papd.
+
+* Add queue aliases support to ppr2samba, and ppr-papd.
 
 * IPP server
 
@@ -29,10 +31,6 @@
 * Support banner page "news" messages
 
 * Convert build to autoconf
-
-* Support printing subsets of the document's pages
-
-* More tightly integrate Ghostscript
 
 ==============================================================================
  end of file

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 November 2002.
+** Last modified 17 November 2002.
 */
 
 /*
@@ -1764,7 +1764,6 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
     for(i=0; i<features_count; i++)
 	{
 	name = features[i];
-printf("%d %s\n", i, name);
 	if((value = lmatchp(name, "*PageSize ")) || (value = lmatchp(name, "*PageRegion ")))
 	    {
 	    if(gu_pcs_bytes(&clean_options) > 0)

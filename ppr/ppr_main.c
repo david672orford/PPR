@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 15 November 2002.
+** Last revised 17 November 2002.
 */
 
 /*
@@ -1250,15 +1250,19 @@ int parse_feature_option(const char option_text[])
 	   */
 	current_duplex_enforce = TRUE;
 
-	/* Simplex */
-	if(strcmp(option, "None") == 0)
+	if(strcmp(option, "None") == 0)		/* i.e., simplex */
 	    current_duplex = DUPLEX_NONE;
 	else if(strcmp(option, "SimplexTumble") == 0)
 	    current_duplex = DUPLEX_SIMPLEX_TUMBLE;
 	else if(strcmp(option, "DuplexTumble") == 0)
 	    current_duplex = DUPLEX_DUPLEX_TUMBLE;
-	else
+	else if(strcmp(option, "DuplexNoTumble") == 0)
 	    current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
+	else					/* unrecognized!!! */
+	    {
+	    warning(WARNING_SEVERE, "Unrecognized duplex type %s, substituting DuplexNoTumble", option);
+	    current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
+	    }
 
 	if(name_storage)
 	    gu_free(name_storage);
@@ -1471,9 +1475,9 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    break;
 
 	case 'w':				/* set warning option */
-	    if( strcmp(optarg, "log") == 0)
+	    if(strcmp(optarg, "log") == 0)
 		warning_log = TRUE;
-	    else if( gu_strcasecmp(optarg, "stderr") == 0)
+	    else if(gu_strcasecmp(optarg, "stderr") == 0)
 	    	warning_log = FALSE;
 	    else if(strcmp(optarg, "severe") == 0)
 		warning_level = WARNING_SEVERE;
@@ -1589,18 +1593,18 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    	{
 	    	read_copies = FALSE;
 	    	}
-	    else if(strcmp(optarg, "duplex:duplex") == 0)
-		{
-		read_duplex=TRUE;
-		current_duplex_enforce = TRUE;
-		current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
-		}
 	    else if(strcmp(optarg, "duplex:simplex") == 0)
 	    	{
 	    	read_duplex = TRUE;
 	    	current_duplex_enforce = TRUE;
 	    	current_duplex = DUPLEX_NONE;
 	    	}
+	    else if(strcmp(optarg, "duplex:duplex") == 0)
+		{
+		read_duplex=TRUE;
+		current_duplex_enforce = TRUE;
+		current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
+		}
 	    else if(strcmp(optarg, "duplex:duplextumble") == 0)
 	        {
 	        read_duplex = TRUE;
@@ -2516,20 +2520,18 @@ int main(int argc, char *argv[])
 	    case DUPLEX_DUPLEX_NOTUMBLE:
 	    	mark_feature_for_insertion("*Duplex DuplexNoTumble");
 		delete_requirement("duplex");
-		requirement(REQ_DOC, "duplex(tumble)");
+		requirement(REQ_DOC, "duplex");
 	    	break;
 	    case DUPLEX_DUPLEX_TUMBLE:
 	    	mark_feature_for_insertion("*Duplex DuplexTumble");
 		delete_requirement("duplex");
-		requirement(REQ_DOC, "duplex");
+		requirement(REQ_DOC, "duplex(tumble)");
 	    	break;
 	    case DUPLEX_SIMPLEX_TUMBLE:
 	    	mark_feature_for_insertion("*Duplex SimplexTumble");
-		/* Adobe yet hasn't defined a requirement name for this. */
-		#if 0
 		delete_requirement("duplex");
-		requirement_REQ_DOC, "duplex(simplextumble)");
-		#endif
+		/* Adobe yet hasn't defined a requirement name for this. */
+		/*requirement(REQ_DOC, "duplex(simplextumble)"); */
 	    	break;
 	    default:
 		fatal(PPREXIT_OTHERERR, "%s(): assertion failed at %s line %d", function, __FILE__, __LINE__);
