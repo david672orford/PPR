@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--4 June 2004.
+1.53a2, 20 February 2004--8 June 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9370,6 +9370,9 @@ Internet Printing Protocol Work
   code is intended to turn a frustrating malfunction which casts suspicion 
   in all the wrong directions into an identifiable error condition.
 
+* www/ppr-passwd.c: added more memset() calls to zero out even rejected and
+  incorrectly typed passwords as soon as possible so that they are less likely
+  to be swapped out.
 
 
 TODO

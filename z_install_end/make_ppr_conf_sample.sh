@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 June 2004.
+# Last modified 8 June 2004.
 #
 
 #
@@ -141,6 +141,22 @@ cat - >&5 <<'===EndHere41==='
   #flag date format = "%d-%b-%y, %I:%M%p"		# 26-Jul-00, 12:49pm
   #flag date format = "%b %d, %Y, %I:%M%p"		# Jul 26, 2000, 12:49pm
   #flag date format = "%B %d, %Y, %I:%M%p"		# July 26, 2000, 12:49pm
+
+  # Choose a format job submission dates or times as displayed by the ppop
+  # command.  The first value is the format for jobs at least 24 hours
+  # old, the second for younger jobs.  If nothing is defined here, or the 
+  # format you define is invalid or contains elements which aren't defined in
+  # the current locale, then the first defaults to "%d-%b-%y" (day-of-month,
+  # localized-abbreviated-month-name, two digit year) while the second defaults
+  # to "%I:%M%p" (12-hour hour, two digit minutes, local-specific AM/PM 
+  # indicator) for locales which define AM/PM indicators and "%H:%M" (24-hour
+  # hour, two digit minutes) for those which do not.
+  #
+  # The default is not "%x" and "%X" because, at least in Glibc 2.3.2 1) %x and
+  # %X don't seem to be defined for many locales, and 2) the C locale produces 
+  # 24 hour time which is all but incomprehensible to most Americans.  To fix
+  # this, uncomment the line below.
+  #ppop date format = "%x", "%X"			# prefered local convention
 
 ===EndHere41===
 

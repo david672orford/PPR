@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 8 June 2004.
 */
 
 /*
@@ -63,12 +63,40 @@ static void format_time(char *timestr, size_t timestr_len, time_t time_to_format
 	{
 	struct tm *tm_time;
 	time_t time_now;
+	static gu_boolean format_loaded = FALSE;
+	static const char *format_date = NULL;
+	static const char *format_time = NULL;
+
+	if(!format_loaded)
+		{
+		FILE *cf;
+		if((cf = fopen(PPR_CONF, "r")))
+			{
+			struct GU_INI_ENTRY *section;
+			if((section = gu_ini_section_load(cf, "internationalization")))
+				{
+				const struct GU_INI_ENTRY *value;
+				if((value = gu_ini_section_get_value(section, "ppopdateformat")))
+					{
+					format_date = gu_ini_value_index(value, 0, NULL);
+					format_time = gu_ini_value_index(value, 1, NULL);
+					if(format_date)
+						format_date = gu_strdup(format_date);
+					if(format_time)
+						format_time = gu_strdup(format_time);
+					}
+				gu_ini_section_free(section);
+				}
+			fclose(cf);
+			}
+		format_loaded = TRUE;
+		}
+
 	tm_time = localtime(&time_to_format);
 	time_now = time((time_t*)NULL);
 	if(difftime(time_now, time_to_format) >= (24*60*60))
 		{
-		#warning Expect spurious y2k warning on next line
-		if(strftime(timestr, timestr_len, "%x", tm_time) == 0)
+		if(!format_date || strftime(timestr, timestr_len, format_date, tm_time) == 0)
 			{
 			#warning Expect y2k warning on next line
 			strftime(timestr, timestr_len, "%d-%b-%y", tm_time);
@@ -76,15 +104,16 @@ static void format_time(char *timestr, size_t timestr_len, time_t time_to_format
 		}
 	else
 		{
-		if(strftime(timestr, timestr_len, "%X", tm_time) == 0)
+		if(!format_time || strftime(timestr, timestr_len, format_time, tm_time) == 0)
 			{
+			printf("fallback from %s\n", format_time);
 			if(strftime(timestr, timestr_len, "%p", tm_time) == 0)
-				strftime(timestr, timestr_len, "%H:%M",tm_time);
+				strftime(timestr, timestr_len, "%H:%M", tm_time);
 			else
-				strftime(timestr, timestr_len, "%I:%M%p",tm_time);
+				strftime(timestr, timestr_len, "%I:%M%p", tm_time);
 			}
 		}
-	}
+	} /* format_time() */
 
 /*
 ** Those subcommands which allow PPRDEST to be used as the default argument

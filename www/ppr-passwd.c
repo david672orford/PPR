@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/ppr-passwd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 8 June 2004.
 */
 
 /*
@@ -359,6 +359,7 @@ static int old_password(const char username[], const char realm[], const char di
 		}
 
 	md5_digest(old_digested, username, realm, pass_ptr);
+	memset(pass_ptr, 0, strlen(pass_ptr));
 
 	if(strcmp(old_digested, digested) != 0)
 		{
@@ -380,14 +381,15 @@ static int new_password(FILE *wfile, const char username[], const char realm[])
 	snprintf(prompt, sizeof(prompt), _("Please enter new password for user %s in realm %s: "), username, realm);
 
 	do	{
-		while(!pass_ptr_first)
+		while(!pass_ptr)
 			{
-			if(!(pass_ptr_first = getpass(prompt)))
+			if(!(pass_ptr = getpass(prompt)))
 				return -1;
-			if(strlen(pass_ptr_first) == 0)
+			if(strlen(pass_ptr) == 0)
 				return EXIT_USER_ABORT;
-			if(strlen(pass_ptr_first) < 6)
+			if(strlen(pass_ptr) < 6)
 				{
+				memset(pass_ptr, 0, strlen(pass_ptr));
 				printf(_("That password is too short.  Please pick another.\n"));
 				pass_ptr = NULL;
 				continue;
@@ -395,8 +397,10 @@ static int new_password(FILE *wfile, const char username[], const char realm[])
 			break;
 			}
 
-		pass_ptr_first = gu_strdup(pass_ptr_first);
+		pass_ptr_first = gu_strdup(pass_ptr);
+		memset(pass_ptr, 0, strlen(pass_ptr));
 
+		pass_ptr = NULL;
 		while(!pass_ptr)
 			{
 			if(!(pass_ptr = getpass(_("Please verify new password: "))))
@@ -409,11 +413,12 @@ static int new_password(FILE *wfile, const char username[], const char realm[])
 		pass_ptr_first = NULL;
 
 		if(!match)
-			 {
-			 fputc('\n', stdout);
-			 printf(_("Passwords do not match, please try again.\n"));
-			 pass_ptr = NULL;
-			 }
+			{
+			memset(pass_ptr, 0, strlen(pass_ptr));
+			fputc('\n', stdout);
+			printf(_("Passwords do not match, please try again.\n"));
+			pass_ptr = NULL;
+			}
 		} while(!match);
 
 	/* Create the MD5 signiture and then zero the cleartext password out
