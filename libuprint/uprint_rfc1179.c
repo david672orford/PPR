@@ -25,7 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 February 2003.
+*/
+
+/*
+** This module contains that portion of UPRINT that needs to run as root in 
+** order to open sockets with port numbers below 1024.  This file is
+** compiled to make the program uprint_rfc1179 which is setuid root.
 */
 
 #include "before_system.h"
@@ -36,6 +42,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pwd.h>
+#include <string.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -66,18 +74,96 @@ void uprint_error_callback(const char *format, ...)
     va_end(va);
     } /* end of uprint_error_callback() */
 
+static const char *get_username(void)
+    {
+    const char function[] = "get_username";
+    struct passwd *pw;
+    if(!(pw = getpwuid(getuid())))
+	{
+	uprint_errno = UPE_INTERNAL;
+	uprint_error_callback(X_("%s(): getpwuid(%ld) failed, errno=%d (%s)"), function, (long)getuid(), errno, gu_strerror(errno));
+	return NULL;
+	}
+    return pw->pw_name;
+    }
+
 static int do_print(int sockfd, const char server_node[], char *argv[])
     {
     const char function[] = "do_lpr";
+    const char		*printer = argv[0];
+    const char		*local_nodename = argv[1];
+    const char		*local_username = argv[2];
+    int			lpr_queueid = atoi(argv[3]);
+    const char		*control_file = argv[4];
+    char		**files_list = &argv[5];
     char command[64];
     int code;
-    const char *local_nodename = argv[0];
-    int lpr_queueid = atoi(argv[1]);
-    const char *printer = argv[2];
-    const char *control_file = argv[3];
-    char **files_list = &argv[4];
     const char *filename;
     int x;
+
+    /*
+    ** Make sure the nodename is true.
+    */
+    if(strcmp(local_nodename, uprint_lpr_nodename()) != 0)
+	{
+	uprint_errno = UPE_DENIED;
+	uprint_error_callback(X_("nodename \"%s\" is not actual nodename"), local_nodename);
+	return -1;
+	}
+
+    /*
+    ** Make sure the username is true.
+    */
+    {
+    const char *p = get_username();
+    if(!p)
+	return -1; 
+    if(strcmp(p, local_username) != 0)
+	{
+	uprint_errno = UPE_DENIED;
+	uprint_error_callback(X_("username \"%s\" is not actual username"), local_username);
+	return -1;
+	}
+    }
+
+    /*
+    ** Make sure that the control file does not make false statements about either
+    ** the username or the source node.  Notice that will _will_ examine a final 
+    ** unterminated line.
+    */
+    {
+    char *cfdup = gu_strdup(control_file);
+    char *p = cfdup;
+    gu_boolean lie_found = FALSE;
+    char *p_break;
+    while(*p)
+	{
+	if((p_break = strchr(p, '\n')))
+	    *p_break = '\0';
+	switch(p[0])
+	    {
+	    case 'H':
+		if(strcmp(&p[1], local_nodename) != 0)
+		    lie_found = TRUE;
+		break;
+	    case 'P':
+		if(strcmp(&p[1], local_username) != 0)
+		    lie_found = TRUE;
+		break;
+	    }
+	if(p_break)
+	    p = p_break + 1;
+	else
+	    p += strlen(p);
+	}
+    gu_free(cfdup);
+    if(lie_found)
+	{
+	uprint_errno = UPE_DENIED;
+	uprint_error_callback(X_("bad control file"));
+	return -1;
+	}
+    }
 
     /* Say we want to send a job: */
     snprintf(command, sizeof(command), "\002%s\n", printer);
@@ -179,7 +265,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 		if(fstat(pffd, &statbuf) == -1)
 		    {
 		    uprint_errno = UPE_INTERNAL;
-		    uprint_error_callback("%s(): fstat() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		    uprint_error_callback(_("%s(): fstat() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
 		    break;
 		    }
 	    	df_length = (int)statbuf.st_size;
@@ -253,11 +339,51 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 static int do_command(int sockfd, char *argv[])
     {
     const char function[] = "do_command";
+    const char *command = argv[0];
     int x;
     char temp[512];
 
+    /* Make sure the command is ok. */
+    switch(command[0])
+	{
+	case 3:			/* send queue status (short) */
+	    break;
+	case 4:			/* send queue status (long) */
+	    break;
+	case 5:			/* remove job */
+	    /*
+	    From RFC 1179:
+		+----+-------+----+-------+----+------+----+
+		| 05 | Queue | SP | Agent | SP | List | LF |
+		+----+-------+----+-------+----+------+----+
+		Command code - 5
+		Operand 1 - Printer queue name
+		Operand 2 - User name making request (the agent)
+		Other operands - User names or job numbers
+		*/	                                              
+	    /* Verify that the agent cooresponds to the real UID. */
+	    {
+	    const char *correct_username = get_username();
+	    char *p;
+	    if(!(p = strchr(command, ' '))
+	    	|| strcspn(++p, " ") != strlen(correct_username)
+	    	|| strncmp(p, correct_username, strlen(correct_username)) != 0
+	    	)
+		{
+		uprint_errno = UPE_DENIED;
+		uprint_error_callback(X_("%s(): bad command"), function);
+		return -1;
+		}
+	    }
+	    break;
+	default:
+	    uprint_errno = UPE_DENIED;
+	    uprint_error_callback(X_("%s(): unknown command"), function);
+	    return -1;
+	}
+
     /* Transmit the command: */
-    if(uprint_lpr_send_cmd(sockfd, argv[0], strlen(argv[0])) == -1)
+    if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
 	return -1;
 
     /* Copy from the socket to stdout until the connexion

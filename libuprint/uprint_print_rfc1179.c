@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 February 2003.
 */
 
 #include "before_system.h"
@@ -61,13 +61,13 @@ static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const c
     {
     const char function[] = "create_control_file";
     struct UPRINT *upr = (struct UPRINT *)p;
-    char control_file[10000];
     char file_type;
     int copies;
     int copy;
     int i;
     int x;
     const char *filename;
+    char control_file[10000];
 
     /* I am not sure if we should refrain in the
        presence of solaris extensions or not. */
@@ -86,8 +86,11 @@ static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const c
     	copies = 1;
 
     /* Build the `control file', start with nodename and user: */
-    snprintf(control_file, sizeof(control_file), "H%s\nP%s\n", local_nodename, upr->user);
-    i = strlen(control_file);
+    i = 0;
+    snprintf(&control_file[i], sizeof(control_file) - i, "H%s\n", local_nodename);
+    i += strlen(&control_file[i]);
+    snprintf(&control_file[i], sizeof(control_file) - i, "P%s\n", upr->user);
+    i += strlen(&control_file[i]);
 
     /* Mail on job completion? */
     if(upr->notify_email)
@@ -246,7 +249,9 @@ static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const c
     	{
 	if(upr->ppr_responder && upr->ppr_responder_address && strchr(upr->ppr_responder_address, '@'))
 	    {
-	    snprintf(&control_file[i], sizeof(control_file) - i, "8PPR --responder %.16s\n8PPR --responder-address %.128s\n", upr->ppr_responder, upr->ppr_responder_address);
+	    snprintf(&control_file[i], sizeof(control_file) - i, "8PPR --responder %.16s\n", upr->ppr_responder);
+	    i += strlen(&control_file[i]);
+	    snprintf(&control_file[i], sizeof(control_file) - i, "8PPR --responder-address %.128s\n", upr->ppr_responder_address);
 	    i += strlen(&control_file[i]);
 
 	    if(upr->ppr_responder_options)
@@ -260,24 +265,68 @@ static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const c
     /* Add each of the file names to the control file: */
     for(x = 0; (filename = files_list[x]) != (const char *)NULL; x++)
     	{
+	int expected_size, saved_i = i;
+	
 	if(strcmp(filename, "-") == 0)
 	    filename = "";
 
-	if( (i + (12 + strlen(local_nodename)) * copies + 14 + strlen(local_nodename) + strlen(filename) + 1) > sizeof(control_file))
+	/*
+	** ldfA123.000mouse\n
+	** ^   ^   ^  ^
+	** |   |   |  +-- local_nodename
+	** |       +----- x
+	** |   +--------- lpr_queueid
+	** +------------- file_type
+	**
+	** N/etc/profile\n
+	** ^^
+	** |+------------ filename
+	** +------------- indicates actual filename
+	**
+	** UdfA123.000mouse\n
+	** ^
+	** +------------- undicates file to unlink when done
+	*/
+	expected_size = (12 + strlen(local_nodename)) * copies
+			+ 2 + strlen(filename)
+			+ 12 + strlen(local_nodename)
+			;
+	if( (i + expected_size + 1) > sizeof(control_file))
 	    {
 	    uprint_errno = UPE_INTERNAL;
 	    uprint_error_callback("%s(): out of space in control file buffer", function);
 	    return NULL;
 	    }
+
+	/* This emmits lines which specify the type of the file and the name that it should
+	   have in the queue directory.  This is repeated to produce multiple copies.
+	   */
 	for(copy = 0; copy < copies; copy++)
 	    {
 	    snprintf(&control_file[i], sizeof(control_file) - i, "%cdfA%03d.%03d%s\n", file_type, lpr_queueid, x, local_nodename);
 	    i += strlen(&control_file[i]);
 	    }
-	snprintf(&control_file[i], sizeof(control_file) - i, "N%s\nUdfA%03d.%03d%s\n", filename, lpr_queueid, x, local_nodename);
+
+	/* N specifies the name of the source file. */
+	snprintf(&control_file[i], sizeof(control_file) - i, "N%s\n", filename);
 	i += strlen(&control_file[i]);
+
+	/* U specifies the file to unlink. */
+	snprintf(&control_file[i], sizeof(control_file) - i, "UdfA%03d.%03d%s\n", lpr_queueid, x, local_nodename);
+	i += strlen(&control_file[i]);
+
+	/* Make sure our computation above was correct. */
+	if(!((i - saved_i) == expected_size))
+	    {
+	    uprint_errno = UPE_INTERNAL;
+	    uprint_error_callback("%s(): assertion failed: ((i - saved_i) = %d) == (expected_size = %d)", function, (i - saved_i), expected_size);
+	    return NULL;
+	    }
     	}
 
+    /* printf("control_file[] = \"%s\"\n", control_file); */
+
+    /* Copy it into memory which we can return. */
     return gu_strdup(control_file);
     } /* end of control file */
 
@@ -296,7 +345,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     const char *default_files_list[] = {"-", NULL};
     char *control_file;
     int files_count = 0;	/* number of files sent */
-    const char *args[100];
+    const char **args = (const char**)NULL;
 
     DODEBUG(("%s(p=%p, scratchpad=%p)", function, p, scratchpad));
     DODEBUG(("scratchpad={node=\"%s\", printer=\"%s\", osf_extensions=%s, solaris_extensions=%s, ppr_extensions=%s}",
@@ -387,22 +436,27 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
 	return -1;
 	}
 
+    /* Create the argument list for uprint_rfc1179 (our setuid root helper). */
     {
     int si, di;
+    int args_available = 10;
+    args = (const char**)gu_alloc(args_available, sizeof(char**));
     di = 0;
     args[di++] = UPRINT_RFC1179;
     args[di++] = "print";
     args[di++] = scratchpad->node;
-    args[di++] = local_nodename;
-    args[di++] = lpr_queueid_str;    
     args[di++] = scratchpad->printer;
+    args[di++] = local_nodename;
+    args[di++] = upr->user;
+    args[di++] = lpr_queueid_str;    
     args[di++] = control_file;
     for(si = 0; files_list[si]; si++)
 	{
-	if(di >= ((sizeof(args) / sizeof(char*)) - 1))
+	if(di >= (args_available - 1))
 	    {
-	    uprint_errno = UPE_TOOMANY;
-	    return -1;
+	    args_available += 4;
+	    /* printf("expanding args[] to %d members\n", args_available); */
+	    args = (const char**)gu_realloc(args, args_available, sizeof(char**));
 	    }
 	args[di++] = files_list[si];
 	}
@@ -411,10 +465,15 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
 
     {
     int retcode;
+
     retcode = uprint_run_rfc1179(UPRINT_RFC1179, args);
 
     gu_free((char*)control_file);
+    gu_free(args);
 
+    /* If the command suceeded, and we have been asked to show the job ID, and at least one
+       file was printed, then show a fake jobid.
+       */
     if(retcode == 0 && upr->show_jobid && files_count > 0)
 	printf("job id is %s-0 (%d file%s)\n", upr->dest, files_count, files_count > 1 ? "s" : "");
 

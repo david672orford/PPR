@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 February 2003.
 */
 
 #include "before_system.h"
@@ -153,7 +153,10 @@ int uprint_print(void *p, gu_boolean remote_too)
 	    fprintf(f, "to remote %s@%s\n", info.printer, info.node);
 	    fclose(f);
 	    }
-	ret = uprint_print_rfc1179(upr, &info);
+	if(uprint_print_rfc1179(upr, &info) == -1)
+	    ret = 1;
+	else
+	    ret = 0;
 	gu_free(info.node);
     	}
 
@@ -249,6 +252,7 @@ int uprint_print(void *p, gu_boolean remote_too)
 	}
     #endif
 
+    /* uprint-lpr and uprint-lp will call exit() with this value. */
     return ret;
     } /* end of uprint_print() */
 

@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--19 February 2003.
+1.51, 15 February 2003--20 February 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8243,16 +8243,15 @@ line was being parsed twice.
   exec fails.  This was bad because the die was often caught.  The result 
   was that both parent and child tried to issue the second half of the
   HTML page.  The copy from the child was received by the parent, HTML
-  escaped, and displayed as command output!
+  escaped, and displayed as command output!  Suppressed program path in 
+  run() output.  Suppressed Perl 5.8.0 warning about tainted arguments
+  to exec().
 
 * www/*_addwiz.cgi.perl: changed run("/usr/bin/id") to run("id") since it
   is often /bin/id.
 
 * ppad/ppad.c:priviledged(): commented out install-time exception because
   it turns --su into a noop for user ppr.
-
-* www/cgi_run.pl, prn_addwiz.cgi.perl: fixed some more Perl 5.8.0 warnings,
-  suppressed program path in run() output.
 
 * www/docs_man.cgi.perl, docs_utils.pl: added manpage directory.
 
@@ -8316,5 +8315,4 @@ line was being parsed twice.
 * ppr/prune_env.c:set_ppr_env(): changed IFS from " \t" to " \t\n" because
   that is what is recomended by "Secure Programming for Linux and Unix
   HOWTO".
-
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 February 2003.
+# Last modified 20 February 2003.
 #
 
 #===============================================================
@@ -102,6 +102,10 @@ sub run
 sub opencmd
     {
     my $handle = shift;
+    my @command_list = @_;
+
+    # Perl 5.8.0 spews warnings if exec() arguments are tainted.
+    run_detaint(\@command_list);
 
     my $pid = open($handle, "-|");
 
@@ -119,11 +123,11 @@ sub opencmd
 
     # This is the child.  Exec the program we want.  The exec() is in 
     # a block by itself to suppress a Perl warning.
-    { exec(@_); }
+    { exec(@command_list); }
 
     # We must actually execute something because if we don't, then this
     # copy of Perl will dump its buffers.
-    exec("/bin/echo", "exec(\"" . join('", "', @_) . "\") failed: $!");
+    exec("/bin/echo", "exec(\"" . join('", "', @command_list) . "\") failed: $!");
 
     # Don't use die!
     exit 255;
