@@ -1,0 +1,1449 @@
+#! /bin/sh
+
+# The next line is to make Ultrix's lame /bin/sh bow out.
+#if false () { echo }; then unset false; else exec /bin/sh5 "$@"; fi
+
+#
+# mouse:~ppr/src/Configure
+# Copyright 1995--2002, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software is provided "as is" without express or
+# implied warranty.
+#
+# Last modified 14 November 2002.
+#
+
+# Find an echo that will support "echo -n".  If we
+# can't find one, use the default echo in this script
+# and use PPR's echo in installed scripts.
+NECHO=echo
+NECHO_EXPORT=lib/pprecho
+for i in echo /bin/echo /usr/ucb/echo print
+    do
+    if [ `($i -n) 2>&1 | wc -l` -eq 0 ]
+	then
+	NECHO=$i
+	NECHO_EXPORT=$i
+	break;
+	fi
+    done
+
+# Find an echo that will support escapes
+EECHO=echo
+EECHO_EXPORT=lib/pprecho
+for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
+    do
+    if [ `($i '\n') 2>/dev/null | wc -l` -eq 2 ]
+	then
+	EECHO=$i
+	EECHO_EXPORT=$i
+	break
+	fi
+    done
+
+# Function to find a program in the specified $PATH style
+# search list.  The first argument is the program to find,
+# the second is the search list.
+findprog_prog_path ()
+    {
+    echo "Searching for $1" >&2
+    for i in `echo $2 | tr ':' ' '`
+	do
+	if [ `echo $i | cut -c1` = '/' ]
+	    then
+	    # echo "Trying $i/$1" >&2
+	    if [ -x "$i/$1" ]
+		then
+		echo "Found $i/$1" >&2
+		echo "$i/$1"
+		return
+		fi
+	    fi
+	done
+    echo "Not found" >&2
+    }
+
+#
+# Parse the command line options.
+#
+opt_prefix="/usr"
+opt_sysconfdir=""
+opt_bindir=""
+opt_libdir=""
+opt_datadir=""
+opt_prompt_paths=1
+for opt in $*
+    do
+    case $opt in
+	--prefix=* )
+	    opt_prefix=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--sysconfdir=* )
+	    opt_sysconfdir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--bindir=* )
+	    opt_bindir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--libdir=* )
+	    opt_libdir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--datadir=* )
+	    opt_datadir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	* )
+	    echo "Unrecognized option: $opt"
+	    exit 1
+	    ;;
+    esac
+    done
+if [ -z "$sysconfdir" ]
+    then
+    if [ "$prefix" = "/usr" ]
+	then
+	sysconfdir="/etc"
+	else
+	sysconfdir="$opt_prefix/etc"
+	fi
+    fi
+opt_bindir=${opt_bindir:-$opt_prefix/bin}
+opt_libdir=${opt_libdir:-$opt_prefix/lib}
+opt_datadir=${opt_datadir:-$opt_prefix/share}
+
+#
+# Try to detect the operating system.
+#
+echo "Detecting OS..."
+case `uname -s` in
+    ATTWGS )			# dubious
+	SYSTEM="ATTWGS"
+	DESCRIPTION="AT&T WGS Unix"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    Linux )
+	SYSTEM="LINUX"
+	DESCRIPTION="Linux"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    FreeBSD )
+	SYSTEM="FREEBSD"
+	DESCRIPTION="FreeBSD 3.1R"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    SunOS )
+	major=`uname -r | cut -d. -f1`
+	minor=`uname -r | cut -d. -f2`
+	case $major in
+	    4 )
+		SYSTEM="SUNOS4"
+		DESCRIPTION="SunOS 4.1.3_U1"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	    5 )
+		if [ $minor -lt 6 ]
+		    then
+		    SYSTEM="SUNOS_5"
+		    DESCRIPTION="SunOS 5.0 thru 5.5.1"
+		    CC_NATIVE=0
+		    CC_GCC=1
+		    else
+		    SYSTEM="SUNOS_5_6"
+		    DESCRIPTION="SunOS 5.6 thru 5.8"
+		    CC_NATIVE=0
+		    CC_GCC=1
+		    fi
+		;;
+	    * )
+		echo "Unrecognized SunOS major version $major."
+		exit 1
+		;;
+	    esac
+	;;
+    OSF1 )
+	SYSTEM="OSF1"
+	DESCRIPTION="OSF/1 3.2 or Digital Unix 4.0"
+	CC_NATIVE=1
+	CC_GCC=1
+	;;
+    IRIX )
+	SYSTEM="IRIX"
+	DESCRIPTION="IRIX 6.3"
+	CC_NATIVE=1
+	CC_GCC=1
+	;;
+    NetBSD )
+	SYSTEM="NETBSD"
+	DESCRIPTION="NetBSD 1.0"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    Cygwin )
+	SYSTEM="CYGWIN"
+	DESCRIPTION="Cygwin 1.x"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    UWIN )
+	SYSTEM="UWIN"
+	DESCRIPTION="UWIN 2.x"
+	CC_NATIVE=1
+	CC_GCC=1
+	;;
+    HP-UX )
+	SYSTEM="HPUX"
+	DESCRIPTION="HPUX 10.2"
+	CC_NATIVE=1
+	CC_GCC=1
+	;;
+    ULTRIX )
+	SYSTEM="ULTRIX"
+	DESCRIPTION="ULTRIX 4.4 RISC"
+	ACTUAL_SYSTEM=`uname -s | tr -d '-'`
+	CC_NATIVE=1
+	CC_GCC=0
+	;;
+    Darwin )
+	SYSTEM="DARWIN"
+	DESCRIPTION="Darwin (Mac OS X)"
+	CC_NATIVE=0
+	CC_GCC=1
+	;;
+    * )
+	echo "No rule for OS `uname -s`.  Please fix this script or use ./Configure instead."
+	exit 1
+	;;
+    esac
+
+echo "We will set up to compile for operating system \"$SYSTEM\"."
+
+#
+# If this is a system for which we support the native C compiler,
+# ask the user if he wants to use it.
+#
+if [ $CC_GCC -ne 0 -a $CC_NATIVE -eq 0 ]
+    then
+    NATIVE_CC="no"
+    fi
+
+if [ $CC_GCC -eq 0 -a $CC_NATIVE -ne 0 ]
+    then
+    NATIVE_CC="yes"
+    fi
+
+if [ $CC_NATIVE -ne 0 -a $CC_GCC -ne 0 ]
+  then
+  echo
+  echo "Normally, GCC is used to compile PPR.  For this operating system"
+  echo "you have the option of using the C compiler that comes with the"
+  echo "operating system (if you have it)."
+  echo
+  NATIVE_CC="?"
+  while [ "$NATIVE_CC" = "?" ]
+    do
+    $NECHO -n "Use native cc? "
+    read NATIVE_CC
+    case "$NATIVE_CC" in
+	[yY]* )
+	    NATIVE_CC="yes"
+	    ;;
+	[nN]* )
+	    NATIVE_CC="no"
+	    ;;
+	* )
+	    NATIVE_CC="?";
+	    ;;
+	esac
+    done
+  fi
+
+if [ $CC_GCC -eq 0 -a $CC_NATIVE -eq 0 ]
+    then
+    echo "Error in Configure, no compiler!"
+    exit 1
+    fi
+
+if [ "$NATIVE_CC" = "yes" ]
+  then
+  echo "The system's own C compiler will be used."
+  else
+  echo "GCC will be used."
+  fi
+echo
+
+#
+# Create a list of default install locations.
+#
+HOMEDIR=$opt_libdir/ppr
+SHAREDIR=$opt_datadir/ppr
+CONFDIR=$opt_sysconfdir/ppr
+VAR_SPOOL_PPR=/var/spool/ppr
+TEMPDIR=/tmp
+BINDIR=$opt_bindir
+
+#
+# Ask the user if he would like to change any of the PPR
+# install directories.
+#
+if [ $opt_prompt_paths -ne 0 ]
+then
+
+echo
+echo "Please choose where to install PPR.  It is suggested that"
+echo "you accept the defaults as all the documentation assumes"
+echo "that you are using the default directories."
+echo
+
+$NECHO -n "PPR home directory [$HOMEDIR]: "
+read answer
+if [ -n "$answer" ]; then HOMEDIR="$answer"; fi
+echo
+
+$NECHO -n "PPR share directory [$SHAREDIR]: "
+read answer
+if [ -n "$answer" ]; then SHAREDIR="$answer"; fi
+echo
+
+$NECHO -n "PPR configuration directory [$CONFDIR]: "
+read answer
+if [ -n "$answer" ]; then CONFDIR="$answer"; fi
+echo
+
+$NECHO -n "PPR spool files directory [$VAR_SPOOL_PPR]: "
+read answer
+if [ -n "$answer" ]; then VAR_SPOOL_PPR="$answer"; fi
+echo
+
+$NECHO -n "PPR temporary files directory [$TEMPDIR]: "
+read answer
+if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
+echo
+
+$NECHO -n "Directory for symbolic links to PPR binaries [$BINDIR]: "
+read answer
+if [ -n "$answer" ]; then BINDIR="$answer"; fi
+echo
+
+fi
+
+echo "\$CONFDIR=$CONFDIR"
+echo "\$HOMEDIR=$HOMEDIR"
+echo "\$SHAREDIR=$SHAREDIR"
+echo "\$VAR_SPOOL_PPR=$VAR_SPOOL_PPR"
+echo "\$TEMPDIR=$TEMPDIR"
+echo "\$BINDIR=$BINDIR"
+
+#
+# Figure out which user and group names to use.
+#
+echo
+echo "Please choose the users and groups that will own PPR files and processes."
+echo "These users and groups should be used only by PPR.  They need not exist"
+echo "right now, they can be created later."
+echo
+
+# These are the values in global_defines.h.
+DEFAULT_USER_PPR="ppr"
+DEFAULT_GROUP_PPR="ppr"
+DEFAULT_USER_PPRWWW="pprwww"
+
+# What if the user presses <RETURN> in response to the group prompt?
+if [ $SYSTEM = "UWIN" -o $SYSTEM = "CYGWIN" ]
+    then
+    RETURN_GROUP_PPR="pprgrp"
+    else
+    RETURN_GROUP_PPR=$DEFAULT_GROUP_PPR
+    fi
+
+$NECHO -n "PPR user [$DEFAULT_USER_PPR]: "
+read USER_PPR
+if [ -z "$USER_PPR" ]; then USER_PPR=$DEFAULT_USER_PPR; fi
+echo
+
+$NECHO -n "PPR group [$RETURN_GROUP_PPR]: "
+read GROUP_PPR
+if [ -z "$GROUP_PPR" ]; then GROUP_PPR=$RETURN_GROUP_PPR; fi
+echo
+
+$NECHO -n "PPR WWW user [$DEFAULT_USER_PPRWWW]: "
+read USER_PPRWWW
+if [ -z "$USER_PPRWWW" ]; then USER_PPRWWW=$DEFAULT_USER_PPRWWW; fi
+echo
+
+#
+# Ask where the X Windows binaries are
+#
+echo
+echo "You must indicate the directory where X-Windows binaries such as"
+echo "xterm may be found.  It is recomended that if the default is not"
+echo "correct, you accept it anyway and make a symbolic link from"
+echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
+echo "etc.) to /usr/bin/X11."
+echo
+$NECHO -n "X-Windows bin [/usr/bin/X11]: "
+read XWINBINDIR
+if [ -z "$XWINBINDIR" ]; then XWINBINDIR="/usr/bin/X11"; fi
+echo
+
+#
+# Ask about gdbm:
+#
+echo
+echo "Do you have the GNU database library (GDBM)?"
+echo
+echo "(If you say no, the user database will not work.  See the"
+echo "ppuser(8) man page for information about this feature."
+echo "Almost all users can do without this feature.)"
+echo
+USE_GDBM="?"
+while [ "$USE_GDBM" = "?" ]
+    do
+    $NECHO -n "Use gdbm? [yes] "
+    read USE_GDBM
+    case "$USE_GDBM" in
+	[yY]* )
+	    USE_GDBM="yes"
+	    ;;
+	[nN]* )
+	    USE_GDBM="no"
+	    ;;
+	'' )
+	    USE_GDBM="yes"
+	    ;;
+	* )
+	    USE_GDBM="?";
+	    ;;
+	esac
+done
+
+if [ "$USE_GDBM" = "yes" ]
+  then
+  echo "PPR will use GDBM."
+  else
+  echo "PPR features which require GDBM will be disabled."
+  fi
+echo
+
+#
+# Ask about gdbm:
+#
+echo
+echo "Do you have Samba's Trivial DataBase library (TDB)?"
+echo
+echo "(If you say no, then automatic Samba client printer driver download"
+echo "will not work."
+echo
+USE_TDB="?"
+while [ "$USE_TDB" = "?" ]
+    do
+    $NECHO -n "Use tdb? [yes] "
+    read USE_TDB
+    case "$USE_TDB" in
+	[yY]* )
+	    USE_TDB="yes"
+	    ;;
+	[nN]* )
+	    USE_TDB="no"
+	    ;;
+	'' )
+	    USE_TDB="yes"
+	    ;;
+	* )
+	    USE_TDB="?";
+	    ;;
+	esac
+done
+
+if [ "$USE_TDB" = "yes" ]
+  then
+  echo "PPR will use TDB."
+  else
+  echo "PPR features which require TDB will be disabled."
+  fi
+echo
+
+#
+# Ask about internationalized of messages
+#
+echo
+echo "Do you want support for translation of messages to non-English languages?"
+echo "This option requires the GNU Gettext package.  Currently, only a partial"
+echo "French translation is provided.  If you would like to contribute translations"
+echo "into additional languages, compile with this option on and read"
+echo "po/README.txt for instructions."
+echo
+INTERNATIONAL="?"
+while [ "$INTERNATIONAL" = "?" ]
+    do
+
+    # prompt
+    $NECHO -n "Include international messages support? [yes] "
+    read INTERNATIONAL
+
+    # if yes
+    case "$INTERNATIONAL" in
+	[yY]* )
+	    INTERNATIONAL=""	# don't comment out
+	    ;;
+	[nN]* )
+	    INTERNATIONAL="#"	# comment out
+	    ;;
+	'' )
+	    INTERNATIONAL=""	# don't comment out
+	    ;;
+	* )
+	    INTERNATIONAL="?"
+	    ;;
+	esac
+    done
+if [ -z "$INTERNATIONAL" ]
+    then
+    echo "Will use gettext()."; else echo "Won't use gettext()."
+    fi
+echo
+
+#
+# Look for various AppleTalk libraries.  Accept the first seemingly complete
+# one we find.
+#
+echo
+ATALKTYPE=""
+ATALKTYPE_LONG="None"
+ATALKLIBS=""
+ATALKFLAGS=""
+
+if [ -z "$ATALKTYPE" ]
+then
+echo "Looking for NATALI and Netatalk..."
+for prefix in /usr/local /usr
+    do
+    if [ -f "$prefix/lib/libnatali.a" ]
+	then
+	echo "Found \"$prefix/lib/libnatali.a\"."
+	for prefix2 in /usr/local/atalk /usr/local /usr
+	    do
+	    if [ -f "$prefix2/lib/libatalk.a" ]
+		then
+		echo "Found \"$prefix2/lib/libatalk.a\"."
+		ATALKTYPE="ali"
+		ATALKTYPE_LONG="NATALI and Netatalk"
+		ATALKFLAGS="-I $prefix/include -I $prefix2/include"
+		ATALKLIBS="$prefix/lib/libnatali.a $prefix2/lib/libatalk.a"
+		break;
+		fi
+	    done
+	if [ "$ATALKTYPE_LONG" != "NATALI and Netatalk" ]
+	    then
+	    echo "You have NATALI, but Netatalk is missing!"
+	    exit 1
+	    fi
+	break
+	fi
+    done
+fi
+
+if [ -z "$ATALKTYPE" ]
+then
+echo "Looking for the Columbia AppleTalk Program (CAP)..."
+for prefix in /usr/local /usr
+    do
+    if [ -f "$prefix/lib/libcap.a" ]
+	then
+	echo "Found \"$prefix/lib/libcap.a\"."
+	if [ ! -d "$prefix/include/netat" ]
+	    then
+	    echo "CAP include directory at \"$prefix/include/netat\" is missing."
+	    exit 1
+	    fi
+	if [ ! -f "$prefix/include/netat/abpap.h" ]
+	    then
+	    echo "You didn't install CAP's abpap.h in $prefix/include/netat as INSTALL.txt instructs."
+	    exit 1
+	    fi
+	ATALKTYPE="cap"
+	ATALKTYPE_LONG="Columbia AppleTalk Program"
+	ATALKFLAGS="-I $prefix/include"
+	ATALKLIBS="$prefix/lib/libcap.a \$(SOCKLIBS)"
+	break
+	fi
+    done
+echo
+fi
+
+if [ -z "$ATALKTYPE" ]
+then
+echo "Looking for the AT&T/NCR AppleTalk Network Program..."
+if [ -f /usr/lib/libanp.so ]
+    then
+    echo "    Found \"/usr/lib/libanp.so\"."
+    ATALKTYPE="ali"
+    ATALKTYPE_LONG="AT&T/NCR AppleTalk Network Program"
+    ATALKFLAGS=""
+    ATALKLIBS="-lanp"
+    fi
+echo
+fi
+
+echo
+if [ "$ATALKTYPE" = "" ]
+    then
+    echo "No AppleTalk."
+    else
+    echo "Will use $ATALKTYPE_LONG AppleTalk."
+    fi
+echo
+
+#
+# See if we can find uncompress or gunzip
+#
+GUNZIP=`findprog_prog_path gunzip $PATH`
+if [ -z "$GUNZIP" ]
+    then
+    UNCOMPRESS=`findprog_prog_path uncompress`
+    else
+    UNCOMPRESS=""
+    fi
+echo
+
+#
+# Find the Perl interpreter.
+#
+PERL=`findprog_prog_path perl $PATH`
+if [ -z "$PERL" ]
+    then
+    PERL="/usr/bin/perl"
+    fi
+echo
+
+#
+# If we will be using GCC, devise a set of options
+# appropriate to this processor and version.
+#
+if [ $NATIVE_CC = "no" ]
+  then
+  echo "Selecting appropriate processor options for GCC."
+
+  GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -O2"
+  PROCESSOR=`uname -m`
+  GCC_VERSION=`gcc --version`
+  GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^egcs-//'`
+
+  echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
+  echo "  Processor: $PROCESSOR"
+
+  # If this is an Intel platform and the gcc version
+  # is prior to 2.7.2.1 then add -fno-strength-reduce
+  case $PROCESSOR in
+    i[3456789]86 )
+	case $GCC_VERSION_SHORT in
+	    2.7.2.[1-9] | 2.[89]* | [3456789].* )
+		;;
+	    * )
+		echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"
+		echo "    buggy strength-reduce optimization."
+		GCC_CFLAGS="$GCC_CFLAGS -fno-strength-reduce"
+		;;
+	    esac
+    esac
+
+  #
+  # add options for each processor
+  #
+  case $PROCESSOR in
+    i386 )			# default anyway?
+	;;
+    i486 )
+	echo "  Selecting i486 code generation."
+	GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
+	;;
+    i[56]86 )
+	case $GCC_VERSION_SHORT in
+	    2.9* | [3456789].* )
+		echo "  Selecting $PROCESSOR code generation."
+		GCC_CFLAGS="$GCC_CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
+	        ;;
+	    * )
+		echo "  Selecting i486 code generation because $PROCESSOR may not be available."
+		GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
+		;;
+	    esac
+	;;
+    * )
+	;;
+    esac
+
+  echo
+  fi
+
+#========================================================================
+# Start of Makefile.conf builder code.
+#========================================================================
+
+echo "Building Makefile.conf..."
+exec 3>Makefile.conf
+
+#========================================================================
+echo "    Building header..."
+cat >&3 <<===EndOfHere10===
+#
+# ~ppr/src/Makefile.conf
+# Generated by Configure on `date`.
+#
+# You may want to change some of this if it doesn't work on
+# your system.
+#
+
+# This name of the system on which PPR will be compiled.
+# You should change this if you are creating a new port.
+PORT_NAME=$SYSTEM
+
+# Directory for program files and such.
+# Default is /usr/lib/ppr.
+HOMEDIR=$HOMEDIR
+
+# Directory for architecture independent files
+# Default is /usr/share/ppr
+SHAREDIR=$SHAREDIR
+
+# Directory into which to install configuration files.
+# Default is /etc/ppr.
+CONFDIR=$CONFDIR
+
+# Directory for spool files.
+# Default is /var/spool/ppr.
+VAR_SPOOL_PPR=$VAR_SPOOL_PPR
+
+# Directory for temporary files.
+# Default is /tmp.
+TEMPDIR=$TEMPDIR
+
+# Directory for symbolic links to PPR executables
+# Default is /usr/bin.
+BINDIR=$BINDIR
+
+# Directory were we will find X-Windows programs
+# Default is /usr/bin/X11.
+XWINBINDIR=$XWINBINDIR
+
+# Directory for HTML files.  If you change this
+# you will have to fix makeprogs/make_install_dirs.sh too.
+WWWDIR=\$(SHAREDIR)/www
+
+# Directory for man pages to be installed in.
+MANDIR=\$(SHAREDIR)/man
+
+# Directory for the CGI programs for the WWW interface.
+CGI_BIN=\$(HOMEDIR)/cgi-bin
+
+===EndOfHere10===
+
+echo "# If all of the above have their default values then," >&3
+echo "# this line may be commented out." >&3
+if [ $HOMEDIR = "/usr/lib/ppr" -a $SHAREDIR = "/usr/share/ppr" \
+		-a $CONFDIR = "/etc/ppr" \
+		-a $VAR_SPOOL_PPR = "/var/spool/ppr" \
+		-a $TEMPDIR = "/tmp" -a $BINDIR = "/usr/bin" \
+		-a $XWINBINDIR = "/usr/bin/X11" ]
+	then
+	$EECHO "#\c" >&3
+	fi
+echo 'CHANGE=-DHOMEDIR=\"$(HOMEDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DCONFDIR=\"$(CONFDIR)\" -DVAR_SPOOL_PPR=\"$(VAR_SPOOL_PPR)\" -DTEMPDIR=\"$(TEMPDIR)\" -DXWINBINDIR=\"$(XWINBINDIR)\"' >&3
+echo >&3
+
+cat >&3 <<===EndOfHere20===
+# Do we want international messages support?
+# This uses GNU Gettext or Solaris Gettext.
+#
+${INTERNATIONAL}INTERNATIONAL=-DINTERNATIONAL
+${INTERNATIONAL}INTLLIBS=-lintl
+${INTERNATIONAL}INTERNATIONAL_INSTALL=install-international
+
+# Define the owner and group of most PPR files.  If any of USER_PPR,
+# GROUP_PPR, or USER_PPRWWW are defined as something other than the
+# defaults, then the USER_GROUP= line must be uncommented.
+USER_PPR=$USER_PPR
+GROUP_PPR=$GROUP_PPR
+USER_PPRWWW=$USER_PPRWWW
+===EndOfHere20===
+
+if [ $USER_PPR = $DEFAULT_USER_PPR -a $GROUP_PPR = $DEFAULT_GROUP_PPR -a $USER_PPRWWW = $DEFAULT_USER_PPRWWW ]
+    then
+    $EECHO "#\c" >&3
+    fi
+
+cat >&3 <<===EndOfHere21===
+USER_GROUP=-DUSER_PPR=\\"\$(USER_PPR)\\" -DGROUP_PPR=\\"\$(GROUP_PPR)\\" -DUSER_PPRWWW=\\"\$(USER_PPRWWW)\\"
+
+# Shell script which modifies shell and Perl scripts to use the above values.
+# Don't change this setting.
+SCRIPTFIXUP=../makeprogs/scriptfixup.sh
+
+# A shell script which copies executable files into place.  It also attempts
+# to strip them.  We don't use "install" because the BSD and System V versions
+# are very different.  There is no reason to change this setting.
+INSTALLPROGS=../makeprogs/installprogs.sh
+
+# A shell script which copies data files into place.  There is no reason to
+# change this setting.
+INSTALLDATA=../makeprogs/installdata.sh
+
+# This copies a single file into place, renaming it as it goes.
+INSTALLCP=../makeprogs/installcp.sh
+
+# This links a single file to another.
+INSTALLLN=../makeprogs/installln.sh
+
+# Shell script which creates a directory, deleting any
+# old one first.
+MAKE_NEW_DIR=../makeprogs/make_new_dir.sh
+
+# Program to rebuild .depend
+PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
+
+===EndOfHere21===
+
+echo "# Programs for uncompressing files.  This variable is used when" >&3
+echo "# building ppr/ppr_infile.c." >&3
+if [ -n "$GUNZIP" ]
+    then
+    echo "UNCOMPRESS_OPTS=-DGUNZIP=\\\"$GUNZIP\\\"" >&3
+    else
+    if [ -n "$UNCOMPRESS" ]
+	then
+	echo "UNCOMPRESS_OPTS=-DUNCOMPRESS=\\\"$UNCOMPRESS\\\"" >&3
+	else
+	echo "UNCOMPRESS_OPTS=" >&3
+	fi
+    fi
+echo >&3
+
+cat >&3 <<===EndOfHere25===
+# Echo programs that support -n and backslash escapes.
+NECHO=$NECHO_EXPORT
+EECHO=$EECHO_EXPORT
+
+# Location of Perl interpreter
+PERL=$PERL
+
+===EndOfHere25===
+
+if [ "$USE_GDBM" = "yes" ]
+then
+cat >&3 <<===EndOfHere30===
+# Decide which user database module to use.
+USER_DBM=gdbm
+#USER_DBM=none
+
+# Extra libraries which should be included when linking to the PPR user
+# database library.
+DBLIBS=-lgdbm
+#DBLIBS=
+
+===EndOfHere30===
+else
+cat >&3 <<===EndOfHere40===
+# Decide which user database module to use.
+#USER_DBM=gdbm
+USER_DBM=none
+
+# Extra libraries which should be included when linking to the PPR user
+# database library.
+#DBLIBS=-lgdbm
+DBLIBS=
+
+===EndOfHere40===
+fi
+
+if [ "$USE_TDB" = "yes" ]
+then
+cat >&3 <<===EndOfHere30===
+# Enable building and installing of programs that require Samba's TDB.
+ALL_TDB=all-tdb
+INSTALL_TDB=install-tdb
+
+===EndOfHere30===
+else
+cat >&3 <<===EndOfHere40===
+# Enable building and installing of programs that require Samba's TDB.
+#ALL_TDB=all-tdb
+#INSTALL_TDB=install-tdb
+
+===EndOfHere40===
+fi
+
+cat >&3 <<'===EndOfHere50==='
+# Wrap several options together into one
+MISC_OPTS=-DPPR_$(PORT_NAME) $(CHANGE) $(USER_GROUP) $(INTERNATIONAL)
+
+# Backup files to delete
+BACKUPS=*~ *.bak *.bck
+
+# Here are some defaults for the system dependent section:
+MV=mv
+RMF=rm -f
+CHMOD=chmod
+
+===EndOfHere50===
+
+#========================================================================
+echo "    Selecting a system dependent section..."
+
+cat >&3 <<===EndofHere6===
+#============================================================
+# System Dependent Section
+# For: $DESCRIPTION
+#============================================================
+===EndofHere6===
+
+
+#============================================================
+if [ $SYSTEM = "ATTWGS" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndSYSATTWGS===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -sq
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=-lsocket -lnsl -lresolv
+LEX=lex
+LIB_LEX=-ll
+PARALLEL=generic
+
+# If you don't have NetBIOS, comment these out.
+ALL_NETBIOS=all-netbios
+INSTALL_NETBIOS=install-netbios
+===EndSYSATTWGS===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "SUNOS_5" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndSUNOS5===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=-lsocket -lnsl -lresolv
+LEX=lex
+LIB_LEX=-ll
+PARALLEL=generic
+===EndSUNOS5===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "SUNOS_5_6" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndSUNOS56===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=-lsocket -lnsl -lresolv
+LEX=lex
+LIB_LEX=-ll
+PARALLEL=generic
+===EndSUNOS56===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "NETBSD" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndNETBSD===
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndNETBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "LINUX" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndLINUX===
+MAKE=make
+MAKEFLAGS=--no-print-directory
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -crs
+
+CC=gcc
+#CC=diet
+#CC=g++ -fno-exceptions
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+
+LD=gcc
+#LD=diet
+LDFLAGS=
+
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=flex
+LEX_LIB=
+PARALLEL=linux
+
+# Here we clear INTLLIBS which may been set above.  Modern Linux distrubions
+# use glibc 2.0 and later include include Gettext, so including a separate
+# library isn't necessary.  Worse, on RedHat 5.1 systems which have been
+# upgraded from certain earlier versions the /usr/lib/libintl.a
+# is poison.  That is why we clear it here.  Comment this line out if
+# this decisoin is wrong for your system.
+INTLLIBS=
+
+===EndLINUX===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "SUNOS4" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndSUNOS4===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndSUNOS4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "OSF1" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<'===EndOSF1==='
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+===EndOSF1===
+if [ "$NATIVE_CC" = "yes" ]
+then
+echo "CC=`pwd`/makeprogs/fixed_cc_osf.sh" >&3
+# Note: don't put spaces after -I below!
+cat >&3 <<'===EndOSF2==='
+CFLAGS=-O2 -I/usr/local/include -I../include $(MISC_OPTS)
+LD=cc
+LDFLAGS=
+CPP=/lib/cpp
+===EndOSF2===
+else
+cat >&3 <<===EndOSF3===
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+===EndOSF3===
+fi
+cat >&3 <<'===EndOSF4==='
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndOSF4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "IRIX" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<'===EndIRIX==='
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+===EndIRIX===
+
+if [ "$NATIVE_CC" = "yes" ]
+then
+cat >&3 <<===EndIRIX2===
+# We use the full path in case /usr/local/bin/cc
+# is a link to GCC.
+CC=/usr/bin/cc
+CFLAGS=-O2 -I /usr/local/include -L /usr/local/lib -I ../include \$(MISC_OPTS)
+LD=/usr/bin/cc
+LDFLAGS=
+# /lib/cpp doesn't handle #elif correctly so we
+# must use the one in the C compiler.
+#CPP=/lib/cpp
+CPP=/usr/bin/cc -E
+===EndIRIX2===
+
+else
+cat >&3 <<===EndIRIX3===
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+===EndIRIX3===
+fi
+
+cat >&3 <<'===EndIRIX4==='
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndIRIX4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "CYGWIN" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndCYGWIN===
+.SUFFIXES: .exe
+
+.c.exe:
+	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
+
+MAKE=make
+MAKEFLAGS=--no-print-directory
+STRIP=strip
+OBJ=o
+DOTEXE=.exe
+LIBEXT=a
+LIBCMD=ar -crs
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=flex
+LEX_LIB=-lfl
+PARALLEL=generic
+===EndCYGWIN===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "UWIN" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndUWIN1===
+.SUFFIXES: .exe
+
+.c.exe:
+	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
+
+MAKE=make
+MAKEFLAGS=
+STRIP=touch
+OBJ=o
+DOTEXE=.exe
+LIBEXT=a
+LIBCMD=ar -cr
+===EndUWIN1===
+
+if [ "$NATIVE_CC" = "yes" ]
+then
+cat >&3 <<===EndUWIN2===
+CC=cc
+CFLAGS=-I ../include \$(MISC_OPTS)
+LD=cc
+LDFLAGS=
+CPP=/lib/cpp
+===EndUWIN2===
+
+else
+cat >&3 <<===EndUWIN3===
+CC=gcc
+CFLAGS=-I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+===EndUWIN3===
+fi
+
+cat >&3 <<===EndUWIN4===
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndUWIN4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "HPUX" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndHPUX1===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+===EndHPUX1===
+
+if [ "$NATIVE_CC" = "yes" ]
+then
+cat >&3 <<===EndHPUX2===
+CC=/usr/bin/cc
+CFLAGS=-Ae -O -I../include $(MISC_OPTS)
+LD=/usr/bin/cc
+LDFLAGS=-ldld
+CPP=/usr/bin/cc -E
+===EndHPUX2===
+
+else
+cat >&3 <<===EndHPUX3===
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=-ldld
+CPP=gcc -E -P -xc-header
+===EndHPUX3===
+fi
+
+cat >&3 <<===EndHPUX4===
+SOCKLIBS=
+LEX=lex
+LIB_LEX=-ll
+PARALLEL=generic
+===EndHPUX4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "ULTRIX" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndULTRIX1===
+MAKE=s5make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -crs
+===EndULTRIX1===
+
+if [ "$NATIVE_CC" = "yes" ]
+then
+echo "CC=`pwd`/makeprogs/fixed_cc_osf.sh" >&3
+cat >&3 <<===EndULTRIX2===
+CC=cc
+CFLAGS=-YPOSIX -O -I../include $(MISC_OPTS)
+LD=cc
+LDFLAGS=
+CPP=/lib/cpp
+===EndULTRIX2===
+
+else
+cat >&3 <<===EndULTRIX3===
+CC=gcc
+CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+===EndULTRIX3===
+fi
+
+cat >&3 <<===EndULTRIX4===
+SOCKLIBS=
+LEX=lex
+LIB_LEX=-ll
+# For makeprogs/scriptfixup.sh to change #! lines:
+SH=/bin/sh5
+# So make will use the good shell:
+SHELL=/bin/sh5
+PARALLEL=generic
+===EndULTRIX4===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "DARWIN" ]
+then
+echo "      Emitting section for $DESCRIPTION"
+cat >&3 <<===EndDarwin===
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -cr
+CC=cc
+CFLAGS=$GCC_CFLAGS -I ../include -I /usr/local/include \$(MISC_OPTS)
+LD=cc
+LDFLAGS=
+CPP=cpp
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndDarwin===
+fi
+
+
+
+#============================================================
+echo "      Emitting make rules"
+cat >&3 <<'===MakeRules==='
+#==============================================================
+# Make Rules
+# We use these to reduce the complexity of the makefiles.  We
+# also can't really depend of different versions of make to
+# have the same internal rules.
+#==============================================================
+
+.SUFFIXES: .sh .perl .tcl .c .$(OBJ)
+
+# Convert .sh files to shell scripts.
+.sh:
+	$(SCRIPTFIXUP) $*.sh $*
+
+# Convert .perl files to Perl scripts.
+.perl:
+	$(SCRIPTFIXUP) $*.perl $*
+
+# Convert .tcl files to Tcl scripts.
+.tcl:
+	$(SCRIPTFIXUP) $*.tcl $*
+
+# Build an object file from a single .c file.
+.c.$(OBJ):
+	$(CC) $(CFLAGS) -c $*.c
+
+===MakeRules===
+
+
+echo "    Selecting AppleTalk support..."
+echo "      $ATALKTYPE_LONG"
+cat >&3 <<===EndATALK1===
+
+#==============================================================
+# Start of AppleTalk settings.
+#==============================================================
+# Which AppleTalk library are we using, if any?
+ATALKTYPE=$ATALKTYPE
+ATALKFLAGS=$ATALKFLAGS
+ATALKLIBS=$ATALKLIBS
+
+===EndATALK1===
+
+if [ -n "$ATALKTYPE" ]
+then
+cat >&3 <<===EndATALK2===
+# Enable building and installing of programs that require AppleTalk.
+ALL_ATALK=all-atalk
+INSTALL_ATALK=install-atalk
+
+===EndATALK2===
+
+else
+cat >&3 <<===EndATALK3===
+# Enable building and installing of programs that require AppleTalk.
+#ALL_ATALK=all-atalk
+#INSTALL_ATALK=install-atalk
+
+===EndATALK3===
+fi
+
+#====================================================
+# End of AppleTalk settings.
+#====================================================
+
+echo "    Emitting trailer..."
+cat >&3 <<===EndEOF===
+
+# end of file
+
+===EndEOF===
+
+#========================================================================
+# End of Makefile.conf builder code.
+#========================================================================
+
+# We are done
+echo "Done."
+
+echo
+echo "Take a look at Makefile.conf if you like, then run \"make\"."
+echo
+exit 0
+

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 31 July 2002.
+# Last modified 14 November 2002.
 #
 # This is my first attempt at a RPM spec file for PPR.  I think I have made
 # a few mistakes.  Please point them out.
@@ -13,7 +13,7 @@
 
 Summary: A spooler for PostScript printers
 Name: ppr
-Version: 1.50a2
+Version: 1.50b1
 Release: 1
 Copyright: BSD
 Group: System Environment/Daemons
@@ -39,8 +39,15 @@ with Ghostscript, Netatalk, CAP60, and Samba.
 # the root of the source code.
 #============================================================================
 %build
+
+# This would be interactive.  Work on a non-interactive version is proceding
+# in ./Configure_new.
 #./Configure
+
+# Instead of an interactive configure, we use a saved Makefile.conf from a 
+# prior (interactive) Configure session.
 cp makeprogs/Makefile.conf.%_target_cpu-%_target_vendor-%_target_os Makefile.conf
+
 make
 
 #============================================================================
