@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 June 2001.
+# Last modified 13 June 2001.
 #
 
 #
@@ -39,6 +39,10 @@ include makeprogs/global.mk
 
 # The version number of PPR is found in this file and in version.h.
 include include/version.mk
+
+# Sourceforge CVS repository contact information.
+CVS_RSH=ssh
+CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 
 # These are the subdirectories we will do make in:
 SUBDIRS=\
@@ -88,7 +92,7 @@ SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests
 
 # This makes everything but doesn't install it.  This is so we can avoid
 # disturbing an old version until we are sure the old one can be built.
-all:
+all: symlinks
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -103,7 +107,7 @@ all:
 
 # Make the programs and install them.  It is allright to run this without
 # doing "make all" first.
-install:
+install: symlinks
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -176,9 +180,16 @@ dist: docs distclean
 	@echo "Distribution archive built."
 	@echo
 
-# Check into CVS on Sourceforge.
-cvs: veryclean
-	CVS_RSH=ssh cvs -d:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr import ppr vendor start
+# CVS doesn't preserve symlinks.  If INSTALL.txt is missing, run the hidden
+# shell script in which they are preserved.
+symlinks:
+	if [ ! -f INSTALL.txt ]; then ./.restore_symlinks; fi
+
+# CVS on Sourceforge.
+cvs-import: veryclean
+	./makeprogs/save_symlinks.sh
+	#CVS_RSH=ssh cvs -d:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr import ppr vendor start
+	cvs import ppr vendor start
 
 # end of file
 
