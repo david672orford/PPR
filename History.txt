@@ -9650,4 +9650,8 @@ no final tarball was released.
 * Renamed struct QFileEntry to QEntryFile and renamed its manipulation 
   functions to conform to current PPR style.
 
+* libgu/gu_name_value.c: added
+
+* Switched calling method for ppr-respond to name=value pairs.
+
 
