@@ -975,7 +975,7 @@ gu_boolean queueinfo_colorDevice(void *p)
 		{
 		struct PRINTER_INFO *pip;
 		vector_get(qip->printers, i, pip);
-		if(!pip->binaryOK)
+		if(!pip->colorDevice)
 			return FALSE;
 		else
 			answer = TRUE;
