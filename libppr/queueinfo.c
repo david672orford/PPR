@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 14 December 2004.
 */
 
 /*+ \file
@@ -36,7 +36,7 @@ PPR queue.
 
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -723,7 +723,7 @@ void queueinfo_add_printer(void *p, const char name[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	if(!do_printer(qip, name, 0))
-		gu_CodeThrow(EEXIST, _("no printer called \"%s\""), qip->name);
+		gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
 	}
 
 /** add a hypothetical printer to this object

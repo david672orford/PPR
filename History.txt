@@ -9430,56 +9430,17 @@ no final tarball was released.
   This supposedly happens automatically in Perl 5.6 and later, but doesn't
   seem to work until 5.8.x.
 
-* libppr/ipp_utils.c, include/ipp_constants.h, include/ipp_utils.h, pprd/pprd_ipp.c,
-  ipp/ipp.c: greatly expanded IPP support.
+* libppr/ipp_utils.c, include/ipp_constants.h, include/ipp_utils.h, 
+  pprd/pprd_ipp.c, ipp/ipp.c: greatly expanded IPP support.
 
 * www/ppr-httpd.perl: added --inetd-port, --ipp; fixed --root-xlate to remove the
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54a1, 11 December 2004--11 December 2004
+1.54, 11 December 2004--17 December 2004
 
-*
+* samba/ppd2win95drv.perl: removed
 
+* samba/ppd2windrv.perl: fixed to work with indexed PPD files.
 
-TODO
-
-* Finish Debian package.
-
-* Make a stripped-down GtkEmbed or Mozilla chrome Mozilla browser
-
-* Make a stripped-down browser with the Mozilla ActiveX control
-
-* Finish the IPP server.
-
-* Finish support for automatic driver download in Samba 2.2.x and 3.x.
-
-* Fix Dillo caching problem when deleting printer in the web interface.  It
-  may be necessary to emit an header to say that certain CGI output is not
-  cacheable.  It is probably that Dillo is exposing a bug by not having
-  a workaround for buggy sites.
-
-* Change responder interface to use name=value pairs on the command line.
-  Change commentators to support the new status handling code and merge them
-  with responders.
-
-* Implement automatic PPD file download URL.
-
-* Implement PPD file upload and import
-
-* Implement PPD file installable options handling in pprdrv.
-
-* Implement PPR node-to-node printing, queue display, and job canceling.
-
-* Add IPP support to UPRINT so that jobs can be sent to CUPS queues.  This
-  should probably be done with libcups which is LGPL.
-
-* Make uprint-cancel and uprint-lpstat actually do something
-
-* Implement -F switch sorting in pprdrv.
-
-* Add code to convert command line option value strings and DSC text fields
-  to utf-8.  Add --dsc-charset to ppr.
-
-* Support banner page "news" messages.
 
