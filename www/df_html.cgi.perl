@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/df_html.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 9 June 2000.
+# Last modified 24 April 2002.
 #
 
 #
@@ -96,7 +96,7 @@ while(<D>)
 
     print <<"BODY10";
 <table border=1 hspace=5 vspace=5 cellpadding=5 cellspacing=0 align="left">
-<tr><td><table border=0 cellspacing=0 cellpadding=0>
+<tr><td><table border=0 cellspacing=0 cellpadding=0 height=100>
 		<tr><td><img width=100 height=$percent_reserved border=0 src="../images/pixel-blue.png"></td></tr>
 		<tr><td><img width=100 height=$percent_available border=0 src="../images/pixel-green.png"></td></tr>
 		<tr><td><img width=100 height=$percent_used border=0 src="../images/pixel-red.png"></td></tr>
