@@ -109,12 +109,12 @@ sub opencmd
 	my @command_list = @_;
 	my $stderr_fate = ">&STDOUT";
 
-	if($command_list[0] =~ /2>(.+)$/)
+	if($command_list[0] =~ /^2>(.+)$/)
 		{
 		$stderr_fate = ">$1";
 		shift @command_list;
 		}
-
+print STDERR "\$stderr_fate=$stderr_fate\n";
 	# Perl 5.8.0 spews warnings if exec() arguments are tainted.
 	run_detaint(\@command_list);
 
@@ -125,7 +125,7 @@ sub opencmd
 	return 1 if($pid != 0);				# if parent
 
 	# Keep stderr output out of the server error log.
-	open(STDERR, $stderr_fate) if($stderr_fate ne ">STDERR");
+	open(STDERR, $stderr_fate) if($stderr_fate ne ">&STDERR");
 
 	# If possible, clear the PATH to avoid problems with
 	# tainted PATHs.

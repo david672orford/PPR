@@ -28,13 +28,13 @@
 *%	PRINTER_HPIII		HP LaserJet III with at least 1MB memory
 *%	PRINTER_HPDJ500		HP DeskJet 500, DeskWriter
 *%	PRINTER_HPDJ550C	HP DeskJet 550C, 560C
-*%  PRINTER_HPDJ880C	HP DeskJet 880C
+*%  PRINTER_HPDJ850C	HP DeskJet 850C
 *%	PRINTER_DM24		24 pin dot matrix printers
 *%	PRINTER_EPSC62		Epson Stylus C62
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 12 May 2004.
+*% which was last revised 15 May 2004.
 *%
 #endif
 
@@ -92,6 +92,7 @@
 *ModelName: "HP DeskJet 550C Ghostscript"
 *NickName: "HP DeskJet 550C Ghostscript"
 *PCFileName: "HPDJ5GS.PPD"
+*1284DeviceID: "CLASS:PRINTER; MODEL:DESKJET 880C; MANUFACTURER:HEWLETT-PACKARD; DESCRIPTION:Hewlett-Packard DeskJet 850C; COMMAND SET:MLC,PCL,PML"
 *DefaultResolution: 300dpi
 *ColorDevice: True
 *DefaultColorSpace: CMYK
@@ -99,21 +100,18 @@
 *pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
 #endif
 
-#ifdef PRINTER_HPDJ880C
-*Product: "(HP DeskJet 880C Ghostscript)"
-*ModelName: "HP DeskJet 880C Ghostscript"
-*NickName: "HP DeskJet 880C Ghostscript"
-*PCFileName: "HPDJ880C.PPD"
-*1284DeviceID: "CLASS:PRINTER; MODEL:DESKJET 880C; MANUFACTURER:HEWLETT-PACKARD; DESCRIPTION:Hewlett-Packard DeskJet 880C; COMMAND SET:MLC,PCL,PML"
+#ifdef PRINTER_HPDJ850C
+*Product: "(HP DeskJet 850C hpdj850c)"
+*ModelName: "HP DeskJet 850C hpdj850c"
+*NickName: "HP DeskJet 850C hpdj850c"
+*PCFileName: "HPDJ850C.PPD"
+*1284DeviceID: "CLASS:PRINTER; MODEL:DESKJET 880C; MANUFACTURER:HEWLETT-PACKARD; DESCRIPTION:Hewlett-Packard DeskJet 850C; COMMAND SET:MLC,PCL,PML"
 *DefaultResolution: 600dpi
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
 *Protocols: PJL
-*% This driver produces distorted output in ESP GS 7.07.1.
-*% *pprRIP: ppr-gs pcl -sDEVICE=cdj880 -dBitsPerPixel=24
-*% We will use this one for now.
-*pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
+*pprRIP: ppr-gs PCL3GUI -sDEVICE=hpdj850c -r300
 #endif
 
 #ifdef PRINTER_DM24

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2004.
+** Last modified 15 May 2004.
 */
 
 #include "before_system.h"
@@ -342,9 +342,9 @@ static int ppd_choices(struct THE_FACTS *facts, struct MATCH **matches, int matc
 		if(matched > 0)
 			{
 			*matches = gu_realloc(*matches, matches_count + count + 1, sizeof(struct MATCH));
-			(*matches)[matches_count].fuzzy = (matched==fuzzy);
-			(*matches)[matches_count].manufacturer = gu_strdup(f_manufacturer);
-			(*matches)[matches_count].description = gu_strdup(f_description);
+			(*matches)[matches_count + count].fuzzy = (matched==fuzzy);
+			(*matches)[matches_count + count].manufacturer = gu_strdup(f_manufacturer);
+			(*matches)[matches_count + count].description = gu_strdup(f_description);
 			count++;
 			}
 		}

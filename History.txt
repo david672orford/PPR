@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--14 May 2004.
+1.53a2, 20 February 2004--15 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9145,8 +9145,6 @@ Internet Printing Protocol Work
 
 * www/test_components.cgi.perl: changed "Required" column to "Role" and
   wrote role descriptions for all of the packages.
-
-* ppd/ghostscript/: added HP DeskJet 880C.
 
 * ppad/ppad_ppd.c: fixed crash bug due to failure to clear all members 
   of structure which contains gathered information about the printer.

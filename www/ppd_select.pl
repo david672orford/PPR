@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 May 2004.
+# Last modified 15 May 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -88,76 +88,83 @@ sub ppd_summary
 	require "readppd.pl";
 	my($ppdname) = @_;
 
-	my $line;
-	my $fileversion = "?";
-	my $languagelevel = 1;
-	my $psversion = "?";
-	my $fonts = 0;
-	my $ttrasterizer = "None";
-	my $rip = "Internal";
-
-	ppd_open($ppdname);
-
-	while(defined($line = ppd_readline()))
+	eval {
+		my $line;
+		my $fileversion = "?";
+		my $languagelevel = 1;
+		my $psversion = "?";
+		my $fonts = 0;
+		my $ttrasterizer = "None";
+		my $rip = "Internal";
+	
+		ppd_open($ppdname);
+	
+		while(defined($line = ppd_readline()))
+			{
+			if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
+				{
+				$fileversion = $1;
+				next;
+				}
+			if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
+				{
+				$languagelevel = $1;
+				next;
+				}
+			if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
+				{
+				$psversion = $1;
+				next;
+				}
+			if($line =~ /^\*Font\s+/)
+				{
+				$fonts++;
+				next;
+				}
+			if($line =~ /^\*TTRasterizer:\s*(\S+)/)
+				{
+				$ttrasterizer = $1;
+				next;
+				}
+			if($line =~ /^\*cupsFilter:\s*"([^"]+)"/)
+				{
+				my $options = $1;
+				my @options = split(/ /, $options);
+				$rip = "Ghostscript+CUPS";
+				$rip .= "+GIMP" if($options[2] eq "rastertoprinter");
+				next;
+				}
+			if($line =~ /^\*pprRIP:\s*(.+)$/)
+				{
+				my $options = $1;
+				my @options = split(/ /, $options);
+				$rip = "Ghostscript";
+				if(grep(/^-sDEVICE=cups$/, @options))
+					{ $rip .= "+CUPS" }
+				elsif(my($temp) = grep(s/^-sDEVICE=(.+)$/$1/, @options))
+					{ $rip .= " ($temp)" }
+				$rip .= "+GIMP" if(grep(/^cupsfilter=rastertoprinter$/, @options));
+				next;
+				}
+			}
+	
+		print "<table class=\"lines\" cellspacing=0>\n";
+		print "<tr><th>", H_("PPD File"), "</th><td>", html($ppdname), "</td></tr>\n";
+		print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
+		print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
+		print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
+		print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($fonts), "</td></tr>\n";
+		print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
+		$rip = html($rip);
+		$rip =~ s/\+/<wbr>+/g;
+		print "<tr><th>", H_("RIP"), "</th><td>", $rip, "</td></tr>\n";
+		print "</table>\n";
+		};
+	if($@)
 		{
-		if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
-			{
-			$fileversion = $1;
-			next;
-			}
-		if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
-			{
-			$languagelevel = $1;
-			next;
-			}
-		if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
-			{
-			$psversion = $1;
-			next;
-			}
-		if($line =~ /^\*Font\s+/)
-			{
-			$fonts++;
-			next;
-			}
-		if($line =~ /^\*TTRasterizer:\s*(\S+)/)
-			{
-			$ttrasterizer = $1;
-			next;
-			}
-		if($line =~ /^\*cupsFilter:\s*"([^"]+)"/)
-			{
-			my $options = $1;
-			my @options = split(/ /, $options);
-			$rip = "Ghostscript+CUPS";
-			$rip .= "+GIMP" if($options[2] eq "rastertoprinter");
-			next;
-			}
-		if($line =~ /^\*pprRIP:\s*(.+)$/)
-			{
-			my $options = $1;
-			my @options = split(/ /, $options);
-			$rip = "Ghostscript";
-			if(grep(/^-sDEVICE=cups$/, @options))
-				{ $rip .= "+CUPS" }
-			elsif(my($temp) = grep(s/^-sDEVICE=(.+)$/$1/, @options))
-				{ $rip .= " ($temp)" }
-			$rip .= "+GIMP" if(grep(/^cupsfilter=rastertoprinter$/, @options));
-			next;
-			}
+		my $error = $@;
+		print "<p>", html($error), "</p>\n";
 		}
-
-	print "<table class=\"lines\" cellspacing=0>\n";
-	print "<tr><th>", H_("PPD File"), "</th><td>", html($ppdname), "</td></tr>\n";
-	print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
-	print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
-	print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
-	print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($fonts), "</td></tr>\n";
-	print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
-	$rip = html($rip);
-	$rip =~ s/\+/<wbr>+/g;
-	print "<tr><th>", H_("RIP"), "</th><td>", $rip, "</td></tr>\n";
-	print "</table>\n";
 	} # ppd_summary()
 
 #
@@ -170,7 +177,7 @@ sub ppd_probe
 	my($interface, $address, $options) = @_;
 
 	#opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
-	opencmd(RESULTS, "2>STDERR", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
+	opencmd(RESULTS, "2>&STDERR", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
 
 	my @list = ();
 	while(<RESULTS>)

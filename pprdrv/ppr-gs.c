@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 		else
 			{
 			if(lmatch(argv[si], "-sDEVICE="))
-				saw_DEVICE=TRUE;
+				saw_DEVICE = TRUE;
 			gs_args[di++] = argv[si];
 			}
 		}
