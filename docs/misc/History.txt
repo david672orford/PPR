@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--18 February 2003.
+1.51, 15 February 2003--19 February 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
