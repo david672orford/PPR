@@ -6,6 +6,7 @@ if [ ! -h ./libgu/gu_md5.c ]; then ln -s ../nonppr/md5/gu_md5.c ./libgu/gu_md5.c
 if [ ! -h ./libgu/gu_wildmat.c ]; then ln -s ../nonppr/misc/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1; fi
 if [ ! -h ./libgu/snprintf.c ]; then ln -s ../nonppr/misc/snprintf.c ./libgu/snprintf.c || exit 1; fi
 if [ ! -h ./libscript/MD5pp.pm ]; then ln -s ../nonppr/md5/MD5pp.pm ./libscript/MD5pp.pm || exit 1; fi
+if [ ! -h ./libttf/ps_type3.c ]; then ln -s ../nonppr/misc/ps_type3.c ./libttf/ps_type3.c || exit 1; fi
 if [ ! -h ./makeprogs/squeeze.c ]; then ln -s ../nonppr/misc/squeeze.c ./makeprogs/squeeze.c || exit 1; fi
 if [ ! -h ./misc/README.txt ]; then ln -s ../docs/misc/misc_dir_contents.txt ./misc/README.txt || exit 1; fi
 if [ ! -h ./po/README.txt ]; then ln -s ../docs/misc/internationalization.txt ./po/README.txt || exit 1; fi

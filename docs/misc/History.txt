@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--29 August 2001
+1.50a1, 1 August 2001--30 August 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7382,3 +7382,16 @@ line was being parsed twice.
 
 * ppad/ppad_printer.c:printer_rip(): fixed so that "ppad rip _printer_" can
   clear the RIP setting rather than triggering a spurious syntax error.
+
+* interface/lpr.c: fixed so that if uprint_lpr_response() returns -1 on the
+  ^B command (start job), then it exits with EXIT_PRNERR as before rather
+  than EXIT_PRNERR_NORETRY_ACCESS_DENIED.
+
+* vendors/ppd_hp/: added "HP LaserJet 8100 Series" and "HP LaserJet 8150
+  Series" from <http://hp.sourceforge.net/>.
+
+* samba/ppr2samba.c: added message identifying the printer when ppd_open()
+  fails.
+
+* www/prn_properties.cgi: added [RIP] tab, added information extracted from
+  the PPD file to the [PPD] tab.

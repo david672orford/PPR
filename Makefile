@@ -157,6 +157,9 @@ symlinks-save:
 cvs-import: veryclean symlinks-save
 	cvs import ppr vendor start
 
+cvs-commit: symlinks-save
+	cvs commit
+
 #=== Housekeeping ===========================================================
 
 # Update the .depend file in each directory.

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 August 2001.
+** Last modified 30 August 2001.
 */
 
 /*
@@ -582,10 +582,15 @@ int main(int argc, char *argv[])
     if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
 	{
 	if(result == -1)	/* elaborate on error message */
+	    {
 	    alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send job.)"));
+	    int_exit(EXIT_PRNERR);
+	    }
 	else			/* non-zero byte returned */
+	    {
 	    alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."), address_host, address_queue);
-	int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+	    int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+	    }
 	}
 
     /* Get our nodename because we need it for the queue file. */
