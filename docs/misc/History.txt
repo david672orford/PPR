@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--10 January 2003.
+1.50b1, 13 November 2002--11 January 2003.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8091,6 +8091,9 @@ line was being parsed twice.
 * interfaces/serial.c: Marked open_port() messages for i18n.
 
 * interfaces/usblp.c: added.
+
+* www/prn_addwiz.cgi.perl, libppr/interfaces.c: added entries for usblp
+  interface program.
 
 
 

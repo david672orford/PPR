@@ -38,13 +38,9 @@ PPR uses interface programs to communicate with printers.  An interface is
 selecte with the B<ppad interface> command.  Its options are set with the
 B<ppad options> command.  Please see the L<ppad(8)> manpage for details.
 
-=head2 Available Interfaces
-
 These are the interfaces which are distributed with PPR:
 
-=over 4
-
-=item B<simple>
+=head2 B<simple>
 
 The interface B<simple> is a shell script which sends the job to a Unix port.
 The address is the port name, such as F</dev/lp0>.  It has no provision for
@@ -56,7 +52,7 @@ not be detected when using this interface.  If your printer is connected to
 the parallel port or the print spooling computer, you should probably use the
 newer B<parallel> interface instead of the B<simple> one.
 
-=item B<serial>
+=head2 B<serial>
 
 The interface B<serial> sends the job to a serial port on the server.  The
 address is the port name, such as F</dev/ttyS00>.
@@ -148,7 +144,7 @@ By default, this interface uses the jobbreak method B<control-d>, however,
 the method B<pjl> is also suitable if the printer understands the HP PJL.
 See the B<ppad jobbreak> section of this document.
 
-=item B<parallel>
+=head2 B<parallel>
 
 This interface sends the print job to the parallel port specified in its
 address.
@@ -200,13 +196,13 @@ If your printer, parallel port hardware, and operating system's parallel
 port driver support bidirectional communication, then you may use
 the B<ppad feedback> command to enable PostScript error detection.
 
-=item B<usblp>
+=head2 B<usblp>
 
 This interface sends the print job to a USB printer.  It is still
 experimental.  You may get better results with the B<parallel> or B<simple>
 interface.
 
-=item B<dummy>
+=head2 B<dummy>
 
 The interface B<dummy> is for testing purposes.  It is a shell script which
 copies the job to a file.  The address is the name of the file.
@@ -226,7 +222,7 @@ will create the output file if it doesn't exist yet.  It is true by default.
 
 =back
 
-=item B<atalk>
+=head2 B<atalk>
 
 The interface B<atalk> sends the job to an AppleTalk printer using the
 Printer Access Protocol.  The address is the AppleTalk address of the
@@ -282,7 +278,7 @@ interface or the address has changed.
 
 =back
 
-=item B<tcpip>
+=head2 B<tcpip>
 
 The interface B<tcpip> opens a TCP/IP connection to a specific socket on a
 specific host and sends the data.  End of job is indicated with a
@@ -404,7 +400,7 @@ connect retry code which takes care of this problem.  The default is
 
 =back
 
-=item B<lpr>
+=head2 B<lpr>
 
 The interface B<lpr> sends the job to another system using the Berkeley
 LPR/LPD protocol (described in RFC 1179).  The filter can be useful for
@@ -461,7 +457,7 @@ This interface also has the experimental options "chunk_size=",
 "exaggerated_size=", and "temp_first=".  No documentation is provided for
 these at this time.
 
-=item B<clispool>
+=head2 B<clispool>
 
 The interface B<clispool> (formerly called B<client>) sends the job to an
 MS-DOS LAN Manager client running spooling software.  This interface is
@@ -489,7 +485,7 @@ PostScript errors will not be detected when using the B<clispool> interface
 because the protocol it implements does not support bidirectional
 communication with the printer.
 
-=item B<smb>
+=head2 B<smb>
 
 The interface B<smb> uses Samba's B<smbclient> to send the job.
 
@@ -512,8 +508,6 @@ printer server.
 PostScript errors will not be detected when using the B<smb> interface
 because the protocol it implements does not support bidirectional
 communication with the printer.
-
-=back
 
 =head1 SEE ALSO
 

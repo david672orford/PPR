@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 11 January 2003.
 */
 
 /*
@@ -166,32 +166,42 @@ static void printer_error(int error_number)
     }
 
 /*
-** This routine prints a LaserWriter-style description of the
-** error state returned by parallel_port_status().
-**
-** We print as many as apply since pprdrv can now deal with 
-** all of this information.
-**
-** If no error conditions are indicated, we say that the printer 
-** is busy.  That should prompt pprdrv to clear any previously
-** reported error conditions.
+** This routine prints (on the pipe to pprdrv) a series of LaserWriter-style 
+** descriptions of any Centronics error states indicated by the value 
+** returned by  parallel_port_status().
 */
-static void describe_status(int s)
+#define PARALLEL_DISABLED (PARALLEL_PORT_OFFLINE | PARALLEL_PORT_PAPEROUT | PARALLEL_PORT_FAULT)
+static int describe_status(int s)
     {
-    if(s == 0)
+    /*
+    ** If no fault buts set, the printer is now busy printing our job.  We 
+    ** should tell pprdrv about this because otherwise it will think
+    ** that any error conditions which we described earlier are still
+    ** present.
+    */
+    if((s & PARALLEL_DISABLED) == 0)
 	{
 	fputs("%%[ status: busy ]%%\n", stdout);
 	}
-    else if(s & PARALLEL_PORT_BUSY
-    		&& 
-    		(  s & PARALLEL_PORT_OFFLINE
-    		|| s & PARALLEL_PORT_PAPEROUT
-    		|| s & PARALLEL_PORT_FAULT
-    		   )
-    		)
+    /*
+    ** If one of the disabling conditions is indicated but the busy line is
+    ** active, it probably indicates that we are reading the status from
+    ** a turned-off printer or a dangling parallel cable.
+    **
+    ** Note that this code doesn't may fail to detect an absent printer since
+    ** it depends on hard-to-predict electrical factors.
+    */
+    else if(s & PARALLEL_PORT_BUSY && s & PARALLEL_DISABLED)
 	{
 	fputs("%%[ PrinterError: printer disconnected or powered down ]%%\n", stderr);
 	}
+    /*
+    ** If we get this far, print a Laserwriter-style message for each fault
+    ** that is present.  In the past we would have picked only the most
+    ** 'important' one, since later ones would replace earlier ones in 
+    ** the "ppop status" output, but pprdrv can deal with such things now.
+    ** it will integrate them all into an SNMP-printer-MIB-style status.
+    */
     else
 	{
 	if(s & PARALLEL_PORT_OFFLINE)
@@ -201,7 +211,12 @@ static void describe_status(int s)
 	if(s & PARALLEL_PORT_FAULT)
             fputs("%%[ PrinterError: miscellaneous error ]%%\n", stdout);
 	}
+
+    /* Since stdout is a pipe, stdio may not know to flush it. */
     fflush(stdout);
+
+    /* Return the status with extranious bits masked out. */
+    return s & PARALLEL_DISABLED;
     }
 
 /*
@@ -360,14 +375,8 @@ int main(int argc, char *argv[])
     parallel_port_setup(portfd, &options);
 
     /* Make sure the printer is ready. */
-    {
-    int s;
-    if((s = parallel_port_status(portfd)) & ~PARALLEL_PORT_BUSY)
-	{
-	describe_status(s);
+    if(describe_status(parallel_port_status(portfd)))
     	int_exit(EXIT_ENGAGED);
-    	}
-    }
 
     /* Possibly do a reset. */
     if(options.reset_before)

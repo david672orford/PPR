@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 January 2003.
+# Last modified 11 January 2003.
 #
 
 include ../Makefile.conf
@@ -87,7 +87,7 @@ tcpip$(DOTEXE): tcpip.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
-tcpip$(DOTEXE): usblp.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+usblp$(DOTEXE): usblp.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o usblp$(DOTEXE) usblp.$(OBJ) \
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
