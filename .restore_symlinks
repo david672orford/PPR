@@ -1,0 +1,19 @@
+#! /bin/bash
+if [ ! -h ./include/gu_md5.h ]; then ln -s ../nonppr/md5/gu_md5.h ./include/gu_md5.h || exit 1; fi
+if [ ! -h ./include/cexcept.h ]; then ln -s ../nonppr/cexcept-1.0.0/cexcept.h ./include/cexcept.h || exit 1; fi
+if [ ! -h ./misc/README.txt ]; then ln -s ../docs/misc/misc_dir_contents.txt ./misc/README.txt || exit 1; fi
+if [ ! -h ./filters_misc/modes-3.3.mf ]; then ln -s ../nonppr/misc/modes-3.3.mf ./filters_misc/modes-3.3.mf || exit 1; fi
+if [ ! -h ./procsets/TrinColl-PPR-dmm-nup-3-5 ]; then ln -s ../nonppr/misc/TrinColl-PPR-dmm-nup-3-5 ./procsets/TrinColl-PPR-dmm-nup-3-5 || exit 1; fi
+if [ ! -h ./procsets/TrinColl-PPR-dmm-nup-3-6 ]; then ln -s ../nonppr/misc/TrinColl-PPR-dmm-nup-3-6 ./procsets/TrinColl-PPR-dmm-nup-3-6 || exit 1; fi
+if [ ! -h ./History.txt ]; then ln -s docs/misc/History.txt ./History.txt || exit 1; fi
+if [ ! -h ./PORTING.txt ]; then ln -s docs/misc/PORTING.txt ./PORTING.txt || exit 1; fi
+if [ ! -h ./TODO.txt ]; then ln -s docs/misc/TODO.txt ./TODO.txt || exit 1; fi
+if [ ! -h ./LICENSE.txt ]; then ln -s docs/misc/LICENSE.txt ./LICENSE.txt || exit 1; fi
+if [ ! -h ./po/README.txt ]; then ln -s ../docs/misc/internationalization.txt ./po/README.txt || exit 1; fi
+if [ ! -h ./www/md5.js ]; then ln -s ../nonppr/md5/md5.js ./www/md5.js || exit 1; fi
+if [ ! -h ./libscript/MD5pp.pm ]; then ln -s ../nonppr/md5/MD5pp.pm ./libscript/MD5pp.pm || exit 1; fi
+if [ ! -h ./makeprogs/squeeze.c ]; then ln -s ../nonppr/misc/squeeze.c ./makeprogs/squeeze.c || exit 1; fi
+if [ ! -h ./libgu/gu_md5.c ]; then ln -s ../nonppr/md5/gu_md5.c ./libgu/gu_md5.c || exit 1; fi
+if [ ! -h ./libgu/snprintf.c ]; then ln -s ../nonppr/misc/snprintf.c ./libgu/snprintf.c || exit 1; fi
+if [ ! -h ./libgu/gu_wildmat.c ]; then ln -s ../nonppr/misc/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1; fi
+if [ ! -h ./INSTALL.txt ]; then ln -s docs/misc/INSTALL.txt ./INSTALL.txt || exit 1; fi
