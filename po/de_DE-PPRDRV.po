@@ -1,0 +1,506 @@
+# German translation for ppr.
+# Copyright (C) 2004 by Jan Kohnert
+# This file is distributed under the same license as the ppr package.
+# Jan Kohnert <jan.kohnert@t-online.de>, 2004.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ppr-1.53b\n"
+"POT-Creation-Date: 2004-06-09 00:38+0200\n"
+"PO-Revision-Date: 2004-04-26 12:15+0200\n"
+"Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
+"Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../pprdrv/pprdrv.c:1246 ../pprdrv/pprdrv.c:1324 ../pprdrv/pprdrv.c:1353
+#: ../pprdrv/pprdrv.c:1359 ../pprdrv/pprdrv.c:1364 ../pprdrv/pprdrv.c:1369
+#: ../pprdrv/pprdrv.c:1382
+#, c-format
+msgid "Invalid \"%s\" (%s line %d)."
+msgstr "Ungültiges \"%s\" (%s, Zeile %d)."
+
+#: ../pprdrv/pprdrv.c:1399
+#, c-format
+msgid "Syntax error in \"%s\" (%s line %d)."
+msgstr "Syntax Fehler in \"%s\" (%s, Zeile %d)."
+
+#: ../pprdrv/pprdrv.c:1411
+#, c-format
+msgid "Value of \"%s\" in \"%s\" must be boolean."
+msgstr "Der Wert für \"%s\" in \"%s\" muß boolean (wahr/falsch) sein."
+
+#: ../pprdrv/pprdrv.c:1416
+#, c-format
+msgid "Unrecognized userparams variable \"%s\"."
+msgstr "Unbekannte Nutzervariable \"%s\"."
+
+#: ../pprdrv/pprdrv.c:1429
+#, c-format
+msgid "No \"Interface:\" line in %s"
+msgstr "Fehlende \"Interface:\" Zeile in %s"
+
+#: ../pprdrv/pprdrv_capable.c:132
+#, c-format
+msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
+msgstr ""
+"+Auftrag wurde vom Drucker \"%s\" wegen des/der folgenden Grundes/Gründe:\n"
+
+#: ../pprdrv/pprdrv_capable.c:161
+#, c-format
+msgid ""
+"+Printer \"%s\" may not print this job correctly for the following reason"
+"(s):\n"
+msgstr ""
+"+Der Drucker \"%s\" kann diesen Auftrag nicht korrekt drucken wegen des/der "
+"folgenden Grundes/Gründe:\n"
+
+#: ../pprdrv/pprdrv_capable.c:395
+#, c-format
+msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
+msgstr ""
+"Kann Ersetzung \"%s\" für \"%s\" nicht vornehmen, da der Type1 Abschnitt "
+"fehlt."
+
+#: ../pprdrv/pprdrv_capable.c:450 ../pprdrv/pprdrv_capable.c:461
+#, c-format
+msgid "Resource \"%s %s %s %d\" not available."
+msgstr "Ressource \"%s %s %s %d\" ist nicht verfügbar."
+
+#: ../pprdrv/pprdrv_capable.c:452 ../pprdrv/pprdrv_capable.c:463
+#, c-format
+msgid "Resource \"%s %s\" not available."
+msgstr "Ressource \"%s %s\" ist nicht verfügbar."
+
+#: ../pprdrv/pprdrv_capable.c:558 ../pprdrv/pprdrv_capable.c:563
+#, c-format
+msgid "Requirement \"%s\" can't be met."
+msgstr "Vorraussetzung \"%s\" kann nicht erfüllt werden."
+
+#: ../pprdrv/pprdrv_capable.c:573
+#, c-format
+msgid "Required language level (%d) exceeds printer's language level (%d)."
+msgstr "Vorrausgesetzter Sprachlevel (%d) überschreitet den des Druckers (%d)."
+
+#: ../pprdrv/pprdrv_capable.c:587
+msgid "Printer does not have all required extensions."
+msgstr "Der Drucker hat nicht alle benötigten Erweiterungen."
+
+#: ../pprdrv/pprdrv_capable.c:599
+msgid "Printer is not permitted to print grayscale documents."
+msgstr "Dem Drucker ist nicht gestattet Grauskalendokumente zu drucken."
+
+#: ../pprdrv/pprdrv_capable.c:656
+msgid "Communications channel cannot pass required codes."
+msgstr "Der Kommunikationskanal kann die benötigten Codes nicht übertragen."
+
+#: ../pprdrv/pprdrv_capable.c:668
+#, c-format
+msgid "Job has %d pages but allowed range for this printer is %d--%d."
+msgstr ""
+"Der Auftrag hat %d Seiten, es sind aber für diesen Drucker nur %d--%d Seiten "
+"erlaubt."
+
+#: ../pprdrv/pprdrv_capable.c:681
+#, c-format
+msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
+msgstr ""
+"Der Auftrag hat %d kB, es sind aber für diesen Drucker nur %d--%d kB erlaubt."
+
+#: ../pprdrv/pprdrv_commentary.c:250
+#, c-format
+msgid ""
+"The printer \"%s\", which could print your job \"%s-%d\" (%s), reports the "
+"error \"%s%s%s%s\".  This condition must be corrected before your job can "
+"start."
+msgstr ""
+"Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) nicht drucken konnte, "
+"meldet den Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr "
+"Auftrag beginnen kann."
+
+#: ../pprdrv/pprdrv_commentary.c:254
+#, fuzzy, c-format
+msgid ""
+"The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the "
+"error \"%s%s%s%s\".  This condition must be corrected before your job can "
+"continue."
+msgstr ""
+"Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den "
+"Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr Auftrag "
+"fortgesetzt werden kann."
+
+#: ../pprdrv/pprdrv_commentary.c:258
+#, c-format
+msgid ""
+"The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the "
+"error \"%s%s%s%s\".  It may be to your benefit to correct this condition."
+msgstr ""
+"Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den "
+"Fehler \"%s%s%s%s\".  Es kann zu Ihrem Vorteil sein, dies zu korrigieren."
+
+#: ../pprdrv/pprdrv_commentary.c:272
+#, c-format
+msgid "  This condition has persisted for %d minutes."
+msgstr " Dieser Zustand hält seit %d Minuten an."
+
+#: ../pprdrv/pprdrv_commentary.c:280
+#, c-format
+msgid ""
+"The printer \"%s\" cannot start your job \"%s-%d\" (%s) because of the error "
+"condition \"%s\"."
+msgstr ""
+"Der Drucker \"%s\" kann Ihren Auftrag \"%s-%d\" (%s) wegen des Fehlers \"%s"
+"\" nicht beginnen."
+
+#: ../pprdrv/pprdrv_commentary.c:292
+#, c-format
+msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
+msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, %s."
+
+#: ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
+#: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)"
+msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_flag.c:331
+#, c-format
+msgid ""
+"%s: %s\n"
+"\twhile attempting to read \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+msgstr ""
+"%s: %s\n"
+"\tbeim Versuch \"%s\" zu lesen\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+
+#: ../pprdrv/pprdrv_flag.c:536
+#, c-format
+msgid "End of job %s:%s-%d"
+msgstr "Auftrag %s:%s-%d beendet"
+
+#: ../pprdrv/pprdrv_flag.c:539 ../pprdrv/pprdrv_flag.c:557
+#, c-format
+msgid "Title: %s"
+msgstr "Titel: %s"
+
+#: ../pprdrv/pprdrv_flag.c:548
+#, c-format
+msgid "Job ID: %s:%s-%d"
+msgstr "Auftrags ID: %s:%s-%d"
+
+#: ../pprdrv/pprdrv_flag.c:551
+#, c-format
+msgid "Routing: %s"
+msgstr "Route: %s"
+
+#: ../pprdrv/pprdrv_flag.c:554
+#, c-format
+msgid "Creator: %s"
+msgstr "Ersteller: %s"
+
+#: ../pprdrv/pprdrv_flag.c:569
+#, c-format
+msgid "Print Date: %s"
+msgstr "Druckdatum: %s"
+
+#: ../pprdrv/pprdrv_flag.c:576
+#, c-format
+msgid "Pages: %d"
+msgstr "Seiten: %d"
+
+#: ../pprdrv/pprdrv_flag.c:577
+#, c-format
+msgid "Sheets: %d"
+msgstr "Blätter: %d"
+
+#: ../pprdrv/pprdrv_flag.c:583
+#, c-format
+msgid "Copies: %d"
+msgstr "Kopien: %d"
+
+#: ../pprdrv/pprdrv_flag.c:602
+#, c-format
+msgid "User \"%s\" is inexplicably absent from the charge account database."
+msgstr ""
+"Der Nutzer \"%s\" ist unerklärlicherweise nicht in der "
+"Druckernutzerdatenbank."
+
+#: ../pprdrv/pprdrv_flag.c:608
+#, c-format
+msgid "Balance before printing this job: %s"
+msgstr "Kredit vor dem Drucken dieses Auftrages: %s"
+
+#: ../pprdrv/pprdrv_interface.c:140
+#, c-format
+msgid ""
+"The printer interface program terminated abruptly after receiving\n"
+"signal %d (%s) from a non-spooler process (possibly\n"
+"the OS kernel)."
+msgstr ""
+"Das Druckerinterface wurde abrupt durch Signal %d (%s)\n"
+"von einem Nichtspoolerprozeß (möglicherweise\n"
+"der Betriebssystemkern) beendeet."
+
+#: ../pprdrv/pprdrv_interface.c:150
+msgid "The interface program dumped core."
+msgstr "Das Interface beendete den Kern."
+
+#: ../pprdrv/pprdrv_interface.c:165
+msgid ""
+"The interface performed a controlled shutdown because a non-spoolerprocess "
+"(possibly the OS kernel) sent it a signal."
+msgstr ""
+"Das Interface wurde kontrolliert beendet, weil ihm ein Nichtspoolerprozeß "
+"(möglicherweise der Betriebssystemkern) ein Signal gesendet hat.."
+
+#: ../pprdrv/pprdrv_interface.c:175
+#, c-format
+msgid "Mischief afoot, interface program stopped by signal \"%s\"."
+msgstr "Unheil im Gange, das Interface wurde durch Signal \"%s\" beendet."
+
+#: ../pprdrv/pprdrv_interface.c:177
+msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."
+msgstr "Bizarre Interfacefehlfunktion: SIGCHLD ohne Signal oder exit()."
+
+#: ../pprdrv/pprdrv_interface.c:191
+#, c-format
+msgid "Interface program malfunction: it returned invalid exit code %d."
+msgstr "Interface Fehlfunktion: Ungültiger Rückgabewert %d."
+
+#: ../pprdrv/pprdrv_interface.c:232
+msgid ""
+"Interface program malfunction: it quit before accepting\n"
+"\tall of the job but didn't return an error code."
+msgstr ""
+"Interfacefehlfunktion: Programm wurde vor Akzeptieren des kompletten\n"
+"\tAuftrages eendet, hat aber keinen Fehlercode zurückgegeben."
+
+#: ../pprdrv/pprdrv_interface.c:309
+#, c-format
+msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
+msgstr ""
+"Interface \"%s\" existiert nicht oder ist nicht ausführbar, Fehlernummer=%s "
+"(%s)."
+
+#: ../pprdrv/pprdrv_interface.c:313 ../pprdrv/pprdrv_interface.c:317
+#, c-format
+msgid "%s(): pipe() failed, errno=%d (%s)"
+msgstr "%s(): pipe() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_lw_messages.c:83 ../pprdrv/pprdrv_pjl_messages.c:92
+#, c-format
+msgid "Not enough fields in \"%s\" line %d"
+msgstr "zuwenig Felder in \"%s\", Zeile %d"
+
+#: ../pprdrv/pprdrv_lw_messages.c:92 ../pprdrv/pprdrv_pjl_messages.c:103
+#, c-format
+msgid "Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"
+msgstr "Unbekannter hrGerätestatus \"%s\" in \"%s\", Zeile %d, Feld 2"
+
+#: ../pprdrv/pprdrv_lw_messages.c:94 ../pprdrv/pprdrv_pjl_messages.c:105
+#, c-format
+msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
+msgstr "Unbekannter hrDruckerstatus \"%s\" in \"%s\", Zeile %d, Feld 3"
+
+#: ../pprdrv/pprdrv_lw_messages.c:96 ../pprdrv/pprdrv_pjl_messages.c:107
+#, c-format
+msgid ""
+"Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"
+msgstr ""
+"Unbekannter hrDruckerEnteckteFehlerstatus \"%s\" in \"%s\", Zeile %d, Feld 4"
+
+#: ../pprdrv/pprdrv_lw_messages.c:114
+#, c-format
+msgid "%s: no match for \"%s\""
+msgstr "%s: kein Eintrag für \"%s\""
+
+#: ../pprdrv/pprdrv_mactt.c:45 ../pprdrv/pprdrv_mactt.c:57
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no \"%.*s\"."
+msgstr "Gecachete Mac TT font \"%s\" hat kein \"%.*s\"."
+
+#: ../pprdrv/pprdrv_mactt.c:79
+#, c-format
+msgid "Can't open resource file \"%s\", errno=%d (%s)"
+msgstr "Kann Ressourcendatei \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_mactt.c:134
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no sfntdef section."
+msgstr "Gecachete Mac TT font \"%s\" hat keinen sfntdef Abschnitt."
+
+#: ../pprdrv/pprdrv_nup.c:62
+#, c-format
+msgid ""
+"The font \"%s\", which is required for the draft notice, is not available."
+msgstr ""
+"Die Schriftart \"%s\", die für die Entwurfsbenachrichtigung benötigt wird, "
+"ist nicht verfügbar."
+
+#: ../pprdrv/pprdrv_pagecount.c:69
+msgid ""
+"Timeout expired while waiting for printer to respond to pagecount query."
+msgstr ""
+"Beim Wartem auf eine Antwort vom Drucker auf die Anfrage nach der "
+"Seitenzahl, ist die Zeit abgelaufen."
+
+#: ../pprdrv/pprdrv_patch.c:86
+msgid ""
+"Timeout expired while waiting for printer to respond to *?PatchFile query."
+msgstr ""
+"Beim Wartem auf eine Antwort vom Drucker auf die Anfrage nach *?PatchFile, "
+"ist die Zeit abgelaufen."
+
+#: ../pprdrv/pprdrv_patch.c:94
+msgid "Printer did not respond correctly to *?PatchFile query."
+msgstr "Der Drucker hat nicht korrekt auf *?PatchFile geantortet."
+
+#: ../pprdrv/pprdrv_patch.c:124
+msgid "PPD file does not have *ExitServer code"
+msgstr "Das PPD verfügt nicht über *ExitServer Code"
+
+#: ../pprdrv/pprdrv_pfb.c:64 ../pprdrv/pprdrv_pfb.c:74
+#: ../pprdrv/pprdrv_pfb.c:89 ../pprdrv/pprdrv_pfb.c:101
+#: ../pprdrv/pprdrv_pfb.c:116 ../pprdrv/pprdrv_pfb.c:121
+#, c-format
+msgid "PFB file \"%s\" is corrupt (defect type %d)"
+msgstr "Die PFB datei \"%s\" ist beschädigt (Beschädigungstyp %d)"
+
+#: ../pprdrv/pprdrv_pjl_messages.c:123
+#, c-format
+msgid "%s: no match for %d \"%s\""
+msgstr "%s: kein Eintrag für %d \"%s\""
+
+#: ../pprdrv/pprdrv_ppd.c:533
+msgid "Can't parse RIP information in PPD file."
+msgstr "Kann RIP Informationen in der PPD Datei nicht finden."
+
+#: ../pprdrv/pprdrv_ppd.c:537
+msgid ""
+"Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."
+msgstr ""
+"Schrägstriche sind in RIP Namen in \"*pprRIP:\" Zeilen in PPD Dateien nicht "
+"erlaubt."
+
+#: ../pprdrv/pprdrv_ppd.c:845
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", skipping it."
+msgstr ""
+"Die PPD Datei enthält keinen Code für die Druckerfunktion\n"
+"\"%s %s\", wird übersprungen."
+
+#: ../pprdrv/pprdrv_ppd.c:911
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", retaining old code."
+msgstr ""
+"Die PPD Datei enthält keinen Code für die Druckerfunktion\n"
+"\"%s %s\", alter Code wird beibehalten."
+
+#: ../pprdrv/pprdrv_ppd.c:921
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", removing existing code."
+msgstr ""
+"Die PPD Datei enthält keinen Code für die Druckerfunktion\n"
+"\"%s %s\", existierender Code wird verworfen."
+
+#: ../pprdrv/pprdrv_progress.c:212
+#, c-format
+msgid "%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"
+msgstr "%s(): open(\"%s\", O_RDWR) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:217
+#, c-format
+msgid "%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"
+msgstr "%s(): lseek(%d, %d, SEEK_END) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:221
+#, c-format
+msgid "%s(): read() failed, errno=%d (%s)"
+msgstr "%s(): read() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:223
+#, c-format
+msgid "%s(): read() read %d bytes instead of %d"
+msgstr "%s(): read() las %d statt %d Bytes"
+
+#: ../pprdrv/pprdrv_progress.c:229
+#, c-format
+msgid "%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"
+msgstr "%s(): lseek(%d, 0, SEEK_END) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:251
+#, c-format
+msgid "%s(): write() failed, errno=%d (%s)"
+msgstr "%s(): write() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:253
+#, c-format
+msgid "%s(): write() wrote %d bytes instead of %d"
+msgstr "%s(): write() schrieb %d statt %d Bytes."
+
+#: ../pprdrv/pprdrv_reason.c:102
+#, c-format
+msgid ""
+"The PostScript error indicated below occured while printing on \"%s\".\n"
+msgstr ""
+"Der unten beschriebene PostScript Fehler trat beim Drucken auf \"%s\" auf.\n"
+
+#: ../pprdrv/pprdrv_reason.c:134
+msgid "Probable cause: "
+msgstr "Wahrscheinlicher Grund: "
+
+#: ../pprdrv/pprdrv_rip.c:90
+#, c-format
+msgid ""
+"The RIP (Ghostscript) malfunctioned (caught SIGSEGV) while printing the job\n"
+"%s.  Presumably it can print other jobs that don't\n"
+"trigger the bug, so the spooler will arrest the job and move on."
+msgstr ""
+"Das RIP (Ghostscript) schlug beim Drucken des Auftrages %d fehl\n"
+"(erhielt SIGSEGV).  Vermutlich kann es andere Aufträge, die den Bug nicht\n"
+"berühren, drucken, daher wird der Spooler den Auftrag sperren und fortfahren."
+
+#: ../pprdrv/pprdrv_rip.c:102
+msgid ""
+"The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led "
+"to\n"
+"a post-processing filter which died.  Look in the RIP options to find out "
+"what\n"
+"post-processing filter is being used."
+msgstr ""
+"Das RIP (Ghostscript) wurde wegen einer abgebrochenen Weiterleitung beendet. "
+"Wahrscheinlich führte diese\n"
+"Weiterleitung zu einem Anschlußfilter, der beendet wurde. Sehen Sie in den "
+"RIP Optionen nach,\n"
+"welcher Anschlußfilter genutzt wird.."
+
+#: ../pprdrv/pprdrv_rip.c:111
+#, c-format
+msgid ""
+"The RIP (Ghostscript) was killed by signal %d (%s).\n"
+"Perhaps a system operator did this or perhaps the system\n"
+"is shutting down."
+msgstr ""
+"Das RIP (Ghostscript) wurde duch Signal %d (%s) beendet.\n"
+"Vielleicht sendete der Systemadministrator diese Signal oder\n"
+"der Rechner wird heruntergefahren."
+
+#: ../pprdrv/pprdrv_rip.c:123
+#, c-format
+msgid "RIP stopped by signal \"%s\"."
+msgstr "RIP wurde durch Signal \"%s\" beendet."
+
+#: ../pprdrv/pprdrv_rip.c:125
+msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
+msgstr "Bizarre RIP Fehlfunktion: SIGCHLD ohne Signal oder exit."

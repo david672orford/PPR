@@ -1,0 +1,377 @@
+# German translation for ppr.
+# Copyright (C) 2004 by Jan Kohnert
+# This file is distributed under the same license as the ppr package.
+# Jan Kohnert <jan.kohnert@t-online.de>, 2004.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ppr-1.53b\n"
+"POT-Creation-Date: 2004-06-09 00:38+0200\n"
+"PO-Revision-Date: 2004-04-26 12:15+0200\n"
+"Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
+"Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../pprd/pprd_mainsup.c:171
+#, c-format
+msgid "%s: The user \"%s\" doesn't exist.\n"
+msgstr "%s: Der Nutzer \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_mainsup.c:177
+#, c-format
+msgid "%s: The group \"%s\" doesn't exist.\n"
+msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_mainsup.c:182
+#, c-format
+msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+msgstr ""
+"%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
+
+#: ../pprd/pprd_mainsup.c:208
+#, c-format
+msgid ""
+"%s: Security problem: euid = %ld\n"
+"(This program should be setuid %ld (%s).)\n"
+msgstr ""
+"%s: Sicherheitsproblem: euid = %ld\n"
+"(Dieses Programm muß setuid %ld (%s) sein.)\n"
+
+#: ../pprd/pprd_mainsup.c:215
+#, c-format
+msgid ""
+"%s: Security problem: egid = %ld\n"
+"(This program should be setgid %ld (%s).)\n"
+msgstr ""
+"%s: Sicherheitsproblem: egid = %ld\n"
+"(Dieses Programm muß setgid %ld (%s) sein.)\n"
+
+#: ../pprd/pprd_mainsup.c:225
+#, c-format
+msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+msgstr "%s: Nur \"%s\" oder \"root\" dürfen %s sterten.\n"
+
+#: ../pprd/pprd_mainsup.c:238
+#, c-format
+msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
+msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:258
+#, c-format
+msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
+msgstr "%s: setgid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:263
+#, c-format
+msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
+msgstr "%s: setuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:270
+#, c-format
+msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
+msgstr "%s: setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:275
+#, c-format
+msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
+msgstr "%s: setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:282
+#, c-format
+msgid "%s: setuid(0) did not fail!\n"
+msgstr "%s: setuid(0) nicht fehlgeschlagen!\n"
+
+#: ../pprd/pprd_mainsup.c:316
+#, c-format
+msgid "%s: not running\n"
+msgstr "%s: läuft nicht\n"
+
+#: ../pprd/pprd_mainsup.c:326
+#, c-format
+msgid "%s: failed to read PID from lock file"
+msgstr "%s: Lesen der PID aus Lockdatei fehlgeschlagen"
+
+#: ../pprd/pprd_mainsup.c:330
+#, c-format
+msgid "Sending SIGTERM to %s (PID=%ld).\n"
+msgstr "Sende SIGTERM an %s (PID=%ld).\n"
+
+#: ../pprd/pprd_mainsup.c:334
+#, c-format
+msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
+msgstr "%s: kill(%ld, SIGTERM) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#: ../pprd/pprd_mainsup.c:340
+#, c-format
+msgid "Waiting while %s shuts down..."
+msgstr "Warte auf Beenden von %s..."
+
+#: ../pprd/pprd_mainsup.c:350
+msgid "Shutdown complete.\n"
+msgstr "Beendet.\n"
+
+#: ../pprd/pprd_ppop.c:127
+#, c-format
+msgid "Destination \"%s\" does not exist.\n"
+msgstr "Ziel \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:322 ../pprd/pprd_ppop.c:563 ../pprd/pprd_ppop.c:732
+#: ../pprd/pprd_ppop.c:879
+#, c-format
+msgid "The destination \"%s\" does not exist.\n"
+msgstr "Ziel \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:385
+#, c-format
+msgid "The printer \"%s\" does not exist.\n"
+msgstr "Der Drucker \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:392
+#, c-format
+msgid "\"%s\" is a group of printers, not a printer.\n"
+msgstr "\"%s\" ist eine Gruppe von Druckern, kein einzelner Drucker.\n"
+
+#: ../pprd/pprd_ppop.c:408
+#, c-format
+msgid "The printer \"%s\" is not stopt.\n"
+msgstr "Der Drucker \"%\" ist  nicht angehalten.\n"
+
+#: ../pprd/pprd_ppop.c:413
+#, c-format
+msgid "The printer \"%s\" is already printing.\n"
+msgstr "Der Drucker \"%s\" druckt bereits.\n"
+
+#: ../pprd/pprd_ppop.c:426
+#, c-format
+msgid "There is an outstanding halt command for the printer \"%s\".\n"
+msgstr "Es gibt einen noch ausstehenden Stopbefehl für den Drucker \"%s\".\n"
+
+#: ../pprd/pprd_ppop.c:442 ../pprd/pprd_ppop.c:500
+#, c-format
+msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
+msgstr ""
+"Interner pprd Fehler: Der Drucker \"%s\" befindet sich in einem "
+"undefinierten Status.\n"
+
+#: ../pprd/pprd_ppop.c:461
+#, c-format
+msgid "The printer \"%s\" is already halting.\n"
+msgstr "Der Drucker \"%s\" hält bereits an.\n"
+
+#: ../pprd/pprd_ppop.c:466
+#, c-format
+msgid "The printer \"%s\" is already stopt.\n"
+msgstr "Der Drucker \"%s\" ist bereits angehalten.\n"
+
+#: ../pprd/pprd_ppop.c:480
+#, c-format
+msgid "The printer \"%s\" is already stopping.\n"
+msgstr "Der Drucker \"%s\" hält gerade an.\n"
+
+#: ../pprd/pprd_ppop.c:513
+#, c-format
+msgid ""
+"Another process is already using the notify\n"
+"feature for the printer \"%s\".\n"
+msgstr ""
+"Ein anderer Prozeß nutzt bereits das\n"
+"Benachrichtigungskommando für den Drucker \"%s\".\n"
+
+#: ../pprd/pprd_ppop.c:593
+#, c-format
+msgid "The print job \"%s\" is already held.\n"
+msgstr "Der Druckauftrag \"%s\" ist bereits angehalten.\n"
+
+#: ../pprd/pprd_ppop.c:597
+#, c-format
+msgid "The print job \"%s\" is arrested.\n"
+msgstr "Der Druckauftrag \"%s\" wurde gesperrt.\n"
+
+#: ../pprd/pprd_ppop.c:602
+#, c-format
+msgid ""
+"The print job \"%s\" is already undergoing a\n"
+"transition to the held state.\n"
+msgstr ""
+"Der Druckauftrag \"%s\" wird gerade\n"
+"in den Status gehalten verstzt.\n"
+
+#: ../pprd/pprd_ppop.c:609
+#, c-format
+msgid ""
+"Converting outstanding cancel order for\n"
+"job \"%s\" to a hold order.\n"
+msgstr ""
+"Wandele einen cancel Befehl für Auftrag\n"
+"\"%s\" in einen gehalten Befehl um.\n"
+
+#: ../pprd/pprd_ppop.c:624
+#, c-format
+msgid "Seizing job \"%s\" which is printing on \"%s\".\n"
+msgstr "Erfasse Auftrag \"%s\", der auf \"%s\" gedruckt wird.\n"
+
+#: ../pprd/pprd_ppop.c:646
+#, c-format
+msgid "Internal pprd error: job \"%s\" has unknown status %d.\n"
+msgstr "Interner pprd Fehler: Auftrag \"%s\" hat den unbekannten Status %d.\n"
+
+#: ../pprd/pprd_ppop.c:671
+#, c-format
+msgid ""
+"The print job \"%s\" can't be released until an\n"
+"outstanding hold order has been fully executed.\n"
+msgstr ""
+"Der Druckauftrag \"%s\" kann nicht freigegeben werden, bis ein noch\n"
+"ausstehender anhalten Befehl vollständig ausgeführt worden ist.\n"
+
+#: ../pprd/pprd_ppop.c:680
+#, c-format
+msgid "The print job \"%s\" is not being held.\n"
+msgstr "Der Druckauftrag \"%s\" wird nicht angehalten.\n"
+
+#: ../pprd/pprd_ppop.c:694 ../pprd/pprd_ppop.c:834
+#, c-format
+msgid "The print job \"%s\" does not exist.\n"
+msgstr "Der Druckauftrag \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:950
+#, c-format
+msgid "Printer \"%s\" does not exist.\n"
+msgstr "Der Drucker \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:957
+#, c-format
+msgid "\"%s\" is not a printer.\n"
+msgstr "\"%s\" ist kein Drucker.\n"
+
+#: ../pprd/pprd_ppop.c:969
+#, c-format
+msgid "\"%s\" does not have a bin called \"%s\".\n"
+msgstr "\"%s\" hat keinen Einzug mit Namen \"%s\".\n"
+
+#: ../pprd/pprd_ppop.c:1033 ../pprd/pprd_ppop.c:1125
+#, c-format
+msgid "\"%s\" is not a valid destination.\n"
+msgstr "\"%s\" ist kein gültiges Ziel.\n"
+
+#: ../pprd/pprd_ppop.c:1171 ../pprd/pprd_ppop.c:1180 ../pprd/pprd_ppop.c:1407
+#: ../pprd/pprd_ppop.c:1493
+#, c-format
+msgid "No printer or group is called \"%s\".\n"
+msgstr "Kein Drucker oder Gruppe hat den Namen \"%s\".\n"
+
+#: ../pprd/pprd_ppop.c:1340
+#, c-format
+msgid "No jobs are queued for \"%s\".\n"
+msgstr "Für \"%s\" sind keine Aufträge in der Warteschlange.\n"
+
+#: ../pprd/pprd_ppop.c:1349
+#, c-format
+msgid "Job \"%s\" does not exist.\n"
+msgstr "Der Auftrag \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_ppop.c:1354
+msgid "1 file was moved.\n"
+msgstr "1 Datei wurde verschoben.\n"
+
+#: ../pprd/pprd_ppop.c:1358
+#, c-format
+msgid "%d files where moved.\n"
+msgstr "%d Dateien wurden verschoben.\n"
+
+#: ../pprd/pprd_ppop.c:1366
+msgid "1 file was not moved because it was being printed.\n"
+msgstr "1 Datei wurde nicht verschoben, da sie gerade gedruckt wurde.\n"
+
+#: ../pprd/pprd_ppop.c:1368
+#, c-format
+msgid "%d files were not moved because they were being printed.\n"
+msgstr "%d Dateien wurden nicht verschoben, da sie gerade gedruckt wurden.\n"
+
+#: ../pprd/pprd_ppop.c:1457 ../pprd/pprd_ppop.c:1518
+#, c-format
+msgid "Queue entry \"%s\" does not exist.\n"
+msgstr "Warteschlangeneintrag \"%s\" existiert nicht.\n"
+
+#: ../pprd/pprd_pprdrv.c:260
+#, c-format
+msgid "Internal error, pprdrv core dumped after receiving signal %d (%s)."
+msgstr "Interner Fehler, pprdrv wurde durch Signal %d (%s) beendet."
+
+#: ../pprd/pprd_pprdrv.c:275
+#, c-format
+msgid "Mischief afoot, pprdrv stopt by signal %d (%s)."
+msgstr "Unheil im Gange, pprdrv wurde durch %d (%s) Signal beendet."
+
+#: ../pprd/pprd_pprdrv.c:455
+msgid ""
+"Printing aborted because pprdrv died.  The stated reason for its death "
+"(killed\n"
+"by signal 0) is nonsense but may indicate that dynamic linking failed due to "
+"a\n"
+"problem with the shared library search path."
+msgstr ""
+"Druck wurde abgebrochen, da pprdrv beendet wurde. Der angegebene Grund "
+"(beendet\n"
+"durch Signal 0) ist Unsinn, kann aber darauf hindeuten, daß das dynamische "
+"Linken wegen\n"
+"eines Problems mit dem shared library Suchpfad fehlgeschlagen ist."
+
+#: ../pprd/pprd_pprdrv.c:463
+#, c-format
+msgid ""
+"Printing aborted because pprdrv was killed by signal %d (%s).\n"
+"This was not expected and the cause is unknown."
+msgstr ""
+"Der Druck wurde abgebrochen da pprdrv duch Signal %d (%s) beendet wurde.\n"
+"Dies war nicht erwartet und der Grund hierfür ist unbekannt."
+
+#: ../pprd/pprd_pprdrv.c:469
+msgid ""
+"Unexpected pprdrv shutdown.  It claims to have received a signal to "
+"terminate."
+msgstr ""
+"Unerwartetes Beenden von pprdrv. Es meldet den Empfang eines Signalszum "
+"beenden."
+
+#: ../pprd/pprd_pprdrv.c:489
+#, c-format
+msgid "Unrecognized exit code %d returned by pprdrv."
+msgstr "Unbekannter Exitcode %d von pprdrv."
+
+#: ../pprd/pprd_pprdrv.c:503
+msgid "Printer placed in fault mode, no auto-retry."
+msgstr "Drucker in Fehlerstatus versetzt, kein automatischer Wiederversuch."
+
+#: ../pprd/pprd_pprdrv.c:511
+msgid "Printer placed in auto-retry mode."
+msgstr "Drucker in Wiederversuchsmodus gesetzt"
+
+#: ../pprd/pprd_remind.c:107
+msgid "Remaining printer problems"
+msgstr "Bestehende Druckerprobleme"
+
+#: ../pprd/pprd_remind.c:125
+#, c-format
+msgid "The printer \"%s\" has suffered %d faults.\n"
+msgstr "Der Drucker \"%s\" hat %d Fehler gehabt.\n"
+
+#: ../pprd/pprd_remind.c:131
+#, c-format
+msgid ""
+"The printer \"%s\" has suffered a fault from\n"
+"which it can not recover on its own.\n"
+msgstr ""
+"Der Drucker \"%s\" hat einen Fehler, den er nicht\n"
+"von selbst beheben kann.\n"
+
+#: ../pprd/pprd_remind.c:144
+#, c-format
+msgid ""
+"The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
+msgstr ""
+"Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht "
+"erreichbar.\n"
