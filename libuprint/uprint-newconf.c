@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 26 March 2003.
 */
 
 #include "before_system.h"
@@ -294,12 +294,14 @@ int main(int argc, char *argv[])
     if(getuid() != 0)
     	fatal(1, _("must be run by root"));
 
+    #if 0
     if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
     	{
 	fprintf(stderr, _("This system uses /etc/alternatives.  Using uprint-newconf\n"
 			"is not advised and it will not run without --force or --remove.\n"));
 	return 1;
     	}
+    #endif
 
     printf(_("Adjusting file system to conform to %s:\n"), UPRINTCONF);
     printf("\n");
