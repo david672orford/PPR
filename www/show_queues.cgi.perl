@@ -170,7 +170,7 @@ my @col_values = (
 	["-1", _("Details")],
 	["-2", _("Many Details")]
 	);
-for(my $i = 4; $i <= 24; $i += 2)
+for(my $i = 4; $i <= 16; $i += 2)
 	{
 	push(@col_values, [$i, sprintf(_("%d Columns"), $i)]);
 	}

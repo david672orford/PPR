@@ -29,7 +29,7 @@ windows['prn_testpage.cgi'] =		'width=775,height=525,resizable';
 windows['cliconf.cgi'] =			'width=700,height=525,resizable';
 windows['show_printlog.cgi'] =		'width=800,height=600,resizable,scrollbars';
 windows['delete_queue.cgi'] =		'width=600,height=150';
-windows['about.cgi'] =				'width=450,height=275,resizable';	
+windows['about.cgi'] =				'width=550,height=275,resizable';	
 windows['login_cookie.html'] =		'width=350,height=250,resizable';
 windows['df_html.cgi'] =			'width=600,height=500,resizable,scrollbars';
 

@@ -77,6 +77,7 @@ BODY {
 	}
 TD {
 	font-size: 10pt;
+	font-family: "Times New Roman" Times serif;
 	}	
 </style>
 </head>
