@@ -1,6 +1,6 @@
-claim_lp.$(OBJ): claim_lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+claim_lp.$(OBJ): claim_lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-claim_lpr.$(OBJ): claim_lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+claim_lpr.$(OBJ): claim_lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 claim_ppr.$(OBJ): claim_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
@@ -22,7 +22,7 @@ uprint_argv_lpr.$(OBJ): uprint_argv_lpr.c ../include/before_system.h ../include/
 
 uprint_argv_ppr.$(OBJ): uprint_argv_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_conf.$(OBJ): uprint_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h
+uprint_conf.$(OBJ): uprint_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h uprint_private.h
 
 uprint_loop.$(OBJ): uprint_loop.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 

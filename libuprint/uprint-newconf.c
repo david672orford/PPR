@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/uprint/uprint-newconf.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** mouse:~ppr/src/libuprint/uprint-newconf.c
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 21 December 2000.
+** Last modified 7 May 2002.
 */
 
 #include "before_system.h"
@@ -26,7 +26,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_conf.h"
 
@@ -50,7 +49,7 @@ void uprint_error_callback(const char *format, ...)
     va_end(va);
     } /* end of uprint_error_callback() */
 
-void fatal(int exitcode, const char *format, ...)
+static void fatal(int exitcode, const char *format, ...)
     {
     va_list va;
     va_start(va, format);

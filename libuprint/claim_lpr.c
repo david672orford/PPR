@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 7 May 2002.
 */
 
 #include "before_system.h"
@@ -19,6 +19,7 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "uprint.h"
+#include "uprint_private.h"
 
 /*
 ** Return TRUE if the destname is the name
@@ -33,7 +34,7 @@ int printdest_claim_lpr(const char *destname)
     {
     FILE *f;
 
-    if((f = fopen(LPR_PRINTCAP, "r")) != (FILE*)NULL)
+    if((f = fopen(uprint_lpr_printcap(), "r")) != (FILE*)NULL)
     	{
 	char line[256];
 	char *p;
