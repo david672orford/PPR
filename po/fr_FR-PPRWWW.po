@@ -5,7 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
-"POT-Creation-Date: 2001-06-09 20:58+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-03-29 21:23-0500\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -13,471 +14,1157 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../www/prn_properties.cgi.perl:241
-msgid " (not listed in PPD file)"
-msgstr " (non listé dans le fichier PPD)"
-
-#: ../www/show_queues.cgi.perl:167
-#, c-format
-msgid "%d Columns"
-msgstr "%d Colonnes"
-
-#: ../www/prn_properties.cgi.perl:234
-#, c-format
-msgid "%s -- %s"
-msgstr "%s -- %s"
-
-#: ../www/cgi_tabbed.pl:188
-msgid "<<More"
-msgstr "<<Plus"
-
-#: ../www/job_modify.cgi.perl:104
-msgid "Account number:"
-msgstr "Compte numéro :"
-
-#: ../www/show_queues.cgi.perl:216
-msgid "Add New Group"
-msgstr "Ajout d'un nouveau groupe"
-
-#: ../www/show_queues.cgi.perl:212
-msgid "Add New Printer"
-msgstr "Ajout d'une nouvelle imprimante"
-
-#: ../www/grp_addwiz.cgi.perl:38
-msgid "Add a Group"
-msgstr "Ajout d'un groupe"
-
-#: ../www/prn_addwiz.cgi.perl:137 ../www/prn_addwiz.cgi.perl:545
-msgid "Add a Printer"
-msgstr "Ajout d'une imprimante"
-
-#: ../www/prn_addwiz.cgi.perl:605
-msgid "Additional Information"
-msgstr "Informations supplémentaires"
-
-#: ../www/prn_control.cgi.perl:408
-msgid "Alert Messages:"
-msgstr "Messages d'alerte :"
-
-#: ../www/prn_properties.cgi.perl:268
-msgid "Alert address:"
-msgstr "Adresse d'alerte :"
-
-#: ../www/prn_properties.cgi.perl:259
-msgid "Alert frequency:"
-msgstr "Fréquence d'alerte :"
-
-#: ../www/prn_properties.cgi.perl:254
-msgid "Alert method:"
-msgstr "Méthode d'alerte :"
-
-#: ../www/prn_properties.cgi.perl:251
-msgid "Alerts"
-msgstr "Alertes"
-
-#: ../www/prn_addwiz.cgi.perl:277
-msgid "AppleTalk Interface: Choose a Printer"
-msgstr "Interface AppleTalk : choisissez une imprimante"
-
-#: ../www/prn_addwiz.cgi.perl:224
-msgid "AppleTalk Interface: Choose a Zone"
-msgstr "Interface AppleTalk : choisissez une zone"
-
-#: ../www/prn_addwiz.cgi.perl:49
-msgid "AppleTalk PAP"
-msgstr "PAP AppleTalk"
-
-#: ../www/prn_addwiz.cgi.perl:248
-msgid "AppleTalk Zones:"
-msgstr "Zones AppleTalk :"
-
-#: ../www/test_components.cgi.perl:66
-msgid "Are Required Packages Present?"
-msgstr "Les paquets nécessaires sont-ils présents ?"
-
-#: ../www/job_modify.cgi.perl:153
-msgid "As proxy for:"
-msgstr "Mandataire pour :"
-
-#: ../www/grp_addwiz.cgi.perl:69
-msgid "Assign Group Members"
-msgstr "Désignation des membres du groupe"
-
-#: ../www/grp_properties.cgi.perl:112 ../www/prn_properties.cgi.perl:299
-msgid "Assign to virtual server (Samba setup required):"
-msgstr "Affecter au serveur virtuel (configuration de Samba nécessaire) :"
-
-#: ../www/cgi_auth.pl:20 ../www/cgi_auth.pl:23
-msgid "Authorization Required"
-msgstr "Autorisation nécessaire"
-
-#: ../www/prn_addwiz.cgi.perl:286
-msgid "Available Printers:"
-msgstr "Imprimantes disponibles :"
-
-#: ../www/prn_addwiz.cgi.perl:372
-msgid "Bidirectional:"
-msgstr "Bidirectionnelle :"
-
-#: ../www/prn_properties.cgi.perl:116
-msgid "Binary"
-msgstr "Binaire"
-
-#: ../www/prn_properties.cgi.perl:218
-msgid "Bins"
-msgstr "Bacs"
-
-#: ../www/prn_properties.cgi.perl:220
-msgid "Bins for forms management purposes:"
-msgstr "Bacs à des fins de gestion des formulaires :"
-
-#: ../www/prn_properties.cgi.perl:473
-msgid ""
-"Both the duplex charge and the simplex charge must be set or neither must be "
-"set!"
+#: ../www/about.cgi.perl:55 ../www/cgi_widgets.pl:246
+msgid "About PPR"
 msgstr ""
-"Les coûts pour le recto-verso et pour le recto seul doivent être positionnés "
-"tous les deux ou bien aucun des deux !"
 
-#: ../www/prn_control.cgi.perl:358 ../www/show_printlog.cgi.perl:140
-msgid "Bytes Sent"
-msgstr "Octets Envoyés"
-
-#: ../www/prn_control.cgi.perl:358
-msgid "Bytes Unsent"
-msgstr "Octets Non Envoyés"
-
-#: ../www/prn_control.cgi.perl:290 ../www/prn_control.cgi.perl:331
-msgid "Bytes sent:"
-msgstr "Octets envoyés :"
-
-#: ../www/docs_cat.cgi.perl:54 ../www/docs_plain.cgi.perl:52
-msgid "Can't Display File"
-msgstr "Impossible d'afficher le fichier"
-
-#: ../www/docs_man.cgi.perl:52
-msgid "Can't Display Manpage"
-msgstr "Impossible d'afficher la page de manuel"
-
-#: ../www/prn_control.cgi.perl:167
-#, c-format
-msgid "Can't [%s] printer \"%s\" for the following reason:"
-msgstr "Impossible de [%s] l'imprimante \"%s\" pour la raison suivante :"
-
-#: ../www/show_printlog.cgi.perl:79
-#, c-format
-msgid "Can't open log file: %s\n"
-msgstr "Impossible d'ouvrir le fichier de trace : %s\n"
-
-#: ../www/job_log.cgi.perl:86 ../www/show_log.cgi.perl:84
-#, c-format
-msgid "Can't read log file: %s"
-msgstr "Impossible de lire le fichier de trace : %s"
-
-#: ../www/prn_properties.cgi.perl:111
-msgid "Character code compatibility:"
-msgstr "Compatibilité du jeu de caractère :"
-
-#: ../www/show_printlog.cgi.perl:140
-msgid "Charge"
-msgstr "Coût"
-
-#: ../www/prn_addwiz.cgi.perl:470
-msgid "Choose a Jobbreak Method:"
-msgstr "Choisissez une méthode de coupure de travail :"
-
-#: ../www/prn_addwiz.cgi.perl:501
-msgid "Choose a PPD File"
-msgstr "Choisissez un fichier PPD"
-
-#: ../www/prn_properties.cgi.perl:114
-msgid "Clean7Bit"
-msgstr "Clean7Bit"
-
-#: ../www/prn_properties.cgi.perl:115
-msgid "Clean8Bit"
-msgstr "Clean8Bit"
-
-#: ../www/login_cookie.cgi.perl:88 ../www/login_cookie.cgi.perl:139
+#: ../www/about.cgi.perl:95 ../www/login_cookie.cgi.perl:102
+#: ../www/login_cookie.cgi.perl:156 ../www/show_jobs.cgi.perl:416
 msgid "Close"
 msgstr "Fermer"
 
-#: ../www/grp_properties.cgi.perl:31 ../www/prn_properties.cgi.perl:33
+#: ../www/about.cgi.perl:95 ../www/prn_control.cgi.perl:385
+#: ../www/prn_media.cgi.perl:213 ../www/show_jobs.cgi.perl:385
+#: ../www/show_jobs.cgi.perl:416 ../www/show_queues.cgi.perl:187
+#: ../www/show_queues.cgi.perl:217 ../www/cgi_tabbed.pl:370
+msgid "Close this window."
+msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:53
+msgid "Add an Alias"
+msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:56
+#, fuzzy
+msgid "PPR Alias Creation"
+msgstr "Création de file d'impression PPR"
+
+#: ../www/alias_addwiz.cgi.perl:58
+#, fuzzy
+msgid ""
+"This program will guide you through the process of\n"
+"creating an alias for a printer or a group of printers."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration\n"
+"d'un groupe d'imprimantes dans PPR."
+
+#: ../www/alias_addwiz.cgi.perl:61
+#, fuzzy
+msgid ""
+"The alias must have a name.  The name may be up\n"
+"to 16 characters long.  Control codes, tildes, and spaces\n"
+"are not allowed.  Also, the first character may not be\n"
+"a period or a hyphen."
+msgstr ""
+"L'imprimante doit avoir un nom. Le nom peut avoir jusqu'à 16 caractères\n"
+"de long. Les codes de contrôle, les tildes et les espaces sont\n"
+"interdits. De plus, le premier caractère ne peut pas être un point\n"
+"ou un tiret."
+
+#: ../www/alias_addwiz.cgi.perl:66 ../www/alias_properties.cgi.perl:50
+#, fuzzy
+msgid "Alias Name:"
+msgstr "Nom :"
+
+#: ../www/alias_addwiz.cgi.perl:72
+#, fuzzy
+msgid "You must enter a name for the alias!"
+msgstr "Vous devez entrer un nom pour l'imprimante !"
+
+#: ../www/alias_addwiz.cgi.perl:74
+#, fuzzy, c-format
+msgid "The alias \"%s\" already exists!"
+msgstr "L'imprimante \"%s\" existe déjà !"
+
+#: ../www/alias_addwiz.cgi.perl:77 ../www/alias_addwiz.cgi.perl:145
+#: ../www/cliconf.cgi.perl:67 ../www/grp_addwiz.cgi.perl:77
+#: ../www/grp_addwiz.cgi.perl:143 ../www/prn_addwiz.cgi.perl:117
+#: ../www/prn_addwiz.cgi.perl:818 ../www/prn_testpage.cgi.perl:111
+#: ../www/cgi_tabbed.pl:379 ../www/cgi_wizard.pl:336
+msgid "_Cancel"
+msgstr "_Annuler"
+
+#: ../www/alias_addwiz.cgi.perl:77 ../www/cliconf.cgi.perl:67
+#: ../www/grp_addwiz.cgi.perl:77 ../www/prn_addwiz.cgi.perl:117
+#: ../www/cgi_wizard.pl:336
+msgid "_Next"
+msgstr "_Suivant"
+
+#: ../www/alias_addwiz.cgi.perl:84
+msgid "For What an Alias"
+msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:104
+#, fuzzy, c-format
+msgid "Please select the printer or group for which \"%s\" is to be an alias."
+msgstr ""
+"Veuillez choisir l'imprimante que vous désirez utiliser dans la liste ci-"
+"dessous."
+
+#: ../www/alias_addwiz.cgi.perl:118
+msgid "The alias must point to something!"
+msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:127
+#, fuzzy
+msgid "Describe the Alias"
+msgstr "Décrivez l'imprimante"
+
+#: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
+#, fuzzy, c-format
+msgid ""
+"While short group names are convenient in certain contexts,\n"
+"it is sometimes helpful to have a longer, more informative\n"
+"description.  Please supply a longer description for\n"
+"\"%s\" below."
+msgstr ""
+"Bien que des noms de groupes courts soient intéressants dans certains "
+"contextes,\n"
+"il est parfois utile d'avoir une description plus longue, donnant plus\n"
+"d'informations. Veuillez donner une description plus longue pour\n"
+"\"%s\" ci-dessous."
+
+#: ../www/alias_addwiz.cgi.perl:136 ../www/grp_addwiz.cgi.perl:134
+#: ../www/prn_addwiz.cgi.perl:779
+msgid "Description:"
+msgstr "Description :"
+
+#: ../www/alias_addwiz.cgi.perl:142 ../www/grp_addwiz.cgi.perl:140
+#: ../www/prn_addwiz.cgi.perl:785
+msgid "You must supply a description!"
+msgstr "Vous devez fournir une description !"
+
+#: ../www/alias_addwiz.cgi.perl:145 ../www/grp_addwiz.cgi.perl:143
+#: ../www/prn_addwiz.cgi.perl:818 ../www/prn_testpage.cgi.perl:173
+#: ../www/cgi_wizard.pl:336
+msgid "_Back"
+msgstr "_Retour"
+
+#: ../www/alias_addwiz.cgi.perl:145 ../www/grp_addwiz.cgi.perl:143
+#: ../www/prn_addwiz.cgi.perl:818
+msgid "_Finish"
+msgstr "_Finir"
+
+#: ../www/alias_addwiz.cgi.perl:152
+#, fuzzy
+msgid "Save the Alias"
+msgstr "Sauver le groupe"
+
+#: ../www/alias_addwiz.cgi.perl:157
+#, fuzzy
+msgid "Saving new alias:"
+msgstr "Sauvegarde de la nouvelle imprimante :"
+
+#: ../www/alias_addwiz.cgi.perl:170 ../www/prn_addwiz.cgi.perl:854
+#, fuzzy
+msgid "The print queue has been created."
+msgstr "L'imprimante a été supprimée."
+
+#: ../www/alias_addwiz.cgi.perl:174 ../www/grp_addwiz.cgi.perl:172
+#: ../www/prn_addwiz.cgi.perl:858
+msgid "Due to the problem indicated above, the queue was not created."
+msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:181 ../www/cliconf.cgi.perl:91
+#: ../www/cliconf.cgi.perl:107 ../www/cliconf.cgi.perl:190
+#: ../www/delete_queue.cgi.perl:151 ../www/grp_addwiz.cgi.perl:179
+#: ../www/prn_addwiz.cgi.perl:865 ../www/prn_control.cgi.perl:385
+#: ../www/prn_media.cgi.perl:213 ../www/prn_testpage.cgi.perl:173
+#: ../www/show_jobs.cgi.perl:385 ../www/show_queues.cgi.perl:187
+#: ../www/show_queues.cgi.perl:217 ../www/cgi_tabbed.pl:370
+msgid "_Close"
+msgstr "_Fermer"
+
+#: ../www/alias_properties.cgi.perl:46 ../www/grp_properties.cgi.perl:46
+#: ../www/prn_properties.cgi.perl:46
 msgid "Comment"
 msgstr "Commentaire"
 
-#: ../www/grp_properties.cgi.perl:38 ../www/prn_control.cgi.perl:275
-#: ../www/prn_control.cgi.perl:306 ../www/prn_properties.cgi.perl:40
+#: ../www/alias_properties.cgi.perl:53 ../www/grp_properties.cgi.perl:53
+#: ../www/prn_control.cgi.perl:256 ../www/prn_properties.cgi.perl:54
 msgid "Comment:"
 msgstr "Commentaire :"
 
-#: ../www/test_components.cgi.perl:93
-msgid "Component"
-msgstr "Composant"
+#: ../www/alias_properties.cgi.perl:63
+msgid "For What"
+msgstr ""
 
-#: ../www/prn_properties.cgi.perl:49
-msgid "Contact:"
-msgstr "Contact :"
-
-#: ../www/show_queues.cgi.perl:191
-msgid "Cookie Login"
-msgstr "Login par cookie"
-
-#: ../www/prn_control.cgi.perl:279 ../www/prn_control.cgi.perl:312
-msgid "Countdown:"
-msgstr "Décompte :"
-
-#: ../www/test_components.cgi.perl:93
-msgid "Critical?"
-msgstr "Critique ?"
-
-#: ../www/prn_control.cgi.perl:286 ../www/prn_control.cgi.perl:325
-msgid "Current job:"
-msgstr "Travail en cours :"
-
-#: ../www/prn_addwiz.cgi.perl:343 ../www/prn_addwiz.cgi.perl:412
-msgid "DNS Name or IP Address:"
-msgstr "Nom DNS ou adresse IP :"
-
-#: ../www/job_modify.cgi.perl:105
-msgid "Date wanted:"
-msgstr "Date voulue :"
-
-#: ../www/delete_queue.cgi.perl:57
+#: ../www/alias_properties.cgi.perl:82
 #, c-format
-msgid "Delete Alias \"%s\""
-msgstr "Supprime l'alias \"%s\""
+msgid "Printer or group for which \"%s\" is an alias:"
+msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:75
-msgid "Delete Group"
-msgstr "Supression du groupe"
+#: ../www/alias_properties.cgi.perl:100 ../www/grp_properties.cgi.perl:102
+#: ../www/prn_properties.cgi.perl:456
+msgid "Switchset"
+msgstr "Ensemble d'options"
 
-#: ../www/delete_queue.cgi.perl:55
+#: ../www/alias_properties.cgi.perl:102 ../www/grp_properties.cgi.perl:104
+#: ../www/prn_properties.cgi.perl:459
+msgid "Switchset:"
+msgstr "Ensemble d'options :"
+
+#: ../www/alias_properties.cgi.perl:114 ../www/grp_properties.cgi.perl:116
+#: ../www/prn_properties.cgi.perl:471
+msgid "Samba"
+msgstr "Samba"
+
+#: ../www/alias_properties.cgi.perl:118 ../www/grp_properties.cgi.perl:120
+msgid "Share with Samba (provided Samba is prepared)"
+msgstr "Partager avec Samba (à condition que Samba soit prêt)"
+
+#: ../www/alias_properties.cgi.perl:122 ../www/grp_properties.cgi.perl:124
+#: ../www/prn_properties.cgi.perl:480
+msgid "Prototype Share:"
+msgstr ""
+
+#: ../www/alias_properties.cgi.perl:128 ../www/grp_properties.cgi.perl:130
+#: ../www/prn_properties.cgi.perl:486
+msgid "Override Win95 driver name:"
+msgstr "Surcharger le nom du pilote Win95 :"
+
+#: ../www/alias_properties.cgi.perl:132 ../www/grp_properties.cgi.perl:134
+#: ../www/prn_properties.cgi.perl:490
+msgid "Assign to virtual server (Samba setup required):"
+msgstr "Affecter au serveur virtuel (configuration de Samba nécessaire) :"
+
+#: ../www/alias_properties.cgi.perl:139 ../www/grp_properties.cgi.perl:141
+#: ../www/prn_properties.cgi.perl:497
+msgid ""
+"Note that if the Samba configuration file smb.conf has not been edited as "
+"described in\n"
+"the ppr2samba(8) manpage, the settings on this screen will have no effect."
+msgstr ""
+
+#: ../www/alias_properties.cgi.perl:154 ../www/grp_properties.cgi.perl:156
+#: ../www/prn_properties.cgi.perl:512
+#, fuzzy
+msgid "AppleTalk"
+msgstr "PAP AppleTalk"
+
+#: ../www/alias_properties.cgi.perl:161 ../www/grp_properties.cgi.perl:163
+#: ../www/prn_properties.cgi.perl:519
+#, fuzzy
+msgid "Share with AppleTalk PAP"
+msgstr "PAP AppleTalk"
+
+#: ../www/alias_properties.cgi.perl:165 ../www/grp_properties.cgi.perl:167
+#: ../www/prn_properties.cgi.perl:523
+#, fuzzy
+msgid "Share As:"
+msgstr "Coût :"
+
+#: ../www/alias_properties.cgi.perl:186 ../www/grp_properties.cgi.perl:188
+#: ../www/prn_properties.cgi.perl:683
+msgid "Other"
+msgstr "Autre"
+
+#: ../www/alias_properties.cgi.perl:188 ../www/grp_properties.cgi.perl:202
+msgid "Passthru Printer Languages:"
+msgstr "Langages d'impression directs :"
+
+#: ../www/alias_properties.cgi.perl:238 ../www/grp_properties.cgi.perl:252
+msgid "Saving changes:"
+msgstr "Sauvegarde des modifications :"
+
+#: ../www/alias_properties.cgi.perl:293
+#, fuzzy, c-format
+msgid "PPR: Alias Properties: %s"
+msgstr "PPR : propriétés de l'imprimante : %s"
+
+#: ../www/cgi_auth.pl:35 ../www/cgi_auth.pl:38
+#, fuzzy
+msgid "Authentication Required"
+msgstr "Autorisation nécessaire"
+
+#: ../www/cgi_auth.pl:40
+msgid ""
+"Your web browser failed to validate your username and password\n"
+"using an MD5 Digest as defined by RFC 2117.  If you entered your\n"
+"username and password correctly, it may be that your browser\n"
+"doesn't support MD5 Digest authentication."
+msgstr ""
+
+#: ../www/cgi_auth.pl:45
+msgid ""
+"If your server is running Linux and the web browser is running on\n"
+"the server, try connecting to localhost rather than to the machine\n"
+"name.  On Linux systems the PPR web server can determine the user\n"
+"id of the web browser if the connection is to localhost."
+msgstr ""
+
+#: ../www/cgi_auth.pl:50
+msgid ""
+"If your browser supports JavaScript, Cookies, and Frames, then\n"
+"click on the \"Cookie Login\" button in PPR's Printer Control\n"
+"Panel.  A window will pop up that will log you in using a\n"
+"modified form of MD5 Digest authentication implemented with\n"
+"JavaScript and a CGI script."
+msgstr ""
+
+#: ../www/cgi_tabbed.pl:87
+msgid ""
+"The load function for this dialog failed with the following error message:"
+msgstr ""
+"La fonction de chargement de ce dialogue a échoué avec le message d'erreur "
+"suivant :"
+
+#: ../www/cgi_tabbed.pl:262
+msgid "<<More"
+msgstr "<<Plus"
+
+#: ../www/cgi_tabbed.pl:262
+msgid "Bring tabs on the left into view."
+msgstr ""
+
+#: ../www/cgi_tabbed.pl:288
+msgid "Bring tabs on the right into view."
+msgstr ""
+
+#: ../www/cgi_tabbed.pl:288
+msgid "More>>"
+msgstr "Plus>>"
+
+#: ../www/cgi_tabbed.pl:379
+msgid "Close without saving changes."
+msgstr ""
+
+#: ../www/cgi_tabbed.pl:380
+msgid "_Save"
+msgstr "_Sauvegarder"
+
+#: ../www/cgi_widgets.pl:134 ../www/cgi_widgets.pl:241
+msgid "Help"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:197
+msgid "Tools"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:200
+msgid "Spooler Logs"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:201
+msgid "Open a window with links to the spooler log files."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:202
+#, fuzzy
+msgid "Disk Space"
+msgstr "Utilisation de l'espace disque sur %s"
+
+#: ../www/cgi_widgets.pl:203
+msgid "Display information about free disk space on the print server."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:204
+msgid "Tests"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:205
+msgid "Open a window with links to test scripts."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:212
+msgid "Window"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:213
+#, fuzzy
+msgid "Queues"
+msgstr "Voir la file"
+
+#: ../www/cgi_widgets.pl:214
+msgid "Open a window with an icon for each queue."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:215
+msgid "All Jobs"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:216
+msgid "Open a window which lists all jobs."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:221
+#, fuzzy, c-format
+msgid "Control %s"
+msgstr "contrôle-d"
+
+#: ../www/cgi_widgets.pl:222
+msgid "Monitor, start, stop, and mount forms on the printer."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:223 ../www/cgi_widgets.pl:230
+#, fuzzy, c-format
+msgid "Properties of %s"
+msgstr "PPR : propriétés du groupe : %s"
+
+#: ../www/cgi_widgets.pl:224
+msgid "Examine and change the configuration of the printer."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:228
 #, c-format
-msgid "Delete Group \"%s\""
-msgstr "Supression du groupe \"%s\""
+msgid "Control %s members"
+msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:66
-msgid "Delete Printer"
-msgstr "Suppression de l'imprimante"
+#: ../www/cgi_widgets.pl:229
+msgid "Monitor, start, stop, and mount forms on the member printers."
+msgstr ""
 
-#: ../www/delete_queue.cgi.perl:53
+#: ../www/cgi_widgets.pl:231
+msgid "Examine and change the configuration of the group."
+msgstr ""
+
+#: ../www/cgi_widgets.pl:242
+msgid "For This Window"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:243
+msgid "Display the help document for this program in a web browser window"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:244
+msgid "All PPR Documents"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:245
+msgid "Open the PPR documentation index in a web browser window"
+msgstr ""
+
+#: ../www/cgi_widgets.pl:247
+msgid "Display PPR version information"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:44
+msgid "Downloadable Client Configuation Files"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:55
+msgid ""
+"Using this program you can download various files which help you to use "
+"PPR.\n"
+"These include shell scripts for configuring client computers to send print\n"
+"jobs to PPR, PPD files, and icons for opening the PPR web interface."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:59
+#, c-format
+msgid "What do you want to download for the queue \"%s\"?"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:61
+msgid "Spooler Configuration Script"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:62
+msgid "KDE Shortcut to Web Interface"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:63
+msgid "KDE Shortcut to Perl/Tk Interface"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:71
+#, fuzzy
+msgid "You must make a choice."
+msgstr "Vous devez choisir une interface !"
+
+#: ../www/cliconf.cgi.perl:83 ../www/cliconf.cgi.perl:99
+msgid "Downloadable KDE Icon"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:86
+msgid ""
+"Click on the button below to download the KDE shortcut\n"
+"to the PPR Web Interface.\n"
+"You will probably want to save it in your Desktop folder."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:89 ../www/cliconf.cgi.perl:105
+#: ../www/cliconf.cgi.perl:184
+msgid "_Download"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:102
+msgid ""
+"Click on the button below to download the KDE shortcut\n"
+"to the PPR Perl/Tk interface.\n"
+"You will probably want to save it in your Desktop folder."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:115
+msgid "Create Client Script: Choose a Spooler"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:124
+#, c-format
+msgid ""
+"You have chosen to create a script which you can download and run\n"
+"in order to set up your local spooler to print to the PPR\n"
+"queue \"%s\"."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:128
+msgid "Please indicate which print spooler you are using:"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:129
+msgid "BSD lpd"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:130
+msgid "LPR Next Generation"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:137
+#, fuzzy
+msgid "You must choose a spooler!"
+msgstr "Vous devez d'abord choisir un fichier PPD !"
+
+#: ../www/cliconf.cgi.perl:147
+msgid "Create Client Script: Local Name"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:155
+#, c-format
+msgid "Please choose a local name for %s:"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:159
+msgid "Please provide a description of this queue:"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:166
+msgid "The local name must not be blank."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:170
+msgid "The description must not be blank."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:179
+msgid "Create Client Script: Download"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:183
+msgid "Click on the button below to download the install script."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:185
+msgid "This script must be run as root.  The command to run it is:"
+msgstr ""
+
+#: ../www/commentary_select.cgi.perl:41
+msgid "PPR Printer Commentary Selection"
+msgstr "Sélection du commentaire d'imprimante PPR"
+
+#: ../www/commentary_select.cgi.perl:92
+msgid "Event Categories:"
+msgstr "Catégories d'événements :"
+
+#: ../www/commentary_select.cgi.perl:93
+msgid "Printer Errors"
+msgstr "Erreurs de l'imprimante"
+
+#: ../www/commentary_select.cgi.perl:94
+msgid "Printer Status"
+msgstr "État de l'imprimante"
+
+#: ../www/commentary_select.cgi.perl:95
+msgid "Printer Stalled"
+msgstr "Imprimante bloquée"
+
+#: ../www/commentary_select.cgi.perl:96
+msgid "Printing Attempt Results"
+msgstr "Résultats de tentatives d'impression"
+
+#: ../www/commentary_select.cgi.perl:101
+msgid "Severity Threshold:"
+msgstr "Seuil de sévérité :"
+
+#: ../www/commentary_select.cgi.perl:116
+msgid "Voice:"
+msgstr "Voix :"
+
+#: ../www/commentary_select.cgi.perl:123
+msgid "Silly Sounds:"
+msgstr "Sons débiles :"
+
+#: ../www/commentary_select.cgi.perl:124 ../www/delete_queue.cgi.perl:108
+#: ../www/test_components.cgi.perl:220
+msgid "Yes"
+msgstr "Oui"
+
+#: ../www/commentary_select.cgi.perl:125 ../www/delete_queue.cgi.perl:109
+#: ../www/test_components.cgi.perl:220
+msgid "No"
+msgstr "Non"
+
+#: ../www/commentary_select.cgi.perl:128
+msgid "Player:"
+msgstr "Outil de lecture :"
+
+#: ../www/commentary_select.cgi.perl:144
+#, fuzzy
+msgid ""
+"To limit the commentary to certain printers, check one or\n"
+"more of the boxes below."
+msgstr ""
+"Pour limiter le commentaire à certaines imprimantes, cochez une ou plusieurs "
+"cases ci-dessous."
+
+#: ../www/commentary_select.cgi.perl:149
+msgid "Printers to Monitor"
+msgstr "Imprimantes à surveiller :"
+
+#: ../www/delete_queue.cgi.perl:68
 #, c-format
 msgid "Delete Printer \"%s\""
 msgstr "Suppression de l'imprimante \"%s\""
 
-#: ../www/delete_queue.cgi.perl:87
+#: ../www/delete_queue.cgi.perl:70
 #, c-format
-msgid "Delete the alias \"%s\"?"
-msgstr "Supression de l'alias \"%s\" ?"
+msgid "Delete Group \"%s\""
+msgstr "Supression du groupe \"%s\""
 
-#: ../www/delete_queue.cgi.perl:85
+#: ../www/delete_queue.cgi.perl:72
 #, c-format
-msgid "Delete the group \"%s\"?"
-msgstr "Supression du groupe \"%s\" ?"
+msgid "Delete Alias \"%s\""
+msgstr "Supprime l'alias \"%s\""
 
-#: ../www/delete_queue.cgi.perl:83
+#: ../www/delete_queue.cgi.perl:98
 #, c-format
 msgid "Delete the printer \"%s\"?"
 msgstr "Supression de l'imprimante \"%s\" ?"
 
-#: ../www/job_modify.cgi.perl:106
-msgid "Delivery instructions (routing):"
-msgstr "Instructions de livraison (routage) :"
+#: ../www/delete_queue.cgi.perl:100
+#, c-format
+msgid "Delete the group \"%s\"?"
+msgstr "Supression du groupe \"%s\" ?"
 
-#: ../www/prn_addwiz.cgi.perl:619 ../www/prn_properties.cgi.perl:46
-msgid "Department:"
-msgstr "Service :"
+#: ../www/delete_queue.cgi.perl:102
+#, c-format
+msgid "Delete the alias \"%s\"?"
+msgstr "Supression de l'alias \"%s\" ?"
 
-#: ../www/grp_addwiz.cgi.perl:110
-msgid "Describe the Group"
-msgstr "Décrivez le groupe"
+#: ../www/delete_queue.cgi.perl:139
+msgid "The printer has been deleted."
+msgstr "L'imprimante a été supprimée."
 
-#: ../www/prn_addwiz.cgi.perl:576
-msgid "Describe the Printer"
-msgstr "Décrivez l'imprimante"
+#: ../www/delete_queue.cgi.perl:141
+msgid "The group has been deleted."
+msgstr "Le groupe a été supprimé."
 
-#: ../www/grp_addwiz.cgi.perl:119 ../www/prn_addwiz.cgi.perl:590
-msgid "Description:"
-msgstr "Description :"
+#: ../www/delete_queue.cgi.perl:143
+msgid "The alias has been deleted."
+msgstr "L'alias a été supprimé."
 
-#: ../www/show_queues.cgi.perl:157
-msgid "Details"
-msgstr "Détails"
-
-#: ../www/df_html.cgi.perl:48
+#: ../www/df_html.cgi.perl:64
 #, c-format
 msgid "Disk Space Usage on %s"
 msgstr "Utilisation de l'espace disque sur %s"
 
-#: ../www/prn_addwiz.cgi.perl:460
-msgid "Do the Interface and Printer Support 2-Way Communication?"
-msgstr ""
-"L'interface et l'imprimante supportent-elles les communications "
-"bi-directionnelles ?"
-
-#: ../www/docs_rpm.cgi.perl:32
-#, c-format
-msgid "Documentation for RPM Package %s"
-msgstr "Documentation du paquet RPM %s"
-
-#: ../www/prn_properties.cgi.perl:84
-msgid "Does feedback (2-way communication) work?"
-msgstr "Le retour (communication bi-directionnelle) fonctionne-t-il ?"
-
-#: ../www/prn_addwiz.cgi.perl:456
-msgid "Enter Interface Options:"
-msgstr "Entrez les options de l'interface :"
-
-#: ../www/prn_addwiz.cgi.perl:452
-msgid "Enter Printer Address:"
-msgstr "Entrez l'adresse de l'imprimante :"
-
-#: ../www/df_html.cgi.perl:106
-#, c-format
-msgid "Error while closing pipe from df (%s)"
-msgstr "Erreur pendant la fermeture du tube avec df (%s)"
-
-#: ../www/docs_man.cgi.perl:179 ../www/docs_plain.cgi.perl:95
-msgid "Error: "
-msgstr "Erreur : "
-
-#: ../www/commentary_select.cgi.perl:77
-msgid "Event Categories:"
-msgstr "Catégories d'événements :"
-
-#: ../www/df_html.cgi.perl:71
+#: ../www/df_html.cgi.perl:87
 #, c-format
 msgid "Failed to run df (%s)"
 msgstr "Échec de l'exécution de df (%s)"
 
-#: ../www/prn_properties.cgi.perl:171
-msgid "Features"
-msgstr "Possibilités"
-
-#: ../www/show_printlog.cgi.perl:138
-msgid "For"
-msgstr "Pour"
-
-#: ../www/prn_control.cgi.perl:287 ../www/prn_control.cgi.perl:326
-msgid "For:"
-msgstr "Pour :"
-
-#: ../www/show_queues.cgi.perl:153
-msgid "Free Flow"
-msgstr "Débit libre"
-
-#: ../www/prn_addwiz.cgi.perl:55
-msgid "GS & AppSocket"
-msgstr "GS & AppSocket"
-
-#: ../www/prn_addwiz.cgi.perl:59
-msgid "GS & LANMAN"
-msgstr "GS & LANMAN"
-
-#: ../www/prn_addwiz.cgi.perl:54
-msgid "GS & PAP"
-msgstr "GS & PAP"
-
-#: ../www/prn_addwiz.cgi.perl:57
-msgid "GS & Server Parallel Port"
-msgstr "GS & port parallèle du serveur"
-
-#: ../www/prn_addwiz.cgi.perl:56
-msgid "GS & Server Serial Port"
-msgstr "GS & port série du serveur"
-
-#: ../www/prn_addwiz.cgi.perl:58
-msgid "GS & lpr/lpd"
-msgstr "GS & lpr/lpd"
-
-#: ../www/job_modify.cgi.perl:78
-msgid "General"
-msgstr "Général"
-
-#: ../www/prn_properties.cgi.perl:327
-msgid "Grayscale documents OK:"
-msgstr "Documents en niveaux de gris OK :"
-
-#: ../www/show_queues_nojs.cgi.perl:42
+#: ../www/df_html.cgi.perl:150
 #, c-format
-msgid "Group \"%s\""
-msgstr "Groupe \"%s\""
+msgid "Error while closing pipe from df (%s)"
+msgstr "Erreur pendant la fermeture du tube avec df (%s)"
 
-#: ../www/grp_addwiz.cgi.perl:51 ../www/grp_properties.cgi.perl:35
+#: ../www/docs_cat.cgi.perl:69 ../www/docs_plain.cgi.perl:67
+msgid "Can't Display File"
+msgstr "Impossible d'afficher le fichier"
+
+#: ../www/docs_info.cgi.perl:553 ../www/docs_info.cgi.perl:560
+msgid "Error: "
+msgstr "Erreur : "
+
+#: ../www/docs_info.cgi.perl:560
+#, fuzzy
+msgid "Can't Display Info Document"
+msgstr "Impossible d'afficher la page de manuel"
+
+#: ../www/docs_man.cgi.perl:167
+#, fuzzy
+msgid "Available Manpages"
+msgstr "Imprimantes disponibles :"
+
+#: ../www/docs_man.cgi.perl:177
+msgid "Can't Display Manpage"
+msgstr "Impossible d'afficher la page de manuel"
+
+#: ../www/docs_man.cgi.perl:215 ../www/docs_plain.cgi.perl:110
+#, fuzzy
+msgid "Error:"
+msgstr "Erreur : "
+
+#: ../www/docs_man.cgi.perl:263
+#, c-format
+msgid "Section %s"
+msgstr ""
+
+#: ../www/docs_rpm.cgi.perl:47
+#, c-format
+msgid "Documentation for RPM Package %s"
+msgstr "Documentation du paquet RPM %s"
+
+# not very good
+#: ../www/docs_util.pl:47
+msgid ""
+"This script was invoked without any trailing path.  In other words,\n"
+"it should have been treated as if it were a subdirectory.\n"
+msgstr ""
+"Ce script a été lancé sans chemin attenant. En d'autres mots,\n"
+"il aurait dû être traité comme si c'était un sous-répertoire.\n"
+
+#: ../www/docs_util.pl:72
+#, c-format
+msgid "The file \"%s\" is not within a recognized document directory.\n"
+msgstr "Le fichier \"%s\" n'est pas dans un répertoire de documents reconnu.\n"
+
+#: ../www/grp_addwiz.cgi.perl:53
+msgid "Add a Group"
+msgstr "Ajout d'un groupe"
+
+#: ../www/grp_addwiz.cgi.perl:56
+msgid "PPR Group Queue Creation"
+msgstr "Création de la file de groupe PPR"
+
+#: ../www/grp_addwiz.cgi.perl:58
+msgid ""
+"This program will guide you through the process of\n"
+"setting up a group of printers in PPR."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration\n"
+"d'un groupe d'imprimantes dans PPR."
+
+#: ../www/grp_addwiz.cgi.perl:61
+msgid ""
+"The group must have a name.  The name may be up\n"
+"to 16 characters long.  Control codes, tildes, and spaces\n"
+"are not allowed.  Also, the first character may not be\n"
+"a period or a hyphen."
+msgstr ""
+"Le groupe doit avoir un nom. Ce nom peut faire jusqu'à\n"
+"16 caractères de long. Les codes de contrôle, tildes et espaces\n"
+"sont interdits. De plus, le premier caractère ne peut pas être\n"
+"un point ou un tiret."
+
+#: ../www/grp_addwiz.cgi.perl:66 ../www/grp_properties.cgi.perl:50
 msgid "Group Name:"
 msgstr "Nom du groupe :"
 
-#: ../www/show_queues_nojs.cgi.perl:73
-msgid "Group Properties"
-msgstr "Propriétés du groupe"
+#: ../www/grp_addwiz.cgi.perl:72
+msgid "You must enter a name for the group!"
+msgstr "Vous devez entrer un nom pour le groupe !"
 
-#: ../www/prn_addwiz.cgi.perl:347
-msgid ""
-"HP JetDirect cards accept jobs on TCP port 9100.\n"
-"With some other equipment, the port number the printer\n"
-"accepts jobs on can be changed but is 9100 when they\n"
-"come from the factory."
+#: ../www/grp_addwiz.cgi.perl:74
+#, fuzzy, c-format
+msgid "The group \"%s\" already exists!"
+msgstr "L'imprimante \"%s\" existe déjà !"
+
+#: ../www/grp_addwiz.cgi.perl:84
+msgid "Assign Group Members"
+msgstr "Désignation des membres du groupe"
+
+#: ../www/grp_addwiz.cgi.perl:112 ../www/grp_properties.cgi.perl:94
+msgid "Members:"
+msgstr "Membres :"
+
+#: ../www/grp_addwiz.cgi.perl:112 ../www/grp_properties.cgi.perl:94
+msgid "Non-Members:"
+msgstr "Non membres :"
+
+#: ../www/grp_addwiz.cgi.perl:116
+msgid "The group must have at least one member!"
+msgstr "Le groupe doit avoir au moins un membre !"
+
+#: ../www/grp_addwiz.cgi.perl:125
+msgid "Describe the Group"
+msgstr "Décrivez le groupe"
+
+#: ../www/grp_addwiz.cgi.perl:150
+msgid "Save the Group"
+msgstr "Sauver le groupe"
+
+#: ../www/grp_addwiz.cgi.perl:155
+msgid "Saving new group:"
+msgstr "Sauvegarde du nouveau groupe :"
+
+#: ../www/grp_addwiz.cgi.perl:168
+#, fuzzy
+msgid "The queue has been created."
+msgstr "Le groupe a été supprimé."
+
+#: ../www/grp_control.cgi.perl:66
+#, fuzzy, c-format
+msgid "Status of \"%s\" Member Printers"
+msgstr "État de l'imprimante \"%s\""
+
+#: ../www/grp_properties.cgi.perl:63
+#, fuzzy
+msgid "Members"
+msgstr "Membres :"
+
+#: ../www/grp_properties.cgi.perl:190
+msgid "Rotate Through Members:"
+msgstr "Rotation parmi les membres"
+
+#: ../www/grp_properties.cgi.perl:193 ../www/prn_properties.cgi.perl:99
+#: ../www/prn_properties.cgi.perl:561 ../www/prn_properties.cgi.perl:687
+msgid "no"
+msgstr "non"
+
+#: ../www/grp_properties.cgi.perl:193 ../www/prn_properties.cgi.perl:99
+#: ../www/prn_properties.cgi.perl:561 ../www/prn_properties.cgi.perl:687
+msgid "yes"
+msgstr "oui"
+
+#: ../www/grp_properties.cgi.perl:313
+#, c-format
+msgid "PPR: Group Properties: %s"
+msgstr "PPR : propriétés du groupe : %s"
+
+#: ../www/job_log.cgi.perl:55
+#, c-format
+msgid "Log for Job \"%s\""
+msgstr "Trace pour le travail \"%s\""
+
+#: ../www/job_log.cgi.perl:101 ../www/show_log.cgi.perl:101
+#, c-format
+msgid "Can't read log file: %s"
+msgstr "Impossible de lire le fichier de trace : %s"
+
+#: ../www/job_modify.cgi.perl:93
+msgid "General"
+msgstr "Général"
+
+#: ../www/job_modify.cgi.perl:95
+msgid "This page gives general information about the print job."
 msgstr ""
-"Les cartes HP JetDirect acceptent les travaux sur le port TCP 9100.\n"
-"Avec un autre matériel, on peut modifier le numéro de port sur lequel\n"
-"l'imprimante accepte les travaux mais c'est 9100 quand elles viennent\n"
-"de l'usine."
+"Cette page donne des informations générales sur le travail d'impression."
 
-#: ../www/cgi_auth.pl:33
+#: ../www/job_modify.cgi.perl:97
+msgid "Job ID:"
+msgstr "ID du travail :"
+
+#: ../www/job_modify.cgi.perl:98
+msgid "Submitted by:"
+msgstr "Soumis par :"
+
+#: ../www/job_modify.cgi.perl:99
+msgid "Submitted at:"
+msgstr "Soumis à :"
+
+#: ../www/job_modify.cgi.perl:100
+msgid "Job title:"
+msgstr "Titre du travail :"
+
+#: ../www/job_modify.cgi.perl:101
+msgid "Job creator:"
+msgstr "Créateur du travail :"
+
+#: ../www/job_modify.cgi.perl:112
+#, fuzzy
 msgid ""
-"If your browser supports JavaScript, Cookies, and Frames, then click on the "
-"\"Cookie Login\" button"
+"This page contains instructions for a human printer operator.  Use\n"
+"this page when the printer is located in a central location such as a\n"
+"print shop."
 msgstr ""
-"Si votre navigateur reconnaît JavaScript, les cookies et les cadres, cliquez\n"
-"sur le bouton \"Login par cookies\""
+"Cette page contient des instrutions pour un opérateur d'imprimantes\n"
+"humains. Utilisez cette page quand l'imprimante est située dans un\n"
+"endroit central comme un atelier d'impression."
 
-#: ../www/cgi_auth.pl:29
+#: ../www/job_modify.cgi.perl:116
+msgid "Your name:"
+msgstr "Votre nom :"
+
+#: ../www/job_modify.cgi.perl:117
+msgid "Your department:"
+msgstr "Votre service :"
+
+#: ../www/job_modify.cgi.perl:118
+msgid "Your telephone number:"
+msgstr "Votre numéro de téléphone :"
+
+#: ../www/job_modify.cgi.perl:120
+msgid "Account number:"
+msgstr "Compte numéro :"
+
+#: ../www/job_modify.cgi.perl:121
+msgid "Date wanted:"
+msgstr "Date voulue :"
+
+#: ../www/job_modify.cgi.perl:122
+msgid "Delivery instructions (routing):"
+msgstr "Instructions de livraison (routage) :"
+
+#: ../www/job_modify.cgi.perl:124
+msgid "Special processing instructions:"
+msgstr "Instructions de traitement spécial :"
+
+#: ../www/job_modify.cgi.perl:137
 msgid ""
-"If your server is running Linux and the web browser is running on the "
-"server, try connecting"
+"This page describes how the person who submitted the job will be notified\n"
+"when it has been printed or when a problem arises."
 msgstr ""
-"Si votre serveur fonctionne sous Linux et le navigateur fonctionne sur\n"
-"le serveur, essayez de vous connecter"
+"Cette page décrit comment la personne qui a soumis un travail sera avertie\n"
+"quand il a été imprimé ou quand un problème arrive."
 
-#: ../www/login_cookie.cgi.perl:92
+#: ../www/job_modify.cgi.perl:142
+msgid "Responder method:"
+msgstr "Méthode de réponse :"
+
+#: ../www/job_modify.cgi.perl:153
+msgid "Responder address:"
+msgstr "Adresse du répondeur :"
+
+#: ../www/job_modify.cgi.perl:154
+msgid "Responder options:"
+msgstr "Options du répondeur :"
+
+#: ../www/job_modify.cgi.perl:164
+msgid ""
+"This page gives precise and rather technical information about who entered\n"
+"the job in the queue and on behalf of whom."
+msgstr ""
+"Cette page donne des informations précises et plutôt techniques sur qui\n"
+"a introduit le travail dans la file et de la part de qui."
+
+#: ../www/job_modify.cgi.perl:167
+msgid "Submitter description:"
+msgstr "Description du soumetteur :"
+
+#: ../www/job_modify.cgi.perl:168
+msgid "Submitted by Unix user:"
+msgstr "Soumis par l'utilisateur Unix :"
+
+#: ../www/job_modify.cgi.perl:169
+msgid "As proxy for:"
+msgstr "Mandataire pour :"
+
+#: ../www/job_modify.cgi.perl:197
+msgid "Log"
+msgstr "Trace"
+
+#: ../www/job_modify.cgi.perl:200
+msgid ""
+"This page lists potential problems with this job.  If an attempt has "
+"already\n"
+"been made to print it and the PostScript code wrote to the stdout or the "
+"stderr\n"
+"of the PostScript interpreter, those messages may also appear here."
+msgstr ""
+"Cette page liste les problèmes potentiels avec ce travail. Si une tentative\n"
+"a déjà été faite pour l'imprimer et que le code PostScript a écrit sur la\n"
+"sortie ou l'erreur standard de l'interpréteur PostScript, ces messages "
+"peuvent aussi apparaître ici."
+
+#: ../www/job_modify.cgi.perl:306
+msgid "Save changes to job:"
+msgstr "Sauver les modifications du travail :"
+
+#: ../www/job_modify.cgi.perl:321
+#, c-format
+msgid "PPR: Modify Job: %s"
+msgstr "PPR : modification du travail : %s"
+
+#: ../www/job_public.cgi.perl:143
+#, c-format
+msgid ""
+"You have submitted a print job entitled \"%s\".  You may either enter your\n"
+"username and password to print it or you may cancel it."
+msgstr ""
+
+#: ../www/login_cookie.cgi.perl:60
+msgid "PPR Login"
+msgstr "Login PPR"
+
+#: ../www/login_cookie.cgi.perl:97
+msgid "Username:"
+msgstr "Nom d'utilisateur :"
+
+#: ../www/login_cookie.cgi.perl:99
+msgid "Password:"
+msgstr "Mot de passe :"
+
+#: ../www/login_cookie.cgi.perl:101
+msgid "Login"
+msgstr "Se logger"
+
+#: ../www/login_cookie.cgi.perl:108
 msgid "Incorrect username or password."
 msgstr "Nom d'utilisateur ou mot de passe incorrect."
 
-#: ../www/show_printlog.cgi.perl:140
-msgid "Increment"
-msgstr "Incrément"
+#: ../www/login_cookie.cgi.perl:131
+#, c-format
+msgid ""
+"You are logged in as \"%s\".  Leave this window open to remain logged in.\n"
+"If you close this window without logging out, you will be automatically "
+"logged\n"
+"out after %d seconds.\n"
+msgstr ""
+"Vous êtes authentifié en tant que \"%s\". Laissez cette fenêtre ouverte "
+"pour\n"
+"rester authentifié. Si vous fermez cette fenêtre sans vous déconnecter, "
+"vous\n"
+"le serez automatiquement au bout de %d secondes.\n"
 
-#: ../www/prn_properties.cgi.perl:57
-msgid "Interface"
-msgstr "Interface"
+#: ../www/login_cookie.cgi.perl:134
+msgid "Renew"
+msgstr "Renouveler"
 
-#: ../www/prn_addwiz.cgi.perl:165
+#: ../www/login_cookie.cgi.perl:135
+msgid "Logout"
+msgstr "Se délogger"
+
+#: ../www/login_cookie.cgi.perl:153
+#, c-format
+msgid ""
+"You are already logged in as user \"%s\" using authentication method \"%s\"."
+msgstr ""
+"Vous êtes déja authentifié en tant qu'utilisateur \"%s\" avec la méthode "
+"d'authentification \"%s\"."
+
+#: ../www/ppd_select.pl:160
+#, fuzzy
+msgid "PPD File"
+msgstr "Fichier PPD :"
+
+#: ../www/ppd_select.pl:161
+msgid "ModelName"
+msgstr ""
+
+#: ../www/ppd_select.pl:162
+msgid "PPD File Version"
+msgstr ""
+
+#: ../www/ppd_select.pl:163
+msgid "LanguageLevel"
+msgstr ""
+
+#: ../www/ppd_select.pl:164
+#, fuzzy
+msgid "PostScript Version"
+msgstr "Description :"
+
+#: ../www/ppd_select.pl:165
+msgid "Number of Fonts"
+msgstr ""
+
+#: ../www/ppd_select.pl:166
+msgid "TrueType Rasterizer"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:56
+#, fuzzy
+msgid "Server Generic Port"
+msgstr "Port série du serveur"
+
+#: ../www/prn_addwiz.cgi.perl:57
+msgid "Server Serial Port"
+msgstr "Port série du serveur"
+
+#: ../www/prn_addwiz.cgi.perl:58
+msgid "Server Parallel Port"
+msgstr "Port parallèle du serveur"
+
+#: ../www/prn_addwiz.cgi.perl:59
+#, fuzzy
+msgid "Server USB Port"
+msgstr "Port série du serveur"
+
+#: ../www/prn_addwiz.cgi.perl:60
+#, fuzzy
+msgid "Network via AppleTalk PAP"
+msgstr "PAP AppleTalk"
+
+#: ../www/prn_addwiz.cgi.perl:61
+msgid "Network via raw TCP"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:62
+msgid "Network via SocketAPI"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:63
+#, fuzzy
+msgid "Network via AppSocket"
+msgstr "GS & AppSocket"
+
+#: ../www/prn_addwiz.cgi.perl:64
+msgid "Network via HP JetDirect"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:65
+msgid "Network via AXIS PROS"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:66
+msgid "Network via LPD"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:67
+#, fuzzy
+msgid "Network via LAN Manager/MS-Windows"
+msgstr "LAN Manager/MS-Windows"
+
+#: ../www/prn_addwiz.cgi.perl:98
+#, fuzzy
+msgid "PPR: Add a Printer"
+msgstr "Ajout d'une imprimante"
+
+#: ../www/prn_addwiz.cgi.perl:101
+msgid "PPR Printer Queue Creation"
+msgstr "Création de file d'impression PPR"
+
+#: ../www/prn_addwiz.cgi.perl:102
+msgid ""
+"This program will guide you through the process of setting up a printer in "
+"PPR."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration d'une "
+"imprimante dans PPR."
+
+#: ../www/prn_addwiz.cgi.perl:111 ../www/prn_addwiz.cgi.perl:168
+#, fuzzy
+msgid "You must make a selection!"
+msgstr "Vous devez fournir une description !"
+
+#: ../www/prn_addwiz.cgi.perl:125
+#, fuzzy
+msgid "PPR: Add a Printer: Select an Interface Program"
+msgstr "Choisissez un programme d'interface"
+
+#: ../www/prn_addwiz.cgi.perl:138
+#, fuzzy
+msgid ""
+"Please select an interface program.  PPR uses an interface\n"
+"program to communicate with the printer.  There is an\n"
+"interface program for each communication method."
+msgstr ""
+"Veuillez sélectionner un programme d'interface. PPR utilise un programme\n"
+"d'interface pour communiquer avec l'imprimante. Il y a un programme\n"
+"d'interface pour chaque méthode de communication. Les interfaces dont\n"
+"le nom commence par \"gs\" passent les travaux PostScript à Ghostscript\n"
+"avant de les envoyer à l'imprimante."
+
+#: ../www/prn_addwiz.cgi.perl:142
 msgid "Interface Program:"
 msgstr "Programme de l'interface :"
 
-#: ../www/prn_addwiz.cgi.perl:443
-msgid "Interface Setup"
-msgstr "Configuration de l'interface"
+#: ../www/prn_addwiz.cgi.perl:188
+#, fuzzy
+msgid "PPR: Add a Printer: Raw TCP/IP Interface: Choose an Address"
+msgstr "Interface TCP/IP directe : choisissez une adresse"
 
-#: ../www/prn_properties.cgi.perl:81
-msgid "Interface options:"
-msgstr "Options de l'interface :"
-
-#: ../www/prn_addwiz.cgi.perl:367
-msgid ""
-"Internal JetDirect cards support bidirectional communication.\n"
-"External print servers will only support bidirectional\n"
-"communication if they communicate with the printer\n"
-"through a serial port or through a bidirectional parallel port."
-msgstr ""
-"Les cartes JetDirect internes supportent les communications "
-"bi-directionnelles.\n"
-"Les serveurs d'impression externes ne supportent les communications\n"
-"bi-directionnelles que s'ils communiquent avec l'imprimante grâce à\n"
-"un port série ou un port parallèle bi-directionnel."
-
-#: ../www/prn_addwiz.cgi.perl:338
+#: ../www/prn_addwiz.cgi.perl:191 ../www/prn_addwiz.cgi.perl:248
 msgid ""
 "It is necessary to know the IP address of the printer,\n"
 "or preferably a DNS name which represents that address.\n"
@@ -489,144 +1176,132 @@ msgstr ""
 "Un exemple de nom DNS est \"monimpri.imp.monorga.org\". Un exemple\n"
 "d'adresse IP est \"192.168.10.45\"."
 
-#: ../www/prn_addwiz.cgi.perl:407
+#: ../www/prn_addwiz.cgi.perl:196 ../www/prn_addwiz.cgi.perl:253
+#: ../www/prn_addwiz.cgi.perl:311 ../www/prn_addwiz.cgi.perl:360
+msgid "DNS Name or IP Address:"
+msgstr "Nom DNS ou adresse IP :"
+
+#: ../www/prn_addwiz.cgi.perl:200
 msgid ""
-"It is necessary to know the IP address of the server,\n"
-"or preferably a DNS name which represents that address.\n"
-"An example of a DNS name is \"myhost.myorg.org\".  An example\n"
-"of an IP address is \"157.252.200.52\"."
+"HP JetDirect cards accept jobs on TCP port 9100.\n"
+"For AXIS print servers it is 9900.  For other brands,\n"
+"consult the product manual."
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:204 ../www/prn_addwiz.cgi.perl:259
+msgid "TCP Port Number:"
+msgstr "Numéro de port TCP :"
+
+#: ../www/prn_addwiz.cgi.perl:209
+msgid ""
+"Bidirectional communication is highly desirable, however many devices don't\n"
+"support it.  If you say Yes here and the correct answer is No, the queue "
+"will\n"
+"get stuck at the end of the first job."
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:213 ../www/prn_addwiz.cgi.perl:270
+msgid "Bidirectional:"
+msgstr "Bidirectionnelle :"
+
+#: ../www/prn_addwiz.cgi.perl:226 ../www/prn_addwiz.cgi.perl:283
+msgid "You must fill in the printer's DNS name or IP address!"
+msgstr "Vous devez renseigner le nom DNS ou l'adresse IP de l'imprimante !"
+
+#: ../www/prn_addwiz.cgi.perl:228 ../www/prn_addwiz.cgi.perl:285
+msgid "You must fill in the TCP port number!"
+msgstr "Vous devez remplir le numéro de port TCP !"
+
+#: ../www/prn_addwiz.cgi.perl:245
+#, fuzzy
+msgid "PPR: Add a Printer: JetDirect Interface: Choose an Address"
+msgstr "Interface LPR : choisissez une adresse"
+
+#: ../www/prn_addwiz.cgi.perl:257
+msgid "Most HP JetDirect cards accept jobs on TCP port 9100.\n"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:264
+#, fuzzy
+msgid ""
+"Internal JetDirect cards support bidirectional communication.  External "
+"print\n"
+"servers will only support bidirectional communication if they communicate "
+"with\n"
+"the printer through a serial port or through a bidirectional parallel port.  "
+"If\n"
+"you say Yes here and the correct answer is No, the queue will get stuck at "
+"the\n"
+"end of the first job."
+msgstr ""
+"Les cartes JetDirect internes supportent les communications bi-"
+"directionnelles.\n"
+"Les serveurs d'impression externes ne supportent les communications\n"
+"bi-directionnelles que s'ils communiquent avec l'imprimante grâce à\n"
+"un port série ou un port parallèle bi-directionnel."
+
+#: ../www/prn_addwiz.cgi.perl:302 ../www/prn_addwiz.cgi.perl:351
+#, fuzzy
+msgid "PPR: Add a Printer: LPR Interface: Choose an Address"
+msgstr "Interface LPR : choisissez une adresse"
+
+#: ../www/prn_addwiz.cgi.perl:306 ../www/prn_addwiz.cgi.perl:355
+#, fuzzy
+msgid ""
+"PPR needs to know the name or IP address of the printer or of the print "
+"server\n"
+"to which it is attached.  An example of a DNS name is \"myhost.myorg.org\".  "
+"An\n"
+"example of an IP address is \"157.252.200.52\".  A name is preferred."
 msgstr ""
 "Il est nécessaire de connaître l'adresse IP du serveur,\n"
 "ou mieux encore un nom DNS qui représente cette adresse.\n"
 "Un exemple de nom DNS est \"monhote.monorga.org\". Un exemple\n"
 "d'adresse IP est \"192.168.10.45\"."
 
-#: ../www/show_jobs.cgi.perl:379
-#, c-format
-msgid "Job \"%s\""
-msgstr "Travail \"%s\""
+#: ../www/prn_addwiz.cgi.perl:315
+msgid "What is the name of the printer on the remote print server?\n"
+msgstr ""
 
-#: ../www/show_jobs.cgi.perl:431
-msgid "Job Actions: "
-msgstr "Actions du travail : "
+#: ../www/prn_addwiz.cgi.perl:316
+msgid "See the table below."
+msgstr ""
 
-#: ../www/show_printlog.cgi.perl:138
-msgid "Job ID"
-msgstr "ID du travail"
+#: ../www/prn_addwiz.cgi.perl:320 ../www/prn_addwiz.cgi.perl:366
+msgid "Remote Queue Name:"
+msgstr "Nom de la file distante :"
 
-#: ../www/job_modify.cgi.perl:82
-msgid "Job ID:"
-msgstr "ID du travail :"
+#: ../www/prn_addwiz.cgi.perl:324
+msgid "Brand"
+msgstr ""
 
-#: ../www/job_modify.cgi.perl:86
-msgid "Job creator:"
-msgstr "Créateur du travail :"
+#: ../www/prn_addwiz.cgi.perl:324
+msgid "Product"
+msgstr ""
 
-#: ../www/job_modify.cgi.perl:85
-msgid "Job title:"
-msgstr "Titre du travail :"
+#: ../www/prn_addwiz.cgi.perl:324
+#, fuzzy
+msgid "Remote Queue Name"
+msgstr "Nom de la file distante :"
 
-#: ../www/prn_properties.cgi.perl:99
-msgid "Jobbreak method:"
-msgstr "Méthode de coupure de travail :"
+#: ../www/prn_addwiz.cgi.perl:333 ../www/prn_addwiz.cgi.perl:371
+msgid "You must fill in the remote host's DNS name or IP address!"
+msgstr "Vous devez renseigner le nom DNS ou l'adresse IP de l'hôte distant !"
 
-#: ../www/show_jobs.cgi.perl:197
-#, c-format
-msgid "Jobs Queued for \"%s\" on \"%s\""
-msgstr "Travaux en attente pour \"%s\" sur \"%s\""
+#: ../www/prn_addwiz.cgi.perl:335 ../www/prn_addwiz.cgi.perl:373
+msgid "You must fill in the remote queue name!"
+msgstr "Vous devez renseigner le nom de la file distante !"
 
-#: ../www/prn_addwiz.cgi.perl:52
-msgid "LAN Manager/MS-Windows"
-msgstr "LAN Manager/MS-Windows"
+#: ../www/prn_addwiz.cgi.perl:363
+msgid "What is the name of the printer on the remote print server?"
+msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:404
-msgid "LPR Interface: Choose an Address"
-msgstr "Interface LPR : choisissez une adresse"
+#: ../www/prn_addwiz.cgi.perl:390
+#, fuzzy
+msgid "PPR: Add a Printer: Interface Setup"
+msgstr "Configuration de l'interface"
 
-#: ../www/prn_properties.cgi.perl:318
-msgid "Limit Kilobytes"
-msgstr "Limite en kilooctets"
-
-#: ../www/prn_properties.cgi.perl:322
-msgid "Limit Pages"
-msgstr "Limites de pages"
-
-#: ../www/prn_properties.cgi.perl:314
-msgid "Limits"
-msgstr "Limites"
-
-#: ../www/prn_properties.cgi.perl:316
-msgid "Limits Enforced Before Printing"
-msgstr "Limites en place avant l'impression"
-
-#: ../www/prn_properties.cgi.perl:331
-msgid "Limits Enforced During Printing"
-msgstr "Limite en place durant l'impression"
-
-#: ../www/prn_addwiz.cgi.perl:613 ../www/prn_properties.cgi.perl:43
-msgid "Location:"
-msgstr "Emplacement :"
-
-#: ../www/job_modify.cgi.perl:181
-msgid "Log"
-msgstr "Trace"
-
-#: ../www/job_log.cgi.perl:40
-#, c-format
-msgid "Log for Job \"%s\""
-msgstr "Trace pour le travail \"%s\""
-
-#: ../www/login_cookie.cgi.perl:87
-msgid "Login"
-msgstr "Se logger"
-
-#: ../www/login_cookie.cgi.perl:121
-msgid "Logout"
-msgstr "Se délogger"
-
-#: ../www/prn_properties.cgi.perl:319 ../www/prn_properties.cgi.perl:323
-msgid "Lower limit:"
-msgstr "Limite inférieure :"
-
-#: ../www/show_queues.cgi.perl:161
-msgid "Many Details"
-msgstr "Beaucoup de détails"
-
-#: ../www/prn_media.cgi.perl:40
-#, c-format
-msgid "Media Mounted on Printer \"%s\""
-msgstr "Support monté sur l'imprimante \"%s\""
-
-#: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:81
-msgid "Members:"
-msgstr "Membres :"
-
-#: ../www/prn_properties.cgi.perl:453
-msgid "Monetary Charge for Printing on this Printer"
-msgstr "Coût monétaire pour imprimer sur cette imprimante"
-
-#: ../www/cgi_tabbed.pl:214
-msgid "More>>"
-msgstr "Plus>>"
-
-#: ../www/prn_control.cgi.perl:274 ../www/prn_control.cgi.perl:305
-msgid "Name:"
-msgstr "Nom :"
-
-#: ../www/commentary_select.cgi.perl:110 ../www/test_components.cgi.perl:108
-#: ../www/test_components.cgi.perl:109
-msgid "No"
-msgstr "Non"
-
-#: ../www/prn_properties.cgi.perl:161
-msgid "No PPD file is selected!"
-msgstr "Aucun fichier PPD n'est sélectionné !"
-
-#: ../www/prn_properties.cgi.perl:123
-msgid "No interface is selected!"
-msgstr "Aucune interface n'est sélectionnée !"
-
-#: ../www/prn_addwiz.cgi.perl:446
+#: ../www/prn_addwiz.cgi.perl:393
 #, c-format
 msgid ""
 "No special help is available for the interface called\n"
@@ -641,546 +1316,115 @@ msgstr ""
 "rapporter à la page de manuel de ppad(1) pour déterminer le format\n"
 "correct des valeurs des champs ci-dessous."
 
-#: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:81
-msgid "Non-Members:"
-msgstr "Non membres :"
+#: ../www/prn_addwiz.cgi.perl:399
+msgid "Enter Printer Address:"
+msgstr "Entrez l'adresse de l'imprimante :"
 
-#: ../www/prn_properties.cgi.perl:460
-msgid "Normal"
-msgstr "Normal"
+#: ../www/prn_addwiz.cgi.perl:403
+msgid "Enter Interface Options:"
+msgstr "Entrez les options de l'interface :"
 
-#: ../www/prn_addwiz.cgi.perl:625
-msgid "On Site Contact:"
-msgstr "Contact sur site :"
-
-#: ../www/prn_addwiz.cgi.perl:608
-msgid ""
-"On this screen you may record additional information\n"
-"about the printer for future reference."
+#: ../www/prn_addwiz.cgi.perl:407
+msgid "Do the Interface and Printer Support 2-Way Communication?"
 msgstr ""
-"Sur cet écran vous pouvez enregistrer des informations supplémentaires\n"
-"sur l'imprimante pour y revenir plus tard."
+"L'interface et l'imprimante supportent-elles les communications bi-"
+"directionnelles ?"
 
-#: ../www/prn_control.cgi.perl:281 ../www/prn_control.cgi.perl:316
-msgid "Operation:"
-msgstr "Opération :"
+#: ../www/prn_addwiz.cgi.perl:417
+msgid "Choose a Jobbreak Method:"
+msgstr "Choisissez une méthode de coupure de travail :"
 
-#: ../www/prn_properties.cgi.perl:173
-msgid "Optional printer features:"
-msgstr "Possibilités supplémentaires de l'imprimante :"
+#: ../www/prn_addwiz.cgi.perl:431
+msgid "You must enter an address for the printer!"
+msgstr "Vous devez entrer une adresse pour l'imprimante !"
 
-#: ../www/grp_properties.cgi.perl:127 ../www/prn_properties.cgi.perl:443
-msgid "Other"
-msgstr "Autre"
-
-#: ../www/prn_properties.cgi.perl:458
-msgid "Output order:"
-msgstr "Ordre de sortie :"
-
-#: ../www/grp_properties.cgi.perl:109 ../www/prn_properties.cgi.perl:296
-msgid "Override Win95 driver name:"
-msgstr "Surcharger le nom du pilote Win95 :"
-
-#: ../www/show_printlog.cgi.perl:140
-msgid "PJL Pages"
-msgstr "Pages PJL"
-
-#: ../www/prn_properties.cgi.perl:134 ../www/prn_properties.cgi.perl:462
-msgid "PPD"
-msgstr "PPD"
-
-#: ../www/prn_properties.cgi.perl:137
-msgid "PPD file:"
-msgstr "Fichier PPD :"
-
-#: ../www/grp_addwiz.cgi.perl:41
-msgid "PPR Group Queue Creation"
-msgstr "Création de la file de groupe PPR"
-
-#: ../www/login_cookie.cgi.perl:45
-msgid "PPR Login"
-msgstr "Login PPR"
-
-#: ../www/show_printlog.cgi.perl:50
-msgid "PPR Print Log"
-msgstr "Trace d'impression PPR"
-
-#: ../www/show_printlog.cgi.perl:48
-#, c-format
-msgid "PPR Print Log for Printer \"%s\""
-msgstr "Trace d'impression PPR pour l'imprimante \"%s\""
-
-#: ../www/show_printlog.cgi.perl:46
-#, c-format
-msgid "PPR Print Log for Queue \"%s\""
-msgstr "Trace d'impression PPR pour la file \"%s\""
-
-#: ../www/show_queues.cgi.perl:109
-#, c-format
-msgid "PPR Print Queues on \"%s\""
-msgstr "Files d'impression PPR sur \"%s\""
-
-#: ../www/commentary_select.cgi.perl:26
-msgid "PPR Printer Commentary Selection"
-msgstr "Sélection du commentaire d'imprimante PPR"
-
-#: ../www/prn_addwiz.cgi.perl:140
-msgid "PPR Printer Queue Creation"
-msgstr "Création de file d'impression PPR"
-
-#: ../www/show_log.cgi.perl:46
-#, c-format
-msgid "PPR log \"%s\""
-msgstr "Trace PPR \"%s\""
-
-#: ../www/test_components.cgi.perl:58
-msgid "PPR sound files"
-msgstr "Fichiers sonores PPR"
-
-#: ../www/grp_properties.cgi.perl:252
-#, c-format
-msgid "PPR: Group Properties: %s"
-msgstr "PPR : propriétés du groupe : %s"
-
-#: ../www/job_modify.cgi.perl:304
-#, c-format
-msgid "PPR: Modify Job: %s"
-msgstr "PPR : modification du travail : %s"
-
-#: ../www/prn_properties.cgi.perl:733
-#, c-format
-msgid "PPR: Printer Properties: %s"
+#: ../www/prn_addwiz.cgi.perl:449 ../www/prn_addwiz.cgi.perl:498
+#, fuzzy
+msgid "PPR: Add a Printer: Browse Printers"
 msgstr "PPR : propriétés de l'imprimante : %s"
 
-#: ../www/show_printlog.cgi.perl:140
-msgid "PS Bytes"
-msgstr "Octets PS"
-
-#: ../www/prn_control.cgi.perl:282 ../www/prn_control.cgi.perl:317
-msgid "Page clock:"
-msgstr "Horloge de page :"
-
-#: ../www/show_printlog.cgi.perl:139
-msgid "Pages"
-msgstr "Pages"
-
-#: ../www/prn_control.cgi.perl:390
-msgid "Pages Completed"
-msgstr "Pages terminées"
-
-#: ../www/prn_control.cgi.perl:391
-msgid "Pages Started"
-msgstr "Pages démarrées"
-
-#: ../www/prn_control.cgi.perl:392
-msgid "Pages Unstarted"
-msgstr "Pages non démarrées"
-
-#: ../www/prn_control.cgi.perl:295 ../www/prn_control.cgi.perl:338
-msgid "Pages completed:"
-msgstr "Pages terminées :"
-
-#: ../www/prn_control.cgi.perl:294 ../www/prn_control.cgi.perl:337
-msgid "Pages started:"
-msgstr "Pages démarrées :"
-
-#: ../www/grp_properties.cgi.perl:141
-msgid "Passthru Printer Languages:"
-msgstr "Langages d'impression directs :"
-
-#: ../www/prn_properties.cgi.perl:465
-msgid "Passthru printer languages:"
-msgstr "Langages d'impression directs :"
-
-#: ../www/login_cookie.cgi.perl:85
-msgid "Password:"
-msgstr "Mot de passe :"
-
-#: ../www/prn_properties.cgi.perl:454
-msgid "Per duplex sheet:"
-msgstr "Par feuille recto-verso :"
-
-#: ../www/prn_properties.cgi.perl:455
-msgid "Per simplex sheet:"
-msgstr "Par feuille recto :"
-
-#: ../www/prn_properties.cgi.perl:334
-msgid "Per-page time limit (in seconds):"
-msgstr "Limite de temps par page (en secondes) :"
-
-#: ../www/prn_control.cgi.perl:291 ../www/prn_control.cgi.perl:332
-msgid "Percent sent:"
-msgstr "Pourcentage envoyé :"
-
-#: ../www/test_components.cgi.perl:56
-msgid "Perl 5.005 or later"
-msgstr "Perl 5.005 ou supérieur"
-
-#: ../www/test_components.cgi.perl:60
-msgid "Perl Chart::PNGgraph module"
-msgstr "Module Perl Chart::PNGgraph"
-
-#: ../www/test_components.cgi.perl:59
-msgid "Perl GNU Gettext module"
-msgstr "Module Perl GNU Gettext"
-
-#: ../www/commentary_select.cgi.perl:113
-msgid "Player:"
-msgstr "Outil de lecture :"
-
-#: ../www/prn_addwiz.cgi.perl:284
-msgid "Please choose the printer you want to use from the list below."
+#: ../www/prn_addwiz.cgi.perl:456
+msgid "Zones Available for Browsing"
 msgstr ""
-"Veuillez choisir l'imprimante que vous désirez utiliser dans la liste "
-"ci-dessous."
 
-#: ../www/prn_addwiz.cgi.perl:246
-msgid "Please choose the zone which contains the printer you want to use."
+#: ../www/prn_addwiz.cgi.perl:485
+msgid "Up to a minute may be required to search some zones."
 msgstr ""
-"Veuillez choisir la zone contenant l'imprimante que vous désirez utiliser."
 
-#: ../www/prn_addwiz.cgi.perl:512
+#: ../www/prn_addwiz.cgi.perl:489
+#, fuzzy
+msgid "You must choose a zone!"
+msgstr "Vous devez d'abord choisir un fichier PPD !"
+
+#: ../www/prn_addwiz.cgi.perl:574
+#, c-format
+msgid "Printers Available in Zone %s %s"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:582
+#, c-format
+msgid ", Model: %s"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:586
+#, fuzzy, c-format
+msgid ", Location: %s"
+msgstr "Emplacement :"
+
+#: ../www/prn_addwiz.cgi.perl:617
+#, fuzzy
+msgid "You must choose a printer!"
+msgstr "Vous devez d'abord choisir un fichier PPD !"
+
+#: ../www/prn_addwiz.cgi.perl:636
+#, fuzzy
+msgid "PPR: Add a Printer: Choose a PPD File"
+msgstr "Choisissez un fichier PPD"
+
+#: ../www/prn_addwiz.cgi.perl:645
+#, fuzzy
 msgid ""
 "Please select a appropriate PostScript Printer\n"
-"Description (PPD) file for this printer:"
+"Description (PPD) file for this printer."
 msgstr ""
 "Veuillez sélectionner un fichier de description d'imprimante\n"
 "PostScript (PPD) convenable pour cette imprimante :"
 
-#: ../www/prn_addwiz.cgi.perl:159
-msgid ""
-"Please select an interface program.  PPR uses an interface\n"
-"program to communicate with the printer.  There is an\n"
-"interface program for each communication method.  The\n"
-"interfaces whose names begin with \"gs\" pass PostScript jobs\n"
-"through Ghostscript before sending them to the printer."
+#: ../www/prn_addwiz.cgi.perl:659 ../www/prn_properties.cgi.perl:187
+msgid "Auto detection failed."
 msgstr ""
-"Veuillez sélectionner un programme d'interface. PPR utilise un programme\n"
-"d'interface pour communiquer avec l'imprimante. Il y a un programme\n"
-"d'interface pour chaque méthode de communication. Les interfaces dont\n"
-"le nom commence par \"gs\" passent les travaux PostScript à Ghostscript\n"
-"avant de les envoyer à l'imprimante."
 
-#: ../www/prn_properties.cgi.perl:344
-msgid "PostScript Interpreter Userparams Settings:"
-msgstr "Paramètres Userparams de l'interpréteur PostScript :"
-
-#: ../www/test_components.cgi.perl:93
-msgid "Present?"
-msgstr "Présent ?"
-
-#: ../www/prn_properties.cgi.perl:448
-msgid "Print banner page"
-msgstr "Imprimer la bannière :"
-
-#: ../www/prn_properties.cgi.perl:450
-msgid "Print trailer page"
-msgstr "Imprimer la bannière de queue"
-
-#: ../www/show_printlog.cgi.perl:138
-msgid "Printer"
-msgstr "Imprimante"
-
-#: ../www/show_queues_nojs.cgi.perl:38
-#, c-format
-msgid "Printer \"%s\""
-msgstr "Imprimante \"%s\""
-
-#: ../www/show_queues_nojs.cgi.perl:63
-msgid "Printer Control"
-msgstr "Contrôle de l'imprimante"
-
-#: ../www/commentary_select.cgi.perl:78
-msgid "Printer Errors"
-msgstr "Erreurs de l'imprimante"
-
-#: ../www/prn_addwiz.cgi.perl:559
-msgid "Printer Name:"
-msgstr "Nom de l'imprimante :"
-
-#: ../www/show_queues_nojs.cgi.perl:64
-msgid "Printer Properties"
-msgstr "Propriétés de l'imprimante"
-
-#: ../www/commentary_select.cgi.perl:80
-msgid "Printer Stalled"
-msgstr "Imprimante bloquée"
-
-#: ../www/commentary_select.cgi.perl:79
-msgid "Printer Status"
-msgstr "État de l'imprimante"
-
-#: ../www/prn_properties.cgi.perl:78
-msgid "Printer address:"
-msgstr "Adresse de l'imprimante :"
-
-#: ../www/prn_properties.cgi.perl:75
-msgid "Printer interface program:"
-msgstr "Programme d'interface de l'imprimante :"
-
-#: ../www/prn_properties.cgi.perl:37
-msgid "Printer name:"
-msgstr "Nom de l'imprimante :"
-
-#: ../www/prn_control.cgi.perl:284 ../www/prn_control.cgi.perl:321
-msgid "Printer status:"
-msgstr "État de l'imprimante :"
-
-#: ../www/commentary_select.cgi.perl:134
-msgid "Printers to Monitor"
-msgstr "Imprimantes à surveiller :"
-
-#: ../www/commentary_select.cgi.perl:81
-msgid "Printing Attempt Results"
-msgstr "Résultats de tentatives d'impression"
-
-#: ../www/show_printlog.cgi.perl:139
-msgid "Printing Time"
-msgstr "Temps d'impression"
-
-#: ../www/show_queues_nojs.cgi.perl:65 ../www/show_queues_nojs.cgi.perl:74
-msgid "Printlog"
-msgstr "Trace d'impression"
-
-#: ../www/show_printlog.cgi.perl:138
-msgid "Proxy For"
-msgstr "Mandataire de"
-
-#: ../www/show_jobs.cgi.perl:138
-msgid "Queue Display Settings"
-msgstr "Paramètres d'affichage de la file"
-
-#: ../www/show_printlog.cgi.perl:139
-msgid "Queued Time"
-msgstr "Temps dans la file"
-
-#: ../www/prn_addwiz.cgi.perl:51
-msgid "RFC 1179 (lpr/lpd protocol)"
-msgstr "RFC 1179 (protocole lpr/lpd)"
-
-#: ../www/show_jobs.cgi.perl:454
-msgid "R_ush"
-msgstr "R_ush"
-
-#: ../www/prn_addwiz.cgi.perl:335
-msgid "Raw TCP/IP Interface: Choose an Address"
-msgstr "Interface TCP/IP directe : choisissez une adresse"
-
-#: ../www/show_queues.cgi.perl:178
-msgid "Refresh Interval:"
-msgstr "Intervalle de rafraîchissement :"
-
-#: ../www/show_jobs.cgi.perl:177
-msgid "Refresh interval (in seconds):"
-msgstr "Intervalle de rafraîchissement (en secondes) :"
-
-#: ../www/prn_addwiz.cgi.perl:419
-msgid "Remote Queue Name:"
-msgstr "Nom de la file distante :"
-
-#: ../www/login_cookie.cgi.perl:120
-msgid "Renew"
-msgstr "Renouveler"
-
-#: ../www/job_modify.cgi.perl:137
-msgid "Responder address:"
-msgstr "Adresse du répondeur :"
-
-#: ../www/job_modify.cgi.perl:126
-msgid "Responder method:"
-msgstr "Méthode de réponse :"
-
-#: ../www/job_modify.cgi.perl:138
-msgid "Responder options:"
-msgstr "Options du répondeur :"
-
-#: ../www/prn_control.cgi.perl:278 ../www/prn_control.cgi.perl:311
-msgid "Retry:"
-msgstr "Tentative à nouveau :"
-
-#: ../www/prn_properties.cgi.perl:461
-msgid "Reverse"
-msgstr "Inverse"
-
-#: ../www/grp_properties.cgi.perl:129
-msgid "Rotate Through Members:"
-msgstr "Rotation parmi les membres"
-
-#: ../www/grp_properties.cgi.perl:103 ../www/prn_properties.cgi.perl:290
-msgid "Samba"
-msgstr "Samba"
-
-#: ../www/prn_addwiz.cgi.perl:636
-msgid "Save New Printer"
-msgstr "Sauver la nouvelle imprimante"
-
-#: ../www/job_modify.cgi.perl:290
-msgid "Save changes to job:"
-msgstr "Sauver les modifications du travail :"
-
-#: ../www/grp_addwiz.cgi.perl:135
-msgid "Save the Group"
-msgstr "Sauver le groupe"
-
-#: ../www/grp_properties.cgi.perl:191
-msgid "Saving changes:"
-msgstr "Sauvegarde des modifications :"
-
-#: ../www/grp_addwiz.cgi.perl:140
-msgid "Saving new group:"
-msgstr "Sauvegarde du nouveau groupe :"
-
-#: ../www/prn_addwiz.cgi.perl:639
-msgid "Saving new printer:"
-msgstr "Sauvegarde de la nouvelle imprimante :"
-
-#: ../www/prn_addwiz.cgi.perl:151
-msgid "Select an Interface Program"
-msgstr "Choisissez un programme d'interface"
-
-#: ../www/prn_addwiz.cgi.perl:48
-msgid "Server Parallel Port"
-msgstr "Port parallèle du serveur"
-
-#: ../www/prn_addwiz.cgi.perl:47
-msgid "Server Serial Port"
-msgstr "Port série du serveur"
-
-#: ../www/commentary_select.cgi.perl:86
-msgid "Severity Threshold:"
-msgstr "Seuil de sévérité :"
-
-#: ../www/grp_properties.cgi.perl:106 ../www/prn_properties.cgi.perl:293
-msgid "Share with Samba (provided Samba is prepared)"
-msgstr "Partager avec Samba (à condition que Samba soit prêt)"
-
-#: ../www/show_queues.cgi.perl:220
-msgid "Show All Queues"
-msgstr "Montrer toutes les files"
-
-#: ../www/commentary_select.cgi.perl:108
-msgid "Silly Sounds:"
-msgstr "Sons débiles :"
-
-#: ../www/prn_addwiz.cgi.perl:50
-msgid "SocketAPI (JetDirect)"
-msgstr "SocketAPI (JetDirect)"
-
-#: ../www/job_modify.cgi.perl:108
-msgid "Special processing instructions:"
-msgstr "Instructions de traitement spécial :"
-
-#: ../www/show_printlog.cgi.perl:140
-msgid "Start Pages"
-msgstr "Pages de démarrage"
-
-#: ../www/prn_control.cgi.perl:111
-#, c-format
-msgid "Status of Printer \"%s\""
-msgstr "État de l'imprimante \"%s\""
-
-#: ../www/prn_control.cgi.perl:277 ../www/prn_control.cgi.perl:310
-msgid "Status:"
-msgstr "État :"
-
-#: ../www/prn_control.cgi.perl:424
-msgid "Sto_p"
-msgstr "Sto_p"
-
-#: ../www/job_modify.cgi.perl:84
-msgid "Submitted at:"
-msgstr "Soumis à :"
-
-#: ../www/job_modify.cgi.perl:152
-msgid "Submitted by Unix user:"
-msgstr "Soumis par l'utilisateur Unix :"
-
-#: ../www/job_modify.cgi.perl:83
-msgid "Submitted by:"
-msgstr "Soumis par :"
-
-#: ../www/job_modify.cgi.perl:151
-msgid "Submitter description:"
-msgstr "Description du soumetteur :"
-
-#: ../www/grp_properties.cgi.perl:89 ../www/prn_properties.cgi.perl:276
-msgid "Switchset"
-msgstr "Ensemble d'options"
-
-#: ../www/grp_properties.cgi.perl:91 ../www/prn_properties.cgi.perl:278
-msgid "Switchset:"
-msgstr "Ensemble d'options :"
-
-#: ../www/prn_properties.cgi.perl:117
-msgid "TBCP"
-msgstr "TBCP"
-
-#: ../www/prn_addwiz.cgi.perl:352
-msgid "TCP Port Number:"
-msgstr "Numéro de port TCP :"
-
-#: ../www/prn_properties.cgi.perl:125
-msgid "The Printer Address is blank!"
-msgstr "L'adresse de l'imprimante est vide !"
-
-#: ../www/delete_queue.cgi.perl:129
-msgid "The alias has been deleted."
-msgstr "L'alias a été supprimé."
-
-#: ../www/prn_properties.cgi.perl:469
-msgid "The charge per duplex sheet is not valid!"
-msgstr "Le coût par feuille recto-verso est invalide !"
-
-#: ../www/prn_properties.cgi.perl:471
-msgid "The charge per simplex sheet is not valid!"
-msgstr "Le coût par feuille recto est invalide !"
-
-#: ../www/docs_util.pl:51
-#, c-format
-msgid "The file \"%s\" is not within a recognized document directory.\n"
-msgstr "Le fichier \"%s\" n'est pas dans un répertoire de documents reconnu.\n"
-
-#: ../www/grp_addwiz.cgi.perl:59
-msgid "The group \"$data{name}\" already exists!"
-msgstr "Le groupe \"$data{name}\" existe déjà !"
-
-#: ../www/delete_queue.cgi.perl:127
-msgid "The group has been deleted."
-msgstr "Le groupe a été supprimé."
-
-#: ../www/grp_addwiz.cgi.perl:46
-msgid ""
-"The group must have a name.  The name may be up\n"
-"to 16 characters long.  Control codes, tildes, and spaces\n"
-"are not allowed.  Also, the first character may not be\n"
-"a period or a hyphen."
+#: ../www/prn_addwiz.cgi.perl:671 ../www/prn_properties.cgi.perl:200
+msgid "Suitable PPD Files:"
 msgstr ""
-"Le groupe doit avoir un nom. Ce nom peut faire jusqu'à\n"
-"16 caractères de long. Les codes de contrôle, tildes et espaces\n"
-"sont interdits. De plus, le premier caractère ne peut pas être\n"
-"un point ou un tiret."
 
-#: ../www/grp_addwiz.cgi.perl:101
-msgid "The group must have at least one member!"
-msgstr "Le groupe doit avoir au moins un membre !"
+#: ../www/prn_addwiz.cgi.perl:675 ../www/prn_properties.cgi.perl:204
+#, fuzzy
+msgid "All Available PPD Files:"
+msgstr "Imprimantes disponibles :"
 
-#: ../www/cgi_tabbed.pl:56
-msgid ""
-"The load function for this dialog failed with the following error message:"
+#: ../www/prn_addwiz.cgi.perl:711 ../www/prn_properties.cgi.perl:237
+msgid "Auto Detect"
 msgstr ""
-"La fonction de chargement de ce dialogue a échoué avec le message d'erreur "
-"suivant :"
 
-#: ../www/prn_addwiz.cgi.perl:567
-#, c-format
-msgid "The printer \"%s\" already exists!"
-msgstr "L'imprimante \"%s\" existe déjà !"
+#: ../www/prn_addwiz.cgi.perl:711 ../www/prn_properties.cgi.perl:237
+msgid "Automatically detect printer type and propose suitable PPD files."
+msgstr ""
 
-#: ../www/delete_queue.cgi.perl:125
-msgid "The printer has been deleted."
-msgstr "L'imprimante a été supprimée."
+#: ../www/prn_addwiz.cgi.perl:715
+#, fuzzy
+msgid "Show all PPD Files"
+msgstr "Choisissez un fichier PPD"
 
-#: ../www/prn_addwiz.cgi.perl:548
+#: ../www/prn_addwiz.cgi.perl:725
+msgid "You must choose a PPD file first!"
+msgstr "Vous devez d'abord choisir un fichier PPD !"
+
+#: ../www/prn_addwiz.cgi.perl:734
+msgid "PPR: Add a Printer: Name the Printer"
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:737
 msgid ""
 "The printer must have a name.  The name may be up\n"
 "to 16 characters long.  Control codes, tildes, and spaces\n"
@@ -1192,178 +1436,25 @@ msgstr ""
 "interdits. De plus, le premier caractère ne peut pas être un point\n"
 "ou un tiret."
 
-#: ../www/prn_addwiz.cgi.perl:416
-msgid ""
-"The remote queue name may be different from the local queue name.\n"
-"If so, change it below."
-msgstr ""
-"Le nom de file distante peut être différent du nom de file locale.\n"
-"Si c'est le cas, changez-le ci-dessous."
+#: ../www/prn_addwiz.cgi.perl:748 ../www/prn_properties.cgi.perl:51
+msgid "Printer Name:"
+msgstr "Nom de l'imprimante :"
 
-#: ../www/job_modify.cgi.perl:97
-msgid ""
-"This page contains instructions for a human printer operator.  Use this "
-"page\n"
-"when the printer is located in a central location such as a print shop."
-msgstr ""
-"Cette page contient des instrutions pour un opérateur d'imprimantes\n"
-"humains. Utilisez cette page quand l'imprimante est située dans un\n"
-"endroit central comme un atelier d'impression."
+#: ../www/prn_addwiz.cgi.perl:754
+msgid "You must enter a name for the printer!"
+msgstr "Vous devez entrer un nom pour l'imprimante !"
 
-#: ../www/job_modify.cgi.perl:121
-msgid ""
-"This page describes how the person who submitted the job will be notified\n"
-"when it has been printed or when a problem arises."
-msgstr ""
-"Cette page décrit comment la personne qui a soumis un travail sera avertie\n"
-"quand il a été imprimé ou quand un problème arrive."
-
-#: ../www/job_modify.cgi.perl:80
-msgid "This page gives general information about the print job."
-msgstr ""
-"Cette page donne des informations générales sur le travail d'impression."
-
-#: ../www/job_modify.cgi.perl:148
-msgid ""
-"This page gives precise and rather technical information about who entered\n"
-"the job in the queue and on behalf of whom."
-msgstr ""
-"Cette page donne des informations précises et plutôt techniques sur qui\n"
-"a introduit le travail dans la file et de la part de qui."
-
-#: ../www/job_modify.cgi.perl:184
-msgid ""
-"This page lists potential problems with this job.  If an attempt has "
-"already\n"
-"been made to print it and the PostScript code wrote to the stdout or the "
-"stderr\n"
-"of the PostScript interpreter, those messages may also appear here."
-msgstr ""
-"Cette page liste les problèmes potentiels avec ce travail. Si une tentative\n"
-"a déjà été faite pour l'imprimer et que le code PostScript a écrit sur la\n"
-"sortie ou l'erreur standard de l'interpréteur PostScript, ces messages "
-"peuvent aussi apparaître ici."
-
-#: ../www/grp_addwiz.cgi.perl:43
-msgid ""
-"This program will guide you through the process of\n"
-"setting up a group of printers in PPR."
-msgstr ""
-"Ce programme vous guidera dans le processus de configuration\n"
-"d'un groupe d'imprimantes dans PPR."
-
-#: ../www/prn_addwiz.cgi.perl:141
-msgid ""
-"This program will guide you through the process of setting up a printer in "
-"PPR."
-msgstr ""
-"Ce programme vous guidera dans le processus de configuration d'une "
-"imprimante dans PPR."
-
-# not very good
-#: ../www/docs_util.pl:32
-msgid ""
-"This script was invoked without any trailing path.  In other words,\n"
-"it should have been treated as if it were a subdirectory.\n"
-msgstr ""
-"Ce script a été lancé sans chemin attenant. En d'autres mots,\n"
-"il aurait dû être traité comme si c'était un sous-répertoire.\n"
-
-#: ../www/show_printlog.cgi.perl:138
-msgid "Time"
-msgstr "Temps"
-
-#: ../www/show_printlog.cgi.perl:141
-msgid "Title or Filename"
-msgstr "Titre ou nom de fichier"
-
-#: ../www/commentary_select.cgi.perl:129
-msgid ""
-"To limit the commentary to certain printers, check one or more or the boxes "
-"below."
-msgstr ""
-"Pour limiter le commentaire à certaines imprimantes, cochez une ou plusieurs "
-"cases ci-dessous."
-
-#: ../www/show_printlog.cgi.perl:139
-msgid "Total Sheets"
-msgstr "Nombre total de feuilles"
-
-#: ../www/show_printlog.cgi.perl:139
-msgid "Total Sides"
-msgstr "Nombre total de faces"
-
-#: ../www/prn_control.cgi.perl:289 ../www/prn_control.cgi.perl:330
-msgid "Total bytes:"
-msgstr "Nombre total d'octets :"
-
-#: ../www/prn_control.cgi.perl:293 ../www/prn_control.cgi.perl:336
-msgid "Total pages:"
-msgstr "Nombre total de pages :"
-
-#: ../www/prn_properties.cgi.perl:118
-msgid "UNKNOWN"
-msgstr "INCONNU"
-
-#: ../www/show_printlog.cgi.perl:138
-msgid "Unix User"
-msgstr "Utilisateur Unix"
-
-#: ../www/prn_properties.cgi.perl:320 ../www/prn_properties.cgi.perl:324
-msgid "Upper limit:"
-msgstr "Limite Supérieure :"
-
-#: ../www/login_cookie.cgi.perl:83
-msgid "Username:"
-msgstr "Nom d'utilisateur :"
-
-#: ../www/prn_properties.cgi.perl:342
-msgid "Userparams"
-msgstr "Userparams"
-
-#: ../www/show_queues_nojs.cgi.perl:57
-msgid "View Queue"
-msgstr "Voir la file"
-
-#: ../www/show_queues.cgi.perl:147
-msgid "View:"
-msgstr "Voir :"
-
-#: ../www/commentary_select.cgi.perl:101
-msgid "Voice:"
-msgstr "Voix :"
-
-#: ../www/prn_addwiz.cgi.perl:262
-msgid ""
-"When you press the [Next] button, the selected zone will\n"
-"be searched.  This will take about 10 seconds."
-msgstr ""
-"Quand vous pressez le bouton [Suivant], la zone sé]ectionnée\n"
-"sera recherchée. Ceci prendra environ 10 secondes."
-
-#: ../www/prn_addwiz.cgi.perl:611
-msgid "Where is the printer located?"
-msgstr "Où se trouve l'imprimante ?"
-
-#: ../www/prn_addwiz.cgi.perl:617
-msgid "Which department within your organization uses this printer?"
-msgstr "Quel service dans votre organisation se sert de cette imprimante ?"
-
-#: ../www/grp_addwiz.cgi.perl:113
+#: ../www/prn_addwiz.cgi.perl:756
 #, c-format
-msgid ""
-"While short group names are convient in certain contexts,\n"
-"it is sometimes helpful to have a longer, more informative\n"
-"description.  Please supply a longer description for\n"
-"\"%s\" below."
-msgstr ""
-"Bien que des noms de groupes courts soient intéressants dans certains "
-"contextes,\n"
-"il est parfois utile d'avoir une description plus longue, donnant plus\n"
-"d'informations. Veuillez donner une description plus longue pour\n"
-"\"%s\" ci-dessous."
+msgid "The printer \"%s\" already exists!"
+msgstr "L'imprimante \"%s\" existe déjà !"
 
-#: ../www/prn_addwiz.cgi.perl:579
+#: ../www/prn_addwiz.cgi.perl:765
+#, fuzzy
+msgid "PPR: Add a Printer: Describe the Printer"
+msgstr "Décrivez l'imprimante"
+
+#: ../www/prn_addwiz.cgi.perl:768
 #, c-format
 msgid ""
 "While short printer names are convenient in certain contexts,\n"
@@ -1377,282 +1468,1361 @@ msgstr ""
 "d'informations. Veuillez donner une description plus longue pour\n"
 "\"%s\" ci-dessous."
 
-#: ../www/prn_addwiz.cgi.perl:623
+#: ../www/prn_addwiz.cgi.perl:794
+#, fuzzy
+msgid "PPR: Add a Printer: Additional Information"
+msgstr "Informations supplémentaires"
+
+#: ../www/prn_addwiz.cgi.perl:797
 msgid ""
-"Whom should the print server's system administrator contact to discuss "
+"On this screen you may record additional information\n"
+"about the printer for future reference."
+msgstr ""
+"Sur cet écran vous pouvez enregistrer des informations supplémentaires\n"
+"sur l'imprimante pour y revenir plus tard."
+
+#: ../www/prn_addwiz.cgi.perl:800
+msgid "Where is the printer located?"
+msgstr "Où se trouve l'imprimante ?"
+
+#: ../www/prn_addwiz.cgi.perl:802 ../www/prn_properties.cgi.perl:57
+msgid "Location:"
+msgstr "Emplacement :"
+
+#: ../www/prn_addwiz.cgi.perl:806
+msgid "Which department within your organization uses this printer?"
+msgstr "Quel service dans votre organisation se sert de cette imprimante ?"
+
+#: ../www/prn_addwiz.cgi.perl:808 ../www/prn_properties.cgi.perl:60
+msgid "Department:"
+msgstr "Service :"
+
+#: ../www/prn_addwiz.cgi.perl:812
+#, fuzzy
+msgid ""
+"What is the name of a user with whom system administrator should discuss "
 "problems with the printer?"
 msgstr ""
 "Quelle personne doit contacter l'administrateur système du serveur "
 "d'impressions pour discuter des problèmes avec l'imprimante ?"
 
-#: ../www/commentary_select.cgi.perl:109 ../www/test_components.cgi.perl:108
-#: ../www/test_components.cgi.perl:109
-msgid "Yes"
-msgstr "Oui"
+#: ../www/prn_addwiz.cgi.perl:814
+msgid "On Site Contact:"
+msgstr "Contact sur site :"
 
-#: ../www/login_cookie.cgi.perl:136
+#: ../www/prn_addwiz.cgi.perl:825
+msgid "Save New Printer"
+msgstr "Sauver la nouvelle imprimante"
+
+#: ../www/prn_addwiz.cgi.perl:829
+msgid "Saving new printer:"
+msgstr "Sauvegarde de la nouvelle imprimante :"
+
+#: ../www/prn_control.cgi.perl:84
 #, c-format
-msgid ""
-"You are already logged in as user \"%s\" using authentication method \"%s\"."
-msgstr "Vous êtes déja authentifié en tant qu'utilisateur \"%s\" avec la méthode d'authentification \"%s\"."
+msgid "Status of Printer \"%s\""
+msgstr "État de l'imprimante \"%s\""
 
-#: ../www/login_cookie.cgi.perl:116
+#: ../www/prn_control.cgi.perl:142
 #, c-format
+msgid "Can't [%s] printer \"%s\" for the following reason:"
+msgstr "Impossible de [%s] l'imprimante \"%s\" pour la raison suivante :"
+
+#: ../www/prn_control.cgi.perl:255
+msgid "Name:"
+msgstr "Nom :"
+
+#: ../www/prn_control.cgi.perl:260
+msgid "Status:"
+msgstr "État :"
+
+#: ../www/prn_control.cgi.perl:261
+msgid "Retry:"
+msgstr "Tentative à nouveau :"
+
+#: ../www/prn_control.cgi.perl:262
+msgid "Countdown:"
+msgstr "Décompte :"
+
+#: ../www/prn_control.cgi.perl:266
+msgid "Operation:"
+msgstr "Opération :"
+
+#: ../www/prn_control.cgi.perl:267
+msgid "Page clock:"
+msgstr "Horloge de page :"
+
+#: ../www/prn_control.cgi.perl:271
+msgid "Printer status:"
+msgstr "État de l'imprimante :"
+
+#: ../www/prn_control.cgi.perl:275
+msgid "Current job:"
+msgstr "Travail en cours :"
+
+#: ../www/prn_control.cgi.perl:276
+msgid "For:"
+msgstr "Pour :"
+
+#: ../www/prn_control.cgi.perl:280
+msgid "Total bytes:"
+msgstr "Nombre total d'octets :"
+
+#: ../www/prn_control.cgi.perl:281
+msgid "Bytes sent:"
+msgstr "Octets envoyés :"
+
+#: ../www/prn_control.cgi.perl:282
+msgid "Percent sent:"
+msgstr "Pourcentage envoyé :"
+
+#: ../www/prn_control.cgi.perl:286
+msgid "Total pages:"
+msgstr "Nombre total de pages :"
+
+#: ../www/prn_control.cgi.perl:287
+msgid "Pages started:"
+msgstr "Pages démarrées :"
+
+#: ../www/prn_control.cgi.perl:288
+msgid "Pages completed:"
+msgstr "Pages terminées :"
+
+#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:172
+msgid "Bytes Sent"
+msgstr "Octets Envoyés"
+
+#: ../www/prn_control.cgi.perl:307
+msgid "Bytes Unsent"
+msgstr "Octets Non Envoyés"
+
+#: ../www/prn_control.cgi.perl:338
+msgid "Pages Completed"
+msgstr "Pages terminées"
+
+#: ../www/prn_control.cgi.perl:339
+msgid "Pages Started"
+msgstr "Pages démarrées"
+
+#: ../www/prn_control.cgi.perl:340
+msgid "Pages Unstarted"
+msgstr "Pages non démarrées"
+
+#: ../www/prn_control.cgi.perl:356
+msgid "Alert Messages:"
+msgstr "Messages d'alerte :"
+
+#: ../www/prn_control.cgi.perl:370
+#, fuzzy
+msgid "Start the printer."
+msgstr "Sauvegarde de la nouvelle imprimante :"
+
+#: ../www/prn_control.cgi.perl:370
+msgid "_Start"
+msgstr "_Démarrer"
+
+#: ../www/prn_control.cgi.perl:372
+msgid "Sto_p"
+msgstr "Sto_p"
+
+#: ../www/prn_control.cgi.perl:372
+msgid "Stop the printer after current job."
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:374
+msgid "Stop the printer imediately."
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:374
+msgid "_Halt"
+msgstr "_Stopper"
+
+#: ../www/prn_control.cgi.perl:376
+#, fuzzy
+msgid "Media"
+msgstr "_Support"
+
+#: ../www/prn_control.cgi.perl:377
+msgid "Change the media mounted on the printer's input trays."
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:379
+msgid "_Refresh"
+msgstr "_Rafraîchir"
+
+#: ../www/prn_control.cgi.perl:465
+msgid "fault"
+msgstr "panne"
+
+#: ../www/prn_control.cgi.perl:467
+msgid "fault, no auto retry"
+msgstr "panne, pas de tentative automatique"
+
+#: ../www/prn_control.cgi.perl:473
+msgid "offline"
+msgstr "hors ligne"
+
+#: ../www/prn_control.cgi.perl:475
+msgid "otherwise engaged or offline"
+msgstr "déjà occupée ou hors ligne"
+
+#: ../www/prn_control.cgi.perl:480
+msgid "idle"
+msgstr "inactif"
+
+#: ../www/prn_control.cgi.perl:485
+msgid "stopt"
+msgstr "arrêtée"
+
+#: ../www/prn_media.cgi.perl:51
+#, c-format
+msgid "Media Mounted on Printer \"%s\""
+msgstr "Support monté sur l'imprimante \"%s\""
+
+#: ../www/prn_media.cgi.perl:214 ../www/cgi_tabbed.pl:380
+#, fuzzy
+msgid "Save changes."
+msgstr "Sauvegarde des modifications :"
+
+#: ../www/prn_media.cgi.perl:214
+msgid "_Apply"
+msgstr "_Appliquer"
+
+#: ../www/prn_properties.cgi.perl:63
+msgid "Contact:"
+msgstr "Contact :"
+
+#: ../www/prn_properties.cgi.perl:71
+msgid "Interface"
+msgstr "Interface"
+
+#: ../www/prn_properties.cgi.perl:85
+msgid "Printer interface program:"
+msgstr "Programme d'interface de l'imprimante :"
+
+#: ../www/prn_properties.cgi.perl:89
+msgid "Printer address:"
+msgstr "Adresse de l'imprimante :"
+
+#: ../www/prn_properties.cgi.perl:93
+msgid "Interface options:"
+msgstr "Options de l'interface :"
+
+#: ../www/prn_properties.cgi.perl:97
+msgid "Does feedback (2-way communication) work?"
+msgstr "Le retour (communication bi-directionnelle) fonctionne-t-il ?"
+
+#: ../www/prn_properties.cgi.perl:99 ../www/prn_properties.cgi.perl:115
+#: ../www/prn_properties.cgi.perl:128
+msgid "default"
+msgstr "défaut"
+
+#: ../www/prn_properties.cgi.perl:113
+msgid "Jobbreak method:"
+msgstr "Méthode de coupure de travail :"
+
+#: ../www/prn_properties.cgi.perl:116
+msgid "control-d"
+msgstr "contrôle-d"
+
+#: ../www/prn_properties.cgi.perl:117
+msgid "pjl"
+msgstr "pjl"
+
+#: ../www/prn_properties.cgi.perl:118
+msgid "signal"
+msgstr "signal"
+
+#: ../www/prn_properties.cgi.perl:119
+msgid "signal/pjl"
+msgstr "signal/pjl"
+
+#: ../www/prn_properties.cgi.perl:120
+msgid "newinterface"
+msgstr "nouvelle interface"
+
+#: ../www/prn_properties.cgi.perl:121
+msgid "none"
+msgstr "aucun"
+
+#: ../www/prn_properties.cgi.perl:122
+msgid "save/restore"
+msgstr "sauver/restaurer"
+
+#: ../www/prn_properties.cgi.perl:126
+msgid "Character code compatibility:"
+msgstr "Compatibilité du jeu de caractère :"
+
+#: ../www/prn_properties.cgi.perl:129
+msgid "Clean7Bit"
+msgstr "Clean7Bit"
+
+#: ../www/prn_properties.cgi.perl:130
+msgid "Clean8Bit"
+msgstr "Clean8Bit"
+
+#: ../www/prn_properties.cgi.perl:131
+msgid "Binary"
+msgstr "Binaire"
+
+#: ../www/prn_properties.cgi.perl:132
+msgid "TBCP"
+msgstr "TBCP"
+
+#: ../www/prn_properties.cgi.perl:133
+msgid "UNKNOWN"
+msgstr "INCONNU"
+
+#: ../www/prn_properties.cgi.perl:138
+msgid "No interface is selected!"
+msgstr "Aucune interface n'est sélectionnée !"
+
+#: ../www/prn_properties.cgi.perl:140
+msgid "The Printer Address is blank!"
+msgstr "L'adresse de l'imprimante est vide !"
+
+#: ../www/prn_properties.cgi.perl:149 ../www/prn_properties.cgi.perl:706
+msgid "PPD"
+msgstr "PPD"
+
+#: ../www/prn_properties.cgi.perl:173
+#, fuzzy
+msgid "Current PPD File:"
+msgstr "Choisissez un fichier PPD"
+
+#: ../www/prn_properties.cgi.perl:241
+#, fuzzy
+msgid "Show All PPD Files"
+msgstr "Choisissez un fichier PPD"
+
+#: ../www/prn_properties.cgi.perl:251
+msgid "No PPD file is selected!"
+msgstr "Aucun fichier PPD n'est sélectionné !"
+
+#: ../www/prn_properties.cgi.perl:260 ../www/ppd_select.pl:169
+msgid "RIP"
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:278
+#, fuzzy
+msgid "From PPD File"
+msgstr "Choisissez un fichier PPD"
+
+#: ../www/prn_properties.cgi.perl:284
+msgid "The PPD file does not call for a raster image processor."
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:289 ../www/prn_properties.cgi.perl:307
+msgid "Raster Image Processor:"
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:291 ../www/prn_properties.cgi.perl:312
+#, fuzzy
+msgid "Output Language:"
+msgstr "Ordre de sortie :"
+
+#: ../www/prn_properties.cgi.perl:293 ../www/prn_properties.cgi.perl:317
+#, fuzzy
+msgid "Options:"
+msgstr "Opération :"
+
+#: ../www/prn_properties.cgi.perl:326
+msgid "Incomplete custom RIP settings."
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:349
+msgid "Features"
+msgstr "Possibilités"
+
+#: ../www/prn_properties.cgi.perl:352
+msgid "Optional printer features:"
+msgstr "Possibilités supplémentaires de l'imprimante :"
+
+#: ../www/prn_properties.cgi.perl:398
+msgid "Bins"
+msgstr "Bacs"
+
+#: ../www/prn_properties.cgi.perl:401
+msgid "Bins for forms management purposes:"
+msgstr "Bacs à des fins de gestion des formulaires :"
+
+#: ../www/prn_properties.cgi.perl:413
+#, c-format
+msgid "%s -- %s"
+msgstr "%s -- %s"
+
+#: ../www/prn_properties.cgi.perl:420
+msgid " (not listed in PPD file)"
+msgstr " (non listé dans le fichier PPD)"
+
+#: ../www/prn_properties.cgi.perl:430
+msgid "Alerts"
+msgstr "Alertes"
+
+#: ../www/prn_properties.cgi.perl:434
+msgid "Alert method:"
+msgstr "Méthode d'alerte :"
+
+#: ../www/prn_properties.cgi.perl:436
+msgid "mail"
+msgstr "courrier"
+
+#: ../www/prn_properties.cgi.perl:439
+msgid "Alert frequency:"
+msgstr "Fréquence d'alerte :"
+
+#: ../www/prn_properties.cgi.perl:441 ../www/prn_properties.cgi.perl:687
+msgid "never"
+msgstr "jamais"
+
+#: ../www/prn_properties.cgi.perl:442
+msgid "after"
+msgstr "après"
+
+#: ../www/prn_properties.cgi.perl:443
+msgid "every"
+msgstr "chaque"
+
+#: ../www/prn_properties.cgi.perl:445
+msgid "errors"
+msgstr "erreurs"
+
+#: ../www/prn_properties.cgi.perl:448
+msgid "Alert address:"
+msgstr "Adresse d'alerte :"
+
+#: ../www/prn_properties.cgi.perl:476
+msgid "Share with Samba"
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:544
+msgid "Limits"
+msgstr "Limites"
+
+#: ../www/prn_properties.cgi.perl:548
+msgid "Limits Enforced Before Printing"
+msgstr "Limites en place avant l'impression"
+
+#: ../www/prn_properties.cgi.perl:550
+msgid "Limit Kilobytes"
+msgstr "Limite en kilooctets"
+
+#: ../www/prn_properties.cgi.perl:551 ../www/prn_properties.cgi.perl:556
+msgid "Lower limit:"
+msgstr "Limite inférieure :"
+
+#: ../www/prn_properties.cgi.perl:552 ../www/prn_properties.cgi.perl:557
+msgid "Upper limit:"
+msgstr "Limite Supérieure :"
+
+#: ../www/prn_properties.cgi.perl:555
+msgid "Limit Pages"
+msgstr "Limites de pages"
+
+#: ../www/prn_properties.cgi.perl:561
+msgid "Grayscale documents OK:"
+msgstr "Documents en niveaux de gris OK :"
+
+#: ../www/prn_properties.cgi.perl:567
+msgid "Limits Enforced During Printing"
+msgstr "Limite en place durant l'impression"
+
+#: ../www/prn_properties.cgi.perl:570
+msgid "Per-page time limit (in seconds):"
+msgstr "Limite de temps par page (en secondes) :"
+
+#: ../www/prn_properties.cgi.perl:581
+msgid "Userparams"
+msgstr "Userparams"
+
+#: ../www/prn_properties.cgi.perl:584
+msgid "PostScript Interpreter Userparams Settings:"
+msgstr "Paramètres Userparams de l'interpréteur PostScript :"
+
+#: ../www/prn_properties.cgi.perl:687
+msgid "always"
+msgstr "toujours"
+
+#: ../www/prn_properties.cgi.perl:689
+msgid "Print banner page"
+msgstr "Imprimer la bannière :"
+
+#: ../www/prn_properties.cgi.perl:691
+msgid "Print trailer page"
+msgstr "Imprimer la bannière de queue"
+
+#: ../www/prn_properties.cgi.perl:696
+msgid "Monetary Charge for Printing on this Printer"
+msgstr "Coût monétaire pour imprimer sur cette imprimante"
+
+#: ../www/prn_properties.cgi.perl:697
+msgid "Per duplex sheet:"
+msgstr "Par feuille recto-verso :"
+
+#: ../www/prn_properties.cgi.perl:698
+msgid "Per simplex sheet:"
+msgstr "Par feuille recto :"
+
+#: ../www/prn_properties.cgi.perl:702
+msgid "Output order:"
+msgstr "Ordre de sortie :"
+
+#: ../www/prn_properties.cgi.perl:704
+msgid "Normal"
+msgstr "Normal"
+
+#: ../www/prn_properties.cgi.perl:705
+msgid "Reverse"
+msgstr "Inverse"
+
+#: ../www/prn_properties.cgi.perl:710
+msgid "Passthru printer languages:"
+msgstr "Langages d'impression directs :"
+
+#: ../www/prn_properties.cgi.perl:715
+msgid "The charge per duplex sheet is not valid!"
+msgstr "Le coût par feuille recto-verso est invalide !"
+
+#: ../www/prn_properties.cgi.perl:717
+msgid "The charge per simplex sheet is not valid!"
+msgstr "Le coût par feuille recto est invalide !"
+
+#: ../www/prn_properties.cgi.perl:719
 msgid ""
-"You are logged in as \"%s\".  Leave this window open to remain logged in.\n"
-"If you close this window without logging out, you will be automatically "
-"logged\n"
-"out after %d seconds.\n"
+"Both the duplex charge and the simplex charge must be set or neither must be "
+"set!"
 msgstr ""
-"Vous êtes authentifié en tant que \"%s\". Laissez cette fenêtre ouverte pour\n"
-"rester authentifié. Si vous fermez cette fenêtre sans vous déconnecter, vous\n"
-"le serez automatiquement au bout de %d secondes.\n"
+"Les coûts pour le recto-verso et pour le recto seul doivent être positionnés "
+"tous les deux ou bien aucun des deux !"
 
-#: ../www/prn_addwiz.cgi.perl:536
-msgid "You must choose a PPD file first!"
-msgstr "Vous devez d'abord choisir un fichier PPD !"
-
-#: ../www/prn_addwiz.cgi.perl:267
-msgid "You must choose a zone before you may proceed!"
-msgstr "Vous devez choisir une zone avant de pouvoir continuer !"
-
-#: ../www/grp_addwiz.cgi.perl:57
-msgid "You must enter a name for the group!"
-msgstr "Vous devez entrer un nom pour le groupe !"
-
-#: ../www/prn_addwiz.cgi.perl:565
-msgid "You must enter a name for the printer!"
-msgstr "Vous devez entrer un nom pour l'imprimante !"
-
-#: ../www/prn_addwiz.cgi.perl:484
-msgid "You must enter an address for the printer!"
-msgstr "Vous devez entrer une adresse pour l'imprimante !"
-
-#: ../www/prn_addwiz.cgi.perl:388
-msgid "You must fill in the TCP port number!"
-msgstr "Vous devez remplir le numéro de port TCP !"
-
-#: ../www/prn_addwiz.cgi.perl:386
-msgid "You must fill in the printer's DNS name or IP address!"
-msgstr "Vous devez renseigner le nom DNS ou l'adresse IP de l'imprimante !"
-
-#: ../www/prn_addwiz.cgi.perl:425
-msgid "You must fill in the remote host's DNS name or IP address!"
-msgstr "Vous devez renseigner le nom DNS ou l'adresse IP de l'hôte distant !"
-
-#: ../www/prn_addwiz.cgi.perl:427
-msgid "You must fill in the remote queue name!"
-msgstr "Vous devez renseigner le nom de la file distante !"
-
-#: ../www/show_jobs.cgi.perl:288
-msgid "You must select a destination queue before pressing [Move]."
+#: ../www/prn_properties.cgi.perl:1155
+msgid "There were no changes to save."
 msgstr ""
-"Vous devez choisir une file de destination avant de presser [Déplacement]."
 
-#: ../www/prn_addwiz.cgi.perl:314
-msgid "You must select a printer before you can proceed!"
-msgstr "Vous devez choisir une imprimante avant de pouvoir continuer !"
+#: ../www/prn_properties.cgi.perl:1159
+#, fuzzy
+msgid "The changes have been saved."
+msgstr "L'alias a été supprimé."
 
-#: ../www/prn_addwiz.cgi.perl:190
-msgid "You must select an interface!"
-msgstr "Vous devez choisir une interface !"
+#: ../www/prn_properties.cgi.perl:1184
+#, c-format
+msgid "PPR: Printer Properties: %s"
+msgstr "PPR : propriétés de l'imprimante : %s"
 
-#: ../www/show_jobs.cgi.perl:280
+#: ../www/prn_testpage.cgi.perl:72 ../www/prn_testpage.cgi.perl:118
+#: ../www/prn_testpage.cgi.perl:129
+#, fuzzy
+msgid "PPR Print Test Page"
+msgstr "Trace d'impression PPR"
+
+#: ../www/prn_testpage.cgi.perl:75
+msgid ""
+"To print a PPR test page, select the desired options below\n"
+"and press [Print]."
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:81
+#, fuzzy
+msgid "Page Size:"
+msgstr "Pages démarrées"
+
+#: ../www/prn_testpage.cgi.perl:88
+#, fuzzy
+msgid "Image:"
+msgstr "Coût :"
+
+#: ../www/prn_testpage.cgi.perl:92
+msgid "Color Space Test Patterns"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:94
+msgid "Grayscale"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:97
+msgid "RGB"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:100
+msgid "CMYK"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:105
+msgid "Other Test Patterns"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:107
+msgid "Spoked Wheel"
+msgstr ""
+
+#: ../www/prn_testpage.cgi.perl:111
+#, fuzzy
+msgid "_Print"
+msgstr "Imprimante"
+
+#: ../www/qquery_xlate.pl:43
+msgid "Friendly Form of the Job ID"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:44
+msgid "Elaborate, Fully Qualified Form of the Job ID"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:46
+#, fuzzy
+msgid "Status of the Job"
+msgstr "État de l'imprimante \"%s\""
+
+#: ../www/qquery_xlate.pl:47
+msgid "Elaboration on Status of the Job"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:48
+msgid "Status of the Job with Elaboration"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:50
+msgid "Job Submission Time, Compact"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:51
+msgid "Job Submission Time, Full"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:53
+msgid "Whose Job is This?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:54
+msgid "Unix Username of Job Submitter"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:55
+msgid "Numberic Unix Userid of Job Submitter"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:56
+msgid "For Whom is the Submitter Acting as Proxy?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:58
+msgid "What Was the Name of the Input File?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:59
+#, fuzzy
+msgid "Descriptive Job Title"
+msgstr "Description :"
+
+#: ../www/qquery_xlate.pl:60
+msgid "Person or Application that Created the Job"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:61
+msgid "Instructions to a Human Operator for Delivery of the Output"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:63
+msgid "Number of PostScript Page Descriptions"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:64
+#, fuzzy
+msgid "Pages x Copies"
+msgstr "Pages terminées"
+
+#: ../www/qquery_xlate.pl:65
+msgid "Number of Copies to be Printed"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:66
+msgid "Will the Copies be Collated?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:67
+msgid "PostScript Page Descriptions Per Sheet"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:68
+msgid "Number of Logical Pages Per Physical Page"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:69
+msgid "Print Borders Around Logical Pages in N-Up Mode?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:70
+msgid "How Many Sheets Per Signiture?  (For Booklet Printing.)"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:71
+msgid "The Fronts, the Backs, or Both"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:72
+msgid "Total Page Descriptions for All Copies"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:73
+msgid "Total Medium Sides to be Marked (after N-Up)"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:74
+msgid "Total Medium Sheets to be Used"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:76
+msgid "Current Queue Priority of this Job"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:77
+msgid "Original Queue Priority of this Job"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:79
+msgid "Was a Banner Page Requested?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:80
+msgid "Was a Trailer Page Requested?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:82
+msgid "Size of Input File Before Conversion to PostScript"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:83
+msgid "Size of Input File After Conversion to PostScript"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:85
+msgid "Does this Document have a DSC Prolog?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:86
+msgid "Does this Document have a DSC Document Setup Section?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:87
+msgid "Does this Document have a DSC Script?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:89
+msgid "DSC Proofmode Setting"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:90
+msgid "Portrait or Landscape"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:91
+msgid "Message to Print Diagonally Across Each Page"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:92
+msgid "Are the Pages in Ascending or Descending Order in the Input File?"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:133
+#, fuzzy
+msgid "Move"
+msgstr "Plus>>"
+
+#: ../www/show_jobs.cgi.perl:134
+#, fuzzy
+msgid "Delete"
+msgstr "Supression du groupe"
+
+#: ../www/show_jobs.cgi.perl:135
+#, fuzzy
+msgid "Rush"
+msgstr "R_ush"
+
+#: ../www/show_jobs.cgi.perl:136
+#, fuzzy
+msgid "Hold"
+msgstr "_Stopper"
+
+#: ../www/show_jobs.cgi.perl:137
+#, fuzzy
+msgid "Release"
+msgstr "_Relâcher"
+
+#: ../www/show_jobs.cgi.perl:138 ../www/show_jobs.cgi.perl:395
+#: ../www/show_jobs.cgi.perl:415 ../www/show_queues.cgi.perl:194
+#: ../www/show_queues.cgi.perl:214
+#, fuzzy
+msgid "Refresh"
+msgstr "_Rafraîchir"
+
+#: ../www/show_jobs.cgi.perl:139
+#, fuzzy
+msgid "Done"
+msgstr "aucun"
+
+#: ../www/show_jobs.cgi.perl:262
+msgid "Queue Display Settings"
+msgstr "Paramètres d'affichage de la file"
+
+#: ../www/show_jobs.cgi.perl:343
+#, c-format
+msgid "Jobs Queued for \"%s\" on \"%s\""
+msgstr "Travaux en attente pour \"%s\" sur \"%s\""
+
+#: ../www/show_jobs.cgi.perl:381 ../www/show_queues.cgi.perl:180
+#, c-format
+msgid "Every %d seconds"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:384 ../www/show_queues.cgi.perl:186
+#, fuzzy
+msgid "File"
+msgstr "inactif"
+
+#: ../www/show_jobs.cgi.perl:390 ../www/show_jobs.cgi.perl:410
+#: ../www/show_queues.cgi.perl:190
+#, fuzzy
+msgid "View"
+msgstr "Voir :"
+
+#: ../www/show_jobs.cgi.perl:391
+msgid "Preferences"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:396 ../www/show_queues.cgi.perl:195
+#, fuzzy
+msgid "Now"
+msgstr "Non"
+
+#: ../www/show_jobs.cgi.perl:411 ../www/show_queues.cgi.perl:210
+msgid "Refresh Interval:"
+msgstr "Intervalle de rafraîchissement :"
+
+#: ../www/show_jobs.cgi.perl:412 ../www/show_queues.cgi.perl:211
+msgid "This page will be reloaded at the indicated interval (in seconds)."
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:479
 #, c-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr "Vous devez choisir un ou plusieurs travaux avant de presser [%s]."
 
-#: ../www/grp_addwiz.cgi.perl:125 ../www/prn_addwiz.cgi.perl:596
-msgid "You must supply a description!"
-msgstr "Vous devez fournir une description !"
+#: ../www/show_jobs.cgi.perl:487
+msgid "You must select a destination queue before pressing [Move]."
+msgstr ""
+"Vous devez choisir une file de destination avant de presser [Déplacement]."
 
-#: ../www/job_modify.cgi.perl:101
-msgid "Your department:"
-msgstr "Votre service :"
-
-#: ../www/job_modify.cgi.perl:100
-msgid "Your name:"
-msgstr "Votre nom :"
-
-#: ../www/job_modify.cgi.perl:102
-msgid "Your telephone number:"
-msgstr "Votre numéro de téléphone :"
-
-#: ../www/cgi_auth.pl:25
-msgid ""
-"Your web browser failed to validate your username and password using an MD5 "
-"Digest as defined "
-msgstr "Votre navigateur n'a pas réussi à valider votre nom utilisateur et votre mot de passe à l'aide d'un Digest MD5 comme défini "
-
-#: ../www/show_jobs.cgi.perl:312
+#: ../www/show_jobs.cgi.perl:513
 #, c-format
-msgid "[%s] failed for the following reason:"
-msgstr "[%s] a échoué pour la raison suivante :"
+msgid "[%s] Failed"
+msgstr ""
 
-#: ../www/prn_media.cgi.perl:160
-msgid "_Apply"
-msgstr "_Appliquer"
+#: ../www/show_jobs.cgi.perl:545
+msgid ""
+"This table has one row for each print job.  The left hand column has\n"
+"a checkbox for each print job.  Elsewhere on the page there are\n"
+"buttons which act on all checked jobs.  The other columns display\n"
+"information about each print job.  There may be blank rows at the\n"
+"end of the table."
+msgstr ""
 
-#: ../www/cgi_wizard.pl:268 ../www/grp_addwiz.cgi.perl:128
-#: ../www/prn_addwiz.cgi.perl:629
-msgid "_Back"
-msgstr "_Retour"
+#: ../www/show_jobs.cgi.perl:597
+#, c-format
+msgid "Job \"%s\""
+msgstr "Travail \"%s\""
 
-#: ../www/cgi_tabbed.pl:284 ../www/cgi_wizard.pl:268
-#: ../www/grp_addwiz.cgi.perl:62 ../www/grp_addwiz.cgi.perl:128
-#: ../www/prn_addwiz.cgi.perl:143 ../www/prn_addwiz.cgi.perl:629
-#: ../www/show_jobs.cgi.perl:453
-msgid "_Cancel"
-msgstr "_Annuler"
+#: ../www/show_jobs.cgi.perl:673
+msgid "Cancel selected jobs."
+msgstr ""
 
-#: ../www/cgi_tabbed.pl:280 ../www/grp_addwiz.cgi.perl:153
-#: ../www/prn_addwiz.cgi.perl:663 ../www/prn_control.cgi.perl:434
-#: ../www/prn_media.cgi.perl:159 ../www/show_queues.cgi.perl:198
-msgid "_Close"
-msgstr "_Fermer"
+#: ../www/show_jobs.cgi.perl:673
+#, fuzzy
+msgid "_Delete"
+msgstr "_Relâcher"
 
-#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:629
-msgid "_Finish"
-msgstr "_Finir"
+#: ../www/show_jobs.cgi.perl:674
+msgid "Move selected jobs to the front of the queue."
+msgstr ""
 
-#: ../www/prn_control.cgi.perl:426
-msgid "_Halt"
-msgstr "_Stopper"
+#: ../www/show_jobs.cgi.perl:674
+msgid "R_ush"
+msgstr "R_ush"
 
-#: ../www/show_jobs.cgi.perl:455
+#: ../www/show_jobs.cgi.perl:675
+msgid "Place selected jobs in the held state so that they won't print."
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:675
 msgid "_Hold"
 msgstr "_Stopper"
 
-#: ../www/show_jobs.cgi.perl:458
-msgid "_Log"
-msgstr "Trace"
+#: ../www/show_jobs.cgi.perl:676
+msgid "Release selected jobs which are held."
+msgstr ""
 
-#: ../www/prn_control.cgi.perl:428
-msgid "_Media"
-msgstr "_Support"
-
-#: ../www/show_jobs.cgi.perl:457
-msgid "_Modify"
-msgstr "_Modifier"
-
-#: ../www/cgi_wizard.pl:268 ../www/grp_addwiz.cgi.perl:62
-#: ../www/prn_addwiz.cgi.perl:143
-msgid "_Next"
-msgstr "_Suivant"
-
-#: ../www/prn_control.cgi.perl:432
-msgid "_Refresh"
-msgstr "_Rafraîchir"
-
-#: ../www/show_jobs.cgi.perl:456
+#: ../www/show_jobs.cgi.perl:676
 msgid "_Release"
 msgstr "_Relâcher"
 
-#: ../www/cgi_tabbed.pl:285
-msgid "_Save"
-msgstr "_Sauvegarder"
+#: ../www/show_jobs.cgi.perl:677
+msgid "Open windows in which to modify selected jobs."
+msgstr ""
 
-#: ../www/prn_control.cgi.perl:422
-msgid "_Start"
-msgstr "_Démarrer"
+#: ../www/show_jobs.cgi.perl:677
+msgid "_Modify"
+msgstr "_Modifier"
 
-#: ../www/prn_properties.cgi.perl:262
-msgid "after"
-msgstr "après"
+#: ../www/show_jobs.cgi.perl:678
+msgid "Display log files of selected jobs."
+msgstr ""
 
-#: ../www/prn_properties.cgi.perl:446
-msgid "always"
-msgstr "toujours"
+#: ../www/show_jobs.cgi.perl:678
+msgid "_Log"
+msgstr "Trace"
 
-#: ../www/prn_properties.cgi.perl:102
-msgid "control-d"
-msgstr "contrôle-d"
+#: ../www/show_log.cgi.perl:61
+#, c-format
+msgid "PPR log \"%s\""
+msgstr "Trace PPR \"%s\""
 
-#: ../www/prn_properties.cgi.perl:86 ../www/prn_properties.cgi.perl:101
-#: ../www/prn_properties.cgi.perl:113
-msgid "default"
-msgstr "défaut"
+#: ../www/show_printlog.cgi.perl:62
+#, c-format
+msgid "PPR Print Log for Queue \"%s\""
+msgstr "Trace d'impression PPR pour la file \"%s\""
 
-#: ../www/prn_properties.cgi.perl:265
-msgid "errors"
-msgstr "erreurs"
+#: ../www/show_printlog.cgi.perl:64
+#, c-format
+msgid "PPR Print Log for Printer \"%s\""
+msgstr "Trace d'impression PPR pour l'imprimante \"%s\""
 
-#: ../www/prn_properties.cgi.perl:263
-msgid "every"
-msgstr "chaque"
+#: ../www/show_printlog.cgi.perl:66
+msgid "PPR Print Log"
+msgstr "Trace d'impression PPR"
 
-#: ../www/prn_control.cgi.perl:38
-msgid "fault"
-msgstr "panne"
+#: ../www/show_printlog.cgi.perl:104
+#, c-format
+msgid ""
+"Print job logging is disabled.  To enable it, create the file \"%s\"\n"
+"and make sure the user \"%s\" can write to it.\n"
+msgstr ""
 
-#: ../www/prn_control.cgi.perl:40
-msgid "fault, no auto retry"
-msgstr "panne, pas de tentative automatique"
+#: ../www/show_printlog.cgi.perl:109
+#, fuzzy, c-format
+msgid "Can't open log file \"%s\", %s\n"
+msgstr "Impossible d'ouvrir le fichier de trace : %s\n"
 
-#: ../www/prn_control.cgi.perl:53
-msgid "idle"
-msgstr "inactif"
+#: ../www/show_printlog.cgi.perl:170
+msgid "For"
+msgstr "Pour"
 
-#: ../www/prn_properties.cgi.perl:256
-msgid "mail"
-msgstr "courrier"
+#: ../www/show_printlog.cgi.perl:170
+msgid "Job ID"
+msgstr "ID du travail"
 
-#: ../www/prn_properties.cgi.perl:261 ../www/prn_properties.cgi.perl:446
-msgid "never"
-msgstr "jamais"
+#: ../www/show_printlog.cgi.perl:170
+msgid "Printer"
+msgstr "Imprimante"
 
-#: ../www/prn_properties.cgi.perl:106
-msgid "newinterface"
-msgstr "nouvelle interface"
+#: ../www/show_printlog.cgi.perl:170
+msgid "Proxy For"
+msgstr "Mandataire de"
 
-#: ../www/grp_properties.cgi.perl:132 ../www/prn_properties.cgi.perl:86
-#: ../www/prn_properties.cgi.perl:327 ../www/prn_properties.cgi.perl:446
-msgid "no"
-msgstr "non"
+#: ../www/show_printlog.cgi.perl:170
+msgid "Time"
+msgstr "Temps"
 
-#: ../www/prn_properties.cgi.perl:107
-msgid "none"
-msgstr "aucun"
+#: ../www/show_printlog.cgi.perl:170
+msgid "Unix User"
+msgstr "Utilisateur Unix"
 
-#: ../www/prn_control.cgi.perl:46
-msgid "offline"
-msgstr "hors ligne"
+#: ../www/show_printlog.cgi.perl:171
+msgid "Pages"
+msgstr "Pages"
 
-#: ../www/prn_control.cgi.perl:48
-msgid "otherwise engaged or offline"
-msgstr "déjà occupée ou hors ligne"
+#: ../www/show_printlog.cgi.perl:171
+msgid "Printing Time"
+msgstr "Temps d'impression"
 
-#: ../www/prn_properties.cgi.perl:103
-msgid "pjl"
-msgstr "pjl"
+#: ../www/show_printlog.cgi.perl:171
+msgid "Queued Time"
+msgstr "Temps dans la file"
 
-#: ../www/prn_properties.cgi.perl:108
-msgid "save/restore"
-msgstr "sauver/restaurer"
+#: ../www/show_printlog.cgi.perl:171
+msgid "Total Sheets"
+msgstr "Nombre total de feuilles"
 
-#: ../www/prn_properties.cgi.perl:104
-msgid "signal"
-msgstr "signal"
+#: ../www/show_printlog.cgi.perl:171
+msgid "Total Sides"
+msgstr "Nombre total de faces"
 
-#: ../www/prn_properties.cgi.perl:105
-msgid "signal/pjl"
-msgstr "signal/pjl"
+#: ../www/show_printlog.cgi.perl:172
+msgid "Charge"
+msgstr "Coût"
 
-#: ../www/prn_control.cgi.perl:58
-msgid "stopt"
-msgstr "arrêtée"
+#: ../www/show_printlog.cgi.perl:172
+msgid "Increment"
+msgstr "Incrément"
 
-#: ../www/grp_properties.cgi.perl:132 ../www/prn_properties.cgi.perl:86
-#: ../www/prn_properties.cgi.perl:327 ../www/prn_properties.cgi.perl:446
-msgid "yes"
-msgstr "oui"
+#: ../www/show_printlog.cgi.perl:172
+msgid "PJL Pages"
+msgstr "Pages PJL"
+
+#: ../www/show_printlog.cgi.perl:172
+msgid "PS Bytes"
+msgstr "Octets PS"
+
+#: ../www/show_printlog.cgi.perl:172
+msgid "Start Pages"
+msgstr "Pages de démarrage"
+
+#: ../www/show_printlog.cgi.perl:173
+msgid "Title or Filename"
+msgstr "Titre ou nom de fichier"
+
+#: ../www/show_queues.cgi.perl:125
+#, c-format
+msgid "PPR Print Queues on \"%s\""
+msgstr "Files d'impression PPR sur \"%s\""
+
+#: ../www/show_queues.cgi.perl:168
+msgid "Free Flow"
+msgstr "Débit libre"
+
+#: ../www/show_queues.cgi.perl:169
+msgid "Details"
+msgstr "Détails"
+
+#: ../www/show_queues.cgi.perl:170
+msgid "Many Details"
+msgstr "Beaucoup de détails"
+
+#: ../www/show_queues.cgi.perl:174
+#, c-format
+msgid "%d Columns"
+msgstr "%d Colonnes"
+
+#: ../www/show_queues.cgi.perl:209
+msgid "Choose the display format."
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:209
+msgid "View:"
+msgstr "Voir :"
+
+#: ../www/show_queues.cgi.perl:214
+msgid "Refresh the page right now."
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:215 ../www/cgi_widgets.pl:198
+msgid "Cookie Login"
+msgstr "Login par cookie"
+
+#: ../www/show_queues.cgi.perl:215 ../www/cgi_widgets.pl:199
+msgid "Use this if your browser doesn't support Digest authentication."
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:236
+msgid "Show All Queues"
+msgstr "Montrer toutes les files"
+
+#: ../www/show_queues.cgi.perl:238
+msgid "Click here to open a window which will show all queued jobs."
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:241
+msgid "Add New Printer"
+msgstr "Ajout d'une nouvelle imprimante"
+
+#: ../www/show_queues.cgi.perl:243
+#, fuzzy
+msgid ""
+"Click here and you will be guided through the process of adding a new "
+"printer."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration d'une "
+"imprimante dans PPR."
+
+#: ../www/show_queues.cgi.perl:246
+msgid "Add New Group"
+msgstr "Ajout d'un nouveau groupe"
+
+#: ../www/show_queues.cgi.perl:248
+#, fuzzy
+msgid ""
+"Click here and you will be guided through the process of adding a new group "
+"of printers."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration\n"
+"d'un groupe d'imprimantes dans PPR."
+
+#: ../www/show_queues.cgi.perl:251
+#, fuzzy
+msgid "Add New Alias"
+msgstr "Ajout d'une nouvelle imprimante"
+
+#: ../www/show_queues.cgi.perl:253
+#, fuzzy
+msgid ""
+"Click here and you will be guided through the process of adding a new alias."
+msgstr ""
+"Ce programme vous guidera dans le processus de configuration d'une "
+"imprimante dans PPR."
+
+#: ../www/show_queues.cgi.perl:462
+#, fuzzy
+msgid "-- No Description --"
+msgstr "Description :"
+
+#: ../www/show_queues.cgi.perl:536 ../www/show_queues.cgi.perl:563
+msgid "View Queue"
+msgstr "Voir la file"
+
+#: ../www/show_queues.cgi.perl:539
+msgid "Printer Control"
+msgstr "Contrôle de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:542
+msgid "Printer Properties"
+msgstr "Propriétés de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:545
+#, fuzzy
+msgid "Test Page"
+msgstr "Page de bannière"
+
+#: ../www/show_queues.cgi.perl:548 ../www/show_queues.cgi.perl:572
+#: ../www/show_queues.cgi.perl:590
+msgid "Client Configuration"
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:551 ../www/show_queues.cgi.perl:575
+msgid "Printlog"
+msgstr "Trace d'impression"
+
+#: ../www/show_queues.cgi.perl:554
+msgid "Delete Printer"
+msgstr "Suppression de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:566
+#, fuzzy
+msgid "Member Printer Control"
+msgstr "Contrôle de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:569
+msgid "Group Properties"
+msgstr "Propriétés du groupe"
+
+#: ../www/show_queues.cgi.perl:578
+msgid "Delete Group"
+msgstr "Supression du groupe"
+
+#: ../www/show_queues.cgi.perl:587
+#, fuzzy
+msgid "Alias Properties"
+msgstr "Propriétés de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:593
+#, fuzzy
+msgid "Delete Alias"
+msgstr "Supprime l'alias \"%s\""
+
+#: ../www/test_components.cgi.perl:46
+msgid "PPR sound files"
+msgstr "Fichiers sonores PPR"
+
+#: ../www/test_components.cgi.perl:53
+msgid "Perl 5.005 or later"
+msgstr "Perl 5.005 ou supérieur"
+
+#: ../www/test_components.cgi.perl:62
+msgid "Perl GNU Gettext module"
+msgstr "Module Perl GNU Gettext"
+
+#: ../www/test_components.cgi.perl:69
+#, fuzzy
+msgid "Perl Tk module"
+msgstr "Module Perl MD5"
+
+#: ../www/test_components.cgi.perl:76
+msgid "PPR-GS Ghostscript distribution"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:82
+msgid "Other Ghostscript distribution"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:88 ../www/test_components.cgi.perl:95
+msgid "IJS Gimp Print drivers"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:102
+msgid "NetPBM image converters"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:108
+msgid "Groff"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:114
+msgid "HTMLDOC"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:120
+msgid "Acroread"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:126
+msgid "JPEG utilities"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:174
+msgid "Inventory of Packages Which PPR can Use"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:206
+msgid "Component"
+msgstr "Composant"
+
+#: ../www/test_components.cgi.perl:206
+msgid "Debian Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:206
+msgid "Present?"
+msgstr "Présent ?"
+
+#: ../www/test_components.cgi.perl:206
+msgid "Redhat Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:206
+msgid "Role"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:206
+msgid "Source Download"
+msgstr ""
+
+#~ msgid "AppleTalk Interface: Choose a Printer"
+#~ msgstr "Interface AppleTalk : choisissez une imprimante"
+
+#~ msgid "AppleTalk Interface: Choose a Zone"
+#~ msgstr "Interface AppleTalk : choisissez une zone"
+
+#~ msgid "AppleTalk Zones:"
+#~ msgstr "Zones AppleTalk :"
+
+#~ msgid "Are Required Packages Present?"
+#~ msgstr "Les paquets nécessaires sont-ils présents ?"
+
+#~ msgid "Critical?"
+#~ msgstr "Critique ?"
+
+#~ msgid "GS & LANMAN"
+#~ msgstr "GS & LANMAN"
+
+#~ msgid "GS & PAP"
+#~ msgstr "GS & PAP"
+
+#~ msgid "GS & Server Parallel Port"
+#~ msgstr "GS & port parallèle du serveur"
+
+#~ msgid "GS & Server Serial Port"
+#~ msgstr "GS & port série du serveur"
+
+#~ msgid "GS & lpr/lpd"
+#~ msgstr "GS & lpr/lpd"
+
+#~ msgid "Group \"%s\""
+#~ msgstr "Groupe \"%s\""
+
+#~ msgid ""
+#~ "HP JetDirect cards accept jobs on TCP port 9100.\n"
+#~ "With some other equipment, the port number the printer\n"
+#~ "accepts jobs on can be changed but is 9100 when they\n"
+#~ "come from the factory."
+#~ msgstr ""
+#~ "Les cartes HP JetDirect acceptent les travaux sur le port TCP 9100.\n"
+#~ "Avec un autre matériel, on peut modifier le numéro de port sur lequel\n"
+#~ "l'imprimante accepte les travaux mais c'est 9100 quand elles viennent\n"
+#~ "de l'usine."
+
+#~ msgid ""
+#~ "If your browser supports JavaScript, Cookies, and Frames, then click on "
+#~ "the \"Cookie Login\" button"
+#~ msgstr ""
+#~ "Si votre navigateur reconnaît JavaScript, les cookies et les cadres, "
+#~ "cliquez\n"
+#~ "sur le bouton \"Login par cookies\""
+
+#~ msgid ""
+#~ "If your server is running Linux and the web browser is running on the "
+#~ "server, try connecting"
+#~ msgstr ""
+#~ "Si votre serveur fonctionne sous Linux et le navigateur fonctionne sur\n"
+#~ "le serveur, essayez de vous connecter"
+
+#~ msgid "Job Actions: "
+#~ msgstr "Actions du travail : "
+
+#~ msgid "Perl Chart::PNGgraph module"
+#~ msgstr "Module Perl Chart::PNGgraph"
+
+#~ msgid "Please choose the zone which contains the printer you want to use."
+#~ msgstr ""
+#~ "Veuillez choisir la zone contenant l'imprimante que vous désirez utiliser."
+
+#~ msgid "Printer \"%s\""
+#~ msgstr "Imprimante \"%s\""
+
+#~ msgid "Printer name:"
+#~ msgstr "Nom de l'imprimante :"
+
+#~ msgid "RFC 1179 (lpr/lpd protocol)"
+#~ msgstr "RFC 1179 (protocole lpr/lpd)"
+
+#~ msgid "Refresh interval (in seconds):"
+#~ msgstr "Intervalle de rafraîchissement (en secondes) :"
+
+#~ msgid "SocketAPI (JetDirect)"
+#~ msgstr "SocketAPI (JetDirect)"
+
+#~ msgid "The group \"$data{name}\" already exists!"
+#~ msgstr "Le groupe \"$data{name}\" existe déjà !"
+
+#~ msgid ""
+#~ "The remote queue name may be different from the local queue name.\n"
+#~ "If so, change it below."
+#~ msgstr ""
+#~ "Le nom de file distante peut être différent du nom de file locale.\n"
+#~ "Si c'est le cas, changez-le ci-dessous."
+
+#~ msgid ""
+#~ "When you press the [Next] button, the selected zone will\n"
+#~ "be searched.  This will take about 10 seconds."
+#~ msgstr ""
+#~ "Quand vous pressez le bouton [Suivant], la zone sé]ectionnée\n"
+#~ "sera recherchée. Ceci prendra environ 10 secondes."
+
+#~ msgid "You must choose a zone before you may proceed!"
+#~ msgstr "Vous devez choisir une zone avant de pouvoir continuer !"
+
+#~ msgid "You must select a printer before you can proceed!"
+#~ msgstr "Vous devez choisir une imprimante avant de pouvoir continuer !"
+
+#~ msgid ""
+#~ "Your web browser failed to validate your username and password using an "
+#~ "MD5 Digest as defined "
+#~ msgstr ""
+#~ "Votre navigateur n'a pas réussi à valider votre nom utilisateur et votre "
+#~ "mot de passe à l'aide d'un Digest MD5 comme défini "
+
+#~ msgid "[%s] failed for the following reason:"
+#~ msgstr "[%s] a échoué pour la raison suivante :"
 
 #, fuzzy
 #~ msgid "Failed to open the file \"%s\", %s"
 #~ msgstr "Échec de l'ouverture du fichier \"%s\", %s"
-
-#~ msgid "Perl MD5 module"
-#~ msgstr "Module Perl MD5"
 
 #~ msgid "Printer Errors (including updates)"
 #~ msgstr "Erreurs de l'imprimante (avec les mises à jour)"
@@ -1668,12 +2838,6 @@ msgstr "oui"
 
 #~ msgid "Printing Attempt Results (including normal)"
 #~ msgstr "Résultats de tentatives d'impression (avec les normales)"
-
-#~ msgid "Banner Page"
-#~ msgstr "Page de bannière"
-
-#~ msgid "Charge:"
-#~ msgstr "Coût :"
 
 #~ msgid "UPP (JetDirect protocol)"
 #~ msgstr "UPP (protocole JetDirect)"

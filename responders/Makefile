@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2005.
+# Last modified 29 March 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-RESPONDERS=write netsend mail samba xwin pprpopup audio audio_flite
+RESPONDERS=write netsend mail samba xwin audio audio_flite
 
 LIBPROGS=ppr-respond$(DOTEXE)
 

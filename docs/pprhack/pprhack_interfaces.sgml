@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_interfaces.sgml
-Last Modified: 20 January 2005
+Last Modified: 29 March 2005
 Last Proofread: never
 -->
 
@@ -79,7 +79,7 @@ values.  These values are defined symbolically in the C include file
 <filename>interface.sh</filename>.</para>
 
 <para>The order to some of the parameters between 7 and 11 inclusive changed
-with <program>PPR</program> 2.00.  Also, the name and semantics of what is now
+with <application>PPR</application> 2.00.  Also, the name and semantics of what is now
 parameter number 7 changed slightly.</para>  
 
 <sect3>

@@ -111,7 +111,7 @@ int translate_snmp_error(int bit, const char **description, const char **raw1, i
 			*severity = 6;
 			break;
 		case 14:						/* 0x00004000 */
-			*description = N("overdue for preventative maintainance");
+			*description = N_("overdue for preventative maintainance");
 			*raw1 = "overduePreventMaint";
 			*severity = 2;
 			break;
@@ -170,7 +170,7 @@ int translate_snmp_status(int device_status, int printer_status, const char **me
 			*severity = 1;
 			break;
 		case 4:
-			*message = N("busy");
+			*message = N_("busy");
 			raw1b = "printing(4)";
 			*severity = 2;
 			break;

@@ -1,24 +1,23 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# PPR Utilities Messages in French
+# Copyright (C) 2001 Olivier Tharan
+# Olivier Tharan <olive@betty.minet.net>, 2001.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-03-29 21:23-0500\n"
-"PO-Revision-Date: 2004-03-02 20:05-0500\n"
-"Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
-"Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
+"PO-Revision-Date: 2001-01-02 12:00+GMT\n"
+"Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
+"Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=koi8-r\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
 #: ../papd/papd.c:397
 #, c-format
 msgid "%s: not running\n"
-msgstr "%s: програма не выпускаема\n"
+msgstr ""
 
 #: ../papd/papd.c:407
 #, c-format
@@ -28,22 +27,21 @@ msgstr ""
 #: ../papd/papd.c:411
 #, c-format
 msgid "Sending %s to %s (PID=%ld).\n"
-msgstr "Посылаем %s програме %s (PID=%ld).\n"
+msgstr ""
 
 #: ../papd/papd.c:434
 #, c-format
 msgid "Waiting while %s shuts down..."
-msgstr "Здём пока %s не остановется..."
-
+msgstr ""
 #: ../papd/papd.c:443
 #, c-format
 msgid "Shutdown complete.\n"
-msgstr "Остановлен.\n"
+msgstr ""
 
 #: ../papd/papd.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
-msgstr "%s(): opendir(\"%s\") не успаел, errno=%d (%s)"
+msgstr ""
 
 #: ../papd/papd.c:559
 #, c-format
@@ -55,9 +53,10 @@ msgstr ""
 #: ../papd/papd_conf.c:312
 #, c-format
 msgid "%s(): opendir(\"%s\") failed, errno=%d (%s)"
-msgstr "%s(): opendir(\"%s\") не успаел, errno=%d (%s)"
+msgstr ""
 
 #: ../papd/papd_printjob.c:102
-#, fuzzy, c-format
+#, c-format
 msgid "%s(): fork() failed, errno=%d (%s)"
-msgstr "%s(): opendir(\"%s\") не успаел, errno=%d (%s)"
+msgstr ""
+

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 29 March 2005.
 */
 
 /*
@@ -1928,8 +1928,8 @@ int real_main(int argc, char *argv[])
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
 	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_PPRDRV, LOCALEDIR);
-	textdomain(PACKAGE_PPRDRV);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 	#endif
 
 	/* Should we run in test mode? */

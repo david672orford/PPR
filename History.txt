@@ -9671,6 +9671,8 @@ no final tarball was released.
 * consolidated libscript/speach_response.pl and speach_commentary.pl 
   into responders/audio.perl.
 
+* responders/audio_flite.tcl: added
+
 
 
 

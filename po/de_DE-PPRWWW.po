@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-21 18:11+0200\n"
+"POT-Creation-Date: 2005-03-29 21:23-0500\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -20,8 +20,8 @@ msgstr ""
 msgid "About PPR"
 msgstr "Über PPR"
 
-#: ../www/about.cgi.perl:95 ../www/login_cookie.cgi.perl:87
-#: ../www/login_cookie.cgi.perl:141 ../www/show_jobs.cgi.perl:416
+#: ../www/about.cgi.perl:95 ../www/login_cookie.cgi.perl:102
+#: ../www/login_cookie.cgi.perl:156 ../www/show_jobs.cgi.perl:416
 msgid "Close"
 msgstr "Schließen"
 
@@ -189,17 +189,17 @@ msgid "Printer or group for which \"%s\" is an alias:"
 msgstr "Drucker oder Gruppe, für die \"%s\" ein Alias ist:"
 
 #: ../www/alias_properties.cgi.perl:100 ../www/grp_properties.cgi.perl:102
-#: ../www/prn_properties.cgi.perl:454
+#: ../www/prn_properties.cgi.perl:456
 msgid "Switchset"
 msgstr "Satz von Optionen"
 
 #: ../www/alias_properties.cgi.perl:102 ../www/grp_properties.cgi.perl:104
-#: ../www/prn_properties.cgi.perl:457
+#: ../www/prn_properties.cgi.perl:459
 msgid "Switchset:"
 msgstr "Satz von Optionen:"
 
 #: ../www/alias_properties.cgi.perl:114 ../www/grp_properties.cgi.perl:116
-#: ../www/prn_properties.cgi.perl:469
+#: ../www/prn_properties.cgi.perl:471
 msgid "Samba"
 msgstr "Samba"
 
@@ -210,22 +210,22 @@ msgstr ""
 "vorbereitet)"
 
 #: ../www/alias_properties.cgi.perl:122 ../www/grp_properties.cgi.perl:124
-#: ../www/prn_properties.cgi.perl:478
+#: ../www/prn_properties.cgi.perl:480
 msgid "Prototype Share:"
 msgstr "Druckerfreigabenprotoyp:"
 
 #: ../www/alias_properties.cgi.perl:128 ../www/grp_properties.cgi.perl:130
-#: ../www/prn_properties.cgi.perl:484
+#: ../www/prn_properties.cgi.perl:486
 msgid "Override Win95 driver name:"
 msgstr "Win95 Treibernamen übergehen:"
 
 #: ../www/alias_properties.cgi.perl:132 ../www/grp_properties.cgi.perl:134
-#: ../www/prn_properties.cgi.perl:488
+#: ../www/prn_properties.cgi.perl:490
 msgid "Assign to virtual server (Samba setup required):"
 msgstr "mit virtuellem Server verknüpfen (Samba Setup wird benötigt)"
 
 #: ../www/alias_properties.cgi.perl:139 ../www/grp_properties.cgi.perl:141
-#: ../www/prn_properties.cgi.perl:495
+#: ../www/prn_properties.cgi.perl:497
 msgid ""
 "Note that if the Samba configuration file smb.conf has not been edited as "
 "described in\n"
@@ -237,22 +237,22 @@ msgstr ""
 "Effekt haben werden"
 
 #: ../www/alias_properties.cgi.perl:154 ../www/grp_properties.cgi.perl:156
-#: ../www/prn_properties.cgi.perl:510
+#: ../www/prn_properties.cgi.perl:512
 msgid "AppleTalk"
 msgstr "AppleTalk"
 
 #: ../www/alias_properties.cgi.perl:161 ../www/grp_properties.cgi.perl:163
-#: ../www/prn_properties.cgi.perl:517
+#: ../www/prn_properties.cgi.perl:519
 msgid "Share with AppleTalk PAP"
 msgstr "in AppleTalk PAP zur Verfügung stellen"
 
 #: ../www/alias_properties.cgi.perl:165 ../www/grp_properties.cgi.perl:167
-#: ../www/prn_properties.cgi.perl:521
+#: ../www/prn_properties.cgi.perl:523
 msgid "Share As:"
 msgstr "Freigabename:"
 
 #: ../www/alias_properties.cgi.perl:186 ../www/grp_properties.cgi.perl:188
-#: ../www/prn_properties.cgi.perl:681
+#: ../www/prn_properties.cgi.perl:683
 msgid "Other"
 msgstr "Anderes"
 
@@ -697,15 +697,15 @@ msgstr "Ausführung von df fehlgeschlagen (%s)"
 msgid "Error while closing pipe from df (%s)"
 msgstr "Fehler beim Schließen der Weiterleitung von df (%s)"
 
-#: ../www/docs_cat.cgi.perl:54 ../www/docs_plain.cgi.perl:52
+#: ../www/docs_cat.cgi.perl:69 ../www/docs_plain.cgi.perl:67
 msgid "Can't Display File"
 msgstr "Kann Datei nicht anzeigen"
 
-#: ../www/docs_info.cgi.perl:533 ../www/docs_info.cgi.perl:540
+#: ../www/docs_info.cgi.perl:553 ../www/docs_info.cgi.perl:560
 msgid "Error: "
 msgstr "Fehler: "
 
-#: ../www/docs_info.cgi.perl:540
+#: ../www/docs_info.cgi.perl:560
 msgid "Can't Display Info Document"
 msgstr "Kann Info nicht anzeigen"
 
@@ -717,7 +717,7 @@ msgstr "Verfügbare Manualseiten"
 msgid "Can't Display Manpage"
 msgstr "Kan Manualseite nicht anzeigen"
 
-#: ../www/docs_man.cgi.perl:215 ../www/docs_plain.cgi.perl:95
+#: ../www/docs_man.cgi.perl:215 ../www/docs_plain.cgi.perl:110
 msgid "Error:"
 msgstr "Fehler:"
 
@@ -726,7 +726,7 @@ msgstr "Fehler:"
 msgid "Section %s"
 msgstr "Abschnitt %s"
 
-#: ../www/docs_rpm.cgi.perl:32
+#: ../www/docs_rpm.cgi.perl:47
 #, c-format
 msgid "Documentation for RPM Package %s"
 msgstr "Dokumentation für RPM-Paket %s"
@@ -834,12 +834,12 @@ msgid "Rotate Through Members:"
 msgstr "unter Mitgliedern rotieren:"
 
 #: ../www/grp_properties.cgi.perl:193 ../www/prn_properties.cgi.perl:99
-#: ../www/prn_properties.cgi.perl:559 ../www/prn_properties.cgi.perl:685
+#: ../www/prn_properties.cgi.perl:561 ../www/prn_properties.cgi.perl:687
 msgid "no"
 msgstr "nein"
 
 #: ../www/grp_properties.cgi.perl:193 ../www/prn_properties.cgi.perl:99
-#: ../www/prn_properties.cgi.perl:559 ../www/prn_properties.cgi.perl:685
+#: ../www/prn_properties.cgi.perl:561 ../www/prn_properties.cgi.perl:687
 msgid "yes"
 msgstr "ja"
 
@@ -848,12 +848,12 @@ msgstr "ja"
 msgid "PPR: Group Properties: %s"
 msgstr "PPR: Gruppeneigenschaften: %s"
 
-#: ../www/job_log.cgi.perl:40
+#: ../www/job_log.cgi.perl:55
 #, c-format
 msgid "Log for Job \"%s\""
 msgstr "Log für Auftrag \"%s\""
 
-#: ../www/job_log.cgi.perl:86 ../www/show_log.cgi.perl:101
+#: ../www/job_log.cgi.perl:101 ../www/show_log.cgi.perl:101
 #, c-format
 msgid "Can't read log file: %s"
 msgstr "Kann Logdatei nicht lesen: %s"
@@ -1005,27 +1005,27 @@ msgstr ""
 "Benutzernamen und Ihr Passwort zu drucken eingeben oder den Auftrag "
 "abbrechen."
 
-#: ../www/login_cookie.cgi.perl:45
+#: ../www/login_cookie.cgi.perl:60
 msgid "PPR Login"
 msgstr "PPR Login"
 
-#: ../www/login_cookie.cgi.perl:82
+#: ../www/login_cookie.cgi.perl:97
 msgid "Username:"
 msgstr "Benutzername:"
 
-#: ../www/login_cookie.cgi.perl:84
+#: ../www/login_cookie.cgi.perl:99
 msgid "Password:"
 msgstr "Passwort:"
 
-#: ../www/login_cookie.cgi.perl:86
+#: ../www/login_cookie.cgi.perl:101
 msgid "Login"
 msgstr "Login"
 
-#: ../www/login_cookie.cgi.perl:93
+#: ../www/login_cookie.cgi.perl:108
 msgid "Incorrect username or password."
 msgstr "Falscher Benutzername oder Passwort"
 
-#: ../www/login_cookie.cgi.perl:116
+#: ../www/login_cookie.cgi.perl:131
 #, c-format
 msgid ""
 "You are logged in as \"%s\".  Leave this window open to remain logged in.\n"
@@ -1038,15 +1038,15 @@ msgstr ""
 "Wenn Sie diese Fenster schließen, ohne sich abzumelden werden Sienach\n"
 "%d Sekunden automatisch ausgeloggt.\n"
 
-#: ../www/login_cookie.cgi.perl:119
+#: ../www/login_cookie.cgi.perl:134
 msgid "Renew"
 msgstr "Erneuern"
 
-#: ../www/login_cookie.cgi.perl:120
+#: ../www/login_cookie.cgi.perl:135
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: ../www/login_cookie.cgi.perl:138
+#: ../www/login_cookie.cgi.perl:153
 #, c-format
 msgid ""
 "You are already logged in as user \"%s\" using authentication method \"%s\"."
@@ -1507,8 +1507,9 @@ msgid "Department:"
 msgstr "Abteilung:"
 
 #: ../www/prn_addwiz.cgi.perl:812
+#, fuzzy
 msgid ""
-"Whom should the print server's system administrator contact to discuss "
+"What is the name of a user with whom system administrator should discuss "
 "problems with the printer?"
 msgstr ""
 "Wen soll der Druckserveradministrator kontaktieren, wenn es Probleme mit dem "
@@ -1596,7 +1597,7 @@ msgstr "Begonnene Seiten:"
 msgid "Pages completed:"
 msgstr "Fertiggestellte Seiten:"
 
-#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:157
+#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:172
 msgid "Bytes Sent"
 msgstr "Gesendete Bytes"
 
@@ -1786,7 +1787,7 @@ msgstr "Kein Interface ausgewählt!"
 msgid "The Printer Address is blank!"
 msgstr "Die Druckeradresse ist leer!"
 
-#: ../www/prn_properties.cgi.perl:149 ../www/prn_properties.cgi.perl:704
+#: ../www/prn_properties.cgi.perl:149 ../www/prn_properties.cgi.perl:706
 msgid "PPD"
 msgstr "PPD"
 
@@ -1838,157 +1839,157 @@ msgstr "Funktionen"
 msgid "Optional printer features:"
 msgstr "Optionale Druckerfunktionen:"
 
-#: ../www/prn_properties.cgi.perl:396
+#: ../www/prn_properties.cgi.perl:398
 msgid "Bins"
 msgstr "Einzüge"
 
-#: ../www/prn_properties.cgi.perl:399
+#: ../www/prn_properties.cgi.perl:401
 msgid "Bins for forms management purposes:"
 msgstr "Einzüge für Vorlagenverwaltung:"
 
-#: ../www/prn_properties.cgi.perl:411
+#: ../www/prn_properties.cgi.perl:413
 #, c-format
 msgid "%s -- %s"
 msgstr "%s -- %s"
 
-#: ../www/prn_properties.cgi.perl:418
+#: ../www/prn_properties.cgi.perl:420
 msgid " (not listed in PPD file)"
 msgstr " (nicht in PPD Datei aufgeführt)"
 
-#: ../www/prn_properties.cgi.perl:428
+#: ../www/prn_properties.cgi.perl:430
 msgid "Alerts"
 msgstr "Warnungen"
 
-#: ../www/prn_properties.cgi.perl:432
+#: ../www/prn_properties.cgi.perl:434
 msgid "Alert method:"
 msgstr "Warnmethode:"
 
-#: ../www/prn_properties.cgi.perl:434
+#: ../www/prn_properties.cgi.perl:436
 msgid "mail"
 msgstr "mail"
 
-#: ../www/prn_properties.cgi.perl:437
+#: ../www/prn_properties.cgi.perl:439
 msgid "Alert frequency:"
 msgstr "Warnfrequenz:"
 
-#: ../www/prn_properties.cgi.perl:439 ../www/prn_properties.cgi.perl:685
+#: ../www/prn_properties.cgi.perl:441 ../www/prn_properties.cgi.perl:687
 msgid "never"
 msgstr "nie"
 
-#: ../www/prn_properties.cgi.perl:440
+#: ../www/prn_properties.cgi.perl:442
 msgid "after"
 msgstr "nach"
 
-#: ../www/prn_properties.cgi.perl:441
+#: ../www/prn_properties.cgi.perl:443
 msgid "every"
 msgstr "aller"
 
-#: ../www/prn_properties.cgi.perl:443
+#: ../www/prn_properties.cgi.perl:445
 #, fuzzy
 msgid "errors"
 msgstr "Fehler:"
 
-#: ../www/prn_properties.cgi.perl:446
+#: ../www/prn_properties.cgi.perl:448
 msgid "Alert address:"
 msgstr "Warnadresse:"
 
-#: ../www/prn_properties.cgi.perl:474
+#: ../www/prn_properties.cgi.perl:476
 msgid "Share with Samba"
 msgstr "In Samba zu Verfügung stellen"
 
-#: ../www/prn_properties.cgi.perl:542
+#: ../www/prn_properties.cgi.perl:544
 msgid "Limits"
 msgstr "Limits"
 
-#: ../www/prn_properties.cgi.perl:546
+#: ../www/prn_properties.cgi.perl:548
 msgid "Limits Enforced Before Printing"
 msgstr "Erzwungene Limits vor dem Druck"
 
-#: ../www/prn_properties.cgi.perl:548
+#: ../www/prn_properties.cgi.perl:550
 msgid "Limit Kilobytes"
 msgstr "Limit kB"
 
-#: ../www/prn_properties.cgi.perl:549 ../www/prn_properties.cgi.perl:554
+#: ../www/prn_properties.cgi.perl:551 ../www/prn_properties.cgi.perl:556
 msgid "Lower limit:"
 msgstr "Untere Grenze"
 
-#: ../www/prn_properties.cgi.perl:550 ../www/prn_properties.cgi.perl:555
+#: ../www/prn_properties.cgi.perl:552 ../www/prn_properties.cgi.perl:557
 msgid "Upper limit:"
 msgstr "Obere Grenze"
 
-#: ../www/prn_properties.cgi.perl:553
+#: ../www/prn_properties.cgi.perl:555
 msgid "Limit Pages"
 msgstr "Seitenlimit"
 
-#: ../www/prn_properties.cgi.perl:559
+#: ../www/prn_properties.cgi.perl:561
 msgid "Grayscale documents OK:"
 msgstr "Graudruck OK:"
 
-#: ../www/prn_properties.cgi.perl:565
+#: ../www/prn_properties.cgi.perl:567
 msgid "Limits Enforced During Printing"
 msgstr "Erzwungene Limits während des Drucks"
 
-#: ../www/prn_properties.cgi.perl:568
+#: ../www/prn_properties.cgi.perl:570
 msgid "Per-page time limit (in seconds):"
 msgstr "Zeitlimit pro Seite (in Sekunden):"
 
-#: ../www/prn_properties.cgi.perl:579
+#: ../www/prn_properties.cgi.perl:581
 msgid "Userparams"
 msgstr "Nutzerparameter"
 
-#: ../www/prn_properties.cgi.perl:582
+#: ../www/prn_properties.cgi.perl:584
 msgid "PostScript Interpreter Userparams Settings:"
 msgstr "PostScript Interpreter Nutzerparameter"
 
-#: ../www/prn_properties.cgi.perl:685
+#: ../www/prn_properties.cgi.perl:687
 msgid "always"
 msgstr "immer"
 
-#: ../www/prn_properties.cgi.perl:687
+#: ../www/prn_properties.cgi.perl:689
 msgid "Print banner page"
 msgstr "Drucke Startseite"
 
-#: ../www/prn_properties.cgi.perl:689
+#: ../www/prn_properties.cgi.perl:691
 msgid "Print trailer page"
 msgstr "Drucke Endseite"
 
-#: ../www/prn_properties.cgi.perl:694
+#: ../www/prn_properties.cgi.perl:696
 msgid "Monetary Charge for Printing on this Printer"
 msgstr "Kosten für das Drucken auf diesem Drucker"
 
-#: ../www/prn_properties.cgi.perl:695
+#: ../www/prn_properties.cgi.perl:697
 msgid "Per duplex sheet:"
 msgstr "Für beidseitiges Blatt:"
 
-#: ../www/prn_properties.cgi.perl:696
+#: ../www/prn_properties.cgi.perl:698
 msgid "Per simplex sheet:"
 msgstr "Für einseitiges Blatt:"
 
-#: ../www/prn_properties.cgi.perl:700
+#: ../www/prn_properties.cgi.perl:702
 msgid "Output order:"
 msgstr "Ausgabeordnung:"
 
-#: ../www/prn_properties.cgi.perl:702
+#: ../www/prn_properties.cgi.perl:704
 msgid "Normal"
 msgstr "Normal"
 
-#: ../www/prn_properties.cgi.perl:703
+#: ../www/prn_properties.cgi.perl:705
 msgid "Reverse"
 msgstr "Umgekehrt"
 
-#: ../www/prn_properties.cgi.perl:708
+#: ../www/prn_properties.cgi.perl:710
 msgid "Passthru printer languages:"
 msgstr "Weiterzuleitende Druckersprachen:"
 
-#: ../www/prn_properties.cgi.perl:713
+#: ../www/prn_properties.cgi.perl:715
 msgid "The charge per duplex sheet is not valid!"
 msgstr "Die Kosten für ein beidseitiges Blatt sind ungültig!"
 
-#: ../www/prn_properties.cgi.perl:715
+#: ../www/prn_properties.cgi.perl:717
 msgid "The charge per simplex sheet is not valid!"
 msgstr "Die Kosten für ein einseitiges Blatt sind ungültig!"
 
-#: ../www/prn_properties.cgi.perl:717
+#: ../www/prn_properties.cgi.perl:719
 msgid ""
 "Both the duplex charge and the simplex charge must be set or neither must be "
 "set!"
@@ -1996,16 +1997,16 @@ msgstr ""
 "Es müssen entweder beidseitige und einseitige Druckkosten angegeben werden "
 "oder keine!"
 
-#: ../www/prn_properties.cgi.perl:1143
+#: ../www/prn_properties.cgi.perl:1155
 msgid "There were no changes to save."
 msgstr "Keine Änderungen zu speichern."
 
-#: ../www/prn_properties.cgi.perl:1147
+#: ../www/prn_properties.cgi.perl:1159
 #, fuzzy
 msgid "The changes have been saved."
 msgstr "Das Alias wurde gelöscht."
 
-#: ../www/prn_properties.cgi.perl:1172
+#: ../www/prn_properties.cgi.perl:1184
 #, c-format
 msgid "PPR: Printer Properties: %s"
 msgstr "PPR: Druckereigenschaften: %s"
@@ -2382,21 +2383,21 @@ msgstr "_log"
 msgid "PPR log \"%s\""
 msgstr "PPR log \"%s\""
 
-#: ../www/show_printlog.cgi.perl:47
+#: ../www/show_printlog.cgi.perl:62
 #, c-format
 msgid "PPR Print Log for Queue \"%s\""
 msgstr "PPR Druckerlog für Warteschleife \"%s\""
 
-#: ../www/show_printlog.cgi.perl:49
+#: ../www/show_printlog.cgi.perl:64
 #, c-format
 msgid "PPR Print Log for Printer \"%s\""
 msgstr "PPR Druckerlog für Drucker \"%s\""
 
-#: ../www/show_printlog.cgi.perl:51
+#: ../www/show_printlog.cgi.perl:66
 msgid "PPR Print Log"
 msgstr "PPR Druckerlog"
 
-#: ../www/show_printlog.cgi.perl:89
+#: ../www/show_printlog.cgi.perl:104
 #, c-format
 msgid ""
 "Print job logging is disabled.  To enable it, create the file \"%s\"\n"
@@ -2406,76 +2407,76 @@ msgstr ""
 "die Datei \"%s\" und stellen Sie sicher, das der Nutzer \"%s\" in sie "
 "schreiben kann.\n"
 
-#: ../www/show_printlog.cgi.perl:94
+#: ../www/show_printlog.cgi.perl:109
 #, c-format
 msgid "Can't open log file \"%s\", %s\n"
 msgstr "Kann Logdatei \"%s\" nicht öffnen, %s\n"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "For"
 msgstr "Für"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "Job ID"
 msgstr "Auftrags-ID"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "Printer"
 msgstr "Drucker"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "Proxy For"
 msgstr "Proxy für"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "Time"
 msgstr "Zeit"
 
-#: ../www/show_printlog.cgi.perl:155
+#: ../www/show_printlog.cgi.perl:170
 msgid "Unix User"
 msgstr "Unix Nutzer"
 
-#: ../www/show_printlog.cgi.perl:156
+#: ../www/show_printlog.cgi.perl:171
 msgid "Pages"
 msgstr "Seiten"
 
-#: ../www/show_printlog.cgi.perl:156
+#: ../www/show_printlog.cgi.perl:171
 msgid "Printing Time"
 msgstr "Druckzeit"
 
-#: ../www/show_printlog.cgi.perl:156
+#: ../www/show_printlog.cgi.perl:171
 msgid "Queued Time"
 msgstr "Warteschlangenzeit"
 
-#: ../www/show_printlog.cgi.perl:156
+#: ../www/show_printlog.cgi.perl:171
 msgid "Total Sheets"
 msgstr "Gesamtzahl Blätter"
 
-#: ../www/show_printlog.cgi.perl:156
+#: ../www/show_printlog.cgi.perl:171
 msgid "Total Sides"
 msgstr "Gesamtzahl Seiten"
 
-#: ../www/show_printlog.cgi.perl:157
+#: ../www/show_printlog.cgi.perl:172
 msgid "Charge"
 msgstr "Kosten"
 
-#: ../www/show_printlog.cgi.perl:157
+#: ../www/show_printlog.cgi.perl:172
 msgid "Increment"
 msgstr "Inkrement"
 
-#: ../www/show_printlog.cgi.perl:157
+#: ../www/show_printlog.cgi.perl:172
 msgid "PJL Pages"
 msgstr "PJL Seiten"
 
-#: ../www/show_printlog.cgi.perl:157
+#: ../www/show_printlog.cgi.perl:172
 msgid "PS Bytes"
 msgstr "PS Bytes"
 
-#: ../www/show_printlog.cgi.perl:157
+#: ../www/show_printlog.cgi.perl:172
 msgid "Start Pages"
 msgstr "Startseiten"
 
-#: ../www/show_printlog.cgi.perl:158
+#: ../www/show_printlog.cgi.perl:173
 msgid "Title or Filename"
 msgstr "Titel oder Dateiname"
 

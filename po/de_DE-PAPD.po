@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-21 18:11+0200\n"
+"POT-Creation-Date: 2005-03-29 21:23-0500\n"
 "PO-Revision-Date: 2004-10-21 18:15+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -16,36 +16,37 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../papd/papd.c:393
+#: ../papd/papd.c:397
 #, c-format
 msgid "%s: not running\n"
 msgstr "%s: läuft nicht\n"
 
-#: ../papd/papd.c:403
+#: ../papd/papd.c:407
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr "%s: Lesen der PID aus Lockdatei fehlgeschlagen"
 
-#: ../papd/papd.c:407
+#: ../papd/papd.c:411
 #, c-format
 msgid "Sending %s to %s (PID=%ld).\n"
 msgstr "Sende %s an %s (PID=%ld.\n"
 
-#: ../papd/papd.c:430
+#: ../papd/papd.c:434
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr "Warte auf Beenden von %s..."
 
-#: ../papd/papd.c:439
+#: ../papd/papd.c:443
+#, c-format
 msgid "Shutdown complete.\n"
 msgstr "Beendet.\n"
 
-#: ../papd/papd.c:455
+#: ../papd/papd.c:459
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
 
-#: ../papd/papd.c:555
+#: ../papd/papd.c:559
 #, c-format
 msgid ""
 "Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"

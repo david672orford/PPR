@@ -1,169 +1,149 @@
 <!--
 Filename: pprhack_responders.sgml
-Last Modified:
+Last Modified: 29 March 2005
 Last Proofread: 
 -->
 
 <sect1 id="responders">
 <title>Requirements for a Responder</title>
 
-<para>
-A responder is a small program.  All responders are stored in the responders
-directory <filename>/usr/ppr/responders</filename>.  The responder which will eventually be
-used to tell the user what happened to the job is selected when the job is
-submitted.  It is selected using <command>ppr</command>'s <command>-m</command>. switch.  The argument to
-the <command>-m</command> switch is the name of the program in the responders directory which
-should be used.  A responder can be very simple.  Here is an example:
-</para>
+<para>A responder is a small program which is used to send a user a message about his
+print job.  All responders are stored in the responders directory
+<filename>/usr/lib/ppr/responders</filename>.  </para>
+
+
+<para>A responder can be very simple.  Here is an example:</para>
 
 <para>
 
 <screen>
 #!/bin/sh
-echo "Message for $1:\n$3" | write $2
+while [ $# -gt 0 ]
+	do
+	name=`echo $1 | cut -d= -f1`
+	value=`echo $1 | cut -d= -f2`
+	case $name in
+		for )
+			for="$value"
+			;;
+		responder_address )
+			responder_address="$value"
+			;;
+		short_message )
+			short_message="$value"
+			;;
+	esac
+	shift
+	done
+
+write $responder_address &lt;&lt;EndOfMessage
+Message for $for:
+$short_message
+EndOfMessage
+
 exit 0
 </screen>
 
 </para>
 
-<para>
-The responder shown above is a stript down version of the responder <command>write</command>.
-If the <command>-m</command> switch is not used then the name of the responder will be read
-from the environment variable PPR_RESPONDER.  If PPR_RESPONDER is not defined
-then the responder <command>write</command> will be used.
-</para>
+<para>The responder shown above is a stript down version of the responder
+<command>write</command>.</para>
 
-<para>
-A responder program is invoked with the name of the user as the first
-parameter.  It is the name just as it appears in queue listings and on banner
-pages.
-</para>
+<para>The responder which will
+eventually be used to tell the user what happened to the job is selected when
+the job is submitted.  It is selected using <command>ppr</command>'s
+<command>-m</command>. switch.  The argument to the <command>-m</command>
+switch is the name of the program in the responders directory which should be
+used.
+If the <command>-m</command> switch is not used then
+the name of the responder will be read from the environment variable
+PPR_RESPONDER.  If PPR_RESPONDER is not defined then the responder
+<command>followme</command> will be used.</para>
 
-<para>
-The address to which the message should be sent is the second parameter.  The
-address is specified at the time <command>ppr</command> is invoked by using the <command>-r</command>
-switch.  The proper format for the address depends on the responder.  If the
-<command>-r</command> switch is absent then the value of the environment variable
-PPR_RESPONDER_ADDRESS is used.  If that too is absent then the name of the Unix
-user who invoked <command>ppr</command> is used.  The value used in the absence of both
-<command>-r</command> and PPR_RESPONDER_ADDRESS is appropriate since the default responder is
-a script which invokes the Unix program <command>write</command>.
-</para>
+<para>A responder program is invoked with the name of the user as the for= parameter.  It is the name just as it appears in queue listings and on banner
+pages.</para>
 
-<para>
-The third parameter is the suggested message text.  The message text will
-contain embedded line feeds.  The length of the lines will depend on the
-responder.  The routine get_responder_width() in <filename>libppr/reswidth.c</filename>
-determines what length to limit the lines to.  For most responders, this
-routine returns 0 which means to use a predetermined set of line breaks which
-generally results in lines less than 80 characters long.
-</para>
+<para>The address to which the message should be sent is the responder_address=
+parameter.  The address is specified at the time <command>ppr</command> is
+invoked by using the <command>-r</command> switch.  The proper format for the
+address depends on the responder.  If the <command>-r</command> switch is
+absent then the value of the environment variable PPR_RESPONDER_ADDRESS is
+used.  If that too is absent then the name of the Unix user who invoked
+<command>ppr</command> is used.  The value used in the absence of both
+<command>-r</command> and PPR_RESPONDER_ADDRESS is appropriate since the
+default responder is a script which invokes the Unix program
+<command>write</command>.</para>
 
-<para>
-The fourth parameter is reserved for future use, at present it is an empty
-string.
-</para>
+<para>The <varname>short_message</varname> parameter contains one version of the suggested
+message text.  The responder should word-wrap the text before presenting
+it to the user.</para>
 
-<para>
-The fifth parameter is a space separated list of responder options.  Each of
-this options is a name=value pair.  Common options include <command>printed=no</command> and
-<command>timeout=60</command>.  The value of this option comes from the <command>ppr</command>
+<para>The <varname>long_message</varname> parameter is a longer and more
+detailed version of <varname>short_message</varname>.</para>
+
+<para>The <varname>responder_options</varname> parameter is a space separated
+list of responder options.  Each of this options is a name=value pair.  The
+value of this option comes from the <command>ppr</command>
 <command>--responder-options</command> switch or from the environment variable
 PPR_RESPONDER_OPTIONS.  A responder should ignore any options it does not
-recognize.
-</para>
+recognize.</para>
 
-<para>
-The sixth parameter is a code number which represents the approximate content
-of the message.  It is provided in case a responder wants to send different
-types of message by different methods or wishes to provide its own wording for
-one or more of the messages.  For example, it might want to send a popup
-message but then follow it up with email if the message indicated that the job
-was arrested.  The code numbers are defined in C include file
-<filename>include/respond.h</filename>, the Bourne shell script include file
-<filename>lib/respond.sh</filename>, and the Perl include file <filename>lib/respond.ph</filename>.
-</para>
+<para>The <varname>response_code</varname> parameter is a code number which
+represents the approximate content of the message.  It is provided in case a
+responder wants to send different types of message by different methods or
+wishes to provide its own wording for one or more of the messages.  For
+example, it might want to send a popup message but then follow it up with email
+if the message indicated that the job was arrested.  The code numbers are
+defined in C include file <filename>include/respond.h</filename>, the Bourne
+shell script include file <filename>lib/respond.sh</filename>, and the Perl
+include file <filename>lib/respond.ph</filename>.</para>
 
-<para>
-The seventh parameter contains the complete job id.  This is probably only
-useful if the responder is constructing its own messages since the default
-messages provided in the third parameter already mention the job id.  The job
-id is not provided in the normal form since that is rather difficult to parse.
-In stead, the elements are separated by spaces.  The elements are, in order,
-destination node, <replaceable>destination name</replaceable>, <replaceable>queue id number</replaceable>,
-<replaceable>sub id number</replaceable>, 
-and <replaceable>home node</replaceable>.  For example, <literal>mouse chipmunk 1000 0 mouse</literal>.
-This id would normally appear as <literal>mouse:chipmunk-1000.0(mouse)</literal> or more
-likely in abreviated form as <literal>chipmunk-1000</literal>.
-</para>
+<para>The <varname>job</varname> parameter contains the complete job id.  This
+is probably only useful if the responder is constructing its own messages since
+the default messages already mention the job id.</para>
 
-<para>
-The eight parameter is also necessary for constructing replacement messages.
-Some of the messages normally contain a blank space which is filled with a
-piece of text.  Normally this is the name of the printer which the job was
-printed on, but if the user database is being used and PPR refuses access the
-the printer, the piece of text is the name of the user who was refused access.
-At other times the piece of text will be an error message.
-</para>
+<para>The <varname>title</varname> parameter is the title of the job.  This
+title will be derived from a "%%Title:" line if present.  Failing that, the
+title will be the name of the file being printed.  If the file was received on
+stdin, this field will generally be blank.</para>
 
-<para>
-The ninth parameter is the title of the job.  This title will be derived from a
-"%%Title:" line if present.  Failing that, the title will be the
-name of the file being printed.  If the file was received on stdin, this field
-will generally be blank.
-</para>
+<para>The <varname>time</varname> parameter is the time at which the job was
+submitted.  It is represented in Unix format (as a count of the seconds since
+12:00am, January 1, 1970).  The program <command>lib/time_elapsed</command> may
+be used to express this time in terms of how far in the past it is.</para>
 
-<para>
-The tenth parameter is the time at which the job was submitted.  It is
-represented in Unix format (as a count of the seconds since 12:00am, January
-1, 1970).  The program <command>lib/time_elapsed</command> may be used to express this
-time in terms of how far in the past it is.
-</para>
+<para>The <varname>pages</varname> parameter contains the number of pages
+printed.  If this is unknown, it is "?".  If the response code (the fourth
+parameter) has a value other than <command>RESP_FINISHED</command> then the
+contents of this field is undefined.</para>
 
-<para>
-The eleventh parameter will contain a short message which indicates the
-reason the job was arrested.  If the response code does not indicated that
-the job has been arrested, this string will be blank.
-</para>
+<para>When the responder is run, stdin with either be connected to
+<filename>/dev/null</filename> or it will be connected to the job's log file.
+This is so that the responder may send the job log back to the user.  Some of
+the supplied responders exploit this feature.</para>
 
-<para>
-The twelth parameter contains the number of pages printed.  If this is unknown,
-it is "?".  If the response code (the fourth parameter) has a value other than
-<command>RESP_FINISHED</command> then the contents of this field is undefined.
-</para>
-
-<para>
-When the responder is run, stdin with either be connected to <filename>/dev/null</filename>
-or it will be connected to the job's log file.  This is so that the responder
-may send the job log back to the user.  Some of the supplied responders exploit
-this feature.
-</para>
-
-<para>
-When exiting, the responder should return a value of zero if the message was
-delivered.  It should also return a value of zero if the addresse was not
+<para>When exiting, the responder should return a value of zero if the message
+was delivered.  It should also return a value of zero if the addresse was not
 found.  Non-zero exit values should be reserved for truly abnormal conditions
 such as insufficient system resources or syntactically invalid addresses.  If a
-responder does return a non-zero exit value, <command>ppr</command> will print a notice to
-that effect on stderr or <command>pprd</command> will put a notice in its log file, depending
-on which one invoked the responder.
-</para>
+responder does return a non-zero exit value, <command>ppr</command> will print
+a notice to that effect on stderr or <command>pprd</command> will put a notice
+in its log file, depending on which one invoked the responder.</para>
 
-<para>
-When the responder is invoked by <command>pprd</command>, it will always have a real uid,
-effective uid and saved uid of <literal>ppr</literal>.  When it is invoked by <command>ppr</command> (due to
-the use of the <command>-e</command> responder option) things will be different.  The program
-<command>ppr</command> is setuid <literal>ppr</literal>, so the effective and saved uids are
-<literal>ppr</literal> and the
-real uid is the id of the user who invoked it.  Just before executing the
-responder <command>ppr</command> sets the effective user id equal to the real user id.  This
-last feature is not intended as a security measure, rather, the <command>xwin</command>
-responder will not work if this is not done since the X library uses access()
-on the .Xauthority file before trying to open it which means that the
-.Xauthority file in the user's home directory must be readable under both the
-real and the effective uids.  This feature may be overridden by setting the
-setuid bit on the responder.  If this is done then the effective uid will remain
-<literal>ppr</literal>.
-</para>
+<para>When the responder is invoked by <command>pprd</command>, it will always
+have a real uid, effective uid and saved uid of <literal>ppr</literal>.  When
+it is invoked by <command>ppr</command> (due to the use of the
+<command>-e</command> responder option) things will be different.  The program
+<command>ppr</command> is setuid <literal>ppr</literal>, so the effective and
+saved uids are <literal>ppr</literal> and the real uid is the id of the user
+who invoked it.  Just before executing the responder <command>ppr</command>
+sets the effective user id equal to the real user id.  This last feature is not
+intended as a security measure, rather, the <command>xwin</command> responder
+will not work if this is not done since the X library uses access() on the
+.Xauthority file before trying to open it which means that the .Xauthority file
+in the user's home directory must be readable under both the real and the
+effective uids.  This feature may be overridden by setting the setuid bit on
+the responder.  If this is done then the effective uid will remain
+<literal>ppr</literal>.</para>
 
 </sect1>

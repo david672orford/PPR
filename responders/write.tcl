@@ -60,8 +60,9 @@ set command [ppr_popen_w [list write $responder_address]]
 puts $command "To: $for"
 puts $command "Subject: $subject"
 puts $command ""
+puts $command "=== Short Version ============================================================"
 puts $command [ppr_wordwrap $short_message 78]
-puts $command "======================================================"
+puts $command "=== Long Version ============================================================="
 puts $command [ppr_wordwrap $long_message 78]
 set result [catch { close $command } error]
 

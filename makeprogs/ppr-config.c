@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2005.
+** Last modified 29 March 2005.
 */
 
 #include "config.h"
@@ -105,8 +105,6 @@ static void do_paths(char format[], char language[])
 	printf(format, "LOCALEDIR", LOCALEDIR);
 	printf(format, "PACKAGE", PACKAGE);
 	printf(format, "PACKAGE_INTERFACES", PACKAGE_INTERFACES);
-	printf(format, "PACKAGE_PPRD", PACKAGE_PPRD);
-	printf(format, "PACKAGE_PPRDRV", PACKAGE_PPRDRV);
 	printf(format, "PACKAGE_PPRWWW", PACKAGE_PPRWWW);
 
 	/* More stuff for PPR.pm. */

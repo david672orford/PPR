@@ -46,14 +46,10 @@ xgettext --default-domain=PPR --keyword=_ --keyword=N_ --sort-output  \
 	../unixuser/*.c \
 	../libuprint/*.c \
 	../ppr-sysv/*.c \
-	../ppr-bsd/*.c
-mv PPR.po PPR.pot
-
-echo "PPRDRV.pot"
-xgettext --default-domain=PPRDRV --keyword=_ --keyword=N_ --sort-output \
+	../ppr-bsd/*.c \
 	../pprdrv/pprdrv*.c
-./sort_by_file.perl <PPRDRV.po >PPRDRV.pot
-rm PPRDRV.po
+#./sort_by_file.perl PPR.po PPR.pot
+mv PPR.po PPR.pot
 
 echo "PPRD.pot"
 xgettext --default-domain=PPRD --keyword=_ --keyword=N_ --sort-output \

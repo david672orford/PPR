@@ -828,7 +828,7 @@ echo
 #
 # Come up with a set of CFLAGS for the native compiler and for GCC.
 #
-GCC_WARNINGS_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations"
+GCC_WARNINGS_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -Wno-format-y2k"
 
 if [ -n "$CFLAGS" ]
     then
@@ -1449,7 +1449,7 @@ RANLIB=touch
 # GCC and Glibc
 CC=gcc
 #CC=g++ -fno-exceptions
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include 
 LD=gcc
 LDFLAGS=
 

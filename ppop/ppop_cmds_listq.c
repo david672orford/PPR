@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 29 March 2005.
 */
 
 /*
@@ -98,7 +98,6 @@ static void format_time(char *timestr, size_t timestr_len, time_t time_to_format
 		{
 		if(!format_date || strftime(timestr, timestr_len, format_date, tm_time) == 0)
 			{
-			#warning Expect y2k warning on next line
 			strftime(timestr, timestr_len, "%d-%b-%y", tm_time);
 			}
 		}

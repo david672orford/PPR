@@ -206,10 +206,10 @@ typedef short int SHORT_INT;
 #define LOCALEDIR SHAREDIR"/locale"
 #define PACKAGE "PPR"
 #define PACKAGE_INTERFACES "PPR"
+#define PACKAGE_PPRWWW "PPRWWW"
 #define PACKAGE_PPRD "PPRD"
 #define PACKAGE_PPRDRV "PPRDRV"
 #define PACKAGE_PAPD "PAPD"
-#define PACKAGE_PPRWWW "PPRWWW"
 
 #ifdef INTERNATIONAL
 #define _(String) gettext(String)

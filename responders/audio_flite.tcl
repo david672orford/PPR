@@ -1,6 +1,6 @@
-#! /bin/sh
+#! @PPR_TCLSH@
 #
-# mouse:~ppr/src/po/merge_to_pox.sh
+# mouse:~ppr/src/responders/audio_flite.tcl
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,32 +30,38 @@
 #
 
 #
-# This program takes the current .pot files (translation string template
-# files) and uses them to update the .po files, making temporary .po
-# files called .pox files.
+# This responder attempts to send the message with the write
+# program.	If that fails, it invokes the mail responder.
 #
 
-lang=$1
-if [ -z "$lang" ]
-	then
-	echo "Usage: install_mo.sh <language>"
-	exit 1
-	fi
+foreach option $argv {
+	regexp {^([^=]+)=(.*)$} $option junk name value
+	switch -exact -- $name {
+		for {
+			set for $value
+			}
+		responder_address {
+			set responder_address $value
+			}
+		subject {
+			set subject $value
+			}
+		short_message {
+			set short_message $value
+			}
+		long_message {
+			set long_message $value
+			}
+		}
+	}
 
-for potfile in *.pot
-	do
-	division=`basename $potfile .pot`
-	echo -n "$lang-$division.pox: "
-	if [ -f "$lang-$division.po" ]
-	then
-	echo "merging old and new messages"
-	msgmerge $lang-$division.po $division.pot >$lang-$division.pox
-	else
-	echo "creating new"
-	cp $division.pot $lang-$division.pox
-	fi
-	done
-echo
+# Send the message with write.
+set command [ppr_popen_w [list flite]]
+puts $command [ppr_wordwrap $long_message 78]
+set result [catch { close $command } error]
+
+if {$result != 0} {
+	puts "responder audio_flite: flite failed, exit code is $result"
+	}
 
 exit 0
-

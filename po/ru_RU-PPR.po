@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru-PPR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-01 17:35-0500\n"
+"POT-Creation-Date: 2005-03-29 21:23-0500\n"
 "PO-Revision-Date: 2005-26-01 16:30-0400\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <C@li.org>\n"
@@ -15,32 +15,11 @@ msgstr ""
 "Content-Type: text/plain; charset=KOI8-R\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../ppr/ppr_main.c:1029
-msgid ""
-"\t--cache-priority {auto,low,high}\n"
-"\t                           prefer to insert resources from cache?\n"
-msgstr ""
-"\t--cache-priority {auto,low,high}\n"
-"\t                           жилателно ли чтобы испозевали реcорcы из\n"
-"\t                           склада?  (auto=автоматически, low=не очень\n"
-"\t                           жилателно, high=очень жилателно)\n"
-
-#: ../ppr/ppr_main.c:1024
-msgid ""
-"\t--cache-store none         don't store new resources (default)\n"
-"\t--cache-store unavailable  store if not in cache or fontindex\n"
-"\t--cache-store uncached     store if not already in cache\n"
-msgstr ""
-"\t--cache-store none         не складевать новые ресурсы (по молчию)\n"
-"\t--cache-store unavailable  складевать ресурсыне находащиеся в складе\n"
-"\t                           или в списке шрифтов\n"
-"\t--cache-store uncached     складевать ресурсы не находащиеся в складе\n"
-
-#: ../ppr/ppr_main.c:971
+#: ../ppr/ppr_main.c:918
 msgid "\t--charge-to <string>       PPR charge account to bill for job\n"
 msgstr "\t--charge-to <текст>        счет из которого взять денгы\n"
 
-#: ../ppr/ppr_main.c:991
+#: ../ppr/ppr_main.c:938
 msgid "\t--commentary <n>           send commentary messages of types <n>\n"
 msgstr "\t--commentary <чесло>       посылать замечании типа <чесло>\n"
 
@@ -49,11 +28,11 @@ msgstr "\t--commentary <чесло>       посылать замечании типа <чесло>\n"
 msgid "\t--debug      explain what is being done\n"
 msgstr "\t--debug      описевать то что программа делает\n"
 
-#: ../ppr/ppr_main.c:1152
+#: ../ppr/ppr_main.c:1078
 msgid "\t--editps-level <pos int>   set level of editing for -H editps\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1054
+#: ../ppr/ppr_main.c:980
 msgid "\t--file-type <option>       same as -T\n"
 msgstr "\t--file-type <выбор>        то же что -T\n"
 
@@ -62,11 +41,11 @@ msgstr "\t--file-type <выбор>        то же что -T\n"
 msgid "\t--help       print this message\n"
 msgstr "\t--help       показать это собщение\n"
 
-#: ../ppr/ppr_main.c:1126
+#: ../ppr/ppr_main.c:1052
 msgid "\t--hold                     job should be held immediately\n"
 msgstr "\t--hold                     держать задачу при ее прибытия\n"
 
-#: ../ppr/ppr_main.c:1144
+#: ../ppr/ppr_main.c:1070
 msgid "\t--lpq-filename <string>    filename for ppop lpq listings\n"
 msgstr "\t--lpq-filename <текст>     название файла для ppop lpq\n"
 
@@ -75,30 +54,30 @@ msgstr "\t--lpq-filename <текст>     название файла для ppop lpq\n"
 msgid "\t--nocreate   don't create %s if it doesn't exist\n"
 msgstr "\t--nocreate   не сотворить %s если он не существует\n"
 
-#: ../ppr/ppr_main.c:1119
+#: ../ppr/ppr_main.c:1045
 msgid "\t--page-list <page-list>    print only the pages indicated\n"
 msgstr ""
 "\t--page-list <список страниц>\n"
 "\t                           печатать толко упаминанния страницы\n"
 
-#: ../ppr/ppr_main.c:1158
+#: ../ppr/ppr_main.c:1084
 msgid ""
 "\t--print-id-to-fd           print the numberic queue id file descriptor\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1129
+#: ../ppr/ppr_main.c:1055
 msgid "\t--question <path>          path of HTML question page\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1038
+#: ../ppr/ppr_main.c:964
 msgid "\t--ripopts '<options>'      options to pass to external RIP\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:980
+#: ../ppr/ppr_main.c:927
 msgid "\t--routing <string>         set DSC routing instructions\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1132
+#: ../ppr/ppr_main.c:1058
 msgid "\t--save                     job should be saved after printing\n"
 msgstr ""
 "\t--save                     оставить задачу в очереди после завершенния\n"
@@ -107,29 +86,23 @@ msgstr ""
 msgid "\t--show\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1155
+#: ../ppr/ppr_main.c:1081
 msgid "\t--show-jobid               print the queue id of submitted jobs\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1012
-msgid ""
-"\t--strip-cache true         strip out cached resources\n"
-"\t--strip-cache false        don't strip these resources (default)\n"
-msgstr ""
-
-#: ../ppr/ppr_main.c:1016
+#: ../ppr/ppr_main.c:951
 msgid ""
 "\t--strip-fontindex true     strip out fonts listed in font index\n"
 "\t--strip-fontindex false    don't strip these fonts (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1020
+#: ../ppr/ppr_main.c:955
 msgid ""
 "\t--strip-printer true       strip out resources already in printer\n"
 "\t--strip-printer false      don't strip these resources (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:974
+#: ../ppr/ppr_main.c:921
 msgid "\t--title <string>           set default document title\n"
 msgstr "\t--title <текст>            опеделить название документа\n"
 
@@ -139,7 +112,7 @@ msgid ""
 "\t--help\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1161
+#: ../ppr/ppr_main.c:1087
 msgid ""
 "\t--version                  print PPR version information\n"
 "\t--help                     print this help\n"
@@ -148,10 +121,6 @@ msgstr ""
 #: ../samba/ppr2samba.c:361
 #, c-format
 msgid "\t--version    print the PPR version number\n"
-msgstr ""
-
-#: ../ppr/ppr_main.c:1008
-msgid "\t-A                         root or ppr has preauthorized\n"
 msgstr ""
 
 #: ../lprsrv/lprsrv.c:174
@@ -165,17 +134,17 @@ msgid ""
 "\t\t(print this message)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1048
+#: ../ppr/ppr_main.c:974
 msgid ""
 "\t-B false                   disable automatic bin selection\n"
 "\t-B true                    enable automatic bin selection (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1045
+#: ../ppr/ppr_main.c:971
 msgid "\t-D <mediumname>            sets default medium\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1033
+#: ../ppr/ppr_main.c:959
 msgid ""
 "\t-F '<feature name>'        inserts setup code for a printer feature\n"
 "\t--feature '<feature name>' same as above\n"
@@ -185,7 +154,7 @@ msgstr ""
 "\t--feature '<feature name>' то же что -F\n"
 "\t--features                 list available printer features\n"
 
-#: ../ppr/ppr_main.c:1122
+#: ../ppr/ppr_main.c:1048
 msgid ""
 "\t-G <string>                gab about subject indicated by <string>\n"
 "\t--gab <string>             same as -G\n"
@@ -193,7 +162,7 @@ msgstr ""
 "\t-G <string>                gab about subject indicated by <string>\n"
 "\t--gab <string>             то же что -G\n"
 
-#: ../ppr/ppr_main.c:1147
+#: ../ppr/ppr_main.c:1073
 msgid ""
 "\t-H <hack name>             turn on a hack\n"
 "\t-H no-<hack name>          turn off a hack\n"
@@ -203,40 +172,40 @@ msgstr ""
 "\t-H no-<hack name>          turn off a hack\n"
 "\t--hack [no-]<hack name>    то же что -H\n"
 
-#: ../ppr/ppr_main.c:1041
+#: ../ppr/ppr_main.c:967
 msgid ""
 "\t-K true                    keep feature code though not in PPD file\n"
 "\t-K false                   don't keep bad feature code (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1062
+#: ../ppr/ppr_main.c:988
 msgid ""
 "\t-N <positive integer>      print pages N-Up\n"
 "\t-N noborders               turn off N-Up borders\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:977
+#: ../ppr/ppr_main.c:924
 msgid "\t-O <string>                overlay `Draft' notice\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1098
+#: ../ppr/ppr_main.c:1024
 msgid ""
 "\t-P notifyme                set ProofMode to NotifyMe\n"
 "\t-P substitute              set ProofMode to Substitute\n"
 "\t-P trustme                 set ProofMode to TrustMe\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1141
+#: ../ppr/ppr_main.c:1067
 msgid "\t-Q <string>                TrueType query answer given (for papd)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1079
+#: ../ppr/ppr_main.c:1005
 msgid ""
 "\t-R copies                  read copy count from document (default)\n"
 "\t-R ignore-copies           don't read copy count\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1083
+#: ../ppr/ppr_main.c:1009
 msgid ""
 "\t-R duplex:softsimplex      read duplex mode, assume simplex (default)\n"
 "\t-R duplex:simplex          read duplex mode, assume simplex\n"
@@ -245,32 +214,32 @@ msgid ""
 "\t-R ignore-duplex           don't read duplex mode\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1071
+#: ../ppr/ppr_main.c:997
 #, c-format
 msgid ""
 "\t-R for                     read \"%%For:\" line\n"
 "\t-R ignore-for              don't read \"%%For:\" (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1090
+#: ../ppr/ppr_main.c:1016
 #, c-format
 msgid ""
 "\t-R routing                 use routing from \"%%Routing:\" (default)\n"
 "\t-R ignore-routing          ignore \"%%Routing:\" comment\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1075
+#: ../ppr/ppr_main.c:1001
 #, c-format
 msgid ""
 "\t-R title                   use title from \"%%Title:\" (default)\n"
 "\t-R ignore-title            ignore \"%%Title:\" comment\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1138
+#: ../ppr/ppr_main.c:1064
 msgid "\t-U                         unlink job file after queuing it\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:966
+#: ../ppr/ppr_main.c:913
 msgid ""
 "\t-X <string>                used by network servers to tell PPR the\n"
 "\t                           identity of alien users for whom they act\n"
@@ -280,28 +249,24 @@ msgstr ""
 "\t                           identity of alien users for whom they act\n"
 "\t--proxy-for <string>       то же что -X\n"
 
-#: ../ppr/ppr_main.c:1116
+#: ../ppr/ppr_main.c:1042
 msgid "\t-Y <options>               experimental job splitting feature\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1094
+#: ../ppr/ppr_main.c:1020
 #, c-format
 msgid ""
 "\t-Z true                    ignore jobs without %%EOF\n"
 "\t-Z false                   don't ignore (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1005
-msgid "\t-a                         turns on authcode mode\n"
-msgstr ""
-
-#: ../ppr/ppr_main.c:994
+#: ../ppr/ppr_main.c:941
 msgid ""
 "\t-b {yes,no,dontcare}       express banner page preference\n"
 "\t-t {yes,no,dontcare}       express trailer page preference\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1103
+#: ../ppr/ppr_main.c:1029
 msgid ""
 "\t-e none                    discard error messages\n"
 "\t-e stderr                  report errors on stderr (default)\n"
@@ -311,7 +276,7 @@ msgid ""
 "\t-e no-hexdump              discourage hexdump in absence of filter\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:983
+#: ../ppr/ppr_main.c:930
 msgid ""
 "\t-m <method>                response method\n"
 "\t-m none                    no response\n"
@@ -327,7 +292,7 @@ msgstr ""
 "\t--responder-address        то же что -r\n"
 "\t--responder-options <list> list of name=value responder options\n"
 
-#: ../ppr/ppr_main.c:1066
+#: ../ppr/ppr_main.c:992
 msgid ""
 "\t-n <positive integer>      print n copies\n"
 "\t-n collate                 print collated copies\n"
@@ -337,14 +302,14 @@ msgstr ""
 "\t-n collate                 print collated copies\n"
 "\t--copies <option>          то же что -n\n"
 
-#: ../ppr/ppr_main.c:1057
+#: ../ppr/ppr_main.c:983
 msgid ""
 "\t-o <string>                specify filter options\n"
 "\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
 "\t                           set handling of LaTeX, HTML, and such\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1135
+#: ../ppr/ppr_main.c:1061
 msgid "\t-q <integer>               sets priority of print job\n"
 msgstr ""
 
@@ -355,21 +320,21 @@ msgid ""
 "\t\t(run standalone, bind to specified TCP port)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1111
+#: ../ppr/ppr_main.c:1037
 msgid ""
 "\t-s <positive integer>      signature sheet count\n"
 "\t-s booklet                 automatic signature sheet count\n"
 "\t-s {both,fronts,backs}     indicate part of each signature to print\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:961
+#: ../ppr/ppr_main.c:908
 msgid ""
 "\t-u yes                     use username to identify jobs in queue\n"
 "\t-u no                      use /etc/passwd comment instead (default)\n"
 "\t-f <string>                override user identication from -u\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:998
+#: ../ppr/ppr_main.c:945
 msgid ""
 "\t-w log                     routes warnings to log file\n"
 "\t-w stderr                  routes warnings to stderr (default)\n"
@@ -398,27 +363,27 @@ msgstr ""
 msgid "    Abbreviation: ppop ldest {<destination>, all}"
 msgstr ""
 
-#: ../ppr/ppr_main.c:364 ../ppr/ppr_main.c:372 ../ppr/ppr_main.c:379
-#: ../ppr/ppr_main.c:393
+#: ../ppr/ppr_main.c:353 ../ppr/ppr_main.c:361 ../ppr/ppr_main.c:368
+#: ../ppr/ppr_main.c:382
 msgid " argument"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:160
+#: ../ppr/ppr_simplify.c:151
 #, c-format
 msgid "\"%%%%BeginData:\" block ran off end of file after %ld of %ld lines"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:203
+#: ../ppr/ppr_simplify.c:182
 #, c-format
 msgid "\"%%%%BeginData:\" block ran off end of file at byte %ld of %ld"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:213
+#: ../ppr/ppr_simplify.c:192
 #, c-format
 msgid "\"%%%%BeginData:\" said %ld bytes, but no \"%%%%EndData\" found there"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:166
+#: ../ppr/ppr_simplify.c:157
 #, c-format
 msgid "\"%%%%BeginData:\" said %ld lines, but no \"%%%%EndData\" found there"
 msgstr ""
@@ -433,7 +398,7 @@ msgstr ""
 msgid "\"%%%%PageOrder: Descending\" should be \"%%%%PageOrder: Descend\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:2629
+#: ../ppr/ppr_main.c:2475
 #, c-format
 msgid "\"%%%%Pages:\" comment is wrong, changing it from %d to %d"
 msgstr ""
@@ -484,7 +449,7 @@ msgstr "Принтер \"%s\" уже явлается членом групы \"%s\".\n"
 msgid "%d active jobs were canceled.\n"
 msgstr "%d текущих задач удалили.\n"
 
-#: ../ppr/ppr_main.c:2438 ../ppr/ppr_main.c:2440
+#: ../ppr/ppr_main.c:2296 ../ppr/ppr_main.c:2298
 #, c-format
 msgid "%d characters follow EOF mark"
 msgstr ""
@@ -539,24 +504,24 @@ msgstr ""
 msgid "%s (by default)"
 msgstr "%s (по молчанию)"
 
-#: ../ppr/ppr_main.c:797
+#: ../ppr/ppr_main.c:751
 #, c-format
 msgid "%s died on receipt of signal %d"
 msgstr "Команда %s завершилась при приходе сигнала %d"
 
-#: ../ppr/ppr_main.c:795
+#: ../ppr/ppr_main.c:749
 #, c-format
 msgid "%s died on receipt of signal %d, core dumped"
 msgstr ""
 "Команда %s завершилась при прихода сигнала %s, дамп оперативной памяти "
 "выполнен"
 
-#: ../ppr/ppr_main.c:788
+#: ../ppr/ppr_main.c:742
 #, c-format
 msgid "%s failed, exit code = %d"
 msgstr "Возникла ошибка при запуске команды %s, код завершения = %d"
 
-#: ../ppr/ppr_main.c:785
+#: ../ppr/ppr_main.c:739
 #, c-format
 msgid "%s failed, exit code = 242 (exec() failed?)"
 msgstr ""
@@ -575,45 +540,45 @@ msgstr ""
 msgid "%s interface: serial port driver does not support selected options"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1672
+#: ../ppr/ppr_main.c:1573
 #, c-format
 msgid "%s must be followed by \"none\", \"stderr\", \"responder\", or \"both\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1649
+#: ../ppr/ppr_main.c:1550
 #, c-format
 msgid "%s must be followed by \"notifyme\", \"substitute\", or \"trustme\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1496 ../ppr/ppr_main.c:1506 ../ppr/ppr_main.c:1633
-#: ../ppr/ppr_main.c:1870 ../ppr/ppr_main.c:1875
+#: ../ppr/ppr_main.c:1418 ../ppr/ppr_main.c:1534 ../ppr/ppr_main.c:1741
+#: ../ppr/ppr_main.c:1746
 #, c-format
 msgid "%s must be followed by \"true\" or \"false\""
 msgstr "после %s должно следить или \"true\" (вирно) или \"false\" (не вирно)"
 
-#: ../ppr/ppr_main.c:1655
+#: ../ppr/ppr_main.c:1556
 #, c-format
 msgid "%s must be set to \"true\" or \"false\""
 msgstr "%s должно быт или \"true\" (вирно) или \"false\" (не вирно)"
 
-#: ../ppr/ppr_main.c:1518
+#: ../ppr/ppr_main.c:1430
 #, c-format
 msgid "%s option (N-Up) must be between 1 and 16"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1687
+#: ../ppr/ppr_main.c:1588
 #, c-format
 msgid ""
 "%s option must be \"fronts\", \"backs\", \"both\", \"booklet\", or a "
 "positive integer"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1501
+#: ../ppr/ppr_main.c:1413
 #, c-format
 msgid "%s option must be between 0 and 39"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1491
+#: ../ppr/ppr_main.c:1408
 #, c-format
 msgid "%s option specifies unrecognized file type \"%s\""
 msgstr ""
@@ -628,12 +593,12 @@ msgstr ""
 msgid "%s per simplex sheet\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:379
+#: ../ppr/ppr_main.c:368
 #, c-format
 msgid "%s%s is empty"
 msgstr ""
 
-#: ../ppr/ppr_main.c:393
+#: ../ppr/ppr_main.c:382
 #, c-format
 msgid "%s%s is entirely whitespace"
 msgstr "%s%s составлается изклучително из пробелных символов"
@@ -649,7 +614,7 @@ msgid "%s(): %s(\"%d\", \"%s\") failed, errno=%d (%s)"
 msgstr ""
 "%s(): возникла ошибка при запуски функции %s(\"%d\", \"%s\"), errno=%d (%s)"
 
-#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1612
+#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1499
 #, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
@@ -671,7 +636,7 @@ msgstr "%s(): возникла ошибка при запуски функции %s(%ld), errno=%d (%s)"
 msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)"
 
-#: ../ppr/ppr_infile.c:1733 ../ppr/ppr_infile.c:1738
+#: ../ppr/ppr_infile.c:1620 ../ppr/ppr_infile.c:1625
 #, c-format
 msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr ""
@@ -682,8 +647,8 @@ msgstr ""
 #: ../libuprint/uprint_run_rfc1179.c:78 ../libuprint/uprint_run_rfc1179.c:143
 #: ../lprsrv/lprsrv.c:242 ../ppad/ppad_conf.c:276 ../ppad/ppad_conf.c:278
 #: ../ppad/ppad_conf.c:280 ../ppad/ppad_conf.c:284 ../ppad/ppad_conf.c:288
-#: ../ppr/ppr_infile.c:1579 ../ppr/ppr_infile.c:1631 ../ppr/ppr_infile.c:1698
-#: ../ppr/ppr_infile.c:2336 ../ppr/ppr_main.c:439
+#: ../ppr/ppr_infile.c:1466 ../ppr/ppr_infile.c:1518 ../ppr/ppr_infile.c:1585
+#: ../ppr/ppr_infile.c:2223 ../ppr/ppr_main.c:425
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
@@ -693,18 +658,12 @@ msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
 msgid "%s(): %s() of \"%s\" failed, errno=%d (%s)\n"
 msgstr "%s(): %s() не успела, errno=%d (%s)\n"
 
-#: ../ppr/ppr_rcache.c:198
-#, c-format
-msgid "%s(): Can't open \"%s\", errno=%d (%s)"
+#: ../libppr/findres.c:86
+#, fuzzy, c-format
+msgid "%s(): can't open \"%s\", errno=%d (%s)"
 msgstr "%s(): нивозможно открыть файл \"%s\", errno=%d (%s)"
 
-#: ../ppr/ppr_mactt.c:455
-#, c-format
-msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
-msgstr ""
-"%s(): возникла ошибка при запуски функции chmod(\"%s\", %o), errno=%d (%s)"
-
-#: ../ppr/ppr_infile.c:2339
+#: ../ppr/ppr_infile.c:2226
 #, c-format
 msgid "%s(): disk full"
 msgstr "%s(): диск переполен"
@@ -714,36 +673,69 @@ msgstr "%s(): диск переполен"
 msgid "%s(): local nodename or username is too long"
 msgstr ""
 
-#: ../ppr/ppr_mactt.c:463
+#: ../pprdrv/pprdrv_progress.c:217
 #, c-format
-msgid "%s(): rename(\"%s\", \"%s\") failed, errno=%d (%s)"
+msgid "%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"
 msgstr ""
-"%s(): возникла ошибка при запуски функции rename(\"%s\", \"%s\"), errno=%d (%"
-"s)"
 
-#: ../ppr/ppr_respond.c:136
+#: ../pprdrv/pprdrv_progress.c:229
+#, c-format
+msgid "%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../filter_dotmatrix/inbuf.c:76
+#, fuzzy, c-format
+msgid "%s(): lseek() failed, errno=%d (%s)"
+msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:212
+#, c-format
+msgid "%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
+#, c-format
+msgid "%s(): pipe() failed, errno=%d (%s)"
+msgstr ""
+
+#: ../filter_dotmatrix/inbuf.c:54 ../pprdrv/pprdrv_progress.c:221
+#, fuzzy, c-format
+msgid "%s(): read() failed, errno=%d (%s)"
+msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
+
+#: ../pprdrv/pprdrv_progress.c:223
+#, c-format
+msgid "%s(): read() read %d bytes instead of %d"
+msgstr ""
+
+#: ../ppr/ppr_respond.c:132
 #, c-format
 msgid "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../ppr/ppr_respond.c:131
+#: ../ppr/ppr_respond.c:127
 #, c-format
 msgid "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:1679
+#: ../ppr/ppr_infile.c:1566
 #, fuzzy, c-format
 msgid "%s(): stat(\"%s\", ?) failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции fstat(), errno=%d (%s)"
 
-#: ../ppr/ppr_mactt.c:459 ../ppr/ppr_mactt.c:467
-#, c-format
-msgid "%s(): unlink(\"%s\") failed, errno=%d (%s)"
-msgstr ""
-
-#: ../ppr/ppr_respond.c:171
+#: ../ppr/ppr_respond.c:167
 #, c-format
 msgid "%s(): wait() failed, errno=%d (%s)\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:251
+#, c-format
+msgid "%s(): write() failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:253
+#, c-format
+msgid "%s(): write() wrote %d bytes instead of %d"
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:347
@@ -758,6 +750,7 @@ msgstr ""
 
 #: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1385
 #: ../filters_misc/filter_hexdump.c:192 ../filters_misc/make_dvips_conf.c:79
+#: ../pprdrv/pprdrv_flag.c:331
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -766,7 +759,7 @@ msgid ""
 "\t\t%s =\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2778
+#: ../ppr/ppr_main.c:2624
 #, c-format
 msgid "%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"
 msgstr ""
@@ -812,13 +805,13 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелтат не будет.\n"
 msgid "%s: This program must be setuid %s!\n"
 msgstr ""
 
-#: ../fontutils/indexfonts.c:500
+#: ../fontutils/indexfonts.c:514
 #, c-format
 msgid "%s: can't create \"%s\", errno=%d (%s)\n"
 msgstr "%s: невозможно создать \"%s\", errno=%d (%s)\n"
 
-#: ../fontutils/indexfonts.c:160 ../fontutils/indexfonts.c:197
-#: ../fontutils/indexfonts.c:477
+#: ../fontutils/indexfonts.c:184 ../fontutils/indexfonts.c:221
+#: ../fontutils/indexfonts.c:491
 #, c-format
 msgid "%s: can't open \"%s\", errno=%d (%s)\n"
 msgstr "%s: невозможно открыть \"%s\", errno=%d (%s)\n"
@@ -863,6 +856,16 @@ msgstr ""
 msgid "%s: lp -i and -H are not yet implemented\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_lw_messages.c:114
+#, c-format
+msgid "%s: no match for \"%s\""
+msgstr ""
+
+#: ../pprdrv/pprdrv_pjl_messages.c:123
+#, c-format
+msgid "%s: no match for %d \"%s\""
+msgstr ""
+
 #: ../ppad/ppad_ppd.c:814 ../ppad/ppad_printer.c:3118
 #, fuzzy, c-format
 msgid "%s: query failed: %s\n"
@@ -888,13 +891,13 @@ msgstr ""
 msgid "%s: unrecognized option: -%c\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1994
+#: ../ppr/ppr_main.c:1865
 #, c-format
 msgid ""
 "%s: warning: either account \"%s\" or this program has the wrong group ID.\n"
 msgstr ""
 
-#: ../fontutils/indexfonts.c:488
+#: ../fontutils/indexfonts.c:502
 #, c-format
 msgid "%s: warning: no [%s] section in \"%s\", copying from \"%s.sample\"\n"
 msgstr ""
@@ -1003,6 +1006,18 @@ msgstr ""
 msgid "(send alert on first error, send notice on recovery)"
 msgstr ""
 
+#: ../pprdrv/pprdrv_capable.c:116
+#, c-format
+msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:145
+#, c-format
+msgid ""
+"+Printer \"%s\" may not print this job correctly for the following reason"
+"(s):\n"
+msgstr ""
+
 #: ../ppop/ppop.c:1099
 msgid "--arrest-interest-time=<seconds>\tsame as -A"
 msgstr ""
@@ -1052,10 +1067,6 @@ msgstr ""
 msgid "-X <principal_string>\tact as proxy for principal described"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2246
-msgid "-a and -A are mutually exclusive"
-msgstr ""
-
 #: ../ppad/ppad.c:320
 msgid "-d <n>\tset debug level to <n>"
 msgstr ""
@@ -1064,7 +1075,7 @@ msgstr ""
 msgid "1 active job was canceled.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2436
+#: ../ppr/ppr_main.c:2294
 msgid "1 character follows EOF mark"
 msgstr ""
 
@@ -1213,7 +1224,7 @@ msgstr "Псевдоним слишком длиный.\n"
 msgid "Alias name: %s\n"
 msgstr "Псевдоним: %s\n"
 
-#: ../ppr/ppr_main.c:1824
+#: ../ppr/ppr_main.c:1717
 #, c-format
 msgid "Argument for %s must be between 1 and 10"
 msgstr ""
@@ -1222,7 +1233,7 @@ msgstr ""
 msgid "As Proxy For"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:269
+#: ../ppr/ppr_simplify.c:247
 msgid "Attempt to continue non-existent DSC comment"
 msgstr ""
 
@@ -1251,6 +1262,11 @@ msgstr ""
 "Порочние настройки, исполнайте команду \"ppop alerts\" чтобы видеть "
 "подробности."
 
+#: ../pprdrv/pprdrv_flag.c:608
+#, c-format
+msgid "Balance before printing this job: %s"
+msgstr ""
+
 #: ../ppuser/ppuser.c:294
 #, c-format
 msgid "Balance: %s\n"
@@ -1277,7 +1293,7 @@ msgid ""
 "which you have specified.\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:244
+#: ../ppr/ppr_infile.c:239
 msgid "Berkeley Plot files"
 msgstr ""
 
@@ -1285,12 +1301,30 @@ msgstr ""
 msgid "Bins: "
 msgstr "Потоки: "
 
-#: ../ppr/ppr_infile.c:215
+#: ../pprdrv/pprdrv_rip.c:125
+msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:177
+msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."
+msgstr ""
+
+#: ../ppr/ppr_infile.c:210
 msgid "CAT/4 (old Troff) files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:245
+#: ../ppr/ppr_infile.c:240
 msgid "CIF files"
+msgstr ""
+
+#: ../pprdrv/pprdrv_mactt.c:59 ../pprdrv/pprdrv_mactt.c:71
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no \"%.*s\"."
+msgstr ""
+
+#: ../pprdrv/pprdrv_mactt.c:156
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no sfntdef section."
 msgstr ""
 
 #: ../ppad/ppad_printer.c:2196
@@ -1306,7 +1340,9 @@ msgid "Can't create media file \"%s\", errno=%d (%s)"
 msgstr "Не возможно создать файл носителев \"%s\", errno=%d (%s)"
 
 #: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1267 ../ppr/ppr_editps.c:142
-#: ../ppr/ppr_main.c:504 ../samba/ppr2samba.c:427
+#: ../ppr/ppr_main.c:490 ../samba/ppr2samba.c:427 ../pprdrv/pprdrv_flag.c:260
+#: ../pprdrv/pprdrv_log.c:68 ../pprdrv/pprdrv_lw_messages.c:63
+#: ../pprdrv/pprdrv_pjl_messages.c:70
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s)"
@@ -1339,15 +1375,29 @@ msgstr "Не возмозно открыть \"%s\", errno=%d (%s)\n"
 msgid "Can't open media database \"%s\", errno=%d (%s)"
 msgstr "Не возмозно открыть базу носителев \"%s\", errno=%d (%s)"
 
+#: ../pprdrv/pprdrv_mactt.c:96
+#, c-format
+msgid "Can't open resource file \"%s\", errno=%d (%s)"
+msgstr ""
+
 #: ../ppad/ppad_conf.c:120
 #, c-format
 msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr "Невозможно сождать временый файл \"%s\" в режиме записи, errno=%d (%s)"
 
-#: ../ppr/ppr_infile.c:2021
+#: ../pprdrv/pprdrv_ppd.c:533
+msgid "Can't parse RIP information in PPD file."
+msgstr ""
+
+#: ../ppr/ppr_infile.c:1908
 #, c-format
 msgid "Can't print %s.\n"
 msgstr "Нет средства печать %s.\n"
+
+#: ../pprdrv/pprdrv_capable.c:374
+#, c-format
+msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
+msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:1583
 msgid "Charge"
@@ -1420,6 +1470,10 @@ msgstr ""
 msgid "Comment: %s\n"
 msgstr "Заметка: %s\n"
 
+#: ../pprdrv/pprdrv_capable.c:635
+msgid "Communications channel cannot pass required codes."
+msgstr ""
+
 #: ../ppr/ppr_editps.c:204
 #, c-format
 msgid "Condition \"%s\" contains no \"=\" on \"%s\" line %d"
@@ -1439,9 +1493,14 @@ msgstr ""
 msgid "Contact: %s\n"
 msgstr "Контактное лицо: %s\n"
 
-#: ../ppr/ppr_simplify.c:275
+#: ../ppr/ppr_simplify.c:253
 #, c-format
 msgid "Continued DSC comment \"%s...\" overflows buffer"
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:583
+#, c-format
+msgid "Copies: %d"
 msgstr ""
 
 #: ../lprsrv/lprsrv_cancel.c:106
@@ -1465,6 +1524,11 @@ msgstr ""
 #: ../ppad/ppad_media.c:113
 #, c-format
 msgid "Creating media file \"%s\".\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:554
+#, c-format
+msgid "Creator: %s"
 msgstr ""
 
 #: ../ppuser/ppuser.c:306
@@ -1507,19 +1571,19 @@ msgstr "Удел: %s\n"
 msgid "Destination"
 msgstr "Очередь"
 
-#: ../ppr/ppr_main.c:2237
+#: ../ppr/ppr_main.c:2107
 msgid "Destination (printer or group) name contains a disallowed character"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2233
+#: ../ppr/ppr_main.c:2103
 msgid "Destination (printer or group) name is empty"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2235
+#: ../ppr/ppr_main.c:2105
 msgid "Destination (printer or group) name is too long"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2239
+#: ../ppr/ppr_main.c:2109
 msgid "Destination (printer or group) name starts with a disallowed character"
 msgstr ""
 
@@ -1552,11 +1616,11 @@ msgstr ""
 msgid "Destination or job name \"%s\" is invalid.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2736
+#: ../ppr/ppr_main.c:2582
 msgid "Disk full"
 msgstr "Диск переполен"
 
-#: ../ppr/ppr_infile.c:216
+#: ../ppr/ppr_infile.c:211
 msgid "Ditroff output"
 msgstr ""
 
@@ -1572,6 +1636,11 @@ msgstr "Работа закончена.\n"
 
 #: ../libppr/options.c:144
 msgid "Empty value is not allowed"
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:536
+#, c-format
+msgid "End of job %s-%d"
 msgstr ""
 
 #: ../libppr/options.c:117
@@ -1610,7 +1679,7 @@ msgstr "Не верно"
 msgid "FATAL: "
 msgstr "Неисправимая ошибка: "
 
-#: ../ppr/ppr_infile.c:253
+#: ../ppr/ppr_infile.c:248
 msgid "FIG files"
 msgstr ""
 
@@ -1634,7 +1703,7 @@ msgstr ""
 msgid "Failed to open \"%s\" for write, errno=%d, (%s)"
 msgstr ""
 
-#: ../ppr/ppr_main.c:310
+#: ../ppr/ppr_main.c:299
 #, c-format
 msgid "Failed to open log file, using stderr.\n"
 msgstr ""
@@ -1661,11 +1730,11 @@ msgstr ""
 msgid "For what: %s\n"
 msgstr "Чего: %s\n"
 
-#: ../ppr/ppr_infile.c:211
+#: ../ppr/ppr_infile.c:206
 msgid "Fortran files"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:236
+#: ../ppr/ppr_simplify.c:214
 #, c-format
 msgid "Found \"%%%%End\" after copying %ld additional bytes"
 msgstr ""
@@ -1675,7 +1744,7 @@ msgstr ""
 msgid "Fullname: %s\n"
 msgstr "ФИО: %s\n"
 
-#: ../ppr/ppr_infile.c:242
+#: ../ppr/ppr_infile.c:237
 msgid "GIF pictures"
 msgstr "GIF картини"
 
@@ -1710,23 +1779,23 @@ msgstr ""
 msgid "Group name: %s\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:223
+#: ../ppr/ppr_infile.c:218
 msgid "HP PCL files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:226
+#: ../ppr/ppr_infile.c:221
 msgid "HP PCL-XL files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:228
+#: ../ppr/ppr_infile.c:223
 msgid "HP PCL3GUI files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:224
+#: ../ppr/ppr_infile.c:219
 msgid "HP-GL/2 files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:236
+#: ../ppr/ppr_infile.c:231
 msgid "HTML documents"
 msgstr ""
 
@@ -1783,7 +1852,7 @@ msgstr ""
 msgid "Illegal \"speed=\" value"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2357
+#: ../ppr/ppr_main.c:2215
 msgid "Input file is empty, nothing to print"
 msgstr "Ввиденный файл пустой, ничего печать"
 
@@ -1800,7 +1869,7 @@ msgstr ""
 msgid "Input file's aspect ratio: %.2f (landscape_asptrigger=%.2f)\n"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:120
+#: ../ppr/ppr_simplify.c:116
 #, c-format
 msgid "Insufficent number of arguments on \"%%%%BeginData:\" line"
 msgstr ""
@@ -1826,16 +1895,38 @@ msgid ""
 "any money.\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_interface.c:311
+#, c-format
+msgid "Interface program \"%s\" does not exist."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:232
+msgid ""
+"Interface program malfunction: it quit before accepting\n"
+"\tall of the job but didn't return an error code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:191
+#, c-format
+msgid "Interface program malfunction: it returned invalid exit code %d."
+msgstr ""
+
 #: ../ppad/ppad_printer.c:766
 #, c-format
 msgid "Interface: %s\n"
 msgstr "Посредническая програма (interface): %s\n"
 
-#: ../ppr/ppr_rcache.c:104
+#: ../ppr/ppr_rcache.c:72
 #, c-format
 msgid ""
 "Invalid \"%%%%BeginResource:\" line:\n"
 "%s"
+msgstr ""
+
+#: ../pprdrv/pprdrv.c:1245 ../pprdrv/pprdrv.c:1323 ../pprdrv/pprdrv.c:1337
+#: ../pprdrv/pprdrv.c:1342 ../pprdrv/pprdrv.c:1347 ../pprdrv/pprdrv.c:1360
+#, c-format
+msgid "Invalid \"%s\" (%s line %d)."
 msgstr ""
 
 #: ../ppr/ppr_dscdoc.c:213
@@ -1843,28 +1934,19 @@ msgstr ""
 msgid "Invalid \"%s\" argument \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1486
+#: ../ppr/ppr_main.c:1403
 #, c-format
 msgid "Invalid %s argument format"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1448 ../ppr/ppr_main.c:1453
+#: ../ppr/ppr_main.c:1374 ../ppr/ppr_main.c:1379
 #, c-format
 msgid "Invalid %s option"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1399 ../ppop/ppop_modify.c:95
+#: ../ppop/ppop_cmds_listq.c:1400 ../ppop/ppop_modify.c:95
 #, c-format
 msgid "Invalid Addon line: %s\n"
-msgstr ""
-
-#: ../ppr/ppr_rcache.c:322
-msgid "Invalid Macintosh TrueType PostScript font discarded"
-msgstr ""
-
-#: ../ppr/ppr_infile.c:777 ../ppr/ppr_infile.c:786 ../ppr/ppr_infile.c:795
-#, c-format
-msgid "Invalid argument on .ppr header \"%s\" line: %s"
 msgstr ""
 
 #: ../interfaces/serial.c:303 ../interfaces/serial.c:317
@@ -1883,12 +1965,12 @@ msgstr ""
 msgid "Invalid section for queue \"%s\" in \"%s\"."
 msgstr ""
 
-#: ../ppr/ppr_main.c:1839
+#: ../ppr/ppr_main.c:1732
 #, c-format
 msgid "Invalid setting for %s"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:241
+#: ../ppr/ppr_infile.c:236
 #, fuzzy
 msgid "JPEG pictures"
 msgstr "GIF картини"
@@ -1896,6 +1978,21 @@ msgstr "GIF картини"
 #: ../ppop/ppop_cmds_other.c:1789
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:548
+#, c-format
+msgid "Job ID: %s-%d"
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:647
+#, c-format
+msgid "Job has %d pages but allowed range for this printer is %d--%d."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:660
+#, c-format
+msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:480
@@ -1946,7 +2043,7 @@ msgstr ""
 msgid "Landscape printable area: %.2fpsu x %.2fpsu\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:904
+#: ../ppr/ppr_infile.c:791
 #, c-format
 msgid "Language \"%s\" in PJL header not recognized"
 msgstr ""
@@ -1999,19 +2096,19 @@ msgid ""
 "(Probably uprint.conf has been changed since uprint-newconf was run.)"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:247
+#: ../ppr/ppr_infile.c:242
 msgid "MS-Windows Bitmaps"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:219
+#: ../ppr/ppr_infile.c:214
 msgid "MS-Windows Enhanced Metafiles"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:218
+#: ../ppr/ppr_infile.c:213
 msgid "MS-Windows Metafiles"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:208
+#: ../ppr/ppr_infile.c:203
 msgid "Macintosh text"
 msgstr ""
 
@@ -2067,16 +2164,16 @@ msgstr "Носитель удален.\n"
 msgid "Members:"
 msgstr "Члены:"
 
-#: ../ppr/ppr_infile.c:220
+#: ../ppr/ppr_infile.c:215
 msgid "Mentor Graphics Plot Metafiles"
 msgstr ""
 
-#: ../ppr/ppr_mactt.c:268
+#: ../pprdrv/pprdrv_interface.c:175
 #, c-format
-msgid "Merge into \"%s\" aborted because new font is not Mac TrueType"
+msgid "Mischief afoot, interface program stopped by signal \"%s\"."
 msgstr ""
 
-#: ../ppr/ppr_main.c:2634
+#: ../ppr/ppr_main.c:2480
 #, c-format
 msgid "Missing \"%%%%Page:\" comments or incorrect \"%%%%Pages:\" comment"
 msgstr ""
@@ -2085,7 +2182,7 @@ msgstr ""
 msgid "Missing option name"
 msgstr ""
 
-#: ../ppr/ppr_main.c:364
+#: ../ppr/ppr_main.c:353
 #, c-format
 msgid "NULL value for %s%s"
 msgstr ""
@@ -2115,9 +2212,14 @@ msgstr ""
 msgid "No \"%%%%EndProlog\" before first \"%%%%Page:\", inserting one"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2482
+#: ../ppr/ppr_main.c:2336
 #, c-format
 msgid "No \"%%%%Trailer:\" comment"
+msgstr ""
+
+#: ../pprdrv/pprdrv.c:1407
+#, c-format
+msgid "No \"Interface:\" line in %s"
 msgstr ""
 
 #: ../ppr/ppr_res.c:442
@@ -2131,11 +2233,6 @@ msgstr ""
 
 #: ../interfaces/serial.c:338
 msgid "No OS support for RTS/CTS handshaking"
-msgstr ""
-
-#: ../ppr/ppr_mactt.c:439
-#, c-format
-msgid "No Type 1 section found while merging Mac TT font \"%s\", merge aborted"
 msgstr ""
 
 #: ../lprsrv/lprsrv-test.c:178
@@ -2162,17 +2259,6 @@ msgstr ""
 msgid "No printer matching address \"%s\" is presently connected."
 msgstr ""
 
-#: ../ppr/ppr_mactt.c:314
-#, c-format
-msgid "No sfnt section found while merging Mac font \"%s\", merger aborted"
-msgstr ""
-
-#: ../ppr/ppr_mactt.c:397
-#, c-format
-msgid ""
-"No sfntdef section found while merging Mac TT font \"%s\", merger aborted"
-msgstr ""
-
 #: ../libppr/options.c:127
 msgid "No spaces allowed after equals sign"
 msgstr ""
@@ -2185,7 +2271,7 @@ msgstr ""
 msgid "No unused TCP ports available in reserved range."
 msgstr ""
 
-#: ../ppr/ppr_main.c:2606
+#: ../ppr/ppr_main.c:2452
 #, c-format
 msgid "No valid \"%%%%Pages:\" comment"
 msgstr ""
@@ -2205,21 +2291,21 @@ msgstr ""
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1816
+#: ../ppr/ppr_main.c:1710
 #, c-format
 msgid "Non-privileged users may not use %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1814
+#: ../pprdrv/pprdrv_lw_messages.c:83 ../pprdrv/pprdrv_pjl_messages.c:92
 #, c-format
-msgid "Non-privileged users may not use %s w/out -a"
+msgid "Not enough fields in \"%s\" line %d"
 msgstr ""
 
 #: ../filter_lp/filter_lp.c:565
 msgid "Not one FF found, page length and asp[ect ratio] unknown\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1530
+#: ../ppr/ppr_main.c:1442
 msgid "Number of copies must be positive"
 msgstr "Количество экземпларов должно быть положительным числом"
 
@@ -2232,14 +2318,9 @@ msgstr ""
 msgid "Only 9 and 24 are valid values."
 msgstr ""
 
-#: ../ppr/ppr_main.c:1560
+#: ../ppr/ppr_main.c:1461
 #, c-format
 msgid "Only privileged users may use \"%s for\""
-msgstr ""
-
-#: ../ppr/ppr_main.c:1538
-#, c-format
-msgid "Only privledged users may use the %s switch"
 msgstr ""
 
 #: ../interfaces/serial.c:394
@@ -2263,12 +2344,12 @@ msgstr "Операция: "
 msgid "Option \"-H editps\" used, scanning \"%s\".\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1353
+#: ../ppr/ppr_main.c:1279
 #, c-format
 msgid "Option -%c inserted by -I switch has an unneeded argument"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1350
+#: ../ppr/ppr_main.c:1276
 #, c-format
 msgid "Option -%c inserted by -I switch is missing an argument"
 msgstr ""
@@ -2303,12 +2384,23 @@ msgstr ""
 msgid "OutputOrder: %s\n"
 msgstr "Очеред страниц (outputorder): %s\n"
 
+#: ../pprdrv/pprdrv_pfb.c:64 ../pprdrv/pprdrv_pfb.c:74
+#: ../pprdrv/pprdrv_pfb.c:89 ../pprdrv/pprdrv_pfb.c:101
+#: ../pprdrv/pprdrv_pfb.c:116 ../pprdrv/pprdrv_pfb.c:121
+#, c-format
+msgid "PFB file \"%s\" is corrupt (defect type %d)"
+msgstr ""
+
 #: ../ppad/ppad.c:574
 msgid "PPAD, Page Printer Administrator's utility"
 msgstr ""
 
 #: ../ppad/ppad.c:292
 msgid "PPD File Management:\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_patch.c:139
+msgid "PPD file does not have *ExitServer code"
 msgstr ""
 
 #: ../ppad/ppad_printer.c:801
@@ -2323,6 +2415,10 @@ msgstr ""
 
 #: ../ppop/ppop.c:983
 msgid "PPOP, Page Printer Operator's utility"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:243
+msgid "PPR does not have access to printer"
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:447
@@ -2344,6 +2440,11 @@ msgstr ""
 msgid "PageTimeLimit: %d\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_flag.c:576
+#, c-format
+msgid "Pages: %d"
+msgstr ""
+
 #: ../interfaces/parallel.c:164
 #, c-format
 msgid "Parallel port communication failed, errno=%d (%s)."
@@ -2354,7 +2455,7 @@ msgstr "Собещение через параллельного порта терпело неудачу, errno=%d (%s)."
 msgid "Parallel port probing not implemented on this OS.\n"
 msgstr ""
 
-#: ../ppop/ppop_modify.c:364
+#: ../ppop/ppop_modify.c:365
 #, c-format
 msgid "Parameter \"%s\" is not a name=value pair.\n"
 msgstr ""
@@ -2364,7 +2465,7 @@ msgstr ""
 msgid "PassThru types: %s\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:209
+#: ../ppr/ppr_infile.c:204
 msgid "Plain text"
 msgstr "Простой текст"
 
@@ -2378,11 +2479,11 @@ msgstr ""
 msgid "Port \"%s\" not found.\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:252
+#: ../ppr/ppr_infile.c:247
 msgid "Portable Network Graphics files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:251
+#: ../ppr/ppr_infile.c:246
 msgid "Portable aNy Maps"
 msgstr ""
 
@@ -2418,6 +2519,11 @@ msgstr "Название носинеля: %16.16s\n"
 #: ../ppad/ppad_media.c:305
 #, c-format
 msgid "Pre-printed Form Type: (%s) "
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:569
+#, c-format
+msgid "Print Date: %s"
 msgstr ""
 
 #: ../ppop/ppop.c:822
@@ -2489,6 +2595,18 @@ msgstr ""
 msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_patch.c:109
+msgid "Printer did not respond correctly to *?PatchFile query."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:566
+msgid "Printer does not have all required extensions."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:578
+msgid "Printer is not permitted to print grayscale documents."
+msgstr ""
+
 #: ../ppop/ppop_cmds_other.c:185
 msgid "Printer isn't responding."
 msgstr ""
@@ -2516,6 +2634,10 @@ msgstr ""
 msgid "Printer turned off or disconnected while printing."
 msgstr ""
 
+#: ../pprdrv/pprdrv_reason.c:134
+msgid "Probable cause: "
+msgstr ""
+
 #: ../interfaces/parallel.c:364 ../interfaces/usb.c:461
 #, c-format
 msgid "Probe failed.\n"
@@ -2536,10 +2658,15 @@ msgstr ""
 msgid "Procset \"%s\" has no version and revision numbers"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:645
+#: ../ppop/ppop_cmds_listq.c:646
 #, c-format
 msgid "Queue ID        For                      Time      Pgs Status\n"
 msgstr "Очередный ID    Для Кого                 Когда     #Ср Состояное\n"
+
+#: ../pprdrv/pprdrv_rip.c:123
+#, c-format
+msgid "RIP stopped by signal \"%s\"."
+msgstr ""
 
 #: ../ppad/ppad_printer.c:816
 #, c-format
@@ -2551,7 +2678,7 @@ msgstr ""
 msgid "RIP: %s %s \"%s\" (from PPD)\n"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:224
+#: ../ppr/ppr_simplify.c:202
 #, c-format
 msgid "Ran off end of file after %ld bytes while searching for \"%%%%End\""
 msgstr ""
@@ -2640,7 +2767,7 @@ msgstr ""
 msgid "Remote system \"%s\" has refused the connection."
 msgstr ""
 
-#: ../ppr/ppr_main.c:550
+#: ../ppr/ppr_main.c:536
 #, c-format
 msgid "Request id: %s-%d.%d\n"
 msgstr ""
@@ -2649,9 +2776,29 @@ msgstr ""
 msgid "Requested medium is not listed in the media database"
 msgstr ""
 
+#: ../pprdrv/pprdrv_capable.c:552
+#, c-format
+msgid "Required language level (%d) exceeds printer's language level (%d)."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:537 ../pprdrv/pprdrv_capable.c:542
+#, c-format
+msgid "Requirement \"%s\" can't be met."
+msgstr ""
+
 #: ../libuprint/lpr_failover.c:57
 #, c-format
 msgid "Resorting to backup server \"%s\"."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:429 ../pprdrv/pprdrv_capable.c:440
+#, c-format
+msgid "Resource \"%s %s %s %d\" not available."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:431 ../pprdrv/pprdrv_capable.c:442
+#, c-format
+msgid "Resource \"%s %s\" not available."
 msgstr ""
 
 #: ../ppr/ppr_res.c:461
@@ -2694,7 +2841,7 @@ msgstr ""
 msgid "Reverse lookup failed for \"%s\" address \"%s\".\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:234
+#: ../ppr/ppr_infile.c:229
 msgid "Rich Text Format documents"
 msgstr ""
 
@@ -2703,7 +2850,12 @@ msgstr ""
 msgid "Rotate: %s\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:237
+#: ../pprdrv/pprdrv_flag.c:551
+#, c-format
+msgid "Routing: %s"
+msgstr ""
+
+#: ../ppr/ppr_infile.c:232
 msgid "SGML documents"
 msgstr ""
 
@@ -2726,6 +2878,11 @@ msgstr ""
 msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_flag.c:577
+#, c-format
+msgid "Sheets: %d"
+msgstr ""
+
 #: ../samba/ppr2samba.c:294
 #, fuzzy, c-format
 msgid "Skipping alias \"%s\": %s\n"
@@ -2741,7 +2898,12 @@ msgstr "останоится (печетает %s)"
 msgid "Skipping printer \"%s\": %s\n"
 msgstr "останоится (печетает %s)"
 
-#: ../ppr/ppr_simplify.c:392
+#: ../pprdrv/pprdrv_ppd.c:537
+msgid ""
+"Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."
+msgstr ""
+
+#: ../ppr/ppr_simplify.c:370
 #, c-format
 msgid "Space missing after keyword \"%.*s\""
 msgstr ""
@@ -2783,7 +2945,7 @@ msgstr ""
 msgid "Suitability for banners and trailers: (%d) "
 msgstr ""
 
-#: ../ppr/ppr_infile.c:243
+#: ../ppr/ppr_infile.c:238
 msgid "Sun raster files"
 msgstr ""
 
@@ -2794,6 +2956,11 @@ msgstr ""
 
 #: ../ppad/ppad_alias.c:94 ../ppad/ppad_group.c:194 ../ppad/ppad_printer.c:902
 msgid "Switchset: "
+msgstr ""
+
+#: ../pprdrv/pprdrv.c:1377
+#, c-format
+msgid "Syntax error in \"%s\" (%s line %d)."
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:316
@@ -2830,7 +2997,7 @@ msgstr ""
 msgid "TCP/IP interface can't determine IP address for \"%s\"."
 msgstr ""
 
-#: ../ppr/ppr_infile.c:246
+#: ../ppr/ppr_infile.c:241
 msgid "TIFF pictures"
 msgstr ""
 
@@ -2838,15 +3005,15 @@ msgstr ""
 msgid "TRUE"
 msgstr "Верно"
 
-#: ../ppr/ppr_infile.c:217
+#: ../ppr/ppr_infile.c:212
 msgid "TeX DVI files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:232
+#: ../ppr/ppr_infile.c:227
 msgid "TeX and LaTeX source"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:235
+#: ../ppr/ppr_infile.c:230
 msgid "TeXInfo documents"
 msgstr ""
 
@@ -2867,12 +3034,12 @@ msgid ""
 "    ppdoc %s\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1435
+#: ../ppr/ppr_main.c:1361
 #, c-format
 msgid "The %s option must be followed by \"yes\" or \"no\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1909
+#: ../ppr/ppr_main.c:1780
 #, c-format
 msgid "The %s option requires an argument"
 msgstr ""
@@ -2882,7 +3049,7 @@ msgstr ""
 msgid "The %s option requires an argument.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1915
+#: ../ppr/ppr_main.c:1786
 #, c-format
 msgid "The %s switch does not take an argument"
 msgstr ""
@@ -2892,14 +3059,66 @@ msgstr ""
 msgid "The %s switch does not take an argument.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1912
+#: ../ppr/ppr_main.c:1783
 #, c-format
 msgid "The %s switch takes an argument and so must stand alone"
+msgstr ""
+
+#: ../pprdrv/pprdrv_ppd.c:921
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", removing existing code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_ppd.c:911
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", retaining old code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_ppd.c:845
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", skipping it."
 msgstr ""
 
 #: ../interfaces/lpr.c:568
 #, c-format
 msgid "The PPR interface program \"%s\" is incapable of sending feedback."
+msgstr ""
+
+#: ../pprdrv/pprdrv_reason.c:102
+#, c-format
+msgid ""
+"The PostScript error indicated below occured while printing on \"%s\".\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:102
+msgid ""
+"The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led "
+"to\n"
+"a post-processing filter which died.  Look in the RIP options to find out "
+"what\n"
+"post-processing filter is being used."
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:90
+#, c-format
+msgid ""
+"The RIP (Ghostscript) malfunctioned (caught SIGSEGV) while printing the job\n"
+"%s.  Presumably it can print other jobs that don't\n"
+"trigger the bug, so the spooler will arrest the job and move on."
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:111
+#, c-format
+msgid ""
+"The RIP (Ghostscript) was killed by signal %d (%s).\n"
+"Perhaps a system operator did this or perhaps the system\n"
+"is shutting down."
 msgstr ""
 
 #: ../ppad/ppad_printer.c:1630
@@ -2943,6 +3162,12 @@ msgstr ""
 msgid "The file \"%s\" is not a tty."
 msgstr ""
 
+#: ../pprdrv/pprdrv_nup.c:62
+#, c-format
+msgid ""
+"The font \"%s\", which is required for the draft notice, is not available."
+msgstr ""
+
 #: ../ppad/ppad_conf.c:364 ../ppad/ppad_group.c:90 ../ppad/ppad_group.c:312
 #: ../ppad/ppad_group.c:597 ../ppad/ppad_group.c:646 ../ppad/ppad_group.c:681
 #, c-format
@@ -2964,11 +3189,21 @@ msgstr ""
 msgid "The interface \"%s\" not executable.\n"
 msgstr ""
 
+#: ../pprdrv/pprdrv_interface.c:165
+msgid ""
+"The interface performed a controlled shutdown because a non-spoolerprocess "
+"(possibly the OS kernel) sent it a signal."
+msgstr ""
+
 #: ../interfaces/atalk_ali.c:749 ../interfaces/atalk_cap.c:491
 #: ../interfaces/pros.c:465 ../interfaces/serial.c:542
 #, fuzzy, c-format
 msgid "The interface program \"%s\" does not support probing.\n"
 msgstr "Принтер \"%s\" не существует.\n"
+
+#: ../pprdrv/pprdrv_interface.c:150
+msgid "The interface program dumped core."
+msgstr ""
 
 #: ../ppop/ppop_modify.c:294
 #, c-format
@@ -3028,6 +3263,14 @@ msgstr ""
 #, fuzzy, c-format
 msgid "The printer \"%s\" has no \"PPDFile:\" line in its configuration file."
 msgstr "Принтер \"%s\" не имет PPD файл.\n"
+
+#: ../pprdrv/pprdrv_interface.c:140
+#, c-format
+msgid ""
+"The printer interface program terminated abruptly after receiving\n"
+"signal %d (%s) from a non-spooler process (possibly\n"
+"the OS kernel)."
+msgstr ""
 
 #: ../ppad/ppad_printer.c:1214
 msgid "The printer name begins with a disallowed character.\n"
@@ -3122,9 +3365,19 @@ msgstr ""
 msgid "This program is used to test an lprsrv.conf file.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1992
+#: ../ppr/ppr_main.c:1863
 #, c-format
 msgid "This program must be setuid and owned by \"%s\""
+msgstr ""
+
+#: ../pprdrv/pprdrv_patch.c:101
+msgid ""
+"Timeout expired while waiting for printer to respond to *?PatchFile query."
+msgstr ""
+
+#: ../pprdrv/pprdrv_pagecount.c:69
+msgid ""
+"Timeout expired while waiting for printer to respond to pagecount query."
 msgstr ""
 
 #: ../libuprint/lpr_connect.c:250
@@ -3142,12 +3395,17 @@ msgstr ""
 msgid "Timeout while waiting for response from print server."
 msgstr ""
 
+#: ../pprdrv/pprdrv_flag.c:539 ../pprdrv/pprdrv_flag.c:557
+#, c-format
+msgid "Title: %s"
+msgstr ""
+
 #: ../libppr/cs2enc.c:89
 #, c-format
 msgid "Too few fields in \"%s\" line %d"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1191
+#: ../ppr/ppr_main.c:1117
 msgid "Too many -F switches"
 msgstr ""
 
@@ -3159,7 +3417,7 @@ msgstr ""
 msgid "Too many parameters.  Did you forget to quote the list of options?\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:231
+#: ../ppr/ppr_infile.c:226
 msgid "Troff source files"
 msgstr ""
 
@@ -3202,21 +3460,21 @@ msgstr "%s: невозможно создать \"%s\", errno=%d (%s)\n"
 msgid "Unclosed quote"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2471
+#: ../ppr/ppr_main.c:2326
 msgid "Unclosed resource or resources"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:315
+#: ../ppr/ppr_simplify.c:293
 msgid "Unenclosed EPS file, applying badeps hack"
 msgstr ""
 
-#: ../ppr/ppr_simplify.c:325
+#: ../ppr/ppr_simplify.c:303
 msgid ""
 "Unenclosed EPS file, try -H badeps\n"
 "\t(Expect additional semi-spurious warnings due to this problem.)"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2484
+#: ../ppr/ppr_main.c:2338
 #, c-format
 msgid "Unexpected EOF in unclosed %s"
 msgstr ""
@@ -3225,12 +3483,12 @@ msgstr ""
 msgid "Unknown error code"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1347
+#: ../ppr/ppr_main.c:1273
 #, c-format
 msgid "Unknown option -%c inserted by -I switch"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1342
+#: ../ppr/ppr_main.c:1268
 #, c-format
 msgid "Unknown option --%.*s inserted by -I switch"
 msgstr ""
@@ -3253,22 +3511,17 @@ msgstr ""
 msgid "Unreasonable value for option \"%s=\"."
 msgstr ""
 
-#: ../ppr/ppr_main.c:1763
+#: ../ppr/ppr_main.c:1664
 #, c-format
 msgid "Unrecognized %s option: \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1627 ../ppr/ppr_main.c:1751 ../ppr/ppr_main.c:1768
+#: ../ppr/ppr_main.c:1528 ../ppr/ppr_main.c:1652 ../ppr/ppr_main.c:1669
 #, c-format
 msgid "Unrecognized %s option: %s"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:803
-#, c-format
-msgid "Unrecognized .ppr header line: %s %s"
-msgstr ""
-
-#: ../ppr/ppr_simplify.c:249
+#: ../ppr/ppr_simplify.c:227
 #, c-format
 msgid "Unrecognized data type \"%s\" in \"%%%%BeginData:\""
 msgstr ""
@@ -3277,12 +3530,28 @@ msgstr ""
 msgid "Unrecognized emulation."
 msgstr ""
 
+#: ../pprdrv/pprdrv_lw_messages.c:92 ../pprdrv/pprdrv_pjl_messages.c:103
+#, c-format
+msgid "Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"
+msgstr ""
+
+#: ../pprdrv/pprdrv_lw_messages.c:96 ../pprdrv/pprdrv_pjl_messages.c:107
+#, c-format
+msgid ""
+"Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"
+msgstr ""
+
+#: ../pprdrv/pprdrv_lw_messages.c:94 ../pprdrv/pprdrv_pjl_messages.c:105
+#, c-format
+msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
+msgstr ""
+
 #: ../interfaces/usb.c:307
 #, c-format
 msgid "Unrecognized search key in address: %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1906
+#: ../ppr/ppr_main.c:1777
 #, c-format
 msgid "Unrecognized switch %s.  Try --help"
 msgstr ""
@@ -3309,9 +3578,9 @@ msgstr ""
 msgid "Unrecognized type of identity proof \"%s\" at \"%s\" line %d"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1854 ../ppr/ppr_main.c:1865
+#: ../pprdrv/pprdrv.c:1394
 #, c-format
-msgid "Unrecognized value for %s option: %s"
+msgid "Unrecognized userparams variable \"%s\"."
 msgstr ""
 
 #: ../lprsrv/lprsrv-test.c:143
@@ -3420,7 +3689,7 @@ msgid ""
 "\tform displays the command and the interface and address.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1184
+#: ../ppop/ppop_cmds_listq.c:1185
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -3452,7 +3721,7 @@ msgid ""
 "This command moves the specified jobs to the end of the queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:635
+#: ../ppop/ppop_cmds_listq.c:636
 msgid ""
 "Usage: ppop list {all, <printer>, <group> , <job>} ...\n"
 "\n"
@@ -3466,7 +3735,7 @@ msgstr ""
 msgid "Usage: ppop log <job>\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:729
+#: ../ppop/ppop_cmds_listq.c:730
 msgid ""
 "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
 "\n"
@@ -3502,7 +3771,7 @@ msgid ""
 "This command moves a job or jobs to a different queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1921
+#: ../ppop/ppop_cmds_listq.c:1922
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"
@@ -3537,7 +3806,7 @@ msgid ""
 "This command moves the specified jobs to the head of the queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:588
+#: ../ppop/ppop_cmds_listq.c:589
 msgid ""
 "Usage: ppop short {<printer>, all}\n"
 "\n"
@@ -3577,6 +3846,11 @@ msgstr ""
 #: ../interfaces/lpr.c:574
 #, c-format
 msgid "Use the command \"ppad feedback %s false\" to correct this problem."
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:602
+#, c-format
+msgid "User \"%s\" is inexplicably absent from the charge account database."
 msgstr ""
 
 #: ../filter_lp/filter_lp.c:576
@@ -3670,6 +3944,11 @@ msgstr ""
 msgid "Value must be boolean."
 msgstr ""
 
+#: ../pprdrv/pprdrv.c:1389
+#, c-format
+msgid "Value of \"%s\" in \"%s\" must be boolean."
+msgstr ""
+
 #: ../libuprint/claim_remote.c:197
 #, c-format
 msgid "Value of \"%s\" too long in \"%s\" section \"[%s]\", line %d."
@@ -3686,7 +3965,7 @@ msgstr ""
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:320
+#: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:309
 #, c-format
 msgid "WARNING: "
 msgstr ""
@@ -3818,7 +4097,7 @@ msgstr ""
 msgid "Width: (%.2f in, %.1f pt, %.1f cm) "
 msgstr ""
 
-#: ../ppr/ppr_infile.c:233
+#: ../ppr/ppr_infile.c:228
 msgid "WordPerfect documents"
 msgstr ""
 
@@ -3828,15 +4107,15 @@ msgid ""
 "Wrong format for \"systemtype\" value in \"%s\" section \"[%s]\", line %d."
 msgstr ""
 
-#: ../ppr/ppr_infile.c:248
+#: ../ppr/ppr_infile.c:243
 msgid "X-Windows bitmaps"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:249
+#: ../ppr/ppr_infile.c:244
 msgid "X-Windows pixel maps"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:250
+#: ../ppr/ppr_infile.c:245
 msgid "X-Windows window dumps"
 msgstr ""
 
@@ -4204,12 +4483,17 @@ msgid ""
 "quoted list of options may follow the address.\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:672
+#: ../ppr/ppr_infile.c:667
 msgid "^D as EOF is spurious in a spooled environment"
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:1635
 msgid "accepting"
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:313
+#, c-format
+msgid "access(\"%s\", X_OK) failed, errno=%d (%s)."
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:1676
@@ -4251,16 +4535,16 @@ msgstr "Не возмозно открыть \"%s\", errno=%d (%s)\n"
 msgid "can't open config file"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:2417
+#: ../ppr/ppr_infile.c:2304
 #, c-format
 msgid "can't open input file \"%s\", %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:607
+#: ../ppr/ppr_main.c:585
 msgid "can't open printing charge database"
 msgstr ""
 
-#: ../ppr/ppr_main.c:437
+#: ../ppr/ppr_main.c:423
 #, c-format
 msgid "can't open queue file \"%s\", errno=%d (%s)"
 msgstr ""
@@ -4295,7 +4579,7 @@ msgstr ""
 msgid "connecting"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:143
+#: ../ppop/ppop_cmds_other.c:143 ../pprdrv/pprdrv_snmp_messages.c:64
 msgid "cover open"
 msgstr "крыша открыта"
 
@@ -4304,11 +4588,11 @@ msgstr "крыша открыта"
 msgid "default medium \"%s\" does not exist"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:225
+#: ../ppr/ppr_infile.c:220
 msgid "dot matrix printer files"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:212
+#: ../ppr/ppr_infile.c:207
 msgid "email messages"
 msgstr ""
 
@@ -4329,115 +4613,115 @@ msgstr ""
 msgid "fault, retry %d in %d seconds"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:211
+#: ../ppr/ppr_infile.c:206
 msgid "file employs Fortran carriage control"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:232
+#: ../ppr/ppr_infile.c:227
 msgid "file is TeX or LaTeX source"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:231
+#: ../ppr/ppr_infile.c:226
 msgid "file is Troff source"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:242
+#: ../ppr/ppr_infile.c:237
 msgid "file is a GIF compressed picture"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:241
+#: ../ppr/ppr_infile.c:236
 msgid "file is a JPEG compressed picture"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:220
+#: ../ppr/ppr_infile.c:215
 msgid "file is a Mentor Graphics Plot Metafile"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:251
+#: ../ppr/ppr_infile.c:246
 msgid "file is a Portable aNy Map"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:233
+#: ../ppr/ppr_infile.c:228
 msgid "file is a WordPerfect document"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:219
+#: ../ppr/ppr_infile.c:214
 msgid "file is an MS-Windows Enhanced Metafile"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:218
+#: ../ppr/ppr_infile.c:213
 msgid "file is an MS-Windows Metafile"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:247
+#: ../ppr/ppr_infile.c:242
 msgid "file is an MS-Windows or OS/2 BMP"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:212
+#: ../ppr/ppr_infile.c:207
 msgid "file is an RFC-822 email message"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:248
+#: ../ppr/ppr_infile.c:243
 msgid "file is an X-Windows bit map"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:249
+#: ../ppr/ppr_infile.c:244
 msgid "file is an X-Windows pixel map"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:250
+#: ../ppr/ppr_infile.c:245
 msgid "file is an X-Windows window dump"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:238
+#: ../ppr/ppr_infile.c:233
 msgid "file is in Adobe Portable Document Format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:244
+#: ../ppr/ppr_infile.c:239
 msgid "file is in Berkeley plot library format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:245
+#: ../ppr/ppr_infile.c:240
 msgid "file is in CIF graphics language"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:253
+#: ../ppr/ppr_infile.c:248
 msgid "file is in FIG format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:236
+#: ../ppr/ppr_infile.c:231
 msgid "file is in HTML format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:252
+#: ../ppr/ppr_infile.c:247
 msgid "file is in Portable Network Graphics format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:234
+#: ../ppr/ppr_infile.c:229
 msgid "file is in Rich Text Format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:237
+#: ../ppr/ppr_infile.c:232
 msgid "file is in SGML format (other than HTML)"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:243
+#: ../ppr/ppr_infile.c:238
 msgid "file is in Sun raster format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:246
+#: ../ppr/ppr_infile.c:241
 msgid "file is in TIFF graphics format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:235
+#: ../ppr/ppr_infile.c:230
 msgid "file is in TeXInfo format"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:215
+#: ../ppr/ppr_infile.c:210
 msgid "file is old troff output"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:209
+#: ../ppr/ppr_infile.c:204
 msgid "file is plain text"
 msgstr ""
 
@@ -4445,43 +4729,43 @@ msgstr ""
 msgid "file not found"
 msgstr "файл не существует"
 
-#: ../ppr/ppr_infile.c:216
+#: ../ppr/ppr_infile.c:211
 msgid "file type is Ditroff (modern Troff) output"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:223
+#: ../ppr/ppr_infile.c:218
 msgid "file type is HP PCL"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:226
+#: ../ppr/ppr_infile.c:221
 msgid "file type is HP PCL-XL"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:228
+#: ../ppr/ppr_infile.c:223
 msgid "file type is HP PCL3GUI"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:224
+#: ../ppr/ppr_infile.c:219
 msgid "file type is HP-GL/2"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:208
+#: ../ppr/ppr_infile.c:203
 msgid "file type is Macintosh text"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:217
+#: ../ppr/ppr_infile.c:212
 msgid "file type is TeX DVI"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:225
+#: ../ppr/ppr_infile.c:220
 msgid "file type is generic dot matrix"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:257
+#: ../ppr/ppr_infile.c:252
 msgid "files of unrecognized format"
 msgstr "файлы не известного вида"
 
-#: ../ppr/ppr_main.c:2270
+#: ../ppr/ppr_main.c:2132
 msgid "filter options must take form keyword=value"
 msgstr ""
 
@@ -4489,16 +4773,16 @@ msgstr ""
 msgid "fork() failed"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:256
+#: ../ppr/ppr_infile.c:251
 msgid "fragmentary PostScript files"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1990
+#: ../ppr/ppr_main.c:1861
 #, c-format
 msgid "getpwnam(\"%s\") failed"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1975
+#: ../ppr/ppr_main.c:1846
 msgid "getpwuid() fails to find your account"
 msgstr "getpwuid() не нашёл ваша счёта"
 
@@ -4511,7 +4795,12 @@ msgstr "групаа"
 msgid "halting (printing %s)"
 msgstr "останавлевается не медлено (печатает %s)"
 
+#: ../pprdrv/pprdrv_commentary.c:208
+msgid "has printed a job"
+msgstr ""
+
 #: ../ppop/ppop_cmds_other.c:116 ../ppop/ppop_cmds_other.c:569
+#: ../pprdrv/pprdrv_snmp_messages.c:168
 msgid "idle"
 msgstr "не занятый"
 
@@ -4519,34 +4808,46 @@ msgstr "не занятый"
 msgid "inoperative"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:201
+#: ../ppr/ppr_infile.c:196
 msgid "input file is PostScript"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:2238 ../ppr/ppr_infile.c:2347
+#: ../ppr/ppr_infile.c:2125 ../ppr/ppr_infile.c:2234
 #, c-format
 msgid "input file read error, errno=%d (%s)"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2459
+#: ../ppr/ppr_main.c:2317
 #, c-format
 msgid "input file was truncated (no %%%%EOF)"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:161
+#: ../ppop/ppop_cmds_other.c:161 ../pprdrv/pprdrv_snmp_messages.c:109
 msgid "input tray empty"
 msgstr "касета для бумагы пуста"
+
+#: ../pprdrv/pprdrv_commentary.c:228
+msgid "interface program killed"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:253
+msgid "interface settings are invalid"
+msgstr ""
 
 #: ../libuprint/uprint_strerror.c:47
 msgid "internal error"
 msgstr "ошибка в прогаме"
 
-#: ../ppr/ppr_main.c:1468
+#: ../ppr/ppr_main.c:1394
 #, c-format
 msgid "invalid %s option"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2275
+#: ../pprdrv/pprdrv_commentary.c:223
+msgid "job error"
+msgstr ""
+
+#: ../ppr/ppr_main.c:2137
 msgid "last -o keyword has no value"
 msgstr ""
 
@@ -4558,12 +4859,12 @@ msgstr ""
 msgid "ldeflines is less than minlines"
 msgstr ""
 
-#: ../ppr/ppr_main.c:372
+#: ../ppr/ppr_main.c:361
 #, c-format
 msgid "line feed in %s%s"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:207
+#: ../ppr/ppr_infile.c:202
 msgid "line printer files"
 msgstr ""
 
@@ -4605,7 +4906,7 @@ msgstr ""
 msgid "maxlines is less than minlines"
 msgstr ""
 
-#: ../ppr/ppr_main.c:756
+#: ../ppr/ppr_main.c:710
 #, c-format
 msgid "mortally wounded by signal %d (%s)."
 msgstr "ранен до смерти сигнадом (%d) (%s)."
@@ -4624,11 +4925,11 @@ msgstr "платы нет\n"
 msgid "no font available for charset %s, weight %s, slant %s"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:153
+#: ../ppop/ppop_cmds_other.c:153 ../pprdrv/pprdrv_snmp_messages.c:89
 msgid "no output tray"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:151
+#: ../ppop/ppop_cmds_other.c:151 ../pprdrv/pprdrv_snmp_messages.c:84
 msgid "no paper tray"
 msgstr "касеты для бумагы нет"
 
@@ -4653,11 +4954,11 @@ msgstr ""
 msgid "not an error"
 msgstr "не явлается ошыбкей"
 
-#: ../ppop/ppop_cmds_other.c:147
+#: ../ppop/ppop_cmds_other.c:147 ../pprdrv/pprdrv_snmp_messages.c:74
 msgid "off line"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2307
+#: ../ppr/ppr_main.c:2169
 msgid "only one file name allowed"
 msgstr "позволено въводить названое толко одного файла"
 
@@ -4665,9 +4966,13 @@ msgstr "позволено въводить названое толко одного файла"
 msgid "operational"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:112
+#: ../ppop/ppop_cmds_other.c:112 ../pprdrv/pprdrv_snmp_messages.c:158
 msgid "other"
 msgstr "другое состояние"
+
+#: ../pprdrv/pprdrv_commentary.c:233
+msgid "otherwise engaged or off-line"
+msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:599
 #, c-format
@@ -4678,19 +4983,19 @@ msgstr ""
 msgid "out of disk space"
 msgstr "свободная часть диска не хватает"
 
-#: ../ppop/ppop_cmds_other.c:137
+#: ../ppop/ppop_cmds_other.c:137 ../pprdrv/pprdrv_snmp_messages.c:49
 msgid "out of paper"
 msgstr "бумага закончелась"
 
-#: ../ppop/ppop_cmds_other.c:141
+#: ../ppop/ppop_cmds_other.c:141 ../pprdrv/pprdrv_snmp_messages.c:59
 msgid "out of toner/ink"
 msgstr "чорнила закончелась"
 
-#: ../ppop/ppop_cmds_other.c:159
+#: ../ppop/ppop_cmds_other.c:159 ../pprdrv/pprdrv_snmp_messages.c:104
 msgid "output tray full"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:157
+#: ../ppop/ppop_cmds_other.c:157 ../pprdrv/pprdrv_snmp_messages.c:99
 msgid "output tray near full"
 msgstr ""
 
@@ -4698,19 +5003,19 @@ msgstr ""
 msgid "overdue preventative maintainance"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:145
+#: ../ppop/ppop_cmds_other.c:145 ../pprdrv/pprdrv_snmp_messages.c:69
 msgid "paper jam"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:135
+#: ../ppop/ppop_cmds_other.c:135 ../pprdrv/pprdrv_snmp_messages.c:44
 msgid "paper low"
 msgstr "бумага скоро закончется"
 
-#: ../ppr/ppr_infile.c:207
+#: ../ppr/ppr_infile.c:202
 msgid "pass file thru line printer emulator"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:210
+#: ../ppr/ppr_infile.c:205
 msgid "pass file thru pr"
 msgstr ""
 
@@ -5141,6 +5446,30 @@ msgstr ""
 msgid "printer"
 msgstr "принтер"
 
+#: ../pprdrv/pprdrv_commentary.c:263
+msgid "printer address does not exist"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:258
+msgid "printer address lookup failed"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:213
+msgid "printer error"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:218
+msgid "printer error, no retry"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:268
+msgid "printer incapable of printing this job"
+msgstr ""
+
+#: ../pprdrv/pprdrv_commentary.c:248
+msgid "printer is not responding"
+msgstr ""
+
 #: ../ppop/ppop_cmds_other.c:118
 msgid "printing"
 msgstr "печатает"
@@ -5178,7 +5507,7 @@ msgstr "лишная Begin %s стройка"
 msgid "rejecting"
 msgstr "итказется"
 
-#: ../ppr/ppr_main.c:548
+#: ../ppr/ppr_main.c:534
 #, fuzzy, c-format
 msgid "request id is %s-%d (1 file)\n"
 msgstr "название задания %s (1 файл)\n"
@@ -5199,21 +5528,25 @@ msgstr ""
 msgid "sending data"
 msgstr "посылаем текст"
 
-#: ../ppop/ppop_cmds_other.c:149
+#: ../ppop/ppop_cmds_other.c:149 ../pprdrv/pprdrv_snmp_messages.c:79
 msgid "service requested"
 msgstr "ножно ченить"
 
-#: ../ppr/ppr_main.c:2278
+#: ../ppr/ppr_main.c:2140
 msgid "spaces may not follow \"=\" in filter options"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2267
+#: ../ppr/ppr_main.c:2129
 msgid "spaces may not precede \"=\" in filter options"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:2514
+#: ../ppr/ppr_infile.c:2389
 msgid "spurious leading ^D"
 msgstr "нинужное ^D в начале файла"
+
+#: ../pprdrv/pprdrv_commentary.c:238
+msgid "starved for system resources"
+msgstr ""
 
 #: ../lprsrv/lprsrv_client_info.c:108
 msgid "stdin is not a TCP socket (Run from Inetd or use -s option.)"
@@ -5240,7 +5573,7 @@ msgstr ""
 msgid "testing"
 msgstr "попробуем"
 
-#: ../ppr/ppr_infile.c:238
+#: ../ppr/ppr_infile.c:233
 msgid "the Adobe Portable Document Format"
 msgstr ""
 
@@ -5249,11 +5582,11 @@ msgstr ""
 msgid "there is already a server listening on TCP port %d"
 msgstr "сервер слушающый у TCP порта %d уже ест"
 
-#: ../ppop/ppop_cmds_other.c:155
+#: ../ppop/ppop_cmds_other.c:155 ../pprdrv/pprdrv_snmp_messages.c:94
 msgid "toner/ink cartridge missing"
 msgstr "касета для чорнилы отсутствует"
 
-#: ../ppop/ppop_cmds_other.c:139
+#: ../ppop/ppop_cmds_other.c:139 ../pprdrv/pprdrv_snmp_messages.c:54
 msgid "toner/ink is low"
 msgstr "чорнилы нет"
 
@@ -5261,11 +5594,12 @@ msgstr "чорнилы нет"
 msgid "too many files"
 msgstr "слишком много файлов"
 
-#: ../ppr/ppr_main.c:2289
+#: ../ppr/ppr_main.c:2151
 msgid "unclosed quote in filter option value"
 msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:91 ../ppop/ppop_cmds_other.c:114
+#: ../pprdrv/pprdrv_snmp_messages.c:163
 msgid "unknown"
 msgstr "неизвестный"
 
@@ -5273,7 +5607,7 @@ msgstr "неизвестный"
 msgid "unknown remote system"
 msgstr "ниизвестный противоположный компутер"
 
-#: ../ppr/ppr_infile.c:258
+#: ../ppr/ppr_infile.c:253
 msgid "unrecognized binary files"
 msgstr ""
 
@@ -5284,7 +5618,7 @@ msgstr ""
 msgid "unrecognized keyword"
 msgstr "низнокомое название"
 
-#: ../ppr/ppr_main.c:956
+#: ../ppr/ppr_main.c:903
 msgid ""
 "usage: ppr [switches] [filename]\n"
 "\n"
@@ -5292,7 +5626,7 @@ msgid ""
 "\t-I                         insert destination's switchset macro here\n"
 msgstr ""
 
-#: ../ppr/ppr_infile.c:210
+#: ../ppr/ppr_infile.c:205
 msgid "using pr"
 msgstr ""
 
@@ -5357,7 +5691,7 @@ msgstr "ждём пока принтер не закончил работу"
 msgid "waiting for resource ration"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:120
+#: ../ppop/ppop_cmds_other.c:120 ../pprdrv/pprdrv_snmp_messages.c:178
 msgid "warming up"
 msgstr "нагревается"
 
@@ -5365,3 +5699,30 @@ msgstr "нагревается"
 msgid "yes"
 msgstr "да"
 
+#~ msgid ""
+#~ "\t--cache-priority {auto,low,high}\n"
+#~ "\t                           prefer to insert resources from cache?\n"
+#~ msgstr ""
+#~ "\t--cache-priority {auto,low,high}\n"
+#~ "\t                           жилателно ли чтобы испозевали реcорcы из\n"
+#~ "\t                           склада?  (auto=автоматически, low=не очень\n"
+#~ "\t                           жилателно, high=очень жилателно)\n"
+
+#~ msgid ""
+#~ "\t--cache-store none         don't store new resources (default)\n"
+#~ "\t--cache-store unavailable  store if not in cache or fontindex\n"
+#~ "\t--cache-store uncached     store if not already in cache\n"
+#~ msgstr ""
+#~ "\t--cache-store none         не складевать новые ресурсы (по молчию)\n"
+#~ "\t--cache-store unavailable  складевать ресурсыне находащиеся в складе\n"
+#~ "\t                           или в списке шрифтов\n"
+#~ "\t--cache-store uncached     складевать ресурсы не находащиеся в складе\n"
+
+#~ msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
+#~ msgstr ""
+#~ "%s(): возникла ошибка при запуски функции chmod(\"%s\", %o), errno=%d (%s)"
+
+#~ msgid "%s(): rename(\"%s\", \"%s\") failed, errno=%d (%s)"
+#~ msgstr ""
+#~ "%s(): возникла ошибка при запуски функции rename(\"%s\", \"%s\"), errno=%"
+#~ "d (%s)"
