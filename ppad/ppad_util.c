@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_util.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 July 2001.
+** Last modified 7 April 2003.
 */
 
 #include "before_system.h"
@@ -200,12 +215,12 @@ void print_switchset(char *switchset)
 	int len;
 
 	len = strlen(switchset);
-	for(count=x=0; x < len; count++,x++)		/* move thru the line */
+	for(count=x=0; x < len; count++,x++)			/* move thru the line */
 		{
-		optchar = switchset[x++];				/* get an option character */
+		optchar = switchset[x++];					/* get an option character */
 
-		argument = &switchset[x];						/* The stuff after the switch */
-		argument[strcspn(argument, "|\n")] = '\0';		/* NULL terminate */
+		argument = &switchset[x];					/* The stuff after the switch */
+		argument[strcspn(argument, "|\n")] = '\0';	/* NULL terminate */
 
 		if(count > 0)
 			PUTC(' ');
@@ -251,25 +266,25 @@ int print_wrapped(const char *deffiltopts, int starting_column)
 	int out_len = starting_column;
 	int word_len;
 
-	opts_len = strlen(deffiltopts);				/* determine total length of options */
+	opts_len = strlen(deffiltopts);					/* determine total length of options */
 
-	for(x=0; x < opts_len; x++)					/* while options remain */
+	for(x=0; x < opts_len; x++)						/* while options remain */
 		{
 		word_len = strcspn(&deffiltopts[x], " \t"); /* how long is this element? */
 
-		if( (out_len+word_len+1) >= 80)			/* If leading space and element */
-			{									/* will not fit, */
-			PUTS("\n	");						/* start a new line. */
+		if((out_len+word_len+1) >= 80)				/* If leading space and element */
+			{										/* will not fit, */
+			PUTS("\n    ");							/* start a new line. */
 			out_len = 4 + word_len;
 			}
-		else									/* Otherwise, */
-			{									/* add to this one */
+		else										/* Otherwise, */
+			{										/* add to this one */
 			if(x) putchar(' ');
-			out_len++;							/* a space */
-			out_len += word_len;				/* and the element. */
+			out_len++;								/* a space */
+			out_len += word_len;					/* and the element. */
 			}
 
-		while(word_len--)						/* Print the element. */
+		while(word_len--)							/* Print the element. */
 			{
 			putchar(deffiltopts[x++]);
 			}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 7 April 2003.
 */
 
 /*! \file */
@@ -200,12 +200,13 @@ void ipp_put_si(struct IPP *p, int val)
 */
 unsigned char *ipp_get_bytes(struct IPP *p, int len)
     {
-	char *ptr = gu_alloc(len, sizeof(char));
+	char *ptr = gu_alloc(len + 1, sizeof(char));
 	int i;
 	for(i=0; i<len; i++)
 		{
 		ptr[i] = ipp_get_byte(p);
 		}
+	ptr[len] = '\0';
 	return ptr;
     }
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 7 April 2003.
 */
 
 /*
@@ -753,8 +753,8 @@ static void our_procset(void)
 
 	/* show */
 	fputs("/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add\n"
-		"        page 2 mod 1 eq{gut_lr add}if\n"	/* possibly add gutter width */
-		"        y moveto}if\n"
+		"    page 2 mod 1 eq{gut_lr add}if\n"	/* possibly add gutter width */
+		"    y moveto}if\n"
 		" show}d\n",stdout);
 
 	/* show and newline */

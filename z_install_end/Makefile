@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 7 April 2003.
 #
 
 include ../Makefile.conf
@@ -52,15 +52,12 @@ install: $(ALL)
 	./install_inetd_conf.sh
 	./install_init_script.sh
 	#./install_alternatives.tcl
-	if [ -z "$(RPM_BUILD_ROOT)" ]; \
-		then \
-		./fixup_obsolete.sh; \
-		touch $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
-		chown $(USER_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
-		chgrp $(GROUP_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
-		$(RPM_BUILD_ROOT)$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null; \
-		$(HOMEDIR)/bin/ppr-index >/dev/null; \
-		fi
+	[ -z "$(RPM_BUILD_ROOT)" ] && ./fixup_obsolete.sh
+	[ -z "$(RPM_BUILD_ROOT)" ] && touch $(CONFDIR)/media.db \
+		&& chown $(USER_PPR) $(CONFDIR)/media.db \
+		&& chgrp $(GROUP_PPR) $(CONFDIR)/media.db \
+		&& $(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
+	[ -z "$(RPM_BUILD_ROOT)" ] && $(HOMEDIR)/bin/ppr-index >/dev/null
 
 #=== Housekeeping ===========================================================
 

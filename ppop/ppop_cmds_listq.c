@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 7 April 2003.
 */
 
 /*
@@ -531,7 +531,7 @@ static void ppop_short_help(void)
 
 static void ppop_short_banner(void)
 	{
-	printf("Job ID					For					 Status\n");
+	printf("Job ID                  For                  Status\n");
 	printf("--------------------------------------------------------------\n");
 	}
 
@@ -581,13 +581,13 @@ static void ppop_list_help(void)
 static void ppop_list_banner(void)
 	{
 /*		123456789012345678901234567890123456789012345678901234567890 */
-printf(_("Queue ID		  For					   Time		 Pgs Status\n"));
-printf("----------------------------------------------------------------------------\n");
-/*		12345678-xxxx.y David Chappell			 21 May 79 999 waiting for printer
-		glunkish-1004	Joseph Smith			 11:31pm   ??? printing on glunkish
-		melab_deskjet-1004
-						Joseph Andrews			 11:35pm   001 waiting for media
-															   letterhead
+printf(_("Queue ID        For                      Time      Pgs Status\n"));
+printf(  "----------------------------------------------------------------------------\n");
+/*		  12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
+		  glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish
+		  melab_deskjet-1004
+		  Joseph Andrews                           11:35pm   001 waiting for media
+		                                                         letterhead
 */
 	}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 7 April 2003.
 */
 
 #include "before_system.h"
@@ -166,7 +166,8 @@ static gu_boolean authorized(const char name[])
 	else if(authorized_file_check(name, "/etc/hosts.equiv"))
 		answer = TRUE;
 
-	/* reject any hosts listed in hosts.lpd_deny */
+	/* If the host was accepted above, reject reject it if it is also listed 
+	   in hosts.lpd_deny. */
 	if(answer && authorized_file_check(name, "/etc/hosts.lpd_deny"))
 		answer = FALSE;
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 7 April 2003.
 */
 
 #include "before_system.h"
@@ -95,8 +95,32 @@ int main(int argc, char *argv[])
 				debug("0x%.2x 0x%.2x name[%d]=\"%s\"", delimiter_tag, value_tag, name_length, name);
 
 				value_length = ipp_get_ss(ipp);
-				ipp_get_bytes(ipp, value_length);
-				debug("    value[%d]", value_length);
+				switch(value_tag)
+					{
+					case IPP_TAG_INTEGER:
+						debug("    integer[%d]=%d", value_length, ipp_get_si(ipp));
+						break;
+					case IPP_TAG_NAME:
+						debug("    nameWithoutLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+						break;
+					case IPP_TAG_URI:
+						debug("    uri[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+						break;
+					case IPP_TAG_KEYWORD:
+						debug("    keyword[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+						break;
+					case IPP_TAG_CHARSET:
+						debug("    charset[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+						break;
+					case IPP_TAG_LANGUAGE:
+						debug("    naturalLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+						break;
+
+					default:
+						ipp_get_bytes(ipp, value_length);
+						debug("    ?????????[%d]", value_length);
+						break;
+					}
 				}
 			else
 				{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 7 April 2003.
 */
 
 /*
@@ -524,7 +524,7 @@ int ppop_status(char *argv[])
 
 	if( ! machine_readable )
 		{
-		PUTS(_("Printer			 Status\n"));
+		PUTS(_("Printer          Status\n"));
 		PUTS("------------------------------------------------------------\n");
 		}
 
@@ -736,7 +736,7 @@ int ppop_media(char *argv[])
 
 	if( ! machine_readable )
 		{
-		printf("Printer					 Bin			 Media\n");
+		printf("Printer                  Bin             Media\n");
 		printf("---------------------------------------------------------------\n");
 		}
 
