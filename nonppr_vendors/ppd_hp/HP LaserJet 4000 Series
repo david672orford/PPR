@@ -305,7 +305,7 @@
 *UIConstraints: *Option3 False *Duplex DuplexTumble
 
 *% If the hard disk is not installed disable printer collation.
-*UIConstraints: *Option4 False *HPCollate True
+*UIConstraints: *Option4 False *Collate True
 
 *% If the envelope feeder is not installed disable envelope slot.
 *UIConstraints: *Option5 False *InputSlot Envelope
