@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 4 September 2001.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -89,24 +89,25 @@ struct QFileEntry
 	} attr;
     struct {
 	gu_boolean binselect;		/* do automatic bin selection */
-	int copies;		/* number of copies to print, -1=unspecified */
+	int copies;			/* number of copies to print, -1=unspecified */
 	gu_boolean collate;		/* TRUE if we should collate copies */
 	gu_boolean keep_badfeatures;	/* keep Feature code we can not replace from PPD file */
-	unsigned int hacks;	/* enables code to deal with problems */
+	unsigned int hacks;		/* enables code to deal with problems */
 	gu_boolean resume;		/* TRUE if should try to resume jobs in the middle */
 	} opts;
-    struct {			/* N Up parameters */
-	int N;			/* virtual pages per physical side */
+    struct {				/* N Up parameters */
+	int N;				/* virtual pages per physical side */
 	gu_boolean borders;		/* TRUE or false, should we print borders */
-	int sigsheets;		/* Number of sheets to user per signiture */
-	int sigpart;		/* fronts, backs, both */
+	int sigsheets;			/* Number of sheets to user per signiture */
+	int sigpart;			/* fronts, backs, both */
 	} N_Up;
-    const char *draft_notice;	/* `Draft' string */
-    const char *PassThruPDL;	/* "pcl", "hpgl2", etc., NULL for PostScript */
-    const char *Filters;	/* filter chain: "pcl", "gzip pcl", etc. */
-    const char *PJL;		/* HP PJL lines, newline separated */
+    const char *draft_notice;		/* `Draft' string */
+    const char *PassThruPDL;		/* "pcl", "hpgl2", etc., NULL for PostScript */
+    const char *Filters;		/* filter chain: "pcl", "gzip pcl", etc. */
+    const char *PJL;			/* HP PJL lines, newline separated */
     enum CACHE_PRIORITY CachePriority;
-    gu_boolean StripPrinter;		/* Strip resources in printer? */
+    gu_boolean StripPrinter;		/* Strip resources that printer has? */
+    char *PageMask;			/* which pages should be printed? */
     } ;
 
 /* Possible values for orientation member of struct QFileEntry. */
@@ -167,6 +168,10 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job);
 int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry);
 void destroy_struct_QFileEntry(struct QFileEntry *job);
 int parse_qfname(char *buffer, const char **destnode, const char **destname, short int *id, short int *subid, const char **homenode);
+int pagemask_encode(struct QFileEntry *job, const char pages[]);
+void  pagemask_print(const struct QFileEntry *job);
+int pagemask_get_bit(const struct QFileEntry *job, int bit);
+int pagemask_count(const struct QFileEntry *job);
 
 /* ======================== Media file format =========================== */
 struct Media

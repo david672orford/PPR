@@ -2569,7 +2569,19 @@ int main(int argc, char *argv[])
     ** will never return.
     */
     if(option_page_list)
-    	select_pages(&qentry, option_page_list);
+	{
+	if(! qentry.attr.script)
+	    {
+	    respond(RESP_CANCELED_NOPAGES, "");
+	    exit(PPREXIT_NOTPOSSIBLE);
+ 	    }
+
+	if(pagemask_encode(&qentry, option_page_list) == -1)
+ 	    {
+ 	    respond(RESP_FATAL_SYNTAX, "");
+ 	    exit(PPREXIT_SYNTAX);
+ 	    }
+    	}
 
     /*
     ** Give the job splitting machinery a chance to work.

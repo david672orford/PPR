@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 1 June 2001.
+# Last modified 4 September 2001.
 #
 
 include ../makeprogs/global.mk
@@ -28,7 +28,7 @@ OBJS1=ppr_main.$(OBJ) ppr_infile.$(OBJ) ppr_outfile.$(OBJ) \
 	ppr_res.$(OBJ) ppr_old2new.$(OBJ) ppr_dscdoc.$(OBJ) \
 	ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
 	ppr_mactt.$(OBJ) ppr_nest.$(OBJ) ppr_things.$(OBJ) \
-	ppr_simplify.$(OBJ) ppr_editps.$(OBJ) ppr_selpgs.$(OBJ) \
+	ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)
 ppr$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(INTLLIBS)

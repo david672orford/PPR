@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 12 July 2001.
+# Last modified 4 September 2001.
 #
 
 include ../makeprogs/global.mk
@@ -39,7 +39,8 @@ LIBOBJS=\
 	alert.$(OBJ) \
 	tail_status.$(OBJ) \
 	query.$(OBJ) \
-	queueinfo.$(OBJ)
+	queueinfo.$(OBJ) \
+	pagemask.$(OBJ)
 
 TARGETS=../libppr.$(LIBEXT)
 

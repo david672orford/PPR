@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--31 August 2001
+1.50a1, 1 August 2001--4 September 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7353,7 +7353,7 @@ line was being parsed twice.
   seems to cause problems with mod_perl CGI emulation and whatever once
   required it is appearently using PPR.pm now.
 
-* Added nonppr/tcl7.4_hacked.
+* Added tcl/.
 
 * Added the job title to the arguments passed to the interface programs. 
   Changed the lpr interface program to pass it to the remote system.
@@ -7398,3 +7398,11 @@ line was being parsed twice.
 
 * Moved nonppr/tcl7.5_hacked into tcl/ and integrated the Makefile with the 
   PPR build system.
+
+* include/ppr_exits.h: Added PPREXIT_NOTPOSSIBLE.
+
+* ppr/ppr_conffile.c: Fixed so that aliases don't inherit the switchset,
+  passthru or acls of the thing they are an alias for.  I haven't firmly 
+  decided if they should inherit ACLs or not, but inheriting passthru really
+  reduces their usefulness.
+

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 4 September 2001.
 */
 
 #include "before_system.h"
@@ -18,7 +18,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 
 #define ARGS_2(a,b) a,b
@@ -94,6 +93,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->commentator.address = NULL;
     job->commentator.options = NULL;
     job->commentator.next = NULL;		/* unused at present */
+    job->PageMask = NULL;
 
     /* We do not actually read these items: */
     job->PJL = (const char *)NULL;
@@ -218,8 +218,11 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 	    case 'P':
 		MATCH("Priority: ", _2("%d", &job->priority), !=1, found_priority)
-		if(strncmp(line, "PPRVersion: ", 12) == 0) continue;
+		if(strncmp(line, "PPRVersion: ", 12) == 0)
+		    continue;
 		MATCH("PassThruPDL: ", _2("%Z", &job->PassThruPDL), !=1, found_other)
+		if(gu_sscanf(line, "PageMask: %Z", &job->PageMask) == 1)
+		    continue;
 		break;
 
 	    case 'R':

@@ -10,13 +10,12 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 4 September 2001.
 */
 
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 
 /* Define a version of gu_free() which can free const stuff: */
@@ -65,6 +64,8 @@ void destroy_struct_QFileEntry(struct QFileEntry *job)
     	gu_free_const(job->commentator.address);
     if(job->commentator.options)
     	gu_free_const(job->commentator.options);
+    if(job->PageMask)
+    	gu_free(job->PageMask);
 
     /* Things not read by read_struct_QFileEntry() */
     if(job->PJL)

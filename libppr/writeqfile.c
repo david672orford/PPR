@@ -10,14 +10,13 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 1 June 2001.
+** Last modified 4 September 2001.
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "version.h"
 
@@ -137,6 +136,9 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     fprintf(Qfile, "CachePriority: %d\n", (int)qentry->CachePriority);
 
     fprintf(Qfile, "StripPrinter: %d\n", (int)qentry->StripPrinter);
+
+    if(qentry->PageMask)
+	fprintf(Qfile, "PageMask: %s\n", qentry->PageMask);
 
     return 0;
     }
