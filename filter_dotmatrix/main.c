@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/main.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 21 May 2004.
 */
 
 /*
@@ -749,7 +749,7 @@ int main(int argc, char *argv[])
 
 				explicit_pins=TRUE;
 
-				x=atoi(value);
+				x = atoi(value);
 
 				if(x==9)
 					emulation &= ~EMULATION_24PIN_UNITS;
@@ -772,15 +772,16 @@ int main(int argc, char *argv[])
 			/*---------------------------------------------
 			** Select a LangaugeLevel for PostScript
 			---------------------------------------------*/
-			else if(strcmp(name,"level")==0)
+			else if(strcmp(name, "level")==0)
 				{
-				if(value[0] == '1')
+				int x = atoi(value);
+				if(x == 1)
 					level2 = FALSE;
-				else if(value[0] == '2')
+				else if(x >= 2)
 					level2 = TRUE;
 				else
 					{
-					filter_options_error(1, &o, _("Legal values are \"1\" and \"2\"."));
+					filter_options_error(1, &o, _("Value must be a positive integer."));
 					}
 				}
 

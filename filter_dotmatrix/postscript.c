@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 21 May 2004.
 */
 
 #include "filter_dotmatrix.h"
@@ -233,7 +233,7 @@ void top_of_document(void)
 	if(uses_graphics)
 		{
 		if(level2)
-			gu_psprintf("%%IncludeResource: procset %s\n", DOTMATRIXG2);
+			gu_psprintf("%%%%IncludeResource: procset %s\n", DOTMATRIXG2);
 		else
 			gu_psprintf("%%%%IncludeResource: procset %s\n", DOTMATRIXG1);
 		}

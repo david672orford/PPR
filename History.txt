@@ -9210,6 +9210,11 @@ Internet Printing Protocol Work
 * ppuser/ppuser.c:ppuser_show() use date format from banner page 
   (patch from Jan Kohnert)
 
+* filter_dotmatrix/main.c: Fixed level= option to accept values higher
+  than 2 as equivelent to 2.  (Previously it only accepted 1 and 2 which
+  meant that the whole filter failed for PostScript level 3 printers.)
+
+
 
 TODO
 
