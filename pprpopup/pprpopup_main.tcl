@@ -4,44 +4,61 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 8 January 2002.
+# Last revised 9 January 2002.
 #
 
-# This is supposed to be set by pprpopup_loader.tcl.
-if {![info exists ppr_root_url]} {
-    puts "You can't execute this script directly.  It must be run by pprpopup_launch.tcl."
-    exit 1
-    }
-
-# And this provides a default for the list of servers we register with.
-if {![info exists ppr_server_list]} {
-    set ppr_server_list [list $ppr_root_url]
-    }
-
-# This is the URL that is loaded when the user selects Help/Contents.
-set help_url "${ppr_root_url}docs/pprpopup/"
-
 set about_text "PPR Popup 1.50a1
-4 January 2002
+9 January 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
+
+# This is the URL that is loaded when the user selects Help/Contents.
+set help_contents_file "docs/pprpopup/"
 
 # This is the port that this server should listen on:
 set server_port 15009
 
 # This is the token which the server must present for access.
-set magic_cookie "wrmvosrm324"
+set magic_cookie "wrmvosrmssdr324"
 
 # Set options in order to make the Macintosh version look more like the others.
+set background_color #a4b6dd
+set button_color #8892a8
 option add *foreground black
-option add *background #a4b6dd
+option add *background $background_color
 option add *activeForeground black
-option add *activeBackground #a4b6dd
+option add *activeBackground $background_color
 option add *textBackground white
 
 # Window serial number.  This is used to generate unique Tk window
 # command names.
 set wserial 0
+
+#
+# Put up a dialog box for bad errors.  We don't use iwidgets::messagedialog 
+# because it won't appear on WinNT if the main window isn't visible.
+#
+proc alert {message} {
+    global wserial
+
+    set w .alert_[incr wserial]
+
+    toplevel $w
+    wm title $w "PPR Popup has Malfunctioned"
+
+    frame $w.title
+    pack $w.title -side top -padx 10 -pady 10
+    label $w.title.icon -bitmap error
+    label $w.title.text -text "PPR Popup has Malfunctioned"
+    pack $w.title.icon $w.title.text -side left
+
+    label $w.message -text $message
+    pack $w.message -side top -fill both -expand true
+
+    button $w.dismiss -text "Dismiss" -command [list destroy $w]
+    pack $w.dismiss -side right -padx 20 -pady 5
+    tkwait window $w
+    }
 
 # The MacOS Finder can hide applications.  On MacOS we define this function
 # to unhide this application.  On other plaforms it is a no-op.
@@ -100,21 +117,6 @@ end tell
 		return $env(PPR_RESPONDER_ADDRESS)
 		}
 	}
-    }
-
-#
-# Put up a dialog box for bad errors.
-#
-proc alert {message} {
-    global wserial
-    set w .alert_[incr wserial]
-    iwidgets::messagedialog $w \
-    	-modality application \
-    	-title "PPR Popup Malfunctioned" \
-    	-text $message
-    $w buttonconfigure OK -text "Close"
-    $w hide "Cancel"
-    $w activate
     }
 
 #
@@ -406,7 +408,7 @@ proc server_reader {file} {
 
     # Push out the reply.
     if [catch { flush $file }] {
-	alert "Unexepected disconnect by print server!"
+	#alert "Unexepected disconnect by print server!"
 	catch { close $file }
 	}
     }
@@ -463,7 +465,19 @@ proc register_callback {token} {
 #========================================================================
 
 proc main {} {
-    global tcl_platform
+    global ppr_root_url
+    global ppr_server_list
+
+    # This is supposed to be set by pprpopup_loader.tcl.
+    if {![info exists ppr_root_url]} {
+	alert "You can't execute this script directly.  It must be started by pprpopup_launch.tcl."
+	exit 1
+	}
+
+    # And this provides a default for the list of servers we register with.
+    if {![info exists ppr_server_list]} {
+	set ppr_server_list [list $ppr_root_url]
+	}
 
     # Set the monitor DPI to 90.
     global system_dpi
@@ -498,6 +512,7 @@ proc main {} {
 
     # Macintosh needs another toplevel to keep the menu in place.
     # We will place it off the screen.
+    global tcl_platform
     if {$tcl_platform(platform) == "macintosh"} {
         toplevel .dummy -menu .menubar
         wm geometry .dummy 25x25+2000+2000
@@ -565,68 +580,24 @@ proc main {} {
     do_config_save 
     }
 
-proc menu_help_about_system {} {
-    global system_dpi
-    global tcl_platform
-
-    set info ""
-
-    set tclversion [info tclversion]
-    set patchlevel [info patchlevel]
-    append info "Tcl Version: $tclversion patch level $patchlevel\n"
-
-    foreach name [array names tcl_platform] {
-	set value $tcl_platform($name)
-	append info "Platform $name: $value\n"
-	}
-
-    set screenheight [winfo screenheight .]
-    set screenwidth [winfo screenwidth .]
-    append info "Screen size: ${screenwidth}x${screenheight}\n"
-
-    set dpi [winfo pixels . 1i]
-    append info "OS screen resolution claim: $system_dpi DPI\n"
-    append info "Working screen resolution assumption: $dpi DPI\n"
-
-    iwidgets::dialog .si \
-    	-modality application \
-    	-title "About System"
-    .si buttonconfigure OK -text "Dismiss"
-    .si hide "Cancel"
-    .si hide "Apply"
-    .si hide "Help"
-    set childsite [.si childsite]
-
-    label $childsite.label -justify left -text $info
-    pack $childsite.label -side left
-
-    frame $childsite.pad -width 10
-    pack $childsite.pad -side left
-
-    frame $childsite.dpi
-    pack $childsite.dpi -side left -padx 5 -pady 5
-    frame $childsite.dpi.square1 -width $system_dpi -height $system_dpi -background white
-    pack $childsite.dpi.square1 -side top -anchor w
-    label $childsite.dpi.label1 -text "1 inch at $system_dpi DPI"
-    pack $childsite.dpi.label1 -side top -anchor w
-    frame $childsite.dpi.pad -height 5
-    pack $childsite.dpi.pad -side top
-    frame $childsite.dpi.square2 -width $dpi -height $dpi -background white
-    pack $childsite.dpi.square2 -side top -anchor w
-    label $childsite.dpi.label2 -text "1 inch at $dpi DPI"
-    pack $childsite.dpi.label2 -side top -anchor w
-
-    .si activate
-    destroy .si
-    }
-
 proc menu_file_quit {} {
+    global button_color
     iwidgets::messagedialog .quit_confirm \
             -modality application \
             -title "Confirmation" \
             -text "If you close this program, you will be unable to print to the public printers."
-    .quit_confirm buttonconfigure OK -text "Close"
-    .quit_confirm buttonconfigure Cancel -text "Don't Close"
+    .quit_confirm buttonconfigure OK -text "Close" \
+		-background $button_color \
+		-activebackground $button_color \
+		-defaultring false \
+		-defaultringpad 0 \
+		-highlightthickness 0
+    .quit_confirm buttonconfigure Cancel -text "Don't Close" \
+		-background $button_color \
+		-activebackground $button_color \
+		-defaultring false \
+		-defaultringpad 0 \
+		-highlightthickness 0
     if {[.quit_confirm activate]} {
         exit 0
         } else {
@@ -667,7 +638,8 @@ proc menu_view_main {yes} {
 
 proc menu_help_contents {} {
     global wserial
-    global help_url
+    global ppr_root_url
+    global help_contents_file
     set w .help_[incr wserial]
     toplevel $w
     urlfetch $w.urlfetch
@@ -682,27 +654,95 @@ proc menu_help_contents {} {
 	-postcommand [itcl::code $w.urlfetch post] \
 	-titlecommand [itcl::code wm title $w]
     pack $w.browser -side top -anchor w -fill both -expand 1
-    $w.browser import $help_url
+    $w.browser import $ppr_root_url$help_contents_file
     }
 
 proc menu_help_about {} {
     global about_text
+    global button_color
     iwidgets::messagedialog .about \
     	-modality application \
     	-title "About PPR Popup" \
     	-text $about_text
-    .about buttonconfigure OK -text "OK"
+    .about buttonconfigure OK -text "OK" \
+		-background $button_color \
+		-activebackground $button_color \
+		-defaultring false \
+		-defaultringpad 0 \
+		-highlightthickness 0
     .about hide "Cancel"
     .about activate
     destroy .about
+    }
+
+proc menu_help_about_system {} {
+    global system_dpi
+    global tcl_platform
+    global button_color
+
+    set info ""
+
+    set tclversion [info tclversion]
+    set patchlevel [info patchlevel]
+    append info "Tcl Version: $tclversion patch level $patchlevel\n"
+
+    foreach name [array names tcl_platform] {
+	set value $tcl_platform($name)
+	append info "Platform $name: $value\n"
+	}
+
+    set screenheight [winfo screenheight .]
+    set screenwidth [winfo screenwidth .]
+    append info "Screen size: ${screenwidth}x${screenheight}\n"
+
+    set dpi [winfo pixels . 1i]
+    append info "OS screen resolution claim: $system_dpi DPI\n"
+    append info "Working screen resolution assumption: $dpi DPI\n"
+
+    iwidgets::dialog .si \
+    	-modality application \
+    	-title "About System"
+    .si buttonconfigure OK -text "Dismiss" \
+		-background $button_color \
+		-activebackground $button_color \
+		-defaultring false \
+		-defaultringpad 0 \
+		-highlightthickness 0
+    .si hide "Cancel"
+    .si hide "Apply"
+    .si hide "Help"
+    set childsite [.si childsite]
+
+    label $childsite.label -justify left -text $info
+    pack $childsite.label -side left
+
+    frame $childsite.pad -width 10
+    pack $childsite.pad -side left
+
+    frame $childsite.dpi
+    pack $childsite.dpi -side left -padx 5 -pady 5
+    frame $childsite.dpi.square1 -width $system_dpi -height $system_dpi -background white
+    pack $childsite.dpi.square1 -side top -anchor w
+    label $childsite.dpi.label1 -text "1 inch at $system_dpi DPI"
+    pack $childsite.dpi.label1 -side top -anchor w
+    frame $childsite.dpi.pad -height 5
+    pack $childsite.dpi.pad -side top
+    frame $childsite.dpi.square2 -width $dpi -height $dpi -background white
+    pack $childsite.dpi.square2 -side top -anchor w
+    label $childsite.dpi.label2 -text "1 inch at $dpi DPI"
+    pack $childsite.dpi.label2 -side top -anchor w
+
+    .si activate
+    destroy .si
     }
 
 proc do_config_save {} {
     global ppr_root_url
     global ppr_server_list
     puts "Saving configuration..."
-    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list $ppr_server_list\n"} errormsg]} {
-	alert "Failed to save configuration:\n$errormsg"	
+    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\n"} errormsg]} {
+	puts "Failed to save configuration:\n$errormsg"	
+	#alert "Failed to save configuration:\n$errormsg"	
 	}
     }
 

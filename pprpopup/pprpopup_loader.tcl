@@ -3,7 +3,7 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 8 January 2002.
+# Last modified 9 January 2002.
 #
 
 package require Tcl 8.3
@@ -14,13 +14,27 @@ package require Tk 8.3
 #
 switch -glob -- $tcl_platform(platform) {
     macintosh {
-	proc config_load {} { return [resource read TEXT 8001] }
-	proc config_save {config} { resource write -id 8001 -force TEXT $config }
+	proc config_load {} {
+		set config [resource read TEXT 8001]
+		regsub -all "\r" $config "\n" config
+		return $config
+		}
+	proc config_save {config} {
+		regsub -all "\n" $config "\r" config
+		resource write -file application -id 8001 -force TEXT $config
+		}
 	}
     windows {
 	package require registry 1.0
-	proc config_load {} {return [registry get "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config"] }
-	proc config_save {config} { registry set "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config" $config }
+	proc config_load {} {
+		set config [registry get "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config"]
+		regsub -all ";" $config "\n" config
+		return $config
+		}
+	proc config_save {config} {
+		regsub -all "\n" $config ";" config
+		registry set "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config" $config
+		}
 	}
     * {
 	proc config_load {} {
@@ -268,7 +282,6 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	entry .splash.pd.entry -background white
 	button .splash.pd.button -text "Go" -background gray -command [list destroy .splash.pd.button]
 	bind .splash.pd.entry <Return> [list .splash.pd.button invoke]
-	bind .splash.pd.entry <space> {}
 
 	pack .splash.pd -side top -fill x
 	pack .splash.pd.label -side top -fill x
