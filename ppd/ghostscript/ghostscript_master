@@ -28,7 +28,8 @@
 *%	PRINTER_HPIII		HP LaserJet III with at least 1MB memory
 *%	PRINTER_HPDJ500		HP DeskJet 500, DeskWriter
 *%	PRINTER_DM24		24 pin dot matrix printers
-*%	PRINTER_HP550C		HP DeskJet 550C, 560C
+*%	PRINTER_HPDJ550C	HP DeskJet 550C, 560C
+*%	PRINTER_EPSC62		Epson Stylus C62
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
@@ -114,6 +115,20 @@
 *pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
 #endif
 
+#ifdef PRINTER_EPSC62
+*Product: "(Epson Stylus C62 Ghostscript)"
+*ModelName: "Epson Stylus C62 Ghostscript"
+*ShortNickName: "Epson Stylus C62 Ghostscript"
+*NickName: "Epson Stylus C62 Ghostscript"
+*PCFileName: "EPSC62GS.PPD"
+*DefaultResolution: 360dpi
+*ColorDevice: True
+*DefaultColorSpace: CMYK
+*Throughput: "8"
+*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams='Quality=1440x1440,MediaType=Photo'
+*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
+#endif
+
 *% ===== General Information =====
 
 *LanguageLevel: "2"
@@ -185,7 +200,7 @@
 *ManualFeed False: "statusdict /manualfeed false put"
 *CloseUI: *ManualFeed
 
-#if defined(PRINTER_HPDJ500) | defined(PRINTER_HPDJ550C)
+#if defined(PRINTER_HPDJ500) | defined(PRINTER_HPDJ550C) | defined(PRINTER_EPSC62)
 *DefaultOutputOrder: Reverse
 #else
 *DefaultOutputOrder: Forward
@@ -258,6 +273,43 @@
 *CloseUI: *Depletion
 
 *CloseGroup: PrintQuality
+#endif
+
+#ifdef PRINTER_EPSC62
+*% ===== Epson Stylus C62 Options =====
+
+*OpenGroup: PrintQuality
+
+*OpenUI *Quality/Quality: PickOne
+*OrderDependency 20 AnySetup *Quality
+*DefaultQuality: 360dpi
+*Quality 360dpi: "<< /IjsParams (Quality=360dpi) >> setpagedevice"
+*Quality 1440x1440hq2: "<< /IjsParams (Quality=1440x1440hq2) >> setpagedevice"
+*CloseUI: *Quality
+
+*OpenUI *Inking: PickOne
+*OrderDependency 20 AnySetup *Inking
+*DefaultInking: Plain
+*Inking Plain/Plain Paper: "<< /IjsParams (MediaType=Plain) >> setpagedevice"
+*Inking PlainFast/Plain Paper Fast Load: "<< /IjsParams (Mediatype=PlainFast) >> setpagedevice"
+*% Postcard        Postcard
+*% GlossyFilm      Glossy Film
+*% Transparency    Transparencies
+*% Envelope        Envelopes
+*% BackFilm        Back Light Film
+*% Matte           Matte Paper
+*% Inkjet          Inkjet Paper
+*Inking Coated/Photo Quality Inkjet Paper: "<< /IjsParams (MediaType=Coated) >> setpagedevice"
+*% GlossyPhoto     Premium Glossy Photo Paper
+*% Luster          Premium Luster Photo Paper
+*Inking Photo/Photo Paper: "<< /IjsParams (MediaType=Photo) >> setpagedevice"
+*% Glossy          Photo Quality Glossy Paper
+*% Ilford          Ilford Heavy Paper
+*% Other           Other
+*CloseUI: *Inking
+
+*CloseGroup: PrintQuality
+
 #endif
 
 *% ===== Fonts =====

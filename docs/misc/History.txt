@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--4 December 2002.
+1.50b1, 13 November 2002--5 December 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8035,6 +8035,12 @@ line was being parsed twice.
   "as of" is displayed.  These two changes shorting the messages
   considerably while still providing a useful amount of information.  Using
   the --verbose switch gets you everything.
+
+* unixuser/ppr-hexdump.c: added
+
+* pprdrv/ppr-gs.c: changed "cupsfilter=" to "cups=", added "ijs=".
+
+* ppd/ghostscript/: added support for Epson Stylus C62.
 
 * samba/ppr2samba.c: fixed test for driver download share to check for it
   under its current name (which is pprprnt$).

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+unset LANGUAGE
+unset `env | grep ^LC_ | cut -f1 -d=`
+LANG=ru
+OUTPUT_CHARSET=koi8-r
+
+export LANG OUTPUT_CHARSET
+
+xterm -font "-*-*-*-r-*-*-*-140-*-*-m-*-koi8-r" -e joe -asis $1
+
+exit 0

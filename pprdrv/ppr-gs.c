@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 November 2002.
+** Last modified 29 November 2002.
 */
 
 /*
@@ -95,23 +95,53 @@ int main(int argc, char *argv[])
     ** thru to Ghostscript.  These are in name=value form.  At the moment
     ** these all specify output post-processing of some kind.
     */
-    gs_args = gu_alloc(argc + 5, sizeof(const char *));
+    gs_args = gu_alloc(argc + 10, sizeof(const char *));
 
     di = 0;
     gs_args[di++] = "gs";
 
     for(si=1; si<argc; si++)
 	{
-	if((p=lmatchp(argv[si], "cupsfilter=")))
+	if((p=lmatchp(argv[si], "cups=")))
 	    {
 	    cupsfilter = gu_strdup(p);
 	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", cupsfilter);
+	    gs_args[di++] = "-sDEVICE=cups";
+	    saw_DEVICE = TRUE;
 	    }
 
-	else if((p=lmatchp(argv[si], "ijsserver=")))
+	else if((p=lmatchp(argv[si], "ijs=")))
 	    {
-	    ijsserver = gu_strdup(p);
-	    /* something missing here */
+	    char *server, *manufacturer, *model;
+	    char *temp_ptr;
+	    char *copy;
+
+	    p = copy = gu_strdup(p);
+
+	    if(!(server = gu_strsep(&p, ",")) || !(manufacturer = gu_strsep(&p, ",")) || !(model = gu_strsep(&p, ",")))
+		{
+		fprintf(stderr, "Can't parse ijs=.\n");
+		return 1;
+		}
+
+	    ijsserver = gu_strdup(server);
+
+	    gs_args[di++] = "-sDEVICE=ijs";
+
+	    gu_asprintf(&temp_ptr, "-sIjsServer=%s", ijsserver);
+	    gs_args[di++] = temp_ptr;
+
+	    gu_asprintf(&temp_ptr, "-sDeviceManufacturer=%s", manufacturer);
+	    gs_args[di++] = temp_ptr;
+	    
+	    gu_asprintf(&temp_ptr, "-sDeviceModel=%s", model);
+	    gs_args[di++] = temp_ptr;
+
+	    gs_args[di++] = "-dIjsUseOutputFD";
+
+	    gu_free(copy);
+	    
+	    saw_DEVICE = TRUE;
 	    }
 
 	/* Unrecognized options must be for Ghostscript. */
