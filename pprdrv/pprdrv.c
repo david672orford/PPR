@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -1187,7 +1187,6 @@ static void pprdrv_read_printer_conf(void)
 	printer.RIP.name = NULL;
 	printer.RIP.output_language = NULL;
 	printer.RIP.options_storage = NULL;
-	printer.Commentators = (struct COMMENTATOR *)NULL;
 	printer.do_banner = BANNER_DISCOURAGED;		/* default flag */
 	printer.do_trailer = BANNER_DISCOURAGED;	/* page settings */
 	printer.OutputOrder = 0;					/* unknown */
@@ -1332,27 +1331,6 @@ static void pprdrv_read_printer_conf(void)
 			gu_free(tptr);
 			}
 
-		else if(lmatch(confline, "Commentator:"))
-			{
-			struct COMMENTATOR *newcom;
-
-			newcom = (struct COMMENTATOR*)gu_alloc(1,sizeof(struct COMMENTATOR));
-			newcom->options = (char*)NULL;
-
-			if(gu_sscanf(confline, "Commentator: %d %Q %Q %Q",
-						&newcom->interests,				/* interesting commentary() flags values */
-						&newcom->progname,				/* commentator program */
-						&newcom->address,				/* address */
-						&newcom->options) >= 3)
-				{
-				newcom->next = printer.Commentators;
-				printer.Commentators = newcom;
-				}
-			else
-				{
-				fatal(EXIT_PRNERR_NORETRY, _("Invalid \"%s\" (%s line %d)."), "Commentator:", cfname, linenum);
-				}
-			}
 		else if((tptr = lmatchp(confline, "GrayOK:")))
 			{
 			if(gu_torf_setBOOL(&printer.GrayOK, tptr) == -1)

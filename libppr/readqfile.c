@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 22 March 2005.
 */
 
 #include "config.h"
@@ -98,9 +98,9 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	job->For = (char*)NULL;
 	job->charge_to = (char*)NULL;				/* optional */
 	job->magic_cookie = (const char *)NULL;
-	job->responder = (const char*)NULL;
-	job->responder_address = (const char*)NULL;
-	job->responder_options = (const char*)NULL; /* optional */
+	job->responder.name = (const char*)NULL;
+	job->responder.address = (const char*)NULL;
+	job->responder.options = (const char*)NULL; /* optional */
 	job->lc_messages = (char*)NULL;
 
 	job->Creator = (char*)NULL;					/* optional */
@@ -268,7 +268,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 			case 'R':
 				MATCH("Routing: ", _2("%Z", &job->Routing), !=1, found_other)
-				MATCH("Response: ", _4("%S %S %Z", &job->responder, &job->responder_address, &job->responder_options), <2, found_response)
+				MATCH("Response: ", _4("%S %S %Z", &job->responder.name, &job->responder.address, &job->responder.options), <2, found_response)
 				MATCH("RIPopts: ", _2("%Z", &job->ripopts), !=1, found_other)
 				break;
 

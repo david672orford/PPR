@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 22 March 2005.
 */
 
 #include "config.h"
@@ -54,9 +54,9 @@ void destroy_struct_QFileEntry(struct QFileEntry *job)
 	free_and_zero((void**)&job->For);
 	free_and_zero((void**)&job->charge_to);
 	free_and_zero((void**)&job->magic_cookie);
-	free_and_zero((void**)&job->responder);
-	free_and_zero((void**)&job->responder_address);
-	free_and_zero((void**)&job->responder_options);
+	free_and_zero((void**)&job->responder.name);
+	free_and_zero((void**)&job->responder.address);
+	free_and_zero((void**)&job->responder.options);
 	free_and_zero((void**)&job->lc_messages);
 
 	free_and_zero((void**)&job->Creator);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 May 2004.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -390,7 +390,6 @@ struct PPRDRV {
 			int options_count;
 			} RIP;
 
-		struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */
 		gu_boolean do_banner;
 		gu_boolean do_trailer;
 		int OutputOrder;					/* 1 or -1 or 0 if unknown */

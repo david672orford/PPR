@@ -25,28 +25,16 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 22 March 2005.
 */
 
-/* =================== destined for libppr_queueentry.h =====================*/
+/* =================== for queue entries =====================*/
 
-/*
-** A record which describes a printer commentator which
-** should be fed information about what is going on with
-** the printer.
-**
-** This structure is included in struct QFileEntry.	 It is also
-** used to store "Commentator:" lines from the printer configuration
-** file.  The "next" member is only used in the latter instance.
-*/
-struct COMMENTATOR
-		{
-		int interests;					/* bitmask telling which events to invoke for */
-		const char *progname;			/* "file" or program to invoke */
-		const char *address;			/* first parameter to feed to it */
-		const char *options;			/* second parameter to feed to it */
-		struct COMMENTATOR *next;
-		} ;
+struct RESPONDER {
+	const char *name;		/* program for sending messages to user */
+	const char *address;	/* address for errors, possibly NULL */
+	const char *options;	/* name=value list of responder options */
+	};
 
 /** Holds the contents of a queue file.
  * This structure is loaded using read_struct_QFileEntry(), saved using
@@ -78,9 +66,7 @@ struct QFileEntry
 	const char *Title;					/* %%Title: for Postscript header */
 	const char *Creator;				/* application which created it */
 	const char *lpqFileName;			/* name of input file */
-	const char *responder;				/* program for sending messages to user */
-	const char *responder_address;		/* address for errors, possibly NULL */
-	const char *responder_options;		/* name=value list of responder options */
+	struct RESPONDER responder;
 	int commentary;						/* bitmask of commentary to send thru the responder */
 	int nmedia;							/* number of media types */
 	int media[MAX_DOCMEDIA];			/* list of required media types */

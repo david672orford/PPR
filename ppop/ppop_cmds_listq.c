@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -1242,9 +1242,9 @@ static int ppop_details_item(const struct QEntry *qentry,
 	printf("Trailer: %s\n",describe_flag_page_setting(qfileentry->do_trailer));
 
 	/* response methode and address */
-	printf("Respond by: %s \"%s\"\n", qfileentry->responder, qfileentry->responder_address);
-	if(qfileentry->responder_options)
-		printf("Responder options: %s\n", qfileentry->responder_options);
+	printf("Respond by: %s \"%s\"\n", qfileentry->responder.name, qfileentry->responder.address);
+	if(qfileentry->responder.options)
+		printf("Responder options: %s\n", qfileentry->responder.options);
 
 	if(qfileentry->commentary)
 		printf("Commentary: %d\n", qfileentry->commentary);
@@ -1694,16 +1694,16 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				PUTS(qfileentry->destname);
 				break;
 			case 44:					/* responder */
-				if(qfileentry->responder)
-					PUTS(qfileentry->responder);
+				if(qfileentry->responder.name)
+					PUTS(qfileentry->responder.name);
 				break;
 			case 45:					/* responder-address */
-				if(qfileentry->responder_address);
-					PUTS(qfileentry->responder_address);
+				if(qfileentry->responder.address);
+					PUTS(qfileentry->responder.address);
 				break;
 			case 46:					/* responder-options */
-				if(qfileentry->responder_options)
-					PUTS(qfileentry->responder_options);
+				if(qfileentry->responder.options)
+					PUTS(qfileentry->responder.options);
 				break;
 			case 47:					/* status/explain */
 				PUTS(status);

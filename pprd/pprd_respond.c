@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 22 March 2005.
 */
 
 #include "config.h"
@@ -114,7 +114,7 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 			}
 
 		/* Here we go! */
-		execl("lib/ppr-respond", "ppr-respond",
+		execl(LIBDIR"/ppr-respond", "ppr-respond",
 				"pprd",
 				jobname_short,
 				code_str,

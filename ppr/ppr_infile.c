@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -1986,10 +1986,10 @@ static void no_filter(const char *file_type_str)
 	else if(!option_nofilter_hexdump
 				&&
 				(
-						(ppr_respond_by & PPR_RESPOND_BY_STDERR)
-						||
-						((ppr_respond_by & PPR_RESPOND_BY_RESPONDER)
-								&& strcmp(qentry.responder, "none") != 0)
+					(ppr_respond_by & PPR_RESPOND_BY_STDERR)
+					||
+					((ppr_respond_by & PPR_RESPOND_BY_RESPONDER)
+						&& strcmp(qentry.responder.name, "none") != 0)
 				)
 			)
 		{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -413,9 +413,9 @@ int write_queue_file(struct QFileEntry *qentry)
 	assert_ok_value(qentry->Creator, TRUE, FALSE, FALSE, "qentry->Creator", FALSE);
 	assert_ok_value(qentry->Routing, TRUE, FALSE, FALSE, "qentry->Routing", FALSE);
 	assert_ok_value(qentry->lpqFileName, TRUE, FALSE, FALSE, "qentry->lpqFileName", FALSE);
-	assert_ok_value(qentry->responder, FALSE, FALSE, FALSE, "qentry->responder", FALSE);
-	assert_ok_value(qentry->responder_address, FALSE, FALSE, FALSE, "qentry->responder_address", FALSE);
-	assert_ok_value(qentry->responder_options, TRUE, TRUE, TRUE, "qentry->responder_options", FALSE);
+	assert_ok_value(qentry->responder.name, FALSE, FALSE, FALSE, "qentry->responder", FALSE);
+	assert_ok_value(qentry->responder.address, FALSE, FALSE, FALSE, "qentry->responder.address", FALSE);
+	assert_ok_value(qentry->responder.options, TRUE, TRUE, TRUE, "qentry->responder.options", FALSE);
 	assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE);
 	assert_ok_value(qentry->lc_messages, TRUE, FALSE, FALSE, "LC_MESSAGES", FALSE);
 
@@ -1411,11 +1411,11 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'm':								/* responder */
-			qentry.responder = optarg;
+			qentry.responder.name = optarg;
 			break;
 
 		case 'r':								/* responder address */
-			qentry.responder_address = optarg;
+			qentry.responder.address = optarg;
 			break;
 
 		case 'b':								/* banner */
@@ -1755,17 +1755,17 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 
 		case 1005:								/* --responder-options */
 			{
-			if(!qentry.responder_options)
+			if(!qentry.responder.options)
 				{
-				qentry.responder_options = gu_strdup(optarg);
+				qentry.responder.options = gu_strdup(optarg);
 				}				/* duplicate because we might free */
 			else
 				{
-				int len = strlen(qentry.responder_options) + 1 + strlen(optarg) + 1;
+				int len = strlen(qentry.responder.options) + 1 + strlen(optarg) + 1;
 				char *ptr = (char*)gu_alloc(len, sizeof(char));
-				snprintf(ptr, len, "%s %s", qentry.responder_options, optarg);
-				gu_free((char*)qentry.responder_options);		/* !!! */
-				qentry.responder_options = ptr;
+				snprintf(ptr, len, "%s %s", qentry.responder.options, optarg);
+				gu_free((char*)qentry.responder.options);		/* !!! */
+				qentry.responder.options = ptr;
 				}
 			}
 			break;
@@ -2026,8 +2026,8 @@ int main(int argc, char *argv[])
 	** We would like to find a default response method in the variable
 	** PPR_RESPONDER.  If we don't we will use "followme".
 	*/
-	if(!(qentry.responder = getenv("PPR_RESPONDER")))
-		qentry.responder = "followme";
+	if(!(qentry.responder.name = getenv("PPR_RESPONDER")))
+		qentry.responder.name = "followme";
 
 	/*
 	** Since a responder address may not be specified with the -r switch, we 
@@ -2042,17 +2042,17 @@ int main(int argc, char *argv[])
 	** login name.  That is why we try the environment variables "USER" and 
 	** "LOGNAME" before resorting to the current user id.
 	*/
-	if(!(qentry.responder_address = getenv("PPR_RESPONDER_ADDRESS")))
+	if(!(qentry.responder.address = getenv("PPR_RESPONDER_ADDRESS")))
 		{
 		char *p;
 		if((p = getenv("LOGNAME")) || (p = getenv("USER")))
 			{
 			/* Duplicate because prune_env() may obliterate. */
-			qentry.responder_address = gu_strdup(p);
+			qentry.responder.address = gu_strdup(p);
 			}
 		else
 			{
-			qentry.responder_address = qentry.username;
+			qentry.responder.address = qentry.username;
 			}
 		}
 
@@ -2061,7 +2061,7 @@ int main(int argc, char *argv[])
 	** If the variable is undefined, getenv() will return NULL
 	** which is just what we want.
 	*/
-	qentry.responder_options = getenv("PPR_RESPONDER_OPTIONS");
+	qentry.responder.options = getenv("PPR_RESPONDER_OPTIONS");
 
 	/*
 	** Look for default commentatary option in the environment.

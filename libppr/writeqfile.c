@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 22 March 2005.
 */
 
 #include "config.h"
@@ -84,9 +84,11 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
 	fprintf(Qfile, "Banners: %d %d\n", qentry->do_banner, qentry->do_trailer);
 
-	fprintf(Qfile, "Response: %s %s %s\n", qentry->responder,
-		qentry->responder_address,
-		qentry->responder_options ? qentry->responder_options : "");
+	fprintf(Qfile, "Response: %s %s %s\n",
+		qentry->responder.name,
+		qentry->responder.address,
+		qentry->responder.options ? qentry->responder.options : ""
+		);
 
 	/* If the --commentatary switch was used, emmit a "Commentary:" line. */
 	fprintf(Qfile, "Commentary: %d\n", qentry->commentary);

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 22 March 2005.
 */
 
 /*
@@ -89,7 +89,7 @@ int respond(int response_code, const char extra[])
 	int wstat;					/* wait() status */
 	int wret;					/* wait() return code */
 
-	if(strcmp(qentry.responder, "none") == 0)
+	if(strcmp(qentry.responder.name, "none") == 0)
 		return -1;
 
 	/* Set a harmless SIGCHLD handler. */
@@ -144,14 +144,14 @@ int respond(int response_code, const char extra[])
 		** That means that it will change between PPR versions, so don't
 		** write anything that uses it!
 		*/
-		execl("lib/ppr-respond", "ppr_respond",
+		execl(LIBDIR"/ppr-respond", "ppr-respond",
 				"ppr",
 				qentry.destname,
 				response_code_str,
 				extra ? extra : "",
 				qentry.responder,
-				qentry.responder_address,
-				qentry.responder_options ? qentry.responder_options : "",
+				qentry.responder.address,
+				qentry.responder.options ? qentry.responder.options : "",
 				qentry.For ? qentry.For : "",
 				qentry.Title ? qentry.Title : "",
 				qentry.lc_messages ? qentry.lc_messages : "",
