@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/filter_pcl/PCL.java
-** Copyright 1995--2000, Trinity College Computing Center.
+** mouse:~ppr/src/filter_pcl/PCLparse.java
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,20 +10,33 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2000.
+** Last modified 29 August 2001.
 */
 
 import java.io.*;
 
-class PCL extends PSout
+class PCLparse
     {
+    private PSout out;
+
     // Create a new PCL parser and attached an open file to
     // receive the PostScript.
-    public PCL(OutputStream outfile) throws AssertionFailed
+    public PCLparse(PSout ps_out_object) throws AssertionFailed
     	{
-	super(outfile);
-	moveto(left_margin, top_margin);
+	out = ps_out_object;
+	out.moveto(left_margin, top_margin);
+	out.set_orientation(0);
+	out.set_pagesize((int)(8.5 * 7200), (int)(11 * 7200), "Letter");
+	out.set_font_family("courier");
+	out.set_font_bold(false);
+	out.set_font_size(1200);
     	}
+
+    // Call this when there are no more files you want to parse.
+    public void finish()
+	{
+	out.finish();
+	}
 
     // Print debugging output.
     private void debug(String s)
@@ -42,6 +55,19 @@ class PCL extends PSout
         {
         System.err.print(d);
         }
+    private void debug(char c)
+	{
+	System.err.print(c);
+	}
+
+    private void debug_control(int c, String name)
+	{
+	debug("control ");
+	debug(c);
+	debug(" (");
+	debug(name);
+	debug(")\n");
+	}
 
     // Some of the current state.
     private int top_margin = 4175;	// In theory, 4275 for 4 lines @ 8 LPI
@@ -52,40 +78,43 @@ class PCL extends PSout
     // This function performs a control character function.
     public void control(int c)
         {
-	debug("control "); debug(c); debug(" (");
-
 	switch(c)
 	    {
 	    case 8:
-	    	debug("backspace");
-		rxmoveto(0 - get_space_width());
+	    	debug_control(c, "backspace");
+		out.rxmoveto(0 - out.get_space_width());
 	    	break;
 	    case 10:
-	    	debug("line feed");
-		rymoveto(line_spacing);
+	    	//debug_control(c, "line feed");
+		out.rymoveto(line_spacing);
+		if(true)
+		     out.xmoveto(left_margin);
 	    	break;
 	    case 12:
-	    	debug("form feed");
-		close_page();
-		moveto(left_margin, top_margin);
+	    	debug_control(c, "form feed");
+		out.close_page();
+		out.moveto(left_margin, top_margin);
 	    	break;
 	    case 13:
-		debug("carriage return");
-		xmoveto(left_margin);
+		//debug_control(c, "carriage return");
+		out.xmoveto(left_margin);
 		break;
 	    case 32:
-	    	debug("space");
-	    	rxmoveto(hmi);
+	    	//debug_control(c, "space");
+	    	out.rxmoveto(hmi);
 	    	break;
+	    default:
+		debug_control(c, "?");
+		break;
 	    }
-
-	debug(")\n");
         }
 
     // This function performs a simple PCL ESC.
     public void simple_esc(int c)
         {
-	debug("ESC "); debug((char)c); debug(" (");
+	debug("ESC ");
+		debug((char)c);
+		debug(" (");
 
 	switch(c)
 	    {
@@ -114,15 +143,25 @@ class PCL extends PSout
     // terminology is HP's.
     public void parameterized_esc(int parameterized_char, int group_char, int value_thousandths, int parameter_char) throws AssertionFailed
         {
-	debug("ESC "); debug((char)parameterized_char); debug(" "); debug((char)group_char); debug(" ");
-		debug(value_thousandths / 1000.0); debug(" "); debug((char)parameter_char);
-		debug(" (");
+	debug("ESC ");
+		debug((char)parameterized_char);
+		debug(" ");
+		debug((char)group_char);
+		debug(" ");
+		debug(value_thousandths / 1000.0);
+		debug(" ");
+		debug((char)parameter_char);
+
+	debug(" (");
 
 	int command = ((parameterized_char << 16) | (group_char << 8) | parameter_char);
 	switch(command)
 	    {
 	    case 0x252d58:
 		debug("UEL");
+	    	break;
+	    case 0x266b47:
+	    	debug("line termination mode");
 	    	break;
 	    case 0x266c58:
 	    	debug("# copies");
@@ -157,7 +196,7 @@ class PCL extends PSout
             case 0x266c4f:
             	debug("orientation");
 		if(value_thousandths >= 0 && value_thousandths < 4000 && (value_thousandths % 1000) == 0)
-		    set_orientation(value_thousandths / 1000);
+		    out.set_orientation(value_thousandths / 1000);
 		else
 		    debug(", invalid");
             	break;
@@ -168,7 +207,7 @@ class PCL extends PSout
             	debug("top margin, ");
 		top_margin = (line_spacing * value_thousandths / 1000);
 		debug(top_margin); debug("/7200");
-		ymoveto(top_margin);
+		out.ymoveto(top_margin);
             	break;
             case 0x266c46:
             	debug("text length");
@@ -177,16 +216,16 @@ class PCL extends PSout
             	debug("left margin, ");
 		left_margin = (hmi * value_thousandths / 1000);
 		debug(left_margin); debug("/7200");
-		xmoveto(left_margin);
+		out.xmoveto(left_margin);
             	break;
             case 0x26614d:
             	debug("right margin");
             	break;
-            case 0x266c4c:
-            	debug("perforation skip");
-            	break;
             case 0x266b48:
             	debug("horizontal motion index");
+            	break;
+            case 0x266c4c:
+            	debug("perforation skip");
             	break;
             case 0x266c43:
             	debug("vertical motion index");
@@ -213,9 +252,6 @@ class PCL extends PSout
 	    	break;
 	    case 0x266148:
 	    	debug("horizontal position in decipoints");
-	    	break;
-	    case 0x266b47:
-	    	debug("line termination");
 	    	break;
             case 0x266653:
             	debug("push/pop position");
@@ -257,12 +293,29 @@ class PCL extends PSout
 	    case 0x287348:
 	    	debug("primary pitch");
 		hmi = (7200000 / value_thousandths);
+		out.set_font_size((int)(7200000 / 0.6 / value_thousandths + 0.5));
 	    	break;
 	    case 0x297348:
 	    	debug("secondary pitch");
 	    	break;
 	    case 0x266b53:
-	    	debug("set pitch mode");
+	    	debug("set pitch mode: ");
+		out.set_font_family("courier");
+		switch(value_thousandths / 1000)
+		    {
+		    case 0:
+			debug("10.0 cpi");
+			out.set_font_size(1200);	// 12 point
+			break;
+		    case 2:
+			debug("compressed (16.5-16.7 cpi)");
+			out.set_font_size(720);		// 7.2 point
+			break;
+		    case 4:
+			debug("elite (12.0 cpi)");
+			out.set_font_size(1000);	// 10 point
+			break;
+		    }
 	    	break;
             case 0x287356:
             	debug("primary height");
@@ -279,9 +332,9 @@ class PCL extends PSout
 	    case 0x287342:
 	    	debug("primary stroke weight");
 		if(value_thousandths == 0)
-		    set_font(0);
+		    out.set_font_bold(false);
 		else
-		    set_font(1);
+		    out.set_font_bold(true);
 	    	break;
 	    case 0x297342:
 	    	debug("secondary stroke weight");
@@ -444,12 +497,12 @@ class PCL extends PSout
 	    // If it gets this far, it must be printable.
 	    else
 	    	{
-		printable(c);
+		out.printable(c);
 	    	}
             }
     	}
 
-    } // class PCL
+    } // class PCLparse
 
-// end of PCL.java
+// end of PCLparse.java
 
