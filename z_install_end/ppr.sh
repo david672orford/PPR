@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 27 February 2005.
 #
 
 #
@@ -51,6 +51,7 @@
 LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
+BINDIR="@BINDIR@"
 EECHO="@EECHO@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 27 February 2005.
 #
 
 #
@@ -103,10 +103,7 @@ prog_ok ()
 	}
 
 #==========================================================================
-# Add these lines to /etc/services if necessary.
-#		pprpopup		15009/tcp
-#		ppradmin		15010/tcp
-#		pprcom			15011/tcp
+# Add a line to /etc/services if it does not yet exist
 #==========================================================================
 add_service ()
 	{
@@ -135,9 +132,9 @@ add_service ()
 	}
 
 #==========================================================================
-# Add lines to /etc/inetd.conf as necessary.
-#		printer stream tcp nowait root /usr/sbin/tcpd /usr/ppr/lib/lprsrv
-#		ppradmin stream tcp nowait.400 pprwww /usr/sbin/tcpd /usr/ppr/lib/ppr-httpd
+# Add lines to /etc/inetd.conf as necessary.  Some of the arguments will
+# be ignored if Inetd does not support them.
+#
 # Arguments are:
 #		$1		portname
 #		$2		.connexion_limit
@@ -187,37 +184,37 @@ xinetd_config ()
 # RFC 1179 (LPR/LPD) server
 service printer
 {
-		socket_type		= stream
-		wait			= no
-		user			= root
-		server			= $LIBDIR/lprsrv
-		cps				= 400 30
-		instances		= 50
-		disable = yes
+	socket_type	= stream
+	wait		= no
+	user		= root
+	server		= $LIBDIR/lprsrv
+	cps		= 400 30
+	instances	= 50
+	disable		= yes
 }
 
 # WWW interface HTTP server
 service ppradmin
 {
-		socket_type		= stream
-		port			= 15010
-		wait			= no
-		user			= $USER_PPRWWW
-		server			= $LIBDIR/ppr-httpd
-		instances		= 50
-		disable = no
+	socket_type	= stream
+	port		= 15010
+	wait		= no
+	user		= $USER_PPRWWW
+	server		= $LIBDIR/ppr-httpd
+	instances	= 50
+	disable		= no
 }
 
 # IPP server
-service ppradmin
+service ipp
 {
-		socket_type		= stream
-		port			= ipp
-		wait			= no
-		user			= $USER_PPRWWW
-		server			= $LIBDIR/ppr-httpd --ipp
-		instances		= 50
-		disable = yes
+	socket_type	= stream
+	wait		= no
+	user		= $USER_PPRWWW
+	server		= $LIBDIR/ppr-httpd
+	server_args	= --ipp
+	instances	= 50
+	disable		= yes
 }
 
 # end of file
@@ -277,11 +274,11 @@ file_ok $SERVICES -w
 # Add the standard printer service if it isn't present already.
 add_service printer 515
 
-# Add the PPR web managment port.
-add_service ppradmin 15010
-
 # Add the Internet Printing Protocol
 add_servce ipp 631
+
+# Add the PPR web managment port.
+add_service ppradmin 15010
 
 #==========================================================================
 # If we are using Xinetd, things are pretty easy.

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 27 February 2005.
 #
 
 #
@@ -50,8 +50,8 @@ SUBDIRS=\
 	z_install_begin \
 	makeprogs \
 	libgu \
-	nonppr_tcl \
 	libppr \
+	nonppr_tcl \
 	libscript \
 	libpprdb \
 	libttf \
