@@ -7,8 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
-"POT-Creation-Date: 2004-06-09 00:38+0200\n"
-"PO-Revision-Date: 2004-06-09 12:15+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-10-21 18:11+0200\n"
+"PO-Revision-Date: 2004-10-21 18:18+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
@@ -280,14 +281,17 @@ msgstr ""
 "Interfacefehlfunktion: Programm wurde vor Akzeptieren des kompletten\n"
 "\tAuftrages eendet, hat aber keinen Fehlercode zurückgegeben."
 
-#: ../pprdrv/pprdrv_interface.c:309
-#, c-format
-msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
-msgstr ""
-"Interface \"%s\" existiert nicht oder ist nicht ausführbar, Fehlernummer=%s "
-"(%s)."
+#: ../pprdrv/pprdrv_interface.c:311
+#, fuzzy, c-format
+msgid "Interface program \"%s\" does not exist."
+msgstr "Das Interface beendete den Kern."
 
-#: ../pprdrv/pprdrv_interface.c:313 ../pprdrv/pprdrv_interface.c:317
+#: ../pprdrv/pprdrv_interface.c:313
+#, fuzzy, c-format
+msgid "access(\"%s\", X_OK) failed, errno=%d (%s)."
+msgstr "%s(): open(\"%s\", O_RDWR) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
 #, c-format
 msgid "%s(): pipe() failed, errno=%d (%s)"
 msgstr "%s(): pipe() fehlgeschlagen, Fehlernummer=%d (%s)"
@@ -504,3 +508,8 @@ msgstr "RIP wurde durch Signal \"%s\" beendet."
 #: ../pprdrv/pprdrv_rip.c:125
 msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
 msgstr "Bizarre RIP Fehlfunktion: SIGCHLD ohne Signal oder exit."
+
+#~ msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
+#~ msgstr ""
+#~ "Interface \"%s\" existiert nicht oder ist nicht ausführbar, Fehlernummer=%"
+#~ "s (%s)."

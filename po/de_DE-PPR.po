@@ -7,8 +7,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
-"POT-Creation-Date: 2004-06-09 00:38+0200\n"
-"PO-Revision-Date: 2004-06-09 12:15+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-10-21 18:11+0200\n"
+"PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
@@ -88,7 +89,7 @@ msgstr ""
 msgid "\t--question <path>          path of HTML question page\n"
 msgstr "\t--question <Pfad>          Pfad der HTML Formularseite\n"
 
-#: ../libuprint/uprint-newconf.c:235
+#: ../libuprint/uprint-newconf.c:236
 msgid ""
 "\t--remove     back out changes\n"
 "\t--force      change system against advice\n"
@@ -156,7 +157,7 @@ msgstr ""
 msgid "\t--title <string>           set default document title\n"
 msgstr "\t--title <Titel>            Titel des Druckauftrages setzen\n"
 
-#: ../libuprint/uprint-newconf.c:238 ../unixuser/ppr-followme.c:217
+#: ../libuprint/uprint-newconf.c:239 ../unixuser/ppr-followme.c:217
 msgid ""
 "\t--version\n"
 "\t--help\n"
@@ -502,12 +503,12 @@ msgstr "    Benutzung: ppop dest {<Drucker>, all}"
 msgid "    Abbreviation: ppop ldest {<destination>, all}"
 msgstr "    Benutzung: ppop ldest {<Drucker>, all}"
 
-#: ../libuprint/uprint-newconf.c:161
+#: ../libuprint/uprint-newconf.c:162
 #, c-format
 msgid "  (Note: \"%s\" does not exist.)\n"
 msgstr "  (Achtung: \"%s\" existiert nicht.)\n"
 
-#: ../libuprint/uprint-newconf.c:166
+#: ../libuprint/uprint-newconf.c:167
 #, c-format
 msgid "  (Warning: \"%s\" is not executable.)\n"
 msgstr "  (Warnung: \"%s\" ist nicht ausführbar.)\n"
@@ -521,7 +522,7 @@ msgstr "Wert"
 #, c-format
 msgid "\"%%%%BeginData:\" block ran off end of file after %ld of %ld lines"
 msgstr ""
-"\"%%%%BeginData:\" Datenblock ging über EOF hinaus nach %ld of %ld Zeilen "
+"\"%%%%BeginData:\" Datenblock ging über EOF hinaus nach %ld of %ld Zeilen"
 
 #: ../ppr/ppr_simplify.c:186
 #, c-format
@@ -539,7 +540,7 @@ msgstr ""
 #, c-format
 msgid "\"%%%%BeginData:\" said %ld lines, but no \"%%%%EndData\" found there"
 msgstr ""
-"\"%%%%BeginData:\" meltete %ld Zeilen, dort aber kein \"%%%%EndData\" "
+"\"%%%%BeginData:\" meltete %ld Zeilen, dort aber kein \"%%%%EndData\""
 "gefunden"
 
 #: ../ppr/ppr_dscdoc.c:348
@@ -1268,9 +1269,9 @@ msgstr "ACLs: %s\n"
 #: ../samba/ppr2samba.c:431
 #, c-format
 msgid "Absence of \"%s\" indicates that export to Samba is not desired.\n"
-msgstr ""
+msgstr "Das Nichvorhandensein von \"%s\" zeigt an, das ein Export zu Samba nicht gewünscht wird.\n"
 
-#: ../interfaces/usb.c:433
+#: ../interfaces/usb.c:447
 #, c-format
 msgid "Access to port \"%s\" denied.\n"
 msgstr "Verbindung zu Port \"%s\" abgelehnt.\n"
@@ -1302,7 +1303,7 @@ msgstr "Weitere Hilfethemen:\n"
 #: ../ppad/ppad_printer.c:3082
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
-"zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben "
+"Zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben "
 "beginnen.\n"
 
 #: ../ppad/ppad_group.c:205 ../ppad/ppad_printer.c:934
@@ -1318,7 +1319,7 @@ msgstr "Adresse"
 msgid "Address: \"%s\"\n"
 msgstr "Adresse: \"%s\"\n"
 
-#: ../libuprint/uprint-newconf.c:309
+#: ../libuprint/uprint-newconf.c:310
 #, c-format
 msgid "Adjusting spooler program names to conform to %s:\n"
 msgstr "Passe Programmnamen des Spooler an, um folgendem zu genügen: %s:\n"
@@ -1359,7 +1360,7 @@ msgstr "Der Aliasname ist zu lang.\n"
 msgid "Alias name: %s\n"
 msgstr "Aliasname: %s\n"
 
-#: ../libuprint/uprint-newconf.c:198
+#: ../libuprint/uprint-newconf.c:199
 #, c-format
 msgid "Appearently, \"%s\" never was sidelined.\n"
 msgstr "Es scheint, als wäre \"%s\" nicht umbennannt gewesen.\n"
@@ -1618,7 +1619,7 @@ msgstr ""
 "Konnte den Druckauftrag wegen eines Problems mit dem Druckserver\n"
 " \"%s\" nicht löschen. Bitten Sie den Sytemadministrator des\n"
 "des Druckservers, in der Logdatei\"%s\" nachzusehen\n"
-"um die Details zu sehen.\n"
+"um die Details zu erfahren.\n"
 
 #: ../lprsrv/lprsrv_list.c:96
 #, c-format
@@ -1628,7 +1629,7 @@ msgid ""
 "system administrator to examine the log file \"%s\"\n"
 "to learn the details.\n"
 msgstr ""
-"Konnte keine Watreschlagenliste wegen eines Problems mit dem\n"
+"Konnte keine Warteschlagenliste wegen eines Problems mit dem\n"
 "Druckserver \"%s\" bekommen. Bitten Sie den Sytemadministrator des\n"
 "des Druckservers, in der Logdatei\"%s\" nachzusehen\n"
 "um die Details zu sehen.\n"
@@ -1638,7 +1639,7 @@ msgstr ""
 msgid "Creating media file \"%s\".\n"
 msgstr "Erstelle Mediendatei \"%s\".\n"
 
-#: ../libuprint/uprint-newconf.c:152
+#: ../libuprint/uprint-newconf.c:153
 #, c-format
 msgid "Creating symbolic link \"%s\" -> \"%s\".\n"
 msgstr "Erstelle symbolische Verknüpfung \"%s\" -> \"%s\".\n"
@@ -1838,19 +1839,19 @@ msgstr "Fatal:"
 msgid "Feedback: "
 msgstr "Bidirektional: "
 
-#: ../libuprint/uprint-newconf.c:324
+#: ../libuprint/uprint-newconf.c:325
 msgid "Files for lp should be in their normal locations.\n"
 msgstr "Dateien für lp sollten an ihren normalen Orten sein.\n"
 
-#: ../libuprint/uprint-newconf.c:317
+#: ../libuprint/uprint-newconf.c:318
 msgid "Files for lp should be in their sidelined locations.\n"
 msgstr "Dateien für lp sollten an ihren verschobenen Orten sein.\n"
 
-#: ../libuprint/uprint-newconf.c:340
+#: ../libuprint/uprint-newconf.c:342
 msgid "Files for lpr should be in their normal locations.\n"
 msgstr "Dateien für lpr sollten an ihren normalen Orten sein.\n"
 
-#: ../libuprint/uprint-newconf.c:333
+#: ../libuprint/uprint-newconf.c:334
 msgid "Files for lpr should be in their sidelined locations.\n"
 msgstr "Dateien für lpr sollten an ihren verschobenen Orten sein.\n"
 
@@ -2070,7 +2071,7 @@ msgstr "Ungültiges %s Argument-Format"
 msgid "Invalid %s option"
 msgstr "Ungültige %s Option"
 
-#: ../ppop/ppop_cmds_listq.c:1412 ../ppop/ppop_modify.c:80
+#: ../ppop/ppop_cmds_listq.c:1411 ../ppop/ppop_modify.c:80
 #, c-format
 msgid "Invalid Addon line: %s\n"
 msgstr "Ungültige Zusatzzeile: %s\n"
@@ -2307,7 +2308,7 @@ msgstr "Fehlende \"%%%%Page:\" Köpfe oder fehlerhafter \"%%%%Pages:\" Kopf"
 msgid "Missing option name"
 msgstr "Name der Option fehlt"
 
-#: ../libuprint/uprint-newconf.c:209
+#: ../libuprint/uprint-newconf.c:210
 #, c-format
 msgid "Moving \"%s\" back to \"%s\".\n"
 msgstr "Verschiebe \"%s\" zurück nach \"%s\".\n"
@@ -2348,7 +2349,7 @@ msgstr ""
 msgid "No \"%%%%Trailer:\" comment"
 msgstr "Fehlender \"%%%%Trailer:\" Kopf"
 
-#: ../libuprint/uprint-newconf.c:205
+#: ../libuprint/uprint-newconf.c:206
 #, c-format
 msgid "No \"%s\" to move to \"%s\".\n"
 msgstr ""
@@ -2393,7 +2394,7 @@ msgstr "Keine Warnungen für Drucker \"%s\".\n"
 msgid "No matching filter found.\n"
 msgstr "Kein passender Filter gefunden.\n"
 
-#: ../interfaces/usb.c:469
+#: ../interfaces/usb.c:425
 #, fuzzy, c-format
 msgid "No printer matching address \"%s\" is presently connected."
 msgstr "Der Drucker auf \"%s\" hat die Verbindung abgelehnt."
@@ -2618,7 +2619,7 @@ msgstr "Einfacher Text"
 msgid "Port \"%s\" does not support 2-way communication."
 msgstr "Anschluß \"%s\" unterstützt keine bidirektionale Kommunikation."
 
-#: ../interfaces/parallel.c:361 ../interfaces/usb.c:430
+#: ../interfaces/parallel.c:361 ../interfaces/usb.c:444
 #, c-format
 msgid "Port \"%s\" not found.\n"
 msgstr "Anschluß \"%s\" nicht gefunden.\n"
@@ -2765,7 +2766,7 @@ msgstr "Der Drucker verweigert dem Spoolerprogramm Zugriff."
 msgid "Printer turned off or disconnected while printing."
 msgstr "Drucker wurde beim Drucken ausgeschalten oder getrennt."
 
-#: ../interfaces/parallel.c:365 ../interfaces/usb.c:437
+#: ../interfaces/parallel.c:365 ../interfaces/usb.c:451
 msgid "Probe failed.\n"
 msgstr "Test fehlgeschlagen.\n"
 
@@ -2774,7 +2775,7 @@ msgstr "Test fehlgeschlagen.\n"
 msgid "Probe failed: %s\n"
 msgstr "Test fehlgeschlagen: %s\n"
 
-#: ../interfaces/parallel.c:358 ../interfaces/usb.c:427
+#: ../interfaces/parallel.c:358 ../interfaces/usb.c:441
 #, c-format
 msgid "Probing not implemented for port \"%s\".\n"
 msgstr "Test für Anschluß \"%s\" nicht implementiert.\n"
@@ -2784,7 +2785,7 @@ msgstr "Test für Anschluß \"%s\" nicht implementiert.\n"
 msgid "Procset \"%s\" has no version and revision numbers"
 msgstr "Fehlende Versions- und Revisionsnummer in Procset \"%s\""
 
-#: ../ppop/ppop_cmds_listq.c:650
+#: ../ppop/ppop_cmds_listq.c:649
 msgid "Queue ID        For                      Time      Pgs Status\n"
 msgstr "Warteschlange    Für                      Zeit      Seiten Status\n"
 
@@ -2900,12 +2901,12 @@ msgstr "Entfernter Benutzer"
 msgid "Remote system \"%s\" has refused the connection."
 msgstr "Enferntes System \"%s\" hat die Verbindung verweigert."
 
-#: ../libuprint/uprint-newconf.c:187
+#: ../libuprint/uprint-newconf.c:188
 #, c-format
 msgid "Removing symbolic link \"%s\".\n"
 msgstr "Entferne symbolische Verknüpfung \"%s\".\n"
 
-#: ../libuprint/uprint-newconf.c:132 ../libuprint/uprint-newconf.c:145
+#: ../libuprint/uprint-newconf.c:133 ../libuprint/uprint-newconf.c:146
 #, c-format
 msgid "Renaming \"%s\" -> \"%s\".\n"
 msgstr "Umbenennen: \"%s\" -> \"%s\".\n"
@@ -2968,7 +2969,7 @@ msgid "Resource \"%s\" listed as supplied but it isn't actually supplied"
 msgstr ""
 "Ressource \"%s\" ist als mitgeliefert vermerkt, wird aber nicht mitgeliefert"
 
-#: ../libuprint/uprint-newconf.c:307
+#: ../libuprint/uprint-newconf.c:308
 msgid "Restoring original spooler program names:\n"
 msgstr "Stelle originale Spoolerprogrammnamen wieder her:\n"
 
@@ -3220,7 +3221,7 @@ msgid "The alias \"%s:%s\" doesn't have a forwhat value.\n"
 msgstr "Der Aliasname \"%s\" zeigt auf keine Warteschlange.\n"
 
 #: ../interfaces/parallel.c:384 ../interfaces/serial.c:558
-#: ../interfaces/usb.c:459
+#: ../interfaces/usb.c:473
 #, c-format
 msgid ""
 "The codes setting \"Binary\" is not compatible with the PPR interface\n"
@@ -3275,7 +3276,7 @@ msgstr ""
 
 #: ../interfaces/lpr.c:563 ../interfaces/parallel.c:375
 #: ../interfaces/pros.c:471 ../interfaces/serial.c:549
-#: ../interfaces/tcpip.c:353 ../interfaces/usb.c:447
+#: ../interfaces/tcpip.c:353 ../interfaces/usb.c:461
 #, c-format
 msgid ""
 "The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
@@ -3447,7 +3448,7 @@ msgstr "Dieses Programm wirde zum testen der Datei \"lprsrv.conf\" genutzt.\n"
 msgid "This program must be setuid and owned by \"%s\""
 msgstr "Dieses Programm muß setuid sein und von \"%s\" besessen werden"
 
-#: ../libuprint/uprint-newconf.c:300
+#: ../libuprint/uprint-newconf.c:301
 msgid ""
 "This system uses /etc/alternatives.  Using uprint-newconf\n"
 "is not advised and it will not run without --force or --remove.\n"
@@ -3522,7 +3523,7 @@ msgstr ""
 msgid "USB port communication failed, errno=%d (%s)."
 msgstr "USB Port Kommunikation fehlgeschlagen, Fehlernummer=%d (%s)."
 
-#: ../interfaces/usb.c:424
+#: ../interfaces/usb.c:438
 msgid "USB port probing not implemented on this OS.\n"
 msgstr "USB Port testen wird von diesem Betriebssystem nicht unterstützt.\n"
 
@@ -3803,7 +3804,7 @@ msgstr ""
 "\tDrucker oder die Gruppe. Der Befehl \"ppop dest-comment-address\n"
 "\tzeigt das Kommando, das Interface und die Adresse.\n"
 
-#: ../ppop/ppop_cmds_listq.c:1197
+#: ../ppop/ppop_cmds_listq.c:1196
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -3847,12 +3848,12 @@ msgid ""
 "\n"
 "This command moves the specified jobs to the end of the queue.\n"
 msgstr ""
-"Usage: ppop last <Auftrag> ...\n"
+"Benutzung: ppop last <Auftrag> ...\n"
 "\n"
 "Dieser Befehl verschiebt die angegebenen Aufträge ans Ende der "
 "Warteschlange.\n"
 
-#: ../ppop/ppop_cmds_listq.c:640
+#: ../ppop/ppop_cmds_listq.c:639
 msgid ""
 "Usage: ppop list {all, <printer>, <group> , <job>} ...\n"
 "\n"
@@ -3872,14 +3873,14 @@ msgstr ""
 msgid "Usage: ppop log <job>\n"
 msgstr "Benutzung: ppop log >Auftrag>\n"
 
-#: ../ppop/ppop_cmds_listq.c:735
+#: ../ppop/ppop_cmds_listq.c:734
 msgid ""
 "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
 "\n"
 "The \"ppop lpq\" subcommand prints a queue listing in a format\n"
 "similiar to that of the Berkeley Unix \"lpq\" command.\n"
 msgstr ""
-"Usage: ppop lpq {all, <Drucker>, <Gruppe>} [<Nutzer>...] [<ID>...]\n"
+"Benutzung: ppop lpq {all, <Drucker>, <Gruppe>} [<Nutzer>...] [<ID>...]\n"
 "\n"
 "Der Befehl \"ppop lpq\" zeigt eine Warteschlangenliste\n"
 "ähnlich der des Berkeley Unix \"lpq\" Befehls.\n"
@@ -3919,7 +3920,7 @@ msgstr ""
 "Dieser Befehl verschiebt einen oder mehrere Aufträge in eine andere "
 "Warteschlange.\n"
 
-#: ../ppop/ppop_cmds_listq.c:1939
+#: ../ppop/ppop_cmds_listq.c:1938
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"
@@ -3955,7 +3956,7 @@ msgid ""
 "\n"
 "This command releases previously held or arrested jobs.\n"
 msgstr ""
-"Usage: ppop release <Auftrag> ...\n"
+"Benutzung: ppop release <Auftrag> ...\n"
 "\n"
 "Dieser Befehl gibt vorher gehaltene oder gesperrte Aufträge wieder frei.\n"
 
@@ -3970,7 +3971,7 @@ msgstr ""
 "Dieser Befehl verschiebt den angegebenen Auftrag an den Beginn der "
 "Warteschleife.\n"
 
-#: ../ppop/ppop_cmds_listq.c:593
+#: ../ppop/ppop_cmds_listq.c:592
 msgid ""
 "Usage: ppop short {<printer>, all}\n"
 "\n"
@@ -4063,7 +4064,7 @@ msgstr ""
 "Erlaubte \"duplex=\" Werte sind \"none\", \"undef\", \"tumble\", und "
 "\"notumble\"."
 
-#: ../libuprint/uprint-newconf.c:233 ../lprsrv/lprsrv.c:166 ../ppad/ppad.c:337
+#: ../libuprint/uprint-newconf.c:234 ../lprsrv/lprsrv.c:166 ../ppad/ppad.c:337
 #: ../ppop/ppop.c:1176 ../unixuser/ppr-followme.c:213
 msgid "Valid switches:\n"
 msgstr "Erlaubte Optionen:\n"
@@ -4279,7 +4280,7 @@ msgstr "Breite: %.2f Zoll, %.1f Punkte, %.1f Zentimeter\n"
 msgid "Width: (%.2f in, %.1f pt, %.1f cm) "
 msgstr "Breite: (%.2f in, %.1f pt, %.1f cm) "
 
-#: ../libuprint/uprint-newconf.c:193
+#: ../libuprint/uprint-newconf.c:194
 #, c-format
 msgid "Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"
 msgstr ""
@@ -4834,8 +4835,8 @@ msgid "can't open FIFO, pprd is probably not running."
 msgstr "Kann FIFO nicht öffnen, vielleicht läuft pprd nicht."
 
 #: ../libppr/readppd.c:449
-#, c-format
-msgid "can't open PPD file \"%s\", errno=%d (%s)\n"
+#, fuzzy, c-format
+msgid "can't open PPD file \"%s\", errno=%d (%s)"
 msgstr "Kann PPD Datei \"%s\" nicht öffnen, Fehlernummer=%d (%s)\n"
 
 #: ../libgu/ini_section.c:412
@@ -5205,7 +5206,7 @@ msgstr "maxlines ist kleiner als minlines"
 msgid "mortally wounded by signal %d (%s)."
 msgstr "Getötet durch Signal %d (%s)."
 
-#: ../libuprint/uprint-newconf.c:295
+#: ../libuprint/uprint-newconf.c:296
 msgid "must be run by root"
 msgstr "Darf nur von root ausgaführt werden"
 
