@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 June 2001.
+# Last modified 2 August 2001.
 #
 
 HOMEDIR="?"
@@ -157,6 +157,8 @@ outdated $HOMEDIR/lib/ppr-commentary-httpd
 outdated_dir $SHAREDIR/www/docs/rfc
 outdated $SHAREDIR/www/html/docbrowse.html
 outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
+outdated $HOMEDIR/lib/login_ppr.sh
+outdated $HOMEDIR/lib/login_ppr.csh
 
 echo "Done."
 echo
