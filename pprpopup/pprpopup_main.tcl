@@ -4,7 +4,7 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 10 January 2002.
+# Last revised 11 January 2002.
 #
 
 set about_text "PPR Popup 1.50a1
@@ -56,7 +56,7 @@ proc alert {message} {
     label $w.title.text -text "PPR Popup has Malfunctioned"
     pack $w.title.icon $w.title.text -side left
 
-    label $w.message -text $message
+    label $w.message -justify left -text $message
     pack $w.message -side top -fill both -expand true
 
     button $w.dismiss -text "Dismiss" -command [list destroy $w]
@@ -78,23 +78,26 @@ switch -exact -- $tcl_platform(platform) {
     macintosh {
 	proc get_client_id {} {
 		package require Tclapplescript
+
 		set id [AppleScript execute {
-tell application "Network Setup Scripting"
-	try
-		open database
-		set con_set to current configuration set
-		set conAt to item 1 of AppleTalk configurations of con_set
-		set network to network ID of conAt
-		set node to node ID of conAt
-		close database
-		return (network as string) & "." & (node as string)
-	on error errmsg
-		tell application "Finder"
-			display dialog "Error: " & errmsg
-		end tell
-	end try
-end tell
-}]
+			tell application "Network Setup Scripting"
+				try
+					open database
+					set con_set to current configuration set
+					set conAt to item 1 of AppleTalk configurations of con_set
+					set network to network ID of conAt
+					set node to node ID of conAt
+					close database
+					return (network as string) & "." & (node as string)
+				on error errmsg
+					tell application "Finder"
+						display dialog "Error: " & errmsg
+					end tell
+				end try
+			end tell
+			}]
+
+		# Remove the quote marks from the result and return it.
 		regsub {^"([^"]+)"$} $id {\1} id
 		return $id
 		}
@@ -433,7 +436,13 @@ proc do_register {register_url} {
     # This reduces problems on Macintoshes with AppleScript
     # timeouts.
     if {![info exists client_id]} {
-	set client_id [get_client_id]
+	if [catch { set client_id [get_client_id] } result] {
+	    global errorInfo
+	    alert "Error getting client ID: $result\n\n$errorInfo"
+	    global registration_interval
+	    after [expr $registration_interval * 1000 / 4] [list do_register $register_url]
+	    return
+	    }
 	}
 
     set sockname [fconfigure $server_socket -sockname]
@@ -467,7 +476,7 @@ proc register_callback {token} {
 	    }
 	}
 
-    # Register again in 10 minutes.
+    # Register again in a few minutes.
     after [expr $registration_interval * 1000] [list do_register $state(url)]
     }
 

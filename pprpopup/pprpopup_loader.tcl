@@ -99,6 +99,7 @@ namespace eval pprpopup_loader {
         }
 
     # Create an image object for the PPR logo.
+    variable splash_image
     set splash_image [image create photo -data {
 R0lGODlhagECAfcAAAAAAAsFAAgIAAoKAA0NAA0LCxEPDxAQABUVABcXABgYABwcAB0dABER
 ESANACsRACIeHjcWACAgACIiACgoACkpAC4uADAwADIyADc3ADg4ADk5AD4+ACIiIiYmJjIs
@@ -309,25 +310,17 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	    set ppr_root_url "http://$ppr_root_url:15010/"
 	    }
 	}
-
-    # We will call this 10% done.
-    .splash.scale set 10
-    update
-
+puts [info vars]
     # Define a callback procedure to adjust the progress bar.
-    # It can take the bar from 10% to 90% done.
+    # It can take the bar from 20% to 90% done.
     proc scale_callback {token total current} {
-	.splash.scale set [expr $current / $current * 80.0 + 10]
+	.splash.scale set [expr $current / $current * 70.0 + 20]
         }
 
     # Define the callback procedure that gets called once the HTTP
     # request is finished.
     proc loaded_callback {token} {
 	puts "***  Done."
-
-	# Get rid of the progress bar.
-	destroy .splash.scale
-	update
 
 	# Check to see if the GET suceeded.
 	upvar #0 $token state
@@ -353,15 +346,32 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	    exit 0
 	    }
 
-	# Remove the spash screen.
+	# We really are 100% done.
+	.splash.scale set 100
+
+	# Remove the splash screen in a moment.
+	after 500 [namespace code { splash_remove }]
+	}
+
+    # Remove the spash screen.
+    proc splash_remove {} {
+	variable splash_image
+
 	puts "*** Removing splash screen..."
 	destroy .splash
+
 	puts "*** Freeing splash image..."
 	image delete $splash_image
+
 	puts "*** Removing loader namespace..."
-	namespace delete pprpopup_loader
+	namespace delete ::pprpopup_loader
+
 	puts "***   Done."
 	}
+
+    # We will call this 10% done.
+    .splash.scale set 10
+    update
 
     # Start the HTTP transaction.
     set code_url "${ppr_root_url}clientsoft/pprpopup.tcl"
@@ -375,6 +385,9 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	display_error "Can't fetch <$code_url>:\n$errormsg"
 	exit 10
 	}
+
+    # We will call this 20% done.
+    .splash.scale set 20
     }
 
 # end of file

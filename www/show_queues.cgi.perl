@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 7 January 2002.
+# Last modified 11 January 2002.
 #
 
 use 5.005;
@@ -166,8 +166,7 @@ eval {
 print <<"Top5";
 <div class="menubar">
 <label title="Choose the display format.">
-<span class="label">${\H_("View:")}</span>&nbsp;
-<select name="columns" onchange="document.forms[0].submit()")>
+<span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()")>
 Top5
 
 print "<option";
@@ -198,8 +197,7 @@ Top7
 print <<"Top8";
 <spacer type="horizontal" size=10>
 <label title="This page will be reloaded at the indicated interval (in seconds).">
-	<span class="label">${\H_("Refresh Interval:")}</span>
-	<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
+<span class="label">${\H_NB_("Refresh Interval:")}</span>&nbsp;<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
 </label>
 Top8
 
@@ -215,7 +213,7 @@ Top9
 print <<"TopCookie";
 <spacer type="horizontal" size=10>
 <label title="Use this if your browser doesn't support Digest authentication.">
-<input type="button" value=${\html_value(_("Cookie Login"))} 
+<input type="button" value=${\html_value(_("Cookie Login"))}
 	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
 </label>
 TopCookie
