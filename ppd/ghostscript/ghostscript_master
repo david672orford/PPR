@@ -101,6 +101,7 @@
 #endif
 
 #ifdef PRINTER_HPDJ850C
+*% The Ghostscript driver doesn't seem to work.
 *Product: "(HP DeskJet 850C hpdj850c)"
 *ModelName: "HP DeskJet 850C hpdj850c"
 *NickName: "HP DeskJet 850C hpdj850c"
