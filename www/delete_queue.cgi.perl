@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/delete_queue.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 January 2001.
+# Last modified 10 May 2002.
 #
 
 use lib "?";
@@ -90,7 +90,6 @@ else
     { print html(sprintf("Delete the %s \"%s\"?", $type, $name)) }
 
 print <<"Del1";
-<spacer type="horizontal" size=20>
 <input type="submit" name="action" value="Yes">
 <input type="submit" name="action" value="No" onclick="window.close()">
 </p>
@@ -136,7 +135,6 @@ if($ret == 0)
     }
 
 print <<"Del2";
-<spacer type="horizontal" size=200>
 <input type="submit" name="action" value="Close" onclick="window.close()">
 Del2
 }

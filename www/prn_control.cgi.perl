@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 February 2002.
+# Last modified 10 May 2002.
 #
 
 use lib "?";
@@ -272,7 +272,7 @@ if(0)
 # Notice that the entry widgets have no names so that they will not waste
 # bandwidth sending stuff to the server.
 print <<"Form12";
-	<span class="label">${\H_("Name:")}</span> <span class="blank">$printer<spacer type="horizontal" size=50></span>
+	<span class="label">${\H_("Name:")}</span> <span class="blank">$printer</span>
 	<span class="label">${\H_("Comment:")}</span> <span class="blank">$comment</span>
 <br>
 	<label><span class="label">${\H_("Status:")}</span> <input type="text" size=28 value="$status" tabindex=0 readonly></label>

@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--9 May 2002.
+1.50a2, 27 February 2002--10 May 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7668,7 +7668,7 @@ line was being parsed twice.
 * makeprogs/make_install_dirs.sh, fixup/fixup_perms.sh: changed permissions
   of $VAR_SPOOL_PPR/pprpopup.db to 770.
 
-* www/cgi_membership.pl, www/cgi_tabbed.pl, www/prn_media.cgi.perl: improved 
+* www/cgi_membership.pl, www/cgi_tabbed.pl, www/prn_media.cgi.perl: improved
   appearance in Mozilla.
 
 * www/cgi_tabbed.pl: added [Help].
@@ -7676,7 +7676,7 @@ line was being parsed twice.
 * www/prn_properties.html: added.
 
 * fixup/fixup_inetd.sh: removed spurious "disabled = yes" line from the
-  generated xinetd config file.  (The correct line "disable = yes" 
+  generated xinetd config file.  (The correct line "disable = yes"
   was already present.)
 
 * ppd/ghostscript/ghostscript_master: Added "-dBitsPerPixel=24" for
@@ -7685,10 +7685,10 @@ line was being parsed twice.
 * Fixed bug in the new internal resource table code in
   pprdrv/pprdrv_capable.c which made it non-functional.
 
-* Fixed pprd/pprd_ppop.c:ppop_move() so that the pass number is reset when a 
+* Fixed pprd/pprd_ppop.c:ppop_move() so that the pass number is reset when a
   job is moved.
 
-* Changed pprdrv so that "Reason:" lines don't have parentheses around them 
+* Changed pprdrv so that "Reason:" lines don't have parentheses around them
   in the queue file and changed ppop to print them itself.
 
 * nonppr_vendors/hp_ppd/: commented out "*HPScalePatterns" since it breaks
@@ -7725,11 +7725,20 @@ line was being parsed twice.
   so as to conform to the structure used in the Unix version (i.e.
   ~/.ppr/pprpopup).
 
-* pprpopup/pprpopup_loader.tcl, pprpopup_main.tcl: added random_load() and 
+* pprpopup/pprpopup_loader.tcl, pprpopup_main.tcl: added random_load() and
   random_save() in order to separate the constantly changing random seed from
   the configuration.  The random seed is stored raw (not as Tcl code) in
   ~/.ppr/random, HKEY_CURRENT_USER\Software\PPR\random, resid -8002.
 
 * pprpopup/pprpopup_main.tcl: fixed problem with registration that fails
   imediately not triggering a retry.
+
+* www/: removed all uses of <spacer> since it is not supported by Mozilla
+  or IE (in fact I think it is only supported by Netscape 4.x and earlier).
+
+* www/: changed some instance of the "strict" documentation type
+  specification to "transitional" since they use HTML 4.01 features that are
+  deprecated since their effect can now be achived with CSS.
+
+
 

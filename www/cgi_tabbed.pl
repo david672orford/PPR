@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2002.
+# Last modified 10 May 2002.
 #
 
 use 5.004;
@@ -174,7 +174,7 @@ $data{tab_prevpage} = $page;
 $data{tab_hscroll} = $hscroll;
 
 # The save window doesn't have tabs.  We just insert a spacer
-# to take up their space.
+# image to take up their space.
 if($bottom eq 'Save')
     {
     print "<img src=\"../images/pixel-clear.png\" height=20 width=1 border=0>\n";

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_error.pl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 15 September 2000.
+# Last modified 10 May 2002.
 #
 
 require 'cgi_intl.pl';
@@ -97,7 +97,7 @@ foreach my $i (@lines)
 
 print <<"EndOfError2";
 d.write('<' + '/pre>\\n');
-d.write('<spacer type=horizontal size=300><form><input type="submit" value="Close" onclick="window.close(self)"><' + '/form>\\n');
+d.write('<form><input type="submit" value="Close" onclick="window.close(self)"><' + '/form>\\n');
 d.write('<' + '/body><' + '/html>\\n');
 d.close();
 </script>

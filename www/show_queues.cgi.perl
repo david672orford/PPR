@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 23 April 2002.
+# Last modified 10 May 2002.
 #
 
 use 5.005;
@@ -151,7 +151,7 @@ Content-Type: text/html;charset=$charset
 Content-Language: $content_language
 Vary: user-agent, accept-language
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html style="$fixed_html_style">
 <head>
 <title>$title</title>
@@ -183,7 +183,7 @@ eval {
 print <<"Top5";
 <div class="menubar" style="$fixed_div_style">
 <label title="Choose the display format.">
-<span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()")>
+<span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()">
 Top5
 
 print "<option";
@@ -212,7 +212,6 @@ Top7
 
 # Add a control for the refresh interval.
 print <<"Top8";
-<spacer type="horizontal" size=10>
 <label title="This page will be reloaded at the indicated interval (in seconds).">
 <span class="label">${\H_NB_("Refresh Interval:")}</span>&nbsp;<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
 </label>
@@ -220,7 +219,6 @@ Top8
 
 # Add a refresh button.
 print <<"Top9";
-<spacer type="horizontal" size=50>
 <label title="Refresh the page right now.">
 	<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
 </label>
@@ -228,7 +226,6 @@ Top9
 
 # Create a button for JavaScript Cookie login.
 print <<"TopCookie";
-<spacer type="horizontal" size=10>
 <label title="Use this if your browser doesn't support Digest authentication.">
 <input class="buttons" type="button" value=${\html_value(_("Cookie Login"))}
 	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
@@ -237,7 +234,6 @@ TopCookie
 
 # Try to make a "Close" button.  (They do the same thing.)
 cgi_back_possible("/");
-print '<spacer type="horizontal" size=10>', "\n";
 print "<label title=\"Close this window.\">\n";
 isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
 print "</label>\n";
