@@ -112,6 +112,19 @@ for i in /etc/rc.local /etc/rc.d/rc.local
         fi
     done
 
+#
+# Look for MacOS StartupItems
+#
+StartupItems=""
+for i in /System/Library/StartupItems 
+    do 
+    if [ -d $i ]
+	then
+	echo "    MacOS StartupItems found at \"$i\"."
+    	StartupItems=$i
+	fi
+    done
+
 #========================================================================
 # Part 2, install our code
 #========================================================================
@@ -194,6 +207,43 @@ then
 	    fi
 
 #
+# Otherwise, do the MacOS X thing.
+#
+else
+if [ -n "$StartupItems" ]
+    then
+    echo "  Installing MacOS X startup script..."
+    if [ -d $StartupItems/PPR ]
+	then
+	echo "    Directory $StartupItems/PPR already exists, good."
+	else
+	echo "    Creating directory $StartupItems/PPR..."
+	mkdir $StartupItems/PPR
+	fi
+    if diff ppr $StartupItems/PPR/PPR
+	then
+	echo "    Startup script already installed, good."
+	else
+	echo "    Installing startup script..."
+	cp ppr $StartupItems/PPR/PPR || exit 1
+	fi
+    if [ -f $StartupItems/PPR/StartupParameters.plist ]
+	then
+	echo "    $StartupItems/PPR/StartupParameters.plist already exists, good."
+	else
+	echo "    Creating $StartupItems/PPR/StartupParameters.plist..."
+	cat - >$StartupItems/PPR/StartupParameters.plist <<"EndOfStartupParameters"
+{
+  Description     = "PPR Print Spooler";
+  Provides        = ("PPR Printing");
+  Requires        = ("Resolver");
+  Uses            = ("Network Time");
+  OrderPreference = "Late";
+}
+EndOfStartupParameters
+	fi
+
+#
 # Otherwise, try to find a Berkeley style rc.local file.
 #
 else
@@ -255,6 +305,7 @@ if [ -n "$RC_LOCAL" ]
 	echo
     fi
 
+fi
 fi
 
 exit 0
