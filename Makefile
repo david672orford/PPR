@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 April 2002.
+# Last modified 22 January 2003.
 #
 
 #
@@ -92,7 +92,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests papd
+SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests papd browsers
 
 #=== Build ==================================================================
 
@@ -138,7 +138,8 @@ dist-docs:
 # Make sure the hard-to-build docs are built, remove the easy to build stuff, and build the tar file.
 dist: dist-docs clean unconfigure
 	( cd po; ./extract_to_pot.sh )
-	( cd /usr/local/src; tar cf - ppr-$(VERSION) | gzip --best >~ppr/ppr-$(VERSION).tar.gz )
+	#( cd /usr/local/src; tar cf - ppr-$(VERSION) | gzip --best >~ppr/ppr-$(VERSION).tar.gz )
+	( cd /usr/local/src; tar zcf ~ppr/ppr-$(VERSION).tar.gz ppr-$(VERSION) --exclude 'docbook-*-*' --exclude CVS )
 	@echo
 	@echo "Distribution archive built."
 	@echo

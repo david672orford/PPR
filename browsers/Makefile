@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/tests/Makefile
+# mouse:~ppr/src/browsers/Makefile
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -32,21 +32,36 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-GROUPS=test-ppr test-pprdrv test-consistency test-filters test-interface test-ppad test-rip
+BIN_PROGS=
+
+LIB_PROGS=
 
 #=== Build ==================================================================
 
-all:
-	./do_tests $(GROUPS)
+all: $(BIN_PROGS) $(LIB_PROGS)
+
+OBJS=\
+	xxx.$(OBJ) \
+	../libppr.$(LIBEXT) \
+	../libgu.$(LIBEXT)
+xxx$(DOTEXE): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+
+#=== Install ================================================================
+
+install: $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 
 #=== Housekeeping ===========================================================
 
+include .depend
+
 depend:
+	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS)
-	(cd tools; $(RMF) $(BACKUPS))
-	(cd misc_old; $(RMF) $(BACKUPS) *.out)
-	for d in $(GROUPS); do echo $$d; (cd $$d; $(RMF) $(BACKUPS) *.out); done
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
 
 # end of file
+

@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--17 January 2003.
+1.50b1, 8 November 2002--22 January 2003.
 
 * Removed completed items from TODO.txt.
 
@@ -329,5 +329,7 @@ more information about RIPs and *pprRIP:.
 
 * rules.mk: added rules to generate PostScript and PDF from Docbook
   SGML using xsltproc and FOP but left them commented out as FOP
-  isn't ready yet.
+  seems to have overprint problems.
+
+
 

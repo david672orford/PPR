@@ -56,6 +56,9 @@ by sending them to "ppr-list@mail.trincoll.edu".
 * Improved handling of multiple copies requests from the Adobe PostScript
   driver for Microsoft Windows.
 
+* Made filters automatically aware of ppr command line options such as 
+  -F "*Duplex=DuplexNoTumble".  Users should find this more intuitive.
+
 ==========================================================================
  Major Features
 ==========================================================================
