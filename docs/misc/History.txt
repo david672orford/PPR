@@ -7751,9 +7751,9 @@ line was being parsed twice.
 * pprdrv/pprdrv.c: fixed messed up decimal point splitting in formatting of
   money in the printlog.  (Again, thanks to Jacques Sansdrap.)
 
-* libgu/gu_pch.c:
+* libgu/gu_pch.c: This is the start of a hash library.
 
-* uprint/uprint-lpstat.c:
+* uprint/uprint-lpstat.c: Improvements for Solaris application support.
 
 * Changed makeprogs/global.mk to Makefile.conf and renamed the models in
   makeprogs/ accordingly.  Did a search-and-replace on all makefiles.
