@@ -1,53 +1,43 @@
 <Sect1>
-<Title>Protocol for Comunicating with <Emphasis remap="bf">pprd</Emphasis></Title>
+<Title>Protocol for Comunicating with <Command>pprd</Command></Title>
 
 <Para>
-This section describes the protocol which use commands such as <Emphasis remap="bf">ppr</Emphasis>,
-<Emphasis remap="bf">ppop</Emphasis>, and <Emphasis remap="bf">ppad</Emphasis> use to communicate with <Emphasis remap="bf">pprd</Emphasis> and <Emphasis remap="bf">rpprd</Emphasis>.
+This section describes the protocol which use commands such as <Command>ppr</Command>,
+<Command>ppop</Command>, and <Command>ppad</Command> use to communicate with <Command>pprd</Command> and <Command>rpprd</Command>.
 This information may assist those attempting to understand the source code.
 </Para>
 
 <Para>
-The main printing daemon, <Emphasis remap="bf">pprd</Emphasis> receives commands over a named pipe and
-acts on them.  The program <Emphasis remap="bf">ppr</Emphasis> uses one such command it sends to <Emphasis remap="bf">pprd</Emphasis>
+The main printing daemon, <Command>pprd</Command> receives commands over a named pipe and
+acts on them.  The program <Command>ppr</Command> uses one such command it sends to <Command>pprd</Command>
 to tell it that a new jobs has been placed in the queue directories.  The
-program <Emphasis remap="bf">ppad</Emphasis> has two such commands which it uses to inform <Emphasis remap="bf">pprd</Emphasis> that
-a printer or group configuration file has been modified.  Finally, <Emphasis remap="bf">ppop</Emphasis>
-has many commands which it uses to control <Emphasis remap="bf">pprd</Emphasis> or to request information
+program <Command>ppad</Command> has two such commands which it uses to inform <Command>pprd</Command> that
+a printer or group configuration file has been modified.  Finally, <Command>ppop</Command>
+has many commands which it uses to control <Command>pprd</Command> or to request information
 from it.
-</Para>
-
-<Para>
-The remote printing daemon, <Emphasis remap="bf">rpprd</Emphasis> will receive commands over a named pipe
-of its own.  These commands will be identical in format to those understood by
-<Emphasis remap="bf">pprd</Emphasis>.
 </Para>
 
 <Sect2>
 <Title>Accepting Jobs</Title>
 
 <Para>
-Once the job submission program <Emphasis remap="bf">ppr</Emphasis> has created the queue files it
-sends a command to <Emphasis remap="bf">pprd</Emphasis> or <Emphasis remap="bf">rpprd</Emphasis> telling it that the job is there and
+Once the job submission program <Command>ppr</Command> has created the queue files it
+sends a command to <Command>pprd</Command> or <Command>rpprd</Command> telling it that the job is there and
 is ready for printing or transfer to the remote system.  This command takes the
 form:
 </Para>
 
 <Para>
-j <Emphasis remap="it">destination&lowbar;node destination&lowbar;queue id subid home&lowbar;node initial&lowbar;priority</Emphasis>
+j <Replaceable>destination&lowbar;node destination&lowbar;queue id subid home&lowbar;node initial&lowbar;priority</Replaceable>
 </Para>
 
 <Para>
-The <Emphasis remap="it">destination&lowbar;node</Emphasis> is the node to which the job should be sent.  If the
-command is written to <Emphasis remap="bf">pprd</Emphasis>'s named pipe, this field must contain the node
-name of the local system.  The <Emphasis remap="it">destination&lowbar;queue</Emphasis> is the name of the print
-queue on the destination node.  The <Emphasis remap="it">id</Emphasis> and <Emphasis remap="it">subid</Emphasis> are the queue id and
-the job fragment number respectively.  The <Emphasis remap="it">subid</Emphasis> will most often be zero.
-The <Emphasis remap="it">home&lowbar;node</Emphasis> is the node name of the system on which the job origionated.
-Jobs submitted by the program <Emphasis remap="bf">ppr</Emphasis> to <Emphasis remap="bf">pprd</Emphasis> or <Emphasis remap="bf">rpprd</Emphasis> will always
-have the home node name of the local system, but jobs submitted to <Emphasis remap="bf">pprd</Emphasis> by
-<Emphasis remap="bf">rpprd</Emphasis> probably will not since it is one of <Emphasis remap="bf">rpprd</Emphasis>'s jobs to accept jobs
-from remote systems.
+The <Replaceable>destination&lowbar;node</Replaceable> is the node to which the job should be sent.  If the
+command is written to <Command>pprd</Command>'s named pipe, this field must contain the node
+name of the local system.  The <Replaceable>destination&lowbar;queue</Replaceable> is the name of the print
+queue on the destination node.  The <Replaceable>id</Replaceable> and <Replaceable>subid</Replaceable> are the queue id and
+the job fragment number respectively.  The <Replaceable>subid</Replaceable> will most often be zero.
+The <Replaceable>home&lowbar;node</Replaceable> is the node name of the system on which the job origionated.
 </Para>
 
 </Sect2>
@@ -57,7 +47,7 @@ from remote systems.
 
 <Para>
 Whenever a printer or group configuration files is modified or a new one
-created, <Emphasis remap="bf">pprd</Emphasis> must be directed to read it.  To inform <Emphasis remap="bf">pprd</Emphasis> that it
+created, <Command>pprd</Command> must be directed to read it.  To inform <Command>pprd</Command> that it
 must read a new or revised printer configuration file, a command line of this
 form is sent:
 </Para>
@@ -65,7 +55,7 @@ form is sent:
 <Para>
 
 <Screen>
-NP <Emphasis remap="it">printername</Emphasis>
+NP <Replaceable>printername</Replaceable>
 </Screen>
 
 </Para>
@@ -79,7 +69,7 @@ first time:
 <Para>
 
 <Screen>
-NG <Emphasis remap="it">groupname</Emphasis>
+NG <Replaceable>groupname</Replaceable>
 </Screen>
 
 </Para>
@@ -91,12 +81,12 @@ There will be no acknowledgement of either command.
 </Sect2>
 
 <Sect2>
-<Title>Yielding Information to <Emphasis remap="bf">ppop</Emphasis></Title>
+<Title>Yielding Information to <Command>ppop</Command></Title>
 
 <Para>
-The utility <Emphasis remap="bf">ppop</Emphasis> must communicate with <Emphasis remap="bf">pprd</Emphasis> and <Emphasis remap="bf">rpprd</Emphasis> in
+The utility <Command>ppop</Command> must communicate with <Command>pprd</Command> and <Command>rpprd</Command> in
 order to list the queue, show the status of printers, mount forms, and do other
-tasks.  As work on <Emphasis remap="bf">rpprd</Emphasis> continue, descriptions of the necessary commands
+tasks.  As work on <Command>rpprd</Command> continue, descriptions of the necessary commands
 will be added to this document.
 </Para>
 

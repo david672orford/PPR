@@ -2,23 +2,22 @@
 <Title>Requirements for an Input Filter</Title>
 
 <Para>
-If <Emphasis remap="bf">ppr</Emphasis> determines that the input file is not PostScript, it will seek
+If <Command>ppr</Command> determines that the input file is not PostScript, it will seek
 to use a filter to convert it to PostScript.  This appendix provides the
-information you will need to write your own PPR input filters.
+information you will need to write your own <Application>PPR</Application> input filters.
 </Para>
 
-<Para>
-The filters are found in the directory <Literal remap="tt">/usr/ppr/lib</Literal>.  Each of these
-files has a name that consists of ``filter&lowbar;'' followed by the PPR input type
+<Para>The filters are found in the directory <Filename class="Directory">/usr/lib/ppr/filters/</Filename>.  Each of these
+files has a name that consists of <Filename>filter&lowbar;</Filename> followed by the <Application>PPR</Application>
+input type
 name.  For example, the filter for JPEG files is called
-``<Literal remap="tt">/usr/ppr/filters/filter&lowbar;jpeg</Literal>".
-</Para>
+<Filename>/usr/lib/ppr/filters/filter&lowbar;jpeg</Filename>.</Para>
 
 <Para>
 A filter should read the file from STDIN and write PostScript code on STDOUT.
 If it must, it can write messages on STDERR.  STDIN is guaranteed to be
 seekable.  Messages sent to STDERR will go wherever STDERR was going when
-<Emphasis remap="bf">ppr</Emphasis> was invoked.
+<Command>ppr</Command> was invoked.
 </Para>
 
 <Para>
@@ -34,10 +33,10 @@ The parameters are as follows:
 The first parameter is the list of filter options.  These are expressed as a
 space seperated list of name-value pairs.  The name and value are joined by an
 equal sign.  The options list is formed by concatrnating the contents of the
-<Emphasis remap="sf">DefFiltOpts:</Emphasis> line in the printer or group configuration file with the
-contents of any <Emphasis remap="bf">-o</Emphasis> lines the user put on the <Emphasis remap="bf">ppr</Emphasis> command line.
+<Literal>DefFiltOpts:</Literal> line in the printer or group configuration file with the
+contents of any <Option>-o</Option> lines the user put on the <Command>ppr</Command> command line.
 
-Before passing the option list to the filter, <Emphasis remap="bf">ppr</Emphasis> pre-processes it.  Any
+Before passing the option list to the filter, <Command>ppr</Command> pre-processes it.  Any
 options whose names begin with a file type name and a hyphen will have the file
 type name and the hyphen removed if the file type name matches the filter being
 invoked, otherwise, such options are discarded.  The names of the parameters (the
@@ -69,7 +68,7 @@ their input as pages with headers and footers.
 <ListItem>
 
 <Para>
-The directory which was current when <Emphasis remap="bf">ppr</Emphasis> was invoked.  This is used
+The directory which was current when <Command>ppr</Command> was invoked.  This is used
 by the TeX, TeXinfo, and DVI filters when searching for include files.
 
 </Para>
@@ -133,24 +132,26 @@ because the JPEG filter has no code to use them.
 <Para>
 If the filter exits with a value other than 0, the job will not be discarded.
 A message may be informed by printing on stderr or invoking a responder, the
-exect behaviour being controled by the <Emphasis remap="bf">-e</Emphasis> switch.
+exect behaviour being controled by the <Option>-e</Option> switch.
 </Para>
 
 <Para>
 When a filter is executed, the real user id is that of the user who executed
-<Emphasis remap="bf">ppr</Emphasis>.  The effective user id and the saved user id's are ``ppr''.  The real
-group id is the same as it was when <Emphasis remap="bf">ppr</Emphasis> was executed.  The effective and
-saved group id's are ``ppop''.
+<Command>ppr</Command>.  The effective user id and the saved user id's are ``ppr''.  The real
+group id is the same as it was when <Command>ppr</Command> was executed.  The effective and
+saved group id's are <Literal>ppop</Literal>.
 </Para>
 
 <Para>
 It is possible to determine precisely what filter is being executed with what
-arguments by running <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-G infile:filter</Emphasis> option.
+arguments by running <Command>ppr</Command> with the <Option>-G infile:filter</Option> option.
+
 </Para>
 
 <Para>
-The filters supplied with PPR, together with their options are described in the
-ppr(1) man page, under the section for the <Emphasis remap="bf">-T</Emphasis> switch.
+The filters supplied with PPR, together with their options are described in
+<ULink URL="../refman/ppr.1.html">the
+ppr(1) man page</ULink>, under the section for the <Option>-T</Option> switch.
 </Para>
 
 </Sect1>

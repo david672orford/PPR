@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--15 January 2003.
+1.50b1, 8 November 2002--16 January 2003.
 
 * Removed completed items from TODO.txt.
 
@@ -316,5 +316,10 @@ more information about RIPs and *pprRIP:.
 * refman/ppr-hexdump.1.pod: added
 
 * refman/papd.8.pod: added
+
+* misc/docbook.txt: added
+
+* pprinst/, pprdoc/, pprhack/: changed all remap= tags left over from automatic
+  conversion from Linuxdoc formation to proper docbook tags.
 
 

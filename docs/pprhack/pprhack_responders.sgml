@@ -3,10 +3,10 @@
 
 <Para>
 A responder is a small program.  All responders are stored in the responders
-directory <Literal remap="tt">/usr/ppr/responders</Literal>.  The responder which will eventually be
+directory <Filename>/usr/ppr/responders</Filename>.  The responder which will eventually be
 used to tell the user what happened to the job is selected when the job is
-submitted.  It is selected using <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-m</Emphasis>. switch.  The argument to
-the <Emphasis remap="bf">-m</Emphasis> switch is the name of the program in the responders directory which
+submitted.  It is selected using <Command>ppr</Command>'s <Command>-m</Command>. switch.  The argument to
+the <Command>-m</Command> switch is the name of the program in the responders directory which
 should be used.  A responder can be very simple.  Here is an example:
 </Para>
 
@@ -21,10 +21,10 @@ exit 0
 </Para>
 
 <Para>
-The responder shown above is a stript down version of the responder <Emphasis remap="bf">write</Emphasis>.
-If the <Emphasis remap="bf">-m</Emphasis> switch is not used then the name of the responder will be read
+The responder shown above is a stript down version of the responder <Command>write</Command>.
+If the <Command>-m</Command> switch is not used then the name of the responder will be read
 from the environment variable PPR&lowbar;RESPONDER.  If PPR&lowbar;RESPONDER is not defined
-then the responder <Emphasis remap="bf">write</Emphasis> will be used.
+then the responder <Command>write</Command> will be used.
 </Para>
 
 <Para>
@@ -35,19 +35,19 @@ pages.
 
 <Para>
 The address to which the message should be sent is the second parameter.  The
-address is specified at the time <Emphasis remap="bf">ppr</Emphasis> is invoked by using the <Emphasis remap="bf">-r</Emphasis>
+address is specified at the time <Command>ppr</Command> is invoked by using the <Command>-r</Command>
 switch.  The proper format for the address depends on the responder.  If the
-<Emphasis remap="bf">-r</Emphasis> switch is absent then the value of the environment variable
+<Command>-r</Command> switch is absent then the value of the environment variable
 PPR&lowbar;RESPONDER&lowbar;ADDRESS is used.  If that too is absent then the name of the Unix
-user who invoked <Emphasis remap="bf">ppr</Emphasis> is used.  The value used in the absence of both
-<Emphasis remap="bf">-r</Emphasis> and PPR&lowbar;RESPONDER&lowbar;ADDRESS is appropriate since the default responder is
-a script which invokes the Unix program <Emphasis remap="bf">write</Emphasis>.
+user who invoked <Command>ppr</Command> is used.  The value used in the absence of both
+<Command>-r</Command> and PPR&lowbar;RESPONDER&lowbar;ADDRESS is appropriate since the default responder is
+a script which invokes the Unix program <Command>write</Command>.
 </Para>
 
 <Para>
 The third parameter is the suggested message text.  The message text will
 contain embedded line feeds.  The length of the lines will depend on the
-responder.  The routine get&lowbar;responder&lowbar;width() in <Literal remap="tt">libppr/reswidth.c</Literal>
+responder.  The routine get&lowbar;responder&lowbar;width() in <Filename>libppr/reswidth.c</Filename>
 determines what length to limit the lines to.  For most responders, this
 routine returns 0 which means to use a predetermined set of line breaks which
 generally results in lines less than 80 characters long.
@@ -60,9 +60,9 @@ string.
 
 <Para>
 The fifth parameter is a space separated list of responder options.  Each of
-this options is a name=value pair.  Common options include <Emphasis remap="bf">printed=no</Emphasis> and
-<Emphasis remap="bf">timeout=60</Emphasis>.  The value of this option comes from the <Emphasis remap="bf">ppr</Emphasis>
-<Emphasis remap="bf">--responder-options</Emphasis> switch or from the environment variable
+this options is a name=value pair.  Common options include <Command>printed=no</Command> and
+<Command>timeout=60</Command>.  The value of this option comes from the <Command>ppr</Command>
+<Command>--responder-options</Command> switch or from the environment variable
 PPR&lowbar;RESPONDER&lowbar;OPTIONS.  A responder should ignore any options it does not
 recognize.
 </Para>
@@ -74,8 +74,8 @@ types of message by different methods or wishes to provide its own wording for
 one or more of the messages.  For example, it might want to send a popup
 message but then follow it up with email if the message indicated that the job
 was arrested.  The code numbers are defined in C include file
-<Literal remap="tt">include/respond.h</Literal>, the Bourne shell script include file
-<Literal remap="tt">lib/respond.sh</Literal>, and the Perl include file <Literal remap="tt">lib/respond.ph</Literal>.
+<Filename>include/respond.h</Filename>, the Bourne shell script include file
+<Filename>lib/respond.sh</Filename>, and the Perl include file <Filename>lib/respond.ph</Filename>.
 </Para>
 
 <Para>
@@ -84,8 +84,9 @@ useful if the responder is constructing its own messages since the default
 messages provided in the third parameter already mention the job id.  The job
 id is not provided in the normal form since that is rather difficult to parse.
 In stead, the elements are separated by spaces.  The elements are, in order,
-destination node, <Emphasis remap="it">destination name</Emphasis>, <Emphasis remap="it">queue id number</Emphasis>, <Emphasis remap="it">sub id
-number</Emphasis>, and <Emphasis remap="it">home node</Emphasis>.  For example, ``mouse chipmunk 1000 0 mouse''.
+destination node, <Replaceable>destination name</Replaceable>, <Replaceable>queue id number</Replaceable>,
+<Replaceable>sub id number</Replaceable>, 
+and <Replaceable>home node</Replaceable>.  For example, <Literal>mouse chipmunk 1000 0 mouse</Literal>.
 This id would normally appear as ``mouse:chipmunk-1000.0(mouse)'' or more
 likely in abreviated form as ``chipmunk-1000''.
 </Para>
@@ -109,7 +110,7 @@ will generally be blank.
 <Para>
 The tenth parameter is the time at which the job was submitted.  It is
 represented in Unix format (as a count of the seconds since 12:00am, January
-1, 1970).  The program <Emphasis remap="bf">lib/time&lowbar;elapsed</Emphasis> may be used to express this
+1, 1970).  The program <Command>lib/time&lowbar;elapsed</Command> may be used to express this
 time in terms of how far in the past it is.
 </Para>
 
@@ -122,11 +123,11 @@ the job has been arrested, this string will be blank.
 <Para>
 The twelth parameter contains the number of pages printed.  If this is unknown,
 it is "?".  If the response code (the fourth parameter) has a value other than
-<Emphasis remap="bf">RESP&lowbar;FINISHED</Emphasis> then the contents of this field is undefined.
+<Command>RESP&lowbar;FINISHED</Command> then the contents of this field is undefined.
 </Para>
 
 <Para>
-When the responder is run, stdin with either be connected to <Literal remap="tt">/dev/null</Literal>
+When the responder is run, stdin with either be connected to <Filename>/dev/null</Filename>
 or it will be connected to the job's log file.  This is so that the responder
 may send the job log back to the user.  Some of the supplied responders exploit
 this feature.
@@ -137,19 +138,19 @@ When exiting, the responder should return a value of zero if the message was
 delivered.  It should also return a value of zero if the addresse was not
 found.  Non-zero exit values should be reserved for truly abnormal conditions
 such as insufficient system resources or syntactically invalid addresses.  If a
-responder does return a non-zero exit value, <Emphasis remap="bf">ppr</Emphasis> will print a notice to
-that effect on stderr or <Emphasis remap="bf">pprd</Emphasis> will put a notice in its log file, depending
+responder does return a non-zero exit value, <Command>ppr</Command> will print a notice to
+that effect on stderr or <Command>pprd</Command> will put a notice in its log file, depending
 on which one invoked the responder.
 </Para>
 
 <Para>
-When the responder is invoked by <Emphasis remap="bf">pprd</Emphasis>, it will always have a real uid,
-effective uid and saved uid of ``ppr''.  When it is invoked by <Emphasis remap="bf">ppr</Emphasis> (due to
-the use of the <Emphasis remap="bf">-e</Emphasis> responder option) things will be different.  The program
-<Emphasis remap="bf">ppr</Emphasis> is setuid ``ppr'', so the effective and saved uids are ``ppr'' and the
+When the responder is invoked by <Command>pprd</Command>, it will always have a real uid,
+effective uid and saved uid of ``ppr''.  When it is invoked by <Command>ppr</Command> (due to
+the use of the <Command>-e</Command> responder option) things will be different.  The program
+<Command>ppr</Command> is setuid ``ppr'', so the effective and saved uids are ``ppr'' and the
 real uid is the id of the user who invoked it.  Just before executing the
-responder <Emphasis remap="bf">ppr</Emphasis> sets the effective user id equal to the real user id.  This
-last feature is not intended as a security measure, rather, the <Emphasis remap="bf">xwin</Emphasis>
+responder <Command>ppr</Command> sets the effective user id equal to the real user id.  This
+last feature is not intended as a security measure, rather, the <Command>xwin</Command>
 responder will not work if this is not done since the X library uses access()
 on the .Xauthority file before trying to open it which means that the
 .Xauthority file in the user's home directory must be readable under both the

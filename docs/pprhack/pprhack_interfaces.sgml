@@ -26,41 +26,41 @@ the alert() function in libppr.a or lib/alert.
 </Para>
 
 <Para>
-The second parameter is set to the string following the <Emphasis remap="sf">Address:</Emphasis> keyword
+The second parameter is set to the string following the <Literal>Address:</Literal> keyword
 in the printer configuration file or to the printer name if there is no address
 line.  (That last feature is a holdover from very old versions of PPR. Printer
-configuration files created by <Emphasis remap="bf">ppad</Emphasis> always have <Emphasis remap="sf">Address:</Emphasis> lines.)
+configuration files created by <Command>ppad</Command> always have <Literal>Address:</Literal> lines.)
 </Para>
 
 <Para>
-The third parameter is set to the string following the <Emphasis remap="sf">Options:</Emphasis> keyword in
+The third parameter is set to the string following the <Literal>Options:</Literal> keyword in
 the printer config uration file.  This will be zero or more space separated
 name=value pairs.
 </Para>
 
 <Para>
 The fourth parameter is the value from the printer configuration file's
-<Emphasis remap="sf">JobBreak:</Emphasis> line.  This value is a small integer.  The possible values are
-defined in <Literal remap="tt">include/interface.h</Literal>.
+<Literal>JobBreak:</Literal> line.  This value is a small integer.  The possible values are
+defined in <Filename>include/interface.h</Filename>.
 </Para>
 
 <Para>
-The fifth is the value from the printer configuration file's <Emphasis remap="sf">Feedback:</Emphasis>
+The fifth is the value from the printer configuration file's <Literal>Feedback:</Literal>
 line.  It is zero if the printer is incapable of sending data back to the
 computer running PPR over the communications line, non-zero if it is capable.
-The <Emphasis remap="sf">Feedback:</Emphasis> line is set with the <Emphasis remap="bf">ppad feedback</Emphasis> command.
+The <Literal>Feedback:</Literal> line is set with the <Command>ppad feedback</Command> command.
 </Para>
 
 <Para>
 The sixth parameter is the value from the printer configuration file's
-<Emphasis remap="sf">Codes:</Emphasis> line.  The value is a small integer.  The possible values are defined
-in <Literal remap="tt">include/interface.h</Literal>.
+<Literal>Codes:</Literal> line.  The value is a small integer.  The possible values are defined
+in <Filename>include/interface.h</Filename>.
 </Para>
 
 <Para>
 The seventh parameter is set to the name of the job.  (For example,
 ``mouse:chipmunk-148.0(mouse)''.  This will not generally be used.  The
-<Emphasis remap="bf">lpr</Emphasis> interface passes this information on to the remote system.
+<Command>lpr</Command> interface passes this information on to the remote system.
 </Para>
 
 <Para>
@@ -72,11 +72,11 @@ parameter.
 </Para>
 
 <Para>
-The ninth parameter is the text of the <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> comment in the
-print job.  (The <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line in the job as sent to the
-printer which is not necessarily the same as the <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line
+The ninth parameter is the text of the <Literal>&percnt;&percnt;For:</Literal> comment in the
+print job.  (The <Literal>&percnt;&percnt;For:</Literal> line in the job as sent to the
+printer which is not necessarily the same as the <Literal>&percnt;&percnt;For:</Literal> line
 in the input file.)  If this information is unavailable, the field is blank.
-The <Emphasis remap="bf">lpr</Emphasis> interface passes this on to the remote system.
+The <Command>lpr</Command> interface passes this on to the remote system.
 </Para>
 
 <Para>
@@ -87,26 +87,26 @@ PostScript format.
 </Para>
 
 <Para>
-If passthru mode is in effect (see <Emphasis remap="bf">ppad passthru</Emphasis> and <Emphasis remap="bf">ppad group
-passthru</Emphasis>), that is if the file to be transmitted to the printer is not
+If passthru mode is in effect (see <Command>ppad passthru</Command> and <Command>ppad group
+passthru</Command>), that is if the file to be transmitted to the printer is not
 a PostScript file, then this parameter will be the name of the file type,
 such as ``pcl'' or ``pdf''.  (The file type names which appear in this
-parameter are the same names as are used with the <Emphasis remap="bf">ppr -T</Emphasis> switch.
+parameter are the same names as are used with the <Command>ppr -T</Command> switch.
 A non-empty tenth parameter <Emphasis>does not</Emphasis> necessarily indicate that
-a <Emphasis remap="bf">-T</Emphasis> switch was used.)
+a <Command>-T</Command> switch was used.)
 </Para>
 
 <Para>
-Also, if transparent mode is in effect (see <Emphasis remap="bf">ppr -H transparent</Emphasis>), then
+Also, if transparent mode is in effect (see <Command>ppr -H transparent</Command>), then
 this parameter will contain a space separated list of the filters which
 would be required (and may actually have been invoked) to convert the
-input file to PostScript.  Uncompression with <Emphasis remap="bf">uncompress</Emphasis>
-and <Emphasis remap="bf">gunzip</Emphasis> are indicated by the strings ``uncompress'' and ``gunzip''
+input file to PostScript.  Uncompression with <Command>uncompress</Command>
+and <Command>gunzip</Command> are indicated by the strings ``uncompress'' and ``gunzip''
 respectively.  Here are some examples:  if the input file is already PostScript,
 then this parameter will be empty.  If the file is PCL data, then this
-paramater will be ``pcl''.  If the file is <Emphasis remap="bf">gzip</Emphasis> compressed
+paramater will be ``pcl''.  If the file is <Command>gzip</Command> compressed
 PostScript, then this parameter will be ``gunzip''.  If the file is
-<Emphasis remap="bf">gzip</Emphasis> compressed PCL, then this parameter will be ``gunzip pcl''.
+<Command>gzip</Command> compressed PCL, then this parameter will be ``gunzip pcl''.
 </Para>
 
 <Para>
@@ -121,46 +121,46 @@ and if it is not empty, remove Ghostscript from the pipeline.
 
 <Para>
 The exit codes which interface programs should use are defined in
-<Literal remap="tt">include/interface.h</Literal> and <Literal remap="tt">/lib/interface.sh</Literal>.
+<Filename>include/interface.h</Filename> and <Filename>/lib/interface.sh</Filename>.
 </Para>
 
 <Para>
 If the interface prints the job successfully, it should return an exit code of
-<Emphasis remap="bf">EXIT&lowbar;PRINTED</Emphasis>.
+<Command>EXIT&lowbar;PRINTED</Command>.
 </Para>
 
 <Para>
 If there was a printer error, the interface should exit with code
-<Emphasis remap="bf">EXIT&lowbar;PRNERR</Emphasis> and the printer will be placed in fault-auto-retry mode.
+<Command>EXIT&lowbar;PRNERR</Command> and the printer will be placed in fault-auto-retry mode.
 </Para>
 
 <Para>
 If the printer error was caused by a circumstance which will not disappear
 spontainiously, such as a syntactically invalid printer address, then the
-interface should return <Emphasis remap="bf">EXIT&lowbar;PRNERR&lowbar;NORETRY</Emphasis> and the printer will be placed
+interface should return <Command>EXIT&lowbar;PRNERR&lowbar;NORETRY</Command> and the printer will be placed
 in fault-no-auto-retry mode.
 </Para>
 
 <Para>
 If a PostScript error occured in the job and the interface detects it it should
-use the code <Emphasis remap="bf">EXIT&lowbar;JOBERR</Emphasis>.  Generally the interface will leave the job of detecting
-PostScript errors to <Emphasis remap="bf">pprdrv</Emphasis> which examines the messages received from the
+use the code <Command>EXIT&lowbar;JOBERR</Command>.  Generally the interface will leave the job of detecting
+PostScript errors to <Command>pprdrv</Command> which examines the messages received from the
 printer.
 </Para>
 
 <Para>
 If the interface program catches a signal such as SIGTERM, it should exit
-with code <Emphasis remap="bf">EXIT&lowbar;SIGNAL</Emphasis> at the end of the signal handler function.
+with code <Command>EXIT&lowbar;SIGNAL</Command> at the end of the signal handler function.
 </Para>
 
 <Para>
 If no printer error occured but the printer was busy or off line, the
-interface should return <Emphasis remap="bf">EXIT&lowbar;ENGAGED</Emphasis>.
+interface should return <Command>EXIT&lowbar;ENGAGED</Command>.
 </Para>
 
 <Para>
 The interface program should not return any value other than those defined
-above.  Any undefined value will be interpreted as a <Emphasis remap="bf">EXIT&lowbar;PRNERR</Emphasis>.
+above.  Any undefined value will be interpreted as a <Command>EXIT&lowbar;PRNERR</Command>.
 </Para>
 
 </Sect2>
@@ -169,13 +169,13 @@ above.  Any undefined value will be interpreted as a <Emphasis remap="bf">EXIT&l
 <Title>Interpretation of the Fifth Parameter</Title>
 
 <Para>
-If the <Emphasis remap="it">jobbreak</Emphasis> value for the printer (the firth parameter) is
-<Emphasis remap="bf">JOBBREAK&lowbar;SIGNAL</Emphasis>, or  <Emphasis remap="bf">JOBBREAK&lowbar;SIGNAL&lowbar;PJL</Emphasis> then the interface should
+If the <Replaceable>jobbreak</Replaceable> value for the printer (the firth parameter) is
+<Command>JOBBREAK&lowbar;SIGNAL</Command>, or  <Command>JOBBREAK&lowbar;SIGNAL&lowbar;PJL</Command> then the interface should
 send its parent SIGUSR1 as soon as it has established its own SIGUSR1 handler.
 Thereafter, whenever it receives SIGUSR1, it should read all bytes currently
 available from the pipe, send them to the printer and then send the printer an
 end of job indication. When it receives an acknowleding end of job indication
-from the printer, it should send its parent SIGUSR1.  The interface <Emphasis remap="bf">atalk</Emphasis>
+from the printer, it should send its parent SIGUSR1.  The interface <Command>atalk</Command>
 does this.  This handshaking method is necessary because the PAP (AppleTalk
 Printer Access Protocol) end of file marker has no representation in the byte
 stream.  Instead it is sent by setting a special flag in the header of the
@@ -184,8 +184,7 @@ packet.
 
 <Para>
 Other job break values do not require any special action on the part of
-the interface.  (Before version 1.40, interfaces took special action for
-the control-d and pjl methods.  This is no longer necessary.)
+the interface.
 </Para>
 
 <Para>
@@ -194,10 +193,10 @@ is known to be incompatible.  It should only check for settings <Emphasis>known<
 incompatible.  It should not limit jobbreak settings to a list of those known to
 be compatible since other, compatible settings may be added in future versions of
 PPR.  The various possible jobbreak settings are briefly described in the ppad(8)
-man page under the section for the <Emphasis remap="bf">ppad jobbreak</Emphasis> command.  A more thorough
+man page under the section for the <Command>ppad jobbreak</Command> command.  A more thorough
 discussion may be found in section <XRef LinkEnd="interfaces1">.  The code numbers for the various jobbreak values are defined in the
-include file <Literal remap="tt">include/interface.h</Literal> and in the shell script fragment
-<Literal remap="tt">/lib/interface.sh</Literal>.
+include file <Filename>include/interface.h</Filename> and in the shell script fragment
+<Filename>/lib/interface.sh</Filename>.
 </Para>
 
 </Sect2>

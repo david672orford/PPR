@@ -52,7 +52,7 @@ adjust before compiling the programs.  These are described below:
 </Para>
 
 <Sect3>
-<Title><Literal remap="tt">include/version.h</Literal></Title>
+<Title><Filename class="HeaderFile">include/version.h</Filename></Title>
 
 <Para>
 This file defines the pre-processor macros VERSION, SHORT&lowbar;VERSION, and
@@ -63,20 +63,20 @@ macro.
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">include/global.mk</Literal></Title>
+<Title><Filename>Makefile.conf</Filename></Title>
 
 <Para>
-This file is included by all the make files.  The shell script <Emphasis remap="bf">Configure</Emphasis>
+This file is included by all the make files.  The shell script <Command>Configure</Command>
 generates this file.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">include/sysdep.h</Literal></Title>
+<Title><Filename class="Headerfile">include/sysdep.h</Filename></Title>
 
 <Para>
-This file is included by <Literal remap="tt">include/global&lowbar;defines.h</Literal> (described
+This file is included by <Filename>include/global&lowbar;defines.h</Filename> (described
 below).  This file contains one section for each system to which PPR has
 been ported.  For each of these it defines some macros and possibly some
 function prototypes.  You should add a section to this file
@@ -87,30 +87,30 @@ can be defined in this file are described in comments at its head.
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">include/global&lowbar;defines.h</Literal></Title>
+<Title><Filename class="HeaderFile">include/global&lowbar;defines.h</Filename></Title>
 
 <Para>
 An important part of this file is the list of definitions of files and
 directories.  Any file or directory names in this section which do not begin
-with a slash are relative to the directory defined as <Emphasis remap="sf">HOMEDIR</Emphasis>. There are
+with a slash are relative to the directory defined as <Literal>HOMEDIR</Literal>. There are
 other parameters below the file names, but these should be modified with care.
-Probably, you should only modify <Emphasis remap="sf">QUEUE&lowbar;SIZE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;DOCMEDIA</Emphasis>,
-<Emphasis remap="sf">MAX&lowbar;LINE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;BINS</Emphasis>, <Emphasis remap="sf">MAX&lowbar;GROUPS</Emphasis>, and <Emphasis remap="sf">MAX&lowbar;PRINTERS</Emphasis>.
+Probably, you should only modify <Literal>QUEUE&lowbar;SIZE</Literal>, <Literal>MAX&lowbar;DOCMEDIA</Literal>,
+<Literal>MAX&lowbar;LINE</Literal>, <Literal>MAX&lowbar;BINS</Literal>, <Literal>MAX&lowbar;GROUPS</Literal>, and <Literal>MAX&lowbar;PRINTERS</Literal>.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">ppr/ppr.h</Literal></Title>
+<Title><Filename class="HeaderFile">ppr/ppr.h</Filename></Title>
 
 <Para>
-Defined here is the maximum number of <Emphasis remap="bf">-F</Emphasis> switches for <Emphasis remap="bf">ppr</Emphasis>.
+Defined here is the maximum number of <Command>-F</Command> switches for <Command>ppr</Command>.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">include/pprd.h</Literal></Title>
+<Title><Filename class="HeaderFile">include/pprd.h</Filename></Title>
 
 <Para>
 In this file are a few parameters related to retrying printer faults and to
@@ -120,20 +120,20 @@ the priority system.  The present values should prove satisfactory.
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">papsrv/papsrv.h</Literal></Title>
+<Title><Filename class="HeaderFile">papsrv/papsrv.h</Filename></Title>
 
 <Para>
 One might wish to edit this file in order to change the maximum number of
 PAP server names which may be advertise.  Keep in mind that the number of PAP
 server names might also be limited by your AppleTalk protocol stack.  In CAP,
 the limit is defined in the CAP sources in the file
-<Literal remap="tt">cap60/lib/cap/abpap.h</Literal>.
+<Filename>cap60/lib/cap/abpap.h</Filename>.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">filter&lowbar;lp/filter&lowbar;lp.h</Literal></Title>
+<Title><Filename class="HeaderFile">filter&lowbar;lp/filter&lowbar;lp.h</Filename></Title>
 
 <Para>
 One may desire to edit this file in order to change the paper size, margins
@@ -143,36 +143,36 @@ for selecting landscape rather than portrait mode.  Any change to the trigger
 values should be tested very thoroughly to ensure that pleasing results are
 obtained with input files of various formats.  Starting with version 1.20 of
 PPR, the lp filter has options which can be used to change these parameters
-without re-compiling.  These values are specified by using the <Emphasis remap="bf">ppr</Emphasis> <Emphasis remap="bf">-o</Emphasis>
-switch when submitting a print job.  The <Emphasis remap="bf">ppad switchset</Emphasis> command can be
-useful here, especially when the jobs are arriving through <Emphasis remap="bf">lprsrv</Emphasis>.  It is
-still necessary to edit <Literal remap="tt">include/filter&lowbar;lp.h</Literal> and re-compile if you wish
+without re-compiling.  These values are specified by using the <Command>ppr</Command> <Command>-o</Command>
+switch when submitting a print job.  The <Command>ppad switchset</Command> command can be
+useful here, especially when the jobs are arriving through <Command>lprsrv</Command>.  It is
+still necessary to edit <Filename>include/filter&lowbar;lp.h</Filename> and re-compile if you wish
 to change the system-wide defaults.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">include/interface.h</Literal></Title>
+<Title><Filename>include/interface.h</Filename></Title>
 
 <Para>
 This include file defines the exit codes which printer interfaces should
 use.  It also describes the possible values of the fifth parameter to a printer
 interface which are also are possible values for the printer configuration file
-<Emphasis remap="sf">JobBreak:</Emphasis> line.  Most of the definitions in this file are repeated in
-bourne shell script form in the file <Literal remap="tt">interfaces/interface.sh</Literal> which is
-installed as <Literal remap="tt">/usr/ppr/lib/interface.sh</Literal>.
+<Literal>JobBreak:</Literal> line.  Most of the definitions in this file are repeated in
+bourne shell script form in the file <Filename>interfaces/interface.sh</Filename> which is
+installed as <Filename>/usr/ppr/lib/interface.sh</Filename>.
 </Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Literal remap="tt">libppr/interfaces.c</Literal></Title>
+<Title><Filename>libppr/interfaces.c</Filename></Title>
 
 <Para>
 This file contains an array of structures which give the default values
 which should be use with each of the printer interface programs supplied with
-PPR when <Emphasis remap="sf">JobBreak:</Emphasis>, <Emphasis remap="sf">Feedback:</Emphasis>, or <Emphasis remap="sf">Codes:</Emphasis> lines are missing
+PPR when <Literal>JobBreak:</Literal>, <Literal>Feedback:</Literal>, or <Literal>Codes:</Literal> lines are missing
 from printer configuration files.
 </Para>
 

@@ -15,22 +15,23 @@
 
 <Articleinfo>
 	<Title>The PPR Hackers Guide</Title>
-	<AUTHOR>
+	<Author>
 		<FirstName>David</firstname>
 		<Surname>Chappell</Surname>
-		</AUTHOR>
-	<PubDate>16 December 2002</PubDate>
+	</Author>
+	<PubDate>16 January 2003</PubDate>
 	<Copyright>
-		<year>1995--2002</year>
+		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
-		</Copyright>
+	</Copyright>
 </Articleinfo>
 
 <Abstract>
 
 <Para>This document provides information of interest to those wishing to
-modify the PPR source code or to add plugin modules such as printer
-interface programs and programs that send messages to users.</Para>
+modify the <Application>PPR</Application> source code or to add plugin
+modules such as printer interface programs and programs that send messages
+to users.</Para>
 
 </Abstract>
 

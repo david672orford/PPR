@@ -4,11 +4,11 @@
 <Para>
 The PPR components use a library of common code.  Persons attempting to
 extend PPR by adding additional programs are encouraged to make use of the
-functions in this library.  This library is contained in a file <Literal remap="tt">libppr.a</Literal>
+functions in this library.  This library is contained in a file <Filename>libppr.a</Filename>
 which is created in the top level source directory.  Its source code is found
-in the <Literal remap="tt">libppr</Literal> directory.  The prototypes for PPR library functions are
-found in the file <Literal remap="tt">include/global defines.h</Literal> with a few in
-<Literal remap="tt">include/global&lowbar;structs.h</Literal>.
+in the <Filename class="Directory">libppr/</Filename> directory.  The prototypes for PPR library functions are
+found in the file <Filename>include/global defines.h</Filename> with a few in
+<Filename class="HeaderFile">include/global&lowbar;structs.h</Filename>.
 </Para>
 
 <Sect3>
