@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 March 2004.
+# Last modified 11 December 2004.
 #
 
 # Pull in settings from Configure.
@@ -130,7 +130,7 @@ install-html: $(ALL_HTML)
 
 # Remove just editor backups.
 clean:
-	$(RMF) $(BACKUPS)
+	$(RMF) $(BACKUPS) *.tmp
 
 # Remove anything that can be reconstructed.
 veryclean: clean

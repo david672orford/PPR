@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 November 2004.
+# Last modified 11 December 2004.
 #
 
 =head1 NAME
@@ -280,8 +280,8 @@ The method B<xwin> causes the notification to be sent to an X-Windows
 display.  The display must be specified with the B<-r> switch.  This method
 will not work if the user "ppr" is not allowed to connct to the X display. 
 The B<ppr-xgrant> command (see L<ppr-xgrant.1>) can be used to grant the
-necessary permission.  This responder uses L<xmessage(1)>, L<wish(1)> or in
-a pinch L<xterm(1)> to display the message.  The message will look much
+necessary permission.  This responder uses L<xmessage>(1), L<wish>(1) or in
+a pinch L<xterm>(1) to display the message.  The message will look much
 neater if B<xmessage> or B<wish> is available.  This responder has an option
 "timeout=".  This parameter specifies that the message should disapear after
 the indicated number of seconds if the user does not dismiss it manually. 

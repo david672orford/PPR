@@ -391,6 +391,6 @@ PPR may be obtained from <ftp://ppr-dist.trincoll.edu/pub/ppr/> or
 <http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes
 the following files:
 
-ppr-1.53b1.tar.gz         Source code for PPR
+ppr-1.53.tar.gz           Source code for PPR
 natali-1.25.tar.gz        A library needed for Netatalk support under Linux
 

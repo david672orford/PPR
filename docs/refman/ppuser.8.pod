@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppuser.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2003.
+# Last modified 11 December 2004.
 #
 
 =head1 NAME
@@ -117,7 +117,7 @@ Now lets assume that the operator made an error and Mr. Jones' was printed
 on the wrong kind of paper.  We post a refund by issuing a $1.55 positive
 correction to his account:
 
-C<$ ppuser correction jjones 1.55
+C<$ ppuser correction jjones 1.55>
 
 Oops!  We entered that as 155 rather than 1.55.  We had better reverse the
 erroneous correction and issue a new one:
@@ -166,13 +166,13 @@ non-functional.
 
 =head1 SEE ALSO
 
-L<ppr.1>, L<ppop>, L<ppad>, L<pprd.8>,
+L<ppr.1>, L<ppop.1>, L<ppad.8>, L<pprd.8>,
 "PPR, a PostScript Print Spooler",
 "Installing and Using PPR".
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 February 2004.
+# Last modified 11 December 2004.
 #
 
 =head1 NAME
@@ -392,11 +392,11 @@ want to use F<win95cp.bat>.
 
 =head1 SEE ALSO
 
-Samba's L<smb.conf>(5), "Installing and Using PPR", L<ppr>(1).
+Samba's L<smb.conf>(5), "Installing and Using PPR", L<ppr.1>(1).
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHORS

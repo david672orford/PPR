@@ -230,7 +230,7 @@ L<uprint-lprm.1>,
 and L<lprsrv.8>.
 
 The Uprint programs use or replace the programs descibed in B<lp(1)>,
-L<lpstat(1)>, L<cancel(1)>, L<lpr(1)>, L<lpq(1)>, and L<lprm(1)>.
+L<lpstat>(1), L<cancel>(1), L<lpr>(1), L<lpq>(1), and L<lprm>(1).
 
 =head1 HISTORY
 

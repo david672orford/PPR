@@ -522,17 +522,21 @@ more information about RIPs and *pprRIP:.
 * refman/ppr.1.pod: fixed to indicate that all hacks are off by defaul.
   It has erroneously stated that editps is on by default.
 
+* refman/, uprint/: fixed sundry formatting typos.
+
 
 1.53b1, 22 September 2004--2 October 2004.
 
 * uprint/uprint-lpc.8.pod: added
 
 
-1.53, 5 October 2004--19 November 2004.
+1.53, 5 October 2004--11 December 2004.
 
 * misc/ppr.lsm: removed
 
 * refman/ppr.1.pod: description if -R duplex:* clarified
+
+* ../INSTALL.txt: added section about CVS build requirements
 
 
 
