@@ -593,7 +593,8 @@ $addprn_wizard_table = [
 				my $browser_printer = cgi_data_peek("browser_printer", undef);
 				if(! defined($browser_printer))
 					{ return _("You must choose a printer!") }
-				if($browser_printer !~ /^([^,]+),"([^"]+)"(?:,"([^"]+)")(?:,([^,]+))(?:,([^,]+))(?:,([^,]+))$/)
+				#if($browser_printer !~ /^([^,]+),"([^"]+)"(?:,"([^"]+)")(?:,([^,]+))(?:,([^,]+))(?:,([^,]+))$/)
+				if($browser_printer !~ /^([^,]+),"([^"]+)"$/)
 					{ return "internal error: browser_printer=$browser_printer" }
 				$data{interface} = $1;
 				$data{address} = $2;

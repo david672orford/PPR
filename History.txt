@@ -9143,6 +9143,9 @@ Internet Printing Protocol Work
 * moved from printdesk/ to browsers/: nbp_lookup_cap.c,
   nbp_lookup_ali.c
 
+* ppd/ghostscript/: added HP DeskJet 880C.
+
+
 +++++++++++++++++++++
 TODO
 
