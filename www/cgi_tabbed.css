@@ -1,18 +1,24 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 26 April 2002.
+** Last modified 23 May 2002.
 */
 
 BODY {
-	background: #C0C0C0;
+	background-color: #C0C0C0;
 	color: black;
+	}
+
+/* This gets rid of the bottom margin in Mozilla 1.0rc2.  Without this
+  we have to make the window a little too big to avoid a scrollbar. */
+FORM {
+	margin: 0pt;
 	}
 
 /* Button for visible pane. */
 INPUT.tabactive,BUTTON.tabactive {
 	font-size: 8pt;
 	font-weight: bold;
-	background: beige;
+	background-color: beige;
 	margin: 0pt;
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
@@ -24,7 +30,7 @@ INPUT.tabactive,BUTTON.tabactive {
 INPUT.tabinactive,BUTTON.tabinactive {
 	font-size: 8pt;
 	font-weight: normal;
-	background: beige;
+	background-color: beige;
 	margin: 0pt;
 	border-style: solid;
 	border-width: 1px 1px 1px 1px;
@@ -42,7 +48,7 @@ BUTTON {
 
 /* This is a span that looks like a button.  We use it for the [Help] button. */
 SPAN.button {
-	background: #b0b0b0;
+	background-color: #b0b0b0;
 	border: 2px solid;
 	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
 	padding: 3px 2mm 3px 2mm;
@@ -56,7 +62,7 @@ SPAN.button A {
 
 /* Tables of this class form the background for tabbed dialog boxes. */
 TABLE.tabpage {
-	background: beige;
+	background-color: beige;
 	margin: 0;
 	border-style: solid;
 	border-color: black black black #000000;
@@ -79,13 +85,13 @@ TABLE.tabpage P {
 
 /* Text input fields. */
 INPUT {
-	background: white;
+	background-color: white;
 	font-weight: normal;
 	}
 
 /* Buttons that are supposed to look like buttons. */
 INPUT.buttons,BUTTON.buttons {
-	background: #b0b0b0;
+	background-color: #b0b0b0;
 	}
 
 /* This is for error messages. */
@@ -103,7 +109,7 @@ SPAN.value {
 	font-weight: normal;
 	font-size: 12pt;
 	font-family: sans-serif;
-	background: white;
+	background-color: white;
 	border-style: solid;
 	border-width: thin;
 	border-color: black;
@@ -129,7 +135,7 @@ DIV.section SPAN.section_label {
 	position: absolute;
 	top: -9pt;
 	left: 10pt;
-	background: beige;
+	background-color: beige;
 	font-weight: bold;
 	border: thin solid black;
 	padding: 0ex 1ex 0ex 1ex;
