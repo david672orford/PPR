@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 November 2002.
+# Last modified 26 November 2002.
 #
 
 use lib "?";
@@ -61,7 +61,8 @@ $printcap_wizard_table = [
 
 		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
 		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Shortcut"), "<br>\n";
-		print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
+ 		#print '<input type="radio" name="what_to_download" value="mswin_shortcut">', H_("MS-Windows Shortcut"), "<br>\n";
+		#print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
 		},
 	'buttons' => [N_("_Cancel"), N_("_Next")],
 	'onnext' => sub {
