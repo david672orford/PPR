@@ -81,7 +81,7 @@ while(<D>)
     next if($total <= 0);
 
     # Some things aren't real devices.  Skip them.
-    next if(!m#^/#);
+    next if($dev !~ m#^/#);
 
     # Deduce the amount of space reserved for use only be root.
     my $reserved = ($total - $used - $available);
