@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--21 November 2002.
+1.50b1, 13 November 2002--22 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8015,4 +8015,6 @@ line was being parsed twice.
 * ppop/ppop_cmds_other.c:ppop_status(): changed code to hide printer
   problems that are unconfirmed for more than 4 hours unless --verbose
   is used.
+
+* po/ru-PPRWWW.po: added a few messages and made minor corrections.
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-11-05 16:21-0500\n"
+"POT-Creation-Date: 2002-11-22 14:52-0500\n"
 "PO-Revision-Date: 2002-11-05 16:52-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -20,13 +20,14 @@ msgstr "Сделеть Новый Alias"
 
 #: ../www/alias_addwiz.cgi.perl:41
 msgid "PPR Alias Creation"
-msgstr ""
+msgstr "PPR Создаие Alias"
 
 #: ../www/alias_addwiz.cgi.perl:43
 msgid ""
 "This program will guide you through the process of\n"
 "creating an alias for a printer or a group of printers."
-msgstr ""
+msgstr "Это программа помогает создать alias для принтера\n"
+"или для групы принтеров."
 
 #: ../www/alias_addwiz.cgi.perl:46
 msgid ""
@@ -38,31 +39,31 @@ msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:51 ../www/alias_properties.cgi.perl:35
 msgid "Alias Name:"
-msgstr ""
+msgstr "Название Alias:"
 
 #: ../www/alias_addwiz.cgi.perl:57
 msgid "You must enter a name for the alias!"
-msgstr ""
+msgstr "Вам нужно вовусти название для alias!"
 
 #: ../www/alias_addwiz.cgi.perl:59
 #, c-format
 msgid "The alias \"%s\" already exists!"
-msgstr ""
-
-#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:283
-#: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
-#: ../www/prn_addwiz.cgi.perl:144
-msgid "_Next"
-msgstr "На Следеющую"
+msgstr "Alias \"%s\" уже существует!"
 
 #: ../www/alias_addwiz.cgi.perl:62 ../www/alias_addwiz.cgi.perl:130
 #: ../www/cgi_tabbed.pl:316 ../www/cgi_wizard.pl:283
 #: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:144
 #: ../www/prn_addwiz.cgi.perl:631 ../www/prn_testpage.cgi.perl:95
-#: ../www/show_jobs.cgi.perl:500
+#: ../www/show_jobs.cgi.perl:557
 msgid "_Cancel"
 msgstr "Отменять"
+
+#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:283
+#: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
+#: ../www/prn_addwiz.cgi.perl:144
+msgid "_Next"
+msgstr "На Следеющую"
 
 #: ../www/alias_addwiz.cgi.perl:69
 msgid "For What an Alias"
@@ -82,9 +83,9 @@ msgid "Describe the Alias"
 msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:115 ../www/grp_addwiz.cgi.perl:113
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"While short group names are convient in certain contexts,\n"
+"While short group names are convenient in certain contexts,\n"
 "it is sometimes helpful to have a longer, more informative\n"
 "description.  Please supply a longer description for\n"
 "\"%s\" below."
@@ -106,7 +107,7 @@ msgstr ""
 #: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
 #: ../www/prn_addwiz.cgi.perl:631
 msgid "_Finish"
-msgstr ""
+msgstr "Закончить"
 
 #: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:283
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:631
@@ -115,34 +116,35 @@ msgstr "Обротно"
 
 #: ../www/alias_addwiz.cgi.perl:137
 msgid "Save the Alias"
-msgstr ""
+msgstr "Сохранние Alias"
 
 #: ../www/alias_addwiz.cgi.perl:142
 msgid "Saving new alias:"
-msgstr ""
+msgstr "Сохранаем новый alias:"
 
 #: ../www/alias_addwiz.cgi.perl:155 ../www/cgi_tabbed.pl:307
-#: ../www/cliconf.cgi.perl:115 ../www/delete_queue.cgi.perl:135
-#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:665
-#: ../www/prn_control.cgi.perl:432 ../www/prn_media.cgi.perl:197
-#: ../www/prn_testpage.cgi.perl:134 ../www/show_queues.cgi.perl:257
+#: ../www/cliconf.cgi.perl:88 ../www/cliconf.cgi.perl:171
+#: ../www/delete_queue.cgi.perl:135 ../www/grp_addwiz.cgi.perl:153
+#: ../www/prn_addwiz.cgi.perl:665 ../www/prn_control.cgi.perl:435
+#: ../www/prn_media.cgi.perl:197 ../www/prn_testpage.cgi.perl:134
+#: ../www/show_queues.cgi.perl:257
 msgid "_Close"
 msgstr "Закрыть"
 
 #: ../www/alias_properties.cgi.perl:31 ../www/grp_properties.cgi.perl:31
 #: ../www/prn_properties.cgi.perl:32
 msgid "Comment"
-msgstr ""
+msgstr "Описевание"
 
 #: ../www/alias_properties.cgi.perl:38 ../www/grp_properties.cgi.perl:38
 #: ../www/prn_control.cgi.perl:275 ../www/prn_control.cgi.perl:306
 #: ../www/prn_properties.cgi.perl:40
 msgid "Comment:"
-msgstr ""
+msgstr "Онисевание:"
 
 #: ../www/alias_properties.cgi.perl:48
 msgid "For What"
-msgstr ""
+msgstr "Для Чего"
 
 #: ../www/alias_properties.cgi.perl:67
 #, c-format
@@ -239,7 +241,8 @@ msgid ""
 msgstr ""
 
 #: ../www/cgi_tabbed.pl:67
-msgid "The load function for this dialog failed with the following error message:"
+msgid ""
+"The load function for this dialog failed with the following error message:"
 msgstr ""
 
 #: ../www/cgi_tabbed.pl:201
@@ -254,68 +257,111 @@ msgstr "Дополнительный>>"
 msgid "_Save"
 msgstr "Сохроить"
 
-#: ../www/cliconf.cgi.perl:42
+#: ../www/cliconf.cgi.perl:44
+msgid "Downloadable Client Configuation Files"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:55
+msgid ""
+"Using this program you can download various files which help you to use "
+"PPR.\n"
+"These include shell scripts for configuring client computers to send print\n"
+"jobs to PPR, PPD files, and icons for opening the PPR web interface."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:59
+#, c-format
+msgid "What do you want to download for the queue \"%s\"?"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:61
+msgid "Spooler Configuration Script"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:62
+msgid "KDE Shortcut"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:63
+msgid "PPD File"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:69
+msgid "You must make a choice."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:81
+msgid "Downloadable KDE Icon"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:84
+msgid ""
+"Click on the button below to download the KDE shortcut.\n"
+"You will probably want to save it in your Desktop folder."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:86 ../www/cliconf.cgi.perl:165
+msgid "_Download"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:96
 msgid "Create Client Script: Choose a Spooler"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:48
+#: ../www/cliconf.cgi.perl:105
 #, c-format
 msgid ""
-"This program will create a script which you can download and run\n"
+"You have chosen to create a script which you can download and run\n"
 "in order to set up your local spooler to print to the PPR\n"
 "queue \"%s\"."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:52
+#: ../www/cliconf.cgi.perl:109
 msgid "Please indicate which print spooler you are using:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:53
+#: ../www/cliconf.cgi.perl:110
 msgid "BSD lpd"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:54
+#: ../www/cliconf.cgi.perl:111
 msgid "LPR Next Generation"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:61
+#: ../www/cliconf.cgi.perl:118
 msgid "You must choose a spooler!"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:72
+#: ../www/cliconf.cgi.perl:128
 msgid "Create Client Script: Local Name"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:80
+#: ../www/cliconf.cgi.perl:136
 #, c-format
 msgid "Please choose a local name for %s:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:84
+#: ../www/cliconf.cgi.perl:140
 msgid "Please provide a description of this queue:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:91
+#: ../www/cliconf.cgi.perl:147
 msgid "The local name must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:95
+#: ../www/cliconf.cgi.perl:151
 msgid "The description must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:104
+#: ../www/cliconf.cgi.perl:160
 msgid "Create Client Script: Download"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:108
+#: ../www/cliconf.cgi.perl:164
 msgid "Click on the button below to download the install script."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:109
-msgid "_Download"
-msgstr ""
-
-#: ../www/cliconf.cgi.perl:110
+#: ../www/cliconf.cgi.perl:166
 msgid "This script must be run as root.  The command to run it is:"
 msgstr ""
 
@@ -508,11 +554,11 @@ msgid "Assign Group Members"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:79
-msgid "Members:"
+msgid "Non-Members:"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:79
-msgid "Non-Members:"
+msgid "Members:"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:101
@@ -546,13 +592,13 @@ msgstr ""
 
 #: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:81
 #: ../www/prn_properties.cgi.perl:471 ../www/prn_properties.cgi.perl:595
-msgid "no"
-msgstr "нет"
+msgid "yes"
+msgstr "да"
 
 #: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:81
 #: ../www/prn_properties.cgi.perl:471 ../www/prn_properties.cgi.perl:595
-msgid "yes"
-msgstr "да"
+msgid "no"
+msgstr "нет"
 
 #: ../www/grp_properties.cgi.perl:266
 #, c-format
@@ -685,7 +731,7 @@ msgstr ""
 msgid "Save changes to job:"
 msgstr ""
 
-#: ../www/job_modify.cgi.perl:305
+#: ../www/job_modify.cgi.perl:306
 #, c-format
 msgid "PPR: Modify Job: %s"
 msgstr ""
@@ -714,7 +760,7 @@ msgid "Login"
 msgstr ""
 
 #: ../www/login_cookie.cgi.perl:87 ../www/login_cookie.cgi.perl:141
-#: ../www/show_jobs.cgi.perl:263
+#: ../www/show_jobs.cgi.perl:318
 msgid "Close"
 msgstr "Закрыть"
 
@@ -744,7 +790,8 @@ msgstr ""
 
 #: ../www/login_cookie.cgi.perl:138
 #, c-format
-msgid "You are already logged in as user \"%s\" using authentication method \"%s\"."
+msgid ""
+"You are already logged in as user \"%s\" using authentication method \"%s\"."
 msgstr ""
 
 #: ../www/ppd_select.pl:135
@@ -1736,67 +1783,133 @@ msgstr ""
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:147
+#: ../www/show_jobs.cgi.perl:168
 msgid "Queue Display Settings"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:187
+#: ../www/show_jobs.cgi.perl:208
 msgid "Refresh Interval (in seconds):"
 msgstr "Частота Обновления (в секонах):"
 
-#: ../www/show_jobs.cgi.perl:239
+#: ../www/show_jobs.cgi.perl:260
 #, c-format
 msgid "Jobs Queued for \"%s\" on \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:261
-msgid "Settings"
+#: ../www/show_jobs.cgi.perl:280 ../www/show_queues.cgi.perl:167
+#: ../www/show_queues_nojs.cgi.perl:81 ../www/show_queues_nojs.cgi.perl:94
+msgid "View Queue"
+msgstr "Посмотреть на Очередь"
+
+#: ../www/show_jobs.cgi.perl:281 ../www/show_queues.cgi.perl:168
+#: ../www/show_queues_nojs.cgi.perl:82
+msgid "Printer Control"
+msgstr "Управлать Принтером"
+
+#: ../www/show_jobs.cgi.perl:282 ../www/show_queues.cgi.perl:169
+#: ../www/show_queues_nojs.cgi.perl:83
+msgid "Printer Properties"
+msgstr "Свойства Принтера"
+
+#: ../www/show_jobs.cgi.perl:283 ../www/show_queues.cgi.perl:170
+#: ../www/show_queues_nojs.cgi.perl:84
+msgid "Test Page"
+msgstr "Печатать Пробную Страницу"
+
+#: ../www/show_jobs.cgi.perl:284 ../www/show_queues.cgi.perl:171
+#: ../www/show_queues_nojs.cgi.perl:85 ../www/show_queues_nojs.cgi.perl:97
+msgid "Client Configuration"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:262 ../www/show_queues.cgi.perl:244
+#: ../www/show_jobs.cgi.perl:285 ../www/show_queues.cgi.perl:172
+#: ../www/show_queues_nojs.cgi.perl:86 ../www/show_queues_nojs.cgi.perl:98
+msgid "Printlog"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:286 ../www/show_queues.cgi.perl:173
+#: ../www/show_queues_nojs.cgi.perl:87
+msgid "Delete Printer"
+msgstr "Удалить Принтер"
+
+#: ../www/show_jobs.cgi.perl:287 ../www/show_queues.cgi.perl:174
+#: ../www/show_queues_nojs.cgi.perl:95
+msgid "Member Printer Control"
+msgstr "Управлать Члены Принтеры"
+
+#: ../www/show_jobs.cgi.perl:288 ../www/show_queues.cgi.perl:175
+#: ../www/show_queues_nojs.cgi.perl:96
+msgid "Group Properties"
+msgstr "Свойства Группы"
+
+#: ../www/show_jobs.cgi.perl:289 ../www/show_queues.cgi.perl:176
+#: ../www/show_queues_nojs.cgi.perl:99
+msgid "Delete Group"
+msgstr "Удалить Группу"
+
+#: ../www/show_jobs.cgi.perl:290 ../www/show_queues.cgi.perl:177
+#: ../www/show_queues_nojs.cgi.perl:106
+msgid "Alias Properties"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:291 ../www/show_queues.cgi.perl:178
+#: ../www/show_queues_nojs.cgi.perl:107
+msgid "Delete Alias"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:315
+#, fuzzy
+msgid "Queue"
+msgstr "Посмотреть на Очередь"
+
+#: ../www/show_jobs.cgi.perl:316
+#, fuzzy
+msgid "View"
+msgstr "Вид:"
+
+#: ../www/show_jobs.cgi.perl:317 ../www/show_queues.cgi.perl:244
 msgid "Refresh"
 msgstr "Обновить"
 
-#: ../www/show_jobs.cgi.perl:325
+#: ../www/show_jobs.cgi.perl:382
 #, c-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:333
+#: ../www/show_jobs.cgi.perl:390
 msgid "You must select a destination queue before pressing [Move]."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:357
+#: ../www/show_jobs.cgi.perl:414
 #, c-format
 msgid "[%s] failed for the following reason:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:424
+#: ../www/show_jobs.cgi.perl:481
 #, c-format
 msgid "Job \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:478
+#: ../www/show_jobs.cgi.perl:535
 msgid "Job Actions:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:501
+#: ../www/show_jobs.cgi.perl:558
 msgid "R_ush"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:502
+#: ../www/show_jobs.cgi.perl:559
 msgid "_Hold"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:503
+#: ../www/show_jobs.cgi.perl:560
 msgid "_Release"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:504
+#: ../www/show_jobs.cgi.perl:561
 msgid "_Modify"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:505
+#: ../www/show_jobs.cgi.perl:562
 msgid "_Log"
 msgstr ""
 
@@ -1832,11 +1945,7 @@ msgid "Can't open log file \"%s\", %s\n"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Job ID"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
-msgid "Unix User"
+msgid "Printer"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
@@ -1844,19 +1953,23 @@ msgid "Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Proxy For"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
 msgid "For"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Printer"
+msgid "Proxy For"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:155
+msgid "Job ID"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:155
+msgid "Unix User"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
-msgid "Total Sheets"
+msgid "Printing Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
@@ -1864,7 +1977,7 @@ msgid "Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
-msgid "Total Sides"
+msgid "Total Sheets"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
@@ -1872,15 +1985,11 @@ msgid "Queued Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
-msgid "Printing Time"
+msgid "Total Sides"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
-msgid "Increment"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:157
-msgid "Charge"
+msgid "Start Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
@@ -1888,11 +1997,15 @@ msgid "PJL Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
+msgid "Increment"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
 msgid "PS Bytes"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
-msgid "Start Pages"
+msgid "Charge"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:158
@@ -1903,57 +2016,6 @@ msgstr ""
 #, c-format
 msgid "PPR Print Queues on \"%s\""
 msgstr "PPR Очереди Принтеров на \"%s\""
-
-#: ../www/show_queues.cgi.perl:167 ../www/show_queues_nojs.cgi.perl:81
-#: ../www/show_queues_nojs.cgi.perl:94
-msgid "View Queue"
-msgstr "Посмотреть на Очередь"
-
-#: ../www/show_queues.cgi.perl:168 ../www/show_queues_nojs.cgi.perl:82
-msgid "Printer Control"
-msgstr "Управлать Принтером"
-
-#: ../www/show_queues.cgi.perl:169 ../www/show_queues_nojs.cgi.perl:83
-msgid "Printer Properties"
-msgstr "Свойства Принтера"
-
-#: ../www/show_queues.cgi.perl:170 ../www/show_queues_nojs.cgi.perl:84
-msgid "Test Page"
-msgstr "Печатать Пробную Страницу"
-
-#: ../www/show_queues.cgi.perl:171 ../www/show_queues_nojs.cgi.perl:85
-#: ../www/show_queues_nojs.cgi.perl:97
-msgid "Client Configuration"
-msgstr ""
-
-#: ../www/show_queues.cgi.perl:172 ../www/show_queues_nojs.cgi.perl:86
-#: ../www/show_queues_nojs.cgi.perl:98
-msgid "Printlog"
-msgstr ""
-
-#: ../www/show_queues.cgi.perl:173 ../www/show_queues_nojs.cgi.perl:87
-msgid "Delete Printer"
-msgstr "Удалить Принтер"
-
-#: ../www/show_queues.cgi.perl:174 ../www/show_queues_nojs.cgi.perl:95
-msgid "Member Printer Control"
-msgstr "Управлать Члены Принтеры"
-
-#: ../www/show_queues.cgi.perl:175 ../www/show_queues_nojs.cgi.perl:96
-msgid "Group Properties"
-msgstr "Свойства Группы"
-
-#: ../www/show_queues.cgi.perl:176 ../www/show_queues_nojs.cgi.perl:99
-msgid "Delete Group"
-msgstr "Удалить Группу"
-
-#: ../www/show_queues.cgi.perl:177 ../www/show_queues_nojs.cgi.perl:106
-msgid "Alias Properties"
-msgstr ""
-
-#: ../www/show_queues.cgi.perl:178 ../www/show_queues_nojs.cgi.perl:107
-msgid "Delete Alias"
-msgstr ""
 
 #: ../www/show_queues.cgi.perl:208
 msgid "Choose the display format."
@@ -2006,7 +2068,7 @@ msgstr "Закрить это окно."
 
 #: ../www/show_queues.cgi.perl:273
 msgid "Click here to open a window which will show all queued jobs."
-msgstr "Снимите здесь открить окно покозающое вся очереди."
+msgstr "Снимите здесь открить окно покозающое всю очереди."
 
 #: ../www/show_queues.cgi.perl:276
 msgid "Show All Queues"
@@ -2033,7 +2095,8 @@ msgid "Add New Group"
 msgstr "Добавлять Новую Группу"
 
 #: ../www/show_queues.cgi.perl:306
-msgid "Click here and you will be guided through the process of adding a new alias."
+msgid ""
+"Click here and you will be guided through the process of adding a new alias."
 msgstr ""
 
 #: ../www/show_queues.cgi.perl:309
@@ -2096,20 +2159,16 @@ msgid "Inventory of Packages Which PPR can Use"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
-msgid "Critical?"
-msgstr "Важно?"
-
-#: ../www/test_components.cgi.perl:149
 msgid "Source Download"
-msgstr ""
-
-#: ../www/test_components.cgi.perl:149
-msgid "Redhat Package Name"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
 msgid "Debian Package Name"
 msgstr ""
+
+#: ../www/test_components.cgi.perl:149
+msgid "Critical?"
+msgstr "Важно?"
 
 #: ../www/test_components.cgi.perl:149
 msgid "Present?"
@@ -2119,3 +2178,6 @@ msgstr ""
 msgid "Component"
 msgstr ""
 
+#: ../www/test_components.cgi.perl:149
+msgid "Redhat Package Name"
+msgstr ""

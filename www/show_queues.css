@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 23 April 2002.
+** Last modified 22 November 2002.
 */
 
 /* The <body> element of the main window uses this class.  This is so that
@@ -28,6 +28,9 @@ A {	font-weight: normal;
 INPUT.buttons,BUTTON
 	{
 	background: #b0b0b0;
+	margin: 0pt;
+	padding: 2pt;
+	padding-left: -0.5cm;
 	}
 
 /* In Mozilla (at least up to 1.0rc1) these settings of <button>
