@@ -4,7 +4,7 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 28 March 2002.
+# Last modified 10 May 2002.
 #
 
 package require Tcl 8.3
@@ -24,17 +24,35 @@ switch -glob -- $tcl_platform(platform) {
 		regsub -all "\n" $config "\r" config
 		resource write -file application -id 8001 -force TEXT $config
 		}
+	proc random_load {} {
+		set random [resource read TEXT 8002]
+		regsub -all "\r" $random "\n" random
+		return $random
+		}
+	proc random_save {random} {
+		regsub -all "\n" $random "\r" random
+		resource write -file application -id 8002 -force TEXT $random
+		}
 	}
     windows {
 	package require registry 1.0
 	proc config_load {} {
-		set config [registry get "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config"]
+		set config [registry get "HKEY_CURRENT_USER\\Software\\PPR" "pprpopup"]
 		regsub -all ";" $config "\n" config
 		return $config
 		}
 	proc config_save {config} {
 		regsub -all "\n" $config ";" config
-		registry set "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config" $config
+		registry set "HKEY_CURRENT_USER\\Software\\PPR" "pprpopup" $config
+		}
+	proc random_load {} {
+		set random [registry get "HKEY_CURRENT_USER\\Software\\PPR" "random"]
+		regsub -all ";" $random "\n" random
+		return $random
+		}
+	proc random_save {random} {
+		regsub -all "\n" $random ";" random
+		registry set "HKEY_CURRENT_USER\\Software\\PPR" "random" $random
 		}
 	}
     * {
@@ -50,6 +68,20 @@ switch -glob -- $tcl_platform(platform) {
 		catch { exec mkdir $env(HOME)/.ppr }
 		set f [open "$env(HOME)/.ppr/pprpopup" w]
 		puts $f $config
+		close $f
+		}
+	proc random_load {} {
+		global env
+		set f [open "$env(HOME)/.ppr/random" r]
+		set random [read $f]
+		close $f
+		return $random
+		}
+	proc random_save {random} {
+		global env
+		catch { exec mkdir $env(HOME)/.ppr }
+		set f [open "$env(HOME)/.ppr/random" w]
+		puts $f $random
 		close $f
 		}
 	}

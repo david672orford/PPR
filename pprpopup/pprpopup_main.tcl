@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.50a2
-28 March 2002
+10 May 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -39,8 +39,9 @@ set help_contents_file "docs/pprpopup/"
 # to get rid of this.
 set server_port 15009
 
-# This is the token which the server must present for access.
-if {![info exists ppr_magic_cookie_seed]} {
+# This is the seed for the token which the server must present for access.
+if {[catch {set ppr_magic_cookie_seed [random_load]} errormsg]} {
+    puts "Failed to load magic cookie seed."
     set ppr_magic_cookie_seed ""
     }
 
@@ -568,7 +569,12 @@ proc register_with_server {register_url} {
     puts "client_id=$client_id, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
     set data [eval ::http::formatQuery [list client $client_id pprpopup_address $pprpopup_address magic_cookie $magic_cookie]]
 
-    ::http::geturl $register_url -query $data -command [namespace code register_callback]
+    if [catch {::http::geturl $register_url -query $data -command [namespace code register_callback]} errormsg] {
+	puts "Can't contact server $register_url, $errormsg, retry in 30 seconds."
+
+	# Re-schedual for 30 seconds (30,000 milliseconds) in the future.
+	after 30000 [list register_with_server $register_url]
+	}
     }
 
 proc register_callback {token} {
@@ -649,7 +655,9 @@ proc do_register {} {
 
     # We safe this proto-seed to the config file so that when we are restarted
     # we don't have to start from scratch.
-    do_config_save
+    if {[catch {random_save $ppr_magic_cookie_seed} errormsg]} {
+	puts "Failed to save magic cookie seed."
+	}
 
     # Start collecting entropy for next time.  The least significating
     # (decimal) digit of the mouse's x and y coordinates will be added
@@ -812,9 +820,11 @@ proc main {} {
     wm title . "PPR Popup"
     menu_view_main 0
 
-    # No need to do this since do_register does it in order to save the 
-    # magic cookie seed.
-    #do_config_save
+    puts "Saving configuration..."
+    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\n"} errormsg]} {
+	puts "Failed to save configuration:\n$errormsg"
+	#alert "Failed to save configuration:\n$errormsg"
+	}
     }
 
 proc menu_file_quit {} {
@@ -1039,17 +1049,6 @@ proc menu_help_about_system {} {
 
     .si activate
     destroy .si
-    }
-
-proc do_config_save {} {
-    global ppr_root_url
-    global ppr_server_list
-    global ppr_magic_cookie_seed
-    puts "Saving configuration..."
-    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\nset ppr_magic_cookie_seed \"$ppr_magic_cookie_seed\"\n"} errormsg]} {
-	puts "Failed to save configuration:\n$errormsg"
-	#alert "Failed to save configuration:\n$errormsg"
-	}
     }
 
 main

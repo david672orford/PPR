@@ -7707,3 +7707,29 @@ line was being parsed twice.
 
 * www/cliconf.cgi.perl: fixed typos in generated /etc/printcap fragment.
 
+* pprdrv/pprdrv_buf.c:printer_flush(): moved a call to fault_check() to catch
+  the case where SIGTERM doesn't interupt a system call and the interface
+  program (such as simple) doesn't send anything which would cause a call to
+  fault_check() (before feedback_reader()).  I am wondering if all those calls
+  to fault_check() are really necessary if if just one just before the select
+  is enough.
+
+* interfaces/simple.sh: removed code to send control-d when killed, moved
+  opening out output device to the cat call rather than using exec since exec
+  quits the script if it fails.
+
+* pprpopup/pprpopup_loader.tcl: changed Win32 registry key from
+  HKEY_LOCAL_MACHINE\Software\PPR\PPR Popup\config
+  to
+  HKEY_CURRENT_USER\Software\PPR\pprpopup
+  so as to conform to the structure used in the Unix version (i.e.
+  ~/.ppr/pprpopup).
+
+* pprpopup/pprpopup_loader.tcl, pprpopup_main.tcl: added random_load() and 
+  random_save() in order to separate the constantly changing random seed from
+  the configuration.  The random seed is stored raw (not as Tcl code) in
+  ~/.ppr/random, HKEY_CURRENT_USER\Software\PPR\random, resid -8002.
+
+* pprpopup/pprpopup_main.tcl: fixed problem with registration that fails
+  imediately not triggering a retry.
+

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_buf.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 10 May 2002.
 */
 
 /*
@@ -93,6 +93,8 @@ int printer_flush(void)
 	remain = BUFSIZE - wbuf_space;
 	wptr = wbuf;
 
+	/* Count the number of control-Ds in the block we are sending
+	   adding them to the running total of unacknowledged control-Ds. */
 	while(remain && (p = (char*)memchr(wptr, 0x04, remain)))
 	    {
 	    control_d_count++;
@@ -112,7 +114,11 @@ int printer_flush(void)
     /* We will continue to call write() until our buffer is empty. */
     while(remain > 0)
 	{
+	/* Track stalls in this block. */
 	writemon_start("WRITE");
+
+	/* How long should we sleep?  Note that we will break out of
+	   this loop when it is time to do a write(). */
 	while(writemon_sleep_time(&sleep_time, 0))
 	    {
             FD_ZERO(&rfds);
@@ -120,11 +126,13 @@ int printer_flush(void)
             FD_SET(intstdout, &rfds);
             FD_SET(intstdin, &wfds);
 
+	    fault_check();
+
             if((readyfds = select(setsize, &rfds, &wfds, NULL, &sleep_time)) < 0)
                 {
                 if(errno == EINTR)
                     {
-		    fault_check();
+		    /*fault_check();*/
                     continue;
                     }
                 fatal(EXIT_PRNERR, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -154,7 +162,7 @@ int printer_flush(void)
 	    }
 
 	/* Call write(), restarting it if it is interupted.
-	   by a signal such as SIGALRM. */
+	   by a signal such as SIGALRM or SIGCHLD. */
 	while((rval = write(intstdin, wptr, remain)) < 0)
 	    {
 	    /* Handle interuption by signals. */
@@ -196,7 +204,8 @@ int printer_flush(void)
 	if(doing_primary_job)
 	    progress_bytes_sent(rval);
 
-	/* If coming out of a stall, say so. */
+	/* If we were stalled, we aren't anymore.  Let writemon know so that if it
+	   told people we were stalled, it can tell them the condition is cleared. */
 	writemon_unstalled("WRITE");
 
 	/* If we wanted throttle the bandwidth consumption, we could pause here. */

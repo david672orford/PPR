@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 May 2002.
+# Last modified 10 May 2002.
 #
 
 set HOMEDIR "?"
@@ -41,6 +41,7 @@ exec rm -f "$HOMEDIR/lib/getzones"
 foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
     puts "    Trying \"$file\"..."
     if [ file executable $file ] {
+	puts "\tFound, linking to $HOMEDIR/lib/getzones."
 	exec ln -s $file "$HOMEDIR/lib/getzones"
 	break
 	}	
@@ -48,7 +49,7 @@ foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
 if [ file executable "$HOMEDIR/lib/getzones" ] {
     puts "Done."
     } else {
-    puts "Failed."
+    puts "No getzones found."
     }
 puts ""
 

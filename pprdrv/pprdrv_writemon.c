@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 6 May 2002.
+** Last modified 10 May 2002.
 */
 
 #include "before_system.h"
@@ -93,8 +93,19 @@ void writemon_start(const char operation[])
 ** calling it if nothing happens?
 **
 ** The actual stall messages are dispatched from inside this routine.
+**
+** The argument sleep_time is a timeval structure that should be 
+** filled in with the amount of time select() should sleep.  This
+** routine gets to decide how long (based upon its need to issue
+** stall warnings.  However, if timeout is greater than zero, then
+** the sleep time will never take us more than timeout seconds from
+** the time when writemon_start() was called.
+**
+** If select() should not sleep (because the timeout time has already
+** arrived or passed, then this routine will return FALSE, otherwise
+** it will return TRUE.
 */
-int writemon_sleep_time(struct timeval *sleep_time, int timeout)
+gu_boolean writemon_sleep_time(struct timeval *sleep_time, int timeout)
     {
     const char function[] = "writemon_sleep_time";
     struct timeval now_time, my_next_time, your_next_time;

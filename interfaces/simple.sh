@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/interfaces/simple.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 May 2001.
+# Last modified 10 May 2002.
 #
 
 #
@@ -24,6 +24,7 @@
 PRINTER="$1"
 ADDRESS="$2"
 OPTIONS="$3"
+JOBBREAK="$4"
 FEEDBACK="$5"
 
 # read in the exit codes
@@ -51,15 +52,12 @@ if [ $FEEDBACK -ne 0 ]
 	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
-# change standard output to the port
-exec >$ADDRESS
-
 # If we are terminated, write a control-d and exit.
 # Is this a good idea?
-trap 'echo "\04"; exit $EXIT_SIGNAL' 15
+trap 'exit $EXIT_SIGNAL' 15
 
 # copy the job
-/bin/cat -
+/bin/cat - >$ADDRESS
 
 # see if there was an error
 exit_code=$?
