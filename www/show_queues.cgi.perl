@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2004.
+# Last modified 9 March 2004.
 #
 
 use 5.005;
@@ -459,7 +459,8 @@ foreach my $qname (sort(keys(%queues)))
 
 	# Some queues will have no description because the system
 	# administrator was lazy.
-	if($qdescription eq '') { $qdescription = '-- No Description --' }
+	if($qdescription eq '')
+		{ $qdescription = _("-- No Description --") }
 
 	# Define these here to avoid code duplication.
 	my $a_tag = "<a

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 March 2004.
+# Last modified 9 March 2004.
 #
 
 #
@@ -187,7 +187,7 @@ $addprn_wizard_table = [
 		# Welcome
 		#===========================================
 		{
-		'title' => N_("Add a Printer"),
+		'title' => N_("PPR: Add a Printer"),
 		'picture' => "wiz-newprn.jpg",
 		'dopage' => sub {
 				print "<p><span class=\"label\">", H_("PPR Printer Queue Creation"), "</span></p>\n";
@@ -197,7 +197,6 @@ $addprn_wizard_table = [
 				labeled_radio("method", "Choose connexion method first", "choose_int", $method);
 				print "<br>\n";
 				labeled_radio("method", "Choose printer first", "browse_printers", $method);
-
 				},
 		'onnext' => sub {
 				if(! defined($data{method}))
@@ -215,7 +214,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'choose_int',
-		'title' => N_("Select an Interface Program"),
+		'title' => N_("PPR: Add a Printer: Select an Interface Program"),
 		'picture' => "wiz-interface.jpg",
 		'dopage' => sub {
 				# Get a sorted list of the available interfaces.
@@ -289,7 +288,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'int_atalk',
-		'title' => N_("AppleTalk Interface: Choose a Zone"),
+		'title' => N_("PPR: Add a Printer: AppleTalk Interface: Choose a Zone"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				require 'cgi_run.pl';
@@ -332,7 +331,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'int_atalk',
-		'title' => N_("AppleTalk Interface: Choose a Printer"),
+		'title' => N_("PPR: Add a Printer: AppleTalk Interface: Choose a Printer"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				require 'cgi_run.pl';
@@ -392,7 +391,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'int_tcpip',
-		'title' => N_("Raw TCP/IP Interface: Choose an Address"),
+		'title' => N_("PPR: Add a Printer: Raw TCP/IP Interface: Choose an Address"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				print "<p>", H_("It is necessary to know the IP address of the printer,\n"
@@ -463,7 +462,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'int_xaty',
-		'title' => N_("LPR Interface: Choose an Address"),
+		'title' => N_("PPR: Add a Printer: LPR Interface: Choose an Address"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				print "<p>",
@@ -509,7 +508,7 @@ $addprn_wizard_table = [
 		#===========================================
 		{
 		'label' => 'int_generic',
-		'title' => N_("Interface Setup"),
+		'title' => N_("PPR: Add a Printer: Interface Setup"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				print "<p>", html(sprintf(_("No special help is available for the interface called\n"
@@ -563,20 +562,96 @@ $addprn_wizard_table = [
 		},
 
 		#===========================================
-		# Browse printers
+		# Browse printers--select zone
 		#===========================================
 		{
 		'label' => 'browse_printers',
-		'title' => N_("Browse Printers"),
+		'title' => N_("PPR: Add a Printer: Browse Printers"),
 		'picture' => "wiz-newprn.jpg",
 		'dopage' => sub {
+			require 'cgi_run.pl';
+			my $browser_zone = cgi_data_move("browser_zone", "");
 			opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
+			print '<select tabindex=1 name="browser_zone" size="15" style="max-width: 300px">', "\n";
 			while(my $browser = readdir(BROWSERS))
 				{
 				next if($browser =~ /^\./);
-				print $browser, "<br>\n";
+				$browser =~ /^([a-z0-9_-]+)$/ || die;
+				$browser = $1;
+				print "<optgroup label=", html_value($browser), ">\n";
+				opencmd(ZONES, "$HOMEDIR/browsers/$browser") || die "Unable to get zone list";
+				while(my $zone = <ZONES>)
+					{
+					my $new_browser_zone = "$browser:$zone";
+					print "<option value=", html_value($new_browser_zone);
+					print " selected" if($new_browser_zone eq $browser_zone);
+					print ">", html($zone), "</option>\n";
+					}
+				close(ZONES) || die $!;
+				print "</optgroup>\n";
 				}
+			print "</select>\n";
 			closedir(BROWSERS) || die $!;
+			},
+		'onnext' => sub {
+				if(! defined($data{browser_zone}))
+					{ return _("You must choose a zone!") }
+				return undef;
+				}
+		},
+		
+		#===========================================
+		# Browse printers--select printer
+		#===========================================
+		{
+		'title' => N_("PPR: Add a Printer: Browse Printers"),
+		'picture' => "wiz-newprn.jpg",
+		'dopage' => sub {
+			require 'cgi_run.pl';
+			my $browser_zone = cgi_data_move("browser_zone", "");
+			my($browser, $zone) = split(/:/, $browser_zone, 2);
+			$browser =~ /^([a-z0-9_-]+)$/ || die;
+			$browser = $1;
+			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
+			print '<select tabindex=1 name="browser_zone" size="15" style="max-width: 300px">', "\n";
+			outer:
+			while(1)
+				{
+				my $name = "";
+				my @interfaces = ();
+				while(my $line = <PRINTERS>)
+					{
+					print $line;
+					if($line =~ /^\[([^\]]+)]$/)
+						{
+						$name = $1;
+						}
+					elsif($line =~ /^interface=(.+)$/)
+						{
+						push(@interfaces, $1);
+						}
+					elsif($line +~ /^$/)
+						{
+						if(scalar @interfaces > 1)
+							{
+							print "<optgroup label=", html_value($name), ">\n";
+							foreach my $interface (@interfaces)
+								{
+								print "<option value=", html_value($interface), ">", html($interface), "</option>\n";
+								}
+							print "</optgroup>\n";
+							}
+						else
+							{
+							print "<option value=", html_value($interface), ">", html($name), "</option>\n";
+							}
+						next outer;
+						}
+					}
+				last;
+				}
+			print "</select>\n";
+			close(PRINTERS) || die $!;
 			}
 		},
 		
@@ -586,7 +661,7 @@ $addprn_wizard_table = [
 		#'picture' => "wiz-ppd.jpg",
 		{
 		'label' => 'ppd',
-		'title' => N_("Choose a PPD File"),
+		'title' => N_("PPR: Add a Printer: Choose a PPD File"),
 		'dopage' => sub {
 				require "ppd_select.pl";
 
@@ -598,7 +673,6 @@ $addprn_wizard_table = [
 				print "<table class=\"ppd\"><tr><td>\n";
 
 				print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit();">', "\n";
-				#print "<option>\n";
 				my $lastgroup = "";
 				foreach my $item (ppd_list())
 					{
@@ -637,7 +711,7 @@ $addprn_wizard_table = [
 		# Name printer
 		#===========================================
 		{
-		'title' => N_("Add a Printer"),
+		'title' => N_("PPR: Add a Printer: Name the Printer"),
 		'picture' => "wiz-newprn.jpg",
 		'dopage' => sub {
 				print "<p>", H_("The printer must have a name.  The name may be up\n"
@@ -668,7 +742,7 @@ $addprn_wizard_table = [
 		# Assign a comment to the printer
 		#===========================================
 		{
-		'title' => _("Describe the Printer"),
+		'title' => _("PPR: Add a Printer: Describe the Printer"),
 		'picture' => "wiz-name.jpg",
 		'dopage' => sub {
 				print "<p>", html(sprintf(_("While short printer names are convenient in certain contexts,\n"
@@ -697,7 +771,7 @@ $addprn_wizard_table = [
 		# Additional information
 		#===========================================
 		{
-		'title' => N_("Additional Information"),
+		'title' => N_("PPR: Add a Printer: Additional Information"),
 		'picture' => "wiz-name.jpg",
 		'dopage' => sub {
 				print "<p>", H_("On this screen you may record additional information\n"

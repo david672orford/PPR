@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/ppd_select.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 November 2003.
+# Last modified 9 March 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -161,7 +161,7 @@ sub ppd_summary
 sub ppd_probe
 	{
 	my($interface, $address, $options) = @_;
-	opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppd", "query", $interface, $address, $options);
+	opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
 	my @list = ();
 	while(<RESULTS>)
 		{

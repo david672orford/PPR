@@ -40,7 +40,6 @@ my $UNTRANSLATED_CHARSET = "iso-8859-1";
 # Which charsets for which languages?
 my $CHARSET_DEFAULT = "iso-8859-1";
 my %CHARSET_EXCEPTIONS = (
-		"ru" => "koi8-r",
 		"ru_RU" => "koi8-r"
 		);
 
