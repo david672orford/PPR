@@ -165,7 +165,7 @@ static int handle_atend(const char *keyword, const char *argument, int argcount,
 	/* If there is an old (atend) in the header, we
 	   will ommit the warning. */
 	if( ! (*atend_flag & ATEND_WAS_DEFERED) )
-	    warning(WARNING_SEVERE, "Ignoring \"%s\" in trailer because no \"%s (atend)\" in header", keyword, keyword);
+	    warning(WARNING_SEVERE, _("Ignoring \"%s\" in trailer because no \"%s (atend)\" in header"), keyword, keyword);
 	return -1;
     	}
     return 0;
@@ -190,7 +190,7 @@ static int trap_atend(const char *keyword, const char *argument, int argcount, i
     	}
     if(trailer)
     	{
-    	warning(WARNING_SEVERE, "Keyword \"%s\" is not allowed in trailer, ignoring", keyword);
+    	warning(WARNING_SEVERE, _("Keyword \"%s\" is not allowed in trailer, ignoring"), keyword);
     	return -1;
     	}
     return 0;
@@ -201,7 +201,7 @@ static int trap_atend(const char *keyword, const char *argument, int argcount, i
 */
 static void warning_invalid_arg(const char *keyword, const char *argument)
     {
-    warning(WARNING_SEVERE, "Invalid \"%s\" argument \"%s\"", keyword, argument);
+    warning(WARNING_SEVERE, _("Invalid \"%s\" argument \"%s\""), keyword, argument);
     } /* end of warning_invalid_arg() */
 
 /*
@@ -295,7 +295,7 @@ static int header_trailer(gu_boolean trailer)
 		/* Warning for "%%Pages: (atend) 1" which RBIIp 703
 		   suggests is not allowed: */
 		if(tokens_count == 3 && strcmp(tokens[1], "atend") == 0)
-		    warning(WARNING_SEVERE, "Second argument to \"%%%%Pages:\" is invalid with (atend), ignoring it");
+		    warning(WARNING_SEVERE, _("Second argument to \"%%%%Pages:\" is invalid with (atend), ignoring it"));
 
 		/* As part of "%%Pages: (atend) 1" handling, we don't let
 		   handle_atend() consider no more than two tokens: */
@@ -315,11 +315,11 @@ static int header_trailer(gu_boolean trailer)
 
 		    /* If no numberic arguments: */
 		    if(cnt == 0)
-			warning(WARNING_SEVERE, "Comment \"%s\" is invalid", line);
+			warning(WARNING_SEVERE, _("Comment \"%s\" is invalid"), line);
 
 		    /* Deprecated in DSC 3.0 (RBIIp 703): */
 		    if(cnt == 2 && qentry.attr.DSClevel >= 3.0)
-		    	warning(WARNING_PEEVE, "2nd argument to \"%%%%Pages:\" is deprecated in DSC >= 3.0");
+		    	warning(WARNING_PEEVE, _("2nd argument to \"%%%%Pages:\" is deprecated in DSC >= 3.0"));
 		    }
 		return -1;      /* use only first */
 		}
@@ -336,12 +336,12 @@ static int header_trailer(gu_boolean trailer)
 		    qentry.attr.pageorder = PAGEORDER_SPECIAL;
 		else if(strcmp(tokens[1], "Ascending") == 0)
 		    {
-		    warning(WARNING_PEEVE, "\"%%%%PageOrder: Ascending\" should be \"%%%%PageOrder: Ascend\"");
+		    warning(WARNING_PEEVE, _("\"%%%%PageOrder: Ascending\" should be \"%%%%PageOrder: Ascend\""));
 		    qentry.attr.pageorder = PAGEORDER_ASCEND;
 		    }
 		else if(strcmp(tokens[1], "Descending") == 0)
 		    {
-		    warning(WARNING_PEEVE, "\"%%%%PageOrder: Descending\" should be \"%%%%PageOrder: Descend\"");
+		    warning(WARNING_PEEVE, _("\"%%%%PageOrder: Descending\" should be \"%%%%PageOrder: Descend\""));
 		    qentry.attr.pageorder = PAGEORDER_DESCEND;
 		    }
 		else
@@ -351,9 +351,9 @@ static int header_trailer(gu_boolean trailer)
 	    if(strncmp(line, "%%Page", 5) == 0)	/* detect things like */
 		{				/* %%PageBoundingBox: */
 		if(trailer)
-		    warning(WARNING_PEEVE, "Page level keyword \"%s\" in trailer", line);
+		    warning(WARNING_PEEVE, _("Page level keyword \"%s\" in trailer"), line);
 		else
-		    warning(WARNING_PEEVE, "Page level keyword \"%s\" in header comments", line);
+		    warning(WARNING_PEEVE, _("Page level keyword \"%s\" in header comments"), line);
 		return 0;                       /* but leave it in */
 		}
 	    if(strcmp(tokens[0], "%%ProofMode:") == 0)
@@ -491,7 +491,7 @@ static int header_trailer(gu_boolean trailer)
 		    else if(strcmp(tokens[x],"FileSystem") == 0)
 			qentry.attr.extensions |= EXTENSION_FileSystem;
 		    else
-			warning(WARNING_SEVERE, "Language extension \"%s\" is unrecognized", tokens[x]);
+			warning(WARNING_SEVERE, _("Language extension \"%s\" is unrecognized"), tokens[x]);
 		    }
 		fprintf(comments,"%s\n",line);  /* this is faster than */
 		return -1;                      /* returning zero */
@@ -677,7 +677,7 @@ static int header_trailer(gu_boolean trailer)
 		    else if(strcmp(tokens[1], "Binary") == 0)
 		    	qentry.attr.docdata = CODES_Binary;
 		    else
-			warning(WARNING_SEVERE, "Invalid \"%%%%DocumentData: %s\"", tokens[1]);
+			warning_invalid_arg(tokens[0], tokens[1]);
 
 		    found_DocumentData = TRUE;
 		    }
@@ -689,7 +689,7 @@ static int header_trailer(gu_boolean trailer)
 	       %%DocumentPaperSize:, %%DocumentPaperColor:, etc. */
 	    if(strncmp(line, "%%DocumentPaper", 15) == 0)
 	    	{
-		warning(WARNING_SEVERE, "Obsolete \"%s\" comment ignored", line);
+		warning(WARNING_SEVERE, _("Obsolete \"%s\" comment ignored"), line);
 		return 0;
 	    	}
 	    break;
@@ -729,7 +729,7 @@ static int header_trailer(gu_boolean trailer)
     if(tokens_count == 2 && strcmp(tokens[1], "atend") == 0)
 	{
 	if(trailer)
-	    warning(WARNING_SEVERE, "Keyword \"%s\" declared (atend) in trailer", tokens[0]);
+	    warning(WARNING_SEVERE, _("Keyword \"%s\" declared (atend) in trailer"), tokens[0]);
 	return -1;
 	}
 
@@ -790,7 +790,7 @@ static int pagelevel(void)
 	}
     else if(strncmp(line, "%%Paper", 7) == 0)
     	{
-    	warning(WARNING_SEVERE, "Obsolete \"%s\" comment ignored", line);
+    	warning(WARNING_SEVERE, _("Obsolete \"%s\" comment ignored"), line);
     	}
 
     return 0;
@@ -878,7 +878,7 @@ static void feature_spy(void)
 		** For the media size, we will remember it
 		** for use if there is no %%Media: comment.
 		*/
-		if(strcmp(tokens[1], "*PageSize") == 0 || strcmp(tokens[1],"*PageRegion") == 0)
+		if(strcmp(tokens[1], "*PageSize") == 0 || strcmp(tokens[1], "*PageRegion") == 0)
 		    {
 		    double width, height;
 		    gu_boolean envelope;
@@ -944,7 +944,7 @@ static void feature_spy_nonppd(void)
 		    	{
 			int x;
 			if((x = atoi(tokens[2])) < 1)
-			    warning(WARNING_SEVERE, "Ignoring NonPPD Feature NumCopies which requests \"%s\" copies", tokens[2]);
+			    warning(WARNING_SEVERE, _("Ignoring NonPPDFeature NumCopies which requests \"%s\" copies"), tokens[2]);
 			else
 			    qentry.opts.copies = x;
 		    	}
@@ -1115,7 +1115,7 @@ gu_boolean read_prolog(void)
 		{
 		if(!qentry.attr.prolog)		/* XV will be scolded here */
 		    {
-		    warning(WARNING_PEEVE, "No \"%%%%EndProlog\" before first \"%%%%Page:\", inserting one");
+		    warning(WARNING_PEEVE, _("No \"%%%%EndProlog\" before first \"%%%%Page:\", inserting one"));
 		    fputs("%%EndProlog\n", text);
 		    qentry.attr.prolog = TRUE;
 		    }
@@ -1159,7 +1159,7 @@ gu_boolean read_prolog(void)
 
 		if(!qentry.attr.prolog)		/* if no "%%EndProlog" seen, */
 		    {
-		    warning(WARNING_SEVERE, "No \"%%%%EndProlog\" before \"%%%%BeginSetup\", inserting one");
+		    warning(WARNING_SEVERE, _("No \"%%%%EndProlog\" before \"%%%%BeginSetup\", inserting one"));
 		    outermost_end(OUTERMOST_PROLOG);
 		    fputs("%%EndProlog\n", text);
 		    qentry.attr.prolog = TRUE;
@@ -1179,7 +1179,7 @@ gu_boolean read_prolog(void)
 		{
 		if(qentry.attr.prolog)	/* if already seen, */
 		    {
-		    warning(WARNING_SEVERE, "Extra \"%%%%EndProlog\"");
+		    warning(WARNING_SEVERE, _("Extra \"%%%%EndProlog\""));
 		    }
 		else
 		    {

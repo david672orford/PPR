@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--24 September 2002.
+1.50a2, 27 February 2002--27 September 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7876,4 +7876,7 @@ line was being parsed twice.
 
 * interfaces/lpr.c: changed "L" in control file to use the username instead
   of "somebody".  Changed "N" to use the job title rather than the queue id.
+
+* ppr/ppr_dscdoc.c: added support for "%%BeginNonPPDFeature: NumCopies X" to 
+  "-R copies"; marked all warnings for internationalization.
 
