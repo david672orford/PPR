@@ -54,12 +54,12 @@ install: $(ALL)
 	./install_inetd_conf.sh
 	./install_init_script.sh
 	#./install_alternatives.tcl
-	if [ -n "$(RPM_BUILD_ROOT)" ] \
+	if [ -z "$(RPM_BUILD_ROOT)" ] \
 		then \
 		./install_crontab.sh \
 		./fixup_obsolete.sh \
 		$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null \
-		$(HOMEDIR)/bin/ppr-index >/dev/null \
+		$(HOMEDIR)/bin/ppr-index >/dev/null
 		fi
 
 #=== Housekeeping ===========================================================

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2003.
+# Last modified 6 August 2003.
 #
 
 #
@@ -41,8 +41,9 @@
 # /sbin/chkconfig which can be used to automatically install and remove the
 # links from the rc?.d directories to the init.d directory.
 #
-# chkconfig: 2345 80 40
+# chkconfig: 2345 80 20
 # description: PPR is a print spooler for PostScript printers.
+# probe: true
 #
 
 # System configuration values in this section are filled in when the
@@ -132,31 +133,77 @@ do_stop ()
 	if [ -d /var/lock/subsys ]; then rm -f /var/lock/subsys/ppr; fi
 	}
 
+do_status_1()
+	{
+	proc=$1
+	important=$2
+	if [ -f $RUNDIR/$proc.pid ] && kill `cat $RUNDIR/$proc.pid` 2>/dev/null
+		then
+		echo "$proc up since" `ls -l $RUNDIR/$proc.pid | cut -c44-55`
+		else
+		if [ $important -ne 0 ]
+			then
+			echo "$proc down"
+			fi
+		fi
+	}
+
+do_status()
+	{
+	do_status_1 pprd 1
+	do_status_1 papd 0
+	if [ -r $CONFDIR/papsrv.conf ]
+		then
+		do_status_1 papsrv 1
+		else
+		do_status_1 papsrv 0
+		fi
+	do_status_1 lprsrv 0
+	do_status_1 olprsrv 0
+	}
+
 case "$1" in
 
 	start_msg)
-	echo "Start PPR spooler"
+	echo "Startint PPR spooler"
 	;;
 
 	stop_msg)
-	echo "Stopping PPR spooler"
-	;;
+		echo "Stopping PPR spooler"
+		;;
 
 	start)
-	do_start
-	;;
+		do_start
+		;;
 
 	stop)
-	do_stop
-	;;
+		do_stop
+		;;
 
-	restart)
-	do_stop
-	do_start
-	;;
+	status)
+		do_status
+		;;
+
+	restart|reload)
+		do_stop
+		do_start
+		;;
+
+	condrestart)
+		;;
+
+	probe)
+		if [ -r $RUNDIR/pprd.pid ]
+			then
+			if kill -0 `cat $RUNDIR/pprd.pid` 2>/dev/null
+				then
+				echo "restart"
+				fi
+			fi
+		;;
 
 	*)
-	echo "Usage: ppr {start, stop, restart}"
+	echo "Usage: ppr {start|stop|status|reload|restart|probe}"
 	exit 1
 	;;
 esac

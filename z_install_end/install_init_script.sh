@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 6 August 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -61,7 +61,7 @@ case "$INIT_BASE" in
 	# RedHat Linux
 	"/etc/rc.d" )
 		# Needs checking:
-		INIT_LIST="rc0.d/K40ppr rc1.d/K40ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K40ppr"
+		INIT_LIST="rc0.d/K20ppr rc1.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
 		;;
 
 	# Several systems

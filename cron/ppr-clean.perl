@@ -44,6 +44,7 @@ $TEMPDIR = "?";
 $opt_debug = 1;
 $opt_all_removable = 0;
 
+# This is a chatty wrapper around unlink().
 sub remove
 	{
 	$file = shift;
@@ -52,6 +53,8 @@ sub remove
 		{ print "Can't remove \"$file\", $!\n" }
 	}
 
+# The file named in the first argument is removed if it is older than the 
+# number of days stated in the second.
 sub remove_if_old
 	{
 	$file = shift;
@@ -60,6 +63,8 @@ sub remove_if_old
 	unlink($file) if(-M $file > $reference_age);
 	}
 
+# This calls either remove_if_old() or just remove(), depending
+# on whether --all-removable was used.
 sub remove_switch
 	{
 	my $file = shift;
@@ -74,6 +79,8 @@ sub remove_switch
 		}
 	}
 
+# This calls remove_switch() on all files in a directory that match
+# an (optional) regular expression.
 sub sweepdir
 	{
 	$dir = shift;
@@ -177,7 +184,7 @@ if($opt_all_removable)
 	# Remove pprd's FIFO.
 	unlink("$VAR_SPOOL_PPR/PIPE");
 
-	# Remove any linger run state files.
+	# Remove any lingering run state files.
 	sweepdir("$VAR_SPOOL_PPR/run", undef, 0.0);
 
 	# Remove all of the indexes.
@@ -185,9 +192,9 @@ if($opt_all_removable)
 
 	# Remove all of the converted PPD files.
 	#system("$HOMEDIR/bin/ppr2samba --remove");
-	#system("$HOMEDIR/bin/ppr-win95drv --remove");
-	#system("$HOMEDIR/bin/ppr-windrv --remove");
-	#system("$HOMEDIR/bin/ppr-macosdrv --remove");
+	#system("$HOMEDIR/bin/ppr2win95drv --remove");
+	#system("$HOMEDIR/bin/ppr2windrv --remove");
+	#system("$HOMEDIR/bin/ppr2macosdrv --remove");
 
 	exit 0;
 	}

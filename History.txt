@@ -8675,6 +8675,10 @@ Bug Fixes
 
 * editps/Makefile: fixed Makefile to install Qt_2.2.0.
 
+* z_install_end/install_init_scripts.sh,ppr.sh: changed Linux Initscripts 
+  stop number from 40 to 20 to conform guidelines in Initscripts 
+  documentation.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
@@ -8708,6 +8712,9 @@ Misc. Enhancements
 
 * ppad/ppad_media.c: added code to create media database if it doesn't 
   already exist.
+
+* z_install_end/ppr.sh: added support for additional commands as recommended
+  by Linux Initscripts documentation.
 
 Internet Printing Protocol Work
 

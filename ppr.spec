@@ -126,7 +126,7 @@ rm -rf $RPM_BUILD_ROOT
 #============================================================================
 %pre
 
-echo "pre of %{name}-%{version}-%{release}: $1"
+echo "pre of %{name}-%{version}-%{release}: count=$1"
 
 # If this is a first time install, and not an upgrade,
 if [ $1 -lt 2 ]
@@ -145,13 +145,13 @@ if [ $1 -lt 2 ]
 #============================================================================
 %post
 
-echo "post of %{name}-%{version}-%{release}: $1"
+echo "post of %{name}-%{version}-%{release}: count=$1"
 
 # Sample empty files are not of value.
-rm -f /etc/ppr/acl/*.rpmnew
+#rm -f /etc/ppr/acl/*.rpmnew
 
 # These will just be copies of the .sample files.  Nix them.
-rm -f /etc/ppr/*.rpmnew
+#rm -f /etc/ppr/*.rpmnew
 
 # Initialize the binary media database.
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
@@ -187,7 +187,7 @@ if [ $1 -lt 2 ]
 #============================================================================
 %preun
 
-echo "preun of %{name}-%{version}-%{release}: $1"
+echo "preun of %{name}-%{version}-%{release}: count=$1"
 
 # Stop the PPR daemons while the stop script is still available.
 /etc/rc.d/init.d/ppr stop
@@ -216,7 +216,7 @@ if [ $1 -lt 2 ]
 #============================================================================
 %postun
 
-echo "postun of %{name}-%{version}-%{release}: $1"
+echo "postun of %{name}-%{version}-%{release}: count=$1"
 
 # If this is an actual removal and not an upgrade,
 if [ $1 -lt 1 ]
