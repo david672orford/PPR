@@ -27,8 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-set about_text "PPR Popup 1.50a1
-22 February 2002
+set about_text "PPR Popup 1.50a2
+28 March 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -534,14 +534,14 @@ proc server_authcheck {file} {
 # This is called by a handler bound to mouse motion.
 proc entropy {entropy} {
     global ppr_magic_cookie_seed
-    puts "\$entropy = \"$entropy\""
+    #puts "\$entropy = \"$entropy\""
 
     # Add this mouse motion (or whatever) to the seed for the next magic cookie.
     append ppr_magic_cookie_seed $entropy
 
     # If we have as much entry as we think we need, top intercepting mouse
     # motion events, it is a waste of time.
-    puts "Seed size: [string length $ppr_magic_cookie_seed]"
+    #puts "Seed size: [string length $ppr_magic_cookie_seed]"
     if {[string length $ppr_magic_cookie_seed] >= 256} {
 	bind all <Motion> {}
 	bind all <KeyPress> {}

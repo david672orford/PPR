@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 January 2002.
+# Last modified 28 March 2002.
 #
 
 include ../makeprogs/global.mk
@@ -34,6 +34,7 @@ include ../makeprogs/global.mk
 
 BUILT_PROGS=pprpopup.tcl
 PROGS=pprpopup_loader.tcl pprpopup.tcl
+IMAGES=splashscreen.tid icon_frown.tid icon_stopsign.tid
 
 #=== Build ==================================================================
 
@@ -44,6 +45,13 @@ pprpopup.tcl: pprpopup_main.tcl browser.itk urlfetch.itk
 	cat urlfetch.itk browser.itk md5pure.tcl pprpopup_main.tcl \
 		| sed -e '/^[ 	]*#/d' -e 's/^[ 	][ 	]*//' -e '/^$$/d' \
 		>>pprpopup.tcl
+
+.SUFFIXES: .fig .tid
+
+images: $(IMAGES)
+
+.fig.tid:
+	./fig2tid $*
 
 #=== Install ================================================================
 
@@ -59,6 +67,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT_PROGS) *.gif *.gif.base64
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT_PROGS)
 
 # end of file
