@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--10 May 2002.
+1.50a2, 27 February 2002--13 May 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7691,9 +7691,6 @@ line was being parsed twice.
 * Changed pprdrv so that "Reason:" lines don't have parentheses around them
   in the queue file and changed ppop to print them itself.
 
-* nonppr_vendors/hp_ppd/: commented out "*HPScalePatterns" since it breaks
-  the Adobe version of the MS-Windows PostScript driver.
-
 * Added www/window_open.cgi.perl.
 
 * printdesk/: converted to use PPR.pm instead of paths.ph, fixing bugs
@@ -7740,5 +7737,9 @@ line was being parsed twice.
   specification to "transitional" since they use HTML 4.01 features that are
   deprecated since their effect can now be achived with CSS.
 
+* nonppr_vendors/ppd_hp/, MIT licensed files: commented out N-Up and watermark
+  stuff, removed *ScalePatterns code since it doesn't work on many versions of
+  the MS-Windows PostScript drivers, renamed "HP C LaserJet 4500-PS" to "HP
+  Color LaserJet 4500".
 
 

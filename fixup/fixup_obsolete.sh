@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 April 2002.
+# Last modified 13 May 2002.
 #
 
 HOMEDIR="?"
@@ -161,6 +161,7 @@ outdated $HOMEDIR/lib/login_ppr.sh
 outdated $HOMEDIR/lib/login_ppr.csh
 #outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
 outdated $HOMEDIR/cgi-bin/df_img.cgi
+#outdated "$SHAREDIR/PPDFiles/HP C LaserJet 4500-PS"
 
 echo "Done."
 echo

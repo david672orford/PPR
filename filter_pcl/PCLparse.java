@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_pcl/PCLparse.java
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 10 September 2001.
+** Last modified 14 May 2002.
 */
 
 import java.io.*;
@@ -172,37 +172,37 @@ class PCLparse
 	    case 0x266b47:
 	    	debug("line termination mode");
 	    	break;
-	    case 0x266c58:
+	    case 0x266c58:			// ESC & l X
 	    	debug("# copies");
 	    	break;
-	    case 0x266c53:
+	    case 0x266c53:			// ESC & l
 	    	debug("simplex/duplex");
 	    	break;
-	    case 0x266c55:
+	    case 0x266c55:			// ESC & l
 	    	debug("long edge offset");
 	    	break;
-	    case 0x266c5a:
+	    case 0x266c5a:			// ESC & l
 	    	debug("short edge offset");
 		break;
-	    case 0x266147:
+	    case 0x266147:			// ESC & a G
 	    	debug("page size selection");
 	    	break;
-	    case 0x266c54:
+	    case 0x266c54:			// ESC & l
 	    	debug("job separation");
 	    	break;
-	    case 0x266cc47:
+	    case 0x266cc47:			// ESC & l
 	    	debug("output bin");
 	    	break;
 	    case 0x267544:
 	    	debug("units of measure");
 	    	break;
-	    case 0x266c48:
+	    case 0x266c48:			// ESC & l
 	    	debug("paper source");
 	    	break;
-	    case 0x266c41:
+	    case 0x266c41:			// ESC & l A
 	    	debug("page size");
 	    	break;
-            case 0x266c4f:
+            case 0x266c4f:			// ESC & l
             	debug("orientation");
 		if(value_thousandths >= 0 && value_thousandths < 4000 && (value_thousandths % 1000) == 0)
 		    out.set_orientation(value_thousandths / 1000);
@@ -212,13 +212,13 @@ class PCLparse
             case 0x266150:
             	debug("print direction");
             	break;
-            case 0x266c45:
+            case 0x266c45:			// ESC & l
             	debug("top margin, ");
 		top_margin = (line_spacing * value_thousandths / 1000);
 		debug(top_margin); debug("/7200");
 		out.ymoveto(top_margin);
             	break;
-            case 0x266c46:
+            case 0x266c46:			// ESC & l
             	debug("text length");
             	break;
             case 0x26614c:
@@ -233,14 +233,14 @@ class PCLparse
             case 0x266b48:
             	debug("horizontal motion index");
             	break;
-            case 0x266c4c:
+            case 0x266c4c:			// ESC & l
             	debug("perforation skip");
             	break;
-            case 0x266c43:
+            case 0x266c43:			// ESC & l
             	debug("vertical motion index");
 		line_spacing = (value_thousandths * 3 / 20);	// rounding problems?
             	break;
-            case 0x266c44:
+            case 0x266c44:			// ESC & l
             	debug("line spacing");
 		line_spacing = (7200000 / value_thousandths);	// "invalid" values work!!!
             	break;
@@ -366,16 +366,30 @@ class PCLparse
 	    case 0x266440:
 	    	debug("disable underline");
 	    	break;
-	    case 0x267058:		// !!!
+	    case 0x267058:			// !!!
 	    	debug("transparent print data");
 	    	break;
-
-
 	    case 0x267343:
 	    	debug("end of line wrap");
 	    	break;
-
-
+	    case 0x2a7242:			// ESC * r B
+		debug("end raster graphics");
+		break;
+	    case 0x2a7452:			// ESC * t R
+		debug("set resolution");
+		break;
+	    case 0x2a7241:			// ESC * r A
+		debug("start raster graphics");
+		break;
+	    case 0x2a624d:			// ESC * b M
+		debug("set compression method");
+		break;
+	    case 0x2a6257:			// ESC * b W
+		debug("raster row");
+		break;
+	    case 0x2a7246:			// ESC * r F
+		debug("raster graphics orientation");
+		break;
 
 	    }
 
