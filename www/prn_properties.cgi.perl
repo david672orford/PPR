@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 August 2001.
+# Last modified 30 August 2001.
 #
 
 use lib "?";
@@ -129,8 +129,11 @@ my $tabbed_table = [
 	'tabname' => N_("PPD"),
 	'dopage' => sub {
 		my $checked_ppd = cgi_data_move('ppd', undef);
-		print '<p><span class="label">', H_("PPD file:"), "</span><br>\n";
 
+		print "<span class=\"label\">", H_("PPD file:"), "</span>\n";
+
+		print "<table class=\"section\"><tr><td>\n";
+		
 		# Read the PPD File list (and unfortunately "." and "..") into
 		# the array @ppd_list.
 		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
@@ -149,6 +152,20 @@ my $tabbed_table = [
 		    print "<option value=", html_value($ppd), ">", html($ppd), "\n";
 		    }
 		print "</select>\n";
+
+		print "</td><td>\n";
+
+		my @trivia = ppd_trivia($checked_ppd);
+		print "<table class=\"lines\" cellspacing=0>\n";
+		print "<tr><th colspan=2>", html(sprintf(_("Features of %s"), $checked_ppd)), "</th></tr>\n";
+		print "<tr><th>", H_("PPD File Version"), "</th><td>", html($trivia[0]), "</td></tr>\n";
+		print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($trivia[1]), "</td></tr>\n";
+		print "<tr><th>", H_("PostScript Version"), "</th><td>", html($trivia[2]), "</td></tr>\n";
+		print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($trivia[3]), "</td></tr>\n";
+		print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($trivia[4]), "</td></tr>\n";
+		print "</table>\n";
+
+		print "</td></tr></table>\n";
 		},
 	'onleave' => sub {
 		if($data{ppd} eq '')
@@ -183,11 +200,11 @@ my $tabbed_table = [
 		my @rip_list;
 		if(! defined $ppdfile)
 		    {
-		    print "<p>", _("No PPD file selected in [PPD] pane."), "</p>\n";
+		    print "<p>", H_("No PPD file selected in [PPD] pane."), "</p>\n";
 		    }
 		elsif(scalar(@rip_list = ppd_rip($ppdfile)) == 0)
 		    {
-		    print "<p>", _("The PPD file does not call for a raster image processor."), "</p>\n";
+		    print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
 		    }
 		else
 		    {
@@ -698,6 +715,55 @@ sub ppd_rip
 	}
 
     return @answer;
+    }
+
+#
+# This function gets interesting information from the PPD file.
+#
+sub ppd_trivia
+    {
+    require "readppd.pl";
+    my $filename = shift;
+
+    my $line;
+    my $fileversion = "?";
+    my $languagelevel = 1;
+    my $psversion = "?";
+    my $fonts = 0;
+    my $ttrasterizer = "None";
+
+    ppd_open($filename);
+
+    while(defined($line = ppd_readline()))
+	{
+	if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
+	    {
+	    $fileversion = $1;
+	    next;
+	    }
+	if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
+	    {
+	    $languagelevel = $1;
+	    next;
+	    }
+	if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
+	    {
+	    $psversion = $1;
+	    next;
+	    }
+	if($line =~ /^\*Font\s+/)
+	    {
+	    $fonts++;
+	    next;
+	    }
+	if($line =~ /^\*TTRasterizer:\s*(\S+)/)
+	    {
+	    $ttrasterizer = $1;
+	    next;
+	    }
+	}
+
+    return ($fileversion, $languagelevel, $psversion, $fonts, $ttrasterizer);
     }
 
 #=====================================================================

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 29 August 2001.
+** Last modified 30 August 2001.
 */
 
 BODY {	background: #C0C0C0;
@@ -39,7 +39,6 @@ TABLE.tabpage TD {
 	font-size: 10pt;
 	font-weight: normal;
 	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
-	height: 350px;			/* Mozilla 0.7 workaround */
 	}
 
 TABLE.tabpage P {
@@ -105,6 +104,29 @@ SPAN.section {
 	border-style: solid;
 	padding-left: 1ex;  
 	padding-right: 1ex; 
+	}
+
+TABLE.section TD {
+	padding-right: 10pt;
+	text-align: left;
+	vertical-align: top;
+	}
+
+/* This is for real tables with fine rules. */
+TABLE.lines {
+	background-color: white;
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+	padding: 2px;
+	}
+TABLE.lines TH, TABLE.lines TD {
+	white-space: nowrap;
+	text-align: 1px;
+	padding: 3pt;
+	border-width: thin;
+	border-style: solid;
+	border-color: black;
 	}
 
 /* end of file */

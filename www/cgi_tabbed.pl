@@ -240,7 +240,7 @@ print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
 <tr align=$align valign=$valign>
 <td>
-<img src="../images/pixel-clear.png" width=0 height=400 align="left">
+<img src="../images/pixel-clear.png" width=1 height=400 align="left">
 tableStart
 
 # Run the code to generate the current page.
