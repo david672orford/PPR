@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 November 2002.
+** Last modified 5 December 2002.
 */
 
 /*
@@ -391,7 +391,7 @@ void read_PPD_file(const char *ppd_file_name)
 	{
 	printer.RIP.name = "ppr-gs";
 	printer.RIP.output_language = "pcl";
-	gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=cups -r%d cupsfilter=%s", default_resolution, cups_filter);
+	gu_asprintf(&printer.RIP.options_storage, "cups=%s -r%d", cups_filter, default_resolution);
 	}
 
     if(cups_filter)
