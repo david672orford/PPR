@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 December 2004.
+** Last modified 11 December 2004.
 */
 
 /*! \file */
@@ -762,29 +762,48 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 		/* prepend the "http://host:port" stuff to URLs. */
 		if(attr->value_tag == IPP_TAG_URI)
 			{
-			DEBUG(("        \"%s\" + \"%s\"", ipp->root, p->string.text));
-			len = strlen(ipp->root) + strlen(p->string.text);
-			ipp_put_ss(ipp, len);
-			ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
-			ipp_put_bytes(ipp, p->string.text, strlen(p->string.text));
-			continue;
+			if(attr->template)
+				{
+				char temp[64];
+
+				if(strstr(attr->template, "%d"))
+					gu_snprintf(temp, sizeof(temp), attr->template, p->integer);
+				else
+					gu_snprintf(temp, sizeof(temp), attr->template, p->string.text);
+
+				DEBUG(("    \"%s\" + \"%s\"", ipp->root, temp));
+				len = strlen(ipp->root) + strlen(temp);
+				ipp_put_ss(ipp, len);
+				ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
+				ipp_put_bytes(ipp, temp, strlen(temp));
+				continue;
+				}
+			else if(p->string.text[0] == '/')
+				{
+				DEBUG(("    \"%s\" + \"%s\"", ipp->root, p->string.text));
+				len = strlen(ipp->root) + strlen(p->string.text);
+				ipp_put_ss(ipp, len);
+				ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
+				ipp_put_bytes(ipp, p->string.text, strlen(p->string.text));
+				continue;
+				}
 			}
 
 		switch(tag_simplify(attr->value_tag))
 			{
 			case IPP_TAG_INTEGER:
-				DEBUG(("        %d", p->integer));
+				DEBUG(("    %d", p->integer));
 				ipp_put_ss(ipp, 4);
 				ipp_put_si(ipp, p->integer);
 				break;
 			case IPP_TAG_STRING:
-				DEBUG(("        \"%s\"", p->string.text));
+				DEBUG(("    \"%s\"", p->string.text));
 				len = strlen(p->string.text);
 				ipp_put_ss(ipp, len);
 				ipp_put_bytes(ipp, p->string.text, len);
 				break;
 			case IPP_TAG_BOOLEAN:
-				DEBUG(("        %s", p->boolean ? "TRUE" : "FALSE"));
+				DEBUG(("    %s", p->boolean ? "TRUE" : "FALSE"));
 				ipp_put_ss(ipp, 1);
 				ipp_put_sb(ipp, p->boolean ? 1 : 0);
 				break;
@@ -836,7 +855,10 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 			if(p->value_tag == IPP_TAG_END)
 				{
 				if(p->next)
+					{
 					ipp_put_byte(ipp, IPP_TAG_PRINTER);
+					DEBUG(("-------------------------------------------------"));
+					}
 				}
 			else
 				ipp_put_attr(ipp, p);
@@ -847,13 +869,16 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 		{
 		DEBUG(("encoding job tags"));
 		ipp_put_byte(ipp, IPP_TAG_JOB);
+
 		for( ; p; p = p->next)
 			{
-			DEBUG((" job:"));
 			if(p->value_tag == IPP_TAG_END)
 				{
 				if(p->next)
+					{
 					ipp_put_byte(ipp, IPP_TAG_JOB);
+					DEBUG(("-------------------------------------------------"));
+					}
 				}
 			else
 				ipp_put_attr(ipp, p);
@@ -886,6 +911,7 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
 	ap->group_tag = 0;				/* consider this unused */
 	ap->value_tag = tag;
 	ap->name = (char*)name;
+	ap->template = NULL;
 	ap->free_name = FALSE;			/* we are probably only borrowing the name */
 	ap->free_values = FALSE;		/* we are probably borrowing these too */
 	ap->num_values = num_values;
@@ -989,6 +1015,28 @@ void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], cons
 	va_end(va);
 
 	ap->free_values = TRUE;		/* copy belongs to object */
+	}
+
+/** add a very basic formatted string to the IPP response
+*/
+void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], const char template[], ...)
+	{
+	ipp_attribute_t *ap;
+	va_list va;
+
+	if(tag_simplify(tag) != IPP_TAG_STRING)
+		gu_Throw("ipp_add_printf(): %s is a %s", name, tag_to_str(tag));
+
+	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+
+	ap->template = template;
+
+	va_start(va, template);
+	if(strstr(template, "%d"))
+		ap->values[0].integer = va_arg(va, int);
+	else
+		ap->values[0].string.text = va_arg(va, char*);
+	va_end(va);
 	}
 
 /** add a boolean  to the IPP response 

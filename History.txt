@@ -9389,7 +9389,7 @@ no final tarball was released.
 * added uprint/uprint-lpc.c.
 
 
-1.53, 5 October 2004--9 December 2004
+1.53, 5 October 2004--11 December 2004
 
 * z_install_end/ppr.sh: added code it bail out if PPR is no longer installed.
   This is needed because initscripts are considered configuration files in
@@ -9420,6 +9420,9 @@ no final tarball was released.
 * papsrv/papsrv_query.c, papd/papd_query.c: fixed handling of %%?End
   without %%?Begin.
 
+* ppr/ppr_infile.c: added recognition of JPEG Exif magic number, removed references
+  to JFIF from the messages.
+
 * Makefile cleanup using $^.  Most OBJ= constructs were eliminated.  This
   means that some old versions of Make will not work.
 
@@ -9427,9 +9430,16 @@ no final tarball was released.
   This supposedly happens automatically in Perl 5.6 and later, but doesn't
   seem to work until 5.8.x.
 
+* libppr/ipp_utils.c, include/ipp_constants.h, include/ipp_utils.h, pprd/pprd_ipp.c,
+  ipp/ipp.c: greatly expanded IPP support.
+
+* www/ppr-httpd.perl: added --inetd-port, --ipp; fixed --root-xlate to remove the
+  translated root drirectory from SCRIPT_NAME when running CGI scripts.
+  
+
 TODO
 
-* Fix Debian package.
+* Finish Debian package.
 
 * Make a stripped-down GtkEmbed or Mozilla chrome Mozilla browser
 

@@ -33,7 +33,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 30 September 2004.
+*% which was last revised 8 December 2004.
 *%
 #endif
 
@@ -106,10 +106,10 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
+*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=2880x720sw,Dither=Adaptive
-*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive
+*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive
 #endif
 
 *% ===== General Information =====
@@ -263,10 +263,16 @@
 
 *OpenGroup: PrintQuality
 
+*OpenUI *Cluster: PickOne
+*OrderDependency 20 AnySetup *Cluster
+*Cluster Photo: "<< /IjsParams (ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive) >> setpagedevice"
+*CloseUI *Cluster
+
+
 *OpenUI *Quality/Quality: PickOne
 *OrderDependency 20 AnySetup *Quality
 *DefaultQuality: 360dpi
-*Quality 360dpi: "<< /IjsParams (Quality=360dpi) >> setpagedevice"
+*Quality 360dpi:       "<< /IjsParams (Quality=360dpi) >> setpagedevice"
 *Quality 1440x1440hq2: "<< /IjsParams (Quality=1440x1440hq2) >> setpagedevice"
 *CloseUI: *Quality
 

@@ -34,11 +34,6 @@
 These IPP constant names are from the CUPS documentation.  The values are from
 RFC 2565.  The RFC 2565 names are noted in the comments.
 
-The structures too are intentionaly similiar to those used by CUPS.  This is to
-make the code easier to understand by those who are already programming using
-the CUPS API.  It also saved me the trouble of designing that part of the 
-API.  :-)
-
 */
 
 /* RFC 2565 section 3.7.1 Delimiter Tags */
@@ -109,8 +104,13 @@ API.  :-)
 #define CUPS_GET_PPDS 0x400c
 #define CUPS_MOVE_JOB 0x400d
 
-/* IPP status codes */
+/* IPP request result codes */
 #define IPP_OK 0x0000
 #define IPP_NOT_FOUND 0x0406
+
+/* IPP printer-state codes */
+#define IPP_PRINTER_IDLE 3
+#define IPP_PRINTER_PROCESSING 4
+#define IPP_PRINTER_STOPPED 5
 
 /* end of file */

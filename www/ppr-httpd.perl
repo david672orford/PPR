@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 11 December 2004.
 #
 
 use lib "?";
@@ -164,19 +164,32 @@ umask(002);
 #===========================================================
 my $standalone_port = undef;
 my $root_xlate = undef;
-my $assume_port = 15010;
+my $port = 15010;
+my $ipp = undef;
+
 if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
 	if(!Getopt::Long::GetOptions(
 			"standalone-port=s" => \$standalone_port,
 			"root-xlate=s" => \$root_xlate,
-			"assume-port" => \$assume_port
+			"inetd-port=s" => \$port,
+			"ipp" => \$ipp
 			))
 		{
-		print STDERR "Usage: ppr-httpd [--standalone-port=<port>] [--root-xlate=<path>]\n";
+		print STDERR "Usage: ppr-httpd [--standalone-port=<port>] [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
 		exit 1;
 		}
+	}
+
+if(defined $ipp)
+	{
+	$root_xlate = "cgi-bin/ipp";
+	$port = 631;
+	}
+if(defined $standalone_port)
+	{
+	$port = $standalone_port;
 	}
 
 #===========================================================
@@ -496,9 +509,21 @@ while(1)
 			{
 			if($request_method eq "GET" || $request_method eq "POST")
 				{
+				my($script_basename, $path_info) = ($1, $2);
+
+				my $script_name;
+				if(defined $root_xlate)
+					{
+					$script_name = "/";
+					}
+				else
+					{
+					$script_name = "/cgi-bin/$script_basename";
+					}
+
 				$resp_header_connection =
 					do_cgi($request_method, $request_uri, \%request_headers,
-						"cgi-bin", $1, $2, $query,
+						$script_name, $script_basename, $path_info, $query,
 						$resp_header_connection, $resp_headers_general,
 						$request_time,
 						$request_version_major, $request_version_minor);
@@ -891,15 +916,15 @@ sub do_get
 #=========================================================================
 sub do_cgi
 	{
-	my($method, $request_uri, $request_headers, $http_cgi_dir, $path, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
-	my $protection_domain = "http://$request_headers->{HOST}/$http_cgi_dir/";
+	my($method, $request_uri, $request_headers, $script_name, $script_basename, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
+	my $protection_domain = "http://$request_headers->{HOST}/cgi-bin/";
 	my $stale = 0;
 	my $auth_info = undef;
 
-	if(! -f "$CGI_BIN/$path")
-		{ die("404 The CGI program \"$path\" is not found.\n") }
+	if(! -f "$CGI_BIN/$script_basename")
+		{ die("404 The CGI program \"$script_basename\" is not found.\n") }
 	if(! -x _)
-		{ die("403 The CGI program \"$path\" is not executable.\n") }
+		{ die("403 The CGI program \"$script_basename\" is not executable.\n") }
 
 	$ENV{REMOTE_USER} = "";
 
@@ -935,7 +960,7 @@ sub do_cgi
 	#	($ENV{AUTH_TYPE}, $ENV{REMOTE_USER}) = ("None", "ppranon");
 	#	}
 
-	print STDERR "Executing CGI program \"$CGI_BIN/$path\".\n";
+	print STDERR "Executing CGI program \"$CGI_BIN/$script_basename\".\n";
 
 	# Create two anonymous pipes, one to send data to the CGI script,
 	# the other to receive data.
@@ -968,19 +993,19 @@ sub do_cgi
 				$ENV{SERVER_NAME} =~ s/:\d+$//;
 			$ENV{GATEWAY_INTERFACE} = "CGI/1.1";
 			$ENV{SERVER_PROTOCOL} = "HTTP/$request_version_major.$request_version_minor";
-			$ENV{SERVER_PORT} = ($request_headers->{HOST} =~ /:(\d+)$/) ? $1 : $assume_port;
+			$ENV{SERVER_PORT} = ($request_headers->{HOST} =~ /:(\d+)$/) ? $1 : $port;
 			$ENV{REQUEST_METHOD} = $method;
 			if($path_info ne "")
 				{
 				$ENV{PATH_INFO} = $path_info;
-				$ENV{PATH_TRANSLATED} = "$WEBROOT$path_info";
+				$ENV{PATH_TRANSLATED} = "$WEBROOT$path_info";	# ??? can this be right ???
 				}
 			else
 				{
 				delete $ENV{PATH_INFO};
 				delete $ENV{PATH_TRANSLATED};
 				}
-			$ENV{SCRIPT_NAME} = "/$http_cgi_dir/$path";
+			$ENV{SCRIPT_NAME} = $script_name;
 			$ENV{QUERY_STRING} = $query;
 			delete $ENV{REMOTE_HOST};					# not implemented
 			delete $ENV{REMOTE_IDENT};					# not implemented
@@ -1008,7 +1033,7 @@ sub do_cgi
 				}
 
 			# Run the CGI script.
-			exec("$CGI_BIN/$path") || die;
+			exec("$CGI_BIN/$script_basename") || die;
 			} ;
 
 		# Catch exceptions

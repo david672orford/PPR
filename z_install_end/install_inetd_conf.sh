@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 February 2004.
+# Last modified 11 December 2004.
 #
 
 #
@@ -208,6 +208,18 @@ service ppradmin
 		disable = no
 }
 
+# IPP server
+service ppradmin
+{
+		socket_type		= stream
+		port			= ipp
+		wait			= no
+		user			= $USER_PPRWWW
+		server			= $HOMEDIR/lib/ppr-httpd --ipp
+		instances		= 50
+		disable = yes
+}
+
 # end of file
 END
 	}
@@ -267,6 +279,9 @@ add_service printer 515
 
 # Add the PPR web managment port.
 add_service ppradmin 15010
+
+# Add the Internet Printing Protocol
+add_servce ipp 631
 
 #==========================================================================
 # If we are using Xinetd, things are pretty easy.
@@ -347,6 +362,7 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 
 add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
+add_inetd ipp ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's IPP server"
 
 send_hup inetd
 

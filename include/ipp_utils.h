@@ -28,6 +28,13 @@
 ** Last modified 10 December 2004.
 */
 
+/*! \file
+
+This file defines an IPP server API.  It is loosly based on the CUPS IPP 
+client API.
+
+*/
+
 /* This union holds any kind of IPP value. */
 typedef union
 	{
@@ -53,6 +60,7 @@ typedef struct ipp_attribute_s
 	char *name;
 	gu_boolean free_name;
 	gu_boolean free_values;
+	const char *template;
 	int num_values;
 	ipp_value_t values[1];
 	} ipp_attribute_t;
@@ -122,6 +130,11 @@ void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[], gu_boolean free_value);
 void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[], gu_boolean free_values);
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
+#ifdef __GNUC__
+__attribute__ (( format (printf, 5, 6) ))
+#endif
+;
+void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], const char template[], ...)
 #ifdef __GNUC__
 __attribute__ (( format (printf, 5, 6) ))
 #endif

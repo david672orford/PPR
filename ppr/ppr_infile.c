@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 8 December 2004.
 */
 
 /*
@@ -238,7 +238,7 @@ struct FILTER filters[]=
 {IN_TYPE_PDF,			NULL,							FALSE,	"pdf",					N_("file is in Adobe Portable Document Format"),		N_("the Adobe Portable Document Format")},
 
 /* Graphics formats: */
-{IN_TYPE_JPEG,			"image/jpeg",					FALSE,	"jpeg",					N_("file is in JPEG File Interchange Format"),			N_("JPEG (JFIF) pictures")},
+{IN_TYPE_JPEG,			"image/jpeg",					FALSE,	"jpeg",					N_("file is a JPEG compressed picture"),				N_("JPEG pictures")},
 {IN_TYPE_GIF,			"image/gif",					FALSE,	"gif",					N_("file is a GIF compressed picture"),					N_("GIF pictures")},
 {IN_TYPE_SUNRAS,		NULL,							FALSE,	"sunras",				N_("file is in Sun raster format"),						N_("Sun raster files")},
 {IN_TYPE_PLOT,			NULL,							FALSE,	"plot",					N_("file is in Berkeley plot library format"),			N_("Berkeley Plot files")},
@@ -1258,7 +1258,11 @@ static int analyze_input(int *skip_size)
 	/*
 	** Test for JFIF (JPEG) files.
 	*/
-	if(in_left > 10 && in_ptr[0] == 0xFF && in_ptr[1] == 0xD8 && strncmp((char*)&in_ptr[6], "JFIF", 4) == 0)
+	if(in_left > 10 && in_ptr[0] == 0xFF && in_ptr[1] == 0xD8 
+		&& (strncmp((char*)&in_ptr[6], "JFIF", 4) == 0
+			|| strncmp((char*)&in_ptr[6], "Exif", 4) == 0
+			)
+		)
 		return IN_TYPE_JPEG;
 
 	/*

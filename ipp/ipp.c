@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 December 2004.
+** Last modified 11 December 2004.
 */
 
 #include "before_system.h"
@@ -62,7 +62,7 @@
 #endif
 
 /* Extract the URI of the requested printer from the request. */
-static const char *printer_uri(struct IPP *ipp)
+static const char *get_printer_uri(struct IPP *ipp)
 	{
 	ipp_attribute_t *p;
 	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
@@ -73,29 +73,38 @@ static const char *printer_uri(struct IPP *ipp)
 /* Extract the URI of the requested printer from the request,
  * but return only the last path element.
  */ 
-static const char *printer_uri_basename(struct IPP *ipp)
+static const char *get_printer_uri_basename(struct IPP *ipp)
 	{
-	const char *p = printer_uri(ipp);
+	const char *p = get_printer_uri(ipp);
 	if(p && (p = strrchr(p, '/')))
 		return p + 1;
 	return NULL;
 	}
 
+static const char *get_username(struct IPP *ipp)
+	{
+	ipp_attribute_t *p;
+	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name")))
+		gu_Throw("no requesting-user-name");
+	return p->values[0].string.text;
+	}
+
 static void do_print_job(struct IPP *ipp)
 	{
-	const char *printer;
-	pid_t pid;
+	const char *printer, *username;
 	int toppr_fds[2] = {-1, -1};
 	int jobid_fds[2] = {-1, -1};
-	int read_len, write_len;
-	char *p;
-	char jobid_buf[10];
-	int jobid;
 		
-	if(!(printer = printer_uri_basename(ipp)))
-		gu_Throw("no printer name");
+	printer = get_printer_uri_basename(ipp);
+	username = get_username(ipp);
 
 	gu_Try {
+		pid_t pid;
+		int read_len, write_len;
+		char *p;
+		char jobid_buf[10];
+		int jobid;
+
 		if(pipe(toppr_fds) == -1)
 			gu_Throw("pipe() failed");
 	
@@ -120,7 +129,7 @@ static void do_print_job(struct IPP *ipp)
 
 			snprintf(for_whom, sizeof(for_whom),
 				"%s@%s",
-				ipp->remote_user ? ipp->remote_user : "?", 
+				ipp->remote_user ? ipp->remote_user : username, 
 				ipp->remote_addr ? ipp->remote_addr : "?"
 				);
 	
@@ -168,8 +177,8 @@ static void do_print_job(struct IPP *ipp)
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
-		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", printer_uri(ipp), jobid);
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
+		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", get_printer_uri(ipp), jobid);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending", FALSE);
 		}
 	gu_Final
 		{
@@ -308,7 +317,7 @@ static void do_get_default(struct IPP *ipp)
 			{
 			if((p = lmatchp(line, "ForWhat:")))
 				{
-				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p));
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p), TRUE);
 				found = TRUE;
 				break;
 				}
@@ -358,12 +367,27 @@ int main(int argc, char *argv[])
 		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
 			gu_Throw("CONTENT_LENGTH is missing or invalid");
 
-		gu_asprintf(&root, "http://%s:%s%s",
-			(p = getenv("SERVER_NAME")) ? p : "localhost",
-			(p = getenv("SERVER_PORT")) ? p : "15010",
-			(p = getenv("SCRIPT_NAME")) ? p : "/cgi-bin/ipp"
-			);
-		
+		/* This is the full URL of this script. */ 
+		{
+		char *server, *port, *script;
+
+		if(!(server = getenv("SERVER_NAME")))
+			gu_Throw("SERVER_NAME is not defined");
+		if(!(port = getenv("SERVER_PORT")))
+			gu_Throw("SERVER_PORT is not defined");
+		if(!(script = getenv("SCRIPT_NAME")))
+			gu_Throw("SCRIPT_NAME is not defined");
+
+		if(strcmp(script, "/") == 0)
+			script = "";
+
+		if(strcmp(port, "631") == 0)
+			gu_asprintf(&root, "ipp://%s%s", server, script);
+		else
+			gu_asprintf(&root, "http://%s:%s%s", server, port, script);
+		}
+	
+		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
 
 		if((p = getenv("REMOTE_USER")))
@@ -373,6 +397,7 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request_header(ipp);
 
+		/* Process the request embodied in the IPP object. */
 		DEBUG(("dispatching operation 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
 		switch(ipp->operation_id)
 			{
@@ -387,8 +412,8 @@ int main(int argc, char *argv[])
 				ipp_parse_request_body(ipp);
 
 				/* For now, English is all we are capable of. */
-				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
-				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en", FALSE);
 
 				switch(ipp->operation_id)
 					{
@@ -404,7 +429,7 @@ int main(int argc, char *argv[])
 					}
 
 				if(ipp->response_code == IPP_OK)
-					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok", FALSE);
 
 				break;
 			}

@@ -60,15 +60,32 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-/*
- * This is the folder structure.  We have deliberately made
- * it the same as that used by CUPS as some buggy software
- * makes unwarranted assumptions.
- */
-#define DIR_GROUPS "classes"
-#define DIR_PRINTERS "printers"
-#define DIR_GROUP_JOBS "jobs"
-#define DIR_PRINTER_JOBS "jobs"
+static int xlate_printer_state(int printer_status)
+	{
+	switch(printer_status)
+		{
+		case PRNSTATUS_IDLE:
+			return IPP_PRINTER_IDLE;
+
+		case PRNSTATUS_CANCELING:
+		case PRNSTATUS_SEIZING:
+		case PRNSTATUS_HALTING:
+		case PRNSTATUS_STOPPING:
+		case PRNSTATUS_PRINTING:
+			return IPP_PRINTER_PROCESSING;
+
+		case PRNSTATUS_ENGAGED:
+		case PRNSTATUS_STARVED:
+		case PRNSTATUS_FAULT:
+		case PRNSTATUS_STOPT:
+			return IPP_PRINTER_STOPPED;
+
+		default:
+			error("xlate_printer_state(): invalid printer_status %d", printer_status);
+			return 0;
+		}
+	
+	}
 
 /* IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
@@ -87,67 +104,28 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 
 	do	{
 		char *p;
-		if((p = strstr(printer_uri_value, "/"DIR_GROUPS"/")))
+		if((p = strstr(printer_uri_value, "/printers/")))
 			{
-			const char *queue_name = p + sizeof("/"DIR_GROUPS"/") - 1;
+			const char *queue_name = p + sizeof("/printers/") - 1;
 			int i;
 	
-			for(i=0; group_count; i++)
+			for(i=0; printer_count; i++)
 				{
-				if(strcmp(groups[i].name, queue_name) == 0)
+				if(strcmp(printers[i].name, queue_name) == 0)
 					break;
 				}
 	
-			if(i == group_count)
+			if(i == printer_count)
 				{
 				ipp->response_code = IPP_NOT_FOUND;
 				break;
 				}
 
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri",
-				"/%s/%s",
-				DIR_GROUPS,
-				queue_name
-				);
-
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
-			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug", FALSE); */
-			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-				"printer-is-accepting-jobs",
-				groups[i].accepting
-				);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE);
-			}
-		else if((p = strstr(printer_uri_value, "/"DIR_PRINTERS"/")))
-			{
-			const char *queue_name = p + sizeof("/"DIR_PRINTERS"/") - 1;
-			int i;
-	
-			for(i=0; group_count; i++)
-				{
-				if(strcmp(groups[i].name, queue_name) == 0)
-					break;
-				}
-	
-			if(i == group_count)
-				{
-				ipp->response_code = IPP_NOT_FOUND;
-				break;
-				}
-
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri",
-				"/%s/%s",
-				DIR_PRINTERS,
-				queue_name
-				);
-	
+			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/printers/%s", queue_name);
 			/* ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4); */
 			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug", FALSE); */
-			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-				"printer-is-accepting-jobs",
-				printers[i].accepting
-				);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE);
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", groups[i].accepting);
+			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE); */
 			}
 		else
 			{
@@ -194,16 +172,8 @@ static void ipp_get_jobs(struct IPP *ipp)
 			}
 
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", queue[i].id);
-		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", 
-				"/%s/%s",
-				destid_local_is_group(queue[i].destid) ? DIR_GROUPS : DIR_PRINTERS,
-				destid_to_name(queue[i].destnode_id, queue[i].destid)
-				);
-		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri",
-				"/%s/%d",
-				destid_local_is_group(queue[i].destid) ? DIR_GROUP_JOBS : DIR_PRINTER_JOBS,
-				queue[i].id
-				);
+		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", "/printers/%s", destid_to_name(queue[i].destnode_id, queue[i].destid));
+		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "/jobs/%d", queue[i].id);
 
 		/* Derived from "ppop lpq" */
 		{
@@ -248,17 +218,57 @@ static void cups_get_printers(struct IPP *ipp)
 	for(i=0; i < printer_count; i++)
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", printers[i].name, FALSE);
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", 
-			"/%s/%s",
-			DIR_PRINTERS,
-			printers[i].name
-			);
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs",
-			printers[i].accepting
-			);
-		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/printers/%s", printers[i].name);
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", printers[i].accepting);
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", xlate_printer_state(printers[i].status));
+
+		{
+		char fname[MAX_PPR_PATH];
+		FILE *f;
+		char *line = NULL;
+		int line_len = 80;
+		char *p;
+		char *interface = NULL;
+		char *address = NULL;
+
+		ppr_fnamef(fname, "%s/%s", PRCONF, printers[i].name);
+		if((f = fopen(fname, "r")))
+			{
+			while((line = gu_getline(line, &line_len, f)))
+				{
+				if(gu_sscanf(line, "Interface: %S", &p) == 1)
+					{
+					if(interface)
+						gu_free(interface);
+					interface = p;
+					}
+				if(gu_sscanf(line, "Address: %A", &p) == 1)
+					{
+					if(address)
+						gu_free(address);
+					address = p;
+					}
+				}
+			fclose(f);
+	
+			if(interface && address)
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri",
+					"%s:%s",
+					address[0] == '/' ? "file" : interface,		/* for benefit of CUPS lpc */
+					address);
+				}
+	
+			if(interface)
+				gu_free(interface);
+			if(address)
+				gu_free(address);
+			}
+					
+			ipp_add_end(ipp, IPP_TAG_PRINTER);
+			}
 		}
+
 	unlock();
 	}
 	
@@ -271,15 +281,8 @@ static void cups_get_classes(struct IPP *ipp)
 	for(i=0; i < group_count; i++)
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", groups[i].name, FALSE);
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", 
-			"/%s/%s",
-			DIR_GROUPS,
-			groups[i].name
-			);
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs",
-			groups[i].accepting
-			);
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/classes/%s", groups[i].name);
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", groups[i].accepting);
 		for(i2=0; i2 < groups[i].members; i2++)
 			members[i2] = printers[groups[i].printers[i2]].name;
 		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
