@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 10 March 2003.
 #
 
 include ../Makefile.conf
@@ -48,7 +48,7 @@ ppr-respond$(DOTEXE): $(OBJS1)
 
 install: $(RESPONDERS) $(LIBPROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/responders $(RESPONDERS)
-	$(INSTALLLN) $(HOMEDIR)/responders/mail $(HOMEDIR)/responders/errmail
+	$(INSTALLLN) mail $(HOMEDIR)/responders/errmail
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIBPROGS)
 
 #=== Housekeeping ===========================================================

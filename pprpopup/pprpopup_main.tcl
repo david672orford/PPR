@@ -169,11 +169,11 @@ switch -exact -- $tcl_platform(platform) {
 		if { [info exists env(PPR_RESPONDER_ADDRESS)] } {
 		    return $env(PPR_RESPONDER_ADDRESS)
 		    }
-		if { [ info exists env(USER)] } {
-		    return "$env(USER)@localhost"
-		    } 
 		if { [ info exists env(LOGNAME)] } {
 		    return "$env(LOGNAME)@localhost"
+		    } 
+		if { [ info exists env(USER)] } {
+		    return "$env(USER)@localhost"
 		    } 
 		alert "Neither the environment variable PPR_RESPONDER_ADDRESS nor USER nor LOGNAME is defined."
 		exit 1

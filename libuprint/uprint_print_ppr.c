@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 10 March 2003.
 */
 
 #include "before_system.h"
@@ -204,7 +204,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	    ppr_argv[i++] = upr->ppr_responder_options;
 	    }
 	}
-    else if(upr->notify_email)		/* explicit request for email */
+    else if(upr->notify_email)		/* explicit request for e-mail */
     	{
     	ppr_argv[i++] = "-m";
     	ppr_argv[i++] = "mail";
@@ -220,8 +220,10 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
     	}
     else
     	{
+    	#if 0				/* let it be followme */
     	ppr_argv[i++] = "-m";
     	ppr_argv[i++] = "mail";
+    	#endif
     	ppr_argv[i++] = "-r";
     	ppr_argv[i++] = upr->str_mailaddr;
 	ppr_argv[i++] = "--responder-options";

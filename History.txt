@@ -7467,7 +7467,7 @@ line was being parsed twice.
   is starved for resources such as file descriptors.
 
 * www/show_printlog.cgi.perl: Improvied the workign of the error message
-  which is displayed when it is found that $VAR_SPOOL_PPR/logs/printlog 
+  which is displayed when it is found that $VAR_SPOOL_PPR/logs/printlog
   doesn't exist.
 
 * fixup/fixup_inetd.sh: changed Xinetd configuration for the lpd port from
@@ -7499,7 +7499,7 @@ line was being parsed twice.
 * Changed -r option from net:node to net.node to match the Netatalk
   nbplkup output.
 
-* Changed libscript/pprpopup.pl to look up names in 
+* Changed libscript/pprpopup.pl to look up names in
   $VAR_SPOOL_PPR/pprpopup.db/.
 
 * Added www/pprpopup_register.cgi.perl.  This receives registration requests
@@ -7605,7 +7605,7 @@ line was being parsed twice.
 
 * pprdrv/pprdrv_capable.c: moved the handling of internal resources to a
   table, replacing hand-written C code implementation.  Added CIDInit to the
-  table, assuming that level three printers have it.  This will have to be 
+  table, assuming that level three printers have it.  This will have to be
   checked in the Adobe technical documents concerning CID keyed fonts.
 
 * makeprogs/save_symlinks.sh: added -f to ln command.
@@ -7715,7 +7715,7 @@ line was being parsed twice.
   and www/prn_addwiz.cgi.perl the to use the one it finds.
 
 * www/show_jobs.cgi.perl: added support for fixed positioning in Mozilla.
-  Added JavaScript onclick= handler to checkboxes which highlights selected 
+  Added JavaScript onclick= handler to checkboxes which highlights selected
   rows.
 
 * www/cliconf.cgi.perl: fixed typos in generated /etc/printcap fragment.
@@ -7728,7 +7728,7 @@ line was being parsed twice.
   is enough.
 
 * interfaces/simple.sh: removed code to send control-d when killed, moved
-  opening of the output device to the cat call rather than using exec since 
+  opening of the output device to the cat call rather than using exec since
   exec quits the script if it fails.
 
 * pprpopup/pprpopup_loader.tcl: changed Win32 registry key from
@@ -7749,9 +7749,9 @@ line was being parsed twice.
 * www/: removed all uses of <spacer> since it is not supported by Mozilla
   or IE (in fact I think it is only supported by Netscape 4.x and earlier).
 
-* www/: changed some instance of the "strict" documentation type specification 
-  to "transitional" for certain pages that use certian HTML 4.01 features that 
-  are declared deprecated in the standard because their effect can now be 
+* www/: changed some instance of the "strict" documentation type specification
+  to "transitional" for certain pages that use certian HTML 4.01 features that
+  are declared deprecated in the standard because their effect can now be
   achieved with CSS.
 
 * nonppr_vendors/ppd_hp/, MIT licensed files: commented out N-Up and watermark
@@ -7784,8 +7784,8 @@ line was being parsed twice.
 
 * pprdrv/pprdrv_rip.c: removed special treatment for RIP "ppr-gs" (which means
   that it will have to supply things like "-q -dSAFER" and "-sOutputFile="
-  itself).  Added option for Ghostscript with specified path.  Added code to 
-  omit "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was 
+  itself).  Added option for Ghostscript with specified path.  Added code to
+  omit "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was
   already supplied.
 
 * Added pprdrv/ppr-gs.c which is a wrapper around Ghostscript.
@@ -7828,7 +7828,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_feedback.c, pprdrv_rip.c: changed Ghostscript error message
   parsing code to identify error messages associated with the RIP's
   configuration and distinguish them from PostScript errors caused by errors
-  in the job.  For example, this new code will catch the message that 
+  in the job.  For example, this new code will catch the message that
   Ghostscript prints if a driver that is not available is requested.
 
 * pprdrv/pprdrv_rip.c:rip_start(): added missing call to gu_nonblock() to
@@ -7862,7 +7862,7 @@ line was being parsed twice.
 
 * www/pprpopup_register.cgi.perl: added code to create an alias registration
   based on the stuff to the left of the @ and the client IP address.  With
-  the above change, this should allow users who are running PPR Popup on 
+  the above change, this should allow users who are running PPR Popup on
   the same machine as the web browser to receive notification of the fate
   of their test pages.
 
@@ -8191,7 +8191,7 @@ line was being parsed twice.
 
 * libppr/alert.c:alert(): expanded formatting buffer from 256 to 512 bytes.
 
-* pprdrv/pprdrv_log.c: added as a central repository for code that deals 
+* pprdrv/pprdrv_log.c: added as a central repository for code that deals
   with the job log.
 
 * pprdrv/pprdrv_capable.c, pprdrv_feedback.c: replace job log handling code
@@ -8224,17 +8224,17 @@ line was being parsed twice.
 
 1.51, 15 February 2003--10 March 2003.
 
-* www/index.html: fixed broken links to documentation.  I am more than 
+* www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
   certain browers (including Mozilla and Links) have been hiding the fact
   that these links pointed above the root.  Dillo finally gave the game
   away.  Thanks Dillo!
 
 # www/cgi_run.pl: fixed run() and opencmd() so that they don't use die if
-  exec fails.  This was bad because the die was often caught.  The result 
+  exec fails.  This was bad because the die was often caught.  The result
   was that both parent and child tried to issue the second half of the
   HTML page.  The copy from the child was received by the parent, HTML
-  escaped, and displayed as command output!  Suppressed program path in 
+  escaped, and displayed as command output!  Suppressed program path in
   run() output.  Suppressed Perl 5.8.0 warning about tainted arguments
   to exec().
 
@@ -8256,7 +8256,7 @@ line was being parsed twice.
   the next lpr jobid.
 
 * unixuser/ppr-xgrant.c: by using setreuid() in stead of setuid() was able
-  to set the real uid (necessary because xauth is a stinker and calls 
+  to set the real uid (necessary because xauth is a stinker and calls
   access()) without being root.  This means that it can now be setuid ppr in
   stead of setuid root.
 
@@ -8264,33 +8264,33 @@ line was being parsed twice.
   setuid root.  Made code neater by creating another for loops which steps
   through a list of files that all need the same settings.
 
-* lprsrv/olprsrv.c: fixed to work with libuprint changes and to always 
+* lprsrv/olprsrv.c: fixed to work with libuprint changes and to always
   compile support for all supported spoolers.
 
-* lprsrv/ fixed to work with renamed dest_claim_*() functions from libuprint 
-  and other changes in libuprint.  Changed to run most of the time with the 
-  euid and egid set to those of the user ppr (previousy the egid wasn't 
+* lprsrv/ fixed to work with renamed dest_claim_*() functions from libuprint
+  and other changes in libuprint.  Changed to run most of the time with the
+  euid and egid set to those of the user ppr (previousy the egid wasn't
   changed and the euid was set to that of the owner of /etc/ppr/uprint.conf).
   When running a command as a user, the gid is now set as well since Inetd,
   when asked to run lprsrv as root may run it under a gid that could allow
   excessive access.
 
-* include/sysdep.h: deleted all references to HAVE_LP, HAVE_LPR, 
+* include/sysdep.h: deleted all references to HAVE_LP, HAVE_LPR,
   LP_PRINTERS_CONF.
 
 * papsrv/papsrv-kill.sh: removed, added to fixup/fixup_obsolete.sh.
 
 * pprd/: removed code to create /var/spool/ppr directories on startup.  It
-  wasn't being maintained (because it was forgotton).  It would be better 
-  combined with fixup_perms.sh or with the Init script.  Interestingly, 
+  wasn't being maintained (because it was forgotton).  It would be better
+  combined with fixup_perms.sh or with the Init script.  Interestingly,
   this code was the source of a longstanding problem with the mode of the
   log directory mysteriously changing from 775 to 755.
 
 * pprd/, papsrv/, papd/: Changed all calls to setuid() and setgid() (except
   setuid(0)) to setreuid() and setregid() respectively and made sure that the
-  return value is checked except for those setuid(0) calls that just prepare 
-  the way for the important ones.  Added paranoid checks too.  (Using setuid() 
-  risks security bugs because it does completely different things depending on 
+  return value is checked except for those setuid(0) calls that just prepare
+  the way for the important ones.  Added paranoid checks too.  (Using setuid()
+  risks security bugs because it does completely different things depending on
   whether the EUID is 0 or not.  Thus it may not do what you want it to do but
   it will indicate success.)
 
@@ -8298,7 +8298,7 @@ line was being parsed twice.
   checks which make sure it is running under the right uid.
 
 * ppr/ppr_infile.c: switch from seteuid()/setegid() to setreuid()/setregid()
-  for filter execution so that the saved ppr_uid/ppr_gid is dropt.  Added 
+  for filter execution so that the saved ppr_uid/ppr_gid is dropt.  Added
   checks to make sure that the calls suceed.  Did a test to make sure this
   works.  Verified that setting the effective ids left the saved ids
   untouched on Linux but that the exec() changed the saved ids.
@@ -8317,7 +8317,7 @@ line was being parsed twice.
   "*DefaultJCLResolution:" as a way to deal with recent HP PPD files.
 
 * makeprogs/installdata.sh: made mode of installed data files 444 instead of
-  644.  This seems right since this is used in install *.sample and 
+  644.  This seems right since this is used in install *.sample and
   $HOMEDIR/lib/*.conf and we want the user to understand that they shouldn't
   ordinarily be modified.
 
@@ -8371,7 +8371,7 @@ line was being parsed twice.
   superseeded by later changes.  Besides, I haven't heard of anybody
   running a version older than 1.4x.
 
-* fixup/fixup_obsolete.sh: removed code to clean up from versions prior to 
+* fixup/fixup_obsolete.sh: removed code to clean up from versions prior to
   1.4x.
 
 * Removed fixup/fixup_lmx.sh and misc/custom.ppr as they haven't been tested
@@ -8409,7 +8409,7 @@ line was being parsed twice.
 
 * merged ppr-indexfonts, ppr-indexppds, and fixup_filters.sh into lib/ as
   indexfonts, indexppds, and indexfilters respectively and added
-  cron/ppr-index as a wrapper to call them with.  Added --delete option 
+  cron/ppr-index as a wrapper to call them with.  Added --delete option
   to all.
 
 * z_install_begin/install_create_accounts.sh: added code for Linux to make
@@ -8418,7 +8418,7 @@ line was being parsed twice.
   haven't been altered.  This means a parallel printer may be set up if
   one has ppad access but no root access.
 
-* makeprogs/installprogs.sh: added code to properly handle attempts to 
+* makeprogs/installprogs.sh: added code to properly handle attempts to
   install setuid root binaries when not running as root.  (It stops and
   tells the user to do "make install" again as root.)
 
@@ -8435,9 +8435,13 @@ line was being parsed twice.
 * pprpopup/pprpopup_main.tcl: added code to use "$USER@localhost" or
   "$LOGNAME@localhost" if PPR_RESPONDER_ADDRESS isn't defined.
 
-* pprd/pprd_main.c: Due to MacOS X wierdness with regard to saved IDs, added seteuid(0), setgid(), setuid() sequence before the existing setreuid() setregid() sequence.
+* pprd/pprd_main.c: Due to MacOS X wierdness with regard to saved IDs and
+  setuid(), added seteuid(0), setgid(), setuid() sequence before the existing
+  setreuid() setregid() sequence.
 
-* lprsrv/olprsrv.c,lprsrv_print.c: same ID business
+* lprsrv/olprsrv.c,lprsrv_print.c: same ID business, plus added missing
+  paranoid attempt to setuid(0) (which is what caught the above problem).
+
 
 
 
@@ -8454,11 +8458,11 @@ TODO
 * Finish support for automatic driver download in Samba 2.2.x.
 
 * IPP support in UPRINT so that jobs can be sent to CUPS queues.  This
-  should probably be done with libcups which is LGPL.  
+  should probably be done with libcups which is LGPL.
 
 * Make uprint-cancel and uprint-lpstat actually do something
 
-* Change responder interface to use name=value pairs on the command line. 
+* Change responder interface to use name=value pairs on the command line.
 
 * Change commentators to support the new status handling code and merge them
   with responders.
@@ -8472,13 +8476,13 @@ TODO
 
 * Implement PPR node-to-node printing, queue display, and job canceling.
 
-* Add code to convert command line options to utf-8 and provide mechanism for 
+* Add code to convert command line options to utf-8 and provide mechanism for
   their translation.
 
 * Add --dsc-charset to ppr.
 
 * Support banner page "news" messages.
 
-* Decide how pprd should handle the matter of the hostname changing due 
+* Decide how pprd should handle the matter of the hostname changing due
   to dial-up networking.
 
