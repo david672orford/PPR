@@ -940,7 +940,7 @@ HELP(_(
 "\t--responder-options <list> list of name=value responder options\n"));
 
 HELP(_(
-"\t--commentary {error,status,stall,exit}\n"
+"\t--commentary {status,stall,exit}\n"
 "\t                           requested commentary of listed types\n"));
 
 HELP(_(
@@ -1332,10 +1332,11 @@ static int parse_commentary_option(const char source[], const char list[])
 	char *temp, *place, *next;
 	for(place=temp=gu_strdup(list); (next = gu_strsep(&place, ", ")); )
 		{
-		if(strcmp(next, "error") == 0)
-			mask |= COM_PRINTER_ERROR;
-		else if(strcmp(next, "status") == 0)
+		if(strcmp(next, "status") == 0)
+			{
 			mask |= COM_PRINTER_STATUS;
+			mask |= COM_PRINTER_ERROR;
+			}
 		else if(strcmp(next, "stall") == 0)
 			mask |= COM_STALL;
 		else if(strcmp(next, "exit") == 0)

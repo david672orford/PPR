@@ -129,15 +129,15 @@ struct SHADOW_LIST {
 	};
 
 static const struct SHADOW_LIST shadow_list[] = {
-		{DES_noPaper, DES_lowPaper, DES_offline},
-		{DES_noToner, DES_lowToner, DES_offline},
-		{DES_doorOpen, DES_offline, DES_offline},
-		{DES_jammed, DES_offline, DES_offline},
-		{DES_inputTrayMissing, DES_offline, DES_offline},
-		{DES_outputTrayMissing, DES_offline, DES_offline},
-		{DES_markerSupplyMissing, DES_offline, DES_offline},
-		{DES_outputFull, DES_outputNearFull, DES_offline},
-		{-1, -1, -1}
+	{DES_noPaper, DES_lowPaper, DES_offline},
+	{DES_noToner, DES_lowToner, DES_offline},
+	{DES_doorOpen, DES_offline, DES_offline},
+	{DES_jammed, DES_offline, DES_offline},
+	{DES_inputTrayMissing, DES_offline, DES_offline},
+	{DES_outputTrayMissing, DES_offline, DES_offline},
+	{DES_markerSupplyMissing, DES_offline, DES_offline},
+	{DES_outputFull, DES_outputNearFull, DES_offline},
+	{-1, -1, -1}
 	};
 
 /*
@@ -478,23 +478,25 @@ static void dispatch_commentary(void)
 	*/
 	for(x=0; x<SNMP_BITS; x++)
 		{
-		if(snmp_bits[x].start && (snmp_bits[x].last_commentary == 0 || (time_now - snmp_bits[x].last_commentary) >= 300))
+		if(snmp_bits[x].start && !snmp_bits[x].shadowed)
 			{
 			const char *description, *raw1;
 			int severity;
 			translate_snmp_error(x, &description, &raw1, &severity);
-			if(!snmp_bits[x].shadowed)
+			debug("bit: %d, severity: %d", x, severity);
+			if(severity > greatest_severity)
+				greatest_severity = severity;
+			if(snmp_bits[x].last_commentary == 0 || (time_now - snmp_bits[x].last_commentary) >= 300)
 				{
 				commentary(COM_PRINTER_ERROR,
-						description,
-						raw1,
-						snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL,
-						(int)(time_now - snmp_bits[x].start),
-						severity);
-				if(severity > greatest_severity)
-					greatest_severity = severity;
+					description,
+					raw1,
+					snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL,
+					(int)(time_now - snmp_bits[x].start),
+					severity
+					);
+				snmp_bits[x].last_commentary = time_now;
 				}
-			snmp_bits[x].last_commentary = time_now;
 			}
 		}
 
@@ -514,6 +516,7 @@ static void dispatch_commentary(void)
 		{
 		const char *message, *raw1; int severity;
 		translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
+		debug("greatest_severity: %d, severity: %d", greatest_severity, severity);
 		if(severity > greatest_severity)
 			{
 			commentary(COM_PRINTER_STATUS, message, raw1, status.details, time(NULL) - status.start, severity);

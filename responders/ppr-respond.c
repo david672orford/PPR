@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 March 2005.
+** Last modified 31 March 2005.
 */
 
 /*
@@ -82,7 +82,8 @@ struct RESPONSE_INFO
 	int charge_per_simplex;
 	struct COMPUTED_CHARGE charge;
 	char *reason;
-	int elapsed_time_threshold;
+	int commentary_duration_threshold;
+	int commentary_severity_threshold;
 	} ;
 
 static char *build_subject(struct RESPONSE_INFO *rinfo)
@@ -212,11 +213,6 @@ static char *build_subject(struct RESPONSE_INFO *rinfo)
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
-			gu_pcs_append_sprintf(&message,
-				_("error on %s: %s while printing %s (%s)"),
-				rinfo->printer, gettext(rinfo->commentary_cooked), rinfo->job, title);	
-			break;
-
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
 			gu_pcs_append_sprintf(&message,
 				_("status of %s: %s while printing %s (%s)"),
@@ -417,40 +413,58 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
+		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
 			if(rinfo->commentary_seq_number == 1 && rinfo->commentary_severity > 5)
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\" which could print your job \"%s\" cannot at present\n"
+					_("The printer %s which could print your job %s (%s) cannot at present\n"
 					"due to the error condition \"%s\"."),
-					rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));
+					rinfo->printer, rinfo->job, title, gettext(rinfo->commentary_cooked));
 				}
 			else
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\" which is printing your job \"%s\" reports error\n"
+					_("The printer %s which is printing your job %s (%s) reports error\n"
 					"\"%s\"."),
-					rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));
+					rinfo->printer, rinfo->job, title, gettext(rinfo->commentary_cooked));
 				if(long_format)
 					{
 					gu_pcs_append_char(&message, ' ');
-					if(rinfo->commentary_severity > 5)
+					if(rinfo->commentary_severity >= 7)
 						gu_pcs_append_cstr(&message, _("Printing has probably come to a halt."));
 					else
 						gu_pcs_append_cstr(&message, _("It is advisable to correct this condition before it worsens."));
-					if(rinfo->commentary_duration > 5)
+
+					if(rinfo->commentary_duration >= 300)	/* if longer than 5 minutes */
 						{
+						long elapsed_time;
+						int days, hours, minutes;
+
+						elapsed_time = rinfo->commentary_duration / 60;
+						minutes = elapsed_time % 60;
+						elapsed_time /= 60;
+						hours = elapsed_time % 24;
+						days = elapsed_time / 60;
+						
 						gu_pcs_append_char(&message, ' ');
-						gu_pcs_append_sprintf(&message, _("This condition has persisted for %d minutes."), rinfo->commentary_duration);
+						if(days >= 1)
+							{
+							if(minutes >= 30)	/* round off hours */
+								hours++;
+							if(hours == 24)		/* handle carry */
+								{
+								days++;
+								hours = 0;
+								}
+							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d day(s) %d hours(s)."), days, hours);
+							}
+						else if(hours >= 1)
+							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d hour(s) %d minute(s)."), hours, minutes);
+						else
+							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d minutes."), minutes);
 						}
 					}
 				}
-			break;
-
-		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
-			gu_pcs_append_sprintf(&message,
-				_("The printer \"%s\" which is printing your job \"%s\" reports status\n"
-				"\"%s\"."),
-				rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_STALL:
@@ -461,18 +475,18 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					case 1:
 					case 2:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) may be stalled."),
+							_("The printer %s which is printing your job %s (%s) may be stalled."),
 							rinfo->printer, rinfo->job, title);
 						break;
 					case 3:
 					case 4:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) is probably stalled."),
+							_("The printer %s which is printing your job %s (%s) is probably stalled."),
 							rinfo->printer, rinfo->job, title);
 						break;
 					default:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) has been stalled for %d minutes."),
+							_("The printer %s which is printing your job %s (%s) has been stalled for %d minutes."),
 							rinfo->printer, rinfo->job, title, rinfo->commentary_duration / 60);
 						break;
 					}
@@ -486,12 +500,12 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					case 3:
 					case 4:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) was not actually stalled."),
+							_("The printer %s which is printing your job %s (%s) was not actually stalled."),
 							rinfo->printer, rinfo->job, title);
 						break;
 					default:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) is no longer stalled."),
+							_("The printer %s which is printing your job %s (%s) is no longer stalled."),
 							rinfo->printer, rinfo->job, title);
 						break;
 					}
@@ -502,20 +516,20 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 			if(rinfo->commentary_severity > 5)
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\", which could print your job \"%s\" cannot at present: %s."),
+					_("The printer %s, which could print your job %s (%s) cannot at present: %s."),
 					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
 				}
 			else
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\", completed an attempt to print your job \"%s\".  The result was: %s."),
-					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+					_("The printer %s, completed an attempt to print your job %s (%s).  The result was: %s."),
+					rinfo->printer, rinfo->job, title, rinfo->commentary_cooked);	
 				}
 			break;
 
 		default:
 			gu_pcs_append_sprintf(&message,
-				_("Undefined response code %d for job \"%s\"."),
+				"Invalid response_code %d for job %s.",		/* don't translate */
 				rinfo->response_code, rinfo->job);
 			break;
 		}
@@ -532,12 +546,13 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 	if(long_format && rinfo->qentry.time != 0)
 		{
 		long elapsed_time = (time(NULL) - rinfo->qentry.time);
-		if(elapsed_time > rinfo->elapsed_time_threshold)
+		if(elapsed_time > rinfo->commentary_duration_threshold)
 			{
 			int seconds, minutes, hours, days;
 			seconds = elapsed_time % 60;			/* remainder seconds */
 			elapsed_time /= 60;						/* total minutes */
-			if(seconds >= 30) elapsed_time++;
+			if(seconds >= 30)
+				elapsed_time++;
 			minutes = elapsed_time % 60;			/* remainder minutes */
 			elapsed_time /= 60;						/* total hours */
 			hours = elapsed_time % 24;				/* remainder hours */
@@ -660,7 +675,8 @@ int main(int argc, char *argv[])
 	rinfo.charge_per_duplex = 0;
 	rinfo.charge_per_simplex = 0;
 	rinfo.reason = NULL;
-	rinfo.elapsed_time_threshold = 0;
+	rinfo.commentary_duration_threshold = 0;
+	rinfo.commentary_severity_threshold = 5;
 
 	for(iii=1; iii < argc; iii++)
 		{
@@ -806,8 +822,9 @@ int main(int argc, char *argv[])
 				if(gu_torf_setBOOL(&yes, value) != -1 && !yes && (rinfo.response_code==RESP_CANCELED || rinfo.response_code==RESP_CANCELED_PRINTING))
 					return 0;
 				}
-			else if((value = gu_name_matchp(item, "severity_threshold")))
+			else if((value = gu_name_matchp(item, "commentary_severity_threshold")))
 				{
+				rinfo.commentary_severity_threshold = atoi(p);
 				if(rinfo.commentary_severity >= 0)		/* if defined */
 					{
 					int temp = atoi(p);
@@ -815,14 +832,17 @@ int main(int argc, char *argv[])
 						return 0;
 					}
 				}
-			else if((value = gu_name_matchp(item, "elapsed_time_threshold")))
+			else if((value = gu_name_matchp(item, "commentary_duration_threshold")))
 				{
-				rinfo.elapsed_time_threshold = atoi(p);
+				rinfo.commentary_duration_threshold = atoi(p);
 				}
 			}
 		gu_free(temp);
 		}
 
+	if(rinfo.response_code & RESP_TYPE_COMMENTARY && rinfo.commentary_severity < rinfo.commentary_severity_threshold)
+		return 0;
+	
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
 	if(rinfo.qentry.lc_messages)

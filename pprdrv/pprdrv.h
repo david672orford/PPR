@@ -34,7 +34,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 0
+#if 1
 #define DEBUG 1							/* include function debug() */
 #define DEBUG_MAIN 1					/* main() */
 #define DEBUG_INTERFACE 1				/* show opening, closing, etc. */

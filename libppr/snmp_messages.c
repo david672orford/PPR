@@ -276,7 +276,7 @@ int translate_snmp_status(int device_status, int printer_status, const char **se
 		}
 	else if(device_status == 3)			/* warning */
 		{
-		severity = 6;					/* <-- barely operational */
+		severity = 5;					/* <-- barely operational */
 		if(printer_status == 3)			/* warning/idle */
 			{
 			description = N_("idle (with warning)");

@@ -390,18 +390,36 @@ or B<-e responder> has been used and B<-m none> has been used as well.  In
 other words, it will only be used when there is no other way to report the
 problem.
 
-=item B<--commentary> B<error,status,stall,exit}
+=item B<--commentary> B<status,stall,exit}
 
 This option indicates that, while this job is being printed, the responder
 should be used to send the submitter comments on the printer's behavior.  The commentary
 will be limited to those categories listed.
 
 If this option is not specified, then the value is read from the environment
-variable PPR_COMMENTARY.  If that environment variable is not defined, then a
-value of 0 (which requests no commentary) is used.
+variable PPR_COMMENTARY.  If that environment variable is not defined, then 
+no commentary messages will be sent.
 
-The I<integer> is the sum of certain numbers which designate the catagories
-of commentary desired.  These values are not yet documented.
+The categories are:
+
+=over 4
+
+=item B<status>
+
+The status of the printer is reported whenever it changes and at intervals
+thereafter.  One can use responder options to filter out the most favourable
+status messages.
+
+=item B<stall>
+
+Messages are sent whenever the printer stops accepting input.
+
+=item B<exit>
+
+A message is sent whenever B<pprdrv> exits.  In other words, the result of each
+printing attempt is reported.
+
+=back
 
 =back
 
