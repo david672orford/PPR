@@ -8,7 +8,7 @@
 		<FirstName>David</firstname>
 		<surname>Chappell</surname>
 		</Author>
-	<PubDate>16 December 2002</pubdate>
+	<PubDate>17 December 2002</pubdate>
 	<copyright>
 		<Year>1995--2002</Year>
 		<Holder>Trinity College Computing Center</Holder>
@@ -17,14 +17,9 @@
 
 <ABSTRACT>
 
-<Para> This document describes the makup and theory of operation of PPR.  It
-also describes some of the more advanced features which
-<CITETITLE>Installing and Using PPR</CITETITLE> ignores or gives scant
-attention.  While the man pages provide the definitive reference for the
-commands and programs, they do not attempt to explain in detail why and how
-one would use any particular command or feature.  These topics are what this
-document is meant to cover. Unfortunately, this document has never been
-finished. </Para>
+<Para>This document is intended to describe PPR's features and theory of
+operation more deaply than <CiteTitle>Installing and Using PPR</CiteTitle>
+does.  Unfortunately, this document has never been finished.</Para>
 
 </ABSTRACT>
 

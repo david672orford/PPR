@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 5 September 2002.
+# Last modified 18 December 2002.
 #
 
 #
@@ -43,8 +43,8 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 # descriptions.
 #===========================================
 %interface_descriptions = (
-	'simple' => "--hide",
 	'dummy' => "--hide",
+	'simple' => N_("Server Generic Port"),
 	'serial' => N_("Server Serial Port"),
 	'parallel' => N_("Server Parallel Port"),
 	'atalk' => N_("AppleTalk PAP"),
