@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 22 April 2003.
 */
 
 /*
@@ -621,7 +621,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 
 	jobname = remote_jobid(qfileentry->destnode,qfileentry->destname,qentry->id,qentry->subid,qfileentry->homenode);
 	if(strlen(jobname) > 15)
-		printf("%s\n			   ", jobname);
+		printf("%s\n               ", jobname);
 	else
 		printf("%-15.15s", jobname);
 
