@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 January 2003.
+# Last modified 11 December 2003.
 #
 
 use 5.005;
@@ -35,6 +35,7 @@ require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
 require 'qquery_xlate.pl';
+require 'cgi_user_agent.pl';
 
 defined($CONFDIR) || die;
 defined(@qquery_available) || die;
@@ -248,30 +249,21 @@ exit 0;
 # For example, we turn on table borders unless we think the web browser is
 # likely be capable of displaying images.
 #
-my $table_border = 1;
 my $fixed_html_style = "";
 my $fixed_div_style_top = "";
 my $fixed_div_style_bottom = "";
 if($data{controls})
-  {
-  if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
 	{
-	my $mozilla_version = $1;
+	my $user_agent = cgi_user_agent();
 
-	if(!cgi_data_peek("borders", "0"))
-		{ $table_border = 0 }
-
-	# If this is the new Mozilla, add style to the <html> element and the
-	# <div> element which encloses the toolbar so that the toolbar won't
-	# scroll.
-	if($mozilla_version >= 5.0)
+	# If CSS level 3 is supported, make the top and bottom bars non-scrolling.
+	if($user_agent->{css3})
 		{
 		$fixed_html_style = "margin-top: 2em";
 		$fixed_div_style_top = "position:fixed; top:0pt; left: 0pt;";
 		$fixed_div_style_bottom = "position:fixed; bottom: 0pt; left: 0pt;";
 		}
 	}
-  }
 
 my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue, $ENV{SERVER_NAME}));
 

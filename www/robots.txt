@@ -1,7 +1,7 @@
 #
 # mouse:~ppr/src/www/robots.txt
 # Written by David Chappell.
-# Last revised 5 November 1999.
+# Last revised 11 December 2003.
 #
 # This is installed in the root of the PPR web server.  Since a robots.txt
 # file must be in the web server root directory to be effective, it will
@@ -9,7 +9,7 @@
 # and it presents them in a directory other than the root.
 #
 # I have created these exclusion rules because I thought it would be a bad
-# thing if the search engines indexed everone's private copy of the PPR
+# thing if the search engines indexed everyone's private copy of the PPR
 # documentation.
 #
 User-agent: *

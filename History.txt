@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--18 November 2003.
+1.53a1, 24 September 2003--11 December 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8939,7 +8939,10 @@ Internet Printing Protocol Work
 
 * libuprint/,uprint/: removed dependencies on libppr.
 
-
+* www/show_queues*: redid popup menu so that all popup menus are pre-generated 
+  HTML at the bottom of the page.  In browsers that support CSS and JavaScript, 
+  then are hidden.  Clicking on an icon unhides the cooresponding menu and moves
+  it to a position under the cursor.
 
 
 +++++++++++++++++++++

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2003.
+# Last modified 11 December 2003.
 #
 
 use 5.005;
@@ -38,6 +38,7 @@ require 'cgi_data.pl';
 require 'cgi_back.pl';
 require 'cgi_intl.pl';
 require 'cgi_time.pl';
+require 'cgi_user_agent.pl';
 use PPR::PPOP;
 
 # Spacing
@@ -102,8 +103,8 @@ if($action eq "Back" || $action eq "Close")
 	exit 0;
 	}
 
-# What back information should we pass to scripts we link to?
-my $encoded_back_stack = cgi_back_stackme();
+# What back information should we pass to scripts to which we link?
+my $encoded_back_stack = cgi_back_init();
 
 # These will become hidden fields which will be used to preserve
 # the scroll position across refreshes.	 The "seq" is incremented
@@ -126,31 +127,28 @@ $refresh_interval = $DEFAULT_REFRESH_INTERVAL if($refresh_interval eq '');
 $refresh_interval = $MIN_REFRESH_INTERVAL if($refresh_interval < $MIN_REFRESH_INTERVAL);
 
 #
-# Make descisions based on the browser.	 Because of this code, we must emit
-# a "Vary: user-agent" header.
+# Use the USER_AGENT header to decide which features to try to use.
 #
-# For example, we turn on table borders unless we think the web browser is
-# likely be capable of displaying images.
-#
-my $table_border = 1;
-my $fixed_html_style = "";
+my $table_border = 0;
+my $fixed_body_style = "";
 my $fixed_div_style = "";
-if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
+{
+my $user_agent = cgi_user_agent();
+
+# If CSS level 3 is supported, make the top bar non-scrolling.
+if($user_agent->{css3})
 	{
-	my $mozilla_version = $1;
-
-	if(!cgi_data_peek("borders", "0"))
-		{ $table_border = 0 }
-
-	# If this is the new Mozilla, add style to the <html> element and the
-	# <div> element which encloses the toolbar so that the toolbar won't
-	# scroll off the top of the screen when you scroll down.
-	if($mozilla_version >= 5.0)
-		{
-		$fixed_html_style = "margin-top: 2em";
-		$fixed_div_style = "position:fixed; top:0; left: 0;";
-		}
+	$fixed_body_style = "margin-top: 2em";
+	$fixed_div_style = "position:fixed; top:0; left: 0;";
 	}
+
+# If images aren't supported, turn on table border so that the text will
+# be grouped in some way.
+if(!$user_agent->{images})
+	{
+	$table_border = 1;
+	}
+}
 
 # We need an informative title.
 my $title = html(sprintf(_("PPR Print Queues on \"%s\""), $ENV{SERVER_NAME}));
@@ -167,7 +165,7 @@ Content-Language: $content_language
 Vary: user-agent, accept-language
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html style="$fixed_html_style">
+<html>
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -176,7 +174,7 @@ Vary: user-agent, accept-language
 <link rel="icon" href="../images/icon-16.png" type="image/png">
 <link rel="SHORTCUT ICON" href="../images/icon-16.ico">
 </head>
-<body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
+<body style="$fixed_body_style" onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
 <form method="post" action="$ENV{SCRIPT_NAME}">
 Head10
 
@@ -232,7 +230,6 @@ isubmit("action", "Refresh", N_("Refresh"), 'class="buttons" onclick="gentle_rel
 ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", "class=\"buttons\"", _("Use this if your browser doesn't support Digest authentication."));
 
 # Try to make a "Close" button.	 (They do the same thing.)
-cgi_back_possible("/");
 print "<label title=", html_value(_("Close this window.")), ">\n";
 isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
 print "</label>\n";
@@ -247,61 +244,56 @@ Top10
 #=============================================================================
 
 print <<"Top10";
-<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING width="50%">
 <tr align=center>
-<td width="150"><a href="show_jobs.cgi?name=all;$encoded_back_stack"
-		onclick="show_jobs_window('all'); return false"
-		title=${\html_value(_("Click here to open a window which will show all queued jobs."))}
-		target="_blank"
-		>
-		<img $ICON_ALL_QUEUES border=0><br>
-		<span class="qname">${\H_("Show All Queues")}</span>
-		</a></td>
+Top10
+
+foreach my $i (
+	[$ICON_ALL_QUEUES,
+		_("Show All Queues"),
+		"show_jobs.cgi?name=all;",
+		"return show_jobs(null,this.href)",
+		_("Click here to open a window which will show all queued jobs.")
+		],
+	[$ICON_ADD_PRINTER,
+		_("Add New Printer"),
+		"prn_addwiz.cgi?",
+		"return wizard(null,this.href)",
+		_("Click here and you will be guided through the process of adding a new printer.")
+		],
+	[$ICON_ADD_GROUP,
+		_("Add New Group"),
+		"grp_addwiz.cgi?",
+		"return wizard(null,this.href)",
+		_("Click here and you will be guided through the process of adding a new group of printers.")
+		],
+	[$ICON_ADD_ALIAS,
+		_("Add New Alias"),
+		"alias_addwiz.cgi?",
+		"return wizard(null,this.href)",
+		_("Click here and you will be guided through the process of adding a new alias.")
+		]
+	)
+{
+print <<"Top20";
+<td width="25%"><a
+	href="$i->[2]$encoded_back_stack"
+	onclick="$i->[3]"
+	title=${\html_value($i->[4])}
+	target="_blank"
+	>
+	<img $i->[0] border=0><br>
+	<span class="qname">${\html($i->[1])}</span>
+	</a></td>
+Top20
+}
+
+print <<"Top100";
 </tr>
 </table>
-
-<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
-<tr align=center>
-<td width="150"><a href="prn_addwiz.cgi?$encoded_back_stack"
-		onclick="return wizard('prn_addwiz.cgi')"
-		title=${\html_value(_("Click here and you will be guided through the process of adding a new printer."))}
-		target="_blank"
-		>
-		<img $ICON_ADD_PRINTER border=0><br>
-		<span class="qname">${\H_("Add New Printer")}</span>
-		</a></td>
-</tr>
-</table>
-
-<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
-<tr align=center>
-<td width="150"><a href="grp_addwiz.cgi?$encoded_back_stack"
-		onclick="return wizard('grp_addwiz.cgi')"
-		title=${\html_value(_("Click here and you will be guided through the process of adding a new group of printers."))}
-		target="_blank"
-		>
-		<img $ICON_ADD_GROUP border=0><br>
-		<span class="qname">${\H_("Add New Group")}</span>
-		</a></td>
-</tr>
-</table>
-
-<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
-<tr align=center>
-<td width="150"><a href="alias_addwiz.cgi?$encoded_back_stack"
-		onclick="return wizard('alias_addwiz.cgi')"
-		title=${\html_value(_("Click here and you will be guided through the process of adding a new alias."))}
-		target="_blank"
-		>
-		<img $ICON_ADD_ALIAS border=0><br>
-		<span class="qname">${\H_("Add New Alias")}</span>
-		</a></td>
-</tr>
-</table>
-
 <br clear="left">
 <hr>
-Top10
+Top100
 
 #=============================================================================
 # Here we loop through the available print destinations, gathering information
@@ -474,6 +466,7 @@ foreach my $qname (sort(keys(%queues)))
 	# Define these here to avoid code duplication.
 	my $a_tag = "<a
 		href=\"#" . $qtype . "_" . $qname . "\"
+		title=\"" . html($qdescription) . "\"
 		onclick=\"return popup(event," . javascript_string($qtype . "_" . $qname) . ")\" 
 		oncontextmenu=\"return popup(event," . javascript_string($qtype . "_" . $qname) . ")\" 
 		target=\"_blank\">";
@@ -483,7 +476,7 @@ foreach my $qname (sort(keys(%queues)))
 	if($columns > 0)			# multicolumn or single column w/out details
 		{
 		print "<tr align=center>\n" if(($col % $columns) == 0);
-		print '<td title="', html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
+		print "<td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
 		$col++;
 		print "</tr>\n" if(($col % $columns) == 0);
 		}
@@ -491,7 +484,7 @@ foreach my $qname (sort(keys(%queues)))
 		{
 		print "<table align=\"left\" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>";
 		print "<tr align=\"center\">";
-		print '<td title="', html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
+		print "<td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
 		print "</tr></table>\n";
 		}
 	else						# Details (-1) or Many Details (-2)
@@ -511,6 +504,7 @@ if($columns != 0)
 	print "</tr>\n" if($columns > 0 && $col % $columns);
 	print "</table>\n";
 	}
+print "\n";
 }
 
 #=============================================================================
@@ -525,18 +519,13 @@ my $encoded_type = form_urlencoded("type", $qtype);
 my $encoded_tag = "${qtype}_${qname}";
 my $js_name = javascript_string($qname);
 
-#for(my $x=0; $x < 15; $x++)
-#	{
-#	print "<p>&nbsp;</p>\n";
-#	}
-
 print <<"POP";
-<div class="popup" id="$encoded_tag" onmouseover="menu_hide(event)">
+<div class="popup" id="$encoded_tag" onmouseover="offmenu(event)">
 <a name="$encoded_tag">
 <table border="1" cellspacing="0" class="menu">
 <noscript>
-<tr><th>${\html("Menu for $qtype $qname")}</th></tr>;
-<tr><td><a href=\"$ENV{SCRIPT_NAME}\">Back to Top</a></td></tr>;
+<tr><th>${\html("Menu for $qtype $qname")}</th></tr>
+<tr><td><a href=\"$ENV{SCRIPT_NAME}\">Back to Top</a></td></tr>
 </noscript>
 POP
 
@@ -544,25 +533,25 @@ if($qtype eq "printer")
 {
 print <<"Printer";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return show_jobs(event,$js_name)" 
+	onclick="return show_jobs(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="prn_control.cgi?$encoded_name;$encoded_back_stack"
 	onclick="return prn_control(event,$js_name)" 
 	>${\H_("Printer Control")}</a></td></tr>
 <tr><td><a href="prn_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return prn_properties(event,$js_name)" 
+	onclick="return properties(event,this.href)" 
 	>${\H_("Printer Properties")}</a></td></tr>
 <tr><td><a href="prn_testpage.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return prn_testpage(event,$js_name)" 
+	onclick="return wizard(event,this.href)" 
 	>${\H_("Test Page")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return cliconf(event,$js_name)" 
+	onclick="return wizard(event,this.href)" 
 	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("printer", $qname)};$encoded_back_stack"
 	onclick="return show_printlog(event,'printer',$js_name)" 
 	>${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return delete_queue(event,'printer',$js_name)" 
+	onclick="return confirm(event,this.href)" 
 	>${\H_("Delete Printer")}</a></td></tr>
 Printer
 }
@@ -571,22 +560,22 @@ elsif($qtype eq "group")
 {
 print <<"Group";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return show_jobs(event,$js_name)" 
+	onclick="return show_jobs(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="grp_control.cgi?$encoded_name;$encoded_back_stack"
 	onclick="return grp_control(event,$js_name)" 
 	>${\H_("Member Printer Control")}</a></td></tr>
 <tr><td><a href="grp_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return grp_properties(event,$js_name)" 
+	onclick="return properties(event,this.href)" 
 	>${\H_("Group Properties")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return cliconf(event,$js_name)" 
+	onclick="return wizard(event,this.href)" 
 	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("queue", $qname)};$encoded_back_stack"
 	onclick="return show_printlog(event,'group',$js_name)" 
 	>${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return delete_queue(event,'group',$js_name)" 
+	onclick="return confirm(event,this.href)" 
 	>${\H_("Delete Group")}</a></td></tr>
 Group
 }
@@ -595,10 +584,13 @@ elsif($qtype eq "alias")
 {
 print <<"Alias";
 <tr><td><a href="alias_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return alias_properties(event,$js_name)" 
+	onclick="return properties(event,this.href)" 
 	>${\H_("Alias Properties")}</a></td></tr>
+<tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
+	onclick="return wizard(event,this.href)" 
+	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
-	onclick="return delete_queue(event,'alias',$js_name)" 
+	onclick="return confirm(event,this.href)" 
 	>${\H_("Delete Alias")}</a></td></tr>
 Alias
 }
@@ -610,6 +602,7 @@ die;
 
 print "</table>\n";
 print "</div>\n";
+print "\n";
 }
 
 #=============================================================================

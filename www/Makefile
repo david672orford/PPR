@@ -88,7 +88,7 @@ CGI_PROGS=show_queues.cgi \
 
 LIBS=cgi_data.pl qquery_xlate.pl cgi_wizard.pl cgi_run.pl cgi_tabbed.pl cgi_error.pl \
 	cgi_membership.pl cgi_time.pl cgi_auth.pl cgi_intl.pl cgi_back.pl cgi_redirect.pl \
-	cgi_widgets.pl cgi_digest.pl \
+	cgi_widgets.pl cgi_digest.pl cgi_user_agent.pl \
 	docs_util.pl ppd_select.pl
 
 JAVASCRIPT=show_queues.js show_jobs.js md5.js

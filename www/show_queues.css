@@ -51,7 +51,7 @@ DIV.popup {
 	z-index: 1;
 	left: 0;
 	top: 0;
-	padding: 5mm;
+	padding: 50px;
 	background-color: transparent;
 	}
 DIV.popup TABLE {

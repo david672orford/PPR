@@ -25,10 +25,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2003.
+# Last modified 11 December 2003.
 #
 
 require "paths.ph";
+require "cgi_user_agent.pl";
 defined($LOCALEDIR) || die;
 defined($PACKAGE_PPRWWW) || die;
 
@@ -291,18 +292,14 @@ sub isubmit
 
 	my $translation = _($translatable);
 
-	# Try to get a Mozilla version number.
-	my $mozilla_version = 0;
-	if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+) /)
-		{
-		$mozilla_version = $1;
-		}
+	# Figure out what this browser supports.
+	my $user_agent = cgi_user_agent();
 
 	print "<label title=", html_value($title), ">\n" if(defined $title);
 
 	# <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
 	# so only enable it if we are using a Gecko Mozilla based browser.
-	if($int_on && $mozilla_version >= 5.0)
+	if($int_on && $user_agent->{button})
 		{
 		$accesskey = $1 if($translation =~ s/_(.)/$1/);
 		$translation = html($translation);
@@ -341,18 +338,14 @@ sub ibutton
 	defined($value) && defined($onclick) || die;
 	my $accesskey = undef;
 
-	# Try to get a Mozilla version number.
-	my $mozilla_version = 0;
-	if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+) /)
-		{
-		$mozilla_version = $1;
-		}
+	# Figure out what this browser supports.
+	my $user_agent = cgi_user_agent();
 
 	print "<label title=", html_value($title), ">\n" if(defined $title);
 
 	# <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
 	# so only enable it if we are using a Gecko Mozilla based browser.
-	if($int_on && $mozilla_version >= 5.0)
+	if($int_on && $user_agent->{button})
 		{
 		$accesskey = $1 if($value =~ s/_(.)/$1/);
 		$value = html($value);

@@ -1,36 +1,48 @@
 #
 # mouse:~ppr/src/www/cgi_back.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 1 August 2001.
+# Last modified 11 December 2003.
 #
 
 #
-# Attempt to set up the CGI variable "HIST" to store our PPR page navigation
-# history.	We can do this if either HTTP_REFERER is defined or the caller
-# provides a default URL to use if it is not defined.
+# Return a new HIST encoded in QUERY_STRING form with the calling script as
+# the last item.  This is the value which it should pass to its children.
 #
-sub cgi_back_possible
+sub cgi_back_init
 	{
-	my $default = shift;
-
 	if(!defined($data{HIST}))
 		{
 		if(defined($ENV{HTTP_REFERER}))
 			{ $data{HIST} = $ENV{HTTP_REFERER} }
-		elsif(defined($default))
-			{ $data{HIST} = $default }
+		else
+			{ $data{HIST} = "/" }
 		}
 
-	return defined($data{HIST});
+	return form_urlencoded("HIST", "$data{HIST} $ENV{SCRIPT_NAME}");
 	}
 
 #
@@ -51,7 +63,7 @@ EndOfText
 		}
 
 	my @back_stack_list = split(/ /, $data{HIST});
-	my $back_url = shift(@back_stack_list);
+	my $back_url = pop(@back_stack_list);
 	if($back_url =~ /^\//)
 		{
 		$back_url = "http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$back_url";
@@ -77,26 +89,6 @@ Content-Length: ${\length($html_body)}
 EndQuote20
 
 	print $html_body;
-	}
-
-#
-# Return a new HIST encoded in QUERY_STRING form with the calling script as
-# the last item.
-#
-sub cgi_back_stackme
-	{
-	my $hist = $data{HIST};
-	my $myurl = $ENV{SCRIPT_NAME};
-	if(defined($hist))
-		{
-		$hist .= " ";
-		$hist .= $myurl;
-		}
-	else
-		{
-		$hist = $myurl;
-		}
-	return form_urlencoded("HIST", $hist);
 	}
 
 1;
