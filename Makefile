@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2005.
+# Last modified 13 January 2005.
 #
 
 #
@@ -180,7 +180,6 @@ dist: dist-docs clean unconfigure
 # CVS doesn't preserve symlinks.  If INSTALL.txt is missing, run the hidden
 # shell script in which they are preserved.
 symlinks-restore:
-	#if [ ! -f libgu/gu_md5.c ]; then bash ./.restore_symlinks; fi
 	if [ -d CVS ]; then ./.restore_symlinks; fi
 
 # This creates the file that the symbolic links are restored from.

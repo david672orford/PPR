@@ -69,5 +69,3 @@ ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1 ||
 ln -sf ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1
 # ../nonppr_misc/md5/md5.js --> ./www/md5.js
 ln -sf ../nonppr_misc/md5/md5.js ./www/md5.js || exit 1
-# /usr/local/src/ppr_cvs --> ./ppr_cvs
-ln -sf /usr/local/src/ppr_cvs ./ppr_cvs || exit 1
