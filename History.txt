@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--3 August 2003.
+1.52, 24 July 2003--4 August 2003.
 
 Bug Fixes
 
@@ -8645,6 +8645,14 @@ Bug Fixes
 * z_install_begin/, makeprogs/, z_install_end/: fixed sundry build problems
   which broke RPM building.
 
+* interfaces/smb.sh: added "-z 600000" to the smbclient command line.  This
+  changes the timeout used when waiting for the SMB server to respond.  That
+  is 600,000 milliseconds (10 minutes).  The default is only 20 seconds
+  which may not be enough if the file is very large (say 250Mbytes).  It
+  seems that on some server the close operation takes a while on such large
+  files.  Should it be a matter of concern that the -z option isn't
+  documented?
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
@@ -8665,6 +8673,9 @@ Misc. Enhancements
 
 * libppr/query.c: changed to use new exception handing.  (It was OK to make
   this change since the code in query.c isn't used yet.
+
+* www/prn_control.cgi.perl: now prints large byte counts in kilobytes or
+  megabytes.
 
 Internet Printing Protocol Work
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 June 2003.
+# Last modified 4 August 2003.
 #
 
 =head1 NAME
@@ -186,7 +186,8 @@ sub launch
     # wait for messages that will never come.
     $wtr->autoflush(1);
 
-    # The first thing it does is print the PPR version number.
+    # The first thing ppop does is print the PPR version number.  If we receive the
+    # version number message we will know that ppop is alive and kicking.
     my $junk = <$rdr>;
     $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready: $junk";
 

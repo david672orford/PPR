@@ -77,7 +77,7 @@ for opt in $OPTIONS
   esac
 done
 
-$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER"
+$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" -z 600000
 
 retval=$?
 case $retval in
