@@ -969,7 +969,7 @@ static void ppop_cancel_byuser_banner(void)
 	{ }
 
 static int ppop_cancel_byuser_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1136,7 +1136,7 @@ static void ppop_clean_banner(void)
 	}
 
 static int ppop_clean_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1214,7 +1214,7 @@ static void ppop_cancel_active_banner(void)
 	}
 
 static int ppop_cancel_active_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{

@@ -781,7 +781,7 @@ int job_permission_check(struct Jobname *job)
 ** The global variables uid and proxy_for are used by
 ** this function.
 */
-int is_my_job(const struct QEntry *qentry, const struct QFileEntry *qfileentry)
+int is_my_job(const struct QEntry *qentry, const struct QFile *qfileentry)
 	{
 	/* If the user names don't match, it isn't. */
 	if(strcmp(su_user, qfileentry->username))

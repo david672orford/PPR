@@ -44,7 +44,7 @@
 ** Read an ASCII string and store it in job as the mask of pages
 ** to be printed.
 */
-int pagemask_encode(struct QFileEntry *job, const char pages[])
+int pagemask_encode(struct QFile *job, const char pages[])
 	{
 	int bytes;
 	int page;
@@ -161,7 +161,7 @@ int pagemask_encode(struct QFileEntry *job, const char pages[])
 ** Print a human readable representation of the list of the
 ** page mask.
 */
-void pagemask_print(const struct QFileEntry *job)
+void pagemask_print(const struct QFile *job)
 	{
 	if(job->page_list.mask)
 		{
@@ -179,7 +179,7 @@ void pagemask_print(const struct QFileEntry *job)
 ** Return the value of a bit in the array of bits that represents the pages.
 ** The value must be in the range 1-job->attr.pages.
 */
-int pagemask_get_bit(const struct QFileEntry *job, int page)
+int pagemask_get_bit(const struct QFile *job, int page)
 	{
 	/* If there is no page mask, we print all pages. */
 	if(!job->page_list.mask)
@@ -205,7 +205,7 @@ int pagemask_get_bit(const struct QFileEntry *job, int page)
 ** Return the number of bits that are set.  This will be the
 ** number of pages that will be printed (per copy of course).
 */
-int pagemask_count(const struct QFileEntry *job)
+int pagemask_count(const struct QFile *job)
 	{
 	if(job->page_list.mask)
 		return job->page_list.count;

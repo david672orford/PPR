@@ -126,7 +126,7 @@ gu_boolean current_duplex_enforce = FALSE;
 
 /* odds and ends */
 static FILE *FIFO = (FILE*)NULL;		/* streams library thing for pipe to pprd */
-struct QFileEntry qentry;				/* structure in which we build our queue entry */
+struct QFile qentry;				/* structure in which we build our queue entry */
 int pagenumber = 0;						/* count of %%Page: comments */
 char *AuthCode = (char*)NULL;			/* clear text of authcode */
 static int auth_needed;					/* TRUE if dest protect */
@@ -397,7 +397,7 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 ** Create and fill the queue file.
 ** Return -1 if we run out of disk space.
 */
-int write_queue_file(struct QFileEntry *qentry)
+int write_queue_file(struct QFile *qentry)
 	{
 	const char function[] = "write_queue_file";
 	char magic_cookie[16];
@@ -433,7 +433,7 @@ int write_queue_file(struct QFileEntry *qentry)
 		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fdopen", errno, gu_strerror(errno));
 
 	/* Use library code to write the body. */
-	qentry_save(qentry, Qfile);
+	qfile_save(qentry, Qfile);
 
 	/* Write an empty Addon section.  Job ticket information may be added later by ppop. */
 	fprintf(Qfile, "EndAddon\n");
@@ -525,7 +525,7 @@ static FILE *open_fifo(const char name[])
 /*
 ** Function to send a command to the FIFO to submit a job.
 */
-void submit_job(struct QFileEntry *qe, int subid)
+void submit_job(struct QFile *qe, int subid)
 	{
 	fprintf(FIFO, "j %s-%d.%d\n", qe->destname, qe->id, subid);
 

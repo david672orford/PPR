@@ -142,7 +142,7 @@ static char **allow_PPRDEST(char *argv[])
 ** the required media names.  Lastly, it is passed the indent to use when
 ** printing continuation lines.
 */
-static void job_status(const struct QEntry *qentry, const struct QFileEntry *qfileentry,
+static void job_status(const struct QEntry *qentry, const struct QFile *qfileentry,
 		 const char *onprinter, FILE *vfile, int indent, int reason_indent)
 	{
 	/* Print a message appropriate to the status. */
@@ -432,7 +432,7 @@ int custom_list(char *argv[],
 		void(*help)(void),		/* function for syntax error */
 		void(*banner)(void),	/* function to print column labels */
 		int(*item)(const struct QEntry *qentry,
-			const struct QFileEntry*,
+			const struct QFile*,
 			const char *onprinter,
 			FILE *qstream),		/* file to read Media: from */
 		int suppress,			/* True if should suppress header on empty queue */
@@ -441,7 +441,7 @@ int custom_list(char *argv[],
 	int arg_index;
 	FILE *FIFO, *reply_file;
 	struct Jobname job;					/* Split up job name */
-	struct QFileEntry qfileentry;		/* full queue entry */
+	struct QFile qfileentry;		/* full queue entry */
 	struct QEntry qentry;
 	int header_printed = FALSE;
 	char *line = NULL;
@@ -518,8 +518,8 @@ int custom_list(char *argv[],
 			** Read additional information from the queue file included
 			** in the reply file.
 			*/
-			qentry_clear(&qfileentry);
-			if(qentry_load(&qfileentry, reply_file) == -1)
+			qfile_clear(&qfileentry);
+			if(qfile_load(&qfileentry, reply_file) == -1)
 				printf("Invalid queue entry:\n");
 
 			/* Copy everything into a QEntry structure for easy parameter passing. */
@@ -531,7 +531,7 @@ int custom_list(char *argv[],
 			qentry.notnow = notnow;
 			qentry.pass = pass;
 
-			/* And into the QFileEntry structure too, this will take care of deallocation. */
+			/* And into the QFile structure too, this will take care of deallocation. */
 			qfileentry.destname = destname;
 			qfileentry.id = id;
 			qfileentry.subid = subid;
@@ -568,7 +568,7 @@ int custom_list(char *argv[],
 			** Free memory in the qfileentry.
 			** This will free destname as well.
 			*/
-			qentry_free(&qfileentry);
+			qfile_free(&qfileentry);
 			gu_free(onprinter);
 			} /* end of while, loop back for next job */
 
@@ -598,7 +598,7 @@ static void ppop_short_banner(void)
 	}
 
 static int ppop_short_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -654,7 +654,7 @@ printf(  "----------------------------------------------------------------------
 	}
 
 static int ppop_list_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -951,7 +951,7 @@ static void ppop_lpq_banner(void)
 ** This is called for each job in the queue.
 */
 static int ppop_lpq_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1194,7 +1194,7 @@ static void ppop_details_banner(void)
 	}
 
 static int ppop_details_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1372,7 +1372,7 @@ static void ppop_qquery_banner(void)
 	{ /* empty */ }
 
 static int ppop_qquery_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1933,7 +1933,7 @@ static void ppop_progress_banner(void)
 	}
 
 static int ppop_progress_item(const struct QEntry *qentry,
-		const struct QFileEntry *qfileentry,
+		const struct QFile *qfileentry,
 		const char *onprinter,
 		FILE *qstream)
 	{

@@ -128,7 +128,7 @@ int copies_auto;
 int copies_auto_collate;
 char *dgetline(FILE *infile);
 extern const char *QueueFile;
-extern struct QFileEntry job;
+extern struct QFile job;
 extern int group_pass;
 extern gu_boolean doing_primary_job;
 extern gu_boolean doing_prolog;

@@ -75,7 +75,7 @@ int test_mode = FALSE;
 /* Queue entry variables. */
 const char *QueueFile;							/* name of queue file of job to print */
 FILE *qstream;									/* queue file "handle" */
-struct QFileEntry job;							/* queue file entry */
+struct QFile job;							/* queue file entry */
 
 /* List of resource refered to in this job. */
 struct DRVRES *drvres = (struct DRVRES *)NULL;
@@ -2027,8 +2027,8 @@ int real_main(int argc, char *argv[])
 	** Read miscelaneous data from the queue file
 	** into the structure "job".
 	*/
-	qentry_clear(&job);
-	if(qentry_load(&job, qstream))
+	qfile_clear(&job);
+	if(qfile_load(&job, qstream))
 		fatal(EXIT_JOBERR, "Defective queue file data.");
 
 	/*

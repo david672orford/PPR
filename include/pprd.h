@@ -161,7 +161,7 @@ struct Group
 	} ;
 
 /* A queue entry as stored by pprd and passed back to ppop.
-   Notice that this is shorter than struct QFileEntry. */
+   Notice that this is shorter than struct QFile. */
 struct QEntry
 	{
 	SHORT_INT destnode_id;				/* destination node by key number */

@@ -79,7 +79,7 @@ int print_reply(void);
 
 int assert_am_operator(void);
 int job_permission_check(struct Jobname *job);
-int is_my_job(const struct QEntry *qentry, const struct QFileEntry *qfileentry);
+int is_my_job(const struct QEntry *qentry, const struct QFile *qfileentry);
 
 /* ============== Functions in ppop_cmds_listq.c =================== */
 
@@ -97,7 +97,7 @@ int custom_list(char *argv[],
 				void(*help)(void),
 				void(*banner)(void),
 				int(*item)(const struct QEntry *qentry,
-					const struct QFileEntry*,
+					const struct QFile*,
 					const char *onprinter,
 					FILE *qstream),
 				int suppress,

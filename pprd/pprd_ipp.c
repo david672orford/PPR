@@ -455,7 +455,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 	int i;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
-	struct QFileEntry qfileentry;
+	struct QFile qfileentry;
 	struct OPERATION *req;
 
 	req = request_new(ipp, OP_SUPPORTS_PRINTER);
@@ -485,9 +485,9 @@ static void ipp_get_jobs(struct IPP *ipp)
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
 			continue;
 			}
-		qentry_clear(&qfileentry);
+		qfile_clear(&qfileentry);
 		{
-		int ret = qentry_load(&qfileentry, qfile);
+		int ret = qfile_load(&qfileentry, qfile);
 		fclose(qfile);
 		if(ret == -1)
 			{
@@ -544,7 +544,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
-		qentry_free(&qfileentry);
+		qfile_free(&qfileentry);
 		}
 
 	unlock();

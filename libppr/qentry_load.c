@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libppr/qentry_load.c
+** mouse:~ppr/src/libppr/qfile_load.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -60,9 +60,9 @@ if(strncmp(line, name, sizeof(name)-1) == 0) \
  * Read the queue file up to but not including the first "Media:" line.
  * Return 0 if all goes well, -1 if there is an error in the queue file.
 */
-int qentry_load(struct QFileEntry *job, FILE *qfile)
+int qfile_load(struct QFile *job, FILE *qfile)
 	{
-	const char function[] = "read_struct_QFileEntry";
+	const char function[] = "read_struct_QFile";
 	gu_boolean found_time = FALSE;
 	gu_boolean found_opts = FALSE;
 	gu_boolean found_user = FALSE;
@@ -321,7 +321,7 @@ int qentry_load(struct QFileEntry *job, FILE *qfile)
 		gu_free(line);
 
 	return retcode;
-	} /* end of read_struct_QFileEntry() */
+	} /* end of read_struct_QFile() */
 
 /* end of file */
 

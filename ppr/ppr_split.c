@@ -129,7 +129,7 @@ void Y_switch(const char *optarg)
 ** pieces and will not call write_queue_file() or submit
 ** the job to the spooler.
 */
-int split_job(struct QFileEntry *qentry)
+int split_job(struct QFile *qentry)
 	{
 	int x;
 

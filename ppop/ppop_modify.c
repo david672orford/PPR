@@ -68,7 +68,7 @@ struct JOB
 	{
 	struct Jobname jobname;
 	char qfname[MAX_PPR_PATH];
-	struct QFileEntry qentry;
+	struct QFile qentry;
 	struct ADDON addon[MAX_ADDON_LINES];
 	int addon_count;
 	};
@@ -146,7 +146,7 @@ static void write_changes(FILE *qf, const struct JOB *job)
 		return;
 		}
 
-	qentry_save(&(job->qentry), nqf);
+	qfile_save(&(job->qentry), nqf);
 
 	for(i = 0; i < job->addon_count; i++)
 		fprintf(nqf, "%s: %s\n", job->addon[i].name, job->addon[i].value);
@@ -337,8 +337,8 @@ int ppop_modify(char *argv[])
 		}
 
 	/* Read the first part of the queue file into a special structure. */
-	qentry_clear(&job.qentry);
-	if(qentry_load(&job.qentry, qf) == -1)
+	qfile_clear(&job.qentry);
+	if(qfile_load(&job.qentry, qf) == -1)
 		return EXIT_INTERNAL;
 
 	/* Read in the extensions section.  This section will contain things that
@@ -412,7 +412,7 @@ int ppop_modify(char *argv[])
 	fclose(qf);
 
 	/* Free any allocated memory. */
-	qentry_free(&job.qentry);
+	qfile_free(&job.qentry);
 	destroy_addon(&job);
 
 	return ret;

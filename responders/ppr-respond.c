@@ -74,7 +74,7 @@ struct RESPONSE_INFO
 	char *jobname;					/* destname-id of job */
 	int response_code;				/* what happened to the job? */
 	char *extra;					/* extra parameter supplementing response_code */
-	struct QFileEntry job;
+	struct QFile job;
 	int pages_printed;
 	struct COMPUTED_CHARGE charge;	/* the amount of money to charge */
 	} ;
@@ -326,8 +326,8 @@ static int job_message(int argc, char *argv[])
 			return -1;
 			}
 
-		qentry_clear(&rinfo.job);
-		qentry_load(&rinfo.job, f);
+		qfile_clear(&rinfo.job);
+		qfile_load(&rinfo.job, f);
 	
 		fclose(f);
 		}

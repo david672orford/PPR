@@ -37,12 +37,12 @@ struct RESPONDER {
 	};
 
 /** Holds the contents of a queue file.
- * This structure is loaded using read_struct_QFileEntry(), saved using
- * write_struct_QFileEntry(), and destroyed using destroy_struct_QFileEntry().
+ * This structure is loaded using read_struct_QFile(), saved using
+ * write_struct_QFile(), and destroyed using destroy_struct_QFile().
  * The members are minipulated directly by the caller as there are no
  * member functions for that purpose.
 */
-struct QFileEntry
+struct QFile
 	{
 	float PPRVersion;					/* version number of PPR that created queue entry */
 
@@ -116,7 +116,7 @@ struct QFileEntry
 	const char *ripopts;				/* name=value pairs for Ghostscript and such */
 	} ;
 
-/* Possible values for orientation member of struct QFileEntry. */
+/* Possible values for orientation member of struct QFile. */
 #define ORIENTATION_UNKNOWN 0
 #define ORIENTATION_PORTRAIT 1
 #define ORIENTATION_LANDSCAPE 2
@@ -172,16 +172,16 @@ struct QFileEntry
 #define WILDCARD_JOBID -1
 #define WILDCARD_SUBID -1
 
-void qentry_clear(struct QFileEntry *job);
-int qentry_load(struct QFileEntry *job, FILE *qfile);
-int qentry_save(const struct QFileEntry *qentry, FILE *Qfile);
-void qentry_free(struct QFileEntry *job);
+void qfile_clear(struct QFile *job);
+int qfile_load(struct QFile *job, FILE *qfile);
+int qfile_save(const struct QFile *qentry, FILE *Qfile);
+void qfile_free(struct QFile *job);
 
 int parse_qfname(char *buffer, const char **destname, short int *id, short int *subid);
-int pagemask_encode(struct QFileEntry *job, const char pages[]);
-void  pagemask_print(const struct QFileEntry *job);
-int pagemask_get_bit(const struct QFileEntry *job, int page);
-int pagemask_count(const struct QFileEntry *job);
+int pagemask_encode(struct QFile *job, const char pages[]);
+void  pagemask_print(const struct QFile *job);
+int pagemask_get_bit(const struct QFile *job, int page);
+int pagemask_count(const struct QFile *job);
 
 /* ======================== Media file format =========================== */
 struct Media

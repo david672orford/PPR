@@ -54,7 +54,7 @@
 ** and incremented making the new id, and the new id is written back
 ** to the file, the file is closed, and the new id is returned.
 */
-void get_next_id(struct QFileEntry *q)
+void get_next_id(struct QFile *q)
 	{
 	const char function[] = "get_next_id";
 	const char filename[] = NEXTIDFILE;

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libppr/qentry_clear.c
+** mouse:~ppr/src/libppr/qfile_clear.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -37,12 +37,12 @@
 #include "global_defines.h"
 #include "global_structs.h"
 
-/** Clear a struct QFileEntry
+/** Clear a struct QFile
  *
- * This function clears a struct QFileEntry in preparation for loading information
+ * This function clears a struct QFile in preparation for loading information
  * into it.
  */
-void qentry_clear(struct QFileEntry *job)
+void qfile_clear(struct QFile *job)
 	{
 	/* Clear the job id variables because we won't read them.
 	   (They are encoded in the queue file name.) */

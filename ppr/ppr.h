@@ -164,7 +164,7 @@ extern int read_Routing;
 extern int current_duplex;
 extern gu_boolean current_duplex_enforce;
 
-extern struct QFileEntry qentry;		/* where we build our queue entry */
+extern struct QFile qentry;		/* where we build our queue entry */
 extern int pagenumber;					/* count of %%Page: comments */
 
 /* Command line option settings. */
@@ -213,26 +213,26 @@ __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
 void file_cleanup(void);
-int write_queue_file(struct QFileEntry *qentry);
-void submit_job(struct QFileEntry *qe, int segment);
+int write_queue_file(struct QFile *qentry);
+void submit_job(struct QFile *qe, int segment);
 void become_user(void);
 void unbecome_user(void);
 int parse_feature_option(const char name[]);
 int parse_hack_option(const char *name);
 
 /* ppr_selpgs.c */
-void select_pages(struct QFileEntry *qentry, const char *page_list);
+void select_pages(struct QFile *qentry, const char *page_list);
 
 /* ppr_split.c */
 void prepare_thing_bitmap(void);
 void set_thing_bit(int bitoffset);
 void Y_switch(const char *optarg);
-int split_job(struct QFileEntry *qentry);
+int split_job(struct QFile *qentry);
 int is_thing_in_current_fragment(int thing_number, int fragment);
 extern char default_pagemedia[MAX_MEDIANAME+1];
 
 /* ppr_outfile.c */
-void get_next_id(struct QFileEntry *q);
+void get_next_id(struct QFile *q);
 void open_output(void);
 
 /* ppr_dscdoc.c */
