@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 5 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=ppr.conf.sample
+ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) id$(DOTEXE) etc_init.d_ppr
 
 #=== Build ==================================================================
 
@@ -45,9 +45,14 @@ ppr.conf.sample: make_ppr_conf_sample.sh
 
 install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
+	./fixup_obsolete.sh
 	./install_sample_config.sh
 	./install_mediadb.sh >/dev/null
 	./install_atalk_links.tcl
+	./install_crontab.sh
+	./install_bin_links.sh
+	-./install_inetd_conf.sh
+	-./install_init_script.sh
 	$(HOMEDIR)/bin/ppr-indexfilters >/dev/null
 	$(HOMEDIR)/bin/ppr-indexfonts >/dev/null
 	$(HOMEDIR)/bin/ppr-indexppds >/dev/null

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 5 March 2003.
 */
 
 #include "before_system.h"
@@ -52,12 +52,14 @@ static void do_paths(char format[], char language[])
     if(strcmp(language, "--mk") != 0)
     	{
 	printf(format, "USER_PPR", USER_PPR);
+	printf(format, "USER_PPRWWW", USER_PPRWWW);
 	printf(format, "GROUP_PPR", GROUP_PPR);
 	printf(format, "CONFDIR", CONFDIR);
 	printf(format, "HOMEDIR", HOMEDIR);
 	printf(format, "SHAREDIR", SHAREDIR);
 	printf(format, "VAR_SPOOL_PPR", VAR_SPOOL_PPR);
 	printf(format, "TEMPDIR", TEMPDIR);
+	printf(format, "SYSBINDIR", SYSBINDIR);
 
 	/* non-path stuff */
 	printf(format, "VERSION", VERSION);

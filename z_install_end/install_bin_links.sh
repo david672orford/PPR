@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/fixup/Makefile
+# mouse:~ppr/src/z_install_end/install_bin_links.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,35 +25,34 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 5 March 2003.
 #
 
-include ../Makefile.conf
+. ../makeprogs/paths.sh
 
-#=== Inventory ==============================================================
+#======================================================================
+# Create links so that the PPR bin directory need
+# not be in the PATH.
+#======================================================================
 
-FIXUP_PROGS=fixup \
-	fixup_cron \
-	fixup_init \
-	fixup_links \
-	fixup_obsolete \
-	fixup_perms \
-	fixup_inetd
+echo "Creating symbolic links in \"$SYSBINDIR\"..."
+for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd
+    do
+    ./puts "  $SYSBINDIR/$i..."
+    existing=`readlink $RPM_BUILD_ROOT$SYSBINDIR/$i`
+    if [ "$existing" = "$HOMEDIR/bin/$i" ]
+	then
+	echo " exists and is correct ($existing)"
+	else
+	echo " linking $HOMEDIR/bin/$i -> $SYSBINDIR/$i"
+	rm -f $RPM_BUILD_ROOT$SYSBINDIR/$i
+	ln -s $HOMEDIR/bin/$i $RPM_BUILD_ROOT$SYSBINDIR/$i 2>/dev/null
+	if [ $? -ne 0 ]
+	    then
+	    echo "Warning: Can't create because not running as root."
+	    fi
+	fi
+    done
 
-#=== Build ==================================================================
+exit 0
 
-all: $(FIXUP_PROGS)
-
-#=== Install ================================================================
-
-install: $(FIXUP_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/fixup $(FIXUP_PROGS)
-
-#=== Housekeeping ===========================================================
-
-depend:
-
-clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(FIXUP_PROGS)
-
-# end of file

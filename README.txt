@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/README.txt
  mouse:~ppr/src/README.txt (symbolic link)
- Last revised 21 February 2003.
+ Last revised 4 March 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -111,7 +111,7 @@ The source code is divided into directories as follows:
 		in nonppr_vendors/.
 	misc/
 		Odds and ends that are mostly small, experimental,
-		unimportant, or included only for reference.
+		unimportant, or included as examples.
 	encodings/
 		PostScript arrays for mapping various character sets to
 		PostScript glyph names.
@@ -132,9 +132,6 @@ The source code is divided into directories as follows:
 		Internationalization files.	
 	www/
 		The WWW interface to PPR.
-	docbrowse/
-		A series of CGI scripts which provide a WWW interface to a
-		computer's online documentation.
 	printdesk/
 		A basic print queue control program written in Perl/Tk.
 	unixuser/
@@ -144,7 +141,9 @@ The source code is divided into directories as follows:
 		A System V Init script for PPR and scripts to be run as Cron
 		jobs to clean up stray PPR temporary files.
 	fixup/
-		Shell scripts used in the final stages of installing PPR.
+		Shell scripts used in the final stages of installing PPR.  An
+		attempt is being made to phase this out or at least reduce it
+		to almost nothing.
 	tests/
 		Regression tests.
 	nonppr_misc/
@@ -163,7 +162,3 @@ The source code is divided into directories as follows:
 		directories.  The z_install_end/Makefile does final tasks
 		such as creating missing configuration files from sample
 		configuration files.
-
-
-
-

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 5 March 2003.
 #
 
 #
@@ -56,7 +56,7 @@ foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
     }
 
 if {! [ file executable "$HOMEDIR/lib/getzones" ]} {
-    puts "  No getzones found."
+    puts "  No getzones found.  You probably don't have AppleTalk."
     }
 
 exit 0

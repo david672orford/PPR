@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/makeprogs/scriptfixup.sh
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 July 2002.
+# Last modified 5 March 2003.
 #
 
 #
@@ -58,7 +58,6 @@ if [ ! -r "$paths_file" ]
 USER_PPRWWW=`sed -ne 's/^USER_PPRWWW=\(.*\)$/\1/p' ../Makefile.conf`
 NECHO=`sed -ne 's/^NECHO=\(.*\)$/\1/p' ../Makefile.conf`
 EECHO=`sed -ne 's/^EECHO=\(.*\)$/\1/p' ../Makefile.conf`
-BINDIR=`sed -ne 's/^BINDIR=\(.*\)$/\1/p' ../Makefile.conf`
 XWINBINDIR=`sed -ne 's/^XWINBINDIR=\(.*\)$/\1/p' ../Makefile.conf`
 SH=`sed -ne 's/^SH=\(.*\)$/\1/p' ../Makefile.conf`
 PERL=`sed -ne 's/^PERL=\(.*\)$/\1/p' ../Makefile.conf`
@@ -78,7 +77,6 @@ sed \
     -e "s#^\\(\$*\\)CONFDIR *= *\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
     -e "s#^\\(\$*\\)VAR_SPOOL_PPR *= *\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
     -e "s#^\\(\$*\\)TEMPDIR *= *\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
-    -e "s#^\\(\$*\\)BINDIR *= *\"[^\"]*\"#\\1BINDIR=\"$BINDIR\"#" \
     -e "s#^\\(\$*\\)XWINBINDIR *= *\"[^\"]*\"#\\1XWINBINDIR=\"$XWINBINDIR\"#" \
     -e "s#^\\(\$*\\)NECHO *= *\"[^\"]*\"#\\1NECHO=\"$NECHO\"#" \
     -e "s#^\\(\$*\\)EECHO *= *\"[^\"]*\"#\\1EECHO=\"$EECHO\"#" \

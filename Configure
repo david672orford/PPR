@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 February 2003.
+# Last modified 5 March 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -314,14 +314,14 @@ then
     CONFDIR=$opt_prefix/etc/ppr
     VAR_SPOOL_PPR=$opt_prefix/var/ppr
     TEMPDIR=/tmp
-    BINDIR=$opt_prefix/bin
+    SYSBINDIR=$opt_prefix/bin
 else
     HOMEDIR=/usr/lib/ppr
     SHAREDIR=/usr/share/ppr
     CONFDIR=/etc/ppr
     VAR_SPOOL_PPR=/var/spool/ppr
     TEMPDIR=/tmp
-    BINDIR=/usr/bin
+    SYSBINDIR=/usr/bin
 fi
 
 #
@@ -359,9 +359,9 @@ read answer
 if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
 echo
 
-$NECHO -n "Directory for symbolic links to PPR binaries [$BINDIR]: "
+$NECHO -n "Directory for symbolic links to PPR binaries [$SYSBINDIR]: "
 read answer
-if [ -n "$answer" ]; then BINDIR="$answer"; fi
+if [ -n "$answer" ]; then SYSBINDIR="$answer"; fi
 echo
 
 #
@@ -762,7 +762,7 @@ TEMPDIR=$TEMPDIR
 
 # Directory for symbolic links to PPR executables
 # Default is /usr/bin.
-BINDIR=$BINDIR
+SYSBINDIR=$SYSBINDIR
 
 # Directory were we will find X-Windows programs
 # Default is /usr/bin/X11.
@@ -785,12 +785,12 @@ echo "# this line may be commented out." >&3
 if [ $HOMEDIR = "/usr/lib/ppr" -a $SHAREDIR = "/usr/share/ppr" \
 		-a $CONFDIR = "/etc/ppr" \
 		-a $VAR_SPOOL_PPR = "/var/spool/ppr" \
-		-a $TEMPDIR = "/tmp" -a $BINDIR = "/usr/bin" \
+		-a $TEMPDIR = "/tmp" -a $SYSBINDIR = "/usr/bin" \
 		-a $XWINBINDIR = "/usr/bin/X11" ]
 	then
 	$EECHO "#\c" >&3
 	fi
-echo 'CHANGE=-DHOMEDIR=\"$(HOMEDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DCONFDIR=\"$(CONFDIR)\" -DVAR_SPOOL_PPR=\"$(VAR_SPOOL_PPR)\" -DTEMPDIR=\"$(TEMPDIR)\" -DXWINBINDIR=\"$(XWINBINDIR)\"' >&3
+echo 'CHANGE=-DHOMEDIR=\"$(HOMEDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DCONFDIR=\"$(CONFDIR)\" -DVAR_SPOOL_PPR=\"$(VAR_SPOOL_PPR)\" -DTEMPDIR=\"$(TEMPDIR)\" -DSYSBINDIR=\"$(SYSBINDIR)\" -DXWINBIN]DIR=\"$(XWINBINDIR)\"' >&3
 echo >&3
 
 cat >&3 <<===EndOfHere20===

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 February 2003.
+# Last modified 5 March 2003.
 #
 
 include ../Makefile.conf
@@ -75,8 +75,8 @@ uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
 
 install: $(TARGETS) $(DATA)
 	$(INSTALLDATA) $(CONFDIR) $(DATA)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) root        $(GROUP_PPR) 4755 $(HOMEDIR)/lib uprint_rfc1179$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

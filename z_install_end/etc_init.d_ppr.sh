@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/init_and_cron/init_ppr.sh
+# mouse:~ppr/src/z_install_end/etc_init.d_ppr.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,21 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 February 2001.
+# Last modified 5 March 2003.
 #
 
 #
-# This file is designed to work with the System V init provided with
-# operating systems such as SunOS 5.  If invoked with the argument
-# "start", it starts PPRD and PAPSRV, if invoked with the argument
-# "stop", it is supposed to stop them.  The "/usr/lib/ppr/fixup/fixup_init"
-# script will install this script if necessary.
+# This file is designed to work with the System V init provided with operating
+# systems such as SunOS 5 and the reimplementation used in most Linux 
+# distributions.  If invoked with the argument "start", it starts PPRD and 
+# PAPSRV, if invoked with the argument "stop", it is supposed to stop them.
 #
 
 #
-# This information in this block is for the user of the Linux program
-# /sbin/chkconfig which can be used to install and remove links from
-# the init.d directory to the rc?.d directories.
+# This information in this block is read by the Linux program /sbin/chkconfig
+# which can be used to automatically install and remove the links from the 
+# init.d directory to the rc?.d directories.
 #
 # chkconfig: 2345 80 40
 # description: PPR is a print spooler for PostScript printers.
@@ -56,30 +55,17 @@ NECHO="?"
 # Where will the .pid files be found?
 RUNDIR="$VAR_SPOOL_PPR/run"
 
-# What language should messages be printed in?
-lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
-if [ -n "$lang" ]
-    then
-    LANG=$lang
-    export LANG
-    fi
-
-case "$1" in
-
-    start_msg)
-	echo "Start PPR spooler"
-	;;
-
-    stop_msg)
-	echo "Stopping PPR spooler"
-	;;
-
-    start)
+do_start ()
+	{
 	$NECHO -n "Starting PPR spooler: "
 
-	if [ -n "$LANG" ]
+	# What language should messages be printed in?
+	lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
+	if [ -n "$lang" ]
 	    then
-	    $NECHO -n "(language is $LANG) "
+	    $NECHO -n "(language is $lang) "
+	    LANG=$lang
+	    export LANG
 	    fi
 
 	# This is the spooler daemon.
@@ -111,9 +97,10 @@ case "$1" in
 
 	# Extra code for RedHat Linux:
 	if [ -d /var/lock/subsys ]; then touch /var/lock/subsys/ppr; fi
-	;;
+	}
 
-    stop)
+do_stop ()
+	{
 	$NECHO -n "Stopping PPR daemons: "
 	if [ -r $RUNDIR/pprd.pid ]
 	    then
@@ -143,10 +130,32 @@ case "$1" in
 	echo
 	# For RedHat Linux:
 	if [ -d /var/lock/subsys ]; then rm -f /var/lock/subsys/ppr; fi
+	}
+
+case "$1" in
+
+    start_msg)
+	echo "Start PPR spooler"
 	;;
 
+    stop_msg)
+	echo "Stopping PPR spooler"
+	;;
+
+    start)
+	do_start
+	;;
+
+    stop)
+	do_stop
+	;;
+
+    restart)
+	do_stop
+	do_start
+
     *)
-	echo "Usage: ppr {start, stop}"
+	echo "Usage: ppr {start, stop, restart}"
 	exit 1
 	;;
 esac

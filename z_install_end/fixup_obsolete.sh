@@ -25,20 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 5 March 2003.
 #
 
-HOMEDIR="?"
-SHAREDIR="?"
-CONFDIR="?"
-VAR_SPOOL_PPR="?"
-BINDIR="?"
+. ../makeprogs/paths.sh
 
 #===========================================================================
 # Remove files which are no longer used in the current version or PPR.
 #===========================================================================
-
-echo "Removing obsolete files..."
 
 outdated ()
   {
@@ -62,6 +56,8 @@ outdated_dir ()
     rm -rf "$1" || exit 1
   fi
   }
+
+echo "Removing obsolete files..."
 
 outdated $HOMEDIR/lib/cgi_conf.pl
 outdated $HOMEDIR/lib/play_local.pl
@@ -102,17 +98,6 @@ outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
 outdated $HOMEDIR/bin/ppr-web-control			# renamed
 outdated $HOMEDIR/bin/papsrv-kill			# replaced by papsrv --stop
 
-# PPR 1.51
-outdated $HOMEDIR/fixup/fixup_login
-outdated $HOMEDIR/fixup/login_ppr.sh
-outdated $HOMEDIR/fixup/login_ppr.csh
-outdated $HOMEDIR/fixup/remove_ppr
-outdated $HOMEDIR/fixup/fixup_conf
-outdated $HOMEDIR/fixup/fixup_samples
-outdated $HOMEDIR/fixup/fixup_filters
-outdated $HOMEDIR/fixup/fixup_atalk
-outdated $HOMEDIR/fixup/fixup_media
-
 echo "Checking of symbolic links from old install directories are needed..."
 if [ $HOMEDIR != "/usr/ppr" -a -d /usr/ppr -a ! -d /usr/ppr_old ]
     then
@@ -141,5 +126,16 @@ EndOfQuote
     echo "Not needed."
     fi
 echo
+
+# PPR 1.51
+outdated $HOMEDIR/fixup/fixup_login
+outdated $HOMEDIR/fixup/login_ppr.sh
+outdated $HOMEDIR/fixup/login_ppr.csh
+outdated $HOMEDIR/fixup/remove_ppr
+outdated $HOMEDIR/fixup/fixup_conf
+outdated $HOMEDIR/fixup/fixup_samples
+outdated $HOMEDIR/fixup/fixup_filters
+outdated $HOMEDIR/fixup/fixup_atalk
+outdated $HOMEDIR/fixup/fixup_media
 
 exit 0

@@ -1,27 +1,41 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/fixup/fixup_init.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# mouse:~ppr/src/z_install_end/install_init_script.sh
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 9 January 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 5 March 2003.
 #
 
-HOMEDIR="?"
-CONFDIR="?"
+. ../makeprogs/paths.sh
 
 #========================================================================
 # Part 1, figure out what we have
 #========================================================================
 
-echo "Studying Init script system..."
+echo "  Studying Init script system..."
 
 # Figure out if we have a System V init and what directories it uses:
 INIT_BASE=""
@@ -98,14 +112,9 @@ for i in /etc/rc.local /etc/rc.d/rc.local
         fi
     done
 
-echo "Done studying."
-echo
-
 #========================================================================
 # Part 2, install our code
 #========================================================================
-
-echo "Installing PPR startup code..."
 
 #
 # If we have a System V style init with System V style init scripts, install
@@ -114,11 +123,16 @@ echo "Installing PPR startup code..."
 #
 if [ -n "$INIT_BASE" ]
 then
-	echo "    Installing the System V style start and stop scripts:"
+	echo "  Installing the System V style start and stop scripts..."
 
 	# Install the principal script:
-	echo "        $INIT_BASE/init.d/ppr"
-	cp $HOMEDIR/fixup/init_ppr $INIT_BASE/init.d/ppr
+	echo "    $INIT_BASE/init.d/ppr"
+	cp etc_init.d_ppr $INIT_BASE/init.d/ppr
+	if [ $? -ne 0 ]
+	    then
+	    echo "Must not be running as root, aborting."
+	    exit 10
+	    fi
 	chown root $INIT_BASE/init.d/ppr
 	chmod 755 $INIT_BASE/init.d/ppr
 
@@ -128,7 +142,7 @@ then
 	# Install the new links:
 	for f in $INIT_LIST
 	    do
-	    echo "        $INIT_BASE/$f"
+	    echo "    $INIT_BASE/$f"
 	    rm -f $INIT_BASE/$f
 	    ln -s ../init.d/ppr $INIT_BASE/$f
 	    done
@@ -158,6 +172,7 @@ if [ -n "$RC_LOCAL" ]
     then
     if grep '[Ss]tart [Pp][Pp][Rr]' $RC_LOCAL >/dev/null
 	then
+	echo
 	echo "Commands to start PPR already exist in $RC_LOCAL."
 	echo "After this script is done, please make sure they are correct."
 	echo "In particular, make sure that the program paths are correct."
@@ -168,9 +183,10 @@ if [ -n "$RC_LOCAL" ]
 	echo
 	echo "Please press RETURN to continue."
 	read x
+	echo
 
 	else
-	echo "Appending PPR startup commands to $RC_LOCAL"
+	echo "  Appending PPR startup commands to $RC_LOCAL"
 	{
 	echo
 	echo "# ==== Start PPR ===="
@@ -199,21 +215,17 @@ if [ -n "$RC_LOCAL" ]
 # No identifiable init script system.
 #
     else
-	clear
-	echo "Since your system doesn't seem to use a System V style"
-	echo "init nor do you have have an rc.local file, you must find"
-	echo "your own means to start PPR when the system boots."
-	echo "You must arrange for root to run $HOMEDIR/bin/pprd"
-	echo "and possibly $HOMEDIR/bin/papsrv."
+	echo
+	echo "Since your system doesn't seem to use a System V style Init nor do you have"
+	echo "have an rc.local file, you must find your own means to start PPR when the"
+	echo "system boots.  Specifically, you must arange for root or $USER_PPR to run"
+	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papsrv."
 	echo
 	echo "Please press RETURN to continue."
 	read x
+	echo
     fi
 
 fi
 
-echo "Done."
-echo
-
 exit 0
-

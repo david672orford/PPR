@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_defines.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 19 November 2002.
+** This file was last modified 5 March 2003.
 */
 
 /*
@@ -145,6 +145,9 @@
 #endif
 #ifndef TEMPDIR
 #define TEMPDIR "/tmp"			/* short life temporary files */
+#endif
+#ifndef SYSBINDIR
+#define SYSBINDIR "/usr/bin"		/* for standard system programs */
 #endif
 #ifndef XWINBINDIR
 #define XWINBINDIR "/usr/bin/X11"	/* for standard X-Windows programs */

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2002.
+# Last modified 4 March 2003.
 #
 
 include ../Makefile.conf
@@ -34,7 +34,6 @@ include ../Makefile.conf
 
 BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 	rewind_stdin$(DOTEXE) tail_status$(DOTEXE) \
-	getpwnam$(DOTEXE) getgrnam$(DOTEXE) getservbyname$(DOTEXE) \
 	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
 
 BUILT_LIBS=respond.sh respond.ph \

@@ -1,5 +1,6 @@
 #! /bin/sh
 #
+# mouse:~ppr/src/z_install_end/install_crontab.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,35 +26,39 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 5 March 2003.
 #
 
-HOMEDIR="?"
-VAR_SPOOL_PPR="?"
+. ../makeprogs/paths.sh
 
-# This is a list of files which might be lists of installed packages.  The
-# file /var/lib/rpm/packages.rpm is for Red Hat Linux's RPM format, the file
-# /var/sadm/install/contents is for Solaris's package format, the file
-# /var/lib/dpkg/status is for Debian GNU/Linux
-PACKAGE_LISTS="/var/lib/rpm/packages.rpm /var/sadm/install/contents /var/lib/dpkg/status"
+./puts "Making sure we are $USER_PPR..."
+if [ "`./id -un`" = "$USER_PPR" ]
+    then
+    echo " OK"
+    else
+    echo " Nope, we must be root, doing su..."
+    su $USER_PPR -c $0    
+    exit $?
+    fi
 
-#
-# If any of the package lists has changed since the font index was
-# generated, rebuild the font index now.
-#
-for i in $PACKAGE_LISTS
-    do
-    if [ -f $i ]
-	then
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-indexfonts >$VAR_SPOOL_PPR/logs/ppr-indexfonts 2>&1
-	    fi
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/ppdindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-indexppds >$VAR_SPOOL_PPR/logs/ppr-indexppds 2>&1
-	    fi
-	fi
-    done
+echo "Installing crontab for the user $USER_PPR..."
+
+# Create a temporary file.  We have to do this because of limitations
+# of some versions of the crontab program.
+# Sadly, not all versions of crontab can read from stdin, at least not
+# with the same command.
+tempname=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
+
+# Write the new crontab to a temporary file.
+cat - >$tempname <<===EndOfHere===
+3 10,16 * * 1-5 $HOMEDIR/bin/ppad remind
+5 4 * * * $HOMEDIR/lib/cron_daily
+17 * * * * $HOMEDIR/lib/cron_hourly
+===EndOfHere===
+
+crontab $tempname
+
+rm $tempname
 
 exit 0
+

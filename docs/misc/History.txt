@@ -8381,3 +8381,9 @@ line was being parsed twice.
   in years and Google search doesn't clearly indicate that LanmanX is still in
   use.
 
+* Moved remainder of fixup/ stuff to z_install_end/.
+
+* Moved init script from init_and_cron/ to z_install_end/.
+
+* Renamed init_and_cron/ to cron/.
+

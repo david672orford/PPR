@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 5 March 2003.
 #
 
 #
@@ -86,8 +86,7 @@ SUBDIRS=\
 	www \
 	misc \
 	po \
-	fixup \
-	init_and_cron \
+	cron \
 	templates \
 	docs \
 	z_install_end
@@ -122,10 +121,6 @@ install: symlinks-restore
 		( cd $$i && $(MAKE) install ) || exit 1; \
 		echo; \
 		done
-	@echo
-	@echo "Installation of binaries and support files done,"
-	@echo "you must now run $(HOMEDIR)/fixup/fixup as root."
-	@echo
 
 #=== Distribution Archive Generation =======================================
 
