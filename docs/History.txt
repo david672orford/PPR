@@ -446,6 +446,15 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
+1.60, 24 July 2003--25 July 2003.
+
+* docs/refman/Makefile: moved comment which broke install of manpages in
+  nroff format.
+
+
+
+
+
 
 
 TODO

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 25 July 2003.
 #
 
 # Pull in settings from Configure.
@@ -104,11 +104,11 @@ all-docs: $(ALL_HTML) $(ALL_TROFF)
 
 install: install-troff install-html
 
-# Install the man pages in Nroff format
+# Install the man pages in Nroff format.
+# Note that this removes the UPRINT man pages too.
 install-troff: $(ALL_TROFF)
 	for d in 1 5 8;\
 	  do \
-	  # Note that this removes the UPRINT man pages.
 	  ../$(MAKE_NEW_DIR) $(MANDIR)/man$$d; \
 	  for f in *.$$d.man;\
 	    do \
@@ -123,8 +123,8 @@ install-troff: $(ALL_TROFF)
 	#../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
 	#../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
 	../$(INSTALLLN) ppr2samba.8 $(MANDIR)/man8/ppd2win95drv.8
-	../$(INSTALLLN) lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
-	../$(INSTALLLN) lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
+	../$(INSTALLLN) ../man8/lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
+	../$(INSTALLLN) ../man8/lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
 
 # Install the man pages and other stuff in HTML format.
 install-html: $(ALL_HTML)

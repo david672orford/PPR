@@ -8615,6 +8615,17 @@ line was being parsed twice.
   message.
 
 
+1.52, 24 July 2003--25 July 2003.
+
+* Actually removed include/version.mk which somehow didn't get removed when
+  it was taken out of service.
+
+* added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
+
+* makeprogs/installln.sh: fixed source existence check to work properly when
+  installing relative symbolic links.
+
+
 
 +++++++++++++++++++++
 TODO

@@ -1,0 +1,1246 @@
+*PPD-Adobe: "4.3"
+*% =======================================================
+*% Printer Description File
+*% Copyright 1992-2000 Hewlett-Packard Company
+*% PPD for HP LaserJet 2300
+*% For Windows NT Whistler and 2000
+*%========================================================
+*%========================================================
+*%  PPD File Version Information
+*%========================================================
+*FileVersion: "5.301"
+*FormatVersion:    "4.3"
+*LanguageEncoding: ISOLatin1
+*LanguageVersion: English
+*PCFileName:       "HPC2325S.PPD"
+*%========================================================
+*%  Product Version Information
+*%========================================================
+*ModelName:     "HP LaserJet 2300 PS"
+*ShortNickName: "HP LaserJet 2300 PS"
+*NickName:      "HP LaserJet 2300 PS"
+*Product:       "(HP LaserJet 2300)"
+*Manufacturer:  "HP"
+*PSVersion:     "(3010.107) 0"
+*%========================================================
+*%  Device Capabilities
+*%========================================================
+*ColorDevice:       False
+*DefaultColorSpace: Gray
+*FileSystem:        True
+*?FileSystem: "
+   save
+     false
+     (%disk?%)
+     { currentdevparams dup /Writeable known
+        { /Writeable get {pop true} if }  { pop } ifelse
+     } 100 string /IODevice resourceforall
+     {(True)}{(False)} ifelse = flush
+   restore
+"
+*End
+*LanguageLevel: "3"
+*Throughput:    "25"
+*TTRasterizer:  Type42
+*?TTRasterizer: "
+   save
+      42 /FontType resourcestatus
+      { pop pop (Type42)} {pop pop (None)} ifelse = flush
+   restore
+"
+*End
+*%========================================================
+*% Emulations and Protocols
+*%========================================================
+*Protocols: PJL TBCP
+*SuggestedJobTimeout:  "0"
+*SuggestedWaitTimeout: "120"
+*PrintPSErrors: True
+*%===================================================================
+*% Custom Feature - Rotate Orientations 180 Degrees
+*%===================================================================
+*OpenUI *HPOrientRotate180/Orientation Rotated 180 Degrees: PickOne
+*DefaultHPOrientRotate180: False
+*HPOrientRotate180 False/Off: ""
+*HPOrientRotate180 True/On: ""
+*HPOrientRotate180 HelpIndex/HelpIndex_14067: ""
+*CloseUI: *HPOrientRotate180
+*%===================================================================
+*% Custom Feature - Print Text As Black
+*%===================================================================
+*OpenUI *TextAsBlack/Print All Text as Black: Boolean
+*DefaultTextAsBlack: False
+*TextAsBlack False/Disabled: ""
+*TextAsBlack True/Enabled: ""
+*TextAsBlack HelpIndex/HelpIndex_15250: ""
+*CloseUI: *TextAsBlack
+*%===================================================================
+*% Resolution Enhancement
+*%===================================================================
+*JCLOpenUI *JCLRETChoice/REt: PickOne
+*DefaultJCLRETChoice: True
+*OrderDependency: 10 JCLSetup  *JCLRETChoice
+*JCLRETChoice False/Off: "@PJL SET RET=OFF<0A>"
+*JCLRETChoice True/On: "@PJL SET RET=MEDIUM<0A>"
+*JCLRETChoice HelpIndex/HelpIndex_12010: ""
+*JCLCloseUI: *JCLRETChoice
+*%========================================================
+*% JCL Features
+*%========================================================
+*JCLBegin:           ""
+*JCLToPSInterpreter: "@PJL ENTER LANGUAGE=POSTSCRIPT<0A>"
+*JCLEnd:             "<1B>%-12345X@PJL EOJ<0A><1B>%-12345X"
+*%========================================================
+*% JCLResolution
+*%========================================================
+*JCLOpenUI *JCLResolution/Resolution: PickOne
+*OrderDependency: 10 JCLSetup *JCLResolution
+*DefaultJCLResolution: 600dpi
+*JCLResolution 1200dpi/1200dpi:"@PJL SET RESOLUTION=1200<0A>"
+*JCLResolution 600dpi/600 dpi: "@PJL SET RESOLUTION=600<0A>"
+*JCLCloseUI: *JCLResolution
+*%==========================================================================
+*% JCL FastRes
+*%==========================================================================
+*JCLOpenUI *JCLFastRes/FastRes 1200: Boolean
+*OrderDependency: 10 JCLSetup *JCLFastRes
+*DefaultJCLFastRes: True
+*JCLFastRes True/On: "@PJL SET BITSPERPIXEL=2<0A>"
+*JCLFastRes False/Off: "@PJL SET BITSPERPIXEL=1<0A>"
+*JCLCloseUI: *JCLFastRes
+*%================================================================================
+*% JCL Economode
+*%================================================================================
+*JCLOpenUI *JCLEconomode/EconoMode: Boolean
+*DefaultJCLEconomode: False
+*OrderDependency: 10 JCLSetup  *JCLEconomode
+*JCLEconomode False/False: "@PJL SET ECONOMODE=OFF<0A>"
+*JCLEconomode True/True: "@PJL SET ECONOMODE=ON<0A>"
+*JCLEconomode HelpIndex/HelpIndex_15211: ""
+*JCLCloseUI: *JCLEconomode
+*%================================================================================
+*% JCL HPPrintOnBothSidesManually
+*%================================================================================
+*JCLOpenUI *JCLHPPrintOnBothSidesManually/Allow Manual Duplexing:  PickOne
+*OrderDependency: 10 JCLSetup *JCLHPPrintOnBothSidesManually
+*DefaultJCLHPPrintOnBothSidesManually: False
+*JCLHPPrintOnBothSidesManually False/Off:  ""
+*JCLHPPrintOnBothSidesManually True/On:  ""
+*JCLHPPrintOnBothSidesManually HelpIndex/HelpIndex_15204: ""
+*JCLCloseUI: *JCLHPPrintOnBothSidesManually
+*%========================================================
+*%Installable Options
+*%========================================================
+*OpenGroup: InstallableOptions/Installed Options
+*%==============================================
+*% Tray 3
+*%==============================================
+*OpenUI *Tray3/Tray 3: PickOne
+*DefaultTray3: NotInstalled
+*Tray3 NotInstalled/Not Installed: ""
+*Tray3 Tray3_250/250-Sheet Tray: ""
+*Tray3 Tray3_500/500-Sheet Tray: ""
+*Tray3 HelpIndex/HelpIndex_12005: ""
+*?Tray3: "
+  save
+    currentpagedevice /InputAttributes get dup 5 known
+    {5 get null ne {(True)}{(False)} ifelse} {pop (False)} ifelse = flush
+  restore
+"
+*End
+*CloseUI: *Tray3
+*%==============================================
+*% Duplex Unit (for 2-Sided Printing)
+*%==============================================
+*OpenUI *DuplexUnit/Duplex Unit (for 2-Sided Printing): Boolean
+*DefaultDuplexUnit: NotInstalled
+*DuplexUnit NotInstalled/Not Installed: ""
+*DuplexUnit Installed/Installed: ""
+*DuplexUnit HelpIndex/HelpIndex_15241: ""
+*?DuplexUnit: "
+  save
+    currentpagedevice /Duplex known
+    {(True)}{(False)}ifelse = flush
+  restore
+"
+*End
+*CloseUI: *DuplexUnit
+*% =================================================
+*% Manual Duplex
+*% =================================================
+*OpenUI *ManualDuplex/Allow Manual Duplexing:  PickOne
+*DefaultManualDuplex: True
+*ManualDuplex False/Disabled:  ""
+*ManualDuplex True/Enabled:  ""
+*ManualDuplex HelpIndex/HelpIndex_15207:  ""
+*CloseUI: *ManualDuplex
+*OpenUI *InstalledMemory/Printer Memory: PickOne
+*DefaultInstalledMemory: 32-47MB
+*InstalledMemory 32-47MB/32 - 47 MB: ""
+*InstalledMemory 48-63MB/48 - 63 MB: ""
+*InstalledMemory 64-79MB/64 - 79 MB: ""
+*InstalledMemory 80-95MB/80 - 95 MB: ""
+*InstalledMemory 96-127MB/96 - 127 MB: ""
+*InstalledMemory 128-159MB/128 - 159 MB: ""
+*InstalledMemory 160-191MB/160 - 191 MB: ""
+*InstalledMemory 192-223MB/192 - 223 MB: ""
+*InstalledMemory 224-255MB/224 - 255 MB: ""
+*InstalledMemory 256-287MB/256 - 287 MB: ""
+*InstalledMemory 288-304MB/288 - 304 MB: ""
+*InstalledMemory HelpIndex/HelpIndex_12003: ""
+*?InstalledMemory: "
+  save
+    currentsystemparams /RamSize get
+    524288 div ceiling cvi 2 div
+    /size exch def
+    {size 288 ge
+      {(288-30MB)}
+        {size 256 ge
+          {(256-287MB)}
+            {size 224 ge
+              {(224-255MB)}
+                {size 192 ge
+                  {(192-223MB)}
+                    {size 160 ge
+                      {(160-191MB)}
+                        {size 128 ge
+                          {(128-159MB)}
+                            {size 96 ge
+                              {(96-127MB)}
+                                {size 95 ge
+                                  {(80-95MB)}
+                                  {(64-79MB)}
+                                  {(48-63MB)}
+                                  {(32-47MB)}
+                               } ifelse
+                            } ifelse
+                        } ifelse
+                    } ifelse
+                } ifelse
+            } ifelse
+        } ifelse
+    } ifelse = flush
+  restore
+"
+*End
+*CloseUI: *InstalledMemory
+*% -------------------------------------------------
+*% Job Storage
+*% -------------------------------------------------
+*OpenUI *JobRetention/Job Storage: Boolean
+*DefaultJobRetention: NotInstalled
+*JobRetention NotInstalled/Disabled: ""
+*JobRetention Installed/Enabled: ""
+*JobRetention HelpIndex/HelpIndex_15129: ""
+*CloseUI: *JobRetention
+*% -------------------------------------------------
+*% Mopier
+*% -------------------------------------------------
+*OpenUI *DeviceIsMopier/Mopier Mode: Boolean
+*DefaultDeviceIsMopier: NotInstalled
+*DeviceIsMopier NotInstalled/Disabled: ""
+*DeviceIsMopier Installed/Enabled: ""
+*DeviceIsMopier HelpIndex/HelpIndex_14041: ""
+*CloseUI: *DeviceIsMopier
+*%==========================================================
+*% Combine MediaTypes And InputBins
+*%==========================================================
+*OpenUI *CombineMediaTypesAndInputBins/Include Types in Applications Source List:  PickOne
+*DefaultCombineMediaTypesAndInputBins: Installed
+*CombineMediaTypesAndInputBins Installed/Enabled:  ""
+*CloseUI: *CombineMediaTypesAndInputBins
+*%===========================================================
+*% Custom Features for EAC
+*%===========================================================
+*OpenUI *HPInstallableTrayFeatureName/HPInstallableTrayFeatureName: PickOne
+*HPInstallableTrayFeatureName  Tray3/Tray3: ""
+*CloseUI: *HPInstallableTrayFeatureName
+*OpenUI *HPInstallableTraySize/HPInstallableTraySize: PickOne
+*HPInstallableTraySize  Tray3_250-250-LOWER_CASSETTE/Tray3_250-250-LOWER_CASSETTE: ""
+*HPInstallableTraySize  Tray3_500-500-LOWER_CASSETTE/Tray3_500-500-LOWER_CASSETTE: ""
+*CloseUI: *HPInstallableTraySize
+*%==========================================================
+*% Printer Specific Custom Data - Actual custom range
+*%==========================================================
+*OpenUI *ActualCustomRange/Actual Custom Range: PickOne
+*DefaultActualCustomRange: 215900_355600
+*ActualCustomRange  215900_355600/215900_355600: ""
+*CloseUI: *ActualCustomRange
+*%==========================================================
+*% Printer Specific Custom Data - Printer PDL Type
+*%==========================================================
+*OpenUI *HPPDLType/HPPDLType: PickOne
+*DefaultHPPDLType: PDL_PS
+*HPPDLType PDL_PS/Postscript: ""
+*CloseUI: *HPPDLType
+*%==========================================================
+*% PJL Encoding Custom Features
+*%==========================================================
+*OpenUI *HPPJLEncoding/HPPJLEncoding: PickOne
+*DefaultHPPJLEncoding: UTF8
+*HPPJLEncoding UTF8/UTF8: ""
+*CloseUI: *HPPJLEncoding
+*%==========================================================
+*% Custom Features for Allow Scaling from Larger Paper
+*%==========================================================
+*OpenUI *ScaleFromLargePaper/Allow Scaling from Large Paper: Boolean
+*DefaultScaleFromLargePaper: Installed
+*ScaleFromLargePaper NotInstalled/Disabled: ""
+*ScaleFromLargePaper Installed/Enabled: ""
+*ScaleFromLargePaper HelpIndex/HelpIndex_15115: ""
+*CloseUI: *ScaleFromLargePaper
+*CloseGroup: InstallableOptions
+*%==========================================================
+*% Enable/Disable Collate via PostScript
+*%==========================================================
+*OpenUI *Collate/Collate:  Boolean
+*OrderDependency: 20 AnySetup *Collate
+*DefaultCollate: True
+*Collate False/Off: "<</Collate false>> setpagedevice"
+*Collate True/On: "<</Collate true>> setpagedevice"
+*?Collate: "
+   save
+      currentpagedevice /Collate get
+      {(True)}{(False)}ifelse = flush
+   restore
+"
+*End
+*CloseUI: *Collate
+*%==========================================================
+*% Printer Specific Custom Data - HPXMLFileUsed
+*%==========================================================
+*OpenUI *HPXMLFileUsed/HPXMLFileUsed: PickOne
+*DefaultHPXMLFileUsed: HPXMLFileName
+*HPXMLFileUsed HPXMLFileName/hpc2325s.xml: ""
+*HPXMLFileUsed HPXMLFileNameEnd/ :""
+*CloseUI: *HPXMLFileUsed
+*%==========================================================
+*% Printer Specific Custom Data - HPColorMode
+*%==========================================================
+*OpenUI *HPColorMode/HPColorMode: PickOne
+*DefaultHPColorMode: MONOCHROME_MODE
+*HPColorMode MONOCHROME_MODE/Monochrome Mode: ""
+*CloseUI: *HPColorMode
+*%=======================================================================
+*% Printer Specific Custom Data - Job Accounting and Time Stamp
+*%=======================================================================
+*OpenUI *HPJobAccounting/HPJobAccounting: PickOne
+*HPJobAccounting HPJOBACCT_JOBACNT: ""
+*CloseUI: *HPJobAccounting
+*%=======================================================================
+*% Printer Specific Custom Data - Born On Date
+*%=======================================================================
+*OpenUI *HPBornOnDate/HPBornOnDate: PickOne
+*DefaultHPBornOnDate: HPBOD
+*HPBornOnDate  HPBOD/HPBOD: ""
+*CloseUI: *HPBornOnDate
+*%=======================================================================
+*% Printer Specific Custom Data - Job by Job Override
+*%=======================================================================
+*OpenUI *HPJobByJobOverride/HPJobByJobOverride: PickOne
+*HPJobByJobOverride JBJO: ""
+*CloseUI: *HPJobByJobOverride
+*%=======================================================================
+*% Custom Fetaure - ManualDuplex Dialog Model - (Modeless / Modal)
+*%=======================================================================
+*OpenUI *HPManualDuplexDialogModel/HPManualDuplexDialogModel: PickOne
+*DefaultHPManualDuplexDialogModel: Modeless
+*HPManualDuplexDialogModel Modeless/Modeless: ""
+*CloseUI: *HPManualDuplexDialogModel
+*%==============================================================================
+*% Custom Fetaure - ManualDuplex Page Order - (EvenPagesFirst / OddPagesFirst)
+*%==============================================================================
+*OpenUI *HPManualDuplexPageOrder/HPManualDuplexPageOrder: PickOne
+*DefaultHPManualDuplexPageOrder: EvenPagesFirst
+*HPManualDuplexPageOrder EvenPagesFirst/EvenPagesFirst: ""
+*CloseUI: *HPManualDuplexPageOrder
+*%=======================================================================
+*% Custom Fetaure - ManualDuplex Mapping - (True / False)
+*% Should be True only if the Manual Duplex PJL is sent
+*%=======================================================================
+*OpenUI *HPMapManualFeedToTray1/HPMapManualFeedToTray1: PickOne
+*DefaultHPMapManualFeedToTray1: True
+*HPMapManualFeedToTray1 True/True: ""
+*CloseUI: *HPMapManualFeedToTray1
+*%===============================================================================================
+*% Custom feature for Manual Duplex - List of paper sizes that has constraints with Auto Duplex
+*% Should have the option names of paper sizes constrained with Auto Duplex
+*%===============================================================================================
+*OpenUI *HPPaperSizeDuplexConstraints/HPPaperSizeDuplexConstraints: PickOne
+*DefaultHPPaperSizeDuplexConstraints: Executive
+*HPPaperSizeDuplexConstraints Executive/Executive: ""
+*HPPaperSizeDuplexConstraints A5/A5: ""
+*HPPaperSizeDuplexConstraints Env10/Env10: ""
+*HPPaperSizeDuplexConstraints EnvDL/EnvDL: ""
+*HPPaperSizeDuplexConstraints EnvC5/EnvC5: ""
+*HPPaperSizeDuplexConstraints EnvISOB5/EnvISOB5: ""
+*HPPaperSizeDuplexConstraints EnvMonarch/EnvMonarch: ""
+*HPPaperSizeDuplexConstraints B5/B5: ""
+*HPPaperSizeDuplexConstraints ISOB5/ISOB5: ""
+*HPPaperSizeDuplexConstraints EXECUTIVE_JIS/EXECUTIVE_JIS: ""
+*HPPaperSizeDuplexConstraints 16K/16K: ""
+*HPPaperSizeDuplexConstraints DoublePostcard/DoublePostcard: ""
+*CloseUI: *HPPaperSizeDuplexConstraints
+*%-----------------------------------------------------------------------------
+*% JRConstraints will have an option value for full, none or partial
+*% (1) JRCHDFull - the printer requires a Hard Disk for ALL JR options
+*% (2) JRCHDPartial - the printer requires a HardDisk only for SOME JR options
+*%                    These options will be specified in another custom feature
+*% (3) JRCHDNone - the printer does NOT require a HardDisk for ANY JR options
+*%-----------------------------------------------------------------------------
+*OpenUI *JRConstraints/JRConstraints: PickOne
+*DefaultJRConstraints: JRCHDPartial
+*JRConstraints JRCHDPartial/JRCHDPartial: ""
+*JRConstraints JRCJobRet/JRCJobRet: ""
+*JRConstraints 0/0: ""
+*CloseUI: *JRConstraints
+*%=== Printer Specific Feature Data - Job Retention Option Constraints =======================
+*%*************************************************************************************
+*%
+*% Two JR Option constraint features are defined
+*% (1) JRHDInstalled - This lists the JR options available when HD is installed
+*% (2) JRHDNotInstalled - This lists the JR options available when HD is not installed
+*%       The options are as follows - (in this order)
+*%               (a) JRHDOff
+*%               (b) JRHDProof
+*%               (c) JRHDPrivate
+*%               (d) JRHDQuickCopy
+*%               (e) JRHDStore
+*%   NOTE: The options are the same for both JRHDInstalled and JRHDNotInstalled
+*%*************************************************************************************
+*OpenUI *JRHDNotInstalled/JRHDNotInstalled: PickOne
+*DefaultJRHDNotInstalled: JRHDOff
+*JRHDNotInstalled JRHDOff/JRHDOff: ""
+*JRHDNotInstalled JRHDProof/JRHDProof: ""
+*JRHDNotInstalled JRHDPrivate/JRHDPrivate: ""
+*CloseUI: *JRHDNotInstalled
+*%==========================================================
+*% Custom Feature - PrintQuality Group
+*%==========================================================
+*OpenUI *PrintQualityGroup/PrintQualityGroup: PickOne
+*DefaultPrintQualityGroup: PQGroup_2
+*PrintQualityGroup PQGroup_1/ProRes 1200: ""
+*PrintQualityGroup PQGroup_2/FastRes 1200: ""
+*PrintQualityGroup PQGroup_3/600 dpi: ""
+*PrintQualityGroup HelpIndex/HelpIndex_15131: ""
+*CloseUI: *PrintQualityGroup
+*OpenUI *HPStraightPaperPath/HPStraightPaperPath:  PickOne
+*OrderDependency: 10 AnySetup *HPStraightPaperPath
+*DefaultHPStraightPaperPath: False
+*HPStraightPaperPath False/False:  ""
+*HPStraightPaperPath True/True:  ""
+*HPStraightPaperPath HelpIndex/HelpIndex_15206:  ""
+*CloseUI: *HPStraightPaperPath
+*%==============================================================
+*% Manual Duplex Bitmap and String IDs
+*%==============================================================
+*OpenUI *HPManualDuplexDialogItems/HPManualDuplexDialogItems: PickOne
+*DefaultHPManualDuplexDialogItems: InstructionID_01_NPP
+*OrderDependency: 30 AnySetup  *HPManualDuplexDialogItems
+*HPManualDuplexDialogItems InstructionID_01_NPP/BitmapID_105_StringID_3069: ""
+*HPManualDuplexDialogItems InstructionID_01_SPP/BitmapID_106_StringID_3069: ""
+*HPManualDuplexDialogItems InstructionID_02_NPP/BitmapID_107_StringID_3071: ""
+*HPManualDuplexDialogItems InstructionID_02_SPP/BitmapID_107_StringID_3071: ""
+*HPManualDuplexDialogItems InstructionID_03_NPP/BitmapID_109_StringID_3065: ""
+*HPManualDuplexDialogItems InstructionID_03_SPP/BitmapID_109_StringID_3065: ""
+*CloseUI: *HPManualDuplexDialogItems
+*%==============================================================
+*% Manual Feed tray Orientation
+*%==============================================================
+*OpenUI *HPManualFeedOrientation/HPManualFeedOrientation: PickOne
+*DefaultHPManualFeedOrientation: FACEDOWN
+*OrderDependency: 30 AnySetup *HPManualFeedOrientation
+*HPManualFeedOrientation FACEDOWN/FACEDOWN: ""
+*CloseUI: *HPManualFeedOrientation
+*%===============================================================================================
+*% HPOutputBinOrientation - should have orientations of all supported output bins
+*% If the printer has no selectable outputbins, then  feature has only 1 option - FACEUP/FACEDOWN
+*% If the printer has selectable outputbins, this feature should have 1 option each for each
+*% of the selectable output bins eg Option1-FACEDOWN, Option2-FACEUP
+*%===============================================================================================
+*OpenUI *HPOutputBinOrientation/HPOutputBinOrientation: PickOne
+*DefaultHPOutputBinOrientation: FACEDOWN
+*OrderDependency: 30 AnySetup *HPOutputBinOrientation
+*HPOutputBinOrientation FACEDOWN/FACEDOWN: ""
+*CloseUI: *HPOutputBinOrientation
+*%==========================================================
+*% VMOption
+*%==========================================================
+*FreeVM: "3000000"
+*VMOption 32-47MB/32 - 47 MB: "3000000"
+*VMOption 48-63MB/48 - 63 MB: "6000000"
+*VMOption 64-79MB/64 - 79 MB: "6000000"
+*VMOption 80-95MB/80 - 95 MB: "14000000"
+*VMOption 96-127MB/96 - 127 MB: "22000000"
+*VMOption 128-159MB/128 - 159 MB: "38000000"
+*VMOption 160-191MB/160 - 191 MB: "54000000"
+*VMOption 192-223MB/192 - 223 MB: "70000000"
+*VMOption 224-255MB/224 - 255 MB: "86000000"
+*VMOption 256-287MB/256 - 287 MB: "102000000"
+*VMOption 288-304MB/288 - 304 MB: "118000000"
+*%===================================================================
+*% Input tray constraints
+*%===================================================================
+*UIConstraints: *Tray3 NotInstalled *InputSlot Tray3_250
+*UIConstraints: *Tray3 NotInstalled *InputSlot Tray3_500
+*UIConstraints: *InputSlot Tray3_250 *Tray3 NotInstalled
+*UIConstraints: *InputSlot Tray3_500 *Tray3 NotInstalled
+*UIConstraints: *Tray3 Tray3_250  *InputSlot Tray3_500
+*UIConstraints: *Tray3 Tray3_500 *InputSlot Tray3_250
+*UIConstraints: *InputSlot Tray3_500  *Tray3 Tray3_250
+*UIConstraints: *InputSlot Tray3_250 *Tray3 Tray3_500
+*%===================================================================
+*% Mopier - Collate
+*%===================================================================
+*UIConstraints: *DeviceIsMopier NotInstalled *Collate True
+*UIConstraints: *Collate True *DeviceIsMopier NotInstalled
+*%===================================================================
+*% Mopier - Printer Memory
+*%===================================================================
+*UIConstraints: *DeviceIsMopier Installed *InstalledMemory 32-47MB
+*UIConstraints: *InstalledMemory 32-47MB *DeviceIsMopier Installed
+*%===================================================================
+*% Job Storage - Printer Memory
+*%===================================================================
+*UIConstraints: *JobRetention Installed *InstalledMemory 32-47MB
+*UIConstraints: *InstalledMemory 32-47MB *JobRetention Installed
+*%===================================================================
+*% If the duplex unit is not installed disable duplex modes.
+*%===================================================================
+*UIConstraints: *DuplexUnit NotInstalled *Duplex DuplexNoTumble
+*UIConstraints: *DuplexUnit NotInstalled *Duplex DuplexTumble
+*UIConstraints: *Duplex DuplexNoTumble *DuplexUnit NotInstalled
+*UIConstraints: *Duplex DuplexTumble *DuplexUnit NotInstalled
+*%===================================================================
+*% Manual duplex - Media constraints
+*%===================================================================
+*UIConstraints: *MediaType TRANSPARENCY  *JCLHPPrintOnBothSidesManually True
+*UIConstraints: *MediaType LABELS        *JCLHPPrintOnBothSidesManually True
+*UIConstraints: *MediaType ENVELOPE      *JCLHPPrintOnBothSidesManually True
+*UIConstraints: *JCLHPPrintOnBothSidesManually True  *MediaType TRANSPARENCY
+*UIConstraints: *JCLHPPrintOnBothSidesManually True  *MediaType LABELS
+*UIConstraints: *JCLHPPrintOnBothSidesManually True  *MediaType ENVELOPE
+*%===================================================================
+*% Duplex and Media constraints
+*%===================================================================
+*UIConstraints: *MediaType TRANSPARENCY  *Duplex DuplexNoTumble
+*UIConstraints: *MediaType LABELS        *Duplex DuplexNoTumble
+*UIConstraints: *MediaType ENVELOPE      *Duplex DuplexNoTumble
+*UIConstraints: *Duplex DuplexNoTumble   *MediaType TRANSPARENCY
+*UIConstraints: *Duplex DuplexNoTumble   *MediaType LABELS
+*UIConstraints: *Duplex DuplexNoTumble   *MediaType ENVELOPE
+*UIConstraints: *MediaType CARDSTOCK        *Duplex DuplexNoTumble
+*UIConstraints: *Duplex DuplexNoTumble   *MediaType CARDSTOCK
+*UIConstraints: *MediaType TRANSPARENCY  *Duplex DuplexTumble
+*UIConstraints: *MediaType LABELS        *Duplex DuplexTumble
+*UIConstraints: *MediaType ENVELOPE      *Duplex DuplexTumble
+*UIConstraints: *Duplex DuplexTumble     *MediaType TRANSPARENCY
+*UIConstraints: *Duplex DuplexTumble     *MediaType LABELS
+*UIConstraints: *Duplex DuplexTumble     *MediaType ENVELOPE
+*UIConstraints: *MediaType CARDSTOCK        *Duplex DuplexTumble
+*UIConstraints: *Duplex DuplexTumble     *MediaType CARDSTOCK
+*%======================================================================
+*% Don't allow envelopes etc to be duplexed
+*%======================================================================
+*UIConstraints: *PageSize Executive      *Duplex DuplexNoTumble
+*UIConstraints: *PageSize A5             *Duplex DuplexNoTumble
+*UIConstraints: *PageSize Env10          *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvDL          *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvC5          *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvISOB5       *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvMonarch     *Duplex DuplexNoTumble
+*UIConstraints: *PageSize B5             *Duplex DuplexNoTumble
+*UIConstraints: *PageSize ISOB5          *Duplex DuplexNoTumble
+*%UIConstraints: *PageSize EXECUTIVE_JIS  *Duplex DuplexNoTumble
+*UIConstraints: *PageSize 16K            *Duplex DuplexNoTumble
+*UIConstraints: *PageSize DoublePostcard *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion Executive      *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion A5             *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion Env10          *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion EnvDL          *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion EnvC5          *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion EnvISOB5       *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion EnvMonarch     *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion B5             *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion ISOB5          *Duplex DuplexNoTumble
+*%UIConstraints: *PageRegion EXECUTIVE_JIS  *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion 16K            *Duplex DuplexNoTumble
+*UIConstraints: *PageRegion DoublePostcard *Duplex DuplexNoTumble
+*UIConstraints: *Duplex DuplexNoTumble *PageSize Executive
+*UIConstraints: *Duplex DuplexNoTumble *PageSize A5
+*UIConstraints: *Duplex DuplexNoTumble *PageSize Env10
+*UIConstraints: *Duplex DuplexNoTumble *PageSize EnvDL
+*UIConstraints: *Duplex DuplexNoTumble *PageSize EnvC5
+*UIConstraints: *Duplex DuplexNoTumble *PageSize EnvISOB5
+*UIConstraints: *Duplex DuplexNoTumble *PageSize EnvMonarch
+*UIConstraints: *Duplex DuplexNoTumble *PageSize B5
+*UIConstraints: *Duplex DuplexNoTumble *PageSize ISOB5
+*%UIConstraints: *Duplex DuplexNoTumble *PageSize EXECUTIVE_JIS
+*UIConstraints: *Duplex DuplexNoTumble *PageSize 16K
+*UIConstraints: *Duplex DuplexNoTumble *PageSize DoublePostcard
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion Executive
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion A5
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion Env10
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion EnvDL
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion EnvC5
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion EnvISOB5
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion EnvMonarch
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion B5
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion ISOB5
+*%UIConstraints: *Duplex DuplexNoTumble *PageRegion EXECUTIVE_JIS
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion 16K
+*UIConstraints: *Duplex DuplexNoTumble *PageRegion DoublePostcard
+*UIConstraints: *PageSize Executive        *Duplex DuplexTumble
+*UIConstraints: *PageSize A5               *Duplex DuplexTumble
+*UIConstraints: *PageSize Env10            *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvDL            *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvC5            *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvISOB5         *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvMonarch       *Duplex DuplexTumble
+*UIConstraints: *PageSize B5               *Duplex DuplexTumble
+*UIConstraints: *PageSize ISOB5            *Duplex DuplexTumble
+*%UIConstraints: *PageSize EXECUTIVE_JIS    *Duplex DuplexTumble
+*UIConstraints: *PageSize 16K              *Duplex DuplexTumble
+*UIConstraints: *PageSize DoublePostcard   *Duplex DuplexTumble
+*UIConstraints: *PageRegion Executive      *Duplex DuplexTumble
+*UIConstraints: *PageRegion A5             *Duplex DuplexTumble
+*UIConstraints: *PageRegion Env10          *Duplex DuplexTumble
+*UIConstraints: *PageRegion EnvDL          *Duplex DuplexTumble
+*UIConstraints: *PageRegion EnvC5          *Duplex DuplexTumble
+*UIConstraints: *PageRegion EnvISOB5       *Duplex DuplexTumble
+*UIConstraints: *PageRegion EnvMonarch     *Duplex DuplexTumble
+*UIConstraints: *PageRegion B5             *Duplex DuplexTumble
+*UIConstraints: *PageRegion ISOB5          *Duplex DuplexTumble
+*%UIConstraints: *PageRegion EXECUTIVE_JIS  *Duplex DuplexTumble
+*UIConstraints: *PageRegion 16K            *Duplex DuplexTumble
+*UIConstraints: *PageRegion DoublePostcard *Duplex DuplexTumble
+*UIConstraints: *Duplex DuplexTumble *PageSize Executive
+*UIConstraints: *Duplex DuplexTumble *PageSize A5
+*UIConstraints: *Duplex DuplexTumble *PageSize Env10
+*UIConstraints: *Duplex DuplexTumble *PageSize EnvDL
+*UIConstraints: *Duplex DuplexTumble *PageSize EnvC5
+*UIConstraints: *Duplex DuplexTumble *PageSize EnvISOB5
+*UIConstraints: *Duplex DuplexTumble *PageSize EnvMonarch
+*UIConstraints: *Duplex DuplexTumble *PageSize B5
+*UIConstraints: *Duplex DuplexTumble *PageSize ISOB5
+*%UIConstraints: *Duplex DuplexTumble *PageSize EXECUTIVE_JIS
+*UIConstraints: *Duplex DuplexTumble *PageSize 16K
+*UIConstraints: *Duplex DuplexTumble *PageSize DoublePostcard
+*UIConstraints: *Duplex DuplexTumble *PageRegion Executive
+*UIConstraints: *Duplex DuplexTumble *PageRegion A5
+*UIConstraints: *Duplex DuplexTumble *PageRegion Env10
+*UIConstraints: *Duplex DuplexTumble *PageRegion EnvDL
+*UIConstraints: *Duplex DuplexTumble *PageRegion EnvC5
+*UIConstraints: *Duplex DuplexTumble *PageRegion EnvISOB5
+*UIConstraints: *Duplex DuplexTumble *PageRegion EnvMonarch
+*UIConstraints: *Duplex DuplexTumble *PageRegion B5
+*UIConstraints: *Duplex DuplexTumble *PageRegion ISOB5
+*%UIConstraints: *Duplex DuplexTumble *PageRegion EXECUTIVE_JIS
+*UIConstraints: *Duplex DuplexTumble *PageRegion 16K
+*UIConstraints: *Duplex DuplexTumble *PageRegion DoublePostcard
+*%======================================================================
+*% Paper Sizes
+*%======================================================================
+*OpenUI *PageSize: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: Letter
+*PageSize Letter/Letter: "
+  <</DeferredMediaSelection true /PageSize [612 792] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize Executive/Executive: "
+  <</DeferredMediaSelection true /PageSize [522 756] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize Legal/Legal: "
+  <</DeferredMediaSelection true /PageSize [612 1008] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize A4/A4: "
+  <</DeferredMediaSelection true /PageSize [595 842] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize A5/A5: "
+  <</DeferredMediaSelection true /PageSize [420 595] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize B5/B5 (JIS): "
+  <</DeferredMediaSelection true /PageSize [516 729] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize EXECUTIVE_JIS/Executive (JIS): "
+  <</DeferredMediaSelection true /PageSize [612 935] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize 16K/16K: "
+  <</DeferredMediaSelection true /PageSize [558 774] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize Env10/Envelope #10: "
+  <</DeferredMediaSelection true /PageSize [297 684] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize EnvMonarch/Envelope Monarch: "
+  <</DeferredMediaSelection true /PageSize [279 540] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize EnvDL/Envelope DL: "
+  <</DeferredMediaSelection true /PageSize [312 624] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize EnvC5/Envelope C5: "
+  <</DeferredMediaSelection true /PageSize [459 649] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize EnvISOB5/Envelope B5: "
+  <</DeferredMediaSelection true /PageSize [499 709] /ImagingBBox null /MediaClass (Envelope)>> setpagedevice"
+*End
+*PageSize DoublePostcard/Double Postcard (JIS): "
+    <</DeferredMediaSelection true /PageSize [420 567] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize ISOB5/B5 (ISO): "
+  <</DeferredMediaSelection true /PageSize [499 709] /ImagingBBox null /MediaClass (CutSheet)>> setpagedevice"
+*End
+*PageSize A3/A3: "
+  <</DeferredMediaSelection true /PageSize [842 1191] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize 8K/8K: "
+  <</DeferredMediaSelection true /PageSize [774 1116] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize 11X17/11x17: "
+  <</DeferredMediaSelection true /PageSize [792 1224] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageSize B4/B4 (JIS): "
+  <</DeferredMediaSelection true /PageSize [729 1032] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*?PageSize: "
+   save
+   currentpagedevice /PageSize get aload pop
+   2 copy gt {exch} if
+   (Unknown)
+   19 dict
+   dup [612 792]  (Letter) put
+   dup [522 756]  (Executive) put
+   dup [612 1008] (Legal) put
+   dup [595 842]  (A4) put
+   dup [420 595]  (A5) put
+   dup [516 729]  (B5) put
+   dup [612 935]  (EXECUTIVE_JIS) put
+   dup [558 774]  (16K) put
+   dup [297 684]  (Env10) put
+   dup [279 540]  (EnvMonarch) put
+   dup [312 624]  (EnvDL) put
+   dup [459 649]  (EnvC5) put
+   dup [499 709]  (EnvISOB5) put
+   dup [420 567] (DoublePostcard) put
+   dup [499 709]  (ISOB5) put
+   dup [842 1191] (A3) put
+   dup [774 1116] (8K) put
+   dup [792 1224] (11X17) put
+   dup [729 1032] (B4) put
+   { exch aload pop 4 index sub abs 5 le exch
+      5 index sub abs 5 le and
+      {exch pop exit} {pop} ifelse
+   } bind forall
+   = flush pop pop
+   restore
+"
+*End
+*CloseUI: *PageSize
+*%======================================================================
+*% PageRegion
+*%======================================================================
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 40 AnySetup *PageRegion
+*DefaultPageRegion: Letter
+*PageRegion Letter/Letter: "
+  <</DeferredMediaSelection true /PageSize [612 792] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion Executive/Executive: "
+  <</DeferredMediaSelection true /PageSize [522 756] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion Legal/Legal: "
+  <</DeferredMediaSelection true /PageSize [612 1008] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion A4/A4: "
+  <</DeferredMediaSelection true /PageSize [595 842] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion A5/A5: "
+  <</DeferredMediaSelection true /PageSize [420 595] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion B5/B5 (JIS): "
+  <</DeferredMediaSelection true /PageSize [516 729] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion EXECUTIVE_JIS/Executive (JIS): "
+  <</DeferredMediaSelection true /PageSize [612 935] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion 16K/16K: "
+  <</DeferredMediaSelection true /PageSize [558 774] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion Env10/Envelope #10: "
+  <</DeferredMediaSelection true /PageSize [297 684] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion EnvMonarch/Envelope Monarch: "
+  <</DeferredMediaSelection true /PageSize [279 540] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion EnvDL/Envelope DL: "
+  <</DeferredMediaSelection true /PageSize [312 624] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion EnvC5/Envelope C5: "
+  <</DeferredMediaSelection true /PageSize [459 649] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion EnvISOB5/Envelope B5: "
+  <</DeferredMediaSelection true /PageSize [499 709] /ImagingBBox null /MediaClass (Envelope)>> setpagedevice"
+*End
+*PageRegion DoublePostcard/Double Postcard (JIS): "
+    <</DeferredMediaSelection true /PageSize [420 567] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion ISOB5/B5 (ISO): "
+  <</DeferredMediaSelection true /PageSize [499 709] /ImagingBBox null /MediaClass (CutSheet)>> setpagedevice"
+*End
+*PageRegion A3/A3: "
+  <</DeferredMediaSelection true /PageSize [842 1191] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion 8K/8K: "
+  <</DeferredMediaSelection true /PageSize [774 1116] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion 11X17/11x17: "
+  <</DeferredMediaSelection true /PageSize [792 1224] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*PageRegion B4/B4 (JIS): "
+  <</DeferredMediaSelection true /PageSize [729 1032] /ImagingBBox null /MediaClass null>> setpagedevice"
+*End
+*CloseUI: *PageRegion
+*%======================================================================
+*% ImageableArea
+*%======================================================================
+*DefaultImageableArea: Letter
+*ImageableArea Letter/Letter:                               "12.00 12.00 599.76 779.76"
+*ImageableArea Executive/Executive:                         "12.00 12.00 509.76 743.76"
+*ImageableArea Legal/Legal:                                 "12.00 12.00 599.76 995.76"
+*ImageableArea A4/A4:                                       "12.00 12.00 582.96 829.44"
+*ImageableArea A5/A5:                                       "12.00 12.00 407.28 582.96"
+*ImageableArea B5/B5 (JIS):                                   "12.00 12.00 503.52 716.16"
+*ImageableArea EXECUTIVE_JIS/Executive (JIS):                 "12.00 12.00 599.76 922.76"
+*ImageableArea 16K/16K:                                     "12.00 12.00 545.76 761.76"
+*ImageableArea Env10/Envelope #10:                           "12.00 12.00 284.64 671.76"
+*ImageableArea EnvMonarch/Envelope Monarch:                 "12.00 12.00 266.64 527.76"
+*ImageableArea EnvDL/Envelope DL:                           "12.00 12.00 299.52 611.28"
+*ImageableArea EnvC5/Envelope C5:                           "12.00 12.00 446.88 636.72"
+*ImageableArea EnvISOB5/Envelope B5:                        "12.00 12.00 486.48 696.24"
+*ImageableArea DoublePostcard/Double Postcard (JIS):          "12.00 12.12 407.76 554.52"
+*ImageableArea ISOB5/B5 (ISO):                                    "12.00 12.00 486.48 696.24"
+*ImageableArea A3/A3:                                       "12.00 12.12 830.00 1179.00"
+*ImageableArea 8K/8K:                                       "12.00 12.12 770.00 1110.00"
+*ImageableArea 11X17/11x17:                                 "12.00 12.12 785.00 1218.00"
+*ImageableArea B4/B4 (JIS):                                   "12.00 12.12 723.00 1026.00"
+*?ImageableArea: "
+   save
+   /cvp { (                ) cvs print ( ) print } bind def
+   /upperright {10000 mul floor 10000 div} bind def
+   /lowerleft {10000 mul ceiling 10000 div} bind def
+   newpath clippath pathbbox
+   4 -2 roll exch 2 {lowerleft cvp} repeat
+   exch 2 {upperright cvp} repeat flush
+   restore
+"
+*End
+*%======================================================================
+*% PaperDimension
+*%======================================================================
+*DefaultPaperDimension: Letter
+*PaperDimension Letter/Letter:                          "612 792"
+*PaperDimension Executive/Executive:                    "522 756"
+*PaperDimension Legal/Legal:                            "612 1008"
+*PaperDimension A4/A4:                                  "595 842"
+*PaperDimension A5/A5:                                  "420 595"
+*PaperDimension B5/B5 (JIS):                              "516 729"
+*PaperDimension EXECUTIVE_JIS/Executive (JIS):            "612 935"
+*PaperDimension 16K/16K:                                "558 774"
+*PaperDimension Env10/Envelope #10:                      "297 684"
+*PaperDimension EnvMonarch/Envelope Monarch:            "279 540"
+*PaperDimension EnvDL/Envelope DL:                      "312 624"
+*PaperDimension EnvC5/Envelope C5:                      "459 649"
+*PaperDimension EnvISOB5/Envelope B5:                   "499 709"
+*PaperDimension DoublePostcard/Double Postcard (JIS):     "420 567"
+*PaperDimension ISOB5/B5 (ISO):                               "499 709"
+*PaperDimension A3/A3:                                  "842 1191"
+*PaperDimension 8K/8K:                                  "774 1116"
+*PaperDimension 11X17/11x17:                            "792 1224"
+*PaperDimension B4/B4 (JIS):                              "729 1032"
+*LandscapeOrientation: Plus90
+*%=====================================================================
+*% Custom Paper Support
+*% Orientation and Margin (offsets) values are not utilized
+*% Smallest = 3 x 5, Largest = 8.5 x 14
+*% max siz has been increased to 11.7 x 17.7 for SLP
+*% feature(large paper size support)
+*%=====================================================================
+*LeadingEdge Short: ""
+*DefaultLeadingEdge: Short
+*MaxMediaWidth:         "842"
+*MaxMediaHeight:        "1274"
+*CenterRegistered:      False
+*HWMargins:             16 16 16 16
+*CustomPageSize True: "
+    pop pop pop
+        <</DeferredMediaSelection true /PageSize [ 7 -2 roll ] /ImagingBBox null >> setpagedevice"
+*End
+*ParamCustomPageSize Width:             1 points 216 842
+*ParamCustomPageSize Height:            2 points 360 1274
+*ParamCustomPageSize WidthOffset:       3 points 0 0
+*ParamCustomPageSize HeightOffset:      4 points 0 0
+*ParamCustomPageSize Orientation:       5 int 1 1
+*%=====================================================================
+*% InputSlot
+*%=====================================================================
+*OpenUI *InputSlot: PickOne
+*OrderDependency: 60 AnySetup *InputSlot
+*DefaultInputSlot: Tray2
+*InputSlot Tray1/Tray 1: "
+    <</ManualFeed false /MediaPosition 3>> setpagedevice"
+*End
+*InputSlot Tray2/Tray 2: "
+    <</ManualFeed false /MediaPosition 0>> setpagedevice"
+*End
+*InputSlot Tray3_250/Tray 3 (250-sheet): "
+    <</ManualFeed false /MediaPosition 1>> setpagedevice"
+*End
+*InputSlot Tray3_500/Tray 3 (500-Sheet): "
+    <</ManualFeed false /MediaPosition 1>> setpagedevice"
+*End
+*InputSlot ManualFeed/Manual Feed (Tray 1): "
+    <</ManualFeed true /MediaPosition 3>> setpagedevice"
+*End
+*?InputSlot: "
+ save
+   [(Tray2) (Tray3_250) (Tray3_500) (Tray1) (Unknown)]
+   statusdict /papertray get exec
+   {get exec} stopped { pop pop (Unknown) } if =
+   currentpagedevice /InputAttributes get dup
+   /Priority get 0 get get /MediaType get = flush
+ restore
+"
+*End
+*CloseUI: *InputSlot
+*%=====================================================================
+*% Media Types
+*%=====================================================================
+*OpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 50 AnySetup *MediaType
+*DefaultMediaType: Auto
+*MediaType Auto/Unspecified: ""
+*MediaType PLAIN/Plain: "<</ManualFeed false /MediaType (Plain)>> setpagedevice"
+*MediaType PREPRINTED/Preprinted: "<</ManualFeed false /MediaType (Preprinted)>> setpagedevice"
+*MediaType LETTERHEAD/Letterhead: "<</ManualFeed false /MediaType (Letterhead)>> setpagedevice"
+*MediaType TRANSPARENCY/Transparency: "<</ManualFeed false /MediaType (Transparency)>> setpagedevice"
+*MediaType PREPUNCHED/Prepunched: "<</ManualFeed false /MediaType (Prepunched)>> setpagedevice"
+*MediaType LABELS/Labels: "<</ManualFeed false /MediaType (Labels)>> setpagedevice"
+*MediaType BOND/Bond: "<</ManualFeed false /MediaType (Bond)>> setpagedevice"
+*MediaType RECYCLED/Recycled: "<</ManualFeed false /MediaType (Recycled)>> setpagedevice"
+*MediaType COLOR/Color: "<</ManualFeed false /MediaType (Color)>> setpagedevice"
+*MediaType CARDSTOCK/Cardstock: "<</ManualFeed false /MediaType (Card Stock)>> setpagedevice"
+*MediaType ENVELOPE/Envelope: "<</ManualFeed false /MediaType (Envelope)>> setpagedevice"
+*MediaType ROUGH/Rough: "<</ManualFeed false /MediaType (Rough)>> setpagedevice"
+*MediaType HelpIndex/HelpIndex_14100: ""
+*?MediaType: "
+  save
+    currentpagedevice /InputAttributes get dup
+    /Priority get
+    0 get get
+    /MediaType get
+    (Rough) anchorsearch
+      {pop pop (Rough)} if
+    = flush
+  restore
+"
+*End
+*CloseUI: *MediaType
+*%=====================================================================
+*% Halftone Information
+*%=====================================================================
+*ScreenFreq:  "106.0"
+*ScreenAngle: "45.0"
+*ResScreenFreq 600dpi/600 dpi:  "106.0"
+*ResScreenAngle 600dpi/600 dpi: "45.0"
+*DefaultScreenProc: Dot
+*ScreenProc HPEnhanced: "
+  { /EnhancedHalftone /Halftone findresource }"
+*End
+*ScreenProc Dot: "
+{abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
+sub }{dup mul exch dup mul add 1 exch sub }ifelse }
+"
+*End
+*ScreenProc Line: "{ pop }"
+*ScreenProc Ellipse: "{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }"
+*DefaultTransfer: Null
+*Transfer Null: "{ }"
+*Transfer Null.Inverse: "{ 1 exch sub }"
+*DefaultHalftoneType:    9
+*AccurateScreensSupport: False
+*%=====================================================================
+*% Color Control
+*%=====================================================================
+*DefaultColorSep: ProcessBlack.106lpi.600dpi/106 lpi / 600 dpi
+*InkName: ProcessBlack/Process Black
+*InkName: CustomColor/Custom Color
+*InkName: ProcessCyan/Process Cyan
+*InkName: ProcessMagenta/Process Magenta
+*InkName: ProcessYellow/Process Yellow
+*%=====================================================================
+*%  For 85 lpi / 600 dpi  (5,5,2,6,6,2,20/3,0)
+*%=====================================================================
+*ColorSepScreenAngle ProcessBlack.85lpi.600dpi/85 lpi / 600 dpi: "45.0"
+*ColorSepScreenAngle CustomColor.85lpi.600dpi/85 lpi / 600 dpi: "45.0"
+*ColorSepScreenAngle ProcessCyan.85lpi.600dpi/85 lpi / 600 dpi: "71.5651"
+*ColorSepScreenAngle ProcessMagenta.85lpi.600dpi/85 lpi / 600 dpi: "18.4349"
+*ColorSepScreenAngle ProcessYellow.85lpi.600dpi/85 lpi / 600 dpi: "0.0"
+*ColorSepScreenFreq ProcessBlack.85lpi.600dpi/85 lpi / 600 dpi: "84.8528"
+*ColorSepScreenFreq CustomColor.85lpi.600dpi/85 lpi / 600 dpi: "84.8528"
+*ColorSepScreenFreq ProcessCyan.85lpi.600dpi/85 lpi / 600 dpi: "94.8683"
+*ColorSepScreenFreq ProcessMagenta.85lpi.600dpi/85 lpi / 600 dpi: "94.8683"
+*ColorSepScreenFreq ProcessYellow.85lpi.600dpi/85 lpi / 600 dpi: "30.0"
+*ColorSepScreenProc ProcessYellow.85lpi.600dpi/85 lpi / 600 dpi: "
+{1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch
+1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch
+abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
+sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
+*End
+*%=====================================================================
+*%  For 106 lpi / 600 dpi
+*%=====================================================================
+*ColorSepScreenAngle ProcessBlack.106lpi.600dpi/106 lpi / 600 dpi: "45.0"
+*ColorSepScreenAngle CustomColor.106lpi.600dpi/106 lpi / 600 dpi: "45.0"
+*ColorSepScreenAngle ProcessCyan.106lpi.600dpi/106 lpi / 600 dpi: "71.5651"
+*ColorSepScreenAngle ProcessMagenta.106lpi.600dpi/106 lpi / 600 dpi: "18.4349"
+*ColorSepScreenAngle ProcessYellow.106lpi.600dpi/106 lpi / 600 dpi: "0.0"
+*ColorSepScreenFreq ProcessBlack.106lpi.600dpi/106 lpi / 600 dpi: "106.066"
+*ColorSepScreenFreq CustomColor.106lpi.600dpi/106 lpi / 600 dpi: "106.066"
+*ColorSepScreenFreq ProcessCyan.106lpi.600dpi/106 lpi / 600 dpi: "94.8683"
+*ColorSepScreenFreq ProcessMagenta.106lpi.600dpi/106 lpi / 600 dpi: "94.8683"
+*ColorSepScreenFreq ProcessYellow.106lpi.600dpi/106 lpi / 600 dpi: "100.0"
+*%=====================================================================
+*%  For 180 lpi / 1200 dpi
+*%=====================================================================
+*ColorSepScreenAngle ProcessBlack.180lpi.1200dpi/180 lpi / 1200 dpi: "45.0"
+*ColorSepScreenAngle CustomColor.180lpi.1200dpi/180 lpi / 1200 dpi: "45.0"
+*ColorSepScreenAngle ProcessCyan.180lpi.1200dpi/180 lpi / 1200 dpi: "71.5651"
+*ColorSepScreenAngle ProcessMagenta.180lpi.1200dpi/180 lpi / 1200 dpi: "18.4349"
+*ColorSepScreenAngle ProcessYellow.180lpi.1200dpi/180 lpi / 1200 dpi: "0.0"
+*ColorSepScreenFreq ProcessBlack.180lpi.1200dpi/180 lpi / 1200 dpi: "180"
+*ColorSepScreenFreq CustomColor.180lpi.1200dpi/180 lpi / 1200 dpi: "180"
+*ColorSepScreenFreq ProcessCyan.180lpi.1200dpi/180 lpi / 1200 dpi: "161"
+*ColorSepScreenFreq ProcessMagenta.180lpi.1200dpi/180 lpi / 1200 dpi: "161"
+*ColorSepScreenFreq ProcessYellow.180lpi.1200dpi/180 lpi / 1200 dpi: "170"
+*%=====================================================================
+*% Duplex
+*%=====================================================================
+*OpenUI *Duplex/Duplex:  PickOne
+*OrderDependency: 50 AnySetup *Duplex
+*DefaultDuplex: None
+*Duplex None/Off (1-Sided): "
+  <</Duplex false>> setpagedevice"
+*End
+*Duplex DuplexNoTumble/Flip on Long Edge (Standard): "
+  <</Duplex true /Tumble false>> setpagedevice"
+*End
+*Duplex DuplexTumble/Flip on Short Edge: "
+  <</Duplex true /Tumble true>> setpagedevice"
+*End
+*Duplex HelpIndex/HelpIndex_15202: ""
+*?Duplex: "
+   save
+   currentpagedevice /Duplex known
+   false ne
+     { currentpagedevice /Duplex get
+        { currentpagedevice /Tumble get
+            {(DuplexTumble)}{(DuplexNoTumble)}ifelse
+        } { (None)}    ifelse
+     }{(None)}  ifelse = flush
+   restore
+"
+*End
+*CloseUI: *Duplex
+*%=====================================================================
+*% Font Information
+*%=====================================================================
+*DefaultFont: Courier
+*Font AvantGarde-Book: Standard "(001.006S)" Standard ROM
+*Font AvantGarde-BookOblique: Standard "(001.006S)" Standard ROM
+*Font AvantGarde-Demi: Standard "(001.007S)" Standard ROM
+*Font AvantGarde-DemiOblique: Standard "(001.007S)" Standard ROM
+*Font Bookman-Demi: Standard "(001.004S)" Standard ROM
+*Font Bookman-DemiItalic: Standard "(001.004S)" Standard ROM
+*Font Bookman-Light: Standard "(001.004S)" Standard ROM
+*Font Bookman-LightItalic: Standard "(001.004S)" Standard ROM
+*Font Courier: Standard "(002.004S)" Standard ROM
+*Font Courier-Bold: Standard "(002.004S)" Standard ROM
+*Font Courier-BoldOblique: Standard "(002.004S)" Standard ROM
+*Font Courier-Oblique: Standard "(002.004S)" Standard ROM
+*Font Helvetica: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Bold: Standard "(001.007S)" Standard ROM
+*Font Helvetica-BoldOblique: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Narrow-Bold: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.007S)" Standard ROM
+*Font Helvetica-Narrow-Oblique: Standard "(001.006S)" Standard ROM
+*Font Helvetica-Oblique: Standard "(001.006S)" Standard ROM
+*Font NewCenturySchlbk-Bold: Standard "(001.009S)" Standard ROM
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.007S)" Standard ROM
+*Font NewCenturySchlbk-Italic: Standard "(001.006S)" Standard ROM
+*Font NewCenturySchlbk-Roman: Standard "(001.007S)" Standard ROM
+*Font Palatino-Bold: Standard "(001.005S)" Standard ROM
+*Font Palatino-BoldItalic: Standard "(001.005S)" Standard ROM
+*Font Palatino-Italic: Standard "(001.005S)" Standard ROM
+*Font Palatino-Roman: Standard "(001.005S)" Standard ROM
+*Font Symbol: Special "(001.007S)" Special ROM
+*Font Times-Bold: Standard "(001.007S)" Standard ROM
+*Font Times-BoldItalic: Standard "(001.009S)" Standard ROM
+*Font Times-Italic: Standard "(001.007S)" Standard ROM
+*Font Times-Roman: Standard "(001.007S)" Standard ROM
+*Font ZapfChancery-MediumItalic: Standard "(001.007S)" Standard ROM
+*Font ZapfDingbats: Special "(001.004S)" Special ROM
+*%=====================================================================
+*% Extra PS fonts
+*%=====================================================================
+*Font Albertus-ExtraBold: Standard "(001.008S)" Standard ROM
+*Font Albertus-Medium: Standard "(001.008S)" Standard ROM
+*Font AntiqueOlive: Standard "(001.008S)" Standard ROM
+*Font AntiqueOlive-Bold: Standard "(001.008S)" Standard ROM
+*Font AntiqueOlive-Italic: Standard "(001.008S)" Standard ROM
+*Font Arial: Standard "(001.008S)" Standard ROM
+*Font Arial-Bold: Standard "(001.008S)" Standard ROM
+*Font Arial-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font Arial-Italic: Standard "(001.008S)" Standard ROM
+*Font CGOmega: Standard "(001.008S)" Standard ROM
+*Font CGOmega-Bold: Standard "(001.008S)" Standard ROM
+*Font CGOmega-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font CGOmega-Italic: Standard "(001.008S)" Standard ROM
+*Font CGTimes: Standard "(001.008S)" Standard ROM
+*Font CGTimes-Bold: Standard "(001.008S)" Standard ROM
+*Font CGTimes-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font CGTimes-Italic: Standard "(001.008S)" Standard ROM
+*Font Clarendon-Condensed-Bold: Standard "(001.008S)" Standard ROM
+*Font Coronet: Standard "(001.008S)" Standard ROM
+*Font CourierHP: Standard "(001.008S)" Standard ROM
+*Font CourierHP-Bold: Standard "(001.008S)" Standard ROM
+*Font CourierHP-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font CourierHP-Italic: Standard "(001.008S)" Standard ROM
+*Font Garamond-Antiqua: Standard "(001.008S)" Standard ROM
+*Font Garamond-Halbfett: Standard "(001.008S)" Standard ROM
+*%Font Garamond-Kursiv: Standard "(001.008S)" Standard ROM
+*Font Garamond-KursivHalbfett: Standard "(001.008S)" Standard ROM
+*Font LetterGothic: Standard "(001.008S)" Standard ROM
+*Font LetterGothic-Bold: Standard "(001.008S)" Standard ROM
+*Font LetterGothic-Italic: Standard "(001.008S)" Standard ROM
+*Font Marigold: Standard "(001.008S)" Standard ROM
+*Font SymbolMT: Standard "(001.008S)" Standard ROM
+*Font TimesNewRoman: Standard "(001.008S)" Standard ROM
+*Font TimesNewRoman-Bold: Standard "(001.008S)" Standard ROM
+*Font TimesNewRoman-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font TimesNewRoman-Italic: Standard "(001.008S)" Standard ROM
+*Font Univers-Bold: Standard "(001.008S)" Standard ROM
+*Font Univers-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font Univers-Condensed-Bold: Standard "(001.008S)" Standard ROM
+*Font Univers-Condensed-BoldItalic: Standard "(001.008S)" Standard ROM
+*Font Univers-Condensed-Medium: Standard "(001.008S)" Standard ROM
+*Font Univers-Condensed-MediumItalic: Standard "(001.008S)" Standard ROM
+*Font Univers-Medium: Standard "(001.008S)" Standard ROM
+*Font Univers-MediumItalic: Standard "(001.008S)" Standard ROM
+*Font Wingdings-Regular: Special "(001.008S)" Special ROM
+*?FontQuery: "
+   save
+   { count 1 gt
+      { exch dup 127 string cvs (/) print print (:) print
+      /Font resourcestatus {pop pop (Yes)} {(No)} ifelse =
+      } { exit } ifelse
+   } bind loop
+   (*) = flush
+   restore
+"
+*End
+*?FontList: "
+   save
+     (*) {cvn ==} 128 string /Font resourceforall
+     (*) = flush
+   restore
+"
+*End
+*%=====================================================================
+*% Printer Messages (verbatim from printer):
+*%=====================================================================
+*Message: "%%[ exitserver: permanent state may be changed ]%%"
+*Message: "%%[ Flushing: rest of job (to end-of-file) will be ignored ]%%"
+*Message: "\FontName\ not found, using Courier"
+*%=====================================================================
+*% Status (format: %%[ status: <one of these> ] %%)
+*%=====================================================================
+*Status: "warming up"/warming up
+*Status: "idle"/idle
+*Status: "busy"/busy
+*Status: "waiting"/waiting
+*Status: "printing"/printing
+*Status: "initializing"/initializing
+*Status: "printing test page"/printing test page
+*Status: "PrinterError: cover open or no toner cartridge"/cover open or no toner cartridge
+*Status: "PrinterError: cover open"/cover open
+*Status: "PrinterError: needs attention"/needs attention
+*Status: "PrinterError: no toner cartridge"/no toner cartridge
+*Status: "PrinterError: warming up"/warming up
+*Status: "PrinterError: manual feed"/manual feed
+*Status: "PrinterError: out of paper"/out of paper
+*Status: "PrinterError: Paper Jam"/Paper Jam
+*Status: "PrinterError: paper jam"/paper jam
+*Status: "PrinterError: page protect needed"/page protect needed
+*Status: "PrinterError: out of memory"/out of memory
+*Status: "PrinterError: output bin full"/output bin full
+*Status: "PrinterError: resetting printer"/resetting printer
+*Status: "PrinterError: toner is low"/toner is low
+*Status: "PrinterError: off line"/off line
+*%=====================================================================
+*% Printer Error (format: %%[ PrinterError: <one of these> ]%%)
+*%=====================================================================
+*PrinterError: "cover open or no toner cartridge"/cover open or no toner cartridge
+*PrinterError: "cover open"/cover open
+*PrinterError: "needs attention"/needs attention
+*PrinterError: "no toner cartridge"/no toner cartridge
+*PrinterError: "warming up"/warming up
+*PrinterError: "manual feed"/manual feed
+*PrinterError: "out of paper"/out of paper
+*PrinterError: "Paper Jam"/Paper Jam
+*PrinterError: "paper jam"/paper jam
+*PrinterError: "page protect needed"/page protect needed
+*PrinterError: "out of memory"/out of memory
+*PrinterError: "output bin full"/output bin full
+*PrinterError: "resetting printer"/resetting printer
+*PrinterError: "toner is low"/toner is low
+*PrinterError: "off line"/off line
+*%=========================================================================
+*% Input Sources (format: %%[ status: <stat>; source: <one of these> ]%% )
+*%=========================================================================
+*Source: "BiTronics"/BiTronics
+*Source: "other I/O"/other I/O
+*Source: "AppleTalk"/AppleTalk
+*Source: "APPLETALK"/AppleTalk
+*Source: "ATALK"/AppleTalk
+*Source: "LocalTalk"/LocalTalk
+*Source: "Parallel"/Parallel
+*Source: "EtherTalk"/EtherTalk
+*Source: "NOVELL"/NOVELL
+*Source: "DLC/LLC"/DLC/LLC
+*Source: "ETALK"/EtherTalk
+*Source: "TCP/IP"/TCP/IP
+*Password: "()"
+*ExitServer: "
+ count 0 eq
+ { false } { true exch startjob } ifelse
+ not {
+     (WARNING: Cannot modify initial VM.) =
+     (Missing or invalid password.) =
+     (Please contact the author of this software.) = flush quit
+     } if
+"
+*End
+*Reset: "
+  count 0 eq { false } { true exch startjob } ifelse
+  not {
+    (WARNING: Cannot reset printer.) =
+    (Missing or invalid password.) =
+    (Please contact the author of this software.) = flush quit
+    } if
+  systemdict /quit get exec
+  (WARNING : Printer Reset Failed.) = flush
+"
+*End
+*% ============================================
+*% For "HP LaserJet 2300 PS" version 3010.107
+*% ============================================

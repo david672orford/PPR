@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 25 July 2003.
 #
 
 #
@@ -59,7 +59,7 @@ target="$2"
 
 echo "    \"$source\" --> \"$target\" (link)"
 
-if [ `basename $source` = $source ]
+if [ `echo $source | cut -c1` != / ]
 	then
 	source_verify="`dirname $target`/$source"
 	else
