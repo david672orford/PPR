@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 28 May 2004.
 */
 
 /*
@@ -1122,8 +1122,8 @@ HELP(_(
 "\t-e stderr                  report errors on stderr (default)\n"
 "\t-e responder               report errors by responder\n"
 "\t-e both                    report errors with both\n"
-"\t-e hexdump                 always use hexdump for no filter\n"
-"\t-e no-hexdump              discourage hexdump for no filter\n"));
+"\t-e hexdump                 always use hexdump in absence of filter\n"
+"\t-e no-hexdump              discourage hexdump in absence of filter\n"));
 
 HELP(_(
 "\t-s <positive integer>      signature sheet count\n"

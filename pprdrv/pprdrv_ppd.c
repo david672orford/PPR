@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 28 May 2004.
 */
 
 /*
@@ -73,6 +73,9 @@ struct PAPERSIZE papersize[MAX_PAPERSIZES];
 int papersizex = 0;								/* index into papersize[] */
 int num_papersizes = 0;
 
+/* Program CUPS would run to convert PostScript to CUPS raster format. */
+static char *cups_filter = NULL;
+
 /*=========================================================
 ** Hash Functions
 =========================================================*/
@@ -119,27 +122,6 @@ static int hash2(const char *s1, const char *s2, int tabsize)
 /*=========================================================
 ** Callback Functions for the Lexer
 =========================================================*/
-
-/*
-** ppd_callback_add_font() is called for each "*Font:" line.
-** The hash structure used by this routine and find_font() is
-** different from that used by the others in this module.
-*/
-void ppd_callback_add_font(char *fontname)
-	{
-	FUNCTION4DEBUG("ppd_callback_add_font")
-	int h;
-	struct PPDFONT *p;
-
-	DODEBUG_PPD(("%s(\"%s\")", function, fontname ? fontname : "<NULL>"));
-
-	p = (struct PPDFONT*)gu_alloc(1, sizeof(struct PPDFONT));
-	p->name = gu_strdup(fontname);
-
-	h = hash(fontname,FONT_TABSIZE);
-	p->next = ppdfont[h];
-	ppdfont[h] = p;
-	} /* end of ppd_callback_add_font() */
 
 /*
 ** This is called by the lexer when it detects the start of
@@ -231,14 +213,6 @@ void ppd_callback_end_string(void)
 	} /* end of ppd_callback_end_string() */
 
 /*
-** Process *OrderDependency information.
-*/
-void ppd_callback_order_dependency(const char text[])
-	{
-
-	} /* end of ppd_callback_order_dependency() */
-
-/*
 ** Move the paper size array index.
 */
 void ppd_callback_papersize_moveto(char *nameline)
@@ -268,68 +242,6 @@ void ppd_callback_papersize_moveto(char *nameline)
 	p->name = gu_strdup(name);
 	p->width = p->height = p->lm = p->tm = p->rm = p->bm = 0;
 	} /* end of ppd_callback_papersize_moveto() */
-
-/*
-** Process "*pprRIP:" information.
-*/
-void ppd_callback_rip(const char text[])
-	{
-	DODEBUG_PPD(("ppd_callback_rip(\"%s\")", text));
-	if(!printer.RIP.name)		/* if first in PPD file and not set in printer config file */
-		{
-		char *p;
-
-		/* Duplicate the Lex buffer because we are going to edit it in place
-		   and keep pointers to the edited copy. */
-		p = gu_strdup(text);
-
-		/* Parse it using gu_strsep(), keeping pointers and inserting nulls. */
-		if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, " \t")))
-			fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
-		printer.RIP.options_storage = gu_strsep(&p, "");
-
-		if(strchr(printer.RIP.name, '/'))
-			fatal(EXIT_PRNERR_NORETRY, _("Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."));
-
-		}
-	} /* end of ppd_callback_rip() */
-
-static char *cups_filter = NULL;
-static int default_resolution = 0;
-
-/*
-** Process "*cupsFilter:" information.
-*/
-void ppd_callback_cups_filter(const char text[])
-	{
-	DODEBUG_PPD(("ppd_callback_cups_filter(\"%s\")", text));
-	if(!cups_filter)
-		{
-		char *temp, *p, *p1, *p2, *p3;
-		p = temp = gu_strdup(text);
-
-		if((p1 = gu_strsep(&p, " \t"))									/* first exists */
-				&& strcmp(p1, "application/vnd.cups-raster") == 0		/* and mime type matches */
-				&& (p2 = gu_strsep(&p, " \t"))							/* second exists */
-				&& strspn(p2, "0123456789") == strlen(p2)				/* and is numberic */
-				&& (p3 = gu_strsep(&p, "\t"))							/* third exists */
-			)
-			{
-			cups_filter = gu_strdup(p3);
-			}
-		gu_free(temp);
-		}
-	DODEBUG_PPD(("ppd_callback_cups_filter(): done"));
-	}
-
-/*
-** Process "*DefaultResolution:".
-*/
-void ppd_callback_resolution(const char text[])
-	{
-	DODEBUG_PPD(("ppd_callback_resolution(\"%s\")", text));
-	default_resolution = atoi(text);
-	}
 
 /*==========================================================
 ** Read the Adobe PostScript Printer Description file.
@@ -412,8 +324,28 @@ void read_PPD_file(const char *ppd_file_name)
 							{
 							p++;
 							p[strcspn(p, "\"")] = '\0';
-							ppd_callback_cups_filter(p);
+							if(!cups_filter)
+								{
+								char *f1, *f2, *f3;
+								if((f1 = gu_strsep(&p, " \t"))							/* first exists */
+										&& strcmp(f1, "application/vnd.cups-raster") == 0	/* and mime type matches */
+										&& (f2 = gu_strsep(&p, " \t"))					/* second exists */
+										&& strspn(f2, "0123456789") == strlen(f2)			/* and is numberic */
+										&& (f3 = gu_strsep(&p, "\t"))						/* third exists */
+									)
+									{
+									cups_filter = gu_strdup(f3);
+									}
+								}
 							}
+						continue;
+						}
+					break;
+				case 'C':
+					if((p = lmatchp(line, "*ColorDevice:")))
+						{
+						if(gu_torf_setBOOL(&(Features.ColorDevice), p) == -1)
+							error("Invalid \"*ColorDevice:\" in PPD file: %s", p);
 						continue;
 						}
 					break;
@@ -427,11 +359,6 @@ void read_PPD_file(const char *ppd_file_name)
 							printer.OutputOrder = -1;
 						else
 							error("Unrecognized \"*OutputOrder:\" in PPD file: \"%s\"", p);
-						continue;
-						}
-					else if((p = lmatchp(line, "*DefaultResolution:")))
-						{
-						ppd_callback_resolution(p);
 						continue;
 						}
 					break;
@@ -483,8 +410,14 @@ void read_PPD_file(const char *ppd_file_name)
 						}
 					if((p = lmatchsp(line, "*Font")))
 						{
+						int h;
+						struct PPDFONT *font;
 						p[strcspn(p, ":")] = '\0';
-						ppd_callback_add_font(p);
+						font = (struct PPDFONT*)gu_alloc(1, sizeof(struct PPDFONT));
+						font->name = gu_strdup(p);
+						h = hash(font->name, FONT_TABSIZE);
+						font->next = ppdfont[h];
+						ppdfont[h] = font;
 						continue;
 						}
 					break;
@@ -542,7 +475,7 @@ void read_PPD_file(const char *ppd_file_name)
 				case 'O':
 					if((p = lmatchp(line, "*OrderDependency:")))
 						{
-						ppd_callback_order_dependency(p);
+						/* code missing */
 						continue;
 						}
 					break;
@@ -591,7 +524,21 @@ void read_PPD_file(const char *ppd_file_name)
 				case 'p':
 					if((p = lmatchp(line, "*pprRIP:")))
 						{
-						ppd_callback_rip(p);
+						if(!printer.RIP.name)		/* if first in PPD file and not set in printer config file */
+							{
+							/* Parse it using gu_strsep(), keeping pointers and inserting nulls. */
+							if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, " \t")))
+								fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
+							printer.RIP.options_storage = gu_strsep(&p, "");
+					
+							if(strchr(printer.RIP.name, '/'))
+								fatal(EXIT_PRNERR_NORETRY, _("Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."));
+
+							printer.RIP.name = gu_strdup(printer.RIP.name);
+							printer.RIP.output_language = gu_strdup(printer.RIP.output_language);
+							if(printer.RIP.options_storage)
+								printer.RIP.options_storage = gu_strdup(printer.RIP.options_storage);
+							}
 						continue;
 						}
 					break;
@@ -656,16 +603,27 @@ void read_PPD_file(const char *ppd_file_name)
 	** If we still haven't been told to use a RIP, see if we saw a
 	** "*cupsFilter:" line that can help us.
 	*/
-	DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_filter=\"%s\", default_resolution=%d",
+	DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_filter=\"%s\"",
 		printer.RIP.name ? printer.RIP.name : "",
 		cups_filter ? cups_filter : "",
-		default_resolution));
-	if(!printer.RIP.name && cups_filter) /* && default_resolution > 0) */
+		));
+	if(!printer.RIP.name && cups_filter)
 		{
-		printer.RIP.name = "ppr-gs";
-		printer.RIP.output_language = "pcl";	/* !!! a wild guess !!! */
-		/* gu_asprintf(&printer.RIP.options_storage, "cups=%s -r%d", cups_filter, default_resolution); */
-		gu_asprintf(&printer.RIP.options_storage, "cups=%s", cups_filter);
+		if(strcmp(cups_filter, "pstoplx") == 0)
+			{
+			printer.RIP.name = "ppr-gs";
+			printer.RIP.output_language = "PCLXL";
+			if(Features.ColorDevice)
+				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=plxcolor");
+			else
+				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=plxmono");
+			}
+		else
+			{
+			printer.RIP.name = "ppr-gs";
+			printer.RIP.output_language = "PCL";	/* !!! a wild guess !!! */
+			gu_asprintf(&printer.RIP.options_storage, "cups=%s", cups_filter);
+			}
 		}
 
 	if(cups_filter)

@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--25 May 2004.
+1.53a2, 20 February 2004--28 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9301,6 +9301,8 @@ Internet Printing Protocol Work
 * www/*_addwiz.cgi.perl: added code to save routines to stop after the
   first error; also added code to clearly indicate whether the operation
   succeeded or failed.
+
+* www/prn_properties.cgi.perl: same change to save routine.
 
 * z_install_end/install_inetd_conf.sh: added check for Inetd at
   /usr/etc/inetd.  (This is the wierd location used by some early System V

@@ -1041,44 +1041,63 @@ $data{charge} = "$data{charge_duplex} $data{charge_simplex}";
 $data{limitkilobytes} = "$data{limitkilobytes_lower} $data{limitkilobytes_upper}";
 $data{limitpages} = "$data{limitpages_lower} $data{limitpages_upper}";
 
+my $e = 0;	# error indicator
+my $change_count = 0;
+
 # If the interface or its address have changed,
 if($data{interface} ne $data{_interface} || $data{address} ne $data{_address})
-	{ run(@PPAD, "interface", $name, $data{interface}, $data{address}) }
+	{
+	$e || ($e=run(@PPAD, "interface", $name, $data{interface}, $data{address}));
+	$change_count++;
+	}
 
 # If the interface has changed, all of these must be set.  Otherwise,
 # only those which have themselves changed need to be set.
 foreach my $i (qw(options jobbreak feedback codes))
 	{
 	if($data{$i} ne $data{"_$i"} || $data{interface} ne $data{_interface})
-		{ run(@PPAD, $i, $name, $data{$i}) }
+		{
+		$e || ($e=run(@PPAD, $i, $name, $data{$i}));
+		$change_count++;
+		}
 	}
 
 # If the RIP has changed,
 if($data{rip} ne $data{_rip} || $data{rip_which} ne $data{_rip_which})
 	{
 	if($data{rip_which} eq "CONFIG")
-		{ run(@PPAD, "rip", $name, split(/\t/, $data{rip}, 100)) }
+		{ $e || ($e=run(@PPAD, "rip", $name, split(/\t/, $data{rip}, 100))) }
 	else
-		{ run(@PPAD, "rip", $name) }
+		{ $e || ($e=run(@PPAD, "rip", $name)) }
+	$change_count++;
 	}
 
 # Do single value stuff.
 foreach my $i (qw(comment location department contact ppd outputorder userparams pagetimelimit grayok))
 	{
 	if($data{$i} ne $data{"_$i"})
-		{ run(@PPAD, $i, $name, $data{$i}) }
+		{
+		$e || ($e=run(@PPAD, $i, $name, $data{$i}));
+		$change_count++;
+		}
 	}
 
 # Do space separated list value stuff.
 foreach my $i (qw (flags charge alerts passthru limitkilobytes limitpages ppdopts))
 	{
 	if($data{$i} ne $data{"_$i"})
-		{ run(@PPAD, $i, $name, split(/ /, $data{$i}, 100)) }
+		{
+		$e || ($e=run(@PPAD, $i, $name, split(/ /, $data{$i}, 100)));
+		$change_count++;
+		}
 	}
 
 # Setting bins needs a special command.
 if($data{bins} ne $data{"_bins"})
-	{ run(@PPAD, "bins", "set", $name, split(/ /, $data{bins}, 100)) }
+	{
+	$e || ($e=run(@PPAD, "bins", "set", $name, split(/ /, $data{bins}, 100)));
+	$change_count++;
+	}
 
 # Switchsets are very hard to do.
 {
@@ -1086,7 +1105,8 @@ my $unwrapped_switchset = $data{switchset};
 $unwrapped_switchset =~ s/\s*[\r\n]+\s*/ /g;
 if($unwrapped_switchset ne $data{"_switchset"})
 	{
-	run(@PPAD, "switchset", $name, &shell_parse($unwrapped_switchset));
+	$e || ($e=run(@PPAD, "switchset", $name, &shell_parse($unwrapped_switchset)));
+	$change_count++;
 	}
 }
 
@@ -1100,7 +1120,8 @@ foreach my $item (keys %data)
 		if($data{$item} ne $data{"_$item"})
 			{
 			$samba_addon_changed = 1 if($key =~ /^ppr2samba/);
-			run(@PPAD, "addon", $name, $key, $data{$item});
+			$e || ($e=run(@PPAD, "addon", $name, $key, $data{$item}));
+			$change_count++;
 			}
 		}
 	}
@@ -1108,10 +1129,20 @@ foreach my $item (keys %data)
 # If anything that Samba cares about has changed, update it.
 if($data{comment} ne $data{_comment} || $data{ppd} ne $data{_ppd} || $samba_addon_changed)
 	{
-	run($PPR2SAMBA_PATH, '--nocreate');
+	$e || ($e=run($PPR2SAMBA_PATH, '--nocreate'));
+	$change_count++;
 	}
 
 print "</pre>\n";
+
+if($change_count == 0)
+	{
+	print "<p>", H_("There were no changes to save."), "</p>\n";
+	}
+elsif($e == 0)
+	{
+	print "<p>", H_("The changes have been saved."), "</p>\n";
+	}
 
 # Make the display queues screen reload.  We really should
 # try to make sure there is one first!

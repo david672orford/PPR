@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2003.
+# Last modified 28 May 2004.
 #
 
 =head1 NAME
@@ -384,8 +384,13 @@ Report job submission errors with both stderr and responder.
 
 =item B<-e hexdump>
 
-Always try to force the banner page on and print a one page hex dump when
-no filter is available to convert the input file to PostScript.
+Always try to force the printing of a banner page on and print a one page hex
+dump of the beginning of the input file when no filter is available to convert 
+the input file to PostScript.  Such a hex dump is intended primarily as a 
+debugging tool to assist in developing rules by which PPR will identify
+jobs or particular types.  Also, in circumstances described below under
+B<-e no-hexdump> it is a last-resort way of informing the user that his 
+job cannot be printed.
 
 =item B<-e dishexdump> (being phased out)
 

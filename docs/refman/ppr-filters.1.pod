@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2004.
+# Last modified 28 May 2004.
 #
 
 =head1 NAME
@@ -478,15 +478,17 @@ sets the number of columns between tab stops.  The default is 8.
 
 =item B<pdeflines=>I<integer>
 
-sets the number of portrait mode lines per page for files which do not
-contain form feeds.
+Portrait mode default lines per page.  This parameter is used for documents 
+which have not already been broken into pages (i.e., do not contain form 
+feeds) when the filter receives them.  It sets the number lines which will
+be on each page if portrain mode is selected.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
 =item B<ldeflines=>I<integer>
 
-sets the number of landscape mode lines for files which do not contain form
-feeds.
+Landscape mode default lines per page.  This sets the number of lines per page
+when breaking documents into pages in landscape mode.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
