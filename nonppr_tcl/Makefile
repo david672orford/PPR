@@ -12,7 +12,7 @@ include ../Makefile.conf
 #CFLAGS=-O2
 #HOMEDIR=
 #OBJ=o
-#LIBCMD=ar -c
+#LIBCMD=ar -cr
 #RANLIB=ranlib
 #DOTEXE=
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/sysdep.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 December 2002.
+** Last modified 23 January 2003.
 */
 
 /*
@@ -187,7 +187,7 @@
 
 /* This doesn't work yet. */
 #ifdef PPR_AUTOCONF
-#include "config.h"
+#include "../config.h"
 #else
 
 /*
@@ -304,11 +304,11 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif /* PASS2 */
 #endif /* PPR_SUNOS_5 */
 
-/*====================================================================
+/*========================================================================
 ** NetBSD 1.0
 **
 ** Sample machine:
-====================================================================*/
+========================================================================*/
 #ifdef PPR_NETBSD
 #ifdef PASS1
 
@@ -325,13 +325,13 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif /* PASS2 */
 #endif /* PPR_NETBSD */
 
-/*====================================================================
+/*========================================================================
 ** Linux
 ** Linux for i386 is the principal development platform.
 ** Linux for DEC Alpha has received some testing at Trinity College.
 **
 ** Sample machine: Mouse
-====================================================================*/
+========================================================================*/
 #ifdef PPR_LINUX
 #ifdef PASS1
 
@@ -421,11 +421,11 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif /* PASS2 */
 #endif /* PPR_OSF1 */
 
-/*==========================================================================
+/*========================================================================
 ** SGI IRIX 6.3
 **
 ** Sample machine: Ermac
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_IRIX
 #ifdef PASS1
 
@@ -448,10 +448,10 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif
 #endif /* PPR_IRIX */
 
-/*==========================================================================
+/*========================================================================
 ** MS-Windows 95 or NT with Cygwin 1.1
 ** Sample machine: Jane
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_CYGWIN
 #ifdef PASS1
 
@@ -477,10 +477,10 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* PPR_CYGWIN */
 
-/*==========================================================================
+/*========================================================================
 ** MS-Windows 95/NT with AT&T UWIN 2.9
 ** Sample machine: Jane
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_UWIN
 #ifdef PASS1
 
@@ -506,11 +506,11 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* __UWIN__ */
 
-/*==========================================================================
+/*========================================================================
 ** HP-UX 10.x
 **
 ** Sample machine: Micro1
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_HPUX
 #ifdef PASS1
 
@@ -540,11 +540,11 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* PPR_HPUX */
 
-/*==========================================================================
+/*========================================================================
 ** DEC ULTRIX 4.4 (RISC DECstation, similiar to OSF1, but older)
 **
 ** Sample machine:
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_ULTRIX
 #ifdef PASS1
 
@@ -598,11 +598,11 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* PPR_SUNOS_5_6 */
 
-/*====================================================================
+/*========================================================================
 ** FreeBSD 3.1R
 **
 ** Sample machine:
-====================================================================*/
+========================================================================*/
 #ifdef PPR_FREEBSD
 #ifdef PASS1
 
@@ -622,9 +622,24 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* PPR_FREEBSD */
 
-/*==========================================================================
+/*========================================================================
+** Darwin (MacOS 10.x)
+========================================================================*/
+#ifdef PPR_DARWIN
+#ifdef PASS1
+#undef HAVE_STRSIGNAL
+#endif
+
+#ifdef PASS2
+#undef SAFE_PATH
+#define SAFE_PATH "/sw/bin:/usr/bin:/bin"
+
+#endif
+#endif /* PPR_DARWIN */
+
+/*========================================================================
 ** Win32 testing on Linux
-==========================================================================*/
+========================================================================*/
 #ifdef PPR_WIN32_TESTING
 #ifdef PASS1
 
@@ -632,7 +647,8 @@ int seteuid(uid_t);		/* not defined in header files */
 #undef HAVE_STATFS
 #undef HAVE_SYS_VFS_H
 #undef HAVE_UNSETENV
-
+#undef SENDMAIL_PATH
+#define SENDMAIL_PATH "/usr/sbin/sendmail"
 #endif
 #ifdef PASS2
 
@@ -642,7 +658,7 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif /* PASS2 */
 #endif /* WIN32_TESTING */
 
-/*========================================================================*/
+/*======================================================================*/
 
 #endif /* Not autoconf */
 
