@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_query.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 December 2004.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -60,15 +60,6 @@
 ** 2 -- show queries, default replies, actual replies, and PostScript code
 */
 int query_trace = 0;						/* debug level */
-
-/*
-** This determines where we look to find things requested by resource queries.
-** With LaserWriter 8.x we want a greedy font cache, so we will be saying
-** something isn't present if it isn't in the cache, even if it is present
-** elsewhere (we won't even look).
-*/
-static const enum RES_SEARCH font_search_list[] = { RES_SEARCH_CACHE, RES_SEARCH_END };
-static const enum RES_SEARCH other_search_list[] = { RES_SEARCH_CACHE, RES_SEARCH_END };
 
 /*
 ** SIGUSR1 changes the query logging level.
@@ -204,6 +195,7 @@ static void do_font_query(int sesfd, void *qc, int index)
 	char temp[256];				/* stuff from line[] can't overflow this buffer */
 	int x;
 	int wanted_mactruetype_features;
+	char *free_me = NULL;
 	int features;
 
 	/* These are substrings of the answer. */
@@ -244,7 +236,7 @@ static void do_font_query(int sesfd, void *qc, int index)
 		** the client would probably supply if we said "No".
 		*/
 		if(!queueinfo_transparentMode(qc) && !queueinfo_psPassThru(qc)
-				&& noalloc_find_cached_resource("font", tokens[x], 0.0, 0, font_search_list, (int*)NULL, &features, NULL)
+				&& (free_me = find_resource("font", tokens[x], 0.0, 0, &features))
 				&& ( !(features & FONT_MACTRUETYPE) || (features & wanted_mactruetype_features) ) )
 			{
 			DODEBUG_QUERY(("%s/%s:%sYes (in cache)", type, tokens[x], space));
@@ -265,6 +257,9 @@ static void do_font_query(int sesfd, void *qc, int index)
 		}
 
 	REPLY(sesfd, "*\n");		/* Terminate the returned list */
+
+	if(free_me)
+		gu_free(free_me);
 	} /* end of do_font_query() */
 
 /*
@@ -296,6 +291,7 @@ static void resource_query(int sesfd, void *qc)
 	int areprocsets = FALSE;	/* TRUE if resources are procedure sets */
 	double version;
 	int revision;
+	char *free_me = NULL;
 
 	DODEBUG_QUERY(("Resource Query"));
 
@@ -332,7 +328,7 @@ static void resource_query(int sesfd, void *qc)
 			}
 
 		/* Now look in the cache and build a suitable reply in temp[]. */
-		if(noalloc_find_cached_resource(tokens[1], tokens[2], version, revision, other_search_list, (int*)NULL, (int*)NULL, NULL))
+		if((free_me = find_resource(tokens[1], tokens[2], version, revision, (int*)NULL)))
 			{
 			snprintf(temp, sizeof(temp), "%s %s: Yes\n", tokens[1], tokens[x]);
 			DODEBUG_QUERY(("%s %s: Yes", tokens[1], tokens[x]));
@@ -347,6 +343,9 @@ static void resource_query(int sesfd, void *qc)
 		}
 
 	REPLY(sesfd, "*\n");						/* Terminate the returned list */
+
+	if(free_me)
+		gu_free(free_me);
 	} /* end of resource_query() */
 
 /*

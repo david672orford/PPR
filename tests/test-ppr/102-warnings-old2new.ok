@@ -18,7 +18,6 @@ WARNING: "%%BeginFont:" line has no argument
 WARNING: "%%EndDocumentSetup" should be "%%EndSetup"
 WARNING: "%%ExecuteFile:" should be "%%IncludeDocument:" in DSC >= 3.0
 WARNING: "%%BeginFont:" line has no argument
-WARNING: Dubious font "Regression-Test-1" downloaded in print job
 WARNING: "%%BeginFile:" line has no argument
 WARNING: "%%BeginBinary:" line has no argument
 WARNING: Resource "procset Regression-Test-Non-Existent 1 15" has an %%Include but isn't listed as needed

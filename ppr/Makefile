@@ -43,7 +43,7 @@ ppr$(DOTEXE): \
 		ppr_media.$(OBJ) ppr_rcache.$(OBJ) ppr_req.$(OBJ) \
 		ppr_res.$(OBJ) ppr_old2new.$(OBJ) ppr_dscdoc.$(OBJ) \
 		ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
-		ppr_mactt.$(OBJ) ppr_nest.$(OBJ) ppr_things.$(OBJ) \
+		ppr_nest.$(OBJ) ppr_things.$(OBJ) \
 		ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
 		ppr_features.$(OBJ) \
 		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)

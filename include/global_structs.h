@@ -25,14 +25,10 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 11 March 2005.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
-
-#define CACHE_PRIORITY_AUTO -1
-#define CACHE_PRIORITY_LOW 0
-#define CACHE_PRIORITY_HIGH 1
 
 /*
 ** A record which describes a printer commentator which
@@ -125,7 +121,6 @@ struct QFileEntry
 	const char *PassThruPDL;			/* "pcl", "hpgl2", etc., NULL for PostScript */
 	const char *Filters;				/* filter chain: "pcl", "gzip pcl", etc. */
 	const char *PJL;					/* HP PJL lines, newline separated */
-	int CachePriority;
 	gu_boolean StripPrinter;			/* Strip resources that printer has? */
 	struct {
 		char *mask;						/* which pages should be printed? */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 11 March 2005.
 */
 
 #include "config.h"
@@ -87,7 +87,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	job->priority = 20;
 	job->time = 0;
 	job->commentary = 0;						/* optional */
-	job->CachePriority = CACHE_PRIORITY_LOW;	/* optional for now */
 	job->StripPrinter = TRUE;
 	job->commentary = 0;
 
@@ -214,7 +213,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				MATCH("Charge-To: ", _2("%Z", &job->charge_to), !=1, found_other)
 				MATCH("Creator: ", _2("%Z", &job->Creator), !=1, found_other)
 				MATCH("Commentary: ", _2("%d", &job->commentary), !=1, found_other)
-				MATCH("CachePriority: ", _2("%d", &job->CachePriority), !=1, found_other)
 				break;
 
 			case 'D':

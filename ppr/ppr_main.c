@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -76,7 +76,6 @@ gu_boolean line_overflow;				/* is lines truncated? true or false */
 FILE *comments = (FILE*)NULL;			/* file for header & trailer comments */
 FILE *page_comments = (FILE*)NULL;		/* file for page level comments */
 FILE *text = (FILE*)NULL;				/* file for remainder of text */
-FILE *cache_file;						/* file to copy resource into */
 static int spool_files_created = FALSE; /* TRUE once we have created some files, used for cleanup on abort */
 
 /* Information used for determining privileges and such. */
@@ -102,9 +101,7 @@ static const char *option_page_list = (char*)NULL;
 /* Command line option settings */
 const char *features[MAX_FEATURES];				/* -F switch features to add */
 int features_count = 0;							/* number asked for (number of -F switches?) */
-gu_boolean option_strip_cache = FALSE;			/* TRUE if should strip those in cache */
 gu_boolean option_strip_fontindex = FALSE;				/* TRUE if should strip those in fontindex.db */
-enum CACHE_STORE option_cache_store = CACHE_STORE_NONE;
 int ppr_respond_by = PPR_RESPOND_BY_STDERR;
 int option_nofilter_hexdump = FALSE;			/* don't encourage use of hexdump when no filter */
 char *option_filter_options = (char*)NULL;		/* contents of -o switch */
@@ -422,9 +419,6 @@ int write_queue_file(struct QFileEntry *qentry)
 	assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE);
 	assert_ok_value(qentry->lc_messages, TRUE, FALSE, FALSE, "LC_MESSAGES", FALSE);
 
-	if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
-		fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);
-
 	/* Create a new magic cookie. */
 	snprintf(magic_cookie, sizeof(magic_cookie), "%08X", rand());
 	qentry->magic_cookie = magic_cookie;
@@ -715,9 +709,6 @@ void file_cleanup(void)
 	if(text)
 		fclose(text);
 
-	/* Remove any temporary cache file. */
-	abort_resource();
-
 	/* Remove any files created by ppr_infile.c */
 	infile_file_cleanup();
 
@@ -872,7 +863,7 @@ void unbecome_user(void)
 ** letters have been used:
 ** aAbBCdDefFGHIKmNnoOPqQrRsStTUvwYXZ
 */
-static const char *option_description_string = "ad:e:f:i:m:r:b:t:w:D:F:T:S:q:B:N:n:AC:H:R:Z:O:K:s:P:Io:UY:X:u:G:Q:";
+static const char *option_description_string = "ad:e:f:i:m:r:b:t:w:D:F:T:q:B:N:n:AC:H:R:Z:O:K:s:P:Io:UY:X:u:G:Q:";
 
 /*
 ** This table maps long option names to short options or to large integers.
@@ -917,7 +908,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"responder",			'm', TRUE},
 		{"copies",				'n', TRUE},
 		{"responder-address",	'r', TRUE},
-		{"strip-cache",			'S', TRUE},
 		{"file-type",			'T', TRUE},
 		{"proxy-for",			'X', TRUE},
 		{"features",			1000, FALSE},
@@ -930,8 +920,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"editps-level",		1009, TRUE},
 		{"markup",				1010, TRUE},
 		{"page-list",			1012, TRUE},
-		{"cache-store",			1013, TRUE},
-		{"cache-priority",		1014, TRUE},
 		{"strip-fontindex",		1015, TRUE},
 		{"strip-printer",		1016, TRUE},
 		{"save",				1017, FALSE},		/* not documented because not implemented */
@@ -1009,25 +997,12 @@ HELP(_(
 #endif
 
 HELP(_(
-"\t--strip-cache true         strip out cached resources\n"
-"\t--strip-cache false        don't strip these resources (default)\n"));
-
-HELP(_(
 "\t--strip-fontindex true     strip out fonts listed in font index\n"
 "\t--strip-fontindex false    don't strip these fonts (default)\n"));
 
 HELP(_(
 "\t--strip-printer true       strip out resources already in printer\n"
 "\t--strip-printer false      don't strip these resources (default)\n"));
-
-HELP(_(
-"\t--cache-store none         don't store new resources (default)\n"
-"\t--cache-store unavailable  store if not in cache or fontindex\n"
-"\t--cache-store uncached     store if not already in cache\n"));
-
-HELP(_(
-"\t--cache-priority {auto,low,high}\n"
-"\t                           prefer to insert resources from cache?\n"));
 
 HELP(_(
 "\t-F '<feature name>'        inserts setup code for a printer feature\n"
@@ -1491,11 +1466,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				fatal(PPREXIT_SYNTAX, _("%s option specifies unrecognized file type \"%s\""), true_option, optarg);
 			break;
 
-		case 'S':								/* -S, --strip-cache */
-			if(gu_torf_setBOOL(&option_strip_cache, optarg) == -1)
-				fatal(PPREXIT_SYNTAX, _("%s must be followed by \"true\" or \"false\""), true_option);
-			break;
-
 		case 'q':								/* queue priority */
 			if((qentry.priority = atoi(optarg)) < 0 || qentry.priority > 39)
 				fatal(PPREXIT_SYNTAX, _("%s option must be between 0 and 39"), true_option);
@@ -1843,28 +1813,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			option_page_list = optarg;
 			break;
 
-		case 1013:								/* --cache-store */
-			if(strcmp(optarg, "none") == 0)
-				option_cache_store = CACHE_STORE_NONE;
-			else if(strcmp(optarg, "unavailable") == 0)
-				option_cache_store = CACHE_STORE_UNAVAILABLE;
-			else if(strcmp(optarg, "uncached") == 0)
-				option_cache_store = CACHE_STORE_UNCACHED;
-			else
-				fatal(PPREXIT_SYNTAX, _("Unrecognized value for %s option: %s"), true_option, optarg);
-			break;
-
-		case 1014:								/* --cache-priority */
-			if(strcmp(optarg, "auto") == 0)
-				qentry.CachePriority = CACHE_PRIORITY_AUTO;
-			else if(strcmp(optarg, "low") == 0)
-				qentry.CachePriority = CACHE_PRIORITY_LOW;
-			else if(strcmp(optarg, "high") == 0)
-				qentry.CachePriority = CACHE_PRIORITY_HIGH;
-			else
-				fatal(PPREXIT_SYNTAX, _("Unrecognized value for %s option: %s"), true_option, optarg);
-			break;
-
 		case 1015:								/* --strip-fontindex */
 			if(gu_torf_setBOOL(&option_strip_fontindex, optarg) == -1)
 				fatal(PPREXIT_SYNTAX, _("%s must be followed by \"true\" or \"false\""), true_option);
@@ -2065,7 +2013,6 @@ int main(int argc, char *argv[])
 	qentry.PassThruPDL = (const char *)NULL;			/* default (means PostScript) */
 	qentry.Filters = (const char *)NULL;				/* default (means none) */
 	qentry.PJL = (const char *)NULL;
-	qentry.CachePriority = CACHE_PRIORITY_AUTO;
 	qentry.StripPrinter = FALSE;
 	qentry.page_list.mask = NULL;
 	qentry.ripopts = NULL;
@@ -2462,14 +2409,10 @@ int main(int argc, char *argv[])
 	** Check for unclosed resources.  (This is an example of a check
 	** for which an abnormal result would not be suprising if the
 	** input file where truncated.)
-	**
-	** The call to abort_resource() does not cause an exit, it
-	** mearly removes any temporary resource cache file.
 	*/
 	if( nest_level() )
 		{
 		warning(WARNING_SEVERE, _("Unclosed resource or resources"));
-		abort_resource();
 		}
 
 	/*
@@ -2587,14 +2530,6 @@ int main(int argc, char *argv[])
 	comments = page_comments = text = (FILE*)NULL;
 
 	/* =================== Input PostScript Processing Ends ===================== */
-
-	if(qentry.CachePriority == CACHE_PRIORITY_AUTO)
-		{
-		if(get_cache_strip_count() > 0)
-			qentry.CachePriority = CACHE_PRIORITY_HIGH;
-		else
-			qentry.CachePriority = CACHE_PRIORITY_LOW;
-		}
 
 	/*
 	** Compare "qentry.attr.pages" to "pagenumber".

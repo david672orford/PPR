@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/libppr/findres.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 February 2001.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -27,42 +42,29 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <string.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 
-static char resource_fname[MAX_PPR_PATH];
-
-static char *try_cachedir(const char cachedir[],
+static char *try_resource_dir(const char cachedir[],
 				const char res_type[], const char res_name[],
-				double version, int revision, int *newrev, int *features)
+				double version, int revision)
 	{
 	struct stat statbuf;
+	char resource_fname[MAX_PPR_PATH];
 
 	if(strcmp(res_type, "procset") == 0)
 		ppr_fnamef(resource_fname, "%s/procset/%s-%s-%d", cachedir, res_name, gu_dtostr(version), revision);
 	else
 		ppr_fnamef(resource_fname, "%s/%s/%s", cachedir, res_type, res_name);
 
-	/* Try the permanent cache. */
 	if(stat(resource_fname, &statbuf) == 0)
 		{
-		if(features)
-			{
-			*features = 0;				/* redundant */
-			if(strcmp(res_type, "font") == 0)
-				{
-				if(statbuf.st_mode & FONT_MODE_MACTRUETYPE)
-					*features |= FONT_MACTRUETYPE;
-				if(statbuf.st_mode & FONT_MODE_TYPE_1)
-					*features |= FONT_TYPE_1;
-				if(statbuf.st_mode & FONT_MODE_TYPE_42)
-					*features |= FONT_TYPE_42;
-				}
-			}
-		return resource_fname;
+		return gu_strdup(resource_fname);
 		}
 
-	/* Looks like it is not in either cache. */
 	return (char*)NULL;
 	}
 
@@ -80,7 +82,7 @@ static char *try_fontindex(const char res_name[], int *features)
 
 	if(!(dbf = fopen(filename, "r")))
 		{
-		error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, gu_strerror(errno));
+		error(_("%s(): can't open \"%s\", errno=%d (%s)"), function, filename, errno, gu_strerror(errno));
 		return NULL;
 		}
 
@@ -99,17 +101,7 @@ static char *try_fontindex(const char res_name[], int *features)
 					error("%s(): \"%s\" line %d is invalid", function, filename, linenum);
 					continue;
 					}
-
-				ppr_fnamef(resource_fname, "%s", f3);
-				answer = resource_fname;
-
-				if(features)
-					{
-					*features = 0;				/* redundant */
-					if(strcmp(f2, "ttf") == 0)
-						*features |= FONT_TYPE_TTF;
-					}
-
+				answer = gu_strdup(f3);
 				gu_free(line);
 				break;
 				}
@@ -122,64 +114,38 @@ static char *try_fontindex(const char res_name[], int *features)
 	} /* end of try_fontindex() */
 
 /*
-** Return a pointer to the filename of a resource in the cache.
-**
-** If we substitute a newer revision, we will store the new revision
-** number in the integer pointed to by "newrev".  This isn't implemented yet.
+** Return a pointer to the filename of a resource which we can provide.
+** The caller should pass the pointer to gu_free() when it is no longer
+** needed.
 */
-const char *noalloc_find_cached_resource(const char res_type[], const char res_name[], double version, int revision,
-				const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
+char *find_resource(
+	const char res_type[], const char res_name[], double version, int revision,
+	int *features
+	)
 	{
-	int x;
 	char *ptr;
 
-	if(features) *features = 0;
+	if(features)
+		*features = 0;
 
-	for(x=0; sequence[x] != RES_SEARCH_END; x++)
+	if(strcmp(res_type, "font") == 0)
 		{
-		switch(sequence[x])
+		if((ptr = try_fontindex(res_name, features)))
 			{
-			case RES_SEARCH_FONTINDEX:
-				if(strcmp(res_type, "font") == 0 && (ptr = try_fontindex(res_name, features)))
-					{
-					if(where_found) *where_found = RES_SEARCH_FONTINDEX;
-					return ptr;
-					}
-				break;
+			return ptr;
+			}
+		}
 
-			case RES_SEARCH_CACHE:
-				if((ptr = try_cachedir(STATIC_CACHEDIR, res_type, res_name, version, revision, newrev, NULL))
-						|| (ptr = try_cachedir(CACHEDIR, res_type, res_name, version, revision, newrev, features)))
-					{
-					if(where_found) *where_found = RES_SEARCH_CACHE;
-					return ptr;
-					}
-				break;
-
-			#ifdef GNUC_HAPPY
-			case RES_SEARCH_END:
-				break;
-			#endif
+	else
+		{
+		if((ptr = try_resource_dir(RESOURCEDIR, res_type, res_name, version, revision)))
+			{
+			return ptr;
 			}
 		}
 
 	return (char*)NULL;
-	} /* end of noalloc_find_cached_resource() */
-
-/*
-** In this version, if the pointer is not NULL, it points
-** into newly allocated memory.
-*/
-char *find_cached_resource(const char res_type[], const char res_name[], double version, int revision,
-		const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
-	{
-	const char *ptr;
-
-	if((ptr = noalloc_find_cached_resource(res_type, res_name, version, revision, sequence, newrev, features, where_found)))
-		return gu_strdup(ptr);
-
-	return (char*)NULL;
-	} /* end of find_cached_resource() */
+	} /* end of find_resource() */
 
 /* end of file */
 

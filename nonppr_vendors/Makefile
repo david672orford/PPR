@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/nonppr_vendors/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 August 2003.
+# Last modified 11 March 2005.
 #
 
 include ../Makefile.conf
 
 PPD_DESTDIR=$(SHAREDIR)/PPDFiles
-PROCSET_DESTDIR=$(SHAREDIR)/cache/procset
+PROCSET_DESTDIR=$(RESOURCEDIR)/procset
 FONT_DESTDIR=$(SHAREDIR)/fonts
 
 #=== Inventory ==============================================================
@@ -53,7 +53,6 @@ install:
 	$(INSTALLDATA) $(PROCSET_DESTDIR) \
 			procset_apple/*[!~]
 	$(INSTALLDATA) $(FONT_DESTDIR) \
-			font_adobe/*.afm \
 			font_ibm/*.afm font_ibm/*.pf[ab] \
 			font_paragraph/*.afm font_paragraph/*.pf[ab]
 

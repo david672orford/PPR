@@ -1051,7 +1051,7 @@ export RESPONDERDIR=$(LIBDIR)/responders
 # our PPD file library (must be absolute)
 export PPDDIR=$(SHAREDIR)/PPDFiles
 # pre-loaded cache files
-export STATIC_CACHEDIR=$(SHAREDIR)/cache
+export RESOURCEDIR=$(SHAREDIR)/resources
 
 #----------------------------------------
 # Directories where the spooler writes

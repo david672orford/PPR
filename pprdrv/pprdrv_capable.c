@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_capable.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 11 March 2005.
 */
 
 /*===========================================================================
@@ -50,22 +50,6 @@
 #include "global_structs.h"
 #include "interface.h"
 #include "pprdrv.h"
-
-/* This defines the resource search path when --cache-priority=low. */
-static const enum RES_SEARCH cache_priority_low_search_list[] =
-	{
-	RES_SEARCH_FONTINDEX,
-	RES_SEARCH_CACHE,
-	RES_SEARCH_END
-	};
-
-/* This defines the resource search path when --cache-priority=high. */
-static const enum RES_SEARCH cache_priority_high_search_list[] =
-	{
-	RES_SEARCH_CACHE,
-	RES_SEARCH_FONTINDEX,
-	RES_SEARCH_END
-	};
 
 /* These are the resources that PostScript printers have built in that
    are not mentioned in the PPD files. */
@@ -217,11 +201,6 @@ int check_if_capable(FILE *qfile, int group_pass)
 	int font;					/* TRUE if current resource is a font. */
 	const char *fnptr;			/* Temporary pointer to file name. */
 	int features;
-	const enum RES_SEARCH *search_list;
-
-	search_list = job.CachePriority == CACHE_PRIORITY_HIGH
-				? cache_priority_high_search_list
-				: cache_priority_low_search_list;
 
 	while((qline = gu_getline(qline, &qline_available, qfile)))
 		{										/* Work until end of file */
@@ -293,7 +272,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 		/*
 		** See if the resource in question is in the cache.
 		*/
-		if((fnptr = find_cached_resource(d->type, d->name, d->version, d->revision, search_list, (int*)NULL, &features, NULL)))
+		if((fnptr = find_resource(d->type, d->name, d->version, d->revision, &features)))
 			{									/* If found, */
 			DODEBUG_RESOURCES(("resource %s %s is in cache file \"%s\"", d->type, d->name, fnptr));
 
@@ -322,11 +301,11 @@ int check_if_capable(FILE *qfile, int group_pass)
 				d->dot_ttf = TRUE;
 				}
 
-			d->filename = fnptr;				/* remember the name of the cache file */
-			d->needed = FALSE;					/* resource is now a supplied resource */
+			d->filename = fnptr;		/* remember the name of the cache file */
+			d->needed = FALSE;			/* resource is now a supplied resource */
 			if(features & FONT_MACTRUETYPE) d->mactt = TRUE;
 
-			continue;							/* Go on to next resource. */
+			continue;					/* Go on to next resource. */
 			}
 
 		/*
@@ -380,7 +359,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 						*/
 						fnptr = (char*)NULL;			/* cached PostScript font name pointer */
 						if(ppd_font_present(ptr)
-								|| (fnptr = find_cached_resource("font", ptr, 0.0, 0, search_list, (int*)NULL, &features, NULL)))
+								|| (fnptr = find_resource("font", ptr, 0.0, 0, &features)))
 							{
 							/* If it must be downloaded from a file, */
 							if(fnptr)

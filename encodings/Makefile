@@ -32,7 +32,7 @@ install: charsets.conf $(ENCODINGS)
 	$(INSTALLDATA) $(SHAREDIR)/lib charsets.conf
 	for enc in $(ENCODINGS);\
 		do\
-		$(INSTALLCP) --squeeze $$enc $(SHAREDIR)/cache/encoding/$$enc;\
+		$(INSTALLCP) --squeeze $$enc $(RESOURCEDIR)/encoding/$$enc;\
 		done
 
 depend:

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_printjob.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2004.
+** Last modified 11 March 2005.
 */
 
 #include "config.h"
@@ -175,11 +175,6 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const str
 		argv[x++]="-Z";
 		argv[x++]="true";
 		#endif
-
-		/* LaserWriter 8.x benefits from a cache that stores stuff. */
-		argv[x++] = "--cache-store=uncached";
-		argv[x++] = "--cache-priority=high";
-		argv[x++] = "--strip-cache=true";
 
 		/* end of argument list */
 		argv[x] = (char*)NULL;

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/rules.mk
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 September 2003.
+# Last modified 11 March 2005.
 #
 
 # Where do we install the documentation?
@@ -52,7 +52,7 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 # Rule to convert POD to HTML using Perl's pod2html
 #============================================================================
 .pod.html:
-	$(POD2HTML) --htmlroot=. --podpath=.:../refman:../uprint --libpods=$(LIBPODS) $*.pod >$*.html
+	$(POD2HTML) --htmlroot=. --podpath=.:../refman --libpods=$(LIBPODS) $*.pod >$*.html
 
 #============================================================================
 # Rule to convert POD to Nroff format using Perl's pod2man

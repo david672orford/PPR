@@ -49,7 +49,7 @@ all: $(PROGS)
 install: $(PROGS) $(SQUEEZEME)
 	for i in $(SQUEEZEME);\
 	    do\
-	    $(INSTALLCP) --squeeze $$i $(SHAREDIR)/cache/procset/$$i;\
+	    $(INSTALLCP) --squeeze $$i $(RESOURCEDIR)/procset/$$i;\
 	    done
 
 #=== Housekeeping ===========================================================

@@ -9635,3 +9635,4 @@ no final tarball was released.
 * moved nonppr_misc/openbsd/strlcpy.c to libgu/gu_strlcpy.c and strlcat.c to
   gu_strlcat.c.
 
+* ppr/: removed options -S, --cache-store, --strip-cache, --cache-priority 

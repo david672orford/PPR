@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -373,9 +373,9 @@ static void mgu_ini_insert_resource(const char restype[], const char resname[], 
 	int c;
 
 	if(version == 0.0)
-		ppr_fnamef(fname, "%s/%s/%s", STATIC_CACHEDIR, restype, resname);
+		ppr_fnamef(fname, "%s/%s/%s", RESOURCEDIR, restype, resname);
 	else
-		ppr_fnamef(fname, "%s/%s/%s-%s-%d", STATIC_CACHEDIR, restype, resname, gu_dtostr(version), revision);
+		ppr_fnamef(fname, "%s/%s/%s-%s-%d", RESOURCEDIR, restype, resname, gu_dtostr(version), revision);
 
 	if((f = fopen(fname, "r")) == NULL)
 		fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\" for read, errno=%d (%s)", function, fname, errno, gu_strerror(errno));

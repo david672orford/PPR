@@ -91,14 +91,14 @@ TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0: prop_genmetrics$(DOTEXE)
 
 install: $(TARGETS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(FILTDIR) filter_dotmatrix$(DOTEXE)
-	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-1-2 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-1-2
-	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G1-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-G1-1-0
-	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G2-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-G2-1-0
-	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-Colour-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-Colour-1-0
-	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0
-	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0
-	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0
-	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0
+	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-1-2 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-1-2
+	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G1-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-G1-1-0
+	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G2-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-G2-1-0
+	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-Colour-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-Colour-1-0
+	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0
+	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0
+	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0
+	$(INSTALLCP) TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0 $(RESOURCEDIR)/procset/TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0
 
 #=== Housekeeping ===========================================================
 

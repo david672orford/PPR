@@ -364,16 +364,6 @@ struct PPD_PROTOCOLS
 #define CODES_Binary 3
 #define CODES_TBCP 4
 
-/*
-** This is for find_cached_resource().
-*/
-enum RES_SEARCH
-	{
-	RES_SEARCH_CACHE,
-	RES_SEARCH_FONTINDEX,
-	RES_SEARCH_END
-	};
-
 /* Function prototypes */
 char *datestamp(void);
 void tokenize(void);
@@ -384,8 +374,7 @@ gu_boolean destination_protected(const char destname[]);
 char *money(int amount_times_ten);
 const char *jobid(const char *destname, int id, int subid);
 int pagesize(const char keyword[], char **corrected_keyword, double *width, double *length, gu_boolean *envelope);
-const char *noalloc_find_cached_resource(const char res_type[], const char res_name[], double version, int revision, const enum RES_SEARCH search_list[], int *new_revision, int *features, enum RES_SEARCH *where_found);
-char *find_cached_resource(const char res_type[], const char res_name[], double version, int revision, const enum RES_SEARCH search_list[], int *new_revision, int *features, enum RES_SEARCH *where_found);
+char *find_resource(const char res_type[], const char res_name[], double version, int revision, int *features);
 int get_responder_width(const char *name);
 double convert_dimension(const char *string);
 void filter_options_error(int exlevel, struct OPTIONS_STATE *o, const char *format, ...)

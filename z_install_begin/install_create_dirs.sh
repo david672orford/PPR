@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 January 2005.
+# Last modified 11 March 2005.
 #
 
 #=============================================================================
@@ -115,12 +115,13 @@ directory $CONFDIR/aliases 755
 directory $CONFDIR/mounted 755
 directory $CONFDIR/acl 755
 
-# Make the directories for the permanent cache.
-directory $SHAREDIR/cache 755
-directory $SHAREDIR/cache/font 755
-directory $SHAREDIR/cache/procset 755
-directory $SHAREDIR/cache/file 755
-directory $SHAREDIR/cache/encoding 755
+# Make the directories for the resource store.  Notice
+# that we do not make a directory for fonts since they
+# are handled separately.
+directory $RESOURCEDIR 755
+directory $RESOURCEDIR/procset 755
+directory $RESOURCEDIR/file 755
+directory $RESOURCEDIR/encoding 755
 
 # Make the miscelaineous directories in /usr/lib/ppr.
 directory $BINDIR 755

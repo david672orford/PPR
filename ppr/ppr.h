@@ -135,9 +135,6 @@ struct Thing
 #define PPR_RESPOND_BY_RESPONDER 2		/* respond() exec()s responder */
 #define PPR_RESPOND_BY_BOTH 3			/* respond() does both */
 
-/* Possible --cache-store settings: */
-enum CACHE_STORE { CACHE_STORE_NONE, CACHE_STORE_UNAVAILABLE, CACHE_STORE_UNCACHED };
-
 /*===============================================
 ** global variables
 ===============================================*/
@@ -149,7 +146,6 @@ extern char *starting_directory;
 extern FILE *comments;			/* file for header & trailer comments */
 extern FILE *page_comments;		/* file for page level comments */
 extern FILE *text;				/* file for remainder of text */
-extern FILE *cache_file;		/* file to copy resource into */
 
 extern uid_t user_uid;			/* uid/gid of person submitting the job */
 extern gid_t user_gid;
@@ -272,9 +268,9 @@ void old_DSC_to_new(void);
 
 /* ppr_simplify.c */
 void copy_comment(FILE *out);
-void getline_simplify_cache(void);
-void getline_simplify_cache_hide_nest(void);
-void getline_simplify_cache_hide_nest_hide_ps(void);
+void getline_simplify(void);
+void getline_simplify_hide_nest(void);
+void getline_simplify_hide_nest_hide_ps(void);
 extern int dsc_comment_number;
 extern int eof_comment_present;
 

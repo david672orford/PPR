@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_res.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 July 2001.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -30,13 +45,6 @@
 #include "global_structs.h"
 #include "interface.h"
 #include "pprdrv.h"
-
-static const enum RES_SEARCH add_resource_search_list[] =
-	{
-	RES_SEARCH_FONTINDEX,
-	RES_SEARCH_CACHE,
-	RES_SEARCH_END
-	};
 
 /*
 ** include_resource() is called whenever an "%%IncludResource:" comment is
@@ -507,7 +515,7 @@ int add_resource(const char type[], const char name[], double version, int revis
 		}
 
 	/*
-	** If we have it in the cache, then we will be downloading it.
+	** If we have it in in our library, then we will be downloading it.
 	** Notice that we say it is not a "needed" resource in the sense that
 	** it will not be missing from the data that we send to the
 	** printer.
@@ -515,8 +523,8 @@ int add_resource(const char type[], const char name[], double version, int revis
 	fnptr = NULL;
 	features = 0;
 	if((strcmp(type, "font") == 0 && ppd_font_present(name))
-				|| (fnptr = find_cached_resource(type, name, version, revision, add_resource_search_list, (int*)NULL, &features, NULL))
-				)
+		|| (fnptr = find_resource(type, name, version, revision, &features))
+		)
 		{
 		d = add_drvres(FALSE, FALSE, type, name, version, revision);
 		d->filename = fnptr;
@@ -526,7 +534,7 @@ int add_resource(const char type[], const char name[], double version, int revis
 		else
 			d->force_into_prolog = TRUE;
 
-		/* code is needed here for TrueType */
+		/* Code is needed here for TrueType font support. */
 
 		return 0;
 		}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_dscdoc.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2002.
+** Last modified 11 March 2005.
 */
 
 /*
@@ -978,7 +978,7 @@ void read_header_comments(void)
 	{
 	outermost_start(OUTERMOST_HEADER_COMMENTS);
 
-	getline_simplify_cache();				 /* get 1st line, hopefully %!PS-... */
+	getline_simplify();		 /* get 1st line, hopefully %!PS-... */
 
 	/*
 	** Process the %! line.
@@ -995,7 +995,7 @@ void read_header_comments(void)
 			warning(WARNING_SEVERE, _("Document uses DSC version %.1f which is > 3.0"), qentry.attr.DSClevel);
 			}
 
-		getline_simplify_cache();						/* and refill buffer */
+		getline_simplify();				/* and refill buffer */
 		}
 	else								/* If not flagged with */
 		{								/* "%!PS-Adobe-x.xx", */
@@ -1005,7 +1005,7 @@ void read_header_comments(void)
 	/*
 	** Process all of the header lines.
 	*/
-	for( ; !in_eof(); getline_simplify_cache() )
+	for( ; !in_eof(); getline_simplify() )
 		{
 		if(line[0] != '%')		/* If not a comment, then */
 			break;				/* comments section is done. */
@@ -1023,7 +1023,7 @@ void read_header_comments(void)
 			{
 			if(strcmp(line, "%%EndComments") == 0)
 				{					/* swallow "%%EndComments" */
-				getline_simplify_cache();	 /* but, we must leave a line in the buffer */
+				getline_simplify();	/* but, we must leave a line in the buffer */
 				break;
 				}
 
@@ -1061,7 +1061,7 @@ static void read_defaults(void)
 	fprintf(page_comments, "%s\n", line);
 
 	/* Copy the rest of the document defaults section. */
-	for(getline_simplify_cache(); ! in_eof(); getline_simplify_cache())
+	for(getline_simplify(); ! in_eof(); getline_simplify())
 		{
 		/* Save line in the -pages file. */
 		fprintf(page_comments, "%s\n", line);
@@ -1069,7 +1069,7 @@ static void read_defaults(void)
 		/* If that line was the end, get something for next guy and stop. */
 		if(strncmp(line, "%%EndDefaults", 13) == 0)
 			{
-			getline_simplify_cache();
+			getline_simplify();
 			break;
 			}
 
@@ -1230,7 +1230,7 @@ gu_boolean read_prolog(void)
 			if(! line_overflow)
 				fputc('\n', text);
 			}
-		getline_simplify_cache();	 /* get the next line */
+		getline_simplify();	 /* get the next line */
 		}
 
 	/* no pages will follow, say so */
@@ -1263,7 +1263,7 @@ void read_pages(void)
 	int pageheader = TRUE;
 	int script = FALSE;
 
-	for( ; ! in_eof() ; getline_simplify_cache() )
+	for( ; ! in_eof() ; getline_simplify() )
 		{
 		if(line[0] == '%' && line[1] == '%' && nest_level() == 0 && line_len <= MAX_TOKENIZED)
 			{
@@ -1342,7 +1342,7 @@ void read_trailer(void)
 	{
 	outermost_start(OUTERMOST_TRAILER);
 
-	for(getline_simplify_cache(); ! in_eof(); getline_simplify_cache())
+	for(getline_simplify(); ! in_eof(); getline_simplify())
 		{
 		if(line[0]=='%' && line[1]=='%' && line_len <= MAX_TOKENIZED)
 			{							/* if DSC comment */

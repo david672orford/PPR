@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_simplify.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,22 +25,20 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 November 2004.
+** Last modified 11 March 2005.
 */
 
 /*
 ** The line input routines for ppr are arranged in a hierarcy.  The higher
-** level versions hide more of the unpleasant looking lines and take care
-** of copying resources to cache files when necessary as well as possibly
-** stripping out resources which we think we can later restore from the cache.
+** level versions hide more of the unpleasant looking lines.
 **
 ** The hierarcy looks like this:
 **
-** getline_simplify_cache()
-**			--> getline_simplify() 
-**				--> in_getline()
-**					   --> copy_data() --> in_getline();
-**											   --> in_getc();
+**	--> getline_simplify() 
+**		--> in_getline()
+**		   --> copy_data()
+**				--> in_getline();
+**				   --> in_getc();
 */
 
 #include "config.h"
@@ -57,7 +55,6 @@
 #include "ppr_gab.h"
 
 int eof_comment_present = FALSE;
-int rgrab = 0;							/* 0, 1 or 2 for grabing a resources */
 int dsc_comment_number = 0;				/* Will be the same for 1st and cont. lines */
 
 /* These are used to handle %%+ comment continuation. */
@@ -112,7 +109,6 @@ static void copy_data(void)
 	/* Write the %%BeginData: comment to the output.  If we are caching
 	   a resource now, then put in the cache file too. */
 	fprintf(text, "%s\n", line);
-	if(rgrab) fprintf(cache_file, "%s\n", line);
 
 	/* Syntax check */
 	if(!tokens[1] || !tokens[2] || !tokens[3])
@@ -137,11 +133,6 @@ static void copy_data(void)
 		while(!in_eof() && countdown--)
 			{
 			in_getline();
-			if(rgrab)
-				{
-				fwrite(line, sizeof(unsigned char), line_len, cache_file);
-				if(!line_overflow) fputc('\n', cache_file);
-				}
 			fwrite(line, sizeof(unsigned char), line_len, text);
 			if(line_overflow)
 				countdown++;
@@ -177,22 +168,10 @@ static void copy_data(void)
 		long int countup = 0;
 
 		/* Copy the required number of bytes. */
-		if(rgrab)
+		while(countdown-- && (c = in_getc()) != EOF)
 			{
-			while(countdown-- && (c = in_getc()) != EOF)
-				{
-				fputc(c, text);
-				fputc(c, cache_file);
-				countup++;
-				}
-			}
-		else
-			{
-			while(countdown-- && (c = in_getc()) != EOF)
-				{
-				fputc(c, text);
-				countup++;
-				}
+			fputc(c, text);
+			countup++;
 			}
 
 		/* Read a 5 byte sample of what follows. */
@@ -214,7 +193,6 @@ static void copy_data(void)
 
 			do	{
 				fputc(temp[0], text);
-				if(rgrab) fputc(temp[0], cache_file);
 
 				for(x=1; x < LENGTH_END; x++)
 					temp[x - 1] = temp[x];
@@ -335,7 +313,7 @@ static void do_bang(void)
 **
 ** This function is only called by getline_simplify_cache().
 */
-static void getline_simplify(void)
+void getline_simplify(void)
 	{
 	/* Call the basic line input routine in ppr_infile.c. */
 	in_getline();
@@ -491,8 +469,6 @@ static void getline_simplify(void)
 						}
 					else
 						{
-						if(nest_level() == 1)	/* If first level resource, */
-							end_resource();		/* tell cache machinery. */
 						nest_pop(NEST_RES);		/* Drop down a level. */
 						}
 					break;
@@ -529,51 +505,18 @@ static void getline_simplify(void)
 	} /* end of getline_simplify() */
 
 /*
-** This function gets the next line of input, though %%Begin(End)Data
-** and that which is between them are never returned because they are
-** silently copied thru by getline_simplify().  This is the only
-** function which calls getline_simplify().
-*/
-void getline_simplify_cache(void)
-	{
-	/*
-	** Call lower level part.
-	*/
-	getline_simplify();
-
-	/*
-	** If rgrab is non-zero, stash the line in
-	** the resource cache.
-	*/
-	if(rgrab)
-		{
-		if(rgrab == 2)	/* If 2nd or subsequent line, */
-			{			/* (1st line is "%%BeginResource:".) */
-						/* then write it to the cache file. */
-			fwrite(line, sizeof(unsigned char), line_len, cache_file);
-
-			if(!line_overflow)					/* If that was a whole line, */
-				fputc('\n', cache_file);		/* then terminate it. */
-			}
-		else									/* If first line, */
-			{
-			rgrab = 2;							/* just note that we saw the 1st line. */
-			}
-		}
-	} /* end of getline_simplify_cache() */
-
-/*
 ** This is like getline_simplify_cache() above but it
 ** never returns a line that is part of a nested structure.
 */
-void getline_simplify_cache_hide_nest(void)
+void getline_simplify_hide_nest(void)
 	{
-	getline_simplify_cache();
+	getline_simplify();
 	while(!in_eof() && nest_level() > 0)
 		{
 		fwrite(line, sizeof(unsigned char), line_len, text);
-		if(!line_overflow) fputc('\n', text);
-		getline_simplify_cache();
+		if(!line_overflow)
+			fputc('\n', text);
+		getline_simplify();
 		}
 	} /* end of getline_simplify_cache_hidenest() */
 
@@ -581,16 +524,17 @@ void getline_simplify_cache_hide_nest(void)
 ** This is like getline_simplify_cache_hidenest above but it
 ** never returns a line of PostScript code, only comments.
 */
-void getline_simplify_cache_hide_nest_hide_ps(void)
+void getline_simplify_hide_nest_hide_ps(void)
 	{
-	getline_simplify_cache_hide_nest();
+	getline_simplify_hide_nest();
 	while(!in_eof() && line[0] != '%')
 		{
 		fwrite(line, sizeof(unsigned char), line_len, text);
-		if(!line_overflow) fputc('\n', text);
-		getline_simplify_cache();
+		if(!line_overflow)
+			fputc('\n', text);
+		getline_simplify();
 		}
-	} /* end of getline_simplify_cache_hide_nest_hide_ps() */
+	} /* end of getline_simplify_hide_nest_hide_ps() */
 
 /* end of file */
 

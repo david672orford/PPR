@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 January 2005.
+** Last modified 11 March 2005.
 */
 
 #include "config.h"
@@ -131,8 +131,6 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
 	if(qentry->PassThruPDL)
 		fprintf(Qfile, "PassThruPDL: %s\n", qentry->PassThruPDL);
-
-	fprintf(Qfile, "CachePriority: %d\n", (int)qentry->CachePriority);
 
 	fprintf(Qfile, "StripPrinter: %d\n", (int)qentry->StripPrinter);
 

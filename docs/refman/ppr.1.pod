@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2005.
+# Last modified 11 March 2005.
 #
 
 =head1 NAME
@@ -936,56 +936,39 @@ performs major modifications such as optimizing it for size or speed.
 
 =head2 Resource Handling
 
-PPR has a resource cache.  A PostScript resource is a section of PostScript
-code which forms a font, a procedure set, an encoding map or certain other
-objects of general utility.
+Prior to version 2.00, PPR has a complicated system for stripping resources,
+such as procedure sets and fonts, out of jobs and reinserting them at print 
+time.  While useful in theory, only LaserWriter 8 (a Macintosh printer driver)
+to advantage of it.  Other than that, it simply caused problems as multiple
+versions of the same resource with the same name proliferated.  One print
+job could 'poison' the cache with versions of resources which were incompatible
+with other print jobs.  To these reasons, PPR version 2.00 no longer extracts
+resources from incoming jobs.
 
-Some fonts and other resources come with PPR, with your operating system,
-and with other software.  Fonts should be listed in PPR's font index.
-PPR also comes with a static cache which is found in F</usr/share/ppr/cache>.
-
-PPR can also build up a dynamic cache of resources saved from previous jobs.
-This dynamic cache is stored in F</var/spool/ppr/cache>.
-When using B<papd> and LaserWriter 8.x, this can be used to reduce the time
-Macintosh clients spend transmitting fonts to PPR.  For this reason when
-B<papd> invokes B<ppr>, it sets certain options to enable caching behaviour.
-The options are B<--cache-store=uncached>, B<--strip-cache=true>, and
-B<--cache-priority=high>.
+The new philosophy is that it is the responsibility of the system administrator
+to install the needed fonts and resources on the server.
 
 =over 4
 
 =item B<--cache-store> [B<none>, B<unavailable>, B<uncached>]
 
-This directive controls which resources found in the submitted job are saved
-in the resource cache.  If it is set to B<uncached>, then all resources (or
-rather resources of all categories for which there is a cache directory in
-F</var/spool/ppr/cache>) which are not already in the cache are saved in
-the cache.  If it is set to I<unavailable> then the resource is saved only if
-it doesn't exist elsewhere such as in the font index.  If it is set to B<none>
-then no resources are added to the cache (with the minor exception of
-of those Macintosh dual mode fonts which are already partially cached).
-
 =item B<--strip-cache> [B<true>, B<false>]
 
 =item B<-S> [B<true>, B<false>]
 
-This option controls whether when the job is placed in the queue, PPR will
-strip out PostScript resources such as fonts and procedure sets and
-temporarily replace them with "C<%%IncludeResource:>" comments if identically
-named and version numbered resources are already in the cache or are being
-copied from the job into the cache.  Doing so can save disk space in the
-spool area.  The default value is B<false>.
+=item B<--cache-priority> [B<auto>, B<low>, B<high>]
 
-Enabling this feature could cause problems if various jobs give the same name
-to resources which are really different from one another.  For this reason,
-this feature is off by default.
+These options has been removed in PPR 2.00.
 
 =item B<--strip-fontindex> [B<true>, B<false>]
 
 The default for this option is B<false>.  If this is option is set to I<true>
-and a font which is sent as part
-of the job is listed in the font index, then it is stripped out and later
-replaced with the one listed in the font index.
+and a font which is sent as part of the job is listed in PPR's font index
+(indicating that PPR has it available for insertion into the job, then it is
+stripped out and later replaced with the one listed in the font index.
+
+You should only use this option if you are certain that the font stored on the
+server has all of the characters which the job will need.
 
 =item B<--strip-printer> [B<true>, B<false>]
 
@@ -993,16 +976,8 @@ The default for this option is B<false>.  If this option is set to B<true> and
 a resource, such as a font, which is sent as part of the job is already in the
 printer, it is stripped out just before the job is sent to the printer.
 
-=item B<--cache-priority> [B<auto>, B<low>, B<high>]
-
-This directive determines where PPR looks first when it is asked to insert
-a resource or when it replaces one it stripped out.  The default is B<auto>.
-If the setting is B<high> then the resource cache will be searched before
-the font index.  If it is B<low> then the resource cache will be searched
-after the font index.  If it is B<auto> then the priority will be set to
-B<low>,unless one or more resources were stripped out of the job with the
-expectation of restoring them from the cache, in which case it will be
-B<high>.
+You should only use this option if you are certain that the font already stored
+in the printer has all of the characters which the job will need.
 
 =back
 
