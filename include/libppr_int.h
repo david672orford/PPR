@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 21 June 2001.
+** Last modified 14 August 2001.
 */
 
 #ifndef LIBPPR_INT_H
@@ -29,18 +29,19 @@
 */
 struct INT_CMDLINE
     {
-    const char *int_name;		/* "interfaces/atalk" */
-    const char *int_basename;		/* "atalk" */
-    const char *printer;		/* "myprn" */
-    const char *address;		/* "My Laser Printer:LaserWriter@Computing Center" */
-    const char *options;		/* "idle_status_interval=60 open_retries=5" */
-    int jobbreak;			/* 1 (signal) */
-    gu_boolean feedback;		/* 1 (True) */
-    enum CODES codes;			/* 3 (Binary) */
-    const char *jobname;		/* "mouse:myprn-1001.0(mouse)" */
-    const char *routing;		/* "Call David Chappell at 2114 when ready" */
-    const char *forline;		/* "David Chappell" */
-    const char *barbarlang;		/* "" (PostScript) */
+    const char *int_name;		/* example: "interfaces/atalk" */
+    const char *int_basename;		/* example: "atalk" */
+    const char *printer;		/* example: "myprn" */
+    const char *address;		/* example: "My Laser Printer:LaserWriter@Computing Center" */
+    const char *options;		/* example: "idle_status_interval=60 open_retries=5" */
+    int jobbreak;			/* example: 1 (signal) */
+    gu_boolean feedback;		/* example: 1 (True) */
+    enum CODES codes;			/* example: 3 (Binary) */
+    const char *jobname;		/* example: "mouse:myprn-1001.0(mouse)" */
+    const char *routing;		/* example: "Call David Chappell at 2114 when ready" */
+    const char *forline;		/* example: "David Chappell" */
+    const char *barbarlang;		/* example: "" (PostScript) */
+    const char *title;			/* example: "My Print Job" */
     } ;
 
 extern struct INT_CMDLINE int_cmdline;

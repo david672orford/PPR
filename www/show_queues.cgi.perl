@@ -11,11 +11,13 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 21 January 2001.
+# Last modified 2 August 2001.
 #
 
 use 5.005;
 use lib "?";
+use strict;
+use vars qw{%data};
 require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_back.pl';
@@ -43,8 +45,22 @@ my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=85 
 my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
 my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
 
+#
 # Routine to convert printer messages to icon selection characters.
-sub integrate_messages
+#
+# The first parameter is a reference to the list of auxiliary status messages
+# from the printer.
+#
+# The second is the character that should be returned if the status messages
+# don't contain anything noteworthy.
+#
+# The third is the character that should be returned if the messages indicate
+# that the printer is off-line.
+#
+# The fourth is the character that should be returned if the printer is in some
+# other error state.
+#
+sub pstatus_char
     {
     my($messages, $default_char, $offline_char, $error_char) = @_;
     foreach my $message (@$messages)
@@ -138,8 +154,10 @@ Head10
 # Begin an exception handling block
 eval {
 
+#=============================================================================
 # Print a lame menu bar.
-#
+#=============================================================================
+
 # IE 5.0 choaks on this:
 #<div style="position:fixed; top:0; left: 0; width:100%; height: 2em; background:white">
 {
@@ -203,8 +221,10 @@ print <<"Top10";
 Top10
 }
 
+#=============================================================================
 # Here we create the icons for the wizards and for Show All Jobs.
-#
+#=============================================================================
+
 print <<"Top10";
 <table border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
@@ -225,31 +245,34 @@ print <<"Top10";
 <hr>
 Top10
 
+#=============================================================================
+# Here we loop through the available print destinations, gathering information
+# about type, status, number of jobs, etc. and choosing an icon for each.
 #
-# Here we loop through the available queues, creating an icon
-# for each.
-#
+# The information is stored in $queues{} and $queues_counts{}.
+#=============================================================================
+
+my %queues;
+my %queues_counts;
 {
 my $control = new PPR::PPOP("all");
 
 # Select the correct member function to get the level of detail we need.
-my $function;
-if($columns >= 0)
-    { $function = "list_destinations" }
-elsif($columns == -1)
-    { $function = "list_destinations_comments" }
-else
-    { $function = "list_destinations_comments_addresses" }
+#my $function;
+#if($columns >= 0)
+#    { $function = "list_destinations" }
+#elsif($columns == -1)
+#    { $function = "list_destinations_comments" }
+#else
+#    { $function = "list_destinations_comments_addresses" }
 
 # Get a list of all queues with a description for each.
-# The information is stored in $queues{}.
-my $qname;
-my $row;
-my %queues;
-my %queues_counts;
-foreach $row ($control->list_destinations_comments_addresses())
+print STDERR "xxxxxx\n";
+print STDERR "\$control = $control\n";
+foreach my $row ($control->list_destinations_comments_addresses())
     {
     my($name, $type, $accepting, $protected, $comment, $address) = @$row;
+print STDERR "\$name = \"$name\"\n";
     my $icon = '';
 
     if($type eq 'printer')
@@ -279,13 +302,13 @@ foreach $row ($control->list_destinations_comments_addresses())
 
 # Count the number of jobs in each queue.  The counts are
 # stored in $queues_count{}.
-foreach $row ($control->qquery('destname'))
+foreach my $row ($control->qquery('destname'))
     {
     $queues_counts{$row->[0]}++;
     }
 
 # Add the correct "jobs present" (0 or 1) character for each queue.
-foreach $qname (keys(%queues))
+foreach my $qname (keys(%queues))
     {
     if($queues_counts{$qname} > 0)
     	{
@@ -298,19 +321,8 @@ foreach $qname (keys(%queues))
     }
 
 #
-# Add a printer status character for each printer.
-#
-# The first parameter is the list of auxiliary status messages from the
-# printer.
-#
-# The second is the character that should be returned if the
-# status messages don't contain anything noteworthy.
-#
-# The third is the character that should be returned if the messages indicate
-# that the printer is off-line.
-#
-# The fourth is the character that should be returned if the printer is in some
-# other error state.
+# Refine our icon selection for destinations that are printers by
+# adding an additional characters that indicates the printer status.
 #
 # These are the available characters:
 #
@@ -327,7 +339,7 @@ foreach $qname (keys(%queues))
 # a	printing but off-line
 # b	printing but other "PrinterError:"
 #
-foreach $row ($control->get_pstatus())
+foreach my $row ($control->get_pstatus())
     {
     my $name = shift @$row;
     my $status = shift @$row;
@@ -341,9 +353,9 @@ foreach $row ($control->get_pstatus())
     #print STDERR "\$type=\"$type\", \$icon=\"$icon\", \$comment=\"$comment\", \$qaddress=\"$qaddress\"\n";
 
     if($status eq "idle")
-    	{ $icon .= integrate_messages(\@messages, '0', '8', '9') }
+    	{ $icon .= pstatus_char(\@messages, '0', '8', '9') }
     elsif($status eq "printing")
-    	{ $icon .= integrate_messages(\@messages, '1', 'a', 'b') }
+    	{ $icon .= pstatus_char(\@messages, '1', 'a', 'b') }
     elsif($status eq "stopping" || $status eq "halting")
     	{ $icon .= '2' }
     elsif($status eq "canceling" || $status eq "seizing")
@@ -363,7 +375,7 @@ foreach $row ($control->get_pstatus())
     	}
     elsif($status eq "engaged")
     	{
-	$icon .= integrate_messages(\@messages, '7', '8', '9')
+	$icon .= pstatus_char(\@messages, '7', '8', '9')
     	}
     else
     	{ $icon .= 'x' }
@@ -372,6 +384,11 @@ foreach $row ($control->get_pstatus())
     }
 # Shut down ppop.
 $control->destroy;
+}
+
+#=============================================================================
+# Produce the HTML for the print destination icons.
+#=============================================================================
 
 # If there is going to be only a single table, start it.
 if($columns != 0)
@@ -379,8 +396,9 @@ if($columns != 0)
 
 # Loop thru the queues, creating a labeled icon for each.
 # Code needed to escape the queue name in HTML, URLs and JavaScript!
+{
 my $col = 0;
-foreach $qname (sort(keys(%queues)))
+foreach my $qname (sort(keys(%queues)))
     {
     my($qtype, $icon, $qdescription, $qaddress) = @{$queues{$qname}};
 
@@ -426,6 +444,10 @@ if($columns != 0)
     print "</table>\n";
     }
 }
+
+#=============================================================================
+# Final stuff
+#=============================================================================
 
 # End the exception handling block.
 }; if($@)

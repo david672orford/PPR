@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 June 2001.
+# Last modified 1 August 2001.
 #
 
 #
@@ -100,7 +100,7 @@ all: symlinks-restore
 		echo "==========================================="; \
 		echo "=    running $(MAKE) in $$i"; \
 		echo "==========================================="; \
-		( cd $$i && $(MAKE) $(MAKEFLAGS) ) || exit 1; \
+		( cd $$i && $(MAKE) ) || exit 1; \
 		echo; \
 		done
 	@echo
@@ -115,7 +115,7 @@ install: symlinks-restore
 		echo "==========================================="; \
 		echo "    running $(MAKE) install in $$i"; \
 		echo "==========================================="; \
-		( cd $$i && $(MAKE) $(MAKEFLAGS) install ) || exit 1; \
+		( cd $$i && $(MAKE) install ) || exit 1; \
 		echo; \
 		done
 	@echo
@@ -127,7 +127,11 @@ install: symlinks-restore
 
 # Just the documents, built before making the distribution.
 dist-docs:
-	( cd docs && $(MAKE) $(MAKEFLAGS) all-docs ) || exit 1
+	@echo "==========================================="
+	@echo "    Building Documentation"
+	@echo "==========================================="
+	( cd docs && $(MAKE) MAKEFLAGS= all-docs ) || exit 1
+	@echo
 
 # Make sure the hard-to-build docs are built, remove the easy to build stuff, and build the tar file.
 dist: dist-docs clean unconfigure
@@ -158,7 +162,7 @@ cvs-import: veryclean symlinks-save
 depend:
 	@for i in $(SUBDIRS) $(SUBDIRS_CLEAN_ONLY); \
 		do \
-		( cd $$i && $(MAKE) $(MAKEFLAGS) depend ) || exit 1; \
+		( cd $$i && $(MAKE) depend ) || exit 1; \
 		done
 
 # Remove editor backup files, object files, and executables
@@ -169,7 +173,7 @@ clean:
 		echo "==========================================="; \
 		echo "    running $(MAKE) clean in $$i"; \
 		echo "==========================================="; \
-		( cd $$i && $(MAKE) $(MAKEFLAGS) clean ) || exit 1; \
+		( cd $$i && $(MAKE) clean ) || exit 1; \
 		echo; \
 		done
 	$(RMF) $(BACKUPS)

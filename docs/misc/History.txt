@@ -7336,3 +7336,24 @@ line was being parsed twice.
 * Fixed ppop/ppop.c:job_permission_check() to return 'OK' if the queue file
   does not exist.  This brings the code back in line with the comments.
 
+
+1.50a1, 1 August 2001--14 August 2001
+
+* Replaced makeprogs/global.mk.4rpm with a series of them for different
+  arch-vendor-os combinations.
+
+* Makefile, docs/Makefile, docs/*/Makefile: corrected mistaken use of 
+  MAKEFLAGS.
+
+* Changed installation of login_ppr.sh and login_ppr.csh to copy them
+  into /etc/profile.d rather than place links to them there.  The master
+  copies are now installed in $HOMEDIR/fixup/ rather than $HOMEDIR/lib/.
+
+* makeprogs/gen_paths.c: Removed "package main;" from top of paths.ph since it 
+  seems to cause problems with mod_perl CGI emulation and whatever once
+  required it is appearently using PPR.pm now.
+
+* Added nonppr/tcl7.4_hacked.
+
+* Added the job title to the arguments passed to the interface programs.
+

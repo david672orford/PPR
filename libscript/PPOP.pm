@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 16 February 2001.
+# Last modified 2 August 2001.
 #
 
 =head1 NAME
@@ -82,7 +82,7 @@ sub new
   defined($self->{queue}) || croak "Queue name parameter missing";
 
   $references++;
-  #print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n";
+  print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n";
 
   bless $self;
   return $self;
@@ -102,12 +102,10 @@ sub destroy
     defined($self) || croak;
 
     $references--;
-    #print STDERR "PPR::PPOP::destroy(): \$references = $references\n";
+    print STDERR "PPR::PPOP::destroy(): \$references = $references\n";
     if($references == 0)
     	{
-	close($wtr);
-	close($rdr);
-	$ppop_launched = 0;
+	$self->shutdown();
     	}
     }
 
@@ -129,9 +127,8 @@ sub launch
   # being prepared.
   if($ppop_launched && ($self->{su_user} ne $ppop_launched_su_user || $self->{proxy_for} ne $ppop_launched_proxy_for))
     {
-    close($wtr);
-    close($rdr);
-    $ppop_launched = 0;
+    print STDERR "PPR::PPOP::launch(): need shutdown and relaunch\n";
+    $self->shutdown();
     }
 
   if( ! $ppop_launched )
@@ -141,8 +138,6 @@ sub launch
     my $saved_buffer_mode = $|;
     $| = 1;
     print "";
-
-    ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
 
     defined($PPR::PPOP_PATH) || croak;
 
@@ -163,19 +158,49 @@ sub launch
 
     # Launch the command.
     #print STDERR "Launching: ", join(" ", @COMMAND), "\n";
-    $pid = open2($rdr, $wtr, @COMMAND);
+    ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
+    my $pid = open2($rdr, $wtr, @COMMAND);
+    $wtr->autoflush();
 
     # The first thing it does is print the PPR version number.
     my $junk = <$rdr>;
-    $junk =~ /^\*READY\t([0-9.]+)/;
-    #print STDERR "PPR version $1\n";
+    $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready";
 
-    $ppop_launched = 1;
+    print STDERR "PID $pid, PPR version $1\n";
+
+    $ppop_launched = $pid;
     $ppop_launched_su_user = $self->{su_user};
 
     # Undo whatever that was we did.
     $| = $saved_buffer_mode;
+
     }
+  }
+
+#
+# Internal function
+#
+sub shutdown
+  {
+  my $self = shift;
+  defined($self) || croak;
+
+  # Flush and close the write pipe.
+  close($wtr);
+
+  # Drain the read pipe.
+  while(<$rdr>)
+    {
+    }
+
+  # Close the read pipe.
+  close($rdr);
+
+  # Get the exit status of the process.
+  waitpid($ppop_launched, 0);
+
+  # Clear the process-alive flag.
+  $ppop_launched = 0;
   }
 
 #
@@ -187,9 +212,11 @@ sub read_lists
     {
     my @result_rows = ();
 
+    print STDERR "PPR::PPOP::read_lists()\n";
+
     while(<$rdr>)
 	{
-	#print STDERR $_;
+	print STDERR $_;
 	chomp;
 	if(/^\*DONE\t([0-9]+)/)
 	    {
@@ -221,7 +248,7 @@ sub do_it
 
     $self->launch();
 
-    #print STDERR "\$ ppop -M ", join(' ', @_), "\n";
+    print STDERR "\$ ppop -M ", join(' ', @_), "\n";
     print $wtr join(' ', @_), "\n";
 
     while(1)
@@ -294,6 +321,7 @@ sub qquery
   $self->launch();
 
   # Send a command to ppop.
+  print STDERR "ppop -M qquery $self->{queue}-* ", join(' ', @_), "\n";
   print $wtr "qquery $self->{queue}-* ", join(' ', @_), "\n";
 
   my @result = ();
@@ -640,6 +668,7 @@ sub list_destinations_comments_addresses
     my $queue = shift;
     $queue = $self->{queue} unless defined($queue);
     $self->launch();
+    print STDERR "ppop -M destination-comment-address $queue\n";
     print $wtr "destination-comment-address $queue\n";
     return read_lists();
     }

@@ -1,19 +1,19 @@
 #
-# mouse:~ppr/src/ppr-1.44.spec
-# Last modified 5 June 2001.
+# mouse:~ppr/src/ppr.spec
+# Last modified 2 August 2001.
 #
 # This is my first attempt at a RPM spec file for PPR.  I think I have made
 # a few mistakes.  Please point them out.
 #
 # In order to use this file, move the PPR source archive to
-# /usr/src/RPM/SOURCES and run "rpm -ba ppr-1.41b1.spec".  It is possible to
+# /usr/src/RPM/SOURCES and run "rpm -ba ppr-X.XX.spec".  It is possible to
 # build the thing elsewhere, such as in ones home dirctory, but I don't know
 # how.
 #
 
 Summary: A spooler for PostScript printers
 Name: ppr
-Version: 1.44
+Version: 1.50a1
 Release: 1
 Copyright: BSD
 Group: System Environment/Daemons
@@ -40,7 +40,7 @@ with Ghostscript, Netatalk, CAP60, and Samba.
 #============================================================================
 %build
 #./Configure
-cp makeprogs/global.mk.4rpm makeprogs/global.mk
+cp makeprogs/global.mk.%_target_cpu-%_target_vendor-%_target_os makeprogs/global.mk
 make
 
 #============================================================================

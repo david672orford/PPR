@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 7 May 2001.
+# Last modified 1 August 2001.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -25,11 +25,11 @@ BUILT=pprinst.html pprinst.ps pprinst.pdf
 
 #=== Build ==================================================================
 
-all: $(BUILT)
+all-docs: $(BUILT)
 
 #=== Install ================================================================
 
-install: all
+install: all-docs
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprinst
 	../$(INSTALLDATA) $(DOCSDIR)/pprinst $(BUILT)
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 24 July 2001.
+** Last modified 2 August 2001.
 */
 
 #include "before_system.h"
@@ -47,9 +47,7 @@ int main(int argc, char *argv[])
 
     printf("# This is NOT a configuration file!  Don't modify it!\n");
 
-    if(strcmp(argv[1], "--ph") == 0)
-    	printf("package main;\n");
-    else if(strcmp(argv[1], "--pm") == 0)
+    if(strcmp(argv[1], "--pm") == 0)
     	printf("package PPR;\n");
 
     /*

@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 20 April 2001.
+# Last modified 1 August 2001.
 #
 
 include ../../makeprogs/global.mk
@@ -21,7 +21,7 @@ include ../rules.mk
 
 #=== Build ==================================================================
 
-all: 
+all-docs: 
 
 #=== Install ================================================================
 

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 20 July 2001.
+** Last modified 14 August 2001.
 */
 
 /*
@@ -365,6 +365,7 @@ static void start_interface(const char *BarBarPDL)
 	    job.Routing ? job.Routing : "",
 	    job.For ? job.For : "",
 	    BarBarPDL ? BarBarPDL : "",
+	    job.Title ? job.Title : "",
 	    (char*)NULL);
 
 	/*

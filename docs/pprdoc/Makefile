@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 21 June 2001.
+# Last modified 1 August 2001.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -27,13 +27,13 @@ BUILT=pprdoc.html pprdoc.ps pprdoc.pdf \
 
 #=== Build ==================================================================
 
-all: $(BUILT)
+all-docs: $(BUILT)
 
 pprdoc.ps: pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps
 
 #=== Install ================================================================
 
-install: all
+install: all-docs
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprdoc
 	../$(INSTALLDATA) $(DOCSDIR)/pprdoc $(BUILT)
 

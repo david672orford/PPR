@@ -30,7 +30,7 @@ SUBDIRS=refman uprint pprdoc pprinst pprhack misc
 all: $(PROGS) all-docs
 
 all-docs: $(HTML)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) $(MAKEFLAGS) ); done
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) all-docs ); done
 
 #=== Install ================================================================
 
@@ -38,7 +38,7 @@ install: $(PROGS) $(HTML)
 	$(MAKE_NEW_DIR) $(DOCSDIR)
 	$(INSTALLDATA) $(DOCSDIR) $(HTML)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	for i in $(SUBDIRS); do ( cd $$i && $(MAKE) $(MAKEFLAGS) install ); done
+	for i in $(SUBDIRS); do ( cd $$i && $(MAKE) install ); done
 
 #=== Housekeeping ===========================================================
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_back.pl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 14 June 2000.
+# Last modified 1 August 2001.
 #
 
 #
@@ -67,6 +67,7 @@ EndOfText
 <body>
 <p>Going back to "<a href="$back_url">$back_url</a>"...
 </body>
+</html>
 EndQuote10
 
     print <<"EndQuote20";

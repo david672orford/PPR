@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 31 June 2001.
+# Last modified 1 August 2001.
 #
 
 # Pull in settings from Configure.
@@ -37,7 +37,7 @@ ALL_TROFF=ppr.1.man ppr-filters.1.man ppr2samba.8.man ppr-indexfonts.8.man ppop.
 
 #=== Build ==================================================================
 
-all: $(ALL_HTML) $(ALL_TROFF)
+all-docs: $(ALL_HTML) $(ALL_TROFF)
 
 #=== Install ================================================================
 
