@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 7 March 2003.
 #
 
 #=============================================================================
@@ -37,7 +37,15 @@
 #=============================================================================
 
 # System configuration values:
-. ../makeprogs/paths.sh
+if [ ! -x ../makeprogs/ppr-config ]
+    then
+    ( cd ../makeprogs && make ppr-config )
+    fi
+CONFDIR=`../makeprogs/ppr-config --confdir`
+HOMEDIR=`../makeprogs/ppr-config --homedir`
+SHAREDIR=`../makeprogs/ppr-config --sharedir`
+VAR_SPOOL_PPR=`../makeprogs/ppr-config --var-spool-ppr`
+TEMPDIR=`../makeprogs/ppr-config --tempdir`
 
 # List of files for RPM:
 fileslist="`dirname $0`/../z_install_begin/installed_files_list"

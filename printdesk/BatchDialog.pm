@@ -1,10 +1,45 @@
-#================================================================
+#
 # mouse:~ppr/src/printdesk/BatchDialog.pm
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last modified 5 January 1999.
-#================================================================
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 7 March 2003.
+#
+
+=head1 NAME
+PrintDesk::BatchDialog
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+The PrintDesk::BatchDialog object is an error dialog box that can be reused. 
+The size, font, and title are set when it is created, but its Show() method
+may be used at any time to display an error message.
+
+=cut
 
 package PrintDesk::BatchDialog;
 
@@ -17,11 +52,25 @@ use PrintDesk;
 #@ISA = qw(Exporter);
 #@EXPORT = qw();
 
-#
-# Constructor.
-#
-# $dialog = new PrintDesk::BatchDialog($parent, -title, "Can't perform operation");
-#
+=pod
+
+my $dialog = new PrintDesk::BatchDialog($parent, -title, "Can't perform operation");
+
+Create a new error dialog object.
+
+Options:
+
+=over 4
+
+=item -title
+
+=item -width
+
+=item -font
+
+=back
+
+=cut
 sub new
     {
     shift;
@@ -74,9 +123,15 @@ sub new
     return $self;
     }
 
-#
-# $button = $dialog->Show("This is the message", "cancel", "continue");
-#
+=pod
+
+my $pressed_button = $dialog->Show("This is the message", "cancel", "continue");
+
+Display the error message in the first parameter and display buttons with
+the names in the subsequent parameters.  Return the name of the button that
+the user presses.
+
+=cut
 sub Show
     {
     my $self = shift;
@@ -152,11 +207,3 @@ sub destroy
 1;
 
 __END__
-=head1 NAME
-PrintDesk::BatchDialog
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-=cut

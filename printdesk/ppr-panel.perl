@@ -24,6 +24,7 @@ use PrintDesk::PPRlistqueue;
 use PrintDesk::GENjobbuttons;
 use PrintDesk::PPRprnstatus;
 use PrintDesk::GENprnbuttons;
+use PrintDesk::PPRprintdialog;
 use PPR::PPOP;
 
 #==========================================================================
@@ -130,6 +131,24 @@ sub do_menu
     # Arrange for future destruction.
     $previous_menu = $menu;
     }
+
+#==========================================================================
+# Print some files
+#==========================================================================
+
+sub doit
+    {
+    my $main = shift;
+
+    my $dialog = new PrintDesk::PPRprintdialog($main);
+
+    if($dialog->Show(@_))
+	{
+	$dialog->printFile(@_)
+	}
+
+    }
+
 
 #==========================================================================
 # Create the main application window.

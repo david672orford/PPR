@@ -160,6 +160,8 @@ int main(int argc, char *argv[])
 	    printf("%s\n", SHAREDIR);
 	else if(strcmp(argv[i], "--var-spool-ppr") == 0)
 	    printf("%s\n", VAR_SPOOL_PPR);
+	else if(strcmp(argv[i], "--tempdir") == 0)
+	    printf("%s\n", TEMPDIR);
 	else
 	    {
 	    fprintf(stderr, "%s: unknown option %s\n", myname, argv[i]);
