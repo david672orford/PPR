@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 24 May 2004.
+ Last revised 9 June 2004.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -21,6 +21,7 @@ information about other packages still applies.
 * Notes for Netatalk
 * Notes X-Windows
 * Notes for RedHat Linux 4.x
+* Notes for Linux 2.6.x
 * Notes for DEC OSF/1
 * Notes for SGI IRIX 6.3
 * Notes for HP-UX 10.20
@@ -245,9 +246,9 @@ You should find kernel configuration parameters in the file
 /sys/conf/HOSTNAME.  Examine the file and determine if the following
 lines are present.
 
-options		STREAMS
-options         FFM_FS
-options         PCKT
+options     STREAMS
+options     FFM_FS
+options     PCKT
 
 If the above are present all the necessary components are already in place.
 Otherwise, you will need to rebuild the OS kernel using /usr/sbin/doconfig
@@ -258,6 +259,20 @@ Filesystem.  When doconfig finishes copy the new kernel to /vmunix and reboot.
 From this point on, you should be able to follow the usual PPR
 installation procedures.  When you run Configure, it will give you
 the option of using the C compiler that comes with the operating system.
+
+=============================================================================
+ Notes for Linux 2.6.x
+=============================================================================
+
+Early versions of Linux 2.6.x have serious bugs in their drivers for parallel
+printer ports and USB printers.  These bugs lead to a variety of problems
+such as excessive CPU time consumption and the printing of pages and pages of
+garbage.  PPR's "parallel" and "usb" printer interface programs will abort if
+they detect these bugs.
+
+The USB printer driver is broken in the 2.6.4 kernel distributed by Debian
+but is fixed in 2.6.6.  The parallel port driver is still not fixed in
+version 2.6.6.
 
 =============================================================================
  Notes for SGI IRIX 6.3 and 6.5

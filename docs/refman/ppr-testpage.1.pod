@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 May 2004.
+# Last modified 9 June 2004.
 #
 
 =head1 NAME
@@ -79,10 +79,17 @@ appication.
 
 =item --test-spoked
 
-Print a spoked wheel with a radius of 125 points.  The spokes are at 1 degree
-intervals.  The lines are as thin as the printer is capable of printing.  Rings
-printed at 25 point intervals out from the center enable one to judge how 
-closely lines may be printed while still being distringuishable.
+Print a spoked wheel with a radius of 125 points.  The spokes are 365 
+spokes at 1 degree intervals.  The PostScript interpreter is asked to
+give the lines a width of zero.  This means that it should make them as thin
+as the physical capabilities of the printer permit.
+
+Toward the center of the wheel, the lines will undergo distortion, first morie
+effects, then then will merge to solid black.  The higher the effective 
+resolution of the Ghostscript-printer combination, the closer the lines will
+get to the center of the while before these distortion become obtrusive,
+The concentric rings with radii of 25, 50, 75, 100, and 125 points are intended
+to enable one to measure distances from the center.
 
 =item --version
 
