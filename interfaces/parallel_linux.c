@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 2 November 2003.
 */
 
 /*
@@ -126,6 +126,91 @@ void parallel_port_cleanup(int fd)
 	{
 	/* Cancel the reset printer on cancel handler. */
 	signal_interupting(SIGTERM, SIG_DFL);
+	}
+
+/*
+** This is the routine which implements --probe.  Its exit code is the one
+** which the parallel interface program passes to exit().  The meaning of
+** the possible return codes is a follows:
+**
+** EXIT_PRINTED
+**		no error
+**
+** EXIT_PRNERR_NORETRY 
+**		parallel port probing not implemented for this OS
+**
+** EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
+**		probing not implemented for specified port
+**
+** EXIT_PRNERR_NO_SUCH_ADDRESS
+**		port not found
+**
+** EXIT_PRNERR
+**		other failure	
+*/
+
+/* The address must match one of these scanf() patterns.
+ * They are used to extract the port number.
+ */
+const char *dev_names[] =
+	{
+	"/dev/lp%d",			/* traditional */
+	"/dev/printers/%d",		/* devfs */
+	NULL
+	};
+
+/* One of these printf() format strings mush produce the 
+ * name of the pseudo file in /proc which contains the
+ * autoprobe information.
+ */
+const char *probe_names[] =
+	{
+	"/proc/sys/dev/parport/parport%d/autoprobe",	/* Linux 2.4.x */
+	"/proc/parport/%d/autoprobe",					/* Linux 2.2.x */
+	NULL
+	};
+
+int parallel_port_probe(const char address[])
+	{
+	int i;
+	int portnum = -1;
+	char filename[MAX_PPR_PATH];
+	FILE *f = NULL;
+	char *line = NULL;
+	int line_len = 80;
+	char *p, *f1, *f2;
+	
+	for(i=0; dev_names[i]; i++)
+		{
+		if(gu_sscanf(address, dev_names[i], &portnum) == 1)
+			break;
+		}
+
+	if(portnum == -1)
+		return EXIT_PRNERR_NO_SUCH_ADDRESS;
+
+	for(i=0; probe_names[i]; i++)
+		{
+		ppr_fnamef(filename, probe_names[i], portnum);
+		if((f = fopen(filename, "r")))
+			break;
+		}
+
+	if(!f)
+		return EXIT_PRNERR;
+
+	while((line = gu_getline(line, &line_len, f)))
+		{
+		p = line;
+		if((f1 = gu_strsep(&p, ":")) && (f2 = gu_strsep(&p, ";")))
+			{
+			printf("PROBE: 1284DeviceID %s=%s\n", f1, f2);
+			}
+		}
+
+	fclose(f);
+
+	return EXIT_PRINTED;
 	}
 
 /* end of file */

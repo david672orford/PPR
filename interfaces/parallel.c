@@ -25,11 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 2 November 2003.
 */
 
 /*
-** PPR interface to drive a parallel printer.
+** PPR interface program to drive a parallel printer.
 */
 
 #include "before_system.h"
@@ -319,15 +319,6 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	} /* end of parse_options() */
 
 /*
-** Implementation of the --probe option.
-*/
-static int do_probe(const char address[])
-	{
-	fprintf(stderr, "probe not yet supported\n");
-	return EXIT_PRNERR;
-	}
-
-/*
 ** Tie it all together.
 */
 int main(int argc, char *argv[])
@@ -358,7 +349,26 @@ int main(int argc, char *argv[])
 	/* If the --probe option was used, */
 	if(int_cmdline.probe)
 		{
-		int_exit(do_probe(int_cmdline.address));
+		int retval = parallel_port_probe(int_cmdline.address);
+		switch(retval)
+			{
+			case EXIT_PRINTED:
+				break;
+			case EXIT_PRNERR_NORETRY:
+				fprintf(stderr, _("Parallel port probing not implemented on this OS.\n"));
+				break;
+			case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
+				fprintf(stderr, _("Probing not implemented for port \"%s\".\n"), int_cmdline.address);
+				break;
+			case EXIT_PRNERR_NO_SUCH_ADDRESS:
+				fprintf(stderr, _("Port \"%s\" not found.\n"), int_cmdline.address);
+				break;
+			case EXIT_PRNERR:
+			default:
+				fprintf(stderr, _("Probe failed.\n"));
+				break;
+			}
+		return retval;
 		}
 
 	/* Check for unusable job break methods. */

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 October 2003.
+# Last modified 2 November 2003.
 #
 
 #
@@ -40,7 +40,7 @@
 # Detect the --probe option.  We are a fake, so we fake it.
 if [ "$1" == "--probe" ]
 	then
-	echo "PROBE: Product=HP LaserJet 4000 Series"
+	echo "PROBE: PostScript Product=HP LaserJet 4000 Series"
 	exit $EXIT_PRINTED
 	fi
 

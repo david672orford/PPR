@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 October 2003.
+# Last modified 2 November 2003.
 #
 
 defined($VAR_SPOOL_PPR) || die;
@@ -45,10 +45,10 @@ sub ppd_list
 			{
 			next if($line =~ /^#/);
 			chomp $line;
-			my($description, $filename, $manufacturer) = (split(/:/, $line));
+			my($description, $filename, $manufacturer) = (split(/:/, $line))[0 .. 2];
 			next if($manufacturer eq "PPR");		# these aren't for printers
 			$filename =~ s#^$PPDDIR/##;				# reduce clutter by removing PPR PPD Directory name
-			push(@list, [$manufacturer, $description, $filename);
+			push(@list, [$manufacturer, $description, $filename]);
 			}
 		close(P) || die $!;
 		}

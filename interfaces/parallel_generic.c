@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 2 November 2003.
 */
 
 /*
@@ -48,6 +48,7 @@
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
+#include "interface.h"
 #include "parallel.h"
 
 /*
@@ -92,6 +93,31 @@ int parallel_port_status(int fd)
 */
 void parallel_port_cleanup(int fd)
 	{
+	}
+
+/*
+** This is the routine which implements --probe.  Its exit code is the one
+** which the parallel interface program passes to exit().  The meaning of
+** the possible return codes is a follows:
+**
+** EXIT_PRINTED
+**		no error
+**
+** EXIT_PRNERR_NORETRY 
+**		parallel port probing not implemented for this OS
+**
+** EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
+**		probing not implemented for specified port
+**
+** EXIT_PRNERR_NO_SUCH_ADDRESS
+**		port not found
+**
+** EXIT_PRNERR
+**		other failure	
+*/
+int parallel_port_probe(const char address[])
+	{
+	return EXIT_PRNERR_NORETRY;
 	}
 
 /* end of file */

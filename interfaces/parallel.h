@@ -47,6 +47,7 @@ void parallel_port_setup(int fd, const struct OPTIONS *options);
 void parallel_port_reset(int fd);
 int parallel_port_status(int fd);
 void parallel_port_cleanup(int fd);
+int parallel_port_probe(const char address[]);
 
 /* end of file */
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 2 November 2003.
 */
 
 #include "before_system.h"
@@ -93,6 +93,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
 	char *line = NULL;
 	int line_len = 80;
+	int linenum = 0;
 	char *p;
 	char *f_description,
 		*f_filename,
@@ -126,6 +127,8 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 
 	while((line = gu_getline(line, &line_len, f)))
 		{
+		linenum++;
+
 		if(line[0] == '#')
 			continue;
 
@@ -145,24 +148,8 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 				|| !(f_SNMP_hrDeviceDescr = gu_strsep(&p,":"))
 				)
 			{
-			/* parse failed, print a message if -M wasn't used */
 			if(!machine_readable)
-				{
-				char *p2;
-				for(p2 = line; p2 < p; p2++)
-					{
-					if(*p2 == '\0')
-						*p2 = ':';
-					}
-				fprintf(stderr,
-					"Bad line in \"%s\":\n"
-					"%s\n",
-					filename,
-					line
-					);
-				}
-
-			/* skip the bad line */
+				fprintf(stderr, "Too few fields at line %d in \"%s\".\n", linenum, filename);
 			continue;
 			}
 		
@@ -449,7 +436,8 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 								/* retval = 1; */
 								}
 							}
-						else if(strcmp(f1, "1284DeviceID MANUFACTURER") == 0)
+						else if(strcmp(f1, "1284DeviceID MANUFACTURER") == 0
+								|| strcmp(f1, "1284DeviceID MFG") == 0)
 							{
 							if(!facts->deviceid_manufacturer)
 								{
@@ -457,13 +445,26 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 								retval = 1;
 								}
 							}
-						else if(strcmp(f1, "1284DeviceID MODEL") == 0)
+						else if(strcmp(f1, "1284DeviceID MODEL") == 0
+								|| strcmp(f1, "1284DeviceID MDL") == 0)
 							{
 							if(!facts->deviceid_model)
 								{
 								facts->deviceid_model = gu_strdup(f2);
 								retval = 1;
 								}
+							}
+						else if(strcmp(f1, "1284DeviceID CLASS") == 0
+								|| strcmp(f1, "1284DeviceID CLS") == 0)
+							{
+							}
+						else if(strcmp(f1, "1284DeviceID COMMAND SET") == 0
+								|| strcmp(f1, "1284DeviceID CMD") == 0)
+							{
+							}
+						else if(strcmp(f1, "1284DeviceID DESCRIPTION") == 0
+								|| strcmp(f1, "1284DeviceID DES") == 0)
+							{
 							}
 						else
 							{

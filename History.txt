@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--31 October 2003.
+1.53a1, 24 September 2003--2 November 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8879,7 +8879,7 @@ Internet Printing Protocol Work
   serial.c,simple.sh,smb.sh: added code to detect --probe and say it isn't
   supported.
 
-* interfaces/parallel.c,usblp.c: added skeleton of --probe support
+* interfaces/parallel.c,usblp.c: added --probe support
 
 * pprdrv/pprdrv_feedback.c,pprdrv_ppop_status.c,ppop/ppop_cmds_other.c:
   added support for "%%[ PPR address lookup ]%%".
@@ -8942,6 +8942,8 @@ TODO
 
 * Change commentators to support the new status handling code and merge them
   with responders.
+
+* Implement automatic PPD file download
 
 * Create Debian package
 

@@ -25,11 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 2 November 2003.
 */
 
 /*
-** PPR interface to drive a USB printer.
+** PPR interface program to drive a USB printer.
+**
+** Though this program should compile and run on any Unix,
+** it currently contains explicit support only for Linux.
 */
 
 #include "before_system.h"
@@ -45,6 +48,10 @@
 #include <ctype.h>
 #include <termios.h>
 #include <string.h>
+#ifdef PPR_LINUX
+#include <sys/ioctl.h>
+#include <linux/lp.h>
+#endif
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -66,6 +73,7 @@
 #define DODEBUG(a)
 #endif
 
+/* The name=value style options from the command line are stored here. */
 struct OPTIONS {
 		int idle_status_interval;
 		int status_interval;
@@ -76,11 +84,11 @@ struct OPTIONS {
 */
 static int connect_usblp(void)
 	{
-	struct stat statbuf;				/* buffer for stat on the port */
+	struct stat statbuf;		/* buffer for stat() on the port */
 	int portfd;
 	int open_flags;
 
-	DODEBUG(("connect_parallel()"));
+	DODEBUG(("connect_usblp()"));
 
 	/*
 	** Make sure the address we were given is a tty.
@@ -92,7 +100,7 @@ static int connect_usblp(void)
 		if( ! (statbuf.st_mode & S_IFCHR) )
 			{
 			alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
-			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 			}
 		}
 
@@ -117,36 +125,45 @@ static int connect_usblp(void)
 		switch(errno)
 			{
 			case EBUSY:
-				int_exit(EXIT_ENGAGED);
+				exit(EXIT_ENGAGED);
 			case EACCES:
 				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+				exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 			case ENOENT:		/* file not found */
 			case ENOTDIR:		/* path not found */
 				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NOT_RESPONDING);
+				exit(EXIT_PRNERR_NOT_RESPONDING);
 			case ENXIO:
 				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case ENFILE:
 				alert(int_cmdline.printer, TRUE, _("System open file table is full."));
-				int_exit(EXIT_STARVED);
+				exit(EXIT_STARVED);
 			default:
 				alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR_NORETRY);
+				exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 
 	return portfd;
-	} /* end of connect_parallel() */
+	} /* end of connect_usblp() */
 
 /*
 ** Explain why reading from or writing to the printer port failed.
 */
 static void printer_error(int error_number)
 	{
-	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-	int_exit(EXIT_PRNERR);
+
+	/* specific messages go here */
+	
+	
+	/* If all else fails, we end up here. */
+	alert(int_cmdline.printer, TRUE,
+		_("USB port communication failed, errno=%d (%s)."),
+	   	error_number,
+	   	gu_strerror(error_number)
+		);
+	exit(EXIT_PRNERR);
 	}
 
 /*
@@ -214,7 +231,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 		alert(int_cmdline.printer, TRUE, "Option parsing error:	 %s", gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* We can't use control-T status updates if the job isn't PostScript. */
@@ -226,10 +243,62 @@ static void parse_options(int portfd, struct OPTIONS *options)
 /*
 ** Implementation of the --probe option.
 */
-static int do_probe(const char address[])
+static int usblp_port_probe(const char address[])
 	{
-	fprintf(stderr, "probe not yet supported\n");
-	return EXIT_PRNERR;
+	#ifdef PPR_LINUX
+	int fd;								/* printer port */
+	unsigned char deviceid[1024];		/* IEEE 1284 DeviceID string */
+	int deviceid_len;
+	char *p, *item, *name, *value;
+
+	/* Reference for these two macros is the CUPS USB backend. */
+	#define IOCNR_GET_DEVICE_ID	1
+	#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
+
+	if((fd = open(address, O_RDWR | O_EXCL)) == -1)
+		{
+		if(errno == EACCES)
+			return EXIT_PRNERR_NORETRY_ACCESS_DENIED;
+		if(errno == EEXIST)
+			return EXIT_PRNERR_NO_SUCH_ADDRESS;
+		fprintf(stderr, "open() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
+		return EXIT_PRNERR;
+		}
+
+	if(ioctl(fd, LPIOC_GET_DEVICE_ID(sizeof(deviceid)), deviceid) == -1)
+		{
+		fprintf(stderr, "ioctl() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
+		return EXIT_PRNERR;
+		}
+
+	/* First try big endian (per IEEE 1284 standard). */
+	deviceid_len = ((deviceid[0] << 8) + deviceid[1]);
+
+	/* if that is unreasonable, try little endian (This is from CUPS too.) */
+	if(deviceid_len > (sizeof(deviceid) - 2))
+		deviceid_len = ((deviceid[1] << 8) + deviceid[0]);
+
+	/* Limit to buffer size with space for NUL. */
+	if(deviceid_len > (sizeof(deviceid) - 3))
+		deviceid_len = (sizeof(deviceid) - 3);
+
+	deviceid[2 + deviceid_len] = '\0';
+
+	for(p = deviceid + 2; (item = gu_strsep(&p, ";")); )
+		{
+		if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
+			{
+			printf("PROBE: 1284DeviceID %s=%s\n", name, value);
+			}
+		}
+
+	close(fd);
+
+	return EXIT_PRINTED;
+
+	#else
+	return EXIT_PRNERR_NORETRY;
+	#endif
 	}
 
 /*
@@ -263,7 +332,29 @@ int main(int argc, char *argv[])
 	/* If the --probe option was used, */
 	if(int_cmdline.probe)
 		{
-		int_exit(do_probe(int_cmdline.address));
+		int retval = usblp_port_probe(int_cmdline.address);
+		switch(retval)
+			{
+			case EXIT_PRINTED:
+				break;
+			case EXIT_PRNERR_NORETRY:
+				fprintf(stderr, _("USB port probing not implemented on this OS.\n"));
+				break;
+			case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
+				fprintf(stderr, _("Probing not implemented for port \"%s\".\n"), int_cmdline.address);
+				break;
+			case EXIT_PRNERR_NO_SUCH_ADDRESS:
+				fprintf(stderr, _("Port \"%s\" not found.\n"), int_cmdline.address);
+				break;
+			case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
+				fprintf(stderr, _("Access to port \"%s\" denied.\n"), int_cmdline.address);
+				break;
+			case EXIT_PRNERR:
+			default:
+				fprintf(stderr, _("Probe failed.\n"));
+				break;
+			}
+		return retval;
 		}
 
 	/* Check for unsuitable job break methods. */
@@ -272,17 +363,19 @@ int main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
 				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		return EXIT_PRNERR_NORETRY_BAD_SETTINGS;
 		}
 
-	/* Check for unusable codes settings. */
-	/* !!! Is the true for USB ??? */
+	/*
+	 * Check for unusable codes settings.
+	 * !!! Is this true for USB ??? 
+	 */
 	if(int_cmdline.codes == CODES_Binary)
 		{
 		alert(int_cmdline.printer, TRUE,
 				_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
 				"program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Open the printer port and esablish default settings: */
@@ -304,7 +397,7 @@ int main(int argc, char *argv[])
 	close(portfd);
 
 	DODEBUG(("sucessful completion"));
-	int_exit(EXIT_PRINTED);
+	exit(EXIT_PRINTED);
 	} /* end of main() */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 2 November 2003.
 */
 
 #include "before_system.h"
@@ -35,6 +35,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
@@ -47,6 +50,9 @@
 ** lines may either be empty, to indicate that we are still alive, or
 ** may contain a name=value pair describing something which we have
 ** discovered about the printer.
+**
+** Anything intended for the user should be sent to stderr.  These will
+** be intercepted by ppad and sent to stdout.
 =========================================================================*/
 int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_community[])
 	{
@@ -96,7 +102,7 @@ int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_com
 					{
 					if(strstr(gu_exception, "(noSuchName)"))
 						{
-						printf("SNMP %s not found\n", query_items[i].name);
+						fprintf(stderr, _("SNMP %s not found\n"), query_items[i].name);
 						}
 					else
 						{
@@ -116,7 +122,8 @@ int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_com
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "Probe failed: %s\n", gu_exception);
+		fprintf(stderr, _("Probe failed: %s\n"), gu_exception);
+		return EXIT_PRNERR;
 		}
 
 	return EXIT_PRINTED;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 2 November 2003.
 */
 
 /*
@@ -506,7 +506,7 @@ int main(int argc, char *argv[])
 	   */
 	if(int_cmdline.probe)
 		{
-		int_exit(int_tcp_probe(&printer_address, options.snmp_community));
+		return int_tcp_probe(&printer_address, options.snmp_community);
 		}
 
 	/* Within this block we connect, transfer the data, and close the connexion. */
