@@ -31,11 +31,117 @@
 
 #
 # This script attempts to open the PPR web interface in the best web
-# browser available.  Right now we only have code for Mozilla.
+# browser available (for our purposes that is).
 #
-exec mozilla-xremote-client \
-	"openurl(http://localhost:15010/cgi-bin/window_open.cgi?url=http://localhost:15010/cgi-bin/show_queues.cgi;width=700,new-window)"
-	\ >@stdout 2>@stderr
+
+# This is the url of the PPR root.
+set base_url "http://localhost:15010"
+
+# This is a script which uses Javascript to open the window without
+# decoration and then closes itself.
+set opener_url "$base_url/cgi-bin/window_open.cgi"
+
+# This is the URL of the page we really want to open.
+set final_url "$base_url/cgi-bin/show_queues.cgi"
+
+# This is the size of the second window.
+set width 700
+set height 550
+
+# These are the browsers in order of preference.  Again, this is according
+# to how well or poorly they render the PPR web interface.  They are listed
+# separately for X11 and character mode.
+set browsers_x11 [list mozilla konqueror]
+set browsers_character [list links w3m lynx]
+
+set browsers ""
+if [info exists env(DISPLAY)] {
+    set browsers $browsers_x11
+    }
+set browsers [concat $browsers $browsers_character]
+
+# We look for each in turn in the path.
+set selected_browser ""
+
+puts "Searching for suitable web browser..."
+foreach browser $browsers {
+    puts "  $browser..."
+    foreach dir [split $env(PATH) :] {
+	#puts "    in $dir..."
+	if [file executable $dir/$browser] {
+	    set location $dir
+	    set selected_browser $browser
+	    break
+	    }
+	}
+    if {$selected_browser != ""} { break }
+    }
+
+if {$selected_browser == ""} {
+    puts "No web browser found.";
+    exit 1
+    }
+
+# Now we launch the selected browser.
+switch -exact $selected_browser {
+    mozilla {
+
+	# Obsolete bounce-off-cgi-script method
+	#exec $location/mozilla -remote \
+	#	"openurl($opener_url?url=$final_url;width=$width;height=$height,new-window)" \
+	#	>@stdout 2>@stderr
+
+	set file [open $env(HOME)/.ppr/ppr-web-control.html w 0600]
+
+	puts $file "<html>
+		<script>
+		netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserWrite');
+		window.locationbar.visible = false;
+		window.toolbar.visible = false;
+		window.statusbar.visible = false;
+		window.menubar.visible = false;
+		window.personalbar.visible = false;
+		window.resizeTo($width,$height);
+		window.location = '$final_url';
+		</script>
+		</html>"
+	close $file
+
+	# first we try to contact an already-running copy
+	puts "Contacting Mozilla..."
+	set result [catch {
+		exec $location/mozilla -remote \
+			"openurl(file://$env(HOME)/.ppr/ppr-web-control.html,new-window)" \
+			>@stdout 2>@stderr
+		} error]
+
+	if {$result != 0} {
+	    #puts "\$result=$result, \$error=$error"
+	    puts "Mozilla isn't running yet, starting it..."
+	    exec $location/mozilla \
+		"$env(HOME)/.ppr/ppr-web-control.html" \
+		>@stdout 2>@stderr &
+	    }
+
+	}
+    konqueror {
+	exec $location/konqueror "$opener_url?url=$final_url;width=$width;height=$height" \
+		>@stdout 2>@stderr
+	}
+    links {
+	exec $location/links $final_url \
+		>@stdout 2>@stderr <@stdin
+	}
+    w3m {
+	exec $location/w3m $final_url \
+		>@stdout 2>@stderr <@stdin
+	}
+    lynx {
+	exec $location/lynx $final_url \
+		>@stdout 2>@stderr <@stdin
+	}
+    }
+
+puts "Done."
 
 exit 0
-

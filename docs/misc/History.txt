@@ -7975,3 +7975,8 @@ line was being parsed twice.
 * pprdrv/pprdrv.c:pprdrv_read_printer_conf(): fixed to allow empty option 
   list.
 
+* www/ppr-web-control.tcl, window_open.cgi.perl: fleshed out adding opening 
+  of Mozilla using $HOME/.ppr/ppr-web-control.html so that browser write
+  privlege can be granted and we cna open without an intermediate window. 
+  Added support for Konqueror, Links, W3m, and Lynx.
+
