@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 20 August 2003.
 */
 
 /*
@@ -194,7 +194,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 			{
 			if((options->status_interval = atoi(value)) < 0)
 				{
-				o.error = N_("value must be 0 or a positive integer");
+				o.error = N_("value must be a positive integer or zero");
 				retval = -1;
 				break;
 				}

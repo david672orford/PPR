@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 15 August 2003.
 */
 
 /*
@@ -593,10 +593,10 @@ static void check_for_problems(void)
 static void help(FILE *outfile)
 	{
 	fprintf(outfile, _("Usage: %s\n"), "ppr2samba [--debug] [--nocreate] [--version] [--help]");
-	fprintf(outfile, _("\t--debug	   explain what is being done\n"));
+	fprintf(outfile, _("\t--debug      explain what is being done\n"));
 	fprintf(outfile, _("\t--nocreate   don't create %s if it doesn't exist\n"), smb_include_conf);
-	fprintf(outfile, _("\t--version	   print the PPR version number\n"));
-	fprintf(outfile, _("\t--help	   print this message\n"));
+	fprintf(outfile, _("\t--version    print the PPR version number\n"));
+	fprintf(outfile, _("\t--help       print this message\n"));
 	}
 
 int main(int argc, char *argv[])

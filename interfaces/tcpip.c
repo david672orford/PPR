@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 20 August 2003.
 */
 
 /*
@@ -390,7 +390,7 @@ int main(int argc, char *argv[])
 			{
 			if((options.idle_status_interval = atoi(value)) < 0)
 				{
-				o.error = N_("value must be 0 or a positive integer");
+				o.error = N_("value must be a positive integer or zero");
 				retval = -1;
 				break;
 				}
@@ -402,7 +402,7 @@ int main(int argc, char *argv[])
 			{
 			if((options.snmp_status_interval = atoi(value)) < 0)
 				{
-				o.error = N_("value must be 0 or a positive integer");
+				o.error = N_("value must be a positive integer or zero");
 				retval = -1;
 				break;
 				}
@@ -423,7 +423,7 @@ int main(int argc, char *argv[])
 			{
 			if((options.appsocket_status_interval = atoi(value)) < 0)
 				{
-				o.error = N_("value must be 0 or a positive integer");
+				o.error = N_("value must be a positive integer or zero");
 				retval = -1;
 				break;
 				}
@@ -449,7 +449,7 @@ int main(int argc, char *argv[])
 			{
 			if((options.sleep = atoi(value)) < 0)
 				{
-				o.error = N_("value must be 0 or a positive integer");
+				o.error = N_("value must be a positive integer or zero");
 				retval = -1;
 				break;
 				}

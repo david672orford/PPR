@@ -1,5 +1,5 @@
 mouse:~ppr/src/vendors/README.txt
-12 September 2000
+21 August 2003
 
 This subdirectory contains files on which are not covered by the PPR license
 terms and which are not necessary to the operation of PPR.  It includes these
@@ -7,9 +7,7 @@ catagories:
 
 1) PPD files which Adobe or a printer's manufacturer has provided.
 
-2) Procedure sets extracted from the output of PostScript drivers.  PPR will
-   sometimes download these when it is necessary to do so and the printer
-   driver failed to.
+2) A TrueType renderer for 68000-based level 1 PostScript printers.
 
 3) AFM files which font vendors have provided for use with their fonts.
 

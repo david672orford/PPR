@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 August 2003.
 */
 
 #include "before_system.h"
@@ -179,10 +179,10 @@ int main(int argc, char *argv[])
 		const char *username;
 		char proxy_for[82];
 
-		printf(_("Based on the lprsrv.conf section shown above, the following table shows the local\n"
-				"user IDs and proxy for strings that will be used when accepting remote jobs from\n"
-				"the node \"%s\" for the remote user or users which you have\n"
-				"specified.\n"), hostname);
+		printf(_("Based on the lprsrv.conf section shown above, the following table shows the\n"
+				"local user IDs and proxy for strings that will be used when accepting\n"
+				"remote jobs from the node \"%s\" for the remote user or users which you\n"
+				"have specified.\n"), hostname);
 		printf("\n");
 
 		printf(FORMAT, _("Spooler"), _("Remote User"), _("Local User"), _("As Proxy For"));

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 August 2003.
+** Last modified 20 August 2003.
 */
 
 /*
@@ -118,7 +118,7 @@ static FILE *open_database(const char mode[])
 				}
 			else
 				{
-				fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+				fatal(EXIT_INTERNAL, _("Can't open media database \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
 				}
 			}
 		break;

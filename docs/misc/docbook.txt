@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-13 March 2003
+20 August 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -137,6 +137,22 @@ A command-line-interface prompt for user input.
 <guilabel>
 
 The label place where the user may enter data in a GUI interface.
+
+<guimenu>
+
+The name of a GUI menu.
+
+<guisubmenu>
+
+The name of a submenu in a GUI.
+
+<guimenuitem>
+
+The name of a terminal menu item in a GUI.
+
+<guibutton>
+
+The text of a pushbutton in a GUI.
 
 <computeroutput>
 

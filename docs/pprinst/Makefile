@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 21 August 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -38,9 +38,17 @@ include ../rules.mk
 
 BUILT=pprinst.html pprinst.ps pprinst.pdf
 
+NONBUILT=web_start.png \
+	web_control.png \
+	web_jobs.png \
+	web_prn_control.png \
+	web_prn_addwiz.png \
+	web_prn_properties1.png \
+	perltk_control.png
+
 #=== Build ==================================================================
 
-all-docs: $(BUILT)
+all-docs: $(BUILT) $(NONBUILT)
 
 pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_adding_groups.sgml \
@@ -50,7 +58,7 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_adding_samba.sgml \
 		pprinst_adding_spooler.sgml \
 		pprinst_backup.sgml \
-		pprinst_canceling_jobs.sgml \
+		pprinst_queue.sgml \
 		pprinst_installation.sgml \
 		pprinst_job_submit.sgml \
 		pprinst_operators_duties.sgml \
@@ -58,7 +66,6 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_replacing_printer.sgml \
 		pprinst_start_restart.sgml \
 		pprinst_user_notification.sgml \
-		pprinst_viewing_queue.sgml \
 		../shared/legal.sgml
 	touch pprinst.sgml
 
@@ -71,7 +78,7 @@ lint:
 
 install: all-docs
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprinst
-	../$(INSTALLDATA) $(DOCSDIR)/pprinst $(BUILT)
+	../$(INSTALLDATA) $(DOCSDIR)/pprinst $(BUILT) $(NONBUILT)
 
 #=== Housekeeping ===========================================================
 

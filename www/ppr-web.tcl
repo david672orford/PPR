@@ -151,7 +151,8 @@ switch -exact $selected_browser {
 				}
 			catch(e) { }
 			window.resizeTo($width,$height);
-			window.location = '$final_url';
+			//window.location = '$final_url';
+			window.open('$final_url', '_self', '', true);
 			}
 		</script>
 		</head>

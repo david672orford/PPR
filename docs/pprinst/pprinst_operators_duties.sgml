@@ -1,3 +1,9 @@
+<!--
+Filename: pprinst_operators_duties.sgml
+Last Modified: 20 August 2003
+Last Proofread:
+-->
+
 <sect1 id="operators-duties">
 <title>Operator's Duties for the PPR Spooler</title>
 
@@ -188,9 +194,24 @@ halt the printer on which it was origionally printing.
 </para>
 
 <para>The <command>ppop start</command> command can also be used when a
-printer is not printing due to a fault.  In that case, the <command>ppop
+printer has stopt printing due to a fault.  In that case, the <command>ppop
 start</command> command will cause an immediate retry. Printer faults are
 discussed in section <xref linkend="printerfaults"/>.</para>
+
+<para>If you would rather, you can use the web interface to check a printer's status and stop 
+and start it.  To do this, click on the printer's icon in the PPR Control Panel and choose <guimenuitem>
+Printer Control</guimenuitem>.  A window like that shown in figure <xref linkend="web-prn-control"/> will appear.
+</para>
+
+<figure id="web-prn-control">
+<title>Printer Status and Control</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_prn_control.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+<para>Now instead of using commands such as <command>ppop stop</command> and <command>ppop start</command> you can 
+simply press the coresponding buttons.</para>
 
 </sect2>
 

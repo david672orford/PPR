@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--11 August 2003.
+1.52, 24 July 2003--20 August 2003.
 
 Bug Fixes
 
@@ -8700,6 +8700,17 @@ Bug Fixes
   one quoted string with two single quotes in the middle!  The code still
   isn't completely correct, but it does handle plausible switchsets.
 
+* ppr/ppr_main.c,libuprint/uprint-newconf.c: converted some tabs back into
+  spaces in the --help output.
+
+* www/ppr-web.tcl: fixed the code that opens the printer control panel in
+  Mozilla using a file in $HOME/.ppr/ to avoid the need for a singed script
+  so that instead of simply assigning to window.location it uses
+  window.open() with a 4th argument of true so that the control panel
+  replaces the temporary window in the history lists.  This takes advantage
+  of an exception to the self.close() access rules.  The exception says that 
+  self.close() only works if the history list is empty.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
@@ -8715,6 +8726,16 @@ Misc. Removed Material
   graphics.
 
 * Configure_old: Removed since we aren't testing it anymore.
+
+* nonppr_vendors/procset_adobe/AdobePS_Win_Driver_L2-4.2-0: removed since,
+  if it is still needed, it should be repackaged with Adobe drivers, if it
+  is needed at all.  It probably isn't since -S currently defaults to false.
+
+* nonppr_vendors/procset_adobe/Adobe_Win_Driver-2-0: same as above, but this
+  one is absurdly old too.
+
+* nonppr_vendors/procset_apple/"AppleDict md-71-0": removed.  This was a bad
+  hack.  Most of the drivers involved are probably long dead.
 
 Misc. Enhancements
 
@@ -8743,6 +8764,9 @@ Misc. Enhancements
   init script.
 
 * www/prn_properties.cgi.perl,prn_properties.en.html: added new help topics.
+
+* Many new Russian messages, though most remain untranslated and the quality
+  of the completed work is probably poor.
 
 Internet Printing Protocol Work
 

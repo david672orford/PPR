@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 14 February 2003
+Last Modified: 20 August 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -26,19 +26,34 @@ which is the definitive reference for interface programs and their options.
 It also describes additional interface programs which are not mentioned
 here.</para>
 
+<para>In the sections below we will discuss some of the more popular interface programs and explain how
+to use them.  You will be directed to use the <command>ppad</command> to create a new printer queue,
+choose an interface, and set other options.  However, you may find it easier to use the web interface.
+<application>PPR</application>'s web interface provides an add printer wizard which will present you with a
+series of questions and then compose and execute the necessary <command>ppad</command> commands.  An early
+screen of the Add Printer Wizard is shown in figure <xref linkend="web-prn-addwiz"/>.  To reach
+the Add Printer Wizard, go to the PPR Web Control Panel and click on the icon labeled "Add a Printer".</para>
+
+<figure id="web-prn-addwiz">
+<title>Choosing the Interface in the Add Printer Wizard</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_prn_addwiz.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
 <sect3 id="adding-inteface-atalk">
 <title>Adding a Printer With an AppleTalk Interface</title>
 
 <para>Before you can add an AppleTalk connected printer to
-<application>PPR</application> you must
-determine its complete AppleTalk name.  The complete AppleTalk name has
-three parts.  The first is the printer's individual name, this is the name
-you see in the Macintosh Chooser. The second part is the AppleTalk type
-which is almost certainly <literal>LaserWriter</literal>.  The third part is
-the AppleTalk zone which you can also find in the Chooser.  HP printers with
-Jetdirect cards will list their AppleTalk names and zones on the test page. 
-Having determined this informatoin we put it all together as part of the
-<command>ppad interface</command> command, like so:
+<application>PPR</application> you must determine its complete AppleTalk name.
+The complete AppleTalk name has three parts. The first is the printer's
+individual name, this is the name you see in the Macintosh Chooser. The second
+part is the AppleTalk type which is almost certainly
+<literal>LaserWriter</literal>. The third part is the AppleTalk zone which you
+can also find in the Chooser. HP printers with Jetdirect cards will list their
+AppleTalk names and zones on the test page. Having determined this informatoin
+we put it all together as part of the <command>ppad interface</command>
+command, like so:
 
 <screen>
 # ppad interface myprn atalk "Joe's Mac Printer:LaserWriter@CC Zone"
@@ -333,7 +348,7 @@ really exist on your printer and should have the correct code for selecting
 them.  Finally, it is best that the font list be correct.  A font list which
 leaves some fonts out is probably better than one which names fonts the
 printer does not have.  Here are some PPD files you might try if you don't
-have anthing closer:
+have anything closer:
 
 <variablelist>
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 August 2003.
+** Last modified 18 August 2003.
 */
 
 #include "before_system.h"
@@ -232,11 +232,11 @@ static void help_switches(FILE *outfile)
 	{
 	fputs(_("Valid switches:\n"), outfile);
 
-	fputs(_(	"\t--remove		back out changes\n"
-				"\t--force		change system against advice\n"), outfile);
+	fputs(_("\t--remove     back out changes\n"
+			"\t--force      change system against advice\n"), outfile);
 
-	fputs(_(	"\t--version\n"
-				"\t--help\n"), outfile);
+	fputs(_("\t--version\n"
+			"\t--help\n"), outfile);
 	}
 
 /*

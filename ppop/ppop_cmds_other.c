@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 July 2003.
+** Last modified 20 August 2003.
 */
 
 /*
@@ -524,7 +524,7 @@ int ppop_status(char *argv[])
 
 	if( ! machine_readable )
 		{
-		PUTS(_("Printer          Status\n"));
+		printf("%s          %s\n", _("Printer"), _("Status"));
 		PUTS("------------------------------------------------------------\n");
 		}
 

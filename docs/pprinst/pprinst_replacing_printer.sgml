@@ -1,3 +1,9 @@
+<!--
+Filename: pprinst_replacing_printer.sgml
+Last Modified: 20 August 2003
+Last Proofread: 
+-->
+
 <sect1 id="replacing-printer">
 <title>Replacing a Printer</title>
 
@@ -8,6 +14,9 @@ the new printer.  An alternative is to adjust the configuration of the existing
 queue so that it points to the new printer.  This latter method may minimize the
 disruption experienced by the users of the printer.
 </para>
+
+<para>To modify a queues configuration we can use either the <command>ppad</command> command or 
+the web interface's Printer Properties window.</para>
 
 <sect2>
 <title>Basic Queue Modifications</title>
@@ -23,26 +32,37 @@ with the <command>ppad show</command> command, like this:
 <screen>
 # ppad show sea305
 Printer name: sea305
-Comment: QMS-PS 410 in Seabury Room 305
+  Comment: QMS-PS 410 in Seabury Room 305
 Interface: serial
-Address: /dev/ttyS0
-Options: baud=9600 bits=8 parity=none
-JobBreak: control-d (by default)
-Feedback: yes (by default)
-Codes: Clean8Bit (by default)
-Alert interval: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: alertreaders@mail.trincoll.edu
-Flags: no no (banners discouraged, trailers discouraged)
-Charge: none
+  Address: "/dev/ttyS0"
+  Options: baud=9600 bits=8 parity=none
+  JobBreak: control-d (by default)
+  Feedback: yes (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: QMS-PS 410
-Bins:
-OutputOrder: ppd
-Default Filter Options:
+  Default Filter Options: level=1 colour=False resolution=300 freevm=336596
+    mfmode=CanonCX
+  Bins:
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
 Switchset:
 </screen>
 
 </para>
+
+<para>If we were to use the web interface, we would see the same information presented in a
+series of tabbed pages, as in figure <xref linkend="prn-properties1"/>.</para>
+
+<figure id="prn-properties1">
+<title>A Printer's Properties</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_prn_properties1.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
 
 <para>
 Notice that the printer in this example is currently a QMS-PS 410 connected
@@ -76,22 +96,23 @@ configuration looks like now:
 <screen>
 # ppad show sea305
 Printer name: sea305
-Comment: QMS-PS 410 in Seabury Room 305
+  Comment: QMS-PS 410 in Seabury Room 305
 Interface: atalk
-Address: "Seabury Room 305:LaserShared@Seabury Zone"
-Options:
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
-Alert interval: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: alertreaders@mail.trincoll.edu
-Flags: no no (banners discouraged, trailers discouraged)
-Charge: none
+  Address: "Seabury Room 305:LaserShared@Seabury Zone"
+  Options:
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
 PPDFile: QMS-PS 410
-Bins:
-OutputOrder: ppd
-Default Filter Options:
+  Default Filter Options: level=1 colour=False resolution=300 freevm=336596
+    mfmode=CanonCX
+  Bins:
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
 Switchset:
 </screen>
 
@@ -107,11 +128,9 @@ instead so that we can get nifty messages on the printer's display panel.
 We can make the change with this command: </para>
 
 <para>
-
 <screen>
 # ppad jobbreak sea305 signal/pjl
 </screen>
-
 </para>
 
 <para>
@@ -119,11 +138,9 @@ Next, we must change the PPD file:
 </para>
 
 <para>
-
 <screen>
 # ppad ppd sea305 "HP LaserJet 4M DSC"
 </screen>
-
 </para>
 
 <para>
@@ -138,18 +155,14 @@ Finally, any good system administrator will change the comment:
 
 </para>
 
-<para>
-If this printer had had bins defined for automatic bin selection, we would
+<para>This printer did not have bins defined for automatic bin selection but if it had had, we would
 have had to alter the bin list to reflect the bins available on the new
-printer.  The easiest way to do this would be to execute the command:
-</para>
+printer.  The easiest way to do this would be to execute the command:</para>
 
 <para>
-
 <screen>
 # ppad bins ppd sea305
 </screen>
-
 </para>
 
 <para>
@@ -165,30 +178,33 @@ any of this.  Here we display the final configuration:
 </para>
 
 <para>
-
 <screen>
 # ppad show sea305
 Printer name: sea305
-Comment: HP 4M in Seabury room 305
+  Comment: HP 4M in Seabury room 305
 Interface: atalk
-Address: "Seabury Room 305:LaserShared@Seabury Zone"
-Options:
-JobBreak: signal/pjl
-Feedback: yes (by default)
-Codes: Binary (by default)
-Alert interval: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: alertreaders@mail.trincoll.edu
-Flags: no no (banners discouraged, trailers discouraged)
-Charge: none
+  Address: "Seabury Room 305:LaserWriter@Seabury Zone"
+  Options:
+  JobBreak: signal/pjl
+  Feedback: yes (by default)
+  Codes: Binary (by default)
 PPDFile: HP LaserJet 4M DSC
-Bins:
-OutputOrder: ppd
-Default Filter Options:
+  Default Filter Options: level=2 colour=False resolution=600 freevm=709584
+    mfmode=ljfour
+  Bins:
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
 Switchset:
 </screen>
-
 </para>
+
+<para>Of course, if you are using the web interface you should go through the various tabs and make
+the changes described above.  You should then press <guibutton>Save</guibutton>.  The <command>ppad</command>
+commands show above will then be generated and executed automatically.</para>
 
 </sect2>
 
@@ -245,11 +261,10 @@ comment attached to the LAN Manager queue:
 <sect2>
 <title>Changes for Samba</title>
 
-<para>
-If you are using Samba, you should edit <filename>smb.conf</filename> and change the printer's
+<para>If you are using Samba, you should edit <filename>smb.conf</filename> and change the printer's
 comment, unless you are also using <command>ppr2samba</command>, in which case you can
-simply run <command>ppr2samba</command>.
-</para>
+simply run <command>ppr2samba</command>.  If you are using the web interface, the <command>ppr2samba</command>
+will be executed automatically when you press <guibutton>Save</guibutton>.</para>
 
 </sect2>
 

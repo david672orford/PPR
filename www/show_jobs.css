@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 8 August 2003.
+** Last modified 20 August 2003.
 */
 
 BODY {
@@ -58,6 +58,7 @@ TABLE.queue TR.checked TD {
 
 /* This style is for form buttons. */
 INPUT.buttons,BUTTON,SPAN.buttons {
+	font-family: sans-serif;
 	background-color: #b0b0b0;
 	vertical-align: middle; /* IE 6 doesn't like baseline */
 	border: 2px solid;

@@ -1,0 +1,104 @@
+<!--
+Filename: pprinst_queue.sgml
+Last Modified: 20 August 2003
+Last Proofread: 
+-->
+
+<sect1>
+<title>Queue Manipulation</title>
+
+<sect2 id="viewing-queue">
+<title>Viewing the Queue</title>
+
+<para>
+You may see what jobs are in the queue and what is happening to them by
+using the <command>ppop list</command> command:
+</para>
+
+<para>
+
+<screen>
+$ ppop list chipmunk
+Queue ID        For                  Time    Pgs Status
+----------------------------------------------------------------------------
+chipmunk-2715   John Smith           11:53AM 007 printing on chipmunk
+                                                 14%, page 1
+</screen>
+
+</para>
+
+<para>
+The above command only listed the jobs queued for a particular printer. In
+order to show all jobs for all printers use this command:
+</para>
+
+<para>
+
+<screen>
+$ ppop list all
+Queue ID        For                  Time    Pgs Status
+----------------------------------------------------------------------------
+chipmunk-2715   John Smith           11:53AM 007 printing on chipmunk
+                                                 14%, page 1
+rat-2716        Pamela Andrews       11:55AM 007 printing on rat
+                                                 14%, page
+</screen>
+
+</para>
+
+<para>Of course, you can also view the queue using the web interface.  To view the queue for a specific 
+printer or group of printers, click on the printers icon in the PPR Web Control Panel and choose <guimenuitem>
+View Queue</guimenuitem>.  To see all jobs, click on the icon labeled "Show All Queues".  A sample queue listing 
+window is shown in figure <xref linkend="web-jobs"/>.</para>
+
+<figure id="web-jobs">
+<title>Job Control</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_jobs.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+</sect2>
+
+<sect2 id="canceling-jobs">
+<title>Canceling Jobs</title>
+
+<para>
+If John Smith wants to delete his job should use this command:
+</para>
+
+<para>
+
+<screen>
+$ ppop cancel chipmunk-2715
+1 job was canceled.
+</screen>
+
+</para>
+
+<para>
+He could have used another form of the command, a form which deletes all
+jobs which he has queued for chipmunk:
+</para>
+
+<para>
+
+<screen>
+$ ppop cancel chipmunk
+1 job was canceled.
+</screen>
+
+</para>
+
+<para>
+Since on this occasion he had only one job, this command has the save effect
+as the first one.
+</para>
+
+<para>If he were using the web interface, he could check the boxes next to the jobs he wishes the remove
+and then press the <guibutton>Cancel</guibutton> at the bottom of the window.</para>
+
+</sect2>
+
+</sect1>
+

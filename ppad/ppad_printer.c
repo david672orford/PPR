@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 April 2003.
+** Last modified 20 August 2003.
 */
 
 /*==============================================================
@@ -850,7 +850,7 @@ int printer_show(const char *argv[])
 		printf(_("Charge: "));
 		if(charge_duplex_sheet == -1)
 			{
-			printf(_("none\n"));
+			printf(_("no charge\n"));
 			}
 		else
 			{		/* money() uses static array for result */

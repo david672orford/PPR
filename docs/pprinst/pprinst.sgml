@@ -3,6 +3,7 @@
 	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!ENTITY section-installation SYSTEM "pprinst_installation.sgml">
 <!ENTITY section-start-restart SYSTEM "pprinst_start_restart.sgml">
+<!ENTITY section-user-interfaces SYSTEM "pprinst_user_interfaces.sgml">
 <!ENTITY section-adding-spooler SYSTEM "pprinst_adding_spooler.sgml">
 <!ENTITY section-adding-groups SYSTEM "pprinst_adding_groups.sgml">
 <!ENTITY section-adding-lmx SYSTEM "pprinst_adding_lmx.sgml">
@@ -12,8 +13,7 @@
 <!ENTITY section-adding-autobin SYSTEM "pprinst_adding_autobin.sgml">
 <!ENTITY section-job-submit SYSTEM "pprinst_job_submit.sgml">
 <!ENTITY section-user-notification SYSTEM "pprinst_user_notification.sgml">
-<!ENTITY section-viewing-queue SYSTEM "pprinst_viewing_queue.sgml">
-<!ENTITY section-canceling-jobs SYSTEM "pprinst_canceling_jobs.sgml">
+<!ENTITY section-queue SYSTEM "pprinst_queue.sgml">
 <!ENTITY section-operators-duties SYSTEM "pprinst_operators_duties.sgml">
 <!ENTITY section-backup SYSTEM "pprinst_backup.sgml">
 <!ENTITY section-removing SYSTEM "pprinst_removing.sgml">
@@ -29,7 +29,7 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>4 March 2003</pubdate>
+	<pubdate>20 August 2003</pubdate>
 	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -51,15 +51,18 @@ Guide</citetitle></ulink>.</para>
 
 &section-installation;
 &section-start-restart;
+&section-user-interfaces;
 
 <sect1 id="adding">
 <title>Adding Printers</title>
-<para>
-This section has several parts.  This is because adding printers may be a
-multiple step process.  For example, you might add a printer to PPR, them make
-it a member of a PPR group, then tell Samba about it, then add it to the
-printers shared by PPR's AppleTalk print server.
-</para>
+
+<para>This section has several parts. This is because adding printers
+may be a multi-step process. For example, you might add a printer
+to <application>PPR</application>, them make it a member of a
+<application>PPR</application> group, then tell
+<application>Samba</application> about it, then add it to the printers
+shared by PPR's AppleTalk print server.</para>
+
 &section-adding-spooler;
 &section-adding-groups;
 &section-adding-lmx;
@@ -71,8 +74,7 @@ printers shared by PPR's AppleTalk print server.
 
 &section-job-submit;
 &section-user-notification;
-&section-viewing-queue;
-&section-canceling-jobs;
+&section-queue;
 &section-operators-duties;
 &section-backup;
 &section-removing;

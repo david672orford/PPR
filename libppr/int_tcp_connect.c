@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 20 August 2003.
 */
 
 #include "before_system.h"
@@ -73,7 +73,7 @@ int int_tcp_connect_option(const char name[], const char value[], struct OPTIONS
 		{
 		if((options->refused_retries = atoi(value)) < 0)
 			{
-			o->error = N_("value must be 0 or a positive integer");
+			o->error = N_("value must be a positive integer or zero");
 			return -1;
 			}
 		return 1;

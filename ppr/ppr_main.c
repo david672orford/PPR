@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 July 2003.
+** Last modified 18 August 2003.
 */
 
 /*
@@ -960,97 +960,97 @@ static void help(FILE *outfile)
 #define HELP(a) fputs(a, outfile);
 HELP(_(
 "usage: ppr [switches] [filename]\n\n"
-"\t-d <destname>			  selects desired printer or group\n"
-"\t-I						  insert destination's switchset macro here\n"));
+"\t-d <destname>              selects desired printer or group\n"
+"\t-I                         insert destination's switchset macro here\n"));
 
 HELP((
-"\t-u yes					  use username to identify jobs in queue\n"
-"\t-u no					  use /etc/passwd comment instead (default)\n"
-"\t-f <string>				  override user identication from -u\n"));
+"\t-u yes                     use username to identify jobs in queue\n"
+"\t-u no                      use /etc/passwd comment instead (default)\n"
+"\t-f <string>                override user identication from -u\n"));
 
 HELP(_(
-"\t-X <string>				  used by network servers to tell PPR the\n"
-"\t							  identity of alien users for whom they act\n"
+"\t-X <string>                used by network servers to tell PPR the\n"
+"\t                           identity of alien users for whom they act\n"
 "\t--proxy-for <string>       same as -X\n"));
 
 HELP(_(
-"\t--charge-to <string>		  PPR charge account to bill for job\n"));
+"\t--charge-to <string>       PPR charge account to bill for job\n"));
 
 HELP(_(
-"\t--title <string>			  set default document title\n"));
+"\t--title <string>           set default document title\n"));
 
 HELP(_(
-"\t-O <string>				  overlay `Draft' notice\n"));
+"\t-O <string>                overlay `Draft' notice\n"));
 
 HELP(_(
-"\t--routing <string>		  set DSC routing instructions\n"));
+"\t--routing <string>         set DSC routing instructions\n"));
 
 HELP(_(
-"\t-m <method>				  response method\n"
-"\t-m none					  no response\n"
+"\t-m <method>                response method\n"
+"\t-m none                    no response\n"
 "\t--responder                same as -m\n"
-"\t-r <address>				  response address\n"
+"\t-r <address>               response address\n"
 "\t--responder-address        same as -r\n"
 "\t--responder-options <list> list of name=value responder options\n"));
 
 HELP(_(
-"\t--commentary <n>			  send commentary messages of types <n>\n"));
+"\t--commentary <n>           send commentary messages of types <n>\n"));
 
 HELP(_(
-"\t-b {yes,no,dontcare}		  express banner page preference\n"
-"\t-t {yes,no,dontcare}		  express trailer page preference\n"));
+"\t-b {yes,no,dontcare}       express banner page preference\n"
+"\t-t {yes,no,dontcare}       express trailer page preference\n"));
 
 HELP(_(
-"\t-w log					  routes warnings to log file\n"
-"\t-w stderr				  routes warnings to stderr (default)\n"
-"\t-w both					  routes warnings to stderr and log file\n"
-"\t-w {severe,peeve,none}	  sets warning level\n"));
+"\t-w log                     routes warnings to log file\n"
+"\t-w stderr                  routes warnings to stderr (default)\n"
+"\t-w both                    routes warnings to stderr and log file\n"
+"\t-w {severe,peeve,none}     sets warning level\n"));
 
 HELP(_(
-"\t-a						  turns on authcode mode\n"));
+"\t-a                         turns on authcode mode\n"));
 
 HELP(_(
-"\t-A						  root or ppr has preauthorized\n"));
+"\t-A                         root or ppr has preauthorized\n"));
 
 HELP(_(
-"\t--strip-cache true		  strip cached resources from job file\n"
-"\t--strip-cache false		  don't strip cached resources (default)\n"));
+"\t--strip-cache true         strip cached resources from job file\n"
+"\t--strip-cache false        don't strip cached resources (default)\n"));
 
 HELP(_(
-"\t--strip-fontindex true	  strip fonts in font index from job file\n"
-"\t--strip-fontindex false	  don't strip fonts in font index (defualt)\n"));
+"\t--strip-fontindex true     strip fonts in font index from job file\n"
+"\t--strip-fontindex false    don't strip fonts in font index (defualt)\n"));
 
 HELP(_(
-"\t--strip-printer true		  strip out resources already in printer\n"
-"\t--strip-printer false	  don't strip printer resources (default)\n"));
+"\t--strip-printer true       strip out resources already in printer\n"
+"\t--strip-printer false      don't strip printer resources (default)\n"));
 
 HELP(_(
-"\t--cache-store none		  don't store new resources (default)\n"
+"\t--cache-store none         don't store new resources (default)\n"
 "\t--cache-store unavailable  store if not in cache or fontindex\n"
-"\t--cache-store uncached	  store if not already in cache\n"));
+"\t--cache-store uncached     store if not already in cache\n"));
 
 HELP(_(
 "\t--cache-priority {auto,low,high}\n"
-"\t							  prefer to insert resources from cache?\n"));
+"\t                           prefer to insert resources from cache?\n"));
 
 HELP(_(
-"\t-F '<feature name>'		  inserts setup code for a printer feature\n"
+"\t-F '<feature name>'        inserts setup code for a printer feature\n"
 "\t--feature '<feature name>' same as above\n"
-"\t--features				  list available printer features\n"));
+"\t--features                 list available printer features\n"));
 
 HELP(_(
-"\t--ripopts '<options>'	  options to pass to external RIP\n"));
+"\t--ripopts '<options>'      options to pass to external RIP\n"));
 
 HELP(_(
-"\t-K true					  keep feature code though not in PPD file\n"
-"\t-K false					  don't keep bad feature code (default)\n"));
+"\t-K true                    keep feature code though not in PPD file\n"
+"\t-K false                   don't keep bad feature code (default)\n"));
 
 HELP(_(
-"\t-D <mediumname>			  sets default medium\n"));
+"\t-D <mediumname>            sets default medium\n"));
 
 HELP(_(
-"\t-B false					  disable automatic bin selection\n"
-"\t-B true					  enable automatic bin selection (default)\n"));
+"\t-B false                   disable automatic bin selection\n"
+"\t-B true                    enable automatic bin selection (default)\n"));
 
 minus_tee_help(outfile);		/* drag in -T stuff */
 
@@ -1058,113 +1058,113 @@ HELP(_(
 "\t--file-type <option>       same as -T\n"));
 
 HELP(_(
-"\t-o <string>				  specify filter options\n"
+"\t-o <string>                specify filter options\n"
 "\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
-"\t							  set handling of LaTeX, HTML, and such\n"));
+"\t                           set handling of LaTeX, HTML, and such\n"));
 
 HELP(_(
-"\t-N <positive integer>	  print pages N-Up\n"
-"\t-N noborders				  turn off N-Up borders\n"));
+"\t-N <positive integer>      print pages N-Up\n"
+"\t-N noborders               turn off N-Up borders\n"));
 
 HELP(_(
-"\t-n <positive integer>	  print n copies\n"
-"\t-n collate				  print collated copies\n"
+"\t-n <positive integer>      print n copies\n"
+"\t-n collate                 print collated copies\n"
 "\t--copies <option>          same as -n\n"));
 
 HELP(_(
-"\t-R for					  read \"%%For:\" line\n"
-"\t-R ignore-for			  don't read \"%%For:\" (default)\n"));
+"\t-R for                     read \"%%For:\" line\n"
+"\t-R ignore-for              don't read \"%%For:\" (default)\n"));
 
 HELP(_(
-"\t-R title					  use title from \"%%Title:\" (default)\n"
-"\t-R ignore-title			  ignore \"%%Title:\" comment\n"));
+"\t-R title                   use title from \"%%Title:\" (default)\n"
+"\t-R ignore-title            ignore \"%%Title:\" comment\n"));
 
 HELP(_(
-"\t-R copies				  read copy count from document\n"
-"\t-R ignore-copies			  don't read copy count (default)\n"));
+"\t-R copies                  read copy count from document\n"
+"\t-R ignore-copies           don't read copy count (default)\n"));
 
 HELP(_(
-"\t-R duplex:softsimplex	  read duplex mode, assume simplex (default)\n"
-"\t-R duplex:simplex		  read duplex mode, assume simplex\n"
-"\t-R duplex:duplex			  read duplex mode, assume normal duplex\n"
-"\t-R duplex:duplextumble	  read duplex mode, assume tumble duplex\n"
-"\t-R ignore-duplex			  don't read duplex mode\n"));
+"\t-R duplex:softsimplex      read duplex mode, assume simplex (default)\n"
+"\t-R duplex:simplex          read duplex mode, assume simplex\n"
+"\t-R duplex:duplex           read duplex mode, assume normal duplex\n"
+"\t-R duplex:duplextumble     read duplex mode, assume tumble duplex\n"
+"\t-R ignore-duplex           don't read duplex mode\n"));
 
 HELP(_(
-"\t-R routing				  use routing from \"%%Routing:\" (default)\n"
-"\t-R ignore-routing		  ignore \"%%Routing:\" comment\n"));
+"\t-R routing                 use routing from \"%%Routing:\" (default)\n"
+"\t-R ignore-routing          ignore \"%%Routing:\" comment\n"));
 
 HELP(_(
-"\t-Z true					  ignore jobs without %%EOF\n"
-"\t-Z false					  don't ignore (default)\n"));
+"\t-Z true                    ignore jobs without %%EOF\n"
+"\t-Z false                   don't ignore (default)\n"));
 
 HELP(_(
-"\t-P notifyme				  set ProofMode to NotifyMe\n"
-"\t-P substitute			  set ProofMode to Substitute\n"
-"\t-P trustme				  set ProofMode to TrustMe\n"));
+"\t-P notifyme                set ProofMode to NotifyMe\n"
+"\t-P substitute              set ProofMode to Substitute\n"
+"\t-P trustme                 set ProofMode to TrustMe\n"));
 
 HELP(_(
-"\t-e none					  don't user stderr or responder for errors\n"
-"\t-e stderr				  report errors on stderr (default)\n"
-"\t-e responder				  report errors by responder\n"
-"\t-e both					  report errors with both\n"
-"\t-e hexdump				  always use hexdump for no filter\n"
-"\t-e no-hexdump			  discourage hexdump for no filter\n"));
+"\t-e none                    don't user stderr or responder for errors\n"
+"\t-e stderr                  report errors on stderr (default)\n"
+"\t-e responder               report errors by responder\n"
+"\t-e both                    report errors with both\n"
+"\t-e hexdump                 always use hexdump for no filter\n"
+"\t-e no-hexdump              discourage hexdump for no filter\n"));
 
 HELP(_(
-"\t-s <positive integer>	  signature sheet count\n"
-"\t-s booklet				  automatic signature sheet count\n"
-"\t-s {both,fronts,backs}	  indicate part of each signature to print\n"));
+"\t-s <positive integer>      signature sheet count\n"
+"\t-s booklet                 automatic signature sheet count\n"
+"\t-s {both,fronts,backs}     indicate part of each signature to print\n"));
 
 HELP(_(
-"\t-Y						  experimental job splitting feature\n"));
+"\t-Y <options>               experimental job splitting feature\n"));
 
 HELP(_(
-"\t--page-list <page-list>	  print only the pages indicated\n"));
+"\t--page-list <page-list>    print only the pages indicated\n"));
 
 HELP(_(
-"\t-G <string>				  gab about subject indicated by <string>\n"
-"\t--gab <string>			  same as -G\n"));
+"\t-G <string>                gab about subject indicated by <string>\n"
+"\t--gab <string>             same as -G\n"));
 
 HELP(_(
-"\t--hold					  job should be held immediately\n"));
+"\t--hold                     job should be held immediately\n"));
 
 HELP(_(
-"\t--question <path>		  path of HTML question page\n"));
+"\t--question <path>          path of HTML question page\n"));
 
 HELP(_(
-"\t--save					  job should be saved after printing\n"));
+"\t--save                     job should be saved after printing\n"));
 
 HELP(_(
-"\t-q <integer>				  sets priority of print job\n"));
+"\t-q <integer>               sets priority of print job\n"));
 
 HELP(_(
-"\t-U						  unlink job file after queuing it\n"));
+"\t-U                         unlink job file after queuing it\n"));
 
 HELP(_(
-"\t-Q <string>				  TrueType query answer given (for papsrv)\n"));
+"\t-Q <string>                TrueType query answer given (for papsrv)\n"));
 
 HELP(_(
-"\t--lpq-filename <string>	  filename for ppop lpq listings\n"));
+"\t--lpq-filename <string>    filename for ppop lpq listings\n"));
 
 HELP(_(
-"\t-H <hack name>			  turn on a hack\n"
-"\t-H no-<hack name>		  turn off a hack\n"
-"\t--hack [no-]<hack name>	  same as -H\n"));
+"\t-H <hack name>             turn on a hack\n"
+"\t-H no-<hack name>          turn off a hack\n"
+"\t--hack [no-]<hack name>    same as -H\n"));
 
 HELP(_(
-"\t--editps-level <pos int>	  set level of editing for -H editps\n"));
+"\t--editps-level <pos int>   set level of editing for -H editps\n"));
 
 HELP(_(
-"\t--show-jobid				  print the queue id of submitted jobs\n"
-"\t--show-long-jobid		  print queue id in long format\n"));
+"\t--show-jobid               print the queue id of submitted jobs\n"
+"\t--show-long-jobid          print queue id in long format\n"));
 
 HELP(_(
 "\t--print-id-to-fd           print the numberic queue id file descriptor\n"));
 
 HELP(_(
-"\t--version				  print PPR version information\n"
-"\t--help					  print this help\n"));
+"\t--version                  print PPR version information\n"
+"\t--help                     print this help\n"));
 	} /* end of help() */
 
 /*

@@ -1,0 +1,58 @@
+<!--
+Filename: pprinst_user_interfaces.sgml
+Last Modified: 21 August 2003
+Last Proofread: 
+-->
+
+<sect1 id="cmdline-and-web">
+<title>PPR's User, Operator, and Administrator Interfaces</title>
+
+<para>
+</para>
+
+<sect2>
+<title>The Command Line Interface</title>
+
+<para>
+</para>
+
+</sect2>
+
+<sect2>
+<title>The Web Interface</title>
+
+<para>
+</para>
+
+<figure id="web-start">
+<title>Opening the <application>PPR</application>Web Interface</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_start.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+<figure id="web-control">
+<title><application>PPR</application>'s Web Control Panel</title>
+<mediaobject>
+	<imageobject><imagedata fileref="web_control.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+</sect2>
+
+<sect2>
+<title>The Perl/Tk Interface</title>
+
+<para>
+</para>
+
+<figure id="perltk-control">
+<title>The Perl/Tk Control Panel</title>
+<mediaobject>
+	<imageobject><imagedata fileref="perltk_control.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+</sect2>
+
+</sect1>
