@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 August 2001.
+** Last modified 10 September 2001.
 */
 
 import java.io.*;
@@ -90,6 +90,9 @@ class PCLparse
 	    	//debug_control(c, "backspace");
 		out.rxmoveto(0 - out.get_space_width());
 	    	break;
+	    case 9:
+		debug_control(c, "tab");
+		break;
 	    case 10:
 	    	//debug_control(c, "line feed");
 		out.rymoveto(line_spacing);
@@ -321,6 +324,7 @@ class PCLparse
 			primary.set_size(1000);		// 10 point
 			break;
 		    }
+		hmi = out.get_space_width();
 	    	break;
             case 0x287356:
             	debug("primary height");
