@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 15 January 2002.
+# Last modified 21 March 2002.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -37,6 +37,7 @@ install: all-docs
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS)
+	$(RMF) *.dvi *.aux *.log *.toc *.tex
 
 # Remove anything that can be reconstructed.
 veryclean: clean

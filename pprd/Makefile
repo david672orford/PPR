@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2002.
+# Last modified 21 March 2002.
 #
 
 include ../makeprogs/global.mk
@@ -76,7 +76,7 @@ install: $(PROGS)
 include .depend
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) pprd$(DOTEXE)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

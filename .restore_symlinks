@@ -10,6 +10,7 @@ if [ ! -f ./libttf/ps_type3.c ]; then ln -s ../nonppr/misc/ps_type3.c ./libttf/p
 if [ ! -f ./makeprogs/squeeze.c ]; then ln -s ../nonppr/misc/squeeze.c ./makeprogs/squeeze.c || exit 1; fi
 if [ ! -f ./misc/README.txt ]; then ln -s ../docs/misc/misc_dir_contents.txt ./misc/README.txt || exit 1; fi
 if [ ! -f ./po/README.txt ]; then ln -s ../docs/misc/internationalization.txt ./po/README.txt || exit 1; fi
+if [ ! -f ./pprpopup/md5pure.tcl ]; then ln -s ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1; fi
 if [ ! -f ./www/md5.js ]; then ln -s ../nonppr/md5/md5.js ./www/md5.js || exit 1; fi
 if [ ! -f ./History.txt ]; then ln -s docs/misc/History.txt ./History.txt || exit 1; fi
 if [ ! -f ./PORTING.txt ]; then ln -s docs/misc/PORTING.txt ./PORTING.txt || exit 1; fi
