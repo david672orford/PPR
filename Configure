@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 June 2001.
+# Last modified 31 August 2001.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -69,6 +69,23 @@ findprog_prog_path ()
     }
 
 #
+# Parse the command line options.
+#
+opt_prefix=""
+for opt in $*
+    do
+    case $opt in
+	--prefix=* )
+	    opt_prefix=`echo $opt | cut -d= -f2`
+    	    ;;
+	* )
+	    echo "Unrecognized option: $opt"
+	    exit 1
+	    ;;
+    esac
+    done
+
+#
 # Present the user with a menu
 #
 clear
@@ -87,7 +104,7 @@ echo "9) AT&T UWIN 2.9 with NT 4.0 (Doesn't work yet) *"
 echo "10) HP-UX 10.2 *"
 echo "11) ULTRIX 4.4 RISC *"
 echo "12) SunOS 5.6--5.8 (Solaris 2.6--8.0)"
-echo "13) FreeBSD 3.1R"
+echo "13) FreeBSD 3.1R, 4.3R"
 echo
 echo " * See INSTALL.txt for notes on this port."
 echo
@@ -150,14 +167,14 @@ case "$answer" in
     	    	;;
 	8 )
 		SYSTEM="CYGWIN"
-		DESCRIPTION="Cygwin 1.1"
+		DESCRIPTION="Cygwin 1.x"
 		ACTUAL_SYSTEM=""
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
 	9 )
 		SYSTEM="UWIN"
-		DESCRIPTION="UWIN 2.0"
+		DESCRIPTION="UWIN 2.x"
 		ACTUAL_SYSTEM=""
 		CC_NATIVE=1
 		CC_GCC=1
@@ -178,15 +195,15 @@ case "$answer" in
 		;;
 	12 )
 		SYSTEM="SUNOS_5_6"
-		DESCRIPTION="SunOS 5.6 thru 5.7"
+		DESCRIPTION="SunOS 5.6 thru 5.8"
 		ACTUAL_SYSTEM=`uname -sr | sed -e 's/^SunOS 5\.[6-9]$/SUNOS_5_6/'`
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
 	13 )
-		SYSTEM="FreeBSD"
+		SYSTEM="FREEBSD"
 		DESCRIPTION="FreeBSD 3.1R"
-		ACTUAL_SYSTEM=`uname -s`
+		ACTUAL_SYSTEM=`uname -s | sed -e 's/^FreeBSD/FREEBSD/'`
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
@@ -265,6 +282,26 @@ if [ "$NATIVE_CC" = "yes" ]
 echo
 
 #
+# Create a list of default install locations.
+#
+if [ -n "$opt_prefix" ]
+then
+    HOMEDIR=$opt_prefix/lib/ppr
+    SHAREDIR=$opt_prefix/share/ppr
+    CONFDIR=$opt_prefix/etc/ppr
+    VAR_SPOOL_PPR=$opt_prefix/var/ppr
+    TEMPDIR=/tmp
+    BINDIR=$opt_prefix/bin
+else
+    HOMEDIR=/usr/lib/ppr
+    SHAREDIR=/usr/share/ppr
+    CONFDIR=/etc/ppr
+    VAR_SPOOL_PPR=/var/spool/ppr
+    TEMPDIR=/tmp
+    BINDIR=/usr/bin
+fi
+
+#
 # Ask the user if he would like to change any of the PPR
 # install directories.
 #
@@ -273,29 +310,35 @@ echo "Please choose where to install PPR.  It is suggested that"
 echo "you accept the defaults as all the documentation assumes"
 echo "that you are using the default directories."
 echo
-$NECHO -n "PPR home directory [/usr/lib/ppr]: "
-read HOMEDIR
-if [ -z "$HOMEDIR" ]; then HOMEDIR="/usr/lib/ppr"; fi
+
+$NECHO -n "PPR home directory [$HOMEDIR]: "
+read answer
+if [ -n "$answer" ]; then HOMEDIR="$answer"; fi
 echo
-$NECHO -n "PPR share directory [/usr/share/ppr]: "
-read SHAREDIR
-if [ -z "$SHAREDIR" ]; then SHAREDIR="/usr/share/ppr"; fi
+
+$NECHO -n "PPR share directory [$SHAREDIR]: "
+read answer
+if [ -n "$answer" ]; then SHAREDIR="$answer"; fi
 echo
-$NECHO -n "PPR configuration directory [/etc/ppr]: "
-read CONFDIR
-if [ -z "$CONFDIR" ]; then CONFDIR="/etc/ppr"; fi
+
+$NECHO -n "PPR configuration directory [$CONFDIR]: "
+read answer
+if [ -n "$answer" ]; then CONFDIR="$answer"; fi
 echo
-$NECHO -n "PPR spool files directory [/var/spool/ppr]: "
-read VAR_SPOOL_PPR
-if [ -z "$VAR_SPOOL_PPR" ]; then VAR_SPOOL_PPR="/var/spool/ppr"; fi
+
+$NECHO -n "PPR spool files directory [$VAR_SPOOL_PPR]: "
+read answer
+if [ -n "$answer" ]; then VAR_SPOOL_PPR="$answer"; fi
 echo
-$NECHO -n "PPR temporary files directory [/tmp]: "
-read TEMPDIR
-if [ -z "$TEMPDIR" ]; then TEMPDIR="/tmp"; fi
+
+$NECHO -n "PPR temporary files directory [$TEMPDIR]: "
+read answer
+if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
 echo
-$NECHO -n "Directory for symbolic links to PPR binaries [/usr/bin]: "
-read BINDIR
-if [ -z "$BINDIR" ]; then BINDIR="/usr/bin"; fi
+
+$NECHO -n "Directory for symbolic links to PPR binaries [$BINDIR]: "
+read answer
+if [ -n "$answer" ]; then BINDIR="$answer"; fi
 echo
 
 #
@@ -563,7 +606,7 @@ if [ $NATIVE_CC = "no" ]
   case $PROCESSOR in
     i[3456789]86 )
 	case $GCC_VERSION_SHORT in
-	    2.7.2.[1-9] | 2.[89]*.* | [3456789].* )
+	    2.7.2.[1-9] | 2.[89]* | [3456789].* )
 		;;
 	    * )
 		echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"
@@ -815,6 +858,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSYSATTWGS===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -843,6 +887,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS5===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -867,6 +912,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS56===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -891,6 +937,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndNETBSD===
 MAKE=gmake
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -914,19 +961,23 @@ if [ $SYSTEM = "LINUX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndLINUX===
-MAKE=make --no-print-directory
+MAKE=make
+MAKEFLAGS=--no-print-directory
 STRIP=strip
 OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+
 CC=gcc
 #CC=diet
 #CC=g++ -fno-exceptions
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+
 LD=gcc
 #LD=diet
 LDFLAGS=
+
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
 LEX=flex
@@ -942,6 +993,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS4===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -966,6 +1018,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndOSF1==='
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1006,6 +1059,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1057,7 +1111,8 @@ cat >&3 <<===EndCYGWIN===
 .c.exe:
 	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
 
-MAKE=make --no-print-directory
+MAKE=make
+MAKEFLAGS=--no-print-directory
 STRIP=strip
 OBJ=o
 DOTEXE=.exe
@@ -1087,6 +1142,7 @@ cat >&3 <<===EndUWIN1===
 	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
 
 MAKE=make
+MAKEFLAGS=
 STRIP=touch
 OBJ=o
 DOTEXE=.exe
@@ -1129,6 +1185,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndHPUX1===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1171,6 +1228,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndULTRIX1===
 MAKE=s5make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1218,6 +1276,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndFreeBSD===
 MAKE=gmake
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=

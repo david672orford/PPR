@@ -4,8 +4,8 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PPR 1.42\n"
-"POT-Creation-Date: 2001-01-30 17:01-0500\n"
+"Project-Id-Version: PPR 1.50\n"
+"POT-Creation-Date: 2002-02-25 16:05-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -13,118 +13,142 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../papsrv/papsrv_conf.c:518
+#: ../papsrv/papsrv.c:657
+#, c-format
+msgid "%s: not running\n"
+msgstr ""
+
+#: ../papsrv/papsrv.c:667
+#, c-format
+msgid "%s: failed to read PID from lock file"
+msgstr ""
+
+#: ../papsrv/papsrv.c:671
+#, c-format
+msgid "Sending SIGTERM to %s (PID=%ld).\n"
+msgstr ""
+
+#: ../papsrv/papsrv.c:681
+#, c-format
+msgid "Waiting while %s shuts down..."
+msgstr ""
+
+#: ../papsrv/papsrv.c:691
+msgid "Shutdown complete.\n"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:184
+#, c-format
+msgid "Printer \"%s\" has no \"PPDFile\" line in its config file"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:232
+#, c-format
+msgid "group \"%s\" member \"%s\" does not exist (%s line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:288
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:346
+#, c-format
+msgid "Can't open configuration file \"%s\", errno=%d (%s)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:393
+msgid "Too many advertised names in config file"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:441
+#, c-format
+msgid "AppleTalk name too long (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:452
+#, c-format
+msgid "AppleTalk name \"type\" element too long (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:468
+#, c-format
+msgid "AppleTalk name \"zone\" element too long (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:492
+#, c-format
+msgid "Duplicate \"PPRname\" line (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:517
 #, c-format
 msgid "\"%s\" is not a printer or group (line %d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:618
+#: ../papsrv/papsrv_conf.c:532
+#, c-format
+msgid "\"PPRname\" must be first line in record (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:538
+#, c-format
+msgid "Duplicate or unnecessary \"PPDFile\" line (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:545
+#, c-format
+msgid "You must put a \"PPDFile\" line here (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:558
+#, c-format
+msgid "\"BinaryOK\" option must be \"true\" or \"false\" (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:565
+#, c-format
+msgid "\"LanguageLevel\" must be a positive integer (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:602
+#, c-format
+msgid "\"ForceAUFSSecurity\" must be \"true\" or \"false\" (line %d)"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:604
+msgid "\"ForceAUFSSecurity\" option TRUE when no -X switch used"
+msgstr ""
+
+#: ../papsrv/papsrv_conf.c:617
 #, c-format
 msgid ""
 "\"AUFSSecurityFor\" must be \"DSC\", \"username\", or \"realname\" (line %d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:559
-#, c-format
-msgid "\"BinaryOK\" option must be \"true\" or \"false\" (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:603
-#, c-format
-msgid "\"ForceAUFSSecurity\" must be \"true\" or \"false\" (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:605
-msgid "\"ForceAUFSSecurity\" option TRUE when no -X switch used"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:566
-#, c-format
-msgid "\"LanguageLevel\" must be a positive integer (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:533
-#, c-format
-msgid "\"PPRname\" must be first line in record (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:637
-#, c-format
-msgid "\"QueryFontCache\" option must be \"true\" or \"false\" (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:629
-#, c-format
-msgid "\"RAMSize\" option must be a positive integer (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:453
-#, c-format
-msgid "AppleTalk name \"type\" element too long (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:469
-#, c-format
-msgid "AppleTalk name \"zone\" element too long (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:442
-#, c-format
-msgid "AppleTalk name too long (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:289
-#, c-format
-msgid "Can't open \"%s\", errno=%d (%s)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:347
-#, c-format
-msgid "Can't open configuration file \"%s\", errno=%d (%s)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:493
-#, c-format
-msgid "Duplicate \"PPRname\" line (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:539
-#, c-format
-msgid "Duplicate or unnecessary \"PPDFile\" line (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:621
+#: ../papsrv/papsrv_conf.c:620
 #, c-format
 msgid ""
 "If the -X switch is not used then \"AUFSSecurityName\" must be \"DSC\" (line "
 "%d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:185
+#: ../papsrv/papsrv_conf.c:628
 #, c-format
-msgid "Printer \"%s\" has no \"PPDFile\" line in its config file"
+msgid "\"RAMSize\" option must be a positive integer (line %d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:394
-msgid "Too many advertised names in config file"
+#: ../papsrv/papsrv_conf.c:636
+#, c-format
+msgid "\"QueryFontCache\" option must be \"true\" or \"false\" (line %d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:670
+#: ../papsrv/papsrv_conf.c:669
 #, c-format
 msgid "Unmatched double quote in \"PPRparms\" line (line %d)"
 msgstr ""
 
-#: ../papsrv/papsrv_conf.c:678
+#: ../papsrv/papsrv_conf.c:677
 #, c-format
 msgid "Unmatched single quote in \"PPRparms\" line (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:546
-#, c-format
-msgid "You must put a \"PPDFile\" line here (line %d)"
-msgstr ""
-
-#: ../papsrv/papsrv_conf.c:233
-#, c-format
-msgid "group \"%s\" member \"%s\" does not exist (%s line %d)"
 msgstr ""

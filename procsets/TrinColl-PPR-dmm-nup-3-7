@@ -1,0 +1,1232 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: TrinColl-dmm-nup
+%%Creator: Donald Markuson, modified by David Chappell
+%%Copyright: 1995--2002, Trinity College Computing Center, BSD license
+%%Version: 3.0 6
+%%CreationDate: 14 January 2002
+%%EndComments
+
+% If this version of PostScript supports it, save and change the packing
+% method.  We leave the existing method on the stack.
+systemdict /setpacking known { currentpacking true setpacking } if
+
+% Define a dictionary to hold our stuff
+/DMM-nup-dict 60 dict
+dup begin
+
+% Percent of page diagonal consumed by draft notice
+/draft-span-pct 60 def
+
+% Default if no job name!
+/nulljobname (\(From out of the blue\274\)) def
+
+% Word which should appear before the page number.
+/pagetext (Page ) def
+
+% This is so useful, we define it first.
+/xdf {exch def} bind def
+
+%
+% Make sure a statusdict exists, even if we have to build an empty one
+% ourselves.  According to the PS Level 2 reference manual (the Red Book), not
+% all products have one!  Doing this helps because otherwise we would have to
+% write a lot of extra code to take account of the fact that it might exist
+% every time we wanted to see if something was defined in it.
+%
+/statusdict where
+	{ pop }
+	{ userdict /statusdict 1 dict put }
+	ifelse
+
+%
+% Save the real versions of the commands
+% we will be replacing.
+%
+/realshowpage		/showpage	load def
+/realinitclip		/initclip	load def
+/realinitmatrix		/initmatrix	load def
+/realinitgraphics	/initgraphics	load def
+/realrestore		/restore	load def
+/realgrestore		/grestore	load def
+/realgsave		/gsave		load def
+/realerasepage		/erasepage	load def
+statusdict /setpapertray known {statusdict /setpapertray get /realsetpapertray xdf} if
+/setpagedevice where {/setpagedevice get /realsetpagedevice xdf} if
+/currentpagedevice where {/currentpagedevice get /realcurrentpagedevice xdf} if
+
+% This function returns the current N-Up N.  It will return 0 if this
+% procedure set is "sleeping".
+/get_N
+    {
+    userdict /DMM-nup-state known
+	{ userdict /DMM-nup-state get /lps-pp get }
+	{ 0 }
+	ifelse
+    } bind def
+
+%============================================================================
+% Replacements for standard PostScript functions.
+%============================================================================
+
+%
+% initclip REPLACEMENT for 2/4/8/16-up that clips to logical page.
+%
+% This calls realinitclip, then if noclip is not true it
+% arranges to clip to the virtual page boundaries
+%
+% Usage: - initclip -
+% DictStack context:  ...  [0 nested begin/end]
+% Calls: realinitclip
+% Called by: initgraphics
+%
+userdict /initclip
+    {
+    % First do the real thing.
+    DMM-nup-dict /realinitclip get exec
+
+    % if doing 2-Up or greater,
+    DMM-nup-dict /get_N get exec 1 gt
+	{
+	% If user hasn't asked to have clipping to the logical page disabled,
+	DMM-nup-state /noclip get
+	    {   % Current path is destroyed, but few issue initclip with a path.
+
+	    % Push the current point onto the stack or 0 0 if there is
+	    % no current point.  We will restore it later.
+	    errordict /nocurrentpoint get
+	    errordict /nocurrentpoint { pop 0 0 } put
+	    currentpoint
+	    errordict /nocurrentpoint 5 -1 roll put
+
+	    % Push the current line width for later restoration.
+	    currentlinewidth
+
+	    DMM-nup-state /Tstate get currentmatrix
+
+	    DMM-nup-state /Pstate get setmatrix
+	    0.3 setlinewidth % Stay away from borderlines
+	    DMM-nup-state /Lstate get setmatrix
+	    newpath
+	    DMM-nup-state /lp-wid get
+	    DMM-nup-state /lp-hgt get
+	    0 exch moveto
+	    dup 0 rlineto
+	    0 lineto
+	    0 0 lineto
+	    closepath
+	    clip
+	    newpath
+
+	    % Restore the matrix using the value saved on the stack.
+	    setmatrix
+
+	    % Same for line width
+	    setlinewidth
+
+	    % and current point.
+	    moveto
+	    } if
+	} if
+    } bind put
+
+%
+% initmatrix REPLACEMENT for 2/4/8/16-up that inits logical page CTM.
+%
+% Usage: - initmatrix -
+% DictStack context:  ...  [0 nested begin/end]
+% Calls: realinitmatrix
+% Called by: initgraphics
+%
+userdict /initmatrix
+    {
+    DMM-nup-dict /get_N get exec 1 gt
+	{ DMM-nup-state /Lstate get setmatrix }
+	{ DMM-nup-dict /realinitmatrix get exec }
+	ifelse
+    } bind put
+
+%
+% initgraphics REPLACEMENT for 2/4/8/16-up that inits logical page
+%              graphics state.
+%
+% Usage: - initgraphics -
+% DictStack context:
+% Calls: realinitgraphics, initmatrix (ours), initclip (ours)
+% Called by:
+%
+userdict /initgraphics
+    {
+    DMM-nup-dict /realinitgraphics get exec
+
+    DMM-nup-dict /get_N get exec 1 gt
+	{
+	initmatrix initclip
+	} if
+    } bind put
+
+%
+% erasepage REPLACEMENT for 2/4/8/16-up that clears logical page.
+%
+% Usage: - erasepage -
+% DictStack context:  ...  [0 nested begin/end]
+% Calls: realgsave, initclip (ours), realgrestore, realerasepage
+% Called by:
+%
+userdict /erasepage
+    {
+    DMM-nup-dict /get_N get exec 1 gt
+	{
+	DMM-nup-dict /realgsave get exec
+	initclip
+	1 setgray
+	newpath clippath fill
+	DMM-nup-dict /realgrestore get exec
+	}
+	{
+	DMM-nup-dict /realerasepage get exec
+	}
+	ifelse
+    } bind put
+
+%
+% restore REPLACEMENT for 2/4/8/16-up that handles the DRAFT notice.
+%  Usage: <saveimage> restore -
+%  DictStack context:  ...  [2 nested begin/end]
+%
+userdict /restore
+    {
+    DMM-nup-dict /get_N get exec 1 gt
+	{
+	% Preserve physical & logical pagecounts across restore, and check
+	% against restored values:  if different, then showpage occurred
+	% WITHIN save/restore pair so must regenerate logical page matrix
+	% just undone by restore op (which also restored the necessary
+	% Lstate value for the regeneration).
+	DMM-nup-state /pp-num get exch
+	DMM-nup-state /lp-num get exch
+	DMM-nup-dict /realrestore get exec
+	DMM-nup-state /lp-num 2 copy get 4 1 roll 2 index put eq exch
+	DMM-nup-state /pp-num 2 copy get 4 1 roll 2 index put eq and not
+		{
+		DMM-nup-dict begin
+		false lshowpage
+		end %DMM-nup-dict
+		} if
+	}
+	{
+	DMM-nup-dict /realrestore get exec
+	}
+	ifelse
+    } bind put
+
+%
+% grestore REPLACEMENT for 2/4/8/16-up that catches PostScript files that
+%          use "gsave showpage grestore".  Strictly speaking, such files
+%          are non-conforming, but pragmatically speaking, if they set up
+%          any graphics state in the document setup section prior to the
+%          first %%Page, this is the only way they can preserve it across
+%          a showpage unless they violate another rule by putting the
+%          showpage within the per-page save/restore.
+%          N.B.  This assumes each page doesn't alter transformation
+%                matrix graphics state itself.
+%   Usage: - grestore -
+%   DictStack context:  ...  [2 nested begin/end]
+%
+userdict /grestore
+	{
+	DMM-nup-dict /realgrestore get exec
+
+	DMM-nup-dict /get_N get exec 1 gt
+		{
+		DMM-nup-state /did-showpage get
+			{
+			DMM-nup-dict begin
+			DMM-nup-state begin
+			oldLstate Lstate copy pop
+			false lshowpage
+			end %DMM-nup-state
+			end %DMM-nup-dict
+			} if
+		} if
+	} bind put
+
+%
+% gsave  REPLACEMENT for 2/4/8/16-up that catches PostScript files that
+%        use "gsave showpage grestore" *without* using save/restore also.
+% Usage: - gsave -
+% DictStack context:  ...  [0 nested begin/end]
+%
+userdict /gsave
+    {
+    DMM-nup-dict /get_N get exec 1 gt
+	{ DMM-nup-state /did-showpage false put } if
+    DMM-nup-dict /realgsave get exec
+    } bind put
+
+%
+% showpage REPLACEMENT for 2/4/8/16-up that tags end-of-logical page.
+% Usage: - showpage -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/showpage_nup
+    {
+    userdict /#copies 2 copy known { get } { pop pop 1 } ifelse 0 gt
+	{ true lshowpage }
+	{ initgraphics erasepage }
+	ifelse
+    } bind def
+
+%
+% showpage REPLACEMENT for 1-up that handles the DRAFT notice.
+%
+% Usage: - showpage_draft -
+% DictStack context: DMM-nup-dict DMM-nup-state
+% Calls: gsave (real), grestore (real), initgraphics (real), realshowpage, draftbar
+%
+/showpage_draft
+    {
+    draft exec length 0 gt
+	{   realgsave
+	    realinitgraphics
+	    % Calculate actual paper size here for draft string (assumes
+	    % imageable area of page is centered on physical paper).
+	    newpath clippath pathbbox newpath
+	    3 -1 roll add /lp-hgt exch def
+	    add /lp-wid exch def
+	    % Since we don't really flip pages in 1-up mode, must flip DRAFT
+	    % notice to track the "upside-down" page!
+	    flipit
+	    {   lp-wid lp-hgt translate
+		180 rotate
+	    } if
+	    draftbar
+	    realgrestore
+	} if
+	realshowpage
+    } bind def
+
+%
+% Replacement showpage
+%
+userdict /showpage
+    {
+    DMM-nup-dict begin
+    DMM-nup-state begin
+    get_N dup 0 gt
+	{
+	1 gt
+	    { showpage_nup }
+	    { showpage_draft }
+	ifelse
+	}
+	{
+	pop
+	realshowpage
+	}
+    ifelse
+    end
+    end
+    } bind put
+
+%============================================================================
+% Internal Functions Used by Our Hooks
+%============================================================================
+
+%
+% Define functions and fonts needed to do draft strings.
+%
+
+%
+% outlinefont generates an outline version of a font given the base
+%             font name, the new font name, and the stroke weight
+%             for the outline.
+% Usage: <basefontname> <newfontname> <strokeweight> outlinefont -
+% DictStack context:
+% Calls:
+% Called by:
+%
+/outlinefont
+    {   5 dict begin
+	/strokeweight exch def
+	/newfontname exch def
+	/basefontname exch def
+	/basefontdict basefontname findfont def
+	/outfontdict basefontdict maxlength 2 add dict def
+	basefontdict
+	{   exch dup
+	    /FID ne
+	    {   exch outfontdict 3 1 roll put
+	    }{  pop pop
+	    } ifelse
+	} forall
+	outfontdict /BaseFontName basefontname put       % draftbar checks this
+	outfontdict /FontName newfontname put
+	outfontdict /PaintType 2 put
+	outfontdict /StrokeWidth strokeweight put
+	newfontname outfontdict definefont pop
+	end %5 dict
+    } bind def
+
+%
+% draftbar images the outlined DRAFT diagonally across the (logical)
+%          page.  This should be the last thing done on the page; if
+%          it's the first, white graphic objects may overlay, erasing
+%          the DRAFT outline.  It assumes the graphics state has been
+%          set up accordingly for imaging on the logical page.
+%          Note that dfont should really exist, and be outlineable.
+%          If it doesn't exist, Courier will typically be substituted
+%          by findfont; Courier for many PostScript printers is a
+%          stroked font unsuitable for outlining.
+% Usage: - draftbar -
+% DictStack context: DMM-nup-dict DMM-nup-state
+% Calls: gsave (real), grestore (real)
+% Called by: showpage_draft
+%
+/draftbar
+    {   % First make sure /DMM-DraftFont exists and is based on correct font.
+	% If not, then make it so.  This allows document to change it easily.
+	FontDirectory /DMM-DraftFont known
+	{   /DMM-DraftFont findfont /BaseFontName 2 copy known
+	    {   get dfont exec ne
+	    }{  true
+	    } ifelse
+	}{  true
+	} ifelse
+	{   dfont exec /DMM-DraftFont 0.2 outlinefont
+	} if
+
+	% For upward compatibility
+	% With what?
+	userdict /DMM-draft known
+	{   /draft userdict /DMM-draft get def
+	} if
+
+	realgsave
+	/DMM-DraftFont findfont dup setfont
+	draft-span-pct 100 div dup 1 exch sub 2 div
+	lp-wid dup mul lp-hgt dup mul add sqrt % diag span
+	lp-hgt lp-wid atan rotate
+	dup 3 -1 roll mul 0 moveto
+	mul draft exec stringwidth pop div dup 3 1 roll scalefont setfont
+	% Adjust to put text's x-height more-or-less on diagonal span.
+	-.35 mul 0 exch rmoveto          % Guess x-height ~ 35% of design size?
+	draft exec show
+	realgrestore
+    } bind def
+
+%
+% lshowpage handles emitting a logical page on the physical page
+%           by adjusting the coordinate system from under the
+%           application's eyes.
+%
+% Usage: <really-emit-logical-page> lshowpage -
+% DictStack context: DMM-nup-dict DMM-nup-state
+% Calls: initgraphics (ours), initclip (ours), realgsave, realgrestore
+% Called by:
+%
+/lshowpage
+    {
+	% Extract the matrix transformations that the application performs
+	% on its own by "undoing" our Lstate (logical page) transform.
+	% We must reapply the application's transformations to the Lstate
+	% of a new logical page.
+	Tstate currentmatrix Lstate Cstate invertmatrix Cstate concatmatrix pop
+	dup /did-showpage xdf
+	dup
+	{   Lstate oldLstate copy pop
+	    draft exec length 0 gt
+	    {   initgraphics
+		draftbar
+	    } if
+	    /lp-num lp-num 1 add def
+	    lp-num lps-pp eq { emitppage } if	% End this page!
+	    Pstate setmatrix
+	    lporig				% Position for new logical page
+	    initgraphics			% Must mimic what showpage really does
+	    realgsave
+	}{  Pstate setmatrix
+	    lporig				% Position for new logical page
+	    initclip				% Don't initgraphics here--application did a (g)restore!
+	} ifelse
+	Cstate concat				% Reintegrate application's transform
+	fixnasties
+	{ realgrestore } if
+    } bind def
+
+
+%
+% emitppage draws the page boundaries & emits physical page.
+%
+% Usage: - emitppage -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/emitppage
+    {   /lp-num 0 def
+	/pp-num pp-num 1 add def
+	pp-num pp-total abs gt { /pp-num 1 def } if	% DSC
+	pbgray exec dup 0.0 ge exch 1.0 le and
+	{   realgsave
+	    Pstate setmatrix
+	    realinitclip
+	    {} settransfer pbgray exec setgray
+	    newpath
+	    0.3 setlinewidth
+	    0 1 lp-row
+	    {   lp-hgt lp-scl mul mul 0 exch moveto
+		lp-col lp-wid lp-scl mul mul 0 rlineto
+	    } for
+	    0 1 lp-col
+	    {   lp-wid lp-scl mul mul 0 moveto
+		0 lp-row lp-hgt lp-scl mul mul rlineto
+	    } for
+	    stroke
+	    % Now emit job name and page number just outside of top boundary.
+	    DMM-nup-state /hfont known not { DMM-nup-state /hfont dfont put } if
+	    % User can instruct us not to do this with nohead.
+	    DMM-nup-state /nohead known { nohead exec } { false } ifelse not
+	    {   lscape { 90 rotate 0 } { lp-row lp-hgt mul } ifelse
+		lp-scl mul 3 add 0 exch moveto
+		hfont exec findfont 8 scalefont setfont
+		realgsave
+		nulljobname exec
+		statusdict /jobname known
+		{   statusdict /jobname get dup type /stringtype eq { exch } if
+		    pop
+		} if
+		show
+		realgrestore
+		lscape
+		{   lp-row lp-hgt
+		}{  lp-col lp-wid
+		} ifelse
+		lp-scl mul mul 0 rmoveto
+		pp-num
+		pp-total 0 lt {1 sub pp-total add neg % DSC
+				pp-duplex {1 sub 1 xor 1 add}if % DSC
+				}if % DSC
+		ppstr cvs dup stringwidth neg exch neg exch rmoveto
+		currentpoint 3 -1 roll show moveto
+		pagetext exec dup stringwidth neg exch neg exch rmoveto show
+	    } if
+	    realgrestore
+	} if
+	realshowpage
+    } bind def
+
+%
+% lporig sets up the logical page's translation and scaling for
+%        proper placement on the physical page.
+% Usage: - lporig -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/lporig
+    {   %
+	% Normally, logical pages are laid out col-major on the physical
+	% page; transpose lays 'em out row-major.
+	%
+	lp-scl dup scale
+	xpose lscape xor
+	{   lp-num lp-col mod lp-wid mul
+	    lp-num lp-col idiv
+	}{  lp-num lp-row idiv lp-wid mul
+	    lp-num lp-row mod
+	} ifelse
+	lscape { lp-row 1 sub exch sub } if
+	1 add neg lp-row add lp-hgt mul translate
+	Lstate currentmatrix pop                   % New logical page transform
+    } bind def
+
+%
+% fixnasties updates certain state within known non-conforming PostScript
+%            generating software so it properly works with N-up.
+%     Usage: - fixnasties -
+%     DictStack context: DMM-nup-dict DMM-nup-state
+%
+/fixnasties
+    {   % TeX DVI-to-PS translators (most including older dvi2ps versions):
+	% Update Mtrx which TeXDict (no version data) naughtily maintains
+	% across pages!  From /usr/local/tex/postscript/dvi3ps.ps (and,
+	% presumably, /usr/local/tex/DVIware/dvi2ps.pro).
+	% Only do this if TeXDict is known dictionary (use various guesses at
+	% spelling since some are different than others) and Mtrx is known in
+	% TeXDict.  We likely do NOT support dvi?ps two-up modes.
+	[ /TeXDict /TeXdict /TexDict /Texdict /texdict ]
+	{   dup where
+	    {   exch get
+		dup /Mtrx known { /Mtrx get currentmatrix } if
+	    } if
+	    pop
+	} forall
+    } bind def
+
+%
+% setlayout establishes the logical page layout for N-up, and is generally
+%           used when N <> 1.  Establish default row/col page ordering
+%           assuming portrait logical pages on a portrait or landscape
+%           physical page (whichever is more natural).  We support 1-16
+%           logical pages (with 1-4, 6, 8-9, 12, and 15-16 completely
+%           filling the page; intermediate values get the next higher
+%           configuration but won't fill all the page slots).  The special
+%           value of 0 allows optional parameters to DMM-nup-pre that
+%           directly specify row and col orientation.  Any other value
+%           defaults to 1, however note that 1-up here is *different* than
+%           the 1-up from above where lps-pp was originally specified as 1.
+%           Here 1-up will have page borders and be scaled appropriately!
+%
+% Usage: <logical-pages-per-physical-page> setlayout -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/setlayout
+    {   dup 16 gt exch 0 lt or
+	{    /lps-pp 1 def
+	} if
+	[ {} 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 4 ] lps-pp get exec           % rows
+	[ {} 1 2 3 2 3 3 4 4 3 4 4 4 5 5 5 4 ] lps-pp get exec           % cols
+	ppdict begin
+	/lp-col-orig xdf
+	/lp-row-orig xdf
+	lps-pp 0 eq
+	{   /lps-pp lp-row-orig lp-col-orig mul def
+	} if
+	end %ppdict
+    } bind def
+
+%
+% sense_paper picks up the current physical paper parameters of the printer.
+%          This is what we use for our physical page layout.  Then builds
+%          an imageable area within the device's imageable area for our
+%          logical layout including page borders and headlines.  If an
+%          N-up document is to be embedded, the surrounding code must
+%          establish an appropriate paper imageable area clippath.
+%
+% Usage: - sense_paper -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/sense_paper
+	{
+	ppdict begin
+
+	DMM-nup-dict /realcurrentpagedevice known
+	    {
+	    % Use currentpagedevice
+	    0 0		% lly, llx
+	    realcurrentpagedevice /PageSize get
+	    dup 0 get exch	% ury
+	    1 get		% urx
+	    pipp
+	    }
+	    {
+	    % Take the current clipping path as the page size.
+	    newpath clippath pathbbox newpath pipp
+	    } ifelse
+
+	% Force physical page into portrait orientation if its landscape.
+	pp-w pp-h gt
+	{   0 pp-h translate
+	    -90 rotate
+	    pi-lly pi-llx pi-ury pi-urx pipp
+	} if
+
+	pp-matrix currentmatrix pop                   % Physical page transform
+
+	% Now for logical imagearea.  It's the physical imagearea with 12pt
+	% margins (0pt if no borders) all around yet also guarantees a 0.5in
+	% (0.0in if no borders) paper margin all around.
+	pbgray exec dup 0.0 ge exch 1.0 le and
+	    {			% w/ borders
+	    /pi-mar 12 def	% amount to add to physical margins
+	    /pp-mar 36 def	% minimum margin
+	    }
+	    {			% w/out borders
+	    /pi-mar 0 def
+	    /pp-mar 0 def
+	    } ifelse
+
+	% logical lower-left x
+	/li-llx pi-llx pi-mar add def
+	li-llx pp-mar lt { /li-llx pp-mar def } if
+
+	% logical lower-left y
+	/li-lly pi-lly pi-mar add def
+	li-lly pp-mar lt { /li-lly pp-mar def } if
+
+	% logical upper-right x
+	/li-urx pi-urx pi-mar sub def
+	li-urx pp-w pp-mar sub gt { /li-urx pp-w pp-mar sub def } if
+
+	% logical upper-right y
+	/li-ury pi-ury pi-mar sub def
+	li-ury pp-h pp-mar sub gt { /li-ury pp-h pp-mar sub def } if
+
+	% logical image area width
+	/li-w li-urx li-llx sub def
+
+	% logical image area height
+	/li-h li-ury li-lly sub def
+
+	% Probably should assert (li-h > 0) and (li-w > 0) and (li-h >= li-w)!
+
+	end %ppdict
+
+	% Nullify logical page width and height to force recalc in setvpage.
+	/lp-wid -1 def
+	/lp-hgt -1 def
+    } bind def		% /sense_paper
+
+%
+% setvpage establishes the logical imagearea for logical page layout
+%         based on the actual papersize requested by the job.
+%
+% Usage: <logical-page-width> <logical-page-height> setvpage -
+% DictStack context: DMM-nup-dict DMM-nup-state
+%
+/setvpage
+	{
+	ppdict begin
+	/lp-h xdf /lp-w xdf           % Parameters:  logical page width, height
+	% Special handling of case where logical page width & height == -1.
+	% This is a setpapertray operation; stack still contains papertray
+	% to use.  We briefly switch to this papertray to capture its paper
+	% dimensions for our logical layout, then switch back to using the same
+	% tray as we started. A CROCK thankfully unnecessary in PS Level 2!
+	lp-h -1 eq lp-w -1 eq and
+	{   save exch
+	    realinitgraphics
+	    statusdict /papertray get exec exch
+	    realsetpapertray
+	    newpath clippath pathbbox
+	    6 -2 roll realsetpapertray
+	    realrestore
+	    3 -1 roll add /lp-h xdf add /lp-w xdf
+	} if
+	% Only need to (re)calc layout if it's changed from what we're using;
+	% allow a 5pt tolerance just like PS Level 2 does with paper changes.
+	lp-w lp-wid sub abs 5.0 gt lp-h lp-hgt sub abs 5.0 gt or
+	end %ppdict
+	{   % Start new layout on new sheet if we've already put something on
+	    % the current sheet.
+	    lp-num 0 gt { emitppage } if
+	    % If landscape, toggle our thinking about rows and cols, otherwise
+	    % set our thinking straight again.
+	    ppdict begin
+	    lp-row-orig lp-col-orig
+	    lp-w lp-h gt
+	    end %ppdict
+	    % Put values to actually use within DMM-nup-state
+	    {   /lp-row xdf  /lp-col xdf
+	    }{  /lp-col xdf  /lp-row xdf
+	    } ifelse
+	    ppdict begin
+	    DMM-nup-state /portpp lp-w lp-col mul lp-h lp-row mul le put
+	    /ll-w /ll-h portpp { exch } if
+		lp-w lp-col mul def
+		lp-h lp-row mul def
+	    % Determine proper scaling factor to fit logical layout into
+	    % logical imagearea, keeping logical page's aspect ratio correct.
+	    DMM-nup-state /lp-scl
+		li-h ll-h div li-w ll-w div 2 copy gt { exch } if pop put
+	    % Center logical layout within logical imagearea by moving
+	    % coordinate system origin to proper palce.
+	    pp-matrix setmatrix           % Essentially start an "initgraphics"
+	    % Doing landscape logical on landscape physical causes paper to be
+	    % fed "upside down"--not appealing in viewers like ghostscript.
+	    portpp not lscape and
+	    {   pp-w pp-h translate
+		180 rotate
+	    } if
+	    li-w ll-w lp-scl mul sub 2 div li-llx add
+	    li-h ll-h lp-scl mul sub 2 div li-lly add
+	    translate
+	    portpp not
+	    {   ll-w lp-scl mul 0 translate
+		90 rotate
+	    } if
+	    % Update logical page width and height used elsewhere.
+	    DMM-nup-state /lp-wid lp-w put                 % Logical page width
+	    DMM-nup-state /lp-hgt lp-h put                 % Logical page height
+	    end %ppdict
+	    % Okay, now (re)init N-up state within DMM-nup-state accordingly.
+	    Pstate currentmatrix pop                  % Physical page transform
+	    lporig
+	    initclip
+	    %
+	    % If flipping pages, move origin to opposite corner of paper.  We
+	    % DON'T do this in lporig so draft notices come out okay (we're
+	    % assuming the job images its pages upside down, which can happen
+	    % with 270-degree rotated landscape).  This origin change *should*
+	    % be picked up as part of Cstate matrix; job is expected not to
+	    % do anything nasty.
+	    %
+	    flipit
+	    {  lp-wid lp-hgt translate
+	       180 rotate
+	    } if
+	    % Finish "initgraphics"
+	} if
+    } bind def		% /setvpage
+
+% pipp -- Physical Imagearea on Physical Page
+% This routine eats up the current transform matrix
+/pipp
+    {   /pi-ury xdf /pi-urx xdf /pi-lly xdf /pi-llx xdf % Physical imagearea bb
+	/pp-w pi-urx pi-llx add def                     % Physical paper width
+	/pp-h pi-ury pi-lly add def                     % Physical paper height
+    } bind def
+
+%=============================================================================
+% Redefine Level 1 PageSize (such as "lettertray") and PageRegion (such as
+% "letter") commands.  If our replacements are called before the first
+% showpage, then they will actually call the real commands (if they exist),
+% otherwise they will change only the virtual page size.
+%
+% We put redefinitions in userdict even though originals *might* be in
+% systemdict.
+%=============================================================================
+
+8 dict begin
+/in  { 72 mul } bind def			% inch conversion to points
+/mm  { 72 25.4 div mul } bind def		% millimeter conversion to points
+/str 40 string def
+
+%
+% This is a temporary setup routine.  It is only used during
+% this installation of this procedure set.
+%
+% This routine builds a routine like /lettertray.
+%
+% Tray replacement routine will actually effect a paper tray change
+% if we're at the beginning of the job (pp-num is 0); otherwise
+% we simply note that the job requested a new paper size and
+% adjust only the logical page layout accordingly (no physical
+% paper change occurs in the middle of a job).
+%
+% Usage: /name [width height] fixuptray -
+%
+/fixuptray
+    {
+    exch str cvs				% leaves [width height] (name)
+    length dup str exch (tray) putinterval	% leaves [width height] len (nametray)
+    4 add str exch 0 exch getinterval 		% leaves [width height] (nametray)
+    cvn						% leaves [width height] /nametray
+
+    % If /nametray is defined in statusdict,
+    statusdict 1 index known
+	{
+	    % insert this new definition in statusdict.
+	    {
+	    % We push these here so that they will be easy to modify.
+	    /-realtray- /-dimensions-
+
+	    DMM-nup-dict /get_N get exec 1 gt	% ???
+	    	{
+		DMM-nup-dict begin
+		DMM-nup-state begin
+
+		% If this is the first page,
+		pp-num 0 eq lp-num 0 eq and
+		    {
+		    1 index exec		% do real tray select
+		    realinitgraphics		% <-- in case new tray == old
+		    sense_paper			% detect new phys dimensions and copy into ppdict
+		    ppdict begin pp-w pp-h end	% push the width and height onto the stack
+		    }
+		    {
+		    0 index exec		% copy values from /-dimensions- onto stack
+		    }
+                    ifelse
+
+		setvpage		% logical-page-width logical-page-height on stack
+
+		end %DMM-nup-state
+		end %DMM-nup-dict
+		}
+		{
+		1 index exec		% do real tray select
+		} ifelse
+
+	    % We don't need those things anymore.
+	    pop pop
+            }
+
+	    dup length array copy
+	    dup 0 3 index statusdict exch get put	% realtray
+	    dup 1 4 index put				% [width height]
+            cvx
+            bind
+
+	    % stack is [width height] /nametray { }
+	    statusdict 2 index
+	    3 -1 roll
+	    put
+	} if
+
+    % Clean up the "stack frame".
+    pop pop
+
+    } def
+
+%
+% Temporary setup routine.
+%
+% Usage: /op [ array ] putalways
+%
+% Define the indicated operator in userdict.
+%
+% The operator will be defined so that it will change the virtual
+% page size but will not select a different physical paper size.
+%
+/putalways
+    {
+	{
+	/-realtray- /-dimensions-
+	DMM-nup-dict /get_N get exec 1 gt
+	    {
+	    DMM-nup-dict begin DMM-nup-state begin
+	    0 index exec
+	    setvpage
+	    end end
+	    }
+	    {
+	    1 index exec
+	    } ifelse
+	pop pop
+	}
+
+	dup length array copy			% copy the executable array an an ordinary array (original is lost)
+	dup					% make extra reference to array
+		0				% <-- index into executable array
+		4 index 			% copy name of realtray
+		dup 				% save name
+		where 				% find its dictionary
+			{ exch get } 		% found, fetch it using the saved name
+			{ pop {} } ifelse	% not found, discard name and use an empty procedure
+		put				% overwrite placeholder /-realtray-
+	dup 1 3 index put			% overwrite /-dimenstions- with [width height] array
+	cvx					% make it an executable array
+	bind					% look up and replace references
+
+	% Attach it the the name in userdict.
+	userdict 3 index 3 -1 roll put
+
+    % Now, if there is a nametray command in statusdict, replace it.
+    fixuptray
+    } def
+
+%
+% Temporary setup routine.
+%
+% Usage: /op [ array ] putneeded
+%
+% If the named operator exists, call putalways on it,
+% otherwise, do nothing
+%
+/putneeded
+	{
+	1 index where { pop putalways } { pop pop } ifelse
+	} bind def
+
+% A tricky way to define a new setpapertray:
+/setpaper	[   -1         -1      ] fixuptray
+
+/letter         [    8.5  in   11   in ] putalways
+/legal          [    8.5  in   14   in ] putalways
+/executivepaper [    7.25 in   10.5 in ] putneeded
+/11x17          [   11    in   17   in ] putalways
+/ledger         [   11    in   17   in ] putneeded
+
+/a0             [  841    mm 1189   mm ] putneeded
+/a1             [  594    mm  841   mm ] putneeded
+/a2             [  420    mm  594   mm ] putneeded
+/a3             [  297    mm  420   mm ] putalways
+/a4             [  210    mm  297   mm ] putalways
+/a5             [  148    mm  210   mm ] putneeded
+/a6             [  105    mm  148   mm ] putneeded
+/a7             [   74    mm  105   mm ] putneeded
+/a8             [   52    mm   74   mm ] putneeded
+/a9             [   37    mm   52   mm ] putneeded
+/a10            [   26    mm   37   mm ] putneeded
+
+/b0             [ 1000    mm 1414   mm ] putneeded
+/b1             [  707    mm 1000   mm ] putneeded
+/b2             [  500    mm  707   mm ] putneeded
+/b3             [  353    mm  500   mm ] putneeded
+/b4             [  250    mm  353   mm ] putneeded
+/b5             [  176    mm  250   mm ] putalways
+/b6             [  125    mm  176   mm ] putneeded
+/b7             [   88    mm  125   mm ] putneeded
+/b8             [   62    mm   88   mm ] putneeded
+/b9             [   44    mm   62   mm ] putneeded
+/b10            [   31    mm   44   mm ] putneeded
+
+/c0             [  914.4  mm 1300.5 mm ] putneeded
+/c1             [  650.2  mm  914.4 mm ] putneeded
+/c2             [  457.2  mm  650.2 mm ] putneeded
+/c3             [  325.1  mm  457.2 mm ] putneeded
+/c4             [  228.6  mm  325.1 mm ] putneeded
+/c5             [  162.6  mm  228.6 mm ] putneeded
+/c6             [  114.3  mm  162.6 mm ] putneeded
+/c7             [   81.3  mm  114.3 mm ] putneeded
+
+% some weird stuff
+/lettersmall	[ 8.5 in 11 in ]	putneeded
+/note		[ 8.5 in 11 in ] 	putneeded
+/a4small	[ 210 mm 297 mm ]	putneeded
+
+end % 8 dict
+
+%=============================================================================
+% Redefine commands that can change or read the pagesize.
+%=============================================================================
+
+% setpagedevice REPLACEMENT that traps paper size/tray changes.
+% Usage: <pagedevicedict> setpagedevice -
+% DictStack context:  ...  [2 nested begin/end]
+%
+/setpagedevice where
+    {
+    pop
+    userdict /setpagedevice
+	{
+	DMM-nup-dict begin
+
+	get_N 1 gt
+	    {
+	    DMM-nup-state begin
+
+	    % If printing not started yet,
+	    pp-num 0 eq lp-num 0 eq and
+		{
+		realsetpagedevice
+		realinitgraphics   % In case new tray == old & printer is smart
+		sense_paper
+		ppdict begin pp-w pp-h end
+		true
+		}
+		{  dup /PageSize known dup
+		    { exch /PageSize get aload pop 3 -1 roll } if
+		} ifelse
+
+	    % If the page size was set,
+	    { setvpage } { pop } ifelse
+
+	    end %DMM-nup-state
+	    }
+
+	    % N-Up not active
+	    {
+	    realsetpagedevice
+	    }
+	    ifelse
+
+	end %DMM-nup-dict
+	} bind put
+    } if % setpagedevice exists
+
+%
+% currentpagedevice REPLACEMENT that traps paper size requests.
+% Usage: - currentpagedevice <pagedevicedict>
+% DictStack context:  ...  [1 nested begin/end]
+%
+/currentpagedevice where
+    {
+    pop
+    userdict /currentpagedevice
+	{
+	DMM-nup-dict begin
+	realcurrentpagedevice
+	get_N 1 gt
+	    {
+	    % If there is a /PageSize key, replace it with the virtual page size.
+	    dup /PageSize known
+		{
+		dup length dict copy 			% replace with writable copy
+		DMM-nup-state begin
+		dup /PageSize [ lp-wid lp-hgt ] put
+		end % DMM-nup-state
+		readonly
+		} if
+	    } if
+	end %DMM-nup-dict
+	} bind put
+    } if
+
+
+%
+% This is a level 1 operator which was superseded by setpagedevice.
+%
+% It appears to take three parameters, the first is unknown, the second
+% and third are the requested page size.
+%
+statusdict /setpage known
+    {
+    /realsetpage statusdict /setpage get bind def
+    statusdict /setpage
+	{
+	DMM-nup-dict /get_N get exec 1 gt
+	    {
+	    pop
+	    DMM-nup-dict
+	    DMM-nup-state
+	    begin
+	    setvpage
+	    end % DMM-nup-state
+	    end % DMM-nup-dict
+	    }
+	    {
+	    DMM-nup-dict /realsetpage get exec
+	    } ifelse
+	} bind put
+    } if
+
+%
+% This is a level 1 operator which was superseded by setpagedevice.
+%
+% It appears to take four parameters, the first two are unknown, the third
+% and fourth are the requested page size.
+%
+statusdict /setpageparams known
+    {
+    /realsetpageparams statusdict /setpageparams get bind def
+    statusdict /setpageparams
+	{
+	DMM-nup-dict /get_N get exec 1 gt
+	    {
+	    pop pop
+	    DMM-nup-dict begin
+	    DMM-nup-state begin
+	    setvpage
+	    end % DMM-nup-state
+	    end % DMM-nup-dict
+	    }
+	    {
+	    DMM-nup-dict /realsetpageparams get exec
+	    } ifelse
+	} bind put
+    } if
+
+%=============================================================================
+% Startup and Shutdown
+%=============================================================================
+
+%
+% DMM-nup-pre:  Activate N-Up dictionary.  This should be called from
+%		the document setup section.
+%               Works with either conforming or non-conforming PostScript
+%               page conventions (optimized for non-conforming).
+%               Handles the following document page structure:
+%  Conforming->        ..pageimage.. showpage
+%  Conforming->  gsave ..pageimage.. grestore showpage
+%                gsave ..pageimage.. showpage grestore
+%  Conforming->   save ..pageimage.. restore gsave showpage grestore
+%                 save ..pageimage.. gsave showpage grestore restore
+%  Conforming->   save ..pageimage.. showpage restore
+%                 save ..pageimage.. restore showpage
+%       Usage: *<layout-rows>     % [Int]  Rows in layout*
+%              *<layout-cols>     % [Int]  Columns in layout*
+%               ----------------- % * Above are only used when lps-pp is 0.
+%               <lps-pp>          % [Int]  Logical pages per physical sheet
+%               <xpose>           % [Bool] Transpose logical page layout order
+%               <lscape>          % [Bool] Landscape logical page layout order
+%               <flipit>          % [Bool] Set for 270-degree rotated landscape
+%               <noclip>          % [Bool] Don't enforce clip to logical page
+%               <pbgray>          % [Int]  Boundary gray level: black 0..1,-1=no
+%               <draft>           % [Str]  "DRAFT" string notice for each page
+%               <dfont>           % [Lit]  "DRAFT" string font name
+%               DMM-nup-pre -
+%   Dictstack:  ...  [4 nested begin/end]
+%
+userdict /DMM-nup-pre
+    {
+    %
+    % Establish proper dictstack environment to avoid potential conflicts
+    % with any user definitions.
+    %
+    systemdict begin
+    userdict begin
+    DMM-nup-dict begin
+    userdict /DMM-nup-state 20 dict dup begin put
+
+    % Save our arguments.
+    % Optionals are left on stack to be picked up within setlayout invocation.
+    /dfont  xdf
+    /draft  xdf
+    /pbgray xdf
+    /noclip xdf
+    /flipit xdf
+    /lscape xdf
+    /xpose  xdf
+    /lps-pp xdf
+
+    % Set our initial state.
+    /pp-num 0 def			% current physical page number
+    /pp-total 0 def			% total physical pages to expect
+    /pp-duplex false def		% duplex printed in reverse
+    /lp-num 0 def			% logical page number on current physical page
+    /Pstate matrix def
+    /Lstate matrix def
+    /oldLstate matrix def
+    /Cstate matrix def
+    /Tstate matrix def
+    /ppstr 15 string def
+    /did-showpage false def		% Initially no showpage pending
+
+    % This is for something.
+    /ppdict 30 dict def
+    ppdict begin
+    /pp-matrix matrix def
+    % lp-col-orig lp-row-orig
+    % pi-mar
+    % pp-mar
+    % li-llx li-lly li-urx li-ury
+    % li-w li-h
+    % lp-w lp-h
+    % ll-w ll-h
+    end %ppdict
+
+    % Set N
+    lps-pp setlayout
+
+    % Pick up physical paper size
+    sense_paper
+
+    % Assume for now that logical pages are same as physical; this might be
+    % changed if any of the below paper setup ops are executed within the job.
+    ppdict begin pp-w pp-h end
+    setvpage
+
+    end		% DMM-nup-state
+    end		% DMM-nup-dict
+    end		% userdict
+    end		% systemdict
+    } put	% DMM-nup-pre into userdict
+
+%
+% N-Up shutdown routine.
+%
+userdict /DMM-nup-post
+    {
+    DMM-nup-dict begin
+
+    % If we were doing N-Up,
+    % Emmit any lingering physical page
+    get_N 1 gt
+	{
+	DMM-nup-state begin
+	lp-num 0 gt
+	    { emitppage } if
+	end
+	} if
+
+    % Clear out our state dictionary.
+    userdict /DMM-nup-state 1 dict put
+
+    end
+    } bind put
+
+end 	% DMM-nup-dict
+readonly def
+
+% Restore packing setting
+systemdict /setpacking known { setpacking } if
+
+%%EOF

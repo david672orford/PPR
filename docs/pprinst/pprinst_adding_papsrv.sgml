@@ -42,22 +42,15 @@ should cause to appear in the Macintosh Choosers.
 
 <Para>
 After you add or delete an entry in <Literal remap="tt">/etc/ppr/papsrv.conf</Literal>, you must
-restart <Emphasis remap="bf">papsrv</Emphasis>.  The shell script <Emphasis remap="bf">/usr/ppr/bin/papsrv&lowbar;kill</Emphasis> will
-kill the old server for you.  Here are commands that will kill and restart the
-server:
-</Para>
-
-<Para>
-
+restart <Emphasis remap="bf">papsrv</Emphasis>.  Here are commands that will shut down and restart 
+the server:
 <Screen>
-# /usr/ppr/bin/papsrv_kill
-Killing papsrv, PID=4691.
-Waiting while papsrv shuts down...
-Waiting while papsrv shuts down...
+# /usr/lib/ppr/bin/papsrv --stop
+Sending SIGTERM to papsrv (PID=10163).
+Waiting while papsrv shuts down....
 Shutdown complete.
-# /usr/ppr/bin/papsrv
+# /usr/lib/ppr/bin/papsrv
 </Screen>
-
 </Para>
 
 <Para>

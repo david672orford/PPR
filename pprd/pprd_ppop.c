@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ppop.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 9 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 25 January 2002.
 */
 
 /*
@@ -184,10 +199,9 @@ static void ppop_list(const char command[])
 	    ** append a line with a single period to
 	    ** indicate the end of the reply file.
 	    */
-	    while( (len = read(qfile, buffer, sizeof(buffer))) > 0 )
+	    while((len = read(qfile, buffer, sizeof(buffer))) > 0)
 	    	{
-		if((int)fwrite(buffer, sizeof(char), len, reply_file) != len)
-		    fatal(0, "%s(): fwrite() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		fwrite(buffer, sizeof(char), len, reply_file);
 	    	}
 
 	    if(len == -1)
@@ -412,7 +426,7 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 
 	    case PRNSTATUS_STOPPING:
 		fprintf(reply_file, "%d\n", EXIT_OK);
-		if(printers[prnid].ppop_pid)			/* If another ppop waiting for a stop command */
+		if(printers[prnid].ppop_pid > 0)		/* If another ppop waiting for a stop command */
 		    {						/* to finish, let it wait no longer. */
 		    kill(printers[prnid].ppop_pid, SIGUSR1);
 		    printers[prnid].ppop_pid = (uid_t)0;	/* (Unfortunately, it won't know it failed.) */
@@ -466,17 +480,10 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 		    }			/* if halt, drop thru */
 
 	    case PRNSTATUS_PRINTING:
-		/* fprintf(reply_file, "%d\n", EXIT_OK); */
-		if( (action&3) == 2 )		/* if halt, not stop */
+		if( (action&3) == 2 )		/* if halt, not stop (i.e., don't wait for job to finish) */
 		    {				/* change state to halting */
 		    printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
-
-		    DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_local_to_name(prnid), (long)printers[prnid].pid));
-		    if(kill(printers[prnid].pid, SIGTERM) < 0)
-			{
-			error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-			    	(long)printers[prnid].pid, errno, gu_strerror(errno) );
-			}
+		    pprdrv_kill(prnid);
 		    }
 		else
 		    {				/* if stop requested, arrange to stop */
@@ -493,9 +500,10 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 	    }
 	}
 
-    if(delayed_action)			/* If action was not immedate */
+    /* If action was not immedate */
+    if(delayed_action)
 	{
-	if(action & 128)		/* If we are instructed to wait if */
+	if(action & 128)			/* If we are instructed to wait if */
 	    {					/* for completion of action and */
 	    if(printers[prnid].ppop_pid)	/* if someone else is */
 		{				/* using notify, we can't */
@@ -576,7 +584,7 @@ static void ppop_hold_release(const char command[], int action)
                     case STATUS_WAITING:	/* if not printing, */
                     case STATUS_WAITING4MEDIA:	/* just quitely go to `hold' */
                         fprintf(reply_file, "%d\n", EXIT_OK);
-                        p_job_new_status(&queue[x], STATUS_HELD);
+                        queue_p_job_new_status(&queue[x], STATUS_HELD);
                         break;
                     case STATUS_HELD:		/* if already held, say so */
                         fprintf(reply_file, "%d\n", EXIT_ALREADY);
@@ -602,7 +610,7 @@ static void ppop_hold_release(const char command[], int action)
                         printer_new_status(&printers[queue[x].status], PRNSTATUS_SEIZING);
                         printers[queue[x].status].cancel_job = FALSE;
                         printers[queue[x].status].hold_job = TRUE;
-                        p_job_new_status(&queue[x], STATUS_SEIZING);
+                        queue_p_job_new_status(&queue[x], STATUS_SEIZING);
                         break;
                     default:                        /* printing? */
                         if(queue[x].status >= 0)
@@ -615,15 +623,18 @@ static void ppop_hold_release(const char command[], int action)
                                     remote_jobid(destnode,destname,id,subid,homenode),
                                     destid_to_name(nodeid_local(), prnid));
 
-                            p_job_new_status(&queue[x], STATUS_SEIZING);
+                            queue_p_job_new_status(&queue[x], STATUS_SEIZING);
                             printer_new_status(&printers[prnid], PRNSTATUS_SEIZING);
                             printers[prnid].hold_job = TRUE;
 
                             DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_local_to_name(prnid), (long)printers[prnid].pid));
-                            if(kill(printers[prnid].pid, SIGTERM) < 0)
-                                {
-                                error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-                                    (long)printers[prnid].pid, errno, gu_strerror(errno) );
+			    if(printers[prnid].pid <= 0)
+			    	{
+			    	error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);
+			    	}
+			    else
+				{
+				pprdrv_kill(prnid);
                                 }
                             }
                         else
@@ -644,7 +655,7 @@ static void ppop_hold_release(const char command[], int action)
                     case STATUS_HELD:       /* "held" or "arrested" jobs */
                     case STATUS_ARRESTED:   /* may be made "waiting" */
                         fprintf(reply_file, "%d\n", EXIT_OK);
-                        p_job_new_status(&queue[x], STATUS_WAITING);
+                        queue_p_job_new_status(&queue[x], STATUS_WAITING);
                         if(nodeid_is_local_node(queue[x].destnode_id))
                             {
                             media_set_notnow_for_job(&queue[x], TRUE);
@@ -754,14 +765,10 @@ static void ppop_cancel_purge(const char command[])
 		    printers[prnid].cancel_job = TRUE;
 
 		    /* Change the job status to "being canceled". */
-		    p_job_new_status(&queue[x], STATUS_CANCEL);
+		    queue_p_job_new_status(&queue[x], STATUS_CANCEL);
 
-		    DODEBUG_PPOPINT(("Killing pprdrv process %ld", (long)printers[prnid].pid));
-		    if(kill(printers[prnid].pid, SIGTERM) == -1)
-			{
-			error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-				(long)printers[prnid].pid, errno, gu_strerror(errno) );
-			}
+		    /* Kill pprdrv. */
+		    pprdrv_kill(prnid);
 		    }
 
 		/* If a cancel is in progress, */
@@ -787,7 +794,7 @@ static void ppop_cancel_purge(const char command[])
                                 printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
                             printers[prnid].hold_job = FALSE;
                             printers[prnid].cancel_job = TRUE;
-                            p_job_new_status(&queue[x], STATUS_CANCEL);
+                            queue_p_job_new_status(&queue[x], STATUS_CANCEL);
 			    break;
 		    	    }
 			}
@@ -809,10 +816,7 @@ static void ppop_cancel_purge(const char command[])
 				RESP_CANCELED);
 			}
 
-		    /* Remove the job files.  (We may do this only after responding.) */
-		    queue_unlink_job(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id);
-
-		    /* We may now remove it from the queue array. */
+		    /* Remove the job from the queue array and its files form the spool directories. */
 		    queue_dequeue_job(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id);
 
 		    x--;        /* compensate for deletion */
@@ -1269,7 +1273,7 @@ static void ppop_move(const char command[])
 	    */
 	    if(queue[x].status == STATUS_STRANDED)
 	    	{
-		p_job_new_status(&queue[x], STATUS_WAITING);
+		queue_p_job_new_status(&queue[x], STATUS_WAITING);
 	    	}
 
 	    /*
@@ -1307,21 +1311,23 @@ static void ppop_move(const char command[])
 
     unlock(); 			/* we are done modifying the queue array */
 
-    switch(moved)               /* tell how many jobs where moved */
+    /* Tell how many files were moved. */
+    switch(moved)
 	{
 	case 0:
-	    if(id == -1)	/* if moving all files on destination, */
+	    if(id == -1)		/* If we tried to move all files on destination, */
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADJOB);
 		fprintf(reply_file, _("No jobs are queued for \"%s\".\n"), destname);
 		}
-	    else
+	    else if(printing > 0)	/* If files not moved because they were printing, */
 		{
-		if(printing==0) /* suppress if we already said it was */
-		    {           /* printing */
-		    fprintf(reply_file, "%d\n", EXIT_BADJOB);
-		    fprintf(reply_file, _("Job \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
-		    }
+		fprintf(reply_file, "%d\n", EXIT_OK);	/* Is this right? !!! */
+		}
+	    else			/* If no matching file, */
+		{
+		fprintf(reply_file, "%d\n", EXIT_BADJOB);
+		fprintf(reply_file, _("Job \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
 		}
 	    break;
 	case 1:
@@ -1334,6 +1340,7 @@ static void ppop_move(const char command[])
 	    break;
 	}
 
+    /* Say how many files wern't moved because they were being printed. */
     if(printing > 0)
     	{
 	if(printing == 1)

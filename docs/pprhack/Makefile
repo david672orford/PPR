@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/pprhack/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,26 +10,36 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 20 April 2001.
+# Last modified 15 January 2002.
 #
 
+# Pull in settings from Configure, the PPR version number, and special rules
+# for building documentation.
 include ../../makeprogs/global.mk
+include ../../include/version.mk
 include ../rules.mk
 
 #=== Inventory ==============================================================
 
+BUILT=pprhack.html pprhack.ps pprhack.pdf
 
 #=== Build ==================================================================
 
-all: 
+all-docs: $(BUILT)
 
 #=== Install ================================================================
 
-install:
+install: all-docs
+	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprhack
+	../$(INSTALLDATA) $(DOCSDIR)/pprhack $(BUILT)
 
 #=== Housekeeping ===========================================================
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS)
+
+# Remove anything that can be reconstructed.
+veryclean: clean
+	$(RMF) $(BUILT)
 
 # end of file

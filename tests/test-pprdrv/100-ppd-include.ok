@@ -11,7 +11,7 @@ clear_output: ppop: 0
 clear_output: rm: 0
 WARNING: No valid "%%Pages:" comment
 ppr: 0
-%!
+%!PS-Adobe-3.0
 %%For: (ppr)
 %%Pages: 1
 %%PageOrder: Ascend

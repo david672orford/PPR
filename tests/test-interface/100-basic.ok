@@ -17,7 +17,7 @@ QUEUEFILE=hhhh:regression-test1=nnnn.0(hhhh)
 ROUTING="My Routing Message"
 FORLINE="ppr"
 BARBARLANG=""
-%!
+%!PS-Adobe-3.0
 %%For: (ppr)
 %%Routing: My Routing Message
 %%Pages: 0

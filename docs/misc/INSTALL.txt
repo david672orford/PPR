@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/INSTALL.txt
  mouse:~ppr/src/INSTALL.txt (symbolic link)
- Last revised 20 April 2001
+ Last revised 2 February 2002.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -27,13 +27,13 @@ version of PPR is still considered experimental.
 * Notes for MS-Windows NT 4.0 and UWIN 2.0
 * Notes for MS-Windows NT 4.0 and Cygwin
 * Simple Compiling Instructions
-* Upgrading to PPR 1.43 from previous versions
+* Upgrading to PPR 1.50 from previous versions
 
 =============================================================================
  Requirements for Installing PPR
 =============================================================================
 
-1) The PPR source archive (ppr-1.44.tar.gz)
+1) The PPR source archive (ppr-1.50.tar.gz)
 
 2) Gunzip (to uncompress the source archive)
 
@@ -292,7 +292,7 @@ clone but it is good enough for PPR's purposes
    cd /usr/local/src
    gunzip -c ppr-1.44.tar.gz | tar -xvf -
 
-3) Change directory to "ppr-1.44" and run "./Configure".  Answer the questions.
+3) Change directory to "ppr-1.50" and run "./Configure".  Answer the questions.
 
 4) Run "make" and then "make install".
 
@@ -302,12 +302,29 @@ If you have problems building PPR and want to delve into the Makefiles, you
 should probably read PORTING.txt first.
 
 ============================================================================
- Upgrading to PPR 1.44 from previous versions
+ Making Binary Distributions
+============================================================================
+
+If you are compiling a binary distribution of PPR, such as an RPM, you can
+use the variable RPM_BUILD_ROOT to control where "make install" installs
+PPR.  If this environment variable is set, then its contents will be
+prepended to all install paths.  The sample ppr.spec uses this feature.
+
+For example, here are commands to build a tar archive binary distribution
+from a configured and built PPR source directory:
+
+$ mkdir /tmp/ppr-binary
+$ make RPM_BUILD_ROOT=/tmp/ppr-binary install
+$ cd /tmp/ppr-binary
+$ tar zcvf ../ppr-binary.tar.gz .
+
+============================================================================
+ Upgrading to PPR 1.50 from previous versions
 ============================================================================
 
 This is a list of important changes you should be aware of when upgrading
-from a prevous version of PPR.  Previous versions include 1.43, 1.42, 1.41,
-1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.
+from a prevous version of PPR.  Previous versions include 1.44, 1.43, 1.42, 
+1.41, 1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.
 
 It is hard to keep track of what has changed.  If, when upgrading, you find
 things I have omitted, please write to <ppr-bugs@mail.trincoll.edu>.
@@ -334,7 +351,7 @@ You should also change the PPR home directory to /usr/lib/ppr and move anything
 else you put in /usr/ppr (such as PPD files, .k5login, .profile, etc.) into 
 either /usr/lib/ppr or /usr/share/ppr.
 
-2) The version 1.41 queue file format differs from all previous versions.
+2) The version 1.50 queue file format differs from all previous versions.
 Therefor, you should empty the queues before upgrading.
 
 3) Be aware that certain files formerly in /etc/ppr and /usr/ppr/globalconf

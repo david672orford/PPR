@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_print.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,14 +10,13 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 15 June 2000.
+** Last modified 18 September 2001.
 */
 
 #include "before_system.h"
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -34,10 +33,10 @@ static void logit(const char *command_path, const char **argv)
     if((f = fopen(UPRINT_LOGFILE, "a")) != (FILE*)NULL)
 	{
 	int x;
-	fprintf(f, "--> %s:", command_path);
-	for(x=0; argv[x]; x++)
+	fprintf(f, "--> %s", command_path);
+	for(x=1; argv[x]; x++)
 	    {
-	    if(strchr(argv[x], ' '))
+	    if(strlen(argv[x]) == 0 || strchr(argv[x], ' '))
 		fprintf(f, " \"%s\"", argv[x]);
 	    else
 		fprintf(f, " %s", argv[x]);
@@ -173,7 +172,8 @@ int uprint_print(void *p, gu_boolean remote_too)
 	    argv[i++] = "stdin";
 	    }
 	argv[i] = (const char *)NULL;
-	if(upr->argc > 0) logit(command_path, argv);
+	if(upr->argc > 0)
+	    logit(command_path, argv);
 	ret = uprint_run(upr->uid, command_path, argv);
     	}
 
@@ -194,7 +194,8 @@ int uprint_print(void *p, gu_boolean remote_too)
 	    argv[i] = upr->files[x];
 	    argv[i+1] = (const char *)NULL;
 
-	    if(upr->argc > 0) logit(command_path, argv);
+	    if(upr->argc > 0)
+	        logit(command_path, argv);
 
 	    if((ret = uprint_run(upr->uid, command_path, argv)) != 0)
 	    	break;
@@ -216,7 +217,8 @@ int uprint_print(void *p, gu_boolean remote_too)
 	    ret = -1;
 	    }
 
-	if(upr->argc > 0) logit(command_path, argv);
+	if(upr->argc > 0)
+	    logit(command_path, argv);
 
 	ret = uprint_run(upr->uid, command_path, argv);
 	}
@@ -227,7 +229,10 @@ int uprint_print(void *p, gu_boolean remote_too)
 	FILE *f;
 	if((f = fopen(UPRINT_LOGFILE, "a")) != (FILE*)NULL)
 	    {
-	    fprintf(f, "result = %d\n\n", ret);
+	    if(ret == -1)
+		fprintf(f, "result=%d, uprint_errno=%d (%s)\n\n", ret, uprint_errno, uprint_strerror(uprint_errno));
+	    else
+		fprintf(f, "result=%d\n\n", ret);
 	    fclose(f);
 	    }
 	}

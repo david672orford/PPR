@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/misc/prn_addwiz.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 6 April 2001.
+# Last modified 3 January 2002.
 #
 
 #
@@ -52,12 +52,12 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 	'lpr' => N_("RFC 1179 (lpr/lpd protocol)"),
 	'smb' => N_("LAN Manager/MS-Windows"),
 	'gssimple' => "--hide",
-	'gsatalk' => N_("GS & PAP"),
-	'gstcpip' => N_("GS & AppSocket"),
-	'gsserial' => N_("GS & Server Serial Port"),
-	'gsparallel' => N_("GS & Server Parallel Port"),
-	'gslpr' => N_("GS & lpr/lpd"),
-	'gssmb' => N_("GS & LANMAN")
+	'gsatalk' => "--hide",
+	'gstcpip' => "--hide",
+	'gsserial' => "--hide",
+	'gsparallel' => "--hide",
+	'gslpr' => "--hide",
+	'gssmb' => "--hide"
 	);
 
 #====================================================================
@@ -136,7 +136,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Add a Printer"),
-	'picture' => "interface.jpg",
+	'picture' => "wiz-newprn.jpg",
 	'dopage' => sub {
 		print "<p><span class=\"label\">", H_("PPR Printer Queue Creation"), "</span></p>\n";
 		print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
@@ -150,7 +150,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'choose_int',
 	'title' => N_("Select an Interface Program"),
-	'picture' => "interface.jpg",
+	'picture' => "wiz-interface.jpg",
 	'dopage' => sub {
 		# Get a sorted list of the available interfaces.
 		opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
@@ -223,7 +223,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'int_atalk',
 	'title' => N_("AppleTalk Interface: Choose a Zone"),
-	'picture' => "address.jpg",
+	'picture' => "wiz-address.jpg",
 	'dopage' => sub {
 		my $zone = cgi_data_move('int_atalk_zone', '');
 
@@ -276,7 +276,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'int_atalk',
 	'title' => N_("AppleTalk Interface: Choose a Printer"),
-	'picture' => "address.jpg",
+	'picture' => "wiz-address.jpg",
 	'dopage' => sub {
 		my $address = cgi_data_move('int_atalk_address', '');
 		my $zone = $data{'int_atalk_zone'};
@@ -334,7 +334,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'int_tcpip',
 	'title' => N_("Raw TCP/IP Interface: Choose an Address"),
-	'picture' => "address.jpg",
+	'picture' => "wiz-address.jpg",
 	'dopage' => sub {
 		print "<p>", H_("It is necessary to know the IP address of the printer,\n"
 				. "or preferably a DNS name which represents that address.\n"
@@ -403,7 +403,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'int_lpr',
 	'title' => N_("LPR Interface: Choose an Address"),
-	'picture' => "address.jpg",
+	'picture' => "wiz-address.jpg",
 	'dopage' => sub {
 		print "<p>", H_("It is necessary to know the IP address of the server,\n"
 			. "or preferably a DNS name which represents that address.\n"
@@ -442,7 +442,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'int_generic',
 	'title' => N_("Interface Setup"),
-	'picture' => "address.jpg",
+	'picture' => "wiz-address.jpg",
 	'dopage' => sub {
 		print "<p>", html(sprintf(_("No special help is available for the interface called\n"
 			. "\"%s\".  Therefore, we present the generic\n"
@@ -500,7 +500,7 @@ $addprn_wizard_table = [
 	{
 	'label' => 'ppd',
 	'title' => N_("Choose a PPD File"),
-	'picture' => "ppd.jpg",
+	'picture' => "wiz-ppd.jpg",
 	'dopage' => sub {
 		# PPD file, if any, selected on a previous pass through this form.
 		my $checked_ppd = cgi_data_move('ppd', undef);
@@ -544,7 +544,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Add a Printer"),
-	'picture' => "newprn.jpg",
+	'picture' => "wiz-newprn.jpg",
 	'dopage' => sub {
 		print "<p>", H_("The printer must have a name.  The name may be up\n"
 			. "to 16 characters long.  Control codes, tildes, and spaces\n"
@@ -575,7 +575,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => _("Describe the Printer"),
-	'picture' => "name.jpg",
+	'picture' => "wiz-name.jpg",
 	'dopage' => sub {
 		print "<p>", html(sprintf(_("While short printer names are convenient in certain contexts,\n"
 			. "it is sometimes helpful to have a longer, more informative\n"
@@ -604,7 +604,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Additional Information"),
-	'picture' => "name.jpg",
+	'picture' => "wiz-name.jpg",
 	'dopage' => sub {
 		print "<p>", H_("On this screen you may record additional information\n"
 			. "about the printer for future reference."), "</p>\n";
@@ -635,7 +635,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Save New Printer"),
-	'picture' => "save.jpg",
+	'picture' => "wiz-save.jpg",
 	'dopage' => sub {
 		print "<p><span class=\"label\">", H_("Saving new printer:"), "</span></p>\n";
 		print "<pre>\n";

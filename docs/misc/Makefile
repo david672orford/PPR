@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 8 May 2001.
+# Last modified 1 August 2001.
 #
 
 # Pull in settings from Configure.
@@ -40,11 +40,11 @@ NOTBUILT=\
 
 #=== Build ==================================================================
 
-all: $(NOTBUILT) $(BUILT)
+all-docs: $(NOTBUILT) $(BUILT)
 
 #=== Install ================================================================
 
-install: all
+install: all-docs
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/misc
 	../$(INSTALLDATA) $(DOCSDIR)/misc $(NOTBUILT) $(BUILT)
 

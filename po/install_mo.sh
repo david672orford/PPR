@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/po/install_mo.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 13 September 2000.
+# Last modified 31 July 2001.
 #
 
 #
@@ -66,7 +66,7 @@ for potfile in *.pot
     if [ -f "$lang-$division.po" ]
         then
         echo -n " $division"
-        msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo"
+        msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" || exit 1
 	echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
         else
         echo -n " $division(missing)"

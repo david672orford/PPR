@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 2 January 2001.
+# Last modified 30 October 2001.
 #
 
 sub demand_authentication
@@ -23,17 +23,21 @@ my $content = <<"Auth10";
 <body>
 <h1>${\H_("Authorization Required")}</h1>
 
-<p>${\H_("Your web browser failed to validate your username and password using an MD5 Digest as defined 
-by RFC 2117.  If you entered your username and password correctly, it may be that your browser
-doesn't support MD5 Digest authentication.")}</p>
+<p>${\H_("Your web browser failed to validate your username and password\n"
+	. "using an MD5 Digest as defined by RFC 2117.  If you entered your\n"
+	. "username and password correctly, it may be that your browser\n"
+	. "doesn't support MD5 Digest authentication.")}</p>
 
-<p>${\H_("If your server is running Linux and the web browser is running on the server, try connecting
-to localhost rather than to the machine name.  On Linux systems the PPR web server can determine
-the user id of the web browser if the connection is to localhost.")}</p>
+<p>${\H_("If your server is running Linux and the web browser is running on\n"
+	. "the server, try connecting to localhost rather than to the machine\n"
+	. "name.  On Linux systems the PPR web server can determine the user\n"
+	. "id of the web browser if the connection is to localhost.")}</p>
 
-<p>${\H_("If your browser supports JavaScript, Cookies, and Frames, then click on the \"Cookie Login\" button
-in PPR's Printer Control Panel.  A window will pop up that will log you in using a modified form
-of MD5 Digest authentication implemented with JavaScript and a CGI script.")}</p>
+<p>${\H_("If your browser supports JavaScript, Cookies, and Frames, then\n"
+	. "click on the \"Cookie Login\" button in PPR's Printer Control\n"
+	. "Panel.  A window will pop up that will log you in using a\n"
+	. "modified form of MD5 Digest authentication implemented with\n"
+	. "JavaScript and a CGI script.")}</p>
 
 </body>
 </html>

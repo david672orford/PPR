@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 9 August 1999.
+# Last modified 5 December 2001.
 #
 
 # Filled in by scriptfixup.sh:
@@ -22,7 +22,7 @@ RUNDIR="$VAR_SPOOL_PPR/run"
 
 if [ ! -f $RUNDIR/papsrv.pid ]
 	then
-	echo "papsrv_kill: papsrv is not running"
+	echo "papsrv-kill: papsrv is not running"
 	exit 1
 	fi
 

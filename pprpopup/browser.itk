@@ -1,0 +1,1409 @@
+#
+# browser.itk
+# Copyright 1995--2002, Trinity College Computing Center.
+# Portions Copyright (c) 1996 DSC Technologies Corporation
+#	(Note: check to see if this is still true.)
+# Written by David Chappell.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 16 January 2002.
+#
+
+package require Itcl
+package require Itk
+package require Iwidgets
+
+#===========================================================
+# WWW Browser Object DOM (very limited)
+#===========================================================
+
+#-----------------------------------------------------------
+# This object represents the contents of a <form> tag.
+#-----------------------------------------------------------
+itcl::class Browser::form {
+  protected variable browser
+  public variable action ""
+  public variable method "GET"
+  public variable name ""
+  protected variable elements {}
+
+  # This constructor simply records the browser object which
+  # contains this form.
+  constructor {browser_obj} {
+    set browser $browser_obj
+    }
+
+  # Return a reference to the browser object to which this form belongs.
+  public method get_browser {} {
+    return $browser
+    }
+
+  # Set the focus to the first element that can accept it.
+  public method accept_focus {} {
+    puts "Browser::form::accept_focus"
+    foreach el $elements {
+	puts "  $el"
+	if {[$el accept_focus] != 0} {
+	    return
+	    }
+	}
+    }
+
+  # This is called whenever an element is added to the form.  The element
+  # objects are kept in a list so that they can all be found at submit time.
+  public method add_element {newelement} {
+    $newelement configure -containing_form $this
+    lappend elements $newelement
+    }
+
+  # This is called to reset the form to its initial state.
+  public method reset {} {
+    puts "Browser::form::reset"
+    foreach element $elements {
+      $element reset
+      }
+    }
+
+  # This method gets the value of a form element by name.
+  public method get_value_by_name {name} {
+    foreach element $elements {
+      if {[string compare [$element get_name] $name] == 0} {
+	return [lindex [$element get_value] 1]
+      	}
+      }
+    return ""
+    }
+
+  # This is the function which is called to submit the form.
+  # It must gather the values, do the GET or POST, and
+  # fill the browser window with the returned document.
+  public method submit {} {
+    puts "Browser::form::submit"
+
+    # Get the value from each element and collapse them all into
+    # a flat list of name and value pairs.
+    set list {}
+    foreach element $elements {
+      #puts "  $element"
+      set ret [$element get_value]
+      #puts "    $ret"
+      set list [concat $list $ret]
+      }
+
+    # Encode the form values.
+    set encoded [eval ::http::formatQuery $list]
+    #puts $encoded
+
+    # Make sure this form has an action URL.
+    if {$action == ""} {
+      puts "!!! No Action for Form \"$name\" !!!"
+      return
+      }
+
+    # Take the required action according to the request method.
+    switch -exact -- [string toupper $method] {
+      GET {
+    	$browser import $action $encoded
+    	}
+      POST {
+    	$browser import $action "" $encoded
+    	}
+      default {
+	puts "Invalid form method \"$method\""
+        }
+      }
+
+    }
+
+  }
+
+#-----------------------------------------------------------
+# This is the basic class for representing <input>,
+# <select>, <textarea>, <button>, etc.
+#-----------------------------------------------------------
+itcl::class Browser::form_element {
+  public variable containing_form ""
+  public variable name ""
+  public variable value_initial ""
+  public variable value ""
+  protected variable widget ""
+
+  # Restore the field to its original value.
+  public method reset {} {
+    set value $value_initial
+    }
+
+  # Set the focus to this element.
+  public method accept_focus {} {
+    puts "Browser::form_element::accept_focus"
+    if {$widget != ""} {
+      puts "  setting focus to widget $widget"
+      focus $widget
+      return 1
+      } else {
+      puts "  can't accept focus"
+      return 0
+      }
+    }
+
+  # Return the name.
+  public method get_name {} {
+    return $name
+    }
+
+  # Get the name and value as a list suitable for submitting.
+  public method get_value {} {
+    if {[string compare $name ""] != 0} {
+      return [list $name $value]
+      }
+    return {}
+    }
+
+  # This is used to determine the background color.
+  protected method get_bgcolor {} {
+    return [[$containing_form get_browser] get_bgcolor]
+    }
+
+  # Create the window and return its name so that it
+  # can be added to the text widget.
+  public method window {newname}
+  }
+
+# If the default value is changed, change the current value.
+itcl::configbody Browser::form_element::value_initial {
+  set value $value_initial
+  }
+
+#-----------------------------------------------------------
+# <input type="button">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_button {
+  inherit form_element
+
+  public variable onclick ""
+
+  public method press {} {
+    puts "input button press"
+    if {[string compare $onclick ""] != 0} {
+	puts "  Calling onclick handler"
+	[$containing_form get_browser] fake_javascript $onclick
+	}
+    }
+
+  public method window {newname} {
+    button $newname -command [itcl::code $this press]
+    if [info exists value] {
+      $newname configure -text $value
+      }
+    set widget $newname
+    ### bind $newname <Return> [list $newname invoke]
+    return $newname
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="checkbox">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_checkbox {
+  inherit form_element
+
+  public variable checked 0
+
+  public method reset {} {
+    if {$checked} {
+      set value $value_initial
+      } else {
+      set value ""
+      }
+    }
+
+  public method window {newname} {
+    checkbutton $newname \
+    	-offvalue "" \
+    	-onvalue $value_initial \
+    	-variable [itcl::scope value] \
+    	-background [get_bgcolor] \
+    	-activebackground [get_bgcolor] \
+    	-highlightthickness 0
+    $this reset
+    set widget $newname
+    return $newname
+    }
+
+  # We must override this function since checkboxes contribute
+  # no value when they are unchecked.
+  public method get_value {} {
+    if {[string compare $name ""] != 0} {
+      if {[string compare $value ""] != 0} {
+        return [list $name $value]
+        }
+      }
+    return {}
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="hidden">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_hidden {
+  inherit form_element
+  }
+
+#-----------------------------------------------------------
+# <input type="image">
+# Imagemaps are not implemented yet.
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_image {
+  inherit form_element
+
+  public variable src ""
+
+  public method window {newname} {
+    button $newname -text $src
+    set widget $newname
+    return $newname
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="radio">
+# There must be a better way than a global variable.
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_radio {
+  inherit form_element
+
+  public method window {newname} {
+    global radio_groups
+    radiobutton $newname \
+    	-value $value_initial \
+    	-variable radio_groups($containing_form.$name) \
+    	-background [get_bgcolor] \
+    	-activebackground [get_bgcolor] \
+    	-highlightthickness 0
+    set widget $newname
+    return $newname
+    }
+
+  public method get_value {} {
+    global radio_groups
+    if {[string compare $name ""] != 0} {
+      if {[string compare $value $radio_groups($containing_form.$name)] == 0} {
+	return [list $name $value]
+        }
+      }
+    return {}
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="reset">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_reset {
+  inherit form_element
+
+  public method window {newname} {
+
+    button $newname -command [itcl::code $containing_form reset]
+    if [info exists value] {
+      $newname configure -text $value
+      }
+    set widget $newname
+    return $newname
+    }
+
+  # A reset button doesn't submit a value.
+  public method get_value {} {
+    return {}
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="submit">
+# The button will not inherit the background color.
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_submit {
+  inherit form_element
+
+  protected variable pressed false
+
+  public method press {} {
+    set pressed true
+    $containing_form submit
+    }
+
+  public method window {newname} {
+    button $newname -command [itcl::code $this press]
+    if [info exists value] {
+      $newname configure -text $value
+      }
+    set widget $newname
+    ### bind $newname <Return> [list $newname invoke]
+    return $newname
+    }
+
+  public method get_value {} {
+    if {$pressed && [string compare $name ""] != 0} {
+      return [list $name $value]
+      }
+    return {}
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="text">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_text {
+  inherit form_element
+
+  public variable size 15
+  public variable maxlength 256
+
+  public method window {newname} {
+    entry $newname \
+    	-textvariable [itcl::scope value] \
+    	-background white \
+    	-width $size
+    bind $newname <Return> [itcl::code $containing_form submit]
+    set widget $newname
+    return $newname
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <input type="password">
+#-----------------------------------------------------------
+itcl::class Browser::form_element_input_password {
+  inherit form_element_input_text
+
+  public variable auth_md5 ""
+
+  public method window {newname} {
+    entry $newname \
+	-textvariable [itcl::scope value] \
+	-background white \
+	-width $size \
+	-show *
+    bind $newname <Return> [itcl::code $containing_form submit]
+    set widget $newname
+    return $newname
+    }
+
+  public method get_value {} {
+    if {[string compare $name ""] != 0} {
+      if {[string compare $auth_md5 ""] != 0} {
+	# MD5 mode
+	regexp {^([^ ]+) ([^ ]+) ([^ ]+)$} $auth_md5 junk username_field realm nonce
+        puts "  username_field=$username_field, realm=$realm, nonce=$nonce"
+	set username [$containing_form get_value_by_name $username_field]
+	puts "  username=$username"
+	set H1 [md5pure::md5 "$username:$realm:$value"]
+	puts "  H1=$H1"
+	set result [md5pure::md5 "$H1:$nonce"]
+	puts "  result=$result"
+	return [list $name "$nonce $result"]
+      	} else {
+	# Normal mode
+        return [list $name $value]
+        }
+      }
+    return {}
+    }
+  }
+
+#-----------------------------------------------------------
+# <select>
+#-----------------------------------------------------------
+itcl::class Browser::form_element_select {
+  inherit form_element
+
+  public variable multiple 0
+  public variable size 1
+  private variable items {}
+
+  # This is called when the <option> tag is seen.
+  public method option {label value selected} {
+    #puts "<option label=\"$label\" value=\"$value\">"
+    lappend items [list $label $value $selected]
+    }
+
+  # This is called with the contents of the <option> tag.
+  public method appendlabel {newtext} {
+    #puts "    $newtext"
+    set last_index [llength $items]
+    if {$last_index > 0} {
+	incr last_index -1
+	set last [lindex $items $last_index]
+	set last_label [lindex $last 0]
+	set last_value [lindex $last 1]
+	set last_selected [lindex $last 2]
+	set last_label "$last_label$newtext"
+	set items [lreplace $items $last_index 1 [list $last_label $last_value $last_selected]]
+	}
+    }
+
+  # Reset it to the original state.
+  public method reset {} {
+    if {$size > 1} {
+    	$widget selection clear 0 end
+	set x 0
+	foreach item $items {
+	    if {[lindex $item 2]} {
+	    	$widget selection set $x
+	    	}
+	    incr x
+	    }
+   	} else {
+    	$widget select 0
+	set x 0
+	foreach item $items {
+	    if {[lindex $item 2]} {
+	    	$widget select $x
+	    	}
+	    incr x
+	    }
+    	}
+    }
+
+  # Create the Tk window and return its handle.
+  public method window {newname} {
+
+    # Use a listbox or a drop-down menu.
+    if {$size > 1} {
+	iwidgets::Scrolledlistbox $newname \
+		-hscrollmode dynamic -vscrollmode dynamic \
+		-textbackground white \
+		-borderwidth 2 -relief groove
+	if {$multiple} {
+	    $newname configure -selectmode multiple
+	    }
+    } else {
+	iwidgets::Optionmenu $newname -background [get_bgcolor]
+    }
+
+    # Insert the items into the listbox while remembering the
+    # length of the longest one.
+    set maxwidth 4
+    foreach item $items {
+	set item_text [lindex $item 0]
+	$newname insert end $item_text
+	set item_text_len [string length $item_text]
+	if {$item_text_len > $maxwidth} {
+	    set maxwidth $item_text_len
+	    }
+	}
+
+    # If the listbox is a listbox and not a drop down menu, set
+    # its width and height.
+    if {$size > 1} {
+	set listboxwidth [expr $maxwidth + 2]
+	$newname configure -visibleitems "${listboxwidth}x${size}"
+	}
+
+    set widget $newname
+    $this reset
+
+    return $newname
+    }
+
+  # This is called at submit time.  It returns a list of
+  # name, value lists.
+  public method get_value {} {
+
+    if {[string compare $name ""] == 0} {
+    	return {}
+    	}
+
+    if {$size > 1} {
+	set selectedlist [$widget getcurselection]
+        } else {
+	set selectedlist [list [$widget get]]
+        }
+    #puts "  $name: $selectedlist"
+
+    set values_list {}
+    foreach item $selectedlist {
+	lappend values_list $name
+	lappend values_list $item
+    	}
+
+    return $values_list
+    }
+
+  }
+
+#-----------------------------------------------------------
+# <textarea>
+#-----------------------------------------------------------
+itcl::class Browser::form_element_textarea {
+  inherit form_element
+
+  protected variable cols 80
+  protected variable rows 6
+
+  public method appendtext {text} {
+    append value_initial $text
+    }
+
+  public method reset {} {
+    $widget delete 1.0 end
+    $widget insert end $value_initial
+    }
+
+  public method window {newname} {
+    iwidgets::Scrolledtext $newname \
+	-textbackground white \
+	-hscrollmode dynamic \
+	-vscrollmode dynamic \
+	-visibleitems "${cols}x${rows}" \
+	-borderwidth 2 -relief groove
+
+    set widget $newname
+    $this reset
+    return $newname
+    }
+
+  public method get_value {} {
+    if {[string compare $name ""] == 0} {
+    	return {}
+    	}
+    return [list $name [$widget get 1.0 end]]
+    }
+
+  }
+
+#===========================================================
+# The actual browser class
+#===========================================================
+itcl::class Browser {
+  inherit iwidgets::Scrolledhtml
+
+  constructor {args} {
+    eval itk_initialize $args
+    }
+
+  public method close {} { $closecommand }
+  public method clear {}
+  public method import {args}
+  public method import_callback {code message content_type data}
+  public method render {html {wd .}}
+  public method write {html}
+  public method img_callback {label code message content_type data}
+  public method get_bgcolor {} { return $_bgcolor }
+  public method fake_javascript {script}
+
+  protected method _entity_!doctype {args} {
+    #puts "Browser::_entity_!doctype"
+    }
+  protected method _entity_html {args} {
+    #puts "Browser::_entity_html"
+    }
+  protected method _entity_/html {args} {
+    #puts "Browser::_entity_/html"
+    }
+  protected method _entity_head {args} {
+    #puts "Browser::_entity_head"
+    }
+  protected method _entity_/head {args} {
+    #puts "Browser::_entity_/head"
+    }
+  protected method _entity_/p {} {
+    #puts "Browser::_entity_/p"
+    }
+  protected method _entity_img {args}
+  protected method _entity_/th {}
+  protected method _entity_form {args}
+  protected method _entity_/form {}
+  protected method _entity_input {args}
+  protected method _entity_button {args}
+  protected method _entity_select {args}
+  protected method _entity_option {args}
+  protected method _entity_/select {}
+  protected method _entity_textarea {args}
+  protected method _entity_/textarea {args}
+  protected method _entity_script {args}
+  protected method _entity_/script {args}
+  protected method _entity_style {args}
+  protected method _entity_/style {args}
+
+  public variable closecommand
+  public variable getcommand
+  public variable postcommand
+  public variable titlecommand ""
+
+  protected variable _forms
+  protected variable _current_form
+  protected variable _anchorname
+  protected variable _current_select
+  protected variable _current_textarea
+  protected variable _in_script
+  protected variable _script_text
+  protected variable _in_style
+  protected variable _style_text
+
+  protected method _append_text {text}
+  protected method to_anchor {}
+  protected method parse_url {url}
+}
+
+#-----------------------------------------------------------
+# Break a URL up into its components.
+#-----------------------------------------------------------
+itcl::body Browser::parse_url {url} {
+  puts "Browser::parse_url $url"
+
+  # Break the current base directory into method, host, and path.
+  if ![regexp {^([a-zA-Z]+)://([^/]*)(.*)$} $_cwd dummy cwd_method cwd_host cwd_dir] {
+    set cwd_method "file"
+    set cwd_host ""
+    set cwd_dir ""
+    }
+  puts "_cwd: $_cwd, cwd_method: $cwd_method, cwd_host: $cwd_host, cwd_dir: $cwd_dir"
+
+  # If the URL doesn't have a method and host (possibly empty),
+  # then take the method and host from the base.
+  if ![regexp {^([a-zA-Z]+)://([^/]*)(.*)$} $url dummy method host remainder] {
+    set method $cwd_method
+    set host $cwd_host
+    set remainder $url
+    }
+  puts "method: $method, host: $host, remainder: $remainder"
+
+  # Add the directory to the front if we have to.
+  if [regexp {^~} $remainder] {
+    set remainder "/$remainder"
+    } else {
+    if {$remainder != "" && ![regexp {^/} $remainder]} {
+      set remainder "$cwd_dir/$remainder"
+      }
+    }
+  puts "remainder: $remainder"
+
+  # Seperate remainder2#anchorname (each is optional).
+  if ![regexp {^(.*)#(.*)$} $remainder dummy remainder2 anchorname] {
+    set remainder2 $remainder
+    set anchorname ""
+    }
+  puts "remainder2: $remainder2, _anchorname: $anchorname"
+
+  # Separate filename and query.
+  if ![regexp {^(.*)(\?.*)$} $remainder2 dummy filename query] {
+    set filename $remainder2
+    set query ""
+    }
+  puts "filename: $filename, query: $query"
+
+  return [list $method $host $filename $query $anchorname]
+  }
+
+#-----------------------------------------------------------
+# Clear and reset the HTML widget.
+#-----------------------------------------------------------
+itcl::body Browser::clear {} {
+  iwidgets::Scrolledhtml::clear
+  set _forms {}
+  set _current_form {}
+  set _current_select {}
+  set _current_textarea {}
+  set _in_script 0
+  set _script_text ""
+  set _in_style 0
+  set _style_text ""
+}
+
+#----------------------------------------------------------------------------
+# METHOD import filename?#anchorname?
+#
+# Read HTML text from a URL.
+#
+# If '#anchorname' is appended to the URL, the page is displayed starting
+# at the anchor named 'anchorname' If an anchor is specified without a
+# filename, the current page is assumed.
+#-----------------------------------------------------------------------------
+itcl::body Browser::import {args} {
+  puts "Browser::import $args"
+
+  set len [llength $args]
+  set url [lindex $args 0]
+  if {$len > 1} { set extra_query [lindex $args 1] }
+  if {$len > 2} { set post_data [lindex $args 2] }
+
+  set result [parse_url $url]
+  set method [lindex $result 0]
+  set host [lindex $result 1]
+  set filename [lindex $result 2]
+  set query [lindex $result 3]
+  set _anchorname [lindex $result 4]
+
+  # If it is just an anchor jump,
+  if [regexp {^#} $url] {
+    to_anchor
+
+    # If it it more than an anchor jump,
+    } else {
+
+    # Clear the text widget.
+    clear
+
+    # Change base.  We can't use "file dirname" because it behaves
+    # differently on a Macintosh.
+    set dirname ""
+    regexp {^(/.+)/[^/]*$} $filename junk dirname
+    set _cwd "$method://$host$dirname"
+
+    # Append extra query data if necessary.
+    if {[info exists extra_query] && [string compare $extra_query ""] != 0} {
+      if {$query != ""} {
+      	set query "$query&$extra_query"
+      	} else {
+      	set query "?$extra_query"
+      	}
+      }
+
+    if [info exists post_data] {
+      $postcommand "$method://$host$filename$query" $post_data [itcl::code $this import_callback]
+      } else {
+      $getcommand "$method://$host$filename$query" [itcl::code $this import_callback]
+      }
+    }
+
+  }
+
+itcl::body Browser::import_callback {code message content_type data} {
+  puts "Browser::import_callback $code $message ..."
+
+  # Write the data into the widget.
+  write $data
+
+  # Set the focus to the proper form element.
+  if {$_forms != ""} {
+    puts "  Setting focus to first form..."
+    [lindex $_forms 0] accept_focus
+    }
+
+  # Move to anchor
+  to_anchor
+
+  # Set the window title.
+  if {$titlecommand != ""} {
+    $titlecommand $_title
+    }
+  }
+
+itcl::body Browser::to_anchor {} {
+  # if an anchor was requested, move that anchor into view
+  if {[info exists _anchorname] && $_anchorname!=""} \
+    {
+    if [info exists _anchor($_anchorname)] \
+      {
+      $itk_component(text) see end
+      $itk_component(text) see $_anchor($_anchorname)
+      } else {
+      $itk_component(text) see 0.0
+      }
+    }
+  }
+
+#------------------------------------------------------------
+# METHOD: render text ?wd?
+#
+# Clear the text widget, then render the HTML formatted text
+# in the provided string.  The optional wd argument sets the
+# base directory for any links or images.  By default it is
+# the current directory.
+#------------------------------------------------------------
+itcl::body Browser::render {html {wd .}} {
+    clear
+    set _cwd $wd
+    write $html
+}
+
+#-----------------------------------------------------------
+# METHOD: write text
+#
+# This is like JavaScript document.write().
+#-----------------------------------------------------------
+itcl::body Browser::write {html} {
+
+    # make text writable
+    $itk_component(text) config -state normal
+
+    # Create a text widget tag for the characters we may be about to insert?
+    _set_tag
+
+    set continuerendering 1
+    while {$continuerendering} {
+
+	# While there is still HTML to render,
+	while {[set len [string length $html]]} {
+
+	    # Look for text up to the next <> element and append it
+	    # to the text widget.
+	    if [regexp -indices "^\[^<\]+" $html match] {
+		set text [string range $html 0 [lindex $match 1]]
+		_append_text "$text"
+		set html [string range $html [expr [lindex $match 1]+1] end]
+	    }
+
+	    # Now we're either at a <>, or at the EOT.
+	    if [regexp -indices "^<((\[^>\"\]+|(\"\[^\"\]*\"))*)>" $html match entity] {
+		regsub -all "\n" [string range $html [lindex $entity 0] [lindex $entity 1]] "" entity
+		set cmd [string tolower [lindex $entity 0]]
+
+		if [catch {
+			eval _entity_$cmd [lrange $entity 1 end]
+			} result] {
+		    puts "==============================================="
+		    puts "_entity_$cmd [lrange $entity 1 end]: $result"
+		    global errorInfo
+		    puts $errorInfo
+		    puts "=============="
+		    }
+
+		set html [string range $html [expr [lindex $match 1]+1] end]
+	    }
+
+	    # Call the progress feedback function, if there is one.
+	    if {$itk_option(-feedback) != {} } {
+	      eval $itk_option(-feedback) $len
+	    }
+
+	    if $_verbatim break
+	}
+
+	# We reach here if html is empty, or _verbatim is 1.
+	# If html is empty, stop now.
+	if !$len break
+
+  	# _verbatim must be 1
+	# append text until next tag is reached
+	if [regexp -indices "<.*>" $html match] {
+	    set text [string range $html 0 [expr [lindex $match 0]-1]]
+	    set html [string range $html [expr [lindex $match 0]] end]
+	} else {
+	    set text $html
+	    set html ""
+	}
+	_append_text "$text"
+    }
+
+    # Make the text widget read-only again.
+    $itk_component(text) config -state disabled
+}
+
+#------------------------------------------------------------------
+# Internal function
+# Append text in the format described by the state variables.
+#------------------------------------------------------------------
+itcl::body Browser::_append_text {text} {
+
+    # This is a good time to call update so that the user can see our progress.
+    if {!$_intable && $itk_option(-update)} {
+	update
+	}
+
+    # Swallow <style></style>
+    if $_in_style {
+	append _style_text $text
+	return
+	}
+
+    # Swallow <script></script>
+    if $_in_script {
+	append _script_text $text
+	return
+	}
+
+    # If not in <pre></pre>, then convert each instance of whitespace
+    # to a single space.
+    if !$_pre {
+	set text [string trim $text "\n\r"]
+	regsub -all "\[ \n\r\t\]+" $text " " text
+	if ![string length $text] return
+	}
+
+    # Convert character entities.  Is this efficient?
+    if {[string first "&" $text] != -1} {
+       regsub -nocase -all "&amp;" $text {\&} text
+       regsub -nocase -all "&lt;" $text "<" text
+       regsub -nocase -all "&gt;" $text ">" text
+       regsub -nocase -all "&quot;" $text "\"" text
+       regsub -nocase -all "&nbsp;" $text " " text
+    }
+
+    # If we are between <title></title> tags, then just stash the data.
+    if {$_intitle} {
+	append _title $text
+	return
+	}
+
+    # If we are within a <select></select>, then add the text to the
+    # current item.
+    if {$_current_select != ""} {
+	$_current_select appendlabel $text
+	return
+	}
+
+    # If we are within a <textarea></textarea>, then add the text to the
+    # current item.
+    if {$_current_textarea != ""} {
+	$_current_textarea appendtext $text
+	return
+	}
+
+    # Within <pre></pre> tags, we just insert the text into
+    # the Tk text widget.
+    if {$_pre} {
+	$_hottext insert end $text $_tag
+	return
+    }
+
+    # If we get here, it is typical HTML text.
+    set p [$_hottext get "end - 2c"]
+    set n [string index $text 0]
+    if {$n == " " && $p == " "} {
+	set text [string range $text 1 end]
+	}
+    $_hottext insert end $text $_tag
+}
+
+#------------------------------------------------------------------
+# <img> tag handler
+#------------------------------------------------------------------
+itcl::body Browser::_entity_img {{args {}}} {
+  #puts "Browser::_entity_img: $args"
+
+  _parse_fields ar $args
+
+  # This frame will hold the button that holds the image.
+  set imgframe $_hottext.img[incr _counter]
+
+  # if this is an anchor
+  if $_anchorcount {
+
+    # create a frame with a border and bindings.
+    frame $imgframe -borderwidth 2 -background $_link
+    bind $imgframe <Enter> [list $imgframe configure -background $_alink]
+    bind $imgframe <Leave> [list $imgframe configure -background $_link]
+
+    # If not,
+    } else {
+
+    # create plain frame.
+    frame $imgframe -borderwidth 0 -background $_color
+    }
+
+  # If height= and width= exist, make the frame the proper size.
+  if {[info exists ar(width)] && [info exists ar(height)] } {
+    $imgframe configure -width $ar(width) -height $ar(height)
+    pack propagate $imgframe false
+    }
+
+  # Find a string to display until the image arrives.
+  if [info exists ar(alt)] {
+    set alt $ar(alt)
+    } else {
+    if [info exists ar(src)] {
+      regexp {[^/]*$} $ar(src) alt
+      } else {
+      set alt "image"
+      }
+    }
+
+  # Make a label and put the alt text in it.  We will
+  # add the image as soon as we have it.
+  set win $imgframe.label
+  label $win -text "\[$alt\]" -borderwidth 0 -background $_bgcolor -foreground $_color
+  pack $win -fill both -expand true
+
+  #
+  # Determine alignment to use.
+  #
+  set align bottom
+  if [info exists ar(align)] {
+    switch $ar(align) {
+      middle {
+        set align center
+        }
+      right {
+        set align center
+        }
+      default {
+        set align [string tolower $ar(align)]
+        }
+      }
+    }
+
+  #
+  # Create window in text to display image.  Align it as
+  # determined above.
+  #
+  $_hottext window create end -window $imgframe -align $align
+
+  #
+  # Set a tag for the image window.  If it is enclosed
+  # in <a>...</a>, then bind mouse button one to it.
+  #
+  $_hottext tag add $_tag $imgframe
+  if $_anchorcount {
+    set href [_peek href]
+
+    # These next two lines seem to be unused!!!
+    set href_tag href[incr _counter]
+    set tags [list $_tag $href_tag]
+
+    if { $itk_option(-linkcommand) != {} } {
+      bind $win <1> [itcl::code $itk_option(-linkcommand) $href]
+      }
+    }
+
+  #
+  # Start the image loading.
+  #
+  if [info exists ar(src)] {
+    set result [parse_url $ar(src)]
+    set method [lindex $result 0]
+    set host [lindex $result 1]
+    set filename [lindex $result 2]
+    set query [lindex $result 3]
+
+    $getcommand "$method://$host$filename$query" [itcl::code $this img_callback $win]
+    }
+
+  }
+
+itcl::body Browser::img_callback {label code message content_type data} {
+  #puts "Browser::img_callback: $label $code $message $content_type ..."
+
+  if {[catch {image create photo -data $data} img]} {
+    puts "Image create failed: $img"
+    } else {
+    $label configure -image $img
+    lappend _images $img
+    }
+  }
+
+#-----------------------------------------------------------
+# Override defective </th>
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/th {} {
+  _entity_/b
+  _entity_/td
+}
+
+#-----------------------------------------------------------
+# <form> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_form {args} {
+  #puts "Browser::_entity_form $args"
+  _parse_fields ar $args
+
+  set _current_form [uplevel #0 Browser::form $_hottext.#auto $this]
+  lappend _forms $_current_form
+
+  if [info exists ar(name)] {
+    $_current_form configure -name $ar(name)
+    }
+  if [info exists ar(action)] {
+    $_current_form configure -action $ar(action)
+    }
+  if [info exists ar(method)] {
+    $_current_form configure -method $ar(method)
+    }
+
+  _entity_p
+}
+
+#-----------------------------------------------------------
+# </form> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/form {} {
+  #puts "Browser::_entity_/form"
+  set _current_form {}
+  _entity_/p
+}
+
+#-----------------------------------------------------------
+# <input> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_input {args} {
+  #puts "Browser::_entity_input"
+  _parse_fields ar $args
+
+  if {[string compare $_current_form ""] == 0} {
+    puts "Form element outside form"
+    }
+
+  set type ""
+  if [info exists ar(type)] {
+    set type [string tolower $ar(type)]
+    }
+
+  switch -exact -- $type {
+    button {
+      set obj [form_element_input_button #auto]
+    }
+    checkbox {
+      set obj [form_element_input_checkbox #auto]
+    }
+    hidden {
+      set obj [form_element_input_hidden #auto]
+    }
+    image {
+      set obj [form_element_input_image #auto]
+    }
+    password {
+      set obj [form_element_input_password #auto]
+    }
+    radio {
+      set obj [form_element_input_radio #auto]
+    }
+    reset {
+      set obj [form_element_input_reset #auto]
+    }
+    submit {
+      set obj [form_element_input_submit #auto]
+    }
+    text {
+      set obj [form_element_input_text #auto]
+    }
+    default {
+      puts "Unknown <input> type \"$type\", substituting text."
+      set obj [form_element_input_text #auto]
+    }
+  }
+
+  # Add this form element to the form so that it can
+  # be found at submit time.
+  $_current_form add_element [itcl::code $obj]
+
+  # Pass options to the form element.
+  if [info exists ar(name)] {
+    $obj configure -name $ar(name)
+    }
+  if [info exists ar(value)] {
+    $obj configure -value_initial $ar(value)
+    }
+  if [info exists ar(size)] {
+    catch { $obj configure -size $ar(size) }
+    }
+  if [info exists ar(maxlength)] {
+    catch { $obj configure -maxlength $ar(maxlength) }
+    }
+  if [info exists ar(checked)] {
+    catch { $obj configure -checked 1 }
+    }
+  if [info exists ar(src)] {
+    catch { $obj configure -src $ar(src) }
+    }
+  if [info exists ar(onclick)] {
+    catch { $obj configure -onclick $ar(onclick) }
+    }
+  if [info exists ar(auth_md5)] {
+    catch { $obj configure -auth_md5 $ar(auth_md5) }
+    }
+
+  # Create the form elements visible manifestation (window) and
+  # add it to the text widget.  Of course, hidden fields don't
+  # have windows.
+  if {[string compare $type "hidden"] != 0} {
+    $_hottext window create end -window [$obj window $_hottext.input[incr _counter]] -align bottom
+    }
+}
+
+#-----------------------------------------------------------
+# <button> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_button {args} {
+  puts "Browser::_entity_button"
+}
+
+#-----------------------------------------------------------
+# <select> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_select {args} {
+  #puts "Browser::_entity_select"
+  _parse_fields ar $args
+
+  set _current_select [form_element_select #auto]
+
+  if [info exists ar(name)] {
+    $_current_select configure -name $ar(name)
+    }
+
+  if [info exists ar(multiple)] {
+    $_current_select configure -multiple 1
+    }
+
+  if [info exists ar(size)] {
+    $_current_select configure -size $ar(size)
+    }
+
+}
+
+#-----------------------------------------------------------
+# </select> tag handler
+#
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/select {} {
+  #puts "Browser::_entity_/select"
+
+  $_current_form add_element [itcl::code $_current_select]
+
+  # We have to use baseline alignment because bottom
+  # alignment doesn't work.
+  $_hottext window create end -window [$_current_select window $_hottext.select[incr _counter]] -align baseline
+
+  set _current_select {}
+}
+
+#-----------------------------------------------------------
+# <option> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_option {args} {
+  #puts "Browser::_entity_option"
+  _parse_fields ar $args
+
+  set label ""
+  if [info exists ar(label)] {
+    set label $ar(label)
+    }
+
+  set value ""
+  if [info exists ar(value)] {
+    set value $ar(value)
+    }
+
+  set selected 0
+  if [info exists ar(selected)] {
+    set selected 1
+    }
+
+  $_current_select option $label $value $selected
+}
+
+#-----------------------------------------------------------
+# <textarea> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_textarea {args} {
+  #puts "Browser::_entity_textarea"
+  _parse_fields ar $args
+
+  set _current_textarea [form_element_textarea #auto]
+
+  if [info exists ar(name)] {
+    $_current_textarea configure -name $ar(name)
+    }
+  if [info exists ar(rows)] {
+    $_current_textarea configure -rows $ar(rows)
+    }
+  if [info exists ar(cols)] {
+    $_current_textarea configure -cols $ar(cols)
+    }
+}
+
+#-----------------------------------------------------------
+# </textarea> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/textarea {args} {
+  #puts "Browser::_entity_/textarea"
+  $_current_form add_element [itcl::code $_current_textarea]
+  $_hottext insert end "\n"
+  $_hottext window create end -window [$_current_textarea window $_hottext.textarea[incr _counter]]
+  $_hottext insert end "\n"
+  set _current_textarea {}
+}
+
+#-----------------------------------------------------------
+# <script> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_script {args} {
+  puts "Browser::_entity_script"
+  _parse_fields ar $args
+  set _in_script 1
+  }
+
+#-----------------------------------------------------------
+# </script> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/script {args} {
+  puts "Browser::_entity_/script"
+
+  fake_javascript $_script_text
+
+  set _in_script 0
+  set _script_text ""
+  }
+
+#-----------------------------------------------------------
+# <style> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_style {args} {
+  puts "Browser::_entity_style"
+  _parse_fields ar $args
+  set _in_style 1
+  }
+
+#-----------------------------------------------------------
+# </style> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/style {args} {
+  puts "Browser::_entity_/style"
+
+  # Add style handling code here.
+
+  set _in_style 0
+  set _style_text ""
+  }
+
+#-----------------------------------------------------------
+# Handle a few common JavaScript cases.
+#-----------------------------------------------------------
+itcl::body Browser::fake_javascript {script} {
+  puts "Browser::fake_javascript $script"
+
+  # Remove leading and trailing spaces.
+  regsub {^[ ]+} $script {} script
+  regsub {[ ]+$} $script {} script
+
+  puts "    $script"
+
+  switch -- $script {
+    "window.close()" {
+	puts "    Closing window"
+	close
+	}
+    default {
+	puts "    Not recognized"
+	}
+    }
+  }
+
+# end of file

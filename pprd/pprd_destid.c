@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 10 January 2001.
+** Last modified 27 August 2001.
 */
 
 /*
@@ -23,6 +23,7 @@
 */
 
 #include "before_system.h"
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "pprd.h"
@@ -128,7 +129,7 @@ int destid_local_by_name_reversed(char *name)
 */
 int destid_local_is_group(int id)
     {
-    if(id > printer_count)
+    if(id >= printer_count)	/* printers run 0 - (printer_count - 1) */
 	return -1;
     else
 	return 0;

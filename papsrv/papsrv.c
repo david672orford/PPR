@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 February 2001.
+** Last modified 22 February 2002.
 */
 
 /*
@@ -40,6 +40,8 @@
 #include "ppr_exits.h"
 #include "util_exits.h"
 #include "version.h"
+
+const char myname[] = "papsrv";
 
 /* The table of advertised names. */
 struct ADV adv[PAPSRV_MAX_NAMES];
@@ -189,7 +191,7 @@ char *debug_string(char *s)
 ** If more signals are received before the server exits,
 ** they have no effect.
 */
-void termination_handler(int sig)
+static void termination_handler(int sig)
     {
     static int count = 0;
 
@@ -215,9 +217,9 @@ char *pap_getline(int sesfd)
 	{
 	c = cli_getc(sesfd);	/* get the next character */
 
-	if( (c=='\r') || (c=='\n') || (c==-1) )
-	    {				/* If carriage return or line feed or end of file, */
-	    line[x] = (char)NULL;	/* terminate the line and stop reading. */
+	if(c=='\r' || c=='\n' || c==-1)
+	    {			/* If carriage return or line feed or end of file, */
+	    line[x] = '\0';	/* terminate the line and stop reading. */
 	    break;
 	    }
 
@@ -226,7 +228,7 @@ char *pap_getline(int sesfd)
 
     line_len = x;		/* Store the final length. */
 
-    if( (c == -1) && (x == 0) )	/* If end of file and line was empty */
+    if(c == -1 && x == 0)	/* If end of file and line was empty */
 	return (char*)NULL;	/* return NULL pointer. */
 
     if(x == 255)		/* If line overflow, eat up extra characters. */
@@ -261,7 +263,7 @@ void postscript_stdin_flushfile(int sesfd)
 ** This is called from child_main_loop() which it turn is called
 ** from appletalk_dependent_main_loop().
 ===========================================================================*/
-void printjob(int sesfd, int prnid, int net, int node, char *username, int preauthorized)
+void printjob(int sesfd, int prnid, int net, int node, const char username[], int preauthorized)
     {
     int pipefds[2];		/* a set of file descriptors for pipe to ppr */
     int wstat;			/* wait status */
@@ -291,7 +293,7 @@ void printjob(int sesfd, int prnid, int net, int node, char *username, int preau
     	}
 
     /* Turn the network and node numbers into a string. */
-    snprintf(netnode, sizeof(netnode), "%d:%d", net, node);
+    snprintf(netnode, sizeof(netnode), "%d.%d", net, node);
 
     /*
     ** Fork and exec a copy of ppr and accept the job.
@@ -343,7 +345,7 @@ void printjob(int sesfd, int prnid, int net, int node, char *username, int preau
 	    else
 	    	{ argv[x++] = "-R"; argv[x++] = "for"; }
 
-	    /* Proxy for whom */
+	    /* Indicate for whom the user "ppr" is acting as proxy. */
 	    argv[x++] = "-X"; argv[x++] = netnode;
 
 	    /* Answer for TTRasterizer query */
@@ -351,7 +353,7 @@ void printjob(int sesfd, int prnid, int net, int node, char *username, int preau
 	    	{ argv[x++] = "-Q"; argv[x++] = adv[prnid].TTRasterizer; }
 
 	    /* no responder */
-	    argv[x++] = "-m"; argv[x++] = "none";
+	    argv[x++] = "-m"; argv[x++] = "pprpopup";
 
 	    /* default response address */
 	    argv[x++] = "-r"; argv[x++] = netnode;
@@ -520,7 +522,7 @@ void sigpipe_handler(int sig)
 ** Note child termination.
 ** This handler is used only by the main daemon.
 ===========================================================*/
-void reapchild(int signum)
+static void reapchild(int signum)
     {
     pid_t pid;
     int wstat;
@@ -566,7 +568,7 @@ void reapchild(int signum)
 void child_main_loop(int sesfd, int prnid, int net, int node)
     {
     char *cptr;
-    char *username = (char*)NULL;
+    const char *username = (const char*)NULL;
     int preauthorized = FALSE;	/* can we vouch for the user? */
 
     while(TRUE)			/* will loop until we break out */
@@ -611,7 +613,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 /*=====================================================================
 ** Turn query tracing on or off.
 =====================================================================*/
-void sigusr1_handler(int sig)
+static void sigusr1_handler(int sig)
     {
     if(++query_trace > 2) query_trace = 0;
 
@@ -635,12 +637,60 @@ static const struct gu_getopt_opt option_words[] =
 	{
 	{"help", 1000, FALSE},
 	{"version", 1001, FALSE},
+	{"stop", 1003, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
-void help(FILE *out)
+static void help(FILE *out)
     {
     fputs("Usage: papsrv [-f conffile] [-l logfile] [-p pidfile] [-X] [-z zone]\n", out);
+    }
+
+static int do_stop(void)
+    {
+    FILE *f;
+    int count;
+    long int pid;
+
+    if(!(f = fopen(pid_file_name, "r")))
+    	{
+    	fprintf(stderr, _("%s: not running\n"), myname);
+    	return 1;
+    	}
+
+    count = fscanf(f, "%ld", &pid);
+
+    fclose(f);
+
+    if(count != 1)
+    	{
+    	fprintf(stderr, _("%s: failed to read PID from lock file"), myname);
+    	return 2;
+    	}
+
+    printf(_("Sending SIGTERM to %s (PID=%ld).\n"), myname, pid);
+
+    if(kill((pid_t)pid, SIGTERM) < 0)
+    	{
+	fprintf(stderr, "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n", myname, pid, errno, gu_strerror(errno));
+	return 3;
+    	}
+
+    {
+    struct stat statbuf;
+    printf(_("Waiting while %s shuts down..."), myname);
+    while(stat(pid_file_name, &statbuf) == 0)
+    	{
+	printf(".");
+	fflush(stdout);
+	sleep(1);
+    	}
+    printf("\n");
+    }
+
+    printf(_("Shutdown complete.\n"));
+
+    return 0;
     }
 
 int main(int argc, char *argv[])
@@ -729,6 +779,10 @@ int main(int argc, char *argv[])
 	    	puts(AUTHOR);
 	    	exit(EXIT_OK);
 
+	    case 1003:			/* --stop */
+		exit(do_stop());
+	    	break;
+
 	    case '?':			/* help or unrecognized switch */
 		fprintf(stderr, "Unrecognized switch: %s\n\n", getopt_state.name);
 		help(stderr);
@@ -810,7 +864,7 @@ int main(int argc, char *argv[])
     pid = getpid();
     debug("Daemon starting, pid=%ld", (long)pid);
 
-    if( (f=fopen(pid_file_name, "w")) != (FILE*)NULL )
+    if((f = fopen(pid_file_name, "w")) != (FILE*)NULL)
     	{
     	fprintf(f, "%ld\n", (long)pid);
 	fclose(f);

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/responder_speach.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,13 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 15 June 2000.
+# Last modified 7 December 2001.
+#
+
+#
+# This CGI script is used to help a client response receiver.  The response
+# receiver can feed the received information back to this CGI script, and
+# this script will generate an appropriate sound file for it to play.
 #
 
 use lib "?";
@@ -76,4 +82,3 @@ EndOfHeader
 speach_cat_au(STDOUT, @playlist);
 
 exit 0;
-

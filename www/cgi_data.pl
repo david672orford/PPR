@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/misc/cgi_data.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 January 2001.
+# Last modified 11 January 2002.
 #
 
 #
@@ -146,6 +146,16 @@ sub html
     $text =~ s/&/&amp;/g;	# This one must be first.
     $text =~ s/</&lt;/g;
     $text =~ s/>/&gt;/g;
+    return $text;
+    }
+
+#
+# This one goes a step furthur and converts spaces to non-breaking spaces.
+#
+sub html_nb
+    {
+    my $text = html(shift);
+    $text =~ s/ /&nbsp;/g;
     return $text;
     }
 

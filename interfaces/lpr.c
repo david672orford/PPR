@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 May 2001.
+** Last modified 30 August 2001.
 */
 
 /*
@@ -118,13 +118,15 @@ static void do_control_file(int sockfd, const char *local_nodename, const char *
 	"%s"				/* name for banner page */
     	"%c"DF_TEMPLATE"\n"		/* file to print */
     	"U"DF_TEMPLATE"\n"		/* file to unlink */
- 	"N%s\n",			/* file name, to keep System V LP happy */
+ 	"N%s\n"				/* file name, to keep System V LP happy */
+ 	"J%s\n",			/* job title */
     		local_nodename,
 		person,
     		options->banner ? "Lsomebody\n" : "",
 		options->lpr_typecode, lpr_queueid, local_nodename,
     		lpr_queueid, local_nodename,
-    		int_cmdline.jobname);
+    		int_cmdline.jobname,
+    		int_cmdline.title);
 
     DODEBUG(("control file: %d bytes: \"%s\"", strlen(control_file), control_file));
 
@@ -580,10 +582,15 @@ int main(int argc, char *argv[])
     if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
 	{
 	if(result == -1)	/* elaborate on error message */
+	    {
 	    alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send job.)"));
+	    int_exit(EXIT_PRNERR);
+	    }
 	else			/* non-zero byte returned */
+	    {
 	    alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."), address_host, address_queue);
-	int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+	    int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+	    }
 	}
 
     /* Get our nodename because we need it for the queue file. */

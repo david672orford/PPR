@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 April 2001.
+** Last modified 30 April 2001.
 */
 
 /*
@@ -301,7 +301,11 @@ static void do_printers(int *total, int *exported)
 	    {
 	    char *ppdline;
 
-	    if(ppd_open(ppd, errors) == EXIT_OK)
+	    if(ppd_open(ppd, errors) != EXIT_OK)
+		{
+		warning(_("You should select a new PPD file for printer \"%s\"."), printer);
+		}
+	    else
 	    	{
 		while((ppdline = ppd_readline()))
 		    {

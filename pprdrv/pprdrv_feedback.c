@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 May 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -509,7 +509,7 @@ int feedback_reader(void)
 		{
 		unsigned int temp;
 		if(sscanf(ptr2, "%x", &temp) != 1)
-		    error("%s(): can't parse hex number: %*s", function, strcspn(ptr2, " "), ptr2);
+		    error("%s(): can't parse hex number: %*s", function, (int)strcspn(ptr2, " "), ptr2);
 		continue;
 		}
 

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 1 March 2001.
+# Last modified 5 November 2001.
 #
 
 use lib "?";
@@ -95,8 +95,9 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 'tabname' => 'Ticket',
 'cellpadding' => 10,
 'dopage' => sub {
-	print "<p>", H_("This page contains instructions for a human printer operator.  Use this page\n"
-		. "when the printer is located in a central location such as a print shop."), "</p>\n";
+	print "<p>", H_("This page contains instructions for a human printer operator.  Use\n"
+		. "this page when the printer is located in a central location such as a\n"
+		. "print shop."), "</p>\n";
 
 	text_entry(_("Your name:"), "for", cgi_data_move("for", ""), 40);
 	text_entry(_("Your department:"), "addon:department", cgi_data_move("addon:department", ""), 40);
@@ -151,7 +152,7 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 
 	text_display(_("Submitter description:"), cgi_data_peek('for', ''), 30);
 	text_display(_("Submitted by Unix user:"), cgi_data_peek('username', ''), 16);
-	text_display(_("As proxy for:"), cgi_data_peek('proxy', ''), 30);
+	text_display(_("As proxy for:"), cgi_data_peek('proxy-for', ''), 30);
 	}
 },
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr.1.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 8 May 2001.
+# Last modified 2 January 2002.
 #
 
 =head1 NAME
@@ -388,7 +388,7 @@ problem.
 
 =item B<--commentary> I<integer>
 
-This is a temporary experimental option which will be removed in PPR 1.50 when 
+This is a temporary experimental option which will be removed in PPR 1.50 when
 the commentary and responder systems are integrated.
 
 This option indicates that, while this job is being printed, commentary
@@ -405,7 +405,7 @@ For PostScript" for a list of the values.
 
 =item B<--commentator> I<method>
 
-This is a temporary experimental option which will be removed in PPR 1.50 when 
+This is a temporary experimental option which will be removed in PPR 1.50 when
 the commentary and responder systems are integrated.
 
 This option indicates that the method I<method> should be used to send
@@ -415,7 +415,7 @@ is not defined, then the responder method is used.
 
 =item B<--commentator-address> I<address>
 
-This is a temporary experimental option which will be removed in PPR 1.50 when 
+This is a temporary experimental option which will be removed in PPR 1.50 when
 the commentary and responder systems are integrated.
 
 This option indicates the address to which commentary messages should be sent.
@@ -426,7 +426,7 @@ responder address is used.
 
 =item B<--commentator-options> I<list>
 
-This is a temporary experimental option which will be removed in PPR 1.50 when 
+This is a temporary experimental option which will be removed in PPR 1.50 when
 the commentary and responder systems are integrated.
 
 This option is used to specify a space separated list of name=value pairs.  This
@@ -1051,7 +1051,16 @@ source file "ppr/ppr_split.c".
 =item B<--page-list> I<string>
 
 This switch can be used to specify a subset of the documents pages which
-should be printed.  It does not work.
+should be printed.  Work on it is not yet complete.  It should not be used
+when charging for printing since it doesn't yet take that into account.
+
+The pages to be printed should be indicated by listing their numbers separated
+by spaces or commas.  Ranges may be indicated by using two numbers separated
+by a hyphen.
+
+The order in which the pages are specified is of no importance.  They will
+always be printed in order.  Nor will specifying the same page twice have any
+more effect than specifying it once.
 
 =back
 
@@ -1103,6 +1112,50 @@ to the B<fortran> filter, and pass "width=80" to the B<pr> filter.
 
 The filters and the options they understand are listed in the
 L<ppr-filters(1)> manpage.
+
+=item B<--markup> <option>
+
+this option controls how markup language files are printed.  A markup language
+is a plain text file with special codes added.  Examples of markup langauges
+are Troff, TeX, HTML, SGML, and RTF.
+
+Basically, there are two ways of printing a marked-up file:  We can print it
+as is, or we can pass it through a formatter to produce a typeset document.
+The B<--markup> option controls which method is used.  The B<--markup> option
+has no effect if the input file is not contain marked-up text.
+
+The B<--markup> option can have the following values:
+
+=over 4
+
+=item B<--markup format>
+
+If a text file is marked-up, it is passed through a
+formatting filter to produce a typeset document.  If no formatting filter
+is available then the job will be rejected.
+
+=item B<--markup lp>
+
+Files which are marked-up are passed through the B<lp> filter.  (As if the
+B<-T lp> switch had been used.)
+
+=item B<--markup pr>
+
+A marked-up file is paginated with B<pr> and then passed through the
+B<lp> filter.  (As if the B<-T pr> option had been used.)
+
+=item B<--markup fallback-lp>
+
+This is the default.
+If an apropriate formatting filter is available it is used.  If not, the
+effect is the same as that of B<--markup lp>.
+
+=item B<--markup fallback-pr>
+
+If an apropriate formatting filter is available it is used.  If not, the
+effect is the same as that of B<--markup pr>.
+
+=back
 
 =head2 Proofmode and Printer Validation
 
@@ -1179,7 +1232,7 @@ L<ppad(8)>, L<ppuser(8)> L<ppr2samba(8)>, "PPR, a PostScript Print Spooler",
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2000.
+PPR was written at Trinity College during 1993--2002.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

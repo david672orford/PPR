@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 May 2001.
+# Last modified 13 November 2001.
 #
 
 #
@@ -88,7 +88,7 @@ if [ -f $ADDRESS ]
 if [ $? -ne 0 ]
 	then
 	lib/alert $PRINTER TRUE "dummy interface: cat failed"
-	exit $EXIT_PRNERR_NORETRY
+	exit $EXIT_PRNERR
 	fi
 
 # Sleep if we have been asked to do so

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/gu.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 21 February 2002.
 */
 
 #ifndef _GU_H
@@ -67,7 +67,7 @@ typedef int gu_boolean;
 
 /* Actual allocation functions */
 void *gu_alloc(size_t number, size_t size);
-void *ppr_realloc(void *ptr, size_t number, size_t size);
+void *gu_realloc(void *ptr, size_t number, size_t size);
 char *gu_strdup(const char *string);
 char *gu_strndup(const char *string, size_t len);
 char *gu_restrdup(char *ptr, size_t *number, const char *string);
@@ -152,6 +152,11 @@ char *gu_strsignal(int signum);
 char *gu_StrCopyMax(char *target, size_t max, const char *source);
 char *gu_StrAppendMax(char *target, size_t max, const char *source);
 int gu_snprintfcat(char *buffer, size_t max, const char *format, ...);
+int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2);
+void gu_timeval_sub(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_add(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_zero(struct timeval *t);
 
 /*
 ** Values for gu_torf(), a function which examines a string
@@ -251,6 +256,38 @@ int gu_snmp_get(struct gu_snmp *p, int *error_code, ...);
 #define GU_SNMP_INT 1
 #define GU_SNMP_STR 2
 #define GU_SNMP_BIT 3
+
+/*===================================================================
+** Perl Compatibility Functions
+===================================================================*/
+
+/* Perl Compatible String */
+void *gu_pcs_new(void);
+void gu_pcs_free(void **pcs);
+void gu_pcs_debug(void **pcs, const char name[]);
+void *gu_pcs_snapshot(void **pcs);
+void gu_pcs_grow(void **pcs, int size);
+void *gu_pcs_new_pcs(void **pcs);
+void *gu_pcs_new_cstr(const char cstr[]);
+void gu_pcs_set_cstr(void **pcs, const char cstr[]);
+void gu_pcs_set_pcs(void **pcs, void **pcs2);
+const char *gu_pcs_get_cstr(void **pcs);
+int gu_pcs_bytes(void **pcs);
+void gu_pcs_append_cstr(void **pcs, const char cstr[]);
+void gu_pcs_append_pcs(void **pcs, void **pcs2);
+int gu_pcs_cmp(void **pcs1, void **pcs2);
+int gu_pcs_hash(void **pcs_key);
+
+/* Perl Compatible Hash */
+void *gu_pch_new(int buckets_count);
+void gu_pch_free(void **pch);
+void gu_pch_debug(void **pch, const char name[]);
+void gu_pch_set(void **pch, void **pcs_key, void **pcs_value);
+void *gu_pch_get(void **pch, void **pcs_key);
+void gu_pch_delete(void **pch, void **pcs_key);
+void gu_pch_rewind(void **pch);
+void *gu_pch_nextkey(void **pch);
+
 
 /*===================================================================
 ** Replacements for missing functions

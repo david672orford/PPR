@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 19 June 2000.
+** Last modified 22 February 2002.
 */
 
 /* The <body> element of the main window uses this class.  This is so that
@@ -11,6 +11,11 @@ BODY {
 	background: white;
 	color: black;
 	font-family: sans-serif;
+	}
+
+/* Mozilla bug for Russian. */
+INPUT, BUTTON {
+/*	font-family: serif;	*/
 	}
 
 /* I guess setting the body font doesn't cover tables. */

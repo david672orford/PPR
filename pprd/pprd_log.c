@@ -28,6 +28,8 @@
 #include "pprd.h"
 #include "./pprd.auto_h"
 
+gu_boolean lockfile_created = FALSE;
+
 /*
 ** This is the core function which all of those below call.
 */
@@ -69,7 +71,8 @@ void fatal(int exitval, const char message[], ... )
     }
 
     /* Remove the lock file which also has our PID in it. */
-    unlink(PPRD_LOCKFILE);
+    if(lockfile_created)
+    	unlink(PPRD_LOCKFILE);
 
     /*
     ** This code responds to special fatal() calls which may

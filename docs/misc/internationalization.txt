@@ -1,7 +1,7 @@
 =============================================================================
  mouse:~ppr/docs/misc/internationalization.txt
  mouse:~ppr/src/po/README.txt (symbolic link)
- Last revised 20 September 2000.
+ Last revised 30 October 2001.
 =============================================================================
 
 The po/ directory in the PPR distribution contains language translation files
@@ -26,7 +26,7 @@ Basically, the GNU Gettext system uses files of these types:
 	.pot files and .po files prepared for a previous version of PPR.
 	If there are new or changed messages, then some of the spaces for
 	translation text will be empty.  The translator fills in the missing
-	translations and uses the result as the new .po file.
+	translations and then renames the .pox file to .po.
 
 .mo	These are .po files that have been "compiled" into an indexed format
 	which programs can used to lookup the translations of their messages.

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_addwiz.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 29 June 2000.
+# Last modified 3 January 2002.
 #
 
 use lib "?";
@@ -37,7 +37,7 @@ my $addgrp_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Add a Group"),
-	'picture' => "$IMAGES/newgrp.jpg",
+	'picture' => "wiz-newgrp.jpg",
 	'dopage' => sub {
 		print "<P><span class=\"label\">", H_("PPR Group Queue Creation"), "</span></P>\n";
 
@@ -57,7 +57,7 @@ my $addgrp_wizard_table = [
 		if($data{name} eq '')
 		    { return _("You must enter a name for the group!") }
 		if(-f "$CONFDIR/groups/$data{name}")
-		    { return _("The group \"$data{name}\" already exists!") }
+		    { return sprintf(_("The group \"%s\" already exists!"), $data{name}) }
 		return undef;
 		},
 	'buttons' => [N_("_Cancel"), N_("_Next")]
@@ -68,7 +68,7 @@ my $addgrp_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Assign Group Members"),
-	'picture' => "$IMAGES/membership.jpg",
+	'picture' => "wiz-membership.jpg",
 	'valign' => 'top',
 	'dopage' => sub {
 		require 'cgi_membership.pl';
@@ -109,7 +109,7 @@ my $addgrp_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Describe the Group"),
-	'picture' => "$IMAGES/name.jpg",
+	'picture' => "wiz-name.jpg",
 	'dopage' => sub {
 		print "<p>", html(sprintf(_("While short group names are convient in certain contexts,\n"
 			. "it is sometimes helpful to have a longer, more informative\n"
@@ -134,7 +134,7 @@ my $addgrp_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Save the Group"),
-	'picture' => "$IMAGES/save.jpg",
+	'picture' => "wiz-save.jpg",
 	'dopage' => sub {
 		require 'cgi_run.pl';
 
@@ -163,7 +163,8 @@ my $addgrp_wizard_table = [
 
 &do_wizard($addgrp_wizard_table,
 	{
-	'auth' => 1
+	'auth' => 1,
+	'imgdir' => "../images/"
 	});
 
 exit 0;

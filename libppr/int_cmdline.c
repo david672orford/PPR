@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 10 May 2001.
+** Last modified 14 August 2001.
 */
 
 #include "before_system.h"
@@ -100,6 +100,12 @@ void int_cmdline_set(int argc, char *argv[])
     	int_cmdline.barbarlang = argv[10];
     else
         int_cmdline.barbarlang = "";
+
+    /* title */
+    if(argc >= 12)
+	int_cmdline.title = argv[11];
+    else
+	int_cmdline.title = "";
 
     } /* end of int_cmdline_set() */
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 28 February 2001.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
@@ -28,7 +28,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "ppad.h"
 #include "util_exits.h"
 
@@ -307,7 +306,7 @@ char *list_to_string(const char *argv[])
 	if((newlen + 1) > string_space)		/* If necessary, enlarge the memory block */
 	    {
 	    string_space += 256;
-	    string = (char*)ppr_realloc(string, string_space, sizeof(char));
+	    string = (char*)gu_realloc(string, string_space, sizeof(char));
 	    }
 
 	if(string_len)				/* if not the first word, append a space first */
@@ -317,12 +316,11 @@ char *list_to_string(const char *argv[])
 	string_len = newlen;			/* adopt the new length */
 	}
 
-    /* Chop the memory block the size actually used. */
+    /* Chop the memory block down to the size actually used. */
     if(string)
-	string = (char*)ppr_realloc(string, (string_len + 1), sizeof(char));
+	string = (char*)gu_realloc(string, (string_len + 1), sizeof(char));
 
     return string;
     } /* end of list_to_string */
 
 /* end of file */
-

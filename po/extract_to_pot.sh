@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/po/extract_to_pot.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,13 +11,13 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 June 2000.
+# Last modified 30 October 2001.
 #
 
 echo "Extracting master string lists..."
 
 echo "PPR.pot"
-xgettext --default-domain=PPR --keyword=_ --keyword=N_ --sort-output \
+xgettext --default-domain=PPR --keyword=_ --keyword=N_ --sort-output  \
 	../filter*/*.c \
 	../fontutils/*.c \
 	../interfaces/*.c \
@@ -36,22 +36,26 @@ mv PPR.po PPR.pot
 echo "PPRDRV.pot"
 xgettext --default-domain=PPRDRV --keyword=_ --keyword=N_ --sort-output \
 	../pprdrv/pprdrv*.c
-mv PPRDRV.po PPRDRV.pot
+./sort_by_file.perl <PPRDRV.po >PPRDRV.pot
+rm PPRDRV.po
 
 echo "PPRD.pot"
 xgettext --default-domain=PPRD --keyword=_ --keyword=N_ --sort-output \
 	../pprd/pprd*.c
-mv PPRD.po PPRD.pot
+./sort_by_file.perl <PPRD.po >PPRD.pot
+rm PPRD.po
 
 echo "PAPSRV.pot"
 xgettext --default-domain=PAPSRV --keyword=_ --keyword=N_ --sort-output \
 	../papsrv/papsrv*.c
-mv PAPSRV.po PAPSRV.pot
+./sort_by_file.perl <PAPSRV.po >PAPSRV.pot
+rm PAPSRV.po
 
 echo "PPRWWW.pot"
 ./perl_to_pseudo_c.perl ../www/*.perl ../www/*.pl \
 	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --sort-output --language=c -
-mv PPRWWW.po PPRWWW.pot
+./sort_by_file.perl <PPRWWW.po >PPRWWW.pot
+rm PPRWWW.po
 
 echo "Done."
 

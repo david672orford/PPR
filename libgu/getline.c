@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/getline.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 22 November 2000.
+** Last modified 19 July 2001.
 */
 
 #include <stdio.h>
@@ -65,7 +65,7 @@ char *gu_getline(char *line, int *space_available, FILE *fstream)
     while(len == (*space_available - 1) && line[len - 1] != '\n')
 	{
 	*space_available *= 2;
-	line = (char*)ppr_realloc(line, *space_available, sizeof(char));
+	line = (char*)gu_realloc(line, *space_available, sizeof(char));
 	if(!fgets((line + len), (*space_available - len), fstream)) break;
 	len = strlen(line);
 	}

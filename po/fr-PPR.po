@@ -33,18 +33,6 @@ msgstr ""
 "                                     l'index des fontes\n"
 "\t--cache-store uncached     stocker si pas déjà présent dans le cache\n"
 
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-# msgid ""
-#~ msgstr ""
-#~ "POT-Creation-Date: 1999-02-22 17:51+0100\n"
-#~ "Content-Type: text/plain; charset=\n"
-#~ "Date: 1998-04-21 20:56:43+0200\n"
-#~ "From: Olivier Tharan <olive@oban.frmug.org>\n"
-#~ "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output --default-domain=PPR\n"
-#~ "Files: ../ppr/ppr_conffile.c ../ppr/ppr_dscdoc.c ../ppr/ppr_editps.c ../ppr/ppr_infile.c ../ppr/ppr_mactt.c ../ppr/ppr_main.c ../ppr/ppr_media.c ../ppr/ppr_nest.c ../ppr/ppr_old2new.c ../ppr/ppr_outfile.c ../ppr/ppr_rcache.c ../ppr/ppr_req.c ../ppr/ppr_res.c ../ppr/ppr_respond.c ../ppr/ppr_selpgs.c ../ppr/ppr_simplify.c ../ppr/ppr_split.c ../ppr/ppr_things.c ../lprsrv/lprsrv-test.c ../lprsrv/lprsrv.c ../lprsrv/lprsrv_cancel.c ../lprsrv/lprsrv_client_info.c ../lprsrv/lprsrv_conf.c ../lprsrv/lprsrv_list.c ../lprsrv/lprsrv_print.c ../lprsrv/lprsrv_standalone.c ../lprsrv/olprsrv.c ../uprint/uprint-cancel.c ../uprint/uprint-lp.c ../uprint/uprint-lpq.c ../uprint/uprint-lpr.c ../uprint/uprint-lprm.c ../uprint/uprint-lpstat.c ../libuprint/claim_lp.c ../libuprint/claim_lpr.c ../libuprint/claim_ppr.c ../libuprint/claim_remote.c ../libuprint/lpr_connect.c ../libuprint/lpr_sendfile.c ../libuprint/uprint-newconf.c ../libuprint/uprint.c ../libuprint/uprint_argv_lp.c ../libuprint/uprint_argv_lpr.c ../libuprint/uprint_argv_ppr.c ../libuprint/uprint_conf.c ../libuprint/uprint_loop.c ../libuprint/uprint_lpq.c ../libuprint/uprint_lpq_rfc1179.c ../libuprint/uprint_lprm.c ../libuprint/uprint_lprm_rfc1179.c ../libuprint/uprint_print.c ../libuprint/uprint_print_rfc1179.c ../libuprint/uprint_run.c ../libuprint/uprint_strerror.c ../libuprint/uprint_type_lp.c ../libuprint/uprint_type_lpr.c ../libuprint/uprint_type_ppr.c ../libuprint/uprint_uid.c ../libuprint/uprint_xlate.c\n"
 #: ../ppr/ppr_main.c:895
 msgid "\t--charge-to <string>       PPR charge account to bill for job\n"
 msgstr ""

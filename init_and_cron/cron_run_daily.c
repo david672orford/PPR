@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/init_and_cron/cron_run_daily.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,18 +10,18 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 June 2000.
+** Last modified 30 August 2001.
 */
 
 #include "before_system.h"
 #include <stdio.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 #include "version.h"
 

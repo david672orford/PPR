@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -251,12 +251,11 @@ void ppd_callback_rip(const char text[])
 	char *p;
 	p = gu_strdup(text);
 	if(!(printer.RIP.name = gu_strsep(&p, " \t"))
-		|| !(printer.RIP.driver = gu_strsep(&p, " \t"))
-		|| !(printer.RIP.driver_output_language = gu_strsep(&p, " \t")))
+		|| !(printer.RIP.output_language = gu_strsep(&p, "")))
 	    {
 	    fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
 	    }
-	printer.RIP.options = gu_strsep_quoted(&p, " \t", NULL);	/* optional */
+	printer.RIP.options_storage = gu_strsep(&p, "");
 	}
     } /* end of ppd_callback_rip() */
 
@@ -558,8 +557,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    #ifdef KEEP_OLD_CODE
@@ -630,8 +629,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    if(strcmp(line, "%%EndFeature") == 0)
@@ -683,8 +682,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    printer_putline(line);

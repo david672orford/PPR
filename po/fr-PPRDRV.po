@@ -412,7 +412,7 @@ msgstr "hrPrinterDetectedErrorState \"%s\" non reconnu dans \"%s\" ligne %d cham
 #: ../pprdrv/pprdrv_lw_messages.c:85 ../pprdrv/pprdrv_pjl_messages.c:91
 #, c-format
 msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
-msgstr "hrPrinterStatus \"%s\" non reconnu dans \"%s\" ligne %d champ 3\n"
+msgstr "hrPrinterStatus \"%s\" non reconnu dans \"%s\" ligne %d champ 3"
 
 #: ../pprdrv/pprdrv.c:1347
 #, c-format

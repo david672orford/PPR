@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 25 February 2002.
 */
 
 /*
@@ -564,7 +564,7 @@ static void ppop_list_help(void)
 static void ppop_list_banner(void)
     {
 /*      123456789012345678901234567890123456789012345678901234567890 */
-printf("Queue ID        For                      Time      Pgs Status\n");
+printf(_("Queue ID        For                      Time      Pgs Status\n"));
 printf("----------------------------------------------------------------------------\n");
 /*      12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
 	glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish
@@ -852,7 +852,8 @@ static void ppop_lpq_banner(void)
 
 	while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
 	    {
-	    print_aux_status(line, printer_status, "; ");
+	    /* print_aux_status(line, printer_status, "; "); */
+	    print_aux_status(line, printer_status, "\n\t");
 	    }
 
 	PUTC('\n');
@@ -1193,6 +1194,9 @@ static int ppop_details_item(const struct QEntry *qentry,
     else
 	printf("Pages: ?\n");
     printf("Page Order: %s\n", describe_pageorder(qfileentry->attr.pageorder));
+    PUTS("Page List: ");
+    pagemask_print(qfileentry);
+    PUTC('\n');
     printf("Prolog Present: %s\n", qfileentry->attr.prolog ? "True" : "False");
     printf("DocSetup Present: %s\n", qfileentry->attr.docsetup ? "True" : "False");
     printf("Script Present: %s\n", qfileentry->attr.script ? "True" : "False");
@@ -1574,7 +1578,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		break;
 	    case 32:			/* pages */
 		if(qfileentry->attr.pages >= 0)
-		    printf("%d", qfileentry->attr.pages);
+		    printf("%d", pagemask_count(qfileentry));
 		else
 		    fputs("?", stdout);
 	    	break;
@@ -1675,7 +1679,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		if(qfileentry->opts.copies > 1)
 		    printf("x%d", qfileentry->opts.copies);
 		break;
-
+	    case 49:
+	    	pagemask_print(qfileentry);
+	    	break;
 
 	    default:
 	    	if(qquery_query[x] >= 1000)
@@ -1837,6 +1843,9 @@ int ppop_qquery(char *argv[])
 	    qquery_query[x] = 47;
 	else if(strcmp(ptr, "pagesxcopies") == 0)
 	    qquery_query[x] = 48;
+	else if(strcmp(ptr, "page-list") == 0)
+	    qquery_query[x] = 49;
+
 	else
 	    {
 	    fprintf(errors, "Unrecognized field: %s\n", ptr);

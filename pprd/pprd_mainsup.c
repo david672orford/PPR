@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_mainsup.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 9 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 16 January 2002.
 */
 
 #include "before_system.h"
@@ -38,24 +53,7 @@
 ** only once, from main().
 */
 
-/*
-** Handler for signals we don't expect to receive
-** like SIGHUP and SIGPIPE.
-*/
-static void signal_ignore(int sig)
-    {
-    error("Received %d (%s)", sig, gu_strsignal(sig));
-    }
-
-/*
-** This is the signal that init will send us
-** at system shutdown time.
-*/
-static void sigterm_handler(int sig)
-    {
-    state_update("SHUTDOWN");
-    fatal(0, "Received SIGTERM, exiting");
-    }
+static const char myname[] = "pprd";
 
 /*
 ** Create the FIFO for receiving commands from
@@ -112,23 +110,6 @@ int open_fifo(void)
     } /* end of open_fifo() */
 
 /*
-** Install all of the signal handlers.
-*/
-void install_signal_handlers(void)
-    {
-    /* Signal handlers for silly stuff. */
-    signal_restarting(SIGPIPE, signal_ignore);
-    signal_restarting(SIGHUP, signal_ignore);
-    signal_interupting(SIGTERM, sigterm_handler);
-
-    /* Arrange for child termination to be noted. */
-    signal_restarting(SIGCHLD, reapchild);
-
-    /* Arrange for alarm clock to tick every TICK_INTERVAL seconds. */
-    signal_restarting(SIGALRM, tick);
-    } /* end of install_signal_handlers() */
-
-/*
 ** Create the lock file which ensures only one pprd at a time.
 */
 void create_lock_file(void)
@@ -136,12 +117,13 @@ void create_lock_file(void)
     int lockfilefd;
     char temp[10];
     if((lockfilefd = open(PPRD_LOCKFILE, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
-	fatal(1, "can't open \"%s\", errno=%d (%s)", PPRD_LOCKFILE, errno, gu_strerror(errno));
+	fatal(100, "can't open \"%s\", errno=%d (%s)", PPRD_LOCKFILE, errno, gu_strerror(errno));
     if(gu_lock_exclusive(lockfilefd, FALSE))
-	fatal(1, "pprd already running");
+	fatal(100, "pprd already running");
     snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
     write(lockfilefd, temp, strlen(temp));
     gu_set_cloexec(lockfilefd);
+    lockfile_created = TRUE;
     } /* end of create_lock_file() */
 
 /*
@@ -215,7 +197,6 @@ void adjust_ids(void)
     {
     uid_t uid, euid, correct_euid;
     gid_t gid, egid, correct_egid;
-    const char *myname = "pprd";
 
     /*
     ** Look up the correct uid and gid.
@@ -328,12 +309,60 @@ static const struct gu_getopt_opt option_words[] =
 	{"version", 1000, FALSE},
 	{"help", 1001, FALSE},
 	{"foreground", 1002, FALSE},
+	{"stop", 1003, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
 static void help(FILE *out)
     {
     fputs("Usage: pprd [--version] [--help] [--foreground]\n", out);
+    }
+
+static int pprd_stop(void)
+    {
+    FILE *f;
+    int count;
+    long int pid;
+
+    if(!(f = fopen(PPRD_LOCKFILE, "r")))
+    	{
+    	fprintf(stderr, _("%s: not running\n"), myname);
+    	return 1;
+    	}
+
+    count = fscanf(f, "%ld", &pid);
+
+    fclose(f);
+
+    if(count != 1)
+    	{
+    	fprintf(stderr, _("%s: failed to read PID from lock file"), myname);
+    	return 2;
+    	}
+
+    printf(_("Sending SIGTERM to %s (PID=%ld).\n"), myname, pid);
+
+    if(kill((pid_t)pid, SIGTERM) < 0)
+    	{
+	fprintf(stderr, _("%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"), myname, pid, errno, gu_strerror(errno));
+	return 3;
+    	}
+
+    {
+    struct stat statbuf;
+    printf(_("Waiting while %s shuts down..."), myname);
+    while(stat(PPRD_LOCKFILE, &statbuf) == 0)
+    	{
+	printf(".");
+	fflush(stdout);
+	sleep(1);
+    	}
+    printf("\n");
+    }
+
+    printf(_("Shutdown complete.\n"));
+
+    return 0;
     }
 
 /*
@@ -347,7 +376,7 @@ void parse_command_line(int argc, char *argv[], int *option_foreground)
 
     gu_getopt_init(&getopt_state, argc, argv, option_description_string, option_words);
 
-    while( (optchar=ppr_getopt(&getopt_state)) != -1 )
+    while((optchar = ppr_getopt(&getopt_state)) != -1)
 	{
 	switch(optchar)
 	    {
@@ -364,6 +393,9 @@ void parse_command_line(int argc, char *argv[], int *option_foreground)
 	    case 1002:		/* --foreground */
 		*option_foreground = TRUE;
 		break;
+	    case 1003:		/* --stop */
+	    	exit_code = pprd_stop();
+	    	break;
 	    case '?':
 	    case ':':
 	    case '!':

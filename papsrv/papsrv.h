@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/include/papsrv.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** mouse:~ppr/src/papsrv/papsrv.h
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 June 2000.
+** Last modified 21 June 2001.
 */
 
 /*
@@ -134,7 +134,7 @@ void postscript_stdin_flushfile(int sesfd);
 void printjob_reapchild(int signum);
 void sigpipe_handler(int signum);
 void child_main_loop(int sesfd, int prnid, int net, int node);
-void printjob(int sesfd, int prnid, int net, int node, char *username, int preauthorized);
+void printjob(int sesfd, int prnid, int net, int node, const char username[], int preauthorized);
 
 /* routines in papsrv_ali.c and papsrv_cap.c */
 void appletalk_dependent_daemon_main_loop(void);
@@ -148,7 +148,7 @@ void add_name(int prnid);
 void appletalk_dependent_cleanup(void);
 
 /* routines in papsrv_query.c */
-void answer_query(int sesfd, int prnid, char **username, int *preauthorized);
+void answer_query(int sesfd, int prnid, const char **username, int *preauthorized);
 void REPLY(int sesfd, char *ptr);
 
 /* routines in papsrv_conf.c */
@@ -157,8 +157,8 @@ SHORT_INT get_font_id(const char fontname[]);
 const char *get_font_name(SHORT_INT fontid);
 
 /* routines in papsrv_authorize.c */
-void preauthorize(int sesfd, int prnid, int net, int node, char **user, int *preauthorized);
-void login_request(int sesfd, int destid, char **username, int *preauthorized);
+void preauthorize(int sesfd, int prnid, int net, int node, const char **user, int *preauthorized);
+void login_request(int sesfd, int destid, const char **username, int *preauthorized);
 
 /* Structure used to describe an *Option entry. */
 struct OPTION
@@ -215,6 +215,7 @@ extern char *default_zone;	/* default zone for advertised names, initialy set to
 */
 #define MSG_NOCHARGEACCT "%%[ Error: you don't have a charge account ]%%\n"
 #define MSG_BADAUTH "%%[ Error: password incorrect ]%%\n"
+#define MSG_NOFOR "%%[ Error: No \"%%For:\" line in PostScript ]%%\n"
 #define MSG_NOVOL "%%[ Error: you don't have a volume mounted ]%%\n"
 #define MSG_OVERDRAWN "%%[ Error: account overdrawn ]%%\n"
 #define MSG_DBERR "%%[ Error: user charge account database error ]%%\n"
@@ -228,4 +229,3 @@ extern char *default_zone;	/* default zone for advertised names, initialy set to
 #define MSG_ACL "%%[ Error: ACL forbids you access to selected print destination ]%%\n"
 
 /* end of file */
-

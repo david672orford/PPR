@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 16 February 2001.
+# Last modified 8 October 2001.
 #
 
 #
@@ -26,9 +26,6 @@ export PATH
 HOMEDIR="?"
 CONFDIR="?"
 TEMPDIR="?"
-
-# A version of echo which supports \t and the like.
-EECHO="?"
 
 # Determine the user name of the current user.
 MYUID=`id | sed -ne 's/^uid=[0-9][0-9]*(\([^)]*\)).*$/\1/p'`
@@ -89,39 +86,45 @@ tempfile=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-sync-XXXXXX`
 # While we do so, we make a list of those files which were not replaced.
 #
 echo "Copying configuration files"
-{ find $CONFDIR ! -name 'lw*.conf' ! -name 'papsrv_default_zone.conf' -print \
-	| cpio -oc | $RSH $DESTSYS 'cpio -i' 2>&1 } >$tempfile
+find $CONFDIR ! -name 'lw*.conf' ! -name 'papsrv_default_zone.conf' -print \
+	| cpio -oc | $RSH $DESTSYS 'cpio -i' >$tempfile 2>&1
+echo
 
 # Touch updated printers.
-$EECHO "\nTouching updated printers"
+echo "Touching updated printers"
 cd $CONFDIR/printers
 for printer in *
 	do
 	egrep "$CONFDIR/printers/$printer" <$tempfile >/dev/null
 	if [ $? -ne 0 ]
 		then
-		$EECHO "\tTouching printer \"$printer\""
+		echo "    Touching printer \"$printer\""
 		$RSH $DESTSYS "$HOMEDIR/bin/ppad touch $printer"
 		fi
 	done
+echo
 
 # touch updated groups
-$EECHO "\nTouching updated groups"
+echo "Touching updated groups"
 cd $CONFDIR/groups
 for group in *
 	do
-	egrep "$CONFDIR/groups/$group" <$tempfile >/dev/null \
-		|| { $EECHO "\tTouching group \"$group\""
-		   $RSH $DESTSYS "$HOMEDIR/bin/ppad group touch $group"
-		}
+	egrep "$CONFDIR/groups/$group" <$tempfile >/dev/null
+	if [ $? -ne 0 ]
+		then
+		echo "    Touching group \"$group\""
+		$RSH $DESTSYS "$HOMEDIR/bin/ppad group touch $group"
+		fi
 	done
+echo
 
 # Restart papsrv if necessary
 egrep "$CONFDIR/papsrv" <$tempfile >/dev/null
 if [ $? -ne 0 ]
     then
-    $EECHO "\nRestarting papsrv on $DESTSYS"
+    echo "Restarting papsrv on $DESTSYS"
     $RSH $DESTSYS "$HOMEDIR/bin/papsrv_kill; $HOMEDIR/bin/papsrv"
+    echo
     fi
 
 # remove the list which we no longer need

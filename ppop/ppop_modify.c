@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 19 December 2001.
 */
 
 #include "before_system.h"
@@ -25,7 +25,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "ppop.h"
@@ -203,6 +202,16 @@ static int modify_boolean(const char *name, const char *value, struct JOB *job, 
     return EXIT_OK;
     }
 
+static int modify_pagelist(const char *name, const char *value, struct JOB *job, size_t offset)
+    {
+    if(pagemask_encode(&job->qentry, value) == -1)
+    	{
+	fprintf(errors, _("The value \"%s\" is not a valid page list.\n"), value);
+    	return EXIT_SYNTAX;
+    	}
+    return EXIT_OK;
+    }
+
 static int modify_addon(const char *name, const char *value, struct JOB *job)
     {
     const char function[] = "modify_addon";
@@ -242,6 +251,8 @@ const struct DT commands[] =
     { "nupn", modify_positive_integer, OFFSET(qentry.N_Up.N) },
     { "nupborders", modify_boolean, OFFSET(qentry.N_Up.borders) },
     { "draft-notice", modify_string, OFFSET(qentry.draft_notice) },
+    { "page-list", modify_pagelist, 0 },
+    { "question", modify_string, OFFSET(qentry.question) },
     { NULL, NULL }
     };
 
@@ -267,7 +278,7 @@ static int dispatch(const char name[], const char value[], struct JOB *job)
 
     fprintf(errors, _("The job property \"%s\" does not exist or is not writable.\n"), name);
     return EXIT_SYNTAX;
-    }
+    } /* end of dispatch() */
 
 /*
 ** This is the action routine for the "ppop modify" command.
@@ -364,7 +375,7 @@ int ppop_modify(char *argv[])
     destroy_addon(&job);
 
     return ret;
-    }
+    } /* end of ppop_modify() */
 
 /* end of file */
 

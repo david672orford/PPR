@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2002.
 */
 
 /*
@@ -27,6 +42,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -56,6 +72,52 @@ int active_printers = 0;	/* number of printers currently active */
 int starving_printers = 0;	/* printers currently waiting for rations */
 
 /*=========================================================================
+** Utility functions used by children
+=========================================================================*/
+
+/*
+** We call this from the child after a fork() because pprd likely has SIGCHLD
+** and possibly other signals blocked while calling fork().
+*/
+void child_unblock_all(void)
+    {
+    sigset_t sigset;
+    sigemptyset(&sigset);
+    sigprocmask(SIG_SETMASK, &sigset, (sigset_t*)NULL);
+    } /* end of child_unblock_all() */
+
+/*
+** We calls this from the child side of fork() because pprd has no stdin,
+** stdout, or stderr handles open.  It directs the child's stdin to /dev/null
+** and stdout and stderr to the pprd log file.
+*/
+void child_stdin_stdout_stderr(const char input_file[], const char output_file[])
+    {
+    const char function[] = "child_stdin_stdout_stderr";
+    int fd;
+
+    /* Open the indicated file for input.  If that doesn't work, open /dev/null. */
+    if((fd = open(input_file, O_RDONLY)) < 0)
+	{
+	if((fd = open("/dev/null", O_RDONLY)) < 0)
+	    fatal(1, "child: %s(): can't open \"/dev/null\", errno=%d (%s)", function, errno, gu_strerror(errno) );
+	}
+
+    /* If the handle we got was not stdin, make it stdin. */
+    if(fd != 0) dup2(fd, 0);
+    if(fd > 0) close(fd);
+
+    /* Open the second file for output. */
+    if((fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) < 0)
+	fatal(1, "child: %s(): can't open \"%s\", errno=%d (%s)", function, output_file, errno, gu_strerror(errno));
+
+    /* Connect the second file to stdout and stderr. */
+    if(fd != 1) dup2(fd, 1);
+    if(fd != 2) dup2(fd, 2);
+    if(fd > 2) close(fd);
+    } /* end of child_stdin_stdout_stderr() */
+
+/*=========================================================================
 ** Lock and unlock those data structures which must not be simultainiously
 ** modified.  The one I can think of at the moment is the queue.
 **
@@ -80,44 +142,163 @@ void unlock(void)
 ** be either pprdrv or responders.
 ===================================================================*/
 
-void reapchild(int signum)
-    {
-    pid_t pid;
-    int wstat;			/* result of waitpid() */
-    int saved_errno = errno;
-    int gu_alloc_saved = gu_alloc_checkpoint_get();
+static volatile gu_boolean sigchld_caught = FALSE;
+static struct timeval select_tv;
 
-    lock_level++;		/* set our flag */
+/* This is the signal hanlder.  It does nothing but set variables. */
+void sigchld_handler(int signum)
+    {
+    /* The select() loop tests for this. */
+    sigchld_caught = TRUE;
+
+    /* This is in case the signal is received right after it is unblocked
+       and before select() can be called.  We set the timeout to zero so
+       that select() will return right away. */
+    gu_timeval_zero(&select_tv);
+    }
+
+/* This is called from the select() loop. */
+static void reapchild(void)
+    {
+    pid_t pid;			/* pid from waitpid() */
+    int wstat;			/* status from waitpid() */
 
     while((pid = waitpid((pid_t)-1, &wstat, WNOHANG)) > (pid_t)0)
 	{
 	DODEBUG_PRNSTOP(("reapchild(): child terminated, pid=%ld, exit=%i", (long)pid, WEXITSTATUS(wstat)));
 
-	/* Give everyone a chance to claim it. */
+	/* Is it pprdrv? */
 	if(!pprdrv_child_hook(pid, wstat))
+	    /* Is it pprd-remote? */
 	    if(!remote_child_hook(pid, wstat))
-		responder_child_hook(pid, wstat);
+		{
+		/* Those which follow don't have complex reporting, report weird stuff here. */
+		if(WIFSIGNALED(wstat))
+		    {
+		    error("Process %ld was killed by signal %d (%s)%s",
+		    	(long)pid,
+		    	WTERMSIG(wstat),
+		    	gu_strsignal(WTERMSIG(wstat)),
+		    	WCOREDUMP(wstat) ? ", (core dumped)" : "");
+		    }
+		else if(!WIFEXITED(wstat))
+		    {
+		    error("Process %ld met a mysterious end", (long)pid);
+		    }
+
+		/* Is it pprd-question? */
+		if(!question_child_hook(pid, wstat))
+		    /* Is it a responder? */
+		    responder_child_hook(pid, wstat);
+		}
 	}
 
-    lock_level--;				/* clear our flag */
-
     DODEBUG_PRNSTOP(("reapchild(): done"));
-
-    gu_alloc_checkpoint_put(gu_alloc_saved);
-    errno = saved_errno;
     } /* end of reapchild() */
 
 /*=======================================================================
-** Timer tick routine (SIGALRM handler).
+** Other signal handlers.
 =======================================================================*/
-void tick(int sig)
+
+/*
+** Handler for signals we don't expect to receive such as SIGHUP and SIGPIPE.
+** The effect of this handler is to ignore such signals.
+*/
+static void signal_ignore(int sig)
     {
-    int saved_errno = errno;		/* save errno of interupted code */
-    alarm(TICK_INTERVAL);		/* set timer for next tick */
+    debug("Received %d (%s)", sig, gu_strsignal(sig));
+    }
+
+/*
+** This is the signal that init will send us
+** at system shutdown time.
+*/
+volatile gu_boolean sigterm_received = FALSE;
+static void sigterm_handler(int sig)
+    {
+    sigterm_received = TRUE;
+    }
+
+/*=======================================================================
+** Timer tick routine.  This is called every TICK_INTERVAL seconds.
+=======================================================================*/
+static void tick(void)
+    {
     printer_tick();
     remote_tick();
-    errno = saved_errno;
+    question_tick();
     } /* end of tick() */
+
+/*========================================================================
+** Handle a command on the pipe.
+========================================================================*/
+static void do_command(int FIFO)
+    {
+    const char function[] = "do_command";
+    char buffer[256];		/* buffer for received command */
+    int len;			/* length of data in buffer */
+    int count;
+    char *ptr, *next;
+
+    /*
+    ** Get a line from the FIFO.  We include lame code for
+    ** Cygnus-Win32 which doesn't implement mkfifo() yet.
+    */
+    #ifdef HAVE_MKFIFO
+    while((len = read(FIFO, buffer, sizeof(buffer))) < 0)
+	{
+	if(errno != EINTR)	/* <-- exception for OSF/1 3.2 */
+	    fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	}
+    #else
+    while((len = read(FIFO, buffer, sizeof(buffer))) <= 0)
+	{
+	if(len < -1)
+	    fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	sleep(1);
+	}
+    #endif
+
+    if(len == 0 || buffer[len-1] != '\n')
+	{
+	error("ignoring malformed command(s) from pipe");
+	return;
+	}
+
+    /* Remove the line feed which terminates the command. */
+    buffer[len - 1] = '\0';
+
+    /* Actually, there could be more than one command waiting. */
+    for(next=buffer,count=0; (ptr = gu_strsep(&next, "\n")); count++)
+	{
+	DODEBUG_MAINLOOP(("command[%d]: %s", count, ptr));
+
+	switch(ptr[0])			/* examine the first character */
+	    {
+	    case 'j':			/* a print job */
+		queue_new_job(ptr);
+		break;
+
+	    case 'n':			/* Nag operator by email */
+		gu_alloc_checkpoint();
+		ppad_remind();
+		gu_alloc_assert(0);
+		break;
+
+	    case 'N':			/* new printer or group config */
+		if(ptr[1] == 'P')
+		    new_printer_config(&ptr[3]);
+	        else			/* 'G' */
+		    new_group_config(&ptr[3]);
+	        break;
+
+	    default:			/* anything else needs a reply to ppop */
+		ppop_dispatch(ptr);
+		break;
+	    }
+	}
+
+    } /* end of do_command() */
 
 /*========================================================================
 ** The Main Procedure
@@ -129,6 +310,7 @@ int main(int argc, char *argv[])
     int option_foreground = FALSE;
     int FIFO;			/* First-in-first-out which feeds us requests */
     sigset_t lock_set;
+    struct timeval next_tick;
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -165,10 +347,18 @@ int main(int argc, char *argv[])
     /* Create /var/spool/ppr/pprd.pid. */
     create_lock_file();
 
-    /* Handler for terminate, child exit, and timer. */
-    install_signal_handlers();
+    /* Signal handlers for silly stuff. */
+    signal_restarting(SIGPIPE, signal_ignore);
+    signal_restarting(SIGHUP, signal_ignore);
 
-    /* move /var/spool/ppr/logs/pprd to pprd.old */
+    /* Signal handler for shutdown request. */
+    signal_interupting(SIGTERM, sigterm_handler);
+
+    /* Arrange for child termination to be noted. */
+    signal_restarting(SIGCHLD, sigchld_handler);
+
+    /* Move /var/spool/ppr/logs/pprd to pprd.old before we call debug()
+       for the first time (below). */
     rename_old_log_file();
 
     /*
@@ -179,17 +369,12 @@ int main(int argc, char *argv[])
     debug("PPRD startup, pid=%ld", (long)getpid());
     state_update("STARTUP");
 
-    /*
-    ** Create a signal mask which will be needed by the
-    ** lock() and unlock() functions.
-    */
-    sigemptyset(&lock_set);
-    sigaddset(&lock_set, SIGALRM);
-    sigaddset(&lock_set, SIGCHLD);
-
     /* Make sure the local node gets the node id of 0. */
     if(! nodeid_is_local_node(nodeid_assign(ppr_get_nodename())))
     	fatal(1, "%s(): line %d: assertion failed", function, __LINE__);
+
+    /* Initialize other subsystems. */
+    question_init();
 
     /* Load the printers database. */
     DODEBUG_STARTUP(("loading printers database"));
@@ -207,86 +392,95 @@ int main(int argc, char *argv[])
     DODEBUG_STARTUP(("initializing the queue"));
     initialize_queue();
 
-    /* Start periodic alarm going. */
-    alarm(TICK_INTERVAL);
+    /* Schedule the first timer tick. */
+    gettimeofday(&next_tick, NULL);
+    next_tick.tv_sec += TICK_INTERVAL;
 
     /*
-    ** Main Loop
-    **
-    ** This daemon terminates only if it is killed,
-    ** so the condition on this loop is always TRUE.
-    **
-    ** Notice that
-    ** SIGCHLD and SIGALRM are blocked except while
-    ** we are executing read().  This is so as to be
-    ** absolutely sure that they will not interupted
-    ** non-reentrant C library calls.
+    ** Create a signal block set which will be used to block SIGCHLD except
+    ** when we are calling select().
     */
-    while(TRUE)
+    sigemptyset(&lock_set);
+    sigaddset(&lock_set, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
+
+    /*
+    ** This is the Main Loop.  It runs until the sigterm_handler
+    ** sets sigterm_received.
+    */
+    while(!sigterm_received)
 	{
-	char command[256];	/* buffer for received command + zero byte  */
-	int len;		/* length of data in buffer */
+	int readyfds;			/* return value from select() */
+	fd_set rfds;			/* list of file descriptors for select() to watch */
+	struct timeval time_now;	/* the current time */
 
 	DODEBUG_MAINLOOP(("top of main loop"));
 
-	sigprocmask(SIG_UNBLOCK, &lock_set, (sigset_t*)NULL);
+	gettimeofday(&time_now, NULL);
 
-	/*
-	** Get a line from the FIFO.  We include lame code for
-	** Cygnus-Win32 which doesn't implement mkfifo() yet.
-	*/
-	#ifdef HAVE_MKFIFO
-	while((len = read(FIFO, command, 255)) < 0)
+	/* If it is time for or past time for the next tick, */
+	if(gu_timeval_cmp(&time_now, &next_tick) >= 0)
 	    {
-	    if(errno != EINTR)	/* <-- exception for OSF/1 3.2 */
-		fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	    readyfds = 0;
 	    }
-	#else
-	while((len = read(FIFO, command, 255)) <= 0)
-	    {
-	    if(len < -1)
-	    	fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    sleep(1);
+
+	/* If it is not time for the next tick yet, */
+	else
+            {
+	    /* Set the select() timeout so that it will return in time for the
+	       next tick(). */
+	    gu_timeval_cpy(&select_tv, &next_tick);
+	    gu_timeval_sub(&select_tv, &time_now);
+
+	    /* Create a file descriptor list which contains only the descriptor
+	       of the FIFO. */
+	    FD_ZERO(&rfds);
+	    FD_SET(FIFO, &rfds);
+
+	    /* Call select() with SIGCHLD unblocked. */
+	    sigprocmask(SIG_UNBLOCK, &lock_set, (sigset_t*)NULL);
+	    readyfds = select(FIFO + 1, &rfds, NULL, NULL, &select_tv);
+	    sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
 	    }
-	#endif
 
-	sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
-
-	if(len == 0 || command[len-1] != '\n')
+	/* If there is something to read, */
+	if(readyfds > 0)
 	    {
-	    error("ignoring misformed command from pipe");
+	    if(!FD_ISSET(FIFO, &rfds))
+		fatal(0, "%s(): assertion failed: select() returned but FIFO not ready", function);
+	    do_command(FIFO);
 	    continue;
 	    }
 
-	/* Remove the line feed which terminates the command. */
-	command[len - 1] = '\0';
+	/* If the SIGCHLD handler set the flag, handle child termination.  Once
+	   we have done that, we must go back to the top of the loop because
+	   we don't really know if it is time for a tick() call yet. */
+        if(sigchld_caught)
+            {
+            sigchld_caught = FALSE;
+            reapchild();
+	    continue;
+            }
 
-	DODEBUG_MAINLOOP(("command: %s", command));
+	/* If there was no error and no file descriptors are ready, then the 
+	   timeout must have expired.  Call tick(). */
+        if(readyfds == 0)
+            {
+            tick();
+	    next_tick.tv_sec += TICK_INTERVAL;
+            continue;
+            }
 
-	switch(command[0])		/* examine the first character */
-	    {
-	    case 'j':			/* a print job */
-		queue_new_job(command);
-		break;
+	/* If interupted by a system call, restart it. */
+	if(errno == EINTR)
+	    continue;
 
-	    case 'n':			/* Nag operator by email */
-		gu_alloc_checkpoint();
-	    	ppad_remind();
-	    	gu_alloc_assert(0);
-	    	break;
-
-	    case 'N':			/* new printer or group config */
-		if(command[1] == 'P')
-		    new_printer_config(&command[3]);
-		else			/* 'G' */
-		    new_group_config(&command[3]);
-		break;
-
-	    default:                    /* anything else needs a reply to ppop */
-		ppop_dispatch(command);
-		break;
-	    }
+	/* If we get this far, there was an error. */
+	fatal(0, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	} /* end of endless while() loop */
+
+    state_update("SHUTDOWN");
+    fatal(0, "Received SIGTERM, exiting");
     } /* end of main() */
 
 /* end of file */

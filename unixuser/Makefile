@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/unixuser/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,15 +10,15 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 November 2000.
+# Last modified 7 January 2002.
 #
 
 include ../makeprogs/global.mk
 
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
 BIN_PROGS=ppr-xfm
-LIB_PROGS=pprpopupd
-LIB_PROGS_UNBUILT=login_ppr.sh login_ppr.csh
+LIB_PROGS=
+FIXUP_SCRIPTS=login_ppr.sh login_ppr.csh
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
 all: $(PROGS)
@@ -26,7 +26,8 @@ all: $(PROGS)
 install: $(PROGS)
 	$(INSTALLPROGS) root        $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS_SUID)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/lib $(LIB_PROGS) $(LIB_PROGS_UNBUILT)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/lib $(LIB_PROGS) 
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 644  $(HOMEDIR)/fixup $(FIXUP_SCRIPTS)
 
 include .depend
 

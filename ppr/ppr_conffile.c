@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_conffile.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 16 June 2000.
+** Last modified 4 September 2001.
 */
 
 /*
@@ -29,7 +29,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "ppr_exits.h"
@@ -102,13 +101,16 @@ static void cache_info(void)
             {
             while((line = gu_getline(line, &len, f)))
                 {
-                if(!switchset && gu_sscanf(line, "Switchset: %Z", &switchset) == 1)
-                    continue;
+		if(!forwhat)
+		    {
+		    if(!switchset && gu_sscanf(line, "Switchset: %Z", &switchset) == 1)
+                    	continue;
+		    if(!passthru && gu_sscanf(line, "PassThru: %Z", &passthru) == 1)
+			continue;
+		    if(!acls && gu_sscanf(line, "ACLs: %Z", &acls) == 1)
+			continue;
+		    }
                 if(!deffiltopts && gu_sscanf(line, "DefFiltOpts: %Z", &deffiltopts) == 1)
-                    continue;
-                if(!passthru && gu_sscanf(line, "PassThru: %Z", &passthru) == 1)
-                    continue;
-                if(!acls && gu_sscanf(line, "ACLs: %Z", &acls) == 1)
                     continue;
                 }
             fclose(f);

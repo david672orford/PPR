@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
-# mouse.trincoll.edu:~ppr/src/misc/samba_submitter.perl
-# Copyright 1996, 1998, Trinity College Computing Center.
+# mouse:~ppr/src/misc/samba_submitter.perl
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 17 September 1998.
+# Last modified 19 December 2001.
 #
 
 # System configuration values:
@@ -49,7 +49,7 @@ if( open_connexion(CLIENTCON, "$CLIENT_IP:$CLIENT_PORT") )
     # Demand a user name.
     print "Sending request for user name...\n" if($DEBUG);
     sleep(1);
-    print CLIENTCON "USER\r\n";
+    print CLIENTCON "USER\n";
 
     # Wait for an answer.
     my $answer = <CLIENTCON>;

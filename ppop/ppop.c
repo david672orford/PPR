@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 22 February 2002.
 */
 
 /*
@@ -47,6 +47,7 @@ const char myname[] = "ppop";
 pid_t pid;						/* this process id */
 static char *su_user = (char*)NULL;			/* --su switch value */
 static const char *proxy_for = (const char*)NULL;	/* -X switch value */
+static const char *magic_cookie = (const char*)NULL;	/* --magic-cookie value */
 int arrest_interest_interval = -1;
 int machine_readable = FALSE;				/* machine readable mode */
 FILE *errors;						/* file we should send stderr type messages to */
@@ -211,7 +212,7 @@ FILE *wait_for_pprd(int do_timeout)
 
     if(timeout)
 	{
-	fprintf(errors, _("Timeout waiting for response"));
+	fprintf(errors, _("%s: timeout waiting for response"), myname);
 	reply_file = (FILE*)NULL;
 	return (FILE*)NULL;
 	}
@@ -352,7 +353,7 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 	{
 	if(len > MAX_NODENAME)
 	    {
-	    fprintf(errors, _("Destination node name \"%*s\" is too long.\n"), len, ptr);
+	    fprintf(errors, _("Destination node name \"%*s\" is too long.\n"), (int)len, ptr);
 	    return -1;
 	    }
 	if(len == 0)
@@ -397,7 +398,7 @@ int parse_job_name(struct Jobname *job, const char *jobname)
     */
     if(len > MAX_DESTNAME)
 	{
-	fprintf(errors, _("Destination name \"%*s\" is too long.\n"), len, ptr);
+	fprintf(errors, _("Destination name \"%*s\" is too long.\n"), (int)len, ptr);
 	return -1;
 	}
     if(len == 0)
@@ -662,6 +663,7 @@ int job_permission_check(struct Jobname *job)
     {
     char job_username[17];
     char job_proxy_for[127];
+    char job_magic_cookie[33];
 
     /*
     ** If the user is an operator (as modified by the --su switch) and
@@ -670,7 +672,7 @@ int job_permission_check(struct Jobname *job)
     ** job.  This will save us the time and trouble of opening the
     ** queue file to figure out whose job it is.
     */
-    if(privledged() && !proxy_for)
+    if(privledged() && !proxy_for && !magic_cookie)
 	return 0;
 
     /*
@@ -678,7 +680,7 @@ int job_permission_check(struct Jobname *job)
     ** from the "User:" line.
     **
     ** If we can't open it, just say it is ok to manipulate the job.  This is
-    ** because, for non-xistent jobs we want to user to be told it does not
+    ** because, for non-existent jobs we want to user to be told it does not
     ** exist, not that he can't touch it!
     **
     ** !!! This code must be fixed for distributed printing !!!
@@ -702,21 +704,29 @@ int job_permission_check(struct Jobname *job)
     	strcmp(job->homenode, "*") ? job->homenode : ppr_get_nodename());
     if((f = fopen(fname, "r")) == (FILE*)NULL)
 	{
-	/* This is where we need code for remote printing. */
-	fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights.\n"), fname);
+	/* This is where we need code for remote printing!!! */
+
+	/* See note above. */
+	if(errno == ENOENT)
+	    return 0;
+
+	fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
 	return -1;
 	}
 
     /* Read the queue file and find the "User:" line. */
     job_username[0] = '\0';
     job_proxy_for[0] = '\0';
+    job_magic_cookie[0] = '\0';
     while((line = gu_getline(line, &line_space, f)))
 	{
 	if(gu_sscanf(line, "User: %ld %#s %#s",
 		&job_uid,
 		sizeof(job_username), job_username,
 		sizeof(job_proxy_for), job_proxy_for) >= 2)
-	    break;
+	    continue;
+	if(gu_sscanf(line, "MagicCookie: %#s", sizeof(job_magic_cookie), &job_magic_cookie) == 1)
+	    continue;
 	}
 
     /* Close the queue file. */
@@ -740,7 +750,7 @@ int job_permission_check(struct Jobname *job)
     if(!privledged() && strcmp(job_username, su_user))
 	{
 	fprintf(errors,
-		_("You may not perform this operation because the job \"%s\"\n"
+		_("You may not manipulate the job \"%s\" because it\n"
 		"does not belong to the user \"%s\".\n"),
 			remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
 			su_user);
@@ -769,11 +779,44 @@ int job_permission_check(struct Jobname *job)
 	/* If --proxy-for wasn't used when the job was submitted or it doesn't match, */
 	if(job_proxy_for[0] == '\0' || !proxy_for_match(job_proxy_for, proxy_for))
 	    {
-	    fprintf(errors,
-	    	_("You may not perform this operation because the job \"%s\"\n"
-	    	  "was not submitted on behalf of \"%s\".\n"),
-		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode), proxy_for);
+	    char *job_at_host, *pattern_at_host;
+	    gu_boolean show_hostnames;
 
+	    /* If both proxy-for strings contain a hostname and they are the same or the
+	       hostname from our command line is a *, then suppress both of them
+	       since they aren't what is at issue and will only serve to confuse 
+	       the user. */
+    	    if((job_at_host = strchr(job_proxy_for, '@')) && (pattern_at_host = strchr(proxy_for, '@'))
+		&& (strcmp(pattern_at_host, "@*") == 0 || strcmp(pattern_at_host, job_at_host) == 0)
+    	    	)
+	    	{
+		show_hostnames = FALSE;
+	    	}
+	    else
+		{	    
+		show_hostnames = TRUE;
+		}
+
+	    /* Print the error message with or without hostnames. */
+	    fprintf(errors,
+	    	_("You may not manipulate the job \"%s\" because it belongs to\n"
+	    	  "\"%.*s\", while you are \"%.*s\".\n"),
+		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
+		(int)(show_hostnames ? strlen(job_proxy_for) : strcspn(job_proxy_for, "@")), job_proxy_for,
+		(int)(show_hostnames ? strlen(proxy_for) : strcspn(proxy_for, "@")), proxy_for);
+
+	    return -1;
+	    }
+    	}
+
+    /*
+    ** If there was an --magic-cookie option,
+    */
+    if(magic_cookie)
+    	{
+	if(strcmp(magic_cookie, job_magic_cookie) != 0)
+	    {
+	    fprintf(errors, "Magic cookie doesn't match.\n");
 	    return -1;
 	    }
     	}
@@ -1115,6 +1158,7 @@ static const struct gu_getopt_opt option_words[] =
 	{"version", 1001, FALSE},
 	{"su", 1002, TRUE},
 	{"verbose", 1003, FALSE},
+	{"magic-cookie", 1004, TRUE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -1203,6 +1247,10 @@ int main(int argc, char *argv[])
 	    case 1003:			/* --verbose */
 		verbose = TRUE;
 		break;
+
+	    case 1004:			/* --magic-cookie */
+	    	magic_cookie = getopt_state.optarg;
+	    	break;
 
 	    default:
 		gu_getopt_default(myname, optchar, &getopt_state, errors);

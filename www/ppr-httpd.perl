@@ -1,23 +1,38 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 7 May 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 17 January 2002.
 #
 
-# Filled in by installscript:
 use lib "?";
 require "paths.ph";
 require "cgi_time.pl";
+require "cgi_digest.pl";
 use Socket;
 
 # Suppress mistaken warnings about things defined in paths.ph.  Otherwise,
@@ -28,7 +43,6 @@ defined($SHAREDIR) || die;
 defined($LOGDIR) || die;
 defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
-defined($CONFDIR) || die;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.  It is based on
 # the PPR version number.
@@ -54,12 +68,6 @@ my $GET_FILEREAD_BUFSIZE = 16384;
 my $POST_REQUEST_BUFSIZE = 4096;
 my $POST_REQUEST_TIMEOUT = 600;
 my $POST_RESPONSE_BUFSIZE = 4096;
-
-# Temporary
-$PWFILE = "$CONFDIR/htpasswd";
-$SECRET = "jlkfjasdf8923sdklf";
-$REALM = "printing";
-$MAX_NONCE_AGE = 600;
 
 # One day expressed in seconds.
 $DAY = (24 * 60 * 60);
@@ -100,8 +108,13 @@ my $TOKEN = '[\!\#\$\%\&\x27\*\+\-\.0-9A-Z\^\_\`a-z\|\~]';
 	505 => 'HTTP Version Not Supported'
 );
 
+#===========================================================
+# Initialization code.
+#===========================================================
+
 # Ditch Linux environment variables which offend or sense of neatness because
-# they are not meaningful in the context of a CGI script.
+# they are not meaningful (or even necessarily true) in the context of a CGI
+# script.
 delete $ENV{CONSOLE};
 delete $ENV{TERM};
 delete $ENV{HOME};
@@ -127,19 +140,58 @@ delete $ENV{LINGUAS};		# Who knows
 # This is the PATH that we will feed to CGI scripts.
 $ENV{PATH} = $SAFE_PATH;
 
-# I don't know what this variable does, but Perl won't do an exec()
-# if it is defined.
+# These variables specify files which sh, ksh, and bash should source during
+# startup.  Since taint checks are on, Perl won't do exec() if these
+# are defined since they could alter the semantics of a shell script.
+# or shell command.  The same goes for IFS since it changes how the shells
+# parse commands.  I don't know what CDPATH is, but Perl 5.6.0 checks for it.
 delete $ENV{ENV};
+delete $ENV{BASH_ENV};
+delete $ENV{IFS};
+delete $ENV{CDPATH};
 
 # Set the umask so that our log file will have the correct permissions.
 # Remember that we will be running under the user "pprwww" and the
 # group "ppr".
 umask(002);
 
-# If we have access, send STDERR to a debugging file, otherwise throw it
-# away.  We must do something with it so it doesn't corrupt the HTTP
-# transaction.
-open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die;
+#===========================================================
+# If there are command line arguments, pull in Getopt::Long
+# to process them.
+#===========================================================
+my $standalone_port = undef;
+if(scalar @ARGV >= 1)
+    {
+    require Getopt::Long;
+    if(!Getopt::Long::GetOptions("standalone-port=s" => \$standalone_port))
+    	{
+	print STDERR "Usage: ppr-httpd [--standalone-port=<port>]\n";
+	exit 1;
+    	}
+    }
+
+#===========================================================
+# If we have access, send STDERR to a debugging file,
+# otherwise throw it away.  We must do something with it so
+# it doesn't corrupt the HTTP transaction.
+#===========================================================
+open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+
+#===========================================================
+# If standalone mode is called for, load and call
+# tcpserver().  It will fork child processes which will
+# return from tcpserver() with STDIN and STDOUT connected
+# to the remote machine, but the parent will never return.
+#===========================================================
+if(defined $standalone_port)
+    {
+    require "tcpserver.pl";
+    tcpserver($standalone_port);
+    }
+
+#===========================================================
+# Start of connection handling code.
+#===========================================================
 
 # This is used to detect idle connexions.
 $SIG{ALRM} = sub { die "alarm\n" };
@@ -1298,6 +1350,27 @@ sub do_push
 
 #=========================================================================
 # MD5 Digest authentication as defined in RFC 2617
+#=========================================================================
+
+#
+# This routine returns the value for a "WWW-Authenticate:" header
+# which makes a Digest challenge.
+#
+sub auth_challenge
+    {
+    my $domain = shift;
+    my $stale = shift;
+    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
+
+    my $nonce = digest_nonce_create($domain);
+    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce\"";
+
+    if($stale)
+    	{ $challenge .= ",stale=true" }
+
+    return $challenge;
+    }
+
 #
 # This routine is fed the value from an "Authentication:" request header.
 #
@@ -1307,7 +1380,7 @@ sub do_push
 # "Authentication-Info:" line.
 #
 # If the credentials are not valid, it returns ("", "", 0, undef).
-#=========================================================================
+#
 sub auth_verify
     {
     my $request_method = shift;
@@ -1367,19 +1440,7 @@ sub auth_verify
         # The clients computation of the digest must match ours.
         ($parm{response} eq $correct_response) || die "Response is incorrect\n";
 
-        # Our nonces are a Unix time followed by a colon and a hash.
-        ($parm{nonce} =~ /^(\d+):([0-9a-f]+)$/) || die "Nonce format not recognized\n";
-        my($nonce_time, $nonce_hash) = ($1, $2);
-	#print STDERR "Nonce time: $nonce_time\n";
-	#print STDERR "Nonce hash: $nonce_hash\n";
-
-        my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-	#print STDERR "Correct nonce hash: $correct_nonce_hash\n";
-        ($nonce_hash eq $correct_nonce_hash) || die "nonce hash is incorrect.\n";
-
-        my $time_now = time();
-	#print STDERR "Time now: $time_now\n";
-        if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE))
+        if(!digest_nonce_validate($domain, $parm{nonce}))
             {
             print STDERR "Nonce is too stale.\n";
             return ("", "", 1, undef);
@@ -1455,76 +1516,6 @@ sub uri_compare
     return 1;
     }
 
-# Hash a string using MD5 and return the hash in hexadecimal.
-sub md5hex
-    {
-    my $string = shift;
-
-    #require "MD5.pm";
-    #my $md5 = new MD5;
-    #$md5->reset;
-    #$md5->add($string);
-    #return unpack("H*", $md5->digest());
-
-    require "MD5pp.pm";
-    return unpack("H*", MD5pp::Digest($string));
-    }
-
-# This function generates the hashed part of the server nonce.
-sub digest_nonce_hash
-    {
-    my $nonce_time = shift;
-    my $domain = shift;
-    #print STDERR "digest_nonce_hash(\$nonce_time=\"$nonce_time\", \$domain=\"$domain\")\n";
-    return md5hex("$nonce_time:$domain:$SECRET");
-    }
-
-# Find the user's entry (for the correct realm) in the private
-# password file.
-sub digest_getpw
-    {
-    my $sought_username = shift;
-    #print STDERR "digest_getpw(\"$sought_username\")\n";
-
-    my $answer = undef;
-
-    open(PW, "<$PWFILE") || die "Can't open \"$PWFILE\", $!\n";
-    while(<PW>)
-	{
-	chomp;
-	my($username, $realm, $hash) = split(/:/);
-	if($username eq $sought_username && $realm eq $REALM)
-	    {
-	    $answer = $hash;
-	    last;
-	    }
-	}
-    close(PW) || die;
-
-    return $answer if(defined($answer));
-    die "User \"$sought_username\" not in \"$PWFILE\"\n";
-    }
-
-#
-# This routine returns the value for a "WWW-Authenticate:" header
-# which makes a Digest challenge.
-#
-sub auth_challenge
-    {
-    my $domain = shift;
-    my $stale = shift;
-    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
-
-    my $nonce_time = time();
-    my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
-    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce_time:$nonce_hash\"";
-
-    if($stale)
-    	{ $challenge .= ",stale=true" }
-
-    return $challenge;
-    }
-
 #=========================================================================
 # Digest authentication through a cookie.
 #
@@ -1548,18 +1539,20 @@ sub auth_verify_cookie
 	die "No auth_md5 cookie\n" if(scalar @matching_cookies < 1);
 	my $cookie = pop @matching_cookies;
 	#print STDERR "\$cookie=\"$cookie\"\n";
-	die "Cookie syntax error\n" unless($cookie =~ /^auth_md5=([^:]+):(\d+):([0-9a-f]+):([0-9a-f]+)$/);
-	my($username, $nonce_time, $nonce_hash, $response) = ($1, $2, $3, $4);
+	die "Cookie syntax error\n" unless($cookie =~ /^auth_md5=(\S+) (\S+) (\S+)$/);
+	my($username, $nonce, $response) = ($1, $2, $3);
+
 	my $H1 = digest_getpw($username);
-	my $correct_response = md5hex("$H1:$nonce_time:$nonce_hash");
-	#print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n";
+	my $correct_response = md5hex("$H1:$nonce");
+	print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n";
 	die "Password is wrong\n" if($response ne $correct_response);
-        my $time_now = time();
-	#print STDERR "\$time_now=$time_now, \$nonce_time=$nonce_time\n";
-        die "Nonce is too stale\n" if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE));
+
+	if(!digest_nonce_validate($domain, $nonce))
+	    {
+	    die "Nonce is stale\n"
+	    }
+
 	return ("Cookie", $username);
-        my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-        ($nonce_hash eq $correct_nonce_hash) || die "nonce hash is incorrect.\n";
 	};
 
     if($@)

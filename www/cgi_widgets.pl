@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 3 January 2000.
+# Last modified 28 August 2001.
 #
 
 sub labeled_checkbox
@@ -29,7 +29,7 @@ sub labeled_select
     my $selected = shift;
     my @options = @_;
 
-    print '<span class="label">', html($label), "</span>" if(defined $label);
+    print '<span class="label">', html($label), "</span>", " " if(defined $label);
     print "<select name=\"$name\">\n";
     foreach my $option (@options)
 	{
@@ -48,7 +48,7 @@ sub labeled_entry
     my($name, $label, $value, $size) = @_;
     if(defined $label)
 	{
-	print '<span class="label">', html($label), "</span>";
+	print '<span class="label">', html($label), "</span> ";
 	print "<br>\n" if($size >= 50);
 	}
     print "<input name=\"$name\" size=$size value=", html_value($value), ">\n";
@@ -59,7 +59,7 @@ sub labeled_blank
     my($label, $value, $size) = @_;
     if(defined $label)
 	{
-	print "<span class=\"label\">", html($label), "</span>";
+	print "<span class=\"label\">", html($label), "</span> ";
 	print "<br>\n" if($size >= 50);
 	}
     print "<span class=\"value\">", html($value);

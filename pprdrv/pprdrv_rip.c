@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 12 November 2001.
 */
 
 #include "before_system.h"
@@ -25,6 +25,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
 
@@ -75,7 +76,8 @@ static int rip_exit_screen(void)
 	if(WCOREDUMP(rip_wait_status))
 	    {
 	    alert(printer.Name, FALSE, "The RIP dumped core.");
-	    hooked_exit(EXIT_PRNERR_NORETRY, "RIP core dump");
+	    /* hooked_exit(EXIT_PRNERR_NORETRY, "RIP core dump"); */
+	    hooked_exit(EXIT_JOBERR, "RIP core dump");
 	    }
 	hooked_exit(EXIT_PRNERR, "RIP killed");
 	}
@@ -98,13 +100,25 @@ void rip_fault_check(void)
 	int exit_code;
 	DODEBUG_INTERFACE(("%s(): rip_wait_status=0x%04x", function, rip_wait_status));
 
-	/* Try to get the interface to claim blame. */
-	rip_died = FALSE;
-	sleep(1);
-	fault_check();
+	/* Disconnect the dead RIP without flushing.  This code like this is also in job_end(). */
+	intstdin = rip_stop(intstdin, FALSE);
+	gu_nonblock(intstdin, TRUE);
 
-	/* Check for unpleasant stuff such as core dumps. */
+	/* Close the interface without flushing. */
+	interface_close(FALSE);
+
+	/* If it core dumped or something, that is not a job error. */
 	exit_code = rip_exit_screen();
+
+	/* Did Ghostscript indicate a command line problem?
+	   This is our lame solution.  It would be better to get the
+	   error message into the alerts file!!! */
+	if(exit_code == 1)
+	    {
+	    fatal(EXIT_PRNERR_NORETRY, "Possible error on Ghostscript command line.  Check options.\n"
+	    				"(Use \"ppop log %s:%s-%d.%d\" to view the error message.)",
+	    					job.destnode, job.destname, job.id, job.subid);
+	    }
 
 	/* It still shouldn't have exited. */
 	fatal(EXIT_JOBERR, "The RIP exited with code %d before accepting all of the data.", exit_code);
@@ -122,27 +136,53 @@ int rip_start(int printdata_handle, int stdout_handle)
     {
     FUNCTION4DEBUG("rip_start")
     static const char *gs = NULL;
+    const char **rip_args;
     int rip_pipe[2];
-    char driver_option[32];
 
     DODEBUG_INTERFACE(("%s()", function));
-
-    /* Make sure gs is what the user wants. */
-    if(strcmp(printer.RIP.name, "gs"))
-	fatal(EXIT_PRNERR_NORETRY, "Ghostscript (gs) is the only RIP supported at this time.");
 
     /* Get the path to the Ghostscript interpreter from ppr.conf. */
     if(!gs)
 	{
-	if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
-	    fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
+	if(strcmp(printer.RIP.name, "gs") == 0)
+	    {
+	    if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
+		fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
+	    }
+	else if(strcmp(printer.RIP.name, "ppr-gs") == 0)
+	    {
+	    gs = HOMEDIR"/lib/ppr-gs";
+	    }
+	else
+	    {
+    	    fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name);
+    	    }
+    	}
+
+    /* Make sure the RIP exists. */
+    if(access(gs, X_OK) != 0)
+    	{
+	fatal(EXIT_PRNERR_NORETRY, "Ghostscript program \"%s\" doesn't exist or isn't executable.", gs);
+    	}
+
+    /* Build the argument vector. */
+    {
+    int si, di;
+    rip_args = gu_alloc(printer.RIP.options_count + 6, sizeof(const char *));
+    di = 0;
+    rip_args[di++] = gs;
+    for(si = 0; si < printer.RIP.options_count; si++)
+	{
+	rip_args[di++] = printer.RIP.options[si];
 	}
-
-    if(strlen(printer.RIP.driver) > 4 && strcmp(&printer.RIP.driver[strlen(printer.RIP.driver) - 4], ".upp") == 0)
-	snprintf(driver_option, sizeof(driver_option), "@%s", printer.RIP.driver);
-    else
-	snprintf(driver_option, sizeof(driver_option), "-sDEVICE=%s", printer.RIP.driver);
-
+    rip_args[di++] = "-q";
+    rip_args[di++] = "-dSAFER";
+    rip_args[di++] = "-sOutputFile=| cat - >&3";
+    rip_args[di++] = "-";
+    rip_args[di++] = NULL;
+    }
+    
+    /* Reset flags related to the RIP dying. */
     rip_died = FALSE;
     rip_fault_check_disable = FALSE;
 
@@ -152,6 +192,7 @@ int rip_start(int printdata_handle, int stdout_handle)
     if((rip_pid = fork()) == -1)
     	fatal(EXIT_PRNERR, "fork() failed, errno=%d (%s)", errno, strerror(errno));
 
+    /* If child, */
     if(rip_pid == 0)
     	{
 	/* See pprdrv_interface.c:start_interface() for comments on this paranoid code. */
@@ -174,12 +215,12 @@ int rip_start(int printdata_handle, int stdout_handle)
 	close(new_printdata);
 
 	/* Launch Ghostscript. */
-	execl(gs, gs, driver_option, "-q", "-dSAFER", "-sOutputFile=| cat - >&3", "-", NULL);
+	execv(gs, (char**)rip_args);
 	_exit(1);
     	}
 
     close(rip_pipe[0]);
-
+    gu_free(rip_args);
     saved_printdata_handle = printdata_handle;
 
     DODEBUG_INTERFACE(("%s(): done", function));
@@ -189,15 +230,18 @@ int rip_start(int printdata_handle, int stdout_handle)
 /*
 ** This is called from job_end().
 */
-int rip_stop(int printdata_handle2)
+int rip_stop(int printdata_handle2, gu_boolean flushit)
     {
     FUNCTION4DEBUG("rip_stop")
     DODEBUG_INTERFACE(("%s()", function));
 
     /* Flush the last of the PostScript to the RIP. */
-    DODEBUG_INTERFACE(("%s(): calling printer_flush()", function));
-    printer_flush();
-    DODEBUG_INTERFACE(("%s(): return from printer_flush()", function));
+    if(flushit)
+	{
+	DODEBUG_INTERFACE(("%s(): calling printer_flush()", function));
+	printer_flush();
+	DODEBUG_INTERFACE(("%s(): return from printer_flush()", function));
+	}
 
     /* We can handle it from here. */
     rip_fault_check_disable = TRUE;

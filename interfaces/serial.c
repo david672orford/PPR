@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 20 June 2001.
 */
 
 /*
@@ -136,7 +136,7 @@ static int open_port(const char *printer_name, const char *printer_address, stru
     ** timeout since printers which are off line have been known
     ** to cause open() to block indefinitely.
     */
-    portfd = open(printer_address, O_RDWR | O_NONBLOCK | O_NOCTTY);
+    portfd = open(printer_address, O_RDWR | O_NONBLOCK | O_NOCTTY | O_EXCL);
 
     if(portfd == -1)	/* If error, */
     	{

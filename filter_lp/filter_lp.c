@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 8 February 2001. 
+** Last modified 2 January 2002. 
 */
 
 /*
@@ -213,7 +213,7 @@ const char *charset = "ISOLatin1";
 ** Handle fatal errors.
 ** Print a message and exit.
 */
-void fatal(int exitval, const char message[], ... )
+static void fatal(int exitval, const char message[], ... )
     {
     va_list va;
     va_start(va, message);
@@ -245,7 +245,7 @@ void error(const char message[], ... )
 ** returned in formfeed is TRUE.  If auto_lf is TRUE then
 ** CR is considered to be CRLF.
 */
-int readline_normal(void)
+static int readline_normal(void)
     {
     int count;				/* current possition in line */
     int maxcount;
@@ -343,7 +343,7 @@ int readline_normal(void)
 ** When in FORTRAN carriage control mode, this function
 ** is used instead of readline_normal().
 */
-int readline_fortran(void)
+static int readline_fortran(void)
     {
     int c
 	#ifdef GNUC_HAPPY
@@ -422,7 +422,7 @@ int readline_fortran(void)
 ** the longest page and how big the built in left and top margins
 ** are if they exist.
 =======================================================================*/
-void pass1(void)
+static void pass1(void)
     {
     int max_plen = 0;		/* maximum page length */
     int max_len = 0;		/* maximim line length */
@@ -719,7 +719,7 @@ void pass1(void)
 /*
 ** Send the filter_lp procedure set.
 */
-void our_procset(void)
+static void our_procset(void)
     {
     /* bind and define */
     fputs("/d{bind def}bind def\n",stdout);
@@ -784,7 +784,7 @@ void our_procset(void)
 /*
 ** write the prolog to standard output
 */
-void prolog(void)
+static void prolog(void)
     {
     const char *newencoding, *newencoding_normal, *newencoding_bold;
     struct ENCODING_INFO encoding;
@@ -1021,7 +1021,7 @@ int indent;		/* spaces to indent next line */
 /*
 ** start a page
 */
-void startpage(int page)
+static void startpage(int page)
     {
     printf("%%%%Page: %i %i\n", page, page);
     puts("%%BeginPageSetup");
@@ -1040,7 +1040,7 @@ void startpage(int page)
 /*
 ** End a page.
 */
-void endpage(void)
+static void endpage(void)
     {
     fputs("ep\n\n", stdout);
     } /* end of endpage() */
@@ -1050,7 +1050,7 @@ void endpage(void)
 ** If the whole line was spaces and we underlined it with a command,
 ** return zero, otherwise return -1.
 */
-int underline(int skip)
+static int underline(int skip)
     {
     unsigned char *cptr = &line[skip];
     unsigned char *aptr = &line_attr[skip];
@@ -1108,7 +1108,7 @@ int underline(int skip)
 ** Send a line, properly formated to stdout.
 ** This routine should not be called with a blank line.
 */
-void outline(int skip)
+static void outline(int skip)
     {
     unsigned char *cptr=&line[skip];
     unsigned char *aptr=&line_attr[skip];
@@ -1214,7 +1214,7 @@ void outline(int skip)
 /*
 ** Write the document trailer to standard output.
 */
-void trailer(int pagecount)
+static void trailer(int pagecount)
     {
     fputs("%%Trailer\n",stdout);
     printf("%%%%Pages: %d\n",pagecount);
@@ -1224,7 +1224,7 @@ void trailer(int pagecount)
 /*
 ** do the second pass on the input file
 */
-void pass2(void)
+static void pass2(void)
     {
     int current_page = 0;	/* page we are on */
     int linen, linen2;		/* current line number */
@@ -1405,7 +1405,7 @@ int main(int argc, char *argv[])
 		    filter_options_error(1, &o, _("Value for option \"%s=\" is invalid."), "pagesize");
  	    	}
 
-	    /* force a page width (number of columns */
+	    /* force a page width (number of columns) */
 	    else if(strcmp(name, "width") == 0)
 	    	{
 	    	if((MAX_WIDTH = atoi(value)) < 10 || MAX_WIDTH > 1000)
@@ -1760,7 +1760,7 @@ int main(int argc, char *argv[])
     if( (LMTM + LMBM + gutter) >= phys_pu_width )
 	fatal(1, _("lmtm, lmbm, gutter, and current pagesize leave no space for text"));
 
-    /* If in noisy mode, point out certain odd conditions */
+    /* If in noisy mode, point out certain odd conditions. */
     if(noisy)
 	{
 	if(MIN_COLUMNS >= landscape_lentrigger)
@@ -1799,4 +1799,3 @@ int main(int argc, char *argv[])
     } /* end of main() */
 
 /* end of file */
-

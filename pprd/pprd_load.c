@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 15 January 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 December 2001.
 */
 
 /*
@@ -30,7 +45,6 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"
@@ -336,7 +350,7 @@ void new_printer_config(char *printer)
 		{
 		queue[x].never &= (0xFF ^ prnbit);
 		if(queue[x].status == STATUS_STRANDED)
-		    p_job_new_status(&queue[x], STATUS_WAITING);
+		    queue_p_job_new_status(&queue[x], STATUS_WAITING);
 		}
     	    }
 	}
@@ -598,15 +612,7 @@ void initialize_queue(void)
     {
     const char function[] = "initialize_queue";
     DIR *dir;			/* the open queue directory */
-    struct dirent *direntp;	/* one directory entry */
-    struct QEntry newent;	/* the new terse queue entry we are building */
-    char *scratch = NULL;
-    size_t scratch_len;
-    const char *ptr_destnode, *ptr_destname, *ptr_homenode;
-#if 0
-    char *ptr;
-    int len;
-#endif
+    struct dirent *direntp;	/* pointer to the current queue entry */
 
     DODEBUG_RECOVER(("%s()", function));
 
@@ -618,9 +624,6 @@ void initialize_queue(void)
     if((dir = opendir(QUEUEDIR)) == (DIR*)NULL)
 	fatal(0, "%s(): can't open directory \"%s\", errno=%d (%s)", function, QUEUEDIR, errno, gu_strerror(errno));
 
-    /* Protect the queue array during modification. */
-    lock();
-
     /* loop to read file names */
     while((direntp = readdir(dir)))
 	{
@@ -629,188 +632,11 @@ void initialize_queue(void)
 
 	DODEBUG_RECOVER(("%s(): inheriting queue file \"%s\"", function, direntp->d_name));
 
-	/* Make a copy of the file name that we can stomp on. */
-	scratch = gu_restrdup(scratch, &scratch_len, direntp->d_name);
-
-#if 0
-	/* Find the extent of the destination node name. */
-	ptr_destnode = scratch;
-	len = strcspn(ptr_destnode, COLON_STR);
-	if(ptr_destnode[len] != COLON_CHAR)
-	    {
-	    error("%s(): can't parse \"%s\" (1)", function, direntp->d_name);
-	    continue;
-	    }
-	ptr_destnode[len] = '\0';
-
-	/* Find the extent of the destination name by getting
-	   the length of part before dash followed by digit.
-	   */
-	{
-	int c;
-	ptr_destname = &ptr_destnode[len+1];
-	for(len=0; TRUE; len++)
-	    {
-	    len += strcspn(&ptr_destname[len], "-");
-
-            if(ptr_destname[len] == '\0')	/* check for end of string */
-                break;
-
-            if((c = ptr_destname[len+1+strspn(&ptr_destname[len+1], "0123456789")]) == '.' || c == '(' || c=='\0')
-                break;
-	    }
-	if(ptr_destname[len] != '-')
-	    {
-	    error("%s(): can't parse \"%s\" (2)", function, direntp->d_name);
-	    continue;
-	    }
-	ptr_destname[len] = '\0';				/* terminate destination name */
+	queue_accept_queuefile(direntp->d_name, FALSE);
 	}
 
-	/* Scan for id number, subid number, and home node name. */
-	ptr = &ptr_destname[len+1];
-	if(sscanf(ptr, "%hd.%hd", &newent.id, &newent.subid) != 2
-		|| newent.id < 0 || newent.subid < 0)
-	    {
-	    error("%s(): can't parse \"%s\" (3)", function, direntp->d_name);
-	    continue;
-	    }
-
-	/* Find the home node name. */
-	ptr_homenode = &ptr[strspn(ptr, "0123456789.")];
-	if(*(ptr_homenode++) != '(' || (len = strlen(ptr_homenode)) < 2 || ptr_homenode[--len] != ')')
-	    {
-	    error("%s(): can't parse \"%s\" (4)", function, direntp->d_name);
-	    continue;
-	    }
-	ptr_homenode[len] = '\0';
-#else
-	{
-	int e = parse_qfname(scratch, &ptr_destnode, &ptr_destname, &newent.id, &newent.subid, &ptr_homenode);
-	if(e < 0)
-	    {
-	    error("%s(): can't parse \"%s\" (%d)", function, direntp->d_name, e);
-	    continue;
-	    }
-	}
-#endif
-
-	/*
-	** This section handles opening the queue file and extracting
-	** information from it an its permissions..
-	*/
-	{
-	FILE *qfile;
-	struct stat qstat;
-
-	/* Open the queue file. */
-	{
-	char qfname[MAX_PPR_PATH];
-	ppr_fnamef(qfname, "%s/%s", QUEUEDIR, direntp->d_name);
-	if((qfile = fopen(qfname, "r")) == (FILE*)NULL)
-	    {
-	    error("%s(): can't open \"%s\", errno=%d (%s)", function, direntp->d_name, errno, gu_strerror(errno));
-	    continue;
-	    }
-	}
-
-	/* stat the file, we will use the information below */
-	fstat(fileno(qfile), &qstat);
-
-	/* Recover the job status from the permission bits.  We start with
-	   the assumption that it is waiting for a printer, but if certain
-	   execute bits are set we will understand that it is held, stranded,
-	   or arrested.
-	   */
-	newent.status = STATUS_WAITING;
-	if(qstat.st_mode & BIT_JOB_HELD)
-	    newent.status = STATUS_HELD;
-	if(qstat.st_mode & BIT_JOB_STRANDED)
-	    newent.status = STATUS_STRANDED;
-	if(qstat.st_mode & BIT_JOB_ARRESTED)
-	    newent.status = STATUS_ARRESTED;
-
-	/*
-	** If the queue file is of zero length, then it is defective,
-	** delete the job files.
-	*/
-	if(qstat.st_size == 0)
-	    {
-	    error("%s(): queue file \"%s\" was of zero length", function, direntp->d_name);
-	    fclose(qfile);
-	    queue_unlink_job_2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode);
-	    continue;
-	    }
-
-	/*
-	** Read the priority from the queue file.  There is no good reason
-	** for the default since all queue files have a "Priority:" line.
-	** We are just being paranoid.
-	*/
-	newent.priority = 20;
-	{
-	char *line = NULL;
-	int line_available = 80;
-	while((line = gu_getline(line, &line_available, qfile)))
-	    {
-	    if(sscanf(line, "Priority: %hd", &newent.priority) == 1)
-		{
-		break;
-		}
-	    }
-	}
-
-	/* That is all we needed the queue file for. */
-	fclose(qfile);
-	}
-
-	/*
-	** Convert the destination node, the destination queue, and the
-	** home node names to numbers.  (We keep this at the end in order
-	** to keep cleanup simple.  Oh! for a try {} catch {} construct!
-	*/
-	newent.destnode_id = nodeid_assign(ptr_destnode);
-        if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
-            {
-            error("%s(): destination \"%s\" no longer exists", function, ptr_destname);
-            nodeid_free(newent.destnode_id);
-            continue;
-            }
-	newent.homenode_id = nodeid_assign(ptr_homenode);
-
-	/*
-	** If there is room for the job in the queue and is local,
-	** an attempt is made to start a printer for it.
-	**
-	** If it is remote, the xmit stuff is told it is ready to go.
-	*/
-	{
-	int rank1, rank2;
-	struct QEntry *newent_ptr;
-	if((newent_ptr = queue_enqueue_job(&newent, &rank1, &rank2)))
-	    {
-	    if(newent_ptr->status == STATUS_WAITING)
-	    	{
-	    	if(nodeid_is_local_node(newent_ptr->destnode_id))
-		    printer_try_start_suitable_4_this_job(newent_ptr);
-	    	else
-	    	    remote_new_job(newent_ptr);
-	    	}
-	    }
-	else
-	    {
-	    error("%s() failed to add job to queue", function);
-	    destid_free(newent.destnode_id, newent.destid);
-	    nodeid_free(newent.destnode_id);
-	    nodeid_free(newent.homenode_id);
-	    }
-	}
-
-	} /* end directory search loop */
-
-    unlock();
+    /* We are done.  Close the queue directory. */
     closedir(dir);
-    if(scratch) gu_free(scratch);
 
     DODEBUG_RECOVER(("%s(): done", function));
     } /* end of initialize_queue() */

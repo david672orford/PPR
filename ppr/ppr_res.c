@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 10 September 2001.
 */
 
 /*
@@ -278,7 +278,7 @@ void dump_page_resources(void)
 	    */
 	    if(strcmp(resource->R_Type,"procset")==0)
 		{
-		fprintf(page_comments,"%s %s %s %d\n",
+		fprintf(page_comments, "%s %s %s %d\n",
 			resource->R_Type, quote(resource->R_Name),
 			gu_dtostr(resource->R_Version),resource->R_Revision );
 		#ifdef DEBUG_RESOURCES_DETAILED
@@ -293,10 +293,10 @@ void dump_page_resources(void)
 	    */
 	    else
 		{
-		fprintf(page_comments,"%s %s\n",
+		fprintf(page_comments, "%s %s\n",
 			resource->R_Type, quote(resource->R_Name) );
 		#ifdef DEBUG_RESOURCES_DETAILED
-		printf("%s %s\n",resource->R_Type, quote(resource->R_Name));
+		printf("%s %s\n", resource->R_Type, quote(resource->R_Name));
 		#endif
 		}
 

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 16 November 2001.
 #
 
 use lib "?";
@@ -20,6 +20,7 @@ require 'cgi_data.pl';
 require 'cgi_intl.pl';
 require 'cgi_time.pl';
 defined($LOGDIR) || die;
+defined($USER_PPR) || die;
 
 # How far into the future (in seconds) should we declare the expiration date
 # to be?
@@ -77,7 +78,19 @@ LogHead
 # Try:
 eval {
 
-open(LOG, "< $filename") || die sprintf(_("Can't open log file: %s\n"), $!);
+if(!open(LOG, "< $filename"))
+    {
+    my $error = $!;
+    if($error =~ /^No such file /)
+    	{
+    	die sprintf(_("Print job logging is disabled.  To enable it, create the file \"%s\"\n"
+    		"and make sure the user \"%s\" can write to it.\n"), $filename, $USER_PPR);
+    	}
+    else
+	{
+	die sprintf(_("Can't open log file \"%s\", %s\n"), $filename, $!);
+	}
+    }
 
 my $last_qdate = '';
 my @row;

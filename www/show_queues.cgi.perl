@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/show_queues.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,11 +11,13 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 21 January 2001.
+# Last modified 11 January 2002.
 #
 
 use 5.005;
 use lib "?";
+use strict;
+use vars qw{%data};
 require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_back.pl';
@@ -43,8 +45,22 @@ my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=85 
 my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
 my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
 
+#
 # Routine to convert printer messages to icon selection characters.
-sub integrate_messages
+#
+# The first parameter is a reference to the list of auxiliary status messages
+# from the printer.
+#
+# The second is the character that should be returned if the status messages
+# don't contain anything noteworthy.
+#
+# The third is the character that should be returned if the messages indicate
+# that the printer is off-line.
+#
+# The fourth is the character that should be returned if the printer is in some
+# other error state.
+#
+sub pstatus_char
     {
     my($messages, $default_char, $offline_char, $error_char) = @_;
     foreach my $message (@$messages)
@@ -127,6 +143,8 @@ Vary: user-agent, accept-language
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <script type="text/javascript" src="../js/show_queues.js" defer></script>
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
+<link rel="icon" href="../images/icon-16.png" type="image/png">
+<link rel="SHORTCUT ICON" href="../images/icon-16.ico">
 </head>
 <body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
 <div id="popup" class="menu">
@@ -138,15 +156,17 @@ Head10
 # Begin an exception handling block
 eval {
 
+#=============================================================================
 # Print a lame menu bar.
-#
+#=============================================================================
+
 # IE 5.0 choaks on this:
 #<div style="position:fixed; top:0; left: 0; width:100%; height: 2em; background:white">
 {
 print <<"Top5";
 <div class="menubar">
-<label><span class="label">${\H_("View:")}</span>&nbsp;
-<select name="columns" onchange="document.forms[0].submit()")>
+<label title="Choose the display format.">
+<span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()")>
 Top5
 
 print "<option";
@@ -176,78 +196,102 @@ Top7
 # Add a control for the refresh interval.
 print <<"Top8";
 <spacer type="horizontal" size=10>
-<label><span class="label">${\H_("Refresh Interval:")}</span>
-<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
+<label title="This page will be reloaded at the indicated interval (in seconds).">
+<span class="label">${\H_NB_("Refresh Interval:")}</span>&nbsp;<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
 </label>
 Top8
 
 # Add a refresh button.
 print <<"Top9";
 <spacer type="horizontal" size=50>
-<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
+<label title="Refresh the page right now.">
+	<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
+</label>
 Top9
 
 # Create a button for JavaScript Cookie login.
-print '<spacer type="horizontal" size=10>', "\n";
-print '<input type="button" value=', html_value(_("Cookie Login")), ' onclick="';
-print "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')";
-print '">', "\n";
+print <<"TopCookie";
+<spacer type="horizontal" size=10>
+<label title="Use this if your browser doesn't support Digest authentication.">
+<input type="button" value=${\html_value(_("Cookie Login"))}
+	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
+</label>
+TopCookie
 
 # Try to make a "Close" button.  (They do the same thing.)
 cgi_back_possible("/");
 print '<spacer type="horizontal" size=10>', "\n";
+print "<label title=\"Close this window.\">\n";
 isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
+print "</label>\n";
 
 print <<"Top10";
 </div>
 Top10
 }
 
+#=============================================================================
 # Here we create the icons for the wizards and for Show All Jobs.
-#
+#=============================================================================
+
 print <<"Top10";
-<table border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')">
+<td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
+	title="Click here and you will be guided through the process of adding a new printer."
+	>
 	<img $ICON_ADD_PRINTER border=0><br>
 	<span class="qname">${\H_("Add New Printer")}</span>
         </a></td>
-<td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')">
+</tr>
+</table>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<tr align=center>
+<td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
+	title="Click here and you will be guided through the process of adding a new group of printers."
+	>
 	<img $ICON_ADD_GROUP border=0><br>
 	<span class="qname">${\H_("Add New Group")}</span>
 	</a></td>
-<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false">
+</tr>
+</table>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<tr align=center>
+<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
+	title="Click here to open a window which will show all queued jobs."
+	>
 	<img $ICON_ALL_QUEUES border=0><br>
 	<span class="qname">${\H_("Show All Queues")}</span>
 	</a></td>
 </tr>
 </table>
+<br clear="left">
 <hr>
 Top10
 
+#=============================================================================
+# Here we loop through the available print destinations, gathering information
+# about type, status, number of jobs, etc. and choosing an icon for each.
 #
-# Here we loop through the available queues, creating an icon
-# for each.
-#
+# The information is stored in $queues{} and $queues_counts{}.
+#=============================================================================
+
+my %queues;
+my %queues_counts;
 {
 my $control = new PPR::PPOP("all");
 
 # Select the correct member function to get the level of detail we need.
-my $function;
-if($columns >= 0)
-    { $function = "list_destinations" }
-elsif($columns == -1)
-    { $function = "list_destinations_comments" }
-else
-    { $function = "list_destinations_comments_addresses" }
+#my $function;
+#if($columns >= 0)
+#    { $function = "list_destinations" }
+#elsif($columns == -1)
+#    { $function = "list_destinations_comments" }
+#else
+#    { $function = "list_destinations_comments_addresses" }
 
 # Get a list of all queues with a description for each.
-# The information is stored in $queues{}.
-my $qname;
-my $row;
-my %queues;
-my %queues_counts;
-foreach $row ($control->list_destinations_comments_addresses())
+foreach my $row ($control->list_destinations_comments_addresses())
     {
     my($name, $type, $accepting, $protected, $comment, $address) = @$row;
     my $icon = '';
@@ -279,13 +323,13 @@ foreach $row ($control->list_destinations_comments_addresses())
 
 # Count the number of jobs in each queue.  The counts are
 # stored in $queues_count{}.
-foreach $row ($control->qquery('destname'))
+foreach my $row ($control->qquery('destname'))
     {
     $queues_counts{$row->[0]}++;
     }
 
 # Add the correct "jobs present" (0 or 1) character for each queue.
-foreach $qname (keys(%queues))
+foreach my $qname (keys(%queues))
     {
     if($queues_counts{$qname} > 0)
     	{
@@ -298,19 +342,8 @@ foreach $qname (keys(%queues))
     }
 
 #
-# Add a printer status character for each printer.
-#
-# The first parameter is the list of auxiliary status messages from the
-# printer.
-#
-# The second is the character that should be returned if the
-# status messages don't contain anything noteworthy.
-#
-# The third is the character that should be returned if the messages indicate
-# that the printer is off-line.
-#
-# The fourth is the character that should be returned if the printer is in some
-# other error state.
+# Refine our icon selection for destinations that are printers by
+# adding an additional characters that indicates the printer status.
 #
 # These are the available characters:
 #
@@ -327,7 +360,7 @@ foreach $qname (keys(%queues))
 # a	printing but off-line
 # b	printing but other "PrinterError:"
 #
-foreach $row ($control->get_pstatus())
+foreach my $row ($control->get_pstatus())
     {
     my $name = shift @$row;
     my $status = shift @$row;
@@ -341,9 +374,9 @@ foreach $row ($control->get_pstatus())
     #print STDERR "\$type=\"$type\", \$icon=\"$icon\", \$comment=\"$comment\", \$qaddress=\"$qaddress\"\n";
 
     if($status eq "idle")
-    	{ $icon .= integrate_messages(\@messages, '0', '8', '9') }
+    	{ $icon .= pstatus_char(\@messages, '0', '8', '9') }
     elsif($status eq "printing")
-    	{ $icon .= integrate_messages(\@messages, '1', 'a', 'b') }
+    	{ $icon .= pstatus_char(\@messages, '1', 'a', 'b') }
     elsif($status eq "stopping" || $status eq "halting")
     	{ $icon .= '2' }
     elsif($status eq "canceling" || $status eq "seizing")
@@ -363,7 +396,7 @@ foreach $row ($control->get_pstatus())
     	}
     elsif($status eq "engaged")
     	{
-	$icon .= integrate_messages(\@messages, '7', '8', '9')
+	$icon .= pstatus_char(\@messages, '7', '8', '9')
     	}
     else
     	{ $icon .= 'x' }
@@ -372,6 +405,11 @@ foreach $row ($control->get_pstatus())
     }
 # Shut down ppop.
 $control->destroy;
+}
+
+#=============================================================================
+# Produce the HTML for the print destination icons.
+#=============================================================================
 
 # If there is going to be only a single table, start it.
 if($columns != 0)
@@ -379,8 +417,9 @@ if($columns != 0)
 
 # Loop thru the queues, creating a labeled icon for each.
 # Code needed to escape the queue name in HTML, URLs and JavaScript!
+{
 my $col = 0;
-foreach $qname (sort(keys(%queues)))
+foreach my $qname (sort(keys(%queues)))
     {
     my($qtype, $icon, $qdescription, $qaddress) = @{$queues{$qname}};
 
@@ -399,14 +438,16 @@ foreach $qname (sort(keys(%queues)))
     if($columns > 0)		# multicolumn or single column w/out details
 	{
 	print "<tr align=center>\n" if(($col % $columns) == 0);
-	print "<td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
+	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
 	$col++;
 	print "</tr>\n" if(($col % $columns) == 0);
 	}
     elsif($columns == 0)	# free flow
         {
 	print "<table align=\"left\" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>";
-	print "<tr align=\"center\"><td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td></tr></table>\n";
+	print "<tr align=\"center\">";
+	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
+	print "</tr></table>\n";
         }
     else			# Details (-1) or Many Details (-2)
         {
@@ -426,6 +467,10 @@ if($columns != 0)
     print "</table>\n";
     }
 }
+
+#=============================================================================
+# Final stuff
+#=============================================================================
 
 # End the exception handling block.
 }; if($@)

@@ -1,7 +1,7 @@
-#! /usr/local/bin/wish
+#! /usr/bin/wish
 #
 # mouse:~ppr/src/misc/xmessage.tcl
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 August 1999.
+# Last modified 31 July 2001.
 #
 
 #

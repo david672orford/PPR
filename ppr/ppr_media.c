@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_media.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 December 2000.
+** Last modified 10 September 2001.
 */
 
 /*
@@ -193,7 +193,7 @@ void dump_page_media(void)
 	    m=(struct Media *) things[x].th_ptr;
 	    padded_to_ASCIIZ(medianame,m->medianame,sizeof(m->medianame));
 
-	    fprintf(page_comments,"%%%%PageMedia: %s\n",medianame);
+	    fprintf(page_comments, "%%%%PageMedia: %s\n", medianame);
 
 	    things[x].R_Flags &= (~MREF_PAGE);
 	    break;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 5 April 2001.
+** Last modified 11 January 2002.
 */
 
 BODY {
@@ -18,16 +18,16 @@ DIV.menubar {
 	border-style: raised;
 	}
 
+/* The table with the queue listing is 80% as high as the page. */
 DIV.queue {
-	overflow: scroll;
-	height: 80%;
+	/* overflow: auto; */
+	margin-top: 2pt;
+	margin-bottom: 2pt;
 	}
 
 /* This is for the queue display table. */
 TABLE.queue {
 	width: 100%;
-	margin-top: 2pt;
-	margin-bottom: 2pt;
 	border-style: solid;
 	border-color: black;
 	}
@@ -40,6 +40,16 @@ TABLE.queue THEAD TH {
 	border-style: outset;
 	border-width: thin;
 	padding: 0pt 5pt 0pt 5pt;
+	}
+
+TABLE.queue TBODY {
+	height: 9cm;
+	overflow: auto;
+	}
+
+/* IE 5.5 stupidly passes the height of <TBODY> on to <TR>. */
+TABLE.queue TBODY TR {
+	height: 14pt;
 	}
 
 TABLE.queue TBODY TH, TD {

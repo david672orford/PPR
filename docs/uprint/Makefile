@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 16 February 2001.
+# Last modified 1 August 2001.
 #
 
 # Pull in settings from Configure.
@@ -32,7 +32,7 @@ ALL_TROFF=UPRINT.1.man uprint-remote.conf.5.man \
 
 #=== Build ==================================================================
 
-all: $(ALL_HTML) $(ALL_TROFF)
+all-docs: $(ALL_HTML) $(ALL_TROFF)
 
 #=== Install ================================================================
 

@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last revised 1 June 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last revised 14 December 2001.
 */
 
 /*
@@ -76,7 +91,6 @@ static int warning_log = FALSE;			/* set true if warnings should go to log */
 static int option_unlink_jobfile = FALSE;	/* Was the -U switch used? */
 static int use_username = FALSE;		/* User username instead of comment as default For: */
 static int ignore_truncated = FALSE;		/* TRUE if should discard without %%EOF */
-static int option_hold = FALSE;			/* should it be held when it is submitted? */
 static int option_show_jobid = 0;		/* 0 for don't , 1 for short, 2 for long */
 static int use_authcode = FALSE;		/* true if using authcode line to id */
 static int preauthorized = FALSE;		/* set true by -A switch */
@@ -101,6 +115,7 @@ int read_duplex = TRUE;			/* TRUE if we should guess duplex */
 int read_duplex_enforce = FALSE;	/* TRUE if we should insert duplex code after determination */
 int current_duplex = DUPLEX_NONE;	/* set when we read duplex */
 int read_signature = TRUE;		/* TRUE if we should implement signature features */
+int read_nup = TRUE;
 int read_For = FALSE;			/* Pay attention to "%%For:" lines? */
 int read_ProofMode = TRUE;
 int read_Title = TRUE;
@@ -311,6 +326,7 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 int write_queue_file(struct QFileEntry *qentry)
     {
     const char function[] = "write_queue_file";
+    char magic_cookie[16];
     char qfname[MAX_PPR_PATH];
     int fd;
     FILE *Qfile;
@@ -330,12 +346,16 @@ int write_queue_file(struct QFileEntry *qentry)
     if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
     	fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);
 
+    /* Create a new magic cookie. */
+    snprintf(magic_cookie, sizeof(magic_cookie), "%08X", rand());
+    qentry->magic_cookie = magic_cookie;
+
     /* Construct the queue file name. */
     ppr_fnamef(qfname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,
     	qentry->destnode, qentry->destname, qentry->id, qentry->subid, qentry->homenode);
 
     /* Very carefully open the queue file. */
-    if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, option_hold ? (BIT_JOB_BASE | BIT_JOB_HELD) : BIT_JOB_BASE )) < 0)
+    if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
 	fatal(PPREXIT_OTHERERR, _("can't open queue file \"%s\", errno=%d (%s)"), qfname, errno, gu_strerror(errno) );
     if((Qfile = fdopen(fd, "w")) == (FILE*)NULL)
     	fatal(PPREXIT_OTHERERR, "%s(): fdopen() failed", function);
@@ -436,13 +456,11 @@ static FILE *open_fifo(const char name[])
 */
 void submit_job(struct QFileEntry *qe, int subid)
     {
-    fprintf(FIFO, "j %s %s %d %d %s %d %d\n",
+    fprintf(FIFO, "j %s:%s-%d.%d(%s)\n",
 	qe->destnode,
     	qe->destname,
     	qe->id, subid,
-	qe->homenode,
-    	qe->priority,
-    	option_hold);
+	qe->homenode);
 
     /*
     ** If --show-jobid or --show-long-jobid has been used,
@@ -618,11 +636,11 @@ static void authorization_acl(void)
 void file_cleanup(void)
     {
     /* Close any job spool files that are open. */
-    if(comments != (FILE*)NULL)
+    if(comments)
     	fclose(comments);
-    if(page_comments != (FILE*)NULL)
+    if(page_comments)
     	fclose(page_comments);
-    if(text != (FILE*)NULL)
+    if(text)
     	fclose(text);
 
     /* Remove any temporary cache file. */
@@ -855,6 +873,8 @@ static const struct gu_getopt_opt option_words[] =
 	{"strip-cache", 'S', TRUE},
 	{"strip-fontindex", 1015, TRUE},
 	{"strip-printer", 1016, TRUE},
+	{"save", 1017, FALSE},
+	{"question", 1018, TRUE},
 	{"commentary", 1100, TRUE},
 	{"commentator", 1101, TRUE},
 	{"commentator-address", 1102, TRUE},
@@ -1035,6 +1055,12 @@ HELP(_(
 
 HELP(_(
 "\t--hold                     job should be held immediately\n"));
+
+HELP(_(
+"\t--question <path>          path of HTML question page\n"));
+
+HELP(_(
+"\t--save                     job should be saved after printing\n"));
 
 HELP(_(
 "\t-q <integer>               sets priority of print job\n"));
@@ -1682,7 +1708,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    break;
 
 	case 1004:				/* --hold */
-	    option_hold = TRUE;
+	    qentry.status = STATUS_HELD;
 	    break;
 
 	case 1005:				/* --responder-options */
@@ -1771,6 +1797,15 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	case 1016:				/* --strip-printer */
 	    if(gu_torf_setBOOL(&qentry.StripPrinter, optarg) == -1)
 	    	fatal(PPREXIT_SYNTAX, _("%s must be followed by \"true\" or \"false\""), true_option);
+	    break;
+
+	case 1017:				/* --save */
+	    qentry.flags |= JOB_FLAG_SAVE;
+	    break;
+
+	case 1018:				/* --question */
+	    qentry.question = optarg;
+	    qentry.flags |= JOB_FLAG_QUESTION_UNANSWERED;
 	    break;
 
 	case 1100:				/* --commentary */
@@ -1899,9 +1934,9 @@ int main(int argc, char *argv[])
 	if(errno != ERANGE)
 	    fatal(PPREXIT_OTHERERR, "getcwd() failed, errno=%d (%s)", errno, gu_strerror(errno));
 	len *= 2;
-	starting_directory = (char*)ppr_realloc(starting_directory, len, sizeof(char));
+	starting_directory = (char*)gu_realloc(starting_directory, len, sizeof(char));
 	}
-    starting_directory = (char*)ppr_realloc(starting_directory, strlen(starting_directory) + 1, sizeof(char));
+    starting_directory = (char*)gu_realloc(starting_directory, strlen(starting_directory) + 1, sizeof(char));
     }
     unbecome_user();
 
@@ -1915,11 +1950,13 @@ int main(int argc, char *argv[])
     qentry.id = 0;					/* not assigned yet */
     qentry.subid = 0;					/* job fragment number (unused) */
     qentry.homenode = ppr_get_nodename();		/* this are the node this job came from */
+    qentry.status = STATUS_WAITING;
+    qentry.flags = 0;
     qentry.time = time((time_t*)NULL);			/* job submission time */
     qentry.priority = 20;				/* default priority */
     qentry.user = user_uid;				/* record real user id of submitter */
     qentry.username = pw->pw_name;			/* fill in name associated with id */
-    qentry.For = (char*)NULL;			/* start with no %%For: line */
+    qentry.For = (char*)NULL;				/* start with no %%For: line */
     qentry.charge_to = (char*)NULL;			/* ppuser account to charge to */
     qentry.Title = (char*)NULL;				/* start with no %%Title: line */
     qentry.Creator = (char*)NULL;			/* "%%Creator:" */
@@ -1953,6 +1990,7 @@ int main(int argc, char *argv[])
     qentry.PJL = (const char *)NULL;
     qentry.CachePriority = CACHE_PRIORITY_AUTO;
     qentry.StripPrinter = FALSE;
+    qentry.page_list.mask = NULL;
 
     /*
     ** We would like to find a default response method in the variable
@@ -2195,9 +2233,9 @@ int main(int argc, char *argv[])
 
     /*
     ** If no --title switch was used but a file name was used, make the file
-    ** name the default title.  The default title may be overridden by a 
-    ** "%%Title:" line.  (Note that if the input is stdin, real_filename will 
-    ** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the 
+    ** name the default title.  The default title may be overridden by a
+    ** "%%Title:" line.  (Note that if the input is stdin, real_filename will
+    ** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the
     ** --lpq-filename switch has been used.)
     */
     if(!qentry.Title)
@@ -2205,7 +2243,7 @@ int main(int argc, char *argv[])
     	    qentry.Title = real_filename;
 
     /*
-    ** If we don't have at least a provisional For, then use either the Unix 
+    ** If we don't have at least a provisional For, then use either the Unix
     ** user name or the comment field from /etc/passwd.
     **
     ** The variable default_For is used by authorization()
@@ -2560,15 +2598,20 @@ int main(int argc, char *argv[])
 
     /*
     ** Has the user asked for only a subset of the pages?
-    ** If so, then we will call this function to create
-    ** a new "-pages" file with only the requested pages
-    ** mentioned in it.
-    **
-    ** If the request cannot be fulfiled, this function
-    ** will never return.
     */
     if(option_page_list)
-    	select_pages(&qentry, option_page_list);
+	{
+	if(! qentry.attr.script)
+	    {
+	    respond(RESP_CANCELED_NOPAGES, "");
+	    exit(PPREXIT_NOTPOSSIBLE);
+ 	    }
+
+	if(pagemask_encode(&qentry, option_page_list) == -1)
+ 	    {
+ 	    fatal(PPREXIT_SYNTAX, "Can't parse page list");
+ 	    }
+    	}
 
     /*
     ** Give the job splitting machinery a chance to work.

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_pcl/PSout.java
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,46 +10,70 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 3 May 2000.
+** Last modified 30 August 2001.
 */
 
 import java.io.*;
 
+/*
+** This class generates PostScript.
+*/
 class PSout
     {
     // This is where we send the PostScript.
     private PrintStream out;
+
+    // These members are used to determine if certain PostScript
+    // document elements are currently started but not finshed.
+    private boolean doc_open;
+    private boolean page_open;
+    private boolean string_open;
+
+    // This is the physical page size in 1/7200ths of an inch.
+    private int phys_width;
+    private int phys_height;
+    private String phys_name;
+
+    // This is where the cursor is.  It is relative to the top left
+    // corner.  The units are 1/7200th of an inch.
+    private int xpos, ypos;
+    private int ps_xpos, ps_ypos;
+
+    // Current page number
+    private int page;
+
+    // Current font
+    PSfont font = null;
+    String ps_font_name = "";
+    int ps_font_size = 0;
 
     public PSout(OutputStream outfile) throws AssertionFailed
     	{
 	out = new PrintStream(outfile);
 	doc_open = page_open = string_open = false;
 	page = 0;
-	reset();
+	page_reset();
 	}
 
-    public void reset() throws AssertionFailed
-	{
-	set_orientation(0);
-	set_pagesize((int)(8.5 * 7200), (int)(11 * 7200), "Letter");
-	set_font(0);
-	page_reset();
-    	}
-
+    // This is called at the start of each page to reset any state that
+    // is reset at the end of a page.
     private void page_reset()
     	{
 	xpos = ypos = 0;
     	}
 
     // This is the physical page size in 1/7200ths of an inch.
-    private int phys_width;
-    private int phys_height;
-    private String phys_name;
     public void set_pagesize(int width, int height, String name)
 	{
 	phys_width = width;
 	phys_height = height;
 	phys_name = name;
+	}
+
+    // Set the font to use.
+    public void set_font(PSfont new_font)
+	{
+	font = new_font;
 	}
 
     // This is the PCL style page orientation.
@@ -60,7 +84,8 @@ class PSout
 	    throw new AssertionFailed("requested orientation out of range");
 	page_orientation = orientation;
         }
-    // Figure out the page height or width depending on the orientation.
+
+    // Figure out the page width depending on the orientation.
     public int get_page_width() throws AssertionFailed
 	{
 	switch(page_orientation)
@@ -75,6 +100,8 @@ class PSout
 	        throw new AssertionFailed("Impossible orientation in object state");
 	    }
 	}
+
+    // Figure out the page height depending on the orientation.
     public int get_page_height() throws AssertionFailed
         {
 	switch(page_orientation)
@@ -92,7 +119,6 @@ class PSout
 
     // This is where the cursor is.  It is relative to the top left
     // corner.  The units are 1/7200th of an inch.
-    private int xpos, ypos;
     public void moveto(int x, int y)
     	{
 	xpos = x;
@@ -130,7 +156,6 @@ class PSout
 
     // This is where the PostScript cursor is.  The PostScript cursor
     // might lag behind.
-    private int ps_xpos, ps_ypos;
     private void attain_position()
     	{
 	open_page();
@@ -177,39 +202,32 @@ class PSout
     	}
 
     // This is where we select one of the fonts.
-    private int font;
-    private int ps_font;
-    public void set_font(int new_font)
-        {
-	font = new_font;
-        }
     private void attain_font()
         {
-	if(ps_font != font)
+	String font_name = font.get_postscript_name();
+	int font_size = font.get_size();
+
+	if(ps_font_size != font_size || ps_font_name != font_name)
 	    {
 	    close_string();
-	    out.print("F" + font + " ");
-	    ps_font = font;
+	    out.print("/" + font_name + " findfont " + font_size + " scalefont setfont ");
+
+	    ps_font_name = font_name;
+	    ps_font_size = font_size;
 	    }
         }
 
     // What is the space width of the selected font?
     public int get_space_width()
     	{
-	return 432;
+	return (int)(font.get_size() * 0.6 + 0.5);
     	}
 
     // Get the width of the indicated character.
     public int get_char_width(int c)
     	{
-	return 432;
+	return (int)(font.get_size() * 0.6 + 0.5);
     	}
-
-    // These members are used to determine if certain PostScript
-    // document elements are currently started but not finshed.
-    private boolean doc_open;
-    private boolean page_open;
-    private boolean string_open;
 
     private void open_doc()
     	{
@@ -239,17 +257,14 @@ class PSout
 	    out.print("%%BeginSetup\n"
 		+ "/ph 72 11 mul def\n"
 		+ "/pw 72 8.5 mul def\n"
-		+ "/f0 /Courier findfont 720 scalefont def\n"
-		+ "/F0 { f0 setfont } def\n"
-		+ "/f1 /Courier-Bold findfont 720 scalefont def\n"
-		+ "/F1 { f1 setfont } def\n"
 	    	+ "%%EndSetup\n\n");
 
 	    doc_open = true;
 	    }
     	}
 
-    public void close_doc()
+    // This method should be called when the user is done with the object.
+    public void finish()
         {
         if(doc_open)
             {
@@ -262,24 +277,27 @@ class PSout
             }
         }
 
-    private int page;
-
+    // This is an internal hook for emiting page start code.
     private void open_page()
         {
         if(!page_open)
             {
             open_doc();
 	    page++;
+
             out.print("%%Page: " + page + " " + page + "\n");
 	    if(page_orientation == 1)
 	    	out.print("%%PageOrientation: Landscape\n");
 	    out.print(page_orientation + " bp\n");
+
             page_open = true;
 	    ps_xpos = ps_ypos = 0;
-	    ps_font = -1;
+	    ps_font_name = "";
+	    ps_font_size = 0;
             }
         }
 
+    // This is called to eject a page.
     public void close_page()
         {
         if(page_open)
@@ -288,8 +306,10 @@ class PSout
 	    out.print("\nep\n\n");
 	    page_open = false;
 	    }
+	page_reset();
 	}
 
+    // This is an internal hook for emiting printable string start code.
     private void open_string()
         {
         if(!string_open)
@@ -300,6 +320,8 @@ class PSout
             }
         }
 
+    // This is an internal hook that is called to finish a printable
+    // string so that motion commands or the like can be emitted.
     private void close_string()
         {
         if(string_open)

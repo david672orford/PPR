@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 7 May 2001.
+# Last modified 21 June 2001.
 #
 
 # Where do we install the documentation?
@@ -48,12 +48,10 @@ DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets/print/docbook.dsl
 .sgml.tex:
 	$(JADE) -t tex -d $(DSSSL_SPEC_PRINT) -i tex $*.sgml
 
-.tex.dvi:
+.tex.ps:
 	$(JADETEX) $*; \
-	while grep 'LaTeX Warning: Label(s) may have changed' $*.log >/dev/null; \
-	do $(JADETEX) $*; done
-
-.dvi.ps:
+		while grep 'LaTeX Warning: Label(s) may have changed' $*.log >/dev/null; \
+		do $(JADETEX) $*; done
 	$(DVIPS) -f $* >$*.ps
 
 .ps.pdf:

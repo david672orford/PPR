@@ -1,6 +1,6 @@
 /*
 ** mouse: ~ppr/src/ppr/ppr_nest.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 21 January 2000.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
@@ -19,7 +19,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "ppr.h"
 #include "ppr_exits.h"
 #include "ppr_gab.h"
@@ -75,7 +74,7 @@ void nest_push(int leveltype, const char *name)
     if( level > available_levels )
 	{
 	available_levels += 10;
-    	nest_stack = (int*)ppr_realloc(nest_stack, available_levels, sizeof(int));
+    	nest_stack = (int*)gu_realloc(nest_stack, available_levels, sizeof(int));
     	}
     nest_stack[level-1] = leveltype;
     } /* end of nest_push() */

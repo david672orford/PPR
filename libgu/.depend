@@ -1,26 +1,58 @@
+gu_md5.$(OBJ): gu_md5.c ../include/gu_md5.h
+
 cloexec.$(OBJ): cloexec.c ../include/gu.h
-
-ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-getline.$(OBJ): getline.c ../include/gu.h
-
-gu_throw.$(OBJ): gu_throw.c ../include/before_system.h ../include/gu.h
-
-malloc.$(OBJ): malloc.c ../include/before_system.h ../include/gu.h
 
 daemon.$(OBJ): daemon.c ../include/before_system.h ../include/gu.h
 
 disk_space.$(OBJ): disk_space.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
+getline.$(OBJ): getline.c ../include/gu.h
+
 getopt.$(OBJ): getopt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
-gu_md5.$(OBJ): gu_md5.c ../include/gu_md5.h
+gu_StrAppendMax.$(OBJ): gu_StrAppendMax.c ../include/before_system.h ../include/gu.h
 
-malloc_debug.$(OBJ): malloc_debug.c ../include/before_system.h ../include/gu.h
+gu_StrCopyMax.$(OBJ): gu_StrCopyMax.c ../include/before_system.h ../include/gu.h
 
 gu_dtostr.$(OBJ): gu_dtostr.c ../include/before_system.h ../include/gu.h
 
+gu_fscanf.$(OBJ): gu_fscanf.c ../include/before_system.h ../include/gu.h
+
 gu_getdouble.$(OBJ): gu_getdouble.c ../include/before_system.h ../include/gu.h
+
+gu_mkstemp.$(OBJ): gu_mkstemp.c ../include/before_system.h ../include/gu.h
+
+gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
+
+gu_snmp.$(OBJ): gu_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/cexcept.h
+
+gu_snprintfcat.$(OBJ): gu_snprintfcat.c ../include/before_system.h ../include/gu.h
+
+gu_sscanf.$(OBJ): gu_sscanf.c ../include/before_system.h ../include/gu.h
+
+gu_strcasecmp.$(OBJ): gu_strcasecmp.c ../include/before_system.h ../include/gu.h
+
+gu_strerror.$(OBJ): gu_strerror.c ../include/gu.h
+
+gu_strsep.$(OBJ): gu_strsep.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+gu_strsep2.$(OBJ): gu_strsep2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
+
+gu_throw.$(OBJ): gu_throw.c ../include/before_system.h ../include/gu.h
+
+gu_trim.$(OBJ): gu_trim.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+gu_wildmat.$(OBJ): gu_wildmat.c
+
+ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+lock_exclusive.$(OBJ): lock_exclusive.c ../include/gu.h
+
+malloc.$(OBJ): malloc.c ../include/before_system.h ../include/gu.h
+
+malloc_debug.$(OBJ): malloc_debug.c ../include/before_system.h ../include/gu.h
 
 padded.$(OBJ): padded.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
@@ -28,41 +60,9 @@ signal1.$(OBJ): signal1.c ../include/before_system.h ../include/gu.h ../include/
 
 signal2.$(OBJ): signal2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
-snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
-
 torf.$(OBJ): torf.c ../include/before_system.h ../include/gu.h
-
-gu_mkstemp.$(OBJ): gu_mkstemp.c ../include/before_system.h ../include/gu.h
-
-gu_sscanf.$(OBJ): gu_sscanf.c ../include/before_system.h ../include/gu.h
 
 wordwrap.$(OBJ): wordwrap.c ../include/before_system.h ../include/gu.h
 
-gu_wildmat.$(OBJ): gu_wildmat.c
-
-gu_strerror.$(OBJ): gu_strerror.c ../include/gu.h
-
-gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
-
-gu_strcasecmp.$(OBJ): gu_strcasecmp.c ../include/before_system.h ../include/gu.h
-
-lock_exclusive.$(OBJ): lock_exclusive.c ../include/gu.h
-
-gu_StrCopyMax.$(OBJ): gu_StrCopyMax.c ../include/before_system.h ../include/gu.h
-
-gu_snprintfcat.$(OBJ): gu_snprintfcat.c ../include/before_system.h ../include/gu.h
-
-gu_StrAppendMax.$(OBJ): gu_StrAppendMax.c ../include/before_system.h ../include/gu.h
-
-gu_snmp.$(OBJ): gu_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/cexcept.h
-
-gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
-
-gu_trim.$(OBJ): gu_trim.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_strsep2.$(OBJ): gu_strsep2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_fscanf.$(OBJ): gu_fscanf.c ../include/before_system.h ../include/gu.h
-
-gu_strsep.$(OBJ): gu_strsep.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
 

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/grp_properties.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 December 2000.
+# Last modified 19 December 2001.
 #
 
 use lib "?";
@@ -103,16 +103,32 @@ my $tabbed_table = [
 	{
 	'tabname' => N_("Samba"),
 	'dopage' => sub {
-		print "<p>";
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">";
 		labeled_checkbox("addon ppr2samba", _("Share with Samba (provided Samba is prepared)"), 1, cgi_data_move("addon ppr2samba", 1));
+		print "</span>\n";
+
+		print "<p>";
+		labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
+			"", cgi_data_move("addon ppr2samba-prototype", ""), 
+			"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
+		print "</p>\n";
 
 		print "<p>";
 		labeled_entry("addon ppr2samba-drivername", _("Override Win95 driver name:"), cgi_data_move("addon ppr2samba-drivername", ""), 20);
+		print "</p>\n";
 
 		print "<p>";
 		labeled_select("addon ppr2samba-vserver", _("Assign to virtual server (Samba setup required):"),
 			"", cgi_data_move("addon ppr2samba-vserver", ""),
 			"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+		print "</p>\n";
+
+		print "</div>\n";
+
+		print "<p>", _("Note that if the Samba configuration file smb.conf has not been edited as described in\n"
+				. "the ppr2samba(8) manpage, the settings on this screen will have no effect."), "</p>\n";
+
 		},
 	'onleave' => sub {
 		# This gives it a value 0 if it wasn't checked and blank if it was.

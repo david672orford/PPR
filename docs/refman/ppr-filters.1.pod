@@ -1,6 +1,6 @@
 #
 # ppr-filters.1.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 1 June 2001.
+# Last modified 2 January 2002.
 #
 
 =head1 NAME
@@ -62,8 +62,8 @@ executed.
 This filter supports many B<-o> options.  These are described in the section
 which describes the B<-o> switch.
 
-The default value for the "charset=" option is "ISOLatin1".  The default for
-toe "fontfamily=" option is "fixed".
+The default value for the B<charset=> option is B<ISOLatin1>.  The default for
+toe B<fontfamily=> option is B<fixed>.
 
 This filter supports the B<gutter=> option which specifies an amount to be
 added to the margin on the side on which the paper will be bound.  The
@@ -80,8 +80,8 @@ option is used or B<orientation=auto> is used, then the orientation will be
 decided upon automatically.
 
 If the orientation is to be decided automatically, then the descision is
-based upon the parameters B<landscape_lentrigger> and
-B<landscape_asptrigger>.  These parameters are described in detail in the
+based upon the parameters B<landscape_lentrigger=> and
+B<landscape_asptrigger=>.  These parameters are described in detail in the
 section for the B<-o> switch.
 
 =item B<-T lp_autolf>
@@ -114,7 +114,7 @@ Normally, the file name or the string specified with the B<--title> switch (if p
 will be used as the title.  You may override the title with the B<-o title=> option.
 
 The B<-o> option "B<width=>" specifies the value for B<pr>'s B<-w> switch and 
-"B<length=>" specifies a value for B<pr>'s B<-l> option.  Since, after being 
+B<length=> specifies a value for B<pr>'s B<-l> option.  Since, after being 
 processed by B<pr>, the file is passed through the "lp" filter, lines will be
 wrapped at the length specified by the B<-o width=> switch.
 
@@ -354,6 +354,8 @@ which options they do not understand from among those that appear after
 (Supported by:  lp, lp_autolf, fortran, pr, tex, texinfo, dvi, and dotmatrix at
 the very least)
 
+=item B<color=>I<boolean>
+
 =item B<colour=>I<boolean>
 
 sets filters to produce colour or grayscale.  This option is provided
@@ -408,15 +410,10 @@ will be used.
 
 =item B<width=>I<integer>
 
-sets the maximum width of the page in columns.
+sets the maximum width of the page in columns.  If the input file has more columns, then lines that exceed this width 
+will be truncated.
 
 (Supported by:  fortran, pr, lp, lp_autolf)
-
-=item B<length=>I<integer>
-
-sets the length of the page in lines.
-
-(Supported by:  pr)
 
 =item B<mincolumns=>I<integer>
 
@@ -425,6 +422,24 @@ document requires fewer columns than this, the type size will not be reduced
 beyond the point required to achieve the specified number of columns.  The
 default for this parameter is generally 70, but the default may vary from
 filter to filter.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<length=>I<integer>
+
+sets the length of the page in lines.
+
+(Supported by:  pr)
+
+=item B<minlines=>I<integer>
+
+=item B<maxlines=>I<integer>
+
+these two parameters affect how many lines of vertical space is provided on the
+page.  If the shortest page in a document is shorter than minlines, pages
+are made minlines long, resulting in white space at the bottom of every page.
+If the longest page is longer than maxlines, all pages are made maxlines
+long, with the result that some pages are split into two or more pages.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
@@ -445,18 +460,6 @@ contain form feeds.
 
 sets the number of landscape mode lines for files which do not contain form
 feeds.
-
-(Supported by:  lp, lp_autolf, pr, fortran)
-
-=item B<minlines=>I<integer>
-
-=item B<maxlines=>I<integer>
-
-these two parameters affect how many lines of vertical space is provided on the
-page.  If the shortest page in a document is shorter than minlines, pages
-are made minlines long, resulting in white space at the bottom of every page.
-If the longest page is longer than maxlines, all pages are made maxlines
-long, with the result that some pages are split into two or more pages.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
@@ -540,11 +543,17 @@ families which are listed in F<fonts.conf> for the character set you are using.
 
 =item B<charheight=>I<real>
 
-These options inform the filter of the size of the fonts selected.  These
-will normally only have to be used if the "fontnormal=" or "fontbold="
-options are used.  The dimensions are expressed as a decimal fraction of the
-point size.  For example, a typical setting for Courier is
-C<-o 'charwidth=0.6 charheight=1.0'>.
+These options inform the filter of the proportions of the fonts selected.  These
+will never be needed if the B<fontfamily=> or B<fontnormal=> and B<fontbold=>
+options are not used.
+
+The dimensions are expressed as a decimal fraction of the point size.  For example,
+the default setting is C<-o 'charwidth=0.6 charheight=1.0'>, which is appropriate
+for Courier.
+
+Note that these parameters do not change the point size.  Instead, they allow the filter 
+to figure out how many letters will fit on a long at any given point size and how far apart 
+the lines should be verticaly.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
@@ -678,50 +687,6 @@ specify an amount to shift the page image to the right and up
 respectively.  The units are 72ths of an inch.
 
 (Supported by:  dotmatrix)
-
-=back
-
-=item B<--markup> <option>
-
-this option controls how markup language files are printed.  A markup language
-is a plain text file with special codes added.  Examples of markup langauges
-are Troff, TeX, HTML, SGML, and RTF.
-
-Basically, there are two ways of printing a marked-up file:  We can print it
-as is, or we can pass it through a formatter to produce a typeset document.
-The B<--markup> option controls which method is used.  The B<--markup> option
-has no effect if the input file is not contain marked-up text.
-
-The B<--markup> option can have the following values:
-
-=over 4
-
-=item B<--markup format>
-
-If a text file is marked-up, it is passed through a
-formatting filter to produce a typeset document.  If no formatting filter
-is available then the job will be rejected.
-
-=item B<--markup lp>
-
-Files which are marked-up are passed through the B<lp> filter.  (As if the
-B<-T lp> switch had been used.)
-
-=item B<--markup pr>
-
-A marked-up file is paginated with B<pr> and then passed through the
-B<lp> filter.  (As if the B<-T pr> option had been used.)
-
-=item B<--markup fallback-lp>
-
-This is the default.
-If an apropriate formatting filter is available it is used.  If not, the
-effect is the same as that of B<--markup lp>.
-
-=item B<--markup fallback-pr>
-
-If an apropriate formatting filter is available it is used.  If not, the
-effect is the same as that of B<--markup pr>.
 
 =back
 

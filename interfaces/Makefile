@@ -10,24 +10,17 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 April 2001.
+# Last modified 28 August 2001.
 #
 
 include ../makeprogs/global.mk
 
 PROGS=dummy simple parallel$(DOTEXE) serial$(DOTEXE) \
-	tcpip$(DOTEXE) lpr$(DOTEXE) smb \
-	gssimple gsparallel gsserial gsatalk gstcpip \
-	gslpr gssmb
+	tcpip$(DOTEXE) lpr$(DOTEXE) smb
 
 ATALK_PROGS=atalk$(DOTEXE)
 
 NETBIOS_PROGS=clispool$(DOTEXE)
-
-# This is the Sed command to process gs_master.sh after it
-# has passed thru cpp.  It is quoted a bit to get thru
-# make and sh.
-SEDCMD=./sedcmd.sh
 
 all: $(ALLNETBIOS) $(ALLATALK) $(PROGS)
 
@@ -87,27 +80,6 @@ serial$(DOTEXE): serial.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEX
 tcpip$(DOTEXE): tcpip.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) tcpip.$(OBJ) \
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
-
-gssimple.sh: gs_master.sh
-	$(CPP) -DBACKEND_SIMPLE gs_master.sh | $(SEDCMD) >gssimple.sh
-
-gsparallel.sh: gs_master.sh
-	$(CPP) -DBACKEND_PARALLEL gs_master.sh | $(SEDCMD) >gsparallel.sh
-
-gsserial.sh: gs_master.sh
-	$(CPP) -DBACKEND_SERIAL gs_master.sh | $(SEDCMD) >gsserial.sh
-
-gsatalk.sh: gs_master.sh
-	$(CPP) -DBACKEND_ATALK gs_master.sh | $(SEDCMD) >gsatalk.sh
-
-gstcpip.sh: gs_master.sh
-	$(CPP) -DBACKEND_TCPIP gs_master.sh | $(SEDCMD) >gstcpip.sh
-
-gslpr.sh: gs_master.sh
-	$(CPP) -DBACKEND_LPR gs_master.sh | $(SEDCMD) >gslpr.sh
-
-gssmb.sh: gs_master.sh
-	$(CPP) -DBACKEND_SMB gs_master.sh | $(SEDCMD) >gssmb.sh
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS) atalk$(DOTEXE) clispool$(DOTEXE)

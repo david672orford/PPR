@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 17 January 2001.
+# Last modified 22 January 2002.
 #
 
 use 5.004;
@@ -49,6 +49,7 @@ if($bottom eq 'Cancel' || $bottom eq 'Close')
 # If the load function hasn't been run yet, do it now.
 if(!defined($data{tab_data_loaded}))
     {
+    print STDERR "Calling load function...\n" if($debug);
     eval { &$load_function };
     if($@)
     	{
@@ -98,12 +99,12 @@ if(browser_version >= 4.0 && browser_version < 5.0
 </style>
 </head>
 <body>
-<form action=\"$ENV{SCRIPT_NAME}\" method=post>
+<form action=\"$ENV{SCRIPT_NAME}\" method="POST">
 DocStart
 
 # Figure out which tab is currently selected.
 my $page = 0;
-my $tab = &cgi_data_move('tab_tab', undef);
+my $tab = &cgi_data_move("tab_tab", undef);
 my $prev_hscroll = &cgi_data_move('tab_hscroll', 0);
 my $hscroll = $prev_hscroll;
 if(defined($tab))       # if one was pressed,
@@ -137,7 +138,9 @@ if(defined($tab))       # if one was pressed,
 else	# if no tab pressed,
     {
     if(defined($data{tab_prevpage}))
-        { $page = $data{tab_prevpage} }
+        {
+        $page = $data{tab_prevpage};
+        }
     }
 
 # If there was a previous page, make sure it was left
@@ -150,6 +153,7 @@ if(defined($prevpage))
     my $prevpage_validate = $tabbed_table->[$prevpage]->{onleave};
     if(defined($prevpage_validate))
     	{
+	print STDERR "Calling onleave function...\n" if($debug);
 	if(defined($error = &$prevpage_validate))
 	    {
 	    $page = $prevpage;
@@ -205,7 +209,7 @@ else
 	    # Create a copy of the tabname with the accesskey marker removed.
 	    (my $tabname_stript = $tabname) =~ s/_//;
 
-	    isubmit("tab_tab", $tabname_stript, _($tabname), $other);
+	    isubmit("tab_tab", $tabname_stript, N_($tabname), $other);
 	    }
 	$x++;
 	}
@@ -236,11 +240,13 @@ print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
 <tr align=$align valign=$valign>
 <td>
+<img src="../images/pixel-clear.png" width=1 height=400 align="left">
 tableStart
 
 # Run the code to generate the current page.
 if($bottom eq "Save")
     {
+    print STDERR "Calling save function...\n" if($debug);
     eval { &$save_function };
     if($@)
     	{
@@ -250,6 +256,7 @@ if($bottom eq "Save")
 else
     {
     my $dopage = $tabbed_table->[$page]->{dopage};
+    print STDERR "Calling dopage function...\n" if($debug);
     eval { &$dopage };
     if($@)
     	{

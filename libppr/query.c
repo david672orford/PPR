@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 2 February 2001.
+** Last modified 24 July 2001.
 */
 
 #include "before_system.h"
@@ -382,7 +382,7 @@ char *query_connect_wait(struct QUERY *q)
 	    continue;
 	if(strncmp(line, "%%[", 3) == 0)
 	    return line;
-	fprintf(stderr, "Leading garbage: \"%s\" (%d characters)\n", line, strlen(line));
+	fprintf(stderr, "Leading garbage: \"%s\" (%d characters)\n", line, (int)strlen(line));
     	}
     return NULL;
     }
@@ -397,7 +397,7 @@ void query_control_d(struct QUERY *q)
 	    {
 	    if(strcmp(line, "\004") == 0)
 	        break;
-	    fprintf(stderr, "Control-D garbage: \"%s\" (%d characters)\n", line, strlen(line));
+	    fprintf(stderr, "Control-D garbage: \"%s\" (%d characters)\n", line, (int)strlen(line));
 	    if(strchr(line, '\004'))
 	    	break;
 	    }
@@ -450,7 +450,7 @@ void query_disconnect(struct QUERY *q)
 
     while((line = query_getline(q, NULL)))
     	{
-	fprintf(stderr, "Trailing garbage: \"%s\" (%d characters)\n", line, strlen(line));
+	fprintf(stderr, "Trailing garbage: \"%s\" (%d characters)\n", line, (int)strlen(line));
     	}
 
     q->connected = FALSE;

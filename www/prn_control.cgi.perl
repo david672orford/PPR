@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_control.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 22 February 2002.
 #
 
 use lib "?";
@@ -357,10 +357,9 @@ if($job ne "")
     my $width2 = ($progress_width_total - $width1);
 
     print "<span class=\"label\"><span class=\"sent\">", H_("Bytes Sent"), "</span>/<span class=\"unsent\">", H_("Bytes Unsent"), "</span></span><br>\n";
-    print "<div class=\"bar\">";
-    print "<img src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width1>" if($width1 > 0);	# no "\n"!
-    print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width2>" if($width2 > 0);	# no "\n"!
-    print "</div>\n";
+    print "<img class=\"left\" src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width1>";
+    print "<img class=\"right\" src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width2>";
+    print "<br>\n";
     }
 
 # If we know how many pages there should be, and the values make sense,
@@ -392,11 +391,10 @@ if($pages > 0 && $pages_started <= $pages && $pages_completed <= $pages && $page
     	print "<span class=\"started\">", H_("Pages Started"), "</span>/";
     	print "<span class=\"unstarted\">", H_("Pages Unstarted"), "</span>";
     print "</span><br>\n";
-    print "<div class=\"bar\">";
-	print "<img src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>" if($width1 > 0);	# no "\n"!
-	print "<img src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width2>" if($width2 > 0);	# no "\n"!
-	print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width3>" if($width3 > 0);	# no "\n"!
-    print "</div>\n";
+	print "<img class=\"left\" src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>"; # no "\n"!
+	print "<img class=\"middle\" src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width2>"; # no "\n"!
+	print "<img class=\"right\" src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width3>"; # no "\n"!
+    print "<br>\n";
     }
 
 #
@@ -420,19 +418,19 @@ print "</td>\n";
 if($controls)
 {
 print "<td align=\"right\" valign=\"top\">\n";
-isubmit("action", "Start", _("_Start"), "class=\"buttons\"");
+isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Stop", _("Sto_p"), "class=\"buttons\"");
+isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Halt", _("_Halt"), "class=\"buttons\"");
+isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Media", _("_Media"),
+isubmit("action", "Media", N_("_Media"),
 	"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=750,height=400,scrollbars,resizable'); return false;\""
 	);
 print "<br><br><br>\n";
-isubmit("action", "Refresh", _("_Refresh"), "class=\"buttons\"");
+isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Close", _("_Close"), "class=\"buttons\" onclick=\"window.close()\"");
+isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close()\"");
 print "</td>\n";
 }
 

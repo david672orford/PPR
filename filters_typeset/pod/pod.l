@@ -1,11 +1,11 @@
 %{
 /*
-** pod.l
-** Last modified 23 June 1999.
+** mouse:~ppr/src/filters_typeset/pod/pod.l
+** Last modified 17 January 2002.
 */
 
 #include "pod_parser.h"
-int debug = 1;
+int debug = 0;
 %}
 
 %s MPOD
@@ -13,12 +13,17 @@ int debug = 1;
 
 %%
 
-^=pod		{ BEGIN MPOD;
+^=pod		{
+		BEGIN MPOD;
 		if(debug) printf("POD\n");
 		return POD;
 		}
-^=head1		{ BEGIN MPOD;
-		return HEAD1; }
+
+^=head1		{
+		BEGIN MPOD;
+		return HEAD1;
+		}
+
 <MPOD>^=head2	{ return HEAD2; }
 <MPOD>^=over	{ return OVER; }
 <MPOD>^=back	{ return BACK; }
@@ -43,26 +48,42 @@ int debug = 1;
 <MPOD>E<	{ return EOPEN; }
 <MPOD>>		{ return CLOSE; }
 
-<MPOD>^[ \t]+	{ if(debug) printf("VERBATIM\n");
-		return VERBATIM; }
+	/* Pod lines with leading whitespace are verbatim. */
+<MPOD>^[ \t]+	{
+		if(debug) printf("VERBATIM\n");
+		return VERBATIM;
+		}
 
+	/* What does all this mean? */
 <MPOD>[ \t]+	|
 <MPOD>[ \t]+\n	|
 \n[ \t]+	|
-\n		{ if(debug) printf("SPACE\n");
-		return SPACE; }
+\n		{
+		if(debug) printf("SPACE\n");
+		return SPACE;
+		}
 
-[^ \t\n]+	{ if(debug) printf("WORD: \"%s\"\n", yytext);
+	/* Non-space sequences that we haven't caught above are words. */
+[^ \t\n]+	{
+		if(debug) printf("WORD: \"%s\"\n", yytext);
 		yylval.str = yytext;
-		return WORD; }
+		return WORD;
+		}
 
+	/* One or more blank lines end a paragraph. */
 [ \t]*\n[ \t]*\n[ \t\n]* {
 		if(debug) printf("ENDPARAGRAPH\n");
-		return ENDPARAGRAPH; }
+		return ENDPARAGRAPH;
+		}
 
-[ \t]*\n/=	{ if(debug) printf("ENDPARAGRAPH (malformed)\n");
-		return ENDPARAGRAPH; }
+	/* If the next line begins with a POD command, that is the end of
+	    the paragraph.  (Though there should have been a blank line.) */
+[ \t]*\n/=	{
+		if(debug) printf("ENDPARAGRAPH (malformed)\n");
+		return ENDPARAGRAPH;
+		}
 
+	/* Nothing should get this far. */
 .|\n		{ printf("ERROR!\n"); }
 
 %%

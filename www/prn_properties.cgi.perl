@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_properties.cgi.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 30 December 2000.
+# Last modified 19 December 2001.
 #
 
 use lib "?";
@@ -20,7 +20,6 @@ require 'cgi_data.pl';
 require 'cgi_tabbed.pl';
 require 'cgi_intl.pl';
 require 'cgi_widgets.pl';
-require 'cgi_run.pl';
 
 defined($INTDIR) || die;
 defined($PPDDIR) || die;
@@ -57,15 +56,10 @@ my $tabbed_table = [
 	{
 	'tabname' => N_("Interface"),
 	'dopage' => sub {
-		# Get list of available interfaces
-		if(! opendir(I, $INTDIR))
-		    {
-		    print "<P>Error getting list of interfaces.</P>\n";
-		    return;
-		    }
-		my $interface;
+		# Read a list of available interfaces into @interface_list.
+		opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
 		my @interface_list = ();
-		while(defined($interface = readdir(I)))
+		while(defined(my $interface = readdir(I)))
 		    {
 		    next if($interface =~ /^\./);
 		    push(@interface_list, $interface);
@@ -135,16 +129,18 @@ my $tabbed_table = [
 	'tabname' => N_("PPD"),
 	'dopage' => sub {
 		my $checked_ppd = cgi_data_move('ppd', undef);
-		print '<p><span class="label">', H_("PPD file:"), "</span><br>\n";
 
-		if(! opendir(P, $PPDDIR))
-		    {
-		    print "<p>Can't open directory \"$PPDDIR\", $!\n";
-		    return;
-		    }
+		print "<span class=\"label\">", H_("PPD file:"), "</span>\n";
+
+		print "<table class=\"section\"><tr><td>\n";
+		
+		# Read the PPD File list (and unfortunately "." and "..") into
+		# the array @ppd_list.
+		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
 		my @ppd_list = sort(readdir(P));
 		closedir(P) || die;
 
+		# Print the HTML for a select box.
 		print "<select name=\"ppd\" size=12>\n";
 		if(defined($checked_ppd))
 		    {
@@ -156,11 +152,106 @@ my $tabbed_table = [
 		    print "<option value=", html_value($ppd), ">", html($ppd), "\n";
 		    }
 		print "</select>\n";
+
+		print "</td><td>\n";
+
+		my @trivia = ppd_trivia($checked_ppd);
+		print "<table class=\"lines\" cellspacing=0>\n";
+		print "<tr><th colspan=2>", html(sprintf(_("Features of %s"), $checked_ppd)), "</th></tr>\n";
+		print "<tr><th>", H_("PPD File Version"), "</th><td>", html($trivia[0]), "</td></tr>\n";
+		print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($trivia[1]), "</td></tr>\n";
+		print "<tr><th>", H_("PostScript Version"), "</th><td>", html($trivia[2]), "</td></tr>\n";
+		print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($trivia[3]), "</td></tr>\n";
+		print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($trivia[4]), "</td></tr>\n";
+		print "</table>\n";
+
+		print "</td></tr></table>\n";
 		},
 	'onleave' => sub {
 		if($data{ppd} eq '')
 		    { return _("No PPD file is selected!") }
 		return undef;
+		}
+	},
+
+	#====================================================
+	# Pane to select the RIP
+	#====================================================
+	{
+	'tabname' => N_("RIP"),
+	'dopage' => sub {
+
+		# Split the RIP settings into three values.
+		($data{rip_name}, $data{rip_output_language}, $data{rip_options}) = split(/\t/, cgi_data_move("rip", "\t\t"));
+
+		# Handle the complex business with the sections and
+		# their radio buttons.
+		fix_rip_which() if(!defined $data{rip_which});
+		my $rip_which = $data{rip_which_previous} = cgi_data_move("rip_which", undef);
+		
+		# Upper section: PPD RIP info.
+		{
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\"><input type=\"radio\" name=\"rip_which\" value=\"ppd\"";
+		print " checked" if($rip_which eq "ppd");
+		print "> From PPD File</span>\n";
+
+		my $ppdfile = cgi_data_peek("ppd", undef);
+		my @rip_list;
+		if(! defined $ppdfile)
+		    {
+		    print "<p>", H_("No PPD file selected in [PPD] pane."), "</p>\n";
+		    }
+		elsif(scalar(@rip_list = ppd_rip($ppdfile)) == 0)
+		    {
+		    print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
+		    }
+		else
+		    {
+		    print "<p>";
+		    labeled_blank(_("Raster Image Processor:"), $rip_list[0], 8);
+		    print "<p>";
+		    labeled_blank(_("Output Language:"), $rip_list[1], 8);
+		    print "<p>";
+		    labeled_blank(_("Options:"), $rip_list[2], 40);
+		    }
+
+		print "</div>\n";
+		}
+
+		# Lower section: Custom RIP Info
+		{
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\"><input type=\"radio\" name=\"rip_which\" value=\"custom\"";
+		print " checked" if($rip_which eq "custom");
+		print "> Custom</span>\n";
+
+		print "<p>";
+		labeled_select("rip_name", _("Raster Image Processor:"),
+			"", cgi_data_move("rip_name", undef),
+			"", "gs", "ppr-gs");
+
+		print "<p>";
+		labeled_select("rip_output_language", _("Output Language:"),
+			"", cgi_data_move("rip_output_language", undef),
+			"", "pcl", "other");
+
+		print "<p>";
+		labeled_entry("rip_options", _("Options:"), cgi_data_move("rip_options", undef), 40);
+
+		print "</div>\n";
+		}
+		},
+	'onleave' => sub {
+		my $error = fix_rip_which();
+
+		$data{rip} = join("\t",
+		    	cgi_data_move("rip_name", ""),
+		    	cgi_data_move("rip_output_language", ""),
+		    	cgi_data_move("rip_options", ""));
+		$data{rip} =~ s/\t+$//;
+
+		return $error;
 		}
 	},
 
@@ -186,7 +277,7 @@ my $tabbed_table = [
 		    {
 		    $value = shift @list;
 		    $current{"$name $value"} = 1;
-		    #print "<pre>\$name=\"$name\", \$value=\"$value\"\n";
+		    #print "<pre>\$name=\"$name\", \$value=\"$value\"</pre>\n";
 		    }
 		}
 
@@ -290,16 +381,32 @@ my $tabbed_table = [
 	{
 	'tabname' => N_("Samba"),
 	'dopage' => sub {
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">";
+		labeled_checkbox("addon ppr2samba", _("Share with Samba"), 1, cgi_data_move("addon ppr2samba", 1));
+		print "</span>\n";
+
 		print "<p>";
-		labeled_checkbox("addon ppr2samba", _("Share with Samba (provided Samba is prepared)"), 1, cgi_data_move("addon ppr2samba", 1));
+		labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
+			"", cgi_data_move("addon ppr2samba-prototype", ""), 
+			"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
+		print "</p>\n";
 
 		print "<p>";
 		labeled_entry("addon ppr2samba-drivername", _("Override Win95 driver name:"), cgi_data_move("addon ppr2samba-drivername", ""), 20);
+		print "</p>\n";
 
 		print "<p>";
 		labeled_select("addon ppr2samba-vserver", _("Assign to virtual server (Samba setup required):"),
 			"", cgi_data_move("addon ppr2samba-vserver", ""),
 			"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+		print "</p>\n";
+
+		print "</div>\n";
+
+		print "<p>", _("Note that if the Samba configuration file smb.conf has not been edited as described in\n"
+				. "the ppr2samba(8) manpage, the settings on this screen will have no effect."), "</p>\n";
+
 		},
 	'onleave' => sub {
 		# This gives it a value of 0 if it wasn't checked and blank if it was.
@@ -309,30 +416,57 @@ my $tabbed_table = [
 	},
 
 	#====================================================
+	# PAP
+	#====================================================
+	{
+	'tabname' => N_("PAP"),
+	'dopage' => sub {
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">";
+		labeled_checkbox("addon ppr2samba", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon pprpapd", 0));
+		print "</span>\n";
+
+		print "<p>";
+		labeled_entry("addon pprpapd-papname", _("Share As:"), cgi_data_move("addon pprpapd-papname", ""), 32);
+		print "</p>\n";
+		
+		print "</div>\n";
+		}
+	},
+
+	#====================================================
 	# Limits
 	#====================================================
 	{
 	'tabname' => N_("Limits"),
 	'dopage' => sub {
-		print '<p><span class="label">', H_("Limits Enforced Before Printing"), "</span>\n";
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">", H_("Limits Enforced Before Printing"), "</span>\n";
 
 		print '<p><span class="label">', H_("Limit Kilobytes"), "</span><br>\n";
 		labeled_entry("limitkilobytes_lower", _("Lower limit:"), cgi_data_move("limitkilobytes_lower", 0), 8);
 		labeled_entry("limitkilobytes_upper", _("Upper limit:"), cgi_data_move("limitkilobytes_upper", 0), 8);
+		print "</p>\n";
 
 		print '<p><span class="label">', H_("Limit Pages"), "</span><br>\n";
 		labeled_entry("limitpages_lower", _("Lower limit:"), cgi_data_move("limitpages_lower", 0), 8);
 		labeled_entry("limitpages_upper", _("Upper limit:"), cgi_data_move("limitpages_upper", 0), 8);
+		print "</p>\n";
 
 		print "<p>";
 		labeled_select("grayok", _("Grayscale documents OK:"), "", cgi_data_move("grayok", "yes"), N_("yes"), N_("no"));
+		print "</p>\n";
 
-		print "<hr>\n";
+		print "</div>\n";
 
-		print '<p><span class="label">', H_("Limits Enforced During Printing"), "</span>\n";
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">", H_("Limits Enforced During Printing"), "</span>\n";
 
 		print "<p>";
 		labeled_entry("pagetimelimit", H_("Per-page time limit (in seconds):"), cgi_data_move("pagetimelimit", 0), 4);
+		print "</p>\n";
+
+		print "</div>\n";
 		}
 	},
 
@@ -449,11 +583,14 @@ my $tabbed_table = [
 		labeled_select("flags_banner", _("Print banner page"), "", cgi_data_move("flags_banner", ""), @flags_list);
 		print "<br>\n";
 		labeled_select("flags_trailer", _("Print trailer page"), "", cgi_data_move("flags_trailer", ""), @flags_list);
+		print "</p>\n";
 		}
 
-		print '<p><span class="label">', H_("Monetary Charge for Printing on this Printer"), "<br>\n";
+		print "<p>";
+		print "<span class=\"label\">", H_("Monetary Charge for Printing on this Printer"), "<br>\n";
 		labeled_entry("charge_duplex", _("Per duplex sheet:"), cgi_data_move("charge_duplex", ""), 6);
 		labeled_entry("charge_simplex", _("Per simplex sheet:"), cgi_data_move("charge_simplex", ""), 6);
+		print "</p>\n";
 
 		print "<p>";
 		labeled_select("outputorder", _("Output order:"),
@@ -461,9 +598,11 @@ my $tabbed_table = [
 			N_("Normal"),
 			N_("Reverse"),
 			N_("PPD"));
+		print "</p>\n";
 
 		print "<p>";
 		labeled_entry("passthru", _("Passthru printer languages:"), cgi_data_move("passthru", ""), 25);
+		print "</p>\n";
 		},
 	'onleave' => sub {
 		if(cgi_data_peek('charge_duplex', '') !~ /^(\d*\.\d\d)?$/)
@@ -477,15 +616,20 @@ my $tabbed_table = [
 	}
 ];
 
-#============================================
-# This function will return a list of the
-# optional features that a certain printer
-# has.
-#============================================
+#=========================================================
+# These functions retrieve information from the PPD file.
+#=========================================================
+
+#
+# This function will return a list of the optional
+# features that a certain printer has.
+#
 sub ppd_features
     {
     require "readppd.pl";
     my $filename = shift;
+
+    my $line;
     my $open_ui = undef;
     my @answer = ();
     my $subanswer;
@@ -527,10 +671,16 @@ sub ppd_features
     return @answer;
     }
 
+#
+# This function will return a list of the possible bins
+# named in the PPD file.
+#
 sub ppd_bins
     {
     require "readppd.pl";
     my $filename = shift;
+
+    my $line;
     my @answer = ();
 
     ppd_open($filename);
@@ -548,6 +698,134 @@ sub ppd_bins
     return @answer;
     }
 
+#
+# This function will return a three element list which contains the RIP,
+# output_language, and options from the PPD file's *pprRIP: line.
+#
+sub ppd_rip
+    {
+    require "readppd.pl";
+    my $filename = shift;
+
+    my $line;
+    my @answer = ();
+
+    ppd_open($filename);
+
+    while(defined($line = ppd_readline()))
+	{
+	if($line =~ /^\*pprRIP:\s+(\S+)\s+(\S+)\s+([^\n]+)$/)
+	    {
+	    @answer = ($1, $2, $3);
+	    }
+	}
+
+    return @answer;
+    }
+
+#
+# This function gets interesting information from the PPD file.
+#
+sub ppd_trivia
+    {
+    require "readppd.pl";
+    my $filename = shift;
+
+    my $line;
+    my $fileversion = "?";
+    my $languagelevel = 1;
+    my $psversion = "?";
+    my $fonts = 0;
+    my $ttrasterizer = "None";
+
+    ppd_open($filename);
+
+    while(defined($line = ppd_readline()))
+	{
+	if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
+	    {
+	    $fileversion = $1;
+	    next;
+	    }
+	if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
+	    {
+	    $languagelevel = $1;
+	    next;
+	    }
+	if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
+	    {
+	    $psversion = $1;
+	    next;
+	    }
+	if($line =~ /^\*Font\s+/)
+	    {
+	    $fonts++;
+	    next;
+	    }
+	if($line =~ /^\*TTRasterizer:\s*(\S+)/)
+	    {
+	    $ttrasterizer = $1;
+	    next;
+	    }
+	}
+
+    return ($fileversion, $languagelevel, $psversion, $fonts, $ttrasterizer);
+    }
+
+#=====================================================================
+# These functions are helpers for the panes.
+#=====================================================================
+sub fix_rip_which
+    {
+    my @names = qw(rip_name rip_output_language rip_options);
+
+    my $rip_which = "ppd";
+
+    foreach my $name (@names)
+	{
+	if(defined $data{$name} && $data{$name} ne "")
+	    {
+	    print STDERR "+++ custom because \$data{$name} is \"$data{$name}\"\n";
+	    $rip_which = "custom";
+	    last;
+	    }
+	}
+
+    if(defined $data{rip_which_previous})
+    	{
+	if($data{rip_which} eq "ppd" && $data{rip_which_previous} eq "custom")
+	    {
+	    print STDERR "+++ clearing custom\n";
+	    foreach my $name (@names)
+	    	{
+		$data{$name} = "";
+	    	}
+	    $rip_which = "ppd";
+	    }
+	elsif($data{rip_which} eq "custom" && $data{rip_which_previous} eq "ppd")
+	    {
+	    print STDERR "+++ switching to custom\n";
+	    $rip_which = "custom";
+	    }
+    	}
+
+    $data{rip_which} = $rip_which;
+
+    if($rip_which eq "custom")
+	{
+	foreach my $name (@names)
+	    {
+	    if(cgi_data_peek($name, "") eq "")
+		{
+		print STDERR "+++ missing $name\n";
+		return _("The custom RIP information is incomplete.");
+		}
+	    }
+	}
+
+    return undef;
+    }
+
 #============================================
 # This function is called from do_tabbed().
 # It uses the "ppad show" command to
@@ -556,8 +834,10 @@ sub ppd_bins
 
 sub load
 {
-my $name = $data{'name'};
-if(!defined($name)) { $name = '???' }
+require "cgi_run.pl";
+
+my $name = $data{name};
+defined($name) || die "No printer name specified!\n";
 
 # Use "ppad -M show" to dump the printer's
 # current configuration.
@@ -565,7 +845,8 @@ opencmd(PPAD, $PPAD_PATH, '-M', 'show', $name) || die;
 while(<PPAD>)
     {
     chomp;
-    my($key, $value) = split(/\t/);
+    /^([^\t]+)\t(.*)$/ || die;
+    my($key, $value) = ($1, $2);
     $data{$key} = $value;		# copy to modify
     $data{"_$key"} = $value;		# copy to keep
     }
@@ -626,6 +907,8 @@ $data{switchset} =~ s/ -/\n-/g;
 
 sub save
 {
+require 'cgi_run.pl';
+
 my $name = $data{name};
 my $i;
 
@@ -668,11 +951,18 @@ foreach my $i (qw(comment location department contact ppd outputorder userparams
         { run(@PPAD, $i, $name, $data{$i}) }
     }
 
-# Do list value stuff.
-foreach my $i(qw (flags charge alerts passthru limitkilobytes limitpages ppdopts))
+# Do space separated list value stuff.
+foreach my $i (qw (flags charge alerts passthru limitkilobytes limitpages ppdopts))
     {
     if($data{$i} ne $data{"_$i"})
     	{ run(@PPAD, $i, $name, split(/ /, $data{$i}, 100)) }
+    }
+
+# Do the tab separated list value stuff.
+foreach my $i (qw (rip))
+    {
+    if($data{$i} ne $data{"_$i"})
+    	{ run(@PPAD, $i, $name, split(/\t/, $data{$i}, 100)) }
     }
 
 # Setting bins needs a special command.
@@ -722,7 +1012,7 @@ print "<script>window.opener.gentle_reload()</script>\n";
 #========================================
 
 # Should debugging messages be added to the html?
-$debug = 0;
+$debug = 1;
 
 # Swap the real and effective user ids.
 ($<,$>) = ($>,$<);
@@ -734,4 +1024,3 @@ $debug = 0;
 &do_tabbed($tabbed_table, sprintf(_("PPR: Printer Properties: %s"), $data{name}), \&load, \&save, 8);
 
 exit 0;
-

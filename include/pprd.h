@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 December 2000.
+** Last modified 25 January 2002.
 */
 
 /*
@@ -35,25 +35,30 @@
 #define QUEUE_SIZE_MAX 10000		/* absolute maximum size we will attempt to allocate */
 
 /*
-** pprd Debugging Options.
+** These are the pprd debugging options.  Change "#if 0" to "#if 1" to turn 
+** debugging on.
+**
+** Note that we use C++ comments here to disable the ones we don't want.  This
+** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
 #if 0
-#define DEBUG 1				/* function name strings */
-#define DEBUG_STARTUP 1			/* initialization routines */
-#define DEBUG_MAINLOOP 1		/* main loop */
-/* #define DEBUG_RECOVER 1 */		/* reloading jobs and mounted media on restart */
-#define DEBUG_NEWJOBS 1			/* receipt of new jobs */
-#define DEBUG_PRNSTART 1		/* starting of printers */
-/* #define DEBUG_PRNSTART_GRITTY 1 */	/* details of starting printers */
-#define DEBUG_PRNSTOP 1			/* analysis of pprdrv exit */
-#define DEBUG_DEQUEUE 1			/* removal from the queue */
-#define DEBUG_MEDIA 1			/* media operations */
-/* #define DEBUG_TICK 1 */		/* debug timer tick routine */
-/* #define DEBUG_RESPOND 1 */		/* launching of responders */
-#define DEBUG_PPOPINT 1			/* interface to ppop */
-/* #define DEBUG_ALERTS 1 */            /* sending of operator alerts */
-#define DEBUG_NODEID 1			/* allocating and deallocating node id numbers */
+#define DEBUG 1				/* define function[] strings */
+//#define DEBUG_STARTUP 1		/* initialization routines */
+//#define DEBUG_MAINLOOP 1		/* main loop */
+//#define DEBUG_RECOVER 1		/* reloading jobs and mounted media on restart */
+//#define DEBUG_NEWJOBS 1		/* receipt of new jobs */
+//#define DEBUG_PRNSTART 1		/* starting of printers */
+//#define DEBUG_PRNSTART_GRITTY 1	/* details of starting printers */
+//#define DEBUG_PRNSTOP 1		/* analysis of pprdrv exit */
+//#define DEBUG_DEQUEUE 1		/* removal from the queue */
+//#define DEBUG_MEDIA 1			/* media operations */
+//#define DEBUG_TICK 1			/* debug timer tick routine */
+//#define DEBUG_RESPOND 1		/* launching of responders */
+//#define DEBUG_PPOPINT 1		/* interface to ppop */
+//#define DEBUG_ALERTS 1		/* sending of operator alerts */
+//#define DEBUG_NODEID 1		/* allocating and deallocating node id numbers */
 #define DEBUG_REMOTE 1			/* sending of jobs to remote systems */
+#define DEBUG_QUESTIONS 1		/* sending questions to job submitters */
 #endif
 
 /*
@@ -64,6 +69,9 @@
 #define PPRD_LOGFILE LOGDIR"/pprd"
 
 /*============ User: don't change anything below this line. ============*/
+
+/* A few global variables: */
+extern gu_boolean lockfile_created;
 
 /* A few critical declarations: */
 void fatal(int exval, const char string[], ...)
@@ -140,27 +148,25 @@ struct Group
    Notice that this is shorter than struct QFileEntry. */
 struct QEntry
     {
-    SHORT_INT destnode_id;	/* destination node by key number */
-    SHORT_INT destid;		/* destination key number */
-    SHORT_INT id;		/* queue id */
-    SHORT_INT subid;		/* fractional queue id */
-    SHORT_INT homenode_id;	/* id of node job come from */
-    SHORT_INT priority;		/* priority number (0=highest, 39=lowest) */
-    SHORT_INT status;		/* printer id if printing, < 0 for other status */
-    unsigned char never;	/* bitmap of group member which can't print */
-    unsigned char notnow;	/* bitmap of group members without media mntd */
-    SHORT_INT media[MAX_DOCMEDIA]; /* list of id numbers of media types req. */
-    SHORT_INT pass;		/* number of current pass thru printers in group */
-#if 0
-    unsigned char flags;
-#endif
+    SHORT_INT destnode_id;		/* destination node by key number */
+    SHORT_INT destid;			/* destination key number */
+    SHORT_INT id;			/* queue id */
+    SHORT_INT subid;			/* fractional queue id */
+    SHORT_INT homenode_id;		/* id of node job come from */
+
+    SHORT_INT status;			/* printer id if printing, < 0 for other status */
+    unsigned short int flags;		/* --keep, responding, etc. */
+    time_t resend_message_at;		/* time at which to retry responder to questioner */
+
+    SHORT_INT priority;			/* priority number (0=highest, 39=lowest) */
+    unsigned char never;		/* bitmap of group member which can't print */
+    unsigned char notnow;		/* bitmap of group members without media mntd */
+    SHORT_INT media[MAX_DOCMEDIA]; 	/* list of id numbers of media types req. */
+    SHORT_INT pass;			/* number of current pass thru printers in group */
     } ;
 
-/* These are the values for flags. */
-#define QEntry_KEEP 1
-
 /*
-** Printer status values.
+** Printer status values
 */
 #define PRNSTATUS_IDLE 0		/* idle but ready to print */
 #define PRNSTATUS_PRINTING 1		/* printing right now */
@@ -300,6 +306,12 @@ struct fcommand2
 #define DODEBUG_REMOTE(a) debug a
 #else
 #define DODEBUG_REMOTE(a)
+#endif
+
+#ifdef DEBUG_QUESTIONS
+#define DODEBUG_QUESTIONS(a) debug a
+#else
+#define DODEBUG_QUESTIONS(a)
 #endif
 
 /* end of file */

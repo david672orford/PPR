@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/responders/pprpopup.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,12 +11,12 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 May 2000.
+# Last modified 20 December 2001.
 #
 
 #
 # This program will send a response to the Tcl/Tk script "pprpopup"
-# which is likely running # on a MS-Windows 95 machine.
+# which is likely running on a MS-Windows 95 machine.
 #
 
 require 5.000;
@@ -25,7 +25,7 @@ require 'respond.ph';
 require 'pprpopup.pl';
 
 # Set a maximum time this script can run.
-alarm(600);
+alarm(30);
 
 # Split the arguments out into individually named variables.
 my($for, $addr, $msg, $msg2, $options, $code, $jobid, $extra, $title, $time, $reason, $pages, $charge) = @ARGV;
@@ -50,11 +50,10 @@ $reason =~ s/[|]/ /g;
 
 # If a user is specified in the address,
 # break the address into user and machine.
-my $user = '';
-if($addr =~ /^([^\@]+)\@(.+)$/)
+my $user = "";
+if($addr =~ /^([^\@]+)\@.+$/)
     {
     $user = $1;
-    $addr = $2;
     }
 
 # Open a connexion to pprpopup
@@ -63,6 +62,19 @@ if(!open_connexion(SEND, $addr))
 
 # Variable for response messages:
 my $result;
+
+# Remove the job from the list.
+if(1)
+    {
+    my $jobname;
+    ($jobname = $jobid) =~ s/^(\S+) (\S+) (\d+) (\d+) (\S+)$/$1:$2-$3.$4($5)/;
+    print SEND "JOB REMOVE $jobname\n";
+    $result = <SEND>;
+    print "JOB REMOVE failed: $result\n" if(/^-ERR/);
+    }
+
+# Turn off autoflush because the message could be long.
+SEND->autoflush(0);
 
 # Tell the other end that we are going to send
 # the message.  If the formal user name was specified,
@@ -106,18 +118,11 @@ if($code == $RESP_ARRESTED || $code == $RESP_STRANDED_PRINTER_INCAPABLE || $code
     }
   }
 
-# Mark end of message and flush it.
+# Mark end of message, flush it, and get the result.
 SEND->autoflush(1);
 print SEND ".\n";
-
-# Wait for a reply to our command.
-$result = '';
-while(<SEND>)
-    {
-    $result .= $_;
-    last if(/^(\+OK)|(-ERR)/);
-    }
-print $result if(/^-ERR/);
+$result = <SEND>;
+print "MESSAGE failed: $result\n" if(/^-ERR/);
 
 # Close the connexion to pprpopup.
 close(SEND);

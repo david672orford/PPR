@@ -1,7 +1,7 @@
 %{
 /*
-** pod.y
-** Last modified 23 June 1999.
+** mouse:~ppr/src/filters_typeset/pod/pod.y
+** Last modified 17 January 2002.
 */
 %}
 
@@ -37,15 +37,17 @@
 
 %%
 
+	/* A document consists of a paragraph or a valid 
+		document with one more paragraph. */
 doc: paragraph
 	| doc paragraph
 
 	/* paragraph: sub_paragraph ENDPARAGRAPH */
 
-paragraph: command			{ printf("COMMAND\n"); }
-	| WORD 				{ printf("P: \"%s\"\n", $1); }
-	| paragraph SPACE WORD	{ printf("P: \" %s\"\n", $3); }
-	| paragraph ENDPARAGRAPH
+paragraph: command			{ printf("<p>\n"); }
+	| WORD 				{ printf("%s", $1); }
+	| paragraph SPACE WORD		{ printf(" %s", $3); }
+	| paragraph ENDPARAGRAPH	{ printf("</p>\n"); }
 
 command:	HEAD1
 	|	HEAD2

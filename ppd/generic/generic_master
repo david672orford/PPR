@@ -1,0 +1,313 @@
+*PPD-Adobe: "4.2"
+*%
+*% mouse:~ppr/src/ppd/generic/ppr_generic
+*% Copyright 1995--2001, Trinity College Computing Center.
+*% Written by David Chappell.
+*%
+*% Permission to use, copy, modify, and distribute this software and its
+*% documentation for any purpose and without fee is hereby granted, provided
+*% that the above copyright notice appear in all copies and that both that
+*% copyright notice and this permission notice appear in supporting
+*% documentation.  This software is provided "as is" without express or
+*% implied warranty.
+*%
+*% Last modified 18 July 2001.
+*%
+
+*%
+*% This file in its various versions describes typical PostScript printers.  
+*% This file is for use by clients that will be printing through the PPR
+*% spooler.  It is intended to free the clients from having to know about
+*% the precise features of the printer such as input bins.  This is reasonable
+*% in a lab environment where policy places such things outside the control of
+*% the users or where the lab managers want to be able to change the printers
+*% without modifying the clients.  These PPD files also might be used where
+*% users print to a pool of dissimiliar printers.  Finally, this file contains
+*% psydo printer features for selecting media by colour or type and for invoking
+*% the N-Up capabilities of PPR, including booklet and signature maing.
+*%
+*% Note that actual PostScript code to invoke printer features is deliberately
+*% omitted.  We rely on PPR to later fill in any needed feature code just before
+*% sending the job to the selected printer.
+*%
+
+*FormatVersion: "4.2"
+*LanguageVersion: English
+
+*% This version number tracks the PPR version number.  Whenever the PPR Generic
+*% PPD files change, this version is updated to the version of the then current
+*% PPR.  Thus this version may be lower than the PPR version number but it
+*% will never be higher.
+*FileVersion: "1.44"
+
+#ifdef GENERIC_LEVEL1
+*Product: "(PPR Generic)"
+*ModelName: "PPR Generic"
+*PCFileName: "PPRGENER.PPD"
+*ShortNickName: "PPR Generic"
+*NickName: "PPR Generic"
+*PSVersion: "(47.0) 1"
+*LanguageLevel: "1"
+*FreeVM: "400000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 300dpi
+*TTRasterizer: None
+#endif
+
+#ifdef GENERIC_LEVEL2
+*Product: "(PPR Generic Level 2)"
+*ModelName: "PPR Generic Level 2"
+*PCFileName: "PPRGENE2.PPD"
+*ShortNickName: "PPR Generic Level 2"
+*NickName: "PPR Generic Level 2"
+*PSVersion: "(2000.0) 0"
+*LanguageLevel: "2"
+*FreeVM: "650000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 600dpi
+*TTRasterizer: None
+#endif
+
+#ifdef GENERIC_LEVEL2_TTF
+*Product: "(PPR Generic Level 2 TTF)"
+*ModelName: "PPR Generic Level 2 TTF"
+*PCFileName: "PPRGENE3.PPD"
+*ShortNickName: "PPR Generic Level 2 TTF"
+*NickName: "PPR Generic Level 2 TTF"
+*PSVersion: "(2013.0) 0"
+*LanguageLevel: "2"
+*FreeVM: "650000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 600dpi
+*TTRasterizer: Type42
+#endif
+
+*% The startjob password.  This is just a placeholder.
+*Password: "()"
+
+*% Users using pre-punched paper will likely expect landscape to be achived 
+*% by a 90 counter-clockwise rotation.
+*LandscapeOrientation: Plus90
+
+*%==========================================================================
+*% What page sizes are available on this printer?  Remove any you do not
+*% want your users to be able to pick.
+*%==========================================================================
+
+*% This is generally used to construct the GUI pick list.
+*OpenUI *PageSize: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: Letter
+*PageSize Letter: ""
+*PageSize Legal: ""
+*PageSize A4: ""
+*PageSize Executive: ""
+*PageSize Comm10: ""
+*PageSize Monarch: ""
+*PageSize DL: ""
+*PageSize C5: ""
+*PageSize B5: ""
+*PageSize HalfSheet: ""
+*CloseUI: *PageSize
+
+*% These are obscurely different from the above.
+*OpenUI *PageRegion:  PickOne
+*OrderDependency: 40 AnySetup *PageRegion
+*DefaultPageRegion: Letter
+*PageRegion Letter: ""
+*PageRegion Legal: ""
+*PageRegion A4: ""
+*PageRegion Executive: ""
+*PageRegion Comm10: ""
+*PageRegion Monarch: ""
+*PageRegion DL: ""
+*PageRegion C5: ""
+*PageRegion B5: ""
+*PageRegion HalfSheet: ""
+*CloseUI: *PageRegion
+
+*% This describes which portion of the above mentioned page sizes the printer
+*% is capable of placing marks on.
+*DefaultImageableArea: Letter
+*ImageableArea Letter/US Letter : "18 19 593 774"
+*ImageableArea Legal/US Legal : "18 19 593 990"
+*ImageableArea A4/A4 : "13.44 12.06 581.76 829.74"
+*ImageableArea Executive/Executive : "13.32 12.06 508.68 744.06"
+*ImageableArea Comm10/Envelope Comm10 : "12.12 12.06 284.76 672.06 "
+*ImageableArea Monarch/Envelope Monarch : "12.72 12.06 266.16 528.06 "
+*ImageableArea DL/Envelope DL : "13.8 12.06 297.84 611.58 "
+*ImageableArea C5/Envelope C5 : "12.6 12.06 444.52 637.02 "
+*ImageableArea B5/Envelope ISO B5 : "13.2 12.06 485.52 696.54 "
+*ImageableArea HalfSheet/Half Sheet: "0 0 397 612 "
+
+*% This describes the physical dimensions of the paper for each page size above.
+*DefaultPaperDimension: Letter
+*PaperDimension Letter: "612 792"
+*PaperDimension Legal: "612 1008"
+*PaperDimension A4: "595 842"
+*PaperDimension Executive: "522 756"
+*PaperDimension Comm10: "297 684"
+*PaperDimension Monarch: "279 540"
+*PaperDimension DL: "312 624"
+*PaperDimension C5: "459 649"
+*PaperDimension B5: "499 708"
+*PaperDimension HalfSheet: "397 612"
+
+*%==========================================================================
+*% Duplexing
+*%==========================================================================
+
+*% Allow user to select duplex on duplex printers.  Remove this only if none
+*% of your printers are duplex-capable.
+*OpenUI *Duplex: PickOne
+*OrderDependency: 50 AnySetup *Duplex
+*DefaultDuplex: None
+*Duplex None: ""
+*Duplex DuplexNoTumble/Long-edge binding: ""
+*Duplex DuplexTumble/Short-edge binding: ""
+*CloseUI: *Duplex
+
+*%==========================================================================
+*% Media selection features
+*%
+*% Few printers have code for these features, but PPR will notice the 
+*% presence of these features and use them to select the proper medium 
+*% if no %%Media: comments are present.
+*%==========================================================================
+
+*OpenUI *MediaType/Paper Type: PickOne
+*OrderDependency: 10 AnySetup *MediaType
+*DefaultMediaType: Plain
+*MediaType Plain: ""
+*MediaType DeptLetterHead/Letterhead: ""
+*MediaType UserLetterHead/Other Letterhead: ""
+*MediaType 3Hole/3 Hole Punched: ""
+*CloseUI: *MediaType
+
+*OpenUI *MediaColor/Paper Color: PickOne
+*OrderDependency: 10 AnySetup *MediaColor
+*DefaultMediaColor: white
+*MediaColor white/White: ""
+*MediaColor gold/Gold: ""
+*MediaColor green/Green: ""
+*MediaColor orange/Orange: ""
+*MediaColor pink/Pink: ""
+*MediaColor purple/Purple: ""
+*MediaColor red/Red: ""
+*MediaColor yellow/Yellow: ""
+*MediaColor blue/Blue: ""
+*CloseUI: *MediaColor
+
+*% We have made up all these weights
+*OpenUI *MediaWeight/Paper Thickness: PickOne
+*OrderDependency: 10 AnySetup *MediaWeight
+*DefaultMediaWeight: 75
+*MediaWeight 75/Normal: ""
+*MediaWeight 300/Heavy: ""
+*CloseUI: *MediaWeight
+
+*%==========================================================================
+*% N-Up, booklet making, and book making
+*%
+*% PPR implements these itself.
+*%==========================================================================
+
+*% We need a way to invoke N-Up.  We have invented this.
+*OpenUI *pprN-Up/N-Up: PickOne
+*OrderDependency: 10 AnySetup *pprN-Up
+*DefaultpprN-Up: 1
+*pprN-Up 1/None: ""
+*pprN-Up 2/2: ""
+*pprN-Up 4/4: ""
+*pprN-Up 6/6: ""
+*pprN-Up 8/8: ""
+*pprN-Up 10/10: ""
+*pprN-Up 12/12: ""
+*pprN-Up 14/14: ""
+*pprN-Up 16/16: ""
+*CloseUI: *pprN-Up
+
+*OpenUI *pprN-Up/N-UpBorders: PickOne
+*OrderDependency: 10 AnySetup *pprN-UpBorders
+*DefaultpprN-UpBorders: False
+*pprN-UpBorders False/No: ""
+*pprN-UpBorders True/No: ""
+*CloseUI: *pprN-UpBorders
+
+*% Re-order the pages and print in 2-up duplex so that they can be folded and 
+*% stapled or sewn into a little booklet.
+*OpenUI *Booklet/Booklet Making: PickOne
+*OrderDependency: 10 AnySetup *Booklet
+*DefaultBooklet: False
+*Booklet False/Off: ""
+*Booklet True/On: ""
+*CloseUI: *Booklet
+
+*% Print the document as a series of little bookets, each with the indicated
+*% number of sheets.  Note that only "False" is defined in the PPD 
+*% specification.
+*OpenUI *Signature/Signature Printing: PickOne
+*OrderDependency: 10 AnySetup *Signature
+*DefaultSignature: False
+*Signature False/None: ""
+*Signature 4/4 Page (1 Sheet): ""
+*Signature 8/8 Page (2 Sheets): ""
+*Signature 12/12 Page (3 Sheets): ""
+*Signature 16/16 Page (4 Sheets): ""
+*Signature 20/20 Page (5 Sheets): ""
+*Signature 24/24 Page (6 Sheets): ""
+*Signature 28/28 Page (7 Sheets): ""
+*Signature 32/32 Page (8 Sheets): ""
+*Signature 36/36 Page (9 Sheets): ""
+*Signature 40/40 Page (10 Sheets): ""
+*CloseUI: *Signature
+
+*%==========================================================================
+*% This is a list of the available fonts.  We list the basic 35 which
+*% almost all PostScript printers have.
+*%==========================================================================
+
+*DefaultFont: Courier
+*Font Courier: Standard "(002.004)" Standard ROM
+*Font Courier-Bold: Standard "(002.004)" Standard ROM
+*Font Courier-BoldOblique: Standard "(002.004)" Standard ROM
+*Font Courier-Oblique: Standard "(002.004)" Standard ROM
+*Font Helvetica: Standard "(001.006)" Standard ROM
+*Font Helvetica-Bold: Standard "(001.007)" Standard ROM
+*Font Helvetica-Oblique: Standard "(001.006)" Standard ROM
+*Font Helvetica-BoldOblique: Standard "(001.007)" Standard ROM
+*Font Times-Bold: Standard "(001.007)" Standard ROM
+*Font Times-BoldItalic: Standard "(001.009)" Standard ROM
+*Font Times-Italic: Standard "(001.007)" Standard ROM
+*Font Times-Roman: Standard "(001.007)" Standard ROM
+*Font ZapfChancery-MediumItalic: Standard "(001.007)" Standard ROM
+*Font ZapfDingbats: Special "(001.004)" Special ROM
+*Font Symbol: Special "(001.007)" Special ROM
+*Font Helvetica-Narrow: Standard "(001.006)" Standard ROM
+*Font Helvetica-Narrow-Bold: Standard "(001.007)" Standard ROM
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.007)" Standard ROM
+*Font Helvetica-Narrow-Oblique: Standard "(001.006)" Standard ROM
+*Font AvantGarde-Book: Standard "(001.006)" Standard ROM
+*Font AvantGarde-BookOblique: Standard "(001.006)" Standard ROM
+*Font AvantGarde-Demi: Standard "(001.007)" Standard ROM
+*Font AvantGarde-DemiOblique: Standard "(001.007)" Standard ROM
+*Font Bookman-Demi: Standard "(001.003)" Standard ROM
+*Font Bookman-DemiItalic: Standard "(001.003)" Standard ROM
+*Font Bookman-Light: Standard "(001.003)" Standard ROM
+*Font Bookman-LightItalic: Standard "(001.003)" Standard ROM
+*Font NewCenturySchlbk-Bold: Standard "(001.009)" Standard ROM
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.007)" Standard ROM
+*Font NewCenturySchlbk-Italic: Standard "(001.006)" Standard ROM
+*Font NewCenturySchlbk-Roman: Standard "(001.007)" Standard ROM
+*Font Palatino-Bold: Standard "(001.005)" Standard ROM
+*Font Palatino-BoldItalic: Standard "(001.005)" Standard ROM
+*Font Palatino-Italic: Standard "(001.005)" Standard ROM
+*Font Palatino-Roman: Standard "(001.005)" Standard ROM
+
+*% end of file

@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/libppr/pprpopup.pl
-# Copyright 1995--1999, Trinity College Computing Center.
+# mouse:~ppr/src/libscript/pprpopup.pl
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,17 +10,19 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 18 November 1999.
+# Last modified 19 December 2001.
 #
 
 #
 # Routines needed for communicating with pprpopup.
 #
 
-# Stuff needed for TCP/IP:
+use PPR;
 use FileHandle;
 use Socket;
 my $SOCKADDR="S n a4 x8";
+
+my $dbdir = "$PPR::VAR_SPOOL_PPR/pprpopup.db";
 
 #==============================================================
 # Connect STDOUT and STDERR to a log file and connect STDIN
@@ -43,40 +45,90 @@ sub log_stdout_stderr
 # Open a TCP/IP connexion to the indicated port and address.
 #==============================================================
 sub open_connexion
-  {
-  my($handle, $ADDRESS) = @_;
-
-  if($ADDRESS !~ /^([^:]+):([0-9]+)$/)
     {
-    print "open_connexion(): address syntax incorrect\n";
-    return 0;
+    my($handle, $responder_address) = @_;
+    my $magic_cookie = "";
+    my ($host, $ip_address, $port);
+
+    if($responder_address =~ /^([^:]\.[^:]+):([0-9]+)$/)
+	{
+	($host, $port) = ($1, $2);
+	if($host =~ /^\d+\.\d+\.\d+\.\d+$/)
+	    {
+	    $ip_address = inet_aton($host);
+	    }
+	else
+	    {
+	    if( ! defined($ip_address = (gethostbyname($host))[4]) )
+		{
+		print "open_connexion($handle, \"$responder_address\"): gethostbyname(\"$host\") failed, $!\n";
+		return 0;
+		}
+	    }
+	}
+    else
+	{
+	my $encoded_responder_address = $responder_address;
+	$encoded_responder_address =~ s/([^a-zA-Z0-9\@\.])/sprintf("%%%02X", ord $1)/ge;
+	if(! open(PPRPOPUP_DB, "<$dbdir/$encoded_responder_address"))
+	    {
+	    print "open_connexion($handle, \"$responder_address\"): client not registered\n";
+	    return 0;
+	    }
+
+	while(my $line = <PPRPOPUP_DB>)
+	    {
+	    if($line =~ /^pprpopup_address=(\d+\.\d+\.\d+\.\d+):(\d+)$/)
+	    	{
+	    	$host = $1;
+	    	$port = $2;
+	    	$ip_address = inet_aton($host);
+		next;
+	    	}
+	    if($line =~ /^magic_cookie=(.+)$/)
+	    	{
+	    	$magic_cookie = $1;
+	    	next;
+	    	}
+	    }
+
+	close(PPRPOPUP_DB);
+	}
+
+    defined $host || die;
+    defined $ip_address || die;
+    defined $port || die;
+
+    my $proto = (getprotobyname("tcp"))[2];
+
+    if( ! socket($handle, AF_INET, SOCK_STREAM, $proto) )
+	{
+	print "open_connexion(): socket() failed, $!\n";
+	return 0;
+	}
+
+    if( ! connect($handle, pack($SOCKADDR, AF_INET, $port, $ip_address)) )
+	{
+	print "open_connexion($handle, \"$responder_address\"): connect() to ${\inet_ntoa($ip_address)}:$port failed, $!\n";
+	close($handle);
+	return 0;
+	}
+
+    $handle->autoflush(1);
+
+    if($magic_cookie ne "")
+	{
+	print $handle "COOKIE $magic_cookie\n";
+	my $result = <$handle>;
+	if($result !~ /^\+OK/)
+	    {
+	    print $result;
+	    close($handle);
+	    return 0;
+	    }
+	}
+
+    return 1;	# sucess!
     }
-
-  my($HOST, $PORT) = ($1, $2);
-
-  my $proto = (getprotobyname("tcp"))[2];
-
-  if( ! socket($handle, AF_INET, SOCK_STREAM, $proto) )
-    {
-    print "open_connexion(): socket() failed, $!\n";
-    return 0;
-    }
-
-  if( ! defined($address = (gethostbyname($HOST))[4]) )
-    {
-    print "open_connexion($handle, \"$ADDRESS\"): gethostbyname() failed, $!\n";
-    return 0;
-    }
-
-  if( ! connect($handle, pack($SOCKADDR, AF_INET, $PORT, $address)) )
-    {
-    print "open_connexion($handle, \"$ADDRESS\"): connect() failed, $!\n";
-    close($handle);
-    return 0;
-    }
-
-  $handle->autoflush(1);
-  return 1;	# sucess!
-  }
 
 1;

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_obsolete.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 June 2001.
+# Last modified 7 January 2002.
 #
 
 HOMEDIR="?"
@@ -87,30 +87,42 @@ outdated $HOMEDIR/lib/xerox_ticket_submitter
 outdated $HOMEDIR/bin/indexttf
 outdated_dir $SHAREDIR/globalconf
 
-for f in ASCIIEncoding CP1250Encoding CP437Encoding ISOLatin2Encoding \
-	ISOLatin3Encoding ISOLatin4Encoding ISOLatin5Encoding KOI8Encoding \
+# These have been renamed.
+for f in \
+	ASCIIEncoding \
+	CP1250Encoding \
+	CP437Encoding \
+	ISOLatin2Encoding \
+	ISOLatin3Encoding \
+	ISOLatin4Encoding \
+	ISOLatin5Encoding \
+	KOI8Encoding \
 	MacintoshEncoding
     do
     outdated $SHAREDIR/cache/encoding/$f
     done
 
-for f in TrinColl-PPR-dmm-nup-3-3 TrinColl-PPR-dmm-nup-3-4 \
+# These are obsolete.
+for f in \
+	TrinColl-PPR-dmm-nup-3-3 \
+	TrinColl-PPR-dmm-nup-3-4 \
+	TrinColl-PPR-dmm-nup-3-5 \
 	TrinColl-PPR-ReEncode-1-0
     do
     outdated $SHAREDIR/cache/procset/$f
     done
 
-outdated_dir $VAR_SPOOL_PPR/addr_cache
-outdated_dir $VAR_SPOOL_PPR/alerts
-outdated $VAR_SPOOL_PPR/nextid
-outdated $VAR_SPOOL_PPR/lpr_nextid	# older than the one below
-outdated $VAR_SPOOL_PPR/lpr_previd	# newer but still obsolete
-outdated $VAR_SPOOL_PPR/pprd.pid
-outdated $VAR_SPOOL_PPR/papsrv.pid
-outdated $VAR_SPOOL_PPR/lprsrv.pid
-outdated $VAR_SPOOL_PPR/olprsrv.pid
-outdated $VAR_SPOOL_PPR/state_update
-outdated $VAR_SPOOL_PPR/state_update_pprdrv
+outdated_dir $VAR_SPOOL_PPR/addr_cache		# moved
+outdated_dir $VAR_SPOOL_PPR/alerts		# moved
+outdated $VAR_SPOOL_PPR/nextid			# moved
+outdated $VAR_SPOOL_PPR/lpr_nextid		# older than the one below
+outdated $VAR_SPOOL_PPR/lpr_previd		# newer but still obsolete
+outdated $VAR_SPOOL_PPR/pprd.pid		# moved
+outdated $VAR_SPOOL_PPR/papsrv.pid		# moved
+outdated $VAR_SPOOL_PPR/lprsrv.pid		# moved
+outdated $VAR_SPOOL_PPR/olprsrv.pid		# moved
+outdated $VAR_SPOOL_PPR/state_update		# moved
+outdated $VAR_SPOOL_PPR/state_update_pprdrv	# moved
 outdated $HOMEDIR/lib/Printdesk/printer2.xbm
 
 if [ -d "$VAR_SPOOL_PPR/win95drv" ]
@@ -144,8 +156,10 @@ outdated $SHAREDIR/www/docs/rfc/index.html
 outdated $HOMEDIR/lib/ppr-commentary-httpd
 outdated_dir $SHAREDIR/www/docs/rfc
 outdated $SHAREDIR/www/html/docbrowse.html
-#outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# might be bad
-#outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 Series"	# might be bad
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
+outdated $HOMEDIR/lib/login_ppr.sh
+outdated $HOMEDIR/lib/login_ppr.csh
+#outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
 
 echo "Done."
 echo
