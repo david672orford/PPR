@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--28 February 2005
+2.00a1, 11 December 2004--1 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9605,8 +9605,9 @@ no final tarball was released.
 * z_install_end/install_inetd_conf.sh: fixed broken Xinetd config file (merged 
   into 1.54)
 
-* libgu/pcre_maketables.c: removed link and removed from Makefile since it is i
-  not used
+* libgu/pcre_maketables.c,pcre_get.c: removed links and removed from Makefile 
+  since they not used at present.
 
-
+* changed all remaining references to gu_torf() to gu_torf_setBOOL() and removed
+  gu_torf() and its constants from include/gu.h and libgu/torf.c.
 

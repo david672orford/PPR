@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_patch.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 May 2001.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -24,8 +39,9 @@
 #include "pprdrv.h"
 #include "interface.h"
 
-static int tripped = TRUE;
-static int result;
+static int result_tripped = TRUE;
+static int result_retval;
+static gu_boolean result_boolean;
 
 /*
 ** This is called by pprdrv_feedback.c whenever it gets a message.
@@ -33,10 +49,11 @@ static int result;
 */
 gu_boolean patchfile_query_callback(const char message[])
 	{
-	if(tripped) return FALSE;
+	if(result_tripped)		/* only swallow one line */
+		return FALSE;
 	DODEBUG_QUERY(("patchfile query response: %.*s", (int)strcspn(message, "\n"), message));
-	result = gu_torf(message);
-	tripped = TRUE;
+	result_retval = gu_torf_setBOOL(&result_boolean,message);
+	result_tripped = TRUE;
 	return TRUE;
 	} /* end of patchfile_query_callback() */
 
@@ -63,10 +80,8 @@ void patchfile(void)
 			if((qcode = find_feature("*?PatchFile", (char*)NULL)) == (char*)NULL)
 				fatal(EXIT_PRNERR_NORETRY, "PPD file has *PatchFile but no *?PatchFile");
 
-			result = ANSWER_UNKNOWN;
-
 			job_start(JOBTYPE_QUERY);
-			tripped = FALSE;
+			result_tripped = FALSE;
 
 			printer_putline("%!PS-Adobe-3.0 Query");
 			printer_putline("");
@@ -80,7 +95,7 @@ void patchfile(void)
 			   we don't want to give up before the interface gives
 			   up its connection attempt. */
 			writemon_start("QUERY");
-			while(!tripped)
+			while(!result_tripped)
 				{
 				if(feedback_wait(120, FALSE) == -1)
 					fatal(EXIT_PRNERR, _("Timeout expired while waiting for printer to respond to *?PatchFile query."));
@@ -90,14 +105,14 @@ void patchfile(void)
 			job_end();
 
 			/* If no response or unintelligible response, */
-			if(result == ANSWER_UNKNOWN)
+			if(result_retval == -1)
 				fatal(EXIT_PRNERR_NORETRY, _("Printer did not respond correctly to *?PatchFile query."));
 
 			/*
 			** If patch is in place, turn off the flag
 			** which calls for it to be downloaded.
 			*/
-			else if(result == ANSWER_TRUE)
+			else if(result_boolean)
 				{
 				DODEBUG_QUERY(("Patch is not needed"));
 				patch_needed = FALSE;

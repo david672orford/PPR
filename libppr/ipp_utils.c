@@ -200,7 +200,7 @@ static int tag_simplify(int value_tag)
 		}
 	}
 	
-/** create IPP request handling object
+/*! create IPP request handling object
 
 This function creates an IPP service object.  The IPP request will be read
 from stdin and the response will be sent to stdout.  IPP data of various

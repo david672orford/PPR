@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -98,9 +98,9 @@ int receive(int fd, int flag);
 int opt_open_retries = 10;				/* number of times to retry pap_open() */
 int opt_lookup_retries = 8;				/* number of times to retry NBP lookup */
 int opt_lookup_interval = 1;			/* interval between retries */
-int opt_is_laserwriter = TRUE;			/* Is this a LaserWriter compatible PostScript printer? */
+gu_boolean opt_is_laserwriter = TRUE;	/* Is this a LaserWriter compatible PostScript printer? */
 int opt_idle_status_interval = 0;		/* ask for status this often */
-int opt_address_cache = TRUE;			/* Should we use the address cache? */
+gu_boolean opt_address_cache = TRUE;	/* Should we use the address cache? */
 
 #if 0
 #define DEBUG 1
@@ -771,7 +771,7 @@ int int_main(int argc, char *argv[])
 		{
 		if(strcmp(name, "is_laserwriter") == 0)
 			{
-			if((opt_is_laserwriter = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&opt_is_laserwriter,value) == -1)
 				{
 				o.error = N_("value must be \"true\" or \"false\"");
 				retval = -1;
@@ -820,7 +820,7 @@ int int_main(int argc, char *argv[])
 			}
 		else if(strcmp(name, "address_cache") == 0)
 			{
-			if((opt_address_cache = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&opt_address_cache,value) == -1)
 				{
 				o.error = N_("value must be \"true\" or \"false\"");
 				retval = -1;

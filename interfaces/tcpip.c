@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -443,14 +443,12 @@ int int_main(int argc, char *argv[])
 		*/
 		else if(strcmp(name, "use_shutdown") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options.use_shutdown),value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
 				break;
 				}
-			options.use_shutdown = answer ? TRUE : FALSE;
 			}
 		/*
 		** The delay after closing connection, before exiting.

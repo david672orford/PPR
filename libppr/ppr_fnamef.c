@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/ppr_fnamef.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 December 2004.
+** Last modified 28 February 2005.
 */
 
 /*! \file
@@ -41,10 +41,9 @@
 
 /*! construct a filename using a printf()-style format string
 
-This is a special version of sprintf().  It will never write more than
-MAX_PPR_PATH characters.  It only understands %s and %d.  On MS-Windows
-systems it will convert ":" to "!" because MS OSs are confused by colons in
-filenames.
+This is a special, simple version of sprintf().  It is intended for 
+constructing file names.  It will never write more than
+MAX_PPR_PATH characters.  It only understands %s and %d.
 
 */
 void ppr_fnamef(char target[], const char pattern[], ...)

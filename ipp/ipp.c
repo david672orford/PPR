@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2005.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -430,15 +430,14 @@ int main(int argc, char *argv[])
 				break;
 			}
 
-		if(p_handler)
+		if(p_handler)		/* if we found a handler function, */
 			{
+			DEBUG(("handler is internal"));
 			ipp_parse_request_body(ipp);
 
 			if(ipp_validate_request(ipp))
 				{
-				DEBUG(("handler is internal"));
 				(*p_handler)(ipp);
-
 				if(ipp->response_code == IPP_OK)
 					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok", FALSE);
 				}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/getline.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,11 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 1 March 2005.
 */
 
 /*! \file
-	\brief read lines of unimited length from a file efficiently
+	\brief read lines of unlimited length from a file efficiently
 */
 
 #include <stdio.h>

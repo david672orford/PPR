@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/claim_remote.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -204,45 +204,29 @@ gu_boolean printdest_claim_remote(const char dest[], struct REMOTEDEST *scratchp
 
 			else if(strcmp(name, "osfextensions") == 0)
 				{
-				int answer;
-				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&(scratchpad->osf_extensions),value) == -1)
 					{
 					uprint_errno = UPE_BADCONFIG;
 					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "osfextensions", UPRINTREMOTECONF, dest, linenum);
-					}
-				else
-					{
-					scratchpad->osf_extensions = answer ? TRUE : FALSE;
 					}
 				}
 
 			else if(strcmp(name, "solarisextensions") == 0)
 				{
-				int answer;
-				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&(scratchpad->solaris_extensions),value) == -1)
 					{
 					uprint_errno = UPE_BADCONFIG;
 					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "solarisextensions", UPRINTREMOTECONF, dest, linenum);
-					}
-				else
-					{
-					scratchpad->solaris_extensions = answer ? TRUE : FALSE;
 					}
 				}
 
 			else if(strcmp(name, "pprextensions") == 0)
 				{
-				int answer;
-				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&(scratchpad->ppr_extensions),value) == -1)
 					{
 					uprint_errno = UPE_BADCONFIG;
 					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "pprextensions", UPRINTREMOTECONF, dest, linenum);
 					}
-				else
-					{
-					scratchpad->ppr_extensions = answer ? TRUE : FALSE;
-					}
-
 				}
 
 			else if(strcmp(name, "remotesystemtype") == 0)

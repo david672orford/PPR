@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -297,8 +297,8 @@ static void set_options(const char *printer_name, const char *printer_options, i
 			}
 		else if(strcmp(name, "xonxoff") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
@@ -306,13 +306,13 @@ static void set_options(const char *printer_name, const char *printer_options, i
 				}
 			if(answer)			/* on */
 				settings->c_iflag |= IXON | IXOFF;
-			else						/* off */
+			else				/* off */
 				settings->c_iflag &= ~(IXON | IXOFF);
 			}
 		else if(strcmp(name, "rtscts") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
@@ -403,19 +403,17 @@ static void set_options(const char *printer_name, const char *printer_options, i
 			}
 		else if(strcmp(name, "detect_hangups") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&options->detect_hangups,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
 				break;
 				}
-			options->detect_hangups = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "hangup_on_close") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;

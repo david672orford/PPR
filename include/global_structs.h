@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 1 March 2005.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -52,8 +52,11 @@ struct COMMENTATOR
 		struct COMMENTATOR *next;
 		} ;
 
-/*
-** This structure can hold the contents of a queue file.
+/** Holds the contents of a queue file.
+ * This structure is loaded using read_struct_QFileEntry(), saved using
+ * write_struct_QFileEntry(), and destroyed using destroy_struct_QFileEntry().
+ * The members are minipulated directly by the caller as there are no
+ * member functions for that purpose.
 */
 struct QFileEntry
 	{

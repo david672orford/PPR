@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2004.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -93,14 +93,16 @@ int group_show(const char *argv[])
 
 	while(confread())			/* Read all the lines in the config file. */
 		{
-		if(lmatch(confline, "Rotate:"))
+		if((ptr = lmatchp(confline, "Rotate:")))
 			{
-			rotate = gu_torf(&confline[7]);
+			if(gu_torf_setBOOL(&rotate,ptr) == -1)
+				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
 			continue;
 			}
 		if(gu_sscanf(confline, "Comment: %A", &ptr) == 1)
 			{
-			if(comment) gu_free(comment);
+			if(comment)
+				gu_free(comment);
 			comment = ptr;
 			continue;
 			}
@@ -119,25 +121,29 @@ int group_show(const char *argv[])
 			}
 		if(gu_sscanf(confline, "Switchset: %Z", &ptr) == 1)
 			{
-			if(switchset) gu_free(switchset);
+			if(switchset)
+				gu_free(switchset);
 			switchset = ptr;
 			continue;
 			}
 		if(gu_sscanf(confline, "DefFiltOpts: %Z", &ptr) == 1)
 			{
-			if(deffiltopts) gu_free(deffiltopts);
+			if(deffiltopts)
+				gu_free(deffiltopts);
 			deffiltopts = ptr;
 			continue;
 			}
 		if(gu_sscanf(confline, "PassThru: %Z", &ptr) == 1)
 			{
-			if(passthru) gu_free(passthru);
+			if(passthru)
+				gu_free(passthru);
 			passthru = ptr;
 			continue;
 			}
 		if(gu_sscanf(confline, "ACLs: %Z", &ptr) == 1)
 			{
-			if(acls) gu_free(acls);
+			if(acls)
+				gu_free(acls);
 			acls = ptr;
 			continue;
 			}
@@ -289,12 +295,12 @@ int group_comment(const char *argv[])
 int group_rotate(const char *argv[])
 	{
 	const char *group = argv[0];
-	int newstate;
+	gu_boolean newstate;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! group || ! argv[1] || ((newstate=gu_torf(argv[1]))==ANSWER_UNKNOWN) )
+	if(! group || ! argv[1] || gu_torf_setBOOL(&newstate,argv[1]) == -1)
 		{
 		fputs(_("You must supply the name of a group and \"true\" or \"false\".\n"), errors);
 		return EXIT_SYNTAX;

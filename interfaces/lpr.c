@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -473,14 +473,12 @@ int int_main(int argc, char *argv[])
 
 		if(strcmp(name, "banner") == 0)
 			{
-			int x;
-			if((x = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options.banner),value) == -1)
 				{
 				o.error = N_("value must be \"true\" or \"false\"");
 				retval = -1;
 				break;
 				}
-			options.banner = x ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "lpr_typecode") == 0)
 			{
@@ -513,14 +511,12 @@ int int_main(int argc, char *argv[])
 			}
 		else if(strcmp(name, "temp_first") == 0)
 			{
-			int x;
-			if((x = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options.temp_first),value) == -1)
 				{
 				o.error = N_("value must be \"true\" or \"false\"");
 				retval = -1;
 				break;
 				}
-			options.temp_first = x ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "snmp_community") == 0)
 			{

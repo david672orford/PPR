@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -209,13 +209,11 @@ static int modify_positive_integer(const char *name, const char *value, struct J
 static int modify_boolean(const char *name, const char *value, struct JOB *job, size_t offset)
 	{
 	gu_boolean *p = (int*)JOB_OFFSET(job, offset);
-	int temp;
-	if((temp = gu_torf(value)) == ANSWER_UNKNOWN)
+	if(gu_torf_setBOOL(p,value) == -1)
 		{
 		fprintf(errors, _("The value \"%s\" is not boolean.\n"), value);
 		return EXIT_SYNTAX;
 		}
-	*p = temp ? TRUE : FALSE;
 	return EXIT_OK;
 	}
 

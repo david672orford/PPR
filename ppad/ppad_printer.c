@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*==============================================================
@@ -419,20 +419,15 @@ int printer_show(const char *argv[])
 			if(options) gu_free(options);
 			options = ptr;
 			}
-		else if(lmatch(confline, "Feedback:"))
+		else if((ptr = lmatchp(confline, "Feedback:")))
 			{
-			switch(gu_torf(&confline[9]))
-				{
-				case ANSWER_TRUE:
-					feedback = FEEDBACK_YES;
-					break;
-				case ANSWER_FALSE:
-					feedback = FEEDBACK_NO;
-					break;
-				default:
-					feedback = FEEDBACK_INVALID;
-					break;
-				}
+			gu_boolean temp;
+			if(gu_torf_setBOOL(&temp,ptr) == -1)
+				feedback = FEEDBACK_INVALID;
+			if(temp)
+				feedback = FEEDBACK_YES;
+			else
+				feedback = FEEDBACK_NO;
 			}
 		else if(gu_sscanf(confline, "JobBreak: %d", &jobbreak) == 1)
 			{
@@ -444,14 +439,18 @@ int printer_show(const char *argv[])
 			}
 		else if((ptr = lmatchp(confline, "RIP:")))
 			{
-			if(rip_name) gu_free(rip_name);
-			if(rip_output_language) gu_free(rip_output_language);
-			if(rip_options) gu_free(rip_options);
+			if(rip_name)
+				gu_free(rip_name);
+			if(rip_output_language)
+				gu_free(rip_output_language);
+			if(rip_options)
+				gu_free(rip_options);
 			gu_sscanf(ptr, "%S %S %Z", &rip_name, &rip_output_language, &rip_options);
 			}
 		else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 			{
-			if(PPDFile) gu_free(PPDFile);
+			if(PPDFile)
+				gu_free(PPDFile);
 			PPDFile = ptr;
 			}
 		else if(gu_sscanf(confline, "Bin: %Z", &ptr) == 1)
@@ -461,22 +460,26 @@ int printer_show(const char *argv[])
 			}
 		else if(gu_sscanf(confline, "Comment: %A", &ptr) == 1)
 			{
-			if(comment) gu_free(comment);
+			if(comment)
+				gu_free(comment);
 			comment = ptr;
 			}
 		else if(gu_sscanf(confline, "Location: %A", &ptr) == 1)
 			{
-			if(location) gu_free(location);
+			if(location)
+				gu_free(location);
 			location = ptr;
 			}
 		else if(gu_sscanf(confline, "Department: %A", &ptr) == 1)
 			{
-			if(department) gu_free(department);
+			if(department)
+				gu_free(department);
 			department = ptr;
 			}
 		else if(gu_sscanf(confline, "Contact: %A", &ptr) == 1)
 			{
-			if(contact) gu_free(contact);
+			if(contact)
+				gu_free(contact);
 			contact = ptr;
 			}
 		else if(lmatch(confline, "FlagPages:"))
@@ -488,8 +491,10 @@ int printer_show(const char *argv[])
 			int x=6;
 			int len;
 
-			if(alerts_method) gu_free(alerts_method);
-			if(alerts_address) gu_free(alerts_address);
+			if(alerts_method)
+				gu_free(alerts_method);
+			if(alerts_address)
+				gu_free(alerts_address);
 
 			x+=strspn(&confline[x]," \t");				/* eat up space */
 			alerts_frequency=atoi(&confline[x]);
@@ -497,16 +502,12 @@ int printer_show(const char *argv[])
 			x+=strspn(&confline[x]," \t-0123456789");	/* skip spaces and */
 														/* digits */
 			len=strcspn(&confline[x]," \t");			/* get word length */
-			alerts_method = (char*)gu_alloc(len+1,sizeof(char));
-			strncpy(alerts_method,&confline[x],len);	 /* copy */
-			alerts_method[len] = '\0';					/* terminate */
+			alerts_method = gu_strndup(&confline[x],len);
 			x+=len;										/* move past word */
 			x+=strspn(&confline[x]," \t");				/* skip spaces */
 
 			len=strcspn(&confline[x]," \t\n");			/* get length */
-			alerts_address = (char*)gu_alloc(len+1,sizeof(char));
-			strncpy(alerts_address,&confline[x],len);	/* copy */
-			alerts_address[len] = '\0';					/* terminate */
+			alerts_address = gu_strndup(&confline[x],len);
 			}
 		else if(gu_sscanf(confline, "OutputOrder: %#s", sizeof(scratch), scratch) == 1)
 			{
@@ -530,12 +531,14 @@ int printer_show(const char *argv[])
 			}
 		else if(gu_sscanf(confline, "Switchset: %Z", &ptr) == 1)
 			{
-			if(switchset) gu_free(switchset);
+			if(switchset)
+				gu_free(switchset);
 			switchset = ptr;
 			}
 		else if(gu_sscanf(confline, "DefFiltOpts: %Z", &ptr) == 1)
 			{
-			if(deffiltopts) gu_free(deffiltopts);
+			if(deffiltopts)
+				gu_free(deffiltopts);
 			deffiltopts = ptr;
 			}
 		else if(gu_sscanf(confline, "PPDOpt: %Z", &ptr) == 1)
@@ -551,7 +554,8 @@ int printer_show(const char *argv[])
 			}
 		else if(gu_sscanf(confline, "PassThru: %Z", &ptr) == 1)
 			{
-			if(passthru) gu_free(passthru);
+			if(passthru)
+				gu_free(passthru);
 			passthru = ptr;
 			}
 		else if(gu_sscanf(confline, "LimitPages: %d %d", &limitpages_lower, &limitpages_upper) == 2)
@@ -564,12 +568,13 @@ int printer_show(const char *argv[])
 			}
 		else if((ptr = lmatchp(confline, "GrayOK:")))
 			{
-			if(gu_torf_setBOOL(&grayok, ptr) == -1)
+			if(gu_torf_setBOOL(&grayok,ptr) == -1)
 				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", ptr);
 			}
 		else if(gu_sscanf(confline, "ACLs: %Z", &ptr) == 1)
 			{
-			if(acls) gu_free(acls);
+			if(acls)
+				gu_free(acls);
 			acls = ptr;
 			}
 		else if(gu_sscanf(confline, "PageTimeLimit: %d", &pagetimelimit) == 1)
@@ -674,7 +679,7 @@ int printer_show(const char *argv[])
 	
 				if((p = lmatchp(pline, "*ColorDevice:")))
 					{
-					gu_torf_setBOOL(&ColorDevice, p);
+					gu_torf_setBOOL(&ColorDevice,p);
 					continue;
 					}
 	
@@ -1472,13 +1477,14 @@ int printer_jobbreak(const char *argv[])
 int printer_feedback(const char *argv[])
 	{
 	const char *printer = argv[0];
-	int newstate;
+	gu_boolean newstate;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
 	if(! printer || ! argv[1]
-		|| ( (newstate=gu_torf(argv[1]))==ANSWER_UNKNOWN && gu_strcasecmp(argv[1],"default") ) )
+		|| (gu_torf_setBOOL(&newstate,argv[1])==-1 && gu_strcasecmp(argv[1],"default")!=0)
+		)
 		{
 		fputs(_("You must supply the name of an existing printer\n"
 				"and \"true\", \"false\", or \"default\".\n"), errors);
@@ -1507,7 +1513,7 @@ int printer_feedback(const char *argv[])
 
 	/* If the new feedback setting is not "default", */
 	/* write a new "Feedback:" line.				 */
-	if(newstate != ANSWER_UNKNOWN)
+	if(strcmp(argv[1],"default") != 0)
 		conf_printf("Feedback: %s\n", newstate ? "True" : "False");
 
 	while(confread())							/* copy rest of file, */

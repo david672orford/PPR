@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 
 int main(int argc, char *argv[])
@@ -50,7 +49,7 @@ int main(int argc, char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if((stamp = gu_torf(argv[2])) == ANSWER_UNKNOWN)
+	if(gu_torf_setBOOL(&stamp,argv[2]) == -1)
 		{
 		fprintf(stderr, "%s: second parameter must be TRUE or FALSE\n", argv[0]);
 		return EXIT_SYNTAX;

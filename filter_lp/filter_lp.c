@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -1408,7 +1408,7 @@ int main(int argc, char *argv[])
 			/* Turn on debugging. */
 			if(strcmp(name, "noisy") == 0)
 				{
-				if((noisy = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&noisy,value) == -1)
 					filter_options_error(1, &o, _("Value for option \"%s=\" must be boolean."), "noisy");
 				}
 

@@ -77,7 +77,6 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_strlower.$(OBJ) \
 	gu_strtrim.$(OBJ) \
 	pcre.$(OBJ) \
-	pcre_get.$(OBJ) \
 	pcre_study.$(OBJ) 
 
 TARGETS=../libgu.$(LIBEXT)

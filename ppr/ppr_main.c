@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -1629,7 +1629,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'Z':
-			if((ignore_truncated = gu_torf(optarg)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&ignore_truncated,optarg) == -1)
 				fatal(PPREXIT_SYNTAX, _("%s must be followed by \"true\" or \"false\""), true_option);
 			break;
 

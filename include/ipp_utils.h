@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,44 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2004.
+** Last modified 1 March 2005.
 */
 
 /*! \file
 
 This file defines an IPP server API.  It is loosly based on the CUPS IPP 
 client API.
+
+When one creates an IPP object by calling ipp_new() one specifies the file
+descriptors from which to read the request and to which to send the reply
+as well as the base path for building IPP object URL's, and the 
+PATH_INFO.
+
+Once the object has bee created, it is necessary to call ipp_parse_request_header()
+and ipp_parse_request_body() in order to read in the full request.  Once this is 
+done, One can call methods of the IPP object to
+enumerate the request attributes.  
+
+Other methods of the IPP object can be used
+to build a reply which, when ipp_send_reply() is called, is formatted and sent
+to the reply file descriptor which ch was specified as a parameter to ipp_new().
+
+Here is a partial example of using the IPP object from a CGI "script":
+
+	char *p;
+	void *ipp = ipp_new("http://myserver/myscript", getenv("PATH_INFO"), atoi(getenv(CONTENT_LENGTH), 0, 1);
+	if((p = getenv("REMOTE_USER")) && *p)
+		ipp_set_remote_user(ipp, p);
+	if((p = getenv("REMOTE_ADDR")))
+		ipp_set_remote_addr(ipp, p);
+	ipp_parse_request_header(ipp);
+	ipp_parse_request_body(ipp);
+
+	... read request and build reply ...
+	
+	ipp_send_reply(ipp, TRUE);
+
+Fuller examples can be found in ../ipp/ipp.c and ../pprd/pprd_ipp.c.
 
 */
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -274,25 +274,21 @@ static void parse_options(int portfd, struct OPTIONS *options)
 			}
 		else if(strcmp(name, "reset_before") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&options->reset_before,value) == -1)
 				{
 				o.error = N_("Value must be boolean");
 				retval = -1;
 				break;
 				}
-			options->reset_before = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "reset_on_cancel") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options->reset_on_cancel),value) == -1)
 				{
 				o.error = N_("Value must be boolean");
 				retval = -1;
 				break;
 				}
-			options->reset_on_cancel = answer ? TRUE : FALSE;
 			}
 		else
 			{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 1 March 2005.
 */
 
 /*! \file
@@ -171,7 +171,6 @@ void gu_trim_whitespace_right(char *s);
 int gu_strcasecmp(const char *s1, const char *s2);
 int gu_strncasecmp(const char *s1, const char *s2, int n);
 int gu_lock_exclusive(int filenum, int waitmode);
-int gu_torf(const char *s);
 int gu_torf_setBOOL(gu_boolean *b, const char *s);
 double gu_getdouble(const char *);
 const char *gu_dtostr(double);
@@ -214,22 +213,11 @@ __attribute__ (( format (printf, 1, 2) ))
 char *gu_strlower(char *string);
 char *gu_strtrim(char *string);
 
-/*
-** Values for gu_torf(), a function which examines a string
-** and tries to determine whether it represents a true or
-** a false value.
-**
-** These are obsolete.  Change uses of gu_torf() to gu_torf_setBOOL().
-*/
-#define ANSWER int
-#define ANSWER_UNKNOWN -1
-#define ANSWER_FALSE 0
-#define ANSWER_TRUE 1
-
 /*===================================================================
 ** Command line option parsing
 ===================================================================*/
 
+/** an array of these hold the list of valid long options */
 struct gu_getopt_opt
 		{
 		const char *name;
@@ -237,6 +225,7 @@ struct gu_getopt_opt
 		gu_boolean needsarg;
 		} ;
 
+/** holds state of command line option parser */
 struct gu_getopt_state
 		{
 		int argc;										/* private */
@@ -408,9 +397,11 @@ void gu_snmp_set_result_len(struct gu_snmp *p, int len);
 int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, int *request_id, struct gu_snmp_items *items, int items_count);
 int gu_snmp_parse_response(struct gu_snmp *p, int request_id, struct gu_snmp_items *items, int items_count);
 
-#define GU_SNMP_INT 1		/**< tells gu_snmp_get() to fetch an integer value */
-#define GU_SNMP_STR 2		/**< tells gu_snmp_get() to fetch a string value */
-#define GU_SNMP_BIT 3		/**< tells gu_snmp_get() to fetch a bitstring value */
+enum GU_SNMP_TYPES {
+	GU_SNMP_INT=1,		/**< tells gu_snmp_get() to fetch an integer value */
+	GU_SNMP_STR=2,		/**< tells gu_snmp_get() to fetch a string value */
+	GU_SNMP_BIT=3		/**< tells gu_snmp_get() to fetch a bitstring value */
+	} ;
 
 /*===================================================================
 ** Perl Compatibility Functions

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -72,7 +72,7 @@ int receive(int cno, int flag);
 int open_retries = 10;					/* number of times to retry pap_open() */
 int lookup_retries = 8;					/* number of times to retry NBP lookup */
 int lookup_interval = 1;				/* interval between retries */
-int is_laserwriter = TRUE;				/* Is this a LaserWriter compatible PostScript printer? */
+gu_boolean is_laserwriter = TRUE;		/* Is this a LaserWriter compatible PostScript printer? */
 int idle_status_interval;
 
 /*
@@ -504,7 +504,7 @@ int int_main(int argc, char *argv[])
 		{
 		if(strcmp(name, "is_laserwriter") == 0)
 			{
-			if((is_laserwriter = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&is_laserwriter,value) == -1)
 				{
 				o.error = N_("value must be \"true\" or \"false\"");
 				retval = -1;

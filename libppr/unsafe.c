@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/unsafe.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 28 February 2005.
 */
 
 #include "config.h"
@@ -36,11 +36,10 @@
 /*! \file
 */
 
-/** detect unsafe Postscript names
+/*! detect unsafe Postscript names
 
-This function will return TRUE if its argumetn cotnains characters which are
-not valid in PostScript will object to in font names, medium types, and
-colour names.
+This function will return TRUE if its argument contains characters which are
+not permitted in PostScript-language symbol names.
 
 */
 gu_boolean is_unsafe_ps_name(const char name[])

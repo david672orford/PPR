@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/main.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 May 2004.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -624,7 +624,7 @@ int main(int argc, char *argv[])
 			**-------------------------------------------*/
 			if(strcmp(name, "noisy") == 0)
 				{
-				if( (noisy = gu_torf(value)) == ANSWER_UNKNOWN )
+				if(gu_torf_setBOOL(&noisy,value) == -1)
 					filter_options_error(1, &o, _("Value must be boolean."));
 				}
 
@@ -633,7 +633,7 @@ int main(int argc, char *argv[])
 			**-------------------------------------------*/
 			else if(strcmp(name, "colour") == 0 || strcmp(name, "color") == 0)
 				{
-				if((colour_ok = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&colour_ok,value) == -1)
 					filter_options_error(1, &o, _("Value must be boolean."));
 				}
 
@@ -790,18 +790,13 @@ int main(int argc, char *argv[])
 			----------------------------------------------*/
 			else if(strcmp(name, "narrowcarriage") == 0)
 				{
-				switch( gu_torf(value) )
-					{
-					case ANSWER_TRUE:
-						emulation |= EMULATION_8IN_LINE;
-						break;
-					case ANSWER_FALSE:
-						emulation &= ~EMULATION_8IN_LINE;
-						break;
-					case ANSWER_UNKNOWN:
-					default:
-						filter_options_error(1, &o, _("Value must be boolean."));
-					}
+				gu_boolean temp;
+				if(gu_torf_setBOOL(&temp,value) == -1)
+					filter_options_error(1, &o, _("Value must be boolean."));
+				else if(temp)
+					emulation |= EMULATION_8IN_LINE;
+				else
+					emulation &= ~EMULATION_8IN_LINE;
 				}
 
 			/*----------------------------------------------

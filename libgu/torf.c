@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 1 March 2005.
 */
 
 /*! \file
@@ -34,36 +34,6 @@
 
 #include "config.h"
 #include "gu.h"
-
-/** Parse a boolean value
-
-Read a True or False answer and return ANSWER_TRUE, ANSWER_FALSE,
-or ANSWER_UNKNOWN.
-
-This function should be phased out in favor of gu_torf_setBOOL().
-
-*/
-int gu_torf(const char *s)
-	{
-	while( *s == ' ' || *s == '\t' )	/* eat up */
-		s++;							/* leading white space */
-
-	switch(*s)
-		{
-		case 'y':
-		case 'Y':
-		case 't':
-		case 'T':
-			return ANSWER_TRUE;
-		case 'n':
-		case 'N':
-		case 'f':
-		case 'F':
-			return ANSWER_FALSE;
-		default:
-			return ANSWER_UNKNOWN;
-		}
-	} /* end of gu_torf() */
 
 /** Parse a boolean value
  *

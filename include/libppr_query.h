@@ -25,12 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 1 March 2005.
 */
 
-/*
-** This is the definition of the query object.  Call one of the query_new_*() functions
-** to create one of these things.
+/** Query object
+ *
+ * This is the definition of the query object.  Call one of the query_new_*() functions
+ * to create one of these things.  It should not be manipulated directly by the caller.
 */
 struct QUERY
 	{
