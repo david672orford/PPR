@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ru-PPR\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-09 15:40-0500\n"
-"PO-Revision-Date: 2003-10-21 16:30-0400\n"
+"PO-Revision-Date: 2004-04-02 16:30-0400\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <C@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2288,7 +2288,7 @@ msgstr "Идинцвение варианти--7 и 8"
 
 #: ../ppop/ppop_cmds_other.c:344
 msgid "Operation: "
-msgstr ""
+msgstr "Операция: "
 
 #: ../ppr/ppr_editps.c:126
 #, c-format
@@ -2480,7 +2480,7 @@ msgstr "Название принтера: %s\n"
 #: ../ppop/ppop_cmds_other.c:279
 #, c-format
 msgid "Printer Problem: \"%s\""
-msgstr "Проблема относително принтера: \"%s\""
+msgstr "Проблема у принтера: \"%s\""
 
 #: ../ppop/ppop_cmds_other.c:244
 #, c-format
@@ -4571,7 +4571,7 @@ msgstr ""
 
 #: ../ppr/ppr_main.c:2020
 msgid "getpwuid() fails to find your account"
-msgstr ""
+msgstr "getpwuid() не нашёл ваша счёта"
 
 #: ../ppop/ppop_cmds_other.c:1638
 msgid "group"
@@ -4580,7 +4580,7 @@ msgstr "групаа"
 #: ../ppop/ppop_cmds_other.c:592
 #, c-format
 msgid "halting (printing %s)"
-msgstr ""
+msgstr "останавлевается не медлено (печатает %s)"
 
 #: ../ppop/ppop_cmds_other.c:116 ../ppop/ppop_cmds_other.c:571
 msgid "idle"
@@ -5217,17 +5217,17 @@ msgstr "печатель"
 
 #: ../ppop/ppop_cmds_other.c:118
 msgid "printing"
-msgstr ""
+msgstr "печатает"
 
 #: ../ppop/ppop_cmds_other.c:577
 #, c-format
 msgid "printing %s"
-msgstr ""
+msgstr "печатает %s"
 
 #: ../ppop/ppop_cmds_other.c:575
 #, c-format
 msgid "printing %s (retry %d)"
-msgstr ""
+msgstr "печатает %s (попытка %d)"
 
 #: ../ppop/ppop_cmds_other.c:95
 msgid "problem exists"
@@ -5235,7 +5235,7 @@ msgstr "проблема есть"
 
 #: ../ppop/ppop_cmds_other.c:326
 msgid "querying printer"
-msgstr "дапрашеваем печател"
+msgstr "дапрашеваем принтер"
 
 #: ../samba/ppr2samba.c:210 ../samba/ppr2samba.c:222 ../samba/ppr2samba.c:234
 #: ../samba/ppr2samba.c:251
@@ -5311,7 +5311,7 @@ msgstr ""
 #: ../ppop/ppop_cmds_other.c:586
 #, c-format
 msgid "stopping (printing %s)"
-msgstr "останоится (печетает %s)"
+msgstr "останавливается (печетает %s)"
 
 #: ../ppop/ppop_cmds_other.c:589
 msgid "stopt"

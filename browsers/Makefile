@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2004.
+# Last modified 2 April 2004.
 #
 
 include ../Makefile.conf
@@ -37,6 +37,10 @@ BROWSERS=parallel atalk ip_scan_snmp
 #=== Build ==================================================================
 
 all: $(BROWSERS)
+
+ip_scan_snmp$(DOTEXE): ip_scan_snmp.$(OBJ) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o ip_scan_snmp$(DOTEXE) ip_scan_snmp.$(OBJ) \
+		../libgu.$(LIBEXT) $(SOCKLIBS)
 
 #=== Install ================================================================
 

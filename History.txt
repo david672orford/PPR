@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--23 March 2004.
+1.53a2, 20 February 2004--2 April 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9095,7 +9095,9 @@ Internet Printing Protocol Work
 * www/prn_addwiz.perl: added support for auto-detection of printer type
   and selection of PPD file.
 
+* browsers/atalk.tcl: improved to group names on the same printer
 
+* browsers/ip_scan_snmp.c: added
 
 +++++++++++++++++++++
 TODO

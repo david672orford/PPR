@@ -287,6 +287,21 @@ int gu_snmp_fd(struct gu_snmp *p)
 	return p->socket;
 	}
 
+/** return the receive buffer of the SNMP object
+*/
+char *gu_snmp_recv_buf(struct gu_snmp *p, int *len)
+	{
+	*len = sizeof(p->result);
+	return p->result;
+	}
+
+/* set the result length
+ */
+void gu_snmp_set_result_len(struct gu_snmp *p, int len)
+	{
+	p->result_len = len;
+	}
+
 /** Create the SNMP query packet
 */
 int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2004.
+** Last modified 2 April 2004.
 */
 
 /*! \file
@@ -384,6 +384,8 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
 void gu_snmp_close(struct gu_snmp *p);
 void gu_snmp_get(struct gu_snmp *p, ...);
 int gu_snmp_fd(struct gu_snmp *p);
+char *gu_snmp_recv_buf(struct gu_snmp *p, int *len);
+void gu_snmp_set_result_len(struct gu_snmp *p, int len);
 int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count);
 int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int items_count);
 
