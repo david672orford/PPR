@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 14 November 2002.
+# Last modified 15 November 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -81,6 +81,19 @@ cat - <<EndOfHelp
 	--libdir=
 	--datadir=
 	--spooldir=
+	--x11bindir=
+	--with-gcc
+	--without-gcc
+	--user-ppr=
+	--user-pprwww=
+	--group-ppr=
+	--with-gdbm
+	--without-gdbm
+	--with-tdb
+	--without-tdb
+	--with-gettext
+	--without-gettext
+	--help )
 
 EndOfHelp
 }
@@ -192,13 +205,13 @@ for opt in $*
 	    ;;
     esac
     done
-if [ -z "$sysconfdir" ]
+if [ -z "$opt_sysconfdir" ]
     then
     if [ "$opt_prefix" = "/usr" ]
 	then
-	sysconfdir="/etc"
+	opt_sysconfdir="/etc"
 	else
-	sysconfdir="$opt_prefix/etc"
+	opt_sysconfdir="$opt_prefix/etc"
 	fi
     fi
 opt_bindir=${opt_bindir:-$opt_prefix/bin}
@@ -318,7 +331,7 @@ case `uname -s` in
 echo "  OS is $SYSTEM."
 
 #
-# If both GCC and a native compiler are available and the user hasn't 
+# If both GCC and a native compiler are available and the user hasn't
 # specified a preference on the command line, ask now, otherwise
 # pick
 if [ $opt_prompt_compiler -ne 0 -a $CC_GCC -ne 0 -a $CC_NATIVE -ne 0 ]
@@ -374,6 +387,7 @@ CONFDIR=$opt_sysconfdir/ppr
 VAR_SPOOL_PPR=$opt_spooldir/ppr
 TEMPDIR=/tmp
 BINDIR=$opt_bindir
+XWINBINDIR=$opt_x11bindir
 
 #
 # Ask the user if he would like to change any of the PPR
@@ -418,6 +432,18 @@ read answer
 if [ -n "$answer" ]; then BINDIR="$answer"; fi
 echo
 
+echo
+echo "You must indicate the directory where X-Windows binaries such as"
+echo "xterm may be found.  It is recomended that if the default is not"
+echo "correct, you accept it anyway and make a symbolic link from"
+echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
+echo "etc.) to /usr/bin/X11."
+echo
+$NECHO -n "X-Windows bin [$XWINBINDIR]: "
+read answer
+if [ -n "$answer" ]; then XWINBINDIR=$answer; fi
+echo
+
 fi
 
 echo "\$CONFDIR=$CONFDIR"
@@ -426,6 +452,7 @@ echo "\$SHAREDIR=$SHAREDIR"
 echo "\$VAR_SPOOL_PPR=$VAR_SPOOL_PPR"
 echo "\$TEMPDIR=$TEMPDIR"
 echo "\$BINDIR=$BINDIR"
+echo "\$XWINBINDIR=$XWINBINDIR"
 
 #========================================================================
 # Figure out which user and group names to use.
@@ -471,38 +498,11 @@ read answer
 if [ -n "$answer" ]; then USER_PPRWWW=$answer; fi
 echo
 
-else
+fi
 
 echo "\$USER_PPR=$USER_PPR"
 echo "\$USER_PPRWWW=$USER_PPRWWW"
 echo "\$GROUP_PPR=$GROUP_PPR"
-
-fi
-
-#
-# Ask where the X Windows binaries are
-#
-XWINBINDIR=$opt_x11bindir
-if [ $opt_prompt_paths -ne 0 ]
-then
-
-echo
-echo "You must indicate the directory where X-Windows binaries such as"
-echo "xterm may be found.  It is recomended that if the default is not"
-echo "correct, you accept it anyway and make a symbolic link from"
-echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
-echo "etc.) to /usr/bin/X11."
-echo
-$NECHO -n "X-Windows bin [$XWINBINDIR]: "
-read answer
-if [ -z "$Xanswer" ]; then XWINBINDIR=$answer; fi
-echo
-
-else
-
-echo "\$XWINBINDIR=$XWINBINDIR"
-
-fi
 
 #
 # Ask about gdbm:
@@ -789,8 +789,8 @@ if [ $NATIVE_CC = "no" ]
 
   GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -O2"
   PROCESSOR=`uname -m`
-  GCC_VERSION=`gcc --version`
-  GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^egcs-//'`
+  GCC_VERSION=`gcc --version | head -1`
+  GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
 
   echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
   echo "  Processor: $PROCESSOR"
@@ -818,7 +818,7 @@ if [ $NATIVE_CC = "no" ]
 	;;
     i486 )
 	echo "  Selecting i486 code generation."
-	GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
+	GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
 	;;
     i[56]86 )
 	case $GCC_VERSION_SHORT in
@@ -828,7 +828,7 @@ if [ $NATIVE_CC = "no" ]
 	        ;;
 	    * )
 		echo "  Selecting i486 code generation because $PROCESSOR may not be available."
-		GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
+		GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
 		;;
 	    esac
 	;;

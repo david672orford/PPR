@@ -7923,14 +7923,26 @@ line was being parsed twice.
   failed messages.
 
 * libuprint/uprint_argv_ppr.c: changed title= to pr-title=.  (In lpr, the -J
-  option cooresponds most closely to PPR's --title, so we don't want to use 
+  option cooresponds most closely to PPR's --title, so we don't want to use
   --title for the title for pr.)  This ensure that this potentially
   difficult-to-parse option is not passed to any other interface.
 
-* Added Configure_new.  This will be a better, more automated configure
+* Added Configure_new.  This is a better, more automated configure
   script.
 
 * Deleted makeprogs/Makefile.conf.i[356]86-mandrake-linux.
 
 * ppr.spec: changed to use Configure_new.
+
+* libgu/gu_pcs.c: added gu_pcs_append_byte().
+
+* ppr/ppr_main.c: fixed handling of duplex requirements.
+
+* ppr/ppr_infile.c: added prepended implied filter options.  These
+  options are implied by -F *PageSize, -F *Duplex, -R duplex:.  We have
+  Till Kamppeter <till.kamppeter@gmx.net> to thank for this suggestion.
+
+* ./Configure, ./Configure_new: fixed to accomondate changed format
+  of GCC 3.2's gcc --version output.
+
 

@@ -293,6 +293,7 @@ void gu_pcs_set_cstr(void **pcs, const char cstr[]);
 void gu_pcs_set_pcs(void **pcs, void **pcs2);
 const char *gu_pcs_get_cstr(void **pcs);
 int gu_pcs_bytes(void **pcs);
+void gu_pcs_append_byte(void **pcs, int c);
 void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
 int gu_pcs_cmp(void **pcs1, void **pcs2);

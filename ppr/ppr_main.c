@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 27 September 2002.
+** Last revised 15 November 2002.
 */
 
 /*
@@ -85,7 +85,7 @@ uid_t setuid_uid;			/* uid of spooler owner (ppr) */
 gid_t user_gid;
 gid_t setgid_gid;
 
-/* Command line option settings. */
+/* Command line option settings, static */
 static int warning_level = WARNING_SEVERE;	/* these and more serious allowed */
 static int warning_log = FALSE;			/* set true if warnings should go to log */
 static int option_unlink_jobfile = FALSE;	/* Was the -U switch used? */
@@ -94,10 +94,11 @@ static int ignore_truncated = FALSE;		/* TRUE if should discard without %%EOF */
 static int option_show_jobid = 0;		/* 0 for don't , 1 for short, 2 for long */
 static int use_authcode = FALSE;		/* true if using authcode line to id */
 static int preauthorized = FALSE;		/* set true by -A switch */
-static const char *features[MAX_FEATURES];	/* -F switch features to add */
-static int features_count = 0;			/* number asked for (number of -F switches?) */
 static const char *option_page_list = (char*)NULL;
 
+/* Command line option settings */
+const char *features[MAX_FEATURES];		/* -F switch features to add */
+int features_count = 0;				/* number asked for (number of -F switches?) */
 gu_boolean option_strip_cache = FALSE;		/* TRUE if should strip those in cache */
 gu_boolean option_strip_fontindex = FALSE;		/* TRUE if should strip those in fontindex.db */
 enum CACHE_STORE option_cache_store = CACHE_STORE_NONE;
@@ -112,14 +113,16 @@ enum MARKUP option_markup = MARKUP_FALLBACK_LP;	/* how to treat markup languages
 /* -R switch command line option settings. */
 int read_copies = TRUE;			/* TRUE if should read copies from file */
 int read_duplex = TRUE;			/* TRUE if we should guess duplex */
-int read_duplex_enforce = FALSE;	/* TRUE if we should insert duplex code after determination */
-int current_duplex = DUPLEX_NONE;	/* set when we read duplex */
 int read_signature = TRUE;		/* TRUE if we should implement signature features */
 int read_nup = TRUE;
 int read_For = FALSE;			/* Pay attention to "%%For:" lines? */
 int read_ProofMode = TRUE;
 int read_Title = TRUE;
 int read_Routing = TRUE;
+
+/* Duplex handling is complex. */
+int current_duplex = DUPLEX_NONE;
+gu_boolean current_duplex_enforce = FALSE;
 
 /* odds and ends */
 static FILE *FIFO = (FILE*)NULL;	/* streams library thing for pipe to pprd */
@@ -1172,6 +1175,10 @@ static int flag_option(const char *optstr)
 /*
 ** Add a PPD file feature to the list of those that should be added
 ** to the document setup section of the job.
+**
+** This is called from parse_feature_option() which is called during command
+** line parsing for each -F switch.  It is also called towards the end of
+** job processing as part of the handling of the -R duplex:* option.
 */
 static void mark_feature_for_insertion(const char name[])
     {
@@ -1183,57 +1190,28 @@ static void mark_feature_for_insertion(const char name[])
     } /* end of mark_feature_for_insertion() */
 
 /*
-** Special handling for duplex, delete requirements
-** we are overriding and gather information for
-** pagefactor computations.
-**
-** This is called from parse_feature_option() below.
-*/
-static void watch_duplex(const char *option)
-    {
-    /* Simplex */
-    if(strcmp(option, "None") == 0)
-	{
-	current_duplex = DUPLEX_NONE;
-	delete_requirement("duplex");       /* duplex not required */
-	delete_requirement("duplex(tumble)");
-	}
-    else if(strcmp(option, "SimplexTumble") == 0)
-	{
-	current_duplex = DUPLEX_SIMPLEX_TUMBLE;
-	/* delete_requirement("");
-	requirement_REQ_DOC, ""); */
-	}
-    else if(strcmp(option, "DuplexTumble") == 0)
-	{
-	current_duplex = DUPLEX_DUPLEX_TUMBLE;
-	delete_requirement("duplex");
-	requirement(REQ_DOC, "duplex(tumble)");
-	}
-    else
-	{
-	current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
-	delete_requirement("duplex(tumble)");
-	requirement(REQ_DOC, "duplex");     /* ordinary duplex */
-	}
-    } /* end of watch_duplex() */
-
-/*
-** This function is called for the "-F" option or for ".feature:"
+** This function is called for the -F (--feature) option and for ".feature:"
 ** lines in ".ppr" headers.
+**
+** There are two acceptable formats for such an option:
+**	-F "*Duplex DuplexNoTumble"
+**	-F Duplex=DuplexNoTumble
+**
+** This function returns 0 if the option is parsable, -1 if it isn't.
 */
 int parse_feature_option(const char option_text[])
     {
     const char *name = option_text;
+    char *name_storage = NULL;
 
-    /* Origional format:
+    /* Original format:
        -F '*Feature'
        -F '*Feature Option'
        */
     if(name[0] == '*')
 	{
+	/* syntax error if more than 1 space */
 	const char *p;
-	/* check for more than 1 space */
 	if((p = strchr(name, ' ')) && strchr(p+1, ' '))
 	    return -1;
 	}
@@ -1243,26 +1221,55 @@ int parse_feature_option(const char option_text[])
        The code converts this format to the origional -F format. */
     if(name[0] != '*')
 	{
-	char *newname, *p;
+	char *p;
 
+	/* syntax error if no equals or any spaces */
 	if(!strchr(name, '=') || strchr(name, ' '))
 	    return -1;
 
-	p = newname = (char*)gu_alloc(strlen(name) + 2, sizeof(char));
+	p = name_storage = (char*)gu_alloc(strlen(name) + 2, sizeof(char));
 	*p++ = '*';
 	strcpy(p, name);
 	*strchr(p, '=') = ' ';
-	name = newname;
+	name = name_storage;
 	}
 
-    /* Do the real act. */
-    mark_feature_for_insertion(name);
-
-    /* This code allows -F switches to override -R duplex:* switches. */
-    if(strncmp(name, "*Duplex ", 8) == 0)
+    /* Duplex gets special handling. */
+    if(lmatch(name, "*Duplex "))
 	{
-	read_duplex = read_duplex_enforce = FALSE;
-	watch_duplex(name+8);
+	const char *option = &name[8];
+
+	/* Any %%BeginFeature: *Duplex or %%IncludeFeature: *Duplex won't
+	   override what has been selected.
+	   */
+	read_duplex = FALSE;
+
+	/* After reading the whole document, the value in current_duplex
+	   will be used to select the proper argument for a call
+	   to mark_feature_for_insertion().
+	   */
+	current_duplex_enforce = TRUE;
+
+	/* Simplex */
+	if(strcmp(option, "None") == 0)
+	    current_duplex = DUPLEX_NONE;
+	else if(strcmp(option, "SimplexTumble") == 0)
+	    current_duplex = DUPLEX_SIMPLEX_TUMBLE;
+	else if(strcmp(option, "DuplexTumble") == 0)
+	    current_duplex = DUPLEX_DUPLEX_TUMBLE;
+	else
+	    current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
+
+	if(name_storage)
+	    gu_free(name_storage);
+	}
+
+    /* Others get entered into the table right away.  Remember that
+       this function keeps a pointer to the array we pass to it,
+       so don't free it! */
+    else
+	{
+	mark_feature_for_insertion(name);
 	}
 
     return 0;
@@ -1585,32 +1592,36 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    else if(strcmp(optarg, "duplex:duplex") == 0)
 		{
 		read_duplex=TRUE;
-		read_duplex_enforce = TRUE;
+		current_duplex_enforce = TRUE;
 		current_duplex = DUPLEX_DUPLEX_NOTUMBLE;
 		}
 	    else if(strcmp(optarg, "duplex:simplex") == 0)
 	    	{
 	    	read_duplex = TRUE;
-	    	read_duplex_enforce = TRUE;
+	    	current_duplex_enforce = TRUE;
 	    	current_duplex = DUPLEX_NONE;
 	    	}
 	    else if(strcmp(optarg, "duplex:duplextumble") == 0)
 	        {
 	        read_duplex = TRUE;
-	        read_duplex_enforce = TRUE;
+	        current_duplex_enforce = TRUE;
 	        current_duplex = DUPLEX_DUPLEX_TUMBLE;
 	        }
 	    else if(strcmp(optarg, "duplex:softsimplex") == 0)
 	    	{
 	    	read_duplex = TRUE;
-	    	read_duplex_enforce = FALSE;
+	    	current_duplex_enforce = FALSE;
 	    	current_duplex = DUPLEX_NONE;
 	    	}
 	    else if(strcmp(optarg, "ignore-duplex") == 0)
 	    	{
 		read_duplex = FALSE;
-		read_duplex_enforce = FALSE;
-		/* current_duplex = DUPLEX_NONE; */ /* don't do this! */
+		current_duplex_enforce = FALSE;
+		/* An old note says we shouldn't do this below, but I am not sure
+		   if that is still valid now that the handling of -F *Duplex has
+		   been changed to stuff its value into current_duplex.
+		   */
+		/* current_duplex = DUPLEX_NONE; */
 		}
 	    else if(strcmp(optarg, "routing") == 0)
 	    	{
@@ -2467,7 +2478,7 @@ int main(int argc, char *argv[])
     */
     if(qentry.N_Up.sigsheets)		/* if not zero (not disabled) */
     	{
-	read_duplex_enforce = TRUE;	/* try to turn duplex on or off */
+	current_duplex_enforce = TRUE;	/* try to turn duplex on or off */
 	qentry.N_Up.borders = FALSE;	/* no borders around virtual pages */
 
 	if(qentry.N_Up.N == 1)		/* if N-Up has not been set yet, */
@@ -2487,28 +2498,42 @@ int main(int argc, char *argv[])
     	}
 
     /*
-    ** If we looked for clews as to the desired duplex mode,
-    ** we may want to dump our results here so that even if
-    ** we are wrong, our prediction will come true.
+    ** We may add duplex settings to the list of PPD options to be applied to
+    ** this job.  Thus we implement the orders of an -F *Duplex option,
+    ** -R duplex:* option, or -s optin.
+    **
+    ** Notice that we add the duplex mode to the list of job requirements
+    ** and delete conflicting requirements.
     */
-    if(read_duplex_enforce)		/* if we are to enforce our duplex finding, */
+    if(current_duplex_enforce)		/* if we are to enforce our duplex finding, */
     	{				/* then */
 	switch(current_duplex)		/* insert appropriate code */
 	    {
 	    case DUPLEX_NONE:
 	    	mark_feature_for_insertion("*Duplex None");
-	    	break;
-	    case DUPLEX_SIMPLEX_TUMBLE:
-	    	mark_feature_for_insertion("*Duplex SimplexTumble");
+		delete_requirement("duplex");
 	    	break;
 	    case DUPLEX_DUPLEX_NOTUMBLE:
 	    	mark_feature_for_insertion("*Duplex DuplexNoTumble");
+		delete_requirement("duplex");
+		requirement(REQ_DOC, "duplex(tumble)");
 	    	break;
 	    case DUPLEX_DUPLEX_TUMBLE:
 	    	mark_feature_for_insertion("*Duplex DuplexTumble");
+		delete_requirement("duplex");
+		requirement(REQ_DOC, "duplex");
+	    	break;
+	    case DUPLEX_SIMPLEX_TUMBLE:
+	    	mark_feature_for_insertion("*Duplex SimplexTumble");
+		/* Adobe yet hasn't defined a requirement name for this. */
+		#if 0
+		delete_requirement("duplex");
+		requirement_REQ_DOC, "duplex(simplextumble)");
+		#endif
 	    	break;
 	    default:
-	    	fatal(PPREXIT_OTHERERR, "%s(): assertion failed at %s line %d", function, __FILE__, __LINE__);
+		fatal(PPREXIT_OTHERERR, "%s(): assertion failed at %s line %d", function, __FILE__, __LINE__);
+		break;
 	    }
     	}
 
@@ -2531,7 +2556,11 @@ int main(int argc, char *argv[])
 	    break;
 	}
 
-    /* Dump the gathered information into the -comments file. */
+    /*
+    ** Dump the gathered information into the -comments file.
+    ** If this seems sparse, it is because most of the comments
+    ** will be held in the queue file until the job is reconstructed.
+    */
     dump_document_media(comments, 0);
 
     /*

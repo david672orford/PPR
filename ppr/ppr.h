@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 September 2002.
+** Last modified 15 November 2002.
 */
 
 /*
@@ -164,12 +164,16 @@ extern int read_For;			/* TRUE to heed "%%For:" */
 extern int read_Title;
 extern int read_ProofMode;		/* TRUE to heed "%%ProofMode:" */
 extern int read_Routing;
-extern int current_duplex;		/* what auto duplex code sets */
+
+extern int current_duplex;
+extern gu_boolean current_duplex_enforce;
 
 extern struct QFileEntry qentry;	/* where we build our queue entry */
 extern int pagenumber;			/* count of %%Page: comments */
 
 /* Command line option settings. */
+extern const char *features[MAX_FEATURES];		/* -F switch features to add */
+extern int features_count;				/* number asked for (number of -F switches?) */
 extern int ppr_respond_by;		/* should ppr use responder or stderr or both? */
 extern int option_nofilter_hexdump;	/* if TRUE, always use hexdump when no filter */
 extern char *option_filter_options;	/* Options from -o switch */

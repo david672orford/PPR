@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 23 October 2002.
+# Last modified 15 November 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -641,8 +641,10 @@ if [ $NATIVE_CC = "no" ]
 
   GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -O2"
   PROCESSOR=`uname -m`
-  GCC_VERSION=`gcc --version`
-  GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^egcs-//'`
+  #GCC_VERSION=`gcc --version`
+  #GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^egcs-//'`
+  GCC_VERSION=`gcc --version | head -1`
+  GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
 
   echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
   echo "  Processor: $PROCESSOR"

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 July 2002.
+** Last modified 15 November 2002.
 */
 
 #include "before_system.h"
@@ -259,6 +259,33 @@ int gu_pcs_bytes(void **pcs)
     {
     struct PCS *p = (struct PCS *)*pcs;
     return p->length;
+    }
+
+/*
+=head2 void gu_pcs_append_cchar(void **I<pcs>, char I<c>[])
+
+This function appends a C character to the the PCS object.
+
+=cut
+*/
+void gu_pcs_append_byte(void **pcs, int c)
+    {
+    struct PCS *p = (struct PCS *)*pcs;
+    int new_length;
+
+    if(p->refcount > 1)
+    	{
+	void *new_pcs = gu_pcs_new_pcs(pcs);
+	gu_pcs_free(pcs);
+	*pcs = new_pcs;
+    	}
+
+    p = (struct PCS *)*pcs;
+    new_length = p->length + 1;
+    gu_pcs_grow(pcs, new_length);
+    p->storage[p->length] = c;
+    p->storage[new_length] = '\0';	/* keep it null terminated */
+    p->length = new_length;
     }
 
 /*

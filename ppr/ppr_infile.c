@@ -3,14 +3,29 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 11 November 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 15 November 2002.
 */
 
 /*
@@ -1734,38 +1749,96 @@ static void exec_filter(const char *filter_path, ...)
 */
 static void exec_tops_filter(const char filter_path[], const char filter_name[], const char title[])
     {
-    char *clean_options
-    #ifdef GNUC_HAPPY
-	= (char*)NULL
-    #endif
-	;
-    const char *si;
-    char *di;
-    int stage = 1;
-    int item_len, key_len, prefix_len, filter_name_len;
+    const char function[] = "exec_tops_filter";
+    void *clean_options;
 
-    /* We will use this length in future comparisons: */
-    filter_name_len = strlen(&filter_name[7]);
+    /* We will assemble the final option string in this Perl Compatible String. */
+    clean_options = gu_pcs_new();
 
-    /* Get the default options from the printer or group config file: */
-    si = extract_deffiltopts();
+    /* Search the -F table and make an implied option for each
+       -F *PageSize or -F *PageRegion.
+       */
+    {
+    int i;
+    const char *name, *value;
+    for(i=0; i<features_count; i++)
+	{
+	name = features[i];
+printf("%d %s\n", i, name);
+	if((value = lmatchp(name, "*PageSize ")) || (value = lmatchp(name, "*PageRegion ")))
+	    {
+	    if(gu_pcs_bytes(&clean_options) > 0)
+		gu_pcs_append_cstr(&clean_options, " ");
+	    gu_pcs_append_cstr(&clean_options, "pagesize=");
+	    gu_pcs_append_cstr(&clean_options, value);
+	    }
+	}
+    }
+
+    /* If we have any kind of a duplex setting, add it. */
+    if(current_duplex_enforce)
+	{
+	const char *value;
+
+	switch(current_duplex)
+	    {
+	    case DUPLEX_NONE:
+	    	value = "none";
+	    	break;
+	    case DUPLEX_DUPLEX_NOTUMBLE:
+	        value = "notumble";
+	    	break;
+	    case DUPLEX_DUPLEX_TUMBLE:
+	        value = "tumble";
+	    	break;
+	    case DUPLEX_SIMPLEX_TUMBLE:
+	        value = "simplextumble";
+	    	break;
+	    default:
+		fatal(PPREXIT_OTHERERR, "%s(): assertion failed at %s line %d", function, __FILE__, __LINE__);
+		break;
+	    }
+
+	if(gu_pcs_bytes(&clean_options) > 0)
+	    gu_pcs_append_cstr(&clean_options, " ");
+	gu_pcs_append_cstr(&clean_options, "duplex=");
+	gu_pcs_append_cstr(&clean_options, value);
+	}
 
     /* If the -G switch requires it, describe what we are doing. */
     if(option_gab_mask & GAB_INFILE_FILTER)
 	{
-	printf("Raw default filter options: \"%s\"\n", si ? si : "");
+	const char *p;
+	printf("Implied filter options: \"%s\"\n", (p = gu_pcs_get_cstr(&clean_options)) ? p : "");
+	printf("Raw queue default filter options: \"%s\"\n", (p = extract_deffiltopts()) ? p : "");
 	printf("Raw explicit filter options: \"%s\"\n", option_filter_options ? option_filter_options : "");
 	}
 
     /*
-    ** Allocate enough room for the default options and the -o ones.  The
-    ** absence of either kind of options may be indicated by a NULL pointer.
-    ** Often, we will not need as much room as we allocate.
+    ** In this block we combine the various option lists while selecting only
+    ** those options which apply to the present filter.
     */
-    di = clean_options = (char*)gu_alloc(
-	(si ? strlen(si) : 0) + 1 + (option_filter_options ? strlen(option_filter_options) : 0) + 1,
-	sizeof(char)
-	);
+    {
+    const char *si_list[3];
+    int i;
+    const char *si;
+    const char *filter_basename;
+    int filter_basename_len;
+    int item_len, key_len, prefix_len;
+
+    /* We will use the pointer to the basename and the length of the basename
+       to test prefixes.
+       */
+    filter_basename = &filter_name[7];
+    filter_basename_len = strlen(filter_basename);
+
+    /* Get the default options from the printer or group config file. */
+    si_list[0] = extract_deffiltopts();
+
+    /* And the options from the command line. */
+    si_list[1] = option_filter_options;
+
+    si_list[2] = NULL;
 
     /*
     ** Merge the default filter options with those the user has
@@ -1774,73 +1847,66 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
     ** off the prefix.  Convert keywords to lower case but not
     ** their arguments.
     */
-    while(TRUE)
+    for(i=0; (si = si_list[i]); i++)
+      {
+      while(*si)
 	{
-	if((!si || *si == '\0') && stage == 1)	/* If end of defaults, */
-	    {					/* start -o switch options */
-	    si = option_filter_options;
-	    if(di != clean_options)		/* If there were any default options */
-		*(di++)=' ';			/* leaving one space after them. */
-	    stage = 2;
-	    }
-
-	if(!si || *si == '\0')		/* If entirely out of options, */
-	    break;			/* stop. */
-
 	item_len = strcspn(si," \t");	/* Length of next non-space segment */
 	key_len = strcspn(si,"=");	/* length of keyword */
 	prefix_len = strcspn(si,"-");	/* Find distance to next hyphen */
 	if(prefix_len < key_len)	/* If this item contains a prefix, */
 	    {
-    	    if(prefix_len == filter_name_len && gu_strncasecmp(si, &filter_name[7], filter_name_len) == 0)
+    	    if(prefix_len == filter_basename_len && gu_strncasecmp(si, filter_basename, filter_basename_len) == 0)
     	    	{			/* If the correct filter prefix, */
-		si += filter_name_len;	/* skip the prefix, */
+		si += prefix_len;	/* skip the prefix, */
 		si += 1;		/* skip the hyphen. */
 		}
 	    else			/* If not for us, */
 	    	{			/* eat it up. */
-		while( *si && ! isspace(*si) )
-		    si++;
-		if(isspace(*si))	/* eat up space which follows */
-		    si++;
+		si += item_len;
+		si += strspn(si, " \t");
 		continue;
 	    	}
 	    }
 
-	while( *si && *si != '=' )	/* Copy the keyword, */
-	    *di++ = tolower(*si++);	/* converting it to lower case. */
+	/* if not first option, add a space */
+	if(gu_pcs_bytes(&clean_options) > 0)
+	    gu_pcs_append_byte(&clean_options, ' ');
 
-	if( *si && *si == '=' )		/* Copy the equals sign. */
-	    *di++ = *si++;
+	/* Copy the keyword while converting it to lower case. */
+	while(*si && *si != '=')
+	    gu_pcs_append_byte(&clean_options, tolower(*si++));
 
-	if(*si != '"')
+	if(*si && *si == '=')		/* Copy the equals sign. */
+	    gu_pcs_append_byte(&clean_options, *si++);
+
+	/* Copy the (possibly quoted) value. */
+	{
+	int c, lastc = '\0';
+	gu_boolean qmode = FALSE;
+	while((c=*si) && (!isspace(c) || qmode))
 	    {
-	    while( *si && ! isspace(*si) )	/* Then, value. */
-		*di++ = *si++;
-	    }
-	else
-	    {
-	    int c, lastc = '\0';
-	    *di++ = *si++;
-	    while((c = *di++ = *si++) != '"' || lastc == '\\')
-		{
-		lastc = c;
-		}
-	    }
-
-	if( isspace(*si) )		/* Finally, copy the space */
-	    *di++ = *si++;		/* which follows. */
-
-	while( isspace(*si) )		/* Eat extra spaces. */
+	    if(c == '"' && lastc != '\\')	/* unbackslashed quote */
+		qmode = ~qmode;			/* toggles quote mode */
+	    gu_pcs_append_byte(&clean_options, c);
+	    lastc = c;
 	    si++;
+	    }
 	}
-    *di = '\0';				/* Terminate the resulting string. */
+
+	/* Eat any spaces which follow. */
+	si += strspn(si, " \t");
+	}
+      }
+    }
 
     /* If the -G switch requires it, describe what we have accomplished. */
     if(option_gab_mask & GAB_INFILE_FILTER)
-    	printf("Final filter options: \"%s\"\n", clean_options);
+    	printf("Final filter options: \"%s\"\n", gu_pcs_get_cstr(&clean_options));
 
-    exec_filter(filter_path, filter_name, clean_options, qentry.destname, title, starting_directory, (char*)NULL);
+    exec_filter(filter_path, filter_name, gu_pcs_get_cstr(&clean_options), qentry.destname, title, starting_directory, (char*)NULL);
+
+    gu_pcs_free(&clean_options);
     } /* end of exec_tops_filter() */
 
 /*
