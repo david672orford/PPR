@@ -303,15 +303,8 @@ else
     {
     if(defined $help)
 	{
-	$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
-	my $helpfile = "../help/$1.html";
-	print <<"helpLink";
-<span class="button">
-<a href="$helpfile#$help" target="_blank"
-	onclick="window.open('$helpfile#$help','_blank','width=600,height=400,resizable,scrollbars');return false;">
-	Help</a>
-</span>
-helpLink
+	require "cgi_widgets.pl";
+	help_button($help);
 	}
     isubmit("tab_bottom", "Cancel", N_("_Cancel"), "class=\"buttons\" onclick=\"self.close()\"");
     isubmit("tab_bottom", "Save", N_("_Save"), "class=\"buttons\"");

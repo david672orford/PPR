@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 8 May 2002.
+** Last modified 16 May 2002.
 */
 
 BODY {
@@ -64,6 +64,22 @@ INPUT.buttons,BUTTON {
 BUTTON {
 	padding: 0pt;
 	vertical-align: bottom;
+	}
+
+/* This is a span that looks like a button.  We use it for the [Help] button. */
+SPAN.button {
+	background-color: #a0a0a0;
+	border: 2px solid;
+	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
+	padding: 3px 2mm 3px 2mm;
+	margin: 1mm;
+	/* lame but works with Mozilla 1.0rc2 */
+	position: relative; bottom: 4px;
+	}
+SPAN.button A {
+	text-decoration: none;
+	font-family: sans-serif;
+	color: black;
 	}
 
 /* This is for the [Settings] screen. */

@@ -46,7 +46,16 @@ my ($charset, $content_language) = cgi_intl_init();
 &cgi_read_data();
 
 # Should we display controls?
-my $controls = cgi_data_peek("controls", 1);
+# Make a hash which represents the buttons that should be shown.
+if(!defined $data{controls})
+    {
+    $data{controls} = "Settings Refresh Close Help Move Cancel Rush Hold Release Modify Log";
+    }
+my %controls;
+foreach my $b (split(/ /, $data{controls}))
+    {
+    $controls{$b} = 1;
+    }
 
 # If no queue was specified, use "all".  Note that we don't use
 # cgi_data_move().
@@ -207,7 +216,9 @@ my $table_border = 1;
 my $fixed_html_style = "";
 my $fixed_div_style_top = "";
 my $fixed_div_style_bottom = "";
-if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
+if($data{controls})
+  {
+  if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
     {
     my $mozilla_version = $1;
 
@@ -224,6 +235,7 @@ if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\
 	$fixed_div_style_bottom = "position:fixed; bottom: 0pt; left: 0pt;";
 	}
     }
+  }
 
 my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue, $ENV{SERVER_NAME}));
 
@@ -244,12 +256,18 @@ Vary: user-agent, accept-language
 <form method="POST" action="$ENV{SCRIPT_NAME}">
 Quote10
 
-if($controls)
+if($data{controls})
 {
 print "<div class=\"menubar\" style=\"$fixed_div_style_top\">\n";
-isubmit("action", "Settings", _("Settings"));
-isubmit("action", "Refresh", _("Refresh"));
-isubmit("action", "Close", _("Close"), 'onclick="window.close()"');
+isubmit("action", "Settings", _("Settings")) if(defined $controls{Settings});
+isubmit("action", "Refresh", _("Refresh")) if(defined $controls{Refresh});
+isubmit("action", "Close", _("Close"), 'onclick="window.close()"') if(defined $controls{Close});
+print "<span style='margin-left: 11cm'></span>\n";
+if(defined $controls{Help})
+    {
+    require "cgi_widgets.pl";
+    help_button(undef);
+    }
 print "</div>\n";
 }
 
@@ -449,12 +467,13 @@ TFOOT10
 # Final stuff
 #=============================================================
 
-if($controls)
+if($data{controls})
 {
 # Start the bottom menubar.
 print "<div class=\"menubar\" style=\"$fixed_div_style_bottom\">\n";
 
 # Create the move select box.
+if(defined $controls{Move})
 {
 print <<"QuoteMove10";
 <b>${\&H_("Job Actions:")}</b>
@@ -479,12 +498,12 @@ QuoteMove90
 }
 
 # Create all of the other buttons.
-isubmit("action", "Cancel", N_("_Cancel"), "class=\"buttons\"");
-isubmit("action", "Rush", N_("R_ush"), "class=\"buttons\"");
-isubmit("action", "Hold", N_("_Hold"), "class=\"buttons\"");
-isubmit("action", "Release", N_("_Release"), "class=\"buttons\"");
-isubmit("action", "Modify", N_("_Modify"), "class=\"buttons\" onclick=\"return do_modify();\"");
-isubmit("action", "Log", N_("_Log"), "class=\"buttons\" onclick=\"return do_log();\"");
+isubmit("action", "Cancel", N_("_Cancel"), "class=\"buttons\"") if(defined $controls{Cancel});
+isubmit("action", "Rush", N_("R_ush"), "class=\"buttons\"") if(defined $controls{Rush});
+isubmit("action", "Hold", N_("_Hold"), "class=\"buttons\"") if(defined $controls{Hold});
+isubmit("action", "Release", N_("_Release"), "class=\"buttons\"") if(defined $controls{Release});
+isubmit("action", "Modify", N_("_Modify"), "class=\"buttons\" onclick=\"return do_modify();\"") if(defined $controls{Modify});
+isubmit("action", "Log", N_("_Log"), "class=\"buttons\" onclick=\"return do_log();\"") if(defined $controls{Log});
 
 # Close the bottom menubar.
 print "</div>\n";

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 May 2002.
+# Last modified 16 August 2002.
 #
 
 sub labeled_checkbox
@@ -83,5 +83,28 @@ sub labeled_boolean
     print "> <span class=\"label\">", html($label), "</span>";
     print "</span>\n";
     }
+
+#
+# Here is a button that pops up a help page.  The name of the help page is
+# based on the script name.  The argument is used to make an HTML fragment
+# identifier.
+#
+sub help_button
+{
+my $topic = shift;
+
+$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
+my $helpfile = "../help/$1.$ENV{LANG}.html";
+
+my $fragment = defined($topic) ? "#$topic" : "";
+
+print <<"HelpLink";
+<span class="button">
+<a href="$helpfile#$fragment" target="_blank"
+	onclick="window.open('$helpfile#$fragment','_blank','width=600,height=400,resizable,scrollbars');return false;">
+	Help</a>
+</span>
+HelpLink
+}
 
 1;

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 August 2002.
+# Last modified 17 August 2002.
 #
 
 include ../Makefile.conf
@@ -100,7 +100,7 @@ HTML_GUI=robots.txt \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
-HTML_HELP=prn_properties.html
+HTML_HELP=prn_properties.en.html
 
 STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 	prn_control.css prn_media.css
