@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 22 September 2004.
 */
 
 #include "before_system.h"
@@ -38,6 +38,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>

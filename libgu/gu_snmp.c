@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 22 September 2004.
 */
 
 #include "before_system.h"
@@ -40,6 +40,9 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <stdarg.h>
+#ifndef INADDR_NONE
+#define INADDR_NONE -1
+#endif
 #include "gu.h"
 #include "global_defines.h"
 
