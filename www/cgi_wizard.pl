@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 January 2003.
+# Last modified 28 August 2003.
 #
 
 use 5.004;
@@ -320,6 +320,20 @@ EndOfText8
 $data{wiz_page} = $page;
 $data{wiz_stack} = join(' ', @stack);
 
+# Snap the window size to fit snugly around the document.
+if(!cgi_data_peek("resized", 0))
+{
+print <<"Tail05";
+<script>
+if(document.width)
+		{
+		window.resizeTo(document.width, document.height);
+		}
+</script>
+Tail05
+$data{resized} = 1;
+}
+
 # Emmit the data gathered on other pages as hidden
 # form fields.
 &cgi_write_data();
@@ -328,16 +342,6 @@ print "</form>\n";
 
 # Print data at bottom of page for debugging.
 &cgi_debug_data() if($options->{debug});
-
-# Snap the window size to fit snugly around the document.
-#print <<"Tail05";
-#<script>
-#if(document.width)
-#		{
-#		window.resizeTo(document.width, document.height);
-#		}
-#</script>
-#Tail05
 
 # And this is the last of the HTML document.
 print <<"Tail10";

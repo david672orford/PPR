@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 30 August 2003.
 #
 
 =head1 NAME
@@ -44,55 +44,62 @@ user be "root", "ppr", or be listed in F</etc/ppr/acl/ppuser.allow>.
 
 =over 4
 
-=item B<ppuser add> 'I<user name>' 'I<real name>' I<authcode> I<initialbalance> I<cutoff> I<life>
+=item B<ppuser add> I<username> 'I<real name>' I<authcode> I<initialbalance> I<cutoff> I<life>
 
-Adds a user to the accounting database.  "I<User name>" is the name of the
-user as it will appear in "C<%%For:>" comments and L<ppr.1/ppr> B<-f> switches.
-"I<Real name>" is the name "B<user name>" should be translated to before it
-is used in queue listings or banner pages.  (For example, if "I<user name>"
-is "jandrews", "I<real name>" might be "Joseph Andrews. When B<ppr> is
-invoked by a unix user, this field is ignored in favour of the
-F</etc/passwd> gecos field, but this field will eventually be used for jobs
-received from personal computers.) I<Authcode> is the password which will
-identify the user. IInitialbalance> is the user's starting balance. 
-I<Cutoff> is the balance below which printing privledges should be denied. 
+Adds a user to the accounting database.
+
+I<Username> is the username that, paired with a password, the user will use
+for logging in.
+
+I<Real name> is the name B<user name> should be translated to before it is
+used in queue listings or banner pages.  (For example, if I<user name> is
+"jandrews", I<real name> might be "Joseph Andrews".)
+
+I<Authcode> is the password which will identify the user.  This field is
+not used and will be removed in the future.  For now, you should set it to a
+dummy value such as the empty string.
+
+I<Initialbalance> is the user's starting balance.  I<Cutoff> is the balance
+below which printing priviledges should be denied.
+
 I<Life> is the lifetime of the account.  It is measured in days of
-inactivity.  Accounts are not deleted automatically, a separate program must
-be employed to compare the period of inactivity to the life parameter.  Such
-a program is not included in the current distribution.
+inactivity.  PPR will not delete charge accounts automatically, a separate
+program must be employed to compare the period of inactivity to the life
+parameter.  Such a program is not included in the current distribution.
 
-=item B<ppuser delete> 'I<user name>'
+=item B<ppuser delete> I<username>
 
-delete the indicated user.
+Deletes the indicated user.
 
-=item B<ppuser show> 'I<user name>'
+=item B<ppuser show> I<username>
 
-show the indicated user's account information.
+Shows the indicated user's account information.
 
-=item B<ppuser authcode> 'I<user name>' I<authcode>
+=item B<ppuser authcode> I<username> I<authcode>
 
-set the indicated users authorization code (password) to \f2authcode\f1.
+This subcommand has been removed.
 
-=item B<ppuser deposit> 'I<user name>' I<amount>
+=item B<ppuser deposit> I<username> I<amount>
 
-deposit money in amount I<amount> in the indicated user's account.
+Deposits money in amount I<amount> into the indicated user's account.
 
-=item B<ppuser withdraw> 'I<user name>' I<amount>
+=item B<ppuser withdraw> I<username> I<amount>
 
-withdraw the indicated amount I<amount> of money from the indicated
-account.  This command should be used when refunding unused money.
+Withdraws the indicated amount I<amount> of money from the indicated
+account.  This command used when a user makes a cash withdrawal from the
+account, assuming that you permit cash withdrawals.
 
-=item B<ppuser charge> 'I<user name>' I<amount>
+=item B<ppuser charge> I<username> I<amount>
 
-assess a charge of I<amount> against the indicated account.  PPR does
-this automatically when a job is printed on a printer for which charges are
-made.
+Assess a charge of I<amount> against the indicated account.  PPR does
+this automatically when posting a charge for printing.
 
-=item B<ppuser correction> 'I<user name>' I<amount>
+=item B<ppuser correction> I<username> I<amount>
 
-make a correction to the indicated user's account.  If I<amount> is
+Makes a correction to the indicated user's account.  If I<amount> is
 positive, the amount of money in the user's account will increase, if it is
-negative, the amount of money in the account will decrease.
+negative, the amount of money in the account will decrease.  Generally this
+will be used to issue a credit for a botched print job.
 
 =back
 
@@ -102,16 +109,42 @@ To set up a new account for John Jones with an initial deposit of $10.00, a
 cutoff when he is overdrawn by more than $2.50 and to have his account
 disappear if it is unused for a year:
 
-C<$ /usr/lib/ppr/bin/ppuser add "John Jones" "John Jones" 10.00 -2.50 365>
+C<$ ppuser add jjones "John Jones" "" 10.00 -2.50 365>
 
-Or, if Mr. Jones will be entering an account-style name instead of his real
-name:
+Note the empty I<authcode> field.
 
-C<$ /usr/lib/ppr/bin/ppuser add jjones "John Jones" 10.00 -2.50 365>
+Now lets assume that the operator made an error and Mr. Jones' was printed
+on the wrong kind of paper.  We post a refund by issuing a $1.55 positive
+correction to his account:
 
-To set his password to "secret":
+C<$ ppuser correction jjones 1.55
 
-C<$ /usr/lib/ppr/bin/ppuser authcode "John Jones" secret>
+Oops!  We entered that as 155 rather than 1.55.  We had better reverse the
+erroneous correction and issue a new one:
+
+C<$ ppuser correction jjones -155>
+C<$ ppuser correction jjones 1.55>
+
+Later Mr. Jones inquires about his balance.  The operator checks his account
+status:
+
+C<$ ppuser show jjones>
+
+Mr. Jones sees that his account is running low.  He hands the operator $10
+to deposit.  The operator puts the money in the till and runs this command:
+
+C<$ ppuser deposit jjones 10.00>
+
+Mr. Jones is printing his term paper and has directed the operator to bind
+it in a handsome blue cover.  There is a $2.50 charge for the cover and the
+service.  The operator manualy posts the charge:
+
+C<$ ppuser charge jjones 2.50>
+
+Now Mr. Jones is leaving us and wants the $9.50 remaining in his account.  We
+run this command and hand him the cash:
+
+C<$ ppuser withdraw jjones 9.50>
 
 =head1 FILES
 
@@ -127,12 +160,15 @@ Exit codes for ppuser are defined in the source code file
 
 =head1 BUGS
 
-If you choose to compile PPR without GDBM, this program will be
+If you choose to compile PPR without GNU DBM and don't provide an
+alternative to the GNU DBM based backend, this program will be
 non-functional.
 
 =head1 SEE ALSO
 
-L<ppr.1>, L<pprd.8>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
+L<ppr.1>, L<ppop>, L<ppad>, L<pprd.8>,
+"PPR, a PostScript Print Spooler",
+"Installing and Using PPR".
 
 =head1 HISTORY
 

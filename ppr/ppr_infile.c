@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 April 2003.
+** Last modified 30 August 2003.
 */
 
 /*
@@ -687,6 +687,7 @@ void in_getline(void)
 ** Code to read informational headers.
 =====================================================================*/
 
+#ifdef CRUFT_AUTH
 /*
 ** Read an identifying header if one is present.
 **
@@ -792,6 +793,7 @@ static void read_dot_header(void)
 
 		} /* line reading loop */
 	} /* end of read_dot_header() */
+#endif
 
 /*
 ** If a PJL header is found, strip it off after setting the language
@@ -2385,6 +2387,7 @@ int infile_open(const char filename[])
 	in_reset_buffering();
 	in_load_buffer();
 
+#ifdef CRUFT_AUTH
 	/*
 	** Read any PPR user identification header.
 	** These headers are used when submitting non-PostScript
@@ -2394,6 +2397,7 @@ int infile_open(const char filename[])
 	** The whole thing is a hack.
 	*/
 	read_dot_header();
+#endif
 
 	/* If the "keepinfile" or "transparent" hack is being used
 	   then it is necessary to keep a copy of the input file.

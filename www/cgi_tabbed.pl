@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 January 2003.
+# Last modified 28 August 2003.
 #
 
 use 5.004;
@@ -339,6 +339,20 @@ print <<"TableEnd10";
 </table>
 TableEnd10
 
+# Snap the window size to fit snugly around the document.
+if(!cgi_data_peek("resized", 0))
+{
+print <<"Tail05";
+<script>
+if(document.width)
+		{
+		window.resizeTo(document.width + 20, document.height + 20);
+		}
+</script>
+Tail05
+$data{resized} = 1;
+}
+
 # Emmit the data gathered on other pages as hidden
 # form fields.
 &cgi_write_data();
@@ -348,16 +362,6 @@ TableEnd10
 # off the bottom of the page so the user won't see it
 # unless he scrolls down.
 &cgi_debug_data() if($debug);
-
-# Snap the window size to fit snugly around the document.
-#print <<"Tail05";
-#<script>
-#if(document.width)
-#		{
-#		window.resizeTo(document.width + 20, document.height + 20);
-#		}
-#</script>
-#Tail05
 
 # Emmit HTML to end the document
 print <<"Tail10";

@@ -427,7 +427,7 @@ more information about RIPs and *pprRIP:.
 * refman/ppr.1.pod: added description of the followme responder method,
   proofred and corrected entire -m description.
 
-* pprhack/pprhack_custom_hooks.sgml: skeletal section filled in
+* pprhack/pprhack_custom_hooks.sgml: added
 
 * pprhack/pprhack_rips.sgml: skeleton created
 
@@ -446,7 +446,7 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.52, 24 July 2003--21 August 2003.
+1.52, 24 July 2003--30 August 2003.
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
@@ -459,32 +459,38 @@ more information about RIPs and *pprRIP:.
 * pprinst/: added many references to using the web and Perl/Tk interfaces
   instead of the command-line interface.  Many screenshots are included.
 
+* refman/ppr.1.pod: spelling corrections, noted that -a and -A are slated
+  for removal.
 
+* refman/ppuser.8.pod: spelling corrections, noted that authcodes don't do
+  anything and are slated for removal, provided more examples.
+
+* refman/ppr-panel.1.pod: expanded the section about desktop icons.
 
 
 TODO
 
-* pprdoc: Document (or remove) the ".ppr", ".For:", ".AuthCode", ".Routing",
-  ".feature:", ".hack", ".end" header format
+* refman: describe editps.conf and editps system
 
-* pprdoc: Describe editps.conf and editps system
+* pprhack: explain meaning of !!! in source code
 
-* pprdoc: Explain meaning of !!! in source code
+* uprint: describe uprint responder extensions to the lpr protocol
 
-* Describe uprint responder extensions
+* refman: describe pagesizes.conf
 
-* Describe the pagesizes.conf and pserrors.conf files.
+* refman: describe pserrors.conf
 
-* Describe the "CustomHook:" printer configuration line.
+* refman: describe lwstatus.conf, pjlstatus.conf
 
-* Describe the "Userparams:" printer configuration line.
+* pprhack: describe the "CustomHook:" printer configuration line
 
-* Describe the "LimitPages:" printer configuration line.
+* pprhack: describe the "Userparams:" printer configuration line
 
-* Describe the "LimitKilobytes:" printer configuration line.
+* pprhack: describe the "LimitPages:" printer configuration line
 
-* Finish uprint-lpstat(1) manpage
+* pprhack: describe the "LimitKilobytes:" printer configuration line
 
-* Finish ppr-followme(1) manpage
+* uprint: finish uprint-lpstat(1) manpage
 
-* Finish ppr-panel(1) manpage
+* refman: finish ppr-followme(1) manpage
+

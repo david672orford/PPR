@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 August 2003.
+# Last modified 28 August 2003.
 #
 
 use lib "?";
@@ -453,6 +453,22 @@ if(defined($data{prev_status}))
 	}
 $data{prev_status} = $status;
 
+# Snap the window size to fit snugly around the document.  This is commented
+# out because some forms of this window have a lot of blank space at the 
+# bottom.
+#if(!cgi_data_peek("resized", 0))
+#{
+#print <<"Tail05";
+#<script>
+#if(document.width)
+#	{
+#	window.resizeTo(document.width, document.height);
+#	}
+#</script>
+#Tail05
+#$data{resized} = 1;
+#}
+
 # Propagate data to the next generation.
 &cgi_write_data();
 
@@ -478,16 +494,6 @@ else
 		{ window.setTimeout("document.forms[0].submit()", 10000); }
 </script>
 Tail01
-
-# Snap the window size to fit snugly around the document.
-#print <<"Tail05";
-#<script>
-#if(document.width)
-#		{
-#		window.resizeTo(document.width, document.height);
-#		}
-#</script>
-#Tail05
 
 print <<"Tail10";
 </body>

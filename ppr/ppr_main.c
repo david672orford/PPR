@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 August 2003.
+** Last modified 30 August 2003.
 */
 
 /*
@@ -79,7 +79,7 @@ FILE *text = (FILE*)NULL;				/* file for remainder of text */
 FILE *cache_file;						/* file to copy resource into */
 static int spool_files_created = FALSE; /* TRUE once we have created some files, used for cleanup on abort */
 
-/* Information used for determining privledges and such. */
+/* Information used for determining privileges and such. */
 uid_t user_uid;							/* Unix user id of person submitting the job */
 gid_t user_gid;
 uid_t ppr_uid;							/* uid of spooler owner (ppr) */
@@ -93,8 +93,10 @@ static int use_username = FALSE;				/* User username instead of comment as defau
 static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF */
 static int option_show_jobid = 0;				/* 0 for don't , 1 for short, 2 for long */
 static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
+#ifdef CRUFT_AUTH
 static int use_authcode = FALSE;				/* true if using authcode line to id */
 static int preauthorized = FALSE;				/* set true by -A switch */
+#endif
 static const char *option_page_list = (char*)NULL;
 
 /* Command line option settings */
@@ -130,7 +132,7 @@ static FILE *FIFO = (FILE*)NULL;		/* streams library thing for pipe to pprd */
 struct QFileEntry qentry;				/* structure in which we build our queue entry */
 int pagenumber = 0;						/* count of %%Page: comments */
 char *AuthCode = (char*)NULL;			/* clear text of authcode */
-static int auth_needed;					/* TRUE if use_authcode or dest protect */
+static int auth_needed;					/* TRUE if dest protect */
 char *starting_directory = (char*)NULL; /* Not MAX_PPR_PATH!  (MAX_PPR_PATH might be just large enough for PPR file names) */
 static const char *charge_to_switch_value = (char*)NULL;
 static const char *default_For = (char*)NULL;
@@ -568,7 +570,11 @@ void submit_job(struct QFileEntry *qe, int subid)
 */
 static void authorization_charge(void)
 	{
-	if((auth_needed = (use_authcode || destination_protected(qentry.destnode, qentry.destname))))
+	if((auth_needed = (
+			#ifdef CRUFT_AUTH
+			use_authcode || 
+			#endif
+			destination_protected(qentry.destnode, qentry.destname))))
 		{
 		struct userdb user;
 		int ret;
@@ -587,8 +593,10 @@ static void authorization_charge(void)
 		else
 			qentry.charge_to = qentry.username;
 
+		#ifdef CRUFT_AUTH
 		if(!preauthorized)						/* do user lookup only */
 			{									/* if not preauthorized */
+		#endif
 			ret = db_auth(&user, qentry.charge_to);		/* user lookup */
 
 			if(ret == USER_ISNT)				/* If user not found, */
@@ -607,6 +615,7 @@ static void authorization_charge(void)
 				fatal(PPREXIT_OTHERERR, _("can't open printing charge database"));
 				}
 
+			#ifdef CRUFT_AUTH
 			/*
 			** If in authcode mode and "-u yes" has not been set
 			** then use the comment field from the user database
@@ -625,11 +634,9 @@ static void authorization_charge(void)
 				ppr_abort(PPREXIT_BADAUTH, qentry.charge_to);
 				}
 			} /* end of if not preauthorized */
-		} /* end of if use_authcode or protected printer */
+			#endif
 
-	/* Do not allow jobs w/out page counts on cost per page printers. */
-	if(auth_needed)
-		{
+		/* Do not allow jobs w/out page counts on cost per page printers. */
 		if(qentry.attr.pages < 0)
 			{
 			ppr_abort(PPREXIT_NONCONFORMING, (char*)NULL);
@@ -810,8 +817,8 @@ static void reapchild(int signum)
 	} /* end of reapchild() */
 
 /*
-** Function to return true if the current user is a privledged
-** user.  A privledged user is defined as a a member of the
+** Function to return true if the current user is a privileged
+** user.  A privileged user is defined as a a member of the
 ** ACL called "pprprox".  The users USER_PPR and "root" are
 ** non-removable members of that ACL.
 **
@@ -826,7 +833,7 @@ static void reapchild(int signum)
 ** and FALSE because answer starts out with the value -1
 ** which might be confounded with TRUE.
 */
-static int privledged(void)
+static int privileged(void)
 	{
 	static int answer = -1;		/* -1 means undetermined */
 
@@ -839,7 +846,7 @@ static int privledged(void)
 		}
 
 	return answer;
-	} /* end of privledged() */
+	} /* end of privileged() */
 
 /*
 ** Aquire the user's credentials so that
@@ -905,8 +912,10 @@ static const struct gu_getopt_opt option_words[] =
 		{"auto-bin-select", 'B', TRUE},
 		{"read", 'R', TRUE},
 		{"require-eof", 'Z', TRUE},
+	#ifdef CRUFT_AUTH
 		{"authcode-mode", 'a', FALSE},
 		{"preauthorized", 'A', FALSE},
+	#endif
 		{"truetype", 'Q', TRUE},
 		{"keep-bad-features", 'K', TRUE},
 		{"filter-options", 'o', TRUE},
@@ -1006,11 +1015,13 @@ HELP(_(
 "\t-w both                    routes warnings to stderr and log file\n"
 "\t-w {severe,peeve,none}     sets warning level\n"));
 
+#ifdef CRUFT_AUTH
 HELP(_(
 "\t-a                         turns on authcode mode\n"));
 
 HELP(_(
 "\t-A                         root or ppr has preauthorized\n"));
+#endif
 
 HELP(_(
 "\t--strip-cache true         strip cached resources from job file\n"
@@ -1499,10 +1510,12 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				fatal(PPREXIT_SYNTAX, _("invalid %s option"), true_option);
 			break;
 
+#ifdef CRUFT_AUTH
 		case 'a':								/* authcode mode */
 			use_authcode = TRUE;
 			read_For = TRUE;
 			break;
+#endif
 
 		case 'D':								/* set default media */
 			default_medium = optarg;
@@ -1559,12 +1572,14 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				}
 			break;
 
+	#ifdef CRUFT_AUTH
 		case 'A':								/* a preauthorized job */
-			if( ! privledged() )
+			if( ! privileged() )
 				fatal(PPREXIT_SYNTAX, _("Only privledged users may use the %s switch"), true_option);
 			else
 				preauthorized = TRUE;
 			break;
+	#endif
 
 		case 'C':								/* default title */
 			assert_ok_value(optarg, FALSE, TRUE, FALSE, true_option, TRUE);
@@ -1579,8 +1594,8 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 		case 'R':
 			if(strcmp(optarg, "for") == 0)
 				{
-				if(!privledged())
-					fatal(PPREXIT_SYNTAX, _("Only privledged users may use \"%s for\""), true_option);
+				if(!privileged())
+					fatal(PPREXIT_SYNTAX, _("Only privileged users may use \"%s for\""), true_option);
 				read_For = TRUE;
 				}
 			else if(strcmp(optarg, "ignore-for") == 0)
@@ -1832,8 +1847,16 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1008:								/* --charge-to */
-			if(! privledged() && ! use_authcode)
-				fatal(PPREXIT_SYNTAX, _("Non-privledged users may not use %s w/out -a"), true_option);
+			if(! privileged()
+					#ifdef CRUFT_AUTH
+					 && ! use_authcode
+					#endif
+					)
+		#ifdef CRUFT_AUTH
+				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s w/out -a"), true_option);
+		#else
+				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s"), true_option);
+		#endif
 			/* This is not copied into the queue structure unless it is needed. */
 			charge_to_switch_value = optarg;
 			break;
@@ -2269,11 +2292,13 @@ int main(int argc, char *argv[])
 	if(strchr(DEST_DISALLOWED_LEADING, (int)qentry.destname[0]))
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name starts with a disallowed character"));
 
+	#ifdef CRUFT_AUTH
 	/*
 	** Check for illegal combinations of options.
 	*/
 	if(use_authcode && preauthorized)
 		fatal(PPREXIT_SYNTAX, _("-a and -A are mutually exclusive"));
+	#endif
 
 	/*
 	** Do a crude test of the syntax of the -o option.
@@ -2358,7 +2383,11 @@ int main(int argc, char *argv[])
 	** to use the users realname (from the password comment (gecos) field).
 	** If the gecos field is empty we use the username anyway.
 	*/
-	if(qentry.For == (char*)NULL || (! privledged() && ! use_authcode))
+	if(qentry.For == (char*)NULL || (! privileged() 
+			#ifdef CRUFT_AUTH
+			&& ! use_authcode
+			#endif
+			))
 		{
 		if(use_username || !user_realname[0])
 			default_For = qentry.For = qentry.username;

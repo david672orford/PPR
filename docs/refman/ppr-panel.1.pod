@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 April 2003.
+# Last modified 30 August 2003.
 #
 
 =head1 NAME
@@ -62,12 +62,23 @@ If non-option command line parameters are present, they are understood to be
 the names of files to be printed on the indicated printer.  A print dialog
 will be opened.  This dialog will allow the user to select a different
 printer, select printer options, and select options provided by PPR such as
-multiple copies.
+multiple copies.  If the I<-d> option is used, then the indicated queue will
+be selected (though the user can still use the drop-down list to select a
+different one).
 
 =head2 Desktop Icons
 
-This command is the action command of KDE icons which you can double click
-on to open a queue or drop files onto to print them.
+If you are running a GUI such as KDE which provides desktop icons, this
+command can be used as the the action command for an icon.  
+
+If the icon is configured to run B<ppr-panel> without arguments, then if you
+double click on the icon the control panel will open and if you drop files
+on the icon a print dialog will open.
+
+If the icon is configured to run B<ppr-panel> with the arguments B<-d>
+I<queuename>, then double clicking on the icon will open the queue display
+window and dropping files on the icon will open a print dialog with the 
+indicated queue already selected.
 
 =head1 SEE ALSO
 

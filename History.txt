@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--25 August 2003.
+1.52, 24 July 2003--30 August 2003.
 
 Bug Fixes
 
@@ -8714,7 +8714,7 @@ Bug Fixes
 * libscript/PPOP.pm: fixed so that stderr from PPOP is captured too.
 
 * z_install_end/install_inetd_conf.sh: added code to send HUP to 
-  xinetd or inetd.  Currently it uses killall, so it is not portable.
+  xinetd or inetd.
 
 Misc. Added Material
 
@@ -8741,6 +8741,8 @@ Misc. Removed Material
 
 * nonppr_vendors/procset_apple/"AppleDict md-71-0": removed.  This was a bad
   hack.  Most of the drivers involved are probably long dead.
+
+* ppuser/ppuser.c: removed authcode subcommand.
 
 Misc. Enhancements
 
@@ -8772,6 +8774,10 @@ Misc. Enhancements
 
 * Many new Russian messages, though most remain untranslated and the quality
   of the completed work is probably poor.
+
+* www/cgi_tabbed.pl,cgi_wizard.pl: enabled snap-to-size code after changing
+  it to run only on the first time.  This should take care of the
+  a-few-pixels-at-a-time creap problems.
 
 Internet Printing Protocol Work
 

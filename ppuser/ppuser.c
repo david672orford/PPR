@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppuser/ppuser.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 May 2001.
+** Last modified 30 August 2003.
 */
 
 /*
@@ -62,7 +77,6 @@ void error(const char *message, ... )
 ** <vscheidt@sun10rz2.rz.uni-leipzig.de>.
 **
 ** called for:	ppuser delete ...
-**				ppuser authcode ...
 **				ppuser deposit ...
 **				ppuser withdraw ..
 **				ppuser charge ...
@@ -173,16 +187,16 @@ static int ppuser_add(char *argv[])
 	if(! argv[0] || ! argv[1] || ! argv[2] || ! argv[3] || ! argv[4] || ! argv[5])
 		{
 		fputs(_("Usage:\n"
-			"\tppuser add '<user name>' '<real name>' <authcode> <initial balance> <cutoff> <life>\n"), stderr);
+			"\tppuser add <username> '<real name>' <authcode> <initial balance> <cutoff> <life>\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	username = argv[0];
 
-	strncpy(data.fullname,argv[1], MAX_FULLNAME);		/* the real name */
+	strncpy(data.fullname, argv[1], MAX_FULLNAME);		/* the real name */
 	data.fullname[MAX_FULLNAME] = '\0';
 
-	strncpy(data.authcode,argv[2], MAX_AUTHCODE);		/* the AuthCode */
+	strncpy(data.authcode, argv[2], MAX_AUTHCODE);		/* the AuthCode */
 	data.authcode[MAX_AUTHCODE] = '\0';
 
 	sscanf(argv[3],"%f",&x);					/* the initial balance */
@@ -240,7 +254,7 @@ static int ppuser_delete(char *argv[])
 	} /* end of ppuser_delete() */
 
 /*
-** Show a user's recored, all except the authcode field.
+** Show a user's recored.
 */
 static int ppuser_show(char *argv[])
 	{
@@ -279,39 +293,6 @@ static int ppuser_show(char *argv[])
 			return EXIT_INTERNAL;
 		}
 	} /* end of ppuser_show() */
-
-/*
-** Change a user's authcode.
-*/
-static int ppuser_authcode(char *argv[])
-	{
-	const char *username, *newauthcode;
-
-	if(! am_administrator() )
-		return EXIT_DENIED;
-
-	username = argv[0];
-	newauthcode = argv[1];
-
-	if(! username || ! newauthcode)
-		{
-		fprintf(stderr, _("Usage: ppuser authcode '<UserName>' <NewAuthCode>\n"));
-		return EXIT_SYNTAX;
-		}
-
-	switch(db_new_authcode(username,newauthcode))
-		{
-		case USER_ISNT:
-			fprintf(stderr, _("The user \"%s\" does not exist.\n"), username);
-			return EXIT_NOTFOUND;
-		case USER_OK:
-			log_ppuser("ppuser authcode \"%s\" \"%s\"\n", username, newauthcode);
-			return EXIT_OK;
-		default:
-			fprintf(stderr, _("Database error.\n"));
-			return EXIT_INTERNAL;
-		}
-	} /* ppuser_authcode() */
 
 /*
 ** Deposit money in a users account.
@@ -373,14 +354,13 @@ static int ppuser_transaction(char *argv[], enum TRANSACTION transaction_type)
 static void help(FILE *outfile)
 	{
 	fputs(_("Usage:\n"
-		"\tppuser add '<user name>' '<real name>' <authcode> <initial balance> <cutoff> <life>\n"
-		"\tppuser delete '<user name>'\n"
-		"\tppuser show '<user name>'\n"
-		"\tppuser authcode '<user name>' <authcode>\n"
-		"\tppuser deposit '<user name>' amount\n"
-		"\tppuser withdraw '<user name>' amount\n"
-		"\tppuser charge '<user name>' amount\n"
-		"\tppuser correction '<user name>' amount\n"), outfile);
+		"\tppuser add <username> '<real name>' <authcode> <initial balance> <cutoff> <life>\n"
+		"\tppuser delete <username>\n"
+		"\tppuser show <username>\n"
+		"\tppuser deposit <username> amount\n"
+		"\tppuser withdraw <username> amount\n"
+		"\tppuser charge <username> amount\n"
+		"\tppuser correction <username> amount\n"), outfile);
 	} /* end of help */
 
 /*
@@ -410,8 +390,6 @@ int main(int argc, char *argv[])
 		return ppuser_delete(&argv[2]);
 	else if(gu_strcasecmp(argv[1], "show") == 0)
 		return ppuser_show(&argv[2]);
-	else if(gu_strcasecmp(argv[1], "authcode") == 0)
-		return ppuser_authcode(&argv[2]);
 	else if(gu_strcasecmp(argv[1], "deposit") == 0)
 		return ppuser_transaction(&argv[2],TRANSACTION_DEPOSIT);
 	else if(gu_strcasecmp(argv[1], "withdraw") == 0)

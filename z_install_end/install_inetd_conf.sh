@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 August 2003.
+# Last modified 30 August 2003.
 #
 
 #
@@ -100,6 +100,11 @@ add_service ()
 		echo " already assigned port $port, good."
 		else
 		echo " not assigned, assigning port $2..."
+		if [ ! -w $SERVICES ]
+			then
+			echo "Don't have write permission to $SERVICES!"
+			exit 1
+			fi
 		echo "# Added by PPR" >>$SERVICES
 		echo "$1 $2/tcp" >>$SERVICES
 		if [ `$GETSERVBYNAME $1 tcp` -eq -1 ]
@@ -156,8 +161,8 @@ add_inetd ()
 # Generate an Xinetd config file.
 #==========================================================================
 xinetd_config ()
-		{
-		cat - >$1 <<END
+	{
+	cat - >$1 <<END
 #
 # Xinetd configuration file for PPR
 #
@@ -188,8 +193,44 @@ service ppradmin
 
 # end of file
 END
-		}
+	}
 
+#==========================================================================
+# Send SIGHUP to the indicated program.
+#==========================================================================
+
+send_hup ()
+	{
+	prog=$1
+
+	echo "  Sending SIGHUP to $prog..."
+
+	# If program is nice,
+	if [ -f /var/run/$prog.pid ]
+		then
+		echo "    Using PID file..."
+		kill -1 `cat /var/run/$prog.pid`
+
+	# If we have Linux utilities,
+	elif [ -x /usr/bin/killall ]
+		then
+		echo "    Using killall..."
+		/usr/bin/killall -HUP $prog
+
+	# Do it the hard way.  Lets hope we have System V-style ps.
+	else
+		echo "    Using System V ps and awk to find pid of $prog..."
+		pid=`ps -e | awk '/ '$prog'$/ { print $1 }'`
+		if [ "$pid" != "" ]
+			then
+			echo "    PID is $pid"
+			kill -1 $pid
+		else
+			echo "    not running"
+		fi
+	fi
+	}
+	
 #==========================================================================
 # /etc/services
 #==========================================================================
@@ -239,9 +280,7 @@ if [ -x "$XINETD" -a -f "$XINETD_CONF" ]
 
 	../makeprogs/installconf.sh root root 644 'config(noreplace)' $XINETD_PPR
 
-
-	# This only works on Linux.
-	killall -HUP xinetd
+	send_hup xinetd
 
 	exit 0
 
@@ -286,7 +325,6 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
 
-# This only works on Linux.
-killall -HUP inetd
+send_hup inetd
 
 exit 0
