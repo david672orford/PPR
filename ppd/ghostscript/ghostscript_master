@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2003, Trinity College Computing Center.
+*% Copyright 1995--2004, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -27,13 +27,14 @@
 *%
 *%	PRINTER_HPIII		HP LaserJet III with at least 1MB memory
 *%	PRINTER_HPDJ500		HP DeskJet 500, DeskWriter
-*%	PRINTER_DM24		24 pin dot matrix printers
 *%	PRINTER_HPDJ550C	HP DeskJet 550C, 560C
+*%  PRINTER_HPDJ880C	HP DeskJet 880C
+*%	PRINTER_DM24		24 pin dot matrix printers
 *%	PRINTER_EPSC62		Epson Stylus C62
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 19 April 2004.
+*% which was last revised 12 May 2004.
 *%
 #endif
 
@@ -103,12 +104,16 @@
 *ModelName: "HP DeskJet 880C Ghostscript"
 *NickName: "HP DeskJet 880C Ghostscript"
 *PCFileName: "HPDJ880C.PPD"
-*1284DeviceID: "CLASS=PRINTER; MODEL=DESKJET 880C; MANUFACTURER=HEWLETT-PACKARD; DESCRIPTION=Hewlett-Packard DeskJet 880C; COMMAND SET=MLC,PCL,PML"
+*1284DeviceID: "CLASS:PRINTER; MODEL:DESKJET 880C; MANUFACTURER:HEWLETT-PACKARD; DESCRIPTION:Hewlett-Packard DeskJet 880C; COMMAND SET:MLC,PCL,PML"
 *DefaultResolution: 600dpi
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*pprRIP: ppr-gs pcl -sDEVICE=cdj880 -dBitsPerPixel=24
+*Protocols: PJL
+*% This driver produces distorted output in ESP GS 7.07.1.
+*% *pprRIP: ppr-gs pcl -sDEVICE=cdj880 -dBitsPerPixel=24
+*% We will use this one for now.
+*pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
 #endif
 
 #ifdef PRINTER_DM24

@@ -114,12 +114,14 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 		di = si = line;
 		si += strspn(si, " \t");
 
-		/* skip blank links */
-		if(!*si) continue;
-		/* skip comments */
-		if(*si == '#' || *si == ';') continue;
-		/* stop before start of next section */
-		if(*si == '[') break;
+		if(!*si)						/* skip blank links */
+			continue;
+
+		if(*si == '#' || *si == ';')	/* skip comments */
+			continue;
+		
+		if(*si == '[')					/* stop before start of next section */
+			break;
 
 		if(strchr(si, '='))				/* If the name part is present, */
 			{

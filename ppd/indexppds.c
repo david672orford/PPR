@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 12 May 2004.
 */
 
 #include "before_system.h"
@@ -167,7 +167,9 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			pcre *split_pattern;
 			vector pairs;
 
+			printf("XX: %s\n", p);
 			p = ppd_finish_quoted_string(obj, p + 1);
+			printf("XX: %s\n", p);
 			ppd_decode_QuotedValue(p);
 			ptrim(p);
 
@@ -291,7 +293,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	} /* end of do_file() */
 
 /*============================================================================
-** This routine is called for each directory containing PPD file which
+** This routine is called for each directory containing PPD files which
 ** are supposed to be included in the index.
 ============================================================================*/
 static int do_dir(FILE *indexfile, const char dirname[])
@@ -302,11 +304,15 @@ static int do_dir(FILE *indexfile, const char dirname[])
 	struct stat statbuf;
 	int retval = EXIT_OK;
 
+	printf("%s\n", dirname);
+
 	if(!(dirobj = opendir(dirname)))
 		{
 		if(errno == ENOENT)		/* it is ok if the directory doesn't exist */
 			{
-			printf("  %s\n", _("Skipped because it doesn't exist."));
+			printf("  ");
+			printf(_("Skipped %s because it doesn't exist."), dirname);
+			printf("\n");
 			return EXIT_OK;
 			}
 
@@ -337,6 +343,13 @@ static int do_dir(FILE *indexfile, const char dirname[])
 			{
 			if((retval = do_file(indexfile, filename, fileobj->d_name)) != EXIT_OK)
 				break;
+			continue;
+			}
+
+		/* Directories are search recursively. */
+		if(S_ISDIR(statbuf.st_mode))
+			{
+			do_dir(indexfile, filename);
 			continue;
 			}
 		}
@@ -425,7 +438,6 @@ int main(int argc, char *argv[])
 	fprintf(indexfile, "# This file format is a temporary hack.  Its format will change.\n");
 
 	/* Index the PPD files distributed with PPR. */
-	printf("%s\n", PPDDIR);
 	do_dir(indexfile, PPDDIR);
 
 	/* Iterate over the nameless values in the [PPDs] section. */
@@ -435,11 +447,11 @@ int main(int argc, char *argv[])
 			{
 			dirname = gu_ini_value_index(&section[i], 0, "<MISSING VALUE>");
 
-			printf("%s\n", dirname);
-	
 			if(strcmp(dirname, PPDDIR) == 0)
 				{
-				printf("  %s\n", _("Skipped because it has already been indexed."));
+				printf("  ");
+				printf(_("Skipping %s because it has already been indexed."), dirname);
+				printf("\n");
 				continue;
 				}
 
@@ -455,7 +467,6 @@ int main(int argc, char *argv[])
 	fclose(indexfile);
 
 	return retval;
-
 	} /* end of main() */
 
 /* end of file */

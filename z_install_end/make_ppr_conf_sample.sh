@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/create_ppr_conf.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 November 2003.
+# Last modified 12 May 2004.
 #
 
 #
@@ -199,11 +199,8 @@ cat - >&5 <<===EndHere90===
 # from any of the listed directories.
 #
 [PPDs]
+"/usr/share/cups/model"
 ===EndHere90===
-
-# CUPS filters
-if_dir_print "/usr/share/cups/model"
-if_dir_print "/usr/share/cups/model/C"
 
 # MacOS 10.x
 if_dir_print "/Library/Printers/PPDs/Contents/Resources/en.lproj"

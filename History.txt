@@ -9188,10 +9188,17 @@ Internet Printing Protocol Work
   COMPRESS, BUNZIP2 options to use it.  We include config.h in 
   global_defines.h.
 
+* ppr/ppr_infile.c: added PCL3GUI (HP Inkjet printer language) to recognized
+  file types.  The name is in the table in upper case because it eventually
+  is copied into the @PJL ENTER LANGUAGE command.  The DeskJet 882C only
+  recognizes it if it is in upper case.
+
 
 TODO
 
 * www/prn_testpage.cgi.perl: improve search for Ghostscript test pages
+
+* libgu/ini_section.c: fix bug with nameless value starting in first column.
 
 * Create Debian package.
 

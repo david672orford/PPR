@@ -140,6 +140,7 @@ struct ANALYZE {
 #define IN_TYPE_DOTMATRIX 301			/* Generic dot matrix printer */
 #define IN_TYPE_HPGL2 302				/* HP-GL/2 */
 #define IN_TYPE_PCLXL 303				/* HP PCL-XL format */
+#define IN_TYPE_PCL3GUI 304				/* HP PCL3GUI format */
 
 /* Document languages */
 #define IN_TYPE_TROFF 500				/* TRoff source */
@@ -223,6 +224,8 @@ struct FILTER filters[]=
 {IN_TYPE_HPGL2,			NULL,							FALSE,	"hpgl2",				N_("file type is HP-GL/2"),								N_("HP-GL/2 files")},
 {IN_TYPE_DOTMATRIX,		NULL,							FALSE,	"dotmatrix",			N_("file type is generic dot matrix"),					N_("dot matrix printer files")},
 {IN_TYPE_PCLXL,			NULL,							FALSE,	"pclxl",				N_("file type is HP PCL-XL"),							N_("HP PCL-XL files")},
+	/* HP DeskJet 882C (and possibly others) won't recognize PCL3GUI unless it is in upper case! */
+{IN_TYPE_PCL3GUI,		NULL,							FALSE,	"PCL3GUI",				N_("file type is HP PCL3GUI"),							N_("HP PCL3GUI files")},
 
 /* Document languages: */
 {IN_TYPE_TROFF,			NULL,							TRUE,	"troff",				N_("file is Troff source"),								N_("Troff source files")},
@@ -817,31 +820,39 @@ static void read_dot_header(void)
 */
 static void check_for_PJL(void)
 	{
-	/*
-	** If "universal exit language" command
-	** is not found at the start of the job,
-	** there is nothing for this routine to do.
-	*/
-	if( in_left < 9 || strncmp((char*)in_ptr, "\x1b%-12345X", 9) )
+	int consume;
+
+	/* The MS-Windows 98 driver for the HP Deskjet 882C sends 600 zero bytes at 
+	 * the start of the job.  Could this be a hack to clear out a buffer?
+	 */
+	for(consume = 0; consume < in_left && in_ptr[consume] == 0; consume++)
+		{ /* do nothing */ }
+
+	/* The driver mentioned above also sends this reset sequence. */
+	if((in_left - consume) >= 2 && strncmp((char*)in_ptr + consume, "\x1b""E", 2) == 0)
+		consume += 2;
+
+	/* This is make-it-or-break-it.  If we see UEL, ok. */
+	if((in_left - consume) >= 9 && strncmp((char*)in_ptr + consume, "\x1b%-12345X", 9) == 0)
+		consume += 9;
+	/* Otherwise, no PJL here, bail out. */
+	else
 		return;
+
+	in_ptr += consume;
+	in_left -= consume;
 
 	{
 	char *si, *di;
 	int space_credit;
-
-	#define MAX_PJL_BYTES 16384
-	char pjl_buffer[MAX_PJL_BYTES];
+	char *pjl_buffer = NULL;
 	int pjl_size = 0;
-
-	/* Consume UEL. */
-	in_ptr += 9;
-	in_left -= 9;
 
 	while(!in_eof())
 		{
 		in_getline();							/* Read a PJL line */
 
-		if(gu_strncasecmp(line, "@PJL", 4))				/* if not PJL line */
+		if(gu_strncasecmp(line, "@PJL", 4))		/* if not PJL line */
 			return;								/* then go back to auto-detect */
 
 		/* Convert all whitespace sequences to
@@ -922,12 +933,8 @@ static void check_for_PJL(void)
 		if(gu_strncasecmp(line, "@PJL USTATUS", 12) == 0)
 			continue;
 
-		/* If we don't have room to save this PJL command, */
-		if((pjl_size + strlen(line) + 2) > MAX_PJL_BYTES)
-			{
-			warning(WARNING_SEVERE, "PJL buffer overflow");
-			continue;
-			}
+		/* Grow the buffer to fit this command. */
+		pjl_buffer = gu_realloc(pjl_buffer, (pjl_size + strlen(line) + 2), sizeof(char));
 
 		/* Save this PJL command in the queue file. */
 		strcpy(pjl_buffer + pjl_size, line);
@@ -936,9 +943,9 @@ static void check_for_PJL(void)
 		pjl_size++;
 		} /* this while loop only ends if we hit EOF */
 
-	/* If PJL lines were gathered, save them. */
-	if(pjl_size)
-		qentry.PJL = gu_strdup(pjl_buffer);
+	/* If PJL lines were gathered, save them.  (If none have been, then
+	 * pjl_buffer will still be NULL.) */
+	qentry.PJL = pjl_buffer;
 	}
 	} /* end of check_for_PJL() */
 
