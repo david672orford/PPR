@@ -71,6 +71,21 @@ P.navigation
 	padding: 2mm;
 	border: thin solid black;
 	}
+TABLE,TD,TH {
+	border-color: black;
+	border-style: solid;
+	}
+TABLE {
+	border-width: 1px 0px 0px 1px;
+	}
+TD,TH {
+	padding: 2pt;
+	border-width: 0px 1px 1px 0px;
+	}
+TD {
+	text-align: left;
+	vertical-align: top;
+	}
 </style>
 </head>
 <body>
@@ -91,7 +106,7 @@ sub linkize_helper
     return "*$note <a href=\"${info_to_url($name)}\">$name</a>::";
     }
 
-# Preserve line breaks
+# Preserve line breaks by converting newlines to <br> tags.
 sub linebreak
     {
     my $text = shift;
@@ -264,25 +279,32 @@ eval {
 		my @lines = split(/\n/);
 		my $title = shift @lines;
 		print "<h2>", html($title), "</h2>\n";
-		print "<table border=1 cellspacing=0 cellpadding=3 width="100%">\n";
-		print "<tr><th>Subject</th><th>Document</th><th>Section</th><th>Description</th></tr>\n";
+		print "<table cellspacing=0 width=\"100%\">\n";
+		print "<tr><th width=\"15%\">Subject</th><th width=\"15%\">Document</th><th width=\"20%\">Section</th><th>Description</th></tr>\n";
 		foreach (@lines)
 		    {
+		    # Try to match a menu line.  
 		    if(/^\* ([^:]+): \((.+)\)(.*)\.\s+(.+)\.?$/)
 			{
 			my($subject, $filename, $section, $description) = ($1, $2, $3, $4);
+
 			my $escaped_section = $section;
 			$escaped_section =~ s/\s+/_/g;
+
+			my $url = $filename;
+			$url =~ s/\.info$//;			# fix silly mistake
+			$url .= "#$section" if($section ne "");
+
 			print "<tr>";
 			print "<td><a href=\"$filename#$escaped_section\">", html($subject), "</a></td>";
 			print "<td>", html($filename), "</td>";
-			print "<td>", html_nb($section), "</td>";
+			print "<td>", $section ne "" ? html_nb($section) : "&nbsp;", "</td>";
 			print "<td>", html($description), "</td>";
 			print "</tr>\n";
 			}
 		    else
 			{
-			print "<p class=\"error\">", html($_), "</p>\n";
+			print "<tr><td class=\"error\" colspan=4>", html($_), "</td></tr>\n";
 			}
 		    }		
 		print "</table>\n";

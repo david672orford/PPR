@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 January 2002.
+# Last modified 19 April 2002.
 #
 
 #
@@ -150,12 +150,14 @@ sub html
     }
 
 #
-# This one goes a step furthur and converts spaces to non-breaking spaces.
+# This one goes a step furthur and converts spaces to non-breaking spaces. 
+# This is a good thing to use with table cells we don't want broken.
 #
 sub html_nb
     {
     my $text = html(shift);
     $text =~ s/ /&nbsp;/g;
+
     return $text;
     }
 
