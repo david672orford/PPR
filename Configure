@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 21 June 2001.
+# Last modified 3 July 2001.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -167,14 +167,14 @@ case "$answer" in
     	    	;;
 	8 )
 		SYSTEM="CYGWIN"
-		DESCRIPTION="Cygwin 1.1"
+		DESCRIPTION="Cygwin 1.x"
 		ACTUAL_SYSTEM=""
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
 	9 )
 		SYSTEM="UWIN"
-		DESCRIPTION="UWIN 2.0"
+		DESCRIPTION="UWIN 2.x"
 		ACTUAL_SYSTEM=""
 		CC_NATIVE=1
 		CC_GCC=1
@@ -195,7 +195,7 @@ case "$answer" in
 		;;
 	12 )
 		SYSTEM="SUNOS_5_6"
-		DESCRIPTION="SunOS 5.6 thru 5.7"
+		DESCRIPTION="SunOS 5.6 thru 5.8"
 		ACTUAL_SYSTEM=`uname -sr | sed -e 's/^SunOS 5\.[6-9]$/SUNOS_5_6/'`
 		CC_NATIVE=0
 		CC_GCC=1
