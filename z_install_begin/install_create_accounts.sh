@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 10 March 2003.
 #
 
 # The makefile has to feed us this information since ../makeprogs/paths.sh
@@ -68,9 +68,14 @@ if [ $group_ppr_gid -ne -1 ]
 	then
 	/usr/sbin/pw groupadd $GROUP_PPR
     else
-        echo "Oops, this script doesn't contain instructions for adding groups on this system."
+    if [ -x /usr/bin/niload ]
+	then
+	echo "$GROUP_PPR:*:100:" | niload group .
+    else
+	echo "Oops, this script doesn't contain instructions for adding groups on this system."
         echo "Please add the group \"$GROUP_PPR\" and then run fixup again."
         exit 1
+    fi
     fi
     fi
 
@@ -141,6 +146,19 @@ for user in $USER_PPR $USER_PPRWWW
 	    /usr/sbin/pw useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
 	    exitval=$?
 
+	# MacOS X
+	else
+	if [ -x /usr/bin/niload ]
+	    then
+	    if [ "$user" = "$USER_PPR" ]
+		then
+		uid=100
+		else
+		uid=101
+		fi
+	    echo "$user:*:$uid:$group_ppr_gid:0:0::$COMMENT:$HOMEDIR:" | niload passwd .
+	    exitval=$?
+
 	else                # no user passmgmt or useradd
 	echo
 	echo "Oops!  This script does not contains instructions for adding accounts on"
@@ -149,6 +167,7 @@ for user in $USER_PPR $USER_PPRWWW
 	exit 1
         fi
         fi
+	fi
 	fi
 	fi
 

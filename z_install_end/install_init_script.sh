@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 10 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -247,7 +247,7 @@ if [ -n "$RC_LOCAL" ]
 	echo
 	echo "Since your system doesn't seem to use a System V style Init nor do you have"
 	echo "have an rc.local file, you must find your own means to start PPR when the"
-	echo "system boots.  Specifically, you must arange for root or $USER_PPR to run"
+	echo "system boots.  Specifically, you must arrange for root or $USER_PPR to run"
 	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papsrv."
 	echo
 	echo "Please press RETURN to continue."

@@ -242,20 +242,40 @@ void adjust_ids(void)
     #endif
 
     /*
-    ** Relinquish any root privledge we may have.
+    ** Relinquish any root privledge we may have.  This is difficult because not all 
+    ** systems have precisely the same semantics with regard to when the saved IDs 
+    ** are set.
     */
+
+    /* MacOS 10.2 must not act as its manpage suggest since setuid(ppr_uid) doesn't work except for root. */
+    seteuid(0);
+
+    /* MacOS 10.2 manpage (which is probably the BSD manpage)suggests that this will 
+	set the saved IDs. */
+    if(setgid(ppr_gid) == -1)
+	{
+	fprintf(stderr, _("%s: setgid(%ld) failed, errno=%d (%s)\n"), myname, (long)ppr_gid, errno, gu_strerror(errno));
+	exit(1);
+	}
+    if(setuid(ppr_uid) == -1)
+	{
+	fprintf(stderr, _("%s: setuid(%ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, errno, gu_strerror(errno));
+	exit(1);
+	}
+
+    /* Linux manpage suggests that this will set the saved IDs. */
     if(setreuid(ppr_uid, ppr_uid) == -1)
 	{
-	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
+	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
 	exit(1);
 	}
-
     if(setregid(ppr_gid, ppr_gid) == -1)
 	{
-	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
+	fprintf(stderr, _("%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
 	exit(1);
 	}
 
+    /* Make sure the system semantics haven't bitten us. */
     if(setuid(0) != -1)
 	{
 	fprintf(stderr, _("%s: setuid(0) did not fail!\n"), myname);

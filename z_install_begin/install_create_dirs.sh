@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 10 March 2003.
 #
 
 #=============================================================================
@@ -36,18 +36,16 @@
 # Changes to this should be coordinated with ../fixup/fixup_perms.sh.
 #=============================================================================
 
-# System configuration values:
-if [ ! -x ../makeprogs/ppr-config ]
-    then
-    ( cd ../makeprogs && make ppr-config )
-    fi
-CONFDIR=`../makeprogs/ppr-config --confdir`
-HOMEDIR=`../makeprogs/ppr-config --homedir`
-SHAREDIR=`../makeprogs/ppr-config --sharedir`
-VAR_SPOOL_PPR=`../makeprogs/ppr-config --var-spool-ppr`
-TEMPDIR=`../makeprogs/ppr-config --tempdir`
+USER_PPR=$1
+USER_PPRWWW=$2
+GROUP_PPR=$3
+CONFDIR=$4
+HOMEDIR=$5
+SHAREDIR=$6
+VAR_SPOOL_PPR=$7
+TEMPDIR=$8
 
-# List of files for RPM:
+# Blank the list of files for RPM.
 fileslist="`dirname $0`/../z_install_begin/installed_files_list"
 rm -f $fileslist
 
@@ -67,17 +65,6 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   exit 1
   fi
 
-# This function returns "ok" if the directory in question
-# exists and we have full access to it.
-dirok ()
-    {
-    dir="$RPM_BUILD_ROOT$1"
-    if [ -w $dir -a -r $dir -a -x $dir -a -d $dir ]
-	then
-	echo "ok"
-	fi
-    }
-
 # This function creates a directory
 directory ()
     {
@@ -94,27 +81,34 @@ directory ()
     echo "%dir \"$dir\"">>$fileslist
     }
 
-# Try to make them but don't react badly if it doesn't work,
-# that is handled in the next section.
-mkdir -p $RPM_BUILD_ROOT$HOMEDIR		2>/dev/null
-mkdir -p $RPM_BUILD_ROOT$SHAREDIR		2>/dev/null
-mkdir -p $RPM_BUILD_ROOT$CONFDIR		2>/dev/null
-mkdir -p $RPM_BUILD_ROOT$VAR_SPOOL_PPR		2>/dev/null
-mkdir -p $RPM_BUILD_ROOT$TEMPDIR 		2>/dev/null
+# Create the top-level PPR directories.
+for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
+    do
+    if [ ! -d $RPM_BUILD_ROOT$dir ]
+	then
+	mkdir -p $RPM_BUILD_ROOT$dir
+	fi
+    chown $USER_PPR $RPM_BUILD_ROOT$dir || exit 1
+    chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir || exit 1
+    chmod 755 $RPM_BUILD_ROOT$dir
+    done 
 
-# Make sure the directories exist
-if [ -z "`dirok $HOMEDIR`" -o -z "`dirok $SHAREDIR`" -o -z "`dirok $CONFDIR`" -o -z "`dirok $VAR_SPOOL_PPR`" -o -z "`dirok $TEMPDIR`" ]
+# We have to be more careful with this one since it is probably the 
+# system-wide temporary directory and we don't want to mess up its
+# permissions.e
+if [ ! -d $RPM_BUILD_ROOT$TEMPDIR ]
     then
-    echo "Before this script can be run, root must create the directories $HOMEDIR,"
-    echo "$SHAREDIR, $VAR_SPOOL_PPR and $CONFDIR and make sure that they are"
-    echo "writable by you."
-    exit 1
+    mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
+    chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
+    chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
+    chmod 755 $RPM_BUILD_ROOT$dir
     fi
 
 echo "%dir \"$HOMEDIR\"">>$fileslist
 echo "%dir \"$SHAREDIR\"">>$fileslist
 echo "%dir \"$CONFDIR\"">>$fileslist
 echo "%dir \"$VAR_SPOOL_PPR\"">>$fileslist
+echo "%dir \"$TEMPDIR\"">>$fileslist
 
 # It is necessary to create empty configuration
 # directories.

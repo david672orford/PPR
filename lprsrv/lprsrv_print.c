@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 10 March 2003.
 */
 
 /*
@@ -573,16 +573,28 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 	    	case 0:
 		    DODEBUG_PRINT(("%s(): %s ran normally", function, prog));
 	    	    break;
-		case 240:
-		    debug("%s(): setuid(0) failed in child", function);
-		    break;
-		case 241:
-		    debug("%s(): setreuid(%ld, %ld) failed in child", function, (long int)run_uid, (long int)run_uid);
-		    break;
-	    	case 242:
+	    	case 240:
 	    	    debug("%s(): Child can't open log file", function);
 	    	    break;
-	    	case 243:
+		case 241:
+		    debug("%s(): setuid(0) failed in child", function);
+		    break;
+		case 242:
+		    debug("%s(): setgid(%ld) failed in child", function, (long int)run_gid);
+		    break;
+		case 243:
+		    debug("%s(): setuid(%ld) failed in child", function, (long int)run_uid);
+		    break;
+		case 244:
+		    debug("%s(): setregid(%ld, %ld) failed in child", function, (long int)run_gid, (long int)run_gid);
+		    break;
+		case 245:
+		    debug("%s(): setreuid(%ld, %ld) failed in child", function, (long int)run_uid, (long int)run_uid);
+		    break;
+		case 246:
+		    debug("%s(): setuid(0) did not fail in child", function, (long int)run_uid, (long int)run_uid);
+		    break;
+	    	case 247:
 	    	    debug("%s(): Exec() of %s failed", function, prog);
 	    	    break;
 	    	default:
@@ -610,7 +622,7 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 
 	/* Open the lprsrv log file */
 	if( (log=open(LPRSRV_LOGFILE, O_WRONLY | O_APPEND, 1)) == -1 )
-	    _exit(242);
+	    _exit(240);
 
 	/* Connect stdout and stderr to the log file. */
 	dup2(log, 1);
@@ -619,15 +631,20 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 
 	/* Fully relinquish root authority and become designated user. */
 	if(setuid(0) == -1)
-	    _exit(240);
+	    _exit(241);
+	if(setgid(run_gid) == -1)
+	    _exit(242);
+	if(setuid(run_uid) == -1)
+	    _exit(243);
 	if(setregid(run_gid, run_gid) == -1)
-	    _exit(241);
+	    _exit(244);
 	if(setreuid(run_uid, run_uid) == -1)
-	    _exit(241);
-
+	    _exit(245);
+	if(run_uid != 0 && setuid(0) != -1)
+	    _exit(246);
 	execv(prog, (char **)args);
 
-	_exit(243);		/* exit here if exec failed */
+	_exit(247);		/* exit here if exec failed */
     	} /* end of if child */
 
     } /* end of dispatch_files_run() */

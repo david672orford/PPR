@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 10 March 2003.
 */
 
 /*
@@ -2311,11 +2311,20 @@ void fully_demote_self(uid_t uid_ppr, gid_t gid_ppr)
     if(setgid(0) == -1)
  	fatal(1, "fully_demote_self(): setgid(0) failed");
 
+    if(setgid(gid_ppr) == -1)
+    	fatal(1, "fully_demote_self(): setgid(%ld) failed", (long)gid_ppr);
+
+    if(setuid(uid_ppr) == -1)
+    	fatal(1, "fully_demote_self(): setuid(%ld) failed", (long)uid_ppr);
+
     if(setregid(gid_ppr, gid_ppr) == -1)
     	fatal(1, "fully_demote_self(): setregid(%ld, %ld) failed", (long)gid_ppr, (long)gid_ppr);
 
     if(setreuid(uid_ppr, uid_ppr) == -1)
     	fatal(1, "fully_demote_self(): setreuid(%ld, %ld) failed", (long)uid_ppr, (long)uid_ppr);
+
+    if(setuid(0) != -1)
+    	fatal(1, "fully_demote_self(): setuid(0) did not fail", (long)uid_ppr, (long)uid_ppr);
     }
 
 /*

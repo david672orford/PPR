@@ -8435,6 +8435,10 @@ line was being parsed twice.
 * pprpopup/pprpopup_main.tcl: added code to use "$USER@localhost" or
   "$LOGNAME@localhost" if PPR_RESPONDER_ADDRESS isn't defined.
 
+* pprd/pprd_main.c: Due to MacOS X wierdness with regard to saved IDs, added seteuid(0), setgid(), setuid() sequence before the existing setreuid() setregid() sequence.
+
+* lprsrv/olprsrv.c,lprsrv_print.c: same ID business
+
 
 
 TODO

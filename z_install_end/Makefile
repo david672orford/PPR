@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 10 March 2003.
 #
 
 include ../Makefile.conf
@@ -47,6 +47,9 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./fixup_obsolete.sh
 	./install_sample_config.sh
+	touch $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
+	chown $(USER_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
+	chgrp $(GROUP_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
 	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
 	./install_atalk_links.tcl
 	./install_crontab.sh

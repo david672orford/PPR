@@ -1981,6 +1981,7 @@ int main(int argc, char *argv[])
     	fatal(PPREXIT_OTHERERR, "strange getpwuid() error, pw_name is NULL");
     user_username = gu_strdup(pw->pw_name);
     user_realname = gu_strdup(pw->pw_gecos);
+printf("%ld \"%s\" \"%s\"\n", (long)user_uid, pw->pw_name, pw->pw_gecos);
     }
 
     /*
