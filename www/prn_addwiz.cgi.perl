@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2004.
+# Last modified 25 March 2004.
 #
 
 #
@@ -103,10 +103,10 @@ $addprn_wizard_table = [
 				print "<p><span class=\"label\">", H_("PPR Printer Queue Creation"), "</span></p>\n";
 				print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
 
-				my $method = cgi_data_move("method", "");
-				labeled_radio("method", "Manually choose connexion method and enter printer address", "choose_int", $method);
+				my $method = cgi_data_move("method", "browse_printers");
+				labeled_radio("method", "Browse lists of available printers and appropriate connexion methods", "browse_printers", $method);
 				print "<br>\n";
-				labeled_radio("method", "Choose printer from list", "browse_printers", $method);
+				labeled_radio("method", "Manually choose connexion method and enter printer address", "choose_int", $method);
 				},
 		'onnext' => sub {
 				if(! defined($data{method}))
@@ -372,7 +372,7 @@ $addprn_wizard_table = [
 			my $browser_zone = cgi_data_move("browser_zone", "");
 			opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
 			print '<p><label>', H_("Zones available for browsing:"), '<br>', "\n";
-			print '<select tabindex=1 name="browser_zone" size="15" style="max-width: 300px">', "\n";
+			print '<select tabindex=1 name="browser_zone" size="21" style="min-width: 450px; max-width: 450px;">', "\n";
 			while(my $browser = readdir(BROWSERS))
 				{
 				next if($browser =~ /^\./);
@@ -386,7 +386,7 @@ $addprn_wizard_table = [
 					my $new_browser_zone = "$browser:$zone";
 					print "<option value=", html_value($new_browser_zone);
 					print " selected" if($new_browser_zone eq $browser_zone);
-					print ">", html($zone), "</option>\n";
+					print ">", html_nb($zone), "</option>\n";
 					}
 				close(ZONES) || die $!;
 				print "</optgroup>\n";
@@ -408,6 +408,7 @@ $addprn_wizard_table = [
 		{
 		'title' => N_("PPR: Add a Printer: Browse Printers"),
 		'picture' => "wiz-newprn.jpg",
+		'dopage_returns_html' => 1,
 		'dopage' => sub {
 			require 'cgi_run.pl';
 			my $browser_zone = cgi_data_peek("browser_zone", "");
@@ -417,29 +418,44 @@ $addprn_wizard_table = [
 			$browser = $1;
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
 			print '<p><label>', H_("Available printers:"), '<br>', "\n";
-			print '<select tabindex=1 name="browser_printer" size="20" style="max-width: 450px; min-width: 450px">', "\n";
+			print '<select tabindex=1 name="browser_printer" size="21" style="max-width: 450px; min-width: 450px">', "\n";
+			my @browser_comments = ();
 			outer:
 			while(1)
 				{
 				my $name = "";
+				my $manufacturer = "";
+				my $model = "";
 				my @interfaces = ();
 				while(my $line = <PRINTERS>)
 					{
 					chomp $line;
-					print STDERR "\"$line\"\n";
-					if($line =~ /^\[([^\]]+)\]$/)
+					#print STDERR "\"$line\"\n";
+					if($line =~ /^;(.+)$/)
 						{
-						print STDERR "Name: $1\n";
+						push(@browser_comments, $1);
+						}
+					elsif($line =~ /^\[([^\]]+)\]$/)
+						{
 						$name = $1;
 						}
 					elsif($line =~ /^interface=(.+)$/)
 						{
-						print STDERR "Interface: $1\n";
 						push(@interfaces, $1);
+						}
+					elsif($line =~ /^manufacturer=(.*)$/)
+						{
+						$manufacturer = $1;
+						}
+					elsif($line =~ /^model=(.*)$/)
+						{
+						$model = $1;
 						}
 					elsif($line =~ /^$/)	# end of record
 						{
-						print "<optgroup label=", html_value($name), ">\n";
+						my $label = $name;
+						$label .= " ($manufacturer $model)" if($manufacturer ne "" && $model ne "");
+						print "<optgroup label=", html_value($label), ">\n";
 						foreach my $interface (@interfaces)
 							{
 							my($interface_name, $interface_address) = split(/,/, $interface, 2);
@@ -453,7 +469,7 @@ $addprn_wizard_table = [
 						}
 					else
 						{
-						print STDERR "*** Unmatched browser line: $line";
+						push(@browser_comments, "???: $line");
 						}
 					}
 				last;
@@ -461,6 +477,13 @@ $addprn_wizard_table = [
 			print "</select>\n";
 			print "</span></p>\n";
 			close(PRINTERS) || die $!;
+			if(scalar @browser_comments > 0)
+				{
+				my $html = html(join("\n", @browser_comments));
+				$html =~ s/\n/<br>\n/g;
+				return $html;
+				}
+			return "";
 			},
 		'onnext' => sub {
 				my $browser_printer = cgi_data_peek("browser_printer", undef);

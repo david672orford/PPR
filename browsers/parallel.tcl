@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2004.
+# Last modified 25 March 2004.
 #
 
 # Name the command line parameters.
@@ -65,35 +65,42 @@ proc probe_system {} {
 
     # Linux 2.2.X
     if [file isdirectory /proc/parport] {
+		puts ";Parallel port driver is Linux 2.2.X."
 		set autoprobe_template "/proc/parport/%d/autoprobe"
 		set dev_template "/dev/lp%d"
 		proc ports_list {} {
 		    set retval {}
-		    foreach port [glob /proc/parport/*] {
-			regexp {([0-9]+)$} $port junk number
-			set retval [lappend $retval $number]
-			}
+			foreach port [glob /proc/parport/*] {
+				regexp {([0-9]+)$} $port junk number
+				set retval [lappend $retval $number]
+				}
 		    return $retval
 		    }
 		return
 		}
 
-    # Linux 2.4.X
+    # Linux 2.4.X, 2.6.X
     if [file isdirectory /proc/sys/dev/parport] {
+		puts stderr ";Parallel port driver is Linux 2.4.x or 2.6.X."
 		set autoprobe_template "/proc/sys/dev/parport/parport%d/autoprobe"
 		set dev_template "/dev/lp%d"
 		proc ports_list {} {
 			set retval {}
 			foreach port [glob /proc/sys/dev/parport/parport*] {
-			regexp {([0-9]+)$} $port junk number
-			set retval [lappend $retval $number]
-			}
+				regexp {([0-9]+)$} $port junk number
+				set retval [lappend $retval $number]
+				}
 			return $retval
 			}
 		return
 		}
 
-    # Other/Unknown
+	if [file exists /proc/version] {
+		puts ";Linux parallel port driver is not installed."
+		}
+
+    # Unknown 
+	puts stderr ";Parallel port driver type is not known."
     set autoprobe_template ""
     set dev_template "/dev/lp%d"
     proc ports_list {} {
@@ -134,14 +141,27 @@ proc autoprobe {filename} {
 # templates.
 probe_system
 
-# Probe each of the ports.
-foreach port [ports_list] {
+# Search for ports.  The command ports_list may fail if there
+# are no ports since glob treats failure to find something
+# as an exception.
+if [catch { ports_list } ports] {
+	exit 0
+	}
+
+# Print a section for each printer that we found.
+foreach port $ports {
     puts "\[Printer on Parallel Port $port\]"
-    set lp [format $dev_template $port]
+
+	set lp [format $dev_template $port]
+	if {![file exists $lp]} {
+		puts ";Warning: device node $lp is missing."
+		}
+
     set ap [format $autoprobe_template $port]
     if {$ap != ""} {
 		puts [autoprobe $ap]
 		}
+
     puts "interface=simple,\"$lp\""
     puts "interface=parallel,\"$lp\""
     puts ""

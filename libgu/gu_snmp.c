@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 26 March 2004.
 */
 
 #include "before_system.h"
@@ -216,6 +216,10 @@ This function creates an SNMP object, connects it to a remote system, and
 returns a pointer to it.  If the community[] is NULL, then "public" will
 be used.  This function throws exceptions on failure.
 
+If ip_address is INADDR_NONE, then the socket will not be connected.  This is
+useful if you will be providing additional code to query multiple hosts
+in parallel.
+
 */
 struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[])
 	{
@@ -227,15 +231,15 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
 	if(community && strlen(community) > 127)
 		gu_Throw("SNMP community name too long");
 
-	memset(&server_ip, 0, sizeof(server_ip));
-	server_ip.sin_family = AF_INET;
-	memcpy(&server_ip.sin_addr, &ip_address, sizeof(ip_address));
-	server_ip.sin_port = htons(161);
-
 	memset(&my_ip, 0, sizeof(my_ip));
 	my_ip.sin_family = AF_INET;
 	my_ip.sin_addr.s_addr = htonl(INADDR_ANY);
 	my_ip.sin_port = htons(0);
+
+	memset(&server_ip, 0, sizeof(server_ip));
+	server_ip.sin_family = AF_INET;
+	memcpy(&server_ip.sin_addr, &ip_address, sizeof(ip_address));
+	server_ip.sin_port = htons(161);
 
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 		gu_Throw("socket() failed, errno=%d (%s)", errno, gu_strerror(errno));
@@ -244,8 +248,11 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
 		if(bind(fd, (struct sockaddr *)&my_ip, sizeof(my_ip)) < 0)
 			gu_Throw("bind() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-		if(connect(fd, (struct sockaddr *)&server_ip, sizeof(server_ip)) < 0)
-			gu_Throw("connect() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		if(ip_address != INADDR_NONE)
+			{
+			if(connect(fd, (struct sockaddr *)&server_ip, sizeof(server_ip)) < 0)
+				gu_Throw("connect() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			}
 		}
 	gu_Catch
 		{
@@ -272,21 +279,17 @@ void gu_snmp_close(struct gu_snmp *p)
 	gu_free(p);
 	}
 
-/*
-** An array of these structures is used to hold a list of the expected return
-** values, their types, and pointers to variables into which they should
-** be stored.
-*/
-struct ITEMS {
-	const char *oid;
-	int type;
-	void *ptr;
-	};
+/** return the file descriptor of the SNMP object
 
-/*
-** Create the SNMP query packet.
 */
-static int create_packet(struct gu_snmp *p, char *buffer, struct ITEMS *items, int items_count)
+int gu_snmp_fd(struct gu_snmp *p)
+	{
+	return p->socket;
+	}
+
+/** Create the SNMP query packet
+*/
+int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count)
 	{
 	int start_pdu, start_values_list;				/* place markers to things we can't fill in until the end */
 	int i = 0;
@@ -408,12 +411,11 @@ static int create_packet(struct gu_snmp *p, char *buffer, struct ITEMS *items, i
 		}
 
 	return i;
-	} /* end of create_packet() */
+	} /* end of gu_snmp_create_packet() */
 
-/*
-** parse an SNMP response packet
+/** Parse an SNMP response packet
 */
-static int parse_response(struct gu_snmp *p, struct ITEMS *items, int items_count)
+int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int items_count)
 	{
 	char *ptr;
 	int len;
@@ -501,7 +503,7 @@ static int parse_response(struct gu_snmp *p, struct ITEMS *items, int items_coun
 		}
 
 	return 0;
-	} /* end of parse_response() */
+	} /* end of gu_snmp_parse_response() */
 
 /** Perform an SNMP query
 
@@ -513,10 +515,10 @@ exceptions on errors.
 */
 void gu_snmp_get(struct gu_snmp *p, ...)
 	{
-	char buffer[1024];						/* buffer into which we build query packet */
-	int packet_length;						/* length of query packet in bytes */
-	struct ITEMS items[10];					/* queried data items list */
-	int items_count;						/* length of the queried data items list */
+	char buffer[1024];					/* buffer into which we build query packet */
+	int packet_length;					/* length of query packet in bytes */
+	struct gu_snmp_items items[10];		/* queried data items list */
+	int items_count;					/* length of the queried data items list */
 
 	/* Read the arguments array into an easy-to-use array of structures. */
 		{
@@ -533,9 +535,9 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 		}
 
 	/* Construct the SNMP query packet. */
-	packet_length = create_packet(p, buffer, items, items_count);
+	packet_length = gu_snmp_create_packet(p, buffer, items, items_count);
 
-	/* Send and resent the request until we get a response or the retries
+	/* Send and resend the request until we get a response or the retries
 	   are exhausted. */
 	{
 	int attempt;
@@ -572,14 +574,14 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 
 		/* If the packet isn't an SNMP response, then we get -1,
 		   for other errors an exception is thrown. */
-		if(parse_response(p, items, items_count) != -1)
+		if(gu_snmp_parse_response(p, items, items_count) != -1)
 			return;
 		} /* end of retry loop */
 	}
 
 	/* If we reach here, there was no valid response. */
 	gu_Throw("no response");
-	}
+	} /* end of snmp_get() */
 
 /*
 ** To compile this test code:
@@ -596,7 +598,7 @@ int main(int argc, char *argv[])
 	unsigned int n2;
 	char *str;
 
-	s = gu_snmp_open(inet_addr(argv[1]), "public");
+	s = gu_snmp_open(inet_addr(argv[1]), argv[2] ? argv[2] : "public");
 
 	gu_snmp_get(s,
 				"1.3.6.1.2.1.1.5.0", GU_SNMP_STR, &str,

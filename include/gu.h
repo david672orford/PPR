@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 25 March 2004.
 */
 
 /*! \file
@@ -369,9 +369,23 @@ struct gu_snmp
 	int result_len;
 	};
 
+/*
+** An array of these structures is used to hold a list of the expected return
+** values, their types, and pointers to variables into which they should
+** be stored.
+*/
+struct gu_snmp_items {
+	const char *oid;
+	int type;
+	void *ptr;
+	};
+
 struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[]);
 void gu_snmp_close(struct gu_snmp *p);
 void gu_snmp_get(struct gu_snmp *p, ...);
+int gu_snmp_fd(struct gu_snmp *p);
+int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count);
+int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int items_count);
 
 #define GU_SNMP_INT 1		/**< tells gu_snmp_get() to fetch an integer value */
 #define GU_SNMP_STR 2		/**< tells gu_snmp_get() to fetch a string value */

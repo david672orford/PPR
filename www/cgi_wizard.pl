@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_wizard.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 25 March 2004.
 #
 
 use 5.004;
@@ -240,12 +240,18 @@ print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
 # If there is a "dopage" procedure, then call it to emit
 # the text which distinguishes this page from others.
 my $dopage = $wizpage->{dopage};
+my $dopage_retval = "";
 if(defined($dopage))
 	{
-	eval { &$dopage };
+	my $retval;
+	eval { $retval = &$dopage };
 	if($@)						# if error,
 		{						# print message from die
 		print "<p>", html($@), "</p>\n";
+		}
+	elsif(defined $wizpage->{dopage_returns_html})
+		{
+		$dopage_retval = $retval;
 		}
 	}
 
@@ -286,6 +292,13 @@ print <<"EndOfText4";
 <td><span class="alert">${\&html($error)}</span></td>
 </tr></table>
 EndOfText4
+	}
+
+# If there isn't an error, maybe dopage() has something it wants
+# to say in HTML.
+elsif($dopage_retval ne "")
+	{
+	print $dopage_retval;
 	}
 
 # Now the submit buttons, then we close the table.	Note that we
