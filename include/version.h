@@ -1,4 +1,4 @@
-#define SHORT_VERSION "1.53"
+#define SHORT_VERSION "2.00a1"
 #define REVISION_DATE "11 December 2004"
 #define COPYRIGHT_YEARS "1995--2004"
 

@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 12 May 2004.
+** This file was last modified 11 December 2004.
 */
 
 /*
@@ -107,132 +107,6 @@
 */
 #define CRUFT_AUTH 1
 
-/*======================================================================
-** These are the default values for the PPR user and group names.  If
-** you want to change these, don't do it here, it won't work.  You must
-** change them in include/global.mk (which is created when you run
-** Configure).
-=======================================================================*/
-#ifndef USER_PPR
-#define USER_PPR "ppr"
-#endif
-#ifndef GROUP_PPR
-#define GROUP_PPR "ppr"
-#endif
-#ifndef USER_PPRWWW
-#define USER_PPRWWW "pprwww"
-#endif
-
-/*======================================================================
-** This section defines various directory and file names.
-** You shouldn't want to change anything in this section.
-** If you do you may have to change some makefiles too.
-======================================================================*/
-
-/*
-** These are the basic PPR directories in which its files and
-** other directories are placed.  Notice that these are defined
-** only if they have not been defined already.	Often, Configure
-** will have generated an include/global.mk which defines these
-** values first.
-*/
-#ifndef CONFDIR
-#define CONFDIR "/etc/ppr"				/* configuration files */
-#endif
-#ifndef HOMEDIR
-#define HOMEDIR "/usr/lib/ppr"			/* architechture dependent files */
-#endif
-#ifndef SHAREDIR
-#define SHAREDIR "/usr/share/ppr"		/* architechture independent files */
-#endif
-#ifndef VAR_SPOOL_PPR
-#define VAR_SPOOL_PPR "/var/spool/ppr"	/* work files */
-#endif
-#ifndef TEMPDIR
-#define TEMPDIR "/tmp"					/* short life temporary files */
-#endif
-#ifndef SYSBINDIR
-#define SYSBINDIR "/usr/bin"			/* for standard system programs */
-#endif
-#ifndef XWINBINDIR
-#define XWINBINDIR "/usr/bin/X11"		/* for standard X-Windows programs */
-#endif
-
-/* Subdirectories */
-#define RUNDIR VAR_SPOOL_PPR"/run"
-#define VAR_PRINTERS VAR_SPOOL_PPR"/printers"
-
-/* The main PPR configuration file. */
-#define PPR_CONF CONFDIR"/ppr.conf"
-
-/* Various configuration files: */
-#define DBNAME CONFDIR"/charge_users.db"						/* users database file name */
-#define MEDIAFILE CONFDIR"/media.db"							/* media definitions */
-#define NEWPRN_CONFIG CONFDIR"/newprn.conf"						/* new printer configuration lines */
-#define UPRINTCONF CONFDIR"/uprint.conf"						/* for libuprint.a */
-#define UPRINTREMOTECONF CONFDIR"/uprint-remote.conf"			/* list of remote printers */
-
-/* Configuration files that aren't meant to be changed: */
-#define MFMODES SHAREDIR"/lib/mfmodes.conf"						/* MetaFont modes for various printers */
-#define FONTSUB SHAREDIR"/lib/fontsub.conf"						/* font substitution database */
-#define LW_MESSAGES_CONF SHAREDIR"/lib/lw-messages.conf"		/* LaserWriter errors file */
-#define PJL_MESSAGES_CONF SHAREDIR"/lib/pjl-messages.conf"		/* PJL USTATUS DEVICE errors file */
-#define EDITPSCONF HOMEDIR"/editps/editps.conf"					/* for ppr -H editps */
-#define CHARSETSCONF SHAREDIR"/lib/charsets.conf"				/* map characters set to PostScript encodings */
-#define FONTSCONF SHAREDIR"/lib/fonts.conf"						/* list of fonts and the PostScript encodings they support */
-#define PAGESIZES_CONF SHAREDIR"/lib/pagesizes.conf"			/* additional PostScript *PageSize names */
-#define PSERRORS_CONF SHAREDIR"/lib/pserrors.conf"				/* additional PostScript error explainations */
-
-/* Various configuration directories: */
-#define PRCONF CONFDIR"/printers"				/* printer configuration files */
-#define GRCONF CONFDIR"/groups"					/* group configuration files */
-#define ALIASCONF CONFDIR"/aliases"				/* queue alias configuration files */
-#define MOUNTEDDIR CONFDIR"/mounted"			/* directory for media mounted files */
-#define ACLDIR CONFDIR"/acl"					/* Access Control Lists */
-
-/* Special files used by the spooler: */
-#define NEXTIDFILE RUNDIR"/lastid_ppr"			/* file with previous queue id number */
-#define FIFO_NAME VAR_SPOOL_PPR"/PIPE"			/* name of pipe between ppr & pprd */
-#define PPRD_LOCKFILE RUNDIR"/pprd.pid"			/* created and locked by pprd */
-
-/* Directories where the spooler and friends find components: */
-#define FILTDIR HOMEDIR"/filters"				/* directory for input filter programs */
-#define INTDIR HOMEDIR"/interfaces"				/* directory for interface programs */
-#define COMDIR HOMEDIR"/commentators"			/* directory for commentator programs */
-#define RESPONDERDIR HOMEDIR"/responders"		/* responder programs */
-#define PPDDIR SHAREDIR"/PPDFiles"				/* our PPD file library (must be absolute) */
-#define STATIC_CACHEDIR SHAREDIR"/cache"		/* pre-loaded cache files */
-
-/* Directories where the spooler writes stuff: */
-#define QUEUEDIR VAR_SPOOL_PPR"/queue"			/* queue directory */
-#define DATADIR VAR_SPOOL_PPR"/jobs"			/* job data directory */
-#define ALERTDIR VAR_PRINTERS"/alerts"			/* directory for printer alert files */
-#define STATUSDIR VAR_PRINTERS"/status"			/* directory for printer status files */
-#define LOGDIR VAR_SPOOL_PPR"/logs"				/* directory for log files */
-#define CACHEDIR VAR_SPOOL_PPR"/cache"			/* directory for automatically cached files */
-#define ADDRESS_CACHE VAR_PRINTERS"/addr_cache" /* directory for cache of printer addresses */
-#define FONT_INDEX VAR_SPOOL_PPR"/fontindex.db"
-#define PPD_INDEX VAR_SPOOL_PPR"/ppdindex.db"
-
-/* The spooler state file for GUI interface: */
-#define STATE_UPDATE_FILE RUNDIR"/state_update"
-#define STATE_UPDATE_MAXLINES 1000
-#define STATE_UPDATE_PPRDRV_FILE RUNDIR"/state_update_pprdrv"
-#define STATE_UPDATE_PPRDRV_MAXBYTES 30000
-
-/* If this file exists, it will be filled with a log of all jobs printed: */
-#define PRINTLOG_PATH LOGDIR"/printlog"
-
-/* Paths to invoke various PPR components: */
-#define PPRDRV_PATH HOMEDIR"/lib/pprdrv"
-#define PPAD_PATH HOMEDIR"/bin/ppad"
-#define PPOP_PATH HOMEDIR"/bin/ppop"
-#define PPR_PATH HOMEDIR"/bin/ppr"
-#define TBCP2BIN_PATH HOMEDIR"/lib/tbcp2bin"
-#define PPR2SAMBA_PATH HOMEDIR"/bin/ppr2samba"
-#define TAIL_STATUS_PATH HOMEDIR"/lib/tail_status"
-#define PPJOB_PATH HOMEDIR"/bin/ppjob"
-
 /*=====================================================================
 ** Some Practical Limits
 =====================================================================*/
@@ -264,6 +138,9 @@
 #define MAX_PPD_NEST 10					/* maximum PPD file include levels */
 #define MAX_PPD_LINE 255				/* maximum line length for PPD files */
 #define MAX_VMOPTIONS 50				/* maximun number of *VMOption lines in PPD file */
+
+#define STATE_UPDATE_MAXLINES 1000
+#define STATE_UPDATE_PPRDRV_MAXBYTES 30000
 
 /*=========================================================================
 ** End of values which an end user might want to change.

@@ -25,12 +25,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 May 2004.
+# Last modified 11 December 2004.
 #
 
 #
 # This is the master Makefile for the PPR spooling system.
 #
+
+# Sign to Configure
+export CONFIGURE_RUNNING_FROM_MAKEFILE=1
 
 # We have to pull this in because at some point we need to print the name of
 # PPR's home directory.  (This file contains most of the system and local
@@ -95,7 +98,7 @@ SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests
 
 #=== Build ==================================================================
 
-all: symlinks-restore
+all: symlinks-restore config.h
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -108,19 +111,9 @@ all: symlinks-restore
 	@echo "Done making binaries.  You must now run \"$(MAKE) install\"."
 	@echo
 
-uprint: symlinks-restore
-	@for i in z_install_begin makeprogs libgu libuprint uprint; \
-		do \
-		echo "==========================================="; \
-		echo "=    running $(MAKE) in $$i"; \
-		echo "==========================================="; \
-		( cd $$i && $(MAKE) ) || exit 1; \
-		echo; \
-		done
-
 #=== Install ================================================================
 
-install: symlinks-restore
+install: symlinks-restore config.h
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -139,6 +132,29 @@ uprint-install:
 		( cd $$i && $(MAKE) install ) || exit 1; \
 		echo; \
 		done
+
+#=== Configure  =============================================================
+
+# The script Configure calls this in order to pick up the old settings 
+# exported from Makefile.conf.
+configure:
+	@echo "Searching for shell..."; \
+	for shell in /bin/bash /bin/ksh /bin/sh; \
+		do \
+		echo " Trying $$shell..."; \
+		if [ -x $$shell ]; \
+			then \
+			echo "Running \"$$shell ./Configure\"..."; \
+			$$shell ./Configure; \
+			break; \
+			fi; \
+		done
+
+config.h: config.h.in Makefile.conf subst_tool$(DOTEXE)
+	./subst_tool <config.h.in >config.h	
+
+subst_tool$(DOTEXE): subst_tool.c
+	$(CC) $(CFLAGS) -o $@ $^
 
 #=== Distribution Archive Generation =======================================
 
