@@ -1,6 +1,6 @@
 ;
 ; lprsrv.conf.sample
-; Last modified 5 February 2003.
+; Last modified 7 April 2004.
 ;
 ; This is a sample security configuration file for the PPR LPR/LPD
 ; server.  The intent of this sample file is to duplicate as closely
@@ -75,6 +75,9 @@
 ;	Note that since the "ppr user format" option uses the ppr -f
 ;	switch it will only be effective when ppr is executed by a proxy
 ;	user which is listed in /etc/ppr/acl/pprprox.allow.
+; force mail
+;   Always send e-mail on job completion as if the user had used lpr's
+;   -m option.
 ;
 [global]
 allow = yes
@@ -87,6 +90,7 @@ ppr proxy user = ppr
 other proxy user = nobody
 ppr proxy class = $cname
 ppr user format = $user@$host
+force mail = no
 
 ;
 ; This section applies to nodes which are granted access by /etc/hosts.lpd,

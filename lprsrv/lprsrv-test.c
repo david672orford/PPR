@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv-test.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 7 April 2004.
 */
 
 #include "before_system.h"
@@ -47,6 +47,13 @@
 #include "global_defines.h"
 #include "lprsrv.h"
 #include "util_exits.h"
+
+/*======================================================
+** These functions are needed because we link with many
+** of the modules used by lprsrv.  Thus we must provide
+** the same callback output functions as the daemon
+** uses.
+======================================================*/
 
 void fatal(int exitcode, const char message[], ... )
 	{
@@ -83,18 +90,18 @@ void debug(const char message[], ... )
 	va_end(va);
 	} /* end of debug() */
 
-/*
+/*======================================================
 ** Try to determine the fully qualified host name of
 ** a specified computer.
 **
 ** The returned string is in malloc() allocated memory.
-*/
+======================================================*/
 static const char *fully_qualify_hostname(const char *hostname)
 	{
 	struct hostent *hostinfo;
 	struct in_addr my_addr;
 
-	if( (hostinfo=gethostbyname(hostname)) == (struct hostent *)NULL )
+	if((hostinfo = gethostbyname(hostname)) == (struct hostent *)NULL)
 		{
 		fprintf(stderr, _("Network node \"%s\" does not exist.\n"), hostname);
 		return (const char *)NULL;
@@ -108,7 +115,7 @@ static const char *fully_qualify_hostname(const char *hostname)
 
 	memcpy(&my_addr, hostinfo->h_addr_list[0], sizeof(my_addr));
 
-	if( (hostinfo=gethostbyaddr((char*)&my_addr, sizeof(my_addr), AF_INET)) == (struct hostent *)NULL )
+	if((hostinfo = gethostbyaddr((char*)&my_addr, sizeof(my_addr), AF_INET)) == (struct hostent *)NULL)
 		{
 		fprintf(stderr, _("Reverse lookup failed for \"%s\" address \"%s\".\n"), hostname, inet_ntoa(my_addr));
 		return (const char *)NULL;
@@ -117,6 +124,8 @@ static const char *fully_qualify_hostname(const char *hostname)
 	return gu_strdup(hostinfo->h_name);
 	} /* end of fully_qualify_hostname() */
 
+/*======================================================
+======================================================*/
 int main(int argc, char *argv[])
 	{
 	const char *hostname;
@@ -161,6 +170,7 @@ int main(int argc, char *argv[])
 	printf("other proxy user = %s\n", access_info.other_proxy_user);
 	printf("ppr proxy class = %s\n", access_info.ppr_proxy_class);
 	printf("ppr user format = %s\n", access_info.ppr_from_format);
+	printf("force mail = %s\n", access_info.force_mail ? "yes" : "no");
 	fputs("\n", stdout);
 
 	if(!access_info.allow)
@@ -180,9 +190,9 @@ int main(int argc, char *argv[])
 		char proxy_for[82];
 
 		printf(_("Based on the lprsrv.conf section shown above, the following table shows the\n"
-				"local user IDs and proxy for strings that will be used when accepting\n"
-				"remote jobs from the node \"%s\" for the remote user or users which you\n"
-				"have specified.\n"), hostname);
+				"local user IDs and proxy for strings that will be used when accepting remote\n"
+				"jobs from the node \"%s\" for the remote user or users\n"
+				"which you have specified.\n"), hostname);
 		printf("\n");
 
 		printf(FORMAT, _("Spooler"), _("Remote User"), _("Local User"), _("As Proxy For"));
@@ -210,6 +220,6 @@ int main(int argc, char *argv[])
 		}
 
 	return EXIT_OK;
-	}
+	} /* end of main() */
 
 /* end of file */
