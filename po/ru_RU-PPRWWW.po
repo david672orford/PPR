@@ -1291,7 +1291,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:653 ../www/prn_properties.cgi.perl:51
 msgid "Printer Name:"
-msgstr "Название Принтера:"
+msgstr "Название принтера:"
 
 #: ../www/prn_addwiz.cgi.perl:659
 msgid "You must enter a name for the printer!"

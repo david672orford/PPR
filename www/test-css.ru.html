@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Brower Cascading Style Sheets Test</title>
+<style type="text/css">
+BODY {
+	font-family: serif;
+	font-size: 12pt;
+	background-color: white;
+	color: black;
+	}
+TABLE,TH,TD {
+	border: thin solid black;
+	}
+TH,TD {
+	text-align: left;
+	padding: 3pt;
+	}
+TABLE.font_example TD {
+	font-size: 18pt;
+	}
+IMG.unit {
+	height: 10pt;
+	}
+</style>
+</head>
+<body>
+<h1>Brower Cascading Style Sheets Test</h1>
+
+<h2>Standard CSS Fonts</h2>
+<table cellspacing=0 class="font_example">
+<tr style="font-family: serif"><td>Serif</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: sans-serif"><td>Sans-serif</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: monospace"><td>Monospace</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: cursive"><td>Cursive</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: fantasy"><td>Fantasy</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+</table>
+
+<h2>Basic PostScript Fonts</h2>
+<table cellspacing=0 class="font_example">
+<tr style="font-family: Times"><td>Times</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: Helvetica"><td>Helvetica</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: Courier"><td>Courier</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+</table>
+
+<h2>Basic Microsoft Windows Fonts</h2>
+<table cellspacing=0 class="font_example">
+<tr style="font-family: 'Times New Roman'"><td>Times New Roman</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: Arial"><td>Arial</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+<tr style="font-family: 'Courier New'"><td>Courier New</td><td>בגקחה ÁÂ×ÇÄ 0123456789</td></tr>
+</table>
+
+<h2>Dimension Interpretation</h2>
+<table cellspacing=0>
+<tr><th rowspan=4>An inch by any name</th>
+    <th>1 inch			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 1in"></td></tr>
+<tr><th>2.54 centimeters</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 2.54cm"></td></tr>
+<tr><th>72 points		</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 72pt"></td></tr>
+<tr><th>6 picas			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 6pc"></td></tr>
+<tr><th rowspan=9>Units as themselves</th>
+    <th>One centimeter	</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 1cm"></td></tr>
+<tr><th>1 pixel			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 1px"></td></tr>
+<tr><th>72 pixels		</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 72px"></td></tr>
+<tr><th>100 pixels		</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 100px"></td></tr>
+<tr><th>1 em			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 1em"></td></tr>
+<tr><th>10 em			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 10em"></td></tr>
+<tr><th>10 actual ems	</th><td>MMMMMMMMMM</td></tr>
+<tr><th>1 ex			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 1ex"></td></tr>
+<tr><th>10 ex			</th><td><img src="../images/pixel-blue.png" class="unit" style="width: 10ex"></td></tr>
+</table>
+
+</body>
+</html>
