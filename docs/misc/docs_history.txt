@@ -301,6 +301,9 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 
 * refman/ppr.1.pod: documented implied filter options.
 
+* refman/ppad.8.pod: improved description of "ppad rip" including
+more information about RIPs and *pprRIP:.
+
 
 
 

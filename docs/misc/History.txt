@@ -7970,3 +7970,8 @@ line was being parsed twice.
 
 * pprdrv/pprdrv_commentary.c: restored support for "ppr --commentary".
 
+* Fixed "ppad help" description of "ppad rip".
+
+* pprdrv/pprdrv.c:pprdrv_read_printer_conf(): fixed to allow empty option 
+  list.
+
