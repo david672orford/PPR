@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 4 June 2004.
 */
 
 /*
@@ -302,7 +302,7 @@ int media_put(const char *argv[])
 	padded_to_ASCIIZ(asciiz, media.type, sizeof(media.type));
 	if( exists && *asciiz )
 		{
-		printf(_("Preprinted Form Type: (%s) "), asciiz);
+		printf(_("Pre-printed Form Type: (%s) "), asciiz);
 		get_answer(asciiz, sizeof(asciiz), argv, &index);
 		if(*asciiz)
 			{
@@ -314,7 +314,7 @@ int media_put(const char *argv[])
 		}
 	else
 		{
-		printf(_("Preprinted Form Type: "));
+		printf(_("Pre-printed Form Type: "));
 		get_answer(asciiz,sizeof(asciiz),argv,&index);
 		ASCIIZ_to_padded(media.type,asciiz,sizeof(media.type));
 		}
@@ -413,7 +413,7 @@ int media_show(const char *argv[])
 									media.height/72.0*2.54 );
 			printf(_("Weight: %.1f grams per square metre\n"), media.weight);
 			printf(_("Colour: %16.16s\n"), media.colour);
-			printf(_("From Type: %16.16s\n"), media.type);
+			printf(_("Pre-printed Form Type: %16.16s\n"), media.type);
 			printf(_("Banner/Trailer suitability: %d\n"), media.flag_suitability);
 
 			if( ! all ) break;

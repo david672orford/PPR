@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 4 June 2004.
 */
 
 /*
@@ -48,6 +48,43 @@
 #include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
+
+/*
+ * This routine converts a Unix time to a string.
+ *
+ * If the job was submitted within the last 24 hours, display the
+ * time of day.  Otherwise, display the date.
+ *
+ * We try to use %X and %x to format the date and time according
+ * to the current locale, but these are appearently not defined
+ * for all locales, so we fall back to our own formats.
+ */
+static void format_time(char *timestr, size_t timestr_len, time_t time_to_format)
+	{
+	struct tm *tm_time;
+	time_t time_now;
+	tm_time = localtime(&time_to_format);
+	time_now = time((time_t*)NULL);
+	if(difftime(time_now, time_to_format) >= (24*60*60))
+		{
+		#warning Expect spurious y2k warning on next line
+		if(strftime(timestr, timestr_len, "%x", tm_time) == 0)
+			{
+			#warning Expect y2k warning on next line
+			strftime(timestr, timestr_len, "%d-%b-%y", tm_time);
+			}
+		}
+	else
+		{
+		if(strftime(timestr, timestr_len, "%X", tm_time) == 0)
+			{
+			if(strftime(timestr, timestr_len, "%p", tm_time) == 0)
+				strftime(timestr, timestr_len, "%H:%M",tm_time);
+			else
+				strftime(timestr, timestr_len, "%I:%M%p",tm_time);
+			}
+		}
+	}
 
 /*
 ** Those subcommands which allow PPRDEST to be used as the default argument
@@ -596,25 +633,14 @@ static int ppop_list_item(const struct QEntry *qentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
-	struct tm *tm_time;
-	time_t time_now;
 	char timestr[10];
 	char pagesstr[4];
 	char *jobname;
 
-	/* Decide on a representation of the date
-	   it was submitted.  This depends on how much that
-	   date differs from the current time. */
-	tm_time = localtime((time_t*)&qfileentry->time);
-	time_now = time((time_t*)NULL);
-	if( difftime(time_now, (time_t)qfileentry->time) >= (24*60*60) )
-		#warning Expect y2k warning on next line
-		strftime(timestr,sizeof(timestr),"%d-%b-%y",tm_time);
-	else
-		strftime(timestr,sizeof(timestr),"%I:%M%p",tm_time);
+	format_time(timestr, sizeof(timestr), (time_t)qfileentry->time);
 
 	/* Convert the number of pages to ASCII. */
-	if( (qfileentry->attr.pages < 0) || (qfileentry->attr.pages > 999) )
+	if(qfileentry->attr.pages < 0 || qfileentry->attr.pages > 999)
 		strcpy(pagesstr,"???");
 	else
 		snprintf(pagesstr, sizeof(pagesstr), "%3.3d", qfileentry->attr.pages);
@@ -1586,17 +1612,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 31:					/* subtime */
 				{
-				struct tm *tm_time;
-				time_t time_now;
 				char timestr[10];
-				tm_time = localtime((time_t*)&qfileentry->time);		/* break up queue time */
-				time_now = time((time_t*)NULL);							/* get current time */
-				if(difftime(time_now, (time_t)qfileentry->time) >= (24*60*60))
-					#warning Expect y2k warning on next line
-					strftime(timestr, sizeof(timestr), "%d-%b-%y", tm_time);
-				else
-					strftime(timestr, sizeof(timestr), "%I:%M%p", tm_time);
-				fputs(timestr,stdout);
+				format_time(timestr, sizeof(timestr), (time_t)qfileentry->time);
+				fputs(timestr, stdout);
 				}
 				break;
 			case 32:					/* pages */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 4 June 2004.
 */
 
 /*
@@ -296,14 +296,10 @@ static int ppuser_show(char *argv[])
 			{
 			struct tm *t;
 			char temp[32];
-			/* This one is for the i18n of the date format.  Should we follow 
-			 * the format of the flag pages (as we do here), or should we use
-			 * the format from the user's locale?
-			 */
-			char *format = gu_ini_query(PPR_CONF, "internationalization", "flagdateformat", 0, "%d-%b-%Y, %I:%M%p");
 			t = localtime(&entry.last_mod);
-			strftime(temp, sizeof(temp), "%d %b %Y %I:%M %p", t);
-			strftime(temp, sizeof(temp), format, t);
+			/*strftime(temp, sizeof(temp), "%d %b %Y %I:%M %p", t);*/
+			#warning Expect y2k warning in the next line
+			strftime(temp, sizeof(temp), "%c", t);
 			printf(_("Last Modified: %s\n"), temp);
 			}
 			printf(_("Account lifetime: %d\n"), entry.lifetime);
