@@ -96,6 +96,9 @@ char *gu_strndup(const char *string, size_t len)
 char *gu_restrdup(char *ptr, size_t *number, const char *string)
     {
     size_t len = strlen(string);
+
+    DODEBUG(("gu_restrdup(ptr=%p, number=%d, string=\"%s\")", ptr, number, string));
+
     if(!ptr || *number <= len)		/* must be at least one greater */
     	{
 	*number = (len + 1);
@@ -109,11 +112,11 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 /*
 ** PPR memory allocator, change the size of a block.
 */
-void *ppr_realloc(void *ptr, size_t number, size_t size)
+void *gu_realloc(void *ptr, size_t number, size_t size)
     {
     void *rval;
 
-    DODEBUG(("ppr_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
+    DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
 
     if((rval = realloc(ptr, number*size)) == (void*)NULL)
 	libppr_throw(EXCEPTION_STARVED, "ppr_realloc", "realloc() failed, errno=%d", errno);

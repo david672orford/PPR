@@ -31,12 +31,13 @@
 *%	PRINTER_HP550C		HP DeskJet 550C, 560C
 *%
 #else
-*% This file was generated from "~ppr/src/ppd/ghostscript.master"
-*% which was last revised 5 June 2001.
+*% This file was generated from "~ppr/src/ppd/ghostscript_master"
+*% which was last revised 19 July 2001.
 *%
 #endif
 
-*% This tracks the PPR version:
+*% This tracks the PPR version.  It will be the same as the last version of
+*% PPR in which this file was changed.
 *FileVersion: "1.44"
 
 *FormatVersion: "4.2"
@@ -70,7 +71,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "6"
-*% *pprRIP: gs ljet3 pcl
+*% *pprRIP: ppr-gs pcl -sDEVICE=ljet3
 #endif
 
 #ifdef PRINTER_HPDJ500
@@ -83,7 +84,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "4"
-*% *pprRIP: gs djet500 pcl
+*% *pprRIP: ppr-gs pcl -sDEVICE=djet500
 #endif
 
 #ifdef PRINTER_DM24
@@ -96,7 +97,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "1"
-*% *pprRIP: gs necp6 ?
+*% *pprRIP: ppr-gs x -sDEVICE=necp6
 #endif
 
 #ifdef PRINTER_HPDJ550C
@@ -109,21 +110,17 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*% *pprRIP: gs cdj550 pcl
+*% *pprRIP: ppr-gs pcl -sDEVICE=cdj550
 #endif
 
-*% This is also true:
-*Product: "(Aladin Ghostscript)"
+*% ===== General Information =====
 
-*% General Information and Defaults ===============
 *LanguageLevel: "2"
 *VariablePaperSize: False
 *FileSystem: True
 *TTRasterizer: None
 
-*ColorDevice: False
-*DefaultColorSpace: Gray
-*Throughput: "3"
+*% ===== Available Memory =====
 
 *FreeVM: "1048576"
 *VMOption 512K/512K Free RAM: "524288"
@@ -138,6 +135,8 @@
 *InstalledMemory 2Meg/2 MB Free RAM: ""
 *InstalledMemory 4Meg/4 MB Free RAM: ""
 *CloseUI: *InstalledMemory
+
+*% ===== Page Sizes =====
 
 *OpenUI *PageSize: PickOne
 *OrderDependency: 30 AnySetup *PageSize
@@ -169,6 +168,8 @@
 *PaperDimension A4: "595 842"
 *PaperDimension B5: "516 729"
 
+*% ===== Input Trays =====
+
 *RequiresPageRegion All: True
 *OpenUI *InputSlot: PickOne
 *OrderDependency: 20 AnySetup *InputSlot
@@ -190,6 +191,8 @@
 #endif
 
 #ifdef PRINTER_HPDJ550C
+*% ===== HP Colour DeskJet Options =====
+
 *OpenGroup: PrintQuality
 
 *OpenUI *BitsPerPixel/Color Rendering: PickOne
@@ -255,6 +258,8 @@
 
 *CloseGroup: PrintQuality
 #endif
+
+*% ===== Fonts =====
 
 #ifdef FONTS_IBMCOURIER
 #ifndef COURIER_INCLUDED

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 May 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -802,8 +802,8 @@ void job_start(enum JOBTYPE jobtype)
 	    BarBarPDL = job.Filters;
 	    break;
 	default:
-	    if(printer.RIP.driver_output_language)
-	    	BarBarPDL = printer.RIP.driver_output_language;
+	    if(printer.RIP.output_language)
+	    	BarBarPDL = printer.RIP.output_language;
 	    else
 		BarBarPDL = NULL;
 	    break;

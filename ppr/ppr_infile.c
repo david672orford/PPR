@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 1 June 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -296,7 +296,7 @@ static char *append_to_list(char *oldpart, const char *newpart)
     else
 	{
 	int len = strlen(oldpart) + strlen(newpart) + 2;
-	oldpart = (char*)ppr_realloc(oldpart, len, sizeof(char));
+	oldpart = (char*)gu_realloc(oldpart, len, sizeof(char));
 	strcat(oldpart, " ");
 	strcat(oldpart, newpart);
 	}
@@ -1809,7 +1809,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 	    *di++ = tolower(*si++);	/* converting it to lower case. */
 
 	if( *si && *si == '=' )		/* Copy the equals sign. */
-	    *di++ = *si++;	
+	    *di++ = *si++;
 
 	if(*si != '"')
 	    {
@@ -1824,7 +1824,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 		{
 		lastc = c;
 		}
-	    }	    
+	    }
 
 	if( isspace(*si) )		/* Finally, copy the space */
 	    *di++ = *si++;		/* which follows. */

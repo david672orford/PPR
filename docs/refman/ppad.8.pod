@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 11 May 2001.
+# Last revised 19 July 2001.
 #
 
 =head1 NAME
@@ -141,7 +141,7 @@ printer with a serial interface:
 C<$ ppad options myprn 'speed=19200 bits=7 parity=even'>
 
 The available options depend on which interface was selected.  See the
-appropriate section in the L<ppad_interfaces(8)> manpage to learn what
+appropriate section in the L<ppad-interfaces(8)> manpage to learn what
 options are available for any given interface.
 
 The options can be removed either by specifying an empty string or omitting the options
@@ -294,9 +294,10 @@ whether the printer's PPD file indicates that the printer supports TBCP.
 =back
 
 
-=item B<ppad rip> I<printer> [I<rip> I<driver> I<driver_output_language> [I<options>]]
+=item B<ppad rip> I<printer> [I<rip> I<output_language> [I<options>]]
 
-This option is new and experimental in PPR version 1.44.
+This option is new and experimental in PPR version 1.44.  It has already changed once 
+during the beta testing period and may change again.
 
 PPR has the ability to execute external Raster Image Processors such as Ghostscript to
 convert PostScript to a form usable by non-PostScript printers.  It does so when it
@@ -304,26 +305,20 @@ finds a "*pprRIP:" line in the PPD file or if this command has been used to set 
 in the printer's configuration file.  RIP settings set with this command override those
 in the PPD file.
 
-The parameter I<rip> indicates the Raster Image Processor to use.  Currently only B<gs>
-which selects GhostScript is supported.  PPR will find the actual Ghostscript executable by
-fetching the first value of B<gs=> in the B<[ghostscript]> section of F</etc/ppr/ppr.conf>.
+The parameter I<rip> indicates the Raster Image Processor to use.  If the value is B<gs>,
+then PPR will use the copy of Ghostscript pointed to by the first value of B<gs=> in the 
+B<[ghostscript]> section of F</etc/ppr/ppr.conf>.  If it is B<ppr-gs> then it will use
+the special copy of Ghostscript from the PPR-Ghostscript distribution.  (You must of course 
+download this special Ghostscript distribution from the place you obtained PPR and install
+it before this option will be useful.)
 
-The parameter I<driver> selects the Ghostscript driver.  Run B<gs -h> to get a list
-of the drivers compiled into your copy of Ghostscript.  For example, you might choose
-"cdj550" to use the HP DeskJet 550C driver.
-
-If your copy of Ghostscript includes the driver called "uniprint", then you may instead
-specify the name of a F<.upp> file.  For example, you might choose "cdj550.upp" to select
-the Uniprint driver for the same printer.  If the F<.upp> file is in Ghostscript's search
-path, there is no need to specify the directory.
-
-The parameter I<driver_output_language> is the name of the printer language which the
+The parameter I<output_language> is the name of the printer language which the
 selected Ghostscript driver will produce output in.  It is used as the parameter to the
 PJL B<@PJL ENTER LANGUAGE> command.  If you will not be using the B<pjl> or B<signal/pjl>
-jobbreak method, then the actual value doesn't matter, you can set it to "?".
+jobbreak method, then the actual value doesn't matter, you can set it to "x".
 
-The option I<options> contains additional options for Ghostscript.  The syntax has not
-yet been defined and any value you enter will be ignored.  This option is optional.
+The option I<options> contains options for Ghostscript.  These should select the desired 
+Ghostscript device driver.
 
 To revert to the RIP settings in the PPD file, execute this command with just the
 printer name.
@@ -576,7 +571,7 @@ presence or absence of optional printer features.  Obviously, a PPD file
 should be selected with the "ppad ppd" command before this command is
 used.  The information which the user supplies is used to answer queries
 from Macintosh clients.  It is likely that this information will be used for
-other purposes in the future.  L<papsrv> will not pick up new information until
+other purposes in the future.  L<papsrv(8)> will not pick up new information until
 it is restarted.  Running "ppad ppd" will undo "ppad ppdopts", leaving all
 of the feature information unspecified.
 
@@ -693,7 +688,7 @@ PPR ACLs are stored in files in B</etc/ppr/acl>.  The ACL system is still under
 development, so no furthur information is available at this time.
 
 
-=item B<ppad userparams I<printer> I<options>
+=item B<ppad userparams> I<printer> I<options>
 
 This can be used to set a list of name=value pairs of options.  These
 options are for the PostScript interpreter and are set with the PostScript
@@ -1009,7 +1004,7 @@ F<include/util_exits.h>.
 
 =head1 SEE ALSO
 
-ppop(1), ppr(1), papsrv.conf(5), mfmodes.conf(5), papsrv(8), papsrv(8),
+ppop(1), ppr(1), papsrv.conf(5), mfmodes.conf(5), papsrv(8),
 lprsrv(8), ppuser(8) "PPR, a PostScript Print Spooler", "Installing and
 Using PPR".
 

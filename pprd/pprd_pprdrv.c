@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif

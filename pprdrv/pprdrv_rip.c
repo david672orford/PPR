@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
@@ -121,30 +121,48 @@ void rip_fault_check(void)
 int rip_start(int printdata_handle, int stdout_handle)
     {
     FUNCTION4DEBUG("rip_start")
-    static const char *gs = HOMEDIR"/lib/gs";
+    static const char *gs = NULL;
+    const char **rip_args;
     int rip_pipe[2];
-    char driver_option[32];
 
     DODEBUG_INTERFACE(("%s()", function));
 
-    /* Make sure gs is what the user wants. */
-    if(strcmp(printer.RIP.name, "gs"))
-	fatal(EXIT_PRNERR_NORETRY, "Ghostscript (gs) is the only RIP supported at this time.");
-
     /* Get the path to the Ghostscript interpreter from ppr.conf. */
-    #if 0
     if(!gs)
 	{
-	if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
-	    fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
+	if(strcmp(printer.RIP.name, "gs") == 0)
+	    {
+	    if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
+		fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
+	    }
+	else if(strcmp(printer.RIP.name, "ppr-gs") == 0)
+	    {
+	    gs = HOMEDIR"/lib/gs";
+	    }
+	else
+	    {
+    	    fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name);
+    	    }
+    	}
+
+    /* Build the argument vector. */
+    {
+    int si, di;
+    rip_args = gu_alloc(printer.RIP.options_count + 6, sizeof(const char *));
+    di = 0;
+    rip_args[di++] = gs;
+    for(si = 0; si < printer.RIP.options_count; si++)
+	{
+	rip_args[di++] = printer.RIP.options[si];
 	}
-    #endif
-
-    if(strlen(printer.RIP.driver) > 4 && strcmp(&printer.RIP.driver[strlen(printer.RIP.driver) - 4], ".upp") == 0)
-	snprintf(driver_option, sizeof(driver_option), "@%s", printer.RIP.driver);
-    else
-	snprintf(driver_option, sizeof(driver_option), "-sDEVICE=%s", printer.RIP.driver);
-
+    rip_args[di++] = "-q";
+    rip_args[di++] = "-dSAFER";
+    rip_args[di++] = "-sOutputFile=| cat - >&3";
+    rip_args[di++] = "-";
+    rip_args[di++] = NULL;
+    }
+    
+    /* Reset flags related to the RIP dying. */
     rip_died = FALSE;
     rip_fault_check_disable = FALSE;
 
@@ -154,6 +172,7 @@ int rip_start(int printdata_handle, int stdout_handle)
     if((rip_pid = fork()) == -1)
     	fatal(EXIT_PRNERR, "fork() failed, errno=%d (%s)", errno, strerror(errno));
 
+    /* If child, */
     if(rip_pid == 0)
     	{
 	/* See pprdrv_interface.c:start_interface() for comments on this paranoid code. */
@@ -176,12 +195,12 @@ int rip_start(int printdata_handle, int stdout_handle)
 	close(new_printdata);
 
 	/* Launch Ghostscript. */
-	execl(gs, gs, driver_option, "-q", "-dSAFER", "-sOutputFile=| cat - >&3", "-", NULL);
+	execv(gs, (char**)rip_args);
 	_exit(1);
     	}
 
     close(rip_pipe[0]);
-
+    gu_free(rip_args);
     saved_printdata_handle = printdata_handle;
 
     DODEBUG_INTERFACE(("%s(): done", function));

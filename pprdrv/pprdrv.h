@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 21 June 2001.
+** Last revised 19 July 2001.
 */
 
 /*
@@ -353,9 +353,10 @@ struct PPRDRV {
 	struct					/* Raster Image Processor (such as Ghostscript) */
 	    {
 	    char *name;
-	    char *driver;
-	    char *driver_output_language;
-	    char *options;
+	    char *output_language;
+	    char *options_storage;
+	    const char **options;
+	    int options_count;
 	    } RIP;
 
 	struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */

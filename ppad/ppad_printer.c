@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 June 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -332,8 +332,7 @@ int printer_show(const char *argv[])
     int codes = CODES_DEFAULT;
     int codes_default;
     char *rip_name = NULL;
-    char *rip_driver = NULL;
-    char *rip_driver_output_language = NULL;
+    char *rip_output_language = NULL;
     char *rip_options = NULL;
     char *PPDFile = (char*)NULL;
     char *bins[MAX_BINS];
@@ -425,10 +424,9 @@ int printer_show(const char *argv[])
 	else if((ptr = lmatchp(confline, "RIP:")))
 	    {
 	    if(rip_name) gu_free(rip_name);
-	    if(rip_driver) gu_free(rip_driver);
-	    if(rip_driver_output_language) gu_free(rip_driver_output_language);
+	    if(rip_output_language) gu_free(rip_output_language);
 	    if(rip_options) gu_free(rip_options);
-	    gu_sscanf(ptr, "%S %S %S %Q", &rip_name, &rip_driver, &rip_driver_output_language, &rip_options);
+	    gu_sscanf(ptr, "%S %S %S %Z", &rip_name, &rip_output_language, &rip_options);
 	    }
 	else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 	    {
@@ -613,10 +611,9 @@ int printer_show(const char *argv[])
 	    	{
 		if(!rip_name)
 		    {
-		    char *f1, *f2, *f3, *f4;
+		    char *f1, *f2, *f3;
 		    if(!(f1 = gu_strsep(&p, " \t\n"))
 				|| !(f2 = gu_strsep(&p, " \t\n"))
-				|| !(f3 = gu_strsep(&p, " \t\n"))
 				)
 		        {
 		        fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
@@ -624,10 +621,9 @@ int printer_show(const char *argv[])
 		    else
 			{
 			rip_name = gu_strdup(f1);
-			rip_driver = gu_strdup(f2);
-			rip_driver_output_language = gu_strdup(f3);
-			if((f4 = gu_strsep_quoted(&p, " \t\n", NULL)))
-			    f4 = gu_strdup(f4);
+			rip_output_language = gu_strdup(f2);
+			if((f3 = gu_strsep_quoted(&p, "", NULL)))
+			    f3 = gu_strdup(f3);
 			}
 		    }
 	    	} /* "*pprRIP:" */
@@ -679,10 +675,9 @@ int printer_show(const char *argv[])
 	/* RIP */
 	if(rip_name)
 	    {
-	    printf(_("RIP: %s %s %s \"%s\"\n"),
+	    printf(_("RIP: %s %s \"%s\"\n"),
 		rip_name,
-		rip_driver ? rip_driver : "?",
-		rip_driver_output_language ? rip_driver_output_language : "?",
+		rip_output_language ? rip_output_language : "?",
 		rip_options ? rip_options : "");
 	    }
 
@@ -832,10 +827,9 @@ int printer_show(const char *argv[])
 	printf("codes\t%s %s\n", codes_description(codes), codes_description(codes_default));
 
 	/* RIP */
-	printf("rip\t%s\t%s\t%s\t%s\n",
+	printf("rip\t%s\t%s\t%s\n",
 		rip_name ? rip_name : "",
-		rip_driver ? rip_driver : "",
-		rip_driver_output_language ? rip_driver_output_language : "",
+		rip_output_language ? rip_output_language : "",
 		rip_options ? rip_options : "");
 
 	/* Alerts */
@@ -943,8 +937,7 @@ int printer_show(const char *argv[])
     if(address) gu_free(address);
     if(options) gu_free(options);
     if(rip_name) gu_free(rip_name);
-    if(rip_driver) gu_free(rip_driver);
-    if(rip_driver_output_language) gu_free(rip_driver_output_language);
+    if(rip_output_language) gu_free(rip_output_language);
     if(rip_options) gu_free(rip_options);
     if(PPDFile) gu_free(PPDFile);
     if(alerts_method) gu_free(alerts_method);
@@ -1472,19 +1465,18 @@ int printer_codes(const char *argv[])
 */
 int printer_rip(const char *argv[])
     {
-    const char *printer = argv[0], *rip = argv[1], *driver = argv[2], *driver_output_language = argv[3], *options = argv[4];
+    const char *printer = argv[0], *rip = argv[1], *output_language = argv[2], *options = argv[3];
 
-    if(!printer || (printer && rip && (!driver || !driver_output_language)))
+    if(!printer || (printer && rip && !output_language))
 	{
 	fputs(_("You must supply the name of an existing printer.  If you supply no other\n"
 		"parameters, the RIP setting will revert to the PPD file default.  To set\n"
-		"a different RIP, supply the RIP name (such as \"gs\"), a driver name (such\n"
-		"as \"djet500\"), an output language (such as \"pcl\"), and an optional\n"
-		"RIP options string.\n"), errors);
+		"a different RIP, supply the RIP name (such as \"gs\" or \"ppr-gs\"), an\n"
+		"output language (such as \"pcl\"), and a RIP options string.\n"), errors);
 	return EXIT_SYNTAX;
 	}
 
-    return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s \"%s\"" : NULL, rip, driver, driver_output_language, options ? options : "");
+    return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s" : NULL, rip, output_language, options ? options : "");
     } /* end of printer_rip() */
 
 /*

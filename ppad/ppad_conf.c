@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_conf.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 September 2000.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -155,7 +155,7 @@ int confread(void)
     while(len == (confline_len - 1) && confline[len - 1] != '\n')
 	{
 	confline_len *= 2;
-	confline = (char*)ppr_realloc(confline, confline_len, sizeof(char));
+	confline = (char*)gu_realloc(confline, confline_len, sizeof(char));
 	if(!fgets((confline + len), (confline_len - len), confin)) break;
 	len = strlen(confline);
 	}

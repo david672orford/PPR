@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 January 2001.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
@@ -20,9 +20,9 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "pprdrv.h"
 #include "interface.h"
 

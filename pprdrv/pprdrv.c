@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 May 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -1121,9 +1121,8 @@ static void pprdrv_read_printer_conf(void)
     printer.Address = NULL;
     printer.Options = NULL;
     printer.RIP.name = NULL;
-    printer.RIP.driver = NULL;
-    printer.RIP.driver_output_language = NULL;
-    printer.RIP.options = NULL;
+    printer.RIP.output_language = NULL;
+    printer.RIP.options_storage = NULL;
     printer.Commentators = (struct COMMENTATOR *)NULL;
     printer.do_banner = BANNER_DISCOURAGED;	/* default flag */
     printer.do_trailer = BANNER_DISCOURAGED;	/* page settings */
@@ -1223,13 +1222,11 @@ static void pprdrv_read_printer_conf(void)
 	    {
 	    if(printer.RIP.name)
 	    	gu_free(printer.RIP.name);
-	    if(printer.RIP.driver)
-	    	gu_free(printer.RIP.driver);
-	    if(printer.RIP.driver_output_language)
-	    	gu_free(printer.RIP.driver_output_language);
-	    if(printer.RIP.options)
-	    	gu_free(printer.RIP.options);
-	    if((count = gu_sscanf(tptr, "%S %S %S %Z", &printer.RIP.name, &printer.RIP.driver, &printer.RIP.driver_output_language, &printer.RIP.options)) < 3)
+	    if(printer.RIP.output_language)
+	    	gu_free(printer.RIP.output_language);
+	    if(printer.RIP.options_storage)
+	    	gu_free(printer.RIP.options_storage);
+	    if((count = gu_sscanf(tptr, "%S %S %Z", &printer.RIP.name, &printer.RIP.output_language, &printer.RIP.options_storage)) < 3)
 	    	fatal(EXIT_PRNERR_NORETRY, "Invalid \"%s\" (%s line %d).", "RIP:", cfname, linenum);
 	    }
 
@@ -1405,6 +1402,72 @@ static void pprdrv_read_printer_conf(void)
     	printer.Jobbreak = interface_default_jobbreak(printer.Interface, &printer.prot);
     if(! saw_codes)
 	printer.Codes = interface_default_codes(printer.Interface, &printer.prot);
+
+    /*
+    ** Now we have to parse the RIP options.  It would be nice if we had a 
+    ** library function for this.
+    */
+    printer.RIP.options_count = 0;
+    if(printer.RIP.options_storage)
+	{
+	char *si, *di;
+
+	/* Estimate how many items there are, erring on the side of caution. */
+	{
+	int count;
+	for(count = 1, si = printer.RIP.options_storage; *si; si++)
+	    {
+	    if(isspace(*si))
+	    	count++;
+	    }
+	printer.RIP.options = gu_alloc(count, sizeof(const char *));
+	}
+
+	/* Parse into "words" with crude quoting. */
+	si = di = printer.RIP.options_storage;
+	while(*si)
+	    {
+	    si += strspn(si, " \t");
+	    if(*si)
+		{
+		int c, quote = 0; 
+		printer.RIP.options[printer.RIP.options_count++] = si;
+		while((c = *si++))
+		    {
+		    switch(c)
+		    	{
+			case '\"':
+			case '\'':
+			    if(c == quote)
+			    	quote = 0;
+			    else if(!quote)
+				quote = c;
+			    else
+			    	*di++ = c;
+			    break;
+
+			case ' ':
+			case '\t':
+			    if(!quote)
+				{
+				*di++ = '\0';
+			    	goto break_break;
+			    	}
+			    *di++ = c;
+			    break;
+
+			default:
+			    *di++ = c;
+			    break;
+		    	}
+		    }
+		break_break:
+		}
+	    }
+
+	printer.RIP.options = gu_realloc(printer.RIP.options, printer.RIP.options_count, sizeof(const char *));
+	}
+
     } /* end of pprdrv_read_printer_conf() */
 
 /*

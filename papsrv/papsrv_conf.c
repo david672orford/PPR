@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv_conf.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 21 June 2001.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -30,12 +30,11 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "papsrv.h"
 
 int yylex(void);
 extern FILE *yyin;
-struct ADV *printer;            /* for communicating with yylex() */
+struct ADV *printer;			/* for communicating with yylex() */
 
 char *ppd_nest_fname[MAX_PPD_NEST];	/* names of all nested PPD files */
 int ppd_nest_level;			/* number of PPD files now open */
@@ -64,7 +63,7 @@ static SHORT_INT make_font_id(const char fontname[])
     if(fonts_count == fonts_space)	/* if more space needed */
 	{
 	fonts_space += 50;		/* make space for 50 more */
-	fonts = (char**)ppr_realloc(fonts, fonts_space, sizeof(char*) );
+	fonts = (char**)gu_realloc(fonts, fonts_space, sizeof(char*) );
 	}
 
     fonts[fonts_count++] = gu_strdup(fontname);
@@ -312,7 +311,7 @@ void add_font(char *fontname)
     if( printer->fontcount == printer_fontspace )	/* if more space needed */
     	{
     	printer_fontspace += 50;
-    	printer->fontlist = (SHORT_INT*)ppr_realloc((void*)printer->fontlist, printer_fontspace, sizeof(SHORT_INT) );
+    	printer->fontlist = (SHORT_INT*)gu_realloc((void*)printer->fontlist, printer_fontspace, sizeof(SHORT_INT) );
     	}
 
     printer->fontlist[printer->fontcount++] = make_font_id(fontname);
