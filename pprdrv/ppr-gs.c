@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/ppr-gs.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 October 2003.
+** Last modified 21 May 2004.
 */
 
 /*
@@ -101,31 +101,10 @@ int main(int argc, char *argv[])
 	{
 	const char *gs_exe = NULL;
 	char *outputfile = NULL;
-	gu_boolean saw_DEVICE = FALSE;
+	const char *device = NULL;
 	const char **gs_args;
 	int si, di;
 	char *p;
-
-	/*
-	** First step is to find a copy of Ghostscript which we can use.  We use
-	** list specified above.
-	*/
-	{
-	int i;
-	for(i=0 ; gs_exe_list[i]; i++)
-		{
-		if(access(gs_exe_list[i], X_OK) == 0)
-			{
-			gs_exe = gs_exe_list[i];
-			break;
-			}
-		}
-	if(!gs_exe)
-		{
-		fprintf(stderr, "RIP: Can't find Ghostscript!\n");
-		return 1;
-		}
-	}
 
 	/*
 	** Here we start to build the Ghostscript command line with the options
@@ -167,7 +146,7 @@ int main(int argc, char *argv[])
 				}
 			gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", exepath);
 			gs_args[di++] = "-sDEVICE=cups";
-			saw_DEVICE = TRUE;
+			device = "cups";
 			}
 
 		else if((p=lmatchp(argv[si], "ijs=")))
@@ -217,14 +196,15 @@ int main(int argc, char *argv[])
 
 			gu_free(copy);
 			
-			saw_DEVICE = TRUE;
+			device = "ijs";
 			}
 
 		/* Unrecognized options must be for Ghostscript. */
 		else
 			{
-			if(lmatch(argv[si], "-sDEVICE="))
-				saw_DEVICE = TRUE;
+			char *p;
+			if((p = lmatchp(argv[si], "-sDEVICE=")))
+				device = p;
 			gs_args[di++] = argv[si];
 			}
 		}
@@ -234,7 +214,7 @@ int main(int argc, char *argv[])
 	** it wasn't, we print a message that looks like the message that
 	** Ghostscript prints if one asks for a device that doesn't exist.
 	*/
-	if(!saw_DEVICE)
+	if(!device)
 		{
 		fprintf(stderr, "RIP: no device specified in RIP options\n");
 		return 1;
@@ -265,6 +245,31 @@ int main(int argc, char *argv[])
 	gs_args[di++] = "-";
 
 	gs_args[di++] = NULL;
+
+	/*
+	** Find a copy of Ghostscript which we can use.  We use
+	** the list specified above.
+	*/
+	{
+	int i;
+	for(i=0 ; gs_exe_list[i]; i++)
+		{
+		if(access(gs_exe_list[i], X_OK) == 0)
+			{
+			/* temporary hack !!! */
+			if(i == 0 && strcmp(device, "cups") != 0 && strcmp(device, "ijs") != 0)
+				continue;
+				
+			gs_exe = gs_exe_list[i];
+			break;
+			}
+		}
+	if(!gs_exe)
+		{
+		fprintf(stderr, "RIP: Can't find Ghostscript!\n");
+		return 1;
+		}
+	}
 
 	/* Replace ourself with Ghostscript. */
 	execv(gs_exe, (char**)gs_args);

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 22 May 2004.
 */
 
 /*
@@ -174,7 +174,7 @@ static void printer_error(int error_number)
 static int describe_status(int s)
 	{
 	/*
-	** If no fault buts set, the printer is now busy printing our job.  We 
+	** If no fault bits set, the printer is now busy printing our job.  We 
 	** should tell pprdrv about this because otherwise it will think
 	** that any error conditions which we described earlier are still
 	** present.

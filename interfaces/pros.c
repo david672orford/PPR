@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 22 May 2004.
 */
 
 /*
@@ -80,7 +80,7 @@
 #define PROSERR_HDR 0		/* bad header syntax */
 #define PROSERR_MEM 1		/* print server out of memory */
 #define PROSERR_NOA 2		/* access denied (wrong password maybe?) */
-#define PROSERR_POC 3		/* printer "occupied", whatever that means */
+#define PROSERR_POC 3		/* printer "occupied" (talking to another client) */
 #define PROSERR_BAN 4		/* bad printer name */
 #define PROSERR_OLD 5		/* unsupported protocol version */
 #define PROSERR_NOI 6		/* printer "not installed", whatever that means */
@@ -99,19 +99,20 @@
 #define PROSMSG_PRN 35		/* queue select */
 #define PROSMSG_PAS 36		/* password */
 #define PROSMSG_DTP 37		/* data block */
-#define PROSMSG_NOP 38		/* NOP - used as a tickle */
+#define PROSMSG_NOP 38		/* NOP - used as a 'tickle' to reset timeout */
 
 /* These are the messages which the print server can send to the 
  * client (to this program).
  */
 #define PROSMSG_JOK 48		/* PROSMSG_EOF acknowledge */
-#define PROSMSG_JST 49		/* job start */
+#define PROSMSG_JST 49		/* job acknowledgement */
 #define PROSMSG_ACC 50		/* accounting data */
 #define PROSMSG_DFP 51		/* data block */
+#define PROSMSG_no_error 52	/* undocumented, indicates PROSERR_* cleared */
 
 /* These values may be bitwise ored with any of the above. */
 #define PROSBIT_FATAL 0x40	/* indicate that the condition described is fatal */
-#define PROSBIT_DATA 0x80	/* indates that a data section is included */
+#define PROSBIT_DATA 0x80	/* indicates that a data section is included */
 
 /*=========================================================================
 ** This structure is used to store the result of parsing the name=value 
@@ -132,14 +133,15 @@ struct OPTIONS
 =========================================================================*/
 
 static int pros_pack(unsigned char *buf, int buf_size, int buf_off, int code, const char string[]);
-static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean *recv_eoj);
+static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean *recv_eoj, gu_boolean *job_start_acked);
 
 static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printer[], const char username[], const char hostname[])
     {
-    unsigned char sendbuf[4096];			/* data being sent to the printer */
+    unsigned char sendbuf[4096+3];			/* data being sent to the printer */
     int sendbuf_off;
-    unsigned char recvbuf[4096];			/* data received from the printer */
+    unsigned char recvbuf[4096+3];			/* data received from the printer */
 	int last_stdin_read;					/* number of bytes received at last stdin read */
+	gu_boolean job_start_acked = FALSE;
 	gu_boolean sent_eoj = FALSE;			/* have we sent PROSMSG_EOF? */
 	gu_boolean recv_eoj = FALSE;			/* have we received PROSMSG_JOK? */
 	fd_set rfds, wfds;						/* select() sets for sockfd */
@@ -148,8 +150,8 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
     struct timeval timeout;
 
     /* Build the PROS job header.  We will pack it into the print data buffer
-     * as though pretend we had received it from stdin.  It will be the first 
-     * block we transmit to the print server.
+     * whither we normally put the data which we receive from stdin.  It will
+	 * be the first block we transmit to the print server.
      */
 	sendbuf_off = 0;
 	sendbuf_off = pros_pack(sendbuf, sizeof(sendbuf), sendbuf_off, PROSMSG_HST, hostname);
@@ -169,28 +171,39 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 		timeout.tv_sec = 10;			/* lazy way of doing tickles */
 		timeout.tv_usec = 0;
 
-		if(sendbuf_off == 0)
+		if(sendbuf_off == 0)			/* if transmit buffer empty, */
 			{
-			/* If we didn't get EOF on stdin, as for more data. */
-			if(last_stdin_read != 0)
+			if(!job_start_acked)
 				{
+				/* do nothing */
+				}
+			/* If we didn't get EOF on stdin, ask for more data. */
+			else if(last_stdin_read != 0)
+				{
+				DODEBUG(("waiting for data on stdin"));
 				FD_SET(0, &rfds);
 				}
-			/* If we get EOF on stdin but haven't sent EOJ to printer, prepare the message. */
+			/* If we get did EOF on stdin, but haven't sent EOJ to printer, prepare 
+			 * the message.
+			 */
 			else if(!sent_eoj)
 				{
 				sendbuf[0] = PROSMSG_EOF;
 				sendbuf_off = 1;
 				sent_eoj = TRUE;
-				time(&time_last_tickle);
+				time(&time_last_tickle);		/* start clock for first tickle */
 				}
-			/* Since we have sent EOJ, see if it time for a tickle. */
+			/* Since we have sent EOJ already, see if it time for a 'tickle'.
+			 * A tickle is a PROS no-operation message.  It serves no purpose
+			 * other than to reasure the print server that we haven't crashed.
+			 */
 			else
 				{
 				time_t time_now;
 				time(&time_now);
 				if((time_now - time_last_tickle) >= 55)
 					{
+					DODEBUG(("time for a tickle"));
 					time_last_tickle = time_now;
 					sendbuf[0] = PROSMSG_NOP;
 					sendbuf_off = 1;
@@ -198,14 +211,19 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 				}
 			}
 
-		/* If we have anything at all to send, tell select() we want to. */
+		/* If we have anything at all to send, tell select() we want to write
+		 * to the socket.
+		 */
 		if(sendbuf_off > 0)
+			{
+			DODEBUG(("waiting to send a packet"));
 			FD_SET(sockfd, &wfds);
+			}
 
-		/* Wait we can:
+		/* Wait we can until:
 			1) there is something to receive from stdin
-			2) send to the print server
-			3) there is something to receive from the print
+			2) there is something to send to the print server
+			3) there is something to receive from the print server
 			*/
 		if((selret = select(sockfd + 1, &rfds, &wfds, NULL, &timeout)) < 0)
 			{
@@ -213,7 +231,7 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 			int_exit(EXIT_PRNERR);
 			}
 
-		/* If there is data from the printserver, */
+		/* If the printserver sent us something, */
 		if(FD_ISSET(sockfd, &rfds))
 			{
 			int recvbuf_len = 0, ret;
@@ -228,8 +246,9 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 					alert(int_cmdline.printer, TRUE, "unexpected zero length read from socket");
 					int_exit(EXIT_PRNERR);
 					}
+				DODEBUG(("received %d bytes from print server", ret));
 				recvbuf_len += ret;
-				} while((recvbuf_len = pros_reply_handler(recvbuf, recvbuf_len, &recv_eoj)) > 0);
+				} while((recvbuf_len = pros_reply_handler(recvbuf, recvbuf_len, &recv_eoj, &job_start_acked)) > 0);
 			continue;
 			}
 
@@ -237,6 +256,7 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 		if(FD_ISSET(sockfd, &wfds))
 			{
 			int ret;
+			DODEBUG(("dispatching %d byte packet to print server", sendbuf_off));
 			if((ret = write(sockfd, sendbuf, sendbuf_off)) == -1)
 				{
 				alert(int_cmdline.printer, TRUE, "write() to socket failed, errno=%d (%s)", errno, gu_strerror(errno));
@@ -261,11 +281,12 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 				}
 			if(last_stdin_read == 0)
 				{
-			    sendbuf[0] = PROSMSG_EOF;
-			    sendbuf_off = 1;
+				DODEBUG(("EOF on stdin"));
+			    sendbuf_off = 0;
 				}
 			else
 				{
+				DODEBUG(("received %d bytes on stdin", last_stdin_read));
 				sendbuf[0] = PROSMSG_DTP | PROSBIT_DATA;
 				sendbuf[1] = last_stdin_read >> 8;
 				sendbuf[2] = last_stdin_read & 0xFF;
@@ -305,7 +326,7 @@ static int pros_pack(unsigned char *buf, int buf_size, int buf_off, int code, co
 ** and return the number of bytes in the partial message.  Of course, if all
 ** messages are processed, it returns 0.
 */
-static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean *recv_eoj)
+static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean *recv_eoj, gu_boolean *job_start_acked)
 	{
     int code, masked_code, len, consumed;
     unsigned char *data;
@@ -320,13 +341,15 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 		/* If this reply contains data, */
 	    if(code & PROSBIT_DATA)
 	    	{
-			/* If not even the header is here yet, go back and wait. */
-			if(buffer_len < 3)
+			consumed += 2;		/* 16 bit length */
+
+			/* If not even the header has been received yet, go back and wait. */
+			if(buffer_len < consumed)
 				return buffer_len;
 
 			len = (buffer[1] << 8) | buffer[2];
-			consumed += (2 + len);
 			data = &buffer[3];
+			consumed += len;
 
 			/* If we don't have all of it yet, go back and wait. */
 			if(consumed > buffer_len)
@@ -336,18 +359,26 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 		masked_code = code & ~(PROSBIT_FATAL | PROSBIT_DATA);
 
 		/* Process what we got. */
-		DODEBUG(("Printer message: %d %0x.2x len \"%.*s\"", code, code, len, data ? data : ""));
+		DODEBUG(("Printer message: %d (0x%.2x) \"%.*s\"", code, code, len, data ? (char*)data : ""));
 
 		if(code & PROSBIT_FATAL)				/* fatal error condition */
 			{
 			alert(int_cmdline.printer, TRUE, "Fatal PROS protocol error: %d (%.*s)", masked_code, len, data ? (char*)data : "");
 			int_exit(EXIT_PRNERR);
 			}
-		else if(code & PROSMSG_JOK)				/* EOJ acknowledgement */
+		else if(masked_code == PROSERR_POC)		/* printer occupied */
+			{
+			int_exit(EXIT_ENGAGED);
+			}
+		else if(masked_code == PROSMSG_JST)		/* printer willing to accept job */
+			{
+			*job_start_acked = TRUE;
+			}
+		else if(masked_code == PROSMSG_JOK)		/* EOJ acknowledgement */
 			{
 			*recv_eoj = TRUE;
 			}
-		else if(masked_code == PROSMSG_DFP)		/* data from printer (not print server) */
+		else if(masked_code == PROSMSG_DFP)		/* data from printer (thru but not print print server) */
 			{
 			/*printf("%.*s", len, data ? (char*)data : "");*/
 			write(1, data ? (char*)data : "", len);
@@ -370,6 +401,9 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 				case PROSERR_EOP:
 					gu_write_string(1, "%%[ PrinterError: out of paper ]%%\n");
 					break;
+				case PROSMSG_no_error:
+					gu_write_string(1, "%%[ status: busy ]%%\n");	/* again busy printing our job */
+					break;
 				}
 			}
 
@@ -380,7 +414,7 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 		}
 
 	return 0;
-	}
+	} /* pros_reply_handler() */
 
 /*=========================================================================
 ** Main
@@ -411,7 +445,7 @@ int int_main(int argc, char *argv[])
 
 	DODEBUG(("============================================================"));
 	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, jobname=\"%s\", routing=\"%s\", forline=\"%s\", barbarlang=\"%s\"",
-		int_cmdline.basename,
+		int_cmdline.int_basename,
 		int_cmdline.printer,
 		int_cmdline.address,
 		int_cmdline.options,

@@ -8553,7 +8553,8 @@ line was being parsed twice.
   and "jetdirect" as aliases for the tcpip interface.  Some of them have
   different default options.
 
-* libppr/interfaces.c: added pros, socketapi, appsocket, and jetdirect.
+* libppr/interfaces.c: added pros, socketapi, appsocket, and jetdirect to
+  default settings table.
 
 * www/prn_addwiz.cgi.perl: added pros, socketapi, appsocket, and jetdirect.
 
@@ -9056,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--15 May 2004.
+1.53a2, 20 February 2004--22 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9214,6 +9215,20 @@ Internet Printing Protocol Work
   than 2 as equivelent to 2.  (Previously it only accepted 1 and 2 which
   meant that the whole filter failed for PostScript level 3 printers.)
 
+* interfaces/pros.c: fixed a number of bugs which caused the interface
+  to disconnect without sending EOJ.  Added code to print
+  "%%[ status: busy ]%%" when fault conditions are cleared.
+
+* pprdrv/pprdrv_ppop_status.c:handle_lw_status() fixed nasty bug in 
+  the testing of the return code of translate_lw_status() which made
+  lw-messages.conf useless.
+
+* pprdrv/pprdrv_ppop_status.c:handle_lw_status(): added code to clear
+  hrDetectedErrorState fields incompatible with printing when 
+  hrPrinterStatus is printing(4).
+
+* pprdrv/lw-messages.conf: filled in many of the missing hrDeviceStatus
+  and hrPrinterStatus fields with plausible-seeming values.
 
 
 TODO

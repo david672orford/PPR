@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 22 May 2004.
 */
 
 /*
@@ -39,10 +39,10 @@
 #define DEBUG_MAIN 1					/* main() */
 #define DEBUG_INTERFACE 1				/* show opening, closing, etc. */
 /* #define DEBUG_INTERFACE_GRITTY 1 */	/* show what we send to and receive from the interface */
-/* #define DEBUG_FEEDBACK 1 */			/* show twoway operations */
+#define DEBUG_FEEDBACK 1				/* show twoway operations */
 #define DEBUG_FEEDBACK_LINES 1			/* show the lines read from printer */
-#define DEBUG_PPD 1						/* PPD file parsing */
-#define DEBUG_PPD_DETAILED 1
+/* #define DEBUG_PPD 1 */				/* PPD file parsing */
+/* #define DEBUG_PPD_DETAILED 1 */
 /* #define DEBUG_FLAGS 1 */				/* banner and trailer pages */
 /* #define DEBUG_RESOURCES 1 */			/* fonts, procset, etc. */
 /* #define DEBUG_QUERY 1 */				/* patch queries? */
@@ -53,7 +53,7 @@
 #define DEBUG_COMMENTARY 1
 /* #define DEBUG_TRUETYPE 1 */			/* truetype fonts, conversion to Postscript */
 /* #define DEBUG_CUSTOM_HOOK 1 */
-/* #define DEBUG_PPOP_STATUS 1 */		/* code to leave info for "ppop status" */
+#define DEBUG_PPOP_STATUS 1				/* code to leave info for "ppop status" */
 #endif
 
 /*

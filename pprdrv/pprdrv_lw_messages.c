@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_lw_messages.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 22 May 2004.
 */
 
 #include "before_system.h"
@@ -104,7 +104,7 @@ int translate_lw_message(const char raw_message[], int *value1, int *value2, int
 
 	fclose(f);
 
-	if(line)
+	if(line)		/* if found before end of file, */
 		{
 		gu_free(line);
 		DODEBUG_LW_MESSAGES(("%s(): %d %d %d \"%s\"", function, *value1, *value2, *value3, *details));
