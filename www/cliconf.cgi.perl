@@ -53,7 +53,7 @@ $printcap_wizard_table = [
 		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), cgi_data_peek("name", "?")), "</span><br>\n";
 
 		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
-		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Icon"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Shortcut"), "<br>\n";
 		print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
 		},
 	'buttons' => [N_("_Cancel"), N_("_Next")],
@@ -77,7 +77,7 @@ $printcap_wizard_table = [
 	'dopage' => sub {
 		print "<p>", H_("Click on the button below to download the KDE shortcut.\n"
 			. "You will probably want to save it in your Desktop folder."), "</p>\n";
-		isubmit("action", "Download", N_("_Download"), undef);
+		isubmit("action", "Download", N_("_Download"), 'class="buttons"');
 		},
 	'buttons' => [N_("_Close")]
 	},
@@ -156,7 +156,7 @@ $printcap_wizard_table = [
 	'dopage' => sub {
 		my $localname = cgi_data_peek("localname", "?");
 		print "<p>", H_("Click on the button below to download the install script."), "</p>\n";
-		isubmit("action", "Download", N_("_Download"), undef); 
+		isubmit("action", "Download", N_("_Download"), 'class="buttons"'); 
 		print "<p>", H_("This script must be run as root.  The command to run it is:"), "</p>\n";
 		print "<pre>\n";
 		print html("# sh setup_$localname.sh"), "\n";
@@ -233,17 +233,19 @@ sub gen_kde_shortcut
     my $name = cgi_data_move("name", "?");
     my $filename = $name;
 
+    my $comment = (split(/\t/, `$PPOP_PATH -M ldest $name`))[4];
+
     print <<"EndIcon";
 Content-Type: application/octet-stream; name=$filename
 Content-Disposition: inline; filename=$filename
 
 [Desktop Entry]
-Comment[en_US]=
+Comment=$comment
 Encoding=UTF-8
 Exec=ppr-web $name
 Icon=$SHAREDIR/www/q_icons/00000.png
 MimeType=
-Name[en_US]=$name
+Name=$name
 Path=
 ServiceTypes=
 SwallowExec=

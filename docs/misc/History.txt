@@ -7995,5 +7995,6 @@ line was being parsed twice.
   fixes the xwin and pprpopup responder when launched by ppr (rather than
   pprd).
 
-
+* ppop/ppop_cmds_other.c:ppop_dest(): fixed to show only those aliases which
+  match what the user specified.
 
