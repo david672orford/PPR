@@ -5,7 +5,7 @@
 
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 3 February 2004.
 #
 
 # Find an echo that will supports escapes.
@@ -1241,9 +1241,9 @@ LD=gcc
 LDFLAGS=
 
 # GCC with Diet libc wrapper
-#CC=diet
+#CC=diet gcc
 #CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
-#LD=diet
+#LD=diet gcc
 #LDFLAGS=
 
 # GCC with UClibc wrapper

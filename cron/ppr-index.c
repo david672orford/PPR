@@ -122,8 +122,24 @@ int main(int argc, char *argv[])
 	if(i < argc)
 		{
 		for( ;i < argc; i++)
-			if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
+			{
+			int i2;
+			for(i2 = 0; indexes[i2]; i2++)
+				{
+				if(strcmp(indexes[i2], argv[i]) == 0)
+					break;
+				}
+			if(!indexes[i2])
+				{
+				fprintf(stderr, "%s: there is no index called \"%s\"\n", argv[0], argv[i]);
+				ret = EXIT_BADDEST;
 				break;
+				}
+			if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
+				{
+				break;
+				}
+			}
 		}
 	else
 		{

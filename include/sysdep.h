@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/sysdep.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 May 2003.
+** Last modified 4 February 2004.
 */
 
 /*
@@ -343,6 +343,11 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 /* uClibc doesn't support NIS.  We have to put this in pass 2 because
    no uClibc headers have been read during pass 1. */
 #ifdef __UCLIBC__
+#undef HAVE_NETGROUP
+#endif
+
+/* Save for dietlibc. */
+#ifdef __dietlibc__
 #undef HAVE_NETGROUP
 #endif
 

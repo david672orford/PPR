@@ -43,7 +43,6 @@
 /*
  * Make sure that MAXPATHLEN is defined.
  */
-
 #ifndef MAXPATHLEN
 #   ifdef PATH_MAX
 #       define MAXPATHLEN PATH_MAX
@@ -57,7 +56,6 @@
  * Tcl versions retry automatically if interrupted by signals.
  * (see tclUnixUtil.c).
  */
-
 #define open(a,b,c) TclOpen(a,b,c)
 #define read(a,b,c) TclRead(a,b,c)
 #define waitpid(a,b,c) TclWaitpid(a,b,c)
@@ -70,10 +68,16 @@ int TclWrite(int fd, void *buf, size_t numBytes);
 /*
  * Variables provided by the C library:
  */
-
 #if defined(_sgi) || defined(__sgi)
 #define environ _environ
 #endif
 extern char **environ;
+
+/*
+ * This causes duplicate cases in tclUnixStr.c.
+ */
+#ifdef __dietlibc__
+#undef SIGLOST
+#endif
 
 #endif /* _TCLPORT */

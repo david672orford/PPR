@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--3 February 2004.
+1.53a1, 24 September 2003--4 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9022,6 +9022,11 @@ Internet Printing Protocol Work
 * ppad/: moved all ppad_filt.c stuff which ../libppr/queueinfo.c couldn't yet
   do into the latter, adjusted all of the subcommands to queueinfo, deleted
   ppad_filter.c.
+
+* cron/ppr-index.c: added check to make sure that only indexers on the 
+  approved list are run.  This is important because ppr-index is setuid 
+  and setgid ppr and so could have been used by ordinary users to 
+  interfer with the operation of the spooler.
 
 
 
