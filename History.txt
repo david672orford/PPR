@@ -9403,6 +9403,10 @@ no final tarball was released.
 * docs/Makefile: changed "make" to "$(MAKE)".
 
 
+1.53, 22 October 2004
+
+* updated the German translation to curent CVS.
+
 TODO
 
 * Fix Debian package.
