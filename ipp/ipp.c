@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 December 2004.
+** Last modified 10 January 2005.
 */
 
 #include "config.h"
@@ -87,12 +87,10 @@ static void do_print_job(struct IPP *ipp)
 		
 		if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
 			printer_uri = attr->values[0].string.text;
-		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "requesting-user-name") == 0)
+		else if(attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "requesting-user-name") == 0)
 			username = attr->values[0].string.text;
 		else
 			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
-
-			
 		}
 	}
 
@@ -411,7 +409,7 @@ int main(int argc, char *argv[])
 		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
 
-		if((p = getenv("REMOTE_USER")))
+		if((p = getenv("REMOTE_USER")) && *p)	/* defined and not empty */
 			ipp_set_remote_user(ipp, p);
 		if((p = getenv("REMOTE_ADDR")))
 			ipp_set_remote_addr(ipp, p);

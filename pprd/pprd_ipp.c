@@ -257,10 +257,41 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 static void ipp_get_jobs(struct IPP *ipp)
 	{
 	const char function[] = "ipp_get_jobs";
+	const char *printer_uri = NULL;
+	int destname_id = -1;
 	int i;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
 	struct QFileEntry qfileentry;
+
+	{
+	ipp_attribute_t *attr;
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag != IPP_TAG_OPERATION)
+			continue;
+		if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+			printer_uri = attr->values[0].string.text;
+		else
+			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
+		}
+	}
+
+	if(printer_uri)
+		{
+		char *destname;
+		if(!(destname = strrchr(printer_uri, '/')))
+			{
+			/* add code to set error code */
+			return;
+			}
+		destname++;
+		if((destname_id = destid_by_name(nodeid_local(), destname)) == -1)
+			{
+			/* add code to set error code */
+			return;
+			}
+		}
 
 	lock();
 
@@ -268,6 +299,9 @@ static void ipp_get_jobs(struct IPP *ipp)
 	for(i=0; i < queue_entries; i++)
 		{
 		if(queue[i].destnode_id != nodeid_local())		/* delete in 2.x */
+			continue;
+
+		if(destname_id != -1 && queue[i].destid != destname_id)
 			continue;
 
 		/* Read and parse the queue file. */
@@ -282,13 +316,15 @@ static void ipp_get_jobs(struct IPP *ipp)
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
 			continue;
 			}
-		if(read_struct_QFileEntry(qfile, &qfileentry) == -1)
+		{
+		int ret = read_struct_QFileEntry(qfile, &qfileentry);
+		fclose(qfile);
+		if(ret == -1)
 			{
 			error("%s(): invalid queue file: %s", function, fname);
-			fclose(qfile);
 			continue;
 			}
-		fclose(qfile);
+		}
 
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
 			"job-id", queue[i].id);

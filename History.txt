@@ -9503,6 +9503,8 @@ no final tarball was released.
 
 * ppr/ppr_main.c:write_queue_file(): added check for lc_messages validity
 
+* pprd/pprd_ipp.c:ipp_get_jobs(): fixed file-decriptor leak
+
 
 TODO
 
