@@ -7559,9 +7559,6 @@ line was being parsed twice.
 * misc/: removed atalk.conf.sample, atalkmapd.perl, fix410.ps,
   printer_query.ps, and ttquery.ps.
 
-* Moved responder message building out of ppr/ppr_respond.c and into
-  responders/ppr-respond.c.
-
 * ppr/: removed --commentator, --commentator-address,
   and --commentator-options.
 
@@ -7578,8 +7575,10 @@ line was being parsed twice.
 * Configure: changed everything but Linux to include -lint if international
   messages is selected.
 
-* Added "ppop question" to disable the question.  Added support for this
-  to pprd and www/job_public.cgi.perl.
+* Added "ppop question" command to cancel a question attached to a job.
+  Added support for this to pprd and www/job_public.cgi.perl.  (These
+  questions are a request for user feedback which can be attached to
+  a job.)
 
 * pprd/pprd_question.perl: fix to recognize "+OK" as success.
 
@@ -7621,7 +7620,7 @@ line was being parsed twice.
 * www/index.html: added boxes to enter names of desired man pages, info
   page, and RPM pages; changed logo to pprlogo2-medium.png.
 
-* docs/index.html: chnaged logo to pprlogo2-medium.png.
+* docs/index.html: changed logo to pprlogo2-medium.png.
 
 * www/df_html.cgi.perl, df_img.cgi.perl: removed df_img.cgi.perl and changed
   df_html.cgi.perl to make a percentage line graph with stretched
@@ -7662,7 +7661,7 @@ line was being parsed twice.
 * Makefile: added subdir pprpopup/ to those automatically built.
 
 * makeprogs/installdata.sh, makeprogs/installcp.sh, fixup/fixup_samples.sh,
-  fixup/fixup_media.sh: added chmod to set the permissions of the target 
+  fixup/fixup_media.sh: added chmod to set the permissions of the target
   files.
 
 * makeprogs/make_install_dirs.sh, fixup/fixup_perms.sh: changed permissions
@@ -7697,7 +7696,7 @@ line was being parsed twice.
   introduced by changes to paths.ph.
 
 * Added fixup/fixup_atalk.tcl to find getzones, fixed printdesk/Printdesk.pm
-  and www/prn_addwiz.cgi.perl to use it.
+  and www/prn_addwiz.cgi.perl the value it finds.
 
 * www/show_jobs.cgi.perl: added support for fixed positioning in Mozilla.
   Added JavaScript onclick to check boxes to highlight selected rows.
@@ -7787,7 +7786,7 @@ line was being parsed twice.
 
 * Added ppd/ppr-indexppds.c.
 
-* Renamed "Dot Matric 24 pin Ghostscript" PPD file to "NEC Pinwriter 7
+* Renamed "Dot Matrix 24 pin Ghostscript" PPD file to "NEC Pinwriter 7
   Ghostscript".
 
 * Changed www/prn_properties.cgi.perl to use the output of ppr-indexppds.
@@ -7823,7 +7822,8 @@ line was being parsed twice.
   repository), added move_pox_to_po.sh, updated README.txt.
 
 * www/: Added code to various programs to snap the window size to the size of
-  the document.
+  the document.  (This is disabled right now due to browser compatibility
+  problems.)
 
 * www/show_jobs.cgi.perl: enhanced "?controls=" option to limit the list of
   controls which will be shown.  The control bars are completely removed if
@@ -7837,7 +7837,7 @@ line was being parsed twice.
 * www/prn_testpage.cgi.perl: added -m and -r options to the ppr command.
 
 * www/pprpopup_register.cgi.perl: added code to create an alias registration
-  based on the stuff to the left of the @ and the client IP address. 
+  based on the stuff to the left of the @ and the client IP address.
 
 * init_and_cron/ppr-clean.perl: added code to remove old files from
   $VAR_SPOOL_PPR/pprpopup.db/.
@@ -7854,7 +7854,7 @@ line was being parsed twice.
   by the new pprpopup_register.cgi, commented out most of the debugging
   puts commands.
 
-* pprpopup/ppr-popup: added code to set the session restart command to 
+* pprpopup/ppr-popup: added code to set the session restart command to
   /bin/true.
 
 * libuprint/Makefile, uprint/Makefile: changed CC to LD and CFLAGS to
@@ -7878,7 +7878,7 @@ line was being parsed twice.
 * interfaces/lpr.c: changed "L" in control file to use the username instead
   of "somebody".  Changed "N" to use the job title rather than the queue id.
 
-* ppr/ppr_dscdoc.c: added support for "%%BeginNonPPDFeature: NumCopies X" to 
+* ppr/ppr_dscdoc.c: added support for "%%BeginNonPPDFeature: NumCopies X" to
   "-R copies"; marked all warnings for internationalization.
 
 * ppr/ppr_main.c: changed default to "-R copies" and made "-n" imply "-R
@@ -7888,12 +7888,12 @@ line was being parsed twice.
   X", both the insert it and to modify it.
 
 * pprdrv/: added support for in-printer collating for printers that define
-  *Collate in their PPD files but left it turned off for now since it is 
-  unclear how to determine how many pages a printer can collate and 
+  *Collate in their PPD files but left it turned off for now since it is
+  unclear how to determine how many pages a printer can collate and
   because pprdrv doesn't yet parse *UIContraint: lines.
 
 * pprdrv/pprdrv_ppd.c: rewrote begin_feature() and include_feature()
-  combining their common code for changing and deleting features and 
+  combining their common code for changing and deleting features and
   adding code to support new colating features.
 
 * Configure, various makefiles: made building of programs that require tdb
@@ -7912,4 +7912,5 @@ line was being parsed twice.
   in ppr.conf.sample.
 
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
+
 

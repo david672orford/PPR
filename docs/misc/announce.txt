@@ -1,4 +1,4 @@
-27 February 2002
+8 November 2002
 
 This is announce.txt from:
 
@@ -8,7 +8,7 @@ http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50a1.tar.gz
 
 ==========================================================================
 
-Version 1.50a1 of PPR has been released.
+Version 1.50a2 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -27,9 +27,12 @@ by sending them to "ppr-list@mail.trincoll.edu".
  New in this Release (Since 1.44)
 ==========================================================================
 
-* Improved Ghostscript integration.
+* Improved Ghostscript integration.  This includes automatic configuration
+  to invoke Ghostscript when appropriate PPD files (supplied with PPR
+  or CUPS) are used.  The interfaces with names begining with "gs"
+  are now obsolete.
 
-* Added printer fault reporting from "ppop status".
+* Added reporting of common printer fault types in "ppop status" output.
 
 * Fixed confusing error messages.
 
@@ -40,11 +43,18 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 * Added --stop option to pprd and papsrv.
 
-* Fixed a problem on rare ocasions caused a job not to silently fail
+* Fixed a problem on rare ocasions caused a job to silently fail
   to make it into the queue until next time pprd was restarted.
 
-* Numberous bug fixes including fixes for bugs that caused spooler
-  crashes.
+* Fixed numberous bugs, including bugs which caused spooler crashes.
+
+* Numberous refinements to the web interface.
+
+* Added support for AppSocket (in addition to the existing support
+  for SocketAPI).
+
+* Improved handling of multiple copies requests from the Adobe PostScript
+  driver for Microsoft Windows.
 
 ==========================================================================
  Major Features
@@ -160,10 +170,10 @@ allows PPR to work with Netatalk under Linux.
 DEC OSF/1 and Digital Unix 4.0 are also supported.  It has not been tested
 with CAP on these platforms.
 
-SGI's IRIX 6.3 is also a supported platform.  However, AppleTalk on IRIX has 
+SGI's IRIX 6.3 is also a supported platform.  However, AppleTalk on IRIX has
 not been attempted.
 
-The complete system has not been tested on 386BSD/NetBSD/FreeBSD/OpenBSD, 
+The complete system has not been tested on 386BSD/NetBSD/FreeBSD/OpenBSD,
 however it should run with only minor modifications.
 
 Support for SunOS 4.1.3 is included in the current release but nobody has
@@ -256,13 +266,13 @@ documentation and/or other materials provided with the distribution.
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
 ============================================================================
@@ -270,7 +280,7 @@ POSSIBILITY OF SUCH DAMAGE.
 ============================================================================
 
 PPR may be obtained from <ftp://ppr-dist.trincoll.edu/pub/ppr/> or
-<http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes 
+<http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes
 the following files:
 
 ppr-1.50a1.tar.gz         Source code for PPR
