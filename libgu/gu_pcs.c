@@ -114,7 +114,7 @@ void gu_pcs_debug(void **pcs, const char name[])
     }
 
 /*
-=head2 void gu_pcs_reference(void **I<pcs>)
+=head2 void gu_pcs_snapshot(void **I<pcs>)
 
 This function increments the reference count of a PCS object.  A function
 should call this if it is going to keep a pointer to a PCS object that was
@@ -122,7 +122,7 @@ passed to it as an argument.
 
 =cut
 */
-void *gu_pcs_reference(void **pcs)
+void *gu_pcs_snapshot(void **pcs)
     {
     struct PCS *p = (struct PCS *)*pcs;
     p->refcount++;
@@ -249,6 +249,19 @@ const char *gu_pcs_get_cstr(void **pcs)
     }
 
 /*
+=head2 int gu_pcs_size(void **pcs)
+
+This function returns the length of the PCS in bytes.
+
+=cut
+*/
+int gu_pcs_bytes(void **pcs)
+    {
+    struct PCS *p = (struct PCS *)*pcs;
+    return p->length;
+    }
+
+/*
 =head2 void gu_pcs_append_cstr(void **I<pcs>, const char I<cstr>[])
 
 This function appends a C string the the PCS object.
@@ -304,6 +317,56 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
     }
 
 /*
+=head2 int gu_pcs_hash(void **pcs_key)
+
+This function hashes a PCS.
+This function is attibuted to P. J Weinberger.
+
+=cut
+*/
+int gu_pcs_hash(void **pcs_key)
+    {
+    int total;
+    const char *p;
+    int temp, count;
+
+    p = gu_pcs_get_cstr(pcs_key);
+    for(total = 0, count = gu_pcs_bytes(pcs_key); count-- > 0; )
+	{
+	total = (total << 4) + *p++;
+	if((temp = (total & 0xf0000000)))	/* if we are about to lose something off the top, */
+	    {
+	    total ^= (temp >> 24);		/* mix it into the bottom */
+	    total ^= temp;			/* and remove it from the top */
+	    }
+	}
+    }
+
+/*
+=head int gu_pcs_cmp(void *pcs1, void *pcs2)
+
+This function does for PCSs what strcmp() does for C strings.
+
+=cut
+*/
+int gu_pcs_cmp(void **pcs1, void **pcs2)
+    {
+    struct PCS *p1 = (struct PCS *)*pcs1;
+    struct PCS *p2 = (struct PCS *)*pcs2;
+    int remaining1 = p1->length + 1;
+    int remaining2 = p2->length + 1;
+    char *cp1 = p1->storage;
+    char *cp2 = p2->storage;
+    int cmp;
+    while(remaining1-- && remaining2--)
+	{
+	if((cmp = (*cp1++ - *cp2++)) != 0)
+	    break;
+	}
+    return cmp;
+    }
+
+/*
 ** Test program
 ** gcc -Wall -DTEST -I../include gu_pcs.c ../libgu.a
 */
@@ -314,7 +377,7 @@ int main(int argc, char *argv[])
 
     pcs_a = gu_pcs_new_cstr("Hello, World!");
     gu_pcs_debug(&pcs_a, "pcs_a");
-    pcs_b = gu_pcs_reference(&pcs_a);
+    pcs_b = gu_pcs_snapshot(&pcs_a);
     gu_pcs_debug(&pcs_a, "pcs_a");
     gu_pcs_debug(&pcs_b, "pcs_b");
     printf("\n");

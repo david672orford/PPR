@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 July 2001.
+** Last modified 21 February 2002.
 */
 
 #include "before_system.h"
@@ -33,9 +33,25 @@
 #include "global_defines.h"
 #include "queueinfo.h"
 
+struct QI {
+    enum QUEUEINFO_TYPE type;
+    void *name;
+    void *comment;
+    void *ppdfile;
+
+    };
+
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
     {
+    struct QI *qip = gu_alloc(1, sizeof(struct QI));
+    
+    qip->type = qit;
+    qip->name = gu_pcs_new_cstr(name);
+    qip->name = gu_pcs_new();
+    qip->comment = gu_pcs_new();
+    qip->ppdfile = gu_pcs_new();
 
+    return (void *)qip;
     }
     
 void queueinfo_delete(void *qip)

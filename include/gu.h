@@ -265,15 +265,28 @@ int gu_snmp_get(struct gu_snmp *p, int *error_code, ...);
 void *gu_pcs_new(void);
 void gu_pcs_free(void **pcs);
 void gu_pcs_debug(void **pcs, const char name[]);
-void *gu_pcs_reference(void **pcs);
+void *gu_pcs_snapshot(void **pcs);
 void gu_pcs_grow(void **pcs, int size);
 void *gu_pcs_new_pcs(void **pcs);
 void *gu_pcs_new_cstr(const char cstr[]);
 void gu_pcs_set_cstr(void **pcs, const char cstr[]);
 void gu_pcs_set_pcs(void **pcs, void **pcs2);
 const char *gu_pcs_get_cstr(void **pcs);
+int gu_pcs_bytes(void **pcs);
 void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
+int gu_pcs_cmp(void **pcs1, void **pcs2);
+int gu_pcs_hash(void **pcs_key);
+
+/* Perl Compatible Hash */
+void *gu_pch_new(int buckets_count);
+void gu_pch_free(void **pch);
+void gu_pch_debug(void **pch, const char name[]);
+void gu_pch_set(void **pch, void **pcs_key, void **pcs_value);
+void *gu_pch_get(void **pch, void **pcs_key);
+void gu_pch_delete(void **pch, void **pcs_key);
+void gu_pch_rewind(void **pch);
+void *gu_pch_nextkey(void **pch);
 
 
 /*===================================================================

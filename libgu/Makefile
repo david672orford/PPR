@@ -65,7 +65,7 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_snprintfcat.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
-	gu_pcs.$(OBJ)
+	gu_pcs.$(OBJ) gu_pch.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 
