@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 11 January 2002.
+# Last modified 5 April 2002.
 #
 
 use 5.005;
@@ -38,9 +38,6 @@ my $Q_ICONS_EXT = ".png";
 my $Q_ICONS_DIMS = "width=88 height=88";
 
 # Icon for the fixed things.
-#my $ICON_ADD_GROUP = "../images/group.png";
-#my $ICON_ADD_PRINTER = "../images/printer.png";
-#my $ICON_ALL_QUEUES = "../images/group.png";
 my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=85 height=75";
 my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
 my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";

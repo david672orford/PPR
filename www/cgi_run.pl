@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 9 January 2002.
+# Last modified 5 April 2002.
 #
 
 #===============================================================
@@ -23,7 +23,7 @@ sub run_print
     my $total_length = 1;
     foreach $arg (@_)
     	{
-	if(($total_length + length($arg)) >= 70)
+	if($total_length > 4 && ($total_length + length($arg)) >= 70)
 	    {
 	    print " \\\n    ";
 	    $total_length = 4;

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 March 2002.
+# Last modified 5 April 2002.
 #
 
 use lib "?";
@@ -46,7 +46,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("PPR Print Test Page"),
-	'picture' => "wiz-newprn.jpg",
+	'picture' => "prn_testpage1.png",
 	'dopage' => sub {
 		print "<p>", H_("To print a PPR test page, select the desired page size below\n"
 			. "and press Print."), "</p>\n";
@@ -62,7 +62,7 @@ $addprn_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("PPR Print Test Page"),
-	'picture' => "wiz-newprn.jpg",
+	'picture' => "prn_testpage2.png",
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "_missing_");
 		my $pagesize = cgi_data_peek("pagesize", "Letter");

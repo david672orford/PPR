@@ -1,4 +1,0 @@
-#! /bin/sh
-
-# Convert a 6.375" square FIG image to a 128 pixel square PNG image.
-fig2dev -L png -m 1.0 $1.fig | pngtopnm | pnmscale 0.250 | pnmtopng > $1.png
