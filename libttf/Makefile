@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libttf/Makefile
-# Copyright 1998, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -33,7 +33,7 @@ include .depend
 
 ../libttf.$(LIBEXT): $(OBJS)
 	$(RMF) ../libttf.$(LIBEXT)
-	$(LIBCMD) ../libttf.$(LIBEXT) >/dev/null 2>&1
+	-$(LIBCMD) ../libttf.$(LIBEXT) >/dev/null 2>&1
 	$(LIBCMD) ../libttf.$(LIBEXT) $(OBJS)
 
 depend:

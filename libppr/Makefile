@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 5 March 2002.
+# Last modified 17 May 2002.
 #
 
 include ../makeprogs/global.mk
@@ -57,7 +57,7 @@ ali_str.$(OBJ): ali_str.c
 
 ../libppr.$(LIBEXT): $(LIBOBJS)
 	$(RMF) ../libppr.$(LIBEXT)
-	$(LIBCMD) ../libppr.$(LIBEXT) >/dev/null 2>&1
+	#$(LIBCMD) ../libppr.$(LIBEXT) >/dev/null 2>&1
 	$(LIBCMD) ../libppr.$(LIBEXT) $(LIBOBJS)
 
 depend:

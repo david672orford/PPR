@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2002.
+# Last modified 17 May 2002.
 #
 
 include ../makeprogs/global.mk
@@ -65,7 +65,7 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_snprintfcat.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
-	gu_pcs.$(OBJ) gu_pch.$(OBJ)
+	gu_pcs.$(OBJ) #gu_pch.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 
@@ -75,7 +75,7 @@ all: $(TARGETS)
 
 ../libgu.$(LIBEXT): $(LIBOBJS)
 	$(RMF) ../libgu.$(LIBEXT)
-	$(LIBCMD) ../libgu.$(LIBEXT) >/dev/null 2>&1
+	-$(LIBCMD) ../libgu.$(LIBEXT) >/dev/null 2>&1
 	$(LIBCMD) ../libgu.$(LIBEXT) $(LIBOBJS)
 
 #=== Install ================================================================
