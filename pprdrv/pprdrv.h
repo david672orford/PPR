@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 20 November 2002.
+** Last revised 6 February 2003.
 */
 
 /*
@@ -188,7 +188,7 @@ void rip_cancel(void);
 gu_boolean rip_sigchld_hook(pid_t pid, int wait_status);
 
 /* pprdrv_flag.c: */
-void print_flag_page(int flagtype, int position);
+int print_flag_page(int flagtype, int position, int skiplines);
 
 /* pprdrv_feedback.c: */
 void feedback_setup(int fd);
@@ -198,7 +198,6 @@ void feedback_pjl_wait(void);
 void feedback_drain(void);
 gu_boolean feedback_posterror(void);
 gu_boolean feedback_ghosterror(void);
-void feedback_close_log(void);
 int feedback_pjl_chargable_pagecount(void);
 
 /* pprdrv_ppd.c: */
@@ -357,6 +356,15 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char display[
 /* pprdrv_userparams.c: */
 void insert_userparams(void);
 void insert_userparams_jobtimeout(void);
+
+/* pprdrv_log.c: */
+FILE *log_reader(void);
+void log_putc(int c);
+void log_puts(const char data[]);
+void log_vprintf(const char format[], va_list va);
+void log_printf(const char format[], ...);
+void log_flush(void);
+void log_close(void);
 
 /*
 ** This structure holds the information we compile about the printer and

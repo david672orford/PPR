@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_feedback.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,15 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 October 2002.
+** Last modified 6 February 2003.
 */
 
-/*
-** Handle data coming back from the interface.  This will generally be
-** messages sent by this printer.  These messages include notification of
-** PostScript errors, printer status messages, and anything the PostScript
-** job writes to stdout.
-*/
+/*===========================================================================
+** This module handles data coming back from the interface.  This will 
+** generally be messages sent by this printer.  These messages include 
+** notification of PostScript errors, printer status messages, and anything 
+** the PostScript job writes to stdout.
+===========================================================================*/
 
 #include "before_system.h"
 #include <sys/time.h>
@@ -62,7 +62,6 @@ static const char hexchars[] = "0123456789ABCDEF";
 static int intfd = -1;			/* fd to read from */
 static gu_boolean posterror = FALSE;	/* true if a PostScript error is detected */
 static gu_boolean ghosterror = FALSE;	/* true if a non-PostScript Ghostscript error is detected */
-static int logfile = -1;		/* fd of possibly open log file */
 
 enum PJL_STATE
 	{
@@ -90,7 +89,6 @@ static int pjl_code2;
 static char pjl_display2[80];
 
 /* These are prototypes for internal functions to which there are forward references. */
-static void open_log(void);
 static void pjl_ustatus_clear(void);
 
 /*===================================================================
@@ -558,11 +556,10 @@ int feedback_reader(void)
 	    	}
 
 	    /*
-	    ** If it is a PostScript error, set a flag so that the
-	    ** job will be arrested as soon as it is done and call
-	    ** a routine which analyzes the error message and attempts
-	    ** to write an inteligent description of it into the
-	    ** job's log file.
+	    ** If it is a PostScript error, set a flag so that the job will be
+	    ** arrested as soon as it is done and call a routine which
+	    ** analyzes the error message and attempts to write an intelligent
+	    ** description of it into the job's log file.
 	    */
 	    if((ptr2 = lmatchp((char*)ptr, "%%[ Error:")))
 		{
@@ -576,8 +573,8 @@ int feedback_reader(void)
 		error = ptr2;
 
 		/* Find the offending command in the error message: */
-		command = strstr((char*)ptr, "OffendingCommand: ");
-		if(command) command += 18;
+		if((command = strstr((char*)ptr, "OffendingCommand: ")))
+		    command += 18;
 
 		/* Terminate each one with a NULL */
 		if((end_error = strchr(error, ';')))
@@ -586,7 +583,9 @@ int feedback_reader(void)
 		if(command && (end_command = strchr(command, ' ')))
 		    *end_command = '\0';
 
-		/* Call the function which may write a "Reason:" line in the queue file. */
+		/* Write an introduction to the PostScript error in the job log 
+		   and a "Reason:" line into the queue file.
+		   */
 		describe_postscript_error(job.Creator, error, command);
 
 		/* If they existed, put the origional characters back so that
@@ -708,31 +707,24 @@ int feedback_reader(void)
 	    ** If we get this far, we should write the message
 	    ** to the job's log file.
 	    */
-	    DODEBUG_FEEDBACK(("%s(): no match, writing to job log", function));
+	    DODEBUG_FEEDBACK(("%s(): no match (?), writing to job log", function));
 	    {
-	    char outbuf[1024];
-	    int y, cnt;
+	    int i;
 
-	    if(logfile == -1)
-		open_log();
-
-	    for(y=cnt=0; y < linelen && y < 256; y++)
+	    for(i=0; i < linelen; i++)
 	    	{
-		if(isprint(ptr[y]) || isspace(ptr[y]))
+		if(isprint(ptr[i]) || isspace(ptr[i]))
 		    {
-		    outbuf[cnt++] = ptr[y];
+		    log_putc(ptr[i]);
 		    }
 		else		/* no printable, represent with hexadecimal */
 		    {
-		    outbuf[cnt++] = '<';
-		    outbuf[cnt++] = hexchars[ptr[y] / 16];
-		    outbuf[cnt++] = hexchars[ptr[y] % 16];
-		    outbuf[cnt++] = '>';
+		    log_putc('<');
+		    log_putc(hexchars[ptr[i] / 16]);
+		    log_putc(hexchars[ptr[i] % 16]);
+		    log_putc('>');
  		    }
 	    	}
-
-	    if(write(logfile, outbuf, cnt) != cnt)
-	    	fatal(EXIT_PRNERR, "%s(): write() to job log failed", function);
 	    } /* end of write to log block */
 
 	    } /* End of loop which considers the lines from the printer. */
@@ -741,40 +733,6 @@ int feedback_reader(void)
     DODEBUG_FEEDBACK(("%s(): done, %d bytes read", function, total_bytes));
     return total_bytes;
     } /* end of feedback_reader() */
-
-/*===================================================================
-** Support functions for feedback_reader().
-===================================================================*/
-
-/*
-** This is called to open the job's log file.  If we are running
-** in test mode, stderr is used in stead.
-*/
-static void open_log(void)
-    {
-    DODEBUG_FEEDBACK(("open_log()"));
-
-    /* In test mode we send what we would ordinarily send to the
-       job log to stderr.
-       */
-    if(test_mode)
-    	{
-    	logfile = 2;
-    	}
-
-    /* When not running in test mode, we send these messages to
-       a file with a name ending in "-log" in DATADIR.
-       */
-    else
-    	{
-	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-	if((logfile = open(fname, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) == -1)
-	    fatal(EXIT_PRNERR, "open_log(): can't open \"%s\" for append, errno=%d (%s)", fname, errno, gu_strerror(errno));
-	gu_set_cloexec(logfile);
-	}
-
-    } /* end of open_log() */
 
 /*===================================================================
 ** Wait until we receive the next glob of data to be read from
@@ -1006,23 +964,6 @@ gu_boolean feedback_ghosterror(void)
     {
     return ghosterror;
     }
-
-/*===================================================================
-** Close the log file if it is open.  This routine is needed because
-** the routine feedback_reader() tends to open the log file and leave
-** it open.  This routine is called from pprdrv_flag.c.
-===================================================================*/
-void feedback_close_log(void)
-    {
-    DODEBUG_FEEDBACK(("close_log()"));
-
-    if(logfile != -1)
-	{
-	if(!test_mode)
-	    close(logfile);
-	logfile = -1;
-	}
-    } /* end of feedback_close_log() */
 
 /*===================================================================
 ** Return the number of PJL PAGE messages received by

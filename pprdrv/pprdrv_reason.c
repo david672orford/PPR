@@ -1,22 +1,39 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_reason.c
-** Copyright 1995--2002, Trinity College Computing Center
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 6 May 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 February 2003.
 */
 
-/*
-** This module appends "Reason: " lines to the queue file in order
-** to indicate the reason why a job was arrested.
-*/
+/*===========================================================================
+** The primary work of this module is to append a "Reason:" line to the
+** job's queue file when it is arrested.  In some places the code calls
+** give_reason() directly.  However pprdrv_feedback.c calls 
+** describe_postscript_error() which calls give_reason() itself.
+===========================================================================*/
 
 #include "before_system.h"
 #include <sys/stat.h>
@@ -24,6 +41,9 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "pprdrv.h"
@@ -52,12 +72,17 @@ void give_reason(const char reason[])
     } /* end of give_reason() */
 
 /*
-** This routine is passed information about a PostScript error.  It looks
-** up the error in a list and hopefully finds a description.  In addition to
-** the name of the failed PostScript command and the PostScript error message
-** it receives the string from the "%%Creator:" line in the document.  Since
-** this often indicates the program or printer driver that generated
-** the document, it can help us to explain the error in context.
+** This routine is passed information about a PostScript error.  It looks up 
+** the error in a list in a file and hopefully finds a description.  In 
+** addition to the name of the failed PostScript command and the PostScript 
+** error message it receives the string from the "%%Creator:" line in the 
+** document.  Since this often indicates the program or printer driver that
+** generated the document, it can help us to explain the error in context.
+**
+** Information about the error is sent to the job log and to the queue file.
+**
+** This function is called from pprdrv_feedback.c _before_ the PostScript 
+** error is logged.
 */
 void describe_postscript_error(const char creator[], const char errormsg[], const char command[])
     {
@@ -73,8 +98,13 @@ void describe_postscript_error(const char creator[], const char errormsg[], cons
     	command ? command : "");
     #endif
 
+    log_puts("==============================================================================\n");
+    log_printf(_("The PostScript error indicated below occured while printing on \"%s\".\n"), printer.Name);
+
+    /* If we have someting to go on... */
     if(errormsg && command)
 	{
+	/* Look in. */
         if((f = fopen(filename, "r")))
             {
             const char *safe_creator = creator ? creator : "";
@@ -88,6 +118,7 @@ void describe_postscript_error(const char creator[], const char errormsg[], cons
                 linenum++;
                 if(line[0] == ';' || line[0] == '#' || line[0] == '\0') continue;
 
+		/* Parse the line into three colon separated fields. */
                 p = line;
                 if(!(f1 = gu_strsep(&p, ":")) || !(f2 = gu_strsep(&p, ":"))
                             || !(f3 = gu_strsep(&p, ":")) || !(f4 = gu_strsep(&p, ":")))
@@ -98,7 +129,28 @@ void describe_postscript_error(const char creator[], const char errormsg[], cons
 
                 if(ppr_wildmat(safe_creator, f1) && ppr_wildmat(errormsg, f2) && ppr_wildmat(command, f3))
                     {
+		    int i;
+
+		    log_puts(_("Probable cause: "));
+		    for(i=0; f4[i]; i++)
+		    	{
+			switch(f4[i])
+			    {
+			    case ',':
+			    	log_puts(", ");
+			    	break;
+			    case '|':
+			    	log_putc(' ');
+			    	break;
+			    default:
+			    	log_putc(f4[i]);
+			    	break;
+			    }
+		    	}
+		    log_putc('\n');
+
                     give_reason(f4);
+
                     gu_free(line);
                     found = TRUE;
                     break;
@@ -109,6 +161,7 @@ void describe_postscript_error(const char creator[], const char errormsg[], cons
             }
 	}
 
+    log_puts("==============================================================================\n");
 
     /* If nothing was found above, use the generic message. */
     if(!found)

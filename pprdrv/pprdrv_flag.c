@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_flag.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 19 November 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 February 2003.
 */
 
 /*
@@ -386,9 +401,9 @@ static void mgu_ini_insert_resource(const char restype[], const char resname[], 
 ** flag_type -1		trailer page
 ** position 0		before job
 */
-static void print_flag_page_standard(int flag_type, int position, int mediumfound)
+static int print_flag_page_standard(int flag_type, int position, int skiplines, int mediumfound)
     {
-    FILE *logfile;
+    int linenum = 0;
 
     /* Get interface and printer ready to receive the flag page. */
     job_start(JOBTYPE_FLAG);
@@ -626,35 +641,42 @@ static void print_flag_page_standard(int flag_type, int position, int mediumfoun
 
     /* print the log file contents */
     {
-    char fname[MAX_PPR_PATH];
-    char buffer[82];			/* buffer for reading log file */
-    feedback_close_log();	/* flush out messages from printer */
-    ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-    if((logfile = fopen(fname, "r")) != (FILE*)NULL)
+    FILE *logfile;
+    char *line = NULL;
+    int line_available = 80;
+
+    /* Flush the stdio buffer on the job log file (if ther is one). */
+    log_flush();
+
+    /* Get a read handle to the log.  log_reader() will return NULL if
+       there is no log file. */
+    if((logfile = log_reader()) != (FILE*)NULL)
 	{
-	#ifdef DEBUG_FLAGS
-	debug("print_flag_page(): printing log contents");
-	#endif
+	DODEBUG_FLAGS(("print_flag_page(): printing log contents"));
 
 	printer_printf("/Courier findfont %d scalefont setfont\n", flag.log_size);
 	printer_printf("/ys %d def\n", (int)(flag.log_size*1.2));
 	printer_putline("nl");
 
-	while(fgets(buffer,sizeof(buffer),logfile))
+	while((line = gu_getline(line, &line_available, logfile)))
 	    {
+	    /* Skip lines already printed and a first flag page. */
+	    if(++linenum < skiplines)
+	    	continue;
+
 	    /* Skip job redirection description lines. */
-#if 0
-	    if(buffer[0] == '+') continue;
-#endif
-	    buffer[strcspn(buffer, "\n")] = '\0';	/* remove trailing space */
-	    printer_puts("("); printer_puts_escaped(buffer); printer_puts(")p\n");
+	    #if 0
+	    if(line[0] == '+')
+		continue;
+	    #endif
+
+	    printer_puts("(");
+	    printer_puts_escaped(line);
+	    printer_puts(")p\n");
 	    }
 
 	fclose(logfile);
-
-	if(position == 0)   	/* if this page was printed before the job, */
-	    unlink(fname);  	/* then unlink the log file */
-	} /* logfile exists */
+	} /* if logfile exists */
     }
 
     /* close the page */
@@ -667,6 +689,8 @@ static void print_flag_page_standard(int flag_type, int position, int mediumfoun
     /* Tell printer setup and interface routines
        that the job is done. */
     job_end();
+
+    return linenum;
     } /* end of print_flag_page_standard() */
 
 /*
@@ -674,10 +698,12 @@ static void print_flag_page_standard(int flag_type, int position, int mediumfoun
 **
 ** If proper, print a banner or trailer page.
 **
-** Flag type of 1 is header, -1 is trailer.
-** position is 0 if at start of job, 1 if at end of job.
+** flag_type: 1 for header, -1 for trailer
+** position: 0 if at start of job, 1 if at end of job
+** skiplines: number of lines to skip at begining of log file
+** returns: number of log file lines printed
 */
-void print_flag_page(int flag_type, int position)
+int print_flag_page(int flag_type, int position, int skiplines)
     {
     DODEBUG_FLAGS(("print_flag_page(flag_type=%d, position=%d)", flag_type, position));
 
@@ -685,31 +711,32 @@ void print_flag_page(int flag_type, int position)
     if(flag_type < 0)           /* trailer page */
 	{
 	if( !flag_page_vote(printer.do_trailer, job.do_trailer, position) )
-	    return;
+	    return 0;
 	}
     else                        /* banner page */
 	{
 	if( !flag_page_vote(printer.do_banner, job.do_banner, position) )
-	    return;
+	    return 0;
 	}
 
     /* Give a custom flag page program a chance to run.  If it declines,
        print our own flag page. */
-    if(!custom_hook((flag_type > 0) ? CUSTOM_HOOK_BANNER : CUSTOM_HOOK_TRAILER, position))
+    if(custom_hook((flag_type > 0) ? CUSTOM_HOOK_BANNER : CUSTOM_HOOK_TRAILER, position))
+	return 0;
+
+    {
+    /* Look for a suitable medium.  If select_flag_medium() indicates
+       that bins exist but none of them have suitable media mounted,
+       abort flag printing now. */
+    int mediumfound;
+    if((mediumfound = select_flag_medium()) == -1)
 	{
-        /* Look for a suitable medium.  If select_flag_medium() indicates
-           that bins exist but none of them have suitable media mounted,
-           abort flag printing now. */
-        int mediumfound;
-        if((mediumfound = select_flag_medium()) == -1)
-            {
-            DODEBUG_FLAGS(("all mounted media are unsuitable for flag pages"));
-            return;
-            }
-	/* Print a flag page on the selected medium. */
-        print_flag_page_standard(flag_type, position, mediumfound);
-        }
+	DODEBUG_FLAGS(("all mounted media are unsuitable for flag pages"));
+	return 0;
+	}
+    /* Print a flag page on the selected medium. */
+    return print_flag_page_standard(flag_type, position, skiplines, mediumfound);
+    }
     } /* end of print_flag_page() */
 
 /* end of file */
-

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2003.
+** Last modified 5 February 2003.
 */
 
 /*
@@ -451,14 +451,10 @@ static void pprdrv_exited(int prnid, int wstat)
 		{			/* (Note: we know that there was no core dump) */
 		if(WSTOPSIG(wstat) == 0)
 		    {
-		    char *LD_LIBRARY_PATH = getenv("LD_LIBRARY_PATH");
 		    alert(printers[prnid].name, TRUE,
 		    	_("Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
-		    	  "by signal 0) may indicate that dynamic linking failed.  You may need to\n"
-		    	  "restart pprd with LD_LIBRARY_PATH set or take some other operating system-\n"
-		    	  "specific action to help pprdrv to find the libraries it needs to run.\n"
-		    	  "LD_LIBRARY_PATH=\"%s\""),
-		    	  LD_LIBRARY_PATH ? LD_LIBRARY_PATH : ""
+		    	  "by signal 0) may indicate that dynamic linking failed due to a problem with\n"
+		    	  "the shared library search path.")
 		    	  );
 		    }
 		else

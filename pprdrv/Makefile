@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/pprdrv/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 November 2002.
+# Last modified 5 February 2003.
 #
 
 include ../Makefile.conf
@@ -40,22 +40,35 @@ LIB_DATA=lw-messages.conf pjl-messages.conf pserrors.conf
 
 all: $(LIB_PROGS)
 
-OBJS1=pprdrv.$(OBJ) pprdrv_interface.$(OBJ) pprdrv_feedback.$(OBJ) \
+OBJS1=pprdrv.$(OBJ) \
+	pprdrv_interface.$(OBJ) \
+	pprdrv_feedback.$(OBJ) \
 	pprdrv_rip.$(OBJ) \
-	pprdrv_flag.$(OBJ) pprdrv_custom_hook.$(OBJ) \
-	pprdrv_buf.$(OBJ) pprdrv_ppd.$(OBJ) pprdrv_ppd_parse.$(OBJ) \
-	pprdrv_res.$(OBJ) pprdrv_capable.$(OBJ) pprdrv_media.$(OBJ) \
-	pprdrv_nup.$(OBJ) pprdrv_req.$(OBJ) pprdrv_signature.$(OBJ) \
-	pprdrv_reason.$(OBJ) pprdrv_patch.$(OBJ) \
+	pprdrv_flag.$(OBJ) \
+	pprdrv_custom_hook.$(OBJ) \
+	pprdrv_buf.$(OBJ) \
+	pprdrv_ppd.$(OBJ) \
+	pprdrv_ppd_parse.$(OBJ) \
+	pprdrv_res.$(OBJ) \
+	pprdrv_capable.$(OBJ) \
+	pprdrv_media.$(OBJ) \
+	pprdrv_nup.$(OBJ) \
+	pprdrv_req.$(OBJ) \
+	pprdrv_signature.$(OBJ) \
+	pprdrv_reason.$(OBJ) \
+	pprdrv_patch.$(OBJ) \
 	pprdrv_pagecount.$(OBJ) \
-	pprdrv_commentary.$(OBJ) pprdrv_ppop_status.$(OBJ) \
-	pprdrv_progress.$(OBJ) pprdrv_writemon.$(OBJ) \
+	pprdrv_commentary.$(OBJ) \
+	pprdrv_ppop_status.$(OBJ) \
+	pprdrv_progress.$(OBJ) \
+	pprdrv_writemon.$(OBJ) \
 	pprdrv_snmp.$(OBJ) \
 	pprdrv_lw_messages.$(OBJ) pprdrv_pjl_messages.$(OBJ) pprdrv_snmp_messages.$(OBJ) \
 	pprdrv_tt.$(OBJ) pprdrv_pfb.$(OBJ) pprdrv_mactt.$(OBJ) \
 	pprdrv_notppd.$(OBJ) \
 	pprdrv_persistent.$(OBJ) pprdrv_fault_debug.$(OBJ) \
 	pprdrv_userparams.$(OBJ) \
+	pprdrv_log.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libttf.$(LIBEXT) ../libpprdb.$(LIBEXT)
 pprdrv$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS)

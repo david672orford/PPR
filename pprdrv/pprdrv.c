@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 5 February 2003.
 */
 
 /*
@@ -1958,6 +1958,7 @@ int main(int argc, char *argv[])
     int group_pass;	/* Number of the pass thru the group (a pprdrv invokation parameter). */
     int argi = 1;
     int pagecount_start, pagecount_change;
+    int flag_page_skiplines;	/* number of log line already printed on a flag page */
 
     /* Note the start time for the logs: */
     gettimeofday(&start_time, (struct timezone *)NULL);
@@ -2158,7 +2159,7 @@ int main(int argc, char *argv[])
 
     /* Print banner or trailer page. */
     DODEBUG_MAIN(("main(): calling print_flag_page(%d, 0)", printer.OutputOrder));
-    print_flag_page(printer.OutputOrder,0);
+    flag_page_skiplines = print_flag_page(printer.OutputOrder, 0, 0);
 
     /* Download any patchfile if it is not already downloaded. */
     DODEBUG_MAIN(("main(): patchfile()"));
@@ -2341,7 +2342,7 @@ int main(int argc, char *argv[])
     ** We must close the job log so we can print it.
     */
     DODEBUG_MAIN(("main(): calling print_flag_page()"));
-    print_flag_page(printer.OutputOrder*-1, 1);
+    print_flag_page(printer.OutputOrder*-1, 1, flag_page_skiplines);
 
     /*
     ** Close the pipes to the interface and wait

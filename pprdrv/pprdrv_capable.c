@@ -1,22 +1,40 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_capable.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 18 March 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 February 2003.
 */
 
-/*
-** Determine if the printer is capable of printing the job.
-** Resource substitution descisions are made in this module.
-*/
+/*===========================================================================
+** Determine if the printer is capable of printing the job.  If the printer 
+** is not capable, then message are added to the job log and the job will be
+** turned away from this printer.
+**
+** Resource substitution descisions are also made in this module.
+===========================================================================*/
 
 #include "before_system.h"
 #include <stdlib.h>
@@ -61,78 +79,76 @@ static struct INTERNAL_RESOURCES
     {"encoding", "StandardEncoding", 1},
     {"encoding", "SymbolEncoding", 1},
     {"encoding", "ISOLatin1Encoding", 2},
-    {"procset", "CIDInit", 3},			/* ??? */
+    {"procset", "CIDInit", 3},			/* ??? is this true ??? */
     {NULL, NULL, 0}
     };
 
+/*===========================================================================
+** These functions are used by check_if_capable() to add messages to the
+** job's log file.  These functions call the job log functions in 
+** pprdrv_log.c to do the actual logging.  These functions just provide 
+** a way to add extra lines that mark off the start of a report on 
+** the incapabability of a printer.
+===========================================================================*/
+
+static gu_boolean log_started = FALSE;
+static gu_boolean log_said_incapable = FALSE;
+static gu_boolean log_said_willtry = FALSE;
+
 /*
-** Write a line to the job log file, prepending a "+" to it.
-** Lines that begin with "+" concern circumstances which might
-** prevent a certain printer from printing the job.
-** If the log is not yet open, open it and write the 1st line.
+** All of the functions that log incapabilities call this first to make sure
+** that the proper heading has already been printed.
 */
-static FILE *log = (FILE*)NULL;
-static gu_boolean said_incapable = FALSE;
-static gu_boolean said_willtry = FALSE;
-
-static void open_incapable_log(int group_pass)
+static void start_incapable_log(int group_pass)
     {
-    if(log == (FILE*)NULL)
+    if(!log_started)
 	{
-        char fname[MAX_PPR_PATH];
-
-        /* Open the log file for write. */
-        ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-        if((log = fopen(fname, "a")) == (FILE*)NULL)
-            fatal(EXIT_PRNERR, _("Can't open \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
-
-        /* Be paranoid. */
-        gu_set_cloexec(fileno(log));
-
         /* If there may be 2 passes, say which one this is. */
         if(group_pass)
             {
             if(group_pass == 1)
-                fprintf(log, "+Pass 1\n");
+                log_printf("+Pass 1\n");
             else
-                fprintf(log, "+Pass %d, ProofMode=%s\n", group_pass, job.attr.proofmode == PROOFMODE_TRUSTME ? "TrustMe" : job.attr.proofmode == PROOFMODE_SUBSTITUTE ? "Substitute" : "NotifyMe");
+                log_printf("+Pass %d, ProofMode=%s\n", group_pass, job.attr.proofmode == PROOFMODE_TRUSTME ? "TrustMe" : job.attr.proofmode == PROOFMODE_SUBSTITUTE ? "Substitute" : "NotifyMe");
             }
 	}
-    } /* end of logopen() */
+    } /* end of start_incapable_log() */
 
-/* This is the function we actually call to write the line. */
+/*
+** This function logs a reason we will not try to print the job on this printer.
+*/
 static void incapable_log(int group_pass, const char *s, ...)
     {
     va_list va;
 
-    open_incapable_log(group_pass);
+    start_incapable_log(group_pass);
 
     /*
     ** If we have not previously said that this printer
     ** is incapable, say so now.
     */
-    if(! said_incapable)
+    if(! log_said_incapable)
 	{
-	fprintf(log, _("+Job turned away from printer \"%s\" for the following reason(s):\n"), printer.Name);
-	said_incapable = TRUE;
+	log_printf(_("+Job turned away from printer \"%s\" for the following reason(s):\n"), printer.Name);
+	log_said_incapable = TRUE;
 	}
 
-    fputc('+', log);		/* begin with a plus */
+    log_putc('+');		/* begin with a plus */
     va_start(va, s);
-    vfprintf(log, s, va);	/* print the error message */
+    log_vprintf(s, va);		/* print the error message */
     va_end(va);
-    fputc('\n', log);		/* add a newline */
+    log_putc('\n');		/* add a newline */
     } /* end of incapable_log() */
 
 /*
-** Say that we may be incapable but we will try.  This is
-** a variation on incapable_log().
+** This function logs a reason why we think the job may not print correctly on this
+** printer even though we are going to try.
 */
 static void incapable_log_willtry(int group_pass, const char *s, ...)
     {
     va_list va;
 
-    open_incapable_log(group_pass);
+    start_incapable_log(group_pass);
 
     /*
     ** If we have not yet said that we are going to try to print even
@@ -140,30 +156,31 @@ static void incapable_log_willtry(int group_pass, const char *s, ...)
     ** not said that we won't try to print, then say now that
     ** we will do our best.
     */
-    if(!said_willtry && !said_incapable)
+    if(!log_said_willtry && !log_said_incapable)
 	{
-	fprintf(log, _("+Printer \"%s\" may not print this job correctly for the following reason(s):\n"), printer.Name);
-	said_willtry = TRUE;
+	log_printf(_("+Printer \"%s\" may not print this job correctly for the following reason(s):\n"), printer.Name);
+	log_said_willtry = TRUE;
 	}
 
-    fputc('+', log);		/* begin with a plus */
+    log_putc('+');		/* begin with a plus */
     va_start(va, s);
-    vfprintf(log, s, va);	/* print the error message */
+    log_vprintf(s, va);		/* print the error message */
     va_end(va);
-    fputc('\n', log);		/* add a newline */
+    log_putc('\n');		/* add a newline */
     } /* end of incapable_log_willtry() */
 
-static void close_incapable_log(void)
-    {
-    if(log)
-	{
-	fclose(log);
-	log = (FILE*)NULL;
-	said_incapable = said_willtry = FALSE;
-	}
-    } /* end of close_incapable_log() */
-
 /*
+** This function doesn't really do anything important, at least at the moment.
+*/
+static void end_of_incapable_log(void)
+    {
+    if(log_started)
+	{
+	log_started = log_said_incapable = log_said_willtry = FALSE;
+	}
+    } /* end of end_of_incapable_log() */
+
+/*===================================================================
 ** Here is the giant function which makes this module famous!
 **
 ** Read the required resources and requirements from
@@ -171,7 +188,7 @@ static void close_incapable_log(void)
 ** all be met satisfactorily.
 **
 ** Also, check some of the things stored in the "Attr:" line.
-*/
+===================================================================*/
 int check_if_capable(FILE *qfile, int group_pass)
     {
     const char *function = "check_if_capable";
@@ -258,17 +275,6 @@ int check_if_capable(FILE *qfile, int group_pass)
 	** "Standard" and "Symbol", for level 2 printers, "ISOLatin1"
 	** is also built in.
 	*/
-#if 0
-	if(strcmp(d->type, "encoding") == 0)
-	    {
-	    if(strcmp(d->name, "StandardEncoding") == 0 || strcmp(d->name, "SymbolEncoding") == 0
-	    	    || ( Features.LanguageLevel > 1 && strcmp(d->name,"ISOLatin1Encoding") == 0 ) )
-	        {
-		DODEBUG_RESOURCES(("Encoding %s is in printer", d->name));
-	        continue;
-	        }
-	    }
-#else
 	{
 	int i;
 	for(i=0; internal_resources[i].type; i++)
@@ -284,7 +290,6 @@ int check_if_capable(FILE *qfile, int group_pass)
 	if(internal_resources[i].type)		/* if didn't reach end of table, */
 	    continue;
 	}
-#endif
 
 	/*
 	** See if the resource in question is in the cache.
@@ -586,8 +591,6 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    }
 	}
 
-    close_incapable_log();
-
     /*---------------------------------------------------------------
     ** If this is not a colour document and the printer is not
     ** allowed to print grayscale documents, don't print this job.
@@ -681,6 +684,8 @@ int check_if_capable(FILE *qfile, int group_pass)
 	incapable_kilobyteslimit++;
 	}
     }
+
+    end_of_incapable_log();
 
     /*------------------------------------------------------------
     ** If the printer was judged to be incapable and this is not
@@ -781,6 +786,6 @@ int check_if_capable(FILE *qfile, int group_pass)
     DODEBUG_RESOURCES(("%s(): incapable=%s", function, incapable ? "TRUE" : "FALSE"));
 
     return incapable;
-    } /* end of check_if_capable */
+    } /* end of check_if_capable() */
 
 /* end of file */

@@ -28,19 +28,13 @@ int_acache.$(OBJ): int_acache.c ../include/before_system.h ../include/gu.h ../in
 
 int_cmdline.$(OBJ): int_cmdline.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_con_tcpip.$(OBJ): int_con_tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
 int_copy_job.$(OBJ): int_copy_job.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
 int_debug.$(OBJ): int_debug.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
 int_exit.$(OBJ): int_exit.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_pe_tcpip.$(OBJ): int_pe_tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
 int_prpapst.$(OBJ): int_prpapst.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
-
-int_snmp.$(OBJ): int_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
 interfaces.$(OBJ): interfaces.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
@@ -85,4 +79,6 @@ unreadqfile.$(OBJ): unreadqfile.c ../include/before_system.h ../include/gu.h ../
 unsafe.$(OBJ): unsafe.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+
+destinfo.$(OBJ): destinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
