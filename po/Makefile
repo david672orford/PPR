@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2004.
+# Last modified 9 June 2004.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../makeprogs/paths.mk
 
 #=== Inventory ==============================================================
 
-LANGUAGES=fr_FR ru_RU
+LANGUAGES=fr_FR ru_RU de_DE
 
 #=== Build ==================================================================
 
