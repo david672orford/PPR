@@ -9131,6 +9131,9 @@ Internet Printing Protocol Work
 * www/show_jobs.cgi.perl: renamed the [Cancel] button to [Delete] since that 
   is more in accord with GUI conventions.
 
+* www/prn_addwiz.cgi.perl: split LPR and PROS screens, split JetDirect screen
+  from all of the other tcpip variants.
+
 
 +++++++++++++++++++++
 TODO

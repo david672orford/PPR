@@ -83,9 +83,9 @@ defined($PPR2SAMBA_PATH) || die;
 	"tcpip"		=> "int_tcpip",
 	"socketapi"	=> "int_tcpip",
 	"appsocket"	=> "int_tcpip",
-	"jetdirect"	=> "int_tcpip",
-	"lpr"		=> "int_xaty",
-	"pros"		=> "int_xaty"
+	"jetdirect"	=> "int_jetdirect",
+	"lpr" => "int_lpr",
+	"pros" => "int_pros"
 	);
 
 #===========================================
@@ -183,10 +183,9 @@ $addprn_wizard_table = [
 				}
 		},
 
-		#===========================================
-		# Interface setup for TCP/IP JetDirect
-		# style printing
-		#===========================================
+		#===============================================
+		# Interface setup for TCP/IP socket protocols
+		#===============================================
 		{
 		'label' => 'int_tcpip',
 		'title' => N_("PPR: Add a Printer: Raw TCP/IP Interface: Choose an Address"),
@@ -209,35 +208,21 @@ $addprn_wizard_table = [
 				print "<input tabindex=1 name=\"int_tcpip_port\" size=8 value=", html_value(cgi_data_move('int_tcpip_port', '9100')), ">\n";
 				print "</p>\n";
 
-				# If this is for the Ghostscript version of the tcpip interface,
-				# then it is bidirectional because we have a two way communictions
-				# chanel with the PostScript interpreter (Ghostscript).
-				if($data{interface} =~ /^gs/)
-					{
-					$data{int_tcpip_feedback} = "default";
-					}
+				print "<p>",
+					H_("Bidirectional communication is highly desirable, however many devices don't\n"
+					. "support it.  If you say Yes here and the correct answer is No, the queue will\n"
+					. "get stuck at the end of the first job."), "</p>\n";
 
-				# Otherwise, this is a question for the user.
-				else
-					{
-					print "<p>",
-						H_("Internal JetDirect cards support bidirectional communication.  External print\n"
-						. "servers will only support bidirectional communication if they communicate with\n"
-						. "the printer through a serial port or through a bidirectional parallel port.  If\n"
-						. "you say Yes here and the correct answer is No, the queue will get stuck at the\n"
-						. "end of the first job."), "</p>\n";
-
-					print "<p>", H_("Bidirectional:"), " ";
-					print "<select tabindex=1 name=\"int_tcpip_feedback\">\n";
-					my $feedback = cgi_data_move('int_tcpip_feedback', 'Yes');
-					print "<option";
-					print " selected" if($feedback eq 'Yes');
-					print ">Yes\n";
-					print "<option";
-					print " selected" if($feedback eq 'No');
-					print ">No\n";
-					print "</select>\n</p>\n";
-					}
+				print "<p>", H_("Bidirectional:"), " ";
+				print "<select tabindex=1 name=\"int_tcpip_feedback\">\n";
+				my $feedback = cgi_data_move('int_tcpip_feedback', 'No');
+				print "<option";
+				print " selected" if($feedback eq 'Yes');
+				print ">Yes\n";
+				print "<option";
+				print " selected" if($feedback eq 'No');
+				print ">No\n";
+				print "</select>\n</p>\n";
 				},
 		'onnext' => sub {
 				if($data{'int_tcpip_name'} eq '')
@@ -255,11 +240,66 @@ $addprn_wizard_table = [
 		},
 
 		#===========================================
-		# Interface setup for RFC 1179 and PROS
-		# servers
+		# Interface setup for HP JetDirect
 		#===========================================
 		{
-		'label' => 'int_xaty',
+		'label' => 'int_jetdirect',
+		'title' => N_("PPR: Add a Printer: JetDirect Interface: Choose an Address"),
+		'picture' => "wiz-address.jpg",
+		'dopage' => sub {
+				print "<p>", H_("It is necessary to know the IP address of the printer,\n"
+								. "or preferably a DNS name which represents that address.\n"
+								. "An example of a DNS name is \"myprn.prn.myorg.org\".  An example\n"
+								. "of an IP address is \"157.252.200.22\"."), "</p>\n";
+
+				print "<p>", H_("DNS Name or IP Address:"), " ";
+				print "<input tabindex=1 name=\"int_jetdirect_name\" size=32 value=", html_value(cgi_data_move('int_jetdirect_name', '')), ">\n";
+				print "</p>\n";
+
+				print "<p>", H_("Most HP JetDirect cards accept jobs on TCP port 9100.\n"), "</p>\n";
+
+				print "<p>", H_("TCP Port Number:"), " ";
+				print "<input tabindex=1 name=\"int_jetdirect_port\" size=8 value=", html_value(cgi_data_move('int_jetdirect_port', '9100')), ">\n";
+				print "</p>\n";
+
+				print "<p>",
+					H_("Internal JetDirect cards support bidirectional communication.  External print\n"
+					. "servers will only support bidirectional communication if they communicate with\n"
+					. "the printer through a serial port or through a bidirectional parallel port.  If\n"
+					. "you say Yes here and the correct answer is No, the queue will get stuck at the\n"
+					. "end of the first job."), "</p>\n";
+
+				print "<p>", H_("Bidirectional:"), " ";
+				print "<select tabindex=1 name=\"int_jetdirect_feedback\">\n";
+				my $feedback = cgi_data_move('int_jetdirect_feedback', 'Yes');
+				print "<option";
+				print " selected" if($feedback eq 'Yes');
+				print ">Yes\n";
+				print "<option";
+				print " selected" if($feedback eq 'No');
+				print ">No\n";
+				print "</select>\n</p>\n";
+				},
+		'onnext' => sub {
+				if($data{'int_jetdirect_name'} eq '')
+					{ return _("You must fill in the printer's DNS name or IP address!") }
+				if($data{'int_jetdirect_port'} eq '')
+					{ return _("You must fill in the TCP port number!") }
+				$data{address} = $data{int_jetdirect_name} . ':' . $data{int_jetdirect_port};
+				$data{options} = '';
+				$data{jobbreak} = 'default';
+				$data{feedback} = $data{'int_jetdirect_feedback'};
+
+				return undef;
+				},
+		'getnext' => sub { return 'ppd' }
+		},
+
+		#===========================================
+		# Interface setup for RFC 1179 (LPR/LPD)
+		#===========================================
+		{
+		'label' => 'int_lpr',
 		'title' => N_("PPR: Add a Printer: LPR Interface: Choose an Address"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
@@ -269,13 +309,16 @@ $addprn_wizard_table = [
 						. "example of an IP address is \"157.252.200.52\".  A name is preferred."), "</p>\n";
 
 				print "<p>";
-				labeled_entry("int_xaty_host", _("DNS Name or IP Address:"), cgi_data_move("int_xaty_host", ""), 32);
+				labeled_entry("int_lpr_host", _("DNS Name or IP Address:"), cgi_data_move("int_lpr_host", ""), 32);
 				print "</p>\n";
 
-				print "<p>", H_("What is the name of the printer on the remote print server?  See the table below."), "</p>\n";
+				print "<p>";
+				print H_("What is the name of the printer on the remote print server?\n");
+				print H_("See the table below.");
+				print "</p>\n";
 
 				print "<p>";
-				labeled_entry("int_xaty_printer", _("Remote Queue Name:"), cgi_data_move('int_xaty_printer', ""), 16);
+				labeled_entry("int_lpr_printer", _("Remote Queue Name:"), cgi_data_move('int_lpr_printer', ""), 16);
 				print "</p>\n";
 
 				print "<table class=\"lines\" cellspacing=0>\n";
@@ -287,11 +330,48 @@ $addprn_wizard_table = [
 				print "</table>\n";
 				},
 		'onnext' => sub {
-				if($data{int_xaty_host} eq '')
+				if($data{int_lpr_host} eq '')
 					{ return _("You must fill in the remote host's DNS name or IP address!") }
-				if($data{int_xaty_printer} eq '')
+				if($data{int_lpr_printer} eq '')
 					{ return _("You must fill in the remote queue name!") }
-				$data{address} = $data{int_xaty_printer} . '@' . $data{int_xaty_host};
+				$data{address} = $data{int_lpr_printer} . '@' . $data{int_lpr_host};
+				$data{options} = '';
+				$data{jobbreak} = 'default';
+				$data{feedback} = 'default';
+				return undef;
+				},
+		'getnext' => sub { return 'ppd' }
+		},
+
+		#===========================================
+		# Interface setup for PROS
+		#===========================================
+		{
+		'label' => 'int_pros',
+		'title' => N_("PPR: Add a Printer: LPR Interface: Choose an Address"),
+		'picture' => "wiz-address.jpg",
+		'dopage' => sub {
+				print "<p>",
+						H_("PPR needs to know the name or IP address of the printer or of the print server\n"
+						. "to which it is attached.  An example of a DNS name is \"myhost.myorg.org\".  An\n"
+						. "example of an IP address is \"157.252.200.52\".  A name is preferred."), "</p>\n";
+
+				print "<p>";
+				labeled_entry("int_pros_host", _("DNS Name or IP Address:"), cgi_data_move("int_pros_host", ""), 32);
+				print "</p>\n";
+
+				print "<p>", H_("What is the name of the printer on the remote print server?"), "</p>\n";
+
+				print "<p>";
+				labeled_entry("int_pros_printer", _("Remote Queue Name:"), cgi_data_move('int_pros_printer', "LPT1"), 16);
+				print "</p>\n";
+				},
+		'onnext' => sub {
+				if($data{int_pros_host} eq '')
+					{ return _("You must fill in the remote host's DNS name or IP address!") }
+				if($data{int_pros_printer} eq '')
+					{ return _("You must fill in the remote queue name!") }
+				$data{address} = $data{int_pros_printer} . '@' . $data{int_pros_host};
 				$data{options} = '';
 				$data{jobbreak} = 'default';
 				$data{feedback} = 'default';
@@ -745,9 +825,6 @@ sub suggest_queue_name
 	my($interface, $address) = @_;
 	my $name = "";
 
-	# Don't treat Ghostscript versions differently.
-	$interface =~ s/^gs//;
-
 	# AppleTalk is pretty easy.  We just remove noise.
 	if($interface eq "atalk" && $address =~ /^([^:]+):/)
 		{
@@ -815,9 +892,6 @@ sub suggest_queue_comment
 	{
 	my($interface, $address, $ppdfile) = @_;
 	my $name = "";
-
-	# Don't treat Ghostscript versions differently.
-	$interface =~ s/^gs//;
 
 	# If it is an AppleTalk address and the name part contains
 	# at least one space,
