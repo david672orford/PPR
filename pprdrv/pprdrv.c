@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 7 November 2003.
 */
 
 /*
@@ -1339,7 +1339,8 @@ static void pprdrv_read_printer_conf(void)
 			{
 			if(printer.PPDFile)
 				gu_free(printer.PPDFile);
-			printer.PPDFile = tptr;
+			printer.PPDFile = ppd_find_file(tptr);		/* resolve to full path to file */
+			gu_free(tptr);
 			}
 
 		else if(lmatch(confline, "Commentator:"))

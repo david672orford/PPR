@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_files.sgml
-Last Modified: 23 October 2003
+Last Modified: 7 November 2003
 Last Proofread: 
 -->
 
@@ -206,12 +206,12 @@ for missing fonts.  It is described in <xref linkend="fontsub"/>.</para>
 <sect3>
 <title>The <filename class="Directory">/usr/lib/ppr/interfaces/</filename> Directory</title>
 
-<para>Each file in this directory is a program which is responsible for making
-contact with any printer which has a particular kind of interface.  For
-instance, <filename>interfaces/atalk</filename> is used to communicate with printers
-connected through Apple's Printer Access Protocol.  The requirements imposed on
-such an interface program are described in Appendix <xref
-linkend="interfaces2"/>.</para>
+<para>Each file in this directory is a program which is responsible for
+making contact with any printer which has a particular kind of interface. 
+For instance, <filename>interfaces/atalk</filename> is used to communicate
+with printers connected through Apple's Printer Access Protocol.  If you
+would like to write a printer interface program, see section <xref
+linkend="interfaces"/>.</para>
 
 </sect3>
 
@@ -244,7 +244,9 @@ directory.</para>
 <sect3>
 <title>The <filename class="Directory">/usr/lib/ppr/filters/</filename> Directory</title>
 
-<para>[This section hasn't been written yet.]</para>
+<para>The programs in this directory are filters which convert various file
+formats to PostScript.  If you would like to write a new filter, see section
+<xref linkend="filters"/>.</para>
 
 </sect3>
 
@@ -275,22 +277,48 @@ class="Directory">/cgi-bin/</filename> at the top level of the
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/cache/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory contains the PostScript resources distributed with
+<application>PPR</application>.  They are segregated in subdirectories by
+resource type.  Many of the input filters distributed with
+<application>PPR</application> use resources in the <filename
+class="Directory">encodings/</filename> and <filename
+class="Directory">procset/</filename> subdirectories.  The filters don't use
+these files directly.  Instead, they insert
+<literal>%%IncludeResource:</literal> in their output so that
+<command>pprdrv</command> will insert the contents of the desired
+file.</para>
+
 </sect3>
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/www/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory is the root for the <application>PPR</application> web
+server <command>ppr-httpd</command>.</para>
+
 </sect3>
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/fonts/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory contains fonts and font metric files which are
+distributed with <application>PPR</application>.  Formerly, the font files
+were stored in <filename
+class="Directory">/usr/share/ppr/cache/font/</filename>, but the font index
+mechanism made this unnecessary.</para>
+
 </sect3>
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/man/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory contains the <application>PPR</application> man pages. 
+Packagers may choose to relocate this files to the system-wide man page
+directory.  If not, one must either use the
+<ulink url="../refman/ppdoc.1.html"><command>ppdoc</command></ulink> command
+to view them or add this directories to one's <envar>MANPATH</envar>.</para>
+
 </sect3>
 
 <sect3>
@@ -308,12 +336,20 @@ of PPR.</para>
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/locale/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory contains <application>GNU Gettext</application> message
+catalogs.  These catalogs are used to display program messages in languages
+other than English.  If you would like to add messages for your language,
+see the file <filename>README.txt</filename> in the source code directory
+<filename class="Directory">po/</filename>.</para>
+
 </sect3>
 
 <sect3>
 <title>The <filename class="Directory">/usr/share/ppr/speach/</filename> Directory</title>
-<para>[This section hasn't been written yet.]</para>
+
+<para>This directory contains sound files used by the audio responder.</para>
+
 </sect3>
 
 </sect2>

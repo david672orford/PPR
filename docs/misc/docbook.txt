@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-23 October 2003
+7 November 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -258,13 +258,13 @@ The name of a variable.
  Hyperlinks
 ==============================================================================
 
-<xref linkend="target_id">
+<xref linkend="target_id"/>
 
 This tag inserts the name of the target section.  If the output format
 supports hyperlinks, then the section name is hyperlinked to the section
 to which it refers.
 
-<ulink url="XXXXX">
+<ulink url="XXXXX">linked text</ulink>
 
 A hyperlink with a URL.  It does not generate the linked text.
 

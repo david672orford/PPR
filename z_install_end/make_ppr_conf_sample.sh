@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 1 November 2003.
+# Last modified 7 November 2003.
 #
 
 #
@@ -145,7 +145,7 @@ cat - >&5 <<'===EndHere41==='
 
 cat - >&5 <<===EndHere50===
 #
-# Where are the Type 1 and TrueType fonts?	These directories will be
+# Where are the Type 1 and TrueType fonts?  These directories will be
 # searched recursively.
 #
 # After changing this section, you must run this command in order for your
