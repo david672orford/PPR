@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2002.
+** Last modified 15 April 2002.
 */
 
 #include "before_system.h"
@@ -325,8 +325,8 @@ static const struct gu_getopt_opt option_words[] =
 	{"eps-file", 1003, TRUE},
 	{"eps-scale", 1004, TRUE},
 	{"test-grayscale", 1005, FALSE},
-	{"test-rgb", 1005, FALSE},
-	{"test-cmyk", 1005, FALSE},
+	{"test-rgb", 1006, FALSE},
+	{"test-cmyk", 1007, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
