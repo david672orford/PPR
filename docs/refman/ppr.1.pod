@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 May 2004.
+# Last modified 4 June 2004.
 #
 
 =head1 NAME
@@ -71,8 +71,8 @@ to insert the options from the queue's switchset at the point it appeared in
 the command line.  Starting in version 1.40 the switchset options are always
 parsed before the options on the command line.
 
-For instructions for setting switchset options, see the B<ppad switchset>
-and B<ppad group switchset> options.
+For instructions for setting switchset options, see the B<ppad switchset>,
+B<ppad group switchset>, and the B<ppad alias switchset> options.
 
 =back
 

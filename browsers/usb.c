@@ -138,9 +138,9 @@ int main(int argc, char *argv[])
 		 * fall back on the name of the /dev/ node.
 		 */
 		if(mfg && mdl && sern)
-			printf("interface=usb,\"MFG=%s;MDL=%s;SERN=%s\"\n", mfg, mdl, sern);
+			printf("interface=usb,\"MFG:%s;MDL:%s;SERN:%s\"\n", mfg, mdl, sern);
 		if(mfg && mdl)
-			printf("interface=usb,\"MFG=%s;MDL=%s\"\n", mfg, mdl);
+			printf("interface=usb,\"MFG:%s;MDL:%s\"\n", mfg, mdl);
 		else
 			printf("interface=usb,\"%s\"\n", port_temp);
 

@@ -561,7 +561,8 @@ int int_main(int argc, char *argv[])
 		options.idle_status_interval,					/* how often to send control-T */
 		explain_error_in_context,						/* error printing function */
 		options.use_shutdown ? do_shutdown : NULL,		/* EOJ function */
-		status_function, status_obj, status_interval	/* SNMP or AppSocket UDP status function */
+		status_function, status_obj, status_interval,	/* SNMP or AppSocket UDP status function */
+		NULL											/* no init string */
 		);
 
 	/* Close the connection */

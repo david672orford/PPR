@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 May 2004.
+# Last modified 4 June 2004.
 #
 
 =head1 NAME
@@ -550,55 +550,50 @@ They are also handy when the user can't select the desired options directly,
 such as when the job is being submitted through Samba, L<lprsrv.8/lprsrv>, or
 L<papsrv.8/lprsrv>.
 
-Notice that if the job is submitted to a group of which this printer is a
-member, the printer's switchset will not be used, rather, the switchset from
-the group (if there are any) will be used.  Switchsets for groups are
-established with the B<ppad group switchset> command.
+Notice that groups do not inherit the (possibly conflicting) switchsets of
+their member printers but that aliases inherit the switchset of the printer
+or group to which they point.  Any switchset attached to the alias itself is 
+appended to the one supplied by the printer or group to which it points.
+(Note: prior to PPR version 1.53, alias did not inherit switchsets at all.)
+Switchsets for groups are aliases are set with the B<ppad group switchset> 
+and B<ppad alias switchset> commands respectively.
 
 Here are some examples.  If we have a printer "myprn" and want to make duplex
 the default we can do this:
 
-	$ ppad switchset myprn -F '*Duplex DuplexNoTumble'
+	$ ppad switchset myprn --feature Duplex=DuplexNoTumble
 
 Now, if we use the command:
 
 	$ ppr -d myprn /etc/profile
 
-the file will be printed in duplex mode.  We will get the results we could
-get formerly by typing.
+the file will be printed in duplex mode even though we did not explicitly 
+request it.  We will get the results we could get formerly by typing:
 
-	$ ppr -F '*Duplex DuplexNoTumble' -d myprn /etc/profile
+	$ ppr --feature Duplex=DuplexNoTumble -d myprn /etc/profile
 
-But suppose we want to print in simplex mode?  We can make a group that
-contains only "myprn" and give that group a different switchset:
+But suppose we want an easy way to print in simplex mode?  We can an alias
+for "myprn" which overrides the duplex setting:
 
-	$ ppad group add myprn_sim myprn
-	$ ppad group switchset -F '*Duplex None"
+	$ ppad alias what myprn_simplex myprn
+	$ ppad alias switchset myprn_simplex --feature Duplex=None
 
 Now, if we use the command:
 
-	$ ppr -d myprn_sim /etc/profile
+	$ ppr -d myprn_simplex /etc/profile
 
-then the switchset from the group "myprn_sim" will be used.
+then the switchset from the printer "myprn" will be applied followed by the
+switchset from the alias "myprn_simplex".  The final setting will be
+B<--feature Duplex=None>.
 
-So you see, groups with one member can be used as printer aliases.  A set
-of B<ppr> options can then be assigned to each of these aliases.
+It is possible to put abusive options in switchsets.  The most obvious 
+evil would be to include a B<-d> option (presumably in attempt to redirect
+the print jobs to a different queue).  Fortunately, B<ppr> will ignore it.
 
-(We should note that PPR version 1.40 introduced explicit support aliases.  An
-alias could be used in the above example instead of a single member group.
-Switchsets for aliases are set with the B<ppad alias switchset> command.
-However, while alias support in the PPR core is complete, B<ppr2samba> and
-B<papsrv> don't support them yet, so you should probably avoid them for now.)
-
-It is possible to abuse the B<ppad switchset>, B<ppad group switchset>, and
-B<ppad alias switchset> commands.  In the most obvious case, one could include
-B<-d> option (presumably in attempt to redirect the print jobs to a different
-queue).  Fortunately, B<ppr> will ignore it.
-
-Another option one should not include in a switchset is B<-m> (which sets
+Another option one should never include in a switchset is B<-m> (which sets
 the responder method).  Why?  Because the method by which PPR should send
 messages to the person who submitted the job depends very much on how the
-job arrived. For example, if the job was submitted by a Unix shell user on
+job arrived.  For example, if the job was submitted by a Unix shell user on
 the server, then the B<write> command can be used to send a message to his
 terminal.  But if the user is Microsoft Windows user connecting through
 Samba, then the B<smbclient> program should be used to send messages.  For

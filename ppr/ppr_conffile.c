@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 4 June 2004.
 */
 
 /*
@@ -133,9 +133,18 @@ static void cache_info(void)
 				{
 				if(!forwhat)	/* If we didn't get here thru an alias, */
 					{
-					if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
+					if((tempptr = lmatchp(line, "Switchset:")))
 						{
-						set_field(switchset, tempptr);
+						if(switchset)		/* Switchsets are cumulative. */
+							{
+							gu_asprintf(&tempptr, "%s %s", switchset, tempptr);
+							gu_free(switchset);
+							switchset = tempptr;
+							}
+						else
+							{
+							switchset = gu_strdup(tempptr);
+							}
 						continue;
 						}
 					if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)

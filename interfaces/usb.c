@@ -81,6 +81,7 @@ static const char *port_patterns[] =
 struct OPTIONS {
 	int idle_status_interval;
 	int status_interval;
+	const char *init;
 	} ;
 
 /*
@@ -157,17 +158,21 @@ static int connect_usb(const char port[])
 */
 static void printer_error(int error_number)
 	{
+	switch(error_number)
+		{
+		case ENODEV:
+			alert(int_cmdline.printer, TRUE,
+				_("Printer turned off or disconnected while printing."));
+			exit(EXIT_PRNERR);
 
-	/* specific messages go here */
-	
-	
-	/* If all else fails, we end up here. */
-	alert(int_cmdline.printer, TRUE,
-		_("USB port communication failed, errno=%d (%s)."),
-	   	error_number,
-	   	gu_strerror(error_number)
-		);
-	exit(EXIT_PRNERR);
+		default:	 /* If all else fails, we end up here. */
+			alert(int_cmdline.printer, TRUE,
+				_("USB port communication failed, errno=%d (%s)."),
+			   	error_number,
+			   	gu_strerror(error_number)
+				);
+			exit(EXIT_PRNERR);
+		}
 	}
 
 /*
@@ -191,6 +196,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	/* Set default values. */
 	options->idle_status_interval = 0;
 	options->status_interval = 0;
+	options->init = NULL;
 
 	/* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
 	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
@@ -219,6 +225,10 @@ static void parse_options(int portfd, struct OPTIONS *options)
 				retval = -1;
 				break;
 				}
+			}
+		else if(strcmp(name, "init") == 0)
+			{
+			options->init = "\35\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
 			}
 		else
 			{
@@ -460,6 +470,8 @@ int int_main(int argc, char *argv[])
 		exit(EXIT_PRNERR);
 		}
 	
+	gu_write_string(1, "%%[ PPR connecting ]%%\n");
+
 	/* Open the printer port and esablish default settings: */
 	portfd = connect_usb(port);
 
@@ -467,14 +479,18 @@ int int_main(int argc, char *argv[])
 	   printer port apropriately: */
 	parse_options(portfd, &options);
 
+	gu_write_string(1, "%%[ PPR connected ]%%\n");
+
 	/* Read the job data from stdin and send it to portfd. */
+	/*kill(getpid(), SIGSTOP);*/
 	int_copy_job(portfd,
 		options.idle_status_interval,
 		printer_error,
 		NULL,
 		status_function,
 		(void*)&portfd,
-		options.status_interval);
+		options.status_interval,
+		options.init);
 
 	close(portfd);
 

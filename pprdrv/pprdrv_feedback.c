@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_feedback.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 4 June 2004.
 */
 
 /*===========================================================================
@@ -616,14 +616,14 @@ int feedback_reader(void)
 			*/
 			{
 			char *error, *command;
-			if(			(
-						(error = lmatchp((char*)ptr, "Error:"))
-						||
-						(error = lmatchp((char*)ptr, "Unrecoverable error:"))
-						)
-						&&
-						(command = strstr(error, " in "))
-						)
+			if(		(
+					(error = lmatchp((char*)ptr, "Error:"))
+					||
+					(error = lmatchp((char*)ptr, "Unrecoverable error:"))
+					)
+					&&
+					(command = strstr(error, " in "))
+					)
 				{
 				int end_command_len;
 				char end_command_char;
@@ -710,6 +710,11 @@ int feedback_reader(void)
 				ghosterror = TRUE;
 				continue;
 				}
+
+			if(lmatchp((char*)ptr, "DEBUG:"))
+				continue;
+			if(lmatchp((char*)ptr, "DEBUG2:"))
+				continue;
 
 			/*
 			** If we get this far, allow the *PatchFile query

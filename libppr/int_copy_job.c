@@ -88,7 +88,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** >a) select can't tell how big the next write is going to be
 ** >
 ** >  With some file types (eg. pipes) select will mark the fd as ready
-** >  if one byte could be written, however, write(2) guanantees that
+** >  if one byte could be written, however, write(2) guarantees that
 ** >  small writes ( <= PIPE_BUF, typically 512 bytes) are written
 ** >  atomically, so write has to do the _entire_ write or return EAGAIN.
 ** >
@@ -123,7 +123,13 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
 ** 399-400.
 */
-void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*status_function)(void * status_address), void *status_address, int status_interval)
+void int_copy_job(int portfd,
+		int idle_status_interval,
+		void (*fatal_prn_err)(int err),
+		void (*send_eoj_funct)(int fd), 
+		void (*status_function)(void * status_address), void *status_address, int status_interval,
+		const char *init_string
+		)
 	{
 	char xmit_buffer[BUFFER_SIZE];		/* data going to printer */
 	char *xmit_ptr = xmit_buffer;
@@ -140,12 +146,13 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	time_t time_next_control_t = 0;		/* time of next schedualed control-T (if not postponed) */
 	time_t time_next_status = 0;		/* time of next schedualed status function call */
 	struct timeval *timeout, timeout_workspace;
+	int runaway_detect = 0;
 
 	DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
 	/*
 	** Set the printer port to O_NONBLOCK.  This is important because we don't
-	** want to block if it can't accept BUFFER_SIZE bytes.
+	** want to block if it can't yet accept BUFFER_SIZE bytes.
 	**
 	** We could set stdin and stdout to O_NONBLOCK too, but they are much less
 	** likely to block for an appreciatable period of time and we aren't
@@ -164,6 +171,17 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 		time_next_status = (time(NULL) + status_interval);
 
 	/*
+	 * If there is an initialization string, copy it into the transmit buffer.
+	 */
+	if(init_string)
+		{
+		xmit_len = last_stdin_read = (unsigned char)init_string[0];
+		memcpy(xmit_buffer, init_string+1, xmit_len);
+		xmit_ptr = xmit_buffer;
+		xmit_state = COPYSTATE_WRITING;
+		}
+	
+	/*
 	** Copy stdin to the printer and from the printer to stdout.  Continue
 	** to do so for as long as read() on stdin doesn't return 0 and we
 	** have data in the receive buffer from the printer that we haven't
@@ -176,6 +194,12 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 				|| (send_eoj_funct && !recv_eoj)
 				)
 		{
+		if(runaway_detect > 10)
+			{
+			alert(int_cmdline.printer, TRUE, "Driver for \"%s\" is defective.", int_cmdline.address);
+			int_exit(EXIT_PRNERR_NORETRY);
+			}
+			
 		FD_ZERO(&rfds);
 		FD_ZERO(&wfds);
 
@@ -319,6 +343,15 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 					(*fatal_prn_err)(errno);
 				}
 
+			/* If select() told use the printer was ready but it wasn't, assign
+			 * a demerit point.  One is understandable.  More than a few
+			 * indicates that the port driver is bad.
+			 */
+			if(len == 0)
+				runaway_detect++;
+			else
+				runaway_detect = 0;
+			
 			DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
 			DODEBUG(("--->\"%.*s\"<---", len, xmit_ptr));
 

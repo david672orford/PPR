@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 May 2004.
+** Last modified 4 June 2004.
 */
 
 /*
@@ -409,13 +409,15 @@ int int_main(int argc, char *argv[])
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
 	/* Read the job data from stdin and send it to portfd. */
+	/*kill(getpid(), SIGSTOP);*/
 	int_copy_job(portfd,
 		options.idle_status_interval,
 		printer_error,
 		NULL,
 		status_function,
 		(void*)&portfd,
-		options.status_interval);
+		options.status_interval,
+		NULL);
 
 	DODEBUG(("closing port"));
 	parallel_port_cleanup(portfd);

@@ -501,7 +501,7 @@ more information about RIPs and *pprRIP:.
   and one should use papd instead.
 
 
-1.53a2, 20 February 2004--30 May 2004.
+1.53a2, 20 February 2004--3 June 2004.
 
 * uprint/uprint-lpr.1.pod, uprint-lp.1.pod: added ENVIRONMENT
   VARIABLES sections, expanded BUGS sections.
@@ -517,6 +517,7 @@ more information about RIPs and *pprRIP:.
 * refman/ppad-interfaces.8.pod: updated usb section to include new support
   for printer-matching addressing.
 
+* refman/ppad.8.pod: updated switchset description
 
 
 TODO
