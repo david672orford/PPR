@@ -98,7 +98,7 @@ ppr: 0
 %%Page: 1 1
 
 %%BeginFeature: *FileVersion
-1.20
+1.1.2 X
 %%EndFeature
 
 %%BeginFeature: *FormatVersion
@@ -106,7 +106,7 @@ ppr: 0
 %%EndFeature
 
 %%BeginFeature: *PCFileName
-PPRHP4K.PPD
+HP4000_5.PPD
 %%EndFeature
 
 %%BeginFeature: *ModelName
@@ -114,11 +114,11 @@ HP LaserJet 4000 Series
 %%EndFeature
 
 %%BeginFeature: *ShortNickName
-HP LaserJet 4000 Series PS
+HP LaserJet 4000 Series
 %%EndFeature
 
 %%BeginFeature: *NickName
-HP LaserJet 4000 Series PS
+HP LaserJet 4000 Series
 %%EndFeature
 
 %%BeginFeature: *Product
@@ -151,73 +151,50 @@ HP
 
 % This one should be empty
 %%BeginFeature: *MediaType None
-
+    <</MediaType null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *MediaType Plain
-<</MediaType (Plain)>> setpagedevice
+    <</MediaType (Plain)>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *MediaType Letterhead
-<</MediaType (Letterhead)>> setpagedevice
+    <</MediaType (Letterhead)>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *Collate True
-<</Collate true>> setpagedevice
+    <</Collate true>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *Collate False
-<</Collate false>> setpagedevice
+    <</Collate false>> setpagedevice
 %%EndFeature
 
-%%BeginFeature: *Smoothing True
-  << /PostRenderingEnhance true /PostRenderingEnhanceDetails << /REValue 2 /Type 8 >>
-  >> setpagedevice
+%%BeginFeature: *Smoothing None
+<< /PostRenderingEnhance true
+    /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >>
+>>  setpagedevice
 %%EndFeature
 
-%%BeginFeature: *Smoothing False
-  << /PostRenderingEnhance true /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >>
-  >> setpagedevice
+%%BeginFeature: *Smoothing Light
+<< /PostRenderingEnhance true
+    /PostRenderingEnhanceDetails << /REValue 1 /Type 8 >>
+>>  setpagedevice
 %%EndFeature
 
-%%BeginFeature: *JCLBegin
-%-12345X@PJL JOB
-
+%%BeginFeature: *Smoothing Medium
+<< /PostRenderingEnhance true
+    /PostRenderingEnhanceDetails << /REValue 2 /Type 8 >>
+>>  setpagedevice
 %%EndFeature
 
-%%BeginFeature: *JCLToPSInterpreter
-@PJL ENTER LANGUAGE = POSTSCRIPT 
-
+%%BeginFeature: *Smoothing Dark
+<< /PostRenderingEnhance true
+    /PostRenderingEnhanceDetails << /REValue 3 /Type 8 >>
+>> setpagedevice
 %%EndFeature
 
-%%BeginFeature: *JCLEnd
-%-12345X@PJL EOJ
-
-%%EndFeature
-
-%%BeginFeature: *JCLResolution 300dpi
-@PJL SET RESOLUTION = 300<0A>
-%%EndFeature
-
-%%BeginFeature: *JCLResolution 600dpi
-@PJL SET RESOLUTION = 600<0A>
-%%EndFeature
-
-%%BeginFeature: *JCLEconomode False
-@PJL SET ECONOMODE = OFF<0A>
-%%EndFeature
-
-%%BeginFeature: *JCLEconomode True
-@PJL SET ECONOMODE = ON<0A>
-%%EndFeature
-
-%%BeginFeature: *Option1 True
-
-%%EndFeature
-
-%%BeginFeature: *Option1 False
-
-%%EndFeature
+%%IncludeFeature: *Smoothing NonExistent
 
 %%BeginFeature: *InstalledMemory 4MB
 
@@ -240,27 +217,27 @@ HP
 %%EndFeature
 
 %%BeginFeature: *PageSize Letter
-  <</PageSize [612 792] /ImagingBBox null>> setpagedevice
+    <</PageSize [612 792] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *PageSize Legal
-  <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
+    <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *PageSize A4
-  <</PageSize [595 842] /ImagingBBox null>> setpagedevice
+    <</PageSize [595 842] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *PageRegion Letter
-  <</PageSize [612 792] /ImagingBBox null>> setpagedevice
+    <</PageSize [612 792] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *PageRegion Legal
-  <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
+    <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *PageRegion A4
-  <</PageSize [595 842] /ImagingBBox null>> setpagedevice
+    <</PageSize [595 842] /ImagingBBox null>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *ImageableArea Letter
@@ -296,20 +273,22 @@ HP
 %%EndFeature
 
 %%BeginFeature: *CustomPageSize True
-  pop pop pop
-  << /PageSize [ 5 -2 roll ] /ImagingBBox null >> setpagedevice
+  pop pop pop 2 copy gt {exch} if
+  <</DeferredMediaSelection true /PageSize [ 7 -2 roll ] /ImagingBBox null >>
+  setpagedevice
+	
 %%EndFeature
 
 %%BeginFeature: *InputSlot Upper
-<</ManualFeed false /MediaPosition 3>> setpagedevice
+    <</ManualFeed false/MediaPosition 3>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *InputSlot Middle
-<</ManualFeed false /MediaPosition 0>> setpagedevice
+    <</ManualFeed false/MediaPosition 0>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *InputSlot Lower
-<</ManualFeed false /MediaPosition 1>> setpagedevice
+    <</ManualFeed false/MediaPosition 1>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *ScreenFreq
@@ -320,37 +299,25 @@ HP
 45.0
 %%EndFeature
 
-%%BeginFeature: *ResScreenFreq 300dpi
-60.0
-%%EndFeature
+%%IncludeFeature: *ResScreenFreq 300dpi
 
-%%BeginFeature: *ResScreenAngle 300dpi
-45.0
-%%EndFeature
+%%IncludeFeature: *ResScreenAngle 300dpi
 
-%%BeginFeature: *ResScreenFreq 600dpi
-106.0
-%%EndFeature
+%%IncludeFeature: *ResScreenFreq 600dpi
 
-%%BeginFeature: *ResScreenAngle 600dpi
-45.0
-%%EndFeature
+%%IncludeFeature: *ResScreenAngle 600dpi
 
-%%BeginFeature: *ResScreenFreq 1200dpi
-180.0
-%%EndFeature
+%%IncludeFeature: *ResScreenFreq 1200dpi
 
-%%BeginFeature: *ResScreenAngle 1200dpi
-45.0
-%%EndFeature
+%%IncludeFeature: *ResScreenAngle 1200dpi
 
 %%BeginFeature: *ScreenProc HPEnhanced
-  { /EnhancedHalftone /Halftone findresource }
+	{ /EnhancedHalftone /Halftone findresource }
 %%EndFeature
 
 %%BeginFeature: *ScreenProc Dot
-{abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
-sub }{dup mul exch dup mul add 1 exch sub }ifelse }
+        {abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
+        sub }{dup mul exch dup mul add 1 exch sub }ifelse }
 %%EndFeature
 
 %%BeginFeature: *ScreenProc Line
@@ -370,25 +337,25 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }
 %%EndFeature
 
 %%BeginFeature: *Duplex None
-  <</Duplex false>> setpagedevice
+    <</Duplex false>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *Duplex DuplexNoTumble
-  <</Duplex true /Tumble false>> setpagedevice
+    <</Duplex true /Tumble false>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *Duplex DuplexTumble
-  <</Duplex true /Tumble true>> setpagedevice
+    <</Duplex true /Tumble true>> setpagedevice
 %%EndFeature
 
 %%BeginFeature: *?Duplex
-   save
+  save
    currentpagedevice /Duplex known
-   false ne
-     { currentpagedevice /Duplex get
+	false ne
+    {  currentpagedevice /Duplex get
         { currentpagedevice /Tumble get
             {(DuplexTumble)}{(DuplexNoTumble)}ifelse
-        } { (None)}    ifelse
+         } { (None)}    ifelse
      }{(None)}  ifelse = flush
    restore
 %%EndFeature
@@ -408,14 +375,15 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }
 %%EndFeature
 
 %%BeginFeature: *Reset
-  count 0 eq { false } { true exch startjob } ifelse
-  not {
+ count 0 eq
+ { false } { true exch startjob } ifelse
+ not {
     (WARNING: Cannot reset printer.) =
     (Missing or invalid password.) =
     (Please contact the author of this software.) = flush quit
     } if
-  systemdict /quit get exec
-  (WARNING : Printer Reset Failed.) = flush
+ systemdict /quit get exec
+ (WARNING : Printer Reset Failed.) = flush
 %%EndFeature
 
 % ============ These shouldn't work =============

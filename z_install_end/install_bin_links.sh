@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 May 2004.
+# Last modified 28 May 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -42,7 +42,7 @@ if [ ! -d $RPM_BUILD_ROOT$SYSBINDIR ]
     fi
 for i in ppr ppop ppad ppuser ppdoc \
 	ppr-testpage \
-	ppr-config --ppr-index \
+	ppr-config ppr-index \
 	ppr-followme ppr-xgrant ppr-popup \
 	ppr-panel ppr-web ppr-passwd
 	do

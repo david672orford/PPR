@@ -90,27 +90,15 @@ $HOMEDIR/bin/ppr -d regression-test1 -m none -u yes <<EndOfSample
 
 %%IncludeFeature: *Collate False
 
-%%IncludeFeature: *Smoothing True
+%%IncludeFeature: *Smoothing None
 
-%%IncludeFeature: *Smoothing False
+%%IncludeFeature: *Smoothing Light
 
-%%IncludeFeature: *JCLBegin
+%%IncludeFeature: *Smoothing Medium
 
-%%IncludeFeature: *JCLToPSInterpreter
+%%IncludeFeature: *Smoothing Dark
 
-%%IncludeFeature: *JCLEnd
-
-%%IncludeFeature: *JCLResolution 300dpi
-
-%%IncludeFeature: *JCLResolution 600dpi
-
-%%IncludeFeature: *JCLEconomode False
-
-%%IncludeFeature: *JCLEconomode True
-
-%%IncludeFeature: *Option1 True
-
-%%IncludeFeature: *Option1 False
+%%IncludeFeature: *Smoothing NonExistent
 
 %%IncludeFeature: *InstalledMemory 4MB
 

@@ -73,8 +73,11 @@ struct PAPERSIZE papersize[MAX_PAPERSIZES];
 int papersizex = 0;								/* index into papersize[] */
 int num_papersizes = 0;
 
-/* Program CUPS would run to convert PostScript to CUPS raster format. */
-static char *cups_filter = NULL;
+/* Program CUPS would run to convert CUPS raster format to the printer's language. */
+static char *cups_raster_filter = NULL;
+
+/* Program CUPS would run to convert PostScript to the printer's language. */
+static char *cups_postscript_filter = NULL;
 
 /*=========================================================
 ** Hash Functions
@@ -322,20 +325,19 @@ void read_PPD_file(const char *ppd_file_name)
 						{
 						if(*p == '"')
 							{
+							char *f1, *f2, *f3;
 							p++;
 							p[strcspn(p, "\"")] = '\0';
-							if(!cups_filter)
+							if((f1 = gu_strsep(&p, " \t"))							/* first exists */
+									&& (f2 = gu_strsep(&p, " \t"))					/* second exists */
+									&& strspn(f2, "0123456789") == strlen(f2)			/* and is numberic */
+									&& (f3 = gu_strsep(&p, "\t"))						/* third exists */
+								)
 								{
-								char *f1, *f2, *f3;
-								if((f1 = gu_strsep(&p, " \t"))							/* first exists */
-										&& strcmp(f1, "application/vnd.cups-raster") == 0	/* and mime type matches */
-										&& (f2 = gu_strsep(&p, " \t"))					/* second exists */
-										&& strspn(f2, "0123456789") == strlen(f2)			/* and is numberic */
-										&& (f3 = gu_strsep(&p, "\t"))						/* third exists */
-									)
-									{
-									cups_filter = gu_strdup(f3);
-									}
+								if(!cups_raster_filter && strcmp(f1, "application/vnd.cups-raster") == 0)
+									cups_raster_filter = gu_strdup(f3);
+								else if(!cups_postscript_filter && strcmp(f1, "application/vnd.cups-postscript") == 0)
+									cups_postscript_filter = gu_strdup(f3);
 								}
 							}
 						continue;
@@ -603,31 +605,34 @@ void read_PPD_file(const char *ppd_file_name)
 	** If we still haven't been told to use a RIP, see if we saw a
 	** "*cupsFilter:" line that can help us.
 	*/
-	DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_filter=\"%s\"",
+	DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_raster_filter=\"%s\", cups_postscript_filter=\"%s\"",
 		printer.RIP.name ? printer.RIP.name : "",
-		cups_filter ? cups_filter : "",
+		cups_raster_filter ? cups_raster_filter : "",
+		cups_postscript_filter ? cups_postscript_filter : "",
 		));
-	if(!printer.RIP.name && cups_filter)
+	if(!printer.RIP.name)
 		{
-		if(strcmp(cups_filter, "pstoplx") == 0)
+		if(cups_raster_filter)
+			{
+			printer.RIP.name = "ppr-gs";
+			printer.RIP.output_language = "PCL";	/* !!! a wild guess !!! */
+			gu_asprintf(&printer.RIP.options_storage, "cups=%s", cups_raster_filter);
+			}
+		else if(cups_postscript_filter && strcmp(cups_postscript_filter, "pstopxl") == 0)
 			{
 			printer.RIP.name = "ppr-gs";
 			printer.RIP.output_language = "PCLXL";
 			if(Features.ColorDevice)
-				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=plxcolor");
+				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=pxlcolor");
 			else
-				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=plxmono");
-			}
-		else
-			{
-			printer.RIP.name = "ppr-gs";
-			printer.RIP.output_language = "PCL";	/* !!! a wild guess !!! */
-			gu_asprintf(&printer.RIP.options_storage, "cups=%s", cups_filter);
+				gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=pxlmono");
 			}
 		}
 
-	if(cups_filter)
-		gu_free(cups_filter);
+	if(cups_raster_filter)
+		gu_free(cups_raster_filter);
+	if(cups_postscript_filter)
+		gu_free(cups_postscript_filter);
 		
 	} /* read_PPD_file() */
 

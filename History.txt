@@ -9325,6 +9325,16 @@ Internet Printing Protocol Work
 
 * ppad/,ppr/: applied typo patches from Jan Kohnert.
 
+* tests/test-filters/300-filter_dotmatrix.ok: accepted changes resulting
+  from bug fixes and removal of meaningless extra zeros after the decimal
+  point in floating-point numbers.
+
+* test/test-pprdrv/102-ppd-comprehensive.ok: accepted changes caused by
+  replacing the HP 4000 PPD file.
+
+* ppad/ppad_printer.c: fixed "ppad ppdopts" so that it works even if the 
+  installable options don't have names that begin with "*Option".
+
 
 TODO
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 May 2004.
+# Last modified 28 May 2004.
 #
 
 use lib "?";
@@ -44,11 +44,11 @@ $GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
 	"Ghostscript Golfer" =>
 		["$GS_EXAMPLES/golfer.eps", 0.25],
 	"Ghostscript Tiger" => 
-		["$GS_EXAMPLES/tiger.eps", 0.25]
+		["$GS_EXAMPLES/tiger.eps", 0.25],
 	"Ghostscript Color Circle" => 
-		["$GS_EXAMPLES/colorcir.ps", 0.25]
+		["$GS_EXAMPLES/colorcir.ps", 0.25],
 	"Ghostscript Escher" => 
-		["$GS_EXAMPLES/escher.ps", 0.25]
+		["$GS_EXAMPLES/escher.ps", 0.25],
 	"Ghostscript Dore Tree" => 
 		["$GS_EXAMPLES/doretree.ps", 0.25]
 	);
@@ -119,6 +119,7 @@ $addprn_wizard_table = [
 	'title' => N_("PPR Print Test Page"),
 	'picture' => "prn_testpage1.png",
 	'dopage' => sub {
+		print "<p>Please ignore this page for now and just press [Next].</p>\n";
 		}
 	},
 

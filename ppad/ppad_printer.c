@@ -603,8 +603,9 @@ int printer_show(const char *argv[])
 	*/
 	{
 	char *pline, *p;
-	char *cups_filter = NULL;
-	int default_resolution = 0;
+	char *cups_raster_filter = NULL;
+	char *cups_postscript_filter = NULL;
+	gu_boolean ColorDevice = FALSE;
 	struct PPD_PROTOCOLS prot;
 	prot.TBCP = FALSE;
 	prot.PJL = FALSE;
@@ -650,27 +651,30 @@ int printer_show(const char *argv[])
 					continue;
 					} /* "*pprRIP:" */
 	
-				if((p = lmatchp(pline, "*cupsFilter:")) && !cups_filter)
+				if((p = lmatchp(pline, "*cupsFilter:")))
 					{
 					char *p1, *p2, *p3;
 					if(*p++ == '"' && (p1 = strchr(p, '"')))
 						{
 						*p1 = '\0';
 						if((p1 = gu_strsep(&p, " \t"))										/* first exists */
-									&& strcmp(p1, "application/vnd.cups-raster") == 0		/* and mime type matches */
-									&& (p2 = gu_strsep(&p, " \t"))							/* and second parameter exists */
-									&& strspn(p2, "0123456789") == strlen(p2)				/* and it is numberic */
-									&& (p3 = gu_strsep(&p, "\t"))							/* and third parameter exists */
+								&& (p2 = gu_strsep(&p, " \t"))							/* and second parameter exists */
+								&& strspn(p2, "0123456789") == strlen(p2)				/* and it is numberic */
+								&& (p3 = gu_strsep(&p, "\t"))							/* and third parameter exists */
 							)
 							{
-							cups_filter = gu_strdup(p3);
+							if(!cups_raster_filter && strcmp(p1, "application/vnd.cups-raster") == 0)
+								cups_raster_filter = gu_strdup(p3);
+							else if(!cups_postscript_filter && strcmp(p1, "application/vnd.cups-postscript") == 0)
+								cups_postscript_filter = gu_strdup(p3);
 							}
 						}
 					continue;
 					} /* "*cupsFilter:" */
 	
-				if(gu_sscanf(pline, "*DefaultResolution: %d", &default_resolution) == 1)
+				if((p = lmatchp(pline, "*ColorDevice:")))
 					{
+					gu_torf_setBOOL(&ColorDevice, p);
 					continue;
 					}
 	
@@ -692,12 +696,23 @@ int printer_show(const char *argv[])
 	codes_default = interface_default_codes(interface, &prot);
 
 	/* If we didn't find a "*pprRIP:" line, use "*cupsFilter:". */
-	if(!rip_ppd_name && cups_filter) /* && default_resolution > 0) */
+	if(!rip_ppd_name)
 		{
-		rip_ppd_name = gu_strdup("ppr-gs");
-		rip_ppd_output_language = gu_strdup("pcl");				/* !!! a wild guess !!! */
-		/* gu_asprintf(&rip_ppd_options, "cups=%s -r%d", cups_filter, default_resolution); */
-		gu_asprintf(&rip_ppd_options, "cups=%s", cups_filter);
+		if(cups_raster_filter)
+			{
+			rip_ppd_name = gu_strdup("ppr-gs");
+			rip_ppd_output_language = gu_strdup("PCL");	/* !!! a wild guess !!! */
+			gu_asprintf(&rip_ppd_options, "cups=%s", cups_raster_filter);
+			}
+		else if(cups_postscript_filter && strcmp(cups_postscript_filter, "pstopxl") == 0)
+			{
+			rip_ppd_name = gu_strdup("ppr-gs");
+			rip_ppd_output_language = gu_strdup("PCLXL");
+			if(ColorDevice)
+				gu_asprintf(&rip_ppd_options, "-sDEVICE=pxlcolor");
+			else
+				gu_asprintf(&rip_ppd_options, "-sDEVICE=pxlmono");
+			}
 		}
 
 	/* If the PPD file specifies a RIP and the printer configuration file
@@ -710,7 +725,10 @@ int printer_show(const char *argv[])
 		rip_options = rip_ppd_options;
 		}
 
-	if(cups_filter) gu_free(cups_filter);
+	if(cups_raster_filter)
+		gu_free(cups_raster_filter);
+	if(cups_postscript_filter)
+		gu_free(cups_postscript_filter);
 	}
 
 	/*
@@ -2542,7 +2560,6 @@ int printer_ppdopts(const char *argv[])
 
 	char *PPDFile = (char*)NULL;		/* name of PPD file to open */
 	char *InstalledMemory = (char*)NULL;
-	int ui_open_mrlen;
 	char *ptr;
 	unsigned int next_value;
 	int c;
@@ -2609,7 +2626,9 @@ int printer_ppdopts(const char *argv[])
 		*/
 		{
 		char *ppdline;
-		char *ui_open = (char*)NULL;		/* the UI section we are int, NULL otherwise */
+		gu_boolean in_installable_options = FALSE;
+		char *ui_open = (char*)NULL;		/* the UI section we are in, NULL otherwise */
+		int ui_open_mrlen = 0;
 
 		ppd_obj = ppdobj_new(PPDFile);
 		next_value = 0;
@@ -2619,6 +2638,22 @@ int printer_ppdopts(const char *argv[])
 
 		while((ppdline = ppdobj_readline(ppd_obj)))
 			{
+			if(!in_installable_options)
+				{
+				if((ptr = lmatchp(ppdline, "*OpenGroup:")))
+					{
+					if(lmatch(ptr, "InstallableOptions"))	/* !!! */
+						in_installable_options = TRUE;
+					}
+				continue;
+				}
+
+			if((ptr = lmatchp(ppdline, "*CloseGroup:")))
+				{
+				in_installable_options = FALSE;
+				continue;
+				}
+
 			if((ptr = lmatchp(ppdline, "*OpenUI")))
 				{
 				/*
@@ -2640,9 +2675,11 @@ int printer_ppdopts(const char *argv[])
 					ui_open = (char*)NULL;
 					}
 	
+				#if 0
 				/* If this is not an option UI block, we are not interested. */
 				if(!lmatch(ptr, "*Option") && !lmatch(ptr, "*InstalledMemory"))
 					continue;
+				#endif
 	
 				/* Truncate after the end of the translation string. */
 				ptr[strcspn(ptr, ":")] = '\0';
@@ -2661,17 +2698,9 @@ int printer_ppdopts(const char *argv[])
 				continue;
 				}
 	
-			/* If between "*OpenUI" and "*CloseUI" and this is an "*Option" or "*InstalledMemory" line, */
-			if(ui_open && (lmatch(ppdline, "*Option") || lmatch(ppdline, "*InstalledMemory")) )
+			/* If this is open of the choices, */
+			if(ui_open && strcspn(ppdline, "/ \t") == ui_open_mrlen && strncmp(ppdline, ui_open, ui_open_mrlen) == 0)
 				{
-				/* If the first part of the name of this option doesn't match the part of the
-				   UI section name before the start of the translation string, */
-				if(strcspn(ppdline, "/ \t") != ui_open_mrlen || strncmp(ppdline, ui_open, ui_open_mrlen))
-					{
-					fprintf(errors, _("WARNING: spurious option found in UI section \"%s\".\n"), ui_open);
-					continue;
-					}
-	
 				ptr = ppdline;
 				ptr += strcspn(ptr, " \t");
 				ptr += strspn(ptr, " \t");
@@ -2787,6 +2816,7 @@ int printer_ppdopts(const char *argv[])
 	
 				gu_free(ui_open);
 				ui_open = (char*)NULL;
+				ui_open_mrlen = 0;
 				}
 			} /* end of PPD reading loop */
 
