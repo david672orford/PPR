@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 April 2004.
+# Last modified 29 April 2004.
 #
 
 =pod
@@ -267,6 +267,7 @@ Content-Type: text/html;charset=$charset
 Content-Language: $content_language
 Vary: accept-language
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
 <title>${\html($title)}</title>
@@ -292,11 +293,11 @@ foreach my $i (@qquery_available)
 		next;
 		}
 	my($short, $long) = @{$qquery_xlate{$i}};
-	print "<nobr><input type=\"checkbox\" name=\"fields\" value=", html_value($i);
+	print "<nobr><label><input type=\"checkbox\" name=\"fields\" value=", html_value($i);
 	print " checked" if(defined($fields_hash{$i}));
 	print ">", H_($short);
 	print " &#151; ", H_($long) if(defined $long);		# em dash
-	print "</nobr><br>\n";
+	print "</label></nobr><br>\n";
 	}
 
 print "</p>\n";
@@ -349,6 +350,7 @@ Content-Type: text/html;charset=$charset
 Content-Language: $content_language
 Vary: user-agent, accept-language
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html style="$fixed_html_style">
 <head>
 <title>${\html($title)}</title>
@@ -534,8 +536,11 @@ if(!defined($data{dests}))
 # Start the table which holds the queue listing and
 # write the column headings.
 #=============================================================
+my $scrolling_table = new ScrollingTable("queue", 725, 350);
+
+$scrolling_table->pre();
+
 print <<"THEAD10";
-<div class="queue">
 <table class="queue" title=${\html_value($title)} border=1 cellpadding=5 cellspacing=0
 summary=${\html_value(
 	_("This table has one row for each print job.  The left hand column has\n"
@@ -549,13 +554,24 @@ THEAD10
 # Create the column headings.
 print "<tr><th>&nbsp;</th>";
 foreach my $i (@fields)
-	{ print "<th scope=\"col\">", html($qquery_xlate{$i}->[0]), "</th>" }
+	{
+	my $label = $qquery_xlate{$i}->[0];
+	my $padding = "";
+	if(defined(my $minwidth = $qquery_xlate{$i}->[2]))
+		{
+		for(my $i = length($label); $i < $minwidth; $i++)
+			{
+			$padding .= "&nbsp;";
+			}
+		}
+	print '<th scope="col">', html_nb($label), $padding, '</th>';
+	}
 print "</tr>\n";
 
-print <<"THEAD20";
-</thead>
-<tbody>
-THEAD20
+print "</thead>\n";
+
+# The table body may be scrollable (though without a scrollbar).
+print '<tbody id="queue_body"', $scrolling_table->tbody_style(), ">\n";
 
 # Make a hash of the jobs that should be checked.
 my %checked_list;
@@ -598,7 +614,7 @@ foreach my $i (@answer)
 	}
 
 # Make some empty rows to suggest the possibility of more jobs.
-for(; $jobcount < 5; $jobcount++)
+for(; $jobcount < 10; $jobcount++)
 	{
 	print "<tr><th><input type=\"checkbox\" value=\"\"></th>";
 	foreach my $i (@fields)
@@ -609,8 +625,9 @@ for(; $jobcount < 5; $jobcount++)
 print <<"TFOOT10";
 </tbody>
 </table>
-</div>
 TFOOT10
+
+$scrolling_table->post();
 
 #=============================================================
 # This is the end of the exception handling block.
@@ -681,4 +698,114 @@ window.setTimeout("gentle_reload()", $refresh_interval * 1000);
 Quote10
 
 exit 0;
+
+#=============================================================
+# This package encapsulates most of the nastiness required
+# for the fully scrollable table which is used if the 
+# browser is Mozilla.
+#=============================================================
+package ScrollingTable;
+
+sub new
+	{
+	shift;
+	my $self = {};
+	$self->{table_name} = shift;
+	$self->{width} = shift;
+	$self->{height} = shift;
+	$self->{on} = 0;
+
+	if(defined $ENV{HTTP_USER_AGENT})
+		{
+		if($ENV{HTTP_USER_AGENT} =~ /Gecko\/(\d{8})/)
+			{
+			if($1 >= 20040413)
+				{
+				$self->{on} = 1;
+				}
+			}
+		}
+
+	bless $self;
+	return $self;
+	}
+
+sub pre {
+my $self = shift;
+defined($self) || die;
+if($self->{on})
+{
+print <<"End_pre";
+<!-- start of pre-table -->
+<table border=0 cellspacing=0 cellpadding=0>
+<tr><td style="border: 1px solid black" align="left" valign="top">
+	<div id="$self->{table_name}_div" style="max-width: $self->{width}px; overflow: hidden">
+<!-- end of pre-table -->
+End_pre
+}
+}
+
+sub post {
+my $self = shift;
+defined($self) || die;
+if($self->{on})
+{
+print <<"End_post";
+<!-- start of post-table -->
+		</div>
+		</td>
+	<td style="height: $self->{height}px; width: 30px;">
+		<div id="$self->{table_name}_vert" style="max-height: $self->{height}px; overflow: auto;" onscroll="$self->{table_name}_vert_scroll()"> 
+		<img id="$self->{table_name}_v_img" src="../images/pixel-clear.png" height=800 width=1 border=0>
+		</div>
+		</td>
+	</tr>
+<tr><td style="width: $self->{width}px">
+		<div id="$self->{table_name}_horiz" style="max-width: $self->{width}px; overflow: auto" onscroll="$self->{table_name}_horiz_scroll()">
+		<img id="$self->{table_name}_h_img" src="../images/pixel-clear.png" width=800 height=1 border=0>
+		</div>
+		</td>
+	<td></td>
+	</tr>
+</table>
+<!-- end of post-table -->
+<script>
+function $self->{table_name}_vert_scroll()
+	{
+	var vertical_scroll = document.getElementById("$self->{table_name}_vert");
+	var table_body = document.getElementById("$self->{table_name}_body");
+	table_body.scrollTop = vertical_scroll.scrollTop;
+	}
+function $self->{table_name}_horiz_scroll()
+	{
+	var horizontal_scroll = document.getElementById("$self->{table_name}_horiz");
+	var table_body = document.getElementById("$self->{table_name}_div");
+	table_body.scrollLeft = horizontal_scroll.scrollLeft;
+	}
+var table_body = document.getElementById("$self->{table_name}_body");
+var h_img = document.getElementById("$self->{table_name}_h_img");
+var v_img = document.getElementById("$self->{table_name}_v_img");
+h_img.width = table_body.scrollWidth + 50;
+v_img.height = table_body.scrollHeight + 50;
+</script>
+End_post
+}
+}
+
+sub tbody_style
+	{
+	my $self = shift;
+	my $max_height = $self->{height} - 20;
+	my $min_width = $self->{width};
+	if($self->{on})
+		{
+		return " style=\"max-height: ${max_height}px; overflow: hidden;\"";
+		}
+	else
+		{
+		return "";
+		}
+	}
+
+1;
 

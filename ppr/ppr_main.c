@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 30 April 2004.
 */
 
 /*
@@ -1023,16 +1023,16 @@ HELP(_(
 #endif
 
 HELP(_(
-"\t--strip-cache true         strip cached resources from job file\n"
-"\t--strip-cache false        don't strip cached resources (default)\n"));
+"\t--strip-cache true         strip out cached resources\n"
+"\t--strip-cache false        don't strip these resources (default)\n"));
 
 HELP(_(
-"\t--strip-fontindex true     strip fonts in font index from job file\n"
-"\t--strip-fontindex false    don't strip fonts in font index (defualt)\n"));
+"\t--strip-fontindex true     strip out fonts listed in font index\n"
+"\t--strip-fontindex false    don't strip these fonts (default)\n"));
 
 HELP(_(
 "\t--strip-printer true       strip out resources already in printer\n"
-"\t--strip-printer false      don't strip printer resources (default)\n"));
+"\t--strip-printer false      don't strip these resources (default)\n"));
 
 HELP(_(
 "\t--cache-store none         don't store new resources (default)\n"
@@ -1114,7 +1114,7 @@ HELP(_(
 "\t-P trustme                 set ProofMode to TrustMe\n"));
 
 HELP(_(
-"\t-e none                    don't user stderr or responder for errors\n"
+"\t-e none                    discard error messages\n"
 "\t-e stderr                  report errors on stderr (default)\n"
 "\t-e responder               report errors by responder\n"
 "\t-e both                    report errors with both\n"

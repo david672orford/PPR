@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--21 April 2004.
+1.53a2, 20 February 2004--30 April 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9163,8 +9163,19 @@ Internet Printing Protocol Work
 * www/prn_properties.cgi.perl, prn_addwiz.cgi.perl: added detection of auto
   detection failures.
 
+* www/show_jobs.cgi.perl: added full scrolling table implementation (which
+  works only in Mozilla 1.6 and later).
+
+* z_install_end/ppr.sh: fixed "ppr status" so it uses "kill -0" rather than
+  simply "kill".  Also fixed code which extracts date from the output of ls
+  to use awk to get the fifth and sixth fields rather than those columns which
+  contain the date and time in the US-English output.  Also added support for
+  /etc/defaults/ppr.  So far the only setting is LPRSRV_STANDALONE_PORT.
+  
 
 TODO
+
+* www/prn_testpage.cgi.perl: improve search for Ghostscript test pages
 
 * Create Debian package.
 

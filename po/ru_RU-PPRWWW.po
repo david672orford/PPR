@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ru_RU-PPRWWW\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-04-16 11:25-0400\n"
-"PO-Revision-Date: 2004-04-16 11:27-0500\n"
+"PO-Revision-Date: 2004-05-04 11:27-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -81,13 +81,13 @@ msgstr "Псевдоним \"%s\" уже существует!"
 #: ../www/prn_addwiz.cgi.perl:763 ../www/prn_testpage.cgi.perl:95
 #: ../www/cgi_tabbed.pl:335 ../www/cgi_wizard.pl:315
 msgid "_Cancel"
-msgstr "Отменять"
+msgstr "Отмена"
 
 #: ../www/alias_addwiz.cgi.perl:77 ../www/cliconf.cgi.perl:67
 #: ../www/grp_addwiz.cgi.perl:77 ../www/prn_addwiz.cgi.perl:117
 #: ../www/cgi_wizard.pl:315
 msgid "_Next"
-msgstr "На Следующую"
+msgstr "_Далее"
 
 #: ../www/alias_addwiz.cgi.perl:84
 msgid "For What an Alias"
@@ -132,12 +132,12 @@ msgstr "Надо вводить описиваное!"
 #: ../www/alias_addwiz.cgi.perl:145 ../www/grp_addwiz.cgi.perl:143
 #: ../www/prn_addwiz.cgi.perl:763 ../www/cgi_wizard.pl:315
 msgid "_Back"
-msgstr "Обратно"
+msgstr "_Назад"
 
 #: ../www/alias_addwiz.cgi.perl:145 ../www/grp_addwiz.cgi.perl:143
 #: ../www/prn_addwiz.cgi.perl:763
 msgid "_Finish"
-msgstr "Закончить"
+msgstr "Завершить"
 
 #: ../www/alias_addwiz.cgi.perl:152
 msgid "Save the Alias"
@@ -291,7 +291,7 @@ msgstr ""
 
 #: ../www/cgi_tabbed.pl:217
 msgid "<<More"
-msgstr "<<Дополнительнние"
+msgstr "<<Ещё"
 
 #: ../www/cgi_tabbed.pl:217
 msgid "Bring tabs on the left into view."
@@ -303,7 +303,7 @@ msgstr ""
 
 #: ../www/cgi_tabbed.pl:243
 msgid "More>>"
-msgstr "Дополнительные>>"
+msgstr "Ещё>>"
 
 #: ../www/cgi_tabbed.pl:335
 msgid "Close without saving changes."
@@ -315,7 +315,7 @@ msgstr "Сохранить"
 
 #: ../www/cgi_widgets.pl:136 ../www/cgi_widgets.pl:238
 msgid "Help"
-msgstr "Справка"
+msgstr "_Справка"
 
 #: ../www/cgi_widgets.pl:194
 msgid "Tools"
@@ -451,11 +451,11 @@ msgstr ""
 
 #: ../www/cliconf.cgi.perl:71
 msgid "You must make a choice."
-msgstr ""
+msgstr "Надо принимать выбор."
 
 #: ../www/cliconf.cgi.perl:83 ../www/cliconf.cgi.perl:99
 msgid "Downloadable KDE Icon"
-msgstr ""
+msgstr "Загрузить пиктограм для KDE"
 
 #: ../www/cliconf.cgi.perl:86
 msgid ""
@@ -932,6 +932,8 @@ msgid ""
 "You have submitted a print job entitled \"%s\".  You may either enter your\n"
 "username and password to print it or you may cancel it."
 msgstr ""
+"Вы послали задачу которая называется \"%s\".  Вы можете вводить имя\n"
+"пользователя и пароль или удалить задачу."
 
 #: ../www/login_cookie.cgi.perl:45
 msgid "PPR Login"
@@ -993,7 +995,7 @@ msgstr ""
 
 #: ../www/ppd_select.pl:153
 msgid "PostScript Version"
-msgstr ""
+msgstr "Версия PostScript"
 
 #: ../www/ppd_select.pl:154
 msgid "Number of Fonts"
@@ -1009,7 +1011,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:57
 msgid "Server Serial Port"
-msgstr ""
+msgstr "Сириалный порт у сервера"
 
 #: ../www/prn_addwiz.cgi.perl:58
 msgid "Server Parallel Port"
@@ -1017,7 +1019,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:59
 msgid "Server USB Port"
-msgstr ""
+msgstr "USB порт у сервера"
 
 #: ../www/prn_addwiz.cgi.perl:60
 msgid "Network via AppleTalk PAP"
@@ -1067,7 +1069,7 @@ msgstr "Эта программа помогает вам поставеть новый принтер под контол PPR."
 
 #: ../www/prn_addwiz.cgi.perl:111 ../www/prn_addwiz.cgi.perl:170
 msgid "You must make a selection!"
-msgstr "Вам надо принимать выбор!"
+msgstr "Надо принимать выбор!"
 
 #: ../www/prn_addwiz.cgi.perl:125
 msgid "PPR: Add a Printer: Select an Interface Program"
@@ -1112,7 +1114,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:206 ../www/prn_addwiz.cgi.perl:260
 msgid "TCP Port Number:"
-msgstr ""
+msgstr "Номер TCP порта:"
 
 #: ../www/prn_addwiz.cgi.perl:211
 msgid ""
@@ -1132,7 +1134,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:230 ../www/prn_addwiz.cgi.perl:286
 msgid "You must fill in the TCP port number!"
-msgstr ""
+msgstr "Надо вводить номер TCP порта!"
 
 #: ../www/prn_addwiz.cgi.perl:246
 msgid "PPR: Add a Printer: JetDirect Interface: Choose an Address"
@@ -1182,7 +1184,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:324
 msgid "Brand"
-msgstr ""
+msgstr "Знак"
 
 #: ../www/prn_addwiz.cgi.perl:324
 msgid "Product"
@@ -1220,7 +1222,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:397
 msgid "Enter Printer Address:"
-msgstr ""
+msgstr "Вводить адрес принтера:"
 
 #: ../www/prn_addwiz.cgi.perl:401
 msgid "Enter Interface Options:"
@@ -1236,7 +1238,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:429
 msgid "You must enter an address for the printer!"
-msgstr ""
+msgstr "Надо вводить адрес принтера!"
 
 #: ../www/prn_addwiz.cgi.perl:446 ../www/prn_addwiz.cgi.perl:493
 msgid "PPR: Add a Printer: Browse Printers"
@@ -1299,7 +1301,7 @@ msgstr "Вы PPD файл не выбрали!"
 
 #: ../www/prn_addwiz.cgi.perl:679
 msgid "PPR: Add a Printer: Name the Printer"
-msgstr ""
+msgstr "PPR: Дабавить принтер: Давать название принтеру"
 
 #: ../www/prn_addwiz.cgi.perl:682
 msgid ""
@@ -1324,11 +1326,11 @@ msgstr "Вам надо вводить названое принтера!"
 #: ../www/prn_addwiz.cgi.perl:701
 #, c-format
 msgid "The printer \"%s\" already exists!"
-msgstr ""
+msgstr "Принтер с названием \"%s\" уже существует!"
 
 #: ../www/prn_addwiz.cgi.perl:710
 msgid "PPR: Add a Printer: Describe the Printer"
-msgstr ""
+msgstr "PPR: Дабавить принтер: описание принтера"
 
 #: ../www/prn_addwiz.cgi.perl:713
 #, c-format
@@ -1338,32 +1340,38 @@ msgid ""
 "description.  Please supply a longer description for\n"
 "\"%s\" below."
 msgstr ""
+"Хотя часто удобно назвывать принтер коротым названием, иногда\n"
+"полное описание тоже помогает.  Вводите пожаласто длиное\n"
+"описание принтера \"%s\"."
 
 #: ../www/prn_addwiz.cgi.perl:739
 msgid "PPR: Add a Printer: Additional Information"
-msgstr ""
+msgstr "PPR: Дабавить принтер: Дополнителная информация"
 
 #: ../www/prn_addwiz.cgi.perl:742
 msgid ""
 "On this screen you may record additional information\n"
 "about the printer for future reference."
 msgstr ""
+"На этой странице вы можете вводить дополнителную информацию\n"
+"относительно принтера за будущую нужду."
+
 
 #: ../www/prn_addwiz.cgi.perl:745
 msgid "Where is the printer located?"
-msgstr ""
+msgstr "Где принтер находется?"
 
 #: ../www/prn_addwiz.cgi.perl:747 ../www/prn_properties.cgi.perl:57
 msgid "Location:"
-msgstr ""
+msgstr "Место:"
 
 #: ../www/prn_addwiz.cgi.perl:751
 msgid "Which department within your organization uses this printer?"
-msgstr ""
+msgstr "Этот принтер исползуется в каком отдели вашой организации?"
 
 #: ../www/prn_addwiz.cgi.perl:753 ../www/prn_properties.cgi.perl:60
 msgid "Department:"
-msgstr ""
+msgstr "Отдель:"
 
 #: ../www/prn_addwiz.cgi.perl:757
 msgid ""
@@ -1373,7 +1381,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:759
 msgid "On Site Contact:"
-msgstr ""
+msgstr "Ответственое лицо в отделе принтера:"
 
 #: ../www/prn_addwiz.cgi.perl:770
 msgid "Save New Printer"
@@ -1386,12 +1394,12 @@ msgstr ""
 #: ../www/prn_control.cgi.perl:84
 #, c-format
 msgid "Status of Printer \"%s\""
-msgstr ""
+msgstr "Состояние принтера \"%s\""
 
 #: ../www/prn_control.cgi.perl:142
 #, c-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
-msgstr ""
+msgstr "Невозможно [%s] принтер \"%s\" по следующей причиной:"
 
 #: ../www/prn_control.cgi.perl:255
 msgid "Name:"
@@ -1475,7 +1483,7 @@ msgstr ""
 
 #: ../www/prn_control.cgi.perl:356
 msgid "Alert Messages:"
-msgstr ""
+msgstr "Собщенния о проблемах:"
 
 #: ../www/prn_control.cgi.perl:370
 msgid "Start the printer."
@@ -1523,11 +1531,11 @@ msgstr "порок есть, снова не попробуют"
 
 #: ../www/prn_control.cgi.perl:473
 msgid "offline"
-msgstr ""
+msgstr "разъединенный"
 
 #: ../www/prn_control.cgi.perl:475
 msgid "otherwise engaged or offline"
-msgstr ""
+msgstr "или занятый или разъединенный"
 
 #: ../www/prn_control.cgi.perl:480
 msgid "idle"
@@ -1548,7 +1556,7 @@ msgstr "Сохранить изменения."
 
 #: ../www/prn_media.cgi.perl:214
 msgid "_Apply"
-msgstr ""
+msgstr "Принимать"
 
 #: ../www/prn_properties.cgi.perl:63
 msgid "Contact:"
@@ -1577,11 +1585,11 @@ msgstr ""
 #: ../www/prn_properties.cgi.perl:99 ../www/prn_properties.cgi.perl:115
 #: ../www/prn_properties.cgi.perl:128
 msgid "default"
-msgstr ""
+msgstr "как по молчанию"
 
 #: ../www/prn_properties.cgi.perl:113
 msgid "Jobbreak method:"
-msgstr ""
+msgstr "Метод демаркации задачей (jobbreak method):"
 
 #: ../www/prn_properties.cgi.perl:116
 msgid "control-d"
@@ -1613,7 +1621,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:126
 msgid "Character code compatibility:"
-msgstr ""
+msgstr "приемлемый коды (codes):"
 
 #: ../www/prn_properties.cgi.perl:129
 msgid "Clean7Bit"
@@ -1637,11 +1645,11 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:138
 msgid "No interface is selected!"
-msgstr ""
+msgstr "Не какая программа свази не выбранна!"
 
 #: ../www/prn_properties.cgi.perl:140
 msgid "The Printer Address is blank!"
-msgstr ""
+msgstr "Место для адреса принтера пустое!"
 
 #: ../www/prn_properties.cgi.perl:149 ../www/prn_properties.cgi.perl:680
 msgid "PPD"
@@ -1669,7 +1677,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:265 ../www/prn_properties.cgi.perl:283
 msgid "Raster Image Processor:"
-msgstr ""
+msgstr "Растровый графический процессор (RIP):"
 
 #: ../www/prn_properties.cgi.perl:267 ../www/prn_properties.cgi.perl:288
 msgid "Output Language:"
@@ -1685,7 +1693,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:325
 msgid "Features"
-msgstr ""
+msgstr "Особенности"
 
 #: ../www/prn_properties.cgi.perl:328
 msgid "Optional printer features:"
@@ -1693,7 +1701,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:372
 msgid "Bins"
-msgstr ""
+msgstr "Лотоки"
 
 #: ../www/prn_properties.cgi.perl:375
 msgid "Bins for forms management purposes:"
@@ -1710,11 +1718,11 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:404
 msgid "Alerts"
-msgstr ""
+msgstr "Тревогы"
 
 #: ../www/prn_properties.cgi.perl:408
 msgid "Alert method:"
-msgstr ""
+msgstr "Метод собщения:"
 
 #: ../www/prn_properties.cgi.perl:410
 msgid "mail"
@@ -1722,7 +1730,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:413
 msgid "Alert frequency:"
-msgstr ""
+msgstr "Частота собщения:"
 
 #: ../www/prn_properties.cgi.perl:415 ../www/prn_properties.cgi.perl:661
 msgid "never"
@@ -1750,7 +1758,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:518
 msgid "Limits"
-msgstr ""
+msgstr "Ограничения"
 
 #: ../www/prn_properties.cgi.perl:522
 msgid "Limits Enforced Before Printing"
@@ -1794,7 +1802,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:661
 msgid "always"
-msgstr ""
+msgstr "всегда"
 
 #: ../www/prn_properties.cgi.perl:663
 msgid "Print banner page"
@@ -2496,5 +2504,3 @@ msgstr "Название пакета в Redhat"
 msgid "Source Download"
 msgstr ""
 
-#~ msgid "[%s] failed for the following reason:"
-#~ msgstr "Операция [%s] не успела по этой причине:"

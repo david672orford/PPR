@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 March 2004.
+# Last modified 30 April 2004.
 #
 
 #
@@ -53,6 +53,10 @@ CONFDIR="?"
 VAR_SPOOL_PPR="?"
 EECHO="?"
 
+# Read default file such as is found on Debian systems.
+LPRSRV_STANDALONE_PORT=""
+test -f /etc/default/ppr && . /etc/default/ppr
+
 # Where will the .pid files be found?
 RUNDIR="$VAR_SPOOL_PPR/run"
 
@@ -75,7 +79,7 @@ do_start ()
 	# This is the new AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papd ]
 		then
-		$HOMEDIR/bin/papd
+		$HOMEDIR/bin/papd && $EECHO "papd \c"
 		fi
 
 	# This is the old AppleTalk server daemon.
@@ -84,17 +88,13 @@ do_start ()
 		$HOMEDIR/bin/papsrv && $EECHO "papsrv \c"
 		fi
 
-	# This is the new AppleTalk server daemon.
-	if [ -x $HOMEDIR/bin/papd ]
-		then
-		$HOMEDIR/bin/papd && $EECHO "papd \c"
+	# Uncomment this if you want to run lprsrv in standalone mode.
+	if [ -n "$LPRSRV_STANDALONE_PORT" ]
+		$HOMEDIR/lib/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
 		fi
 
-	# Uncomment this if you want to run lprsrv in standalone mode.
-	#$HOMEDIR/lib/lprsrv -s printer && $EECHO "lprsrv \c"
-
 	# This updates links for lp, lpr, lprm, lpq, etc.
-	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO "uprint-newconf\c"
+	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO "uprint-newconf \c"
 
 	echo
 
@@ -125,23 +125,23 @@ do_stop ()
 		kill `cat $RUNDIR/lprsrv.pid` && $EECHO "lprsrv \c"
 		rm -f $RUNDIR/lprsrv.pid
 		fi
-	if [ -r $RUNDIR/olprsrv.pid ]
-		then
-		kill `cat $RUNDIR/olprsrv.pid` && $EECHO "olprsrv \c"
-		rm -f $RUNDIR/olprsrv.pid
-		fi
 	echo
+
 	# For RedHat Linux:
 	if [ -d /var/lock/subsys ]; then rm -f /var/lock/subsys/ppr; fi
 	}
 
+# This function prints the status of the deamon named in the first parameter.
+# If it is down, this is noted only if the second parameter is true.
+# A daemon is considered to be up if its .pid file exists and kill -0 works
+# on its PID.
 do_status_1()
 	{
 	proc=$1
 	important=$2
-	if [ -f $RUNDIR/$proc.pid ] && kill `cat $RUNDIR/$proc.pid` 2>/dev/null
+	if [ -f $RUNDIR/$proc.pid ] && kill -0 `cat $RUNDIR/$proc.pid` 2>/dev/null
 		then
-		echo "$proc up since" `ls -l $RUNDIR/$proc.pid | cut -c44-55`
+		echo "$proc up since" `ls -l $RUNDIR/$proc.pid | awk '{ print $6, $7 }'`
 		else
 		if [ $important -ne 0 ]
 			then
@@ -160,8 +160,12 @@ do_status()
 		else
 		do_status_1 papsrv 0
 		fi
-	do_status_1 lprsrv 0
-	do_status_1 olprsrv 0
+	if [ -n "$LPRSRV_STANDALONE_PORT" ]
+		then
+		do_status_1 lprsrv 1
+		else
+		do_status_1 lprsrv 0
+		fi
 	}
 
 case "$1" in

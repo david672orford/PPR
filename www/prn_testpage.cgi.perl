@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 24 April 2004.
 #
 
 use lib "?";
@@ -37,7 +37,8 @@ require "cgi_widgets.pl";
 require "cgi_intl.pl";
 require "cgi_run.pl";
 
-# Where are the Ghostscript example PostScript files?
+# Where are the Ghostscript example PostScript files?  We need to improve this
+# code to search more widely.
 $GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
 %IMAGES = (
 		"Ghostscript Golfer" => ["$GS_EXAMPLES/golfer.ps", 0.40],

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/qquery_xlate.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 29 April 2004.
 #
 
 require 'cgi_intl.pl';
@@ -35,8 +35,13 @@ require 'cgi_intl.pl';
 # command.	These descriptions can be used as column headings
 # in a GUI.
 #
+# Column 1: field name according to "ppop qquery"
+# Column 2: name to display in queue listing
+# Column 3: longer name for tooltip
+# Column 4: minimum width (optional)
+#
 @qquery_fields = (
-'jobname' =>			[N_('Job ID'),			N_("Friendly Form of the Job ID")],
+'jobname' =>			[N_('Job ID'),			N_("Friendly Form of the Job ID"), 13],
 'fulljobname' =>		[N_('Full Job ID'),		N_("Elaborate, Fully Qualified Form of the Job ID")],
 '-' => undef,
 'status' =>				[N_('Status'),			N_("Status of the Job")],
@@ -49,11 +54,11 @@ require 'cgi_intl.pl';
 'for' =>				[N_('For Whom'),		N_("Whose Job is This?")],
 'username' =>			[N_('Username'),		N_("Unix Username of Job Submitter")],
 'userid' =>				[N_('UID'),				N_("Numberic Unix Userid of Job Submitter")],
-'proxy-for' =>			[N_('Proxy For'),		N_("For Whom is the Submitter Action as Proxy?")],
+'proxy-for' =>			[N_('Proxy For'),		N_("For Whom is the Submitter Acting as Proxy?")],
 '-' => undef,
 'lpqfilename' =>		[N_('File Name'),		N_("What Was the Name of the Input File?")],
-'title' =>				[N_('Title'),			N_("Descriptive Job Title")],
-'creator' =>			[N_('Creator'),			N_("Person or Application that Created the Job")],
+'title' =>				[N_('Title'),			N_("Descriptive Job Title"), 20],
+'creator' =>			[N_('Creator'),			N_("Person or Application that Created the Job"), 20],
 'routing' =>			[N_('Routing Instructions'), N_("Instructions to a Human Operator for Delivery of the Output")],
 '-' => undef,
 'pages' =>				[N_('Pages'),			N_("Number of PostScript Page Descriptions")],

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2004.
+# Last modified 29 April 2004.
 #
 
 use 5.004;
@@ -53,6 +53,11 @@ $options->{imgheight} = 128 if(!defined($options->{imgheight}));
 $options->{imgwidth} = 128 if(!defined($options->{imgwidth}));
 $options->{height} = 425 if(!defined($options->{height}));
 $options->{padding} = 15 if(!defined($options{padding}));
+
+# Extract the script basename so that this scripts can
+# make non-absolute links back to itself.
+$ENV{SCRIPT_NAME} =~ m#([^/]+)$# || die;
+my $script_basename = $1;
 
 # Turn on table borders if we are running in debug mode.
 my $border = $options->{debug} ? 1 : 0;
@@ -207,10 +212,26 @@ Vary: accept-language
 <title>$title</title>
 <link rel="stylesheet" href="$options->{cssdir}shared.css" type="text/css">
 <link rel="stylesheet" href="$options->{cssdir}cgi_wizard.css" type="text/css">
+<link rel="prefetch" href="$options->{wiz_imgdir}exclaim.png">
+EndOfText1
+
+{
+my %noted;
+foreach my $prefetch_page (@$wizard_table)
+	{
+	if(defined $prefetch_page->{picture} && ! defined $noted{$prefetch_page->{picture}})
+		{
+		print "<link rel=\"prefetch\" href=\"$options->{imgdir}$prefetch_page->{picture}\">\n";
+		$noted{$prefetch_page->{picture}} = 1;
+		}
+	}
+}
+
+print <<"EndOfText2";
 </head>
 <body>
-<form action="$ENV{SCRIPT_NAME}" method="POST">
-EndOfText1
+<form action="$script_basename" method="POST">
+EndOfText2
 
 my $spacer_height = $options->{height} - (2 * $options->{padding});
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_rfc1179.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 30 April 2004.
 */
 
 /*
@@ -205,7 +205,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 	/* Check if response is favourable. */
 	if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
 		{
-		uprint_error_callback(_("(Connection lost while negotiating to send control file failed.)"));
+		uprint_error_callback(_("(Connection lost while negotiating to send control file.)"));
 		return -1;
 		}
 	else if(code)

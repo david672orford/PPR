@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 February 2004.
+# Last modified 26 April 2004.
 #
 
 #
@@ -58,6 +58,7 @@ SUBDIRS=\
 	pprdrv \
 	fontutils \
 	interfaces \
+	browsers \
 	responders \
 	commentators \
 	ppr \
@@ -90,7 +91,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests browsers
+SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests
 
 #=== Build ==================================================================
 

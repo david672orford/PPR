@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2004.
+# Last modified 29 April 2004.
 #
 
 use 5.004;
@@ -52,6 +52,11 @@ my $max_per = shift;			# maximum number of tabs to show at one time
 my $options = shift;
 
 $options->{height} = 425 if(!defined($options->{height}));
+
+# Extract the script basename so that this scripts can
+# make non-absolute links back to itself.
+$ENV{SCRIPT_NAME} =~ m#([^/]+)$# || die;
+my $script_basename = $1;
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.
@@ -125,7 +130,7 @@ if(browser_version >= 4.0 && browser_version < 5.0
 </style>
 </head>
 <body>
-<form action=\"$ENV{SCRIPT_NAME}\" method="POST">
+<form action=\"$script_basename\" method="POST">
 DocStart
 
 # Figure out which tab is currently selected.

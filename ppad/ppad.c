@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 January 2004.
+** Last modified 3 May 2004.
 */
 
 /*
@@ -590,6 +590,10 @@ static int interactive_mode(void)
 	*/
 	while((ptr = ppr_get_command("ppad>", machine_readable)))
 		{
+		/* Skip comments. */
+		if(ptr[0] == '#' || ptr[0] == ';')
+			continue;
+
 		/*
 		** Break the string into white-space separated "words".  A quoted string
 		** will be treated as one word.

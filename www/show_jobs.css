@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 21 April 2004.
+** Last modified 29 April 2004.
 */
 
 BODY {
@@ -13,11 +13,9 @@ BODY {
 /* These are for the queue display table. */
 TABLE.queue {
 	width: 99%;
-	border-style: solid;
-	border-color: black;
-	margin: 2pt;
 	}
 TABLE.queue THEAD TH {
+	background-color: #d0d0d0;
 	font-size: 10pt;
 	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
 	font-weight: bold;

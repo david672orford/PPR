@@ -542,7 +542,7 @@ int media_import(const char *argv[])
 		{
 		linenum++;
 
-		if(line[0] == '#' || strlen(line) == 0)
+		if(line[0] == '#' || line[0] == ';' || strlen(line) == 0)
 			continue;
 
 		for(i=0; (ar[i] = gu_strsep_quoted(&p, " \t\n", NULL)); i++)
