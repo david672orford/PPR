@@ -60,31 +60,82 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-static int xlate_printer_state(int printer_status)
+static void printer_add_status(struct IPP *ipp, int printer)
 	{
-	switch(printer_status)
+	const char function[] = "printer_add_status";
+	switch(printers[printer].status)
 		{
 		case PRNSTATUS_IDLE:
-			return IPP_PRINTER_IDLE;
-
-		case PRNSTATUS_CANCELING:
-		case PRNSTATUS_SEIZING:
-		case PRNSTATUS_HALTING:
-		case PRNSTATUS_STOPPING:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_IDLE);
+			break;
 		case PRNSTATUS_PRINTING:
-			return IPP_PRINTER_PROCESSING;
-
-		case PRNSTATUS_ENGAGED:
-		case PRNSTATUS_STARVED:
-		case PRNSTATUS_FAULT:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_PROCESSING);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("printing %s"), "???");
+			break;
+		case PRNSTATUS_CANCELING:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_PROCESSING);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("canceling %s"), "???");
+			break;
+		case PRNSTATUS_SEIZING:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_PROCESSING);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("seizing %s"), "???");
+			break;
+		case PRNSTATUS_STOPPING:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_PROCESSING);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("stopping (printing %s)"), "???");
+			break;
+		case PRNSTATUS_HALTING:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_PROCESSING);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("halting (printing %s)"), "???");
+			break;
 		case PRNSTATUS_STOPT:
-			return IPP_PRINTER_STOPPED;
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_STOPPED);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("stopt"), FALSE);
+			break;
+		case PRNSTATUS_FAULT:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_STOPPED);
+			if(1)
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("fault, retry %d in %d seconds"), 1, 1);
+				}
+			else
+				{
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("fault, no auto retry"), FALSE);
+				}
+			break;
+		case PRNSTATUS_ENGAGED:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_STOPPED);
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), 1, 2);
+			break;
+		case PRNSTATUS_STARVED:
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"printer-state", IPP_PRINTER_STOPPED);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-state-message", _("waiting for resource ration"), FALSE);
+			break;
 
 		default:
-			error("xlate_printer_state(): invalid printer_status %d", printer_status);
-			return 0;
+			error("%s(): invalid printer_status %d", function, printers[printer].status);
+			break;
 		}
-	
 	}
 
 /* IPP_GET_PRINTER_ATTRIBUTES */
@@ -217,10 +268,15 @@ static void cups_get_printers(struct IPP *ipp)
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", printers[i].name, FALSE);
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/printers/%s", printers[i].name);
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", printers[i].accepting);
-		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", xlate_printer_state(printers[i].status));
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+			"printer-name", printers[i].name, FALSE);
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+			"printer-uri", "/printers/%s", printers[i].name);
+
+		printer_add_status(ipp, i);
+
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs", printers[i].accepting);
 
 		{
 		char fname[MAX_PPR_PATH];
