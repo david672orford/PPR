@@ -1,5 +1,5 @@
 mouse:~ppr/src/nonppr_misc/README.txt
-Last modified 2 November 2003.
+Last modified 13 January 2005.
 
 This directory contains small bits of code and documents which are not under 
 the PPR license.  There are symbolic links in other parts of the source tree 
@@ -14,23 +14,9 @@ include/gu_md5.h -> nonppr_misc/md5/gu_md5.h
 	Copyright 1999, Aladdin Enterprises, BSDish license described in
 	the files themselves.
 
-www/md5.js -> nonppr_misc/md5/md5.js
-	Copyright (c) 1996 Henri Torgemane, BSDish license described in 
-	the file.
-
-pprppopup/md5pure.tcl -> nonppr_misc/md5/md5pure.tcl
-	Copyright 1999, Don Libes
-
-libscript/MD5pp.pm -> nonppr_misc/md5/MD5pp.pm
-	More info needed.
-
-libgu/snprintf.c -> nonppr_misc/snprintf/snprintf.c
+libgu/snprintf.c includes nonppr_misc/snprintf/snprintf.c
 	Copyright 1995, Patrick Powell, preservation of copyright notice in
 	source code required.
-
-makeprogs/squeeze.c -> nonppr_misc/squeeze/squeeze.c
-	Copyright 1988, Radical Eye Software.  This program is a modified
-	version of squeeze.c from the DVIPS distribution.
 
 libgu/gu_wildmat.c -> nonppr_misc/wildmat/gu_wildmat.c
 nonppr_misc/wildmat/gu_wildmat.3 (no symbolic link)
@@ -38,10 +24,49 @@ nonppr_misc/wildmat/gu_wildmat.3 (no symbolic link)
 	modifications for PPR is likewise abandoned.  Look in gu_wildmat.c
 	for a list of changes.
 
+include/hash.h -> nonppr_misc/c2lib/hash.h
+include/pcre.h -> nonppr_misc/pcre/pcre.h
+include/pool.h -> nonppr_misc/c2lib/pool.h
+include/pre.h -> nonppr_misc/c2lib/pre.h
+include/pstring.h -> nonppr_misc/c2lib/pstring.h
+include/tree.h -> nonppr_misc/c2lib/tree.h
+include/vector.h -> nonppr_misc/c2lib/vector.h
+libgu/c2lib_hash.c -> nonppr_misc/c2lib/hash.c
+libgu/c2lib_pool.c -> nonppr_misc/c2lib/pool.c
+libgu/c2lib_pre.c -> nonppr_misc/c2lib/pre.c
+libgu/c2lib_pstring.c nonppr_misc/c2lib/pstring.c
+libgu/c2lib_tree.c -> nonppr_misc/c2lib/tree.c
+libgu/c2lib_vector.c -> nonppr_misc/c2lib/vector.c
+	See c2lib/README.txt
+
+libgu/pcre.c -> nonppr_misc/pcre/pcre.c
+libgu/pcre_get.c -> nonppr_misc/pcre/get.c
+libgu/pcre_maketables.c -> nonppr_misc/pcre/maketables.c
+libgu/pcre_study.c -> nonppr_misc/pcre/study.c
+	See pcre/README.txt
+
+libgu/gu_strlcat.c includes nonppr_misc/openbsd/strlcat.c
+libgu/gu_strlcpy.c includes nonppr_misc/openbsd/strlcpy.c
+    String functions from OpenBSD
+
+www/md5.js -> nonppr_misc/md5/md5.js
+	Copyright (c) 1996 Henri Torgemane, BSDish license described in 
+	the file.
+
+libscript/MD5pp.pm -> nonppr_misc/md5/MD5pp.pm
+	More info needed.
+
 libttf/ps_type3.c -> nonppr_misc/ps_type3/ps_type3.c
 	The code in this file is almost all from L. S. Ng's
 	comp.sources.postscript USENET posting of a program to create
 	PostScript from a TrueType font file and a text file.
+
+pprpopup/md5pure.tcl -> nonppr_misc/md5/md5pure.tcl
+	Copyright 1999, Don Libes
+
+makeprogs/squeeze.c -> nonppr_misc/squeeze/squeeze.c
+	Copyright 1988, Radical Eye Software.  This program is a modified
+	version of squeeze.c from the DVIPS distribution.
 
 docbook-xml -> docbook-xml-4.2
 	This is the DocBook XML 4.2 DTD and the entities it needs.  It is

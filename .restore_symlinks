@@ -29,8 +29,6 @@ ln -sf ../nonppr_misc/c2lib/vector.h ./include/vector.h || exit 1
 ln -sf ../config.h ./include/config.h || exit 1
 # ../nonppr_misc/md5/gu_md5.c --> ./libgu/gu_md5.c
 ln -sf ../nonppr_misc/md5/gu_md5.c ./libgu/gu_md5.c || exit 1
-# ../nonppr_misc/snprintf/snprintf.c --> ./libgu/snprintf.c
-ln -sf ../nonppr_misc/snprintf/snprintf.c ./libgu/snprintf.c || exit 1
 # ../nonppr_misc/wildmat/gu_wildmat.c --> ./libgu/gu_wildmat.c
 ln -sf ../nonppr_misc/wildmat/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1
 # ../nonppr_misc/pcre/pcre.c --> ./libgu/pcre.c
@@ -65,7 +63,11 @@ ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl || exit 1
 ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2 || exit 1
 # docbook-xml-4.2/ --> ./nonppr_misc/docbook-xml
 ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1
+# docbook-xsl-1.60.1 --> ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1
+ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1 || exit 1
 # ../nonppr_misc/md5/md5pure.tcl --> ./pprpopup/md5pure.tcl
 ln -sf ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1
 # ../nonppr_misc/md5/md5.js --> ./www/md5.js
 ln -sf ../nonppr_misc/md5/md5.js ./www/md5.js || exit 1
+# /usr/local/src/ppr_cvs --> ./ppr_cvs
+ln -sf /usr/local/src/ppr_cvs ./ppr_cvs || exit 1

@@ -1,37 +1,4 @@
 /*
-** This module is always compiled into the PPR library libgu.  That way,
-** code which requires C99 sematics can explicitly use the gu_ versions
-** of the funtions.  On systems on which snprintf(), vsnprintf(), asprintf(),
-** or vasprintf() are completely missing, gu.h defines macros to equate
-** them with gu_snprintf() and gu_vsnprintf(), etc.
-*/
-
-/* Material added for PPR is marked marked thus: */
-#define PPR
-#ifdef PPR
-
-#include "config.h"
-
-/* PPR doesn't use autoconf (yet). */
-#define NO_CONFIG_H
-
-/* All systems on which PPR compiles have these headers. */
-#define HAVE_STRING_H
-#define HAVE_CTYPE_H
-#define HAVE_STDLIB_H
-
-/* We are going to pretent that we have none of these. */
-#undef HAVE_SNPRINTF
-#undef HAVE_VSNPRINTF
-#undef HAVE_ASPRINTF
-#undef HAVE_VASPRINTF
-
-/* Just to check, enclose the prototypes. */
-#include "gu.h"
-
-#endif /* PPR */
-
-/*
  * Copyright Patrick Powell 1995
  * This code is based on code written by Patrick Powell (papowell@astart.com)
  * It may be used for any purpose as long as this notice remains intact
@@ -129,24 +96,6 @@
 #else
 #define LLONG long
 #endif
-
-#ifdef PPR
-
-/* Rename these functions so as not to clash with libc. */
-#undef snprintf
-#define snprintf gu_snprintf
-#undef vsnprintf
-#define vsnprintf gu_vsnprintf
-#undef asprintf
-#define asprintf gu_asprintf
-#undef vasprintf
-#define vasprintf gu_vasprintf
-
-/* Hook memory allocation. */
-#define malloc(a) gu_alloc(a, sizeof(char))
-#define free(a) gu_free(a)
-
-#endif /* PPR */
 
 /* free memory if the pointer is valid and zero the pointer */
 #ifndef SAFE_FREE
@@ -400,15 +349,14 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
 				fmtstr (buffer, &currlen, maxlen, strvalue, flags, min, max);
 				break;
 			case 'p':
-				#ifndef PPR
+				/* DSC: This is what was: */
 				strvalue = va_arg (args, void *);
 				fmtint (buffer, &currlen, maxlen, (long) strvalue, 16, min, max, flags);
-				#else
+				/* This is the fix: */
 				{
 				long longvalue = (long)va_arg (args, void *);
 				fmtint (buffer, &currlen, maxlen, longvalue, 16, min, max, flags);
 				}
-				#endif
 				break;
 			case 'n':
 				if (cflags == DP_C_SHORT) {
