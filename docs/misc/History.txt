@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--4 October 2002.
+1.50a2, 27 February 2002--15 October 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7639,7 +7639,7 @@ line was being parsed twice.
   exiting with error code 1 indicates a command line arguments error.  Now we
   nix that if a PostScript error notification has been received.
 
-* misc/ppr-testpage.c: added options to enable grayscale, rgb, and cmyk
+* misc/ppr-testpage.c: added options to enable grayscale, RGB, and CMYK
   bars.
 
 * www/prn_testpage.cgi.perl: added choices of images and whether or not to
@@ -7662,8 +7662,8 @@ line was being parsed twice.
 * Makefile: added subdir pprpopup/ to those automatically built.
 
 * makeprogs/installdata.sh, makeprogs/installcp.sh, fixup/fixup_samples.sh,
-  fixup/fixup_media.sh:
-  added chmod to set the permissions of the target files.
+  fixup/fixup_media.sh: added chmod to set the permissions of the target 
+  files.
 
 * makeprogs/make_install_dirs.sh, fixup/fixup_perms.sh: changed permissions
   of $VAR_SPOOL_PPR/pprpopup.db to 770.
