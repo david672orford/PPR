@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 March 2002.
+** Last modified 19 March 2002.
 */
 
 #include "before_system.h"
@@ -86,7 +86,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
     job->PPRVersion = 0.0;
     job->username = (char*)NULL;
-    job->LC_MESSAGES = (char*)NULL;
+    job->lc_messages = (char*)NULL;
     job->For = (char*)NULL;
     job->proxy_for = (char*)NULL;		/* optional */
     job->priority = 20;
@@ -211,7 +211,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		break;
 
 	    case 'L':
-	    	MATCH("LC_MESSAGES: ", _2("%Z", &job->LC_MESSAGES), !=1, found_other)
+	    	MATCH("LC_MESSAGES: ", _2("%Z", &job->lc_messages), !=1, found_other)
 
 	    case 'l':
 		MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 8 March 2002.
+** Last revised 19 March 2002.
 */
 
 /*
@@ -2043,8 +2043,8 @@ int main(int argc, char *argv[])
 
     /* Figure out what language the user is getting messages in and
        attach its name to the job. */
-    if(!(qentry.LC_MESSAGES = getenv("LC_MESSAGES")))
-    	qentry.LC_MESSAGES = getenv("LANG");
+    if(!(qentry.lc_messages = getenv("LC_MESSAGES")))
+    	qentry.lc_messages = getenv("LANG");
 
     /*
     ** We would like to find a default response method in the variable

@@ -53,7 +53,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     	qentry->username ? qentry->username : "?",	/* Unix user name */
 	qentry->proxy_for ? qentry->proxy_for : "");
 
-    fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->LC_MESSAGES ? qentry->LC_MESSAGES : "");
+    fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages ? qentry->lc_messages : "");
 
     fprintf(Qfile, "Priority: %d\n", qentry->priority);
 

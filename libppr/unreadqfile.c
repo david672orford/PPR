@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2002.
+** Last modified 19 March 2002.
 */
 
 #include "before_system.h"
@@ -79,6 +79,8 @@ void destroy_struct_QFileEntry(struct QFileEntry *job)
     	gu_free(job->page_list.mask);
     if(job->question)
     	gu_free_const(job->question);
+    if(job->lc_messages)
+    	gu_free_const(job->lc_messages);
 
     /* Things not read by read_struct_QFileEntry() */
     if(job->PJL)

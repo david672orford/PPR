@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 March 2002.
+** Last modified 19 March 2002.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -62,7 +62,7 @@ struct QFileEntry
     long user;				/* id of user who submitted it (don't use uid_t) */
     const char *username;		/* text version of "user" */
     const char *proxy_for;		/* -X switch string */
-    const char *LC_MESSAGES;		/* language setting for messages */
+    const char *lc_messages;		/* language setting for messages */
     const char *For;			/* %%For: line for PostScript header */
     const char *charge_to;		/* charge account to debit */
     const char *Routing;		/* %%Routing: line for PostScript header */
