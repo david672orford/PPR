@@ -126,9 +126,6 @@ rm -rf $RPM_BUILD_ROOT
 #============================================================================
 # This is run before unpacking the file archive from the binary .rpm file.
 # This is similiar to what "make install" in z_install_begin/ does.
-#
-# It is annoying that the RPM documentation doesn't discuss the issue of
-# creating users and groups.
 #============================================================================
 %pre
 
@@ -138,6 +135,7 @@ echo "pre of %{name}-%{version}-%{release}: $1"
 if [ $1 -lt 2 ]
 	then
 	echo "  Is a new install."
+
 	# Create the PPR users and groups.
 	/usr/sbin/groupadd ppr
 	/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System" -g ppr -G lp ppr
@@ -145,17 +143,20 @@ if [ $1 -lt 2 ]
 	fi
 
 #============================================================================
-# This is run after unpacking the cpio archive from the binary .rpm file.
+# This is run after unpacking the archive from the binary .rpm file.
 # This is similiar to what make install in z_install_end/ does.
 #============================================================================
 %post
 
 echo "post of %{name}-%{version}-%{release}: $1"
 
+# Sample empty files are not of value.
+rm -f /etc/ppr/acl/*.rpmnew
+
+# These will just be copies of the .sample files.  Nix them.
+rm -f /etc/ppr/*.rpmnew
+
 # Initialize the binary media database.
-touch /etc/ppr/media.db
-chown ppr:ppr /etc/ppr/media.db
-chmod 644 /etc/ppr/media.db
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
 
 # Generate or re-generate index of fonts, PPD files, etc.
@@ -194,7 +195,7 @@ echo "preun of %{name}-%{version}-%{release}: $1"
 # Stop the PPR daemons while the stop script is still available.
 /etc/rc.d/init.d/ppr stop
 
-# If this is an actual removeal and not an upgrade,
+# If this is an actual removal and not an upgrade,
 if [ $1 -lt 2 ]
 	then
 	echo "  Is an actual removal, not an upgrade."
@@ -220,7 +221,7 @@ if [ $1 -lt 2 ]
 
 echo "postun of %{name}-%{version}-%{release}: $1"
 
-# If this is an actual removeal and not an upgrade,
+# If this is an actual removal and not an upgrade,
 if [ $1 -lt 1 ]
 	then
 	echo "  Is an actual removal, not an upgrade."

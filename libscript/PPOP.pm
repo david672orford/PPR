@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 August 2003.
+# Last modified 6 August 2003.
 #
 
 =head1 NAME
@@ -176,10 +176,14 @@ sub launch
 		push(@COMMAND, "--proxy-for", $1);
 		}
 
-    # Launch the command.
+    # Launch the command.  Note that we temporarily clear PATH so that the
+    # child won't inherit it and balk at exec() due to taint checking.
     #print STDERR "Launching: ", join(" ", @COMMAND), "\n";
     ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
+	my $saved_PATH = $ENV{PATH};
+	delete $ENV{PATH};
     my $pid = open2($rdr, $wtr, @COMMAND);
+    $ENV{PATH} = $saved_PATH;
 
     # Set the file handle to ppop to flush on each print.  If we don't
     # do this, then communication will get locked as both parties

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 6 August 2003.
 */
 
 /*
@@ -40,6 +40,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -75,6 +78,10 @@ static void get_answer(char *buffer, int len, const char *argv[], int *index)
 		}
 	} /* end of get_answer() */
 
+/*
+** A wrapper around convert_dimension() which prints an error message
+** if it fails.
+*/
 static double ppad_convert_dimension(const char *string)
 	{
 	double answer;
@@ -88,27 +95,34 @@ static double ppad_convert_dimension(const char *string)
 	return answer;
 	} /* end of ppad_convert_dimension */
 
+/*
+** Open the media database, creating it first if it does not already exist.
+*/
 static FILE *open_database(const char mode[])
 	{
-	char fname_buffer[MAX_PPR_PATH];
-	char *fname = MEDIAFILE;
 	FILE *f;
+	int i = 1;
 
-	if(getenv("RPM_BUILD_ROOT"))
+	while(TRUE)
 		{
-		if(getuid() != geteuid() && getuid() != 0)
+		if((f = fopen(MEDIAFILE, "r+b")) == (FILE*)NULL)
 			{
-			fprintf(errors, X_("Warning: RPM_BUILD_ROOT ignored\n"));
+			if(errno == ENOENT && i-- > 0)
+				{
+				int fd;
+				printf(_("Creating media file \"%s\".\n"), MEDIAFILE);
+				if((fd = open(MEDIAFILE, O_WRONLY | O_CREAT, UNIX_644)) == -1)
+					fatal(EXIT_INTERNAL, _("Can't create media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+				close(fd);
+				continue;
+				}
+			else
+				{
+				fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+				}
 			}
-		else
-			{
-			ppr_fnamef(fname_buffer, "%s/%s", getenv("RPM_BUILD_ROOT"), MEDIAFILE);
-			fname = fname_buffer;
-			}
+		break;
 		}
-
-	if((f = fopen(fname, "r+b")) == (FILE*)NULL)
-		fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
 
 	return f;
 	}

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2003.
+# Last modified 6 August 2003.
 #
 
 use lib "?";
@@ -875,7 +875,7 @@ opencmd(PPAD, $PPAD_PATH, '-M', 'show', $name) || die;
 while(<PPAD>)
 	{
 	chomp;
-	/^([^\t]+)\t(.*)$/ || die "Can't parse \"$_\"";
+	/^([^\t]+)\t(.*)$/ || die "Uninteligible message from ppad: \"$_\"";
 	my($key, $value) = ($1, $2);
 	$data{$key} = $value;				# copy to modify
 	$data{"_$key"} = $value;			# copy to keep

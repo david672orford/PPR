@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 6 August 2003.
 #
 
 include ../Makefile.conf
@@ -50,18 +50,17 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./install_sample_config.sh
 	./install_atalk_links.tcl
-	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_crontab.sh || true
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh
 	#./install_alternatives.tcl
-	[ -z "$(RPM_BUILD_ROOT)" ] && ./fixup_obsolete.sh || true
-	[ -z "$(RPM_BUILD_ROOT)" ] && touch $(CONFDIR)/media.db \
-		&& chown $(USER_PPR) $(CONFDIR)/media.db \
-		&& chgrp $(GROUP_PPR) $(CONFDIR)/media.db \
-		&& $(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null \
-		|| true
-	[ -z "$(RPM_BUILD_ROOT)" ] && $(HOMEDIR)/bin/ppr-index >/dev/null || true
+	if [ -n "$(RPM_BUILD_ROOT)" ] \
+		then \
+		./install_crontab.sh \
+		./fixup_obsolete.sh \
+		$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null \
+		$(HOMEDIR)/bin/ppr-index >/dev/null \
+		fi
 
 #=== Housekeeping ===========================================================
 

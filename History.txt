@@ -8669,6 +8669,8 @@ Bug Fixes
   of $NECHO (echo -n) and replaced it with echo "\c" since echo -n isn't 
   supported on Solaris without the UCB package.
 
+* libscript/PPOP.pm: added code to launch ppop with PATH unset.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
@@ -8697,6 +8699,9 @@ Misc. Enhancements
 
 * No longer defines ppradmin in /etc/services if Xinetd is used.  This
   makes building packages much easier.
+
+* ppad/ppad_media.c: added code to create media database if it doesn't 
+  already exist.
 
 Internet Printing Protocol Work
 
