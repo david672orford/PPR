@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 6 August 2003.
 #
 
 #
@@ -206,9 +206,13 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 		echo "  $XINETD_PPR already exists, good."
 		else
 		echo "  Creating $XINETD_PPR..."
+		if [ -n "$RPM_BUILD_ROOT" ]
+			then
+			mkdir -p $RPM_BUILD_ROOT/etc/xinetd.d
+			fi
 		xinetd_config $RPM_BUILD_ROOT$XINETD_PPR
-		../makeprogs/installconf 'config(noreplace)' $XINETD_PPR
 		fi
+	../makeprogs/installconf.sh 'config(noreplace)' $XINETD_PPR
 	exit 0
 	else
 	echo " not found"

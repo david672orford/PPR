@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 5 August 2003.
+# Last modified 6 August 2003.
 #
 
 Name: ppr
@@ -135,7 +135,7 @@ rm -rf $RPM_BUILD_ROOT
 echo "pre of %{name}-%{version}-%{release}: $1"
 
 # If this is a first time install, and not an upgrade,
-if [ $1 -gt 1 ]
+if [ $1 -lt 2 ]
 	then
 	echo "  Is a new install."
 	# Create the PPR users and groups.
@@ -171,7 +171,7 @@ END
 # If this isn't an upgrade,
 if [ $1 -lt 2 ]
 	then
-	echo "  Isn't a new install, not an upgrade."
+	echo "  Is a new install, not an upgrade."
 
 	# Setup init scripts to start PPR daemons at boot.
 	/sbin/chkconfig --add ppr
@@ -223,7 +223,7 @@ echo "postun of %{name}-%{version}-%{release}: $1"
 # If this is an actual removeal and not an upgrade,
 if [ $1 -lt 1 ]
 	then
-	echo "  Is a removal."
+	echo "  Is an actual removal, not an upgrade."
 
 	# Tell Xinetd to reload its configuration files.
 	killall -HUP xinetd 2>/dev/null
