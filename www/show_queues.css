@@ -1,22 +1,7 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 16 December 2003.
+** Last modified 17 December 2003.
 */
-
-/* The <body> element of the main window uses this class.  This is so that
-   we can change its appearance without changing the appearance of
-   layers.
-   */
-BODY {
-	background: white;
-	color: black;
-	font-family: sans-serif;
-	}
-
-/* I guess setting the body font doesn't cover tables. */
-TABLE TD {
-	font-family: sans-serif;
-	}
 
 /* Normal link behaviour makes little sense in this context. */
 A {	font-weight: normal;
@@ -24,81 +9,24 @@ A {	font-weight: normal;
 	text-decoration: none;
 	}
 
-/* Try to make buttons gray. */
-INPUT.buttons,BUTTON.buttons
-	{
-	background: #b0b0b0;
-	margin: 0pt;
-	padding: 2pt;
-	vertical-align: bottom;
-	}
-
-/* Menu bar at the top of the page. */
-DIV.menubar {
-	z-index: 1;
-	width: 100%;
-	padding: 2pt;
-	margin: 0pt;
-	border: solid black;
-	border-width: 0px 0px 1px 0px;
-	background-color: #d0d0d0;
-	font-size: 12pt;
-	}
-DIV.menubar A {
-	margin-right: 5pt;
-	}
-
-/* Popup menu */
-DIV.popup {
-	z-index: 1;
-	visibility: hidden;
-	position: absolute;
-	left: 0;
-	top: 0;
-	padding: 50px;
-	background-color: transparent;
-	}
-DIV.popup TABLE {
-	border-width: 2px;
-	border-style: outset;
-	background-color: #d0d0d0;
-	}
-DIV.popup TABLE TD {
-	border: none;
-	}
-DIV.popup A,LABEL {
-	display: block;
-	width: 100%;
-	padding: 1pt 5pt 1pt 5pt;
-	}
-DIV.popup A:hover,LABEL:hover {
-	background-color: #808080;
-	color: #d0d0d0;
-	}
-DIV.popup BUTTON {
-	border: none;
-	background-color: transparent;
-	}
-
-/* We don't want the surround to overlap the menu bar. */
-DIV.menubar DIV.popup {
-	padding-top: 0;
-	}
-
-/* This is used for form element labels. */
-SPAN.label { font-weight: bold; }
-
 /* queue name */
-SPAN.qname { font-weight: bold; }
+SPAN.qname {
+	font-weight: bold;
+	}
 
 /* queue comment */
-SPAN.qcomment { }
+SPAN.qcomment {
+	}
 
 /* number of jobs */
-SPAN.qjobs { color: brown; }
+SPAN.qjobs {
+	color: brown;
+	}
 
 /* address */
-SPAN.qaddress { font-family: monospace; }
+SPAN.qaddress {
+	font-family: monospace;
+	}
 
 /* end of file */
 

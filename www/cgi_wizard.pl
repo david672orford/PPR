@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 September 2003.
+# Last modified 17 December 2003.
 #
 
 use 5.004;
@@ -205,6 +205,7 @@ Vary: accept-language
 <html>
 <head>
 <title>$title</title>
+<link rel="stylesheet" href="$options->{cssdir}shared.css" type="text/css">
 <link rel="stylesheet" href="$options->{cssdir}cgi_wizard.css" type="text/css">
 </head>
 <body>
@@ -304,11 +305,11 @@ my $b;
 my $tabindex = 1000;
 foreach $b (@$buttons)
 	{
-	my $other = "class=\"buttons\" tabindex=$tabindex";
+	my $onclick = undef;
 	if($b eq "_Cancel" || $b eq "_Close")
-		{ $other .= " onclick=\"self.close()\"" }
-	(my $b_stript = $b ) =~ s/_//;
-	isubmit("wiz_action", $b_stript, $b, $other);
+		{ $onclick = "self.close()" }
+	(my $b_stript = $b) =~ s/_//;
+	isubmit("wiz_action", $b_stript, $b, undef, $onclick);
 	$tabindex--;
 	}
 }

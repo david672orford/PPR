@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2003, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 16 December 2003.
+// Last revised 17 December 2003.
 //
 
 // Width in pixels of invisible border round the table.
@@ -14,12 +14,14 @@ var pointer_in = 10;
 
 // This is a list of the various CGI scripts and the window options to use with them.
 var windows = new Array();
+windows['show_queues.cgi'] =		'width=800,height=600,scrollbars,resizable';
 windows['prn_addwiz.cgi'] =			'width=775,height=500,resizable';
 windows['grp_addwiz.cgi'] =			'width=775,height=500,resizable';
 windows['alias_addwiz.cgi'] =		'width=775,height=500,resizable';
 windows['show_jobs.cgi'] =			'width=775,height=500,resizable,scrollbars';
 windows['prn_control.cgi'] =		'width=750,height=350,resizable';
 windows['grp_control.cgi'] =		'width=750,height=400,resizable';
+windows['prn_media.cgi'] =			'width=700,height=300,scrollbars,resizable';
 windows['prn_properties.cgi'] =		'width=675,height=580,resizable';
 windows['grp_properties.cgi'] =		'width=675,height=580,resizable';
 windows['alias_properties.cgi'] =	'width=675,height=580,resizable';
@@ -27,6 +29,9 @@ windows['prn_testpage.cgi'] =		'width=775,height=525,resizable';
 windows['cliconf.cgi'] =			'width=700,height=525,resizable';
 windows['show_printlog.cgi'] =		'width=800,height=600,resizable,scrollbars';
 windows['delete_queue.cgi'] =		'width=600,height=150';
+windows['about.cgi'] =				'width=450,height=275,resizable';	
+windows['login_cookie.html'] =		'width=350,height=250,resizable';
+windows['df_html.cgi'] =			'width=600,height=500,resizable,scrollbars';
 
 // These two functions determine the X and Y coordinates to which the window is
 // scrolled.  Since the w3c hasn't defined this, we have to hunt for it.  Some have
@@ -66,15 +71,20 @@ function gentle_reload()
 	{
 	if(page_locked == 0)
 		{
-		document.forms[0].x.value = scrolled_x();
-		document.forms[0].y.value = scrolled_y();
-		document.forms[0].seq.value++;				// serial number 
-		document.forms[0].submit();
+		reload();
 		}
 	else
 		{
 		window.setTimeout("gentle_reload()", 5000);
 		}
+	}
+
+function reload()
+	{
+	document.forms[0].x.value = scrolled_x();
+	document.forms[0].y.value = scrolled_y();
+	document.forms[0].seq.value++;				// serial number 
+	document.forms[0].submit();
 	}
 
 // This is called when the user clicks to bring up the context
@@ -93,14 +103,18 @@ function popup(event, name)
 // This is called when the user clicks on one of the items on the menu bar.
 function popup2(container, name)
 	{
+	// Close any other menus
 	var menus = document.getElementsByName('menubar');
 	for(var i=0; i < menus.length; i++)
 		{
 		menus.item(i).style.visibility = 'hidden';
 		}
+
+	// Move the popup menu under the menu bar item that activated it.
 	var w = document.getElementById(name);
 	w.style.left = container.offsetLeft - 50 + 'px';
 	w.style.top = '25px';
+
 	w.style.visibility = 'visible';
 	page_locked = 1;
 	return false;
@@ -125,9 +139,22 @@ function offmenu(event)
 //
 function wopen(event, url)
 	{
-	var script = url.substr(0, url.indexOf('?'));			// remove query string
-	script = script.substr(script.lastIndexOf('/') + 1);	// take only base name
-	window.open(url, '_blank', windows[script]);
+	// Extract the base script name from the URL.
+	var script = url;
+	var query_offset = script.indexOf('?');
+	if(query_offset >= 0)
+		script = script.substr(0, query_offset);
+	script = script.substr(script.lastIndexOf('/') + 1);
+
+	// Look the base script name up in the list to find the window options
+	// to use.
+	var options = windows[script];
+	if(options == null)
+		options = 'menubar,resizable,scrollbars,toolbar';
+
+	window.open(url, '_blank', options);
+	
+	// Try to pop the menu down.
 	if(event)
 		{
 		var node = event.target.parentNode;					// search upward for the popup frame
@@ -138,6 +165,7 @@ function wopen(event, url)
 		node.style.visibility = 'hidden';
 		page_locked = 0;
 		}
+
 	return false;
 	}
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 December 2003.
+# Last modified 17 December 2003.
 #
 
 use 5.005;
@@ -92,7 +92,7 @@ TD {
 <tr><td align="right">
 End10
 
-isubmit("action", "Close", _("Close"), 'class="buttons" onclick="window.close()"');
+isubmit("action", "Close", _("Close"), _("Close this window."), "window.close()");
 
 print <<"End100";
 </td></tr>

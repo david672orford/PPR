@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 7 April 2003.
+** Last modified 17 December 2003.
 */
 
 BODY {
@@ -8,15 +8,9 @@ BODY {
 	margin: 0px;
 	}
 
-/* Try to give all buttons darker gray backgrounds. */
-INPUT.buttons,BUTTON.buttons
-	{
-	background: #B0B0B0;
-	}
-
 /* This is for form field labels.
    */
-SPAN.label {
+SPAN.label,LABEL {
 	font-weight: bold;
 	font-size: 12pt;
 	}

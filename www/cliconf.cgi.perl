@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2003.
+# Last modified 17 December 2003.
 #
 
 use lib "?";
@@ -87,7 +87,7 @@ $printcap_wizard_table = [
 				print "<p>", H_("Click on the button below to download the KDE shortcut\n"
 						. "to the PPR Web Interface.\n"
 						. "You will probably want to save it in your Desktop folder."), "</p>\n";
-				isubmit("action", "Download", N_("_Download"), 'class="buttons"');
+				isubmit("action", "Download", N_("_Download"));
 				},
 		'buttons' => [N_("_Close")]
 		},
@@ -103,7 +103,7 @@ $printcap_wizard_table = [
 				print "<p>", H_("Click on the button below to download the KDE shortcut\n"
 						. "to the PPR Perl/Tk interface.\n"
 						. "You will probably want to save it in your Desktop folder."), "</p>\n";
-				isubmit("action", "Download", N_("_Download"), 'class="buttons"');
+				isubmit("action", "Download", N_("_Download"));
 				},
 		'buttons' => [N_("_Close")]
 		},
@@ -182,7 +182,7 @@ $printcap_wizard_table = [
 		'dopage' => sub {
 				my $localname = cgi_data_peek("localname", "?");
 				print "<p>", H_("Click on the button below to download the install script."), "</p>\n";
-				isubmit("action", "Download", N_("_Download"), 'class="buttons"'); 
+				isubmit("action", "Download", N_("_Download")); 
 				print "<p>", H_("This script must be run as root.  The command to run it is:"), "</p>\n";
 				print "<pre>\n";
 				print html("# ./setup_$localname.sh"), "\n";

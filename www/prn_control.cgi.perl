@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 August 2003.
+# Last modified 17 December 2003.
 #
 
 use lib "?";
@@ -34,6 +34,8 @@ use PPR::PPOP;
 require 'cgi_data.pl';
 require 'cgi_time.pl';
 require 'cgi_intl.pl';
+require 'cgi_back.pl';
+require 'cgi_widgets.pl';
 
 # How wide is a character (in pixels)?
 my $CHARWIDTH = 10;
@@ -114,23 +116,14 @@ my $action = cgi_data_move('action', undef);
 
 # If the user press the "Close" button and it got past
 # JavaScript, try to load the previous page.
-if(defined($action))
+if(defined $action && $action eq "Close")
 	{
-	if($action eq "Close")
-		{
-		require 'cgi_back.pl';
-		cgi_back_doit();
-		exit 0;
-		}
-	if($action eq "Media")
-		{
-		require 'cgi_redirect.pl';
-		my $encoded_HIST = form_urlencoded("HIST", $data{HIST});
-		my $encoded_name = form_urlencoded("name", $printer);
-		cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}/cgi-bin/prn_media.cgi?$encoded_name;$encoded_HIST");
-		exit 0;
-		}
+	cgi_back_doit();
+	exit 0;
 	}
+
+# What back information should we pass to scripts to which we link?
+my $encoded_back_stack = cgi_back_init();
 
 # Demand authentication if necessary.
 if(defined($action) && $action ne "Refresh" && undef_to_empty($ENV{REMOTE_USER}) eq "")
@@ -152,7 +145,9 @@ Vary: accept-language
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/prn_control.css" type="text/css">
+<script type="text/javascript" src="../js/show_queues.js" defer></script>
 </head>
 <body>
 EndOfHead
@@ -207,7 +202,7 @@ my @result_rows = $control->get_pstatus();
 my @result_row1 = @{shift @result_rows};
 
 # Sanity check: make sure the first field is the printer name.
-((shift @result_row1) eq $printer) || die "Failed to get printer status";
+((shift @result_row1) eq $printer) || die "Failed to get status of printer \"$printer\"";
 
 # The first three columns are easy.
 my $status = shift @result_row1;
@@ -420,22 +415,21 @@ print "</td>\n";
 if($controls)
 	{
 	print "<td class=\"right_buttons\" align=\"right\" valign=\"top\">\n";
-	isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
+	isubmit("action", "Start", N_("_Start"), _("Start the printer."));
 	print "<br>\n";
-	isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");
+	isubmit("action", "Stop", N_("Sto_p"), _("Stop the printer after current job."));
 	print "<br>\n";
-	isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
+	isubmit("action", "Halt", N_("_Halt"), _("Stop the printer imediately."));
 	print "<br>\n";
-	isubmit("action", "Media", N_("_Media"),
-		"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=700,height=300,scrollbars,resizable'); return false;\""
-		);
+	link_button(_("Media"), "prn_media.cgi?" . form_urlencoded("name", $printer) . ";" . $encoded_back_stack,
+		_("Change the media mounted on the printer's input trays."));
 	print "<br><br><br>\n";
-	isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
+	isubmit("action", "Refresh", N_("_Refresh"));
 	print "<br>\n";
 	# We use parent.close() in the next line so that if it opened in a frame by
 	# grp_control() it will close the window rather than trying to close the
 	# frame (which can't be done).
-	isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"parent.close()\"");
+	isubmit("action", "Close", N_("_Close"), _("Close this window."), "parent.close()");
 	print "</td>\n";
 	}
 

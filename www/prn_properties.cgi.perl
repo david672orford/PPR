@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 November 2003.
+# Last modified 17 December 2003.
 #
 
 use lib "?";
@@ -84,26 +84,30 @@ my $tabbed_table = [
 
 				print "<p>";
 				labeled_select("interface", _("Printer interface program:"), "", cgi_data_move("interface", ""), @interface_list);
+				print "</p>\n";
 
 				print "<p>";
 				labeled_entry("address", _("Printer address:"), cgi_data_move("address", ""), 50);
+				print "</p>\n";
 
 				print "<p>";
 				labeled_entry("options", _("Interface options:"), cgi_data_move("options", ""), 50);
+				print "</p>\n";
 
 				{
-				print "<p><span class=\"label\">", H_("Does feedback (2-way communication) work?"), "</span><br>\n";
+				print '<p><span class="label">', H_("Does feedback (2-way communication) work?"), "</span><br>\n";
 				my $selected_feedback = cgi_data_move('feedback', 'default');
 				foreach my $feedback (N_("default"), N_("yes"), N_("no"))
 					{
-					print '<input type="radio" name="feedback" value=', html_value($feedback);
+					print '<label><input type="radio" name="feedback" value=', html_value($feedback);
 					if($feedback eq $selected_feedback)
 						{ print " checked" }
 					print "> ", H_($feedback);
 					if($feedback eq 'default')
 						{ print " (", H_($data{feedback_default}), ")" }
-					print "\n";
+					print "</label>\n";
 					}
+				print "</p>\n";
 				}
 
 				print "<p>";
@@ -117,6 +121,7 @@ my $tabbed_table = [
 								N_("newinterface"),
 								N_("none"),
 								N_("save/restore"));
+				print "</p>\n";
 
 				print "<p>";
 				labeled_select("codes", _("Character code compatibility:"),
@@ -127,7 +132,7 @@ my $tabbed_table = [
 								N_("Binary"),
 								N_("TBCP"),
 								N_("UNKNOWN"));
-
+				print "</p>\n";
 				},
 		'onleave' => sub {
 				if($data{interface} eq "")
@@ -153,9 +158,9 @@ my $tabbed_table = [
 				$ppd = $ppd_select if($ppd_select ne "" && $ppd_select ne cgi_data_peek("_ppd", ""));
 
 				print "<table class=\"ppd\"><tr><td>\n";
-				print '<p><span class="label">', H_("Current PPD File:"), "</span><br>\n";
+				print '<p><label>', H_("Current PPD File:"), "<br>\n";
 				print '<input tabindex=1 name="ppd" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
-				print "</p>\n";
+				print "</label></p>\n";
 
 				{
 				my $probe = cgi_data_move("probe", "");
@@ -171,7 +176,7 @@ my $tabbed_table = [
 				}
 
 				# Print the HTML for a select box.
-				print '<p><span class="label">', H_("Available PPD Files (by printer description):"), "</span><br>\n";
+				print '<p><label>', H_("Available PPD Files (by printer description):"), "<br>\n";
 				print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
 				my $lastgroup = "";
 				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
@@ -189,7 +194,7 @@ my $tabbed_table = [
 					}
 				print "</optgroup>\n" if($lastgroup ne "");
 				print "</select>\n";
-				print "</p>\n";
+				print "</label></p>\n";
 
 				print "</td><td>\n";
 
@@ -200,7 +205,7 @@ my $tabbed_table = [
 
 				if(cgi_data_peek("ppd_probe_list","") eq "")
 					{
-					isubmit("probe", "probe", N_("Auto Detect Printer Type"));
+					isubmit("probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
 					}
 				else
 					{
@@ -235,9 +240,9 @@ my $tabbed_table = [
 				# Upper section: PPD RIP info.
 				{
 				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"PPD\"";
-				print " checked" if($rip_which eq "PPD");
-				print "> From PPD File</span>\n";
+				print '<span class="section_label">';
+				labeled_radio("rip_which", _("From PPD File"), $rip_which);
+				print "</span>\n";
 
 				my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", ""));
 				if($rip_list[0] eq "")
@@ -260,9 +265,9 @@ my $tabbed_table = [
 				# Lower section: Custom RIP Info
 				{
 				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"CONFIG\"";
+				print "<span class=\"section_label\"><label><input type=\"radio\" name=\"rip_which\" value=\"CONFIG\"";
 				print " checked" if($rip_which eq "CONFIG");
-				print "> Custom</span>\n";
+				print "> Custom</label></span>\n";
 
 				print "<p>";
 				labeled_select("rip_name", _("Raster Image Processor:"),
@@ -310,7 +315,7 @@ my $tabbed_table = [
 		'tabname' => N_("Features"),
 		'help' => "features",
 		'dopage' => sub {
-				print "<span class=\"label\">", H_("Optional printer features:"), "</span><br>\n";
+				print "<label>", H_("Optional printer features:"), "<br>\n";
 
 				# Get the list of features from the PPD file.
 				my @features = ppd_features(cgi_data_peek("ppd", "?"));
@@ -325,14 +330,12 @@ my $tabbed_table = [
 					{
 					$value = shift @list;
 					$current{"$name $value"} = 1;
-					#print "<pre>\$name=\"$name\", \$value=\"$value\"</pre>\n";
 					}
 				}
 
 				# Print a select control for each feature.
 				foreach my $feature (@features)
 					{
-					#print "<pre>", join(' ', @$feature), "</pre>\n";
 					my $name = shift @$feature;
 					$name =~ m#^([^/]+)/?(.*)$# || die;
 					my($name_mr, $name_tr) = ($1, $2);
@@ -346,7 +349,8 @@ my $tabbed_table = [
 						print " selected" if(defined $current{"$name_mr $setting_mr"});
 						print ">", html("$name_tr $setting_tr"), "\n";
 						}
-					print "</select><br>\n";
+					print "</select>\n";
+					print "</label>\n";
 					}
 				}
 		},
@@ -433,7 +437,7 @@ my $tabbed_table = [
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
-				labeled_checkbox("addon ppr2samba", _("Share with Samba"), 1, cgi_data_move("addon ppr2samba", 1));
+				labeled_boolean("addon ppr2samba", _("Share with Samba"), cgi_data_move("addon ppr2samba", 1));
 				print "</span>\n";
 
 				print "<p>";
@@ -474,7 +478,7 @@ my $tabbed_table = [
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
-				labeled_checkbox("addon papd", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon papd", 0));
+				labeled_boolean("addon papd", _("Share with AppleTalk PAP"), cgi_data_move("addon papd", 0));
 				print "</span>\n";
 
 				print "<p>";
@@ -482,6 +486,11 @@ my $tabbed_table = [
 				print "</p>\n";
 
 				print "</div>\n";
+				},
+		'onleave' => sub {
+				# This gives it a value of 0 if it wasn't checked and blank if it was.
+				$data{"addon addon papd"} = (cgi_data_move("addon papd", 0) ? "" : "0");
+				return undef;
 				}
 		},
 
@@ -1023,13 +1032,6 @@ foreach my $i (qw (flags charge alerts passthru limitkilobytes limitpages ppdopt
 	if($data{$i} ne $data{"_$i"})
 		{ run(@PPAD, $i, $name, split(/ /, $data{$i}, 100)) }
 	}
-
-# Do the tab separated list value stuff.
-#foreach my $i ()
-#	 {
-#	 if($data{$i} ne $data{"_$i"})
-#		{ run(@PPAD, $i, $name, split(/\t/, $data{$i}, 100)) }
-#	 }
 
 # Setting bins needs a special command.
 if($data{bins} ne $data{"_bins"})

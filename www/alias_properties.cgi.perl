@@ -1,17 +1,32 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/alias_properties.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 April 2002.
+# Last modified 17 December 2003.
 #
 
 use lib "?";
@@ -101,7 +116,7 @@ my $tabbed_table = [
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
-				labeled_checkbox("addon ppr2samba", _("Share with Samba (provided Samba is prepared)"), 1, cgi_data_move("addon ppr2samba", 1));
+				labeled_boolean("addon ppr2samba", _("Share with Samba (provided Samba is prepared)"), cgi_data_move("addon ppr2samba", 1));
 				print "</span>\n";
 
 				print "<p>";
@@ -129,6 +144,31 @@ my $tabbed_table = [
 		'onleave' => sub {
 				# This gives it a value 0 if it wasn't checked and blank if it was.
 				$data{"addon ppr2samba"} = (cgi_data_move("addon ppr2samba", 0) ? "" : "0");
+				return undef;
+				}
+		},
+
+		#====================================================
+		# AppleTalk
+		#====================================================
+		{
+		'tabname' => N_("AppleTalk"),
+		'help' => "appletalk",
+		'dopage' => sub {
+				print "<div class=\"section\">\n";
+				print "<span class=\"section_label\">";
+				labeled_boolean("addon papd", _("Share with AppleTalk PAP"), cgi_data_move("addon papd", 0));
+				print "</span>\n";
+
+				print "<p>";
+				labeled_entry("addon papd-papname", _("Share As:"), cgi_data_move("addon papd-papname", ""), 32);
+				print "</p>\n";
+
+				print "</div>\n";
+				},
+		'onleave' => sub {
+				# This gives it a value of 0 if it wasn't checked and blank if it was.
+				$data{"addon addon papd"} = (cgi_data_move("addon papd", 0) ? "" : "0");
 				return undef;
 				}
 		},

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 December 2003.
+# Last modified 17 December 2003.
 #
 
 require "paths.ph";
@@ -286,7 +286,7 @@ sub H_NB_
 #
 sub isubmit
 	{
-	my($name, $value, $translatable, $other, $tooltip) = @_;
+	my($name, $value, $translatable, $tooltip, $onclick, $class) = @_;
 	defined($name) && defined($value) && defined($translatable) || die;
 	my $accesskey = undef;
 
@@ -295,8 +295,6 @@ sub isubmit
 	# Figure out what this browser supports.
 	my $user_agent = cgi_user_agent();
 
-	print "<label title=", html_value($tooltip), ">" if(defined $tooltip);
-
 	# <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
 	# so only enable it if we are using a Gecko Mozilla based browser.
 	if($int_on && $user_agent->{button})
@@ -304,10 +302,11 @@ sub isubmit
 		$accesskey = $1 if($translation =~ s/_(.)/$1/);
 		$translation = html($translation);
 		$translation =~ s#_(.)#<u>$1</u>#g;
-
 		print "<button type=\"submit\" name=\"$name\" value=", html_value($value);
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " ", $other if(defined($other));
+		print " onclick=\"$onclick\"", $other if(defined($onclick));
+		print ' class="', (defined $class ? $class : "buttons"), '"';
+		print " title=", html_value($tooltip) if(defined $tooltip);
 		print ">", $translation, "</button>";
 		}
 
@@ -316,59 +315,11 @@ sub isubmit
 		$accesskey = $1 if($translation =~ s/_(.)/$1/);
 		print "<input type=\"submit\" name=\"$name\" value=", html_value($value);
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " ", $other if(defined($other));
+		print " onclick=\"$onclick\"", $other if(defined($onclick));
+		print ' class="', (defined $class ? $class : "buttons"), '"';
+		print " title=", html_value($tooltip) if(defined $tooltip);
 		print ">";
 		}
-	print "</label>" if(defined $tooltip);
-	print "\n";
-	}
-
-#
-# This is like isubmit() but for a JavaScript button.
-#
-# $value
-#		text for button (already translated)
-# $onclick
-#		onclick text
-# $title
-#		hover help 
-#
-sub ibutton
-	{
-	my($value, $onclick, $other, $tooltip) = @_;
-	defined($value) && defined($onclick) || die;
-	my $accesskey = undef;
-
-	# Figure out what this browser supports.
-	my $user_agent = cgi_user_agent();
-
-	print "<label title=", html_value($tooltip), ">" if(defined $tooltip);
-
-	# <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
-	# so only enable it if we are using a Gecko Mozilla based browser.
-	if($int_on && $user_agent->{button})
-		{
-		$accesskey = $1 if($value =~ s/_(.)/$1/);
-		$value = html($value);
-		$value =~ s#_(.)#<u>$1</u>#g;
-
-		print '<button type="button"';
-		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " onclick=\"$onclick\"";
-		print " $other" if(defined $other);
-		print ">", html($value), "</button>";
-		}
-
-	else
-		{
-		$accesskey = $1 if($value =~ s/_(.)/$1/);
-		print '<input type="button" value=', html_value($value);
-		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " onclick=\"$onclick\"";
-		print " $other" if(defined $other);
-		print ">";
-		}
-	print "</label>" if(defined $tooltip);
 	print "\n";
 	}
 

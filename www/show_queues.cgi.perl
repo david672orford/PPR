@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 December 2003.
+# Last modified 17 December 2003.
 #
 
 use 5.005;
@@ -96,7 +96,7 @@ my $columns = cgi_data_move('columns', 6);
 
 # Figure out the refresh interval.
 my $refresh_interval = cgi_data_move('refresh_interval', '');
-$refresh_interval =~ s/\s*(\d+).*$/$1/;
+$refresh_interval =~ s/\s*(\d+).*$/$1/;		# paranoid
 $refresh_interval = $DEFAULT_REFRESH_INTERVAL if($refresh_interval eq '');
 $refresh_interval = $MIN_REFRESH_INTERVAL if($refresh_interval < $MIN_REFRESH_INTERVAL);
 
@@ -144,6 +144,7 @@ Vary: user-agent, accept-language
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <script type="text/javascript" src="../js/show_queues.js" defer></script>
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
 <link rel="icon" href="../images/icon-16.png" type="image/png">
 <link rel="SHORTCUT ICON" href="../images/icon-16.ico">
@@ -182,24 +183,11 @@ foreach my $i (qw(5 10 15 30 45 60 90 120))
 	push(@refresh_values, [$i, sprintf(_("Every %d seconds"), $i)]);
 	}
 
-sub menu_start
-    {
-	my($id, $name) = @_;
-	print "\t<a href=\"\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
-	print '<div class="popup" name="menubar"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
-	}
-
-sub menu_end
-	{
-	print "\t</table></div>\n";
-	}
-
-if($user_agent->{css_hover})
+# new style menu bar
+if($user_agent->{css_dom})
 {
 menu_start("m_file", _("File"));
-	print "\t\t<tr><td>";
-		isubmit("action", "Close", N_("_Close"), 'class="buttons" onclick="window.close(); return false;"', _("Close this window."));
-		print "\t\t</td></tr>\n";
+		menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
 menu_end();
 
 menu_start("m_view", _("View"));
@@ -210,29 +198,14 @@ menu_start("m_refresh", _("Refresh"));
 	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
 menu_end();
 
-menu_start("m_tools", _("Tools"));
-	print "\t\t<tr><td>"; 
-		ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", "class=\"buttons\"", _("Use this if your browser doesn't support Digest authentication."));
-		print "\t\t</td></tr>\n";
-menu_end();
+menu_tools();
 
-menu_start("m_help", _("Help"));
-	my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
-	print "\t\t<tr><td>";
-		ibutton(_("For This Window"), "window.open('../help/show_queues.$lang.html', '_blank', 'menubar,resizable,scrollbars,toolbar')", "class=\"buttons\"",
-			_("Display the help document for this program in a web browser window"));
-		print "\t\t</td></tr>\n";
-	print "\t\t<tr><td>";
-		ibutton(_("All PPR Documents"), "window.open('../docs/', '_blank', 'menubar,resizable,scrollbars,toolbar')", "class=\"buttons\"",
-			_("Open the PPR documentation index in a web browser window"));
-		print "\t\t</td></tr>\n";
-	print "\t\t<tr><td>";
-		ibutton(_("About PPR"), "window.open('about.cgi', '_blank', 'width=450,height=275,resizable')", "class=\"buttons\"",
-			_("Display PPR version information"));
-		print "\t\t</td></tr>\n";
-menu_end();
+menu_window();
+
+menu_help();
 }
 
+# Old style menu bar
 else
 {
 labeled_select2("columns", _("View:"), \@col_values, $columns, _("Choose the display format."), 'onchange="document.forms[0].submit()"');
@@ -240,9 +213,10 @@ labeled_entry("refresh_internal", _("Refresh Interval:"), $refresh_interval, 4,
 	_("This page will be reloaded at the indicated interval (in seconds)."),
 	'onchange="document.forms[0].submit()"'
 	);
-isubmit("action", "Refresh", N_("Refresh"), 'class="buttons" onclick="gentle_reload(); return false"', _("Refresh the page right now."));
-ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", "class=\"buttons\"", _("Use this if your browser doesn't support Digest authentication."));
-isubmit("action", "Close", N_("_Close"), 'class="buttons" onclick="window.close(); return false;"', _("Close this window."));
+isubmit("action", "Refresh", N_("Refresh"), _("Refresh the page right now."), "return reload()");
+link_button(_("Cookie Login"), "../html/login_cookie.html", _("Use this if your browser doesn't support Digest authentication."));
+help_button("../help/", undef);
+isubmit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
 }
 
 print <<"Top10";
@@ -523,33 +497,6 @@ foreach my $qname (sort(keys(%queues)))
 	}
 
 # If there was a single table, close any dangling row and
-#
-# Routine to convert printer messages to icon selection characters.
-#
-# The first parameter is a reference to the list of auxiliary status messages
-# from the printer.
-#
-# The second is the character that should be returned if the status messages
-# don't contain anything noteworthy.
-#
-# The third is the character that should be returned if the messages indicate
-# that the printer is off-line.
-#
-# The fourth is the character that should be returned if the printer is in some
-# other error state.
-#
-sub pstatus_char
-	{
-	my($messages, $default_char, $offline_char, $error_char) = @_;
-	foreach my $message (@$messages)
-		{
-		return $offline_char if($message =~ /^status: PrinterError: off ?line/);
-		return $offline_char if($message =~ /^pjl: OFFLINE/);
-		return $error_char if($message =~ /^status: PrinterError:/);
-		}
-	return $default_char;
-	}
-
 # then close the table.
 if($columns != 0)
 	{
@@ -585,7 +532,7 @@ POP
 if($qtype eq "printer")
 {
 print <<"Printer";
-<tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
+<tr><td><a href="show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
 	onclick="return wopen(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="prn_control.cgi?$encoded_name;$encoded_back_stack"
@@ -612,7 +559,7 @@ Printer
 elsif($qtype eq "group")
 {
 print <<"Group";
-<tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
+<tr><td><a href="show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
 	onclick="return wopen(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="grp_control.cgi?$encoded_name;$encoded_back_stack"

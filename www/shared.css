@@ -1,0 +1,98 @@
+/*
+** mouse:~ppr/src/www/shared.css
+** Last modified 17 December 2003.
+*/
+
+BODY {
+	background: white;
+	color: black;
+	font-family: sans-serif;
+	}
+
+/* I guess setting the body font doesn't cover tables. */
+TABLE TD {
+	font-family: sans-serif;
+	}
+
+/*
+** This style is for form buttons and things which we want to look like form
+** buttons.  Some browsers don't display <input type="button"> with the same
+** padding and alignment as <button>.  We try to even that out.  We also
+** style hyperlinks of class button to have the same appearance.
+*/
+INPUT.buttons,BUTTON,A.buttons {
+	font-family: sans-serif;
+	background-color: #b0b0b0;
+	vertical-align: middle; /* IE 6 doesn't like baseline */
+	border: 2px solid;
+	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
+	padding: 1px 3px 1px 3px;
+	margin: 0mm 1mm 0mm 1mm;
+	text-decoration: none;
+	color: black;
+	}
+
+/* This is used for form element labels. */
+SPAN.label,LABEL {
+	font-weight: bold;
+	}
+
+/* Menu bar at the top of the page. */
+DIV.menubar {
+	z-index: 1;
+	width: 100%;
+	padding: 2pt;
+	margin: 0pt;
+	border: solid black;
+	border-width: 0px 0px 1px 0px;
+	background-color: #d0d0d0;
+	font-size: 12pt;
+	}
+DIV.menubar A {
+	font-weight: normal;
+	color: black;
+	text-decoration: none;
+	margin-right: 5pt;
+	}
+
+/* Popup menu */
+DIV.popup {
+	z-index: 1;
+	visibility: hidden;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 50px;
+	background-color: transparent;
+	}
+DIV.popup TABLE {
+	border-width: 2px;
+	border-style: outset;
+	background-color: #d0d0d0;
+	}
+DIV.popup TABLE TD {
+	border: none;
+	}
+DIV.popup A, DIV.popup LABEL {
+	display: block;
+	width: 100%;
+	padding: 1pt 5pt 1pt 5pt;
+	}
+DIV.popup A:hover, DIV.popup LABEL:hover {
+	background-color: #808080;
+	color: #d0d0d0;
+	}
+DIV.popup BUTTON {
+	border: none;
+	background-color: transparent;
+	}
+DIV.popup LABEL {
+	font-weight: normal;
+	}
+
+/* We don't want the surround to overlap the menu bar. */
+DIV.menubar DIV.popup {
+	padding-top: 0;
+	}
+
+/* end of file */

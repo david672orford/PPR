@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 December 2003.
+# Last modified 17 December 2003.
 #
 
 include ../Makefile.conf
@@ -108,7 +108,7 @@ HTML_HELP_RU=show_queues.ru.html prn_properties.ru.html show_jobs.ru.html
 
 HTML_HELP=$(HTML_HELP_EN) $(HTML_HELP_RU)
 
-STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
+STYLES=shared.css show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 	prn_control.css prn_media.css
 
 #== Build ====================================================================

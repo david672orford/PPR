@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 8 August 2003.
+** Last modified 17 December 2003.
 */
 
 BODY {
@@ -12,7 +12,7 @@ BODY {
 	margin: 0px;
 	}
 
-SPAN.label { font-weight: bold }
+SPAN.label,LABEL { font-weight: bold }
 SPAN.blank { backgroup-color: white; color: blue }
 
 /* printer status table: labels are in <th>, values are in <td> */
@@ -31,12 +31,6 @@ TD.right_buttons {
 	}
 
 TEXTAREA.alerts { font-size: 8pt; }
-
-INPUT.buttons,BUTTON {
-	background: #b0b0b0;
-	padding: 1px 3px 1px 3px;
-	margin: 2pt;
-	}
 
 IMG {
 	border-color: black;

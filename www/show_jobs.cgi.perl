@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 December 2003.
+# Last modified 17 December 2003.
 #
 
 use 5.005;
@@ -34,6 +34,7 @@ use lib "?";
 require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
+require "cgi_widgets.pl";
 require 'qquery_xlate.pl';
 require 'cgi_user_agent.pl';
 
@@ -75,16 +76,19 @@ foreach my $b (split(/ /, $data{controls}))
 	$controls{$b} = 1;
 	}
 
-# If no queue was specified, use "all".	 Note that we don't use
-# cgi_data_move().
-if(!defined($data{name})) { $data{name} = "all" }
-my $queue = $data{name};
+my $queue_name = cgi_data_peek("name", "all");
 
-if(!defined($data{type}))
+# If the queue type wasn't specified, figure it out.
+if(!defined $data{type})
 	{
-	$data{type} = "alias" if(-f "$CONFDIR/aliases/$queue");
-	$data{type} = "group" if(-f "$CONFDIR/groups/$queue");
-	$data{type} = "printer" if(-f "$CONFDIR/printers/$queue");
+	if(-f "$CONFDIR/aliases/$queue_name")
+		{ $data{type} = "alias" }
+	elsif(-f "$CONFDIR/groups/$queue_name")
+		{ $data{type} = "group" }
+	elsif(-f "$CONFDIR/printers/$queue_name")
+		{ $data{type} = "printer" }
+	else
+		{ $data{type} = "all" }
 	}
 my $queue_type = cgi_data_peek("type", "?");
 
@@ -95,7 +99,9 @@ if(!defined($data{y})) { $data{y} = 0 }
 if(!defined($data{seq})) { $data{seq} = 0 }
 
 # How often to reload?
-my $refresh_interval = cgi_data_peek("refresh_interval", 60);
+my $refresh_interval = cgi_data_move("refresh_interval", 60);
+$refresh_interval =~ s/\s*(\d+).*$/$1/;		# paranoid
+$refresh_interval = 3 if($refresh_interval < 3);
 
 # What are we to do?
 my $action = cgi_data_move("action", undef);
@@ -122,19 +128,8 @@ else
 #=============================================================
 if(defined($action))
 	{
-	if($action eq "Queue")
-		{
-		require 'cgi_redirect.pl';
-		cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}/cgi-bin/show_queues_nojs.cgi?"
-				. join(";", form_urlencoded("type", $queue_type),
-						form_urlencoded("name", $queue),
-						form_urlencoded("HIST", $data{HIST})
-				));
-		exit 0;
-		}
-
 	# These actions load other CGI URLs.
-	elsif($action eq "Modify" || $action eq "Log")
+	if($action eq "Modify" || $action eq "Log")
 		{
 		if(defined($data{jobs}))
 			{
@@ -179,7 +174,6 @@ if(defined($action))
 #=============================================================
 if(defined($action) && $action eq 'View')
 {
-&cgi_data_move('refresh_interval', undef);
 &cgi_data_move('fields', undef);
 
 my $title = html(_("Queue Display Settings"));
@@ -192,6 +186,7 @@ Vary: accept-language
 <html>
 <head>
 <title>$title</title>
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
 </head>
 <body>
@@ -222,9 +217,6 @@ foreach my $i (@qquery_available)
 
 print "</p>\n";
 
-print "<p>", html(_("Refresh Interval (in seconds):"));
-print "<input type=\"text\" name=\"refresh_interval\" value=", html_value($refresh_interval), " size=4></p>\n";
-
 # Emmit the hidden fields.
 &cgi_write_data();
 
@@ -249,14 +241,13 @@ exit 0;
 # For example, we turn on table borders unless we think the web browser is
 # likely be capable of displaying images.
 #
+my $user_agent = cgi_user_agent();
 my $fixed_html_style = "";
 my $fixed_div_style_top = "";
 my $fixed_div_style_bottom = "";
 if($data{controls})
 	{
-	my $user_agent = cgi_user_agent();
-
-	# If CSS fixed positioning is used, use it for the top bar.
+	# If CSS fixed positioning is likely to work, use it for the top bar.
 	if($user_agent->{css_fixed})
 		{
 		$fixed_html_style = "margin-top: 2em";
@@ -265,7 +256,9 @@ if($data{controls})
 		}
 	}
 
-my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue, $ENV{SERVER_NAME}));
+my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue_name, $ENV{SERVER_NAME}));
+
+#print "Expires: ", cgi_time_format(time() + $refresh_interval + 10), "\n";
 
 print <<"Quote10";
 Content-Type: text/html;charset=$charset
@@ -275,62 +268,69 @@ Vary: user-agent, accept-language
 <html style="$fixed_html_style">
 <head>
 <title>$title</title>
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
+<link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
 <HTA:APPLICATION navigable="yes"></HTA:APPLICATION>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <script type="text/javascript" src="../js/show_queues.js" defer></script>
 <script type="text/javascript" src="../js/show_jobs.js" defer></script>
-<link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
-<script>
-var xlate=new Array();
-Quote10
-
-foreach my $i (
-		N_("View Queue"),
-		N_("Printer Control"),
-		N_("Printer Properties"),
-		N_("Test Page"),
-		N_("Client Configuration"),
-		N_("Printlog"),
-		N_("Delete Printer"),
-		N_("Member Printer Control"),
-		N_("Group Properties"),
-		N_("Delete Group"),
-		N_("Alias Properties"),
-		N_("Delete Alias")
-		)
-	{
-	print 'xlate["', html($i), '"]="', H_($i), '";', "\n";
-	}
-
-print <<"Quote20";
-</script>
 </head>
 <body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
-<div id="popup" class="menu">
-This text is supposed to be hidden.
-</div>
 <form method="POST" action="$ENV{SCRIPT_NAME}">
-Quote20
+Quote10
 
 if($data{controls})
 {
 print <<"Quote20";
 <div class="menubar" style="$fixed_div_style_top">
-<!-- This is for a Netscape 4.x bug: -->
-<input type="image" border="0" name="action" value="Refresh" src="../images/pixel-clear.png" alt="">
+	<!-- This is for a Netscape 4.x bug: -->
+	<input type="image" border="0" name="action" value="Refresh" src="../images/pixel-clear.png" alt="">
 Quote20
 
-isubmit("action", "Queue", _("Queue"), "class=\"buttons\" onclick=\"return $queue_type(event,${\javascript_string($queue)})\"") if(defined $controls{Queue});
-isubmit("action", "View", _("View"), 'class="buttons"') if(defined $controls{View});
-isubmit("action", "Refresh", _("Refresh"), 'class="buttons"') if(defined $controls{Refresh});
-isubmit("action", "Close", _("Close"), 'class="buttons" onclick="window.close()"') if(defined $controls{Close});
-
-print "<span style='margin-left: 9cm'></span>\n";
-if(defined $controls{Help})
+# New-style menu bar
+if($user_agent->{css_dom})
+{
+my @refresh_values = (
+	[$refresh_interval, _("Now")]
+	);
+foreach my $i (qw(5 10 15 30 45 60 90 120))
 	{
-	require "cgi_widgets.pl";
-	help_button("../help/", undef);
+	push(@refresh_values, [$i, sprintf(_("Every %d seconds"), $i)]);
 	}
+
+menu_start("m_file", _("File"));
+		menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
+menu_end();
+
+menu_start("m_view", _("View"));
+	#menu_radio_set("columns", \@col_values, $columns, 'onchange="document.forms[0].submit()"');
+	menu_submit("action", "View", _("Preferences"));
+menu_end();
+
+menu_start("m_refresh", _("Refresh"));
+	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
+menu_end();
+
+menu_tools();
+
+menu_window($queue_type, $queue_name);
+
+menu_help();
+}
+
+# Old-style menu bar
+else
+{
+isubmit("action", "View", _("View")) if(defined $controls{View});
+labeled_entry("refresh_internal", _("Refresh Interval:"), $refresh_interval, 4, 
+	_("This page will be reloaded at the indicated interval (in seconds)."),
+	'onchange="document.forms[0].submit()"'
+	);
+isubmit("action", "Refresh", _("Refresh")) if(defined $controls{Refresh});
+isubmit("action", "Close", _("Close"), _("Close this window."), "window.close()") if(defined $controls{Close});
+print "<span style='margin-left: 9cm'></span>\n";
+help_button("../help/", undef) if(defined $controls{Help})
+}
 
 print "</div>\n";
 }
@@ -343,7 +343,7 @@ eval {
 require PPR::PPOP;
 
 # Create the object we use to examine and to manipulate the queue.
-my $control = new PPR::PPOP($queue);
+my $control = new PPR::PPOP($queue_name);
 
 #----------------------------------------------------------------------------
 # If a button was pressed, act on it.
@@ -540,7 +540,6 @@ print "<div class=\"menubar\" style=\"$fixed_div_style_bottom\">\n";
 if(defined $controls{Move})
 {
 print <<"QuoteMove10";
-<b>${\&H_("Job Actions:")}</b>
 <select name="move_to"
 		onchange="document.forms[0].submit()"
 		onmouseover="page_lock()"
@@ -562,12 +561,12 @@ QuoteMove90
 }
 
 # Create all of the other buttons.
-isubmit("action", "Cancel", N_("_Cancel"), "class=\"buttons\"") if(defined $controls{Cancel});
-isubmit("action", "Rush", N_("R_ush"), "class=\"buttons\"") if(defined $controls{Rush});
-isubmit("action", "Hold", N_("_Hold"), "class=\"buttons\"") if(defined $controls{Hold});
-isubmit("action", "Release", N_("_Release"), "class=\"buttons\"") if(defined $controls{Release});
-isubmit("action", "Modify", N_("_Modify"), "class=\"buttons\" onclick=\"return do_modify();\"") if(defined $controls{Modify});
-isubmit("action", "Log", N_("_Log"), "class=\"buttons\" onclick=\"return do_log();\"") if(defined $controls{Log});
+isubmit("action", "Cancel", N_("_Cancel"), _("Cancel selected jobs.")) if(defined $controls{Cancel});
+isubmit("action", "Rush", N_("R_ush"), _("Move selected jobs to the front of the queue.")) if(defined $controls{Rush});
+isubmit("action", "Hold", N_("_Hold"), _("Place selected jobs in the held state so that they won't print.")) if(defined $controls{Hold});
+isubmit("action", "Release", N_("_Release"), _("Release selected jobs which are held.")) if(defined $controls{Release});
+isubmit("action", "Modify", N_("_Modify"), _("Open windows in which to modify selected jobs."), "return do_modify()") if(defined $controls{Modify});
+isubmit("action", "Log", N_("_Log"), _("Display log files of selected jobs."), "return do_log()") if(defined $controls{Log});
 
 # Close the bottom menubar.
 print "</div>\n";

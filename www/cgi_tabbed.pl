@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 August 2003.
+# Last modified 17 December 2003.
 #
 
 use 5.004;
@@ -108,6 +108,7 @@ Vary: accept-language
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/cgi_tabbed.css" type="text/css">
 <style type="text/javascript">
 // Fix for broken CSS in Netscape 4.x.
@@ -214,7 +215,7 @@ else
 
 	if($hscroll > 0)
 		{
-		isubmit("tab_tab", "<<More", N_("<<More"), "class=\"tabinactive\"");
+		isubmit("tab_tab", "<<More", N_("<<More"), _("Bring tabs on the left into view."), undef, "tabinactive");
 		}
 
 	my $x = 0;
@@ -223,24 +224,24 @@ else
 		if($x >= $hscroll && $x < $tabstop)		# if visible
 			{
 			my $tabname = $i->{tabname};
-			my $other;
+			my $class;
 
 			if($x == $page)
-				{ $other = "class=\"tabactive\"" }
+				{ $class = "tabactive" }
 			else
-				{ $other = "class=\"tabinactive\"" }
+				{ $class = "tabinactive" }
 
 			# Create a copy of the tabname with the accesskey marker removed.
 			(my $tabname_stript = $tabname) =~ s/_//;
 
-			isubmit("tab_tab", $tabname_stript, N_($tabname), $other);
+			isubmit("tab_tab", $tabname_stript, N_($tabname), undef, undef, $class);
 			}
 		$x++;
 		}
 
 	if($tabstop < $tablast )
 		{
-		isubmit("tab_tab", "More>>", N_("More>>"), "class=\"tabinactive\"");
+		isubmit("tab_tab", "More>>", N_("More>>"), _("Bring tabs on the right into view."), undef, "tabinactive");
 		}
 	}
 
@@ -320,7 +321,7 @@ BottomTable2
 # Print the bottom buttons.
 if($bottom eq 'Save')
 	{
-	isubmit("tab_bottom", "Close", N_("_Close"), "class=\"buttons\" onclick=\"self.close()\"");
+	isubmit("tab_bottom", "Close", N_("_Close"), _("Close this window."), "self.close()");
 	}
 else
 	{
@@ -329,8 +330,8 @@ else
 		require "cgi_widgets.pl";
 		help_button("../help/", $help);
 		}
-	isubmit("tab_bottom", "Cancel", N_("_Cancel"), "class=\"buttons\" onclick=\"self.close()\"");
-	isubmit("tab_bottom", "Save", N_("_Save"), "class=\"buttons\"");
+	isubmit("tab_bottom", "Cancel", N_("_Cancel"), _("Close without saving changes."), "self.close()");
+	isubmit("tab_bottom", "Save", N_("_Save"), _("Save changes."));
 	}
 
 print <<"TableEnd10";

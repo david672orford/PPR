@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 8 August 2003.
+** Last modified 17 December 2003.
 */
 
 BODY {
@@ -39,23 +39,6 @@ INPUT.tabinactive,BUTTON.tabinactive {
 	-moz-border-radius: 1mm 1mm 0mm 0mm;
 	}
 
-/* Buttons that are supposed to look like buttons and a <span> containing a hyperlinks
-   that looks like a button.  We use it for the [Help] button. 
-   */
-INPUT.buttons,BUTTON.buttons,SPAN.buttons {
-	background-color: #b0b0b0;
-	vertical-align: middle; /* IE 6 doesn't like baseline */
-	border: 2px solid;
-	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
-	padding: 3px 2mm 3px 2mm;
-	margin: 0mm 2mm 0mm 0mm;
-	}
-SPAN.buttons A {
-	color: black;
-	text-decoration: none;
-	font-family: sans-serif;
-	}
-
 /* Tables of this class form the background for tabbed dialog boxes. */
 TABLE.tabpage {
 	background-color: beige;
@@ -91,7 +74,7 @@ SPAN.alert {
 	}
 
 /* This is for form field labels. */
-SPAN.label {
+LABEL,SPAN.label {
 	font-weight: bold;
 	}
 
