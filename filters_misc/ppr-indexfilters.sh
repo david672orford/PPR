@@ -108,15 +108,14 @@ sedit ()
 	-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 	-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
 	-e "s@^#! *ppr-tclsh\\( *.*\\)\$@#! $PPR_TCLSH\\1@" \
-	$1 >$2 || exit 1 # infile, outfile
+	$1 >$RPM_BUILD_ROOT$2 || exit 1 # infile, outfile
 
     # Make it executable
-    chmod 755 $2 || exit 1
+    chmod 755 $RPM_BUILD_ROOT$2 || exit 1
 
-    # This is so that if we are root, ppr will own the file.  Otherwise,
-    # it doesn't really matter.
-    chown $USER_PPR $2 >/dev/null
-    chgrp $GROUP_PPR $2 >/dev/null
+    # This is so that if we are root, ppr will own the file.
+    chown $USER_PPR $RPM_BUILD_ROOT$2 || exit 1
+    chgrp $GROUP_PPR $RPM_BUILD_ROOT$2 || exit 1
     }
 
 # Print banner
