@@ -360,7 +360,7 @@ pvsprintf (pool pool, const char *format, va_list args)
 
   char *s;
 
-  gu_vasprintf (&s, format, args);
+  vasprintf (&s, format, args);
   if (s == 0) abort ();			/* XXX Should call bad_malloc_handler. */
 
   /* The pool will clean up the malloc when it goes. */

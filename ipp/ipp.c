@@ -41,30 +41,46 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
-static void do_print_job(struct IPP *ipp)
-	{
-	pid_t pid;
-	int toppr_fds[2] = {-1, -1};
-	int jobid_fds[2] = {-1, -1};
-	const char *printer_uri;
-	int jobid;
-		
+static const char *printer_uri(struct IPP *ipp)
 	{
 	ipp_attribute_t *p;
 	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
 		gu_Throw("no printer-uri");
-	printer_uri = p->values[0].string.text;
+	return p->values[0].string.text;
 	}
 
+static void do_print_job(struct IPP *ipp)
+	{
+	pid_t pid;
+	int toppr_fds[2];
+	int jobid_fds[2];
+		
 	if(pipe(toppr_fds) == -1)
 		gu_Throw("pipe() failed");
 
-	if(pipe(jobid_fds) == -1)
-		gu_Throw("pipe() failed");
-
-	if((pid = fork()) == -1)
+	gu_Try
 		{
-		gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		if(pipe(jobid_fds) == -1)
+			gu_Throw("pipe() failed");
+		gu_Try
+			{
+			if((pid = fork()) == -1)
+				{
+				gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
+				}
+			}
+		gu_Catch
+			{
+			close(jobid_fds[0]);
+			close(jobid_fds[1]);
+			gu_ReThrow();
+			}
+		}
+	gu_Catch
+		{
+		close(toppr_fds[0]);
+		close(toppr_fds[1]);
+		gu_ReThrow();
 		}
 
 	if(pid == 0)		/* child */
@@ -88,52 +104,69 @@ static void do_print_job(struct IPP *ipp)
 	{
 	int len, write_len;
 	char *ptr;
+	char buf[10];
+	int jobid;
 
 	close(toppr_fds[0]);
 	close(jobid_fds[1]);
 	
-	while((len = ipp_get_block(ipp, &ptr)) > 0)
+	gu_Try
 		{
-		debug("Got %d bytes", len);
-		while(len > 0)
+		gu_Try
 			{
-			if((write_len = write(toppr_fds[1], ptr, len)) < 0)
-				gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-			debug("Wrote %d bytes", write_len);
-			len -= write_len;
-			ptr += write_len;
+			/* Copy the job data to ppr. */
+			while((len = ipp_get_block(ipp, &ptr)) > 0)
+				{
+				debug("Got %d bytes", len);
+				while(len > 0)
+					{
+					if((write_len = write(toppr_fds[1], ptr, len)) < 0)
+						gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
+					debug("Wrote %d bytes", write_len);
+					len -= write_len;
+					ptr += write_len;
+					}
+				}
+
+			debug("Done sending job data to ppr");
 			}
+		gu_Final
+			{
+			close(toppr_fds[1]);
+			}
+		gu_Catch
+			{
+			gu_ReThrow();
+			}
+
+		/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
+		if((len = read(jobid_fds[0], buf, sizeof(buf))) == -1)
+			gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		debug("read %d bytes as jobid", len);
+	
+		buf[len < sizeof(buf) ? len : sizeof(buf) - 1] = '\0';
+		jobid = atoi(buf);
+		debug("jobid is %d", jobid);
 		}
-	}
-
-	close(toppr_fds[1]);
-
-	/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
-	{
-	int len;
-	char buf[10];
-	if((len = read(jobid_fds[0], buf, sizeof(buf))) == -1)
-		gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
-	debug("read %d bytes as jobid", len);
-
-	buf[len < sizeof(buf) ? len : sizeof(buf) - 1] = '\0';
-	jobid = atoi(buf);
-	debug("jobid is %d", jobid);
-
-	close(jobid_fds[0]);
-	}
-
+	gu_Final
+		{
+		close(jobid_fds[0]);
+		}
+	gu_Catch
+		{
+		gu_ReThrow();
+		}
+		
 	if(jobid > 0)
 		{	
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
 		{
 		char *p;
-		gu_asprintf(&p, "%s/%d", printer_uri, jobid);
+		gu_asprintf(&p, "%s/%d", printer_uri(ipp), jobid);
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", p);
 		}
 	
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
 		}
 	else
@@ -141,27 +174,18 @@ static void do_print_job(struct IPP *ipp)
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 		}
 
+	}
 	} /* end of do_print_job() */
 
 static void do_get_jobs(struct IPP *ipp)
 	{
-	const char *printer_uri;
 	int x;
-
-	for(x=0; x < 10; x++)
-		
-	{
-	ipp_attribute_t *p;
-	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
-		gu_Throw("no printer-uri");
-	printer_uri = p->values[0].string.text;
-	}
 
 	for(x=0; x < 10; x++)
 		{
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", x * 4);
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri(ipp));
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", x + 100);
 		ipp_add_end(ipp, IPP_TAG_JOB);
@@ -212,7 +236,7 @@ int main(int argc, char *argv[])
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
 
-		debug("dispatching operation 0x.2x", ipp->operation_id);
+		debug("dispatching operation 0x%.2x", ipp->operation_id);
 		switch(ipp->operation_id)
 			{
 			case IPP_PRINT_JOB:

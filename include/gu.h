@@ -289,6 +289,8 @@ void gu_Throw(const char message[], ...);
 
 void gu_ReThrow(void);
 
+#define gu_Final if(1)
+
 #define gu_Catch _gu_exception_try_depth--; } if(_gu_exception_setjmp_retcode != 0)
 
 /*===================================================================

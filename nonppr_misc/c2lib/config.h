@@ -13,4 +13,7 @@
 #define HAVE_UNISTD_H 1
 #define HAVE_VASPRINTF 1
 
+#include "gu.h"
+#define vasprintf gu_vasprintf
+
 #endif /* MP_CONFIG_H */

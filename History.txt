@@ -8631,7 +8631,8 @@ Bug Fixes
 * libgu/ini_section.c, responders/ppr-respond.c, unixuser/ppr-followme.c:
   changed asprintf() to gu_asprintf().
   
-* nonppr_misc/c2lib/c2lib_pstring.c: changed vasprintf() to gu_vasprintf().
+* nonppr_misc/c2lib/config.h: added include for gu.h and define to map 
+  vasprintf() to gu_vasprintf().
 
 * www/ppr-httpd.perl: changed code to close connexion on error.  (The
   alternative is to swallow the entity body.)
