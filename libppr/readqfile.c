@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 November 2001.
+** Last modified 5 December 2001.
 */
 
 #include "before_system.h"
@@ -237,8 +237,11 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		    job->StripPrinter = tempint ? TRUE : FALSE;
 		    continue;
 		    }
-		if(sscanf(line, "Status-and-Flags: %d %hx", &job->status, &job->flags) == 1)
+		if(sscanf(line, "Status-and-Flags: %02hd %hx", &job->status, &job->flags) == 2)
+		    {
+		    job->status *= -1;
 		    continue;
+		    }
 	    	break;
 
 	    case 'T':

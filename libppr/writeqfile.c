@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 November 2001.
+** Last modified 5 December 2001.
 */
 
 #include "before_system.h"
@@ -26,7 +26,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     fprintf(Qfile, "PPRVersion: %s\n", SHORT_VERSION);
 
     /* This is at the begining of the file so that it will be easy to modify. */
-    fprintf(Qfile, "Status-and-Flags: %d %04X\n", qentry->status, qentry->flags);
+    fprintf(Qfile, "Status-and-Flags: %02d %04X\n", (qentry->status * -1), qentry->flags);
 
     /* This is so we will know when the job was submitted. */
     fprintf(Qfile, "Time: %ld\n", qentry->time);

@@ -11,7 +11,7 @@
 ** without express or implied warranty.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 28 August 2001.
+** This file was last modified 5 December 2001.
 */
 
 /*
@@ -401,16 +401,6 @@ typedef short int SHORT_INT;
 #define TT_NONE 1
 #define TT_ACCEPT68K 2
 #define TT_TYPE42 3
-
-/*
-** Bit values for job and printer status.
-** Both pprd and ppr need to know some of these
-** values.
-*/
-#define BIT_JOB_BASE (S_IRUSR | S_IWUSR)
-#define BIT_JOB_HELD S_IXUSR
-#define BIT_JOB_ARRESTED S_IXGRP
-#define BIT_JOB_STRANDED S_IXOTH
 
 /*
 ** Job Flags Bitmap Values

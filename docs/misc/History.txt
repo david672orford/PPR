@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--5 December 2001
+1.50a1, 1 August 2001--6 December 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7475,4 +7475,11 @@ line was being parsed twice.
 
 * Moved vendors/ --> nonppr_vendors/, nonppr/ --> nonppr_misc/, and tcl/ -->
   nonppr->tcl/.
+
+* Added pprd/pprd-kill.sh.
+
+* Added "Status-and-Flags:" to queue file and stopped using the execute bits
+  to save this information.
+
+* Added ppr --keep (but it doesn't do anything yet.
 

@@ -3,19 +3,34 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 19 July 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 December 2001.
 */
 
 /*
-** This module contains routines for maintaining the print queue array and
-** spool directories.
+** This module contains routines for maintaining the print queue array,
+** loading queue files into the array, and changing the status of jobs.
 */
 
 #include "before_system.h"
@@ -23,58 +38,33 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"
 #include "respond.h"
+#include "cexcept.h"
 
-/*
-** Enqueue a job.  If for some reason we can't, we are allowed
-** to return a NULL pointer.  The rank1 and rank2 parameters
-** will be set to its position in the "all" queue and the
-** individual queue in which it is placed, respectively.
-*/
-struct QEntry *queue_enqueue_job(struct QEntry *newentry, int *rank1, int *rank2)
+define_exception_type(int);
+static struct exception_context the_exception_context[1];
+
+/*================================================================
+** Insert a job into the queue structure.  If for some reason we
+** can't, we are allowed to return a NULL pointer.  The rank1 and
+** rank2 parameters will be set to its position in the "all" queue
+** and the individual queue in which it is placed, respectively.
+================================================================*/
+static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry, int *rank1, int *rank2)
     {
-    const char function[] = "queue_enqueue_job";
-    int x;
-    FILE *qfile;
-    char qfname[MAX_PPR_PATH];
-    char tline[256];
-    char tmedia[MAX_MEDIANAME+1];
+    const char function[] = "queue_insert";
     int destmates_passed = 0;
+    int x;
 
     DODEBUG_NEWJOB(("%s(): destid=%d id=%d subid=%d status=%d", function, newentry->destid, newentry->id, newentry->subid, newentry->status));
-
-    /* Read in the list of required media. */
-
-    /* First we open the queue file. */
-    ppr_fnamef(qfname, "%s/%s:%s-%d.%d(%s)",
-	QUEUEDIR, nodeid_to_name(newentry->destnode_id), destid_to_name(newentry->destnode_id, newentry->destid),
-	newentry->id, newentry->subid, nodeid_to_name(newentry->homenode_id) );
-
-    if((qfile = fopen(qfname, "r")) == (FILE*)NULL)
-	{
-	error("%s(): can't open \"%s\", errno=%d (%s)", function, qfname, errno, gu_strerror(errno));
-	return (struct QEntry*)NULL;
-	}
-
-    /* Then we read the "Media:" lines. */
-    x=0;
-    while(x < MAX_DOCMEDIA && fgets(tline,sizeof(tline), qfile))
-	{
-	if(gu_sscanf(tline, "Media: %#s", sizeof(tmedia), tmedia) == 1)
-	    newentry->media[x++] = get_media_id(tmedia);
-	}
-
-    fclose(qfile);
-
-    DODEBUG_MEDIA(("%s(): %d media requirement(s) read", function, x));
-
-    while(x < MAX_DOCMEDIA)		/* fill in entra spaces with -1 */
-	newentry->media[x++] = -1;
 
     /*
     ** If this is a group job, set pass number
@@ -86,22 +76,6 @@ struct QEntry *queue_enqueue_job(struct QEntry *newentry, int *rank1, int *rank2
 	newentry->pass = 1;
     else
     	newentry->pass = 0;
-
-    lock();                             /* must lock before media_set_notnow... */
-
-    /* Set the bitmask which shows which printers have the form. */
-    if(nodeid_is_local_node(newentry->destnode_id))
-	{
-	media_set_notnow_for_job(newentry, FALSE);
-	}
-    else
-	{
-	newentry->notnow = 0;
-	newentry->status = STATUS_WAITING;
-	}
-
-    /* Initialize the bitmask of printers which can't possibly print it. */
-    newentry->never = 0;
 
     /* Sanity check: */
     if(queue_entries > queue_size || queue_entries < 0)
@@ -150,7 +124,7 @@ struct QEntry *queue_enqueue_job(struct QEntry *newentry, int *rank1, int *rank2
 
 	/*
 	** If we are passing a job which is for the same destination as
-	** the jbo we are inserting, add one to the count which will
+	** the job we are inserting, add one to the count which will
 	** be stored in rank2.
 	*/
 	if(queue[x].destid == newentry->destid)
@@ -162,17 +136,15 @@ struct QEntry *queue_enqueue_job(struct QEntry *newentry, int *rank1, int *rank2
 
     queue_entries++;            /* increment our count of queue entries */
 
-    unlock();			/* release our lock on the queue array */
-
     *rank1 = x;			/* fill in queue rank of new entry */
     *rank2 = destmates_passed;
 
     return &queue[x];           /* return pointer to what we put it in */
-    } /* end of queue_enqueue_job() */
+    } /* end of queue_insert() */
 
-/*
+/*================================================================
 ** Remove an entry from the queue array.
-*/
+================================================================*/
 void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homenode_id)
     {
     FUNCTION4DEBUG("queue_dequeue_job")
@@ -207,12 +179,14 @@ void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homen
 	}
 
     unlock();		/* unlock queue array */
+
     } /* end of queue_dequeue_job() */
 
-/*
-** Unlink a job.  This is called by queue_unlink_job().  It is also called
-** to cancel rejected jobs (which haven't been put in the queue yet.)
-*/
+/*===========================================================================
+** Unlink a job.  The function queue_unlink_job() calls queue_unlink_job_2().
+** It is also called to cancel rejected jobs (which haven't been put in the
+** queue yet.)
+===========================================================================*/
 void queue_unlink_job_2(const char *destnode, const char *queuename, int id, int subid, const char *homenode_name)
     {
     char filename[MAX_PPR_PATH];
@@ -266,7 +240,7 @@ void queue_unlink_job(int destnode_id, int destid, int id, int subid, int homeno
     queue_unlink_job_2(destnode_name, queuename, id, subid, homenode_name);
     } /* end of queue_unlink_job() */
 
-/*
+/*========================================================================
 ** Change the status of a job.
 **
 ** We will update the execute bits on the queue file if required.
@@ -279,12 +253,14 @@ void queue_unlink_job(int destnode_id, int destid, int id, int subid, int homeno
 ** with the queue locked but job_new_status() need not be since
 ** it locks the queue itself.
 **
-** This routine is sometimes called from within a signal handler, so
-** it must not call routines which are not reentrant.
-*/
+** Probably obsolete comment:  This routine is sometimes called from
+** within a signal handler, so it must not call routines which are not
+** reentrant.
+========================================================================*/
+
 struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
     {
-    char filename[MAX_PPR_PATH];
+    const char function[] = "p_job_new_status";
     const char *queuename;
 
     queuename = destid_to_name(job->destnode_id, job->destid);
@@ -318,12 +294,12 @@ struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
     	case STATUS_CANCEL:
     	    status_string = "being canceled";
     	    break;
-    	default:
+    	default:					/* >=0 means printing */
 	    if(newstat < 0)
 	    	fatal(0, "p_job_new_status(): assertion failed");
 	    state_update("JST %s printing on %s",
 	    	local_jobid(queuename,job->id,job->subid,nodeid_to_name(job->homenode_id)),
-	    	destid_to_name(job->destnode_id, newstat));
+	   	destid_to_name(job->destnode_id, newstat));
     	    break;
     	}
 
@@ -335,27 +311,71 @@ struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
 	}
     }
 
-    /* Re-construct the name of the queue file. */
-    ppr_fnamef(filename, QUEUEDIR"/%s:%s-%d.%d(%s)", ppr_get_nodename(), queuename, job->id, job->subid, nodeid_to_name(job->homenode_id));
-
     /*
-    ** If necessary, do a chmod() on the queue file to reflect the new status.
+    ** New way:
+    ** Edit the "Status-and-Flags: XX XXXX\n" in the queue file.
     */
-    switch(newstat)
+    /* start of exception handling block */
+    do
 	{
-	case STATUS_HELD:
-	    chmod(filename, BIT_JOB_BASE | BIT_JOB_HELD);
+	#define STATUS_BLOCK_SIZE 50
+	int fd;
+	char buf[STATUS_BLOCK_SIZE + 1];
+	ssize_t read_size;
+	size_t to_write_size, written_size;
+	char *p;
+
+	{
+	char filename[MAX_PPR_PATH];
+	ppr_fnamef(filename, QUEUEDIR"/%s:%s-%d.%d(%s)", ppr_get_nodename(), queuename, job->id, job->subid, nodeid_to_name(job->homenode_id));
+	if((fd = open(filename, O_RDWR)) == -1)
+    	    {
+	    error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
 	    break;
-	case STATUS_ARRESTED:
-	    chmod(filename, BIT_JOB_BASE | BIT_JOB_ARRESTED);
-	    break;
-	case STATUS_STRANDED:
-	    chmod(filename, BIT_JOB_BASE | BIT_JOB_STRANDED);
-	    break;
-	default:
-	     if(job->status == STATUS_HELD || job->status==STATUS_ARRESTED || job->status==STATUS_STRANDED)
-		chmod(filename, BIT_JOB_BASE);
+	    }
 	}
+
+	/* start of inner exception handling block */
+	while(1)
+	    {
+	    if((read_size = read(fd, buf, STATUS_BLOCK_SIZE)) == -1)
+		{
+		error("%s(): read() failed, errno=%d (%s)", function, errno, strerror(errno));
+		break;
+		}
+	    if(read_size != STATUS_BLOCK_SIZE)
+	    	{
+	    	error("%s(): expected %d bytes, get %d", function, (int)STATUS_BLOCK_SIZE, (int)read_size);
+	    	break;
+	    	}
+	    buf[STATUS_BLOCK_SIZE] = '\0';
+	    if(!(p = strstr(buf, "Status-and-Flags: ")))
+	    	{
+		error("%s(): can't find place", function);
+		break;
+	    	}
+	    if(lseek(fd, (p - buf), SEEK_SET) == -1)
+	    	{
+	    	error("%s(): lseek() failed, errno=%d (%s)", function, errno, strerror(errno));
+	    	break;
+	    	}
+	    snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", newstat >= 0 ? 0 : (newstat * -1), job->flags);
+	    to_write_size = strlen(buf);
+	    if((written_size = write(fd, buf, to_write_size)) == -1)
+	    	{
+	    	error("%s(): write() failed, errno=%d (%s)", function, errno, strerror(errno));
+	    	break;
+	    	}
+	    if(written_size != to_write_size)
+	    	{
+		error("%s(): tried to write %d bytes but wrote %d instead", function, to_write_size, written_size);
+		}
+	    break;	/* end of inner exception handling block */
+	    }
+
+	close(fd);
+
+    	} while(FALSE);			/* end of exception handling block */
 
     job->status = newstat;		/* save new status */
 
@@ -385,8 +405,71 @@ struct QEntry *job_new_status(int id, int subid, int homenode_id, int newstat)
     return &queue[x];		/* return a pointer to the queue entry */
     } /* end of job_new_status() */
 
-/*
-** Receive a new job.
+/*===========================================================================
+** Read necessary information from the queuefile into the queue structure.
+**
+===========================================================================*/
+int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
+    {
+    const char function[] = "queue_read_queuefile";
+    FILE *qfile;
+    char tmedia[MAX_MEDIANAME+1];
+    int x;
+
+    /* First we open the queue file. */
+    {
+    char qfname_path[MAX_PPR_PATH];
+    ppr_fnamef(qfname_path, "%s/%s", QUEUEDIR, qfname);
+    if((qfile = fopen(qfname_path, "r")) == (FILE*)NULL)
+	{
+	error("%s(): can't open \"%s\", errno=%d (%s)", function, qfname_path, errno, gu_strerror(errno));
+	return -1;
+	}
+    }
+
+    /*
+    ** Read the priority from the queue file.  There is no good reason
+    ** for the default since all queue files have a "Priority:" line.
+    ** We are just being paranoid.
+    */
+    newentry->status = STATUS_WAITING;
+    newentry->flags = 0;
+    newentry->priority = 20;
+    {
+    char *line = NULL;
+    int line_available = 80;
+    x=0;
+    while((line = gu_getline(line, &line_available, qfile)))
+	{
+	if(sscanf(line, "Priority: %hd", &newentry->priority) == 1)
+	    {
+	    continue;
+	    }
+	if(sscanf(line, "Status-and-Flags: %02hd %hx", &newentry->status, &newentry->flags) == 2)
+	    {
+	    newentry->status *= -1;
+	    continue;
+	    }
+	if(x < MAX_DOCMEDIA && gu_sscanf(line, "Media: %#s", sizeof(tmedia), tmedia) == 1)
+	    {
+	    newentry->media[x++] = get_media_id(tmedia);
+	    continue;
+	    }
+	}
+    }
+
+    fclose(qfile);
+
+    DODEBUG_MEDIA(("%s(): %d media requirement(s) read", function, x));
+
+    while(x < MAX_DOCMEDIA)		/* fill in entra spaces with -1 */
+	newentry->media[x++] = -1;
+
+    return 0;
+    } /* end of queue_read_queuefile() */
+
+/*===========================================================================
+** Receive a new job into the queue.
 **
 ** The job is entered in the queue.  If it is for this node, then the
 ** pprd_printer.c module is informed of its arrival, otherwise the
@@ -397,93 +480,144 @@ struct QEntry *job_new_status(int id, int subid, int homenode_id, int newstat)
 ** is a new job in the queue.  This function is `instrumented' for this
 ** purpose rather than enqueue_job() because enqueue_job() is used to
 ** re-load jobs that are already in the queue when pprd starts.
-*/
-void queue_new_job(char *command)
+===========================================================================*/
+void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
     {
-    FUNCTION4DEBUG("queue_new_job")
+    const char function[] = "queue_insert_job";
+    int e;
+    char *scratch = NULL;
+    const char *ptr_destnode, *ptr_destname, *ptr_homenode;
     struct QEntry newent;		/* space for building new queue entry */
-    char queuename[MAX_DESTNAME+1];	/* name of destination */
-    char destnode[MAX_NODENAME+1];
-    char homenode[MAX_NODENAME+1];
-    int hold;
     struct QEntry *newentp;		/* new queue entry */
     int rank1, rank2;
 
-    /* Parse command: */
-    gu_sscanf(command, "j %s %s %hd %hd %s %hd %d",
-		destnode,
-		queuename,			/* group or printer name */
-		&newent.id,			/* read major queue id */
-		&newent.subid,			/* minor queue id */
-		homenode,
-		&newent.priority,		/* and queue priority */
-		&hold);
-
-    DODEBUG_NEWJOBS(("%s(): destnode=%s queuename=%s id=%d subid=%d homenode=%s priority=%d hold=%d", function,
-		destnode, queuename, newent.id, newent.subid, homenode, newent.priority, hold));
-
-    /* Assign the initial job status: */
-    newent.status = hold ? STATUS_HELD : STATUS_WAITING;
-
-    /* Convert the home node name to an id number. */
-    newent.destnode_id = nodeid_assign(destnode);
-    newent.homenode_id = nodeid_assign(homenode);
-
-    /* Convert the destination queue name to a queue id number.  If the queue
-       does not exist, inform the user and cancel the job.  We can't use
-       queue_unlink_job() here because we don't have a valid destination id to
-       pass to it.
-       */
-    if((newent.destid = destid_assign(newent.destnode_id, queuename)) == -1)
-        {
-        respond2(destnode, queuename, newent.id, newent.subid, homenode, queuename, -1, RESP_CANCELED_BADDEST);
-        queue_unlink_job_2(destnode, queuename, newent.id, newent.subid, homenode);
-        nodeid_free(newent.destnode_id);
-        nodeid_free(newent.homenode_id);
-        return;
-        }
-
-    /* If destination is not accepting new jobs, tell the user
-       and ditch the job.
-       */
-    if(! destid_accepting(newent.destnode_id, newent.destid))
-        {
-        respond(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id, -1, RESP_CANCELED_REJECTING);
-        queue_unlink_job(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id);
-	destid_free(newent.destnode_id, newent.destid);
-        nodeid_free(newent.destnode_id);
-        nodeid_free(newent.homenode_id);
-        return;
-        }
-
-    /* If there is no room in the queue array, abort.  An error()
-       call will have already been made.
-       */
-    if(! (newentp = queue_enqueue_job(&newent, &rank1, &rank2)))
-        {
-	destid_free(newent.destnode_id, newent.destid);
-        nodeid_free(newent.destnode_id);
-        nodeid_free(newent.homenode_id);
-	return;
-        }
-
-    /* If it is for a remote node, */
-    if(! nodeid_is_local_node(newent.destnode_id))
+    Try {
 	{
-	remote_new_job(newentp);
-	return;
+	int err;
+	scratch = gu_strdup(qfname);
+	err = parse_qfname(scratch, &ptr_destnode, &ptr_destname, &newent.id, &newent.subid, &ptr_homenode);
+	if(err < 0)
+	    {
+	    error("%s(): can't parse \"%s\" (%d)", function, qfname, err);
+	    Throw(-1);
+	    }
 	}
 
-    /* Inform queue display programs that there is a new job in the queue. */
-    state_update("JOB %s %d %d",
-            local_jobid(queuename, newent.id, newent.subid, homenode),
-            rank1, rank2);
+	/* Convert the home node name to an id number. */
+	newent.destnode_id = nodeid_assign(ptr_destnode);
+	newent.homenode_id = nodeid_assign(ptr_homenode);
 
-    /* If the job is ready to go, try to start it on a printer.  Otherwise,
-       just leave it.
-       */
-    if(newent.status == STATUS_WAITING)
-        printer_try_start_suitable_4_this_job(newentp);
+	Try {
+	    /* Convert the destination queue name to a queue id number.  If the queue
+	       does not exist, inform the user.  The exception handler will delete the
+	       job files.
+	       */
+	    if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
+		{
+		if(job_is_new)
+		    respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, ptr_destname, -1, RESP_CANCELED_BADDEST);
+		else
+		    error("%s(): destination \"%s\" no longer exists", function, ptr_destname);
+		Throw(-1);
+		}
+
+	    Try {
+		/* If this is a new job and the destination is not accepting new
+		   jobs, tell the user and ditch the job.
+		   */
+		if(job_is_new && ! destid_accepting(newent.destnode_id, newent.destid))
+		    {
+		    respond(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id, -1, RESP_CANCELED_REJECTING);
+		    Throw(-1);
+		    }
+
+		if(queue_read_queuefile(qfname, &newent) == -1)
+		    {
+		    Throw(-1);
+		    }
+
+		/* Clear the time of next response. */
+		newent.resend_response_at = 0;
+
+                /* Clear the bitmaps of printers which it is known can't print it
+                   and of those that can't print it right now because they don't
+                   have the required media mounted. */
+		newent.never = 0;
+		newent.notnow = 0;
+
+		lock();
+
+                /* Set the bitmask which shows which printers have the form.
+                   This may change the printer status too.  For remote jobs,
+                   this is defered until it reaches to target system. */
+                if(nodeid_is_local_node(newent.destnode_id))
+                    media_set_notnow_for_job(&newent, FALSE);
+
+		/* If there is room in the queue array, */
+		if(!(newentp = queue_insert(qfname, &newent, &rank1, &rank2)))
+		    {
+		    /* error() already called */
+		    /* Don't Throw() as that would leave the queue locked! */
+		    }
+		else
+		    {
+		    /* Inform queue display programs that there is a new job in the queue. */
+		    state_update("JOB %s %d %d",
+			remote_jobid(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode),
+			rank1, rank2);
+
+		    /* Start sending it, or if it is local and ready to print, try to start a printer. */
+		    if(!nodeid_is_local_node(newentp->destnode_id))
+			remote_job(newentp);
+		    else if(newentp->status == STATUS_WAITING)
+			printer_try_start_suitable_4_this_job(newentp);
+		    }
+
+		unlock();
+		}
+	    Catch(e)
+	    	{
+		destid_free(newent.destnode_id, newent.destid);
+		Throw(e);
+	    	}
+	    }
+        Catch(e)
+	    {
+	    queue_unlink_job_2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode);
+	    nodeid_free(newent.destnode_id);
+	    nodeid_free(newent.homenode_id);
+	    Throw(e);
+	    }
+        }
+    Catch(e)
+	{
+	/* nothing to do */
+	}
+
+    if(scratch)
+    	gu_free(scratch);
+
+    } /* end of queue_accept_queuefile() */
+
+/*============================================================
+** This handles the j command from ppr.  The j command is
+** used to inform pprd that a new job has been placed in
+** the queue.
+============================================================*/
+void queue_new_job(char *command)
+    {
+    const char function[] = "queue_new_job";
+    char *qfname;
+
+    if(gu_sscanf(command, "j %S", &qfname) != 1)
+	{
+	error("%s(): bad j command: %s", function, command);
+	}
+    else
+	{
+	queue_accept_queuefile(qfname, TRUE);
+	gu_free(qfname);
+	}
     } /* end of queue_new_job() */
 
 /* end of file */

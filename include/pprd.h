@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 December 2001.
+** Last modified 6 December 2001.
 */
 
 /*
@@ -147,7 +147,8 @@ struct QEntry
     SHORT_INT homenode_id;		/* id of node job come from */
 
     SHORT_INT status;			/* printer id if printing, < 0 for other status */
-    unsigned short int flags;		/* */
+    unsigned short int flags;		/* --keep, responding, etc. */
+    time_t resend_response_at;		/* time at which to retry responder to questioner */
 
     SHORT_INT priority;			/* priority number (0=highest, 39=lowest) */
     unsigned char never;		/* bitmap of group member which can't print */

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 30 November 2001.
+** Last revised 5 December 2001.
 */
 
 /*
@@ -76,7 +76,6 @@ static int warning_log = FALSE;			/* set true if warnings should go to log */
 static int option_unlink_jobfile = FALSE;	/* Was the -U switch used? */
 static int use_username = FALSE;		/* User username instead of comment as default For: */
 static int ignore_truncated = FALSE;		/* TRUE if should discard without %%EOF */
-static int option_hold = FALSE;			/* should it be held when it is submitted? */
 static int option_show_jobid = 0;		/* 0 for don't , 1 for short, 2 for long */
 static int use_authcode = FALSE;		/* true if using authcode line to id */
 static int preauthorized = FALSE;		/* set true by -A switch */
@@ -336,7 +335,7 @@ int write_queue_file(struct QFileEntry *qentry)
     	qentry->destnode, qentry->destname, qentry->id, qentry->subid, qentry->homenode);
 
     /* Very carefully open the queue file. */
-    if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, option_hold ? (BIT_JOB_BASE | BIT_JOB_HELD) : BIT_JOB_BASE )) < 0)
+    if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
 	fatal(PPREXIT_OTHERERR, _("can't open queue file \"%s\", errno=%d (%s)"), qfname, errno, gu_strerror(errno) );
     if((Qfile = fdopen(fd, "w")) == (FILE*)NULL)
     	fatal(PPREXIT_OTHERERR, "%s(): fdopen() failed", function);
@@ -437,13 +436,11 @@ static FILE *open_fifo(const char name[])
 */
 void submit_job(struct QFileEntry *qe, int subid)
     {
-    fprintf(FIFO, "j %s %s %d %d %s %d %d\n",
+    fprintf(FIFO, "j %s:%s-%d.%d(%s)\n",
 	qe->destnode,
     	qe->destname,
     	qe->id, subid,
-	qe->homenode,
-    	qe->priority,
-    	option_hold);
+	qe->homenode);
 
     /*
     ** If --show-jobid or --show-long-jobid has been used,
@@ -1036,6 +1033,9 @@ HELP(_(
 
 HELP(_(
 "\t--hold                     job should be held immediately\n"));
+
+HELP(_(
+"\t--keep                     job should be kept after printing\n"));
 
 HELP(_(
 "\t-q <integer>               sets priority of print job\n"));
@@ -1683,7 +1683,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    break;
 
 	case 1004:				/* --hold */
-	    option_hold = TRUE;
 	    qentry.status = STATUS_HELD;
 	    break;
 

@@ -10,12 +10,14 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 23 March 2001.
+# Last modified 5 December 2001.
 #
 
 include ../makeprogs/global.mk
 
-PROGS=pprd$(DOTEXE)
+#=== Inventory ==============================================================
+
+PROGS=pprd$(DOTEXE) pprd-kill
 
 OBJS=pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
 	pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \
@@ -24,31 +26,38 @@ OBJS=pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
 	pprd_media.$(OBJ) pprd_printer.$(OBJ) pprd_state.$(OBJ) \
 	pprd_remote.$(OBJ)
 
-all: $(PROGS)
+#=== Build ==================================================================
 
-install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(PROGS)
+all: $(PROGS)
 
 pprd$(DOTEXE): $(OBJS) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o pprd$(DOTEXE) $(OBJS) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 	$(CHMOD) 6755 pprd$(DOTEXE)
-
-include .depend
 
 # This automatically makes a header file which has prototypes for
 # all functions and has extern definitions of all global variables.
 # This file is not updated automatically, you must remove pprd.auto_h
 # if a function prototype changes.
 pprd.auto_h:
-	# functions
-	cat *.c | egrep '^[^ 	]+ [^ ]* *[^ ]+\(.*\)$$' \
-		| egrep -v '^static ' \
-		| sed -e 's/^\(.*\)$$/\1;/' >pprd.auto_h
-	# global variables
+	# functions: eliminate static, ???, ???
 	cat *.c | egrep -v '^static ' \
-		| sed -n -e 's/^\([^ 	][^;]*;\).*$$/extern \1/p' \
+		| egrep '^[^ 	]+ [^ ]* *[^ ]+\(.*\)$$' \
+		| sed -e 's/^\(.*\)$$/\1;/' >pprd.auto_h
+	# global variables: eliminate static, add "extern", remove size
+	cat *.c | egrep -v '^static ' \
+		| sed -n -e 's/^\([^ 	\*][^;(]*;\).*$$/extern \1/p' \
 		| sed -e 's/\[[^[]*\]/[]/' -e 's/=[^;]*;/;/' \
 			 >>pprd.auto_h
+
+#=== Install ================================================================
+
+install: $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin pprd
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin pprd-kill
+
+#=== Housekeeping ===========================================================
+
+include .depend
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) pprd$(DOTEXE)

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 12 April 2001.
+** Last modified 6 December 2001.
 */
 
 /*
@@ -171,6 +171,10 @@
 **			colons into excalmation points.
 */
 
+#ifdef PPR_AUTOCONF
+#include "config.h"
+#else
+
 /*
 ** These will be the most normal values.
 ** They serve as defaults.
@@ -187,7 +191,7 @@
 
 #ifdef PASS2
 #define SENDMAIL_PATH "/usr/lib/sendmail"	/* mail program for alerting */
-#define SAFE_PATH "/bin:/usr/bin"	/* Secure path */
+#define SAFE_PATH "/bin:/usr/bin"		/* Secure path */
 #define LPR_PRINTCAP "/etc/printcap"
 #endif
 
@@ -598,7 +602,7 @@ int seteuid(uid_t);		/* not defined in header files */
 /*==========================================================================
 ** Win32 testing on Linux
 ==========================================================================*/
-#ifdef WIN32_TESTING
+#ifdef PPR_WIN32_TESTING
 #ifdef PASS1
 
 #undef HAVE_MKFIFO
@@ -614,6 +618,8 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #endif /* PASS2 */
 #endif /* WIN32_TESTING */
+
+#endif /* Not autoconf */
 
 /* end of file */
 
