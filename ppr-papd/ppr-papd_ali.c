@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 27 December 2002.
 */
 
 /*
@@ -106,7 +106,7 @@ void reply(int sesfd, char *s)
 ** This uses the global variables ocount, blocked, out[], writebuf[],
 ** write_unit, and tindex.
 */
-void do_xmit(int sesfd)
+static void do_xmit(int sesfd)
     {
     static int wcnt = 0;	/* initialized to zero to satisfy GNU-C */
 
@@ -450,7 +450,7 @@ void appletalk_dependent_daemon_main_loop(void)
 	FD_ZERO( &select_fds );		/* clear list of files desciptors we want watched */
 
 	for(x=0; x<name_count; x++)
-	    FD_SET( adv[x].fd, &select_fds );
+	    FD_SET(adv[x].fd, &select_fds);
 
 	while( select(FD_SETSIZE, &select_fds, (fd_set*)NULL, (fd_set*)NULL, (struct timeval*)NULL) == -1 )
 	    {
@@ -468,7 +468,7 @@ void appletalk_dependent_daemon_main_loop(void)
 	*/
 	for(x=0; x<name_count; x++)		/* try each file descriptor */
 	    {
-	    if( ! FD_ISSET( adv[x].fd, &select_fds ) )
+	    if( ! FD_ISSET(adv[x].fd, &select_fds) )
 	    	continue;
 
 	    DODEBUG_LOOP(("main loop: something happened on fd %d", adv[x].fd));
@@ -530,7 +530,7 @@ void appletalk_dependent_daemon_main_loop(void)
 		{
 		int y;
 		for(y=0; y <name_count; y++)
-		    pap_abrupt_close( adv[y].fd );
+		    pap_abrupt_close(adv[y].fd);
 		}
 
 		/*
@@ -543,17 +543,6 @@ void appletalk_dependent_daemon_main_loop(void)
 		** We don't want ppr in inherit the PAP endpoint.
 		*/
 		gu_set_cloexec(sesfd);
-
-		/*
-		** Change SIGCHLD handler to the one for catching ppr termination.
-		*/
-		signal(SIGCHLD, child_reapchild);
-
-		/*
-		** Set up a handler for SIGPIPE which may occur
-		** if PPR exits suddenly.
-		*/
-		signal(SIGPIPE, sigpipe_handler);
 
 		/*
 		** Compute usable size of write buffer
@@ -607,12 +596,12 @@ void appletalk_dependent_cleanup(void)
 
     for(x=0; x<name_count; x++)	/* remove all the AppleTalk names. */
 	{
-	debug("Removing name: %s",adv[x].PAPname);
+	debug("Removing name: %s", adv[x].PAPname);
 
-	if( nbp_parse_entity(&name, adv[x].PAPname) == -1 )
+	if(nbp_parse_entity(&name, adv[x].PAPname) == -1)
 	    debug("nbp_parse_entity() failed");
 
-	if( nbp_remove( &name, adv[x].fd ) == -1 )
+	if(nbp_remove(&name, adv[x].fd) == -1)
 	    {
 	    debug("nbp_remove() failed, nbp_errno=%d (%s), errno=%d (%s)",
 		nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );

@@ -213,7 +213,7 @@ void load_printers(void)
 
 	/* Skip Emacs style backup files. */
 	len = strlen(direntp->d_name);
-	if( len > 0 && direntp->d_name[len-1]=='~' )
+	if(len > 0 && direntp->d_name[len-1] == '~')
 	    continue;
 
 	if(x == MAX_PRINTERS)

@@ -3,14 +3,29 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 19 November 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 27 December 2002.
 */
 
 #define PIDFILE RUNDIR"/ppr-papd.pid"
@@ -118,18 +133,17 @@
 #define DODEBUG_PPD(a)
 #endif
 
-/* routines in papsrv.c */
+/* routines in ppr-papd.c */
 void fatal(int exitvalue, const char string[], ...);
 void debug(const char string[], ...);
 char *debug_string(char *s);
 char *pap_getline(int sesfd);
 void postscript_stdin_flushfile(int sesfd);
-void printjob_reapchild(int signum);
 void sigpipe_handler(int signum);
 void child_main_loop(int sesfd, int prnid, int net, int node);
-void printjob(int sesfd, int prnid, int net, int node);
+void child_reapchild(int signum);
 
-/* routines in papsrv_ali.c and papsrv_cap.c */
+/* routines in ppr-papd_ali.c and ppr-papd_cap.c */
 void appletalk_dependent_daemon_main_loop(void);
 int appletalk_dependent_printjob(int sesfd, int pipe);
 int cli_getc(int sesfd);
@@ -140,11 +154,15 @@ void close_reply(int sesfd);
 void add_name(int prnid);
 void appletalk_dependent_cleanup(void);
 
-/* routines in papsrv_query.c */
-void answer_query(int sesfd, int prnid, const char **username, int *preauthorized);
-void REPLY(int sesfd, char *ptr);
+/* routines in ppr-papd_printjob.c */
+void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[]);
+void printjob_abort(void);
+void printjob_reapchild(void);
 
-/* routines in papsrv_conf.c */
+/* routines in ppr-papd_query.c */
+void answer_query(int sesfd, int prnid);
+
+/* routines in ppr-papd_conf.c */
 void read_conf(void);
 SHORT_INT get_font_id(const char fontname[]);
 const char *get_font_name(SHORT_INT fontid);
@@ -160,28 +178,27 @@ struct OPTION
 /* Structure which describes each advertised name. */
 struct ADV
     {
-    const char *PAPname;	/* name to advertise */
-    int fd;			/* file descriptor */
     const char *PPRname;	/* PPR destination to submit to */
+    const char *PAPname;	/* name to advertise */
+    int fd;			/* file descriptor of listening socket */
+    } ;
+
+struct ADV2
+    {
     const char *PPDfile;	/* name of Adobe PPD file */
-    SHORT_INT *fontlist;	/* id numbers of fonts on this printer */
-    int fontcount;		/* number of fonts on this printer */
-    char **argv;                /* array of arguments to pass to ppr */
+    const char **fontlist;	/* list of fonts in this printer */
     int LanguageLevel;          /* 1 or 2, 1 is default */
     char *PSVersion;            /* a rather complicated string */
     char *Resolution;           /* "300dpi", "600x300dpi" */
-    gu_boolean BinaryOK;		/* TRUE or FALSE */
-    int FreeVM;                 /* free printer memory from "*FreeVM:" line */
+    gu_boolean BinaryOK;	/* TRUE or FALSE */
+    int FreeVM;			/* free printer memory from "*FreeVM:" line */
     char *InstalledMemory;	/* Selected "*InstalledMemory" option */
     int VMOptionFreeVM;		/* Value from selected "*VMOption" */
-    char *Product;              /* *Product string */
-    gu_boolean ColorDevice;		/* TRUE or FALSE */
-    int RamSize;                /* an integer (LaserWriter 8) */
+    const char *Product;	/* *Product string from PPD file */
+    gu_boolean ColorDevice;	/* TRUE or FALSE */
+    int RamSize;		/* an integer (LaserWriter 8) */
     char *FaxSupport;		/* a string such as "Base" */
     char *TTRasterizer;		/* "None", "Type42", "Accept68K" */
-    gu_boolean isprotected;		/* TRUE or FALSE */
-    gu_boolean ForceAUFSSecurity;	/* Should we use AUFS security even if not protected? */
-    int AUFSSecurityName;	/* AUFSSECURIYNAME_DSC, AUFSSECURITYNAME_USERNAME, AUFSSECURITYNAME_REALNAME */
     struct OPTION *options;	/* PPD file option settings */
     gu_boolean query_font_cache;
     } ;
@@ -203,7 +220,7 @@ extern char *default_zone;	/* default zone for advertised names, initialy set to
 #define MSG_NONCONFORMING "%%[ Error: insufficient DSC conformance ]%%\n"
 #define MSG_SYNTAX "%%[ Error: bad ppr invokation syntax ]%%\n"
 #define MSG_NOSPOOLER "%%[ Error: spooler is not running ]%%\n"
-#define MSG_FATALPPR "%%[ Error: fatal error, see papsrv log ]%%\n"
+#define MSG_FATALPPR "%%[ Error: fatal error, see ppr-papd log ]%%\n"
 #define MSG_NOPROC "%%[ Error: spooler is out of processes ]%%\n"
 #define MSG_NODISK "%%[ Error: spooler is out of disk space ]%%\n"
 #define MSG_TRUNCATED "%%[ Error: input file is truncated ]%%\n"

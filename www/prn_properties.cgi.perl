@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 December 2002.
+# Last modified 27 December 2002.
 #
 
 use lib "?";
@@ -657,14 +657,14 @@ sub fix_rip_which
         ($data{rip_name}, $data{rip_outlang}, $data{rip_options}) = split(/\t/, cgi_data_move("rip", "\t\t"));
         }
 
-    # Give everything a value to avoid warnings.
+    # Give everything undefined an empty value to avoid warnings.
     for my $i (qw(rip_name rip_outlang rip_options))
 	{
 	$data{$i} = "" if(! defined $data{$i});
 	}
 
-    # If the user has switched the radio button from CONFIG to PPD,
-    # clear the Custom RIP area.
+    # If the user has switched the radio button from "Custom" to "From PPD 
+    # File", clear the Custom RIP area.
     if($data{rip_which} eq "PPD" && cgi_data_peek("rip_which_prev", $data{_rip_which}) eq "CONFIG")
         {
         $data{rip_name} = "";
@@ -673,19 +673,19 @@ sub fix_rip_which
         }
     $data{rip_which_prev} = $data{rip_which};
 
-    # If any of the custom RIP info is filled in, flip radio button to "PPD".
+    # If any of the custom RIP info is filled in, flip radio button to "Custom".
     if($data{rip_name} ne "" || $data{rip_outlang} ne "" || $data{rip_options} ne "")
         {
         $data{rip_which} = "CONFIG";
         }
-    # If none of the custom RIP info is filled in, flip radio button to "Custom RIP".
+    # If none of the custom RIP info is filled in, flip radio button to "From PPD File".
     elsif($data{rip_name} eq "" && $data{rip_outlang} eq "" && $data{rip_options} eq "")
         {
         $data{rip_which} = "PPD";
         }
 
     # If [X]Custom RIP is chosen, but the info is incomplete,
-    if($data{rip_which} eq "CONFIG" && ($data{rip_name} eq "" || $data{rip_outlang} eq "" || $data{rip_options} eq ""))
+    if($data{rip_which} eq "CONFIG" && ($data{rip_name} eq "" || $data{rip_outlang} eq ""))
     	{
 	return 1;
     	}
@@ -980,7 +980,7 @@ foreach my $i (qw(options jobbreak feedback codes))
 # If the RIP has changed,
 if($data{rip} ne $data{_rip} || $data{rip_which} ne $data{_rip_which})
     {
-    if($data{rip} eq "CONFIG")
+    if($data{rip_which} eq "CONFIG")
     	{ run(@PPAD, "rip", $name, split(/\t/, $data{rip}, 100)) }
     else
     	{ run(@PPAD, "rip", $name) }

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 27 December 2002.
 */
 
 /*
@@ -416,8 +416,8 @@ void appletalk_dependent_daemon_main_loop(void)
 	    ** to be the daemon while the other goes off and
 	    ** talks with the client.
 	    */
-	    while( (pid=fork()) == -1 )     /* If we can't fork(), */
-		{			    /* then wait and try again. */
+	    while((pid = fork()) == -1)		/* If we can't fork(), */
+		{				/* then wait and try again. */
 		debug("out of processes");  /* (Of course, forking for ppr */
 		sleep(60);		    /* may fail later.) */
 		}
@@ -434,15 +434,6 @@ void appletalk_dependent_daemon_main_loop(void)
 		signal(SIGHUP, SIG_DFL);
 		signal(SIGINT, SIG_DFL);
 		signal(SIGTERM, SIG_DFL);
-
-		/* change SIGCHLD handler */
-		signal(SIGCHLD, child_reapchild);
-
-		/*
-		** Set up a handler for SIGPIPE which may occur
-		** if PPR exits suddenly.
-		*/
-		signal(SIGPIPE, sigpipe_handler);
 
 		/* compute usable size of write buffer */
 		write_unit = (rquantum<=MAX_REMOTE_QUANTUM?rquantum:MAX_REMOTE_QUANTUM) * 512;

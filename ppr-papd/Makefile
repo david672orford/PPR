@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 November 2002.
+# Last modified 26 December 2002.
 #
 
 include ../Makefile.conf
@@ -47,9 +47,9 @@ all-atalk: $(BIN_PROGS)
 # This is the server.
 OBJS1=ppr-papd.$(OBJ) \
 	ppr-papd_$(ATALKTYPE).$(OBJ) \
-	ppr-papd_query.$(OBJ) \
 	ppr-papd_conf.$(OBJ) \
-	ppr-papd_authorize.$(OBJ) \
+	ppr-papd_query.$(OBJ) \
+	ppr-papd_printjob.$(OBJ) \
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT) \
 	../libpprdb.$(LIBEXT)

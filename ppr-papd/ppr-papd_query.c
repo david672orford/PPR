@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 26 December 2002.
 */
 
 /*
-** PAP server query answering routines.  These routines answer questions
-** put to the spooler by the Macintosh client.  The information in the PPD file
-** and the queue configuration file is used to answer these questions.
+** Here are the PAP server query answering routines.  These routines answer 
+** questions put to the spooler by the Macintosh client.  The information in 
+** the PPD file and the queue configuration file is used to answer these 
+** questions.
 */
 
 #include "before_system.h"
@@ -622,20 +623,6 @@ void vmstatus_query(int sesfd, int destid)
 #endif
 
 /*
-** What user authentication methods do we support?
-**
-** Well, that depends on which queue.
-*/
-static void uamethods_query(int sesfd, int destid)
-    {
-    DODEBUG_QUERY(("uamethods_query(sesfd=%d, destid=%d)", sesfd, destid));
-
-    eat_query(sesfd);
-
-    REPLY(sesfd,"NoUserAuthent\n*\n");
-    } /* end of uamethods_query() */
-
-/*
 ** Read a query job from the client and answer it to the
 ** best of our ability.  This is called just after the line
 ** "%!PS-Adobe-x.x Query" is received.
@@ -647,16 +634,6 @@ void answer_query(int sesfd, int destid)
 	/* If we should print all PostScript in the query, print this line. */
 	if(query_trace >= 2)
 	    debug("QUERY --> %s", line);
-
-	/* Apple login command */
-	if(strncmp(line, "%%Login:", 8) == 0)
-	    {
-	    if(query_trace)
-    		debug("COMMAND --> %.*s", strcspn(line,"\n"), line);
-
-	    login_request(sesfd, destid, username, preauthorized);
-	    continue;
-	    }
 
 	/*
 	** If it was not claimed as a command above
@@ -706,10 +683,6 @@ void answer_query(int sesfd, int destid)
 	/* Resource Query: */
 	else if(strncmp(line, "%%?BeginResourceQuery:", 22) == 0)
 	    resource_query(sesfd, destid);
-
-	/* User authentication methodes querie: */
-	else if(strcmp(line, "%%?BeginUAMethodsQuery") == 0)
-	    uamethods_query(sesfd, destid);
 
 	/* Unrecognized query, just return the default. */
 	else

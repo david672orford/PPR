@@ -25,8 +25,28 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 27 December 2002.
 */
+
+#include "before_system.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <setjmp.h>
+#include <errno.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#ifdef INTERNATIONAL
+#include <locale.h>
+#include <libintl.h>
+#endif
+#include "gu.h"
+#include "global_defines.h"
+#include "ppr_exits.h"
+#include "ppr-papd.h"
+
+static pid_t pid = (pid_t)0;			/* pid of ppr */
+static jmp_buf printjob_env;
 
 /*===========================================================================
 ** Accept a print job and send it to ppr.
@@ -34,9 +54,10 @@
 ** This is called from child_main_loop() which it turn is called
 ** from appletalk_dependent_main_loop().
 ===========================================================================*/
-void printjob(int sesfd, int prnid, int net, int node, const char username[], int preauthorized)
+void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[])
     {
     const char function[] = "printjob";
+    const char *username = "?";
     int pipefds[2];		/* a set of file descriptors for pipe to ppr */
     int wstat;			/* wait status */
     int error;
@@ -44,8 +65,8 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
     char netnode[10];
     char proxy_for[64];
 
-    DODEBUG_PRINTJOB(("printjob(sesfd=%d, prnid=%d, net=%d, node=%d, preauthorized=%d)",
-	sesfd, prnid, net, node, preauthorized));
+    DODEBUG_PRINTJOB(("printjob(sesfd=%d, prnid=%d, net=%d, node=%d)",
+	sesfd, prnid, net, node));
 
     /*
     ** Measure free space in the PPR spool area.  If it is
@@ -96,7 +117,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 	    dup2(pipefds[0],0);		/* as for read end, duplicate to stdin */
 	    close(pipefds[0]);		/* and close origional */
 
-	    if( (fd=open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1 )
+	    if((fd = open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1)
 	    	fatal(0, "printjob(): can't open log file");
 	    if(fd != 1) dup2(fd,1);	/* stdout and */
 	    if(fd != 2) dup2(fd,2);	/* stderr */
@@ -155,10 +176,6 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 	    struct ADV *a = &adv[prnid];
 	    for(y=0; (argv[x] = a->argv[y]) != (char*)NULL; x++,y++);
 	    }
-
-	    /* If authorization already verified, add "-A". */
-	    if(preauthorized)
-		argv[x++] = "-A";
 
 	    /* end of argument list */
 	    argv[x] = (char*)NULL;
@@ -278,5 +295,17 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
     DODEBUG_PRINTJOB(("printjob(): calling reply_eoj()"));
     reply_eoj(sesfd);
     } /* end of printjob() */
+
+void printjob_abort(void)
+    {
+    if(pid)				/* If we have launched ppr, */
+	kill(pid, SIGTERM);		/* then kill it. */
+    pid = (pid_t)0;
+    } /* end of printjob_abort() */
+
+void printjob_reapchild(void)
+    {
+    longjmp(printjob_env, 1);
+    }
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 26 December 2002.
 */
 
 /*
@@ -63,35 +63,41 @@ char line[257];         /* 255 characters plus one null plus extra for my CR */
 int line_len;		/* tokenize() insists that we set this */
 
 /* Other globals: */
+struct ADV adv[PPR_PAPD_MAX_NAMES];
+int name_count = 0;          		/* total advertised names */
 int i_am_master = TRUE;			/* set to FALSE in child ppr-papd's */
 int children = 0;			/* The number of our children living. (master daemon) */
-jmp_buf printjob_env;			/* saved environment for longjump() */
-pid_t pid = (pid_t)0;			/* pid of ppr */
-char *aufs_security_dir = (char*)NULL;	/* for use with CAP AUFS security */
 int query_trace = 0;			/* debug level */
 char *default_zone = "*";		/* for advertised names */
+gu_boolean opt_foreground = FALSE;
 
 /* The names of various files. */
-static const char *log_file_name = LOGFILE;
+const char *log_file_name = LOGFILE;
 static const char *pid_file_name = PIDFILE;
 
 /*
-** This function is called by fatal(), debug(), error(),
+** This function is called by fatal(), debug(),
 ** and libppr_throw() below.
 */
 static void log(const char category[], const char atfunction[], const char format[], va_list va)
     {
     FILE *file;
-    if((file = fopen(log_file_name, "a")) != (FILE*)NULL)
-    	{
-	fprintf(file, "%s: %s: ", category, datestamp());
-	if(! i_am_master)
-	    fprintf(file, "child %ld: ", (long)getpid());
-	if(atfunction) fprintf(file, "%s(): ", atfunction);
-	vfprintf(file, format, va);
-	fputc('\n', file);
+
+    if(opt_foreground)
+	file = stderr;
+    else if((file = fopen(log_file_name, "a")) == (FILE*)NULL)
+	return;
+
+    fprintf(file, "%s: %s: ", category, datestamp());
+    if(! i_am_master)
+	fprintf(file, "child %ld: ", (long)getpid());
+    if(atfunction)
+	fprintf(file, "%s(): ", atfunction);
+    vfprintf(file, format, va);
+    fputc('\n', file);
+
+    if(!opt_foreground)
 	fclose(file);
-	}
     } /* end of log() */
 
 /*
@@ -110,17 +116,6 @@ void debug(const char string[], ... )
     log("DEBUG", NULL, string, va);
     va_end(va);
     } /* end of debug() */
-
-/*
-** This function is called by libpprdb functions.
-*/
-void error(const char string[], ... )
-    {
-    va_list va;
-    va_start(va, string);
-    log("ERROR", NULL, string, va);
-    va_end(va);
-    } /* end of error() */
 
 /*
 ** Fatal error function.
@@ -147,8 +142,7 @@ void fatal(int rval, const char string[], ... )
     /* Daemon's child cleanup: */
     else
 	{
-	if(pid)				/* if we have launched ppr, */
-	    kill(pid, SIGTERM);		/* then kill it */
+	printjob_abort();
 	}
 
     /* Exit with the code we were told to exit with. */
@@ -181,7 +175,7 @@ char *debug_string(char *s)
 
     for(x=0; s[x] && x < (sizeof(result)-1); x++)
     	{
-	if( isprint(s[x]) )
+	if(isprint(s[x]))
 	    result[x] = s[x];
 	else
 	    result[x] = '.';
@@ -205,7 +199,6 @@ char *debug_string(char *s)
 static void termination_handler(int sig)
     {
     static int count = 0;
-
     if(count++ > 0)
     	debug("Signal \"%s\" received, termination routine already initiated", gu_strsignal(sig));
     else
@@ -269,17 +262,7 @@ void postscript_stdin_flushfile(int sesfd)
     } /* end of postscript_stdin_flushfile() */
 
 /*
-** This will be the reapchild handler while printjob() is executing.
-** If ppr exits prematurly, this breaks the loop above.
-*/
-void child_reapchild(int signum)
-    {
-    DODEBUG_PRINTJOB(("SIGCHLD received (ppr exited)"));
-    longjmp(printjob_env, 1);
-    } /* end of child_reapchild() */
-
-/*
-** SIGPIPE handler, used by child PPR_PAPDs for when PPR dies.
+** SIGPIPE handler, used by child ppr-papd processes.
 */
 void sigpipe_handler(int sig)
     {
@@ -290,12 +273,19 @@ void sigpipe_handler(int sig)
 ** Note child termination.
 ** This handler is used only by the main daemon.
 ===========================================================*/
-static void parent_reapchild(int signum)
+static void reapchild(int signum)
     {
     pid_t pid;
     int wstat;
 
-    while( (pid=waitpid((pid_t)-1,&wstat,WNOHANG)) > (pid_t)0 )
+    if(!i_am_master)
+	{
+	DODEBUG_PRINTJOB(("SIGCHLD received (ppr exited)"));
+	printjob_reapchild();
+	return;
+	}
+	
+    while((pid = waitpid((pid_t)-1,&wstat,WNOHANG)) > (pid_t)0)
 	{
 	children--;             /* reduce the count of our progeny */
 
@@ -336,8 +326,6 @@ static void parent_reapchild(int signum)
 void child_main_loop(int sesfd, int prnid, int net, int node)
     {
     char *cptr;
-    const char *username = (const char*)NULL;
-    int preauthorized = FALSE;	/* can we vouch for the user? */
 
     while(TRUE)			/* will loop until we break out */
 	{
@@ -357,7 +345,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 	    DODEBUG_LOOP(("start of query: %s", line));
 
 	    /* Note that query may be for login. */
-	    answer_query(sesfd, prnid, &username, &preauthorized);
+	    answer_query(sesfd, prnid);
 
 	    DODEBUG_LOOP(("query processing complete"));
 	    }
@@ -366,11 +354,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 	    {
 	    DODEBUG_LOOP(("start of print job: \"%s\"", line));
 
-	    /* If answer_query() did not get a "%%Login:" command, */
-	    if( ! preauthorized )
-		preauthorize(sesfd, prnid, net, node, &username, &preauthorized);
-
-	    printjob(sesfd, prnid, net, node, username, preauthorized);
+	    printjob(sesfd, prnid, net, node, log_file_name);
 
 	    DODEBUG_LOOP(("print job processing complete"));
 	    }
@@ -383,7 +367,8 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 =====================================================================*/
 static void sigusr1_handler(int sig)
     {
-    if(++query_trace > 2) query_trace = 0;
+    if(++query_trace > 2)
+	query_trace = 0;
 
     switch(query_trace)
 	{
@@ -464,10 +449,8 @@ static int do_stop(void)
 
 int main(int argc, char *argv[])
     {
-    struct sigaction sig;
-    int optchar;			/* for ppr_getopt() */
+    int optchar;
     struct gu_getopt_state getopt_state;
-    int z_switch = FALSE;
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -527,6 +510,7 @@ int main(int argc, char *argv[])
 	    	exit(EXIT_OK);
 
 	    case 1002:			/* --foreground */
+		opt_foreground = TRUE;
 	    	break;
 
 	    case 1003:			/* --stop */
@@ -557,27 +541,24 @@ int main(int argc, char *argv[])
 	    }
     	}
 
-    /*
-    ** For safety, set some environment variables.
-    ** We do this dispite the fact that we don't
-    ** execute anything but ppr.
-    */
+    /* Set environment variables such as PATH and PPR_VERSION. */
     set_ppr_env();
 
-    /* Remove some unnecessary and misleading
-       things from the environment: */
+    /* Remove some unnecessary and misleading things from the environment. */
     prune_env();
 
     /* Go into background. */
-    gu_daemon(PPR_UMASK);
+    if(!opt_foreground)
+	gu_daemon(PPR_UMASK);
 
-    /* Chang into the PPR home directory: */
+    /* Change to the PPR home directory. */
     chdir(HOMEDIR);
 
     /* Remove any old log file. */
     unlink(log_file_name);
 
-    /* Tell interested humans and programs our pid. */
+    /* Stash our PID in a file so that it is easier to find the daemon
+       to shut it down.  This file also serves as a lock file. */
     {
     FILE *f;
     pid_t pid;
@@ -593,33 +574,21 @@ int main(int argc, char *argv[])
     }
 
     /*
-    ** Arrange for child termination to be noted.  Since child termination is 
-    ** of only passing interest to the daemon, we want interupted system calls 
-    ** restarted.
+    ** Install signal handlers for child termination, shutdown, log
+    ** level bumping, and broken pipe.
     */
-    sig.sa_handler = reapchild;		/* call reapchild() on SIGCHLD */
-    sigemptyset(&sig.sa_mask);		/* block no additional sigs */
-    #ifdef SA_RESTART
-    sig.sa_flags = SA_RESTART;		/* restart interupted sys calls */
-    #else
-    sig.sa_flags = 0;
-    #endif
-    sigaction(SIGCHLD, &sig, NULL);
-
-    /*
-    ** Install a signal handler to catch fatal signals
-    ** so that AppleTalk may be shut down cleanly.
-    */
-    signal(SIGHUP, termination_handler);
-    signal(SIGINT, termination_handler);
-    signal(SIGTERM, termination_handler);
-    signal(SIGUSR1, sigusr1_handler);
+    signal_restarting(SIGCHLD, reapchild);
+    signal_interupting(SIGHUP, termination_handler);
+    signal_interupting(SIGINT, termination_handler);
+    signal_interupting(SIGTERM, termination_handler);
+    signal_restarting(SIGUSR1, sigusr1_handler);
+    signal_interupting(SIGPIPE, sigpipe_handler);
 
     /*
     ** Read the configuration file and advertise
     ** the printer names on the AppleTalk.
     */
-    read_conf(conf_file_name);
+    read_conf();
 
     /*
     ** Call the Appletalk dependent main loop which will fork off a

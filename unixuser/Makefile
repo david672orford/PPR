@@ -25,15 +25,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 November 2002.
+# Last modified 27 December 2002.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS_SUID=ppr-xgrant$(DOTEXE) ppr-hexdump$(DOTEXE)
-BIN_PROGS=ppr-xfm
+BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
+BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE)
 LIB_PROGS=
 FIXUP_SCRIPTS=login_ppr.sh login_ppr.csh
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
@@ -42,7 +42,7 @@ PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
 all: $(PROGS)
 
-# Explicit rule because of System V release 4.0 make bugs.
+# We need an explicit rule because of System V release 4.0 make bugs.
 ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(CC) $(CFLAGS) -o ppr-xgrant$(DOTEXE) ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
