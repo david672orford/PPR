@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 August 2003.
+** Last modified 7 August 2003.
 */
 
 /*! \file
@@ -52,7 +52,7 @@ This function is called by the gu_Try macro.
 void _gu_Try(jmp_buf *p_jmp_buf)
 	{
 	if(_gu_exception_try_depth >= GU_EXCEPTION_MAX_TRY_DEPTH)
-		gu_Throw(255, "Try nested too deep");
+		gu_Throw("Try nested too deep");
 	_gu_exception_jmp_bufs[_gu_exception_try_depth++] = p_jmp_buf;
 	}
 

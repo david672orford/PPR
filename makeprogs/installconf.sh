@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 7 August 2003.
 #
 
 #
@@ -36,8 +36,11 @@
 
 . `dirname $0`/paths.sh
 
-TYPE="$1"
-shift
+USER=$1
+GROUP=$2
+MODE=$3
+TYPE="$4"
+shift 4
 
 if [ "$TYPE" = "" ]
 	then
@@ -62,15 +65,15 @@ while [ "$1" != "" ]
 			fi
 
 		# This may fail during RPM build.
-		echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
-		chown $USER_PPR "$RPM_BUILD_ROOT$1" 2>/dev/null \
-			&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1" 2>/dev/null
+		echo "  chown $USER:$GROUP \"$1\""
+		chown $USER "$RPM_BUILD_ROOT$1" 2>/dev/null \
+			&& chgrp $GROUP "$RPM_BUILD_ROOT$1" 2>/dev/null
 
-		echo "  chmod 644 \"$1\""
+		echo "  chmod $MODE \"$1\""
 		chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
 
 		# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
-		echo "%attr(-,$USER_PPR,$GROUP_PPR) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
+		echo "%attr(-,$USER,$GROUP) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 		fi
 	shift
 	done

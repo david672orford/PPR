@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 7 August 2003.
 #
 
 #
@@ -39,8 +39,12 @@
 
 GETSERVBYNAME="./getservbyname"
 SERVICES="/etc/services"
+
 INETD="/usr/sbin/inetd"
 INETD_CONF="/etc/inetd.conf"
+
+XINETD="/usr/sbin/xinetd"
+XINETD_CONF="/etc/xinetd.conf"
 XINETD_D="/etc/xinetd.d"
 XINETD_PPR="$XINETD_D/ppr"
 
@@ -187,20 +191,35 @@ END
 		}
 
 #==========================================================================
-# Make sure we have what we need to add the services to /etc/services.
+# Make sure we have what we need to add services to /etc/services.
 #==========================================================================
 file_ok $GETSERVBYNAME -x
 file_ok $SERVICES -w
 
+# Add the standard printer service if it isn't present already.
 add_service printer 515
 
 #==========================================================================
 # If we are using Xinetd, things are pretty easy.
 #==========================================================================
-./puts "  Checking for \"/usr/sbin/xinetd\"..."
-if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
+./puts "  Checking for \"$XINETD\"..."
+if [ -f "$XINETD" -a -d "$XINETD_CONF" ]
 	then
 	echo " found, assuming it is what you are using..."
+
+	# If we aren't making an RPM and /etc/xinetd.d doesn't exist yet,
+	# create it and set up /etc/xinetd.conf to include it.
+	if [ -z "$RPM_BUILD_ROOT" -a ! -d "$XINETD_D" ]
+		then
+		echo "Adding $XINETD_D..."
+		mkdir "$XINETD_D" || exit 1
+		echo "Adding include line to $XINETD_CONF..."
+		echo "includedir /etc/xinetd.d" >>"$XINETD_CONF"
+		fi
+
+	# If the file /etc/xinetd.d/ppr doesn't exist, create it.  We pay
+	# attention to $RPM_BUILD_ROOT.  If it is defined, we will have to
+	# create /etc/xinetd.d before we can put a file in it.
 	if [ -f $RPM_BUILD_ROOT$XINETD_PPR ]
 		then
 		echo "  $XINETD_PPR already exists, good."
@@ -212,7 +231,8 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 			fi
 		xinetd_config $RPM_BUILD_ROOT$XINETD_PPR
 		fi
-	../makeprogs/installconf.sh 'config(noreplace)' $XINETD_PPR
+
+	../makeprogs/installconf.sh root root 644 'config(noreplace)' $XINETD_PPR
 	exit 0
 	else
 	echo " not found"

@@ -58,28 +58,28 @@ for i in /etc/rc.d /etc /sbin
 # for your system.
 #
 case "$INIT_BASE" in
-	# RedHat Linux
+	# RedHat Linux, Mandrake Linux, and brethren
 	"/etc/rc.d" )
-		# Needs checking:
 		INIT_LIST="rc0.d/K20ppr rc1.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
 		;;
 
-	# Several systems
+	# Solaris and Debian GNU/Linux
 	"/etc" )
 		# Debian Linux
 		if [ -x /usr/bin/dpkg -a -x /usr/sbin/update-rc.d ]
-		then
-		# Needs checking:
-		INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
-		else
+			then
+			# Correctness of levels needs checking:
+			INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
 
-		# Solaris 2.x, Generic System V
-		INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr"
-		fi
+			else
+			# Solaris 2.x, Generic System V
+			INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr"
+
+			fi
 		;;
 
 	# OSF/1 3.2
-		"/sbin" )
+	"/sbin" )
 		# Needs checking:
 		INIT_LIST="rc0.d/K00ppr rc2.d/K00ppr rc3.d/S65ppr"
 		;;
@@ -96,8 +96,21 @@ case "$INIT_BASE" in
 	esac
 
 #
+# Look for MacOS StartupItems
+#
+StartupItems=""
+for i in /System/Library/StartupItems 
+	do 
+	if [ -d $i ]
+		then
+		echo "    MacOS StartupItems found at \"$i\"."
+		StartupItems=$i
+		fi
+	done
+
+#
 # Look for rc.local which we will use on systems with no System V style
-# startup scripts.	Also, earlier versions of PPR installed code in
+# startup scripts.	Also, very old versions of PPR installed code in
 # rc.local for systems for which it now installs System V style init
 # scripts, so we want to know where this file is so we can warn the user if
 # there is old PPR startup code lurking there.
@@ -107,22 +120,9 @@ for i in /etc/rc.local /etc/rc.d/rc.local
 	do
 	if [ -f $i ]
 		then
-	echo "    BSD-style rc.local found at \"$i\"."
+		echo "    BSD-style rc.local found at \"$i\"."
 		RC_LOCAL=$i
 		fi
-	done
-
-#
-# Look for MacOS StartupItems
-#
-StartupItems=""
-for i in /System/Library/StartupItems 
-	do 
-	if [ -d $i ]
-	then
-	echo "    MacOS StartupItems found at \"$i\"."
-		StartupItems=$i
-	fi
 	done
 
 #========================================================================
@@ -138,19 +138,16 @@ if [ -n "$INIT_BASE" ]
 then
 	echo "  Installing the System V style start and stop scripts..."
 
-	# This if for when we are building an RPM.
-	if [ ! -d $RPM_BUILD_ROOT$INIT_BASE/init.d ]
+	# If we are building an RPM, we will need to create the init.d directory
+	# in the build root.
+	if [ -n "$RPM_BUILD_ROOT" -a ! -d $RPM_BUILD_ROOT$INIT_BASE/init.d ]
 		then
 		echo "    Creating $RPM_BUILD_ROOT$INIT_BASE..."
 		mkdir -p $RPM_BUILD_ROOT$INIT_BASE/init.d
 		fi
 
-	#
-	# Install the principal script if it isn't already installed.
-	# !!! Maybe we should flag this as a configuration file. !!!
-	# !!! That is what the Mandrake Linux people would do.   !!!
-	#
-	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
+	# Copy the init script into place.
+	cp ppr $INIT_BASE/init.d/ppr
 	if [ $? -ne 0 ]
 		then
 		echo "===================================================="
@@ -159,34 +156,46 @@ then
 		exit 1
 		fi
 
-	# Remove any old links and replace them with new ones.  This is
-	# skipt if we are building an RPM.  The RPM %post script will 
-	# run chkconfig.
+	# Mark the init script as a config file when building packages.
+	../makeprogs/installconf.sh root root 755 'config(noreplace)' $INIT_BASE/init.d/ppr
+
+	# Adjust the symbolic links.  This step is skipt if we are building an RPM.
+	# The RPM %post script will run chkconfig.
 	if [ -z "$RPM_BUILD_ROOT" ]
 		then
-		existing=`echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
+		# Construct a list of the links that are present.
+		existing=""
+		for l in `echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
+			do
+			if [ -L $l ]		# exists and is a symbolic link
+				then
+				existing="$existing $l"
+				fi
+			done
+
+		# Construct a list of the links that should be present.
 		temp=""
 		for l in $INIT_LIST
 			do
 			temp="$temp $INIT_BASE/$l"
 			done
-		#echo "$temp"
-		#echo "$existing"
+
+		# Avoid making changes if the required links are in place.
 		if [ "$temp" = " $existing" ]
-			then
+		then
 			echo "    Links are already correct."
-			else
+		else
 			if [ -x /sbin/chkconfig ]
-				then
+			then
 				/sbin/chkconfig --add ppr
-				else
+			else
 				for l in $existing
 					do
 					if [ -f $l ]
-						then
+					then
 						rm $l
 						if [ $? -ne 0 ]
-							then
+						then
 							echo "Please run again as root to update init links."
 							exit 1
 							fi
@@ -198,17 +207,15 @@ then
 					rm -f $INIT_BASE/$f
 					ln -s ../init.d/ppr $INIT_BASE/$f
 					done
-				fi
-			fi
-		fi
+			fi # don't have chkconfig
+		fi # links have changed
+	fi # not building RPM package
 
 	# Look for old PPR startup code in rc.local which may be
 	# left from previous versions of PPR which didn't always
 	# install System V init scripts when it was possible.
-	if [ -n "$RC_LOCAL" ]
-		then
-		if grep '[Ss]tart [Pp][Pp][Rr]' $RC_LOCAL >/dev/null
-		then
+	if [ -n "$RC_LOCAL" ] && grep '[Ss]tart [Pp][Pp][Rr]' $RC_LOCAL >/dev/null
+	then
 		echo
 		echo "There are currently lines in $RC_LOCAL which start"
 		echo "PPR.  You should remove these so that PPR does not get"
@@ -216,11 +223,10 @@ then
 		echo
 		echo "Please press RETURN to continue."
 		read x
-		fi
-		fi
+	fi
 
 #
-# Otherwise, do the MacOS X thing.
+# Or do the MacOS X thing.
 #
 else
 if [ -n "$StartupItems" ]
@@ -228,24 +234,24 @@ if [ -n "$StartupItems" ]
 	echo "  Installing MacOS X startup script..."
 	if [ -d $StartupItems/PPR ]
 	then
-	echo "    Directory $StartupItems/PPR already exists, good."
+		echo "    Directory $StartupItems/PPR already exists, good."
 	else
-	echo "    Creating directory $StartupItems/PPR..."
-	mkdir $StartupItems/PPR
+		echo "    Creating directory $StartupItems/PPR..."
+		mkdir $StartupItems/PPR
 	fi
 	if diff ppr $StartupItems/PPR/PPR >/dev/null 2>&1
 	then
-	echo "    Startup script already installed, good."
+		echo "    Startup script already installed, good."
 	else
-	echo "    Installing startup script..."
-	cp ppr $StartupItems/PPR/PPR || exit 1
+		echo "    Installing startup script..."
+		cp ppr $StartupItems/PPR/PPR || exit 1
 	fi
 	if [ -f $StartupItems/PPR/StartupParameters.plist ]
 	then
-	echo "    $StartupItems/PPR/StartupParameters.plist already exists, good."
+		echo "    $StartupItems/PPR/StartupParameters.plist already exists, good."
 	else
-	echo "    Creating $StartupItems/PPR/StartupParameters.plist..."
-	cat - >$StartupItems/PPR/StartupParameters.plist <<"EndOfStartupParameters"
+		echo "    Creating $StartupItems/PPR/StartupParameters.plist..."
+		cat - >$StartupItems/PPR/StartupParameters.plist <<"EndOfStartupParameters"
 {
   Description	  = "PPR Print Spooler";
   Provides		  = ("PPR Printing");
@@ -257,56 +263,52 @@ EndOfStartupParameters
 	fi
 
 #
-# Otherwise, try to find a Berkeley style rc.local file.
+# Otherwise, maybe we found a Berkeley style rc.local file.
 #
 else
 if [ -n "$RC_LOCAL" ]
-	then
+then
 	if grep '[Ss]tart [Pp][Pp][Rr]' $RC_LOCAL >/dev/null
 	then
-	echo
-	echo "Commands to start PPR already exist in $RC_LOCAL."
-	echo "After this script is done, please make sure they are correct."
-	echo "In particular, make sure that the program paths are correct."
-	if grep "$CONFDIR/papsrv[^.]" $RC_LOCAL >/dev/null
-		then
-		echo "Also, change all references to \"$CONFDIR/papsrv\" to \"$CONFDIR/papsrv.conf\"."
-		fi
-	echo
-	echo "Please press RETURN to continue."
-	read x
-	echo
+		echo
+		echo "Commands to start PPR already exist in $RC_LOCAL."
+		echo "After this script is done, please make sure they are correct."
+		echo "In particular, make sure that the program paths are correct."
+		echo
+		echo "Please press RETURN to continue."
+		read x
+		echo
 
 	else
-	echo "  Appending PPR startup commands to $RC_LOCAL"
-	{
-	echo
-	echo "# ==== Start PPR ===="
-	echo "# PPR always needs pprd.
-	echo "if [ -x $HOMEDIR/bin/pprd ]"
-	echo " then"
-	echo " echo \"Starting PPRD\""
-	echo " $HOMEDIR/bin/pprd"
-	echo " fi"
-	echo "# Start AppleTalk server only if config file is present.
-	echo "if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]"
-	echo " then"
-	echo " echo \"Starting PAPSRV\""
-	echo " $HOMEDIR/bin/papsrv"
-	echo " fi"
-	echo "# Uncomment this line to run olprsrv in standalone mode."
-	echo "#${HOMEDIR}/bin/olprsrv -s printer"
-	echo "# Uncomment this line to run the new lprsrv in standalone mode."
-	echo "#${HOMEDIR}/bin/lprsrv -s printer"
-	echo "# ==== End of PPR Startup Code ===="
-	} >>$RC_LOCAL
+		echo "  Appending PPR startup commands to $RC_LOCAL"
+		{
+		echo
+		echo "# ==== Start PPR ===="
+		echo "# PPR always needs pprd.
+		echo "if [ -x $HOMEDIR/bin/pprd ]"
+		echo " then"
+		echo " echo \"Starting PPRD\""
+		echo " $HOMEDIR/bin/pprd"
+		echo " fi"
+		echo "# Start AppleTalk server only if config file is present.
+		echo "if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]"
+		echo " then"
+		echo " echo \"Starting PAPSRV\""
+		echo " $HOMEDIR/bin/papsrv"
+		echo " fi"
+		echo "# Uncomment this line to run olprsrv in standalone mode."
+		echo "#${HOMEDIR}/bin/olprsrv -s printer"
+		echo "# Uncomment this line to run the new lprsrv in standalone mode."
+		echo "#${HOMEDIR}/bin/lprsrv -s printer"
+		echo "# ==== End of PPR Startup Code ===="
+		} >>$RC_LOCAL
 
 	fi
 
 #
 # No identifiable init script system.
 #
-	else
+else
 	echo
 	echo "Since your system doesn't seem to use a System V style Init nor do you have"
 	echo "have an rc.local file, you must find your own means to start PPR when the"
@@ -316,8 +318,7 @@ if [ -n "$RC_LOCAL" ]
 	echo "Please press RETURN to continue."
 	read x
 	echo
-	fi
-
+fi
 fi
 fi
 

@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--6 August 2003.
+1.52, 24 July 2003--7 August 2003.
 
 Bug Fixes
 
@@ -8629,7 +8629,8 @@ Bug Fixes
   account "$COMMENT".
 
 * libgu/ini_section.c, responders/ppr-respond.c, unixuser/ppr-followme.c:
-  changed asprintf() to gu_asprintf().
+  changed asprintf() to gu_asprintf().  Without this PPR wouldn't compile
+  on systems that didn't have asprintf().
   
 * nonppr_misc/c2lib/config.h: added include for gu.h and define to map 
   vasprintf() to gu_vasprintf().
@@ -8638,17 +8639,17 @@ Bug Fixes
   alternative is to swallow the entity body.)
 
 * fontutils/indexfonts.c: removed message to stderr when a TTF font doesn't 
-  have a PostScript name (stored in one of its tables).  Previously one could
-  come away with the impression that the bad font had halted the indexing
-  process.
+  have a PostScript name (stored in one of its tables).  Previously, if one
+  didn't run ppr-index with --verbose, one could come away with the
+  impression that the bad font had halted the indexing process.
 
 * z_install_begin/, makeprogs/, z_install_end/: fixed sundry build problems
   which broke RPM building.
 
 * libuprint/uprint-newconf.c,uprint_conf.c,uprint_private.h,uprint_conf.h,
-  include/uprint.h: added code to ignore speculative lines in
+  include/uprint.h: added code to ignore speculative sections and lines in
   uprint.conf.sample.  Added notes to uprint.conf.sample which explain that
-  the lines don't do anything.
+  the sections and lines don't do anything yet.
 
 * interfaces/smb.sh: added "-z 600000" to the smbclient command line.  This
   changes the timeout used when waiting for the SMB server to respond.  That
@@ -8662,8 +8663,8 @@ Bug Fixes
 
 * libuprint/Makefile: added $(SOCKLIBS) to build line for uprint_rfc1179.
 
-* z_install_end/Makefile: added explicit rule for getservbyname so that
-  $(SOCKLIBS) could be included.
+* z_install_end/Makefile: added explicit build rule for getservbyname so
+  $that (SOCKLIBS) could be included.
 
 * z_install_end/ppr.sh, makeprogs/scriptfixup.sh, Configure: removed all use 
   of $NECHO (echo -n) and replaced it with echo "\c" since echo -n isn't 
@@ -8677,7 +8678,8 @@ Bug Fixes
 
 * z_install_end/install_init_scripts.sh,ppr.sh: changed Linux Initscripts 
   stop number from 40 to 20 to conform guidelines in Initscripts 
-  documentation.
+  documentation, fixed to convert hard links to symbolic links, init script
+  is now considered a config file for RPM building purposes.
 
 Misc. Added Material
 
@@ -8693,13 +8695,14 @@ Misc. Removed Material
 * nonppr_misc/c2lib/mathvec.[ch]: Removed since we will not be doing 3D
   graphics.
 
-* Configure_old: Removed since not tested anymore.
+* Configure_old: Removed since we aren't testing it anymore.
 
 Misc. Enhancements
 
 * makeprogs/installln.sh,installprog.sh: added code to write commands that
-  fail because not running as root to ../root.sh (if it exists, otherwise the
-  error is still a fatal one).
+  fail because not running as root to ../root.sh (if it exists, otherwise
+  the error is still a fatal one).  The current RPM specfile uses this
+  feature.
 
 * libppr/query.c: changed to use new exception handing.  (It was OK to make
   this change since the code in query.c isn't used yet.
@@ -8707,14 +8710,22 @@ Misc. Enhancements
 * www/prn_control.cgi.perl: now prints large byte counts in kilobytes or
   megabytes.
 
-* No longer defines ppradmin in /etc/services if Xinetd is used.  This
-  makes building packages much easier.
+* z_install_end/install_inetd_conf.sh: no longer defines ppradmin in
+  /etc/services if Xinetd is used.  The port number is specified directly
+  in /etc/xinetd.d/ppr.  This makes building packages much easier.
 
-* ppad/ppad_media.c: added code to create media database if it doesn't 
+* ppad/ppad_media.c: added code to create media database if it doesn't
   already exist.
 
 * z_install_end/ppr.sh: added support for additional commands as recommended
   by Linux Initscripts documentation.
+
+* z_install_end/install_inetd_conf.sh: for Xinetd, add /etc/xinetd.d  and
+  the reference to it in /etc/xinetd.conf if it doesn't already exist.
+
+* makeproge/installconf.sh: change to allow specifying of the owner, group,
+  and permissions.  This means that it can now be used to register the PPR
+  init script.
 
 Internet Printing Protocol Work
 
@@ -8731,7 +8742,7 @@ Internet Printing Protocol Work
 * ipp/ipp_util.c: got code working
 
 * ipp/ipp.c: added do_print_job() and dummy functions for some other
-  operations.
+  operations.  This is sufficient for basic printing.
 
 
 
@@ -8747,9 +8758,17 @@ TODO
   cacheable.  It is probably that Dillo is exposing a bug by not having
   a workaround for buggy sites.
 
+* Decide how pprd should handle the matter of the hostname changing due
+  to dial-up networking.
+
+* Finish the IPP server.
+
 * Finish papd.
 
-* Fix RPM building
+* Change responder interface to use name=value pairs on the command line.
+
+* Change commentators to support the new status handling code and merge them
+  with responders.
 
 * Create Debian package
 
@@ -8762,27 +8781,14 @@ TODO
 
 * Make uprint-cancel and uprint-lpstat actually do something
 
-* Change responder interface to use name=value pairs on the command line.
-
-* Change commentators to support the new status handling code and merge them
-  with responders.
-
-* Finish the IPP server.
-
 * Implement -F switch sorting in pprdrv.
 
-* Replace the PPD parsing code in pprdrv and implement installable options
-  handling.
+* Implement PPD file installable options handling in pprdrv.
 
 * Implement PPR node-to-node printing, queue display, and job canceling.
 
-* Add code to convert command line options to utf-8 and provide mechanism for
-  their translation.
-
-* Add --dsc-charset to ppr.
+* Add code to convert command line options and DSC text fields to utf-8.  
+  Add --dsc-charset to ppr.
 
 * Support banner page "news" messages.
-
-* Decide how pprd should handle the matter of the hostname changing due
-  to dial-up networking.
 

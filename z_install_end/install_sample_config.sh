@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 7 August 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -40,12 +40,12 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
 	./puts "  $CONFDIR/acl/$f..."
 	if [ ! -f $RPM_BUILD_ROOT$CONFDIR/acl/$f ]
 		then
-	echo " creating"
+		echo " creating"
 		touch $RPM_BUILD_ROOT$CONFDIR/acl/$f
 	else
-	echo " exists"
-		fi
-	../makeprogs/installconf.sh 'config(noreplace)' $CONFDIR/acl/$f
+		echo " exists"
+	fi
+	../makeprogs/installconf.sh $USER_PPR $GROUP_PPR 644 'config(noreplace)' $CONFDIR/acl/$f
 	done
 
 #===========================================================================
@@ -67,7 +67,7 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
 	# Using 'config(noreplace)' in place of 'config' means that RPM will write the
 	# new config files as .rpmnew and leave the old ones in place rather than
 	# moving the old ones to .rpmsave and installing the new ones.
-	../makeprogs/installconf.sh 'config(noreplace)' $CONFDIR/$f
+	../makeprogs/installconf.sh $USER_PPR $GROUP_PPR 644 'config(noreplace)' $CONFDIR/$f
 	done
 
 exit 0

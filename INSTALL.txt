@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 6 August 2003.
+ Last revised 7 August 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -161,12 +161,25 @@ the functions required by PPR.  It is recomended that you install a recent
 version of Zlib such as 1.1.4.  If you have installed zlib in /usr or
 /usr/local, then Configure will find it.
 
-If you are depending on LD_LIBRARY_PATH to help PPR to find the shared
-libraries such as Zlib, you will have problems.  This is because
+If you are depending on LD_LIBRARY_PATH to help PPR to find shared libraries
+such as GDBM and Zlib, you will have problems.  This is because
 LD_LIBRARY_PATH doesn't work with setuid programs and because processes
-started by Init or Inetd probably don't have it set.  It is recomended that
-you add all of your shared library directories to the system search path
-by using the crle command.
+started by Init or Inetd probably don't have it set.
+
+In an attempt to solve this problem, when compiling on Solaris PPR compiles
+/usr/local into the binaries as an internal search path.  This seems to work
+OK except for libgcc_s.so.1.  A quick-and-dirty fix that will work on all
+versions of Solaris is to do this:
+
+# ln -s /usr/local/lib/libgcc_s.so.1 /usr/lib
+
+This links the GCC library into a directory that is in the system search
+path.
+
+Newer versions of Solaris (such as 9.0) provide a way to alter the system
+search path.  This is done with the crle command.  You should read the
+crle(8) manpage before trying to use it as you will be tampering with a
+critical system setting.  But briefly:
 
 To see the current search path:
 
@@ -180,7 +193,8 @@ Command line:
   crle -c /var/ld/ld.config -l /usr/lib
 
 The command line show is the command needed to establish the current
-configuration.  Write it down.  To add a directory:
+configuration.  Write it down.  To append a directory to the search path, do
+this:
 
 # crle -u -l /usr/local/lib
 
