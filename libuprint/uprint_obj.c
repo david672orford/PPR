@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_obj.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 27 May 2004.
 */
 
 #include "before_system.h"
@@ -366,7 +366,7 @@ int uprint_set_copies(void *p, int copies)
 	{
 	DODEBUG(("uprint_set_copies(p=%p, copies=%d)", p, copies));
 
-	if(copies < 0 || copies > 9999)
+	if(copies < -1 || copies > 9999)	/* -1 means don't try to influence */
 		{
 		DODEBUG(("uprint_set_copies(): unreasonable value for copies"));
 		uprint_errno = UPE_BADARG;

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 27 May 2004.
 #
 
 use lib "?";
@@ -37,13 +37,21 @@ require "cgi_widgets.pl";
 require "cgi_intl.pl";
 require "cgi_run.pl";
 
-# Where are the Ghostscript example PostScript files?  We need to improve this
-# code to search more widely.
+# Where are the Ghostscript example PostScript files?  This is the
+# location of the PPR Ghostscript distribution.
 $GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
 %IMAGES = (
-		"Ghostscript Golfer" => ["$GS_EXAMPLES/golfer.ps", 0.40],
-		"Ghostscript Tiger" => ["$GS_EXAMPLES/tiger.ps", 0.40]
-		);
+	"Ghostscript Golfer" =>
+		["$GS_EXAMPLES/golfer.eps", 0.40],
+	"Ghostscript Tiger" => 
+		["$GS_EXAMPLES/tiger.eps", 0.40]
+	"Ghostscript Color Circle" => 
+		["$GS_EXAMPLES/colorcir.ps", 0.40]
+	"Ghostscript Escher" => 
+		["$GS_EXAMPLES/escher.ps", 0.40]
+	"Ghostscript Dore Tree" => 
+		["$GS_EXAMPLES/doretree.ps", 0.40]
+	);
 
 # Eliminate those that aren't installed.
 foreach my $i (keys %IMAGES)
@@ -103,6 +111,17 @@ $addprn_wizard_table = [
 		},
 	'buttons' => [N_("_Cancel"), N_("_Print")]
 	},
+	
+	#===========================================
+	#
+	#===========================================
+	{
+	'title' => N_("PPR Print Test Page"),
+	'picture' => "prn_testpage1.png",
+	'dopage' => sub {
+		}
+	},
+
 	#===========================================
 	# Do It
 	#===========================================

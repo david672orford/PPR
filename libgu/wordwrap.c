@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/wordwrap.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,34 +25,40 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 27 May 2004.
 */
 
-/*
-** This function will re-line-wrap a string so that it has lines whose
-** length do not exceed a certain limit.
+/*! \file
+	\brief word wrap lines
 */
 
 #include "before_system.h"
 #include <string.h>
+#include <stdlib.h>
 #include "gu.h"
 
-void gu_wordwrap(char *string, int width)
+/** word wrap string
+ *
+ * This function will re-line-wrap a string so that it has lines whose
+ * length do not exceed a certain limit.
+ */
+
+int gu_wordwrap(char *string, int width)
 	{
 	const char *si;
 	char *di;
-	int curlen;									/* length of the current line */
-	int len;
-	int spacelen;								/* number of spaces at end of line */
+	int curlen;			/* length of the current line */
+	int wordlen;
+	int spacelen;		/* number of spaces at end of line */
 
 	if(width <= 0)
-		return;
+		return 0;
 
 	for(si=di=string,spacelen=curlen=0; *si; spacelen=0)
 		{
-		while( *si == ' ' || *si == '\n' )		/* Copy spaces to the destination */
-			{									/* if they are not at the */
-			if( curlen > 0 )					/* begining of the line. */
+		while(*si == ' ' || *si == '\n')	/* Copy spaces to the destination */
+			{								/* if they are not at the */
+			if(curlen > 0)					/* begining of the line. */
 				{
 				*(di++) = ' ';
 				curlen++;
@@ -61,23 +67,78 @@ void gu_wordwrap(char *string, int width)
 			si++;
 			}
 
-		len = strcspn(si, " \n");				/* length of next word */
+		wordlen = strcspn(si, " \n");	/* length of next word */
 
-		if( (curlen+len) > width )				/* If it won't fit, */
+		/* If it won't fit, take back the space(s) and replace 
+		 * it/them with a linefeed.
+		 */
+		if(curlen > 0 && (curlen+wordlen) > width)
 			{
-			di -= spacelen;						/* take back the preceeding spaces, */
-			*(di++) = '\n';						/* and replace them with a line feed. */
-			curlen = 0;
+			di -= spacelen;
+			*(di++) = '\n';
+			curlen = spacelen = 0;
 			}
 
-		strncpy(di, si, len);					/* copy the word */
-		si += len;
-		di += len;
-		curlen += len;
+		/* copy the word */
+		strncpy(di, si, wordlen);
+		si += wordlen;
+		di += wordlen;
+		curlen += wordlen;
 		}
 
+	if(di > string && *(di-1) == ' ')
+		*(di-1) = '\n';
+
 	*di = '\0';
+	return (di - string);
 	} /* end of gu_wordwrap() */
+
+static int gu_wrap_vfprintf(FILE *file, const char format[], va_list ap)
+	{
+	int ret;
+	char *ptr;
+	int width;
+
+	if((ptr = getenv("COLUMNS")))
+		width = atoi(ptr);
+	else
+		width = 80;
+
+	ret = gu_vsnprintf(NULL, 0, format, ap);
+	ptr = (char*)gu_alloc(ret+1, sizeof(char));
+	gu_vsnprintf(ptr, ret+1, format, ap);
+
+	ret = gu_wordwrap(ptr, width);
+	fputs(ptr, file);
+	
+	gu_free(ptr);
+
+	return ret;
+	} /* gu_wrap_printf() */
+
+/** Print a word-wrapped line on stdout.
+*/
+int gu_wrap_printf(const char format[], ...)
+	{
+	va_list ap;
+	int ret;
+	va_start(ap, format);
+	ret = gu_wrap_vfprintf(stdout, format, ap);
+	va_end(ap);
+	return ret;
+	}
+
+/** Print a word-wrapped line on stderr.
+ */
+int gu_wrap_eprintf(const char format[], ...)
+	{
+	va_list ap;
+	int ret;
+	va_start(ap, format);
+	ret = gu_wrap_vfprintf(stderr, format, ap);
+	va_end(ap);
+	return ret;
+	}
 
 #ifdef TEST
 int main(int argc, char *argv[])

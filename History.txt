@@ -9235,11 +9235,6 @@ Internet Printing Protocol Work
 
 * Added libppr/query_wrapper.c and changed libppr/query.c to use it.
 
-* Removed nonppr_vendors/ppd_adobe/"HP LaserJet 4Si 4SiMX PS 300DPI" since
-  it didn't seem to server any real purpose.  However, just in case someone
-  is using it on an existing installation, it wasn't added to 
-  z_install_end/fixup_obsolete.sh.
-
 * z_install_end/install_bin_links.sh: added link for ppr-testpage.
 
 * ppad/: renamed "ppad ppdlib list" to "ppad ppdlib search".
@@ -9248,10 +9243,33 @@ Internet Printing Protocol Work
   option with default resolutions to Ghostscript options derived
   from *cupsFilter lines.
 
+* removed nonppr_vendors/ppd_hp/	
+							HP Color LaserJet 4500
+							HP LaserJet 4000 Series
+							HP LaserJet 4050 Series
+							HP LaserJet 6P
+							HP LaserJet 8100 Series
+							HP LaserJet 8150 Series
+							HP Color LaserJet
+							HP LaserJet 2100 Series
+							HP LaserJet 4 Plus
+							HP LaserJet 5Si
+							HP LaserJet 8000 Series
+  They have been added to z_install_end/fixup_obsolete.sh.
+
+* Removed nonppr_vendors/ppd_adobe/
+							HP LaserJet 4Si 4SiMX PS 300DPI
+							HP LaserJet 4Si 4SiMX PS 600DPI
+  Note that there are two versions of this file for no very solid reason
+  and that the ModelName contains a slash, hence the filename is different
+  from the modelname (which breaks the old PPR practice for naming PPD
+  files).  Just in case someone is using it on an existing installation, 
+  then weren't added to z_install_end/fixup_obsolete.sh.
+
 * added nonppr_vendors/ppd_hp/
-							hp_laserjet_4100_series.ppd
-  							hp_color_laserjet_8550.ppd
 							hpc9500s.ppd
+					/ppd_hp_mit/
+							contents of hp-ppd-mit-12_02_2003.tar.gz
 					/ppd_canon/
 							EFNC9111.PPD							
 
@@ -9286,14 +9304,23 @@ Internet Printing Protocol Work
   /usr/etc/inetd.  (This is the wierd location used by some early System V
   TCP/IP implemenations.)
 
+* libgu/wordwrap.c: added gu_wrap_printf() and gu_wrap_eprintf().
+
+* samba/ppr2samba.c: converted to use gu_wrap_ functions mentioned above.
+
+* libuprint/uprint_obj.c, lprsrv/lprsrv_print.c: fixed so that if multiple
+  copies aren't selected (such as via "lpr -n 2"), no attempt is made to set
+  the number of copies in the print command that is finally run.  Previously
+  it would run ppr with the option "-n 1" option which broke the multiple 
+  copies facility of MacOS X since it used "%%Requirements: numcopies(2)"
+  to test the copies count rather than the LPR/LPD mechanism.  (Many thanks
+  to Francisco Gonzalez of UC Davis for doing the legwork required to narrow
+  this problem down.)
 
 
 TODO
 
-* www/prn_testpage.cgi.perl: improve search for Ghostscript test pages.
-  It must search multiple locations and for both .ps and .eps.
-
-* Create Debian package.
+* Fix Debian package.
 
 * Make a tiny GtkEmbed or Mozilla chrome Mozilla browser
 

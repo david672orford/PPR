@@ -162,5 +162,16 @@ outdated $HOMEDIR/lib/olprsrv
 outdated $HOMEDIR/lib/PrintDesk/ATChooser.pm
 outdated $HOMEDIR/bin/ppr-chooser
 outdated $HOMEDIR/lib/getzones
+outdated $SHAREDIR/PPDFiles/"HP Color LaserJet 4500"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 4000 Series"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 4050 Series"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 6P"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 8100 Series"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 8150 Series"
+outdated $SHAREDIR/PPDFiles/"HP Color LaserJet"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 2100 Series"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 4 Plus"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 5Si"
+outdated $SHAREDIR/PPDFiles/"HP LaserJet 8000 Series"
 
 exit 0

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 May 2004.
+** Last modified 27 May 2004.
 */
 
 /*
@@ -75,7 +75,6 @@ FILE *outfiles[MAX_VSERVERS + 1];
 
 /* Should be be verbose? */
 int debug = FALSE;
-FILE *errors;
 
 void warning(const char *message, ...)
 #ifdef __GNUC__
@@ -86,11 +85,11 @@ void warning(const char *message, ... )
 	{
 	va_list va;
 	va_start(va, message);
-	fputc('\n', errors);
-	fputs(_("Warning: "), errors);
-	vfprintf(errors, message, va);
-	fputc('\n', errors);
-	fputc('\n', errors);
+	fputc('\n', stderr);
+	fputs(_("Warning: "), stderr);
+	vfprintf(stderr, message, va);
+	fputc('\n', stderr);
+	fputc('\n', stderr);
 	va_end(va);
 	} /* end of warning() */
 
@@ -292,13 +291,13 @@ static void do_config_file(struct DIRS *dir, const char qname[], int *total_expo
 		switch(dir->type)
 			{
 			case QUEUEINFO_ALIAS:
-				fprintf(errors, _("skipping alias \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping alias \"%s\": %s"), qname, gu_exception);
 				break;
 			case QUEUEINFO_GROUP:
-				fprintf(errors, _("skipping group \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping group \"%s\": %s"), qname, gu_exception);
 				break;
 			case QUEUEINFO_PRINTER:
-				fprintf(errors, _("skipping printer \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping printer \"%s\": %s"), qname, gu_exception);
 				break;
 			case QUEUEINFO_SEARCH:
 				gu_Throw("assertion failed");
@@ -378,13 +377,11 @@ int main(int argc, char *argv[])
 
 	umask(PPR_UMASK);
 
-	errors = stderr;
 	for(x=1; x < argc; x++)
 		{
 		if(strcmp(argv[x], "-d") == 0 || strcmp(argv[x], "--debug") == 0)
 			{
 			debug = TRUE;
-			errors = stdout;	/* <-- so we can pipe output to more */
 			continue;
 			}
 		if(strcmp(argv[x], "--version") == 0)
@@ -404,7 +401,7 @@ int main(int argc, char *argv[])
 			return EXIT_OK;
 			}
 
-		help(errors);
+		help(stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -431,7 +428,7 @@ int main(int argc, char *argv[])
 	
 				/* File not found, say so and get out since we
 				   have been asked not to create it. */
-				printf(_("Absence of \"%s\" indicates that export to Samba is not desired.\n"), smb_include_conf);
+				gu_wrap_printf(_("Absence of \"%s\" indicates that export to Samba is not desired.\n"), smb_include_conf);
 				return EXIT_OK;
 				}
 			}
@@ -444,7 +441,7 @@ int main(int argc, char *argv[])
 		for(dir=dirs; dir->name; dir++)
 			{
 			if(debug)
-				printf("Searching directory \"%s\"...\n", dir->name);
+				gu_wrap_printf("Searching directory \"%s\"...\n", dir->name);
 	
 			if(!(dirobj = opendir(dir->name)))
 				gu_Throw(_("Can't open directory \"%s\", errno=%d (%s)\n"), dir->name, errno, gu_strerror(errno));
@@ -485,11 +482,11 @@ int main(int argc, char *argv[])
 	
 		/* Report on what we did. */
 		if(total == 1)
-			printf(_("%d of 1 queue exported to \"%s\".\n"), total_exported, smb_include_conf);
+			gu_wrap_printf(_("%d of 1 queue exported to \"%s\".\n"), total_exported, smb_include_conf);
 		else
-			printf(_("%d of %d queues exported to \"%s\".\n"), total_exported, total, smb_include_conf);
+			gu_wrap_printf(_("%d of %d queues exported to \"%s\".\n"), total_exported, total, smb_include_conf);
 		if(total_errors > 0)
-			printf(_("%d of %d queue(s) skipt due to errors.\n"), total_errors, total);
+			gu_wrap_printf(_("%d of %d queue(s) skipt due to errors.\n"), total_errors, total);
 	
 		/* Produce warning messages. */
 		check_for_problems();

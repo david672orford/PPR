@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-testpage.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 27 May 2004.
 #
 
 =head1 NAME
@@ -76,6 +76,13 @@ since zero represents no illumination.
 Print density bars for cyan, magenta, yellow and black (k).  Zero density
 will be white (assuming white paper) since zero represents no ink
 appication.
+
+=item --test-spoked
+
+Print a spoked wheel with a radius of 125 points.  The spokes are at 1 degree
+intervals.  The lines are as thin as the printer is capable of printing.  Rings
+printed at 25 point intervals out from the center enable one to judge how 
+closely lines may be printed while still being distringuishable.
 
 =item --version
 

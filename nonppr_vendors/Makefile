@@ -47,6 +47,7 @@ install:
 			ppd_adobe/*[!~] \
 			ppd_apple/*[!~] \
 			ppd_hp/*[!~] \
+			ppd_hp_mit/*[!~] \
 			ppd_canon/*[!~] \
 			ppd_ricoh/*[!~]
 	$(INSTALLDATA) $(PROCSET_DESTDIR) \

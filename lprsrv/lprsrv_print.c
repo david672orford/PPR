@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2004.
+** Last modified 27 May 2004.
 */
 
 /*
@@ -681,7 +681,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 		/* If first time thru loop or copies or type have changed, */
 		if(findex == 0 || data->copies != data_files[last_set].copies || data->type != data_files[last_set].type)
 			{
-			uprint_set_copies(upr, data->copies);
+			uprint_set_copies(upr, data->copies > 1 ? data->copies : -1);
 			uprint_set_content_type_lpr(upr, data->type);
 			last_set = findex;
 

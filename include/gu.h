@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 27 May 2004.
 */
 
 /*! \file
@@ -178,7 +178,9 @@ void gu_sscanf_rollback(void);
 int gu_fscanf(FILE *input, const char *format, ...);
 void gu_daemon(mode_t daemon_umask);
 int disk_space(const char *path, unsigned int *free_blocks, unsigned int *free_files);
-void gu_wordwrap(char *string, int width);
+int gu_wordwrap(char *string, int width);
+int gu_wrap_printf(const char format[], ...);
+int gu_wrap_eprintf(const char format[], ...);
 void (*signal_interupting(int signum, void (*handler)(int sig)))(int);
 void (*signal_restarting(int signum, void (*handler)(int sig)))(int);
 int gu_vsnprintf (char *str, size_t count, const char *fmt, va_list args);
