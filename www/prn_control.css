@@ -15,14 +15,15 @@ TD TABLE TD {
 TEXTAREA.alerts { font-size: 8pt; }
 INPUT.buttons { background: #b0b0b0 }
 
-TD.bar {
-	margin: 3pt; 
-	border-style: solid;
-	border-width: thin;
-	height: 25; width: 550;
+IMG {
+	border-color: black;
+	border-width: 1pt;
+	border-style: none;
 	}
 
-IMG { margin: 0pt; padding: 0pt; }
+IMG.left { border-style: solid none solid solid; }
+IMG.middle { border-style: solid none solid none; }
+IMG.right { border-style: solid solid solid none; }
 
 SPAN.sent	{ color: red; }
 SPAN.unsent	{ color: blue; }
