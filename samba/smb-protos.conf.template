@@ -1,9 +1,9 @@
 ;
-; mouse:~ppr/src/samba/smb-protos.conf
+; mouse:~ppr/src/samba/smb-protos.conf.template
 ;
-; See ppr2samba(8) for an explanation of this file.
+; Run "ppdoc ppr2samba" for an explanation of this file's purpose.
 ;
-; Last revised 20 December 2001.
+; Last revised 4 February 2002.
 ;
 
 ;
@@ -24,11 +24,11 @@
    ; The line below must go in [global] if Samba older than 1.9.18.
    printing = bsd
 
-   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a -X %U@samba -f %U -U %s &
+   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a -X %U@%m.samba -f %U -U %s &
    lpq command = %HOMEDIR%/bin/ppop lpq %p
-   lprm command = %HOMEDIR%/bin/ppop -X %U@samba cancel %p-%j
-   lppause command = %HOMEDIR%/bin/ppop -X %U@samba hold %p-%j
-   lpresume command = %HOMEDIR%/bin/ppop -X %U@samba release %p-%j
+   lprm command = %HOMEDIR%/bin/ppop -X %U@%m.samba cancel %p-%j
+   lppause command = %HOMEDIR%/bin/ppop -X %U@%m.samba hold %p-%j
+   lpresume command = %HOMEDIR%/bin/ppop -X %U@%m.samba release %p-%j
 
    ; Samba 1.9.18.p10 and later allows us to pause queues.  There are two
    ; possible queuepause commands.  The first one pauses the queue once
@@ -64,7 +64,7 @@
 
 [pprproto_pprpopup2]
    copy = pprproto
-   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@samba -f %U -U %s &
+   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@%m.samba -f %U -U %s &
 
 ;
 ; This section is for the automatic installation of

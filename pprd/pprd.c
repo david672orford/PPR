@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 January 2002.
+** Last modified 19 February 2002.
 */
 
 /*
@@ -167,8 +167,9 @@ static void reapchild(void)
 	{
 	DODEBUG_PRNSTOP(("reapchild(): child terminated, pid=%ld, exit=%i", (long)pid, WEXITSTATUS(wstat)));
 
-	/* Give everyone a chance to claim it. */
+	/* Is it pprdrv? */
 	if(!pprdrv_child_hook(pid, wstat))
+	    /* Is it pprd-remote? */
 	    if(!remote_child_hook(pid, wstat))
 		{
 		/* Those which follow don't have complex reporting, report weird stuff here. */
@@ -185,8 +186,9 @@ static void reapchild(void)
 		    error("Process %ld met a mysterious end", (long)pid);
 		    }
 
-		/* OK, try the next two. */
+		/* Is it pprd-question? */
 		if(!question_child_hook(pid, wstat))
+		    /* Is it a responder? */
 		    responder_child_hook(pid, wstat);
 		}
 	}
@@ -226,6 +228,77 @@ static void tick(void)
     remote_tick();
     question_tick();
     } /* end of tick() */
+
+/*========================================================================
+** Handle a command on the pipe.
+========================================================================*/
+static void do_command(int FIFO)
+    {
+    const char function[] = "do_command";
+    char buffer[256];		/* buffer for received command */
+    int len;			/* length of data in buffer */
+    int count;
+    char *ptr, *next;
+
+    /*
+    ** Get a line from the FIFO.  We include lame code for
+    ** Cygnus-Win32 which doesn't implement mkfifo() yet.
+    */
+    #ifdef HAVE_MKFIFO
+    while((len = read(FIFO, buffer, sizeof(buffer))) < 0)
+	{
+	if(errno != EINTR)	/* <-- exception for OSF/1 3.2 */
+	    fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	}
+    #else
+    while((len = read(FIFO, buffer, sizeof(buffer))) <= 0)
+	{
+	if(len < -1)
+	    fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	sleep(1);
+	}
+    #endif
+
+    if(len == 0 || buffer[len-1] != '\n')
+	{
+	error("ignoring malformed command(s) from pipe");
+	return;
+	}
+
+    /* Remove the line feed which terminates the command. */
+    buffer[len - 1] = '\0';
+
+    /* Actually, there could be more than one command waiting. */
+    for(next=buffer,count=0; (ptr = gu_strsep(&next, "\n")); count++)
+	{
+	DODEBUG_MAINLOOP(("command[%d]: %s", count, ptr));
+
+	switch(ptr[0])			/* examine the first character */
+	    {
+	    case 'j':			/* a print job */
+		queue_new_job(ptr);
+		break;
+
+	    case 'n':			/* Nag operator by email */
+		gu_alloc_checkpoint();
+		ppad_remind();
+		gu_alloc_assert(0);
+		break;
+
+	    case 'N':			/* new printer or group config */
+		if(ptr[1] == 'P')
+		    new_printer_config(&ptr[3]);
+	        else			/* 'G' */
+		    new_group_config(&ptr[3]);
+	        break;
+
+	    default:			/* anything else needs a reply to ppop */
+		ppop_dispatch(ptr);
+		break;
+	    }
+	}
+
+    } /* end of do_command() */
 
 /*========================================================================
 ** The Main Procedure
@@ -340,8 +413,6 @@ int main(int argc, char *argv[])
 	int readyfds;			/* return value from select() */
 	fd_set rfds;			/* list of file descriptors for select() to watch */
 	struct timeval time_now;	/* the current time */
-	char command[256];		/* buffer for received command + zero byte  */
-	int len;			/* length of data in buffer */
 
 	DODEBUG_MAINLOOP(("top of main loop"));
 
@@ -372,6 +443,15 @@ int main(int argc, char *argv[])
 	    sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
 	    }
 
+	/* If there is something to read, */
+	if(readyfds > 0)
+	    {
+	    if(!FD_ISSET(FIFO, &rfds))
+		fatal(0, "%s(): assertion failed: select() returned but FIFO not ready", function);
+	    do_command(FIFO);
+	    continue;
+	    }
+
 	/* If the SIGCHLD handler set the flag, handle child termination.  Once
 	   we have done that, we must go back to the top of the loop because
 	   we don't really know if it is time for a tick() call yet. */
@@ -382,8 +462,8 @@ int main(int argc, char *argv[])
 	    continue;
             }
 
-	/* If there was no error and no file descriptors are ready, then the timeout
-	   must have expired.  Call tick(). */
+	/* If there was no error and no file descriptors are ready, then the 
+	   timeout must have expired.  Call tick(). */
         if(readyfds == 0)
             {
             tick();
@@ -391,75 +471,12 @@ int main(int argc, char *argv[])
             continue;
             }
 
-	/* If select() claims an error and it is EINTR (Interupted System Call),
-	   then restart it.  Other errors are fatal. */
-	if(readyfds < 0)
-	    {
-	    if(errno == EINTR)
-	    	continue;
-	    fatal(0, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    }
-
-	/* Before we assume there is a request waiting on the FIFO, do a
-	   few sanity checks. */
-	if(readyfds != 1)
-	    fatal(0, "%s(): assertion failed: selected returned %d", function, readyfds);
-	if(!FD_ISSET(FIFO, &rfds))
-	    fatal(0, "%s(): assertion failed: select() returned but FIFO not ready", function);
-
-	/*
-	** Get a line from the FIFO.  We include lame code for
-	** Cygnus-Win32 which doesn't implement mkfifo() yet.
-	*/
-	#ifdef HAVE_MKFIFO
-	while((len = read(FIFO, command, 255)) < 0)
-	    {
-	    if(errno != EINTR)	/* <-- exception for OSF/1 3.2 */
-		fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    }
-	#else
-	while((len = read(FIFO, command, 255)) <= 0)
-	    {
-	    if(len < -1)
-	    	fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    sleep(1);
-	    }
-	#endif
-
-	if(len == 0 || command[len-1] != '\n')
-	    {
-	    error("ignoring malformed command from pipe");
+	/* If interupted by a system call, restart it. */
+	if(errno == EINTR)
 	    continue;
-	    }
 
-	/* Remove the line feed which terminates the command. */
-	command[len - 1] = '\0';
-
-	DODEBUG_MAINLOOP(("command: %s", command));
-
-	switch(command[0])		/* examine the first character */
-	    {
-	    case 'j':			/* a print job */
-		queue_new_job(command);
-		break;
-
-	    case 'n':			/* Nag operator by email */
-		gu_alloc_checkpoint();
-	    	ppad_remind();
-	    	gu_alloc_assert(0);
-	    	break;
-
-	    case 'N':			/* new printer or group config */
-		if(command[1] == 'P')
-		    new_printer_config(&command[3]);
-		else			/* 'G' */
-		    new_group_config(&command[3]);
-		break;
-
-	    default:                    /* anything else needs a reply to ppop */
-		ppop_dispatch(command);
-		break;
-	    }
+	/* If we get this far, there was an error. */
+	fatal(0, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	} /* end of endless while() loop */
 
     state_update("SHUTDOWN");

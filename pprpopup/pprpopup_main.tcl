@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.50a1
-28 January 2002
+19 February 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -180,13 +180,27 @@ switch -exact -- $tcl_platform(platform) {
 # preparing it appear or call attention to a window that
 # the user has been neglecting.
 #
-# The call to update works around a problem in the X-Windows
-# version which causes windows to appear at a default size
-# for a few seconds.
 #
 proc window_reopen {win} {
+
+    # This call to update works around a problem in the X-Windows
+    # version which causes windows to appear at a default size
+    # for a few seconds.
     update
+
+    # This overrides a semi-bug in MS-Windows NT 5.0.  If we don't do this
+    # then the window will remain behind the application that has focus.
+    # What we do is temporarily make it an unmanaged window.  Unmanaged
+    wm overrideredirect $win 1
+    wm overrideredirect $win 0
+
+    # We may have iconified the window while we were filling it with data.
+    # Make sure it is out in the open.
     wm deiconify $win
+
+    # Raise the window to the top and try to give it focus.  Hopefully this
+    # will work within the context of the whole desktop and not just
+    # this program.
     raise $win
     focus $win
     }

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/malloc.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 November 2000.
+** Last modified 21 February 2002.
 */
 
 /*
@@ -43,7 +43,7 @@ void *gu_alloc(size_t number, size_t size)
     DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
 
     if((rval = malloc(size*number)) == (void*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_alloc", "malloc() failed, errno=%d", errno);
+	libppr_throw(EXCEPTION_STARVED, "gu_alloc", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
     gu_alloc_blocks++;
 
@@ -60,7 +60,7 @@ char *gu_strdup(const char *string)
     DODEBUG(("gu_strdup(\"%s\")", string));
 
     if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d", errno);
+	libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
     gu_alloc_blocks++;
 
@@ -79,7 +79,7 @@ char *gu_strndup(const char *string, size_t len)
     DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
 
     if((rval = (char*)malloc(len+1)) == (char*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_strndup", "malloc() failed, errno=%d", errno);
+	libppr_throw(EXCEPTION_STARVED, "gu_strndup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
     gu_alloc_blocks++;
 
@@ -103,7 +103,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
     	{
 	*number = (len + 1);
 	if((ptr = (char*)realloc(ptr, *number)) == (char*)NULL)
-	    libppr_throw(EXCEPTION_STARVED, "gu_restrdup", "realloc() failed, errno=%d", errno);
+	    libppr_throw(EXCEPTION_STARVED, "gu_restrdup", "realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
     	}
     strcpy(ptr, string);
     return ptr;
@@ -119,7 +119,7 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
     DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
 
     if((rval = realloc(ptr, number*size)) == (void*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "ppr_realloc", "realloc() failed, errno=%d", errno);
+	libppr_throw(EXCEPTION_STARVED, "gu_realloc", "realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
 
     return rval;
     } /* end of ppr_realloc() */

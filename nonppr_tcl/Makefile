@@ -1,7 +1,7 @@
 #
 # mouse:~ppr/src/nonppr_tcl/Makefile
 #
-# Last modified 18 January 2002.
+# Last modified 19 February 2002.
 #
 
 include ../makeprogs/global.mk
@@ -23,7 +23,8 @@ TCL_LIBRARY = $(HOMEDIR)/lib
 # If you don't have them enabled, then you can't run the regression tests. 
 #
 MATH_FLAGS =
-MATH_LIBS = -lieee -lm
+#MATH_LIBS = -lieee -lm
+MATH_LIBS = -lm
 #MATH_FLAGS = -DTCL_NO_MATH
 #MATH_LIBS =
 

@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--2 February 2002.
+1.50a1, 1 August 2001--21 February 2002.
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7483,7 +7483,10 @@ line was being parsed twice.
 
 * Removed autoconf/ and moved configure.in into makeprogs/.
 
-* Added pprpopup/ and removed samba/pprpopup.tcl.
+* Added pprpopup/ and removed samba/pprpopup.tcl.  The pprpopup/ directory
+  contains a very heavily re-written PPR Popup program.  It now contains
+  a mini web browser based in the IWidgets Scrolledhtml widget.  This allows
+  us to ask the user arbitrary questions.
 
 * Added nonppr_misc/md5/md5pure.tcl.
 
@@ -7528,3 +7531,15 @@ line was being parsed twice.
   if the temporary file space filled up!
 
 * Updated INSTALL.txt somewhat and added a mention of RPM_BUILD_ROOT.
+
+* pprd/pprd.c: fixed named pipe reader code so that it handles the case
+  where read() returns two commands.  Incredibly, this bug has been there
+  from the very begining (in 1993).  Perhaps it was temporary code that
+  was never replaced with good code.  In any event, it probably explains
+  why the web interface was sometimes leaving CGI scripts hung waiting
+  for ppop.  (Another factor was that the error message displayed when
+  ppop timed out waiting for pprd was missing the line feed at the end.)
+  This should also explain the jobs that sometimes appeared in the queue
+  directory but not in pprd's queue.  This was a vexing problem because
+  restarting pprd would cause old jobs to suddenly appear in the queue.
+

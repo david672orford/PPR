@@ -310,6 +310,14 @@ use the variable RPM_BUILD_ROOT to control where "make install" installs
 PPR.  If this environment variable is set, then its contents will be
 prepended to all install paths.  The sample ppr.spec uses this feature.
 
+For example, here are commands to build a tar archive binary distribution
+from a configured and built PPR source directory:
+
+$ mkdir /tmp/ppr-binary
+$ make RPM_BUILD_ROOT=/tmp/ppr-binary install
+$ cd /tmp/ppr-binary
+$ tar zcvf ../ppr-binary.tar.gz .
+
 ============================================================================
  Upgrading to PPR 1.50 from previous versions
 ============================================================================

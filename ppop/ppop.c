@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 December 2001.
+** Last modified 19 February 2002.
 */
 
 /*
@@ -212,7 +212,7 @@ FILE *wait_for_pprd(int do_timeout)
 
     if(timeout)
 	{
-	fprintf(errors, _("Timeout waiting for response"));
+	fprintf(errors, _("%s: timeout waiting for response"), myname);
 	reply_file = (FILE*)NULL;
 	return (FILE*)NULL;
 	}

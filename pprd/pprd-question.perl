@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 January 2002.
+# Last modified 19 February 2002.
 #
 
 #
@@ -40,15 +40,18 @@ require 'pprpopup.pl';
 require 'cgi_data.pl';
 use Sys::Hostname;
 
+# Set a maximum time this script can run.
+alarm(30);
+
+# We will catch all errors so as to customize the die message.
+eval {
+
 # This is because Sys::Hostname:hostname() might have to exec uname.
 defined($SAFE_PATH) || die;
 $ENV{PATH} = $SAFE_PATH;
 
 # This isn't necessarily so.
 my $host_and_port = hostname() . ":15010";
-
-# Set a maximum time this script can run.
-alarm(30);
 
 # Split the arguments out into individually named variables.
 my($jobname, $qfile) = @ARGV;
@@ -100,8 +103,7 @@ print STDERR "\$query=\"$query\"\n";
 # Open a connexion to pprpopup
 if(!open_connexion(SEND, $response_address))
     {
-    print "open_conexion() failed\n";
-    exit(2);
+    die "open_conexion() failed\n";
     }
 
 # Buffering would cause a lockup, so turn it off.
@@ -118,14 +120,28 @@ $result = <SEND>;
 # Close the connexion to pprpopup.
 close(SEND);
 
-if($result =~ /^-ERR/)
+if($result !~ /^+OK/)
     {
-    print $result;
-    exit 2;
+    die $result;
     }
-else
+
+# This is where we catch errors.
+};
+if($@)
     {
+    print "pprd-question ", join(" ", @ARGV), ": $@";
+
+    # If this script hasn't been running for 10 seconds yet, sleep.
+    # This prevents a storm of processes.
+    my $sleep_left = alarm(0);
+    if($sleep_left > 20)
+    	{
+	sleep 7;
+    	}
+
     exit 1;
     }
+
+exit 0;
 
 # end of file

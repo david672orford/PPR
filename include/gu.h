@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 15 January 2002.
+** Last modified 21 February 2002.
 */
 
 #ifndef _GU_H
@@ -256,6 +256,25 @@ int gu_snmp_get(struct gu_snmp *p, int *error_code, ...);
 #define GU_SNMP_INT 1
 #define GU_SNMP_STR 2
 #define GU_SNMP_BIT 3
+
+/*===================================================================
+** Perl Compatibility Functions
+===================================================================*/
+
+/* Perl Compatible String */
+void *gu_pcs_new(void);
+void gu_pcs_free(void **pcs);
+void gu_pcs_debug(void **pcs, const char name[]);
+void *gu_pcs_reference(void **pcs);
+void gu_pcs_grow(void **pcs, int size);
+void *gu_pcs_new_pcs(void **pcs);
+void *gu_pcs_new_cstr(const char cstr[]);
+void gu_pcs_set_cstr(void **pcs, const char cstr[]);
+void gu_pcs_set_pcs(void **pcs, void **pcs2);
+const char *gu_pcs_get_cstr(void **pcs);
+void gu_pcs_append_cstr(void **pcs, const char cstr[]);
+void gu_pcs_append_pcs(void **pcs, void **pcs2);
+
 
 /*===================================================================
 ** Replacements for missing functions
