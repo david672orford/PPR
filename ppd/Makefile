@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 August 2002.
+# Last modified 14 August 2002.
 #
 
 include ../Makefile.conf
@@ -42,10 +42,9 @@ all: $(BIN_PROGS)
 
 OBJS1=\
 	ppr-indexppds.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
+	../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 ppr-indexppds$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS)
 
 #=== Install ================================================================
 
@@ -61,7 +60,7 @@ install: $(BIN_PROGS)
 depend:
 
 clean:
-	$(RMF) $(BACKUPS)
+	$(RMF) $(BACKUPS) $(BIN_PROGS) *.$(OBJ)
 	( cd ghostscript; $(MAKE) clean )
 	( cd generic; $(MAKE) clean )
 	( cd other; $(RMF) $(BACKUPS) )

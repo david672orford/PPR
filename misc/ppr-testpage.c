@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 May 2002.
+** Last modified 14 August 2002.
 */
 
 #include "before_system.h"
@@ -124,10 +124,12 @@ end
 ** Drawing routines
 ========================================================================*/
 
-static void do_border(double pw, double ph, double border_width)
+static void do_border(double pw, double ph, double border_width, const char setdash[])
     {
     printf("%% border\n");
-    printf("gsave\n0 setlinewidth\n");
+    printf("gsave\n");
+    printf("0 setlinewidth\n");
+    if(setdash) printf("%s setdash\n", setdash);
     printf("newpath %.2f dup moveto 0 %.2f rlineto %.2f 0 rlineto 0 -%.2f rlineto\n",
 	border_width,
 	(ph - (border_width*2)),
@@ -450,8 +452,14 @@ int main(int argc, char *argv[])
 
     do_startpage(1);
 
-    do_border(pw, ph, 36.0);
-    do_border(pw, ph, 18.0);
+    do_border(pw, ph, 36.0, NULL);
+    do_border(pw, ph, 31.5, "[1 1] 1");
+    do_border(pw, ph, 27.0, "[3 1] 2");
+    do_border(pw, ph, 22.5, "[1 1] 1");
+    do_border(pw, ph, 18.0, NULL);
+    do_border(pw, ph, 13.5, "[1 1] 1");
+    do_border(pw, ph, 09.0, "[3 1] 2");
+    do_border(pw, ph, 04.5, "[1 1] 1");
 
     /* We place the EPS file at the upper right. */
     {

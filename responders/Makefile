@@ -40,9 +40,9 @@ LIBPROGS=ppr-respond$(DOTEXE)
 
 all: $(RESPONDERS) $(LIBPROGS)
 
-OBJS1=ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+OBJS1=ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 ppr-respond$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLIBS) $(INTLLIBS)
 
 #=== Install ================================================================
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 August 2002.
+** Last modified 14 August 2002.
 */
 
 #include "before_system.h"
@@ -47,16 +47,7 @@
 const char myname[] = "ppr-indexppds";
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "ppds";
-const char fontindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
-
-static void indent(int i)
-    {
-    int x;
-    for(x=0; x<i; x++)
-    	{
-	fputc(' ', stdout);
-    	}
-    }
+const char ppdindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
 
 /*==========================================================================
 ** This routine is called for each file found in the PPD
@@ -71,6 +62,8 @@ static int do_file(FILE *indexfile, const char filename[])
     char *ModelName = NULL;
     char *NickName = NULL;
     char *ShortNickName = NULL;
+
+    printf("  %s", filename);
 
     if((ret = ppd_open(filename, stderr)) != EXIT_OK)
 	return ret;
@@ -110,13 +103,17 @@ static int do_file(FILE *indexfile, const char filename[])
 	    }
 	}
 
-    printf(": Manufacturer=\"%s\", Product=\"%s\", ModelName=\"%s\", NickName=\"%s\", ShortNickName=\"%s\"\n",
+    #ifdef DEBUG
+    printf(": Manufacturer=\"%s\", Product=\"%s\", ModelName=\"%s\", NickName=\"%s\", ShortNickName=\"%s\"",
 	Manufacturer ? Manufacturer : "",
 	Product ? Product : "",
 	ModelName ? ModelName : "",
 	NickName ? NickName : "",
 	ShortNickName ? ShortNickName : ""
 	);
+    #endif
+
+    fputc('\n', stdout);
 
     {
     char *vendor;
@@ -173,7 +170,7 @@ static int do_file(FILE *indexfile, const char filename[])
 /*============================================================================
 ** This routine is called for each PPD directory.
 ============================================================================*/
-static int do_dir(FILE *indexfile, const char dirname[], int level)
+static int do_dir(FILE *indexfile, const char dirname[])
     {
     DIR *dirobj;
     struct dirent *fileobj;
@@ -181,7 +178,6 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
     struct stat statbuf;
     int retval = EXIT_OK;
 
-    indent(level * 4);
     printf("%s\n", dirname);
 
     if(!(dirobj = opendir(dirname)))
@@ -204,21 +200,9 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 	    return EXIT_INTERNAL;
 	    }
 
-	/* Search directories recursively. */
-	#if 0
-	if(S_ISDIR(statbuf.st_mode))
-	    {
-	    if((retval = do_dir(indexfile, filename, level + 1)) != EXIT_OK)
-	    	break;
-	    continue;
-	    }
-	#endif
-
-	/* Consider regular files to be possible fonts. */
+	/* Process regular files as PPD files. */
 	if(S_ISREG(statbuf.st_mode))
 	    {
-	    indent((level * 4) + 2);
-            printf("%s", fileobj->d_name);
             if((retval = do_file(indexfile, filename)) != EXIT_OK)
                 break;
 	    continue;
@@ -312,9 +296,9 @@ int main(int argc, char *argv[])
     fclose(cf);
 
     /* Create the output file */
-    if(!(indexfile = fopen(fontindex_db, "w")))
+    if(!(indexfile = fopen(ppdindex_db, "w")))
     	{
-	fprintf(stderr, _("%s: can't create \"%s\", errno=%d (%s)\n"), myname, FONT_INDEX, errno, gu_strerror(errno));
+	fprintf(stderr, _("%s: can't create \"%s\", errno=%d (%s)\n"), myname, ppdindex_db, errno, gu_strerror(errno));
 	return EXIT_INTERNAL;
     	}
 
@@ -327,15 +311,15 @@ int main(int argc, char *argv[])
 	if(section[i].name[0] == '\0')
 	    {
 	    dirname = gu_ini_value_index(&section[i], 0, "<MISSING VALUE>");
-	    if((retval = do_dir(indexfile, dirname, 0)) != EXIT_OK)
+	    if((retval = do_dir(indexfile, dirname)) != EXIT_OK)
 	   	break;
 	    }
 	}
 
-    /* Free the in-memory representation of the [fonts] section. */
+    /* Free the in-memory representation of the [PPDs] section. */
     gu_ini_section_free(section);
 
-    /* Close the completed font index file. */
+    /* Close the completed PPD index file. */
     fclose(indexfile);
 
     return retval;
