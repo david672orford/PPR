@@ -8,7 +8,7 @@
 **
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
-** 
+**
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
@@ -16,16 +16,16 @@
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 19 March 2003.
 */
 
 #include "before_system.h"
@@ -71,6 +71,111 @@ static int write_record(const char username[], const char responder[], const cha
     }
 
 /*
+** This function reads one's existing followme record and prints it.
+*/
+static int do_show(const char username[])
+    {
+    FILE *f;
+
+    {
+    char fname[MAX_PPR_PATH];
+    ppr_fnamef(fname, "%s/%s", dbdir, username);
+    if(!(f = fopen(fname, "r")))
+	{
+	if(errno == ENOENT)
+	    {
+	    printf(_("The user \"%s\" is not registered with followme.\n"), username);
+	    return EXIT_NOTFOUND;
+	    }
+	else
+	    {
+	    fprintf(stderr, _("%s: fopen(\"%s\", \"r\") failed, errno=%d (%s)\n"), myname, fname, errno, gu_strerror(errno));
+	    return EXIT_INTERNAL;
+	    }
+	}
+    }
+
+    {
+    char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
+    {
+    char *line = NULL;
+    int line_space_available = 80;
+
+    if(!(line = gu_getline(line, &line_space_available, f)) || gu_sscanf(line, "%S %S %Q", &responder, &responder_address, &responder_options) != 3)
+	{
+	fprintf(stderr, _("%s: invalid followme registration record\n"), myname);
+	return EXIT_INTERNAL;
+	}
+
+    gu_free(line);
+    }
+
+    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
+    gu_free(responder);
+    gu_free(responder_address);
+    gu_free(responder_options);
+    }
+
+    return EXIT_OK;
+    }
+
+static int do_set(char username[], int argc, char *argv[], int i)
+    {
+    char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
+
+    /* Read up to three command line options. */
+    if((argc - i) >= 1)
+	responder = argv[i + 0];
+    if((argc - i) >= 2)
+	responder_address = argv[i + 1];
+    if((argc - i) >= 3)
+	responder_options = argv[i + 2];
+
+    /* Now we supply defaults for any that weren't specified. */
+
+    if(!responder)
+	responder = "write";
+
+    if(!responder_address)
+	{
+	if(strcmp(responder, "xwin") == 0)
+	    responder_address = ":0.0";
+	else if(strcmp(responder, "pprpopup") == 0)
+	    asprintf(&responder_address, "%s@localhost", username);
+	else
+	    responder_address = username;
+	}
+
+    if(!responder_options)
+	if(!(responder_options = getenv("PPR_RESPONDER_OPTIONS")))
+	    responder_options = "";
+
+    /* Detect settings that could subvert the user's intentions. */
+    {
+    char *p;
+    if((p = getenv("PPR_RESPONDER")) && strcmp(p, "followme") != 0)
+	fprintf(stderr, _("Warning: PPR_RESPONDER is set to %s\n"), p);
+    if((p = getenv("PPR_RESPONDER_ADDRESS")) && strcmp(p, username) != 0)
+	fprintf(stderr, _("Warning: PPR_RESPONDER_ADDRESS is set to %s\n"), p);
+    }
+
+    /* Show the user what we have decided on. */
+    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
+
+    /* Save it in followme.db. */
+    if(write_record(username, responder, responder_address, responder_options) == -1)
+	return EXIT_INTERNAL;
+
+    /* The xwin responder won't work unless we give it X display access. */
+    if(strcmp(responder, "xwin") == 0)
+	{
+	gu_runl(myname, stderr, HOMEDIR"/bin/ppr-xgrant", NULL);
+	}
+
+    return EXIT_OK;
+    } /* end of do_set() */
+
+/*
 ** Command line options:
 */
 static const char *option_chars = "";
@@ -102,7 +207,6 @@ int main(int argc, char *argv[])
     {
     int i;
     struct passwd *pw;
-    char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -138,6 +242,12 @@ int main(int argc, char *argv[])
     i = getopt_state.optind;
     }
 
+    if((argc - i) >= 4)
+	{
+	help_usage(stderr);
+	return EXIT_SYNTAX;
+	}
+
     /* We need the username since it is the key into followme.db. */
     if(!(pw = getpwuid(getuid())))
 	{
@@ -145,61 +255,11 @@ int main(int argc, char *argv[])
 	return EXIT_INTERNAL;
 	}
 
-    /* Read up to three command line options. */
     if((argc - i) >= 1)
-	responder = argv[i + 0];
-    if((argc - i) >= 2)
-	responder_address = argv[i + 1];
-    if((argc - i) >= 3)
-	responder_options = argv[i + 2];
-    if((argc - i) >= 4)
-	{
-	help_usage(stderr);
-	return EXIT_SYNTAX;
-	}
+    	return do_set(pw->pw_name, argc, argv, i);
+    else
+	return do_show(pw->pw_name);
 
-    /* Now we supply defaults for any that weren't specified. */
-
-    if(!responder)
-	responder = "write";
-
-    if(!responder_address)
-	{
-	if(strcmp(responder, "xwin") == 0)
-	    responder_address = ":0.0";
-	else if(strcmp(responder, "pprpopup") == 0)
-	    asprintf(&responder_address, "%s@localhost", pw->pw_name);
-	else
-	    responder_address = pw->pw_name;
-	}
-
-    if(!responder_options)
-	if(!(responder_options = getenv("PPR_RESPONDER_OPTIONS")))
-	    responder_options = "";
-
-    /* Detect settings that could subvert the user's intentions. */
-    {
-    char *p;
-    if((p = getenv("PPR_RESPONDER")) && strcmp(p, "followme") != 0)
-	fprintf(stderr, _("Warning: PPR_RESPONDER is set to %s\n"), p);
-    if((p = getenv("PPR_RESPONDER_ADDRESS")) && strcmp(p, pw->pw_name) != 0)
-	fprintf(stderr, _("Warning: PPR_RESPONDER_ADDRESS is set to %s\n"), p);
-    }
-
-    /* Show the user what we have decided on. */
-    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
-
-    /* Save it in followme.db. */
-    if(write_record(pw->pw_name, responder, responder_address, responder_options) == -1)
-	return EXIT_INTERNAL;   
-
-    /* The xwin responder won't work unless we give it X display access. */
-    if(strcmp(responder, "xwin") == 0)
-	{
-	gu_runl(myname, stderr, HOMEDIR"/bin/ppr-xgrant", NULL);
-	}
-
-    return EXIT_OK;
     } /* end of main() */
 
 /* end of file */

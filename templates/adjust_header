@@ -2,7 +2,7 @@
 
 my $COPYRIGHT_YEARS = "1995--2003";
 my $COPYRIGHT_HOLDER = "Trinity College Computing Center";
-my $DATE = "18 March 2003";
+my $DATE = "19 March 2003";
 
 my @LICENSE = split(/\n/, <<"==========END==========");
 Redistribution and use in source and binary forms, with or without
