@@ -8404,7 +8404,8 @@ line was being parsed twice.
 
 * makeprogs/install*.sh: added code to chown and chgrp installed files.
 
-* printdesk/printdialog.perl: removed
+* printdesk/printdialog.perl: removed (after merging the tiny bit of code that
+  it had int printdesk/ppr-panel.perl).
 
 * merged ppr-indexfonts, ppr-indexppds, and fixup_filters.sh into lib/ as
   indexfonts, indexppds, and indexfilters respectively and added
