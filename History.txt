@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--30 April 2004.
+1.53a2, 20 February 2004--10 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9172,6 +9172,10 @@ Internet Printing Protocol Work
   contain the date and time in the US-English output.  Also added support for
   /etc/defaults/ppr.  So far the only setting is LPRSRV_STANDALONE_PORT.
   
+* papd/papd_login_aufs.c, papd_login_rbi.c: added.
+
+* papd/ppad_ali.c: changed at_reply_eoj() to send EOF on the last packet
+  rather than in a separate empty packet.
 
 TODO
 

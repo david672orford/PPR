@@ -510,6 +510,7 @@ more information about RIPs and *pprRIP:.
 
 * index.html: added link to Apple IP Print Server Security Protocol
 
+* applied various patches from Jan Kohnert to fix types and long lines
 
 TODO
 
