@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 9 August 2002.
+# Last modified 8 November 2002.
 #
 
 #
@@ -79,18 +79,6 @@ cat - >&5 <<===EndHere10===
 
 ===EndHere10===
 
-gs=`findfile_test_basename_path_default -x gs $PATH /usr/bin/gs`
-cat - >&5 <<===EndHere20===
-# Facts About Ghostscript
-[ghostscript]
-
-  # This is the Ghostscript interpreter that PPR will use if you specify a
-  # RIP of "gs" with the "ppad rip" command.  It has no effect if you
-  # specify a different RIP such as "ppr-gs".
-  gs = "$gs"
-
-===EndHere20===
-
 smbclient=`findfile_test_basename_path_default -x smbclient /usr/local/samba/bin:$PATH /usr/local/samba/bin/smbclient`
 smb_conf=`findfile_test_basename_path_default -f smb.conf /usr/local/samba/lib:/etc:/etc/samba /usr/local/samba/lib/smb.conf`
 cat - >&5 <<===EndHere30===
@@ -111,6 +99,9 @@ cat - >&5 <<===EndHere40===
 [internationalization]
 
   # What LANG environment value should the daemons be started with?
+  # (The value in ppr.conf.sample (which is copied to ppr.conf if you don't
+  # have one) ppr.conf was taken from the environment variable LANG when 
+  # fixup was run.)
   daemon lang = $LANG
 
 ===EndHere40===

@@ -7862,7 +7862,8 @@ line was being parsed twice.
 
 * responders/mail.sh: fixed so that EECHO= gets filled in.
 
-* editps/: added Mozilla_1.0
+* editps/: added Mozilla_1.0 (but left entry in editps.conf commented
+  out).
 
 * libppr/: int_con_tcpip.c, int_pe_tcpip.c: moved code back into
   interfaces/tcpip.c.
@@ -7904,4 +7905,11 @@ line was being parsed twice.
 
 * libuprint/uprint_conf.c: added warning if [real lp] or [real lpr] doesn't
   define installed= and changed the default to yes.
+
+* pprdrv/pprdrv_rip.c: removed support for ppr.conf [ghostscript] gs=.
+
+* fixup/fixup_conf.sh: removed code to generate [ghostscript] gs=
+  in ppr.conf.sample.
+
+* pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 August 2002.
+** Last modified 8 November 2002.
 */
 
 #include "before_system.h"
@@ -175,7 +175,7 @@ int rip_start(int printdata_handle, int stdout_handle)
     {
     const char function[] = "rip_start";
     static const char *rip_exe = NULL;
-    static gu_boolean rip_is_ghostscript = FALSE;
+    static gu_boolean rip_is_unwrapped_ghostscript = FALSE;
     const char **rip_args;
     int rip_pipe[2];
 
@@ -185,20 +185,27 @@ int rip_start(int printdata_handle, int stdout_handle)
       or now, do so now. */
     if(!rip_exe)
 	{
-	/* Just plain, unwrapped Ghostscript.  The location comes from ppr.conf. */
-	if(strcmp(printer.RIP.name, "gs") == 0)
-	    {
-	    if(!(rip_exe = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
-		fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
-	    rip_is_ghostscript = TRUE;
-	    }
-	/* Just plain, unwrapped Ghostscript.  The location is specified. */
-	else if(rmatch(printer.RIP.name, "/gs"))
+	/* If the rip name ends in "/gs", assume it is just plain, unwrapped 
+	   Ghostscript.  Note that this means that if you want to use unwrapped
+	   Ghostscript, you have to specify the path.  For example:
+
+		$ ppad myprn rip /usr/bin/gs -sDEVICE=hpjet
+
+	   Note that a RIP name specified in a PPD file is not allowed to
+	   contain slashes.  This is to make sure that people don't write
+	   PPD files that apply only to their own computers!
+
+	   */
+	if(rmatch(printer.RIP.name, "/gs"))
 	    {
 	    rip_exe = printer.RIP.name;
-	    rip_is_ghostscript = TRUE;
+	    rip_is_unwrapped_ghostscript = TRUE;
 	    }
-	/* Some sort of Ghostscript wrapper. */
+
+	/* Since the program isn't named "gs", assume that it is some
+	   sort of Ghostscript wrapper in $HOMEDIR/lib, probably
+	   our own ppr-gs.
+	   */
 	else
 	    {
 	    char *p;
@@ -226,7 +233,7 @@ int rip_start(int printdata_handle, int stdout_handle)
 	if(gu_strncasecmp(printer.RIP.options[si], "-sOutputFile=", 13) == 0)
 	    saw_OutputFile = TRUE;
 	}
-    if(rip_is_ghostscript)				/* Ghostscript gets extra arguments */
+    if(rip_is_unwrapped_ghostscript)			/* Ghostscript gets extra arguments */
 	{
 	rip_args[di++] = "-q";
 	rip_args[di++] = "-dSAFER";

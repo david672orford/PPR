@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 September 2002.
+** Last modified 8 November 2002.
 */
 
 /*
@@ -266,12 +266,19 @@ void ppd_callback_rip(const char text[])
     if(!printer.RIP.name)	/* if first in PPD file and not set in printer config file */
 	{
 	char *p;
+
+	/* Duplicate the Lex buffer because we are going to edit it in place
+	   and keep pointers to the edited copy. */
 	p = gu_strdup(text);
+
+	/* Parse it using gu_strsep(), keeping pointers and inserting nulls. */
 	if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, " \t")))
-	    {
 	    fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
-	    }
 	printer.RIP.options_storage = gu_strsep(&p, "");
+
+	if(strchr(printer.RIP.name, '/'))
+	    fatal(EXIT_PRNERR_NORETRY, _("Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."));
+
 	}
     } /* end of ppd_callback_rip() */
 

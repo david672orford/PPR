@@ -1,4 +1,7 @@
 #! /usr/bin/perl -w
+#
+# Last modified 8 November 2002.
+#
 
 #
 # This program is used to run PPR regression tests.  It should be invoked
@@ -58,6 +61,10 @@ $ENV{SHAREDIR} = "/usr/share/ppr";
 $ENV{CONFDIR} = "/etc/ppr";
 $ENV{VAR_SPOOL_PPR} = "/var/spool/ppr";
 $ENV{TEMPDIR} = "/tmp";
+
+delete $ENV{LANG};
+delete $ENV{LANGUAGE};
+delete $ENV{LC_MESSAGES};
 
 $ENV{TESTBIN} = "$ENV{HOMEDIR}/src/tests/tools";
 $ENV{REGTEST_INTERFACE_OUTPUT} = "$ENV{TEMPDIR}/regtest_interface_output";
