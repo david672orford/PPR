@@ -1,5 +1,3 @@
-pipecat.$(OBJ): pipecat.c
-
 pprdrv.$(OBJ): pprdrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
 
 pprdrv_buf.$(OBJ): pprdrv_buf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h

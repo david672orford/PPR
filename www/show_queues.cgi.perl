@@ -235,7 +235,7 @@ Top10
 #=============================================================================
 
 print <<"Top10";
-<table border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
 	title="Click here and you will be guided through the process of adding a new printer."
@@ -243,12 +243,20 @@ print <<"Top10";
 	<img $ICON_ADD_PRINTER border=0><br>
 	<span class="qname">${\H_("Add New Printer")}</span>
         </a></td>
+</tr>
+</table>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<tr align=center>
 <td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
 	title="Click here and you will be guided through the process of adding a new group of printers."
 	>
 	<img $ICON_ADD_GROUP border=0><br>
 	<span class="qname">${\H_("Add New Group")}</span>
 	</a></td>
+</tr>
+</table>
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<tr align=center>
 <td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
 	title="Click here to open a window which will show all queued jobs."
 	>
@@ -257,6 +265,7 @@ print <<"Top10";
 	</a></td>
 </tr>
 </table>
+<br clear="left">
 <hr>
 Top10
 

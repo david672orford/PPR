@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 November 2001.
+# Last modified 11 January 2002.
 #
 
 #
@@ -166,6 +166,9 @@ cvs-commit: symlinks-save
 depend:
 	@for i in $(SUBDIRS) $(SUBDIRS_CLEAN_ONLY); \
 		do \
+		echo "==========================================="; \
+		echo "    running $(MAKE) depend in $$i"; \
+		echo "==========================================="; \
 		( cd $$i && $(MAKE) depend ) || exit 1; \
 		done
 
