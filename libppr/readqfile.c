@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/readqfile.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2001.
+** Last modified 7 March 2002.
 */
 
 #include "before_system.h"
@@ -86,6 +86,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
     job->PPRVersion = 0.0;
     job->username = (char*)NULL;
+    job->LC_MESSAGES = (char*)NULL;
     job->For = (char*)NULL;
     job->proxy_for = (char*)NULL;		/* optional */
     job->priority = 20;
@@ -105,11 +106,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->Filters = (const char *)NULL;		/* optional */
     job->CachePriority = CACHE_PRIORITY_LOW;	/* optional for now */
     job->StripPrinter = TRUE;
-    job->commentator.interests = 0;
-    job->commentator.progname = NULL;
-    job->commentator.address = NULL;
-    job->commentator.options = NULL;
-    job->commentator.next = NULL;		/* unused at present */
+    job->commentary = 0;
     job->page_list.mask = NULL;
     job->question = NULL;
 
@@ -183,7 +180,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	    case 'C':
 		MATCH("Charge-To: ", _2("%Z", &job->charge_to), !=1, found_other)
 		MATCH("Creator: ", _2("%Z", &job->Creator), !=1, found_other)
-		MATCH("Commentator: ", _5("%d %Q %Q %Q", &job->commentator.interests, &job->commentator.progname, &job->commentator.address, &job->commentator.options), !=4, found_other)
+		MATCH("Commentary: ", _2("%d", &job->commentary), !=1, found_other)
 		{
 		int tempint;
 		if(gu_sscanf(line, "CachePriority: %d", &tempint) == 1)
@@ -212,6 +209,9 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		MATCH("For: ", _2("%Z", &job->For), !=1, found_for)
 		MATCH("Filters: ", _2("%Z", &job->Filters), !=1, found_other)
 		break;
+
+	    case 'L':
+	    	MATCH("LC_MESSAGES: ", _2("%Z", &job->LC_MESSAGES), !=1, found_other)
 
 	    case 'l':
 		MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)

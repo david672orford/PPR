@@ -1178,12 +1178,8 @@ static int ppop_details_item(const struct QEntry *qentry,
     if(qfileentry->responder_options)
     	printf("Responder options: %s\n", qfileentry->responder_options);
 
-    if(qfileentry->commentator.interests)
-	{
-	printf("Commentatary: %d\n", qfileentry->commentator.interests);
-	printf("Commentator: %s \"%s\"\n", qfileentry->commentator.progname, qfileentry->commentator.address);
-	printf("Commentator options: %s\n", qfileentry->commentator.options);
-	}
+    if(qfileentry->commentary)
+	printf("Commentary: %d\n", qfileentry->commentary);
 
     /* attributes */
     printf("Required Language Level: %d\n", qfileentry->attr.langlevel);
@@ -1628,20 +1624,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		    PUTS(qfileentry->Filters);
 		break;
 	    case 39:			/* commentary */
-		printf("%d", qfileentry->commentator.interests);
+		printf("%d", qfileentry->commentary);
 	    	break;
-	    case 40:			/* commentator */
-	    	if(qfileentry->commentator.progname)
-	    	    PUTS(qfileentry->commentator.progname);
-	    	break;
-	    case 41:			/* commentator-address */
-	    	if(qfileentry->commentator.address)
-	    	    PUTS(qfileentry->commentator.address);
-	    	break;
-	    case 42:			/* commentator-options */
-	    	if(qfileentry->commentator.options)
-	    	    PUTS(qfileentry->commentator.options);
-	    	break;
+
 	    case 43:			/* destname */
 		if(strcmp(qfileentry->destnode, ppr_get_nodename()))
 		    {
@@ -1825,12 +1810,7 @@ int ppop_qquery(char *argv[])
 	    qquery_query[x] = 38;
 	else if(strcmp(ptr, "commentary") == 0)
 	    qquery_query[x] = 39;
-	else if(strcmp(ptr, "commentator") == 0)
-	    qquery_query[x] = 40;
-	else if(strcmp(ptr, "commentator-address") == 0)
-	    qquery_query[x] = 41;
-	else if(strcmp(ptr, "commentator-options") == 0)
-	    qquery_query[x] = 42;
+
 	else if(strcmp(ptr, "destname") == 0)
 	    qquery_query[x] = 43;
 	else if(strcmp(ptr, "responder") == 0)

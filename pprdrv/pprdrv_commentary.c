@@ -325,11 +325,11 @@ void commentary(int category, const char cooked[], const char raw1[], const char
     ** the commentators in the commentators/ directory.
     */
     DODEBUG_COMMENTARY(("%s(): job.commentator.interests = %d", function, job.commentator.interests));
-    if((category & job.commentator.interests) == category)
+    if((category & job.commentary) == category)
 	{
 	DODEBUG_COMMENTARY(("commentary(): job submitter is interested"));
-	if(job.commentator.progname && strcmp(job.commentator.progname, "file") != 0 && !strchr(job.commentator.progname, '/'))
-	    commentary_spawn(&job.commentator, category, cooked, raw1, raw2, severity, canned_message);
+/*	commentary_spawn(&job.responder, category, cooked, raw1, raw2, severity, canned_message);
+*/
 	}
 
     /*

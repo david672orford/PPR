@@ -252,7 +252,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 
 * Added links to w3c documents.
 
-* Removed references to the "ppr -C" switch in favour of the newer form 
+* Removed references to the "ppr -C" switch in favour of the newer form
   "ppr --title".
 
 
@@ -272,7 +272,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   them with pprd --stop and papsrv --stop.
 
 
-1.50a1, 27 February 2002--28 February 2002.
+1.50a1, 27 February 2002--7 March 2002.
 
 * misc/release_steps.html: added CVS information and hyperlinked URLs.
 
@@ -280,4 +280,8 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   be deleted just because some cross references didn't match up.
 
 * index.html: fixed broken link the pprhack.
+
+* refman/ppr.1.pod: removed references to --commentator, --commentator-address,
+  and --commentator-options.
+
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_infile.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 7 March 2002.
 */
 
 /*
@@ -1872,8 +1872,9 @@ static void no_filter(const char *file_type_str)
     ** If the -e hexdump switch has not been used, try to use responder first.
     */
     else if(!option_nofilter_hexdump && respond(RESP_NOFILTER, file_type_str) == 0)
-	{			/* If respond works */
-	exit(PPREXIT_NOFILTER);	/* we can exit. */
+	{
+	/* The responder worked!  We can do an abort! */
+	ppr_abort(PPREXIT_NOFILTER);
 	}
 
     /*
@@ -1886,13 +1887,13 @@ static void no_filter(const char *file_type_str)
     else
     	{
 	char lfname[MAX_PPR_PATH];	/* log file name */
-	FILE *lfile;		/* log file */
+	FILE *lfile;			/* log file object */
 
 	/* Select the hex dump filter. */
-    	exec_tops_filter(FILTDIR"/filter_hexdump", "filter_hexdump", xlated_file_type_str);
+	exec_tops_filter(FILTDIR"/filter_hexdump", "filter_hexdump", xlated_file_type_str);
 
 	/* Try to force banner page option on. */
-    	qentry.do_banner = BANNER_YESPLEASE;
+	qentry.do_banner = BANNER_YESPLEASE;
 
 	/* Try to add a message to the log file. */
 	ppr_fnamef(lfname, "%s/%s:%s-%d.0(%s)-log", DATADIR, qentry.destnode, qentry.destname, qentry.id, qentry.homenode);

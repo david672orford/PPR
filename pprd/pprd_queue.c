@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 January 2002.
+** Last modified 5 March 2002.
 */
 
 /*
@@ -509,7 +509,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 	    if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
 		{
 		if(job_is_new)
-		    respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, ptr_destname, -1, RESP_CANCELED_BADDEST);
+		    respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, -1, ptr_destname, RESP_CANCELED_BADDEST);
 		else
 		    error("%s(): destination \"%s\" no longer exists", function, ptr_destname);
 		Throw(-1);

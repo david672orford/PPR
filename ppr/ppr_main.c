@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -8,7 +8,7 @@
 **
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
-** 
+**
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
@@ -16,16 +16,16 @@
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 14 December 2001.
+** Last revised 7 March 2002.
 */
 
 /*
@@ -169,15 +169,24 @@ static struct {const char *name; unsigned int bit;} gab_table[]=
 =========================================================================*/
 
 /*
+** Delete any files we have created and exit.
+*/
+void ppr_abort(int exitval)
+    {
+    file_cleanup();
+    exit(exitval);
+    }
+
+/*
 ** Handle fatal errors by printing a message and exiting.
-** Since this calls respond, file cleanup will get called.
+** Since this calls ppr_abort(), file cleanup will get called.
 */
 void fatal(int exitval, const char *message, ... )
     {
     va_list va;
     char errbuf[256];
 
-    fflush(stdout);			/* In case we will be printing on stderr */
+    fflush(stdout);					/* In case we will be printing on stderr */
 
     va_start(va, message);				/* Format the error message */
     vsnprintf(errbuf, sizeof(errbuf), message, va);	/* as a string. */
@@ -188,7 +197,7 @@ void fatal(int exitval, const char *message, ... )
     else
 	respond(RESP_FATAL, errbuf);
 
-    exit(exitval);			/* And give our parent a hint. */
+    ppr_abort(exitval);
     } /* end of fatal() */
 
 /*
@@ -418,9 +427,9 @@ static FILE *open_fifo(const char name[])
     ** ever been run).
     */
     #ifdef HAVE_MKFIFO
-    if((fifo=open(name, O_WRONLY | O_NONBLOCK)) < 0)
+    if((fifo = open(name, O_WRONLY | O_NONBLOCK)) < 0)
     #else
-    if((fifo=open(name, O_WRONLY | O_APPEND)) < 0)
+    if((fifo = open(name, O_WRONLY | O_APPEND)) < 0)
     #endif
 	{
 	if(errno != ENXIO && errno != ENOENT)
@@ -515,13 +524,13 @@ static void authorization_charge(void)
 	    if(ret == USER_ISNT)		/* If user not found, */
 		{				/* then, turn away. */
 		respond(RESP_CANCELED_NOCHARGEACCT, qentry.charge_to);
-		exit(PPREXIT_NOCHARGEACCT);
+		ppr_abort(PPREXIT_NOCHARGEACCT);
 		}
 
 	    else if(ret == USER_OVERDRAWN)	/* If account overdrawn, */
 		{				/* then, turn away. */
 		respond(RESP_CANCELED_OVERDRAWN, qentry.charge_to);
-		exit(PPREXIT_OVERDRAWN);
+		ppr_abort(PPREXIT_OVERDRAWN);
 		}
 
 	    /* We check for database error. */
@@ -546,7 +555,7 @@ static void authorization_charge(void)
 			(AuthCode == (char*)NULL || strcmp(AuthCode, user.authcode)) )
 		{
 		respond(RESP_CANCELED_BADAUTH, qentry.charge_to);
-		exit(PPREXIT_BADAUTH);
+		ppr_abort(PPREXIT_BADAUTH);
 		}
 	    } /* end of if not preauthorized */
 	} /* end of if use_authcode or protected printer */
@@ -557,7 +566,7 @@ static void authorization_charge(void)
 	if(qentry.attr.pages < 0)
 	    {
 	    respond(RESP_CANCELED_NONCONFORMING, (char*)NULL);
-	    exit(PPREXIT_NONCONFORMING);
+	    ppr_abort(PPREXIT_NONCONFORMING);
 	    }
 
 	if(qentry.opts.copies == -1)	/* If `secure' printer, force */
@@ -610,13 +619,13 @@ static void authorization_acl(void)
 	if(!real_passes)
 	    {
 	    respond(RESP_CANCELED_ACL, qentry.username);
-	    exit(PPREXIT_ACL);
+	    ppr_abort(PPREXIT_ACL);
 	    }
 
 	if(!proxy_for_passes)
 	    {
 	    respond(RESP_CANCELED_ACL, qentry.proxy_for);
-	    exit(PPREXIT_ACL);
+	    ppr_abort(PPREXIT_ACL);
 	    }
 	}
     } /* end of authorization_acl() */
@@ -692,22 +701,23 @@ void file_cleanup(void)
 static void gallows_speach(int signum)
     {
     fprintf(stderr, _("PPR: mortally wounded by signal %d (%s).\n"), signum, gu_strsignal(signum));
-    file_cleanup();
-    exit(PPREXIT_KILLED);
+    ppr_abort(PPREXIT_KILLED);
     } /* end of gallows_speach() */
 
 /*
-** Child exit handler.
+** Child Exit Handler
+**
 ** The purpose of this routine is to detect core dumps and
 ** other failures in filters.
 */
 static void reapchild(int signum)
     {
+    const char function[] = "reapchild";
     int wstat;		/* storage for child's exit status */
 
     /* Get the child's exit code. */
-    if(wait(&wstat)==-1)
-    	fatal(PPREXIT_OTHERERR, "reapchild(): wait() failed, errno=%d (%s)", errno, gu_strerror(errno));
+    if(wait(&wstat) == -1)
+    	fatal(PPREXIT_OTHERERR, "%s(): wait() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
     if(WIFEXITED(wstat))
     	{
@@ -732,7 +742,7 @@ static void reapchild(int signum)
 	}
     else
     	{
-    	fatal(PPREXIT_OTHERERR, "ppr_main.c: reapchild(): Bizzar child termination");
+    	fatal(PPREXIT_OTHERERR, "%s(): bizzar child termination", function);
     	}
     } /* end of reapchild() */
 
@@ -876,9 +886,6 @@ static const struct gu_getopt_opt option_words[] =
 	{"save", 1017, FALSE},
 	{"question", 1018, TRUE},
 	{"commentary", 1100, TRUE},
-	{"commentator", 1101, TRUE},
-	{"commentator-address", 1102, TRUE},
-	{"commentator-options", 1103, TRUE},
 
 	/* These are also documented and final. */
 	{"help", 9000, FALSE},
@@ -925,12 +932,7 @@ HELP(_(
 "\t--responder-options <list> list of name=value responder options\n"));
 
 HELP(_(
-"\t--commentary <n>           send commentary messages of types <n>\n"
-"\t--commentator <method>     use commentator program <method>\n"
-"\t--commentator-address <address>\n"
-"\t                           address for commentator program\n"
-"\t--commentator-options <options>\n"
-"\t                           option list for commentator program\n"));
+"\t--commentary <n>           send commentary messages of types <n>\n"));
 
 HELP(_(
 "\t-b {yes,no,dontcare}       express banner page preference\n"
@@ -1431,7 +1433,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 
 	case 'T':				/* force input type */
 	    if(infile_force_type(optarg))
-		fatal(PPREXIT_SYNTAX, _("%s %s is unrecognized"), true_option, optarg);
+		fatal(PPREXIT_SYNTAX, _("%s option specifies unrecognized file type \"%s\""), true_option, optarg);
 	    break;
 
 	case 'S':				/* -S, --strip-cache */
@@ -1809,30 +1811,18 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    break;
 
 	case 1100:				/* --commentary */
-	    qentry.commentator.interests = atoi(optarg);
-	    break;
-
-	case 1101:				/* --commentator */
-	    qentry.commentator.progname = optarg;
-	    break;
-
-	case 1102:				/* --commentator-address */
-	    qentry.commentator.address = optarg;
-	    break;
-
-	case 1103:				/* --commentator-options */
-	    qentry.commentator.options = optarg;
+	    qentry.commentary = atoi(optarg);
 	    break;
 
 	case 9000:				/* --help */
 	    help(stdout);
-	    exit(PPREXIT_OK);
+	    ppr_abort(PPREXIT_OK);
 
 	case 9001:				/* --version */
 	    puts(VERSION);
 	    puts(COPYRIGHT);
 	    puts(AUTHOR);
-	    exit(PPREXIT_OK);
+	    ppr_abort(PPREXIT_OK);
 
 	case '?':				/* Unrecognized switch */
 	    fatal(PPREXIT_SYNTAX, _("Unrecognized switch %s.  Try --help"), true_option);
@@ -1865,7 +1855,7 @@ int main(int argc, char *argv[])
     {
     const char *function = "main";
     char *real_filename = (char*)NULL;		/* the file we read from if not stdin */
-    struct gu_getopt_state getopt_state;       /* defined here because used to find filename */
+    struct gu_getopt_state getopt_state;	/* defined here because used to find filename */
     struct passwd *pw;				/* to get information on invoking user */
     int x;					/* various very short term uses */
     char *ptr;					/* general use */
@@ -1992,6 +1982,11 @@ int main(int argc, char *argv[])
     qentry.StripPrinter = FALSE;
     qentry.page_list.mask = NULL;
 
+    /* Figure out what language the user is getting messages in and
+       attach its name to the job. */
+    if(!(qentry.LC_MESSAGES = getenv("LC_MESSAGES")))
+    	qentry.LC_MESSAGES = getenv("LANG");
+
     /*
     ** We would like to find a default response method in the variable
     ** PPR_RESPONDER.  If we don't we will use "write".
@@ -2031,16 +2026,13 @@ int main(int argc, char *argv[])
     qentry.responder_options = getenv("PPR_RESPONDER_OPTIONS");
 
     /*
-    ** Look for default commentator options in the environment.
+    ** Look for default commentatary option in the environment.
     ** Remember that getenv() returns NULL for variables that
     ** are not found.
     */
-    qentry.commentator.interests = 0;
+    qentry.commentary = 0;
     if((ptr = getenv("PPR_COMMENTARY")))
-    	qentry.commentator.interests = atoi(ptr);
-    qentry.commentator.progname = getenv("PPR_COMMENTATOR");
-    qentry.commentator.address = getenv("PPR_COMMENTATOR_ADDRESS");
-    qentry.commentator.options = getenv("PPR_COMMENTATOR_OPTIONS");
+    	qentry.commentary = atoi(ptr);
 
     /*
     ** Remove unnecessary variables from the environment.
@@ -2288,8 +2280,7 @@ int main(int argc, char *argv[])
     if((FIFO = open_fifo(FIFO_NAME)) == (FILE*)NULL)
         {
         respond(RESP_NOSPOOLER, (char*)NULL);
-        infile_file_cleanup();
-        exit(PPREXIT_NOSPOOLER);
+        ppr_abort(PPREXIT_NOSPOOLER);
         }
 
     /*
@@ -2604,7 +2595,7 @@ int main(int argc, char *argv[])
 	if(! qentry.attr.script)
 	    {
 	    respond(RESP_CANCELED_NOPAGES, "");
-	    exit(PPREXIT_NOTPOSSIBLE);
+	    ppr_abort(PPREXIT_NOTPOSSIBLE);
  	    }
 
 	if(pagemask_encode(&qentry, option_page_list) == -1)

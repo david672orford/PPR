@@ -74,7 +74,7 @@ void remote_job(struct QEntry *qentry);
 gu_boolean remote_child_hook(pid_t pid, int wstat);
 void remote_tick(void);
 void responder_child_hook(pid_t pid, int wstat);
-void respond2(const char *destnode, const char *destname, int id, int subid, const char *homenode, const char *prnname, int prnid, int response_code);
+void respond2(const char *destnode, const char *destname, int id, int subid, const char *homenode, int prnid, const char *prnname, int response_code);
 void respond(int destnode_id, int destid, int id, int subid, int homenode_id, int prnid, int response);
 void state_update(const char *string, ... );
 extern struct QEntry *queue;

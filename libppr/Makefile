@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libppr/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 September 2001.
+# Last modified 5 March 2002.
 #
 
 include ../makeprogs/global.mk
@@ -28,7 +28,7 @@ LIBOBJS=\
 	findres.$(OBJ) \
 	protected.$(OBJ) money.$(OBJ) \
 	charge.$(OBJ) jobid.$(OBJ) pagesize.$(OBJ) \
-	reswidth.$(OBJ) options.$(OBJ) \
+	options.$(OBJ) \
 	dimens.$(OBJ) foptions.$(OBJ) ali_str.$(OBJ) \
 	ppr_gcmd.$(OBJ) gnodename.$(OBJ) readppd.$(OBJ) \
 	destspec.$(OBJ) unsafe.$(OBJ) prune_env.$(OBJ) \

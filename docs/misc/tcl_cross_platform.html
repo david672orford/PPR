@@ -25,22 +25,148 @@ to present the hard-to-find information gained during the PPR Popup project.
 <p>The first difficulty was in identifying usable distributions of Tcl for 
 each of the three above-named platforms.
 
+<p>The Tcl web sites appear to be in the midst of a shakup.  Tcl has
+traditionally been available from <a
+href="http://www.scriptics.com/">http://www.scriptics.com/</a>.  This site
+appears to have been taken over by <a
+href="http://www.activestate.com/">Activestate</a>).  It is being kept up to
+date and current versions of Tcl and some related packages are available for
+download.  But it the CVS repository is on <a
+href="http://sourceforge.net/">Sourceforge.net</a>.  Sourceforge also has
+packages available for download that don't appear on the Scriptics pages.
+Many of these packages are on the <a
+href="http://sourceforge.net/tcl/">Tcl</a> project page, but others are on
+their own project pages and can be easily found through the <a
+href="http://sourceforge.net/foundry/tcl-foundry/>Tcl Foundry</a> page. </p>
+
 <h3>X-Windows</h3>
 
 <p>X-Windows was easy, probably because Tcl/Tk and friends were developed on
-that platform.
+that platform.  That is not so say there were no problems.  One problem was
+that Mandrake 8.1 has defective Itcl and Itk packages.  We downloaded the
+Tcl/Tk source from <a href="http://sourceforge.net/projects/tcl/">Tcl</a> project page</a>
+and Itcl and friends from the <a href="http://sourceforge.net/projects/incrtcl/>
+ITcl</a> project page, both at <a href="http://sourceforge.net/">Sourceforge.net</a>.
+
+<p>The first step is to unpack, build, and install Tcl:</p>
+
+<pre>
+$ tar zxvf tcl8.3.3.tar.gz
+$ cd tcl8.3.3/unix
+$ ./configure --prefix=/usr/local
+$ make
+$ su
+# make install
+# exit
+$ cd ../..
+</pre>
+
+<p>Then, Tk:</p>
+
+<pre>
+$ tar zxvf tk8.3.3.tar.gz
+$ cd tk8.3.3/unix
+$ ./configure --prefix=/usr/local
+$ make
+$ su
+# make install
+# exit
+$ cd ../..
+</pre>
+
+<p>The, Itcl/Itk:</p>
+
+<pre>
+$ tar zxvf itcl3.2.1_src.tgz
+$ cd itcl3.2.1
+$ ./configure --prefix=/usr/local
+$ make
+$ su
+# make install
+# exit
+$ cd ..
+</pre>
+
+<p>Installing Iwidgets is a little weird, you have to do it inside the Itcl build directory:</p>
+
+<pre>
+$ cd itcl3.2.1
+$ tar zxvf ../iwidgets4.0.0.tar.gz
+$ cd iwidgets4.0.0
+$ ./configure
+$ su
+# make install
+# exit
+$ cd ../..
+</pre>
 
 <h3>MacOS</h3>
 
 <p>We had considerable difficulty finding a set of binary distributions for MacOS
 which worked together and were sufficiently stable.  The necessary files were eventually
-located on Sourceforge.
+located on Sourceforge.</p>
+
+<p>Tcl and Tk can be downloaded from the <a
+href="http://sourceforge.net/projects/tcl/">Tcl Project Page</a>.  There is
+a <a href="http://prdownloads.sourceforge.net/tcl/TclTk_8.3.4_FullInstall.bin">
+binary distribution of Tcl/Tk 8.3.4</a> which seems reasonably stable.</p>
+
+<p>To find ITcl, ITk, and IWidgets, one must go to the
+<a href="http://sourceforge.net/projects/incrtcl/>
+ITcl Project Page</a>.  Even though it was compiled for Tcl/Tk 8.3.2p1, the
+<a href="http://prdownloads.sourceforge.net/incrtcl/Mac_Itcl3.1_8.3.2p1.sit.bin">
+binary distribution of ITcl/Itk/IWidgets version 3.1</a> works with Tcl/Tk 8.3.4.</p>
 
 <h3>Win32</h3>
 
-<p>For Win32 we used the excelent binary Tcl distribution from Activestate.
+<p>For Microsoft Windows computers we selected the <a
+href="http://downloads.activestate.com/ActiveTcl/Windows/8.3.4/ActiveTcl8.3.4.2-1-win32-ix86.exe">
+ActiveTcl 8.3.4.2</a> distribution from <a
+href="http://www.activestate.com/">Activestate</a>.</p>
+
+<p>The only problem with this distribution is that it contains far more than
+we need.  It consumes about 24 Megabytes of disk space and takes a fairly
+long time to install.</p>
+
+<h2>Connecting Interpreter and Scripts</h2>
+
+<p>The first area of incompatibility between platforms involves how scripts
+are run.</p>
+
+<h3>Unix</h3>
+
+<p>On Unix and Unix-like systems such as BSD and Linux things work fairly well.
+Any modern operating system of this family supports the #! comment at the top
+of the script file as a way to specify the interpreter.
+
+<h3>Win32</h3>
+
+<p>Things are not quite so bright on Microsoft Windows machines.  You
+basically have two choices.  One, you can rely on the operating system's
+file extension handling.  Generally this will be set up so that .tcl files
+are run by Wish, though it is difficult to know if it will be the copy of
+Wish that you expected it to be.  The other is that you can create a
+shortcut that explicitly invokes the Wish interpreter you want with the
+script name as a command line argument.
+
+<h3>MacOS</h3>
+
+<p>It is most unclear to us what is the normal way to run Tcl scripts under
+MacOS.  What we did discover was that we could make a copy of Wish, open it
+in Resedit, and paste the script into a Text resource with ID number ????. 
+There is even a little program that will do this for you.</p>
+
+<p>Of course, every script done this way requires an extra copy of Wish,
+which eats up a few hundred kilobytes of hard disk space.  It would be worse
+if it were not for the fact that a good deal of Tcl and Tk are in two
+dynamicly linked libraries.</p>
+
+<h2>Application Configuration Files</h2>
+
+<p>Another area of incompatibility is
+
+
 
 
 </body>
 </html>
-

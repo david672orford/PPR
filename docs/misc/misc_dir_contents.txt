@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/misc_README.txt
-7 June 2001
+7 March 2002
 
 The PPR source directory "misc/" contains a number of small programs and other
 files.  Some of these are not described in the primary documentation.  Some
@@ -23,37 +23,6 @@ This shell script can be used to syncronize the printer configurations on
 two computers running PPR.  After making a change on one computer, while
 logged in as "ppr", run "ppr-sync <othercomputer>".  This script uses rsh to
 transfer the files.  It is really just a hack and not a very good one at that.
-
-
-=========================
- atalkmapd.perl
- atalk.conf.sample
-=========================
-
-A Perl script which uses CAP60 utilities to construct a list of nodes
-and the sockets on which various popup-messages programs are listening.
-This list is for use by the atalk responder.  This code was never really
-finished and hasn't been used in a long time, so it is not installed
-by "make install".
-
-
-======================
- fix410.ps
- ttquery.ps
-======================
-
-These two PostScript files are not installed by "make install".
-
-The first one, fix410.ps, is a PostScript utility.  It sets a number of
-features of the QMS-PS 410.  For example, it sets the optional paper tray
-as the default tray.
-
-The second, ttquery.ps is a query which the Macintosh LaserWriter driver
-uses to figure out how to print TrueType fonts on a particular printer.
-It is included for reference.  The file contains a deliberate error, an
-undefined command at its end.  You can send this file to a printer and wait
-for it to be arrested, then use "ppop log" to find out what it printed on
-stdout.
 
 
 ========================
@@ -139,4 +108,3 @@ the ones supplied by WordPerfect Corp.
 
 =========================
 End of file
-

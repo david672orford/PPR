@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 2 January 2002.
+# Last modified 7 March 2002.
 #
 
 =head1 NAME
@@ -388,54 +388,16 @@ problem.
 
 =item B<--commentary> I<integer>
 
-This is a temporary experimental option which will be removed in PPR 1.50 when
-the commentary and responder systems are integrated.
-
-This option indicates that, while this job is being printed, commentary
-messages of the categories respresented by the I<integer> should be
-sent to the person who submitted the job.
+This option indicates that, while this job is being printed, the responder
+should be used to send commentary on the printer's behavior.  The commentary
+will be limited to those categories respresented by the I<integer>.
 
 If this option is not specified, then the value is read from the environment
 variable PPR_COMMENTARY.  If that environment variable is not defined, then a
 value of 0 (which requests no commentary) is used.
 
 The I<integer> is the sum of certain numbers which designate the catagories
-of commentary desired.  See the section on commentators in "PPR, a Print Spooler
-For PostScript" for a list of the values.
-
-=item B<--commentator> I<method>
-
-This is a temporary experimental option which will be removed in PPR 1.50 when
-the commentary and responder systems are integrated.
-
-This option indicates that the method I<method> should be used to send
-commentary messages to the user.  If this option is not specified, then the
-value is read from the environment variable PPR_COMMENTATOR.  If that variable
-is not defined, then the responder method is used.
-
-=item B<--commentator-address> I<address>
-
-This is a temporary experimental option which will be removed in PPR 1.50 when
-the commentary and responder systems are integrated.
-
-This option indicates the address to which commentary messages should be sent.
-This address should be in a format suitable for the commentator method being used.
-If this option is not specified, then the value is read from the environment
-variable PPR_COMMENTATOR_ADDRESS.  If that variable is not defined, then the
-responder address is used.
-
-=item B<--commentator-options> I<list>
-
-This is a temporary experimental option which will be removed in PPR 1.50 when
-the commentary and responder systems are integrated.
-
-This option is used to specify a space separated list of name=value pairs.  This
-list is passed the the commentator program.  The meaning of the name=value pairs
-depends entirely uppon the commentator program.
-
-If this option is not specified, then the value is read from the environment
-variable PPR_COMMENTATOR_OPTIONS.  If that value is not defined, then
-an empty option list is used.  (The responder options are I<not> used!)
+of commentary desired.  These values are not yet documented.
 
 =back
 

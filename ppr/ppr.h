@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 July 2001.
+** Last modified 7 March 2002.
 */
 
 /*
@@ -187,6 +187,11 @@ void warning(int level, const char *message, ...)
 __attribute__ (( format (printf, 2, 3) ))
 #endif
 ;
+void ppr_abort(int exitval)
+#ifdef __GNUC__
+__attribute__ (( noreturn ))
+#endif
+;
 void fatal(int exitval, const char *message, ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 2, 3) ))
@@ -267,7 +272,7 @@ int truetype_set_fontmode(const char filename[]);
 void truetype_merge_fonts(char *fontname, char *oldfont, char *newfont);
 
 /* ppr_respond.c */
-int respond(int respcode, const char *extra);
+int respond(int response_code, const char extra[]);
 
 /* ppr_nest.c */
 void nest_push(int leveltype, const char *name);

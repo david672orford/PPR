@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/writeqfile.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2001.
+** Last modified 7 March 2002.
 */
 
 #include "before_system.h"
@@ -52,6 +52,8 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     	qentry->user,					/* Unix user id */
     	qentry->username ? qentry->username : "?",	/* Unix user name */
 	qentry->proxy_for ? qentry->proxy_for : "");
+
+    fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->LC_MESSAGES ? qentry->LC_MESSAGES : "");
 
     fprintf(Qfile, "Priority: %d\n", qentry->priority);
 
@@ -85,19 +87,9 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 	MAX_RESPONSE_ADDRESS, qentry->responder_address,
 	MAX_RESPONDER_OPTIONS, qentry->responder_options ? qentry->responder_options : "");
 
-    /* If the --commentatary switch was used, emmit a "Commentator:" line.
-       If no --commentator or --commentator-address option was used, use the
-       same name as the responder and the responder address.  If no
-       --commentator-options switch was used, use a blank options list.
+    /* If the --commentatary switch was used, emmit a "Commentary:" line.
        */
-    if(qentry->commentator.interests)
-	{
-	fprintf(Qfile, "Commentator: %d \"%s\" \"%s\" \"%s\"\n",
-		qentry->commentator.interests,
-		qentry->commentator.progname ? qentry->commentator.progname : qentry->responder,
-		qentry->commentator.address ? qentry->commentator.address : qentry->responder_address,
-		qentry->commentator.options ? qentry->commentator.options : "");
-	}
+    fprintf(Qfile, "Commentary: %d\n", qentry->commentary);
 
     /* This big long line contains lots of information.  It will later be broken
        up into several lines. */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 December 2001.
+** Last modified 7 March 2002.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -62,6 +62,7 @@ struct QFileEntry
     long user;				/* id of user who submitted it (don't use uid_t) */
     const char *username;		/* text version of "user" */
     const char *proxy_for;		/* -X switch string */
+    const char *LC_MESSAGES;		/* language setting for messages */
     const char *For;			/* %%For: line for PostScript header */
     const char *charge_to;		/* charge account to debit */
     const char *Routing;		/* %%Routing: line for PostScript header */
@@ -71,7 +72,6 @@ struct QFileEntry
     const char *responder;		/* program for sending messages to user */
     const char *responder_address;	/* address for errors, possibly NULL */
     const char *responder_options;	/* name=value list of responder options */
-    struct COMMENTATOR commentator;
     int commentary;			/* bitmask of commentary to send thru the responder */
     int nmedia;				/* number of media types */
     int media[MAX_DOCMEDIA];		/* list of required media types */

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/templates/main.c
+** mouse:~ppr/src/misc/ppr-testpage.c
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -40,7 +40,60 @@
 #include "util_exits.h"
 #include "version.h"
 
-const char myname[] = "template";
+const char myname[] = "ppr-testpage";
+
+/*========================================================================
+**
+========================================================================*/
+
+static void do_header(void)
+    {
+    printf("\
+%%!PS-Adobe-3.0
+%%%%Title: PPR Test Page
+%%%%Pages: 1
+%%%%EndComments
+
+");
+    }
+
+static void do_setup(void)
+    {
+    printf("\
+%%%%BeginSetup
+%%%%EndSetup
+
+");
+    }
+
+static void do_startpage(int num)
+    {
+    printf("\
+%%%%Page: %d %d
+save
+", num, num);
+    }
+
+static void do_endpage(void)
+    {
+    printf("\
+restore
+showpage
+
+");
+    }
+
+static void do_trailer(void)
+    {
+    printf("\
+%%%%Trailer
+%%%%EOF
+");
+    }
+
+/*========================================================================
+** Main and support routines
+========================================================================*/
 
 /*
 ** Command line options:
@@ -100,8 +153,17 @@ int main(int argc, char *argv[])
     	}
     }
 
-    /* Main code continues here */
+    do_header();
 
+    do_setup();
+
+    do_startpage(1);
+
+    do_endpage();
+
+    do_trailer();
+
+    return 0;
     } /* end of main() */
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_respond.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 7 March 2002.
 */
 
 /*
@@ -54,294 +54,161 @@ static void empty_reapchild(int sig)
     } /* end of empty_reapchild() */
 
 /*
-** Given queue id information, the response number, and the extra parameter, build
-** an appropriate English message to send to the user.
-*/
-static void respond_build_message(char *response_str, size_t space_available, const char *destnode, const char *destname, int id, int subid, const char *homenode, int response, const char *extra)
-    {
-    switch(response)
-	{
-	case RESP_CANCELED_NOCHARGEACCT:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" was rejected because\n"
-	    "\"%s\" does not have a charge account."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_CANCELED_BADAUTH:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" was rejected because\n"
-	    "you did not enter %s's authorization code."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_CANCELED_OVERDRAWN:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" was rejected because\n"
-	    "your account is overdrawn."),
-		network_destspec(destnode, destname)
-		);
-	    break;
-	case RESP_CANCELED_NONCONFORMING:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" was rejected because\n"
-	    "it does not contain DSC page division information."),
-		network_destspec(destnode, destname)
-		);
-	    break;
-	case RESP_NOFILTER:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected because no filter\n"
-	    "is available which can convert %s to PostScript."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_FATAL:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected by PPR because of a\n"
-	    "fatal error: %s."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_NOSPOOLER:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been lost because PPRD is not running."),
-		network_destspec(destnode, destname)
-		);
-	    break;
-	case RESP_BADMEDIA:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected because it requires\n"
-	    "a size and type of medium (paper) which is not available."),
-		network_destspec(destnode, destname)
-		);
-	    break;
-	case RESP_BADPJLLANG:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected because the\n"
-	    "PJL header requests an unrecognized printer language \"%s\"."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_FATAL_SYNTAX:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected because\n"
-	    "the ppr command line contains an error:\n"
-	    "%s."),
-		network_destspec(destnode, destname),
-		extra
-		);
-	    break;
-	case RESP_CANCELED_NOPAGES:
-	    snprintf(response_str, space_available,
-	    _("Your new print job for \"%s\" has been rejected because\n"
-	    "you requested printing of only selected pages but the pages\n"
-	    "are not marked by DSC comments."),
-	    	network_destspec(destnode, destname)
-	    	);
-	    break;
-	case RESP_CANCELED_ACL:
-	    snprintf(response_str, space_available,
-	    _("Your print job for \"%s\" has been rejected because the\n"
-	    "PPR access control lists do not grant \"%s\" access to\n"
-	    "that destination."),
-	    	network_destspec(destnode, destname),
-	    	extra
-	    	);
-	    break;
-	default:
-	    snprintf(response_str, space_available,
-	    "Invalid response code %d for your new print job.", response);
-	}
-    } /* end of respond_build_message() */
-
-/*
 ** Send a response to the user.
 **
 ** The caller should call exit() immediatly after calling
 ** this function.
 **
-** Return 0 if we send the message, -1 if we don't.
-**
 ** It is worth noting that when this function is called, qentry.subid will
 ** always be zero and qentry.homenode will always be the value returned
 ** from ppr_get_nodename().
+**
+** This function returns 0 if it succedest, -1 if it fails.  The return
+** code is used by ppr_infile.c.  If there is no filter to convert the file
+** to PostScript and calling this function returns -1, it will use the
+** hexdump filter to report the error.
 */
-int respond(int response, const char *extra)
+int respond(int response_code, const char extra[])
     {
-    char response_str[512];		/* for building our message */
-    int retval = -1;			/* will set to 0 if we send the message */
+    const char function[] = "respond";
+    char jobname[128];
+    int fd;
+    pid_t pid;			/* Process id of responder */
+    int wstat;			/* wait() status */
+    int wret;			/* wait() return code */
+
+    /* Bail out of here if we can't do anything. */
+    if(!(ppr_respond_by & PPR_RESPOND_BY_RESPONDER) && !(ppr_respond_by & PPR_RESPOND_BY_STDERR))
+    	return -1;
+    if(strcmp(qentry.responder, "none") == 0)
+    	return -1;
+
+    /* Build a string containing all of the queue id elements separated by spaces. */
+    snprintf(jobname, sizeof(jobname), "%s:%s",
+		qentry.destnode != (char*)NULL ? qentry.destnode : ppr_get_nodename(),
+		qentry.destname);
+
+    /* Create a temporary file that looks enough like a queue file to
+       keep ppr-respond happy. */
+    {
+    char filename[MAX_PPR_PATH];
+    char buffer[1024];
+    ppr_fnamef(filename, "%s/ppr-respond-XXXXXX", TEMPDIR);
+    if((fd = gu_mkstemp(filename)) == -1)
+	{
+	fprintf(stderr, "%s(): gu_mkstemp(\"%s\") failed, errno=%d (%s)\n", function, filename, errno, gu_strerror(errno));
+	return -1;
+	}
+    unlink(filename);
+    snprintf(buffer, sizeof(buffer),
+	"For: %s\n"
+	"Title: %s\n"
+	"Response: %.*s %.*s %.*s\n",
+		qentry.For ? qentry.For : "???",
+		qentry.Title ? qentry.Title : "",
+		MAX_RESPONSE_METHOD, qentry.responder,
+		MAX_RESPONSE_ADDRESS, qentry.responder_address,
+		MAX_RESPONDER_OPTIONS, qentry.responder_options ? qentry.responder_options : ""
+    	);
+    write(fd, buffer, strlen(buffer));
+    lseek(fd, SEEK_SET, 0);
+    }
+
+    /* Set a harmless SIGCHLD handler. */
+    signal(SIGCHLD, empty_reapchild);
 
     /* Change to /usr/lib/ppr so we can find responders and responders can find stuff. */
     if(chdir(HOMEDIR) == -1)
     	fprintf(stderr, "respond(): chdir(\"%s\") failed, errno=%d (%s)\n", HOMEDIR, errno, gu_strerror(errno));
 
-    /* Construct an English message. */
-    respond_build_message(response_str, sizeof(response_str), qentry.destnode, qentry.destname, qentry.id, qentry.subid, qentry.homenode, response, extra);
-
-    /*
-    ** If we should respond by stderr, do it now.
-    ** Notice that output to stderr is never re-wrapped.
-    **
-    ** Notice that we don't return after doing this.  It may
-    ** be that we are supposed to use both stderr and the responder.
-    */
-    if(ppr_respond_by & PPR_RESPOND_BY_STDERR)
+    /* Fork and exec a responder. */
+    if((pid = fork()) == -1)
 	{
-    	fprintf(stderr, "%s\n", response_str);
-    	retval = 0;		/* that counts as sending the message */
-    	}
+	fprintf(stderr, "%s(): can't fork(), errno=%d (%s)\n", function, errno, gu_strerror(errno));
+	return -1;
+	}
 
-    /*
-    ** If we should use the responder and the responder name
-    ** is not set to "none", then launch it.
-    */
-    if((ppr_respond_by & PPR_RESPOND_BY_RESPONDER) && strcmp(qentry.responder, "none"))
+    if(pid == 0)               /* if child */
 	{
-	char resfname[MAX_PPR_PATH];	/* for responder file name */
-	pid_t pid;			/* Process id of responder */
-	int wstat;			/* wait() status */
-	int wret;			/* wait() return code */
-	struct stat statbuf;
+	char response_code_str[6];
 
-	/* Re-wrap the response string.  This modifies response_str. */
-	gu_wordwrap(response_str, get_responder_width(qentry.responder));
+	/* Convert the response code to a string. */
+	snprintf(response_code_str, sizeof(response_code_str), "%d", response_code);
 
-	/* Set a harmless SIGCHLD handler. */
-	signal(SIGCHLD, empty_reapchild);
-
-	/* Construct the full path to the responder from HOMEDIR: */
-	ppr_fnamef(resfname, "%s/%s", RESPONDERDIR, qentry.responder);
-
-	/*
-	** Get file information about the responder.  This will tell us
-	** if it exists but it will also allow us to determine if the
-	** setuid bit is set on the responder.  If it is not we will use
-	** setuid() to set the effective uid to that of the person
-	** who invoked this program.
-	*/
-	if(stat(resfname, &statbuf) == -1)
+	/* Move the queue file to file descriptor 3 if it isn't there already. */
+	if(fd != 3)
 	    {
-	    fprintf(stderr, "can't stat() \"%s\", errno=%d (%s)\n", resfname, errno, gu_strerror(errno));
-	    return -1;
+	    dup2(fd, 3);
+	    close(fd);
 	    }
 
-    	/* Fork and exec a responder. */
-	if((pid = fork()) == -1)
+	/* Make sure the responder has a nice, safe stdin. */
+	if((fd = open("/dev/null", O_RDONLY)) < 0)
 	    {
-	    fprintf(stderr, "can't fork() in respond(), errno=%d (%s)\n", errno, gu_strerror(errno) );
-	    return -1;
-	    }
-
-	if(pid == 0)               /* if child */
-	    {
-	    char response_code_number[3];
-	    char time_number[16];
-	    char queue_id[256];
-	    int fd;
-
-	    /* Convert the response code to a string. */
-	    snprintf(response_code_number, sizeof(response_code_number), "%d", response);
-
-	    /* Convert the submission time to a string. */
-	    snprintf(time_number, sizeof(time_number), "%ld", qentry.time);
-
-	    /* Build a string containing all of the queue id elements separated by spaces. */
-	    snprintf(queue_id, sizeof(queue_id), "%s %s %d %d %s",
-	    	qentry.destnode != (char*)NULL ? qentry.destnode : ppr_get_nodename(),
-	    	qentry.destname, qentry.id, qentry.subid, qentry.homenode);
-
-	    /* Make sure the responder has a nice, safe stdin. */
-	    if((fd = open("/dev/null", O_RDONLY)) < 0)
-	    	{
-	    	fprintf(stderr, "Warning: can't open \"/dev/null\", errno=%d (%s)\n", errno, gu_strerror(errno));
-	    	}
-	    else
-	    	{
-		if(fd != 0) dup2(fd, 0);
-		if(fd > 0) close(fd);
-		}
-
-	    /*
-	    ** Unless the setuid bit is set, set the effective
-	    ** user id back to the user's.  This is important
-	    ** for the xwin responder because XWindows programs
-	    ** will not work unless access() suceeds on
-	    ** .Xauthority.
-	    */
-	    if((statbuf.st_mode & S_ISUID) == 0)
-	    	seteuid(user_uid);
-	    if((statbuf.st_mode & S_ISGID) == 0)
-	    	setegid(user_gid);
-
-	    /* Execute the responder: */
-	    execl(resfname, qentry.responder,
-	    	qentry.For ? qentry.For : qentry.username, /* !!! */
-	    	qentry.responder_address,				/* address to send response to */
-	    	response_str,						/* suggested message text */
-		"",							/* second response string */
-		qentry.responder_options ? qentry.responder_options : "",
-		response_code_number,					/* response type number */
-		queue_id,						/* complete job queue id */
-		extra ? extra : "",					/* normally printer name */
-		qentry.Title ? qentry.Title : "",			/* job title */
-		time_number,						/* time job was submitted */
-		"",							/* reason last arrested */
-		"?",							/* number of pages */
-	    	(char*)NULL);
-	    _exit(242);
-	    }
-
-	retval = 0;		/* we sent it */
-
-	/*
-	** Wait for the responder to finish.  If we detect that it
-	** finished abnormally, don't call fatal(), as that would
-	** call respond() which could have nasty results.
-	*/
-	while((wret = wait(&wstat)) != pid)
-	    {
-	    if(wret == -1 && errno != EINTR)
-	    	{
-	    	fprintf(stderr, "ppr_respond.c: respond(): wait() failed, errno=%d (%s)\n", errno, gu_strerror(errno) );
-		exit(PPREXIT_OTHERERR);
-		}
-	    }
-
-	if(WIFEXITED(wstat))
-	    {
-	    if( WEXITSTATUS(wstat) != 0 )
-	    	{
-	    	fprintf(stderr, "Responder exited with code %d.\n", (int)WEXITSTATUS(wstat));
-	    	exit(PPREXIT_OTHERERR);
-	    	}
-	    }
-	else if(WIFSIGNALED(wstat))
-	    {
-	    fprintf(stderr, "Responder killed by signal %d (%s).\n", WTERMSIG(wstat), gu_strsignal(WTERMSIG(wstat)));
-	    if(WCOREDUMP(wstat))
-	    	fprintf(stderr, "Core dumped\n");
-	    exit(PPREXIT_OTHERERR);
+	    fprintf(stderr, "Warning: can't open \"/dev/null\", errno=%d (%s)\n", errno, gu_strerror(errno));
 	    }
 	else
 	    {
-	    fprintf(stderr, "ppr_respond.c: respond(): The responder suffered some really bizzar accident.\n");
-	    exit(PPREXIT_OTHERERR);
+	    if(fd != 0) dup2(fd, 0);
+	    if(fd > 0) close(fd);
 	    }
-	} /* If we should exec() a responder */
+
+	/*
+	** Set the effective user id back to the user's.  This is
+	** important for the xwin responder because XWindows programs
+	** will not work unless access() suceeds on .Xauthority.
+	*/
+	seteuid(user_uid);
+	setegid(user_gid);
+
+
+	/* Execute the responder wrapper. */
+	execl("lib/ppr-respond", "ppr_respond",
+		(ppr_respond_by & PPR_RESPOND_BY_STDERR) ? "--stderr" : "--no-stderr",
+		(ppr_respond_by & PPR_RESPOND_BY_RESPONDER) ? "--responder" : "--no-responder",
+		jobname,
+		response_code_str,
+		extra ? extra : "",
+	    	(char*)NULL);
+	    _exit(242);
+	}
 
     /*
-    ** When respond() returns, its caller will immediately
-    ** call exit(), so we should remove any files ppr has created.
+    ** Wait for the responder to finish.  If we detect that it
+    ** finished abnormally, don't call fatal(), as that would
+    ** call respond() which could have nasty results.
     */
-    file_cleanup();
+    while((wret = wait(&wstat)) != pid)
+	{
+	if(wret == -1 && errno != EINTR)
+	    {
+	    fprintf(stderr, "%s(): wait() failed, errno=%d (%s)\n", function, errno, gu_strerror(errno) );
+	    return -1;
+	    }
+	}
 
-    return retval;				/* Say if we did anything */
+    if(WIFEXITED(wstat))
+	{
+	if(WEXITSTATUS(wstat) != 0)
+	    {
+	    fprintf(stderr, "%s(): ppr-respond exited with code %d.\n", function, (int)WEXITSTATUS(wstat));
+	    return -1;
+	    }
+	}
+    else if(WIFSIGNALED(wstat))
+	{
+	fprintf(stderr, "%s(): ppr-respond killed by signal %d (%s).\n", function, WTERMSIG(wstat), gu_strsignal(WTERMSIG(wstat)));
+	if(WCOREDUMP(wstat))
+	    fprintf(stderr, "Core dumped\n");
+	return -1;
+	}
+    else
+	{
+	fprintf(stderr, "%s(): ppr-respond suffered some really bizzar accident.\n", function);
+	return -1;
+	}
+
+    return 0;
     } /* end of respond() */
 
 /* end of file */

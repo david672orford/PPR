@@ -7526,7 +7526,7 @@ line was being parsed twice.
 
 * Broke the www/ppr-httpd.perl standalone code out into libscript/tcpserver.pl.
 
-* pprd/pprd_ppop.c:ppop_list(): removed error check from fwrite(). 
+* pprd/pprd_ppop.c:ppop_list(): removed error check from fwrite().
   Previously it was a fatal error.  This meant that pprd would kill itself
   if the temporary file space filled up!
 
@@ -7546,13 +7546,25 @@ line was being parsed twice.
 * Added www/cliconf.cgi.perl which creates a shell script to configure
   a client to send jobs to a PPR queue.
 
-* Copied papsrv/ into ppr-papd/ as a first step in making a papsrv 
-  replacement which reads the regular queue configuration files 
+* Copied papsrv/ into ppr-papd/ as a first step in making a papsrv
+  replacement which reads the regular queue configuration files
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--27 February 2002.
+1.50a1, 27 February 2002--7 March 2002.
 
-*
+* Moved responder message building out of pprd/pprd_respond.c and into
+  responders/ppr-respond.c.
+
+* misc/: removed atalk.conf.sample, atalkmapd.perl, fix410.ps,
+  printer_query.ps, and ttquery.ps.
+
+* Moved responder message building out of ppr/ppr_respond.c and into
+  responders/ppr-respond.c.
+
+* ppr/: removed --commentator, --commentator-address,
+  and --commentator-options.
+
+
 
 
