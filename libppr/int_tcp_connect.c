@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/libppr/int_tcp_connect.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 August 2003.
+** Last modified 28 February 2004.
 */
 
 #include "before_system.h"
@@ -262,7 +262,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 			switch(saved_errno)
 				{
 				case ETIMEDOUT:
-					alert(int_cmdline.printer, TRUE, _("Timeout while trying to connect to printer."
+					alert(int_cmdline.printer, TRUE, _("Timeout while trying to connect to printer.\n"
 										"(Connect() reported error ETIMEDOUT.)"));
 					int_exit(EXIT_PRNERR_NOT_RESPONDING);
 					break;

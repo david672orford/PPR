@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-20 15:22-0400\n"
+"POT-Creation-Date: 2004-02-28 10:13-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -14,29 +14,29 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprdrv/pprdrv.c:1245 ../pprdrv/pprdrv.c:1268 ../pprdrv/pprdrv.c:1335
-#: ../pprdrv/pprdrv.c:1372 ../pprdrv/pprdrv.c:1378 ../pprdrv/pprdrv.c:1383
-#: ../pprdrv/pprdrv.c:1388 ../pprdrv/pprdrv.c:1401
+#: ../pprdrv/pprdrv.c:1246 ../pprdrv/pprdrv.c:1324 ../pprdrv/pprdrv.c:1353
+#: ../pprdrv/pprdrv.c:1359 ../pprdrv/pprdrv.c:1364 ../pprdrv/pprdrv.c:1369
+#: ../pprdrv/pprdrv.c:1382
 #, c-format
 msgid "Invalid \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1418
+#: ../pprdrv/pprdrv.c:1399
 #, c-format
 msgid "Syntax error in \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1430
+#: ../pprdrv/pprdrv.c:1411
 #, c-format
 msgid "Value of \"%s\" in \"%s\" must be boolean."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1435
+#: ../pprdrv/pprdrv.c:1416
 #, c-format
 msgid "Unrecognized userparams variable \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1448
+#: ../pprdrv/pprdrv.c:1429
 #, c-format
 msgid "No \"Interface:\" line in %s"
 msgstr ""
@@ -53,49 +53,49 @@ msgid ""
 "(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:396
+#: ../pprdrv/pprdrv_capable.c:395
 #, c-format
 msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:451 ../pprdrv/pprdrv_capable.c:462
+#: ../pprdrv/pprdrv_capable.c:450 ../pprdrv/pprdrv_capable.c:461
 #, c-format
 msgid "Resource \"%s %s %s %d\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:453 ../pprdrv/pprdrv_capable.c:464
+#: ../pprdrv/pprdrv_capable.c:452 ../pprdrv/pprdrv_capable.c:463
 #, c-format
 msgid "Resource \"%s %s\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:559 ../pprdrv/pprdrv_capable.c:564
+#: ../pprdrv/pprdrv_capable.c:558 ../pprdrv/pprdrv_capable.c:563
 #, c-format
 msgid "Requirement \"%s\" can't be met."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:574
+#: ../pprdrv/pprdrv_capable.c:573
 #, c-format
 msgid "Required language level (%d) exceeds printer's language level (%d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:588
+#: ../pprdrv/pprdrv_capable.c:587
 msgid "Printer does not have all required extensions."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:600
+#: ../pprdrv/pprdrv_capable.c:599
 msgid "Printer is not permitted to print grayscale documents."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:657
+#: ../pprdrv/pprdrv_capable.c:656
 msgid "Communications channel cannot pass required codes."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:669
+#: ../pprdrv/pprdrv_capable.c:668
 #, c-format
 msgid "Job has %d pages but allowed range for this printer is %d--%d."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:682
+#: ../pprdrv/pprdrv_capable.c:681
 #, c-format
 msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
 msgstr ""
@@ -141,7 +141,7 @@ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
 msgstr ""
 
 #: ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
-#: ../pprdrv/pprdrv_lw_messages.c:48 ../pprdrv/pprdrv_pjl_messages.c:70
+#: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr ""
@@ -258,28 +258,28 @@ msgstr ""
 msgid "%s(): pipe() failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:73 ../pprdrv/pprdrv_pjl_messages.c:93
+#: ../pprdrv/pprdrv_lw_messages.c:83 ../pprdrv/pprdrv_pjl_messages.c:92
 #, c-format
 msgid "Not enough fields in \"%s\" line %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:82 ../pprdrv/pprdrv_pjl_messages.c:104
+#: ../pprdrv/pprdrv_lw_messages.c:92 ../pprdrv/pprdrv_pjl_messages.c:103
 #, c-format
 msgid "Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:84 ../pprdrv/pprdrv_pjl_messages.c:106
+#: ../pprdrv/pprdrv_lw_messages.c:94 ../pprdrv/pprdrv_pjl_messages.c:105
 #, c-format
 msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:86 ../pprdrv/pprdrv_pjl_messages.c:108
+#: ../pprdrv/pprdrv_lw_messages.c:96 ../pprdrv/pprdrv_pjl_messages.c:107
 #, c-format
 msgid ""
 "Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:104
+#: ../pprdrv/pprdrv_lw_messages.c:114
 #, c-format
 msgid "%s: no match for \"%s\""
 msgstr ""
@@ -335,35 +335,35 @@ msgstr ""
 msgid "PFB file \"%s\" is currupt (defect type %d)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_pjl_messages.c:124
+#: ../pprdrv/pprdrv_pjl_messages.c:123
 #, c-format
 msgid "%s: no match for %d \"%s\""
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:284
+#: ../pprdrv/pprdrv_ppd.c:288
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:288
+#: ../pprdrv/pprdrv_ppd.c:292
 msgid ""
 "Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:890
+#: ../pprdrv/pprdrv_ppd.c:881
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:956
+#: ../pprdrv/pprdrv_ppd.c:947
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:966
+#: ../pprdrv/pprdrv_ppd.c:957
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
