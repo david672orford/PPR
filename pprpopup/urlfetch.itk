@@ -1,26 +1,36 @@
 #
 # urlfetch.itk
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 5 November 2001.
+# Last modified 14 January 2002.
 #
 
 package require Tcl 8.3
 package require Tk 8.3
-package require http 2.2
+package require http 2.3
 package require Itcl 3.1
 
 #-----------------------------------------------------------
 # This object manages the HTTP connections and may someday
 # include a cache.
+#
+# It also has a lame implementation of file: URLs for GET.
+# It is only there to support the browser_test.tcl script.
 #-----------------------------------------------------------
 itcl::class urlfetch {
   protected variable token_commands
 
   public method get {url command} {
     puts "url::get $url $command"
-    set token [::http::geturl $url -command [list $this callback]]
-    set token_commands($token) $command
+    if [regexp {^file://(/.*)$} $url junk filename] {
+	set stream [open $filename r]
+	set data [read $stream]
+	close $stream
+	$command 200 OK text/html $data
+	} else {
+	set token [::http::geturl $url -command [list $this callback]]
+	set token_commands($token) $command
+	}
     }
 
   public method post {url data command} {

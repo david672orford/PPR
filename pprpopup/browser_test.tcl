@@ -1,9 +1,9 @@
 #! /usr/bin/wish
 #
 # browser_test.tcl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 14 December 2001.
+# Last modified 14 January 2002.
 #
 
 source ./urlfetch.itk
@@ -33,6 +33,6 @@ Browser .t1.sh \
 pack .t1.sh -side top -anchor w -fill both -expand 1
 
 # Load a page into the browser.
-.t1.sh import http://localhost:15010/html/test_forms.html
+.t1.sh import file:///[pwd]/test_forms.html
 
 # end of file

@@ -4,11 +4,31 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 11 January 2002.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 #
 
 set about_text "PPR Popup 1.50a1
-10 January 2002
+19 January 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -47,12 +67,28 @@ proc alert {message} {
 
     set w .alert_[incr wserial]
 
+    set frown_image [image create photo -data {
+R0lGODlhUgBSAKEAAAAAAPDw8P//AAAAVSH5BAEAAAEALAAAAABSAFIAAAL+
+jI+pywfQopy0ooezzrb7qQniSJaC9qXdZrbtpsZL5tb2ickyffcup/NgfMRa
+LkgZFpe/BzLyYEqNkGdCOc2Wjlas9iviBr1gsDgWLatJzh1gDR+1U+l4fL6q
+29fn5Htvh+cHCCgI9Ue4ZziD2MNiFkK0eNVos6EndVlJJYFJpZml6dl06CNK
+Znq6+VLFmKq6+qmayjBqAmvbBEurkLuFu4Qbe9vqMPy7WyQsWWxwjDyrDCxJ
+KZ3MfO1Y7Et8mhnNfPENOuXN1MqtGxl6WV6Vrg5/8/jt/JxI2HaPn+/M///C
+H8CBYQQSBAhB3sEyPBbya+gwEcSIhVBRvGPxIp/OhBLN9QuwL5iwdXwMQhop
+qiRIhiinfXkXktUyHDPd2WOXEls7myBjysk5bqdIB+eEniRp6kJMchvpaVOq
+MyNLpJzEaaOKEeutXs+c4vNKjKslsB0n/nIl0+xDrZNyaf1KdlLPTxTByp2r
+ceyou3jz/iDVyaffMM1qCc7LF+rgpxakLqYp5LDDxGgfn1WhcCHlUpZxIMn8
+b7MfyYFEV3Ac2nRj0HD6WOlJGufrBmpLq9aB+uTs1az1Ft4NonZU4G5yswFC
+/HPL28kjw2huoAAAOw==
+}]
+
     toplevel $w
     wm title $w "PPR Popup has Malfunctioned"
 
     frame $w.title
     pack $w.title -side top -padx 10 -pady 10
-    label $w.title.icon -bitmap error
+    #label $w.title.icon -bitmap error
+    label $w.title.icon -image $frown_image
     label $w.title.text -text "PPR Popup has Malfunctioned"
     pack $w.title.icon $w.title.text -side left
 
@@ -62,6 +98,8 @@ proc alert {message} {
     button $w.dismiss -text "Dismiss" -command [list destroy $w]
     pack $w.dismiss -side right -padx 20 -pady 5
     tkwait window $w
+
+    image delete $frown_image
     }
 
 #
@@ -223,7 +261,7 @@ proc command_MESSAGE {file for} {
 
     frame $w.message
     pack $w.message -side top -fill both -expand true
-    wm withdraw $w
+#    wm withdraw $w
 
     text $w.message.text \
  	-width 75 -height 8 \
@@ -310,7 +348,7 @@ proc command_QUESTION {file jobname url width height} {
 
     set w .html_[incr wserial]
     toplevel $w
-    wm withdraw $w
+#    wm withdraw $w
 
     set open_windows($jobname) $w
     .questions.list insert end $jobname
@@ -530,12 +568,17 @@ proc main {} {
     . configure -menu .menubar
     menu .menubar -border 1 -relief groove
 
-    # Macintosh needs another toplevel to keep the menu in place.  We will place it off the screen.  We 
-    # also add a menu called "apple" to override the default "About Tcl & Tk".
+    # Here are some MacOS hacks.
     global tcl_platform
     if {$tcl_platform(platform) == "macintosh"} {
+
+	# Macintosh needs another toplevel to keep the menu in place.
+	# We will place it off the screen.
         toplevel .dummy -menu .menubar
         wm geometry .dummy 25x25+2000+2000
+	bindtags .dummy GlobalBindTags
+
+	# We also add a menu called "apple" to override the default "About Tcl & Tk".
 	.menubar add cascade -menu [menu .menubar.apple -tearoff 0 -border 1]
 	.menubar.apple add command -label "About PPR Popup" -command { menu_help_about }
         }
@@ -621,27 +664,63 @@ proc main {} {
 
 proc menu_file_quit {} {
     global button_color
-    iwidgets::messagedialog .quit_confirm \
+    global wserial
+
+    set w .quit_confirm_[incr wserial]
+
+    # This is a GIF file converted to base64 with uuencode -m.
+    set stop_image [image create photo -data {
+R0lGODlhiwB5AKEAAPDw8P8AAP///wAAVSH5BAEAAAAALAAAAACLAHkAAAL+
+hI+pq+EPo5y02huZ3rz7hIXiSAbfiaZgybasCseaS9eWjOOQwPf+DwwKh8Ri
+Joc8RXi2JokJSUo5O4HzGoI+ptxGFQu2aB3dMuAbTkvGJvMUrY4/2G4pXC4f
+15F3fJy+F7Nk5ecHGJjSV6h2iPgxuFjY6Eg1RxiJN0nJoIjJeEm2udHpmaYp
+akBaGnYqCrkqCdqGeqAKC9bq+HprKEubaskbqUdrK4zri2p8jJVrtsx85dy1
+G917hAht7TRtp73d1M0XDD6c7PZdHn7+TK6+KA6T/m4TnzhPX2Ov5J4PD0oN
+nz8a+zoIHEiQnY4dCD0VnNGvYSxsMg5KdPFwRcT+i9eiVNzIseMWeRZDtsh4
+BqTJTAo9LFlZ6mFJmCdbjlJJk6VHlzNzsojX0+dPmxodsBE6cSdEo7LEDJlQ
+xAgFIhii+hDh7GUWq4OsBoHKtYLXHlspemG61WuVsT/WsJ3KtilYs7Vwrh1r
+KS7Zu3jdxi2rFJhdpm357tV7Ne9fv4ud0oVWGGxisZPhflUcGbPlypQpVqO8
+V3LozXINlw5wWTPp030QaMvMmDVqzl1p12YD+zbWZFrTjk74+7ZswrhtqwYc
+6ltq4EcN+x6Tm++I5minSy0R/fgFINJXW3dsPexzp8FBQze+fLuElNXDiydP
+nfhw7Yi/e/z8nOp24/L+3YOqj9xI7LX3xHuisZbdgaZdVxU7+A0lBHwI8hfb
+gk/t9lhQsyW4YXwdeojZf2oVSNeAIGJHIYfcNfgbhyQGVpddK5o3YXnOSSiL
+i9Otx4kqM5Im4X4JpqdjgLMs8KB8NdrYH44tpvfhOjwuRaBwxbmoI2JyFblf
+iUXNRmNfNOZnYJMJeXlWlRZeGCSLYuqmD1FIDjaim/MpGeGYZ8J402Afcmkm
+mRQG+tOUj2iIFFxoUglmop8Yyo+fjg61aCVqThpnpZZeimlNmm6KWqdS8nmP
+pKKKBakgiAqFUpqNnvoiqSSZCmuVAXFaq1ufloprrhG1Q2unrYJ6IqxN1ZGh
+ZK7D8tTrqUcFkqyzcnLRm6+vhpLNqgMti0K0jnLbrbb0HOuKuOWAq4K52zxb
+jLrRoDtrszDBG++1306ri7u30PuRvCGR+4tr+saEb7lzJMpuwF8WixC/4wT7
+jsMP++uPxBPby5HFSQycSaoKu8rwuQV/PCDG2wJMMqMhW6MxtRw3M3LKgv2p
+Zc1a7ipztSHJHK5QPEea08890yQ00CvtUQAAOw==
+}]
+
+    iwidgets::messagedialog $w \
             -modality application \
             -title "Confirmation" \
-            -text "If you close this program, you will be unable to print to the public printers."
-    .quit_confirm buttonconfigure OK -text "Close" \
+	    -image $stop_image \
+	    -justify left \
+            -text \
+"If you close this program, this computer will be unable to print to 
+the public printers.  As a courtesy to the next user, you should
+leave it running."
+    $w buttonconfigure OK -text "Close" \
 		-background $button_color \
 		-activebackground $button_color \
 		-defaultring false \
 		-defaultringpad 0 \
 		-highlightthickness 0
-    .quit_confirm buttonconfigure Cancel -text "Don't Close" \
+    $w buttonconfigure Cancel -text "Don't Close" \
 		-background $button_color \
 		-activebackground $button_color \
 		-defaultring false \
 		-defaultringpad 0 \
 		-highlightthickness 0
-    .quit_confirm default OK
-    if {[.quit_confirm activate]} {
+    $w default Cancel
+    if {[$w activate]} {
         exit 0
         } else {
-        destroy .quit_confirm
+        destroy $w
+	image delete $stop_image
         }
     }
 

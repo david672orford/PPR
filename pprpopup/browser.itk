@@ -1,9 +1,33 @@
 #
 # browser.itk
-# Portions Copyright (c) 1996 DSC Technologies Corporation
 # Copyright 1995--2002, Trinity College Computing Center.
+# Portions Copyright (c) 1996 DSC Technologies Corporation
+#	(Note: check to see if this is still true.)
 # Written by David Chappell.
-# Last modified 11 January 2002.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 16 January 2002.
 #
 
 package require Itcl
@@ -30,8 +54,20 @@ itcl::class Browser::form {
     set browser $browser_obj
     }
 
+  # Return a reference to the browser object to which this form belongs.
   public method get_browser {} {
     return $browser
+    }
+
+  # Set the focus to the first element that can accept it.
+  public method accept_focus {} {
+    puts "Browser::form::accept_focus"
+    foreach el $elements {
+	puts "  $el"
+	if {[$el accept_focus] != 0} {
+	    return
+	    }
+	}
     }
 
   # This is called whenever an element is added to the form.  The element
@@ -118,6 +154,19 @@ itcl::class Browser::form_element {
     set value $value_initial
     }
 
+  # Set the focus to this element.
+  public method accept_focus {} {
+    puts "Browser::form_element::accept_focus"
+    if {$widget != ""} {
+      puts "  setting focus to widget $widget"
+      focus $widget
+      return 1
+      } else {
+      puts "  can't accept focus"
+      return 0
+      }
+    }
+
   # Return the name.
   public method get_name {} {
     return $name
@@ -168,6 +217,7 @@ itcl::class Browser::form_element_input_button {
       $newname configure -text $value
       }
     set widget $newname
+    ### bind $newname <Return> [list $newname invoke]
     return $newname
     }
 
@@ -313,6 +363,7 @@ itcl::class Browser::form_element_input_submit {
       $newname configure -text $value
       }
     set widget $newname
+    ### bind $newname <Return> [list $newname invoke]
     return $newname
     }
 
@@ -339,6 +390,7 @@ itcl::class Browser::form_element_input_text {
     	-textvariable [itcl::scope value] \
     	-background white \
     	-width $size
+    bind $newname <Return> [itcl::code $containing_form submit]
     set widget $newname
     return $newname
     }
@@ -359,6 +411,7 @@ itcl::class Browser::form_element_input_password {
 	-background white \
 	-width $size \
 	-show *
+    bind $newname <Return> [itcl::code $containing_form submit]
     set widget $newname
     return $newname
     }
@@ -721,7 +774,6 @@ itcl::body Browser::import {args} {
 
     # Change base.  We can't use "file dirname" because it behaves
     # differently on a Macintosh.
-    #set dirname [file dirname $filename]
     set dirname ""
     regexp {^(/.+)/[^/]*$} $filename junk dirname
     set _cwd "$method://$host$dirname"
@@ -749,6 +801,12 @@ itcl::body Browser::import_callback {code message content_type data} {
 
   # Write the data into the widget.
   write $data
+
+  # Set the focus to the proper form element.
+  if {$_forms != ""} {
+    puts "  Setting focus to first form..."
+    [lindex $_forms 0] accept_focus
+    }
 
   # Move to anchor
   to_anchor

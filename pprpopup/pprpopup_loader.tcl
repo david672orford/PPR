@@ -1,9 +1,10 @@
+#! /usr/local/bin/wish8.4
 #! /usr/bin/wish
 #
 # pprpopup_loader.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 10 January 2002.
+# Last modified 18 January 2002.
 #
 
 package require Tcl 8.3
