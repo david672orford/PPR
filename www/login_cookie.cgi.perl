@@ -84,8 +84,8 @@ print H_("Username:"), ' <input name="username" value=', html_value(cgi_data_mov
 print "<br>\n";
 print H_("Password:"), ' <input name="password" value="" size=16 type="password">', "\n";
 print "<br>\n";
-print '<input type="button" value="', H_("Login"), '" onclick="login()">', "\n";
-print '<input type="button" value="', H_("Close"), '" onclick="window.parent.close(self)">', "\n";
+print '<input type="button" value="', H_("Login"), '" onclick="login();return false">', "\n";
+print '<input type="button" value="', H_("Close"), '" onclick="window.parent.close(self);return false">', "\n";
 print "</p>\n";
 
 # If the user tried to log in and failed,
@@ -139,7 +139,7 @@ print "<p>\n";
 print html(sprintf(_("You are already logged in as user \"%s\" using authentication method \"%s\"."), $ENV{REMOTE_USER}, $ENV{AUTH_TYPE}));
 print "</p>\n";
 print "<p>\n";
-print '<input type="button" value="', H_("Close"), '" onclick="window.parent.close(self)">', "\n";
+print '<input type="button" value="', H_("Close"), '" onclick="window.parent.close(self);return false">', "\n";
 print "</p>\n";
 }
 

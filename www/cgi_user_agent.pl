@@ -35,6 +35,7 @@ sub cgi_user_agent
 	$facts{opera_version} = 0.0;
 	$facts{links_version} = 0.0;
 	$facts{gecko_version} = 0.0;
+	$facts{msie_version} = 0.0;
 	$facts{css_fixed} = 0;				# Does CSS fixed positioning work?
 	$facts{css_hover} = 0;				# Does CSS :hover work on any object?
 	$facts{css_dom} = 0;				# Can CSS attributes be manipulated using the W3C DOM?
@@ -54,6 +55,10 @@ sub cgi_user_agent
 					{
 					$facts{gecko_version} = $1;
 					}
+				if($i =~ /^MSIE ([\d\.]+)$/)
+					{
+					$facts{msie_version} = $1;
+					}
 				}
 			if($ua =~ / Opera (\d+\.\d+)/)
 				{ $facts{opera_version} = $1 }
@@ -68,6 +73,12 @@ sub cgi_user_agent
 			}
 		}
 
+	# If it claims any level of Mozilla compatibility, it can probably do images.
+	if($facts{mozilla_version} > 0.0 || $facts{opera_version} > 0.0)
+		{
+		$facts{images} = 1;
+		}
+
 	# If this browser claims compatility with Mozilla level five or greater
 	# or it really is Mozilla 1.0 or later
 	# or it is Opera 7 or greater, assume it supports all sorts of neat stuff.
@@ -79,10 +90,9 @@ sub cgi_user_agent
 		$facts{button} = 1;
 		}
 
-	# If it claims any level of Mozilla compatibility, it can probably do images.
-	if($facts{mozilla_version} > 0.0 || $facts{opera_version} > 0.0)
+	if($facts{msie_version} >= 4.0)
 		{
-		$facts{images} = 1;
+		$facts{css_dom} = 1;
 		}
 
 	return \%facts;

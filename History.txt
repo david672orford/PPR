@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--18 December 2003.
+1.53a1, 24 September 2003--19 December 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8961,6 +8961,14 @@ Internet Printing Protocol Work
 
 * www/test-css.html: added as a place to try out style posibilities and as a 
   way of testing browsers.
+
+* ppr/ppr_res.c:rationalize_resources(): fixed two places where ! was used in
+  place of ~.  The result was that if a document declared a resource supplied
+  when it should have declared it as needed and had an include for it, no
+  record for it would be included in the queue file and the job would be 
+  arrested when pprdrv got to the %%IncludeResource line.  PageMaker 7.0
+  exposed this bug.  Also, rewrote many of the warning messages in this
+  function in order to improve their clarity.
 
 
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 19 December 2003.
 */
 
 /*
@@ -331,6 +331,11 @@ void dump_page_resources(void)
 ** If the resource references are inconsistent, emmit warnings and try
 ** to take a guess.  If comments like "%%DocumentFonts:" appear, try
 ** to determine if they mean the resources are included or required.
+**
+** REREF_NEEDED -- was listed in DocumentNeededResources
+** REREF_SUPLIED -- was listed in DocumentSuppliedResources
+** REREF_REALLY_SUPPLIED -- was listed in BeginResource
+** REREF_INCLUDE -- was listed in IncludeResource
 */
 void rationalize_resources(void)
 	{
@@ -351,12 +356,12 @@ void rationalize_resources(void)
 		r=(struct Resource *)things[x].th_ptr;	/* Cast the thing object pointer to a resource pointer. */
 
 		/*
-		** To supply a resource at one point in the document
-		** and to ask to have it inserted at another point
-		** is truly bizzar behavior.
+		** To actually supply a resource at one point in the document and to 
+		** ask to have it inserted at another point is truly bizzar behavior.
+		**
+		** All we can do is print a warning.
 		*/
-		if( (t->R_Flags & REREF_INCLUDE)
-					&& (t->R_Flags & REREF_REALLY_SUPPLIED) )
+		if((t->R_Flags & REREF_INCLUDE) && (t->R_Flags & REREF_REALLY_SUPPLIED))
 			{
 			warning(WARNING_SEVERE,
 				_("Resource \"%s\" has both %%%%Include and %%%%Begin"),
@@ -364,30 +369,30 @@ void rationalize_resources(void)
 			}
 
 		/*
-		** To say that a resource is both present in the print job
-		** and not present indicates serious confusion on the
-		** part of the document code generator.
+		** To say that a resource is both present in the print job and not 
+		** present indicates serious confusion on the part of the document
+		** code generator.
+		**
+		** We could probably fix this.
 		*/
-		if( (t->R_Flags & REREF_NEEDED)
-					&& (t->R_Flags & REREF_SUPPLIED) )
+		if( (t->R_Flags & REREF_NEEDED) && (t->R_Flags & REREF_SUPPLIED) )
 			{
 			warning(WARNING_SEVERE,
-				_("Resource \"%s\" declared both Supplied and Needed"),
+				_("Resource \"%s\" listed as both supplied and needed"),
 				resname_to_str(r->R_Type,r->R_Name,r->R_Version,r->R_Revision));
 			}
 
 		/*
-		** To say that a resource is supplied and then to leave
-		** it out or not to mark it with "%%Begin(End)Resource"
-		** indicates serious problems.
+		** To say that a resource is supplied and then to leave it out or not 
+		** to mark it with "%%Begin(End)Resource" indicates serious problems
+		** in the document code generator.
 		*/
-		if( (t->R_Flags & REREF_SUPPLIED)
-					&& !(t->R_Flags & REREF_REALLY_SUPPLIED) )
+		if( (t->R_Flags & REREF_SUPPLIED) && !(t->R_Flags & REREF_REALLY_SUPPLIED) )
 			{
 			warning(WARNING_SEVERE,
-				_("Resource \"%s\" declared Supplied but isn't included"),
+				_("Resource \"%s\" listed as supplied but it isn't actually supplied"),
 				resname_to_str(r->R_Type, r->R_Name, r->R_Version, r->R_Revision));
-			t->R_Flags &= ! REREF_SUPPLIED; /* kinda fix it */
+			t->R_Flags &= ~REREF_SUPPLIED; /* kinda fix it */
 			}
 
 		/*
@@ -401,7 +406,7 @@ void rationalize_resources(void)
 		if( (t->R_Flags & REREF_NEEDED) && !(t->R_Flags & REREF_INCLUDE) )
 			{
 			warning(WARNING_SEVERE,
-				_("Resource \"%s\" declared Needed but no %%%%Include"),
+				_("Resource \"%s\" listed as needed but there is no %%%%Include"),
 				resname_to_str(r->R_Type, r->R_Name, r->R_Version, r->R_Revision));
 			t->R_Flags |= REREF_FIXINCLUDE;		/* we will fix this is pprdrv */
 			}
@@ -415,9 +420,7 @@ void rationalize_resources(void)
 		**
 		** This must come before the tests for undeclared resources.
 		*/
-		if( (t->R_Flags & REREF_UNCLEAR)
-				&& ! ( (t->R_Flags & REREF_NEEDED)
-					|| (t->R_Flags & REREF_SUPPLIED) ) )
+		if( (t->R_Flags & REREF_UNCLEAR) && ! ( (t->R_Flags & REREF_NEEDED) || (t->R_Flags & REREF_SUPPLIED) ) )
 			{
 			if( t->R_Flags & REREF_REALLY_SUPPLIED )
 				{
@@ -450,14 +453,13 @@ void rationalize_resources(void)
 
 		/*
 		** To have a comment indicating where to include a resource
-		** but to failed to declair it as a document needed resource
+		** but to failed to declare it as a document needed resource
 		** is careless, but we can fix it, so it is not a severe warning.
 		*/
-		if( (t->R_Flags & REREF_INCLUDE)
-					&& !(t->R_Flags & REREF_NEEDED) )
+		if( (t->R_Flags & REREF_INCLUDE) && !(t->R_Flags & REREF_NEEDED) )
 			{
 			warning(WARNING_PEEVE,
-				_("Resource \"%s\" has %%%%Include but never declared"),
+				_("Resource \"%s\" has an %%%%Include but isn't listed as needed"),
 				resname_to_str(r->R_Type,r->R_Name,r->R_Version,r->R_Revision));
 
 			t->R_Flags |= REREF_NEEDED;	 /* fix it */
@@ -467,11 +469,10 @@ void rationalize_resources(void)
 		** To include a resource and to fail to declare it is careless,
 		** but we can fix it, so this is not a severe warning.
 		*/
-		if( (t->R_Flags & REREF_REALLY_SUPPLIED)
-				&& !(t->R_Flags & REREF_SUPPLIED) )
+		if( (t->R_Flags & REREF_REALLY_SUPPLIED) && !(t->R_Flags & REREF_SUPPLIED) )
 			{
 			warning(WARNING_PEEVE,
-				_("Resource \"%s\" supplied but never declared"),
+				_("Resource \"%s\" is supplied but isn't listed as supplied"),
 				resname_to_str(r->R_Type, r->R_Name, r->R_Version, r->R_Revision));
 
 			t->R_Flags |= REREF_SUPPLIED;	/* fix it */
@@ -483,7 +484,7 @@ void rationalize_resources(void)
 		*/
 		if( t->R_Flags & REREF_REMOVED )
 			{
-			t->R_Flags &= ( ! REREF_SUPPLIED );
+			t->R_Flags &= ~REREF_SUPPLIED;	/* unset bit */
 			t->R_Flags |= REREF_NEEDED;
 			}
 

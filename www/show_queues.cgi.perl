@@ -143,8 +143,8 @@ Vary: user-agent, accept-language
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
-<script type="text/javascript" src="../js/show_queues.js" defer></script>
-<link rel="stylesheet" href="../style/shared.css" type="text/css">
+<script type="text/javascript" src="../js/show_queues.js?" defer></script>
+<link rel="stylesheet" href="../style/shared.css?" type="text/css">
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
 <link rel="icon" href="../images/icon-16.png" type="image/png">
 <link rel="SHORTCUT ICON" href="../images/icon-16.ico">

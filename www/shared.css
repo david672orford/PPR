@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/shared.css
-** Last modified 18 December 2003.
+** Last modified 19 December 2003.
 **
 ** This style sheet is imported by all of the PPR web interface applets.
 */
@@ -9,6 +9,7 @@ BODY {
 	background: white;
 	color: black;
 	font-family: sans-serif;
+	margin: 0;						/* <-- quash silly IE behavior */
 	}
 
 /* I guess setting the body font doesn't cover tables. */
@@ -68,6 +69,7 @@ DIV.popup {
 	background-color: transparent;
 	}
 DIV.popup TABLE {
+	z-index: 2;
 	border-width: 2px;
 	border-style: outset;
 	background-color: #d0d0d0;

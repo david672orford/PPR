@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2003, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 18 December 2003.
+// Last revised 19 December 2003.
 //
 
 // Width in pixels of invisible border round the table.
@@ -107,6 +107,11 @@ function popup2(container, name)
 	{
 	// Close any other menus
 	var menus = document.getElementsByName('menubar');
+	if(!menus)
+		{
+		menus = document.all['menubar'];
+		alert('IE workaround, closing ' + menus.length + ' menus');
+		}
 	for(var i=0; i < menus.length; i++)
 		{
 		menus.item(i).style.visibility = 'hidden';
@@ -130,7 +135,8 @@ function popup2(container, name)
 // style of the DIV is altered so that it (and its children) are hidden.
 function offmenu(event)
 	{
-	if(event.currentTarget == event.target)
+	//if(event.currentTarget == event.target)	<-- no .currentTarget in IE
+	if(event.target.className == 'popup')
 		{
 		event.target.style.visibility = 'hidden';
 		page_locked = 0;
@@ -156,19 +162,25 @@ function wopen(event, url)
 	if(options == null)
 		options = 'menubar,resizable,scrollbars,toolbar';
 
+	// We have all the information we need.  Do it now.
 	window.open(url, '_blank', options);
-	
+
 	// Try to pop the menu down.
-	if(event)
-		{
-		var node = event.target.parentNode;					// search upward for the popup frame
-		while(node.className != 'popup')
+	try {
+		if(event)
 			{
-			node = node.parentNode;
+			var node = event.target.parentNode;			// search upward for the popup frame
+			while(node.className != 'popup')
+				{
+				node = node.parentNode;
+				}
+			node.style.visibility = 'hidden';
+			page_locked = 0;
 			}
-		node.style.visibility = 'hidden';
-		page_locked = 0;
 		}
+	catch(e) {
+		alert("Can't pop menu down: " + e);
+	}
 
 	return false;
 	}

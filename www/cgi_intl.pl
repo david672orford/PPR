@@ -292,6 +292,13 @@ sub isubmit
 
 	my $translation = _($translatable);
 
+	# Some browsers (such as IE 5.x Mac) follow the hyperlink too if the onclick
+	# handler doesn't return false.
+	if(defined $onclick && $onclick !~ /^return /)
+		{
+		$onclick .= ";return false";
+		}
+
 	# Figure out what this browser supports.
 	my $user_agent = cgi_user_agent();
 
