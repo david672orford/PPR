@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 March 2004.
+# Last modified 16 March 2004.
 #
 
 =head1 NAME
@@ -206,6 +206,14 @@ is not yet defined.
 
 To learn how the environment variables LPDEST and PRINTER are used, see the
 description of the B<-d> option.
+
+The variables PPR_RESPONDER, PPR_RESPONDER_ADDRESS and PPR_RESPONDER_OPTIONS
+can be used to control the response method used to inform the submitter of 
+the fate of such jobs as are eventually processed by PPR (as opposed to some 
+other spooler.  They work as described in the L<ppr> manpage.  If the job is
+passed to a remove node's PPR spooler through the LPR/LPD protocol and 
+B<lprsrv>, a protocol extension is used to convey this information.
+
 
 =head1 BUGS
 

@@ -9083,6 +9083,8 @@ Internet Printing Protocol Work
 * www/df_html.cgi.perl: fixed a problem with the fact that GNU df wraps lines if
   the device node path is too long.
 
+* lprsrv/olprsrv.c: dropt
+
 
 +++++++++++++++++++++
 TODO

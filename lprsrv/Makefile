@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIB_PROGS=olprsrv$(DOTEXE) lprsrv$(DOTEXE)
+LIB_PROGS=lprsrv$(DOTEXE)
 BIN_PROGS=lprsrv-test$(DOTEXE)
 PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
@@ -45,9 +45,6 @@ USELIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 #=== Build ==================================================================
 
 all: $(PROGS)
-
-olprsrv$(DOTEXE): olprsrv.$(OBJ) $(USELIBS)
-	$(LD) $(LDFLAGS) -o olprsrv$(DOTEXE) olprsrv.$(OBJ) $(USELIBS) $(SOCKLIBS) $(INTLLIBS)
 
 lprsrv$(DOTEXE): $(LPRSRV_OBJS) $(USELIBS)
 	$(LD) $(LDFLAGS) -o lprsrv$(DOTEXE) $(LPRSRV_OBJS) $(USELIBS) $(SOCKLIBS) $(INTLLIBS)

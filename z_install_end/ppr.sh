@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 January 2004.
+# Last modified 16 March 2004.
 #
 
 #
@@ -90,12 +90,8 @@ do_start ()
 		$HOMEDIR/bin/papd && $EECHO "papd \c"
 		fi
 
-	# Uncomment this if you want to run the new lprsrv
-	# in standalone mode:
+	# Uncomment this if you want to run lprsrv in standalone mode.
 	#$HOMEDIR/lib/lprsrv -s printer && $EECHO "lprsrv \c"
-
-	# Uncomment this if you want to run olprsrv in standalone mode:
-	#$HOMEDIR/lib/olprsrv -s printer && $EECHO "olprsrv \c"
 
 	# This updates links for lp, lpr, lprm, lpq, etc.
 	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO "uprint-newconf\c"

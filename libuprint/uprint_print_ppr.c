@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_argv_ppr.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 16 March 2004.
 */
 
 #include "before_system.h"
@@ -218,12 +218,8 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 		ppr_argv[i++] = "-r";			/* is from lprsrv they won't be */
 		ppr_argv[i++] = upr->user;		/* (though write is not useful then). */
 		}
-	else
+	else								 /* let it be followme */
 		{
-		#if 0							/* let it be followme */
-		ppr_argv[i++] = "-m";
-		ppr_argv[i++] = "mail";
-		#endif
 		ppr_argv[i++] = "-r";
 		ppr_argv[i++] = upr->str_mailaddr;
 		ppr_argv[i++] = "--responder-options";

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 16 March 2004.
 #
 
 # Pull in settings from Configure.
@@ -52,7 +52,6 @@ ALL_HTML=ppdoc.1.html \
 	ppr-xgrant.1.html \
 	ppuser.8.html \
 	lprsrv.8.html \
-	olprsrv.8.html \
 	ppr-hexdump.1.html \
 	ppr-config.8.html \
 	ppr-passwd.1.html \
@@ -81,7 +80,6 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-xgrant.1.man \
 	ppuser.8.man \
 	lprsrv.8.man \
-	olprsrv.8.man \
 	ppr-hexdump.1.man \
 	ppr-config.8.man \
 	ppr-passwd.1.man \
@@ -94,7 +92,7 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-popup.1.man
 
 # List of PODs for cross references
-LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1,ppr-popup.1
+LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1,ppr-popup.1
 
 #=== Build ==================================================================
 
