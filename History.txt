@@ -9381,14 +9381,15 @@ no final tarball was released.
 * editps/Windows_XP: added
 
 
-1.53b1, 22 September 2004--2 October 2004
+1.53b1, 22 September 2004--13 October 2004
 
 * added debian/Makefile, removed some of the unnecessary files
   from debian/.
 
 * added uprint/uprint-lpc.c.
 
-
+* libppr/readppd.c: removed extra newline from message about
+  missing PPD file.
 
 TODO
 

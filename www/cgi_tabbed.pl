@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 April 2004.
+# Last modified 13 October 2004.
 #
 
 use 5.004;
@@ -85,7 +85,7 @@ if(!defined($data{tab_data_loaded}))
 		{
 		my $message = html($@);
 		require "cgi_error.pl";
-		error_doc("Load Failed", "<p>" . H_("The load function for this dialog failed with the following error message:") . "<br>\n$message</p>\n");
+		error_doc("Load Failed", "<p>" . H_("The load function for this dialog failed with the following error message:") . "</p>\n<pre>\n$message</pre>\n");
 		return;
 		}
 	$data{tab_data_loaded} = 1;

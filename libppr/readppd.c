@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2004.
+** Last modified 13 October 2004.
 */
 
 /*+ \file
@@ -446,7 +446,7 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 	if(!(self->f[self->nest] = fopen(self->fname[self->nest], "r")))
 	#endif
 		{
-		gu_Throw(_("can't open PPD file \"%s\", errno=%d (%s)\n"), self->fname[self->nest], errno, gu_strerror(errno));
+		gu_Throw(_("can't open PPD file \"%s\", errno=%d (%s)"), self->fname[self->nest], errno, gu_strerror(errno));
 		}
 	}
 

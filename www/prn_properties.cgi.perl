@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 13 October 2004.
 #
 
 use lib "?";
@@ -946,17 +946,21 @@ defined($name) || die "No printer name specified!\n";
 
 # Use "ppad -M show" to dump the printer's
 # current configuration.
+{
+my $log = "";
 opencmd(PPAD, $PPAD_PATH, '-M', 'show', $name) || die;
-while(<PPAD>)
+while(my $line = <PPAD>)
 	{
-	chomp;
-	/^ppad:/ && /PPD/ && next;			# !!! bad hack to swallow warning
-	/^([^\t]+)\t(.*)$/ || die "Uninteligible message from ppad: \"$_\"";
+	$log .= $line;
+	chomp $line;
+	$line =~ /^ppad:/ && $line =~ /PPD/ && next;	# !!! bad hack to swallow warning
+	$line =~ /^([^\t]+)\t(.*)$/ || die "Can't parse ppad output (error in last line shown):\n$log";
 	my($key, $value) = ($1, $2);
 	$data{$key} = $value;				# copy to modify
 	$data{"_$key"} = $value;			# copy to keep
 	}
 close(PPAD);
+}
 
 # Split the alert information into separate fields and split the
 # signed number alerts_frequency into a count (absolute value) and
