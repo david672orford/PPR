@@ -371,3 +371,7 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr-indexfilters.8.pod: added
 
+* uprint/uprint-lpstat.c: partial update, still much work to do
+
+
+

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/README.txt
  mouse:~ppr/src/README.txt (symbolic link)
- Last revised 7 February 2003.
+ Last revised 21 February 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -153,4 +153,17 @@ The source code is divided into directories as follows:
 	nonppr_tcl/
 		A modified copy of Tcl 7.4.  It is intended to replace
 		/bin/sh as the language for PPR's simple scripts.
+	z_install_start/
+	z_install_end/
+		These directories begin with z so that they will appear at
+		the end of a directory listing.  They contain build and
+		install scripts which are run at the start and end
+		respectively when the top level Makefile is run.  The
+		z_install_start/Makefile creates the installation
+		directories.  The z_install_end/Makefile does final tasks
+		such as creating missing configuration files from sample
+		configuration files.
+
+
+
 

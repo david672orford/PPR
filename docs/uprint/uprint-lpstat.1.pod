@@ -23,10 +23,29 @@ B<uprint-lpstat>
 
 =head1 DESCRIPTION
 
-This program is part of the PPR uprint suite.  See the UPRINT(1) man page
+This program is part of the PPR Uprint suite.  See the UPRINT(1) man page
 for an explanation of what this means.
 
-Currently, this program simply invokes the real B<lpstat>.
+This command attempts to emulate lpstat(1) from System V Unix.  Though it
+recognizes most of lpstat(1)'s options, its implementation of some of them
+is simplistic.  It is just adequate to satisfy GUI programs on Solaris.
+
+=over 4
+
+=item B<-a>
+
+=item B<-c>
+
+=item B<-p>
+
+=item B<-d>
+
+=item B<-D>
+
+=item B<-f>
+
+
+=back
 
 =head1 AUTHOR
 

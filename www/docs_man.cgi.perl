@@ -143,7 +143,12 @@ eval {
 	    $page =~ m#(^[^\(]+)(\(([^\)]+)\))?$# || die "Invalid manpage name \"$page\"";
 	    my($name, $section) = ($1, $3);
 	    $path = search_manpath(\@MANPATH, $name, $section);
-	    defined($path) || die "Can't find $name($section) in MANPATH";
+	    if(!defined($path))
+		{
+		die("Can't find $name($section) in any of the following directories:"
+			. "\n\t" . join("\n\t", @MANPATH) . "\n"
+		    );
+		}
 	    }
 
 	# Otherwise, accept the path that the user supplies.
@@ -168,7 +173,9 @@ if($@)
     {
     my $message = $@;
     require 'cgi_error.pl';
-    error_doc(_("Can't Display Manpage"), html($message), $charset, $content_language);
+    $message = html($message);
+    $message =~ s/\n/<br>\n/g;
+    error_doc(_("Can't Display Manpage"), $message, $charset, $content_language);
     exit 0;
     }
 

@@ -1,6 +1,6 @@
 ==========================================================================
  mouse:~ppr/src/www/README.txt
- 14 February 2003.
+ 21 February 2003.
 ==========================================================================
 
 This directory contains HTML pages, CGI scripts, and images which together
@@ -122,12 +122,29 @@ Digest authentication.
 ==========================================================================
 
 In order to set passwords for digest authenication or cookie authentication,
-make sure that the Apache web server's htdigest program is in your PATH and
-then run /usr/ppr/bin/ppr-passwd.  An entry will be created in
-/etc/ppr/htpasswd.  (Obviously, this is a silly dependency.)
+run:
+
+$ ppr-passwd --add <username>
+
+You will be prompted for a password and an entry will be created for the
+indicated user in /etc/ppr/htpasswd.  Note that only root, ppr, and users
+listed in /etc/ppr/acl/passwd.allow will be able to add and remove users and
+change other user's passwords.  However, once an authorized user has done
+this, users can change their own passwords, like this:
+
+$ ppr-passwd
+
+Run "ppdoc ppr-passwd" to view the ppr-passwd manpage and lean about the
+other options.
+
+This command is new, so its behavior when run by ordinary users may change a
+little.  For instance, they might be permitted to create and remove
+/etc/ppr/htpasswd entries for themselves.  Comments on how this command
+ought to behave are welcome on the PPR mailing list or they may be sent to 
+<ppr-bugs@mail.trincoll.edu>.
 
 You can add users to /etc/ppr/passwd even if there aren't corresponding
-users in /etc/passwd, but be careful because if you add the account name to
+users in /etc/passwd, but be careful because if you add the username to
 access control lists in /etc/ppr/acl and later add an account with the same
 username to /etc/passwd, the new shell account will have those rights too,
 which could be bad if you carelessly created them for different people.

@@ -8338,5 +8338,8 @@ line was being parsed twice.
 
 * makeprogs/ppr-config.c: added --tcl, added paths.tcl to Makefile.
 
+* www/README.txt: updated to reflect the addition of ppr-passwd.
 
+* README.txt: added explanation of purpose of z_install_begin/
+  and z_install_end/.
 

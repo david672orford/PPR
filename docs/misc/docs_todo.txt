@@ -1,4 +1,5 @@
 mouse:~ppr/src/docs/misc/docs_todo.txt
+21 February 2003
 
 Work still to be done on the documentation:
 
@@ -25,3 +26,4 @@ Work still to be done on the documentation:
 
 * Describe the "LimitKilobytes:" printer configuration line.
 
+* Finish uprint-lpstat(1) manpage
