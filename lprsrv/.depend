@@ -1,18 +1,18 @@
+lprsrv-test.$(OBJ): lprsrv-test.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h
+
 lprsrv.$(OBJ): lprsrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h ../include/version.h ../include/uprint.h
+
+lprsrv_cancel.$(OBJ): lprsrv_cancel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+
+lprsrv_client_info.$(OBJ): lprsrv_client_info.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+
+lprsrv_conf.$(OBJ): lprsrv_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+
+lprsrv_list.$(OBJ): lprsrv_list.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+
+lprsrv_print.$(OBJ): lprsrv_print.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
 lprsrv_standalone.$(OBJ): lprsrv_standalone.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h
 
 olprsrv.$(OBJ): olprsrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h olprsrv.h ../include/util_exits.h ../include/uprint.h ../include/version.h
-
-lprsrv_conf.$(OBJ): lprsrv_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
-
-lprsrv_print.$(OBJ): lprsrv_print.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
-
-lprsrv_list.$(OBJ): lprsrv_list.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
-
-lprsrv_cancel.$(OBJ): lprsrv_cancel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
-
-lprsrv-test.$(OBJ): lprsrv-test.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h
-
-lprsrv_client_info.$(OBJ): lprsrv_client_info.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 

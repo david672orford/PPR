@@ -1,8 +1,8 @@
 dbstrlower.$(OBJ): dbstrlower.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-gdbm_dbmod.$(OBJ): gdbm_dbmod.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
-
 gdbm_dbauth.$(OBJ): gdbm_dbauth.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+
+gdbm_dbmod.$(OBJ): gdbm_dbmod.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
 gdbm_dbtrans.$(OBJ): gdbm_dbtrans.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 

@@ -1,68 +1,68 @@
+pipecat.$(OBJ): pipecat.c
+
 pprdrv.$(OBJ): pprdrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
 
 pprdrv_buf.$(OBJ): pprdrv_buf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
 pprdrv_capable.$(OBJ): pprdrv_capable.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
+pprdrv_commentary.$(OBJ): pprdrv_commentary.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/commentary.h
+
+pprdrv_custom_hook.$(OBJ): pprdrv_custom_hook.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+
+pprdrv_fault_debug.$(OBJ): pprdrv_fault_debug.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+
+pprdrv_feedback.$(OBJ): pprdrv_feedback.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+
 pprdrv_flag.$(OBJ): pprdrv_flag.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
+
+pprdrv_interface.$(OBJ): pprdrv_interface.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+
+pprdrv_lw_messages.$(OBJ): pprdrv_lw_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+
+pprdrv_mactt.$(OBJ): pprdrv_mactt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
 
 pprdrv_media.$(OBJ): pprdrv_media.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h
-
-pprdrv_signature.$(OBJ): pprdrv_signature.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
-
-pprdrv_res.$(OBJ): pprdrv_res.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
+pprdrv_notppd.$(OBJ): pprdrv_notppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
 pprdrv_nup.$(OBJ): pprdrv_nup.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+
+pprdrv_pagecount.$(OBJ): pprdrv_pagecount.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+
+pprdrv_patch.$(OBJ): pprdrv_patch.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+
+pprdrv_persistent.$(OBJ): pprdrv_persistent.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+
+pprdrv_pfb.$(OBJ): pprdrv_pfb.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
+
+pprdrv_pjl_messages.$(OBJ): pprdrv_pjl_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+
+pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h
+
+pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/commentary.h
+
+pprdrv_progress.$(OBJ): pprdrv_progress.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
 pprdrv_reason.$(OBJ): pprdrv_reason.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
 pprdrv_req.$(OBJ): pprdrv_req.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h
 
-pprdrv_patch.$(OBJ): pprdrv_patch.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
-
-pprdrv_tt.$(OBJ): pprdrv_tt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/libttf.h
-
-pprdrv_commentary.$(OBJ): pprdrv_commentary.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/commentary.h
-
-pprdrv_progress.$(OBJ): pprdrv_progress.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
-
-pprdrv_feedback.$(OBJ): pprdrv_feedback.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
-
-pprdrv_lw_messages.$(OBJ): pprdrv_lw_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
-
-pprdrv_notppd.$(OBJ): pprdrv_notppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
-
-pprdrv_persistent.$(OBJ): pprdrv_persistent.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
-
-pprdrv_interface.$(OBJ): pprdrv_interface.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
-
-pprdrv_fault_debug.$(OBJ): pprdrv_fault_debug.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
-
-pprdrv_pfb.$(OBJ): pprdrv_pfb.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
-
-pprdrv_pagecount.$(OBJ): pprdrv_pagecount.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
-
-pprdrv_mactt.$(OBJ): pprdrv_mactt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
-
-pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/commentary.h
-
-pprdrv_custom_hook.$(OBJ): pprdrv_custom_hook.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
-
-pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/commentary.h
-
-pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_res.$(OBJ): pprdrv_res.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
 pprdrv_rip.$(OBJ): pprdrv_rip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h pprdrv_ppd.h
+pprdrv_signature.$(OBJ): pprdrv_signature.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
 pprdrv_snmp.$(OBJ): pprdrv_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
 pprdrv_snmp_messages.$(OBJ): pprdrv_snmp_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_pjl_messages.$(OBJ): pprdrv_pjl_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_tt.$(OBJ): pprdrv_tt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/libttf.h
 
-pipecat.$(OBJ): pipecat.c
+pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+
+pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/commentary.h
+
+pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h pprdrv_ppd.h
 

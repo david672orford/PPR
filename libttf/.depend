@@ -1,32 +1,32 @@
+alloc.$(OBJ): alloc.c libttf_before_system.h libttf_private.h
+
+charstrings.$(OBJ): charstrings.c libttf_before_system.h libttf_private.h
+
 endian.$(OBJ): endian.c libttf_before_system.h libttf_private.h
 
 fixed.$(OBJ): fixed.c libttf_before_system.h libttf_private.h
 
-alloc.$(OBJ): alloc.c libttf_before_system.h libttf_private.h
-
 head.$(OBJ): head.c libttf_before_system.h libttf_private.h
+
+loadname.$(OBJ): loadname.c libttf_before_system.h libttf_private.h
+
+loadtable.$(OBJ): loadtable.c libttf_before_system.h libttf_private.h
 
 name.$(OBJ): name.c ../include/before_system.h libttf_private.h
 
 ps_header.$(OBJ): ps_header.c libttf_before_system.h libttf_private.h
 
+ps_sfnts.$(OBJ): ps_sfnts.c libttf_before_system.h libttf_private.h
+
 ps_trailer.$(OBJ): ps_trailer.c libttf_before_system.h libttf_private.h
-
-ttf_object.$(OBJ): ttf_object.c libttf_before_system.h libttf_private.h
-
-charstrings.$(OBJ): charstrings.c libttf_before_system.h libttf_private.h
 
 ps_type3.$(OBJ): ps_type3.c libttf_before_system.h libttf_private.h
 
-ps_sfnts.$(OBJ): ps_sfnts.c libttf_before_system.h libttf_private.h
-
-loadtable.$(OBJ): loadtable.c libttf_before_system.h libttf_private.h
-
-ttf_psout.$(OBJ): ttf_psout.c libttf_before_system.h libttf_private.h
-
 ttf_get_psname.$(OBJ): ttf_get_psname.c libttf_before_system.h libttf_private.h
 
-loadname.$(OBJ): loadname.c libttf_before_system.h libttf_private.h
+ttf_object.$(OBJ): ttf_object.c libttf_before_system.h libttf_private.h
+
+ttf_psout.$(OBJ): ttf_psout.c libttf_before_system.h libttf_private.h
 
 ttf_strerror.$(OBJ): ttf_strerror.c libttf_before_system.h libttf_private.h
 

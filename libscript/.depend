@@ -1,22 +1,22 @@
-signal_sh.$(OBJ): signal_sh.c
+getgrnam.$(OBJ): getgrnam.c
 
 alert.$(OBJ): alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
-tail_status.$(OBJ): tail_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/version.h
-
-ppr_conf_query.$(OBJ): ppr_conf_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-time_elapsed.$(OBJ): time_elapsed.c
-
-rewind_stdin.$(OBJ): rewind_stdin.c
+file_outdated.$(OBJ): file_outdated.c
 
 getpwnam.$(OBJ): getpwnam.c
 
-getgrnam.$(OBJ): getgrnam.c
-
 getservbyname.$(OBJ): getservbyname.c
 
-file_outdated.$(OBJ): file_outdated.c
-
 mkstemp.$(OBJ): mkstemp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+ppr_conf_query.$(OBJ): ppr_conf_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+rewind_stdin.$(OBJ): rewind_stdin.c
+
+signal_sh.$(OBJ): signal_sh.c
+
+tail_status.$(OBJ): tail_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/version.h
+
+time_elapsed.$(OBJ): time_elapsed.c
 
