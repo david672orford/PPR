@@ -51,7 +51,6 @@
 #include "util_exits.h"
 #include "interface.h"
 #include "ppad.h"
-#include "ppr_query.h"
 
 /*
 ** Send the spooler a command to re-read a printer definition.
@@ -3064,11 +3063,10 @@ int printer_addon(const char *argv[])
 /*
 ** Send a query to the printer and produce a list of suitable PPD files.
 */
-static void ppd_choices(const char printer[], const char product[], const char version[], int revision);
 int printer_ppdq(const char *argv[])
 	{
 	const char *printer = argv[0];
-	struct QUERY *q;
+	struct QUERY *q = NULL;
 
 	if(!printer || argv[1])
 		{
@@ -3078,75 +3076,13 @@ int printer_ppdq(const char *argv[])
 
 	gu_Try
 		{
+		/* Create an object from the printer's configuration. */
 		q = query_new_byprinter(printer);
 
 		gu_Try
 			{
-			char *p;
-			int i;
-			gu_boolean is_stderr;
-			const char *result_labels[] = {"Revision", "Version", "Product"};
-			char *results[] = {NULL, NULL, NULL};
-
-			fprintf(stderr, "Connecting...\n");
-			query_connect(q);
-			if(!(p = query_connect_wait(q)))
-				gu_Throw("connection attempt failed");
-			fprintf(stderr, "    Result: %s\n", p);
-
-			fprintf(stderr, "Sending query...\n");
-			query_sendquery(q,
-				"Printer",			/* DSC defined name (NULL if not defined in DSC) */
-				NULL,				/* Ad-hoc name if above is NULL */
-				"spooler",			/* default response */
-				"statusdict begin revision == version == product == flush end\n"
-				);
-
-			gu_Try
-				{
-				fprintf(stderr, "Reading response...\n");
-				for(i=0; i < 3 && (p = query_getline(q, &is_stderr)); )
-					{
-					/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
-
-					if(is_stderr)
-						continue;
-
-					if(strcmp(p, "spooler") == 0)
-						gu_Throw("supposed printer is actually a spooler");
-
-					results[i] = gu_strdup(p);
-
-					i++;
-					}
-
-				if(i != 3)
-					gu_Throw("not enough response lines");
-
-				for(i=0; i < 3; i++)
-					fprintf(stderr, "    %s: %s\n", result_labels[i], results[i]);
-
-				p = results[2];
-				if(p[0] == '(')
-					{
-					p++;
-					p[strcspn(p, ")")] = '\0';
-					}
-				ppd_choices(printer, p, results[1], atoi(results[0]));
-				}
-			gu_Final
-				{
-				int i;
-				for(i=0; i < 3; i++)
-					{
-					if(results[i])
-						gu_free(results[i]);
-					}
-				}
-			gu_Catch
-				{
-				gu_ReThrow();
-				}
+			/* Now call the function in ppad_ppd.c that does the real work. */
+			ppd_ppdq(printer, q);
 			}
 		gu_Final
 			{
@@ -3164,47 +3100,7 @@ int printer_ppdq(const char *argv[])
 		}
 
 	return EXIT_OK;
-	}
-
-static void ppd_choices(const char printer[], const char product[], const char version[], int revision)
-	{
-	FILE *f;
-	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
-	char *line = NULL;
-	int line_len = 80;
-	char *p, *f_filename, *f_vendor, *f_description, *f_product;
-	int count = 0;
-
-	if(!(f = fopen(filename, "r")))
-		gu_Throw("Can't open \"%s\", errno=%d (%s)", filename, errno, gu_strerror(errno));
-
-	while((line = gu_getline(line, &line_len, f)))
-		{
-		if(line[0] == '#')
-			continue;
-
-		p = line;
-		if(!(f_filename = gu_strsep(&p,":"))
-				|| !(f_vendor = gu_strsep(&p,":"))
-				|| !(f_description = gu_strsep(&p,":"))
-				|| !(f_product = gu_strsep(&p,":"))
-				)
-			{
-			fprintf(stderr, "Bad line in \"%s\":\n%s\n", filename, line);
-			continue;
-			}
-
-		/*printf("X: %s vs. %s\n", f_product, product);*/
-		if(strcmp(f_product, product) == 0)
-			{
-			if(count++ < 1)
-				printf("Run one of these commands:\n");
-			printf("    ppad %s \"%s\"\n", printer, (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename);
-			}
-		}
-
-	fclose(f);
-	}
+	} /* end of printer_ppdq */
 
 /* end of file */
 

@@ -32,16 +32,20 @@
 ** This is the header file for the PPR administrator's utility ppad.
 */
 
+#include "ppr_query.h"
+
 /* A useful macro considering how often we write to stdout. */
 #define PUTS(string) fputs(string, stdout)
 
 /* functions and global variables in ppad.c */
 extern const char myname[];
+
 void fatal(int exitval, const char *string, ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
+
 gu_boolean am_administrator(void);
 extern FILE *errors;
 extern int machine_readable;
@@ -143,6 +147,9 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 int deffiltopts_add_printer(const char printer_name[]);
 char *deffiltopts_line(void);
 void deffiltopts_close(void);
+
+/* functions in ppad_ppd.c */
+void ppd_ppdq(const char printer[], struct QUERY *q);
 
 /* end of file */
 

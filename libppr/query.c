@@ -106,7 +106,7 @@ struct QUERY *query_new_byprinter(const char printer[])
 			}
 		}
 
-	fclose(f);
+	fclose(f);		/* close printer configuration file */
 
 	gu_Try {
 		if(!interface)
@@ -125,6 +125,20 @@ struct QUERY *query_new_byprinter(const char printer[])
 
 	return query_new_byaddress(interface, address);
 	}
+
+/** destroy a query object
+
+*/
+void query_delete(struct QUERY *q)
+	{
+	if(!q)
+		gu_Throw("query_delete(NULL)!");
+	if(q->connected)
+		query_disconnect(q);
+	if(q->line)
+		gu_free(q->line);
+	gu_free(q);
+	} /* end of query_delete() */
 
 /** connect to the printer
 
@@ -237,6 +251,9 @@ void query_connect(struct QUERY *q)
 
 /** Send a line to the printer
 
+Actually this function doesn't transmit the line.  It just adds it to the
+list of lines which will be sent as you call query_getline().
+
 */
 void query_puts(struct QUERY *q, const char s[])
 	{
@@ -328,10 +345,11 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 			}
 
 		/* If we have no more to send, close the pipe to the interface program. */
-		if(q->buf_stdin_len == 0 && q->disconnecting)
+		if(q->buf_stdin_len == 0 && q->disconnecting && q->pipe_stdin[1] != -1)
 			{
 			if(close(q->pipe_stdin[1]) == -1)
-				gu_Throw("close() failed");
+				gu_Throw("close() failed on pipe to interface, errno=%d (%s)", errno, gu_strerror(errno));
+			q->pipe_stdin[1] = -1;
 			}
 
 		/* Create a list of the file descriptors that we are waiting for. */
@@ -351,14 +369,14 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 				gu_Throw("select() failed, errno=%d (%s)", errno, gu_strerror(errno));
 			}
 
-		/* If there is room to write data, */
-		if(FD_ISSET(q->pipe_stdin[1], &wfds))
+		/* If there is now room to write data, */
+		if(q->pipe_stdin[1] != -1 && FD_ISSET(q->pipe_stdin[1], &wfds))
 			{
 			int len;
 			while((len = write(q->pipe_stdin[1], q->buf_stdin, q->buf_stdin_len)) == -1)
 				{
 				if(errno != EINTR)
-					gu_Throw("write() failed, errno=%d (%s)");
+					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
 				}
 			if(len < 0)
 				gu_Throw("%d < 0", len);
@@ -496,6 +514,7 @@ void query_disconnect(struct QUERY *q)
 	if(!q->connected)
 		gu_Throw("not connected");
 
+	/* If we started a PostScript query job, close it. */
 	if(q->started)
 		{
 		query_puts(q, "%%EOF\n");
@@ -507,23 +526,14 @@ void query_disconnect(struct QUERY *q)
 
 	while((line = query_getline(q, NULL)))
 		{
-		fprintf(stderr, "Trailing garbage: \"%s\" (%d characters)\n", line, (int)strlen(line));
+		fprintf(stderr, "Trailing garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
 		}
+
+	close(q->pipe_stdout[0]);
+	close(q->pipe_stderr[0]);
 
 	q->connected = FALSE;
 	} /* end of query_disconnect() */
-
-/** destroy a query object
-
-*/
-void query_delete(struct QUERY *q)
-	{
-	if(q->connected)
-		query_disconnect(q);
-	if(q->line)
-		gu_free(q->line);
-	gu_free(q);
-	} /* end of query_delete() */
 
 /*
 ** gcc -I ../include -o query -DTEST query.c ../libppr.a ../libgu.a

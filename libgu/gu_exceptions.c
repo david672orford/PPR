@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_except.c
+** mouse:~ppr/src/libgu/gu_exceptions.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 August 2003.
+** Last modified 15 October 2003.
 */
 
 /*! \file
@@ -39,26 +39,28 @@
 
 #define GU_EXCEPTION_MAX_TRY_DEPTH 25
 
-char gu_exception[100];
-static jmp_buf *_gu_exception_jmp_bufs[GU_EXCEPTION_MAX_TRY_DEPTH];
-int _gu_exception_try_depth;
-int _gu_exception_setjmp_retcode;
-int _gu_exception_final;
+/* our globals */
+char gu_exception[100];				/* text of last exception message */
+int gu_exception_try_depth;			/* number of gu_Try statements active */
+int gu_exception_temp;
+int gu_exception_debug = 0;
 
-/** Get Ready to Try
+/* our list of active gu_Try contexts */
+static jmp_buf *gu_exception_jmp_bufs[GU_EXCEPTION_MAX_TRY_DEPTH];
+
+/** Start a block that catches exceptions
 
 This function is called by the gu_Try() macro.  
 
 */
 void gu_Try_funct(jmp_buf *p_jmp_buf)
 	{
-	if(_gu_exception_try_depth >= GU_EXCEPTION_MAX_TRY_DEPTH)
-		gu_Throw("Try nested too deep");
-	_gu_exception_jmp_bufs[_gu_exception_try_depth++] = p_jmp_buf;
-	_gu_exception_final = 0;
+	if(gu_exception_try_depth >= GU_EXCEPTION_MAX_TRY_DEPTH)
+		gu_Throw("gu_Try nested too deep");
+	gu_exception_jmp_bufs[gu_exception_try_depth++] = p_jmp_buf;
 	}
 
-/** Throw an Exception
+/** Throw an exception as a printf()-style formated string
 
 When throwing an exception, one specifies a code number (which is passed to exit() if
 the exception is not caught) and an error message.  The error message is a printf()-style
@@ -68,28 +70,34 @@ format and arguments.
 void gu_Throw(const char message[], ...)
 	{
 	va_list va;
+	char temp[100];
 	va_start(va, message);
-	gu_vsnprintf(gu_exception, sizeof(gu_exception), message, va);
+	gu_vsnprintf(temp, sizeof(temp), message, va);
 	va_end(va);
+	gu_strlcpy(gu_exception, temp, sizeof(gu_exception));
 	gu_ReThrow();
 	}
 	
-/** Re-throw Exception
+/** Re-throw The last exception
 
-This is intended to be called from within a gu_Catch block in order to pass the
-exception higher up the call stack. 
+This is intended to be called from within a gu_Catch block in order to pass
+the exception higher up the call stack.  It also is used to do the actually
+throwing for gu_Throw().
 
 */
 void gu_ReThrow(void)
 	{
-	if(_gu_exception_try_depth < 1)
+	if(gu_exception_debug > 0)
+		fprintf(stderr, "Throwing exception at try depth %d: %s\n", gu_exception_try_depth, gu_exception);		
+
+	if(gu_exception_try_depth < 1)		/* if not inside a gu_Try(), */
 		{
 		fprintf(stderr, "Fatal: %s\n", gu_exception);
 		exit(255);
 		}
-	else
+	else								/* jump back to context saved by last gu_Try() */
 		{
-		longjmp(*(_gu_exception_jmp_bufs[_gu_exception_try_depth - 1]), 1);
+		longjmp(*(gu_exception_jmp_bufs[gu_exception_try_depth - 1]), 1);
 		}
 	}
 

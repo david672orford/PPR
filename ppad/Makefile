@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 15 October 2003.
 #
 
 include ../Makefile.conf
@@ -47,6 +47,7 @@ OBJS1=ppad.$(OBJ) \
 	ppad_filt.$(OBJ) \
 	ppad_util.$(OBJ) \
 	ppad_alias.$(OBJ) \
+	ppad_ppd.$(OBJ) \
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT)
 ppad$(DOTEXE): $(OBJS1)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2003.
+** Last modified 16 October 2003.
 */
 
 #include "before_system.h"
@@ -86,19 +86,28 @@ This file contains a minimal inplementation of SNMP querys.
 ** This function reads an ASN.1 length value.  It returns a pointer to the byte
 ** after the decoded length.
 */
-static void *decode_length(void *vp, int *length)
+static void *decode_length(void *vp, int *remaining, int *length)
 	{
 	char *p = vp;
 	int skip;
+
+	if(--(*remaining) < 0)
+		return NULL;
+
 	skip = *length = *(unsigned char *)(p++);
+
 	if(skip & LONG_LENGTH)
 		{
 		switch(skip)
 			{
 			case LONG_LENGTH | 1:
+				if(--(*remaining) < 0)
+					return NULL;
 				*length = *(unsigned char*)p;
 				break;
 			case LONG_LENGTH | 2:
+				if((*remaining -= 2) < 0)
+					return NULL;
 				*length = *(unsigned char *)p << 8 | *(unsigned char *)(p+1);
 				break;
 			default:
@@ -113,30 +122,42 @@ static void *decode_length(void *vp, int *length)
 ** This function verifies that the next data item is an ASN.1 sequence of the specified type.  It then
 ** reads and stores the length and returns a pointer to the byte after the decoded length.
 */
-static void *decode_sequence(void *vp, int tag, int *len)
+static void *decode_sequence(void *vp, int *remaining, int tag, int *len)
 	{
 	char *p = vp;
+	if(--(*remaining) < 0)
+		return NULL;
 	if(*(unsigned char *)p++ != tag)
 		return NULL;
-	return decode_length(p, len);
+	return decode_length(p, remaining, len);
 	}
 
 /*
 ** This function verifies that the next data item is an ASN.1 encoded integer.  It then reads
 ** the integer into an int n and returns an pointer to the next data byte.
 */
-static void *decode_int(void *vp, int *n)
+static void *decode_int(void *vp, int *remaining, int *n)
 	{
 	char *p = vp;
 	int int_size;
+
+	if(--(*remaining) < 0)
+		return NULL;
 	if(*(unsigned char *)p++ != INT_TAG)
 		return NULL;
+
+	if(--(*remaining) < 0)
+		return NULL;
 	int_size = *(unsigned char *)p++;
+
+	if((*remaining -= int_size) < 0)
+		return NULL;
 	for(*n=0; int_size--; )
 		{
 		*n = *n << 8;
 		*n |= *(unsigned char *)p++;
 		}
+
 	return (void*)p;
 	}
 
@@ -146,14 +167,22 @@ static void *decode_int(void *vp, int *n)
 ** to the start of the integer.  These values can later by used as arguments to
 ** gu_strndup().
 */
-static void *decode_string(void *vp, int tag, char **s, int *len)
+static void *decode_string(void *vp, int *remaining, int tag, char **s, int *len)
 	{
 	char *p = vp;
+
+	if(--(*remaining) < 0)
+		return NULL;
 	if(*(unsigned char *)p++ != tag)
 		return NULL;
-	p = decode_length(p, len);
+
+	p = decode_length(p, remaining, len);
+
+	if((*remaining -= *len) < 0)
+		return NULL;
 	*s = (char *)p;
 	p+= *len;
+
 	return (void*)p;
 	}
 
@@ -360,61 +389,63 @@ static int create_packet(struct gu_snmp *p, char *buffer, struct ITEMS *items, i
 /*
 ** parse an SNMP response packet
 */
-static int parse_response(struct gu_snmp *p, char *buffer, struct ITEMS *items, int items_count)
+static int parse_response(struct gu_snmp *p, struct ITEMS *items, int items_count)
 	{
 	char *ptr;
+	int len;
 	int obj_ival, obj_ival2; char *obj_ptr; int obj_len;
 	int items_i;
 
 	ptr = p->result;
+	len = p->result_len;
 
 	/* In this block we make sure the received packet constitutes a response to
 	   our query and not some garbage from out of the blue.  If it doesn't match
 	   up with our query, we bail out, silently ignoring it.
 	   */
-	if(!(ptr = decode_sequence(ptr, 0x30, &obj_len)))	/* outside structure */
+	if(!(ptr = decode_sequence(ptr, &len, 0x30, &obj_len)))		/* outside structure */
 		return -1;
-	if(!(ptr = decode_int(ptr, &obj_ival)))				/* SNMP version number */
+	if(!(ptr = decode_int(ptr, &len, &obj_ival)))				/* SNMP version number */
 		return -1;
-	if(obj_ival != 0)									/* SNMP version 1.0 is 0 */
+	if(obj_ival != 0)											/* SNMP version 1.0 is 0 */
 		return -1;
-	if(!(ptr = decode_string(ptr, OCTET_STRING_TAG, &obj_ptr, &obj_len)))	/* the community name */
+	if(!(ptr = decode_string(ptr, &len, OCTET_STRING_TAG, &obj_ptr, &obj_len)))	/* the community name */
 		return -1;
-	if(!(ptr = decode_sequence(ptr, 0xA2, &obj_len)))	/* SNMP response PDU */
+	if(!(ptr = decode_sequence(ptr, &len, 0xA2, &obj_len)))		/* SNMP response PDU */
 		return -1;
-	if(!(ptr = decode_int(ptr, &obj_ival)))				/* request id */
+	if(!(ptr = decode_int(ptr, &len, &obj_ival)))				/* request id */
 		return -1;
-	if(obj_ival != p->request_id)						/* request id should match */
+	if(obj_ival != p->request_id)								/* request id should match */
 		return -1;
 
 	/* OK, now things are serious.  If the packet is bad, we treat it as a fatal error.
 	   */
-	if(!(ptr = decode_int(ptr, &obj_ival)))				/* SNMP error code */
+	if(!(ptr = decode_int(ptr, &len, &obj_ival)))				/* SNMP error code */
 		gu_Throw("failed to read SNMP error code");
-	if(!(ptr = decode_int(ptr, &obj_ival2)))			/* error index */
+	if(!(ptr = decode_int(ptr, &len, &obj_ival2)))				/* error index */
 		gu_Throw("failed to read SNMP error index");
-	if(obj_ival != 0)									/* 0 means no error */
+	if(obj_ival != 0)											/* 0 means no error */
 		gu_Throw("SNMP response indicates error %d for item %d", obj_ival, obj_ival2);
-	if(!(ptr = decode_sequence(ptr, 0x30, &obj_len)))	/* response data list */
+	if(!(ptr = decode_sequence(ptr, &len, 0x30, &obj_len)))		/* response data list */
 		gu_Throw("failed to find SNMP response data list");
 
 	for(items_i=0; items_i < items_count; items_i++)
 		{
-		if(!(ptr = decode_sequence(ptr, 0x30, &obj_len)))	/* first item name-value pair */
+		if(!(ptr = decode_sequence(ptr, &len, 0x30, &obj_len)))	/* first item name-value pair */
 			gu_Throw("Parse error 1 on item %d", items_i);
-		if(!(ptr = decode_sequence(ptr, OBJECT_ID_TAG, &obj_len)))
+		if(!(ptr = decode_sequence(ptr, &len, OBJECT_ID_TAG, &obj_len)))
 			gu_Throw("Parse error 2 on item %d", items_i);
 		ptr += obj_len;
 		switch(items[items_i].type)
 			{
 			case GU_SNMP_INT:
-				if(!(ptr = decode_int(ptr, (int*)items[items_i].ptr)))
+				if(!(ptr = decode_int(ptr, &len, (int*)items[items_i].ptr)))
 					gu_Throw("failed to decode integer");
 				break;
 			case GU_SNMP_STR:
 				{
 				char *temp;
-				if(!(ptr = decode_string(ptr, OCTET_STRING_TAG, &temp, &obj_len)))
+				if(!(ptr = decode_string(ptr, &len, OCTET_STRING_TAG, &temp, &obj_len)))
 					gu_Throw("failed to decode string");
 				*((char**)items[items_i].ptr) = gu_strndup(temp, obj_len);
 				}
@@ -424,7 +455,7 @@ static int parse_response(struct gu_snmp *p, char *buffer, struct ITEMS *items, 
 				char *temp;
 				int bit, x, y;
 				unsigned int n = 0;
-				if(!(ptr = decode_string(ptr, OCTET_STRING_TAG, &temp, &obj_len)))
+				if(!(ptr = decode_string(ptr, &len, OCTET_STRING_TAG, &temp, &obj_len)))
 					gu_Throw("failed to decode bit string");
 				for(x=0,bit=0; x<obj_len; x++)
 					{
@@ -458,10 +489,10 @@ exceptions on errors.
 */
 void gu_snmp_get(struct gu_snmp *p, ...)
 	{
-	char buffer[1024];
-	int packet_length;
-	struct ITEMS items[10];
-	int items_count;								/* length of the queried data items list */
+	char buffer[1024];						/* buffer into which we build query packet */
+	int packet_length;						/* length of query packet in bytes */
+	struct ITEMS items[10];					/* queried data items list */
+	int items_count;						/* length of the queried data items list */
 
 	/* Read the arguments array into an easy-to-use array of structures. */
 		{
@@ -509,18 +540,15 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 			continue;
 
 		/* Receive the packet. */
-		{
-		int len;
-		if((len = recv(p->socket, p->result, sizeof(p->result), 0)) < 0)
+		if((p->result_len = recv(p->socket, p->result, sizeof(p->result), 0)) < 0)
 			gu_Throw("%s() failed, errno=%d (%s)", "recv", errno, gu_strerror(errno));
 		#ifdef TEST
-		printf("Got %d bytes\n", len);
+		printf("Got %d bytes\n", p->result_len);
 		#endif
-		}
 
 		/* If the packet isn't an SNMP response, then we get -1,
 		   for other errors an exception is thrown. */
-		if(parse_response(p, buffer, items, items_count) != -1)
+		if(parse_response(p, items, items_count) != -1)
 			return;
 		} /* end of retry loop */
 	}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2003.
+** Last modified 16 October 2003.
 */
 
 #ifndef _GU_H
@@ -271,27 +271,84 @@ __attribute__ (( noreturn, format (printf, 3, 4) ))
 
 /*===================================================================
 ** New exception handling code
+**
+** Here is the pattern:
+**
+**	char *p = gu_strdup("hello");
+**	gu_Try
+**		{
+**		gu_Throw("error 5");
+**		}
+**	gu_Final
+**		{
+**		gu_free(p);
+**		}
+**	gu_Catch
+**		{
+**		fprintf(stderr, "I caught error \"%s\", ouch!\n", gu_exception);
+**		}
+**
 ===================================================================*/
 
 extern char gu_exception[];					/* text of exception message */
-extern int _gu_exception_try_depth;			/* how deap are we? */
-extern int _gu_exception_setjmp_retcode;	/* what was the result of the last Try? */
-extern int _gu_exception_final;
+extern int  gu_exception_try_depth;			/* how deap are we? */
+extern int  gu_exception_temp;
+extern int  gu_exception_debug;
 
+/* This macro starts a try block.  It creates a setjmp() context can calls
+   gu_Try_funct() which saves it in an array.  The array enables gu_Throw()
+   to find the context even if it is called from inside a function called
+   by the function which called gu_Try().
+   */
 #define gu_Try { \
-	jmp_buf _gu_exception_jmp_buf; \
-	gu_Try_funct(&_gu_exception_jmp_buf); \
-	if((_gu_exception_setjmp_retcode = setjmp(_gu_exception_jmp_buf)) == 0)
+	jmp_buf gu_exception_jmp_buf; \
+	int gu_exception_setjmp_retcode; \
+	int gu_exception_pop = 1; \
+	gu_Try_funct(&gu_exception_jmp_buf); \
+	if((gu_exception_setjmp_retcode = setjmp(gu_exception_jmp_buf)) == 0)
 	
 void gu_Try_funct(jmp_buf *p_jmp_buf);
 
+/* This function calls longjmp() if there is a gu_Try() context, otherwise
+   it prints the message on stderr and calls exit(255).
+   */
 void gu_Throw(const char message[], ...);
 
+/* This function throws a new exception using the exception message string
+   stored by the last call to gu_Throw().
+   */
 void gu_ReThrow(void);
 
-#define gu_Final if(_gu_exception_final++ < 1)
+/** Run cleanup code during exception handing.
 
-#define gu_Catch _gu_exception_try_depth--; } if(_gu_exception_setjmp_retcode != 0)
+A gu_Final block is executed after the gu_Try block regardless of whether an
+exception was caught.  If an exception was caught, then the gu_Catch block
+is executed after the gu_Final block.
+
+Note that the semantics of gu_Final are difference from the semantics of
+Java finally blocks.  Java finally blocks are executed after any matching
+catch clauses.
+   
+Note that exceptions which occur in the gu_Final block are not caught by the
+associated gu_Catch block.
+   
+*/
+#define gu_Final \
+gu_exception_try_depth--; \
+gu_exception_pop = 0; \
+if(1)
+
+/** Hancle exceptions encountered in gu_Try
+
+The block introduced by this macro is executed if an exception was
+caught in the gu_Try block.
+
+*/
+#define gu_Catch \
+	gu_exception_try_depth -= gu_exception_pop; \
+	gu_exception_temp = gu_exception_setjmp_retcode; \
+	} \
+if(gu_exception_temp != 0)
 
 /*===================================================================
 ** SNMP functions
@@ -303,6 +360,7 @@ struct gu_snmp
 	const char *community;
 	unsigned int request_id;
 	char result[1024];
+	int result_len;
 	};
 
 struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[]);
