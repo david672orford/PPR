@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2004.
+# Last modified 18 November 2004.
 #
 
 =head1 NAME
@@ -748,27 +748,29 @@ would really come out in simplex.  Thus the user would be undercharged.
 
 =item B<-R duplex:simplex>
 
-Look for duplexing comments, but if none are found, assume that simplex
-printing is intended and turn duplexing off. on.
+Look for duplexing comments in order to properly understand how many
+sheets of paper will be used (and if required, charge accordingly), 
+but if none are found, assume that simplex
+printing is desired and turn duplexing off. on.
 
 =item B<-R duplex:duplex>
 
 Look for duplexing comments, but if none are found, assume that duplexing
-(specifically the no-tumble or long-edge variant) is intended and turn it
+(specifically the no-tumble or long-edge variant) is desired and turn it
 on.
 
 =item B<-R duplex:duplextumble>
 
 Look for duplexing comments, but if none are found, assume that duplexing
-(specifically the tumble or short-edge variant) is intended and turn it
+(specifically the tumble or short-edge variant) is desired and turn it
 on.
 
 =item B<-R ignore-duplex>
 
 Ignore the possibility of duplex mode.  No comments will be examined, and
 unless there is an B<-F *Duplex> option on the command line that turns on
-duplex mode, B<ppr> will assume that the job will naturally be printed in
-simplex mode and charge accordingly.
+duplex mode, B<ppr> will assume that the job will of its own accord be 
+printed in simplex mode and charge accordingly.
 
 
 =back
