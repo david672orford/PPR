@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 4 September 2001.
+** Last modified 5 September 2001.
 */
 
 #include "before_system.h"
@@ -93,7 +93,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->commentator.address = NULL;
     job->commentator.options = NULL;
     job->commentator.next = NULL;		/* unused at present */
-    job->PageMask = NULL;
+    job->page_list.mask = NULL;
 
     /* We do not actually read these items: */
     job->PJL = (const char *)NULL;
@@ -221,7 +221,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		if(strncmp(line, "PPRVersion: ", 12) == 0)
 		    continue;
 		MATCH("PassThruPDL: ", _2("%Z", &job->PassThruPDL), !=1, found_other)
-		if(gu_sscanf(line, "PageMask: %Z", &job->PageMask) == 1)
+		if(gu_sscanf(line, "PageList: %d %Z", &job->page_list.count, &job->page_list.mask) == 2)
 		    continue;
 		break;
 

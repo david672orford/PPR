@@ -1954,6 +1954,7 @@ int main(int argc, char *argv[])
     qentry.PJL = (const char *)NULL;
     qentry.CachePriority = CACHE_PRIORITY_AUTO;
     qentry.StripPrinter = FALSE;
+    qentry.page_list.mask = NULL;
 
     /*
     ** We would like to find a default response method in the variable

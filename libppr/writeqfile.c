@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 4 September 2001.
+** Last modified 5 September 2001.
 */
 
 #include "before_system.h"
@@ -137,8 +137,8 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
     fprintf(Qfile, "StripPrinter: %d\n", (int)qentry->StripPrinter);
 
-    if(qentry->PageMask)
-	fprintf(Qfile, "PageMask: %s\n", qentry->PageMask);
+    if(qentry->page_list.mask)
+	fprintf(Qfile, "PageList: %d %s\n", qentry->page_list.count, qentry->page_list.mask);
 
     return 0;
     }

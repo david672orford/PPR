@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 4 September 2001.
+** Last modified 5 September 2001.
 */
 
 #include "before_system.h"
@@ -64,8 +64,8 @@ void destroy_struct_QFileEntry(struct QFileEntry *job)
     	gu_free_const(job->commentator.address);
     if(job->commentator.options)
     	gu_free_const(job->commentator.options);
-    if(job->PageMask)
-    	gu_free(job->PageMask);
+    if(job->page_list.mask)
+    	gu_free(job->page_list.mask);
 
     /* Things not read by read_struct_QFileEntry() */
     if(job->PJL)

@@ -1578,7 +1578,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		break;
 	    case 32:			/* pages */
 		if(qfileentry->attr.pages >= 0)
-		    printf("%d", qfileentry->attr.pages);
+		    printf("%d", pagemask_count(qfileentry));
 		else
 		    fputs("?", stdout);
 	    	break;

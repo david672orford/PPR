@@ -336,15 +336,15 @@ static void copy_header(void)
 	printer_printf("%%%%Title: (%s)\n", job.Title);
 
     /*
-    ** If the number of pages is not unspecified, then print it.
-    ** If the number of copies is 1 or copies_pages_countdown starts
-    ** at 1, then the complicated formula below is reduced
-    ** to ``job.attr.pages''.
+    ** If the number of pages is not unspecified, then print it as a DSC 
+    ** comment.  If the number of copies is 1 or copies_pages_countdown starts
+    ** at 1, then the complicated formula below is reduced to "pages".
     */
     if(job.attr.pages != -1)
 	{
+	int pages = pagemask_count(&job);
 	printer_printf("%%%%Pages: %d\n",
-       	    ((sheetcount*job.attr.pagefactor*(copies_pages_countdown-1))+job.attr.pages));
+       	    ((sheetcount * pages * (copies_pages_countdown-1))+pages)); /* !!! */
 	}
 
     /*
@@ -748,9 +748,8 @@ static char *getpline(void)
 
 /*
 ** Make a table of the offset of each page record in the "-pages" file.
-** This routine leaves the pointer of the pages file at the
-** begining of the line which gives the offset of the start of
-** the trailer.
+** This routine leaves the pointer of the pages file at the begining 
+** of the line which gives the offset of the start of the trailer.
 */
 static int make_pagetable(void)
     {
@@ -1020,7 +1019,6 @@ static void copy_pages(void)
 		    printer_printf("%% Skipping page %d\n\n", pagenumber + 1);
 		    continue;
 		    }
-
 
 		/* If the pages in the file are in ascending order,
 		   then the pages index into the file is equal to
@@ -1610,6 +1608,7 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 	    struct tm *time_detail;		/* print log file. */
 	    char time_str[15];
 
+	    int pages = pagemask_count(&job);
 	    struct COMPUTED_CHARGE charge;
 
 	    /*
@@ -1619,14 +1618,14 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 	    */
 	    if(job.N_Up.sigsheets == 0)
 	    	{
-	    	sidecount = (job.attr.pages + job.N_Up.N - 1) / job.N_Up.N;
+	    	sidecount = (pages + job.N_Up.N - 1) / job.N_Up.N;
 	    	}
 	    else
 	    	{
 		if((job.N_Up.sigpart & SIG_BOTH) == SIG_BOTH)
-	    	    sidecount = sheetcount * 2;
+	    	    sidecount = sheetcount * 2;			/* !!! */
 		else
-	    	    sidecount = sheetcount;
+	    	    sidecount = sheetcount;			/* !!! */
 		}
 
 	    /*
@@ -1637,12 +1636,12 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 	    */
 	    if(job.opts.copies > 1)		/* if multiple copies */
 		{
-		total_printed_sheets = sheetcount * job.opts.copies;
+		total_printed_sheets = sheetcount * job.opts.copies;	/* !!! */
 		total_printed_sides = sidecount * job.opts.copies;
 		}
 	    else				/* 1 or unknown # of copies */
 		{
-		total_printed_sheets = sheetcount;
+		total_printed_sheets = sheetcount;			/* !!! */
 		total_printed_sides = sidecount;
 		}
 
@@ -1668,7 +1667,7 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 		compute_charge(&charge,
 			printer.charge.per_duplex,
 			printer.charge.per_simplex,
-			job.attr.pages,
+			pages,
 			job.N_Up.N,
 			job.attr.pagefactor,
 			job.N_Up.sigsheets,
@@ -1684,7 +1683,7 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 		job.For ? job.For : "???",
 		job.username,
 		job.proxy_for ? job.proxy_for : "",
-		job.attr.pages,
+		pages,
 	    	total_printed_sheets,
 	    	total_printed_sides,
 	    	(long)(seconds_now - job.time),
@@ -1699,7 +1698,8 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 
 	    if(fclose(printlog) == EOF)
 	    	error("%s(): fclose() failed", function);
-	    }
+
+	    } /* fdopen() didn't fail */
 	}
     } /* end of printer_use_log() */
 
@@ -2298,7 +2298,7 @@ int main(int argc, char *argv[])
 
 	    compute_charge(&charge,
 	    	printer.charge.per_duplex, printer.charge.per_simplex,
-	    	job.attr.pages, job.N_Up.N, job.attr.pagefactor,
+	    	pagemask_count(&job), job.N_Up.N, job.attr.pagefactor,
 	    	job.N_Up.sigsheets, job.N_Up.sigpart, job.opts.copies);
 
 	    if(db_transaction(job.charge_to, charge.total, TRANSACTION_CHARGE) != USER_OK)

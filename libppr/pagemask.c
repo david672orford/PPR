@@ -39,124 +39,149 @@
 #include "global_defines.h"
 #include "global_structs.h"
 
-/* Read an ASCII string and store it in job as the mask of pages
-   to be printed. */
+/*
+** Read an ASCII string and store it in job as the mask of pages
+** to be printed.
+*/
 int pagemask_encode(struct QFileEntry *job, const char pages[])
     {
     int bytes;
-    int page, lastsep;
+    int page;
+    gu_boolean range;
     const char *p;
 
     /* If there is an old page mask, deallocate it. */
-    if(job->PageMask)
-    	gu_free(job->PageMask);
+    if(job->page_list.mask)
+    	gu_free(job->page_list.mask);
 
     /* Allocate enough memory and set it to all zeros. */
     bytes = (job->attr.pages + 5) / 6;
-    job->PageMask = gu_alloc(bytes+1, 1);
-    memset(job->PageMask, 0, bytes+1);
+    job->page_list.mask = gu_alloc(bytes+1, 1);
+    memset(job->page_list.mask, 0, bytes+1);
 
     /* This is the parser loop. */
-    for(p=pages, lastsep=0, page=1; *p; )
+    for(p=pages, range=FALSE, page=1; *p; )
     	{
-	/* Spaces have no value except to terminate numbers. */
-	if(isspace(*p))
-	    {
-	    p++;
-	    continue;
-	    }
+	/* This inner loop ends if the string ends or we hit a comma.
+	   That gives us a change to consider whether we have an
+	   unclosed range. */
+	while(*p)
+            {
+            /* Spaces have no value except to terminate numbers. */
+            if(isspace(*p))
+                {
+                p++;
+                continue;
+                }
 
-	/* If a number, interpretation depends on context. */
-	if(isdigit(*p))
-	    {
-	    /* Parse the digits and move the read pointer past them. */
-	    int value = atoi(p);
-	    p += strspn(p, "0123456789");
+            /* If a number, interpretation depends on context. */
+            if(isdigit(*p))
+                {
+                /* Parse the digits and move the read pointer past them. */
+                int value = atoi(p);
+                p += strspn(p, "0123456789");
 
-	    /* If it is a hyphen and nothing proceded it and it
-	       wasn't at the start of the string, it is an error. */
-	    if(lastsep == '-')
-	    	{
-	    	if(page == 0)
-		    return -1;
-		}
+		/* If we aren't in a range, move the starting page up to this number. */
+                if(!range)
+                    page = value;
 
-	    /* If the last separator wasn't a hyphen, this is
-	       a starting value or a single value. */
-	    else
-		page = value;
+                /* Step from the starting value to the ending value (the number
+                   we read just now) or the end of the document, whichever 
+                   comes first, setting bits as we go. */
+                for( ; page <= value && page <= job->attr.pages; page++)
+                    {
+                    int offset = (page - 1);
+                    job->page_list.mask[offset / 6] |= (1 << (offset % 6));
+                    }
+                    
+		/* If we finished a range, reset things. */
+		if(range)
+		    {
+		    range = FALSE;
+		    page = 1;
+		    }
 
-	    /* Step from the starting value to the ending value
-	       or the end of the document, whichever comes first,
-	       setting bits as we go. */
-            for( ; page <= value && page <= job->attr.pages; page++)
-            	{
-		int offset = (page - 1);
-		int bytenum = offset / 6;
-		int bitnum = offset % 6;
-		job->PageMask[bytenum] |= (1 << bitnum);
-            	}
+                continue;
+                }
 
-	    /* If that was the end of a range, close it. */
-	    if(lastsep == '-')
-	    	{
-	    	lastsep = 0;
-	    	page = 0;
-	    	}
+	    /* We must break out of this inner loop at comma to see if
+	       there is an open range that needs closing. */
+            if(*p == ',')
+                {
+                p++;
+                break;
+                }
 
-	    continue;
-	    }
+	    /* If we see a hyphen, that means the previous number (or one if 
+	       there was none) was the tart of a range. */
+            if(*p == '-')
+                {
+		range = TRUE;
+                p++;
+                continue;
+                }
 
-	/* Commas and hyphens change the interpretation of numbers
-	   that follow them, so remember them. */
-	if(*p == ',' || *p == '-')
-	    {
-	    lastsep = *p;
-	    p++;
-	    continue;
-	    }
+            /* Other characters are invalid. */
+            return -1;
+            } /* inner loop until comma */
 
-	/* Other characters are invalid. */
-	return -1;
-    	}
+        /* If we ended with an unclosed range, run it to the
+           end of the pages. */
+        if(range)
+            {
+            for( ; page <= job->attr.pages; page++)
+                {
+                int offset = (page - 1);
+                job->page_list.mask[offset / 6] |= (1 << (offset % 6));
+                }
+	    range = FALSE;
+            }
 
+    	} /* outer loop til end of string */
+
+    /* Count the number of bits set in each byte and then add 33 to each byre
+       to convert it to printable ASCII. */
     {
-    int x;
+    int x, y;
+    job->page_list.count = 0;
     for(x=0; x<bytes; x++)
 	{
-    	job->PageMask[x] += 33;
+	for(y=0; y < 6; y++)
+	    if(job->page_list.mask[x] & (1 << y))
+	    	job->page_list.count++;
+    	job->page_list.mask[x] += 33;
     	}
     }
 
     return 0;
-    }
+    } /* end of pagemask_encode() */
 
-/* Print a human readable representation of the list of the
-   page mask. */
+/*
+** Print a human readable representation of the list of the
+** page mask.
+*/
 void pagemask_print(const struct QFileEntry *job)
     {
-    if(job->PageMask)
+    if(job->page_list.mask)
 	{
 	int x;
-	for(x=1; x<job->attr.pages; x++)
+	for(x=1; x<=job->attr.pages; x++)
 	    {
-	    int offset = (x - 1);
-	    int bytenum = offset / 6;
-	    int bitnum = offset % 6;
-	    if((job->PageMask[bytenum] - 33) & (1 << bitnum))
+	    if(pagemask_get_bit(job, x))
 	    	printf("%d ", x);
 	    }
 
 	}
     } /* end of pagemask_print() */
 
-/* Return the value of a bit in the array of bits that represents the pages.
-   The value must be in the range 1-job->attr.pages.
-   */
+/*
+** Return the value of a bit in the array of bits that represents the pages.
+** The value must be in the range 1-job->attr.pages.
+*/
 int pagemask_get_bit(const struct QFileEntry *job, int page)
     {
     /* If there is no page mask, we print all pages. */
-    if(!job->PageMask)
+    if(!job->page_list.mask)
     	return 1;
 
     /* We don't want to handle this sort of error here. */
@@ -168,20 +193,22 @@ int pagemask_get_bit(const struct QFileEntry *job, int page)
     int offset = (page - 1);
     int bytenum = offset / 6;
     int bitnum = offset % 6;
-    if((job->PageMask[bytenum] - 33) & (1 << bitnum))
+    if((job->page_list.mask[bytenum] - 33) & (1 << bitnum))
     	return 1;
     else
 	return 0;
     }
     } /* end of pagemask_get_bit() */
 
-/* Return the number of bits that are set.  This will be the
-   number of pages that will be printed (per copy of course).
-   */
+/*
+** Return the number of bits that are set.  This will be the
+** number of pages that will be printed (per copy of course).
+*/
 int pagemask_count(const struct QFileEntry *job)
     {
-    /* If there is no page mask, we print all pages. */
-    if(!job->PageMask)
+    if(job->page_list.mask)
+	return job->page_list.count;
+    else
     	return job->attr.pages;
     } /* end of pagemask_count() */
 

@@ -107,7 +107,10 @@ struct QFileEntry
     const char *PJL;			/* HP PJL lines, newline separated */
     enum CACHE_PRIORITY CachePriority;
     gu_boolean StripPrinter;		/* Strip resources that printer has? */
-    char *PageMask;			/* which pages should be printed? */
+    struct {
+	char *mask;			/* which pages should be printed? */
+	int count;			/* how many 1's in the mask? */
+	} page_list;
     } ;
 
 /* Possible values for orientation member of struct QFileEntry. */
