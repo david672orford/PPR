@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--10 September 2002.
+1.50a2, 27 February 2002--20 September 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.

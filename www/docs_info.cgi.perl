@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/docs_info.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 9 August 2002.
+# Last modified 20 September 2002.
 #
 
 #
@@ -106,7 +106,7 @@ sub linkize_helper
     {
     my $note = shift;
     my $name = shift;
-    return "*$note <a href=\"${info_to_url($name)}\">$name</a>::";
+    return "*$note <a href=\"${\info_to_url($name)}\">$name</a>::";
     }
 
 # Preserve line breaks by converting newlines to <br> tags.
