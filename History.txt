@@ -9244,6 +9244,11 @@ Internet Printing Protocol Work
 
 * ppad/: renamed "ppad ppdlib list" to "ppad ppdlib search".
 
+* pprdrv/pprdrv_ppd.c, ppad/ppad_printer.c: removed code to add -r 
+  option with default resolutions to Ghostscript options derived
+  from *cupsFilter lines.
+
+
 
 TODO
 
