@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 January 2002.
+# Last modified 22 February 2002.
 #
 
 use 5.005;
@@ -452,12 +452,12 @@ QuoteMove90
 }
 
 # Create all of the other buttons.
-isubmit("action", "Cancel", _("_Cancel"), "class=\"buttons\"");
-isubmit("action", "Rush", _("R_ush"), "class=\"buttons\"");
-isubmit("action", "Hold", _("_Hold"), "class=\"buttons\"");
-isubmit("action", "Release", _("_Release"), "class=\"buttons\"");
-isubmit("action", "Modify", _("_Modify"), "class=\"buttons\" onclick=\"return do_modify();\"");
-isubmit("action", "Log", _("_Log"), "class=\"buttons\" onclick=\"return do_log();\"");
+isubmit("action", "Cancel", N_("_Cancel"), "class=\"buttons\"");
+isubmit("action", "Rush", N_("R_ush"), "class=\"buttons\"");
+isubmit("action", "Hold", N_("_Hold"), "class=\"buttons\"");
+isubmit("action", "Release", N_("_Release"), "class=\"buttons\"");
+isubmit("action", "Modify", N_("_Modify"), "class=\"buttons\" onclick=\"return do_modify();\"");
+isubmit("action", "Log", N_("_Log"), "class=\"buttons\" onclick=\"return do_log();\"");
 
 # Close the bottom menubar.
 print "</div>\n";

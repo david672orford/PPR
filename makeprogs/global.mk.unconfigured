@@ -12,6 +12,7 @@
 CP=cp
 RMF=rm -f
 BACKUPS=*~ *.bak *.bck
+OBJ=o
 PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
 
 # This is first, so it will be the default target.

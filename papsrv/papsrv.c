@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 December 2001.
+** Last modified 22 February 2002.
 */
 
 /*
@@ -40,6 +40,8 @@
 #include "ppr_exits.h"
 #include "util_exits.h"
 #include "version.h"
+
+const char myname[] = "papsrv";
 
 /* The table of advertised names. */
 struct ADV adv[PAPSRV_MAX_NAMES];
@@ -635,12 +637,60 @@ static const struct gu_getopt_opt option_words[] =
 	{
 	{"help", 1000, FALSE},
 	{"version", 1001, FALSE},
+	{"stop", 1003, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
 static void help(FILE *out)
     {
     fputs("Usage: papsrv [-f conffile] [-l logfile] [-p pidfile] [-X] [-z zone]\n", out);
+    }
+
+static int do_stop(void)
+    {
+    FILE *f;
+    int count;
+    long int pid;
+
+    if(!(f = fopen(pid_file_name, "r")))
+    	{
+    	fprintf(stderr, _("%s: not running\n"), myname);
+    	return 1;
+    	}
+
+    count = fscanf(f, "%ld", &pid);
+
+    fclose(f);
+
+    if(count != 1)
+    	{
+    	fprintf(stderr, _("%s: failed to read PID from lock file"), myname);
+    	return 2;
+    	}
+
+    printf(_("Sending SIGTERM to %s (PID=%ld).\n"), myname, pid);
+
+    if(kill((pid_t)pid, SIGTERM) < 0)
+    	{
+	fprintf(stderr, "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n", myname, pid, errno, gu_strerror(errno));
+	return 3;
+    	}
+
+    {
+    struct stat statbuf;
+    printf(_("Waiting while %s shuts down..."), myname);
+    while(stat(pid_file_name, &statbuf) == 0)
+    	{
+	printf(".");
+	fflush(stdout);
+	sleep(1);
+    	}
+    printf("\n");
+    }
+
+    printf(_("Shutdown complete.\n"));
+
+    return 0;
     }
 
 int main(int argc, char *argv[])
@@ -729,6 +779,10 @@ int main(int argc, char *argv[])
 	    	puts(AUTHOR);
 	    	exit(EXIT_OK);
 
+	    case 1003:			/* --stop */
+		exit(do_stop());
+	    	break;
+
 	    case '?':			/* help or unrecognized switch */
 		fprintf(stderr, "Unrecognized switch: %s\n\n", getopt_state.name);
 		help(stderr);
@@ -810,7 +864,7 @@ int main(int argc, char *argv[])
     pid = getpid();
     debug("Daemon starting, pid=%ld", (long)pid);
 
-    if( (f=fopen(pid_file_name, "w")) != (FILE*)NULL )
+    if((f = fopen(pid_file_name, "w")) != (FILE*)NULL)
     	{
     	fprintf(f, "%ld\n", (long)pid);
 	fclose(f);

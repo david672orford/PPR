@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/papsrv.8.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 November 2001.
+# Last modified 27 February 2002.
 #
 
 =head1 NAME
@@ -23,6 +23,7 @@ papsrv.conf - Macintosh printer server configuration file
 
 B<papsrv> [B<--help>] [B<--version>] [B<-f> I<configfile>] [B<-l> I<logfile>]
 [B<-p> I<pidfile>] [B<-X> I<AUFS_Security_directory>] [B<-z> I<default_zone>]
+B<papsrv> B<--stop>
 
 =head1 DESCRIPTION
 
@@ -63,11 +64,11 @@ command is all known shells.  Several seconds may elapse between the time
 papsrv receives the TERM signal and the time it exits.  During this time
 B<papsrv> is removing the advertized names from the network.
 
-A good way to stop B<papsrv> is with the shell script
-B<papsrv_kill>.  This script reads the process id of
-B<papsrv> from the file F</var/spool/ppr/run/papsrv.pid> and kills B<papsrv> by
-sending it SIGTERM.  It then waits for B<papsrv> to shut down, then exits
-itself.  When B<papsrv_kill> is done it is safe to start a new B<papsrv>.
+A good way to stop B<papsrv> is to run it with the B<--stop> option.  When
+run in this way, it will read the process id of the copy of B<papsrv> 
+running as a daemon from the file F</var/spool/ppr/run/papsrv.pid> and send
+it SIGTERM.  It will then wait for B<papsrv> to shut down before exiting
+itself.  When B<papsrv --stop> is done it is safe to start a new B<papsrv>.
 
 =head2 Server Debugging
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 January 2002.
+** Last modified 22 February 2002.
 */
 
 #include "before_system.h"
@@ -48,6 +48,9 @@
 /* How many processes may we use to ask questions? */
 #define MAX_ACTIVE_QUESTIONS 10
 
+/* How many processes may be launched per tick? */
+#define MAX_LAUNCHES_PER_TICK 3
+
 /* This array of structures keeps track of the processes
    asking the questions. */
 static struct {
@@ -61,6 +64,9 @@ static struct {
 
 /* How many entries in the above array user in use? */
 static int active_questions = 0;
+
+/* How many processes launched this tick? */
+static int launches_this_tick = 0;
 
 /* How many questions are still unanswered? */
 static int outstanding_questions = 0;
@@ -139,6 +145,7 @@ static int question_launch(struct QEntry *job)
     active_question[x].homenode_id = job->homenode_id;
 
     active_questions++;
+    launches_this_tick++;
 
     DODEBUG_QUESTIONS(("%s()", function));
     return 0;
@@ -153,7 +160,7 @@ static int question_launch(struct QEntry *job)
 static void question_look_for_work(void)
     {
     FUNCTION4DEBUG("question_look_for_work")
-    DODEBUG_QUESTIONS(("%s(): outstanding_questions=%d, active_questions=%d", function, outstanding_questions, active_questions));
+    DODEBUG_QUESTIONS(("%s(): outstanding_questions=%d, active_questions=%d, launches_this_tick=%d", function, outstanding_questions, active_questions, launches_this_tick));
     if(outstanding_questions > 0)
 	{
 	int x, count;
@@ -163,9 +170,14 @@ static void question_look_for_work(void)
 
 	DODEBUG_QUESTIONS(("%s(): time_now=%ld", function, (long)time_now));
 
+	/* We need exclusive access to the queue. */
 	lock();
 
-	for(x=count=0; x < queue_entries && count < outstanding_questions && active_questions < MAX_ACTIVE_QUESTIONS; x++)
+	/* Scan the queue until we get to the end, or we have seen all the questions
+	   (there variable outstanding_questions is the maximum number of outstanding
+	   questions there might be), or the maximum number of processes are running,
+	   or the maximum number of launches for this tick have been used up. */
+	for(x=count=0; x < queue_entries && count < outstanding_questions && active_questions < MAX_ACTIVE_QUESTIONS && launches_this_tick < MAX_LAUNCHES_PER_TICK; x++)
 	    {
 	    DODEBUG_QUESTIONS(("%s(): id=%d, UNANSWERED=%s, ASKING_NOW=%s, resend_message_at=%ld (now %+ld)",
 	    	function,
@@ -186,9 +198,12 @@ static void question_look_for_work(void)
 	    	}
 	    }
 
+	/* If we ended up scanning the whole queue, we now know how 
+	   many outstanding questions there _really_ are. */
 	if(x==queue_entries)
 	    outstanding_questions = count;
 
+	/* We are done with the queue. */
         unlock();
 	}
 
@@ -304,8 +319,14 @@ void question_tick(void)
     {
     FUNCTION4DEBUG("question_tick")
     DODEBUG_QUESTIONS(("%s()", function));
+
+    /* We have a new alotment of launches. */
+    launches_this_tick = 0;
+
+    /* Se if there are jobs with questions and free resources to ask them. */
     question_look_for_work();
+
     DODEBUG_QUESTIONS(("%s(): done", function));
-    }
+    } /* end of question_tick() */
 
 /* end of file */

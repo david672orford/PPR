@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 25 September 2001.
+# Last modified 22 January 2002.
 #
 
 use 5.004;
@@ -209,7 +209,7 @@ else
 	    # Create a copy of the tabname with the accesskey marker removed.
 	    (my $tabname_stript = $tabname) =~ s/_//;
 
-	    isubmit("tab_tab", $tabname_stript, _($tabname), $other);
+	    isubmit("tab_tab", $tabname_stript, N_($tabname), $other);
 	    }
 	$x++;
 	}

@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.50a1
-19 February 2002
+22 February 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -45,8 +45,7 @@ if {![info exists ppr_magic_cookie_seed]} {
     }
 
 # This is how often we re-register (in seconds).
-#set registration_interval 600
-set registration_interval 60
+set registration_interval 600
 
 # Set options in order to make the Macintosh version look more
 # like the others.

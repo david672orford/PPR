@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 3 January 2002.
+# Last modified 22 February 2002.
 #
 
 use 5.004;
@@ -276,7 +276,7 @@ foreach $b (@$buttons)
     if($b eq "_Cancel" || $b eq "_Close")
 	{ $other .= " onclick=\"self.close()\"" }
     (my $b_stript = $b ) =~ s/_//;
-    isubmit("wiz_action", $b_stript, _($b), $other);
+    isubmit("wiz_action", $b_stript, $b, $other);
     $tabindex--;
     }
 }

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 February 2002.
+** Last modified 22 February 2002.
 */
 
 /*

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 January 2002.
+# Last modified 25 February 2002.
 #
 
 require "paths.ph";
@@ -162,10 +162,11 @@ sub cgi_intl_init
 	    print STDERR "Selected language: ", defined($selected_lang) ? $selected_lang : "<default>", "\n";
 	    if(defined($selected_lang) && $selected_lang ne $UNTRANSLATED_LANGUAGE)
 		{
-		# Put the selection into the normal environment variable where
-		# setlocale() and the programs the CGI script runs can pick
-		# it up.
-		$ENV{LANG} = $selected_lang;
+		# Pull in the Perl modules needed for translation.
+	    	require POSIX;
+	    	import POSIX qw(locale_h);
+		require Locale::gettext;
+		import Locale::gettext;
 
 		# Many languages use Latin1, but there is a list of exceptions.
 		my $selected_charset;
@@ -174,11 +175,11 @@ sub cgi_intl_init
 		    $selected_charset = $CHARSET_DEFAULT;
 		    }
 
-		# Pull in the Perl modules needed for translation.
-	    	require POSIX;
-	    	import POSIX qw(locale_h);
-		require Locale::gettext;
-		import Locale::gettext;
+		# Put the selection into the normal environment variable where
+		# setlocale() and the programs the CGI script runs can pick
+		# it up.
+		$ENV{LANG} = $selected_lang;
+		$ENV{OUTPUT_CHARSET} = $selected_charset;
 
 		# Set things up so that gettext() will use the the language
 		# the user has selected.
@@ -219,9 +220,9 @@ sub _
     my $text = shift;
     if($int_on && $text ne "")
 	{
-	#print STDERR "translating \"$text\"";
+	print STDERR "translating \"$text\"";
 	$text = &gettext($text);
-	#print STDERR " as \"$text\"\n";
+	print STDERR " as \"$text\"\n";
 	}
     return $text;
     }
@@ -253,11 +254,12 @@ sub H_NB_
 #
 # This function generates a <button> if a non-default language has
 # been selected, otherwise it generates an <input type=submit> which
-# doesn't permit the button label to differ from the value that is
+# doesn't permit the button label to different from the value that is
 # submitted when the button is pressed.
 #
 # Arguments:
 #	* The value for name= property of the <input> or <button> tag.
+#	* The value for the value= property of the tag.
 #	* A translatable (but not yet translated) button label with the
 #	  accesskey indicated by a proceding underscore.  An underscore
 #	  should appear in the translation string if an accesskey is desired.
@@ -265,9 +267,11 @@ sub H_NB_
 #
 sub isubmit
     {
-    my($name, $value, $translation, $other) = @_;
-    defined($name) && defined($value) && defined($translation) || die;
+    my($name, $value, $translatable, $other) = @_;
+    defined($name) && defined($value) && defined($translatable) || die;
     my $accesskey = undef;
+
+    my $translation = _($translatable);
 
     # Try to get a Mozilla version number.
     my $mozilla_version = 0;
@@ -281,9 +285,10 @@ sub isubmit
     if($int_on && $mozilla_version >= 5.0)
     	{
 	$accesskey = $1 if($translation =~ s/_(.)/$1/);
-	$value =~ s/_//;
-	$value = &html($value);
-	print "<button type=\"submit\" name=\"$name\" value=\"$value\"";
+	$translation = html($translation);
+	$translation =~ s#_(.)#<u>$1</u>#g;
+
+	print "<button type=\"submit\" name=\"$name\" value=", html_value($value);
 	print " accesskey=\"$accesskey\"" if(defined($accesskey));
 	print " ", $other if(defined($other));
 	print ">", &html($translation), "</button>\n";
@@ -291,9 +296,8 @@ sub isubmit
 
     else
 	{
-	$accesskey = $1 if($value =~ s/_(.)/$1/);
-	$value = &html($value);
-	print "<input type=\"submit\" name=\"$name\" value=\"$value\"";
+	$accesskey = $1 if($translation =~ s/_(.)/$1/);
+	print "<input type=\"submit\" name=\"$name\" value=", html_value($value);
 	print " accesskey=\"$accesskey\"" if(defined($accesskey));
 	print " ", $other if(defined($other));
 	print ">\n";

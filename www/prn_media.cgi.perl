@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_media.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 May 2001.
+# Last modified 22 February 2002.
 #
 
 use lib "?";
@@ -153,8 +153,8 @@ foreach my $i (@binlist)
 print "</table>\n";
 
 print "<p class=\"buttons\">\n";
-isubmit("action", "Close", _("_Close"), 'class="buttons" onclick="window.close()"');
-isubmit("action", "Apply", _("_Apply"), 'class="buttons"');
+isubmit("action", "Close", N_("_Close"), 'class="buttons" onclick="window.close()"');
+isubmit("action", "Apply", N_("_Apply"), 'class="buttons"');
 print "</p>\n";
 
 # This is the end of the exception handling block.  If die() was called

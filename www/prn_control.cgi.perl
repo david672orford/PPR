@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 10 January 2002.
+# Last modified 22 February 2002.
 #
 
 use lib "?";
@@ -418,19 +418,19 @@ print "</td>\n";
 if($controls)
 {
 print "<td align=\"right\" valign=\"top\">\n";
-isubmit("action", "Start", _("_Start"), "class=\"buttons\"");
+isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Stop", _("Sto_p"), "class=\"buttons\"");
+isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Halt", _("_Halt"), "class=\"buttons\"");
+isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Media", _("_Media"),
+isubmit("action", "Media", N_("_Media"),
 	"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=750,height=400,scrollbars,resizable'); return false;\""
 	);
 print "<br><br><br>\n";
-isubmit("action", "Refresh", _("_Refresh"), "class=\"buttons\"");
+isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Close", _("_Close"), "class=\"buttons\" onclick=\"window.close()\"");
+isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close()\"");
 print "</td>\n";
 }
 

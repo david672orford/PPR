@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 January 2002.
+# Last modified 27 February 2002.
 #
 
 #
@@ -91,7 +91,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests
+SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests ppr-papd
 
 #=== Build ==================================================================
 

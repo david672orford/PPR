@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 25 February 2002.
 */
 
 /*
@@ -564,7 +564,7 @@ static void ppop_list_help(void)
 static void ppop_list_banner(void)
     {
 /*      123456789012345678901234567890123456789012345678901234567890 */
-printf("Queue ID        For                      Time      Pgs Status\n");
+printf(_("Queue ID        For                      Time      Pgs Status\n"));
 printf("----------------------------------------------------------------------------\n");
 /*      12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
 	glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-01-17 13:25-0500\n"
+"POT-Creation-Date: 2002-02-25 16:05-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -55,16 +55,17 @@ msgstr ""
 msgid "More>>"
 msgstr ""
 
-#: ../www/cgi_tabbed.pl:287 ../www/grp_addwiz.cgi.perl:153
-#: ../www/prn_addwiz.cgi.perl:663 ../www/prn_control.cgi.perl:432
-#: ../www/prn_media.cgi.perl:155 ../www/show_queues.cgi.perl:224
+#: ../www/cgi_tabbed.pl:287 ../www/cliconf.cgi.perl:83
+#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:663
+#: ../www/prn_control.cgi.perl:432 ../www/prn_media.cgi.perl:155
+#: ../www/show_queues.cgi.perl:224
 msgid "_Close"
 msgstr "Закрыть"
 
 #: ../www/cgi_tabbed.pl:291 ../www/cgi_wizard.pl:269
-#: ../www/grp_addwiz.cgi.perl:62 ../www/grp_addwiz.cgi.perl:128
-#: ../www/prn_addwiz.cgi.perl:143 ../www/prn_addwiz.cgi.perl:629
-#: ../www/show_jobs.cgi.perl:454
+#: ../www/cliconf.cgi.perl:56 ../www/grp_addwiz.cgi.perl:62
+#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:143
+#: ../www/prn_addwiz.cgi.perl:629 ../www/show_jobs.cgi.perl:454
 msgid "_Cancel"
 msgstr ""
 
@@ -72,14 +73,51 @@ msgstr ""
 msgid "_Save"
 msgstr ""
 
+#: ../www/cgi_wizard.pl:269 ../www/cliconf.cgi.perl:56
+#: ../www/grp_addwiz.cgi.perl:62 ../www/prn_addwiz.cgi.perl:143
+msgid "_Next"
+msgstr ""
+
 #: ../www/cgi_wizard.pl:269 ../www/grp_addwiz.cgi.perl:128
 #: ../www/prn_addwiz.cgi.perl:629
 msgid "_Back"
 msgstr ""
 
-#: ../www/cgi_wizard.pl:269 ../www/grp_addwiz.cgi.perl:62
-#: ../www/prn_addwiz.cgi.perl:143
-msgid "_Next"
+#: ../www/cliconf.cgi.perl:42
+msgid "Create Client Script: Choose a Spooler"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:47
+#, c-format
+msgid ""
+"This program will create a script which you can download and run\n"
+"in order to set up your local spooler to print to the PPR\n"
+"queue \"%s\"."
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:51
+msgid "Please indicate which print spooler you are using:"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:52
+msgid "BSD lpd"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:53
+msgid "LPR Next Generation"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:62
+msgid "Create Client Script: Local Name"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:68
+#, c-format
+msgid "Please choose a local name for %s:"
+msgstr ""
+
+#: ../www/cliconf.cgi.perl:77
+msgid "Create Client Script: Download"
 msgstr ""
 
 #: ../www/commentary_select.cgi.perl:26
@@ -365,12 +403,12 @@ msgstr ""
 
 #: ../www/grp_properties.cgi.perl:148 ../www/prn_properties.cgi.perl:80
 #: ../www/prn_properties.cgi.perl:456 ../www/prn_properties.cgi.perl:580
-msgid "yes"
+msgid "no"
 msgstr ""
 
 #: ../www/grp_properties.cgi.perl:148 ../www/prn_properties.cgi.perl:80
 #: ../www/prn_properties.cgi.perl:456 ../www/prn_properties.cgi.perl:580
-msgid "no"
+msgid "yes"
 msgstr ""
 
 #: ../www/grp_properties.cgi.perl:157
@@ -969,12 +1007,12 @@ msgstr ""
 msgid "Pages completed:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:358
-msgid "Bytes Unsent"
-msgstr ""
-
 #: ../www/prn_control.cgi.perl:358 ../www/show_printlog.cgi.perl:153
 msgid "Bytes Sent"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:358
+msgid "Bytes Unsent"
 msgstr ""
 
 #: ../www/prn_control.cgi.perl:389
@@ -1612,7 +1650,15 @@ msgid "Can't open log file \"%s\", %s\n"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:151
-msgid "Proxy For"
+msgid "Printer"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:151
+msgid "Time"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:151
+msgid "For"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:151
@@ -1624,15 +1670,7 @@ msgid "Unix User"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:151
-msgid "Time"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:151
-msgid "Printer"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:151
-msgid "For"
+msgid "Proxy For"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:152
@@ -1640,7 +1678,7 @@ msgid "Total Sheets"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:152
-msgid "Queued Time"
+msgid "Total Sides"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:152
@@ -1648,15 +1686,15 @@ msgid "Printing Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:152
-msgid "Pages"
+msgid "Queued Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:152
-msgid "Total Sides"
+msgid "Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:153
-msgid "Increment"
+msgid "Start Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:153
@@ -1664,15 +1702,15 @@ msgid "PJL Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:153
-msgid "Charge"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:153
 msgid "PS Bytes"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:153
-msgid "Start Pages"
+msgid "Charge"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:153
+msgid "Increment"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:154
@@ -1717,41 +1755,41 @@ msgstr "добавлять новую группу"
 msgid "Show All Queues"
 msgstr "показывать всем очередям"
 
-#: ../www/show_queues_nojs.cgi.perl:38
+#: ../www/show_queues_nojs.cgi.perl:53
 #, c-format
 msgid "Printer \"%s\""
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:42
+#: ../www/show_queues_nojs.cgi.perl:57
 #, c-format
 msgid "Group \"%s\""
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:57
+#: ../www/show_queues_nojs.cgi.perl:77 ../www/show_queues_nojs.cgi.perl:89
 msgid "View Queue"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:63
+#: ../www/show_queues_nojs.cgi.perl:78
 msgid "Printer Control"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:64
+#: ../www/show_queues_nojs.cgi.perl:79
 msgid "Printer Properties"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:65 ../www/show_queues_nojs.cgi.perl:74
+#: ../www/show_queues_nojs.cgi.perl:81 ../www/show_queues_nojs.cgi.perl:92
 msgid "Printlog"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:66
+#: ../www/show_queues_nojs.cgi.perl:82
 msgid "Delete Printer"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:73
+#: ../www/show_queues_nojs.cgi.perl:90
 msgid "Group Properties"
 msgstr ""
 
-#: ../www/show_queues_nojs.cgi.perl:75
+#: ../www/show_queues_nojs.cgi.perl:93
 msgid "Delete Group"
 msgstr ""
 
@@ -1776,13 +1814,13 @@ msgid "Are Required Packages Present?"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:93
-msgid "Critical?"
-msgstr ""
-
-#: ../www/test_components.cgi.perl:93
 msgid "Present?"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:93
 msgid "Component"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:93
+msgid "Critical?"
 msgstr ""

@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--21 February 2002.
+1.50a1, 1 August 2001--27 February 2002.
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7384,7 +7384,7 @@ line was being parsed twice.
   clear the RIP setting rather than triggering a spurious syntax error.
 
 * interface/lpr.c: fixed so that if uprint_lpr_response() returns -1 on the
-  ^B command (start job), then it exits with EXIT_PRNERR as before rather
+  command (start job), then it exits with EXIT_PRNERR as before rather
   than EXIT_PRNERR_NORETRY_ACCESS_DENIED.
 
 * vendors/ppd_hp/: added "HP LaserJet 8100 Series" and "HP LaserJet 8150
@@ -7542,4 +7542,11 @@ line was being parsed twice.
   This should also explain the jobs that sometimes appeared in the queue
   directory but not in pprd's queue.  This was a vexing problem because
   restarting pprd would cause old jobs to suddenly appear in the queue.
+
+* Added www/cliconf.cgi.perl which creates a shell script to configure
+  a client to send jobs to a PPR queue.
+
+* Copied papsrv/ into ppr-papd/ as a first step in making a papsrv 
+  replacement which reads the regular queue configuration files 
+  rather than papsrv.conf.
 

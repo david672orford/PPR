@@ -263,3 +263,11 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 
 * Updated papsrv.8.pod section on AUFSSecurityName.
 
+
+1.50a1, 1 August 2001--27 February 2002.
+
+* pprhack/: Split out hacker's guide.
+
+* pprinst/pprinst.sgml: removed instructions for ps and kill and replaced
+  them with pprd --stop and papsrv --stop.
+
