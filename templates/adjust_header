@@ -1,8 +1,12 @@
 #! /usr/bin/perl
 
-my $COPYRIGHT_YEARS = "1995--2003";
+my($mday,$mon,$year) = (localtime(time()))[3 .. 5];
+$year += 1900;
+$mon = (qw(January February March April May June July August September October November December))[$mon];
+
+my $DATE = "$mday $mon $year"; 
+my $COPYRIGHT_YEARS = "1995--$year";
 my $COPYRIGHT_HOLDER = "Trinity College Computing Center";
-my $DATE = "19 March 2003";
 
 my @LICENSE = split(/\n/, <<"==========END==========");
 Redistribution and use in source and binary forms, with or without
@@ -50,6 +54,8 @@ sub do_file
     my @lines = <F>;
     close(F) || die $!;
 
+    # Identify the file type.  We don't yet do anything with this
+    # information.
     if($lines[0] =~ m#^/\*#)
 	{
 	print "  File type is C source.\n";
