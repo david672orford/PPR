@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/uprint/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 2 October 2004.
 #
 
 # Pull in settings from Configure.
@@ -38,15 +38,15 @@ include ../rules.mk
 # List of man pages in HTML format
 ALL_HTML=UPRINT.1.html uprint-remote.conf.5.html \
 	uprint-lp.1.html uprint-lpstat.1.html uprint-cancel.1.html \
-	uprint-lpr.1.html uprint-lpq.1.html uprint-lprm.1.html
+	uprint-lpr.1.html uprint-lpq.1.html uprint-lprm.1.html uprint-lpc.8.html
 
 # List of man pages in nroff format
 ALL_TROFF=UPRINT.1.man uprint-remote.conf.5.man \
 	uprint-lp.1.man uprint-lpstat.1.man uprint-cancel.1.man \
-	uprint-lpr.1.man uprint-lpq.1.man uprint-lprm.1.man
+	uprint-lpr.1.man uprint-lpq.1.man uprint-lprm.1.man uprint-lpc.8.man
 
 # List of PODs for cross references
-LIBPODS=UPRINT.1,uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
+LIBPODS=UPRINT.1,uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpc.8,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
 
 #=== Build ==================================================================
 

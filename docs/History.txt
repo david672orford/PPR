@@ -523,9 +523,9 @@ more information about RIPs and *pprRIP:.
   It has erroneously stated that editps is on by default.
 
 
-1.53b1, 22 September 2004--22 September 2004.
+1.53b1, 22 September 2004--2 October 2004.
 
-No changes.
+* uprint/uprint-lpc.8.pod: added
 
 
 TODO
