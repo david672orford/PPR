@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 5 April 2003.
 */
 
 /*
@@ -608,6 +608,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 	tm_time = localtime((time_t*)&qfileentry->time);
 	time_now = time((time_t*)NULL);
 	if( difftime(time_now, (time_t)qfileentry->time) >= (24*60*60) )
+		#warning Expect y2k warning on next line
 		strftime(timestr,sizeof(timestr),"%d-%b-%y",tm_time);
 	else
 		strftime(timestr,sizeof(timestr),"%I:%M%p",tm_time);
@@ -1582,7 +1583,8 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				char timestr[10];
 				tm_time = localtime((time_t*)&qfileentry->time);		/* break up queue time */
 				time_now = time((time_t*)NULL);							/* get current time */
-				if( difftime(time_now, (time_t)qfileentry->time) >= (24*60*60) )
+				if(difftime(time_now, (time_t)qfileentry->time) >= (24*60*60))
+					#warning Expect y2k warning on next line
 					strftime(timestr, sizeof(timestr), "%d-%b-%y", tm_time);
 				else
 					strftime(timestr, sizeof(timestr), "%I:%M%p", tm_time);

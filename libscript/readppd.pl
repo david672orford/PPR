@@ -36,94 +36,94 @@ package readppd;
 $current_handle = undef;
 
 sub _ppd_open
-    {
-    my $filename = shift;
-
-    eval
 	{
-        (scalar @nest_stack < 10) || die "PPD files nested too deep.\n";
+	my $filename = shift;
 
-        if($filename !~ /^\//)			# if doesn't begin with slash,
-            {
-            if(scalar @nest_stack == 0)		# if not an include file
-                {
-                $filename = "$main::PPDDIR/$filename";
-                }
-            else
-                {
-                my $dirname = $nest_stack[0]->[1];
-                $dirname =~ s#/[^/]+$##;
-                $filename = "$dirname/$filename";
-                }
-            }
-
-        $current_handle = "PPDFILE" . scalar @nest_stack;
-
-	if($filename =~ /^(.+\.gz)$/)
-	    {
-	    my $f = $1;
-	    $pid = open($current_handle, "-|");
-	    defined($pid) || die "Can't fork, $!";
-	    if($pid == 0)
+	eval
 		{
-		exec("gunzip", "-c", $f);
-		exit(255);
+		(scalar @nest_stack < 10) || die "PPD files nested too deep.\n";
+
+		if($filename !~ /^\//)					# if doesn't begin with slash,
+			{
+			if(scalar @nest_stack == 0)			# if not an include file
+				{
+				$filename = "$main::PPDDIR/$filename";
+				}
+			else
+				{
+				my $dirname = $nest_stack[0]->[1];
+				$dirname =~ s#/[^/]+$##;
+				$filename = "$dirname/$filename";
+				}
+			}
+
+		$current_handle = "PPDFILE" . scalar @nest_stack;
+
+		if($filename =~ /^(.+\.gz)$/)
+			{
+			my $f = $1;
+			$pid = open($current_handle, "-|");
+			defined($pid) || die "Can't fork, $!";
+			if($pid == 0)
+				{
+				exec("gunzip", "-c", $f);
+				exit(255);
+				}
+			}
+		else
+			{
+			open($current_handle, "<$filename") || die "Can't open \"$filename\", $!\n";
+			}
+		};
+
+	if($@)
+		{
+		foreach my $i (@nest_stack)
+			{
+			close $i->[0];
+			}
+		die $@;
 		}
-	    }
-	else
-	    {
-            open($current_handle, "<$filename") || die "Can't open \"$filename\", $!\n";
-	    }
-	};
 
-    if($@)
-	{
-	foreach my $i (@nest_stack)
-	    {
-	    close $i->[0];
-	    }
-	die $@;
+	unshift @nest_stack, [$current_handle, $filename];
 	}
-
-    unshift @nest_stack, [$current_handle, $filename];
-    }
 
 sub main::ppd_open
-    {
-    my $filename = shift;
-    (scalar @nest_stack == 0) || die;
-    _ppd_open($filename);
-    }
+	{
+	my $filename = shift;
+	(scalar @nest_stack == 0) || die;
+	_ppd_open($filename);
+	}
 
 sub main::ppd_readline
-    {
-    my $line;
-    while(1)
 	{
-        while(scalar(@nest_stack) > 0 && !defined($line = <$current_handle>))
-            {
-            close($current_handle) || die $!;
-            shift @nest_stack;
-            return undef if(scalar @nest_stack == 0);
-            $current_handle = $nest_stack[0]->[0];
-            }
-	chomp $line;
-	if($line =~ /^\*Include:\s*"([^"]+)"/)
-	    {
-	    _ppd_open($1);
-	    next;
-	    }
-	last;
+	my $line;
+	while(1)
+		{
+		while(scalar(@nest_stack) > 0 && !defined($line = <$current_handle>))
+			{
+			close($current_handle) || die $!;
+			shift @nest_stack;
+			return undef if(scalar @nest_stack == 0);
+			$current_handle = $nest_stack[0]->[0];
+			}
+		chomp $line;
+		if($line =~ /^\*Include:\s*"([^"]+)"/)
+			{
+			_ppd_open($1);
+			next;
+			}
+		last;
+		}
+	return $line;
 	}
-    return $line;
-    }
 
 #package main;
 #use lib "/usr/lib/ppr/lib";
 #ppd_open("QMS-PS 410 DSC");
 #while(defined ($line = ppd_readline()))
-#    {
-#    print "\"$line\"\n";
-#    }
+#	 {
+#	 print "\"$line\"\n";
+#	 }
 
 1;

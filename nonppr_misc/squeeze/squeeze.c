@@ -7,9 +7,10 @@
 **
 ** This code was ANSIfied and modified by David Chappell so that it no longer
 ** squeezes out DSC comments.  It was also changed so that is will not put a
-** space before names (which change slightly increases the compression ratio).
+** space before names (which change slightly increases the compression ratio)
+** and so that it will not produce warnings when compiled with gcc -Wall
 **
-** Last modified 12 June 2000.
+** Last modified 5 April 2003.
 */
 
 #include <stdio.h>
@@ -32,7 +33,7 @@ char buf[BUFLENGTH];
 ** we simply put it out, since any special character terminates the
 ** preceding token.
 */
-void specialout(char c)
+static void specialout(char c)
 	{
 	if (linepos + 1 > LINELENGTH)
 		{
@@ -47,7 +48,7 @@ void specialout(char c)
 /*
 ** Write a PostScript ASCII or Hex string
 */
-void strout(char *s)
+static void strout(char *s)
 	{
 	if (linepos + strlen(s) > LINELENGTH)		/* If line would be to long with the addition */
 		{										/* of this string, start a new line. */
@@ -63,7 +64,7 @@ void strout(char *s)
 /*
 ** Emmit a PostScript command word.
 */
-void cmdout(char *s)
+static void cmdout(char *s)
 	{
 	int l;
 

@@ -17,7 +17,7 @@ require 'cgi_intl.pl';
 
 #
 # This function emmits an error message as a complete HTML
-# document.  The first argument is the document title, the second
+# document.	 The first argument is the document title, the second
 # argument is the body HTML text.  Note that the title is plain
 # text while the body should be HTML.
 #
@@ -28,18 +28,18 @@ my $text = shift;
 my($charset, $content_language) = @_;
 
 if(defined $content_language)
-    {
-    print "Content-Language: $content_language\n";
-    }
+	{
+	print "Content-Language: $content_language\n";
+	}
 
 if(defined $charset)
-    {
-    print "Content-Type: text/html;charset=$charset\n";
-    }
+	{
+	print "Content-Type: text/html;charset=$charset\n";
+	}
 else
-    {
-    print "Content-Type: text/html\n";
-    }
+	{
+	print "Content-Type: text/html\n";
+	}
 
 print <<"EndOfErrorDoc";
 
@@ -58,7 +58,7 @@ EndOfErrorDoc
 #
 # This function attempts to emmit an error message as a pop-up window using
 # Javascript.  If Javascript does not work, the message will appear in the
-# document.  The first argument is a brief introductory message, the rest of
+# document.	 The first argument is a brief introductory message, the rest of
 # the arguments are lines to present in a <pre> environment.  Both are plain
 # text, not HTML.
 #
@@ -89,11 +89,11 @@ d.write('<p>$intro2<br>\\n<pre>\\n');
 EndOfError1
 
 foreach my $i (@lines)
-    {
-    $i = html($i);
-    $i =~ s/'/\\'/g;
-    print "d.write('$i\\n');\n";
-    }
+	{
+	$i = html($i);
+	$i =~ s/'/\\'/g;
+	print "d.write('$i\\n');\n";
+	}
 
 print <<"EndOfError2";
 d.write('<' + '/pre>\\n');
@@ -115,10 +115,10 @@ print <<"EndOfError3";
 EndOfError3
 
 foreach my $i (@lines)
-    {
-    $i = html($i);
-    print "$i\n";
-    }
+	{
+	$i = html($i);
+	print "$i\n";
+	}
 
 print <<"EndOfError4";
 </pre>

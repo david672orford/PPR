@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 March 2003.
+# Last modified 5 April 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -36,6 +36,10 @@
 #======================================================================
 
 echo "Creating symbolic links in \"$SYSBINDIR\"..."
+if [ ! -d $RPM_BUILD_ROOT$SYSBINDIR ]
+    then
+	mkdir -p $RPM_BUILD_ROOT$SYSBINDIR || exit 1
+    fi
 for i in ppr ppop ppad ppuser ppdoc \
 	ppr-config \
 	ppr-followme ppr-xgrant ppr-popup \

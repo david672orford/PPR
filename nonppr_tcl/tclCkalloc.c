@@ -18,6 +18,7 @@
  */
 
 #include "tclInt.h"
+#include "tcl.h"
 
 #define FALSE	0
 #define TRUE	1
@@ -644,8 +645,7 @@ void *Tcl_Ckalloc (unsigned int size)
  *
  *----------------------------------------------------------------------
  */
-void
-Tcl_Ckfree (void *ptr)
+void Tcl_Ckfree (void *ptr)
 {
         free (ptr);
 }

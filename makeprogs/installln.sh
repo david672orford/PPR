@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -57,17 +57,24 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
 source="$1"
 target="$2"
 
-if [ ! -f "$RPM_BUILD_ROOT$source" ]
-  then
-  echo "The source file \"$RPM_BUILD_ROOT$source\" doesn't exist."
-  exit 1
-  fi
-
 echo "	  \"$source\" --> \"$target\" (link)"
+
+if [ `basename $source` = $source ]
+	then
+	source_verify="$RPM_BUILD_ROOT`dirname $target`/$source"
+	else
+	source_verify="$source"
+	fi
+if [ ! -f "$source_verify" ]
+	then
+	echo "The source file \"$source_verify\" doesn't exist."
+	exit 1
+	fi
+
 if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 	then
 	rm -f "$RPM_BUILD_ROOT$target"
-	ln -s "$RPM_BUILD_ROOT$source" "$RPM_BUILD_ROOT$target"
+	ln -s "$source" "$RPM_BUILD_ROOT$target"
 	if [ $? -ne 0 ]
 	then
 	echo "$0: can't create \"$target\" because not running as root."
@@ -80,4 +87,3 @@ chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 echo "\"$target\"" >>$MYDIR/../z_install_begin/installed_files_list
 
 exit 0
-

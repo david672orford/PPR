@@ -10,7 +10,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * Last modified 18 January 2002.
+ * Last modified 5 April 2003.
  */
 
 #ifndef _TCLINT
@@ -662,8 +662,12 @@ typedef struct ParseValue {
  * value.
  */
 
+/* DSC: actually, it can be signed or unsigned.  I have added the
+   cast of c to int.
+   */
+
 extern char tclTypeTable[];
-#define CHAR_TYPE(c) (tclTypeTable+128)[c]
+#define CHAR_TYPE(c) (tclTypeTable+128)[(int)c]
 
 /*
  * Possible values returned by CHAR_TYPE:

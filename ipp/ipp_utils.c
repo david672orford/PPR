@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 April 2003.
+** Last modified 5 April 2003.
 */
 
 /*! \file */
@@ -114,11 +114,10 @@ void ipp_end(struct IPP *p)
 
 /** fetch an unsigned byte from the IPP request
 
-Note that unsigned bytes are not an IPP datatype.  However they are part of some
-IPP datatypes, hence we need to be able to write them.
+This is used to read tags.
 
 */
-static unsigned char ipp_get_byte(struct IPP *p)
+unsigned char ipp_get_byte(struct IPP *p)
 	{
 	if(p->readbuf_remaining < 1)
 		ipp_readbuf_load(p);
@@ -130,11 +129,10 @@ static unsigned char ipp_get_byte(struct IPP *p)
 
 /** append an unsigned byte to the IPP response
 
-Note that unsigned bytes are not an IPP datatype.  However they are part of some IPP datatypes,
-hence we need to be able to write them.
+This is used to write tags.
 
 */
-static void ipp_put_byte(struct IPP *p, unsigned char val)
+void ipp_put_byte(struct IPP *p, unsigned char val)
 	{
 	p->writebuf[p->writebuf_i++] = val;
 	p->writebuf_remaining--;
@@ -197,6 +195,19 @@ void ipp_put_si(struct IPP *p, int val)
 	ipp_put_byte(p, (temp & 0x0000FF00) >> 8);
 	ipp_put_byte(p, (temp & 0x000000FF));
 	}
+
+/** fetch a byte array of specified length
+*/
+unsigned char *ipp_get_bytes(struct IPP *p, int len)
+    {
+	char *ptr = gu_alloc(len, sizeof(char));
+	int i;
+	for(i=0; i<len; i++)
+		{
+		ptr[i] = ipp_get_byte(p);
+		}
+	return ptr;
+    }
 
 /** Send a debug message to the HTTP server's error log
 

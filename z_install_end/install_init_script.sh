@@ -138,6 +138,12 @@ if [ -n "$INIT_BASE" ]
 then
 	echo "	Installing the System V style start and stop scripts..."
 
+	# This if for when we are building an RPM.
+	if [ ! -d $RPM_BUILD_ROOT$INIT_BASE ]
+		then
+		mkdir -p $RPM_BUILD_ROOT$INIT_BASE
+		fi
+
 	# Install the principal script if it isn't already installed.
 	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
 	if [ $? -ne 0 ]
@@ -148,41 +154,46 @@ then
 		exit 1
 		fi
 
-	# Remove any old links and replace them with new ones.
-	existing=`echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
-	temp=""
-	for l in $INIT_LIST
-		do
-		temp="$temp $INIT_BASE/$l"
-		done
-	#echo "$temp"
-	#echo "$existing"
-	if [ "$temp" = " $existing" ]
+	# Remove any old links and replace them with new ones.  This is
+	# skipt if we are building an RPM.  The RPM %post script will 
+	# run chkconfig.
+	if [ -z "$RPM_BUILD_ROOT" ]
 		then
-		echo "	  Links are already correct."
-		else
-		if [ -x /sbin/chkconfig ]
-		then
-		/sbin/chkconfig --add ppr
-		else
-		for l in $existing
+		existing=`echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
+		temp=""
+		for l in $INIT_LIST
 			do
-			if [ -f $l ]
+			temp="$temp $INIT_BASE/$l"
+			done
+		#echo "$temp"
+		#echo "$existing"
+		if [ "$temp" = " $existing" ]
 			then
-			rm $l
-			if [ $? -ne 0 ]
+			echo "	  Links are already correct."
+			else
+			if [ -x /sbin/chkconfig ]
 				then
-				echo "Please run again as root to update init links."
-				exit 1
+				/sbin/chkconfig --add ppr
+				else
+				for l in $existing
+					do
+					if [ -f $l ]
+						then
+						rm $l
+						if [ $? -ne 0 ]
+							then
+							echo "Please run again as root to update init links."
+							exit 1
+							fi
+						fi
+					done
+				for f in $INIT_LIST
+					do
+					echo "	  $INIT_BASE/$f"
+					rm -f $INIT_BASE/$f
+					ln -s ../init.d/ppr $INIT_BASE/$f
+					done
 				fi
-			fi
-			done
-		for f in $INIT_LIST
-			do
-			echo "	  $INIT_BASE/$f"
-			rm -f $INIT_BASE/$f
-			ln -s ../init.d/ppr $INIT_BASE/$f
-			done
 			fi
 		fi
 

@@ -37,53 +37,53 @@
 # with STDIN and STDOUT connected to the client.  The parent will never return.
 #
 sub tcpserver
-    {
-    my $standalone_port = shift;
-
-    # If the port isn't numberic, look it up in /etc/services.
-    if($standalone_port !~ /^\d+$/)
-    	{
-	($standalone_port) = (getservbyname($standalone_port, "tcp"))[2];
-	defined($standalone_port) || die "Unknown port $standalone_port";
-    	}
-
-    # Craete the server socket.
-    socket(SERVER, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || die "socket() failed, $!";
-    setsockopt(SERVER, Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1) || die "setsockopt() failed, $!";
-    my $my_address = sockaddr_in($standalone_port, INADDR_ANY);
-    bind(SERVER, $my_address) || die "bind() failed, $!";
-    listen(SERVER, SOMAXCONN) || die "listen() failed, $!";
-
-    # This works in Linux.
-    $SIG{CHLD} = 'IGNORE';
-
-    while(1)
 	{
-	accept(CLIENT, SERVER) || die $!;
-	my $pid = fork();
+	my $standalone_port = shift;
 
-	if(!defined $pid)
-	    {
-	    print STDERR "Fork failed, $!\n";
-	    close CLIENT;
-	    next;
-	    }
+	# If the port isn't numberic, look it up in /etc/services.
+	if($standalone_port !~ /^\d+$/)
+		{
+		($standalone_port) = (getservbyname($standalone_port, "tcp"))[2];
+		defined($standalone_port) || die "Unknown port $standalone_port";
+		}
 
-	# if parent,
-	if($pid)
-	    {
-	    close CLIENT || die "close() of connection socket failed, $!";
-	    next;
-	    }
+	# Craete the server socket.
+	socket(SERVER, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || die "socket() failed, $!";
+	setsockopt(SERVER, Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1) || die "setsockopt() failed, $!";
+	my $my_address = sockaddr_in($standalone_port, INADDR_ANY);
+	bind(SERVER, $my_address) || die "bind() failed, $!";
+	listen(SERVER, SOMAXCONN) || die "listen() failed, $!";
 
-	# child
-	close SERVER || die $!;
-	open(STDIN, "<&CLIENT") || die $!;
-	open(STDOUT, ">&CLIENT") || die $!;
-	last;
+	# This works in Linux.
+	$SIG{CHLD} = 'IGNORE';
+
+	while(1)
+		{
+		accept(CLIENT, SERVER) || die $!;
+		my $pid = fork();
+
+		if(!defined $pid)
+			{
+			print STDERR "Fork failed, $!\n";
+			close CLIENT;
+			next;
+			}
+
+		# if parent,
+		if($pid)
+			{
+			close CLIENT || die "close() of connection socket failed, $!";
+			next;
+			}
+
+		# child
+		close SERVER || die $!;
+		open(STDIN, "<&CLIENT") || die $!;
+		open(STDOUT, ">&CLIENT") || die $!;
+		last;
+		}
+
 	}
-
-    }
 
 1;
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2003.
+# Last modified 4 April 2003.
 #
 
 #
@@ -81,12 +81,12 @@ while [ "$1" != "" ]
 	fi
 
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
-	cp "$file" "$dest" || exit 1
+	cp "$file" "$RPM_BUILD_ROOT$dest" || exit 1
 	strip "$RPM_BUILD_ROOT$dest" 2>/dev/null
 
 	chown $USER "$RPM_BUILD_ROOT$dest" \
-	&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" \
-	&& chmod $MODE "$RPM_BUILD_ROOT$dest"
+		&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" \
+		&& chmod $MODE "$RPM_BUILD_ROOT$dest"
 	if [ $? -ne 0 ]
 	then
 	if [ "$USER" = "root" ]

@@ -36,117 +36,117 @@ defined($PPDDIR) || die;
 # PPD file name.  The second item is the model name.
 #
 sub ppd_list
-    {
-    my @list = ();
-
-    if(open(P, "$VAR_SPOOL_PPR/ppdindex.db"))
 	{
-	while(my $line = <P>)
-	    {
-	    next if($line =~ /^#/);
-	    chomp $line;
-	    my @fields = (split(/:/, $line));	# filename, manufacturer, description
-	    next if($fields[1] eq "PPR");	# these aren't for printers
-	    $fields[0] =~ s#^$PPDDIR/##;	# reduce clutter by removing PPR PPD Directory name
-	    push(@list, \@fields);
-	    }
-	close(P) || die $!;
-	}
+	my @list = ();
 
-    else
-	{
-	opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
-	while(my $file = readdir(P))
-	    {
-	    next if($file =~ /^\./);
-	    next if($file =~ /^PPR Generic/);
-	    push(@list, [$file, "", $file]);
-	    }
-	closedir(P) || die $!;
-	}
+	if(open(P, "$VAR_SPOOL_PPR/ppdindex.db"))
+		{
+		while(my $line = <P>)
+			{
+			next if($line =~ /^#/);
+			chomp $line;
+			my @fields = (split(/:/, $line));	# filename, manufacturer, description
+			next if($fields[1] eq "PPR");		# these aren't for printers
+			$fields[0] =~ s#^$PPDDIR/##;		# reduce clutter by removing PPR PPD Directory name
+			push(@list, \@fields);
+			}
+		close(P) || die $!;
+		}
 
-    @list = sort { my $x = ($a->[1] cmp $b->[1]); if($x) { $x } else {$a->[2] cmp $b->[2]} } @list;
-    return @list;
-    }
+	else
+		{
+		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
+		while(my $file = readdir(P))
+			{
+			next if($file =~ /^\./);
+			next if($file =~ /^PPR Generic/);
+			push(@list, [$file, "", $file]);
+			}
+		closedir(P) || die $!;
+		}
+
+	@list = sort { my $x = ($a->[1] cmp $b->[1]); if($x) { $x } else {$a->[2] cmp $b->[2]} } @list;
+	return @list;
+	}
 
 #
 # This function prints a table with a brief summary of the contents
 # of a PPD file.
 #
 sub ppd_summary
-    {
-    require "readppd.pl";
-    my($filename, $description) = @_;
-
-    my $line;
-    my $fileversion = "?";
-    my $languagelevel = 1;
-    my $psversion = "?";
-    my $fonts = 0;
-    my $ttrasterizer = "None";
-    my $rip = "Internal";
-
-    ppd_open($filename);
-
-    while(defined($line = ppd_readline()))
 	{
-	if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
-	    {
-	    $fileversion = $1;
-	    next;
-	    }
-	if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
-	    {
-	    $languagelevel = $1;
-	    next;
-	    }
-	if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
-	    {
-	    $psversion = $1;
-	    next;
-	    }
-	if($line =~ /^\*Font\s+/)
-	    {
-	    $fonts++;
-	    next;
-	    }
-	if($line =~ /^\*TTRasterizer:\s*(\S+)/)
-	    {
-	    $ttrasterizer = $1;
-	    next;
-	    }
-	if($line =~ /^\*cupsFilter:\s*"([^"]+)"/)
-	    {
-	    my $options = $1;
-	    my @options = split(/ /, $options);
-	    $rip = "Ghostscript+CUPS";
-	    $rip .= "+GIMP" if($options[2] eq "rastertoprinter");
-	    next;
-	    }
-	if($line =~ /^\*pprRIP:\s*(.+)$/)
-	    {
-	    my $options = $1;
-	    my @options = split(/ /, $options);
-	    $rip = "Ghostscript";
-	    if(grep(/^-sDEVICE=cups$/, @options))
-		{ $rip .= "+CUPS" }
-	    elsif(my($temp) = grep(s/^-sDEVICE=(.+)$/$1/, @options))
-		{ $rip .= " ($temp)" }
-	    $rip .= "+GIMP" if(grep(/^cupsfilter=rastertoprinter$/, @options));
-	    next;
-	    }
-	}
+	require "readppd.pl";
+	my($filename, $description) = @_;
 
-    print "<table class=\"lines\" cellspacing=0>\n";
-    print "<tr><th>", H_("PPD Filename"), "</th><td>", html($filename), "</td></tr>\n";
-    print "<tr><th>", H_("Printer Description"), "</th><td>", html($description), "</td></tr>\n";
-    print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
-    print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
-    print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
-    print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($fonts), "</td></tr>\n";
-    print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
-    print "<tr><th>", H_("RIP"), "</th><td>", html($rip), "</td></tr>\n";
-    print "</table>\n";
-    }
+	my $line;
+	my $fileversion = "?";
+	my $languagelevel = 1;
+	my $psversion = "?";
+	my $fonts = 0;
+	my $ttrasterizer = "None";
+	my $rip = "Internal";
+
+	ppd_open($filename);
+
+	while(defined($line = ppd_readline()))
+		{
+		if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
+			{
+			$fileversion = $1;
+			next;
+			}
+		if($line =~ /^\*LanguageLevel:\s*"([^"]+)"/)
+			{
+			$languagelevel = $1;
+			next;
+			}
+		if($line =~ /^\*PSVersion:\s*"([^"]+)"/)
+			{
+			$psversion = $1;
+			next;
+			}
+		if($line =~ /^\*Font\s+/)
+			{
+			$fonts++;
+			next;
+			}
+		if($line =~ /^\*TTRasterizer:\s*(\S+)/)
+			{
+			$ttrasterizer = $1;
+			next;
+			}
+		if($line =~ /^\*cupsFilter:\s*"([^"]+)"/)
+			{
+			my $options = $1;
+			my @options = split(/ /, $options);
+			$rip = "Ghostscript+CUPS";
+			$rip .= "+GIMP" if($options[2] eq "rastertoprinter");
+			next;
+			}
+		if($line =~ /^\*pprRIP:\s*(.+)$/)
+			{
+			my $options = $1;
+			my @options = split(/ /, $options);
+			$rip = "Ghostscript";
+			if(grep(/^-sDEVICE=cups$/, @options))
+				{ $rip .= "+CUPS" }
+			elsif(my($temp) = grep(s/^-sDEVICE=(.+)$/$1/, @options))
+				{ $rip .= " ($temp)" }
+			$rip .= "+GIMP" if(grep(/^cupsfilter=rastertoprinter$/, @options));
+			next;
+			}
+		}
+
+	print "<table class=\"lines\" cellspacing=0>\n";
+	print "<tr><th>", H_("PPD Filename"), "</th><td>", html($filename), "</td></tr>\n";
+	print "<tr><th>", H_("Printer Description"), "</th><td>", html($description), "</td></tr>\n";
+	print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
+	print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
+	print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
+	print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($fonts), "</td></tr>\n";
+	print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
+	print "<tr><th>", H_("RIP"), "</th><td>", html($rip), "</td></tr>\n";
+	print "</table>\n";
+	}
 
 1;

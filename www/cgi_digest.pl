@@ -39,88 +39,88 @@ $MAX_NONCE_AGE = 600;
 
 # Hash a string using MD5 and return the hash in hexadecimal.
 sub md5hex
-    {
-    my $string = shift;
+	{
+	my $string = shift;
 
-    # This version uses the reference implementation from RSA.
-    #require "MD5.pm";
-    #my $md5 = new MD5;
-    #$md5->reset;
-    #$md5->add($string);
-    #return unpack("H*", $md5->digest());
+	# This version uses the reference implementation from RSA.
+	#require "MD5.pm";
+	#my $md5 = new MD5;
+	#$md5->reset;
+	#$md5->add($string);
+	#return unpack("H*", $md5->digest());
 
-    # This version uses a pure Perl MD5 implementation.
-    require "MD5pp.pm";
-    return unpack("H*", MD5pp::Digest($string));
-    }
+	# This version uses a pure Perl MD5 implementation.
+	require "MD5pp.pm";
+	return unpack("H*", MD5pp::Digest($string));
+	}
 
 # This function generates the hashed part of the server nonce.
 sub digest_nonce_hash
-    {
-    my $nonce_time = shift;
-    my $domain = shift;
-    return md5hex("$nonce_time:$domain:$SECRET");
-    }
+	{
+	my $nonce_time = shift;
+	my $domain = shift;
+	return md5hex("$nonce_time:$domain:$SECRET");
+	}
 
 # Create a nonce.
 sub digest_nonce_create
-    {
-    my $domain = shift;
-    my $nonce_time = time();
-    print STDERR "digest_nonce_create(): \$nonce_time=$nonce_time, \$domain=\"$domain\"\n";
-    my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
-    return "$nonce_time:$nonce_hash";
-    }
+	{
+	my $domain = shift;
+	my $nonce_time = time();
+	print STDERR "digest_nonce_create(): \$nonce_time=$nonce_time, \$domain=\"$domain\"\n";
+	my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
+	return "$nonce_time:$nonce_hash";
+	}
 
 # Make sure a nonce is valid.
 sub digest_nonce_validate
-    {
-    my $domain = shift;
-    my $nonce = shift;
+	{
+	my $domain = shift;
+	my $nonce = shift;
 
-    $nonce =~ /^(\d+):(.+)$/ || die "Nonce \"$nonce\" is malformed.\n";
-    my($nonce_time, $nonce_hash) = ($1, $2);
+	$nonce =~ /^(\d+):(.+)$/ || die "Nonce \"$nonce\" is malformed.\n";
+	my($nonce_time, $nonce_hash) = ($1, $2);
 
-    my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-    print STDERR "digest_nonce_validate(): \$nonce_time=$nonce_time, \$domain=\"$domain\", \$nonce_hash=\"$nonce_hash\", \$correct_nonce_hash=\"$correct_nonce_hash\"\n";
-    die "Nonce hash is incorrect.\n" if($nonce_hash ne $correct_nonce_hash);
+	my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
+	print STDERR "digest_nonce_validate(): \$nonce_time=$nonce_time, \$domain=\"$domain\", \$nonce_hash=\"$nonce_hash\", \$correct_nonce_hash=\"$correct_nonce_hash\"\n";
+	die "Nonce hash is incorrect.\n" if($nonce_hash ne $correct_nonce_hash);
 
-    my $time_now = time();
-    #print STDERR "\$time_now=$time_now, \$nonce_time=$nonce_time\n";
-    if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE))
-    	{
-    	return 0;
-    	}
-    else
-    	{
-    	return 1;
-    	}
-    }
+	my $time_now = time();
+	#print STDERR "\$time_now=$time_now, \$nonce_time=$nonce_time\n";
+	if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE))
+		{
+		return 0;
+		}
+	else
+		{
+		return 1;
+		}
+	}
 
 # Find the user's entry (for the correct realm) in the private
 # password file.
 sub digest_getpw
-    {
-    my $sought_username = shift;
-    #print STDERR "digest_getpw(\"$sought_username\")\n";
-
-    my $answer = undef;
-
-    open(PW, "<$PWFILE") || die "Can't open \"$PWFILE\", $!\n";
-    while(<PW>)
 	{
-	chomp;
-	my($username, $realm, $hash) = split(/:/);
-	if($username eq $sought_username && $realm eq $REALM)
-	    {
-	    $answer = $hash;
-	    last;
-	    }
-	}
-    close(PW) || die;
+	my $sought_username = shift;
+	#print STDERR "digest_getpw(\"$sought_username\")\n";
 
-    return $answer if(defined($answer));
-    die "User \"$sought_username\" not listed in \"$PWFILE\".\n";
-    }
+	my $answer = undef;
+
+	open(PW, "<$PWFILE") || die "Can't open \"$PWFILE\", $!\n";
+	while(<PW>)
+		{
+		chomp;
+		my($username, $realm, $hash) = split(/:/);
+		if($username eq $sought_username && $realm eq $REALM)
+			{
+			$answer = $hash;
+			last;
+			}
+		}
+	close(PW) || die;
+
+	return $answer if(defined($answer));
+	die "User \"$sought_username\" not listed in \"$PWFILE\".\n";
+	}
 
 1;

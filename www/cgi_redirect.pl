@@ -14,12 +14,12 @@
 #
 
 sub cgi_redirect
-    {
-    my $location = shift;
-    print "Location: $location\n";
-    print "Content-Length: 0\n";
-    print "\n";
-    }
+	{
+	my $location = shift;
+	print "Location: $location\n";
+	print "Content-Length: 0\n";
+	print "\n";
+	}
 
 1;
 

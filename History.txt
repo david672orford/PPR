@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--4 April 2003.
+1.51, 15 February 2003--5 April 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8516,10 +8516,32 @@ line was being parsed twice.
 
 * printdesk/ppr-panel.perl: added -d for selecting queue; added print dialog 
   for printing files named on the ppr-panel command line so that ppr-panel
-  can be used as a desktop  drag-and-drop printing target; added menu bar to
+  can be used as a desktop drag-and-drop printing target; added menu bar to
   queue listing so that the printer status windows can be opened from there;
-  made queue listing background white; made backgrounds of changing status 
+  made queue listing background white; made backgrounds of changing status
   fields in the printer status windows white as well.
+
+* Converted tab spacing from 8 to 4 in *.c, *.h, *.sh, *.perl, *.pm, *.pl,
+  and *.tcl files.  David Chappell:  Maintaining 4 column indenting with 8
+  column tabs requires too much keyboard pounding and probably contributes
+  to repetitive strain injury.  I explored other options before taking this
+  step, including evalutating Cooledit which does half tabs.  However I
+  finally decided not to use it because the GUI interace's is too
+  standardness.  I will just have to configure our editors to do 4 column
+  tabs.  I think I will stick with Joe for character mode and adopt e93 for
+  when X-Windows is running.
+
+* nonppr_tcl/tclInt.h: fixed CHAR_TYPE() macro to cast argument to int
+  before using it as an array index.  This supresses a GCC warning.  Who
+  knows why GCC considers this a possible error.
+
+* nonppr_tcl/: Moved prototypes from tclEnv.c to tcl.h.
+
+* nonppr_misc/squeeze/squeeze.c: declared internal function static so that
+  gcc -Wmissing-delarations doesn't produce warnings.
+
+* ppop/ppop_cmds_listq.c: added #warnings about y2k warnings.
+
 
 
 

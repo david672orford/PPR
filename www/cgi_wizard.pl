@@ -65,18 +65,18 @@ my ($charset, $content_language) = cgi_intl_init();
 # this must be a new wizard on the first page.
 my $new_wizard = 0;
 if(! defined($data{wiz_page}) || ! defined($data{wiz_stack}))
-    {
-    $data{wiz_page} = 0;
-    $data{wiz_stack} = "";
-    $new_wizard = 1;
-    }
+	{
+	$data{wiz_page} = 0;
+	$data{wiz_stack} = "";
+	$new_wizard = 1;
+	}
 
 # Which page are we on and what button was pressed (if any).
 my $page = &cgi_data_move("wiz_page", "");
 my $action = &cgi_data_move("wiz_action", "");
 
 # Break the stack variable out into an array.  The stack keeps a trail back
-# thru the pages we have traversed.  When the users presses our Back button,
+# thru the pages we have traversed.	 When the users presses our Back button,
 # this stack is popped.
 my @stack = split(/ /, $data{wiz_stack});
 
@@ -90,14 +90,14 @@ my @stack = split(/ /, $data{wiz_stack});
 # first page even though it is not strictly necessary so as not to raise
 # false hopes.
 if($options->{auth} && ($new_wizard || $action eq "Finish"))
-    {
-    if($ENV{REMOTE_USER} eq "")
-    	{
-	require "cgi_auth.pl";
-	demand_authentication();
-	return;
-    	}
-    }
+	{
+	if($ENV{REMOTE_USER} eq "")
+		{
+		require "cgi_auth.pl";
+		demand_authentication();
+		return;
+		}
+	}
 
 # If this is defined, it will be printed in red with
 # an exclamation point next to it.
@@ -105,72 +105,72 @@ my $error = undef;
 
 # If the user has pressed a button:
 if($action ne "")
-    {
-    my $wizpage = $wizard_table->[$page];
-
-    # If the user has pressed the "Next" button
-    # or the "Finish" button which is equivelent,
-    if($action eq 'Next' || $action eq 'Finish')
 	{
-	# If there is no "onnext" procedure for this page
-	# or the onnext procedure when called returns
-	# undef instead of an error message, then move
-	# on to the next page.
-	my $onnext = $wizpage->{onnext};
-	if(!defined($onnext) || !defined($error = &$onnext))
-	    {
-	    push(@stack, $page);
+	my $wizpage = $wizard_table->[$page];
 
-	    # If there is a "getnext" procedure, then call
-	    # it and if it returns a value other than undef,
-	    # go to that page.
-	    my $getnext;
-	    my $next_goto;
-	    if(defined($getnext = $wizpage->{getnext}) && defined($next_goto = &$getnext))
+	# If the user has pressed the "Next" button
+	# or the "Finish" button which is equivelent,
+	if($action eq 'Next' || $action eq 'Finish')
 		{
-		print STDERR "Goto: $next_goto\n" if($options->{debug} > 1);
-		while(1)
-		    {
-		    $page++;
-		    die if($page > $#$wizard_table);
-		    last if(defined $wizard_table->[$page]->{label} && $wizard_table->[$page]->{label} eq $next_goto);
-		    }
+		# If there is no "onnext" procedure for this page
+		# or the onnext procedure when called returns
+		# undef instead of an error message, then move
+		# on to the next page.
+		my $onnext = $wizpage->{onnext};
+		if(!defined($onnext) || !defined($error = &$onnext))
+			{
+			push(@stack, $page);
+
+			# If there is a "getnext" procedure, then call
+			# it and if it returns a value other than undef,
+			# go to that page.
+			my $getnext;
+			my $next_goto;
+			if(defined($getnext = $wizpage->{getnext}) && defined($next_goto = &$getnext))
+				{
+				print STDERR "Goto: $next_goto\n" if($options->{debug} > 1);
+				while(1)
+					{
+					$page++;
+					die if($page > $#$wizard_table);
+					last if(defined $wizard_table->[$page]->{label} && $wizard_table->[$page]->{label} eq $next_goto);
+					}
+				}
+			# If there is no "getnext" procedure, then simply
+			# move to the next page in the list.
+			else
+				{
+				$page++;
+				die if($page > $#$wizard_table);
+				}
+			}
 		}
-	    # If there is no "getnext" procedure, then simply
-	    # move to the next page in the list.
-	    else
+
+	# If the user pressed the "Back" button,
+	elsif($action eq "Back")
 		{
-		$page++;
-		die if($page > $#$wizard_table);
+		# If we aren't on the first page,
+		if($page > 0)
+			{
+			$page = pop(@stack);
+			}
 		}
-	    }
-	}
 
-    # If the user pressed the "Back" button,
-    elsif($action eq "Back")
-	{
-	# If we aren't on the first page,
-	if($page > 0)
-	    {
-	    $page = pop(@stack);
-	    }
-	}
+	# If the user pressed the "Cancel" button
+	# and Javascript isn't enabled.
+	elsif($action eq "Cancel" || $action eq "Close")
+		{
+		require 'cgi_back.pl';
+		cgi_back_doit();
+		return;
+		}
 
-    # If the user pressed the "Cancel" button
-    # and Javascript isn't enabled.
-    elsif($action eq "Cancel" || $action eq "Close")
-	{
-	require 'cgi_back.pl';
-	cgi_back_doit();
-	return;
-	}
-
-    # Invalid form post:
-    else
-	{
-	die "Unknown button \"$action\"";
-	}
-    } # if button pressed
+	# Invalid form post:
+	else
+		{
+		die "Unknown button \"$action\"";
+		}
+	} # if button pressed
 
 # Form a pointer to the current page.
 $wizpage = $wizard_table->[$page];
@@ -182,12 +182,12 @@ my $title = H_($wizpage->{title});
 my $picture = $wizpage->{picture};
 my $picture_alt = $wizpage->{picture_alt};
 if(defined $picture && !defined($picture_alt))
-    {
-    if($picture =~ /([^\/]+)\.[^\/]+$/)
-	{ $picture_alt = "[$1]" }
-    else
-	{ $picture_alt = $picture }
-    }
+	{
+	if($picture =~ /([^\/]+)\.[^\/]+$/)
+		{ $picture_alt = "[$1]" }
+	else
+		{ $picture_alt = $picture }
+	}
 
 # Get options for table alignment.
 my $align = $wizpage->{align};
@@ -240,13 +240,13 @@ print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
 # the text which distinguishes this page from others.
 my $dopage = $wizpage->{dopage};
 if(defined($dopage))
-    {
-    eval { &$dopage };
-    if($@)			# if error,
-    	{			# print message from die
-	print "<p>", html($@), "</p>\n";
-    	}
-    }
+	{
+	eval { &$dopage };
+	if($@)						# if error,
+		{						# print message from die
+		print "<p>", html($@), "</p>\n";
+		}
+	}
 
 print "\n  <!-- end of dopage() output -->\n\n" if($options->{debug} > 0);
 
@@ -254,15 +254,15 @@ print "</td>\n</tr>\n";
 
 # This debug information helps to make the table rendering clearer.
 if($options->{debug} > 1)
-    {
-    print "<tr>";
-    my $x;
-    for($x=1; $x <= 5; $x++)
-    	{
-    	print "<td>$x</td>";
-    	}
-    print "</tr>\n";
-    }
+	{
+	print "<tr>";
+	my $x;
+	for($x=1; $x <= 5; $x++)
+		{
+		print "<td>$x</td>";
+		}
+	print "</tr>\n";
+	}
 
 # Close the table which holds the picture and
 # the main page text and start another to hold
@@ -277,15 +277,15 @@ EndOfText2
 
 # If there is error text, put it here in red.
 if(defined($error))
-    {
+	{
 print <<"EndOfText4";
 <img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32>
 <span class="alert">${\&html($error)}</span>
 EndOfText4
-    }
+	}
 
-# Now the submit buttons, then we close the table.  Note that we
-# call the subroutine isubmit() to create the buttons.  It internationalizes
+# Now the submit buttons, then we close the table.	Note that we
+# call the subroutine isubmit() to create the buttons.	It internationalizes
 # the buttons if called for.
 print <<"EndOfText6";
 </td>
@@ -300,14 +300,14 @@ if(!defined($buttons)) { $buttons = [ N_("_Cancel"), N_("_Back"), N_("_Next") ] 
 my $b;
 my $tabindex = 1000;
 foreach $b (@$buttons)
-    {
-    my $other = "class=\"buttons\" tabindex=$tabindex";
-    if($b eq "_Cancel" || $b eq "_Close")
-	{ $other .= " onclick=\"self.close()\"" }
-    (my $b_stript = $b ) =~ s/_//;
-    isubmit("wiz_action", $b_stript, $b, $other);
-    $tabindex--;
-    }
+	{
+	my $other = "class=\"buttons\" tabindex=$tabindex";
+	if($b eq "_Cancel" || $b eq "_Close")
+		{ $other .= " onclick=\"self.close()\"" }
+	(my $b_stript = $b ) =~ s/_//;
+	isubmit("wiz_action", $b_stript, $b, $other);
+	$tabindex--;
+	}
 }
 
 print <<"EndOfText8";
@@ -333,9 +333,9 @@ print "</form>\n";
 #print <<"Tail05";
 #<script>
 #if(document.width)
-#	{
-#	window.resizeTo(document.width, document.height);
-#	}
+#		{
+#		window.resizeTo(document.width, document.height);
+#		}
 #</script>
 #Tail05
 

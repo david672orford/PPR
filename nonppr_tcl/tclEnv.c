@@ -9,20 +9,12 @@
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ * Last modified 5 April 2003.
  */
 
-/*
- * The putenv and setenv definitions below cause any system prototypes for
- * those procedures to be ignored so that there won't be a clash when the
- * versions in this file are compiled.
- */
-
-#define putenv ignore_putenv
-#define setenv ignore_setenv
 #include "tclInt.h"
 #include "tclPort.h"
-#undef putenv
-#undef setenv
 
 /*
  * The structure below is used to keep track of all of the interpereters
@@ -54,15 +46,12 @@ static int environSize = 0;	/* Non-zero means that the all of the
  * Declarations for local procedures defined in this file:
  */
 
-static void		EnvInit _ANSI_ARGS_((void));
-static char *		EnvTraceProc _ANSI_ARGS_((ClientData clientData,
+static void		EnvInit(void);
+static char *	EnvTraceProc(ClientData clientData,
 			    Tcl_Interp *interp, char *name1, char *name2,
-			    int flags));
+			    int flags);
 static int		FindVariable _ANSI_ARGS_((const char *name,
 			    int *lengthPtr));
-void			TclSetEnv _ANSI_ARGS_((const char *name,
-			    const char *value));
-void			TclUnsetEnv _ANSI_ARGS_((const char *name));
 
 /*
  *----------------------------------------------------------------------
@@ -301,10 +290,7 @@ TclSetEnv(name, value)
  *----------------------------------------------------------------------
  */
 
-int
-Tcl_PutEnv(string)
-    const char *string;		/* Info about environment variable in the
-				 * form NAME=value. */
+int Tcl_PutEnv(const char *string)
 {
     int nameLength;
     char *name, *value;
@@ -354,9 +340,7 @@ Tcl_PutEnv(string)
  *----------------------------------------------------------------------
  */
 
-void
-TclUnsetEnv(name)
-    const char *name;			/* Name of variable to remove. */
+void TclUnsetEnv(const char *name)
 {
     int index, dummy;
     char **envPtr;

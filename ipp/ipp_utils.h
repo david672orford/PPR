@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2003.
+** Last modified 5 April 2003.
 */
 
 struct IPP
@@ -41,12 +41,15 @@ struct IPP
 
 struct IPP *ipp_new(int content_length);
 void ipp_end(struct IPP *p);
+unsigned char ipp_get_byte(struct IPP *p);
+void ipp_put_byte(struct IPP *p, unsigned char val);
 int ipp_get_sb(struct IPP *p);
 int ipp_get_ss(struct IPP *p);
 int ipp_get_si(struct IPP *p);
 void ipp_put_sb(struct IPP *p, int val);
 void ipp_put_ss(struct IPP *p, int val);
 void ipp_put_si(struct IPP *p, int val);
+unsigned char *ipp_get_bytes(struct IPP *p, int len);
 void debug(const char message[], ...);
 
 /* end of file */

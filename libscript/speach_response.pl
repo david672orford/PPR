@@ -48,22 +48,22 @@ my @playlist;
 
 my($destnode, $destname, $id, $subid, $homenode) = split(/ /, $args->{JOBID});
 
-if($id != 0)				# if job had an id assigned,
+if($id != 0)							# if job had an id assigned,
   {
   # Start with an almost empty playlist:
   @playlist = ('your print job');
 
   # Add the print job name:
   speach_spellout(\@playlist, $destname);
-  speach_spellout(\@playlist, $id);	# say the digits
-  #speach_number(\@playlist, $id);	# or pronounce it in high style
+  speach_spellout(\@playlist, $id);		# say the digits
+  #speach_number(\@playlist, $id);		# or pronounce it in high style
   if($subid != 0)
-    {
-    push(@playlist, "part");
-    speach_number(\@playlist, $subid);
-    }
+	{
+	push(@playlist, "part");
+	speach_number(\@playlist, $subid);
+	}
   }
-else					# if no id assigned,
+else									# if no id assigned,
   {
   @playlist = ('your new print job for');
   speach_spellout(\@playlist, $destname);
@@ -71,17 +71,17 @@ else					# if no id assigned,
 
 # Add a parenthetical statement about when it was submitted:
 if(defined($args->{TIME}) && $args->{TIME} =~ /^\d+$/)
-    {
-    my $elapsed_seconds = (time() - $args->{TIME});
-    if($elapsed_seconds > 0)
-        {
-        push(@playlist, "which you submitted");
-        speach_time_interval(\@playlist, $elapsed_seconds);
-        push(@playlist, "ago");
-        }
-    }
+	{
+	my $elapsed_seconds = (time() - $args->{TIME});
+	if($elapsed_seconds > 0)
+		{
+		push(@playlist, "which you submitted");
+		speach_time_interval(\@playlist, $elapsed_seconds);
+		push(@playlist, "ago");
+		}
+	}
 
-# Add the main part of the message.  In the unlikely event
+# Add the main part of the message.	 In the unlikely event
 # that the code is undefined, we will deliberately use a
 # non-existent send in order to make a beep.
 if( defined($message = $msg{$args->{CODE}}) )
@@ -96,25 +96,25 @@ if($args->{CODE} == $RESP_FINISHED && $args->{PAGES} ne "?")
   push(@playlist, "the document is");
 
   if($args->{PAGES} == 1)
-    {
-    push(@playlist, "one page long");
-    }
+	{
+	push(@playlist, "one page long");
+	}
   else
-    {
-    speach_number(\@playlist, $args->{PAGES});
-    push(@playlist, "pages long");
-    }
+	{
+	speach_number(\@playlist, $args->{PAGES});
+	push(@playlist, "pages long");
+	}
   }
 
 # Replace "X" in the playlist with the spelled out extra parameter:
 for($x=0; $x <= $#playlist; $x++)
   {
   if( $playlist[$x] eq "X" )
-     {
-     @extra = ();
-     speach_spellout(\@extra, $args->{EXTRA});
-     splice(@playlist, $x, 1, @extra);
-     }
+	 {
+	 @extra = ();
+	 speach_spellout(\@extra, $args->{EXTRA});
+	 splice(@playlist, $x, 1, @extra);
+	 }
   }
 
 return @playlist;

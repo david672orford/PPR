@@ -14,20 +14,20 @@
 #
 
 #
-# This function convert the responder options into a hash.  That way if I
+# This function convert the responder options into a hash.	That way if I
 # ever change the responder options again I need only change this function
 # in order to fix all of the Perl responders.
 #
 sub responder_argv
-    {
-    my $i;
-    my %hash;
-    foreach $i (qw(USER ADDRESS MESSAGE MESSAGE2 OPTIONS CODE JOBID EXTRA TITLE TIME WHY_ARRESTED PAGES CHARGE))
-    	{
-	$hash{$i} = shift @_;
-    	}
-    return \%hash;
-    }
+	{
+	my $i;
+	my %hash;
+	foreach $i (qw(USER ADDRESS MESSAGE MESSAGE2 OPTIONS CODE JOBID EXTRA TITLE TIME WHY_ARRESTED PAGES CHARGE))
+		{
+		$hash{$i} = shift @_;
+		}
+	return \%hash;
+	}
 
 1;
 

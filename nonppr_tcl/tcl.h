@@ -11,7 +11,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * Last modified 18 January 2002.
+ * Last modified 5 April 2003.
  */
 
 #ifndef _TCL
@@ -234,19 +234,20 @@ typedef struct Tcl_DString {
 
 #ifdef TCL_MEM_DEBUG
 
-extern char *		Tcl_DbCkalloc _ANSI_ARGS_((unsigned int size,
-			    char *file, int line));
-extern int		Tcl_DbCkfree _ANSI_ARGS_((char *ptr,
-			    char *file, int line));
-extern char *		Tcl_DbCkrealloc _ANSI_ARGS_((char *ptr,
-			    unsigned int size, char *file, int line));
-extern int		Tcl_DumpActiveMemory _ANSI_ARGS_((char *fileName));
-extern void		Tcl_ValidateAllMemory _ANSI_ARGS_((char *file, int line));
+char *Tcl_DbCkalloc(unsigned int size, char *file, int line);
+int	  Tcl_DbCkfree(char *ptr, char *file, int line);
+char *Tcl_DbCkrealloc(char *ptr, unsigned int size, char *file, int line);
+int   Tcl_DumpActiveMemory(char *fileName);
+void  Tcl_ValidateAllMemory(char *file, int line);
 #define ckalloc(x) Tcl_DbCkalloc(x, __FILE__, __LINE__)
 #define ckfree(x)  Tcl_DbCkfree(x, __FILE__, __LINE__)
 #define ckrealloc(x,y) Tcl_DbCkrealloc((x), (y),__FILE__, __LINE__)
 
 #else
+
+/* Why we aren't using these isn't clear. --DSC */
+void *Tcl_Ckalloc (unsigned int size);
+void Tcl_Ckfree (void *ptr);
 
 #define ckalloc(x) malloc(x)
 #define ckfree(x)  free(x)
@@ -574,14 +575,18 @@ extern int		Tcl_UpVar(Tcl_Interp *interp,
 extern int		Tcl_UpVar2(Tcl_Interp *interp,
 			    char *frameName, char *part1, char *part2,
 			    char *localName, int flags);
-extern int		Tcl_VarEval(Tcl_Interp *interp, ...);
-extern ClientData	Tcl_VarTraceInfo(Tcl_Interp *interp,
+int				Tcl_VarEval(Tcl_Interp *interp, ...);
+ClientData      Tcl_VarTraceInfo(Tcl_Interp *interp,
 			    char *varName, int flags,
 			    Tcl_VarTraceProc *procPtr,
 			    ClientData prevClientData);
-extern ClientData	Tcl_VarTraceInfo2(Tcl_Interp *interp,
+ClientData      Tcl_VarTraceInfo2(Tcl_Interp *interp,
 			    char *part1, char *part2, int flags,
 			    Tcl_VarTraceProc *procPtr,
 			    ClientData prevClientData);
+
+int	            Tcl_PutEnv(const char * string);
+void			TclSetEnv(const char *name, const char *value);
+void			TclUnsetEnv(const char *name);
 
 #endif /* _TCL */

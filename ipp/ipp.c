@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2003.
+** Last modified 5 April 2003.
 */
 
 #include "before_system.h"
@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
 		struct IPP *ipp;
 		int version_major, version_minor;
 		int operation_id, request_id;
+		int tag, delimiter_tag = 0, value_tag, name_length;
+		char *name;
 
 		/* Do basic input validation */
 		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
@@ -78,16 +80,36 @@ int main(int argc, char *argv[])
 				version_major, version_minor, operation_id, request_id
 				);
 
-		switch(operation_id)
+		while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
 			{
-			case 0x08:
-
-
+			if(tag >= 0x00 && tag <= 0x0f)
+				{
+				delimiter_tag = tag;
+				}
+			else if(tag >= 0x10 && tag <= 0xff)
+				{
+				value_tag = tag;
+				name_length = ipp_get_ss(ipp);
+				name = ipp_get_bytes(ipp, name_length);
+				debug("0x%.2x 0x%.2x name[%d]=\"%s\"", delimiter_tag, value_tag, name_length, name);
+				}
+			else
+				{
+				Throw("invalid tag value");
+				}
 			}
+
+
+
+
 		}
 
 	Catch(e)
 		{
+		printf("Content-Type: text/plain\n");
+		printf("Status: 500\n");
+		printf("\n");
+		printf("ipp: exception caught: %s\n", e);
 		fprintf(stderr, "ipp: exception caught: %s\n", e);
 		return 1;
 		}
