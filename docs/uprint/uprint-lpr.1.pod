@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 13 December 2004.
 #
 
 =head1 NAME
@@ -38,8 +38,7 @@ B<uprint-lpr> I<switches> [I<filename1> [I<filename2>] ... ]
 
 =head1 DESCRIPTION
 
-This program is part of the PPR uprint suite.  See the UPRINT(1) man page
-for an explanation of what this means.
+This program is part of the PPR uprint suite.
 
 Your system administrator may have choosen to replace F</usr/bin/lpr>
 with a link to this program.
@@ -155,10 +154,7 @@ Delete the job when printing is done.
 
 =item B<-s>
 
-Don't make a copy of the files, just make symbolic links to them.  If you use
-this then you probably shouldn't modify the files until printing is done.
-In many cases, Uprint will ignore this option and make its own copy of the
-files anyway.
+This exists only for compatibilty with BSD B<lpr>.  It is ignored.  It is intended to instruct B<lpr> to make a copy of the files, just to make symbolic links to them.
 
 =item B<-1 I<fontname>>
 
@@ -193,7 +189,8 @@ correctly in B<uprint-lpr>.
 =head2 OSF/1 and Digital Unix Compatibility Options
 
 The B<lpr> program in OSF/1 and Digital Unix has additional options.
-B<Uprint-lpr> understands these additional options.
+B<uprint-lpr> understands these additional options.  They  are listed
+below.
 
 =over 4
 

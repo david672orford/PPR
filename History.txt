@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--12 December 2004
+2.00a1, 11 December 2004--13 December 2004
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writting them
@@ -9459,6 +9459,9 @@ no final tarball was released.
 
 * include sysdep.h: removed LPR_* and LP_* things since the features of UPRINT
   that need them are being removed.
+
+* z_install_end/ppr.sh: removed references to papsrv and uprint-newconf.
+
 
 
 TODO

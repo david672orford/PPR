@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 June 2004.
+# Last modified 13 December 2004.
 #
 
 =head1 NAME
@@ -547,8 +547,8 @@ If the I<switches> are omited, then the switchset is deleted.
 Switchsets can be used to set defaults for a printer which the user can
 generally override with contradictory options on the B<ppr> command line.
 They are also handy when the user can't select the desired options directly,
-such as when the job is being submitted through Samba, L<lprsrv.8/lprsrv>, or
-L<papsrv.8/lprsrv>.
+such as when the job is being submitted through Samba, L<lprsrv.8>, or
+L<papd.8>.
 
 Notice that groups do not inherit the (possibly conflicting) switchsets of
 their member printers but that aliases inherit the switchset of the printer
@@ -597,8 +597,8 @@ job arrived.  For example, if the job was submitted by a Unix shell user on
 the server, then the B<write> command can be used to send a message to his
 terminal.  But if the user is Microsoft Windows user connecting through
 Samba, then the B<smbclient> program should be used to send messages.  For
-this reason, network servers such as Samba, L<lprsrv.8/lprsrv>, and
-B<papsrv.8/papsrv> set the B<-m> and B<-r> options themselves thereby
+this reason, network servers such as Samba, L<lprsrv.8/lprsrv(8)>, and
+L<papd.8/papd(8)> set the B<-m> and B<-r> options themselves thereby
 overriding any settings in the switchset.
 
 If you want to disable responder messages, don't put B<-r none> in the
@@ -657,14 +657,12 @@ the "ppad show" command.
 =item B<ppad ppdopts> I<printer>
 
 This command examines a printers PPD file and asks for information on the
-presence or absence of optional printer features.  Obviously, a PPD file
-should be selected with the "ppad ppd" command before this command is used.
-The information which the administrator supplies in answer to these
-questions is used to answer queries from Macintosh clients.  It is likely
-that this information will be used for other purposes in the future.
-L<papsrv.8> will not pick up new information until it is restarted.  Running
-"ppad ppd" will undo "ppad ppdopts", leaving all of the feature information
-unspecified.
+presence or absence of optional printer features.  Obviously, a PPD file should
+be selected with the "ppad ppd" command before this command is used.  The
+information which the administrator supplies in answer to these questions is
+used to answer queries from Macintosh clients.  It is likely that this
+information will be used for other purposes in the future.  Running B<ppad ppd>
+will undo B<ppad ppdopts>, leaving all of the feature information unspecified.
 
 =item B<ppad charge> I<printer> I<amount> [I<amount>]
 
@@ -1156,14 +1154,14 @@ F<include/util_exits.h>.
 
 =head1 SEE ALSO
 
-L<ppr.1>, L<ppop.1>, L<papsrv.8>, L<lprsrv.8>, "PPR, a PostScript Print
+L<ppr.1>, L<ppop.1>, L<papd.8/papd(8)>, L<lprsrv.8>, "PPR, a PostScript Print
 Spooler", "Installing and Using PPR".
 
 
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 It was first released to the public on 26 April 1995.
 
 

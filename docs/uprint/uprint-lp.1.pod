@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 13 December 2004.
 #
 
 =head1 NAME
@@ -38,8 +38,7 @@ B<uprint-lp> I<switches> [I<filename ...>]
 
 =head1 DESCRIPTION
 
-This program is part of the PPR uprint suite.  See the UPRINT(1) man page
-for an explanation of what this means.
+This program is part of the PPR uprint suite.
 
 Your system administrator may have chosen to replace B<lp> with a link to
 this program.
@@ -109,11 +108,6 @@ This sets "interface options".  The options are expressed as name=value pairs.
 The standard interface options were conceived in the days when line printers
 dominated.  It is often difficult to determine how they ought to apply to modern
 printers such as laser printers.
-
-If the queue is an B<lp> queue then the B<-o> swith with its option is
-simply passed on to B<lp>.  In the case of a PPR or B<lpr> queue, Uprint
-attempt to perform a suitable convertion.  Those conversions are in a state
-of flux and are undocumented at this time.
 
 The standard interface options are as follows:
 

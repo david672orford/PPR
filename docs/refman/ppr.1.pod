@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 13 December 2004.
 #
 
 =head1 NAME
@@ -206,11 +206,10 @@ This switch will be removed in a future version of PPR.
 
 indicates that a priviledged user (as defined for the B<-f> switch) has
 pre-authorized the job.  This switch should be used in conjunction with the
-B<-f> switch or the B<--charge-to> switch.  Currently, the B<-A> switch is
-used only by B<papsrv>.  The switches B<-a> and B<-A> are mutually
-exclusive.
+B<-f> switch or the B<--charge-to> switch.  The switches B<-a> and B<-A> are
+mutually exclusive.
 
-This switch will be removed in a future version of PPR.
+This switch is obsolete and will be removed in a future version of PPR.
 
 =back
 

@@ -36,17 +36,17 @@ include ../rules.mk
 #=== Inventory ==============================================================
 
 # List of man pages in HTML format
-ALL_HTML=UPRINT.1.html uprint-remote.conf.5.html \
+ALL_HTML=uprint-remote.conf.5.html \
 	uprint-lp.1.html uprint-lpstat.1.html uprint-cancel.1.html \
 	uprint-lpr.1.html uprint-lpq.1.html uprint-lprm.1.html uprint-lpc.8.html
 
 # List of man pages in nroff format
-ALL_TROFF=UPRINT.1.man uprint-remote.conf.5.man \
+ALL_TROFF=uprint-remote.conf.5.man \
 	uprint-lp.1.man uprint-lpstat.1.man uprint-cancel.1.man \
 	uprint-lpr.1.man uprint-lpq.1.man uprint-lprm.1.man uprint-lpc.8.man
 
 # List of PODs for cross references
-LIBPODS=UPRINT.1,uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpc.8,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
+LIBPODS=uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpc.8,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
 
 #=== Build ==================================================================
 
@@ -66,10 +66,6 @@ install-troff: $(ALL_TROFF)
 	       ../$(INSTALLCP) $$f $(MANDIR)/man$$d/`basename $$f .man`; \
 	    done;\
 	  done
-	#../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man5/uprint.conf.5
-	#../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man8/uprint-newconf.8
-	../$(INSTALLLN) UPRINT.1 $(MANDIR)/man5/uprint.conf.5
-	../$(INSTALLLN) UPRINT.1 $(MANDIR)/man8/uprint-newconf.8
 
 # Install the man pages and other stuff in HTML format.
 install-html: $(ALL_HTML)

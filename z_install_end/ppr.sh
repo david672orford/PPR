@@ -89,23 +89,12 @@ do_start ()
 		$HOMEDIR/bin/papd && $EECHO "papd \c"
 		fi
 
-	# This is the old AppleTalk server daemon.  We start it if it was built
-	# and installed and if it has a configuration file.  No configuration 
-	# file in installed by default.
-	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
-		then
-		$HOMEDIR/bin/papsrv && $EECHO "papsrv \c"
-		fi
-
 	# Define LPRSRV_STANDALONE_PORT in /etc/default/ppr if you want to run 
 	# lprsrv in standalone mode.
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
 		$HOMEDIR/lib/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
 		fi
-
-	# This updates links for lp, lpr, lprm, lpq, etc.
-	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO "uprint-newconf \c"
 
 	echo
 
@@ -125,11 +114,6 @@ do_stop ()
 		then
 		kill `cat $RUNDIR/papd.pid` && $EECHO "papd \c"
 		rm -f $RUNDIR/papd.pid
-		fi
-	if [ -r $RUNDIR/papsrv.pid ]
-		then
-		kill `cat $RUNDIR/papsrv.pid` && $EECHO "papsrv \c"
-		rm -f $RUNDIR/papsrv.pid
 		fi
 	if [ -r $RUNDIR/lprsrv.pid ]
 		then
@@ -166,12 +150,6 @@ do_status()
 	{
 	do_status_1 pprd 1
 	do_status_1 papd 0
-	if [ -r $CONFDIR/papsrv.conf ]
-		then
-		do_status_1 papsrv 1
-		else
-		do_status_1 papsrv 0
-		fi
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
 		do_status_1 lprsrv 1
