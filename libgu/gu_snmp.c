@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 17 October 2003.
 */
 
 #include "before_system.h"
@@ -185,6 +185,30 @@ static void *decode_string(void *vp, int *remaining, int tag, char **s, int *len
 
 	return (void*)p;
 	}
+
+/*
+** This function produces a text description from an error code.
+*/
+static const char *str_snmp_error(int code)
+	{
+	switch(code)
+		{
+		case 0:
+			return "noError";
+		case 1:
+			return "tooBig";
+		case 2:
+			return "noSuchName";
+		case 3:
+			return "badValue";
+		case 4:
+			return "readOnly";
+		case 5:
+			return "genErr";
+		default:
+			return "?";
+		}
+	} /* end of str_snmp_error() */
 
 /** Create a gu_snmp object
 
@@ -425,7 +449,7 @@ static int parse_response(struct gu_snmp *p, struct ITEMS *items, int items_coun
 	if(!(ptr = decode_int(ptr, &len, &obj_ival2)))				/* error index */
 		gu_Throw("failed to read SNMP error index");
 	if(obj_ival != 0)											/* 0 means no error */
-		gu_Throw("SNMP response indicates error %d for item %d", obj_ival, obj_ival2);
+		gu_Throw("SNMP query item %d of %d failed, ErrorStatus=%d (%s)", obj_ival2, items_count, obj_ival, str_snmp_error(obj_ival));
 	if(!(ptr = decode_sequence(ptr, &len, 0x30, &obj_len)))		/* response data list */
 		gu_Throw("failed to find SNMP response data list");
 

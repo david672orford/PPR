@@ -52,7 +52,7 @@ This file contains routines for sending queries to printers.
 /** create a query object with interface and address
 
 */
-struct QUERY *query_new_byaddress(const char interface[], const char address[])
+struct QUERY *query_new_byaddress(const char interface[], const char address[], const char options[])
 	{
 	struct QUERY *q;
 
@@ -65,6 +65,7 @@ struct QUERY *query_new_byaddress(const char interface[], const char address[])
 
 	q->interface = interface;
 	q->address = address;
+	q->options = options;
 	q->line = NULL;
 	q->line_len = 128;
 	q->connected = FALSE;
@@ -85,6 +86,7 @@ struct QUERY *query_new_byprinter(const char printer[])
 	int line_len = 128;
 	char *interface = NULL;
 	char *address = NULL;
+	char *options = NULL;
 	char *tptr;
 
 	if(!printer)
@@ -106,6 +108,11 @@ struct QUERY *query_new_byprinter(const char printer[])
 			if(address) gu_free(address);
 			address = tptr;
 			}
+		else if(gu_sscanf(line, "Options: %Z", &tptr) == 1)
+			{
+			if(options) gu_free(options);
+			options = tptr;
+			}
 		}
 
 	fclose(f);		/* close printer configuration file */
@@ -122,10 +129,12 @@ struct QUERY *query_new_byprinter(const char printer[])
 			gu_free(interface);
 		if(address)
 			gu_free(address);
+		if(options)
+			gu_free(options);
 		gu_ReThrow();
 		}
 
-	return query_new_byaddress(interface, address);
+	return query_new_byaddress(interface, address, options);
 	}
 
 /** destroy a query object
@@ -223,11 +232,11 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 							{
 							#define STR(a) #a
 							execl(fname, q->interface,
-								"-",					/* printer name */
-								q->address,				/* printer address */
-								"",						/* interface options */
+								"-",							/* printer name */
+								q->address,						/* printer address */
+								q->options ? q->options : "",	/* interface options */
 								q->control_d ? STR(JOBBREAK_CONTROL_D) : STR(JOBBREAK_NONE),
-								"1",					/* feedback */
+								"1",							/* feedback */
 								NULL
 								);
 							}
@@ -268,49 +277,52 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 	/* The interface should be up and running and trying to connect by now.  Wait
 	   for it to confirm that it has connected to the printer or report failure.
 	   */
-	gu_Try
+	if(!probe)
 		{
-		char *line;
-		gu_boolean is_stderr;
-		int timeout = 10;
-		char temp[80];
+		gu_Try
+			{
+			char *line;
+			gu_boolean is_stderr;
+			int timeout = 10;
+			char temp[80];
 
-		temp[0] = '\0';
-		while((line = query_getline(q, &is_stderr, timeout)))
-			{
-			if(is_stderr)
+			temp[0] = '\0';
+			while((line = query_getline(q, &is_stderr, timeout)))
 				{
-				fprintf(stderr, "    %s\n", line);
-				continue;
+				if(is_stderr)
+					{
+					fprintf(stderr, "    %s\n", line);
+					continue;
+					}
+				if(strcmp(line, "%%[ PPR connecting ]%%") == 0)		/* so far, so good */
+					{
+					timeout = 120;									/* our confidence grows, extend the timeout */
+					continue;
+					}
+				if(strcmp(line, "%%[ PPR connected ]%%") == 0)		/* we are home free */
+					{
+					break;
+					}
+				if(strncmp(line, "%%[", 3) == 0)					/* something bad happened? */
+					{												/* save it in case the interface exits */
+					gu_strlcpy(temp, line, sizeof(temp));
+					continue;
+					}
+				fprintf(stderr, "Leading garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
 				}
-			if(strcmp(line, "%%[ PPR connecting ]%%") == 0)		/* so far, so good */
+			if(!line)							/* if interface exited, */
 				{
-				timeout = 120;									/* our confidence grows, extend the timeout */
-				continue;
+				if(strlen(temp))
+					gu_Throw("%s", temp);
+				else
+					gu_Throw("interface program quit");
 				}
-			if(strcmp(line, "%%[ PPR connected ]%%") == 0)		/* we are home free */
-				{
-				break;
-				}
-			if(strncmp(line, "%%[", 3) == 0)					/* something bad happened? */
-				{												/* save it in case the interface exits */
-				gu_strlcpy(temp, line, sizeof(temp));
-				continue;
-				}
-			fprintf(stderr, "Leading garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
 			}
-		if(!line)							/* if interface exited, */
+		gu_Catch
 			{
-			if(strlen(temp))
-				gu_Throw("%s", temp);
-			else
-				gu_Throw("interface program quit");
+			query_disconnect(q);
+			gu_ReThrow();
 			}
-		}
-	gu_Catch
-		{
-		query_disconnect(q);
-		gu_ReThrow();
 		}
 	} /* end of query_connect() */
 

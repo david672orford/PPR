@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 April 2003.
+# Last modified 17 October 2003.
 #
 
 =head1 NAME
@@ -416,6 +416,22 @@ Using the "ppad ppd" command has the side effect of
 undoing any previous "ppad ppdopts" command.  Therefor, you should run "ppad
 ppdopts" after using "ppad ppd" to set the PPD file.
 
+=item B<ppad ppdq> I<printer>
+
+This command uses the interface program and address previously set with the B<ppad interface>
+command to contact the printer.  The printer is probed in an attempt to determine its make,
+model, and other characteristis.  A search is then made of the PPD files known to
+PPR.  If any of them match the make and model of the printer, then the proper
+B<ppad ppd> commands to select them are printed.
+
+Note that this command will likely fail if necessary interface options have not
+yet been set with the B<ppad options> command.  It is intended to help you select
+the best PPD file for a print queue that is already configured sufficiently correctly
+that documents can be printed (using the default PPD file).
+
+If you wish to probe a printer without first creating a queue for it, you should use the
+B<ppad ppd query> command.
+
 =item B<ppad alerts> I<printer> I<frequency> I<method> I<address>
 
 This command specifies how PPR is to get printer error alert messages to an
@@ -568,17 +584,16 @@ then the switchset from the group "myprn_sim" will be used.
 So you see, groups with one member can be used as printer aliases.  A set
 of B<ppr> options can then be assigned to each of these aliases.
 
-PPR version 1.40 introduces alaises.  An alias could be used in the above
-example instead of a single member group.  Switchsets for aliases are set
-with the B<ppad alias switchset> command.  However, while alias support in the
-PPR core is complete, B<ppr2samba> and B<papsrv> don't support them yet, so
-you should probably avoid them for now.
+(We should note that PPR version 1.40 introduced explicit support aliases.  An
+alias could be used in the above example instead of a single member group.
+Switchsets for aliases are set with the B<ppad alias switchset> command.
+However, while alias support in the PPR core is complete, B<ppr2samba> and
+B<papsrv> don't support them yet, so you should probably avoid them for now.)
 
-It is possible to abuse the B<ppad switchset>, B<ppad group switchset>,
-and B<ppad alias switchset>
-commands.  In the most obvious case, one could include B<-d> option (presumably
-in attempt to redirect the print jobs to a different queue).
-Furtunately, B<ppr> will ignore it.
+It is possible to abuse the B<ppad switchset>, B<ppad group switchset>, and
+B<ppad alias switchset> commands.  In the most obvious case, one could include
+B<-d> option (presumably in attempt to redirect the print jobs to a different
+queue).  Fortunately, B<ppr> will ignore it.
 
 Another option one should not include in a switchset is B<-m> (which sets
 the responder method).  Why?  Because the method by which PPR should send
@@ -648,10 +663,10 @@ the "ppad show" command.
 
 This command examines a printers PPD file and asks for information on the
 presence or absence of optional printer features.  Obviously, a PPD file
-should be selected with the "ppad ppd" command before this command is used. 
+should be selected with the "ppad ppd" command before this command is used.
 The information which the administrator supplies in answer to these
 questions is used to answer queries from Macintosh clients.  It is likely
-that this information will be used for other purposes in the future. 
+that this information will be used for other purposes in the future.
 L<papsrv.8> will not pick up new information until it is restarted.  Running
 "ppad ppd" will undo "ppad ppdopts", leaving all of the feature information
 unspecified.
@@ -680,12 +695,6 @@ protected printer.  If a printer is protected, then only users who appear
 in the PPR accounts database may print on it.
 
 The per page charge may be removed from a printer by setting it to "none".
-
-
-=item B<ppad pageslimit> I<printer> I<number>
-
-This command has been removed as of PPR version 1.41.  It has been replaced
-with B<ppad limitpages>.
 
 
 =item B<ppad limitpages> I<printer> I<lower_number> I<upper_number>
@@ -1056,6 +1065,36 @@ export>.
 =back
 
 
+=head2 PPD File Commands
+
+=over 4
+
+=item B<ppad ppd query I<interface> I<address> [I<option>]
+
+This command uses the interface program I<interface> to connect to the printer
+at address I<address>.  The printer is probed in an attempt to determine its make,
+model, and other characteristis.  A search is then made of the PPD files known to
+PPR.  If any of them match the make and model of the printer, then the proper
+B<ppad ppd> commands to select them are printed.  For example:
+
+	ppad ppd query jetdirect david-hp4.prn.notanorg.org
+
+If the interface program's default options will not enable it to communicate with the printer,
+you should supply the necessary options as a quoted list.  For example, if you have a serial
+printer connected to the first serial port of your Linux system, you could do this:
+
+	ppad ppd query serial /dev/ttyS0 "online=none"
+
+The option "online=none" tells the serial interface program to ignore the fact that
+DSR and CTS seem indicate that the printer isn't ready.
+
+This command is intended to enable you to determine the type of a printer
+without first creating a queue for it.  If you have already created a queue, it
+will likely be easier to use the B<ppad ppdq> command which reads the interface
+name and address from the print queue's configuration.
+
+=back
+
 
 =head2 Error Notice Commands
 
@@ -1063,7 +1102,7 @@ export>.
 
 =item B<ppad new alerts I<interval method address>>
 
-defines a default set of alert settings which will be copied into new
+This command defines a default set of alert settings which will be copied into new
 printer definitions created with the "ppad interface" command.  See the
 "ppad alerts" command for an explanation of the meaning of the parameters.
 

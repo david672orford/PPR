@@ -38,6 +38,7 @@ EDITORS=Windows_NT_4.0 Windows_95_4.0 \
 	dvipsk_5.58f \
 	LaserWriter_8_8.4 \
 	Mozilla_1.0 \
+	Mozilla_1.4 \
 	Qt_2.2.0 Qt_3.1.1
 
 #=== Build ==================================================================

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 17 October 2003.
 */
 
 /*
@@ -36,6 +36,7 @@ struct QUERY
 	{
 	const char *interface;
 	const char *address;
+	const char *options;
 	gu_boolean control_d;
 	char buf_stdin[512];
 	char buf_stdout[512];
@@ -59,7 +60,7 @@ struct QUERY
 	gu_boolean job_started;			/* has query_puts() been called yet? */
 	};
 
-struct QUERY *query_new_byaddress(const char interface[], const char address[]);
+struct QUERY *query_new_byaddress(const char interface[], const char address[], const char options[]);
 struct QUERY *query_new_byprinter(const char printer[]);
 void query_connect(struct QUERY *q, gu_boolean probe);
 void query_puts(struct QUERY *q, const char s[]);

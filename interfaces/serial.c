@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 17 October 2003.
 */
 
 /*
@@ -535,6 +535,13 @@ int main(int argc, char *argv[])
 		int_cmdline.feedback ? "TRUE" : "FALSE",
 		int_cmdline.codes));
 
+	/* There is no out-of-band path for probing printers over a serial line. */
+	if(int_cmdline.probe)
+		{
+		fprintf(stderr, _("The interface program \"%s\" doesn't support probing.\n"), int_cmdline.int_basename);
+	    int_exit(EXIT_PRNERR);
+		}
+
 	/* Check for unusable job break methods. */
 	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
 		{
@@ -552,6 +559,8 @@ int main(int argc, char *argv[])
 				"program \"%s\"."), int_cmdline.int_basename);
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
+
+	gu_write_string(1, "%%[ PPR connecting ]%%\n");
 
 	/* Open the printer port and esablish default settings: */
 	portfd = open_port(int_cmdline.printer, int_cmdline.address, &settings);
@@ -604,6 +613,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	#endif
+
+	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
 	int_copy_job(portfd, options.idle_status_interval, printer_error, NULL, NULL, NULL, 0);
 

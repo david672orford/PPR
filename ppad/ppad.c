@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 17 October 2003.
 */
 
 /*
@@ -229,7 +229,7 @@ static void help_printer(FILE *out)
 static void help_group(FILE *out)
 	{
 	int i;
-	const char *command_list[] = 
+	const char *command_list[] =
 		{
 		N_("ppad group show <group>"),
 		N_("ppad group members <group> <printer> ..."),
@@ -259,7 +259,7 @@ static void help_alias(FILE *out)
 	{
 	int i;
 	const char *command_list[] =
-		{	
+		{
 		N_("ppad alias show <alias>"),
 		N_("ppad alias forwhat <alias> <queuename>"),
 		N_("ppad alias delete <alias>"),
@@ -269,7 +269,7 @@ static void help_alias(FILE *out)
 		N_("ppad alias addon <name> <value>"),
 		NULL
 		};
-		
+
 	fputs(_("Alias Management:\n"), out);
 	for(i = 0; command_list[i]; i++)
 		{
@@ -282,11 +282,11 @@ static void help_ppd(FILE *out)
 	{
 	int i;
 	const char *command_list[] =
-		{	
-		N_("ppad ppd query <interface> <address>"),
+		{
+		N_("ppad ppd query <interface> <address> [<quoted_options_list>]"),
 		NULL
 		};
-		
+
 	fputs(_("PPD File Management:\n"), out);
 	for(i = 0; command_list[i]; i++)
 		{

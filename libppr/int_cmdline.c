@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 17 October 2003.
 */
 
 #include "before_system.h"
@@ -46,12 +46,6 @@ struct INT_CMDLINE int_cmdline;
 void int_cmdline_set(int argc, char *argv[])
 	{
 	int_cmdline.probe = FALSE;
-	if(argc >= 2 && strcmp(argv[1], "--probe") == 0)
-		{
-		int_cmdline.probe = TRUE;
-		argv++;
-		argc--;
-		}
 
 	if(argc < 3)
 		{
@@ -64,12 +58,23 @@ void int_cmdline_set(int argc, char *argv[])
 
 	/* Name portion of path */
 	{
-	char *p = strrchr(argv[0], '/');
+	char *p = strrchr(int_cmdline.int_name, '/');
 	if(p)
 		int_cmdline.int_basename = p + 1;
 	else
-		int_cmdline.int_basename = argv[0];
+		int_cmdline.int_basename = int_cmdline.int_name;
 	}
+
+	/* This option causes the interface program to probe its printer by some 
+	   out-of-band method such as SNMP queries or examining the /proc file
+	   system on Linux.
+	   */
+	if(argc >= 2 && strcmp(argv[1], "--probe") == 0)
+		{
+		int_cmdline.probe = TRUE;
+		argv++;
+		argc--;
+		}
 
 	/* Printer to print to */
 	int_cmdline.printer = argv[1];

@@ -32,15 +32,15 @@ PRINTER="$2"
 TITLE="$3"
 
 # Set colour option to convert image to grayscale
-COLOUR="-grayscale"
-RESOLUTION=""
+colour="-grayscale"
+resolution=""
 
 # Look for parameters we should pay attention to
 for pair in $OPTIONS
 	do
 	case "$pair" in
 	colour=[yYtT1]* )
-		COLOUR=""
+		colour=""
 		;;
 	colour=[nNfF0]* )
 		colour="-grayscale"
@@ -52,13 +52,13 @@ for pair in $OPTIONS
 		colour="-grayscale"
 		;;
 	resolution=* )
-		RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
+		resolution="-dpi `echo $pair | cut -d'=' -f2`"
 		;;
 	esac
 	done
 
 # Run the filters
-$DJPEG $COLOUR | $PNMTOPS $RESOLUTION | grep -v '^%%Title:'
+$DJPEG $colour | $PNMTOPS $resolution | grep -v '^%%Title:'
 
 # Pass on the exit value of the filter pipeline.
 exit $?

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 April 2003.
+# Last modified 17 October 2003.
 #
 
 =head1 NAME
@@ -100,14 +100,18 @@ used, immediately after opening the serial port the interface will check
 that the indicated modem controls lines are in a state indicating readiness.
 If they are not, the interface will exit and PPR will place the printer in
 the state "otherwise engaged or off-line" for 60 seconds before trying
-again.  For this feature to work, your printer must make at least one of its
+again.
+
+The default is "online=dsr/cts" which will work in many cases.  Other options
+include "dsr", "cts", and "none".
+
+For this feature to work, your printer must make at least one of its
 modem control lines go false when it is taken off-line and your null modem
 cable must feed this signal to one of the receiving modem control lines on
 the computer and you must indicate the correct receiving line as the value
 for the "online=" option.  Setting this up correctly may require the use of
 an RS-232 breakout box to determine if there is a line which goes false when
-the printer is offline.  The default is "online=dsr/cts" which will work in
-many cases.
+the printer is offline.
 
 =item detect_hangups=
 

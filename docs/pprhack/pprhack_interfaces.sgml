@@ -1,3 +1,9 @@
+<!--
+Filename: pprhack_interfaces.sgml
+Last Modified: 17 Octoberber 2003
+Last Proofread: never
+-->
+
 <sect1 id="interfaces2">
 <title>Requirements for an Interface</title>
 
@@ -120,6 +126,42 @@ and if it is not empty, remove Ghostscript from the pipeline.
 </sect2>
 
 <sect2>
+<title>Interpretation of the Fifth Parameter</title>
+
+<para>
+If the <replaceable>jobbreak</replaceable> value for the printer (the firth parameter) is
+<command>JOBBREAK_SIGNAL</command>, or  <command>JOBBREAK_SIGNAL_PJL</command> then the interface should
+send its parent SIGUSR1 as soon as it has established its own SIGUSR1 handler.
+Thereafter, whenever it receives SIGUSR1, it should read all bytes currently
+available from the pipe, send them to the printer and then send the printer an
+end of job indication. When it receives an acknowleding end of job indication
+from the printer, it should send its parent SIGUSR1.  The interface <command>atalk</command>
+does this.  This handshaking method is necessary because the PAP (AppleTalk
+Printer Access Protocol) end of file marker has no representation in the byte
+stream.  Instead it is sent by setting a special flag in the header of the
+packet.
+</para>
+
+<para>
+Other job break values do not require any special action on the part of
+the interface.
+</para>
+
+<para>
+It might be useful to have the interface test for jobbreak settings with which it
+is known to be incompatible.  It should only check for settings <emphasis>known</emphasis> to be
+incompatible.  It should not limit jobbreak settings to a list of those known to
+be compatible since other, compatible settings may be added in future versions of
+PPR.  The various possible jobbreak settings are briefly described in the ppad(8)
+man page under the section for the <command>ppad jobbreak</command> command.  A more thorough
+discussion may be found in section <xref linkend="interfaces1"/>.  The code numbers for the various jobbreak values are defined in the
+include file <filename>include/interface.h</filename> and in the shell script fragment
+<filename>/lib/interface.sh</filename>.
+</para>
+
+</sect2>
+
+<sect2>
 <title>The Return Codes</title>
 
 <para>
@@ -161,45 +203,27 @@ If no printer error occured but the printer was busy or off line, the
 interface should return <command>EXIT_ENGAGED</command>.
 </para>
 
-<para>
-The interface program should not return any value other than those defined
-above.  Any undefined value will be interpreted as a <command>EXIT_PRNERR</command>.
+<para>The interface program should not return any value other than those defined
+above.  Any undefined value will be interpreted as a <command>EXIT_PRNERR</command>.</para>
+
+</sect2>
+
+<sect2>
+<title>Posting Alerts</title>
+
+<para>An interface program can post alerts to the printer's alerts log by calling
+the alert() function.
+
 </para>
 
 </sect2>
 
 <sect2>
-<title>Interpretation of the Fifth Parameter</title>
+<title>Special Messages</title>
 
-<para>
-If the <replaceable>jobbreak</replaceable> value for the printer (the firth parameter) is
-<command>JOBBREAK_SIGNAL</command>, or  <command>JOBBREAK_SIGNAL_PJL</command> then the interface should
-send its parent SIGUSR1 as soon as it has established its own SIGUSR1 handler.
-Thereafter, whenever it receives SIGUSR1, it should read all bytes currently
-available from the pipe, send them to the printer and then send the printer an
-end of job indication. When it receives an acknowleding end of job indication
-from the printer, it should send its parent SIGUSR1.  The interface <command>atalk</command>
-does this.  This handshaking method is necessary because the PAP (AppleTalk
-Printer Access Protocol) end of file marker has no representation in the byte
-stream.  Instead it is sent by setting a special flag in the header of the
-packet.
-</para>
+<para>There are special messages which an interface program can send to <program>pprdrv</pprsrv> to
+inform it of its progress or to report the status of the printer.
 
-<para>
-Other job break values do not require any special action on the part of
-the interface.
-</para>
-
-<para>
-It might be useful to have the interface test for jobbreak settings with which it
-is known to be incompatible.  It should only check for settings <emphasis>known</emphasis> to be
-incompatible.  It should not limit jobbreak settings to a list of those known to
-be compatible since other, compatible settings may be added in future versions of
-PPR.  The various possible jobbreak settings are briefly described in the ppad(8)
-man page under the section for the <command>ppad jobbreak</command> command.  A more thorough
-discussion may be found in section <xref linkend="interfaces1"/>.  The code numbers for the various jobbreak values are defined in the
-include file <filename>include/interface.h</filename> and in the shell script fragment
-<filename>/lib/interface.sh</filename>.
 </para>
 
 </sect2>

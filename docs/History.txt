@@ -468,10 +468,17 @@ more information about RIPs and *pprRIP:.
 * refman/ppr-panel.1.pod: expanded the section about desktop icons.
 
 
-1.53a1, 24 September 2003--14 October 2003.
+1.53a1, 24 September 2003--17 October 2003.
 
 * index.html: added links to RFC's relevant to SNMP.
 
+* refman/ppad.8.pod: added descriptions of "ppad ppdq" and "ppad ppd query".
+
+* refman/ppad_interfaces.8.pod: added missing information about the possible
+  values for the serial interface program's online= option.
+
+* refman/ppr-filters.1.pod: added missing information about the HTML filter
+  which uses HTMLDOC, PPR's filter_pcl, and the PDF filter.
 
 TODO
 

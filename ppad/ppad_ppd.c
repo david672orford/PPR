@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/templates/module.c
+** mouse:~ppr/src/ppad/ppad_ppd.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 17 October 2003.
 */
 
 #include "before_system.h"
@@ -43,7 +43,7 @@
 /*
 ** List all PPD files which match the indicated criteria.
 */
-static void ppd_choices(const char printer[], const char product[], const char version[], int revision, const char pjl_info_id[])
+static int ppd_choices(const char printer[], const char product[], const char version[], int revision, const char pjl_info_id[])
 	{
 	FILE *f;
 	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
@@ -73,7 +73,7 @@ static void ppd_choices(const char printer[], const char product[], const char v
 			}
 
 		/*printf("X: %s vs. %s\n", f_product, product);*/
-		if(strcmp(f_product, product) == 0)
+		if(product && strcmp(f_product, product) == 0)
 			{
 			p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
 			if(machine_readable)
@@ -84,19 +84,23 @@ static void ppd_choices(const char printer[], const char product[], const char v
 				{
 				if(count++ < 1)
 					printf("Run one of these commands to select the cooresponding PPD file:\n");
-				printf("    ppad %s \"%s\"\n", printer, p);
+				printf("    ppad ppd %s \"%s\"\n", printer, p);
 				}
 			}
 		}
 
 	fclose(f);
+
+	return count;
 	}
 
 /*
 ** Interface program probe query
 */
-static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q)
+static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q, char **hrDeviceDescr)
 	{
+	int retval = 0;
+
 	gu_Try
 		{
 		if(!machine_readable)
@@ -105,18 +109,33 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q)
 
 		gu_Try
 			{
-			char *p;
+			char *line, *p;
 			gu_boolean is_stderr;
-			int timeout = 2;
+			int timeout = 10;
 
 			if(!machine_readable)
 				printf("Reading response...\n");
-			while((p = query_getline(q, &is_stderr, timeout)))
+			while((line = query_getline(q, &is_stderr, timeout)))
 				{
-				printf("%s%s\n", is_stderr ? "stderr: " : "", p);
-				timeout = 60;
+				if(!is_stderr && (p = lmatchp(line, "PROBE:")))
+					{
+					char *f1, *f2;
 
-				/* missing code */
+					if((f1 = gu_strsep(&p, "=")) && (f2 = gu_strsep(&p, "=")))
+						{
+						printf("    %s: \"%s\"\n", f1, f2);
+						if(strcmp(f1, "hrDeviceDescr") == 0 && !*hrDeviceDescr)
+							{
+							*hrDeviceDescr = gu_strdup(f2);
+							retval = 1;
+							}
+						}
+
+					timeout = 60;
+					continue;
+					}
+
+				printf("    %s\n", line);
 				}
 			}
 		gu_Final
@@ -136,13 +155,15 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q)
 		return 0;
 		}
 
-	return 1;
+	return retval;
 	}
 /*
 ** PJL query
 */
 static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_id)
 	{
+	int retval = 0;
+
 	gu_Try
 		{
 		if(!machine_readable)
@@ -178,7 +199,9 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 					*pjl_info_id = gu_strndup(p, strcspn(p, "\""));
 
 					if(!machine_readable)
-						printf("    Printer Model: %s\n", *pjl_info_id);
+						printf("    INFO ID: \"%s\"\n", *pjl_info_id);
+
+					retval = 1;
 					}
 				}
 			}
@@ -186,6 +209,7 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 			{
 			if(!machine_readable)
 				printf("Disconnecting...\n");
+			query_puts(q,	"\033%-12345X");
 			query_disconnect(q);
 			}
 		gu_Catch
@@ -199,7 +223,7 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 		return 0;
 		}
 
-	return 1;
+	return retval;
 	}
 
 /*
@@ -297,17 +321,15 @@ static int ppd_ppdq_postscript(const char printer[], struct QUERY *q, char **pro
 
 int ppd_ppdq(const char printer[], struct QUERY *q)
     {
+	char *hrDeviceDescr = NULL;
 	char *product = NULL;
 	char *version = NULL;
 	int revision = 0;
 	char *pjl_info_id = NULL;
 	int total_answers = 0;
+	int matches = 0;
 
-	total_answers += ppd_ppdq_interface_probe(printer, q);
-	if(!machine_readable)
-		PUTS("\n");
-
-	total_answers += ppd_ppdq_pjl(printer, q, &pjl_info_id);
+	total_answers += ppd_ppdq_interface_probe(printer, q, &hrDeviceDescr);
 	if(!machine_readable)
 		PUTS("\n");
 
@@ -315,8 +337,22 @@ int ppd_ppdq(const char printer[], struct QUERY *q)
 	if(!machine_readable)
 		PUTS("\n");
 
+	if(total_answers < 1)
+		{
+		total_answers += ppd_ppdq_pjl(printer, q, &pjl_info_id);
+		if(!machine_readable)
+			PUTS("\n");
+		}
+
 	if(total_answers > 0)
-		ppd_choices(printer, product, version, revision, pjl_info_id);
+		{
+		matches = ppd_choices(
+			printer,							/* for message */
+			product ? product : hrDeviceDescr,
+			version, revision,
+			pjl_info_id
+			);
+		}
 
 	if(product)
 		gu_free(product);
@@ -325,10 +361,10 @@ int ppd_ppdq(const char printer[], struct QUERY *q)
 	if(pjl_info_id)
 		gu_free(pjl_info_id);
 
-	if(total_answers < 1)
+	if(matches < 1)
 		{
 		if(!machine_readable)
-			printf("No PPD files matched.\n");	
+			printf("No PPD files matched.\n");
 		return EXIT_NOTFOUND;
 		}
 
@@ -336,25 +372,31 @@ int ppd_ppdq(const char printer[], struct QUERY *q)
 	} /* end of ppd_ppdq() */
 
 /*
-** Send a query to a printer using a specified interface and address and 
+** ppad query
+**
+** Send a query to a printer using a specified interface and address and
 ** produce a list of suitable PPD files.
 */
 int ppd_query(const char *argv[])
 	{
-	const char *interface, *address;
+	const char *interface, *address, *options;
 	struct QUERY *q = NULL;
 	int ret = EXIT_OK;
 
-	if(!(interface = argv[0]) || !(address = argv[1]) || argv[2])
+	if(!(interface = argv[0]) || !(address = argv[1]) || ((options = argv[2]) && argv[3]))
 		{
-		fputs(_("You must supply the name of an interface and an address.\n"), errors);
+		fputs(
+			_("You must supply the name of an interface and an address.  If necessary, a\n"
+			  "quoted list of options may follow the address.\n"),
+			errors
+			);
 		return EXIT_SYNTAX;
 		}
 
 	gu_Try
 		{
 		/* Create an object from the printer's configuration. */
-		q = query_new_byaddress(interface, address);
+		q = query_new_byaddress(interface, address, options);
 
 		/* Now call the function that does the real work. */
 		ret = ppd_ppdq("<printer>", q);

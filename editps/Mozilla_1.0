@@ -1,5 +1,7 @@
 #! /usr/bin/perl
 
+# Allow Mozilla to print a wider range or characters.
+
 %subs = (
 	"Times-Roman" => "TimesNewRomanPSMT",
 	"Times-Bold" => "TimesNewRomanPS-BoldMT",

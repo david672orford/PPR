@@ -242,8 +242,12 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 		/* If a timeout occured, */
 		if(sigalrm_caught)
 			{
-			alert(int_cmdline.printer, TRUE, _("Printer \"%s\" is not responding.\n"
-											"(Aborted after connect() blocked for %d seconds.)"), address, options->timeout);
+			alert(int_cmdline.printer, TRUE,
+				_("Printer \"%s\" is not responding.\n"
+				  "(Aborted after connect() blocked for %d seconds.)"),
+				address,
+				options->timeout
+				);
 			close(sockfd);
 			int_exit(EXIT_PRNERR_NOT_RESPONDING);
 			}

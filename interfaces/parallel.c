@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 17 October 2003.
 */
 
 /*
@@ -318,6 +318,12 @@ static void parse_options(int portfd, struct OPTIONS *options)
 
 	} /* end of parse_options() */
 
+static int do_probe(void)
+	{
+	fprintf(stderr, "probe not yet supported\n");
+	return EXIT_PRNERR;
+	}
+
 /*
 ** Tie it all together.
 */
@@ -346,6 +352,12 @@ int main(int argc, char *argv[])
 		int_cmdline.feedback,
 		int_cmdline.codes));
 
+	/* If the --probe option was used, */
+	if(int_cmdline.probe)
+		{
+		int_exit(do_probe());
+		}
+
 	/* Check for unusable job break methods. */
 	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
 		{
@@ -364,6 +376,8 @@ int main(int argc, char *argv[])
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
+	gu_write_string(1, "%%[ PPR connecting ]%%\n");
+
 	/* Open the printer port and esablish default settings: */
 	portfd = open_parallel();
 
@@ -381,6 +395,8 @@ int main(int argc, char *argv[])
 	/* Possibly do a reset. */
 	if(options.reset_before)
 		parallel_port_reset(portfd);
+
+	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
 	/* Read the job data from stdin and send it to portfd. */
 	int_copy_job(portfd,

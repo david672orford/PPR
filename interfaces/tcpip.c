@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 17 October 2003.
 */
 
 /*
@@ -118,8 +118,7 @@ static void explain_error_in_context(int error_number)
 			alert(int_cmdline.printer, TRUE, _("Connection to printer lost."));
 			break;
 		default:
-			alert(int_cmdline.printer, TRUE, _("TCP/IP communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-			break;
+			alert(int_cmdline.printer, TRUE, _("TCP/IP communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));			break;
 		}
 	int_exit(EXIT_PRNERR);
 	}
@@ -145,24 +144,40 @@ static void snmp_status(void *p)
 	struct gu_snmp *snmp_obj = p;
 	int n1, n2;
 	unsigned int n3;
+	static gu_boolean failed = FALSE;
 
-	gu_Try
+	if(!failed)
 		{
-		gu_snmp_get(snmp_obj,
+		gu_Try
+			{
+			gu_snmp_get(snmp_obj,
 				"1.3.6.1.2.1.25.3.2.1.5.1", GU_SNMP_INT, &n1,
 				"1.3.6.1.2.1.25.3.5.1.1.1", GU_SNMP_INT, &n2,
 				"1.3.6.1.2.1.25.3.5.1.2.1", GU_SNMP_BIT, &n3,
 				NULL);
-		}
-	gu_Catch
-		{
-		alert(int_cmdline.printer, TRUE, "gu_snmp_get() failed: %s", gu_exception);
-		return;
-		}
 
-	/* This will be picked up by pprdrv. */
-	printf("%%%%[ PPR SNMP: %d %d %08x ]%%%%\n", n1, n2, n3);
-	fflush(stdout);
+			/* This will be picked up by pprdrv. */
+			printf("%%%%[ PPR SNMP: %d %d %08x ]%%%%\n", n1, n2, n3);
+			fflush(stdout);
+			}
+		gu_Catch
+			{
+			if(strstr(gu_exception, "(noSuchName)"))
+				{
+				alert(int_cmdline.printer, TRUE,
+					_("Printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
+					  "firmware, if possible.")
+					);
+				}
+			else
+				{
+				alert(int_cmdline.printer, TRUE, "gu_snmp_get() failed: %s", gu_exception);
+				}
+			failed = TRUE;
+			return;
+			}
+		}
+		
 	} /* end of snmp_status() */
 
 /*=========================================================================
@@ -283,6 +298,88 @@ static void appsocket_status_close(void *p)
 	}
 
 /*=========================================================================
+** Probe mode
+**
+** In probe mode we print lines starting with "PROBE:" to stdout.  These
+** lines may either be empty, to indicate that we are still alive, or
+** may contain a name=value pair describing something which we have
+** discovered about the printer.
+=========================================================================*/
+static int do_probe(unsigned long int ip_address, const char snmp_community[])
+	{
+	/* These definitions are from RFC 1155 and 1156. */
+	#define MIB			"1.3.6.1.2"
+	#define  MGMT		MIB".1"
+	#define   SYSTEM	MGMT".1"
+
+	struct {
+		const char *name;
+		const char *id;
+		} query_items[] =
+		{
+		{"sysName",			SYSTEM".5.0"},
+		{"sysDescr",		SYSTEM".1.0"},
+		{"sysContact",		SYSTEM".4.0"},
+		{"sysLocation",		SYSTEM".6.0"},
+		{"hrDeviceDescr",	MGMT".25.3.2.1.3.1"},
+		{NULL, NULL}
+		};
+
+	/* Send an empty result line so that ppad will know we are alive and
+	   extend the timeout.
+	   */
+	printf("PROBE:\n");
+
+	gu_Try
+		{
+		struct gu_snmp *snmp_obj = gu_snmp_open(ip_address, snmp_community);
+
+		gu_Try
+			{
+			int i;
+			char *str;
+
+			for(i=0; query_items[i].name; i++)
+				{
+				gu_Try
+					{
+					gu_snmp_get(snmp_obj,
+						query_items[i].id, GU_SNMP_STR, &str,
+						NULL
+						);
+					printf("PROBE: %s=%s\n", query_items[i].name, str);
+					}
+				gu_Catch
+					{
+					if(strstr(gu_exception, "(noSuchName)"))
+						{
+						fprintf(stderr, "%s not found\n", query_items[i].name);
+						}
+					else
+						{
+						gu_ReThrow();
+						}
+					}
+				}
+			}
+		gu_Final
+			{
+			gu_snmp_close(snmp_obj);
+			}
+		gu_Catch
+			{
+			gu_ReThrow();
+			}
+		}
+	gu_Catch
+		{
+		fprintf(stderr, "Probe failed: %s\n", gu_exception);
+		}
+
+	return EXIT_PRINTED;
+	}
+
+/*=========================================================================
 ** Tie it all together.
 =========================================================================*/
 int main(int argc, char *argv[])
@@ -293,8 +390,8 @@ int main(int argc, char *argv[])
 
 	options.connect.refused_retries = 5;
 	options.connect.refused_engaged = TRUE;
-	options.connect.sndbuf_size = 0;			/* size for SO_SNDBUF, 0 means don't set it */
-	options.connect.timeout = 20;				/* connexion timeout in seconds */
+	options.connect.sndbuf_size = 0;			/* size for SO_SNDBUF, 0 means don't set it
+*/	options.connect.timeout = 20;				/* connexion timeout in seconds */
 	options.idle_status_interval = 0;			/* frequency of ^T transmission */
 	options.snmp_status_interval = 0;
 	options.appsocket_status_interval = 0;
@@ -331,8 +428,10 @@ int main(int argc, char *argv[])
 	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
 		{
 		alert(int_cmdline.printer, TRUE,
-				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
-				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
+			_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
+			  "the PPR interface program \"%s\"."),
+			int_cmdline.int_basename
+			);
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
@@ -464,19 +563,31 @@ int main(int argc, char *argv[])
 	if(int_cmdline.barbarlang[0])
 		{
 		options.idle_status_interval = 0;
-		DODEBUG(("barbarlang=\"%s\", setting idle_status_interval to 0", int_cmdline.barbarlang));
-		}
+		DODEBUG(("barbarlang=\"%s\", setting idle_status_interval to 0", int_cmdline.barbarlang));		}
 
 	/* Describe the options in the debuging output. */
 	DODEBUG(("sleep=%d, connect.timeout=%d, connect.sndbuf_size=%d, idle_status_interval=%d",
 		options.sleep,
 		options.connect.timeout,
 		options.connect.sndbuf_size,
-		options.idle_status_interval));
+		options.idle_status_interval
+		));
+
+	/* We send this message so that commands such as "ppad ppdq" won't give up on us. */
+	gu_write_string(1, "%%[ PPR address lookup ]%%\n");
 
 	/* Parse the printer address and do a DNS lookup if necessary. */
 	int_tcp_parse_address(int_cmdline.address, DEFAULT_PORT, &printer_address);
 
+	/* Was --probe on the command line?  If so, probe the printer at the indicated
+	   TCP/IP address rather than connecting to it for printing.
+	   */
+	if(int_cmdline.probe)
+		{
+		int_exit(do_probe(printer_address.sin_addr.s_addr, options.snmp_community));
+		}
+
+	/* Within this block we connect, transfer the data, and close the connexion. */
 	{
 	void (*status_function)(void *) = NULL;
 	void *status_obj = NULL;

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 17 October 2003.
 #
 
 =head1 NAME
@@ -49,20 +49,19 @@ will be rejected.
 
 Some of PPR's filters are complete programs which come with PPR.  Others are
 simply shell scripts which use other programs to do the real work.  These
-other programs include TeX, Dvips, Troff, Groff, and PBMPlus.
-
-When PPR is installed, the B<fixup> script runs a subsidiary script called
-"F</usr/lib/ppr/bin/ppr-indexfilters>".  If it finds the necessary programs are found
-in the PATH, it will generate shell script filters for "tex", "dvi" "ditroff", 
-"cat4", "jpeg", "gif", "tiff", "plot"", "pdf", and other formats.  If, after 
+other programs include TeX, Dvips, Troff, Groff, and PBMPlus.  When PPR is installed,
+it runs the program B<ppr-index filters> to search for these programs.
+If it finds the necessary programs are found in the PATH, it will generate
+shell script filters for "tex", "dvi" "ditroff", "cat4", "jpeg", "gif", "tiff",
+"plot"", "pdf", and other formats.  If, after
 PPR is installed, you add programs which might be usable as filters, you should
-run F</usr/lib/ppr/bin/ppr-indexfilters> again.
+run B<ppr-index filters> again.
 
 =head2 Available Filters
 
 These are the input file types which PPR can convert to PostScript.  They
 are listed according to the B<-T> switch which would be used to inform PPR
-that the input file is of that type.  Normally PPR will determine the 
+that the input file is of that type.  Normally PPR will determine the
 correct filter automatically.
 
 =over 4
@@ -128,11 +127,11 @@ It is assumed that the file you print is compatible with
 your system's version of B<pr>.  Your system's B<pr> may have trouble
 with files with non-Unix line termination.
 
-Normally, the file name or the string specified with the B<--title> switch (if present) 
+Normally, the file name or the string specified with the B<--title> switch (if present)
 will be used as the title.  You may override the title with the B<-o title=> option.
 
-The B<-o> option "B<width=>" specifies the value for B<pr>'s B<-w> switch and 
-B<length=> specifies a value for B<pr>'s B<-l> option.  Since, after being 
+The B<-o> option "B<width=>" specifies the value for B<pr>'s B<-w> switch and
+B<length=> specifies a value for B<pr>'s B<-l> option.  Since, after being
 processed by B<pr>, the file is passed through the "lp" filter, lines will be
 wrapped at the length specified by the B<-o width=> switch.
 
@@ -156,10 +155,10 @@ have no effect.
 
 =item B<-T pcl>
 
-indicates that the input file is in HP PCL format. The current distribution
-of PPR does not have a PCL to PostScript converter so this option will not
-work unless you provide one.  If you provide one, you should install it as
-F</usr/lib/ppr/filters/filter_pcl>.
+indicates that the input file is in HP PCL format.  PPR includes a crude PCL filter
+written in Java.  However it is not installed by default.  If you have GCC with gcj
+installed, then you can installed it after you have installed PPR by going to the
+F<filter_pcl/> directory and doing B<make install>.
 
 =item B<-T dotmatrix>
 
@@ -270,16 +269,26 @@ filter.  No such filter is supplied with PPR.
 
 =item B<-T texinfo>
 
-indicates that the input file is in GNU Texinfo format.  A filter script
-supplied with PPR will be installed if B<texi2dvi> is in the B<PATH> when
-F</usr/lib/ppr/bin/ppr-indexfilters> is run.  This filter has no options of its
-own, but it invokes the DVI filter, so the DVI filter's options may be used.
+indicates that the input file is in GNU Texinfo format.  This filter script requires
+B<texi2dvi>.  This filter has no options of its own, but it invokes the DVI filter,
+so the DVI filter's options may be used.
 
 =item B<-T rtf>
 
 indicates that the input file is in Rich Text Format.  No filter for this
 format is supplied.  If you write one you should install it as
-"F</usr/lib/ppr/filters/filter_rtf>".
+F</usr/lib/ppr/filters/filter_rtf>.
+
+=item B<-T pdf>
+
+indicates that the input file is in Portable Document Format.  This filter
+uses Acroread or Xpdf.
+
+=item B<-T html>
+
+indicates that the input file is in HyperText Markup Format.  This filter
+uses HTMLDOC.  The B<-o charset=> option is supported by this filter.  The
+default will be the same as the default for HTMLDOC (probably Latin1).
 
 =item B<-T jpeg>
 
@@ -581,7 +590,7 @@ sets the character set.  The options include "ASCII", "AdobeStandard",
 "ISOLatin1", "CP437", and "KOI8-R".  For a complete list see
 F</usr/share/ppr/lib/charsets.conf>.
 
-(Supported by:  dotmatrix, lp, lp_autolf, pr, fortran)
+(Supported by:  dotmatrix, lp, lp_autolf, pr, fortran, html)
 
 =item B<pagesize=>I<pagesize_name>
 
