@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 30 March 2001.
+# Last modified 31 June 2001.
 #
 
 # Pull in settings from Configure.
@@ -45,13 +45,16 @@ install: install-troff install-html
 
 # Install the man pages in Nroff format
 install-troff: $(ALL_TROFF)
-	for d in 1 8;\
+	for d in 1 5 8;\
 	  do \
 	  ../$(MAKE_NEW_DIR) $(MANDIR)/man$$d; \
 	  for f in *.$$d.man;\
 	    do \
-	       echo "    man$$d/$$f"; \
-	       ../$(INSTALLCP) $$f $(MANDIR)/man$$d/`basename $$f .man`; \
+	       if [ $$f != "*.$$d.man" ];\
+	         then \
+	         echo "    man$$d/$$f"; \
+	         ../$(INSTALLCP) $$f $(MANDIR)/man$$d/`basename $$f .man`; \
+	         fi;\
 	    done;\
 	  done
 	../$(INSTALLLN) $(MANDIR)/man8/ppr2samba.8 $(MANDIR)/man8/ppd2win95drv.8
