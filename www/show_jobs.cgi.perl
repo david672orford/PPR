@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2004.
+# Last modified 5 March 2004.
 #
 
 use 5.005;
@@ -290,24 +290,22 @@ Quote20
 # New-style menu bar
 if($user_agent->{css_dom})
 {
-my @refresh_values = (
-	[$refresh_interval, _("Now")]
-	);
+my @refresh_values = ();
 foreach my $i (qw(5 10 15 30 45 60 90 120))
 	{
 	push(@refresh_values, [$i, sprintf(_("Every %d seconds"), $i)]);
 	}
 
 menu_start("m_file", _("File"));
-		menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
+	menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
 menu_end();
 
 menu_start("m_view", _("View"));
-	#menu_radio_set("columns", \@col_values, $columns, 'onchange="document.forms[0].submit()"');
 	menu_submit("action", "View", _("Preferences"));
 menu_end();
 
 menu_start("m_refresh", _("Refresh"));
+	menu_submit("action", "Refresh", N_("Now"));
 	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
 menu_end();
 
@@ -424,7 +422,7 @@ if(defined($action))
 	if((scalar @action_result) > 0)
 		{
 		require 'cgi_error.pl';
-		error_window(sprintf(_("[%s] failed for the following reason:"), $action), @action_result);
+		error_window(sprintf(_("[%s] Failed"), $action), @action_result);
 		}
 	}
 }
@@ -540,7 +538,7 @@ TFOOT10
 if($data{controls})
 {
 # Start the bottom menubar.
-print "<div class=\"menubar\" style=\"$fixed_div_style_bottom\">\n";
+print "<div class=\"menubar menubar_bottom\" style=\"$fixed_div_style_bottom\">\n";
 
 # Create the move select box.
 if(defined $controls{Move})
@@ -548,8 +546,8 @@ if(defined $controls{Move})
 print <<"QuoteMove10";
 <select name="move_to"
 		onchange="document.forms[0].submit()"
-		onmouseover="page_lock()"
-		onmouseout="page_unlock()"
+		onmouseover="page_locked = 1"
+		onmouseout="page_locked = 0"
 		>
 <option value="" selected>Move To
 QuoteMove10

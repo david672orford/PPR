@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 4 March 2004.
 */
 
 #include "filter_dotmatrix.h"
@@ -77,11 +77,11 @@ struct FONTS {
 static struct FONTS fonts[4] =
 	{
 	/*
-	 cmd,	weight,		slant,	used,				non-ASCII,					uses propertional,		prop table, 			FONT_INFO */
-	{"f",	"medium",	"r", 	&uses_normal,		&uses_nonascii_normal,		&uses_proportional1,	"Courier",				&font_normal},
-	{"fb",	"bold",		"r", 	&uses_bold,			&uses_nonascii_bold,		&uses_proportional2,	"Courier-Bold",			&font_bold},
-	{"fo",	"medium",	"o", 	&uses_oblique,		&uses_nonascii_oblique, 	&uses_proportional3,	"Courier-Oblique",		&font_oblique},
-	{"fbo",	"bold",		"o", 	&uses_boldoblique,	&uses_nonascii_boldoblique,	&uses_proportional4,	"Courier-BoldOblique",	&font_boldoblique}
+	 cmd,	weight,		slant,		used,				non-ASCII,					uses propertional,		prop table, 			FONT_INFO */
+	{"f",	"normal",	"normal", 	&uses_normal,		&uses_nonascii_normal,		&uses_proportional1,	"Courier",				&font_normal},
+	{"fb",	"bold",		"normal", 	&uses_bold,			&uses_nonascii_bold,		&uses_proportional2,	"Courier-Bold",			&font_bold},
+	{"fo",	"normal",	"oblique", 	&uses_oblique,		&uses_nonascii_oblique, 	&uses_proportional3,	"Courier-Oblique",		&font_oblique},
+	{"fbo",	"bold",		"oblique", 	&uses_boldoblique,	&uses_nonascii_boldoblique,	&uses_proportional4,	"Courier-BoldOblique",	&font_boldoblique}
    	};
     
 /*
@@ -110,7 +110,7 @@ void top_of_document(void)
 		/* If this font is used at all, */
 		if(*fonts[i].uses)
 			{
-			if(encoding_to_font(encoding.encoding, "fixed", fonts[i].weight, fonts[i].slant, "normal", fonts[i].font_info) < 0)
+			if(encoding_to_font(encoding.encoding, "monospace", fonts[i].weight, fonts[i].slant, "normal", fonts[i].font_info) < 0)
 				fatal(10, _("no font available for charset %s, weight %s, slant %s"), opt_charset, fonts[i].weight, fonts[i].slant);
 
 			/* If the document needs one or more non-ASCII characters from this font

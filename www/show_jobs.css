@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 17 December 2003.
+** Last modified 5 March 2004.
 */
 
 BODY {
@@ -15,6 +15,7 @@ TABLE.queue {
 	width: 100%;
 	border-style: solid;
 	border-color: black;
+	margin: 2pt;
 	}
 TABLE.queue THEAD TH {
 	font-size: 10pt;
@@ -55,6 +56,11 @@ HR.sep {
 	border-width: thin;
 	border-color: black;
 	margin: 0.5ex;
+	}
+
+/* This overrides elements of the menubar style. */
+DIV.menubar_bottom {
+	border-width: 1px 0px 0px 0px;
 	}
 
 /* end of file */

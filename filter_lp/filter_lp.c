@@ -207,7 +207,7 @@ int TAB_WIDTH = DEFAULT_TAB_WIDTH;
 ** Also, the character width for these fonts as a fraction of the
 ** height.  The default value is 0.60.
 */
-char *font_family = "fixed";
+char *font_family = "monospace";
 struct FONT_INFO font_normal;
 struct FONT_INFO font_bold;
 double char_width = DEFAULT_CHAR_WIDTH;
@@ -825,7 +825,7 @@ static void prolog(void)
 		}
 	else
 		{
-		if(encoding_to_font(encoding.encoding, font_family, "medium", "r", "normal", &font_normal) < 0)
+		if(encoding_to_font(encoding.encoding, font_family, "normal", "normal", "normal", &font_normal) < 0)
 			{
 			fatal(10, "Can't find normal style font in family \"%s\"\n"
 				"\tfor charset \"%s\".", font_family, charset);
@@ -855,7 +855,7 @@ static void prolog(void)
 		}
 	else if(uses_bold)
 		{
-		if(encoding_to_font(encoding.encoding, font_family, "bold", "r", "normal", &font_bold) < 0)
+		if(encoding_to_font(encoding.encoding, font_family, "bold", "normal", "normal", &font_bold) < 0)
 			{
 			fatal(10, "Can't find bold style font in family \"%s\"\n"
 				"\tfor charset \"%s\".", font_family, charset);

@@ -1,4 +1,6 @@
 #! /usr/bin/perl
+# mouse:~ppr/src/editps/Mozilla_1.0
+# Last modified 4 March 2004.
 
 #
 # Allow Mozilla to print a wider range or characters.
@@ -7,7 +9,8 @@
 # a new version of this filter.
 #
 
-@fonts = (
+# No font substitution
+@fonts_1 = (
 	"Times-Roman",
 	"Times-Bold",
 	"Times-BoldItalic",
@@ -23,21 +26,41 @@
 	"Symbol"
 	);
 
-@fonts = (
-	"College",
-	"College-Bold",
-	"College-BoldOblique",
-	"College-Oblique",
-	"Textbook",
-	"Textbook-Bold",
-	"Textbook-Italic",
-	"Textbook-Italic",
+# Courier from a2ps 
+@fonts_2 = (
+	"Times-Roman",
+	"Times-Bold",
+	"Times-BoldItalic",
+	"Times-Italic",
+	"Helvetica",
+	"Helvetica-Bold",
+	"Helvetica-BoldOblique",
+	"Helvetica-Oblique",
 	"CourierISOC",
 	"CourierISOC-Bold",
 	"CourierISOC-BoldOblique",
 	"CourierISOC-Oblique",
 	"Symbol"
 	);
+
+# Modified versions of the URW Ghostscript fonts
+@fonts_3 = (
+	"NimbusRomanCYR-Regu",
+	"NimbusRomanCYR-Medi",
+	"NimbusRomanCYR-MediItal",
+	"NimbusRomanCYR-ReguItal",
+	"NimbusSansCYR-Regu",
+	"NimbusSansCYR-Medi",
+	"NimbusSansCYR-MediItal",
+	"NimbusSansCYR-ReguItal",
+	"NimbusMonCYR-Regu",
+	"NimbusMonCYR-Medi",
+	"NimbusMonCYR-MediItal",
+	"NimbusMonCYR-ReguItal",
+	"Symbol"
+	);
+
+@fonts = @fonts_3;
 
 %fonts_seen = ();
 
@@ -67,7 +90,7 @@ while(<STDIN>)
 			}
 		else
 			{
-			print "%+ ";
+			print "%%+ ";
 			}
 		printf("font %s\n", $fonts[$i]);
 		}

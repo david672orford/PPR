@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 February 2004.
+# Last modified 5 March 2004.
 #
 
 use 5.005;
@@ -175,9 +175,7 @@ for(my $i = 4; $i <= 16; $i += 2)
 	push(@col_values, [$i, sprintf(_("%d Columns"), $i)]);
 	}
 
-my @refresh_values = (
-	[$refresh_interval, _("Now")]
-	);
+my @refresh_values = ();
 foreach my $i (qw(5 10 15 30 45 60 90 120))
 	{
 	push(@refresh_values, [$i, sprintf(_("Every %d seconds"), $i)]);
@@ -187,7 +185,7 @@ foreach my $i (qw(5 10 15 30 45 60 90 120))
 if($user_agent->{css_dom})
 {
 menu_start("m_file", _("File"));
-		menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
+	menu_submit("action", "Close", N_("_Close"), _("Close this window."), "window.close()");
 menu_end();
 
 menu_start("m_view", _("View"));
@@ -195,6 +193,7 @@ menu_start("m_view", _("View"));
 menu_end();
 
 menu_start("m_refresh", _("Refresh"));
+	menu_submit("action", "Refresh", N_("Now"));
 	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
 menu_end();
 

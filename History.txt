@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--20 February 2004.
+1.53a1, 24 September 2003--5 March 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9072,25 +9072,25 @@ Internet Printing Protocol Work
 
 * ppr/ppr_respond.c: fixed mixup between ppr_uid and ppr_gid in setregid() call.
 
+* misc/papsrv_conf_to_papd.perl: Made a script to convert papsrv.conf to "ppad
+  addon papname" commands.
 
 
 
 +++++++++++++++++++++
 TODO
 
-* Make a script to convert papsrv.conf to "ppad addon papname" commands.
-
 * Create Debian package.
 
 * Add support for network browers to Add Printer wizard.
 
-* Make a tiny GtkEmbed Mozilla browser
+* Make a tiny GtkEmbed or Mozilla chrome Mozilla browser
 
 * Make a tiny browser with the Mozilla ActiveX control
 
 * Finish the IPP server.
 
-* Finish support for automatic driver download in Samba 2.2.x.
+* Finish support for automatic driver download in Samba 2.2.x and 3.x.
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not

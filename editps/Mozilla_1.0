@@ -1,4 +1,6 @@
 #! /usr/bin/perl
+# mouse:~ppr/src/editps/Mozilla_1.6
+# Last modified 4 March 2004.
 
 #
 # Allow Mozilla to print a wider range or characters.
@@ -7,24 +9,19 @@
 # with later versions such as 1.4 too.
 #
 
-# This set works
 %subs = (
-	"Times-Roman" => "TimesNewRomanPSMT",
-	"Times-Bold" => "TimesNewRomanPS-BoldMT",
-	"Times-BoldItalic" => "TimesNewRomanPS-BoldItalicMT",
-	"Times-Italic" => "TimesNewRomanPS-ItalicMT"
-	);
-
-# Something in here bombs out
-%out =	(
-	"Helvetica" => "ArialMT",
-	"Helvetica-Bold" => "Arial-BoldMT",
-	"Helvetica-BoldOblique" => "Arial-BoldItalicMT",
-	"Helvetica-Oblique" => "Arial-ItalicMT",
-	"Courier" => "CourierNewPSMT",
-	"Courier-Bold" => "CourierNewPS-BoldMT",
-	"Courier-BoldOblique" => "CourierNewPS-BoldItalicMT",
-	"Courier-Oblique" => "CourierNewPS-ItalicMT"
+	"Times-Roman" => "NimbusRomanCYR-Regu",
+	"Times-Bold" => "NimbusRomanCYR-Medi",
+	"Times-BoldItalic" => "NimbusRomanCYR-MediItal",
+	"Times-Italic" => "NimbusRomanCYR-ReguItal",
+	"Helvetica" => "NimbusSansCYR-Regu",
+	"Helvetica-Bold" => "NimbusSansCYR-Medi",
+	"Helvetica-BoldOblique" => "NimbusSansCYR-MediItal",
+	"Helvetica-Oblique" => "NimbusSansCYR-ReguItal",
+	"Courier" => "NimbusMonCYR-Regu",
+	"Courier-Bold" => "NimbusMonCYR-Medi",
+	"Courier-BoldOblique" => "NimbusMonCYR-MediItal",
+	"Courier-Oblique" => "NimbusMonCYR-ReguItal"
 	);
 
 while(<STDIN>)

@@ -30,12 +30,11 @@
 
 require 'cgi_intl.pl';
 
-#
-# This function emmits an error message as a complete HTML
-# document.	 The first argument is the document title, the second
-# argument is the body HTML text.  Note that the title is plain
-# text while the body should be HTML.
-#
+#=============================================================================
+# This function emmits an error message as a complete HTML document.  The 
+# first argument is the document title, the second argument is the body HTML
+# text.  Note that the title is plain text while the body should be HTML.
+#=============================================================================
 sub error_doc
 {
 my $title = html(shift);
@@ -70,7 +69,7 @@ $text
 EndOfErrorDoc
 }
 
-#
+#=============================================================================
 # This function attempts to emmit an error message as a pop-up window using
 # Javascript.  If Javascript does not work, the message will appear in the
 # document.	 The first argument is a brief introductory message, the rest of
@@ -79,51 +78,126 @@ EndOfErrorDoc
 #
 # Notice that some of the strings in the write() calls are split up using the
 # + operator.  This is so that the seqeuence "</" never appears in the script.
-# A strict interpretation of <script></script> ends the script at the first end
-# tag of any kind.
-#
+# A strict interpretation of <script></script> ends the script at the first
+# end tag of any kind.  (Reference?)
+#=============================================================================
 sub error_window
 {
 my $introduction = shift;
 my @lines = @_;
 
 #
-# This is for browsers which support JavaScript.
+# This is for browsers which support JavaScript.  It tries to pop up a window,
+# but if that doesn't work (due to popup blocking) is uses an alert box.
+# The html() function requires JavaScript 1.2.
 #
 {
-my $intro_encoded = html($introduction);
-$intro_encoded =~ s/'/\\'/g;
 my $height = 150 + (25 * (scalar @lines));
+sub js_preprocess
+	{
+	my $string = 0;
+	foreach my $line (split(/\n/, shift))
+		{
+		if($line =~ /^\s*>>>\s*$/)
+			{
+			$string = 1;
+			next;
+			}
+		if($line =~ /^\s*<<<\s*$/)
+			{
+			$string = 0;
+			next;
+			}
+		if($string)
+			{
+			$line =~ s/^\s+//;
+			$line =~ s/\s+$//;
+			$line =~ s#</#<' + '/#g;
+			print "+ " if($string++ > 1);
+			print "'", $line, "\\n'\n";
+			}
+		else
+			{
+			print $line, "\n";
+			}
+		}
+	}
 
-print <<"EndOfError1";
-<script>
+js_preprocess <<"EndOfError1";
+<script type="text/javascript">
+function html(text)
+	{
+	text.replace('&', '&amp;');
+	text.replace('<', '&lt;');
+	text.replace('>', '&gt;');
+	return text;
+	}
+var message_intro = ${\javascript_string($introduction)}; 
+var message_body = ${\javascript_string(join("\\n", @lines))};
 var w = window.open('', '_blank', 'width=600,height=$height');
 if(!w)
 	{
-	alert(${\javascript_string(join("\\n", $introduction, "", @lines))});
+	alert(message_intro + '\\n\\n' + message_body);
 	}
 else
 	{
-	var di = w.document;
-	d.write('<html><head><title>Operation Failed<' + '/title><' + '/head><body>\\n');
-	d.write('<p>$intro_encoded<br>\\n<pre>\\n');
-EndOfError1
-
-foreach my $i (@lines)
-	{
-	$i = html($i);
-	$i =~ s/'/\\'/g;
-	print "\td.write('$i\\n');\n";
-	}
-
-print <<"EndOfError2";
-	d.write('<' + '/pre>\\n');
-	d.write('<form><input type="submit" value="Close" onclick="window.close(self);return false"><' + '/form>\\n');
-	d.write('<' + '/body><' + '/html>\\n');
+	var d = w.document;
+	d.write(
+		>>>
+		<html>
+		<head>
+		<title>Operation Failed</title>
+		<style type="text/css">
+		HTML { margin: 0 }
+		BODY {
+			margin: 0;
+			background-color: #EEEEEE;
+			color: black;
+			}
+		TD {
+			padding: 0.125in;
+			}
+		TD.text {
+			padding: 0.25in;
+			}
+		H1 {
+			font-size: 18pt;
+			margin-bottom: 0.25in;
+			}
+		</style>
+		</head>
+		<body>
+		<table height="$height" width="600" cellspacing="0">
+		<tr>
+		<td><img src="../images/exclaim.png"/></td>
+		<td class="text" valign="top">
+		<h1>
+		<<<
+		);
+	d.write(html(message_intro));
+	d.write(
+		>>>
+		</h1>
+		<<<
+		);
+	d.write(html(message_body));
+	d.write(
+		>>>
+		<tr>
+		<td>&nbsp;</td>
+		<td align="right">
+		<form><input type="submit" value="Close" onclick="window.close();return false;"></form>
+		</td>
+		</tr>
+		</table>
+		</body>
+		</html>
+		<<<
+		);
 	d.close();
 	}
 </script>
-EndOfError2
+EndOfError1
 }
 
 #
@@ -132,14 +206,13 @@ EndOfError2
 {
 print <<"EndOfError3";
 <noscript>
-<p>${\html($introduction)}<br>
+<p>${\html($introduction)}</p>
 <pre>
 EndOfError3
 
 foreach my $i (@lines)
 	{
-	$i = html($i);
-	print "$i\n";
+	print html($i), "\n";
 	}
 
 print <<"EndOfError4";

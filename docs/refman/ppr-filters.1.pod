@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-filters.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2003.
+# Last modified 4 March 2004.
 #
 
 =head1 NAME
@@ -77,7 +77,7 @@ This filter supports many B<-o> options.  These are described in the section
 which describes the B<-o> switch.
 
 The default value for the B<charset=> option is B<ISOLatin1>.  The default for
-the B<fontfamily=> option is B<fixed>.
+the B<fontfamily=> option is B<monospace>.
 
 The default value for B<pmlm=>, B<pmrm=>, B<pmtm=>, and B<pmbm=> is 0.5in.  The
 default for B<lmlm=>, B<lmrm=>, B<lmtm=>, and B<lmbm=> is 0.375in.
@@ -561,7 +561,7 @@ its family with the B<fontfamily=> option.
 =item B<fontfamily=>I<family>
 
 This option is used to select a different set of fonts.  The default value
-is "fixed".  Generally "fixed" means Courier.  You are limited to the font
+is "monospace".  Generally "monospace" means Courier.  You are limited to the font
 families which are listed in F<fonts.conf> for the character set you are using.
 
 (Supported by:  lp, lp_autolf, pr, fortran)

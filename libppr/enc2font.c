@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/enc2font.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 November 2003.
+** Last modified 4 March 2004.
 */
 
 #include "before_system.h"
@@ -51,6 +51,21 @@ int encoding_to_font(const char encoding[], const char fontfamily[], const char 
 	int linenum = 0;
 	int retval = -1;
 
+	/* This is for backwards compatibility. */
+	if(strcmp(fontfamily, "fixed") == 0)
+		fontfamily = "monospace";
+	
+	if(strcmp(fontweight, "medium") == 0)
+		fontfamily = "normal";
+
+	if(strcmp(fontslant, "r") == 0)
+		fontslant = "normal";
+	else if(strcmp(fontslant, "o") == 0)
+		fontslant = "oblique";
+	else if(strcmp(fontslant, "i") == 0)
+		fontslant = "italic";
+
+	/* This file maps encodings and font attributes to specific PostScript fonts. */
 	if(!(file = fopen(filename, "r")))
 		{
 		error("Can't open \"%s\", errno=%d (%s)", filename, errno, gu_strerror(errno));
