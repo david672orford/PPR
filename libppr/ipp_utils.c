@@ -745,7 +745,7 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 		p = &attr->values[i];
 		ipp_put_byte(ipp, attr->value_tag);
 
-		/* If this is the first value, we need to store the name. */
+		/* If this is the first value, we store the name. */
 		if(i == 0)
 			{
 			len = strlen(attr->name);
