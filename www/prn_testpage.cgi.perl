@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 April 2004.
+# Last modified 25 April 2004.
 #
 
 use lib "?";
@@ -93,6 +93,14 @@ $addprn_wizard_table = [
 						labeled_boolean("test_cmyk", _("CMYK"), cgi_data_move("test_cmyk", 0));
 						print "</p>\n";
 				print "</div>\n";
+
+				print "<div class=\"section\">\n";
+				print "<span class=\"section_label\">", H_("Other Test Patterns"), "</span>\n";
+				print "<p>\n";
+				labeled_boolean("test_spokes", _("Spoked Wheel"), cgi_data_move("test_spokes", 0));
+				print "</p>\n";
+				print "</div>\n";
+
 				},
 		'buttons' => [N_("_Cancel"), N_("_Print")]
 		},
@@ -128,6 +136,10 @@ $addprn_wizard_table = [
 				if(cgi_data_move("test_cmyk", 0))
 					{
 					$options .= " --test-cmyk";
+					}
+				if(cgi_data_move("test_spoked", 0))
+					{
+					$options .= " --test-spoked";
 					}
 
 				print "<pre>\n";

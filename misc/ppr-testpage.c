@@ -313,6 +313,40 @@ static void test_graybar(int x, int y, int width, int height, const char setproc
 
 	}
 
+static void test_spoked_wheel(int x, int y, int radius)
+	{
+	gu_psprintf(
+		"gsave\n"
+		"0 setlinewidth\n"
+		"0 setgray\n"
+		"%d %d translate\n",
+		x + radius, y - radius
+		);
+
+	gu_psprintf(
+		"0 25 %d\n"
+		"  {\n"
+		"  newpath 0 0 3 -1 roll 0 360 arc closepath stroke\n"
+		"  } for\n",
+		radius
+		);
+
+	gu_psprintf(
+		"0 1 359\n"
+		"  {\n"
+		"  pop\n"
+		"  newpath\n"
+		"  0 0 moveto\n"
+		"  0 %d lineto\n"
+		"  stroke\n"
+		"  1 rotate\n"
+		"  } for\n",
+		radius
+		);
+
+	gu_psprintf("grestore\n");
+	}
+
 /*========================================================================
 ** Main and support routines
 ========================================================================*/
@@ -331,6 +365,7 @@ static const struct gu_getopt_opt option_words[] =
 		{"test-grayscale", 1005, FALSE},
 		{"test-rgb", 1006, FALSE},
 		{"test-cmyk", 1007, FALSE},
+		{"test-spokes", 1008, FALSE},
 		{(char*)NULL, 0, FALSE}
 		} ;
 
@@ -347,6 +382,7 @@ static void help_switches(FILE *outfile)
 	fputs(_(	"\t--test-grayscale\n"), outfile);
 	fputs(_(	"\t--test-rgb\n"), outfile);
 	fputs(_(	"\t--test-cmyk\n"), outfile);
+	fputs(_(	"\t--test-spokes\n"), outfile);
 
 	fputs(_(	"\t--version\n"
 				"\t--help\n"), outfile);
@@ -363,6 +399,7 @@ int main(int argc, char *argv[])
 	gu_boolean test_grayscale = FALSE;
 	gu_boolean test_rgb = FALSE;
 	gu_boolean test_cmyk = FALSE;
+	gu_boolean test_spokes = FALSE;
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
@@ -426,6 +463,10 @@ int main(int argc, char *argv[])
 
 			case 1007:
 				test_cmyk = TRUE;
+				break;
+
+			case 1008:
+				test_spokes = TRUE;
 				break;
 
 			default:					/* other getopt errors or missing case */
@@ -533,6 +574,15 @@ int main(int argc, char *argv[])
 
 		y -= 15;
 		}
+
+	/* spoked wheel */
+	if(test_spokes)
+		{
+		/* y -= 10; */
+		test_spoked_wheel(x, y, 125);
+		y -= 250;
+		}
+
 
 	/* Print the product name. */
 	x = eps_margin;
