@@ -7301,3 +7301,10 @@ line was being parsed twice.
 
 * Configure: fixed typo that caused the FREEBSD system-dependent section
   of makeprogs/global.mk to be omitted.
+
+* Numberous small fixes for problems in the make rules, failure to create
+  destination directories, failure to use the make program specified
+  in include/global.mk, etc.  It now compiles on Solaris 8; FreeBSD 4.3R;
+  and Debian 2.2 i386, Alpha, Sparc, and PowerPC.  (This testing was done
+  on the Sourceforge.net compile farm.)
+
