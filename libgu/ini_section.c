@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_ini_section.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 13 May 2004.
 */
 
 /*+ \file
@@ -108,10 +108,11 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 	int quote_mode;						/* are we within quote marks now? */
 	int c, lastc;						/* current and previous characters */
 	int this_member_count;				/* number of characters so far in current list member */
+	char *buffer;
 
 	while((line = gu_getline(line, &line_available, file)))
 		{
-		di = si = line;
+		si = line;
 		si += strspn(si, " \t");
 
 		if(!*si)						/* skip blank links */
@@ -122,6 +123,8 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 		
 		if(*si == '[')					/* stop before start of next section */
 			break;
+
+		di = buffer = gu_alloc(strlen(line) + 2, sizeof(char));
 
 		if(strchr(si, '='))				/* If the name part is present, */
 			{
@@ -175,9 +178,8 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 		/* Save the line we have just parsed */
 		{
 		char *name, *first_value;
-		int len = ((di - line) + 1);
-		name = (char*)gu_alloc(len, sizeof(char));
-		memcpy(name, line, len);
+		int len = ((di - buffer) + 1);
+		name = (char*)gu_realloc(buffer, len, sizeof(char));
 		first_value = name + strlen(name) + 1;
 
 		if(list_used == list_avail)

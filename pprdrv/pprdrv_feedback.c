@@ -683,6 +683,7 @@ int feedback_reader(void)
 			*/
 			if((ptr2 = lmatchp((char*)ptr, "Unknown switch -")))
 				{
+				ptr2[strcspn(ptr2, "\n")] = '\0';
 				alert(printer.Name, TRUE, "Unrecognized option passed to Ghostscript RIP: %s", ptr2);
 				ghosterror = TRUE;
 				continue;
@@ -693,7 +694,8 @@ int feedback_reader(void)
 			*/
 			if((ptr2 = lmatchp((char*)ptr, "RIP:")))
 				{
-				alert(printer.Name, TRUE, "RIP: %s", ptr2);
+				ptr2[strcspn(ptr2, "\n")] = '\0';
+				alert(printer.Name, TRUE, "RIP error: %s", ptr2);
 				ghosterror = TRUE;
 				continue;
 				}
@@ -703,7 +705,8 @@ int feedback_reader(void)
 			*/
 			if((ptr2 = lmatchp((char*)ptr, "ERROR:")))
 				{
-				alert(printer.Name, TRUE, "ERROR: %s", ptr2);
+				ptr2[strcspn(ptr2, "\n")] = '\0';
+				alert(printer.Name, TRUE, "RIP error in CUPS filter:\n%s", ptr2);
 				ghosterror = TRUE;
 				continue;
 				}

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2004.
+# Last modified 13 May 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -168,17 +168,23 @@ sub ppd_summary
 sub ppd_probe
 	{
 	my($interface, $address, $options) = @_;
-	opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
+
+	#opencmd(RESULTS, "2>/dev/null", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
+	opencmd(RESULTS, "2>STDERR", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
+
 	my @list = ();
 	while(<RESULTS>)
 		{
 		chomp;
 		push(@list, $_);
 		}
+		
 	if(!close(RESULTS))
 		{
+		print STDERR "ppad failed, \$?=$?\n";
 		return undef;
 		}
+
 	return join("\n", @list);
 	} # ppd_probe()
 

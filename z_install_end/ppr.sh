@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 April 2004.
+# Last modified 13 May 2004.
 #
 
 #
@@ -90,6 +90,7 @@ do_start ()
 
 	# Uncomment this if you want to run lprsrv in standalone mode.
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
+		then
 		$HOMEDIR/lib/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
 		fi
 

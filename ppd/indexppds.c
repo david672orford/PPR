@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 May 2004.
+** Last modified 13 May 2004.
 */
 
 #include "before_system.h"
@@ -167,10 +167,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			pcre *split_pattern;
 			vector pairs;
 
-			printf("XX: %s\n", p);
-			p = ppd_finish_quoted_string(obj, p + 1);
-			printf("XX: %s\n", p);
-			ppd_decode_QuotedValue(p);
+			p = ppd_finish_QuotedValue(obj, p + 1);
 			ptrim(p);
 
 			/* use regular expression to split on semicolons */

@@ -9193,12 +9193,16 @@ Internet Printing Protocol Work
   is copied into the @PJL ENTER LANGUAGE command.  The DeskJet 882C only
   recognizes it if it is in upper case.
 
+* libgu/ini_section.c:gu_ini_section_load(): fixed bug whereby a nameless value
+  which began in column one would be read as empty.
+
+* ppad/ppad_ppd.c: improved code so it doesn't print fuzzy matches if there is
+  at least one exact match (except in test mode where it still prints all 
+  matches).
 
 TODO
 
 * www/prn_testpage.cgi.perl: improve search for Ghostscript test pages
-
-* libgu/ini_section.c: fix bug with nameless value starting in first column.
 
 * Create Debian package.
 

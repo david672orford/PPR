@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_rip.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2002.
+** Last modified 13 May 2004.
 */
 
 #include "before_system.h"
@@ -96,10 +96,13 @@ static int rip_exit_screen(void)
 			}
 		else if(WTERMSIG(rip_wait_status) == SIGPIPE)
 			{
-			alert(printer.Name, TRUE,
-				_("The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led to\n"
-				"a post-processing filter which died.  Look in the RIP options to find out what\n"
-				"post-processing filter is being used."));
+			if(!feedback_ghosterror())		/* only if not already explained */
+				{
+				alert(printer.Name, TRUE,
+					_("The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led to\n"
+					"a post-processing filter which died.  Look in the RIP options to find out what\n"
+					"post-processing filter is being used."));
+				}
 			hooked_exit(EXIT_PRNERR, "RIP broken pipe");
 			}
 		else

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_run.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 September 2003.
+# Last modified 13 May 2004.
 #
 
 #===============================================================
@@ -109,9 +109,9 @@ sub opencmd
 	my @command_list = @_;
 	my $stderr_fate = ">&STDOUT";
 
-	if($command_list[0] eq "2>/dev/null")
+	if($command_list[0] =~ /2>(.+)$/)
 		{
-		$stderr_fate = ">/dev/null";
+		$stderr_fate = ">$1";
 		shift @command_list;
 		}
 
@@ -125,7 +125,7 @@ sub opencmd
 	return 1 if($pid != 0);				# if parent
 
 	# Keep stderr output out of the server error log.
-	open(STDERR, $stderr_fate);
+	open(STDERR, $stderr_fate) if($stderr_fate ne ">STDERR");
 
 	# If possible, clear the PATH to avoid problems with
 	# tainted PATHs.

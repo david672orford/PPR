@@ -69,8 +69,8 @@ const char *gs_exe_list[] = {
 */
 const char *cups_bin_list[] = {
 		HOMEDIR"/../ppr-gs/bin",				/* PPR Ghostscript distribution */
-		"/usr/local/lib/cups/filter",			/* Installatino from Source Tarball */
-		"/usr/lib/cups/filter",					/* System package per FHS */
+		"/usr/local/lib/cups/filter",			/* Installation from CUPS Source Tarball */
+		"/usr/lib/cups/filter",					/* System package per Linux FHS */
 		"/usr/libexec/cups/filter",				/* System package BSD */
 		NULL
 		};

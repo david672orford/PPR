@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 April 2004.
+** Last modified 13 May 2004.
 */
 
 #include "before_system.h"
@@ -63,6 +63,13 @@ struct THE_FACTS
 	char *SNMP_hrDeviceDescr;		/* SNMP HP printer model */
 	};
 
+struct MATCH
+	{
+	gu_boolean fuzzy;
+	char *manufacturer;
+	char *description;
+	};
+
 /*
  * This function looks for a case-insenstive match in some initial segment of
  * two strings.  If the match is long enough and it represents a sufficient
@@ -89,7 +96,7 @@ static gu_boolean very_fuzzy(char *a, char *b)
 /*
 ** List all PPD files which match the indicated criteria.
 */
-static int ppd_choices(const char printer[], struct THE_FACTS *facts)
+static int ppd_choices(struct THE_FACTS *facts, struct MATCH **matches, int matches_count)
 	{
 	FILE *f;
 	char *line = NULL;
@@ -334,23 +341,11 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 		
 		if(matched > 0)
 			{
-			if(machine_readable)
-				{
-				count++;
-				
-				/* This is for the web front end which needs extra fields. */
-				printf("%s:%s\n", f_manufacturer, f_description);
-				}
-			else
-				{
-				/* We wait to print this until we know that we have at least one match. */
-				if(count++ < 1)
-					printf("Run one of these commands to select the corresponding PPD file:\n");
-
-				printf("    # %s\n", matched==fuzzy ? "fuzzy match" : "exact match");
-				p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
-				printf("    ppad ppd %s \"%s\"\n", printer, p);
-				}
+			*matches = gu_realloc(*matches, matches_count + count + 1, sizeof(struct MATCH));
+			(*matches)[matches_count].fuzzy = (matched==fuzzy);
+			(*matches)[matches_count].manufacturer = gu_strdup(f_manufacturer);
+			(*matches)[matches_count].description = gu_strdup(f_description);
+			count++;
 			}
 		}
 		} /* while */
@@ -506,8 +501,8 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 		return 0;
 		}
 
-	if(!machine_readable)
-		PUTS("\n");
+/*	if(!machine_readable)
+		PUTS("\n"); */
 		
 	return retval;
 	} /* end of ppd_query_interface_probe() */
@@ -689,9 +684,10 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 ** This is called from ppad_printer.c:printer_ppdq() and ppd_query().
 */
 int ppd_query_core(const char printer[], struct QUERY *q)
-    {
+	{
 	struct THE_FACTS facts;
-	int matches = 0;
+	struct MATCH *matches = NULL;
+	int matches_count = 0;
 	gu_boolean testmode = FALSE;		/* will try all probe methods */
 
 	facts.product = NULL;
@@ -705,18 +701,63 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 
 	/* First we ask the interface program to do the job. */
 	if(ppd_query_interface_probe(printer, q, &facts) > 0)
-		matches += ppd_choices(printer, &facts);
+		matches_count += ppd_choices(&facts, &matches, matches_count);
 
 	/* Now we connect and try to send a PostScript query. */
-	if(matches < 1 || testmode)
+	if(matches_count < 1 || testmode)
 		if(ppd_query_postscript(printer, q, &facts) > 0)
-			matches += ppd_choices(printer, &facts);
+			matches_count += ppd_choices(&facts, &matches, matches_count);
 
 	/* Now we connect and try to send a PJL query. */
-	if(matches < 1 || testmode)
+	if(matches_count < 1 || testmode)
 		if(ppd_query_pjl(printer, q, &facts) > 0)
-			matches += ppd_choices(printer, &facts);
+			matches_count += ppd_choices(&facts, &matches, matches_count);
 
+	/* If there are any results, print them. */
+	if(matches_count > 0)
+		{
+		gu_boolean include_fuzzy = TRUE;
+		int i;
+
+		if(!machine_readable)
+			printf("Run one of these commands to select the corresponding PPD file:\n");
+
+		/* First pass.  Decide if we should print the fuzzy matches. */
+		if(!testmode)
+			{
+			for(i=0; i < matches_count; i++)
+				{
+				if(!matches[i].fuzzy)
+					{
+					include_fuzzy = FALSE;
+					break;
+					}
+				}
+			}
+
+		for(i=0; i < matches_count; i++)
+			{
+			if(!include_fuzzy && matches[i].fuzzy)
+				continue;
+
+			if(machine_readable)	/* for the web front end */
+				{
+				printf("%s:%s\n", matches[i].manufacturer, matches[i].description);
+				}
+			else					/* for human beings */
+				{
+				printf("    # %s\n", matches[i].fuzzy ? "fuzzy match" : "exact match");
+				printf("    ppad ppd %s \"%s\"\n", printer, matches[i].description);
+				}
+
+			gu_free(matches[i].manufacturer);
+			gu_free(matches[i].description);
+			}
+
+		gu_free(matches);
+		}
+
+	/* Deallocate the storage of the facts about the printer which we collected above. */
 	if(facts.SNMP_hrDeviceDescr)
 		gu_free(facts.SNMP_hrDeviceDescr);
 	if(facts.product)
@@ -728,7 +769,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	if(facts.deviceid_model)
 		gu_free(facts.deviceid_model);
 
-	if(matches < 1)
+	if(matches_count < 1)
 		{
 		if(!machine_readable)
 			printf("No matching PPD files found.\n");
