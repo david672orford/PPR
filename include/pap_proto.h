@@ -1,6 +1,6 @@
 /*
-** ~ppr/src/include/pap_proto.h
-** Copyright abandoned.
+** mouse:~ppr/src/include/pap_proto.h
+** Trinity College abandons any copyright claim to this file.
 ** Written by David Chappell.
 **
 ** Last modified 8 September 2000.
@@ -25,7 +25,8 @@ int nbp_register(at_entity_t *entity, int fd, at_retry_t *retry);
 int nbp_remove(at_entity_t *entity, int fd);
 int nbp_confirm(at_entity_t *entity, at_inet_t *dest, at_retry_t *retry);
 
-/* These differ from manual which makes the improbable claim that status is a char pointer. */
+/* These function prototypes differ slightly from those given in the AT&T from manual 
+   which makes the improbable claim that status is a char pointer. */
 int pap_open(at_nbptuple_t *tuple, u_short *quantum, unsigned char *status, short retry);
 int paps_status(int fd, unsigned char *status);
 int pap_status(at_nbptuple_t *tuple, unsigned char *status);
@@ -41,7 +42,7 @@ int paps_open(u_short quantum);
 
 /*
 ** Unless David Chappell's ALI compatibility library for Netatalk (NATALI)
-** is being instead of the real ALI, define the macro pap_abrupt_close(). 
+** is being used instead of the real ALI, define the macro pap_abrupt_close(). 
 ** There is a function of this name provided by NATALI.  In the AT&T ALI
 ** implementation an equivelent operation may be performed by simply calling
 ** close().

@@ -40,9 +40,15 @@
 #include "libppr_int.h"
 
 /* Includes for ALI */
+#if 0
 #include <at/appletalk.h>
 #include <at/nbp.h>
 #include <at/pap.h>
+#else
+#include <netat/appletalk.h>
+#include <netat/nbp.h>
+#include <netat/pap.h>
+#endif
 
 /* Prototypes which are missing from the AT&T ALI include files: */
 #include "pap_proto.h"
