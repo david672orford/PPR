@@ -1431,7 +1431,7 @@ static void pprdrv_read_printer_conf(void)
 	    if(*si)
 		{
 		int c, quote = 0; 
-		printer.RIP.options[printer.RIP.options_count++] = si;
+		printer.RIP.options[printer.RIP.options_count++] = di;
 		while((c = *si++))
 		    {
 		    switch(c)

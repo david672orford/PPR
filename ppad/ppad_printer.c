@@ -426,7 +426,7 @@ int printer_show(const char *argv[])
 	    if(rip_name) gu_free(rip_name);
 	    if(rip_output_language) gu_free(rip_output_language);
 	    if(rip_options) gu_free(rip_options);
-	    gu_sscanf(ptr, "%S %S %S %Z", &rip_name, &rip_output_language, &rip_options);
+	    gu_sscanf(ptr, "%S %S %Z", &rip_name, &rip_output_language, &rip_options);
 	    }
 	else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 	    {
@@ -609,21 +609,19 @@ int printer_show(const char *argv[])
                 } /* "*Protocols:" */
 	    if((p = lmatchp(pline, "*pprRIP:")))
 	    	{
-		if(!rip_name)
+		if(!rip_name)	/* if not specified in printer config, */
 		    {
 		    char *f1, *f2, *f3;
-		    if(!(f1 = gu_strsep(&p, " \t\n"))
-				|| !(f2 = gu_strsep(&p, " \t\n"))
-				)
-		        {
-		        fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
-			}
-		    else
+		    if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
 			{
 			rip_name = gu_strdup(f1);
 			rip_output_language = gu_strdup(f2);
-			if((f3 = gu_strsep_quoted(&p, "", NULL)))
-			    f3 = gu_strdup(f3);
+			if((f3 = gu_strsep(&p, "")))
+			    rip_options = gu_strdup(f3);
+			}
+		    else
+		        {
+		        fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
 			}
 		    }
 	    	} /* "*pprRIP:" */
@@ -1475,6 +1473,12 @@ int printer_rip(const char *argv[])
 		"output language (such as \"pcl\"), and a RIP options string.\n"), errors);
 	return EXIT_SYNTAX;
 	}
+
+    if(argv[4])
+    	{
+	fputs(_("Too many parameters.  Did you forget to quote the list of options?\n"), errors);
+	return EXIT_SYNTAX;
+    	}
 
     return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s" : NULL, rip, output_language, options ? options : "");
     } /* end of printer_rip() */

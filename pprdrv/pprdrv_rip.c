@@ -137,12 +137,18 @@ int rip_start(int printdata_handle, int stdout_handle)
 	    }
 	else if(strcmp(printer.RIP.name, "ppr-gs") == 0)
 	    {
-	    gs = HOMEDIR"/lib/gs";
+	    gs = HOMEDIR"/lib/ppr-gs";
 	    }
 	else
 	    {
     	    fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name);
     	    }
+    	}
+
+    /* Make sure the RIP exists. */
+    if(access(gs, X_OK) != 0)
+    	{
+	fatal(EXIT_PRNERR_NORETRY, "Ghostscript program \"%s\" doesn't exist or isn't executable.", gs);
     	}
 
     /* Build the argument vector. */
@@ -154,6 +160,7 @@ int rip_start(int printdata_handle, int stdout_handle)
     for(si = 0; si < printer.RIP.options_count; si++)
 	{
 	rip_args[di++] = printer.RIP.options[si];
+	debug("RIP option: %s", printer.RIP.options[si]);
 	}
     rip_args[di++] = "-q";
     rip_args[di++] = "-dSAFER";
