@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 February 2004.
+# Last modified 30 July 2004.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-EDITORS=Windows_NT_4.0 Windows_95_4.0 \
+EDITORS=Windows_NT_4.0 Windows_95_4.0 Windows_XP \
 	Adobe_NT_5.0 ADOBEPS4.DRV_Version_4.24 \
 	MATLAB \
 	dvipsk_5.58f \

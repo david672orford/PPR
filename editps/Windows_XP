@@ -1,0 +1,14 @@
+#! /usr/bin/perl -w
+
+my $page = 1;
+while(my $line = <STDIN>)
+	{
+	if($line eq "%%EndPageComments\r\n")
+		{
+		print "%%Page: $page $page\n";
+		$page++;
+		}
+	print $line;
+	}
+
+exit 0;

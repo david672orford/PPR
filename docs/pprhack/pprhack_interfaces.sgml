@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_interfaces.sgml
-Last Modified: 6 November 2003
+Last Modified: 28 June 2004
 Last Proofread: never
 -->
 
@@ -368,8 +368,8 @@ if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_S
 	<listitem>
 
 	<para>This interface program should return this code if it was able
-	to complete its jobs sucessfully.  It doesn't actually mean that the
-	interface knows the job was printed sucessfully, just that it was
+	to complete its jobs successfully.  It doesn't actually mean that the
+	interface knows the job was printed successfully, just that it was
 	able to do its part.  When it receives this exit code,
 	<command>pprdrv</command> will exit with the same code if the
 	interface program accepted all of the job data before exiting and if
@@ -499,7 +499,7 @@ if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_S
 	<para>If when the interace program attempts to connect to the
 	printer it receives unambiguous notification that the connection is
 	refused on the basis of of access control rules or failure to
-	sucessfully complete an authenticaition process, then it should call
+	successfully complete an authenticaition process, then it should call
 	<function>alert()</function> to append a suitable message to the
 	printers alert log and then exit with this code.  Since correcting
 	this condition will require administrator intervention (either by
@@ -730,7 +730,7 @@ messages.  However, their use may result in better user feedback.</para>
 	<term>%%[ PPR connected ]%%</term>
 	<listitem>
 		<para>This message indicate that the connexion process has
-		been complete sucessfully.</para>
+		been complete successfully.</para>
 	</listitem>
 </varlistentry>
 
