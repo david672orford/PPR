@@ -8412,12 +8412,18 @@ line was being parsed twice.
   to all.
 
 * z_install_begin/install_create_accounts.sh: added code for Linux to make
-  $USER_PPR a suplemental member of the group "lp".  This should allow PPR
+  $USER_PPR a supplemental member of the group "lp".  This should allow PPR
   to open ports such as /dev/lp0 even if the system default permissions
   haven't been altered.  This means a parallel printer may be set up if
   one has ppad access but no root access.
 
+* makeprogs/installprogs.sh: added code to properly handle attempts to 
+  install setuid root binaries when not running as root.  (It stops and
+  tells the user to do "make install" again as root.)
+
 * Removed atalk responder (responders/atalk).
+
+
 
 
 TODO
