@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 December 2001.
 */
 
 /*
@@ -56,6 +71,45 @@ int active_printers = 0;	/* number of printers currently active */
 int starving_printers = 0;	/* printers currently waiting for rations */
 
 /*=========================================================================
+** Utility functions used by children
+=========================================================================*/
+
+/* We use this because pprd blocks SIGCHLD and SIGALRM. */
+void child_unblock_all(void)
+    {
+    sigset_t sigset;
+    sigemptyset(&sigset);
+    sigprocmask(SIG_SETMASK, &sigset, (sigset_t*)NULL);
+    } /* end of child_unblock_all() */
+
+/* We use this because pprd has not stdin, stdout, or stderr. */
+void child_stdin_stdout_stderr(const char input_file[], const char output_file[])
+    {
+    const char function[] = "child_stdin_stdout_stderr";
+    int fd;
+
+    /* Open the indicated file for input.  If that doesn't work, open /dev/null. */
+    if((fd = open(input_file, O_RDONLY)) < 0)
+	{
+	if((fd = open("/dev/null", O_RDONLY)) < 0)
+	    fatal(1, "child: %s(): can't open \"/dev/null\", errno=%d (%s)", function, errno, gu_strerror(errno) );
+	}
+
+    /* If the handle we got was not stdin, make it stdin. */
+    if(fd != 0) dup2(fd, 0);
+    if(fd > 0) close(fd);
+
+    /* Open the second file for output. */
+    if((fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) < 0)
+	fatal(1, "child: %s(): can't open \"%s\", errno=%d (%s)", function, output_file, errno, gu_strerror(errno));
+
+    /* Connect the second file to stdout and stderr. */
+    if(fd != 1) dup2(fd, 1);
+    if(fd != 2) dup2(fd, 2);
+    if(fd > 2) close(fd);
+    } /* end of child_stdin_stdout_stderr() */
+
+/*=========================================================================
 ** Lock and unlock those data structures which must not be simultainiously
 ** modified.  The one I can think of at the moment is the queue.
 **
@@ -96,7 +150,25 @@ void reapchild(int signum)
 	/* Give everyone a chance to claim it. */
 	if(!pprdrv_child_hook(pid, wstat))
 	    if(!remote_child_hook(pid, wstat))
-		responder_child_hook(pid, wstat);
+		{
+		/* Those which follow don't have complex reporting, report weird stuff here. */
+		if(WIFSIGNALED(wstat))
+		    {
+		    error("Process %ld was killed by signal %d (%s)%s",
+		    	(long)pid,
+		    	WTERMSIG(wstat),
+		    	gu_strsignal(WTERMSIG(wstat)),
+		    	WCOREDUMP(wstat) ? ", (core dumped)" : "");
+		    }
+		else if(!WIFEXITED(wstat))
+		    {
+		    error("Process %ld met a mysterious end", (long)pid);
+		    }
+
+		/* OK, try the next two. */
+		if(!question_child_hook(pid, wstat))
+		    responder_child_hook(pid, wstat);
+		}
 	}
 
     lock_level--;				/* clear our flag */
@@ -116,6 +188,7 @@ void tick(int sig)
     alarm(TICK_INTERVAL);		/* set timer for next tick */
     printer_tick();
     remote_tick();
+    question_tick();
     errno = saved_errno;
     } /* end of tick() */
 
@@ -190,6 +263,9 @@ int main(int argc, char *argv[])
     /* Make sure the local node gets the node id of 0. */
     if(! nodeid_is_local_node(nodeid_assign(ppr_get_nodename())))
     	fatal(1, "%s(): line %d: assertion failed", function, __LINE__);
+
+    /* Initialize other subsystems. */
+    question_init();
 
     /* Load the printers database. */
     DODEBUG_STARTUP(("loading printers database"));

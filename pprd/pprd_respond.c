@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 September 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 7 December 2001.
 */
 
 /*
@@ -45,7 +60,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "respond.h"
@@ -293,8 +307,7 @@ static void respond_launch(struct RINFO *rinfo, const char *response_message, co
 	}
     else if(pid == 0)				/* if child, */
 	{
-	int fd;					/* fd opening job log and pprd log */
-	char fname[MAX_PPR_PATH];	    	    	/* scratch space for file names */
+	char fname[MAX_PPR_PATH];		/* scratch space for file names */
 
 	char code_in_ascii[3];
 	char time_in_ascii[16];
@@ -312,31 +325,12 @@ static void respond_launch(struct RINFO *rinfo, const char *response_message, co
 	else
 	    strcpy(numpages_in_ascii, "?");
 
-	/*
-	** Open the log file, or, if there is none, open /dev/null.
-	** The idea is that the responder should find the log file
-	** on stdin.
-	*/
+	/* Unblock signals blocked by pprd. */
+	child_unblock_all();
+
+	/* Connect the job log to stdin and the pprd log file to stdout and stderr. */
 	ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)-log", DATADIR, rinfo->destnode, rinfo->destname, rinfo->id, rinfo->subid, rinfo->homenode);
-	if((fd = open(fname, O_RDONLY)) < 0)
-	    {
-	    if((fd = open("/dev/null", O_RDONLY)) < 0)
-	    	fatal(1, "%s(): child: can't open \"/dev/null\", errno=%d (%s)", function, errno, gu_strerror(errno) );
-	    }
-
-	/* If the handle we got was not stdin, make it stdin. */
-	if(fd != 0)
-	    {
-	    dup2(fd, 0);
-	    close(fd);
-	    }
-
-	/* Connect stdout and stderr to the pprd log file. */
-	if((fd = open(PPRD_LOGFILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) < 0)
-	    fatal(1, "%s(): child: can't open \"%s\", errno=%d (%s)", function, PPRD_LOGFILE, errno, gu_strerror(errno));
-	if(fd != 1) dup2(fd, 1);
-	if(fd != 2) dup2(fd, 2);
-	if(fd > 2) close(fd);
+	child_stdin_stdout_stderr(fname, PPRD_LOGFILE);
 
 	/* Build path to responder. */
 	ppr_fnamef(fname, "%s/%s", RESPONDERDIR, rinfo->response_method);
@@ -370,14 +364,6 @@ static void respond_launch(struct RINFO *rinfo, const char *response_message, co
 void responder_child_hook(pid_t pid, int wstat)
     {
     DODEBUG_RESPOND(("(respond process?)"));
-
-    if(WIFSIGNALED(wstat))
-        error("Process %ld was killed by signal %d (%s)", (long)pid, WTERMSIG(wstat), gu_strsignal(WTERMSIG(wstat)) );
-    else if( WIFEXITED(wstat) && WEXITSTATUS(wstat) != 0 )
-        error("Process %ld exited with error code %d", (long)pid, WEXITSTATUS(wstat) );
-
-    if(WCOREDUMP(wstat))
-        error("Process %ld dumped core", (long)pid);
     } /* end of responder_child_hook() */
 
 /*

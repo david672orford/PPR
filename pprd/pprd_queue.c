@@ -142,52 +142,10 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
     return &queue[x];           /* return pointer to what we put it in */
     } /* end of queue_insert() */
 
-/*================================================================
-** Remove an entry from the queue array.
-================================================================*/
-void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homenode_id)
-    {
-    FUNCTION4DEBUG("queue_dequeue_job")
-    int x;
-
-    DODEBUG_DEQUEUE(("%s(destid=%d, id=%d, subid=%d, homenode_id=%d)", function, destid, id, subid, homenode_id));
-
-    /* Inform queue display programs of job deletion. */
-    state_update("DEL %s", remote_jobid(nodeid_to_name(destnode_id),
-    				destid_to_name(destnode_id,destid),
-    				id,subid,
-    				nodeid_to_name(homenode_id)) );
-
-    lock();		/* lock the queue array while we modify it */
-
-    for(x=0; x < queue_entries; x++)
-	{
-	if(queue[x].id==id && queue[x].subid==subid)
-	    {
-	    DODEBUG_DEQUEUE(("job %s-%d.%d removed from queue",
-		destid_to_name(destnode_id, queue[x].destid), queue[x].id, queue[x].subid));
-
-	    if( (queue_entries-x) > 1 )		/* do a move if not last entry */
-		{				/* (BUG: was queue_entries was queue_size prior to version 1.30) */
-		memmove(&queue[x], &queue[x+1],
-		    sizeof(struct QEntry) * (queue_entries-x-1) );
-		}
-
-	    queue_entries--;			/* one less in queue */
-	    break;				/* and we needn't look farther */
-	    }
-	}
-
-    unlock();		/* unlock queue array */
-
-    } /* end of queue_dequeue_job() */
-
 /*===========================================================================
-** Unlink a job.  The function queue_unlink_job() calls queue_unlink_job_2().
-** It is also called to cancel rejected jobs (which haven't been put in the
-** queue yet.)
+** Unlink a job.
 ===========================================================================*/
-void queue_unlink_job_2(const char *destnode, const char *queuename, int id, int subid, const char *homenode_name)
+static void queue_unlink_job_2(const char *destnode, const char *queuename, int id, int subid, const char *homenode_name)
     {
     char filename[MAX_PPR_PATH];
 
@@ -220,101 +178,60 @@ void queue_unlink_job_2(const char *destnode, const char *queuename, int id, int
     unlink(filename);
     } /* end of queue_unlink_job_2() */
 
-/*
-** Unlink job files for a job that is in the queue or was
-** about to go into the queue.  (I.E., one for which we
-** have already built a queue entry structure.)
-*/
-void queue_unlink_job(int destnode_id, int destid, int id, int subid, int homenode_id)
+/*================================================================
+** Unlink a job and remove an entry from the queue array.
+================================================================*/
+void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homenode_id)
     {
-    const char *destnode_name;
-    const char *queuename;
-    const char *homenode_name;
+    FUNCTION4DEBUG("queue_dequeue_job")
+    int x;
+    const char *destnode = nodeid_to_name(destnode_id);
+    const char *destname = destid_to_name(destnode_id, destid);
+    const char *homenode = nodeid_to_name(homenode_id);
+    const char *full_job_id = remote_jobid(homenode, destname, id, subid, homenode);
 
-    DODEBUG_DEQUEUE(("unlink_job(destid=%d, id=%d, subid=%d, homenode_id=%d)", destid, id, subid, homenode_id));
+    DODEBUG_DEQUEUE(("%s(destid=%d, id=%d, subid=%d, homenode_id=%d)", function, destid, id, subid, homenode_id));
 
-    destnode_name = nodeid_to_name(destnode_id);
-    queuename = destid_to_name(destnode_id, destid);
-    homenode_name = nodeid_to_name(homenode_id);
+    /* Inform queue display programs of job deletion. */
+    state_update("DEL %s", full_job_id);
 
-    queue_unlink_job_2(destnode_name, queuename, id, subid, homenode_name);
-    } /* end of queue_unlink_job() */
+    lock();		/* lock the queue array while we modify it */
 
-/*========================================================================
-** Change the status of a job.
-**
-** We will update the execute bits on the queue file if required.
-**
-** The version p_job_new_status() takes a pointer to the job structure.
-** The version job_new_status() takes the id and subid and finds the
-** job in the queue.
-**
-** Notice that p_job_new_status() must be called
-** with the queue locked but job_new_status() need not be since
-** it locks the queue itself.
-**
-** Probably obsolete comment:  This routine is sometimes called from
-** within a signal handler, so it must not call routines which are not
-** reentrant.
-========================================================================*/
-
-struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
-    {
-    const char function[] = "p_job_new_status";
-    const char *queuename;
-
-    queuename = destid_to_name(job->destnode_id, job->destid);
-
-    /*
-    ** Inform queue display programs.
-    */
-    {
-    char *status_string = (char*)NULL;
-
-    switch(newstat)
-    	{
-	case STATUS_WAITING:
-	    status_string = "waiting for printer";
-	    break;
-	case STATUS_HELD:
-	    status_string = "held";
-	    break;
-	case STATUS_SEIZING:
-	    status_string = "being seized";
-	    break;
-	case STATUS_WAITING4MEDIA:			/* never used */
-	    status_string = "waiting for media";	/* see media_set_job_wait_reason() */
-	    break;
-    	case STATUS_ARRESTED:
-    	    status_string = "arrested";
-    	    break;
-	case STATUS_STRANDED:
-	    status_string = "stranded";
-	    break;
-    	case STATUS_CANCEL:
-    	    status_string = "being canceled";
-    	    break;
-    	default:					/* >=0 means printing */
-	    if(newstat < 0)
-	    	fatal(0, "p_job_new_status(): assertion failed");
-	    state_update("JST %s printing on %s",
-	    	local_jobid(queuename,job->id,job->subid,nodeid_to_name(job->homenode_id)),
-	   	destid_to_name(job->destnode_id, newstat));
-    	    break;
-    	}
-
-    if(status_string)
+    for(x=0; x < queue_entries; x++)
 	{
-	state_update("JST %s %s",
-		local_jobid(queuename,job->id,job->subid,nodeid_to_name(job->homenode_id)),
-		status_string);
-	}
-    }
+	if(queue[x].id==id && queue[x].subid==subid && queue[x].destnode_id == destnode_id && queue[x].homenode_id == homenode_id)
+	    {
+	    DODEBUG_DEQUEUE(("removing job %s at position %d from queue", full_job_id, x));
 
-    /*
-    ** New way:
-    ** Edit the "Status-and-Flags: XX XXXX\n" in the queue file.
-    */
+	    /* Remove the actual job files. */
+	    queue_unlink_job_2(destnode, destname, id, subid, homenode);
+
+	    /* Decrement a few reference counts. */
+	    destid_free(queue[x].destnode_id, queue[x].destid);
+	    nodeid_free(queue[x].destnode_id);
+	    nodeid_free(queue[x].homenode_id);
+
+	    if( (queue_entries-x) > 1 )		/* do a move if not last entry */
+		{				/* (BUG: was queue_entries was queue_size prior to version 1.30) */
+		memmove(&queue[x], &queue[x+1],
+		    sizeof(struct QEntry) * (queue_entries-x-1) );
+		}
+
+	    queue_entries--;			/* one less in queue */
+	    break;				/* and we needn't look farther */
+	    }
+	}
+
+    unlock();		/* unlock queue array */
+
+    } /* end of queue_dequeue_job() */
+
+/*=========================================================================
+** Edit the "Status-and-Flags: XX XXXX\n" in the queue file.
+=========================================================================*/
+static void queue_write_status_and_flags(struct QEntry *job)
+    {
+    const char function[] = "queue_write_status_and_flags";
     /* start of exception handling block */
     do
 	{
@@ -327,7 +244,7 @@ struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
 
 	{
 	char filename[MAX_PPR_PATH];
-	ppr_fnamef(filename, QUEUEDIR"/%s:%s-%d.%d(%s)", ppr_get_nodename(), queuename, job->id, job->subid, nodeid_to_name(job->homenode_id));
+	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)", QUEUEDIR, ppr_get_nodename(), destid_to_name(job->destnode_id, job->destid), job->id, job->subid, nodeid_to_name(job->homenode_id));
 	if((fd = open(filename, O_RDWR)) == -1)
     	    {
 	    error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
@@ -359,7 +276,7 @@ struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
 	    	error("%s(): lseek() failed, errno=%d (%s)", function, errno, strerror(errno));
 	    	break;
 	    	}
-	    snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", newstat >= 0 ? 0 : (newstat * -1), job->flags);
+	    snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", job->status >= 0 ? 0 : (job->status * -1), job->flags);
 	    to_write_size = strlen(buf);
 	    if((written_size = write(fd, buf, to_write_size)) == -1)
 	    	{
@@ -376,15 +293,86 @@ struct QEntry *p_job_new_status(struct QEntry *job, int newstat)
 	close(fd);
 
     	} while(FALSE);			/* end of exception handling block */
+    } /* end of queue_write_status_and_flags() */
 
-    job->status = newstat;		/* save new status */
-
-    return job;				/* return a pointer to the queue entry */
-    } /* end of p_job_new_status() */
-
-struct QEntry *job_new_status(int id, int subid, int homenode_id, int newstat)
+/*========================================================================
+** Send a state update message for a job status change.
+** This code should be sending symbolic values and not English messages.
+========================================================================*/
+static void queue_send_state_update(struct QEntry *job)
     {
-    const char function[] = "job_new_status";
+    const char function[] = "queue_send_state_update";
+    char *status_string = (char*)NULL;
+
+    switch(job->status)
+    	{
+	case STATUS_WAITING:
+	    status_string = "waiting for printer";
+	    break;
+	case STATUS_HELD:
+	    status_string = "held";
+	    break;
+	case STATUS_SEIZING:
+	    status_string = "being seized";
+	    break;
+	case STATUS_WAITING4MEDIA:			/* never used */
+	    status_string = "waiting for media";	/* see media_set_job_wait_reason() */
+	    break;
+    	case STATUS_ARRESTED:
+    	    status_string = "arrested";
+    	    break;
+	case STATUS_STRANDED:
+	    status_string = "stranded";
+	    break;
+    	case STATUS_CANCEL:
+    	    status_string = "being canceled";
+    	    break;
+    	default:					/* >=0 means printing */
+	    if(job->status < 0)
+	    	fatal(0, "%s(): assertion failed", function);
+	    state_update("JST %s printing on %s",
+	    	local_jobid(destid_to_name(job->destnode_id,job->destid),job->id,job->subid,nodeid_to_name(job->homenode_id)),
+	   	destid_to_name(job->destnode_id, job->status));
+    	    break;
+    	}
+
+    if(status_string)
+	{
+	state_update("JST %s %s",
+		remote_jobid(nodeid_to_name(job->destnode_id),destid_to_name(job->destnode_id, job->destid),job->id,job->subid,nodeid_to_name(job->homenode_id)),
+		status_string);
+	}
+    } /* end of queue_send_state_update() */
+
+/*========================================================================
+** Change the status of a job.
+**
+** We will update the execute bits on the queue file if required.
+**
+** The version p_job_new_status() takes a pointer to the job structure.
+** The version job_new_status() takes the id and subid and finds the
+** job in the queue.
+**
+** Notice that p_job_new_status() must be called
+** with the queue locked but job_new_status() need not be since
+** it locks the queue itself.
+**
+** Probably obsolete comment:  This routine is sometimes called from
+** within a signal handler, so it must not call routines which are not
+** reentrant.
+========================================================================*/
+
+struct QEntry *queue_p_job_new_status(struct QEntry *job, int newstat)
+    {
+    job->status = newstat;
+    queue_write_status_and_flags(job);
+    queue_send_state_update(job);
+    return job;
+    } /* end of queue_p_job_new_status() */
+
+struct QEntry *queue_job_new_status(int id, int subid, int homenode_id, int newstat)
+    {
+    const char function[] = "queue_job_new_status";
     int x;
 
     lock();				/* lock queue array while we work on it */
@@ -393,7 +381,7 @@ struct QEntry *job_new_status(int id, int subid, int homenode_id, int newstat)
 	{				/* queue array. */
 	if(queue[x].id == id && queue[x].subid == subid && queue[x].homenode_id == homenode_id)
 	    {
-	    p_job_new_status(&queue[x], newstat);
+	    queue_p_job_new_status(&queue[x], newstat);
 	    break;			/* break for loop */
 	    }
 	}
@@ -403,7 +391,7 @@ struct QEntry *job_new_status(int id, int subid, int homenode_id, int newstat)
     unlock();			/* unlock queue array */
 
     return &queue[x];		/* return a pointer to the queue entry */
-    } /* end of job_new_status() */
+    } /* end of queue_job_new_status() */
 
 /*===========================================================================
 ** Read necessary information from the queuefile into the queue structure.
@@ -415,6 +403,8 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
     FILE *qfile;
     char tmedia[MAX_MEDIANAME+1];
     int x;
+
+    DODEBUG_NEWJOB(("%s(qfname=\"%s\", newentry=?)", function, qfname));
 
     /* First we open the queue file. */
     {
@@ -537,7 +527,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		    }
 
 		/* Clear the time of next response. */
-		newent.resend_response_at = 0;
+		newent.resend_message_at = 0;
 
                 /* Clear the bitmaps of printers which it is known can't print it
                    and of those that can't print it right now because they don't
@@ -565,6 +555,11 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		    state_update("JOB %s %d %d",
 			remote_jobid(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode),
 			rank1, rank2);
+
+		    /* If there is an outstanding question, then let the question system
+		       know about this job. */
+		    if(newentp->flags & JOB_FLAG_QUESTION_UNANSWERED)
+		    	question_job(newentp);
 
 		    /* Start sending it, or if it is local and ready to print, try to start a printer. */
 		    if(!nodeid_is_local_node(newentp->destnode_id))

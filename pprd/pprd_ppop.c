@@ -570,7 +570,7 @@ static void ppop_hold_release(const char command[], int action)
                     case STATUS_WAITING:	/* if not printing, */
                     case STATUS_WAITING4MEDIA:	/* just quitely go to `hold' */
                         fprintf(reply_file, "%d\n", EXIT_OK);
-                        p_job_new_status(&queue[x], STATUS_HELD);
+                        queue_p_job_new_status(&queue[x], STATUS_HELD);
                         break;
                     case STATUS_HELD:		/* if already held, say so */
                         fprintf(reply_file, "%d\n", EXIT_ALREADY);
@@ -596,7 +596,7 @@ static void ppop_hold_release(const char command[], int action)
                         printer_new_status(&printers[queue[x].status], PRNSTATUS_SEIZING);
                         printers[queue[x].status].cancel_job = FALSE;
                         printers[queue[x].status].hold_job = TRUE;
-                        p_job_new_status(&queue[x], STATUS_SEIZING);
+                        queue_p_job_new_status(&queue[x], STATUS_SEIZING);
                         break;
                     default:                        /* printing? */
                         if(queue[x].status >= 0)
@@ -609,7 +609,7 @@ static void ppop_hold_release(const char command[], int action)
                                     remote_jobid(destnode,destname,id,subid,homenode),
                                     destid_to_name(nodeid_local(), prnid));
 
-                            p_job_new_status(&queue[x], STATUS_SEIZING);
+                            queue_p_job_new_status(&queue[x], STATUS_SEIZING);
                             printer_new_status(&printers[prnid], PRNSTATUS_SEIZING);
                             printers[prnid].hold_job = TRUE;
 
@@ -641,7 +641,7 @@ static void ppop_hold_release(const char command[], int action)
                     case STATUS_HELD:       /* "held" or "arrested" jobs */
                     case STATUS_ARRESTED:   /* may be made "waiting" */
                         fprintf(reply_file, "%d\n", EXIT_OK);
-                        p_job_new_status(&queue[x], STATUS_WAITING);
+                        queue_p_job_new_status(&queue[x], STATUS_WAITING);
                         if(nodeid_is_local_node(queue[x].destnode_id))
                             {
                             media_set_notnow_for_job(&queue[x], TRUE);
@@ -751,7 +751,7 @@ static void ppop_cancel_purge(const char command[])
 		    printers[prnid].cancel_job = TRUE;
 
 		    /* Change the job status to "being canceled". */
-		    p_job_new_status(&queue[x], STATUS_CANCEL);
+		    queue_p_job_new_status(&queue[x], STATUS_CANCEL);
 
 		    /* Kill pprdrv. */
 		    pprdrv_kill(prnid);
@@ -780,7 +780,7 @@ static void ppop_cancel_purge(const char command[])
                                 printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
                             printers[prnid].hold_job = FALSE;
                             printers[prnid].cancel_job = TRUE;
-                            p_job_new_status(&queue[x], STATUS_CANCEL);
+                            queue_p_job_new_status(&queue[x], STATUS_CANCEL);
 			    break;
 		    	    }
 			}
@@ -802,10 +802,7 @@ static void ppop_cancel_purge(const char command[])
 				RESP_CANCELED);
 			}
 
-		    /* Remove the job files.  (We may do this only after responding.) */
-		    queue_unlink_job(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id);
-
-		    /* We may now remove it from the queue array. */
+		    /* Remove the job from the queue array and its files form the spool directories. */
 		    queue_dequeue_job(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id);
 
 		    x--;        /* compensate for deletion */
@@ -1262,7 +1259,7 @@ static void ppop_move(const char command[])
 	    */
 	    if(queue[x].status == STATUS_STRANDED)
 	    	{
-		p_job_new_status(&queue[x], STATUS_WAITING);
+		queue_p_job_new_status(&queue[x], STATUS_WAITING);
 	    	}
 
 	    /*

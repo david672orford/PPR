@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 December 2001.
+** Last modified 6 December 2001.
 */
 
 /*
@@ -350,7 +350,7 @@ void new_printer_config(char *printer)
 		{
 		queue[x].never &= (0xFF ^ prnbit);
 		if(queue[x].status == STATUS_STRANDED)
-		    p_job_new_status(&queue[x], STATUS_WAITING);
+		    queue_p_job_new_status(&queue[x], STATUS_WAITING);
 		}
     	    }
 	}

@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 November 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 7 December 2001.
 */
 
 /*
@@ -115,7 +130,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	printers[prnid].homenode_id = job->homenode_id;
 	printer_new_status(&printers[prnid], PRNSTATUS_PRINTING);
 
-	job_new_status(job->id, job->subid, job->homenode_id, prnid);
+	queue_job_new_status(job->id, job->subid, job->homenode_id, prnid);
 
 	/* If is a group job, mark last printer in group that was used. */
 	if(destid_local_is_group(job->destid))
@@ -126,15 +141,8 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	char jobname[MAX_PPR_PATH];
 	char pass_str[10];
 
-	/*
-	** Our child should not start out with
-	** signals blocked, even if we have some blocked.
-	*/
-	{
-	sigset_t sigset;
-	sigemptyset(&sigset);
-	sigprocmask(SIG_SETMASK, &sigset, (sigset_t*)NULL);
-	}
+	/* Unblock the signals pprd blocks. */
+	child_unblock_all();
 
 	/*
 	** Reconstruct the queue file name.
@@ -197,7 +205,7 @@ static void pprdrv_exited(int prnid, int wstat)
     int job_status = STATUS_WAITING;	/* job status will be set to this (as modified) */
     int prn_status = PRNSTATUS_IDLE;	/* printer status will be set to this (as modified) */
 
-    DODEBUG_PRNSTOP(("%s(prnid=%d, wstat=0x%04x)", prnid, wstat));
+    DODEBUG_PRNSTOP(("%s(prnid=%d, wstat=0x%04x)", function, prnid, wstat));
 
     printers[prnid].pid = 0;		/* prevent future false match */
     active_printers--;                  /* a printer is no longer active */
@@ -501,17 +509,13 @@ static void pprdrv_exited(int prnid, int wstat)
     if(estat == EXIT_PRINTED || printers[prnid].cancel_job)
 	{
         queue_dequeue_job(nodeid_local(), printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id);
-        queue_unlink_job(nodeid_local(), printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id);
-	destid_free(nodeid_local(), printers[prnid].jobdestid);
-	nodeid_free(nodeid_local());
-        nodeid_free(printers[prnid].homenode_id);
 	printers[prnid].cancel_job = FALSE;
         }
 
     /* If we will not remove the job, set it to its new state. */
     else
     	{
-	struct QEntry *p = job_new_status(printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id, job_status);
+	struct QEntry *p = queue_job_new_status(printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id, job_status);
 	if(job_status == STATUS_WAITING)
             printer_try_start_suitable_4_this_job(p);
     	}

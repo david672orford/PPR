@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 November 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 December 2001.
 */
 
 #include "before_system.h"
@@ -222,7 +237,7 @@ void media_startstop_update_waitreason(int prnid)
 	    media_startstop_update_waitreason2(g_destid);
 	}
     }
-    
+
     unlock();
     } /* end of media_startstop_update_waitreason() */
 
@@ -359,7 +374,7 @@ static gu_boolean hasmedia(int prnid, struct QEntry *job)
     {
     int x,y;
 
-    DODEBUG_MEDIA(("hasmedia(prnid=%d, struct QEntry job->destid=%d):", prnid, job->destid));
+    DODEBUG_MEDIA(("hasmedia(prnid=%d, struct QEntry job->destid=%d)", prnid, job->destid));
 
     /* If printer has no bins, assume it can print anything! */
     if(printers[prnid].nbins == 0)
@@ -429,7 +444,7 @@ static int stoptmask(int destid)
 ** lock() and unlock().  For this reason, the routine does not call them.
 **
 ** The inqueue parameter is TRUE if the job is already in the queue.  If it
-** is, we must call p_job_new_status().
+** is, we must call queue_p_job_new_status().
 */
 static void media_set_job_wait_reason(struct QEntry *job, int stopt_members_mask, int inqueue)
     {
@@ -464,7 +479,7 @@ static void media_set_job_wait_reason(struct QEntry *job, int stopt_members_mask
 	if(new_status != job->status)
 	    {
 	    if(inqueue)
-		p_job_new_status(job, new_status);
+		queue_p_job_new_status(job, new_status);
 	    else
 		job->status = new_status;
 	    }
