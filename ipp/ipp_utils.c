@@ -35,6 +35,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
@@ -43,7 +44,7 @@
 
 /** create IPP request handling object
 
-This function creates an IPP service object.  The IPP request will be read 
+This function creates an IPP service object.  The IPP request will be read
 from stdin and the response will be sent to stdout.  IPP data of various
 types can be read from the request and appended to the response using the
 member functions.
@@ -101,7 +102,7 @@ static void ipp_writebuf_flush(struct IPP *p)
 /** Finish the IPP service transaction
 
 Any remaining request input bytes are read and discarded.  Any bytes remaining
-in the The response output buffer are sent on their way.  Finally, the IPP 
+in the The response output buffer are sent on their way.  Finally, the IPP
 service object is destroyed.
 
 */
@@ -147,7 +148,7 @@ void ipp_put_byte(struct IPP *p, unsigned char val)
 		ipp_writebuf_flush(p);
 	}
 
-/** fetch a signed byte from the IPP request 
+/** fetch a signed byte from the IPP request
 */
 int ipp_get_sb(struct IPP *p)
 	{
@@ -278,8 +279,8 @@ void ipp_parse_request(struct IPP *ipp)
 					ap_resize = &ap_prev->next;
 				else
 					ap_resize = &ipp->request_attrs;
-			
-				ap = *ap_resize = gu_alloc(1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t));
+
+				ap = *ap_resize = gu_alloc(1, sizeof(ipp_attribute_t));
 
 				ap->next = NULL;
 				ap->group_tag = delimiter_tag;
@@ -295,7 +296,8 @@ void ipp_parse_request(struct IPP *ipp)
 				if(!name)
 					Throw("no name!");
 				ap_i++;
-				ap = *ap_resize = gu_realloc(ap, 1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t) * (1 + ap_i));
+				/* The storeage for ipp_attribute_t contains one ipp_value_t */
+				ap = *ap_resize = gu_realloc(ap, 1, sizeof(ipp_attribute_t) - sizeof(ipp_value_t) * ap_i);
 				}
 
 			switch(value_tag)
@@ -356,8 +358,8 @@ void ipp_send_reply(struct IPP *p)
 
 /** Send a debug message to the HTTP server's error log
 
-This function sends a message to stderr.  Messages sent to stderr end up in 
-the HTTP server's error log.  The function takes a printf() style format 
+This function sends a message to stderr.  Messages sent to stderr end up in
+the HTTP server's error log.  The function takes a printf() style format
 string and argument list.  The marker "ipp: " is prepended to the message.
 
 */

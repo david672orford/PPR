@@ -1,12 +1,22 @@
 <!--
 Filename: pprhack_rips.sgml
-Last Modified: 13 March 2003
+Last Modified: 8 April 2003
 Last Proofread: 
 -->
 
 <sect1>
 <title>Plugin Raster Image Processors</title>
 
+<para>
+If you want to supply your own RIP to use instead of B<ppr-gs>, you should
+create a program and put it in <filename>/usr/lib/ppr/lib</filename>.  It
+should connect stdin, stdout, and stderr to the cooresponding file
+descriptors of the PostScript interpreter and should send the print date to
+file descriptor 3.  The RIP options will be on the command line and the
+filename of the printer's PPD file will be in the environment variable PPD. 
+If the <option>ppr --ripopts</option> option is used, the argument will be
+passed to your RIP in the environment variable <envar>PPR_RIPOPTS</envar>.
+</para>
 
 
 </sect1>
