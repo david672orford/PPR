@@ -1,23 +1,30 @@
 #! /usr/bin/wish
 #
 # pprpopup_main.tcl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 21 December 2001.
+# Last revised 8 January 2002.
 #
 
-set register_url "${ppr_root_url}cgi-bin/pprpopup_register.cgi"
+# This is supposed to be set by pprpopup_loader.tcl.
+if {![info exists ppr_root_url]} {
+    puts "You can't execute this script directly.  It must be run by pprpopup_launch.tcl."
+    exit 1
+    }
+
+# And this provides a default for the list of servers we register with.
+if {![info exists ppr_server_list]} {
+    set ppr_server_list [list $ppr_root_url]
+    }
+
+# This is the URL that is loaded when the user selects Help/Contents.
 set help_url "${ppr_root_url}docs/pprpopup/"
 
 set about_text "PPR Popup 1.50a1
-21 December 2001
-Copyright 1995--2001, Trinity College Computing Center
+4 January 2002
+Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
-
-source ./urlfetch.itk
-source ./browser.itk
-source ./md5pure.tcl
 
 # This is the port that this server should listen on:
 set server_port 15009
@@ -87,7 +94,7 @@ end tell
 	proc get_client_id {} {
 		global env
 		if { ! [info exists env(PPR_RESPONDER_ADDRESS)] } {
-		    alert "The environment variable PPR_RESPONDER_ADDRESS must be defined."
+		    alert "The environment variable PPR_RESPONDER_ADDRESS must be defined.\nPlease set it to user@host."
 		    exit 1
 		    }
 		return $env(PPR_RESPONDER_ADDRESS)
@@ -99,13 +106,15 @@ end tell
 # Put up a dialog box for bad errors.
 #
 proc alert {message} {
-    iwidgets::messagedialog .alert \
+    global wserial
+    set w .alert_[incr wserial]
+    iwidgets::messagedialog $w \
     	-modality application \
     	-title "PPR Popup Malfunctioned" \
     	-text $message
-    .alert buttonconfigure OK -text "Close"
-    .alert hide "Cancel"
-    .alert activate
+    $w buttonconfigure OK -text "Close"
+    $w hide "Cancel"
+    $w activate
     }
 
 #
@@ -406,13 +415,12 @@ proc server_reader {file} {
 # This is what we use to register with the server.
 #========================================================================
 
-proc do_register {} {
+proc do_register {register_url} {
     package require http 2.2
-    global register_url
     global server_socket
     global magic_cookie
 
-    puts "Registering with server at $register_url..."
+    puts "Registering with server at <$register_url>..."
 
     set client [get_client_id]
 
@@ -428,10 +436,10 @@ proc do_register {} {
     }
 
 proc register_callback {token} {
-    puts "Registration finished:"
 
     # Get the result codes for the POST.
     upvar #0 $token state
+    puts "Registration with <$state(url)> finished:"
     regexp {^HTTP/[0-9]+\.[0-9]+ ([0-9]+)} $state(http) junk ncode
     puts "    State: $state(status)"
     puts "    Ncode: $ncode"
@@ -439,15 +447,15 @@ proc register_callback {token} {
 
     # Test the status for errors.
     if {[string compare $state(status) "ok"] != 0} {
-	alert "POST failed while registering with PPR server:\n$state(status)\n$state(error)"
+	alert "POST failed while registering with PPR server:\n$state(url)\n$state(status)\n$state(error)"
 	} else {
 	if {$ncode != 200} {
-	    alert "POST failed while registering with the PPR server:\n$state(http)"
+	    alert "POST failed while registering with the PPR server:\n$state(url)\n$state(http)"
 	    }
 	}
 
     # Register again in 10 minutes.
-    after 600000 [list do_register]
+    after 600000 [list do_register $state(url)]
     }
 
 #========================================================================
@@ -475,16 +483,18 @@ proc main {} {
     menu .menubar -border 1 -relief groove
 
     .menubar add cascade -label "File" -menu [menu .menubar.file -tearoff 0 -border 1]
-    .menubar.file add command -label "System Information" -command { menu_file_system_information }
     .menubar.file add command -label "Quit" -command { menu_file_quit }
 
     .menubar add cascade -label "View" -menu [menu .menubar.view -tearoff 0 -border 1]
-    .menubar.view add check -variable menu_view_main_visibility -label "Main Window" -command { menu_view_main $menu_view_main_visibility }
-    .menubar.view add check -variable menu_view_tk_console_visibility -label "Tk Console" -command { menu_view_tk_console $menu_view_tk_console_visibility }
+    .menubar.view add check -variable menu_view_main_visibility -label "Show Main Window" -command { menu_view_main $menu_view_main_visibility }
+    .menubar.view add check -variable menu_view_tk_console_visibility -label "Show Tk Console" -command { menu_view_tk_console $menu_view_tk_console_visibility }
+
+    .menubar add cascade -label "Tools" -menu [menu .menubar.tools -tearoff 0 -border 1]
 
     .menubar add cascade -label "Help" -menu [menu .menubar.help -tearoff 0 -border 1]
     .menubar.help add command -label "Help Contents" -command { menu_help_contents }
     .menubar.help add command -label "About PPR Popup" -command { menu_help_about }
+    .menubar.help add command -label "About System" -command { menu_help_about_system }
 
     # Macintosh needs another toplevel to keep the menu in place.
     # We will place it off the screen.
@@ -542,15 +552,20 @@ proc main {} {
 
     # Register with the server for the first time and schedual
     # future registrations.
-    do_register
+    global ppr_server_list
+    foreach url $ppr_server_list {
+	do_register "${url}cgi-bin/pprpopup_register.cgi"
+	}
 
     # Set the main window size, title, and visibility.
     wm geometry . 600x200
     wm title . "PPR Popup"
     menu_view_main 0
+
+    do_config_save 
     }
 
-proc menu_file_system_information {} {
+proc menu_help_about_system {} {
     global system_dpi
     global tcl_platform
 
@@ -575,7 +590,7 @@ proc menu_file_system_information {} {
 
     iwidgets::dialog .si \
     	-modality application \
-    	-title "System Information"
+    	-title "About System"
     .si buttonconfigure OK -text "Dismiss"
     .si hide "Cancel"
     .si hide "Apply"
@@ -680,6 +695,15 @@ proc menu_help_about {} {
     .about hide "Cancel"
     .about activate
     destroy .about
+    }
+
+proc do_config_save {} {
+    global ppr_root_url
+    global ppr_server_list
+    puts "Saving configuration..."
+    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list $ppr_server_list\n"} errormsg]} {
+	alert "Failed to save configuration:\n$errormsg"	
+	}
     }
 
 main

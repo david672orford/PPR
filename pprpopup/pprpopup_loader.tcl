@@ -1,16 +1,45 @@
 #! /usr/bin/wish
 #
 # pprpopup_loader.tcl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 19 December 2001.
+# Last modified 8 January 2002.
 #
-
-# This is the server we should load from and register with.
-set ppr_root_url "http://localhost:15010/"
 
 package require Tcl 8.3
 package require Tk 8.3
+package require Iwidgets
+
+#
+# Define system-dependent routines to load and save the configuration data blob.
+#
+switch -glob -- $tcl_platform(platform) {
+    macintosh {
+	proc config_load {} { return [resource read TEXT 8001] }
+	proc config_save {config} { resource write -id 8001 -force TEXT $config }
+	}
+    windows {
+	package require registry 1.0
+	proc config_load {} {return [registry get "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config"] }
+	proc config_save {config} { registry set "HKEY_LOCAL_MACHINE\\Software\\PPR\\PPR Popup" "config" $config }
+	}
+    * {
+	proc config_load {} {
+		global env
+		set f [open "$env(HOME)/.ppr/pprpopup" r]
+		set config [read $f]
+		close $f
+		return $config
+		}
+	proc config_save {config} {
+		global env
+		catch { exec mkdir $env(HOME)/.ppr }
+		set f [open "$env(HOME)/.ppr/pprpopup" w]
+		puts $f $config
+		close $f
+		}
+	}
+    }
 
 #
 # This program loads the PPR popup program from a web server and runs it.
@@ -20,13 +49,9 @@ package require Tk 8.3
 #
 namespace eval pprpopup_loader {
     global ppr_root_url
-    set code_url "${ppr_root_url}clientsoft/pprpopup.tcl"
 
     # Hide Win32 and MacOS consoles.
-    if {$tcl_platform(platform) == "windows" || $tcl_platform(platform) == "macintosh"} {
-	#console show
-	console hide
-	}
+    catch { console hide }
 
     # Hide the main window.  Right now it is an empty toplevel.  We don't want
     # it to be seen until it is dressed.
@@ -188,16 +213,71 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 
     set screen_width [winfo screenwidth .splash]
     set screen_height [winfo screenheight .splash]
+    
+    # Figure out the width and height of the splash screen.  After we know it we
+    # comment out the code and hard-code the values.
     #tkwait visibility .splash
     #set window_width [winfo width .splash]
     #set window_height [winfo height .splash]
     #puts "screen_width=$screen_width, screen_height=$screen_height, window_width=$window_width, window_height=$window_height"
     set window_width 370
     set window_height 266
+
     set window_x [expr ($screen_width - $window_width) / 2]
     set window_y [expr ($screen_height - $window_height) / 2]
     puts "window_x=$window_x, window_y=$window_y"
     wm geometry .splash +$window_x+$window_y
+    update
+
+    # Load the configuration.
+    puts "Loading configuration..."
+    if {[catch { set config [config_load] } errormsg]} {
+	puts "    $errormsg"
+	set config ""
+	}
+
+    # Execute the configuration script.
+    if [catch { namespace eval :: $config }] {
+	global errorInfo
+	display_error "Syntax error in configuration file:\n$errorInfo"
+	exit 10
+	}
+
+    # If the configuration doesn't yet have a URL to load the real pprpopup program
+    # from, then put up a dialog box to prompt for it.
+    if {![info exists ppr_root_url]} {
+
+	# If the main window isn't visiable, the MS-Windows port won't pop up the dialog.
+	# The X-Windows port will obscure the dialog with the splash screen.
+	wm geometry . 10x10+0+30
+	wm deiconify .
+	wm withdraw .splash
+
+	iwidgets::promptdialog .pd \
+		-modality application \
+		-title "PPR Popup Loader: Server Name Required" \
+		-labeltext "Enter the name of the PPR server to load PPR Popup from\nor enter a complete URL to load it from:"
+	.pd hide Apply
+
+	set x [expr $window_x - 50]
+	set y [expr $window_y - 50]
+	wm geometry .pd +$x+$y
+	raise .pd
+
+	if {![.pd activate]} {
+	    puts "Aborting..."
+	    exit 1
+	    }
+
+	set ::ppr_root_url [.pd get]
+	if {![regexp {^http://} $ppr_root_url]} {
+	    set ppr_root_url "http://$ppr_root_url:15010/"
+	    }
+	destroy .pd
+
+	wm withdraw .
+	wm deiconify .splash
+	}
 
     # Add a progress bar.
     scale .splash.scale \
@@ -206,7 +286,6 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
     	-tickinterval 10 \
     	-showvalue false
     pack .splash.scale -side top -fill x
-    update
 
     # Define a callback procedure to adjust the progress bar.
     proc scale_callback {token total current} {
@@ -257,11 +336,17 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	}
 
     # Start the HTTP transaction.
+    set code_url "${ppr_root_url}clientsoft/pprpopup.tcl"
     puts "*** Connecting..."
-    set token [::http::geturl $code_url \
-	-progress [namespace code scale_callback] \
-	-blocksize 1024 \
-	-command [namespace code loaded_callback]]
+    if [catch {
+		set token [::http::geturl $code_url \
+			-progress [namespace code scale_callback] \
+			-blocksize 1024 \
+			-command [namespace code loaded_callback]]
+	} errormsg] {
+	display_error "Can't fetch <$code_url>:\n$errormsg"
+	exit 10
+	}
     }
 
 # end of file
