@@ -50,26 +50,26 @@
 HOMEDIR="?"
 CONFDIR="?"
 VAR_SPOOL_PPR="?"
-NECHO="?"
+EECHO="?"
 
 # Where will the .pid files be found?
 RUNDIR="$VAR_SPOOL_PPR/run"
 
 do_start ()
 	{
-	$NECHO -n "Starting PPR spooler: "
+	$EECHO -n "Starting PPR spooler: \c"
 
 	# What language should messages be printed in?
 	lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
 	if [ -n "$lang" ]
 		then
-		$NECHO -n "(language is $lang) "
+		$EECHO -n "(language is $lang) \c"
 		LANG=$lang
 		export LANG
 		fi
 
 	# This is the spooler daemon.
-	$HOMEDIR/bin/pprd && $NECHO -n "pprd "
+	$HOMEDIR/bin/pprd && $EECHO -n "pprd \c"
 
 	# This is the new AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papd ]
@@ -80,18 +80,18 @@ do_start ()
 	# This is the AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
 		then
-		$HOMEDIR/bin/papsrv && $NECHO -n "papsrv "
+		$HOMEDIR/bin/papsrv && $EECHO -n "papsrv \c"
 		fi
 
 	# Uncomment this if you want to run the new lprsrv
 	# in standalone mode:
-	#$HOMEDIR/lib/lprsrv -s printer && $NECHO -n "lprsrv "
+	#$HOMEDIR/lib/lprsrv -s printer && $EECHO -n "lprsrv \c"
 
 	# Uncomment this if you want to run olprsrv in standalone mode:
-	#$HOMEDIR/lib/olprsrv -s printer && $NECHO -n "olprsrv "
+	#$HOMEDIR/lib/olprsrv -s printer && $EECHO -n "olprsrv \c"
 
 	# This updates links for lp, lpr, lprm, lpq, etc.
-	$HOMEDIR/bin/uprint-newconf >/dev/null && $NECHO -n "uprint-newconf"
+	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO -n "uprint-newconf\c"
 
 	echo
 
@@ -101,30 +101,30 @@ do_start ()
 
 do_stop ()
 	{
-	$NECHO -n "Stopping PPR daemons: "
+	$EECHO -n "Stopping PPR daemons: \c"
 	if [ -r $RUNDIR/pprd.pid ]
 		then
-		kill `cat $RUNDIR/pprd.pid` && $NECHO -n "pprd "
+		kill `cat $RUNDIR/pprd.pid` && $EECHO -n "pprd \c"
 		rm -f $RUNDIR/pprd.pid
 		fi
 	if [ -r $RUNDIR/papd.pid ]
 		then
-		kill `cat $RUNDIR/papd.pid` && $NECHO -n "papd "
+		kill `cat $RUNDIR/papd.pid` && $EECHO -n "papd \c"
 		rm -f $RUNDIR/papd.pid
 		fi
 	if [ -r $RUNDIR/papsrv.pid ]
 		then
-		kill `cat $RUNDIR/papsrv.pid` && $NECHO -n "papsrv "
+		kill `cat $RUNDIR/papsrv.pid` && $EECHO -n "papsrv \c"
 		rm -f $RUNDIR/papsrv.pid
 		fi
 	if [ -r $RUNDIR/lprsrv.pid ]
 		then
-		kill `cat $RUNDIR/lprsrv.pid` && $NECHO -n "lprsrv "
+		kill `cat $RUNDIR/lprsrv.pid` && $EECHO -n "lprsrv \c"
 		rm -f $RUNDIR/lprsrv.pid
 		fi
 	if [ -r $RUNDIR/olprsrv.pid ]
 		then
-		kill `cat $RUNDIR/olprsrv.pid` && $NECHO -n "olprsrv "
+		kill `cat $RUNDIR/olprsrv.pid` && $EECHO -n "olprsrv \c"
 		rm -f $RUNDIR/olprsrv.pid
 		fi
 	echo
