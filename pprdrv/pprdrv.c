@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 20 July 2001.
+** Last modified 5 September 2001.
 */
 
 /*
@@ -993,8 +993,8 @@ static void copy_pages(void)
 		** is a straightforward operation.
 		**
 		** The number we compute is the logical page number
-		** with pages number from 0.  If the pages appear
-		**  backwards in the file 0 will be the last page
+		** with pages numbered from 0.  If the pages appear
+		** backwards in the file 0 will be the last page
 		** in the file.
 		*/
 		if(job.N_Up.sigsheets == 0)
@@ -1003,7 +1003,7 @@ static void copy_pages(void)
 		    }
 		else			/* If not printing this side, */
 		    {			/* (-s fonts or -s backs) */
-		    if( (pagenumber=signature(sheetnumber, sheetmember)) == -1 )
+		    if((pagenumber = signature(sheetnumber, sheetmember)) == -1)
 			{
 			#ifdef DEBUG_SIGNITURE_INLINE
 			printer_printf(", skipping\n");
@@ -1011,6 +1011,16 @@ static void copy_pages(void)
 		    	continue;	/* skip this page. */
 		    	}
 		    }
+
+		/* If the user has specified a subset of the pages to
+		   print, then skip this page if it is not in the subset.
+		   */
+		if(pagemask_get_bit(&job, pagenumber + 1) == 0)
+		    {
+		    printer_printf("%% Skipping page %d\n\n", pagenumber + 1);
+		    continue;
+		    }
+
 
 		/* If the pages in the file are in ascending order,
 		   then the pages index into the file is equal to
@@ -1030,10 +1040,10 @@ static void copy_pages(void)
 		if(pageindex < npages && pageindex >= 0)	/* If we have such a page, */
 	    	    {
 	    	    if(fseek(page_comments, pages_offsets[pageindex], SEEK_SET))
-			fatal(EXIT_JOBERR, "copy_pages(): fseek() error (-pages)");
+			fatal(EXIT_JOBERR, "%s(): fseek() error (-pages)", function);
 
 		    if(fseek(text, text_offsets[pageindex],SEEK_SET))
-			fatal(EXIT_JOBERR, "copy_pages(): fseek() error (-text)");
+			fatal(EXIT_JOBERR, "%s(): fseek() error (-text)", function);
 
 		    copy_a_page(pagenumber + 1);	/* copy this one page */
 		    }
@@ -1404,7 +1414,7 @@ static void pprdrv_read_printer_conf(void)
 	printer.Codes = interface_default_codes(printer.Interface, &printer.prot);
 
     /*
-    ** Now we have to parse the RIP options.  It would be nice if we had a 
+    ** Now we have to parse the RIP options.  It would be nice if we had a
     ** library function for this.
     */
     printer.RIP.options_count = 0;
@@ -1430,7 +1440,7 @@ static void pprdrv_read_printer_conf(void)
 	    si += strspn(si, " \t");	/* skip whitespace */
 	    if(*si)			/* if anything left, */
 		{
-		int c, quote = 0; 
+		int c, quote = 0;
 		printer.RIP.options[printer.RIP.options_count++] = di;
 		while((c = *si))
 		    {
@@ -1655,7 +1665,8 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
             charge.total = 0;
             if(printer.charge.per_duplex > 0 || printer.charge.per_simplex > 0)
 		{
-		compute_charge(&charge, printer.charge.per_duplex,
+		compute_charge(&charge,
+			printer.charge.per_duplex,
 			printer.charge.per_simplex,
 			job.attr.pages,
 			job.N_Up.N,

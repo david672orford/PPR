@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 4 September 2001.
+** Last modified 5 September 2001.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -170,7 +170,7 @@ void destroy_struct_QFileEntry(struct QFileEntry *job);
 int parse_qfname(char *buffer, const char **destnode, const char **destname, short int *id, short int *subid, const char **homenode);
 int pagemask_encode(struct QFileEntry *job, const char pages[]);
 void  pagemask_print(const struct QFileEntry *job);
-int pagemask_get_bit(const struct QFileEntry *job, int bit);
+int pagemask_get_bit(const struct QFileEntry *job, int page);
 int pagemask_count(const struct QFileEntry *job);
 
 /* ======================== Media file format =========================== */

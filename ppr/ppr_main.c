@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 19 July 2001.
+** Last revised 5 September 2001.
 */
 
 /*
@@ -2578,8 +2578,7 @@ int main(int argc, char *argv[])
 
 	if(pagemask_encode(&qentry, option_page_list) == -1)
  	    {
- 	    respond(RESP_FATAL_SYNTAX, "");
- 	    exit(PPREXIT_SYNTAX);
+ 	    fatal(PPREXIT_SYNTAX, "Can't parse page list");
  	    }
     	}
 

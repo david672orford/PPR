@@ -3,7 +3,7 @@
 ;
 ; See ppr2samba(8) for an explanation of this file.
 ;
-; Last revised 31 July 2001.
+; Last revised 5 September 2001.
 ;
 
 ;
@@ -50,6 +50,10 @@
    path = %VAR_SPOOL_PPR%/sambaspool
    printer driver location = \\%L\pprwin95
    printer driver file = %VAR_SPOOL_PPR%/drivers/win95/printers.def
+
+   ; Minimum space in kilobytes which must be free in sambaspool/ before
+   ; print jobs will be accepted.
+   min print space = 2048
 
 ;
 ; Alternative prototype for use with pprpopup.tcl on the clients.

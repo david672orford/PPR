@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 29 August 2001.
+** Last modified 5 September 2001.
 */
 
 /*
@@ -1473,13 +1473,13 @@ int printer_rip(const char *argv[])
 	return EXIT_SYNTAX;
 	}
 
-    if(strlen(rip) == 0)
+    if(rip && strlen(rip) == 0)
         {
         fputs(_("The RIP name may not be an empty string.\n"), errors);
         return EXIT_SYNTAX;
         }
 
-    if(strlen(output_language) == 0)
+    if(output_language && strlen(output_language) == 0)
         {
         fputs(_("The RIP output language may not be an empty string.\n"), errors);
         return EXIT_SYNTAX;

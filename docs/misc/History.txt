@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--4 September 2001
+1.50a1, 1 August 2001--5 September 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7406,3 +7406,11 @@ line was being parsed twice.
   decided if they should inherit ACLs or not, but inheriting passthru really
   reduces their usefulness.
 
+* samba/smb-protos.conf: added "min print space = 2048" to [pprproto]
+  section.
+
+* ppad/ppad_printer.c:printer_rip(): fixed core dump bug for "ppad rip
+  myprn" (to clear the RIP).
+
+* Added code so that "ppr --page-list" and "ppad modify page-list" work
+  (but page accounting doesn't take it into account yet).

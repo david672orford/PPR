@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 21 June 2001.
+** Last modified 5 September 2001.
 */
 
 /*
@@ -1194,6 +1194,9 @@ static int ppop_details_item(const struct QEntry *qentry,
     else
 	printf("Pages: ?\n");
     printf("Page Order: %s\n", describe_pageorder(qfileentry->attr.pageorder));
+    PUTS("Page List: ");
+    pagemask_print(qfileentry);
+    PUTC('\n');
     printf("Prolog Present: %s\n", qfileentry->attr.prolog ? "True" : "False");
     printf("DocSetup Present: %s\n", qfileentry->attr.docsetup ? "True" : "False");
     printf("Script Present: %s\n", qfileentry->attr.script ? "True" : "False");
@@ -1676,7 +1679,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		if(qfileentry->opts.copies > 1)
 		    printf("x%d", qfileentry->opts.copies);
 		break;
-
+	    case 49:
+	    	pagemask_print(qfileentry);
+	    	break;
 
 	    default:
 	    	if(qquery_query[x] >= 1000)
@@ -1838,6 +1843,9 @@ int ppop_qquery(char *argv[])
 	    qquery_query[x] = 47;
 	else if(strcmp(ptr, "pagesxcopies") == 0)
 	    qquery_query[x] = 48;
+	else if(strcmp(ptr, "page-list") == 0)
+	    qquery_query[x] = 49;
+
 	else
 	    {
 	    fprintf(errors, "Unrecognized field: %s\n", ptr);
