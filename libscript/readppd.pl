@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/readppd.pl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2002.
+# Last modified 13 March 2003.
 #
 
 require "paths.ph";
@@ -33,7 +33,7 @@ require "paths.ph";
 package readppd;
 
 @nest_stack = ();
-$current_handle;
+$current_handle = undef;
 
 sub _ppd_open
     {
@@ -58,7 +58,22 @@ sub _ppd_open
             }
 
         $current_handle = "PPDFILE" . scalar @nest_stack;
-        open($current_handle, "<$filename") || die "Can't open \"$filename\", $!\n";
+
+	if($filename =~ /^(.+\.gz)$/)
+	    {
+	    my $f = $1;
+	    $pid = open($current_handle, "-|");
+	    defined($pid) || die "Can't fork, $!";
+	    if($pid == 0)
+		{
+		exec("gunzip", "-c", $f);
+		exit(255);
+		}
+	    }
+	else
+	    {
+            open($current_handle, "<$filename") || die "Can't open \"$filename\", $!\n";
+	    }
 	};
 
     if($@)

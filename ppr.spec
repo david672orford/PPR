@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 7 March 2003.
+# Last modified 13 March 2003.
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
@@ -44,7 +44,7 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 # non-interactively.
 # Note: We have to work %_target_cpu in here somewhere.  Right now
 # it configures for the CPU it runs on.
-./Configure_new --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext
+./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext
 
 make
 

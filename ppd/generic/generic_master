@@ -1,22 +1,40 @@
 *PPD-Adobe: "4.2"
 *%
 *% mouse:~ppr/src/ppd/generic/ppr_generic
-*% Copyright 1995--2001, Trinity College Computing Center.
+*% Copyright 1995--2003, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
-*% Permission to use, copy, modify, and distribute this software and its
-*% documentation for any purpose and without fee is hereby granted, provided
-*% that the above copyright notice appear in all copies and that both that
-*% copyright notice and this permission notice appear in supporting
-*% documentation.  This software is provided "as is" without express or
-*% implied warranty.
+*% Redistribution and use in source and binary forms, with or without
+*% modification, are permitted provided that the following conditions are met:
+*% 
+*% * Redistributions of source code must retain the above copyright notice,
+*% this list of conditions and the following disclaimer.
+*% 
+*% * Redistributions in binary form must reproduce the above copyright
+*% notice, this list of conditions and the following disclaimer in the
+*% documentation and/or other materials provided with the distribution.
+*% 
+*% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+*% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+*% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+*% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+*% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+*% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+*% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+*% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+*% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+*% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+*% POSSIBILITY OF SUCH DAMAGE.
 *%
-*% Last modified 18 July 2001.
+*% Last modified 13 March 2003.
 *%
 
 *%
-*% This file in its various versions describes typical PostScript printers.  
-*% This file is for use by clients that will be printing through the PPR
+*% This file and the other PPR Generic files describe PPR and the job services 
+*% it provides as if PPR were a printer.  Never use one of these files as
+*% the PPD file for a PPR print queue.
+*%
+*% This file is for use by _clients_ that will be printing through the PPR
 *% spooler.  It is intended to free the clients from having to know about
 *% the precise features of the printer such as input bins.  This is reasonable
 *% in a lab environment where policy places such things outside the control of

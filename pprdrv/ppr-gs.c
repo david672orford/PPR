@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/ppr-gs.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 November 2002.
+** Last modified 13 March 2003.
 */
 
 /*
@@ -47,13 +47,55 @@
 
 const char myname[] = "ppr-gs";
 
+/*
+** Where do we seek Ghostscript?
+*/
+const char *gs_exe_list[] = {
+	HOMEDIR"/../ppr-gs/bin/gs",		/* PPR Ghostscript distribution */
+	"/usr/local/bin/gs",			/* Installation from Source Tarball */
+	"/sw/bin/gs",				/* Fink on MacOS X */
+	"/usr/bin/gs",				/* System package per FHS */
+	NULL
+	};
+
+/* 
+** Where do we seek rastertohp, rastertoepson, and other external CUPS drivers?
+*/
+const char *cups_bin_list[] = {
+	HOMEDIR"/../ppr-gs/bin",		/* PPR Ghostscript distribution */
+	"/usr/local/lib/cups/filter",		/* Installatino from Source Tarball */
+	"/usr/lib/cups/filter",			/* System package per FHS */
+	"/usr/libexec/cups/filter",		/* System package BSD */
+	NULL
+	};
+
+/*
+** Where do we seek IJS servers such as hpijs?
+*/
+const char *ijs_bin_list[] = {
+	HOMEDIR"/../ppr-gs/bin",		/* PPR Ghostscript distribution */
+	"/usr/local/bin",			/* Installation from Source Tarball */
+	"/usr/bin",				/* System package */
+	NULL
+	};
+	
+/*===========================================================================
+** Here we go.  We must either find the necessary components and exec 
+** Ghostscript or print an error message on stderr in a format that pprdrv 
+** will recognize and exit with a value of 1.  Error messages begining with 
+** either of these two phrases will be recognized as indicative of a RIP 
+** invokation error when the exit code is 1:
+**
+**	Unknown device:
+**
+**	RIP:
+**
+===========================================================================*/
 int main(int argc, char *argv[])
     {
     const char *gs_exe = NULL;
     char *outputfile = NULL;
     gu_boolean saw_DEVICE = FALSE;
-    char *cupsfilter = NULL;
-    char *ijsserver = NULL;
     const char **gs_args;
     int si, di;
     char *p;
@@ -67,7 +109,6 @@ int main(int argc, char *argv[])
     ** at the system location (/usr/bin/gs).
     */
     {
-    const char *gs_exe_list[] = {HOMEDIR"/../ppr-gs/bin/gs", "/usr/local/bin/gs", "/usr/bin/gs", NULL};
     int i;
     for(i=0 ; gs_exe_list[i]; i++)
 	{
@@ -79,7 +120,7 @@ int main(int argc, char *argv[])
 	}
     if(!gs_exe)
 	{
-	fprintf(stderr, "Can't find Ghostscript!\n");
+	fprintf(stderr, "RIP: Can't find Ghostscript!\n");
 	return 1;
 	}
     }
@@ -100,12 +141,29 @@ int main(int argc, char *argv[])
     di = 0;
     gs_args[di++] = "gs";
 
+    /* Loop over the command line arguments. */
     for(si=1; si<argc; si++)
 	{
 	if((p=lmatchp(argv[si], "cups=")))
 	    {
-	    cupsfilter = gu_strdup(p);
-	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", cupsfilter);
+	    int i;
+	    char exepath[MAX_PPR_PATH];
+	    gu_boolean found = FALSE;
+	    for(i=0 ; cups_bin_list[i]; i++)
+		{
+		ppr_fnamef(exepath, "%s/%s", cups_bin_list[i], p);
+		if(access(exepath, X_OK) == 0)
+		    {
+		    found = TRUE;
+		    break;
+		    }
+	        }
+	    if(!found)
+		{
+		fprintf(stderr, "RIP: can't find %s\n", p);
+		return 1;
+		}
+	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", exepath);
 	    gs_args[di++] = "-sDEVICE=cups";
 	    saw_DEVICE = TRUE;
 	    }
@@ -115,20 +173,36 @@ int main(int argc, char *argv[])
 	    char *server, *manufacturer, *model;
 	    char *temp_ptr;
 	    char *copy;
+	    int i;
+	    char exepath[MAX_PPR_PATH];
+	    gu_boolean found = FALSE;
 
 	    p = copy = gu_strdup(p);
 
 	    if(!(server = gu_strsep(&p, ",")) || !(manufacturer = gu_strsep(&p, ",")) || !(model = gu_strsep(&p, ",")))
 		{
-		fprintf(stderr, "Can't parse ijs=.\n");
+		fprintf(stderr, "RIP: can't parse ijs=%s\n", p);
 		return 1;
 		}
 
-	    ijsserver = gu_strdup(server);
+	    for(i=0 ; ijs_bin_list[i]; i++)
+		{
+		ppr_fnamef(exepath, "%s/%s", ijs_bin_list[i], server);
+		if(access(exepath, R_OK) == 0)
+		    {
+		    found = TRUE;
+		    break;
+		    }
+		}
+	    if(!found)
+		{
+		fprintf(stderr, "RIP: can't find %s\n", server);
+		return 1;
+		}
 
 	    gs_args[di++] = "-sDEVICE=ijs";
 
-	    gu_asprintf(&temp_ptr, "-sIjsServer=%s", ijsserver);
+	    gu_asprintf(&temp_ptr, "-sIjsServer=%s", exepath);
 	    gs_args[di++] = temp_ptr;
 
 	    gu_asprintf(&temp_ptr, "-sDeviceManufacturer=%s", manufacturer);
@@ -172,72 +246,11 @@ int main(int argc, char *argv[])
     gs_args[di++] = "-q";
     gs_args[di++] = "-dSAFER";
 
-    if(outputfile)
-	gs_args[di++] = outputfile;
-    else
-	gs_args[di++] = "-sOutputFile=| cat - >&3";
+    gs_args[di++] = outputfile ? outputfile : "-sOutputFile=| cat - >&3";
 
     gs_args[di++] = "-";
 
     gs_args[di++] = NULL;
-
-    /*
-    ** If we will be piping the output through a CUPS filter, add the CUPS
-    ** filter directory at the head of the PATH.  The search list starts
-    ** with the PPR-GS directory where we may find a private copy of the
-    ** CUPS filters, procedes to /usr/local, and ends in /usr.
-    */
-    if(cupsfilter)
-	{
-	const char *cups_bin_list[] = {HOMEDIR"/../ppr-gs/bin", "/usr/local/lib/cups/filter", "/usr/lib/cups/filter", NULL};
-	int i;
-	char temp[MAX_PPR_PATH];
-	gu_boolean found = FALSE;
-	for(i=0 ; cups_bin_list[i]; i++)
-	    {
-	    ppr_fnamef(temp, "%s/%s", cups_bin_list[i], cupsfilter);
-	    if(access(temp, X_OK) == 0)
-		{
-		char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
-		gu_asprintf(&path_equals, "PATH=%s:%s", cups_bin_list[i], getenv("PATH"));
-		putenv(path_equals);
-		found = TRUE;
-		break;
-		}
-	    }
-	if(!found)
-	    {
-	    fprintf(stderr, "Unknown device: cups (can't find %s)\n", cupsfilter);
-	    }
-	}
-
-    /*
-    ** If we will be using a driver that requires an IJS server, find the 
-    ** external server and add its directory at the head of PATH.
-    */
-    if(ijsserver)
-	{
-	const char *ijs_bin_list[] = {HOMEDIR"/../ppr-gs/bin", "/usr/local/bin", "/usr/bin", NULL};
-	int i;
-	char temp[MAX_PPR_PATH];
-	gu_boolean found = FALSE;
-	for(i=0 ; ijs_bin_list[i]; i++)
-	    {
-	    ppr_fnamef(temp, "%s/%s", ijs_bin_list[i], ijsserver);
-	    if(access(temp, R_OK) == 0)
-		{
-		char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
-		gu_asprintf(&path_equals, "PATH=%s:%s", ijs_bin_list[i], getenv("PATH"));
-		putenv(path_equals);
-		found = TRUE;
-		break;
-		}
-	    }
-	if(!found)
-	    {
-	    fprintf(stderr, "Unknown device: ijs (can't find %s)\n", ijsserver);
-	    }
-	}
 
     /* Replace ourself with Ghostscript. */
     execv(gs_exe, (char**)gs_args);

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 13 March 2003.
 #
 
 include ../Makefile.conf
@@ -46,7 +46,7 @@ OBJS1=\
 	indexppds.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 indexppds$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS) $(ZLIBLIBS)
 
 #=== Install ================================================================
 

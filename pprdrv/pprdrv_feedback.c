@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 February 2003.
+** Last modified 13 March 2003.
 */
 
 /*===========================================================================
@@ -658,9 +658,9 @@ int feedback_reader(void)
 	    }
 
 	    /*
-	    ** If we see Ghostscript's error message for an unknown device, put an alert
-	    ** in the printer's alert log and set a flag so that when Ghostscript
-	    ** dies we will not it is not the job's fault.
+	    ** If we see Ghostscript's error message for an unknown device,
+	    ** put an alert in the printer's alert log and set a flag so that
+	    ** when Ghostscript dies we will not it is not the job's fault.
 	    */
 	    if((ptr2 = lmatchp((char*)ptr, "Unknown device:")))
 		{
@@ -671,13 +671,24 @@ int feedback_reader(void)
 		}
 
 	    /*
-	    ** Catch other signs that Ghostscript is having trouble with its command line.
-	    ** The second one is presently considered non-fatal, but we want to be prepared
-	    ** if it does bomb out.
+	    ** Catch other signs that Ghostscript is having trouble with its 
+	    ** command line.  The second one is presently considered non-fatal
+	    ** (by Ghostscript), but we want to be prepared if it does bomb 
+	    ** out.
 	    */
-	    if(lmatch((char*)ptr, "Usage: gs ") || lmatch((char*)ptr, "Unknown switch -"))
+	    if((ptr2 = lmatchp((char*)ptr, "Usage: gs ")) || (ptr2 = lmatchp((char*)ptr, "Unknown switch -")))
 		{
-		alert(printer.Name, TRUE, "Unrecognized option passed to Ghostscript RIP.", ptr2);
+		alert(printer.Name, TRUE, "Unrecognized option passed to Ghostscript RIP: %s", ptr2);
+		ghosterror = TRUE;
+		continue;
+		}
+
+	    /*
+	    ** Catch messages from the Ghostscript wrapper.
+	    */
+	    if((ptr2 = lmatchp((char*)ptr, "RIP:")))
+		{
+		alert(printer.Name, TRUE, "RIP: %s", ptr2);
 		ghosterror = TRUE;
 		continue;
 		}

@@ -5,27 +5,27 @@
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are met:
-** 
+**
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
-** 
+**
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
-** 
+**
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 13 March 2003.
 */
 
 /*+ \file
@@ -39,20 +39,29 @@ files.  Includes are handled automatically.
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_ZLIB
+#include <zlib.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
 
 static int nest;			/* current PPD nesting level */
-static FILE *f[MAX_PPD_NEST];		/* the list of open PPD files */
-static char *fname[MAX_PPD_NEST];
-static char *line = (char*)NULL;
-static FILE *saved_errors = NULL;
+
+static char *fname[MAX_PPD_NEST];	/* list of names of open PPD files */
+static char *line = (char*)NULL;	/* storate for the current line */
+static FILE *saved_errors = NULL;	/* STDIO file to send error messages to */
+
+#ifdef HAVE_ZLIB
+static gzFile f[MAX_PPD_NEST];
+#else
+static FILE *f[MAX_PPD_NEST];
+#endif
 
 static int _ppd_open(const char *name)
     {
     const char function[] = "_ppd_open";
-    
+
     if(++nest >= MAX_PPD_NEST)		/* are we too deep? */
 	{
 	if(saved_errors)
@@ -114,7 +123,11 @@ static int _ppd_open(const char *name)
 	}
 
     /* Open the PPD file for reading. */
-    if((f[nest] = fopen(fname[nest], "r")) == (FILE*)NULL )
+    #ifdef HAVE_ZLIB
+    if(!(f[nest] = gzopen(fname[nest], "r")))
+    #else
+    if(!(f[nest] = fopen(fname[nest], "r")))
+    #endif
     	{
 	if(saved_errors)
 	    fprintf(saved_errors, "PPD file \"%s\" does not exist.\n", fname[nest]);
@@ -174,7 +187,7 @@ int ppd_open(const char *name, FILE *errors)
 
 /** Read the next line from the PPD file
 
-Returns a pointer to the next line from the PPD file.  If you want to save anything in the line, 
+Returns a pointer to the next line from the PPD file.  If you want to save anything in the line,
 make a copy of it since it will be overwritten on the next call.
 If we have reached the end
 of the file, return (char*)NULL.
@@ -190,9 +203,17 @@ char *ppd_readline(void)
 
     while(nest >= 0)
 	{
-	while(fgets(line, MAX_PPD_LINE+2, f[nest]) == (char*)NULL)
+	#ifdef HAVE_ZLIB
+	while(!gzgets(f[nest], line, MAX_PPD_LINE+2))
+	#else
+	while(!fgets(line, MAX_PPD_LINE+2, f[nest]))
+	#endif
 	    {
+	    #ifdef HAVE_ZLIB
+	    gzclose(f[nest]);
+	    #else
 	    fclose(f[nest]);
+	    #endif
 	    gu_free(fname[nest]);	/* free the stored file name */
 	    if(--nest < 0)		/* if we just closed the last file, */
 	    	{

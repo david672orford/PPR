@@ -120,11 +120,16 @@ static int do_file(FILE *indexfile, const char filename[])
     char *vendor;
     const char *description;
 
+    /*
+    ** Find a vendor string.  If there was a *Manufacturer defined in the PPD file, use that.
+    ** If not, use the part of the Nickname before the first space or hyphen.  If that doesn't
+    ** work, set vendor to NULL and thus let it be "Other".
+    */
     if(Manufacturer)
 	{
-	vendor = Manufacturer;
+	vendor = gu_strdup(Manufacturer);
 	}
-    else if(NickName && isupper(NickName[0]) && isalpha(NickName[1]) && strchr(NickName, ' '))
+    else if(NickName && strlen(NickName) > 3 && isupper(NickName[0]) && isalpha(NickName[1]) && strchr(NickName, ' '))
 	{
 	vendor = gu_strndup(NickName, strcspn(NickName, " -"));
 	}
@@ -133,6 +138,20 @@ static int do_file(FILE *indexfile, const char filename[])
 	vendor = NULL;
 	}
 
+    /*
+    ** If the vendor name is longer than three letters and is all upper 
+    ** case latin letters, lower case all but the first.
+    */
+    if(vendor && strlen(vendor) > 3 && strspn(vendor, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == strlen(vendor))
+	{
+	int i;
+	for(i = 1; vendor[i]; i++)
+	    vendor[i] = tolower(vendor[i]);
+	}
+
+    /*
+    ** Decide on a descriptive name to display in UI pick lists.
+    */
     if(ShortNickName)
 	description = ShortNickName;
     else if(NickName)
@@ -144,13 +163,16 @@ static int do_file(FILE *indexfile, const char filename[])
     else
     	description = filename;
 
+    /*
+    ** OK, here goes.
+    */
     fprintf(indexfile, "%s:%s:%s\n",
 	filename,
 	vendor ? vendor : "Other",
 	description
 	);
 
-    if(vendor && vendor != Manufacturer)
+    if(vendor)
     	gu_free(vendor);
     }
 

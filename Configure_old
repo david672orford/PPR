@@ -4,7 +4,7 @@
 #if false () { echo }; then unset false; else exec /bin/sh5 "$@"; fi
 
 #
-# mouse:~ppr/src/Configure_new
+# mouse:~ppr/src/Configure_old
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 13 March 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -71,10 +71,10 @@ findprog_prog_path ()
 	do
 	if [ `echo $i | cut -c1` = '/' ]
 	    then
-	    # echo " Trying $i/$1" >&2
+	    # echo "Trying $i/$1" >&2
 	    if [ -x "$i/$1" ]
 		then
-		echo "  Found $i/$1" >&2
+		echo "Found $i/$1" >&2
 		echo "$i/$1"
 		return
 		fi
@@ -84,306 +84,216 @@ findprog_prog_path ()
     }
 
 #
-# Help screen
-#
-help_page ()
-{
-cat - <<EndOfHelp
-./Configure
-	--prefix=
-	--sysconfdir=
-	--bindir=
-	--libdir=
-	--datadir=
-	--spooldir=
-	--x11bindir=
-	--with-gcc
-	--without-gcc
-	--user-ppr=
-	--user-pprwww=
-	--group-ppr=
-	--with-gdbm
-	--without-gdbm
-	--with-tdb
-	--without-tdb
-	--with-gettext
-	--without-gettext
-	--help )
-
-EndOfHelp
-}
-
-#
 # Parse the command line options.
 #
-opt_prefix="/usr"
-opt_sysconfdir=""
-opt_bindir=""
-opt_libdir=""
-opt_datadir=""
-opt_spooldir=""
-opt_prompt_paths=1
-opt_with_gcc=1
-opt_prompt_compiler=1
-opt_user_ppr="ppr"
-opt_user_pprwww="pprwww"
-opt_group_ppr="ppr"
-opt_prompt_users=1
-opt_with_gdbm=1
-opt_prompt_gdbm=1
-opt_with_tdb=1
-opt_prompt_tdb=1
-opt_with_gettext=1
-opt_prompt_gettext=1
+opt_prefix=""
 for opt in $*
     do
     case $opt in
 	--prefix=* )
 	    opt_prefix=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
     	    ;;
-	--sysconfdir=* )
-	    opt_sysconfdir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--bindir=* )
-	    opt_bindir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--libdir=* )
-	    opt_libdir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--datadir=* )
-	    opt_datadir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--spooldir=* )
-	    opt_spooldir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--x11bindir=* )
-	    opt_x11bindir=`echo $opt | cut -d= -f2`
-	    opt_prompt_paths=0
-    	    ;;
-	--with-gcc )
-	    opt_with_gcc=1
-	    opt_prompt_compiler=0
-	    ;;
-	--without-gcc )
-	    opt_with_gcc=0
-	    opt_prompt_compiler=0
-	    ;;
-	--user-ppr=* )
-	    opt_user_ppr=`echo $opt | cut -d= -f2`
-	    opt_prompt_users=0
-	    ;;
-	--user-pprwww=* )
-	    opt_user_pprwww=`echo $opt | cut -d= -f2`
-	    opt_prompt_users=0
-	    ;;
-	--group-ppr=* )
-	    opt_group_ppr=`echo $opt | cut -d= -f2`
-	    opt_prompt_users=0
-	    ;;
-	--with-gdbm )
-	    opt_with_gdbm=1
-	    opt_prompt_gdbm=0
-	    ;;
-	--without-gdbm )
-	    opt_with_gdbm=0
-	    opt_prompt_gdbm=0
-	    ;;
-	--with-tdb )
-	    opt_with_tdb=1
-	    opt_prompt_tdb=0
-	    ;;
-	--without-tdb )
-	    opt_with_tdb=0
-	    opt_prompt_tdb=0
-	    ;;
-	--with-gettext )
-	    opt_with_gettext=1
-	    opt_prompt_gettext=0
-	    ;;
-	--without-gettext )
-	    opt_with_gettext=0
-	    opt_prompt_gettext=0
-	    ;;
-	--help )
-	    help_page
-	    exit 0
-	    ;;
 	* )
 	    echo "Unrecognized option: $opt"
 	    exit 1
 	    ;;
     esac
     done
-if [ -z "$opt_sysconfdir" ]
-    then
-    if [ "$opt_prefix" = "/usr" ]
-	then
-	opt_sysconfdir="/etc"
-	else
-	opt_sysconfdir="$opt_prefix/etc"
-	fi
-    fi
-opt_bindir=${opt_bindir:-$opt_prefix/bin}
-opt_libdir=${opt_libdir:-$opt_prefix/lib}
-opt_datadir=${opt_datadir:-$opt_prefix/share}
-opt_spooldir=${opt_spooldir:-/var/spool}
-opt_x11bindir=${opt_x11bindir:-/usr/bin/X11}
 
 #
-# Try to detect the operating system.
+# Present the user with a menu
 #
-echo "Detecting OS..."
-case `uname -s` in
-    ATTWGS )			# dubious
-	SYSTEM="ATTWGS"
-	DESCRIPTION="AT&T WGS Unix"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    Linux )
-	SYSTEM="LINUX"
-	DESCRIPTION="Linux"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    FreeBSD )
-	SYSTEM="FREEBSD"
-	DESCRIPTION="FreeBSD 3.1R"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    SunOS )
-	major=`uname -r | cut -d. -f1`
-	minor=`uname -r | cut -d. -f2`
-	case $major in
-	    4 )
-		SYSTEM="SUNOS4"
-		DESCRIPTION="SunOS 4.1.3_U1"
+clear
+echo
+echo "What operating system is this?"
+echo
+echo "1) System V Release 4 for AT&T WGS series 80[34]86"
+echo "2) SunOS 5.0 thru 5.5.1 (Solaris 2.0 thru 2.5.1) (see also 12)"
+echo "3) Linux (Principal development platform) *"
+echo "4) NetBSD 1.0 (Probably broken)"
+echo "5) SunOS 4.1.3_U1"
+echo "6) OSF/1 3.2 or Digital Unix 4.0 (DEC Alpha) *"
+echo "7) IRIX 6.3 (SGI) *"
+echo "8) Cygwin 1.1 with MS-Windows NT 4.0 (Doesn't work yet) *"
+echo "9) AT&T UWIN 2.9 with MS-Windows NT 4.0 (Doesn't work yet) *"
+echo "10) HP-UX 10.2 *"
+echo "11) ULTRIX 4.4 RISC *"
+echo "12) SunOS 5.6--5.8 (Solaris 2.6--8.0)"
+echo "13) FreeBSD 3.1R, 4.3R"
+echo "14) Darwin (Mac OS X)"
+echo
+echo " * See INSTALL.txt for notes on this port."
+echo
+$NECHO -n "? "
+read answer
+
+#
+# If the answer was valid, set the SYSTEM variable to accord
+# with the answer.
+#
+case "$answer" in
+	1 )
+		SYSTEM="ATTWGS"
+		DESCRIPTION="AT&T WGS Unix"
+		ACTUAL_SYSTEM=""
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
-	    5 )
-		if [ $minor -lt 6 ]
-		    then
-		    SYSTEM="SUNOS_5"
-		    DESCRIPTION="SunOS 5.0 thru 5.5.1"
-		    CC_NATIVE=0
-		    CC_GCC=1
-		    else
-		    SYSTEM="SUNOS_5_6"
-		    DESCRIPTION="SunOS 5.6 thru 5.8"
-		    CC_NATIVE=0
-		    CC_GCC=1
-		    fi
+	2 )
+		SYSTEM="SUNOS_5"
+		DESCRIPTION="SunOS 5.0 thru 5.5.1"
+		ACTUAL_SYSTEM=`uname -sr | sed -e 's/^SunOS 5\..*$/SUNOS_5/'`
+		CC_NATIVE=0
+		CC_GCC=1
 		;;
-	    * )
-		echo "Unrecognized SunOS major version $major."
+	3 )
+		SYSTEM="LINUX"
+		DESCRIPTION="Linux"
+		ACTUAL_SYSTEM=`uname -s | sed -e 's/^Linux$/LINUX/'`
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	4 )
+		SYSTEM="NETBSD"
+		DESCRIPTION="NetBSD 1.0"
+		ACTUAL_SYSTEM=""
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	5 )
+		SYSTEM="SUNOS4"
+		DESCRIPTION="SunOS 4.1.3_U1"
+		ACTUAL_SYSTEM=""
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	6 )
+		SYSTEM="OSF1"
+		DESCRIPTION="OSF/1 3.2 or Digital Unix 4.0"
+		ACTUAL_SYSTEM=`uname -s`
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+    	7 )
+    	    	SYSTEM="IRIX"
+		DESCRIPTION="IRIX 6.3"
+    	    	ACTUAL_SYSTEM=`uname -s`
+		CC_NATIVE=1
+		CC_GCC=1
+    	    	;;
+	8 )
+		SYSTEM="CYGWIN"
+		DESCRIPTION="Cygwin 1.x"
+		ACTUAL_SYSTEM=""
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	9 )
+		SYSTEM="UWIN"
+		DESCRIPTION="UWIN 2.x"
+		ACTUAL_SYSTEM=""
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+	10 )
+		SYSTEM="HPUX"
+		DESCRIPTION="HPUX 10.2"
+		ACTUAL_SYSTEM=`uname -s | tr -d '-'`
+		CC_NATIVE=1
+		CC_GCC=1
+		;;
+	11 )
+		SYSTEM="ULTRIX"
+		DESCRIPTION="ULTRIX 4.4 RISC"
+		ACTUAL_SYSTEM=`uname -s | tr -d '-'`
+		CC_NATIVE=1
+		CC_GCC=0
+		;;
+	12 )
+		SYSTEM="SUNOS_5_6"
+		DESCRIPTION="SunOS 5.6 thru 5.8"
+		ACTUAL_SYSTEM=`uname -sr | sed -e 's/^SunOS 5\.[6-9]$/SUNOS_5_6/'`
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	13 )
+		SYSTEM="FREEBSD"
+		DESCRIPTION="FreeBSD 3.1R"
+		ACTUAL_SYSTEM=`uname -s | sed -e 's/^FreeBSD/FREEBSD/'`
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	14 )
+		SYSTEM="DARWIN"
+		DESCRIPTION="Darwin (Mac OS X)"
+		ACTUAL_SYSTEM=`uname -s | tr a-z A-Z`
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	* )
+		echo "That is not a valid choice."
 		exit 1
 		;;
-	    esac
-	;;
-    OSF1 )
-	SYSTEM="OSF1"
-	DESCRIPTION="OSF/1 3.2 or Digital Unix 4.0"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    IRIX )
-	SYSTEM="IRIX"
-	DESCRIPTION="IRIX 6.3"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    NetBSD )
-	SYSTEM="NETBSD"
-	DESCRIPTION="NetBSD 1.0"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    Cygwin )
-	SYSTEM="CYGWIN"
-	DESCRIPTION="Cygwin 1.x"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    UWIN )
-	SYSTEM="UWIN"
-	DESCRIPTION="UWIN 2.x"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    HP-UX )
-	SYSTEM="HPUX"
-	DESCRIPTION="HPUX 10.2"
-	CC_NATIVE=1
-	CC_GCC=1
-	;;
-    ULTRIX )
-	SYSTEM="ULTRIX"
-	DESCRIPTION="ULTRIX 4.4 RISC"
-	ACTUAL_SYSTEM=`uname -s | tr -d '-'`
-	CC_NATIVE=1
-	CC_GCC=0
-	;;
-    Darwin )
-	SYSTEM="DARWIN"
-	DESCRIPTION="Darwin (Mac OS X)"
-	CC_NATIVE=0
-	CC_GCC=1
-	;;
-    * )
-	echo "No rule for OS `uname -s`.  Please fix this script or use ./Configure instead."
-	exit 1
-	;;
-    esac
+	esac
 
-echo "  OS is $SYSTEM."
+if [ -n "$ACTUAL_SYSTEM" -a "$SYSTEM" != "$ACTUAL_SYSTEM" ]
+  then
+  echo
+  echo "This system does not appear to be a $SYSTEM system,"
+  echo "it appears to be a $ACTUAL_SYSTEM system."
+  echo
+  echo "Press RETURN to continue anyway."
+  read junk
+  fi
+
+clear
+echo "Good, will set up to compile for operating system \"$SYSTEM\"."
+echo
 
 #
-# If both GCC and a native compiler are available and the user hasn't
-# specified a preference on the command line, ask now, otherwise
-# pick
-if [ $opt_prompt_compiler -ne 0 -a $CC_GCC -ne 0 -a $CC_NATIVE -ne 0 ]
+# If this is a system for which we support the native C compiler,
+# ask the user if he wants to use it.
+#
+if [ $CC_GCC -ne 0 -a $CC_NATIVE -eq 0 ]
     then
-    answer="?"
-    while [ "$answer" = "?" ]
-	do
-	$NECHO -n "Use native cc? "
-	read answer
-	case "$answer" in
-	    [yY]* )
-		answer="yes"
-		;;
-	    [nN]* )
-		answer="no"
-		;;
-	    * )
-		answer="?";
-		;;
-	    esac
-	done
-    NATIVE_CC=$answer
+    NATIVE_CC="no"
+    fi
 
-    else
+if [ $CC_GCC -eq 0 -a $CC_NATIVE -ne 0 ]
+    then
+    NATIVE_CC="yes"
+    fi
 
-    if [ $CC_GCC -ne 0 -a $opt_with_gcc -ne 0 ]
-	then
-	NATIVE_CC="no"
-	else
-	if [ $CC_NATIVE -ne 0 ]
-	    then
+if [ $CC_NATIVE -ne 0 -a $CC_GCC -ne 0 ]
+  then
+  echo
+  echo "Normally, GCC is used to compile PPR.  For this operating system"
+  echo "you have the option of using the C compiler that comes with the"
+  echo "operating system (if you have it)."
+  echo
+  NATIVE_CC="?"
+  while [ "$NATIVE_CC" = "?" ]
+    do
+    $NECHO -n "Use native cc? "
+    read NATIVE_CC
+    case "$NATIVE_CC" in
+	[yY]* )
 	    NATIVE_CC="yes"
-	    else
-	    echo "No supported C compiler found."
-	    exit 1
-	    fi
-	fi
+	    ;;
+	[nN]* )
+	    NATIVE_CC="no"
+	    ;;
+	* )
+	    NATIVE_CC="?";
+	    ;;
+	esac
+    done
+  fi
+
+if [ $CC_GCC -eq 0 -a $CC_NATIVE -eq 0 ]
+    then
+    echo "Error in Configure, no compiler!"
+    exit 1
     fi
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -392,25 +302,32 @@ if [ "$NATIVE_CC" = "yes" ]
   else
   echo "GCC will be used."
   fi
+echo
 
 #
 # Create a list of default install locations.
 #
-HOMEDIR=$opt_libdir/ppr
-SHAREDIR=$opt_datadir/ppr
-CONFDIR=$opt_sysconfdir/ppr
-VAR_SPOOL_PPR=$opt_spooldir/ppr
-TEMPDIR=/tmp
-SYSBINDIR=$opt_bindir
-XWINBINDIR=$opt_x11bindir
+if [ -n "$opt_prefix" ]
+then
+    HOMEDIR=$opt_prefix/lib/ppr
+    SHAREDIR=$opt_prefix/share/ppr
+    CONFDIR=$opt_prefix/etc/ppr
+    VAR_SPOOL_PPR=$opt_prefix/var/ppr
+    TEMPDIR=/tmp
+    SYSBINDIR=$opt_prefix/bin
+else
+    HOMEDIR=/usr/lib/ppr
+    SHAREDIR=/usr/share/ppr
+    CONFDIR=/etc/ppr
+    VAR_SPOOL_PPR=/var/spool/ppr
+    TEMPDIR=/tmp
+    SYSBINDIR=/usr/bin
+fi
 
 #
 # Ask the user if he would like to change any of the PPR
 # install directories.
 #
-if [ $opt_prompt_paths -ne 0 ]
-then
-
 echo
 echo "Please choose where to install PPR.  It is suggested that"
 echo "you accept the defaults as all the documentation assumes"
@@ -447,6 +364,46 @@ read answer
 if [ -n "$answer" ]; then SYSBINDIR="$answer"; fi
 echo
 
+#
+# Figure out which user and group names to use.
+#
+echo
+echo "Please choose the users and groups that will own PPR files and processes."
+echo "These users and groups should be used only by PPR.  They need not exist"
+echo "right now, they can be created later."
+echo
+
+# These are the values in global_defines.h.
+DEFAULT_USER_PPR="ppr"
+DEFAULT_GROUP_PPR="ppr"
+DEFAULT_USER_PPRWWW="pprwww"
+
+# What if the user presses <RETURN> in response to the group prompt?
+if [ $SYSTEM = "UWIN" -o $SYSTEM = "CYGWIN" ]
+    then
+    RETURN_GROUP_PPR="pprgrp"
+    else
+    RETURN_GROUP_PPR=$DEFAULT_GROUP_PPR
+    fi
+
+$NECHO -n "PPR user [$DEFAULT_USER_PPR]: "
+read USER_PPR
+if [ -z "$USER_PPR" ]; then USER_PPR=$DEFAULT_USER_PPR; fi
+echo
+
+$NECHO -n "PPR group [$RETURN_GROUP_PPR]: "
+read GROUP_PPR
+if [ -z "$GROUP_PPR" ]; then GROUP_PPR=$RETURN_GROUP_PPR; fi
+echo
+
+$NECHO -n "PPR WWW user [$DEFAULT_USER_PPRWWW]: "
+read USER_PPRWWW
+if [ -z "$USER_PPRWWW" ]; then USER_PPRWWW=$DEFAULT_USER_PPRWWW; fi
+echo
+
+#
+# Ask where the X Windows binaries are
+#
 echo
 echo "You must indicate the directory where X-Windows binaries such as"
 echo "xterm may be found.  It is recomended that if the default is not"
@@ -454,122 +411,46 @@ echo "correct, you accept it anyway and make a symbolic link from"
 echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
 echo "etc.) to /usr/bin/X11."
 echo
-$NECHO -n "X-Windows bin [$XWINBINDIR]: "
-read answer
-if [ -n "$answer" ]; then XWINBINDIR=$answer; fi
+$NECHO -n "X-Windows bin [/usr/bin/X11]: "
+read XWINBINDIR
+if [ -z "$XWINBINDIR" ]; then XWINBINDIR="/usr/bin/X11"; fi
 echo
-
-fi
-
-echo "\$CONFDIR=$CONFDIR"
-echo "\$HOMEDIR=$HOMEDIR"
-echo "\$SHAREDIR=$SHAREDIR"
-echo "\$VAR_SPOOL_PPR=$VAR_SPOOL_PPR"
-echo "\$TEMPDIR=$TEMPDIR"
-echo "\$SYSBINDIR=$SYSBINDIR"
-echo "\$XWINBINDIR=$XWINBINDIR"
-
-#========================================================================
-# Figure out which user and group names to use.
-#========================================================================
-
-# These defaults are the values in global_defines.h.
-USER_PPR=${opt_user_ppr:-ppr}
-USER_PPRWWW=${opt_user_pprwww:-pprwww}
-GROUP_PPR=$opt_group_ppr
-
-# MS-Windows NT doesn't allow a user and a group with the same name!
-if [ $GROUP_PPR = "" ]
-    then
-    if [ $SYSTEM = "UWIN" -o $SYSTEM = "CYGWIN" ]
-	then
-	GROUP_PPR="pprgrp"
-	else
-	GROUP_PPR="ppr"
-	fi
-    fi
-
-if [ $opt_prompt_users -ne 0 ]
-then
-
-echo
-echo "Please choose the users and groups that will own PPR files and processes."
-echo "These users and groups should be used only by PPR.  They need not exist"
-echo "right now, they can be created later."
-echo
-
-$NECHO -n "PPR user [$USER_PPR]: "
-read answer
-if [ -n "$answer" ]; then USER_PPR=$answer; fi
-echo
-
-$NECHO -n "PPR group [$GROUP_PPR]: "
-read answer
-if [ -n "$answer" ]; then GROUP_PPR=$answer; fi
-echo
-
-$NECHO -n "PPR WWW user [$USER_PPRWWW]: "
-read answer
-if [ -n "$answer" ]; then USER_PPRWWW=$answer; fi
-echo
-
-fi
-
-echo "\$USER_PPR=$USER_PPR"
-echo "\$USER_PPRWWW=$USER_PPRWWW"
-echo "\$GROUP_PPR=$GROUP_PPR"
 
 #
 # Ask about GDBM:
 #
-if [ $opt_prompt_gdbm -gt 0 ]
-then
-
 echo
 echo "PPR can use GNU dbm (GDBM).  You can obtain GDBM from"
 echo "<http://www.gnu.org/directory/gdbm.html>.  Please note"
 echo "that PPR binaries linked with GDBM must be distributed in accord"
 echo "with the terms of the GPL."
 echo
-echo "Do you have and wish to use GDBM?"
+echo "Do you have GDBM?"
 echo
 echo "(If you say no, the user database will not work.  See the"
 echo "ppuser(8) man page for information about this feature."
 echo "Almost all users can do without this feature.)"
 echo
-answer="?"
-while [ "$answer" = "?" ]
+USE_GDBM="?"
+while [ "$USE_GDBM" = "?" ]
     do
     $NECHO -n "Use gdbm? [yes] "
-    read answer
-    case "$answer" in
+    read USE_GDBM
+    case "$USE_GDBM" in
 	[yY]* )
-	    answer="yes"
+	    USE_GDBM="yes"
 	    ;;
 	[nN]* )
-	    answer="no"
+	    USE_GDBM="no"
 	    ;;
 	'' )
-	    answer="yes"
+	    USE_GDBM="yes"
 	    ;;
 	* )
-	    answer="?";
+	    USE_GDBM="?";
 	    ;;
 	esac
 done
-echo
-USE_GDBM=$answer
-
-else
-
-if [ $opt_with_gdbm -gt 0 ]
-    then
-    USE_GDBM="yes"
-    else
-    USE_GDBM="no"
-    fi
-
-fi
 
 if [ "$USE_GDBM" = "yes" ]
   then
@@ -577,57 +458,42 @@ if [ "$USE_GDBM" = "yes" ]
   else
   echo "PPR features which require GDBM will be disabled."
   fi
+echo
 
 #
 # Ask about TDB:
 #
-if [ $opt_prompt_tdb -ne 0 ]
-then
-
 echo
 echo "PPR can use the Trivial Database Library (TDB).  TDB is a library"
 echo "used internaly by Samba.  You can obtain it in library form from"
 echo "<http://sourceforge.net/projects/tdb/>.  Please note that PPR linked"
 echo "with TDB must be distributed in accord with the terms of the GPL."
 echo
-echo "Do you have and wish to use TDB?"
+echo "Do you have TDB?"
 echo
 echo "(If you say no, then automatic Samba client printer driver download"
 echo "will not work."
 echo
-answer="?"
-while [ "$answer" = "?" ]
+USE_TDB="?"
+while [ "$USE_TDB" = "?" ]
     do
     $NECHO -n "Use tdb? [yes] "
-    read answer
-    case "$answer" in
+    read USE_TDB
+    case "$USE_TDB" in
 	[yY]* )
-	    answer="yes"
+	    USE_TDB="yes"
 	    ;;
 	[nN]* )
-	    answer="no"
+	    USE_TDB="no"
 	    ;;
 	'' )
-	    answer="yes"
+	    USE_TDB="yes"
 	    ;;
 	* )
-	    answer="?";
+	    USE_TDB="?";
 	    ;;
 	esac
 done
-echo
-USE_TDB=$answer
-
-else
-
-if [ $opt_with_tdb -gt 0 ]
-    then
-    USE_TDB="yes"
-    else
-    USE_TDB="no"
-    fi
-
-fi
 
 if [ "$USE_TDB" = "yes" ]
   then
@@ -635,13 +501,11 @@ if [ "$USE_TDB" = "yes" ]
   else
   echo "PPR features which require TDB will be disabled."
   fi
+echo
 
 #
 # Ask about internationalized of messages
 #
-if [ $opt_prompt_gettext -gt 0 ]
-then
-
 echo
 echo "Do you want support for translation of messages to non-English languages?"
 echo "This option requires the GNU Gettext package.  Currently, only a partial"
@@ -649,58 +513,41 @@ echo "French translation is provided.  If you would like to contribute translati
 echo "into additional languages, compile with this option on and read"
 echo "po/README.txt for instructions."
 echo
-answer="?"
-while [ "$answer" = "?" ]
+INTERNATIONAL="?"
+while [ "$INTERNATIONAL" = "?" ]
     do
 
     # prompt
     $NECHO -n "Include international messages support? [yes] "
-    read answer
+    read INTERNATIONAL
 
-    case "$answer" in
+    # if yes
+    case "$INTERNATIONAL" in
 	[yY]* )
-	    answer="yes"
+	    INTERNATIONAL=""	# don't comment out
 	    ;;
 	[nN]* )
-	    answer="no"
+	    INTERNATIONAL="#"	# comment out
 	    ;;
 	'' )
-	    answer="yes"
+	    INTERNATIONAL=""	# don't comment out
 	    ;;
 	* )
-	    answer="?"
+	    INTERNATIONAL="?"
 	    ;;
 	esac
     done
-if [ $answer = "yes" ]
-    then
-    INTERNATIONAL=""	# don't comment out
-    else
-    INTERNATIONAL="#"	# comment out
-    fi
-
-echo
-
-else
-if [ $opt_with_gettext -gt 0 ]
-    then
-    INTERNATIONAL=""
-    else
-    INTERNATIONAL="#"
-    fi
-fi
-
 if [ -z "$INTERNATIONAL" ]
     then
-    echo "GNU Gettext will be used."
-    else
-    echo "GNU Gettext won't be used."
+    echo "Will use gettext()."; else echo "Won't use gettext()."
     fi
+echo
 
 #
 # Look for various AppleTalk libraries.  Accept the first seemingly complete
 # one we find.
 #
+echo
 ATALKTYPE=""
 ATALKTYPE_LONG="None"
 ATALKLIBS=""
@@ -713,12 +560,12 @@ for prefix in /usr/local /usr
     do
     if [ -f "$prefix/lib/libnatali.a" ]
 	then
-	echo "    Found \"$prefix/lib/libnatali.a\"."
+	echo "Found \"$prefix/lib/libnatali.a\"."
 	for prefix2 in /usr/local/atalk /usr/local /usr
 	    do
 	    if [ -f "$prefix2/lib/libatalk.a" ]
 		then
-		echo "    Found \"$prefix2/lib/libatalk.a\"."
+		echo "Found \"$prefix2/lib/libatalk.a\"."
 		ATALKTYPE="ali"
 		ATALKTYPE_LONG="NATALI and Netatalk"
 		ATALKFLAGS="-I $prefix/include -I $prefix2/include"
@@ -743,7 +590,7 @@ for prefix in /usr/local /usr
     do
     if [ -f "$prefix/lib/libcap.a" ]
 	then
-	echo "    Found \"$prefix/lib/libcap.a\"."
+	echo "Found \"$prefix/lib/libcap.a\"."
 	if [ ! -d "$prefix/include/netat" ]
 	    then
 	    echo "CAP include directory at \"$prefix/include/netat\" is missing."
@@ -775,14 +622,17 @@ if [ -f /usr/lib/libanp.so ]
     ATALKFLAGS=""
     ATALKLIBS="-lanp"
     fi
+echo
 fi
 
+echo
 if [ "$ATALKTYPE" = "" ]
     then
-    echo "  No AppleTalk."
+    echo "No AppleTalk."
     else
-    echo "  Will use $ATALKTYPE_LONG AppleTalk."
+    echo "Will use $ATALKTYPE_LONG AppleTalk."
     fi
+echo
 
 #
 # See if we can find uncompress or gunzip
@@ -794,6 +644,7 @@ if [ -z "$GUNZIP" ]
     else
     UNCOMPRESS=""
     fi
+echo
 
 #
 # Find the Perl interpreter.
@@ -803,6 +654,7 @@ if [ -z "$PERL" ]
     then
     PERL="/usr/bin/perl"
     fi
+echo
 
 #
 # If we will be using GCC, devise a set of options
@@ -814,6 +666,8 @@ if [ $NATIVE_CC = "no" ]
 
   GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -O2"
   PROCESSOR=`uname -m`
+  #GCC_VERSION=`gcc --version`
+  #GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^egcs-//'`
   GCC_VERSION=`gcc --version | head -1`
   GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
 
@@ -843,7 +697,7 @@ if [ $NATIVE_CC = "no" ]
 	;;
     i486 )
 	echo "  Selecting i486 code generation."
-	GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+	GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
 	;;
     i[56]86 )
 	case $GCC_VERSION_SHORT in
@@ -853,7 +707,7 @@ if [ $NATIVE_CC = "no" ]
 	        ;;
 	    * )
 		echo "  Selecting i486 code generation because $PROCESSOR may not be available."
-		GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+		GCC_CFLAGS="$GCC_CFLAGS -m486 -fomit-frame-pointer"
 		;;
 	    esac
 	;;
@@ -872,7 +726,7 @@ echo "Building Makefile.conf..."
 exec 3>Makefile.conf
 
 #========================================================================
-echo "  Building header..."
+echo "    Building header..."
 cat >&3 <<===EndOfHere10===
 #
 # ~ppr/src/Makefile.conf
@@ -936,7 +790,7 @@ if [ $HOMEDIR = "/usr/lib/ppr" -a $SHAREDIR = "/usr/share/ppr" \
 	then
 	$EECHO "#\c" >&3
 	fi
-echo 'CHANGE=-DHOMEDIR=\"$(HOMEDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DCONFDIR=\"$(CONFDIR)\" -DVAR_SPOOL_PPR=\"$(VAR_SPOOL_PPR)\" -DTEMPDIR=\"$(TEMPDIR)\" -DSYSBINDIR=\"$(SYSBINDIR)\" -DXWINBINDIR=\"$(XWINBINDIR)\"' >&3
+echo 'CHANGE=-DHOMEDIR=\"$(HOMEDIR)\" -DSHAREDIR=\"$(SHAREDIR)\" -DCONFDIR=\"$(CONFDIR)\" -DVAR_SPOOL_PPR=\"$(VAR_SPOOL_PPR)\" -DTEMPDIR=\"$(TEMPDIR)\" -DSYSBINDIR=\"$(SYSBINDIR)\" -DXWINBIN]DIR=\"$(XWINBINDIR)\"' >&3
 echo >&3
 
 cat >&3 <<===EndOfHere20===
@@ -955,7 +809,7 @@ GROUP_PPR=$GROUP_PPR
 USER_PPRWWW=$USER_PPRWWW
 ===EndOfHere20===
 
-if [ $USER_PPR = "ppr" -a $GROUP_PPR = "ppr" -a $USER_PPRWWW = "pprwww" ]
+if [ $USER_PPR = $DEFAULT_USER_PPR -a $GROUP_PPR = $DEFAULT_GROUP_PPR -a $USER_PPRWWW = $DEFAULT_USER_PPRWWW ]
     then
     $EECHO "#\c" >&3
     fi
@@ -1078,7 +932,7 @@ CHMOD=chmod
 ===EndOfHere50===
 
 #========================================================================
-echo "  Selecting a system dependent section..."
+echo "    Selecting a system dependent section..."
 
 cat >&3 <<===EndofHere6===
 #============================================================
@@ -1091,7 +945,7 @@ cat >&3 <<===EndofHere6===
 #============================================================
 if [ $SYSTEM = "ATTWGS" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSYSATTWGS===
 MAKE=make
 MAKEFLAGS=
@@ -1121,7 +975,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS5===
 MAKE=make
 MAKEFLAGS=
@@ -1147,7 +1001,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5_6" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS56===
 MAKE=make
 MAKEFLAGS=
@@ -1173,7 +1027,7 @@ fi
 #============================================================
 if [ $SYSTEM = "NETBSD" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndNETBSD===
 MAKE=gmake
 MAKEFLAGS=
@@ -1199,7 +1053,7 @@ fi
 #============================================================
 if [ $SYSTEM = "LINUX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndLINUX===
 MAKE=make
 MAKEFLAGS=--no-print-directory
@@ -1240,7 +1094,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS4" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS4===
 MAKE=make
 MAKEFLAGS=
@@ -1266,7 +1120,7 @@ fi
 #============================================================
 if [ $SYSTEM = "OSF1" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndOSF1==='
 MAKE=make
 MAKEFLAGS=
@@ -1308,7 +1162,7 @@ fi
 #============================================================
 if [ $SYSTEM = "IRIX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
 MAKE=make
 MAKEFLAGS=
@@ -1357,7 +1211,7 @@ fi
 #============================================================
 if [ $SYSTEM = "CYGWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndCYGWIN===
 .SUFFIXES: .exe
 
@@ -1388,7 +1242,7 @@ fi
 #============================================================
 if [ $SYSTEM = "UWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndUWIN1===
 .SUFFIXES: .exe
 
@@ -1437,7 +1291,7 @@ fi
 #============================================================
 if [ $SYSTEM = "HPUX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndHPUX1===
 MAKE=make
 MAKEFLAGS=
@@ -1481,7 +1335,7 @@ fi
 #============================================================
 if [ $SYSTEM = "ULTRIX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndULTRIX1===
 MAKE=s5make
 MAKEFLAGS=
@@ -1530,7 +1384,7 @@ fi
 #============================================================
 if [ $SYSTEM = "DARWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
+echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndDarwin===
 MAKE=make
 MAKEFLAGS=
@@ -1555,7 +1409,7 @@ fi
 
 
 #============================================================
-echo "  Emitting make rules..."
+echo "      Emitting make rules"
 cat >&3 <<'===MakeRules==='
 #==============================================================
 # Make Rules
@@ -1585,8 +1439,8 @@ cat >&3 <<'===MakeRules==='
 ===MakeRules===
 
 
-echo "  Selecting AppleTalk support..."
-echo "    $ATALKTYPE_LONG"
+echo "    Selecting AppleTalk support..."
+echo "      $ATALKTYPE_LONG"
 cat >&3 <<===EndATALK1===
 
 #==============================================================
@@ -1621,7 +1475,7 @@ fi
 # End of AppleTalk settings.
 #====================================================
 
-echo "  Emitting trailer..."
+echo "    Emitting trailer..."
 cat >&3 <<===EndEOF===
 
 # end of file
@@ -1632,9 +1486,11 @@ cat >&3 <<===EndEOF===
 # End of Makefile.conf builder code.
 #========================================================================
 
-echo
-echo "Done.  Take a look at Makefile.conf if you like, then run \"make\"."
-echo
+# We are done
+echo "Done."
 
+echo
+echo "Take a look at Makefile.conf if you like, then run \"make\"."
+echo
 exit 0
 

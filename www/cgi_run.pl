@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 February 2003.
+# Last modified 13 March 2003.
 #
 
 #===============================================================
@@ -207,7 +207,6 @@ sub run_print
 
     foreach my $arg (@command_list)
     	{
-print STDERR ":$arg\n";
 	# If the argument isn't tiny and it would cause the line to become 
 	# too long, start a new indented line.
 	if($total_length > 4 && ($total_length + 1 + length($arg)) >= 70)

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/ppd_select.pl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 August 2002.
+# Last modified 13 March 2003.
 #
 
 defined($VAR_SPOOL_PPR) || die;
@@ -38,6 +38,7 @@ defined($PPDDIR) || die;
 sub ppd_list
     {
     my @list = ();
+
     if(open(P, "$VAR_SPOOL_PPR/ppdindex.db"))
 	{
 	while(my $line = <P>)
@@ -45,21 +46,25 @@ sub ppd_list
 	    next if($line =~ /^#/);
 	    chomp $line;
 	    my @fields = (split(/:/, $line));	# filename, manufacturer, description
-	    $fields[0] =~ s#^$PPDDIR/##;	# reduce clutter
+	    next if($fields[1] eq "PPR");	# these aren't for printers
+	    $fields[0] =~ s#^$PPDDIR/##;	# reduce clutter by removing PPR PPD Directory name
 	    push(@list, \@fields);
 	    }
 	close(P) || die $!;
 	}
+
     else
 	{
 	opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
 	while(my $file = readdir(P))
 	    {
 	    next if($file =~ /^\./);
+	    next if($file =~ /^PPR Generic/);
 	    push(@list, [$file, "", $file]);
 	    }
 	closedir(P) || die $!;
 	}
+
     @list = sort { my $x = ($a->[1] cmp $b->[1]); if($x) { $x } else {$a->[2] cmp $b->[2]} } @list;
     return @list;
     }

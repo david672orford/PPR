@@ -1,17 +1,32 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/misc/ppr-xfm.sh
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 June 1999.
+# Last modified 13 March 2003.
 #
 
 #
@@ -23,21 +38,26 @@
 # xmessage if it is available and xterm, sh, and echo if it is not.
 #
 
-# Save the printer name in a variable sinche we
+# Save the printer name in a variable since we
 # will use shift which will destroy the origional $1.
 PRINTER="$1"
+shift
 
 # If we do not have at least two parameters,
 # then we are a queue display program.
-if [ -z "$PRINTER" -o -z "$2" ]
+if [ -z "$1" ]
     then
-    xterm -title "$1's queue" \
+    if [ -z "$PRINTER" ]
+	then
+	PRINTER="all"
+	fi
+    xterm -title "$PRINTER's queue" \
 	-e /bin/sh -c "while true
 		do
 		clear
-		ppop status $1
+		ppop status $PRINTER
 		echo
-		ppop list $1
+		ppop list $PRINTER
 		echo
 		echo \"Please press control-C when you want to remove this window.\"
 		sleep 5
@@ -46,10 +66,10 @@ if [ -z "$PRINTER" -o -z "$2" ]
     fi
 
 # In this loop, we process each file.
-while [ -n "$2" ]
+while [ -n "$1" ]
     do
     # Run ppr on this file, capturing the output.
-    OUTPUT=`ppr -d $PRINTER -C "$2" -m xwin -r "$DISPLAY" -w log "$2" 2>&1`;
+    OUTPUT=`ppr -d $PRINTER -C "$1" -m xwin -r "$DISPLAY" -w log "$1" 2>&1`;
 
     # If there was an error, print it using xmessage if we have it,
     # if not, pass a shell script to xterm.
@@ -59,12 +79,12 @@ while [ -n "$2" ]
 	    then
 	    echo "$OUTPUT" \
 		| xmessage -geometry +100+100 \
-			-title "Printing Errors For \"$2\""\
+			-title "Printing Errors For \"$1\""\
 			-default okay -file -
 	    else
 	    xterm \
 		-geometry 80x10+100+100 -sb \
-		-title "Printing Errors for \"$2\"" \
+		-title "Printing Errors for \"$1\"" \
 		-e /bin/sh -c "echo \"$OUTPUT\"; echo; echo 'Please press RETURN to clear this message.'; read x"
 	    fi
 	fi

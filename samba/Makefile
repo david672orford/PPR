@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/samba/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 October 2002.
+# Last modified 13 March 2003.
 #
 
 include ../Makefile.conf
@@ -58,7 +58,7 @@ OBJS_PPR2SAMBA=ppr2samba.$(OBJ) \
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT)
 ppr2samba$(DOTEXE): $(OBJS_PPR2SAMBA)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS_PPR2SAMBA) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS_PPR2SAMBA) $(INTLLIBS) $(ZLIBLIBS)
 
 OBJS_SAMBAPRINT=sambaprint.$(OBJ) \
 	../libppr.$(LIBEXT) \

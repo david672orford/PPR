@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--12 March 2003.
+1.51, 15 February 2003--13 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8453,6 +8453,34 @@ line was being parsed twice.
 
 * pprpopup/ppr-popup: fixed to not throw error if ~/.ppr/pprpopup doesn't
   exist yet.
+
+* configure: removed
+
+* Configure: renamed to Configure_old
+
+* Configure_new: renamed to Configure, added Zlib detection.
+
+* libppr/readppd.c: added Gzip decompression using Zlib.  My that was easy! 
+  Gzip decompression is important for compatibility with CUPS and GIMP-Print.
+
+* libscript/readppd.pl: added Gzip uncompression using gunzip.
+
+* ppd/indexppds.c: added code to lower case upper cased manufacturer's names
+  when then are more than three letters long.
+
+* www/ppd_select.pl: exclude "PPR" manufacture PPD's since they aren't meant
+  for printer queues.
+
+* ppd/generic/generic_master: added explicit warning against trying to use 
+  the PPR Generic PPD files on the print server.  They are only for clients.
+
+* pprdrv/pprdrv_feedback.c: fixed bugs in Ghostscript command line parsing
+  error detection, added detection of "RIP:" as RIP error.
+
+* pprdrv/ppr-gs.c: changed to invoke CUPS and IJS filters with their full
+  paths rather than setting the PATH environment variable.
+
+* unixuser/ppr-xfm.sh: minor cleanup
 
 
 

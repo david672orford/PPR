@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 13 March 2003.
 #
 
 #
@@ -144,8 +144,15 @@ cat - >&5 <<'===EndHere41==='
 ===EndHere41===
 
 cat - >&5 <<===EndHere50===
+#
 # Where are the Type 1 and TrueType fonts?  These directories will be
 # searched recursively.
+#
+# After changing this section, you must run this command in order for your
+# changes to take effect:
+#
+# $ ppr-index fonts
+#
 [fonts]
   "$SHAREDIR/fonts"
 ===EndHere50===
@@ -174,9 +181,19 @@ if_dir_print "/usr/share/texmf/fonts/afm"
 echo >&5
 
 cat - >&5 <<===EndHere90===
+#
 # Where are the PPD files?
+#
+# After changing this section, you must run this command in order for your
+# changes to take effect:
+#
+# $ ppr-index ppds
+#
 [PPDs]
   "$SHAREDIR/PPDFiles"
+  "/usr/share/cups/model"
+  "/usr/share/cups/model/C"
+  "/Library/Printers/PPDs/Contents/Resources/en.lproj
 
 # Configuration of the new AppleTalk Printer Access Protocol server
 [papd]

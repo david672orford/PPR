@@ -7,7 +7,7 @@ Last Proofread:
 <sect1>
 <title>Custom Hooks</title>
 
-<para>Custom hooks is a small program which <application>PPR</application>
+<para>A custom hooks is a small program which <application>PPR</application>
 runs at predetermined points in the process of sending a job to a printer. 
 Anything that the program sends to standard output will be transmitted to
 the printer.  The program has access to the queue file, so it can determine
@@ -15,5 +15,20 @@ the characteristics of the job.  For example, you could write a custom hook
 program which printed a banner page.  If a print queue is properly
 configured, your program will be used to print banner pages instead of
 <application>PPR</application>'s internal banner page printing code.</para>
+
+#define CUSTOM_HOOK_BANNER 1
+#define CUSTOM_HOOK_TRAILER 2
+#define CUSTOM_HOOK_COMMENTS 4
+#define CUSTOM_HOOK_PROLOG 8
+#define CUSTOM_HOOK_DOCSETUP 16
+#define CUSTOM_HOOK_PAGEZERO 32
+
+gu_sscanf(confline, "CustomHook: %d %Q", &printer.custom_hook.flags, &tptr))
+
+execl(path, path, code_str, parameter_str, QueueFile, NULL);
+
+if((fd = open(PPRDRV_LOGFILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) != -1)
+
+if(line[0] == '%' && (matches = gu_sscanf(line, "%%%%IncludeFeature: %S %S", &feature, &option)) > 0)
 
 </sect1>

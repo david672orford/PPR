@@ -72,7 +72,7 @@ OBJS1=pprdrv.$(OBJ) \
 	#	pprdrv_ppd_parse.$(OBJ) \
 
 pprdrv$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS) $(ZLIBLIBS)
 
 # How to build the C source for the PPD file lexer:
 pprdrv_ppd_parse.c: pprdrv_ppd_parse.l

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 March 2003.
+** Last modified 13 March 2003.
 */
 
 #include "before_system.h"
@@ -45,6 +45,7 @@
 #include "version.h"
 
 const char myname[] = "ppr-followme";
+
 const char dbdir[] = VAR_SPOOL_PPR"/followme.db";
 
 /*
@@ -137,12 +138,14 @@ int main(int argc, char *argv[])
     i = getopt_state.optind;
     }
 
+    /* We need the username since it is the key into followme.db. */
     if(!(pw = getpwuid(getuid())))
 	{
 	fprintf(stderr, X_("%s: getpwuid(%ld) failed, you are a non-user\n"), myname, (long)getuid());
 	return EXIT_INTERNAL;
 	}
 
+    /* Read up to three command line options. */
     if((argc - i) >= 1)
 	responder = argv[i + 0];
     if((argc - i) >= 2)
@@ -155,12 +158,7 @@ int main(int argc, char *argv[])
 	return EXIT_SYNTAX;
 	}
 
-    if(!responder)
-	responder = getenv("PPR_RESPONDER");
-    if(!responder_address)
-	responder_address = getenv("PPR_RESPONDER_ADDRESS");
-    if(!responder_options)
-	responder_options = getenv("PPR_RESPONDER_OPTIONS");
+    /* Now we supply defaults for any that weren't specified. */
 
     if(!responder)
 	responder = "write";
@@ -176,13 +174,26 @@ int main(int argc, char *argv[])
 	}
 
     if(!responder_options)
-	responder_options = "";
+	if(!(responder_options = getenv("PPR_RESPONDER_OPTIONS")))
+	    responder_options = "";
 
+    /* Detect settings that could subvert the user's intentions. */
+    {
+    char *p;
+    if((p = getenv("PPR_RESPONDER")) && strcmp(p, "followme") != 0)
+	fprintf(stderr, _("Warning: PPR_RESPONDER is set to %s\n"), p);
+    if((p = getenv("PPR_RESPONDER_ADDRESS")) && strcmp(p, pw->pw_name) != 0)
+	fprintf(stderr, _("Warning: PPR_RESPONDER_ADDRESS is set to %s\n"), p);
+    }
+
+    /* Show the user what we have decided on. */
     printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
 
+    /* Save it in followme.db. */
     if(write_record(pw->pw_name, responder, responder_address, responder_options) == -1)
 	return EXIT_INTERNAL;   
 
+    /* The xwin responder won't work unless we give it X display access. */
     if(strcmp(responder, "xwin") == 0)
 	{
 	gu_runl(myname, stderr, HOMEDIR"/bin/ppr-xgrant", NULL);
