@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_infile.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 28 May 2004.
 */
 
 /*
@@ -231,7 +231,7 @@ struct FILTER filters[]=
 {IN_TYPE_TROFF,			NULL,							TRUE,	"troff",				N_("file is Troff source"),								N_("Troff source files")},
 {IN_TYPE_TEX,			NULL,							TRUE,	"tex",					N_("file is TeX or LaTeX source"),						N_("TeX and LaTeX source")},
 {IN_TYPE_WP,			NULL,							FALSE,	"wp",					N_("file is a WordPerfect document"),					N_("WordPerfect documents")},
-{IN_TYPE_RTF,			"application/rtf",				TRUE,	"rtf",					N_("file is in Rich Text Format"),						N_("Reich Text Format documents")},
+{IN_TYPE_RTF,			"application/rtf",				TRUE,	"rtf",					N_("file is in Rich Text Format"),						N_("Rich Text Format documents")},
 {IN_TYPE_TEXINFO,		NULL,							TRUE,	"texinfo",				N_("file is in TeXInfo format"),						N_("TeXInfo documents")},
 {IN_TYPE_HTML,			"text/html",					TRUE,	"html",					N_("file is in HTML format"),							N_("HTML documents")},
 {IN_TYPE_SGML,			NULL,							TRUE,	"sgml",					N_("file is in SGML format (other than HTML)"),			N_("SGML documents")},

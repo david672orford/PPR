@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 28 May 2004.
 */
 
 /*
@@ -413,7 +413,7 @@ int media_show(const char *argv[])
 									media.height/72.0*2.54 );
 			printf(_("Weight: %.1f grams per square metre\n"), media.weight);
 			printf(_("Colour: %16.16s\n"), media.colour);
-			printf(_("Form Type: %16.16s\n"), media.type);
+			printf(_("From Type: %16.16s\n"), media.type);
 			printf(_("Banner/Trailer suitability: %d\n"), media.flag_suitability);
 
 			if( ! all ) break;

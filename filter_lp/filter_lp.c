@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 28 May 2004.
 */
 
 /*
@@ -549,7 +549,7 @@ static void pass1(void)
 		fprintf(stderr, _("Longest line is %d columns wide, shortest leading whitespace is %d columns wide.\n"), max_len, left_skip);
 
 		if(columns != (max_len - left_skip))
-			fprintf(stderr, _("Constaints force columns from %d to %d.\n"), (max_len - left_skip), columns);
+			fprintf(stderr, _("Constraints force columns from %d to %d.\n"), (max_len - left_skip), columns);
 
 		if(lines_per_page != 0)
 			{

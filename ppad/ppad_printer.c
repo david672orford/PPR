@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 28 May 2004.
 */
 
 /*==============================================================
@@ -3042,7 +3042,7 @@ int printer_addon(const char *argv[])
 	if(!printer || !name || (value && argv[3]))
 		{
 		fputs(_("You must supply the name of an existing printer, the name of an addon\n"
-				"parameter.  A value for the paremeter is optional.  If you do not\n"
+				"parameter.  A value for the parameter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_alias.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 28 May 2004.
 */
 
 #include "before_system.h"
@@ -293,7 +293,7 @@ int alias_addon(const char *argv[])
 	if(!alias || !name || (value && argv[3]))
 		{
 		fputs(_("You must supply the name of an existing alias, the name of an addon\n"
-				"parameter.  A value for the paremeter is optional.  If you do not\n"
+				"parameter.  A value for the parameter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_commentary.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 28 May 2004.
 */
 
 #include "before_system.h"
@@ -249,11 +249,11 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 						?
 						_("The printer \"%s\", which could print your job \"%s-%d\" (%s), "
 						"reports the error \"%s%s%s%s\".  This condition must be "
-						"corrected before you job can start.")
+						"corrected before your job can start.")
 						:
 						_("The printer \"%s\", which is printing your job \"%s-%d\" (%s), "
 						"reports the error \"%s%s%s%s\".  This condition must be "
-						"corrected before you job can continue.")
+						"corrected before your job can continue.")
 					:
 					_("The printer \"%s\", which is printing your job \"%s-%d\" (%s), "
 					"reports the error \"%s%s%s%s\".  It may be to your benefit "

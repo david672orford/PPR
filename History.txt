@@ -9323,6 +9323,7 @@ Internet Printing Protocol Work
 
 * z_install_end/install_bin_links.sh: added ppr-index.
 
+* ppad/,ppr/: applied typo patches from Jan Kohnert.
 
 
 TODO
