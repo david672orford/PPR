@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--20 March 2002.
+1.50a1, 27 February 2002--28 March 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7599,5 +7599,5 @@ line was being parsed twice.
   will have to be checked in the Adobe technical documents concerning
   CID keyed fonts.
 
-
+* makeprogs/save_symlinks.sh: added -f to ln command.
 
