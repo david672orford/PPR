@@ -7914,3 +7914,15 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
+
+
+* unixuser/ppr-xgrant.c: changed "ppr" to USER_PPR and improved exec()
+  failed messages.
+
+* libuprint/uprint_argv_ppr.c: changed title= to pr-title=.  (In lpr, the -J
+  option cooresponds most closely to PPR's --title, so we don't want to use 
+  --title for the title for pr.)  This ensure that this potentially
+  difficult-to-parse option is not passed to any other interface.
+
+
+

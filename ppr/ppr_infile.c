@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 8 March 2002.
+** Last modified 11 November 2002.
 */
 
 /*
@@ -1622,6 +1622,7 @@ static void stubborn_rewind(void)
 */
 static void exec_filter_argv(const char *filter_path, const char *arg_list[])
     {
+    const char function[] = "exec_filter_argv";
     int pipefds[2];				/* pipe from filter */
     pid_t pid;					/* process id of filter */
     struct stat statbuf;
@@ -1644,7 +1645,7 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
     ** we know if it has the setuid bit or setgid bit set.
     */
     if(stat(filter_path, &statbuf) < 0)
-    	fatal(PPREXIT_OTHERERR, "exec_filter_argv(): stat(\"%s\", ?) failed, errno=%d (%s)", filter_path, errno, gu_strerror(errno));
+    	fatal(PPREXIT_OTHERERR, "%s(): stat(\"%s\", ?) failed, errno=%d (%s)", function, filter_path, errno, gu_strerror(errno));
 
     /*
     ** Rewind file or, if we can't, copy it to a temporary file
@@ -1657,10 +1658,10 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
     ** output back to this process.
     */
     if(pipe(pipefds))
-	fatal(PPREXIT_OTHERERR, "exec_filter_argv(): can't make pipe, errno=%d (%s)", errno, gu_strerror(errno) );
+	fatal(PPREXIT_OTHERERR, "%s(): can't make pipe, errno=%d (%s)", function, errno, gu_strerror(errno) );
 
     if((pid = fork()) < 0)
-	fatal(PPREXIT_OTHERERR, "exec_filter_argv(): fork() failed, errno=%d (%s)", errno, gu_strerror(errno) );
+	fatal(PPREXIT_OTHERERR, "%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
 
     if(pid)				/* parent */
 	{

@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/misc_filters/pr.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 1 June 2001.
+# Last modified 12 November 2002.
 #
 
 #
@@ -25,15 +25,17 @@
 #
 
 # These are filled in when the script is installed.
-HOMEDIR="?"
-TEMPDIR="?"
-PR="?"
+HOMEDIR="/usr/lib/ppr"
+TEMPDIR="/tmp"
+PR="/usr/bin/pr"
 
 # Process the options
+options="a=1 title=\"hello world\" c=3"
+#options=`echo $1 | sed -e 's/title="/"title=/'`
 title="$3"
 width=""
 length=""
-for option in "$1"
+for option in "$options"
 	do
 	echo "option: $option" >&2
 	case $option in

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 7 February 2001.
+** Last modified 11 November 2001.
 */
 
 /*
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     ** We need to know ppr's uid so that we can run
     ** the second xauth program instance as ppr.
     */
-    if((pass = getpwnam("ppr")) == (struct passwd*)NULL)
+    if((pass = getpwnam(USER_PPR)) == (struct passwd*)NULL)
     	{
     	fprintf(stderr, _("%s: Can't find user \"ppr\" in password database.\n"), argv[0]);
     	return EXIT_INTERNAL;
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
     	execl(xauth_path, "xauth", "-f", ppr_xauthority_file, "nmerge", "-", (char*)NULL);
 
-    	fprintf(stderr, "%s: child: exec() failed, errno=%d (%s)\n", argv[0], errno, gu_strerror(errno) );
+    	fprintf(stderr, "%s: child: exec(\"%s\", ...) failed, errno=%d (%s)\n", argv[0], xauth_path, errno, gu_strerror(errno) );
 	exit(242);
     	}
 
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 
 	execl(xauth_path, "xauth", "nextract", "-", display, (char*)NULL);
 
-	fprintf(stderr, "%s: exec() of xauth failed, errno=%d, (%s)\n", argv[0], errno, gu_strerror(errno) );
+	fprintf(stderr, "%s: exec(\"%s\", ...) failed, errno=%d, (%s)\n", argv[0], xauth_path, errno, gu_strerror(errno) );
 	exit(242);
 	}
 
