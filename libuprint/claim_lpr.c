@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 November 2002.
+** Last modified 13 November 2002.
 */
 
 #include "before_system.h"
@@ -83,18 +83,23 @@ int printdest_claim_lpr(const char *destname)
 		   space in front of the first line of each printer configuration
 		   that it generates.)
 		   */
-		fnbp = line += strspn(line, " \t");
+		fnbp = line + strspn(line, " \t");
 
-		/* If the line begins with a colon, it is a continuation line
-		   while probably has a lot for boring information for lpr
-		   about this queue.  We will skip lines like that.
+		/* If the line begins with a pound sign, it is a comment
+                   */
+		if(fnbp[0] == '#')
+		    continue;
+                                                       
+		/* If the line _begins_ with a colon, it is a continuation 
+		   line while probably has a lot for boring information for 
+		   lpr about this queue.  We will skip lines like that.
 		   */
 		if(fnbp[0] == ':')
 		    continue;		 
 
-		/* Find the first colon.  If there is none, there must not be
-		   a name list here, so skip this line.  (The colon marks the
-		   end of the list of names for this queue.)
+		/* Find the first colon.  If there is none, there isn't a name
+		   list here, so skip this line.  (The colon marks the end of
+		   the list of names for this queue.)
 		   */
 		if((p = strchr(fnbp, ':')) == (char*)NULL)
 		    continue;
@@ -111,11 +116,12 @@ int printdest_claim_lpr(const char *destname)
 			return TRUE;
 			}
 		    }
-		}
+
+		} /* end of line loop */
 
 	    fclose(f);
-	    }
-	}
+	    } /* If fopen() suceded */
+	} /* if lpr installed */
 
     return FALSE;
     } /* end of printdest_claim_lpr() */
