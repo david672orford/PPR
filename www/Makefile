@@ -8,7 +8,7 @@
 #
 # * Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 # notice, this list of conditions and the following disclaimer in the
 # documentation and/or other materials provided with the distribution.
@@ -16,16 +16,16 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 March 2002.
+# Last modified 5 April 2002.
 #
 
 include ../makeprogs/global.mk
@@ -100,7 +100,7 @@ STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 
 #== Build ====================================================================
 
-all: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST)
+all: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST) images_subdir
 
 OBJS=\
 	ppr-push-httpd.$(OBJ) \
@@ -111,6 +111,9 @@ ppr-push-httpd$(DOTEXE): $(OBJS)
 
 $(Q_ICONS_LAST):
 	( cd q_icons; ./make_composit_figs.perl )
+
+images_subdir:
+	( cd images && $(MAKE) )
 
 #== Install ==================================================================
 
@@ -135,7 +138,7 @@ install-html: $(HTML_TOP) $(HTML_GUI)
 	$(MAKE_NEW_DIR) $(WWWDIR_GUI)
 	$(INSTALLDATA) $(WWWDIR_GUI) $(HTML_GUI)
 
-install-images: $(Q_ICONS_LAST)
+install-images: images_subdir $(Q_ICONS_LAST)
 	$(MAKE_NEW_DIR) $(IMAGES_DIR)
 	$(INSTALLDATA) $(IMAGES_DIR) images/*
 	$(MAKE_NEW_DIR) $(Q_ICONS_DIR)
