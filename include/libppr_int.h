@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 5 September 2002.
+** Last modified 24 September 2002.
 */
 
 #ifndef LIBPPR_INT_H
@@ -56,7 +56,7 @@ void print_pap_status(const unsigned char *status);
 void int_cmdline_set(int argc, char *argv[]);
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[]);
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);
-void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*snmp_function)(void *address), void *address, int snmp_status_interval);
+void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*snmp_function)(void *address), void *address, int snmp_status_interval);
 void int_exit(int exitvalue)
 #ifdef __GNUC__
 __attribute__ (( noreturn ))

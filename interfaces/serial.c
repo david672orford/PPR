@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/serial.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 20 June 2001.
+** Last modified 24 September 2002.
 */
 
 /*
@@ -590,7 +590,7 @@ int main(int argc, char *argv[])
 	}
     #endif
 
-    int_copy_job(portfd, options.idle_status_interval, printer_error, NULL, NULL, 0);
+    int_copy_job(portfd, options.idle_status_interval, printer_error, NULL, NULL, NULL, 0);
 
     DODEBUG(("closing port"));
     close(portfd);

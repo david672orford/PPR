@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 19 April 2002.
+** Last modified 24 September 2002.
 */
 
 #include "before_system.h"
@@ -51,14 +51,14 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** If a system call fails in an unexpected way, then the function pointed to
 ** by fatal_prn_err is called.
 **
+** If send_eof is not null, then the function it points to is called with the
+** printer file descriptor as its lone argument once the last data block has
+** been written.
+**
 ** If snmp_function is not NULL, then it is called every snmp_status_interval
 ** seconds.  It is passed the pointer snmp_address.
-**
-** The USE_SHUTDOWN code was an experiment.  HP JetDirect cards don't seem to
-** handle shutdown properly, so it was a bust.  However it may still be the
-** right thing to do, so it is still here but #ifdefed out.
 */
-void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*snmp_function)(void * snmp_address), void *snmp_address, int snmp_status_interval)
+void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*snmp_function)(void * snmp_address), void *snmp_address, int snmp_status_interval)
     {
     char xmit_buffer[BUFFER_SIZE];	/* data going to printer */
     char *xmit_ptr = xmit_buffer;
@@ -66,9 +66,7 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     char recv_buffer[BUFFER_SIZE]; 	/* data coming from printer */
     char *recv_ptr = xmit_buffer;
     int recv_len = 0;
-    #ifdef USE_SHUTDOWN
-    gu_boolean recv_zero_read = FALSE;
-    #endif
+    gu_boolean recv_eoj = FALSE;	/* Has the printer closed its end? */
     enum COPYSTATE xmit_state = COPYSTATE_READING;
     enum COPYSTATE recv_state = COPYSTATE_READING;
     fd_set rfds, wfds;
@@ -97,9 +95,7 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     ** sent to pprdrv yet.
     */
     while(last_stdin_read || recv_len > 0 
-		#ifdef USE_SHUTDOWN
-    		|| !recv_zero_read
-		#endif
+		|| (!send_eoj_funct && !recv_eoj)
     		)
     	{
 	FD_ZERO(&rfds);
@@ -219,12 +215,10 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    	xmit_state = COPYSTATE_WRITING;
 	    	time_next_control_t = 0;		/* cancel control-T */
 	    	}
-	    #ifdef USE_SHUTDOWN
-	    else
+	    else if(send_eoj_funct)
 	   	{
-		shutdown(portfd, SHUT_WR);
+		(*send_eoj_funct)(portfd);
 	   	}
-	    #endif
 	    }
 
 	else if(FD_ISSET(portfd, &wfds))
@@ -272,10 +266,8 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 
 	    if(recv_len > 0)
 		recv_state = COPYSTATE_WRITING;
-	    #ifdef USE_SHUTDOWN
 	    else
-	    	recv_zero_read = TRUE;
-	    #endif
+	    	recv_eoj = TRUE;
 	    }
 
 	else if(FD_ISSET(1, &wfds))

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/lpr.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell and Damian Ivereigh.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 August 2001.
+** Last modified 24 September 2002.
 */
 
 /*
@@ -115,17 +115,19 @@ static void do_control_file(int sockfd, const char *local_nodename, const char *
     snprintf(control_file, sizeof(control_file),
     	"H%s\n"				/* host */
     	"P%s\n"				/* person */
-	"%s"				/* name for banner page */
+	"%s%s%s"			/* name for banner page */
     	"%c"DF_TEMPLATE"\n"		/* file to print */
     	"U"DF_TEMPLATE"\n"		/* file to unlink */
  	"N%s\n"				/* file name, to keep System V LP happy */
- 	"J%s\n",			/* job title */
+ 	"J%s\n",			/* job title (for banner page?) */
     		local_nodename,
 		person,
-    		options->banner ? "Lsomebody\n" : "",
+    		options->banner ? "L" : "",
+    		options->banner ? person : "",
+    		options->banner ? "\n" : "",
 		options->lpr_typecode, lpr_queueid, local_nodename,
     		lpr_queueid, local_nodename,
-    		int_cmdline.jobname,
+    		int_cmdline.title,
     		int_cmdline.title);
 
     DODEBUG(("control file: %d bytes: \"%s\"", strlen(control_file), control_file));

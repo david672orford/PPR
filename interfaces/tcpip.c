@@ -99,6 +99,7 @@ struct OPTIONS
     int snmp_status_interval;
     int appsocket_status_interval;
     int sleep;
+    gu_boolean use_shutdown;
     };
 
 /*
@@ -306,6 +307,18 @@ static void explain_error_in_context(int error_number)
     }
 
 /*
+** Use the shutdown() function to tell the printer we are done sending data.
+*/
+static void do_shutdown(int fd)
+    {
+    if(shutdown(fd, SHUT_WR) < 0)
+	{
+	alert(int_cmdline.printer, TRUE, _("%s() failed, errno=%d (%s)"), "shutdown", errno, gu_strerror(errno));
+	int_exit(EXIT_PRNERR);
+	}
+    }
+
+/*
 ** This fetches the printer status using SNMP and prints it in a special
 ** format which is picked up by the feedback reader in pprdrv.
 */
@@ -480,6 +493,7 @@ int main(int argc, char *argv[])
     options.appsocket_status_interval = 0;
     options.refused_engaged = TRUE;
     options.snmp_community = NULL;
+    options.use_shutdown = FALSE;
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -639,6 +653,20 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 	/*
+	** use_shutdown
+	*/
+	else if(strcmp(name, "use_shutdown") == 0)
+	    {
+	    int answer;
+	    if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+	    	{
+		o.error = N_("Invalid boolean value");
+		retval = -1;
+		break;
+		}
+	    options.use_shutdown = answer ? TRUE : FALSE;
+	    }
+	/*
 	** Catch anything else.
 	*/
 	else
@@ -720,7 +748,12 @@ int main(int argc, char *argv[])
     signal_interupting(SIGPIPE, SIG_IGN);
 
     /* Copy stdin to the printer. */
-    int_copy_job(sockfd, options.idle_status_interval, explain_error_in_context, status_function, status_obj, status_interval);
+    int_copy_job(sockfd,				/* connection to printer */
+	options.idle_status_interval,			/* how often to send control-T */
+	explain_error_in_context,			/* error printing function */
+	options.use_shutdown ? do_shutdown : NULL,	/* EOJ function */
+	status_function, status_obj, status_interval	/* SNMP or AppSocket UDP status function */
+	);
 
     /* Close the connection */
     close(sockfd);
