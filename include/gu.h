@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 11 February 2004.
 */
 
 /*! \file
@@ -71,6 +71,7 @@ typedef int gu_boolean;
 #define UNIX_640 (S_IRUSR | S_IWUSR | S_IRGRP)
 #define UNIX_600 (S_IRUSR | S_IWUSR)
 #define UNIX_022 (S_IWGRP | S_IWOTH)
+#define UNIX_002 S_IWOTH
 #define UNIX_077 (S_IRWXG | S_IRWXO)
 
 /*

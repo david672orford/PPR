@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--10 February 2004.
+1.53a1, 24 September 2003--11 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9016,9 +9016,6 @@ Internet Printing Protocol Work
   for "ppad group addon" to be tagged as too many parameters (this was fixed 
   some time ago for "ppad addon".
 
-* ipp/: moved ipp_utils.h into ../include/, ipp_utils.c into ../libppr/, and
-  ipp_constants.h into ../include/.
-
 * ppad/: moved all ppad_filt.c stuff which ../libppr/queueinfo.c couldn't yet
   do into the latter, adjusted all of the subcommands to queueinfo, deleted
   ppad_filter.c.
@@ -9042,6 +9039,14 @@ Internet Printing Protocol Work
 
 * samba/ppr2samba.c: added queue aliases support (by converting to the new
   queueinfo code).
+
+* pprd/pprd_mainsup.c: changed control FIFO permissions from 0600 to 0660 so that
+  the IPP CGI can connect.
+  
+* ipp/: moved ipp_utils.h into ../include/, ipp_utils.c into ../libppr/, and
+  ipp_constants.h into ../include/.
+
+* pprd/pprd_ipp.c: added and hooked up to FIFO message handler.
 
 
 

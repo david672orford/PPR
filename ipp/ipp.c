@@ -25,21 +25,34 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 11 February 2004.
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <errno.h>
+#ifdef INTERNATIONAL
+#include <locale.h>
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
+
+/* Are we using a real FIFO or just an append to a file? */
+#ifdef HAVE_MKFIFO
+#define FIFO_OPEN_FLAGS (O_WRONLY | O_NONBLOCK)
+#else
+#define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
+#endif
 
 static const char *printer_uri(struct IPP *ipp)
 	{
@@ -189,61 +202,128 @@ static void do_print_job(struct IPP *ipp)
 	}
 	} /* end of do_print_job() */
 
-static void do_get_jobs(struct IPP *ipp)
+static volatile gu_boolean sigcaught;
+static void user_sighandler(int sig)
 	{
-	int x;
-
-	for(x=0; x < 10; x++)
-		{
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", x * 4);
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri(ipp));
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", x + 100);
-		ipp_add_end(ipp, IPP_TAG_JOB);
-		}
+	sigcaught = TRUE;
 	}
 
-static void do_get_printer_attributes(struct IPP *ipp)
-    {
+static volatile gu_boolean timeout;
+static void alarm_sighandler(int sig)
+	{
+	timeout = TRUE;
+	}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
-	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
+static void do_passthru(struct IPP *ipp)
+	{
+	int fifo = -1;
+	int fd = -1;
+	sigset_t set, oset;
+	char fname_in[MAX_PPR_PATH];
+	char fname_out[MAX_PPR_PATH];
+	long int pid;
+	
+	debug("do_passthru()");
 
-	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
+	pid = (long int)getpid();
+	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/ppr-ipp-%ld-in",  TEMPDIR, pid);
+	gu_snprintf(fname_out, sizeof(fname_out), "%s/ppr-ipp-%ld-out", TEMPDIR, pid);
 
-    }
+	gu_Try {
+		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
+			gu_Throw(_("can't open FIFO, pprd is probably not running."));
+
+		if((fd = open(fname_in, O_WRONLY | O_CREAT | O_EXCL, UNIX_660)) == -1)
+			gu_Throw(_("can't create \"%s\", errno=%d (%s)"), fname_in, errno, gu_strerror(errno));
+
+		ipp_request_to_fd(ipp, fd);
+
+		close(fd);
+		fd = -1;
+		
+		signal(SIGUSR1, user_sighandler);
+		signal(SIGALRM, alarm_sighandler);
+
+		sigemptyset(&set);
+		sigaddset(&set, SIGUSR1);
+		sigaddset(&set, SIGALRM);
+		sigprocmask(SIG_BLOCK, &set, &oset);
+		
+		sigcaught = FALSE;
+		timeout = FALSE;
+	
+		{
+		char command[256];
+		int command_len;
+		int ret;
+		gu_snprintf(command, sizeof(command),
+			"IPP %ld ROOT=%s PATH_INFO=%s REMOTE_USER=%s REMOTE_ADDR=%s\n",
+			pid,
+			ipp->root,
+			ipp->path_info,
+			ipp->remote_user ? ipp->remote_user : "",
+			ipp->remote_addr ? ipp->remote_addr : ""
+			);
+		command_len = strlen(command);
+
+		if((ret = write(fifo, command, command_len)) == -1)
+			gu_Throw("write to FIFO failed, errno=%d (%s)", errno, gu_strerror(errno));
+		}
+		
+		alarm(60);
+
+		while(!sigcaught && !timeout)
+			sigsuspend(&oset);
+	
+		alarm(0);
+	
+		if(timeout)
+			gu_Throw("timeout waiting for pprd");
+
+		if((fd = open(fname_out, O_RDONLY)) == -1)
+			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
+
+		ipp_reply_from_fd(ipp, fd);
+		fd = -1;
+		}
+
+	gu_Final {
+		sigprocmask(SIG_SETMASK, &oset, (sigset_t*)NULL);
+
+		unlink(fname_in);
+		unlink(fname_out);
+
+		if(fd != -1)
+			close(fd);
+		
+		if(fifo != -1)
+			close(fifo);
+		}
+
+	gu_Catch {
+		gu_ReThrow();
+		}
+	} /* end of do_passthru() */
 
 static void do_get_default(struct IPP *ipp)
 	{
 	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
 	}
 
-static void do_get_printers(struct IPP *ipp)
-	{
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "dummy");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "aardvark");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "chipmunk");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "adshp4si");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	}
-	
-static void do_get_classes(struct IPP *ipp)
-	{
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "rotate");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	}
-
 int main(int argc, char *argv[])
 	{
-	struct IPP *ipp;
+	struct IPP *ipp = NULL;
+	char *root = NULL;
+
+	/* Leave only the saved UID as "ppr". */
+	seteuid(getuid());
+	
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
 
 	gu_Try {
 		char *p, *path_info;
@@ -259,50 +339,65 @@ int main(int argc, char *argv[])
 		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
 			gu_Throw("CONTENT_LENGTH is missing or invalid");
 
-		ipp = ipp_new(path_info, content_length, 0, 1);
-		ipp_parse_request(ipp);
+		gu_asprintf(&root, "http://%s:%s/%s",
+			(p = getenv("SERVER_NAME")) ? p : "localhost",
+			(p = getenv("SERVER_PORT")) ? p : "15010",
+			(p = getenv("SCRIPT_NAME")) ? p : "ipp"
+			);
+		
+		ipp = ipp_new(root, path_info, content_length, 0, 1);
 
-		/* For now, English is all we are capable of. */
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+		if((p = getenv("REMOTE_USER")))
+			ipp_set_remote_user(ipp, p);
+		if((p = getenv("REMOTE_ADDR")))
+			ipp_set_remote_addr(ipp, p);
+
+		ipp_parse_request_header(ipp);
 
 		debug("dispatching operation 0x%.2x", ipp->operation_id);
 		switch(ipp->operation_id)
 			{
-			case IPP_PRINT_JOB:
-				do_print_job(ipp);
-				break;
-
-			case IPP_GET_JOBS:
-				do_get_jobs(ipp);
-				break;
-			
-			case IPP_GET_PRINTER_ATTRIBUTES:
-				do_get_printer_attributes(ipp);
-				break;
-
-			case CUPS_GET_DEFAULT:
-				do_get_default(ipp);
-				break;
-			
-			case CUPS_GET_PRINTERS:
-				do_get_printers(ipp);
-				break;
-
 			case CUPS_GET_CLASSES:
-				do_get_classes(ipp);
+			case CUPS_GET_PRINTERS:
+			case IPP_GET_PRINTER_ATTRIBUTES:
+			case IPP_GET_JOBS:
+				do_passthru(ipp);
 				break;
 
 			default:
-				gu_Throw("unsupported operation");
+				ipp_parse_request_body(ipp);
+
+				/* For now, English is all we are capable of. */
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+
+				switch(ipp->operation_id)
+					{
+					case IPP_PRINT_JOB:
+						do_print_job(ipp);
+						break;
+					case CUPS_GET_DEFAULT:
+						do_get_default(ipp);
+						break;
+					default:
+						gu_Throw("unsupported operation");
+						break;
+					}
+
+				if(ipp->response_code == IPP_OK)
+					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+
 				break;
 			}
-		
-		if(ipp->response_code == IPP_OK)
-			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 
-		ipp_send_reply(ipp);
-		ipp_delete(ipp);
+		ipp_send_reply(ipp, TRUE);
+		}
+
+	gu_Final {
+		if(ipp)
+			ipp_delete(ipp);
+		if(root)
+			gu_free(root);
 		}
 
 	gu_Catch

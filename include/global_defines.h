@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 27 January 2004.
+** This file was last modified 11 February 2004.
 */
 
 /*
@@ -361,6 +361,12 @@ typedef short int SHORT_INT;
 ** this soon after they begin to execute.
 */
 #define PPR_UMASK UNIX_022
+
+/*
+** Pprd needs a slightly more relaxed umask so that it can communicate
+** with ipp.
+*/
+#define PPR_PPRD_UMASK UNIX_002
 
 /*
 ** This umask is used by the job submission program "ppr".

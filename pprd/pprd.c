@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 11 February 2004.
 */
 
 /*
@@ -293,7 +293,9 @@ static void do_command(int FIFO)
 				break;
 
 			case 'I':					/* Internet Printing Protocol */
+				gu_alloc_checkpoint();
 				ipp_dispatch(ptr);
+				gu_alloc_assert(0);
 				break;
 
 			default:					/* anything else needs a reply to ppop */
@@ -340,7 +342,9 @@ static int real_main(int argc, char *argv[])
 
 	/* If the --forground switch wasn't used, then dropt into background. */
 	if(! option_foreground)
-		gu_daemon(PPR_UMASK);
+		gu_daemon(PPR_PPRD_UMASK);
+	else
+		umask(PPR_PPRD_UMASK);
 
 	/* Change the home directory to the PPR home directory: */
 	chdir(HOMEDIR);

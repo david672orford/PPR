@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 11 February 2004.
 */
 
 /*
@@ -54,24 +54,72 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-#include "pool.h"
-#include "pstring.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "pprd.h"
 #include "pprd.auto_h"
 
+static void do_get_classes(struct IPP *ipp)
+	{
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "rotate");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	}
+
+static void do_get_printers(struct IPP *ipp)
+	{
+	int i;
+	lock();
+	for(i=0; i < printer_count; i++)
+		{
+		const char *name = destid_to_name(nodeid_local(), i);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", name);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		}
+	unlock();
+	}
+	
+static void do_get_printer_attributes(struct IPP *ipp)
+    {
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
+	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
+
+	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
+    }
+
+static void do_get_jobs(struct IPP *ipp)
+	{
+	int i;
+	char *printer_uri = "http://localhost:15010/cgi-bin/ipp/test";
+
+	for(i=0; i < 10; i++)
+		{
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", i * 4);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", i + 100);
+		ipp_add_end(ipp, IPP_TAG_JOB);
+		}
+	}
+
 void ipp_dispatch(const char command[])
 	{
 	const char function[] = "ipp_dispatch";
-	char fname[MAX_PPR_PATH];
+	char fname_in[MAX_PPR_PATH];
+	char fname_out[MAX_PPR_PATH];
 	const char *p;
 	long int ipp_cgi_pid;
 	int in_fd, out_fd;
 	struct stat statbuf;
-	pool subpool;
+	char *command_scratch = NULL;
 	struct IPP *ipp = NULL;
 
+	debug("%s(): %s", function, command);
+	
 	if(!(p = lmatchsp(command, "IPP")))
 		{
 		error("%s(): command missing", function);
@@ -83,54 +131,55 @@ void ipp_dispatch(const char command[])
 		error("%s(): no PID for reply", function);
 		return;
 		}
+	p += strspn(p, "0123456789");
+	p += strspn(p, " ");
 
 	in_fd = out_fd = -1;
 	gu_Try
 		{
-		ppr_fnamef(fname, "%s/ppr-ipp-%ld-in", TEMPDIR, ipp_cgi_pid);
-		if((in_fd = open(fname, O_RDONLY)) == -1)
-			gu_Throw("can't open \"%s\", errno=%d (%s)", fname, errno, gu_strerror(errno));
+		ppr_fnamef(fname_in, "%s/ppr-ipp-%ld-in", TEMPDIR, ipp_cgi_pid);
+		if((in_fd = open(fname_in, O_RDONLY)) == -1)
+			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_in, errno, gu_strerror(errno));
 		gu_set_cloexec(in_fd);
 		if(fstat(in_fd, &statbuf) == -1)
 			gu_Throw("fstat(%d, &statbuf) failed, errno=%d (%s)", in_fd, errno, gu_strerror(errno));
-		ppr_fnamef(fname, "%s/ppr-ipp-%ld-out", TEMPDIR, ipp_cgi_pid);
-		if((out_fd = open(fname, O_WRONLY | O_EXCL | O_CREAT, S_IRUSR | S_IWUSR, UNIX_600)) == -1)
-			gu_Throw("can't create \"%s\", errno=%d (%s)", fname, errno, gu_strerror(errno));
+
+		ppr_fnamef(fname_out, "%s/ppr-ipp-%ld-out", TEMPDIR, ipp_cgi_pid);
+		if((out_fd = open(fname_out, O_WRONLY | O_EXCL | O_CREAT, UNIX_660)) == -1)
+			gu_Throw("can't create \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
 		gu_set_cloexec(out_fd);
-		}
-	gu_Catch
-		{
-		if(in_fd != -1)
-			close(in_fd);
-		if(out_fd != -1)
-			close(out_fd);
-		error("%s(): %s", function, gu_exception);
-		return;
-		}
 
-	subpool = new_subpool(global_pool);
-
-	gu_Try {
-		char *path_info = NULL;
 		{
-		char *opts = pstrdup(subpool, p);
+		char *root=NULL, *path_info=NULL, *remote_user=NULL, *remote_addr=NULL;
+		char *opts = command_scratch = gu_strdup(p);
 		char *name, *value;
-		while((name = gu_strsep(&opts, " ")))
+		while((name = gu_strsep(&opts, " ")) && *name)
 			{
 			if(!(value = strchr(name, '=')))
-				gu_Throw("parse error");
+				gu_Throw("parse error, no = in \"%s\"", name);
 			*(value++) = '\0';
 
-			if(strcmp(name, "PATH_INFO") == 0)
+			if(strcmp(name, "ROOT") == 0)
+				root = value;
+			else if(strcmp(name, "PATH_INFO") == 0)
 				path_info = value;
+			else if(strcmp(name, "REMOTE_USER") == 0)
+				remote_user = value;
+			else if(strcmp(name, "REMOTE_ADDR") == 0)
+				remote_addr = value;
 			else
 				debug("%s(): unknown parameter %s=\"%s\"", function, name, value);
 			}
-		}
 
 		/* Create an IPP object and read the request from the temporary file. */
-		ipp = ipp_new(path_info, statbuf.st_size, in_fd, out_fd);
-		ipp_parse_request(ipp);
+		ipp = ipp_new(root, path_info, statbuf.st_size, in_fd, out_fd);
+		if(remote_user)
+			ipp_set_remote_user(ipp, remote_user);
+		if(remote_addr)
+			ipp_set_remote_addr(ipp, remote_addr);
+		ipp_parse_request_header(ipp);
+		ipp_parse_request_body(ipp);
+		}
 		
 		/* For now, English is all we are capable of. */
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
@@ -139,10 +188,18 @@ void ipp_dispatch(const char command[])
 		debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
 		switch(ipp->operation_id)
 			{
-
-
-
-
+			case CUPS_GET_CLASSES:
+				do_get_classes(ipp);
+				break;
+			case CUPS_GET_PRINTERS:
+				do_get_printers(ipp);
+				break;
+			case IPP_GET_PRINTER_ATTRIBUTES:
+				do_get_printer_attributes(ipp);
+				break;
+			case IPP_GET_JOBS:
+				do_get_jobs(ipp);
+				break;
 			default:
 				gu_Throw("unsupported operation");
 				break;
@@ -151,26 +208,32 @@ void ipp_dispatch(const char command[])
 		if(ipp->response_code == IPP_OK)
 			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 
-		ipp_send_reply(ipp);
+		ipp_send_reply(ipp, FALSE);
 		}
 	gu_Final {
-		/* Close the output file and tell the ipp CGI to take it away. */
-		close(out_fd);
+		if(ipp)
+			ipp_delete(ipp);
+		if(command_scratch)
+			gu_free(command_scratch);
+		if(in_fd != -1)
+			close(in_fd);
+		if(out_fd != -1)
+			close(out_fd);
+
+		/* Close the output file and tell the IPP CGI program to take it away. */
+		debug("Sending signal to IPP CGI...");
 		if(kill((pid_t)ipp_cgi_pid, SIGUSR1) == -1)
 			{
 			debug("%s(): kill(%ld, SIGUSR1) failed, errno=%d (%s), deleting reply file", function, (long)ipp_cgi_pid, errno, gu_strerror(errno));
-			unlink(fname);
+			unlink(fname_in);
+			unlink(fname_out);
 			}
-
-		/* Close and deallocate everything else. */
-		close(in_fd);
-		delete_pool(subpool);
-		if(ipp)
-			ipp_delete(ipp);
 		}
 	gu_Catch {
 		error("%s(): %s", function, gu_exception);
 		}
+
+	debug("%s(): done", function);
 	} /* end of ipp_dispatch() */
 
 /* end of file */

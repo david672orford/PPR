@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ipp/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 July 2003.
+# Last modified 10 February 2004.
 #
 
 include ../Makefile.conf
@@ -42,13 +42,13 @@ OBJS_IPP=ipp.$(OBJ)
 
 all: $(PROGS)
 
-ipp$(DOTEXE): $(OBJS_IPP)
+ipp$(DOTEXE): $(OBJS_IPP) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) -o ipp$(DOTEXE) $(OBJS_IPP) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CGI_BIN) $(CGI_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(CGI_BIN) $(CGI_PROGS)
 
 #=== Housekeeping ===========================================================
 

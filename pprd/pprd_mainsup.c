@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_mainsup.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 July 2003.
+** Last modified 11 February 2004.
 */
 
 #include "before_system.h"
@@ -75,7 +75,7 @@ int open_fifo(void)
 	{
 	int wfd;
 
-	if(mkfifo(FIFO_NAME, S_IRUSR | S_IWUSR) < 0)
+	if(mkfifo(FIFO_NAME, UNIX_660) < 0)
 		fatal(0, "%s(): can't make FIFO, errno=%d (%s)", function, errno, gu_strerror(errno));
 
 	/* Open the read end. */
@@ -99,7 +99,7 @@ int open_fifo(void)
 	** This is the substitute code for broken systems.  It creates an ordinary
 	** file which will grow without bounds.
 	*/
-	if((rfd = open(FIFO_NAME, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
+	if((rfd = open(FIFO_NAME, O_RDONLY | O_CREAT, UNIX_660)) == -1)
 		fatal(0, "open_fifo(): can't open(), errno=%d (%s)", errno, gu_strerror(errno));
 	gu_set_cloexec(rfd);
 #endif

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 11 February 2004.
 */
 
 /* This union holds any kind of IPP value. */
@@ -35,7 +35,7 @@ typedef union
 	gu_boolean boolean;
 	struct
 		{
-		char const *text;
+		char *text;
 		} string;
 	struct
 		{
@@ -51,6 +51,7 @@ typedef struct ipp_attribute_s
 	int group_tag;
 	int value_tag;
 	const char *name;
+	char *free_name;
 	int num_values;
 	ipp_value_t values[1];
 	} ipp_attribute_t;
@@ -58,15 +59,24 @@ typedef struct ipp_attribute_s
 /* The IPP object. */
 struct IPP
 	{
-	const char *path_info;
+	int magic;
 
+	const char *root;
+	const char *path_info;
 	int bytes_left;
 	int in_fd;
 	int out_fd;
+
+	const char *remote_user;
+	const char *remote_addr;
+	
+	int subst_reply_fd;
 	unsigned char readbuf[512];
+	char readbuf_guard;
 	int readbuf_i;
 	int readbuf_remaining;
 	unsigned char writebuf[512];
+	char writebuf_guard;
 	int writebuf_i;
 	int writebuf_remaining;
 	
@@ -84,9 +94,13 @@ struct IPP
 	};
 
 /* IPP object methods */
-struct IPP *ipp_new(const char path_info[], int content_length, int in_fd, int out_fd);
+struct IPP *ipp_new(const char root[], const char path_info[], int content_length, int in_fd, int out_fd);
 void ipp_delete(struct IPP *p);
 int ipp_get_block(struct IPP *p, char **pptr);
+void ipp_set_remote_user(struct IPP *p, const char remote_user[]);
+void ipp_set_remote_addr(struct IPP *p, const char remote_addr[]);
+void ipp_request_to_fd(struct IPP *p, int fd);
+void ipp_reply_from_fd(struct IPP *p, int fd);
 unsigned char ipp_get_byte(struct IPP *p);
 void ipp_put_byte(struct IPP *p, unsigned char val);
 int ipp_get_sb(struct IPP *p);
@@ -99,8 +113,9 @@ unsigned char *ipp_get_bytes(struct IPP *p, int len);
 void ipp_put_bytes(struct IPP *ipp, const unsigned char *data, int len);
 void ipp_put_string(struct IPP *ipp, const char string[]);
 void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr);
-void ipp_parse_request(struct IPP *ipp);
-void ipp_send_reply(struct IPP *ipp);
+void ipp_parse_request_header(struct IPP *ipp);
+void ipp_parse_request_body(struct IPP *ipp);
+void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);

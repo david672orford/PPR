@@ -126,12 +126,12 @@ void puts_detabbed(const char *string)
 ** IPC functions
 ======================================================================*/
 
-static sigset_t oset;					/* old signal set */
-static FILE *FIFO = (FILE*)NULL;		/* channel to pprd */
-static volatile gu_boolean sigcaught;			/* flag which is set when SIGUSR1 received */
-static volatile gu_boolean timeout;				/* set when SIGALRM is caught */
-static char temp_file_name[MAX_PPR_PATH];		/* name of temporary file we get answer in */
-static FILE *reply_file;				/* streams library thing for open reply file */
+static sigset_t oset;						/* old signal set */
+static FILE *FIFO = (FILE*)NULL;			/* channel to pprd */
+static volatile gu_boolean sigcaught;		/* flag which is set when SIGUSR1 received */
+static volatile gu_boolean timeout;			/* set when SIGALRM is caught */
+static char temp_file_name[MAX_PPR_PATH];	/* name of temporary file we get answer in */
+static FILE *reply_file;					/* streams library thing for open reply file */
 static int pprd_retcode;
 
 /*
@@ -1368,7 +1368,8 @@ int main(int argc, char *argv[])
 
 	/* Clean up by closing the FIFOs which may have
 	   been used to communicate with pprd or rpprd. */
-	if(FIFO) fclose(FIFO);
+	if(FIFO)
+		fclose(FIFO);
 
 	/* Exit with the result of the last command. */
 	return result;
