@@ -198,7 +198,7 @@ printer has stopt printing due to a fault.  In that case, the <command>ppop
 start</command> command will cause an immediate retry. Printer faults are
 discussed in section <xref linkend="printerfaults"/>.</para>
 
-<para>If you would rather, you can use the web interface to check a printer's status and stop 
+<para>If you would rather, you can use the web interface to check a printer's status and stop
 and start it.  To do this, click on the printer's icon in the PPR Control Panel and choose <guimenuitem>
 Printer Control</guimenuitem>.  A window like that shown in figure <xref linkend="web-prn-control"/> will appear.
 </para>
@@ -210,8 +210,17 @@ Printer Control</guimenuitem>.  A window like that shown in figure <xref linkend
 </mediaobject>
 </figure>
 
-<para>Now instead of using commands such as <command>ppop stop</command> and <command>ppop start</command> you can 
+<para>Now instead of using commands such as <command>ppop stop</command> and <command>ppop start</command> you can
 simply press the coresponding buttons.</para>
+
+<para>A third option is to use the Perl/Tk interface.</para>
+
+<figure id="perltk-prn-status">
+<title>Printer Status as Displayed in the Perl/Tk Interface</title>
+<mediaobject>
+	<imageobject><imagedata fileref="perltk_prn_status.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
 
 </sect2>
 

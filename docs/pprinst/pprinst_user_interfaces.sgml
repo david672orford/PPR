@@ -77,10 +77,12 @@ web-browser interface.  The web browser interface is shown in figure
 
 <para>Some of the operations which you can perform using the web interface require
 authentication and authorization.  If you are running the web browser on a Linux
-system and connecting to the same system using the address <literal>localhost</liternal>,
+system and connecting to the same system using the address <literal>localhost</literal>,
 then <application>PPR</application> will be able to determine which user is on
 the other browser side of the connection.  Under any other circumstance, you will have to
 present a username and password.</para>
+
+[missing]
 
 </sect2>
 
@@ -90,7 +92,8 @@ present a username and password.</para>
 <para>The Perl/Tk interface is the least mature.  It currently provides a
 way to print files, view and manage queues, view printer status, and start
 and stop printers.  It does not provide any way to alter the spooler
-configuration.  There are also some gaps in the functions which it does provide.
+configuration.  There are also some gaps in the functions which it does
+provide.
 </para>
 
 <figure id="perltk-control">

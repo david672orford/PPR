@@ -1,7 +1,7 @@
 <!--
 Filename: pprinst_queue.sgml
-Last Modified: 20 August 2003
-Last Proofread: 
+Last Modified: 10 September 2003
+Last Proofread:
 -->
 
 <sect1>
@@ -46,15 +46,24 @@ rat-2716        Pamela Andrews       11:55AM 007 printing on rat
 
 </para>
 
-<para>Of course, you can also view the queue using the web interface.  To view the queue for a specific 
+<para>Of course, you can also view the queue using the web interface.  To view the queue for a specific
 printer or group of printers, click on the printers icon in the PPR Web Control Panel and choose <guimenuitem>
-View Queue</guimenuitem>.  To see all jobs, click on the icon labeled "Show All Queues".  A sample queue listing 
+View Queue</guimenuitem>.  To see all jobs, click on the icon labeled "Show All Queues".  A sample queue listing
 window is shown in figure <xref linkend="web-jobs"/>.</para>
 
 <figure id="web-jobs">
 <title>Job Control</title>
 <mediaobject>
 	<imageobject><imagedata fileref="web_jobs.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+<para>Or you might choose the Perl/Tk interface.</para>
+
+<figure id="perltk-queue">
+<title>Viewing the Queue Using the Perl/Tk Interface</title>
+<mediaobject>
+	<imageobject><imagedata fileref="perltk_queue.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
 

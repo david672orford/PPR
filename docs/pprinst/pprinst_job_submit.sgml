@@ -1,3 +1,9 @@
+<!--
+Filename: pprinst_job_submit.sgml
+Last Modified: 10 September 2003
+Last Proofread:
+-->
+
 <sect1 id="job-submit">
 <title>Submitting Jobs to PPR</title>
 
@@ -384,6 +390,18 @@ or <command>ppop</command> will be created and run.
 <para>
 For instructions for setting up Uprint, see the UPRINT(8) man page.
 </para>
+
+</sect2>
+
+<sect2>
+<title>Submitting Jobs Using the Perl/Tk Interface</title>
+
+<figure id="perltk-submit">
+<title>Submitting a Job Using the Perl/Tk Interface</title>
+<mediaobject>
+	<imageobject><imagedata fileref="perltk_submit.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
 
 </sect2>
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 August 2003.
+# Last modified 10 September 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -44,7 +44,10 @@ NONBUILT=web_start.png \
 	web_prn_control.png \
 	web_prn_addwiz.png \
 	web_prn_properties1.png \
-	perltk_control.png
+	perltk_control.png \
+	perltk_prn_status.png \
+	perltk_queue.png \
+	perltk_submit.png
 
 #=== Build ==================================================================
 
@@ -93,4 +96,3 @@ veryclean: clean
 	$(RMF) $(BUILT)
 
 # end of file
-

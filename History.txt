@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--10 September 2003.
+1.52, 24 July 2003--11 September 2003.
 
 Bug Fixes
 
