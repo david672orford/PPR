@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_pca.c
+** mouse:~ppr/src/libgu/gu_parse_uri.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,38 +25,38 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
-*/
-
-/*! \file
-
-Perl Compatible Array
-  
+** Last modified 24 February 2005.
 */
 
 #include "config.h"
 #include "gu.h"
+#include "vector.h"
+#include "pool.h"
+#include "pre.h"
 
-void *gu_pca_new(int initial_size)
+int gu_parse_uri(pool callers_pool, struct URI *uri, char uri_string[])
 	{
-	}
-void  gu_pca_free(void *pca)
-	{
-	}
-char *gu_pca_index(void *pca, int index)
-	{
-	}
-char *gu_pca_pop(void *pca) 
-	{
-	}
-void  gu_pca_push(void *pca, char *item)
-	{
-	}
-char *gu_pca_shift(void *pca)
-	{
-	}
-void  gu_pca_unshift(void *pca, char *item)
-	{
+	pcre *uri_pattern;
+	vector uri_matches;
+	char *p;
+
+	uri_pattern = precomp(callers_pool,
+		"^([a-zA-Z]+)://([a-zA-Z0-9\\.-]+)((?:/[^/]+)*?(?:/([^/]*))?)$",
+		0);
+
+	if(!(uri_matches = prematch(callers_pool, uri_string, uri_pattern, 0)))
+		return -1;
+
+	vector_pop_front(uri_matches, p);	/* discard */
+	vector_pop_front(uri_matches, uri->method);
+	vector_pop_front(uri_matches, uri->node);
+	vector_pop_front(uri_matches, uri->path);
+	if(vector_size(uri_matches) > 0)
+		vector_pop_front(uri_matches, uri->basename);
+	else
+		uri->basename[0] = '\0';
+	
+	return 0;
 	}
 
 /* end of file */

@@ -44,14 +44,15 @@ The values of PCH objects are either NULL pointers or pointers to PCS objects.
 #include "gu.h"
 
 struct PCH_ENTRY {
-	void *key;					/* key for this item */
-	void *value;				/* value for this item */
+	char *key;					/* key for this item */
+	char *value;				/* value for this item */
 	struct PCH_ENTRY *next;		/* next item in bucket */
 	};
 
 struct PCH {
 	struct PCH_ENTRY **buckets;
 	int bucket_count;				/* how many buckets are in the hash? */
+	int key_count;					/* how many items in the hash? */
 	int current_bucket;				/* bucket which iteration has reached */
 	struct PCH_ENTRY *next_item;	/* bucket item which iternation has reached */
 	};
@@ -74,6 +75,7 @@ void *gu_pch_new(int bucket_count)
 		{
 		p->buckets[x] = (struct PCH_ENTRY *)NULL;
 		}
+	p->key_count = 0;
 	p->current_bucket = -1;
 	p->next_item = NULL;
 	return (void *)p;
@@ -86,9 +88,9 @@ it uses and decrementing the reference counts on any objects it holds
 references to (which may result in their being freed too).
 
 */
-void gu_pch_free(void **pch)
+void gu_pch_free(void *pch)
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	int x;
 	struct PCH_ENTRY *bucket, *bucket_next;;
 
@@ -105,30 +107,31 @@ void gu_pch_free(void **pch)
 		}
 
 	gu_free(p->buckets);		/* free the buckets within the object */
-	gu_free(*pch);				/* free the object itself */
-	*pch = (void*)NULL;			/* voiding the pointer will prevent accidental reuse */
+	gu_free(pch);				/* free the object itself */
 	}
 
 /** Print description of PCH object
 
 */
-void gu_pch_debug(void **pch, const char name[])
+void gu_pch_debug(void *pch, const char name[])
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	int x;
 
-	printf("%p ->\n", pch);
+	printf("%p {\n", pch);
 
 	for(x=0; x < p->bucket_count; x++)
 		{
-		struct PCH_ENTRY *bucket = p->buckets[x];
+		struct PCH_ENTRY *entry = p->buckets[x];
 		printf("  buckets[%d]\n", x);
-		while(bucket)
+		while(entry)
 			{
-			printf("    {%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
-			bucket = bucket->next;
+			printf("    {%s} = \"%s\"\n", entry->key, entry->value);
+			entry = entry->next;
 			}
 		}
+
+	printf("  } (%d items)\n", p->key_count);
 	}
 
 /**
@@ -136,9 +139,9 @@ void gu_pch_debug(void **pch, const char name[])
 This function sets a given key of a given hash object to a given value.
 
 */
-void gu_pch_set(void **pch, char key[], void *value)
+void gu_pch_set(void *pch, char key[], void *value)
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	struct PCH_ENTRY *entry, **entry_pp;
 	entry_pp = &p->buckets[gu_hash(key) % p->bucket_count];
 	while(*entry_pp && strcmp((*entry_pp)->key, key) != 0)
@@ -152,10 +155,11 @@ void gu_pch_set(void **pch, char key[], void *value)
 		}
 	else
 		{
-		entry->next = gu_alloc(sizeof(struct PCH_ENTRY *), 1);
+		*entry_pp = entry = gu_alloc(sizeof(struct PCH_ENTRY *), 1);
 		entry->key = key;
 		entry->value = value;
 		entry->next = NULL;
+		p->key_count++;
 		}
 	}
 
@@ -165,9 +169,9 @@ This function looks up the indicated key and returns the value as a PCS (or
 NULL if the key is not found).
 
 */
-void *gu_pch_get(void **pch, const char key[])
+char *gu_pch_get(void *pch, const char key[])
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	struct PCH_ENTRY *entry = p->buckets[gu_hash(key) % p->bucket_count];
 	while(entry && strcmp(entry->key, key) != 0)
 		entry = entry->next;
@@ -182,20 +186,23 @@ void *gu_pch_get(void **pch, const char key[])
 This function deletes a key from the hash table.
 
 */
-void gu_pch_delete(void **pch, char key[])
+char *gu_pch_delete(void *pch, char key[])
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	struct PCH_ENTRY *entry, **entry_pp = &p->buckets[gu_hash(key) % p->bucket_count];
 	while((entry = *entry_pp))
 		{
 		if(strcmp(entry->key, key) == 0)
 			{
+			char *value = entry->value;
 			*entry_pp = entry->next;
-			gu_free(entry->next);
-			break;
+			gu_free(entry);
+			p->key_count--;
+			return value;
 			}
 		entry_pp = &entry->next;
 		}
+	return NULL;
 	}
 
 /** rewind key iteration to first key
@@ -204,9 +211,9 @@ This rewinds the hash to the first key (for hash traversal with
 gu_pch_nextkey()).
 
 */
-void gu_pch_rewind(void **pch)
+void gu_pch_rewind(void *pch)
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	p->current_bucket = -1;
 	p->next_item = NULL;
 	}
@@ -227,9 +234,9 @@ Do it like this:
 		}
 
 */
-char *gu_pch_nextkey(void **pch, char **value)
+char *gu_pch_nextkey(void *pch, char **value)
 	{
-	struct PCH *p = (struct PCH *)*pch;
+	struct PCH *p = (struct PCH *)pch;
 	if(!p->next_item)
 		{
 		/* move to next non-empty bucket */
@@ -284,11 +291,39 @@ int main(int argc, char *argv[])
 	void *thash = gu_pch_new(10);
 	gu_pch_debug(&thash, "thash");
 
-	gu_pch_set(&thash, "x", "100");
-	gu_pch_debug(&thash, "thash");
+	gu_pch_set(thash, "x", "100");
+	gu_pch_set(thash, "y", "110");
+	gu_pch_set(thash, "z", "120");
+	gu_pch_set(thash, "john", "president");
+	gu_pch_set(thash, "sally", "treasurer");
+	gu_pch_set(thash, "sue", "secretary");
+	gu_pch_set(thash, "1", "one");
+	gu_pch_set(thash, "2", "two");
+	gu_pch_set(thash, "3", "three");
+	gu_pch_set(thash, "4", "four");
+	gu_pch_set(thash, "5", "five");
+	gu_pch_set(thash, "6", "six");
+	gu_pch_set(thash, "7", "seven");
+	gu_pch_set(thash, "8", "eight");
+	gu_pch_set(thash, "9", "nine");
+	gu_pch_set(thash, "10", "ten");
+	gu_pch_debug(thash, "thash");
 
-	gu_pch_free(&thash);
+	printf("sue=\"%s\"\n", gu_pch_delete(thash, "sue"));
+	gu_pch_debug(thash, "thash");
 
+	{
+	const char *key;
+	for(gu_pch_rewind(thash); (key = gu_pch_nextkey(thash, NULL)); )
+		{
+		printf("\"%s\" -> \"%s\"\n", key, gu_pch_get(thash, key));
+		}
+	}
+
+	gu_pch_free(thash);
+
+	printf("memory blocks = %d\n", gu_alloc_checkpoint());
+	
 	return 0;
 	}
 #endif

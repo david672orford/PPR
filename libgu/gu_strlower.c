@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_pca.c
+** mouse:~ppr/src/libgu/gu_strlower.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,38 +25,30 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 24 February 2005.
 */
 
-/*! \file
-
-Perl Compatible Array
-  
-*/
+/** \file */
 
 #include "config.h"
+#include <ctype.h>
 #include "gu.h"
 
-void *gu_pca_new(int initial_size)
+/** Convert a string to lower case
+
+This function modifies the string converting each upper-case character
+to its lower-case equivelent.
+
+*/
+char *gu_strlower(char *string)
 	{
-	}
-void  gu_pca_free(void *pca)
-	{
-	}
-char *gu_pca_index(void *pca, int index)
-	{
-	}
-char *gu_pca_pop(void *pca) 
-	{
-	}
-void  gu_pca_push(void *pca, char *item)
-	{
-	}
-char *gu_pca_shift(void *pca)
-	{
-	}
-void  gu_pca_unshift(void *pca, char *item)
-	{
+	char *p;
+	for(p=string; *p; p++)
+		{
+		*p = tolower(*p);
+		p++;
+		}
+	return string;
 	}
 
 /* end of file */

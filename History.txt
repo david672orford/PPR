@@ -9585,7 +9585,10 @@ no final tarball was released.
 * test/*: fixed the tests to coorespond with the interface script parameter
   changes and the directory layout changes.
 
-* libgu/gu_strlower.c,gu_strtrim.c: added
+* libgu/gu_pch.c: restored and finished
+
+* libgu/gu_strlower.c,gu_strtrim.c, gu_pca.c, gu_parse_uri.c: added
 
 * libgu/malloc_debug.c: moved a simplified version into malloc.c and deleted 
   file
+

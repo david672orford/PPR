@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_pca.c
+** mouse:~ppr/src/libgu/gu_strtrim.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -28,35 +28,51 @@
 ** Last modified 13 January 2005.
 */
 
-/*! \file
-
-Perl Compatible Array
-  
-*/
-
 #include "config.h"
+#include <ctype.h>
+#include <string.h>
 #include "gu.h"
 
-void *gu_pca_new(int initial_size)
+char *gu_strtrim(char *string)
 	{
+	char *p;
+	int len;
+	for(p=string; *p && isspace(*p); p++)
+		{
+		}
+	len = strlen(p);
+	if(p > string)
+		{
+		memmove(string, p, len);
+		}
+	while(--len >= 0)
+		{
+		if(isspace(string[len]))
+			string[len] = '\0';
+		}
+	return string;
 	}
-void  gu_pca_free(void *pca)
+
+#ifdef TEST
+#include <stdio.h>
+int main(int argc, char *argv[])
 	{
+	char test[40];
+
+	strcpy(test, "  my test string");
+	gu_strtrim(test);
+	printf("\"%s\"\n", test);
+
+	strcpy(test, "my test string  ");
+	gu_strtrim(test);
+	printf("\"%s\"\n", test);
+
+	strcpy(test, "  my test string  ");
+	gu_strtrim(test);
+	printf("\"%s\"\n", test);
+
+	return 0;
 	}
-char *gu_pca_index(void *pca, int index)
-	{
-	}
-char *gu_pca_pop(void *pca) 
-	{
-	}
-void  gu_pca_push(void *pca, char *item)
-	{
-	}
-char *gu_pca_shift(void *pca)
-	{
-	}
-void  gu_pca_unshift(void *pca, char *item)
-	{
-	}
+#endif
 
 /* end of file */

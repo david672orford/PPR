@@ -437,23 +437,23 @@ int gu_pcs_cmp(void **pcs1, void **pcs2);
 
 /* Perl Compatible Hash */
 void *gu_pch_new(int bucket_count);
-void gu_pch_free(void **pch);
-void gu_pch_debug(void **pch, const char name[]);
-void gu_pch_set(void **pch, char key[], void *value);
-void *gu_pch_get(void **pch, const char key[]);
-void gu_pch_delete(void **pch, char key[]);
-void gu_pch_rewind(void **pch);
-char *gu_pch_nextkey(void **pch, char **value);
+void gu_pch_free(void *pch);
+void gu_pch_debug(void *pch, const char name[]);
+void gu_pch_set(void *pch, char key[], void *value);
+char *gu_pch_get(void *pch, const char key[]);
+char *gu_pch_delete(void *pch, char key[]);
+void gu_pch_rewind(void *pch);
+char *gu_pch_nextkey(void *pch, char **value);
 int gu_hash(const char string[]);
 
 /* Perl Compatible Array */
 void *gu_pca_new(int initial_size);
-void gu_pca_free(void **pca);
-void gu_pca_index(void **pca, int index);
-void *gu_pca_pop(void *pca); 
-void gu_pca_push(void *pca, void **pcs); 
-void *gu_pca_shift(void *pca); 
-void gu_pca_unshift(void *pca, void **pcs); 
+void  gu_pca_free(void *pca);
+char *gu_pca_index(void *pca, int index);
+char *gu_pca_pop(void *pca); 
+void  gu_pca_push(void *pca, char *item); 
+char *gu_pca_shift(void *pca); 
+void  gu_pca_unshift(void *pca, char *item); 
 
 /*===================================================================
 ** Replacements for frequently missing functions
