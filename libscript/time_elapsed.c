@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 30 June 2000.
+** Last modified 19 June 2001.
 */
 
 /*
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     	}
 
     start_time = atol(argv[1]);
-    if(argc == 3) threshold = atol(argv[2]); else threshold = 0;
+    threshold = (argc >= 3) ? atol(argv[2]) : 0;
 
     time(&now_time);
 
@@ -91,4 +91,3 @@ int main(int argc, char *argv[])
     }
 
 /* end of file */
-
