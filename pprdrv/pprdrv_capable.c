@@ -278,9 +278,11 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    		&& Features.LanguageLevel >= internal_resources[i].minlevel)
 	    	{
 		DODEBUG_RESOURCES(("Resource %s %s is in printer", d->type, d->name));
-	        continue;
+	        break;
 		}
 	    }
+	if(internal_resources[i].type)		/* if didn't reach end of table, */
+	    continue;
 	}
 #endif
 
