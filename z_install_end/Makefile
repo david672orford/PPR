@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 April 2004.
+# Last modified 11 May 2004.
 #
 
 include ../Makefile.conf
@@ -54,7 +54,7 @@ install: $(ALL)
 	./install_init_script.sh
 	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real || true
 
-# These are operations which are defered if we are building an package.
+# These are operations which are defered if we are building a package.
 install-real:
 	# Register in /etc/alternatives.
 	#./install_alternatives.tcl
