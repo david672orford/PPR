@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/enc2font.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 March 2004.
+** Last modified 16 March 2005.
 */
 
 #include "config.h"
@@ -38,9 +38,9 @@
 #include "libppr_font.h"
 
 /*
-** This function searches fonts.conf to find a find that will provide the characters
-** for a particular encoding.  The font family, weight, and slant are also
-** specified.
+** This function searches fonts.conf to find a find that will provide the 
+** characters for a particular encoding.  The font family, weight, and slant 
+** are also specified.
 */
 int encoding_to_font(const char encoding[], const char fontfamily[], const char fontweight[], const char fontslant[], const char fontwidth[], struct FONT_INFO *fontinfo)
 	{

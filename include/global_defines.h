@@ -311,15 +311,14 @@ typedef short int SHORT_INT;
 #define BANNER_INVALID 4			/* used internally in ppad */
 
 /*
-** Flags stored in the unix file permissions of a font in
-** the resource cache.	Both pprdrv and ppr use these
-** values.
+** These flags describe the formats of fonts available for transmission to
+** printers.  Both pprdrv and ppr use these values.
 */
 #define FONT_TYPE_1 1			/* Font has Type 1 components present */
 #define FONT_TYPE_3 2
 #define FONT_TYPE_42 4			/* Font has Type 42 components present */
 #define FONT_MACTRUETYPE 8		/* Is a Macintosh TrueType font in PostScript form */
-#define FONT_TYPE_TTF 16				/* Font is MS-Windows .ttf format file (file mode isn't really set) */
+#define FONT_TYPE_TTF 16		/* Font is MS-Windows .ttf format file (file mode isn't really set) */
 
 /* File modes used to represent some of those above in the file system. */
 #define FONT_MODE_MACTRUETYPE S_IXUSR

@@ -105,7 +105,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
 
 	p = font_info_new();
 	p->font_psname = psname;
-	p->font_type = gu_strdup("ttf");
+	p->font_type = FONT_TYPE_TTF;
 
 	return p;
 	} /* end of study_truetype_font() */
@@ -115,6 +115,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
 */
 static gu_boolean type1_line_process(struct FONT_INFO *fi, char *line)
 	{
+	char *p;
 	if(!fi->font_family && strncmp(line, "/FamilyName (", 13) == 0)
 		{
 		fi->font_family = gu_strndup(line + 13, strcspn(line, ")"));
@@ -140,9 +141,32 @@ static gu_boolean type1_line_process(struct FONT_INFO *fi, char *line)
 		fi->font_encoding = gu_strndup(line + 10, strcspn(line + 11, " "));
 		return TRUE;
 		}
-	if(!fi->font_type && strncmp(line, "/FontType ", 10) == 0)
+	if((p = lmatchp(line, "/FontType")))
 		{
-		fi->font_type = gu_strndup(line + 10, strcspn(line + 10, " "));
+		switch(atoi(p))
+			{
+			case 1:
+				fi->font_type |= FONT_TYPE_1;
+				break;
+			case 3:
+				fi->font_type |= FONT_TYPE_3;
+				break;
+			case 42:
+				fi->font_type |= FONT_TYPE_42;
+				break;
+			}
+		return TRUE;
+		}
+	if(strcmp(line, "%beginsfnt\n") == 0)
+		{
+		fi->font_type |= FONT_MACTRUETYPE;
+		fi->font_type |= FONT_TYPE_42;
+		return TRUE;
+		}
+	if(strcmp(line, "%beginType1") == 0)
+		{
+		fi->font_type |= FONT_MACTRUETYPE;
+		fi->font_type |= FONT_TYPE_1;
 		return TRUE;
 		}
 	return FALSE;
@@ -282,17 +306,10 @@ static int do_file(FILE *indexfile, const char filename[])
 	unsigned char sample[16];
 	int fd;
 	ssize_t len;
-	struct FONT_INFO *p;
+	struct FONT_INFO *font_info;
     
 	if((fd = open(filename, O_RDONLY)) == -1)
 		{
-		#if 0		/* appearently redundant code */
-		if(errno == ENOENT)
-			{
-			printf(" -- Broken symbolic link");
-			return EXIT_OK;
-			}
-		#endif
 		fprintf(stderr, "\tCan't open \"%s\", errno=%d (%s)\n", filename, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
@@ -313,41 +330,38 @@ static int do_file(FILE *indexfile, const char filename[])
 	if(len > 4 && memcmp(sample, "\000\001\000\000", 4) == 0)
 		{
 		printf(" -- TrueType font file");
-		p = study_truetype_font(filename);
+		font_info = study_truetype_font(filename);
 		}
 	else if(len > 14 && memcmp(sample, "%!PS-AdobeFont", 14) == 0)
 		{
 		printf(" -- PostScript font (PFA format)");
-		p = study_pfa_font(filename);
+		font_info = study_pfa_font(filename);
 		}
 	else if(len > 1 && sample[0] == 128)
 		{
 		printf(" -- PostScript font (PFB format)");
-		p = study_pfb_font(filename);
+		font_info = study_pfb_font(filename);
 		}
 	else if(len > 15 && memcmp(sample, "StartFontMetrics", 15) == 0)
 		{
 		printf(" -- Adobe Font Metrics file");
-		p = study_afm_file(filename);
+		font_info = study_afm_file(filename);
 		}
 	else
 		{
 		printf(" -- Probably not a scalable font");
-		p = NULL;
+		font_info = NULL;
 		}
 
-	if(p)
+	if(font_info)
 		{
-		/* printf("psname = \"%s\"\n", p->font_psname); */
-		fprintf(indexfile, "%s:%s:%s\n", p->font_psname, p->font_type ? p->font_type : "?", filename);
-		font_info_delete(p);
+		fprintf(indexfile, "%s:%d:%s\n", font_info->font_psname, font_info->font_type, filename);
+		font_info_delete(font_info);
 		}
-	#if 0
 	else
 		{
-		fprintf(indexfile, "# %s\n", filename);
+		/* fprintf(indexfile, "# %s\n", filename); */
 		}
-	#endif
 
 	return EXIT_OK;
 	} /* end of do_file() */
@@ -502,7 +516,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Warn */
-	fprintf(indexfile, "# This file format is a temporary hack.  It will change.\n");
+	fprintf(indexfile, "# %s\n", SHORT_VERSION);
 
 	/* iterate over the nameless values */
 	for(i=0; section[i].name; i++)

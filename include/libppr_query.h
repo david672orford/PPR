@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 16 March 2005.
 */
 
 /** Query object
@@ -35,9 +35,9 @@
 */
 struct QUERY
 	{
-	const char *interface;
-	const char *address;
-	const char *options;
+	const char *interface;		/** name of printer interface program */
+	const char *address;		/** address to pass to interface */
+	const char *options;		/** options list to pass to interface */
 	gu_boolean control_d;
 	char buf_stdin[512];
 	char buf_stdout[512];
@@ -53,12 +53,12 @@ struct QUERY
 	int pipe_stdout[2];
 	int pipe_stderr[2];
 	int last_stdout_crlf;
-	int maxfd;						/* first argument for select() */
-	char *line;						/* last line read from printer */
-	int line_len;					/* number of bytes currently allocated to line */
+	int maxfd;					/** first argument for select() */
+	char *line;					/** last line read from printer */
+	int line_len;				/** number of bytes currently allocated to line */
 	gu_boolean connected;
-	gu_boolean disconnecting;		/* are we going to close() once the output buffer is empty? */
-	gu_boolean job_started;			/* has query_puts() been called yet? */
+	gu_boolean disconnecting;	/** are we going to close() once the output buffer is empty? */
+	gu_boolean job_started;		/** has query_puts() been called yet? */
 	};
 
 struct QUERY *query_new_byaddress(const char interface[], const char address[], const char options[]);

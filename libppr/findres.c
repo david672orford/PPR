@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 16 March 2005.
 */
 
 /*
@@ -42,6 +42,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -89,7 +90,8 @@ static char *try_fontindex(const char res_name[], int *features)
 	while((line = gu_getline(line, &line_space, dbf)))
 		{
 		linenum++;
-		if(line[0] == '#' || line[0] == ';' || line[0] == '\0') continue;
+		if(line[0] == '#')
+			continue;
 
 		ptr = line;
 		if((f1 = gu_strsep(&ptr, ":")))
@@ -101,6 +103,8 @@ static char *try_fontindex(const char res_name[], int *features)
 					error("%s(): \"%s\" line %d is invalid", function, filename, linenum);
 					continue;
 					}
+				if(features)
+					*features = atoi(f2);
 				answer = gu_strdup(f3);
 				gu_free(line);
 				break;

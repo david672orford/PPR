@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_mactt.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 July 1999.
+** Last modified 16 March 2005.
 */
 
 #include "config.h"
@@ -22,7 +37,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "pprdrv.h"
 
@@ -68,6 +82,9 @@ static void _skipblanklines(const char fname[], char *tline, int tline_len, FILE
 		}
 	} /* end of _skipblanklines() */
 
+/*
+ * Send the needed parts of the indicated font file to the printer.
+ */
 void send_font_mactt(const char filename[])
 	{
 	FILE *cache_file;
@@ -79,10 +96,13 @@ void send_font_mactt(const char filename[])
 		fatal(EXIT_JOBERR, _("Can't open resource file \"%s\", errno=%d (%s)"), filename, errno, gu_strerror(errno));
 
 	/* Copy up to the first "%begin" line. */
-	while(fgets(tline,sizeof(tline),cache_file) && strncmp(tline,"%begin",6) )
+	while(fgets(tline,sizeof(tline),cache_file) && !lmatch(tline,"%begin") )
 		printer_puts(tline);
 
-	/* If this is the "%beginsfnt" section, copy or discard it. */
+	/* 
+	 * If this is the "%beginsfnt" section, copy or discard it.
+	 * (The sfnt section is the type 42 version of the font.)
+	 */
 	if(strcmp(tline,"%beginsfnt\n") == 0)
 		{
 		/* If a TrueType rasterizer was previously found to be available, */
@@ -105,16 +125,17 @@ void send_font_mactt(const char filename[])
 		** rasterizer), discard it.  If we need it and it is absent,
 		** insert one from `memory'.
 		*/
-		if( strcmp(tline,"%beginsfntBC\n") == 0 )
+		if(strcmp(tline,"%beginsfntBC\n") == 0)
 			{
-			if( type42_sent && Features.TTRasterizer==TT_ACCEPT68K )
+			if(type42_sent && Features.TTRasterizer == TT_ACCEPT68K)
 				_copy(filename,tline,sizeof(tline),cache_file," %endsfntBC\n");
 			else
 				_discard(filename,tline,sizeof(tline),cache_file," %endsfntBC\n");
 			}
-		else if( type42_sent && Features.TTRasterizer==TT_ACCEPT68K )
+		else if(type42_sent && Features.TTRasterizer == TT_ACCEPT68K)
 			{
-			printer_puts("%beginsfntBC\n"
+			printer_puts(
+				"%beginsfntBC\n"
 				"truedictknown type42known not and ( %endsfntBC)exch fcheckload\n"
 				"/TrueState 271 string def\n"
 				"TrueDict begin sfnts save 72 0 matrix defaultmatrix dtransform dup mul\n"
@@ -124,13 +145,14 @@ void send_font_mactt(const char filename[])
 				"{exch}{exch pop /.notdef}ifelse get dup xcheck{currentdict systemdict\n"
 				"begin begin exec end end}{exch pop TrueDict begin /bander load cvlit\n"
 				"exch TrueState render end}ifelse end} bind def\n"
-				"\n %endsfntBC\n");
+				"\n %endsfntBC\n"
+				);
 			}
 
 		_skipblanklines(filename, tline, sizeof(tline), cache_file);
 
 		/* Sanity check, make sure the sfntdef section is next. */
-		if(strcmp(tline, "%beginsfntdef\n"))	/* if not equal */
+		if(strcmp(tline, "%beginsfntdef\n"))
 			fatal(EXIT_PRNERR_NORETRY, _("Cached Mac TT font \"%s\" has no sfntdef section."), filename);
 
 		/* Copy or discard the "sfntdef" section */
