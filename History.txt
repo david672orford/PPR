@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--19 March 2004.
+1.53a2, 20 February 2004--23 March 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9083,18 +9083,24 @@ Internet Printing Protocol Work
 * www/df_html.cgi.perl: fixed a problem with the fact that GNU df wraps lines if
   the device node path is too long.
 
-* lprsrv/olprsrv.c: dropt
+* lprsrv/olprsrv.c: dropt since it has long been obsolete and nobody
+  on the PPR mailing list begged mercy for it.
 
 * www/shared.css: reduced size of menubar font from 12pt to 10pt and put 
   "Helvetica" in front of sans-serif for page-wide default font.
+
+* www/prn_addwiz.cgi.perl: added support for network browers to Add Printer
+  wizard.
+
+* www/prn_addwiz.perl: added support for auto-detection of printer type
+  and selection of PPD file.
+
 
 
 +++++++++++++++++++++
 TODO
 
 * Create Debian package.
-
-* Add support for network browers to Add Printer wizard.
 
 * Make a tiny GtkEmbed or Mozilla chrome Mozilla browser
 

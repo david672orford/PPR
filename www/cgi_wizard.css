@@ -1,11 +1,15 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 17 December 2003.
+** Last modified 23 March 2004.
 */
 
 BODY {
 	background: #e0e0e0;
 	margin: 0px;
+	}
+
+P {
+	margin: 0 0 12pt 0;
 	}
 
 /* This is for form field labels.

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 February 2004.
+# Last modified 23 March 2004.
 #
 
 use lib "?";
@@ -149,8 +149,10 @@ my $tabbed_table = [
 		{
 		'tabname' => N_("PPD"),
 		'help' => "ppd",
+		'cellpadding' => 10,
 		'dopage' => sub {
 				require 'ppd_select.pl';
+
 				my $ppd = cgi_data_move('ppd', undef);				# select box
 				my $ppd_select = cgi_data_move('ppd_select', "");	# text entry box
 
@@ -163,20 +165,29 @@ my $tabbed_table = [
 				print "</label></p>\n";
 
 				{
-				my $probe = cgi_data_move("probe", "");
-				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
-				if($probe eq "probe")
+				my $ppd_probe = cgi_data_move("ppd_probe", "");
+				if($ppd_probe eq "probe")
 					{
 					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
 					}
-				elsif($probe eq "clear")
+				elsif($ppd_probe eq "clear")
 					{
 					delete $data{ppd_probe_list};
 					}
 				}
 
 				# Print the HTML for a select box.
-				print '<p><label>', H_("Available PPD Files (by printer description):"), "<br>\n";
+				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
+				print '<p><label>';
+				if($ppd_probe_list ne "")
+					{
+					print H_("Suitable PPD Files:");
+					}
+				else
+					{
+					print H_("All Available PPD Files:");
+					}
+				print "<br>\n";
 				print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
 				my $lastgroup = "";
 				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
@@ -196,7 +207,7 @@ my $tabbed_table = [
 				print "</select>\n";
 				print "</label></p>\n";
 
-				print "</td><td>\n";
+				print "</td><td style=\"padding-top: 2cm;\">\n";
 
 				# Print a small table with a summary of what the PPD files says.
 				ppd_summary($ppd);
@@ -205,11 +216,11 @@ my $tabbed_table = [
 
 				if(cgi_data_peek("ppd_probe_list","") eq "")
 					{
-					isubmit("probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
+					isubmit("ppd_probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
 					}
 				else
 					{
-					isubmit("probe", "clear", N_("Show All PPD Files"));
+					isubmit("ppd_probe", "clear", N_("Show All PPD Files"));
 					}
 				},
 		'onleave' => sub {

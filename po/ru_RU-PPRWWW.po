@@ -983,11 +983,11 @@ msgstr ""
 
 #: ../www/ppd_select.pl:150
 msgid "PPD File"
-msgstr ""
+msgstr "PPD файл"
 
 #: ../www/ppd_select.pl:151
 msgid "PPD File Version"
-msgstr ""
+msgstr "Версия PPD файла"
 
 #: ../www/ppd_select.pl:152
 msgid "LanguageLevel"
@@ -999,7 +999,7 @@ msgstr ""
 
 #: ../www/ppd_select.pl:154
 msgid "Number of Fonts"
-msgstr ""
+msgstr "Сколько шрифтов"
 
 #: ../www/ppd_select.pl:155
 msgid "TrueType Rasterizer"
@@ -1261,17 +1261,19 @@ msgstr "PPR: Дабавление принтера: Посмотрить принтеры"
 
 #: ../www/prn_addwiz.cgi.perl:588
 msgid "PPR: Add a Printer: Choose a PPD File"
-msgstr ""
+msgstr "PPR: Дабавление принтера: Вибор PPD файла"
 
 #: ../www/prn_addwiz.cgi.perl:595
 msgid ""
 "Please select a appropriate PostScript Printer\n"
-"Description (PPD) file for this printer:"
+"Description (PPD) file for this printer."
 msgstr ""
+"Выборайте пожалиста файл описывайющий принтер\n"
+"(PPD файл) который подходит к этому принтеру."
 
 #: ../www/prn_addwiz.cgi.perl:630
 msgid "You must choose a PPD file first!"
-msgstr ""
+msgstr "Вы PPD файла не выбрали!"
 
 #: ../www/prn_addwiz.cgi.perl:639
 msgid "PPR: Add a Printer: Name the Printer"
@@ -1625,11 +1627,11 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:160
 msgid "Current PPD File:"
-msgstr "Нынешний описывающий файл:"
+msgstr "Нынешний PPD файл:"
 
 #: ../www/prn_properties.cgi.perl:178
-msgid "Available PPD Files (by printer description):"
-msgstr ""
+msgid "All Available PPD Files:"
+msgstr "Все доступных PPD файлов:"
 
 #: ../www/prn_properties.cgi.perl:207
 msgid "Auto Detect"
@@ -1643,7 +1645,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:211
 msgid "Show All PPD Files"
-msgstr "Показывать все описывающих принтеры файлов"
+msgstr "Показывать все PPD файлов"
 
 #: ../www/prn_properties.cgi.perl:216
 msgid "No PPD file is selected!"
@@ -2295,7 +2297,7 @@ msgstr ""
 
 #: ../www/show_queues.cgi.perl:236
 msgid "Show All Queues"
-msgstr "Показывать Всем Очередям"
+msgstr "Показывать всем очередям"
 
 #: ../www/show_queues.cgi.perl:238
 msgid "Click here to open a window which will show all queued jobs."
@@ -2303,7 +2305,7 @@ msgstr "Снимите здесь открыть окно показайющое всю очереди."
 
 #: ../www/show_queues.cgi.perl:241
 msgid "Add New Printer"
-msgstr "Добавлять Новый Принтер"
+msgstr "Добавлять новый принтер"
 
 #: ../www/show_queues.cgi.perl:243
 msgid ""
@@ -2315,7 +2317,7 @@ msgstr ""
 
 #: ../www/show_queues.cgi.perl:246
 msgid "Add New Group"
-msgstr "Добавлять Новую Группу"
+msgstr "Добавлять новую группу"
 
 #: ../www/show_queues.cgi.perl:248
 msgid ""

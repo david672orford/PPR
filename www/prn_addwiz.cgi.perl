@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 March 2004.
+# Last modified 24 March 2004.
 #
 
 #
@@ -48,10 +48,6 @@ defined($HOMEDIR) || die;
 defined($INTDIR) || die;
 defined($CONFDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
-
-# Programs we need:
-$GETZONES = "$HOMEDIR/lib/getzones";
-$NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 
 #===========================================
 # This is a table of interface program
@@ -375,6 +371,7 @@ $addprn_wizard_table = [
 			require 'cgi_run.pl';
 			my $browser_zone = cgi_data_move("browser_zone", "");
 			opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
+			print '<p><label>', H_("Zones available for browsing:"), '<br>', "\n";
 			print '<select tabindex=1 name="browser_zone" size="15" style="max-width: 300px">', "\n";
 			while(my $browser = readdir(BROWSERS))
 				{
@@ -385,6 +382,7 @@ $addprn_wizard_table = [
 				opencmd(ZONES, "$HOMEDIR/browsers/$browser") || die "Unable to get zone list";
 				while(my $zone = <ZONES>)
 					{
+					chomp $zone;
 					my $new_browser_zone = "$browser:$zone";
 					print "<option value=", html_value($new_browser_zone);
 					print " selected" if($new_browser_zone eq $browser_zone);
@@ -394,6 +392,7 @@ $addprn_wizard_table = [
 				print "</optgroup>\n";
 				}
 			print "</select>\n";
+			print "</span></p>\n";
 			closedir(BROWSERS) || die $!;
 			},
 		'onnext' => sub {
@@ -411,13 +410,14 @@ $addprn_wizard_table = [
 		'picture' => "wiz-newprn.jpg",
 		'dopage' => sub {
 			require 'cgi_run.pl';
-			my $browser_zone = cgi_data_move("browser_zone", "");
+			my $browser_zone = cgi_data_peek("browser_zone", "");
 			my $browser_printer = cgi_data_move("browser_printer", "");
 			my($browser, $zone) = split(/:/, $browser_zone, 2);
 			$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 			$browser = $1;
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
-			print '<select tabindex=1 name="browser_printer" size="15" style="max-width: 300px; min-width: 300px">', "\n";
+			print '<p><label>', H_("Available printers:"), '<br>', "\n";
+			print '<select tabindex=1 name="browser_printer" size="20" style="max-width: 450px; min-width: 450px">', "\n";
 			outer:
 			while(1)
 				{
@@ -439,19 +439,16 @@ $addprn_wizard_table = [
 						}
 					elsif($line =~ /^$/)	# end of record
 						{
-						if(scalar @interfaces > 1)
+						print "<optgroup label=", html_value($name), ">\n";
+						foreach my $interface (@interfaces)
 							{
-							print "<optgroup label=", html_value($name), ">\n";
-							foreach my $interface (@interfaces)
-								{
-								print "<option value=", html_value($interface), ">", html($name) . " " . html($interface), "</option>\n";
-								}
-							print "</optgroup>\n";
+							my($interface_name, $interface_address) = split(/,/, $interface, 2);
+							my $interface_label = "$interface_name $interface_address";
+							print "<option value=", html_value($interface), ">",
+								html($interface_label),
+								"</option>\n";
 							}
-						else
-							{
-							print "<option value=", html_value(shift @interfaces), ">", html($name), "</option>\n";
-							}
+						print "</optgroup>\n";
 						next outer;
 						}
 					else
@@ -462,6 +459,7 @@ $addprn_wizard_table = [
 				last;
 				}
 			print "</select>\n";
+			print "</span></p>\n";
 			close(PRINTERS) || die $!;
 			},
 		'onnext' => sub {
@@ -492,13 +490,39 @@ $addprn_wizard_table = [
 				# PPD file, if any, selected on a previous pass through this form.
 				my $ppd = cgi_data_move('ppd', undef);
 
-				print "<p><span class=\"label\">", H_("Please select a appropriate PostScript Printer\n"
-						. "Description (PPD) file for this printer:"), "</span><br><br>\n";
+				print "<p>",
+						H_("Please select a appropriate PostScript Printer\n"
+						. "Description (PPD) file for this printer."),
+						"</p>\n";
+
 				print "<table class=\"ppd\"><tr><td>\n";
 
+				{
+				my $ppd_probe = cgi_data_move("ppd_probe", "");
+				if($ppd_probe eq "probe")
+					{
+					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
+					}
+				elsif($ppd_probe eq "clear")
+					{
+					delete $data{ppd_probe_list};
+					}
+				}
+
+				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
+				print '<p><label>';
+				if($ppd_probe_list ne "")
+					{
+					print H_("Suitable PPD Files:");
+					}
+				else
+					{
+					print H_("All Available PPD Files:");
+					}
+				print "<br>\n";
 				print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit();">', "\n";
 				my $lastgroup = "";
-				foreach my $item (ppd_list())
+				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
 					{
 					my($item_manufacturer, $item_modelname) = @{$item};
 					if($item_manufacturer ne $lastgroup)
@@ -511,10 +535,11 @@ $addprn_wizard_table = [
 					print " selected" if($item_modelname eq $ppd);
 					print ">", html($item_modelname), "\n";
 					}
+				print "</optgroup>\n" if($lastgroup ne "");
 				print "</select>\n";
 				print "</p>\n";
 
-				print "</td><td>\n";
+				print "</td><td style=\"padding-top: 1cm;\">\n";
 
 				# Print a small table with a summary of what the PPD files says.
 				if($ppd ne "")
@@ -523,6 +548,15 @@ $addprn_wizard_table = [
 					}
 
 				print "</td></tr></table>\n";
+
+				if(cgi_data_peek("ppd_probe_list","") eq "")
+					{
+					isubmit("ppd_probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
+					}
+				else
+					{
+					isubmit("ppd_probe", "clear", N_("Show All PPD Files"));
+					}
 				},
 		'onnext' => sub {
 				if(! defined($data{ppd}))
@@ -694,7 +728,9 @@ sub suggest_queue_name
 		}
 
 	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
-	elsif(defined($tcpip_list{$interface}) && $address =~ /^([^\.:]+)/)
+	elsif(defined($interface_pages{$interface}) 
+			&& $interface_pages{$interface} eq "int_tcpip"
+			&& $address =~ /^([^\.:]+)/)
 		{
 		$name = $1;
 		}

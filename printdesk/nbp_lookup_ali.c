@@ -181,7 +181,7 @@ static int gui_backend(char *argv[])
 		printf("search iteration %d\n", iteration);
 		#endif
 
-		/* In order to produce results as quicly as possible while still giving as many
+		/* In order to produce results as quickly as possible while still giving as many
 		   devices as possible a chance to respond, we start with queries that don't 
 		   wait very long and then move up to more patient queries.
 		   */

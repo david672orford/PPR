@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_tabbed.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 December 2003.
+# Last modified 23 March 2004.
 #
 
 use 5.004;
@@ -264,14 +264,15 @@ $valign = $DEFAULT_valign if(!defined($valign));
 # Start a table.  This table serves as a frame to contain
 # the text of the selected tab.
 {
-my $spacer_height = $options->{height} - (2 * ($cellpadding - $DEFAULT_cellpadding));
+#my $spacer_height = $options->{height} - (2 * ($cellpadding - $DEFAULT_cellpadding));
+my $spacer_height = $options->{height};
 print <<"tableStart";
-<table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
+<table class="tabpage" border=0 cellspacing=0 height=80% width=100%>
 <tr align=$align valign=$valign>
 <td width="1">
 <img src="../images/pixel-clear.png" alt="" width="1" height="$spacer_height" border=0>
 </td>
-<td>
+<td style="padding: ${cellpadding}px;">
 tableStart
 }
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2004.
+# Last modified 23 March 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -154,7 +154,9 @@ sub ppd_summary
 	print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
 	print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($fonts), "</td></tr>\n";
 	print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($ttrasterizer), "</td></tr>\n";
-	print "<tr><th>", H_("RIP"), "</th><td>", html($rip), "</td></tr>\n";
+	$rip = html($rip);
+	$rip =~ s/\+/<wbr>+/g;
+	print "<tr><th>", H_("RIP"), "</th><td>", $rip, "</td></tr>\n";
 	print "</table>\n";
 	}
 

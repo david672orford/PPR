@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
 # mouse:~ppr/src/browsers/parallel.tcl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 24 March 2004.
 #
 
 set HOMEDIR "?"
@@ -44,13 +44,28 @@ if { $domain == "" } {
 
 set f [open "| $HOMEDIR/lib/nbp_lookup \"=:LaserWriter@$domain\"" "r"]
 while {[gets $f line] >= 0} {
-    #puts $line
-    if [regexp {^[^ ]+ [^ ]+ (([^:]+).+)$} $line junk address name] {
-	puts "\[$name\]"
-	puts "interface=atalk,\"$address\""
-	puts ""
-	}
+    puts $line
+    if [regexp {^([0-9]+:[0-9]+):[0-9]+ [0-9]+ (([^:]+).+)$} $line junk num_address address name] {
+		if {![info exists printers($num_address)]} {
+			set printers($num_address) {}
+			}
+		lappend printers($num_address) [list $name $address]
+		}
     }
 close $f
+
+foreach printer [array names printers] {
+	foreach socket $printers($printer) {
+		set name [lindex $socket 0]
+		}
+	regsub {_Direct$} $name {} name
+	puts "\[$name\]"
+	foreach socket $printers($printer) {
+		set name [lindex $socket 0]
+		set address [lindex $socket 1]
+		puts "interface=atalk,\"$address\""
+		}
+	puts ""
+	}
 
 exit 0

@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
 # mouse:~ppr/src/browsers/parallel.tcl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 24 March 2004.
 #
 
 # Name the command line parameters.
@@ -65,45 +65,45 @@ proc probe_system {} {
 
     # Linux 2.2.X
     if [file isdirectory /proc/parport] {
-	set autoprobe_template "/proc/parport/%d/autoprobe"
-	set dev_template "/dev/lp%d"
-	proc ports_list {} {
-	    set retval {}
-	    foreach port [glob /proc/parport/*] {
-		regexp {([0-9]+)$} $port junk number
-		set retval [lappend $retval $number]
+		set autoprobe_template "/proc/parport/%d/autoprobe"
+		set dev_template "/dev/lp%d"
+		proc ports_list {} {
+		    set retval {}
+		    foreach port [glob /proc/parport/*] {
+			regexp {([0-9]+)$} $port junk number
+			set retval [lappend $retval $number]
+			}
+		    return $retval
+		    }
+		return
 		}
-	    return $retval
-	    }
-	return
-	}
 
     # Linux 2.4.X
     if [file isdirectory /proc/sys/dev/parport] {
-	set autoprobe_template "/proc/sys/dev/parport/parport%d/autoprobe"
-	set dev_template "/dev/lp%d"
-	proc ports_list {} {
-	    set retval {}
-	    foreach port [glob /proc/sys/dev/parport/parport*] {
-		regexp {([0-9]+)$} $port junk number
-		set retval [lappend $retval $number]
+		set autoprobe_template "/proc/sys/dev/parport/parport%d/autoprobe"
+		set dev_template "/dev/lp%d"
+		proc ports_list {} {
+			set retval {}
+			foreach port [glob /proc/sys/dev/parport/parport*] {
+			regexp {([0-9]+)$} $port junk number
+			set retval [lappend $retval $number]
+			}
+			return $retval
+			}
+		return
 		}
-	    return $retval
-	    }
-	return
-	}
 
     # Other/Unknown
     set autoprobe_template ""
     set dev_template "/dev/lp%d"
     proc ports_list {} {
-	set retval {}
-	foreach port [glob /dev/lp*] {
-	    regexp {(\d+)$} $port junk number
-	    set retval [lappend $retval $number]
-	    }
-	return $retval
-	}
+		set retval {}
+		foreach port [glob /dev/lp*] {
+			regexp {(\d+)$} $port junk number
+			set retval [lappend $retval $number]
+			}
+		return $retval
+		}
     }
 
 #
@@ -115,17 +115,17 @@ proc autoprobe {filename} {
     set manufacturer ""
     set model ""
     while {[gets $file line] >= 0} {
-	#puts $line
-	regexp {^([^:]+):([^;]+);$} $line junk name value
-	switch -exact -- $name {
-	    MANUFACTURER {
-		set manufacturer $value
-		}
-	    MODEL {
-		set model $value
-		}
-	    }
-	}    
+		#puts $line
+		regexp {^([^:]+):([^;]+);$} $line junk name value
+		switch -exact -- $name {
+		    MANUFACTURER {
+				set manufacturer $value
+				}
+		    MODEL {
+				set model $value
+				}
+		    }
+		}    
     close $file
     return "manufacturer=$manufacturer\nmodel=$model"
     }
@@ -136,13 +136,12 @@ probe_system
 
 # Probe each of the ports.
 foreach port [ports_list] {
-    puts "\[$port\]"
-    puts "comment=Parallel Port $port"
+    puts "\[Printer on Parallel Port $port\]"
     set lp [format $dev_template $port]
     set ap [format $autoprobe_template $port]
     if {$ap != ""} {
-	puts [autoprobe $ap]
-	}
+		puts [autoprobe $ap]
+		}
     puts "interface=simple,\"$lp\""
     puts "interface=parallel,\"$lp\""
     puts ""
