@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 13 November 2001.
+** Last modified 30 November 2001.
 */
 
 #include "before_system.h"
@@ -169,7 +169,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		MATCH("Commentator: ", _5("%d %Q %Q %Q", &job->commentator.interests, &job->commentator.progname, &job->commentator.address, &job->commentator.options), !=4, found_other)
 		{
 		int tempint;
-		if(sscanf(line, "CachePriority: %d", &tempint) == 1)
+		if(gu_sscanf(line, "CachePriority: %d", &tempint) == 1)
 		    {
 		    switch(tempint)
 		    	{
@@ -237,6 +237,8 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		    job->StripPrinter = tempint ? TRUE : FALSE;
 		    continue;
 		    }
+		if(sscanf(line, "Status-and-Flags: %d %hx", &job->status, &job->flags) == 1)
+		    continue;
 	    	break;
 
 	    case 'T':

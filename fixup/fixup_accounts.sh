@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_accounts.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 28 December 2000.
+# Last modified 16 November 2001.
 #
 
 HOMEDIR="?"
@@ -109,9 +109,9 @@ for user in $USER_PPR $USER_PPRWWW
 
 	else                # no user passmgmt or useradd
 	echo
-	echo "Oops!  This script does not contains instructions for"
-	echo "adding accounts on this system, please add an account"
-	echo "called \"$user\" and run this script again."
+	echo "Oops!  This script does not contains instructions for adding accounts on"
+	echo "this system, please add an account called \"$user\" and run this script"
+	echo "again.  The account should have a primary group ID of $group_ppr_gid."
 	exit 1
         fi
         fi

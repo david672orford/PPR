@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 July 2001.
+# Last modified 26 November 2001.
 #
 
 HOMEDIR="?"
@@ -105,7 +105,7 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 # RFC 1179 (LPR/LPD) server
 service printer
 {
-	disable	= no
+	disable	= yes
 	socket_type	= stream
 	wait		= no
 	user		= root

@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--12 November 2001
+1.50a1, 1 August 2001--5 December 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7455,7 +7455,24 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: Fixed code that called fatal() before give_reason()
   (so that give_reason() was never called).
 
-* pprdrv.c: added code to check the PPR version number from the queue file
-  and make sure it is high enough before proceding.  If the job was created
-  by a version of PPR that is too old, the job is arrested.
+* pprdrv/pprdrv.c: added code to check the PPR version number from the queue
+  file and make sure it is high enough before proceding.  If the job was
+  created by a version of PPR that is too old, the job is arrested.
+
+* pprdrv/pprdrv_interface.c:interface_exit_screen(): change exit code used
+  when the interface program exits with an unknown code from
+  EXIT_PRNERR_NORETRY to EXIT_PRNERR.  This seems best since interface programs
+  that are shell scripts may return unexpected error codes if the system
+  is starved for resources such as file descriptors.
+
+* www/show_printlog.cgi.perl: Added better message when printlog doesn't
+  exist.
+
+* fixup/fixup_inetd.sh: changed Xinetd configuration for the lpd port from
+  "disabled = no" to "disabled = yes".
+
+* Split part of fixup/fixup_links.sh out into fixup/fixup_login.sh.
+
+* Moved vendors/ --> nonppr_vendors/, nonppr/ --> nonppr_misc/, and tcl/ -->
+  nonppr->tcl/.
 

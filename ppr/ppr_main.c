@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 10 September 2001.
+** Last revised 30 November 2001.
 */
 
 /*
@@ -1684,6 +1684,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 
 	case 1004:				/* --hold */
 	    option_hold = TRUE;
+	    qentry.status = STATUS_HELD;
 	    break;
 
 	case 1005:				/* --responder-options */
@@ -1916,11 +1917,13 @@ int main(int argc, char *argv[])
     qentry.id = 0;					/* not assigned yet */
     qentry.subid = 0;					/* job fragment number (unused) */
     qentry.homenode = ppr_get_nodename();		/* this are the node this job came from */
+    qentry.status = STATUS_WAITING;
+    qentry.flags = 0;
     qentry.time = time((time_t*)NULL);			/* job submission time */
     qentry.priority = 20;				/* default priority */
     qentry.user = user_uid;				/* record real user id of submitter */
     qentry.username = pw->pw_name;			/* fill in name associated with id */
-    qentry.For = (char*)NULL;			/* start with no %%For: line */
+    qentry.For = (char*)NULL;				/* start with no %%For: line */
     qentry.charge_to = (char*)NULL;			/* ppuser account to charge to */
     qentry.Title = (char*)NULL;				/* start with no %%Title: line */
     qentry.Creator = (char*)NULL;			/* "%%Creator:" */

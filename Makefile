@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 August 2001.
+# Last modified 30 November 2001.
 #
 
 #
@@ -50,7 +50,7 @@ CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 SUBDIRS=\
 	makeprogs \
 	libgu \
-	tcl \
+	nonppr_tcl \
 	libppr \
 	libscript \
 	libpprdb \
@@ -74,7 +74,7 @@ SUBDIRS=\
 	ppd \
 	encodings \
 	fonts \
-	vendors \
+	nonppr_vendors \
 	papsrv \
 	lprsrv \
 	samba \
@@ -182,7 +182,7 @@ clean:
 		done
 	$(RMF) $(BACKUPS)
 	( cd include && $(RMF) $(BACKUPS) )
-	( cd nonppr && $(RMF) $(BACKUPS) )
+	( cd nonppr_misc && $(RMF) $(BACKUPS) )
 	find . -name core -exec rm -f {} \; -print
 	find . -name .tedfilepos -exec rm -f {} \; -print
 	@echo

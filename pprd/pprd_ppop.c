@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 17 August 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -412,7 +412,7 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 
 	    case PRNSTATUS_STOPPING:
 		fprintf(reply_file, "%d\n", EXIT_OK);
-		if(printers[prnid].ppop_pid)			/* If another ppop waiting for a stop command */
+		if(printers[prnid].ppop_pid > 0)		/* If another ppop waiting for a stop command */
 		    {						/* to finish, let it wait no longer. */
 		    kill(printers[prnid].ppop_pid, SIGUSR1);
 		    printers[prnid].ppop_pid = (uid_t)0;	/* (Unfortunately, it won't know it failed.) */
@@ -466,17 +466,10 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 		    }			/* if halt, drop thru */
 
 	    case PRNSTATUS_PRINTING:
-		/* fprintf(reply_file, "%d\n", EXIT_OK); */
-		if( (action&3) == 2 )		/* if halt, not stop */
+		if( (action&3) == 2 )		/* if halt, not stop (i.e., don't wait for job to finish) */
 		    {				/* change state to halting */
 		    printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
-
-		    DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_local_to_name(prnid), (long)printers[prnid].pid));
-		    if(kill(printers[prnid].pid, SIGTERM) < 0)
-			{
-			error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-			    	(long)printers[prnid].pid, errno, gu_strerror(errno) );
-			}
+		    pprdrv_kill(prnid);
 		    }
 		else
 		    {				/* if stop requested, arrange to stop */
@@ -493,9 +486,10 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 	    }
 	}
 
-    if(delayed_action)			/* If action was not immedate */
+    /* If action was not immedate */
+    if(delayed_action)
 	{
-	if(action & 128)		/* If we are instructed to wait if */
+	if(action & 128)			/* If we are instructed to wait if */
 	    {					/* for completion of action and */
 	    if(printers[prnid].ppop_pid)	/* if someone else is */
 		{				/* using notify, we can't */
@@ -620,10 +614,13 @@ static void ppop_hold_release(const char command[], int action)
                             printers[prnid].hold_job = TRUE;
 
                             DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_local_to_name(prnid), (long)printers[prnid].pid));
-                            if(kill(printers[prnid].pid, SIGTERM) < 0)
-                                {
-                                error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-                                    (long)printers[prnid].pid, errno, gu_strerror(errno) );
+			    if(printers[prnid].pid <= 0)
+			    	{
+			    	error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);
+			    	}
+			    else
+				{
+				pprdrv_kill(prnid);
                                 }
                             }
                         else
@@ -756,12 +753,8 @@ static void ppop_cancel_purge(const char command[])
 		    /* Change the job status to "being canceled". */
 		    p_job_new_status(&queue[x], STATUS_CANCEL);
 
-		    DODEBUG_PPOPINT(("Killing pprdrv process %ld", (long)printers[prnid].pid));
-		    if(kill(printers[prnid].pid, SIGTERM) == -1)
-			{
-			error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
-				(long)printers[prnid].pid, errno, gu_strerror(errno) );
-			}
+		    /* Kill pprdrv. */
+		    pprdrv_kill(prnid);
 		    }
 
 		/* If a cancel is in progress, */

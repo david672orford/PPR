@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/dotmatrix/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# mouse:~ppr/src/filter_dotmatrix/Makefile
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 30 June 2000.
+# Last modified 30 November 2001.
 #
 
 include ../makeprogs/global.mk
@@ -64,16 +64,16 @@ prop_genmetrics$(DOTEXE): prop.c filter_dotmatrix.h ../libgu.$(LIBEXT) ../libppr
 	$(CC) $(CFLAGS) -DGENMETRICS -o prop_genmetrics$(DOTEXE) prop.c ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
 TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0: prop_genmetrics$(DOTEXE)
-	./prop_genmetrics ../vendors/font_ibm/IBMCourier.afm Courier 0 >TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0
+	./prop_genmetrics ../nonppr_vendors/font_ibm/IBMCourier.afm Courier 0 >TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0
 
 TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0: prop_genmetrics$(DOTEXE)
-	./prop_genmetrics ../vendors/font_ibm/IBMCourier-Bold.afm Courier-Bold 0 >TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0
+	./prop_genmetrics ../nonppr_vendors/font_ibm/IBMCourier-Bold.afm Courier-Bold 0 >TrinColl-PPR-Dotmatrix-MetricsEpson2-1-0
 
 TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0: prop_genmetrics$(DOTEXE)
-	./prop_genmetrics ../vendors/font_ibm/IBMCourier-Italic.afm Courier-Oblique 1 >TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0
+	./prop_genmetrics ../nonppr_vendors/font_ibm/IBMCourier-Italic.afm Courier-Oblique 1 >TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0
 
 TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0: prop_genmetrics$(DOTEXE)
-	./prop_genmetrics ../vendors/font_ibm/IBMCourier-BoldItalic.afm Courier-BoldOblique 1 >TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0
+	./prop_genmetrics ../nonppr_vendors/font_ibm/IBMCourier-BoldItalic.afm Courier-BoldOblique 1 >TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0
 
 clean:
 	$(RMF) $(BACKUPS) *.$(OBJ)

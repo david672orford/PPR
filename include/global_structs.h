@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 12 November 2001.
+** Last modified 30 November 2001.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -46,11 +46,16 @@ struct COMMENTATOR
 struct QFileEntry
     {
     float PPRVersion;			/* version number of PPR that created queue entry */
+
     const char *destnode;		/* node this job will be sent to */
     const char *destname;		/* destination (group or printer) */
     short int id;			/* queue id number */
     short int subid;			/* fractional part of id number */
     const char *homenode;		/* the node this job origionated on */
+
+    SHORT_INT status;			/* job status */
+    short unsigned int flags;		/* job flags */
+
     int priority;			/* priority number (0-39) */
     long time;				/* time job was submitted (don't use time_t) */
     long user;				/* id of user who submitted it (don't use uid_t) */
@@ -71,12 +76,12 @@ struct QFileEntry
     int media[MAX_DOCMEDIA];		/* list of required media types */
     int do_banner;			/* should we print a banner page? */
     int do_trailer;			/* should we print a trailer page? */
-    struct {			/* various attributes */
-	int langlevel;		/* postscript language level */
-	int extensions;		/* bit fields of extension to level 1 */
-	float DSClevel;		/* DSC comments version */
-	int pages;		/* number of pages, -1 means unknown */
-	int pageorder;		/* -1, 0, or 1 */
+    struct {				/* various attributes */
+	int langlevel;			/* PostScript language level */
+	int extensions;			/* bit fields of extension to level 1 */
+	float DSClevel;			/* DSC comments version */
+	int pages;			/* number of pages, -1 means unknown */
+	int pageorder;			/* -1 (reverse), 0 (special), or 1 (normal) */
 	gu_boolean prolog;		/* true if valid prolog section present */
 	gu_boolean docsetup;		/* true if valid document setup section present */
 	gu_boolean script;		/* delineated pages present */
@@ -151,9 +156,10 @@ struct QFileEntry
 #define STATUS_WAITING4MEDIA -3		/* proper media not mounted */
 #define STATUS_ARRESTED -4		/* automaticaly put on hold because of a job error */
 #define STATUS_CANCEL -5		/* being canceled */
-#define STATUS_SEIZING -6		/* going from printing to held */
+#define STATUS_SEIZING -6		/* going from printing to held (get rid of this) */
 #define STATUS_STRANDED -7		/* no printer can print it */
 #define STATUS_FINISHED -8		/* job has been printed */
+#define STATUS_FUNDS -9			/* insufficient funds to print it */
 
 /* First end of file marker in a transmitted queue file. */
 #define QF_ENDTAG1 "..\n"

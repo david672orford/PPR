@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/fixup/fixup.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 15 September 2000.
+# Last modified 26 September 2001.
 #
 
 #
@@ -66,6 +66,9 @@ $HOMEDIR/fixup/fixup_lmx || exit 1
 
 # Create links in public bin directory.
 $HOMEDIR/fixup/fixup_links || exit 1
+
+# Install login profile scripts.
+$HOMEDIR/fixup/fixup_login || exit 1
 
 # Create a sample ppr.conf.
 $HOMEDIR/fixup/fixup_conf || exit 1

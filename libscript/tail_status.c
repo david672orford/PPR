@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/misc/tail_status.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,14 +10,13 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 8 December 1999.
+** Last modified 13 November 2001.
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "version.h"
 
 gu_boolean print_function(char *p, void *extra)

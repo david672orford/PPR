@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -247,6 +247,10 @@ static void pprdrv_exited(int prnid, int wstat)
         alert(printers[prnid].name, TRUE, X_("Bizaar pprdrv malfunction, exit status not understood."));
         estat = EXIT_PRNERR_NORETRY;
         }
+
+    #ifdef DEBUG_PRNSTOP
+    alert(printers[prnid].name, FALSE, "debug: pprdrv exited with code %d", estat);
+    #endif
 
     /*
     ** Act on pprdrv exit code.  Note that we wait until the next switch to
@@ -548,6 +552,25 @@ gu_boolean pprdrv_child_hook(pid_t pid, int wstat)
     /* No match, tell reapchild() to keep looking. */
     return FALSE;
     } /* end of pprdrv_child_hook() */
+
+/*
+** This is called to cancel a pprdrv.
+*/
+void pprdrv_kill(int prnid)
+    {
+    const char function[] = "pprdrv_kill";
+    DODEBUG_PRNSTOP(("%s(): killing pprdrv (printer=%s, pid=%ld)", function, destid_local_to_name(prnid), (long)printers[prnid].pid));
+    if(printers[prnid].pid <= 0)
+    	{
+    	error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);
+	return;
+    	}
+    if(kill(printers[prnid].pid, SIGTERM) == -1)
+	{
+	error("%s(): kill(%ld, SIGTERM) failed, errno=%d (%s)", function,
+		(long)printers[prnid].pid, errno, gu_strerror(errno) );
+	}
+    } /* end of pprdrv_kill() */
 
 /* end of file */
 

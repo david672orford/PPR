@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 August 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -162,16 +162,18 @@ static void interface_exit_screen(void)
 	fatal(EXIT_PRNERR_NORETRY, _("Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."));
 
     /*
-    ** If the exit code is a legal one for an interface, use it;
-    ** if not, assume something really bad has happened and
-    ** ask to have the printer put in no-retry-fault-mode.
+    ** If the exit code is a legal one for an interface, use it; if not,
+    ** then interpret it as EXIT_PRNERR.  We used to interpret it as
+    ** EXIT_PRNERR_NORETRY, but it was found that shell script interfaces
+    ** return strange exit codes when the system is starved for resources
+    ** such as file descriptors.
     **
     ** Oops!  There is one more exception!  Ghostscript will exit
     ** immediatly if a Postscript error occurs.  We must be ready
     ** for that.
     */
     if(WEXITSTATUS(interface_wait_status) > EXIT_INTMAX)
-	fatal(EXIT_PRNERR_NORETRY, _("Interface program malfunction: it returned invalid exit code %d,"), WEXITSTATUS(interface_wait_status));
+	fatal(EXIT_PRNERR, _("Interface program malfunction: it returned invalid exit code %d."), WEXITSTATUS(interface_wait_status));
     } /* end of interface_exit_screen() */
 
 /*

@@ -412,6 +412,13 @@ typedef short int SHORT_INT;
 #define BIT_JOB_ARRESTED S_IXGRP
 #define BIT_JOB_STRANDED S_IXOTH
 
+/*
+** Job Flags Bitmap Values
+*/
+#define JOB_FLAG_KEEP 1			/* job should be kept after printed */
+#define JOB_FLAG_DO_NOTIFY 2		/* please schedual notification */
+#define JOB_FLAG_NOTIFYING 4		/* notify in progress */
+
 /*=========================================================================
 ** Stuff in libppr.a
 =========================================================================*/

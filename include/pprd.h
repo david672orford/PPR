@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 December 2000.
+** Last modified 5 December 2001.
 */
 
 /*
@@ -140,27 +140,24 @@ struct Group
    Notice that this is shorter than struct QFileEntry. */
 struct QEntry
     {
-    SHORT_INT destnode_id;	/* destination node by key number */
-    SHORT_INT destid;		/* destination key number */
-    SHORT_INT id;		/* queue id */
-    SHORT_INT subid;		/* fractional queue id */
-    SHORT_INT homenode_id;	/* id of node job come from */
-    SHORT_INT priority;		/* priority number (0=highest, 39=lowest) */
-    SHORT_INT status;		/* printer id if printing, < 0 for other status */
-    unsigned char never;	/* bitmap of group member which can't print */
-    unsigned char notnow;	/* bitmap of group members without media mntd */
-    SHORT_INT media[MAX_DOCMEDIA]; /* list of id numbers of media types req. */
-    SHORT_INT pass;		/* number of current pass thru printers in group */
-#if 0
-    unsigned char flags;
-#endif
+    SHORT_INT destnode_id;		/* destination node by key number */
+    SHORT_INT destid;			/* destination key number */
+    SHORT_INT id;			/* queue id */
+    SHORT_INT subid;			/* fractional queue id */
+    SHORT_INT homenode_id;		/* id of node job come from */
+
+    SHORT_INT status;			/* printer id if printing, < 0 for other status */
+    unsigned short int flags;		/* */
+
+    SHORT_INT priority;			/* priority number (0=highest, 39=lowest) */
+    unsigned char never;		/* bitmap of group member which can't print */
+    unsigned char notnow;		/* bitmap of group members without media mntd */
+    SHORT_INT media[MAX_DOCMEDIA]; 	/* list of id numbers of media types req. */
+    SHORT_INT pass;			/* number of current pass thru printers in group */
     } ;
 
-/* These are the values for flags. */
-#define QEntry_KEEP 1
-
 /*
-** Printer status values.
+** Printer status values
 */
 #define PRNSTATUS_IDLE 0		/* idle but ready to print */
 #define PRNSTATUS_PRINTING 1		/* printing right now */

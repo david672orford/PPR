@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 28 August 2001.
+** Last modified 13 November 2001.
 */
 
 #include "before_system.h"
@@ -270,7 +270,7 @@ void media_update_notnow(int prnid)
     int g, g_destid, prnbit;
     for(g = 0; g < group_count; g++)
 	{
-	int g_destid = destid_local_by_gindex(g);
+	g_destid = destid_local_by_gindex(g);
 	if((prnbit = destid_printer_bit(g_destid, prnid)))
 	    media_update_notnow2(g_destid, prnbit, prnid);
 	}

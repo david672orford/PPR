@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 21 June 2001.
+# Last modified 29 November 2001.
 #
 
 =head1 NAME
@@ -348,12 +348,16 @@ and PID files.  That is the purpose of the B<-f>, B<-l>, and B<-p> switches.
 
 =head1 SEE ALSO
 
-L<ppop>(1), L<ppr>(1), L<ppad>(8), L<pprd>(8)
-"PPR, a PostScript Print Spooler", "Installing and Using PPR".
+L<ppop(1)>,
+L<ppr(1)>,
+L<ppad(8)>,
+L<pprd(8)>,
+"PPR, a PostScript Print Spooler",
+"Installing and Using PPR".
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--1998.
+PPR was written at Trinity College during 1993--2001.
 
 =head1 AUTHORS
 
