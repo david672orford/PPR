@@ -4,6 +4,8 @@ pprd_alert.$(OBJ): pprd_alert.c ../include/before_system.h ../include/gu.h ../in
 
 pprd_destid.$(OBJ): pprd_destid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
 
+pprd_ipp.$(OBJ): pprd_ipp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/pprd.h pprd.auto_h
+
 pprd_load.$(OBJ): pprd_load.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
 
 pprd_log.$(OBJ): pprd_log.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad-interfaces.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 1 November 2003.
+# Last modified 30 May 2004.
 #
 
 =head1 NAME
@@ -203,14 +203,55 @@ If your printer, parallel port hardware, and operating system's parallel
 port driver support bidirectional communication, then you may use
 the B<ppad feedback> command to enable PostScript error detection.
 
-=head2 B<usblp>
+=head2 B<usb>
 
-This interface sends the print job to a USB printer.  It is still
-experimental.  You may get better results with the B<parallel> or B<simple>
-interface.  At this time, the only address format supported is device file
-name, such as F</dev/usb/lp0>.  In the future it will support alternative
-address formats which may specify USB bus position or make, model, and
-serial number.
+This interface sends the print job to a USB printer.  There are two 
+acceptable address formats.
+
+The first address format is simply the name of a device node, such as 
+F</dev/usb/lp0>.  An address of this time will not be satisfactory if you
+have more than one USB printer because the OS kernel will assign device names
+to them in the order in which it sees them.  So unless you are are careful to
+always turn on all of your printers before turning on your computer and never
+change their position on the USB bus, their device names will not remain the
+same.
+
+The second address format is a subset of the information from the desired 
+printer's IEEE 1284 identification string.  The first USB printer (going in 
+ascending device-name order) which matches all of the specified identification
+string items is selected.  Identification string items which may be matched are
+MFG, MDL, and SERN.  Item and value should be separated by a colon.  Items 
+should be separated by semicolons.  For example, if you have an Epson Stylus 
+C62 and an HP DeskJet 880C, you could set their addresses thus:
+
+	$ ppad interface c62 usb "MFG:EPSON;MDL:Stylus C62"
+	$ ppad interface 880c usb "MFG:HEWLETT-PACKARD;MDL:DESKJET 880C"
+
+If you use the Add Printer wizard (part of PPR's WWW interface), it will, when
+possible, allow you to pick addresses of this type from a list.  You can run
+its backend USB browser like this:
+
+	$ ~ppr/browsers/usb "USB LP Ports"
+	[USB Printer 0]
+	manufacturer=EPSON
+	model=Stylus C62
+	interface=usb,"MFG=EPSON;MDL=Stylus C62"
+	 
+	[USB Printer 1]
+	interface=usb,"/dev/usb/lp1"
+
+	[USB Printer 2]
+	manufacturer=HEWLETT-PACKARD
+	model=DESKJET 880C
+	interface=usb,"MFG=HEWLETT-PACKARD;MDL=DESKJET 880C"
+
+Notice the lines which begin with "interface=".  The first item of the value
+is the name of an interface program.  The second item is the the address 
+to use with it.
+
+Some printer's do not have an IEEE 1284 identification string.  The second printer
+in the example above does not.  Suggestions as to how to deal with such cases
+are welcome.
 
 =head2 B<dummy>
 

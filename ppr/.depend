@@ -1,8 +1,10 @@
-ppr_dscdoc.$(OBJ): ppr_dscdoc.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
-
 ppr_conffile.$(OBJ): ppr_conffile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ppr_conffile.h
 
+ppr_dscdoc.$(OBJ): ppr_dscdoc.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
+
 ppr_editps.$(OBJ): ppr_editps.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr.h ppr_gab.h ../include/ppr_exits.h
+
+ppr_features.$(OBJ): ppr_features.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
 
 ppr_infile.$(OBJ): ppr_infile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_conffile.h ppr_infile.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
 
@@ -33,6 +35,4 @@ ppr_split.$(OBJ): ppr_split.c ../include/before_system.h ../include/gu.h ../incl
 ppr_things.$(OBJ): ppr_things.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
 
 tbcp2bin.$(OBJ): tbcp2bin.c
-
-ppr_features.$(OBJ): ppr_features.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
 

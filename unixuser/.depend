@@ -1,6 +1,6 @@
-ppr-xgrant.$(OBJ): ppr-xgrant.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
-
 ppr-followme.$(OBJ): ppr-followme.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 
 ppr-hexdump.$(OBJ): ppr-hexdump.c
+
+ppr-xgrant.$(OBJ): ppr-xgrant.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 

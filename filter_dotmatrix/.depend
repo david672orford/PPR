@@ -6,13 +6,13 @@ inbuf.$(OBJ): inbuf.c filter_dotmatrix.h
 
 linebuf.$(OBJ): linebuf.c filter_dotmatrix.h
 
-main.$(OBJ): main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h filter_dotmatrix.h
+main.$(OBJ): main.c filter_dotmatrix.h
 
 pass1.$(OBJ): pass1.c filter_dotmatrix.h
 
-postscript.$(OBJ): postscript.c filter_dotmatrix.h
+postscript.$(OBJ): postscript.c filter_dotmatrix.h ../include/libppr_font.h
 
-prop.$(OBJ): prop.c ../include/before_system.h ../include/gu.h ../include/global_defines.h filter_dotmatrix.h
+prop.$(OBJ): prop.c filter_dotmatrix.h
 
 tabbing.$(OBJ): tabbing.c filter_dotmatrix.h
 

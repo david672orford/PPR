@@ -42,13 +42,22 @@
 #include "gu.h"
 #include "global_defines.h"
 
+/** get IEEE 1284 printer device ID
+ *
+ * This code reads the ID string from a parallel printer or a USB printer.
+ * I (David Chappell) couldn't find any documentation on how to do this.
+ * I figured it out by reading the source code for the CUPS USB backend.
+ * I have since learned that the definitions of the necessary macros
+ * can be found in Randy Dunlap's patch which added support for the necessary
+ * IOCTL to the Linux USB driver.
+ */
 int get_device_id(const char port[], unsigned char *device_id, int device_id_max)
 	{
 	#ifdef PPR_LINUX
 	int fd;
 	int device_id_len;
 
-	/* Reference for these two macros is the CUPS USB backend. */
+	/* The macros as they appear in CUPS and Mr. Dunlap's patch. */
 	#define IOCNR_GET_DEVICE_ID	1
 	#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
 
@@ -68,16 +77,23 @@ int get_device_id(const char port[], unsigned char *device_id, int device_id_max
 	/* First try big endian (per IEEE 1284 standard). */
 	device_id_len = ((device_id[0] << 8) + device_id[1]);
 
-	/* If that is unreasonable, try little endian (This is from CUPS too.) */
+	/* If the result is unreasonable, try little endian (This hack is from CUPS.) */
 	if(device_id_len > (device_id_max - 2))
 		device_id_len = ((device_id[1] << 8) + device_id[0]);
 
-	/* Limit to buffer size with space for NUL. */
-	if(device_id_len > (device_id_max - 3))
-		device_id_len = (device_id_max - 3);
+	/* Interestingly, the length includes the two bytes which store the length itself! */
+	if(device_id_len < 2)
+		return -1;
 
-	memmove(device_id, device_id+2, device_id_len);
-	device_id[device_id_len] = '\0';
+	/* Limit to buffer size. */
+	if(device_id_len > device_id_max)
+		device_id_len = device_id_max;
+
+	/* Move the string left to cover the length.  There is guaranteed to be
+	 * space for the '\0'.
+	 */
+	memmove(device_id, device_id+2, device_id_len-2);
+	device_id[device_id_len-2] = '\0';
 
 	return 0;
 	#else

@@ -10,5 +10,3 @@ papsrv_conf.$(OBJ): papsrv_conf.c ../include/before_system.h ../include/gu.h ../
 
 papsrv_query.$(OBJ): papsrv_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
 
-papsrv_ppd_parse.$(OBJ): papsrv_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
-

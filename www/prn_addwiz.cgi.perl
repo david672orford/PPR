@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 29 May 2004.
 #
 
 #
@@ -57,7 +57,7 @@ defined($PPR2SAMBA_PATH) || die;
 		'simple'		=> N_("Server Generic Port"),
 		'serial'		=> N_("Server Serial Port"),
 		'parallel'		=> N_("Server Parallel Port"),
-		'usblp'			=> N_("Server USB Port"),
+		'usb'			=> N_("Server USB Port"),
 		'atalk'			=> N_("Network via AppleTalk PAP"),
 		'tcpip'			=> N_("Network via raw TCP"),
 		'socketapi'		=> N_("Network via SocketAPI"),

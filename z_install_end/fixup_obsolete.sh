@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 May 2004.
+# Last modified 29 May 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -173,5 +173,6 @@ outdated $SHAREDIR/PPDFiles/"HP LaserJet 2100 Series"
 outdated $SHAREDIR/PPDFiles/"HP LaserJet 4 Plus"
 outdated $SHAREDIR/PPDFiles/"HP LaserJet 5Si"
 outdated $SHAREDIR/PPDFiles/"HP LaserJet 8000 Series"
+outdated $HOMEDIR/interfaces/usblp
 
 exit 0

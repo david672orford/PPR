@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2004.
+# Last modified 29 May 2004.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=dummy simple parallel$(DOTEXE) serial$(DOTEXE) \
-	tcpip$(DOTEXE) lpr$(DOTEXE) smb usblp$(DOTEXE) pros$(DOTEXE)
+	tcpip$(DOTEXE) lpr$(DOTEXE) smb usb$(DOTEXE) pros$(DOTEXE)
 
 ATALK_PROGS=atalk$(DOTEXE)
 
@@ -87,8 +87,8 @@ tcpip$(DOTEXE): $(OBJS_TCPIP)
 	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) $(OBJS_TCPIP) $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
-usblp$(DOTEXE): usblp.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o usblp$(DOTEXE) usblp.$(OBJ) \
+usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o usb$(DOTEXE) usb.$(OBJ) \
 		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Axis PROS protocol

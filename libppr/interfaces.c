@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 29 May 2004.
 */
 
 #include "before_system.h"
@@ -54,7 +54,7 @@ struct INTERFACE_INFO interfaces[] = {
 		{"simple",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"serial",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"parallel",	JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
-		{"usblp",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
+		{"usb",			JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"dummy",		JOBBREAK_NONE,			JOBBREAK_NONE,			FALSE,			CODES_Binary,			CODES_Binary},
 
 		{"tcpip",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},

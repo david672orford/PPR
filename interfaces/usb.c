@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/interfaces/usblp.c
+** mouse:~ppr/src/interfaces/usb.c
 ** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -59,7 +59,7 @@
 
 /*
 ** Here we possible enable debugging.  The debuging output goes to
-** the file "/var/spool/ppr/logs/interface_usblp".
+** the file "/var/spool/ppr/logs/interface_usb".
 */
 #if 0
 #define DEBUG 1
@@ -69,33 +69,41 @@
 #define DODEBUG(a)
 #endif
 
+static const char *port_patterns[] =
+	{
+	"/dev/usb/lp%d",			/* Linux 2.4.x and 2.6.x with devfs */
+	"/dev/usb/usblp%d",
+	"/dev/usblp%d",
+	NULL
+	};
+
 /* The name=value style options from the command line are stored here. */
 struct OPTIONS {
-		int idle_status_interval;
-		int status_interval;
-		} ;
+	int idle_status_interval;
+	int status_interval;
+	} ;
 
 /*
 ** Open the printer port.
 */
-static int connect_usblp(void)
+static int connect_usb(const char port[])
 	{
 	struct stat statbuf;		/* buffer for stat() on the port */
 	int portfd;
 	int open_flags;
 
-	DODEBUG(("connect_usblp()"));
+	DODEBUG(("connect_usb(port=\"%s\")", port));
 
 	/*
 	** Make sure the address we were given is a tty.
 	** If stat() fails, we will ignore the error
 	** for now, we will let open() catch it.
 	*/
-	if(stat(int_cmdline.address, &statbuf) == 0)
+	if(stat(port, &statbuf) == 0)
 		{
 		if( ! (statbuf.st_mode & S_IFCHR) )
 			{
-			alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
+			alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), port);
 			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 			}
 		}
@@ -112,7 +120,7 @@ static int connect_usblp(void)
 	*/
 	{
 	int x;
-	for(x=0; (portfd = open(int_cmdline.address, open_flags)) < 0 && errno == EBUSY && x < 30; x++)
+	for(x=0; (portfd = open(port, open_flags)) < 0 && errno == EBUSY && x < 30; x++)
 		sleep(2);
 	}
 
@@ -123,26 +131,26 @@ static int connect_usblp(void)
 			case EBUSY:
 				exit(EXIT_ENGAGED);
 			case EACCES:
-				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), int_cmdline.address);
+				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), port);
 				exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 			case ENOENT:		/* file not found */
 			case ENOTDIR:		/* path not found */
-				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
+				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), port);
 				exit(EXIT_PRNERR_NOT_RESPONDING);
 			case ENXIO:
-				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
+				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), port);
 				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case ENFILE:
 				alert(int_cmdline.printer, TRUE, _("System open file table is full."));
 				exit(EXIT_STARVED);
 			default:
-				alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
+				alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), port, errno, gu_strerror(errno));
 				exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 
 	return portfd;
-	} /* end of connect_usblp() */
+	} /* end of connect_usb() */
 
 /*
 ** Explain why reading from or writing to the printer port failed.
@@ -224,7 +232,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	/* See if final call to options_get_one() detected an error: */
 	if(retval == -1)
 		{
-		alert(int_cmdline.printer, TRUE, "Option parsing error:	 %s", gettext(o.error));
+		alert(int_cmdline.printer, TRUE, _("Option parsing error: %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
 		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
@@ -237,9 +245,105 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	} /* end of parse_options() */
 
 /*
+ * Hunt up a printer matching the description specified in the address.
+ */
+static const char *find_usb_printer(const char address[])
+	{
+	const char *port_pattern;
+	char port_temp[64];
+	unsigned char device_id[1024];
+	int i;
+	char *temp, *p, *item, *name, *value;
+	char *search_mfg, *search_mdl, *search_sern;
+	char *mfg, *mdl, *sern;
+	char *ret = NULL;
+
+	for(i=0; (port_pattern = port_patterns[i]); i++)
+		{
+		gu_snprintf(port_temp, sizeof(port_temp), port_pattern, 0);
+		if(access(port_temp, F_OK) == 0)
+			break;
+		}
+	
+	if(!port_pattern)	/* If no USB printer ports, */
+		return NULL;
+
+	search_mfg = search_mdl = search_sern = NULL;
+	for(p = temp = gu_strdup(address); (item = gu_strsep(&p, ";")); )
+		{
+		/*printf("item=%s\n", item);*/
+		if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
+			{
+			/*printf("name=%s value=%s\n", name, value);*/
+			if(strcmp(name, "MFG") == 0 || strcmp(name, "MANUFACTURER") == 0)
+				{
+				search_mfg = value;
+				continue;
+				}
+			if(strcmp(name, "MDL") == 0 || strcmp(name, "MODEL") == 0)
+				{
+				search_mdl = value;
+				continue;
+				}
+			if(strcmp(name, "SERN") == 0)
+				{
+				search_sern = value;
+				continue;
+				}
+			}
+		alert(int_cmdline.printer, TRUE, _("Unrecognized search key in address: %s"), name ? name : item);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
+
+	for(i=0; TRUE; i++)
+		{
+		gu_snprintf(port_temp, sizeof(port_temp), port_pattern, i);
+		if(access(port_temp, F_OK) != 0)
+			break;
+
+		if(get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
+			{
+			printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
+			continue;
+			}
+
+		mfg = mdl = sern = NULL;
+		for(p = device_id; (item = gu_strsep(&p, ";")); )
+			{
+			if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
+				{
+				/*printf("name=%s value=%s\n", name, value);*/
+				if(strcmp(name, "MFG") == 0 || strcmp(name, "MANUFACTURER") == 0)
+					mfg = value;
+				else if(strcmp(name, "MDL") == 0 || strcmp(name, "MODEL") == 0)
+					mdl = value;
+				else if(strcmp(name, "SERN") == 0)
+					sern = value;
+				}
+			}
+
+		if((!search_mfg || strcmp(mfg, search_mfg) == 0)
+			&& (!search_mdl || strcmp(mdl, search_mdl) == 0)
+			&& (!search_sern || strcmp(sern, search_sern) == 0)
+			)
+			{
+			ret = port_temp;
+			break;
+			}
+		}
+
+	gu_free(temp);
+
+	if(ret)
+		return gu_strdup(ret);
+	else
+		return NULL;
+	}
+
+/*
 ** Implementation of the --probe option.
 */
-static int usblp_port_probe(const char address[])
+static int usb_port_probe(const char address[])
 	{
 	#ifdef PPR_LINUX
 	unsigned char device_id[1024];		/* IEEE 1284 DeviceID string */
@@ -255,7 +359,7 @@ static int usblp_port_probe(const char address[])
 		return EXIT_PRNERR;
 		}
 
-	for(p = device_id + 2; (item = gu_strsep(&p, ";")); )
+	for(p = device_id; (item = gu_strsep(&p, ";")); )
 		{
 		if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
 			{
@@ -274,6 +378,7 @@ static int usblp_port_probe(const char address[])
 */
 int int_main(int argc, char *argv[])
 	{
+	const char *port;
 	int portfd;							/* file handle of the printer port */
 	struct OPTIONS options;
 
@@ -300,7 +405,7 @@ int int_main(int argc, char *argv[])
 	/* If the --probe option was used, */
 	if(int_cmdline.probe)
 		{
-		int retval = usblp_port_probe(int_cmdline.address);
+		int retval = usb_port_probe(int_cmdline.address);
 		switch(retval)
 			{
 			case EXIT_PRINTED:
@@ -346,8 +451,17 @@ int int_main(int argc, char *argv[])
 		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
+	if(int_cmdline.address[0] == '/')
+		port = int_cmdline.address;
+	else if(!(port = find_usb_printer(int_cmdline.address)))
+		{
+		alert(int_cmdline.printer, TRUE,
+			_("No printer matching address \"%s\" is presently connected."), int_cmdline.address);
+		exit(EXIT_PRNERR);
+		}
+	
 	/* Open the printer port and esablish default settings: */
-	portfd = connect_usblp();
+	portfd = connect_usb(port);
 
 	/* Parse printer_options and set struct OPTIONS and
 	   printer port apropriately: */

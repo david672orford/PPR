@@ -1,0 +1,8 @@
+ip_scan_snmp.$(OBJ): ip_scan_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+
+nbp_lookup_ali.$(OBJ): nbp_lookup_ali.c ../include/before_system.h ../include/gu.h
+
+nbp_lookup_cap.$(OBJ): nbp_lookup_cap.c
+
+usb.$(OBJ): usb.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+

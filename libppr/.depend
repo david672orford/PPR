@@ -10,6 +10,8 @@ cs2enc.$(OBJ): cs2enc.c ../include/before_system.h ../include/gu.h ../include/gl
 
 datestamp.$(OBJ): datestamp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
+destinfo.$(OBJ): destinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
 destspec.$(OBJ): destspec.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 dimens.$(OBJ): dimens.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
@@ -34,9 +36,17 @@ int_debug.$(OBJ): int_debug.c ../include/before_system.h ../include/gu.h ../incl
 
 int_exit.$(OBJ): int_exit.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
+int_main.$(OBJ): int_main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
 int_prpapst.$(OBJ): int_prpapst.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
+int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
+int_tcp_probe.$(OBJ): int_tcp_probe.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+
 interfaces.$(OBJ): interfaces.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+
+ipp_utils.$(OBJ): ipp_utils.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
 
 jobid.$(OBJ): jobid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
@@ -80,13 +90,7 @@ unsafe.$(OBJ): unsafe.c ../include/before_system.h ../include/gu.h ../include/gl
 
 writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
-destinfo.$(OBJ): destinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+query_wrapper.$(OBJ): query_wrapper.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
-int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
-int_tcp_probe.$(OBJ): int_tcp_probe.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
-
-ipp_utils.$(OBJ): ipp_utils.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
-
-int_main.$(OBJ): int_main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+get_device_id.$(OBJ): get_device_id.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 

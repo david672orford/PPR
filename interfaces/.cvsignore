@@ -1,10 +1,10 @@
-usblp
-tcpip
+atalk
+dummy
+lpr
+parallel
+pros
 smb
 simple
 serial
-pros
-parallel
-lpr
-dummy
-atalk
+tcpip
+usb

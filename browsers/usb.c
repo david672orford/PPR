@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 May 2004.
+** Last modified 30 May 2004.
 */
 
 #include "before_system.h"
@@ -47,7 +47,7 @@ static gu_boolean debug = FALSE;
 
 static const char *port_patterns[] =
 	{
-	"/dev/usb/lp%d",
+	"/dev/usb/lp%d",			/* Linux 2.4.x and 2.6.x with devfs */
 	"/dev/usb/usblp%d",
 	"/dev/usblp%d",
 	NULL
@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
 	char port_temp[64];
 	unsigned char device_id[1024];
 	int i;
+	char *p, *item, *name, *value;
+	char *mfg, *mdl, *sern;
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
@@ -108,8 +110,41 @@ int main(int argc, char *argv[])
 			continue;
 			}
 
-		printf("%s\n", device_id);
-		
+		printf("[USB Printer %d]\n", i);
+
+		/*printf("\"%s\"\n", device_id);*/
+		mfg = mdl = sern = NULL;
+		for(p = device_id; (item = gu_strsep(&p, ";")); )
+			{
+			if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
+				{
+				/*printf("name=%s value=%s\n", name, value);*/
+				if(strcmp(name, "MFG") == 0 || strcmp(name, "MANUFACTURER") == 0)
+					mfg = value;
+				else if(strcmp(name, "MDL") == 0 || strcmp(name, "MODEL") == 0)
+					mdl = value;
+				else if(strcmp(name, "SERN") == 0)
+					sern = value;
+				}
+			}
+
+		if(mfg)
+			printf("manufacturer=%s\n", mfg);
+		if(mdl)
+			printf("model=%s\n", mdl);
+
+		/* If the serial number is available, including it will be an option
+		 * but so will excluding it.  It MFG and MDL aren't available, we
+		 * fall back on the name of the /dev/ node.
+		 */
+		if(mfg && mdl && sern)
+			printf("interface=usb,\"MFG=%s;MDL=%s;SERN=%s\"\n", mfg, mdl, sern);
+		if(mfg && mdl)
+			printf("interface=usb,\"MFG=%s;MDL=%s\"\n", mfg, mdl);
+		else
+			printf("interface=usb,\"%s\"\n", port_temp);
+
+		printf("\n");
 		}
 
 	return 0;	

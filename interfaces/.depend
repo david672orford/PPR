@@ -8,17 +8,15 @@ lpr.$(OBJ): lpr.c ../include/before_system.h ../include/gu.h ../include/global_d
 
 parallel.$(OBJ): parallel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
 
-parallel_generic.$(OBJ): parallel_generic.c ../include/before_system.h ../include/gu.h ../include/global_defines.h parallel.h
+parallel_generic.$(OBJ): parallel_generic.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
 
 parallel_linux.$(OBJ): parallel_linux.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+
+pros.$(OBJ): pros.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
 serial.$(OBJ): serial.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
 tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-throw.$(OBJ): throw.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
-pros.$(OBJ): pros.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
-usblp.$(OBJ): usblp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+usb.$(OBJ): usb.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 

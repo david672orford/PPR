@@ -14,5 +14,3 @@ lprsrv_print.$(OBJ): lprsrv_print.c ../include/before_system.h ../include/gu.h .
 
 lprsrv_standalone.$(OBJ): lprsrv_standalone.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h
 
-olprsrv.$(OBJ): olprsrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h olprsrv.h ../include/util_exits.h ../include/uprint.h ../include/version.h
-
