@@ -42,27 +42,6 @@ msgstr "%s : pas de correspondance pour \"%s\""
 msgid "%s: no match for %d \"%s\""
 msgstr "%s : pas de correspondance pour %d \"%s\""
 
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-# msgid ""
-# msgstr ""
-# "POT-Creation-Date: 1999-02-22 17:51+0100\n"
-# "Content-Type: text/plain; charset=\n"
-# "Date: 1998-09-14 14:19:13+0000\n"
-# "From: Olivier Tharan <olive@mars.laria.u-picardie.fr>\n"
-# "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output "
-# "--default-domain=PPRDRV\n"
-# "Files: ../pprdrv/pprdrv.c ../pprdrv/pprdrv_buf.c ../pprdrv/pprdrv_capable.c "
-# "../pprdrv/pprdrv_commentary.c ../pprdrv/pprdrv_feedback.c "
-# "../pprdrv/pprdrv_flag.c ../pprdrv/pprdrv_interface.c "
-# "../pprdrv/pprdrv_lw_messages.c ../pprdrv/pprdrv_media.c "
-# "../pprdrv/pprdrv_notppd.c ../pprdrv/pprdrv_nup.c ../pprdrv/pprdrv_patch.c "
-# "../pprdrv/pprdrv_persistent.c ../pprdrv/pprdrv_ppd.c "
-# "../pprdrv/pprdrv_ppd_parse.c ../pprdrv/pprdrv_progress.c "
-# "../pprdrv/pprdrv_reason.c ../pprdrv/pprdrv_req.c ../pprdrv/pprdrv_res.c "
-# "../pprdrv/pprdrv_signature.c ../pprdrv/pprdrv_tt.c\n"
 #: ../pprdrv/pprdrv_capable.c:99
 #, c-format
 msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
@@ -70,27 +49,6 @@ msgstr ""
 "+Travail éloigné de l'imprimante \"%s\" pour la (les) raison(s) suivante(s) "
 ":\n"
 
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-# msgid ""
-# msgstr ""
-# "POT-Creation-Date: 1999-02-22 17:51+0100\n"
-# "Content-Type: text/plain; charset=\n"
-# "Date: 1998-09-14 14:19:13+0000\n"
-# "From: Olivier Tharan <olive@mars.laria.u-picardie.fr>\n"
-# "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output "
-# "--default-domain=PPRDRV\n"
-# "Files: ../pprdrv/pprdrv.c ../pprdrv/pprdrv_buf.c ../pprdrv/pprdrv_capable.c "
-# "../pprdrv/pprdrv_commentary.c ../pprdrv/pprdrv_feedback.c "
-# "../pprdrv/pprdrv_flag.c ../pprdrv/pprdrv_interface.c "
-# "../pprdrv/pprdrv_lw_messages.c ../pprdrv/pprdrv_media.c "
-# "../pprdrv/pprdrv_notppd.c ../pprdrv/pprdrv_nup.c ../pprdrv/pprdrv_patch.c "
-# "../pprdrv/pprdrv_persistent.c ../pprdrv/pprdrv_ppd.c "
-# "../pprdrv/pprdrv_ppd_parse.c ../pprdrv/pprdrv_progress.c "
-# "../pprdrv/pprdrv_reason.c ../pprdrv/pprdrv_req.c ../pprdrv/pprdrv_res.c "
-# "../pprdrv/pprdrv_signature.c ../pprdrv/pprdrv_tt.c\n"
 #: ../pprdrv/pprdrv_capable.c:128
 #, c-format
 msgid ""
