@@ -271,3 +271,13 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 * pprinst/pprinst.sgml: removed instructions for ps and kill and replaced
   them with pprd --stop and papsrv --stop.
 
+
+1.50a1, 27 February 2002--28 February 2002.
+
+* misc/release_steps.html: added CVS information and hyperlinked URLs.
+
+* rules.mk: Added "-" in front of $(JADE) so that the output won't
+  be deleted just because some cross references didn't match up.
+
+* index.html: fixed broken link the pprhack.
+

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/rules.mk
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 21 June 2001.
+# Last modified 28 February 2002.
 #
 
 # Where do we install the documentation?
@@ -46,7 +46,7 @@ DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets/print/docbook.dsl
 	rm $$NAME.pod
 
 .sgml.tex:
-	$(JADE) -t tex -d $(DSSSL_SPEC_PRINT) -i tex $*.sgml
+	-$(JADE) -t tex -d $(DSSSL_SPEC_PRINT) -i tex $*.sgml
 
 .tex.ps:
 	$(JADETEX) $*; \

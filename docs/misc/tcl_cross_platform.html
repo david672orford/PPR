@@ -5,6 +5,41 @@
 <body>
 <h1>Using Tcl/Tk and Itcl/Itk/Iwidgets for Cross Platform Programming</h1>
 
+<p>The PPR component known as PPR Popup is a small application which runs on 
+client PCs.  It is used in a computing lab environment.  In such an environment
+people will sit down at a computer and try to print.  There is generally no 
+login procedure for the computer, so if a password is required for printing,
+PPR Popup can be used to prompt for it.
+
+<p>Of course, computing labs run many different operating systems.  By using 
+Tcl/Tk and Itcl/Itk/Iwidgets, it was possible to write an application that
+runs under Win32, MacOS, and X Windows with little change.
+
+<p>Unfortunately, there are gaps in the documentation which explains how to 
+install and use Tcl and friends on some of these platforms.  These gaps
+slowed down the PPR Popup project considerably.  This document attempts
+to present the hard-to-find information gained during the PPR Popup project.
+
+<h2>Tcl Distributions</h2>
+
+<p>The first difficulty was in identifying usable distributions of Tcl for 
+each of the three above-named platforms.
+
+<h3>X-Windows</h3>
+
+<p>X-Windows was easy, probably because Tcl/Tk and friends were developed on
+that platform.
+
+<h3>MacOS</h3>
+
+<p>We had considerable difficulty finding a set of binary distributions for MacOS
+which worked together and were sufficiently stable.  The necessary files were eventually
+located on Sourceforge.
+
+<h3>Win32</h3>
+
+<p>For Win32 we used the excelent binary Tcl distribution from Activestate.
+
 
 </body>
 </html>

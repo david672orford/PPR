@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/misc/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 1 August 2001.
+# Last modified 27 February 2002.
 #
 
 # Pull in settings from Configure.
@@ -36,7 +36,8 @@ NOTBUILT=\
 	docs_todo.txt \
 	misc_dir_contents.txt \
 	internationalization.txt \
-	release_steps.html
+	release_steps.html \
+	tcl_cross_platform.html
 
 #=== Build ==================================================================
 
