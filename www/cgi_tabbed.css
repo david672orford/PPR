@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 16 August 2002.
+** Last modified 1 November 2002.
 */
 
 BODY {
@@ -132,7 +132,8 @@ DIV.section {
 	position: relative;		/* <-- necesary for parenthood */
 	border: thin solid black;
 	padding: 10pt;
-	margin-bottom: 15pt;
+	margin-top: 15pt;		/* we stick out at the top */
+	margin-bottom: 5pt;		/* don't crowd the next thing */
 	}
 DIV.section SPAN.section_label {
 	position: absolute;

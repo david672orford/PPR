@@ -7901,3 +7901,6 @@ line was being parsed twice.
 * www/cgi_widgets.pl:help_button(): added $helpdir parameter.
 
 * Configure: changed default for internationalization to "yes".
+
+* libuprint/uprint_conf.c: added warning if [real lp] or [real lpr] doesn't
+  define installed= and changed the default to yes.

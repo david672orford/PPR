@@ -340,9 +340,9 @@ void uprint_read_conf(void)
     validate_path_set("sidelined", &conf.sidelined);
 
     if(!saw_real_lp_installed)
-	uprint_error_callback("Warning: \"%s\" [real lp] doesn't define installed=", UPRINTCONF);
+	uprint_error_callback("Warning: \"%s\" [real lp] doesn't define installed=, assuming installed=yes", UPRINTCONF);
     if(!saw_real_lpr_installed)
-	uprint_error_callback("Warning: \"%s\" [real lpr] doesn't define installed=", UPRINTCONF);
+	uprint_error_callback("Warning: \"%s\" [real lpr] doesn't define installed=, assuming installed=yes", UPRINTCONF);
 
     }
     } /* end of uprint_read_conf() */

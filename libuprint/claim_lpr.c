@@ -51,7 +51,7 @@ int printdest_claim_lpr(const char *destname)
 
 	if((f = fopen(uprint_lpr_printcap(), "r")) != (FILE*)NULL)
 	    {
-	    char *line;
+	    char *line = NULL;
 	    int line_len = 80;
 	    char *p;
 
