@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_intl.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 9 March 2004.
 #
 
 require "paths.ph";
@@ -40,7 +40,8 @@ my $UNTRANSLATED_CHARSET = "iso-8859-1";
 # Which charsets for which languages?
 my $CHARSET_DEFAULT = "iso-8859-1";
 my %CHARSET_EXCEPTIONS = (
-		"ru" => "koi8-r"
+		"ru" => "koi8-r",
+		"ru_RU" => "koi8-r"
 		);
 
 # Did we suceed in loading the Perl modules for internationalization and did we
@@ -82,7 +83,21 @@ sub cgi_intl_init
 					next;
 					}
 				my $lang = $1;
-				my $q = defined($3) ? $3 : 1.0;
+				my $q = defined($3) ? $3 : 1.0;		# defaults is 1.0 per RFC 2068 section 14.4
+
+				# Convert from HTTP to Gettext format.  For example, "ru-ru" becomes "ru_RU".
+				if($lang =~ /^([^-]{2})-([^-]{2})$/)
+					{
+					my($language, $country) = ($1, $2);
+					$language =~ tr/[A-Z]/[a-z]/;
+					$country =~ tr/[a-z]/[A-Z]/;
+					$lang = "${language}_${country}";
+					}
+				else
+					{
+					$lang =~ tr/[A-Z]/[a-z]/;
+					}
+
 				push(@lang_q_list, "$lang $q $x");
 				$x++;
 				}
@@ -92,7 +107,7 @@ sub cgi_intl_init
 			# Apply the sorted rankings to the languages available.
 			my %lang_q_hash = ();
 			my %lang_tiebreaker = ();
-			my $default_q = 0.0;
+			my $default_q = 0.0;		# for languages not in Accept-Language
 			foreach my $language_range (@lang_q_list)
 				{
 				my($lang, $q, $tiebreaker) = split(/ /, $language_range);
@@ -103,7 +118,7 @@ sub cgi_intl_init
 					next;
 					}
 				print STDERR "    Looking for matches for language range \"$lang\".\n" if($debug >= 2);
-				foreach my $matching_lang (grep(/^$lang(-.*)?$/, @langs_available))
+				foreach my $matching_lang (grep(/^$lang(_.*)?$/, @langs_available))
 					{
 					print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n" if($debug >= 2);
 					$lang_q_hash{$matching_lang} = $q;
@@ -197,7 +212,8 @@ sub cgi_intl_init
 				# Put the selection into the normal environment variable where
 				# setlocale() and the programs the CGI script runs can pick
 				# it up.
-				$ENV{LANG} = $selected_lang;
+				#$ENV{LANG} = $selected_lang;
+				$ENV{LANG} = "$selected_lang.$selected_charset";
 				$ENV{OUTPUT_CHARSET} = $selected_charset;
 
 				# Set things up so that gettext() will use the the language
@@ -311,7 +327,7 @@ sub isubmit
 		$translation =~ s#_(.)#<u>$1</u>#g;
 		print "<button type=\"submit\" name=\"$name\" value=", html_value($value);
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " onclick=\"$onclick\"", $other if(defined($onclick));
+		print " onclick=\"$onclick\"" if(defined($onclick));
 		print ' class="', (defined $class ? $class : "buttons"), '"';
 		print " title=", html_value($tooltip) if(defined $tooltip);
 		print ">", $translation, "</button>";
@@ -322,7 +338,7 @@ sub isubmit
 		$accesskey = $1 if($translation =~ s/_(.)/$1/);
 		print "<input type=\"submit\" name=\"$name\" value=", html_value($value);
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
-		print " onclick=\"$onclick\"", $other if(defined($onclick));
+		print " onclick=\"$onclick\"" if(defined($onclick));
 		print ' class="', (defined $class ? $class : "buttons"), '"';
 		print " title=", html_value($tooltip) if(defined $tooltip);
 		print ">";

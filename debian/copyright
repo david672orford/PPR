@@ -1,11 +1,7 @@
-=============================================================================
- mouse:~ppr/src/docs/misc/LICENSE.txt
- mouse:~ppr/src/LICENSE.txt (symbolic link)
- Last modified 24 January 2003.
-=============================================================================
+This is PPR, written and maintained by David Chappell <David.Chappell@trincoll.edu>.
 
-Most of the PPR distribution is licensed under the BSD license, the terms of
-which are as follows:
+The original source can always be found at:
+	ftp://ppr-dist.trincoll.edu/
 
 Copyright 1995--2004, Trinity College Computing Center.
 
@@ -31,17 +27,4 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
 
-
-
-The following directories are set aside for code, documents, or other files
-licensed under different terms:
-
-nonppr_vendors/
-	See vendors/README.txt for information about these files.
-
-nonppr_misc/
-	See nonppr_misc/README.txt for information about these files.
-
-nonppr_tcl/
-	See tcl/license.terms for information about these files.
 

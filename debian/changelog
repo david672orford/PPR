@@ -1,0 +1,9 @@
+ppr (1.53a2) unstable; urgency=low
+
+  * Initial Release.
+
+ -- David Chappell <David.Chappell@trincoll.edu>  Fri,  5 Mar 2004 17:07:03 -0500
+
+Local variables:
+mode: debian-changelog
+End:

@@ -156,5 +156,7 @@ outdated $VAR_SPOOL_PPR/logs/ppr-indexppds
 
 # PPR 1.53
 outdated $HOMEDIR/cgi-bin/show_queues_nojs.cgi
+outdated_dir $SHAREDIR/locale/ru
+outdated_dir $SHAREDIR/locale/fr
 
 exit 0

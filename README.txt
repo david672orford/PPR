@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/README.txt
  mouse:~ppr/src/docs/misc/README.txt (symbolic link)
- Last revised 28 March 2003.
+ Last revised 5 March 2004.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -38,7 +38,7 @@ and get it up and running as quicly as possible.
 	which you are using.
 
     docs/pprinst/pprinst.html
-    docs/pprinst/pprinst.ps.
+    docs/pprinst/pprinst.pdf.
 	a getting started guide which explains how to use PPR after you 
 	have installed it
 

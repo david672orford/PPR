@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/misc/prn_addwiz.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 November 2003.
+# Last modified 8 March 2004.
 #
 
 #
@@ -192,6 +192,20 @@ $addprn_wizard_table = [
 		'dopage' => sub {
 				print "<p><span class=\"label\">", H_("PPR Printer Queue Creation"), "</span></p>\n";
 				print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
+
+				my $method = cgi_data_move("method", "");
+				labeled_radio("method", "Choose connexion method first", "choose_int", $method);
+				print "<br>\n";
+				labeled_radio("method", "Choose printer first", "browse_printers", $method);
+
+				},
+		'onnext' => sub {
+				if(! defined($data{method}))
+					{ return _("You must make a selection!") }
+				return undef;
+				},
+		'getnext' => sub {
+				return $data{method};
 				},
 		'buttons' => [N_("_Cancel"), N_("_Next")]
 		},
@@ -236,17 +250,17 @@ $addprn_wizard_table = [
 						$thiscol = 0;
 						}
 					my $desc = $interface_descriptions{$interface};
-					print "<input tabindex=1 TYPE=\"radio\" NAME=\"interface\" VALUE=", html_value($interface);
+					print "<label><input tabindex=1 TYPE=\"radio\" NAME=\"interface\" VALUE=", html_value($interface);
 					print " checked" if($interface eq $checked_interface);
 					print "> $interface";
 					print " - <font size=-3>", H_($desc), "</font>" if(defined($desc));
-					print "<BR>\n";
+					print "</label><br>\n";
 					}
 				print "</td></tr></table>\n";
 				},
 		'onnext' => sub {
 				if(! defined($data{interface}))
-					{ return _("You must select an interface!") }
+					{ return _("You must make a selection!") }
 				return undef;
 				},
 		'getnext' => sub {
@@ -548,6 +562,24 @@ $addprn_wizard_table = [
 				}
 		},
 
+		#===========================================
+		# Browse printers
+		#===========================================
+		{
+		'label' => 'browse_printers',
+		'title' => N_("Browse Printers"),
+		'picture' => "wiz-newprn.jpg",
+		'dopage' => sub {
+			opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
+			while(my $browser = readdir(BROWSERS))
+				{
+				next if($browser =~ /^\./);
+				print $browser, "<br>\n";
+				}
+			closedir(BROWSERS) || die $!;
+			}
+		},
+		
 		#===========================================
 		# Select a PPD file
 		#===========================================

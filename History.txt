@@ -9075,6 +9075,12 @@ Internet Printing Protocol Work
 * misc/papsrv_conf_to_papd.perl: Made a script to convert papsrv.conf to "ppad
   addon papname" commands.
 
+* www/cgi_intl.pl: fixed bugs in language selection related to the differences between
+  HTTP and GNU Gettext language codes.
+
+* po/: renamed fr to fr_FR and ru to ru_RU.
+
+
 
 
 +++++++++++++++++++++
