@@ -25,7 +25,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 16 December 2004.
+*% which was last revised 22 February 2005.
 *%
 #endif
 
@@ -99,9 +99,6 @@
 *DefaultColorSpace: CMYK
 *Throughput: "8"
 *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c62
-*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
-*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=2880x720sw,Dither=Adaptive
-*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive
 #endif
 
 *% ===== General Information =====
@@ -260,7 +257,9 @@
 *DefaultPrintoutMode: None
 *PrintoutMode: None: ""
 *PrintoutMode Photo: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 720] /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
-*PrintoutMode Photo2: "<< /ImageType (2) /MediaType (Coated) /HWResolution [1440 1440] /Quality (1440x1440hq2) /Dither (Adaptive) >> setpagedevice"
+*PrintoutMode Photo2: "<< /ImageType (2) /MediaType (Coated) /HWResolution [1440 1440] /Quality (1440x1440sw) /Dither (Adaptive) >> setpagedevice"
+*PrintoutMode Photo3: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 1440] /Quality (2880x1440sw) /Dither (Adaptive) >> setpagedevice"
+*PrintoutMode Photo4: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 720] /Quality (2880x720swuni) /Dither (Eventone) >> setpagedevice"
 *CloseUI: *PrintoutMode
 
 *OpenUI *MediaType/Media Type: PickOne
@@ -299,15 +298,15 @@
 *OrderDependency: 20 AnySetup *Resolution
 *DefaultResolution: None
 *Resolution None/Automatic: ""
-*Resolution 360x120sw/360 x 120 DPI Economy: "<</HWResolution[360 120]>>setpagedevice"
-*Resolution 360x240sw/360 x 240 DPI Draft: "<</HWResolution[360 240]>>setpagedevice"
-*Resolution 360sw/360 DPI: "<</HWResolution[360 360]>>setpagedevice"
-*Resolution 720x360sw/720 x 360 DPI: "<</HWResolution[720 360]>>setpagedevice"
-*Resolution 720sw/720 DPI: "<</HWResolution[720 720]>>setpagedevice"
-*Resolution 1440x720sw/1440 x 720 DPI: "<</HWResolution[1440 720]>>setpagedevice"
-*Resolution 2880x720sw/2880 x 720 DPI: "<</HWResolution[2880 720]>>setpagedevice"
-*Resolution 1440x1440sw/1440 x 1440 DPI: "<</HWResolution[1440 1440]>>setpagedevice"
-*Resolution 2880x1440sw/2880 x 1440 DPI: "<</HWResolution[2880 1440]>>setpagedevice"
+*Resolution 360x120/360 x 120 DPI Economy: "<</HWResolution[360 120]>>setpagedevice"
+*Resolution 360x240/360 x 240 DPI Draft: "<</HWResolution[360 240]>>setpagedevice"
+*Resolution 360/360 DPI: "<</HWResolution[360 360]>>setpagedevice"
+*Resolution 720x360/720 x 360 DPI: "<</HWResolution[720 360]>>setpagedevice"
+*Resolution 720/720 DPI: "<</HWResolution[720 720]>>setpagedevice"
+*Resolution 1440x720/1440 x 720 DPI: "<</HWResolution[1440 720]>>setpagedevice"
+*Resolution 2880x720/2880 x 720 DPI: "<</HWResolution[2880 720]>>setpagedevice"
+*Resolution 1440x1440/1440 x 1440 DPI: "<</HWResolution[1440 1440]>>setpagedevice"
+*Resolution 2880x1440/2880 x 1440 DPI: "<</HWResolution[2880 1440]>>setpagedevice"
 *CloseUI: *Resolution
 
 *OpenUI *Quality/Quality: PickOne
