@@ -1,3 +1,8 @@
+<!--
+Filename: pprhack_files.sgml
+Last Modified: 3 March 2003
+Last Proofread: 
+-->
 <Sect1>
 <Title>Directories and Files</Title>
 
@@ -8,7 +13,11 @@ directory (<Filename class="Directory">/usr/lib/ppr/</Filename>), in its spoolin
 (<Filename class="Directory">/etc/ppr/</Filename>).
 </Para>
 
+<!-- ========================== /var/spool/ppr/ ========================= -->
 <Sect2>
+<Title>The <Filename class="Directory">/var/spool/ppr/</Filename> Directory</Title>
+
+<Sect3>
 <Title>The <Filename class="Directory">/var/spool/ppr/queue/</Filename> Directory</Title>
 
 <Para>
@@ -18,9 +27,9 @@ job is describes.  These files are created by the program <Command>ppr</Command>
 by the print daemon <Command>pprd</Command> when the job has been printed or is canceled.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/var/spool/ppr/jobs/</Filename> Directory</Title>
 
 <Para>
@@ -59,9 +68,9 @@ such messages will begin with a "+".  Whenever a banner or trailer page is
 printed, the contents of the log file  is printed and the log file is deleted.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/var/spool/ppr/printers/alerts/</Filename> Directory</Title>
 
 <Para>
@@ -72,9 +81,9 @@ new alert instead of appending.  This ensures that only recent messages will be
 sent to the operator.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/var/spool/ppr/printers/status/</Filename> Directory</Title>
 
 <Para>
@@ -82,9 +91,9 @@ This file may contain one file for each printer.  If present, the file
 contains the last status message received from the printer.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/var/spool/ppr/logs/</Filename> Directory</Title>
 
 <Para>
@@ -94,9 +103,9 @@ log files when <Application>PPR</Application> component fail.  If this directory
 <XRef linkend="printlog"/>.)
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/etc/ppr/</Filename> Directory</Title>
 
 <Para>
@@ -134,9 +143,15 @@ and modified by the
 <Command>ppad media</Command> series of commands.
 </Para>
 
+</Sect3>
+
 </Sect2>
 
+<!-- ========================== /etc/ppr/ ========================= -->
 <Sect2>
+<Title>The <Filename class="Directory">/etc/ppr/</Filename> Directory</Title>
+
+<Sect3>
 <Title>The <Filename class="Directory">/etc/ppr/printers/</Filename> Directory</Title>
 
 <Para>
@@ -145,9 +160,9 @@ same name as the printer it describes.  The format of one of these files is
 described in Appendix <XRef linkend="printer-config"/>.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/etc/ppr/groups/</Filename> Directory</Title>
 
 <Para>
@@ -156,9 +171,9 @@ name as the group it describes.  The format of these files is described in
 Appendix <XRef linkend="group-config"/>.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/etc/ppr/mounted/</Filename> Directory</Title>
 
 <Para>
@@ -175,88 +190,15 @@ printing banner pages and to automatically select bins for print jobs according
 to their required media.
 </Para>
 
+</Sect3>
+
+<!-- ========================== /usr/lib/ppr/ ========================= -->
 </Sect2>
 
 <Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> Directory</Title>
+<Title>The <Filename class="Directory">/usr/lib/ppr/</Filename> Directory</Title>
 
-<Para>Each file in this directory is a program which is responsible for making
-contact with any printer which has a particular kind of interface.  For
-instance, <Filename>interfaces/atalk</Filename> is used to communicate with printers
-connected through Apple's Printer Access Protocol.  The requirements imposed on
-such an interface program are described in Appendix <XRef
-linkend="interfaces2"/>.</Para>
-
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/responders/</Filename> Directory</Title>
-
-<Para>
-Each file in the <Filename class="Directory">responders/</Filename> directory is a program which can be used to
-attempt to send a message to the user who submitted the job.  A responder
-program is selected at the time the user invokes <Command>ppr</Command>, by using the <Option>-m</Option>
-switch.  The parameter for the <Option>-m</Option> switch is the name of the program in the
-<Filename class="Directory">responders/</Filename> directory which should be used.  If the <Option>-m</Option>
-switch is not
-used, the default responder, <Literal>write</Literal>, is used.  (You can change the default
-by setting the environment variable <EnVar>PPR_RESPONDER</EnVar>.)  The manner in which a
-responder is invoked is described in Appendix <XRef linkend="responders"/>.
-</Para>
-
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/filters/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/commentators/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/fonts/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/share/ppr/man/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/cgi-bin/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/www/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/share/ppr/cache/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/fixup/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/share/ppr/locale/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
-<Title>The <Filename class="Directory">/usr/share/ppr/speach/</Filename> Directory</Title>
-<para>[This section hasn't been written yet.]</para>
-</Sect2>
-
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/usr/lib/ppr/bin/</Filename> Directory</Title>
 
 <Para>
@@ -267,9 +209,9 @@ the PPR daemons <Command>pprd</Command>,
 and the <Command>papsrv</Command>.
 </Para>
 
-</Sect2>
+</Sect3>
 
-<Sect2>
+<Sect3>
 <Title>The <Filename class="Directory">/usr/lib/ppr/lib/</Filename> Directory</Title>
 
 <Para>
@@ -297,9 +239,84 @@ The file <Filename>fontsub.conf</Filename> is used to find substitutes for
 missing fonts.  It is described in <XRef linkend="fontsub"/>.
 </Para>
 
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> Directory</Title>
+
+<Para>Each file in this directory is a program which is responsible for making
+contact with any printer which has a particular kind of interface.  For
+instance, <Filename>interfaces/atalk</Filename> is used to communicate with printers
+connected through Apple's Printer Access Protocol.  The requirements imposed on
+such an interface program are described in Appendix <XRef
+linkend="interfaces2"/>.</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/responders/</Filename> Directory</Title>
+
+<Para>
+Each file in the <Filename class="Directory">responders/</Filename> directory is a program which can be used to
+attempt to send a message to the user who submitted the job.  A responder
+program is selected at the time the user invokes <Command>ppr</Command>, by using the <Option>-m</Option>
+switch.  The parameter for the <Option>-m</Option> switch is the name of the program in the
+<Filename class="Directory">responders/</Filename> directory which should be used.  If the <Option>-m</Option>
+switch is not
+used, the default responder, <Literal>write</Literal>, is used.  (You can change the default
+by setting the environment variable <EnVar>PPR_RESPONDER</EnVar>.)  The manner in which a
+responder is invoked is described in Appendix <XRef linkend="responders"/>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/filters/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/commentators/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/cgi-bin/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/lib/ppr/fixup/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
 </Sect2>
 
+<!-- ========================== /usr/share/ppr/ ========================= -->
 <Sect2>
+<Title>The <Filename class="Directory">/usr/share/ppr/</Filename> Directory</Title>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/cache/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/www/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/fonts/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/man/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
 <Title>The <Filename class="Directory">/usr/share/ppr/PPDFiles/</Filename> Directory</Title>
 
 <Para>
@@ -313,6 +330,18 @@ to find their latest PPD file library.</Para>
 
 </FOOTNOTE>but a few are part of PPR.
 </Para>
+
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/locale/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
+
+<Sect3>
+<Title>The <Filename class="Directory">/usr/share/ppr/speach/</Filename> Directory</Title>
+<para>[This section hasn't been written yet.]</para>
+</Sect3>
 
 </Sect2>
 
