@@ -8121,7 +8121,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--12 February 2003.
+1.50, 22 January 2003--13 February 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
@@ -8166,4 +8166,9 @@ line was being parsed twice.
 
 * pprdrv/pprdrv_reason.c: added code to log the name of the printer and the
   probable reason to the job log.
+
+* libuprint/uprint_rfc1179.c: added (but won't be used until the next
+  version.
+
+* ppop/README.txt: added
 

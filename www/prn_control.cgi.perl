@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_control.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 November 2002.
+# Last modified 13 February 2003.
 #
 
 use lib "?";
@@ -203,7 +203,7 @@ my $job = shift @result_row1;
 my $retry = shift @result_row1;
 my $countdown = shift @result_row1;
 
-# The remaining ones are auxiliary status information.
+# The remaining columns are auxiliary status information.
 my @printer_status = ();
 my $printer_job = "";
 my $operation = "";
