@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 23 October 2003.
 */
 
 #ifndef LIBPPR_INT_H
@@ -34,13 +34,11 @@
 #include "gu.h"
 
 /*
-** This is a structure into which interface arguments are stored
-** for handy reference later.  The storing is done by
-** interface_parse_argv().	To the right of each member is a sample
-** of what it might contain.  If you want a real explaination of
-** the significance of the interface options, looks at the
-** appendix "Requirements for an Interface" in "PPR, a Print Spooler for
-** PostScript".
+** This is a structure into which interface arguments are stored for handy
+** reference later.  The storing is done by interface_parse_argv(). To the
+** right of each member is a sample of what it might contain.  If you want a
+** real explaination of the significance of the interface options, looks at
+** the section "Printer Interface Programs" in "The PPR Hackers Guide".
 */
 struct INT_CMDLINE
 	{
@@ -63,8 +61,9 @@ struct INT_CMDLINE
 extern struct INT_CMDLINE int_cmdline;
 
 /*
-** This stuff is for interfaces that use TCP to connect to the printer.
-** It is excluded if the necessary IP include files haven't been included.
+** This stuff is for interfaces that use TCP to connect to the printer. It
+** is include only if the necessary IP include files have already been
+** included.
 */
 #ifdef INADDR_NONE
 struct TCP_CONNECT_OPTIONS

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 23 October 2003.
 */
 
 #include "before_system.h"
@@ -41,9 +41,22 @@
 #include "ppad.h"
 
 /*
+** Passing this stuff piece-by-piece to various functions was a drag.  Here 
+** it is wrapped up in a nice tidy package.
+*/
+struct THE_FACTS
+	{
+	char *hrDeviceDescr;
+	char *product;
+	char *version;
+	int revision;
+	char *pjl_info_id;
+	};
+	
+/*
 ** List all PPD files which match the indicated criteria.
 */
-static int ppd_choices(const char printer[], const char product[], const char version[], int revision, const char pjl_info_id[])
+static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	{
 	FILE *f;
 	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
@@ -72,18 +85,23 @@ static int ppd_choices(const char printer[], const char product[], const char ve
 			continue;
 			}
 
-		/*printf("X: %s vs. %s\n", f_product, product);*/
-		if(product && strcmp(f_product, product) == 0)
+		/*printf("Product: %s\n", f_product);*/
+		if(    (facts->product && strcmp(f_product, facts->product) == 0)
+			|| (facts->hrDeviceDescr && strcmp(f_product, facts->hrDeviceDescr) == 0)
+			)
 			{
 			p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
 			if(machine_readable)
 				{
-				printf("\"%s\"\n", p);
+				/* This is for the web front end which needs extra fields. */
+				printf("%s:%s:%s\n", p, f_vendor, f_description);
 				}
 			else
 				{
+				/* We wait to print this until we know that we have at least one match. */
 				if(count++ < 1)
 					printf("Run one of these commands to select the cooresponding PPD file:\n");
+
 				printf("    ppad ppd %s \"%s\"\n", printer, p);
 				}
 			}
@@ -92,12 +110,16 @@ static int ppd_choices(const char printer[], const char product[], const char ve
 	fclose(f);
 
 	return count;
-	}
+	} /* end of ppd_choices() */
 
 /*
 ** Interface program probe query
+**
+** This function invokes the printer interface program with the --probe 
+** option.  Hopefully it will be able to perform some interface-specific
+** probing in order to obtain information about the printer.
 */
-static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q, char **hrDeviceDescr)
+static int ppd_query_interface_probe(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
 	{
 	int retval = 0;
 
@@ -123,11 +145,40 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q, char 
 
 					if((f1 = gu_strsep(&p, "=")) && (f2 = gu_strsep(&p, "=")))
 						{
-						printf("    %s: \"%s\"\n", f1, f2);
-						if(strcmp(f1, "hrDeviceDescr") == 0 && !*hrDeviceDescr)
+						if(!machine_readable)
+							printf("    %s: \"%s\"\n", f1, f2);
+
+						if(strcmp(f1, "hrDeviceDescr") == 0)
 							{
-							*hrDeviceDescr = gu_strdup(f2);
-							retval = 1;
+							if(!facts->hrDeviceDescr)
+								{
+								facts->hrDeviceDescr = gu_strdup(f2);
+								retval = 1;
+								}
+							}
+						else if(strcmp(f1, "Product") == 0)
+							{
+							if(!facts->product)
+								{
+								facts->product = gu_strdup(f2);
+								retval = 1;
+								}
+							}
+						else if(strcmp(f1, "Version") == 0)
+							{
+							if(!facts->version)
+								{
+								facts->version = gu_strdup(f2);
+								/* retval = 1; */
+								}
+							}
+						else if(strcmp(f1, "Revision") == 0)
+							{
+							if(!facts->revision)
+								{
+								facts->revision = atoi(f2);
+								/* retval = 1; */
+								}
 							}
 						}
 
@@ -156,11 +207,12 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q, char 
 		}
 
 	return retval;
-	}
+	} /* end of ppd_query_interface_probe() */
+
 /*
 ** PJL query
 */
-static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_id)
+static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
 	{
 	int retval = 0;
 
@@ -193,13 +245,13 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 
 				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
 
-				if(p[0] == '"' && !*pjl_info_id)
+				if(p[0] == '"' && !facts->pjl_info_id)
 					{
 					p++;
-					*pjl_info_id = gu_strndup(p, strcspn(p, "\""));
+					facts->pjl_info_id = gu_strndup(p, strcspn(p, "\""));
 
 					if(!machine_readable)
-						printf("    INFO ID: \"%s\"\n", *pjl_info_id);
+						printf("    INFO ID: \"%s\"\n", facts->pjl_info_id);
 
 					retval = 1;
 					}
@@ -209,7 +261,10 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 			{
 			if(!machine_readable)
 				printf("Disconnecting...\n");
+
+			/* This is PCL Universal Exit Langauge. */
 			query_puts(q,	"\033%-12345X");
+
 			query_disconnect(q);
 			}
 		gu_Catch
@@ -224,12 +279,12 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 		}
 
 	return retval;
-	}
+	} /* end of ppd_query_pjl() */
 
 /*
 ** PostScript query
 */
-static int ppd_ppdq_postscript(const char printer[], struct QUERY *q, char **product, char **version, int *revision)
+static int ppd_query_postscript(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
 	{
 	const char *result_labels[] = {"Revision", "Version", "Product"};
 	char *results[] = {NULL, NULL, NULL};
@@ -287,11 +342,11 @@ static int ppd_ppdq_postscript(const char printer[], struct QUERY *q, char **pro
 				p++;
 				p[strcspn(p, ")")] = '\0';
 				}
-			*product = gu_strdup(p);
+			facts->product = gu_strdup(p);
 			gu_free(results[2]);
 
-			*version = results[1];
-			*revision = atoi(results[0]);
+			facts->version = results[1];
+			facts->revision = atoi(results[0]);
 			}
 		gu_Final
 			{
@@ -317,49 +372,51 @@ static int ppd_ppdq_postscript(const char printer[], struct QUERY *q, char **pro
 		}
 
 	return 1;
-	} /* end of ppd_ppdq_postscript() */
+	} /* end of ppd_query_postscript() */
 
-int ppd_ppdq(const char printer[], struct QUERY *q)
+/*
+** This is called from ppad_printer.c:printer_ppdq() and ppd_query().
+*/
+int ppd_query_core(const char printer[], struct QUERY *q)
     {
-	char *hrDeviceDescr = NULL;
-	char *product = NULL;
-	char *version = NULL;
-	int revision = 0;
-	char *pjl_info_id = NULL;
+	struct THE_FACTS facts;
 	int total_answers = 0;
 	int matches = 0;
 
-	total_answers += ppd_ppdq_interface_probe(printer, q, &hrDeviceDescr);
+	facts.hrDeviceDescr = NULL;
+	facts.product = NULL;
+	facts.version = NULL;
+	facts.revision = 0;
+	facts.pjl_info_id = NULL;
+
+	total_answers += ppd_query_interface_probe(printer, q, &facts);
 	if(!machine_readable)
 		PUTS("\n");
 
-	total_answers += ppd_ppdq_postscript(printer, q, &product, &version, &revision);
+	total_answers += ppd_query_postscript(printer, q, &facts);
 	if(!machine_readable)
 		PUTS("\n");
 
 	if(total_answers < 1)
 		{
-		total_answers += ppd_ppdq_pjl(printer, q, &pjl_info_id);
+		total_answers += ppd_query_pjl(printer, q, &facts);
 		if(!machine_readable)
 			PUTS("\n");
 		}
 
 	if(total_answers > 0)
 		{
-		matches = ppd_choices(
-			printer,							/* for message */
-			product ? product : hrDeviceDescr,
-			version, revision,
-			pjl_info_id
-			);
+		matches = ppd_choices(printer, &facts);
 		}
 
-	if(product)
-		gu_free(product);
-	if(version)
-		gu_free(version);
-	if(pjl_info_id)
-		gu_free(pjl_info_id);
+	if(facts.hrDeviceDescr)
+		gu_free(facts.hrDeviceDescr);
+	if(facts.product)
+		gu_free(facts.product);
+	if(facts.version)
+		gu_free(facts.version);
+	if(facts.pjl_info_id)
+		gu_free(facts.pjl_info_id);
 
 	if(matches < 1)
 		{
@@ -369,7 +426,7 @@ int ppd_ppdq(const char printer[], struct QUERY *q)
 		}
 
 	return EXIT_OK;
-	} /* end of ppd_ppdq() */
+	} /* end of ppd_query_core() */
 
 /*
 ** ppad query
@@ -399,7 +456,7 @@ int ppd_query(const char *argv[])
 		q = query_new_byaddress(interface, address, options);
 
 		/* Now call the function that does the real work. */
-		ret = ppd_ppdq("<printer>", q);
+		ret = ppd_query_core("<printer>", q);
 
 		query_delete(q);
 		}

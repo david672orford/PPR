@@ -281,6 +281,81 @@ pcl</literal>.</para>
 </sect2>
 
 <sect2>
+<title>Help in Parsing the Command Line</title>
+
+<para>The interface command line in not particularly difficult to parse, but
+you might find it helpful to use the library functions which those
+interfaces which come with <application>PPR</application> and are written in
+C use.  To use it, include the file <filename>libppr_int.h</filename> and
+call the function <function>int_cmdline_set()</function> from
+<function>main()</function> like this:</para>
+
+<programlisting>
+int_cmdline_set(argc, argv);
+</programlisting>
+
+<para>Once you have do this, the parameters will be available to you as
+members of the global structure <varname>int_cmdline</varname>.  The
+structure <varname>int_cmdline</varname> is an instance of
+<varname>INT_CMDLINE</varname>, which is defined below:</para>
+
+<programlisting>
+struct INT_CMDLINE
+	{
+	gu_boolean probe;		/* TRUE if --probe used */
+	const char *int_name;		/* example: "interfaces/atalk" */
+	const char *int_basename;	/* example: "atalk" */
+	const char *printer;		/* example: "myprn" */
+	const char *address;		/* example: "My Laser Printer:LaserWriter@Computing Center" */
+	const char *options;		/* example: "idle_status_interval=60 open_retries=5" */
+	int jobbreak;			/* example: 1 (JOBBREAK_SIGNAL) */
+	gu_boolean feedback;		/* example: 1 (TRUE) */
+	enum CODES codes;		/* example: 3 (CODES_Binary) */
+	const char *jobname;		/* example: "mouse:myprn-1001.0(mouse)" */
+	const char *routing;		/* example: "Call David Chappell at 2114 when ready" */
+	const char *forline;		/* example: "David Chappell" */
+	const char *barbarlang;		/* example: "" (PostScript) */
+	const char *title;		/* example: "My Print Job" */
+	} ;
+</programlisting>
+
+<para>It is now very easy to write code that refers to the command line
+parameters by name.  For example, if your interface program doesn't support
+probe mode, bidirectional communication, or the jobbreak methods signal and
+signal/pjl, you could put this right after the call to
+<function>int_cmdline_set()</function>:</para>
+
+<programlisting>
+if(int_cmdline.probe)
+	{
+	fprintf(stderr,
+		_("The interface program \"%s\" does not support probing.\n"),
+		int_cmdline.int_basename
+		);
+	exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	}
+
+if(int_cmdline.feedback)
+	{
+	alert(int_cmdline.printer, TRUE,
+		_("The PPR interface program \"%s\" is incapable of sending feedback."),
+		int_cmdline.int_basename
+		);
+	exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	}
+
+if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
+	{
+	alert(int_cmdline.printer, TRUE,
+		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
+		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
+	exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	}
+</programlisting>
+
+</sect2>
+
+<sect2>
 <title>The Return Codes</title>
 
 <para>The exit codes which interface programs should use are defined in

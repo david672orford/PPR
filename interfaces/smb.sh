@@ -47,11 +47,10 @@
 . lib/interface.sh
 . lib/libppr_int.sh
 
-# Detect the --probe option.
-PROBE=0
 if [ "$1" == "--probe" ]
 	then
-	PROBE=1
+	echo "The interface program \"`basename $0`\" does not support probing." >&2
+	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
 # give the parameters names
@@ -60,12 +59,6 @@ ADDRESS="$2"
 if [ "$PPR_GS_INTERFACE_HACK_ADDRESS" != "" ]; then ADDRESS="$PPR_GS_INTERFACE_HACK_ADDRESS"; fi
 OPTIONS="$3"
 if [ "$PPR_GS_INTERFACE_HACK_OPTIONS" != "" ]; then OPTIONS="$PPR_GS_INTERFACE_HACK_OPTIONS"; fi
-
-if [ $PROBE -ne 0 ]
-	then
-	lib/alert $PRINTER TRUE "The interface program \"dummy\" does not support probing."
-	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
-	fi
 
 #echo "smb $PRINTER $ADDRESS $OPTIONS"
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 23 October 2003.
 */
 
 /*
@@ -149,7 +149,7 @@ char *deffiltopts_line(void);
 void deffiltopts_close(void);
 
 /* functions in ppad_ppd.c */
-int ppd_ppdq(const char printer[], struct QUERY *q);
+int ppd_query_core(const char printer[], struct QUERY *q);
 int ppd_query(const char *argv[]);
 
 /* end of file */

@@ -37,11 +37,11 @@
 # source the file which defines the exit codes
 . lib/interface.sh
 
-# Detect the --probe option.
-PROBE=0
+# Detect the --probe option.  We are a fake, so we fake it.
 if [ "$1" == "--probe" ]
 	then
-	PROBE=1
+	echo "PROBE: Product=HP LaserJet 4000 Series"
+	exit $EXIT_PRINTED
 	fi
 
 # give the parameters names
@@ -50,12 +50,6 @@ ADDRESS="$2"
 OPTIONS="$3"
 JOBBREAK="$4"
 FEEDBACK="$5"
-
-if [ $PROBE -ne 0 ]
-	then
-	lib/alert $PRINTER TRUE "The interface program \"dummy\" does not support probing."
-	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
-	fi
 
 # Parse the options.
 SLEEP=""

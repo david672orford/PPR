@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 23 October 2003.
 */
 
 /*==============================================================
@@ -3081,7 +3081,7 @@ int printer_ppdq(const char *argv[])
 		q = query_new_byprinter(printer);
 
 		/* Now call the function in ppad_ppd.c that does the real work. */
-		ret = ppd_ppdq(printer, q);
+		ret = ppd_query_core(printer, q);
 
 		query_delete(q);
 		}
