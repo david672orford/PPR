@@ -14,7 +14,7 @@
 <!ENTITY pprhack-libppr SYSTEM "pprhack_libppr.sgml">
 ]>
 
-<Article>
+<article>
 
 <Articleinfo>
 	<Title>The PPR Hacker's Guide</Title>
@@ -22,7 +22,7 @@
 		<firstname>David</firstname>
 		<Surname>Chappell</Surname>
 	</Author>
-	<PubDate>3 March 2003</PubDate>
+	<PubDate>4 March 2003</PubDate>
 	<Copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -38,18 +38,17 @@ to users.</Para>
 
 </Abstract>
 
-&pprhack-conf;
-&pprhack-files;
-&pprhack-interfaces;
-&pprhack-filters;
-&pprhack-fonts;
-&pprhack-pprd;
-&pprhack-status;
-&pprhack-responders;
-&pprhack-custom-hooks;
+<!-- &pprhack-conf; -->
+<!-- &pprhack-files; -->
+<!-- &pprhack-interfaces; -->
+<!-- &pprhack-filters; -->
+<!-- &pprhack-fonts; -->
+<!-- &pprhack-pprd; -->
+<!-- &pprhack-status; -->
+<!-- &pprhack-responders; -->
+<!-- &pprhack-custom-hooks; -->
 &pprhack-srcnotes;
-&pprhack-libgu;
-&pprhack-libppr;
+<!-- &pprhack-libgu; -->
+<!-- &pprhack-libppr; -->
 
-</Article>
-
+</article>

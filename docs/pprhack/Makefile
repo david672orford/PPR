@@ -49,7 +49,7 @@ pprhack.sgml: \
 		pprhack_fonts.sgml \
 		pprhack_interfaces.sgml \
 		pprhack_pprd.sgml \
-		pprhack_status.sgml
+		pprhack_status.sgml \
 		pprhack_responders.sgml \
 		pprhack_custom_hooks.sgml \
 		pprhack_srcnotes.sgml \

@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_files.sgml
-Last Modified: 3 March 2003
+Last Modified: 4 March 2003
 Last Proofread: 
 -->
 <Sect1>
@@ -192,9 +192,9 @@ to their required media.
 
 </Sect3>
 
-<!-- ========================== /usr/lib/ppr/ ========================= -->
 </Sect2>
 
+<!-- ========================== /usr/lib/ppr/ ========================= -->
 <Sect2>
 <Title>The <Filename class="Directory">/usr/lib/ppr/</Filename> Directory</Title>
 
@@ -319,17 +319,13 @@ responder is invoked is described in Appendix <XRef linkend="responders"/>.
 <Sect3>
 <Title>The <Filename class="Directory">/usr/share/ppr/PPDFiles/</Filename> Directory</Title>
 
-<Para>
-This is the default location for PPD files.  It contains a collection of PPD
-files for common printers.  Most of these were provided by the manufacturers or
-by Adobe<FOOTNOTE>
-
-<Para>Adobe makes a large collection of PPD files available by anonymouse
-FTP.  See <ULink url="ftp://ftp.adobe.com/pub/adobe/">ftp://ftp.adobe.com/pub/adobe/</ULink>
-to find their latest PPD file library.</Para>
-
-</FOOTNOTE>but a few are part of PPR.
-</Para>
+<Para>This is the default location for PPD files.  It contains a collection
+of PPD files for common printers.  Most of these were provided by the
+manufacturers or by Adobe<FOOTNOTE><Para>Adobe makes a large collection of
+PPD files available by anonymouse FTP.  See <ULink
+url="ftp://ftp.adobe.com/pub/adobe/">ftp://ftp.adobe.com/pub/adobe/</ULink>
+to find their latest PPD file library.</Para></FOOTNOTE> but a few are part
+of PPR.</Para>
 
 </Sect3>
 
@@ -346,4 +342,3 @@ to find their latest PPD file library.</Para>
 </Sect2>
 
 </Sect1>
-

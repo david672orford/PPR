@@ -1,12 +1,10 @@
 <Sect1>
 <Title>Configuration File Formats</Title>
 
-<Para>
-Configuration files which the system administrator is expected to modify
+<Para>Configuration files which the system administrator is expected to modify
 directly are described within the reference manual.  The files described
 in this section are modified automatically by programs such as ppad.  That
-is why they are described here in the Hacker's Guide.
-</Para>
+is why they are described here in the Hacker's Guide.</Para>
 
 <Sect2 id="printer-config">
 <Title>Format of a Printer Configuration File</Title>
@@ -30,11 +28,9 @@ by one or more values.  Only the <Literal>Bin:</Literal> and
 <Literal>PPDOpt:</Literal> lines should occur more than once.  If any other
 line occurs multiple times, all but the last instance are ignored.</Para>
 
-<Para>
-Any line that begins with an unrecognized keyword is ignored.  This is so that
+<Para>Any line that begins with an unrecognized keyword is ignored.  This is so that
 you can add lines of your own which will be understood and acted on by other
-programs.  The program <Command>ppr2samba</Command> works on this principle.
-</Para>
+programs.  The program <Command>ppr2samba</Command> works on this principle.</Para>
 
 <VariableList>
 
@@ -193,12 +189,12 @@ is used.</Para>
 <Term><Literal>GrayOK:</Literal> <Replaceable>boolean</Replaceable></Term>
 <ListItem>
 
-<Para>This line is optional.  The default value is <Literal>true</Literal>.  If this parameter is
-set to <Literal>false</Literal>, the printer will refuse to print any job which does not have
-<Literal>color</Literal> in a <Literal>%%Requirements:</Literal> line in its header.
-A <Literal>GrayOK:</Literal>
-line can be used to prevent black-and-white or grayscale jobs from begin
-printed on an expensive colour printer.</Para>
+<Para>This line is optional.  The default value is <Literal>true</Literal>. 
+If this parameter is set to <Literal>false</Literal>, the printer will
+refuse to print any job which does not have <Literal>color</Literal> in a
+<Literal>%%Requirements:</Literal> line in its header. A
+<Literal>GrayOK:</Literal> line can be used to prevent black-and-white or
+grayscale jobs from begin printed on an expensive colour printer.</Para>
 
 </ListItem>
 </VarListEntry>
@@ -310,18 +306,22 @@ command.</Para>
 <VarListEntry>
 <Term><Literal>PageCountQuery:</Literal> <Replaceable>integer</Replaceable></Term>
 <ListItem>
+
 <Para>
 This line can be used to enable pair of queries which fetch the printers
 lifetime page count before and after the printing of the job (exclusive
 of banner and trailer pages).
 </Para>
+
 <Para>
 The information obtained through these queries can be logged.  See Section
 <XRef linkend="printlog"/>.
 </Para>
+
 <Para>
 If this line is absent or the <Replaceable>integer</Replaceable> is 0, then this feature is disabled.
 </Para>
+
 <Para>
 If the value is 1, then then the PostScript code
 <Command>statusdict /pagecount get exec ==</Command> is used to get the page count.  No
@@ -332,10 +332,12 @@ others it may be solved by using the <Literal>pjl</Literal> or <Literal>signal/p
 method which causes PPR to wait until all of the pages have hit the
 output bin before considering the job complete.
 </Para>
+
 <Para>
 In the future, additional values for this parameter may be defined.  These
 additional values will use different techniques to obtain the page count.
 </Para>
+
 </ListItem>
 </VarListEntry>
 
@@ -502,4 +504,3 @@ Used by ppr2samba.  See the man page ppr2samba(8).
 </Sect2>
 
 </Sect1>
-

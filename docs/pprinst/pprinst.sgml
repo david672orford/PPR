@@ -28,7 +28,7 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>14 February 2003</pubdate>
+	<pubdate>4 March 2003</pubdate>
 	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -37,19 +37,14 @@
 
 <abstract>
 
-<para>
-
-This document is intended to help you to get PPR up and running as quicly as
-possible.  It does not attempt to describe all of PPR's features or theory
-of operation.  More information can be found in
-
-<ULink url="../pprdoc/pprdoc.html"><CiteTitle>PPR, a Print Spooler for PostScript</CiteTitle></ULink>,
-
-the <ULink url="../refman/"><CiteTitle>PPR Reference Manual</CiteTitle></ULink>,
-
-and the <ULink url="../pprhack/pprhack.html"><CiteTitle>PPR Hackers Guide</CiteTitle></ULink>.
-
-</para>
+<para>This document is intended to help you to get PPR up and running as
+quicly as possible.  It does not attempt to describe all of PPR's features
+or theory of operation.  More information can be found in <ULink
+url="../pprdoc/pprdoc.html"><CiteTitle>PPR, a Print Spooler for
+PostScript</CiteTitle></ULink>, the <ULink url="../refman/"><CiteTitle>PPR
+Reference Manual</CiteTitle></ULink>, and the <ULink
+url="../pprhack/pprhack.html"><CiteTitle>PPR Hackers
+Guide</CiteTitle></ULink>.</para>
 
 </abstract>
 
@@ -82,4 +77,5 @@ printers shared by PPR's AppleTalk print server.
 &section-removing;
 &section-replacing-printer;
 &section-legal;
+
 </article>

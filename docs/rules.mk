@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 February 2003.
+# Last modified 4 March 2003.
 #
 
 # Where do we install the documentation?
@@ -34,7 +34,7 @@ DOCSDIR=$(WWWDIR)/docs
 # Where are the document formatting and conversion programs?
 POD2MAN=pod2man
 POD2HTML=pod2html
-FIG2DEV=PATH=/usr/bin fig2dev
+FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$PATH fig2dev
 XSLTPROC=xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
