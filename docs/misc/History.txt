@@ -7258,7 +7258,7 @@ line was being parsed twice.
   BSD license.
 
 
-1.44, 5 June 2001--19 June 2001
+1.44, 5 June 2001--20 June 2001
 
 * moved misc/modes-3.3.mf to filters_misc/ and improved the documentation at
   the top of filters_misc/mfmodes.conf.
@@ -7270,4 +7270,11 @@ line was being parsed twice.
 * Converted source tree into a CVS sandbox.
 
 * makeprogs/installdata.sh: added clause to skip things named "CVS".
+
+* Fixed NULL pointer problem in "ppad rip".
+
+* Changed pprdrv/pprdrv_rip.c:rip_start() to use a fixed path of 
+  HOMEDIR/lib/gs for Ghostscript rather than consulting ppr.conf.  This is
+  appropriate because there will be a special Ghostscript distribution
+  for use with PPR
 

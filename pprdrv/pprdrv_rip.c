@@ -121,7 +121,7 @@ void rip_fault_check(void)
 int rip_start(int printdata_handle, int stdout_handle)
     {
     FUNCTION4DEBUG("rip_start")
-    static const char *gs = NULL;
+    static const char *gs = HOMEDIR"/lib/gs";
     int rip_pipe[2];
     char driver_option[32];
 
@@ -132,11 +132,13 @@ int rip_start(int printdata_handle, int stdout_handle)
 	fatal(EXIT_PRNERR_NORETRY, "Ghostscript (gs) is the only RIP supported at this time.");
 
     /* Get the path to the Ghostscript interpreter from ppr.conf. */
+    #if 0
     if(!gs)
 	{
 	if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
 	    fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
 	}
+    #endif
 
     if(strlen(printer.RIP.driver) > 4 && strcmp(&printer.RIP.driver[strlen(printer.RIP.driver) - 4], ".upp") == 0)
 	snprintf(driver_option, sizeof(driver_option), "@%s", printer.RIP.driver);
