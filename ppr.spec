@@ -1,11 +1,11 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 4 March 2003.
+# Last modified 7 March 2003.
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
 #
-# In order to use this file, move the PPR source archive to
+# In order to use this file, move the PPR source archive to 
 # /usr/src/RPM/SOURCES and run "rpm -ba ppr-X.XX.spec".  It is possible to
 # build the thing elsewhere, such as in one's home dirctory, but I don't know
 # how.
@@ -64,7 +64,6 @@ RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 %files -f z_install_end/installed_files_list
 %docdir /usr/share/ppr/man
 %docdir /usr/share/ppr/www/docs
-%config /etc/ppr/media.db
 
 #============================================================================
 # This removes the build directory after the install.
@@ -77,14 +76,18 @@ rm -rf $RPM_BUILD_ROOT
 #============================================================================
 %pre
 
+# Create the PPR users and groups.
+
 #============================================================================
 # This is run after unpacking the cpio archive from the binary .rpm file.
 #============================================================================
 %post
-/etc/rc.d/init.d/ppr start
+
 /usr/lib/ppr/bin/ppr-indexfonts >/dev/null
 /usr/lib/ppr/bin/ppr-ppds >/dev/null
-/usr/lib/ppr/bin/ppr-filterss >/dev/null
+/usr/lib/ppr/bin/ppr-filters >/dev/null
+
+/etc/rc.d/init.d/ppr start
 
 #============================================================================
 # This is run before uninstalling.
@@ -105,36 +108,19 @@ rm -rf $RPM_BUILD_ROOT
 # Remove the crontab.
 /usr/bin/crontab -u ppr -r
 
-# Do the same for Xinetd or Inetd.
-if [ -f /etc/xinetd.d/ppr ]
+# Remove the UPRINT symbolic links and put the native spooler programs back.
+/usr/lib/ppr/bin/uprint-newconf --remove
+
+# Remove PPR from /etc/inetd.conf.
+if [ -f /etc/inetd.conf ]
     then
-    rm -f /etc/xinetd.d/ppr
-    killall -HUP xinetd
-    else
-    rm -f /etc/inetd.conf~
-    mv /etc/inetd.conf /etc/inetd.conf~
-    grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
-    killall -HUP inetd
+    if grep /usr/lib/ppr/bin/ /etc/inetd.conf >/dev/null
+	then
+	rm -f /etc/inetd.conf~
+	mv /etc/inetd.conf /etc/inetd.conf~
+	grep -v '/usr/lib/ppr/bin/' /etc/inetd.conf~ >/etc/inetd.conf
+	fi
     fi
-
-# Remove lots of removable junk.
-/usr/lib/ppr/bin/ppr-clean --aggressive
-rm -f /var/spool/ppr/cache/*/*
-rm -f /var/spool/ppr/dvips/*
-
-# Remove boring log files.
-for l in pprd pprd.old \
-	pprdrv papsrv papd \
-	lprsrv \
-	ppr-indexfonts ppr-indexppds ppr-clean \
-	ppr-httpd uprint
-    do
-    rm -f /var/spool/ppr/logs/$l
-    done
-
-# Remove print jobs.
-rm -f /var/spool/ppr/queue/*
-rm -f /var/spool/ppr/jobs/*
 
 # Remove the font, PPD file, and filter indexes.
 rm -f /var/spool/ppr/fontindex.db
@@ -144,23 +130,44 @@ for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd 
     rm -f /usr/lib/ppr/filters/filter_$t
     done
 
+# Remove boring log files.  Notice that printlog isn't in this list.
+for l in pprd pprd.old \
+	pprdrv \
+	papsrv papd \
+	olprsrv lprsrv \
+	ppr-indexfonts ppr-indexppds ppr-indexfilters ppr-clean \
+	ppr-httpd \
+	uprint
+    do
+    rm -f /var/spool/ppr/logs/$l
+    done
+
+# Remove print jobs.
+rm -f /var/spool/ppr/queue/*
+rm -f /var/spool/ppr/jobs/*
+
+# Remove lots of removable junk.
+/usr/lib/ppr/bin/ppr-clean --aggressive
+rm -f /var/spool/ppr/cache/*/*
+rm -f /var/spool/ppr/dvips/*
+
 # Remove pprd's FIFO.
 rm -f /var/spool/ppr/PIPE
 
 # Remove any linger run state files.
 rm -f /var/spool/ppr/run/*
 
-# Remove the UPRINT symbolic links and put the native spooler programs back.
-/usr/lib/ppr/bin/uprint-newconf --remove
+#============================================================================
+# This is run after uninstalling.
+#============================================================================
+%postun
+
+killall -HUP inetd
+killall -HUP xinetd
 
 # Remove the PPR users and groups.
 /usr/sbin/userdel ppr
 /usr/sbin/userdel pprwww
 /usr/sbin/groupdel ppr
-
-#============================================================================
-# This is run after uninstalling.
-#============================================================================
-%postun
 
 # end of file

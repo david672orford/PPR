@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
-# mouse:~ppr/src/www/ppr-web-control.tcl
-# Copyright 1995--2002, Trinity College Computing Center.
+# mouse:~ppr/src/www/ppr-web.tcl
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 November 2002.
+# Last modified 7 March 2003.
 #
 
 #
@@ -43,13 +43,22 @@ set opener_url "$base_url/cgi-bin/window_open.cgi"
 
 # Process the command line arguments.  The first one is a queue name and any
 # that follow are file names.
+set opt_d 0
 set queue ""
 set files {}
 foreach arg $argv {
-    if {$queue == ""} {
-	set queue $arg
+    if {[string compare $arg "-d"] == 0} {
+	set opt_d 1
 	} else {
-	lappend files $arg
+	if {$opt_d == 1} {
+	    set queue $arg
+	    set opt_d 0
+	    } else { if {$queue == ""} {
+	    puts stderr "Warning: specifying a queue name without -d is obsolete"
+	    set queue $arg
+	    } } else {
+	    lappend files $arg
+	    }
 	}
     }
 

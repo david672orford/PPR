@@ -25,13 +25,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 January 2003.
+# Last modified 7 March 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
 # for building documentation.
 include ../../Makefile.conf
-include ../../include/version.mk
+include ../../makeprogs/paths.mk
 include ../rules.mk
 
 #=== Inventory ==============================================================

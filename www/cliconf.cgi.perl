@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/www/cliconf.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 December 2002.
+# Last modified 7 March 2003.
 #
 
 use lib "?";
@@ -250,7 +250,7 @@ Content-Disposition: attachment; filename=$filename
 [Desktop Entry]
 Comment=$comment
 Encoding=UTF-8
-Exec=ppr-web $name
+Exec=ppr-web -d $name
 Icon=$SHAREDIR/www/images/icon-48.xpm
 MimeType=
 Name=$name

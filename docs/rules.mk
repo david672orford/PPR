@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 # Where do we install the documentation?
@@ -46,7 +46,6 @@ FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
 # Where are the style sheets?
 XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
 XSL_SPEC_PRINT=../../nonppr_misc/docbook-xsl/fo/docbook.xsl
-#SGML_CATALOG_FILES=../catalog
 SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 
 # Additional file extensions to be used in our rules.
@@ -64,7 +63,7 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 .pod.man:
 	NAME=`perl -e '$$ARGV[0] =~ s/\.[0-9]$$//; print $$ARGV[0];' $*`; \
 	ln $*.pod $$NAME.pod; \
-	$(POD2MAN) --center="PPR Documentation" --release=$(VERSION) \
+	$(POD2MAN) --center="PPR Documentation" --release=$(SHORT_VERSION) \
 		--section=`perl -e '$$ARGV[0] =~ /([0-9])$$/; print $$1;' $*` \
 		$$NAME.pod >$*.man; \
 	rm $$NAME.pod

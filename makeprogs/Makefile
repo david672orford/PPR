@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
@@ -37,7 +37,10 @@ TARGETS=ppr-config$(DOTEXE) paths.mk paths.sh paths.ph PPR.pm paths.tcl \
 
 #=== Build ==================================================================
 
-all: $(TARGETS)
+all: $(TARGETS) version.mk
+
+version.mk: ppr-config$(DOTEXE)
+	./ppr-config --mk | grep SHORT_VERSION >version.mk
 
 paths.mk: ppr-config$(DOTEXE)
 	./ppr-config --mk >paths.mk
@@ -53,11 +56,6 @@ PPR.pm: ppr-config$(DOTEXE)
 
 paths.tcl: ppr-config$(DOTEXE)
 	./ppr-config --tcl >paths.tcl
-
-configure: configure.in
-	autoheader
-	autoconf configure.in >configure
-	chmod 755 configure
 
 #=== Install ================================================================
 
@@ -78,8 +76,4 @@ clean:
 	# We need an empty file so make will run to build it.
 	touch paths.mk
 
-clean-configure:
-	$(RMF) configure config.log config.cache config.status config.h
-
 # end of file
-

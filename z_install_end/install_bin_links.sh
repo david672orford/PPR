@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -38,21 +38,7 @@
 echo "Creating symbolic links in \"$SYSBINDIR\"..."
 for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd
     do
-    ./puts "  $SYSBINDIR/$i..."
-    existing=`readlink $RPM_BUILD_ROOT$SYSBINDIR/$i`
-    if [ "$existing" = "$HOMEDIR/bin/$i" ]
-	then
-	echo " exists and is correct ($existing)"
-	else
-	echo " linking $HOMEDIR/bin/$i -> $SYSBINDIR/$i"
-	rm -f $RPM_BUILD_ROOT$SYSBINDIR/$i
-	ln -s $HOMEDIR/bin/$i $RPM_BUILD_ROOT$SYSBINDIR/$i 2>/dev/null
-	if [ $? -ne 0 ]
-	    then
-	    echo "Warning: Can't create because not running as root."
-	    fi
-	fi
+    ../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
     done
 
 exit 0
-

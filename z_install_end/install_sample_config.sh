@@ -42,10 +42,10 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
     	then
 	echo " creating"
     	touch $RPM_BUILD_ROOT$CONFDIR/acl/$f
-	chmod 644 $RPM_BUILD_ROOT$CONFDIR/acl/$f
 	else
 	echo " exists"
     	fi
+    ../makeprogs/installconf.sh conf $CONFDIR/acl/$f
     done
 
 #===========================================================================
@@ -61,12 +61,10 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
 	echo " copy $CONFDIR/$f.sample --> $CONFDIR/$f"
 	# Use Sed to copy it while removing the "Last modified" comment.
     	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $RPM_BUILD_ROOT$CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
-    	chown $USER_PPR $RPM_BUILD_ROOT$CONFDIR/$f
-    	chgrp $GROUP_PPR $RPM_BUILD_ROOT$CONFDIR/$f
-	chmod 644 $RPM_BUILD_ROOT$CONFDIR/$f
 	else
 	echo " exists"
     	fi
+    ../makeprogs/installconf.sh conf $CONFDIR/$f
     done
 
 exit 0

@@ -26,12 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 7 March 2003.
 #
 
 #
 # This script copies a single file into place.
 #
+
+. `dirname $0`/paths.sh
 
 squeeze=0
 if [ "$1" = "--squeeze" ]
@@ -70,6 +72,8 @@ if [ $squeeze != 0 ]
     else
     echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\""
     cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
+    chown $USER_PPR $RPM_BUILD_ROOT$target
+    chgrp $GROUP_PPR $RPM_BUILD_ROOT$target
     chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
     fi
 

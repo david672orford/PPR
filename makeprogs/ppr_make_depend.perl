@@ -2,7 +2,7 @@
 #
 # mouse:~ppr/makeprogs/ppr_make_depend.perl
 #
-# Last modified 4 February 2003.
+# Last modified 7 March 2003.
 #
 
 defined($INCDIR = $ARGV[0]) || die;
@@ -28,7 +28,7 @@ while($file = readdir(D))
 
 	while(<F>)
 		{
-		if(/^#include "([^"]+)"\s*$/)
+		if(/^#include "([^"]+)"/)
 			{
 			my $incfile = $1;
 			if($incfile =~ /\// || -f $incfile)

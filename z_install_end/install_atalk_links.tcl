@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 #
@@ -42,7 +42,7 @@ if [info exists env(RPM_BUILD_ROOT)] {
     set RPM_BUILD_ROOT ""
     }
 
-exec rm -f "$HOMEDIR/lib/getzones"
+exec rm -f "$RPM_BUILD_ROOT$HOMEDIR/lib/getzones"
 
 puts "Searching for getzones..."
 
@@ -50,12 +50,12 @@ foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
     puts "    Trying \"$file\"..."
     if [ file executable $file ] {
 	puts "  Found, linking to $HOMEDIR/lib/getzones."
-	exec ln -s $file "$RPM_BUILD_ROOT$HOMEDIR/lib/getzones"
+	exec ../makeprogs/installln.sh $file "$HOMEDIR/lib/getzones"
 	break
 	}	
     }
 
-if {! [ file executable "$HOMEDIR/lib/getzones" ]} {
+if {! [ file executable "$RPM_BUILD_ROOT$HOMEDIR/lib/getzones" ]} {
     puts "  No getzones found.  You probably don't have AppleTalk."
     }
 

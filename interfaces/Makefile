@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 January 2003.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
@@ -49,9 +49,9 @@ all-netbios: $(NETBIOS_PROGS)
 # Extra stuff to build if we have AppleTalk.
 all-atalk: $(ATALK_PROGS)
 
-# Build the AppleTalk interface by linking the atalk.o
-# created by the rule below with the AppleTalk libraries
-# for this system as defined in global.mk as ATALKLIBS.
+# Build the AppleTalk interface by linking the atalk.o created by the rule 
+# below with the AppleTalk libraries for this system as defined in 
+# Makefile.conf as ATALKLIBS.
 atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o atalk$(DOTEXE) atalk_$(ATALKTYPE).$(OBJ) \
 		$(ATALKLIBS) \

@@ -1,6 +1,8 @@
-#define VERSION "PPR version 1.51, 6 March 2003 (built "__DATE__", "__TIME__")."
 #define SHORT_VERSION "1.51"
-#define COPYRIGHT "Copyright 1995--2003, Trinity College Computing Center."
+#define REVISION_DATE "7 March 2003"
+#define COPYRIGHT_YEARS "1995--2003"
+
+#define VERSION "PPR version "SHORT_VERSION", "REVISION_DATE" (built "__DATE__", "__TIME__")."
+#define COPYRIGHT "Copyright "COPYRIGHT_YEARS", Trinity College Computing Center."
 #define AUTHOR "Written by David Chappell."
-/* Remember to edit include/version.mk too! */
 

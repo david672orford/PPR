@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ B<ppr-web> - Open PPR's Web-based Control Panel
 
 =head1 SYNOPSIS
 
-B<ppr-web> [I<destname> [I<filename>] ... ] 
+B<ppr-web> [B<-d> I<destname>] [I<filename>] ... ] 
 
 =head1 DESCRIPTION
 
@@ -49,16 +49,17 @@ If no arguments are supplied, then the PPR control panel will be opened.
 
 =head2 Queue Display
 
-If one argument, a queue name, is supplied, then a queue display window is
-opened.
+To skip the PPR control panel and open a queue display window, use B<-d>
+I<destname>.  For example:
+
+	$ ppr-web -d myprn
 
 =head2 Job Submission
 
-If two or more arguments are supplied, the first is understood to be the
-queue name and the second and subsequent arguments are understood to be the
-names of files to be submitted to that queue.  There will be no GUI
-manifestation of this operation, though a print dialog is planned for the
-future.
+If B<-d> I<queuenname> is used and additional arguments follow, then they
+are understood to be the names of files to be printed on the indicated
+printer.  There will be no GUI manifestation of this operation, though a
+print dialog is planned for the future.
 
 =head2 KDE Icons
 

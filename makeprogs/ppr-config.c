@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 March 2003.
+** Last modified 7 March 2003.
 */
 
 #include "before_system.h"
@@ -44,6 +44,8 @@ static void do_paths(char format[], char language[])
 
     if(strcmp(language, "--pm") == 0)
     	printf("package PPR;\n");
+
+    printf(format, "SHORT_VERSION", SHORT_VERSION);
 
     /*
     ** These appear in all but paths.mk.  They don't appear in
@@ -169,4 +171,3 @@ int main(int argc, char *argv[])
     }
 
 /* end of file */
-

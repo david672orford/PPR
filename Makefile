@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 #
@@ -37,8 +37,8 @@
 # customization information.)
 include Makefile.conf
 
-# The version number of PPR is found in this file and in version.h.
-include include/version.mk
+# We pull in this because we need SHORT_VERSION.
+include makeprogs/version.mk
 
 # Sourceforge CVS repository contact information.
 CVS_RSH=ssh
@@ -135,8 +135,8 @@ dist-docs:
 # Make sure the hard-to-build docs are built, remove the easy to build stuff, and build the tar file.
 dist: dist-docs clean unconfigure
 	( cd po; ./extract_to_pot.sh )
-	#( cd /usr/local/src; tar cf - ppr-$(VERSION) | gzip --best >~ppr/ppr-$(VERSION).tar.gz )
-	( cd /usr/local/src; tar zcf ~ppr/ppr-$(VERSION).tar.gz ppr-$(VERSION) --exclude 'docbook-*-*' --exclude CVS )
+	#( cd /usr/local/src; tar cf - ppr-$(SHORT_VERSION) | gzip --best >~ppr/ppr-$(SHORT_VERSION).tar.gz )
+	( cd /usr/local/src; tar zcf ~ppr/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
 	@echo
 	@echo "Distribution archive built."
 	@echo

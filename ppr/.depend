@@ -8,7 +8,7 @@ ppr_infile.$(OBJ): ppr_infile.c ../include/before_system.h ../include/gu.h ../in
 
 ppr_mactt.$(OBJ): ppr_mactt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
 
-ppr_main.$(OBJ): ppr_main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
+ppr_main.$(OBJ): ppr_main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_conffile.h ../include/userdb.h ../include/ppr_exits.h ../include/respond.h ../include/version.h ppr_gab.h
 
 ppr_media.$(OBJ): ppr_media.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
 

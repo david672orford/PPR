@@ -1,0 +1,227 @@
+#! /usr/bin/perl
+
+my $COPYRIGHT_YEARS = "1995--2003";
+my $COPYRIGHT_HOLDER = "Trinity College Computing Center";
+my $DATE = "7 March 2003";
+
+my @LICENSE = split(/\n/, <<"==========END==========");
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice,
+this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+==========END==========
+
+#
+# This program updates a PPR source file.  It updates the filename, copyright 
+# notice, license statement, and last modified date.
+#
+
+for my $filename (@ARGV)
+    {
+    print "$filename\n";
+    do_file($filename) || die;
+    }
+
+exit 0;
+
+sub do_file
+    {
+    my $filename = shift;
+    my $file_modified = 0;
+
+    open(F, "<$filename") || die $!;
+    my @lines = <F>;
+    close(F) || die $!;
+
+    if($lines[0] =~ m#^/\*#)
+	{
+	print "  File type is C source.\n";
+	}
+    elsif($lines[0] =~ m/^#!/)
+	{
+	print "  File type is script.\n";
+	}
+    elsif($lines[0] =~ m/^#$/)
+	{
+	print "  File type is script fragment or makefile.\n";
+	}
+    else
+	{
+	die "File type is unknown";
+	}
+
+    my $i = 1;
+
+    #========================================================================
+    # find and update the filename
+    #========================================================================
+    {
+    my $found = 0;
+    for( ; $i < 10 && $i < scalar @lines; $i++)
+	{
+	if($lines[$i] =~ m#^([\*\#]+\s+)mouse:~ppr/src/(.+)$#)
+	    {
+	    print "  Found filename comment, file = \"$2\".\n";
+	    $found = 1;
+	    last;
+	    }
+	}
+    if(!$found)
+	{
+	print STDERR "Can't find filename comment.\n";
+	return 0;
+	}
+    $i++;
+    }
+
+    #========================================================================
+    # find and update the copyright notice
+    #========================================================================
+    {
+    my $found = 0;
+    for( ; $i < 15 && $i < scalar @lines; $i++)
+	{
+	if($lines[$i] =~ /^([\*#]+\s+Copyright )(.+)(, $COPYRIGHT_HOLDER\.)$/o)
+	    {
+	    print "  Found Copyright notice, years = \"$2\".\n";
+	    if($2 ne $COPYRIGHT_YEARS)
+		{
+		print "    Updating to \"$COPYRIGHT_YEARS\".\n";
+		$lines[$i] = "$1$COPYRIGHT_YEARS$3\n";
+		$file_modified = 1;
+		}
+	    $found = 1;
+	    last;
+	    }
+	}
+    if(!$found)
+	{
+	print STDERR "Can't find copyright notice.\n";
+	return 0;
+	}
+    $i++;
+    }
+
+    #========================================================================
+    # find and update the license statement
+    #========================================================================
+    {
+    my $license_sep = undef;
+    for( ; $i < 20 && $i < scalar @lines; $i++)
+	{
+	if($lines[$i] =~ /^([\*#]+\s+)Permission to use, copy, modify,/)
+	    {
+	    print "  Found old license statement.\n";
+	    $license_sep = $1;
+	    last;
+	    }
+	if($lines[$i] =~ /^([\*#]+\s+)Redistribution and use in source /)
+	    {
+	    print "  Found new license statement.\n";
+	    $license_sep = $1;
+	    last;
+	    }
+	}
+    if(!defined($license_sep))
+	{
+	print STDERR "Can't find license statement.\n";
+	return 0;
+	}
+    else
+	{
+	my $license_start = $i;
+	my $found = 0;
+	for( ; $i < 50 && $i < scalar @lines; $i++)
+	    {
+	    if($lines[$i] =~ /^[\*#]+\s+(without )?express or implied warranty\.$/)
+		{
+		print "  Found end of old license statement.\n";
+		print "    Updating to new license statement.\n";
+		splice(@lines, $license_start, ($i - $license_start + 1), map {"$license_sep$_\n"} @LICENSE);
+		$file_modified = 1;
+		$found = 1;
+		last;
+		}
+	    if($lines[$i] =~ /^[\*#]+\s+POSSIBILITY OF SUCH DAMAGE\.$/)
+		{
+		print "  Found end of new license statement.\n";
+		$found = 1;
+		last;
+		}
+	    }
+	if(!$found)
+	    {
+	    print STDERR "Can't find end of license statement.\n";
+	    return 0;
+	    }
+	$i = $license_start + scalar @LICENSE;
+	}
+    }
+
+    #========================================================================
+    # find and update the last revised date
+    #========================================================================
+    {
+    my $found = 0;
+    for( ; $i < 50 && $i < scalar @lines; $i++)
+	{
+	if($lines[$i] =~ /^([\*#]+\s+Last modified )(.+)(\.)$/)
+	    {
+	    print "  Found last modified date, date = \"$2\".\n";
+	    if($2 ne $DATE)
+		{
+		print "    Updating to \"$DATE\".\n";
+		$lines[$i] = "$1$DATE$3\n";
+		$file_modified = 1;
+		}
+	    $found = 1;
+	    $i++;
+	    last;
+	    }
+	}
+    if(!$found)
+	{
+	print STDERR "Can't find revision date.\n";
+	return 0;
+	}
+    }
+
+    #========================================================================
+    # save the changes (if any)
+    #========================================================================
+    if($file_modified)
+	{
+	print "  Saving modified file...\n";
+	unlink("$filename~");
+	rename($filename, "$filename~") || die $!;
+	open(OUT, ">$filename") || die $!;
+	print OUT join('', @lines);
+	close(OUT) || die $!;
+	chmod(0755, $filename) if(-x "$filename~");
+	}
+    else
+	{
+	print "  File is not modified.\n";
+	}
+
+    return 1;
+    }
+
+# end of file

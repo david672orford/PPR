@@ -25,12 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 January 2003.
+# Last modified 7 March 2003.
 #
 
 # Pull in settings from Configure.
 include ../../Makefile.conf
-include ../../include/version.mk
+include ../../makeprogs/paths.mk
 include ../rules.mk
 
 #=== Inventory ==============================================================
@@ -44,11 +44,9 @@ NOTBUILT=\
 	announce.txt \
 	LICENSE.txt \
 	INSTALL.txt \
-	TODO.txt \
-	History.txt \
 	PORTING.txt \
+	main_history.txt \
 	docs_history.txt \
-	docs_todo.txt \
 	misc_dir_contents.txt \
 	internationalization.txt \
 	release_steps.html \

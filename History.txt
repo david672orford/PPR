@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--6 March 2003.
+1.51, 15 February 2003--7 March 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8392,36 +8392,48 @@ line was being parsed twice.
   re-implement id because old versions aren't as nice as GNU id and don't
   support -u, -g, and -n.
 
+* www/ppr-web.tcl: added -d option to specify the queue though its use is
+  still optional.
+
+* www/cliconf.cgi.perl: added -d option to ppr-web command in generated KDE
+  icons.
+
+* makeprogs/ppr_make_depend.perl: fixed bug: #include "" with comment
+  following was ignored!
+
+* Moved include/version.mk to makeprogs/version.mk where it is
+  auto-generated and only used by the top-level makefile.  Eliminated other
+  uses by by adding SHORT_VERSION to ppr-config --mk output.
+
+* templates/adjust_header: added
+
+* makeprogs/install*.sh: added code to chown and chgrp installed files.
+
 
 
 TODO
 
-* Decide how pprd should handle the matter of the hostname changing due 
-  to dial-up networking.
+* Finish papd.
 
-* Finish ppr-papd (a replacement for papsrv).
+* Fix RPM building
 
-* Evaluate libieee1284 at http://sourceforge.net/projects/libieee1284/.
+* Create Debian package
 
 * Add queue aliases support to ppr2samba.
 
-* Add support for Samba's new MS-Windows driver download to ppr2samba.
+* Finish support for automatic driver download in Samba 2.2.x.
 
 * IPP support in UPRINT so that jobs can be sent to CUPS queues.  This
   should probably be done with libcups which is LGPL.  
 
 * Make uprint-cancel and uprint-lpstat actually do something
 
-* Write uprint-lpc, uprint-lpadmin, uprint-accept, and uprint-reject
-
 * Change responder interface to use name=value pairs on the command line. 
 
 * Change commentators to support the new status handling code and merge them
   with responders.
 
-* Increase any limit on the length of the printer interface options line.
-
-* Write an IPP server.
+* Finish the IPP server.
 
 * Implement -F switch sorting in pprdrv.
 
@@ -8430,12 +8442,13 @@ TODO
 
 * Implement PPR node-to-node printing, queue display, and job canceling.
 
-* Add --dsc-charset to ppr.
-
 * Add code to convert command line options to utf-8 and provide mechanism for 
   their translation.
 
+* Add --dsc-charset to ppr.
+
 * Support banner page "news" messages.
 
-* Convert build to autoconf (maybe).
+* Decide how pprd should handle the matter of the hostname changing due 
+  to dial-up networking.
 

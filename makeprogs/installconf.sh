@@ -1,6 +1,5 @@
-#! /bin/sh
 #
-# mouse:~ppr/src/makeprogs/installln.sh
+# mouse:~ppr/src/makeprogs/installconf.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,19 +29,21 @@
 #
 
 #
-# This script is used to install links to programs.  If the link is already
-# ok, we don't remove it.  This allows us to run to completion even if we
-# wouldn't be able to modify the link.  This allows us to do make install
-# as the ppr user if it has previously been done as root.
+# This script is used in Makefiles set the permissions on config files and
+# add them to the installed files list.  Unlike the other install*.sh
+# scripts, this one does not actually copy files.
 #
 
 . `dirname $0`/paths.sh
 
-if [ -z "$1" -o -z "$2" ]
-  then
-  echo "Usage: installln.sh: <sourcefile> <destfile>"
-  exit 1
-  fi
+TYPE="$1"
+shift
+
+if [ "$TYPE" = "" ]
+    then
+    echo "Usage: installconf.sh <type> [<file1> ...]"
+    exit 1
+    fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   then
@@ -50,30 +51,23 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   exit 1
   fi
 
-source="$1"
-target="$2"
-
-if [ ! -f "$RPM_BUILD_ROOT$source" ]
-  then
-  echo "The source file \"$RPM_BUILD_ROOT$source\" doesn't exist."
-  exit 1
-  fi
-
-echo "    \"$source\" --> \"$target\" (link)"
-if [ "`readlink $RPM_BUILD_ROOT$target`" != "$source" ]
-    then
-    rm -f "$RPM_BUILD_ROOT$target"
-    ln -s "$RPM_BUILD_ROOT$source" "$RPM_BUILD_ROOT$target"
-    if [ $? -ne 0 ]
+while [ "$1" != "" ]
+    do
+    if [ "$name" != "CVS" ]
 	then
-	echo "$0: can't create \"$target\" because not running as root."
-	exit 1
+	if [ ! -f "$RPM_BUILD_ROOT$1" ]
+	    then
+	    echo "$1 doesn't exist!"
+	    exit 1
+	    fi
+	echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
+	chown $USER_PPR $RPM_BUILD_ROOT$1
+	chgrp $GROUP_PPR $RPM_BUILD_ROOT$1
+	echo "  chmod 644 \"$1\""
+	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
+	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
-    fi
-chown $USER_PPR $RPM_BUILD_ROOT$target 2>/dev/null
-chgrp $GROUP_PPR $RPM_BUILD_ROOT$target 2>/dev/null
-
-echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
+    shift
+    done
 
 exit 0
-
