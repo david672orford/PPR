@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2004.
+# Last modified 25 May 2004.
 #
 
 #
@@ -618,14 +618,14 @@ $addprn_wizard_table = [
 				my $browser_printer = cgi_data_peek("browser_printer", undef);
 				if(! defined($browser_printer))
 					{ return _("You must choose a printer!") }
-				if($browser_printer !~ /^([^,]+),"([^"]+)"(?:,"([^"]+)")?(?:,([^,]+))?(?:,([^,]+))?(?:,([^,]+))?$/)
+				if($browser_printer !~ /^([^,]+),"([^"]+)"(?:,"([^"]*)")?(?:,([^,]*))?(?:,([^,]*))?(?:,([^,]*))?$/)
 					{ return "internal error: browser_printer=$browser_printer" }
 				$data{interface} = $1;
 				$data{address} = $2;
-				$data{options} = defined $3 ? $3 : "";
-				$data{jobbreak} = defined $4 ? $4 : "default";
-				$data{feedback} = defined $5 ? $5 : "default";
-				$data{codes} = defined $6 ? $6 : "default";
+				$data{options} =  defined $3 ? $3 : "";
+				$data{jobbreak} = defined $4 && $4 ne "" ? $4 : "default";
+				$data{feedback} = defined $5 && $5 ne "" ? $5 : "default";
+				$data{codes} =    defined $6 && $6 ne "" ? $6 : "default";
 				return undef;
 				}
 		},
