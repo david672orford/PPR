@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--28 March 2002.
+1.50a1, 27 February 2002--5 April 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7607,3 +7607,4 @@ line was being parsed twice.
 * lprsrv/lprsrv.c: fixed "unrecognized command" code so that the ^A style
   message is used only if the command byte is less than ASCII space.
 
+* www/cgi_tabbed.css: made tabbed folder borders narrower.

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_properties.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 19 December 2001.
+# Last modified 5 April 2002.
 #
 
 use lib "?";
@@ -1012,7 +1012,7 @@ print "<script>window.opener.gentle_reload()</script>\n";
 #========================================
 
 # Should debugging messages be added to the html?
-$debug = 1;
+$debug = 0;
 
 # Swap the real and effective user ids.
 ($<,$>) = ($>,$<);

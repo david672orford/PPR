@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 30 August 2001.
+** Last modified 5 April 2002.
 */
 
 BODY {	background: #C0C0C0;
@@ -12,8 +12,8 @@ INPUT.tabactive {
 	font-size: 8pt;
 	font-weight: bold;
 	background: beige;
-	margin: 0; border-style: solid; border-color: black;
-	border-width: 1 1 1 1;
+	margin: 0;
+	border-style: solid; border-color: black; border-width: 1px;
 	border-bottom-color: beige;
 	}
 
@@ -22,8 +22,8 @@ INPUT.tabinactive {
 	font-size: 8pt;
 	font-weight: normal;
 	background: beige;
-	margin: 0; border-style: solid; border-color: black;
-	border-width: 1 1 1 1;
+	margin: 0;
+	border-style: solid; border-color: black; border-width: 1px;
 	}
 
 /* Tables of this class form the background for tabbed dialog boxes. */
@@ -32,7 +32,7 @@ TABLE.tabpage {
 	margin: 0;
 	border-style: solid;
 	border-color: black;
-	border-width: 0 1 1 1;
+	border-width: 0px 1px 1px 1px;
 	}
 
 TABLE.tabpage TD {
