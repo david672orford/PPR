@@ -63,7 +63,7 @@ char line[257];         /* 255 characters plus one null plus extra for my CR */
 int line_len;		/* tokenize() insists that we set this */
 
 /* Other globals: */
-struct ADV adv[PPR_PAPD_MAX_NAMES];
+struct ADV *adv = NULL; 
 int name_count = 0;          		/* total advertised names */
 int i_am_master = TRUE;			/* set to FALSE in child ppr-papd's */
 int children = 0;			/* The number of our children living. (master daemon) */
@@ -72,7 +72,7 @@ char *default_zone = "*";		/* for advertised names */
 gu_boolean opt_foreground = FALSE;
 
 /* The names of various files. */
-const char *log_file_name = LOGFILE;
+static const char *log_file_name = LOGFILE;
 static const char *pid_file_name = PIDFILE;
 
 /*
@@ -120,8 +120,7 @@ void debug(const char string[], ... )
 /*
 ** Fatal error function.
 **
-** Print a message in the log file, call the AppleTalk
-** cleanup routine, and exit.
+** Print a message in the log file, remove the advertised names, and exit.
 */
 void fatal(int rval, const char string[], ... )
     {
@@ -134,8 +133,15 @@ void fatal(int rval, const char string[], ... )
     /* Master daemon cleanup: */
     if(i_am_master)
 	{
-	appletalk_dependent_cleanup();	/* let AppleTalk remove names, etc */
+	int i;
+	for(i = 0; adv[i].adv_type != ADV_LAST; i++)
+	    {
+	    if(adv[i].adv_type == ADV_ACTIVE)
+	        remove_name(adv[i].PAPname, adv[i].fd);
+	    }
+	
 	unlink(pid_file_name);		/* remove file with our pid in it */
+
 	debug("Shutdown complete");	/* <-- and let those who are waiting know. */
 	}
 
@@ -191,7 +197,7 @@ char *debug_string(char *s)
 ** be used to terminate the AppleTalk Printer Server.
 **
 ** The first time such a signal is caught, this routine
-** calls fatal() which will call appletalk_independent_cleanup().
+** calls fatal().
 **
 ** If more signals are received before the server exits,
 ** they have no effect.
@@ -203,15 +209,15 @@ static void termination_handler(int sig)
     	debug("Signal \"%s\" received, termination routine already initiated", gu_strsignal(sig));
     else
 	fatal(1, "Received signal \"%s\", shutdown started", gu_strsignal(sig));
-    } /* end of cleanup() */
+    } /* end of termination_handler() */
 
-/*
+/*========================================================================
 ** Get a line from the client and store it in line[],
 ** its length in line_len.
 **
 ** This routine is not dependent on the type of
 ** AppleTalk stack in use.
-*/
+========================================================================*/
 char *pap_getline(int sesfd)
     {
     int x;
@@ -312,7 +318,7 @@ static void reapchild(int signum)
 
     } /* end of reapchild() */
 
-/*
+/*=========================================================================
 ** This is the main loop function for the child.  (The daemon ppr-papd
 ** forks off a child every time it accepts a connection.)  This function
 ** answers queries and dispatches print jobs until the client closes
@@ -322,10 +328,13 @@ static void reapchild(int signum)
 ** Dependent module.  This routine is not AppleTalk
 ** dependent because it deals with the network by
 ** calling routines in the AppleTalk Dependent module.
-*/
+=========================================================================*/
 void child_main_loop(int sesfd, int prnid, int net, int node)
     {
     char *cptr;
+    struct QUEUE_CONFIG queue_config;
+
+    conf_load_queue_config(&adv[prnid], &queue_config);
 
     while(TRUE)			/* will loop until we break out */
 	{
@@ -345,7 +354,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 	    DODEBUG_LOOP(("start of query: %s", line));
 
 	    /* Note that query may be for login. */
-	    answer_query(sesfd, prnid);
+	    answer_query(sesfd, &queue_config);
 
 	    DODEBUG_LOOP(("query processing complete"));
 	    }
@@ -354,7 +363,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 	    {
 	    DODEBUG_LOOP(("start of print job: \"%s\"", line));
 
-	    printjob(sesfd, prnid, net, node, log_file_name);
+	    printjob(sesfd, &adv[prnid], &queue_config, net, node, log_file_name);
 
 	    DODEBUG_LOOP(("print job processing complete"));
 	    }
@@ -588,7 +597,7 @@ int main(int argc, char *argv[])
     ** Read the configuration file and advertise
     ** the printer names on the AppleTalk.
     */
-    read_conf();
+    adv = conf_load(adv);
 
     /*
     ** Call the Appletalk dependent main loop which will fork off a
@@ -596,7 +605,7 @@ int main(int argc, char *argv[])
     ** This function contains the main loop.  It never returns.
     */
     debug("Entering main loop");
-    appletalk_dependent_daemon_main_loop();
+    appletalk_dependent_daemon_main_loop(adv);
 
     return 0;				/* <-- this makes GNU-C happy */
     } /* end of main() */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd_printjob.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 December 2002.
+** Last modified 9 January 2003.
 */
 
 #include "before_system.h"
@@ -54,7 +54,7 @@ static jmp_buf printjob_env;
 ** This is called from child_main_loop() which it turn is called
 ** from appletalk_dependent_main_loop().
 ===========================================================================*/
-void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[])
+void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[])
     {
     const char function[] = "printjob";
     const char *username = "?";
@@ -129,7 +129,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[
 
 	    /* destination printer or group */
 	    argv[x++] = "-d";
-	    argv[x++] = adv[prnid].PPRname;
+	    argv[x++] = adv->PPRname;
 
 	    /*
 	    ** If we have a username from "%Login", use it,
@@ -144,38 +144,37 @@ void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[
 	    argv[x++] = "-X"; argv[x++] = proxy_for;
 
 	    /* Answer for TTRasterizer query */
-	    if(adv[prnid].TTRasterizer)
-	    	{ argv[x++] = "-Q"; argv[x++] = adv[prnid].TTRasterizer; }
+	    if(qc->TTRasterizer)
+	    	{
+	    	argv[x++] = "-Q";
+	    	argv[x++] = qc->TTRasterizer;
+	    	}
 
 	    /* no responder */
-	    argv[x++] = "-m"; argv[x++] = "pprpopup";
+	    argv[x++] = "-m";
+	    argv[x++] = "pprpopup";
 
 	    /* default response address */
-	    argv[x++] = "-r"; argv[x++] = netnode;
+	    argv[x++] = "-r";
+	    argv[x++] = netnode;
 
 	    /* default is already -w severe */
-	    argv[x++] = "-w"; argv[x++] = "log";
+	    argv[x++] = "-w";
+	    argv[x++] = "log";
 
 	    /*
 	    ** Throw away truncated jobs.  This doesn't
 	    ** work with QuickDraw GX so it is commented out.
 	    */
-	    /* argv[x++]="-Z"; argv[x++]="true"; */
+	    #if 0
+	    argv[x++]="-Z";
+	    argv[x++]="true";
+	    #endif
 
 	    /* LaserWriter 8.x benefits from a cache that stores stuff. */
 	    argv[x++] = "--cache-store=uncached";
 	    argv[x++] = "--cache-priority=high";
 	    argv[x++] = "--strip-cache=true";
-
-	    /*
-	    ** Copy user supplied arguments.  These may
-	    ** override some above.
-	    */
-	    {
-	    int y;
-	    struct ADV *a = &adv[prnid];
-	    for(y=0; (argv[x] = a->argv[y]) != (char*)NULL; x++,y++);
-	    }
 
 	    /* end of argument list */
 	    argv[x] = (char*)NULL;
@@ -183,7 +182,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[
 	    #ifdef DEBUG_PPR_ARGV
 	    {
 	    int y;
-	    for(y=0; argv[y]!=(char*)NULL; y++)
+	    for(y=0; argv[y]; y++)
 	    	debug("argv[%d] = \"%s\"",y,argv[y]);
 	    }
 	    #endif

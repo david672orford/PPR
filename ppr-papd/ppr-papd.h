@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 December 2002.
+** Last modified 10 January 2003.
 */
+
+#include "queueinfo.h"
 
 #define PIDFILE RUNDIR"/ppr-papd.pid"
 #define LOGFILE LOGDIR"/ppr-papd"
-#define PAPSRV_DEFAULT_ZONE_FILE CONFDIR"/papsrv_default_zone.conf"
 
 #define PPR_PAPD_MAX_NAMES 64			/* maximum number of advertized names */
 #define MAX_ARGV 25				/* max arg vector length for invoking ppr */
@@ -133,39 +134,17 @@
 #define DODEBUG_PPD(a)
 #endif
 
-/* routines in ppr-papd.c */
-void fatal(int exitvalue, const char string[], ...);
-void debug(const char string[], ...);
-char *debug_string(char *s);
-char *pap_getline(int sesfd);
-void postscript_stdin_flushfile(int sesfd);
-void sigpipe_handler(int signum);
-void child_main_loop(int sesfd, int prnid, int net, int node);
-void child_reapchild(int signum);
+enum ADV_TYPE { ADV_LAST, ADV_ACTIVE, ADV_RELOADING, ADV_DELETED };
 
-/* routines in ppr-papd_ali.c and ppr-papd_cap.c */
-void appletalk_dependent_daemon_main_loop(void);
-int appletalk_dependent_printjob(int sesfd, int pipe);
-int cli_getc(int sesfd);
-void reset_buffer(int hard);
-void reply(int sesfd, char *string);
-void reply_eoj(int sesfd);
-void close_reply(int sesfd);
-void add_name(int prnid);
-void appletalk_dependent_cleanup(void);
-
-/* routines in ppr-papd_printjob.c */
-void printjob(int sesfd, int prnid, int net, int node, const char log_file_name[]);
-void printjob_abort(void);
-void printjob_reapchild(void);
-
-/* routines in ppr-papd_query.c */
-void answer_query(int sesfd, int prnid);
-
-/* routines in ppr-papd_conf.c */
-void read_conf(void);
-SHORT_INT get_font_id(const char fontname[]);
-const char *get_font_name(SHORT_INT fontid);
+/* Structure which describes each advertised name. */
+struct ADV
+    {
+    enum ADV_TYPE adv_type;		/* active, delete, last, etc. */
+    enum QUEUEINFO_TYPE queue_type;	/* alias, group, or printer */
+    const char *PPRname;		/* PPR destination to submit to */
+    const char *PAPname;		/* name to advertise */
+    int fd;				/* file descriptor of listening socket */
+    } ;
 
 /* Structure used to describe an *Option entry. */
 struct OPTION
@@ -175,18 +154,11 @@ struct OPTION
     struct OPTION *next;
     } ;
 
-/* Structure which describes each advertised name. */
-struct ADV
-    {
-    const char *PPRname;	/* PPR destination to submit to */
-    const char *PAPname;	/* name to advertise */
-    int fd;			/* file descriptor of listening socket */
-    } ;
-
-struct ADV2
+struct QUEUE_CONFIG
     {
     const char *PPDfile;	/* name of Adobe PPD file */
     const char **fontlist;	/* list of fonts in this printer */
+    int fontcount;
     int LanguageLevel;          /* 1 or 2, 1 is default */
     char *PSVersion;            /* a rather complicated string */
     char *Resolution;           /* "300dpi", "600x300dpi" */
@@ -203,12 +175,46 @@ struct ADV2
     gu_boolean query_font_cache;
     } ;
 
-extern struct ADV adv[PPR_PAPD_MAX_NAMES];
-extern char line[];             /* input line */
+extern struct ADV *adv;
 extern int name_count;          /* total advertised names */
+extern char line[];             /* input line */
 extern int onebuffer;           /* buffer control flag */
 extern int children;		/* count of children */
 extern char *default_zone;	/* default zone for advertised names, initialy set to "*" */
+extern int i_am_master;
+
+/* routines in ppr-papd.c */
+void fatal(int exitvalue, const char string[], ...);
+void debug(const char string[], ...);
+char *debug_string(char *s);
+char *pap_getline(int sesfd);
+void postscript_stdin_flushfile(int sesfd);
+void sigpipe_handler(int signum);
+void child_main_loop(int sesfd, int prnid, int net, int node);
+void child_reapchild(int signum);
+
+/* routines in ppr-papd_ali.c and ppr-papd_cap.c */
+void appletalk_dependent_daemon_main_loop(struct ADV *adv);
+int appletalk_dependent_printjob(int sesfd, int pipe);
+int cli_getc(int sesfd);
+void reset_buffer(int hard);
+void reply(int sesfd, char *string);
+void reply_eoj(int sesfd);
+void close_reply(int sesfd);
+int add_name(const char papname[]);
+void remove_name(const char papname[], int fd);
+
+/* routines in ppr-papd_printjob.c */
+void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[]);
+void printjob_abort(void);
+void printjob_reapchild(void);
+
+/* routines in ppr-papd_query.c */
+void answer_query(int sesfd, struct QUEUE_CONFIG *qc);
+
+/* routines in ppr-papd_conf.c */
+struct ADV *conf_load(struct ADV *old_config);
+void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
 
 /*
 ** Simulated PostScript error messages to send to a client when errors occur.

@@ -42,7 +42,7 @@ are ignored.
 <Para>
 Any line that begins with an unrecognized keyword is ignored.  This is so that
 you can add lines of your own which will be understood and acted on by other
-programs.  The program <Emphasis remap="bf">ppr2samba</Emphasis> works on this principle.
+programs.  The program <Program>ppr2samba</Program> works on this principle.
 </Para>
 
 <VariableList>

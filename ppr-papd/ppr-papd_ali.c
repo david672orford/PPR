@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd_ali.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 December 2002.
+** Last modified 10 January 2003.
 */
 
 /*
@@ -52,31 +52,29 @@
 #include "global_defines.h"	/* PPR global include file */
 #include "ppr-papd.h"		/* prototypes for this program */
 
-/*
-** Globals related to the input buffer
-*/
-char readbuf[READBUF_SIZE];	/* Data we have just read from client */
-u_char eoj;			/* detects end of file from client */
-int bytestotal;
-int bytesleft;
-char *cptr;			/* next byte for cli_getc() */
-int buffer_count;		/* Number of full or partial buffers we have read */
-int onebuffer=FALSE;		/* When TRUE, we are not allowed to start the second buffer */
+int onebuffer = FALSE;		/* When TRUE, we are not allowed to start the second buffer */
 
-/* Global related to debug messages and shutting down. */
-extern int i_am_master;
+/*
+** The input buffer
+*/
+static char readbuf[READBUF_SIZE];	/* Data we have just read from client */
+static u_char eoj;			/* detects end of file from client */
+static int bytestotal;
+static int bytesleft;
+static char *cptr;			/* next byte for cli_getc() */
+static int buffer_count;		/* Number of full or partial buffers we have read */
 
 /*========================================================================
 ** Output buffer routines.
 ========================================================================*/
 
-char out[10000];		/* the output buffer */
-int blocked = FALSE;		/* TRUE if last write was blocked and data remains in 2ndary buffer */
-int hindex=0;			/* output buffer head index */
-int tindex=0;			/* output buffer tail index */
-int ocount=0;			/* bytes in output buffer */
-char writebuf[WRITEBUF_SIZE];	/* secondary output buffer */
-int write_unit;			/* max size client will allow us to send */
+static char out[10000];			/* the output buffer */
+static int blocked = FALSE;		/* TRUE if last write was blocked and data remains in 2ndary buffer */
+static int hindex=0;			/* output buffer head index */
+static int tindex=0;			/* output buffer tail index */
+static int ocount=0;			/* bytes in output buffer */
+static char writebuf[WRITEBUF_SIZE];	/* secondary output buffer */
+static int write_unit;			/* max size client will allow us to send */
 
 /*
 ** Place a string in the reply buffer.
@@ -341,36 +339,72 @@ int cli_getc(int sesfd)
 
 /*==============================================================
 ** Put a name on the network and return the file descriptor.
-** This is called by read_conf().
+**
+** If this function fails it should return -1.  The caller
+** will not notice this, so other routines in this module
+** should recognized the -1 as a dummy file descriptor number
+** which indicates a dead entry.
 ==============================================================*/
-void add_name(int prnid)
+
+int add_name(const char papname[])
     {
     int fd;                     /* server endpoint file descriptor */
     unsigned char status[257];
     at_entity_t entity;
-    const char *name;
 
-    name = adv[prnid].PAPname;
+    debug("registering name: %s", papname);
 
-    debug("registering name: %s", name);
-
-    if(nbp_parse_entity(&entity, name))
-	fatal(1, "syntax error in server name");
+    if(nbp_parse_entity(&entity, papname))
+	{
+	debug("syntax error in server name");
+	return -1;
+	}
 
     if((fd = paps_open(MY_QUANTUM)) == -1)
-	fatal(1, "paps_open() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+	{
+	debug("paps_open() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+	return -1;
+	}
 
     strcpy((char*)&status[1], "status: The PPR spooler is receiving your job.");
     status[0] = (unsigned char)strlen((char*)&status[1]);
     if(paps_status(fd, status) == -1)
-	fatal(1,"paps_status() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+	{
+	debug("paps_status() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+	return -1;
+	}
 
     if(nbp_register(&entity, fd, (at_retry_t*)NULL) == -1)
-	fatal(1,"nbp_register() failed, nbp_errno=%d (%s), errno=%d (%s)", nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
+	{
+	debug("nbp_register() failed, nbp_errno=%d (%s), errno=%d (%s)", nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
+	pap_close(fd);
+	return -1;
+	}
 
-    adv[prnid].fd = fd;
+    return fd;
     } /* end of add_name() */
 
+void remove_name(const char papname[], int fd)
+    {
+    at_entity_t name;
+
+    if(fd != -1)
+	{
+	debug("Removing name: %s", papname);
+
+	if(nbp_parse_entity(&name, papname) == -1)
+	    {
+	    debug("nbp_parse_entity() failed");
+	    return;
+	    }
+
+	if(nbp_remove(&name, fd) == -1)
+	    {
+	    debug("nbp_remove() failed, nbp_errno=%d (%s), errno=%d (%s)", nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
+	    }
+	}
+    }
+    
 /*===========================================================================
 ** AppleTalk dependent part of printjob()
 **
@@ -426,7 +460,7 @@ int appletalk_dependent_printjob(int sesfd, int pipe)
 ** This is the daemon's main loop where we accept incoming connections.
 ** This loop never ends.
 ==========================================================================*/
-void appletalk_dependent_daemon_main_loop(void)
+void appletalk_dependent_daemon_main_loop(struct ADV *adv)
     {
     int x;
     u_short rquantum;		/* remote flow quantum */
@@ -449,12 +483,15 @@ void appletalk_dependent_daemon_main_loop(void)
 
 	FD_ZERO( &select_fds );		/* clear list of files desciptors we want watched */
 
-	for(x=0; x<name_count; x++)
-	    FD_SET(adv[x].fd, &select_fds);
-
-	while( select(FD_SETSIZE, &select_fds, (fd_set*)NULL, (fd_set*)NULL, (struct timeval*)NULL) == -1 )
+	for(x=0; adv[x].adv_type != ADV_LAST; x++)
 	    {
-	    if( errno == EINTR )
+	    if(adv[x].fd != -1)
+		FD_SET(adv[x].fd, &select_fds);
+	    }
+	    
+	while(select(FD_SETSIZE, &select_fds, (fd_set*)NULL, (fd_set*)NULL, (struct timeval*)NULL) == -1)
+	    {
+	    if(errno == EINTR)
 		{
 		DODEBUG_LOOP(("main loop: EINTR, restarting select()"));
 	    	continue;
@@ -466,22 +503,25 @@ void appletalk_dependent_daemon_main_loop(void)
 	** Something happened!  Find the file descriptor
 	** it happened on and act on it.
 	*/
-	for(x=0; x<name_count; x++)		/* try each file descriptor */
+	for(x=0; adv[x].adv_type != ADV_LAST; x++)		/* try each file descriptor */
 	    {
+	    if(adv[x].fd == -1)
+	    	continue;
+
 	    if( ! FD_ISSET(adv[x].fd, &select_fds) )
 	    	continue;
 
 	    DODEBUG_LOOP(("main loop: something happened on fd %d", adv[x].fd));
 
 	    /* The only event we expect is connection received. */
-	    if( (look_result = pap_look(adv[x].fd)) != PAP_CONNECT_RECVD )
+	    if((look_result = pap_look(adv[x].fd)) != PAP_CONNECT_RECVD)
 		{
-		if( look_result == -1 )
+		if(look_result == -1)
 		    {
 		    fatal(1,"pap_look() failed, pap_errno=%d (%s), errno=%d (%s)",
 		    	pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 		    }
-		else if( look_result == 0 )	/* No real activity. */
+		else if(look_result == 0)	/* No real activity. */
 		    {				/* (Netatalk ALI compatibility only.) */
 		    DODEBUG_LOOP(("main loop: status request?"));
 		    continue;
@@ -499,7 +539,7 @@ void appletalk_dependent_daemon_main_loop(void)
 
 	    /* Accept the new job. */
 	    rquantum = 1;		/* meaningless operation */
-	    if((sesfd=paps_get_next_job(papfd, &rquantum, &other_end)) == -1)
+	    if((sesfd = paps_get_next_job(papfd, &rquantum, &other_end)) == -1)
 		fatal(1,"paps_get_next_job() failed, pap_errno=%d (%s), errno=%d (%s)",
 			pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
@@ -510,13 +550,13 @@ void appletalk_dependent_daemon_main_loop(void)
 	    /*
 	    ** Fork off a child to handle this new connexion.
 	    */
-	    while( (pid=fork()) == -1 )     		/* if we can't fork() */
+	    while((pid = fork()) == -1)     		/* if we can't fork() */
 		{			    		/* then wait and try again */
 		debug("main loop: out of processes");	/* (of course, forking for ppr */
 		sleep(60);		    		/* may fail later) */
 		}
 
-	    if(pid==0)                  	/* if we are the child */
+	    if(pid == 0)                  	/* if we are the child */
 		{
 		/* remove the termination signal handler */
 		signal(SIGHUP,SIG_DFL);
@@ -529,7 +569,7 @@ void appletalk_dependent_daemon_main_loop(void)
 		/* close the server endpoints */
 		{
 		int y;
-		for(y=0; y <name_count; y++)
+		for(y=0; adv[y].adv_type != ADV_LAST; y++)
 		    pap_abrupt_close(adv[y].fd);
 		}
 
@@ -547,7 +587,7 @@ void appletalk_dependent_daemon_main_loop(void)
 		/*
 		** Compute usable size of write buffer
 		*/
-		write_unit = (rquantum<=MAX_REMOTE_QUANTUM?rquantum:MAX_REMOTE_QUANTUM) * 512;
+		write_unit = (rquantum <= MAX_REMOTE_QUANTUM ? rquantum : MAX_REMOTE_QUANTUM) * 512;
 
 		/*
 		** Accept all the queries and jobs.
@@ -557,11 +597,11 @@ void appletalk_dependent_daemon_main_loop(void)
 		** name the client connected to, and a string describing
 		** the network and node of the client.
 		*/
-		child_main_loop( sesfd, x, (int)other_end.net, (int)other_end.node );
+		child_main_loop(sesfd, x, (int)other_end.net, (int)other_end.node);
 
 		DODEBUG_LOOP(("shutting down child server"));
 
-		if( pap_close(sesfd) == -1 )
+		if(pap_close(sesfd) == -1)
 		    fatal(1,"pap_close() failed, pap_errno=%d (%s), errno=%d (%s)",
 		    	pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
@@ -581,33 +621,5 @@ void appletalk_dependent_daemon_main_loop(void)
 
 	} /* end of outside loop which never ends */
     } /* end of appletalk_dependent_main_loop() */
-
-/*
-** Cleanup routine.
-**
-** The AT&T ALI library automatically removes all names when the process 
-** holding them exists, but the Netatalk ALI compatibility library does not,
-** so we use the ALI nbp_remove() function to remove them explicitly.
-*/
-void appletalk_dependent_cleanup(void)
-    {
-    int x;
-    at_entity_t name;
-
-    for(x=0; x<name_count; x++)	/* remove all the AppleTalk names. */
-	{
-	debug("Removing name: %s", adv[x].PAPname);
-
-	if(nbp_parse_entity(&name, adv[x].PAPname) == -1)
-	    debug("nbp_parse_entity() failed");
-
-	if(nbp_remove(&name, adv[x].fd) == -1)
-	    {
-	    debug("nbp_remove() failed, nbp_errno=%d (%s), errno=%d (%s)",
-		nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
-	    }
-	}
-
-    } /* end of appletalk_dependent_cleanup() */
 
 /* end of file */

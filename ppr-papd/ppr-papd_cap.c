@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd_cap.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 December 2002.
+** Last modified 10 January 2002.
 */
 
 /*
@@ -54,10 +54,6 @@ int bytesleft;
 char *cptr;			/* Next byte for cli_getc() */
 int buffer_count;		/* Number of full or partial buffers we have read */
 int onebuffer=FALSE;		/* When TRUE, we are not allowed to start the second buffer */
-
-/* Globals related to the output buffer */
-char writebuf[WRITEBUF_SIZE];	/* Data waiting to be sent to client */
-int write_unit;			/* Max size client will allow us to send */
 
 /* The status of the spooler: */
 PAPStatusRec status;
@@ -165,10 +161,12 @@ int cli_getc(int sesfd)
 ** Output buffer routines.
 ========================================================================*/
 
-char out[10000];	/* the output buffer */
-int hindex=0;		/* head index */
-int tindex=0;		/* tail index */
-int ocount=0;		/* bytes in out */
+char out[10000];		/* the output buffer */
+int hindex=0;			/* head index */
+int tindex=0;			/* tail index */
+int ocount=0;			/* bytes in out */
+char writebuf[WRITEBUF_SIZE];	/* data waiting to be sent to client */
+int write_unit;			/* max size client will allow us to send */
 
 /*
 ** Place a string in the reply buffer.
@@ -225,14 +223,14 @@ void do_xmit(int sesfd)
 	/* Copy a packet sized chunk from the big buffer to the packet buffer. */
 	for(x=0;ocount && x<write_unit;ocount--)
     	    {
-	    writebuf[x++]=out[tindex++];
+	    writebuf[x++] = out[tindex++];
 
 	    if(tindex==sizeof(out))		/* If necessary, */
 	        tindex=0;			/* wrap around. */
     	    }
 
 	DODEBUG_WRITEBUF(("do_xmit(): writing %d bytes", x));
-	if( (paperr=PAPWrite(sesfd,writebuf,x,FALSE,&wcomp)) != 0)
+	if( (paperr=PAPWrite(sesfd, writebuf, x, FALSE, &wcomp)) != 0)
 	    fatal(1,"PAPWrite() returned %d",paperr);
 	}
     } /* end of do_xmit() */
@@ -283,17 +281,22 @@ void close_reply(int sesfd)
 ** Put a name on the network and return the file descriptor.
 ** This is called by read_conf().
 */
-void add_name(int prnid)
+int add_name(const char papname[])
     {
     static int appletalk_started = FALSE;
     int fd;                     /* server endpoint file descriptor */
     int err;
-    const char *name;
 
-    if( ! appletalk_started )	/* Since add_name() will be the first */
-	{			/* function in this module to be called, */
+    /*
+    ** Since add_name() will be the first  function in this module to be 
+    ** called, we will initialize the AppleTalk the first time it is
+    ** called.  This saves us the bother of having a separate module
+    ** initialization function.
+    */
+    if( ! appletalk_started )
+	{
 	DODEBUG_STARTUP(("initializing appletalk"));
-	abInit(FALSE);		/* we will use it to initialize the AppleTalk. */
+	abInit(FALSE);
 	nbpInit();
 	PAPInit();
 	appletalk_started = TRUE;
@@ -301,11 +304,9 @@ void add_name(int prnid)
 	status.StatusStr[0] = (unsigned char)strlen(&status.StatusStr[1]);
 	}
 
-    name = adv[prnid].PAPname;
+    debug("registering name: %s", papname);
 
-    debug("registering name: %s", name);
-
-    while((err = SLInit(&fd, name, MY_QUANTUM, &status)) != 0)
+    while((err = SLInit(&fd, papname, MY_QUANTUM, &status)) != 0)
     	{
 	if(err == nbpNoConfirm)
 	    {
@@ -314,13 +315,14 @@ void add_name(int prnid)
 	    debug("Retry...");
 	    }
 	if(err==nbpDuplicate)
-	    fatal(1, "Name \"%s\" already exists", name);
+	    fatal(1, "Name \"%s\" already exists", papname);
 	else
-    	    fatal(1, "SLInit() failed, err=%d",err);
+    	    fatal(1, "SLInit() failed, err=%d", err);
     	}
 
-    adv[prnid].fd = fd;
     endpoints[prnid].fd = fd;	/* Remember the file descriptor. */
+
+    return fd;
     } /* add_name() */
 
 /*
@@ -376,7 +378,7 @@ void appletalk_dependent_daemon_main_loop(void)
     AddrBlock remote;		/* Address of remote */
 
     /* Run GetNextJob() on each endpoint in the array created by add_name(). */
-    for(x=0; x < name_count; x++)
+    for(x=0; adv[x].adv_type != ADV_LAST; x++)
     	{
 	if((err = GetNextJob(endpoints[x].fd, &endpoints[x].sesfd, &endpoints[x].gcomp)) != 0)
 	    fatal(1, "GetNextJob() returned %d", err);
@@ -394,7 +396,7 @@ void appletalk_dependent_daemon_main_loop(void)
 	abSleep(10,TRUE);
 
 	/* Try the file descriptor representing each name in turn. */
-	for(x=0; x < name_count; x++)
+	for(x=0; adv[x].adv_type != ADV_LAST; x++)
 	    {
 	    DODEBUG_LOOP(("checking endpoint %d, gcomp=%d", x, endpoints[x].gcomp));
 
@@ -475,16 +477,13 @@ void appletalk_dependent_daemon_main_loop(void)
 ** Cleanup routine.  This is called by the daemon if it
 ** is killed or exits due to a fatal error.
 */
-void appletalk_dependent_cleanup(void)
+void remove_name(const char papname[], int fd)
     {
-    int x;
-
-    for(x=0;x<name_count;x++)	/* remove all the AppleTalk names. */
+    if(fd != -1)
 	{
-	debug("Removing name: %s", adv[x].PAPname);
-	PAPRemName(adv[x].fd, adv[x].PAPname);
+	debug("Removing name: %s", papname);
+	PAPRemName(fd, papname);
 	}
-
-    } /* end of appletalk_dependent_cleanup() */
+    } /* end of remove_name() */
 
 /* end of file */

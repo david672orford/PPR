@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--27 December 2002.
+1.50b1, 13 November 2002--10 January 2003.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8065,4 +8065,12 @@ line was being parsed twice.
 * fixup/fixup_perms.sh: made ppr-xgrant setgid as well as setuid
   (unixuser/Makefile already did this).
 
+* libppr/int_copy_job.c: added check for EAGAIN on write to stdout since
+  stdout is a pipe and if the write size is less than PIPE_BUF but bigger
+  than the available space, write() may decline it even though select()
+  says the descriptor is ready for writing.  Added check for EAGAIN to
+  read from stdin (just to be paranoid).
+
+* www/cgi_tabbed.pl, cgi_wizard.pl, show_jobs.cgi.perl: Added alt="" to spacer
+  images.
 

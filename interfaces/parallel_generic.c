@@ -1,22 +1,53 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel_generic.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 15 November 1999.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 10 January 2003.
+*/
+
+/*
+** Since there are major differences in the way parallel ports are controled
+** on various Unix systems, the parallel interface is linked with an
+** operating-system-specific module.  That module contains functions 
+** which are called from parallel.c to do such things as toggle the reset
+** line in the parallel cable and read the state of the printer status
+** lines.  This file, parallel_generic.c, is a dummy implementation of
+** the operating-system-specific module which contains only stub functions.
+** It is used for those operating systems for which an operatining-system-
+** specific module has not been written.
+**
+** If your operating system does not yet have its own module, then you should
+** use this file as a basis to create one.  Note that the os-specific module 
+** is selected by the PARALLEL= line in Makefile.conf.  For example, if it says
+** "PARALLEL=linux", then interface_linux.c will be used.
 */
 
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "parallel.h"
 
 /*
@@ -56,4 +87,3 @@ void parallel_port_cleanup(int fd)
     }
 
 /* end of file */
-

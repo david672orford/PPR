@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd_query.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 December 2002.
+** Last modified 9 January 2003.
 */
 
 /*
@@ -145,43 +145,24 @@ static void return_default(int sesfd)
 ** This is because pre-8.0 LaserWriter drivers do not insert comments
 ** to tell the spooler where to download the fonts.
 */
-static void font_list_query(int sesfd, int destid)
+static void font_list_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     int x;
     char tempstr[75];    	/* space for creating font name lines */
-    struct ADV *d;
 
     DODEBUG_QUERY(("font list query"));
 
-    d = &adv[destid];			/* set a pointer to struct for this destination */
-
-    for(x=0;x<d->fontcount;x++)		/* send the whole list */
+    for(x=0; x < qc->fontcount; x++)	/* send the whole list */
     	{				/* item by item */
-	snprintf(tempstr, sizeof(tempstr), "%.64s\n",get_font_name(d->fontlist[x]));
-	REPLY(sesfd,tempstr);
-	DODEBUG_QUERY(("%s",tempstr));
+	snprintf(tempstr, sizeof(tempstr), "%.64s\n", qc->fontlist[x]);
+	REPLY(sesfd, tempstr);
+	DODEBUG_QUERY(("%s", tempstr));
     	}
 
     REPLY(sesfd,"*\n");			/* send an astrisk to indicate end of reply */
 
     eat_query(sesfd);			/* eat up the PostScript code and %?End line */
     } /* end of font_list_query() */
-
-/*
-** Resource List Query
-*/
-static void resource_list_query(int sesfd)
-    {
-    DODEBUG_QUERY(("Resource List Query"));
-
-    tokenize();				/* Parse fields in query line */
-
-    eat_query(sesfd);			/* Throw away the PostScript */
-
-    /* code is missing here */
-
-    REPLY(sesfd, "*\n");		/* Terminate returned list */
-    } /* end of resource_list_query() */
 
 /*
 ** Support routine for use by font_query() and resource_query() when
@@ -196,12 +177,11 @@ static void resource_list_query(int sesfd)
 ** to the TTRasterizer query is likely to provoke the client to provide
 ** the missing half.
 */
-static void do_font_query(int sesfd, int destid, int index)
+static void do_font_query(int sesfd, struct QUEUE_CONFIG *qc, int index)
     {
     char *type, *space;
     char temp[256];		/* stuff from line[] can't overflow this buffer */
-    int x,y;			/* outer and inner loop counters */
-    SHORT_INT fontid;		/* ID number of a font, used to see if printer has it */
+    int x, y;			/* outer and inner loop counters */
     int wanted_mactruetype_features;
     int features;
 
@@ -216,9 +196,9 @@ static void do_font_query(int sesfd, int destid, int index)
     	space = " ";		/* one space after the colon */
     	}
 
-    if(adv[destid].TTRasterizer
-    		&& (strcmp(adv[destid].TTRasterizer, "Type42") == 0
-    			|| strcmp(adv[destid].TTRasterizer, "Accept68K")==0))
+    if(qc->TTRasterizer
+    		&& (strcmp(qc->TTRasterizer, "Type42") == 0
+    			|| strcmp(qc->TTRasterizer, "Accept68K")==0))
     	wanted_mactruetype_features = FONT_TYPE_42;
     else
     	wanted_mactruetype_features = FONT_TYPE_1;
@@ -227,28 +207,25 @@ static void do_font_query(int sesfd, int destid, int index)
     for(x=index; tokens[x]; x++)
 	{
 	/* Check if the font is in the printer. */
-	if((fontid = get_font_id(tokens[x])) != -1)	/* If at least one printer has this font, */
-	    {						/* we will have assigned it an id number. */
-	    for(y=0; y < adv[destid].fontcount; y++)	/* Compare the ID of each font on this printer */
-	    	{					/* to the font ID we got above. */
-	    	if(adv[destid].fontlist[y]==fontid)	/* If match, */
-		    {					/* acknowledge that we have it. */
-		    DODEBUG_QUERY(("%s/%s:%sYes (printer has it)", type, tokens[x], space));
-		    snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
-		    REPLY(sesfd, temp);
-		    break;			/* terminate for(y... */
-		    }
-	    	}
-	    if(y < adv[destid].fontcount)	/* if printer had it, */
-	    	continue;			/* go on to next font */
+	for(y=0; y < qc->fontcount; y++)
+	    {
+	    if(strcmp(tokens[x], qc->fontlist[y]) == 0)		/* If match, */
+		{						/* acknowledge that we have it. */
+		DODEBUG_QUERY(("%s/%s:%sYes (printer has it)", type, tokens[x], space));
+		snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
+		REPLY(sesfd, temp);
+		break;				/* terminate for(y... */
+		}
 	    }
+	if(y < qc->fontcount)			/* If we hit break above, */
+	    continue;				/* go on to next font */
 
 	/*
 	** If we are allowed to query the cache and if the font is in the cache,
 	** and, if this is a two mode Mac TrueType font, we already have the part
 	** the client would probably supply if we said "No".
 	*/
-	if(adv[destid].query_font_cache
+	if(qc->query_font_cache
 		&& noalloc_find_cached_resource("font", tokens[x], 0.0, 0, font_search_list, (int*)NULL, &features, NULL)
 		&& ( !(features & FONT_MACTRUETYPE) || (features & wanted_mactruetype_features) ) )
 	    {
@@ -274,9 +251,8 @@ static void do_font_query(int sesfd, int destid, int index)
 
 /*
 ** Specific font query.
-**
 */
-static void font_query(int sesfd, int destid)
+static void font_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     DODEBUG_QUERY(("font query"));
 
@@ -284,7 +260,7 @@ static void font_query(int sesfd, int destid)
 
     eat_query(sesfd);		/* Throw away the PostScript */
 
-    do_font_query(sesfd, destid, 1);
+    do_font_query(sesfd, qc, 1);
     } /* end of font_query() */
 
 /*
@@ -295,7 +271,7 @@ static void font_query(int sesfd, int destid)
 ** is correct.  Should the name of a procedure set be returned
 ** with a leading slash, for instance?
 */
-static void resource_query(int sesfd, int destid)
+static void resource_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     char temp[256];		/* stuff from line[] can't overflow this buffer */
     int x;
@@ -315,7 +291,7 @@ static void resource_query(int sesfd, int destid)
     */
     if(strcmp(tokens[1], "font") == 0)
     	{
-    	do_font_query(sesfd, destid, 2);
+    	do_font_query(sesfd, qc, 2);
     	return;
     	}
 
@@ -403,7 +379,7 @@ void procset_query(int sesfd)
 /*
 ** Feature Query
 */
-static void feature_query(int sesfd, int destid)
+static void feature_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     char temp[256];
 
@@ -418,7 +394,7 @@ static void feature_query(int sesfd, int destid)
 	case 'L':
 	    if(strcmp(tokens[1], "*LanguageLevel") == 0)
 		{
-		snprintf(temp, sizeof(temp), "\"%d\"\n", adv[destid].LanguageLevel != 0 ? adv[destid].LanguageLevel : 1 );
+		snprintf(temp, sizeof(temp), "\"%d\"\n", qc->LanguageLevel != 0 ? qc->LanguageLevel : 1 );
 		REPLY(sesfd, temp);
 		return;
 		}
@@ -427,18 +403,18 @@ static void feature_query(int sesfd, int destid)
 	case 'P':
 	    if(strcmp(tokens[1], "*PSVersion") == 0)
 		{
-		if(adv[destid].PSVersion)
+		if(qc->PSVersion)
 		    {
-		    snprintf(temp, sizeof(temp), "\"%s\"\n", adv[destid].PSVersion);
+		    snprintf(temp, sizeof(temp), "\"%s\"\n", qc->PSVersion);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
 		}
 	    else if(strcmp(tokens[1], "*Product") == 0)
 		{
-		if(adv[destid].Product)
+		if(qc->Product)
 		    {
-		    snprintf(temp, sizeof(temp), "\"%s\"\n", adv[destid].Product);
+		    snprintf(temp, sizeof(temp), "\"%s\"\n", qc->Product);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
@@ -448,9 +424,9 @@ static void feature_query(int sesfd, int destid)
 	case '?':
 	    if(strcmp(tokens[1], "*?Resolution") == 0)
 		{
-		if(adv[destid].Resolution)
+		if(qc->Resolution)
 		    {
-		    snprintf(temp, sizeof(temp), "%s\n", adv[destid].Resolution);
+		    snprintf(temp, sizeof(temp), "%s\n", qc->Resolution);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
@@ -460,24 +436,24 @@ static void feature_query(int sesfd, int destid)
 	case 'F':
 	    if(strcmp(tokens[1], "*FreeVM") == 0)
 		{
-		if(adv[destid].VMOptionFreeVM != 0)
+		if(qc->VMOptionFreeVM != 0)
 		    {
-		    snprintf(temp, sizeof(temp), "\"%d\"\n", adv[destid].VMOptionFreeVM);
+		    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->VMOptionFreeVM);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
-		if(adv[destid].FreeVM != 0)	/* If line was present, */
+		if(qc->FreeVM != 0)	/* If line was present, */
 		    {
-		    snprintf(temp, sizeof(temp), "\"%d\"\n", adv[destid].FreeVM);
+		    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->FreeVM);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
 		}
 	    else if(strcmp(tokens[1], "*FaxSupport") == 0)
 		{
-		if(adv[destid].FaxSupport)
+		if(qc->FaxSupport)
 		    {
-		    snprintf(temp, sizeof(temp), "%s\n", adv[destid].FaxSupport);
+		    snprintf(temp, sizeof(temp), "%s\n", qc->FaxSupport);
 		    REPLY(sesfd, temp);
 		    return;
 		    }
@@ -487,9 +463,9 @@ static void feature_query(int sesfd, int destid)
 	case 'T':
 	    if(strcmp(tokens[1], "*TTRasterizer") == 0)
 		{
-		if(adv[destid].TTRasterizer)
+		if(qc->TTRasterizer)
 		     {
-		     snprintf(temp, sizeof(temp), "%s\n", adv[destid].TTRasterizer);
+		     snprintf(temp, sizeof(temp), "%s\n", qc->TTRasterizer);
 		     REPLY(sesfd, temp);
 		     return;
 		     }
@@ -499,12 +475,12 @@ static void feature_query(int sesfd, int destid)
 	case 'C':
 	    if(strcmp(tokens[1], "*ColorDevice") == 0)
 		{
-		if(adv[destid].ColorDevice == ANSWER_TRUE)
+		if(qc->ColorDevice == ANSWER_TRUE)
 		    {
 		    REPLY(sesfd, "True\n");
 		    return;
 		    }
-		else if(adv[destid].ColorDevice == ANSWER_FALSE)
+		else if(qc->ColorDevice == ANSWER_FALSE)
 		    {
 		    REPLY(sesfd, "False\n");
 		    return;
@@ -517,7 +493,7 @@ static void feature_query(int sesfd, int destid)
 		{
 		struct OPTION *opt;
 
-		opt = adv[destid].options;
+		opt = qc->options;
 
 		while(opt != (struct OPTION *)NULL)
 		    {
@@ -535,9 +511,9 @@ static void feature_query(int sesfd, int destid)
 	case 'I':
 	    if(strcmp(tokens[1], "*InstalledMemory") == 0)
 	    	{
-		if(adv[destid].InstalledMemory)
+		if(qc->InstalledMemory)
 		    {
-		    snprintf(temp, sizeof(temp), "%s\n", adv[destid].InstalledMemory);
+		    snprintf(temp, sizeof(temp), "%s\n", qc->InstalledMemory);
 		    REPLY(sesfd, temp);
 	    	    return;
 	    	    }
@@ -557,11 +533,11 @@ static void feature_query(int sesfd, int destid)
 ** Generic query
 ** We answer a few queries generated by LaserWriter 8.x.
 */
-static void generic_query(int sesfd, int destid)
+static void generic_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     char temp[256];
 
-    DODEBUG_QUERY(("generic_query(sesfd=%d, destid=%d) line=\"%s\"", sesfd, destid, line));
+    DODEBUG_QUERY(("generic_query(sesfd=%d, destid=%p) line=\"%s\"", sesfd, qc, line));
 
     tokenize();
     eat_query(sesfd);
@@ -569,12 +545,12 @@ static void generic_query(int sesfd, int destid)
     /* Adobe is binary data OK query: */
     if(strcmp(tokens[1], "ADOIsBinaryOK?") == 0)
 	{
-	if(adv[destid].BinaryOK == ANSWER_TRUE)
+	if(qc->BinaryOK == ANSWER_TRUE)
 	    {
 	    REPLY(sesfd, "True\n");
 	    return;
 	    }
-	if(adv[destid].BinaryOK == ANSWER_FALSE)
+	if(qc->BinaryOK == ANSWER_FALSE)
 	    {
 	    REPLY(sesfd, "False\n");
 	    return;
@@ -584,9 +560,9 @@ static void generic_query(int sesfd, int destid)
     /* Adobe how much RAM is install query: */
     else if(strcmp(tokens[1], "ADORamSize") == 0)
 	{
-	if(adv[destid].RamSize)         /* If not zero which indicates unknown, */
+	if(qc->RamSize)         /* If not zero which indicates unknown, */
 	    {				/* return the value. */
-	    snprintf(temp, sizeof(temp), "\"%d\"\n", adv[destid].RamSize);
+	    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->RamSize);
 	    REPLY(sesfd,temp);
 	    return;
 	    }
@@ -597,37 +573,11 @@ static void generic_query(int sesfd, int destid)
     } /* end of generic_query() */
 
 /*
-** Printer query.  Not yet implemented.
-*/
-#ifdef UNTESTED
-void printer_query(int sesfd, int destid)
-    {
-    DODEBUG_QUERY(("printer query"));
-
-    eat_query(sesfd);
-    return_default(sesfd);
-    } /* end of printer_query() */
-#endif
-
-/*
-** VMstatus query.  Not yet implemented.
-*/
-#ifdef UNTESTED
-void vmstatus_query(int sesfd, int destid)
-    {
-    DODEBUG_QUERY(("vmstatus_query()"));
-
-    eat_query(sesfd);
-    return_default(sesfd);
-    } /* end of vmstatus_query() */
-#endif
-
-/*
 ** Read a query job from the client and answer it to the
 ** best of our ability.  This is called just after the line
 ** "%!PS-Adobe-x.x Query" is received.
 */
-void answer_query(int sesfd, int destid)
+void answer_query(int sesfd, struct QUEUE_CONFIG *qc)
     {
     while(pap_getline(sesfd))		/* `til end of job */
 	{
@@ -646,43 +596,25 @@ void answer_query(int sesfd, int destid)
 	if(query_trace == 1)
 	    debug("QUERY --> %s", line);
 
-	/* Old style font list query: */
+	/* Old style font list query */
 	if(strcmp(line, "%%?BeginFontListQuery") == 0)
-	    font_list_query(sesfd,destid);
+	    font_list_query(sesfd, qc);
 
-	/* New style font query: */
+	/* New style font query */
 	else if(strncmp(line, "%%?BeginFontQuery:", 18) == 0)
-	    font_query(sesfd,destid);
+	    font_query(sesfd, qc);
 
-	/* Old style procset: */
-	#ifdef UNTESTED
-	else if(strncmp(line, "%%?BeginProcSetQuery:", 21) == 0)
-	    procset_query(sesfd);
-	#endif
-
-	/* Feature query: */
-	else if(strncmp(line, "%%?BeginFeatureQuery:", 21) == 0)
-	    feature_query(sesfd, destid);
-
-	/* Generic query: */
-	else if(strncmp(line, "%%?BeginQuery:", 14) == 0)
-	    generic_query(sesfd, destid);
-
-	/* Printer query: */
-	#ifdef UNTESTED
-	else if(strcmp(line, "%%?BeginPrinterQuery") == 0)
-	    printer_query(sesfd, destid);
-	#endif
-
-	/* VMStatus query: */
-	#ifdef UNTESTED
-	else if(strcmp(line, "%%?BeginVMStatus") == 0)
-	    vmstatus_query(sesfd, destid);
-	#endif
-
-	/* Resource Query: */
+	/* Resource Query */
 	else if(strncmp(line, "%%?BeginResourceQuery:", 22) == 0)
-	    resource_query(sesfd, destid);
+	    resource_query(sesfd, qc);
+
+	/* Feature query */
+	else if(strncmp(line, "%%?BeginFeatureQuery:", 21) == 0)
+	    feature_query(sesfd, qc);
+
+	/* Generic query */
+	else if(strncmp(line, "%%?BeginQuery:", 14) == 0)
+	    generic_query(sesfd, qc);
 
 	/* Unrecognized query, just return the default. */
 	else

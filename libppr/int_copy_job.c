@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/libppr/int_copy_job.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 2 October 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 9 January 2003.
 */
 
 #include "before_system.h"
@@ -42,21 +57,73 @@
 enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 
 /*
-** This function copies data from stdin to the printer (portfd) and from the 
-** printer to stdout.
 **
-** If idle_status_interval is non-zero, then it sends a control-T if the send 
-** buffer is empty and nothing has been sent for idle_status_interval seconds.
+** int_copy_job()
+**
+** This function copies data from stdin to the printer (portfd) and from the 
+** printer to stdout.  It uses select() to allow it to copy in both directions
+** simultaniously.
+**
+** The argument portfd must be a non-blocking file descriptor.
+**
+** If the argument idle_status_interval is non-zero, then int_copy_job() will 
+** send a control-T to the printer if the send buffer is empty and nothing has
+** been sent for idle_status_interval seconds or more.
 **
 ** If a system call fails in an unexpected way, then the function pointed to
 ** by fatal_prn_err is called.
 **
-** If send_eof is not null, then the function it points to is called with the
-** printer file descriptor as its lone argument once the last data block has
-** been written.
+** If the argument send_eof is not a NULL pointer, then the function it points 
+** to is called with the printer file descriptor as its lone argument once the
+** last data block has been written.
 **
-** If snmp_function is not NULL, then it is called every snmp_status_interval
-** seconds.  It is passed the pointer snmp_address.
+** If the argument snmp_function is not a NULL pointert, then the function it
+** points to is called every snmp_status_interval seconds.  It is passed the 
+** pointer snmp_address.
+**
+** Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
+** use of select() and non-blocking file descriptors.  He says that write()
+** and possible even read() can fail with errno set to EAGAIN even if select()
+** has stated that the file descriptor is open for writing.  In a private e-mail 
+** to PPR's author, he cited three of the possible reasons:
+**
+** >a) select can't tell how big the next write is going to be
+** >
+** >  With some file types (eg. pipes) select will mark the fd as ready
+** >  if one byte could be written, however, write(2) guanantees that
+** >  small writes ( <= PIPE_BUF, typically 512 bytes) are written
+** >  atomically, so write has to do the _entire_ write or return EAGAIN.
+** >
+** >  On Linux, this doesn't result in a loop because the fd is then marked
+** >  as not-ready until the state of the pipe changes for some other
+** >  reason, such as more space becoming available. I don't know how
+** >  other Unix systems handle this condition.
+** >
+** >b) select may not be able to tell if the device is ready
+** >
+** >  It may not be possible to determine whether a device is ready
+** >  without writing to it. For such devices, select will _always_ return
+** >  ready at least once when the device isn't ready. 
+** >
+** >c) select(2) and write(2) are separate system calls and are therefore not
+** >  atomic; the condition of the device may change between the two system
+** >  calls
+** >
+** >  Suppose that several devices share a common buffer area for writes.
+** >  When that buffer has space available, all devices can legitimately
+** >  return ready from select. By the time that write is called, that
+** >  buffer space may no longer be available. 
+** >
+** >  I doubt you'll ever see this condition from a printer, but you may
+** >  see it with network I/O under very high load.
+**
+** Most man pages for select(2) do a pretty poor job of describing its 
+** behavior and say almost nothing about proper use.  The vagueness of the 
+** origional 4.2BSD man page is probably why various implementations of 
+** select() display subtle differences in behavior.  Some of these differences
+** are described in the Linux select(2) man page and by W. Richard Stevens in
+** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
+** 399-400.
 */
 void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*snmp_function)(void * snmp_address), void *snmp_address, int snmp_status_interval)
     {
@@ -207,8 +274,15 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    DODEBUG(("data available on stdin"));
 	    if((xmit_len = last_stdin_read = read(0, xmit_ptr = xmit_buffer, sizeof(xmit_buffer))) < 0)
 	    	{
-		alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR);
+		if(errno == EAGAIN)	/* may be possible under wacko circumstances */
+		    {
+		    xmit_len = 0;	/* this is ok, last_stdin_read will keep the loop alive */
+		    }
+		else
+		    {
+		    alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
+		    int_exit(EXIT_PRNERR);
+		    }
 	    	}
 
 	    DODEBUG(("read %d byte%s from stdin", xmit_len, xmit_len != 1 ? "s" : ""));
@@ -279,8 +353,15 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    DODEBUG(("space available on stdout"));
 	    if((len = write(1, recv_ptr, recv_len)) < 0)
 	    	{
-		alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR);
+		if(errno == EAGAIN)	/* If available space is less than PIPE_BUF bytes, */
+		    {
+		    len = 0;
+		    }
+		else
+		    {
+		    alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
+		    int_exit(EXIT_PRNERR);
+		    }
 	    	}
 
 	    DODEBUG(("wrote %d byte%s to stdout", len, len != 1 ? "s" : ""));
