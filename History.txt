@@ -4960,7 +4960,7 @@ line was being parsed twice.
   "creatorglob=" to "creator=", improved code quality, removed line length
   limit, added "interpreter=".
 
-* Changed for -H editps to on.
+* Changed default for -H editps to on.
 
 * Moved the code to create a DVIPS configuration file into filters_misc/
   make_dvips_conf.c, removed the setgid bit from the dvi, tex, and texinfo
@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--9 June 2004.
+1.53a2, 20 February 2004--10 September 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9373,6 +9373,11 @@ Internet Printing Protocol Work
 * www/ppr-passwd.c: added more memset() calls to zero out even rejected and
   incorrectly typed passwords as soon as possible so that they are less likely
   to be swapped out.
+
+* include/global_structs.h: again set default for -H editps to on.
+
+* editps/Windows_XP: added
+
 
 
 TODO

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 June 2004.
+# Last modified 1 September 2004.
 #
 
 include ../Makefile.conf
@@ -50,12 +50,13 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./install_sample_config.sh
 	./install_bin_links.sh
-	./install_inetd_conf.sh
 	./install_init_script.sh
 	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real || true
 
 # These are operations which are defered if we are building a package.
 install-real:
+	# Configure Inetd to launch our HTTP and LPR servers
+	./install_inetd_conf.sh
 	# Register in /etc/alternatives.
 	#./install_alternatives.tcl
 	# Create PPR's crontab.

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 10 September 2004.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -144,7 +144,7 @@ struct QFileEntry
 #define HACK_TRANSPARENT 2
 #define HACK_BADEPS 4
 #define HACK_EDITPS 8
-#define HACK_DEFAULT_HACKS 0			/* none by default */
+#define HACK_DEFAULT_HACKS HAC_EDITPS	/* documented in ppr(1) */
 
 /* "%%ProofMode:" values. */
 #define PROOFMODE_NOTIFYME -1

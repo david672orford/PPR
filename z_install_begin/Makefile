@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_begin/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 1 September 2004.
 #
 
 include ../Makefile.conf
@@ -41,7 +41,7 @@ all: $(ALL)
 #=== Install ================================================================
 
 install: $(ALL)
-	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR)
+	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) || true
 	./install_create_dirs.sh $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) $(CONFDIR) $(HOMEDIR) $(SHAREDIR) $(VAR_SPOOL_PPR) $(TEMPDIR)
 
 #=== Housekeeping ===========================================================
