@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/shared.css
-** Last modified 5 March 2004.
+** Last modified 19 March 2004.
 **
 ** This style sheet is imported by all of the PPR web interface applets.
 */
@@ -8,13 +8,13 @@
 BODY {
 	background: white;
 	color: black;
-	font-family: sans-serif;
 	margin: 0;						/* <-- quash silly IE behavior */
+	font-family: Helvetica, sans-serif;
 	}
 
 /* I guess setting the body font doesn't cover tables. */
 TABLE TD {
-	font-family: sans-serif;
+	font-family: Helvetica, sans-serif;
 	}
 
 /*
@@ -49,7 +49,7 @@ DIV.menubar {
 	border: solid black;
 	border-width: 0px 0px 1px 0px;
 	background-color: #d0d0d0;
-	font-size: 12pt;
+	font-size: 10pt;
 	}
 DIV.menubar A {
 	font-weight: normal;

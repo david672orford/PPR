@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 December 2003.
+# Last modified 19 March 2004.
 #
 
 include ../Makefile.conf
@@ -98,7 +98,7 @@ HTML_TOP=index.html robots.txt
 
 HTML_GUI=robots.txt \
 	commentary_select.html \
-	test.html test-css.html test-audio-commentary.html test-audio-responder.html test-cgi.html \
+	test.html test-css.html test-css.ru.html test-audio-commentary.html test-audio-responder.html test-cgi.html \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 

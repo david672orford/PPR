@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ru_RU-PPRWWW\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-03-09 15:40-0500\n"
-"PO-Revision-Date: 2004-03-10 14:40-0500\n"
+"PO-Revision-Date: 2004-03-19 11:27-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -356,7 +356,7 @@ msgstr "Очереди"
 
 #: ../www/cgi_widgets.pl:200
 msgid "Open a window with an icon for each queue."
-msgstr "Открыть окно в котором пикторам для каждой очереди."
+msgstr "Открыть окно на фоне которого пиктограм для каждой очереди."
 
 #: ../www/cgi_widgets.pl:201
 msgid "All Jobs"

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2004.
+# Last modified 19 March 2004.
 #
 
 #
@@ -58,126 +58,40 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 # descriptions.
 #===========================================
 %interface_descriptions = (
-		'dummy' => "--hide",
-		'simple' =>		N_("Server Generic Port"),
-		'serial' =>		N_("Server Serial Port"),
-		'parallel' =>	N_("Server Parallel Port"),
-		'usblp' =>		N_("Server USB Port"),
-		'atalk' =>		N_("Network via AppleTalk PAP"),
-		'tcpip' =>		N_("Network via raw TCP"),
-		'socketapi' =>	N_("Network via SocketAPI"),
-		'appsocket' =>	N_("Network via AppSocket"),
-		'jetdirect' =>	N_("Network via HP JetDirect"),
-		'pros' =>		N_("Network via AXIS PROS"),
-		'lpr' =>		N_("Network via LPD"),
-		'smb' =>		N_("Network via LAN Manager/MS-Windows"),
-		'ppromatic' => "--hide",
-		'foomatic-rip' => "--hide",
-		'gssimple' => "--hide",
-		'gsatalk' => "--hide",
-		'gstcpip' => "--hide",
-		'gsserial' => "--hide",
-		'gsparallel' => "--hide",
-		'gslpr' => "--hide",
-		'gssmb' => "--hide"
+		'dummy'			=> "--hide",
+		'simple'		=> N_("Server Generic Port"),
+		'serial'		=> N_("Server Serial Port"),
+		'parallel'		=> N_("Server Parallel Port"),
+		'usblp'			=> N_("Server USB Port"),
+		'atalk'			=> N_("Network via AppleTalk PAP"),
+		'tcpip'			=> N_("Network via raw TCP"),
+		'socketapi'		=> N_("Network via SocketAPI"),
+		'appsocket'		=> N_("Network via AppSocket"),
+		'jetdirect'		=> N_("Network via HP JetDirect"),
+		'pros'			=> N_("Network via AXIS PROS"),
+		'lpr'			=> N_("Network via LPD"),
+		'smb'			=> N_("Network via LAN Manager/MS-Windows"),
+		'ppromatic'		=> "--hide",
+		'foomatic-rip'	=> "--hide",
+		'gssimple'		=> "--hide",
+		'gsatalk'		=> "--hide",
+		'gstcpip'		=> "--hide",
+		'gsserial'		=> "--hide",
+		'gsparallel'	=> "--hide",
+		'gslpr'			=> "--hide",
+		'gssmb'			=> "--hide"
 		);
 
-$tcpip_list{"tcpip"} = 1;
-$tcpip_list{"socketapi"} = 1;
-$tcpip_list{"appsocket"} = 1;
-$tcpip_list{"jetdirect"} = 1;
-
-#====================================================================
-# On the basis of the interface name and printer address, take a
-# wild guess as to what would make a good queue name.  If we can't
-# even guess, we just return an empty string.
-#====================================================================
-sub suggest_queue_name
-	{
-	my($interface, $address) = @_;
-	my $name = "";
-
-	# Don't treat Ghostscript versions differently.
-	$interface =~ s/^gs//;
-
-	# AppleTalk is pretty easy.  We just remove noise.
-	if($interface eq "atalk" && $address =~ /^([^:]+):/)
-		{
-		$name = $1;
-		$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;			# Hack for Canon
-		}
-
-	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
-	elsif(defined($tcpip_list{$interface}) && $address =~ /^([^\.:]+)/)
-		{
-		$name = $1;
-		}
-
-	# If this looks like an embedded print server sharename, go with
-	# the server name, otherwise, go with the share name.
-	elsif($interface eq "smb" && $address =~ /^\\\\([^\\]+)\\([^\\]+)$/)
-		{
-		my($server, $share) = ($1, $2);
-		$share =~ tr/[A-Z]/[a-z]/;
-		if($share eq "print" || $share eq "direct" || $share eq "hold" || $share =~ /^lpt/)
-			{
-			$name = $server;
-			}
-		else
-			{
-			$name = $share;
-			}
-		}
-
-	# Assuming this is a real host and not an embedded print server,
-	# the queue name is the most meaningful part.
-	elsif($interface eq "lpr" && $address =~ /^([^\@]+)\@/)
-		{
-		$name = $1;
-		}
-
-	# Since most PROS servers generall one port jobs, assume the
-	# hostname is the most meaningful thing.
-	elsif($interface eq "pros" && $address =~ /\@([^\@]+)$/)
-		{
-		$name = $1;
-		}
-
-	# Convert to lower case.  Sure PPR on Unix can distinguish queue names
-	# that differ only in case, but not all operating systems can, it
-	# confuses users, and it is harder to type.	 So there!
-	$name =~ tr/[A-Z]/[a-z]/;
-
-	# Remove characters that Unix shell users won't like.
-	$name =~ s/[^[a-z0-9_-]//g;
-
-	# Truncate to 16 characters (which is PPR's current limit).
-	$name =~ s/^(.{1,16}).*$/$1/;
-
-	return $name;
-	}
-
-#====================================================================
-# On the basis of the interface name, printer address, and PPD file
-# name try to suggest a good printer comment.
-#====================================================================
-sub suggest_queue_comment
-	{
-	my($interface, $address, $ppdfile) = @_;
-	my $name = "";
-
-	# Don't treat Ghostscript versions differently.
-	$interface =~ s/^gs//;
-
-	# If it is an AppleTalk address and the name part contains
-	# at least one space,
-	if($interface eq "atalk" && $address =~ /^([^:]+\s[^:]+):/)
-		{
-		$name = $1;
-		}
-
-	return $name;
-	}
+# This table indentifies interfaces which have custom 
+# manual configuration pages.
+%interface_pages = (
+	"tcpip"		=> "int_tcpip",
+	"socketapi"	=> "int_tcpip",
+	"appsocket"	=> "int_tcpip",
+	"jetdirect"	=> "int_tcpip",
+	"lpr"		=> "int_xaty",
+	"pros"		=> "int_xaty"
+	);
 
 #===========================================
 # This is the table for this wizard:
@@ -194,9 +108,9 @@ $addprn_wizard_table = [
 				print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
 
 				my $method = cgi_data_move("method", "");
-				labeled_radio("method", "Choose connexion method first", "choose_int", $method);
+				labeled_radio("method", "Manually choose connexion method and enter printer address", "choose_int", $method);
 				print "<br>\n";
-				labeled_radio("method", "Choose printer first", "browse_printers", $method);
+				labeled_radio("method", "Choose printer from list", "browse_printers", $method);
 				},
 		'onnext' => sub {
 				if(! defined($data{method}))
@@ -266,123 +180,12 @@ $addprn_wizard_table = [
 				my $interface = $data{interface};
 
 				# Where do we go next?
-				if($interface eq 'atalk')
+				if(defined(my $goto = $interface_pages{$interface}))
 					{
-					$data{'int_atalk_type'} = 'LaserWriter';
-					return 'int_atalk';
-					}
-				if(defined($tcpip_list{$interface}))
-					{
-					return 'int_tcpip';
-					}
-				if($interface eq "lpr" || $interface eq "pros")
-					{
-					return 'int_xaty';
+					return $goto;
 					}
 				return 'int_generic';
 				}
-		},
-
-		#===========================================
-		# Interface setup for atalk, page 1
-		#===========================================
-		{
-		'label' => 'int_atalk',
-		'title' => N_("PPR: Add a Printer: AppleTalk Interface: Choose a Zone"),
-		'picture' => "wiz-address.jpg",
-		'dopage' => sub {
-				require 'cgi_run.pl';
-
-				my $zone = cgi_data_move('int_atalk_zone', '');
-
-				# Use the getzones program to fetch the zone list and sort it.
-				opencmd(GZ, $GETZONES) || die "Unable to get zone list: $!\n";
-				my @zlist = sort(<GZ>);
-				close(GZ) || die $!;
-
-				print "<p>", H_("Please choose the zone which contains the printer you want to use."), "</p>\n";
-
-				print "<p><span class=\"label\">", H_("AppleTalk Zones:"), "</span><br>\n";
-
-				print "<select tabindex=1 name=\"int_atalk_zone\" size=12>\n";
-				foreach $i (@zlist)
-					{
-					chomp $i;
-					print "<option value=", html_value($i);
-					print " selected" if($i eq $zone);
-					print ">", html($i), "\n";
-					}
-				print "</select>\n";
-
-				print "</p>\n";
-
-				print "<p>", H_("When you press the [Next] button, the selected zone will\n"
-						. "be searched.  This will take about 10 seconds."), "</p>\n";
-				},
-		'onnext' => sub {
-				if($data{'int_atalk_zone'} eq '')
-					{ return _("You must choose a zone before you may proceed!") }
-				return undef;
-				}
-		},
-
-		#===========================================
-		# Interface setup for atalk, page 2
-		#===========================================
-		{
-		'label' => 'int_atalk',
-		'title' => N_("PPR: Add a Printer: AppleTalk Interface: Choose a Printer"),
-		'picture' => "wiz-address.jpg",
-		'dopage' => sub {
-				require 'cgi_run.pl';
-
-				my $address = cgi_data_move('int_atalk_address', '');
-				my $zone = $data{'int_atalk_zone'};
-				my $type = $data{'int_atalk_type'};
-
-				print "<p>", H_("Please choose the printer you want to use from the list below."), "</p>\n";
-
-				print "<p><span class=\"label\">", H_("Available Printers:"), "</span><br>\n";
-
-				opencmd(GPR, $NBP_LOOKUP, "=:$type\@$zone") || die "Unable to get printer list: $!\n";
-				my @plist = ();
-				while(<GPR>)
-					{
-					chomp;
-					s/^\d+:\d+:\d+ \d+ //;
-					push(@plist, $_);
-					}
-				close(GPR) || die;
-				@plist = sort(@plist);
-
-				print "<select tabindex=1 name=\"int_atalk_address\" size=12>\n";
-				foreach my $i (@plist)
-					{
-					print "<option value=", html_value($i);
-					print " selected" if($i eq $address);
-					print ">", html($i), "\n";
-					}
-				print "</select>\n";
-
-				print "</p>\n";
-				},
-		'onnext' => sub {
-				my $address;
-
-				if(($address = $data{int_atalk_address}) eq '')
-					{ return _("You must select a printer before you can proceed!") }
-
-				# Strip quotes off of printer and zone.
-				$address =~ s/^"([^"]*)"$/$1/;
-
-				$data{address} = $address;
-				$data{options} = '';
-				$data{jobbreak} = 'default';
-				$data{feedback} = 'default';
-
-				return undef;
-				},
-		'getnext' => sub { return 'ppd' }
 		},
 
 		#===========================================
@@ -576,7 +379,7 @@ $addprn_wizard_table = [
 			while(my $browser = readdir(BROWSERS))
 				{
 				next if($browser =~ /^\./);
-				$browser =~ /^([a-z0-9_-]+)$/ || die;
+				$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 				$browser = $1;
 				print "<optgroup label=", html_value($browser), ">\n";
 				opencmd(ZONES, "$HOMEDIR/browsers/$browser") || die "Unable to get zone list";
@@ -609,11 +412,12 @@ $addprn_wizard_table = [
 		'dopage' => sub {
 			require 'cgi_run.pl';
 			my $browser_zone = cgi_data_move("browser_zone", "");
+			my $browser_printer = cgi_data_move("browser_printer", "");
 			my($browser, $zone) = split(/:/, $browser_zone, 2);
-			$browser =~ /^([a-z0-9_-]+)$/ || die;
+			$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 			$browser = $1;
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
-			print '<select tabindex=1 name="browser_zone" size="15" style="max-width: 300px">', "\n";
+			print '<select tabindex=1 name="browser_printer" size="15" style="max-width: 300px; min-width: 300px">', "\n";
 			outer:
 			while(1)
 				{
@@ -621,38 +425,58 @@ $addprn_wizard_table = [
 				my @interfaces = ();
 				while(my $line = <PRINTERS>)
 					{
-					print $line;
-					if($line =~ /^\[([^\]]+)]$/)
+					chomp $line;
+					print STDERR "\"$line\"\n";
+					if($line =~ /^\[([^\]]+)\]$/)
 						{
+						print STDERR "Name: $1\n";
 						$name = $1;
 						}
 					elsif($line =~ /^interface=(.+)$/)
 						{
+						print STDERR "Interface: $1\n";
 						push(@interfaces, $1);
 						}
-					elsif($line +~ /^$/)
+					elsif($line =~ /^$/)	# end of record
 						{
 						if(scalar @interfaces > 1)
 							{
 							print "<optgroup label=", html_value($name), ">\n";
 							foreach my $interface (@interfaces)
 								{
-								print "<option value=", html_value($interface), ">", html($interface), "</option>\n";
+								print "<option value=", html_value($interface), ">", html($name) . " " . html($interface), "</option>\n";
 								}
 							print "</optgroup>\n";
 							}
 						else
 							{
-							print "<option value=", html_value($interface), ">", html($name), "</option>\n";
+							print "<option value=", html_value(shift @interfaces), ">", html($name), "</option>\n";
 							}
 						next outer;
+						}
+					else
+						{
+						print STDERR "*** Unmatched browser line: $line";
 						}
 					}
 				last;
 				}
 			print "</select>\n";
 			close(PRINTERS) || die $!;
-			}
+			},
+		'onnext' => sub {
+				my $browser_printer = cgi_data_peek("browser_printer", undef);
+				if(! defined($browser_printer))
+					{ return _("You must choose a printer!") }
+				if($browser_printer !~ /^([^,]+),"([^"]+)"/)
+					{ return "internal error: browser_printer=$browser_printer" }
+				$data{interface} = $1;
+				$data{address} = $2;
+				$data{options} = "";
+				$data{feedback} = "default";
+				$data{jobbreak} = "default";
+				return undef;
+				}
 		},
 		
 		#===========================================
@@ -848,5 +672,97 @@ $addprn_wizard_table = [
 		});
 
 exit 0;
+
+#====================================================================
+# On the basis of the interface name and printer address, take a
+# wild guess as to what would make a good queue name.  If we can't
+# even guess, we just return an empty string.
+#====================================================================
+sub suggest_queue_name
+	{
+	my($interface, $address) = @_;
+	my $name = "";
+
+	# Don't treat Ghostscript versions differently.
+	$interface =~ s/^gs//;
+
+	# AppleTalk is pretty easy.  We just remove noise.
+	if($interface eq "atalk" && $address =~ /^([^:]+):/)
+		{
+		$name = $1;
+		$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;			# Hack for Canon
+		}
+
+	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
+	elsif(defined($tcpip_list{$interface}) && $address =~ /^([^\.:]+)/)
+		{
+		$name = $1;
+		}
+
+	# If this looks like an embedded print server sharename, go with
+	# the server name, otherwise, go with the share name.
+	elsif($interface eq "smb" && $address =~ /^\\\\([^\\]+)\\([^\\]+)$/)
+		{
+		my($server, $share) = ($1, $2);
+		$share =~ tr/[A-Z]/[a-z]/;
+		if($share eq "print" || $share eq "direct" || $share eq "hold" || $share =~ /^lpt/)
+			{
+			$name = $server;
+			}
+		else
+			{
+			$name = $share;
+			}
+		}
+
+	# Assuming this is a real host and not an embedded print server,
+	# the queue name is the most meaningful part.
+	elsif($interface eq "lpr" && $address =~ /^([^\@]+)\@/)
+		{
+		$name = $1;
+		}
+
+	# Since most PROS servers generall one port jobs, assume the
+	# hostname is the most meaningful thing.
+	elsif($interface eq "pros" && $address =~ /\@([^\@]+)$/)
+		{
+		$name = $1;
+		}
+
+	# Convert to lower case.  Sure PPR on Unix can distinguish queue names
+	# that differ only in case, but not all operating systems can, it
+	# confuses users, and it is harder to type.	 So there!
+	$name =~ tr/[A-Z]/[a-z]/;
+
+	# Remove characters that Unix shell users won't like.
+	$name =~ s/[^[a-z0-9_-]//g;
+
+	# Truncate to 16 characters (which is PPR's current limit).
+	$name =~ s/^(.{1,16}).*$/$1/;
+
+	return $name;
+	}
+
+#====================================================================
+# On the basis of the interface name, printer address, and PPD file
+# name try to suggest a good printer comment.
+#====================================================================
+sub suggest_queue_comment
+	{
+	my($interface, $address, $ppdfile) = @_;
+	my $name = "";
+
+	# Don't treat Ghostscript versions differently.
+	$interface =~ s/^gs//;
+
+	# If it is an AppleTalk address and the name part contains
+	# at least one space,
+	if($interface eq "atalk" && $address =~ /^([^:]+\s[^:]+):/)
+		{
+		$name = $1;
+		}
+
+	return $name;
+	}
 
 # end of file
