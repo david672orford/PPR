@@ -9148,9 +9148,11 @@ Internet Printing Protocol Work
 
 * ppd/ghostscript/: added HP DeskJet 880C.
 
+* ppad/ppad_ppd.c: fixed crash bug due to failure to clear all members 
+  of structure which contains gathered information about the printer.
 
->>>>>>> 1.149
-+++++++++++++++++++++
+
+
 TODO
 
 * Create Debian package.

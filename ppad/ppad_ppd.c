@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 January 2004.
+** Last modified 20 April 2004.
 */
 
 #include "before_system.h"
@@ -694,13 +694,14 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	int matches = 0;
 	gu_boolean testmode = FALSE;		/* will try all probe methods */
 
-	facts.SNMP_hrDeviceDescr = NULL;
 	facts.product = NULL;
 	facts.version = 0.0;
 	facts.revision = 0;
-	facts.pjl_id = NULL;
 	facts.deviceid_manufacturer = NULL;
 	facts.deviceid_model = NULL;
+	facts.pjl_id = NULL;
+	facts.SNMP_sysDescr = NULL;
+	facts.SNMP_hrDeviceDescr = NULL;
 
 	/* First we ask the interface program to do the job. */
 	if(ppd_query_interface_probe(printer, q, &facts) > 0)
