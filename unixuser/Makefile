@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 9 March 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
-BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE)
+BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE) ppr-followme$(DOTEXE)
 LIB_PROGS=
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
@@ -41,9 +41,11 @@ PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
 all: $(PROGS)
 
-# We need an explicit rule because of System V release 4.0 make bugs.
 ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(CC) $(CFLAGS) -o ppr-xgrant$(DOTEXE) ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+
+ppr-followme$(DOTEXE): ppr-followme.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+	$(CC) $(CFLAGS) -o ppr-followme$(DOTEXE) ppr-followme.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 #=== Install ================================================================
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 9 March 2003.
 #
 
 #
@@ -133,6 +133,7 @@ sweepdir("$VAR_SPOOL_PPR/printers/alerts", undef, 7.0);
 sweepdir("$VAR_SPOOL_PPR/printers/status", undef, 7.0);
 sweepdir("$VAR_SPOOL_PPR/printers/addr_cache", undef, 1.0);
 sweepdir("$VAR_SPOOL_PPR/pprpopup.db", undef, 0.5);
+sweepdir("$VAR_SPOOL_PPR/followme.db", undef, 90.0);
 sweepdir("$VAR_SPOOL_PPR/dvips", undef, 90.0);
 
 if($opt_all_removable)
