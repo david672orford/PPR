@@ -36,9 +36,10 @@ the Add Printer Wizard, go to the PPR Web Control Panel and click on the icon la
 
 <figure id="web-prn-addwiz">
 <title>Choosing the Interface in the Add Printer Wizard</title>
-<mediaobject>
-	<imageobject><imagedata fileref="web_prn_addwiz.png" format="png"/></imageobject>
-</mediaobject>
+<screenshot>
+	<screeninfo>Mozilla 1.4, Linux</screeninfo>
+	<graphic fileref="web_prn_addwiz.png" format="png" width="7in" scalefit="1"/>
+</screenshot>
 </figure>
 
 <sect3 id="adding-inteface-atalk">

@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 7 March 2003
+Last Modified: 11 September 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -31,12 +31,13 @@ The <application>PPR</application> source code comes as a tar archive compressed
 gzip. To unpack it use this command:
 
 <screen>
-# gunzip -c ppr-src-1.50.tar.gz | tar xvf -
+# gunzip -c ppr-X.XX.tar.gz | tar xvf -
 </screen>
 
-This will uncompress and unpack the source code and deposit it in a directory
-called <filename class="Directory">ppr-1.50</filename> which it will create in the current directory.
-</para>
+Where X.XX is the <application>PPR</application> version number.  This
+command will uncompress and unpack the source code and deposit it in a
+directory called <filename class="Directory">ppr-1.50</filename> which it
+will create in the current directory.</para>
 
 <para>
 Compiling and installing <application>PPR</application> consists of 4 basic steps:

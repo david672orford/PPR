@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-20 August 2003
+11 September 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -197,18 +197,21 @@ These tags produce dictionary lists.
  Imported Images and Figures
 ==============================================================================
 
-<figure id="pprdoc-printing2">
-<title><application>PPR</application> Prints a Job</title>
+<figure id="id_here">
+<title>title here</title>
 <mediaobject>
 	<imageobject><imagedata fileref="pprdoc-printing2.eps" format="eps"></imageobject>
 	<imageobject><imagedata fileref="pprdoc-printing2.png" format="png"></imageobject>
 </mediaobject>
 </figure>
 
+<figure id="id-here">
+<title>title here</title>
 <screenshot>
-	<screeninfo>640x480x256</screeninfo>
-	<graphic fileref="screenshot.gif">
+	<screeninfo>notes about how to reproduce</screeninfo>
+	<graphic format="png" fileref="screenshot.png" width="6in" scalefit="1"/>
 </screenshot>
+</figure>
 
 This displays a screenshot image.  The contents of <screeninfo> are not
 displayed.

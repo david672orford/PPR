@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2003.
+# Last modified 11 September 2003.
 #
 
 # Where do we install the documentation?
@@ -38,11 +38,7 @@ FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$(PATH) fig2dev
 XSLTPROC=xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
-
-JAVA_HOME=/usr/java/j2sdk1.4.1_01
-#FOP=/usr/local/src/apache_fop/fop-0.20.5rc/fop.sh
-#FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
-FOP=/usr/local/src/apache_fop/fop-0.20.5/fop.sh
+FOP=fop
 
 # Where are the style sheets?
 XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
