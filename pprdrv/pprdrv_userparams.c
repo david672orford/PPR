@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_userparams.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 September 2002.
+** Last modified 24 February 2003.
 */
 
 #include "before_system.h"
@@ -65,14 +65,17 @@ void insert_userparams(void)
 	if(Features.LanguageLevel >= 2)
 	    printer_printf("<</WaitTimeout %d>>setuserparams %%PPR\n", printer.userparams.WaitTimeout);
 	else
-            printer_printf("%d statusdict /setwaittimeout get exec\n", printer.userparams.WaitTimeout);
+	    printer_printf("%d statusdict /setwaittimeout get exec\n", printer.userparams.WaitTimeout);
 	post("WaitTimeout");
 	}
 
     if(printer.userparams.ManualfeedTimeout >= 0)
 	{
 	pre("ManualfeedTimeout", printer.userparams.ManualfeedTimeout);
-        printer_printf("%d statusdict /setmanualfeedtimeout get exec %%PPR\n", printer.userparams.ManualfeedTimeout);
+	if(Features.LanguageLevel >= 2)
+	    printer_printf("<</ManualFeedTimeout %d>>setpagedevice %%PPR\n", printer.userparams.ManualfeedTimeout);
+	else
+	    printer_printf("%d statusdict /setmanualfeedtimeout get exec %%PPR\n", printer.userparams.ManualfeedTimeout);
 	post("ManualfeedTimeout");
 	}
 
@@ -89,15 +92,17 @@ void insert_userparams(void)
     } /* end of insert_userparams() */
 
 /*
-** This is called at the start of each page.  It resets the
-** job timeout.
+** This is called at the start of each page.  It resets the job timeout.
 */
 void insert_userparams_jobtimeout(void)
     {
     if(printer.userparams.JobTimeout >= 0)
 	{
 	pre("JobTimeout", printer.userparams.JobTimeout);
-	printer_printf("%d statusdict /setjobtimeout get exec %%PPR\n", printer.userparams.JobTimeout);
+	if(Features.LanguageLevel >= 2)
+	    printer_printf("<</JobTimeout %d>>setuserparams %%PPR\n", printer.userparams.JobTimeout);
+	else
+	    printer_printf("%d statusdict /setjobtimeout get exec %%PPR\n", printer.userparams.JobTimeout);
 	post("JobTimeout");
 	}
     } /* end of insert_userparams_jobtimeout() */

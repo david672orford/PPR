@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 26 February 2003.
 */
 
 /*
@@ -234,7 +234,7 @@ int main(int argc,char *argv[])
     ** It is essential that this program run as "root" if it is to act as the user.
     */
     if(getuid())
-	fatal(1, _("new lprsrv must run as root"));
+	fatal(1, _("lprsrv must run as root"));
 
     /*
     ** Switch the effective UID to that of the PPR user in order to gain a 

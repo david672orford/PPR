@@ -1,0 +1,54 @@
+====================================================================
+test:  -F 
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+Filter for this file type: /usr/lib/ppr/filters/filter_lp
+Implied filter options: "duplex=none"
+Raw queue default filter options: "level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Raw explicit filter options: ""
+Final filter options: "duplex=none level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/filter_lp", "duplex=none level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour", "regression-test1", "", "/usr/local/src/ppr-1.50/tests"}
+
+====================================================================
+test:  -F 
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+Filter for this file type: /usr/lib/ppr/filters/filter_lp
+Implied filter options: "duplex=notumble"
+Raw queue default filter options: "level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Raw explicit filter options: ""
+Final filter options: "duplex=notumble level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/filter_lp", "duplex=notumble level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour", "regression-test1", "", "/usr/local/src/ppr-1.50/tests"}
+
+====================================================================
+test:  -F 
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+Filter for this file type: /usr/lib/ppr/filters/filter_lp
+Implied filter options: "duplex=tumble"
+Raw queue default filter options: "level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Raw explicit filter options: ""
+Final filter options: "duplex=tumble level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour"
+Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/filter_lp", "duplex=tumble level=2 colour=False resolution=600 freevm=679680 mfmode=ljfour", "regression-test1", "", "/usr/local/src/ppr-1.50/tests"}
+

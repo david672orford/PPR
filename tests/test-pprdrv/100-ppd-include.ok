@@ -1,5 +1,5 @@
-Warning: "/usr/share/ppr/lib/mfmodes.conf" has no matching clause!  Some filters
-	may not work correctly.
+Warning: PPD file "/usr/lib/ppr/src/tests/test-pprdrv/includer.ppd" (for printer
+"regression-test1") does not have a "*DefaultResolution:" line.
 ppad: 0
 Queue ID        For                      Time      Pgs Status
 ----------------------------------------------------------------------------

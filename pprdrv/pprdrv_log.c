@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 February 2003.
+** Last modified 24 February 2003.
 */
 
 /*===========================================================================
@@ -48,6 +48,7 @@
 
 static FILE *log = NULL;
 
+/* This opens the job log for write.  This is called from some of the functions below. */
 static void log_open(void)
     {
     /* Open the log file for write. */
@@ -71,14 +72,12 @@ static void log_open(void)
     gu_set_cloexec(fileno(log));
     }
 
+/* This is called by the banner page printing code in pprdrv_flag.c. */
 FILE *log_reader(void)
     {
     char fname[MAX_PPR_PATH];
-    FILE *log;
     ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-    if((log = fopen(fname, "r")) == (FILE*)NULL)
-	fatal(EXIT_PRNERR, _("Can't open \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
-    return log;
+    return fopen(fname, "r");
     }
 
 void log_putc(int c)

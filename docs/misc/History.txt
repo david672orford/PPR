@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--24 February 2003.
+1.51, 15 February 2003--26 February 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8343,9 +8343,18 @@ line was being parsed twice.
 * README.txt: added explanation of purpose of z_install_begin/
   and z_install_end/.
 
+* pprdrv/pprdrv_log.c: Fixed banner page printing code which would fail if
+  the job didn't have a log.
+
+* pprdrv/pprdrv_userparams.c: Implemented setting of Manualfeedtimeout for
+  PostScript level 2 (which interestingly is categorized as a page device
+  parameter rathern than a userparam).  Also implemented JobTimeout (which
+  _is_ a userparam).
+
 * ppad/ppad.c:main(): clarified message about unknown subcommand so as to
   make clearer to the user what happens when he types "ppad --debug ppd
   dummy 'HP LaserJet 4000 Series" (for example).
 
 * Did same as above for ppop.
 
+* po/ru-*.po: minor fixes and a few more messages

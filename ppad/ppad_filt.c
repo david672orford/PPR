@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 24 February 2003.
 */
 
 /*
@@ -437,8 +437,8 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
     */
     if( ! thisppd_resolution && ! resolution_conflict )
 	{
-     	fprintf(errors, _("Warning: PPD file \"%s\" (for printer \"%s\") does not have\n"
-     	"\ta \"*DefaultResolution:\" line.\n"), ppd_name, printer_name);
+     	fprintf(errors, _("Warning: PPD file \"%s\" (for printer\n"
+     	"\"%s\") does not have a \"*DefaultResolution:\" line.\n"), ppd_name, printer_name);
 	}
 
     /*
