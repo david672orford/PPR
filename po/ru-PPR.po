@@ -4406,7 +4406,7 @@ msgstr ""
 
 #: ../ppad/ppad_printer.c:849 ../ppop/ppop_cmds_other.c:1635
 msgid "no"
-msgstr ""
+msgstr "нет"
 
 #: ../ppop/ppop_cmds_other.c:153
 msgid "no output tray"
@@ -4567,7 +4567,7 @@ msgstr ""
 #: ../interfaces/serial.c:433 ../interfaces/tcpip.c:689
 #: ../interfaces/usblp.c:216
 msgid "right here"
-msgstr ""
+msgstr "здесь"
 
 #: ../ppop/ppop_cmds_other.c:581
 #, c-format
@@ -4638,7 +4638,7 @@ msgstr ""
 
 #: ../libuprint/uprint_strerror.c:43
 msgid "too many files"
-msgstr ""
+msgstr "слишком много файлов"
 
 #: ../ppr/ppr_main.c:2296
 msgid "unclosed quote in filter option value"
@@ -4724,7 +4724,7 @@ msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:330
 msgid "waiting for RIP to finish"
-msgstr ""
+msgstr "ждем пока RIP не совершает работу"
 
 #: ../ppop/ppop_cmds_other.c:332
 msgid "waiting for commentators to finish"
@@ -4744,4 +4744,4 @@ msgstr ""
 
 #: ../ppad/ppad_printer.c:849 ../ppop/ppop_cmds_other.c:1635
 msgid "yes"
-msgstr ""
+msgstr "да"

@@ -1,7 +1,10 @@
 #!/bin/sh
 
+export XAUTHORITY=/var/spool/ppr/run/Xauthority
+
 unset LANGUAGE
 unset `env | grep ^LC_ | cut -f1 -d=`
+
 LANG=ru
 OUTPUT_CHARSET=koi8-r
 

@@ -40,7 +40,7 @@ msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:51 ../www/alias_properties.cgi.perl:35
 msgid "Alias Name:"
-msgstr "Название :"
+msgstr "Название Псевдонима:"
 
 #: ../www/alias_addwiz.cgi.perl:57
 msgid "You must enter a name for the alias!"
@@ -81,7 +81,7 @@ msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:112
 msgid "Describe the Alias"
-msgstr ""
+msgstr "Описевайте Псевдоним"
 
 #: ../www/alias_addwiz.cgi.perl:115 ../www/grp_addwiz.cgi.perl:113
 #, fuzzy, c-format
@@ -117,11 +117,11 @@ msgstr "Закончить"
 
 #: ../www/alias_addwiz.cgi.perl:137
 msgid "Save the Alias"
-msgstr "Сохранние Alias"
+msgstr "Сохранние Псевдонима"
 
 #: ../www/alias_addwiz.cgi.perl:142
 msgid "Saving new alias:"
-msgstr "Сохранаем новый alias:"
+msgstr "Сохранаем новый псевдоним:"
 
 #: ../www/alias_addwiz.cgi.perl:155 ../www/cliconf.cgi.perl:89
 #: ../www/cliconf.cgi.perl:172 ../www/delete_queue.cgi.perl:135
@@ -209,7 +209,7 @@ msgstr ""
 #: ../www/alias_properties.cgi.perl:246
 #, c-format
 msgid "PPR: Alias Properties: %s"
-msgstr ""
+msgstr "PPR: Подробности Псевдонима"
 
 #: ../www/cgi_auth.pl:20 ../www/cgi_auth.pl:23
 msgid "Authorization Required"
@@ -1853,12 +1853,12 @@ msgstr "Удалить Группу"
 #: ../www/show_jobs.cgi.perl:305 ../www/show_queues.cgi.perl:177
 #: ../www/show_queues_nojs.cgi.perl:106
 msgid "Alias Properties"
-msgstr ""
+msgstr "Подробности Псевдонима"
 
 #: ../www/show_jobs.cgi.perl:306 ../www/show_queues.cgi.perl:178
 #: ../www/show_queues_nojs.cgi.perl:107
 msgid "Delete Alias"
-msgstr ""
+msgstr "Удалить Псевдоним"
 
 #: ../www/show_jobs.cgi.perl:330
 #, fuzzy
@@ -2105,7 +2105,7 @@ msgstr ""
 
 #: ../www/show_queues.cgi.perl:304
 msgid "Add New Alias"
-msgstr ""
+msgstr "Сделеть Новый Псевдоним"
 
 #: ../www/show_queues_nojs.cgi.perl:53
 #, c-format
@@ -2115,12 +2115,12 @@ msgstr ""
 #: ../www/show_queues_nojs.cgi.perl:57
 #, c-format
 msgid "Group \"%s\""
-msgstr "группа \"%s\""
+msgstr "Группа \"%s\""
 
 #: ../www/show_queues_nojs.cgi.perl:61
 #, c-format
 msgid "Alias \"%s\""
-msgstr ""
+msgstr "Псевдоним \"%s\""
 
 #: ../www/test_components.cgi.perl:25
 msgid "Perl 5.005 or later"
