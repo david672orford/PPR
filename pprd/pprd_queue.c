@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2002.
+** Last modified 5 May 2002.
 */
 
 /*
@@ -67,9 +67,8 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
     DODEBUG_NEWJOB(("%s(): destid=%d id=%d subid=%d status=%d", function, newentry->destid, newentry->id, newentry->subid, newentry->status));
 
     /*
-    ** If this is a group job, set pass number
-    ** to one, otherwise, set pass number to zero
-    ** which will indicate the pprdrv that it is not
+    ** If this is a group job, set pass number to one, otherwise, set pass 
+    ** number to zero which will indicate the pprdrv that it is not
     ** a group job.
     */
     if(destid_local_is_group(newentry->destid))

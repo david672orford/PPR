@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2002.
+** Last modified 5 May 2002.
 */
 
 /*
@@ -1252,8 +1252,8 @@ static void ppop_move(const char command[])
                 ** Change the destination id in the queue array.  This must come
                 ** after the rename code or the rename code will break.
                 */
-                queue[x].destnode_id = new_destnode_id;
-                queue[x].destid = new_destname_id;
+                q->destnode_id = new_destnode_id;
+                q->destid = new_destname_id;
 		}
 
 	    /*
@@ -1271,32 +1271,39 @@ static void ppop_move(const char command[])
 	    /*
 	    ** If this job was stranded, maybe it will print here.
 	    */
-	    if(queue[x].status == STATUS_STRANDED)
+	    if(q->status == STATUS_STRANDED)
 	    	{
-		queue_p_job_new_status(&queue[x], STATUS_WAITING);
+		queue_p_job_new_status(q, STATUS_WAITING);
 	    	}
 
 	    /*
-	    ** Clear any "never" (printer unsuitable) flags set new
-	    ** "notnow" (required media not present) flags and update the
-	    ** job status.
-	    **
-	    ** If the result is that the job is ready to print, try to start
-	    ** a printer for it.
+	    ** Clear any "never" (printer unsuitable) flags, set new "notnow" 
+	    ** (required media not present) flags, and update the job status.
 	    */
-	    queue[x].never = 0;
+	    q->never = 0;
 	    if(nodeid_is_local_node(destnode_id))
 		{
-                media_set_notnow_for_job(&queue[x], TRUE);
-                if(queue[x].status == STATUS_WAITING)
-                    printer_try_start_suitable_4_this_job(&queue[x]);
+		/* Reset pass number just like in queue_insert(). */
+		if(destid_local_is_group(q->destid))
+		    q->pass = 1;
+		else
+		    q->pass = 0;
+
+		/* Set the "notnow" bits and the printer status according to the mounted media */
+                media_set_notnow_for_job(q, TRUE);
+
+		/* If the job is ready to print, try to start it on a printer. */		
+                if(q->status == STATUS_WAITING)
+                    printer_try_start_suitable_4_this_job(q);
+
 		}
-	    else
+	    else	/* remote jobs have dummy values */
 	    	{
 	    	q->notnow = 0;
+		q->pass = 0;
 	    	}
 
-	    moved++;				/* increment count */
+	    moved++;				/* increment work count */
 	    }
 
 	/*
@@ -1307,7 +1314,8 @@ static void ppop_move(const char command[])
 	    {
 	    rank2++;
 	    }
-	}
+
+	} /* end of loop over queue array */
 
     unlock(); 			/* we are done modifying the queue array */
 
