@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/printdesk/PrintDesk.pm.perl
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 29 December 1999.
+# Last revised 8 May 2002.
 #
 
 #
@@ -25,14 +25,14 @@ package PrintDesk;
 $VERSION = 0.2;
 
 # Pull in the PPR path information.
-require "paths.ph";
+use PPR;
 
 # Where do we find files and programs we need?
-$BITMAPS = "${main::HOMEDIR}/lib/PrintDesk";
-$GETZONES = "/usr/local/atalk/bin/getzones";
-$NBP_LOOKUP = "${main::HOMEDIR}/lib/nbp_lookup";
-$PPOP_PATH = $main::PPOP_PATH;
-$TAIL_STATUS_PATH = $main::TAIL_STATUS_PATH;
+$BITMAPS = "${PPR::HOMEDIR}/lib/PrintDesk";
+$GETZONES = "${PPR::HOMEDIR}/lib/getzones";
+$NBP_LOOKUP = "${PPR::HOMEDIR}/lib/nbp_lookup";
+$PPOP_PATH = $PPR::PPOP_PATH;
+$TAIL_STATUS_PATH = $PPR::TAIL_STATUS_PATH;
 
 $PrintDesk::BatchDialog::default_width = 400;
 $PrintDesk::BatchDialog::default_font = "-*-times-medium-r-*-*-*-140-*-*-*-*-*-*";

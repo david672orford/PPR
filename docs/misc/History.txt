@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--6 May 2002.
+1.50a2, 27 February 2002--8 May 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7693,4 +7693,12 @@ line was being parsed twice.
 
 * nonppr_vendors/hp_ppd/: commented out "*HPScalePatterns" since it breaks
   the Adobe version of the MS-Windows PostScript driver.
+
+* Added www/window_open.cgi.perl.
+
+* printdesk/: converted to use PPR.pm instead of paths.ph, fixing bugs
+introduced by changes to paths.ph.
+
+* Added fixup/fixup_atalk.tcl to find getzones, fixed printdesk/Printdesk.pm
+  and www/prn_addwiz.cgi.perl to use it.
 

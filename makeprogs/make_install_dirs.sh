@@ -144,7 +144,7 @@ directory $VAR_SPOOL_PPR/dvips 755
 directory $VAR_SPOOL_PPR/pprdrv 755
 directory $VAR_SPOOL_PPR/drivers/W32X86 755	# MS-Windows 95/98
 directory $VAR_SPOOL_PPR/drivers/WIN40 755	# MS-Windows NT 4.0
-directory $VAR_SPOOL_PPR/drviers/WINPPD 755	# PPD files in MS-DOS text format
+directory $VAR_SPOOL_PPR/drivers/WINPPD 755	# PPD files in MS-DOS text format
 directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755

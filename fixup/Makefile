@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 January 2002.
+# Last modified 8 May 2002.
 #
 
 include ../makeprogs/global.mk
@@ -28,7 +28,8 @@ FIXUP_PROGS=fixup \
 	fixup_samples \
 	fixup_inetd \
 	fixup_media \
-	fixup_login
+	fixup_login \
+	fixup_atalk
 
 all: $(FIXUP_PROGS)
 

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 4 January 2002.
+# Last modified 8 May 2002.
 #
 
 #
@@ -93,6 +93,9 @@ $HOMEDIR/fixup/fixup_media || exit 1
 
 # Create filter scripts using external programs.
 $HOMEDIR/fixup/fixup_filters || exit 1
+
+# Create link for AppleTalk getzones.
+$HOMEDIR/fixup/fixup_atalk || exit 1
 
 echo "PPR installation done.  You may now start the spooler."
 echo

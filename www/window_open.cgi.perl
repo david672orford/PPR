@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 1 May 2002.
+# Last modified 7 May 2002.
 #
 
 
@@ -24,7 +24,14 @@ require "cgi_data.pl";
 
 my $url = cgi_data_move('url', '');
 my $target = cgi_data_move('target', '_blank');
-my $options = cgi_data_move('options', '');
+my $resizable = cgi_data_move('resizable', '');
+my $scrollbars = cgi_data_move('scrollbars', '1');
+my $width = cgi_data_move('width', 600);
+my $height = cgi_data_move('height', 400);
+
+my $options = "width=$width,height=$height";
+$options .= ",resizable" if($resizeable);
+$options .= ",scrollbars" if($scrollbars);
 
 print <<"Head";
 Content-Type: text/html
@@ -34,7 +41,7 @@ Content-Type: text/html
 </head>
 <body>
 <script>
-window.open('$url','$target','$options');
+window.open('$url', '$target', '$options');
 window.close();
 </script>
 </body>

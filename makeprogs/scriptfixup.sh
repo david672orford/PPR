@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/makeprogs/scriptfixup.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 12 April 2001.
+# Last modified 8 May 2002.
 #
 
 #
@@ -47,15 +47,18 @@ BINDIR=`sed -ne 's/^BINDIR=\(.*\)$/\1/p' ../makeprogs/global.mk`
 XWINBINDIR=`sed -ne 's/^XWINBINDIR=\(.*\)$/\1/p' ../makeprogs/global.mk`
 SH=`sed -ne 's/^SH=\(.*\)$/\1/p' ../makeprogs/global.mk`
 PERL=`sed -ne 's/^PERL=\(.*\)$/\1/p' ../makeprogs/global.mk`
-
 if [ "$SH" = "" ]; then SH="/bin/sh"; fi
 if [ "$PERL" = "" ]; then PERL="/usr/bin/perl"; fi
+
+PPR_TCLSH="$HOMEDIR/bin/ppr-tclsh";
 
 # Remove any old version of the target file.
 rm -f $2
 
 # Run a shell script thru Sed, changing the program paths
-sed -e "s#^\\(\$*\\)HOMEDIR *= *\"[^\"]*\"#\\1HOMEDIR=\"$HOMEDIR\"#" \
+sed \
+    -e "s#^\\(\$*\\)HOMEDIR *= *\"[^\"]*\"#\\1HOMEDIR=\"$HOMEDIR\"#" \
+    -e "s#^set HOMEDIR *\"[^\"]*\"#set HOMEDIR \"$HOMEDIR\"#" \
     -e "s#^\\(\$*\\)SHAREDIR *= *\"[^\"]*\"#\\1SHAREDIR=\"$SHAREDIR\"#" \
     -e "s#^\\(\$*\\)CONFDIR *= *\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
     -e "s#^\\(\$*\\)VAR_SPOOL_PPR *= *\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
@@ -71,6 +74,7 @@ sed -e "s#^\\(\$*\\)HOMEDIR *= *\"[^\"]*\"#\\1HOMEDIR=\"$HOMEDIR\"#" \
     -e "s#^use lib [\"][\?][\"];#use lib \"$HOMEDIR/lib\";#" \
     -e "s@^#! */bin/sh\\( *.*\\)\$@#! $SH\\1@" \
     -e "s@^#! */usr/bin/perl\\( *.*\\)\$@#! $PERL\\1@" \
+    -e "s@^#! *ppr-tclsh\\( *.*\\)\$@#! $PPR_TCLSH\\1@" \
     $1 >$2	# infile, outfile
 
 # Make it executable but not writable (so we won't

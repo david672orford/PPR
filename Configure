@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 12 March 2002.
+# Last modified 8 May 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -1313,7 +1313,7 @@ cat >&3 <<'===MakeRules==='
 # have the same internal rules.
 #==============================================================
 
-.SUFFIXES: .sh .perl .c .$(OBJ)
+.SUFFIXES: .sh .perl .tcl .c .$(OBJ)
 
 # Convert .sh files to shell scripts.
 .sh:
@@ -1322,6 +1322,10 @@ cat >&3 <<'===MakeRules==='
 # Convert .perl files to Perl scripts.
 .perl:
 	$(SCRIPTFIXUP) $*.perl $*
+
+# Convert .tcl files to Tcl scripts.
+.tcl:
+	$(SCRIPTFIXUP) $*.tcl $*
 
 # Build an object file from a single .c file.
 .c.$(OBJ):

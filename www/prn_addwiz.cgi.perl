@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 3 January 2002.
+# Last modified 8 May 2002.
 #
 
 #
@@ -35,7 +35,7 @@ defined($CONFDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
 
 # Programs we need:
-@GETZONES = ("/usr/bin/getzones", "/usr/local/atalk/bin/getzones");
+$GETZONES = "$HOMEDIR/lib/getzones";
 $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 
 #===========================================

@@ -62,7 +62,7 @@ HELPDIR=$(WWWDIR)/help
 #== Inventory ================================================================
 
 # These programs go into PPR's bin directory.
-BIN_PROGS=ppr-passwd
+BIN_PROGS=ppr-passwd ppr-web-control
 
 # These programs go into PPR's lib directory.
 LIB_PROGS=ppr-httpd ppr-push-httpd$(DOTEXE)
