@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 14 November 2003.
 */
 
 /*
@@ -591,7 +591,7 @@ static int interactive_mode(void)
 		** Break the string into white-space separated "words".  A quoted string
 		** will be treated as one word.
 		*/
-		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
+		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t", NULL)); x++)
 			{
 			if(x == MAX_CMD_WORDS)
 				{

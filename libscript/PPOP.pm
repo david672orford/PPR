@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 September 2003.
+# Last modified 14 November 2003.
 #
 
 =head1 NAME
@@ -359,7 +359,7 @@ sub qquery
   $self->launch();
 
   # Send a command to ppop.
-  #print STDERR "ppop -M qquery $self->{queue}-* ", join(' ', @_), "\n";
+  #print STDERR "ppop -M qquery $self->{queue}-* \"", join('" "', @_), "\"\n";
   print $wtr "qquery $self->{queue}-* ", join(' ', @_), "\n";
 
   my @result = ();
@@ -367,13 +367,14 @@ sub qquery
   while(<$rdr>)
     {
     chomp;
+    #print STDERR "$_\n";
     if(/^\*DONE\t([0-9]+)/)
-	{
-	last;
-	}
+		{
+		last;
+		}
     if(/^\*/)
     	{
-	croak "Unexpected line from ppop: $_\n";
+		croak "Unexpected line from ppop: $_\n";
     	}
     my @result_fields = split(/\t/, $_, 1000);
     #print STDERR join(', ', @result_fields), "\n";
@@ -385,7 +386,7 @@ sub qquery
 
 =head2 The qquery_1job Method
 
-Get the indicated columns for a certain job.
+Get the indicated columns for a particular job.
 
 =cut
 

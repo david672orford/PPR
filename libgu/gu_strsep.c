@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 14 November 2003.
 */
 
 /*! \file
@@ -67,7 +67,7 @@ char *gu_strsep(char **stringp, const char *delim)
 	if(start[len])						/* if terminated by delimiter rather than end of string, */
 		{
 		start[len] = '\0';				/* insert a ASCIIz string terminator */
-		/* don't remove parenthises from next two lines */
+		/* don't remove parentheses from next two lines */
 		(*stringp) += len;				/* for next time, move past the token */
 		(*stringp)++;					/* and move past the delimiter for next time */
 		}

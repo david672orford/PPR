@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 July 2003.
+** Last modified 14 November 2003.
 */
 
 /*
@@ -1851,7 +1851,7 @@ int ppop_qquery(char *argv[])
 
 		else
 			{
-			fprintf(errors, "Unrecognized field: %s\n", ptr);
+			fprintf(errors, "Name of field number %d unrecognized: \"%s\"\n", x+1, ptr);
 			return EXIT_SYNTAX;
 			}
 		}

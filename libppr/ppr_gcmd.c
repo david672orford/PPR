@@ -25,10 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 14 November 2003.
 */
 
 #include "before_system.h"
+#include <string.h>
+#include <ctype.h>
 #ifndef HAVE_TERMIOS_H
 #ifdef SET_BACKSPACE
 #include <termios.h>
@@ -44,7 +46,7 @@
 /** read interactive mode command line
 
 This function is used in the interactive utilities to print a prompt and
-get a command from the user.
+get a command from the user.  Any trailing spaces are removed from the line.
 
 */
 char *ppr_get_command(const char *prompt, int machine_input)
@@ -89,6 +91,19 @@ char *ppr_get_command(const char *prompt, int machine_input)
 		}
 	#endif
 	#endif
+
+	if(result)
+		{
+		int len;
+		for(len = strlen(result); len > 0; )
+			{
+			len--;
+			if(isspace(result[len]))
+				result[len] = '\0';
+			else
+				break;
+			}
+		}
 
 	return result;
 	} /* end of ppr_get_command() */

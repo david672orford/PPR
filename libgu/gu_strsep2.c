@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 14 November 2003.
 */
 
 #include "before_system.h"
@@ -48,7 +48,7 @@ char *gu_strsep_quoted(char **stringp, const char *delim, const char *discard)
 	if(!start)									/* Did we reach the end last time? */
 		return NULL;
 	
-	if(discard)
+	if(discard)									/* If there is a discard list, ignore those characters. */
 		si += strspn(si, discard);
 
 	if(*si != '\"')								/* If not a quoted string, */
