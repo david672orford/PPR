@@ -55,12 +55,14 @@ sub cgi_user_agent
 					$facts{gecko_version} = $1;
 					}
 				}
+			if($ua =~ / Opera (\d+\.\d+)/)
+				{ $facts{opera_version} = $1 }
 			}
 
-		if($ua =~ / Opera (\d+\.\d+)/ || $ua =~ /^Opera\/(\d+\.\d+)/)
+		elsif($ua =~ /^Opera\/(\d+\.\d+)/)
 			{ $facts{opera_version} = $1 }
-		
-		if($ua =~ /^Links \((\d+\.\d+)/)
+
+		elsif($ua =~ /^Links \((\d+\.\d+)/)
 			{
 			$facts{links_version} = $1;
 			}
@@ -78,7 +80,7 @@ sub cgi_user_agent
 		}
 
 	# If it claims any level of Mozilla compatibility, it can probably do images.
-	if($facts{mozilla_version} > 0.0)
+	if($facts{mozilla_version} > 0.0 || $facts{opera_version} > 0.0)
 		{
 		$facts{images} = 1;
 		}

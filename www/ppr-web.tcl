@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 March 2003.
+# Last modified 17 December 2003.
 #
 
 #
@@ -151,8 +151,11 @@ switch -exact $selected_browser {
 				}
 			catch(e) { }
 			window.resizeTo($width,$height);
-			//window.location = '$final_url';
-			window.open('$final_url', '_self', '', true);
+			if(!window.open('$final_url', '_self', '', true))
+				{
+				alert('Popup blocking has messed up the close button.');
+				window.location = '$final_url';
+				}
 			}
 		</script>
 		</head>
@@ -165,6 +168,7 @@ switch -exact $selected_browser {
 		and then press the <b>Yes</b> button.</p>
 		</body>
 		</html>"
+
 	close $file
 
 	# first we try to contact an already-running copy
