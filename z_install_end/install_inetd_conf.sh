@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 August 2003.
+# Last modified 25 August 2003.
 #
 
 #
@@ -242,7 +242,6 @@ if [ -x "$XINETD" -a -f "$XINETD_CONF" ]
 
 	# This only works on Linux.
 	killall -HUP xinetd
-	killall ppr-httpd
 
 	exit 0
 
@@ -286,5 +285,8 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 
 add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
+
+# This only works on Linux.
+killall -HUP inetd
 
 exit 0

@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--21 August 2003.
+1.52, 24 July 2003--25 August 2003.
 
 Bug Fixes
 
@@ -8712,6 +8712,9 @@ Bug Fixes
   self.close() only works if the history list is empty.
 
 * libscript/PPOP.pm: fixed so that stderr from PPOP is captured too.
+
+* z_install_end/install_inetd_conf.sh: added code to send HUP to 
+  xinetd or inetd.  Currently it uses killall, so it is not portable.
 
 Misc. Added Material
 
