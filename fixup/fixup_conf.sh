@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 28 January 2003.
 #
 
 #
@@ -177,18 +177,15 @@ if_dir_print "/usr/share/texmf/fonts/afm"
 
 echo >&5
 
-cat - >&5 <<===EndHere60===
+cat - >&5 <<===EndHere90===
 # Where are the PPD files?
 [PPDs]
   "$SHAREDIR/PPDFiles"
-
-===EndHere60===
 
 # Configuration of the new AppleTalk Printer Access Protocol server
 [papd]
   #default zone = ""
 
-cat - >&5 <<===EndHere90===
 # end of file
 ===EndHere90===
 
