@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 14 October 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -36,7 +36,7 @@ include ../rules.mk
 
 #=== Inventory ==============================================================
 
-BUILT=pprhack.html pprhack.ps pprhack.pdf
+BUILT=pprhack.html pprhack.pdf
 
 #=== Build ==================================================================
 
@@ -70,7 +70,7 @@ install: all-docs
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS)
-	$(RMF) *.dvi *.aux *.log *.toc *.tex
+	$(RMF) *.dvi *.aux *.log *.toc *.tex *.ps
 
 # Remove anything that can be reconstructed.
 veryclean: clean

@@ -43,17 +43,19 @@ char gu_exception[100];
 static jmp_buf *_gu_exception_jmp_bufs[GU_EXCEPTION_MAX_TRY_DEPTH];
 int _gu_exception_try_depth;
 int _gu_exception_setjmp_retcode;
+int _gu_exception_final;
 
 /** Get Ready to Try
 
-This function is called by the gu_Try macro.
+This function is called by the gu_Try() macro.  
 
 */
-void _gu_Try(jmp_buf *p_jmp_buf)
+void gu_Try_funct(jmp_buf *p_jmp_buf)
 	{
 	if(_gu_exception_try_depth >= GU_EXCEPTION_MAX_TRY_DEPTH)
 		gu_Throw("Try nested too deep");
 	_gu_exception_jmp_bufs[_gu_exception_try_depth++] = p_jmp_buf;
+	_gu_exception_final = 0;
 	}
 
 /** Throw an Exception

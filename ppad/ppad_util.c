@@ -257,7 +257,7 @@ void print_switchset(char *switchset)
 /*
 ** Print some text.  Wrap the text to 80 columns.  Indent subsequent
 ** lines by 4 spaces.  Understand that start_column is the column
-** the cursor is when this is called.  (0 is the left hand column.)
+** the cursor is when this is called.  (0 is the first column.)
 */
 int print_wrapped(const char *deffiltopts, int starting_column)
 	{

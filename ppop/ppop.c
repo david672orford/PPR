@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 15 October 2003.
 */
 
 /*
@@ -154,16 +154,13 @@ static void alarm_sighandler(int sig)
 	}
 
 /*
-** Get ready to communicate with a spooler daemon.
-** If the nodename is our nodename, we will communicate
-** with pprd, otherwise we will be communicating with
-** rpprd.
+** Get ready to communicate with the spooler daemon. This involves getting
+** ready for a SIGUSR1 from pprd.  To do this, we clear the signal received
+** flag and block the signal.  (We will unblock it later.)
 **
-** Get ready for a SIGUSR1 from pprd or rpprd.
-**
-** To do this, we clear the signal received flag
-** and block the signal.  (We will unblock it with
-** sigsuspend().
+** Note that the nodename parameter is unused right now.  At some point in
+** the past it was thought that a separate spooler daemon would be used
+** for remote queues.
 */
 FILE *get_ready(const char nodename[])
 	{
@@ -668,11 +665,11 @@ static gu_boolean proxy_for_match(const char job_proxy_for[], const char proxy_f
 ** does not belong to the user and the user is not an operator.  If -1
 ** is returned, also prints an error message.
 **
-** If the user is a proxy (the -X switch has been used) then the proxy
-** id's must also match or the user part of the proxy id must be "*" on
-** the same machine
-** as the job's proxy id.  If the -X switch is used then even operators
-** cannot delete jobs that were not submitted under their Unix uid.
+** If the user is a proxy (the -X switch has been used) then the proxy id's
+** must also match or the user part of the proxy id must be "*" on the same
+** machine as the job's proxy id.  When the -X switch is used, even
+** operators cannot delete jobs that were not submitted under their Unix
+** uid.
 */
 int job_permission_check(struct Jobname *job)
 	{
@@ -698,6 +695,8 @@ int job_permission_check(struct Jobname *job)
 	** because, for non-existent jobs we want to user to be told it does not
 	** exist, not that he can't touch it!
 	**
+	** Yes, this is a race condition.  Any practical way to exploit it?
+	**
 	** !!! This code must be fixed for distributed printing !!!
 	*/
 	{
@@ -716,7 +715,8 @@ int job_permission_check(struct Jobname *job)
 		job->destname,
 		job->id,
 		job->subid != WILDCARD_SUBID ? job->subid : 0,
-		strcmp(job->homenode, "*") ? job->homenode : ppr_get_nodename());
+		strcmp(job->homenode, "*") ? job->homenode : ppr_get_nodename()
+		);
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
 		/* This is where we need code for remote printing!!! */
@@ -876,52 +876,69 @@ int is_my_job(const struct QEntry *qentry, const struct QFileEntry *qfileentry)
 ** Main function and associated functions, dispatch command
 ** to proper command handler.
 =========================================================================*/
-static int main_help(void)
+static int main_help(FILE *out)
+	{
+	int i;
+	const char *help_lines[] =
+			{
+			N_("Destination commands:"),
+				N_("ppop destination {<destination>, all}"),
+				N_("    Abbreviation: ppop dest {<destination>, all}"),
+				N_("ppop destination-comment {<destination>, all}"),
+				N_("    Abbreviation: ppop ldest {<destination>, all}"),
+				N_("ppop destination-comment-address {<destination>, all}"),
+				N_("ppop accept <destination>"),
+				N_("ppop reject <destination>"),
+			N_("Print job commands:"),
+				N_("ppop list {<destination>, <job>, all} ..."),
+				N_("ppop short {<destination>, <job>, all} ..."),
+				N_("ppop details {<destination>, <job>, all} ..."),
+				N_("ppop lpq {<destination>, <job>, all} [<user>] [<id>] ..."),
+				N_("ppop qquery {<destination>, <job>, all} <field name 1> ..."),
+				N_("ppop move {<job>, <old_destination>} <new_destination>"),
+				N_("ppop hold <job> ..."),
+				N_("ppop release <job> ..."),
+				N_("ppop [s]cancel {<job>, <destination>, all} ..."),
+				N_("ppop [s]purge {<destination>, all} ..."),
+				N_("ppop [s]cancel-active {<destination>, all} ..."),
+				N_("ppop [s]cancel-my-active {<destination>, all} ..."),
+				N_("ppop clean <destination> ..."),
+				N_("ppop rush <job> ..."),
+				N_("ppop last <job> ..."),
+				N_("ppop log <job>"),
+				N_("ppop progress <job>"),
+				N_("ppop modify <job> <name>=<value> ..."),
+			N_("Printer commands:"),
+				N_("ppop status {<destination>, all} ..."),
+				N_("ppop start <printer> ..."),
+				N_("ppop halt <printer> ..."),
+				N_("ppop stop <printer> ..."),
+				N_("ppop wstop <printer>"),
+				N_("ppop message <printer>"),
+				N_("ppop alerts <printer>"),
+			N_("Media commands:"),
+				N_("ppop media {<destination>, all}"),
+				N_("ppop mount <printer> <bin> <medium>"),
+			};
+			
+	for(i = 0; help_lines[i]; i++)
 		{
-		fputs(_("\nDestination commands:\n"
-				"\tppop destination {<destination>, all}\n"
-				"\t\tAbbreviation:	ppop dest {<destination>, all}\n"
-				"\tppop destination-comment {<destination>, all}\n"
-				"\t\tAbbreviation:	ppop ldest {<destination>, all}\n"
-				"\tppop destination-comment-address {<destination>, all}\n"
-				"\tppop accept <destination>\n"
-				"\tppop reject <destination>\n"), stdout);
+		const char *p = help_lines[i];
+		const char *pxlate = gettext(p);
 
-		fputs(_("\nPrint job commands:\n"
-				"\tppop list {<destination>, <job>, all} ...\n"
-				"\tppop short {<destination>, <job>, all} ...\n"
-				"\tppop details {<destination>, <job>, all} ...\n"
-				"\tppop lpq {<destination>, <job>, all} [<user>] [<id>] ...\n"
-				"\tppop qquery {<destination>, <job>, all} <field name 1> ...\n"
-				"\tppop move {<job>, <old_destination>} <new_destination>\n"
-				"\tppop hold <job> ...\n"
-				"\tppop release <job> ...\n"
-				"\tppop [s]cancel {<job>, <destination>, all} ...\n"
-				"\tppop [s]purge {<destination>, all} ...\n"
-				"\tppop [s]cancel-active {<destination>, all} ...\n"
-				"\tppop [s]cancel-my-active {<destination>, all} ...\n"
-				"\tppop clean <destination> ...\n"
-				"\tppop rush <job> ...\n"
-				"\tppop last <job> ...\n"
-				"\tppop log <job>\n"
-				"\tppop progress <job>\n"
-				"\tppop modify <job> <name>=<value> ...\n"), stdout);
-
-		fputs(_("\nPrinter commands:\n"
-				"\tppop status {<destination>, all} ...\n"
-				"\tppop start <printer> ...\n"
-				"\tppop halt <printer> ...\n"
-				"\tppop stop <printer> ...\n"
-				"\tppop wstop <printer>\n"
-				"\tppop message <printer>\n"
-				"\tppop alerts <printer>\n"), stdout);
-
-		fputs(_("\nMedia commands:\n"
-				"\tppop media {<destination>, all}\n"
-				"\tppop mount <printer> <bin> <medium>\n"), stdout);
-
-		return EXIT_OK;
-		} /* end of main_help() */
+		if(lmatch(p, "ppop "))
+			{
+			if(i == 0)
+				fputc('\n', out);
+			fputs(pxlate, out);
+			}
+		else
+			{
+			fprintf(out, "    %s\n", pxlate);
+			}
+		}
+	return EXIT_OK;
+	} /* end of main_help() */
 
 /*
 ** Examine the command and run the correct proceedure.
@@ -1010,7 +1027,7 @@ static int dispatch(char *argv[])
 	else if(strcmp(argv[0], "modify") == 0)
 		return ppop_modify(&argv[1]);
 	else if(strcmp(argv[0], "help") == 0)
-		return main_help();
+		return main_help(stderr);
 	else
 		return -1;						/* return `dispatcher failed' code */
 	} /* end of dispatch() */
@@ -1137,27 +1154,38 @@ static void pipe_sighandler(int sig)
 /*
 ** Print help.
 */
-static void help_switches(FILE *outfile)
+static void help_switches(FILE *out)
 	{
-	fputs(_("Valid switches:\n"), outfile);
+	int i;
+	const char *switch_list[] =
+		{
+		N_("-X <principal_string>\tact as proxy for principal described"),
+		N_("--proxy-for=<principal_string>\tsame as -X"),
+		N_("-M\tselect machine-readable output"),
+		N_("--machine-readable\tsame as -M"),
+		N_("--su <user>\tcheck access as if run as indicated user"),
+		N_("-A <seconds>\tdon't show jobs arrested more than <seconds> ago"),
+		N_("--arrest-interest-time=<seconds>\tsame as -A"),
+		N_("--verbose\tprint more information"),
+		N_("--version\tprint the PPR version information"),
+		N_("--help\tprint this help message"),
+		NULL
+		};
 
-	fputs(_(	"\t-X <principal string>\n"
-				"\t--proxy-for=<principal string>\n"
-				"\t-M\n"
-				"\t--machine-readable\n"
-				"\t--su <user>\n"
-				"\t-A <seconds>\n"
-				"\t--arrest-interest-time=<seconds>\n"
-				"\t--verbose\n"
-				), outfile);
+	fputs(_("Valid switches:\n"), out);
+	for(i = 0; switch_list[i]; i++)
+		{
+		const char *p = gettext(switch_list[i]);
+		int to_tab = strcspn(p, "\t");
+		fprintf(out, "    %-35.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
+		}
 
-	fputs(_(	"\t--version\n"
-				"\t--help\n"
-				), outfile);
+	fputc('\n', out);
 
-	fputs("\n", outfile);
-
-	fputs(_("Try \"ppop help\" for help with subcommands.\n"), outfile);
+	fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
+	fputs("\n", out);
+	fprintf(out, _("The %s manpage may be viewed by entering this command at a shell prompt:\n"
+		"    ppdoc %s\n"), "ppop(1)", "ppop");
 	} /* end of help() */
 
 /*

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 May 2002.
+** Last modified 14 October 2003.
 */
 
 /*
@@ -47,10 +47,6 @@
 #include "pprd.h"
 #include "./pprd.auto_h"
 #include "respond.h"
-#include "cexcept.h"
-
-define_exception_type(int);
-static struct exception_context the_exception_context[1];
 
 /*================================================================
 ** Insert a job into the queue structure.  If for some reason we
@@ -477,22 +473,21 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
 void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 	{
 	const char function[] = "queue_insert_job";
-	int e;
 	char *scratch = NULL;
 	const char *ptr_destnode, *ptr_destname, *ptr_homenode;
 	struct QEntry newent;				/* space for building new queue entry */
 	struct QEntry *newentp;				/* new queue entry */
 	int rank1, rank2;
 
-	Try {
+	gu_Try
+		{
 		{
 		int err;
 		scratch = gu_strdup(qfname);
 		err = parse_qfname(scratch, &ptr_destnode, &ptr_destname, &newent.id, &newent.subid, &ptr_homenode);
 		if(err < 0)
 			{
-			error("%s(): can't parse \"%s\" (%d)", function, qfname, err);
-			Throw(-1);
+			gu_Throw("can't parse \"%s\" (%d)", qfname, err);
 			}
 		}
 
@@ -500,7 +495,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		newent.destnode_id = nodeid_assign(ptr_destnode);
 		newent.homenode_id = nodeid_assign(ptr_homenode);
 
-		Try {
+		gu_Try {
 			/* Convert the destination queue name to a queue id number.  If the queue
 			   does not exist, inform the user.  The exception handler will delete the
 			   job files.
@@ -508,25 +503,29 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 			if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
 				{
 				if(job_is_new)
+					{
 					respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, -1, ptr_destname, RESP_CANCELED_BADDEST);
+					gu_Throw("");
+					}
 				else
-					error("%s(): destination \"%s\" no longer exists", function, ptr_destname);
-				Throw(-1);
+					{
+					gu_Throw("destination \"%s\" no longer exists", ptr_destname);
+					}
 				}
 
-			Try {
+			gu_Try {
 				/* If this is a new job and the destination is not accepting new
 				   jobs, tell the user and ditch the job.
 				   */
 				if(job_is_new && ! destid_accepting(newent.destnode_id, newent.destid))
 					{
 					respond(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id, -1, RESP_CANCELED_REJECTING);
-					Throw(-1);
+					gu_Throw("");
 					}
 
 				if(queue_read_queuefile(qfname, &newent) == -1)
 					{
-					Throw(-1);
+					gu_Throw("");
 					}
 
 				/* Clear the time of next response. */
@@ -577,23 +576,24 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 
 				unlock();
 				}
-			Catch(e)
+			gu_Catch
 				{
 				destid_free(newent.destnode_id, newent.destid);
-				Throw(e);
+				gu_ReThrow();
 				}
 			}
-		Catch(e)
+		gu_Catch
 			{
 			queue_unlink_job_2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode);
 			nodeid_free(newent.destnode_id);
 			nodeid_free(newent.homenode_id);
-			Throw(e);
+			gu_ReThrow();
 			}
 		}
-	Catch(e)
+	gu_Catch
 		{
-		/* nothing to do */
+		if(strlen(gu_exception) > 0)
+			error("%s(): %s", function, gu_exception);
 		}
 
 	if(scratch)

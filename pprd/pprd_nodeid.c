@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_nodeid.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 October 2000.
+** Last modified 15 October 2003.
 */
 
 /*
@@ -22,7 +37,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "pprd.auto_h"
@@ -60,6 +74,9 @@ int nodeid_assign(const char nodename[])
 
 	if(strcmp(nodename, "*") == 0)		/* special value reserved for the */
 		return NODEID_WILDCARD;			/* wildcard nodeid */
+
+	if(strcmp(nodename, "localhost") == 0)
+		return NODEID_LOCALHOST;
 
 	/* Search the table to find if this node already has
 	   an ID assigned. */
@@ -156,6 +173,9 @@ int nodeid_by_name(const char name[])
 	if(strcmp(name, "*") == 0)			/* special value reserved for the */
 		return NODEID_WILDCARD;			/* wildcard nodeid */
 
+	if(strcmp(name, "localhost") == 0)
+		return NODEID_LOCALHOST;
+
 	for(x=0; x < table_size; x++)		/* Move thru the part of the table which */
 		{								/* has been used so far. */
 		if(nodes[x].refcount == 0)		/* If this is an unused node, */
@@ -207,7 +227,7 @@ const char *nodeid_to_name(int nodeid)
 */
 int nodeid_local(void)
 	{
-	return 0;
+	return NODEID_LOCALHOST;
 	}
 
 /*
@@ -216,7 +236,7 @@ int nodeid_local(void)
 */
 gu_boolean nodeid_is_local_node(int nodeid)
 	{
-	if(nodeid == 0)
+	if(nodeid == NODEID_LOCALHOST)
 		return TRUE;
 	else
 		return FALSE;

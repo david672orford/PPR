@@ -58,7 +58,7 @@ protected.$(OBJ): protected.c ../include/before_system.h ../include/gu.h ../incl
 
 prune_env.$(OBJ): prune_env.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/version.h
 
-query.$(OBJ): query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/cexcept.h ../include/interface.h ../include/ppr_query.h
+query.$(OBJ): query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/ppr_query.h
 
 queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
 

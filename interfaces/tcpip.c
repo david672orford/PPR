@@ -78,7 +78,6 @@
 #include "global_defines.h"
 #include "libppr_int.h"
 #include "interface.h"
-#include "cexcept.h"
 
 /* Change the zero below to a one and recompile to turn on debugging. */
 #if 0
@@ -88,10 +87,6 @@
 #undef DEBUG
 #define DODEBUG(a)
 #endif
-
-/* We use exception handling in this program.  All exceptions are character pointers. */
-define_exception_type(const char *);
-static struct exception_context the_exception_context[1];
 
 /* Default port (9100 is the port used by HP JetDirect) */
 #define DEFAULT_PORT 9100
@@ -148,24 +143,26 @@ static void do_shutdown(int fd)
 static void snmp_status(void *p)
 	{
 	struct gu_snmp *snmp_obj = p;
-	int error_code;
 	int n1, n2;
 	unsigned int n3;
 
-	if(gu_snmp_get(snmp_obj, &error_code,
+	gu_Try
+		{
+		gu_snmp_get(snmp_obj,
 				"1.3.6.1.2.1.25.3.2.1.5.1", GU_SNMP_INT, &n1,
 				"1.3.6.1.2.1.25.3.5.1.1.1", GU_SNMP_INT, &n2,
 				"1.3.6.1.2.1.25.3.5.1.2.1", GU_SNMP_BIT, &n3,
-				NULL) < 0)
+				NULL);
+		}
+	gu_Catch
 		{
-		alert(int_cmdline.printer, TRUE, "gu_snmp_get() failed, error_code=%d", error_code);
+		alert(int_cmdline.printer, TRUE, "gu_snmp_get() failed: %s", gu_exception);
 		return;
 		}
 
 	/* This will be picked up by pprdrv. */
 	printf("%%%%[ PPR SNMP: %d %d %08x ]%%%%\n", n1, n2, n3);
 	fflush(stdout);
-
 	} /* end of snmp_status() */
 
 /*=========================================================================
@@ -179,49 +176,39 @@ struct appsocket
 	gu_boolean refused;
 	};
 
-static void *appsocket_status_open(unsigned int ip_address, int port, const char **error_str)
+static void *appsocket_status_open(unsigned int ip_address, int port)
 	{
-	const char *e;
 	struct sockaddr_in server_ip;
 	struct sockaddr_in my_ip;
-	#warning Expect spurious warnings on next line.
 	int fd;
 	struct appsocket *p;
 
-	Try {
-		memset(&server_ip, 0, sizeof(server_ip));
-		server_ip.sin_family = AF_INET;
-		memcpy(&server_ip.sin_addr, &ip_address, sizeof(ip_address));
-		server_ip.sin_port = htons(port);
+	memset(&server_ip, 0, sizeof(server_ip));
+	server_ip.sin_family = AF_INET;
+	memcpy(&server_ip.sin_addr, &ip_address, sizeof(ip_address));
+	server_ip.sin_port = htons(port);
 
-		memset(&my_ip, 0, sizeof(my_ip));
-		my_ip.sin_family = AF_INET;
-		my_ip.sin_addr.s_addr = htonl(INADDR_ANY);
-		my_ip.sin_port = htons(0);
+	memset(&my_ip, 0, sizeof(my_ip));
+	my_ip.sin_family = AF_INET;
+	my_ip.sin_addr.s_addr = htonl(INADDR_ANY);
+	my_ip.sin_port = htons(0);
 
-		if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-			Throw("socket() failed, errno=%d (%s)");
+	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+		gu_Throw("socket() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-		Try {
-			if(bind(fd, (struct sockaddr *)&my_ip, sizeof(my_ip)) < 0)
-				Throw("bind() failed, errno=%d (%s)");
+	gu_Try {
+		if(bind(fd, (struct sockaddr *)&my_ip, sizeof(my_ip)) < 0)
+			gu_Throw("bind() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-			if(connect(fd, (struct sockaddr *)&server_ip, sizeof(server_ip)) < 0)
-				Throw("connect() failed, errno=%d (%s)");
-			}
-		Catch(e)
-			{
-			int saved_errno = errno;
-			close(fd);
-			errno = saved_errno;
-			Throw(e);
-			}
+		if(connect(fd, (struct sockaddr *)&server_ip, sizeof(server_ip)) < 0)
+			gu_Throw("connect() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		}
-	Catch(e)
+	gu_Catch
 		{
-		if(error_str)
-			*error_str = e;
-		return NULL;
+		int saved_errno = errno;
+		close(fd);
+		errno = saved_errno;
+		gu_ReThrow();
 		}
 
 	/* We have suceeded!  Go ahead and allocate the structure and fill it in. */
@@ -234,7 +221,6 @@ static void *appsocket_status_open(unsigned int ip_address, int port, const char
 static void appsocket_status(void *p)
 	{
 	struct appsocket *obj = (struct appsocket *)p;
-	const char *e;
 
 	/* If we get "connection refused" on recv(), don't try again. */
 	if(obj->refused)
@@ -242,7 +228,7 @@ static void appsocket_status(void *p)
 
 	/* Send and resent the request until we get a response or the retries
 	   are exhausted. */
-	Try {
+	gu_Try {
 		int attempt;
 		fd_set rfds;
 		struct timeval timeout;
@@ -253,7 +239,7 @@ static void appsocket_status(void *p)
 			/* Send the request (an empty UDP packet). */
 			DODEBUG(("sending..."));
 			if(send(obj->socket, "", 0, 0) < 0)
-				Throw("send() failed, errno=%d (%s)");
+				gu_Throw("send() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 			/* Wait up to 1 second for a response. */
 			FD_ZERO(&rfds);
@@ -261,7 +247,7 @@ static void appsocket_status(void *p)
 			timeout.tv_sec = 1;
 			timeout.tv_usec = 0;
 			if(select(obj->socket + 1, &rfds, NULL, NULL, &timeout) < 0)
-				Throw("select() failed, errno=%d (%s)");
+				gu_Throw("select() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 			/* If there was nothing to read, start next iteration
 			   (which will result in a resend. */
@@ -273,7 +259,7 @@ static void appsocket_status(void *p)
 				{
 				if(errno == ECONNREFUSED)
 					obj->refused = TRUE;
-				Throw("recv() failed, errno=%d (%s)");
+				gu_Throw("recv() failed, errno=%d (%s)", errno, gu_strerror(errno));
 				}
 			DODEBUG(("Got %d bytes", len));
 			printf("%%%%[ %.*s ]%%%%\n", len, obj->result);
@@ -281,15 +267,13 @@ static void appsocket_status(void *p)
 			}
 
 		/* If we reach here, there was no valid response. */
-		Throw("timeout");
+		gu_Throw("timeout");
 		}
-	Catch(e)
+	gu_Catch
 		{
-		char temp[80];
-		gu_snprintf(temp, sizeof(temp), e, errno, gu_strerror(errno));
-		printf("appsocket_status(): %s\n", temp);
+		printf("appsocket_status(): %s\n", gu_exception);
 		}
-	}
+	} /* end of appsocket_status() */
 
 static void appsocket_status_close(void *p)
 	{
@@ -497,14 +481,16 @@ int main(int argc, char *argv[])
 	void (*status_function)(void *) = NULL;
 	void *status_obj = NULL;
 	int status_interval = 0;
-	int error_code;
-	const char *error_str;
 
 	if(options.snmp_status_interval > 0)
 		{
-		if(!(status_obj = gu_snmp_open(printer_address.sin_addr.s_addr, options.snmp_community, &error_code)))
+		gu_Try
 			{
-			alert(int_cmdline.printer, TRUE, "gu_snmp_open() failed, error_code=%d", error_code);
+			status_obj = gu_snmp_open(printer_address.sin_addr.s_addr, options.snmp_community);
+			}
+		gu_Catch
+			{
+			alert(int_cmdline.printer, TRUE, "gu_snmp_open() failed: %s", gu_exception);
 			return EXIT_PRNERR;
 			}
 		status_function = snmp_status;
@@ -512,11 +498,13 @@ int main(int argc, char *argv[])
 		}
 	else if(options.appsocket_status_interval > 0)
 		{
-		if(!(status_obj = appsocket_status_open(printer_address.sin_addr.s_addr, ntohs(printer_address.sin_port) + 1, &error_str)))
+		gu_Try
 			{
-			char temp[80];
-			gu_snprintf(temp, sizeof(temp), error_str, errno, gu_strerror(errno));
-			alert(int_cmdline.printer, TRUE, "appsocket_status_open() failed, %s", temp);
+			status_obj = appsocket_status_open(printer_address.sin_addr.s_addr, ntohs(printer_address.sin_port) + 1);
+			}
+		gu_Catch
+			{
+			alert(int_cmdline.printer, TRUE, "appsocket_status_open() failed: %s", gu_exception);
 			return EXIT_PRNERR;
 			}
 		status_function = appsocket_status;

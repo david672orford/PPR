@@ -37,7 +37,6 @@ require 'cgi_intl.pl';
 require 'cgi_widgets.pl';
 
 defined($INTDIR) || die;
-defined($PPDDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
 
 my $tabbed_table = [

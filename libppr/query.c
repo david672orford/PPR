@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 15 October 2003.
 */
 
 #include "before_system.h"
@@ -193,6 +193,8 @@ void query_connect(struct QUERY *q)
 						close(new_stderr);
 						}
 
+						chdir(HOMEDIR);
+
 						/* launch interface program */
 						{
 						char fname[MAX_PPR_PATH];
@@ -231,7 +233,7 @@ void query_connect(struct QUERY *q)
 		}
 
 	q->connected = TRUE;
-	}
+	} /* end of query_connect() */
 
 /** Send a line to the printer
 
@@ -247,7 +249,7 @@ void query_puts(struct QUERY *q, const char s[])
 		gu_Throw("buffer full");
 	memcpy(q->buf_stdin + q->buf_stdin_len, s, len);
 	q->buf_stdin_len += len;
-	}
+	} /* end of query_puts() */
 
 /** Receive a line from the printer
 
@@ -257,9 +259,9 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 	fd_set rfds, wfds;
 	char *p;
 
-	/* This loop continues until either we get a line a zero byte read()
-	   happens on both the pipes from the interface programs stdout
-	   and stderr. */
+	/* This loop continues until either we get a line or a zero byte read()
+	   happens on both the pipes from the interface program's stdout and
+	   stderr. */
 	while(!q->eof_stdout || !q->eof_stderr)
 		{
 		/* If we previously returned a line from the stdout buffer, delete it. */
@@ -286,7 +288,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 				q->buf_stdout_eaten = 1;
 				if(is_stderr)
 					*is_stderr = FALSE;
-				return "\004";
+				return "\004";				/* control-d */
 				}
 			else if((p = memchr(q->buf_stdout, '\n', q->buf_stdout_len)) || (p = memchr(q->buf_stdout, '\r', q->buf_stdout_len)))
 				{
@@ -404,24 +406,34 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 		}
 
 	return NULL;
-	}
+	} /* end of query_gets() */
 
 /** wait for the interface program to connect to the printer
+
+If the interface program exits before reporting the outcome of the connexion
+attempt, this function will return NULL.  Otherwise it will return the line
+that indicates the result.
 
 */
 char *query_connect_wait(struct QUERY *q)
 	{
 	char *line;
-	while((line = query_getline(q, NULL)))
+	gu_boolean is_stderr;
+	while((line = query_getline(q, &is_stderr)))
 		{
+		if(is_stderr)
+			{
+			fprintf(stderr, "    %s\n", line);
+			continue;
+			}
 		if(strcmp(line, "%%[ PPR connecting ]%%") == 0)
 			continue;
 		if(strncmp(line, "%%[", 3) == 0)
 			return line;
-		fprintf(stderr, "Leading garbage: \"%s\" (%d characters)\n", line, (int)strlen(line));
+		fprintf(stderr, "Leading garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
 		}
 	return NULL;
-	}
+	} /* end of query_wait() */
 
 /** Send a control-d and wait for the answering handshake
 
@@ -441,7 +453,7 @@ void query_control_d(struct QUERY *q)
 				break;
 			}
 		}
-	}
+	} /* end of query_control_d() */
 
 /** send a PostScript query
 
@@ -472,7 +484,7 @@ void query_sendquery(struct QUERY *q, const char *name, const char values[], con
 	query_puts(q, "%%EndQuery: ");
 	query_puts(q, default_response);
 	query_puts(q, "\n");
-	}
+	} /* end of query_sendquery() */
 
 /** Disconnect from the printer
 
@@ -499,16 +511,19 @@ void query_disconnect(struct QUERY *q)
 		}
 
 	q->connected = FALSE;
-	}
+	} /* end of query_disconnect() */
 
 /** destroy a query object
 
 */
 void query_delete(struct QUERY *q)
 	{
-	if(q->line) gu_free(q->line);
+	if(q->connected)
+		query_disconnect(q);
+	if(q->line)
+		gu_free(q->line);
 	gu_free(q);
-	}
+	} /* end of query_delete() */
 
 /*
 ** gcc -I ../include -o query -DTEST query.c ../libppr.a ../libgu.a
@@ -551,7 +566,7 @@ int main(int argc, char *argv[])
 				countdown--;
 			}
 
-		query_disconnect(q);
+		query_disconnect(q);	/* not strictly necessary */
 		query_delete(q);
 		}
 	gu_Catch

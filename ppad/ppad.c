@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 15 October 2003.
 */
 
 /*
@@ -157,90 +157,134 @@ gu_boolean am_administrator(void)
 */
 static void help_media(FILE *out)
 	{
-	fputs("Media Management:\n"
-		"\tppad media show <name>\n"
-		"\tppad media put <name> <width> <length> <weight> <colour> <type> <banner>\n"
-		"\tppad media delete <name>\n"
-		"\tppad media export\n"
-		"\tppad media import\n", out);
+	int i;
+	const char *command_list[] =
+		{
+		N_("ppad media show <name>"),
+		N_("ppad media put <name> <width> <length> <weight> <colour> <type> <banner>"),
+		N_("ppad media delete <name>"),
+		N_("ppad media export"),
+		N_("ppad media import"),
+		NULL
+		};
+
+	fputs(_("Media Management:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "\t%s\n", p);
+		}
 	} /* end of help_media() */
 
 static void help_printer(FILE *out)
 	{
-	fputs("Printer Managment:\n"
-		"\tppad show <printer>\n"
-		"\tppad interface <printer> <interface> <address>\n"
-		"\tppad delete <printer>\n"
-		"\tppad comment <printer> <string>\n"
-		"\tppad location <printer> <string>\n"
-		"\tppad department <printer> <string>\n"
-		"\tppad contact <printer> <string>\n"
-		"\tppad options <printer> <quoted_list>\n"
-		"\tppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}\n"
-		"\tppad feedback <printer> {True, False}\n"
-		"\tppad codes <printer> {Clean7Bit, Clean8Bit, Binary,\n"
-				"\t\tTBCP, UNKNOWN, DEFAULT}\n"
-		"\tppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]\n"
-		"\tppad ppd <printer> <filename>\n"
-		"\tppad alerts <printer> <frequency> <method> <address>\n"
-		"\tppad frequency <printer> <integer>\n"
-		"\tppad flags <printer> {never, no, yes, always} {never, no, yes, always}\n"
-		"\tppad charge <printer> {<money>, none} [<money>]\n"
-		"\tppad outputorder <printer> {Normal, Reverse, PPD}\n"
-		"\tppad bins ppd <printer>\n"
-		"\tppad bins add <printer> <bin>\n"
-		"\tppad bins delete <printer> <bin>\n"
-		"\tppad touch <printer>\n"
-		"\tppad switchset <printer> <list>\n"
-		"\tppad deffiltopts <printer>\n"
-		"\tppad passthru <printer> <list>\n"
-		"\tppad ppdopts <printer>\n"
-		"\tppad limitpages <printer> <number> <number>\n"
-		"\tppad limitkilobytes <printer> <number> <number>\n"
-		"\tppad grayok <printer> <boolean>\n"
-		"\tppad acls <name> <acl> ...\n"
-		"\tppad userparams <name> <list>\n"
-		"\tppad pagetimelimit <name> <value>\n"
-		"\tppad addon <name> <value>\n", out);
+	int i;
+    const char *command_list[] =
+    	{
+		N_("ppad show <printer>"),
+		N_("ppad interface <printer> <interface> <address>"),
+		N_("ppad delete <printer>"),
+		N_("ppad comment <printer> <string>"),
+		N_("ppad location <printer> <string>"),
+		N_("ppad department <printer> <string>"),
+		N_("ppad contact <printer> <string>"),
+		N_("ppad options <printer> <quoted_list>"),
+		N_("ppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}"),
+		N_("ppad feedback <printer> {True, False}"),
+		N_("ppad codes <printer> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"),
+		N_("ppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]"),
+		N_("ppad ppd <printer> <filename>"),
+		N_("ppad ppdq <printer>"),
+		N_("ppad alerts <printer> <frequency> <method> <address>"),
+		N_("ppad frequency <printer> <integer>"),
+		N_("ppad flags <printer> {never, no, yes, always} {never, no, yes, always}"),
+		N_("ppad charge <printer> {<money>, none} [<money>]"),
+		N_("ppad outputorder <printer> {Normal, Reverse, PPD}"),
+		N_("ppad bins ppd <printer>"),
+		N_("ppad bins add <printer> <bin>"),
+		N_("ppad bins delete <printer> <bin>"),
+		N_("ppad touch <printer>"),
+		N_("ppad switchset <printer> <list>"),
+		N_("ppad deffiltopts <printer>"),
+		N_("ppad passthru <printer> <list>"),
+		N_("ppad ppdopts <printer>"),
+		N_("ppad limitpages <printer> <number> <number>"),
+		N_("ppad limitkilobytes <printer> <number> <number>"),
+		N_("ppad grayok <printer> <boolean>"),
+		N_("ppad acls <name> <acl> ..."),
+		N_("ppad userparams <name> <list>"),
+		N_("ppad pagetimelimit <name> <value>"),
+		N_("ppad addon <name> <value>"),
+		NULL
+    	};
+
+	fputs(_("Printer Managment:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "    %s\n", p);
+		}
 	} /* end of help_printer() */
 
 static void help_group(FILE *out)
 	{
-	fputs("Group Management:\n"
-		"\tppad group show <group>\n"
-		"\tppad group members <group> <printer> ...\n"
-		"\tppad group add <group> <printer>\n"
-		"\tppad group remove <group> <printer>\n"
-		"\tppad group delete <group>\n"
-		"\tppad group comment <group> <comment>\n"
-		"\tppad group rotate <group> {true, false}\n"
-		"\tppad group touch <group>\n"
-		"\tppad group switchset <printer> <list>\n"
-		"\tppad group deffiltopts <group>\n"
-		"\tppad group passthru <group> <list>\n"
-		"\tppad group acls <name> <acl> ...\n"
-		"\tppad group addon <name> <value>\n", out);
+	int i;
+	const char *command_list[] = 
+		{
+		N_("ppad group show <group>"),
+		N_("ppad group members <group> <printer> ..."),
+		N_("ppad group add <group> <printer>"),
+		N_("ppad group remove <group> <printer>"),
+		N_("ppad group delete <group>"),
+		N_("ppad group comment <group> <comment>"),
+		N_("ppad group rotate <group> {true, false}"),
+		N_("ppad group touch <group>"),
+		N_("ppad group switchset <printer> <list>"),
+		N_("ppad group deffiltopts <group>"),
+		N_("ppad group passthru <group> <list>"),
+		N_("ppad group acls <name> <acl> ..."),
+		N_("ppad group addon <name> <value>"),
+		NULL
+		};
+
+	fputs(_("Group Management:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "    %s\n", p);
+		}
 	} /* end of help_group() */
 
 static void help_alias(FILE *out)
 	{
-	fputs("Alias Management:\n"
-		"\tppad alias show <alias>\n"
-		"\tppad alias forwhat <alias> <queuename>\n"
-		"\tppad alias delete <alias>\n"
-		"\tppad alias comment <alias> <comment>\n"
-		"\tppad alias switchset <alias> <list>\n"
-		"\tppad alias passthru <alias> <list>\n"
-		"\tppad alias addon <name> <value>\n", out);
+	int i;
+	const char *command_list[] =
+		{	
+		N_("ppad alias show <alias>"),
+		N_("ppad alias forwhat <alias> <queuename>"),
+		N_("ppad alias delete <alias>"),
+		N_("ppad alias comment <alias> <comment>"),
+		N_("ppad alias switchset <alias> <list>"),
+		N_("ppad alias passthru <alias> <list>"),
+		N_("ppad alias addon <name> <value>"),
+		NULL
+		};
+		
+	fputs(_("Alias Management:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "    %s\n", p);
+		}
 	}
 
 static void help_other(FILE *out)
 	{
 	fputs("New printer default:\n"
-		"\tppad new alerts <frequency> <method> <address>\n", out);
+		"ppad new alerts <frequency> <method> <address>\n", out);
 
-	fputs("\nDispatch reminder email to user \""USER_PPR"\":\n"
-		"\tppad remind\n", out);
+	fprintf(out, "Dispatch reminder email to user \"%s\":\n"
+		"ppad remind\n", USER_PPR);
 	} /* end of help_other() */
 
 /*
@@ -248,20 +292,47 @@ static void help_other(FILE *out)
 */
 static void help(FILE *out)
 	{
-	fputs("Valid switches:\n"
-		"\t--version\t\tprint version\n"
-		"\t--help\t\t\tprint help\n"
-		"\t-M\t\t\tmachine readable output\n"
-		"\t--machine-readable\n"
-		"\t-d <n>\t\t\tset debug level to <n>\n"
-		"\t--debug=<n>\n", out);
+	int i;
+	const char *switch_list[] =
+		{
+		N_("-M\tselect machine-readable output"),
+		N_("--machine-readable\tsame as -M"),
+		N_("-d <n>\tset debug level to <n>"),
+		N_("--debug=<n>\tsame as -d"),
+		N_("--version\tprint PPR version information"),
+		N_("--help\tprint this help message"),
+		NULL
+		};
+	const char *command_list[] =
+		{
+		N_("ppad help printer"),
+		N_("ppad help group"),
+		N_("ppad help alias"),
+		N_("ppad help media"),
+		N_("ppad help other"),
+		NULL
+		};
 
-	fputs("\nAdditional help:\n"
-		"\tppad help printer\n"
-		"\tppad help group\n"
-		"\tppad help alias\n"
-		"\tppad help media\n"
-		"\tppad help other\n", out);
+	fputs(_("Valid switches:\n"), out);
+	for(i = 0; switch_list[i]; i++)
+		{
+		const char *p = gettext(switch_list[i]);
+		int to_tab = strcspn(p, "\t");
+		fprintf(out, "    %-20.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
+		}
+
+	fputc('\n', out);
+
+	fputs(_("Additional help topics:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "    %s\n", p);
+		}
+
+	fputc('\n', out);
+	fprintf(out, _("The %s manpage may be viewed by entering this command at a shell prompt:\n"
+		"    ppdoc %s\n"), "ppad(1)", "ppad");
 	} /* end of help() */
 
 /*
@@ -396,6 +467,8 @@ static int dispatch(const char *argv[])
 		return printer_rip(&argv[1]);
 	if(gu_strcasecmp(argv[0], "ppd") == 0)
 		return printer_ppd(&argv[1]);
+	if(gu_strcasecmp(argv[0], "ppdq") == 0)
+		return printer_ppdq(&argv[1]);
 	if(gu_strcasecmp(argv[0], "alerts") == 0)
 		return printer_alerts(&argv[1]);
 	if(gu_strcasecmp(argv[0], "frequency") == 0)

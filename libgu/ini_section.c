@@ -430,18 +430,23 @@ const char *gu_ini_scan_list(const char file_name[], const char section_name[], 
 /** Get string value from INI file
 
 This returns a string value from the INI file.  If there is none,
-the default value is returned.
+the default value is returned.  It is OK for the default value 
+to be NULL.  If a non-NULL value is returned, it is in memory
+allocated with gu_strdup().
+
+This is coded oddly, but it really does produce the correct result
+when the file, section, key, or value is missing.
 
 */
 char *gu_ini_query(const char file_name[], const char section_name[], const char key_name[], int index, const char default_value[])
 	{
 	FILE *cf = fopen(file_name, "r");
 	struct GU_INI_ENTRY *section = gu_ini_section_load(cf, section_name);
-	char *value = gu_strdup(gu_ini_value_index(gu_ini_section_get_value(section, key_name), index, default_value));
+	const char *value = gu_ini_value_index(gu_ini_section_get_value(section, key_name), index, default_value);
 	gu_ini_section_free(section);
 	if(cf)
 		fclose(cf);
-	return value;
+	return value ? gu_strdup(value) : NULL;
 	} /* end of gu_ini_query() */
 
 /** Copy missing section from sample file to INI file

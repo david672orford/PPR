@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 15 October 2003.
 */
 
 /** \file
@@ -1180,11 +1180,12 @@ static void ppop_move(const char command[])
 
 	for(rank2=x=0; x < queue_entries; x++)
 		{
-		if( queue[x].destid == destid	/* if match, */
+		if(queue[x].destid == destid	/* if match, */
 				&& (id == WILDCARD_JOBID || queue[x].id == id)
 				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
 				&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-				&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id) )
+				&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id)
+				)
 			{
 			struct QEntry *q = &queue[x];
 
@@ -1210,7 +1211,7 @@ static void ppop_move(const char command[])
 				ppr_fnamef(oldname,"%s/%s:%s-%d.%d(%s)", QUEUEDIR,
 					nodeid_to_name(q->destnode_id),destid_to_name(q->destnode_id,q->destid),q->id,q->subid,nodeid_to_name(q->homenode_id));
 				ppr_fnamef(newname,"%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-					nodeid_to_name(q->destnode_id),new_destname,q->id,q->subid,nodeid_to_name(q->homenode_id));
+					new_destnode,new_destname,q->id,q->subid,nodeid_to_name(q->homenode_id));
 				rename(oldname, newname);
 
 				/* Rename all of the data files. */
@@ -1221,16 +1222,18 @@ static void ppop_move(const char command[])
 					{
 					ppr_fnamef(oldname,"%s/%s:%s-%d.%d(%s)-%s", DATADIR,
 						nodeid_to_name(q->destnode_id),
-									destid_to_name(q->destnode_id, q->destid),
-									q->id, q->subid,
-									nodeid_to_name(q->homenode_id),
-						list[x]);
+						destid_to_name(q->destnode_id, q->destid),
+						q->id, q->subid,
+						nodeid_to_name(q->homenode_id),
+						list[x]
+						);
 					ppr_fnamef(newname,"%s/%s:%s-%d.%d(%s)-%s", DATADIR,
-						nodeid_to_name(q->destnode_id),
-									new_destname,
-									q->id, q->subid,
-									nodeid_to_name(q->homenode_id),
-						list[x]);
+						new_destnode,
+						new_destname,
+						q->id, q->subid,
+						nodeid_to_name(q->homenode_id),
+						list[x]
+						);
 					rename(oldname, newname);
 					}
 				}

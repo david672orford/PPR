@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 15 October 2003.
 */
 
 /*! \file
@@ -91,15 +91,18 @@ void *gu_alloc(size_t number, size_t size)
 
 /** duplicate a string
 
-The function gu_strdup() takes a string pointer as its sole argument
-and returns a pointer to a new copy of the string.
+The function gu_strdup() takes a string pointer as its sole argument and
+returns a pointer to a new copy of the string.
 
 */
 char *gu_strdup(const char *string)
 	{
 	char *rval;
 
-	DODEBUG(("gu_strdup(\"%s\")", string));
+	DODEBUG(("gu_strdup(\"%s\")", string ? string : ""));
+	
+	if(!string)
+		return NULL;
 
 	if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
 		libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));

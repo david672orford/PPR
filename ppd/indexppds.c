@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 15 October 2003.
 */
 
 #include "before_system.h"
@@ -166,10 +166,11 @@ static int do_file(FILE *indexfile, const char filename[])
 	/*
 	** OK, here goes.
 	*/
-	fprintf(indexfile, "%s:%s:%s\n",
+	fprintf(indexfile, "%s:%s:%s:%s\n",
 		filename,
 		vendor ? vendor : "Other",
-		description
+		description,
+		Product ? Product : ""
 		);
 
 	if(vendor)

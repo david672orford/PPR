@@ -29,7 +29,7 @@
 */
 
 /*! \file
-	\brief determine name of this node
+	\brief determine name of this network node
 */
 
 #include "before_system.h"
@@ -56,38 +56,44 @@ const char *ppr_get_nodename(void)
 	{
 	static char *nodename = (char*)NULL;
 
-	if(nodename == (char*)NULL)
+	if(!nodename)
 		{
-		struct utsname s;
-		int len;
+		/* First we try the configuration file. */
+		nodename = gu_ini_query(PPR_CONF, "network", "nodename", 0, NULL);
 
-		/*
-		** Ask the system for system name information.
-		** What we really care about is the nodename.
-		*/
-		if(uname(&s) == -1)
-			 libppr_throw(EXCEPTION_OTHER, "ppr_get_nodename", "uname() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		/* If that didn't work, we use uname(). */
+		if(!nodename)
+			{
+			struct utsname s;
+			int len;
 
-		/*
-		** If the domain name is included in the node name,
-		** only use the part before the first dot.
-		*/
-		len = strcspn(s.nodename,".");
+			/*
+			** Ask the system for system name information.
+			** What we really care about is the nodename.
+			*/
+			if(uname(&s) == -1)
+				 libppr_throw(EXCEPTION_OTHER, "ppr_get_nodename", "uname() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-		/*
-		** If the node name is too long, truncate it.
-		** That nodenames be unique in the first 16 characters
-		** does not seem unreasonable.
-		*/
-		if(len > MAX_NODENAME) len = MAX_NODENAME;
+			/*
+			** If the domain name is included in the node name,
+			** only use the part before the first dot.
+			*/
+			len = strcspn(s.nodename, ".");
 
-		/*
-		** Allocate memory for and make a copy of the
-		** nodename we have determined uppon.
-		*/
-		nodename = (char*)gu_alloc(len+1, sizeof(char));
-		strncpy(nodename, s.nodename, len);
-		nodename[len] = '\0';
+			/*
+			** If the node name is too long, truncate it.
+			** That nodenames be unique in the first 16 characters
+			** does not seem unreasonable.
+			*/
+			if(len > MAX_NODENAME)
+				len = MAX_NODENAME;
+
+			/*
+			** Allocate memory for and make a copy of the
+			** nodename we have determined uppon.
+			*/
+			nodename = gu_strndup(s.nodename, len);
+			}
 		}
 
 	return nodename;

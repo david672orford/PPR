@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_strsep.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 November 2002.
+** Last modified 15 October 2003.
+*/
+
+/*! \file
+	\brief string parser
+
 */
 
 #include "before_system.h"
@@ -33,19 +38,19 @@
 #include "gu.h"
 #include "global_defines.h"
 
-/*
-** This is intended as a clone of BSD strsep().
-**
-** BSD strsep() differs from ANSI strtok() in that it can handle
-** empty fields and in that it has no static storage, so it is
-** thread safe.
-**
-** p = line;
-** if(!(f1 = gu_strsep(&p, ":")) || !(f2 = gu_strsep(&p, ":")))
-**	  {
-**	  error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
-**	  return -1;
-**	  }
+/** extract fields from a string
+
+This is intended as a clone of BSD strsep(). BSD strsep() differs from ANSI
+strtok() in that it can handle empty fields and in that it has no static
+storage, so it is thread safe.
+
+p = line;
+if(!(f1 = gu_strsep(&p, ":")) || !(f2 = gu_strsep(&p, ":")))
+	{
+	error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
+	return -1;
+	}
+
 */
 char *gu_strsep(char **stringp, const char *delim)
 	{

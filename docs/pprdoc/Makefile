@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 14 October 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -37,11 +37,11 @@ include ../rules.mk
 #=== Inventory ==============================================================
 
 BUILT=\
-	pprdoc-enter.png pprdoc-printing1.png pprdoc-printing2.png \
 	pprdoc.html \
+	pprdoc.pdf \
+	pprdoc-enter.png pprdoc-printing1.png pprdoc-printing2.png \
 	pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps \
-	pprdoc.ps pprdoc.pdf
-
+	
 #=== Build ==================================================================
 
 all-docs: $(BUILT)
@@ -67,7 +67,7 @@ install: all-docs
 # are up to date.
 clean:
 	$(RMF) $(BACKUPS)
-	$(RMF) *.dvi *.aux *.log *.toc *.tex
+	$(RMF) *.dvi *.aux *.log *.toc *.tex *.ps
 
 # Remove anything that can be reconstructed.
 veryclean: clean

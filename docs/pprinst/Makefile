@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 September 2003.
+# Last modified 14 October 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -36,7 +36,7 @@ include ../rules.mk
 
 #=== Inventory ==============================================================
 
-BUILT=pprinst.html pprinst.ps pprinst.pdf
+BUILT=pprinst.html pprinst.pdf
 
 NONBUILT=web_start.png \
 	web_control.png \
@@ -90,7 +90,7 @@ install: all-docs
 # documentation.
 clean:
 	$(RMF) $(BACKUPS)
-	$(RMF) *.dvi *.aux *.log *.toc *.tex
+	$(RMF) *.dvi *.aux *.log *.toc *.tex *.ps
 
 # Remove anything that can be reconstructed.
 veryclean: clean

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 14 October 2003.
 */
 
 #ifndef _GU_H
@@ -273,23 +273,23 @@ __attribute__ (( noreturn, format (printf, 3, 4) ))
 ** New exception handling code
 ===================================================================*/
 
-extern char gu_exception[];
-extern int gu_exception_exitcode;
-extern int _gu_exception_try_depth;
-extern int _gu_exception_setjmp_retcode;
+extern char gu_exception[];					/* text of exception message */
+extern int _gu_exception_try_depth;			/* how deap are we? */
+extern int _gu_exception_setjmp_retcode;	/* what was the result of the last Try? */
+extern int _gu_exception_final;
 
 #define gu_Try { \
 	jmp_buf _gu_exception_jmp_buf; \
-	_gu_Try(&_gu_exception_jmp_buf); \
+	gu_Try_funct(&_gu_exception_jmp_buf); \
 	if((_gu_exception_setjmp_retcode = setjmp(_gu_exception_jmp_buf)) == 0)
 	
-void _gu_Try(jmp_buf *p_jmp_buf);
+void gu_Try_funct(jmp_buf *p_jmp_buf);
 
 void gu_Throw(const char message[], ...);
 
 void gu_ReThrow(void);
 
-#define gu_Final if(1)
+#define gu_Final if(_gu_exception_final++ < 1)
 
 #define gu_Catch _gu_exception_try_depth--; } if(_gu_exception_setjmp_retcode != 0)
 
@@ -305,9 +305,9 @@ struct gu_snmp
 	char result[1024];
 	};
 
-struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[], int *error_code);
+struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[]);
 void gu_snmp_close(struct gu_snmp *p);
-int gu_snmp_get(struct gu_snmp *p, int *error_code, ...);
+void gu_snmp_get(struct gu_snmp *p, ...);
 
 #define GU_SNMP_INT 1
 #define GU_SNMP_STR 2

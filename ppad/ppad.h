@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 April 2003.
+** Last modified 15 October 2003.
 */
 
 /*
@@ -67,6 +67,7 @@ int printer_feedback(const char *argv[]);
 int printer_codes(const char *argv[]);
 int printer_rip(const char *argv[]);
 int printer_ppd(const char *argv[]);
+int printer_ppdq(const char *argv[]);
 int printer_alerts(const char *argv[]);
 int printer_frequency(const char *argv[]);
 int printer_flags(const char *argv[]);
