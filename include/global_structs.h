@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
 
 /* =================== for queue entries =====================*/
@@ -172,9 +172,11 @@ struct QFileEntry
 #define WILDCARD_JOBID -1
 #define WILDCARD_SUBID -1
 
-int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job);
-int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry);
-void destroy_struct_QFileEntry(struct QFileEntry *job);
+void qentry_clear(struct QFileEntry *job);
+int qentry_load(struct QFileEntry *job, FILE *qfile);
+int qentry_save(const struct QFileEntry *qentry, FILE *Qfile);
+void qentry_free(struct QFileEntry *job);
+
 int parse_qfname(char *buffer, const char **destname, short int *id, short int *subid);
 int pagemask_encode(struct QFileEntry *job, const char pages[]);
 void  pagemask_print(const struct QFileEntry *job);

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 23 March 2005.
 #
 
 include ../Makefile.conf
@@ -40,7 +40,7 @@ LIBOBJS=\
 	int_tcp_probe.$(OBJ) \
 	datestamp.$(OBJ) \
 	tokenize.$(OBJ) \
-	readqfile.$(OBJ) writeqfile.$(OBJ) unreadqfile.$(OBJ) parse_qfname.$(OBJ) \
+	qentry_clear.$(OBJ) qentry_load.$(OBJ) qentry_save.$(OBJ) qentry_free.$(OBJ) parse_qfname.$(OBJ) \
 	quote.$(OBJ) \
 	findres.$(OBJ) \
 	protected.$(OBJ) money.$(OBJ) \

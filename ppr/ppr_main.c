@@ -433,7 +433,7 @@ int write_queue_file(struct QFileEntry *qentry)
 		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fdopen", errno, gu_strerror(errno));
 
 	/* Use library code to write the body. */
-	write_struct_QFileEntry(Qfile, qentry);
+	qentry_save(qentry, Qfile);
 
 	/* Write an empty Addon section.  Job ticket information may be added later by ppop. */
 	fprintf(Qfile, "EndAddon\n");

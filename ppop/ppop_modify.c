@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 23 March 2005.
 */
 
 #include "config.h"
@@ -146,7 +146,7 @@ static void write_changes(FILE *qf, const struct JOB *job)
 		return;
 		}
 
-	write_struct_QFileEntry(nqf, &(job->qentry));
+	qentry_save(&(job->qentry), nqf);
 
 	for(i = 0; i < job->addon_count; i++)
 		fprintf(nqf, "%s: %s\n", job->addon[i].name, job->addon[i].value);
@@ -337,7 +337,8 @@ int ppop_modify(char *argv[])
 		}
 
 	/* Read the first part of the queue file into a special structure. */
-	if(read_struct_QFileEntry(qf, &job.qentry) == -1)
+	qentry_clear(&job.qentry);
+	if(qentry_load(&job.qentry, qf) == -1)
 		return EXIT_INTERNAL;
 
 	/* Read in the extensions section.  This section will contain things that
@@ -411,7 +412,7 @@ int ppop_modify(char *argv[])
 	fclose(qf);
 
 	/* Free any allocated memory. */
-	destroy_struct_QFileEntry(&job.qentry);
+	qentry_free(&job.qentry);
 	destroy_addon(&job);
 
 	return ret;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
 
 /*
@@ -518,7 +518,8 @@ int custom_list(char *argv[],
 			** Read additional information from the queue file included
 			** in the reply file.
 			*/
-			if(read_struct_QFileEntry(reply_file, &qfileentry) == -1)
+			qentry_clear(&qfileentry);
+			if(qentry_load(&qfileentry, reply_file) == -1)
 				printf("Invalid queue entry:\n");
 
 			/* Copy everything into a QEntry structure for easy parameter passing. */
@@ -567,7 +568,7 @@ int custom_list(char *argv[],
 			** Free memory in the qfileentry.
 			** This will free destname as well.
 			*/
-			destroy_struct_QFileEntry(&qfileentry);
+			qentry_free(&qfileentry);
 			gu_free(onprinter);
 			} /* end of while, loop back for next job */
 

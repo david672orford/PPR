@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libppr/readqfile.c
+** mouse:~ppr/src/libppr/qentry_load.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,8 +25,10 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
+
+/*! \file */
 
 #include "config.h"
 #include <stdlib.h>
@@ -53,54 +55,12 @@ if(strncmp(line, name, sizeof(name)-1) == 0) \
 	continue; \
 	}
 
-void zero_struct_QFileEntry(struct QFileEntry *job)
-	{
-	/* Clear the job id variables because we won't read them.
-	   (They are encoded in the queue file name.) */
-	job->destname = (char*)NULL;
-	job->id = 0;
-	job->subid = 0;
-
-	/* Some more defaults */
-	job->PPRVersion = 0.0;
-	job->priority = 20;
-	job->time = 0;
-	job->commentary = 0;						/* optional */
-	job->StripPrinter = TRUE;
-	job->commentary = 0;
-
-	/* More pointer defaults which we set to NULL to show they haven't 
-	   been read (yet).  This order is the same as in readqfile.c so 
-	   as to make it easier to compare the lists. */
-	job->username = (char*)NULL;
-	job->proxy_for = (char*)NULL;				/* optional */
-	job->For = (char*)NULL;
-	job->charge_to = (char*)NULL;				/* optional */
-	job->magic_cookie = (const char *)NULL;
-	job->responder.name = (const char*)NULL;
-	job->responder.address = (const char*)NULL;
-	job->responder.options = (const char*)NULL; /* optional */
-	job->lc_messages = (char*)NULL;
-
-	job->Creator = (char*)NULL;					/* optional */
-	job->Title = (char*)NULL;					/* optional */
-	job->Routing = (char*)NULL;					/* optional */
-	job->lpqFileName = (char*)NULL;				/* optional */
-	job->PassThruPDL = (const char *)NULL;		/* optional */
-	job->Filters = (const char *)NULL;			/* optional */
-	job->PJL = (const char *)NULL;				/* not read by us */
-
-	job->page_list.mask = NULL;
-	job->draft_notice = (char*)NULL;			/* optional */
-	job->question = NULL;
-	job->ripopts = NULL;
-	}
-
-/*
-** Read the queue file up to but not including the first "Media:" line.
-** Return 0 if all goes well, -1 if there is an error in the queue file.
+/** Load a queue file into a structure
+ *
+ * Read the queue file up to but not including the first "Media:" line.
+ * Return 0 if all goes well, -1 if there is an error in the queue file.
 */
-int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
+int qentry_load(struct QFileEntry *job, FILE *qfile)
 	{
 	const char function[] = "read_struct_QFileEntry";
 	gu_boolean found_time = FALSE;
@@ -118,8 +78,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	char *p;
 	int retcode = 0;
 	int tempint;
-
-	zero_struct_QFileEntry(job);
 
 	while((line = gu_getline(line, &line_available, qfile)))
 		{

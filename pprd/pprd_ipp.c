@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 March 2005.
+** Last modified 23 March 2005.
 */
 
 /*
@@ -485,8 +485,9 @@ static void ipp_get_jobs(struct IPP *ipp)
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
 			continue;
 			}
+		qentry_clear(&qfileentry);
 		{
-		int ret = read_struct_QFileEntry(qfile, &qfileentry);
+		int ret = qentry_load(&qfileentry, qfile);
 		fclose(qfile);
 		if(ret == -1)
 			{
@@ -543,7 +544,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
-		destroy_struct_QFileEntry(&qfileentry);
+		qentry_free(&qfileentry);
 		}
 
 	unlock();

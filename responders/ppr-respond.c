@@ -325,8 +325,9 @@ static int job_message(int argc, char *argv[])
 			fprintf(stderr, "%s: fdopen(%d, \"r\") failed, errno=%d (%s)\n", argv[0], 3, errno, gu_strerror(errno));
 			return -1;
 			}
-	
-		read_struct_QFileEntry(f, &rinfo.job);
+
+		qentry_clear(&rinfo.job);
+		qentry_load(&rinfo.job, f);
 	
 		fclose(f);
 		}

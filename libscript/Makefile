@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 23 March 2005.
 #
 
 include ../Makefile.conf
@@ -39,7 +39,6 @@ BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 BUILT_LIBS=\
 	respond.sh respond.ph \
 	signal.sh \
-	commentary.sh commentary.ph \
 	interface.sh interface.tcl \
 
 UNBUILT_LIBS=\
@@ -94,18 +93,6 @@ respond.ph: ../include/respond.h
 	echo "# Perl translation of respond.h" >respond.ph
 	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
 		<../include/respond.h >>respond.ph
-
-# Shell version of commentary.h.
-commentary.sh: ../include/commentary.h
-	echo "# Bourne shell translation of commentary.h" >commentary.sh
-	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/\1=\2\3#\4/p' \
-		<../include/commentary.h >>commentary.sh
-
-# Perl version of commentary.h.
-commentary.ph: ../include/commentary.h
-	echo "# Perl translation of commentary.h" >commentary.ph
-	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
-		<../include/commentary.h >>commentary.ph
 
 # Shell version of interface.h.
 interface.sh: ../include/interface.h

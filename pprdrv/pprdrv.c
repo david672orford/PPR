@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
 
 /*
@@ -2027,7 +2027,8 @@ int real_main(int argc, char *argv[])
 	** Read miscelaneous data from the queue file
 	** into the structure "job".
 	*/
-	if(read_struct_QFileEntry(qstream, &job))
+	qentry_clear(&job);
+	if(qentry_load(&job, qstream))
 		fatal(EXIT_JOBERR, "Defective queue file data.");
 
 	/*
