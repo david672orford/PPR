@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/lpr.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell and Damian Ivereigh.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 December 2000.
+** Last modified 10 May 2001.
 */
 
 /*
@@ -38,7 +38,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "libppr_int.h"
 #include "uprint.h"
@@ -427,7 +426,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE,
     		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
     		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Check for an unsuitable feedback settting. */
@@ -437,7 +436,7 @@ int main(int argc, char *argv[])
     		_("The PPR interface program \"%s\" does not support bidirectional\n"
     		"communication.  Use the command \"ppad feedback %s false\" to\n"
     		"correct this problem."), int_cmdline.int_basename, int_cmdline.printer);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
 
     /* Seperate the host and printer parts of the address. */
@@ -447,7 +446,7 @@ int main(int argc, char *argv[])
 	{
     	alert(int_cmdline.printer, TRUE, _("Printer address \"%s\" is invalid, the correct syntax\n"
     					"is \"printer@host\"."), int_cmdline.address);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
     }
 
@@ -536,7 +535,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
     }
 
@@ -559,8 +558,11 @@ int main(int argc, char *argv[])
 	{
 	if(uprint_errno == UPE_TEMPFAIL)
 	    int_exit(EXIT_PRNERR);
-	else
-	    int_exit(EXIT_PRNERR_NORETRY);
+	if(uprint_errno == UPE_BADSYS)
+	    int_exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
+	if(uprint_errno == UPE_BADARG)
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	int_exit(EXIT_PRNERR_NORETRY);
 	}
 
     /* Tell pprdrv that the connexion has gone through. */
@@ -581,7 +583,7 @@ int main(int argc, char *argv[])
 	    alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send job.)"));
 	else			/* non-zero byte returned */
 	    alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."), address_host, address_queue);
-	int_exit(EXIT_PRNERR);
+	int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 	}
 
     /* Get our nodename because we need it for the queue file. */

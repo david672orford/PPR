@@ -234,8 +234,29 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 
 * Added PS and PDF versions of pprinst and pprdoc.
 
+* refman/ppad-interface.8.pod: new "snmp_status_interval=" option for the
+  tcpip interface.
 
-1.44b1, 8 May 2001--8 May 2001
+
+1.44b2, 8 May 2001--5 June 2001
 
 * Noted that ppr --commentary and --commentator* are slated for removal in
   PPR 1.50.
+
+* refman/ppad-interfaces.8.pod: new "create=" option for the dummy interface.
+
+* refman/ppad-interfaces.8.pod: new "snmp_community=" option for the tcpip
+  interface.
+
+* refman/ppad.8.pod: new "ppad rip".
+
+* Added links to w3c documents.
+
+* Removed references to the "ppr -C" switch in favour of the newer form 
+  "ppr --title".
+
+
+1.44, 5 June 2001--5 June 2001
+
+
+

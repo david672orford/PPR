@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 7 May 2001.
+# Last modified 10 May 2001.
 #
 
 use 5.005;
@@ -146,6 +146,7 @@ Vary: accept-language
 <html>
 <head>
 <title>$title</title>
+<link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
 </head>
 <body>
 <form method="POST" action="$ENV{SCRIPT_NAME}">
@@ -162,14 +163,14 @@ foreach my $i (@qquery_available)
     {
     if($i eq "-")
     	{
-	print "<hr width=200 align=\"left\">\n";
+	print "<hr class=\"sep\">\n";
 	next;
     	}
     my($short, $long) = @{$qquery_xlate{$i}};
     print "<nobr><input type=\"checkbox\" name=\"fields\" value=", html_value($i);
     print " checked" if(defined($fields_hash{$i}));
-    print ">", html($short);
-    print " -- ", html($long) if(defined $long);
+    print ">", H_($short);
+    print " &#151; ", H_($long) if(defined $long);	# em dash
     print "</nobr><br>\n";
     }
 

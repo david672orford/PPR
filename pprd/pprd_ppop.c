@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 16 April 2001.
+** Last modified 9 May 2001.
 */
 
 /*
@@ -40,7 +40,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"
@@ -1465,6 +1464,10 @@ void ppop_dispatch(const char command[])
 	error("%s(): can't open \"%s\", errno=%d (%s)", function, reply_fname, errno, gu_strerror(errno));
 	return;
 	}
+
+    /* If we don't do this, then "ppop start" will leak the file descriptor to pprdrv! */
+    gu_set_cloexec(fd);
+
     if(!(reply_file = fdopen(fd, "w")))
     	{
 	error("%s(): fdopen() failed, errno=%d (%s)", function, errno, gu_strerror(errno));

@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/libppr_int/int_cmdline.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** mouse:~ppr/src/libppr/int_cmdline.c
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 9 September 2000.
+** Last modified 10 May 2001.
 */
 
 #include "before_system.h"
@@ -18,7 +18,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "libppr_int.h"
 #include "interface.h"
 
@@ -34,7 +33,7 @@ void int_cmdline_set(int argc, char *argv[])
     if(argc < 3)
 	{
 	fprintf(stderr, "%s interface: insufficient parameters\n", (argc > 0) ? argv[0] : "???");
-	exit(EXIT_PRNERR_NORETRY);
+	exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
 
     /* Path to interface */

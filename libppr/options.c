@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/options.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 10 February 1999.
+** Last modified 5 June 2001.
 */
 
 /*
@@ -27,7 +27,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 
 /*
 ** Reset these routines, giving them a new set of options
@@ -114,24 +113,53 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
     	return -1;
     	}
 
-    /* Length of value is length until next space or tab. */
-    valuelen = strcspn(ptr, " \t");
+    if(*ptr != '"')
+	{
+	/* Length of value is length until next space or tab. */
+	valuelen = strcspn(ptr, " \t");
 
-    if(valuelen > (maxvaluelen - 1))
-    	{
-    	o->error = N_("Option value is illegally long");
-    	return -1;
-    	}
+	if(valuelen > (maxvaluelen - 1))
+    	    {
+    	    o->error = N_("Option value is too long");
+    	    return -1;
+    	    }
 
-    if(valuelen == 0)
-    	{
-    	o->error = N_("Empty value is not allowed");
-    	return -1;
-    	}
+	if(valuelen == 0)
+    	    {
+    	    o->error = N_("Empty value is not allowed");
+    	    return -1;
+    	    }
 
-    /* Copy the value and NULL terminate it. */
-    strncpy(value, ptr, valuelen);
-    value[valuelen] = '\0';
+	/* Copy the value and NULL terminate it. */
+	gu_StrCopyMax(value, valuelen, ptr);
+	value[valuelen] = '\0';
+	}
+    else
+	{
+	int x;
+	for(x=0,valuelen=1,ptr++; *ptr != '"'; valuelen++)
+	    {
+	    if(!*ptr)
+	    	{
+	    	o->error = N_("Unclosed quote");
+	    	return -1;
+	    	}
+	    if(*ptr == '\\' && (ptr[1] == '"' || ptr[1] == '\\'))
+		{
+		ptr++;
+		valuelen++;
+		}
+	    if(x >= maxvaluelen)
+	    	{
+	    	o->error = N_("Option value is too long");
+	    	return -1;
+	    	}
+	    value[x++] = *ptr++;
+	    }
+	value[x] = '\0';
+	ptr++;
+	valuelen++;
+	}    
 
     /* Determine the distance to next name=value pair.
        This will be used at the start of the next call. */

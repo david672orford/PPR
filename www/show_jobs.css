@@ -62,4 +62,15 @@ INPUT.buttons {
 	background: #a0a0a0;
 	}
 
+/* This is for the [Settings] screen. */
+HR.sep {
+	align: left;
+	width: 10cm;
+	height: 0pt;
+	border-style: solid none none none;
+	border-width: thin;
+	border-color: black;
+	margin: 0.5ex;
+	}
+
 /* end of file */

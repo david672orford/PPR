@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/interfaces/simple.sh
-# Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 7 December 1998.
+# Last modified 11 May 2001.
 #
 
 #
@@ -35,10 +35,11 @@ if [ ! -w "$ADDRESS" ]
 	if [ -c "$ADDRESS" ]
 		then
 		lib/alert $PRINTER TRUE "No permission to open port \"$ADDRESS\"."
+		exit $EXIT_PRNERR_NORETRY_ACCESS_DENIED
 		else
 		lib/alert $PRINTER TRUE "Port \"$ADDRESS\" does not exist."
+		exit $EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
 		fi
-	exit $EXIT_PRNERR_NORETRY
 	fi
 
 # Make sure no one has said we can do feedback.
@@ -47,27 +48,27 @@ if [ $FEEDBACK -ne 0 ]
 	lib/alert $PRINTER TRUE "This interface doesn't support bidirectional communication."
 	lib/alert $PRINTER FALSE "Use the command \"ppad feedback $PRINTER false\" to"
 	lib/alert $PRINTER FALSE "correct this problem."
-	exit $EXIT_PRNERR_NORETRY
+	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
 # change standard output to the port
 exec >$ADDRESS
 
-# if we are terminated, write a control-d and exit
+# If we are terminated, write a control-d and exit.
+# Is this a good idea?
 trap 'echo "\04"; exit $EXIT_SIGNAL' 15
 
 # copy the job
 /bin/cat -
 
 # see if there was an error
-errno=$?
-if [ $errno -ne 0 ]
+exit_code=$?
+if [ $exit_code -ne 0 ]
 	then
-	lib/alert $PRINTER TRUE "parallel interface: cat terminated with exit code $errno"
+	lib/alert $PRINTER TRUE "simple interface: cat failed, exit_code=$errno"
 	exit $EXIT_PRNERR
 	fi
 
 exit $EXIT_PRINTED
 
 # end of file
-

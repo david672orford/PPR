@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 10 May 2001.
 #
 
 include ../makeprogs/global.mk
@@ -22,9 +22,9 @@ BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 	getpwnam$(DOTEXE) getgrnam$(DOTEXE) getservbyname$(DOTEXE) \
 	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
 
-BUILT_LIBS=respond.sh respond.ph signal.sh commentary.sh commentary.ph
+BUILT_LIBS=respond.sh respond.ph signal.sh commentary.sh commentary.ph interface.sh
 
-UNBUILT_LIBS=interface.sh libppr_int.sh \
+UNBUILT_LIBS=libppr_int.sh \
 	responder_argv.pl pprpopup.pl \
 	speach.pl speach_play.pl speach_commentary.pl speach_response.pl \
 	MD5pp.pm readppd.pl acl.pl
@@ -77,26 +77,32 @@ signal.sh: signal_sh$(DOTEXE)
 # Shell version of respond.h.
 respond.sh: ../include/respond.h
 	echo "# Bourne shell translation of respond.h" >respond.sh
-	sed -n -e 's/^#define \([^ ]*\) \([^ 	]*\)\([	]*\)\(.*\)$$/\1=\2\3#\4/p' \
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([	]*\)\(.*\)$$/\1=\2\3#\4/p' \
 		<../include/respond.h >>respond.sh
 
 # Perl version of respond.h.
 respond.ph: ../include/respond.h
 	echo "# Perl translation of respond.h" >respond.ph
-	sed -n -e 's/^#define \([^ ]*\) \([^ 	]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
 		<../include/respond.h >>respond.ph
 
 # Shell version of commentary.h.
 commentary.sh: ../include/commentary.h
 	echo "# Bourne shell translation of commentary.h" >commentary.sh
-	sed -n -e 's/^#define \([^ ]*\) \([^ 	]*\)\([	]*\)\(.*\)$$/\1=\2\3#\4/p' \
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/\1=\2\3#\4/p' \
 		<../include/commentary.h >>commentary.sh
 
 # Perl version of commentary.h.
 commentary.ph: ../include/commentary.h
 	echo "# Perl translation of commentary.h" >commentary.ph
-	sed -n -e 's/^#define \([^ ]*\) \([^ 	]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/$$\1=\2;\3#\4/p' \
 		<../include/commentary.h >>commentary.ph
+
+# Shell version of interface.h.
+interface.sh: ../include/interface.h
+	echo "# Bourne shell translation of interface.h" >interface.sh
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/\1=\2\3#\4/p' \
+		<../include/interface.h >>interface.sh
 
 #=== Install ================================================================
 

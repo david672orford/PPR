@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--1999, Trinity College Computing Center.
+*% Copyright 1995--2001, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -32,12 +32,12 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript.master"
-*% which was last revised 4 August 1999.
+*% which was last revised 5 June 2001.
 *%
 #endif
 
 *% This tracks the PPR version:
-*FileVersion: "1.40"
+*FileVersion: "1.44"
 
 *FormatVersion: "4.2"
 *LanguageVersion: English
@@ -70,7 +70,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "6"
-*GhostscriptDriver: ljet3
+*% *pprRIP: gs ljet3 pcl
 #endif
 
 #ifdef PRINTER_HPDJ500
@@ -83,7 +83,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "4"
-*GhostscriptDriver: djet500
+*% *pprRIP: gs djet500 pcl
 #endif
 
 #ifdef PRINTER_DM24
@@ -96,7 +96,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "1"
-*GhostscriptDriver: necp6
+*% *pprRIP: gs necp6 ?
 #endif
 
 #ifdef PRINTER_HPDJ550C
@@ -109,7 +109,7 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*GhostscriptDriver: cdj550
+*% *pprRIP: gs cdj550 pcl
 #endif
 
 *% This is also true:

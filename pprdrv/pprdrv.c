@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 4 May 2001.
+** Last modified 9 May 2001.
 */
 
 /*
@@ -20,6 +20,8 @@
 */
 
 #include "before_system.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -36,7 +38,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
@@ -47,8 +48,11 @@
 ** Global variables.
 ====================================================*/
 
-/* Have we caught SIGTERM? */
+/* Have we caught SIGTERM?  If it is every set to true, then we shut down. */
 volatile gu_boolean sigterm_caught = FALSE;
+
+/* Has one of our timeouts expired?  No need to initialize this. */
+volatile gu_boolean sigalrm_caught;
 
 /* Are we running with the --test switch? */
 int test_mode = FALSE;
@@ -1116,6 +1120,10 @@ static void pprdrv_read_printer_conf(void)
     printer.Interface = NULL;
     printer.Address = NULL;
     printer.Options = NULL;
+    printer.RIP.name = NULL;
+    printer.RIP.driver = NULL;
+    printer.RIP.driver_output_language = NULL;
+    printer.RIP.options = NULL;
     printer.Commentators = (struct COMMENTATOR *)NULL;
     printer.do_banner = BANNER_DISCOURAGED;	/* default flag */
     printer.do_trailer = BANNER_DISCOURAGED;	/* page settings */
@@ -1175,7 +1183,7 @@ static void pprdrv_read_printer_conf(void)
 	    }
 
 	/* Read control-d use setting. */
-	else if(sscanf(confline, "JobBreak: %d", &printer.Jobbreak) == 1)
+	else if(gu_sscanf(confline, "JobBreak: %d", &printer.Jobbreak) == 1)
 	    {
 	    saw_jobbreak = TRUE;
 	    }
@@ -1206,6 +1214,23 @@ static void pprdrv_read_printer_conf(void)
 	    {
 	    if(printer.Options) gu_free(printer.Options);
 	    printer.Options = tptr;
+	    }
+
+	/*
+	** Read the Raster Image Processor settings.
+	*/
+	else if((tptr = lmatchp(confline, "RIP:")))
+	    {
+	    if(printer.RIP.name)
+	    	gu_free(printer.RIP.name);
+	    if(printer.RIP.driver)
+	    	gu_free(printer.RIP.driver);
+	    if(printer.RIP.driver_output_language)
+	    	gu_free(printer.RIP.driver_output_language);
+	    if(printer.RIP.options)
+	    	gu_free(printer.RIP.options);
+	    if((count = gu_sscanf(tptr, "%S %S %S %Z", &printer.RIP.name, &printer.RIP.driver, &printer.RIP.driver_output_language, &printer.RIP.options)) < 3)
+	    	fatal(EXIT_PRNERR_NORETRY, "Invalid \"%s\" (%s line %d).", "RIP:", cfname, linenum);
 	    }
 
 	/*
@@ -1368,6 +1393,7 @@ static void pprdrv_read_printer_conf(void)
     /* Use a Flex scanner to read information from the PPD file and store
        it in the printer structure. */
     read_PPD_file(printer.PPDFile);
+    DODEBUG_PPD(("after reading PPD: printer.prot.PJL=%s, printer.prot.TBCP=%s", printer.prot.PJL ? "TRUE" : "FALSE", printer.prot.TBCP ? "TRUE" : "FALSE"));
 
     /* If these things weren't set in the printer's configuration file,
        then set them to the default values.  The default values depend
@@ -1619,6 +1645,8 @@ static void transparent_hack_or_passthru_copy(const char *qf, gu_boolean is_tran
     if((handle = open(fname, O_RDONLY)) == -1)
 	fatal(EXIT_JOBERR, "%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 
+    gu_set_cloexec(handle);
+
     job_start(is_transparent ? JOBTYPE_THEJOB_TRANSPARENT : JOBTYPE_THEJOB_BARBAR);
 
     while((len = read(handle, buffer, sizeof(buffer))) > 0)
@@ -1633,8 +1661,67 @@ static void transparent_hack_or_passthru_copy(const char *qf, gu_boolean is_tran
     } /* end of transparent_hack_or_passthru_copy() */
 
 /*
+** Catch child death signals.  This handler is in placed during those
+** time when we don't expect the interface to terminate.  We ignore
+** the termination of things other than the interface, such as
+** commentators and custom hooks.
+*/
+static void sigchld_handler(int sig)
+    {
+    const char function[] = "sigchld_handler";
+    pid_t waitid;
+    int wait_status;
+
+    /*
+    ** In this loop we retrieve process exit status until there
+    ** are no more children whose exit status is available.  When
+    ** there are no more, we return.  If the child is the interface,
+    ** we drop out of the loop and let the code below handle it.
+    **
+    ** Notice that it is important to test for a return value of
+    ** 0 before we call interface_sigchld_hook() since it will test
+    ** for a return value that is equal to intpid and it sets intpid
+    ** to 0 when there is not interface running.
+    */
+    while(TRUE)
+	{
+	waitid = waitpid((pid_t)-1, &wait_status, WNOHANG);
+
+	/* If no more children have exited or no more children exist, */
+	if(waitid == 0)
+	    break;
+
+	if(waitid == -1)
+	    {
+	    if(errno == ECHILD)
+		break;
+	    if(errno == EINTR)
+	    	continue;
+	    signal_fatal(EXIT_PRNERR, "%s(): waitpid() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	    }
+
+	/* If the child that died was the interface, */
+	if(interface_sigchld_hook(waitid, wait_status))
+	    continue;
+
+	/* If the RIP terminated, */
+	if(rip_sigchld_hook(waitid, wait_status))
+	    continue;
+
+	/* If we get this far, a commentator terminated. */
+	#ifdef DEBUG_INTERFACE
+	signal_debug("%s(): process %ld terminated", function, (long int)waitid);
+	#endif
+    	}
+    } /* end of sigchld_handler() */
+
+/*
 ** Handler for terminate signal.  We set a flag which causes the main loop
 ** to terminate.
+**
+** While this handler is named for SIGTERM, it is also installed as the handler
+** for a number of other signals that can be reasonably interpreted as
+** terminate requests.  Look in main() to see which signals.
 */
 static void sigterm_handler(int sig)
     {
@@ -1645,13 +1732,13 @@ static void sigterm_handler(int sig)
     #endif
 
     /*
-    ** If we are testing the code which is invoked only if certain
-    ** things happen while halting the printer or canceling the active
-    ** job then delay here so that the cancel operation will
-    ** take a noticable period of time.
+    ** When testing code which is invoked only if certain events occur while
+    ** halting the printer or canceling the active job then delay here so that
+    ** the cancel operation will take a noticable period of time.
     **
     ** We have to be ready to restart sleep() because SIGCHLD might
-    ** interupt it.
+    ** interupt it.  We may get SIGCHLD a lot because commentators may be
+    ** chattering.
     */
     #ifdef DEBUG_DIE_DELAY
     {
@@ -1664,6 +1751,54 @@ static void sigterm_handler(int sig)
 
     sigterm_caught = TRUE;
     } /* end of sigterm_handler() */
+
+/*
+** We use alarm() to set timeouts for certain operations.  We check the
+** variable sigalrm_caught to figure out if the operation suceeded or
+** if it was interupted by the SIGALRM.
+*/
+static void sigalrm_handler(int sig)
+    {
+    #ifdef DEBUG_INTERFACE
+    signal_debug("SIGALRM caught");
+    #endif
+    sigalrm_caught = TRUE;
+    }
+
+/*
+** We might catch this signal if the interface dies.  We basically ignore
+** since we have other means of knowning that that interface has died.
+*/
+static void sigpipe_handler(int sig)
+    {
+    #ifdef DEBUG_INTERFACE
+    signal_debug("SIGPIPE caught");
+    #endif
+    }
+
+/*
+** This is called periodicaly from the output code to make sure we haven't
+** been asked to exit, that the interface hasn't died, and that the
+** RIP (if any) hasn't died.
+*/
+void fault_check(void)
+    {
+    FUNCTION4DEBUG("fault_check")
+    DODEBUG_INTERFACE(("%s()", function));
+
+    /* Not strictly an interface fault, but we catch it here. */
+    if(sigterm_caught)
+	{
+	DODEBUG_INTERFACE(("%s(): exiting because sigterm_caught is TRUE", function));
+	hooked_exit(EXIT_SIGNAL, "printing halted");
+	}
+
+    interface_fault_check();
+
+    rip_fault_check();
+
+    DODEBUG_INTERFACE(("%s(): done", function));
+    } /* end of fault_check() */
 
 /*
 ** main procedure
@@ -1729,6 +1864,9 @@ int main(int argc, char *argv[])
     signal_interupting(SIGTERM, sigterm_handler);;
     signal_interupting(SIGHUP, sigterm_handler);
     signal_interupting(SIGINT, sigterm_handler);
+    signal_restarting(SIGCHLD, sigchld_handler);
+    signal_interupting(SIGALRM, sigalrm_handler);
+    signal_interupting(SIGPIPE, sigpipe_handler);
 
     /* Read the printer configuration. */
     DODEBUG_MAIN(("main(): pprdrv_read_printer_conf()"));
@@ -1895,9 +2033,6 @@ int main(int argc, char *argv[])
     DODEBUG_MAIN(("main(): opening job files"));
     {
     char fname[MAX_PPR_PATH];
-
-/* ppr_fnamef(fname, "%s/%s", QUEUEDIR, QueueFile); */
-    fname[0] = '\0';
 
     ppr_fnamef(fname, "%s/%s-comments", DATADIR, QueueFile);
     if((comments = fopen(fname, "rb")) == (FILE*)NULL)

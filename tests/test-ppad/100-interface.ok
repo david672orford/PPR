@@ -43,6 +43,7 @@ options
 jobbreak	signal/pjl signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -105,6 +106,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -168,6 +170,7 @@ options
 jobbreak	default signal
 feedback	yes yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -231,6 +234,7 @@ options
 jobbreak	default signal
 feedback	no yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -293,6 +297,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -356,6 +361,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	Clean7Bit Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -418,6 +424,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -481,6 +488,7 @@ options	sleep=10 retry=5
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -544,6 +552,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -607,6 +616,7 @@ options	sleep=10 retry=5
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -669,6 +679,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -738,6 +749,7 @@ options	sleep=10 retry=5
 jobbreak	signal/pjl signal
 feedback	no yes
 codes	Clean7Bit Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -800,6 +812,7 @@ options
 jobbreak	default control-d
 feedback	default yes
 codes	default Clean8Bit
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_outfile.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 April 2000.
+** Last modified 24 May 2001.
 */
 
 /*
@@ -29,7 +29,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "ppr_exits.h"
@@ -66,7 +65,7 @@ void get_next_id(struct QFileEntry *q)
 	    /* Create a streams object for read and update. */
             f = fdopen(fd, "r+");
 
-            fscanf(f, "%d", &tid);		/* get last value used */
+            gu_fscanf(f, "%d", &tid);		/* get last value used */
             tid++;				/* add one to it */
             if(tid < 1 || tid > 9999)		/* if resulting id unreasonable or too large */
                 tid = 1;			/* force it to one */

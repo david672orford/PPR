@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 2 February 2001.
+** Last modified 23 May 2001.
 */
 
 #include "before_system.h"
@@ -25,6 +25,13 @@
 #include "global_defines.h"
 #include "libppr_int.h"
 
+/*
+** This code is used by printer interface programs for caching expensive 
+** address lookups.
+**
+** For some reason we are trying not to use stdio.
+*/
+
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[])
     {
     int fd;
@@ -32,7 +39,8 @@ void int_addrcache_save(const char printer[], const char interface[], const char
     char *temp;
     int towrite, written;
 
-    /* The name "-" indicates a printer with no queue yet. */
+    /* The name "-" indicates a printer with no queue yet.  We don't support
+       caching under such circumstances. */
     if(strcmp(printer, "-") == 0)
     	return;
 
@@ -45,13 +53,18 @@ void int_addrcache_save(const char printer[], const char interface[], const char
 
     /* Allocate a block to hold the data we want to write
        and contruct that data in the block. */
-    temp = (char*)gu_alloc((strlen(interface) + strlen(address) + strlen(resolution) + 1), sizeof(char));
-    sprintf(temp, "%s\n%s\n%s\n", interface, address, resolution);
+    {
+    int space_needed = (strlen(interface) + strlen(address) + strlen(resolution) + 4);		/* 3 newlines and a NULL */
+    temp = (char*)gu_alloc(space_needed, sizeof(char));
+    snprintf(temp, space_needed, "%s\n%s\n%s\n", interface, address, resolution);		/* remove snprintf() bloat!!! */
+    }
 
     if((written = write(fd, temp, towrite=strlen(temp))) == -1)
 	alert(printer, TRUE, "%s interface: write() to address cache file failed, errno=%d (%s)", interface, errno, gu_strerror(errno));
     if(written != towrite)
 	alert(printer, TRUE, "%s interface: towrite=%d, written=%d", interface, towrite, written);
+
+    gu_free(temp);
 
     close(fd);
     } /* end of int_addrcache_save() */
@@ -98,7 +111,7 @@ char *int_addrcache_load(const char printer[], const char interface[], const cha
 	if(strcspn(temp, "\n") != len || strncmp(temp, interface, len) != 0)
 	    break;
 
-	/* Make sure the printer address parameter is different from
+	/* Make sure the printer address parameter isn't different from
 	   last time. */
 	p = temp + 6;
 	len = strlen(address);

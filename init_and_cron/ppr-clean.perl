@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/init_and_cron/ppr-clean.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 June 2000.
+# Last modified 31 May 2001.
 #
 
 #
@@ -52,7 +52,7 @@ sub sweepdir
 
     print "sweepdir(\"$dir\", /$regexp/, $reference_age)\n" if($debug);
 
-    opendir(DIR, $dir) || die;
+    opendir(DIR, $dir) || die "Can't open diretory \"$dir\", $!";
     if(defined($regexp))
 	{
 	while(defined($file = readdir(DIR)))
@@ -82,10 +82,10 @@ sweepdir("$CONFDIR/printers", '^\.ppad\d+$', 0.5);
 sweepdir("$CONFDIR/groups", '^\.ppad\d+$', 0.5);
 sweepdir("$VAR_SPOOL_PPR/sambaspool", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/pprclipr", undef, 0.5);
-sweepdir("$VAR_SPOOL_PPR/printer/alerts", undef, 7.0);
+sweepdir("$VAR_SPOOL_PPR/printers/alerts", undef, 7.0);
 
 # All resource caching directories:
-opendir(CACHE, "$VAR_SPOOL_PPR/cache") || die;
+opendir(CACHE, "$VAR_SPOOL_PPR/cache") || die "Can't open directory \"$VAR_SPOOL_PPR/cache\", $!";
 while(defined(<CACHE>))
     {
     next if(/^\./);
@@ -96,7 +96,7 @@ closedir(CACHE) || die;
 
 # This is a harder case
 print "Scanning \"$VAR_SPOOL_PPR/jobs\"...\n";
-opendir(DIR, "$VAR_SPOOL_PPR/jobs") || die;
+opendir(DIR, "$VAR_SPOOL_PPR/jobs") || die "Can't open directory \"$VAR_SPOOL_PPR/jobs\", $!";
 while(defined($file = readdir(DIR)))
     {
     if($file =~ /^(.*)-[a-z]+$/)

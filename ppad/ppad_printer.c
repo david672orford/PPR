@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 April 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -33,7 +33,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 #include "interface.h"
 #include "ppad.h"
@@ -332,6 +331,10 @@ int printer_show(const char *argv[])
     int jobbreak_default;
     int codes = CODES_DEFAULT;
     int codes_default;
+    char *rip_name = NULL;
+    char *rip_driver = NULL;
+    char *rip_driver_output_language = NULL;
+    char *rip_options = NULL;
     char *PPDFile = (char*)NULL;
     char *bins[MAX_BINS];
     int outputorder = 0;		/* unknown outputorder */
@@ -418,6 +421,14 @@ int printer_show(const char *argv[])
 	else if(gu_sscanf(confline, "Codes: %d", &codes) == 1)
 	    {
 	    /* nothing to do */
+	    }
+	else if((ptr = lmatchp(confline, "RIP:")))
+	    {
+	    if(rip_name) gu_free(rip_name);
+	    if(rip_driver) gu_free(rip_driver);
+	    if(rip_driver_output_language) gu_free(rip_driver_output_language);
+	    if(rip_options) gu_free(rip_options);
+	    gu_sscanf(ptr, "%S %S %S %Q", &rip_name, &rip_driver, &rip_driver_output_language, &rip_options);
 	    }
 	else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 	    {
@@ -573,7 +584,7 @@ int printer_show(const char *argv[])
     */
     {
     int ret;
-    const char *p;
+    char *pline, *p;
     struct PPD_PROTOCOLS prot;
     prot.TBCP = FALSE;
     prot.PJL = FALSE;
@@ -585,19 +596,43 @@ int printer_show(const char *argv[])
         if((ret = ppd_open(PPDFile, errors)) != EXIT_OK)
             return ret;
 
-        while((p = ppd_readline()))
+        while((pline = ppd_readline()))
             {
-            if(lmatch(p, "*Protocols:"))
+            if((p = lmatchp(pline, "*Protocols:")))
                 {
-                /* This is not correct code since it
-                   doesn't test for words, just substrings. */
-                if(strstr(p, "TBCP"))
-                    prot.TBCP = TRUE;
-                if(strstr(p, "PJL"))
-                    prot.PJL = TRUE;
-                }
-            }
-        }
+                char *f;
+                while((f = gu_strsep(&p, " \t")))
+                    {
+                    if(strcmp(f, "TBCP") == 0)
+                    	prot.TBCP = TRUE;
+                    if(strcmp(f, "PJL") == 0)
+                        prot.PJL = TRUE;
+		    }
+                } /* "*Protocols:" */
+	    if((p = lmatchp(pline, "*pprRIP:")))
+	    	{
+		if(!rip_name)
+		    {
+		    char *f1, *f2, *f3, *f4;
+		    if(!(f1 = gu_strsep(&p, " \t\n"))
+				|| !(f2 = gu_strsep(&p, " \t\n"))
+				|| !(f3 = gu_strsep(&p, " \t\n"))
+				)
+		        {
+		        fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
+			}
+		    else
+			{
+			rip_name = gu_strdup(f1);
+			rip_driver = gu_strdup(f2);
+			rip_driver_output_language = gu_strdup(f3);
+			if((f4 = gu_strsep_quoted(&p, " \t\n", NULL)))
+			    f4 = gu_strdup(f4);
+			}
+		    }
+	    	} /* "*pprRIP:" */
+            } /* while() */
+        } /* if(PPDFile) */
 
     /* Determine all of the defaults. */
     feedback_default = interface_default_feedback(interface, &prot);
@@ -640,6 +675,18 @@ int printer_show(const char *argv[])
 	else
 	    PUTS(codes_description(codes));
 	putchar('\n');
+
+	/* RIP */
+	if(rip_name)
+	    {
+	    printf(_("RIP: %s %s %s \"%s\"\n"),
+		rip_name,
+		rip_driver ? rip_driver : "?",
+		rip_driver_output_language ? rip_driver_output_language : "?",
+		rip_options ? rip_options : "");
+	    }
+
+	/* Alerts */
 	printf(_("Alert frequency: %d "), alerts_frequency);
 	switch(alerts_frequency)
 	    {
@@ -783,6 +830,15 @@ int printer_show(const char *argv[])
 	printf("jobbreak\t%s %s\n",jobbreak_description(jobbreak), jobbreak_description(jobbreak_default));
 	printf("feedback\t%s %s\n", feedback_description(feedback), feedback_description(feedback_default));
 	printf("codes\t%s %s\n", codes_description(codes), codes_description(codes_default));
+
+	/* RIP */
+	printf("rip\t%s\t%s\t%s\t%s\n",
+		rip_name ? rip_name : "",
+		rip_driver ? rip_driver : "",
+		rip_driver_output_language ? rip_driver_output_language : "",
+		rip_options ? rip_options : "");
+
+	/* Alerts */
 	printf("alerts\t%d %s %s\n",
 		alerts_frequency,
 		alerts_method ? alerts_method : "",
@@ -886,6 +942,10 @@ int printer_show(const char *argv[])
     if(interface) gu_free(interface);
     if(address) gu_free(address);
     if(options) gu_free(options);
+    if(rip_name) gu_free(rip_name);
+    if(rip_driver) gu_free(rip_driver);
+    if(rip_driver_output_language) gu_free(rip_driver_output_language);
+    if(rip_options) gu_free(rip_options);
     if(PPDFile) gu_free(PPDFile);
     if(alerts_method) gu_free(alerts_method);
     if(alerts_address) gu_free(alerts_address);
@@ -1172,7 +1232,7 @@ int printer_options(const char *argv[])
 	gu_free(p);
 	}
     }
-    
+
     while(confread())				/* copy rest of file, */
 	{
 	if(lmatch(confline, "Options:"))
@@ -1406,6 +1466,26 @@ int printer_codes(const char *argv[])
 
     return EXIT_OK;
     } /* end of printer_jobbreak() */
+
+/*
+** Set the RIP.
+*/
+int printer_rip(const char *argv[])
+    {
+    const char *printer = argv[0], *rip = argv[1], *driver = argv[2], *driver_output_language = argv[3], *options = argv[4];
+
+    if(!printer || (printer && rip && (!driver || !driver_output_language)))
+	{
+	fputs(_("You must supply the name of an existing printer.  If you supply no other\n"
+		"parameters, the RIP setting will revert to the PPD file default.  To set\n"
+		"a different RIP, supply the RIP name (such as \"gs\"), a driver name (such\n"
+		"as \"djet500\"), an output language (such as \"pcl\"), and an optional\n"
+		"RIP options string.\n"), errors);
+	return EXIT_SYNTAX;
+	}
+
+    return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s \"%s\"" : NULL, rip, driver, driver_output_language, options);
+    } /* end of printer_rip() */
 
 /*
 ** Set a printer's PPD file.
@@ -2750,7 +2830,7 @@ int printer_grayok(const char *argv[])
 
     /* If FALSE, set to 0, otherwise delete line. */
     ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, "GrayOK", grayok ? NULL : "false");
-    
+
     /* This change may change the eligibility of some jobs. */
     if(grayok)
 	reread_printer(printer);

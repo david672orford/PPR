@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 9 March 2001.
+# Last modified 10 May 2001.
 #
 
 include ../makeprogs/global.mk
@@ -21,9 +21,11 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_throw.$(OBJ) \
 	gu_md5.$(OBJ) \
 	cloexec.$(OBJ) \
+	gu_nonblock.$(OBJ) \
 	daemon.$(OBJ) \
 	gu_strcasecmp.$(OBJ) \
 	gu_sscanf.$(OBJ) \
+	gu_fscanf.$(OBJ) \
 	signal1.$(OBJ) \
 	signal2.$(OBJ) \
 	snprintf.$(OBJ) \

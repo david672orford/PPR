@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/misc_filters/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 30 June 2000.
+# Last modified 1 June 2001.
 #
 
 include ../makeprogs/global.mk
@@ -45,7 +45,7 @@ install: $(PROGS) $(SCRIPTS_SH) $(SCRIPTS_PERL)
 include .depend
 
 filter_hexdump$(DOTEXE): filter_hexdump.c ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(CC) $(CFLAGS) -o filter_hexdump$(DOTEXE) filter_hexdump.c ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+	$(CC) $(CFLAGS) -o filter_hexdump$(DOTEXE) filter_hexdump.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
 make_dvips_conf$(DOTEXE): make_dvips_conf.c ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(CC) $(CFLAGS) -o make_dvips_conf$(DOTEXE) make_dvips_conf.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)

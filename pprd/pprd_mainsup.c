@@ -10,13 +10,12 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 April 2001.
+** Last modified 9 May 2001.
 */
 
 #include "before_system.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
@@ -24,12 +23,12 @@
 #include <pwd.h>
 #include <grp.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "pprd.h"
 #include "./pprd.auto_h"
 #include "version.h"
@@ -77,7 +76,6 @@ int open_fifo(void)
     */
     {
     int wfd;
-    int flags;
 
     if(mkfifo(FIFO_NAME, S_IRUSR | S_IWUSR) < 0)
 	fatal(0, "%s(): can't make FIFO, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -91,16 +89,11 @@ int open_fifo(void)
 	fatal(0, "%s(): can't open FIFO for write, errno=%d (%s)", function, errno, gu_strerror(errno));
 
     /* Clear the non-block flag for rfd. */
-    flags = fcntl(rfd, F_GETFL);
-    flags &= ~O_NONBLOCK;
-    fcntl(rfd, F_SETFL, flags);
+    gu_nonblock(rfd, FALSE);
 
     /* Set the two FIFO descriptors to close on exec(). */
     gu_set_cloexec(rfd);
     gu_set_cloexec(wfd);
-    flags = fcntl(rfd, F_GETFD);
-    flags |= FD_CLOEXEC;
-    fcntl(rfd, F_SETFD, flags);
     }
 
 #else
@@ -148,6 +141,7 @@ void create_lock_file(void)
 	fatal(1, "pprd already running");
     snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
     write(lockfilefd, temp, strlen(temp));
+    gu_set_cloexec(lockfilefd);
     } /* end of create_lock_file() */
 
 /*

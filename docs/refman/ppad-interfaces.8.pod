@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 1 May 2001.
+# Last revised 11 May 2001.
 #
 
 =head1 NAME
@@ -161,6 +161,9 @@ This interface has an option "sleep=".  This tells the interface how many
 seconds to wait after printing the jobs before exiting.  This can be used to
 simulate the time requirements of printing on an actual printer.
 
+This interface has an option "create=".  If it is true, then the interface
+will create the output file if it doesn't exist yet.  It is true by default.
+
 =item B<atalk>
 
 The interface B<atalk> sends the job to an AppleTalk printer using the
@@ -287,6 +290,11 @@ control-T's sent by "idle_status_interval=", these queries will be sent
 constantly, without waiting for a lull in communications.  Since this is a
 new feature, the default for this option is 0 (which disables SNMP status 
 queries), but in a future version of PPR the default will be changed.
+
+The option "snmp_community=" tell the interface what community name (password)
+to use when using SNMP to fetch the printer status.  The default value is
+"public".  Almost all printers allow read-only access with the community
+name "public".
 
 The option "sleep=" is the number of seconds the interface delay between
 closing the connection and exiting.  Some TCP/IP printers may need a

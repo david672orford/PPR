@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 April 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -161,6 +161,7 @@ static void help_printer(FILE *out)
 	"\tppad feedback <printer> {True, False}\n"
 	"\tppad codes <printer> {Clean7Bit, Clean8Bit, Binary,\n"
 		"\t\tTBCP, UNKNOWN, DEFAULT}\n"
+	"\tppad rip <printer> [<rip> <driver> <driver_output_language> [<rip_options>]]\n"
 	"\tppad ppd <printer> <filename>\n"
 	"\tppad alerts <printer> <frequency> <method> <address>\n"
 	"\tppad frequency <printer> <integer>\n"
@@ -370,6 +371,8 @@ static int dispatch(const char *argv[])
     	return printer_feedback(&argv[1]);
     if(gu_strcasecmp(argv[0], "codes") == 0)
     	return printer_codes(&argv[1]);
+    if(gu_strcasecmp(argv[0], "rip") == 0)
+    	return printer_rip(&argv[1]);
     if(gu_strcasecmp(argv[0], "ppd") == 0)
     	return printer_ppd(&argv[1]);
     if(gu_strcasecmp(argv[0], "alerts") == 0)
@@ -463,7 +466,7 @@ static int interactive_mode(void)
 	** Break the string into white-space separated "words".  A quoted string
 	** will be treated as one word.
 	*/
-	for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n")); x++)
+	for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
 	    {
             if(x == MAX_CMD_WORDS)
             	{

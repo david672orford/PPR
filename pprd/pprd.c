@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 November 2000.
+** Last modified 10 May 2001.
 */
 
 /*
@@ -33,7 +33,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"

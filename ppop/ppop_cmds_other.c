@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 4 June 2001.
 */
 
 /*
@@ -35,6 +35,7 @@
 #include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
+#include "interface.h"
 
 /*===================================================================
 ** Routine to display the number of jobs canceled.
@@ -149,24 +150,72 @@ static const char *snmp_error(int bit)
         }
     } /* end of snmp_error() */
 
-/*===================================================================
-** Take a "ppop status" auxiliary status line and convert it to
-** human readable form.
-===================================================================*/
-int print_aux_status(char *line, int printer_status)
+/*
+** Translate an exit code into a fault type decription.  If the exit code
+** does not indicate a fault, return NULL.
+*/
+static const char *fault_translate(int code)
+    {
+    switch(code)
+	{
+	case EXIT_PRNERR:
+	case EXIT_PRNERR_NORETRY:
+	    return _("Use \"ppop alerts\" to see details.");
+	    break;
+	case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
+	    return _("Printer refuses to allow the spooler access.");
+	    break;
+	case EXIT_PRNERR_NOT_RESPONDING:
+	    return _("Printer isn't responding.");
+	    break;
+        case EXIT_PRNERR_NORETRY_BAD_SETTINGS:
+	    return _("Bad settings, use \"ppop alerts\" to see details.");
+	    break;
+        case EXIT_PRNERR_NO_SUCH_ADDRESS:
+        case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
+	    return _("Printer address doesn't exist.");
+	    break;
+	default:
+            return NULL;
+	}
+    } /* end of fault_translate() */
+
+/*===========================================================================
+** Take a "ppop status" auxiliary status line and convert it to human-
+** readable form.  Depending on the settings of --machine-readable and
+** --verbose, this function may choose not to print certain information.
+** It will return non-zero if it prints something.
+===========================================================================*/
+int print_aux_status(char *line, int printer_status, const char sep[])
     {
     char *p;
 
+    if((p = lmatchp(line, "exit:")))
+	{
+	const char *cp;
+	if((cp = fault_translate(atoi(p))))
+	    {
+	    PUTS(sep);
+	    if(machine_readable)
+		printf("fault: %s", cp);
+	    else
+		printf(_("(%s)"), cp);
+	    return 1;
+	    }
+	return 0;
+	}
     if((p = lmatchp(line, "lw-status:")))
     	{
 	if(machine_readable)
 	    {
+	    PUTS(sep);
 	    PUTS("lw-status: ");
 	    puts_detabbed(p);
 	    return 1;
 	    }
 	else if(verbose)
 	    {
+	    PUTS(sep);
 	    printf(_("LW Status: \"%s\""), p);
 	    return 1;
 	    }
@@ -176,12 +225,14 @@ int print_aux_status(char *line, int printer_status)
     	{
 	if(machine_readable)
 	    {
+	    PUTS(sep);
 	    PUTS("pjl: ");
 	    puts_detabbed(p);
 	    return 1;
 	    }
 	else if(verbose)
 	    {
+	    PUTS(sep);
 	    printf(_("PJL Status: %s"), p);
 	    return 1;
 	    }
@@ -192,6 +243,8 @@ int print_aux_status(char *line, int printer_status)
 	if(machine_readable || verbose)
 	    {
 	    char *f1, *f2, *fx;
+
+	    PUTS(sep);
 
 	    if(machine_readable)
 		printf("snmp: ");
@@ -226,11 +279,13 @@ int print_aux_status(char *line, int printer_status)
 
 	if(machine_readable)
 	    {
+	    PUTS(sep);
 	    printf("status: %s, %s", device_status_string, printer_status_string);
 	    return 1;
 	    }
 	else if(verbose || printer_status != PRNSTATUS_IDLE)
 	    {
+	    PUTS(sep);
 	    printf(_("Printer Status: %s, %s"), device_status_string, printer_status_string);
 	    return 1;
 	    }
@@ -245,6 +300,8 @@ int print_aux_status(char *line, int printer_status)
 
 	gu_sscanf(p, "%d %d %d %d %Z", &bit, &start, &last, &last_commentary, &details);
 	string = snmp_error(bit);
+
+	PUTS(sep);
 
 	if(machine_readable)
 	    printf("snmp: %s", string);		/* !!! */
@@ -286,21 +343,27 @@ int print_aux_status(char *line, int printer_status)
 
 	if(gu_sscanf(p, "%#s %d", sizeof(operation), operation, &minutes) == 2)
 	    {
-	    if(strcmp(operation, "CONNECTING") == 0)
-	    	p = "connecting";
+	    if(strcmp(operation, "CONNECT") == 0)
+	    	p = _("connecting");
             else if(strcmp(operation, "WRITE") == 0)
-                p = "sending data";
+                p = _("sending data");
             else if(strcmp(operation, "CLOSE") == 0)
-                p = "closing connection";
+                p = _("closing connection");
             else if(strcmp(operation, "QUERY") == 0)
-                p = "querying printer";
+                p = _("querying printer");
 	    else if(strcmp(operation, "WAIT_PJL_START") == 0)
-	    	p = "syncing PJL";
+	    	p = _("syncing PJL");
             else if(strncmp(operation, "WAIT_", 5) == 0)
-                p = "waiting for printer to finish";
+                p = _("waiting for printer to finish");
+	    else if(strcmp(operation, "RIP_CLOSE") == 0)
+	        p = _("waiting for RIP to finish");
+	    else if(strcmp(operation, "COM_WAIT") == 0)
+	    	p = _("waiting for commentators to finish");
 	    else
 	    	p = operation;
 	    }
+
+	PUTS(sep);
 
 	if(machine_readable)
 	    PUTS("operation: ");
@@ -317,6 +380,8 @@ int print_aux_status(char *line, int printer_status)
     if((p = lmatchp(line, "page:")))
     	{
 	int seconds, asof;
+
+	PUTS(sep);
 
 	if(machine_readable)
 	    PUTS("page: ");
@@ -344,6 +409,7 @@ int print_aux_status(char *line, int printer_status)
     	}
     if((p = lmatchp(line, "job:")))
     	{
+	PUTS(sep);
 	if(machine_readable)
 	    {
 	    PUTS("job: ");
@@ -357,6 +423,7 @@ int print_aux_status(char *line, int printer_status)
     	}
 
     /* new and unknown kind of aux status line */
+    PUTS(sep);
     puts_detabbed(line);
     return 1;
     } /* end of print_aux_status() */
@@ -526,20 +593,11 @@ int ppop_status(char *argv[])
 	** Notice that we pass the lines thru print_aux_status() to get them translated
 	** to human readable form the the user's natural language.
 	*/
-	{
-	int len = 1;
 	while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
 	    {
-	    if(len)
-		{
-		if(!machine_readable)
-		    printf("\n                 ");
-		else
-		    PUTC('\t');
-		}
-	    len = print_aux_status(line, status);
+	    print_aux_status(line, status,
+	    	machine_readable ? "\t" : "\n                 ");
             }
-        }
 
 	PUTC('\n');
 
@@ -578,7 +636,7 @@ int ppop_message(char *argv[])
 	char *line = NULL; int line_len = 40;
 	while((line = gu_getline(line, &line_len, statfile)))
 	    {
-	    if(print_aux_status(line, PRNSTATUS_PRINTING))
+	    if(print_aux_status(line, PRNSTATUS_PRINTING, ""))
 	    	PUTC('\n');
 	    }
 	if(line)
@@ -875,7 +933,7 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 	return TRUE;	/* stop */
 	}
 
-    fscanf(reply_file, "%d", &count);
+    gu_fscanf(reply_file, "%d", &count);
     ppop_cancel_byuser_total += count;
 
     fclose(reply_file);
@@ -944,7 +1002,7 @@ int ppop_cancel(char *argv[], int inform)
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
 	    return print_reply();
 
-	fscanf(reply_file, "%d", &count);
+	gu_fscanf(reply_file, "%d", &count);
 
 	say_canceled(count, FALSE);
 
@@ -992,7 +1050,7 @@ int ppop_purge(char *argv[], int inform)
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
 	    return print_reply();
 
-	fscanf(reply_file, "%d", &count);
+	gu_fscanf(reply_file, "%d", &count);
 
 	say_canceled(count, FALSE);	/* say how many were canceled */
 
@@ -1044,7 +1102,7 @@ static int ppop_clean_item(const struct QEntry *qentry,
 	return TRUE;	/* stop */
 	}
 
-    fscanf(reply_file, "%d", &count);
+    gu_fscanf(reply_file, "%d", &count);
     ppop_clean_total += count;
 
     fclose(reply_file);
@@ -1120,7 +1178,7 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 	return TRUE;
 	}
 
-    fscanf(reply_file, "%d", &count);
+    gu_fscanf(reply_file, "%d", &count);
 
     fclose(reply_file);
 
@@ -1667,4 +1725,3 @@ int ppop_log(char *argv[])
     } /* end of ppop_log() */
 
 /* end of file */
-

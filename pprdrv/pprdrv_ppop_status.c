@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 23 May 2001.
 */
 
 #include "before_system.h"
@@ -43,6 +43,7 @@
 ** to make the printer's status known to "ppop status".
 ============================================================================*/
 
+static int message_exit = EXIT_PRINTED;
 static char message_lw_status[80] = {'\0'};
 static char message_pjl_status[80] = {'\0'};
 static char message_snmp_status[80] = {'\0'};
@@ -261,6 +262,9 @@ static void ppop_status_write(void)
 
     buffer[0] = '\0';
 
+    if(message_exit != EXIT_PRINTED)
+	gu_snprintfcat(buffer, sizeof(buffer), "exit: %d\n", message_exit);
+
     if(message_lw_status[0] != '\0')
 	gu_snprintfcat(buffer, sizeof(buffer), "lw-status: %s\n", message_lw_status);
 
@@ -271,20 +275,21 @@ static void ppop_status_write(void)
 	gu_snprintfcat(buffer, sizeof(buffer), "snmp-status: %s\n", message_snmp_status);
 
     /* The combined SNMP-style status. */
-    gu_snprintfcat(buffer, sizeof(buffer), "status: %d %d %ld %ld %ld\n", status.hrDeviceStatus, status.hrPrinterStatus, (long)status.start, (long)status.last_news, (long)status.last_commentary);
+    if(status.start > 0)
+    	gu_snprintfcat(buffer, sizeof(buffer), "status: %d %d %ld %ld %ld\n", status.hrDeviceStatus, status.hrPrinterStatus, (long)status.start, (long)status.last_news, (long)status.last_commentary);
 
     /* The combined SNMP-style error state. */
     {
     int x;
     for(x=0; x<SNMP_BITS; x++)
 	{
-	if(snmp_bits[x].start)
+	if(snmp_bits[x].start > 0)
 	    gu_snprintfcat(buffer, sizeof(buffer), "error: %02d %ld %ld %ld %s\n", x, (long)snmp_bits[x].start, (long)snmp_bits[x].last_news, (long)snmp_bits[x].last_commentary, snmp_bits[x].details);
 	}
     }
 
     if(message_writemon_operation[0] != '\0')
-	gu_snprintfcat(buffer, sizeof(buffer), "operation: %s %d\n", message_writemon_connecting ? "CONNECTING" : message_writemon_operation, message_writemon_minutes);
+	gu_snprintfcat(buffer, sizeof(buffer), "operation: %s %d\n", message_writemon_connecting ? "CONNECT" : message_writemon_operation, message_writemon_minutes);
 
     if(message_pagemon[0] != '\0')
     	gu_snprintfcat(buffer, sizeof(buffer), "page: %s\n", message_pagemon);
@@ -308,6 +313,7 @@ static void ppop_status_write(void)
 	    ppr_fnamef(fname, "%s/%s", STATUSDIR, printer.Name);
 	    if((statfile = open(fname, O_WRONLY | O_CREAT | O_TRUNC, UNIX_644)) == -1)
 		fatal(EXIT_PRNERR, "%s(): failed to open \"%s\" for write, errno=%d (%s)", function, fname, errno, gu_strerror(errno));
+	    gu_set_cloexec(statfile);
 	    }
 
 	/* Move back to the begining of the file and write the new status. */
@@ -363,7 +369,7 @@ static void dispatch_commentary(void)
     for(x=0; shadow_list[x].bit != -1; x++)
 	{
 	int bit = shadow_list[x].bit;
-	if(snmp_bits[bit].start)
+	if(snmp_bits[bit].start > 0)
 	    {
 	    snmp_bits[shadow_list[bit].first].shadowed = TRUE;
 	    snmp_bits[shadow_list[bit].second].shadowed = TRUE;
@@ -444,6 +450,9 @@ void ppop_status_connecting(gu_boolean connecting)
 void ppop_status_exit_hook(int retval)
     {
     DODEBUG_PPOP_STATUS(("ppop_status_exit_hook(retval=%d)", retval));
+
+    /* This will help "ppop status" display "Fault:". */
+    message_exit = retval;
 
     if(retval == EXIT_PRINTED || retval == EXIT_JOBERR)
 	{

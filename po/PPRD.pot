@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-05-08 08:44-0400\n"
+"POT-Creation-Date: 2001-06-05 17:23-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,143 +14,160 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: ../pprd/pprd_ppop.c:964
+#: ../pprd/pprd_ppop.c:963
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:377
+#: ../pprd/pprd_ppop.c:376
 #, c-format
 msgid "\"%s\" is a group of printers, not a printer.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:952
+#: ../pprd/pprd_ppop.c:951
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1028 ../pprd/pprd_ppop.c:1114
+#: ../pprd/pprd_ppop.c:1027 ../pprd/pprd_ppop.c:1113
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1343
+#: ../pprd/pprd_ppop.c:1342
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1334
+#: ../pprd/pprd_ppop.c:1333
 #, c-format
 msgid "%d files where moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:312
+#: ../pprd/pprd_mainsup.c:306
 #, c-format
 msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:268
+#: ../pprd/pprd_mainsup.c:262
 #, c-format
 msgid ""
 "%s: Security problem: egid = %u\n"
 "(This program should be setgid \"%s\".)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:260
+#: ../pprd/pprd_mainsup.c:254
 #, c-format
 msgid ""
 "%s: Security problem: euid = %u\n"
 "(This program should be setuid \"%s\".)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:241
+#: ../pprd/pprd_mainsup.c:235
 #, c-format
 msgid "%s: The group \"%s\" doesn't exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:235
+#: ../pprd/pprd_mainsup.c:229
 #, c-format
 msgid "%s: The user \"%s\" doesn't exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:318
+#: ../pprd/pprd_mainsup.c:312
 #, c-format
 msgid ""
 "%s: User \"%s\" may only start %s if group is \"%s\".\n"
 "(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:249
+#: ../pprd/pprd_mainsup.c:243
 #, c-format
 msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1330
+#: ../pprd/pprd_ppop.c:1329
 msgid "1 file was moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1341
+#: ../pprd/pprd_ppop.c:1340
 msgid "1 file was not moved because it was being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:504
+#: ../pprd/pprd_ppop.c:503
 #, c-format
 msgid ""
 "Another process is already using the notify\n"
 "feature for the printer \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:600
+#: ../pprd/pprd_ppop.c:599
 #, c-format
 msgid ""
 "Converting outstanding cancel order for\n"
 "job \"%s\" to a hold order.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:111
+#: ../pprd/pprd_ppop.c:110
 #, c-format
 msgid "Destination \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:634
+#: ../pprd/pprd_pprdrv.c:222
+#, c-format
+msgid "Internal error, pprdrv core dumped after receiving signal %d (%s)."
+msgstr ""
+
+#: ../pprd/pprd_ppop.c:633
 #, c-format
 msgid "Internal pprd error: job \"%s\" has unknown status %d.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:427 ../pprd/pprd_ppop.c:492
+#: ../pprd/pprd_ppop.c:426 ../pprd/pprd_ppop.c:491
 #, c-format
 msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1324
+#: ../pprd/pprd_ppop.c:1323
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1317
+#: ../pprd/pprd_pprdrv.c:237
+#, c-format
+msgid "Mischief afoot, pprdrv stopt by signal %d (%s)."
+msgstr ""
+
+#: ../pprd/pprd_ppop.c:1316
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1160 ../pprd/pprd_ppop.c:1169 ../pprd/pprd_ppop.c:1382
+#: ../pprd/pprd_ppop.c:1159 ../pprd/pprd_ppop.c:1168 ../pprd/pprd_ppop.c:1381
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:945
+#: ../pprd/pprd_ppop.c:944
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:421
+#: ../pprd/pprd_pprdrv.c:458
 msgid "Printer placed in auto-retry mode."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:415
+#: ../pprd/pprd_pprdrv.c:450
 msgid "Printer placed in fault mode, no auto-retry."
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1432
+#: ../pprd/pprd_pprdrv.c:411
+#, c-format
+msgid ""
+"Printing aborted because pprdrv was killed by signal %d (%s).\n"
+"This was not expected and the cause is unknown."
+msgstr ""
+
+#: ../pprd/pprd_ppop.c:1431
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr ""
@@ -159,52 +176,52 @@ msgstr ""
 msgid "Remaining printer problems"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:615
+#: ../pprd/pprd_ppop.c:614
 #, c-format
 msgid "Seizing job \"%s\" which is printing on \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:307 ../pprd/pprd_ppop.c:554 ../pprd/pprd_ppop.c:720
-#: ../pprd/pprd_ppop.c:874
+#: ../pprd/pprd_ppop.c:306 ../pprd/pprd_ppop.c:553 ../pprd/pprd_ppop.c:719
+#: ../pprd/pprd_ppop.c:873
 #, c-format
 msgid "The destination \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:659
+#: ../pprd/pprd_ppop.c:658
 #, c-format
 msgid ""
 "The print job \"%s\" can't be released until an\n"
 "outstanding hold order has been fully executed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:682 ../pprd/pprd_ppop.c:829
+#: ../pprd/pprd_ppop.c:681 ../pprd/pprd_ppop.c:828
 #, c-format
 msgid "The print job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:584
+#: ../pprd/pprd_ppop.c:583
 #, c-format
 msgid "The print job \"%s\" is already held.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:593
+#: ../pprd/pprd_ppop.c:592
 #, c-format
 msgid ""
 "The print job \"%s\" is already undergoing a\n"
 "transition to the held state.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:588
+#: ../pprd/pprd_ppop.c:587
 #, c-format
 msgid "The print job \"%s\" is arrested.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:668
+#: ../pprd/pprd_ppop.c:667
 #, c-format
 msgid "The print job \"%s\" is not being held.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:370
+#: ../pprd/pprd_ppop.c:369
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr ""
@@ -227,32 +244,32 @@ msgid ""
 "which it can not recover on its own.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:446
+#: ../pprd/pprd_ppop.c:445
 #, c-format
 msgid "The printer \"%s\" is already halting.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:398
+#: ../pprd/pprd_ppop.c:397
 #, c-format
 msgid "The printer \"%s\" is already printing.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:465
+#: ../pprd/pprd_ppop.c:464
 #, c-format
 msgid "The printer \"%s\" is already stopping.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:451
+#: ../pprd/pprd_ppop.c:450
 #, c-format
 msgid "The printer \"%s\" is already stopt.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:393
+#: ../pprd/pprd_ppop.c:392
 #, c-format
 msgid "The printer \"%s\" is not stopt.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:411
+#: ../pprd/pprd_ppop.c:410
 #, c-format
 msgid "There is an outstanding halt command for the printer \"%s\".\n"
 msgstr ""
@@ -260,6 +277,17 @@ msgstr ""
 #: ../pprd/pprd_respond.c:255
 #, c-format
 msgid "Undefined response code %d for your job \"%s\"."
+msgstr ""
+
+#: ../pprd/pprd_pprdrv.c:416
+msgid ""
+"Unexpected pprdrv shutdown.  It claims to have received a signal to "
+"terminate."
+msgstr ""
+
+#: ../pprd/pprd_pprdrv.c:436
+#, c-format
+msgid "Unrecognized exit code %d returned by pprdrv."
 msgstr ""
 
 #: ../pprd/pprd_respond.c:221

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv-test.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 June 2000.
+** Last modified 23 May 2001.
 */
 
 #include "before_system.h"
@@ -30,7 +30,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "lprsrv.h"
 #include "util_exits.h"
 
@@ -173,7 +172,7 @@ int main(int argc, char *argv[])
 	    get_proxy_identity(&uid, &proxy_class, hostname, argv[x], TRUE, &access_info);
 	    pw = getpwuid(uid);
 	    if(pw) username = pw->pw_name; else username = "???";
-	    if(proxy_class) sprintf(proxy_for, "%.20s@%.60s", strcmp(argv[x], "root") == 0 ? "*" : argv[x], proxy_class);
+	    if(proxy_class) snprintf(proxy_for, sizeof(proxy_for), "%.20s@%.60s", strcmp(argv[x], "root") == 0 ? "*" : argv[x], proxy_class);
 	    printf(FORMAT, x == 2 ? "PPR" : "", argv[x], username, proxy_class ? proxy_for : "");
 	    }
 
@@ -192,4 +191,3 @@ int main(int argc, char *argv[])
     }
 
 /* end of file */
-

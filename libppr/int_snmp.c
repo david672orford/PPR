@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 4 May 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -24,18 +24,11 @@
 ** This is called to print a LaserWriter style message when the printer refuses a
 ** TCP connexion.
 */
-void int_snmp_status(void *addr_ptr)
+void int_snmp_status(struct gu_snmp *s)
     {
-    struct gu_snmp *s;
     int error_code;
     int n1, n2;
     unsigned int n3;
-
-    if(!(s = gu_snmp_open(*(unsigned int *)addr_ptr, "public", &error_code)))
-    	{
-	alert(int_cmdline.printer, TRUE, "gu_snmp_open() failed, error_code=%d", error_code);
-	return;
-	}
 
     if(gu_snmp_get(s, &error_code,
 		"1.3.6.1.2.1.25.3.2.1.5.1", GU_SNMP_INT, &n1,
@@ -53,7 +46,6 @@ void int_snmp_status(void *addr_ptr)
 	fflush(stdout);
 	}
 
-    gu_snmp_close(s);
     } /* end of int_snmp_status() */
 
 /* end of file */

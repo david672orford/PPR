@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppuser/ppuser.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 September 2000.
+** Last modified 29 May 2001.
 */
 
 /*
@@ -34,28 +34,11 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "userdb.h"
 #include "util_exits.h"
 
 /* File where we log transactions: */
 #define PPUSER_LOGFILE LOGDIR"/ppuser"
-
-/*
-** Handle fatal errors.
-** Print a message and exit.
-*/
-void fatal(int rval, const char *message, ... )
-    {
-    va_list va;
-
-    va_start(va,message);
-    fprintf(stderr, _("Fatal: "));
-    vfprintf(stderr,message,va);
-    fprintf(stderr, "\n");
-    va_end(va);
-    exit(rval);
-    } /* end of fatal() */
 
 /*
 ** Handle non-fatal errors.
@@ -138,7 +121,10 @@ static gu_boolean privledged(void)
 	    struct passwd *pw;
 
 	    if((pw = getpwuid(uid)) == (struct passwd *)NULL)
-	    	fatal(EXIT_INTERNAL, "privledged(): getpwuid() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		{
+	    	fprintf(stderr, "privledged(): getpwuid() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
+		exit(EXIT_INTERNAL);
+		}
 
 	    if(user_acl_allows(pw->pw_name, "ppuser"))
 	        {

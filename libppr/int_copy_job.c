@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 1 May 2001.
+** Last modified 9 May 2001.
 */
 
 #include "before_system.h"
@@ -72,14 +72,7 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 
     /* Set the printer port to O_NONBLOCK.  This is important because we don't
        want to block if it can't accept BUFFER_SIZE bytes. */
-    {
-    int flags_portfd = fcntl(portfd, F_GETFL);
-    if(fcntl(portfd, F_SETFL, flags_portfd | O_NONBLOCK) < 0)
-	{
-	alert(int_cmdline.printer, TRUE, "%s interface: fcntl() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-	int_exit(EXIT_PRNERR_NORETRY);
-	}
-    }
+    gu_nonblock(portfd, TRUE);
 
     /* Initialize these to the current time to avoid premature triggering. */
     if(idle_status_interval > 0)
@@ -208,7 +201,10 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    DODEBUG(("read %d byte%s from stdin", xmit_len, xmit_len != 1 ? "s" : ""));
 
 	    if(xmit_len > 0)
+		{
 	    	xmit_state = COPYSTATE_WRITING;
+	    	time_next_control_t = 0;		/* cancel control-T */
+	    	}
 	    }
 
 	else if(FD_ISSET(portfd, &wfds))
@@ -228,10 +224,12 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    xmit_len -= len;
 
 	    if(xmit_len == 0)
+		{
 	    	xmit_state = COPYSTATE_READING;
 
-	    if(idle_status_interval)
-		time_next_control_t = (time(NULL) + idle_status_interval);
+		if(idle_status_interval)
+		    time_next_control_t = (time(NULL) + idle_status_interval);
+		}
 	    }
 
 	if(FD_ISSET(portfd, &rfds))

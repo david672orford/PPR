@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/atalk_cap.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 December 2000.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -22,7 +22,6 @@
 #include <sys/time.h>
 #include <netat/appletalk.h>
 #include <netat/abpap.h>		/* <-- not installed by default */
-#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -35,7 +34,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "libppr_int.h"
 
@@ -69,7 +67,7 @@ int idle_status_interval;
 void sigusr1_handler(int signum)
     {
     sigusr1_caught = TRUE;
-    fcntl(0, F_SETFL, O_NONBLOCK);
+    gu_nonblock(0, TRUE);
     } /* end of sigusr1_handler() */
 
 /*
@@ -103,7 +101,7 @@ int basic_open_printer(const char *address, int *wlen)
 	** fails to find the printer name on the network.
 	**
 	** The CAP source file abpapc.c, function PAPOpen()
-	** contains the sprintf() format string "%Can't find %s".
+	** contains the snprintf() format string "%Can't find %s".
 	** The "%C" is not valid and the result is undefined.
 	** Therefor, we look for the intended output (in case
 	** someone fixes the bug) and two different observed
@@ -195,7 +193,7 @@ void hide_printer(int cno, const char type[], int typelen)
 
     DODEBUG(("hide_printer(%d,%s,%d", cno, type, typelen));
 
-    sprintf(buf,
+    snprintf(buf, sizeof(buf),
 	"%%!PS-Adobe-3.0 ExitServer\n"
 	"0 serverdict begin exitserver\n"
 	"statusdict begin\n"
@@ -247,7 +245,7 @@ int open_printer(const char address[], int *wlen)
 		) )
 	{
 	alert(int_cmdline.printer, TRUE, "Syntax error in printer address.");
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
 
     while(TRUE)		/* really, just a goto */
@@ -265,19 +263,19 @@ int open_printer(const char address[], int *wlen)
     	if((strncmp(&address[typeoffset],"LaserWriter",typelen)==0) || renamed || !is_laserwriter)
     	    {
     	    alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found.", address);
-    	    int_exit(EXIT_PRNERR);
+    	    int_exit(EXIT_PRNERR_NOT_RESPONDING);
     	    }
 
     	/*
     	** Previously we were looking for a hidden printer.  We didn't
     	** find it, so now try with the type changed to "LaserWriter".
     	*/
-    	sprintf(unrenamed,"%.*s:LaserWriter@%s",namelen,address,&address[zoneoffset]);
+    	snprintf(unrenamed, sizeof(unrenamed), "%.*s:LaserWriter@%s", namelen, address, &address[zoneoffset]);
     	if((cno = basic_open_printer(unrenamed,wlen)) < 0)
     	    {
     	    alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found,", address);
     	    alert(int_cmdline.printer, FALSE, "nor is \"%s\".", unrenamed);
-    	    int_exit(EXIT_PRNERR);
+    	    int_exit(EXIT_PRNERR_NOT_RESPONDING);
     	    }
 
 	/* now, send the code to the printer to hide it. */
@@ -544,7 +542,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
     }
 
@@ -590,7 +588,7 @@ int main(int argc, char *argv[])
     /* copy the data */
     while( copy_job(printer_cno,wlen) ) /* continue printing jobs */
 	{				/* while we get SIGUSR1 job seperators. */
-	fcntl(0,F_SETFL,0);		/* Clear the non-blocking flag. */
+	gu_nonblock(0, FALSE);		/* Clear the non-blocking flag. */
 	sigusr1_caught=FALSE;		/* Clear EOJ indicator. */
 	kill(getppid(),SIGUSR1);	/* Tell pprdrv that we understood EOJ. */
 	}

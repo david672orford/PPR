@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 9 March 2001.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -29,7 +29,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "interface.h"
 #include "pprdrv.h"
@@ -206,7 +205,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 		|| !(f1 = gu_strsep(&p, " "))
 		|| !(f2 = gu_strsep(&p, " "))
 		|| !(f3 = gu_strsep(&p, " "))
-		|| !(f4 = gu_strsep_quoted(&p, " "))
+		|| !(f4 = gu_strsep_quoted(&p, " ", NULL))
 		|| !(f5 = gu_strsep(&p, " "))
 		|| !(f6 = gu_strsep(&p, " ")))
 	    fatal(EXIT_JOBERR, "Queue file line has too few arguments: %s", qline);
@@ -662,10 +661,10 @@ int check_if_capable(FILE *qfile, int group_pass)
 
 	if(incapable_fonts)
 	    {
-	    if(incapable_fonts>1)
-	    	sprintf(temp, "%d missing fonts", incapable_fonts);
+	    if(incapable_fonts > 1)
+	    	snprintf(temp, sizeof(temp), "%d missing fonts", incapable_fonts);
 	    else
-	    	sprintf(temp, "1 missing font");
+	    	snprintf(temp, sizeof(temp), "1 missing font");
 	    x+=strlen(temp);		/* more pointer for later append */
 	    }
 
@@ -678,10 +677,10 @@ int check_if_capable(FILE *qfile, int group_pass)
 
 	    other = incapable_fonts ? "other " : "";
 
-	    if(incapable_resources>1)	/* be grammatical */
-	    	sprintf(&temp[x], "%d %smissing rsrcs", incapable_resources, other);
+	    if(incapable_resources > 1)	/* be grammatical */
+	    	snprintf(&temp[x], sizeof(temp) - x, "%d %smissing rsrcs", incapable_resources, other);
 	    else
-	    	sprintf(&temp[x], "1 %smissing rsrc", other);
+	    	snprintf(&temp[x], sizeof(temp) - x, "1 %smissing rsrc", other);
 	    x += strlen(&temp[x]);	/* move pointer for later append */
     	    }
 
@@ -690,10 +689,10 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    if(x)
 		temp[x++] = ',';
 
-	    if( incapable_requirements > 1 )
-	    	sprintf(&temp[x],"%d ptr incompatibilities",incapable_requirements);
+	    if(incapable_requirements > 1)
+	    	snprintf(&temp[x], sizeof(temp) - x, "%d ptr incompatibilities",incapable_requirements);
 	    else
-	    	sprintf(&temp[x],"1 ptr incompatiblity");
+	    	snprintf(&temp[x], sizeof(temp) - x, "1 ptr incompatiblity");
 
 	    x += strlen(&temp[x]);
     	    }
@@ -703,10 +702,10 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    if(x)
 		temp[x++] = ',';
 
-	    if( incapable_prohibitions > 1 )
-	    	sprintf(&temp[x], "%d ptr prohibitions", incapable_requirements);
+	    if(incapable_prohibitions > 1)
+	    	snprintf(&temp[x], sizeof(temp) - x, "%d ptr prohibitions", incapable_requirements);
 	    else
-	    	sprintf(&temp[x], "1 ptr prohibition");
+	    	snprintf(&temp[x], sizeof(temp) - x, "1 ptr prohibition");
 
 	    x += strlen(&temp[x]);
     	    }
@@ -716,7 +715,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    if(x)
 	    	temp[x++] = ',';
 
-	    strcpy(&temp[x], "unpassable codes");
+	    snprintf(&temp[x], sizeof(temp) - x, "unpassable codes");
 
 	    x += strlen(&temp[x]);
 	    }
@@ -725,7 +724,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    {
 	    if(x)
 	    	temp[x++] = ',';
-	    strcpy(&temp[x], "outside pages limits");
+	    snprintf(&temp[x], sizeof(temp) - x, "outside pages limits");
 	    x += strlen(&temp[x]);
 	    }
 
@@ -733,7 +732,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 	    {
 	    if(x)
 	    	temp[x++] = ',';
-	    strcpy(&temp[x], "outside kilobytes limits");
+	    snprintf(&temp[x], sizeof(temp) - x, "outside kilobytes limits");
 	    x += strlen(&temp[x]);
 	    }
 

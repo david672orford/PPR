@@ -56,9 +56,13 @@ gu_StrAppendMax.$(OBJ): gu_StrAppendMax.c ../include/before_system.h ../include/
 
 gu_snmp.$(OBJ): gu_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/cexcept.h
 
+gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
+
 gu_trim.$(OBJ): gu_trim.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 gu_strsep2.$(OBJ): gu_strsep2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+gu_fscanf.$(OBJ): gu_fscanf.c ../include/before_system.h ../include/gu.h
 
 gu_strsep.$(OBJ): gu_strsep.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 

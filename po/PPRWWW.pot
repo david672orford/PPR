@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-05-08 08:44-0400\n"
+"POT-Creation-Date: 2001-06-05 17:23-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -94,6 +94,10 @@ msgstr ""
 
 #: ../www/test_components.cgi.perl:66
 msgid "Are Required Packages Present?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:72
+msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
 #: ../www/job_modify.cgi.perl:153
@@ -230,12 +234,20 @@ msgstr ""
 msgid "Critical?"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:56
+msgid "Current Queue Priority of this Job"
+msgstr ""
+
 #: ../www/prn_control.cgi.perl:286 ../www/prn_control.cgi.perl:325
 msgid "Current job:"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:343 ../www/prn_addwiz.cgi.perl:412
 msgid "DNS Name or IP Address:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:69
+msgid "DSC Proofmode Setting"
 msgstr ""
 
 #: ../www/job_modify.cgi.perl:105
@@ -300,6 +312,10 @@ msgstr ""
 msgid "Description:"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:39
+msgid "Descriptive Job Title"
+msgstr ""
+
 #: ../www/show_queues.cgi.perl:157
 msgid "Details"
 msgstr ""
@@ -320,6 +336,26 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:84
 msgid "Does feedback (2-way communication) work?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:66
+msgid "Does this Document have a DSC Document Setup Section?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:65
+msgid "Does this Document have a DSC Prolog?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:67
+msgid "Does this Document have a DSC Script?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:24
+msgid "Elaborate, Fully Qualified Form of the Job ID"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:27
+msgid "Elaboration on Status of the Job"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:456
@@ -356,12 +392,20 @@ msgstr ""
 msgid "For"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:36
+msgid "For Whom is the Submitter Action as Proxy?"
+msgstr ""
+
 #: ../www/prn_control.cgi.perl:287 ../www/prn_control.cgi.perl:326
 msgid "For:"
 msgstr ""
 
 #: ../www/show_queues.cgi.perl:153
 msgid "Free Flow"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:23
+msgid "Friendly Form of the Job ID"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:55
@@ -417,6 +461,10 @@ msgid ""
 "come from the factory."
 msgstr ""
 
+#: ../www/qquery_xlate.pl:50
+msgid "How Many Sheets Per Signiture?  (For Booklet Printing.)"
+msgstr ""
+
 #: ../www/cgi_auth.pl:33
 msgid ""
 "If your browser supports JavaScript, Cookies, and Frames, then click on the "
@@ -435,6 +483,10 @@ msgstr ""
 
 #: ../www/show_printlog.cgi.perl:140
 msgid "Increment"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:41
+msgid "Instructions to a Human Operator for Delivery of the Output"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:57
@@ -477,12 +529,12 @@ msgid ""
 "of an IP address is \"157.252.200.52\"."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:379
+#: ../www/show_jobs.cgi.perl:380
 #, c-format
 msgid "Job \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:431
+#: ../www/show_jobs.cgi.perl:432
 msgid "Job Actions: "
 msgstr ""
 
@@ -492,6 +544,14 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:82
 msgid "Job ID:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:30
+msgid "Job Submission Time, Compact"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:31
+msgid "Job Submission Time, Full"
 msgstr ""
 
 #: ../www/job_modify.cgi.perl:86
@@ -506,7 +566,7 @@ msgstr ""
 msgid "Jobbreak method:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:197
+#: ../www/show_jobs.cgi.perl:198
 #, c-format
 msgid "Jobs Queued for \"%s\" on \"%s\""
 msgstr ""
@@ -568,13 +628,17 @@ msgstr ""
 msgid "Many Details"
 msgstr ""
 
-#: ../www/prn_media.cgi.perl:40
+#: ../www/prn_media.cgi.perl:36
 #, c-format
 msgid "Media Mounted on Printer \"%s\""
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:81
 msgid "Members:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:71
+msgid "Message to Print Diagonally Across Each Page"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:453
@@ -620,6 +684,22 @@ msgstr ""
 msgid "Normal"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:45
+msgid "Number of Copies to be Printed"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:48
+msgid "Number of Logical Pages Per Physical Page"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:43
+msgid "Number of PostScript Page Descriptions"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:35
+msgid "Numberic Unix Userid of Job Submitter"
+msgstr ""
+
 #: ../www/prn_addwiz.cgi.perl:625
 msgid "On Site Contact:"
 msgstr ""
@@ -636,6 +716,10 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:173
 msgid "Optional printer features:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:57
+msgid "Original Queue Priority of this Job"
 msgstr ""
 
 #: ../www/grp_properties.cgi.perl:127 ../www/prn_properties.cgi.perl:443
@@ -753,6 +837,10 @@ msgstr ""
 msgid "Pages started:"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:44
+msgid "Pages x Copies"
+msgstr ""
+
 #: ../www/grp_properties.cgi.perl:141
 msgid "Passthru Printer Languages:"
 msgstr ""
@@ -793,6 +881,10 @@ msgstr ""
 msgid "Perl GNU Gettext module"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:40
+msgid "Person or Application that Created the Job"
+msgstr ""
+
 #: ../www/commentary_select.cgi.perl:113
 msgid "Player:"
 msgstr ""
@@ -820,12 +912,24 @@ msgid ""
 "through Ghostscript before sending them to the printer."
 msgstr ""
 
+#: ../www/qquery_xlate.pl:70
+msgid "Portrait or Landscape"
+msgstr ""
+
 #: ../www/prn_properties.cgi.perl:344
 msgid "PostScript Interpreter Userparams Settings:"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:47
+msgid "PostScript Page Descriptions Per Sheet"
+msgstr ""
+
 #: ../www/test_components.cgi.perl:93
 msgid "Present?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:49
+msgid "Print Borders Around Logical Pages in N-Up Mode?"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:448
@@ -917,7 +1021,7 @@ msgstr ""
 msgid "RFC 1179 (lpr/lpd protocol)"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:454
+#: ../www/show_jobs.cgi.perl:455
 msgid "R_ush"
 msgstr ""
 
@@ -929,7 +1033,7 @@ msgstr ""
 msgid "Refresh Interval:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:177
+#: ../www/show_jobs.cgi.perl:178
 msgid "Refresh interval (in seconds):"
 msgstr ""
 
@@ -1021,6 +1125,14 @@ msgstr ""
 msgid "Silly Sounds:"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:63
+msgid "Size of Input File After Conversion to PostScript"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:62
+msgid "Size of Input File Before Conversion to PostScript"
+msgstr ""
+
 #: ../www/prn_addwiz.cgi.perl:50
 msgid "SocketAPI (JetDirect)"
 msgstr ""
@@ -1036,6 +1148,14 @@ msgstr ""
 #: ../www/prn_control.cgi.perl:111
 #, c-format
 msgid "Status of Printer \"%s\""
+msgstr ""
+
+#: ../www/qquery_xlate.pl:26
+msgid "Status of the Job"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:28
+msgid "Status of the Job with Elaboration"
 msgstr ""
 
 #: ../www/prn_control.cgi.perl:277 ../www/prn_control.cgi.perl:310
@@ -1076,6 +1196,10 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:352
 msgid "TCP Port Number:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:51
+msgid "The Fronts, the Backs, or Both"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:125
@@ -1211,6 +1335,18 @@ msgid ""
 "below."
 msgstr ""
 
+#: ../www/qquery_xlate.pl:54
+msgid "Total Medium Sheets to be Used"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:53
+msgid "Total Medium Sides to be Marked (after N-Up)"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:52
+msgid "Total Page Descriptions for All Copies"
+msgstr ""
+
 #: ../www/show_printlog.cgi.perl:139
 msgid "Total Sheets"
 msgstr ""
@@ -1235,6 +1371,10 @@ msgstr ""
 msgid "Unix User"
 msgstr ""
 
+#: ../www/qquery_xlate.pl:34
+msgid "Unix Username of Job Submitter"
+msgstr ""
+
 #: ../www/prn_properties.cgi.perl:320 ../www/prn_properties.cgi.perl:324
 msgid "Upper limit:"
 msgstr ""
@@ -1257,6 +1397,18 @@ msgstr ""
 
 #: ../www/commentary_select.cgi.perl:101
 msgid "Voice:"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:59
+msgid "Was a Banner Page Requested?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:60
+msgid "Was a Trailer Page Requested?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:38
+msgid "What Was the Name of the Input File?"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:262
@@ -1295,6 +1447,14 @@ msgstr ""
 msgid ""
 "Whom should the print server's system administrator contact to discuss "
 "problems with the printer?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:33
+msgid "Whose Job is This?"
+msgstr ""
+
+#: ../www/qquery_xlate.pl:46
+msgid "Will the Copies be Collated?"
 msgstr ""
 
 #: ../www/commentary_select.cgi.perl:109 ../www/test_components.cgi.perl:108
@@ -1353,7 +1513,7 @@ msgstr ""
 msgid "You must fill in the remote queue name!"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:288
+#: ../www/show_jobs.cgi.perl:289
 msgid "You must select a destination queue before pressing [Move]."
 msgstr ""
 
@@ -1365,7 +1525,7 @@ msgstr ""
 msgid "You must select an interface!"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:280
+#: ../www/show_jobs.cgi.perl:281
 #, c-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr ""
@@ -1392,12 +1552,12 @@ msgid ""
 "Digest as defined "
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:312
+#: ../www/show_jobs.cgi.perl:313
 #, c-format
 msgid "[%s] failed for the following reason:"
 msgstr ""
 
-#: ../www/prn_media.cgi.perl:160
+#: ../www/prn_media.cgi.perl:156
 msgid "_Apply"
 msgstr ""
 
@@ -1409,13 +1569,13 @@ msgstr ""
 #: ../www/cgi_tabbed.pl:284 ../www/cgi_wizard.pl:268
 #: ../www/grp_addwiz.cgi.perl:62 ../www/grp_addwiz.cgi.perl:128
 #: ../www/prn_addwiz.cgi.perl:143 ../www/prn_addwiz.cgi.perl:629
-#: ../www/show_jobs.cgi.perl:453
+#: ../www/show_jobs.cgi.perl:454
 msgid "_Cancel"
 msgstr ""
 
 #: ../www/cgi_tabbed.pl:280 ../www/grp_addwiz.cgi.perl:153
 #: ../www/prn_addwiz.cgi.perl:663 ../www/prn_control.cgi.perl:434
-#: ../www/prn_media.cgi.perl:159 ../www/show_queues.cgi.perl:198
+#: ../www/prn_media.cgi.perl:155 ../www/show_queues.cgi.perl:198
 msgid "_Close"
 msgstr ""
 
@@ -1427,11 +1587,11 @@ msgstr ""
 msgid "_Halt"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:455
+#: ../www/show_jobs.cgi.perl:456
 msgid "_Hold"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:458
+#: ../www/show_jobs.cgi.perl:459
 msgid "_Log"
 msgstr ""
 
@@ -1439,7 +1599,7 @@ msgstr ""
 msgid "_Media"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:457
+#: ../www/show_jobs.cgi.perl:458
 msgid "_Modify"
 msgstr ""
 
@@ -1452,7 +1612,7 @@ msgstr ""
 msgid "_Refresh"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:456
+#: ../www/show_jobs.cgi.perl:457
 msgid "_Release"
 msgstr ""
 

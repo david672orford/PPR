@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_req.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 September 1998.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -23,7 +23,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 
@@ -48,7 +47,7 @@ void requirement(int reftype, const char req_name[])
     	{
     	if(qentry.attr.DSClevel >= 3.0)
     	    warning(WARNING_PEEVE, "Requirement punch%d should be punch(%d) in DSC >= 3.0", x, x);
-	sprintf(scratch, "punch(%d)", x);
+	snprintf(scratch, sizeof(scratch), "punch(%d)", x);
 	req_name = scratch;
 	}
 

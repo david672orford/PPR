@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last revised 15 November 2000.
+** Last revised 9 May 2001.
 */
 
 /*
@@ -32,7 +32,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
@@ -140,6 +139,9 @@ void state_update_pprdrv_addline(const char line[])
 	break;
 	}
 
+    /* Set the close-on-exec flag so that this file won't be available to our children. */
+    gu_set_cloexec(handle);
+
     /* Write the line, ignoring out of space errors since
        there is not much we can do about them anyway.
        */
@@ -188,6 +190,7 @@ static void progress_write(void)
     	ppr_fnamef(qfname, "%s/%s", QUEUEDIR, QueueFile);
     	if((handle = open(qfname, O_RDWR)) == -1)
     	    fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): open(\"%s\",O_WRONLY) failed, errno=%d (%s)", __FILE__, qfname, errno, gu_strerror(errno) );
+	gu_set_cloexec(handle);
 
 	/* Seek to a spot 31 bytes from the end. */
 	if((spot = lseek(handle, (off_t)(0-len), SEEK_END)) < 0)

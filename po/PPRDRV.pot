@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-05-08 08:44-0400\n"
+"POT-Creation-Date: 2001-06-05 17:23-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,7 +28,7 @@ msgid ""
 "\t\t%s =\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:105
+#: ../pprdrv/pprdrv_lw_messages.c:104
 #, c-format
 msgid "%s: no match for \"%s\""
 msgstr ""
@@ -38,12 +38,12 @@ msgstr ""
 msgid "%s: no match for %d \"%s\""
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:99
+#: ../pprdrv/pprdrv_capable.c:98
 #, c-format
 msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:128
+#: ../pprdrv/pprdrv_capable.c:127
 #, c-format
 msgid ""
 "+Printer \"%s\" may not print this job correctly for the following "
@@ -55,8 +55,12 @@ msgstr ""
 msgid "Balance before printing this job: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:202
-msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit."
+#: ../pprdrv/pprdrv_rip.c:85
+msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:161
+msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."
 msgstr ""
 
 #: ../pprdrv/pprdrv_mactt.c:45 ../pprdrv/pprdrv_mactt.c:57
@@ -69,7 +73,7 @@ msgstr ""
 msgid "Cached Mac TT font \"%s\" has no sfntdef section."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:70 ../pprdrv/pprdrv_flag.c:242
+#: ../pprdrv/pprdrv_capable.c:69 ../pprdrv/pprdrv_flag.c:242
 #: ../pprdrv/pprdrv_lw_messages.c:48 ../pprdrv/pprdrv_pjl_messages.c:55
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
@@ -80,12 +84,16 @@ msgstr ""
 msgid "Can't open resource file \"%s\", errno=%d (%s)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:356
+#: ../pprdrv/pprdrv_ppd.c:257
+msgid "Can't parse RIP information in PPD file."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:355
 #, c-format
 msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:619
+#: ../pprdrv/pprdrv_capable.c:618
 msgid "Communications channel cannot pass required codes."
 msgstr ""
 
@@ -104,30 +112,25 @@ msgstr ""
 msgid "End of job %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:335
+#: ../pprdrv/pprdrv_interface.c:291
 #, c-format
 msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:258
+#: ../pprdrv/pprdrv_interface.c:214
 msgid ""
 "Interface program malfunction: it quit before accepting\n"
 "\tall of the job but didn't return an error code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:214
+#: ../pprdrv/pprdrv_interface.c:173
 #, c-format
 msgid "Interface program malfunction: it returned invalid exit code %d,"
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:200
-#, c-format
-msgid "Interface stopped by signal \"%s\"."
-msgstr ""
-
-#: ../pprdrv/pprdrv.c:1173 ../pprdrv/pprdrv.c:1196 ../pprdrv/pprdrv.c:1247
-#: ../pprdrv/pprdrv.c:1284 ../pprdrv/pprdrv.c:1290 ../pprdrv/pprdrv.c:1295
-#: ../pprdrv/pprdrv.c:1300 ../pprdrv/pprdrv.c:1313
+#: ../pprdrv/pprdrv.c:1181 ../pprdrv/pprdrv.c:1204 ../pprdrv/pprdrv.c:1272
+#: ../pprdrv/pprdrv.c:1309 ../pprdrv/pprdrv.c:1315 ../pprdrv/pprdrv.c:1320
+#: ../pprdrv/pprdrv.c:1325 ../pprdrv/pprdrv.c:1338
 #, c-format
 msgid "Invalid \"%s\" (%s line %d)."
 msgstr ""
@@ -137,22 +140,27 @@ msgstr ""
 msgid "Job ID: %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:631
+#: ../pprdrv/pprdrv_capable.c:630
 #, c-format
 msgid "Job has %d pages but allowed range for this printer is %d--%d."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:644
+#: ../pprdrv/pprdrv_capable.c:643
 #, c-format
 msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1360
+#: ../pprdrv/pprdrv_interface.c:159
+#, c-format
+msgid "Mischief afoot, interface program stopped by signal \"%s\"."
+msgstr ""
+
+#: ../pprdrv/pprdrv.c:1385
 #, c-format
 msgid "No \"Interface:\" line in %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:74 ../pprdrv/pprdrv_pjl_messages.c:78
+#: ../pprdrv/pprdrv_lw_messages.c:73 ../pprdrv/pprdrv_pjl_messages.c:78
 #, c-format
 msgid "Not enough fields in \"%s\" line %d"
 msgstr ""
@@ -169,7 +177,7 @@ msgstr ""
 msgid "PFB file \"%s\" is currupt (defect type %d)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:125
+#: ../pprdrv/pprdrv_patch.c:124
 msgid "PPD file does not have *ExitServer code"
 msgstr ""
 
@@ -183,34 +191,39 @@ msgstr ""
 msgid "Print Date: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:95
+#: ../pprdrv/pprdrv_patch.c:94
 msgid "Printer did not respond correctly to *?PatchFile query."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:548
+#: ../pprdrv/pprdrv_capable.c:547
 msgid "Printer does not have all required extensions."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:562
+#: ../pprdrv/pprdrv_capable.c:561
 msgid "Printer is not permitted to print grayscale documents."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:534
+#: ../pprdrv/pprdrv_rip.c:83
+#, c-format
+msgid "RIP stopped by signal \"%s\"."
+msgstr ""
+
+#: ../pprdrv/pprdrv_capable.c:533
 #, c-format
 msgid "Required language level (%d) exceeds printer's language level (%d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:519 ../pprdrv/pprdrv_capable.c:524
+#: ../pprdrv/pprdrv_capable.c:518 ../pprdrv/pprdrv_capable.c:523
 #, c-format
 msgid "Requirement \"%s\" can't be met."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:411 ../pprdrv/pprdrv_capable.c:422
+#: ../pprdrv/pprdrv_capable.c:410 ../pprdrv/pprdrv_capable.c:421
 #, c-format
 msgid "Resource \"%s %s %s %d\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:413 ../pprdrv/pprdrv_capable.c:424
+#: ../pprdrv/pprdrv_capable.c:412 ../pprdrv/pprdrv_capable.c:423
 #, c-format
 msgid "Resource \"%s %s\" not available."
 msgstr ""
@@ -225,30 +238,37 @@ msgstr ""
 msgid "Sheets: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1330
+#: ../pprdrv/pprdrv.c:1355
 #, c-format
 msgid "Syntax error in \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:621
+#: ../pprdrv/pprdrv_ppd.c:620
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", removing existing code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:673
+#: ../pprdrv/pprdrv_ppd.c:672
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:498
+#: ../pprdrv/pprdrv_ppd.c:497
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:70
+#, c-format
+msgid ""
+"The RIP terminated abruptly after receiving signal %d (%s)\n"
+"from a non-spooler process (possibly the OS kernel)."
 msgstr ""
 
 #: ../pprdrv/pprdrv_nup.c:62
@@ -257,10 +277,14 @@ msgid ""
 "The font \"%s\", which is required for the draft notice, is not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:190
+#: ../pprdrv/pprdrv_interface.c:149
 msgid ""
 "The interface performed a controlled shutdown because a non-spoolerprocess "
 "(possibly the OS kernel) sent it a signal."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:134
+msgid "The interface program dumped core."
 msgstr ""
 
 #: ../pprdrv/pprdrv_commentary.c:277
@@ -298,7 +322,15 @@ msgid ""
 "continue."
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:87
+#: ../pprdrv/pprdrv_interface.c:124
+#, c-format
+msgid ""
+"The printer interface program terminated abruptly after receiving\n"
+"signal %d (%s) from a non-spooler process (possibly\n"
+"the OS kernel)."
+msgstr ""
+
+#: ../pprdrv/pprdrv_patch.c:86
 msgid ""
 "Timeout expired while waiting for printer to respond to *?PatchFile query."
 msgstr ""
@@ -313,23 +345,23 @@ msgstr ""
 msgid "Title: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:83 ../pprdrv/pprdrv_pjl_messages.c:89
+#: ../pprdrv/pprdrv_lw_messages.c:82 ../pprdrv/pprdrv_pjl_messages.c:89
 #, c-format
 msgid "Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:87 ../pprdrv/pprdrv_pjl_messages.c:93
+#: ../pprdrv/pprdrv_lw_messages.c:86 ../pprdrv/pprdrv_pjl_messages.c:93
 #, c-format
 msgid ""
 "Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:85 ../pprdrv/pprdrv_pjl_messages.c:91
+#: ../pprdrv/pprdrv_lw_messages.c:84 ../pprdrv/pprdrv_pjl_messages.c:91
 #, c-format
 msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1347
+#: ../pprdrv/pprdrv.c:1372
 #, c-format
 msgid "Unrecognized userparams variable \"%s\"."
 msgstr ""
@@ -339,7 +371,7 @@ msgstr ""
 msgid "User \"%s\" is inexplicably absent from the charge account database."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1342
+#: ../pprdrv/pprdrv.c:1367
 #, c-format
 msgid "Value of \"%s\" in \"%s\" must be boolean."
 msgstr ""

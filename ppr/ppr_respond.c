@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 13 February 2001.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -35,7 +35,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "respond.h"
@@ -247,13 +246,13 @@ int respond(int response, const char *extra)
 	    int fd;
 
 	    /* Convert the response code to a string. */
-	    sprintf(response_code_number, "%d", response);
+	    snprintf(response_code_number, sizeof(response_code_number), "%d", response);
 
 	    /* Convert the submission time to a string. */
-	    sprintf(time_number, "%ld", qentry.time);
+	    snprintf(time_number, sizeof(time_number), "%ld", qentry.time);
 
 	    /* Build a string containing all of the queue id elements separated by spaces. */
-	    sprintf(queue_id, "%s %s %d %d %s",
+	    snprintf(queue_id, sizeof(queue_id), "%s %s %d %d %s",
 	    	qentry.destnode != (char*)NULL ? qentry.destnode : ppr_get_nodename(),
 	    	qentry.destname, qentry.id, qentry.subid, qentry.homenode);
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 April 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -62,7 +62,7 @@ static void sigalrm_handler(int sig)
 ** Make the connection to the printer.
 ** Return the file descriptor.
 */
-int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_engaged, int refused_retries, unsigned int *address_ptr)
+int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_engaged, int refused_retries, const char snmp_community[], unsigned int *address_ptr)
     {
     const char *address = int_cmdline.address;
     int sockfd;
@@ -83,14 +83,14 @@ int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_e
     	{
     	alert(int_cmdline.printer, TRUE, _("Spaces and tabs not allowed in TCP/IP a printer address."
 				"\"%s\" does not conform to this requirement."), address);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     if((ptr = strchr(address, ':')) == (char*)NULL || ! isdigit(ptr[1]))
     	{
     	alert(int_cmdline.printer, TRUE, _("TCP/IP printer address must be in form \"host:portnum\","
 					"\"%s\" does not conform to this requirement."), address);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
 
     /* Put the port number in the structure. */
@@ -112,9 +112,8 @@ int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_e
 	if((hostinfo = gethostbyname(address)) == (struct hostent *)NULL)
 	    {
 	    alert(int_cmdline.printer, TRUE, _("TCP/IP interface can't determine IP address for \"%s\"."), address);
-	    int_exit(EXIT_PRNERR);	/* DNS failures can be temporary */
+	    int_exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
 	    }
-
 	printer_addr.sin_family = hostinfo->h_addrtype;
 	memcpy(&printer_addr.sin_addr, hostinfo->h_addr_list[0], hostinfo->h_length);
     	}
@@ -154,7 +153,7 @@ int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_e
 	    alert(int_cmdline.printer, TRUE, _("Printer \"%s\" is not responding.\n"
 					    "(Aborted after connect() blocked for %d seconds.)"), address, connect_timeout);
 	    close(sockfd);
-	    int_exit(EXIT_PRNERR);
+	    int_exit(EXIT_PRNERR_NOT_RESPONDING);
 	    }
 
 	/* If connect() failed, */
@@ -169,7 +168,7 @@ int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_e
 		case ETIMEDOUT:
 		    alert(int_cmdline.printer, TRUE, _("Timeout while trying to connect to printer."
 					"(Connect() reported error ETIMEDOUT.)"));
-		    int_exit(EXIT_PRNERR);
+		    int_exit(EXIT_PRNERR_NOT_RESPONDING);
 		    break;
 		case ECONNREFUSED:
 		    if(try_count < refused_retries)
@@ -179,7 +178,15 @@ int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_e
 		    	}
 		    if(refused_engaged)
 			{
-			int_snmp_status(&printer_addr.sin_addr.s_addr);
+			struct gu_snmp *snmp_obj;
+			int error_code;
+		       	if(!(snmp_obj = gu_snmp_open(printer_addr.sin_addr.s_addr, snmp_community, &error_code)))
+			    {
+			    alert(int_cmdline.printer, TRUE, "gu_snmp_open() failed, error_code=%d", error_code);
+			    return EXIT_PRNERR;
+			    }
+			int_snmp_status(snmp_obj);
+			gu_snmp_close(snmp_obj);
 			int_exit(EXIT_ENGAGED);
 			}
 		    else

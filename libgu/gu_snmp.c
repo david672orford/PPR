@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 22 March 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -115,6 +115,10 @@ static void *decode_string(void *vp, int tag, char **s, int *len)
     return (void*)p;
     }
 
+/*
+** This function creates an SNMP object.  If the community[] is NULL, then
+** "public" will be used.
+*/
 struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[], int *error_code)
     {
     int e;
@@ -125,7 +129,7 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
     struct gu_snmp *p;
 
     Try {
-	if(strlen(community) > 127)
+	if(community && strlen(community) > 127)
     	    Throw(-1);
 
         memset(&server_ip, 0, sizeof(server_ip));
@@ -166,17 +170,23 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
     /* We have suceeded!  Go ahead and allocate the structure and fill it in. */
     p = (struct gu_snmp *)gu_alloc(1, sizeof(struct gu_snmp));
     p->socket = fd;
-    p->community = community;
+    p->community = community ? community : "public";
     p->request_id = (getpid() << 16) | (time((time_t *)NULL) & 0xFFFF);
     return p;
     }
 
+/*
+** This destroys the SNMP object.
+*/
 void gu_snmp_close(struct gu_snmp *p)
     {
     close(p->socket);
     gu_free(p);
     }
 
+/*
+** This uses the SNMP object to perform and SNMP query.
+*/
 int gu_snmp_get(struct gu_snmp *p, int *error_code, ...)
     {
     int e;
@@ -455,7 +465,8 @@ int main(int argc, char *argv[])
     {
     struct gu_snmp *s;
     int error_code;
-    int n1, n2;
+    int n1;
+    unsigned int n2;
     char *str;
 
     if(!(s = gu_snmp_open(inet_addr(argv[1]), "public", &error_code)))

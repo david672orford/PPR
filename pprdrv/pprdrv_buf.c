@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 7 February 2001.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -124,7 +124,7 @@ int printer_flush(void)
                 {
                 if(errno == EINTR)
                     {
-		    interface_fault_check();
+		    fault_check();
                     continue;
                     }
                 fatal(EXIT_PRNERR, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -135,7 +135,7 @@ int printer_flush(void)
 		/* If there is data to read from the printer, */
 		if(FD_ISSET(intstdout, &rfds))
 		    {
-		    interface_fault_check();
+		    fault_check();
 		    feedback_reader();
 		    }
 
@@ -161,21 +161,26 @@ int printer_flush(void)
 	    if(errno == EINTR)
 	    	{
 	    	DODEBUG_INTERFACE_GRITTY(("%s(): write() interupted", function));
-		interface_fault_check();
+		fault_check();
 	    	DODEBUG_INTERFACE_GRITTY(("%s(): restarting write()", function));
 	    	continue;
 	    	}
 
-	    /* For a broken pipe error, we prefer that the interface call alert()
-	       and then exit since that will presumably give the user more
-	       information about what went wrong.  If it does so before sleep()
-	       expires, then reapchild() will call exit(). */
+	    /* If we can't write because the pipe is broken, that means that
+	       the interface (or possible a RIP) died.  Wait 10 seconds to
+	       allow time for SIGCHLD to be received.  When it is,
+	       fault_check() will process the last of the output from the
+	       interface or RIP and terminate pprdrv. */
 	    if(errno == EPIPE)
 	    	{
+		int x;
 		DODEBUG_INTERFACE(("Pipe write error, Waiting 10 seconds for SIGCHLD"));
-		sleep(10);
-		interface_fault_check();
-		DODEBUG_INTERFACE(("10 seconds are over"));
+		for(x=0; x<10; x++)
+		    {
+		    fault_check();
+		    sleep(1);
+		    }
+		fatal(EXIT_PRNERR, "%s(): unexplained EPIPE", function);
 	    	}
 
 	    fatal(EXIT_PRNERR, "%s(): write failed, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -354,13 +359,13 @@ void printer_printf(const char *string, ... )
 		    break;
 		case 'd':		/* a decimal value */
 		    n = va_arg(va, int);
-		    sprintf(nstr, "%d", n);
+		    snprintf(nstr, sizeof(nstr), "%d", n);
 		    printer_puts(nstr);
 		    break;
 		case 'o':		/* an octal value */
 		    n = va_arg(va, int);
-		    sprintf(nstr, "%.3o", n);	/* We assume three digits */
-		    printer_puts(nstr);		/* because PostScript needs 3. */
+		    snprintf(nstr, sizeof(nstr), "%.3o", n);	/* (We assume three digits */
+		    printer_puts(nstr);				/* because PostScript needs 3.) */
 		    break;
 		case 'f':		/* a double */
 		case 'g':
@@ -480,5 +485,30 @@ void printer_puts_escaped(const char *str)
 	printer_putc_escaped(c);
 	}
     } /* end of printer_puts_escaped() */
+
+/*
+** Send the PJL Universal Exit Language command to the printer.
+*/
+void printer_universal_exit_language(void)
+    {
+    printer_puts("\33%-12345X");
+    }
+
+/*
+** Use a PJL command to set the display message on a printer.
+**
+** This code is a little more complicated than would seem necessary
+** because printer_printf() does not support "%.*".
+*/
+#define PJL_DISPLAY_LEN 32 /* 16 */
+void printer_display_printf(const char message[], ...)
+    {
+    char temp[PJL_DISPLAY_LEN + 1];
+    va_list va;
+    va_start(va, message);
+    vsnprintf(temp, sizeof(temp), message, va);
+    va_end(va);
+    printer_printf("@PJL RDYMSG DISPLAY = \"%s\"\n", temp);
+    }
 
 /* end of file */

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 1 May 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -37,7 +37,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "libppr_int.h"
 #include "parallel.h"
@@ -75,7 +74,7 @@ static int int_connect_parallel(void)
 	if( ! (statbuf.st_mode & S_IFCHR) )
 	    {
 	    alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
-	    int_exit(EXIT_PRNERR_NORETRY);
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	    }
 	}
 
@@ -103,7 +102,7 @@ static int int_connect_parallel(void)
 	    	int_exit(EXIT_ENGAGED);
 	    case EACCES:
 	    	alert(int_cmdline.printer, TRUE, "Access to port \"%s\" is denied.", int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY);
+		int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 	    case EIO:
 	    	alert(int_cmdline.printer, TRUE, "Hangup or other error while opening \"%s\".", int_cmdline.address);
 		int_exit(EXIT_PRNERR);
@@ -113,10 +112,10 @@ static int int_connect_parallel(void)
 	    case ENOENT:	/* file not found */
 	    case ENOTDIR:	/* path not found */
 	    	alert(int_cmdline.printer, TRUE, "The port \"%s\" does not exist.", int_cmdline.address);
-	    	int_exit(EXIT_PRNERR_NORETRY);
+	    	int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 	    case ENXIO:
 	    	alert(int_cmdline.printer, TRUE, "The device file \"%s\" exists, but the device doesn't.", int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY);
+		int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 	    #ifdef ENOSR
 	    case ENOSR:
 	    	alert(int_cmdline.printer, TRUE, "System is out of STREAMS.");
@@ -206,7 +205,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
     	alert(int_cmdline.printer, TRUE, "Option parsing error:  %s", gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* We can't use control-T status updates if the job isn't PostScript. */
@@ -224,7 +223,7 @@ static void printer_error(int error_number)
     	{
 	case EINVAL:
 	    alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-	    int_exit(EXIT_PRNERR_NORETRY);
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	default:
 	    alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
 	    int_exit(EXIT_PRNERR);
@@ -283,7 +282,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE,
     		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
     		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Check for unusable codes settings. */
@@ -292,7 +291,7 @@ int main(int argc, char *argv[])
 	alert(int_cmdline.printer, TRUE,
 		_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
 		"program \"%s\"."), int_cmdline.int_basename);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Open the printer port and esablish default settings: */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/clispool.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 24 June 1999.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -30,7 +30,6 @@
 #include <sys/wait.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 
 /* Optional debugging */
@@ -65,7 +64,7 @@ struct clipr_request
 
 #define SPOOL_AREA_TEMPLATE "\\\\%s.serve\\pprclipr"
 #define FILE_NAME_TEMPLATE "JOB%ld"		/* notice upper case! */
-#define FULL_FILE_NAME_TEMPLATE "/var/spool/ppr/pprclipr/job%ld"
+#define FULL_FILE_NAME_TEMPLATE VAR_SPOOL_PPR"/pprclipr/job%ld"
 
 #define CLISPOOL_OK 0		/* job printed ok */
 #define CLISPOOL_STOPPED 1	/* CLISPOOL is disabled */
@@ -162,7 +161,7 @@ int main(int argc, char *argv[])
     chdir(HOMEDIR);		/* change to PPR's home directory */
 
     if(argc < 3)
-    	fatal(EXIT_PRNERR_NORETRY, "Interface invokation error: insufficient parameters.");
+    	fatal(EXIT_PRNERR_NORETRY_BAD_SETTINGS, "Interface invokation error: insufficient parameters.");
 
     printer_name = argv[1];		/* assign the arguments */
     printer_address = argv[2];		/* to global variables */
@@ -170,7 +169,7 @@ int main(int argc, char *argv[])
     /* get the system name which we will use in building the */
     /* local network name and in building the share area name */
     if(uname(&uname_data) == -1)
-    	fatal(EXIT_PRNERR_NORETRY,"Internal interface error: uname() failed, errno=%d.",errno);
+    	fatal(EXIT_PRNERR_NORETRY, "Internal interface error: uname() failed, errno=%d (%s).", errno, strerror(errno));
     #ifdef DEBUG
     debug("uname is \"%s\"",uname_data.nodename);
     #endif
@@ -182,7 +181,7 @@ int main(int argc, char *argv[])
     #endif
 
     /* construct the local network name */
-    sprintf(local_name,"%s%ld",uname_data.nodename,pid);
+    snprintf(local_name, sizeof(local_name), "%s%ld", uname_data.nodename, pid);
     while( (int)strlen(local_name) < (int)16 )
 	strcat(local_name," ");
 
@@ -204,46 +203,46 @@ int main(int argc, char *argv[])
     request.clispool_errno=0;
     request.print_errno=0;
     request.extra_code=0;
-    sprintf(request.spool_area,SPOOL_AREA_TEMPLATE,uname_data.nodename);
+    snprintf(request.spool_area, sizeof(request.spool_area), SPOOL_AREA_TEMPLATE, uname_data.nodename);
     for(x=0;request.spool_area[x];x++)				/* Convert path name */
     	request.spool_area[x]=toupper(request.spool_area[x]);	/* to upper case and */
     for( ;x<sizeof(request.spool_area); x++)			/* fill extra space with nulls */
     	request.spool_area[x]=(char)NULL;			/* because CLISPOOL is fussy. */
     request.drive[0]='J';
     request.drive[1]=':';
-    sprintf(request.file_name,FILE_NAME_TEMPLATE,(long)pid);
+    snprintf(request.file_name, sizeof(request.file_name), FILE_NAME_TEMPLATE, (long)pid);
     #ifdef DEBUG
     debug("spool area is \"%s\", file is \"%s\"",request.spool_area,request.file_name);
     #endif
 
     /* build the name of the temporary file */
-    sprintf(full_file_name,FULL_FILE_NAME_TEMPLATE,(long)pid);
+    ppr_fnamef(full_file_name, FULL_FILE_NAME_TEMPLATE, (long)pid);
     #ifdef DEBUG
-    debug("temporary file is \"%s\"",full_file_name);
+    debug("temporary file is \"%s\"", full_file_name);
     #endif
 
     /* Copy stdin to a temporary file */
     if( (copybuf=malloc((size_t)4096)) == (void*)NULL)
-    	fatal(EXIT_PRNERR,"Internal interface error: malloc() failed, errno=%d",errno);
+    	fatal(EXIT_PRNERR,"Internal interface error: malloc() failed, errno=%d (%s).", errno, strerror(errno));
 
-    if( (copyfd=open(full_file_name,O_WRONLY | O_CREAT,UNIX_755)) == -1 )
-    	fatal(EXIT_PRNERR,"Internal interface error: open() failed for transfer file, errno=%d.",errno);
+    if((copyfd = open(full_file_name, O_WRONLY | O_CREAT, UNIX_755)) == -1)
+    	fatal(EXIT_PRNERR, "Internal interface error: open() failed for transfer file, errno=%d (%s).", errno, strerror(errno));
 
     while( (nbytes=read(0,copybuf,4096)) )
     	{
     	if(nbytes==-1)
-    	    fatal(EXIT_PRNERR,"Internal interface error: read() failed, errno=%d.",errno);
+    	    fatal(EXIT_PRNERR, "Internal interface error: read() failed, errno=%d (%s).",errno, strerror(errno));
     	if(write(copyfd,copybuf,nbytes) != nbytes)
     	    {
     	    if(nbytes==-1)
-    	    	fatal(EXIT_PRNERR,"Error writing transfer file: write() failed, errno=%d",errno);
+    	    	fatal(EXIT_PRNERR, "Error writing transfer file: write() failed, errno=%d (%s)", errno, strerror(errno));
     	    else
-    	    	fatal(EXIT_PRNERR,"Disk full error writing transfer file.");
+    	    	fatal(EXIT_PRNERR, "Disk full error writing transfer file.");
     	    }
 	}
 
     if( close(copyfd) == -1 )
-    	fatal(EXIT_PRNERR_NORETRY,"close() failed, errno=%d",errno);
+    	fatal(EXIT_PRNERR_NORETRY, "close() failed, errno=%d",errno);
 
     free(copybuf);
 
@@ -252,28 +251,28 @@ int main(int argc, char *argv[])
     debug("opening endpoint");
     #endif
     if( (endpoint=t_open(CIRCUIT,O_RDWR,(struct t_info*)NULL)) == -1 )
-    	fatal(EXIT_PRNERR,"Interface internal error: t_open() failed, t_errno=%d.",t_errno);
+    	fatal(EXIT_PRNERR, "Interface internal error: t_open() failed, t_errno=%d.", t_errno);
 
     /* bind the local name to the endpoint */
     #ifdef DEBUG
     debug("binding local name to endpoint");
     #endif
     if( (req=(struct t_bind*)t_alloc(endpoint,T_BIND,T_ALL)) == (struct t_bind*)NULL )
-	fatal(EXIT_PRNERR,"Interface internal error: t_alloc() failed, t_errno=%d.",t_errno);
+	fatal(EXIT_PRNERR, "Interface internal error: t_alloc() failed, t_errno=%d.", t_errno);
     strcpy(req->addr.buf,local_name);	/* copy the local */
     req->addr.len=strlen(local_name);	/* name into a structure */
     req->qlen=0;
     if( t_bind(endpoint,req,(struct t_bind*)NULL) == -1 )
-    	fatal(EXIT_PRNERR,"Interface internal error: t_bind() failed, t_errno=%d.",t_errno);
+    	fatal(EXIT_PRNERR, "Interface internal error: t_bind() failed, t_errno=%d.", t_errno);
     if(t_free((char *)req,T_BIND) == -1)
-	fatal(EXIT_PRNERR,"Interface internal error: t_free() failed, t_errno=%d.",t_errno);
+	fatal(EXIT_PRNERR, "Interface internal error: t_free() failed, t_errno=%d.", t_errno);
 
     /* connect to remote name */
     #ifdef DEBUG
     debug("connecting to remote computer");
     #endif
     if( (sndcall=(struct t_call*)t_alloc(endpoint,T_CALL,T_ADDR)) == (struct t_call*)NULL )
-    	fatal(EXIT_PRNERR,"t_alloc() failed, t_errno=%d",t_errno);
+    	fatal(EXIT_PRNERR, "t_alloc() failed, t_errno=%d", t_errno);
     strcpy(sndcall->addr.buf,remote_name);
     sndcall->addr.len=strlen(remote_name);
     sndcall->opt.len=0;
@@ -286,7 +285,7 @@ int main(int argc, char *argv[])
 	    int fd;
 
 	    unlink(full_file_name);	/* remove the transfer file */
-	    full_file_name[0]=(char)NULL;
+	    full_file_name[0] = '\0';
 
 	    if( (fd=open("/dev/null",O_RDWR)) != -1 )	/* open /dev/null */
 	    	{					/* for stdi/o for remstat */
@@ -310,22 +309,22 @@ int main(int argc, char *argv[])
 			close(fd);
 		    	wait(&waitstat);
 		    	if(!WIFEXITED(waitstat))
-			    fatal(EXIT_PRNERR,"Internal error: remstat did not exit normally.");
+			    fatal(EXIT_PRNERR, "Internal error: remstat did not exit normally.");
 		    	if(WEXITSTATUS(waitstat)==255)
-			    fatal(EXIT_PRNERR,"Internal error: remstat not found.");
+			    fatal(EXIT_PRNERR, "Internal error: remstat not found.");
 		    	if(WEXITSTATUS(waitstat)!=0)	/* if machine not found */
-		    	    fatal(EXIT_PRNERR,"Client spooler is turned off or unreachable.");
+		    	    fatal(EXIT_PRNERR, "Client spooler is turned off or unreachable.");
 		    }
 		} /* end of if /dev/null opened ok */
 	    return EXIT_ENGAGED;
 	    }
 	else
 	    {
-	    fatal(EXIT_PRNERR,"t_connect() failed, t_errno=%d",t_errno);
+	    fatal(EXIT_PRNERR, "t_connect() failed, t_errno=%d", t_errno);
 	    }
     	}
     if(t_free((char*)sndcall,T_CALL) == -1)
-    	fatal(EXIT_PRNERR,"t_free() failed, t_errno=%d",t_errno);
+    	fatal(EXIT_PRNERR, "t_free() failed, t_errno=%d", t_errno);
 
     /* send the request packet to the client */
     #ifdef DEBUG
@@ -334,9 +333,9 @@ int main(int argc, char *argv[])
     if( (nbytes=t_snd(endpoint,(char*)&request,sizeof(request),0)) != sizeof(request) )
 	{
 	if(nbytes==-1)
-	    fatal(EXIT_PRNERR,"t_snd() failed, errno=%d",errno);
+	    fatal(EXIT_PRNERR, "t_snd() failed, errno=%d (%s).", errno, strerror(errno));
 	else
-	    fatal(EXIT_PRNERR,"t_snd() failed, return value=%d",nbytes);
+	    fatal(EXIT_PRNERR, "t_snd() failed, return value=%d", nbytes);
 	}
 
     /* receive the response */
@@ -346,9 +345,9 @@ int main(int argc, char *argv[])
     if( (nbytes=t_rcv(endpoint,(char*)&request,sizeof(request),&flags)) != sizeof(request) )
 	{
 	if(nbytes==-1)
-	    fatal(EXIT_PRNERR,"t_rcv() failed, errno=%d",errno);
+	    fatal(EXIT_PRNERR, "t_rcv() failed, errno=%d (%s)", errno, strerror(errno));
 	else
-	    fatal(EXIT_PRNERR,"t_rcv() failed, return value=%d",nbytes);
+	    fatal(EXIT_PRNERR, "t_rcv() failed, return value=%d", nbytes);
 	}
 
     /* undo network stuff */
@@ -356,14 +355,14 @@ int main(int argc, char *argv[])
     debug("disconnecting");
     #endif
     if( t_close(endpoint) == -1 )
-    	fatal(EXIT_PRNERR,"t_close() failed, t_errno=%d",t_errno);
+    	fatal(EXIT_PRNERR, "t_close() failed, t_errno=%d", t_errno);
 
     /* remove the temporary file */
     #ifdef DEBUG
     debug("removing temporary file");
     #endif
     unlink(full_file_name);
-    full_file_name[0]=(char)NULL;
+    full_file_name[0] = '\0';
 
     /* evaluate the response */
     #ifdef DEBUG
@@ -378,54 +377,54 @@ int main(int argc, char *argv[])
 	    #endif
     	    return EXIT_PRINTED;
 	case CLISPOOL_STOPPED:
-	    alert(printer_name,TRUE,"CLISPOOL is temporarily disabled.");
-	    return EXIT_PRNERR;
+	    alert(printer_name, TRUE, "CLISPOOL is temporarily disabled.");
+	    return EXIT_ENGAGED;
 	case CLISPOOL_CANTLINK:
-	    alert(printer_name,TRUE,"The client can't link to \"%s\", DOS error %d.",request.spool_area,request.clispool_errno);
+	    alert(printer_name, TRUE, "The client can't link to \"%s\", DOS error %d.",request.spool_area,request.clispool_errno);
 	    return EXIT_PRNERR;
 	case CLISPOOL_DENIED:
-	    alert(printer_name,TRUE,"Client has denied its services to this spooler.");
-	    return EXIT_PRNERR;
+	    alert(printer_name, TRUE, "Client has denied its services to this spooler.");
+	    return EXIT_PRNERR_NORETRY_ACCESS_DENIED;
 	case CLISPOOL_PRINT_ERROR:
-	    alert(printer_name,TRUE,"Spooler process on client refuses to accept file,");
+	    alert(printer_name, TRUE, "Spooler process on client refuses to accept file,");
 	    switch(request.print_errno)
 	    	{
 		case 0:
-		    alert(printer_name,FALSE,"no reason given.");
+		    alert(printer_name, FALSE, "no reason given.");
 		    return EXIT_PRNERR;		/* this seems best */
 		case 1:
-		    alert(printer_name,FALSE,"claiming it was asked to perform an invalid function.");
+		    alert(printer_name, FALSE, "claiming it was asked to perform an invalid function.");
 		    return EXIT_PRNERR_NORETRY;
 		case 2:
-		    alert(printer_name,FALSE,"because the file was not found.");
+		    alert(printer_name, FALSE, "because the file was not found.");
 		    return EXIT_PRNERR_NORETRY;
 		case 3:
-		    alert(printer_name,FALSE,"because the path was not found.");
+		    alert(printer_name, FALSE, "because the path was not found.");
 		    return EXIT_PRNERR_NORETRY;
 		case 4:
-		    alert(printer_name,FALSE,"because the client computer has too many files open.");
+		    alert(printer_name, FALSE, "because the client computer has too many files open.");
 		    return EXIT_PRNERR;
 		case 5:
-		    alert(printer_name,FALSE,"because it was denied access to \"%s\".",request.spool_area);
+		    alert(printer_name, FALSE, "because it was denied access to \"%s\".",request.spool_area);
 		    return EXIT_PRNERR;		/* this seems best */
 		case 8:
-		    alert(printer_name,FALSE,"because its queue is full.");
+		    alert(printer_name, FALSE, "because its queue is full.");
 		    return EXIT_PRNERR;
 		case 9:
-		    alert(printer_name,FALSE,"claiming that its API is busy.  (This shouldn't happen.)");
+		    alert(printer_name, FALSE, "claiming that its API is busy.  (This shouldn't happen.)");
 		    return EXIT_PRNERR;		/* hope it will go away */
 		case 0xC:
-		    alert(printer_name,FALSE,"claiming that the file name is too long.");
+		    alert(printer_name, FALSE, "claiming that the file name is too long.");
 		    return EXIT_PRNERR_NORETRY;
 		case 0xF:
-		    alert(printer_name,FALSE,"claiming that it was asked to print a file on an invalid drive.");
+		    alert(printer_name, FALSE, "claiming that it was asked to print a file on an invalid drive.");
 		    return EXIT_PRNERR;		/* CLISPOOL might say this, not CLIPRINT */
 		default:
-		    alert(printer_name,FALSE,"because DOS error number %d has occured.",request.print_errno);
+		    alert(printer_name, FALSE, "because DOS error number %d has occured.",request.print_errno);
 		    return EXIT_PRNERR_NORETRY;
 	    	}
 	default:
-	    alert(printer_name,TRUE,"Client has returned an undefined error code: %d.",request.clispool_errno);
+	    alert(printer_name, TRUE, "Client has returned an undefined error code: %d.",request.clispool_errno);
 	    return EXIT_PRNERR_NORETRY;
 	}
     } /* end of main() */

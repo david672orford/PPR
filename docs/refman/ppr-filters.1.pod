@@ -1,6 +1,6 @@
 #
 # ppr-filters.1.pod
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 13 December 2000.
+# Last modified 1 June 2001.
 #
 
 =head1 NAME
@@ -110,15 +110,13 @@ It is assumed that the file you print is compatible with
 your system's version of B<pr>.  Your system's B<pr> may have trouble
 with files with non-Unix line termination.
 
-Normally, the file name or the string specified with
-the B<-C> switch (if present) will be used as the title.  You may override
-the title with the B<-o title=> option.
+Normally, the file name or the string specified with the B<--title> switch (if present) 
+will be used as the title.  You may override the title with the B<-o title=> option.
 
-The B<-o> option "B<width=>" specifies
-the value for B<pr>'s B<-w> switch and "B<length=>" specifies a value for
-B<pr>'s B<-l> option.  Since, after being processed by B<pr>, the file is
-passed through the "lp" filter, lines will be wrapped at the length
-specified by the B<-o width=> switch.
+The B<-o> option "B<width=>" specifies the value for B<pr>'s B<-w> switch and 
+"B<length=>" specifies a value for B<pr>'s B<-l> option.  Since, after being 
+processed by B<pr>, the file is passed through the "lp" filter, lines will be
+wrapped at the length specified by the B<-o width=> switch.
 
 All of the other "lp" filter options
 will work with this filter as well.
@@ -402,9 +400,9 @@ This option is automatically provided as a default filter option.
 
 =item B<title=>I<string>
 
-sets the title to print a the top of each page.  If this switch
-is absent, a default title (probably derived from the B<-C> switch
-or the input file name) will be used.
+sets the title to print a the top of each page.  If this switch is absent, a 
+default title (probably from the B<--title> switch or the input file name) 
+will be used.
 
 (Supported by:  pr)
 

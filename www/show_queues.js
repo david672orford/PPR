@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2001, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 20 February 2001.
+// Last revised 1 June 2001.
 //
 
 //
@@ -63,8 +63,10 @@ function gentle_reload()
 			document.forms[0].x.value = window.document.body.scrollLeft;
 			document.forms[0].y.value = window.document.body.scrollTop;
 			}
-		else
+		else		// Mozilla
 			{
+			document.forms[0].x.value = window.scrollX;
+			document.forms[0].y.value = window.scrollY;
 			}
 
 		document.forms[0].seq.value++;
@@ -205,12 +207,12 @@ function printer(event, name)
 		lnks[3].onmouseout = function () { event.cancelBubble = true };
 		lnks[4].onmouseout = function () { event.cancelBubble = true };
 		}
-	else	// W3C DOM
+	else	// W3C DOM, Mozilla
 		{
 		w = document.getElementById("popup");
 
-		w.style.left = event.clientX + "px";
-		w.style.top = event.clientY + "px";
+		w.style.left = window.scrollX + event.clientX - 40 + "px";	// scrollX, scrollY may be Mozilla only
+		w.style.top = window.scrollY + event.clientY - 15 + "px";
 
 		var rng = document.createRange();
 		rng.selectNodeContents(w);
@@ -264,11 +266,11 @@ function group(event, name)
 		lnks[2].onmouseout = function () { event.cancelBubble = true };
 		lnks[3].onmouseout = function () { event.cancelBubble = true };
 		}
-	else	// W3C DOM
+	else	// W3C DOM, Mozilla
 		{
 		w = document.getElementById("popup");
-		w.style.left = event.clientX + "px";
-		w.style.top = event.clientY + "px";
+		w.style.left = window.scrollX + event.clientX - 40 + "px";
+		w.style.top = window.scrollY + event.clientY - 15 + "px";
 		var rng = document.createRange();
 		rng.selectNodeContents(w);
 		rng.deleteContents();

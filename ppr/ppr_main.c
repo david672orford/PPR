@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 30 March 2001.
+** Last revised 1 June 2001.
 */
 
 /*
@@ -35,7 +35,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "ppr_infile.h"
@@ -155,8 +154,7 @@ static struct {const char *name; unsigned int bit;} gab_table[]=
 =========================================================================*/
 
 /*
-** Handle fatal errors.
-** Print a message and exit.
+** Handle fatal errors by printing a message and exiting.
 ** Since this calls respond, file cleanup will get called.
 */
 void fatal(int exitval, const char *message, ... )
@@ -166,8 +164,8 @@ void fatal(int exitval, const char *message, ... )
 
     fflush(stdout);			/* In case we will be printing on stderr */
 
-    va_start(va, message);		/* Format the error message */
-    vsprintf(errbuf, message, va);	/* as a string. */
+    va_start(va, message);				/* Format the error message */
+    vsnprintf(errbuf, sizeof(errbuf), message, va);	/* as a string. */
     va_end(va);
 
     if(exitval == PPREXIT_SYNTAX)
@@ -179,10 +177,7 @@ void fatal(int exitval, const char *message, ... )
     } /* end of fatal() */
 
 /*
-** The libpprdb library routines require this
-** function to be present.  We have implemented
-** it so it does basicaly the same thing as
-** fprintf(stderr,...).
+** A few routines in libppr use this to print to stderr.
 */
 void error(const char *message, ... )
     {
@@ -196,9 +191,8 @@ void error(const char *message, ... )
     } /* end of error() */
 
 /*
-** Call this function to issue a warning.  It is printed on
-** stderr or sent to the log file, depending on whether
-** or not the ``-w log'' switch was used.
+** Call this function to issue a warning.  It is printed on stderr or sent to
+** the log file, depending on whether or not the ``-w log'' switch was used.
 */
 void warning(int level, const char *message, ... )
     {
@@ -215,7 +209,8 @@ void warning(int level, const char *message, ... )
 
     if(warning_log)		/* if warnings are to go to log file, */
 	{			/* open this job's log file */
-	sprintf(wfname, DATADIR"/%s:%s-%d.0(%s)-log",
+	ppr_fnamef(wfname, "%s/%s:%s-%d.0(%s)-log",
+		DATADIR,
 		qentry.destnode,
 		qentry.destname, qentry.id, qentry.homenode);
 	if((wfile = fopen(wfname, "a")) == (FILE*)NULL)
@@ -2145,15 +2140,18 @@ int main(int argc, char *argv[])
     if(option_filter_options)
 	{
 	ptr = option_filter_options;
+
+	/* eat leading space */
 	ptr += strspn(ptr," \t");
+
 	while(*ptr)
 	    {
 	    /* eat up keyword */
-	    ptr += strcspn(ptr," \t=");
+	    ptr += strcspn(ptr, " \t=");
 
 	    /* Look for space before "=". */
 	    if(isspace(*ptr))
-		fatal(PPREXIT_SYNTAX, _("spaces may not preceed \"=\" in filter options"));
+		fatal(PPREXIT_SYNTAX, _("spaces may not precede \"=\" in filter options"));
 
 	    if(*ptr != '=')
 		fatal(PPREXIT_SYNTAX, _("filter options must take form keyword=value"));
@@ -2166,7 +2164,21 @@ int main(int argc, char *argv[])
 	    if(isspace(*ptr))
 		fatal(PPREXIT_SYNTAX, _("spaces may not follow \"=\" in filter options"));
 
-	    ptr += strcspn(ptr, " \t");
+	    if(*ptr != '"')
+	    	ptr += strcspn(ptr, " \t");
+	    else
+	    	{
+		int c, lastc = '\0';
+		ptr++;
+		while((c = *ptr++) != '"' || lastc == '\\')
+		    {
+		    if(!c)
+		    	fatal(PPREXIT_SYNTAX, _("unclosed quote in filter option value"));
+		    lastc = c;
+		    }
+	    	}
+
+	    /* each separating space */
 	    ptr += strspn(ptr, " \t");
 	    }
 	} /* end of if there were -o switches */
@@ -2182,21 +2194,19 @@ int main(int argc, char *argv[])
 	fatal(PPREXIT_SYNTAX, _("only one file name allowed"));
 
     /*
-    ** If no -C switch was used but a file name was used,
-    ** make the file name the default title.  The default
-    ** title may be overridden by a "%%Title:" line.
-    ** (Note that if the input is stdin, real_filename
-    ** will be NULL.  Also, qentry.lpqFileName will be non-NULL
-    ** only if the --lpq-filename switch has been used.)
+    ** If no --title switch was used but a file name was used, make the file
+    ** name the default title.  The default title may be overridden by a 
+    ** "%%Title:" line.  (Note that if the input is stdin, real_filename will 
+    ** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the 
+    ** --lpq-filename switch has been used.)
     */
     if(!qentry.Title)
     	if(!(qentry.Title = qentry.lpqFileName))
     	    qentry.Title = real_filename;
 
     /*
-    ** If we don't have at least a provisional For,
-    ** then use either the Unix user name or the comment
-    ** field from /etc/passwd.
+    ** If we don't have at least a provisional For, then use either the Unix 
+    ** user name or the comment field from /etc/passwd.
     **
     ** The variable default_For is used by authorization()
     ** to determine if the current value of qentry.For

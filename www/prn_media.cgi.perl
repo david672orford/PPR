@@ -11,10 +11,11 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 17 April 2001.
+# Last modified 11 May 2001.
 #
 
 use lib "?";
+use PPR;
 use PPR::PPOP;
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
@@ -22,11 +23,6 @@ require 'cgi_intl.pl';
 # Initialize the internationalization libraries and determine the
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
-
-# How big is each record in media.db?  If padded to 32 bits (as on a i386),
-# then this should be 76.  If padded to 64 bits (as on a Sparc), then
-# this should be 80.
-my $record_size = 76;
 
 # Read the query string and POST data.
 &cgi_read_data();
@@ -86,7 +82,7 @@ eval
 open(M, $PPR::MEDIAFILE) || die $!;
 print "<pre>\n";
 my @available = ();
-while(read(M, my $record, $record_size) == $record_size)
+while(read(M, my $record, $PPR::SIZEOF_struct_Media) == $PPR::SIZEOF_struct_Media)
     {
     my($medianame, $width, $height, $weight, $colour, $type, $flag_suitability) =
     	unpack("A16dddA16A16i", $record);
@@ -132,7 +128,7 @@ foreach my $b (grep(/^bin_/, keys %data))
 print "</pre>\n";
 
 print "<table>\n";
-print "<tr><th>Bin</th><th>Medium: Size, Weight, Colour, Type, Banner Suitability</th></tr>\n";
+print "<tr><th>Bin</th><th>Medium: (Size Weight, Colour, Type, Banner Suitability)</th></tr>\n";
 
 my @binlist = $control->media();
 foreach my $i (@binlist)

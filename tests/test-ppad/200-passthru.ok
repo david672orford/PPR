@@ -44,6 +44,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -108,6 +109,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -172,6 +174,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -234,6 +237,7 @@ options
 jobbreak	default signal
 feedback	default yes
 codes	default Binary
+rip				
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 

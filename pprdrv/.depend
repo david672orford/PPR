@@ -8,7 +8,7 @@ pprdrv_flag.$(OBJ): pprdrv_flag.c ../include/before_system.h ../include/gu.h ../
 
 pprdrv_media.$(OBJ): pprdrv_media.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h
 
 pprdrv_signature.$(OBJ): pprdrv_signature.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
@@ -36,8 +36,6 @@ pprdrv_notppd.$(OBJ): pprdrv_notppd.c ../include/before_system.h ../include/gu.h
 
 pprdrv_persistent.$(OBJ): pprdrv_persistent.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h
-
 pprdrv_interface.$(OBJ): pprdrv_interface.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
 pprdrv_fault_debug.$(OBJ): pprdrv_fault_debug.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
@@ -56,9 +54,15 @@ pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/before_system.h ../in
 
 pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
+pprdrv_rip.$(OBJ): pprdrv_rip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+
+pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h pprdrv_ppd.h
+
 pprdrv_snmp.$(OBJ): pprdrv_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
 pprdrv_snmp_messages.$(OBJ): pprdrv_snmp_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
 pprdrv_pjl_messages.$(OBJ): pprdrv_pjl_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
+
+pipecat.$(OBJ): pipecat.c
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 1 June 2001.
 */
 
 #include "before_system.h"
@@ -41,10 +41,10 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     if(qentry->charge_to)
 	fprintf(Qfile, "Charge-To: %s\n", qentry->charge_to);
 
-    /* It is permissible to use --title '' or -C '' to make the title an
-       empty string and thereby prevent a temporary file name from becoming
-       the title by default.  That is why we must test for an empty title
-       string. */
+    /* It is permissible to use --title "" to make the title an empty string 
+       and thereby prevent a temporary file name from becoming the title by 
+       default.  That is why we must test for an empty title string.
+       */
     if(qentry->Title && qentry->Title[0] != '\0')
 	fprintf(Qfile, "Title: %s\n", qentry->Title);
 

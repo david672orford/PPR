@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -110,7 +110,7 @@ int ppop_accept_reject(char *argv[], int reject);
 int ppop_destination(char *argv[], int comment_too);
 int ppop_alerts(char *argv[]);
 int ppop_log(char *argv[]);
-int print_aux_status(char *line, int printer_status);
+int print_aux_status(char *line, int printer_status, const char sep[]);
 
 /* =============== Command routines in ppop_modify.c ========================= */
 

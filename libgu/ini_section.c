@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 21 November 2000.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -400,7 +400,8 @@ char *gu_ini_query(const char file_name[], const char section_name[], const char
     struct GU_INI_ENTRY *section = gu_ini_section_load(cf, section_name);
     char *value = gu_strdup(gu_ini_value_index(gu_ini_section_get_value(section, key_name), index, default_value));
     gu_ini_section_free(section);
-    if(cf) fclose(cf);
+    if(cf)
+	fclose(cf);
     return value;
     } /* end of gu_ini_query() */
 

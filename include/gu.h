@@ -10,11 +10,11 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 3 May 2001.
+** Last modified 11 May 2001.
 */
 
-#ifndef _LIBGU
-#define _LIBGU 1
+#ifndef _GU_H
+#define _GU_H 1
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -121,8 +121,9 @@ char *gu_strerror(int n);
 int ppr_wildmat(const char *text, const char *p);
 int compile_string_escapes(char *s);
 char *gu_strsep(char **stringp, const char *delim);
-char *gu_strsep_quoted(char **stringp, const char *delim);
+char *gu_strsep_quoted(char **stringp, const char *delim, const char *discard);
 void gu_set_cloexec(int fd);
+void gu_nonblock(int fd, gu_boolean on);
 void gu_trim_whitespace_right(char *s);
 int gu_strcasecmp(const char *s1, const char *s2);
 int gu_strncasecmp(const char *s1, const char *s2, int n);
@@ -138,6 +139,7 @@ gu_boolean padded_icmp(const char *padded1, const char *padded2, int len);
 int gu_sscanf(const char *input, const char *pattern, ...);
 void gu_sscanf_checkpoint(void);
 void gu_sscanf_rollback(void);
+int gu_fscanf(FILE *input, const char *format, ...);
 void gu_daemon(mode_t daemon_umask);
 int disk_space(const char *path, unsigned int *free_blocks, unsigned int *free_files);
 void gu_wordwrap(char *string, int width);
@@ -230,8 +232,6 @@ __attribute__ (( noreturn, format (printf, 3, 4) ))
 #endif
 ;
 
-#endif	/* _LIBGU */
-
 /*===================================================================
 ** SNMP functions
 ===================================================================*/
@@ -271,5 +271,7 @@ int gu_snmp_get(struct gu_snmp *p, int *error_code, ...);
 #endif
 
 #define strerror(err) gu_strerror(err)
+
+#endif	/* _LIBGU */
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_sscanf.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 4 May 2001.
+** Last modified 10 May 2001.
 */
 
 /*
@@ -79,15 +79,14 @@ static char *gu_sscanf_strndup(const char *string, size_t len)
 int gu_sscanf(const char *input, const char *format, ...)
     {
     va_list va;
-    int count = 0;		/* Number of things extracted so far. */
-    int maxextlen;		/* Maximum characters to extract, including NULL. */
-    int len;			/* Actual length */
-    int sign;			/* 1 or -1 */
+    int count = 0;		/* number of things extracted so far. */
+    int maxextlen;		/* maximum characters to extract, including NULL */
+    int len;			/* actual length */
     const char *pattern=format;	/* Current position in the format. */
     const char *string=input;
-    int islong;			/* True if ell encountered. */
-    int isshort;		/* True if aich encountered. */
-    char *extptr;		/* Pointer to string we are extracting into. */
+    int islong;			/* TRUE if ell encountered. */
+    int isshort;		/* TRUE if aich encountered. */
+    char *extptr;		/* pointer to string we are extracting into */
 
     va_start(va, format);
 
@@ -135,15 +134,13 @@ int gu_sscanf(const char *input, const char *format, ...)
 		 */
 		case 'd':
 		case 'i':
-		    if(*string == '-')		    /* if a minus sign is found, */
+		    {
+		    int sign = 1;			/* 1 or -1 */
+		    if(*string == '-')			/* if a minus sign is found, */
 			{
+			sign = -1;
 			string++;
-			sign = -1;		    /* set a flag */
 			}
-		    else
-		    	{
-		    	sign = 1;
-		    	}
 		    if(! isdigit(*string))		/* if no number present, */
 		    	goto break_break;
 		    if(islong)
@@ -174,8 +171,9 @@ int gu_sscanf(const char *input, const char *format, ...)
 			    tempint *= 10;
 			    tempint += (*(string++) - '0');
 			    }
-			*(va_arg(va, int *)) = (tempint*sign);
+			*(va_arg(va, int *)) = (tempint * sign);
 			}
+		    }
 		    count++;			    /* increment count of values extracted */
 		    break;
 		/*
@@ -324,17 +322,18 @@ int gu_sscanf(const char *input, const char *format, ...)
 		}
 	    }
 
-	else                                    /* Ordinary characters in */
-	    {                                   /* pattern must match themselves. */
-	    if(isspace(*pattern))               /* Whitespace */
-		{                               /* matches any amount of */
-		pattern++;                      /* whitespace. */
+	/* Not a format specifier. */
+	else
+	    {
+	    if(isspace(*pattern))               /* Whitespace matches any */
+		{                               /* amount of whitespace. */
+		pattern++;
 		while(isspace(*string))
 		    string++;
 		}
-	    else                                /* everthing else */
-		{                               /* must exactly match */
-		if( *(pattern++) != *(string++) )   /* characters in string */
+	    else                                	/* Everthing else */
+		{                               	/* must exactly match */
+		if( *(pattern++) != *(string++) )   	/* characters in string. */
 		    break;
 		}
 	    }
