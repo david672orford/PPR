@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 7 March 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -51,9 +51,9 @@ for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
 # search list.  The first argument is the program to find,
 # the second is the search list.
 findprog_prog_path ()
-    {
-    echo "Searching for $1" >&2
-    for i in `echo $2 | tr ':' ' '`
+	{
+	echo "Searching for $1" >&2
+	for i in `echo $2 | tr ':' ' '`
 		do
 		if [ `echo $i | cut -c1` = '/' ]
 		    then
@@ -66,8 +66,8 @@ findprog_prog_path ()
 				fi
 		    fi
 		done
-    echo "Not found" >&2
-    }
+	echo "Not found" >&2
+	}
 
 #
 # Help screen
@@ -1838,7 +1838,12 @@ cat >&3 <<'===MakeRules==='
 # have the same internal rules.
 #==============================================================
 
-.SUFFIXES: .sh .perl .tcl .c .$(OBJ)
+.SUFFIXES: .in .sh .perl .tcl .c .$(OBJ)
+
+# Convert .in files to whatever they are
+.in:
+	../subst_tool <$*.in >$*
+	chmod 755 $*
 
 # Convert .sh files to shell scripts.
 .sh:

@@ -32,7 +32,7 @@
 . ../makeprogs/paths.sh
 
 # Sanity test gauntet
-if [ "$USER_PPR" = "" -o "$LIBDIR" = "" ]
+if [ -z "$USER_PPR" ]
 	then
 	echo "$0: ../makeprogs/paths.sh is bad"
 	exit 1
@@ -56,24 +56,16 @@ if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]
 echo "  Installing crontab for the user $USER_PPR..."
 
 #
-# Create a temporary file.  We have to do this because of limitations of some
+# Create a version of the crontab with the username.
+#
+# We must use a temporary file because of limitations of some
 # versions of the crontab program.  Sadly, not all versions of crontab can 
 # read from stdin, at least not with the same command.
 #
 tempname=`$LIBDIR/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
-
-#
-# Write the new crontab to the temporary file.
-#
-cat - >$tempname <<===EndOfHere===
-3 10,16 * * 1-5 $PPAD_PATH remind
-5 4 * * * $LIBDIR/cron_daily
-17 * * * * $LIBDIR/cron_hourly
-===EndOfHere===
-
+awk '{ print $1,$2,$3,$4,$5,$7,$8 }' <cron.d >$tempname
 crontab $tempname
-
-rm $tempname
+#rm $tempname
 
 exit 0
 

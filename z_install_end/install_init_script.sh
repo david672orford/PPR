@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 7 March 2005.
 #
 
 #========================================================================
@@ -145,11 +145,11 @@ then
 		fi
 
 	# Copy the init script into place.
-	diff ppr $INIT_BASE/init.d/ppr >/dev/null 2>&1
+	diff init.d $INIT_BASE/init.d/ppr >/dev/null 2>&1
 	if [ $? -ne 0 ]
 		then
 
-		cp ppr $INIT_BASE/init.d/ppr
+		cp init.d $INIT_BASE/init.d/ppr
 		if [ $? -ne 0 ]
 			then
 			echo "===================================================="

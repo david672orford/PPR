@@ -218,7 +218,7 @@ sub do_file
 
 	if($file_modified)
 		{
-		if(grep(/^    {/, @lines))
+		if(grep(/^    {/, @lines))		# if space indention,
 		    {
 		    print "Tab conversion needed.\n";
 		    }

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/makeprogs/installconf.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 August 2003.
+# Last modified 8 March 2005.
 #
 
 #
@@ -73,7 +73,10 @@ while [ "$1" != "" ]
 		chmod $MODE "$RPM_BUILD_ROOT$1" || exit 1
 
 		# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
+		# (Is the above wrong?  It sure looks like we have quote marks here!)
 		echo "%attr(-,$USER,$GROUP) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
+
+		echo "$1" >>`dirname $0`/../debian/conffiles
 		fi
 	shift
 	done

@@ -1,4 +1,5 @@
-ppr
+init.d
+cron.d
 ppr.conf.sample
 puts
 getservbyname

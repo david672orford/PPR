@@ -26,7 +26,7 @@ endif
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	./Configure
+	yes "" | ./Configure
 	touch configure-stamp
 
 
@@ -92,14 +92,14 @@ binary-common:
 	dh_installchangelogs 
 	dh_installdocs
 	dh_installexamples
-#	dh_installmenu
+	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate	
 #	dh_installemacsen
 #	dh_installpam
 #	dh_installmime
-#	dh_installinit
-#	dh_installcron
+	dh_installinit
+	dh_installcron
 #	dh_installinfo
 	dh_installman
 	dh_link

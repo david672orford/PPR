@@ -9,9 +9,11 @@ Package: ppr
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: A print spooler for PostScript
- <insert long description, indented with spaces>
+ PPR is a print spooler for PostScript printing.  It can print either to
+ printers with PostScript interpreters built-in or thru Ghostscript.
 
 Package: ppr-doc
 Architecture: all
 Description: Documentation for ppr
- <insert long description, indented with spaces>
+ PPR is a print spooler for PostScript printing.  It can print either to
+ printers with PostScript interpreters built-in or thru Ghostscript.

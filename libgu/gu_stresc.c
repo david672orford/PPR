@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 8 March 2005.
 */
 
 #include "config.h"
@@ -39,8 +39,7 @@
 
 This function takes a string with ANSI C string escape
 sequences in it and replaces the escape sequences with
-the values they represent.  The length of the resulting
-string is returned.
+the values they represent.  A pointer to the string is returned.
 
 */
 char *gu_stresc_convert(char *string)
@@ -117,7 +116,7 @@ char *gu_stresc_convert(char *string)
 
 	*di = '\0';
 
-	return len;
+	return string;
 	}
 
 #ifdef TEST

@@ -1,6 +1,13 @@
+ppr (2.00a1) unstable; urgency=low
+
+  * 
+
+ -- David Chappell <David.Chappell@trincoll.edu>  Tue,  8 Mar 2005 11:09:38 -0500
+
 ppr (1.53b1) unstable; urgency=low
 
-  * Initial Release.
+  * Initial Debian package, installs files but does not set up the package
+	properly.
 
  -- David Chappell <David.Chappell@trincoll.edu>  Fri,  5 Mar 2004 17:07:03 -0500
 

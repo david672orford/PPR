@@ -68,10 +68,15 @@ struct OPERATION {
 	char *printer_uri;
 	struct URI *printer_uri_obj;
 	char *printer_name;
+	char *job_uri;
+	int job_id;
 	};
 
+#define OP_SUPPORTS_PRINTER 1		/* printer-name, printer-uri */
+#define OP_SUPPORTS_JOB 2			/* job-uri, printer-name, job_id */
+
 /** Create an object which can tell us if an attribute was requested. */
-static struct OPERATION *request_new(struct IPP *ipp)
+static struct OPERATION *request_new(struct IPP *ipp, int supported)
 	{
 	struct OPERATION *this;
 	ipp_attribute_t *attr;
@@ -82,6 +87,8 @@ static struct OPERATION *request_new(struct IPP *ipp)
 	this->printer_uri = NULL;
 	this->printer_uri_obj = NULL;
 	this->printer_name = NULL;
+	this->job_uri = NULL;
+	this->job_id = -1;
 
 	/* Traverse the request's operation attributes. */
 	for(attr = ipp->request_attrs; attr; attr = attr->next)
@@ -94,10 +101,14 @@ static struct OPERATION *request_new(struct IPP *ipp)
 			for(iii=0; iii<attr->num_values; iii++)
 				gu_pch_set(this->requested_attributes, attr->values[iii].string.text, "TRUE");
 			}
-		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+		else if(supported & OP_SUPPORTS_PRINTER && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
 			this->printer_uri = attr->values[0].string.text;
-		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-name") == 0)
+		else if(supported & (OP_SUPPORTS_PRINTER|OP_SUPPORTS_JOB) && attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "printer-name") == 0)
 			this->printer_name = attr->values[0].string.text;
+		else if(supported & OP_SUPPORTS_JOB && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "job-uri") == 0)
+			this->job_uri = attr->values[0].string.text;
+		else if(supported & OP_SUPPORTS_JOB && attr->value_tag == IPP_TAG_INTEGER && strcmp(attr->name, "job-id") == 0)
+			this->job_id = attr->values[0].integer;
 		else
 			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
 		}
@@ -300,7 +311,7 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 	int destid;
 	struct OPERATION *req;
 
-	req = request_new(ipp);
+	req = request_new(ipp, OP_SUPPORTS_PRINTER);
 
 	if(!(destname = request_destname(req)) || (destid = destid_by_name(destname)) == -1)
 		{
@@ -447,7 +458,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 	struct QFileEntry qfileentry;
 	struct OPERATION *req;
 
-	req = request_new(ipp);
+	req = request_new(ipp, OP_SUPPORTS_PRINTER);
 
 	if((destname = request_destname(req)))
 		{
@@ -540,13 +551,23 @@ static void ipp_get_jobs(struct IPP *ipp)
 	request_free(req);
 	} /* ipp_get_jobs() */
 
+/** Handler for IPP_CANCEL_JOB */
+static void ipp_cancel_job(struct IPP *ipp)
+	{
+	struct OPERATION *req;
+	req = request_new(ipp, OP_SUPPORTS_JOB);
+
+
+	request_free(req);
+	} /* ipp_cancel_job() */
+
 /** Handler for CUPS_GET_PRINTERS */
 static void cups_get_printers(struct IPP *ipp)
 	{
 	struct OPERATION *req;
 	int i;
 
-	req = request_new(ipp);
+	req = request_new(ipp, 0);
 	
 	lock();
 	for(i=0; i < printer_count; i++)
@@ -629,7 +650,7 @@ static void cups_get_classes(struct IPP *ipp)
 	int i, i2;
 	const char *members[MAX_GROUPSIZE];
 	struct OPERATION *req;
-	req = request_new(ipp);
+	req = request_new(ipp, 0);
 	lock();
 	for(i=0; i < group_count; i++)
 		{
@@ -746,6 +767,9 @@ void ipp_dispatch(const char command[])
 					break;
 				case IPP_GET_JOBS:
 					ipp_get_jobs(ipp);
+					break;
+				case IPP_CANCEL_JOB:
+					ipp_cancel_job(ipp);
 					break;
 				case CUPS_GET_CLASSES:
 					cups_get_classes(ipp);

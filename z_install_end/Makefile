@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/templates/Makefile
+# mouse:~ppr/src/z_install_end/Makefile
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 8 March 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) ppr
+ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) cron.d init.d
 
 #=== Build ==================================================================
 
@@ -50,22 +50,28 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./install_sample_config.sh
 	./install_bin_links.sh
-	./install_init_script.sh
+	[ -z "$(DH_OPTIONS)" ] && ./install_init_script.sh || true
 	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real || true
 
-# These are operations which are defered if we are building a package.
+# These are operations which are defered if we are building a package
+# rather than actually installing hte program.
 install-real:
+	#
 	# Configure Inetd to launch our HTTP and LPR servers
 	./install_inetd_conf.sh
+	#
 	# Register in /etc/alternatives.
 	#./install_alternatives.tcl
+	#
 	# Create PPR's crontab.
 	./install_crontab.sh
+	#
 	# Initialize the media database.
 	$(PPAD_PATH) media import $(CONFDIR)/media.sample >/dev/null
 	$(PPAD_PATH) media import $(CONFDIR)/media.german >/dev/null
+	#
 	# Create indexes of fonts, PPD files, and filters.
-	$(BINDIR)/ppr-index #>/dev/null
+	$(BINDIR)/ppr-index
 
 #=== Housekeeping ===========================================================
 

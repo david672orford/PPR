@@ -1,0 +1,3 @@
+3 10,16 * * 1-5 @USER_PPR@ @PPAD_PATH@ remind
+5 4 * * *       @USER_PPR@ @LIBDIR@/cron_daily
+17 * * * *      @USER_PPR@ @LIBDIR@/cron_hourly
