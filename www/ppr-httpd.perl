@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 26 September 2001.
+# Last modified 3 October 2001.
 #
 
 # Filled in by installscript:
@@ -100,6 +100,10 @@ my $TOKEN = '[\!\#\$\%\&\x27\*\+\-\.0-9A-Z\^\_\`a-z\|\~]';
 	505 => 'HTTP Version Not Supported'
 );
 
+#===========================================================
+# Initialization code.
+#===========================================================
+
 # Ditch Linux environment variables which offend or sense of neatness because
 # they are not meaningful (or even necessarily true) in the context of a CGI 
 # script.
@@ -128,14 +132,15 @@ delete $ENV{LINGUAS};		# Who knows
 # This is the PATH that we will feed to CGI scripts.
 $ENV{PATH} = $SAFE_PATH;
 
-# These variables specify files which sh and bash should source during 
+# These variables specify files which sh, ksh, and bash should source during 
 # startup.  Since taint checks are on, Perl won't do exec() if these
 # are defined since they could alter the semantics of a shell script.
 # or shell command.  The same goes for IFS since it changes how the shells
-# parse commands.
+# parse commands.  I don't know what CDPATH is, but Perl 5.6.0 checks for it.
 delete $ENV{ENV};
 delete $ENV{BASH_ENV};
 delete $ENV{IFS};
+delete $ENV{CDPATH};
 
 # Set the umask so that our log file will have the correct permissions.
 # Remember that we will be running under the user "pprwww" and the
@@ -146,6 +151,59 @@ umask(002);
 # away.  We must do something with it so it doesn't corrupt the HTTP
 # transaction.
 open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die;
+
+#===========================================================
+# If in standalone mode, create the socket and wait for a connexion.
+#===========================================================
+my $standalone_port = undef;
+if(scalar @ARGV >= 1 && $ARGV[0] =~ /^--standalone-port=(.+)$/)
+    {
+    $standalone_port = $1;
+    }
+elsif(scalar @ARGV >= 2 && $ARGV[0] eq "--standalone-port" && $ARGV[1] =~ /^(.+)$/)
+    {
+    $standalone_port = $1;
+    }
+if(defined $standalone_port)
+    {
+    if($standalone_port !~ /^\d+$/)
+    	{
+	($standalone_port) = (getservbyname($standalone_port, "tcp"))[2];
+	defined($standalone_port) || die;
+    	}
+
+    socket(SERVER, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || die $!;
+    setsockopt(SERVER, Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1) || die $!;
+    my $my_address = sockaddr_in($standalone_port, INADDR_ANY);
+    bind(SERVER, $my_address) || die $!;
+    listen(SERVER, SOMAXCONN) || die $!;
+
+    $SIG{CHLD} = 'IGNORE';
+    while(1)
+	{
+	accept(CLIENT, SERVER) || die $!;
+	my $pid = fork();
+	if(!defined $pid)
+	    {
+	    print STDERR "Fork failed, $!\n";
+	    close CLIENT;
+	    next;
+	    }
+	if($pid)
+	    {
+	    close CLIENT;
+	    next;
+	    }
+	close SERVER;
+	open(STDIN, "<&CLIENT") || die $!;
+	open(STDOUT, ">&CLIENT") || die $!;
+	last;
+	}
+    }
+
+#===========================================================
+# Start of connection handling code.
+#===========================================================
 
 # This is used to detect idle connexions.
 $SIG{ALRM} = sub { die "alarm\n" };
