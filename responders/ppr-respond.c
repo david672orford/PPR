@@ -463,14 +463,38 @@ int main(int argc, char *argv[])
 	    char *line = NULL;
 	    if((line = gu_getline(line, &line_available, f)))
 		{
-		char *responder = NULL, *responder_address = NULL;
-		if(gu_sscanf(line, "%S %S", &responder, &responder_address) == 2)
-		if(responder && responder_address)
+		char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
+		if(gu_sscanf(line, "%S %S %Q", &responder, &responder_address, &responder_options) == 2)
+		if(responder && responder_address && responder_options)
 		    {
 		    gu_free(rinfo.responder);
-		    gu_free(rinfo.responder_address);
 		    rinfo.responder = responder;
-		    rinfo.responder_address = responder_address;
+
+		    if(strcmp(rinfo.responder_address, responder_address) != 0)
+			{
+			gu_free(rinfo.responder_address);
+			rinfo.responder_address = responder_address;
+			}
+
+		    /* If both the job and followme supply responder options, 
+		       we will use the ones from the job followed by those 
+		       from followme. */
+		    if(strlen(responder_options) > 0)		/* if any from followme, */
+		    	{
+			if(strlen(rinfo.responder_options) > 0)	/* if any from job too, */
+			    {
+			    char *p;
+			    asprintf(&p, "%s %s", responder_options, rinfo.responder_options);
+			    gu_free(rinfo.responder_options);
+			    gu_free(responder_options);
+			    rinfo.responder_options = p;
+			    }
+			else					/* if just from followme, */
+			    {
+			    gu_free(rinfo.responder_options);
+			    rinfo.responder_options = responder_options;
+			    }
+		        }
 		    }
 		gu_free(line);
 		}

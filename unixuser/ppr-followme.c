@@ -47,7 +47,7 @@ const char myname[] = "ppr-followme";
 const char dbdir[] = VAR_SPOOL_PPR"/followme.db";
 
 /*
-**
+** This function creates the record which is later picked up by ppr-respond.
 */
 static int write_record(const char username[], const char responder[], const char responder_address[], const char responder_options[])
     {
@@ -61,8 +61,7 @@ static int write_record(const char username[], const char responder[], const cha
 	return -1;
 	}
 
-    /* fprintf(f, "%s %s \"%s\"\n", responder, responder_address, responder_options); */
-    fprintf(f, "%s %s\n", responder, responder_address);
+    fprintf(f, "%s %s \"%s\"\n", responder, responder_address, responder_options);
 
     fclose(f);
 

@@ -1,6 +1,6 @@
 #! /bin/sh
-cd makeprogs
-./configure $*
-echo
-echo "Oh, by the way, autoconf doesn't work yet.  You should use ./Configure"
-echo "or ./Configure_new for now."
+
+echo "PPR doesn't have a fully-automatic Autoconf-style configure script,"
+echo "but Configure_new is close.  Run ./Configure_new to try it."
+
+exit 1
