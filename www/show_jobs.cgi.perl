@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2004.
+# Last modified 15 April 2004.
 #
 
 use 5.005;
@@ -48,7 +48,7 @@ my $DEBUG = 0;
 # What ppop subcommand should we run on button presses?
 my %ACTIONS = (
 		'Move' => 'move',
-		'Cancel' => 'cancel',
+		'Delete' => 'cancel',
 		'Rush' => 'rush',
 		'Hold' => 'hold',
 		'Release' => 'release',
@@ -68,7 +68,7 @@ my ($charset, $content_language) = cgi_intl_init();
 # Make a hash which represents the buttons that should be shown.
 if(!defined $data{controls})
 	{
-	$data{controls} = "Queue View Refresh Close Help Move Cancel Rush Hold Release Modify Log";
+	$data{controls} = "Queue View Refresh Close Help Move Delete Rush Hold Release Modify Log";
 	}
 my %controls;
 foreach my $b (split(/ /, $data{controls}))
@@ -565,7 +565,7 @@ QuoteMove90
 }
 
 # Create all of the other buttons.
-isubmit("action", "Cancel", N_("_Cancel"), _("Cancel selected jobs.")) if(defined $controls{Cancel});
+isubmit("action", "Delete", N_("_Delete"), _("Cancel selected jobs.")) if(defined $controls{Delete});
 isubmit("action", "Rush", N_("R_ush"), _("Move selected jobs to the front of the queue.")) if(defined $controls{Rush});
 isubmit("action", "Hold", N_("_Hold"), _("Place selected jobs in the held state so that they won't print.")) if(defined $controls{Hold});
 isubmit("action", "Release", N_("_Release"), _("Release selected jobs which are held.")) if(defined $controls{Release});

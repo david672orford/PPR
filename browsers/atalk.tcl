@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2004.
+# Last modified 15 April 2004.
 #
 
 set HOMEDIR "?"
@@ -35,10 +35,15 @@ set HOMEDIR "?"
 set domain [lindex $argv 0]
 set node [lindex $argv 1]
 
+# Assume that if there is no getzones command, there is no AppleTalk.
+if {![file executable $HOMEDIR/lib/getzones]} {
+	puts ";AppleTalk support not installed (can't find getzones)."
+	exit 0
+	}
+
 # If we are run without a domain specified, then we are to print a list of 
 # the domains which the user may choose to browse.
 if { $domain == "" } {
-    #exec $HOMEDIR/lib/getzones >@stdout 2>@stderr
     set f [open "| $HOMEDIR/lib/getzones" "r"]
 	set zones {}
 	while {[gets $f line] >= 0} {

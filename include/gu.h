@@ -171,6 +171,7 @@ void ASCIIZ_to_padded(char *padded, const char *asciiz, int len);
 void padded_to_ASCIIZ(char *asciiz, const char *padded, int len);
 gu_boolean padded_cmp(const char *padded1, const char *padded2, int len);
 gu_boolean padded_icmp(const char *padded1, const char *padded2, int len);
+int gu_isdigit(int c);
 int gu_sscanf(const char *input, const char *pattern, ...);
 void gu_sscanf_checkpoint(void);
 void gu_sscanf_rollback(void);

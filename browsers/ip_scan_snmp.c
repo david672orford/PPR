@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
 	fclose(ppr_conf);
 	if(!ini_section)
 		{
-		printf(";No zones defined in \"%s\".\n", PPR_CONF);
+		printf(";No ip_snmp_scan zones defined in \"%s\".\n", PPR_CONF);
 		return 0;
 		}
 	}

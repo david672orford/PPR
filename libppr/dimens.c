@@ -1,17 +1,32 @@
 /*
 ** mouse:~ppr/src/libppr/dimens.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 ** Get a dimension and convert it to points.
 **
-** Last modified 7 September 1998.
+** Last modified 15 April 2004.
 */
 
 #include "before_system.h"
@@ -20,44 +35,64 @@
 #include "gu.h"
 #include "global_defines.h"
 
-
+/** Parse a linear dimension
+ *
+ * This function parses a statement of length in any of the many forms accepted
+ * by PPR and returns the dimension in PostScript units.  If the dimension is
+ * not parsable, then -1 is returned.
+ */
 double convert_dimension(const char *string)
 	{
-	const char *nptr;			/* pointer to the number */
 	const char *unitptr;		/* pointer to the units specifier */
-	int unitlen;				/* length of unit specifier in characters */
+	double number, multiplier;
 
-	nptr=&string[strspn(string, " \t")];		/* eat blanks */
-	unitptr=nptr+strspn(string, "0123456789."); /* eat number */
-	unitptr+=strspn(unitptr, " \t");			/* eat trailing space */
-	unitlen=strlen(unitptr);					/* get unit spec length */
+	/* Skip leading space. */
+	string += strspn(string, " \t");
 
-	if( (unitlen==6 && gu_strcasecmp(unitptr, "points") == 0)
-				|| (unitlen==2 && gu_strcasecmp(unitptr, "pt") == 0)
-				|| (unitlen==3 && gu_strcasecmp(unitptr, "psu") == 0) )
-		return atoi(nptr);
+	/* First we give the C library a wack at it. */
+	number = strtod(string, (char**)&unitptr);
 
-	else if( (unitlen==0)
-			|| (unitlen==6 && gu_strcasecmp(unitptr, "inches") == 0)
-			|| (unitlen==4 && gu_strcasecmp(unitptr, "inch") == 0)
-			|| (unitlen==2 && gu_strcasecmp(unitptr, "in") == 0) )
-		return ( atof(nptr) * 72.0 );
-
-	else if( (unitlen==10 && gu_strcasecmp(unitptr, "centimeters") == 0)
-			|| (unitlen==2 && gu_strcasecmp(unitptr, "cm") == 0)
-			|| (unitlen==10 && gu_strcasecmp(unitptr, "centimetres") == 0) )
-		return ( atof(nptr) / 2.54 * 72.0 );
-
-	else if( (unitlen==11 && gu_strcasecmp(unitptr, "millimeters") == 0)
-			|| (unitlen==2 && gu_strcasecmp(unitptr, "mm") == 0)
-			|| (unitlen==11 && gu_strcasecmp(unitptr, "millimetres") == 0) )
-		return ( atof(nptr) / 25.4 * 72.0 );
-
-	else
+	/* If strtod() didn't consume all of the ASCII digits 
+	 * or stopt at a decimal point, then use gu_sscanf()
+	 * to try again with ASCII digits and '.' for a decimal
+	 * separator.
+	 */
+	if(gu_isdigit(*unitptr) && *unitptr == '.')
 		{
-		return -1;
+		float temp;
+		if(gu_sscanf(string, "%f", &temp) != 1)
+			return -1;
+		number = temp;
+		unitptr = string + strspn(string, "0123456789.");
 		}
 
+	unitptr += strspn(unitptr, " \t");
+
+	if(gu_strcasecmp(unitptr, "points") == 0
+				|| gu_strcasecmp(unitptr, "pt") == 0
+				|| gu_strcasecmp(unitptr, "psu") == 0)
+		multiplier = 1.0;
+
+	else if(strlen(unitptr) == 0
+			|| gu_strcasecmp(unitptr, "inches") == 0
+			|| gu_strcasecmp(unitptr, "inch") == 0
+			|| gu_strcasecmp(unitptr, "in") == 0)
+		multiplier = 72.0;
+
+	else if(gu_strcasecmp(unitptr, "centimeters") == 0
+			|| gu_strcasecmp(unitptr, "cm") == 0
+			|| gu_strcasecmp(unitptr, "centimetres") == 0)
+		multiplier = 2.54 * 72.0;
+
+	else if(gu_strcasecmp(unitptr, "millimeters") == 0
+			|| gu_strcasecmp(unitptr, "mm") == 0
+			|| gu_strcasecmp(unitptr, "millimetres") == 0)
+		multiplier = 25.4 * 72.0;
+
+	else
+		return -1;
+
+	return number * multiplier;
 	} /* end of convert_dimension() */
 
 /* end of file */

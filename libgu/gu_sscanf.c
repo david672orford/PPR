@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 15 April 2004.
 */
 
 /*! \file
@@ -93,19 +93,6 @@ static char *gu_sscanf_strndup(const char *string, size_t len)
 		strings[strings_count++] = p;
 		}
 	return p;
-	}
-
-/*
-** This function replaces isdigit() from the C library.  The one in the C library 
-** determines if c is a digit in the current locale.  We want to know if it is a
-** digit in ASCII.
-*/
-static int gu_isdigit(int c)
-	{
-	if(c >= '0' && c <= '9')
-		return 1;
-	else
-		return 0;
 	}
 
 /** safe sscanf()

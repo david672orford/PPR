@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/test_components.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 October 2003.
+# Last modified 15 April 2004.
 #
 
 use lib "?";
@@ -89,6 +89,12 @@ my @tests = (
 		{'name' => _("Other Ghostscript distribution"),
 				'testproc' => sub {
 						return inpath("gs");
+						},
+				'required' => 0
+				},
+		{'name' => _("IJS Gimp Print drivers"),
+				'testproc' => sub {
+						return inpath("ijsgimpprint");
 						},
 				'required' => 0
 				},

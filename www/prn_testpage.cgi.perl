@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/www/prn_testpage.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 August 2002.
+# Last modified 15 April 2004.
 #
 
 use lib "?";
@@ -129,6 +129,7 @@ $addprn_wizard_table = [
 					$options .= " --test-cmyk";
 					}
 
+				print "<pre>\n";
 				run("$HOMEDIR/bin/ppr-testpage$options | $HOMEDIR/bin/ppr -d $name -m pprpopup -r $ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
 				print "</pre>\n";
 				},

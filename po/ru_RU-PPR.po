@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru-PPR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-03-09 15:40-0500\n"
+"POT-Creation-Date: 2004-04-15 23:09-0400\n"
 "PO-Revision-Date: 2004-04-02 16:30-0400\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <C@li.org>\n"
@@ -736,7 +736,7 @@ msgstr ""
 msgid "%s..."
 msgstr ""
 
-#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1380
+#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1385
 #: ../filters_misc/filter_hexdump.c:192 ../filters_misc/make_dvips_conf.c:79
 #, c-format
 msgid ""
@@ -1079,7 +1079,7 @@ msgstr ""
 msgid "4th field is not in the range 1--10 on \"%s\" line %d"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:144
+#: ../lprsrv/lprsrv-test.c:153
 #, c-format
 msgid ""
 ";\n"
@@ -1204,7 +1204,7 @@ msgstr ""
 msgid "Argument for %s must be between 1 and 10"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:188
+#: ../lprsrv/lprsrv-test.c:198
 msgid "As Proxy For"
 msgstr ""
 
@@ -1212,12 +1212,12 @@ msgstr ""
 msgid "Attempt to continue non-existent DSC comment"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1739
+#: ../filter_lp/filter_lp.c:1744
 #, c-format
 msgid "Average: default_landscape_asptrigger=%.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1742
+#: ../filter_lp/filter_lp.c:1747
 #, c-format
 msgid "Average: default_landscape_lentrigger=%d\n"
 msgstr ""
@@ -1251,13 +1251,14 @@ msgstr ""
 msgid "Banner/Trailer suitability: %d\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:182
+#: ../lprsrv/lprsrv-test.c:192
 #, c-format
 msgid ""
 "Based on the lprsrv.conf section shown above, the following table shows the\n"
-"local user IDs and proxy for strings that will be used when accepting\n"
-"remote jobs from the node \"%s\" for the remote user or users which you\n"
-"have specified.\n"
+"local user IDs and proxy for strings that will be used when accepting "
+"remote\n"
+"jobs from the node \"%s\" for the remote user or users\n"
+"which you have specified.\n"
 msgstr ""
 
 #: ../ppr/ppr_infile.c:232
@@ -1604,7 +1605,7 @@ msgstr ""
 msgid "FALSE"
 msgstr "Не верно"
 
-#: ../lprsrv/lprsrv-test.c:56
+#: ../lprsrv/lprsrv-test.c:63
 msgid "FATAL: "
 msgstr ""
 
@@ -1793,7 +1794,7 @@ msgstr ""
 msgid "Ignoring NonPPDFeature NumCopies which requests \"%s\" copies"
 msgstr ""
 
-#: ../filter_dotmatrix/main.c:820 ../filter_lp/filter_lp.c:1610
+#: ../filter_dotmatrix/main.c:820 ../filter_lp/filter_lp.c:1615
 #, c-format
 msgid "Ignoring option \"%s=%s\".\n"
 msgstr ""
@@ -1945,12 +1946,12 @@ msgstr ""
 msgid "Keyword \"%s\" is not allowed in trailer, ignoring"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1738
+#: ../filter_lp/filter_lp.c:1743
 #, c-format
 msgid "Landscape ideal asp (columns/lines): %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1741
+#: ../filter_lp/filter_lp.c:1746
 #, c-format
 msgid "Landscape ideal len for ldeflines=%d: %.2f\n"
 msgstr ""
@@ -1959,7 +1960,7 @@ msgstr ""
 msgid "Landscape mode selected.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1736
+#: ../filter_lp/filter_lp.c:1741
 #, c-format
 msgid "Landscape printable area: %.2fpsu x %.2fpsu\n"
 msgstr ""
@@ -1993,7 +1994,7 @@ msgstr ""
 msgid "LimitPages: %d %d\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:188
+#: ../lprsrv/lprsrv-test.c:198
 msgid "Local User"
 msgstr ""
 
@@ -2127,7 +2128,7 @@ msgstr "Название: %s\n"
 msgid "Negative value not allowed"
 msgstr "Негативный чесло не принимается"
 
-#: ../lprsrv/lprsrv-test.c:99
+#: ../lprsrv/lprsrv-test.c:106
 #, c-format
 msgid "Network node \"%s\" does not exist.\n"
 msgstr ""
@@ -2170,7 +2171,7 @@ msgstr ""
 msgid "No Type 1 section found while merging Mac TT font \"%s\", merge aborted"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:168
+#: ../lprsrv/lprsrv-test.c:178
 #, c-format
 msgid "No access allowed from node \"%s\".\n"
 msgstr ""
@@ -2418,12 +2419,12 @@ msgstr ""
 msgid "Portable aNy Maps"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1737
+#: ../filter_lp/filter_lp.c:1742
 #, c-format
 msgid "Portrait ideal asp (columns/lines): %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1740
+#: ../filter_lp/filter_lp.c:1745
 #, c-format
 msgid "Portrait ideal len for pdeflines=%d: %.2f\n"
 msgstr ""
@@ -2432,7 +2433,7 @@ msgstr ""
 msgid "Portrait mode selected.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1735
+#: ../filter_lp/filter_lp.c:1740
 #, c-format
 msgid "Portrait printable area: %.2fpsu x %.2fpsu\n"
 msgstr ""
@@ -2663,7 +2664,7 @@ msgstr ""
 msgid "Remote LPR/LPD system does not have room for control file."
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:188
+#: ../lprsrv/lprsrv-test.c:198
 msgid "Remote User"
 msgstr ""
 
@@ -2736,7 +2737,7 @@ msgstr ""
 msgid "Restoring original spooler program names:\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:113
+#: ../lprsrv/lprsrv-test.c:120
 #, c-format
 msgid "Reverse lookup failed for \"%s\" address \"%s\".\n"
 msgstr ""
@@ -2785,7 +2786,7 @@ msgid ""
 "conform to this requirement."
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:188
+#: ../lprsrv/lprsrv-test.c:198
 msgid "Spooler"
 msgstr "Спулер"
 
@@ -3156,7 +3157,7 @@ msgid ""
 "interface option \"snmp_status_interval=0\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:135
+#: ../lprsrv/lprsrv-test.c:144
 msgid "This program is used to test an lprsrv.conf file.\n"
 msgstr ""
 
@@ -3289,11 +3290,11 @@ msgstr ""
 msgid "Unknown unit specifier.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1427 ../filter_lp/filter_lp.c:1434
-#: ../filter_lp/filter_lp.c:1447 ../filter_lp/filter_lp.c:1484
-#: ../filter_lp/filter_lp.c:1491 ../filter_lp/filter_lp.c:1540
-#: ../filter_lp/filter_lp.c:1547 ../filter_lp/filter_lp.c:1552
-#: ../filter_lp/filter_lp.c:1559 ../filter_lp/filter_lp.c:1564
+#: ../filter_lp/filter_lp.c:1432 ../filter_lp/filter_lp.c:1439
+#: ../filter_lp/filter_lp.c:1452 ../filter_lp/filter_lp.c:1489
+#: ../filter_lp/filter_lp.c:1496 ../filter_lp/filter_lp.c:1545
+#: ../filter_lp/filter_lp.c:1552 ../filter_lp/filter_lp.c:1557
+#: ../filter_lp/filter_lp.c:1564 ../filter_lp/filter_lp.c:1569
 #, c-format
 msgid "Unreasonable value for option \"%s=\"."
 msgstr ""
@@ -3354,7 +3355,7 @@ msgstr ""
 msgid "Unrecognized value for %s option: %s"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:134
+#: ../lprsrv/lprsrv-test.c:143
 msgid ""
 "Usage:\n"
 "\tlprsrv-test hostname [user [user]]\n"
@@ -3643,7 +3644,7 @@ msgid ""
 "\""
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1533
+#: ../filter_lp/filter_lp.c:1538
 msgid ""
 "Valid \"duplex=\" values are \"none\", \"undef\", \"tumble\", and \"notumble"
 "\"."
@@ -3654,7 +3655,7 @@ msgstr ""
 msgid "Valid switches:\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1585
+#: ../filter_lp/filter_lp.c:1590
 msgid ""
 "Valid values for orientation are \"portrait\", \"landscape\", and \"auto\"."
 msgstr ""
@@ -3669,17 +3670,17 @@ msgstr ""
 msgid "Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1600
+#: ../filter_lp/filter_lp.c:1605
 #, c-format
 msgid "Value for dimension \"%s\" is invalid."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1420
+#: ../filter_lp/filter_lp.c:1425
 #, c-format
 msgid "Value for option \"%s=\" is invalid."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1407
+#: ../filter_lp/filter_lp.c:1412
 #, c-format
 msgid "Value for option \"%s=\" must be boolean."
 msgstr ""
@@ -3710,8 +3711,8 @@ msgstr ""
 msgid "Value of \"%s\" too long in \"%s\" section \"[%s]\", line %d."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1466 ../filter_lp/filter_lp.c:1475
-#: ../filter_lp/filter_lp.c:1498 ../filter_lp/filter_lp.c:1508
+#: ../filter_lp/filter_lp.c:1471 ../filter_lp/filter_lp.c:1480
+#: ../filter_lp/filter_lp.c:1503 ../filter_lp/filter_lp.c:1513
 #, c-format
 msgid "Value of option \"%s=\" contains illegal characters."
 msgstr ""
@@ -3721,7 +3722,7 @@ msgstr ""
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:69 ../ppr/ppr_main.c:323
+#: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:323
 #, c-format
 msgid "WARNING: "
 msgstr ""
@@ -3765,19 +3766,19 @@ msgstr ""
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1793
+#: ../filter_lp/filter_lp.c:1798
 #, c-format
 msgid "Warning:\t maxlines equals minlines, therefore page length is fixed.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1788
+#: ../filter_lp/filter_lp.c:1793
 #, c-format
 msgid ""
 "Warning:\t maxwidth is less than lanscape_lentrigger,\n"
 "\t\t files w/out FF will never be printed in landscape.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1783
+#: ../filter_lp/filter_lp.c:1788
 #, c-format
 msgid ""
 "Warning:\t mincolumns is greater than landscape_lentrigger,\n"
@@ -4276,11 +4277,11 @@ msgstr ""
 msgid "bad function call order"
 msgstr ""
 
-#: ../libgu/ini_section.c:405
+#: ../libgu/ini_section.c:422
 msgid "can't find key in section"
 msgstr ""
 
-#: ../libgu/ini_section.c:398
+#: ../libgu/ini_section.c:415
 msgid "can't find section"
 msgstr ""
 
@@ -4303,7 +4304,7 @@ msgstr ""
 msgid "can't open PPD file \"%s\", errno=%d (%s)\n"
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s)\n"
 
-#: ../libgu/ini_section.c:391
+#: ../libgu/ini_section.c:408
 msgid "can't open config file"
 msgstr ""
 
@@ -4621,11 +4622,11 @@ msgstr ""
 msgid "last -o keyword has no value"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1768
+#: ../filter_lp/filter_lp.c:1773
 msgid "ldeflines is greater than maxlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1766
+#: ../filter_lp/filter_lp.c:1771
 msgid "ldeflines is less than minlines"
 msgstr ""
 
@@ -4638,11 +4639,11 @@ msgstr ""
 msgid "line printer files"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1774
+#: ../filter_lp/filter_lp.c:1779
 msgid "lmlm, lmrm, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1776
+#: ../filter_lp/filter_lp.c:1781
 msgid "lmtm, lmbm, gutter, and current pagesize leave no space for text"
 msgstr ""
 
@@ -4672,7 +4673,7 @@ msgstr ""
 msgid "marked end of %s section in %s section"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1760
+#: ../filter_lp/filter_lp.c:1765
 msgid "maxlines is less than minlines"
 msgstr ""
 
@@ -4789,11 +4790,11 @@ msgstr ""
 msgid "pass file thru pr"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1764
+#: ../filter_lp/filter_lp.c:1769
 msgid "pdeflines is greater than maxlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1762
+#: ../filter_lp/filter_lp.c:1767
 msgid "pdeflines is less than minlines"
 msgstr ""
 
@@ -4801,11 +4802,11 @@ msgstr ""
 msgid "permission denied"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1770
+#: ../filter_lp/filter_lp.c:1775
 msgid "pmlm, pmrm, gutter, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1772
+#: ../filter_lp/filter_lp.c:1777
 msgid "pmtm, pmbm, and current pagesize leave no space for text"
 msgstr ""
 
@@ -5385,7 +5386,7 @@ msgstr ""
 msgid "using pr"
 msgstr ""
 
-#: ../libgu/ini_section.c:417
+#: ../libgu/ini_section.c:434
 msgid "value is not in the correct format"
 msgstr "выбор не по тому схему"
 

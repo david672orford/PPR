@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
 # mouse:~ppr/src/www/ppr-web.tcl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 15 April 2004.
 #
 
 #
@@ -135,8 +135,9 @@ switch -exact $selected_browser {
 		#	"openurl($opener_url?url=$final_url;width=$width;height=$height,new-window)" \
 		#	>@stdout 2>@stderr
 	
-		if [ ! -d $env(HOME)/.ppr ] {
-			mkdir $env(HOME)/.ppr
+		if {![file isdirectory $env(HOME)/.ppr ]} {
+			puts "Creating directory \"$env(HOME)/.ppr\"..."
+			exec mkdir $env(HOME)/.ppr
 			}
 	
 		set file [open $env(HOME)/.ppr/ppr-web-control.html w 0600]

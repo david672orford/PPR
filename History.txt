@@ -9117,6 +9117,20 @@ Internet Printing Protocol Work
 
 * po/install_mo.sh: added chown/chgrp calls.
 
+* www/ppr-web.tcl: added code to create ~/.ppr/ if it doesn't already exist.
+
+* libgu/gu_isdigit.c: extracted from gu_sscanf.c.
+
+* libppr/dimens.c: fixed to parse floating point numbers with a period decimal
+  separator using gu_sscanf() if strtod() doesn't consume all of the digits.
+
+* www/test_components.cgi.perl: added test for ijsgimpprint.
+
+* misc/ppr-testpage.c: changed printf() to gu_psprintf().
+
+* www/show_jobs.cgi.perl: renamed the [Cancel] button to [Delete] since that 
+  is more in accord with GUI conventions.
+
 
 +++++++++++++++++++++
 TODO

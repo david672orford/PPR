@@ -72,16 +72,16 @@ if [ ! -d "$full_instdir/$lang" ]
 	then
 	mkdir "$full_instdir/$lang"
 	fi
-chown $PPR_USER "$full_instdir/$lang"
-chgrp $PPR_GROUP "$full_instdir/$lang"
+chown $USER_PPR "$full_instdir/$lang"
+chgrp $GROUP_PPR "$full_instdir/$lang"
 echo "%dir \"$instdir/$lang\"" >>$fileslist
 
 if [ ! -d "$full_instdir/$lang/LC_MESSAGES" ]
 	then
 	mkdir "$full_instdir/$lang/LC_MESSAGES"
 	fi
-chown $PPR_USER "$full_instdir/$lang/LC_MESSAGES"
-chgrp $PPR_GROUP "$full_instdir/$lang/LC_MESSAGES"
+chown $USER_PPR "$full_instdir/$lang/LC_MESSAGES"
+chgrp $GROUP_PPR "$full_instdir/$lang/LC_MESSAGES"
 echo "%dir \"$instdir/$lang/LC_MESSAGES\"" >>$fileslist
 
 echo -n "    "
@@ -98,7 +98,7 @@ for potfile in *.pot
 		echo -n " $division"
 		msgfmt -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" $lang-$division.po || exit 1
 		chown $USER_PPR "$full_instdir/$lang/LC_MESSAGES/$division.mo" 2>/dev/null \
-			&& chown $USER_PPR "$full_instdir/$lang/LC_MESSAGES/$division.mo" 2>/dev/null
+			&& chgrp $GROUP_PPR "$full_instdir/$lang/LC_MESSAGES/$division.mo" 2>/dev/null
 		echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
 		else
 		echo -n " $division(missing)"

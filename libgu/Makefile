@@ -40,6 +40,7 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_nonblock.$(OBJ) \
 	daemon.$(OBJ) \
 	gu_strcasecmp.$(OBJ) \
+	gu_isdigit.$(OBJ) \
 	gu_sscanf.$(OBJ) \
 	gu_fscanf.$(OBJ) \
 	signal1.$(OBJ) \

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/misc/ppr-testpage.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 15 April 2004.
 */
 
 #include "before_system.h"
@@ -59,7 +59,7 @@ void error(const char *message, ... )
 
 static void do_header(void)
 	{
-	printf(
+	gu_psprintf(
 		"%%!PS-Adobe-3.0\n"
 		"%%%%Title: PPR Test Page\n"
 		"%%%%Pages: 1\n"
@@ -70,7 +70,7 @@ static void do_header(void)
 
 static void do_prolog(void)
 	{
-	printf(
+	gu_psprintf(
 		"%%%%BeginProlog\n"
 		"%%%%EndProlog\n"
 		);
@@ -78,7 +78,7 @@ static void do_prolog(void)
 
 static void do_setup(const char page_size[])
 	{
-	printf(
+	gu_psprintf(
 		"%%%%BeginSetup\n"
 		"%%%%IncludeResource: font Helvetica\n"
 		"/Helvetica findfont 10 scalefont setfont\n"
@@ -90,7 +90,7 @@ static void do_setup(const char page_size[])
 
 static void do_startpage(int num)
 	{
-	printf(
+	gu_psprintf(
 		"%%%%Page: %d %d\n"
 		"save\n"
 		, num, num);
@@ -98,7 +98,7 @@ static void do_startpage(int num)
 
 static void do_endpage(void)
 	{
-	printf(
+	gu_psprintf(
 		"%% End of page\n"
 		"restore\n"
 		"showpage\n"
@@ -107,7 +107,7 @@ static void do_endpage(void)
 
 static void do_trailer(void)
 	{
-	printf(
+	gu_psprintf(
 		"%%%%Trailer\n"
 		"end\n"
 		"%%%%EOF\n"
@@ -120,18 +120,19 @@ static void do_trailer(void)
 
 static void do_border(double pw, double ph, double border_width, const char setdash[])
 	{
-	printf("%% border\n");
-	printf("gsave\n");
-	printf("0 setlinewidth\n");
-	if(setdash) printf("%s setdash\n", setdash);
-	printf("newpath %.2f dup moveto 0 %.2f rlineto %.2f 0 rlineto 0 -%.2f rlineto\n",
+	gu_psprintf("%% border\n");
+	gu_psprintf("gsave\n");
+	gu_psprintf("0 setlinewidth\n");
+	if(setdash)
+		gu_psprintf("%s setdash\n", setdash);
+	gu_psprintf("newpath %f dup moveto 0 %f rlineto %f 0 rlineto 0 -%f rlineto\n",
 		border_width,
 		(ph - (border_width*2)),
 		(pw - (border_width*2)),
 		(ph - (border_width*2)) );
-	printf("closepath stroke\n");
-	printf("grestore\n");
-	printf("\n");
+	gu_psprintf("closepath stroke\n");
+	gu_psprintf("grestore\n");
+	gu_psprintf("\n");
 	}
 
 /* This structure describes an EPS bounding box. */
@@ -203,7 +204,7 @@ static gu_boolean eps_insert(const char filename[], struct BBOX *bbox, double x,
 		}
 
 	/* Here is the Red Book code to save the current state. */
-	printf(
+	gu_psprintf(
 		"%% Start of EPS setup\n"
 		"/b4_Inc_state save def\n"
 		"/dict_count countdictstack def\n"
@@ -214,33 +215,33 @@ static gu_boolean eps_insert(const char filename[], struct BBOX *bbox, double x,
 
 	/* Establish a coordinate system with its origin at the lower left corner
 	   of the box we want the EPS file to appear in. */
-	printf("%.2f %.2f translate\n", x, y);
+	gu_psprintf("%f %f translate\n", x, y);
 
 	/* Scale the EPS file. */
-	printf("%.2f dup scale\n", scale);
+	gu_psprintf("%f dup scale\n", scale);
 
 	/* Make an adjustment to account for EPS files which don't have (0,0) as their origin. */
-	printf("%d neg %d neg translate\n", bbox->llx, bbox->lly);
+	gu_psprintf("%d neg %d neg translate\n", bbox->llx, bbox->lly);
 
 	/* Clip to the EPS file's claimed bounding box.  If we don't do this,
 	   the Ghostscript tiger will paint everthing gray. */
-	printf("newpath %d %d moveto %d %d lineto %d %d lineto %d %d lineto closepath clip\n",
+	gu_psprintf("newpath %d %d moveto %d %d lineto %d %d lineto %d %d lineto closepath clip\n",
 		bbox->llx, bbox->lly,
 		bbox->llx, bbox->ury,
 		bbox->urx, bbox->ury,
 		bbox->urx, bbox->lly
 		);
 
-	printf("%% End of EPS setup\n\n");
+	gu_psprintf("%% End of EPS setup\n\n");
 
-	printf("%%%%BeginDocument: %s\n", filename);
+	gu_psprintf("%%%%BeginDocument: %s\n", filename);
 
 	while((line = gu_getline(line, &line_len, eps)))
 		{
-		printf("%s\n", line);
+		gu_psprintf("%s\n", line);
 		}
 
-	printf(
+	gu_psprintf(
 		"%%%%EndDocument\n"
 		"\n"
 		"%% Start of EPS cleanup\n"
@@ -260,7 +261,7 @@ static gu_boolean eps_insert(const char filename[], struct BBOX *bbox, double x,
 
 static void test_graybar(int x, int y, int width, int height, const char setproc[], const char towhite[])
 	{
-	printf(
+	gu_psprintf(
 		"%% grayscale bar\n"
 		"save\n"
 		"/x %d def\n"
@@ -277,7 +278,7 @@ static void test_graybar(int x, int y, int width, int height, const char setproc
 		setproc,
 		towhite);
 
-	printf(
+	gu_psprintf(
 		"0 setlinewidth\n"
 		"0 1 10 {\n"
 		"	/i exch def\n"
@@ -472,7 +473,7 @@ int main(int argc, char *argv[])
 	if(test_grayscale)
 		{
 		y -= 10;
-		printf("%d %d moveto (Grayscale) show\n", x, y);
+		gu_psprintf("%d %d moveto (Grayscale) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"1 exch sub setgray", "6 gt");
@@ -483,19 +484,19 @@ int main(int argc, char *argv[])
 	if(test_rgb)
 		{
 		y -= 10;
-		printf("%d %d moveto (Red) show\n", x, y);
+		gu_psprintf("%d %d moveto (Red) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 setrgbcolor", "6 lt");
 
 		y -= 10;
-		printf("%d %d moveto (Green) show\n", x, y);
+		gu_psprintf("%d %d moveto (Green) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 3 1 roll setrgbcolor", "6 lt");
 
 		y -= 10;
-		printf("%d %d moveto (Blue) show\n", x, y);
+		gu_psprintf("%d %d moveto (Blue) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 3 2 roll setrgbcolor", "pop true");
@@ -507,25 +508,25 @@ int main(int argc, char *argv[])
 	if(test_cmyk)
 		{
 		y -= 10;
-		printf("%d %d moveto (Cyan) show\n", x, y);
+		gu_psprintf("%d %d moveto (Cyan) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 0 setcmykcolor", "pop false");
 
 		y -= 10;
-		printf("%d %d moveto (Magenta) show\n", x, y);
+		gu_psprintf("%d %d moveto (Magenta) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 0 4 1 roll setcmykcolor", "pop false");
 
 		y -= 10;
-		printf("%d %d moveto (Yellow) show\n", x, y);
+		gu_psprintf("%d %d moveto (Yellow) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 0 4 2 roll setcmykcolor", "pop false");
 
 		y -= 10;
-		printf("%d %d moveto (Black) show\n", x, y);
+		gu_psprintf("%d %d moveto (Black) show\n", x, y);
 		y -= 38;
 		test_graybar(x, y, (pw - eps_margin - eps_margin), 36,
 				"0 0 0 4 3 roll setcmykcolor", "6 gt");
@@ -536,7 +537,7 @@ int main(int argc, char *argv[])
 	/* Print the product name. */
 	x = eps_margin;
 	y = eps_margin;
-	printf(
+	gu_psprintf(
 		"%d %d moveto\n"
 		"statusdict begin\n"
 		"  (Product: ) show product show\n"

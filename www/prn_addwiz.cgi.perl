@@ -49,10 +49,9 @@ defined($INTDIR) || die;
 defined($CONFDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
 
-#===========================================
-# This is a table of interface program
-# descriptions.
-#===========================================
+#======================================================
+# This is a table of interface program descriptions.
+#======================================================
 %interface_descriptions = (
 		'dummy'			=> "--hide",
 		'simple'		=> N_("Server Generic Port"),
@@ -104,9 +103,9 @@ $addprn_wizard_table = [
 				print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
 
 				my $method = cgi_data_move("method", "browse_printers");
-				labeled_radio("method", "Browse lists of available printers and appropriate connexion methods", "browse_printers", $method);
+				labeled_radio("method", "Search for printers", "browse_printers", $method);
 				print "<br>\n";
-				labeled_radio("method", "Manually choose connexion method and enter printer address", "choose_int", $method);
+				labeled_radio("method", "Manually configure printer", "choose_int", $method);
 				},
 		'onnext' => sub {
 				if(! defined($data{method}))
@@ -383,6 +382,12 @@ $addprn_wizard_table = [
 				while(my $zone = <ZONES>)
 					{
 					chomp $zone;
+					if($zone =~ /^;(.+)$/)
+						{
+						my $browser_comment = $1;
+						print "<option value=\"\">", html($browser_comment), "</option>\n";
+						next;
+						}
 					my $new_browser_zone = "$browser:$zone";
 					print "<option value=", html_value($new_browser_zone);
 					print " selected" if($new_browser_zone eq $browser_zone);
@@ -396,7 +401,7 @@ $addprn_wizard_table = [
 			closedir(BROWSERS) || die $!;
 			},
 		'onnext' => sub {
-				if(! defined($data{browser_zone}))
+				if(! defined($data{browser_zone}) || $data{browser_zone} eq "")
 					{ return _("You must choose a zone!") }
 				return undef;
 				}
@@ -417,7 +422,7 @@ $addprn_wizard_table = [
 			$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 			$browser = $1;
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
-			print '<p><label>', H_("Available printers:"), '<br>', "\n";
+			print '<p><label>', H_("Available Printers:"), '<br>', "\n";
 			print '<select tabindex=1 name="browser_printer" size="21" style="max-width: 450px; min-width: 450px">', "\n";
 			my @browser_comments = ();
 			outer:

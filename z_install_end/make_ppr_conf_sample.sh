@@ -213,11 +213,12 @@ if_dir_print "/usr/share/ppr-gs/ppd"
 
 echo >&5
 
-cat - >&5 <<===EndHere90===
+cat - >&5 <<===EndHere100===
 # Configuration of the new AppleTalk Printer Access Protocol server
 [papd]
   #default zone = ""
 
 # end of file
+===EndHere100===
 
 exit 0
