@@ -1,23 +1,41 @@
 /*
 ** mouse:~ppr/src/libgu/gu_sscanf.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 March 2003.
 */
 
-/*
-** This module constains a limited version of sscanf() which allows the
-** maximum width of string arguments to be specified as an additional
-** argument.  It also defines a format called %z which is a string which
-** extends to the end of the string which is fed for gu_sscanf().
+/*! \file
+    \brief safe sscanf()
+    
+This module constains a limited version of sscanf() which allows the maximum
+width of string arguments to be specified as an additional argument.  It also
+defines additional formats such as %z which reads a string which extends to the end
+of the input string, and %S which reads a word and allocates storage for it.
+
 */
 
 #include "before_system.h"
@@ -73,8 +91,55 @@ static char *gu_sscanf_strndup(const char *string, size_t len)
     return p;
     }
 
-/*
-** Here is the title function.
+/** safe sscanf()
+
+This function is similiar to sscanf().  It implements the following formats:
+
+<dl>
+
+<dt>%d</dt>
+
+<dd>read an int.  The argument should be a pointer to an int.</dd>
+
+<dt>%ld</dt>
+
+<dd>read a long int.  The argument should be a pointer to a long int.</dd>
+
+<dt>%hd</dt>
+
+<dd>read a short int.  The argument should be a pointer to a short int.</dd>
+
+<dt>%s</dt>
+
+<dd>Read characters up to the next whitespace.  The argument should be a
+pointer to a char array with enough space to hold the string and the
+terminating NULL.  To prevent overruns, the size of the array may be
+specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
+by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt
+> then the actuall length is
+read from ppr_sscanf()'s next argument (the one before the pointer to the
+char array).</dd>
+
+<dt>%S</dt>
+
+<dd>Read characters up to the next whitespace, allocate memory, and store
+them in the allocated memory.  The argument should be a pointer to a char
+pointer which will be set to the address of the allocated memory.</dd>
+
+<dt>%z</dt>
+
+<dd>Read characters up to the end of the string.  The argument should be a
+char array.  To prevent overruns, the size of the char array may be
+specified in the same manner as for the %s format.</dd>
+
+<dt>%Z</dt>
+
+<dd>Read characters up to the end of the string, allocate storeage
+for them, and copy them into that storage.  The argument should be a pointer to
+a pointer to a char array.</dd>
+
+</dl>
+
 */
 int gu_sscanf(const char *input, const char *format, ...)
     {

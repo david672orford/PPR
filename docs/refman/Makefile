@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 6 March 2003.
 #
 
 # Pull in settings from Configure.
@@ -36,11 +36,14 @@ include ../rules.mk
 #=== Inventory ==============================================================
 
 # List of man pages in HTML format
-ALL_HTML=ppr.1.html \
+ALL_HTML=ppdoc.1.html \
+	ppr.1.html \
 	ppr-filters.1.html \
 	ppr2samba.8.html \
+	ppd2macosdrv.8.html \
 	ppr-indexfonts.8.html \
 	ppr-indexppds.8.html \
+	ppr-indexfilters.8.html \
 	ppop.1.html \
 	ppad.8.html \
 	ppad-interfaces.8.html \
@@ -55,14 +58,21 @@ ALL_HTML=ppr.1.html \
 	ppr-hexdump.1.html \
 	ppr-config.8.html \
 	ppr-passwd.1.html \
-	ppr-clean.8.html
+	ppr-clean.8.html \
+	ppr-testpage.1.html \
+	ppr-ttf2ps.1.html \
+	ppr-web.1.html \
+	ppr-panel.1.html
 
 # List of man pages in nroff format
-ALL_TROFF=ppr.1.man \
+ALL_TROFF=ppdoc.1.man \
+	ppr.1.man \
 	ppr-filters.1.man \
 	ppr2samba.8.man \
+	ppd2macosdrv.8.man \
 	ppr-indexfonts.8.man \
 	ppr-indexppds.8.man \
+	ppr-indexfilters.8.man \
 	ppop.1.man \
 	ppad.8.man \
 	ppad-interfaces.8.man \
@@ -77,10 +87,14 @@ ALL_TROFF=ppr.1.man \
 	ppr-hexdump.1.man \
 	ppr-config.8.man \
 	ppr-passwd.1.man \
-	ppr-clean.8.man
+	ppr-clean.8.man \
+	ppr-testpage.1.man \
+	ppr-ttf2ps.1.man \
+	ppr-web.1.man \
+	ppr-panel.1.man
 
 # List of PODs for cross references
-LIBPODS=ppr.1,ppr-filters.1,ppr2samba.8,ppr-indexfonts.8,ppr-indexppds.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1
+LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-indexfonts.8,ppr-indexppds.8,ppr-indexfilters.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1
 
 #=== Build ==================================================================
 

@@ -395,3 +395,12 @@ more information about RIPs and *pprRIP:.
 
 * pprhack/pprhack_srcnotes.sgml: removed
 
+* pprhack/pprhack_libgu.sgml, pprhack_libppr.sgml: contents converted to
+  Oxygen notes in the source files themselves, removed.
+
+* refman/: added ppr-web.1.pod, ppr-panel.1.pod, ppr-testpage.1.pod, and
+  ppr-ttf2ps.1.pod, ppd2macosdrv.8.pod, ppdoc.1.pod.
+
+
+
+

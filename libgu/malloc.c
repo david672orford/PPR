@@ -1,20 +1,55 @@
 /*
 ** mouse:~ppr/src/libgu/malloc.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 21 February 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 March 2003.
 */
 
-/*
-** Memory allocator for PPR programs.
+/*! \file
+    \brief memory allocator for PPR programs
+
+This file contains the routines which PPR uses to allocate and free memory.
+
+The normal Unix memory allocation routines return a NULL pointer if they
+fail to allocate the requested memory.  Since it is very rare that a Unix
+system will refuse to allocate any reasonable amount of memory, programers
+are often emboldened to ignore the possiblity of malloc() and friends
+returning NULL.  We don't ignore such a possibility, but since a memory
+allocation failure is highly unlikely, PPR programs treats it as a fatal
+error, but, rather than test the return value of malloc() after each call,
+the calls are encapsulated in special functions which test the return value
+and abort the program if the allocation fails.
+
+A program calling these functions must provide a function called
+libppr_throw(). This function should print an error message and exit.  The
+first argument will be EXCEPTION_STARVED, the second will be the name of the
+function that failed to allocate memory, the third is a printf() style
+format string for the error message.  Any remaining arguments are the values
+specified by the format string.
+
 */
 
 #include "before_system.h"
@@ -33,8 +68,12 @@
 /* number of blocks currently allocated */
 int gu_alloc_blocks = 0;
 
-/*
-** PPR memory allocator.
+/** allocate a memory block to hold an array
+
+The function gu_alloc() takes two arguments.  The first is the number of items
+to allocate, the second is the size of each in bytes.  This function will return
+a void pointer to the allocated memory.  The memory is not initialized.
+
 */
 void *gu_alloc(size_t number, size_t size)
     {
@@ -50,8 +89,11 @@ void *gu_alloc(size_t number, size_t size)
     return rval;
     } /* end of gu_alloc() */
 
-/*
-** PPR memory allocator, duplicate a string.
+/** duplicate a string
+
+The function gu_strdup() takes a string pointer as its sole argument
+and returns a pointer to a new copy of the string.
+
 */
 char *gu_strdup(const char *string)
     {
@@ -69,8 +111,12 @@ char *gu_strdup(const char *string)
     return rval;
     } /* end of gu_strdup() */
 
-/*
-** PPR memory allocator, duplicate a part of a string.
+/** duplicate the initial segment of a string
+
+The function gu_strndup() takes a string pointer and a maximum length as its
+arguments.  It returns a pointer to a new string containing a copy of the
+string truncated to the maximum length.
+
 */
 char *gu_strndup(const char *string, size_t len)
     {
@@ -89,9 +135,8 @@ char *gu_strndup(const char *string, size_t len)
     return rval;
     } /* end of gu_strndup() */
 
-/*
-** PPR memory allocator, duplicate a string into the indicated block,
-** resizing it if necessary.
+/** copy a string into a preexisting block, resizing if necessary
+
 */
 char *gu_restrdup(char *ptr, size_t *number, const char *string)
     {
@@ -109,8 +154,14 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
     return ptr;
     }
 
-/*
-** PPR memory allocator, change the size of a block.
+/* change the size of an already allocated array
+
+The function gu_realloc() changes the size of a memory block.  The
+first argument is a pointer to the old block, the second is the desired new
+number of members, the third argument is the size of each member in bytes.  This
+function returns a pointer to a resized block, possibly at a different
+location.
+
 */
 void *gu_realloc(void *ptr, size_t number, size_t size)
     {
@@ -124,8 +175,11 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
     return rval;
     } /* end of ppr_realloc() */
 
-/*
-** PPR memory allocator, free a block.
+/* free memory
+
+The function gu_free() is used to free any memory allocated by the other
+functions.
+
 */
 void gu_free(void *ptr)
     {

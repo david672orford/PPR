@@ -199,7 +199,7 @@ B<lprsrv>.
 
 =item B<ppop progress> I<job-id>
 
-This command reports the amount of an indicated job which has been printed. 
+This command reports the percentage of an indicated job which has been printed. 
 The output is terse because it is intended for use by GUI front ends.
 
 =item B<ppop qquery> {I<destination-name>, I<job_id>, B<all>} I<field1 ... fieldN>

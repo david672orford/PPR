@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 6 March 2003.
 #
 
 =head1 NAME
@@ -34,19 +34,24 @@ ppr2samba - Generates Samba configuration files from PPR configuration files
 
 ppd2win95drv - Converts PPD files and generates printers.def for Samba
 
+ppd2windrv - Converts PPD files and modifies Samba 2.2.x Configuration
+
 =head1 SYNOPSIS
 
-B<ppr2samba>
+B<ppr2samba> [I<--nocreate>] [I<--debug>] [I<--version>] [I<--help>]
 
 B<ppd2win95drv>
 
+B<ppd2windrv>
+
 =head1 DESCRIPTION
 
-The programs B<ppr2samba> and B<ppd2win95drv> reside in F</usr/lib/ppr/bin>.
+[This manpage is somewhat out of date.  An attempt has been made to correct
+some of the more glaring problems, but it needs a therough going over.]
 
 These program are designed to make it easier to use PPR with Samba.  Samba
 is an open source file and print server for SMB clients such as Microsoft
-Windows 95, 98, and NT.  For information on Samba refer to:
+Windows 95, 98,  NT, etc.  For information on Samba refer to:
 
 	http://www.samba.org/
 
@@ -55,22 +60,28 @@ to a file which Samba can use the share them.  This file is called
 B</etc/ppr/smb-include.conf>.
 
 The program B<ppd2win95drv> can be used to convert PPR's collection of PPD
-files to the correct format for Microsoft Windows 95.  It also creates a file
-called F<printers.def> which Samba uses to help Microsoft Windows 95 clients
-install printer drivers.  The converted PPD files and F<printers.def> are
-stored in the directory F</var/spool/ppr/drivers/win95>.  Since B<ppd2win95drv>
-is a Perl script, you must have Perl installed to use it.  The script should
-work with either Perl 4 or Perl 5.
+files to the correct format for Microsoft Windows 95.  It also creates a
+file called F<printers.def> which Samba uses to help Microsoft Windows 95
+clients install printer drivers.  The converted PPD files are stored in
+F</var/spool/ppr/drivers/WIN40/> and F<printers.def> is stored in the
+directory F</var/spool/ppr/drivers/WIN40>.  Since B<ppd2win95drv> is a Perl
+script, you must have Perl installed to use it.  The script should work with
+either Perl 4 or Perl 5.
+
+The program B<ppd2windrv> is a replacement for B<ppd2win95drv>.  Together
+with Samba 2.2.x it allows not only Windows 95 clients, but Windows NT
+(including 2000 and XP) clients to automatically download printer drivers.
 
 If you add or remove printers from PPR, change their PPD files, or change
 their descriptive comment strings, it is necessary to rerun B<ppr2samba>
 so that Samba will perceive the change.
 
-If you add, remove, replace, or modify any of the files in F</usr/share/ppr/PPDFiles>
-or add or remove any of the Microsoft Windows 95 PostScript driver files
-in F</var/spool/ppr/drivers/win95>, or set a printer to use a PPD file which doesn't
-reside in F</usr/share/ppr/PPDFiles>, you must rerun B<ppd2win95drv> to rebuild the
-MS-Windows 95 drivers.
+If you add, remove, replace, or modify any of the files in
+F</usr/share/ppr/PPDFiles> or add or remove any of the Microsoft Windows 95
+PostScript driver files in F</var/spool/ppr/drivers/WIN40>, or set a printer
+to use a PPD file which doesn't reside in F</usr/share/ppr/PPDFiles>, you
+must rerun B<ppd2win95drv> or B<ppd2windrv> (whichever you are using) to
+reconfigure the MS-Windows drivers.
 
 =head2 Versions of Samba
 
@@ -299,8 +310,8 @@ that B<ppr2samba> accepts.
 =head2 What ppd2win95drv does.
 
 The program B<ppd2win95drv> is a Perl script which prepares the directory
-F</var/spool/ppr/drivers/win95> as a directory from which to dispense printer
-drivers for Microsoft Windows 95.
+F</var/spool/ppr/drivers/WINPPD/> and F</var/spool/ppr/drivers/WIN40/> as a
+directories from which to dispense printer drivers for Microsoft Windows 95.
 
 Setting up this feature is not simple.  The reason is that it requires files
 which may not be distributed with PPR.  These files are components of the
@@ -312,7 +323,7 @@ PostScript level 2 printers only.
 
 The driver that comes with Windows 95 is the easiest to get.  Install the
 driver for a PostScript printer on a Windows 95 computer and copy the
-following files from the F<SYSTEM> directory to F</var/spool/ppr/drivers/win95>
+following files from the F<SYSTEM> directory to F</var/spool/ppr/drivers/WIN40>
 on the PPR server:
 
 	PSCRIPT.DRV
@@ -338,7 +349,7 @@ longer distributing the version 4.1 driver.  This is a pity.  Does anyone
 know of a place from which it may still be downloaded?)
 
 Install the driver on a computer running Windows 95 and then copy these files
-from the F<SYSTEM> directory to F</var/spool/ppr/drivers/win95> on the PPR server:
+from the F<SYSTEM> directory to F</var/spool/ppr/drivers/WIN40> on the PPR server:
 
 	ADOBEPS4.DRV (rename to ADBEPS41.DRV)
 	ADOBEPS4.HLP
@@ -358,7 +369,7 @@ To get around this we renamed the file from the 4.1 driver in the previous step.
 
 To install the 4.2x driver on the server, install it on a Windows 95 computer
 as you did with the others.  Then copy the following files from the F<SYSTEM>
-directory to F</var/spool/ppr/drivers/win95> on the PPR server:
+directory to F</var/spool/ppr/drivers/WIN40> on the PPR server:
 
 	ADOBEPS4.DRV
 	ADOBEPS4.HLP
@@ -373,10 +384,10 @@ the 4.2x Adobe driver rather than the 4.1 Adobe driver or the driver that came
 with Windows 95.
 
 Now that I have lead you through this whole process, I should tell you that
-there is a batch file called F<win95cp.bat> in the F<samba> subdirectory of
+there is a batch file called F<WIN95CP.BAT> in the F<samba/> subdirectory of
 the PPR source which can be used to copy the files up to the share area
-if the client it is run on has write access to the F<WIN95DRV> share (otherwise
-known as F</var/spool/ppr/drivers/win95>.  You will have to grant such access if you
+if the client it is run on has write access to the F<pprprnt$> share (otherwise
+known as F</var/spool/ppr/drivers/>).  You will have to grant such access if you
 want to use F<win95cp.bat>.
 
 =head1 SEE ALSO

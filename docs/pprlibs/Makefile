@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/pprhack/Makefile
+# mouse:~ppr/src/docs/doxygen/Makefile
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -28,51 +28,32 @@
 # Last modified 6 March 2003.
 #
 
-# Pull in settings from Configure, the PPR version number, and special rules
-# for building documentation.
 include ../../Makefile.conf
-include ../../include/version.mk
 include ../rules.mk
 
 #=== Inventory ==============================================================
 
-BUILT=pprhack.html pprhack.ps pprhack.pdf
 
 #=== Build ==================================================================
 
-all-docs: $(BUILT)
-
-pprhack.sgml: \
-		pprhack_conf.sgml \
-		pprhack_files.sgml \
-		pprhack_filters.sgml \
-		pprhack_fonts.sgml \
-		pprhack_interfaces.sgml \
-		pprhack_pprd.sgml \
-		pprhack_status.sgml \
-		pprhack_responders.sgml \
-		pprhack_custom_hooks.sgml
-	touch pprhack.sgml
-
-#=== Validity Check ================================================================
-
-lint:
-	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XMLLINT) --catalogs pprhack.sgml
+all:
+	doxygen Doxyfile
 
 #=== Install ================================================================
 
-install: all-docs
-	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprhack
-	../$(INSTALLDATA) $(DOCSDIR)/pprhack $(BUILT)
+install: 
+	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprlibs
+	../$(INSTALLDATA) $(DOCSDIR)/pprlibs *.html *.css *.png
 
 #=== Housekeeping ===========================================================
 
-clean:
-	$(RMF) *.$(OBJ) $(BACKUPS)
-	$(RMF) *.dvi *.aux *.log *.toc *.tex
+include .depend
 
-# Remove anything that can be reconstructed.
-veryclean: clean
-	$(RMF) $(BUILT)
+depend:
+	$(PPR_MAKE_DEPEND) ../include
+
+clean:
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
 
 # end of file
+
