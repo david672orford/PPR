@@ -2,7 +2,7 @@
 #
 # Test the handling of various ppr_infile.c features.
 #
-# Last modified 17 November 2002.
+# Last modified 20 October 2003.
 #
 
 for opt in None DuplexNoTumble DuplexTumble #SimplexTumble
@@ -13,7 +13,7 @@ for opt in None DuplexNoTumble DuplexTumble #SimplexTumble
     $TESTBIN/clear_output
     $HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none -F Duplex=$opt -G infile:filter \
 	<<EndofHerefile \
-	| sed -e 's/ppr-[0-9]*\.[0-9]*/ppr-X.XX/' 
+	| sed -e 's/ppr-[0-9]*\.[0-9ab]*/ppr-X.XX/' 
 Now is the time for all good men to come to the aid of the party.
 EndofHerefile
     $TESTBIN/cat_output >/dev/null

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 20 October 2003.
 */
 
 /*
@@ -165,8 +165,9 @@ static void snmp_status(void *p)
 			if(strstr(gu_exception, "(noSuchName)"))
 				{
 				alert(int_cmdline.printer, TRUE,
-					_("Printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
-					  "firmware, if possible.")
+					_("This printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
+					  "firmware, if possible.  If not, you can turn off SNMP queries by adding the\n"
+					  "interface option \"snmp_status_interval=0\".\n")
 					);
 				}
 			else

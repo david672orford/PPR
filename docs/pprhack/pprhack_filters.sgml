@@ -1,30 +1,32 @@
+<!--
+Filename: pprhack_filters.sgml
+Last Modified: 22 Octoberber 2003
+Last Proofread: never
+-->
+
 <sect1 id="filters">
-<title>Requirements for an Input Filter</title>
+<title>Input Filters</title>
 
-<para>
-If <command>ppr</command> determines that the input file is not PostScript, it will seek
-to use a filter to convert it to PostScript.  This appendix provides the
-information you will need to write your own <application>PPR</application> input filters.
-</para>
+<para>If <command>ppr</command> determines that the input file is not
+PostScript, it will seek to use a filter to convert it to PostScript.  This
+appendix provides the information you will need to write your own
+<application>PPR</application> input filters.</para>
 
-<para>The filters are found in the directory <filename class="Directory">/usr/lib/ppr/filters/</filename>.  Each of these
-files has a name that consists of <filename>filter_</filename> followed by the <application>PPR</application>
-input type
-name.  For example, the filter for JPEG files is called
+<para>The filters are found in the directory <filename
+class="Directory">/usr/lib/ppr/filters/</filename>.  Each of these files has
+a name that consists of <filename>filter_</filename> followed by the
+<application>PPR</application> input type name.  For example, the filter for
+JPEG files is called
 <filename>/usr/lib/ppr/filters/filter_jpeg</filename>.</para>
 
-<para>
-A filter should read the file from STDIN and write PostScript code on STDOUT.
-If it must, it can write messages on STDERR.  STDIN is guaranteed to be
-seekable.  Messages sent to STDERR will go wherever STDERR was going when
-<command>ppr</command> was invoked.
-</para>
+<para>A filter should read the file from STDIN and write PostScript code on
+STDOUT. If it must, it can write messages on STDERR.  STDIN is guaranteed to
+be seekable.  Messages sent to STDERR will go wherever STDERR was going when
+<command>ppr</command> was invoked.</para>
 
 <para>
 The parameters are as follows:
 </para>
-
-<para>
 
 <orderedlist>
 <listitem>
@@ -76,14 +78,11 @@ by the TeX, TeXinfo, and DVI filters when searching for include files.
 
 </orderedlist>
 
-</para>
-
-<para>
-When a filter is invoked, the environment variable <envar>IFS</envar> is set to a space and a
-tab, and the variable <envar>PATH</envar> is set to a value which is just adequate to find
-standard shell script helper programs such as test, sed, and grep.  On most
-systems, that value of <envar>PATH</envar> is <literal>/bin:/usr/bin</literal>.
-</para>
+<para>When a filter is invoked, the environment variable <envar>IFS</envar>
+is set to a space and a tab, and the variable <envar>PATH</envar> is set to
+a value which is just adequate to find standard shell script helper programs
+such as test, sed, and grep.  On most systems, that value of
+<envar>PATH</envar> is <literal>/bin:/usr/bin</literal>.</para>
 
 <para>
 Here is an example.  Suppose this line is in the printer's configuration file:
@@ -154,4 +153,3 @@ described in <ulink url="../refman/ppr.1.html">the ppr(1) man page</ulink>,
 under the section for the <option>-T</option> switch.</para>
 
 </sect1>
-
