@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 2 August 2001.
+# Last modified 29 August 2001.
 #
 
 =head1 NAME
@@ -82,7 +82,7 @@ sub new
   defined($self->{queue}) || croak "Queue name parameter missing";
 
   $references++;
-  print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n";
+  #print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n";
 
   bless $self;
   return $self;
@@ -102,7 +102,7 @@ sub destroy
     defined($self) || croak;
 
     $references--;
-    print STDERR "PPR::PPOP::destroy(): \$references = $references\n";
+    #print STDERR "PPR::PPOP::destroy(): \$references = $references\n";
     if($references == 0)
     	{
 	$self->shutdown();
@@ -127,7 +127,7 @@ sub launch
   # being prepared.
   if($ppop_launched && ($self->{su_user} ne $ppop_launched_su_user || $self->{proxy_for} ne $ppop_launched_proxy_for))
     {
-    print STDERR "PPR::PPOP::launch(): need shutdown and relaunch\n";
+    #print STDERR "PPR::PPOP::launch(): need shutdown and relaunch\n";
     $self->shutdown();
     }
 
@@ -166,7 +166,7 @@ sub launch
     my $junk = <$rdr>;
     $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready";
 
-    print STDERR "PID $pid, PPR version $1\n";
+    #print STDERR "PID $pid, PPR version $1\n";
 
     $ppop_launched = $pid;
     $ppop_launched_su_user = $self->{su_user};
@@ -212,11 +212,11 @@ sub read_lists
     {
     my @result_rows = ();
 
-    print STDERR "PPR::PPOP::read_lists()\n";
+    #print STDERR "PPR::PPOP::read_lists()\n";
 
     while(<$rdr>)
 	{
-	print STDERR $_;
+	#print STDERR $_;
 	chomp;
 	if(/^\*DONE\t([0-9]+)/)
 	    {
@@ -248,7 +248,7 @@ sub do_it
 
     $self->launch();
 
-    print STDERR "\$ ppop -M ", join(' ', @_), "\n";
+    #print STDERR "\$ ppop -M ", join(' ', @_), "\n";
     print $wtr join(' ', @_), "\n";
 
     while(1)
@@ -321,7 +321,7 @@ sub qquery
   $self->launch();
 
   # Send a command to ppop.
-  print STDERR "ppop -M qquery $self->{queue}-* ", join(' ', @_), "\n";
+  #print STDERR "ppop -M qquery $self->{queue}-* ", join(' ', @_), "\n";
   print $wtr "qquery $self->{queue}-* ", join(' ', @_), "\n";
 
   my @result = ();
@@ -668,7 +668,7 @@ sub list_destinations_comments_addresses
     my $queue = shift;
     $queue = $self->{queue} unless defined($queue);
     $self->launch();
-    print STDERR "ppop -M destination-comment-address $queue\n";
+    #print STDERR "ppop -M destination-comment-address $queue\n";
     print $wtr "destination-comment-address $queue\n";
     return read_lists();
     }
