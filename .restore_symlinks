@@ -41,52 +41,6 @@ ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2 || exit 1
 ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1
 # docbook-xsl-1.60.1 --> ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1
 ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1 || exit 1
-# filter_lp --> ./debian/ppr/usr/lib/ppr/filters/filter_lp_autolf
-ln -sf filter_lp ./debian/ppr/usr/lib/ppr/filters/filter_lp_autolf || exit 1
-# filter_lp --> ./debian/ppr/usr/lib/ppr/filters/filter_fortran
-ln -sf filter_lp ./debian/ppr/usr/lib/ppr/filters/filter_fortran || exit 1
-# tcpip --> ./debian/ppr/usr/lib/ppr/interfaces/socketapi
-ln -sf tcpip ./debian/ppr/usr/lib/ppr/interfaces/socketapi || exit 1
-# tcpip --> ./debian/ppr/usr/lib/ppr/interfaces/appsocket
-ln -sf tcpip ./debian/ppr/usr/lib/ppr/interfaces/appsocket || exit 1
-# tcpip --> ./debian/ppr/usr/lib/ppr/interfaces/jetdirect
-ln -sf tcpip ./debian/ppr/usr/lib/ppr/interfaces/jetdirect || exit 1
-# mail --> ./debian/ppr/usr/lib/ppr/responders/errmail
-ln -sf mail ./debian/ppr/usr/lib/ppr/responders/errmail || exit 1
-# ../man8/lprsrv.8 --> ./debian/ppr/usr/share/ppr/man/man5/lprsrv.conf.5
-ln -sf ../man8/lprsrv.8 ./debian/ppr/usr/share/ppr/man/man5/lprsrv.conf.5 || exit 1
-# ppr2samba.8 --> ./debian/ppr/usr/share/ppr/man/man8/ppd2win95drv.8
-ln -sf ppr2samba.8 ./debian/ppr/usr/share/ppr/man/man8/ppd2win95drv.8 || exit 1
-# lprsrv.8 --> ./debian/ppr/usr/share/ppr/man/man8/lprsrv-test.8
-ln -sf lprsrv.8 ./debian/ppr/usr/share/ppr/man/man8/lprsrv-test.8 || exit 1
-# ../lib/ppr/bin/ppr --> ./debian/ppr/usr/bin/ppr
-ln -sf ../lib/ppr/bin/ppr ./debian/ppr/usr/bin/ppr || exit 1
-# ../lib/ppr/bin/ppop --> ./debian/ppr/usr/bin/ppop
-ln -sf ../lib/ppr/bin/ppop ./debian/ppr/usr/bin/ppop || exit 1
-# ../lib/ppr/bin/ppad --> ./debian/ppr/usr/bin/ppad
-ln -sf ../lib/ppr/bin/ppad ./debian/ppr/usr/bin/ppad || exit 1
-# ../lib/ppr/bin/ppuser --> ./debian/ppr/usr/bin/ppuser
-ln -sf ../lib/ppr/bin/ppuser ./debian/ppr/usr/bin/ppuser || exit 1
-# ../lib/ppr/bin/ppdoc --> ./debian/ppr/usr/bin/ppdoc
-ln -sf ../lib/ppr/bin/ppdoc ./debian/ppr/usr/bin/ppdoc || exit 1
-# ../lib/ppr/bin/ppr-testpage --> ./debian/ppr/usr/bin/ppr-testpage
-ln -sf ../lib/ppr/bin/ppr-testpage ./debian/ppr/usr/bin/ppr-testpage || exit 1
-# ../lib/ppr/bin/ppr-config --> ./debian/ppr/usr/bin/ppr-config
-ln -sf ../lib/ppr/bin/ppr-config ./debian/ppr/usr/bin/ppr-config || exit 1
-# ../lib/ppr/bin/ppr-index --> ./debian/ppr/usr/bin/ppr-index
-ln -sf ../lib/ppr/bin/ppr-index ./debian/ppr/usr/bin/ppr-index || exit 1
-# ../lib/ppr/bin/ppr-followme --> ./debian/ppr/usr/bin/ppr-followme
-ln -sf ../lib/ppr/bin/ppr-followme ./debian/ppr/usr/bin/ppr-followme || exit 1
-# ../lib/ppr/bin/ppr-xgrant --> ./debian/ppr/usr/bin/ppr-xgrant
-ln -sf ../lib/ppr/bin/ppr-xgrant ./debian/ppr/usr/bin/ppr-xgrant || exit 1
-# ../lib/ppr/bin/ppr-popup --> ./debian/ppr/usr/bin/ppr-popup
-ln -sf ../lib/ppr/bin/ppr-popup ./debian/ppr/usr/bin/ppr-popup || exit 1
-# ../lib/ppr/bin/ppr-panel --> ./debian/ppr/usr/bin/ppr-panel
-ln -sf ../lib/ppr/bin/ppr-panel ./debian/ppr/usr/bin/ppr-panel || exit 1
-# ../lib/ppr/bin/ppr-web --> ./debian/ppr/usr/bin/ppr-web
-ln -sf ../lib/ppr/bin/ppr-web ./debian/ppr/usr/bin/ppr-web || exit 1
-# ../lib/ppr/bin/ppr-passwd --> ./debian/ppr/usr/bin/ppr-passwd
-ln -sf ../lib/ppr/bin/ppr-passwd ./debian/ppr/usr/bin/ppr-passwd || exit 1
 # ../z_install_end/init.d --> ./debian/init.d
 ln -sf ../z_install_end/init.d ./debian/init.d || exit 1
 # ../z_install_end/cron.d --> ./debian/cron.d
