@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 March 2003.
+# Last modified 21 March 2003.
 #
 
 use strict;
@@ -196,13 +196,15 @@ sub do_drop
 
     my $dialog = new PrintDesk::PPRprintdialog($w);
 
-    my(@args) = $dialog->Show();
+    my @args = $dialog->Show($dest);
 
     if(scalar @args > 0)
 	{
 	foreach my $file (@_)
 	    {
-	    system("$PPR::HOMEDIR/bin/ppr", "-d", $dest, @args, $file) && die;
+	    print join(' ', "$PPR::HOMEDIR/bin/ppr", @args, $file), "\n";
+	
+	    system("$PPR::HOMEDIR/bin/ppr", @args, $file) && die;
 	    }
 	}
 
