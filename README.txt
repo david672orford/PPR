@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/README.txt
  mouse:~ppr/src/docs/misc/README.txt (symbolic link)
- Last revised 11 March 2003.
+ Last revised 28 March 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -167,7 +167,7 @@ documents are also available.  You can either add PPR's man page directory
 	Regression tests.
     nonppr_misc/
 	Files, such as libraries taken from other projects. 
-	Symbolic links point to this directory.
+	Many symbolic links point to this directory.
     nonppr_tcl/
 	A modified copy of Tcl 7.4.  It is intended to replace
 	/bin/sh as the language for PPR's simple scripts.

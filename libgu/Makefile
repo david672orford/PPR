@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 28 March 2003.
 #
 
 include ../Makefile.conf
@@ -66,7 +66,18 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
 	gu_pcs.$(OBJ) gu_pch.$(OBJ) \
-	gu_run.$(OBJ)
+	gu_run.$(OBJ) \
+	pcre.$(OBJ) \
+	pcre_get.$(OBJ) \
+	pcre_maketables.$(OBJ) \
+	pcre_study.$(OBJ) \
+	c2lib_hash.$(OBJ) \
+	c2lib_matvec.$(OBJ) \
+ 	c2lib_pool.$(OBJ) \
+	c2lib_pre.$(OBJ) \
+	c2lib_pstring.$(OBJ) \
+	c2lib_tree.$(OBJ) \
+	c2lib_vector.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 
@@ -94,4 +105,3 @@ clean:
 	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS)
 
 # end of file
-

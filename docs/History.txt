@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--24 March 2003.
+1.51, 15 February 2003--28 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -433,14 +433,15 @@ more information about RIPs and *pprRIP:.
 
 * pprhack/pprhack_pprd.sgml: proofread and corrected
 
+* shared/legal.sgml: added aknowledgement for PCRE.
+
+* index.html: added links to PCRE and C2lib docs.
 
 
 
 TODO
 
-* pprd: --version --help --foreground
-
-* pprdoc: Document the ".ppr", ".For:", ".AuthCode", ".Routing",
+* pprdoc: Document (or remove) the ".ppr", ".For:", ".AuthCode", ".Routing",
   ".feature:", ".hack", ".end" header format
 
 * pprdoc: Describe editps.conf and editps system
@@ -461,3 +462,6 @@ TODO
 
 * Finish uprint-lpstat(1) manpage
 
+* Finish ppr-followme(1) manpage
+
+* Finish ppr-panel(1) manpage
