@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 22 August 2003.
 #
 
 #
@@ -238,7 +238,14 @@ if [ -x "$XINETD" -a -f "$XINETD_CONF" ]
 		fi
 
 	../makeprogs/installconf.sh root root 644 'config(noreplace)' $XINETD_PPR
+
+
+	# This only works on Linux.
+	killall -HUP xinetd
+	killall ppr-httpd
+
 	exit 0
+
 	else
 	echo " not found"
 	fi

@@ -8711,6 +8711,8 @@ Bug Fixes
   of an exception to the self.close() access rules.  The exception says that 
   self.close() only works if the history list is empty.
 
+* libscript/PPOP.pm: fixed so that stderr from PPOP is captured too.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".

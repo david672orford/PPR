@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 22 August 2003.
 #
 
 =head1 NAME
@@ -67,7 +67,7 @@ This object can be used to control a PPR queue or printer.
 package PPR::PPOP;
 
 require 5.003;
-use IPC::Open2;
+use IPC::Open3;
 use FileHandle;
 use Carp;
 use PPR;
@@ -176,24 +176,32 @@ sub launch
 		push(@COMMAND, "--proxy-for", $1);
 		}
 
+    #
     # Launch the command.  Note that we temporarily clear PATH so that the
     # child won't inherit it and balk at exec() due to taint checking.
+	#
     #print STDERR "Launching: ", join(" ", @COMMAND), "\n";
     ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
-	my $saved_PATH = $ENV{PATH};
+	{
+	local($ENV{PATH});
 	delete $ENV{PATH};
-    my $pid = open2($rdr, $wtr, @COMMAND);
-    $ENV{PATH} = $saved_PATH;
+    my $pid = open3($wtr, $rdr, "", @COMMAND);
+    }
 
     # Set the file handle to ppop to flush on each print.  If we don't
     # do this, then communication will get locked as both parties
     # wait for messages that will never come.
     $wtr->autoflush(1);
 
-    # The first thing ppop does is print the PPR version number.  If we receive the
-    # version number message we will know that ppop is alive and kicking.
+	#
+    # The first thing ppop does is print the PPR version number.
+    # If we receive the version number message we will know that
+    # ppop is alive and kicking.
+    #
+	{
     my $junk = <$rdr>;
     $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready: $junk";
+	}
 
     #print STDERR "PID $pid, PPR version $1\n";
 
