@@ -1,19 +1,36 @@
 #
 # mouse:~ppr/src/printdesk/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 22 September 2000.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 21 February 2003.
 #
 
 include ../Makefile.conf
+
+#=== Inventory ==============================================================
 
 PROGS=ppr-panel
 
@@ -25,24 +42,30 @@ PRINTDESK_SUB_SCRIPTS=ATchooser.pm BatchDialog.pm \
 	PPRprnstatus.pm PPRstateupdate.pm \
 	group.xbm printer.xbm
 
-all: $(PROGS) $(ALLATALK)
+#=== Build ==================================================================
 
-allatalk: $(ATALK_PROGS)
+all: $(PROGS) $(ALL_ATALK)
 
-install: $(PROGS) PrintDesk.pm $(PRINTDESK_SUB_SCRIPTS) $(INSTALLATALK)
+all-atalk: $(ATALK_PROGS)
+
+nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).c
+	$(CC) $(CFLAGS) -o nbp_lookup nbp_lookup_$(ATALKTYPE).c ../libgu.$(LIBEXT) $(ATALKLIBS)
+
+#=== Install ================================================================
+
+install: $(PROGS) PrintDesk.pm $(PRINTDESK_SUB_SCRIPTS) $(INSTALL_ATALK)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
 	$(INSTALLDATA) $(HOMEDIR)/lib PrintDesk.pm
 	$(MAKE_NEW_DIR) $(HOMEDIR)/lib/PrintDesk
 	$(INSTALLDATA) $(HOMEDIR)/lib/PrintDesk $(PRINTDESK_SUB_SCRIPTS)
 
-installatalk: $(ATALK_PROGS)
+install-atalk: $(ATALK_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-chooser
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib nbp_lookup$(DOTEXE)
 
-include .depend
+#=== Housekeeping ===========================================================
 
-nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).c
-	$(CC) $(CFLAGS) -o nbp_lookup nbp_lookup_$(ATALKTYPE).c ../libgu.$(LIBEXT) $(ATALKLIBS)
+include .depend
 
 clean:
 	$(RMF) $(BACKUPS) $(OBJ) $(PROGS) $(ATALK_PROGS)
@@ -51,4 +74,3 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 # end of file
-
