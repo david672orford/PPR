@@ -1,0 +1,152 @@
+#! /usr/bin/perl
+#
+# Dot matrix printer test.
+#
+
+#============================================================================
+# PPR filters need a seekable file as input.
+#============================================================================
+my $tempname = `$ENV{HOMEDIR}/lib/mkstemp $ENV{TEMPDIR}/ppr_test_XXXXXX`;
+chomp $tempname;
+
+#============================================================================
+# Test 1, general
+#============================================================================
+open(P, ">$tempname") || die $!;
+
+# reset printer
+printf P "%c@",27;
+
+# Print italic and bold samples
+printf P "This is %c4italic%c5 text.\r\n", 27, 27;
+
+# Print colour samples
+for($m=0; $m < 8; $m++)
+	{
+	printf P "%cr%cTHIS IS COLOUR %d\r\n", 27, $m, $m;
+	}
+printf P "%cr%c",27,0;			# return to black
+print P "\r\n";
+
+# Part expanded
+printf P "%cW%cEXPANDED %cW%cNORMAL\r\n", 27, 1, 27, 0;
+
+# One line expanded
+printf P "%cOne line expanded\r\n", 14;
+
+# extra sizes
+print  P "This is standard 10 cpi print\r\n";
+printf P "%cE%c", 28, 1;
+print  P "THIS IS DOUBLE HORIZONTAL\r\n";
+printf P "%cE%c", 28, 2;
+print  P "TRIPLE HORIZONTAL\r\n";
+printf P "%cE%c", 28, 1;
+printf P "%cV%c", 28, 1;
+print  P "THIS IS 2X VERT & 2X HORZ\r\n";
+printf P "%cE%c", 28, 2;
+print  P "2X VERT & 3X HORZ\r\n";
+printf P "%cE%c", 28, 0;
+printf P "%cV%c", 28, 0;
+print  P "Back to standard print\r\n";
+print  P "\r\n";
+
+# Inter-character spacing
+for($n=0; $n <= 10; $n++)
+	{
+	printf P "%c %cAt this spacing (n) equals %d\r\n", 27, $n, $n;
+	}
+printf P "%c@", 27;
+
+# Line spacing
+for($i=2; $i <=60; $i+=2)
+	{
+	printf P "%c3%c%d/360 - inch line spacing\r\n", 28, $i, $i;
+	}
+
+printf P "%c@", 27;
+
+# Grapics modes
+printf P "%c", 12;
+
+# Test 8 pin graphics modes
+foreach my $m (0, 1, 2, 3, 6)
+	{
+	print P "This is 8-pin grapics, M = $m ";
+	printf P "%c*%c%c%c", 27, $m, 60, 0;
+	for(my $z=1; $z <= 60; $z++)
+		{
+		printf P "%c", 0;
+		}
+	printf P "%c*%c%c%c", 27, $m, 60, 0;
+	for(my $z=1; $z <= 60; $z++)
+		{
+		printf P "%c", 255;
+		}
+	print P "\r\n\r\n";
+	}
+print P "\r\n";
+
+# Test 24 pin graphics modes
+foreach my $m (32, 33, 38, 39, 40)
+	{
+	print P "This is 24-pin grapics, M = $m ";
+	printf P "%c*%c%c%c", 27, $m, 60, 0;
+	for($z=1; $z <= 180; $z++)
+		{
+		printf P "%c", 0;
+		}
+	printf P "%c*%c%c%c", 27, $m, 60, 0;
+	for($z=1; $z <= 180; $z++)
+		{
+		printf P "%c", 255;
+		}
+	print P "\r\n\r\n";
+	}
+
+print P "End of test.\r\n";
+
+close(P) || die $!;
+
+# Level 1 PostScript
+system("$ENV{HOMEDIR}/filters/filter_dotmatrix <$tempname") && die $!;
+
+# Level 2 PostScript (RLL compression of graphics)
+system("$ENV{HOMEDIR}/filters/filter_dotmatrix level=2 <$tempname") && die $!;
+
+#============================================================================
+# Try non-ASCII handling.
+#============================================================================
+open(P, ">$tempname") || die $!;
+
+print P "normal: Зто по русски!\r\n";
+
+printf P "%c!%c", 27, 16;		# bold
+
+print P "bold: This is in English!\r\n";
+
+printf P "%c!%c", 27, 64;		# italic
+
+print P "italic: Зто по русски!\r\n";
+
+printf P "%c!%c", 27, (16 + 64);	# bold italic
+
+print P "bold italic: This is in English!\r\n";
+
+printf P "%c!%c", 27, (2);		# proportional
+
+print P "normal proportional: Зто по русски!\r\n";
+
+printf P "%c!%c", 27, (2 + 16);		# proportional bold
+
+print P "bold proportional: This is in English!\r\n";
+
+close(P) || die $!;
+
+system("$ENV{HOMEDIR}/filters/filter_dotmatrix charset=koi8-r <$tempname") && die $!;
+
+#============================================================================
+# Close up shop
+#============================================================================
+unlink($tempname) || die $!;
+
+exit(0);

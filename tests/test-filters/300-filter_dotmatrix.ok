@@ -1,0 +1,841 @@
+%!PS-Adobe-3.0
+%%Creator: PPR dotmatrix printer emulator
+%%Pages: (atend)
+%%DocumentData: Clean7Bit
+%%DocumentNeededResources: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%+ procset (TrinColl-PPR-Dotmatrix-G1) 1 0
+%%+ font Courier
+%%+ font Courier-Oblique
+%%+ procset (TrinColl-PPR-Dotmatrix-Colour) 1 0
+%%Requirements: color
+%%LanguageLevel: 1
+%%DocumentMedia: lpform 612.0 792.0 75.0 white ()
+%%EndComments
+
+%%BeginProlog
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-G1) 1 0
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-Colour) 1 0
+%%EndProlog
+
+%%BeginSetup
+%%IncludeFeature: *PageSize Letter
+pprdotmatrix begin
+pprdotmatrix_init
+/xfactor 360 72 div def
+/yfactor 360 72 div def
+/bunit 60 def
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+/f /Courier findfont 12 scalefont def
+/fo /Courier-Oblique findfont 12 scalefont def
+f 1 sf
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+bp
+%%EndPageSetup
+0 20528640 mxy
+(This is)p
+fo 1.00 sf
+36 m
+(italic)p
+f 1.00 sf
+36 m
+(text.)p
+0 20528580 mxy
+(THIS IS COLOUR 0)p
+1 colour
+n
+(THIS IS COLOUR 1)p
+2 colour
+n
+(THIS IS COLOUR 2)p
+3 colour
+n
+(THIS IS COLOUR 3)p
+4 colour
+n
+(THIS IS COLOUR 4)p
+5 colour
+n
+(THIS IS COLOUR 5)p
+6 colour
+n
+(THIS IS COLOUR 6)p
+7 colour
+n
+(THIS IS COLOUR 7)p
+f 2.00 sf
+0 colour
+0 20528040 mxy
+36.0 s (EXPANDED)p
+f 1.00 sf
+72 m
+(NORMAL)p
+f 2.00 sf
+0 20527980 mxy
+36.0 s (One  line  expanded)p
+f 1.00 sf
+n
+(This is standard 10 cpi print)p
+f 2.00 sf
+n
+36.0 s (THIS  IS  DOUBLE  HORIZONTAL)p
+f 3.00 sf
+n
+36.0 s (TRIPLE   HORIZONTAL)p
+-8 bb
+f 2.00 2.00 sfh
+n
+36.0 s (THIS  IS  2X  VERT  &  2X  HORZ)p
+f 3.00 2.00 sfh
+0 20527620 mxy
+36.0 s (2X   VERT   &   3X   HORZ)p
+0 bb
+f 1.00 sf
+n
+(Back to standard print)p
+n
+(At this spacing \(n\) equals 0)p
+3 e
+0 20527320 mxy
+(At )p
+3 m
+(this )p
+3 m
+(spacing )p
+3 m
+(\(n\) )p
+3 m
+(equals )p
+3 m
+(1)p
+6 e
+n
+(At )p
+6 m
+(this )p
+6 m
+(spacing )p
+6 m
+(\(n\) )p
+6 m
+(equals )p
+6 m
+(2)p
+9 e
+n
+(At )p
+9 m
+(this )p
+9 m
+(spacing )p
+9 m
+(\(n\) )p
+9 m
+(equals )p
+9 m
+(3)p
+12 e
+n
+(At )p
+12 m
+(this )p
+12 m
+(spacing )p
+12 m
+(\(n\) )p
+12 m
+(equals )p
+12 m
+(4)p
+15 e
+n
+(At )p
+15 m
+(this )p
+15 m
+(spacing )p
+15 m
+(\(n\) )p
+15 m
+(equals )p
+15 m
+(5)p
+18 e
+n
+(At )p
+18 m
+(this )p
+18 m
+(spacing )p
+18 m
+(\(n\) )p
+18 m
+(equals )p
+18 m
+(6)p
+21 e
+n
+(At )p
+21 m
+(this )p
+21 m
+(spacing )p
+21 m
+(\(n\) )p
+21 m
+(equals )p
+21 m
+(7)p
+24 e
+n
+(At )p
+24 m
+(this )p
+24 m
+(spacing )p
+24 m
+(\(n\) )p
+24 m
+(equals )p
+24 m
+(8)p
+27 e
+n
+(At )p
+27 m
+(this )p
+27 m
+(spacing )p
+27 m
+(\(n\) )p
+27 m
+(equals )p
+27 m
+(9)p
+30 e
+n
+(At )p
+30 m
+(this )p
+30 m
+(spacing )p
+30 m
+(\(n\) )p
+30 m
+(equals )p
+30 m
+(10)p
+0 e
+n
+(2/360 - inch line spacing)p
+0 20526718 mxy
+(4/360 - inch line spacing)p
+0 20526714 mxy
+(6/360 - inch line spacing)p
+0 20526708 mxy
+(8/360 - inch line spacing)p
+0 20526700 mxy
+(10/360 - inch line spacing)p
+0 20526690 mxy
+(12/360 - inch line spacing)p
+0 20526678 mxy
+(14/360 - inch line spacing)p
+0 20526664 mxy
+(16/360 - inch line spacing)p
+0 20526648 mxy
+(18/360 - inch line spacing)p
+0 20526630 mxy
+(20/360 - inch line spacing)p
+0 20526610 mxy
+(22/360 - inch line spacing)p
+0 20526588 mxy
+(24/360 - inch line spacing)p
+0 20526564 mxy
+(26/360 - inch line spacing)p
+0 20526538 mxy
+(28/360 - inch line spacing)p
+0 20526510 mxy
+(30/360 - inch line spacing)p
+0 20526480 mxy
+(32/360 - inch line spacing)p
+0 20526448 mxy
+(34/360 - inch line spacing)p
+0 20526414 mxy
+(36/360 - inch line spacing)p
+0 20526378 mxy
+(38/360 - inch line spacing)p
+0 20526340 mxy
+(40/360 - inch line spacing)p
+0 20526300 mxy
+(42/360 - inch line spacing)p
+0 20526258 mxy
+(44/360 - inch line spacing)p
+0 20526214 mxy
+(46/360 - inch line spacing)p
+0 20526168 mxy
+(48/360 - inch line spacing)p
+0 20526120 mxy
+(50/360 - inch line spacing)p
+0 20526070 mxy
+(52/360 - inch line spacing)p
+0 20526018 mxy
+(54/360 - inch line spacing)p
+0 20525964 mxy
+(56/360 - inch line spacing)p
+0 20525908 mxy
+(58/360 - inch line spacing)p
+0 20525850 mxy
+(60/360 - inch line spacing)p
+%%PageTrailer
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+bp
+%%EndPageSetup
+0 20528640 mxy
+(This is 8-pin grapics, M = 0)p
+1404 mx
+%%BeginData: 3 Hex Lines
+60 60 graphic8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+0 20528520 mxy
+(This is 8-pin grapics, M = 1)p
+216 m
+%%BeginData: 3 Hex Lines
+120 60 graphic8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 8-pin grapics, M = 2)p
+216 m
+%%BeginData: 3 Hex Lines
+120 60 graphic8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 8-pin grapics, M = 3)p
+126 m
+%%BeginData: 3 Hex Lines
+240 60 graphic8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 8-pin grapics, M = 6)p
+276 m
+%%BeginData: 3 Hex Lines
+90 60 graphic8
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+0 20527980 mxy
+(This is 24-pin grapics, M = 32)p
+1476 mx
+%%BeginData: 6 Hex Lines
+60 60 graphic24
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+0 20527860 mxy
+(This is 24-pin grapics, M = 33)p
+216 m
+%%BeginData: 6 Hex Lines
+120 60 graphic24
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 24-pin grapics, M = 38)p
+276 m
+%%BeginData: 6 Hex Lines
+90 60 graphic24
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 24-pin grapics, M = 39)p
+156 m
+%%BeginData: 6 Hex Lines
+180 60 graphic24
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(This is 24-pin grapics, M = 40)p
+96 m
+%%BeginData: 6 Hex Lines
+360 60 graphic24
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+%%EndData
+n
+(End of test.)p
+%%PageTrailer
+ep
+
+%%Trailer
+end % pprdotmatrix
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR dotmatrix printer emulator
+%%Pages: (atend)
+%%DocumentData: Clean7Bit
+%%DocumentNeededResources: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%+ procset (TrinColl-PPR-Dotmatrix-G2) 1 0
+%%+ font Courier
+%%+ font Courier-Oblique
+%%+ procset (TrinColl-PPR-Dotmatrix-Colour) 1 0
+%%Requirements: color
+%%LanguageLevel: 2
+%%DocumentMedia: lpform 612.0 792.0 75.0 white ()
+%%EndComments
+
+%%BeginProlog
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-G2) 1 0
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix-Colour) 1 0
+%%EndProlog
+
+%%BeginSetup
+%%IncludeFeature: *PageSize Letter
+pprdotmatrix begin
+pprdotmatrix_init
+/xfactor 360 72 div def
+/yfactor 360 72 div def
+/bunit 60 def
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+/f /Courier findfont 12 scalefont def
+/fo /Courier-Oblique findfont 12 scalefont def
+f 1 sf
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+bp
+%%EndPageSetup
+0 20528640 mxy
+(This is)p
+fo 1.00 sf
+36 m
+(italic)p
+f 1.00 sf
+36 m
+(text.)p
+0 20528580 mxy
+(THIS IS COLOUR 0)p
+1 colour
+n
+(THIS IS COLOUR 1)p
+2 colour
+n
+(THIS IS COLOUR 2)p
+3 colour
+n
+(THIS IS COLOUR 3)p
+4 colour
+n
+(THIS IS COLOUR 4)p
+5 colour
+n
+(THIS IS COLOUR 5)p
+6 colour
+n
+(THIS IS COLOUR 6)p
+7 colour
+n
+(THIS IS COLOUR 7)p
+f 2.00 sf
+0 colour
+0 20528040 mxy
+36.0 s (EXPANDED)p
+f 1.00 sf
+72 m
+(NORMAL)p
+f 2.00 sf
+0 20527980 mxy
+36.0 s (One  line  expanded)p
+f 1.00 sf
+n
+(This is standard 10 cpi print)p
+f 2.00 sf
+n
+36.0 s (THIS  IS  DOUBLE  HORIZONTAL)p
+f 3.00 sf
+n
+36.0 s (TRIPLE   HORIZONTAL)p
+-8 bb
+f 2.00 2.00 sfh
+n
+36.0 s (THIS  IS  2X  VERT  &  2X  HORZ)p
+f 3.00 2.00 sfh
+0 20527620 mxy
+36.0 s (2X   VERT   &   3X   HORZ)p
+0 bb
+f 1.00 sf
+n
+(Back to standard print)p
+n
+(At this spacing \(n\) equals 0)p
+3 e
+0 20527320 mxy
+(At )p
+3 m
+(this )p
+3 m
+(spacing )p
+3 m
+(\(n\) )p
+3 m
+(equals )p
+3 m
+(1)p
+6 e
+n
+(At )p
+6 m
+(this )p
+6 m
+(spacing )p
+6 m
+(\(n\) )p
+6 m
+(equals )p
+6 m
+(2)p
+9 e
+n
+(At )p
+9 m
+(this )p
+9 m
+(spacing )p
+9 m
+(\(n\) )p
+9 m
+(equals )p
+9 m
+(3)p
+12 e
+n
+(At )p
+12 m
+(this )p
+12 m
+(spacing )p
+12 m
+(\(n\) )p
+12 m
+(equals )p
+12 m
+(4)p
+15 e
+n
+(At )p
+15 m
+(this )p
+15 m
+(spacing )p
+15 m
+(\(n\) )p
+15 m
+(equals )p
+15 m
+(5)p
+18 e
+n
+(At )p
+18 m
+(this )p
+18 m
+(spacing )p
+18 m
+(\(n\) )p
+18 m
+(equals )p
+18 m
+(6)p
+21 e
+n
+(At )p
+21 m
+(this )p
+21 m
+(spacing )p
+21 m
+(\(n\) )p
+21 m
+(equals )p
+21 m
+(7)p
+24 e
+n
+(At )p
+24 m
+(this )p
+24 m
+(spacing )p
+24 m
+(\(n\) )p
+24 m
+(equals )p
+24 m
+(8)p
+27 e
+n
+(At )p
+27 m
+(this )p
+27 m
+(spacing )p
+27 m
+(\(n\) )p
+27 m
+(equals )p
+27 m
+(9)p
+30 e
+n
+(At )p
+30 m
+(this )p
+30 m
+(spacing )p
+30 m
+(\(n\) )p
+30 m
+(equals )p
+30 m
+(10)p
+0 e
+n
+(2/360 - inch line spacing)p
+0 20526718 mxy
+(4/360 - inch line spacing)p
+0 20526714 mxy
+(6/360 - inch line spacing)p
+0 20526708 mxy
+(8/360 - inch line spacing)p
+0 20526700 mxy
+(10/360 - inch line spacing)p
+0 20526690 mxy
+(12/360 - inch line spacing)p
+0 20526678 mxy
+(14/360 - inch line spacing)p
+0 20526664 mxy
+(16/360 - inch line spacing)p
+0 20526648 mxy
+(18/360 - inch line spacing)p
+0 20526630 mxy
+(20/360 - inch line spacing)p
+0 20526610 mxy
+(22/360 - inch line spacing)p
+0 20526588 mxy
+(24/360 - inch line spacing)p
+0 20526564 mxy
+(26/360 - inch line spacing)p
+0 20526538 mxy
+(28/360 - inch line spacing)p
+0 20526510 mxy
+(30/360 - inch line spacing)p
+0 20526480 mxy
+(32/360 - inch line spacing)p
+0 20526448 mxy
+(34/360 - inch line spacing)p
+0 20526414 mxy
+(36/360 - inch line spacing)p
+0 20526378 mxy
+(38/360 - inch line spacing)p
+0 20526340 mxy
+(40/360 - inch line spacing)p
+0 20526300 mxy
+(42/360 - inch line spacing)p
+0 20526258 mxy
+(44/360 - inch line spacing)p
+0 20526214 mxy
+(46/360 - inch line spacing)p
+0 20526168 mxy
+(48/360 - inch line spacing)p
+0 20526120 mxy
+(50/360 - inch line spacing)p
+0 20526070 mxy
+(52/360 - inch line spacing)p
+0 20526018 mxy
+(54/360 - inch line spacing)p
+0 20525964 mxy
+(56/360 - inch line spacing)p
+0 20525908 mxy
+(58/360 - inch line spacing)p
+0 20525850 mxy
+(60/360 - inch line spacing)p
+%%PageTrailer
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+bp
+%%EndPageSetup
+0 20528640 mxy
+(This is 8-pin grapics, M = 0)p
+1404 mx
+%%BeginData: 2 ASCII Lines
+60 60 cgraphic8
+`W#o<~>
+%%EndData
+0 20528520 mxy
+(This is 8-pin grapics, M = 1)p
+216 m
+%%BeginData: 2 ASCII Lines
+120 60 cgraphic8
+`W#o<~>
+%%EndData
+n
+(This is 8-pin grapics, M = 2)p
+216 m
+%%BeginData: 2 ASCII Lines
+120 60 cgraphic8
+`W#o<~>
+%%EndData
+n
+(This is 8-pin grapics, M = 3)p
+126 m
+%%BeginData: 2 ASCII Lines
+240 60 cgraphic8
+`W#o<~>
+%%EndData
+n
+(This is 8-pin grapics, M = 6)p
+276 m
+%%BeginData: 2 ASCII Lines
+90 60 cgraphic8
+`W#o<~>
+%%EndData
+0 20527980 mxy
+(This is 24-pin grapics, M = 32)p
+1476 mx
+%%BeginData: 2 ASCII Lines
+60 60 cgraphic24
+JcF!p!!!~>
+%%EndData
+0 20527860 mxy
+(This is 24-pin grapics, M = 33)p
+216 m
+%%BeginData: 2 ASCII Lines
+120 60 cgraphic24
+JcF!p!!!~>
+%%EndData
+n
+(This is 24-pin grapics, M = 38)p
+276 m
+%%BeginData: 2 ASCII Lines
+90 60 cgraphic24
+JcF!p!!!~>
+%%EndData
+n
+(This is 24-pin grapics, M = 39)p
+156 m
+%%BeginData: 2 ASCII Lines
+180 60 cgraphic24
+JcF!p!!!~>
+%%EndData
+n
+(This is 24-pin grapics, M = 40)p
+96 m
+%%BeginData: 2 ASCII Lines
+360 60 cgraphic24
+JcF!p!!!~>
+%%EndData
+n
+(End of test.)p
+%%PageTrailer
+ep
+
+%%Trailer
+end % pprdotmatrix
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR dotmatrix printer emulator
+%%Pages: (atend)
+%%DocumentData: Clean7Bit
+%%DocumentNeededResources: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%+ procset (TrinColl-PPR-ReEncode) 1.1 0
+%%+ encoding PPR-KOI8-R
+%%+ font CourierISOC
+%%+ font CourierISOC-Bold
+%%+ font CourierISOC-Oblique
+%%+ font CourierISOC-BoldOblique
+%%Requirements:
+%%LanguageLevel: 1
+%%DocumentMedia: lpform 612.0 792.0 75.0 white ()
+%%EndComments
+
+%%BeginProlog
+%%IncludeResource: procset (TrinColl-PPR-Dotmatrix) 1 2
+%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0%%IncludeResource: encoding PPR-KOI8-R
+%%EndProlog
+
+%%BeginSetup
+%%IncludeFeature: *PageSize Letter
+pprdotmatrix begin
+pprdotmatrix_init
+%%IncludeResource: font CourierISOC
+%%IncludeResource: font CourierISOC-Bold
+%%IncludeResource: font CourierISOC-Oblique
+%%IncludeResource: font CourierISOC-BoldOblique
+/CourierISOC /CourierISOC /PPR-KOI8-R ReEncode
+/CourierISOC-Oblique /CourierISOC-Oblique /PPR-KOI8-R ReEncode
+/f /CourierISOC findfont 12 scalefont def
+/fb /CourierISOC-Bold findfont 12 scalefont def
+/fo /CourierISOC-Oblique findfont 12 scalefont def
+/fbo /CourierISOC-BoldOblique findfont 12 scalefont def
+f 1 sf
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+bp
+%%EndPageSetup
+0 12317184 mxy
+(normal: \372\324\317 \320\317 \322\325\323\323\313\311!)p
+fb 1.00 sf
+0 12317148 mxy
+(bold: This is in English!)p
+fo 1.00 sf
+n
+(italic: \372\324\317 \320\317 \322\325\323\323\313\311!)p
+fb 1.00 sf
+n
+(bold italic: This is in English!)p
+%%PageTrailer
+ep
+
+%%Trailer
+end % pprdotmatrix
+%%Pages: 1
+%%EOF
