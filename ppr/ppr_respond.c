@@ -132,7 +132,7 @@ int respond(int response_code, const char extra[])
 			fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
 			exit(241);
 			}		
-		if(setregid(ppr_gid, ppr_uid) == -1)
+		if(setregid(ppr_gid, ppr_gid) == -1)
 			{
 			fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
 			exit(241);

@@ -1,16 +1,31 @@
 #
-# uprint-lp.1.pod
-# Copyright 1998, Trinity College Computing Center.
+# mouse:~ppr/src/docs/uprint/uprint-lp.1.pod
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 December 1998.
+# Last modified 3 March 2004.
 #
 
 =head1 NAME
@@ -26,19 +41,28 @@ B<uprint-lp> I<switches> [I<filename ...>]
 This program is part of the PPR uprint suite.  See the UPRINT(1) man page
 for an explanation of what this means.
 
-This program is designed to accept all of the options accepted by the System
-V Unix B<lp> program.
+Your system administrator may have chosen to replace B<lp> with a link to
+this program.
+
+This program is designed to be a drop-in replacement for the B<lp> program from
+System V Unix.  As such it follows B<lp> sematics as much as possible in matters such
+as deciding when to send e-mail to the job submitter, and determining the queue to 
+which the job is to be sent.
 
 =over 4
 
 =item B<-d> I<queue>
 
 This option specifies the print queue in which the job should be entered.
-If this option is omited then the LPDEST and PRINTER environment variables are
+If this option is omited, then the LPDEST and PRINTER environment variables are
 searched in that order.  If they are both undefined, then a queue name
 is taken from the "uprint-lp=" setting in the "[default destinations] section
-of F<uprint.conf>.  If that too is not defined, then a setting of "lp" is
+of F<uprint.conf>.  If that too is not defined, then a queue called "lp" is
 assumed.
+
+Notice that it is quite possible that B<uprint-lp> with the B<-d> option will
+select a different queue from what B<ppr> with the B<-d> option or B<uprint-lpr>
+without the B<-P> option would choose.
 
 =item B<-i> I<requestid>
 
@@ -185,7 +209,7 @@ David Chappell, Trinity College Computing Center, Hartford, Connecticut.
 =head1 BUGS
 
 Many options are simply passed to the remote spooler without any validity
-checking.  Most often this will result in the option doing nothing.
+checking.  Invalid options will likely have no effect. 
 
 =cut
 

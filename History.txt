@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--28 February 2004.
+1.53a2, 20 February 2004--3 March 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9069,6 +9069,9 @@ Internet Printing Protocol Work
   fails.
 
 * po/: added some Russian translations.
+
+* ppr/ppr_respond.c: fixed mixup between ppr_uid and ppr_gid in setregid() call.
+
 
 
 
