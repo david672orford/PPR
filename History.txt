@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--12 May 2004.
+1.53a2, 20 February 2004--14 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9199,6 +9199,19 @@ Internet Printing Protocol Work
 * ppad/ppad_ppd.c: improved code so it doesn't print fuzzy matches if there is
   at least one exact match (except in test mode where it still prints all 
   matches).
+
+* libgu/gu_sscanf.c: fixed %f (patch from Jan Kohnert)
+
+* ppad/ppad_printer.c, pprd/pprd_load.c, pprdrv/pprdrv.c: changed from
+  sscanf() to gu_sscanf() for reading "Charge:" lines in the printer
+  configuration files.  (patch from Jan Kohnert)
+
+* ppuser.c: added parse_float() and used it instead of sscanf() with %f.
+  It tries first using strtof() and then tries gu_sscanf() with %f.
+
+* ppuser/ppuser.c:ppuser_show() use date format from banner page 
+  (patch from Jan Kohnert)
+
 
 TODO
 

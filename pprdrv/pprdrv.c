@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 14 May 2004.
 */
 
 /*
@@ -1287,11 +1287,11 @@ static void pprdrv_read_printer_conf(void)
 
 		/*
 		** Read amount to charge the poor user.
-		** We read two amounts in dollars or pounds, etc.
+		** We read two amounts signifying dollars, pounds, euros, etc.
 		** and then convert them to cents, new pence, etc.
 		*/
-		else if((count = sscanf(confline, "Charge: %f %f", &tf1, &tf2)) >= 1)
-			{	/* ^ notice use of sscanf() rather than gu_sscanf() ^ */
+		else if((count = gu_sscanf(confline, "Charge: %f %f", &tf1, &tf2)) >= 1)
+			{
 			printer.charge.per_duplex = (int)(tf1 * 100.0 + 0.5);
 			if(count == 2)
 				printer.charge.per_simplex = (int)(tf2 * 100.0 + 0.5);

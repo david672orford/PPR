@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 14 May 2004.
 */
 
 /*==============================================================
@@ -517,7 +517,7 @@ int printer_show(const char *argv[])
 			else
 				outputorder = -100;
 			}
-		else if((count = sscanf(confline, "Charge: %f %f", &tf1, &tf2)) > 0)
+		else if((count = gu_sscanf(confline, "Charge: %f %f", &tf1, &tf2)) > 0)
 			{
 			/* Convert dollars to cents, pounds to pence, etc.: */
 			charge_duplex_sheet = (int)(tf1 * 100.0 + 0.5);

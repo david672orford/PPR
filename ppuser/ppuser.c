@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppuser/ppuser.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 14 May 2004.
 */
 
 /*
@@ -43,6 +43,7 @@
 #include <pwd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <ctype.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -168,6 +169,23 @@ static int am_administrator(void)
 		}
 	} /* end of am_administrator() */
 
+/*
+** Parse a float, first trying in the user's locale, and then,
+** if that doesn't work, we try to parse a float in the notation
+** of the C locale.
+*/
+static int parse_float(const char string[], float *store_here)
+	{
+	char *stop_ptr;
+
+	*store_here = strtof(string, (char**)&stop_ptr);
+
+	if(!*stop_ptr && isspace(*stop_ptr))
+		return 1;
+
+	return gu_sscanf(string, "%f", store_here);
+	}
+
 /*===========================================================================
 ** Command action routines
 ===========================================================================*/
@@ -199,15 +217,15 @@ static int ppuser_add(char *argv[])
 	strncpy(data.authcode, argv[2], MAX_AUTHCODE);		/* the AuthCode */
 	data.authcode[MAX_AUTHCODE] = '\0';
 
-	sscanf(argv[3],"%f",&x);					/* the initial balance */
+	parse_float(argv[3], &x);					/* the initial balance */
 	x *= 100.0;
 	data.balance = (int)x;
 
-	sscanf(argv[4],"%f",&x);					/* the credit cutoff point */
+	parse_float(argv[4], &x);					/* the credit cutoff point */
 	x *= 100.0;
 	data.cutoff = (int)x;
 
-	sscanf(argv[5], "%d", &data.lifetime);		/* how long to preserve */
+	gu_sscanf(argv[5], "%d", &data.lifetime);	/* how long to preserve */
 
 	data.revoked = FALSE;						/* credit not revoked */
 
@@ -278,8 +296,14 @@ static int ppuser_show(char *argv[])
 			{
 			struct tm *t;
 			char temp[32];
+			/* This one is for the i18n of the date format.  Should we follow 
+			 * the format of the flag pages (as we do here), or should we use
+			 * the format from the user's locale?
+			 */
+			char *format = gu_ini_query(PPR_CONF, "internationalization", "flagdateformat", 0, "%d-%b-%Y, %I:%M%p");
 			t = localtime(&entry.last_mod);
 			strftime(temp, sizeof(temp), "%d %b %Y %I:%M %p", t);
+			strftime(temp, sizeof(temp), format, t);
 			printf(_("Last Modified: %s\n"), temp);
 			}
 			printf(_("Account lifetime: %d\n"), entry.lifetime);
@@ -314,7 +338,7 @@ static int ppuser_transaction(char *argv[], enum TRANSACTION transaction_type)
 		return EXIT_SYNTAX;
 		}
 
-	sscanf(argv[1],"%f",&x);
+	parse_float(argv[1], &x);
 	x *= 100.0;
 	amount = (int)x;
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 14 May 2004.
 */
 
 /*! \file
@@ -322,6 +322,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						while(gu_isdigit(*string))
 							{
 							fraction += place * (*(string++) - '0');
+							place /= 10.0;
 							}
 						}
 					*(va_arg(va, float *)) = (float)sign * ((float)whole + fraction);
