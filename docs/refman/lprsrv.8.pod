@@ -388,11 +388,11 @@ Then create the local spool directory.
 
 =head1 SEE ALSO
 
-See L<UPRINT.1>.
+See L<UPRINT.1> and the comments in F</etc/ppr/lprsrv.conf>.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 
 =head1 AUTHORS
 

@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--16 February 2004.
+1.53a1, 24 September 2003--20 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9003,7 +9003,7 @@ Internet Printing Protocol Work
 
 * libppr/queueinfo.c: fleshed out functions.
 
-* Makefile: added ppad/ to the list of directories built.
+* Makefile: added papd/ to the list of directories built.
 
 * z_install_end/ppr.sh: added papd to the list of daemons started.
 
@@ -9025,7 +9025,7 @@ Internet Printing Protocol Work
   and setgid ppr and so could have been used by ordinary users to 
   interfer with the operation of the spooler.
 
-* lprsrv/lprsrv_conf.c: added [/filename] support.
+* lprsrv/lprsrv_conf.c: added [/filename] section support.
 
 * lprsrv/lprsrv.conf.sample: improved documentation and added sample
   [/filename] section.
@@ -9051,6 +9051,9 @@ Internet Printing Protocol Work
 * Changed queue file format to break up Attr line into multiple Attr- lines
   and to add a section for IPP attributes.
 
+* ipp/ipp.c: added ability to pass selected IPP requests through to pprd.
+
+* pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
 

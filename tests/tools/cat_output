@@ -46,5 +46,8 @@ while(1)
 
 close(OUT);
 
+# Added to reduce random failures.
+sleep(1);
+
 exit(0);
 
