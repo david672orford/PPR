@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 January 2003.
+# Last modified 14 February 2003.
 #
 
 # Where do we install the documentation?
@@ -79,8 +79,8 @@ SGML_CATALOG_FILES=../catalog
 # Rules to convert HTML to PostScript and PDF using HTMLDOC
 #============================================================================
 
-#.html.ps:
-#	$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
+.html.ps:
+	$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
 
 .html.pdf:
 	$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
@@ -96,8 +96,8 @@ SGML_CATALOG_FILES=../catalog
 .sgml.fo:
 	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --docbook --nonet --output $*.fo $(XSL_SPEC_PRINT) $*.sgml
 
-.fo.ps:
-	$(FOP) -fo $*.fo -ps $*.ps
+#.fo.ps:
+#	$(FOP) -fo $*.fo -ps $*.ps
 
 #.fo.pdf:
 #	$(FOP) -fo $*.fo -pdf $*.pdf

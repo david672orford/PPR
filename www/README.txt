@@ -1,6 +1,6 @@
 ==========================================================================
  mouse:~ppr/src/www/README.txt
- 13 February 2003.
+ 14 February 2003.
 ==========================================================================
 
 This directory contains HTML pages, CGI scripts, and images which together
@@ -65,11 +65,25 @@ will use TCP Wrappers if available.  Be sure that you set /etc/hosts.deny
 and /etc/hosts.allow to limit access appropriately.
 
 ==========================================================================
+ Connecting
+==========================================================================
+
+As you may have noticed while reading the previous session, ppr-httpd
+listens for connexions on port 15010.  If the browser is running on the same
+machine as PPR, enter this URL to connect to the PPR web interface:
+
+	http://localhost:15010
+
+This will open a page of links.  The most important ones are the links to
+the PPR documentation and to the PPR control panel.  The PPR control panel
+is the jumping off point for managing queus and jobs.
+
+==========================================================================
  Logging On
 ==========================================================================
 
 Features which do anything beyond merely viewing the status of printers and
-jobs are limited to authorized users, just as they would be if one were
+jobs are restricted to authorized users, just as they would be if one were
 using the command-line tools.  For example, one must be listed in
 /etc/ppr/acl/ppop.allow before one may manipulate other people's jobs or
 start and stop printers and must be listed in /etc/ppr/acl/ppad.allow before

@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-17 January 2003
+14 Febuary 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -234,7 +234,7 @@ This tag inserts the name of the target section.  If the output format
 supports hyperlinks, then the section name is hyperlinked to the section
 to which it refers.
 
-<ULink URL="XXXXX">
+<ULink url="XXXXX">
 
 A hyperlink with a URL.  It does not generate the linked text.
 

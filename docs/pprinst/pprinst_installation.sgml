@@ -1,9 +1,15 @@
-<sect1 id="installation">
+<!--
+Filename: pprinst_installation.sgml
+Last Modified: 14 February 2003
+Last Proofread: 14 February 2003
+-->
+
+<sect1 id="install">
 <title>Installation</title>
 
 <!-- ===================================================================== -->
-<sect2>
-<title>Obtaining the PPR Source Code</title>
+<sect2 id="install-obtaining">
+<title>Obtaining the <appliation>PPR</application> Source Code</title>
 
 <para>
 The <application>PPR</application> source code may be obtained by anonymous FTP from
@@ -11,14 +17,14 @@ The <application>PPR</application> source code may be obtained by anonymous FTP 
 ftp://ppr-dist.trincoll.edu/pub/ppr/</ulink>.  If you prefer to use
 HTTP, the URL is <ulink url="http://ppr-dist.trincoll.edu/pub/ppr/">
 http://ppr-dist.trincoll.edu/pub/ppr/</ulink>.
-The file size is about 3 megabytes.
+The file size is about 4 megabytes.
 </para>
 
 </sect2>
 
 <!-- ===================================================================== -->
-<sect2>
-<title>Unpacking, Compiling, and Installing PPR</title>
+<sect2 id="install-building">
+<title>Unpacking, Compiling, and Installing <application>PPR</application></title>
 
 <para>
 The <application>PPR</application> source code comes as a tar archive compressed with
@@ -29,11 +35,11 @@ gzip. To unpack it use this command:
 </screen>
 
 This will uncompress and unpack the source code and deposit it in a directory
-called <filename>ppr-1.50</filename> which it will create in the current directory.
+called <filename class="Directory">ppr-1.50</filename> which it will create in the current directory.
 </para>
 
 <para>
-Compiling and installing PPR consists of 4 basic steps:
+Compiling and installing <application>PPR</application> consists of 4 basic steps:
 
 <orderedlist>
 <listitem><para>Running the <command>Configure</command> script</para></listitem>
@@ -42,23 +48,27 @@ Compiling and installing PPR consists of 4 basic steps:
 <listitem><para>Running the <command>fixup</command> script</para></listitem>
 </orderedlist>
 
-These steps are described in detail in the file
-<filename>INSTALL.txt</filename> which
-may be found in the top level source code directory.
-</para>
+These steps are described in detail in the file <Ulink
+url="../misc/INSTALL.txt"><filename>INSTALL.txt</filename></Ulink> which may
+be found in the top level source code directory.  There you will find list
+the of packages which it is required or recomended that you install before
+building and runing <application>PPR</application>.  That file also has and
+has notes about how PPR gets along with various operating systems.</para>
 
 </sect2>
 
 <!-- ===================================================================== -->
-<sect2>
+<sect2 id="install-default-alert-destination">
 <title>Setting a Default Alert Destination</title>
 
-<para>An operator can be informed by email when something goes wrong with a printer.
-For each printer, an operator's email address may be specified as well as an
-option which indicates how long the problem must persist before the operator is
-alerted.  As soon as you have installed the spooler you should set the default
-alert settings which will be applied to new printers.  You do it with a command
-like this one:
+<para>When <application>PPR</application> detects that something is wrong
+with a printer, it can inform an operator by e-mail. The e-mail address of
+the operator to be informed is specified for each individual printer.  Also
+specified is how long a problem must persist before the operator should be
+alerted.  There are default settings which are copied into the configuration
+of each newly created printer.  As soon as you have installed the spooler
+you should set the default alert settings which will be applied to new
+printers.  You do it with a command like this one:
 
 <screen>
 # ppad new alerts 5 mail alertreaders@myorg.org
@@ -72,26 +82,36 @@ mailed to <email>alertreaders@myorg.org</email>.
 </sect2>
 
 <!-- ===================================================================== -->
-<sect2><title>Filter Setup</title>
+<sect2 id="install-filter-setup">
+<title>Filter Setup</title>
 
-<para>
-The last thing the <command>fixup</command> script does is run the script
-<command>/usr/lib/ppr/fixup/fixup_filters</command>.  The
-<command>fixup_filters</command> script searches for certain programs which it will be
-able to use to convert files you may want printed to PostScript.  These
-programs include <application>Troff</application>,
-<application>TeX</application>, <application>DVIPS</application>,
-the <application>NetPBM</application> utilities, and the <application>Adobe Acrobat 
-Reader</application>.
-For those that are found in the current path, PPR generates small shell scripts
-in <filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
-scripts to automatically convert input files to PostScript.
-</para>
+<para>The last thing the <command>fixup</command> script does is run the
+script <command>/usr/lib/ppr/fixup/fixup_filters</command>.  The
+<command>fixup_filters</command> script searches for certain programs which
+it will be able to use to convert files you may want printed to PostScript. 
+These programs include <application>Troff</application>,
+<application>TeX</application>, <application>DVIPS</application>, the
+<application>NetPBM</application> utilities, and the <application>Adobe
+Acrobat Reader</application>.  For those that are found in the current path,
+PPR generates small shell scripts in
+<filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
+scripts to automatically convert input files to PostScript.</para>
 
 <para>
 If you later add or remove programs which PPR uses or could use as filters,
 you should re-run <filename>fixup_filters</filename>.
 </para>
+
+</sect2>
+
+<!-- ===================================================================== -->
+<sect2 id="install-web-interface">
+<title>Web Interface Setup</title>
+
+<para>PPR has a web interface which one can use to manage queues and
+printers.  This is not yet adequately documented here.  Please see
+<filename>www/README.txt</filename> in the PPR source distribution for
+instructions on setting this up.</para>
 
 </sect2>
 

@@ -332,7 +332,7 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
-1.50, 22 January 2003--13 February 2003.
+1.50, 22 January 2003--14 February 2003.
 
 * misc/PORTING.txt: changed references to makeprogs/global.mk to
   Makefile.conf.
@@ -353,3 +353,6 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr-config.8.pod: added
 
+* pprinst/: since neither the web interface nor the new Ghostscript
+  integration are yet properly described in this guide, placeholders where
+  added which refer the user to the reference documentation.

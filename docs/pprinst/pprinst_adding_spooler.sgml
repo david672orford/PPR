@@ -1,130 +1,134 @@
+<!--
+Filename: pprinst_installation.sgml
+Last Modified: 14 February 2003
+Last Proofread: 
+-->
+
 <Sect2 id="adding-spooler">
 <Title>Adding Printers to the Spooler</Title>
 
-<Para>
-Printers may be added without stopping the PPR spooler.  A printer is added
-is you issue a command which sets the interface of a previously unknown
-printer.  An interface is a the program PPR uses to communicate with the
-printer.  A typical interface is the one called <Literal>atalk</Literal>.  The
-<Literal>atalk</Literal>
-interface allows <Application>PPR</Application> to print on <ProductName>Apple
-LaserWriters</ProductName> and other printers which
-conform to Apple's Printer Access Protocol (PAP), such as many QMS and HP
-printers.
-</Para>
+<Para>Printers may be added without stopping the
+<application>PPR</application> spooler.  A new printer queue is created
+using the command <command>ppad interface</command>.  This command sets the
+interface program and address for a printer queue. An interface is a the
+program which <application>PPR</application> uses to communicate with the
+printer.  A good example is the one called <Literal>atalk</Literal>.  The
+<Literal>atalk</Literal> interface allows <Application>PPR</Application> to
+print on <ProductName>Apple LaserWriters</ProductName> and other printers
+which implement Apple's Printer Access Protocol (PAP), such as many QMS and
+HP printers.</Para>
 
-<Sect3>
+<Sect3 id="adding-inteface-atalk">
 <Title>Adding a Printer With an AppleTalk Interface</Title>
 
-<Para>
-In order to add an AppleTalk printer to PPR you must know its complete
-AppleTalk name.  The complete AppleTalk name has three parts.  The first is the
-printer's individual name, this is the name you see in the Macintosh Chooser.
-The second part is the AppleTalk type which is generally
-<Literal>LaserWriter</Literal>.  The
-third part is the AppleTalk zone which you can also find in the Chooser.  We
-put all this information together as in the following command:
-</Para>
-
-<Para>
+<Para>Before you can add an AppleTalk connected printer to
+<application>PPR</application> you must
+determine its complete AppleTalk name.  The complete AppleTalk name has
+three parts.  The first is the printer's individual name, this is the name
+you see in the Macintosh Chooser. The second part is the AppleTalk type
+which is almost certainly <Literal>LaserWriter</Literal>.  The third part is
+the AppleTalk zone which you can also find in the Chooser.  HP printers with
+Jetdirect cards will list their AppleTalk names and zones on the test page. 
+Having determined this informatoin we put it all together as part of the
+<command>ppad interface</command> command, like so:
 
 <Screen>
 # ppad interface myprn atalk "Joe's Mac Printer:LaserWriter@CC Zone"
 </Screen>
 
-</Para>
-
-<Para>
-This command adds a printer called <Literal>myprn</Literal>.  Its AppleTalk name, from the
+Assuming it does not exist already, this command creates a new printer
+queue called <Literal>myprn</Literal>.  Its AppleTalk name, from the
 Chooser, is <Literal>Joe's Mac Printer</Literal>.  The AppleTalk type is
-<Literal>LaserWriter</Literal>.
-The zone is <Literal>CC Zone</Literal>.
-</Para>
+<Literal>LaserWriter</Literal>. The zone is <Literal>CC Zone</Literal>.  (If
+the printer queue did exist already, its configuration would be modified. 
+This will be covered in a later section.)</Para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-interface-atalk-hiding">
 <Title>Hiding an AppleTalk Printer</Title>
 
-<Para>If you choose to hide an AppleTalk printer, PPR will change its AppleTalk
-type.  PPR will do this the first time it sends a job to the printer. The
-AppleTalk type will revert to <Literal>LaserWriter</Literal> every time the printer is turned
-off and back on again.  To have PPR change the type, just enter a string other
-than <Literal>LaserWriter</Literal> in the type part of the address.  When PPR tries to send a
-job to the printer, it will first attempt to find it using the type you
-specify; if that fails, PPR will try again using a type of
-<Literal>LaserWriter</Literal>.  If
-the printer is found with a type of <Literal>LaserWriter</Literal>, PPR will change the type
-to whatever you specified.  For example, if we wanted to hide a printer, we
-could enter its address using this command:
-</Para>
+<para>You may wish to prevent Macintosh users from bypassing the
+<application>PPR</application> print queue and printing to the printer
+directly as they could do if they could choose it in the Chooser.  You can
+hinder them by hidding the printer from the Chooser. 
+<application>PPR</application> hides an AppleTalk printer from the chooser
+by changing its AppleTalk type.  This works because the Macintosh
+LaserWriter driver only lists network names with a type of
+<literal>LaserWriter</literal>.  If you ask <application>PPR</application>
+to hide a printer, then every time it sends a job to the printer it will
+check if it is hidden and hide it if it is not.  However, the AppleTalk type
+will revert to <Literal>LaserWriter</Literal> and the printer will thus
+become unhidden every time the printer is turned off and back on
+again.</para>
 
-<Para>
+<para>To instruct <application>PPR</application> to hide the printer, simply
+enter a string other than <Literal>LaserWriter</Literal> for the
+<replaceable>type</replaceable> part of the address.  Whenever
+<application>PPR</application> tries to send a job to the printer, it will
+first attempt to find it using the type you specify.  If that fails,
+<application>PPR</application> will try again using a type of
+<Literal>LaserWriter</Literal>.  If the printer is found with a type of
+<Literal>LaserWriter</Literal> (i.e., it isn't hidden),
+<application>PPR</application> will change the type to whatever you
+specified.  For example, if we wanted to hide a printer, we could enter its
+address using this command:
 
 <Screen>
 # ppad interface myprn atalk "Joe's Mac Printer:LaserShared@CC Zone"
 </Screen>
 
-</Para>
+</para>
 
-<Para>
-The exact type name you use to hide a printer matters little unless you want
-another kind of spooler to be able to print to it at the same time.  In that
-case, you should use the same type name as that spooler will use.  The type
-<Literal>ATTShared</Literal> is compatible with the NCR server for Macintosh Clients.  The
-name <Literal>LaserShared</Literal> is said to be used by certain Apple spoolers.  When the
-Windows NT spooler 'captures' a printer it changes the type name of the
-printer to the computer name of the machine the NT spooler is running on.
-For example, if <Application>PPR</Application> is sharing a printer with an NT computer name
-<Literal>ALICE</Literal>
-which has captured it, this would be the command to use:
-</Para>
-
-<Para>
+<para>The exact type name you use to hide a printer matters little unless
+you want another spooler to be able to print to it at the same time.  In
+that case, you should use the same type name as that spooler will use.  The
+type <Literal>ATTShared</Literal> is compatible with the NCR server for
+Macintosh Clients.  The name <Literal>LaserShared</Literal> is said to be
+used by certain Apple spoolers.  When the Windows NT spooler 'captures' a
+printer it changes the type name of the printer to the computer name of the
+machine the NT spooler is running on. For example, if
+<Application>PPR</Application> is sharing our example printer with an NT
+computer name <Literal>ALICE</Literal> which has captured it, this would be
+the command to use:
 
 <Screen>
 # ppad interface myprn atalk "Joe's Mac Printer:ALICE@CC Zone"
 </Screen>
 
-</Para>
+</para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-inteface-tcpip">
 <Title>Adding a TCP/IP Connected Printer</Title>
 
-<Para>
-The interface <Literal>tcpip</Literal> can be used to print to some types of
-TCP/IP connected printers.  HP printers with
-<ProductName>JetDirect</ProductName> cards are an
-example.  To set up an <ProductName>HP 4M+</ProductName> we might use this command:
-</Para>
-
-<Para>
+<Para>The interface <Literal>tcpip</Literal> can be used to print to TCP/IP
+connected printers using the SocketAPI and AppSocket protocols.  HP printers
+with <ProductName>JetDirect</ProductName> cards implement SocketAPI.  To set
+up an <ProductName>HP 4M+</ProductName> we might use this command:
 
 <Screen>
 # ppad interface my4m tcpip my4m.prn.trincoll.edu:9100
 </Screen>
 
-</Para>
-
-<Para>In this example, <Literal>my4m</Literal> is the name of the queue we
-are creating. <SystemItem class="SystemName">
-my4m.prn.trincoll.edu</SystemItem> is the DNS name of the printer.  We could
-have used the IP address instead if we had wished.  The number
-<Literal>9100</Literal> is the port that the <Literal>tcpip</Literal>
-interface should connect to.  (On a JetDirect card port 9100 accepts a data
-stream in the same format as the serial or parallel interface would
-want.)</Para>
+In this example, <Literal>my4m</Literal> is the name of the queue we are
+creating. <SystemItem class="SystemName"> my4m.prn.trincoll.edu</SystemItem>
+is the DNS name of the printer.  We could have used the IP address instead
+if we had wished.  The number <Literal>9100</Literal> is the port that the
+<Literal>tcpip</Literal> interface should connect to.  (On a JetDirect card
+port 9100 accepts a data stream in the same format as the serial or parallel
+interface would want.)</Para>
 
 <Para>We can also use this interface to print to Extended Systems Pocket
-Print Servers.  In their default configuration, the correct port to connect
-to on these devices is also 9100.  However, since these devices connect to
-the printer through a unidirectional parallel port, they can only send data
-in one direction.  Therefore we must tell PPR not to expect to receive
-messages from the printer:</Para>
-
-<Para>
+Print Servers.  These devices are small boxes with an Ethernet port on one
+end and a parallel port connector on the other.  In their default
+configuration, they listen for SocketAPI connections on TCP port 9100. 
+However, since the parallel port on these print server is unidirectional,
+they can only convey data from the spooler to the printer and not from the
+printer to the spooler.  Therefore we must tell
+<application>PPR</application> not to expect to expect to receive any sort
+of data in reply from the printer.  Here are the commands:
 
 <Screen>
 # ppad interface qmsps410 tcpip qmsps410.prn.trincoll.edu:9100
@@ -133,25 +137,44 @@ messages from the printer:</Para>
 
 </Para>
 
-<Para>
-The fact that no messages can be received from the printer also means that
-PostScript errors will not be detected.
+<Para>Setting <Option>feedback</Option> to <literal>false</literal> if the
+communications channel does not support two-way communication is very
+important.  If you fail to do so, <application>PPR</application> will almost
+certainly attempt operations, such as queries and handshaking, which require
+two way communications.  The result will be that the queue will get stuck,
+either before printing anything, or after the first job has been printed. 
+If this happens, you must forcibly halt the queue, change the setting, and
+restart the queue, like this:
+
+<Screen>
+# ppop halt qmsps410
+# ppad feedback qmsps410 false
+# ppop start qmsps410
+</Screen>
+
 </Para>
+
+<Para>However, you should not get in the habit of setting
+<option>feedback</option> to <literal>false</literal> for no reason.  Setups
+with <option>feedback</option> set to <literal>false</literal> should be
+considered crippled.  If a printer doesn't support two-way communication
+with a given interface, such as <literal>tcpip</literal>, you consider other
+otherfaces, such as <literal>atalk</literal>.  Among the harmful effects of
+lack of two-way communication is that failure of the job due to PostScript
+errors will not be detected.</Para>
 
 </Sect3>
 
-<Sect3>
-<Title>Using a Printer Connected to a Parallel Port (Old Method)</Title>
+<Sect3 id="adding-inteface-simple">
+<Title>Using a Printer Connected to a Parallel or USB Port (Old Method)</Title>
 
-<Para>
-A simple interface for sending to a printer connected to the print server's
-parallel port is provided.  It is called <Literal>simple</Literal>.  When
-printing through a parallel port we must be sure that the user
-<Literal>ppr</Literal> has permission to
-write to the port.  This is one way you could set it up:
-</Para>
-
-<Para>
+<Para><application>PPR</application> provides a simple (even simplistic)
+interface program which can be used to communicate with a printer connected
+a port on the print server, such as a parallel or USB port.  It is called
+<Literal>simple</Literal>.  When printing through a server port port one
+must be sure that the user <Literal>ppr</Literal> has permission to write to
+the port.  This is one way you could set it up a print queue for a parallel
+port:
 
 <Screen>
 # chown ppr /dev/lp0
@@ -161,23 +184,29 @@ write to the port.  This is one way you could set it up:
 
 </Para>
 
-<Para>
-This interface only supports unidirection data transmission, so PPR will not
-detect PostScript errors when printing through this interface.
-</Para>
+<Para>This interface program does not support bidirectional communication,
+so <application>PPR</application> will not detect PostScript errors when
+printing through this interface.  The default <Option>feedback</Option>
+setting for this interface program is <literal>false</literal>, so there is
+no need to set it with <command>ppad feed</command>.  The
+<literal>simple</literal> interface program is not able to read the printer
+status lines of a parallel port.  These status lines often convey valuable
+information such as that the printer is out of paper.  Due these
+limitations, you should use the <literal>simple</literal> interface to print
+to parallel and USB ports only if the <literal>parallel</literal> and
+<literal>usblp</literal> interface programs won't work on your
+system.</Para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-inteface-parallel">
 <Title>Using a Printer Connected to a Parallel Port (New Method)</Title>
 
-<Para> PPR now has an interface program designed especially for parallel
-ports. It is called <Literal>parallel</Literal>.  When printing through a
-<Hardware>parallel port</Hardware> we must be sure that the user
-<Literal>ppr</Literal> has permission to write to the port. This is one way
-you could set it up: </Para>
-
-<Para>
+<Para><application>PPR</application> also has an interface program designed
+especially for parallel ports. It is called <Literal>parallel</Literal>. 
+When printing through a <Hardware>parallel port</Hardware> we must be sure
+that the user <Literal>ppr</Literal> has permission to write to the port.
+This is one way you could set it up:
 
 <Screen>
 # chown ppr /dev/lp0
@@ -187,37 +216,34 @@ you could set it up: </Para>
 
 </Para>
 
-<Para>
-If your printer and operating system support bidirectional parallel port
-operation, then you should inform PPR of the fact using a command like
-this one:
-</Para>
-
-<Para>
+<Para>The default for this interface is <Option>feedback</Option>
+<Literal>false</Literal>.  If your printer and operating system support
+bidirectional parallel port operation, then you should definitely inform
+<application>PPR</application> of the fact using a command like this one:
 
 <Screen>
 # ppad feedback nearprn true
 </Screen>
 
-</Para>
-
-<Para>
-If you do this, then PPR will be able to detect PostScript errors.
-</Para>
+If you do this, then <application>PPR</application> will be able to detect
+job failures due PostScript errors.</Para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-inteface-usblp">
+<Title>Using a Printer Connected to a USB Port (New Method)</Title>
+
+</Sect3>
+
+<Sect3 id="adding-inteface-serial">
 <Title>Using a Printer Connected to a Serial Port</Title>
 
-<Para> PPR has an interface called <Literal>serial</Literal> for sending
-jobs to printers connected to the print server's serial ports. As with the
-parallel interface, we must set the file permissions on the device file in
-the <Filename class="Directory">/dev/</Filename> directory so that the user
-<Literal>ppr</Literal> can write to the port.  You will also want to set the
-baud rate: </Para>
-
-<Para>
+<Para><application>PPR</application> has an interface called <Literal>serial</Literal> for sending jobs
+to printers connected to the print server's serial ports.  As with the
+<literal>parallel</literal> interface, you must set the file permissions on
+the device file in the <Filename class="Directory">/dev/</Filename>
+directory so that the user <Literal>ppr</Literal> can write to the port. 
+You will also want to set the baud rate:
 
 <Screen>
 # chown ppr /dev/tty0
@@ -228,43 +254,47 @@ baud rate: </Para>
 
 </Para>
 
-<Para>
-This may well be the most difficult interface to set up because of the lack of
-standards for connecting printers to RS-232 ports. To describe the RS-232
-interface, the construction of null modem cables, the use of breakout boxes for
-troubleshooting and the quirks of the serial driver in varous Unix variants
-would require a document much larger than this one and is a task to which the
-author of this document does not feel himself equal. Because of the the
-potential complexity of serial connexions, this interface has many options,
-only three of which have been hinted at here. The remainder of the options are
-described in the ppad(8) manual page.
+<Para> This may well be the most difficult interface to set up because of
+the lack of standards for connecting printers to RS-232 ports.  The problem
+is that RS-232 was originally designed with but one purpose and that was to
+connect a teletype machine to a modem.  It says nothing about connecting
+printers to computers.  Thus there is a lack of consistency in the way
+RS-232 connection printers implement handshaking and flow control.  To
+describe the RS-232 interface, the construction of null modem cables, the
+use of breakout boxes for troubleshooting and the quirks of the serial
+driver in varous Unix variants would require a document much larger than
+this one and is a task to which the author of this document does not feel
+himself equal.  Because of the the potential complexity of serial connexions,
+this interface has many options, only three of which have been hinted at
+in the example above.  The remainder of the options are described in the 
+<Ulink url="../refman/ppad.8.html">ppad(8) manpage</Ulink>.
 </Para>
+
+<Para>RS-232 ports are invariably bidirectional, so the default for
+<Option>feedback</Option> for this interface is <literal>true</literal>.
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-inteface-other">
 <Title>Adding Printers With Other Connexion Methods</Title>
 
-<Para>
-To learn about the interfaces which support other means of connexion, refer
-to the ppad(8) man page.  The ppad(8) manual page also provides more details
-about the features of the interfaces described above.
-</Para>
+<Para>To learn about the interfaces which support other means of connexion,
+refer to the <Ulink
+url="../refman/ppad-interfaces.8.html">ppad-interfaces(8) manpage</Ulink>. 
+The manpage also provides more details about the features and options of the
+interfaces described above.</Para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-ppd">
 <Title>Selecting a PPD File</Title>
 
-<Para>
-Once the printer has been added, you should indicate its PPD file.  Likely
-you will choose one of the files in <Filename
-class="Directory">/usr/ppr/PPDFiles/</Filename>.  The files in
-this directory have descriptive names.  The PPD file name is set with the
+<Para>Once the printer has been added, you should choose a PPD file that
+accurately describes and inform <application>PPR</application> of your
+choice.  Likely you will choose one of the files in <Filename
+class="Directory">/usr/share/ppr/PPDFiles/</Filename>.  The files in this
+directory have descriptive names.  A print queue's PPD filename is set with the
 <Command>ppad ppd</Command> command:
-</Para>
-
-<Para>
 
 <Screen>
 # ppad ppd myprn "QMS-PS 410"
@@ -272,18 +302,17 @@ this directory have descriptive names.  The PPD file name is set with the
 
 </Para>
 
-<Para>
-Using the correct PPD file is very important since the wrong PPD file can
-prevent printer features such as multiple input trays and duplexing from
-working.  If you can not find a PPD file which is exactly right, try to find
-one that is close.  It is important not to use the PPD file for a level 2
-PostScript printer with a level 1 PostScript printer.  Also, the PPD file
-should define the bins which really exist on your printer and should have
-the correct code for selecting them.  Finally, it is best that the font list
-be correct.  A font list which leaves some fonts out is probably better than
-one which names fonts the printer does not have. Here are some common PPD
-file names:
-</Para>
+<Para>Using the correct PPD file is very important since the wrong PPD file
+can prevent printer features such as multiple input trays and duplexing from
+working.  If you cannot find a PPD file which was designed for the precise
+make and model of your printer, try to find one that is close.  It is
+important not to use the PPD file for a level 2 PostScript printer with a
+level 1 PostScript printer.  Also, the PPD file should define the bins which
+really exist on your printer and should have the correct code for selecting
+them.  Finally, it is best that the font list be correct.  A font list which
+leaves some fonts out is probably better than one which names fonts the
+printer does not have.  Here are some PPD files you might try if you don't
+have anthing closer:
 
 <VariableList>
 
@@ -292,8 +321,8 @@ file names:
 <ListItem>
 <Para>
 Good substitute in a pinch for any printer which has only one bin.  It
-describes a level 1 PostScript printer with only one paper tray and 35
-built in fonts.
+describes a level 1 PostScript printer with only one paper tray and the
+basic set of 35 built in fonts.
 </Para>
 </ListItem>
 </VarListEntry>
@@ -311,8 +340,7 @@ A typical Level 2 printer with 35 fonts and one bin.
 <Term>HP LaserJet IIISi PostScript</Term>
 <ListItem>
 <Para>
-A typical 35 font level 1 printer with 2 paper trays.  This PPD file
-will work with a 4si too.
+A typical 35 font level 1 printer with 2 paper trays.
 </Para>
 </ListItem>
 </VarListEntry>
@@ -321,7 +349,7 @@ will work with a 4si too.
 <Term>HP LaserJet 4Si 4SiMX PS 600dpi</Term>
 <ListItem>
 <Para>
-Can't hurt to use the right one though.
+A typeical 35 font level 2 printer with 2 paper trays.
 </Para>
 </ListItem>
 </VarListEntry>
@@ -340,7 +368,7 @@ Works with 4M, supplied by HP, has strange bin names.
 <ListItem>
 <Para>
 David's, good bin names but every client must use this PPD file too or
-they won't be able to select bins.
+they won't be able to select bins correctly.
 </Para>
 </ListItem>
 </VarListEntry>
@@ -358,8 +386,8 @@ Works with 4M Plus, supplied by HP, same strange bin names.
 <Term>HP LaserJet 4M Plus DSC</Term>
 <ListItem>
 <Para>
-Same as above, but for HP 4M Plus.
-Again, each client will need a copy of this PPD file.
+David's, good bin names but every client must use this PPD file too or
+they won't be able to select bins correctly.
 </Para>
 </ListItem>
 </VarListEntry>
@@ -393,48 +421,46 @@ A typical Level 1 printer with 35 fonts and two bins
 
 </VariableList>
 
-<Para>
-If you choose either the <Filename>HP LaserJet 4M DSC</Filename> or
-<Filename>HP LaserJet 4M Plus
-DSC</Filename> PPD file you must equip your clients with copies of PPD file.  You
-may obtain these PPD files in distributions for Macintosh and MS-Windows
-(including Windows 95) from the place you got PPR.
-</Para>
+<Para>If you choose either the <Filename>HP LaserJet 4M DSC</Filename> or
+<Filename>HP LaserJet 4M Plus DSC</Filename> PPD file you must make sure
+your clients are using the vary same PPD file and not the one supplied by
+HP.  If you forget, your users won't be able to select bins
+correctly.</Para>
 
-<Para>
-If you can not find anything that is close, the printer manufacturer you may be
-able to supply a suitable PPD file. Very often it can be found on the Macintosh
-or MS-Windows driver diskettes which come with the printer. If not, you may be
-able to obtain a suitable file from <ULink
-url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  If you are
-really determined, you can obtain the PostScript Printer Description File
-Format Specification from <ULink
-url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  This document
-together with a good printer manual will give you the information you need to
-write your own PPD file or to modify an existing one to work with your printer.
-Any new PPD files should be converted to Unix line termination (FTP will do
-this for you if you transfer them in ASCII mode).  The files already in
-<Filename class="Directory">/usr/ppr/PPDFiles/</Filename> have names that are take from their
-<Literal>*ModelName:</Literal>
-lines.  You might want to adopt this practice.  You may put new PPD files in a
-directory other than <Filename
-class="Directory">/usr/ppr/PPDFiles/</Filename>, as long as you specify the
-path in the <Command>ppad ppd</Command> command.  PPD file names starting with
-<Filename>/</Filename> are used
-as is, others have <Filename class="Directory">/usr/ppr/PPDFiles/</Filename> prepended to them.
-</Para>
+<Para>If you can not find anything that is close, the printer manufacturer
+may be able to supply a suitable PPD file.  Very often it can be found on
+the Macintosh or MS-Windows driver diskettes which come with the printer.  If
+not, you may be able to obtain a suitable file from <ULink
+url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  
+
+<Para>If you are really, abitious, you can obtain the <Ulink
+url="http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf">
+PostScript Printer Description File Format Specification</Ulink> from
+http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf
+</ULink>.  That document, together with a good printer manual, will give you
+the information you need to write your own PPD file or to modify an existing
+one to work with your printer.</Para>
+
+<Para>Any new PPD files should be converted to Unix line termination (FTP
+will do this for you if you transfer them in ASCII mode).  The files already
+in <Filename class="Directory">/usr/share/ppr/PPDFiles/</Filename> have
+names that are take from their <Literal>*ModelName:</Literal> lines.  You
+might want to adopt this practice.  You may put new PPD files in a directory
+other than <Filename class="Directory">/usr/share/ppr/PPDFiles/</Filename>,
+as long as you specify the path in the <Command>ppad ppd</Command> command. 
+When <application>PPR</application> opens the PPD file, PPD file names
+starting with <Filename>/</Filename> are used as is, others have <Filename
+class="Directory">/usr/share/ppr/PPDFiles/</Filename> prepended to
+them.</Para>
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-comment">
 <Title>Adding a Comment</Title>
 
 <Para>
 It is recomended that you set the comment field in each printer's
 configuration. You set it like this:
-</Para>
-
-<Para>
 
 <Screen>
 # ppad comment myprn 'My very own printer, but you may use it'
@@ -444,20 +470,19 @@ configuration. You set it like this:
 
 </Sect3>
 
-<Sect3>
-<Title>Using Ghostscript with PPR</Title>
+<Sect3 id="adding-ghostscript">
+<Title>Using Ghostscript with <application>PPR</application></Title>
 
 <Para>
 Using Ghostscript, a freely available PostScript interpreter, it is possible
 to print PostScript jobs on non-PostScript printers.
 </Para>
 
-<Para>
-Previous versions of PPR had special printer interface programs which
-accepted PostScript from PPR, processed it with Ghostscript, and sent the
-Ghostscript output to the printer.  However, these special interface
-programs are obsolete.  We will describe only the new mechanism here.
-</Para>
+<Para>Previous versions of <application>PPR</application> had special
+printer interface programs which accepted PostScript from PPR, processed it
+with Ghostscript, and sent the Ghostscript output to the printer.  However,
+these special interface programs are obsolete.  We will describe only the
+new mechanism here.</Para>
 
 <Para>
 !!! missing !!!
@@ -479,15 +504,12 @@ A non-PostScript inkjet printer combined with Ghostscript.
 
 </Sect3>
 
-<Sect3>
+<Sect3 id="adding-viewing-config">
 <Title>Viewing the Configuration</Title>
 
 <Para>
 You may view a printer's configuration with the <Command>ppad show</Command> command, like
 this:
-</Para>
-
-<Para>
 
 <Screen>
 # ppad show chipmunk
@@ -515,8 +537,10 @@ Switchset:
 </Para>
 
 <Para>
-Some of these configuration options have already been explained, all of them
-are described in the ppad(8) man page.
+Some of these configuration options which you see in the <command>ppad
+show</commadn> output have already been explained, all of them
+are described in the <ULink url="../refman/ppad.8.html">ppad(8)
+manpage</ULink>.
 </Para>
 
 </Sect3>
@@ -525,10 +549,7 @@ are described in the ppad(8) man page.
 <Title>Deleting a Printer</Title>
 
 <Para>
-If a printer is no longer needed it may be deleted like this:
-</Para>
-
-<Para>
+If a printer queue is no longer needed it may be deleted like this:
 
 <Screen>
 # ppad delete myprn
@@ -539,4 +560,3 @@ If a printer is no longer needed it may be deleted like this:
 </Sect3>
 
 </Sect2>
-
