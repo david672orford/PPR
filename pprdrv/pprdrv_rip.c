@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 20 July 2001.
+** Last modified 12 November 2001.
 */
 
 #include "before_system.h"
@@ -76,7 +76,8 @@ static int rip_exit_screen(void)
 	if(WCOREDUMP(rip_wait_status))
 	    {
 	    alert(printer.Name, FALSE, "The RIP dumped core.");
-	    hooked_exit(EXIT_PRNERR_NORETRY, "RIP core dump");
+	    /* hooked_exit(EXIT_PRNERR_NORETRY, "RIP core dump"); */
+	    hooked_exit(EXIT_JOBERR, "RIP core dump");
 	    }
 	hooked_exit(EXIT_PRNERR, "RIP killed");
 	}
