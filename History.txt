@@ -8660,7 +8660,9 @@ Bug Fixes
 * z_install_end/Makefile: added explicit rule for getservbyname so that
   $(SOCKLIBS) could be included.
 
-* Added missing libscript/echo.c and changed Configure to refer to it.
+* z_install_end/ppr.sh, makeprogs/scriptfixup.sh, Configure: removed all use 
+  of $NECHO (echo -n) and replaced it with echo "\c" since echo -n isn't 
+  supported on Solaris without the UCB package.
 
 Misc. Added Material
 
@@ -8673,6 +8675,8 @@ Misc. Removed Material
 
 * nonppr_misc/c2lib/mathvec.[ch]: Removed since we will not be doing 3D
   graphics.
+
+* Configure_old: Removed since not tested anymore.
 
 Misc. Enhancements
 

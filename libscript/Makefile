@@ -34,7 +34,7 @@ include ../Makefile.conf
 
 BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 	rewind_stdin$(DOTEXE) tail_status$(DOTEXE) \
-	file_outdated$(DOTEXE) mkstemp$(DOTEXE) echo$(DOTEXE)
+	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
 
 BUILT_LIBS=respond.sh respond.ph \
 	signal.sh \

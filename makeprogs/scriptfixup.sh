@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -56,7 +56,6 @@ if [ ! -r "$paths_file" ]
 
 # Extract the information that isn't in paths.sh from global.mk.
 USER_PPRWWW=`sed -ne 's/^USER_PPRWWW=\(.*\)$/\1/p' ../Makefile.conf`
-NECHO=`sed -ne 's/^NECHO=\(.*\)$/\1/p' ../Makefile.conf`
 EECHO=`sed -ne 's/^EECHO=\(.*\)$/\1/p' ../Makefile.conf`
 XWINBINDIR=`sed -ne 's/^XWINBINDIR=\(.*\)$/\1/p' ../Makefile.conf`
 SH=`sed -ne 's/^SH=\(.*\)$/\1/p' ../Makefile.conf`
@@ -78,7 +77,6 @@ sed \
 	-e "s#^\\(\$*\\)VAR_SPOOL_PPR *= *\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 	-e "s#^\\(\$*\\)TEMPDIR *= *\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
 	-e "s#^\\(\$*\\)XWINBINDIR *= *\"[^\"]*\"#\\1XWINBINDIR=\"$XWINBINDIR\"#" \
-	-e "s#^\\(\$*\\)NECHO *= *\"[^\"]*\"#\\1NECHO=\"$NECHO\"#" \
 	-e "s#^\\(\$*\\)EECHO *= *\"[^\"]*\"#\\1EECHO=\"$EECHO\"#" \
 	-e "s#^\\(\$*\\)USER_PPR *= *.*#\\1USER_PPR=$USER_PPR#" \
 	-e "s#^\\(\$*\\)USER_PPRWWW *= *.*#\\1USER_PPRWWW=$USER_PPRWWW#" \

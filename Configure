@@ -33,29 +33,13 @@
 # Last modified 5 August 2003.
 #
 
-# Find an echo that will support "echo -n".  If we can't find one, use the
-# default echo in this script and use PPR's echo in installed scripts.
-NECHO=echo
-NECHO_EXPORT=lib/echo
-for i in echo /bin/echo /usr/ucb/echo print
-    do
-    if [ `($i -n) 2>&1 | wc -l` -eq 0 ]
-	then
-	NECHO=$i
-	NECHO_EXPORT=$i
-	break;
-	fi
-    done
-
 # Find an echo that will supports escapes.
 EECHO=echo
-EECHO_EXPORT=lib/echo
 for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
     do
     if [ `($i '\n') 2>/dev/null | wc -l` -eq 2 ]
 	then
 	EECHO=$i
-	EECHO_EXPORT=$i
 	break
 	fi
     done
@@ -353,7 +337,7 @@ if [ $opt_prompt_compiler -ne 0 -a $CC_GCC -ne 0 -a $CC_NATIVE -ne 0 ]
     answer="?"
     while [ "$answer" = "?" ]
 	do
-	$NECHO -n "Use native cc? "
+	$EECHO "Use native cc? \c"
 	read answer
 	case "$answer" in
 	    [yY]* )
@@ -416,32 +400,32 @@ echo "you accept the defaults as all the documentation assumes"
 echo "that you are using the default directories."
 echo
 
-$NECHO -n "PPR home directory [$HOMEDIR]: "
+$EECHO "PPR home directory [$HOMEDIR]: \c"
 read answer
 if [ -n "$answer" ]; then HOMEDIR="$answer"; fi
 echo
 
-$NECHO -n "PPR share directory [$SHAREDIR]: "
+$EECHO "PPR share directory [$SHAREDIR]: \c"
 read answer
 if [ -n "$answer" ]; then SHAREDIR="$answer"; fi
 echo
 
-$NECHO -n "PPR configuration directory [$CONFDIR]: "
+$EECHO "PPR configuration directory [$CONFDIR]: \c"
 read answer
 if [ -n "$answer" ]; then CONFDIR="$answer"; fi
 echo
 
-$NECHO -n "PPR spool files directory [$VAR_SPOOL_PPR]: "
+$EECHO "PPR spool files directory [$VAR_SPOOL_PPR]: \c"
 read answer
 if [ -n "$answer" ]; then VAR_SPOOL_PPR="$answer"; fi
 echo
 
-$NECHO -n "PPR temporary files directory [$TEMPDIR]: "
+$EECHO "PPR temporary files directory [$TEMPDIR]: \c"
 read answer
 if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
 echo
 
-$NECHO -n "Directory for symbolic links to PPR binaries [$SYSBINDIR]: "
+$EECHO "Directory for symbolic links to PPR binaries [$SYSBINDIR]: \c"
 read answer
 if [ -n "$answer" ]; then SYSBINDIR="$answer"; fi
 echo
@@ -453,7 +437,7 @@ echo "correct, you accept it anyway and make a symbolic link from"
 echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
 echo "etc.) to /usr/bin/X11."
 echo
-$NECHO -n "X-Windows bin [$XWINBINDIR]: "
+$EECHO "X-Windows bin [$XWINBINDIR]: \c"
 read answer
 if [ -n "$answer" ]; then XWINBINDIR=$answer; fi
 echo
@@ -497,17 +481,17 @@ echo "These users and groups should be used only by PPR.  They need not exist"
 echo "right now, they can be created later."
 echo
 
-$NECHO -n "PPR user [$USER_PPR]: "
+$EECHO "PPR user [$USER_PPR]: \c"
 read answer
 if [ -n "$answer" ]; then USER_PPR=$answer; fi
 echo
 
-$NECHO -n "PPR group [$GROUP_PPR]: "
+$EECHO "PPR group [$GROUP_PPR]: \c"
 read answer
 if [ -n "$answer" ]; then GROUP_PPR=$answer; fi
 echo
 
-$NECHO -n "PPR WWW user [$USER_PPRWWW]: "
+$EECHO "PPR WWW user [$USER_PPRWWW]: \c"
 read answer
 if [ -n "$answer" ]; then USER_PPRWWW=$answer; fi
 echo
@@ -539,7 +523,7 @@ echo
 answer="?"
 while [ "$answer" = "?" ]
     do
-    $NECHO -n "Use gdbm? [yes] "
+    $EECHO "Use gdbm? [yes] \c"
     read answer
     case "$answer" in
 	[yY]* )
@@ -597,7 +581,7 @@ echo
 answer="?"
 while [ "$answer" = "?" ]
     do
-    $NECHO -n "Use tdb? [yes] "
+    $EECHO "Use tdb? [yes] \c"
     read answer
     case "$answer" in
 	[yY]* )
@@ -653,7 +637,7 @@ while [ "$answer" = "?" ]
     do
 
     # prompt
-    $NECHO -n "Include international messages support? [yes] "
+    $EECHO "Include international messages support? [yes] \c"
     read answer
 
     case "$answer" in
@@ -1037,8 +1021,7 @@ echo >&3
 
 cat >&3 <<===EndOfHere25===
 # Echo programs that support -n and backslash escapes.
-NECHO=$NECHO_EXPORT
-EECHO=$EECHO_EXPORT
+EECHO=$EECHO
 
 # Location of Perl interpreter
 PERL=$PERL

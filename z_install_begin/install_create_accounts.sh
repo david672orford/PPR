@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 July 2003.
+# Last modified 5 August 2003.
 #
 
 # The makefile has to feed us this information since ../makeprogs/paths.sh
@@ -36,8 +36,8 @@ USER_PPRWWW=$3
 GROUP_PPR=$4
 COMMENT="PPR Spooling System"
 
-my_uid=`id -u`
-my_gid=`id -g`
+my_uid=`./id -u`
+my_gid=`./id -g`
 
 echo "uid=$my_uid gid=$my_gid"
 
