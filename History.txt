@@ -9454,6 +9454,9 @@ no final tarball was released.
 * www/docs_info.cgi.perl: fixed problems related to rendering of definition lists,
   some of them caused by the tab conversion.  (candidate for 1.54)
 
+* README.txt: removed reference to papsrv/, fixed damage to indentation appearently
+  caused by tab conversion.
+
 
 TODO
 
