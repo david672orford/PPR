@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 31 July 2002.
+# Last modified 2 August 2002.
 #
 
 use lib "?";
@@ -135,7 +135,7 @@ my $tabbed_table = [
 		print "<span class=\"label\">", H_("PPD file:"), "</span>\n";
 
 		print "<table class=\"ppd\"><tr><td>\n";
-		
+
 		# Read the PPD File list (and unfortunately "." and "..") into
 		# the array @ppd_list.
 		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
@@ -183,28 +183,25 @@ my $tabbed_table = [
 	'tabname' => N_("RIP"),
 	'dopage' => sub {
 
-		# Split the RIP settings into three values.
-		($data{rip_name}, $data{rip_output_language}, $data{rip_options}) = split(/\t/, cgi_data_move("rip", "\t\t"));
+		fix_rip_which();
 
-		# Handle the complex business with the sections and
-		# their radio buttons.
-		fix_rip_which() if(!defined $data{rip_which});
-		my $rip_which = $data{rip_which_previous} = cgi_data_move("rip_which", undef);
-		
+		my($rip_which, $rip_name, $rip_outlang, $rip_options) =
+			(
+			cgi_data_move("rip_which", ""),
+		    	cgi_data_move("rip_name", ""),
+		    	cgi_data_move("rip_outlang", ""),
+		    	cgi_data_move("rip_options", "")
+		    	);
+
 		# Upper section: PPD RIP info.
 		{
 		print "<div class=\"section\">\n";
-		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"ppd\"";
-		print " checked" if($rip_which eq "ppd");
+		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"PPD\"";
+		print " checked" if($rip_which eq "PPD");
 		print "> From PPD File</span>\n";
 
-		my $ppdfile = cgi_data_peek("ppd", undef);
-		my @rip_list;
-		if(! defined $ppdfile)
-		    {
-		    print "<p>", H_("No PPD file selected in [PPD] pane."), "</p>\n";
-		    }
-		elsif(scalar(@rip_list = ppd_rip($ppdfile)) == 0)
+		my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", "");
+		if($rip_list[0] eq "")
 		    {
 		    print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
 		    }
@@ -224,36 +221,45 @@ my $tabbed_table = [
 		# Lower section: Custom RIP Info
 		{
 		print "<div class=\"section\">\n";
-		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"custom\"";
-		print " checked" if($rip_which eq "custom");
+		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"CONFIG\"";
+		print " checked" if($rip_which eq "CONFIG");
 		print "> Custom</span>\n";
 
 		print "<p>";
 		labeled_select("rip_name", _("Raster Image Processor:"),
-			"", cgi_data_move("rip_name", undef),
-			"", "gs", "ppr-gs", "ppr-gs-cups");
+			"", $rip_name,
+			"", "gs", "ppr-gs");
 
 		print "<p>";
-		labeled_select("rip_output_language", _("Output Language:"),
-			"", cgi_data_move("rip_output_language", undef),
+		labeled_select("rip_outlang", _("Output Language:"),
+			"", $rip_outlang,
 			"", "pcl", "other");
 
 		print "<p>";
-		labeled_entry("rip_options", _("Options:"), cgi_data_move("rip_options", undef), 40);
+		labeled_entry("rip_options", _("Options:"), $rip_options, 40);
 
 		print "</div>\n";
 		}
 		},
 	'onleave' => sub {
-		my $error = fix_rip_which();
-
-		$data{rip} = join("\t",
+		my $error;
+		if(fix_rip_which())
+		    {
+		    return _("Incomplete custom RIP settings.");
+		    }
+		if(cgi_data_peek("rip_which", "") eq "CONFIG")
+		    {
+		    $data{rip} = join("\t", (
 		    	cgi_data_move("rip_name", ""),
-		    	cgi_data_move("rip_output_language", ""),
-		    	cgi_data_move("rip_options", ""));
-		$data{rip} =~ s/\t+$//;
-
-		return $error;
+		    	cgi_data_move("rip_outlang", ""),
+		    	cgi_data_move("rip_options", "")
+		    	));
+		    }
+		else		# If PPD,
+		    {
+		    $data{rip} = $data{rip_ppd};
+		    }
+		return undef;
 		}
 	},
 
@@ -388,7 +394,7 @@ my $tabbed_table = [
 
 		print "<p>";
 		labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
-			"", cgi_data_move("addon ppr2samba-prototype", ""), 
+			"", cgi_data_move("addon ppr2samba-prototype", ""),
 			"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
 		print "</p>\n";
 
@@ -429,7 +435,7 @@ my $tabbed_table = [
 		print "<p>";
 		labeled_entry("addon pprpapd-papname", _("Share As:"), cgi_data_move("addon pprpapd-papname", ""), 32);
 		print "</p>\n";
-		
+
 		print "</div>\n";
 		}
 	},
@@ -617,6 +623,53 @@ my $tabbed_table = [
 ];
 
 #=========================================================
+# This handles a very complicated widget.
+#=========================================================
+sub fix_rip_which
+    {
+    # If this is the first time and the RIP info is from the config file, split it out.
+    if($data{rip_which} eq "CONFIG" && !defined($data{rip_name}))
+        {
+        ($data{rip_name}, $data{rip_outlang}, $data{rip_options}) = split(/\t/, cgi_data_move("rip", "\t\t"));
+        }
+
+    # Give everything a value to avoid warnings.
+    for my $i (qw(rip_name rip_outlang rip_options))
+	{
+	$data{$i} = "" if(! defined $data{$i});
+	}
+
+    # If the user has switched the radio button from CONFIG to PPD,
+    # clear the Custom RIP area.
+    if($data{rip_which} eq "PPD" && cgi_data_peek("rip_which_prev", $data{_rip_which}) eq "CONFIG")
+        {
+        $data{rip_name} = "";
+        $data{rip_outlang} = "";
+        $data{rip_options} = "";
+        }
+    $data{rip_which_prev} = $data{rip_which};
+
+    # If any of the custom RIP info is filled in, flip radio button to "PPD".
+    if($data{rip_name} ne "" || $data{rip_outlang} ne "" || $data{rip_options} ne "")
+        {
+        $data{rip_which} = "CONFIG";
+        }
+    # If none of the custom RIP info is filled in, flip radio button to "Custom RIP".
+    elsif($data{rip_name} eq "" && $data{rip_outlang} eq "" && $data{rip_options} eq "")
+        {
+        $data{rip_which} = "PPD";
+        }
+
+    # If [X]Custom RIP is chosen, but the info is incomplete,
+    if($data{rip_which} eq "CONFIG" && ($data{rip_name} eq "" || $data{rip_outlang} eq "" || $data{rip_options} eq ""))
+    	{
+	return 1;
+    	}
+
+    return 0;
+    }
+
+#=========================================================
 # These functions retrieve information from the PPD file.
 #=========================================================
 
@@ -699,31 +752,6 @@ sub ppd_bins
     }
 
 #
-# This function will return a three element list which contains the RIP,
-# output_language, and options from the PPD file's *pprRIP: line.
-#
-sub ppd_rip
-    {
-    require "readppd.pl";
-    my $filename = shift;
-
-    my $line;
-    my @answer = ();
-
-    ppd_open($filename);
-
-    while(defined($line = ppd_readline()))
-	{
-	if($line =~ /^\*pprRIP:\s+(\S+)\s+(\S+)\s+([^\n]+)$/)
-	    {
-	    @answer = ($1, $2, $3);
-	    }
-	}
-
-    return @answer;
-    }
-
-#
 # This function gets interesting information from the PPD file.
 #
 sub ppd_trivia
@@ -772,60 +800,6 @@ sub ppd_trivia
     return ($fileversion, $languagelevel, $psversion, $fonts, $ttrasterizer);
     }
 
-#=====================================================================
-# These functions are helpers for the panes.
-#=====================================================================
-sub fix_rip_which
-    {
-    my @names = qw(rip_name rip_output_language rip_options);
-
-    my $rip_which = "ppd";
-
-    foreach my $name (@names)
-	{
-	if(defined $data{$name} && $data{$name} ne "")
-	    {
-	    print STDERR "+++ custom because \$data{$name} is \"$data{$name}\"\n";
-	    $rip_which = "custom";
-	    last;
-	    }
-	}
-
-    if(defined $data{rip_which_previous})
-    	{
-	if($data{rip_which} eq "ppd" && $data{rip_which_previous} eq "custom")
-	    {
-	    print STDERR "+++ clearing custom\n";
-	    foreach my $name (@names)
-	    	{
-		$data{$name} = "";
-	    	}
-	    $rip_which = "ppd";
-	    }
-	elsif($data{rip_which} eq "custom" && $data{rip_which_previous} eq "ppd")
-	    {
-	    print STDERR "+++ switching to custom\n";
-	    $rip_which = "custom";
-	    }
-    	}
-
-    $data{rip_which} = $rip_which;
-
-    if($rip_which eq "custom")
-	{
-	foreach my $name (@names)
-	    {
-	    if(cgi_data_peek($name, "") eq "")
-		{
-		print STDERR "+++ missing $name\n";
-		return _("The custom RIP information is incomplete.");
-		}
-	    }
-	}
-
-    return undef;
-    }
-
 #============================================
 # This function is called from do_tabbed().
 # It uses the "ppad show" command to
@@ -852,9 +826,9 @@ while(<PPAD>)
     }
 close(PPAD);
 
-# Split the alert information into separate fields.
-# Split the signed number alerts_frequency into a count (absolute value)
-# and behavior (sign).
+# Split the alert information into separate fields and split the
+# signed number alerts_frequency into a count (absolute value) and
+# behavior (sign).
 my $alerts_frequency;
 ($alerts_frequency, $data{alerts_method}, $data{alerts_address}) = split(/ /, $data{alerts}, 3);
 if($alerts_frequency > 0)
