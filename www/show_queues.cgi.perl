@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2003.
+# Last modified 16 December 2003.
 #
 
 use 5.005;
@@ -39,6 +39,7 @@ require 'cgi_back.pl';
 require 'cgi_intl.pl';
 require 'cgi_time.pl';
 require 'cgi_user_agent.pl';
+require 'cgi_widgets.pl';
 use PPR::PPOP;
 
 # Spacing
@@ -58,33 +59,6 @@ my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=88 hei
 my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=88 height=88";
 my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=88 height=88";
 my $ICON_ADD_ALIAS = "src=\"../q_icons/20000.png\" alt=\"[alias]\" width=88 height=88";
-
-#
-# Routine to convert printer messages to icon selection characters.
-#
-# The first parameter is a reference to the list of auxiliary status messages
-# from the printer.
-#
-# The second is the character that should be returned if the status messages
-# don't contain anything noteworthy.
-#
-# The third is the character that should be returned if the messages indicate
-# that the printer is off-line.
-#
-# The fourth is the character that should be returned if the printer is in some
-# other error state.
-#
-sub pstatus_char
-	{
-	my($messages, $default_char, $offline_char, $error_char) = @_;
-	foreach my $message (@$messages)
-		{
-		return $offline_char if($message =~ /^status: PrinterError: off ?line/);
-		return $offline_char if($message =~ /^pjl: OFFLINE/);
-		return $error_char if($message =~ /^status: PrinterError:/);
-		}
-	return $default_char;
-	}
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.
@@ -132,30 +106,30 @@ $refresh_interval = $MIN_REFRESH_INTERVAL if($refresh_interval < $MIN_REFRESH_IN
 my $table_border = 0;
 my $fixed_body_style = "";
 my $fixed_div_style = "";
-{
 my $user_agent = cgi_user_agent();
 
-# If CSS level 3 is supported, make the top bar non-scrolling.
-if($user_agent->{css3})
+# If CSS fixed positioning is supported, make the top bar non-scrolling.
+if($user_agent->{css_fixed})
 	{
 	$fixed_body_style = "margin-top: 2em";
 	$fixed_div_style = "position:fixed; top:0; left: 0;";
 	}
 
-# If images aren't supported, turn on table border so that the text will
-# be grouped in some way.
+# If images aren't supported, turn on table borders so that the text will
+# be visually grouped in some way.
 if(!$user_agent->{images})
 	{
 	$table_border = 1;
 	}
-}
 
 # We need an informative title.
 my $title = html(sprintf(_("PPR Print Queues on \"%s\""), $ENV{SERVER_NAME}));
 
 # Say when this page will expire.  We don't want it to expire
-# before the reload, otherwise Netscape may refuse to redraw
-# the page if it is resized.
+# before the reload, otherwise buggy Netscape 4.x may refuse to redraw
+# the page if it is resized.  Since we post a different serial number
+# on each refresh, this won't result in the cached page being served up
+# on refresh.
 print "Expires: ", cgi_time_format(time() + $refresh_interval + 10), "\n";
 
 # Start the HTML document.
@@ -182,57 +156,94 @@ Head10
 eval {
 
 #=============================================================================
-# Print a lame menu bar.
+# Print a menu bar.  There are two versions.  One for browsers with good
+# CSS implementations such as Mozilla 1.x, Konqueror 3.x, and Opera 7.x,
+# the other for browers without such as Netscape 4.x and IE 6.0.
 #=============================================================================
 
 {
-print <<"Top5";
-<div class="menubar" style="$fixed_div_style">
-<label title=${\html_value(_("Choose the display format."))}>
-<span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()">
-Top5
+print "<div class=\"menubar\" style=\"$fixed_div_style\">\n";
 
-print "<option";
-print " selected" if($columns == 0);
-print " value=\"0\">", H_("Free Flow"), "\n";
-
-print "<option";
-print " selected" if($columns == -1);
-print " value=\"-1\">", H_("Details"), "\n";
-
-print "<option";
-print " selected" if($columns == -2);
-print " value=\"-2\">", H_("Many Details"), "\n";
-
+my @col_values = (
+	["0", _("Free Flow")],
+	["-1", _("Details")],
+	["-2", _("Many Details")]
+	);
 for(my $i = 4; $i <= 24; $i += 2)
 	{
-	print "<option";
-	print " selected" if($columns == $i);
-	print " value=\"$i\">", html(sprintf(_("%d Columns"), $i)), "\n";
+	push(@col_values, [$i, sprintf(_("%d Columns"), $i)]);
 	}
 
-print <<"Top7";
-</select>
-</label>
-Top7
+my @refresh_values = (
+	[$refresh_interval, _("Now")]
+	);
+foreach my $i (qw(5 10 15 30 45 60 90 120))
+	{
+	push(@refresh_values, [$i, sprintf(_("Every %d seconds"), $i)]);
+	}
 
-# Add a control for the refresh interval.
-print <<"Top8";
-<label title=${\html_value(_("This page will be reloaded at the indicated interval (in seconds)."))}>
-<span class="label">${\H_NB_("Refresh Interval:")}</span>&nbsp;<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
-</label>
-Top8
+sub menu_start
+    {
+	my($id, $name) = @_;
+	print "\t<a href=\"\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
+	print '<div class="popup" name="menubar"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
+	}
 
-# Add a refresh button.
+sub menu_end
+	{
+	print "\t</table></div>\n";
+	}
+
+if($user_agent->{css_hover})
+{
+menu_start("m_file", _("File"));
+	print "\t\t<tr><td>";
+		isubmit("action", "Close", N_("_Close"), 'class="buttons" onclick="window.close(); return false;"', _("Close this window."));
+		print "\t\t</td></tr>\n";
+menu_end();
+
+menu_start("m_view", _("View"));
+	menu_radio_set("columns", \@col_values, $columns, 'onchange="document.forms[0].submit()"');
+menu_end();
+
+menu_start("m_refresh", _("Refresh"));
+	menu_radio_set("refresh_interval", \@refresh_values, $refresh_interval, 'onchange="document.forms[0].submit()"');
+menu_end();
+
+menu_start("m_tools", _("Tools"));
+	print "\t\t<tr><td>"; 
+		ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", "class=\"buttons\"", _("Use this if your browser doesn't support Digest authentication."));
+		print "\t\t</td></tr>\n";
+menu_end();
+
+menu_start("m_help", _("Help"));
+	my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
+	print "\t\t<tr><td>";
+		ibutton(_("For This Window"), "window.open('../help/show_queues.$lang.html', '_blank', 'menubar,resizable,scrollbars,toolbar')", "class=\"buttons\"",
+			_("Display the help document for this program in a web browser window"));
+		print "\t\t</td></tr>\n";
+	print "\t\t<tr><td>";
+		ibutton(_("All PPR Documents"), "window.open('../docs/', '_blank', 'menubar,resizable,scrollbars,toolbar')", "class=\"buttons\"",
+			_("Open the PPR documentation index in a web browser window"));
+		print "\t\t</td></tr>\n";
+	print "\t\t<tr><td>";
+		ibutton(_("About PPR"), "window.open('about.cgi', '_blank', 'width=450,height=275,resizable')", "class=\"buttons\"",
+			_("Display PPR version information"));
+		print "\t\t</td></tr>\n";
+menu_end();
+}
+
+else
+{
+labeled_select2("columns", _("View:"), \@col_values, $columns, _("Choose the display format."), 'onchange="document.forms[0].submit()"');
+labeled_entry("refresh_internal", _("Refresh Interval:"), $refresh_interval, 4, 
+	_("This page will be reloaded at the indicated interval (in seconds)."),
+	'onchange="document.forms[0].submit()"'
+	);
 isubmit("action", "Refresh", N_("Refresh"), 'class="buttons" onclick="gentle_reload(); return false"', _("Refresh the page right now."));
-
-# Create a button for JavaScript Cookie login.
 ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", "class=\"buttons\"", _("Use this if your browser doesn't support Digest authentication."));
-
-# Try to make a "Close" button.	 (They do the same thing.)
-print "<label title=", html_value(_("Close this window.")), ">\n";
-isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
-print "</label>\n";
+isubmit("action", "Close", N_("_Close"), 'class="buttons" onclick="window.close(); return false;"', _("Close this window."));
+}
 
 print <<"Top10";
 </div>
@@ -252,25 +263,21 @@ foreach my $i (
 	[$ICON_ALL_QUEUES,
 		_("Show All Queues"),
 		"show_jobs.cgi?name=all;",
-		"return show_jobs(null,this.href)",
 		_("Click here to open a window which will show all queued jobs.")
 		],
 	[$ICON_ADD_PRINTER,
 		_("Add New Printer"),
 		"prn_addwiz.cgi?",
-		"return wizard(null,this.href)",
 		_("Click here and you will be guided through the process of adding a new printer.")
 		],
 	[$ICON_ADD_GROUP,
 		_("Add New Group"),
 		"grp_addwiz.cgi?",
-		"return wizard(null,this.href)",
 		_("Click here and you will be guided through the process of adding a new group of printers.")
 		],
 	[$ICON_ADD_ALIAS,
 		_("Add New Alias"),
 		"alias_addwiz.cgi?",
-		"return wizard(null,this.href)",
 		_("Click here and you will be guided through the process of adding a new alias.")
 		]
 	)
@@ -278,8 +285,8 @@ foreach my $i (
 print <<"Top20";
 <td width="25%"><a
 	href="$i->[2]$encoded_back_stack"
-	onclick="$i->[3]"
-	title=${\html_value($i->[4])}
+	onclick="return wopen(null,this.href)"
+	title=${\html_value($i->[3])}
 	target="_blank"
 	>
 	<img $i->[0] border=0><br>
@@ -302,19 +309,37 @@ Top100
 # The information is stored in $queues{} and $queues_counts{}.
 #=============================================================================
 
+#
+# Routine to convert printer messages to icon selection characters.
+#
+# The first parameter is a reference to the list of auxiliary status messages
+# from the printer.
+#
+# The second is the character that should be returned if the status messages
+# don't contain anything noteworthy.
+#
+# The third is the character that should be returned if the messages indicate
+# that the printer is off-line.
+#
+# The fourth is the character that should be returned if the printer is in some
+# other error state.
+#
+sub pstatus_char
+	{
+	my($messages, $default_char, $offline_char, $error_char) = @_;
+	foreach my $message (@$messages)
+		{
+		return $offline_char if($message =~ /^status: PrinterError: off ?line/);
+		return $offline_char if($message =~ /^pjl: OFFLINE/);
+		return $error_char if($message =~ /^status: PrinterError:/);
+		}
+	return $default_char;
+	}
+
 my %queues;
 my %queues_counts;
 {
 my $control = new PPR::PPOP("all");
-
-# Select the correct member function to get the level of detail we need.
-#my $function;
-#if($columns >= 0)
-#	 { $function = "list_destinations" }
-#elsif($columns == -1)
-#	 { $function = "list_destinations_comments" }
-#else
-#	 { $function = "list_destinations_comments_addresses" }
 
 # Get a list of all queues with a description for each.
 foreach my $row ($control->list_destinations_comments_addresses())
@@ -498,6 +523,33 @@ foreach my $qname (sort(keys(%queues)))
 	}
 
 # If there was a single table, close any dangling row and
+#
+# Routine to convert printer messages to icon selection characters.
+#
+# The first parameter is a reference to the list of auxiliary status messages
+# from the printer.
+#
+# The second is the character that should be returned if the status messages
+# don't contain anything noteworthy.
+#
+# The third is the character that should be returned if the messages indicate
+# that the printer is off-line.
+#
+# The fourth is the character that should be returned if the printer is in some
+# other error state.
+#
+sub pstatus_char
+	{
+	my($messages, $default_char, $offline_char, $error_char) = @_;
+	foreach my $message (@$messages)
+		{
+		return $offline_char if($message =~ /^status: PrinterError: off ?line/);
+		return $offline_char if($message =~ /^pjl: OFFLINE/);
+		return $error_char if($message =~ /^status: PrinterError:/);
+		}
+	return $default_char;
+	}
+
 # then close the table.
 if($columns != 0)
 	{
@@ -510,6 +562,7 @@ print "\n";
 #=============================================================================
 # Emit the HTML for the popup menus.
 #=============================================================================
+
 foreach my $qname (sort(keys(%queues)))
 {
 my($qtype, $icon, $qdescription, $qaddress) = @{$queues{$qname}};
@@ -522,7 +575,7 @@ my $js_name = javascript_string($qname);
 print <<"POP";
 <div class="popup" id="$encoded_tag" onmouseover="offmenu(event)">
 <a name="$encoded_tag">
-<table border="1" cellspacing="0" class="menu">
+<table border="1" cellspacing="0">
 <noscript>
 <tr><th>${\html("Menu for $qtype $qname")}</th></tr>
 <tr><td><a href=\"$ENV{SCRIPT_NAME}\">Back to Top</a></td></tr>
@@ -533,25 +586,25 @@ if($qtype eq "printer")
 {
 print <<"Printer";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return show_jobs(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="prn_control.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return prn_control(event,$js_name)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Printer Control")}</a></td></tr>
 <tr><td><a href="prn_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return properties(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Printer Properties")}</a></td></tr>
 <tr><td><a href="prn_testpage.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wizard(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Test Page")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wizard(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("printer", $qname)};$encoded_back_stack"
-	onclick="return show_printlog(event,'printer',$js_name)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return confirm(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Delete Printer")}</a></td></tr>
 Printer
 }
@@ -560,22 +613,22 @@ elsif($qtype eq "group")
 {
 print <<"Group";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return show_jobs(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="grp_control.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return grp_control(event,$js_name)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Member Printer Control")}</a></td></tr>
 <tr><td><a href="grp_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return properties(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Group Properties")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wizard(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("queue", $qname)};$encoded_back_stack"
-	onclick="return show_printlog(event,'group',$js_name)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return confirm(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Delete Group")}</a></td></tr>
 Group
 }
@@ -584,13 +637,13 @@ elsif($qtype eq "alias")
 {
 print <<"Alias";
 <tr><td><a href="alias_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return properties(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Alias Properties")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wizard(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
-	onclick="return confirm(event,this.href)" 
+	onclick="return wopen(event,this.href)" 
 	>${\H_("Delete Alias")}</a></td></tr>
 Alias
 }

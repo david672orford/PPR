@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2003.
+# Last modified 16 December 2003.
 #
 
 include ../Makefile.conf
@@ -84,7 +84,8 @@ CGI_PROGS=show_queues.cgi \
 	docs_cat.cgi docs_man.cgi docs_plain.cgi docs_info.cgi docs_rpm.cgi docs_rpms_list.cgi \
 	pprpopup_register.cgi \
 	cliconf.cgi \
-	window_open.cgi
+	window_open.cgi \
+	about.cgi
 
 LIBS=cgi_data.pl qquery_xlate.pl cgi_wizard.pl cgi_run.pl cgi_tabbed.pl cgi_error.pl \
 	cgi_membership.pl cgi_time.pl cgi_auth.pl cgi_intl.pl cgi_back.pl cgi_redirect.pl \
@@ -101,9 +102,9 @@ HTML_GUI=robots.txt \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
-HTML_HELP_EN=prn_properties.en.html show_jobs.en.html
+HTML_HELP_EN=show_queues.en.html prn_properties.en.html show_jobs.en.html
 
-HTML_HELP_RU=prn_properties.ru.html show_jobs.ru.html
+HTML_HELP_RU=show_queues.ru.html prn_properties.ru.html show_jobs.ru.html
 
 HTML_HELP=$(HTML_HELP_EN) $(HTML_HELP_RU)
 

@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2003, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 11 December 2003.
+// Last revised 16 December 2003.
 //
 
 // Width in pixels of invisible border round the table.
@@ -11,6 +11,22 @@ var invisible_border_width = 50;
 // Amount to adjust the popup menu up and to the left so that the mouse
 // pointer is well inside it.
 var pointer_in = 10;
+
+// This is a list of the various CGI scripts and the window options to use with them.
+var windows = new Array();
+windows['prn_addwiz.cgi'] =			'width=775,height=500,resizable';
+windows['grp_addwiz.cgi'] =			'width=775,height=500,resizable';
+windows['alias_addwiz.cgi'] =		'width=775,height=500,resizable';
+windows['show_jobs.cgi'] =			'width=775,height=500,resizable,scrollbars';
+windows['prn_control.cgi'] =		'width=750,height=350,resizable';
+windows['grp_control.cgi'] =		'width=750,height=400,resizable';
+windows['prn_properties.cgi'] =		'width=675,height=580,resizable';
+windows['grp_properties.cgi'] =		'width=675,height=580,resizable';
+windows['alias_properties.cgi'] =	'width=675,height=580,resizable';
+windows['prn_testpage.cgi'] =		'width=775,height=525,resizable';
+windows['cliconf.cgi'] =			'width=700,height=525,resizable';
+windows['show_printlog.cgi'] =		'width=800,height=600,resizable,scrollbars';
+windows['delete_queue.cgi'] =		'width=600,height=150';
 
 // These two functions determine the X and Y coordinates to which the window is
 // scrolled.  Since the w3c hasn't defined this, we have to hunt for it.  Some have
@@ -39,17 +55,13 @@ function scrolled_y()
 	}
 
 //
-// The gentle_reload() function is called to save the current scrolling
-// position of the window in two form variables and then submit the form.
-// It is called as the action of a Javascript timeout.
-//
-// The page_lock() and page_unlock() functions are used to inhibit this
-// behavior while the user is making menu selections.  If gentle_reload()
-// is called while the page is locked, the operation is reschedualed for
-// 5 seconds in the future.
+// The gentle_reload() function is called as a periodic event to save the 
+// current scrolling position of the window in two form variables and then 
+// submit the form.  It is called as the action of a Javascript timeout.  If
+// the variable page_locked is non-zero, then the reload is reschedualed
+// for 5 seconds in the future.
 //
 var page_locked = 0;
-
 function gentle_reload()
 	{
 	if(page_locked == 0)
@@ -65,16 +77,6 @@ function gentle_reload()
 		}
 	}
 
-function page_lock()
-	{
-	page_locked = 1;
-	}
-
-function page_unlock()
-	{
-	page_locked = 0;
-	}
-
 // This is called when the user clicks to bring up the context
 // menu for a queue icon.
 function popup(event, name)
@@ -84,11 +86,27 @@ function popup(event, name)
 	w.style.left = scrolled_x() + event.clientX - invisible_border_width - pointer_in + "px";
 	w.style.top = scrolled_y() + event.clientY - invisible_border_width - pointer_in + "px";
 	w.style.visibility = 'visible';
-	page_lock();
+	page_locked = 1;
 	return false;
 	}
 
-// This is called whenever the mouse pointer enters the DIV which holds
+// This is called when the user clicks on one of the items on the menu bar.
+function popup2(container, name)
+	{
+	var menus = document.getElementsByName('menubar');
+	for(var i=0; i < menus.length; i++)
+		{
+		menus.item(i).style.visibility = 'hidden';
+		}
+	var w = document.getElementById(name);
+	w.style.left = container.offsetLeft - 50 + 'px';
+	w.style.top = '25px';
+	w.style.visibility = 'visible';
+	page_locked = 1;
+	return false;
+	}
+
+// This is called for all mouseover events inside the DIV which holds
 // a popup menu or any of its child elements.  If the mouse pointer entered
 // the exposed part of the DIV element (which is transparent), then the
 // style of the DIV is altered so that it (and its children) are hidden.
@@ -96,87 +114,30 @@ function offmenu(event)
 	{
 	if(event.currentTarget == event.target)
 		{
-		menu_hide(event.target);
+		event.target.style.visibility = 'hidden';
+		page_locked = 0;
 		}
-	}
-
-// This is called when the user clicks on one of the links.  It searches
-// up through the node hierarcy until it comes to the DIV (which it
-// recognizes because its style class is "popup").  It calls menu_hide()
-// on the DIV.
-function click_link(event)
-	{
-	var node = event.target.parentNode;
-	while(node.className != 'popup')
-		{
-		node = node.parentNode;
-		}
-	menu_hide(node);
-	}
-
-// This hides the indicated element and removes the page refresh lock.
-function menu_hide(w)
-	{
-	w.style.visibility = 'hidden';
-	page_unlock();
 	}
 
 //
 // These functions are called from the onclick handlers of the links in the 
 // popup menu.  They open a new window and then hide the menu.
 //
-
-// cgi_wizard.pl
-function wizard(event, url)
+function wopen(event, url)
 	{
-	window.open(url, '_blank', 'width=775,height=500,resizable');
+	var script = url.substr(0, url.indexOf('?'));			// remove query string
+	script = script.substr(script.lastIndexOf('/') + 1);	// take only base name
+	window.open(url, '_blank', windows[script]);
 	if(event)
-		click_link(event);
-	return false;
-	}
-
-function show_jobs(event, url)
-	{
-	window.open(url, '_blank', 'width=775,height=500,resizable,scrollbars');
-	if(event)
-		click_link(event);
-	return false;
-	}
-	
-function prn_control(event, printer_name)
-	{
-	window.open('prn_control.cgi?name=' + printer_name, '_blank', 'width=750,height=350,resizable');
-	click_link(event);
-	return false;
-	}
-	
-function grp_control(event, printer_name)
-	{
-	window.open('grp_control.cgi?name=' + printer_name, '_blank', 'width=750,height=400,resizable');
-	click_link(event);
-	return false;
-	}
-	
-// cgi_tabbed.pl window
-function properties(event, url)
-	{
-	window.open(url, '_blank', 'width=675,height=580,resizable');
-	click_link(event);
-	return false;
-	}
-	
-function show_printlog(event, type, name)
-	{
-	window.open('show_printlog.cgi?' + type + '=' + name, '_blank', 'width=800,height=600,resizable,scrollbars');
-	click_link(event);
-	return false;
-	}
-	
-// confirmation dialog
-function confirm(event, url)
-	{
-	window.open(url, '_blank', 'width=600,height=150');
-	click_link(event);
+		{
+		var node = event.target.parentNode;					// search upward for the popup frame
+		while(node.className != 'popup')
+			{
+			node = node.parentNode;
+			}
+		node.style.visibility = 'hidden';
+		page_locked = 0;
+		}
 	return false;
 	}
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2003.
+# Last modified 15 December 2003.
 #
 
 use 5.005;
@@ -256,8 +256,8 @@ if($data{controls})
 	{
 	my $user_agent = cgi_user_agent();
 
-	# If CSS level 3 is supported, make the top and bottom bars non-scrolling.
-	if($user_agent->{css3})
+	# If CSS fixed positioning is used, use it for the top bar.
+	if($user_agent->{css_fixed})
 		{
 		$fixed_html_style = "margin-top: 2em";
 		$fixed_div_style_top = "position:fixed; top:0pt; left: 0pt;";

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 11 December 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -153,5 +153,8 @@ outdated $HOMEDIR/bin/ppr-indexfonts
 outdated $HOMEDIR/bin/ppr-indexppds
 outdated $VAR_SPOOL_PPR/logs/ppr-indexfonts
 outdated $VAR_SPOOL_PPR/logs/ppr-indexppds
+
+# PPR 1.53
+outdated $HOMEDIR/cgi-bin/show_queues_nojs.cgi
 
 exit 0

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 September 2003.
+# Last modified 16 December 2003.
 #
 
 sub labeled_checkbox
@@ -64,14 +64,18 @@ sub labeled_select
 
 sub labeled_entry
 	{
-	my($name, $label, $value, $size) = @_;
+	my($name, $label, $value, $size, $tooltip, $extra) = @_;
 	print '<span class="widget">';
+	print '<label title=', html_value($tooltip), '>' if(defined $tooltip);
 	if(defined $label)
 		{
 		print '<span class="label">', html($label), "</span> ";
 		print "<br>\n " if($size >= 50);
 		}
-	print "<input name=\"$name\" size=$size value=", html_value($value), ">";
+	print "<input name=\"$name\" size=$size value=", html_value($value);
+	print " $extra" if(defined $extra);
+	print ">";
+	print "</label>" if(defined $tooltip);
 	print "</span>\n";
 	}
 
@@ -100,6 +104,39 @@ sub labeled_boolean
 	print "</span>\n";
 	}
 
+sub labeled_select2
+    {
+	my($name, $label, $values, $current_value, $tooltip, $extra) = @_;
+	print '<span class="widget">';
+	print '<label title=', html_value($tooltip), '>';
+	print '<span class="label">', html_nb($label), '</span>&nbsp;';
+	print '<select name=', html_value($name);
+	print " ", $extra if(defined $extra);
+
+	foreach	my $value (@{$values})
+		{
+		print '<option';
+		print ' selected' if($value->[0] == $current_value);
+		print ' value=', html_value($value->[0]), '>', html($value->[1]), "\n";
+		}
+
+	print "</select>\n";
+	print "</label>\n";
+	print "</span>\n";
+	}
+
+sub menu_radio_set
+	{
+	my($name, $values, $current_value, $extra) = @_;
+	foreach	my $value (@{$values})
+		{
+		print "\t\t", '<tr><td><label><input type="radio" name=', html_value($name), ' value=', html_value($value->[0]);
+		print ' checked' if($value->[0] == $current_value);
+		print " ", $extra if(defined $extra);
+		print '>', html($value->[1]), "</label></td></tr>\n";
+		}
+	}
+
 #
 # Here is a button that pops up a help page.  The name of the help page is
 # based on the script name.	 The argument is used to make an HTML fragment
@@ -126,7 +163,7 @@ my $fragment = defined($topic) ? "#$topic" : "";
 print <<"HelpLink";
 <span class="buttons">
 <a href="$helpfile$fragment" target="_blank"
-		onclick="window.open('$helpfile$fragment','_blank','width=600,height=400,resizable,scrollbars');return false;">
+		onclick="window.open('$helpfile$fragment','_blank','menubar,resizable,scrollbars,toolbar');return false;">
 		${\H_("Help")}</a>
 </span>
 HelpLink
