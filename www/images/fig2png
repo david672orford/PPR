@@ -1,15 +1,22 @@
 #! /bin/sh
 
-if [ $1 = "--wiz" ]
-    then
-    shift
-    # Convert a 6.375" square FIG image to a 128 pixel square PNG image.
-    fig2dev -L ppm -m 1.0 -g '#f0f0f0' $1.fig | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $1.png
+case $1 in
+    --wiz )
+	shift
+	# Convert a 6.375" square FIG image to a 128 pixel square PNG image.
+	fig2dev -L ppm -m 1.0 -g '#f0f0f0' $1 | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $2
+	;;
 
-    else
-    # Render the image at 4x and then scale it down with anti-aliasing.
-    fig2dev -L ppm -m 4.0 -g '#f0f0f0' $1.fig | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $1.png
+    --half )
+	shift
+	# Convert to half size
+	fig2dev -L ppm -m 2.0 -g '#f0f0f0' $1 | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $2
+	;;
 
-    fi
+    * )
+	# Render the image at 4x and then scale it down with anti-aliasing.
+	fig2dev -L ppm -m 4.0 -g '#f0f0f0' $1 | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $2
+	;;
+    esac
 
 exit $?

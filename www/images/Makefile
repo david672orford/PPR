@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2002.
+# Last modified 11 April 2002.
 #
 
 include ../../makeprogs/global.mk
 
 #=== Inventory ==============================================================
 
-GENERATED_IMAGES=pprlogo2.eps pprlogo2.png \
+GENERATED_IMAGES=pprlogo2.eps pprlogo2-large.png pprlogo2-medium.png \
 	prn_testpage1.png prn_testpage2.png \
 	cliconf1.png \
 	exclaim.png
@@ -44,10 +44,16 @@ all: $(GENERATED_IMAGES)
 .SUFFIXES: .fig .png
 
 .fig.png:
-	./fig2png --wiz $*
+	./fig2png --wiz $*.fig $*.png
 
 pprlogo2.eps: pprlogo2.fig
 	fig2dev -L eps pprlogo2.fig >pprlogo2.eps
+
+pprlogo2-large.png: pprlogo2.fig
+	./fig2png pprlogo2.fig $*.png
+
+pprlogo2-medium.png: pprlogo2.fig
+	./fig2png --half pprlogo2.fig $*.png
 
 #=== Install ================================================================
 

@@ -57,6 +57,13 @@ sub search_infopath
 # Read POST and query variables.
 &cgi_read_data();
 
+# Hack for form searching.
+if(defined(my $document = cgi_data_move("document", undef)))
+    {
+    require "cgi_redirect.pl";
+    cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$ENV{SCRIPT_NAME}/INFOPATH/$document");
+    }
+
 # Initialize the internationalization libraries and determine the
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
@@ -68,12 +75,6 @@ Content-Type: text/html
 EndHeader
 
 eval {
-    # Hack for form searching.
-    if(defined(my $document = cgi_data_move("document", undef)))
-	{
-	$ENV{PATH_INFO} = "/INFOPATH/$document";
-	}
-
     my $path;
 
     # If the path begins with "/INFOPATH/", find it.

@@ -42,7 +42,7 @@ sub search_manpath
 
     foreach my $dir (@{$manpath})
 	{
-	next if(! -d $dir);		# skip directories that don't exist
+	next if(! -d $dir);		# skip MANPATH directories that don't exist
 
 	# If the user has specified a section, look in that.  Otherwise
 	# scan and figure out which sections exist.
@@ -68,13 +68,26 @@ sub search_manpath
 
 	foreach my $sect (@sections)
 	    {
+	    my $sectdir = "man$sect";
 	    foreach my $compext ("", ".gz", ".bz2")
 		{
-		my $filename = "$dir/man$sect/$name.$sect$compext";
-		if(-f $filename)
+		# Try looking it up the a straightforward way.
+		my $filename = "$dir/$sectdir/$name.$sect$compext";
+		return $filename if(-f $filename);
+
+		# Debian will put Perl's Chart(3) in /usr/share/man/man3/Chart.3pm.gz.
+		# This will find it is the user specified it as "Chart(3pm)".
+		if($sectdir !~ /[0-9]$/ && ! -d $sectdir)
 		    {
-		    return $filename;
+		    $sectdir =~ s/[^0-9]+$//;
+		    $filename = "$dir/$sectdir/$name.$sect$compext";
+		    return $filename if(-f $filename);
 		    }
+
+		# This will find Perl's Chart(3) if the user specified it as
+		# "Chart" or "Chart(3)".
+		$filename = glob("$dir/$sectdir/$name.$sect*$compext");
+		return $filename if(-f $filename);
 		}
 	    }
 	}
@@ -85,6 +98,13 @@ sub search_manpath
 # Read POST and query variables.
 &cgi_read_data();
 
+# Hack for form searching.
+if(defined(my $document = cgi_data_move("document", undef)))
+    {
+    require "cgi_redirect.pl";
+    cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$ENV{SCRIPT_NAME}/MANPATH/$document");
+    }
+
 # Initialize the internationalization libraries and determine the
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
@@ -93,12 +113,6 @@ my ($charset, $content_language) = cgi_intl_init();
 # HTTP header is generated.  If an error is caught, it produces an error document.
 eval {
     my $path;
-
-    # Hack for form searching.
-    if(defined(my $document = cgi_data_move("document", undef)))
-	{
-	$ENV{PATH_INFO} = "/MANPATH/$document";
-	}
 
     # If the path begins with "/MANPATH/", find it.
     if($ENV{PATH_INFO} =~ m#/MANPATH/(.+)#)

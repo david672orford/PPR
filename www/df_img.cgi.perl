@@ -22,7 +22,6 @@
 #
 
 use lib "?";
-use Chart::PNGgraph::pie;
 require 'cgi_data.pl';
 require 'cgi_time.pl';
 
@@ -32,26 +31,51 @@ my $used = cgi_data_move('used', -1);
 my $available = cgi_data_move('available', -1);
 my $reserved = cgi_data_move('reserved', -1);
 
-# Create a pie graph object.
-my $graph = new Chart::PNGgraph::pie(200, 150);
+if(0)
+    {
+    require Chart::PNGgraph::pie;
 
-# Set the background colour, make the image transparent,
-# and set the colors for the slices.
-$graph->set('bgclr' => 'white',
+    # Create a pie graph object.
+    my $graph = new Chart::PNGgraph::pie(200, 150);
+
+    # Set the background colour, make the image transparent,
+    # and set the colors for the slices.
+    $graph->set(
+	'bgclr' => 'white',
 	'transparent' => 1,
-	'dclrs' => [qw(green yellow red)]);
+	'dclrs' => [qw(green yellow red)]
+	);
 
-# Setting this font size causes rendering errors.
-#$graph->set_value_font(GD::gdLargeFont);
+    # Setting this font size causes rendering errors.
+    #$graph->set_value_font(GD::gdLargeFont);
 
-# Assemble the data, namely the 3 slice names and their sizes.
-my $data = [
+    # Assemble the data, namely the 3 slice names and their sizes.
+    my $data = [
 	[ "${used}% Used", "${available}% Available", "${reserved}% Reserved" ],
 	[ $used,           $available,                $reserved ]
-];
+	];
 
-# Generate PNG image data.
-my $image = $graph->plot($data);
+    # Generate PNG image data.
+    $image = $graph->plot($data);
+    }
+
+else
+    {
+    require Chart::Bars;
+    my $graph = Chart::Bars->new(200, 150);
+    $graph->set(
+	'transparent' => 'true',
+	'legend_labels' => ["${used}% Used", "${available}% Available", "${reserved}% Reserved"],
+	'graph_border' => 0,
+	'text_space' => 0
+	);
+    $image = $graph->scalar_png([
+	[],
+	[$used],
+	[$available],
+	[$reserved]
+	]);
+    }
 
 # Compute the Unix time of the next midnight.  That will be
 # the image expiration time.

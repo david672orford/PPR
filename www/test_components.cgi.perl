@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/test_components.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 11 April 2002.
 #
 
 use lib "?";
@@ -54,11 +54,11 @@ sub test_chart
 # This is a table of tests.
 #
 my @tests = (
-	[\&test_perl5, H_("Perl 5.005 or later"), 1],
-#	[\&test_md5, H_("Perl MD5 module"), 1],
-	[\&test_soundfiles, H_("PPR sound files"), 0],
-	[\&test_gettext, H_("Perl GNU Gettext module"), 0],
-	[\&test_chart, H_("Perl Chart::PNGgraph module"), 0]
+	[\&test_perl5, H_("Perl 5.005 or later"), 1, ""],
+#	[\&test_md5, H_("Perl MD5 module"), 1, ""],
+	[\&test_soundfiles, H_("PPR sound files"), 0, ""],
+	[\&test_gettext, H_("Perl GNU Gettext module"), 0, H_("liblocale-gettext-perl")],
+	[\&test_chart, H_("Perl Chart::PNGgraph module"), 0, ""]
 );
 
 #
@@ -91,7 +91,7 @@ Quote10
 {
 print "<tr>";
 my $i;
-foreach $i (H_("Component"), H_("Present?"), H_("Critical?"))
+foreach $i (H_("Component"), H_("Present?"), H_("Critical?"), H_("Debian Package Name"))
     {
     print "<th>$i</th>";
     }
@@ -105,10 +105,10 @@ print "</tr>\n";
 my $test;
 foreach $test (@tests)
     {
-    my($funct, $desc, $critical) = @{$test};
+    my($funct, $desc, $critical, $debian) = @{$test};
     $found = &$funct ? H_("Yes") : H_("No");
     $critical = $critical ? H_("Yes") : H_("No");
-    print "<tr><td>$desc</td><td>$found</td><td>$critical</td></tr>\n";
+    print "<tr><td>$desc</td><td>$found</td><td>$critical</td><td>$debian</td></tr>\n";
     }
 }
 
