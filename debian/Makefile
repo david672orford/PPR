@@ -1,8 +1,8 @@
 all:
-	( cd .. && dpkg-buildpackage -rfakeroot )
+	#( cd .. && dpkg-buildpackage -rfakeroot )
+	debbuild
 
 clean:
-	#( cd .. && make -f debian/rules clean )
 	debbuild clean
 	rm -rf conffiles
 	
