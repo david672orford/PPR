@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 April 2001.
+** Last modified 10 September 2001.
 */
 
 /*
@@ -103,6 +103,7 @@ static void respond_get_info(struct RINFO *rinfo)
     int line_space_available = 80;
 
     int pages = -1;
+    int pagelist_pages = -1;
     int copies = -1;
     int N = 1;
     int pagefactor = 1;
@@ -133,14 +134,14 @@ static void respond_get_info(struct RINFO *rinfo)
 	if(gu_sscanf(line, "Response: %#s %#s %#z",
 		MAX_RESPONSE_METHOD, rinfo->response_method,
 		MAX_RESPONSE_ADDRESS, rinfo->response_address,
-		MAX_RESPONDER_OPTIONS, rinfo->responder_options) >= 2) {}
-
-	else if(gu_sscanf(line, "For: %#z", MAX_RINFO_FOR, &rinfo->ForLine) == 1) {}
-
-	else if(gu_sscanf(line, "Title: %#z", MAX_RINFO_TITLE, rinfo->Title) == 1) {}
-
-	else if(gu_sscanf(line, "Time: %ld", &rinfo->Time) == 1) {}
-
+		MAX_RESPONDER_OPTIONS, rinfo->responder_options) >= 2)
+	    {}
+	else if(gu_sscanf(line, "For: %#z", MAX_RINFO_FOR, &rinfo->ForLine) == 1)
+	    {}
+	else if(gu_sscanf(line, "Title: %#z", MAX_RINFO_TITLE, rinfo->Title) == 1)
+	    {}
+	else if(gu_sscanf(line, "Time: %ld", &rinfo->Time) == 1)
+	    {}
 	else if(strncmp(line, "Reason: (", 9) == 0)
 	    {
 	    if(rinfo->response_code == RESP_ARRESTED
@@ -154,14 +155,25 @@ static void respond_get_info(struct RINFO *rinfo)
 		rinfo->Reason[len] = '\0';
 		}
     	    }
-	else if(sscanf(line, "Attr: %*s %*s %d %*s %*s %*s %*s %*s %d", &pages, &pagefactor) == 9) {}
-	else if(sscanf(line, "Opts: %*s %d", &copies) == 2) {}
-	else if(sscanf(line, "N-Up: %d %*s %d %d", &N, &sigsheets, &sigpart) == 4) {}
+	else if(sscanf(line, "Attr: %*s %*s %d %*s %*s %*s %*s %*s %d", &pages, &pagefactor) == 9)
+	    {}
+	else if(sscanf(line, "Opts: %*s %d", &copies) == 2)
+	    {}
+	else if(sscanf(line, "N-Up: %d %*s %d %d", &N, &sigsheets, &sigpart) == 4)
+	    {}
     	else if(strncmp(line, "Charge-To:", 10) == 0)
     	    charge_to = TRUE;
-	}
+	else if(gu_sscanf(line, "PageList: %d", &pagelist_pages) == 1)
+	    {}
+	} /* while(gu_getline()) */
 
     fclose(f);
+
+    /*
+    ** If a pagelist was used, use the page count from the pagelist.
+    */
+    if(pagelist_pages != -1)
+    	pages = pagelist_pages;
 
     /*
     ** Compute the number of pages which will have been printed.  This
@@ -171,7 +183,8 @@ static void respond_get_info(struct RINFO *rinfo)
     if(pages >= 0)
     	{
 	rinfo->pages_printed = (pages + N - 1) / N;
-	if(copies >= 0) rinfo->pages_printed *= copies;
+	if(copies >= 0)
+	    rinfo->pages_printed *= copies;
 	}
     else
 	{

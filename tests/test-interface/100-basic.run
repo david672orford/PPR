@@ -3,7 +3,7 @@
 $TESTBIN/clear_output
 
 $HOMEDIR/bin/ppr -d regression-test1 -r none -u yes --routing 'My Routing Message' <<EndOfSample
-%!PS-Adobe 3.0
+%!PS-Adobe-3.0
 %%Pages: 0
 
 %%EOF

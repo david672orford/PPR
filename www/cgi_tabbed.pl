@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 29 August 2001.
+# Last modified 25 September 2001.
 #
 
 use 5.004;
@@ -99,7 +99,7 @@ if(browser_version >= 4.0 && browser_version < 5.0
 </style>
 </head>
 <body>
-<form action=\"$ENV{SCRIPT_NAME}\" method=post>
+<form action=\"$ENV{SCRIPT_NAME}\" method="POST">
 DocStart
 
 # Figure out which tab is currently selected.

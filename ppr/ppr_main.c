@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 5 September 2001.
+** Last revised 10 September 2001.
 */
 
 /*
@@ -619,11 +619,11 @@ static void authorization_acl(void)
 void file_cleanup(void)
     {
     /* Close any job spool files that are open. */
-    if(comments != (FILE*)NULL)
+    if(comments)
     	fclose(comments);
-    if(page_comments != (FILE*)NULL)
+    if(page_comments)
     	fclose(page_comments);
-    if(text != (FILE*)NULL)
+    if(text)
     	fclose(text);
 
     /* Remove any temporary cache file. */
@@ -2562,12 +2562,6 @@ int main(int argc, char *argv[])
 
     /*
     ** Has the user asked for only a subset of the pages?
-    ** If so, then we will call this function to create
-    ** a new "-pages" file with only the requested pages
-    ** mentioned in it.
-    **
-    ** If the request cannot be fulfiled, this function
-    ** will never return.
     */
     if(option_page_list)
 	{

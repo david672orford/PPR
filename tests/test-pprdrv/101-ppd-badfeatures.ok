@@ -7,7 +7,7 @@ regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
 ppr: 0
-%!
+%!PS-Adobe-3.0
 %%For: (ppr)
 %%Pages: 0
 %%PageOrder: Special
@@ -39,7 +39,7 @@ regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
 ppr: 0
-%!
+%!PS-Adobe-3.0
 %%For: (ppr)
 %%Pages: 0
 %%PageOrder: Special

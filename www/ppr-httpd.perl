@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 7 May 2001.
+# Last modified 26 September 2001.
 #
 
 # Filled in by installscript:
@@ -101,7 +101,8 @@ my $TOKEN = '[\!\#\$\%\&\x27\*\+\-\.0-9A-Z\^\_\`a-z\|\~]';
 );
 
 # Ditch Linux environment variables which offend or sense of neatness because
-# they are not meaningful in the context of a CGI script.
+# they are not meaningful (or even necessarily true) in the context of a CGI 
+# script.
 delete $ENV{CONSOLE};
 delete $ENV{TERM};
 delete $ENV{HOME};
@@ -127,9 +128,14 @@ delete $ENV{LINGUAS};		# Who knows
 # This is the PATH that we will feed to CGI scripts.
 $ENV{PATH} = $SAFE_PATH;
 
-# I don't know what this variable does, but Perl won't do an exec()
-# if it is defined.
+# These variables specify files which sh and bash should source during 
+# startup.  Since taint checks are on, Perl won't do exec() if these
+# are defined since they could alter the semantics of a shell script.
+# or shell command.  The same goes for IFS since it changes how the shells
+# parse commands.
 delete $ENV{ENV};
+delete $ENV{BASH_ENV};
+delete $ENV{IFS};
 
 # Set the umask so that our log file will have the correct permissions.
 # Remember that we will be running under the user "pprwww" and the

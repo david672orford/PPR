@@ -7274,7 +7274,7 @@ line was being parsed twice.
 * Fixed NULL pointer problem in "ppad rip".
 
 * Changed pprdrv/pprdrv_rip.c:rip_start() to use a fixed path of
-  HOMEDIR/lib/ppr-gs for Ghostscript if the RIP name is "ppr-gs".  This 
+  HOMEDIR/lib/ppr-gs for Ghostscript if the RIP name is "ppr-gs".  This
   is for a future special Ghostscript distribution for use with PPR.
 
 * Added O_EXCL to the open() calls for the port in the interfaces/parallel.c
@@ -7307,7 +7307,7 @@ line was being parsed twice.
   and Debian 2.2 i386, Alpha, Sparc, and PowerPC.  (This testing was done
   on the Sourceforge.net compile farm.)
 
-* ppd/generic/: Replaced the two separately maintained PPR Generic PPD files 
+* ppd/generic/: Replaced the two separately maintained PPR Generic PPD files
   with three built from a common file using the C pre-processor.
 
 * ppr/: added ability to read *N-Up features to turn on PPR's internal
@@ -7315,9 +7315,9 @@ line was being parsed twice.
 
 * Renamed ppr_realloc() to gu_realloc().
 
-* pprdrv/pprdrv_rip.c (and other files) fixed a problem in rip_fault_check() 
-  which caused it to miss error messages from the RIP.  This require the 
-  addition of a parameter to several functions to tell them whether to 
+* pprdrv/pprdrv_rip.c (and other files) fixed a problem in rip_fault_check()
+  which caused it to miss error messages from the RIP.  This require the
+  addition of a parameter to several functions to tell them whether to
   attempt a flush before closing the RIP or the interface.  Without this
   printer_flush() got called recursively since fault_check() is called
   from printer_flush().
@@ -7337,32 +7337,32 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--5 September 2001
+1.50a1, 1 August 2001--24 September 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
 
-* Makefile, docs/Makefile, docs/*/Makefile: corrected mistaken use of 
+* Makefile, docs/Makefile, docs/*/Makefile: corrected mistaken use of
   MAKEFLAGS.
 
 * Changed installation of login_ppr.sh and login_ppr.csh to copy them
   into /etc/profile.d rather than place links to them there.  The master
   copies are now installed in $HOMEDIR/fixup/ rather than $HOMEDIR/lib/.
 
-* makeprogs/gen_paths.c: Removed "package main;" from top of paths.ph since it 
+* makeprogs/gen_paths.c: Removed "package main;" from top of paths.ph since it
   seems to cause problems with mod_perl CGI emulation and whatever once
   required it is appearently using PPR.pm now.
 
 * Added tcl/.
 
-* Added the job title to the arguments passed to the interface programs. 
+* Added the job title to the arguments passed to the interface programs.
   Changed the lpr interface program to pass it to the remote system.
 
-* pprd/pprd_ppopint.c: Fixed message in case where "ppop move" moves no files 
+* pprd/pprd_ppopint.c: Fixed message in case where "ppop move" moves no files
   because they are all printing.
 
 * pprd/pprd_destid.c:destid_local_is_group(): fixed to return the current
-  answer for the first group id when the printer table is full.  It was 
+  answer for the first group id when the printer table is full.  It was
   returning false for a group with destid 150 when there were 150 printers
   with ids 0--149.  This bug would cause a spooler crash if "ppop start"
   was run on a faulted printer since destid_local_get_member_offset() would
@@ -7396,13 +7396,13 @@ line was being parsed twice.
 * www/prn_properties.cgi: added [RIP] tab, added information extracted from
   the PPD file to the [PPD] tab.
 
-* Moved nonppr/tcl7.5_hacked into tcl/ and integrated the Makefile with the 
+* Moved nonppr/tcl7.5_hacked into tcl/ and integrated the Makefile with the
   PPR build system.
 
 * include/ppr_exits.h: Added PPREXIT_NOTPOSSIBLE.
 
 * ppr/ppr_conffile.c: Fixed so that aliases don't inherit the switchset,
-  passthru or acls of the thing they are an alias for.  I haven't firmly 
+  passthru or acls of the thing they are an alias for.  I haven't firmly
   decided if they should inherit ACLs or not, but inheriting passthru really
   reduces their usefulness.
 
@@ -7412,5 +7412,24 @@ line was being parsed twice.
 * ppad/ppad_printer.c:printer_rip(): fixed core dump bug for "ppad rip
   myprn" (to clear the RIP).
 
-* Added code so that "ppr --page-list" and "ppad modify page-list" work
-  (but page accounting doesn't take it into account yet).
+* Added code so that "ppr --page-list" and "ppad modify page-list" work.
+
+* Changed "-pages" file format, adding a blank line after the section for
+  each page.  This simplifies parsing code in pprdrv.
+
+* tests/: accepted changes caused by the addition of a "rip" field to the
+  "ppad -M show" output.
+
+* tests/: fixed tests which used "%!PS-Adobe 3.0" instead of
+  "%!PS-Adobe-3.0".
+
+* libuprint/uprint_print.c:logit(): changed to omit argv[0] and to put
+  double quotes around empty arguments.  (Previously it only put double
+  quotes around arguments with spaces in them.)
+
+* libuprint/uprint_print.c:uprint_print(): changed logging so that
+  uprint_errno is printed if the return value from uprint_run() is -1.
+
+* www/ppr-httpd.perl: Added BASH_ENV and IFS to the environment variables 
+  undefined.
+

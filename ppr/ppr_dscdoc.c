@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 July 2001.
+** Last modified 10 September 2001.
 */
 
 /*
@@ -226,7 +226,7 @@ void do_dsc_Routing(const char *routingstr)
     } /* end of do_dsc_Routing */
 
 /*
-** This is called from ppr_infile.c and by header_trailer() below.  It checks 
+** This is called from ppr_infile.c and by header_trailer() below.  It checks
 ** to see if the "%%For:" header line has been seen yet and if it hasn't, it
 ** makes a copy of the value and stores it.
 */
@@ -1008,11 +1008,13 @@ static void read_defaults(void)
     /* Copy the rest of the document defaults section. */
     for(getline_simplify_cache(); ! in_eof(); getline_simplify_cache())
 	{
+	/* Save line in the -pages file. */
 	fprintf(page_comments, "%s\n", line);
 
+	/* If that line was the end, get something for next guy and stop. */
 	if(strncmp(line, "%%EndDefaults", 13) == 0)
 	    {
-	    getline_simplify_cache();      /* leave something for next guy */
+	    getline_simplify_cache();
 	    break;
 	    }
 
@@ -1188,6 +1190,7 @@ void end_of_page_processing(void)
     dump_page_resources();
     dump_page_requirements();
     dump_page_media();
+    fputc('\n', page_comments);		/* record separator */
     } /* end of end_of_page_processing() */
 
 /*
@@ -1224,11 +1227,10 @@ void read_pages(void)
 	    if(strcmp(line, "%%BeginPageSetup") == 0)
 		{               /* this terminates page header */
 		pageheader = FALSE;
-		fprintf(text,"%s\n",line);
+		fprintf(text, "%s\n", line);
 		continue;
 		}
-	    if(nest_level() == 0 && ( strcmp(line, "%%Trailer") == 0
-		    || strcmp(line,"%%EOF") == 0 ) )
+	    if(nest_level() == 0 && (strcmp(line, "%%Trailer") == 0 || strcmp(line, "%%EOF") == 0))
 		{
 		if(pagenumber > 0)
 		    end_of_page_processing();
@@ -1253,7 +1255,9 @@ void read_pages(void)
 		    fprintf(text, "%s\n", line);
 		}
 	    }
-	else                                    /* not DSC comment */
+
+	/* not DSC comment */
+	else
 	    {
 	    pageheader = FALSE;
 	    fwrite(line, sizeof(unsigned char), line_len, text);
@@ -1262,7 +1266,7 @@ void read_pages(void)
 	    }
 	} /* end of for which loops `til broken or `til end of file */
 
-	/* If we hit end of file, finish processing of last page. */
+	/* If we hit EOF, finish processing of last page. */
 	if(pagenumber > 0)
 	    end_of_page_processing();
     } /* end of read_pages() */

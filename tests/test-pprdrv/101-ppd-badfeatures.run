@@ -2,13 +2,11 @@
 #
 # Make PPD *Include works correctly.
 #
-# Last modified 13 November 1998.
-#
 
 $TESTBIN/clear_output
 
 $HOMEDIR/bin/ppr -d regression-test1 -r none -u yes <<EndOfSample
-%!PS-Adobe 3.0
+%!PS-Adobe-3.0
 %%Pages: 0
 
 %%EndProlog
@@ -29,7 +27,7 @@ $TESTBIN/cat_output
 $TESTBIN/clear_output
 
 $HOMEDIR/bin/ppr -d regression-test1 -K false -r none -u yes <<EndOfSample
-%!PS-Adobe 3.0
+%!PS-Adobe-3.0
 %%Pages: 0
 
 %%EndProlog

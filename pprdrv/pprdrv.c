@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 10 September 2001.
 */
 
 /*
@@ -142,9 +142,13 @@ static int copies_pages_countdown;	/* number of times to send pages */
 /* The "%%PageMedia:" from the document defaults section. */
 static char default_pagemedia[MAX_MEDIANAME+1] = {(char)NULL};
 
-/* Arrays used to change page order. */
-static long int *pages_offsets;		/* ptr to array offsets into the "-pages" file */
-static long int *text_offsets;		/* ptr to array offsets into the "-text" file */
+/* Array used to change page order. */
+struct PAGETABLE
+	{
+	long int pages_offset;		/* offset into the "-pages" file */
+	long int text_offset;		/* offset into the "-text" file */
+	};
+static struct PAGETABLE *pagetable;
 
 /*=============================================================
 ** Routines for re-assembling the job.
@@ -336,7 +340,7 @@ static void copy_header(void)
 	printer_printf("%%%%Title: (%s)\n", job.Title);
 
     /*
-    ** If the number of pages is not unspecified, then print it as a DSC 
+    ** If the number of pages is not unspecified, then print it as a DSC
     ** comment.  If the number of copies is 1 or copies_pages_countdown starts
     ** at 1, then the complicated formula below is reduced to "pages".
     */
@@ -527,7 +531,7 @@ static gu_boolean copy_prolog(void)
 	    retval = TRUE;
 	    break;
 	    }
-	if(level==0 && strncmp(line, "%%Page:", 7) == 0)
+	if(level==0 && lmatch(line, "%%Page:"))
 	    {
 	    retval = TRUE;		/* was FALSE, an error hidden by copy_trailer() */
 	    break;
@@ -716,7 +720,7 @@ static int copy_nonpages(void)
 	    {
 	    if(strcmp(line, "%%Trailer") == 0)
 		return -1;
-	    if(strncmp(line, "%%Page:", 7) == 0)
+	    if(lmatch(line, "%%Page:"))
 		return 0;
 	    }
 
@@ -738,61 +742,93 @@ static char *getpline(void)
     {
     int len;
 
-    if(!fgets(pline, 256, page_comments))
+    if(!fgets(pline, sizeof(pline), page_comments))
 	return (char*)NULL;
+
+    /* Remove linefeed. */
     len = strlen(pline);
-    if(len) pline[len-1] = '\0';
+    if(len)
+	pline[len-1] = '\0';
 
     return pline;
     } /* end of getpline() */
 
 /*
 ** Make a table of the offset of each page record in the "-pages" file.
-** This routine leaves the pointer of the pages file at the begining 
+** This routine leaves the pointer of the pages file at the begining
 ** of the line which gives the offset of the start of the trailer.
 */
 static int make_pagetable(void)
     {
     const char function[] = "make_pagetable";
-    int pages;
-    int index;
+    int available_pages, printed_pages, page, index;
+    long int temp_offset;
+    int direction;
 
-    if(job.attr.pages != -1)	/* If number of pages is declared, */
-	pages = job.attr.pages;	/* then use that number. */
-    else			/* Otherwise, */
-	pages = 500;		/* set arbitrary limit. */
+    /* If nothing to do, get out. */
+    if(job.attr.pages <= 0)
+    	return 0;
 
-    pages_offsets = (long int *)gu_alloc(pages, sizeof(long int));
-    text_offsets = (long int *)gu_alloc(pages, sizeof(long int));
+    /* How many page descriptions are there in the PostScript code? */
+    available_pages = job.attr.pages;
 
-    getpline();				/* discard first -pages %%Page: line */
-    if(strncmp(pline, "%%Page:", 7))	/* if not a %%Page: line, */
-	return 0;			/* there are no pages */
+    /* How many of those will we be printing? */
+    printed_pages = pagemask_count(&job);
+    
+    /* Allocate memory to hold the table of pages. */
+    pagetable = gu_alloc(printed_pages, sizeof(struct PAGETABLE));
 
-    for(index = 0; index < pages; index++)
+    /* Which order are the page descriptions in? */
+    if(job.attr.pageorder == PAGEORDER_DESCEND)
+    	{
+    	direction = -1;
+    	page = available_pages;
+    	}
+    else
+    	{
+    	direction = 1;
+    	page = 1;
+    	}
+
+    /* Stop thru the list, adding the pages to be printed to the page table. */
+    for(index = 0; page >= 1 && page <= available_pages; page += direction)
 	{
-	if(getpline()==(char*)NULL)     /* read "Offset:" line */
-	    fatal(EXIT_JOBERR, "%s(): unexpected end of -pages file", function);
+	if(!getpline())			/* read "%%Page:" line */
+	    fatal(EXIT_JOBERR, "%s(): bad job: EOF where \"%%%%Page:\" expected", function);
 
-	if(sscanf(pline, "Offset: %ld", &text_offsets[index]) != 1)
-	    fatal(EXIT_JOBERR, "%s(): error reading page offset from -pages", function);
+	if(!lmatch(pline, "%%Page:"))
+	    fatal(EXIT_JOBERR, "%s(): bad job: found \"%s\" where \"%%%%Page:\" expected", function, pline);
 
-	pages_offsets[index] = ftell(page_comments);
+	if(!getpline())			/* read "Offset:" line */
+	    fatal(EXIT_JOBERR, "%s(): bad job: EOF where \"Offset:\" expected", function);
 
-	while( TRUE )			/* eat up this page */
-	    {				/* out of the pages file */
+	if(sscanf(pline, "Offset: %ld", &temp_offset) != 1)
+	    fatal(EXIT_JOBERR, "%s(): bad job: found \"%s\" where \"Offset:\" expected", function, pline);
+
+	/* If this one should be printed, */
+	if(pagemask_get_bit(&job, page) == 1)
+	    {
+	    if(index >= printed_pages)
+	    	fatal(EXIT_JOBERR, "%s(): bad job: pagetable[] overflow", function);
+	    pagetable[index].pages_offset = ftell(page_comments);
+	    pagetable[index].text_offset = temp_offset;
+	    index++;
+	    }
+
+	/* Move head to the next page in the -pages file. */
+	while(TRUE)
+	    {
 	    if(!getpline())
-		return index+1;
-	    if(*pline == '%')
-		{
-		if(strncmp(pline, "%%Page:", 7) == 0)
-		    break;
-		if(strcmp(pline, "%%Trailer") == 0)
-		    return index+1;
-		}
+		fatal(EXIT_JOBERR, "%s(): bad job: EOF in page", function);
+	    if(*pline == '\0')
+		break;
 	    }
 	}
-    return index;                       /* land here only if extra pages */
+
+    if(index != printed_pages)
+    	fatal(EXIT_JOBERR, "%s(): assertion failed, index=%d, printed_pages=%d", function, index, printed_pages);
+
+    return index;
     } /* end of make_pagetable() */
 
 /*
@@ -813,7 +849,7 @@ static void copy_a_page(int newnumber)
     char pagemedia[MAX_MEDIANAME+1];
     char *ptr;
 
-    pagemedia[0] = (char)NULL;
+    pagemedia[0] = '\0';
 
     /* Copy the line that says "%%Page:" from the "-text" file to
        the output.  (Actually, we don't precisely copy it, we read
@@ -825,12 +861,10 @@ static void copy_a_page(int newnumber)
     printer_printf("%%%%Page: %s %d\n", tokens[1] ? tokens[1] : "?", newnumber);
     progress_page_start_comment_sent();		/* tell routines in pprdrv_progress.c */
 
-    /* Copy comments from "-pages" file until end of page. */
-    while(getpline() && ( *pline!='%' ||
-	    (strncmp(pline,"%%Page:",7) && strcmp(pline,"%%Trailer")) ) )
+    /* Copy comments from "-pages" file until blank line. */
+    while(getpline() && *pline)
 	{
 	printer_printf("%s\n", pline);
-
 	gu_sscanf(pline, "%%%%PageMedia: %#s", sizeof(pagemedia), pagemedia);
 	}
 
@@ -891,10 +925,9 @@ static void copy_a_page(int newnumber)
 static void copy_pages(void)
     {
     const char function[] = "copy_pages";
-    long int text_trailer_offset;		/* offset of document trailer */
-    long int page_comments_trailer_offset;
-    int sheetnumber;				/* cardinal current sheet number */
-    int sheetlimit;				/* page number at which we stop */
+    long int trailer_offset_pages;	/* used to save position in -pages */
+    int sheetnumber;			/* cardinal current sheet number */
+    int sheetlimit;			/* page number at which we stop */
     int sheetmember;			/* index into current sheet (cardinal) */
     int npages;				/* Number of pages in document */
     int pagenumber;			/* cardinal number of current page */
@@ -904,22 +937,15 @@ static void copy_pages(void)
     npages = make_pagetable();
 
     /* We can't copy pages if they don't exist: */
-    if(npages == 0) return;
+    if(npages == 0)
+	return;
 
     /*
     ** Remember the offset of the start of the trailer in the "-pages" file.
     ** We do this so that we can move the file pointer back when this
     ** function is done.
     */
-    page_comments_trailer_offset = ftell(page_comments);
-
-    /*
-    ** Read the "Offset:" line for the trailer from the pages file.
-    */
-    if(getpline() == (char*)NULL)
-	fatal(EXIT_JOBERR, "%s(): unexpected end of -pages file", function);
-    if(sscanf(pline, "Offset: %ld", &text_trailer_offset) != 1)
-	fatal(EXIT_JOBERR, "%s(): error reading page offset from -pages", function);
+    trailer_offset_pages = ftell(page_comments);
 
     /*
     ** This is the start of a loop which is used to emmit multiple copies
@@ -1011,15 +1037,6 @@ static void copy_pages(void)
 		    	}
 		    }
 
-		/* If the user has specified a subset of the pages to
-		   print, then skip this page if it is not in the subset.
-		   */
-		if(pagemask_get_bit(&job, pagenumber + 1) == 0)
-		    {
-		    printer_printf("%% Skipping page %d\n\n", pagenumber + 1);
-		    continue;
-		    }
-
 		/* If the pages in the file are in ascending order,
 		   then the pages index into the file is equal to
 		   its number. */
@@ -1037,10 +1054,10 @@ static void copy_pages(void)
 
 		if(pageindex < npages && pageindex >= 0)	/* If we have such a page, */
 	    	    {
-	    	    if(fseek(page_comments, pages_offsets[pageindex], SEEK_SET))
+	    	    if(fseek(page_comments, pagetable[pageindex].pages_offset, SEEK_SET))
 			fatal(EXIT_JOBERR, "%s(): fseek() error (-pages)", function);
 
-		    if(fseek(text, text_offsets[pageindex],SEEK_SET))
+		    if(fseek(text, pagetable[pageindex].text_offset, SEEK_SET))
 			fatal(EXIT_JOBERR, "%s(): fseek() error (-text)", function);
 
 		    copy_a_page(pagenumber + 1);	/* copy this one page */
@@ -1065,10 +1082,8 @@ static void copy_pages(void)
     ** is where one would expect the -text and -pages file pointers to be
     ** after copying all the pages.
     */
-    if( fseek(text, text_trailer_offset, SEEK_SET)
-	    || fseek(page_comments, page_comments_trailer_offset, SEEK_SET) )
-	fatal(EXIT_JOBERR, "%s(): can't seek to trailer", function);
-    dgetline(text);                     /* get the "%%Trailer" line */
+    if(fseek(page_comments, trailer_offset_pages, SEEK_SET))
+	fatal(EXIT_JOBERR, "%s(): can't seek to trailer in -pages", function);
     } /* end of copy_pages() */
 
 /*
@@ -1078,19 +1093,39 @@ static void copy_pages(void)
 */
 static void copy_trailer(void)
     {
-    printer_puts("%%Trailer\n");
+    const char function[] = "copy_trailer";
+    long int temp_offset;
 
+    /* Read the location of the trailer from the -pages file and seek to that
+       location in the -text file. */
+    if(!getpline())
+    	fatal(EXIT_JOBERR, "%s(): bad job: got EOF when \"%%%%Trailer\" expected", function);
+    if(strcmp(pline, "%%Trailer") != 0)
+    	fatal(EXIT_JOBERR, "%s(): bad job: got \"%s\" when \"%%%%Trailer\" expected", function, pline);
+    if(!getpline())
+    	fatal(EXIT_JOBERR, "%s(): bad job: got EOF when \"Offset:\" expected", function);
+    if(sscanf(pline, "Offset: %ld", &temp_offset) != 1)
+    	fatal(EXIT_JOBERR, "%s(): bad job: got \"%s\" when \"Offset:\" expected", function, pline);
+    if(fseek(text, temp_offset, SEEK_SET))
+    	fatal(EXIT_JOBERR, "%s(): can't seek to trailer in -text", function);
+
+    /* Copy -text to printer until EOF or unenclosed %%EOF comment. */
     while(dgetline(text))
 	{
-	printer_write(line, line_len);	    /* write the line, specifying length in case of embeded nulls */
-	if(!line_overflow)	    /* If line is not a partial one, */
-	    printer_putc('\n');	    /* terminate it. */
+	/* Write, specifying length in case of embeded nulls. */
+	printer_write(line, line_len);
 
+	/* If line was not a partial one, terminate it. */
+	if(!line_overflow)
+	    printer_putc('\n');
+
+	/* If we see our "%%EOF", then stop. */
 	if(level==0 && strcmp(line, "%%EOF") == 0)
-	    break;		    /* If we see our "%%EOF", then stop. */
+	    break;
 	}
 
-    close_N_Up();                   /* If N-Up was invoked, clean up. */
+    /* If N-Up was invoked, clean up. */
+    close_N_Up();
 
     printer_puts("%%EOF\n");
     } /* end of copy_trailer() */
@@ -1521,14 +1556,16 @@ static void select_copies_method(void)
 */
 static void page_computations(void)
     {
+    int pages = pagemask_count(&job);
+
     /*
     ** Compute the number of physical pages in one copy of this job.
     **
     ** job.N_Up.sigsheets is the number of pieces of paper in each
     ** signiture.
     **
-    ** job.attr.pages is the number of "%%Page:" comments
-    ** in the file.
+    ** job.attr.pages is the number of "%%Page:" comments in the file.  However
+    ** pages contains the number of those pages we are going to print.
     **
     ** job.attr.pagefactor is the number of "%%Page:" comments per
     ** piece of paper.  It is the N-Up factor times 1 for simplex
@@ -1536,13 +1573,13 @@ static void page_computations(void)
     */
     if(job.N_Up.sigsheets == 0)		/* if not signature printing, */
 	{
-    	sheetcount = (job.attr.pages + job.attr.pagefactor - 1) / job.attr.pagefactor;
+    	sheetcount = (pages + job.attr.pagefactor - 1) / job.attr.pagefactor;
 	}
     else				/* if signature printing, */
     	{
 	/* Compute number of signatures required, counting any partial sig as whole */
 	int signature_count=
-		(job.attr.pages+(job.N_Up.N * 2 * job.N_Up.sigsheets)-1)
+		(pages+(job.N_Up.N * 2 * job.N_Up.sigsheets)-1)
 			/
 		(job.N_Up.N * 2 * job.N_Up.sigsheets);
 
