@@ -9482,6 +9482,8 @@ no final tarball was released.
 * samba/ppd2windrv.perl: fixed to work with indexed PPD files.
   (merged into 1.54)
 
+* samba/ppd2windrv.perl: removed
+
 * samba/Makefile: no longer install WIN95CP.BAT (merged into 1.54)
 
 * samba/indexwindrivers.perl: added
