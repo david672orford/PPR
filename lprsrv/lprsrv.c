@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -236,16 +236,16 @@ static int real_main(int argc,char *argv[])
 	struct passwd *user_ppr;
 
 	if((user_ppr = getpwnam(USER_PPR)) == (struct passwd *)NULL)
-		fatal(1, _("%s(): getpwnam(\"%s\") failed, errno=%d (%s)"), function, USER_PPR, errno, gu_strerror(errno));
+		fatal(1, _("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "getpwnam", USER_PPR, errno, gu_strerror(errno));
 
 	if(setgroups(0, &user_ppr->pw_gid) == -1)
-		fatal(1, _("%s(): setgroups() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+		fatal(1, _("%s(): %s() failed, errno=%d (%s)"), function, "setgroups", errno, gu_strerror(errno));
 
 	if(setegid(user_ppr->pw_gid) == -1)
-		fatal(1, _("%s(): setegid(%ld) failed, errno=%d (%s)"), function, (long)user_ppr->pw_gid, errno, gu_strerror(errno));
+		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "setegid", (long)user_ppr->pw_gid, errno, gu_strerror(errno));
 
 	if(seteuid(user_ppr->pw_uid) == -1)
-		fatal(1, _("%s(): seteuid(%ld) failed, errno=%d (%s)"), function, (long)user_ppr->pw_uid, errno, gu_strerror(errno));
+		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "seteuid"< (long)user_ppr->pw_uid, errno, gu_strerror(errno));
 	}
 
 	/*

@@ -639,7 +639,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	void *pool = gu_pool_new();
 	struct QUEUE_INFO *qip = gu_alloc(1, sizeof(struct QUEUE_INFO));
 	qip->pool = pool;
-	gu_pool_push(qip->pool);
+	GU_OBJECT_POOL_PUSH(qip->pool);
 	qip->debug_level = 0;
 	qip->warnings = NULL;
 	qip->type = qit;
@@ -651,7 +651,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	qip->common_fonts_found = FALSE;
 	qip->fontlist = gu_pca_new(50, 50);
 	qip->chargeExists = FALSE;
-	gu_pool_pop(qip->pool);
+	GU_OBJECT_POOL_POP(qip->pool);
 	return (void*)qip;
 	} /* end of queueinfo_new() */
 
@@ -717,17 +717,10 @@ void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 void queueinfo_add_printer(void *p, const char name[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	gu_pool_push(qip->pool);
-	gu_Try {
-		if(!do_printer(qip, name, 0))
-			gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
-		}
-	gu_Final {
-		gu_pool_pop(qip->pool);
-		}
-	gu_Catch {
-		gu_ReThrow();
-		}
+	GU_OBJECT_POOL_PUSH(qip->pool);
+	if(!do_printer(qip, name, 0))
+		gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
+	GU_OBJECT_POOL_POP(qip->pool);
 	}
 
 /** add a hypothetical printer to this object
@@ -740,20 +733,13 @@ void queueinfo_add_hypothetical_printer(void *p, const char name[], const char p
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
-	gu_pool_push(qip->pool);
-	gu_Try {
-		pip = do_printer_new_obj(qip, name);
-		pip->ppdFile = gu_strdup(ppdfile);
-		if(installed_memory)
-			gu_pch_set(pip->options, "*InstalledMemory", gu_strdup(installed_memory));
-		do_printer_ppd(qip, pip);
-		}
-	gu_Final {
-		gu_pool_pop(qip->pool);
-		}
-	gu_Catch {
-		gu_ReThrow();
-		}
+	GU_OBJECT_POOL_PUSH(qip->pool);
+	pip = do_printer_new_obj(qip, name);
+	pip->ppdFile = gu_strdup(ppdfile);
+	if(installed_memory)
+		gu_pch_set(pip->options, "*InstalledMemory", gu_strdup(installed_memory));
+	do_printer_ppd(qip, pip);
+	GU_OBJECT_POOL_POP(qip->pool);
 	}
 
 /** Set a file object to which warning messages may be sent
@@ -1157,35 +1143,28 @@ static void find_common_fonts(struct QUEUE_INFO *qip)
 	{
 	if(!qip->common_fonts_found)
 		{
-		gu_pool_push(qip->pool);
-		gu_Try {
-			if(gu_pca_size(qip->printers) > 0)
+		GU_OBJECT_POOL_PUSH(qip->pool);
+		if(gu_pca_size(qip->printers) > 0)
+			{
+			struct PRINTER_INFO *pip, *pipy;
+			int y;
+			char *fontname;
+
+			pip = gu_pca_index(qip->printers, 0);
+			for(gu_pch_rewind(pip->fonts); (fontname = gu_pch_nextkey(pip->fonts,NULL)); )
 				{
-				struct PRINTER_INFO *pip, *pipy;
-				int y;
-				char *fontname;
-	
-				pip = gu_pca_index(qip->printers, 0);
-				for(gu_pch_rewind(pip->fonts); (fontname = gu_pch_nextkey(pip->fonts,NULL)); )
+				for(y=1; y < gu_pca_size(qip->printers); y++)
 					{
-					for(y=1; y < gu_pca_size(qip->printers); y++)
-						{
-						pipy = gu_pca_index(qip->printers, y);
-						if(!gu_pch_get(pipy->fonts, fontname))
-							break;
-						}
-					if(y == gu_pca_size(qip->printers))
-						gu_pca_push(qip->fontlist, fontname);
+					pipy = gu_pca_index(qip->printers, y);
+					if(!gu_pch_get(pipy->fonts, fontname))
+						break;
 					}
+				if(y == gu_pca_size(qip->printers))
+					gu_pca_push(qip->fontlist, fontname);
 				}
-			qip->common_fonts_found = TRUE;
 			}
-		gu_Final {
-			gu_pool_pop(qip->pool);
-			}
-		gu_Catch {
-			gu_ReThrow();
-			}
+		qip->common_fonts_found = TRUE;
+		GU_OBJECT_POOL_POP(qip->pool);
 		}
 	} /* end of find_common_fonts() */
 
@@ -1360,57 +1339,62 @@ const char *queueinfo_computedMetaFontMode(void *p)
 	int i;
 	char *answer = NULL;
 	char *temp;
-	void *private_pool = gu_pool_push(gu_pool_new());
 
-	gu_Try {
-		for(i=0; i < gu_pca_size(qip->printers); i++)
+	GU_OBJECT_POOL_PUSH(qip->pool);
+
+	for(i=0; i < gu_pca_size(qip->printers); i++)
+		{
+		pip = gu_pca_index(qip->printers, i);
+		if(!(temp = get_mfmode(qip, pip)))
 			{
-			pip = gu_pca_index(qip->printers, i);
-			if(!(temp = get_mfmode(qip, pip)))
-				{
-				if(qip->warnings)
-					fprintf(qip->warnings, _("Warning: no MetaFont mode found for printer \"%s\".\n"), pip->name);
-				answer = NULL;
-				break;
-				}
-			else if(!answer)
-				{
-				answer = temp;
-				}
-			else if(strcmp(answer, temp))
-				{
-				if(qip->warnings)
-					fprintf(qip->warnings, _("Warning: not all members of group \"%s\" have the save MetaFont mode.\n"), qip->name);
-				answer = NULL;
-				break;
-				}
+			if(qip->warnings)
+				fprintf(qip->warnings, _("Warning: no MetaFont mode found for printer \"%s\".\n"), pip->name);
+			answer = NULL;
+			break;
+			}
+		else if(!answer)
+			{
+			answer = temp;
+			}
+		else if(strcmp(answer, temp))
+			{
+			if(qip->warnings)
+				fprintf(qip->warnings, _("Warning: not all members of group \"%s\" have the save MetaFont mode.\n"), qip->name);
+			answer = NULL;
+			break;
 			}
 		}
-	gu_Final {
-		if(answer)
-			answer = gu_pool_return(answer);
-		gu_pool_free(gu_pool_pop(private_pool));
-		}
-	gu_Catch {
-		gu_ReThrow();
-		}
-	
+	if(answer)
+		answer = gu_pool_return(answer);
+
+	GU_OBJECT_POOL_POP(qip->pool);
+
 	return answer;
 	} /* end of queueinfo_computedMetaFontMode() */
 	
 /** Compute the default filter options for this queue
+ *
+ * I have considered changing this code to use a PCS, but there doesn't seem
+ * to be a real need.  The length of the default filter options is limited
+ * in a practical sense and the temporary array is more than large enough.
+ * Since it is allocated on the stack, it is cleaned up perfectly without
+ * fragmenting the heap.
  */
 const char *queueinfo_computedDefaultFilterOptions(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	char result_line[256];
+	char *retval;
 	const char *sp;
 	int i;
+	
+	GU_OBJECT_POOL_PUSH(qip->pool);
 
-	snprintf(result_line, sizeof(result_line), "level=%d colour=%s",
-			queueinfo_psLanguageLevel(p),
-			queueinfo_colorDevice(p) ? "True" : "False"
-			);
+	snprintf(result_line, sizeof(result_line),
+		"level=%d colour=%s",
+		queueinfo_psLanguageLevel(p),
+		queueinfo_colorDevice(p) ? "True" : "False"
+		);
 
 	if((sp = queueinfo_resolution(p)))
 		{
@@ -1428,7 +1412,11 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 	if(qip->debug_level >= 2)
 		printf("New default filter options for \"%s\" are: %s\n", qip->name, result_line);
 
-	return gu_strdup(result_line);
+	retval = gu_strdup(result_line);
+
+	GU_OBJECT_POOL_POP(qip->pool);
+	
+	return retval;
 	} /* end of queueinfo_computedDefaultFilterOptions() */
 
 /*

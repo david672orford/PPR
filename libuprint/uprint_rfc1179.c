@@ -275,7 +275,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 				if(fstat(pffd, &statbuf) == -1)
 					{
 					uprint_errno = UPE_INTERNAL;
-					uprint_error_callback(_("%s(): fstat() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+					uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "fstat", errno, gu_strerror(errno));
 					break;
 					}
 				df_length = (int)statbuf.st_size;

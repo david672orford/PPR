@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/libppr/stresc.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** mouse:~ppr/src/libppr/gu_stresc.c
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -35,7 +35,7 @@
 /*! \file
 */
 
-/** This function is unused for now.
+/** convert backslash escapes to the code values they represent
 
 This function takes a string with ANSI C string escape
 sequences in it and replaces the escape sequences with
@@ -43,13 +43,13 @@ the values they represent.  The length of the resulting
 string is returned.
 
 */
-int compile_string_escapes(char *s)
+char *gu_stresc_convert(char *string)
 	{
 	int len = 0;
 	int c;
 	char *si, *di;
 
-	si = di = s;
+	si = di = string;
 
 	while((c = *si++))
 		{

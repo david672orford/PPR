@@ -9611,3 +9611,6 @@ no final tarball was released.
 * changed all remaining references to gu_torf() to gu_torf_setBOOL() and removed
   gu_torf() and its constants from include/gu.h and libgu/torf.c.
 
+* moved libppr/stresc.c to libgu/gu_stresc.c
+
+

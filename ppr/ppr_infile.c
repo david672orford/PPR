@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 1 March 2005.
 */
 
 /*
@@ -1576,7 +1576,7 @@ static void stubborn_rewind(void)
 
 	/* Get information about the file. */
 	if(fstat(in_handle, &statbuf) < 0)
-		fatal(PPREXIT_OTHERERR, "%s(): fstat() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fstat", errno, gu_strerror(errno) );
 
 	/*
 	** If input is a file and we don't have to skip a header,
@@ -1609,7 +1609,7 @@ static void stubborn_rewind(void)
 		/* Build a temporary file name and open the file. */
 		ppr_fnamef(fname, "%s/ppr-%d-%d-XXXXXX", TEMPDIR, (int)getpid(), tmpnum++);
 		if((t_handle = mkstemp(fname)) == -1)
-			fatal(PPREXIT_OTHERERR, "%s(): mkstemp(\"%s\") failed, errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
+			fatal(PPREXIT_OTHERERR, _("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "mkstemp", fname, errno, gu_strerror(errno) );
 
 		/* Delete the temporary file's name so it will
 		   magically disappear when it is closed.  This
@@ -1628,7 +1628,7 @@ static void stubborn_rewind(void)
 			{
 			qentry.attr.input_bytes += in_left;
 			if((retval = write(t_handle, in_ptr, in_left)) == -1)
-				fatal(PPREXIT_OTHERERR, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+				fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "write", errno, gu_strerror(errno) );
 			else if(retval != in_left)
 				fatal(PPREXIT_OTHERERR, "%s(): disk full while writing temporary file", function);
 			in_load_buffer();
@@ -1676,7 +1676,7 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 	** we know if it has the setuid bit or setgid bit set.
 	*/
 	if(stat(filter_path, &statbuf) < 0)
-		fatal(PPREXIT_OTHERERR, "%s(): stat(\"%s\", ?) failed, errno=%d (%s)", function, filter_path, errno, gu_strerror(errno));
+		fatal(PPREXIT_OTHERERR, _("%s(): stat(\"%s\", ?) failed, errno=%d (%s)"), function, filter_path, errno, gu_strerror(errno));
 
 	/*
 	** Rewind file or, if we can't, copy it to a temporary file
@@ -1695,7 +1695,7 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 		fatal(PPREXIT_OTHERERR, "%s(): can't make pipe, errno=%d (%s)", function, errno, gu_strerror(errno) );
 
 	if((pid = fork()) < 0)
-		fatal(PPREXIT_OTHERERR, "%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fork", errno, gu_strerror(errno) );
 
 	if(pid)								/* parent */
 		{
@@ -1730,12 +1730,12 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 		*/
 		if(setreuid(user_uid, user_uid) == -1)
 			{
-			fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)user_uid, (long)user_uid, errno, gu_strerror(errno));
+			fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"), function, "setreuid", (long)user_uid, (long)user_uid, errno, gu_strerror(errno));
 			exit(241);
 			}
 		if(setregid(user_gid, user_gid) == -1)
 			{
-			fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)user_gid, (long)user_gid, errno, gu_strerror(errno));
+			fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"), function, "setregid", (long)user_gid, (long)user_gid, errno, gu_strerror(errno));
 			exit(241);
 			}
 
@@ -2333,10 +2333,10 @@ static void do_passthru(const struct FILTER *f)
 		qentry.attr.input_bytes += in_left;
 
 		if((bytes_written = write(out_handle, in_ptr, in_left)) < 0)
-			fatal(PPREXIT_OTHERERR, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "write", errno, gu_strerror(errno));
 
 		if(bytes_written != in_left)
-			fatal(PPREXIT_OTHERERR, "%s(): disk full", function);
+			fatal(PPREXIT_OTHERERR, _("%s(): disk full"), function);
 
 		in_left = 0;
 		in_ptr = in_buffer;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_run.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2003.
+** Last modified 1 March 2005.
 */
 
 #include "config.h"
@@ -34,7 +34,11 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
+#include "global_defines.h"
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -73,7 +77,7 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 	if((pid = fork()) == -1)	/* failed */
 		{
 		uprint_errno = UPE_FORK;
-		uprint_error_callback("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "fork", errno, gu_strerror(errno));
 		return -1;
 		}
 	else if(pid == 0)			/* child */
@@ -90,7 +94,8 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 
 			if(setregid(gid, gid) == -1)
 				{
-				fprintf(stderr, "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n", function, (long)gid, (long)gid, errno, gu_strerror(errno));
+				fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)"), function, "setregid", (long)gid, (long)gid, errno, gu_strerror(errno));
+				fputc('\n',stderr);
 				exit(242);
 				}
 			}
@@ -98,7 +103,8 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 			{
 			if(setreuid(uid, uid) == -1)
 				{
-				fprintf(stderr, "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n", function, (long)uid, (long)uid, errno, gu_strerror(errno));
+				fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)"), function, "setreuid", (long)uid, (long)uid, errno, gu_strerror(errno));
+				fputc('\n',stderr);
 				exit(242);
 				}
 			if(uid != 0 && seteuid(0) != -1)	/* paranoid */
@@ -110,7 +116,8 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 
 		execv(exepath, (char *const *)argv); /* it's OK, execv() won't modify it */
 
-		fprintf(stderr, "%s(): execv() of \"%s\" failed, errno=%d (%s)\n", function, exepath, errno, gu_strerror(errno));
+		fprintf(stderr, _("%s(): %s() of \"%s\" failed, errno=%d (%s)\n"), function, "execv", exepath, errno, gu_strerror(errno));
+		fputc('\n',stderr);
 		exit(242);
 		}
 
@@ -119,7 +126,7 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 		if(wait(&wstatus) == -1)
 			{
 			uprint_errno = UPE_WAIT;
-			uprint_error_callback("%s(): wait() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "wait", errno, gu_strerror(errno));
 			return -1;
 			}
 		/* If it died due to a signal, */

@@ -29,8 +29,23 @@
 */
 
 /*! \file
-	\brief Exception Handling
-
+ *	\brief Exception Handling
+ *
+ * Here is the pattern of use:
+ *
+ *	char *p = gu_strdup("hello");
+ *	gu_Try
+ *		{
+ *		gu_Throw("error 5");
+ *		}
+ *	gu_Final
+ *		{
+ *		gu_free(p);
+ *		}
+ *	gu_Catch
+ *		{
+ *		fprintf(stderr, "I caught error \"%s\", ouch!\n", gu_exception);
+ *		}
 */
 
 #include "config.h"
@@ -67,6 +82,9 @@ When throwing an exception, one specifies a code number (which is passed to exit
 the exception is not caught) and an error message.  The error message is a printf()-style
 format and arguments.
 
+This function calls longjmp() if there is a gu_Try() context, otherwise
+it prints the message on stderr and calls exit(255).
+
 */
 void gu_Throw(const char message[], ...)
 	{
@@ -93,12 +111,14 @@ void gu_CodeThrow(int code, const char message[], ...)
 	}
 	
 /** Re-throw The last exception
-
-This is intended to be called from within a gu_Catch block in order to pass
-the exception higher up the call stack.  It also is used to do the actually
-throwing for gu_Throw().
-
-*/
+ *
+ * This function throws a new exception using the exception message string
+ * stored by the last call to gu_Throw().
+ *
+ * This is intended to be called from within a gu_Catch block in order to pass
+ * the exception higher up the call stack.  It also is used to do the actually
+ * throwing for gu_Throw().
+ */
 void gu_ReThrow(void)
 	{
 	if(gu_exception_debug > 0)

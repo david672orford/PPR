@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--14 January 2005.
+2.00a1, 11 December 2004--1 March 2005.
 
 * refman/: removed references to papsrv.
 
@@ -557,4 +557,6 @@ more information about RIPs and *pprRIP:.
 
 * pprhack/pprhack_interfaces.sgml: adjustments to match change to 
   interface command line parameters.
+
+* index.html: removed link to c2lib homepage
 

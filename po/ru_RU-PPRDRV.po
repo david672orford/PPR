@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-01-26 15:19-0500\n"
+"POT-Creation-Date: 2005-03-01 17:35-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -315,16 +315,16 @@ msgid ""
 "Timeout expired while waiting for printer to respond to pagecount query."
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:86
+#: ../pprdrv/pprdrv_patch.c:101
 msgid ""
 "Timeout expired while waiting for printer to respond to *?PatchFile query."
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:94
+#: ../pprdrv/pprdrv_patch.c:109
 msgid "Printer did not respond correctly to *?PatchFile query."
 msgstr ""
 
-#: ../pprdrv/pprdrv_patch.c:124
+#: ../pprdrv/pprdrv_patch.c:139
 msgid "PPD file does not have *ExitServer code"
 msgstr ""
 

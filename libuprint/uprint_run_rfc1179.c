@@ -68,14 +68,14 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 	if(pipe(pipefds) == -1)
 		{
 		uprint_errno = UPE_INTERNAL;
-		uprint_error_callback(_("%s(): pipe() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+		uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "pipe", errno, gu_strerror(errno));
 		return -1;
 		}
 
 	if((pid = fork()) == -1)	/* failed */
 		{
 		uprint_errno = UPE_FORK;
-		uprint_error_callback("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "fork", errno, gu_strerror(errno));
 		close(pipefds[0]);
 		close(pipefds[1]);
 		return -1;
@@ -95,14 +95,14 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 		if(setreuid(uid, uid) == -1)
 			{
 			uprint_errno = UPE_SETUID;
-			uprint_error_callback(_("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)"), function, (long)uid, (long)uid, errno, gu_strerror(errno));
+			uprint_error_callback(_("%s(): %s(%ld, %ld) failed, errno=%d (%s)"), function, "setreuid", (long)uid, (long)uid, errno, gu_strerror(errno));
 			exit(241);
 			}
 
 		execv(exepath, (char *const *)argv);	/* <-- it's OK, execv() won't modify argv[] */
 
 		uprint_errno = UPE_EXEC;
-		uprint_error_callback(_("%s(): execv(\"%s\", ...) failed, errno=%d (%s)\n"), function, exepath, errno, gu_strerror(errno));
+		uprint_error_callback(_("%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"), function, "execv", exepath, errno, gu_strerror(errno));
 		exit(242);
 		}
 	else						/* parent */
@@ -117,7 +117,7 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 		if(!(reader = fdopen(pipefds[0], "r")))
 			{
 			uprint_errno = UPE_INTERNAL;
-			uprint_error_callback(_("%s(): fdopen(\"%d\", \"%s\") failed, errno=%d (%s)"), function, pipefds[0], "r", errno, gu_strerror(errno));
+			uprint_error_callback(_("%s(): %s(\"%d\", \"%s\") failed, errno=%d (%s)"), function, "fdopen", pipefds[0], "r", errno, gu_strerror(errno));
 			}
 
 		/* Read lines from uprint_rfc1179 and process them according to their tags. */
@@ -140,7 +140,7 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 		if(wait(&wstatus) == -1)
 			{
 			uprint_errno = UPE_WAIT;
-			uprint_error_callback(_("%s(): wait() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+			uprint_error_callback(_("%s(): %s() failed, errno=%d (%s)"), function, "wait", errno, gu_strerror(errno));
 			return -1;
 			}
 

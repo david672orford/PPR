@@ -351,7 +351,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	} /* end of commentary() */
 
 /*
-** This function will be called before we exit.
+** This function will be called before we exit so that commentator
+** messages indicating that pprdrv has exited can be sent.
 */
 void commentary_exit_hook(int rval, const char explain[])
 	{

@@ -107,6 +107,7 @@ char *gu_strdup(const char *string);
 char *gu_strndup(const char *string, size_t len);
 char *gu_restrdup(char *ptr, size_t *number, const char *string);
 void gu_free(void *ptr);
+void gu_free_if(void *ptr);
 
 /* Pool functions */
 void *gu_pool_new(void);
@@ -212,6 +213,7 @@ __attribute__ (( format (printf, 1, 2) ))
 ;
 char *gu_strlower(char *string);
 char *gu_strtrim(char *string);
+char *gu_stresc_convert(char *string);
 
 /*===================================================================
 ** Command line option parsing
@@ -268,23 +270,6 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
 
 /*===================================================================
 ** Exception handling code
-**
-** Here is the pattern:
-**
-**	char *p = gu_strdup("hello");
-**	gu_Try
-**		{
-**		gu_Throw("error 5");
-**		}
-**	gu_Final
-**		{
-**		gu_free(p);
-**		}
-**	gu_Catch
-**		{
-**		fprintf(stderr, "I caught error \"%s\", ouch!\n", gu_exception);
-**		}
-**
 ===================================================================*/
 
 extern char gu_exception[];					/* text of exception message */
@@ -308,10 +293,6 @@ extern int  gu_exception_debug;
 	if((gu_exception_setjmp_retcode = setjmp(gu_exception_jmp_buf)) == 0)
 	
 void gu_Try_funct(jmp_buf *p_jmp_buf);
-
-/* This function calls longjmp() if there is a gu_Try() context, otherwise
-   it prints the message on stderr and calls exit(255).
-   */
 void gu_Throw(const char message[], ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 1, 2) ))
@@ -322,10 +303,6 @@ void gu_CodeThrow(int code, const char message[], ...)
 __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
-
-/* This function throws a new exception using the exception message string
-   stored by the last call to gu_Throw().
-   */
 void gu_ReThrow(void)
 #ifdef __GNUC__
 __attribute__ (( noreturn ))
@@ -362,6 +339,12 @@ caught in the gu_Try block.
 	gu_exception_temp = gu_exception_setjmp_retcode; \
 	} \
 if(gu_exception_temp != 0)
+
+/** make the indicated object memory pool current in an exception-safe manner */
+#define GU_OBJECT_POOL_PUSH(pool) gu_pool_push(pool); gu_Try {
+
+/** pop the indicated object memory pool in an exception-safe manner */
+#define GU_OBJECT_POOL_POP(pool) } gu_Final { gu_pool_pop(pool); } gu_Catch { gu_ReThrow(); }
 
 /*===================================================================
 ** SNMP functions
@@ -454,6 +437,22 @@ void *gu_pcre_match(const char pattern[], const char string[]);
 void *gu_pcre_split(const char pattern[], const char string[]);
 
 /*===================================================================
+** HTTP functions
+===================================================================*/
+
+struct URI {
+	char *method;
+	char *node;
+	int port;
+	char *path;
+	char *basename;
+	char *query;
+	};
+
+struct URI *gu_uri_new(const char uri_string[]);
+void gu_uri_free(struct URI *uri);
+
+/*===================================================================
 ** Replacements for frequently missing functions
 ** Leave this last in the file.
 ===================================================================*/
@@ -479,20 +478,6 @@ void *gu_pcre_split(const char pattern[], const char string[]);
 #if 1
 #define strerror(err) gu_strerror(err)
 #endif
-
-/*===================================================================
-** 
-===================================================================*/
-
-struct URI {
-	char *method;
-	char *node;
-	int port;
-	char *path;
-	char *basename;
-	};
-
-/* int gu_parse_uri(struct pool *callers_pool, struct URI *uri, char uri_string[]); */
 
 #endif	/* _LIBGU */
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2005.
+** Last modified 1 March 2005.
 */
 
 /*! \file */
@@ -308,7 +308,7 @@ void ipp_delete(struct IPP *p)
 	ipp_writebuf_flush(p);
 
 	/* This complicated code deletes all of the attributes.  Should we
-	 * have used c2lib pools?  Maybe.  We did uncover some interesting
+	 * have used a pool?  Maybe.  We did uncover some interesting
 	 * bugs though when we were writing this.
 	 */
 	{

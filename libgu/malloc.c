@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 1 March 2005.
 */
 
 /*! \file
@@ -130,28 +130,24 @@ a void pointer to the allocated memory.  The memory is not initialized.
 */
 void *gu_alloc(size_t number, size_t size)
 	{
+	void *rval;
 	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
-	return gu_malloc(number * size);
+	if(!(rval = malloc(number*size)))
+		gu_CodeThrow(errno, "gu_malloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	gu_alloc_blocks++;
+	gu_pool_register(rval);
+	return rval;
 	} /* end of gu_alloc() */
 
-/** Allocate memory block
+/** Allocate memory block malloc() style
 
-This function is provided for PCRE.
+This function is provided for use with PCRE which requires an allocation
+function with the same prototype as malloc().
 
 */
 void *gu_malloc(size_t size)
 	{
-	void *rval;
-
-	DODEBUG(("gu_malloc(size=%ld)", (long)size));
-
-	if(!(rval = malloc(size)))
-		gu_CodeThrow(errno, "gu_malloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
-
-	gu_alloc_blocks++;
-	gu_pool_register(rval);
-
-	return rval;
+	return gu_alloc(size, 1);
 	}
 
 /** Duplicate a string
@@ -193,7 +189,7 @@ char *gu_strndup(const char *string, size_t len)
 
 	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
 
-	if((rval = (char*)malloc(len+1)) == (char*)NULL)
+	if(!(rval = (char*)malloc(len+1)))
 		gu_CodeThrow(errno, "gu_strndup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
@@ -286,6 +282,14 @@ void gu_free(void *ptr)
 		gu_alloc_blocks--;
 		}
 	} /* end of gu_free() */
+
+/** Free memory if pointer is non-NULL
+ */
+void gu_free_if(void *ptr)
+	{
+	if(ptr)
+		gu_free(ptr);
+	}
 
 /** Create memory pool
 

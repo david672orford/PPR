@@ -73,9 +73,10 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_pca_join.$(OBJ) \
 	gu_run.$(OBJ) \
 	gu_exceptions.$(OBJ) \
-	gu_parse_uri.$(OBJ) \
+	gu_uri.$(OBJ) \
 	gu_strlower.$(OBJ) \
 	gu_strtrim.$(OBJ) \
+	gu_stresc.$(OBJ) \
 	pcre.$(OBJ) \
 	pcre_study.$(OBJ) 
 
