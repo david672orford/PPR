@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2002.
+# Last modified 18 November 2002.
 #
 
 include ../Makefile.conf
@@ -34,8 +34,7 @@ include ../Makefile.conf
 
 PROGS=filter_hexdump$(DOTEXE) make_dvips_conf$(DOTEXE)
 
-SCRIPTS_SH=pr.sh \
-	troff_real.sh ditroff_real.sh troff_groff.sh ditroff_groff.sh \
+SCRIPTS_SH=troff_real.sh ditroff_real.sh troff_groff.sh ditroff_groff.sh \
 	dvi.sh texinfo.sh \
 	jpeg.sh gif.sh bmp.sh pnm.sh xbm.sh xpm.sh xwd.sh tiff.sh png.sh \
 	plot_postplot.sh plot_plot2ps.sh fig.sh \
@@ -43,6 +42,8 @@ SCRIPTS_SH=pr.sh \
 	html_htmldoc.sh
 
 SCRIPTS_PERL=tex.perl
+
+SCRIPTS_TCL=pr.tcl
 
 #=== Build ==================================================================
 
@@ -67,6 +68,10 @@ install: $(PROGS) $(SCRIPTS_SH) $(SCRIPTS_PERL)
 	for f in $(SCRIPTS_PERL);\
 		do\
 		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .perl`;\
+		done
+	for f in $(SCRIPTS_TCL);\
+		do\
+		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .tcl`;\
 		done
 
 #=== Housekeeping ===========================================================

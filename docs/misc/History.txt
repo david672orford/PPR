@@ -7956,3 +7956,8 @@ line was being parsed twice.
 * ppr/ppr_dscdoc.c: suppressed duplicate messages about lack of atend for
   stuff in trailer.
 
+* filters_misc/: replaced pr.sh with pr.tcl.  This new code correctly
+  handles the pr-title= option.
+
+* fixup/fixup_filters.sh: added "#! ppr-tclsh" to things rewritten by sed.
+

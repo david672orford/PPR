@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 August 2002.
+# Last modified 18 November 2002.
 #
 
 #
@@ -46,6 +46,7 @@ GROUP_PPR=?
 # Derived things
 STORE="$HOMEDIR/fixup"
 FILTERS="$HOMEDIR/filters"
+PPR_TCLSH="$HOMEDIR/bin/ppr-tclsh";
 
 # Function to find a program in the $PATH list.
 findprog_prog ()
@@ -106,6 +107,7 @@ sedit ()
 	-e "s#^\\(\$*\\)CONFDIR=\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
 	-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 	-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
+	-e "s@^#! *ppr-tclsh\\( *.*\\)\$@#! $PPR_TCLSH\\1@" \
 	$1 >$2 || exit 1 # infile, outfile
 
     # Make it executable

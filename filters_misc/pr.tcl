@@ -1,4 +1,4 @@
-#! /bin/sh
+#! ppr-tclsh
 #
 # mouse:~ppr/src/misc_filters/pr.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 November 2002.
+# Last modified 18 November 2002.
 #
 
 #
@@ -48,17 +48,16 @@ set PR "/usr/bin/pr"
 # Process the options
 regsub "title=\"" [lindex $argv 0] "\"title=" options
 set title [lindex $argv 2]
-set width ""
-set length ""
+set arglist {-f}
 foreach option $options {
 	regexp {^([^=]+)=(.*)$} $option junk name value
 	puts stderr "name=$name, value=$value"
 	switch -exact -- $name {
 		width {
-			set width "-w $value"
+			lappend arglist -w $value
 			}
 		length {
-			set length "-l $value"
+			lappend arglist -l $value
 			}
 		title {
 			set title $value
@@ -76,18 +75,10 @@ set result [catch {
     set tempfile [exec $HOMEDIR/lib/mkstemp $TEMPDIR/ppr-pr-XXXXXX]
 
     # Now, run pr. 
-    set command [list $PR -f -h $title $width $length >$tempfile 2>@stderr]
-    if {$width != ""} {
-	lappend command $width
-	}
-    if {$length != ""} {
-	lappend command $length
-	}
-    puts $command
-    exec $command
+    exec $PR $arglist -h $title >$tempfile 2>@stderr
 
     # Now, run filter_lp on the temporary file.
-    exec filters/filter_lp "$1" <$tempfile >@stdout 2>@stderr
+    exec filters/filter_lp [lindex $argv 0] <$tempfile >@stdout 2>@stderr
 
     } error ]
 
@@ -99,10 +90,9 @@ if {$tempfile != ""} {
 
 # Make non-zero exit if something failed.
 if {$result != 0} {
-    puts "pr filter failed: $error"
+    puts stderr "pr filter failed: $result $error"
     exit 2
     }
 
 # We are done, we were sucessfull.
 exit 0
-
