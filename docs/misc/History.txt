@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--16 December 2002.
+1.50b1, 13 November 2002--20 December 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8051,4 +8051,12 @@ line was being parsed twice.
 
 * pprd/pprd_load.c:load_printer() fixed rounding error in reading of
   "Charge:" lines.
+
+* fontutils/ppr-indexfonts.c: if an attempt to open a font file returns
+  errno == ENOENT, say it is a broken symbolic link and skip it.  This is
+  a good idea because Mandrake Linux 9.0 still has a broken symbolic link
+  to a Fontmap file from an old version of Ghostscript.
+
+* fixup/fixup_inetd.sh: removed spurious "disabled =" line from generated 
+  xinetd.d/ppr file.
 

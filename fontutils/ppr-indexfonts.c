@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 August 2002.
+** Last modified 20 December 2002.
 */
 
 #include "before_system.h"
@@ -215,7 +215,7 @@ static struct FONT_INFO *study_pfb_font(const char filename[])
 	    length += ((1 << (8 * x)) * c);
 	if(c == EOF) break;
 
-/* printf("section_type=%d, length=%d\n", section_type, length); */
+	/* printf("section_type=%d, length=%d\n", section_type, length); */
 
 	if(section_type == 3) break;	/* end section */
 
@@ -285,6 +285,11 @@ static int do_file(FILE *indexfile, const char filename[])
 
     if((fd = open(filename, O_RDONLY)) == -1)
     	{
+	if(errno == ENOENT)
+	    {
+	    printf(" -- Broken symbolic link\n");
+	    return EXIT_OK;
+	    }
     	fprintf(stderr, "\tCan't open \"%s\", errno=%d (%s)\n", filename, errno, gu_strerror(errno));
 	return EXIT_INTERNAL;
 	}
