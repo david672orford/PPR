@@ -90,7 +90,7 @@ sub do_queue
 	-tearoff => 0
 	)->pack(-side => 'left');
     $menu_queue->command(
-	-label => 'Close',
+	-label => defined($main) ? "Close" : "Exit",
 	-command => sub { $w->destroy() });
     }
 
@@ -196,7 +196,9 @@ sub do_menu
 
     # Create the menu
     my $menu = $parent->Menu(-tearoff, 0);
-    $menu->command(-label => "Queue", -command => sub{do_queue($parent, $queuename)});
+    $menu->command(
+	-label => "Queue",
+	-command => sub{do_queue($parent, $queuename)});
 
     # Add one item for each member
     if($desttype eq 'printer')

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2003.
+** Last modified 28 March 2003.
 */
 
 #include "before_system.h"
@@ -110,7 +110,7 @@ static int do_show(const char username[])
     gu_free(line);
     }
 
-    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
+    printf("%s %s \"%s\"\n", responder, responder_address, responder_options);
     gu_free(responder);
     gu_free(responder_address);
     gu_free(responder_options);
@@ -138,12 +138,20 @@ static int do_set(char username[], int argc, char *argv[], int i)
     /* Now we supply defaults for any that weren't specified. */
 
     if(!responder)
-	responder = "write";
+	{
+	if(getenv("DISPLAY"))
+	    responder = "xwin";
+	else
+	    responder = "write";
+	}
 
     if(!responder_address)
 	{
 	if(strcmp(responder, "xwin") == 0)
-	    responder_address = ":0.0";
+	    {
+	    if(!(responder_address = getenv("DISPLAY")))
+		responder_address = ":0.0";
+	    }
 	else if(strcmp(responder, "pprpopup") == 0)
 	    asprintf(&responder_address, "%s@localhost", username);
 	else
@@ -164,7 +172,7 @@ static int do_set(char username[], int argc, char *argv[], int i)
     }
 
     /* Show the user what we have decided on. */
-    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
+    printf("%s %s \"%s\"\n", responder, responder_address, responder_options);
 
     /* Save it in followme.db. */
     if(write_record(username, responder, responder_address, responder_options) == -1)

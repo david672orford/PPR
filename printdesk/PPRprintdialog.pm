@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 March 2003.
+# Last modified 28 March 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -133,11 +133,15 @@ sub Show
 	)->pack(-side => 'left');
     $pages_frame2->Label(-text => 'Pages from'
 	)->pack(-side => 'left');
-    $pages_frame2->Entry(-width => 4
+    $pages_frame2->Entry(
+	-width => 4,
+	-background => 'white'
 	)->pack(-side => 'left');
     $pages_frame2->Label(-text => 'to'
 	)->pack(-side => 'left');
-    $pages_frame2->Entry(-width => 4
+    $pages_frame2->Entry(
+	-width => 4,
+	-background => 'white'
 	)->pack(-side => 'left');
 
     # Number of copies
@@ -145,8 +149,10 @@ sub Show
 	)->pack(-side => 'left', -fill => 'y', -padx => 5, -pady => 5);
     $copies_frame->Label(-text => 'Number of Copies:'
 	)->pack(-side => 'left', -anchor => 'n');
-    $copies_frame->Entry(-width => 4,
-	-textvariable => \$self->{copies}
+    $copies_frame->Entry(
+	-width => 4,
+	-textvariable => \$self->{copies},
+	-background => 'white'
 	)->pack(-side => 'left', -anchor => 'n');
 
     # Middle frame 2
