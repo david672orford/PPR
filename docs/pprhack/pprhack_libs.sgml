@@ -1,4 +1,4 @@
-<Sect2>
+<Sect1>
 <Title>The PPR Library</Title>
 
 <Para>
@@ -11,7 +11,7 @@ found in the file <Filename>include/global defines.h</Filename> with a few in
 <Filename class="HeaderFile">include/global_structs.h</Filename>.
 </Para>
 
-<Sect3>
+<Sect2>
 <Title>daemon()</Title>
 
 <Para>
@@ -22,9 +22,9 @@ controling terminal and closes all open file descriptors including stdin,
 stdout, and stderr.
 </Para>
 
-</Sect3>
+</Sect2>
 
-<Sect3>
+<Sect2>
 <Title>myalloc(), myfree(), myrealloc(), mystrdup(), and mystrndup()</Title>
 
 <Para>
@@ -78,9 +78,9 @@ arguments.  It returns a pointer to a new string containing a copy of the
 string truncated to the maximum length.
 </Para>
 
-</Sect3>
+</Sect2>
 
-<Sect3>
+<Sect2>
 <Title>ppr_sscanf()</Title>
 
 <Para>
@@ -169,9 +169,9 @@ a pointer to a char array.
 
 </VariableList>
 
-</Sect3>
+</Sect2>
 
-<Sect3>
+<Sect2>
 <Title>ppr_get_nodename()</Title>
 
 <Para>
@@ -181,9 +181,9 @@ name truncated before the first period (if present) and furthur truncated to 16
 characters.
 </Para>
 
-</Sect3>
+</Sect2>
 
-<Sect3>
+<Sect2>
 <Title>fname_sprintf()</Title>
 
 <Para>
@@ -193,8 +193,6 @@ MS-Windows systems it will convert <Literal>:</Literal> to
 <Literal>!</Literal> because they are confused
 by colons in filenames.
 </Para>
-
-</Sect3>
 
 </Sect2>
 

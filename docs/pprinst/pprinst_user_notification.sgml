@@ -68,7 +68,7 @@ Workgroups and MS-Windows 95 the message receiver is a program called ``winpopup
 </Sect2>
 
 <Sect2>
-<Title>Notifying <Command>lprsrv</Command> Users
+<Title>Notifying <Command>lprsrv</Command> Users</Title>
 
 <Para>
 The RFC 1179 protocol has provision for notifying users by email.
@@ -77,4 +77,3 @@ The RFC 1179 protocol has provision for notifying users by email.
 </Sect2>
 
 </Sect1>
-

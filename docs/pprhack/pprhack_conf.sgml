@@ -168,9 +168,9 @@ default for the interface is desired.  Default job break numbers for the
 interfaces which come with PPR are defined in the source file <Filename
 class="HeaderFile">include/interfaces.h</Filename>. The meaning of the
 values in <Filename class="HeaderFile">interfaces.h</Filename> can be
-understood by reading the <Command>ppad jobbreak</Command> section of <ULink
-URL="../refman/ppad.8.html">the ppad(8) man page</ULink>.  Any instances of
-this line which occur before the <Literal>Interface:</Literal> line are
+understood by reading the <Command>ppad jobbreak</Command> section of 
+<ULink url="../refman/ppad.8.html">the ppad(8) man page</ULink>.
+Any instances of this line which occur before the <Literal>Interface:</Literal> line are
 ignored.</Para>
 
 </listitem>

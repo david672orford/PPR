@@ -149,11 +149,9 @@ arguments by running <Command>ppr</Command> with the <Option>-G infile:filter</O
 
 </Para>
 
-<Para>
-The filters supplied with PPR, together with their options are described in
-<ULink URL="../refman/ppr.1.html">the
-ppr(1) man page</ULink>, under the section for the <Option>-T</Option> switch.
-</Para>
+<Para>The filters supplied with PPR, together with their options are
+described in <ULink url="../refman/ppr.1.html">the ppr(1) man page</ULink>,
+under the section for the <Option>-T</Option> switch.</Para>
 
 </Sect1>
 

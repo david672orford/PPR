@@ -39,21 +39,29 @@ JADE=jade
 JADETEX=jadetex
 DVIPS=dvips
 PS2PDF=ps2pdf
+XSLTPROC=xsltproc
+FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
 
 # Where are the style sheets?
 #DSSSL_SPEC_HTML=/usr/share/sgml/docbook/dsssl-stylesheets/html/docbook.dsl
 #DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets/print/docbook.dsl
 DSSSL_SPEC_HTML=/usr/share/sgml/docbook/stylesheet/dsssl/modular/html/docbook.dsl
 DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/stylesheet/dsssl/modular/print/docbook.dsl
+XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
+XSL_SPEC_PRINT=../../nonppr_misc/docbook-xsl/fo/docbook.xsl
 
 # Additional file extensions to be used in our rules.
-.SUFFIXES: .pod .html .man .dvi .tex .eps .ps .pdf .sgml .fig .gif .jpeg .png
+.SUFFIXES: .pod .sgml .fo .html .man .dvi .tex .eps .ps .pdf .fig .gif .jpeg .png
 
-# Rule to create an HTML file from a Perl POD file
+#============================================================================
+# Rule to convert POD to HTML using Perl's pod2html
+#============================================================================
 .pod.html:
 	$(POD2HTML) --podpath=. --libpods=$(LIBPODS) $*.pod >$*.html
 
-# Rule to convert POD to nroff format
+#============================================================================
+# Rule to convert POD to nroff format using Perl's pod2man
+#============================================================================
 .pod.man:
 	NAME=`perl -e '$$ARGV[0] =~ s/\.[0-9]$$//; print $$ARGV[0];' $*`; \
 	ln $*.pod $$NAME.pod; \
@@ -61,6 +69,10 @@ DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/stylesheet/dsssl/modular/print/docbook.
 		--section=`perl -e '$$ARGV[0] =~ /([0-9])$$/; print $$1;' $*` \
 		$$NAME.pod >$*.man; \
 	rm $$NAME.pod
+
+#============================================================================
+# Rules to convert Docbook SGML to PostScript and PDF by way of Tex
+#============================================================================
 
 .sgml.tex:
 	-$(JADE) -t tex -d $(DSSSL_SPEC_PRINT) -i tex $*.sgml
@@ -74,8 +86,40 @@ DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/stylesheet/dsssl/modular/print/docbook.
 .ps.pdf:
 	$(PS2PDF) $*.ps $*.pdf
 
+#============================================================================
+# Rules to convert Docbook SGML to HTML using Jade
+#============================================================================
+
+#.sgml.html:
+#	-$(JADE) -t sgml -i html -V nochunks -d $(DSSSL_SPEC_HTML) $*.sgml >$*.html
+
+#============================================================================
+# Rules to convert Docbook SGML to HTML using Xsltproc
+#============================================================================
+
 .sgml.html:
-	-$(JADE) -t sgml -i html -V nochunks -d $(DSSSL_SPEC_HTML) $*.sgml >$*.html
+	$(XSLTPROC) --docbook --output $*.html $(XSL_SPEC_HTML) $*.sgml
+
+#============================================================================
+# Rules to convert Docbook SGML to PostScript and PDF by way
+# of XML Formatted Objects
+#
+# As of the 17 January 2003 CVS version, FOP does a poor job, overprinting
+# some lines.
+#============================================================================
+
+#.sgml.fo:
+#	$(XSLTPROC) --docbook --output $*.fo $(XSL_SPEC_PRINT) $*.sgml
+#
+#.fo.ps:
+#	$(FOP) -fo $*.fo -ps $*.ps
+#
+#.fo.pdf:
+#	$(FOP) -fo $*.fo -pdf $*.pdf
+
+#============================================================================
+# Rules to convert Xfig files to various vector and bitmap formats.
+#============================================================================
 
 .fig.eps:
 	$(FIG2DEV) -L ps $*.fig $*.eps

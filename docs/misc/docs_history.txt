@@ -324,3 +324,10 @@ more information about RIPs and *pprRIP:.
 
 * pprinst/legal.sgml: moved to new directory shared/.
 
+* rules.mk: added rule for generating HTML from Docbook SGML using
+  xsltproc.  Commented out the Jade rule.
+
+* rules.mk: added rules to generate PostScript and PDF from Docbook
+  SGML using xsltproc and FOP but left them commented out as FOP
+  isn't ready yet.
+
