@@ -1,6 +1,6 @@
 #
 # uprint.conf.sample
-# Last modified 17 April 2002.
+# Last modified 18 November 2002.
 #
 # This file defines the locations of the various programs which
 # comprise the LP and LPR spoolers.
@@ -27,14 +27,15 @@
 
 # Information about the real lp programs (as opposed to the uprint look-alikes).
 [real lp]
-  # Is System V lp installed on this system?
-  installed = no
 
   # Should lp, lpstat, and cancel be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lp, uprint-lpstat, and uprint-cancel?
   # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
   # the lp programs to the new locations.
   sidelined = no
+
+  # Is System V lp installed on this system?
+  installed = no
 
   # Which variant of the System V spooler do we have?
   flavor = solaris
@@ -46,14 +47,15 @@
 
 # Information about the real lpr programs (as opposed to the uprint look-alikes).
 [real lpr]
-  # Is BSD LPR (or a derivitive) installed on this system?
-  installed = yes
 
   # Should lpr, lpq, lprm, and lpc be renamed (if they exist) and be replaced
   # with symbolic links to uprint-lpr, uprint-lpq, uprint-lprm, and uprint-lpc?
   # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
   # the lpr programs to the new locations.
   sidelined = no
+
+  # Is BSD LPR (or a derivitive) installed on this system?
+  installed = yes
 
   # What variant of LPR is installed?  The choices are:
   # bsd -- BSD 4.3
