@@ -24,7 +24,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 August 2001.
+# Last modified 30 August 2001.
 #
 
 include ../makeprogs/global.mk
@@ -33,7 +33,7 @@ include ../makeprogs/global.mk
 
 PROGS=filter_pcl
 
-OBJS=filter_pcl.class PCLparse.class PSout.class AssertionFailed.class
+OBJS=filter_pcl.class PCLparse.class PSout.class PSfont.class AssertionFailed.class
 
 #=== Build ==================================================================
 

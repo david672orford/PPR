@@ -10,14 +10,25 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 29 August 2001.
+** Last modified 30 August 2001.
 */
 
 import java.io.*;
 
 class PCLparse
     {
+    // PostScript output object.
     private PSout out;
+
+    // Font structures for the primary and secondary fonts.
+    private PSfont primary;
+    private PSfont secondary;
+
+    // Some of the current state.
+    private int top_margin = 4175;	// In theory, 4275 for 4 lines @ 8 LPI
+    private int left_margin = 2375;
+    private int line_spacing = 1200;	// 6 LPI
+    private int hmi = 720;		// 10 CPI
 
     // Create a new PCL parser and attached an open file to
     // receive the PostScript.
@@ -27,9 +38,10 @@ class PCLparse
 	out.moveto(left_margin, top_margin);
 	out.set_orientation(0);
 	out.set_pagesize((int)(8.5 * 7200), (int)(11 * 7200), "Letter");
-	out.set_font_family("courier");
-	out.set_font_bold(false);
-	out.set_font_size(1200);
+
+	primary = new PSfont();
+	secondary = new PSfont();
+	out.set_font(primary);
     	}
 
     // Call this when there are no more files you want to parse.
@@ -69,19 +81,13 @@ class PCLparse
 	debug(")\n");
 	}
 
-    // Some of the current state.
-    private int top_margin = 4175;	// In theory, 4275 for 4 lines @ 8 LPI
-    private int left_margin = 2375;
-    private int line_spacing = 1200;	// 6 LPI
-    private int hmi = 720;		// 10 CPI
-
     // This function performs a control character function.
     public void control(int c)
         {
 	switch(c)
 	    {
 	    case 8:
-	    	debug_control(c, "backspace");
+	    	//debug_control(c, "backspace");
 		out.rxmoveto(0 - out.get_space_width());
 	    	break;
 	    case 10:
@@ -293,27 +299,26 @@ class PCLparse
 	    case 0x287348:
 	    	debug("primary pitch");
 		hmi = (7200000 / value_thousandths);
-		out.set_font_size((int)(7200000 / 0.6 / value_thousandths + 0.5));
+		primary.set_size((int)(7200000 / 0.6 / value_thousandths + 0.5));
 	    	break;
 	    case 0x297348:
 	    	debug("secondary pitch");
 	    	break;
 	    case 0x266b53:
 	    	debug("set pitch mode: ");
-		out.set_font_family("courier");
 		switch(value_thousandths / 1000)
 		    {
 		    case 0:
 			debug("10.0 cpi");
-			out.set_font_size(1200);	// 12 point
+			primary.set_size(1200);		// 12 point
 			break;
 		    case 2:
 			debug("compressed (16.5-16.7 cpi)");
-			out.set_font_size(720);		// 7.2 point
+			primary.set_size(720);		// 7.2 point
 			break;
 		    case 4:
 			debug("elite (12.0 cpi)");
-			out.set_font_size(1000);	// 10 point
+			primary.set_size(1000);		// 10 point
 			break;
 		    }
 	    	break;
@@ -332,9 +337,9 @@ class PCLparse
 	    case 0x287342:
 	    	debug("primary stroke weight");
 		if(value_thousandths == 0)
-		    out.set_font_bold(false);
+		    primary.set_bold(false);
 		else
-		    out.set_font_bold(true);
+		    primary.set_bold(true);
 	    	break;
 	    case 0x297342:
 	    	debug("secondary stroke weight");
