@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2002.
+# Last modified 20 November 2002.
 #
 
 use lib "?";
@@ -68,11 +68,13 @@ if(!defined $data{members})
     print <<"Head20";
 <title>$title</title>
 </head>
-<frameset rows="50,*">
+<frameset rows="50,*" scrolling="no">
 Head20
 
     print "<frame src=\"$ENV{SCRIPT_NAME}?", form_urlencoded("members", join(' ', @members)), "\">\n";
-    print "<frame name=\"bottom\" src=\"prn_control.cgi?", form_urlencoded("name", $members[0]), "\">\n";
+
+    my $encoded_HIST = form_urlencoded("HIST", $data{HIST});
+    print "<frame name=\"bottom\" src=\"prn_control.cgi?$encoded_HIST;", form_urlencoded("name", $members[0]), "\">\n";
 
     print "</frameset>\n";
     }

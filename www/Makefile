@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 August 2002.
+# Last modified 20 November 2002.
 #
 
 include ../Makefile.conf
@@ -62,7 +62,7 @@ HELPDIR=$(WWWDIR)/help
 #== Inventory ================================================================
 
 # These programs go into PPR's bin directory.
-BIN_PROGS=ppr-passwd ppr-web-control
+BIN_PROGS=ppr-passwd ppr-web
 
 # These programs go into PPR's lib directory.
 LIB_PROGS=ppr-httpd ppr-push-httpd$(DOTEXE)
@@ -100,9 +100,9 @@ HTML_GUI=robots.txt \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
-HTML_HELP_EN=prn_properties.en.html
+HTML_HELP_EN=prn_properties.en.html show_jobs.en.html
 
-HTML_HELP_RU=prn_properties.ru.html
+HTML_HELP_RU=prn_properties.ru.html show_jobs.ru.html
 
 HTML_HELP=$(HTML_HELP_EN) $(HTML_HELP_RU)
 

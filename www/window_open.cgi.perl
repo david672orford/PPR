@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 November 2002.
+# Last modified 20 November 2002.
 #
 
 =pod
@@ -97,7 +97,7 @@ Content-Type: text/html
 <body>
 
 <p>This window should go away in a moment.  If it doesn't, you have 
-probably outsmarted yourself in your attempt to avoid popup ads.
+probably outsmarted yourself in an attempt to avoid popup ads.
 </p>
 <form>
 <input name="manualy" type="button" value="Trying..." onclick="open_ppr()">

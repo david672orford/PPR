@@ -166,6 +166,8 @@ outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
 
+outdated $HOMEDIR/bin/ppr-web-control			# renamed
+
 echo "Done."
 echo
 

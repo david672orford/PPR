@@ -11,15 +11,17 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 16 August 2002.
+# Last modified 20 November 2002.
 #
 
 use 5.005;
 use lib "?";
+require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
 require 'qquery_xlate.pl';
 
+defined($CONFDIR) || die;
 defined(@qquery_available) || die;
 defined(%qquery_xlate) || die;
 
@@ -49,7 +51,7 @@ my ($charset, $content_language) = cgi_intl_init();
 # Make a hash which represents the buttons that should be shown.
 if(!defined $data{controls})
     {
-    $data{controls} = "Settings Refresh Close Help Move Cancel Rush Hold Release Modify Log";
+    $data{controls} = "Queue View Refresh Close Help Move Cancel Rush Hold Release Modify Log";
     }
 my %controls;
 foreach my $b (split(/ /, $data{controls}))
@@ -61,6 +63,14 @@ foreach my $b (split(/ /, $data{controls}))
 # cgi_data_move().
 if(!defined($data{name})) { $data{name} = "all" }
 my $queue = $data{name};
+
+if(!defined($data{type}))
+    {
+    $data{type} = "alias" if(-f "$CONFDIR/aliases/$queue");
+    $data{type} = "group" if(-f "$CONFDIR/groups/$queue");
+    $data{type} = "printer" if(-f "$CONFDIR/printers/$queue");
+    }
+my $queue_type = cgi_data_peek("type", "?");
 
 # These will become hidden fields which will be used to preserve
 # the scroll position across refreshes.
@@ -137,10 +147,10 @@ if(defined($action))
     }
 
 #=============================================================
-# If the "Settings" button was pressed, we produce the
+# If the "View" button was pressed, we produce the
 # HTML document right here in this block.
 #=============================================================
-if(defined($action) && $action eq 'Settings')
+if(defined($action) && $action eq 'View')
 {
 &cgi_data_move('refresh_interval', undef);
 &cgi_data_move('fields', undef);
@@ -249,25 +259,61 @@ Vary: user-agent, accept-language
 <title>$title</title>
 <HTA:APPLICATION navigable="yes"></HTA:APPLICATION>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
+<script type="text/javascript" src="../js/show_queues.js" defer></script>
 <script type="text/javascript" src="../js/show_jobs.js" defer></script>
 <link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
+<script>
+var xlate=new Array();
+Quote10
+
+foreach my $i (
+	N_("View Queue"),
+	N_("Printer Control"),
+	N_("Printer Properties"),
+	N_("Test Page"),
+	N_("Client Configuration"),
+	N_("Printlog"),
+	N_("Delete Printer"),
+	N_("Member Printer Control"),
+	N_("Group Properties"),
+	N_("Delete Group"),
+	N_("Alias Properties"),
+	N_("Delete Alias")
+	)
+    {
+    print 'xlate["', html($i), '"]="', H_($i), '";', "\n";
+    }
+
+print <<"Quote20";
+</script>
 </head>
 <body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
+<div id="popup" class="menu">
+This text is supposed to be hidden.
+</div>
 <form method="POST" action="$ENV{SCRIPT_NAME}">
-Quote10
+Quote20
 
 if($data{controls})
 {
-print "<div class=\"menubar\" style=\"$fixed_div_style_top\">\n";
-isubmit("action", "Settings", _("Settings")) if(defined $controls{Settings});
+print <<"Quote20";
+<div class="menubar" style="$fixed_div_style_top">
+<!-- This is for a Netscape 4.x bug: -->
+<input type="image" border="0" name="action" value="Refresh" src="../images/pixel-clear.png">
+Quote20
+
+isubmit("action", "Queue", _("Queue"), "onclick=\"return $queue_type(event,${\javascript_string($queue)})\"") if(defined $controls{Queue});
+isubmit("action", "View", _("View")) if(defined $controls{View});
 isubmit("action", "Refresh", _("Refresh")) if(defined $controls{Refresh});
 isubmit("action", "Close", _("Close"), 'onclick="window.close()"') if(defined $controls{Close});
-print "<span style='margin-left: 11cm'></span>\n";
+
+print "<span style='margin-left: 9cm'></span>\n";
 if(defined $controls{Help})
     {
     require "cgi_widgets.pl";
     help_button(undef);
     }
+
 print "</div>\n";
 }
 

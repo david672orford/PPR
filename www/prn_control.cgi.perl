@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 10 May 2002.
+# Last modified 20 November 2002.
 #
 
 use lib "?";
@@ -430,7 +430,10 @@ isubmit("action", "Media", N_("_Media"),
 print "<br><br><br>\n";
 isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
 print "<br>\n";
-isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close()\"");
+# We use parent.close() in the next line so that if it opened in a frame by
+# grp_control() it will close the window rather than trying to close the
+# frame (which can't be done).
+isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"parent.close()\"");
 print "</td>\n";
 }
 
@@ -477,14 +480,14 @@ else
 Tail01
 
 # Snap the window size to fit snugly around the document.
-print <<"Tail05";
-<script>
-if(document.width)
-	{
-	window.resizeTo(document.width, document.height);
-	}
-</script>
-Tail05
+#print <<"Tail05";
+#<script>
+#if(document.width)
+#	{
+#	window.resizeTo(document.width, document.height);
+#	}
+#</script>
+#Tail05
 
 print <<"Tail10";
 </body>

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 October 2002.
+# Last modified 20 November 2002.
 #
 
 use 5.004;
@@ -36,7 +36,7 @@ $options->{wiz_imgdir} = "$options->{prefix}images/" if(!defined($options->{wiz_
 $options->{imgdir} = "" if(!defined($options->{imgdir}));
 $options->{imgheight} = 128 if(!defined($options->{imgheight}));
 $options->{imgwidth} = 128 if(!defined($options->{imgwidth}));
-$options->{height} = 430 if(!defined($options->{height}));
+$options->{height} = 425 if(!defined($options->{height}));
 $options->{padding} = 15 if(!defined($options{padding}));
 
 # Turn on table borders if we are running in debug mode.

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 October 2002.
+# Last modified 20 November 2002.
 #
 
 use 5.004;
@@ -36,7 +36,7 @@ my $save_function = shift;	# function to save properties
 my $max_per = shift;		# maximum number of tabs to show at one time
 my $options = shift;
 
-$options->{height} = 450 if(!defined($options->{height}));
+$options->{height} = 425 if(!defined($options->{height}));
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2002.
+# Last modified 20 November 2002.
 #
 
 use lib "?";
@@ -303,7 +303,14 @@ sub save {
 
 &cgi_read_data();
 
-&do_tabbed($tabbed_table, sprintf(_("PPR: Modify Job: %s"), $data{jobname}), \&load, \&save, 7);
+&do_tabbed($tabbed_table,
+	sprintf(_("PPR: Modify Job: %s"),
+	$data{jobname}),
+	\&load, \&save,
+	7,
+	{'height' => 400
+		},
+	);
 
 exit 0;
 

@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 16 August 2002.
+// Last revised 20 November 2002.
 //
 
 //
@@ -138,7 +138,7 @@ function prn_properties(w, printer_name)
 	}
 function prn_testpage(w, printer_name)
 	{
-	window.open('prn_testpage.cgi?name=' + printer_name, '_blank', 'width=775,height=500,resizable');
+	window.open('prn_testpage.cgi?name=' + printer_name, '_blank', 'width=775,height=525,resizable');
 	menu_hide(w);
 	return false;
 	}
@@ -162,7 +162,7 @@ function alias_properties(w, name)
 	}
 function cliconf(w, name)
 	{
-	window.open('cliconf.cgi?name=' + name, '_blank', 'width=675,height=500,resizable');
+	window.open('cliconf.cgi?name=' + name, '_blank', 'width=700,height=525,resizable');
 	menu_hide(w);
 	return false;
 	}

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 November 2002.
+# Last modified 20 November 2002.
 #
 
 #
@@ -94,16 +94,33 @@ switch -exact $selected_browser {
 	set file [open $env(HOME)/.ppr/ppr-web-control.html w 0600]
 
 	puts $file "<html>
+		<head>
+		<title>Transient PPR Window</title>
 		<script>
-		netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserWrite');
-		window.locationbar.visible = false;
-		window.toolbar.visible = false;
-		window.statusbar.visible = false;
-		window.menubar.visible = false;
-		window.personalbar.visible = false;
-		window.resizeTo($width,$height);
-		window.location = '$final_url';
+		function doit ()
+			{
+			try	{
+				netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserWrite');
+				window.locationbar.visible = false;
+				window.toolbar.visible = false;
+				window.statusbar.visible = false;
+				window.menubar.visible = false;
+				window.personalbar.visible = false;
+				}
+			catch(e) { }
+			window.resizeTo($width,$height);
+			window.location = '$final_url';
+			}
 		</script>
+		</head>
+		<body onload=\"doit()\">
+		<p>This window is trying to remove user interface features
+		which are appropriate for browsing the WWW but only get in
+		the way of the PPR web interface.  You browser will ask for
+		your permission to allow these operations.  Please check
+		the box which says \"remember this descision\" and then press
+		the Yes button.</p>
+		</body>
 		</html>"
 	close $file
 

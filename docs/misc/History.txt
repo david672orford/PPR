@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--19 November 2002.
+1.50b1, 13 November 2002--20 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -7977,6 +7977,16 @@ line was being parsed twice.
 
 * www/ppr-web-control.tcl, window_open.cgi.perl: fleshed out adding opening 
   of Mozilla using $HOME/.ppr/ppr-web-control.html so that browser write
-  privlege can be granted and we cna open without an intermediate window. 
-  Added support for Konqueror, Links, W3m, and Lynx.
+  privlege can be granted and we can open without an intermediate window;
+  Added support for Konqueror, Links, W3m, and Lynx; renamed to ppr-web.tcl.
+
+* fixup/fixup_links.sh: added ppr-web to the list of things liked to the
+  public bin directory.
+
+* www/grp_control.cgi.perl, prn_control.cgi.perl: fixed bugs with sizing
+  and with closing of the whole frameset in grp_control.cgi.
+
+* www/show_jobs.cgi.perl, show_jobs.js, show_jobs.css: added "Queue" which
+  pops up the menu that show_queues.cgi pops up.  Changed "Settings" to
+  "View".
 

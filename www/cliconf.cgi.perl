@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 May 2002.
+# Last modified 20 November 2002.
 #
 
 use lib "?";
@@ -37,20 +37,44 @@ require "cgi_intl.pl";
 
 $printcap_wizard_table = [
 	#===========================================
+	# Choose What to Create
+	#===========================================
+	{
+	'title' => N_("Downloadable Client Configuation Files"),
+	'picture' => "cliconf1.png",
+	'dopage' => sub {
+		print "<p>", 
+			H_("Using this program you can download various files which help you to use PPR.\n"
+			. "These include shell scripts for configuring client computers to send print\n"
+			. "jobs to PPR, PPD files, and icons for opening the PPR web interface."), "</p>\n";
+
+		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), cgi_data_peek("name", "?")), "</span><br>\n";
+
+		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="kde_icon">', H_("KDE Icon"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
+		},
+	'buttons' => [N_("_Cancel"), N_("_Next")]
+	},
+
+	#===========================================
 	# Choose a Spooler
 	#===========================================
 	{
 	'title' => N_("Create Client Script: Choose a Spooler"),
 	'picture' => "cliconf1.png",
 	'dopage' => sub {
+		die unless(cgi_data_peek("what_to_download", "?") eq "spooler_config");
+
 		my $name = cgi_data_peek("name", "?");
 		$data{host} = $ENV{SERVER_NAME};
 
-		print "<p>", html(sprintf(_("This program will create a script which you can download and run\n"
+		print "<p>", html(sprintf(
+			_("You have chosen to create a script which you can download and run\n"
 			. "in order to set up your local spooler to print to the PPR\n"
 			. "queue \"%s\"."), $name)), "</p>\n";
 
-		print "<p>", H_("Please indicate which print spooler you are using:"), "<br>\n";
+		print "<p><span class=\"label\">", H_("Please indicate which print spooler you are using:"), "</span><br>\n";
 		print '<input type="radio" name="spooler" value="lpr">', H_("BSD lpd"), "<br>\n";
 		print '<input type="radio" name="spooler" value="lprng">', H_("LPR Next Generation"), "<br>\n";
 		print "</p>\n";
@@ -62,8 +86,7 @@ $printcap_wizard_table = [
 		    return _("You must choose a spooler!");
 		    }
 		return undef;
-		},
-	'buttons' => [N_("_Cancel"), N_("_Next")]
+		}
 	},
 
 	#===========================================
@@ -120,30 +143,21 @@ $printcap_wizard_table = [
 ];
 
 #===========================================
-# Main
+# This function answers a request to 
+# download a spooler configuration script.  
 #===========================================
 
-&cgi_read_data();
-
-if(cgi_data_move("action", "") ne "Download")
+sub gen_spooler_config
     {
-    &do_wizard($printcap_wizard_table,
-	{
-	'auth' => 0,
-	'imgdir' => "../images/"
-	});
-    exit 0;
-    }
+    my $spooler = cgi_data_move("spooler", "?");
+    my $localname = cgi_data_move("localname", "?");
+    my $name = cgi_data_move("name", "?");
+    my $host = cgi_data_move("host", "?");
+    my $comment = cgi_data_move("comment", "");
+    my $script_filename = "setup_$localname.sh";
+    my $creation_date = scalar localtime(time);
 
-my $spooler = cgi_data_move("spooler", "?");
-my $localname = cgi_data_move("localname", "?");
-my $name = cgi_data_move("name", "?");
-my $host = cgi_data_move("host", "?");
-my $comment = cgi_data_move("comment", "");
-my $script_filename = "setup_$localname.sh";
-my $creation_date = scalar localtime(time);
-
-print <<"EndHead";
+    print <<"EndHead";
 Content-Type: application/octet-stream; name=$script_filename
 Content-Disposition: inline; filename=$script_filename
 
@@ -161,9 +175,9 @@ Content-Disposition: inline; filename=$script_filename
 
 EndHead
 
-if($spooler eq "lpr" || $spooler eq "lprng")
-{
-print <<"EndOfBSD";
+    if($spooler eq "lpr" || $spooler eq "lprng")
+	{
+	print <<"EndOfBSD";
 cat >>/etc/printcap <<'EndOfPrintcap'
 
 $localname|$comment:\\
@@ -178,10 +192,38 @@ EndOfPrintcap
 mkdir /var/spool/lpd/$name
 
 EndOfBSD
-}
+	}
+    else
+	{
+	die;
+	}
+    }
+
+#===========================================
+# Main
+#===========================================
+
+&cgi_read_data();
+
+if(cgi_data_move("action", "") eq "Download")
+    {
+    if(cgi_data_peek("what_to_download", "") eq "spooler_config")
+	{
+	gen_spooler_config();
+	}
+    else
+	{
+	die;
+	}
+    }
 else
-{
-die;
-}
+    {
+    &do_wizard($printcap_wizard_table,
+	{
+	'auth' => 0,
+	'imgdir' => "../images/"
+	});
+    exit 0;
+    }
 
 # end of file
