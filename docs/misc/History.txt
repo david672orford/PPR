@@ -8343,3 +8343,9 @@ line was being parsed twice.
 * README.txt: added explanation of purpose of z_install_begin/
   and z_install_end/.
 
+* ppad/ppad.c:main(): clarified message about unknown subcommand so as to
+  make clearer to the user what happens when he types "ppad --debug ppd
+  dummy 'HP LaserJet 4000 Series" (for example).
+
+* Did same as above for ppop.
+

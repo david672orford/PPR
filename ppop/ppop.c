@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 24 February 2003.
 */
 
 /*
@@ -1333,7 +1333,7 @@ int main(int argc, char *argv[])
 	{
 	if((result = dispatch(&argv[getopt_state.optind])) == -1)
 	    {
-	    fprintf(errors, _("Unknown command, try \"ppop help\".\n"));
+	    fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
 	    result = EXIT_SYNTAX;
 	    }
 	}

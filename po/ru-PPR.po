@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-01-14 15:55-0500\n"
+"POT-Creation-Date: 2003-02-16 20:04-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -107,7 +107,7 @@ msgstr ""
 msgid "\t--title <string>           set default document title\n"
 msgstr ""
 
-#: ../fontutils/ppr-indexfonts.c:442 ../ppop/ppop.c:1139
+#: ../fontutils/ppr-indexfonts.c:452 ../ppop/ppop.c:1139
 msgid ""
 "\t--version\n"
 "\t--help\n"
@@ -645,7 +645,7 @@ msgstr ""
 msgid "%s%s is entirely whitespace"
 msgstr ""
 
-#: ../interfaces/tcpip.c:316
+#: ../interfaces/tcpip.c:319
 #, c-format
 msgid "%s() failed, errno=%d (%s)"
 msgstr ""
@@ -658,6 +658,11 @@ msgstr ""
 #: ../ppr/ppr_mactt.c:455
 #, c-format
 msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../libuprint/uprint_print_rfc1179.c:560
+#, c-format
+msgid "%s(): local nodename or username is too long"
 msgstr ""
 
 #: ../ppr/ppr_mactt.c:463
@@ -681,7 +686,7 @@ msgid "%s..."
 msgstr ""
 
 #: ../filter_dotmatrix/main.c:580 ../filter_lp/filter_lp.c:1365
-#: ../filters_misc/filter_hexdump.c:178 ../filters_misc/make_dvips_conf.c:79
+#: ../filters_misc/filter_hexdump.c:191 ../filters_misc/make_dvips_conf.c:79
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -736,13 +741,13 @@ msgstr ""
 msgid "%s: This program must be setuid root!\n"
 msgstr ""
 
-#: ../fontutils/ppr-indexfonts.c:508
+#: ../fontutils/ppr-indexfonts.c:518
 #, c-format
 msgid "%s: can't create \"%s\", errno=%d (%s)\n"
 msgstr ""
 
 #: ../fontutils/ppr-indexfonts.c:159 ../fontutils/ppr-indexfonts.c:196
-#: ../fontutils/ppr-indexfonts.c:492 ../ppad/ppad_filt.c:89
+#: ../fontutils/ppr-indexfonts.c:502 ../ppad/ppad_filt.c:89
 #, c-format
 msgid "%s: can't open \"%s\", errno=%d (%s)\n"
 msgstr ""
@@ -768,7 +773,7 @@ msgstr ""
 msgid "%s: lp -i and -H are not yet implemented\n"
 msgstr ""
 
-#: ../fontutils/ppr-indexfonts.c:499
+#: ../fontutils/ppr-indexfonts.c:509
 #, c-format
 msgid "%s: no [%s] section in \"%s\"\n"
 msgstr ""
@@ -845,23 +850,23 @@ msgstr ""
 msgid "(Communication failure while sending data file.)"
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:280
+#: ../libuprint/uprint_print_rfc1179.c:295 ../libuprint/uprint_rfc1179.c:110
 msgid "(Connection lost while negotiating to send control file failed.)"
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:418
+#: ../libuprint/uprint_print_rfc1179.c:433 ../libuprint/uprint_rfc1179.c:206
 msgid "(Connection lost while negotiating to send data file.)"
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:568
+#: ../libuprint/uprint_print_rfc1179.c:583 ../libuprint/uprint_rfc1179.c:90
 msgid "(Connection lost while negotiating to send job.)"
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:448
+#: ../libuprint/uprint_print_rfc1179.c:463 ../libuprint/uprint_rfc1179.c:236
 msgid "(Connection lost while sending data file.)"
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:302
+#: ../libuprint/uprint_print_rfc1179.c:317 ../libuprint/uprint_rfc1179.c:132
 msgid "(Connection lost while transmitting control file.)"
 msgstr ""
 
@@ -1069,7 +1074,7 @@ msgstr ""
 msgid "Average: default_landscape_lentrigger=%d\n"
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:82
+#: ../libuprint/lpr_connect.c:97
 msgid "Bad port specification in printer address."
 msgstr ""
 
@@ -1144,8 +1149,8 @@ msgid "Can't open \"%s\", errno=%d (%s)\n"
 msgstr ""
 
 #: ../interfaces/parallel.c:136 ../interfaces/usblp.c:135
-#: ../libuprint/claim_remote.c:86 ../libuprint/uprint_print_rfc1179.c:384
-#: ../ppop/ppop_cmds_other.c:827
+#: ../libuprint/claim_remote.c:86 ../libuprint/uprint_print_rfc1179.c:399
+#: ../libuprint/uprint_rfc1179.c:172 ../ppop/ppop_cmds_other.c:827
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)."
 msgstr ""
@@ -1244,7 +1249,7 @@ msgstr ""
 msgid "Condition \"%s\" contains no \"=\" on \"%s\" line %d"
 msgstr ""
 
-#: ../interfaces/serial.c:487 ../interfaces/tcpip.c:300
+#: ../interfaces/serial.c:487 ../interfaces/tcpip.c:303
 msgid "Connection to printer lost."
 msgstr ""
 
@@ -1626,7 +1631,7 @@ msgstr ""
 msgid "Height: (%.2f in, %.1f pt, %.1f cm) "
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:116
+#: ../libuprint/lpr_connect.c:131
 #, c-format
 msgid "IP address lookup for \"%s\" failed."
 msgstr ""
@@ -1740,7 +1745,7 @@ msgstr ""
 
 #: ../interfaces/serial.c:285 ../interfaces/serial.c:299
 #: ../interfaces/serial.c:391 ../interfaces/serial.c:402
-#: ../interfaces/tcpip.c:663
+#: ../interfaces/tcpip.c:666
 msgid "Invalid boolean value"
 msgstr ""
 
@@ -2059,7 +2064,7 @@ msgstr ""
 msgid "No spaces allowed before equals sign"
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:191
+#: ../libuprint/lpr_connect.c:206
 msgid "No unused TCP ports available in reserved range."
 msgstr ""
 
@@ -2156,7 +2161,7 @@ msgid "Option name is illegaly long"
 msgstr ""
 
 #: ../interfaces/atalk_cap.c:542 ../interfaces/lpr.c:539
-#: ../interfaces/serial.c:431 ../interfaces/tcpip.c:684
+#: ../interfaces/serial.c:431 ../interfaces/tcpip.c:687
 #, c-format
 msgid "Option parsing error:  %s"
 msgstr ""
@@ -2324,7 +2329,7 @@ msgstr ""
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr ""
 
-#: ../interfaces/tcpip.c:215
+#: ../interfaces/tcpip.c:218
 #, c-format
 msgid ""
 "Printer \"%s\" is not responding.\n"
@@ -2357,7 +2362,7 @@ msgstr ""
 msgid "Printer address doesn't exist."
 msgstr ""
 
-#: ../interfaces/tcpip.c:248
+#: ../interfaces/tcpip.c:251
 #, c-format
 msgid "Printer at \"%s\" has refused connection."
 msgstr ""
@@ -2460,22 +2465,22 @@ msgstr ""
 msgid "Remote LPR/LPD queue \"%s\" does not have room for data file."
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:307
+#: ../libuprint/uprint_print_rfc1179.c:322 ../libuprint/uprint_rfc1179.c:137
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" denies correct receipt of control file."
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:453
+#: ../libuprint/uprint_print_rfc1179.c:468 ../libuprint/uprint_rfc1179.c:241
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" denies correct receipt of data file."
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:424
+#: ../libuprint/uprint_print_rfc1179.c:439 ../libuprint/uprint_rfc1179.c:212
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" does not have room for data file."
 msgstr ""
 
-#: ../libuprint/uprint_print_rfc1179.c:574
+#: ../libuprint/uprint_print_rfc1179.c:589 ../libuprint/uprint_rfc1179.c:95
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\" (%d)."
 msgstr ""
@@ -2485,7 +2490,8 @@ msgstr ""
 msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."
 msgstr ""
 
-#: ../interfaces/lpr.c:146 ../libuprint/uprint_print_rfc1179.c:285
+#: ../interfaces/lpr.c:146 ../libuprint/uprint_print_rfc1179.c:300
+#: ../libuprint/uprint_rfc1179.c:115
 msgid "Remote LPR/LPD system does not have room for control file."
 msgstr ""
 
@@ -2493,7 +2499,7 @@ msgstr ""
 msgid "Remote User"
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:240
+#: ../libuprint/lpr_connect.c:255
 #, c-format
 msgid "Remote system \"%s\" has refused the connection."
 msgstr ""
@@ -2517,7 +2523,7 @@ msgstr ""
 msgid "Requested medium is not listed in the media database"
 msgstr ""
 
-#: ../libuprint/lpr_failover.c:43
+#: ../libuprint/lpr_failover.c:57
 #, c-format
 msgid "Resorting to backup server \"%s\"."
 msgstr ""
@@ -2600,11 +2606,11 @@ msgstr ""
 msgid "Space missing after keyword \"%.*s\""
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:61
+#: ../libuprint/lpr_connect.c:76
 msgid "Spaces and tabs are not allowed in LPR hostnames."
 msgstr ""
 
-#: ../interfaces/tcpip.c:132
+#: ../interfaces/tcpip.c:135
 #, c-format
 msgid ""
 "Spaces and tabs not allowed in a TCP/IP printer address.\"%s\" does not "
@@ -2667,17 +2673,17 @@ msgstr ""
 msgid "System open file table is full."
 msgstr ""
 
-#: ../interfaces/tcpip.c:303
+#: ../interfaces/tcpip.c:306
 #, c-format
 msgid "TCP/IP communication failed, errno=%d (%s)."
 msgstr ""
 
-#: ../interfaces/tcpip.c:162
+#: ../interfaces/tcpip.c:165
 #, c-format
 msgid "TCP/IP interface can't determine IP address for \"%s\"."
 msgstr ""
 
-#: ../interfaces/tcpip.c:139
+#: ../interfaces/tcpip.c:142
 #, c-format
 msgid ""
 "TCP/IP printer address must be in form \"host:portnum\",\"%s\" does not "
@@ -2830,7 +2836,7 @@ msgid "The job property \"%s\" does not exist or is not writable.\n"
 msgstr ""
 
 #: ../interfaces/lpr.c:431 ../interfaces/parallel.c:353
-#: ../interfaces/serial.c:527 ../interfaces/tcpip.c:526
+#: ../interfaces/serial.c:527 ../interfaces/tcpip.c:529
 #: ../interfaces/usblp.c:258
 #, c-format
 msgid ""
@@ -2963,18 +2969,18 @@ msgstr ""
 msgid "This program must be setuid and owned by \"%s\""
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:235
+#: ../libuprint/lpr_connect.c:250
 #, c-format
 msgid "Timeout while trying to connect to lpd server \"%s\"."
 msgstr ""
 
-#: ../interfaces/tcpip.c:231
+#: ../interfaces/tcpip.c:234
 msgid ""
 "Timeout while trying to connect to printer.(Connect() reported error "
 "ETIMEDOUT.)"
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:324
+#: ../libuprint/lpr_connect.c:339
 msgid "Timeout while waiting for response from print server."
 msgstr ""
 
@@ -3425,7 +3431,7 @@ msgid ""
 "\"."
 msgstr ""
 
-#: ../fontutils/ppr-indexfonts.c:440 ../lprsrv/lprsrv.c:158
+#: ../fontutils/ppr-indexfonts.c:450 ../lprsrv/lprsrv.c:158
 #: ../ppop/ppop.c:1127
 msgid "Valid switches:\n"
 msgstr ""
@@ -4558,7 +4564,7 @@ msgstr ""
 
 #: ../interfaces/atalk_ali.c:814 ../interfaces/atalk_cap.c:544
 #: ../interfaces/lpr.c:541 ../interfaces/parallel.c:311
-#: ../interfaces/serial.c:433 ../interfaces/tcpip.c:686
+#: ../interfaces/serial.c:433 ../interfaces/tcpip.c:689
 #: ../interfaces/usblp.c:216
 msgid "right here"
 msgstr ""
@@ -4652,7 +4658,7 @@ msgstr ""
 
 #: ../interfaces/atalk_ali.c:803 ../interfaces/atalk_cap.c:533
 #: ../interfaces/lpr.c:529 ../interfaces/parallel.c:299
-#: ../interfaces/serial.c:422 ../interfaces/tcpip.c:674
+#: ../interfaces/serial.c:422 ../interfaces/tcpip.c:677
 #: ../interfaces/usblp.c:204
 msgid "unrecognized keyword"
 msgstr ""
@@ -4673,7 +4679,7 @@ msgstr ""
 msgid "value is not in the correct format"
 msgstr ""
 
-#: ../interfaces/tcpip.c:638
+#: ../interfaces/tcpip.c:641
 msgid "value must be \"engaged\" or \"error\""
 msgstr ""
 
@@ -4686,17 +4692,17 @@ msgstr ""
 msgid "value must be \"true\" or \"false\""
 msgstr ""
 
-#: ../interfaces/parallel.c:270 ../interfaces/tcpip.c:552
-#: ../interfaces/tcpip.c:588 ../interfaces/tcpip.c:600
-#: ../interfaces/tcpip.c:621 ../interfaces/tcpip.c:650
+#: ../interfaces/parallel.c:270 ../interfaces/tcpip.c:555
+#: ../interfaces/tcpip.c:591 ../interfaces/tcpip.c:603
+#: ../interfaces/tcpip.c:624 ../interfaces/tcpip.c:653
 #: ../interfaces/usblp.c:197
 msgid "value must be 0 or a positive integer"
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:767 ../interfaces/atalk_ali.c:777
 #: ../interfaces/atalk_cap.c:507 ../interfaces/atalk_cap.c:517
-#: ../interfaces/lpr.c:502 ../interfaces/lpr.c:511 ../interfaces/tcpip.c:564
-#: ../interfaces/tcpip.c:576
+#: ../interfaces/lpr.c:502 ../interfaces/lpr.c:511 ../interfaces/tcpip.c:567
+#: ../interfaces/tcpip.c:579
 msgid "value must be a positive integer"
 msgstr ""
 

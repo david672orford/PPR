@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-01-14 15:56-0500\n"
+"POT-Creation-Date: 2003-02-16 20:04-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -40,67 +40,61 @@ msgstr ""
 msgid "No \"Interface:\" line in %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:87 ../pprdrv/pprdrv_flag.c:245
-#: ../pprdrv/pprdrv_lw_messages.c:48 ../pprdrv/pprdrv_pjl_messages.c:55
-#, c-format
-msgid "Can't open \"%s\", errno=%d (%s)"
-msgstr ""
-
-#: ../pprdrv/pprdrv_capable.c:116
+#: ../pprdrv/pprdrv_capable.c:132
 #, c-format
 msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:145
+#: ../pprdrv/pprdrv_capable.c:161
 #, c-format
 msgid ""
 "+Printer \"%s\" may not print this job correctly for the following reason"
 "(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:391
+#: ../pprdrv/pprdrv_capable.c:396
 #, c-format
 msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:446 ../pprdrv/pprdrv_capable.c:457
+#: ../pprdrv/pprdrv_capable.c:451 ../pprdrv/pprdrv_capable.c:462
 #, c-format
 msgid "Resource \"%s %s %s %d\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:448 ../pprdrv/pprdrv_capable.c:459
+#: ../pprdrv/pprdrv_capable.c:453 ../pprdrv/pprdrv_capable.c:464
 #, c-format
 msgid "Resource \"%s %s\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:554 ../pprdrv/pprdrv_capable.c:559
+#: ../pprdrv/pprdrv_capable.c:559 ../pprdrv/pprdrv_capable.c:564
 #, c-format
 msgid "Requirement \"%s\" can't be met."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:569
+#: ../pprdrv/pprdrv_capable.c:574
 #, c-format
 msgid "Required language level (%d) exceeds printer's language level (%d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:583
+#: ../pprdrv/pprdrv_capable.c:588
 msgid "Printer does not have all required extensions."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:597
+#: ../pprdrv/pprdrv_capable.c:600
 msgid "Printer is not permitted to print grayscale documents."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:654
+#: ../pprdrv/pprdrv_capable.c:657
 msgid "Communications channel cannot pass required codes."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:666
+#: ../pprdrv/pprdrv_capable.c:669
 #, c-format
 msgid "Job has %d pages but allowed range for this printer is %d--%d."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:679
+#: ../pprdrv/pprdrv_capable.c:682
 #, c-format
 msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
 msgstr ""
@@ -145,7 +139,14 @@ msgstr ""
 msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:316
+#: ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:67
+#: ../pprdrv/pprdrv_log.c:80 ../pprdrv/pprdrv_lw_messages.c:48
+#: ../pprdrv/pprdrv_pjl_messages.c:55
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_flag.c:331
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -154,57 +155,57 @@ msgid ""
 "\t\t%s =\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:521
+#: ../pprdrv/pprdrv_flag.c:536
 #, c-format
 msgid "End of job %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:524 ../pprdrv/pprdrv_flag.c:542
+#: ../pprdrv/pprdrv_flag.c:539 ../pprdrv/pprdrv_flag.c:557
 #, c-format
 msgid "Title: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:533
+#: ../pprdrv/pprdrv_flag.c:548
 #, c-format
 msgid "Job ID: %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:536
+#: ../pprdrv/pprdrv_flag.c:551
 #, c-format
 msgid "Routing: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:539
+#: ../pprdrv/pprdrv_flag.c:554
 #, c-format
 msgid "Creator: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:554
+#: ../pprdrv/pprdrv_flag.c:569
 #, c-format
 msgid "Print Date: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:561
+#: ../pprdrv/pprdrv_flag.c:576
 #, c-format
 msgid "Pages: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:562
+#: ../pprdrv/pprdrv_flag.c:577
 #, c-format
 msgid "Sheets: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:568
+#: ../pprdrv/pprdrv_flag.c:583
 #, c-format
 msgid "Copies: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:587
+#: ../pprdrv/pprdrv_flag.c:602
 #, c-format
 msgid "User \"%s\" is inexplicably absent from the charge account database."
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:593
+#: ../pprdrv/pprdrv_flag.c:608
 #, c-format
 msgid "Balance before printing this job: %s"
 msgstr ""
@@ -362,6 +363,16 @@ msgstr ""
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", removing existing code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_reason.c:102
+#, c-format
+msgid ""
+"The PostScript error indicated below occured while printing on \"%s\".\n"
+msgstr ""
+
+#: ../pprdrv/pprdrv_reason.c:134
+msgid "Probable cause: "
 msgstr ""
 
 #: ../pprdrv/pprdrv_rip.c:90

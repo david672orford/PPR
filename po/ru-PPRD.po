@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-01-14 15:56-0500\n"
+"POT-Creation-Date: 2003-02-16 20:05-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -266,29 +266,38 @@ msgstr ""
 msgid "Mischief afoot, pprdrv stopt by signal %d (%s)."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:453
+#: ../pprd/pprd_pprdrv.c:455
+msgid ""
+"Printing aborted because pprdrv died.  The stated reason for its death "
+"(killed\n"
+"by signal 0) is nonsense but may indicate that dynamic linking failed due to "
+"a\n"
+"problem with the shared library search path."
+msgstr ""
+
+#: ../pprd/pprd_pprdrv.c:463
 #, c-format
 msgid ""
 "Printing aborted because pprdrv was killed by signal %d (%s).\n"
 "This was not expected and the cause is unknown."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:458
+#: ../pprd/pprd_pprdrv.c:469
 msgid ""
 "Unexpected pprdrv shutdown.  It claims to have received a signal to "
 "terminate."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:478
+#: ../pprd/pprd_pprdrv.c:489
 #, c-format
 msgid "Unrecognized exit code %d returned by pprdrv."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:492
+#: ../pprd/pprd_pprdrv.c:503
 msgid "Printer placed in fault mode, no auto-retry."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:500
+#: ../pprd/pprd_pprdrv.c:511
 msgid "Printer placed in auto-retry mode."
 msgstr ""
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-01-14 15:56-0500\n"
+"POT-Creation-Date: 2003-02-16 20:05-0500\n"
 "PO-Revision-Date: 2002-11-05 16:52-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:38
 msgid "Add an Alias"
-msgstr "Сделеть Новый Alias"
+msgstr "Сделеть Новый Псевдоним"
 
 #: ../www/alias_addwiz.cgi.perl:41
 msgid "PPR Alias Creation"
-msgstr "PPR Создаие Alias"
+msgstr "PPR Создаие Псевдонима"
 
 #: ../www/alias_addwiz.cgi.perl:43
 msgid ""
@@ -40,35 +40,35 @@ msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:51 ../www/alias_properties.cgi.perl:35
 msgid "Alias Name:"
-msgstr "Название Alias:"
+msgstr "Название :"
 
 #: ../www/alias_addwiz.cgi.perl:57
 msgid "You must enter a name for the alias!"
-msgstr "Вам нужно вовусти название для alias!"
+msgstr "Вам нужно ввести название для псевдонима!"
 
 #: ../www/alias_addwiz.cgi.perl:59
 #, c-format
 msgid "The alias \"%s\" already exists!"
-msgstr "Alias \"%s\" уже существует!"
-
-#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:298
-#: ../www/cliconf.cgi.perl:66 ../www/grp_addwiz.cgi.perl:62
-#: ../www/prn_addwiz.cgi.perl:160
-msgid "_Next"
-msgstr "На Следеющую"
+msgstr "Псевдоним \"%s\" уже существует!"
 
 #: ../www/alias_addwiz.cgi.perl:62 ../www/alias_addwiz.cgi.perl:130
-#: ../www/cgi_tabbed.pl:331 ../www/cgi_wizard.pl:298
 #: ../www/cliconf.cgi.perl:66 ../www/grp_addwiz.cgi.perl:62
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:160
 #: ../www/prn_addwiz.cgi.perl:647 ../www/prn_testpage.cgi.perl:95
-#: ../www/show_jobs.cgi.perl:572
+#: ../www/show_jobs.cgi.perl:572 ../www/cgi_tabbed.pl:331
+#: ../www/cgi_wizard.pl:298
 msgid "_Cancel"
 msgstr "Отменять"
 
+#: ../www/alias_addwiz.cgi.perl:62 ../www/cliconf.cgi.perl:66
+#: ../www/grp_addwiz.cgi.perl:62 ../www/prn_addwiz.cgi.perl:160
+#: ../www/cgi_wizard.pl:298
+msgid "_Next"
+msgstr "На Следеющую"
+
 #: ../www/alias_addwiz.cgi.perl:69
 msgid "For What an Alias"
-msgstr "Чтого Alias"
+msgstr "Для Чего Псевдоним"
 
 #: ../www/alias_addwiz.cgi.perl:89
 #, c-format
@@ -105,8 +105,8 @@ msgstr ""
 msgid "You must supply a description!"
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:298
-#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:647
+#: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
+#: ../www/prn_addwiz.cgi.perl:647 ../www/cgi_wizard.pl:298
 msgid "_Back"
 msgstr "Обротно"
 
@@ -123,12 +123,12 @@ msgstr "Сохранние Alias"
 msgid "Saving new alias:"
 msgstr "Сохранаем новый alias:"
 
-#: ../www/alias_addwiz.cgi.perl:155 ../www/cgi_tabbed.pl:322
-#: ../www/cliconf.cgi.perl:89 ../www/cliconf.cgi.perl:172
-#: ../www/delete_queue.cgi.perl:135 ../www/grp_addwiz.cgi.perl:153
-#: ../www/prn_addwiz.cgi.perl:681 ../www/prn_control.cgi.perl:425
-#: ../www/prn_media.cgi.perl:197 ../www/prn_testpage.cgi.perl:134
-#: ../www/show_queues.cgi.perl:252
+#: ../www/alias_addwiz.cgi.perl:155 ../www/cliconf.cgi.perl:89
+#: ../www/cliconf.cgi.perl:172 ../www/delete_queue.cgi.perl:135
+#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:681
+#: ../www/prn_control.cgi.perl:425 ../www/prn_media.cgi.perl:197
+#: ../www/prn_testpage.cgi.perl:134 ../www/show_queues.cgi.perl:252
+#: ../www/cgi_tabbed.pl:322
 msgid "_Close"
 msgstr "Закрыть"
 
@@ -255,7 +255,7 @@ msgstr "Дополнительный>>"
 
 #: ../www/cgi_tabbed.pl:332
 msgid "_Save"
-msgstr "Сохроить"
+msgstr "Сохранить"
 
 #: ../www/cliconf.cgi.perl:44
 msgid "Downloadable Client Configuation Files"
@@ -272,7 +272,7 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:59
 #, c-format
 msgid "What do you want to download for the queue \"%s\"?"
-msgstr ""
+msgstr "Что вы хотите загрузить относительно очереди \"%s\"?"
 
 #: ../www/cliconf.cgi.perl:61
 msgid "Spooler Configuration Script"
@@ -298,7 +298,7 @@ msgstr ""
 
 #: ../www/cliconf.cgi.perl:87 ../www/cliconf.cgi.perl:166
 msgid "_Download"
-msgstr ""
+msgstr "Загрузить"
 
 #: ../www/cliconf.cgi.perl:97
 msgid "Create Client Script: Choose a Spooler"
@@ -409,7 +409,7 @@ msgstr "Нет"
 
 #: ../www/commentary_select.cgi.perl:113
 msgid "Player:"
-msgstr ""
+msgstr "Игратель:"
 
 #: ../www/commentary_select.cgi.perl:129
 msgid ""
@@ -434,7 +434,7 @@ msgstr "Удалить Группу"
 #: ../www/delete_queue.cgi.perl:57
 #, c-format
 msgid "Delete Alias \"%s\""
-msgstr ""
+msgstr "Удалить Псевдоним \"%s\""
 
 #: ../www/delete_queue.cgi.perl:83
 #, c-format
@@ -816,10 +816,6 @@ msgstr ""
 
 #: ../www/ppd_select.pl:141
 msgid "TrueType Rasterizer"
-msgstr ""
-
-#: ../www/ppd_select.pl:142 ../www/prn_properties.cgi.perl:206
-msgid "RIP"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:61
@@ -1225,12 +1221,12 @@ msgstr ""
 msgid "Pages completed:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:348
-msgid "Bytes Unsent"
-msgstr ""
-
 #: ../www/prn_control.cgi.perl:348 ../www/show_printlog.cgi.perl:157
 msgid "Bytes Sent"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:348
+msgid "Bytes Unsent"
 msgstr ""
 
 #: ../www/prn_control.cgi.perl:379
@@ -1385,6 +1381,10 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:197
 msgid "No PPD file is selected!"
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:206 ../www/ppd_select.pl:142
+msgid "RIP"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:229
@@ -1949,19 +1949,11 @@ msgid "Can't open log file \"%s\", %s\n"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Proxy For"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
 msgid "For"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Unix User"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
-msgid "Time"
+msgid "Job ID"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
@@ -1969,15 +1961,15 @@ msgid "Printer"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Job ID"
+msgid "Proxy For"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:156
-msgid "Total Sides"
+#: ../www/show_printlog.cgi.perl:155
+msgid "Time"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:156
-msgid "Total Sheets"
+#: ../www/show_printlog.cgi.perl:155
+msgid "Unix User"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
@@ -1992,16 +1984,12 @@ msgstr ""
 msgid "Queued Time"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:157
-msgid "PS Bytes"
+#: ../www/show_printlog.cgi.perl:156
+msgid "Total Sheets"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:157
-msgid "Start Pages"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:157
-msgid "Increment"
+#: ../www/show_printlog.cgi.perl:156
+msgid "Total Sides"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
@@ -2009,7 +1997,19 @@ msgid "Charge"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
+msgid "Increment"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
 msgid "PJL Pages"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
+msgid "PS Bytes"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
+msgid "Start Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:158
@@ -2167,16 +2167,12 @@ msgid "Component"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
-msgid "Debian Package Name"
-msgstr ""
-
-#: ../www/test_components.cgi.perl:149
-msgid "Source Download"
-msgstr ""
-
-#: ../www/test_components.cgi.perl:149
 msgid "Critical?"
 msgstr "Важно?"
+
+#: ../www/test_components.cgi.perl:149
+msgid "Debian Package Name"
+msgstr ""
 
 #: ../www/test_components.cgi.perl:149
 msgid "Present?"
@@ -2184,4 +2180,8 @@ msgstr ""
 
 #: ../www/test_components.cgi.perl:149
 msgid "Redhat Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
+msgid "Source Download"
 msgstr ""

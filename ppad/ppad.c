@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 24 February 2003.
 */
 
 /*
@@ -46,7 +46,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 #include "ppad.h"
 #include "version.h"
@@ -650,7 +649,7 @@ int main(int argc, char *argv[])
     /* command was not recognized, give help */
     if(retval == -1)
     	{
-	fputs("ppad: unknown sub-command, try \"ppad help\"\n", errors);
+	fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
 	retval = EXIT_SYNTAX;
 	}
 

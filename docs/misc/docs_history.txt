@@ -361,7 +361,7 @@ more information about RIPs and *pprRIP:.
 
 
 
-1.51, 15 February 2003--21 February 2003.
+1.51, 15 February 2003--24 February 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -373,5 +373,6 @@ more information about RIPs and *pprRIP:.
 
 * uprint/uprint-lpstat.c: partial update, still much work to do
 
-
+* refman/ppr.1.pod: fixed -D description to reflect knowledge that the word
+  media is plural.
 

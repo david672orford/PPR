@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 24 February 2003.
 #
 
 =head1 NAME
@@ -521,15 +521,16 @@ document requires and select the proper paper tray.
 
 =over 4
 
-=item B<-D> I<medianame>
+=item B<-D> I<mediumname>
 
-sets the default media.  The default media is used to print documents which
-do not specify what media they require.  This is really a default default
-since certain comments in the document may be used the modify the "default",
-resulting in the selection of a different media.  For example, if the
-B<-D letter> switch is used but a "C<%%BeginFeature: *PagesSize Legal>" comment
-appears in the document, then the media type "legal" will be selected
-because it is 8.5 by 14 inches but has all the other attributes of "letter".
+sets the default medium.  The default medium is used to print documents
+which do not specify what media they require.  This is really a default
+default since certain comments in the document may be used the modify the
+"default", resulting in the selection of a different medium.  For example,
+if the B<-D letter> switch is used but a "C<%%BeginFeature: *PagesSize
+Legal>" comment appears in the document, then the "legal" medium will be
+selected because it though it 8.5 by 14 inches rather than 8.5 by 11 inches
+it all the other attributes of "letter".
 
 Also, notice that since the B<-D> switch sets a default, it will have
 no effect when the document contains a "%%Media:" line.  Some PPR filters

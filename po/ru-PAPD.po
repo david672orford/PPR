@@ -6,44 +6,44 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2003-01-14 15:56-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2003-02-16 20:05-0500\n"
+"PO-Revision-Date: 2003-02-16 20:05-0500\n"
+"Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
+"Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=koi8-r\n"
+"Content-Transfer-Encoding: none\n"
 
-#: ../papd/papd.c:406
+#: ../papd/papd.c:409
 #, c-format
 msgid "Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"
 msgstr ""
 
-#: ../papd/papd.c:417
+#: ../papd/papd.c:420
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../papd/papd.c:427
+#: ../papd/papd.c:430
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../papd/papd.c:431
+#: ../papd/papd.c:434
 #, c-format
 msgid "Sending %s to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../papd/papd.c:451
+#: ../papd/papd.c:454
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
-#: ../papd/papd.c:460
+
+#: ../papd/papd.c:463
 msgid "Shutdown complete.\n"
 msgstr ""
 
-#: ../papd/papd_conf.c:273
+#: ../papd/papd_conf.c:276
 #, c-format
 msgid "%s(): opendir(\"%s\") failed, errno=%d (%s)"
 msgstr ""
-
