@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--3 September 2003.
+1.52, 24 July 2003--10 September 2003.
 
 Bug Fixes
 
@@ -8720,6 +8720,8 @@ Bug Fixes
 
 * www/cgi_intl.pl: added $debug to control debugging level (and thereby turn
   off a slew of debugging messages).
+
+* www/cliconf.cgi.perl: fixed wrong label on Perl/Tk icon generation page.
 
 Misc. Added Material
 

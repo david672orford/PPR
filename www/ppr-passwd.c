@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2003.
+** Last modified 10 September 2003.
 */
 
 /*
@@ -177,12 +177,23 @@ int main(int argc, char *argv[])
 		}
 	}
 
+    /* Catching this undefined combination is good policy. */
 	if(opt_add && opt_delete)
 		{
 		fprintf(stderr, _("%s: cannot add and delete a user at the same time.\n"), myname);
 		return EXIT_ERROR;
 		}
 
+	/*
+		Ordinary users aren't allowed to add entries, even for themselves 
+		because then someone stepping up to an unattended terminal logged
+		into the account of a person who did not use the PPR web interface
+		regularly could open that account to web printer management, setting
+		a password known to the interloper.
+		
+		Note that non-privileged users must know their passwords in order
+		to change them.
+	*/
 	if((opt_add || opt_delete) && !privileged)
 		{
 		fprintf(stderr, _("%s: only privileged users may add and delete entries.\n"), myname);

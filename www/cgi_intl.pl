@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 September 2003.
+# Last modified 10 September 2003.
 #
 
 require "paths.ph";
@@ -46,6 +46,9 @@ my %CHARSET_EXCEPTIONS = (
 # select a language other than the default?
 my $int_on = 0;
 
+# Should we print gobs of commentary as we deal with these fateful issues?
+my $debug = 0;
+
 #
 # This function should be called near the begining of the CGI script.  It
 # returns the character set and the language code.	It makes its
@@ -54,8 +57,6 @@ my $int_on = 0;
 #
 sub cgi_intl_init
 	{
-	my $debug = 0;
-
 	if(defined(my $langs = $ENV{HTTP_ACCEPT_LANGUAGE}))
 		{
 		my @result = eval

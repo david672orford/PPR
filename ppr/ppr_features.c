@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2003.
+** Last modified 10 September 2003.
 */
 
 #include "before_system.h"
@@ -146,7 +146,7 @@ int option_features(const char destnode[], const char destname[])
 			p[len] = '\0';
 
 			printf(" %s%-28s  --feature %s=%s\n",
-				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "    ",
+				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "   ",
 				translation,
 				ui,
 				p);

@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 20 August 2003
+Last Modified: 8 September 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -181,10 +181,10 @@ restart the queue, like this:
 <option>feedback</option> to <literal>false</literal> for no reason.  Setups
 with <option>feedback</option> set to <literal>false</literal> should be
 considered crippled.  If a printer doesn't support two-way communication
-with a given interface, such as <literal>tcpip</literal>, you consider other
-otherfaces, such as <literal>atalk</literal>.  Among the harmful effects of
-lack of two-way communication is that failure of the job due to PostScript
-errors will not be detected.</para>
+with a given interface, such as <literal>tcpip</literal>, you should
+consider usinging a different interface, such as <literal>atalk</literal>. 
+Among the harmful effects of lack of two-way communication is that failure
+of the job due to PostScript errors will not be detected.</para>
 
 </sect3>
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 10 September 2003.
 #
 
 # Where do we install the documentation?
@@ -41,7 +41,8 @@ HTMLDOC=htmldoc
 
 JAVA_HOME=/usr/java/j2sdk1.4.1_01
 #FOP=/usr/local/src/apache_fop/fop-0.20.5rc/fop.sh
-FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
+#FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
+FOP=/usr/local/src/apache_fop/fop-0.20.5/fop.sh
 
 # Where are the style sheets?
 XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
@@ -79,11 +80,11 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 # Rules to convert HTML to PostScript and PDF using HTMLDOC
 #============================================================================
 
-.html.ps:
-	-$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
+#.html.ps:
+#	-$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
 
-.html.pdf:
-	-$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
+#.html.pdf:
+#	-$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
 
 #============================================================================
 # Rules to convert Docbook SGML to PostScript and PDF by way
@@ -96,11 +97,11 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 .sgml.fo:
 	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --docbook --nonet --output $*.fo $(XSL_SPEC_PRINT) $*.sgml
 
-#.fo.ps:
-#	$(FOP) -fo $*.fo -ps $*.ps
+.fo.ps:
+	$(FOP) -fo $*.fo -ps $*.ps
 
-#.fo.pdf:
-#	$(FOP) -fo $*.fo -pdf $*.pdf
+.fo.pdf:
+	$(FOP) -fo $*.fo -pdf $*.pdf
 
 #============================================================================
 # Rules to convert Xfig files to various vector and bitmap formats.

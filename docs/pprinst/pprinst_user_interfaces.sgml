@@ -1,35 +1,72 @@
 <!--
 Filename: pprinst_user_interfaces.sgml
-Last Modified: 21 August 2003
-Last Proofread: 
+Last Modified: 10 September 2003
+Last Proofread:
 -->
 
 <sect1 id="cmdline-and-web">
 <title>PPR's User, Operator, and Administrator Interfaces</title>
 
-<para>
+<para>There are three principal ways of interacting with
+<application>PPR</application>.  These are the command-line interface, the
+web-browser interface, and the Perl/Tk interface.
 </para>
 
 <sect2>
 <title>The Command Line Interface</title>
 
-<para>
-</para>
+<para>The command-line interface is the most complete.  All of the other
+interfaces use the command-line interface in the background.  The principal
+commands are <command>ppr</command>, <command>ppop</command>, and
+<command>ppad</command>.</para>
+
+<para>The <command>ppr</command> command is used to submit print jobs.  It
+works much like <command>lpr</command> or <command>lp</command>.
+If a filename is specified on the command line, it is printed,
+otherwise the data to be printed is ready from stdin.  The
+<option>-d</option> is used to specify the queue to which to submit the
+job.</para>
+
+<para>The <command>ppop</command> command is the command which users and
+operators use to control the spooler.  With it they can list the queue,
+delete jobs, mount forms, and perform similiar tasks that don't alter the
+spooler configuration.</para>
+
+<para>The <command>ppad</command> command is the one which the system
+administrator uses to alter the spooler's configuration.  Like the
+<command>ppop</command> command, the <command>ppad</command> command is a
+container for many subcommands.</para>
+
+<para>This manual will provide many examples of the use of these commands.
+Complete explanations of all of their options and subcommands can be found
+in their man pages.</para>
 
 </sect2>
 
 <sect2>
-<title>The Web Interface</title>
+<title>The Web-Browse Interface</title>
 
-<para>
-</para>
+<para>The web-browser interface is the second most complete.  It provides a
+way to manage jobs and create, modify, and delete print queues.  It does not
+provide a way to submit jobs other than test pages.  In a modern browser
+such as <application>Mozilla</application>, the interface looks more like a
+modern GUI than a typical web-browser interface. </para>
+
+<para>One reaches the web-browser interface by connecting to port 15010 on
+the print server.  This is illustrated in figure <xref linkend="web-start"/>
+below.</para>
 
 <figure id="web-start">
-<title>Opening the <application>PPR</application>Web Interface</title>
+<title>Opening the <application>PPR</application>Web-Browser Interface</title>
 <mediaobject>
 	<imageobject><imagedata fileref="web_start.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
+
+<para>The first page which one sees provides links to a number of things
+including <application>PPR</application> documentation and the PPR
+web-browser interface.  The web browser interface is shown in figure
+<xref linkend="web-control"/> below.</para>
 
 <figure id="web-control">
 <title><application>PPR</application>'s Web Control Panel</title>
@@ -38,12 +75,22 @@ Last Proofread:
 </mediaobject>
 </figure>
 
+<para>Some of the operations which you can perform using the web interface require
+authentication and authorization.  If you are running the web browser on a Linux
+system and connecting to the same system using the address <literal>localhost</liternal>,
+then <application>PPR</application> will be able to determine which user is on
+the other browser side of the connection.  Under any other circumstance, you will have to
+present a username and password.</para>
+
 </sect2>
 
 <sect2>
 <title>The Perl/Tk Interface</title>
 
-<para>
+<para>The Perl/Tk interface is the least mature.  It currently provides a
+way to print files, view and manage queues, view printer status, and start
+and stop printers.  It does not provide any way to alter the spooler
+configuration.  There are also some gaps in the functions which it does provide.
 </para>
 
 <figure id="perltk-control">

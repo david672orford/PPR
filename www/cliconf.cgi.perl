@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2003.
+# Last modified 10 September 2003.
 #
 
 use lib "?";
@@ -96,7 +96,7 @@ $printcap_wizard_table = [
 		# KDE Icon for Perl/Tk Interface
 		#===========================================
 		{
-		'label' => 'kde_shortcut_web',
+		'label' => 'kde_shortcut_perltk',
 		'title' => N_("Downloadable KDE Icon"),
 		'picture' => "cliconf1.png",
 		'dopage' => sub {

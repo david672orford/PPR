@@ -33,4 +33,3 @@
 256 array astore readonly
 /defineresource where {pop /Encoding defineresource pop} {def} ifelse
 %%EOF
-
