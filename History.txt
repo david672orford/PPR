@@ -9213,7 +9213,8 @@ Internet Printing Protocol Work
 
 TODO
 
-* www/prn_testpage.cgi.perl: improve search for Ghostscript test pages
+* www/prn_testpage.cgi.perl: improve search for Ghostscript test pages.
+  It must search multiple locations and for both .ps and .eps.
 
 * Create Debian package.
 
