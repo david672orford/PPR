@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2002.
+# Last modified 12 April 2002.
 #
 
 use lib "?";
@@ -48,12 +48,33 @@ $addprn_wizard_table = [
 	'title' => N_("PPR Print Test Page"),
 	'picture' => "prn_testpage1.png",
 	'dopage' => sub {
-		print "<p>", H_("To print a PPR test page, select the desired page size below\n"
-			. "and press Print."), "</p>\n";
+		print "<p>", H_("To print a PPR test page, select the desired options below\n"
+			. "and press [Print]."), "</p>\n";
 
-		my $pagesize = cgi_data_move("pagesize", "Letter");
-		labeled_select("pagesize", _("Page Size:"), "Letter", $pagesize, qw(Letter A4));
+		print "<p>\n";
+		my $default_pagesize = "Letter";
+		my $pagesize = cgi_data_move("pagesize", $default_pagesize);
+		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize, qw(Letter A4));
+		print "</p>\n";
 
+		print "<p>\n";
+		my $default_image = "PPR Logo";
+		my $image = cgi_data_move("image", $default_image);
+		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", "Ghostscript Golfer", "Ghostscript Tiger"));
+		print "</p>\n";
+
+		print "<div class=\"section\">\n";
+		print "<span class=\"section\">", H_("Color Space Test Patterns"), "</span>\n";
+			print "<p>\n";
+			labeled_boolean("test_grayscale", _("Grayscale"), cgi_data_move("test_grayscale", 0));
+			print "</p>\n";
+			print "<p>\n";
+			labeled_boolean("test_rgb", _("RGB"), cgi_data_move("test_rgb", 0));
+			print "</p>\n";
+			print "<p>\n";
+			labeled_boolean("test_cmyk", _("CMYK"), cgi_data_move("test_cmyk", 0));
+			print "</p>\n";
+		print "</div>\n";
 		},
 	'buttons' => [N_("_Cancel"), N_("_Print")]
 	},
@@ -65,10 +86,37 @@ $addprn_wizard_table = [
 	'picture' => "prn_testpage2.png",
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "_missing_");
+
+		my $options = "";
+
 		my $pagesize = cgi_data_peek("pagesize", "Letter");
 		$pagesize =~ /^[a-zA-Z0-9]+$/ || die "$pagesize is not a valid pagesize";
-		print "<pre>\n";
-		run("$HOMEDIR/bin/ppr-testpage --pagesize=$pagesize | $HOMEDIR/bin/ppr -d $name");
+		$options .= " --pagesize=$pagesize";
+
+		my $image = cgi_data_peek("image", "");
+		if($image eq "Ghostscript Tiger")
+		    {
+		    $options .= " --eps-file=$SHAREDIR/gs/golfer.ps --eps-scale=0.25";
+		    }
+		elsif($image eq "Ghostscript Golfer")
+		    {
+		    $options .= " --eps-file=$SHAREDIR/gs/tiger.ps --eps-scale=0.25";
+		    }
+
+		if(cgi_data_move("test_grayscale", 0))
+		    {
+		    $options .= " --test-grayscale";
+		    }
+		if(cgi_data_move("test_rgb", 0))
+		    {
+		    $options .= " --test-rgb";
+		    }
+		if(cgi_data_move("test_cmyk", 0))
+		    {
+		    $options .= " --test-cmyk";
+		    }
+
+		run("$HOMEDIR/bin/ppr-testpage$options | $HOMEDIR/bin/ppr -d $name");
 		print "</pre>\n";
 		},
 	'buttons' => [N_("_Close")]
@@ -89,7 +137,8 @@ if(cgi_data_peek("wiz_action", "") eq "Print")
 &do_wizard($addprn_wizard_table,
 	{
 	'auth' => 1,
-	'imgdir' => "../images/"
+	'imgdir' => "../images/",
+	'debug' => 0
 	});
 
 exit 0;

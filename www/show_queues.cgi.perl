@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 5 April 2002.
+# Last modified 12 April 2002.
 #
 
 use 5.005;
@@ -38,9 +38,10 @@ my $Q_ICONS_EXT = ".png";
 my $Q_ICONS_DIMS = "width=88 height=88";
 
 # Icon for the fixed things.
-my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=85 height=75";
-my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
-my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=85 height=75";
+my $ICON_ALL_QUEUES = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=88 height=88";
+my $ICON_ADD_PRINTER = "src=\"../q_icons/00000.png\" alt=\"[printer]\" width=88 height=88";
+my $ICON_ADD_GROUP = "src=\"../q_icons/10000.png\" alt=\"[group]\" width=88 height=88";
+my $ICON_ADD_ALIAS = "src=\"../q_icons/20000.png\" alt=\"[alias]\" width=88 height=88";
 
 #
 # Routine to convert printer messages to icon selection characters.
@@ -234,6 +235,17 @@ Top10
 print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
+<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
+	title="Click here to open a window which will show all queued jobs."
+	>
+	<img $ICON_ALL_QUEUES border=0><br>
+	<span class="qname">${\H_("Show All Queues")}</span>
+	</a></td>
+</tr>
+</table>
+
+<table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
+<tr align=center>
 <td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
 	title="Click here and you will be guided through the process of adding a new printer."
 	>
@@ -242,6 +254,7 @@ print <<"Top10";
         </a></td>
 </tr>
 </table>
+
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
@@ -252,16 +265,18 @@ print <<"Top10";
 	</a></td>
 </tr>
 </table>
+
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
-	title="Click here to open a window which will show all queued jobs."
+<td><a href="alias_addwiz.cgi?$encoded_back_stack" onclick="return wizard('alias_addwiz.cgi')"
+	title="Click here and you will be guided through the process of adding a new alias."
 	>
-	<img $ICON_ALL_QUEUES border=0><br>
-	<span class="qname">${\H_("Show All Queues")}</span>
+	<img $ICON_ADD_ALIAS border=0><br>
+	<span class="qname">${\H_("Add New Alias")}</span>
 	</a></td>
 </tr>
 </table>
+
 <br clear="left">
 <hr>
 Top10
@@ -297,6 +312,8 @@ foreach my $row ($control->list_destinations_comments_addresses())
     	{ $icon .= "0" }
     elsif($type eq 'group')
     	{ $icon .= "1" }
+    elsif($type eq 'alias')
+	{ $icon .= "2" }
     else
     	{ $icon .= "x" }
 
@@ -304,12 +321,16 @@ foreach my $row ($control->list_destinations_comments_addresses())
     	{ $icon .= '0' }
     elsif($accepting eq 'rejecting')
     	{ $icon .= '1' }
+    elsif($accepting eq '?')
+    	{ $icon .= '0' }
     else
     	{ $icon .= 'x' }
 
-    if($protected eq 'yes')
+    if($protected eq 'no')
+    	{ $icon .= '0' }
+    elsif($protected eq 'yes')
     	{ $icon .= '1' }
-    elsif($protected eq 'no')
+    elsif($protected eq '?')
     	{ $icon .= '0' }
     else
     	{ $icon .= 'x' }
@@ -420,7 +441,7 @@ foreach my $qname (sort(keys(%queues)))
     {
     my($qtype, $icon, $qdescription, $qaddress) = @{$queues{$qname}};
 
-    # Group icon basenames are still missing the last zero.
+    # Group and alias icon basenames are still missing the last zero.
     $icon .= '0' if(length($icon) < 5);
 
     # Some queues will have no description because the system

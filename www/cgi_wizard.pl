@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 February 2002.
+# Last modified 12 April 2002.
 #
 
 use 5.004;
@@ -198,14 +198,16 @@ EndOfText1
 # Start the table which holds the decorative picture on the
 # left and the functional part of the form on the right.
 print <<"EndOfText2";
-<table border=$border height=85% width=100% cellpadding=15 cols=5>
-<tr align="$align" valign="$valign">
- <td align="left" valign="top">
- <img src="$options->{imgdir}$picture" height=$options->{imgheight} width=$options->{imgwidth} alt=${\&html_value($picture_alt)}>
- </td>
-<td colspan=4>
-<img src="../images/pixel-clear.png" width=1 height=400 align="left">
+<TABLE BORDER=$border HEIGHT=85% WIDTH=100% cellpadding=15 cols=5>
+<tr height=400>
+<td width=1 align="left" valign="top">
+  <img src="$options->{imgdir}$picture" height=$options->{imgheight} width=$options->{imgwidth} alt=${\&html_value($picture_alt)}>
+  </td>
+<td align=$align valign=$valign>
 EndOfText2
+#  <img src="../images/pixel-clear.png" width=1 height=400 align="left">
+
+print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
 
 # If there is a "dopage" procedure, then call it to emit
 # the text which distinguishes this page from others.
@@ -219,7 +221,9 @@ if(defined($dopage))
     	}
     }
 
-print "</tr>\n";
+print "\n  <!-- end of dopage() output -->\n\n" if($options->{debug} > 0);
+
+print "</td>\n</tr>\n";
 
 # This debug information helps to make the table rendering clearer.
 if($options->{debug} > 1)
@@ -238,8 +242,8 @@ if($options->{debug} > 1)
 # the error text (if any) and the submit buttons
 # labeled "Back" and "Next".
 print <<"EndOfText2";
-</table>
-<TABLE BORDER=$border HEIGHT=10% WIDTH=95% COLS=7>
+</TABLE>
+<TABLE BORDER=$border HEIGHT=10% WIDTH=100% COLS=4>
 <tr>
 EndOfText2
 
@@ -248,21 +252,21 @@ if(defined($error))
     {
 print <<"EndOfText4";
 <td align="right"><img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32></td>
-<td colspan=4 align="center" valign="center">
+<td colspan=3 align="center" valign="center">
 <span class="alert">${\&html($error)}</span>
 </td>
 EndOfText4
     }
 else
     {
-    print "<td colspan=5></td>\n";
+    print "<td colspan=3></td>\n";
     }
 
 # Now the submit buttons, then we close the table.  Note that we
 # call the subroutine isubmit() to create the buttons.  It internationalizes
 # the buttons if called for.
 print <<"EndOfText6";
-<td align="right" nowrap colspan=2>
+<td align="center" nowrap colspan=1>
 EndOfText6
 
 {

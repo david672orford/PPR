@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_widgets.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 28 August 2001.
+# Last modified 12 April 2002.
 #
 
 sub labeled_checkbox
@@ -33,14 +33,14 @@ sub labeled_select
     print "<select name=\"$name\">\n";
     foreach my $option (@options)
 	{
-	print "<option value=", html_value($option);
+	print " <option value=", html_value($option);
 	print " selected" if($option eq $selected);
 	print ">", H_($option);
 	if($option eq "default")
 	    { print " (", H_($default), ")" }
 	print "\n";
 	}
-    print "</select>\n";
+    print " </select>\n";
     }
 
 sub labeled_entry
@@ -49,7 +49,7 @@ sub labeled_entry
     if(defined $label)
 	{
 	print '<span class="label">', html($label), "</span> ";
-	print "<br>\n" if($size >= 50);
+	print "<br>\n " if($size >= 50);
 	}
     print "<input name=\"$name\" size=$size value=", html_value($value), ">\n";
     }
@@ -57,11 +57,6 @@ sub labeled_entry
 sub labeled_blank
     {
     my($label, $value, $size) = @_;
-    if(defined $label)
-	{
-	print "<span class=\"label\">", html($label), "</span> ";
-	print "<br>\n" if($size >= 50);
-	}
     print "<span class=\"value\">", html($value);
     $size -= length($value);
     while($size-- > 0)
@@ -69,6 +64,15 @@ sub labeled_blank
 	print "&nbsp;";
 	}
     print "</span>\n";
+    }
+
+sub labeled_boolean
+    {
+    my($name, $label, $value) = @_;
+    print "<input type=\"checkbox\" name=\"$name\" value=\"1\"";
+    print " checked" if($value);
+    print "> <span class=\"label\">", html($label), "</span>";
+    print "\n";
     }
 
 1;

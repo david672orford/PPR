@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 March 2002.
+** Last modified 12 April 2002.
 */
 
 #include "before_system.h"
@@ -324,6 +324,9 @@ static const struct gu_getopt_opt option_words[] =
 	{"pagesize", 1002, TRUE},
 	{"eps-file", 1003, TRUE},
 	{"eps-scale", 1004, TRUE},
+	{"test-grayscale", 1005, FALSE},
+	{"test-rgb", 1005, FALSE},
+	{"test-cmyk", 1005, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -337,6 +340,9 @@ static void help_switches(FILE *outfile)
     fputs(_(	"\t--pagesize=<pagesize>\n"), outfile);
     fputs(_(	"\t--eps-file=<filename>\n"), outfile);
     fputs(_(	"\t--eps-scale=<float>\n"), outfile);
+    fputs(_(	"\t--test-grayscale\n"), outfile);
+    fputs(_(	"\t--test-rgb\n"), outfile);
+    fputs(_(	"\t--test-cmyk\n"), outfile);
 
     fputs(_(	"\t--version\n"
 		"\t--help\n"), outfile);
@@ -350,6 +356,9 @@ int main(int argc, char *argv[])
     double eps_scale = 1.0;
     double ph, pw;		/* page width and height */
     int x, y;			/* work variables */
+    gu_boolean test_grayscale = FALSE;
+    gu_boolean test_rgb = FALSE;
+    gu_boolean test_cmyk = FALSE;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -403,6 +412,18 @@ int main(int argc, char *argv[])
 		eps_scale = strtod(getopt_state.optarg, NULL);
 		break;
 
+	    case 1005:
+	    	test_grayscale = TRUE;
+	    	break;
+
+	    case 1006:
+	    	test_rgb = TRUE;
+	    	break;
+
+	    case 1007:
+	    	test_cmyk = TRUE;
+	    	break;
+
 	    default:			/* other getopt errors or missing case */
 		gu_getopt_default(myname, optchar, &getopt_state, stderr);
 	    	exit(EXIT_SYNTAX);
@@ -439,7 +460,7 @@ int main(int argc, char *argv[])
     y -= 15;
 
     /* Grayscale */
-    if(1)
+    if(test_grayscale)
 	{
 	y -= 10;
 	printf("%d %d moveto (Grayscale) show\n", x, y);
@@ -450,7 +471,7 @@ int main(int argc, char *argv[])
 	}
 
     /* RGB */
-    if(1)
+    if(test_rgb)
 	{
 	y -= 10;
 	printf("%d %d moveto (Red) show\n", x, y);
@@ -474,7 +495,7 @@ int main(int argc, char *argv[])
 	}
 
     /* CMYK */
-    if(1)
+    if(test_cmyk)
 	{
 	y -= 10;
 	printf("%d %d moveto (Cyan) show\n", x, y);

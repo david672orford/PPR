@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 March 2002.
+** Last modified 12 April 2002.
 */
 
 #include "before_system.h"
@@ -137,9 +137,14 @@ void rip_fault_check(void)
 	exit_code = rip_exit_screen();
 
 	/* Did Ghostscript indicate a command line problem?
+
 	   This is our lame solution.  It would be better to get the
-	   error message into the alerts file!!! */
-	if(exit_code == 1)
+	   error message into the alerts file!!!
+
+	   Notice that if Ghostscript gave us a PostScript error message we nix this
+	   because a PostScript error message probably indicates a job error.
+	   */
+	if(exit_code == 1 && !feedback_posterror())
 	    {
 	    fatal(EXIT_PRNERR_NORETRY, "Possible error on Ghostscript command line.  Check options.\n"
 	    				"(Use \"ppop log %s:%s-%d.%d\" to view the error message.)",
@@ -160,35 +165,41 @@ void rip_fault_check(void)
 */
 int rip_start(int printdata_handle, int stdout_handle)
     {
-    FUNCTION4DEBUG("rip_start")
-    static const char *gs = NULL;
+    const char function[] = "rip_start";
+    static const char *rip_exe = NULL;
+    static gu_boolean rip_is_ghostscript = FALSE;
     const char **rip_args;
     int rip_pipe[2];
 
     DODEBUG_INTERFACE(("%s()", function));
 
     /* Get the path to the Ghostscript interpreter from ppr.conf. */
-    if(!gs)
+    if(!rip_exe)
 	{
 	if(strcmp(printer.RIP.name, "gs") == 0)
 	    {
-	    if(!(gs = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
+	    if(!(rip_exe = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
 		fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
+	    rip_is_ghostscript = TRUE;
 	    }
 	else if(strcmp(printer.RIP.name, "ppr-gs") == 0)
 	    {
-	    gs = HOMEDIR"/lib/ppr-gs";
+	    rip_exe = HOMEDIR"/lib/ppr-gs";
+	    rip_is_ghostscript = TRUE;
 	    }
 	else
 	    {
-    	    fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name);
+    	    /* fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name); */
+    	    size_t len = sizeof(HOMEDIR) + sizeof("/lib/") + strlen(printer.RIP.name) + 1;
+    	    char *p = (char*)gu_alloc(len, sizeof(char));
+    	    snprintf(p, len, "%s/lib/%s", HOMEDIR, printer.RIP.name);
     	    }
     	}
 
     /* Make sure the RIP exists. */
-    if(access(gs, X_OK) != 0)
+    if(access(rip_exe, X_OK) != 0)
     	{
-	fatal(EXIT_PRNERR_NORETRY, "Ghostscript program \"%s\" doesn't exist or isn't executable.", gs);
+	fatal(EXIT_PRNERR_NORETRY, "RIP program \"%s\" doesn't exist or isn't executable.", rip_exe);
     	}
 
     /* Build the argument vector. */
@@ -196,16 +207,19 @@ int rip_start(int printdata_handle, int stdout_handle)
     int si, di;
     rip_args = gu_alloc(printer.RIP.options_count + 6, sizeof(const char *));
     di = 0;
-    rip_args[di++] = gs;
-    for(si = 0; si < printer.RIP.options_count; si++)
+    rip_args[di++] = rip_exe;				/* argv[0] is program name */
+    for(si = 0; si < printer.RIP.options_count; si++)	/* copy user supplied arguments */
 	{
 	rip_args[di++] = printer.RIP.options[si];
 	}
-    rip_args[di++] = "-q";
-    rip_args[di++] = "-dSAFER";
-    rip_args[di++] = "-sOutputFile=| cat - >&3";
-    rip_args[di++] = "-";
-    rip_args[di++] = NULL;
+    if(rip_is_ghostscript)				/* Ghostscript gets extra arguments */
+	{
+	rip_args[di++] = "-q";
+	rip_args[di++] = "-dSAFER";
+	rip_args[di++] = "-sOutputFile=| cat - >&3";
+	rip_args[di++] = "-";
+	}
+    rip_args[di++] = NULL;				/* terminate the arguments list */
     }
     
     /* Reset flags related to the RIP dying. */
@@ -213,10 +227,10 @@ int rip_start(int printdata_handle, int stdout_handle)
     rip_fault_check_disable = FALSE;
 
     if(pipe(rip_pipe) == -1)
-    	fatal(EXIT_PRNERR, "pipe() failed, errno=%d (%s)", errno, strerror(errno));
+    	fatal(EXIT_PRNERR, "%s(): pipe() failed, errno=%d (%s)", function, errno, strerror(errno));
 
     if((rip_pid = fork()) == -1)
-    	fatal(EXIT_PRNERR, "fork() failed, errno=%d (%s)", errno, strerror(errno));
+    	fatal(EXIT_PRNERR, "%s(): fork() failed, errno=%d (%s)", function, errno, strerror(errno));
 
     /* If child, */
     if(rip_pid == 0)
@@ -241,7 +255,7 @@ int rip_start(int printdata_handle, int stdout_handle)
 	close(new_printdata);
 
 	/* Launch Ghostscript. */
-	execv(gs, (char**)rip_args);
+	execv(rip_exe, (char**)rip_args);
 	_exit(1);
     	}
 

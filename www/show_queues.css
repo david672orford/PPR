@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 22 February 2002.
+** Last modified 12 April 2002.
 */
 
 /* The <body> element of the main window uses this class.  This is so that
@@ -11,11 +11,6 @@ BODY {
 	background: white;
 	color: black;
 	font-family: sans-serif;
-	}
-
-/* Mozilla bug for Russian. */
-INPUT, BUTTON {
-/*	font-family: serif;	*/
 	}
 
 /* I guess setting the body font doesn't cover tables. */
@@ -30,7 +25,7 @@ A {	font-weight: normal;
 	}
 
 /* Try to make buttons gray. */
-INPUT.buttons { background: #b0b0b0 }
+INPUT.buttons,BUTTON { background: #b0b0b0 }
 
 /* This is used to set button bars off from the rest of the page. */
 DIV.menubar {

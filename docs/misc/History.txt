@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--11 April 2002.
+1.50a2, 27 February 2002--12 April 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7627,4 +7627,21 @@ line was being parsed twice.
   df_html.cgi.perl to make a percentage line graph with stretched
   single-pixel images; added df_img.cgi to fixup/fixup_obsolete.sh.
 
+* www/show_queues.cgi.perl: added "Add New Alias"; added menu item "Member
+  Printer Control" for the groups menu; corrected stated size of icons
+  for "Add Printer", "Add Group", "Show All Queues"; moved "Show All Queues"
+  to the front.
+
+* www/show_queues.js: Set href on popup menu items so that users can
+  right-click on them and choose to open them in a new tab.
+
+* pprdrv/pprdrv_rip.c: Added an exception to the rule that Ghostscript
+  exiting with error code 1 indicates a command line arguments error.  Now we
+  nix that if a PostScript error notification has been received.
+
+* misc/ppr-testpage.c: added options to enable grayscale, rgb, and cmyk
+  bars.
+
+* www/prn_testpage.cgi.perl: added choices of images and whether or not to
+  have the various bars.
 

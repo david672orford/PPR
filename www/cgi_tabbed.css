@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 5 April 2002.
+** Last modified 12 April 2002.
 */
 
 BODY {	background: #C0C0C0;
@@ -8,7 +8,7 @@ BODY {	background: #C0C0C0;
 	}
 
 /* Button for visible pane. */
-INPUT.tabactive {
+INPUT.tabactive,BUTTON.tabactive {
 	font-size: 8pt;
 	font-weight: bold;
 	background: beige;
@@ -18,7 +18,7 @@ INPUT.tabactive {
 	}
 
 /* Buttons for concealed panes. */
-INPUT.tabinactive {
+INPUT.tabinactive,BUTTON.tabinactive {
 	font-size: 8pt;
 	font-weight: normal;
 	background: beige;

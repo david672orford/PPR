@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 13 March 2002.
+** Last modified 12 April 2002.
 */
 
 /*
@@ -26,6 +26,7 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <dirent.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -1444,6 +1445,7 @@ int ppop_accept_reject(char *argv[], int reject)
 ===========================================================================*/
 int ppop_destination(char *argv[], int info_level)
     {
+    const char function[] = "ppop_destination";
     struct Destname destination;
     FILE *FIFO, *reply_file;
     const char *format;
@@ -1473,6 +1475,7 @@ int ppop_destination(char *argv[], int info_level)
     if(parse_dest_name(&destination, argv[0]))
     	return EXIT_SYNTAX;
 
+    /* Send a request to pprd. */
     FIFO = get_ready(destination.destnode);
     fprintf(FIFO, "D %s %s\n", destination.destnode, destination.destname);
     fflush(FIFO);
@@ -1525,9 +1528,11 @@ int ppop_destination(char *argv[], int info_level)
 	PUTC('\n');
 	}
 
+    /* Wait for a reply from pprd. */
     if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
 	return print_reply();		/* if error, print it */
 
+    /* Process all of the responses from pprd. */
     while((line = gu_getline(line, &line_len, reply_file)))
 	{
 	destname = comment = interface = address = (char*)NULL;
@@ -1580,11 +1585,45 @@ int ppop_destination(char *argv[], int info_level)
 	if(comment) gu_free(comment);
 	if(interface) gu_free(interface);
 	if(address) gu_free(address);
-	}
+	} /* end of loop which processes responses from pprd. */
 
     if(line) gu_free(line);
 
     fclose(reply_file);
+
+    /* We have to do the aliases ourselves. */
+    {
+    DIR *dir;
+    struct dirent *direntp;
+    int len;
+    
+    if(!(dir = opendir(ALIASCONF)))
+    	fatal(EXIT_INTERNAL, "%s(): opendir(\"%s\") failed, errno=%d (%s)", function, ALIASCONF, errno, gu_strerror(errno));
+
+    while((direntp = readdir(dir)))
+	{
+	/* Skip . and .. and hidden files. */
+	if(direntp->d_name[0] == '.')
+	    continue;
+
+	/* Skip Emacs style backup files. */
+	len = strlen(direntp->d_name);
+	if( len > 0 && direntp->d_name[len-1]=='~' )
+	    continue;
+
+	printf(format,
+		direntp->d_name,
+		machine_readable ? "alias" : _("alias"),
+		"?",		/* accepting */
+		"?",		/* charge */
+		"comment",	
+		"",		/* interface */
+		""		/* address */
+		);
+	}
+
+    closedir(dir); 
+    }
 
     return EXIT_OK;
     } /* end of ppop_destination() */

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 25 February 2002.
+# Last modified 12 April 2002.
 #
 
 require "paths.ph";
@@ -291,7 +291,7 @@ sub isubmit
 	print "<button type=\"submit\" name=\"$name\" value=", html_value($value);
 	print " accesskey=\"$accesskey\"" if(defined($accesskey));
 	print " ", $other if(defined($other));
-	print ">", &html($translation), "</button>\n";
+	print ">", $translation, "</button>\n";
     	}
 
     else

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 April 2002.
+# Last modified 12 April 2002.
 #
 
 use lib "?";
@@ -56,6 +56,10 @@ if($type eq "printer")
 elsif($type eq "group")
     {
     $html_title = html(sprintf(_("Group \"%s\""), $name));
+    }
+elsif($type eq "alias")
+    {
+    $html_title = html(sprintf(_("Alias \"%s\""), $name));
     }
 else
     {
@@ -89,10 +93,19 @@ elsif($type eq "group")
 {
 $html_text .= <<"Group";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_HIST">${\H_("View Queue")}</a></td></tr>
+<tr><td><a href="grp_control.cgi?$encoded_name;$encoded_HIST">${\H_("Member Printer Control")}</a></td></tr>
 <tr><td><a href="grp_properties.cgi?$encoded_name;$encoded_HIST">${\H_("Group Properties")}</a></td></tr>
 <tr><td><a href="cliconf.cgi?$encoded_name;$encoded_HIST">${\H_("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("queue", $name)};$encoded_HIST">${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_HIST">${\H_("Delete Group")}</a></td></tr>
+Group
+}
+
+elsif($type eq "alias")
+{
+$html_text .= <<"Group";
+<tr><td><a href="alias_properties.cgi?$encoded_name;$encoded_HIST">${\H_("Alias Properties")}</a></td></tr>
+<tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_HIST">${\H_("Delete Alias")}</a></td></tr>
 Group
 }
 

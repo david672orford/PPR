@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 29 December 1999.
+** Last modified 12 April 2002.
 */
 
 BODY { background: #e0e0e0 }
@@ -9,7 +9,10 @@ INPUT.buttons { background: #B0B0B0 }
 
 /* This is for form field labels.
    */
-SPAN.label { font-weight: bold }
+SPAN.label {
+	font-weight: bold;
+	font-size: 12pt;
+	}
 
 /* This is for value which should like like form text
    fields but aren't.
@@ -21,4 +24,28 @@ SPAN.value { background: white;
 /* This is for error messages. */
 SPAN.alert { color: blue }
 
+/* A DIV and SPAN of class "section" are used to enclose controls
+   in a labeled box.
+   */
+DIV.section {
+	border: thin solid black;
+	padding: 10pt;
+	margin-top: 2.0em;
+	margin-bottom: 10pt;
+	}
+SPAN.section {
+	position: relative;
+	top: -1.5em;
+	right: 0pt;
+	background: #e0e0e0;
+	border-width: 0.5pt;
+	border-style: solid;
+	padding-left: 1ex;  
+	padding-right: 1ex; 
+	margin-bottom: 0pt;
+	}
+DIV.section P {
+	margin-top: 0pt;
+	margin-bottom: 0pt;
+	}
 /* end of file */
