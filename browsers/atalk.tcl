@@ -50,7 +50,7 @@ if {![info exists getzones]} {
 	}
 
 # If we are run without a domain specified, then we are to print a list of 
-# the domains which the user may choose to browse.
+# the domains from which the user may choose one to browse.
 if { $domain == "" } {
     set f [open "| $getzones" "r"]
 	set zones {}
