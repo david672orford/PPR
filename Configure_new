@@ -56,10 +56,10 @@ findprog_prog_path ()
 	do
 	if [ `echo $i | cut -c1` = '/' ]
 	    then
-	    # echo "Trying $i/$1" >&2
+	    # echo " Trying $i/$1" >&2
 	    if [ -x "$i/$1" ]
 		then
-		echo "Found $i/$1" >&2
+		echo "  Found $i/$1" >&2
 		echo "$i/$1"
 		return
 		fi
@@ -69,6 +69,23 @@ findprog_prog_path ()
     }
 
 #
+# Help screen
+#
+help_page ()
+{
+cat - <<EndOfHelp
+./Configure
+	--prefix=
+	--sysconfdir=
+	--bindir=
+	--libdir=
+	--datadir=
+	--spooldir=
+
+EndOfHelp
+}
+
+#
 # Parse the command line options.
 #
 opt_prefix="/usr"
@@ -76,6 +93,7 @@ opt_sysconfdir=""
 opt_bindir=""
 opt_libdir=""
 opt_datadir=""
+opt_spooldir=""
 opt_prompt_paths=1
 opt_with_gcc=1
 opt_prompt_compiler=1
@@ -83,6 +101,12 @@ opt_user_ppr="ppr"
 opt_user_pprwww="pprwww"
 opt_group_ppr="ppr"
 opt_prompt_users=1
+opt_with_gdbm=1
+opt_prompt_gdbm=1
+opt_with_tdb=1
+opt_prompt_tdb=1
+opt_with_gettext=1
+opt_prompt_gettext=1
 for opt in $*
     do
     case $opt in
@@ -104,6 +128,10 @@ for opt in $*
     	    ;;
 	--datadir=* )
 	    opt_datadir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--spooldir=* )
+	    opt_spooldir=`echo $opt | cut -d= -f2`
 	    opt_prompt_paths=0
     	    ;;
 	--x11bindir=* )
@@ -130,6 +158,34 @@ for opt in $*
 	    opt_group_ppr=`echo $opt | cut -d= -f2`
 	    opt_prompt_users=0
 	    ;;
+	--with-gdbm )
+	    opt_with_gdbm=1
+	    opt_prompt_gdbm=0
+	    ;;
+	--without-gdbm )
+	    opt_with_gdbm=0
+	    opt_prompt_gdbm=0
+	    ;;
+	--with-tdb )
+	    opt_with_tdb=1
+	    opt_prompt_tdb=0
+	    ;;
+	--without-tdb )
+	    opt_with_tdb=0
+	    opt_prompt_tdb=0
+	    ;;
+	--with-gettext )
+	    opt_with_gettext=1
+	    opt_prompt_gettext=0
+	    ;;
+	--without-gettext )
+	    opt_with_gettext=0
+	    opt_prompt_gettext=0
+	    ;;
+	--help )
+	    help_page
+	    exit 0
+	    ;;
 	* )
 	    echo "Unrecognized option: $opt"
 	    exit 1
@@ -138,7 +194,7 @@ for opt in $*
     done
 if [ -z "$sysconfdir" ]
     then
-    if [ "$prefix" = "/usr" ]
+    if [ "$opt_prefix" = "/usr" ]
 	then
 	sysconfdir="/etc"
 	else
@@ -148,6 +204,7 @@ if [ -z "$sysconfdir" ]
 opt_bindir=${opt_bindir:-$opt_prefix/bin}
 opt_libdir=${opt_libdir:-$opt_prefix/lib}
 opt_datadir=${opt_datadir:-$opt_prefix/share}
+opt_spooldir=${opt_spooldir:-/var/spool}
 opt_x11bindir=${opt_x11bindir:-/usr/bin/X11}
 
 #
@@ -314,7 +371,7 @@ if [ "$NATIVE_CC" = "yes" ]
 HOMEDIR=$opt_libdir/ppr
 SHAREDIR=$opt_datadir/ppr
 CONFDIR=$opt_sysconfdir/ppr
-VAR_SPOOL_PPR=/var/spool/ppr
+VAR_SPOOL_PPR=$opt_spooldir/ppr
 TEMPDIR=/tmp
 BINDIR=$opt_bindir
 
@@ -450,6 +507,9 @@ fi
 #
 # Ask about gdbm:
 #
+if [ $opt_prompt_gdbm -gt 0 ]
+then
+
 echo
 echo "Do you have the GNU database library (GDBM)?"
 echo
@@ -457,26 +517,39 @@ echo "(If you say no, the user database will not work.  See the"
 echo "ppuser(8) man page for information about this feature."
 echo "Almost all users can do without this feature.)"
 echo
-USE_GDBM="?"
-while [ "$USE_GDBM" = "?" ]
+answer="?"
+while [ "$answer" = "?" ]
     do
     $NECHO -n "Use gdbm? [yes] "
-    read USE_GDBM
-    case "$USE_GDBM" in
+    read answer
+    case "$answer" in
 	[yY]* )
-	    USE_GDBM="yes"
+	    answer="yes"
 	    ;;
 	[nN]* )
-	    USE_GDBM="no"
+	    answer="no"
 	    ;;
 	'' )
-	    USE_GDBM="yes"
+	    answer="yes"
 	    ;;
 	* )
-	    USE_GDBM="?";
+	    answer="?";
 	    ;;
 	esac
 done
+echo
+USE_GDBM=$answer
+
+else
+
+if [ $opt_with_gdbm -gt 0 ]
+    then
+    USE_GDBM="yes"
+    else
+    USE_GDBM="no"
+    fi
+
+fi
 
 if [ "$USE_GDBM" = "yes" ]
   then
@@ -484,37 +557,52 @@ if [ "$USE_GDBM" = "yes" ]
   else
   echo "PPR features which require GDBM will be disabled."
   fi
-echo
 
 #
-# Ask about gdbm:
+# Ask about tdb:
 #
+if [ $opt_prompt_tdb -ne 0 ]
+then
+
 echo
 echo "Do you have Samba's Trivial DataBase library (TDB)?"
 echo
 echo "(If you say no, then automatic Samba client printer driver download"
 echo "will not work."
 echo
-USE_TDB="?"
-while [ "$USE_TDB" = "?" ]
+answer="?"
+while [ "$answer" = "?" ]
     do
     $NECHO -n "Use tdb? [yes] "
-    read USE_TDB
-    case "$USE_TDB" in
+    read answer
+    case "$answer" in
 	[yY]* )
-	    USE_TDB="yes"
+	    answer="yes"
 	    ;;
 	[nN]* )
-	    USE_TDB="no"
+	    answer="no"
 	    ;;
 	'' )
-	    USE_TDB="yes"
+	    answer="yes"
 	    ;;
 	* )
-	    USE_TDB="?";
+	    answer="?";
 	    ;;
 	esac
 done
+echo
+USE_TDB=$answer
+
+else
+
+if [ $opt_with_tdb -gt 0 ]
+    then
+    USE_TDB="yes"
+    else
+    USE_TDB="no"
+    fi
+
+fi
 
 if [ "$USE_TDB" = "yes" ]
   then
@@ -522,11 +610,13 @@ if [ "$USE_TDB" = "yes" ]
   else
   echo "PPR features which require TDB will be disabled."
   fi
-echo
 
 #
 # Ask about internationalized of messages
 #
+if [ $opt_prompt_gettext -gt 0 ]
+then
+
 echo
 echo "Do you want support for translation of messages to non-English languages?"
 echo "This option requires the GNU Gettext package.  Currently, only a partial"
@@ -534,41 +624,58 @@ echo "French translation is provided.  If you would like to contribute translati
 echo "into additional languages, compile with this option on and read"
 echo "po/README.txt for instructions."
 echo
-INTERNATIONAL="?"
-while [ "$INTERNATIONAL" = "?" ]
+answer="?"
+while [ "$answer" = "?" ]
     do
 
     # prompt
     $NECHO -n "Include international messages support? [yes] "
-    read INTERNATIONAL
+    read answer
 
-    # if yes
-    case "$INTERNATIONAL" in
+    case "$answer" in
 	[yY]* )
-	    INTERNATIONAL=""	# don't comment out
+	    answer="yes"
 	    ;;
 	[nN]* )
-	    INTERNATIONAL="#"	# comment out
+	    answer="no"
 	    ;;
 	'' )
-	    INTERNATIONAL=""	# don't comment out
+	    answer="yes"
 	    ;;
 	* )
-	    INTERNATIONAL="?"
+	    answer="?"
 	    ;;
 	esac
     done
+if [ $answer = "yes" ]
+    then
+    INTERNATIONAL=""	# don't comment out
+    else
+    INTERNATIONAL="#"	# comment out
+    fi
+
+echo
+
+else
+if [ $opt_with_gettext -gt 0 ]
+    then
+    INTERNATIONAL=""
+    else
+    INTERNATIONAL="#"
+    fi
+fi
+
 if [ -z "$INTERNATIONAL" ]
     then
-    echo "Will use gettext()."; else echo "Won't use gettext()."
+    echo "GNU Gettext will be used."
+    else
+    echo "GNU Gettext won't be used."
     fi
-echo
 
 #
 # Look for various AppleTalk libraries.  Accept the first seemingly complete
 # one we find.
 #
-echo
 ATALKTYPE=""
 ATALKTYPE_LONG="None"
 ATALKLIBS=""
@@ -581,12 +688,12 @@ for prefix in /usr/local /usr
     do
     if [ -f "$prefix/lib/libnatali.a" ]
 	then
-	echo "Found \"$prefix/lib/libnatali.a\"."
+	echo "    Found \"$prefix/lib/libnatali.a\"."
 	for prefix2 in /usr/local/atalk /usr/local /usr
 	    do
 	    if [ -f "$prefix2/lib/libatalk.a" ]
 		then
-		echo "Found \"$prefix2/lib/libatalk.a\"."
+		echo "    Found \"$prefix2/lib/libatalk.a\"."
 		ATALKTYPE="ali"
 		ATALKTYPE_LONG="NATALI and Netatalk"
 		ATALKFLAGS="-I $prefix/include -I $prefix2/include"
@@ -611,7 +718,7 @@ for prefix in /usr/local /usr
     do
     if [ -f "$prefix/lib/libcap.a" ]
 	then
-	echo "Found \"$prefix/lib/libcap.a\"."
+	echo "    Found \"$prefix/lib/libcap.a\"."
 	if [ ! -d "$prefix/include/netat" ]
 	    then
 	    echo "CAP include directory at \"$prefix/include/netat\" is missing."
@@ -643,17 +750,14 @@ if [ -f /usr/lib/libanp.so ]
     ATALKFLAGS=""
     ATALKLIBS="-lanp"
     fi
-echo
 fi
 
-echo
 if [ "$ATALKTYPE" = "" ]
     then
-    echo "No AppleTalk."
+    echo "  No AppleTalk."
     else
-    echo "Will use $ATALKTYPE_LONG AppleTalk."
+    echo "  Will use $ATALKTYPE_LONG AppleTalk."
     fi
-echo
 
 #
 # See if we can find uncompress or gunzip
@@ -665,7 +769,6 @@ if [ -z "$GUNZIP" ]
     else
     UNCOMPRESS=""
     fi
-echo
 
 #
 # Find the Perl interpreter.
@@ -675,7 +778,6 @@ if [ -z "$PERL" ]
     then
     PERL="/usr/bin/perl"
     fi
-echo
 
 #
 # If we will be using GCC, devise a set of options
@@ -745,7 +847,7 @@ echo "Building Makefile.conf..."
 exec 3>Makefile.conf
 
 #========================================================================
-echo "    Building header..."
+echo "  Building header..."
 cat >&3 <<===EndOfHere10===
 #
 # ~ppr/src/Makefile.conf
@@ -828,7 +930,7 @@ GROUP_PPR=$GROUP_PPR
 USER_PPRWWW=$USER_PPRWWW
 ===EndOfHere20===
 
-if [ $USER_PPR = $DEFAULT_USER_PPR -a $GROUP_PPR = $DEFAULT_GROUP_PPR -a $USER_PPRWWW = $DEFAULT_USER_PPRWWW ]
+if [ $USER_PPR = "ppr" -a $GROUP_PPR = "ppr" -a $USER_PPRWWW = "pprwww" ]
     then
     $EECHO "#\c" >&3
     fi
@@ -948,7 +1050,7 @@ CHMOD=chmod
 ===EndOfHere50===
 
 #========================================================================
-echo "    Selecting a system dependent section..."
+echo "  Selecting a system dependent section..."
 
 cat >&3 <<===EndofHere6===
 #============================================================
@@ -961,7 +1063,7 @@ cat >&3 <<===EndofHere6===
 #============================================================
 if [ $SYSTEM = "ATTWGS" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSYSATTWGS===
 MAKE=make
 MAKEFLAGS=
@@ -990,7 +1092,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS5===
 MAKE=make
 MAKEFLAGS=
@@ -1015,7 +1117,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5_6" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS56===
 MAKE=make
 MAKEFLAGS=
@@ -1040,7 +1142,7 @@ fi
 #============================================================
 if [ $SYSTEM = "NETBSD" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndNETBSD===
 MAKE=gmake
 MAKEFLAGS=
@@ -1065,7 +1167,7 @@ fi
 #============================================================
 if [ $SYSTEM = "LINUX" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndLINUX===
 MAKE=make
 MAKEFLAGS=--no-print-directory
@@ -1105,7 +1207,7 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS4" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS4===
 MAKE=make
 MAKEFLAGS=
@@ -1130,7 +1232,7 @@ fi
 #============================================================
 if [ $SYSTEM = "OSF1" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndOSF1==='
 MAKE=make
 MAKEFLAGS=
@@ -1171,7 +1273,7 @@ fi
 #============================================================
 if [ $SYSTEM = "IRIX" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
 MAKE=make
 MAKEFLAGS=
@@ -1219,7 +1321,7 @@ fi
 #============================================================
 if [ $SYSTEM = "CYGWIN" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndCYGWIN===
 .SUFFIXES: .exe
 
@@ -1249,7 +1351,7 @@ fi
 #============================================================
 if [ $SYSTEM = "UWIN" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndUWIN1===
 .SUFFIXES: .exe
 
@@ -1297,7 +1399,7 @@ fi
 #============================================================
 if [ $SYSTEM = "HPUX" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndHPUX1===
 MAKE=make
 MAKEFLAGS=
@@ -1340,7 +1442,7 @@ fi
 #============================================================
 if [ $SYSTEM = "ULTRIX" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndULTRIX1===
 MAKE=s5make
 MAKEFLAGS=
@@ -1388,7 +1490,7 @@ fi
 #============================================================
 if [ $SYSTEM = "DARWIN" ]
 then
-echo "      Emitting section for $DESCRIPTION"
+echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndDarwin===
 MAKE=make
 MAKEFLAGS=
@@ -1412,7 +1514,7 @@ fi
 
 
 #============================================================
-echo "      Emitting make rules"
+echo "  Emitting make rules..."
 cat >&3 <<'===MakeRules==='
 #==============================================================
 # Make Rules
@@ -1442,8 +1544,8 @@ cat >&3 <<'===MakeRules==='
 ===MakeRules===
 
 
-echo "    Selecting AppleTalk support..."
-echo "      $ATALKTYPE_LONG"
+echo "  Selecting AppleTalk support..."
+echo "    $ATALKTYPE_LONG"
 cat >&3 <<===EndATALK1===
 
 #==============================================================
@@ -1478,7 +1580,7 @@ fi
 # End of AppleTalk settings.
 #====================================================
 
-echo "    Emitting trailer..."
+echo "  Emitting trailer..."
 cat >&3 <<===EndEOF===
 
 # end of file
@@ -1489,11 +1591,9 @@ cat >&3 <<===EndEOF===
 # End of Makefile.conf builder code.
 #========================================================================
 
-# We are done
-echo "Done."
+echo
+echo "Done.  Take a look at Makefile.conf if you like, then run \"make\"."
+echo
 
-echo
-echo "Take a look at Makefile.conf if you like, then run \"make\"."
-echo
 exit 0
 
