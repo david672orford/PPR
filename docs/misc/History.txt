@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--29 October 2002.
+1.50a2, 27 February 2002--1 November 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7898,3 +7898,6 @@ line was being parsed twice.
 * Configure, various makefiles: made building of programs that require tdb
   optional.
 
+* www/cgi_widgets.pl:help_button(): added $helpdir parameter.
+
+* Configure: changed default for internationalization to "yes".

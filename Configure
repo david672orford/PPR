@@ -493,7 +493,7 @@ while [ "$INTERNATIONAL" = "?" ]
     do
 
     # prompt
-    $NECHO -n "Include international messages support? [no] "
+    $NECHO -n "Include international messages support? [yes] "
     read INTERNATIONAL
 
     # if yes
@@ -505,7 +505,7 @@ while [ "$INTERNATIONAL" = "?" ]
 	    INTERNATIONAL="#"	# comment out
 	    ;;
 	'' )
-	    INTERNATIONAL="#"	# comment out
+	    INTERNATIONAL=""	# don't comment out
 	    ;;
 	* )
 	    INTERNATIONAL="?"

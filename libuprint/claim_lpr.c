@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 October 2002.
+** Last modified 1 November 2002.
 */
 
 #include "before_system.h"
@@ -55,17 +55,19 @@ int printdest_claim_lpr(const char *destname)
 	    int line_len = 80;
 	    char *p;
 
-	    while((line = gu_getline(line, &line_len, f))
+	    while((line = gu_getline(line, &line_len, f)))
 		{
 		if(!line[0])
 		    continue;
 
+		/* Find the first colon.  If there is none, skip this line. */
 		if((p = strchr(line, ':')) == (char*)NULL)
 		    continue;
 
-		*p = '\0';	/* terminate at colon */
+		*p = '\0';	/* truncate line at first colon */
 
-		for(p = line; (p = strtok(p, "|")) != (char*)NULL; p = (char*)NULL)
+		/* Iterate through a |-separated listed of queue names and aliases. */
+		for(p = line; (p = strtok(p, "|")); p = (char*)NULL)
 		    {
 		    if(strcmp(p, destname) == 0)
 			{

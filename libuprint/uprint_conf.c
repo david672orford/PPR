@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 October 2002.
+** Last modified 1 November 2002.
 */
 
 #include "before_system.h"
@@ -112,7 +112,7 @@ void uprint_read_conf(void)
     char *name, *value;
     int linenum = 0;
     gu_boolean saw_real_lp_installed = FALSE;
-    gu_goolean saw_real_lpr_installed = FALSE;
+    gu_boolean saw_real_lpr_installed = FALSE;
 
     conf.well_known.lpr = 
 	conf.well_known.lpq =
