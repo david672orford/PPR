@@ -353,6 +353,12 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr-config.8.pod: added
 
-* pprinst/: since neither the web interface nor the new Ghostscript
-  integration are yet properly described in this guide, placeholders where
-  added which refer the user to the reference documentation.
+* pprinst/pprinst_installation.sgml: added reference to web interface and
+  referal to ../../www/README.txt, added hyperlink to ../misc/INSTALL.txt.
+
+* pprinst/pprinst_adding_spooler.sgml: brought up-to-date and proofread,
+  added description of new Ghostscript support.
+
+
+
+

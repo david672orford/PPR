@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 January 2003.
+# Last modified 14 February 2003.
 #
 
 =head1 NAME
@@ -200,7 +200,10 @@ the B<ppad feedback> command to enable PostScript error detection.
 
 This interface sends the print job to a USB printer.  It is still
 experimental.  You may get better results with the B<parallel> or B<simple>
-interface.
+interface.  At this time, the only address format supported is device file
+name, such as F</dev/usb/lp0>.  In the future it will support alternative
+address formats which may specify USB bus position or make, model, and
+serial number.
 
 =head2 B<dummy>
 

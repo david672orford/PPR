@@ -34,7 +34,7 @@ DOCSDIR=$(WWWDIR)/docs
 # Where are the document formatting and conversion programs?
 POD2MAN=pod2man
 POD2HTML=pod2html
-FIG2DEV=fig2dev
+FIG2DEV=PATH=/usr/bin fig2dev
 XSLTPROC=xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
@@ -107,16 +107,16 @@ SGML_CATALOG_FILES=../catalog
 #============================================================================
 
 .fig.eps:
-	$(FIG2DEV) -L ps $*.fig $*.eps
+	$(FIG2DEV) -L ps $*.fig $*.eps || ( rm -f $*.eps; exit 1 )
 
 .fig.gif:
-	$(FIG2DEV) -L gif $*.fig $*.gif
+	$(FIG2DEV) -L gif $*.fig $*.gif || ( rm -f $*.gif; exit 1 )
 
 .fig.jpeg:
-	$(FIG2DEV) -L jpeg $*.fig >$*.jpeg
+	$(FIG2DEV) -L jpeg $*.fig >$*.jpeg || ( rm -f $*.jpeg; exit 1 )
 
 .fig.png:
-	$(FIG2DEV) -L png $*.fig >$*.png
+	$(FIG2DEV) -L png $*.fig >$*.png || ( rm -f $*.png; exit 1 )
 
 # end of file
 

@@ -1,15 +1,21 @@
-<Sect2 id="adding-samba">
-<Title>Adding PPR Printers to Samba</Title>
+<!--
+Filename: pprinst_adding_samba.sgml
+Last Modified: 14 February 2003
+Last Proofread:
+-->
 
-<Para> If you are using the SMB server called
-<Application>Samba</Application> you can use it to share PPR printers.  It
-is recomended that you use Samba version 1.9.18 or later.  For information
+<Sect2 id="adding-samba">
+<Title>Adding <application>PPR</application> Printers to <application>Samba</application></Title>
+
+<Para>If you are using the SMB server called
+<Application><application>Samba</application></Application> you can use it to share <application>PPR</application> printers.  It
+is recomended that you use <application>Samba</application> version 1.9.18 or later.  For information
 about obtaining refer to <ULink
 url="http://www.samba.org/">http://www.samba.org/</ULink>.</Para>
 
 <Para>
-To share PPR printers through Samba, you must add a few lines to
-Samba's configuration file.  Samba's configuration file is often called
+To share <application>PPR</application> printers through <application>Samba</application>, you must add a few lines to
+<application>Samba</application>'s configuration file.  <application>Samba</application>'s configuration file is often called
 <Filename>/usr/local/samba/lib/smb.conf</Filename>.
 </Para>
 
@@ -21,7 +27,7 @@ which read:
 <Para>
 
 <Screen>
-include = /usr/ppr/lib/smb-protos.conf
+include = /usr/lib/ppr/lib/smb-protos.conf
 include = /etc/ppr/smb-include.conf
 </Screen>
 
@@ -31,27 +37,27 @@ include = /etc/ppr/smb-include.conf
 After you have modified <Filename>smb.conf</Filename>, you should run
 <Command>ppr2samba</Command> which is a utility which creates the file
 <Filename>/etc/ppr/smb-include.conf</Filename>.  This file will contain a
-<Application>Samba</Application> share
-definition section for each printer and group you have set up in PPR.
+<Application><application>Samba</application></Application> share
+definition section for each printer and group you have set up in <application>PPR</application>.
 You should re-run <Command>ppr2samba</Command> after every time you create or delete a
-printer or group in PPR.
+printer or group in <application>PPR</application>.
 </Para>
 
 <Para>
 To allow guest users to have meaningful names in the queue listing and to
-delete their jobs, you should add the Samba guest user to the access control
+delete their jobs, you should add the <application>Samba</application> guest user to the access control
 file <Filename>/etc/ppr/acl/pprprox.allow</Filename>.  All that is needed is a line with
 the user name on it.
 </Para>
 
 <Para>
-This procedure will share all PPR printers through Samba.  If you want to
+This procedure will share all <application>PPR</application> printers through <application>Samba</application>.  If you want to
 exclude certain printers you should refer to the ppr2samba(8) man page.
 </Para>
 
 <Para>You should also refer to <ULink url="../refman/ppr2samba.8.html">the
 ppr2samba(8) man page</ULink> if you want to set up special features for
-public access computers or if you want to set up Samba so it can offer
+public access computers or if you want to set up <application>Samba</application> so it can offer
 printer drivers to <SystemItem class="OSname">Microsoft Windows
 95</SystemItem> clients for automatic installation.</Para>
 

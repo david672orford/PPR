@@ -1,7 +1,7 @@
 <!--
 Filename: pprinst_installation.sgml
 Last Modified: 14 February 2003
-Last Proofread: 
+Last Proofread: 14 February 2003
 -->
 
 <Sect2 id="adding-spooler">
@@ -10,13 +10,21 @@ Last Proofread:
 <Para>Printers may be added without stopping the
 <application>PPR</application> spooler.  A new printer queue is created
 using the command <command>ppad interface</command>.  This command sets the
-interface program and address for a printer queue. An interface is a the
+interface program and address for a printer queue.  An interface is a the
 program which <application>PPR</application> uses to communicate with the
 printer.  A good example is the one called <Literal>atalk</Literal>.  The
 <Literal>atalk</Literal> interface allows <Application>PPR</Application> to
 print on <ProductName>Apple LaserWriters</ProductName> and other printers
 which implement Apple's Printer Access Protocol (PAP), such as many QMS and
 HP printers.</Para>
+
+<para>Interface may sometimes require the settings of options in addition to
+the address.  In the sections below, a few of the more often required
+options will be mentioned, but you may later wish to have a look at the <Ulink
+url="../refman/ppad-interfaces.8.html">ppad-interfaces(8) manpage</Ulink>
+which is the definitive reference for interface programs and their options.
+It also describes additional interface programs which are not mentioned
+here.</para>
 
 <Sect3 id="adding-inteface-atalk">
 <Title>Adding a Printer With an AppleTalk Interface</Title>
@@ -233,6 +241,18 @@ job failures due PostScript errors.</Para>
 <Sect3 id="adding-inteface-usblp">
 <Title>Using a Printer Connected to a USB Port (New Method)</Title>
 
+<para><application>PPR</application> provides an interface for USB-connected
+printers.  It is still experimental and its features subject to change, so
+about all we can say about it is that you might set it up like this:
+
+<Screen>
+# chown ppr /dev/usb/lp0
+# chmod 600 /dev/usb/lp0
+# ppad interface nearprn usblp /dev/usb/lp0
+</Screen>
+
+</para>
+
 </Sect3>
 
 <Sect3 id="adding-inteface-serial">
@@ -271,7 +291,8 @@ in the example above.  The remainder of the options are described in the
 </Para>
 
 <Para>RS-232 ports are invariably bidirectional, so the default for
-<Option>feedback</Option> for this interface is <literal>true</literal>.
+<Option>feedback</Option> for this interface is
+<literal>true</literal>.</Para>
 
 </Sect3>
 
@@ -317,7 +338,7 @@ have anthing closer:
 <VariableList>
 
 <VarListEntry>
-<Term>Apple LaserWriter II NT</Term>
+<Term><filename>Apple LaserWriter II NT</filename></Term>
 <ListItem>
 <Para>
 Good substitute in a pinch for any printer which has only one bin.  It
@@ -328,7 +349,7 @@ basic set of 35 built in fonts.
 </VarListEntry>
 
 <VarListEntry>
-<Term>Personal LaserWriter 320</Term>
+<Term><filename>Personal LaserWriter 320</filename></Term>
 <ListItem>
 <Para>
 A typical Level 2 printer with 35 fonts and one bin.
@@ -337,7 +358,7 @@ A typical Level 2 printer with 35 fonts and one bin.
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet IIISi PostScript</Term>
+<Term><filename>HP LaserJet IIISi PostScript</filename></Term>
 <ListItem>
 <Para>
 A typical 35 font level 1 printer with 2 paper trays.
@@ -346,7 +367,7 @@ A typical 35 font level 1 printer with 2 paper trays.
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet 4Si 4SiMX PS 600dpi</Term>
+<Term><filename>HP LaserJet 4Si 4SiMX PS 600dpi</filename></Term>
 <ListItem>
 <Para>
 A typeical 35 font level 2 printer with 2 paper trays.
@@ -355,7 +376,7 @@ A typeical 35 font level 2 printer with 2 paper trays.
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet 4</Term>
+<Term><filename>HP LaserJet 4</filename></Term>
 <ListItem>
 <Para>
 Works with 4M, supplied by HP, has strange bin names.
@@ -364,7 +385,7 @@ Works with 4M, supplied by HP, has strange bin names.
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet 4M DSC</Term>
+<Term><filename>HP LaserJet 4M DSC</filename></Term>
 <ListItem>
 <Para>
 David's, good bin names but every client must use this PPD file too or
@@ -374,16 +395,18 @@ they won't be able to select bins correctly.
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet 4 Plus</Term>
+<Term><filename>HP LaserJet 4 Plus</filename></Term>
 <ListItem>
 <Para>
-Works with 4M Plus, supplied by HP, same strange bin names.
+Works with 4M Plus, supplied by HP, same strange bin names.  The 4M Plus
+differs from the HP 4M in that it can have an optional duplexer installed
+and it has an internal TrueType font rasterizer.
 </Para>
 </ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>HP LaserJet 4M Plus DSC</Term>
+<Term><filename>HP LaserJet 4M Plus DSC</filename></Term>
 <ListItem>
 <Para>
 David's, good bin names but every client must use this PPD file too or
@@ -393,7 +416,7 @@ they won't be able to select bins correctly.
 </VarListEntry>
 
 <VarListEntry>
-<Term>QMS-PS 410</Term>
+<Term><filename>QMS-PS 410</filename></Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 45 fonts and up to two bins.
@@ -402,7 +425,7 @@ A typical Level 1 printer with 45 fonts and up to two bins.
 </VarListEntry>
 
 <VarListEntry>
-<Term>QMS-PS 810</Term>
+<Term><filename>QMS-PS 810</filename></Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 35 fonts and one bin.
@@ -411,7 +434,7 @@ A typical Level 1 printer with 35 fonts and one bin.
 </VarListEntry>
 
 <VarListEntry>
-<Term>QMS-PS 820</Term>
+<Term><filename>QMS-PS 820</filename></Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 35 fonts and two bins
@@ -421,25 +444,27 @@ A typical Level 1 printer with 35 fonts and two bins
 
 </VariableList>
 
+</Para>
+
 <Para>If you choose either the <Filename>HP LaserJet 4M DSC</Filename> or
 <Filename>HP LaserJet 4M Plus DSC</Filename> PPD file you must make sure
 your clients are using the vary same PPD file and not the one supplied by
 HP.  If you forget, your users won't be able to select bins
 correctly.</Para>
 
-<Para>If you can not find anything that is close, the printer manufacturer
+<para>If you can not find anything that is close, the printer manufacturer
 may be able to supply a suitable PPD file.  Very often it can be found on
 the Macintosh or MS-Windows driver diskettes which come with the printer.  If
 not, you may be able to obtain a suitable file from <ULink
-url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  
+url="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.</para>
 
-<Para>If you are really, abitious, you can obtain the <Ulink
-url="http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf">
-PostScript Printer Description File Format Specification</Ulink> from
-http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf
-</ULink>.  That document, together with a good printer manual, will give you
-the information you need to write your own PPD file or to modify an existing
-one to work with your printer.</Para>
+<Para>If you are really, abitious, you can obtain the 
+PostScript Printer Description File Format Specification from
+<Ulink url="http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf">
+http://partners.adobe.com/asn/developer/PDFS/TN/5003.PPD_Spec_v4.3.pdf</Ulink>. 
+That document, together with a good printer manual, will give you the
+information you need to write your own PPD file or to modify an existing one
+to work with your printer.</Para>
 
 <Para>Any new PPD files should be converted to Unix line termination (FTP
 will do this for you if you transfer them in ASCII mode).  The files already
@@ -471,36 +496,173 @@ configuration. You set it like this:
 </Sect3>
 
 <Sect3 id="adding-ghostscript">
-<Title>Using Ghostscript with <application>PPR</application></Title>
+<Title>Using <application>Ghostscript</application> with <application>PPR</application></Title>
 
-<Para>
-Using Ghostscript, a freely available PostScript interpreter, it is possible
-to print PostScript jobs on non-PostScript printers.
-</Para>
+<Para>Using <application>Ghostscript</application>, a freely available
+PostScript interpreter, it is possible to print PostScript jobs on
+non-PostScript printers.  This is especially useful for driving inexpensive
+inkjet printers connected over parallel or USB cables.  Of course, large
+laser printers and network printers will also work.  The only requirement is
+that the communications path have sufficient bandwidth to quickly transfer
+the large bitmaps produced by <application>Ghostscript</application>.</Para>
 
 <Para>Previous versions of <application>PPR</application> had special
-printer interface programs which accepted PostScript from PPR, processed it
-with Ghostscript, and sent the Ghostscript output to the printer.  However,
-these special interface programs are obsolete.  We will describe only the
-new mechanism here.</Para>
+printer interface wrapper programs which accepted PostScript from PPR,
+processed it with <application>Ghostscript</application>, and sent the <application>Ghostscript</application> output to the
+printer by using one of the real interface programs.  However, these special
+interface wrapper programs are obsolete.  We will describe only the new
+mechanism here.</Para>
 
-<Para>
-!!! missing !!!
-</Para>
+<Para><application>PPR</application>assumes that you have installed
+<application>Ghostscript</application> and the
+<application>Ghostscript</application> printer drivers that you intend to
+use. <application>PPR</application> can use any compiled-in
+<application>Ghostscript</application> driver as well as CUPS and IJS
+drivers including those from HP and the Gimp Print project.</Para>
 
+<para>It is easiest to configure a printer queue to use
+<application>Ghostscript</application> is to use a special PPD file.  These
+PPD files describe the capabilities of the
+printer-<application>Ghostscript</application>-driver combination and have a
+special line begining with <literal>*pprRIP:</literal> which tells
+<application>PPR</application> to use Ghostscript as the RIP (Raster Image
+Processor) and which driver and options to select.  For example, these
+commands will set up an <ProductName>Epson Stylus C62</ProductName> attached
+to the first parallel port:
+
+<screen>
+# ppad interface color_inkjet /dev/lp0
+# ppad ppd color_inkjet "Epson Stylus C62 Ghostscript"
+</screen>
+
+Assuming you have the <application>Gimp Print</application> IJS drivers
+installed, that is all you have to do.
+</para>
+
+<para>Here are the special PPD files supplied with
+<application>PPR</application>:
 
 <VariableList>
 
 <VarListEntry>
-<Term>HP DeskJet 550C PPD Ghostscript</Term>
+<Term><filename>HP DeskJet 500 Ghostscript</filename></Term>
 <ListItem>
 <Para>
-A non-PostScript inkjet printer combined with Ghostscript.
+This uses <application>Ghostscript</application>s dj500 driver.
+It should be able to drive most any HP Deskjet printer, but not
+in color.
+</Para>
+</ListItem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><filename>HP DeskJet 550C Ghostscript</filename></Term>
+<ListItem>
+<Para>
+This uses <application>Ghostscript</application>'s cdj550 driver.
+This will drive most HP color deskjets, though the results are
+not photo quality.
+</Para>
+</ListItem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><filename>HP LaserJet III Ghostscript</filename></Term>
+<ListItem>
+<Para>
+This PPD file chooses <application>Ghostscript</application>'s ljet3 
+driver which can drive many laser PCL printers.
+</Para>
+</ListItem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><filename>Epson Stylus C62 Ghostscript</filename></Term>
+<ListItem>
+<Para>
+This experimental PPD file selects the <application>Ghostscript</application> 
+IJS driver from Gimp Print.
+</Para>
+</ListItem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><filename>NEC Pinwriter 6 Ghostscript</filename></Term>
+<ListItem>
+<Para>
+This invokes <application>Ghostscript</application>'s necp6 driver 
+which can drive many 24 pin dotmatrix printers.
 </Para>
 </ListItem>
 </VarListEntry>
 
 </VariableList>
+
+If this selection seems a little limited, it is because these PPD files were
+built by hand for the printers which <application>PPR</application>'s author
+used.  He hopes to include a broader selection in the future.</para>
+
+<para>If you have <Ulink url="http://www.cups.org">CUPS</Ulink> installed,
+you can use its drivers for HP PCL, Epson-compatible dotmatrix, and Epson
+Stylus printers simply by selecting the cooresponding PPD file as supplied
+with CUPS.  These are the PPD files supplied with CUPS version 1.1.16:
+
+<screen>
+/usr/share/cups/model/deskjet.ppd
+/usr/share/cups/model/deskjet2.ppd
+/usr/share/cups/model/dymo.ppd
+/usr/share/cups/model/epson24.ppd
+/usr/share/cups/model/epson9.ppd
+/usr/share/cups/model/laserjet.ppd
+/usr/share/cups/model/okidat24.ppd
+/usr/share/cups/model/okidata9.ppd
+/usr/share/cups/model/stcolor.ppd
+/usr/share/cups/model/stcolor2.ppd
+/usr/share/cups/model/stphoto.ppd
+/usr/share/cups/model/stphoto2.ppd
+</screen>
+
+</para>
+
+<para><application>PPR</application> understands the extra information in a
+<application>CUPS</application>-<application>Ghostscript</application> PPD
+file and can invoke the correct driver without additional help.  For
+example, if we want to drive a <ProductName>HP LaserJet 4</ProductName> that
+doesn't have the PostScript option installed, but does have a JetDirect
+card, we could set it up with these commands:
+
+<screen>
+# ppad interface johnsprn tcpip johnsprn.prn.notacorp.com:9100
+# ppad ppd johnsprn /usr/share/cups/model/laserjet.ppd
+</screen>
+
+That really is all there is to it.
+</para>
+
+<para>We absolutely must mention the Foomatic project.  Foomatic is an effort
+to catalog as many printers and Ghostscript drivers as possible in an XML
+database.  This database is used to generate PPD file which, when used
+together with a special Perl script that invokes Ghostscript, can support a
+huge list of printers.  Instructions for using Foomatic with PPR can be
+found at <Ulink
+url="http://www.linuxprinting.org/ppr-doc.html">http://www.linuxprinting.org/ppr-doc.html</Ulink>.</para>
+
+<para>Your final option for <application>Ghostscript</application> RIP
+support is to choose a generic PPD file such as <filename>HP LaserJet 4M
+DSC</filename> and then use the <command>ppad rip</command> command to
+select the <application>Ghostscript</application> driver and options.  For
+example:
+
+<screen>
+# ppad ppd myprn "HP LaserJet 4M Plus DSC"
+# ppad rip ppr-gs -sDEVICE=ljet4
+</screen>
+
+You should refer to the <Ulink url="../refman/ppad.8.html">ppad(8)
+manpage</Ulink> for a more complete discussion of <command>ppad
+rip</command>.
+
+</para>
 
 </Sect3>
 
@@ -538,7 +700,7 @@ Switchset:
 
 <Para>
 Some of these configuration options which you see in the <command>ppad
-show</commadn> output have already been explained, all of them
+show</command> output have already been explained, all of them
 are described in the <ULink url="../refman/ppad.8.html">ppad(8)
 manpage</ULink>.
 </Para>

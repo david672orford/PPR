@@ -1,3 +1,9 @@
+<!--
+Filename: pprinst_start_restart.sgml
+Last Modified: 14 February 2003
+Last Proofread: 
+-->
+
 <sect1 id="start-restart">
 <title>Starting and Restarting the PPR Spooler</title>
 
@@ -43,21 +49,19 @@ with the command <command>kill -9</command> or <command>kill -KILL</command> unl
 have already failed.
 </para>
 
-<para>
-One reason this is important is because, depending on which AppleTalk implementation
-you are using,
-<command>papsrv</command> may have to call shutdown code to remove the advertised names
-from the AppleTalk network. If killed by SIGKILL, <command>papsrv</command> will be
-unable to call the shutdown code and the names will remain.  You might then
-have to stop and restart the AppleTalk protocol stack to get rid of them. Until
-you get rid of them, you will be unable to restart <command>papsrv</command> and any
+<para>One reason this is important is because, depending on which AppleTalk
+implementation you are using, <command>papsrv</command> may have to call
+shutdown code to remove the advertised names from the AppleTalk network. If
+killed by SIGKILL, <command>papsrv</command> will be unable to call the
+shutdown code and the names will remain.  You might then have to stop and
+restart the AppleTalk protocol stack to get rid of them. Until you get rid
+of them, you will be unable to restart <command>papsrv</command> and any
 Macintosh clients which attempt to print to the now dead names will probably
-crash.
-</para>
+crash.</para>
 
 </sect2>
 
-<sect2><title>Automatic Way</title>
+<sect2><title>The Automatic Way</title>
 
 <para>
 The above paragraphs describe how to start and stop the PPR daemons individually 
