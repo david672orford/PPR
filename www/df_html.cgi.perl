@@ -96,10 +96,10 @@ while(<D>)
 
     print <<"BODY10";
 <table border=1 hspace=5 vspace=5 cellpadding=5 cellspacing=0 align="left">
-<tr height=100><td><table border=0 cellspacing=0 cellpadding=0 height=100>
-		<tr><td><img width=100 height=$percent_reserved border=0 src="../images/pixel-blue.png"></td></tr>
-		<tr><td><img width=100 height=$percent_available border=0 src="../images/pixel-green.png"></td></tr>
-		<tr><td><img width=100 height=$percent_used border=0 src="../images/pixel-red.png"></td></tr>
+<tr><td><table border=0 cellspacing=0 cellpadding=0>
+		${\percent_bar($percent_reserved, "blue")}
+		${\percent_bar($percent_available, "green")}
+		${\percent_bar($percent_used, "red")}
 		</table>
 	</td>
     <td>
@@ -132,5 +132,17 @@ print <<"TAIL10";
 </body>
 </html>
 TAIL10
+
+sub percent_bar
+    {
+    my $percent = shift;
+    my $color = shift;
+    if($percent > 0)
+	{
+	return <<"End";
+<tr><td><img width=100 height=$percent border=0 src="../images/pixel-$color.png"></td></tr>
+End
+	}
+    }
 
 exit 0;
