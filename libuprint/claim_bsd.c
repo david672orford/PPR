@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/libuprint/claim_lpr.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** mouse:~ppr/src/libuprint/claim_bsd.c
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 November 2002.
+** Last modified 18 February 2003.
 */
 
 #include "before_system.h"
@@ -58,7 +58,7 @@ lab-color:\
 	:lf=/var/spool/lpd/lab-color/log:
 										
 */
-int printdest_claim_lpr(const char *destname)
+int printdest_claim_bsd(const char destname[])
     {
     if(uprint_lpr_installed())
 	{
@@ -124,6 +124,6 @@ int printdest_claim_lpr(const char *destname)
 	} /* if lpr installed */
 
     return FALSE;
-    } /* end of printdest_claim_lpr() */
+    } /* end of printdest_claim_bsd() */
 
 /* end of file */

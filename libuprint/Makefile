@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 February 2003.
+# Last modified 18 February 2003.
 #
 
 include ../Makefile.conf
@@ -33,13 +33,14 @@ include ../makeprogs/paths.mk
 
 #=== Inventory ==============================================================
 
-LIBUPRINT_OBJS=lpr_connect.$(OBJ) lpr_failover.$(OBJ) lpr_sendfile.$(OBJ) \
-	claim_ppr.$(OBJ) claim_lp.$(OBJ) claim_lpr.$(OBJ) \
-	claim_remote.$(OBJ) uprint.$(OBJ) uprint_xlate.$(OBJ) \
+LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
+	uprint_xlate.$(OBJ) \
+	lpr_connect.$(OBJ) lpr_failover.$(OBJ) lpr_sendfile.$(OBJ) \
+	claim_ppr.$(OBJ) claim_sysv.$(OBJ) claim_bsd.$(OBJ) claim_remote.$(OBJ) \
 	uprint_print.$(OBJ) \
-	uprint_type_ppr.$(OBJ) uprint_argv_ppr.$(OBJ) \
-	uprint_type_lpr.$(OBJ) uprint_argv_lpr.$(OBJ) \
-	uprint_type_lp.$(OBJ) uprint_argv_lp.$(OBJ) \
+	uprint_print_sysv.$(OBJ) \
+	uprint_print_bsd.$(OBJ) \
+	uprint_print_ppr.$(OBJ) \
 	uprint_print_rfc1179.$(OBJ) \
 	uprint_lpq.$(OBJ) uprint_lpq_rfc1179.$(OBJ) \
 	uprint_lprm.$(OBJ) uprint_lprm_rfc1179.$(OBJ) \

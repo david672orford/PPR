@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2003.
+** Last modified 18 February 2003.
 */
 
 /* Maximum lengths of control file fields. */
@@ -87,19 +87,13 @@ int uprint_lpr_nextid(void);
 int uprint_file_stdin(int *length);
 int uprint_lpr_send_data_file(int sourcefd, int sockfd);
 
-/* claim_ppr.c: */
-gu_boolean printdest_claim_ppr(const char *dest);
+/* claim_*.c: */
+gu_boolean printdest_claim_ppr(const char dest[]);
+gu_boolean printdest_claim_sysv(const char dest[]);
+gu_boolean printdest_claim_bsd(const char dest[]);
+gu_boolean printdest_claim_remote(const char dest[], struct REMOTEDEST *scratchpad);
 
-/* claim_lp.c: */
-gu_boolean printdest_claim_lp(const char *dest);
-
-/* claim_lpr.c: */
-gu_boolean printdest_claim_lpr(const char *dest);
-
-/* uprint_claim_remote.c: */
-gu_boolean printdest_claim_remote(const char *dest, struct REMOTEDEST *scratchpad);
-
-/* uprint.c: */
+/* uprint.c (object atributes): */
 extern int uprint_errno;
 extern const char *uprint_arrest_interest_interval;
 void *uprint_new(const char *fakername, int argc, const char *argv[]);
@@ -172,28 +166,11 @@ int uprint_run(uid_t uid, const char *exepath, const char *const argv[]);
 /* uprint_strerror.c: */
 const char *uprint_strerror(int errnum);
 
-/* uprint_print.c: */
+/* uprint_print.c, uprint_print_*.c: */
 int uprint_print(void *p, gu_boolean remote_too);
-
-/* uprint_type_lp.c: */
-const char *uprint_get_content_type_lp(void *p);
-
-/* uprint_argv_lp.c: */
-int uprint_print_argv_lp(void *p, const char **argv, int argv_len);
-
-/* uprint_type_lpr.c: */
-char uprint_get_content_type_lpr(void *p);
-
-/* uprint_print_lpr.c: */
-int uprint_print_argv_lpr(void *p, const char **argv, int argv_len);
-
-/* uprint_type_ppr.c: */
-const char *uprint_get_content_type_ppr(void *p);
-
-/* uprint_argv_ppr.c: */
+int uprint_print_argv_sysv(void *p, const char **argv, int argv_len);
+int uprint_print_argv_bsd(void *p, const char **argv, int argv_len);
 int uprint_print_argv_ppr(void *p, const char **argv, int argv_len);
-
-/* uprint_print_rfc1179.c: */
 int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad);
 
 /* uprint_lpq.c: */
@@ -212,6 +189,8 @@ int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue,
 const char *uprint_default_destinations_lpr(void);
 const char *uprint_default_destinations_lp(void);
 const char *uprint_path_lpr(void);
+const char *uprint_path_lpq(void);
+const char *uprint_path_lprm(void);
 const char *uprint_path_lp(void);
 const char *uprint_path_lpstat(void);
 const char *uprint_path_cancel(void);

@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--17 February 2003.
+1.51, 15 February 2003--18 February 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8253,4 +8253,29 @@ line was being parsed twice.
 
 * www/cgi_run.pl, prn_addwiz.cgi.perl: fixed some more Perl 5.8.0 warnings,
   suppressed program path in run() output.
+
+* www/docs_man.cgi.perl, docs_utils.pl: added manpage directory.
+
+* libuprint/: reorganized code and renamed many files and a few functions.
+  Some of the renaming went thusly: lpr->bsd, lp->sysv.  This was done
+  in most cases where the reference was not to a command but to a spooler.
+  [More description coming as work progresses.]
+
+* uprint/: removed all setuid bits and calls to setuid business in
+  libuprint.
+
+* unixuser/ppr-xgrant.c: by using setreuid() in stead of setuid() was able
+  to set the real uid (necessary because xauth is a stinker and calls 
+  access()) without being root.  This means that it can now be setuid ppr in
+  stead of setuid root.
+
+* fixup/fixup_perms.sh: changed to no longer make uprint-* and ppr-xgrant
+  setuid root.  Made code neater by creating another for loops which steps
+  through a list of files that all need the same settings.
+
+* lprsrv/olprsrv.c: fixed to work with libuprint changes and to always 
+  compile support for all supported spoolers.
+
+* lprsrv/lprsrv_print.c: fixed to work with renamed dest_claim_*() functions
+  from libuprint.
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 February 2003.
+# Last modified 18 February 2003.
 #
 
 HOMEDIR="?"
@@ -83,7 +83,7 @@ echo
 # Now go back and change things.
 #=============================================================================
 
-echo "Setting different permissions for certain failes..."
+echo "Setting different permissions for certain files..."
 
 # This is done so that the DVI filters work.
 chmod 775 $VAR_SPOOL_PPR/dvips
@@ -105,43 +105,51 @@ echo
 # or setuid to root are.
 #=============================================================================
 
-echo "Setting up setuid programs..."
+echo "Setting up setuid/setgid $(USER_PPR)/$(GROUP_PPR) programs..."
 
-chmod 6711 $HOMEDIR/bin/pprd \
+# These programs are all setuid ppr and setgid ppr.  We do the group
+# too so that files they created will be owned by the right group.
+for prog in \
+	$HOMEDIR/bin/pprd \
 	$HOMEDIR/bin/ppr \
 	$HOMEDIR/bin/ppop \
 	$HOMEDIR/bin/ppad \
 	$HOMEDIR/bin/ppuser \
-	$HOMEDIR/bin/ppr2samba
+	$HOMEDIR/bin/ppr2samba \
+	$HOMEDIR/bin/ppr-xgrant \
+	$HOMEDIR/bin/papsrv
+	$HOMEDIR/bin/papd
+    do
+    if [ -x $prog ]
+	then
+	echo "    $i"
+	chown $(USER_PPR) $prog
+	chgrp $(GROUP_PPR) $prog
+	chmod 6711 $prog
+	fi
+    done
 
-# If papsrv exists (i.e., we have AppleTalk support),
-if [ -x $HOMEDIR/bin/papsrv ]
-    then
-    chmod 6711 $HOMEDIR/bin/papsrv
-    fi
-
-# The LPR interface must be setuid root
-# so that it can allocate privledged sockets.
-chown root $HOMEDIR/interfaces/lpr
-chmod 4711 $HOMEDIR/interfaces/lpr
-
-# The ppr-xgrant program must be setuid root and setgid ppr too.
-chown root $HOMEDIR/bin/ppr-xgrant
-chmod 6711 $HOMEDIR/bin/ppr-xgrant
-
-# The uprint programs must be setuid root too.
-chown root $HOMEDIR/bin/uprint-*
-chmod 4711 $HOMEDIR/bin/uprint-*
-
-# The Samba printer drivers editor must be setuid root.
-if [ -f $HOMEDIR/lib/sambaprint ]
-    then
-    chown root $HOMEDIR/lib/sambaprint
-    chmod 4711 $HOMEDIR/lib/sambaprint
-    fi
+#
+# The LPR interface must be setuid root so that it can allocate 
+# priveledged sockets.  What a shame!
+#
+# sambaprint must be setuid root so that it can write to the
+# Samba drive database.
+#
+for prog in \
+	$HOMEDIR/interfaces/lpr \
+	$HOMEDIR/lib/sambaprint
+    do
+    if [ -x $prog ]
+	then
+	echo "    $i"
+	chown root $prog
+	chgrp $(GROUP_PPR) $prog
+	chmod 4711 $prog
+	fi
+    done
 
 echo "Done."
 echo
 
 exit 0
-

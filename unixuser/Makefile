@@ -49,7 +49,7 @@ ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) root        $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS_SUID)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS_SUID)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/bin $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/lib $(LIB_PROGS) 
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 644  $(HOMEDIR)/fixup $(FIXUP_SCRIPTS)

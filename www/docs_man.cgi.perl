@@ -9,7 +9,7 @@
 #
 # * Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 # notice, this list of conditions and the following disclaimer in the
 # documentation and/or other materials provided with the distribution.
@@ -17,16 +17,16 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 January 2003.
+# Last modified 18 January 2003.
 #
 
 #
@@ -43,7 +43,7 @@ require "docs_util.pl";
 
 @MANPATH = ("/usr/local/man", "/usr/share/man", "/usr/man");
 
-# Prevent taint problems when running gzip and such.  See Programming 
+# Prevent taint problems when running gzip and such.  See Programming
 # Perl 3rd edition, p. 565.
 defined($ENV{PATH} = $PPR::SAFE_PATH) || die;
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
@@ -127,34 +127,36 @@ my ($charset, $content_language) = cgi_intl_init();
 # This first try block catches errors in operations which must be done before
 # the HTTP header is generated.  If an error is caught, it produces an error
 # document.
+my $path = undef;
 eval {
-    my $path;
 
-    # If the path begins with "/MANPATH/", find the man page in the
-    # MANPATH, just like man(1) would.
-    if($ENV{PATH_INFO} =~ m#/MANPATH/(.+)#)
+    # If this script was invoked as if it were a directory,
+    if(defined($ENV{PATH_INFO}))
 	{
-	my $page = $1;
-	$page !~ m#/# || die "No subirectories within MANPATH";
-	$page =~ m#(^[^\(]+)(\(([^\)]+)\))?$# || die "Invalid manpage name \"$page\"";
-	my($name, $section) = ($1, $3);
-	$path = search_manpath(\@MANPATH, $name, $section);
-	defined($path) || die "Can't find $name($section) in MANPATH";
-	}
+	# If the path begins with "/MANPATH/", find the man page
+	# in the MANPATH, just like man(1) would.
+	if($ENV{PATH_INFO} =~ m#/MANPATH/(.+)#)
+	    {
+	    my $page = $1;
+	    $page !~ m#/# || die "No subirectories within MANPATH";
+	    $page =~ m#(^[^\(]+)(\(([^\)]+)\))?$# || die "Invalid manpage name \"$page\"";
+	    my($name, $section) = ($1, $3);
+	    $path = search_manpath(\@MANPATH, $name, $section);
+	    defined($path) || die "Can't find $name($section) in MANPATH";
+	    }
 
-    # Otherwise, accept the path that the user supplies.
-    else
-	{
-	$path = $ENV{PATH_INFO};
-	}
+	# Otherwise, accept the path that the user supplies.
+	else
+	    {
+	    $path = $ENV{PATH_INFO};
+	    }
 
-    if(defined $path)
-	{
 	my $cleaned_path = docs_open(DOC, $path);
 	$cleaned_path =~ m#/([^/]+)\.(\d+[a-zA-Z]*)(\.[^\./]+)?$# || die "Filename \"$cleaned_path\" is not that of a man page";
 	$html_title = html("$1($2)");
 	docs_last_modified(DOC);
 	}
+
     else
 	{
 	$html_title = html(_("Available Manpages"));
@@ -186,13 +188,17 @@ eval {
 
     if(defined $path)
 	{
+	print "<p>Help the PPR project!  If you have documentation\n";
+	print "for any untranslated macros below, send it to \n";
+	print "<a href=\"mailto:ppr-bugs@mail.trincoll.edu\">ppr-bugs\@mail.trincoll.edu</a>.</p>\n";
+
 	troff_to_html(DOC);
 	close(DOC) || die $!;
 	}
     else
 	{
 	print "<h1>$html_title</h1>\n";
-	do_man_directory();
+	do_man_directory(\@MANPATH);
 	}
 
     };
@@ -215,19 +221,20 @@ exit 0;
 
 sub do_man_directory
     {
+    my $manpath = shift;
     my %sections;
-    foreach my $dir (@{$manpath})
+    foreach my $dir (@$manpath)
 	{
 	next if(! -d $dir);	# skip MANPATH directories that don't exist
 
 	opendir(DIR, $dir) || die $!;
 	while(my $dent = readdir(DIR))
 	    {
-	    if($dent =~ /^man(.+)$/)
+	    if($dent =~ /^man(.+)$/ && -d "$dir/$dent")
 		{
-		$section_number = $1;
-		opendir(SDID, "$dir/$dent") || die $!;
-		while($sdent = readdir(SDIR)))
+		my $section_number = $1;
+		opendir(SDIR, "$dir/$dent") || die $!;
+		while($sdent = readdir(SDIR))
 		    {
 		    if($sdent =~ /^([^\.]+)\./)
 			{
@@ -235,19 +242,25 @@ sub do_man_directory
 			    {
 			    $sections{$section_number} = [];
 			    }
-			push(@{$sections{$section_number}}, $1);
+			push(@{$sections{$section_number}}, ["$1($section_number)", "$dir/$dent/$sdent"]);
 			}
 		    }
 		closedir(SDIR) || die $!;
 		}
 	    }
-	    closedir(DIR) || die $!;
+	closedir(DIR) || die $!;
 	}
 
-    foreach my $key (keys %sections)
+    foreach my $key (sort keys %sections)
 	{
-	print "<h2>", html(sprintf(_("Section %s")), $key), "</h2>\n";
+	print "<h2>", html(sprintf(_("Section %s"), $key)), "</h2>\n";
+	print "<ul>\n";
+	for my $i (sort {$a->[0] cmp $b->[0]} @{$sections{$key}})
+	    {
+	    print "<li><a href=\"$ENV{SCRIPT_NAME}$i->[1]\">", html($i->[0]), "</a></li>\n";
 
+	    }
+	print "</ul>\n";
 
 	}
     }

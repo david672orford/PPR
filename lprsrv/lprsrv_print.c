@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_print.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 7 May 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 18 February 2003.
 */
 
 /*
@@ -30,7 +45,6 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "lprsrv.h"
 #include "uprint.h"
 
@@ -652,16 +666,12 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 		case 1:
 		    args_used = uprint_print_argv_ppr(upr, args, MAX_PRINT_ARGV);
 		    break;
-		#ifdef HAVE_LPR
 		case 2:
-		    args_used = uprint_print_argv_lpr(upr, args, MAX_PRINT_ARGV);
+		    args_used = uprint_print_argv_bsd(upr, args, MAX_PRINT_ARGV);
 		    break;
-		#endif
-		#ifdef HAVE_LP
 		case 3:
-		    args_used = uprint_print_argv_lp(upr, args, MAX_PRINT_ARGV);
+		    args_used = uprint_print_argv_sysv(upr, args, MAX_PRINT_ARGV);
 		    break;
-		#endif
 		default:
 		    fatal(1, "%s line %d: missing case", __FILE__, __LINE__);
 		}
@@ -713,13 +723,13 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 	prog = PPR_PATH;
 	}
 
-    else if(printdest_claim_lpr(printer))
+    else if(printdest_claim_bsd(printer))
 	{
 	spooler = 2;
 	prog = uprint_path_lpr();
 	}
 
-    else if(printdest_claim_lp(printer))
+    else if(printdest_claim_sysv(printer))
 	{
 	spooler = 3;
 	prog = uprint_path_lp();

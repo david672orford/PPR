@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/uprint_private.h
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 November 2002.
+** Last modified 18 February 2003.
 */
 
 /* Do not turn this on when linking with lprsrv!  Such
@@ -157,12 +157,14 @@ struct LP_LPR_TYPE_XLATE
 extern struct LP_LPR_TYPE_XLATE lp_lpr_type_xlate[];
 
 /* uprint_conf.c */
-const char *uprint_path_lpq(void);
-const char *uprint_path_lprm(void);
 const char *uprint_lpr_printcap(void);
 const char *uprint_lp_printers(void);
 const char *uprint_lp_classes(void);
 gu_boolean uprint_lp_printers_conf(void);
+
+/* uprint_print_bsd.c */
+char uprint_get_content_type_lpr(void *p);
+
 
 /* end of file */
 

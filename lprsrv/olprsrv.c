@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/lprsrv/olprsrv.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 3 August 1999.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 18 February 2003.
 */
 
 /*
@@ -1188,7 +1203,6 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 ** Based on the information collected from the control file,
 ** build an argument list for lpr.
 */
-#ifdef HAVE_LPR
 void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *control, int file_index)
     {
     int x;
@@ -1373,13 +1387,11 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 
     args[x] = (char*)NULL;	/* terminate the list */
     } /* end of build_argv_lpr() */
-#endif
 
 /*
 ** Based on the information collected from the control file,
 ** build an argument list for lp.
 */
-#ifdef HAVE_LP
 void build_argv_lp(const char *args[], char *printer, struct CONTROL_FILE *control, int file_index)
     {
     int x;
@@ -1532,7 +1544,6 @@ void build_argv_lp(const char *args[], char *printer, struct CONTROL_FILE *contr
 
     args[x] = (char*)NULL;	/* terminate the list */
     } /* end of build_argv_lp() */
-#endif
 
 /*
 ** Send an already collected datafile to ppr, lp, or lpr.
@@ -1557,15 +1568,11 @@ int dispatch_file(int tempfile, char *printer, struct CONTROL_FILE *control, str
     if(printdest_claim_ppr(printer))
 	build_argv_ppr(args, printer, control, file_index);
 
-    #ifdef HAVE_LPR
-    else if(printdest_claim_lpr(printer))
+    else if(printdest_claim_bsd(printer))
 	build_argv_lpr(args, printer, control, file_index);
-    #endif
 
-    #ifdef HAVE_LP
-    else if(printdest_claim_lp(printer))
+    else if(printdest_claim_sysv(printer))
 	build_argv_lp(args, printer, control, file_index);
-    #endif
 
     else
 	fatal(1, "Queue \"%s\" does not exist on server!", printer);
@@ -1839,8 +1846,7 @@ void show_jobs(char *command)
     	args[x++] = queue;
     	}
 
-    #ifdef HAVE_LPR
-    else if(printdest_claim_lpr(queue))
+    else if(printdest_claim_bsd(queue))
 	{
 	args[x++] = uprint_path_lpq();
 	args[x++] = "lpq";
@@ -1849,17 +1855,14 @@ void show_jobs(char *command)
 	    args[x++] = "-l";
 	args[x++] = queue;
 	}
-    #endif
 
-    #ifdef HAVE_LP
-    else if(printdest_claim_lp(queue))
+    else if(printdest_claim_sysv(queue))
 	{
 	args[x++] = uprint_path_lpstat();
 	args[x++] = "lpstat";
 	args[x++] = "-o";
 	args[x++] = queue;
 	}
-    #endif
 
     else
 	{
@@ -2090,7 +2093,6 @@ static int remove_jobs_ppop_cancel(const char *queue, const char *agent, char *l
 ** It does not implement node based security as
 ** remove_jobs_ppop_cancel() does.
 */
-#ifdef HAVE_LP
 static int remove_jobs_cancel(const char *queue, const char *agent, char *list)
     {
     int retval = 0;
@@ -2156,7 +2158,6 @@ static int remove_jobs_cancel(const char *queue, const char *agent, char *list)
 
     return retval;
     } /* end of remove_jobs_cancel() */
-#endif
 
 /*
 ** Function to remove the jobs from a BSD lpr spooling system.
@@ -2166,7 +2167,6 @@ static int remove_jobs_cancel(const char *queue, const char *agent, char *list)
 ** the real lpd does and remove_jobs_ppr() do.
 **
 */
-#ifdef HAVE_LPR
 static int remove_jobs_lprm(const char *queue, const char *agent, char *list)
     {
     int retval = 0;
@@ -2205,7 +2205,6 @@ static int remove_jobs_lprm(const char *queue, const char *agent, char *list)
 
     return retval;
     } /* end of remove_jobs_lprm() */
-#endif
 
 /*
 ** Handler for the ^E command.  It does some preliminary parsing
@@ -2251,15 +2250,11 @@ void remove_jobs(char *command)
     if(printdest_claim_ppr(queue))
 	retcode = remove_jobs_ppop_cancel(queue, agent, list);
 
-    #ifdef HAVE_LPR
-    else if(printdest_claim_lpr(queue))
+    else if(printdest_claim_bsd(queue))
     	retcode = remove_jobs_lprm(queue, agent, list);
-    #endif
 
-    #ifdef HAVE_LP
-    else if(printdest_claim_lp(queue))
+    else if(printdest_claim_sysv(queue))
     	retcode = remove_jobs_cancel(queue, agent, list);
-    #endif
 
     else
 	{

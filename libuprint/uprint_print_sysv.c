@@ -1,16 +1,31 @@
 /*
-** mouse:~ppr/src/libuprint/uprint_argv_lp.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** mouse:~ppr/src/libuprint/uprint_argv_sysv.c
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 22 April 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 18 February 2003.
 */
 
 #include "before_system.h"
@@ -42,11 +57,38 @@ static int o_opt(const char *name, const char *value, char *scratch, size_t scra
     }
 
 /*
+** Get the System V lp content type of the job
+** represented by the UPRINT structure.
+*/
+static const char *uprint_get_content_type_lp(void *p)
+    {
+    struct UPRINT *upr = (struct UPRINT *)p;
+
+    /* If the caller set the LP content type specifically: */
+    if(upr->content_type_lp != (const char *)NULL)
+    	return upr->content_type_lp;
+
+    /* We may have to figure it out from the lpr content type: */
+    if(upr->content_type_lpr != '\0')
+	{
+	struct LP_LPR_TYPE_XLATE *p;
+	
+	for(p = lp_lpr_type_xlate; p->lpname != (const char *)NULL || p->lprcode != '\0'; p++)
+	    {
+	    if(p->lprcode == upr->content_type_lpr)
+	    	return p->lpname;
+	    }	
+	}
+
+    return (const char *)NULL;
+    } /* end of uprint_get_content_type_lp() */
+
+/*
 ** Fill in the part of the lp argument list before the files
 ** names.  The non-error return value is the number of entries
 ** in the argument array that were used.
 */
-int uprint_print_argv_lp(void *p, const char **lp_argv, int argv_size)
+int uprint_print_argv_sysv(void *p, const char **lp_argv, int argv_size)
     {
     const char function[] = "uprint_print_argv_lp";
     struct UPRINT *upr = (struct UPRINT *)p;
@@ -191,6 +233,6 @@ int uprint_print_argv_lp(void *p, const char **lp_argv, int argv_size)
     	}
 
     return i;
-    } /* end of uprint_print_argv_lp() */
+    } /* end of uprint_print_argv_sysv() */
 
 /* end of file */

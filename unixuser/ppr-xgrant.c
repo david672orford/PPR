@@ -1,21 +1,36 @@
 /*
 ** mouse:~ppr/src/misc/ppr-xgrant.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 11 November 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 18 February 2003.
 */
 
 /*
-** This program should get setuid "ppr".  It reads the invoking user's
-** .Xauthority file and the DISPLAY environment variable and grants
+** This program should get setuid and setgid "ppr".  It reads the invoking 
+** user's .Xauthority file and the DISPLAY environment variable and grants
 ** PPR permission to connect X clients to that display.
 */
 
@@ -34,7 +49,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 
 int main(int argc, char *argv[])
@@ -54,9 +68,9 @@ int main(int argc, char *argv[])
     textdomain(PACKAGE);
     #endif
 
-   if(geteuid() != 0)
+    if(geteuid() == getuid())
 	{
-	fprintf(stderr, _("%s: This program must be setuid root!\n"), argv[0]);
+	fprintf(stderr, _("%s: This program must be setuid %s!\n"), argv[0], USER_PPR);
 	return EXIT_INTERNAL;
 	}
 
@@ -133,11 +147,16 @@ int main(int argc, char *argv[])
 	dup2(fds[0], 0);
 	close(fds[1]);
 
-	setuid(pass->pw_uid);	/* become ppr */
+	/* become ppr */
+	if(setreuid(pass->pw_uid, pass->pw_uid) == -1)
+	    {
+	    fprintf(stderr, "%s: child: setreuid(%ld, %ld) failed, errno=%d (%s)\n", argv[0], (long)pass->pw_uid, (long)pass->pw_uid, errno, gu_strerror(errno));
+	    exit(242);
+	    }
 
     	execl(xauth_path, "xauth", "-f", ppr_xauthority_file, "nmerge", "-", (char*)NULL);
 
-    	fprintf(stderr, "%s: child: exec(\"%s\", ...) failed, errno=%d (%s)\n", argv[0], xauth_path, errno, gu_strerror(errno) );
+    	fprintf(stderr, "%s: child: exec(\"%s\", ...) failed, errno=%d (%s)\n", argv[0], xauth_path, errno, gu_strerror(errno));
 	exit(242);
     	}
 
@@ -159,7 +178,15 @@ int main(int argc, char *argv[])
 	dup2(fds[1], 1);
 	close(fds[0]);
 
-	setuid(getuid());	/* become the user */
+	/* become the user */
+	{
+	uid_t uid = getuid();
+	if(setreuid(uid, uid) == -1)
+	    {
+	    fprintf(stderr, "%s: child: setreuid(%ld, %ld) failed, errno=%d (%s)\n", argv[0], (long)uid, (long)uid, errno, gu_strerror(errno));
+	    exit(242);
+	    }
+	}
 
 	execl(xauth_path, "xauth", "nextract", "-", display, (char*)NULL);
 
