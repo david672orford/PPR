@@ -294,3 +294,8 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 * rules.mk: changed stylesheet paths to convert to the current Debian
   locations.
 
+
+1.50b1, 8 November 2002--8 November 2002.
+
+*
+

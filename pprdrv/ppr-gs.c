@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2002.
+** Last modified 8 November 2002.
 */
 
 /*
@@ -50,15 +50,25 @@ const char myname[] = "ppr-gs";
 int main(int argc, char *argv[])
     {
     const char *gs_exe = NULL;
-    const char *gs_exe_list[] = {"../ppr-gs/bin/gs", "/usr/local/bin/gs", "/usr/bin/gs", NULL};
     char *outputfile = NULL;
     gu_boolean saw_DEVICE = FALSE;
+    gu_boolean saw_cupsfilter = FALSE;
+    gu_boolean saw_hpijs = FALSE;
+    gu_boolean saw_omni = FALSE;
     const char **gs_args;
     int si, di;
     char *p;
 
-    /* Find a copy of Ghostscript which we can use. */
+    /*
+    ** First step is to find a copy of Ghostscript which we can use.  Using
+    ** the list supplied above, we will look for them in what we consider
+    ** order of decreasing deliberateness of their installation.  In other
+    ** words, PPR-GS is first, Ghostscript at the default location when
+    ** built from source (/usr/local/bin) is next, and last is Ghostscript
+    ** at the system location (/usr/bin/gs).
+    */
     {
+    const char *gs_exe_list[] = {HOMEDIR"/../ppr-gs/bin/gs", "/usr/local/bin/gs", "/usr/bin/gs", NULL};
     int i;
     for(i=0 ; gs_exe_list[i]; i++)
 	{
@@ -76,9 +86,11 @@ int main(int argc, char *argv[])
     }
 
     /*
-    ** Here we build the Ghostscript command line.  The extra space allocated
+    ** Here we start to build the Ghostscript command line with the options
+    ** supplied in the printer configuration or PPD file (and which were
+    ** passed to us on our command line.)  The extra space allocated
     ** in the array is for "-q -dSAFER -sOutputFile='...' -" and the NULL
-    ** which terminates the array.
+    ** which terminates the array.  These will be added later.
     */
     gs_args = gu_alloc(argc + 5, sizeof(const char *));
 
@@ -90,7 +102,21 @@ int main(int argc, char *argv[])
 	if((p=lmatchp(argv[si], "cupsfilter=")))
 	    {
 	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", p);
+	    saw_cupsfilter = TRUE;
 	    }
+
+	else if((p=lmatchp(argv[si], "hpijs=")))
+	    {
+	    /* something missing here */
+	    saw_hpijs = TRUE;
+	    }
+
+	else if((p=lmatchp(argv[si], "omni=")))
+	    {
+	    /* something missing here */
+	    saw_omni = TRUE;
+	    }
+
 	/* Unrecognized options must be for Ghostscript. */
 	else
 	    {
@@ -100,10 +126,10 @@ int main(int argc, char *argv[])
 	    }
 	}
 
-    /* 
-    ** Make sure -sDEVICE= was specified.  If it wasn't, we print a message 
-    ** that looks like the message that Ghostscript prints if one asks for
-    ** a device that doesn't exist.
+    /*
+    ** Make sure -sDEVICE= was specified somewhere in that command line.  If
+    ** it wasn't, we print a message that looks like the message that
+    ** Ghostscript prints if one asks for a device that doesn't exist.
     */
     if(!saw_DEVICE)
 	{
@@ -129,14 +155,40 @@ int main(int argc, char *argv[])
     gs_args[di++] = NULL;
 
     /*
-    ** We add a directory to the PATH so that Ghostscript -sOutputfile= commands can
-    ** find CUPS and IJS filters.
+    ** If we will be piping the output through a CUPS filter, add the CUPS
+    ** filter directory at the head of the PATH.  The search list starts
+    ** with the PPR-GS directory where we may find a private copy of the
+    ** CUPS filters, procedes to /usr/local, and ends in /usr.
     */
-    {
-    char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
-    gu_asprintf(&path_equals, "PATH=%s/../ppr-gs/bin:%s", HOMEDIR, getenv("PATH"));
-    putenv(path_equals);
-    }
+    if(saw_cupsfilter)
+	{
+	const char *cups_bin_list[] = {HOMEDIR"/../ppr-gs/bin", "/usr/local/lib/cups/filter", "/usr/lib/cups/filter", NULL};
+	int i;
+	for(i=0 ; cups_bin_list[i]; i++)
+	    {
+	    if(access(cups_bin_list[i], R_OK) == 0)
+		{
+		char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
+		gu_asprintf(&path_equals, "PATH=%s:%s", cups_bin_list[i], getenv("PATH"));
+		putenv(path_equals);
+		break;
+		}
+	    }
+	}
+
+    /*
+    **
+    */
+    if(saw_hpijs)
+	{
+	}
+
+    /*
+    **
+    */
+    if(saw_omni)
+	{
+	}
 
     /* Replace ourself with Ghostscript. */
     execv(gs_exe, (char**)gs_args);
