@@ -92,7 +92,7 @@ SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests
 
 # This makes everything but doesn't install it.  This is so we can avoid
 # disturbing an old version until we are sure the old one can be built.
-all: symlinks
+all: symlinks-restore
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -107,7 +107,7 @@ all: symlinks
 
 # Make the programs and install them.  It is allright to run this without
 # doing "make all" first.
-install: symlinks
+install: symlinks-restore
 	@for i in $(SUBDIRS); \
 		do \
 		echo "==========================================="; \
@@ -149,7 +149,7 @@ clean:
 	@echo
 
 # Just the documents, built before making the distribution.
-docs:
+distdocs:
 	( cd docs && make )
 
 # This one not only does what "make clean" does, it also restores
@@ -173,7 +173,7 @@ veryclean: distclean
 # Pack the source up as an archive.  We build the install target to make
 # absolutely sure that everything works and then to distclean so that
 # we don't pack a lot of junk.
-dist: docs distclean
+dist: distdocs distclean
 	( cd po; ./extract_to_pot.sh )
 	( cd /usr/local/src; tar cf - ppr-$(VERSION) | gzip --best >~ppr/ppr-$(VERSION).tar.gz )
 	@echo
@@ -183,7 +183,7 @@ dist: docs distclean
 # CVS doesn't preserve symlinks.  If INSTALL.txt is missing, run the hidden
 # shell script in which they are preserved.
 symlinks-restore:
-	if [ ! -f INSTALL.txt ]; then ./.restore_symlinks; fi
+	if [ ! -f INSTALL.txt ]; then bash ./.restore_symlinks; fi
 
 # This creates the file that the symbolic links are restored from.
 symlinks-save:

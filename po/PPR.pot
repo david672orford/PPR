@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2001-06-05 17:23-0400\n"
+"POT-Creation-Date: 2001-06-21 17:14-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1629,7 +1629,7 @@ msgstr ""
 msgid "Invalid %s option"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1331 ../ppop/ppop_modify.c:81
+#: ../ppop/ppop_cmds_listq.c:1332 ../ppop/ppop_modify.c:81
 #, c-format
 msgid "Invalid Addon line: %s\n"
 msgstr ""
@@ -2045,7 +2045,7 @@ msgstr ""
 msgid "Option parsing error: %s"
 msgstr ""
 
-#: ../libppr/options.c:123 ../libppr/options.c:154
+#: ../libppr/options.c:123 ../libppr/options.c:153
 msgid "Option value is too long"
 msgstr ""
 
@@ -2834,7 +2834,7 @@ msgstr ""
 msgid "Unable to create \"%s/%s\", errno=%d (%s).\n"
 msgstr ""
 
-#: ../libppr/options.c:144
+#: ../libppr/options.c:143
 msgid "Unclosed quote"
 msgstr ""
 
@@ -3048,7 +3048,7 @@ msgid ""
 "\tform displays the command and the interface and address.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1115
+#: ../ppop/ppop_cmds_listq.c:1116
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -3129,7 +3129,7 @@ msgid ""
 "This command moves a job or jobs to a different queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1870
+#: ../ppop/ppop_cmds_listq.c:1871
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"

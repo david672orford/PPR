@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 June 2001.
+# Last modified 21 June 2001.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -67,6 +67,23 @@ findprog_prog_path ()
 	done
     echo "Not found" >&2
     }
+
+#
+# Parse the command line options.
+#
+opt_prefix=""
+for opt in $*
+    do
+    case $opt in
+	--prefix=* )
+	    opt_prefix=`echo $opt | cut -d= -f2`
+    	    ;;
+	* )
+	    echo "Unrecognized option: $opt"
+	    exit 1
+	    ;;
+    esac
+    done
 
 #
 # Present the user with a menu
@@ -184,7 +201,7 @@ case "$answer" in
 		CC_GCC=1
 		;;
 	13 )
-		SYSTEM="FreeBSD"
+		SYSTEM="FREEBSD"
 		DESCRIPTION="FreeBSD 3.1R"
 		ACTUAL_SYSTEM=`uname -s`
 		CC_NATIVE=0
@@ -265,6 +282,26 @@ if [ "$NATIVE_CC" = "yes" ]
 echo
 
 #
+# Create a list of default install locations.
+#
+if [ -n "$opt_prefix" ]
+then
+    HOMEDIR=$opt_prefix/lib/ppr
+    SHAREDIR=$opt_prefix/share/ppr
+    CONFDIR=$opt_prefix/etc/ppr
+    VAR_SPOOL_PPR=$opt_prefix/var/ppr
+    TEMPDIR=/tmp
+    BINDIR=$opt_prefix/bin
+else
+    HOMEDIR=/usr/lib/ppr
+    SHAREDIR=/usr/share/ppr
+    CONFDIR=/etc/ppr
+    VAR_SPOOL_PPR=/var/spool/ppr
+    TEMPDIR=/tmp
+    BINDIR=/usr/bin
+fi
+
+#
 # Ask the user if he would like to change any of the PPR
 # install directories.
 #
@@ -273,29 +310,35 @@ echo "Please choose where to install PPR.  It is suggested that"
 echo "you accept the defaults as all the documentation assumes"
 echo "that you are using the default directories."
 echo
-$NECHO -n "PPR home directory [/usr/lib/ppr]: "
-read HOMEDIR
-if [ -z "$HOMEDIR" ]; then HOMEDIR="/usr/lib/ppr"; fi
+
+$NECHO -n "PPR home directory [$HOMEDIR]: "
+read answer
+if [ -n "$answer" ]; then HOMEDIR="$answer"; fi
 echo
-$NECHO -n "PPR share directory [/usr/share/ppr]: "
-read SHAREDIR
-if [ -z "$SHAREDIR" ]; then SHAREDIR="/usr/share/ppr"; fi
+
+$NECHO -n "PPR share directory [$SHAREDIR]: "
+read answer
+if [ -n "$answer" ]; then SHAREDIR="$answer"; fi
 echo
-$NECHO -n "PPR configuration directory [/etc/ppr]: "
-read CONFDIR
-if [ -z "$CONFDIR" ]; then CONFDIR="/etc/ppr"; fi
+
+$NECHO -n "PPR configuration directory [$CONFDIR]: "
+read answer
+if [ -n "$answer" ]; then CONFDIR="$answer"; fi
 echo
-$NECHO -n "PPR spool files directory [/var/spool/ppr]: "
-read VAR_SPOOL_PPR
-if [ -z "$VAR_SPOOL_PPR" ]; then VAR_SPOOL_PPR="/var/spool/ppr"; fi
+
+$NECHO -n "PPR spool files directory [$VAR_SPOOL_PPR]: "
+read answer
+if [ -n "$answer" ]; then VAR_SPOOL_PPR="$answer"; fi
 echo
-$NECHO -n "PPR temporary files directory [/tmp]: "
-read TEMPDIR
-if [ -z "$TEMPDIR" ]; then TEMPDIR="/tmp"; fi
+
+$NECHO -n "PPR temporary files directory [$TEMPDIR]: "
+read answer
+if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
 echo
-$NECHO -n "Directory for symbolic links to PPR binaries [/usr/bin]: "
-read BINDIR
-if [ -z "$BINDIR" ]; then BINDIR="/usr/bin"; fi
+
+$NECHO -n "Directory for symbolic links to PPR binaries [$BINDIR]: "
+read answer
+if [ -n "$answer" ]; then BINDIR="$answer"; fi
 echo
 
 #
@@ -563,7 +606,7 @@ if [ $NATIVE_CC = "no" ]
   case $PROCESSOR in
     i[3456789]86 )
 	case $GCC_VERSION_SHORT in
-	    2.7.2.[1-9] | 2.[89]*.* | [3456789].* )
+	    2.7.2.[1-9] | 2.[89]* | [3456789].* )
 		;;
 	    * )
 		echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"

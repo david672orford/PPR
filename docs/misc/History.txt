@@ -7295,5 +7295,9 @@ line was being parsed twice.
   into procsets.  Future versions will be under the PPR license rather
   than public domain.
 
+* Fixed Configure so that is won't identify RedHat's "2.96" GCC as an old
+  one with the strength-reduce bug just because it only has a two part
+  version number.
 
-
+* Configure: fixed typo that caused the FREEBSD system-dependent section
+  of makeprogs/global.mk to be omitted.

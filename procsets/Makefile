@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 10 February 2001.
+# Last modified 21 June 2001.
 #
 
 #
@@ -22,8 +22,7 @@ include ../makeprogs/global.mk
 
 PROGS=
 
-SQUEEZEME=TrinColl-PPR-dmm-nup-3-5 \
-	TrinColl-PPR-dmm-nup-3-6 \
+SQUEEZEME=TrinColl-PPR-dmm-nup-3-6 \
 	TrinColl-PPR-ReEncode-1.1-0 \
 	TrinColl-PPR-NewMetrics-1-0
 
