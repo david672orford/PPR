@@ -415,6 +415,9 @@ more information about RIPs and *pprRIP:.
 * ppdoc.sh: piped list of available documents through more(1) since it is
   now longer than one screen.
 
+* Merged refman/ppr-index*.8.pod into ppr-index.8.pod.
+
+
 
 TODO
 

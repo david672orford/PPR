@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 # The makefile has to feed us this information since ../makeprogs/paths.sh
@@ -91,6 +91,13 @@ if [ $group_ppr_gid -ne -1 ]
 
 for user in $USER_PPR $USER_PPRWWW
     do
+    if [ $user = $USER_PPR ]
+	then
+	sup="-G lp"
+	else
+	sup=""
+	fi
+
     echo "Checking for user $user..."
     user_ppr_uid=`./getpwnam $user`
     if [ $user_ppr_uid -ne -1 ]
@@ -117,7 +124,7 @@ for user in $USER_PPR $USER_PPRWWW
         else
         if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
             then
-            /usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+            /usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $sup $user
             exitval=$?
 
 	# OSF?

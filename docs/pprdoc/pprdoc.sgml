@@ -10,7 +10,7 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 		</author>
-	<pubdate>21 February 2003</pubdate>
+	<pubdate>7 March 2003</pubdate>
 	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -2214,12 +2214,11 @@ section on the <option>-e hexdump</option> in ppr(1).
 <title>The TeX Source Filter</title>
 
 <para>This filter is written in Perl, so it will not be available if Perl
-was not installed last time you ran
-<command>ppr-indexfilters</command>. This filter will read
-the input file and attempt to identify it as either Plain TeX or LaTeX.  It
-will then copy the file to a temporary directory and run TeX on it with
-either the Plain or LaTeX macros.  It will run TeX multiple times if it is
-necessary to get the cross references right.</para>
+was not installed last time you ran <command>ppr-index filters</command>.
+This filter will read the input file and attempt to identify it as either
+Plain TeX or LaTeX.  It will then copy the file to a temporary directory and
+run TeX on it with either the Plain or LaTeX macros.  It will run TeX
+multiple times if it is necessary to get the cross references right.</para>
 
 <para>If running TeX results in a fatal error, TeX's output is passed
 through the Line Printer Emulator and becomes the output of the filter and

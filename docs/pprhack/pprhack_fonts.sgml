@@ -24,7 +24,7 @@ itself.  The list of possible substitutes follows, one per line.  Each
 substitute font line should start with a space or tab.  You may list as many
 substitute fonts as you like.  The first substitute font to be found in the
 printer's PPD file, in the cache directories or in the index created with
-<command>ppr-indexfonts</command> will be used.
+<command>ppr-index fonts</command> will be used.
 </para>
 
 <para>

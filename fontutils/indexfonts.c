@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/fontutils/ppr-indexfonts.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** mouse:~ppr/src/fontutils/indexfonts.c
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 December 2002.
+** Last modified 7 March 2003.
 */
 
 #include "before_system.h"
@@ -50,7 +50,7 @@
 #include "libppr_font.h"
 #include "version.h"
 
-const char myname[] = "ppr-indexfonts";
+const char myname[] = "lib/indexfonts";
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "fonts";
 const char fontindex_db[] = FONT_INDEX;
@@ -430,29 +430,6 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 ** Main
 ============================================================================*/
 
-/*
-** Command line options:
-*/
-static const char *option_chars = "";
-static const struct gu_getopt_opt option_words[] =
-	{
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
-	{"if-older", 1002, TRUE},
-	{(char*)NULL, 0, FALSE}
-	} ;
-
-/*
-** Print help.
-*/
-static void help_switches(FILE *outfile)
-    {
-    fputs(_("Valid switches:\n"), outfile);
-
-    fputs(_(	"\t--version\n"
-		"\t--help\n"), outfile);
-    }
-
 int main(int argc, char *argv[])
     {
     FILE *indexfile;
@@ -470,31 +447,19 @@ int main(int argc, char *argv[])
     #endif
 
     /* Parse the options. */
-    {
-    struct gu_getopt_state getopt_state;
-    int optchar;
-    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
-    while((optchar = ppr_getopt(&getopt_state)) != -1)
-    	{
-    	switch(optchar)
-    	    {
-	    case 1000:			/* --help */
-	    	help_switches(stdout);
-	    	exit(EXIT_OK);
-
-	    case 1001:			/* --version */
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-	    	exit(EXIT_OK);
-
-	    default:			/* other getopt errors or missing case */
-		gu_getopt_default(myname, optchar, &getopt_state, stderr);
-	    	exit(EXIT_SYNTAX);
-		break;
-    	    }
-    	}
-    }
+    if(argc > 1)
+	{
+	if(strcmp(argv[1], "--delete") == 0)
+	    {
+	    unlink(fontindex_db);
+	    return EXIT_OK;
+ 	    }
+	else
+	    {
+	    fprintf(stderr, "%s: unknown option: %s\n", myname, argv[1]);
+	    return EXIT_SYNTAX;
+	    }
+	}
 
     /* open ppr.conf */
     if(!(cf = fopen(ppr_conf, "r")))

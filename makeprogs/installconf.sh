@@ -61,8 +61,8 @@ while [ "$1" != "" ]
 	    exit 1
 	    fi
 	echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
-	chown $USER_PPR $RPM_BUILD_ROOT$1
-	chgrp $GROUP_PPR $RPM_BUILD_ROOT$1
+	chown $USER_PPR "$RPM_BUILD_ROOT$1"
+	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1"
 	echo "  chmod 644 \"$1\""
 	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
 	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list

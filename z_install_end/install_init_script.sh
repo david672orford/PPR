@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -61,7 +61,7 @@ case "$INIT_BASE" in
 	# RedHat Linux
 	"/etc/rc.d" )
 	    # Needs checking:
-	    INIT_LIST="rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc0.d/K40ppr rc1.d/K40ppr rc6.d/K40ppr"
+	    INIT_LIST="rc0.d/K40ppr rc1.d/K40ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K40ppr"
 	    ;;
 
 	# Several systems
@@ -70,18 +70,18 @@ case "$INIT_BASE" in
 	    if [ -x /usr/bin/dpkg -a -x /usr/sbin/update-rc.d ]
 	    then
 	    # Needs checking:
-	    INIT_LIST="rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc0.d/K20ppr rc6.d/K20ppr"
+	    INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
 	    else
 
 	    # Solaris 2.x, Generic System V
-	    INIT_LIST="rc2.d/S80ppr rc0.d/K20ppr"
+	    INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr"
 	    fi
 	    ;;
 
 	# OSF/1 3.2
     	"/sbin" )
 	    # Needs checking:
-	    INIT_LIST="rc3.d/S65ppr rc0.d/K00ppr rc2.d/K00ppr"
+	    INIT_LIST="rc0.d/K00ppr rc2.d/K00ppr rc3.d/S65ppr"
 	    ;;
 
 	# No System V style init scripts
@@ -125,24 +125,56 @@ if [ -n "$INIT_BASE" ]
 then
 	echo "  Installing the System V style start and stop scripts..."
 
-	# Install the principal script:
-	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
-	if [ $? -ne 0 ]
+	# Install the principal script if it isn't already installed.
+	if diff $RPM_BUILD_ROOT/$INIT_BASE/init.d/ppr ppr >/dev/null 2>&1
 	    then
-	    echo "Must not be running as root, aborting."
-	    exit 10
+	    echo "    Init script is already installed."
+	    else
+	    ../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
+	    if [ $? -ne 0 ]
+		then
+		echo "Please run again as root to update init script."
+		exit 1
+		fi
 	    fi
 
-	# Remove any old links:
-	rm -f $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr
-
-	# Install the new links:
-	for f in $INIT_LIST
+	# Remove any old links and replace them with new ones.
+	existing=`echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
+	temp=""
+	for l in $INIT_LIST
 	    do
-	    echo "    $INIT_BASE/$f"
-	    rm -f $INIT_BASE/$f
-	    ln -s ../init.d/ppr $INIT_BASE/$f
+	    temp="$temp $INIT_BASE/$l"
 	    done
+	#echo "$temp"
+	#echo "$existing"
+	if [ "$temp" = " $existing" ]
+	    then
+	    echo "    Links are already correct."
+	    else
+	    if [ -x /sbin/chkconfig ]
+		then
+		/sbin/chkconfig --add ppr
+		else
+		for l in $existing
+		    do
+		    if [ -f $l ]
+			then
+			rm $l
+			if [ $? -ne 0 ]
+			    then
+			    echo "Please run again as root to update init links."
+			    exit 1
+			    fi
+			fi
+		    done
+		for f in $INIT_LIST
+		    do
+		    echo "    $INIT_BASE/$f"
+		    rm -f $INIT_BASE/$f
+		    ln -s ../init.d/ppr $INIT_BASE/$f
+		    done
+	        fi
+	    fi
 
 	# Look for old PPR startup code in rc.local which may be
 	# left from previous versions of PPR which didn't always

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,31 +25,34 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 August 2002.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS=ppr-indexppds$(DOTEXE)
+BIN_PROGS=
+LIB_PROGS=indexppds$(DOTEXE)
+PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
 #=== Build ==================================================================
 
-all: $(BIN_PROGS)
+all: $(PROGS)
 	( cd ghostscript; $(MAKE) )
 	( cd generic; $(MAKE) )
 
 OBJS1=\
-	ppr-indexppds.$(OBJ) \
+	indexppds.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-ppr-indexppds$(DOTEXE): $(OBJS1)
+indexppds$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS)
 
 #=== Install ================================================================
 
 install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 	( cd ghostscript; $(MAKE) install )
 	$(INSTALLDATA) $(SHAREDIR)/PPDFiles other/*
 	( cd generic; $(MAKE) install )
@@ -60,7 +63,7 @@ install: $(BIN_PROGS)
 depend:
 
 clean:
-	$(RMF) $(BACKUPS) $(BIN_PROGS) *.$(OBJ)
+	$(RMF) $(BACKUPS) $(PROGS) *.$(OBJ)
 	( cd ghostscript; $(MAKE) clean )
 	( cd generic; $(MAKE) clean )
 	( cd other; $(RMF) $(BACKUPS) )

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/init_and_cron/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
@@ -33,9 +33,9 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
-PROGS_BIN=ppr-clean
+PROGS_BIN=ppr-clean ppr-index$(DOTEXE)
 PROGS=$(PROGS_FIXUP) $(PROGS_LIB) $(PROGS_BIN)
-USELIBS=../libgu.$(LIBEXT) ../libppr.$(LIBEXT) 
+USELIBS=../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
 
 #=== Build ==================================================================
 
@@ -43,6 +43,9 @@ all: $(PROGS)
 
 cron_run_daily$(DOTEXE): cron_run_daily.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o cron_run_daily$(DOTEXE) cron_run_daily.$(OBJ) $(USELIBS) $(INTLLIBS)
+
+ppr-index$(DOTEXE): ppr-index.$(OBJ) $(USELIBS)
+	$(LD) $(LDFLAGS) -o ppr-index$(DOTEXE) ppr-index.$(OBJ) $(USELIBS) $(INTLLIBS)
 
 #=== Install ================================================================
 

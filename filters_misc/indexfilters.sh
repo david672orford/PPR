@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/filters_misc/ppr-indexfilters.sh
+# mouse:~ppr/src/filters_misc/indexfilters.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 7 March 2003.
 #
 
 #
@@ -118,11 +118,6 @@ sedit ()
     chgrp $GROUP_PPR $2 || exit 1
     }
 
-# Print banner
-echo "===================================================="
-echo "= Setting up filters                               ="
-echo "===================================================="
-
 # Make sure we have permission.
 if [ ! -w $FILTERS ]
     then
@@ -130,6 +125,25 @@ if [ ! -w $FILTERS ]
     echo "to the directory \"$FILTERS\".  You do not."
     exit 1
     fi
+
+if [ "$1" != "" ]
+    then
+    if [ "$1" = "--delete" ]
+	then
+	for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd tiff png plot fig
+	    do
+	    rm -f $HOMEDIR/filters/filter_$t
+	    done
+	exit 0
+	else
+	echo "lib/indexfilters: unknown option: $1"
+	exit 1
+  	fi
+    fi
+
+echo "===================================================="
+echo "= Setting up filters                               ="
+echo "===================================================="
 
 # Direct file descriptor 3 to 1 so that we can print to stdout from
 # within backticks

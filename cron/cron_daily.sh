@@ -26,17 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 HOMEDIR="?"
 VAR_SPOOL_PPR="?"
 
-$HOMEDIR/bin/ppr-indexfonts >$VAR_SPOOL_PPR/logs/ppr-indexfonts 2>&1
-
-$HOMEDIR/bin/ppr-indexppds >$VAR_SPOOL_PPR/logs/ppr-indexppds 2>&1
-
-$HOMEDIR/bin/ppr-indexfilterss >$VAR_SPOOL_PPR/logs/ppr-indexfilters 2>&1
+$HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
 
 $HOMEDIR/bin/ppr-clean >$VAR_SPOOL_PPR/logs/ppr-clean 2>&1
 

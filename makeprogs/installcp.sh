@@ -72,8 +72,8 @@ if [ $squeeze != 0 ]
     else
     echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\""
     cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
-    chown $USER_PPR $RPM_BUILD_ROOT$target
-    chgrp $GROUP_PPR $RPM_BUILD_ROOT$target
+    chown $USER_PPR "$RPM_BUILD_ROOT$target"
+    chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target"
     chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
     fi
 

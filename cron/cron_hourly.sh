@@ -1,5 +1,6 @@
 #! /bin/sh
 #
+# mouse:~ppr/src/cron/cron_hourly.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 7 March 2003.
 #
 
 HOMEDIR="?"
@@ -38,8 +39,8 @@ VAR_SPOOL_PPR="?"
 PACKAGE_LISTS="/var/lib/rpm/packages.rpm /var/sadm/install/contents /var/lib/dpkg/status"
 
 #
-# If any of the package lists has changed since the font index was
-# generated, rebuild the font index now.
+# If any of the package lists has changed since the indexes were
+# generated, rebuild the indexes now.
 #
 for i in $PACKAGE_LISTS
     do
@@ -47,15 +48,7 @@ for i in $PACKAGE_LISTS
 	then
 	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
 	    then
-	    $HOMEDIR/bin/ppr-indexfonts >$VAR_SPOOL_PPR/logs/ppr-indexfonts 2>&1
-	    fi
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/ppdindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-indexppds >$VAR_SPOOL_PPR/logs/ppr-indexppds 2>&1
-	    fi
-	if $HOMEDIR/lib/file_outdated $HOMEDIR/filters/filter_pr $i
-	    then
-	    $HOMEDIR/bin/ppr-indexfilters >$VAR_SPOOL_PPR/logs/ppr-indexfilters 2>&1
+	    $HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
 	    fi
 	fi
     done

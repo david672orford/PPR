@@ -42,7 +42,7 @@ $CONFDIR = "?";
 $TEMPDIR = "?";
 
 $opt_debug = 1;
-$opt_aggressive = 0;
+$opt_all_removable = 0;
 
 sub remove
     {
@@ -57,7 +57,21 @@ sub remove_if_old
     $file = shift;
     $reference_age = shift;
     print "  remove_if_old(\"$file\", $reference_age)\n" if($opt_debug);
-    unlink($file) if(-M $file > $reference_age || $opt_aggressive);
+    unlink($file) if(-M $file > $reference_age);
+    }
+
+sub remove_switch
+    {
+    my $file = shift;
+    my $reference_age = shift;
+    if($opt_all_removable)
+	{
+	remove($file);
+	}
+    else
+	{
+	remove_if_old("$dir/$file", $reference_age);
+	}
     }
 
 sub sweepdir
@@ -68,7 +82,7 @@ sub sweepdir
 
     print "sweepdir(\"$dir\", /$regexp/, $reference_age)\n" if($opt_debug);
 
-    opendir(DIR, $dir) || die "Can't open diretory \"$dir\", $!";
+    opendir(SWDIR, $dir) || die "Can't open diretory \"$dir\", $!";
     if(defined($regexp))
 	{
 	while(defined($file = readdir(DIR)))
@@ -76,7 +90,7 @@ sub sweepdir
 	    next if(-d $file);
 	    if($file =~ /$regexp/)
 		{
-		remove_if_old("$dir/$file", $reference_age);
+		remove_switch("$dir/$file", $reference_age);
 		}
     	    }
     	}
@@ -85,10 +99,10 @@ sub sweepdir
 	while(defined($file = readdir(DIR)))
     	    {
 	    next if(-d $file);
-    	    remove_if_old("$dir/$file", $reference_age);
+    	    remove_switch("$dir/$file", $reference_age);
     	    }
     	}
-    closedir(DIR);
+    closedir(SWDIR) || die $!;
     }
 
 # Command line parsing.
@@ -98,9 +112,9 @@ foreach my $item (@ARGV)
 	{
 	$opt_debug = 1;
 	}
-    elsif($item eq "--aggressive")
+    elsif($item eq "--all-removable")
 	{
-	$opt_aggressive = 1;
+	$opt_all_removable = 1;
 	}
     else
 	{
@@ -119,8 +133,65 @@ sweepdir("$VAR_SPOOL_PPR/printers/alerts", undef, 7.0);
 sweepdir("$VAR_SPOOL_PPR/printers/status", undef, 7.0);
 sweepdir("$VAR_SPOOL_PPR/printers/addr_cache", undef, 1.0);
 sweepdir("$VAR_SPOOL_PPR/pprpopup.db", undef, 0.5);
+sweepdir("$VAR_SPOOL_PPR/dvips", undef, 90.0);
 
+if($opt_all_removable)
+    {
+    # Remove boring log files.  Notice that printlog isn't in this list.
+    foreach my $l (qw(pprd pprd.old
+	pprdrv
+	papsrv papd
+	olprsrv lprsrv
+	ppr-indexfonts ppr-indexppds ppr-indexfilters ppr-clean
+	ppr-httpd
+	uprint
+	))
+	{
+	my $f = "$VAR_SPOOL_PPR/logs/$l";
+	if(-f $f)
+	    {
+	    unlink($f) || die "unlink(\"$f\") failed, $!";
+	    }
+	}
+
+    # Remove print jobs.
+    sweepdir("$VAR_SPOOL_PPR/queue", undef, 0.0);
+    sweepdir("$VAR_SPOOL_PPR/jobs", undef, 0.0);
+
+    # Remove all resource cache files.
+    {
+    my $dir = "$VAR_SPOOL_PPR/cache";
+    opendir(CADIR, $dir) || die "Can't open diretory \"$dir\", $!";
+    while(defined($file = readdir(DIR)))
+	{
+	next if($file =~ /^\./);
+	next if(! -d "$dir/$file");
+	sweepdir("$dir/$file", undef, 0.0);
+	}
+    closedir(CADIR) || die $!;
+    }
+
+    # Remove pprd's FIFO.
+    unlink("$VAR_SPOOL_PPR/PIPE");
+
+    # Remove any linger run state files.
+    sweepdir("$VAR_SPOOL_PPR/run", undef, 0.0);
+
+    # Remove all of the indexes.
+    system("$HOMEDIR/bin/ppr-index --remove");
+
+    # Remove all of the converted PPD files.
+    #system("$HOMEDIR/bin/ppr2samba --remove");
+    #system("$HOMEDIR/bin/ppr-win95drv --remove");
+    #system("$HOMEDIR/bin/ppr-windrv --remove");
+    #system("$HOMEDIR/bin/ppr-macosdrv --remove");
+
+    exit 0;
+    }
+
+#
 # Remove temporary files in each resource cache directory.
+#
 opendir(CACHE, "$VAR_SPOOL_PPR/cache") || die "Can't open directory \"$VAR_SPOOL_PPR/cache\", $!";
 while(defined(<CACHE>))
     {
@@ -151,7 +222,7 @@ while(defined($file = readdir(DIR)))
 	    }
     	}
     }
-closedir(DIR);
+closedir(DIR) || die $!;
 
 # Done
 exit 0;

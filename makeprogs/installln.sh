@@ -70,8 +70,8 @@ if [ "`readlink $RPM_BUILD_ROOT$target`" != "$source" ]
 	exit 1
 	fi
     fi
-chown $USER_PPR $RPM_BUILD_ROOT$target 2>/dev/null
-chgrp $GROUP_PPR $RPM_BUILD_ROOT$target 2>/dev/null
+chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
+chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 
 echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
 

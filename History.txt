@@ -1,4 +1,3 @@
-mouse:~ppr/src/docs/misc/History.txt
 mouse:~ppr/src/History.txt (symbolic link)
 
 This file contains a history of changes to PPR which occured after the
@@ -8225,14 +8224,6 @@ line was being parsed twice.
 
 1.51, 15 February 2003--7 March 2003.
 
-* fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
-  Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
-  and ppr-indexfonts to /dev/null (since it isn't very interesting and 
-  scrolls by to quicly to read anyway).
-
-* fixup/fixup_perms.sh: skipped chown and chmod for sambaprint if it
-  doesn't exist (as it won't if the user chose to build without TDB).
-
 * www/index.html: fixed broken links to documentation.  I am more than 
   a little annoyed that several browsers have been hiding the fact that
   certain browers (including Mozilla and Links) have been hiding the fact
@@ -8334,7 +8325,7 @@ line was being parsed twice.
   directories z_install_begin/ and z_install_end/ in order to cut down what
   fixup.sh does and otherwise simply the build process.
 
-* Moved fixup/fixup_filters.sh to filters_misc/ppr-indexfilters.sh.
+* Moved fixup/fixup_filters.sh to filters_misc/indexfilters.sh.
 
 * makeprogs/ppr-config.c: added --tcl, added paths.tcl to Makefile.
 
@@ -8365,9 +8356,15 @@ line was being parsed twice.
   ppad/ppad_media.c to heed  RPM_BUILD_ROOT when opening media.db if
   UID == EUID.
 
-* init_and_cron/: cron_hourly.sh: added recognition of Debian GNU/Linux
-  package changes and code to call ppr-indexfilters, added ppr-indexppds;
-  ppr-clean.perl: added --debug and --aggressive.
+* Moved init script from init_and_cron/ to z_install_end/.
+
+* Renamed init_and_cron/ to cron/.
+
+* cron/cron_hourly.sh: added recognition of Debian GNU/Linux
+  package changes and code to call ppr-index (see below)
+
+* cron/ppr-clean.perl: added --debug and --all-removable.  Moved much code
+  from ppr.spec and made it part of the --all-removable action.
 
 * INSTALL.txt: removed information on upgrading from versions prior to 1.4x
   since it is too much trouble to proofread it to see if it has been
@@ -8382,10 +8379,6 @@ line was being parsed twice.
   use.
 
 * Moved remainder of fixup/ stuff to z_install_end/.
-
-* Moved init script from init_and_cron/ to z_install_end/.
-
-* Renamed init_and_cron/ to cron/.
 
 * Moved libscript/getpwnam.c,getgrnam.c to z_install_begin/, added them to
   fixup_obsolete.sh, added z_install_begin/id.c.  It was necessary to
@@ -8407,8 +8400,22 @@ line was being parsed twice.
 
 * templates/adjust_header: added
 
+* makeprogs/installconf.sh: added
+
 * makeprogs/install*.sh: added code to chown and chgrp installed files.
 
+* printdesk/printdialog.perl: removed
+
+* merged ppr-indexfonts, ppr-indexppds, and fixup_filters.sh into lib/ as
+  indexfonts, indexppds, and indexfilters respectively and added
+  cron/ppr-index as a wrapper to call them with.  Added --delete option 
+  to all.
+
+* z_install_begin/install_create_accounts.sh: added code for Linux to make
+  $USER_PPR a suplemental member of the group "lp".  This should allow PPR
+  to open ports such as /dev/lp0 even if the system default permissions
+  haven't been altered.  This means a parallel printer may be set up if
+  one has ppad access but no root access.
 
 
 TODO

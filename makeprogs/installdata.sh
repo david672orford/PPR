@@ -66,8 +66,8 @@ while [ "$1" != "" ]
 	echo "    \"$1\" --> \"$RPM_BUILD_ROOT$dest\""
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
 	cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
-	chown $USER_PPR $RPM_BUILD_ROOT$dest
-	chgrp $GROUP_PPR $RPM_BUILD_ROOT$dest
+	chown $USER_PPR "$RPM_BUILD_ROOT$dest"
+	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dest"
 	chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1
 	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi

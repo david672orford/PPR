@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/fixup/fixup_obsolete.sh
+# mouse:~ppr/src/z_install_end/fixup_obsolete.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -149,5 +149,9 @@ outdated $HOMEDIR/fixup/customs.ppr
 outdated $HOMEDIR/fixup/init_ppr
 outdated $HOMEDIR/lib/getpwnam
 outdated $HOMEDIR/lib/getgrnam
+outdated $HOMEDIR/bin/ppr-indexfonts
+outdated $HOMEDIR/bin/ppr-indexppds
+outdated $VAR_SPOOL_PPR/logs/ppr-indexfonts
+outdated $VAR_SPOOL_PPR/logs/ppr-indexppds
 
 exit 0

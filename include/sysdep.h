@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 7 March 2003.
 */
 
 /*
@@ -103,16 +103,14 @@
 ** #define HAVE_NETGROUP 1
 **			Do we have netdb.h and innetgrp()?
 **
+** #define HAVE_INITGROUPS 1
+**			Do we have initgroups()?
+**
 ** =====================================================================
 ** When PASS2 is defined, this file should define the paths to various
 ** programs and correct any mistakes the system include files may
 ** have made.
 ** =====================================================================
-**
-** #define NEEDS_TLI_PROTOS 1
-**			Include files don't have modern prototypes
-**			for certain TLI functions.  This only appears
-**			in the interface called "client".
 **
 ** #define SENDMAIL_PATH "/usr/lib/sendmail"
 **			The path to sendmail or compatible program
@@ -218,8 +216,6 @@
 #undef HAVE_SNPRINTF
 #undef HAVE_VSNPRINTF
 
-#define NEEDS_TLI_PROTOS 1
-
 #define BACKSPACE 1
 #define HAVE_STATVFS 1
 
@@ -300,6 +296,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #ifdef PASS1
 
 #define HAVE_STATFS 1
+#define HAVE_INITGROUPS 1
 
 #endif
 #ifdef PASS2
@@ -326,6 +323,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #define HAVE_UNSETENV 1
 #define HAVE_H_ERRNO 1
 #define HAVE_MKSTEMP 1
+#define HAVE_INITGROUPS 1
 
 /* This is to test the substitute code which normally isn't
    used on Linux systems. */
@@ -585,7 +583,7 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #undef HAVE_STRSIGNAL
 #define HAVE_STATFS 1
-#define HAVE_UNSETENV 1
+#define HAVE_INITGROUPS 1
 
 #endif
 #ifdef PASS2

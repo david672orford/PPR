@@ -36,9 +36,11 @@ include ../rules.mk
 
 #=== Inventory ==============================================================
 
-BUILT=pprdoc.html pprdoc.ps pprdoc.pdf \
+BUILT=\
 	pprdoc-enter.png pprdoc-printing1.png pprdoc-printing2.png \
-	pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps
+	pprdoc.html \
+	pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps \
+	pprdoc.ps pprdoc.pdf
 
 #=== Build ==================================================================
 

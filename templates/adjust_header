@@ -150,7 +150,7 @@ sub do_file
 	my $found = 0;
 	for( ; $i < 50 && $i < scalar @lines; $i++)
 	    {
-	    if($lines[$i] =~ /^[\*#]+\s+(without )?express or implied warranty\.$/)
+	    if($lines[$i] =~ /^[\*#]+\s+(without )?(express or )?implied warranty\.$/)
 		{
 		print "  Found end of old license statement.\n";
 		print "    Updating to new license statement.\n";

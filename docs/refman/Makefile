@@ -41,9 +41,7 @@ ALL_HTML=ppdoc.1.html \
 	ppr-filters.1.html \
 	ppr2samba.8.html \
 	ppd2macosdrv.8.html \
-	ppr-indexfonts.8.html \
-	ppr-indexppds.8.html \
-	ppr-indexfilters.8.html \
+	ppr-index.8.html \
 	ppop.1.html \
 	ppad.8.html \
 	ppad-interfaces.8.html \
@@ -70,9 +68,7 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-filters.1.man \
 	ppr2samba.8.man \
 	ppd2macosdrv.8.man \
-	ppr-indexfonts.8.man \
-	ppr-indexppds.8.man \
-	ppr-indexfilters.8.man \
+	ppr-index.8.man \
 	ppop.1.man \
 	ppad.8.man \
 	ppad-interfaces.8.man \
@@ -94,7 +90,7 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-panel.1.man
 
 # List of PODs for cross references
-LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-indexfonts.8,ppr-indexppds.8,ppr-indexfilters.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1
+LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1
 
 #=== Build ==================================================================
 

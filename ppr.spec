@@ -77,15 +77,18 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 
 # Create the PPR users and groups.
+/usr/sbin/groupadd ppr
+/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System -g ppr -G lp ppr
+/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System -g ppr pprwww
 
 #============================================================================
 # This is run after unpacking the cpio archive from the binary .rpm file.
 #============================================================================
 %post
 
-/usr/lib/ppr/bin/ppr-indexfonts >/dev/null
-/usr/lib/ppr/bin/ppr-ppds >/dev/null
-/usr/lib/ppr/bin/ppr-filters >/dev/null
+/usr/lib/ppr/bin/ppr-index >/dev/null
+
+/sbin/chkconfig --add ppr
 
 /etc/rc.d/init.d/ppr start
 
@@ -122,46 +125,15 @@ if [ -f /etc/inetd.conf ]
 	fi
     fi
 
-# Remove the font, PPD file, and filter indexes.
-rm -f /var/spool/ppr/fontindex.db
-rm -f /var/spool/ppr/ppdindex.db
-for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd tiff png plot fig
-    do
-    rm -f /usr/lib/ppr/filters/filter_$t
-    done
-
-# Remove boring log files.  Notice that printlog isn't in this list.
-for l in pprd pprd.old \
-	pprdrv \
-	papsrv papd \
-	olprsrv lprsrv \
-	ppr-indexfonts ppr-indexppds ppr-indexfilters ppr-clean \
-	ppr-httpd \
-	uprint
-    do
-    rm -f /var/spool/ppr/logs/$l
-    done
-
-# Remove print jobs.
-rm -f /var/spool/ppr/queue/*
-rm -f /var/spool/ppr/jobs/*
-
-# Remove lots of removable junk.
-/usr/lib/ppr/bin/ppr-clean --aggressive
-rm -f /var/spool/ppr/cache/*/*
-rm -f /var/spool/ppr/dvips/*
-
-# Remove pprd's FIFO.
-rm -f /var/spool/ppr/PIPE
-
-# Remove any linger run state files.
-rm -f /var/spool/ppr/run/*
+# Remove almost everything PPR ever generated.
+/usr/lib/ppr/bin/ppr-clean --all-removable
 
 #============================================================================
 # This is run after uninstalling.
 #============================================================================
 %postun
 
+# Let Inetd pick up the new configuration.
 killall -HUP inetd
 killall -HUP xinetd
 

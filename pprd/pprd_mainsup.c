@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_mainsup.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2002.
+** Last modified 7 March 2003.
 */
 
 #include "before_system.h"
@@ -200,7 +200,6 @@ void adjust_ids(void)
     */
     #ifndef BROKEN_SETUID_BIT
     
-    
     /*
     ** Make sure the permissions and setuid/setgid are right.
     */
@@ -228,15 +227,30 @@ void adjust_ids(void)
 	}
 
     /*
+    ** If we were run by root, initialize our auxiliary groups.
+    */
+    #ifdef HAVE_INITGROUPS
+    if(uid == 0)
+	{
+	seteuid(0);
+	if(initgroups(USER_PPR, ppr_gid) == -1)
+	    {
+	    fprintf(stderr, _("%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"), myname, USER_PPR, (long)ppr_gid, errno, gu_strerror(errno));
+	    exit(1);
+	    }
+	}
+    #endif
+
+    /*
     ** Relinquish any root privledge we may have.
     */
-    if(setreuid(ppr_uid, -1) == -1)
+    if(setreuid(ppr_uid, ppr_uid) == -1)
 	{
 	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
 	exit(1);
 	}
 
-    if(setregid(ppr_gid, -1) == -1)
+    if(setregid(ppr_gid, ppr_gid) == -1)
 	{
 	fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)-1, errno, gu_strerror(errno));
 	exit(1);

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/interfaces/clispool.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 May 2001.
+** Last modified 7 March 2003.
 */
 
 /*
@@ -48,6 +63,13 @@
 /* program to run to get remote status */
 #define REMSTAT "/var/opt/slan/bin/remstat"
 
+#define SPOOL_AREA_TEMPLATE "\\\\%s.serve\\pprclipr"
+#define FILE_NAME_TEMPLATE "JOB%ld"		/* notice upper case! */
+#define FULL_FILE_NAME_TEMPLATE VAR_SPOOL_PPR"/pprclipr/job%ld"
+
+/* AT&T System V Release 4.0 WGS doesn't have these. */
+#define NEEDS_TLI_PROTOS 1
+
 #define WORD short int
 #define BYTE char
 
@@ -61,10 +83,6 @@ struct clipr_request
 	BYTE drive[2];			/* "x:" */
 	BYTE file_name[16];		/* name of file to print */
 	} ;
-
-#define SPOOL_AREA_TEMPLATE "\\\\%s.serve\\pprclipr"
-#define FILE_NAME_TEMPLATE "JOB%ld"		/* notice upper case! */
-#define FULL_FILE_NAME_TEMPLATE VAR_SPOOL_PPR"/pprclipr/job%ld"
 
 #define CLISPOOL_OK 0		/* job printed ok */
 #define CLISPOOL_STOPPED 1	/* CLISPOOL is disabled */

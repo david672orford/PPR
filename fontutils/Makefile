@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ttfutils/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2002.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=ppr-ttf2ps$(DOTEXE) ppr-indexfonts$(DOTEXE)
+BIN_PROGS=ppr-ttf2ps$(DOTEXE)
+LIB_PROGS=indexfonts$(DOTEXE)
+PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
 USELIBS=../libgu.$(LIBEXT) ../libppr.$(LIBEXT) ../libttf.$(LIBEXT) 
 
@@ -43,13 +45,14 @@ all: $(PROGS)
 ppr-ttf2ps$(DOTEXE): ppr-ttf2ps.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o ppr-ttf2ps$(DOTEXE) ppr-ttf2ps.$(OBJ) $(USELIBS) $(INTLLIBS)
 
-ppr-indexfonts$(DOTEXE): ppr-indexfonts.$(OBJ) $(USELIBS)
-	$(LD) $(LDFLAGS) -o ppr-indexfonts$(DOTEXE) ppr-indexfonts.$(OBJ) $(USELIBS) $(INTLLIBS)
+indexfonts$(DOTEXE): indexfonts.$(OBJ) $(USELIBS)
+	$(LD) $(LDFLAGS) -o indexfonts$(DOTEXE) indexfonts.$(OBJ) $(USELIBS) $(INTLLIBS)
 
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 
 #=== Housekeeping ===========================================================
 

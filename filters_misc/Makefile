@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2002.
+# Last modified 7 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BUILT=filter_hexdump$(DOTEXE) make_dvips_conf$(DOTEXE) ppr-indexfilters
+BUILT=filter_hexdump$(DOTEXE) make_dvips_conf$(DOTEXE) indexfilters
 
 SCRIPTS_SH=troff_real.sh ditroff_real.sh troff_groff.sh ditroff_groff.sh \
 	dvi.sh texinfo.sh \
@@ -60,7 +60,7 @@ make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(
 install: $(BUILT) $(SCRIPTS_SH) $(SCRIPTS_PERL) $(SCRIPTS_TCL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/filters filter_hexdump$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 2755 $(HOMEDIR)/lib make_dvips_conf$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin ppr-indexfilters
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib indexfilters
 	$(INSTALLDATA) $(SHAREDIR)/lib mfmodes.conf
 	for f in $(SCRIPTS_SH);\
 		do\
@@ -74,7 +74,7 @@ install: $(BUILT) $(SCRIPTS_SH) $(SCRIPTS_PERL) $(SCRIPTS_TCL)
 		do\
 		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .tcl`;\
 		done
-	#./ppr-indexfilters >/dev/null
+	#./ppr-index filters >/dev/null
 
 #=== Housekeeping ===========================================================
 
@@ -87,4 +87,3 @@ clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT)
 
 # end of file
-

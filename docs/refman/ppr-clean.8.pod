@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 7 March 2003.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ B<ppr-clean> - Remove temporary files and old cache files left by PPR
 
 =head1 SYNOPSIS
 
-B<ppr-clean>
+B<ppr-clean> [B<--all-removable>]
 
 =head1 DESCRIPTION
 
@@ -49,18 +49,21 @@ normally run once a day from Cron.
 Normally B<ppr-clean> displays information about files it is removing, but
 the B<--debug> option makes its running commentary much more verbose.
 
-=item --aggressive
+=item --all-removable
 
-The B<--aggressive> option will cause B<ppr-clean> to remove temporary files
-that really shouldn't be removed yet.  Don't use this except as part of a
-script which uninstalls PPR.
+The B<--all-removable> option will cause B<ppr-clean> to remove almost any
+files that PPR may have created.  In other words, it will delete almost
+everything that it can without causing permanent damage to PPR.  This will
+delete all queued jobs.  Don't run this while the spooler is running as it
+would become very confused.  Don't use this except as part of a script which
+uninstalls PPR.
 
 =back
 
 =head1 FILES
 
 The directories from which files are removed include F</var/spool/ppr/> and
-its children, F</tmp/>, and some directories in F</etc/ppr>.
+its children, F</tmp/>, and some directories in F</etc/ppr/>.
 
 =head1 SEE ALSO
 

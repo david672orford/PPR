@@ -56,12 +56,11 @@ static const struct gu_getopt_opt option_words[] =
 /*
 ** Print help.
 */
-static void help_useage(FILE *outfile)
+static void help_usage(FILE *outfile)
     {
-    fputs(_("Usage: \n", outfile);
+    fprintf(outfile, _("Usage: %s [switches]\n"), myname);
 
     fputc('\n', outfile);
-
 
     fputs(_("Valid switches:\n"), outfile);
 
@@ -89,18 +88,17 @@ int main(int argc, char *argv[])
     	    {
 	    case 9000:			/* --help */
 	    	help_usage(stdout);
-	    	exit(EXIT_OK);
+	    	return EXIT_OK;
 
 	    case 9001:			/* --version */
 		puts(VERSION);
 		puts(COPYRIGHT);
 		puts(AUTHOR);
-	    	exit(EXIT_OK);
+	    	return EXIT_OK;
 
 	    default:			/* other getopt errors or missing case */
 		gu_getopt_default(myname, optchar, &getopt_state, stderr);
-	    	exit(EXIT_SYNTAX);
-		break;
+	    	return EXIT_SYNTAX;
     	    }
     	}
     if(argc > getopt_state.optind)

@@ -51,11 +51,9 @@ install: $(ALL)
 	./install_atalk_links.tcl
 	./install_crontab.sh
 	./install_bin_links.sh
-	-./install_inetd_conf.sh
-	-./install_init_script.sh
-	$(HOMEDIR)/bin/ppr-indexfilters >/dev/null
-	$(HOMEDIR)/bin/ppr-indexfonts >/dev/null
-	$(HOMEDIR)/bin/ppr-indexppds >/dev/null
+	./install_inetd_conf.sh
+	./install_init_script.sh
+	$(HOMEDIR)/bin/ppr-index >/dev/null
 
 #=== Housekeeping ===========================================================
 
