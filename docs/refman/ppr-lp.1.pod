@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/docs/uprint/uprint-lp.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# mouse:~ppr/src/docs/refman/ppr-lp.1.pod
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
 
-uprint-lp - selects spooler and submits print job
+ppr-lp - selects spooler and submits print job
 
 =head1 SYNOPSIS
 
-B<uprint-lp> I<switches> [I<filename ...>]
+B<ppr-lp> I<switches> [I<filename ...>]
 
 =head1 DESCRIPTION
 
@@ -55,25 +55,25 @@ which the job is to be sent.
 This option specifies the print queue in which the job should be entered.
 If this option is omited, then the LPDEST and PRINTER environment variables are
 searched in that order.  If they are both undefined, then a queue name
-is taken from the "uprint-lp=" setting in the "[default destinations] section
+is taken from the "ppr-lp=" setting in the "[default destinations] section
 of F<uprint.conf>.  If that too is not defined, then a queue called "lp" is
 assumed.
 
-Notice that it is quite possible that B<uprint-lp> with the B<-d> option will
-select a different queue from what B<ppr> with the B<-d> option or B<uprint-lpr>
+Notice that it is quite possible that B<ppr-lp> with the B<-d> option will
+select a different queue from what B<ppr> with the B<-d> option or B<ppr-lpr>
 without the B<-P> option would choose.
 
 =item B<-i> I<requestid>
 
 This switch is used to specify the request id of a job to be manipulated
 as discribed by the B<-?> switch.  This switch is not yet supported by
-B<uprint-lp>.
+B<ppr-lp>.
 
 =item B<-H> I<handling>
 
 This switch requests "special handling".  The valid values for I<handling> are
 "hold", "resume", and "immediate".  This switch does not work yet
-in B<uprint-lp>.
+in B<ppr-lp>.
 
 =item B<-c>
 
@@ -211,7 +211,7 @@ B<lprsrv>, a protocol extension is used to convey this information.
 
 =head1 BUGS
 
-While B<uprint-lp> is intended to be a drop-in replacement for B<lp>, not all
+While B<ppr-lp> is intended to be a drop-in replacement for B<lp>, not all
 possible options and option values are implemented.  Sometimes this is because
 the features in question simply aren't supported by B<ppr> or don't apply to 
 PostScript printers.  However, others are not implemented or may not be

@@ -70,27 +70,78 @@ static char *acls;
 */
 static void cache_info(void)
 	{
+	char fname[MAX_PPR_PATH];
+	FILE *f;
+	int len = 128;
+	char *line = NULL;
+	char *tempptr;
+	const char *look_for_name;
+
 	switchset = deffiltopts = passthru = forwhat = acls = NULL;
 
-	/* If it is being submitted to a local queue, */
-	if(!qentry.destnode || strcmp(qentry.destnode, qentry.homenode) == 0)
+	/* If  this is an alias, resolve it first. */
+	ppr_fnamef(fname, "%s/%s", ALIASCONF, qentry.destname);
+	if((f = fopen(fname, "r")))
 		{
-		char fname[MAX_PPR_PATH];
-		FILE *f;
-		int len = 128;
-		char *line = NULL;
-		char *tempptr;
-		const char *look_for_name;
-
-		/* If  this is an alias, resolve it first. */
-		ppr_fnamef(fname, "%s/%s", ALIASCONF, qentry.destname);
-		if((f = fopen(fname, "r")))
+		while((line = gu_getline(line, &len, f)))
 			{
-			while((line = gu_getline(line, &len, f)))
+			if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
 				{
-				if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
+				set_field(switchset, tempptr);
+				continue;
+				}
+			if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
+				{
+				set_field(passthru, tempptr);
+				continue;
+				}
+			if(gu_sscanf(line, "ForWhat: %S", &tempptr) == 1)
+				{
+				set_field(forwhat, tempptr);
+				continue;
+				}
+			}
+		fclose(f);
+
+		if(!forwhat)
+			fatal(PPREXIT_OTHERERR, "The alias \"%s\" has no \"ForWhat:\" line", qentry.destname);
+		}
+
+	/* If we found an alias, look for the group or printer it points to.  Otherwise
+	   look for a group printer with the name which the user specified. */
+	look_for_name = forwhat ? forwhat : qentry.destname;
+
+	/* try a group */
+	ppr_fnamef(fname, "%s/%s", GRCONF, look_for_name);
+	if(!(f = fopen(fname, "r")))
+		{
+		/* if not, then try a printer */
+		ppr_fnamef(fname, "%s/%s", PRCONF, look_for_name);
+		f = fopen(fname, "r");
+		}
+
+	/*
+	** If a file was found, use it.  Here is not the place
+	** to worry about groups and printers which do not exist.
+	*/
+	if(f)
+		{
+		while((line = gu_getline(line, &len, f)))
+			{
+			if(!forwhat)	/* If we didn't get here thru an alias, */
+				{
+				if((tempptr = lmatchp(line, "Switchset:")))
 					{
-					set_field(switchset, tempptr);
+					if(switchset)		/* Switchsets are cumulative. */
+						{
+						gu_asprintf(&tempptr, "%s %s", switchset, tempptr);
+						gu_free(switchset);
+						switchset = tempptr;
+						}
+					else
+						{
+						switchset = gu_strdup(tempptr);
+						}
 					continue;
 					}
 				if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
@@ -98,81 +149,19 @@ static void cache_info(void)
 					set_field(passthru, tempptr);
 					continue;
 					}
-				if(gu_sscanf(line, "ForWhat: %S", &tempptr) == 1)
-					{
-					set_field(forwhat, tempptr);
-					continue;
-					}
 				}
-			fclose(f);
-
-			if(!forwhat)
-				fatal(PPREXIT_OTHERERR, "The alias \"%s\" has no \"ForWhat:\" line", qentry.destname);
-			}
-
-		/* If we found an alias, look for the group or printer it points to.  Otherwise
-		   look for a group printer with the name which the user specified. */
-		look_for_name = forwhat ? forwhat : qentry.destname;
-
-		/* try a group */
-		ppr_fnamef(fname, "%s/%s", GRCONF, look_for_name);
-		if(!(f = fopen(fname, "r")))
-			{
-			/* if not, then try a printer */
-			ppr_fnamef(fname, "%s/%s", PRCONF, look_for_name);
-			f = fopen(fname, "r");
-			}
-
-		/*
-		** If a file was found, use it.  Here is not the place
-		** to worry about groups and printers which do not exist.
-		*/
-		if(f)
-			{
-			while((line = gu_getline(line, &len, f)))
+			if(gu_sscanf(line, "DefFiltOpts: %Z", &tempptr) == 1)
 				{
-				if(!forwhat)	/* If we didn't get here thru an alias, */
-					{
-					if((tempptr = lmatchp(line, "Switchset:")))
-						{
-						if(switchset)		/* Switchsets are cumulative. */
-							{
-							gu_asprintf(&tempptr, "%s %s", switchset, tempptr);
-							gu_free(switchset);
-							switchset = tempptr;
-							}
-						else
-							{
-							switchset = gu_strdup(tempptr);
-							}
-						continue;
-						}
-					if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
-						{
-						set_field(passthru, tempptr);
-						continue;
-						}
-					}
-				if(gu_sscanf(line, "DefFiltOpts: %Z", &tempptr) == 1)
-					{
-					set_field(deffiltopts, tempptr);
-					continue;
-					}
-				if(gu_sscanf(line, "ACLs: %Z", &tempptr) == 1)
-					{
-					set_field(acls, tempptr);
-					continue;
-					}
+				set_field(deffiltopts, tempptr);
+				continue;
 				}
-			fclose(f);
+			if(gu_sscanf(line, "ACLs: %Z", &tempptr) == 1)
+				{
+				set_field(acls, tempptr);
+				continue;
+				}
 			}
-		}
-
-	/* If a remote queue, */
-	else
-		{
-		fprintf(stderr, "Note: default filter options, switchsets, and passthru not implemented\n"
-						"for remote queues.\n");
+		fclose(f);
 		}
 
 	information_cached = TRUE;

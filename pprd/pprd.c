@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -169,28 +169,27 @@ static void reapchild(void)
 
 		/* Is it pprdrv? */
 		if(!pprdrv_child_hook(pid, wstat))
-			/* Is it pprd-remote? */
-			if(!remote_child_hook(pid, wstat))
+			{
+			/* Those which follow don't have complex reporting, 
+			   report weird stuff here. */
+			if(WIFSIGNALED(wstat))
 				{
-				/* Those which follow don't have complex reporting, report weird stuff here. */
-				if(WIFSIGNALED(wstat))
-					{
-					error("Process %ld was killed by signal %d (%s)%s",
-						(long)pid,
-						WTERMSIG(wstat),
-						gu_strsignal(WTERMSIG(wstat)),
-						WCOREDUMP(wstat) ? ", (core dumped)" : "");
-					}
-				else if(!WIFEXITED(wstat))
-					{
-					error("Process %ld met a mysterious end", (long)pid);
-					}
-
-				/* Is it pprd-question? */
-				if(!question_child_hook(pid, wstat))
-					/* Is it a responder? */
-					responder_child_hook(pid, wstat);
+				error("Process %ld was killed by signal %d (%s)%s",
+					(long)pid,
+					WTERMSIG(wstat),
+					gu_strsignal(WTERMSIG(wstat)),
+					WCOREDUMP(wstat) ? ", (core dumped)" : "");
 				}
+			else if(!WIFEXITED(wstat))
+				{
+				error("Process %ld met a mysterious end", (long)pid);
+				}
+
+			/* Is it pprd-question? */
+			if(!question_child_hook(pid, wstat))
+				/* Is it a responder? */
+				responder_child_hook(pid, wstat);
+			}
 		}
 
 	DODEBUG_PRNSTOP(("reapchild(): done"));
@@ -225,7 +224,6 @@ static void sigterm_handler(int sig)
 static void tick(void)
 	{
 	printer_tick();
-	remote_tick();
 	question_tick();
 	} /* end of tick() */
 
@@ -373,10 +371,6 @@ static int real_main(int argc, char *argv[])
 	*/
 	debug("PPRD startup, pid=%ld", (long)getpid());
 	state_update("STARTUP");
-
-	/* Make sure the local node gets the node id of 0. */
-	if(! nodeid_is_local_node(nodeid_assign(ppr_get_nodename())))
-		fatal(1, "%s(): line %d: assertion failed", function, __LINE__);
 
 	/* Initialize other subsystems. */
 	question_init();

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2005.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -286,7 +286,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 			return;
 			}
 		destname++;
-		if((destname_id = destid_by_name(nodeid_local(), destname)) == -1)
+		if((destname_id = destid_by_name(destname)) == -1)
 			{
 			/* add code to set error code */
 			return;
@@ -298,19 +298,11 @@ static void ipp_get_jobs(struct IPP *ipp)
 	/* Loop over the queue entries. */
 	for(i=0; i < queue_entries; i++)
 		{
-		if(queue[i].destnode_id != nodeid_local())		/* delete in 2.x */
-			continue;
-
 		if(destname_id != -1 && queue[i].destid != destname_id)
 			continue;
 
 		/* Read and parse the queue file. */
-		ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-			nodeid_to_name(queue[i].destnode_id),
-			destid_to_name(queue[i].destnode_id, queue[i].destid),
-			queue[i].id,
-			queue[i].subid,
-			nodeid_to_name(queue[i].homenode_id));
+		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(queue[i].destid), queue[i].id, queue[i].subid);
 		if(!(qfile = fopen(fname, "r")))
 			{
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
@@ -329,7 +321,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
 			"job-id", queue[i].id);
 		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-			"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destnode_id, queue[i].destid));
+			"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
 		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
 			"job-uri", "/jobs/%d", queue[i].id);
 

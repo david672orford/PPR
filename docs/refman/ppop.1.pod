@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppop.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 July 2003.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
@@ -231,10 +231,8 @@ displayed in the output.  These are the valid column names:
 
 =item jobname
 
-The PPR job id.  If the subid is zero it is ommited.  If the destination
-node is this node, it is ommited.  If the home node is this node it is
-ommited.  (In the current version of PPR, the last two conditions will
-always be true.)  A typical jobname will be "chipmunk-2001".
+The PPR job id.  If the subid is zero it is ommited.  A typical jobname will be
+"chipmunk-2001".  A typical jobname with a subid would be "chipmunk-2002.1".
 
 =item for
 

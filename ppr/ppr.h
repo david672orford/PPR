@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -321,6 +321,6 @@ void things_space_check(void);
 const char **editps_identify(const unsigned char *in_ptr, int in_left);
 
 /* ppr_features.c */
-int option_features(const char destnode[], const char destname[]);
+int option_features(const char destname[]);
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 September 2004.
+** Last modified 14 January 2005.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -59,11 +59,9 @@ struct QFileEntry
 	{
 	float PPRVersion;					/* version number of PPR that created queue entry */
 
-	const char *destnode;				/* node this job will be sent to */
 	const char *destname;				/* destination (group or printer) */
 	short int id;						/* queue id number */
 	short int subid;					/* fractional part of id number */
-	const char *homenode;				/* the node this job origionated on */
 
 	SHORT_INT status;					/* job status */
 	short unsigned int flags;			/* job flags */
@@ -193,7 +191,7 @@ struct QFileEntry
 int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job);
 int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry);
 void destroy_struct_QFileEntry(struct QFileEntry *job);
-int parse_qfname(char *buffer, const char **destnode, const char **destname, short int *id, short int *subid, const char **homenode);
+int parse_qfname(char *buffer, const char **destname, short int *id, short int *subid);
 int pagemask_encode(struct QFileEntry *job, const char pages[]);
 void  pagemask_print(const struct QFileEntry *job);
 int pagemask_get_bit(const struct QFileEntry *job, int page);

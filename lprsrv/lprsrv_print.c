@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_print.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 May 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -690,12 +690,6 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 				case 1:
 					args_used = uprint_print_argv_ppr(upr, args, MAX_PRINT_ARGV);
 					break;
-				case 2:
-					args_used = uprint_print_argv_bsd(upr, args, MAX_PRINT_ARGV);
-					break;
-				case 3:
-					args_used = uprint_print_argv_sysv(upr, args, MAX_PRINT_ARGV);
-					break;
 				default:
 					fatal(1, "%s line %d: missing case", __FILE__, __LINE__);
 				}
@@ -737,26 +731,14 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 	int files_to_unlink = 0;
 	struct DATA_FILE data_files[MAX_FILES_PER_JOB];
 
-	int spooler;								/* number of spooler to use */
-	const char *prog;							/* pathname of spooler program */
+	int spooler;						/* number of spooler to use */
+	const char *prog;					/* pathname of spooler program */
 
 	/* Build a command line appropriate for the spooler: */
 	if(printdest_claim_ppr(printer))
 		{
 		spooler = 1;
 		prog = PPR_PATH;
-		}
-
-	else if(printdest_claim_bsd(printer))
-		{
-		spooler = 2;
-		prog = uprint_path_lpr();
-		}
-
-	else if(printdest_claim_sysv(printer))
-		{
-		spooler = 3;
-		prog = uprint_path_lp();
 		}
 
 	/* If queue not found, */

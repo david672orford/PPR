@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -67,7 +67,7 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
 	** number to zero which will indicate the pprdrv that it is not
 	** a group job.
 	*/
-	if(destid_local_is_group(newentry->destid))
+	if(destid_is_group(newentry->destid))
 		newentry->pass = 1;
 	else
 		newentry->pass = 0;
@@ -140,52 +140,43 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
 /*===========================================================================
 ** Unlink a job.
 ===========================================================================*/
-static void queue_unlink_job_2(const char *destnode, const char *queuename, int id, int subid, const char *homenode_name)
+static void queue_unlink_job_2(const char *queuename, int id, int subid)
 	{
 	char filename[MAX_PPR_PATH];
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)",
-		QUEUEDIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d", QUEUEDIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-comments",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-comments", DATADIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-pages",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-pages", DATADIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-text",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-text", DATADIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-log",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-log", DATADIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-infile",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-infile", DATADIR, queuename, id, subid);
 	unlink(filename);
 
-	ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)-barbar",
-		DATADIR, destnode, queuename, id, subid, homenode_name);
+	ppr_fnamef(filename, "%s/%s-%d.%d-barbar", DATADIR, queuename, id, subid);
 	unlink(filename);
 	} /* end of queue_unlink_job_2() */
 
 /*================================================================
 ** Unlink a job and remove an entry from the queue array.
 ================================================================*/
-void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homenode_id)
+void queue_dequeue_job(int destid, int id, int subid)
 	{
 	FUNCTION4DEBUG("queue_dequeue_job")
 	int x;
-	const char *destnode = nodeid_to_name(destnode_id);
-	const char *destname = destid_to_name(destnode_id, destid);
-	const char *homenode = nodeid_to_name(homenode_id);
-	const char *full_job_id = remote_jobid(homenode, destname, id, subid, homenode);
+	const char *destname = destid_to_name(destid);
+	const char *full_job_id = jobid(destname, id, subid);
 
-	DODEBUG_DEQUEUE(("%s(destid=%d, id=%d, subid=%d, homenode_id=%d)", function, destid, id, subid, homenode_id));
+	DODEBUG_DEQUEUE(("%s(destid=%d, id=%d, subid=%d)", function, destid, id, subid));
 
 	/* Inform queue display programs of job deletion. */
 	state_update("DEL %s", full_job_id);
@@ -194,17 +185,12 @@ void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homen
 
 	for(x=0; x < queue_entries; x++)
 		{
-		if(queue[x].id==id && queue[x].subid==subid && queue[x].destnode_id == destnode_id && queue[x].homenode_id == homenode_id)
+		if(queue[x].destid == destid && queue[x].id==id && queue[x].subid==subid)
 			{
 			DODEBUG_DEQUEUE(("removing job %s at position %d from queue", full_job_id, x));
 
 			/* Remove the actual job files. */
-			queue_unlink_job_2(destnode, destname, id, subid, homenode);
-
-			/* Decrement a few reference counts. */
-			destid_free(queue[x].destnode_id, queue[x].destid);
-			nodeid_free(queue[x].destnode_id);
-			nodeid_free(queue[x].homenode_id);
+			queue_unlink_job_2(destname, id, subid);
 
 			if( (queue_entries-x) > 1 )			/* do a move if not last entry */
 				{								/* (BUG: was queue_entries was queue_size prior to version 1.30) */
@@ -239,7 +225,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 
 		{
 		char filename[MAX_PPR_PATH];
-		ppr_fnamef(filename, "%s/%s:%s-%d.%d(%s)", QUEUEDIR, ppr_get_nodename(), destid_to_name(job->destnode_id, job->destid), job->id, job->subid, nodeid_to_name(job->homenode_id));
+		ppr_fnamef(filename, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(job->destid), job->id, job->subid);
 		if((fd = open(filename, O_RDWR)) == -1)
 			{
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
@@ -330,16 +316,16 @@ static void queue_send_state_update(struct QEntry *job)
 			if(job->status < 0)
 				fatal(0, "%s(): assertion failed", function);
 			state_update("JST %s printing on %s",
-				local_jobid(destid_to_name(job->destnode_id,job->destid),job->id,job->subid,nodeid_to_name(job->homenode_id)),
-				destid_to_name(job->destnode_id, job->status));
+				jobid(destid_to_name(job->destid), job->id, job->subid),
+				destid_to_name(job->status));	/* yes, this looks weird */
 			break;
 		}
 
 	if(status_string)
 		{
 		state_update("JST %s %s",
-				remote_jobid(nodeid_to_name(job->destnode_id),destid_to_name(job->destnode_id, job->destid),job->id,job->subid,nodeid_to_name(job->homenode_id)),
-				status_string);
+			jobid(destid_to_name(job->destid),job->id,job->subid),
+			status_string);
 		}
 	} /* end of queue_send_state_update() */
 
@@ -369,7 +355,7 @@ struct QEntry *queue_p_job_new_status(struct QEntry *job, int newstat)
 	return job;
 	} /* end of queue_p_job_new_status() */
 
-struct QEntry *queue_job_new_status(int id, int subid, int homenode_id, int newstat)
+struct QEntry *queue_job_new_status(int destid, int id, int subid, int newstat)
 	{
 	const char function[] = "queue_job_new_status";
 	int x;
@@ -378,7 +364,7 @@ struct QEntry *queue_job_new_status(int id, int subid, int homenode_id, int news
 
 	for(x=0; x < queue_entries; x++)	/* Find the job in the */
 		{								/* queue array. */
-		if(queue[x].id == id && queue[x].subid == subid && queue[x].homenode_id == homenode_id)
+		if(queue[x].destid == destid && queue[x].id == id && queue[x].subid == subid)
 			{
 			queue_p_job_new_status(&queue[x], newstat);
 			break;						/* break for loop */
@@ -460,11 +446,10 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
 /*===========================================================================
 ** Receive a new job into the queue.
 **
-** The job is entered in the queue.  If it is for this node, then the
-** pprd_printer.c module is informed of its arrival, otherwise the
-** pprd_remote.c module is informed.
+** The job is entered in the queue, then the
+** pprd_printer.c module is informed of its arrival.
 **
-** For local jobs sucessfuly entered into the queue, this function calls
+** For jobs sucessfully entering the queue, this function calls
 ** state_update() in order to inform queue display programs that there
 ** is a new job in the queue.  This function is `instrumented' for this
 ** purpose rather than enqueue_job() because enqueue_job() is used to
@@ -474,37 +459,29 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 	{
 	const char function[] = "queue_insert_job";
 	char *scratch = NULL;
-	const char *ptr_destnode, *ptr_destname, *ptr_homenode;
+	const char *ptr_destname;
 	struct QEntry newent;				/* space for building new queue entry */
 	struct QEntry *newentp;				/* new queue entry */
 	int rank1, rank2;
 
 	gu_Try
 		{
-		{
-		int err;
 		scratch = gu_strdup(qfname);
-		err = parse_qfname(scratch, &ptr_destnode, &ptr_destname, &newent.id, &newent.subid, &ptr_homenode);
-		if(err < 0)
+		if(parse_qfname(scratch, &ptr_destname, &newent.id, &newent.subid) == -1)
 			{
-			gu_Throw("can't parse \"%s\" (%d)", qfname, err);
+			gu_Throw("parse_qfname() can't parse \"%s\"", qfname);
 			}
-		}
-
-		/* Convert the home node name to an id number. */
-		newent.destnode_id = nodeid_assign(ptr_destnode);
-		newent.homenode_id = nodeid_assign(ptr_homenode);
 
 		gu_Try {
 			/* Convert the destination queue name to a queue id number.  If the queue
 			   does not exist, inform the user.  The exception handler will delete the
 			   job files.
 			   */
-			if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
+			if((newent.destid = destid_by_name(ptr_destname)) == -1)
 				{
 				if(job_is_new)
 					{
-					respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, -1, ptr_destname, RESP_CANCELED_BADDEST);
+					respond2(ptr_destname, newent.id, newent.subid, -1, ptr_destname, RESP_CANCELED_BADDEST);
 					gu_Throw("!!! MISSING MESSAGE !!!");
 					}
 				else
@@ -517,9 +494,9 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				/* If this is a new job and the destination is not accepting new
 				   jobs, tell the user and ditch the job.
 				   */
-				if(job_is_new && ! destid_accepting(newent.destnode_id, newent.destid))
+				if(job_is_new && ! destid_accepting(newent.destid))
 					{
-					respond(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id, -1, RESP_CANCELED_REJECTING);
+					respond(newent.destid, newent.id, newent.subid, -1, RESP_CANCELED_REJECTING);
 					gu_Throw("!!! MISSING MESSAGE !!!");
 					}
 
@@ -546,8 +523,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				/* Set the bitmask which shows which printers have the form.
 				   This may change the printer status too.  For remote jobs,
 				   this is defered until it reaches to target system. */
-				if(nodeid_is_local_node(newent.destnode_id))
-					media_set_notnow_for_job(&newent, FALSE);
+				media_set_notnow_for_job(&newent, FALSE);
 
 				/* If there is room in the queue array, */
 				if(!(newentp = queue_insert(qfname, &newent, &rank1, &rank2)))
@@ -559,7 +535,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 					{
 					/* Inform queue display programs that there is a new job in the queue. */
 					state_update("JOB %s %d %d",
-						remote_jobid(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode),
+						jobid(ptr_destname, newent.id, newent.subid),
 						rank1, rank2);
 
 					/* If there is an outstanding question, then let the question system
@@ -567,10 +543,8 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 					if(newentp->flags & JOB_FLAG_QUESTION_UNANSWERED)
 						question_job(newentp);
 
-					/* Start sending it, or if it is local and ready to print, try to start a printer. */
-					if(!nodeid_is_local_node(newentp->destnode_id))
-						remote_job(newentp);
-					else if(newentp->status == STATUS_WAITING)
+					/* If it is ready to print, try to start a printer. */
+					if(newentp->status == STATUS_WAITING)
 						printer_try_start_suitable_4_this_job(newentp);
 					}
 
@@ -578,15 +552,12 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				}
 			gu_Catch
 				{
-				destid_free(newent.destnode_id, newent.destid);
 				gu_ReThrow();
 				}
 			}
 		gu_Catch
 			{
-			queue_unlink_job_2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode);
-			nodeid_free(newent.destnode_id);
-			nodeid_free(newent.homenode_id);
+			queue_unlink_job_2(ptr_destname, newent.id, newent.subid);
 			gu_ReThrow();
 			}
 		}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -2069,12 +2069,9 @@ int real_main(int argc, char *argv[])
 	*/
 	{
 	char *p = gu_strdup(QueueFile);
-	int e = parse_qfname(p, &job.destnode, &job.destname, &job.id, &job.subid, &job.homenode);
-	if(e < 0)
-		fatal(EXIT_JOBERR, "parse_qfname() failed, e=%d", e);
-	job.destnode = gu_strdup(job.destnode);
+	if(parse_qfname(p, &job.destname, &job.id, &job.subid) == -1)
+		fatal(EXIT_JOBERR, "parse_qfname() failed");
 	job.destname = gu_strdup(job.destname);
-	job.homenode = gu_strdup(job.homenode);
 	gu_free(p);
 	}
 

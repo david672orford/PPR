@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_load.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -425,7 +425,7 @@ static void load_group(struct Group *cl, const char filename[])
 				error("group \"%s\" exceeds %d member limit", cl->name, MAX_GROUPSIZE);
 				continue;
 				}
-			if((cl->printers[y] = destid_local_by_printer(tempstr2)) == -1)
+			if((cl->printers[y] = destid_by_printer(tempstr2)) == -1)
 				{
 				error("group \"%s\":  member \"%s\" does not exist", cl->name, tempstr2);
 				}
@@ -577,7 +577,7 @@ void new_group_config(char *group)
 	load_group(&groups[x],group);		/* read the group file */
 
 	/* fix all the jobs for this group */
-	destid = destid_local_by_gindex(x);
+	destid = destid_by_gindex(x);
 	for(x = 0; x < queue_entries; x++)
 		{
 		if(queue[x].destid==destid)		/* if job is for this group, */
@@ -600,15 +600,6 @@ void new_group_config(char *group)
 /*
 ** Initialize the queue, loading existing jobs into it.
 */
-#if 0
-#ifdef COLON_FILENAME_BUG		/* If this operating system doesn't allow colons in file names, */
-#define COLON_STR "!"			/* substitute exclamation points. */
-#define COLON_CHAR '!'
-#else
-#define COLON_STR ":"
-#define COLON_CHAR ':'
-#endif
-#endif
 void initialize_queue(void)
 	{
 	const char function[] = "initialize_queue";

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/unreadqfile.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 March 2002.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -47,9 +47,7 @@ static void free_and_zero(void **p)
 */
 void destroy_struct_QFileEntry(struct QFileEntry *job)
 	{
-	free_and_zero((void**)&job->destnode);
 	free_and_zero((void**)&job->destname);
-	free_and_zero((void**)&job->homenode);
 
 	free_and_zero((void**)&job->username);
 	free_and_zero((void**)&job->proxy_for);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_split.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -218,7 +218,7 @@ int split_job(struct QFileEntry *qentry)
 		{
 		FILE *log;
 
-		ppr_fnamef(fname, DATADIR"/%s:%s-%d.0(%s)", qentry->destnode, qentry->destname, qentry->id, qentry->homenode);
+		ppr_fnamef(fname, DATADIR"/%s-%d.0", qentry->destname, qentry->id);
 
 		if((log = fopen(fname, "ab")) == (FILE*)NULL)
 			fatal(PPREXIT_OTHERERR, "ppr_split.c: split_job(): failed to open \"%s\" for append, errno=%d (%s)", fname, errno, gu_strerror(errno) );
@@ -236,9 +236,9 @@ int split_job(struct QFileEntry *qentry)
 		FILE **segfiles;		/* array of open segment files */
 
 		/* Open the -pages file. */
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-pages",
+		ppr_fnamef(fname, "%s/%s-%d.0-pages",
 				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,qentry->homenode);
+				qentry->destname,qentry->id);
 		if((pages = fopen(fname, "rb")) == (FILE*)NULL)
 			fatal(PPREXIT_OTHERERR, _("Failed to open \"%s\" for read, errno=%d (%s)"), fname, errno, gu_strerror(errno) );
 
@@ -248,18 +248,18 @@ int split_job(struct QFileEntry *qentry)
 		/* Open each new -pages file. */
 		for(x=0; x < segments_created; x++)
 			{
-			ppr_fnamef(fname,"%s/%s:%s-%d.%d(%s)-pages",
+			ppr_fnamef(fname,"%s/%s-%d.%d-pages",
 				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,(x+1),qentry->homenode);
+				qentry->destname,qentry->id,(x+1));
 			#ifdef DEBUG_SPLIT
 			printf("Creating \"%s\"\n",fname);
 			#endif
-			if( (segfiles[x] = fopen(fname, "wb")) == (FILE*)NULL )
+			if(!(segfiles[x] = fopen(fname, "wb")))
 				fatal(PPREXIT_OTHERERR, _("Failed to open \"%s\" for write, errno=%d, (%s)"), fname, errno, gu_strerror(errno) );
 			}
 
 		/* Copy the document defaults section to each segment file. */
-		if(fgets(line,sizeof(line),pages))
+		if(fgets(line, sizeof(line), pages))
 			{
 			if(strncmp(line,"%%BeginDefaults",16)==0)
 				{
@@ -335,29 +335,21 @@ int split_job(struct QFileEntry *qentry)
 		char fname_text[MAX_PPR_PATH];
 		char fname_log[MAX_PPR_PATH];
 
-		ppr_fnamef(fname_text,"%s/%s:%s-%d.0(%s)-text",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,qentry->homenode);
-		ppr_fnamef(fname_log,"%s/%s:%s-%d.0(%s)-log",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,qentry->homenode);
+		ppr_fnamef(fname_text, "%s/%s-%d.0-text", DATADIR, qentry->destname, qentry->id);
+		ppr_fnamef(fname_log,"%s/%s-%d.0-log", DATADIR, qentry->destname,qentry->id);
 
 		for(x=1; x <= segments_created; x++)
 			{
-			ppr_fnamef(fname,"%s/%s:%s-%d.%d(%s)-text",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,x,qentry->homenode);
-			link(fname_text,fname);
+			ppr_fnamef(fname, "%s/%s-%d.%d-text", DATADIR, qentry->destname, qentry->id, x);
+			link(fname_text, fname);
 			#ifdef DEBUG_SPLIT
-			printf("link(\"%s\",\"%s\")\n",fname_text,fname);
+			printf("link(\"%s\",\"%s\")\n", fname_text, fname);
 			#endif
 
-			ppr_fnamef(fname,"%s/%s:%s-%d.%d(%s)-log",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,x,qentry->homenode);
-			link(fname_log,fname);
+			ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, qentry->destname,qentry->id,x);
+			link(fname_log, fname);
 			#ifdef DEBUG_SPLIT
-			printf("link(\"%s\",\"%s\")\n",fname_log,fname);
+			printf("link(\"%s\",\"%s\")\n", fname_log, fname);
 			#endif
 			}
 		}
@@ -368,23 +360,19 @@ int split_job(struct QFileEntry *qentry)
 		{
 		FILE *cfile, *ncfile;
 
-		ppr_fnamef(fname,"%s/%s:%s-%d.0(%s)-comments",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,qentry->homenode);
-		if( (cfile=fopen(fname,"rb")) == (FILE*)NULL )
+		ppr_fnamef(fname,"%s/%s-%d.0-comments", DATADIR, qentry->destname,qentry->id);
+		if(!(cfile = fopen(fname,"rb")))
 			fatal(PPREXIT_OTHERERR, "ppr: ppr_split.c: split_job(): failed to open \"%s\" for read, errno=%d (%s)", fname, errno, gu_strerror(errno) );
 
 		for(x=1; x <= segments_created; x++)
 			{
-			ppr_fnamef(fname,"%s/%s:%s-%d.%d(%s)-comments",
-				DATADIR,
-				qentry->destnode,qentry->destname,qentry->id,x,qentry->homenode);
-			if( (ncfile=fopen(fname,"wb")) == (FILE*)NULL )
+			ppr_fnamef(fname, "%s/%s-%d.%d-comments", DATADIR, qentry->destname, qentry->id, x);
+			if(!(ncfile = fopen(fname,"wb")))
 				fatal(PPREXIT_OTHERERR, "ppr: ppr_split.c: split_job(): failed to open \"%s\" for write, errno=%d (%s)", fname, errno, gu_strerror(errno) );
 
 			rewind(cfile);
 
-			while( fgets(line,sizeof(line),cfile) != (char*)NULL )
+			while(fgets(line, sizeof(line), cfile))
 				{
 				if( strncmp(line,"%%DocumentMedia:",16) )
 					fputs(line,ncfile);
@@ -417,9 +405,8 @@ int split_job(struct QFileEntry *qentry)
 		for(x=1; x <= segments_created; x++)
 			{
 			#ifdef DEBUG_SPLIT
-			printf("submitting job %s:%s-%d.%d(%s)\n", qentry->destnode, qentry->destname,qentry->id, x, qentry->homenode);
+			printf("submitting job %s-%d.%d\n", qentry->destname,qentry->id, x);
 			#endif
-
 			submit_job(qentry, x);
 			}
 

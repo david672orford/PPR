@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/docs/uprint/uprint-lprm.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# mouse:~ppr/src/docs/refman/ppr-lprm.1.pod
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,31 +25,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
 
-uprint-lprm - Deletes print jobs
+ppr-lprm - Deletes print jobs
 
 =head1 SYNOPSIS
 
-B<uprint-lprm> [B<-P> I<queue>] [B<->] [B<job number>] [B<user>]
+B<ppr-lprm> [B<-P> I<queue>] [B<->] [B<job number>] [B<user>]
 
 =head1 DESCRIPTION
 
 This program is part of the PPR suite.
 
-The program B<uprint-lprm> is used to delete print jobs.  On your system,
-the B<lprm> command may be an alias for B<uprint-lprm>.
+The program B<ppr-lprm> is used to delete print jobs.  On your system,
+the B<lprm> command may be an alias for B<ppr-lprm>.
 
 There are several ways to indicate which queue one wants to remove a job from.
 If the B<-P> switch is used, it overrides all other settings.  If the B<-P>
-switch is not used, then B<uprint-lprm> falls back on the PRINTER environment
-variable.  If the PRINTER environment variable is not defined, then it looks
-for a "uprint-lpr=" setting in the "[default destinations]" section of
-F<uprint.conf>.  If that too is not set, then B<uprint-lprm> assumes a queue
-name of "lp".
+switch is not used, then B<ppr-lprm> falls back on the PRINTER environment
+variable.  If the PRINTER environment variable is not defined, 
+then B<ppr-lprm> assumes a queue name of "default".
 
 There are three ways to specify which jobs within the selected queue should
 be deleted.
@@ -60,15 +58,15 @@ numbers will be deleted.
 If one or more user names are specified, then all jobs owned by those users
 will be deleted.  Since ordinary users may not delete other people's jobs,
 this option is only useful to the user "root".  (Note that PPR operators cannot
-delete other people's jobs with B<uprint-lprm> as they can with B<ppop>.)
+delete other people's jobs with B<ppr-lprm> as they can with B<ppop>.)
 
 If the B<-> option is used, then all job belonging to the user who is running
-B<lprm> are deleted.  If the user "root" is the one running B<lprm>, then all
+B<ppr-lprm> are deleted.  If the user "root" is the one running B<ppr-lprm>, then all
 jobs in the queue are deleted.
 
 Note that if the remote server is running PPR's B<lprsrv>, then the definition
 of "all jobs owned by this user" or "all jobs in the queue" may be limited
-to those jobs submitted from the network node on which B<lprm> is being run.
+to those jobs submitted from the network node on which B<ppr-lprm> is being run.
 However, the "proxy class=" setting in the F<lprsrv.conf> file can be used to
 expand this scope at least somewhat.
 

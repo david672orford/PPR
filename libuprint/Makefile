@@ -40,6 +40,7 @@ LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
 	claim_ppr.$(OBJ) claim_remote.$(OBJ) \
 	uprint_print.$(OBJ) \
 	uprint_print_ppr.$(OBJ) \
+	uprint_print_bsd.$(OBJ) \
 	uprint_print_rfc1179.$(OBJ) \
 	uprint_lpq.$(OBJ) uprint_lpq_rfc1179.$(OBJ) \
 	uprint_lprm.$(OBJ) uprint_lprm_rfc1179.$(OBJ) \
@@ -48,11 +49,10 @@ LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
 	uprint_strerror.$(OBJ) \
 
 LIBS=../libuprint.$(LIBEXT)
-BIN_PROGS=uprint-newconf$(DOTEXE)
 LIB_PROGS=uprint_rfc1179$(DOTEXE)
 TARGETS=$(LIBS) $(BIN_PROGS) $(LIB_PROGS)
 USELIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
-DATA=uprint.conf.sample uprint-remote.conf.sample
+DATA=uprint-remote.conf.sample
 
 #=== Build ==================================================================
 
@@ -63,9 +63,6 @@ all: $(TARGETS) $(DATA)
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
 
-uprint-newconf$(DOTEXE): uprint-newconf.$(OBJ) $(USELIBS)
-	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
-
 uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(SOCKLIBS)
 
@@ -73,8 +70,7 @@ uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
 
 install: $(TARGETS) $(DATA)
 	$(INSTALLDATA) $(CONFDIR) $(DATA)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) root        $(GROUP_PPR) 4755 $(HOMEDIR)/lib uprint_rfc1179$(DOTEXE)
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib uprint_rfc1179$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

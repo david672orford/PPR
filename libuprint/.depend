@@ -1,5 +1,3 @@
-claim_bsd.$(OBJ): claim_bsd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
 claim_ppr.$(OBJ): claim_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
 claim_remote.$(OBJ): claim_remote.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
@@ -10,15 +8,11 @@ lpr_failover.$(OBJ): lpr_failover.c ../include/config.h ../include/gu.h ../inclu
 
 lpr_sendfile.$(OBJ): lpr_sendfile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/uprint.h uprint_private.h
 
-uprint-newconf.$(OBJ): uprint-newconf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/uprint.h uprint_conf.h ../include/version.h
-
 uprint_obj.$(OBJ): uprint_obj.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_print_bsd.$(OBJ): uprint_print_bsd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_print_ppr.$(OBJ): uprint_print_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_conf.$(OBJ): uprint_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h uprint_private.h
+uprint_conf.$(OBJ): uprint_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_loop.$(OBJ): uprint_loop.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
@@ -42,11 +36,9 @@ uprint_sysv.$(OBJ): uprint_sysv.c ../include/config.h ../include/gu.h ../include
 
 uprint_xlate.$(OBJ): uprint_xlate.c ../include/config.h ../include/gu.h ../include/uprint.h uprint_private.h
 
-claim_sysv.$(OBJ): claim_sysv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_print_sysv.$(OBJ): uprint_print_sysv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
 uprint_run_rfc1179.$(OBJ): uprint_run_rfc1179.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_rfc1179.$(OBJ): uprint_rfc1179.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+
+uprint_print_bsd.$(OBJ): uprint_print_bsd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 

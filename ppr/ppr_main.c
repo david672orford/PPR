@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 January 2005.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -91,7 +91,7 @@ static int warning_log = FALSE;					/* set true if warnings should go to log */
 static int option_unlink_jobfile = FALSE;		/* Was the -U switch used? */
 static int use_username = FALSE;				/* User username instead of comment as default For: */
 static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF */
-static int option_show_jobid = 0;				/* 0 for don't , 1 for short, 2 for long */
+static gu_boolean option_show_jobid = FALSE;
 static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
 #ifdef CRUFT_AUTH
 static int use_authcode = FALSE;				/* true if using authcode line to id */
@@ -296,7 +296,7 @@ void warning(int level, const char *message, ... )
 	char wfname[MAX_PPR_PATH];
 	FILE *wfile;
 
-	if(!qentry.destnode || !qentry.destname || !qentry.homenode)
+	if(!qentry.destname)
 		fatal(PPREXIT_OTHERERR, "%s(): assertion failed", function);
 
 	if(level < warning_level)	/* if warning level too low */
@@ -304,11 +304,8 @@ void warning(int level, const char *message, ... )
 
 	if(warning_log)				/* if warnings are to go to log file, */
 		{						/* open this job's log file */
-		ppr_fnamef(wfname, "%s/%s:%s-%d.0(%s)-log",
-				DATADIR,
-				qentry.destnode,
-				qentry.destname, qentry.id, qentry.homenode);
-		if((wfile = fopen(wfname, "a")) == (FILE*)NULL)
+		ppr_fnamef(wfname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
+		if(!(wfile = fopen(wfname, "a")))
 			{
 			fprintf(stderr, _("Failed to open log file, using stderr.\n"));
 			wfile = stderr;		/* if fail, use stderr anyway */
@@ -433,8 +430,7 @@ int write_queue_file(struct QFileEntry *qentry)
 	qentry->magic_cookie = magic_cookie;
 
 	/* Construct the queue file name. */
-	ppr_fnamef(qfname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-		qentry->destnode, qentry->destname, qentry->id, qentry->subid, qentry->homenode);
+	ppr_fnamef(qfname, "%s/%s-%d.%d", QUEUEDIR, qentry->destname, qentry->id, qentry->subid);
 
 	/* Very carefully open the queue file. */
 	if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
@@ -537,25 +533,21 @@ static FILE *open_fifo(const char name[])
 */
 void submit_job(struct QFileEntry *qe, int subid)
 	{
-	fprintf(FIFO, "j %s:%s-%d.%d(%s)\n",
-		qe->destnode,
-		qe->destname,
-		qe->id, subid,
-		qe->homenode);
+	fprintf(FIFO, "j %s-%d.%d\n", qe->destname, qe->id, subid);
 
 	/*
-	** If --show-jobid or --show-long-jobid has been used,
-	** display the id of the job being submitted.
+	** If --show-jobid has been used, display the id of the 
+	** job being submitted.
 	**
 	** Notice that --show-jobid produces a message in almost
 	** the same format as System V lp.
 	*/
 	if(option_show_jobid)
 		{
-		if(option_show_jobid == 1)		/* --show-jobid */
-			printf(_("request id is %s (1 file)\n"), remote_jobid(qentry.destnode, qentry.destname, qentry.id, subid, qentry.homenode));
-		else							/* --show-long-jobid */
-			printf(_("Request id: %s:%s-%d.%d(%s)\n"), qentry.destnode, qentry.destname, qentry.id, subid, qentry.homenode);
+		if(subid == 0)
+			printf(_("request id is %s-%d (1 file)\n"), qentry.destname, qentry.id);
+		else
+			printf(_("Request id: %s-%d.%d\n"), qentry.destname, qentry.id, subid);
 		}
 	} /* end of submit_job() */
 
@@ -574,7 +566,7 @@ static void authorization_charge(void)
 			#ifdef CRUFT_AUTH
 			use_authcode || 
 			#endif
-			destination_protected(qentry.destnode, qentry.destname))))
+			destination_protected(qentry.destname))))
 		{
 		struct userdb user;
 		int ret;
@@ -734,29 +726,19 @@ void file_cleanup(void)
 		{
 		char fname[MAX_PPR_PATH];
 
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)",
-				QUEUEDIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.destname, qentry.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-comments",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-comments", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-text",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-text", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-pages",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-pages", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-log",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 		}
 
@@ -944,7 +926,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"hold",				1004, FALSE},
 		{"responder-options",	1005, TRUE},
 		{"show-jobid",			1006, FALSE},
-		{"show-long-jobid",		1007, FALSE},
 		{"charge-to",			1008, TRUE},
 		{"editps-level",		1009, TRUE},
 		{"markup",				1010, TRUE},
@@ -1171,8 +1152,7 @@ HELP(_(
 "\t--editps-level <pos int>   set level of editing for -H editps\n"));
 
 HELP(_(
-"\t--show-jobid               print the queue id of submitted jobs\n"
-"\t--show-long-jobid          print queue id in long format\n"));
+"\t--show-jobid               print the queue id of submitted jobs\n"));
 
 HELP(_(
 "\t--print-id-to-fd           print the numberic queue id file descriptor\n"));
@@ -1382,32 +1362,6 @@ static void parse_switchset(const char *switchset)
 	} /* parse_switchset */
 
 /*
-** Parse a destination queue specification.  This gets called if the
-** -d switch is used.  It is also called in the absence of a -d switch
-** to process the queue name taken from an environment variable
-** or the default queue name.  So, it is always called at least once.
-*/
-static void parse_d_option(const char arg[])
-	{
-	int len;
-
-	if(qentry.destnode) gu_free((char*)qentry.destnode);
-
-	len = strcspn(arg, ":");			/* length before first ':' */
-
-	if(arg[len] == ':')					/* if there is a node name specified, */
-		{
-		qentry.destname = &arg[len+1];
-		qentry.destnode = gu_strndup(arg,len);
-		}
-	else								/* If no node specified, */
-		{								/* the whole argument is */
-		qentry.destname = arg;			/* the destination and there */
-		qentry.destnode = (char*)NULL;	/* is not destination node. */
-		}
-	} /* end of parse_d_option() */
-
-/*
 ** Parse an -H option or .ppr header ".hack:" option.
 */
 int parse_hack_option(const char name[])
@@ -1458,7 +1412,7 @@ static void doopt_pass1(int optchar, const char *optarg, const char *true_option
 	switch(optchar)
 		{
 		case 'd':								/* destination queue */
-			parse_d_option(optarg);
+			qentry.destname = optarg;
 			break;
 		}
 	} /* end of doopt_pass1() */
@@ -1468,7 +1422,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	switch(optchar)
 		{
 		case 'd':								/* destination queue */
-			/* parse_d_option(optarg); */		/* do nothing since handled on first pass */
+			/* qentry.destname = optarg; */		/* do nothing since handled on first pass */
 			break;
 
 		case 'f':								/* for whom */
@@ -1815,7 +1769,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1000:								/* --features */
-			exit(option_features(qentry.destnode, qentry.destname));
+			exit(option_features(qentry.destname));
 
 		case 1001:								/* --print-id-to-fd */
 			option_print_id_to_fd = atoi(optarg);
@@ -1847,11 +1801,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1006:								/* --show-jobid */
-			option_show_jobid = 1;
-			break;
-
-		case 1007:								/* --show-long-jobid */
-			option_show_jobid = 2;
+			option_show_jobid = TRUE;
 			break;
 
 		case 1008:								/* --charge-to */
@@ -2074,11 +2024,9 @@ int main(int argc, char *argv[])
 	** elsewhere.  It is important that we do this right away
 	** since one of the things we do is get our queue id.
 	*/
-	qentry.destnode = (char*)NULL;						/* name of node to send job to */
 	qentry.destname = (char*)NULL;						/* name of printer or group */
 	qentry.id = 0;										/* not assigned yet */
 	qentry.subid = 0;									/* job fragment number (unused) */
-	qentry.homenode = ppr_get_nodename();				/* this are the node this job came from */
 	qentry.status = STATUS_WAITING;
 	qentry.flags = 0;
 	qentry.time = time((time_t*)NULL);					/* job submission time */
@@ -2234,9 +2182,6 @@ int main(int argc, char *argv[])
 	**
 	** (We want to do this as soon as possible so that
 	** messages which refer to the job id will look right.)
-	**
-	** After that we see if the destination node has been
-	** set.  If it hasn't been, then it is this node.
 	*/
 	if(!qentry.destname)
 		{
@@ -2244,7 +2189,7 @@ int main(int argc, char *argv[])
 		if(!(ptr = getenv("PPRDEST")))
 			if(!(ptr = getenv("PRINTER")))
 				ptr = "default";
-		parse_d_option(ptr);
+		qentry.destname = ptr;
 		}
 
 	/*
@@ -2253,15 +2198,8 @@ int main(int argc, char *argv[])
 	{
 	const char *ptr;
 	if((ptr = extract_forwhat()))
-		parse_d_option(ptr);
+		qentry.destname = ptr;
 	}
-
-	/*
-	** If after all that the destination node is not known,
-	** it must be this node.
-	*/
-	if(!qentry.destnode)
-		qentry.destnode = qentry.homenode;
 
 	/*
 	** Now that we know the destination, we can pull in
@@ -2426,8 +2364,6 @@ int main(int argc, char *argv[])
 	** in pprd could be reached, but now that we have our own
 	** responder launcher we can wait until the destination name is set so
 	** that respond() will use the correct job name.
-	**
-	** Note that at this point qentry.destnode will be defined already.
 	*/
 	if((FIFO = open_fifo(FIFO_NAME)) == (FILE*)NULL)
 		{

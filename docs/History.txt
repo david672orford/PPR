@@ -539,15 +539,21 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--17 December 2004
+2.00a1, 11 December 2004--14 January 2005.
 
 * refman/: removed references to papsrv.
 
 * uprint/: removed references to UPRINT(8), uprint-newconf(8), and
   uprint.conf(5).
 
+* uprint/: moved all remaining pages into refman and renamed the program
+  pages from uprint-* to ppr-*.
+
 * refman/ppr2samba.c: removed references to ppd2win95drv (which was
   removed)
+
+* refman/: removed the few meager references to destination node and
+  job home node names.
 
 
 TODO

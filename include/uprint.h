@@ -165,8 +165,6 @@ const char *uprint_strerror(int errnum);
 
 /* uprint_print.c, uprint_print_*.c: */
 int uprint_print(void *p, gu_boolean remote_too);
-int uprint_print_argv_sysv(void *p, const char **argv, int argv_len);
-int uprint_print_argv_bsd(void *p, const char **argv, int argv_len);
 int uprint_print_argv_ppr(void *p, const char **argv, int argv_len);
 int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad);
 
@@ -185,15 +183,6 @@ int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue,
 /* uprint_conf.c: */
 const char *uprint_default_destinations_lpr(void);
 const char *uprint_default_destinations_lp(void);
-const char *uprint_path_lpr(void);
-const char *uprint_path_lpq(void);
-const char *uprint_path_lprm(void);
-const char *uprint_path_lpc(void);
-const char *uprint_path_lp(void);
-const char *uprint_path_lpstat(void);
-const char *uprint_path_cancel(void);
-gu_boolean uprint_lpr_installed(void);
-gu_boolean uprint_lp_installed(void);
 
 /* Values for uprint_errno: */
 #define UPE_NONE 0		/* not an error */

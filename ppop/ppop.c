@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -157,12 +157,8 @@ static void alarm_sighandler(int sig)
 ** Get ready to communicate with the spooler daemon. This involves getting
 ** ready for a SIGUSR1 from pprd.  To do this, we clear the signal received
 ** flag and block the signal.  (We will unblock it later.)
-**
-** Note that the nodename parameter is unused right now.  At some point in
-** the past it was thought that a separate spooler daemon would be used
-** for remote queues.
 */
-FILE *get_ready(const char nodename[])
+FILE *get_ready(void)
 	{
 	int fifo;
 	sigset_t set;				/* storage for set containing SIGUSR1 */
@@ -285,19 +281,18 @@ int print_reply(void)
 /*
 ** This is the routine which makes aliasing work.
 */
-static int do_aliasing(char *destnode, char *destname)
+static int do_aliasing(char *destname)
 	{
 	static int depth = 0;
 	int retval = 0;
 
-	/* printf("do_aliasing(\"%s\", \"%s\")\n", destnode, destname); */
+	/* printf("do_aliasing(\"%s\")\n", destname); */
 
 	/*
-	** If we are not being called recursively and the queue is on this
-	** local node, see if it is a queue alias and if it is, replace it
-	** with the real queue name.
+	** If we are not being called recursively, see if it is a queue 
+	** alias and if it is, replace it with the real queue name.
 	*/
-	if(depth == 0 && strcmp(destnode, ppr_get_nodename()) == 0)
+	if(depth == 0)
 		{
 		char fname[MAX_PPR_PATH];
 		FILE *f;
@@ -321,7 +316,6 @@ static int do_aliasing(char *destnode, char *destname)
 
 					if(retval == 0)
 						{
-						strcpy(destnode, dest.destnode);
 						strcpy(destname, dest.destname);
 						}
 
@@ -337,7 +331,7 @@ static int do_aliasing(char *destnode, char *destname)
 				}
 			else
 				{
-				fprintf(errors, _("The alias \"%s:%s\" doesn't have a forwhat value.\n"), destnode, destname);
+				fprintf(errors, _("The alias \"%s\" doesn't have a forwhat value.\n"), destname);
 				retval = -1;
 				}
 			}
@@ -359,30 +353,6 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 
 	/* Set pointer to start of job name. */
 	ptr = jobname;
-
-	/* If a destination node name is specified, then claim it. */
-	if((len = strcspn(ptr, ":")) != strlen(ptr))
-		{
-		if(len > MAX_NODENAME)
-			{
-			fprintf(errors, _("Destination node name \"%*s\" is too long.\n"), (int)len, ptr);
-			return -1;
-			}
-		if(len == 0)
-			{
-			fprintf(errors, _("Destination node name (the part before the colon) is missing.\n"));
-			return -1;
-			}
-
-		strncpy(job->destnode, jobname, len);
-		job->destnode[len] = '\0';
-		ptr += (len+1);
-		}
-	/* otherwise, assume the destination node is this node */
-	else
-		{
-		strcpy(job->destnode, ppr_get_nodename());
-		}
 
 	/*
 	** Find the full extent of the destination name.  Keep in mind that
@@ -429,7 +399,7 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 	/*
 	** Do the alias replacement if the destination name is an alias.
 	*/
-	if(do_aliasing(job->destnode, job->destname) == -1)
+	if(do_aliasing(job->destname) == -1)
 		return -1;
 
 	/*
@@ -464,25 +434,6 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 		}
 
 	/*
-	** If a left parenthesis comes next, read the
-	** sending node name.  If not, use a wildcard.
-	*/
-	if(*ptr == '(')
-		{
-		ptr++;
-		if((len = strcspn(ptr, ")")) > MAX_NODENAME || ptr[len] != ')')
-			return -1;
-		strncpy(job->homenode, ptr, len);
-		job->homenode[len] = '\0';
-		ptr += len;
-		ptr++;
-		}
-	else
-		{
-		strcpy(job->homenode, "*");
-		}
-
-	/*
 	** If there is anything left, it is an error.
 	*/
 	if(*ptr)
@@ -505,25 +456,6 @@ int parse_dest_name(struct Destname *dest, const char *destname)
 
 	ptr = destname;
 
-	/* If a colon can be found, their is a destination node specified. */
-	if((size_t)(len = strcspn(ptr, ":")) < strlen(ptr))
-		{
-		if(len > MAX_NODENAME)
-			{
-			fprintf(errors, _("Node name \"%*s\" is too long.\n"), len, ptr);
-			return -1;
-			}
-		strncpy(dest->destnode, ptr, len);
-		dest->destnode[len] = '\0';
-		ptr += len;
-		ptr++;
-		}
-	/* Otherwise, assume local node. */
-	else
-		{
-		strcpy(dest->destnode, ppr_get_nodename());
-		}
-
 	if((len = strlen(ptr)) > MAX_DESTNAME)
 		{
 		fprintf(errors, _("Destination name \"%*s\" is too long.\n"), len, ptr);
@@ -545,7 +477,7 @@ int parse_dest_name(struct Destname *dest, const char *destname)
 	strcpy(dest->destname, ptr);
 
 	/* Do the alias replacement. */
-	if(do_aliasing(dest->destnode, dest->destname) == -1)
+	if(do_aliasing(dest->destname) == -1)
 		return -1;
 
 	return 0;
@@ -709,13 +641,11 @@ int job_permission_check(struct Jobname *job)
 	/*
 	** Open queue file.
 	*/
-	ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)",
+	ppr_fnamef(fname, "%s/%s-%d.%d",
 		QUEUEDIR,
-		job->destnode,
 		job->destname,
 		job->id,
-		job->subid != WILDCARD_SUBID ? job->subid : 0,
-		strcmp(job->homenode, "*") ? job->homenode : ppr_get_nodename()
+		job->subid != WILDCARD_SUBID ? job->subid : 0
 		);
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
@@ -767,7 +697,7 @@ int job_permission_check(struct Jobname *job)
 		fprintf(errors,
 				_("You may not manipulate the job \"%s\" because it\n"
 				"does not belong to the user \"%s\".\n"),
-						remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
+						jobid(job->destname, job->id, job->subid),
 						su_user);
 
 		/* If the command is a request by proxy, remote LPR users might be
@@ -816,7 +746,7 @@ int job_permission_check(struct Jobname *job)
 			fprintf(errors,
 				_("You may not manipulate the job \"%s\" because it belongs to\n"
 				  "\"%.*s\", while you are \"%.*s\".\n"),
-				remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode),
+				jobid(job->destname, job->id, job->subid),
 				(int)(show_hostnames ? strlen(job_proxy_for) : strcspn(job_proxy_for, "@")), job_proxy_for,
 				(int)(show_hostnames ? strlen(proxy_for) : strcspn(proxy_for, "@")), proxy_for);
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_features.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 December 2004.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -44,7 +44,7 @@
 ** and prints a list of the --feature options that will work with that
 ** PPD file.
 */
-int option_features(const char destnode[], const char destname[])
+int option_features(const char destname[])
 	{
 	const char *ppdfile;
 	char *line;
@@ -54,7 +54,7 @@ int option_features(const char destnode[], const char destname[])
 	char *ui_default = NULL;
 	char *group = NULL;
 
-	if(!(ppdfile = dest_ppdfile(destnode, destname)))
+	if(!(ppdfile = dest_ppdfile(destname)))
 		{
 		fprintf(stderr, "%s: don't know which PPD file\n", myname);
 		return PPREXIT_OTHERERR;

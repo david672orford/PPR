@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 December 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -449,11 +449,9 @@ int custom_list(char *argv[],
 	time_t time_now;
 	int stop = FALSE;
 
-	char *destnode;						/* the data from one line */
 	char *destname;
 	int id;
 	int subid;
-	char *homenode;
 	int priority;
 	int status;
 	int never;
@@ -486,10 +484,10 @@ int custom_list(char *argv[],
 			return EXIT_SYNTAX;
 
 		/* Prepare to communicate with pprd. */
-		FIFO = get_ready(job.destnode);
+		FIFO = get_ready();
 
 		/* Send command. */
-		fprintf(FIFO, "l %s %s %d %d %s\n", job.destnode, job.destname, job.id, job.subid, job.homenode);
+		fprintf(FIFO, "l %s %d %d\n", job.destname, job.id, job.subid);
 		fflush(FIFO);
 
 		/* Wait for pprd to reply. */
@@ -501,18 +499,18 @@ int custom_list(char *argv[],
 		*/
 		while( ! stop && (line = gu_getline(line, &line_available, reply_file)))
 			{
-			destnode = destname = homenode = onprinter = (char*)NULL;
+			destname = onprinter = (char*)NULL;
 			never = notnow = pass = 0;
 
-			if(gu_sscanf(line,"%S %S %d %d %S %d %d %S %d %d %d %ld",
-						&destnode, &destname, &id, &subid, &homenode,
-						&priority, &status, &onprinter, &never, &notnow, &pass, &arrest_time) < 8)
+			if(gu_sscanf(line,"%S %d %d %d %d %S %d %d %d %ld",
+					&destname, &id, &subid,
+					&priority, &status, &onprinter, &never, &notnow, &pass, &arrest_time) < 6)
 				{
 				printf("Invalid response line: %s", line);
-				if(destnode) gu_free(destnode);
-				if(destname) gu_free(destname);
-				if(homenode) gu_free(homenode);
-				if(onprinter) gu_free(onprinter);
+				if(destname)
+					gu_free(destname);
+				if(onprinter)
+					gu_free(onprinter);
 				continue;
 				}
 
@@ -533,11 +531,9 @@ int custom_list(char *argv[],
 			qentry.pass = pass;
 
 			/* And into the QFileEntry structure too, this will take care of deallocation. */
-			qfileentry.destnode = destnode;
 			qfileentry.destname = destname;
 			qfileentry.id = id;
 			qfileentry.subid = subid;
-			qfileentry.homenode = homenode;
 
 			/*
 			** Normally we print the column headings if they have not
@@ -569,7 +565,7 @@ int custom_list(char *argv[],
 
 			/*
 			** Free memory in the qfileentry.
-			** This will free destnode, destname, and homenode as well.
+			** This will free destname as well.
 			*/
 			destroy_struct_QFileEntry(&qfileentry);
 			gu_free(onprinter);
@@ -607,14 +603,14 @@ static int ppop_short_item(const struct QEntry *qentry,
 	{
 	int len;
 
-	len = printf("%s",remote_jobid(qfileentry->destnode,qfileentry->destname,qfileentry->id,qfileentry->subid,qfileentry->homenode));
+	len = printf("%s", jobid(qfileentry->destname, qfileentry->id, qfileentry->subid));
 
-	while(len++<24)						/* print padded job id */
-		fputc(' ',stdout);
+	while(len++ < 24)					/* print padded job id */
+		PUTC(' ');
 
 	len = printf("%s",qfileentry->For); /* print it */
-	while(len++<21)								/* pad to 21 characters */
-		fputc(' ',stdout);
+	while(len++ < 21)					/* pad to 21 characters */
+		PUTC(' ');
 
 	/* now print the status */
 	job_status(qentry, qfileentry, onprinter, (FILE*)NULL, 45, 45);
@@ -663,7 +659,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 	{
 	char timestr[10];
 	char pagesstr[4];
-	char *jobname;
+	const char *jobname;
 
 	format_time(timestr, sizeof(timestr), (time_t)qfileentry->time);
 
@@ -673,7 +669,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 	else
 		snprintf(pagesstr, sizeof(pagesstr), "%3.3d", qfileentry->attr.pages);
 
-	jobname = remote_jobid(qfileentry->destnode,qfileentry->destname,qentry->id,qentry->subid,qfileentry->homenode);
+	jobname = jobid(qfileentry->destname, qentry->id, qentry->subid);
 	if(strlen(jobname) > 15)
 		printf("%s\n               ", jobname);
 	else
@@ -707,7 +703,6 @@ int ppop_list(char *argv[], int suppress)
 
 static int lpqlist_rank;
 static int lpqlist_banner_called;
-static char *lpqlist_destnode;
 static char *lpqlist_destname;
 static char **lpqlist_argv;
 
@@ -748,12 +743,12 @@ static void ppop_lpq_help(void)
 ** !!! This routine must be kept up to date with the queue file format. !!!
 ** !!! This routine is not ready for distributed printing. !!!
 */
-static void ppop_lpq_banner_progress(const char *printer_job_destname, int printer_job_id, int printer_job_subid, const char *printer_job_homenode)
+static void ppop_lpq_banner_progress(const char *printer_job_destname, int printer_job_id, int printer_job_subid)
 	{
 	char fname[MAX_PPR_PATH];
 	FILE *f;
 
-	ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR, ppr_get_nodename(), printer_job_destname, printer_job_id, printer_job_subid, printer_job_homenode);
+	ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, printer_job_destname, printer_job_id, printer_job_subid);
 	if((f = fopen(fname, "r")) != (FILE*)NULL)
 		{
 		long int postscript_bytes, input_bytes, bytes_tosend, bytes_sent;
@@ -824,17 +819,15 @@ static void ppop_lpq_banner(void)
 	FILE *FIFO, *reply_file;
 	char *line = NULL; int line_len = 128;
 	char *printer_name;
-	char *printer_nodename;
 	char *printer_job_destname;
 	int printer_job_id, printer_job_subid;
-	char *printer_job_homenode;
 	int printer_status;
 	int printer_next_retry;
 	int printer_countdown;
 
 	/* Ask for the status of all the printers: */
-	FIFO = get_ready(lpqlist_destnode);
-	fprintf(FIFO, "s %s %s\n", lpqlist_destnode, lpqlist_destname);
+	FIFO = get_ready();
+	fprintf(FIFO, "s %s\n", lpqlist_destname);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -850,22 +843,20 @@ static void ppop_lpq_banner(void)
 	*/
 	while((line = gu_getline(line, &line_len, reply_file)))
 		{
-		printer_nodename = (char*)NULL;
 		printer_name = (char*)NULL;
 		printer_job_destname = (char*)NULL;
-		printer_job_homenode = (char*)NULL;
 
-		if(gu_sscanf(line, "%S %S %d %d %d %S %d %d %S",
-				&printer_nodename, &printer_name, &printer_status,
+		if(gu_sscanf(line, "%S %d %d %d %S %d %d",
+				&printer_name, &printer_status,
 				&printer_next_retry, &printer_countdown,
-				&printer_job_destname, &printer_job_id, &printer_job_subid,
-				&printer_job_homenode) != 9)
+				&printer_job_destname, &printer_job_id, &printer_job_subid
+				) != 7)
 			{
 			printf("Malformed response: \"%s\"", line);
-			if(printer_nodename) gu_free(printer_nodename);
-			if(printer_name) gu_free(printer_name);
-			if(printer_job_destname) gu_free(printer_job_destname);
-			if(printer_job_homenode) gu_free(printer_job_homenode);
+			if(printer_name)
+				gu_free(printer_name);
+			if(printer_job_destname) 
+				gu_free(printer_job_destname);
 			continue;
 			}
 
@@ -892,11 +883,11 @@ static void ppop_lpq_banner(void)
 				break;
 			case PRNSTATUS_PRINTING:
 				if(printer_next_retry)
-					printf("printing %s (%d%s retry)", remote_jobid(printer_nodename,printer_job_destname,printer_job_id,printer_job_subid,printer_job_homenode), printer_next_retry, count_suffix(printer_next_retry));
+					printf("printing %s (%d%s retry)", jobid(printer_job_destname,printer_job_id,printer_job_subid), printer_next_retry, count_suffix(printer_next_retry));
 				else
-					printf("printing %s", remote_jobid(printer_nodename,printer_job_destname,printer_job_id,printer_job_subid,printer_job_homenode));
+					printf("printing %s", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 
-				ppop_lpq_banner_progress(printer_job_destname, printer_job_id, printer_job_subid, printer_job_homenode);
+				ppop_lpq_banner_progress(printer_job_destname, printer_job_id, printer_job_subid);
 
 				break;
 			case PRNSTATUS_CANCELING:
@@ -906,13 +897,13 @@ static void ppop_lpq_banner(void)
 				fputs("seizing active job", stdout);
 				break;
 			case PRNSTATUS_STOPPING:
-				printf("stopping (still printing %s)", remote_jobid(printer_nodename,printer_job_destname,printer_job_id,printer_job_subid,printer_job_homenode));
+				printf("stopping (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 				break;
 			case PRNSTATUS_STOPT:
 				printf("printing disabled");
 				break;
 			case PRNSTATUS_HALTING:
-				printf("halting (still printing %s)", remote_jobid(printer_nodename,printer_job_destname,printer_job_id,printer_job_subid,printer_job_homenode));
+				printf("halting (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 				break;
 			case PRNSTATUS_FAULT:
 				if(printer_next_retry)
@@ -938,10 +929,8 @@ static void ppop_lpq_banner(void)
 
 		PUTC('\n');
 
-		gu_free(printer_nodename);
 		gu_free(printer_name);
 		gu_free(printer_job_destname);
-		gu_free(printer_job_homenode);
 		} /* end of loop for each printer */
 
 	fclose(reply_file);
@@ -1166,7 +1155,6 @@ int ppop_lpq(char *argv[])
 
 	lpqlist_rank = 0;					/* reset number for "Rank" column */
 	lpqlist_banner_called = FALSE;		/* not called yet! */
-	lpqlist_destnode = job.destnode;
 	lpqlist_destname = job.destname;
 	lpqlist_argv = new_argv;
 
@@ -1210,7 +1198,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 		FILE *qstream)
 	{
 	/* print job name */
-	printf("Job ID: %s\n", remote_jobid(qfileentry->destnode,qfileentry->destname,qentry->id,qentry->subid,qfileentry->homenode));
+	printf("Job ID: %s\n", jobid(qfileentry->destname,qentry->id,qentry->subid));
 
 	/* Say which part of the whole this is. */
 	if(qfileentry->attr.parts == 1)
@@ -1535,7 +1523,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		switch(qquery_query[x])
 			{
 			case 0:						/* jobname */
-				fputs(remote_jobid(qfileentry->destnode,qfileentry->destname,qfileentry->id,qfileentry->subid,qfileentry->homenode),stdout);
+				PUTS(jobid(qfileentry->destname,qfileentry->id,qfileentry->subid));
 				break;
 			case 1:						/* for */
 				puts_detabbed(qfileentry->For ? qfileentry->For : "?");
@@ -1692,7 +1680,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				}
 				break;
 			case 37:					/* fulljobname */
-				printf("%s:%s-%d.%d(%s)", qfileentry->destnode, qfileentry->destname, qfileentry->id, qfileentry->subid, qfileentry->homenode);
+				printf("%s-%d.%d", qfileentry->destname, qfileentry->id, qfileentry->subid);
 				break;
 			case 38:					/* intype */
 				if(qfileentry->Filters)
@@ -1703,11 +1691,6 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 
 			case 43:					/* destname */
-				if(strcmp(qfileentry->destnode, ppr_get_nodename()))
-					{
-					PUTS(qfileentry->destnode);
-					PUTC(':');
-					}
 				PUTS(qfileentry->destname);
 				break;
 			case 44:					/* responder */
@@ -1954,7 +1937,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 		FILE *qstream)
 	{
 	const char function[] = "ppop_progress_item";
-	char *jobname;
+	const char *jobname;
 	long int bytes_total;
 	long bytes_sent = 0;
 	int pages_started = 0;
@@ -1976,7 +1959,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	}
 
 	/* Format the job name. */
-	jobname = remote_jobid(qfileentry->destnode,qfileentry->destname,qentry->id,qentry->subid,qfileentry->homenode);
+	jobname = jobid(qfileentry->destname, qentry->id, qentry->subid);
 
 	/* Compute the percentage of progress.  We do this by figuring out
 	   how many bytes have to be sent and the comparing it to the

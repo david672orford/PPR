@@ -81,9 +81,6 @@ int pprdrv_start(int prnid, struct QEntry *job)
 
 	DODEBUG_PRNSTART(("%s(prnid=%d, job={%d,%d,%d})", function, prnid, job->destid, job->id, job->subid));
 
-	if(!nodeid_is_local_node(job->destnode_id))
-		fatal(0, "%s(): assertion failed: destnode is not local", function);
-
 	if(job->status != STATUS_WAITING)
 		fatal(0, "%s(): assertion failed: job->status != STATUS_WAITING", function);
 
@@ -99,7 +96,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	*/
 	if(active_printers == MAX_ACTIVE)
 		{
-		DODEBUG_PRNSTART(("%s(): Starting printer \"%s\" would exceed MAX_ACTIVE", function, destid_local_to_name(prnid)));
+		DODEBUG_PRNSTART(("%s(): Starting printer \"%s\" would exceed MAX_ACTIVE", function, destid_to_name(prnid)));
 		printer_new_status(&printers[prnid], PRNSTATUS_STARVED);
 		starving_printers++;
 		return -1;
@@ -112,7 +109,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	*/
 	if(printers[prnid].previous_status != PRNSTATUS_STARVED && (active_printers+starving_printers) >= MAX_ACTIVE)
 		{
-		DODEBUG_PRNSTART(("%s(): \"%s\" yielding to a starving printer", function, destid_local_to_name(prnid)));
+		DODEBUG_PRNSTART(("%s(): \"%s\" yielding to a starving printer", function, destid_to_name(prnid)));
 		printer_new_status(&printers[prnid], PRNSTATUS_STARVED);
 		starving_printers++;
 		return -1;
@@ -121,7 +118,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	/* start pprdrv */
 	if((pid = fork()) == -1)			/* if error */
 		{
-		error("%s(): Couldn't fork, printer \"%s\" not started", function, destid_local_to_name(prnid));
+		error("%s(): Couldn't fork, printer \"%s\" not started", function, destid_to_name(prnid));
 		printer_new_status(&printers[prnid], PRNSTATUS_STARVED);
 		starving_printers++;
 		return -1;
@@ -129,20 +126,19 @@ int pprdrv_start(int prnid, struct QEntry *job)
 
 	if(pid)								/* parent */
 		{
-		DODEBUG_PRNSTART(("%s(): Starting printer \"%s\", pid=%d", function, destid_local_to_name(prnid), (int)pid));
+		DODEBUG_PRNSTART(("%s(): Starting printer \"%s\", pid=%d", function, destid_to_name(prnid), (int)pid));
 		active_printers++;								/* add to count of printers printing */
 		printers[prnid].pid = pid;						/* remember which process is printing it */
 		printers[prnid].jobdestid = job->destid;		/* remember what job is being printed */
 		printers[prnid].id = job->id;
 		printers[prnid].subid = job->subid;
-		printers[prnid].homenode_id = job->homenode_id;
 		printer_new_status(&printers[prnid], PRNSTATUS_PRINTING);
 
-		queue_job_new_status(job->id, job->subid, job->homenode_id, prnid);
+		queue_job_new_status(job->destid, job->id, job->subid, prnid);
 
 		/* If is a group job, mark last printer in group that was used. */
-		if(destid_local_is_group(job->destid))
-			groups[destid_local_to_gindex(job->destid)].last = destid_local_get_member_offset(job->destid, prnid);
+		if(destid_is_group(job->destid))
+			groups[destid_to_gindex(job->destid)].last = destid_get_member_offset(job->destid, prnid);
 		}
 	else								/* child */
 		{
@@ -158,11 +154,10 @@ int pprdrv_start(int prnid, struct QEntry *job)
 		** because it tends to ommit parts which conform
 		** to default values.
 		*/
-		snprintf(jobname, sizeof(jobname), "%s:%s-%d.%d(%s)",
-				nodeid_to_name(job->destnode_id),
-				destid_to_name(job->destnode_id, job->destid),
-				job->id,job->subid,
-				nodeid_to_name(job->homenode_id));
+		snprintf(jobname, sizeof(jobname), "%s-%d.%d",
+				destid_to_name(job->destid),
+				job->id,job->subid
+				);
 
 		/*
 		** Convert the pass number to a string so that
@@ -179,7 +174,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 
 		/* Overlay this child process with pprdrv. */
 		execl(PPRDRV_PATH, "pprdrv",					/* execute the driver program */
-			destid_local_to_name(prnid),				/* printer name */
+			destid_to_name(prnid),				/* printer name */
 			jobname,									/* full job id string */
 			pass_str,									/* pass number as a string */
 			(char*)NULL);
@@ -197,7 +192,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 		** call error() and exit().
 		*/
 		error("%s(): Can't execute pprdrv, execl() failed, errno = %d (%s)", function, errno, gu_strerror(errno));
-		alert(destid_local_to_name(prnid), TRUE, "Can't execute \"%s\", errno=%d (%s)", PPRDRV_PATH, errno, gu_strerror(errno));
+		alert(destid_to_name(prnid), TRUE, "Can't execute \"%s\", errno=%d (%s)", PPRDRV_PATH, errno, gu_strerror(errno));
 		exit(EXIT_PRNERR);
 		}
 
@@ -303,7 +298,7 @@ static void pprdrv_exited(int prnid, int wstat)
 			printers[prnid].cancel_job = FALSE;
 
 			/* Tell the user that the job has been printed. */
-			respond(nodeid_local(), printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id, prnid, RESP_FINISHED);
+			respond(printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, prnid, RESP_FINISHED);
 
 			/* If the operator was informed that the printer was in a fault state, this call
 			   will inform the operator that it has recovered. */
@@ -327,7 +322,7 @@ static void pprdrv_exited(int prnid, int wstat)
 			job_status = STATUS_ARRESTED;
 
 			/* Tell the user that his job has been arrested. */
-			respond(nodeid_local(), printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id, prnid, RESP_ARRESTED);
+			respond(printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, prnid, RESP_ARRESTED);
 
 			/* If the printer was in a fault state, this function will inform the
 			   operator that it has recovered. */
@@ -366,13 +361,12 @@ static void pprdrv_exited(int prnid, int wstat)
 			** If a single printer, set the never mask to 1,
 			** arrest the job, and say the printer is incapable.
 			*/
-			if( ! destid_local_is_group(printers[prnid].jobdestid) )
+			if( ! destid_is_group(printers[prnid].jobdestid) )
 				{
 				queue[y].never |= 1;
 				job_status = STATUS_STRANDED;
-				respond(nodeid_local(), printers[prnid].jobdestid,
+				respond(printers[prnid].jobdestid,
 						printers[prnid].id, printers[prnid].subid,
-						printers[prnid].homenode_id,
 						prnid, RESP_STRANDED_PRINTER_INCAPABLE);
 				}
 
@@ -400,14 +394,13 @@ static void pprdrv_exited(int prnid, int wstat)
 				** inform the user.  But, if that was the 1st pass, we give
 				** the job a second chance.
 				*/
-				if(queue[y].never == ((1 << groups[destid_local_to_gindex(printers[prnid].jobdestid)].members) - 1))
+				if(queue[y].never == ((1 << groups[destid_to_gindex(printers[prnid].jobdestid)].members) - 1))
 					{
 					if( ++(queue[y].pass) > 2 ) /* if beyond the second pass */
 						{
 						job_status = STATUS_STRANDED;
-						respond(nodeid_local(), printers[prnid].jobdestid,
+						respond(printers[prnid].jobdestid,
 								printers[prnid].id,printers[prnid].subid,
-								printers[prnid].homenode_id,
 								prnid, RESP_STRANDED_GROUP_INCAPABLE);
 						}
 					else
@@ -539,23 +532,22 @@ static void pprdrv_exited(int prnid, int wstat)
 	   But we leave the flag set because the next if() tests it. */
 	if(printers[prnid].cancel_job)
 		{
-		respond(nodeid_local(), printers[prnid].jobdestid,
-						printers[prnid].id, printers[prnid].subid,
-						printers[prnid].homenode_id,
-						prnid, RESP_CANCELED_PRINTING);
+		respond(printers[prnid].jobdestid,
+				printers[prnid].id, printers[prnid].subid,
+				prnid, RESP_CANCELED_PRINTING);
 		}
 
 	/* If we should remove the job because it was printed or canceled, do it now. */
 	if(estat == EXIT_PRINTED || printers[prnid].cancel_job)
 		{
-		queue_dequeue_job(nodeid_local(), printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id);
+		queue_dequeue_job(printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid);
 		printers[prnid].cancel_job = FALSE;
 		}
 
 	/* If we will not remove the job, set it to its new state. */
 	else
 		{
-		struct QEntry *p = queue_job_new_status(printers[prnid].id, printers[prnid].subid, printers[prnid].homenode_id, job_status);
+		struct QEntry *p = queue_job_new_status(printers[prnid].jobdestid, printers[prnid].id, printers[prnid].subid, job_status);
 		if(job_status == STATUS_WAITING)
 			printer_try_start_suitable_4_this_job(p);
 		}
@@ -603,7 +595,7 @@ gu_boolean pprdrv_child_hook(pid_t pid, int wstat)
 void pprdrv_kill(int prnid)
 	{
 	const char function[] = "pprdrv_kill";
-	DODEBUG_PRNSTOP(("%s(): killing pprdrv (printer=%s, pid=%ld)", function, destid_local_to_name(prnid), (long)printers[prnid].pid));
+	DODEBUG_PRNSTOP(("%s(): killing pprdrv (printer=%s, pid=%ld)", function, destid_to_name(prnid), (long)printers[prnid].pid));
 	if(printers[prnid].pid <= 0)
 		{
 		error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);

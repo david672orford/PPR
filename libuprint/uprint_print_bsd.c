@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/pprd/pprd_remote.c
+** mouse:~ppr/src/libuprint/uprint_argv_bsd.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,61 +25,43 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2003.
-*/
-
-/*
-** This module contains functions for dispatching jobs to remote PPR spoolers.
+** Last modified 14 May 2003.
 */
 
 #include "config.h"
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-#include "global_structs.h"
-#include "pprd.h"
-#include "./pprd.auto_h"
+#include "uprint.h"
+#include "uprint_private.h"
 
 /*
-** Spawn a process to transmit the job.
+** This function returns the switch which should be used
+** to indicate the content type when invoking lpr.
+** It will return a NULL character if none should be
+** used.
 */
-static void remote_spawn(struct QEntry *qentry)
+char uprint_get_content_type_lpr(void *p)
 	{
-    
-	}
+	struct UPRINT *upr = (struct UPRINT *)p;
 
-/*
-** This is called whenever a remote job enters the queue, either as a new
-** job or as one from a previous life of pprd.
-*/
-void remote_job(struct QEntry *qentry)
-	{
-	FUNCTION4DEBUG("remote_new_job")
-	DODEBUG_REMOTE(("%s()", function));
+	/* If it was set directly, */
+	if(upr->content_type_lpr != '\0')
+		return upr->content_type_lpr;
 
-    remote_spawn(qentry);
-	}
+	/* If we can convert an lp content type spec, */
+	if(upr->content_type_lp != (char*)NULL)
+		{
+		struct LP_LPR_TYPE_XLATE *p;
 
-/*
-** This is called from reapchild().  It should return TRUE if the pid is that
-** of a pprd_xmit process.
-*/
-gu_boolean remote_child_hook(pid_t pid, int wstat)
-	{
-	FUNCTION4DEBUG("remote_child_hook")
-	DODEBUG_REMOTE(("%s()", function));
+		for(p = lp_lpr_type_xlate; p->lpname != (const char *)NULL || p->lprcode != '\0'; p++)
+			{
+			if(strcmp(p->lpname, upr->content_type_lp) == 0)
+				return p->lprcode;
+			}
+		}
 
-	return FALSE;
-	}
-
-/*
-** This is our chance to retry transmission to destination nodes.
-*/
-void remote_tick(void)
-	{
-	FUNCTION4DEBUG("remote_tick")
-	DODEBUG_TICK(("%s()", function));
-
-	}
+	return '\0';
+	} /* end of uprint_get_content_type_lpr() */
 
 /* end of file */
-

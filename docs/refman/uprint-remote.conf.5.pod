@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/uprint/uprint-remote.conf.5.pod
+# mouse:~ppr/src/docs/refman/uprint-remote.conf.5.pod
 # Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -78,7 +78,7 @@ filter modes, and other things.  The default is B<no>.
 =item B<ppr extensions => I<boolean>
 
 This indicates whether PPR extensions to RFC 1179 should be used.
-With these extensions B<uprint-lp> and B<uprint-lpr> will pass
+With these extensions B<ppr-lp> and B<ppr-lpr> will pass
 the values of PPR_RESPONDER, PPR_RESPONDER_ADDRESS, and PPR_RESPONDER_OPTIONS
 as parameters to the B<ppr> command run on the remote system if
 PPR_RESPONDER_ADDRESS contains an "@".  The default is B<no>.

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_respond.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 May 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -75,8 +75,7 @@ static void empty_reapchild(int sig)
 ** this function.
 **
 ** It is worth noting that when this function is called, qentry.subid will
-** always be zero and qentry.homenode will always be the value returned
-** from ppr_get_nodename().
+** always be zero.
 **
 ** This function returns 0 if it suceeds, -1 if it fails.  The return
 ** code is used by ppr_infile.c.  If there is no filter to convert the file

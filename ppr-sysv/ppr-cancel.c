@@ -1,18 +1,18 @@
 /*
-** mouse:~ppr/src/include/uprint_conf.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** mouse:~ppr/src/ppr-sysv/ppr-cancel.c
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
 ** modification, are permitted provided that the following conditions are met:
-** 
+**
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
 ** 
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
-** 
+**
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -25,52 +25,72 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 August 2003.
+** Last modified 14 January 2005.
 */
 
-struct PATH_SET
+#include "config.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <pwd.h>
+#include <errno.h>
+#include <string.h>
+#ifdef INTERNATIONAL
+#include <locale.h>
+#include <libintl.h>
+#endif
+#include "gu.h"
+#include "global_defines.h"
+
+#include "uprint.h"
+
+extern char *optarg;
+extern int optind;
+
+static const char *const myname = "ppr-cancel";
+
+void uprint_error_callback(const char *format, ...)
 	{
-	const char *lpr;
-	const char *lpq;
-	const char *lprm;
-	const char *lpc;
-	const char *lp;
-	const char *lpstat;
-	const char *cancel;
-	};
+	va_list va;
+	fprintf(stderr, "%s: ", myname);
+	va_start(va, format);
+	vfprintf(stderr, format, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of uprint_error_callback() */
 
-struct UPRINT_CONF
+static const char *option_list = "";
+
+int main(int argc, char *argv[])
 	{
-	struct PATH_SET well_known;
-	struct PATH_SET sidelined;
+	int c;
 
-	struct
+	/* Initialize internation messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* Trap loops: */
+	if(uprint_loop_check(myname) == -1)
+		return 1;
+
+	/*
+	** Parse the switches.  Mostly, we will call uprint
+	** member functions.
+	*/
+	while((c = getopt(argc, argv, option_list)) != -1)
 		{
-		gu_boolean installed;
-		gu_boolean sidelined;
-		const char *printers;
-		const char *classes;
-		const char *flavor;
-		float flavor_version;
-		} lp;
-	struct
-		{
-		gu_boolean installed;
-		gu_boolean sidelined;
-		const char *flavor;
-		float flavor_version;
-		} lpr;
+		switch(c)
+			{
+			default:
+				fprintf(stderr, _("%s: Syntax error, unrecognized switch: -%c\n"), myname, c);
+				return 1;
+			}
+		}
 
-	struct
-		{
-		const char *lp;
-		const char *lpr;
-		} default_destinations;
-
-	} ;
-
-void uprint_read_conf(void);
-extern struct UPRINT_CONF conf;
+	return 0;
+	} /* end of main() */
 
 /* end of file */
-

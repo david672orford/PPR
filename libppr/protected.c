@@ -29,17 +29,10 @@
 /*
 ** Return true if we must verify that the user is in the users database.
 */
-int destination_protected(const char *destnode, const char *destname)
+gu_boolean destination_protected(const char destname[])
 	{
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
-
-	/*
-	** For the time being we will asume that remote
-	** printers are not protected.
-	*/
-	if(strcmp(destnode, ppr_get_nodename()) != 0)
-		return FALSE;
 
 	/* A group? */
 	ppr_fnamef(fname, "%s/%s", GRCONF, destname);

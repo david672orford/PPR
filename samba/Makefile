@@ -33,7 +33,6 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=ppr2samba$(DOTEXE) \
-	ppd2windrv \
 	indexwindrivers \
 	samba_submitter \
 	smb-protos.conf
@@ -64,7 +63,6 @@ sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
 install: $(PROGS) smb-protos.conf $(INSTALL_TDB)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr2samba$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2windrv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin indexwindrivers
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
 	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf

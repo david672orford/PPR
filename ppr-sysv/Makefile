@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/uprint/Makefile
+# mouse:~ppr/src/uprint/Makefile
 # Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,61 +25,59 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 10 December 2004.
 #
 
-# Pull in settings from Configure.
-include ../../Makefile.conf
-include ../../makeprogs/paths.mk
-include ../rules.mk
+include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-# List of man pages in HTML format
-ALL_HTML=uprint-remote.conf.5.html \
-	uprint-lp.1.html uprint-lpstat.1.html uprint-cancel.1.html \
-	uprint-lpr.1.html uprint-lpq.1.html uprint-lprm.1.html uprint-lpc.8.html
+PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-lpc$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
+SETUID_PROGS=uprint-lpr$(DOTEXE) uprint-lp$(DOTEXE) 
 
-# List of man pages in nroff format
-ALL_TROFF=uprint-remote.conf.5.man \
-	uprint-lp.1.man uprint-lpstat.1.man uprint-cancel.1.man \
-	uprint-lpr.1.man uprint-lpq.1.man uprint-lprm.1.man uprint-lpc.8.man
+PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 
-# List of PODs for cross references
-LIBPODS=uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpc.8,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
+PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 
 #=== Build ==================================================================
 
-all-docs: $(ALL_HTML) $(ALL_TROFF)
+all: $(PROGS) $(SETUID_PROGS)
+
+uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-cancel$(DOTEXE): uprint-cancel.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
+
+uprint-lpstat$(DOTEXE): uprint-lpstat.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 #=== Install ================================================================
 
-install: install-troff install-html
-
-# Install the man pages in Nroff format
-install-troff: $(ALL_TROFF)
-	for d in 1 5;\
-	  do \
-	  for f in *.$$d.man;\
-	    do \
-	       echo "    man$$d/$$f"; \
-	       ../$(INSTALLCP) $$f $(MANDIR)/man$$d/`basename $$f .man`; \
-	    done;\
-	  done
-
-# Install the man pages and other stuff in HTML format.
-install-html: $(ALL_HTML)
-	../$(MAKE_NEW_DIR) $(DOCSDIR)/uprint
-	../$(INSTALLDATA) $(DOCSDIR)/uprint *.html
+install: $(PROGS) $(SETUID_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin $(SETUID_PROGS)
 
 #=== Housekeeping ===========================================================
 
-# Remove just editor backups.
-clean:
-	$(RMF) $(BACKUPS) *.tmp
+include .depend
 
-# Remove anything that can be reconstructed.
-veryclean: clean
-	$(RMF) *.[158].html *.[158].man
+depend:
+	$(PPR_MAKE_DEPEND) ../include
+
+clean:
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS) $(SETUID_PROGS)
 
 # end of file

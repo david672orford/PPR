@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_outfile.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2001.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -85,12 +100,7 @@ void get_next_id(struct QFileEntry *q)
 
 		/* Perform a crude test to alieviate the problems of ID wraparound.
 		   If a job exists with which we would collide, then skip this id. */
-		ppr_fnamef(tempqfname, "%s/%s:%s-%d.%d(%s)",
-				QUEUEDIR,
-				qentry.destnode,
-				qentry.destname,
-				tid, 0,
-				qentry.homenode);
+		ppr_fnamef(tempqfname, "%s/%s-%d.%d", QUEUEDIR, qentry.destname, tid, 0);
 		} while(stat(tempqfname, &statbuf) == 0);
 
 	q->id = tid;
@@ -106,32 +116,17 @@ void open_output(void)
 	char temp[MAX_PPR_PATH];
 
 	/* file for header and trailer comments */
-	ppr_fnamef(temp, "%s/%s:%s-%d.%d(%s)-comments",
-				DATADIR,
-				qentry.destnode,
-				qentry.destname,
-				qentry.id, qentry.subid,
-				qentry.homenode);
+	ppr_fnamef(temp, "%s/%s-%d.%d-comments", DATADIR, qentry.destname, qentry.id, qentry.subid);
 	if(!(comments = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 
 	/* file for page comments */
-	ppr_fnamef(temp, "%s/%s:%s-%d.%d(%s)-pages",
-				DATADIR,
-				qentry.destnode,
-				qentry.destname,
-				qentry.id, qentry.subid,
-				qentry.homenode);
+	ppr_fnamef(temp, "%s/%s-%d.%d-pages", DATADIR, qentry.destname, qentry.id, qentry.subid);
 	if(!(page_comments = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 
 	/* file for the PostScript text */
-	ppr_fnamef(temp,"%s/%s:%s-%d.%d(%s)-text",
-				DATADIR,
-				qentry.destnode,
-				qentry.destname,
-				qentry.id, qentry.subid,
-				qentry.homenode);
+	ppr_fnamef(temp,"%s/%s-%d.%d-text", DATADIR, qentry.destname, qentry.id, qentry.subid);
 	if(!(text = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 	} /* end of open_output() */

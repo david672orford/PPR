@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/docs/uprint/uprint-lpstat.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# mouse:~ppr/src/docs/refman/ppr-lpc.8.pod
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,41 +25,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
 
-uprint-lpstat - Cancels print jobs
+ppr-lpc - Controls printers
 
 =head1 SYNOPSIS
 
-B<uprint-lpstat>
+B<ppr-lpc>
 
 =head1 DESCRIPTION
 
-This program is part of the PPR.
+This program is part of the PPR suite.
 
-This command attempts to emulate lpstat(1) from System V Unix.  Though it
-recognizes most of lpstat(1)'s options, its implementation of some of them
-is simplistic.  It is just adequate to satisfy GUI programs on Solaris.
-
-=over 4
-
-=item B<-a>
-
-=item B<-c>
-
-=item B<-p>
-
-=item B<-d>
-
-=item B<-D>
-
-=item B<-f>
-
-
-=back
+Currently, only the B<status> subcommand is implemented.  It displays
+just enough information to satisfy programs which use B<lpc status> to
+fetch a list of available queues.
 
 =head1 AUTHOR
 

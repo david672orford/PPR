@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_question.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2002.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -55,11 +55,9 @@
    asking the questions. */
 static struct {
 	pid_t pid;
-	int destnode_id;
 	int destid;
 	int id;
 	int subid;
-	int homenode_id;
 	} active_question[MAX_ACTIVE_QUESTIONS];
 
 /* How many entries in the above array user in use? */
@@ -124,7 +122,7 @@ static int question_launch(struct QEntry *job)
 		/* Connect stdin to /dev/null, and stdout and stderr to the pprd log file. */
 		child_stdin_stdout_stderr("/dev/null", PPRD_LOGFILE);
 
-		snprintf(jobname, sizeof(jobname), "%s:%s-%d.%d(%s)", ppr_get_nodename(), destid_to_name(job->destnode_id, job->destid), job->id, job->subid, nodeid_to_name(job->homenode_id));
+		snprintf(jobname, sizeof(jobname), "%s-%d.%d", destid_to_name(job->destid), job->id, job->subid);
 		ppr_fnamef(filename, "%s/%s", QUEUEDIR, jobname);
 
 		execl("lib/pprd-question", "pprd-question", jobname, filename, NULL);
@@ -138,11 +136,9 @@ static int question_launch(struct QEntry *job)
 	job->flags |= JOB_FLAG_QUESTION_ASKING_NOW;
 
 	/* Set information so we can find the job. */
-	active_question[x].destnode_id = job->destnode_id;
 	active_question[x].destid = job->destid;
 	active_question[x].id = job->id;
 	active_question[x].subid = job->subid;
-	active_question[x].homenode_id = job->homenode_id;
 
 	active_questions++;
 	launches_this_tick++;
@@ -248,24 +244,22 @@ gu_boolean question_child_hook(pid_t pid, int wstat)
 			{
 			int y;
 
-			DODEBUG_QUESTIONS(("%s(): pid %ld matches at slot %d, job %s:%s-%d.%d(%s)",
+			DODEBUG_QUESTIONS(("%s(): pid %ld matches at slot %d, job %s-%d.%d",
 				function,
 				(long)pid,
 				x,
-				nodeid_to_name(active_question[x].destnode_id),
-				destid_to_name(active_question[x].destnode_id, active_question[x].destid),
+				destid_to_name(active_question[x].destid),
 				active_question[x].id,
-				active_question[x].subid,
-				nodeid_to_name(active_question[x].homenode_id) ));
+				active_question[x].subid
+				));
 
 			/* Find the queue entry it relates to. */
 			for(y=0; y < queue_entries; y++)
 				{
-				if(		queue[y].id == active_question[x].id
-						&& queue[y].destid == active_question[x].destid
+				if(		queue[y].destid == active_question[x].destid
+						&& queue[y].id == active_question[x].id
 						&& queue[y].subid == active_question[x].subid
-						&& queue[y].destnode_id == active_question[x].destnode_id
-						&& queue[y].homenode_id == active_question[x].homenode_id)
+						)
 					{
 					time_t time_now;
 

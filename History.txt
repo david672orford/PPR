@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--13 January 2005
+2.00a1, 11 December 2004--14 January 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9540,6 +9540,17 @@ no final tarball was released.
 
 * libscript/Makefile: added code to generate and install interface.tcl.
 
+* removed code to support destnode:destname-id.subid(homenode) job name
+  syntax.  Removed files: libppr/gnodename.c, libppr/destspec.c, 
+  pprd/pprd_remote.c, pprd/pprd_nodeid.c.  Modified files are too numberous
+  to metion.  Their directories: libppr/, pprd/, pprdrv/, ppr/, ppop/.
+
+* libuprint/: removed support for printing to other spoolers by invoking 
+  their programs directly.  Removed files: claim_bsd.c, claim_sysv.c.  Removed
+  support for uprint.conf.  Removed uprint-newconf.
+
+* Split uprint/ into ppr-bsd and ppr-sysv/.  Renamed all the programs from
+  uprint-* to ppr-*.
 
 
 TODO
@@ -9565,11 +9576,7 @@ TODO
 
 * Implement automatic PPD file download URL.
 
-* Implement PPD file upload and import
-
 * Implement PPD file installable options handling in pprdrv.
-
-* Implement PPR node-to-node printing, queue display, and job canceling.
 
 * Add IPP support to UPRINT so that jobs can be sent to CUPS queues.  This
   should probably be done with libcups which is LGPL.

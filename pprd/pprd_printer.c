@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_printer.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2000.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -41,10 +56,7 @@ static int printer_start(int prnid, struct QEntry *job)
 	{
 	const char function[] = "printer_start";
 
-	DODEBUG_PRNSTART(("%s(prinid=%d, job={%d,%d,%d})", function, prnid, job->destnode_id, job->id, job->subid));
-
-	if(!nodeid_is_local_node(job->destnode_id))
-		fatal(0, "%s(): assertion failed: destnode is not local", function);
+	DODEBUG_PRNSTART(("%s(prinid=%d, job={%s-%d.%d})", function, prnid, destid_to_name(job->destid), job->id, job->subid));
 
 	if(job->status != STATUS_WAITING)
 		fatal(0, "%s(): assertion failed: job->status != STATUS_WAITING", function);
@@ -57,16 +69,16 @@ static int printer_start(int prnid, struct QEntry *job)
 	*/
 	if(printers[prnid].status != PRNSTATUS_IDLE)
 		{
-		DODEBUG_PRNSTART(("%s(): printer \"%s\" is not idle", function, destid_local_to_name(prnid)));
+		DODEBUG_PRNSTART(("%s(): printer \"%s\" is not idle", function, destid_to_name(prnid)));
 		return -1;
 		}
 
 	/*
 	** Don't start it if the destination is a group and it is held.
 	*/
-	if(destid_local_is_group(job->destid) && groups[destid_local_to_gindex(job->destid)].held)
+	if(destid_is_group(job->destid) && groups[destid_to_gindex(job->destid)].held)
 		{
-		DODEBUG_PRNSTART(("%s(): destination \"%s\" is held", function, destid_local_to_name(job->destid)));
+		DODEBUG_PRNSTART(("%s(): destination \"%s\" is held", function, destid_to_name(job->destid)));
 		return -2;
 		}
 
@@ -114,7 +126,7 @@ void printer_look_for_work(int prnid)
 	const char function[] = "printer_look_for_work";
 	int x;
 
-	DODEBUG_PRNSTART(("%s(): Looking for work for printer %d (\"%s\")", function, prnid, destid_local_to_name(prnid)));
+	DODEBUG_PRNSTART(("%s(): Looking for work for printer %d (\"%s\")", function, prnid, destid_to_name(prnid)));
 
 	lock();						/* lock out others while we modify */
 
@@ -124,19 +136,17 @@ void printer_look_for_work(int prnid)
 	for(x=0; x < queue_entries; x++)
 		{
 		#ifdef DEBUG_PRNSTART_GRITTY
-		debug("trying job: destid=%d, id=%d, subid=%d, homenode_id=%d, status=%d",
-			queue[x].destid,queue[x].id,queue[x].subid,queue[x].homenode_id,queue[x].status);
+		debug("trying job: destid=%d, id=%d, subid=%d, status=%d",
+			queue[x].destid,queue[x].id,queue[x].subid,queue[x].status);
 		#endif
 
 		/* This if() is true if all of these are true:
-		   1) Job is for this node
-		   2) Job is ready to print
-		   3) Printer is destination or member of destination group
+		   1) Job is ready to print
+		   2) Printer is destination or member of destination group
 		   */
-		if(queue[x].destnode_id == 0
-				&& queue[x].status == STATUS_WAITING
+		if(queue[x].status == STATUS_WAITING
 				&& ( queue[x].destid == prnid
-						|| (destid_local_is_group(queue[x].destid) && destid_local_get_member_offset(queue[x].destid, prnid) != -1) )
+					|| (destid_is_group(queue[x].destid) && destid_get_member_offset(queue[x].destid, prnid) != -1) )
 				)
 			{
 			/* Try to start the printer.  If the return value is 0 (success)
@@ -150,7 +160,7 @@ void printer_look_for_work(int prnid)
 
 	#ifdef DEBUG_PRNSTART
 	if(x == queue_entries)
-		debug("no work for \"%s\"", destid_local_to_name(prnid));
+		debug("no work for \"%s\"", destid_to_name(prnid));
 	#endif
 
 	unlock();					/* allow others to use tables now */
@@ -173,18 +183,15 @@ void printer_try_start_suitable_4_this_job(struct QEntry *job)
 
 	lock();
 
-	if(!nodeid_is_local_node(job->destnode_id))
-		fatal(0, "%s(): assertion failed: destnode is not local", function);
-
 	if(job->status != STATUS_WAITING)
 		fatal(0, "%s(): assertion failed: job->status != STATUS_WAITING", function);
 
-	if(destid_local_is_group(job->destid))		/* if group, we have many to try */
+	if(destid_is_group(job->destid))		/* if group, we have many to try */
 		{
 		struct Group *cl;
 		int x, y;
 
-		cl = &groups[destid_local_to_gindex(job->destid)];
+		cl = &groups[destid_to_gindex(job->destid)];
 
 		if(cl->rotate)			/* if we should rotate */
 			y = cl->last;		/* set just before next one */
@@ -286,7 +293,7 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_PRINTING:
 			state_update("PST %s printing %s %d",
 				printer,
-				local_jobid(destid_local_to_name(printer->jobdestid),printer->id,printer->subid,nodeid_to_name(printer->homenode_id)),
+				jobid(destid_to_name(printer->jobdestid), printer->id, printer->subid),
 				printer->next_error_retry);
 			break;
 		case PRNSTATUS_IDLE:
@@ -295,12 +302,12 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_CANCELING:
 			state_update("PST %s canceling %s",
 				printer,
-				local_jobid(destid_local_to_name(printer->jobdestid),printer->id,printer->subid,nodeid_to_name(printer->homenode_id)));
+				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
 			break;
 		case PRNSTATUS_SEIZING:
 			state_update("PST %s seizing %s",
 				printer,
-				local_jobid(destid_local_to_name(printer->jobdestid),printer->id,printer->subid,nodeid_to_name(printer->homenode_id)));
+				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
 			break;
 		case PRNSTATUS_FAULT:
 			state_update("PST %s fault %d %d",
@@ -323,12 +330,12 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_STOPPING:
 			state_update("PST %s stopping (printing %s)",
 				printer,
-				local_jobid(destid_local_to_name(printer->jobdestid),printer->id,printer->subid,nodeid_to_name(printer->homenode_id)));
+				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
 			break;
 		case PRNSTATUS_HALTING:
 			state_update("PST %s halting (printing %s)",
 				printer,
-				local_jobid(destid_local_to_name(printer->jobdestid),printer->id,printer->subid,nodeid_to_name(printer->homenode_id)));
+				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
 			break;
 		}
 	}

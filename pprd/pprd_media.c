@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_media.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -62,7 +62,7 @@ void media_mounted_save(int prnid)
 	int x;
 	struct Printer *p;
 
-	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(nodeid_local(), prnid));
+	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(prnid));
 	if((sf = fopen(fname, "w")) == (FILE*)NULL)
 		fatal(ERROR_DIE, "%s(): can't open \"%s\"", function, fname);
 
@@ -93,10 +93,10 @@ void media_mounted_recover(int prnid)
 	struct Printer *p;
 
 	#ifdef DEBUG_RECOVER
-	debug("media_mounted_recover(%d): \"%s\"", prnid, destid_local_to_name(prnid));
+	debug("media_mounted_recover(%d): \"%s\"", prnid, destid_to_name(prnid));
 	#endif
 
-	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(nodeid_local(), prnid));
+	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(prnid));
 	if((rf = fopen(fname, "r")) == (FILE*)NULL)
 		return;				/* missing file means nothing mounted */
 
@@ -232,8 +232,8 @@ void media_startstop_update_waitreason(int prnid)
 	int g, g_destid;
 	for(g=0; g < group_count; g++)
 		{
-		g_destid = destid_local_by_gindex(g);
-		if(destid_local_get_member_offset(g_destid, prnid) != -1)
+		g_destid = destid_by_gindex(g);
+		if(destid_get_member_offset(g_destid, prnid) != -1)
 			media_startstop_update_waitreason2(g_destid);
 		}
 	}
@@ -249,7 +249,7 @@ static void media_startstop_update_waitreason2(int destid)
 	for(x=0; x < queue_entries; x++)	/* scan the entire queue */
 		{
 		/* if job is for this destination, */
-		if(queue[x].destid == destid && nodeid_is_local_node(queue[x].destnode_id))
+		if(queue[x].destid == destid)
 			{
 			/* set waiting to prn or media */
 			media_set_job_wait_reason(&queue[x],stopt,TRUE);
@@ -285,7 +285,7 @@ void media_update_notnow(int prnid)
 	int g, g_destid, prnbit;
 	for(g = 0; g < group_count; g++)
 		{
-		g_destid = destid_local_by_gindex(g);
+		g_destid = destid_by_gindex(g);
 		if((prnbit = destid_printer_bit(g_destid, prnid)))
 			media_update_notnow2(g_destid, prnbit, prnid);
 		}
@@ -329,18 +329,15 @@ static void media_update_notnow2(int destid, int prnbit, int prnid)
 */
 void media_set_notnow_for_job(struct QEntry *nj, gu_boolean inqueue)
 	{
-	const char function[] = "set_nownow_for_job";
+	FUNCTION4DEBUG("set_nownow_for_job")
 
 	DODEBUG_NOTNOW(("%s()", function));
 
-	if(!nodeid_is_local_node(nj->destnode_id))
-		fatal(0, "%s(): assertion failed", function);
-
-	if(destid_local_is_group(nj->destid))		/* check for each printer: */
+	if(destid_is_group(nj->destid))		/* check for each printer: */
 		{
 		struct Group *gptr;				/* ptr to group array entry */
 		int x;
-		gptr = &groups[destid_local_to_gindex(nj->destid)];
+		gptr = &groups[destid_to_gindex(nj->destid)];
 
 		nj->notnow = 0;					/* start with clear mask */
 
@@ -415,7 +412,7 @@ static int stoptmask(int destid)
 	int mask=0;
 	int x;
 
-	if(!destid_local_is_group(destid))
+	if(!destid_is_group(destid))
 		{
 		if(printers[destid].status < PRNSTATUS_DELIBERATELY_DOWN)
 			return 0;
@@ -423,7 +420,7 @@ static int stoptmask(int destid)
 			return 1;
 		}
 
-	g = &groups[destid_local_to_gindex(destid)];
+	g = &groups[destid_to_gindex(destid)];
 
 	for(x=0; x<g->members; x++)
 		{
@@ -448,18 +445,15 @@ static int stoptmask(int destid)
 */
 static void media_set_job_wait_reason(struct QEntry *job, int stopt_members_mask, int inqueue)
 	{
-	const char function[] = "media_set_job_wait_reason";
-
-	if(!nodeid_is_local_node(job->destnode_id))
-		fatal(0, "%s(): assertion failed", function);
+	FUNCTION4DEBUG("media_set_job_wait_reason")
 
 	if(job->status == STATUS_WAITING || job->status == STATUS_WAITING4MEDIA)
 		{
 		int new_status;
 
-		if(destid_local_is_group(job->destid))	/* set for a group */
+		if(destid_is_group(job->destid))	/* set for a group */
 			{
-			int allmask = ((1 << groups[destid_local_to_gindex(job->destid)].members) - 1);
+			int allmask = ((1 << groups[destid_to_gindex(job->destid)].members) - 1);
 
 			if( ((job->notnow | stopt_members_mask) == allmask) && (stopt_members_mask != allmask) )
 				new_status = STATUS_WAITING4MEDIA;

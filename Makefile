@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 14 January 2005.
 #
 
 #
@@ -81,7 +81,8 @@ SUBDIRS=\
 	samba \
 	ipp \
 	pprpopup \
-	uprint \
+	ppr-bsd \
+	ppr-sysv \
 	unixuser \
 	printdesk \
 	www \

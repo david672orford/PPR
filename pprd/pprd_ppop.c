@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2005.
+** Last modified 14 January 2005.
 */
 
 /** \file
@@ -33,15 +33,9 @@
 * This module handles requests from "ppop". The only externally callable
 * function in this module is ppop_dispatch().
 * 
-* You may notice that this module often calls nodeid_by_name() when it might
-* seem it should call nodeid_assign() and later nodeid_free().  This is ok
-* because nodeid_by_name() returns NODEID_NOTFOUND for non-existent nodes and
-* NODEID_NOTFOUND won't match anything in the print queue.
-* 
-* You may also notice that the ppop subcommand functions don't free the memory
-* allocated by gu_sscanf().  That is ok too because the gu_sscanf_rollback()
+* You may notice that the ppop subcommand functions don't free the memory
+* allocated by gu_sscanf().  That is ok because the gu_sscanf_rollback()
 * calls in ppop_dispatch() take care of that.
-* 
 */
 
 #include "config.h"
@@ -73,14 +67,10 @@ static FILE *reply_file;
 static void ppop_list(const char command[])
 	{
 	const char *function = "ppop_list";
-	char *destnode;
-	int destnode_id;					/* Destination node id to match */
 	char *destname;
 	int destname_id;					/* Destination queue id to match */
 	int id;								/* Queue job id to match */
 	int subid;							/* Queue job sub id to match */
-	char *homenode;
-	int homenode_id;					/* Home node id to match */
 	int x;
 	char fname[MAX_PPR_PATH];
 	int qfile;
@@ -93,22 +83,17 @@ static void ppop_list(const char command[])
 	/*
 	** Pull the relevent information from the command we received.
 	*/
-	if(gu_sscanf(command, "l %S %S %d %d %S",
-				&destnode,
+	if(gu_sscanf(command, "l %S %d %d",
 				&destname,
 				&id,
-				&subid,
-				&homenode) != 5)
+				&subid
+				) != 3)
 		{
 		error("%s(): invalid list command: %s", function, command);
 		return;
 		}
 
-	DODEBUG_PPOPINT(("%s(): destnode=\"%s\", destname=\"%s\", id=%d, subid=%d, homenode=\"%s\"", function, destnode, destname, id, subid, homenode));
-
-	/* It is ok if these return NODEID_UNKNOWN. */
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
+	DODEBUG_PPOPINT(("%s(): destname=\"%s\", id=%d, subid=%d", function, destname, id, subid));
 
 	/*
 	** Convert the destination (printer or group) name into an id
@@ -121,7 +106,7 @@ static void ppop_list(const char command[])
 		}
 	else								/* Otherwise, */
 		{								/* get the destination id number. */
-		if((destname_id = destid_by_name(destnode_id, destname)) == -1)
+		if((destname_id = destid_by_name(destname)) == -1)
 			{
 			fprintf(reply_file, "%d\n", EXIT_BADDEST);
 			fprintf(reply_file, _("Destination \"%s\" does not exist.\n"), destname);
@@ -130,7 +115,7 @@ static void ppop_list(const char command[])
 		}
 
 
-	DODEBUG_PPOPINT(("%s(): destname_id=%d, id=%d, subid=%d, homenode_id=%d", function, destname_id, id, subid, homenode_id));
+	DODEBUG_PPOPINT(("%s(): destname_id=%d, id=%d, subid=%d", function, destname_id, id, subid));
 
 	fprintf(reply_file, "%d\n", EXIT_OK_DATA);
 
@@ -144,24 +129,25 @@ static void ppop_list(const char command[])
 		** and the subid if they are non-zero.
 		*/
 		if( (destname_id == QUEUEID_WILDCARD || queue[x].destid == destname_id)
-				   && (id == WILDCARD_JOBID || queue[x].id == id)
-				   && (subid == WILDCARD_SUBID || queue[x].subid == subid)
-				   && (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id) )
+				&& (id == WILDCARD_JOBID || queue[x].id == id)
+				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
+				)
 			{
 			/* Open the queue file: */
-			ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-				nodeid_to_name(queue[x].destnode_id),
-				destid_to_name(queue[x].destnode_id, queue[x].destid),
+			ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR,
+				destid_to_name(queue[x].destid),
 				queue[x].id,
-				queue[x].subid,
-				nodeid_to_name(queue[x].homenode_id));
+				queue[x].subid
+				);
 
 			/* If job id's wrap around to the number of an
 			   arrested job, ppr will accidently delete
 			   some of its files.  This is a bug that needs
 			   fixing, but for now, if we can't open a job's
 			   queue file we will assume it has been stomped
-			   on and just skip it. */
+			   on and just skip it. 
+			   (This bug is probably fixed already.)
+			   */
 			if((qfile = open(fname, O_RDONLY)) < 0)
 				{
 				error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
@@ -182,15 +168,13 @@ static void ppop_list(const char command[])
 			** Print a line with the information from our job array and
 			** when the job was arrested if it was.
 			*/
-			fprintf(reply_file, "%s %s %d %d %s %d %d %s %d %d %d %ld\n",
-				nodeid_to_name(queue[x].destnode_id),
-				destid_to_name(queue[x].destnode_id, queue[x].destid),
+			fprintf(reply_file, "%s %d %d %d %d %s %d %d %d %ld\n",
+				destid_to_name(queue[x].destid),
 				queue[x].id,
 				queue[x].subid,
-				nodeid_to_name(queue[x].homenode_id),
 				queue[x].priority,
 				queue[x].status,
-				queue[x].status >= 0 ? destid_to_name(queue[x].destnode_id, queue[x].status) : "?",
+				queue[x].status >= 0 ? destid_to_name(queue[x].status) : "?",
 				queue[x].never,
 				queue[x].notnow,
 				queue[x].pass,
@@ -234,22 +218,20 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 				|| status == PRNSTATUS_STOPPING || status == PRNSTATUS_HALTING
 				|| status == PRNSTATUS_SEIZING)
 		{
-		fprintf(outfile, "%s %s %d %d %d %s %d %d %s\n",
-				ppr_get_nodename(),								/* node printer is on (this node) */
-				destid_to_name(nodeid_local(), prnid),			/* printer name */
-				printers[prnid].status,							/* printer status */
+		fprintf(outfile, "%s %d %d %d %s %d %d\n",
+				destid_to_name(prnid),						/* printer name */
+				printers[prnid].status,						/* printer status */
 				printers[prnid].next_error_retry + printers[prnid].next_engaged_retry,	/* retry number of next retry */
-				printers[prnid].countdown,						/* seconds until next retry */
-				destid_to_name(nodeid_local(), printers[prnid].jobdestid),		/* destination of job being printed */
+				printers[prnid].countdown,					/* seconds until next retry */
+				destid_to_name(printers[prnid].jobdestid),	/* destination of job being printed */
 				printers[prnid].id,
-				printers[prnid].subid,
-				nodeid_to_name(printers[prnid].homenode_id));
+				printers[prnid].subid
+				);
 		}
 	else		/* not printing */
 		{
-		fprintf(outfile, "%s %s %d %d %d ? 0 0 ?\n",
-				ppr_get_nodename(),
-				destid_to_name(nodeid_local(), prnid),
+		fprintf(outfile, "%s %d %d %d ? 0 0 ?\n",
+				destid_to_name(prnid),
 				printers[prnid].status,
 				printers[prnid].status == PRNSTATUS_ENGAGED ? printers[prnid].next_engaged_retry : printers[prnid].next_error_retry,
 				printers[prnid].countdown);
@@ -263,7 +245,7 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 	char fname[MAX_PPR_PATH];
 	FILE *statusfile;
 
-	ppr_fnamef(fname, "%s/%s", STATUSDIR, destid_to_name(nodeid_local(), prnid) );
+	ppr_fnamef(fname, "%s/%s", STATUSDIR, destid_to_name(prnid) );
 	if((statusfile = fopen(fname, "r")))
 		{
 		char message[MAX_STATUS_MESSAGE+1];
@@ -282,26 +264,15 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 static void ppop_status(const char command[])
 	{
 	const char function[] = "ppop_status";
-	char *destnode, *destname;
+	char *destname;
 	int x;
 	int destid;
 
 	DODEBUG_PPOPINT(("ppop_status(\"%s\")", command));
 
-	if(gu_sscanf(command,"s %S %S", &destnode, &destname) != 2)
+	if(gu_sscanf(command,"s %S", &destname) != 1)
 		{
 		error("%s(): invalid \"s\" command", function);
-		return;
-		}
-
-	/*
-	** Make sure that the request is for the status of
-	** a local printer.  Status requests for remote
-	** printers should be sent to the remote pprd.
-	*/
-	if( strcmp(destnode, ppr_get_nodename()) )
-		{
-		error("%s(): incorrect destnode", function);
 		return;
 		}
 
@@ -316,7 +287,7 @@ static void ppop_status(const char command[])
 			}
 		unlock();
 		}
-	else if((destid = destid_local_by_name(destname)) == -1)
+	else if((destid = destid_by_name(destname)) == -1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("The destination \"%s\" does not exist.\n"), destname);
@@ -325,10 +296,10 @@ static void ppop_status(const char command[])
 		{								/* whose id was determined in the previous clause */
 		fprintf(reply_file, "%d\n", EXIT_OK_DATA);
 
-		if(destid_local_is_group(destid))		/* be it a group */
+		if(destid_is_group(destid))		/* be it a group */
 			{
 			int x, y;
-			x = destid_local_to_gindex(destid); /* x is group index */
+			x = destid_to_gindex(destid); /* x is group index */
 			lock();
 			for(y=0; y < groups[x].members; y++)
 				ppop_status_do_printer(reply_file, groups[x].printers[y]);
@@ -356,22 +327,15 @@ static void ppop_status(const char command[])
 static void ppop_start_stop_wstop_halt(const char command[], int action)
 	{
 	const char function[] = "ppop_start_stop_wstop_halt";
-	char *prnnode, *prnname;
+	char *prnname;
 	int prnid;
 	int delayed_action = FALSE;
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
-	if(gu_sscanf(command+1," %S %S", &prnnode, &prnname) != 2)
+	if(gu_sscanf(command+1," %S", &prnname) != 1)
 		{
 		error("%s(): invalid \"t\", \"p\", ,\"P\", or \"b\" command", function);
-		return;
-		}
-
-	if(strcmp(prnnode, ppr_get_nodename()))
-		{
-		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, X_("Operation not yet supported for remote printers.\n"));
 		return;
 		}
 
@@ -379,14 +343,14 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 	** Get the id number of the printer.  If there is a group
 	** with the same name, we want the id of the printer.
 	*/
-	if((prnid = destid_local_by_name_reversed(prnname)) == -1)
+	if((prnid = destid_by_name_reversed(prnname)) == -1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("The printer \"%s\" does not exist.\n"), prnname);
 		return;
 		}
 
-	if(destid_local_is_group(prnid))	/* If it is a group name, */
+	if(destid_is_group(prnid))	/* If it is a group name, */
 		{						/* complain. */
 		fprintf(reply_file, "%d\n", EXIT_PRNONLY);
 		fprintf(reply_file, _("\"%s\" is a group of printers, not a printer.\n"), prnname);
@@ -538,45 +502,37 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 static void ppop_hold_release(const char command[], int action)
 	{
 	const char *function = "ppop_hold_release";
-	char *destnode, *destname, *homenode;
+	char *destname;
 	int id, subid;
-	int destnode_id, destid, homenode_id;
+	int destid;
 	int x;
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
-	if(gu_sscanf(command+1, " %S %S %d %d %S", &destnode, &destname, &id, &subid, &homenode) != 5)
+	if(gu_sscanf(command+1, " %S %d %d", &destname, &id, &subid) != 3)
 		{
 		error("%s(): invalid \"h\", or \"r\" command", function);
 		return;
 		}
 
-	/* Note that these may return NODEID_NOTFOUND.  That is fine
-	   since it won't match anything.
-	   */
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
-
-	if((destid = destid_by_name(destnode_id, destname)) == -1)	/* if lookup fails, */
+	if((destid = destid_by_name(destname)) == -1)	/* if lookup fails, */
 		{										/* say destination bad */
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("The destination \"%s\" does not exist.\n"), destname);
 		return;
 		}
 
-	DODEBUG_PPOPINT(("%s(): %sing jobs matching destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d", function, (action ? "releas" : "hold"), destnode_id, destid, id, subid, homenode_id));
+	DODEBUG_PPOPINT(("%s(): %sing jobs matching destid=%d, id=%d, subid=%d", function, (action ? "releas" : "hold"), destid, id, subid));
 
 	lock();										/* lock the queue */
 
 	for(x=0; x < queue_entries; x++)			/* and search it */
 		{
-		DODEBUG_PPOPINT(("%s(): considering destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d", function, queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id));
+		DODEBUG_PPOPINT(("%s(): considering destid=%d, id=%d, subid=%d", function, queue[x].destid, queue[x].id, queue[x].subid));
 
 		if(queue[x].destid == destid
-					&& queue[x].id == id
-					&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
-					&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-					&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id)
+				&& queue[x].id == id
+				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
 			)
 			{
 			if(action==0)					/* if we should hold the job */
@@ -590,25 +546,25 @@ static void ppop_hold_release(const char command[], int action)
 						break;
 					case STATUS_HELD:			/* if already held, say so */
 						fprintf(reply_file, "%d\n", EXIT_ALREADY);
-						fprintf(reply_file, _("The print job \"%s\" is already held.\n"), remote_jobid(destnode,destname,id,subid,homenode));
+						fprintf(reply_file, _("The print job \"%s\" is already held.\n"), jobid(destname, id, subid));
 						break;
 					case STATUS_ARRESTED:		/* can't hold an arrested job */
 						fprintf(reply_file, "%d\n", EXIT_ALREADY);
-						fprintf(reply_file, _("The print job \"%s\" is arrested.\n"), remote_jobid(destnode,destname,id,subid,homenode));
+						fprintf(reply_file, _("The print job \"%s\" is arrested.\n"), jobid(destname,id,subid));
 						break;
 					case STATUS_SEIZING:		/* already going to held */
 						fprintf(reply_file, "%d\n", EXIT_ALREADY);
 						fprintf(reply_file,
 								_("The print job \"%s\" is already undergoing a\n"
 								"transition to the held state.\n"),
-								remote_jobid(destnode,destname,id,subid,homenode));
+								jobid(destname,id,subid));
 						break;
 					case STATUS_CANCEL:			/* if being canceled, hijack the operation */
 						fprintf(reply_file, "%d\n", EXIT_OK);
 						fprintf(reply_file,
 								_("Converting outstanding cancel order for\n"
 								"job \"%s\" to a hold order.\n"),
-								remote_jobid(destnode,destname,id,subid,homenode));
+								jobid(destname,id,subid));
 						printer_new_status(&printers[queue[x].status], PRNSTATUS_SEIZING);
 						printers[queue[x].status].cancel_job = FALSE;
 						printers[queue[x].status].hold_job = TRUE;
@@ -622,14 +578,14 @@ static void ppop_hold_release(const char command[], int action)
 							fprintf(reply_file, "%d\n", EXIT_OK);
 							fprintf(reply_file,
 									_("Seizing job \"%s\" which is printing on \"%s\".\n"),
-									remote_jobid(destnode,destname,id,subid,homenode),
-									destid_to_name(nodeid_local(), prnid));
+									jobid(destname,id,subid),
+									destid_to_name(prnid));
 
 							queue_p_job_new_status(&queue[x], STATUS_SEIZING);
 							printer_new_status(&printers[prnid], PRNSTATUS_SEIZING);
 							printers[prnid].hold_job = TRUE;
 
-							DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_local_to_name(prnid), (long)printers[prnid].pid));
+							DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_to_name(prnid), (long)printers[prnid].pid));
 							if(printers[prnid].pid <= 0)
 								{
 								error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);
@@ -644,7 +600,7 @@ static void ppop_hold_release(const char command[], int action)
 							fprintf(reply_file, "%d\n", EXIT_INTERNAL);
 							fprintf(reply_file,
 									_("Internal pprd error: job \"%s\" has unknown status %d.\n"),
-									remote_jobid(destnode,destname,id,subid,homenode),
+									jobid(destname,id,subid),
 									queue[x].status);
 							}
 						break;
@@ -658,19 +614,16 @@ static void ppop_hold_release(const char command[], int action)
 					case STATUS_ARRESTED:	/* may be made "waiting" */
 						fprintf(reply_file, "%d\n", EXIT_OK);
 						queue_p_job_new_status(&queue[x], STATUS_WAITING);
-						if(nodeid_is_local_node(queue[x].destnode_id))
-							{
-							media_set_notnow_for_job(&queue[x], TRUE);
-							if(queue[x].status == STATUS_WAITING)
-								printer_try_start_suitable_4_this_job(&queue[x]);
-							}
+						media_set_notnow_for_job(&queue[x], TRUE);
+						if(queue[x].status == STATUS_WAITING)
+							printer_try_start_suitable_4_this_job(&queue[x]);
 						break;
 					case STATUS_SEIZING:
 						fprintf(reply_file, "%d\n", EXIT_ALREADY);
 						fprintf(reply_file,
 							_("The print job \"%s\" can't be released until an\n"
 							"outstanding hold order has been fully executed.\n"),
-							remote_jobid(destnode,destname,id,subid,homenode));
+							jobid(destname,id,subid));
 						break;
 					case STATUS_WAITING:
 					case STATUS_WAITING4MEDIA:
@@ -678,7 +631,7 @@ static void ppop_hold_release(const char command[], int action)
 						fprintf(reply_file, "%d\n", EXIT_ALREADY);
 						fprintf(reply_file,
 							_("The print job \"%s\" is not being held.\n"),
-							remote_jobid(destnode,destname,id,subid,homenode));
+							jobid(destname,id,subid));
 						break;
 					}
 				}
@@ -691,7 +644,7 @@ static void ppop_hold_release(const char command[], int action)
 	if(x == queue_entries)	/* If ran off end of queue, */
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADJOB);
-		fprintf(reply_file, _("The print job \"%s\" does not exist.\n"), remote_jobid(destnode,destname,id,subid,homenode));
+		fprintf(reply_file, _("The print job \"%s\" does not exist.\n"), jobid(destname,id,subid));
 		}
 
 	} /* end of ppop_hold_release() */
@@ -708,25 +661,21 @@ static void ppop_hold_release(const char command[], int action)
 static void ppop_cancel_purge(const char command[])
 	{
 	const char function[] = "ppop_cancel_purge";
-	char *destnode, *destname, *homenode;
-	int destnode_id, destid, id, subid, homenode_id;
+	char *destname;
+	int destid, id, subid;
 	gu_boolean inform;					/* should the user be notified? */
 	int prnid;							/* temporary printer id */
 	int canceled_count = 0;				/* number of jobs canceled */
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
-	if(gu_sscanf(command, "c %S %S %d %d %S %d", &destnode, &destname, &id, &subid, &homenode, &inform) != 6)
+	if(gu_sscanf(command, "c %S %d %d %d", &destname, &id, &subid, &inform) != 4)
 		{
 		error("%s(): invalid command: %s", function, command);
 		return;
 		}
 
-	/* The result may be NODEID_NOTFOUND.  That is ok. */
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
-
-	if((destid = destid_by_name(destnode_id, destname)) == -1 && strcmp(destname, "all") && strcmp(destname, "any"))
+	if((destid = destid_by_name(destname)) == -1 && strcmp(destname, "all") && strcmp(destname, "any"))
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("The destination \"%s\" does not exist.\n"), destname);
@@ -735,21 +684,20 @@ static void ppop_cancel_purge(const char command[])
 		{
 		int x;					/* index into queue array */
 
-		DODEBUG_PPOPINT(("%s(): canceling jobs matching destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d", function, destnode_id, destid, id, subid, homenode_id));
+		DODEBUG_PPOPINT(("%s(): canceling jobs matching destid=%d, id=%d, subid=%d", function, destid, id, subid));
 
 		lock();
 
 		/* Search the whole queue */
 		for(x=0; x < queue_entries; x++)
 			{
-			DODEBUG_PPOPINT(("%s(): considering destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d", function, queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id));
+			DODEBUG_PPOPINT(("%s(): considering destid=%d, id=%d, subid=%d", function, queue[x].destid, queue[x].id, queue[x].subid));
 
 			/* If this job matches, */
 			if( (destid == QUEUEID_WILDCARD || queue[x].destid == destid)
-						&& (id == WILDCARD_JOBID || queue[x].id == id)
-						&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
-						&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-						&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id) )
+					&& (id == WILDCARD_JOBID || queue[x].id == id)
+					&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
+					)
 				{
 				canceled_count++;
 
@@ -788,9 +736,9 @@ static void ppop_cancel_purge(const char command[])
 					for(prnid = 0; prnid < printer_count; prnid++)
 						{
 						if(printers[prnid].jobdestid == queue[x].destid
-										&& printers[prnid].id == queue[x].id
-										&& printers[prnid].subid == queue[x].subid
-										&& printers[prnid].homenode_id == queue[x].homenode_id)
+								&& printers[prnid].id == queue[x].id
+								&& printers[prnid].subid == queue[x].subid
+								)
 							{
 							if(printers[prnid].status == PRNSTATUS_SEIZING)
 								printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
@@ -813,13 +761,13 @@ static void ppop_cancel_purge(const char command[])
 					*/
 					if(inform && queue[x].status != STATUS_ARRESTED)
 						{
-						respond(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id,
+						respond(queue[x].destid, queue[x].id, queue[x].subid,
 								-1,	  /* impossible printer */
 								RESP_CANCELED);
 						}
 
 					/* Remove the job from the queue array and its files form the spool directories. */
-					queue_dequeue_job(queue[x].destnode_id, queue[x].destid, queue[x].id, queue[x].subid, queue[x].homenode_id);
+					queue_dequeue_job(queue[x].destid, queue[x].id, queue[x].subid);
 
 					x--;		/* compensate for deletion */
 					}
@@ -831,7 +779,7 @@ static void ppop_cancel_purge(const char command[])
 		if(canceled_count == 0 && id != -1 && subid !=- 1 )		/* if no match, and no wildcard used, */
 			{
 			fprintf(reply_file, "%d\n", EXIT_BADJOB);
-			fprintf(reply_file, _("The print job \"%s\" does not exist.\n"), remote_jobid(nodeid_to_name(destnode_id),destname,id,subid,nodeid_to_name(homenode_id)) );
+			fprintf(reply_file, _("The print job \"%s\" does not exist.\n"), jobid(destname,id,subid));
 			}
 		else
 			{
@@ -846,9 +794,9 @@ static void ppop_cancel_purge(const char command[])
 */
 static void ppop_media(const char command[])
 	{
-	FUNCTION4DEBUG("ppop_media")
-	char *destnode, *destname;
-	int destnode_id, destid;
+	const char function[] = "ppop_media";
+	char *destname;
+	int destid;
 	struct fcommand1 f1;
 	struct fcommand2 f2;
 	int x, y;
@@ -858,13 +806,11 @@ static void ppop_media(const char command[])
 	debug("%s(\"%s\")", function, command);
 	#endif
 
-	if(gu_sscanf(command, "f %S %S", &destnode, &destname) != 2)
+	if(gu_sscanf(command, "f %S", &destname) != 1)
 		{
-		error("ppop_media(): invalid \"f\" command");
+		error("%s(): invalid \"f\" command", function);
 		return;
 		}
-
-	destnode_id = nodeid_by_name(destnode);
 
 	/* set all, group, and destid */
 	if(strcmp(destname, "all") == 0)
@@ -873,13 +819,13 @@ static void ppop_media(const char command[])
 		}
 	else
 		{
-		if((destid = destid_by_name(destnode_id, destname)) == -1)
+		if((destid = destid_by_name(destname)) == -1)
 			{
 			fprintf(reply_file, "%d\n", EXIT_BADDEST);
 			fprintf(reply_file, _("The destination \"%s\" does not exist.\n"), destname);
 			return;
 			}
-		if(destid_local_is_group(destid))
+		if(destid_is_group(destid))
 			group = TRUE;
 		}
 
@@ -887,7 +833,7 @@ static void ppop_media(const char command[])
 
 	for(x=0; x < printer_count; x++)
 		{
-		if(destid == -1 || x==destid || (group && destid_local_get_member_offset(destid,x)!=-1) )
+		if(destid == -1 || x==destid || (group && destid_get_member_offset(destid,x)!=-1) )
 			{
 			f1.nbins = printers[x].nbins;
 			strcpy(f1.prnname, printers[x].name);
@@ -910,8 +856,8 @@ static void ppop_media(const char command[])
 static void ppop_mount(const char command[])
 	{
 	const char function[] = "ppop_mount";
-	char *prnnode, *printer;
-	int prnnode_id, printer_id;
+	char *printer;
+	int printer_id;
 	char binname[MAX_BINNAME+1];
 	char medianame[MAX_MEDIANAME+1];
 	int binid;						/* bin id number of specified bin */
@@ -921,22 +867,12 @@ static void ppop_mount(const char command[])
 
 	/* Parse the command we received over the pipe. */
 	medianame[0] = '\0';
-	if(gu_sscanf(command,"M %S %S %#s %#s",
-						&prnnode,
+	if(gu_sscanf(command,"M %S %#s %#s",
 						&printer,
 						sizeof(binname), binname,
-						sizeof(medianame), medianame) < 3)
+						sizeof(medianame), medianame) < 2)
 		{
 		error("%s(): invalid \"M\" command", function);
-		return;
-		}
-
-	prnnode_id = nodeid_by_name(prnnode);
-
-	if(!nodeid_is_local_node(prnnode_id))
-		{
-		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, X_("Operation not yet supported for remote printers.\n"));
 		return;
 		}
 
@@ -944,14 +880,14 @@ static void ppop_mount(const char command[])
 	** Get the id of the printer.  If there is a group with the
 	** same name, we want the id of the printer, not of the group.
 	*/
-	if((printer_id = destid_local_by_name_reversed(printer))==-1)
+	if((printer_id = destid_by_name_reversed(printer))==-1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("Printer \"%s\" does not exist.\n"), printer);
 		return;
 		}
 
-	if(destid_local_is_group(printer_id))
+	if(destid_is_group(printer_id))
 		{
 		fprintf(reply_file, "%d\n", EXIT_PRNONLY);
 		fprintf(reply_file, _("\"%s\" is not a printer.\n"), printer);
@@ -997,8 +933,8 @@ static void ppop_mount(const char command[])
 static void ppop_accept_reject(const char command[], int action)
 	{
 	const char function[] = "ppop_accept_reject";
-	char *destnode, *destname;
-	int destnode_id, destid;
+	char *destname;
+	int destid;
 	char conffile[MAX_PPR_PATH];
 	struct stat st;
 
@@ -1006,18 +942,9 @@ static void ppop_accept_reject(const char command[], int action)
 	debug("%s(command=\"%s\", action=%d)", function, command, action);
 	#endif
 
-	if(gu_sscanf(&command[1], " %S %S", &destnode, &destname) != 2)
+	if(gu_sscanf(&command[1], " %S", &destname) != 1)
 		{
 		error("%s(): invalid \"A\" or \"R\" command", function);
-		return;
-		}
-
-	destnode_id = nodeid_by_name(destnode);
-
-	if(!nodeid_is_local_node(destnode_id))
-		{
-		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, X_("Operation not yet supported for remote queues.\n"));
 		return;
 		}
 
@@ -1027,33 +954,30 @@ static void ppop_accept_reject(const char command[], int action)
 	** best thing to do because ppr(1) will attempt to submit to
 	** the group, not the printer.
 	*/
-	if((destid = destid_by_name(destnode_id, destname)) == -1)
+	if((destid = destid_by_name(destname)) == -1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("\"%s\" is not a valid destination.\n"), destname);
 		return;
 		}
 
-	if(nodeid_is_local_node(destnode_id))
-		{
-		if(!destid_local_is_group(destid))
-			{								/* printer: */
-			printers[destid].accepting = action;
-			ppr_fnamef(conffile, "%s/%s", PRCONF, destname);
-			stat(conffile, &st);			/* modify group execute bit */
-			}
-		else								/* group: */
-			{
-			groups[destid_local_to_gindex(destid)].accepting = action;
-			ppr_fnamef(conffile, "%s/%s", GRCONF, destname);
-			stat(conffile, &st);			/* modify group execute bit */
-			}
-
-		if(action==0)						/* reject */
-			chmod(conffile, st.st_mode | S_IXGRP );
-		else								/* accept */
-			chmod(conffile, st.st_mode & (0777 ^ S_IXGRP) );
+	if(!destid_is_group(destid))
+		{								/* printer: */
+		printers[destid].accepting = action;
+		ppr_fnamef(conffile, "%s/%s", PRCONF, destname);
+		stat(conffile, &st);			/* modify group execute bit */
 		}
+	else								/* group: */
+		{
+		groups[destid_to_gindex(destid)].accepting = action;
+		ppr_fnamef(conffile, "%s/%s", GRCONF, destname);
+		stat(conffile, &st);			/* modify group execute bit */
+		}
+
+	if(action==0)						/* reject */
+		chmod(conffile, st.st_mode | S_IXGRP );
+	else								/* accept */
+		chmod(conffile, st.st_mode & (0777 ^ S_IXGRP) );
 
 	fprintf(reply_file, "%d\n", EXIT_OK);
 	} /* end of ppop_accept_reject() */
@@ -1080,24 +1004,15 @@ static void ppop_dest_show_group(FILE *outfile, int groupnum)
 static void ppop_dest(const char command[])
 	{
 	const char function[] = "ppop_dest";
-	char *destnode, *destname;
-	int destnode_id, destid;
+	char *destname;
+	int destid;
 	int x;
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
-	if(gu_sscanf(&command[1], " %S %S", &destnode, &destname) != 2)
+	if(gu_sscanf(&command[1], " %S", &destname) != 1)
 		{
 		error("%s(): invalid \"D\" command", function);
-		return;
-		}
-
-	destnode_id = nodeid_by_name(destnode);
-
-	if(!nodeid_is_local_node(destnode_id))
-		{
-		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, X_("Operation not yet supported for remote queues.\n"));
 		return;
 		}
 
@@ -1119,7 +1034,7 @@ static void ppop_dest(const char command[])
 		}
 	else		/* a specific destination, */
 		{
-		if((destid = destid_by_name(destnode_id, destname)) == -1)
+		if((destid = destid_by_name(destname)) == -1)
 			{
 			fprintf(reply_file, "%d\n", EXIT_BADDEST);
 			fprintf(reply_file, _("\"%s\" is not a valid destination.\n"), destname);
@@ -1128,8 +1043,8 @@ static void ppop_dest(const char command[])
 
 		fprintf(reply_file, "%d\n", EXIT_OK_DATA);
 
-		if(destid_local_is_group(destid))
-			ppop_dest_show_group(reply_file, destid_local_to_gindex(destid));
+		if(destid_is_group(destid))
+			ppop_dest_show_group(reply_file, destid_to_gindex(destid));
 		else
 			ppop_dest_show_printer(reply_file, destid);
 		}
@@ -1142,9 +1057,8 @@ static void ppop_dest(const char command[])
 static void ppop_move(const char command[])
 	{
 	const char function[] = "ppop_move";
-	char *destnode, *destname, *homenode;
-	int destnode_id, destid, id, subid, homenode_id;
-	char *new_destnode, *new_destname;
+	char *destname, *new_destname;
+	int destid, id, subid, new_destid;
 	char oldname[MAX_PPR_PATH];
 	char newname[MAX_PPR_PATH];
 	int x;
@@ -1152,33 +1066,26 @@ static void ppop_move(const char command[])
 	int printing=0;						/* not moved because printing */
 	FILE *logfile;						/* used to write to log */
 	int rank2;							/* rank amoung jobs for new destination */
-	int new_destnode_id, new_destname_id;
 
 	DODEBUG_PPOPINT(("ppop_move(\"%s\")", command));
 
-	if(gu_sscanf(command, "m %S %S %d %d %S %S %S", &destnode, &destname, &id, &subid, &homenode, &new_destnode, &new_destname) != 7)
+	if(gu_sscanf(command, "m %S %d %d %S", &destname, &id, &subid, &new_destname) != 4)
 		{
 		error("%s(): invalid \"m\" command", function);
 		return;
 		}
 
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
-
-	if((destid = destid_by_name(destnode_id, destname)) == -1)
+	if((destid = destid_by_name(destname)) == -1)
 		{								/* get id of source */
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), network_destspec(destnode, destname));
+		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), destname);
 		return;
 		}
 
-	/* We must assign these because they must exist. */
-	new_destnode_id = nodeid_assign(new_destnode);
-	if((new_destname_id = destid_assign(new_destnode_id, new_destname)) == -1)
+	if((new_destid = destid_by_name(new_destname)) == -1)
 		{								/* get id of destination */
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
-		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), network_destspec(new_destnode, new_destname));
-		nodeid_free(new_destnode_id);
+		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), new_destname);
 		return;
 		}
 
@@ -1189,8 +1096,6 @@ static void ppop_move(const char command[])
 		if(queue[x].destid == destid	/* if match, */
 				&& (id == WILDCARD_JOBID || queue[x].id == id)
 				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
-				&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-				&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id)
 				)
 			{
 			struct QEntry *q = &queue[x];
@@ -1205,19 +1110,19 @@ static void ppop_move(const char command[])
 			** If this is a real move an not just an attempt to reset the
 			** "never" flags,
 			*/
-			if(q->destid != new_destname_id || q->destnode_id != new_destnode_id)
+			if(q->destid != new_destid)
 				{
 				/* Inform queue monitoring programs of the move. */
 				state_update("MOV %s %s %d",
-						remote_jobid(nodeid_to_name(q->destnode_id), destid_to_name(q->destnode_id, q->destid), q->id, q->subid, nodeid_to_name(q->homenode_id)),
-						network_destspec(new_destnode, new_destname),
+						jobid(destid_to_name(q->destid), q->id, q->subid),
+						new_destname,
 						rank2++);
 
-				/* Rename all the queue file. */
-				ppr_fnamef(oldname,"%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-					nodeid_to_name(q->destnode_id),destid_to_name(q->destnode_id,q->destid),q->id,q->subid,nodeid_to_name(q->homenode_id));
-				ppr_fnamef(newname,"%s/%s:%s-%d.%d(%s)", QUEUEDIR,
-					new_destnode,new_destname,q->id,q->subid,nodeid_to_name(q->homenode_id));
+				/* Rename the queue file. */
+				ppr_fnamef(oldname,"%s/%s-%d.%d", QUEUEDIR,
+					destid_to_name(q->destid),q->id,q->subid);
+				ppr_fnamef(newname,"%s/%s-%d.%d", QUEUEDIR,
+					new_destname,q->id,q->subid);
 				rename(oldname, newname);
 
 				/* Rename all of the data files. */
@@ -1226,18 +1131,14 @@ static void ppop_move(const char command[])
 				int x;
 				for(x=0; list[x]; x++)
 					{
-					ppr_fnamef(oldname,"%s/%s:%s-%d.%d(%s)-%s", DATADIR,
-						nodeid_to_name(q->destnode_id),
-						destid_to_name(q->destnode_id, q->destid),
+					ppr_fnamef(oldname,"%s/%s-%d.%d-%s", DATADIR,
+						destid_to_name(q->destid),
 						q->id, q->subid,
-						nodeid_to_name(q->homenode_id),
 						list[x]
 						);
-					ppr_fnamef(newname,"%s/%s:%s-%d.%d(%s)-%s", DATADIR,
-						new_destnode,
+					ppr_fnamef(newname,"%s/%s-%d.%d-%s", DATADIR,
 						new_destname,
 						q->id, q->subid,
-						nodeid_to_name(q->homenode_id),
 						list[x]
 						);
 					rename(oldname, newname);
@@ -1245,26 +1146,10 @@ static void ppop_move(const char command[])
 				}
 
 				/*
-				** Fix the reference counts.  Order may matter here as correct
-				** order may prevent reference counts from going to 0 and back
-				** to 1 (resulting in unnecessary destruction and re-creation).
-				** However, the fact that we have 1 of each assigned that we
-				** are going to throw away at the end of the functions probably
-				** means that this fear is groundless.
-				*/
-				if(nodeid_assign(new_destnode) != new_destnode_id)
-					fatal(0, "%s(): assertion failed", function);
-				if(destid_assign(new_destnode_id, new_destname) != new_destname_id)
-					fatal(0, "%s(): assertion failed", function);
-				destid_free(q->destnode_id, q->destid);
-				nodeid_free(q->destnode_id);
-
-				/*
 				** Change the destination id in the queue array.  This must come
 				** after the rename code or the rename code will break.
 				*/
-				q->destnode_id = new_destnode_id;
-				q->destid = new_destname_id;
+				q->destid = new_destid;
 				}
 
 			/*
@@ -1292,27 +1177,19 @@ static void ppop_move(const char command[])
 			** (required media not present) flags, and update the job status.
 			*/
 			q->never = 0;
-			if(nodeid_is_local_node(destnode_id))
-				{
-				/* Reset pass number just like in queue_insert(). */
-				if(destid_local_is_group(q->destid))
-					q->pass = 1;
-				else
-					q->pass = 0;
 
-				/* Set the "notnow" bits and the printer status according to the mounted media */
-				media_set_notnow_for_job(q, TRUE);
-
-				/* If the job is ready to print, try to start it on a printer. */				
-				if(q->status == STATUS_WAITING)
-					printer_try_start_suitable_4_this_job(q);
-
-				}
-			else		/* remote jobs have dummy values */
-				{
-				q->notnow = 0;
+			/* Reset pass number just like in queue_insert(). */
+			if(destid_is_group(q->destid))
+				q->pass = 1;
+			else
 				q->pass = 0;
-				}
+
+			/* Set the "notnow" bits and the printer status according to the mounted media */
+			media_set_notnow_for_job(q, TRUE);
+
+			/* If the job is ready to print, try to start it on a printer. */				
+			if(q->status == STATUS_WAITING)
+				printer_try_start_suitable_4_this_job(q);
 
 			moved++;							/* increment work count */
 			}
@@ -1321,7 +1198,7 @@ static void ppop_move(const char command[])
 		** We don't have to move this job, but do we have to count it as a job
 		** that is ahead of our job in the destination queue?
 		*/
-		else if(queue[x].destid == new_destname_id)
+		else if(queue[x].destid == new_destid)
 			{
 			rank2++;
 			}
@@ -1346,7 +1223,7 @@ static void ppop_move(const char command[])
 			else						/* If no matching file, */
 				{
 				fprintf(reply_file, "%d\n", EXIT_BADJOB);
-				fprintf(reply_file, _("Job \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
+				fprintf(reply_file, _("Job \"%s\" does not exist.\n"), jobid(destname,id,subid));
 				}
 			break;
 		case 1:
@@ -1367,9 +1244,6 @@ static void ppop_move(const char command[])
 		else
 			fprintf(reply_file, _("%d files were not moved because they were being printed.\n"), printing);
 		}
-
-	destid_free(new_destnode_id, new_destname_id);
-	nodeid_free(new_destnode_id);
 	} /* end of ppop_move() */
 
 /*
@@ -1378,8 +1252,8 @@ static void ppop_move(const char command[])
 static void ppop_rush(const char command[])
 	{
 	const char function[] = "ppop_rush";
-	char *destnode, *destname, *homenode;
-	int destnode_id, destid, id, subid, homenode_id;
+	char *destname;
+	int destid, id, subid;
 	struct QEntry t;					/* temp storage for queue entry */
 	int x;
 	int newpos;
@@ -1387,21 +1261,18 @@ static void ppop_rush(const char command[])
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
 	/* Parse the command we received over the pipe. */
-	if(gu_sscanf(command, "U %S %S %d %d %S %d", &destnode, &destname, &id, &subid, &homenode, &newpos) != 6)
+	if(gu_sscanf(command, "U %S %d %d %d", &destname, &id, &subid, &newpos) != 4)
 		{
 		error("%s(): invalid \"U\" command", function);
 		return;
 		}
-
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
 
 	/*
 	** Look up the destination id for the destination name.
 	** If the lookup fails it return -1 indicating that the
 	** destination in question does not exist.
 	*/
-	if((destid = destid_by_name(destnode_id, destname)) == -1)
+	if((destid = destid_by_name(destname)) == -1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), destname);
@@ -1415,13 +1286,12 @@ static void ppop_rush(const char command[])
 		if(queue[x].destid == destid	/* If we have a match, */
 				&& queue[x].id == id
 				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
-				&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-				&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id))
+				)
 			{							/* save the matching entry, */
 			fprintf(reply_file, "%d\n", EXIT_OK);
 
 			/* Inform queue display programs. */
-			state_update("RSH %s", local_jobid(destname,queue[x].id,queue[x].subid,nodeid_to_name(queue[x].homenode_id)));
+			state_update("RSH %s", jobid(destname, queue[x].id, queue[x].subid));
 
 			memcpy(&t, &queue[x], sizeof(struct QEntry));
 			if(newpos == 0)
@@ -1454,7 +1324,7 @@ static void ppop_rush(const char command[])
 	if(x==queue_entries)				/* if ran to end with no match */
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADJOB);
-		fprintf(reply_file, _("Queue entry \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
+		fprintf(reply_file, _("Queue entry \"%s\" does not exist.\n"), jobid(destname, id, subid));
 		}
 
 	} /* end of ppop_rush() */
@@ -1465,29 +1335,26 @@ static void ppop_rush(const char command[])
 static void ppop_modify_question(const char command[])
 	{
 	const char function[] = "ppop_modify_question";
-	char *destnode, *destname, *homenode;
-	int destnode_id, destid, id, subid, homenode_id;
+	char *destname;
+	int destid, id, subid;
 	gu_boolean on_off;
 	int x;
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
 	/* Parse the command we received over the pipe. */
-	if(gu_sscanf(command, "q %S %S %d %d %S %d", &destnode, &destname, &id, &subid, &homenode, &on_off) != 6)
+	if(gu_sscanf(command, "q %S %d %d %d", &destname, &id, &subid, &on_off) != 4)
 		{
 		error("%s(): invalid \"q\" command", function);
 		return;
 		}
-
-	destnode_id = nodeid_by_name(destnode);
-	homenode_id = nodeid_by_name(homenode);
 
 	/*
 	** Look up the destination id for the destination name.
 	** If the lookup fails it return -1 indicating that the
 	** destination in question does not exist.
 	*/
-	if((destid = destid_by_name(destnode_id, destname)) == -1)
+	if((destid = destid_by_name(destname)) == -1)
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADDEST);
 		fprintf(reply_file, _("No printer or group is called \"%s\".\n"), destname);
@@ -1501,8 +1368,7 @@ static void ppop_modify_question(const char command[])
 		if(queue[x].destid == destid	/* If we have a match, */
 				&& queue[x].id == id
 				&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
-				&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
-				&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id))
+				)
 			{							/* save the matching entry, */
 			fprintf(reply_file, "%d\n", EXIT_OK);
 			question_on_off(&queue[x], on_off);
@@ -1515,7 +1381,7 @@ static void ppop_modify_question(const char command[])
 	if(x==queue_entries)				/* if ran to end with no match */
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADJOB);
-		fprintf(reply_file, _("Queue entry \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
+		fprintf(reply_file, _("Queue entry \"%s\" does not exist.\n"), jobid(destname, id, subid));
 		}
 
 	} /* end of ppop_modify_question() */

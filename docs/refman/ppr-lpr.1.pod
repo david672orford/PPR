@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/docs/uprint/uprint-lpr.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# mouse:~ppr/src/docs/refman/ppr-lpr.1.pod
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
 
-uprint-lpr - selects spooler and submits print job
+ppr-lpr - selects spooler and submits print job
 
 =head1 SYNOPSIS
 
-B<uprint-lpr> I<switches> [I<filename1> [I<filename2>] ... ]
+B<ppr-lpr> I<switches> [I<filename1> [I<filename2>] ... ]
 
 =head1 DESCRIPTION
 
@@ -48,7 +48,7 @@ It also accepts some of the options accepted by enhanced versions of B<lpr> foun
 on certain other Unix systems such as DEC OSF.  It follows traditional B<lpr> semantics
 as closely as possible.  
 
-These are the option that B<uprint-lpr> accepts:
+These are the option that B<ppr-lpr> accepts:
 
 =over 4
 
@@ -56,12 +56,10 @@ These are the option that B<uprint-lpr> accepts:
 
 Use this option to select a print queue.  If this option is omited, then
 the queue name is read from the environment variable PRINTER.  If PRINTER
-is not defined then the queue name will be read from the "uprint-lpr=" entry
-in the "[default destinations] section of F<uprint.conf>.  If that too is
-missing then the queue be "lp".
+is not defined then the queue name will be "default".
 
-Note that B<uprint-lpr> without the B<-P> option may choose
-a different queue that B<ppr> or B<uprint-lp> without the B<-d> option would.
+Note that B<ppr-lpr> without the B<-P> option may choose
+a different queue that B<ppr> or B<ppr-lp> without the B<-d> option would.
 
 =item B<-m>
 
@@ -182,14 +180,14 @@ This specifies the page width (in columns) for B<pr>.
 Supposedly, this switch is used specify the owner of this job.  Only certain
 users can use it.  It is used by filters that requeue jobs.  At least that
 is what the BSD lpr(1) man page says.  Likely, this switch does not work
-correctly in B<uprint-lpr>.
+correctly in B<ppr-lpr>.
 
 =back
 
 =head2 OSF/1 and Digital Unix Compatibility Options
 
 The B<lpr> program in OSF/1 and Digital Unix has additional options.
-B<uprint-lpr> understands these additional options.  They  are listed
+B<ppr-lpr> understands these additional options.  They  are listed
 below.
 
 =over 4
@@ -224,7 +222,7 @@ even numbered pages.
 
 =over 4
 
-=item<one_sided> or B<1> or B<one_sided_simplex>
+=item B<<one_sided> or B<1> or B<one_sided_simplex>
 
 This is the default.  Page are printed on one side.  Where the spooler can
 adjust margins, it will put any "gutter" (extra space for the bound edge)
@@ -298,7 +296,8 @@ This option may not work when printing to PPR queues.
 
 =head1 ENVIRONMENT VARIABLES
 
-To learn how the environment variable PRINTER is used, see the description of the B<-P> option.
+To learn how the environment variable PRINTER is used, see the description of
+the B<-P> option.
 
 The variables PPR_RESPONDER, PPR_RESPONDER_ADDRESS and PPR_RESPONDER_OPTIONS
 can be used to control the response method used to inform the submitter of 
@@ -311,8 +310,8 @@ B<lprsrv>, a protocol extension is used to convey this information.
 
 Many options are simply passed to the remote spooler without any validity
 checking.  This means that incorrect options will often simply be ignored.
-Some of the more obscure options may not be implemented correctly.  Bug reports are welcome 
-and should be sent to ppr-bugs@trincoll.edu.
+Some of the more obscure options may not be implemented correctly.  Bug reports
+are welcome and should be sent to ppr-bugs@trincoll.edu.
 
 =head1 AUTHOR
 

@@ -13,7 +13,7 @@ OPTIONS=""
 JOBBREAK=0
 FEEDBACK=0
 CODES=0
-QUEUEFILE=hhhh:regression-test1=nnnn.0(hhhh)
+QUEUEFILE=regression-test1=nnnn.0
 ROUTING="My Routing Message"
 FORLINE="ppr"
 BARBARLANG=""

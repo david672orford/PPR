@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/pprd/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 December 2004.
+# Last modified 14 January 2005.
 #
 
 include ../Makefile.conf
@@ -41,10 +41,10 @@ all: $(PROGS)
 pprd$(DOTEXE): \
 		pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
 		pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \
-		pprd_remind.$(OBJ) pprd_nodeid.$(OBJ) pprd_destid.$(OBJ) \
+		pprd_remind.$(OBJ) pprd_destid.$(OBJ) \
 		pprd_mainsup.$(OBJ) pprd_load.$(OBJ) pprd_pprdrv.$(OBJ) \
 		pprd_media.$(OBJ) pprd_printer.$(OBJ) pprd_state.$(OBJ) \
-		pprd_remote.$(OBJ) pprd_question.$(OBJ) pprd_ipp.$(OBJ) \
+		pprd_question.$(OBJ) pprd_ipp.$(OBJ) \
 		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 	$(CHMOD) 6755 $@

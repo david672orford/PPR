@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/libppr/Makefile
+# mouse:~ppr/src/ppr-bsd/Makefile
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,69 +25,41 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 14 January 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIBOBJS=\
-	int_main.$(OBJ) \
-	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
-	int_acache.$(OBJ) int_debug.$(OBJ) \
-	int_copy_job.$(OBJ) int_tcp_connect.$(OBJ) \
-	int_tcp_probe.$(OBJ) \
-	datestamp.$(OBJ) \
-	tokenize.$(OBJ) \
-	readqfile.$(OBJ) writeqfile.$(OBJ) unreadqfile.$(OBJ) parse_qfname.$(OBJ) \
-	quote.$(OBJ) \
-	findres.$(OBJ) \
-	protected.$(OBJ) money.$(OBJ) \
-	charge.$(OBJ) jobid.$(OBJ) pagesize.$(OBJ) \
-	options.$(OBJ) \
-	dimens.$(OBJ) foptions.$(OBJ) ali_str.$(OBJ) \
-	ppr_gcmd.$(OBJ) readppd.$(OBJ) \
-	unsafe.$(OBJ) prune_env.$(OBJ) \
-	acl.$(OBJ) \
-	cs2enc.$(OBJ) enc2font.$(OBJ) font.$(OBJ) \
-	ppr_fnamef.$(OBJ) \
-	interfaces.$(OBJ) \
-	alert.$(OBJ) \
-	tail_status.$(OBJ) \
-	query.$(OBJ) \
-	queueinfo.$(OBJ) \
-	pagemask.$(OBJ) \
-	destinfo.$(OBJ) \
-	ipp_utils.$(OBJ) \
-	get_device_id.$(OBJ)
+PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-lpc$(DOTEXE)
+SETUID_PROGS=uprint-lpr$(DOTEXE)
 
-TARGETS=../libppr.$(LIBEXT) query_wrapper$(DOTEXE)
+PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
+
+PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 
 #=== Build ==================================================================
 
-all: $(TARGETS)
+all: $(PROGS) $(SETUID_PROGS)
 
-# This build rule for this module is listed explicitly because of the
-# -D option on in the cc command.
-ali_str.$(OBJ): ali_str.c
-	$(CC) $(CFLAGS) $(ATALKFLAGS) -DATALKTYPE_$(ATALKTYPE) -c ali_str.c
+uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-../libppr.$(LIBEXT): $(LIBOBJS)
-	$(RMF) $@
-	$(LIBCMD) $@ $^
-	$(RANLIB) $@
+uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-query$(DOTEXE): query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-	$(CC) $(CFLAGS) -o $@ -DTEST $^
+uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-query_wrapper$(DOTEXE): query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-	$(CC) $(CFLAGS) -o $@ -DTEST $^
+uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 #=== Install ================================================================
 
-install: all
-	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib query_wrapper$(DOTEXE)
+install: $(PROGS) $(SETUID_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin $(SETUID_PROGS)
 
 #=== Housekeeping ===========================================================
 
@@ -97,7 +69,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS) query$(DOTEXE)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS) $(SETUID_PROGS)
 
 # end of file
-

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/README.txt
  mouse:~ppr/src/docs/misc/README.txt (symbolic link)
- Last revised 12 December 2004.
+ Last revised 14 January 2005.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -91,9 +91,10 @@ documents are also available.  You can either add PPR's man page directory
     libuprint/
 		A library for submitting jobs to various spooling systems,
 		including PPR, System V lp, and BSD lpr.
-    uprint/
-		Substitutes for programs such as lp, lpr, and lpq which call 
-		libuprint routines to do the real work
+    ppr-bsd/
+		Substitutes for programs such as lpr, lpq, lprm, and lpc
+    ppr-sysv/
+		Substitutes for programs such as lp, lpstat, and cancel
     papd/
 		Source code for PPR's new AppleTalk PAP server
     lprsrv/

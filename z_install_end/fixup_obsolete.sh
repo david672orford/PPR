@@ -181,5 +181,7 @@ outdated $HOMEDIR/bin/papsrv
 outdated $HOMEDIR/bin/ppd2win95drv
 outdated $HOMEDIR/bin/ppd2windrv
 outdated $HOMEDIR/lib/libppr_int.sh
+outdated $HOMEDIR/bin/uprint-*
+outdated $CONFDIR/uprint.conf.sample
 
 exit 0

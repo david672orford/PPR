@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_flag.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 February 2003.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -533,7 +533,7 @@ static int print_flag_page_standard(int flag_type, int position, int skiplines, 
 
 		printer_puts("small_type\n");
 
-		pslinef(_("End of job %s:%s-%d"), job.destnode, job.destname, job.id);
+		pslinef(_("End of job %s-%d"), job.destname, job.id);
 
 		if(job.Title)
 			pslinef(_("Title: %s"), job.Title);
@@ -545,7 +545,7 @@ static int print_flag_page_standard(int flag_type, int position, int skiplines, 
 
 		printer_puts("small_type\n");
 
-		pslinef(_("Job ID: %s:%s-%d"), job.destnode, job.destname, job.id);
+		pslinef(_("Job ID: %s-%d"), job.destname, job.id);
 
 		if(job.Routing)
 			pslinef(_("Routing: %s"), job.Routing);

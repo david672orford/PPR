@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_respond.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 July 2003.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -54,20 +54,20 @@ void responder_child_hook(pid_t pid, int wstat)
 ** This routine is sometimes called directly, at other times it is called
 ** by the wrapper routine respond().
 */
-void respond2(const char *destnode, const char *destname, int id, int subid, const char *homenode, int prnid, const char *prnname, int response_code)
+void respond2(const char *destname, int id, int subid, int prnid, const char *prnname, int response_code)
 	{
 	const char function[] = "respond2";
 	char jobname_long[256];
-	char *jobname_short;
+	const char *jobname_short;
 	char filename[MAX_PPR_PATH];
 	int fd;
 	pid_t pid;									/* Process id of responder */
 
 	/* Format the job name as a string.  This will be the 1st parameter. */
-    jobname_short = remote_jobid(destnode, destname, id, subid, homenode);
+    jobname_short = jobid(destname, id, subid);
 
     /* Formate the job name is verbose format.  This will be used to build queue file names. */
-	snprintf(jobname_long, sizeof(jobname_long), "%s:%s-%d.%d(%s)", destnode, destname, id, subid, homenode);
+	snprintf(jobname_long, sizeof(jobname_long), "%s-%d.%d", destname, id, subid);
 
 	/* Open the queue file before the fork since it may be deleted when we return. */
 	ppr_fnamef(filename, "%s/%s", QUEUEDIR, jobname_long);
@@ -132,13 +132,13 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 	} /* end of respond2() */
 
 /*
-** This is the outer routine.  It takes a destination and a node id number and
-** converts them to names before calling respond2() which does the real work.
+** This is the outer routine.  It takes a destination and converts them to
+** names before calling respond2() which does the real work.
 */
-void respond(int destnode_id, int destid, int id, int subid, int homenode_id, int prnid, int response)
+void respond(int destid, int id, int subid, int prnid, int response)
 	{
-	DODEBUG_RESPOND(("respond(destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d, prnid=%d, response=%d)", destnode_id, destid, id, subid, homenode_id, prnid, response));
-	respond2(nodeid_to_name(destnode_id), destid_to_name(destnode_id, destid), id, subid, nodeid_to_name(homenode_id), prnid, destid_to_name(destnode_id, prnid), response);
+	DODEBUG_RESPOND(("respond(destid=%d, id=%d, subid=%d, prnid=%d, response=%d)", destid, id, subid, prnid, response));
+	respond2(destid_to_name(destid), id, subid, prnid, destid_to_name(prnid), response);
 	}
 
 /* end of file */

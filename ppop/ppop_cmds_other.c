@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 February 2004.
+** Last modified 14 January 2005.
 */
 
 /*
@@ -502,10 +502,8 @@ int ppop_status(char *argv[])
 	int line_len = 128;
 	int len;
 	char *printer_name;
-	char *printer_nodename;
 	char *job_destname;
 	int job_id,job_subid;
-	char *job_homenode;
 	int status;
 	int next_retry;
 	int countdown;
@@ -519,9 +517,9 @@ int ppop_status(char *argv[])
 	if(parse_dest_name(&destname, argv[0]))
 		return EXIT_SYNTAX;
 
-	FIFO = get_ready(destname.destnode);
+	FIFO = get_ready();
 
-	fprintf(FIFO, "s %s %s\n", destname.destnode, destname.destname);
+	fprintf(FIFO, "s %s\n", destname.destname);
 	fflush(FIFO);
 
 	if( ! machine_readable )
@@ -535,18 +533,18 @@ int ppop_status(char *argv[])
 
 	while((line = gu_getline(line, &line_len, reply_file)))
 		{
-		printer_nodename = printer_name = job_destname = job_homenode = (char*)NULL;
+		printer_name = job_destname = (char*)NULL;
 
-		if(gu_sscanf(line, "%S %S %d %d %d %S %d %d %S",
-				&printer_nodename, &printer_name, &status,
-				&next_retry, &countdown, &job_destname, &job_id, &job_subid,
-				&job_homenode) != 9 )
+		if(gu_sscanf(line, "%S %d %d %d %S %d %d",
+				&printer_name, &status,
+				&next_retry, &countdown, &job_destname, &job_id, &job_subid
+				) != 7)
 			{
 			printf("Malformed response: %s\n", line);
-			if(printer_nodename) gu_free(printer_nodename);
-			if(printer_name) gu_free(printer_name);
-			if(job_destname) gu_free(job_destname);
-			if(job_homenode) gu_free(job_homenode);
+			if(printer_name)
+				gu_free(printer_name);
+			if(job_destname)
+				gu_free(job_destname);
 			continue;
 			}
 
@@ -572,21 +570,21 @@ int ppop_status(char *argv[])
 					break;
 				case PRNSTATUS_PRINTING:
 					if(next_retry)
-						printf(_("printing %s (retry %d)"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+						printf(_("printing %s (retry %d)"), jobid(job_destname,job_id,job_subid), next_retry);
 					else
-						printf(_("printing %s"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+						printf(_("printing %s"), jobid(job_destname,job_id,job_subid));
 					break;
 				case PRNSTATUS_CANCELING:
-					printf(_("canceling %s"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+					printf(_("canceling %s"), jobid(job_destname, job_id, job_subid));
 					break;
 				case PRNSTATUS_SEIZING:			/* Spelling "seizing" is standard! */
-					printf(_("seizing %s"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+					printf(_("seizing %s"), jobid(job_destname, job_id, job_subid));
 					break;
 				case PRNSTATUS_STOPPING:
-					printf(_("stopping (printing %s)"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+					printf(_("stopping (printing %s)"), jobid(job_destname,job_id,job_subid));
 					break;
 				case PRNSTATUS_HALTING:
-					printf(_("halting (printing %s)"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+					printf(_("halting (printing %s)"), jobid(job_destname, job_id, job_subid));
 					break;
 				case PRNSTATUS_STOPT:
 					PUTS(_("stopt"));
@@ -616,22 +614,22 @@ int ppop_status(char *argv[])
 					PUTS("idle");
 					break;
 				case PRNSTATUS_PRINTING:
-					printf("printing %s %d", remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+					printf("printing %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_CANCELING:
-					printf("canceling %s %d", remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+					printf("canceling %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_SEIZING:
-					printf("seizing %s %d", remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+					printf("seizing %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_STOPPING:
-					printf("stopping %s %d", remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+					printf("stopping %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_STOPT:
 					PUTS("stopt");
 					break;
 				case PRNSTATUS_HALTING:
-					printf("halting %s %d", remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode), next_retry);
+					printf("halting %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_FAULT:
 					printf("fault %d %d", next_retry, countdown);
@@ -661,10 +659,8 @@ int ppop_status(char *argv[])
 
 		PUTC('\n');
 
-		gu_free(printer_nodename);
 		gu_free(printer_name);
 		gu_free(job_destname);
-		gu_free(job_homenode);
 		} /* end of loop for each printer */
 
 	fclose(reply_file);
@@ -731,9 +727,9 @@ int ppop_media(char *argv[])
 	if(parse_dest_name(&destname, argv[0]))
 		return EXIT_SYNTAX;
 
-	FIFO = get_ready(destname.destnode);
+	FIFO = get_ready();
 
-	fprintf(FIFO, "f %s %s\n", ppr_get_nodename(), argv[0]);
+	fprintf(FIFO, "f %s\n", argv[0]);
 	fflush(FIFO);
 
 	if( ! machine_readable )
@@ -849,8 +845,8 @@ int ppop_mount(char *argv[])
 	** get ready for the response from pprd
 	** and send the mount command
 	*/
-	FIFO = get_ready(destination.destnode);
-	fprintf(FIFO, "M %s %s %s %s\n", ppr_get_nodename(), printer, binname, mediumname);
+	FIFO = get_ready();
+	fprintf(FIFO, "M %s %s %s\n", printer, binname, mediumname);
 	fflush(FIFO);
 
 	wait_for_pprd(TRUE);
@@ -923,21 +919,21 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 			break;
 			}
 
-		FIFO = get_ready(destination.destnode);
+		FIFO = get_ready();
 
 		switch(variation)
 			{
 			case 0:				/* start */
-				fprintf(FIFO, "t %s %s\n", ppr_get_nodename(), destination.destname);
+				fprintf(FIFO, "t %s\n", destination.destname);
 				break;
 			case 1:				/* stop */
-				fprintf(FIFO, "p %s %s\n",ppr_get_nodename(), destination.destname);
+				fprintf(FIFO, "p %s\n", destination.destname);
 				break;
 			case 2:				/* wstop */
-				fprintf(FIFO, "P %s %s\n",ppr_get_nodename(), destination.destname);
+				fprintf(FIFO, "P %s\n", destination.destname);
 				break;
 			case 3:				/* halt */
-				fprintf(FIFO, "b %s %s\n", ppr_get_nodename(), destination.destname);
+				fprintf(FIFO, "b %s\n", destination.destname);
 				break;
 			}
 
@@ -983,8 +979,8 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 	if( ! is_my_job(qentry, qfileentry) )
 		return FALSE;	/* don't stop */
 
-	FIFO = get_ready(qfileentry->destnode);
-	fprintf(FIFO, "c %s %s %d %d %s %d\n", qfileentry->destnode, qfileentry->destname, qentry->id, qentry->subid, qfileentry->homenode, ppop_cancel_byuser_inform);
+	FIFO = get_ready();
+	fprintf(FIFO, "c %s %d %d %d\n", qfileentry->destname, qentry->id, qentry->subid, ppop_cancel_byuser_inform);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1055,8 +1051,8 @@ int ppop_cancel(char *argv[], int inform)
 			return EXIT_DENIED;
 
 		/* Ask pprd to cancel it. */
-		FIFO = get_ready(job.destnode);
-		fprintf(FIFO, "c %s %s %d %d %s %d\n", job.destnode, job.destname, job.id, job.subid, job.homenode, inform);
+		FIFO = get_ready();
+		fprintf(FIFO, "c %s %d %d %d\n", job.destname, job.id, job.subid, inform);
 		fflush(FIFO);
 
 		if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1106,8 +1102,8 @@ int ppop_purge(char *argv[], int inform)
 		if(parse_dest_name(&dest, argv[x]))
 			return EXIT_SYNTAX;
 
-		FIFO = get_ready(dest.destnode);
-		fprintf(FIFO, "c %s %s -1 -1 * %d\n", dest.destnode, dest.destname, inform);
+		FIFO = get_ready();
+		fprintf(FIFO, "c %s -1 -1 * %d\n", dest.destname, inform);
 		fflush(FIFO);
 
 		if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1155,8 +1151,8 @@ static int ppop_clean_item(const struct QEntry *qentry,
 	** does not matter since the user is never informed
 	** of the deletion of arrested jobs.
 	*/
-	FIFO = get_ready(qfileentry->destnode);
-	fprintf(FIFO, "c %s %s %d %d %s 1\n", qfileentry->destnode, qfileentry->destname, qentry->id, qentry->subid, qfileentry->homenode);
+	FIFO = get_ready();
+	fprintf(FIFO, "c %s %d %d 1\n", qfileentry->destname, qentry->id, qentry->subid);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1231,8 +1227,8 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 	if( ppop_cancel_active_my && ! is_my_job(qentry, qfileentry) )
 		return TRUE;
 
-	FIFO = get_ready(qfileentry->destnode);
-	fprintf(FIFO, "c %s %s %d %d %s %d\n", qfileentry->destnode, qfileentry->destname, qentry->id, qentry->subid, qfileentry->homenode, ppop_cancel_active_inform);
+	FIFO = get_ready();
+	fprintf(FIFO, "c %s %d %d %d\n", qfileentry->destname, qentry->id, qentry->subid, ppop_cancel_active_inform);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1329,11 +1325,11 @@ int ppop_move(char *argv[])
 	if( parse_dest_name(&destination, argv[1]) )
 		return EXIT_SYNTAX;
 
-	FIFO = get_ready(job.destnode);		/* !!! */
+	FIFO = get_ready();
 
-	fprintf(FIFO, "m %s %s %d %d %s %s %s\n",
-			job.destnode,job.destname,job.id,job.subid,job.homenode,
-			destination.destnode,destination.destname);
+	fprintf(FIFO, "m %s %d %d %s\n",
+			job.destname, job.id, job.subid,
+			destination.destname);
 
 	fflush(FIFO);							/* force the buffer contents out */
 
@@ -1382,8 +1378,8 @@ int ppop_rush(char *argv[], int newpos)
 		if( parse_job_name(&job, argv[x]) )
 			return EXIT_SYNTAX;
 
-		FIFO = get_ready(job.destnode);
-		fprintf(FIFO, "U %s %s %d %d %s %d\n", job.destnode, job.destname, job.id, job.subid, job.homenode, newpos);
+		FIFO = get_ready();
+		fprintf(FIFO, "U %s %d %d %d\n", job.destname, job.id, job.subid, newpos);
 		fflush(FIFO);
 
 		wait_for_pprd(TRUE);
@@ -1442,9 +1438,9 @@ int ppop_hold_release(char *argv[], int release)
 		if( job_permission_check(&job) )
 			return EXIT_DENIED;
 
-		FIFO = get_ready(job.destnode);
-		fprintf(FIFO, "%c %s %s %d %d %s\n", release ? 'r' : 'h',
-				job.destnode, job.destname, job.id, job.subid, job.homenode);
+		FIFO = get_ready();
+		fprintf(FIFO, "%c %s %d %d\n", release ? 'r' : 'h',
+				job.destname, job.id, job.subid);
 		fflush(FIFO);
 
 		wait_for_pprd(TRUE);
@@ -1486,12 +1482,12 @@ int ppop_accept_reject(char *argv[], int reject)
 	if(parse_dest_name(&destination, argv[0]))
 		return EXIT_SYNTAX;
 
-	FIFO = get_ready(destination.destnode);
+	FIFO = get_ready();
 
 	if(! reject)
-		fprintf(FIFO, "A %s %s\n", destination.destnode, destination.destname);
+		fprintf(FIFO, "A %s\n", destination.destname);
 	else
-		fprintf(FIFO,"R %s %s\n", destination.destnode, destination.destname);
+		fprintf(FIFO, "R %s\n", destination.destname);
 
 	fflush(FIFO);
 
@@ -1538,8 +1534,8 @@ int ppop_destination(char *argv[], int info_level)
 		return EXIT_SYNTAX;
 
 	/* Send a request to pprd. */
-	FIFO = get_ready(destination.destnode);
-	fprintf(FIFO, "D %s %s\n", destination.destnode, destination.destname);
+	FIFO = get_ready();
+	fprintf(FIFO, "D %s\n", destination.destname);
 	fflush(FIFO);
 
 	/* If a human is reading our output, give column names. */
@@ -1756,7 +1752,6 @@ int ppop_log(char *argv[])
 	{
 	const char function[] = "ppop_log";
 	struct Jobname job;
-	const char *homenode;
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
 	FILE *f;
@@ -1780,34 +1775,28 @@ int ppop_log(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	/* For now we will equate the wildcard homenode name
-	   with the name of this node. */
-	homenode = job.homenode;
-	if(strcmp(homenode, "*") == 0)
-		homenode = ppr_get_nodename();
-
 	/* For now we will substitute the subid 0 if the subid wasn't specified. */
 	if(job.subid == -1)
 		job.subid = 0;
 
 	/* construct the name of the queue file */
-	ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)",
-		QUEUEDIR, job.destnode, job.destname, job.id, job.subid == WILDCARD_SUBID ? 0 : job.subid, homenode);
+	ppr_fnamef(fname, "%s/%s-%d.%d",
+		QUEUEDIR, job.destname, job.id, job.subid == WILDCARD_SUBID ? 0 : job.subid);
 
 	/* make sure the queue file is there */
 	if(stat(fname,&statbuf))
 		{
-		fprintf(errors, _("Job \"%s\" does not exist.\n"), local_jobid(job.destname,job.id,job.subid,job.homenode));
+		fprintf(errors, _("Job \"%s\" does not exist.\n"), jobid(job.destname, job.id, job.subid));
 		return EXIT_ERROR;
 		}
 
 	/* construct the name of the log file */
-	ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)-log", DATADIR, job.destnode, job.destname, job.id, job.subid, homenode);
+	ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, job.destname, job.id, job.subid);
 
 	/* open the log file */
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
-		fprintf(errors, _("There is no log for job \"%s\".\n"), local_jobid(job.destname,job.id,job.subid,job.homenode));
+		fprintf(errors, _("There is no log for job \"%s\".\n"), jobid(job.destname, job.id, job.subid));
 		return EXIT_OK;
 		}
 

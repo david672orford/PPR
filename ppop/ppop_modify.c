@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_modify.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2002.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -307,19 +322,14 @@ int ppop_modify(char *argv[])
 	if(job_permission_check(&job.jobname))
 		return EXIT_DENIED;
 
-	/* Take a wild guess as to the home node, if it is not specified. */
-	if(strcmp(job.jobname.homenode, "*") == 0)
-		strcpy(job.jobname.homenode, ppr_get_nodename());
-
 	/* Now use those components to build the path to the queue file, which
 	   includes a fully qualified job name. */
-	ppr_fnamef(job.qfname, "%s/%s:%s-%d.%d(%s)",
+	ppr_fnamef(job.qfname, "%s/%s-%d.%d",
 		QUEUEDIR,
-		job.jobname.destnode,
 		job.jobname.destname,
 		job.jobname.id,
-		job.jobname.subid >= 0 ? job.jobname.subid : 0,
-		job.jobname.homenode);
+		job.jobname.subid >= 0 ? job.jobname.subid : 0
+		);
 
 	/* Open that queue file. */
 	if(!(qf = fopen(job.qfname, "r")))
@@ -383,11 +393,11 @@ int ppop_modify(char *argv[])
 		if(question_touched)
 			{
 			/* Open a connection to pprd. */
-			FILE *FIFO = get_ready(job.jobname.destnode);
+			FILE *FIFO = get_ready();
 
 			/* Let it know what has happened. */
-			fprintf(FIFO, "q %s %s %d %d %s %d\n",
-				job.jobname.destnode, job.jobname.destname, job.jobname.id, job.jobname.subid, job.jobname.homenode,
+			fprintf(FIFO, "q %s %d %d %d\n",
+				job.jobname.destname, job.jobname.id, job.jobname.subid,
 				&job.qentry.question ? 1 : 0);
 			fflush(FIFO);
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 December 2004.
+# Last modified 14 January 2005.
 #
 
 =head1 NAME
@@ -1056,7 +1056,7 @@ firm title rather than a default title.  The default is B<-R title>.
 
 Specifies the name of the origional input file.  This switch is used by
 B<lprsrv> because otherwise B<ppr> would not know what the file's name was
-on the origionating node.
+on the originating node.
 
 =item B<-i> I<string>
 
@@ -1115,12 +1115,13 @@ this option.
 
 =item B<--show-jobid>
 
-Causes the job ID to be printed when the job is submitted.  If the job is broken up into 
-parts (using the B<-Y> option), multiple job IDs are printed, one per line.
+Causes the job ID to be printed when the job is submitted.  If the job has
+been broken up into parts (using the B<-Y> option), multiple job IDs are 
+printed, one per line.
 
 =item B<--show-long-jobid>
 
-Same as B<--show-jobid> but the job IDs is printed in long format.
+This option has been removed in PPR 2.X.
 
 =item B<--print-id-to-fd> I<integer>
 

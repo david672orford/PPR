@@ -2015,8 +2015,8 @@ static void no_filter(const char *file_type_str)
 		qentry.do_banner = BANNER_YESPLEASE;
 
 		/* Try to add a message to the log file. */
-		ppr_fnamef(lfname, "%s/%s:%s-%d.0(%s)-log", DATADIR, qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
-		if((lfile = fopen(lfname, "a")) != (FILE*)NULL)
+		ppr_fnamef(lfname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
+		if((lfile = fopen(lfname, "a")))
 			{
 			fprintf(lfile, _("Can't print %s.\n"), xlated_file_type_str);
 			fclose(lfile);
@@ -2215,7 +2215,7 @@ static void save_infile(void)
 	/*
 	** The input file will be copied into a file in the jobs directory.
 	*/
-	ppr_fnamef(fname, DATADIR"/%s:%s-%d.%d(%s)-infile", qentry.destnode, qentry.destname,qentry.id, qentry.subid, qentry.homenode);
+	ppr_fnamef(fname, DATADIR"/%s-%d.%d-infile", qentry.destname,qentry.id, qentry.subid);
 
 	if((out_handle = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
 		fatal(PPREXIT_OTHERERR, "%s(): can't create \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
@@ -2317,7 +2317,7 @@ static void do_passthru(const struct FILTER *f)
 	/* The input file will be copied into a "-barbar" file in the
 	   jobs directory.  Create the "-barbar" file.  We will use this
 	   fname[] value again later. */
-	ppr_fnamef(fname, DATADIR"/%s:%s-%d.%d(%s)-barbar", qentry.destnode, qentry.destname,qentry.id, qentry.subid, qentry.homenode);
+	ppr_fnamef(fname, DATADIR"/%s-%d.%d-barbar", qentry.destname,qentry.id, qentry.subid);
 	if((out_handle = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
 		fatal(PPREXIT_OTHERERR, "%s(): can't create \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 	barbar_file_created = TRUE;
@@ -2633,18 +2633,14 @@ void infile_file_cleanup(void)
 
 	if(keepinfile_file_created)
 		{
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-infile",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-infile", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 		keepinfile_file_created = FALSE;
 		}
 
 	if(barbar_file_created)
 		{
-		ppr_fnamef(fname, "%s/%s:%s-%d.0(%s)-barbar",
-				DATADIR,
-				qentry.destnode, qentry.destname, qentry.id, qentry.homenode);
+		ppr_fnamef(fname, "%s/%s-%d.0-barbar", DATADIR, qentry.destname, qentry.id);
 		unlink(fname);
 		barbar_file_created = FALSE;
 		}

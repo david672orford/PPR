@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 December 2004.
+** Last modified 14 January 2005.
 */
 
 /*! \file */
@@ -734,7 +734,7 @@ void ipp_parse_request_body(struct IPP *ipp)
 */
 gu_boolean ipp_validate_request(struct IPP *ipp)
 	{
-	ipp_attribute_t *attr;
+	/* ipp_attribute_t *attr; */
 
 	/* For now, English is all we are capable of. */
 	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);

@@ -60,7 +60,10 @@ ALL_HTML=ppdoc.1.html \
 	ppr-web.1.html \
 	ppr-panel.1.html \
 	ppr-followme.1.html \
-	ppr-popup.1.html
+	ppr-popup.1.html \
+	uprint-remote.conf.5.html \
+	ppr-lp.1.html ppr-lpstat.1.html ppr-cancel.1.html \
+	ppr-lpr.1.html ppr-lpq.1.html ppr-lprm.1.html ppr-lpc.8.html
 
 # List of man pages in nroff format
 ALL_TROFF=ppdoc.1.man \
@@ -87,10 +90,13 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-web.1.man \
 	ppr-panel.1.man \
 	ppr-followme.1.man \
-	ppr-popup.1.man
+	ppr-popup.1.man \
+	uprint-remote.conf.5.man \
+	ppr-lp.1.man ppr-lpstat.1.man ppr-cancel.1.man \
+	ppr-lpr.1.man ppr-lpq.1.man ppr-lprm.1.man ppr-lpc.8.man
 
 # List of PODs for cross references
-LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1,ppr-popup.1
+LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1,ppr-popup.1,ppr-cancel.1,ppr-lp.1,ppr-lpq.1,ppr-lpr.1,ppr-lprm.1,ppr-lpc.8,ppr-lpstat.1,uprint-remote.conf.5
 
 #=== Build ==================================================================
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_defines.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 14 December 2004.
+** This file was last modified 14 January 2005.
 */
 
 /*
@@ -120,8 +120,6 @@
 #define MAX_DOCMEDIA 4					/* max media types per job */
 
 #define MAX_DESTNAME 16					/* max length of destination name */
-#define MAX_NODENAME 16					/* max length of node name */
-#define MAX_NODES 25					/* max number of nodes pprd can keep track of */
 #define MAX_PRINTERS 250				/* no more than 250 printers */
 #define MAX_BINS 10						/* max bins per printer */
 #define MAX_GROUPS 150					/* no more than this may groups */
@@ -382,11 +380,9 @@ void tokenize(void);
 extern char *tokens[];
 extern int tokens_count;
 const char *quote(const char *);
-int destination_protected(const char *destnode, const char *destname);
+gu_boolean destination_protected(const char destname[]);
 char *money(int amount_times_ten);
-char *local_jobid(const char *destname, int id, int subid, const char *homenode);
-char *remote_jobid(const char *destnode, const char *destname, int id, int subid, const char *homenode);
-const char *network_destspec(const char *destnode, const char *destname);
+const char *jobid(const char *destname, int id, int subid);
 int pagesize(const char keyword[], char **corrected_keyword, double *width, double *length, gu_boolean *envelope);
 const char *noalloc_find_cached_resource(const char res_type[], const char res_name[], double version, int revision, const enum RES_SEARCH search_list[], int *new_revision, int *features, enum RES_SEARCH *where_found);
 char *find_cached_resource(const char res_type[], const char res_name[], double version, int revision, const enum RES_SEARCH search_list[], int *new_revision, int *features, enum RES_SEARCH *where_found);
@@ -401,11 +397,6 @@ const char *pap_strerror(int err);
 const char *nbp_strerror(int err);
 const char *pap_look_string(int n);
 char *ppr_get_command(const char *prompt, int machine_input);
-const char *ppr_get_nodename(void)
-#ifdef __GNUC__
-__attribute__ ((const))
-#endif
-;
 
 char *ppd_find_file(const char ppdname[]);
 int ppd_open(const char name[], FILE *errors);
@@ -429,7 +420,7 @@ int interface_default_codes(const char interface[], const struct PPD_PROTOCOLS *
 void valert(const char printername[], int dateflag, const char string[], va_list args);
 void alert(const char printername[], int dateflag, const char string[], ...);
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra);
-const char *dest_ppdfile(const char destnode[], const char destname[]);
+const char *dest_ppdfile(const char destname[]);
 int get_device_id(const char port[], unsigned char *device_id, int device_id_max);
 
 /*
