@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 29 December 2003.
 */
 
 #include "before_system.h"
@@ -195,6 +195,9 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 		*/
 		while((item = gu_strsep(&ptr, ":")))
 			{
+			if(!*item)		/* skip empty items (presumably at end) */
+				continue;
+
 			if(!(value = strchr(item, '=')))
 				fatal(PPREXIT_OTHERERR, _("Condition \"%s\" contains no \"=\" on \"%s\" line %d"), item, filename, linenum);
 			*value = '\0';

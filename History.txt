@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--23 December 2003.
+1.53a1, 24 September 2003--31 December 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8973,6 +8973,10 @@ Internet Printing Protocol Work
 * www/prn_control.cgi.perl: added table borders for browsers without CSS.
 
 * www/cgi_back.pl: replaced meta-refresh document with call to cgi_redirect.pl.
+
+* www/cgi_tabbed.pl: moved the 'prop open' image into its own table cell since
+  so many browsers don't implement align="left".
+
 
 
 +++++++++++++++++++++

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2003.
+** Last modified 23 December 2003.
 */
 
 /*
@@ -216,13 +216,14 @@ static void do_font_query(int sesfd, struct QUEUE_CONFIG *qc, int index)
 		}
 
 	if(qc->TTRasterizer
-				&& (strcmp(qc->TTRasterizer, "Type42") == 0
-						|| strcmp(qc->TTRasterizer, "Accept68K")==0))
+			&& (strcmp(qc->TTRasterizer, "Type42") == 0
+					|| strcmp(qc->TTRasterizer, "Accept68K")==0)
+		)
 		wanted_mactruetype_features = FONT_TYPE_42;
 	else
 		wanted_mactruetype_features = FONT_TYPE_1;
 
-	/* Loop thru the font list */
+	/* Loop thru the list of desired fonts. */
 	for(x=index; tokens[x]; x++)
 		{
 		/* Check if the font is in the printer. */
@@ -253,8 +254,8 @@ static void do_font_query(int sesfd, struct QUEUE_CONFIG *qc, int index)
 			}
 
 		/*
-		** Font is not in the cache or we don't have the part the client
-		** is likely willing to supply.
+		** If we hit this, the font is not in the cache or we don't have the
+		** part the client is likely willing to supply.
 		*/
 		else
 			{

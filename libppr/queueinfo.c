@@ -25,7 +25,15 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2003.
+** Last modified 31 December 2003.
+*/
+
+/*+ \file
+
+This module contains the implementation of an object which describes a PPR queue.  An
+instance may be created and automatically populated with the attributes of a specific
+PPR queue.
+
 */
 
 #include "before_system.h"
@@ -86,6 +94,9 @@ static void do_printer(struct QI *qip, const char name[])
 	fclose(pconf);
 	}
 
+/** create a queueinfo object
+
+*/
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	{
 	struct QI *qip = gu_alloc(1, sizeof(struct QI));
@@ -99,12 +110,12 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 
 	if(qit == QUEUEINFO_ALIAS)
 		{
-
+		do_alias(qip, name);
 		}
 
 	if(qit == QUEUEINFO_GROUP)
 		{
-
+		do_group(qip, name);
 		}
 
 	else if(qit == QUEUEINFO_PRINTER)
@@ -119,11 +130,116 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 
 	return (void *)qip;
 	}
-	
-void queueinfo_delete(void *qip)
-	{
 
-	gu_free(qip);
+/** discard a queueinfo object
+*/
+void queueinfo_delete(void *p)
+	{
+	gu_free(p);
 	}
-	
+
+/**
+*/
+const char *queueinfo_product(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+int queueinfo_psLanguageLevel(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+double queueinfo_psVersion(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+int queueinfo_psRevision(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+int queueinfo_psFreeVm(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+const char *queueinfo_resolution(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+gu_boolean queueinfo_colorDevice(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+const char *queueinfo_faxSupport(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+const char *queueinfo_ttRasterizer(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+int *queueinfo_fontCount(void *p)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+const char *queueinfo_font(void *p, int index)
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+gu_boolean queueinfo_fontExists(void *p, const char name[])
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
+/**
+*/
+const char *queueinfo_optionValue(void *p, const char name[])
+	{
+	struct QI *qip = (struct QI *)p;
+
+	}
+
 /* end of file */
