@@ -1,0 +1,157 @@
+<Sect1 id="filters">
+<Title>Requirements for an Input Filter</Title>
+
+<Para>
+If <Emphasis remap="bf">ppr</Emphasis> determines that the input file is not PostScript, it will seek
+to use a filter to convert it to PostScript.  This appendix provides the
+information you will need to write your own PPR input filters.
+</Para>
+
+<Para>
+The filters are found in the directory <Literal remap="tt">/usr/ppr/lib</Literal>.  Each of these
+files has a name that consists of ``filter&lowbar;'' followed by the PPR input type
+name.  For example, the filter for JPEG files is called
+``<Literal remap="tt">/usr/ppr/filters/filter&lowbar;jpeg</Literal>".
+</Para>
+
+<Para>
+A filter should read the file from STDIN and write PostScript code on STDOUT.
+If it must, it can write messages on STDERR.  STDIN is guaranteed to be
+seekable.  Messages sent to STDERR will go wherever STDERR was going when
+<Emphasis remap="bf">ppr</Emphasis> was invoked.
+</Para>
+
+<Para>
+The parameters are as follows:
+</Para>
+
+<Para>
+
+<OrderedList>
+<ListItem>
+
+<Para>
+The first parameter is the list of filter options.  These are expressed as a
+space seperated list of name-value pairs.  The name and value are joined by an
+equal sign.  The options list is formed by concatrnating the contents of the
+<Emphasis remap="sf">DefFiltOpts:</Emphasis> line in the printer or group configuration file with the
+contents of any <Emphasis remap="bf">-o</Emphasis> lines the user put on the <Emphasis remap="bf">ppr</Emphasis> command line.
+
+Before passing the option list to the filter, <Emphasis remap="bf">ppr</Emphasis> pre-processes it.  Any
+options whose names begin with a file type name and a hyphen will have the file
+type name and the hyphen removed if the file type name matches the filter being
+invoked, otherwise, such options are discarded.  The names of the parameters (the
+part to the left of the equals sign) are converted to lower case.  The values (the
+part to the right of the equals sign) are not.
+
+A responder should ignore any option it does not recognize.  If the same option
+appears more than once, the value from the last instance is the one that should be
+used.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The name of the printer or group to which the job was submitted.  This will
+generally be ignored.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The third is the job title.  This may be used by filters which format
+their input as pages with headers and footers.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The directory which was current when <Emphasis remap="bf">ppr</Emphasis> was invoked.  This is used
+by the TeX, TeXinfo, and DVI filters when searching for include files.
+
+</Para>
+</ListItem>
+
+</OrderedList>
+
+</Para>
+
+<Para>
+When a filter is invoked, the environment variable IFS is set to a space and a
+tab, and the variable PATH is set to a value which is just adequate to find
+standard shell script helper programs such as test, sed, and grep.  On most
+systems, that value of PATH is ``/bin:/usr/bin''.
+</Para>
+
+<Para>
+Here is an example.  Suppose this line is in the printer's configuration file:
+</Para>
+
+<Para>
+
+<Screen>
+DefFiltOpts: level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX
+</Screen>
+
+</Para>
+
+<Para>
+and the user submits a JPEG (JFIF) file with this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -o noisy=no -o 'fortran-width=130 jpeg-noisy=yes' picture.jpg
+</Screen>
+
+</Para>
+
+<Para>
+The filter will be invoked like this:
+</Para>
+
+<Para>
+
+<Screen>
+filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX noisy=no noisy=yes' myprn 'picture.jpg' /home/me
+</Screen>
+
+</Para>
+
+<Para>
+A filter should interpret any options it recognizes and ignore any it does
+not.  If it finds two contradictory options, it should obey the last one.  In
+the example above, the option ``noisy=yes'' is the one that prevails.  The
+options ``freevm=1048576'' and ``mfmodes=CanonCX'' would be ignored simply
+because the JPEG filter has no code to use them.
+</Para>
+
+<Para>
+If the filter exits with a value other than 0, the job will not be discarded.
+A message may be informed by printing on stderr or invoking a responder, the
+exect behaviour being controled by the <Emphasis remap="bf">-e</Emphasis> switch.
+</Para>
+
+<Para>
+When a filter is executed, the real user id is that of the user who executed
+<Emphasis remap="bf">ppr</Emphasis>.  The effective user id and the saved user id's are ``ppr''.  The real
+group id is the same as it was when <Emphasis remap="bf">ppr</Emphasis> was executed.  The effective and
+saved group id's are ``ppop''.
+</Para>
+
+<Para>
+It is possible to determine precisely what filter is being executed with what
+arguments by running <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-G infile:filter</Emphasis> option.
+</Para>
+
+<Para>
+The filters supplied with PPR, together with their options are described in the
+ppr(1) man page, under the section for the <Emphasis remap="bf">-T</Emphasis> switch.
+</Para>
+
+</Sect1>
+

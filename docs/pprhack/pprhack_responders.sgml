@@ -1,0 +1,161 @@
+<Sect1 id="responders">
+<Title>Requirements for a Responder</Title>
+
+<Para>
+A responder is a small program.  All responders are stored in the responders
+directory <Literal remap="tt">/usr/ppr/responders</Literal>.  The responder which will eventually be
+used to tell the user what happened to the job is selected when the job is
+submitted.  It is selected using <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-m</Emphasis>. switch.  The argument to
+the <Emphasis remap="bf">-m</Emphasis> switch is the name of the program in the responders directory which
+should be used.  A responder can be very simple.  Here is an example:
+</Para>
+
+<Para>
+
+<Screen>
+#!/bin/sh
+echo "Message for $1:\n$3" | write $2
+exit 0
+</Screen>
+
+</Para>
+
+<Para>
+The responder shown above is a stript down version of the responder <Emphasis remap="bf">write</Emphasis>.
+If the <Emphasis remap="bf">-m</Emphasis> switch is not used then the name of the responder will be read
+from the environment variable PPR&lowbar;RESPONDER.  If PPR&lowbar;RESPONDER is not defined
+then the responder <Emphasis remap="bf">write</Emphasis> will be used.
+</Para>
+
+<Para>
+A responder program is invoked with the name of the user as the first
+parameter.  It is the name just as it appears in queue listings and on banner
+pages.
+</Para>
+
+<Para>
+The address to which the message should be sent is the second parameter.  The
+address is specified at the time <Emphasis remap="bf">ppr</Emphasis> is invoked by using the <Emphasis remap="bf">-r</Emphasis>
+switch.  The proper format for the address depends on the responder.  If the
+<Emphasis remap="bf">-r</Emphasis> switch is absent then the value of the environment variable
+PPR&lowbar;RESPONDER&lowbar;ADDRESS is used.  If that too is absent then the name of the Unix
+user who invoked <Emphasis remap="bf">ppr</Emphasis> is used.  The value used in the absence of both
+<Emphasis remap="bf">-r</Emphasis> and PPR&lowbar;RESPONDER&lowbar;ADDRESS is appropriate since the default responder is
+a script which invokes the Unix program <Emphasis remap="bf">write</Emphasis>.
+</Para>
+
+<Para>
+The third parameter is the suggested message text.  The message text will
+contain embedded line feeds.  The length of the lines will depend on the
+responder.  The routine get&lowbar;responder&lowbar;width() in <Literal remap="tt">libppr/reswidth.c</Literal>
+determines what length to limit the lines to.  For most responders, this
+routine returns 0 which means to use a predetermined set of line breaks which
+generally results in lines less than 80 characters long.
+</Para>
+
+<Para>
+The fourth parameter is reserved for future use, at present it is an empty
+string.
+</Para>
+
+<Para>
+The fifth parameter is a space separated list of responder options.  Each of
+this options is a name=value pair.  Common options include <Emphasis remap="bf">printed=no</Emphasis> and
+<Emphasis remap="bf">timeout=60</Emphasis>.  The value of this option comes from the <Emphasis remap="bf">ppr</Emphasis>
+<Emphasis remap="bf">--responder-options</Emphasis> switch or from the environment variable
+PPR&lowbar;RESPONDER&lowbar;OPTIONS.  A responder should ignore any options it does not
+recognize.
+</Para>
+
+<Para>
+The sixth parameter is a code number which represents the approximate content
+of the message.  It is provided in case a responder wants to send different
+types of message by different methods or wishes to provide its own wording for
+one or more of the messages.  For example, it might want to send a popup
+message but then follow it up with email if the message indicated that the job
+was arrested.  The code numbers are defined in C include file
+<Literal remap="tt">include/respond.h</Literal>, the Bourne shell script include file
+<Literal remap="tt">lib/respond.sh</Literal>, and the Perl include file <Literal remap="tt">lib/respond.ph</Literal>.
+</Para>
+
+<Para>
+The seventh parameter contains the complete job id.  This is probably only
+useful if the responder is constructing its own messages since the default
+messages provided in the third parameter already mention the job id.  The job
+id is not provided in the normal form since that is rather difficult to parse.
+In stead, the elements are separated by spaces.  The elements are, in order,
+destination node, <Emphasis remap="it">destination name</Emphasis>, <Emphasis remap="it">queue id number</Emphasis>, <Emphasis remap="it">sub id
+number</Emphasis>, and <Emphasis remap="it">home node</Emphasis>.  For example, ``mouse chipmunk 1000 0 mouse''.
+This id would normally appear as ``mouse:chipmunk-1000.0(mouse)'' or more
+likely in abreviated form as ``chipmunk-1000''.
+</Para>
+
+<Para>
+The eight parameter is also necessary for constructing replacement messages.
+Some of the messages normally contain a blank space which is filled with a
+piece of text.  Normally this is the name of the printer which the job was
+printed on, but if the user database is being used and PPR refuses access the
+the printer, the piece of text is the name of the user who was refused access.
+At other times the piece of text will be an error message.
+</Para>
+
+<Para>
+The ninth parameter is the title of the job.  This title will be derived from a
+"&percnt;&percnt;Title:" line if present.  Failing that, the title will be the
+name of the file being printed.  If the file was received on stdin, this field
+will generally be blank.
+</Para>
+
+<Para>
+The tenth parameter is the time at which the job was submitted.  It is
+represented in Unix format (as a count of the seconds since 12:00am, January
+1, 1970).  The program <Emphasis remap="bf">lib/time&lowbar;elapsed</Emphasis> may be used to express this
+time in terms of how far in the past it is.
+</Para>
+
+<Para>
+The eleventh parameter will contain a short message which indicates the
+reason the job was arrested.  If the response code does not indicated that
+the job has been arrested, this string will be blank.
+</Para>
+
+<Para>
+The twelth parameter contains the number of pages printed.  If this is unknown,
+it is "?".  If the response code (the fourth parameter) has a value other than
+<Emphasis remap="bf">RESP&lowbar;FINISHED</Emphasis> then the contents of this field is undefined.
+</Para>
+
+<Para>
+When the responder is run, stdin with either be connected to <Literal remap="tt">/dev/null</Literal>
+or it will be connected to the job's log file.  This is so that the responder
+may send the job log back to the user.  Some of the supplied responders exploit
+this feature.
+</Para>
+
+<Para>
+When exiting, the responder should return a value of zero if the message was
+delivered.  It should also return a value of zero if the addresse was not
+found.  Non-zero exit values should be reserved for truly abnormal conditions
+such as insufficient system resources or syntactically invalid addresses.  If a
+responder does return a non-zero exit value, <Emphasis remap="bf">ppr</Emphasis> will print a notice to
+that effect on stderr or <Emphasis remap="bf">pprd</Emphasis> will put a notice in its log file, depending
+on which one invoked the responder.
+</Para>
+
+<Para>
+When the responder is invoked by <Emphasis remap="bf">pprd</Emphasis>, it will always have a real uid,
+effective uid and saved uid of ``ppr''.  When it is invoked by <Emphasis remap="bf">ppr</Emphasis> (due to
+the use of the <Emphasis remap="bf">-e</Emphasis> responder option) things will be different.  The program
+<Emphasis remap="bf">ppr</Emphasis> is setuid ``ppr'', so the effective and saved uids are ``ppr'' and the
+real uid is the id of the user who invoked it.  Just before executing the
+responder <Emphasis remap="bf">ppr</Emphasis> sets the effective user id equal to the real user id.  This
+last feature is not intended as a security measure, rather, the <Emphasis remap="bf">xwin</Emphasis>
+responder will not work if this is not done since the X library uses access()
+on the .Xauthority file before trying to open it which means that the
+.Xauthority file in the user's home directory must be readable under both the
+real and the effective uids.  This feature may be overridden by setting the
+setuid bit on the responder.  If this is done then the effective uid will remain
+``ppr''.
+</Para>
+
+</Sect1>

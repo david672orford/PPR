@@ -4,42 +4,36 @@
 
 <Articleinfo>
 	<Title>PPR, a Print Spooler for PostScript</Title>
-	<AUTHOR>
+	<Author>
 		<FirstName>David</firstname>
 		<surname>Chappell</surname>
-		</AUTHOR>
-	<PubDate>14 January 2002</pubdate>
+		</Author>
+	<PubDate>16 December 2002</pubdate>
 	<copyright>
-		<year>1995--2001</year>
-		<holder>Trinity College Computing Center</holder>
+		<Year>1995--2002</Year>
+		<Holder>Trinity College Computing Center</Holder>
 		</copyright>
 </articleinfo>
 
 <ABSTRACT>
-<PARA>
-This is one of the four parts of the documentation for PPR version 1.50.  The
-other parts are <CITETITLE>Installing and Using PPR</CITETITLE>,
-<CITETITLE>The PPR Hackers Guide</CITETITLE>,
-and the PPR man pages.
-This part describes the construction and theory of operation of PPR.  It also
-describes some of the more advanced features which <CITETITLE>Installing and
-Using PPR</CITETITLE> ignores or gives scant attention.  While the man pages
-provide the
-definitive reference for the commands and programs, they do not attempt to
-explain in detail why and how one would use any particular command or feature.
-Nor do they discuss the internal workings of PPR.  These topics are what this
-document is meant to cover.
-Unfortunately, this document has never been finished.
-</PARA>
+
+<Para> This document describes the makup and theory of operation of PPR.  It
+also describes some of the more advanced features which
+<CITETITLE>Installing and Using PPR</CITETITLE> ignores or gives scant
+attention.  While the man pages provide the definitive reference for the
+commands and programs, they do not attempt to explain in detail why and how
+one would use any particular command or feature.  These topics are what this
+document is meant to cover. Unfortunately, this document has never been
+finished. </Para>
+
 </ABSTRACT>
 
 <Sect1>
 <Title>Introduction to PPR</Title>
 
-<Para>
-PPR is designed to operate printers which use page description languages
-compatible with the PostScript language defined by Adobe Systems.  It is
-true that a PostScript printer can generally be made to work with an
+<Para>PPR is designed to operate printers which use page description
+languages compatible with the PostScript language defined by Adobe Systems. 
+It is true that a PostScript printer can generally be made to work with an
 ordinary print spooler.  Enhancements, generally in the form of special
 filters or interface programs, are available for both the System V LP
 spooler and the Berkeley LPR spooler. However, these are generally rather
@@ -47,30 +41,24 @@ limited adaptations written to fulfill a pressing need, such as the need to
 print banner pages. In order to fully exploit the more sophisticated
 features of PostScript and the Adobe Document Structuring Convention, it
 seemed best to start from scratch, writing a print spooler designed with
-modern PostScript laser printers in mind.
-</Para>
+modern PostScript laser printers in mind.</Para>
 
-<Para>
-It is one of the goals of this project to produce a print spooler which can
-accept print jobs from many different types of computer systems
+<Para>It is one of the goals of this project to produce a print spooler
+which can accept print jobs from many different types of computer systems
 simultaneously.  This includes logged-in Unix users, MS-DOS and MS-Windows
 users, Unix users on remote systems through the LPR/LPD protocol, and Apple
-Macintosh computers.
-</Para>
+Macintosh computers.</Para>
 
-<Para>
-The spooler is designed to provide services such as font and resource caching
-which should reduce the time a Macintosh computer requires to generate and
-transmit the print file.
-</Para>
+<Para>The spooler is designed to provide services such as font and resource
+caching which should reduce the time a Macintosh computer requires to
+generate and transmit the print file.</Para>
 
-<Para>
-On MS-DOS systems it is not always possible to adapt application programs to
-generate PostScript directly.  For this reason, PPR has an automatic conversion
+<Para>On MS-DOS systems, many application programs are not able to generate
+PostScript themselves.  For this reason, PPR has an automatic conversion
 system which attempts to determine the format of an incoming document and
-convert it to PostScript.  Filters are included to convert simple line printer
-files as file inteneded for popular dot matrix printers.
-</Para>
+convert it to PostScript, if necessary.  Filters to convert simple line
+printer files or files for popular dot matrix printers are included with
+PPR.</Para>
 
 <Para>
 PPR will read Adobe PostScript Printer Description (PPD) files in order to
@@ -85,15 +73,14 @@ that PPR insert code fragments from the PPD file in order to invoke specific
 features of the printer, such as duplexing or legal size paper.
 </Para>
 
-<Para>
-PPR provides a mechanism whereby the operator specifies the size and type
-of paper in each of a printer's bins.  When printing, users will request the
-desired paper.  Print jobs will be held back until the operator changes the
-paper and indicates to the spooler that he has done so.  If a job is being
-held back for this reason, the names of the types of media required will be
-indicated in the queue listing.  When the document is printed, PPR will
-insert code to select the input tray which holds the desired medium.
-</Para>
+<Para>PPR provides a mechanism whereby the operator specifies the size and
+type of paper in each of a printer's bins.  When printing, users will
+request the desired paper.  Print jobs will be held back until the operator
+changes the paper and indicates to the spooler that he has done so.  If a
+job is being held back for this reason, the names of the types of media
+required will be indicated in the queue listing.  When the document is
+printed, PPR will insert code to select the input tray which holds the
+desired medium.</Para>
 
 <Para>
 Where the printer and its interface support it, PPR will capture PostScript

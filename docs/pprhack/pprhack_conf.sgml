@@ -1,0 +1,492 @@
+<Sect1>
+<Title>Configuration File Formats</Title>
+
+<Para>
+Configuration files which the system administrator is expected to modify
+directly are described within the reference manual.  The files described
+in this section are modified automatically by programs such as ppad.  That
+is why they are described here in the Hacker's Guide.
+</Para>
+
+<Sect2 id="printer-config">
+<Title>Format of a Printer Configuration File</Title>
+
+<Para>
+Each file in the directory <filename>/etc/ppr/printers</filename> represents
+one printer.  It is permissible to create and edit these files manually,
+however the command <command>ppad</command> has been provided to do this
+automatically.
+</Para>
+
+<Para>
+A new printer configuration file is created by the
+<command>ppad interface</command> command.
+The new configuration file is created by turning the arguments of the
+<command>ppad interface</command> command into a
+<Emphasis remap="sf">Interface:</Emphasis>
+and an <Emphasis remap="sf">Address:</Emphasis> line
+and appending the file <filename>/etc/ppr/newprn.conf</filename>.
+The <filename>newprn.conf</filename> file is normally created by the
+<command>ppad new alerts</command> command.
+</Para>
+
+<Para>
+Any lines begining with ``;'' or ``&num;'' are comments.  Blank lines are
+ignored.  All other lines should begin with a keyword which is followed by one
+or more values.  Only the <Emphasis remap="sf">Bin:</Emphasis> and
+<Emphasis remap="sf">PPDOpt:</Emphasis> lines should occur more
+than once.  If any other line occurs multiple times, all but the last instance
+are ignored.
+</Para>
+
+<Para>
+Any line that begins with an unrecognized keyword is ignored.  This is so that
+you can add lines of your own which will be understood and acted on by other
+programs.  The program <Emphasis remap="bf">ppr2samba</Emphasis> works on this principle.
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Comment:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line contains a comment which describes the printer. The comment is
+displayed when the <Emphasis remap="bf">ppad show</Emphasis> command is used to display the printer
+configuration.  This line is optional.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Interface:</Emphasis> <Emphasis remap="it">interface&lowbar;path</Emphasis></Term>
+<ListItem>
+<Para>
+This line is required.  It gives the name of the program which the spooler
+should invoke in order to make contact with the printer.  If the path does not
+begin with a slash, then it refers to a subdirectory of the
+<Literal remap="tt">/usr/ppr/interfaces</Literal> directory.  Common values for this line are
+``atalk'', ``tcpip'', and ``serial''.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Address:</Emphasis> <Emphasis remap="it">address&lowbar;string</Emphasis></Term>
+<ListItem>
+<Para>
+The address string is passed to the interface program as its second parameter.
+The proper format for this string depends on the interface.  Reasonable values
+for use with the interfaces named in the above paragraph are ``Mac Laser
+Printer: LaserWriter@MYZONE'', ``smith.prn.myorg.org:9100'', and
+``/dev/ttys05''.  If the address contains leading or trailing spaces it should
+be enclosed in double quotes.  Technically, this line is not required, but the
+default address is the name of the printer which is unlikely to be useful.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Options:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The value <Emphasis remap="it">string</Emphasis> is passed to the
+interface as its third parameter.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PPDFile:</Emphasis> <Emphasis remap="it">filename</Emphasis></Term>
+<ListItem>
+<Para>
+This line specifies the path and name of an Adobe Post Script Printer
+Description file which describes the printer.  If the name does not begin with
+a slash, it referes to a file in the directory <Literal remap="tt">/usr/ppr/PPDFiles</Literal>.
+This line may not be required but it really ought to be present.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Alert:</Emphasis> <Emphasis remap="it">interval method address</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If it is present, then messages will be sent to the
+designated person when faults occur on the printer.
+</Para>
+<Para>
+The integer <Emphasis remap="it">interval</Emphasis> indicates how often these messages will be sent.
+For instance, if the value is 5, then a message will be sent for every 5th
+fault.
+</Para>
+<Para>
+The <Emphasis remap="it">method</Emphasis> parameter indicates the method by which the message should be
+sent.  Currently, this parameter is ignored.  Set it to ``mail''.
+</Para>
+<Para>
+The <Emphasis remap="it">address</Emphasis> indicates the person to whom the message should be sent.
+Since <Emphasis remap="sf">mail</Emphasis> is currently the only supported method, this should be a email
+address.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">FlagPages:</Emphasis> <Emphasis remap="it">integer integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The first integer refers to banner pages, the second
+to trailer pages.  Four different values are allowed.  They are <Emphasis remap="sf">0</Emphasis> for
+``never'', <Emphasis remap="sf">1</Emphasis> for ``preferably not'', <Emphasis remap="sf">2</Emphasis> for ``preferably yes'', and
+<Emphasis remap="sf">3</Emphasis> for ``always''.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Feedback:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  It indicates whether or not the connexion to the
+printer allows it to send messages back to the spooler.  There is a list of
+default values for all the interfaces supplied with PPR compiled into
+<Emphasis remap="bf">pprdrv</Emphasis>.  (This list is defined in <Literal remap="tt">include/interfaces.h</Literal>.)  If this
+line is not present and the interface is not in the list, it is assumed to be
+<Emphasis remap="bf">false</Emphasis>.  Any instances of this line which occur before the <Emphasis remap="sf">Interface:</Emphasis>
+line are ignored.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">JobBreak:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The integer is the code number of a job break method.
+This line is only necessary if a job break method other than the default for
+the interface is desired.  Default job break numbers for the interfaces which
+come with PPR are defined in the source file <Literal remap="tt">include/interfaces.h</Literal>.
+The meaning of the values in <Literal remap="tt">interfaces.h</Literal> can be understood by reading
+the <Emphasis remap="bf">ppad jobbreak</Emphasis> section of the ppad(8) man page.  Any instances of this
+line which occur before the <Emphasis remap="sf">Interface:</Emphasis> line are ignored.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Codes:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  It indicates the range of character codes which the
+interface can transmit to the printer.  The acceptable values are 1 for Clean7Bit,
+2 for Clean8Bit, 3 for Binary and 4 for Binary if TBCP is used.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">GrayOK:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The default value is <Emphasis remap="sf">true</Emphasis>.  If this parameter is
+set to <Emphasis remap="sf">false</Emphasis>, the printer will refuse to print any job which does not have
+``<Emphasis remap="sf">color</Emphasis>'' in a <Emphasis remap="sf">&percnt;&percnt;Requirements:</Emphasis> line in its header.  A <Emphasis remap="sf">GrayOK:</Emphasis>
+line can be used to prevent black-and-white or grayscale jobs from begin
+printed on an expensive colour printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Charge:</Emphasis> <Emphasis remap="it">money</Emphasis> &lsqb;it/money/&rsqb;</Term>
+<ListItem>
+<Para>
+This line is optional.  If this line is present, then the printer becomes a
+protected printer.  Each parameter <Emphasis remap="it">money</Emphasis> should be a positive number with
+two decimal places.  If both are ``0.00'', then the printer is protected, but
+no actual charges are mode to the user's account.  The first number is the
+amount that should be charged for each sheet of paper printed on both sides.
+The second is the amount that should be charged for each sheet printed on only
+one side.  If the second number is missing it is assumed to be the same as the
+first.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">OutputOrder:</Emphasis> <Emphasis remap="it">direction</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If it is absent, it is assumed that direction is
+<Emphasis remap="sf">Normal</Emphasis>.  If direction is set to <Emphasis remap="sf">Reverse</Emphasis>, the spooler will cause the
+pages to be printed in reverse order, if possible.  The value of this line
+can be set with the command <Emphasis remap="bf">ppad outputorder printer Normal</Emphasis>, <Emphasis remap="bf">ppad
+outputorder printer Reverse</Emphasis>, or <Emphasis remap="bf">ppad outputorder printer ppd</Emphasis>.  The
+command <Emphasis remap="bf">ppad outputorder printer ppd</Emphasis> deletes any <Emphasis remap="sf">OutputOrder:</Emphasis>
+line which may exist.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Bin:</Emphasis> <Emphasis remap="it">binname</Emphasis></Term>
+<ListItem>
+<Para>
+The <Emphasis remap="it">binname</Emphasis> parameter is the bin name as it appears in a <Emphasis remap="sf">*InputSlot</Emphasis>
+line of the PPD file.  Common values are ``Upper'', ``Lower'', and
+``Cassette''.  If automatic bin selection and media handling are desired, there
+should be one <Emphasis remap="sf">Bin:</Emphasis> line for each installed bin.  Removing all the <Emphasis remap="sf">Bin:</Emphasis>
+lines disables automatic bin selection and media handling.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">DefFiltOpts:</Emphasis> <Emphasis remap="it">options</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains input filter options in the
+form of name-value pairs.  (If the user employs one or more <Emphasis remap="bf">-o</Emphasis> switchs
+when submitting a job with <Emphasis remap="bf">ppr</Emphasis>, then the argument of each <Emphasis remap="bf">-o</Emphasis> switch
+is appended to this list.  Thus, <Emphasis remap="bf">-o</Emphasis> switches can be used to override
+settings in this list.)  This line is automatically updated whenever the
+<Emphasis remap="bf">ppad ppd</Emphasis> command is used to select a new PPD file or the <Emphasis remap="bf">ppad ppdopts</Emphasis>
+command is used to change the PPD options.  An update may be forced at any time
+with the <Emphasis remap="bf">ppad deffiltopts</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Switchset:</Emphasis> <Emphasis remap="it">switch&lowbar;description</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a compressed description of
+the switch settings which were saved with the <Emphasis remap="bf">ppad switchset</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PassThru:</Emphasis> <Emphasis remap="it">type&lowbar;list</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a space separated list
+of file types which should be passed directly through to the printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PagesLimit:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present it indicates the maximum number of pages
+this printer is allowed to print in a single job.  Jobs with more pages
+than the number indicated are rejected.  If the job was submitted to a group,
+it may be printed on another member of the group.  If no printer will print it,
+then it is arrested.
+</Para>
+<Para>
+This line may be edited with the <Emphasis remap="bf">ppad pageslimit</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PageCountQuery:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line can be used to enable pair of queries which fetch the printers
+lifetime page count before and after the printing of the job (exclusive
+of banner and trailer pages).
+</Para>
+<Para>
+The information obtained through these queries can be logged.  See Section
+<XRef LinkEnd="printlog">.
+</Para>
+<Para>
+If this line is absent or the <Emphasis remap="it">integer</Emphasis> is 0, then this feature is disabled.
+</Para>
+<Para>
+If the value is 1, then then the PostScript code
+``statusdict /pagecount get exec =='' is used to get the page count.  No
+attempt is made to make sure that the print engine has come to a stop and the
+printer has updated the count before making the query.  On some printers this
+does not cause a problem because the page count is updated imediately.  On
+others it may be solved by using the <Emphasis remap="bf">pjl</Emphasis> or <Emphasis remap="bf">signal/pjl</Emphasis> jobbreak
+method which causes PPR to wait until all of the pages have hit the
+output bin before considering the job complete.
+</Para>
+<Para>
+In the future, additional values for this parameter may be defined.  These
+additional values will use different techniques to obtain the page count.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Commentator:</Emphasis> <Emphasis remap="it">number name address options</Emphasis></Term>
+<ListItem>
+<Para>
+A printer configuration file may have zero or more of these lines.  Their
+purpose is explained in Appendix <XRef LinkEnd="commentators">.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PPDOpt:</Emphasis> <Emphasis remap="it">option value</Emphasis> (<Emphasis remap="it">description</Emphasis>)</Term>
+<ListItem>
+<Para>
+A printer configuration file may have zero or more of these lines.  Each line
+describes the setting of the options listed in the PPD file.  These settings
+generally describe optional equipment which may be installed in or attatched to
+the printer such as additional paper trays or duplex attachements.  The
+<Emphasis remap="it">option</Emphasis> is the option name from the PPD file, without the translation
+string (the part which may follow a slash).  The <Emphasis remap="it">value</Emphasis> is one of the
+possible option values listed  in the PPD file, again without the translation
+string.  The description is formed by combining the translation strings for the
+option and the value.  (Option settings and the related terminology are
+explained in Adobe's PostScript Printer Description File Format
+Specification.)  These lines can be generated automatically with the <Emphasis remap="bf">ppad
+ppdopts</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ppr2samba:</Emphasis> <Emphasis remap="it">include</Emphasis> <Emphasis remap="it">prototype</Emphasis></Term>
+<ListItem>
+<Para>
+Used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ppr2samba-drivername:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ms-driver-name:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Formerly used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect2>
+
+<Sect2 id="group-config">
+<Title>Format of a Group Configuration File</Title>
+
+<Para>
+Each file in the <Literal remap="tt">/etc/ppr/groups</Literal> directory represents a group.  It
+is permissible to create and edit these files manually, however it is generally
+more convient to use the command <Emphasis remap="bf">ppad</Emphasis> to do it automatically.  The
+<Emphasis remap="sf">Printer:</Emphasis> line is the only one which should appear more than once.  If any
+other line occurs more than once, all but the last instance are ignored.  Lines
+with ``;'' or ``&num;'' in the first column are comments.  The remaining lines are
+of two types:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Comment:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line contains a comment describing the group. This comment is displayed by
+the <Emphasis remap="bf">ppad group show</Emphasis> command.  This line is optional.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Printer:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+The <Emphasis remap="it">name</Emphasis> is the name a printer that should be a member of the group.
+There should be one line for each group member.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Rotate:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This value indicates if the spooler should attempt to distribute the load
+evenly among the printers.  If it is <Emphasis remap="sf">False</Emphasis>, the spooler will always take
+the first idle printer in the group.  If it is <Emphasis remap="sf">True</Emphasis>, the spooler will
+attempt to use each printer in turn.  The default is <Emphasis remap="sf">True</Emphasis>.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">DefFiltOpts:</Emphasis> <Emphasis remap="it">options</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains some name-value pairs to be
+prepended to any the user supplies with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-o</Emphasis> switch. This line
+will be automatically updated by <Emphasis remap="bf">ppad</Emphasis> whenever a group member is added or
+deleted.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Switchset:</Emphasis> <Emphasis remap="it">switch&lowbar;description</Emphasis></Term>
+<ListItem>
+<Para>
+If this line is present, it contains a compress representation if the switches
+saved with the <Emphasis remap="bf">ppad group switchset</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PassThru:</Emphasis> <Emphasis remap="it">type&lowbar;list</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a space separated list
+of file types which should be passed directly through to the printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">ms-driver-name:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Used by ppr2samba.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">ppr2samba:</Emphasis> <Emphasis remap="it">include</Emphasis> <Emphasis remap="it">prototype</Emphasis></Term>
+<ListItem>
+<Para>
+Used by ppr2samba.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect2>
+
+</Sect1>
+

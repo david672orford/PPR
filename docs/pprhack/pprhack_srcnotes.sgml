@@ -1,0 +1,182 @@
+<Sect1>
+<Title>Notes on the Source Code</Title>
+
+<Para>
+Generally, there is one subdirectory for each major program.  Smaller
+components, such as responders are gathered together into directories.
+</Para>
+
+<Para>
+Since PPR, in addition to being a useful tool, is intended as an instructive
+example for writers of programs which must parse DSC comments, and because it
+makes it easier to maintain, the source code is copiously commented.  In the
+source code comments, the abbreviation "RBIIp" refers to a page in the Red Book
+(PostScript Langauge Reference Manual, Second Edition).  As far as possible
+functions from the ANSI C, Posix, and Berkley Sockets libraries have been used
+in preference to function from less widely supported libraries such as the
+System V or BSD libraries.
+</Para>
+
+<Para>
+The signal() function from the ANSI C library
+installs a signal handler.  In some implementations, such as System V, this is
+a one-shot signal handler which is removed just before it is called for the
+first time.  In other implementations, notably BSD, this signal handler remains
+installed and the signal is automatically blocked until the signal handler
+exits.
+</Para>
+
+<Para>
+For the purpose of setting up signal handlers, POSIX provides a function
+called sigaction().  Unfortunately, since one of its arguments is a structure,
+about 10 lines of code are needed to use it.  To simplify the source code,
+PPR has two functions, one called signal&lowbar;interupting() which works like BSD
+signal() and signal&lowbar;restarting() which works differs only in that it passes
+the option SA&lowbar;RESTART to sigaction().  SA&lowbar;RESTART requests that system calls
+interupted by the signal be restarted automatically.
+</Para>
+
+<Para>
+The PPR source code assumes that whenever it calls signal() it will be
+calling a version conforms to BSD semantics.  To make sure this holds true
+on all systems, global&lowbar;defines.h defines a macro
+which equates signal() with signal&lowbar;interupting().
+</Para>
+
+<Sect2>
+<Title>Important Header Files</Title>
+
+<Para>
+There are several header files containing parameters the user may wish to
+adjust before compiling the programs.  These are described below:
+</Para>
+
+<Sect3>
+<Title><Literal remap="tt">include/version.h</Literal></Title>
+
+<Para>
+This file defines the pre-processor macros VERSION, SHORT&lowbar;VERSION, and
+COPYRIGHT.  If you modify PPR you may want to note that fact in the VERSION
+macro.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/global.mk</Literal></Title>
+
+<Para>
+This file is included by all the make files.  The shell script <Emphasis remap="bf">Configure</Emphasis>
+generates this file.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/sysdep.h</Literal></Title>
+
+<Para>
+This file is included by <Literal remap="tt">include/global&lowbar;defines.h</Literal> (described
+below).  This file contains one section for each system to which PPR has
+been ported.  For each of these it defines some macros and possibly some
+function prototypes.  You should add a section to this file
+if you are trying to port PPR to a new system.  The macros which
+can be defined in this file are described in comments at its head.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/global&lowbar;defines.h</Literal></Title>
+
+<Para>
+An important part of this file is the list of definitions of files and
+directories.  Any file or directory names in this section which do not begin
+with a slash are relative to the directory defined as <Emphasis remap="sf">HOMEDIR</Emphasis>. There are
+other parameters below the file names, but these should be modified with care.
+Probably, you should only modify <Emphasis remap="sf">QUEUE&lowbar;SIZE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;DOCMEDIA</Emphasis>,
+<Emphasis remap="sf">MAX&lowbar;LINE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;BINS</Emphasis>, <Emphasis remap="sf">MAX&lowbar;GROUPS</Emphasis>, and <Emphasis remap="sf">MAX&lowbar;PRINTERS</Emphasis>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">ppr/ppr.h</Literal></Title>
+
+<Para>
+Defined here is the maximum number of <Emphasis remap="bf">-F</Emphasis> switches for <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/pprd.h</Literal></Title>
+
+<Para>
+In this file are a few parameters related to retrying printer faults and to
+the priority system.  The present values should prove satisfactory.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">papsrv/papsrv.h</Literal></Title>
+
+<Para>
+One might wish to edit this file in order to change the maximum number of
+PAP server names which may be advertise.  Keep in mind that the number of PAP
+server names might also be limited by your AppleTalk protocol stack.  In CAP,
+the limit is defined in the CAP sources in the file
+<Literal remap="tt">cap60/lib/cap/abpap.h</Literal>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">filter&lowbar;lp/filter&lowbar;lp.h</Literal></Title>
+
+<Para>
+One may desire to edit this file in order to change the paper size, margins
+and typefaces used by the line printer emulator.  Only monospace fonts are
+likely to give good results.  It is also possible to change the trigger values
+for selecting landscape rather than portrait mode.  Any change to the trigger
+values should be tested very thoroughly to ensure that pleasing results are
+obtained with input files of various formats.  Starting with version 1.20 of
+PPR, the lp filter has options which can be used to change these parameters
+without re-compiling.  These values are specified by using the <Emphasis remap="bf">ppr</Emphasis> <Emphasis remap="bf">-o</Emphasis>
+switch when submitting a print job.  The <Emphasis remap="bf">ppad switchset</Emphasis> command can be
+useful here, especially when the jobs are arriving through <Emphasis remap="bf">lprsrv</Emphasis>.  It is
+still necessary to edit <Literal remap="tt">include/filter&lowbar;lp.h</Literal> and re-compile if you wish
+to change the system-wide defaults.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/interface.h</Literal></Title>
+
+<Para>
+This include file defines the exit codes which printer interfaces should
+use.  It also describes the possible values of the fifth parameter to a printer
+interface which are also are possible values for the printer configuration file
+<Emphasis remap="sf">JobBreak:</Emphasis> line.  Most of the definitions in this file are repeated in
+bourne shell script form in the file <Literal remap="tt">interfaces/interface.sh</Literal> which is
+installed as <Literal remap="tt">/usr/ppr/lib/interface.sh</Literal>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">libppr/interfaces.c</Literal></Title>
+
+<Para>
+This file contains an array of structures which give the default values
+which should be use with each of the printer interface programs supplied with
+PPR when <Emphasis remap="sf">JobBreak:</Emphasis>, <Emphasis remap="sf">Feedback:</Emphasis>, or <Emphasis remap="sf">Codes:</Emphasis> lines are missing
+from printer configuration files.
+</Para>
+
+</Sect3>
+
+</Sect2>
+

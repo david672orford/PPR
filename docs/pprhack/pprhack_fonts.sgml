@@ -1,0 +1,267 @@
+<Sect1>
+
+<Sect2 id="fontsub">
+<Title>Font Substitution Configuration File</Title>
+
+<Para>
+This file resides in the directory <Literal remap="tt">/usr/ppr/lib</Literal>.  It is
+replaced whenever a new version of PPR is installed, so if you modify
+it you should keep a copy of your modifications elsewhere.
+</Para>
+
+<Para>
+The file contains a list of PostScript font names and possible substitute
+fonts.
+</Para>
+
+<Para>
+Any line that has ``<Literal remap="tt">&num;</Literal>'' or ``<Literal remap="tt">;</Literal>'' in the first column is a comment.
+Blank lines are ignored.  A font substitution record begins with the name of
+the font for which there are substitutes.  The name should start in column
+one and be on a line by
+itself.  The list of possible substitutes follows, one per line.  Each
+substitute font line should start with a space or tab.  You may list as many
+substitute fonts as you like.  The first substitute font to be found in the
+printer's PPD file, in the cache directories or in the index created with
+<Emphasis remap="bf">indexttf</Emphasis> will be used.
+</Para>
+
+<Para>
+Here is an example of four records which indicate that the IBM Courier fonts are
+suitable substitutes for the Adobe Courier fonts:
+</Para>
+
+<Para>
+
+<Screen>
+Courier
+IBMCourier
+Courier-Bold
+IBMCourier-Bold
+Courier-Oblique
+IBMCourier-Italic
+Courier-BoldOblique
+IBMCourier-BoldItalic
+</Screen>
+
+</Para>
+
+<Para>
+You have the option of specifying a PostScript transform matrix to be applied to
+the substitute font.  Generally this will be used to adjust the width.  The
+should appear on the substitute font line, after the substitute font name.  Here
+is an example:
+</Para>
+
+<Para>
+
+<Screen>
+Helvetica-Condensed
+Helvetica &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-Bold
+Helvetica-Bold &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-Oblique
+Helvetica-Oblique &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-BoldOblique
+Helvetica-BoldOblique &lsqb;0.80 0 0 1 0 0]
+</Screen>
+
+</Para>
+
+<Para>
+This approximates Helvetica Condensed by scaling Helvetica to 80&percnt; of
+its normal width.  The role of the other members of the matrix, refer to the
+PostScript language reference manual.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>MetaFont Modes Configuration File</Title>
+
+<Para>
+This file <Literal remap="tt">mfmodes.conf</Literal> is used by <Emphasis remap="bf">ppad</Emphasis> when setting the default
+filter options.  Specifically, the <Emphasis remap="bf">mfmode=</Emphasis> option is selected with the
+aid of this file.  The <Emphasis remap="bf">mfmode=</Emphasis> option is used by the
+DVI filter to select an appropriate MetaFont mode for a given printer.
+</Para>
+
+<Para>
+Before consulting this file, <Emphasis remap="bf">ppad</Emphasis> reads the printer's PPD file and extracts
+the values from the following lines:
+</Para>
+
+<Para>
+
+<Screen>
+*Product:
+*ModelName:
+*NickName:
+*DefaultResolution:
+</Screen>
+
+</Para>
+
+<Para>
+The extracted values are then compared to values on lines in the <Literal remap="tt">mfmodes.conf</Literal>
+file.  Each line in the <Literal remap="tt">mfmodes.conf</Literal> file has the following format:
+</Para>
+
+<Para>
+
+<Screen>
+<Emphasis remap="it">product</Emphasis>:<Emphasis remap="it">modelname</Emphasis>:<Emphasis remap="it">nickname</Emphasis>:<Emphasis remap="it">resolution</Emphasis>:<Emphasis remap="it">mfmode</Emphasis>
+</Screen>
+
+</Para>
+
+<Para>
+The file is read top to bottom until a match is found or the end is reached.
+The information from the PPD file is compared to the first four fields of each
+line.  A ``<Emphasis remap="sf">*</Emphasis>'' may be used as a wildcard in any or all of the first four fields.
+When a match is found, the value from the fifth field is used as the value for
+the default filter option <Emphasis remap="bf">mfmode=</Emphasis>.
+</Para>
+
+<Sect3>
+<Title>Identification by Product</Title>
+
+<Para>
+The <Emphasis remap="sf">*Product:</Emphasis> line from the PPD file generally identifies the manufacturer and
+model line of which the printer is a part.  Since all printers which use one
+product string generally use the same print mechanism, this parameter alone is
+usually enough to make selection of the correct MetaFont mode possible.  For
+this reason, most entries in the <Literal remap="tt">mfmodes.conf</Literal> file will have the <Emphasis remap="it">product</Emphasis>
+field filled in but the <Emphasis remap="it">modelname</Emphasis>, <Emphasis remap="it">nickname</Emphasis>, and <Emphasis remap="it">resolution</Emphasis> fields will
+all be ``<Emphasis remap="sf">*</Emphasis>''.
+</Para>
+
+<Para>
+For example, the following line:
+</Para>
+
+<Para>
+
+<Screen>
+LaserJet 4:*:*:*:ljfour
+</Screen>
+
+</Para>
+
+<Para>
+will match if the <Emphasis remap="sf">*Product:</Emphasis> line from the PPD file has a value of
+``<Emphasis remap="sf">(LaserJet 4)</Emphasis>''.  The fact that fields two through four contain astrisks indicates that any
+value is acceptable for product, modelname, and resolution.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by ModelName</Title>
+
+<Para>
+The GhostScript interpreter has a product string of ``Ghostscript''
+or ``Alladin GhostScript''.  Therefor, the printer must be identified by means of its PPD
+files <Emphasis remap="sf">*ModelName:</Emphasis> line.  Here are some reasonable configuration lines for
+printers driven by Ghostscript:
+</Para>
+
+<Para>
+
+<Screen>
+*:Dot Matrix 24 pin Ghostscript:*:*:NEChi
+*:HP LaserJet III Ghostscript:*:*:CanonCX
+*:HP DeskJet 500 Ghostscript:*:*:HPDeskJet
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by NickName</Title>
+
+<Para>
+In a PPD file obtained from Adobe or the printer's manufacture,
+the <Emphasis remap="sf">*NickName:</Emphasis> line is identical to the <Emphasis remap="sf">*ModelName:</Emphasis> line.
+You might change it if you make a special hacked-up copy of
+the PPD file for a particular printer.  For example, you might change it to
+``David's HP DeskJet 500 Ghostscript''.
+</Para>
+
+<Para>
+There are valid reasons for using a modified PPD file, but why changes to the
+PPD file should dictate a different MetaFont mode is hard to say.  (Changes to
+the ``*DefaultResolution:'' line are covered by the next section.)  Unless you
+know a good reason not to, you should always put a "*" in this field.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by Resolution</Title>
+
+<Para>
+Generally, you can just put ``<Emphasis remap="sf">*</Emphasis>'' in the <Emphasis remap="it">resolution</Emphasis> field.  There
+are however two possible reasons for filling in the value from the PPD file's
+<Emphasis remap="sf">*DefaultResolution:</Emphasis> line.
+</Para>
+
+<Para>
+One is if the printer's resolution can be changed.  A change in resolution
+requires a change in the MetaFont mode.  You might have several different PPD
+files for the same make and model of printer, one for each resolution.  Here is
+a (fictitous) example:
+</Para>
+
+<Para>
+
+<Screen>
+*:HP LaserJet III Ghostscript:*:300dpi:CanonCX
+*:HP LaserJet III Ghostscript 150DPI:*:150dpi:ljlo
+</Screen>
+
+</Para>
+
+<Para>
+The other reason for putting a value other than ``<Emphasis remap="sf">*</Emphasis>'' in the
+<Emphasis remap="it">resolution</Emphasis> field
+is if the line is one at the end of the file which is intened to to be a best
+guess for printers which have not matched any of the lines above.  These are
+some reasonable last resort lines:
+</Para>
+
+<Para>
+
+<Screen>
+*:*:*:300dpi:CanonCX
+*:*:*:600dpi:ljfour
+*:*:*:360dpi:NEChi
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Selecting MetaFont Mode Names</Title>
+
+<Para>
+The MetaFont mode names in the <Literal remap="tt">mfmodes.conf</Literal> file that comes with PPR are
+taken from the <Literal remap="tt">modes.mf</Literal> file maintained by Karl Berry.  A recent version
+of his <Literal remap="tt">modes.mf</Literal> file is distributed with the PPR source code, in the
+<Literal remap="tt">misc</Literal> directory.  His file defines a number of aliases for each mode.  When
+adding entries to PPR's <Literal remap="tt">mfmodes.conf</Literal> file you should try not to use two
+different names that both refer to the same mode in <Literal remap="tt">modes.mf</Literal> because that
+would result in the generation of duplicate sets of identical pk font files.
+The <Literal remap="tt">mfmodes.conf</Literal> file supplied with PPR always uses the first alias from
+Karl Berry's <Literal remap="tt">modes.mf</Literal> file which may be abtained from
+<Emphasis remap="bf">ftp://ftp.tug.org/tex/modes.mf</Emphasis>.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+</Sect1>
+

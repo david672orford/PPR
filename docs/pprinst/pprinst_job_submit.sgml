@@ -1,26 +1,23 @@
 <Sect1 id="job-submit">
-<Title>Submitting Jobs to PPR
-</Title>
+<Title>Submitting Jobs to PPR</Title>
 
-<Para>
-All jobs enter PPR's queue through the program <Emphasis remap="bf">ppr</Emphasis>. The LANMAN/X
-print processor script invokes <Emphasis remap="bf">ppr</Emphasis> as do the Macintosh print server,
-<Emphasis remap="bf">papsrv</Emphasis>, Samba and the LPR/LPD compatible server <Emphasis remap="bf">lprsrv</Emphasis>.
-</Para>
+<Para>All jobs enter PPR's queue through the program <program>ppr</program>.
+The LANMAN/X print processor script invokes <program>ppr</program> as do the
+Macintosh print server, <program>papsrv</program>, Samba and the LPR/LPD
+compatible server <program>lprsrv</program>.</Para>
 
-<Para>
-Unix users invoke <Emphasis remap="bf">ppr</Emphasis> (the program, not the spooler system)
-directly. To make this easier, <Literal remap="tt">/usr/bin/ppr</Literal> is a symbolic link to
-<Literal remap="tt">/usr/ppr/bin/ppr</Literal>.  For a complete description of <Emphasis remap="bf">ppr</Emphasis>'s
-options, see the ppr(1) man page.  A description of some of the more
-important ones follows.
-</Para>
+<Para>Unix users invoke <program>ppr</program> (the program, not the
+spooler system) directly. To make this easier, <Literal
+remap="tt">/usr/bin/ppr</Literal> is a symbolic link to <Literal
+remap="tt">/usr/ppr/bin/ppr</Literal>.  For a complete description of
+<program>ppr</program>'s options, see the ppr(1) man page.  A description of
+some of the more important ones follows.</Para>
 
 <Sect2>
 <Title>Simple Examples</Title>
 
 <Para>
-When invoking <Emphasis remap="bf">ppr</Emphasis>, the <Emphasis remap="bf">-d</Emphasis> switch may be used to specify the
+When invoking <program>ppr</program>, the <Emphasis remap="bf">-d</Emphasis> switch may be used to specify the
 destination, that is, a printer or group of printers.  For example:
 </Para>
 
@@ -33,7 +30,7 @@ $ ppr -d myprn report1.ps
 </Para>
 
 <Para>
-If <Emphasis remap="bf">ppr</Emphasis> is invoked without specifying the name of a file to print,
+If <program>ppr</program> is invoked without specifying the name of a file to print,
 it reads the file from stdin.  For example, we can print a document using PPR
 on a remote system using this command:
 </Para>
@@ -46,12 +43,11 @@ $ cat report1.ps | rsh cberry 'ppr -d hisprn'
 
 </Para>
 
-<Para>
-The first thing <Emphasis remap="bf">ppr</Emphasis> does is analyze the input file to determine
-whether it is PostScript or not, and if not, what it is.  If it is not
-PostScript, <Emphasis remap="bf">ppr</Emphasis> will attempt to convert it to PostScript before it
-is placed in the queue.  For example, ASCII text files can be printed:
-</Para>
+<Para>The first thing <program>ppr</program> does is analyze the input file
+to determine whether it is PostScript or not, and if not, what it is.  If it
+is not PostScript, <program>ppr</program> will attempt to convert it to
+PostScript before it is placed in the queue.  For example, ASCII text files
+can be printed:</Para>
 
 <Para>
 
@@ -74,7 +70,7 @@ such as duplex, or select paper trays.
 
 <Para>
 When submitting the job from the Unix shell, you just add the options to the
-<Emphasis remap="bf">ppr</Emphasis> command line.  When the job arrives through a network server such
+<program>ppr</program> command line.  When the job arrives through a network server such
 as Samba, <Emphasis remap="bf">papsrv</Emphasis>, or <Emphasis remap="bf">lprsrv</Emphasis> it is more difficult to select options.
 </Para>
 
@@ -121,7 +117,7 @@ PPD file, but you wish to make duplex printing the default.  On some printers
 you can use the front panel to select duplex, but PPR wouldn't know you had
 done this, it would believe the printer was operating in simplex mode, thus
 its printer accounting sheet counts would be thrown off.  Therefore, it would
-be better to invoke <Emphasis remap="bf">ppr</Emphasis> like this:
+be better to invoke <program>ppr</program> like this:
 </Para>
 
 <Para>
@@ -146,7 +142,7 @@ ordinary duplex mode if no such comments are found.
 
 <Para>
 PPR is capable of printing multiple copies of a job. It is also capable of
-printing collated copies.  The number of copies may be selected when <Emphasis remap="bf">ppr</Emphasis> is
+printing collated copies.  The number of copies may be selected when <program>ppr</program> is
 invoked:
 </Para>
 
@@ -189,7 +185,7 @@ forced to 1 if you do not specify it.
 
 <Para>
 You may wish to allow the number of copies desired to be specified in
-the document.  If you invoke <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-R copies</Emphasis> option, PPR will
+the document.  If you invoke <program>ppr</program> with the <Emphasis remap="bf">-R copies</Emphasis> option, PPR will
 read any <Emphasis remap="sf">&percnt;&percnt;Requirement:</Emphasis> comments which specify the number of
 copies or collating mode and obey them.  You might use this command:
 </Para>
@@ -328,7 +324,7 @@ will apply to all submission methods.
 <Para>
 Since Samba allows the administrator to choose any desired print command
 when creating a queue in <Literal remap="tt">smb.conf</Literal>, it is possible to give a queue
-a special <Emphasis remap="bf">ppr</Emphasis> command which includes the desired options.
+a special <program>ppr</program> command which includes the desired options.
 </Para>
 
 <Para>
@@ -343,7 +339,7 @@ is not recomended.  Use a switchset instead.
 <Title>Options for Jobs Received through <Emphasis remap="bf">Lprsrv</Emphasis></Title>
 
 <Para>
-There is no way to specify <Emphasis remap="bf">ppr</Emphasis> command line options in any of the
+There is no way to specify <program>ppr</program> command line options in any of the
 <Emphasis remap="bf">lprsrv</Emphasis> configuration files, so you must use switchsets to force the
 use of options.
 </Para>
@@ -353,7 +349,7 @@ However, certain options, such as the number of copies, can be selected by the
 client and passed to <Emphasis remap="bf">lprsrv</Emphasis> using the RFC 1179 protocol.  Some operating
 systems, such as OSF and SunOS/Solaris extend the protocol to allow for furthur
 options.  When <Emphasis remap="bf">lprsrv</Emphasis> receives these options it attempts to convert them
-into appropriate <Emphasis remap="bf">ppr</Emphasis> command line options.
+into appropriate <program>ppr</program> command line options.
 </Para>
 
 </Sect3>
@@ -378,7 +374,7 @@ programs that came with your system
 and replace them with the Uprint substitutes.  When a Uprint substitute
 program is used, if the requested print queue is one that belongs to the
 system spooler, the renamed origional program will be invoked.  If however
-the requested queue is a PPR queue, an appropriate command for <Emphasis remap="bf">ppr</Emphasis>
+the requested queue is a PPR queue, an appropriate command for <program>ppr</program>
 or <Emphasis remap="bf">ppop</Emphasis> will be created and run.
 </Para>
 
