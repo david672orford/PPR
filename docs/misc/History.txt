@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--27 August 2002.
+1.50a2, 27 February 2002--29 August 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7854,5 +7854,9 @@ the very start.
   by the new pprpopup_register.cgi, commented out most of the debugging
   puts commands.
 
+* pprpopup/ppr-popup: added code to set the session restart command to 
+  /bin/true.
 
+* libuprint/Makefile, uprint/Makefile: changed CC to LD and CFLAGS to
+  LDFLAGS when linking the executables.
 

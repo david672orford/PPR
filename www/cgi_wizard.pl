@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 16 August 2002.
+# Last modified 28 August 2002.
 #
 
 use 5.004;
@@ -36,6 +36,8 @@ $options->{wiz_imgdir} = "$options->{prefix}images/" if(!defined($options->{wiz_
 $options->{imgdir} = "" if(!defined($options->{imgdir}));
 $options->{imgheight} = 128 if(!defined($options->{imgheight}));
 $options->{imgwidth} = 128 if(!defined($options->{imgwidth}));
+$options->{height} = 430 if(!defined($options->{height}));
+$options->{padding} = 15 if(!defined($options{padding}));
 
 # Turn on table borders if we are running in debug mode.
 my $border = $options->{debug} ? 1 : 0;
@@ -163,7 +165,6 @@ $wizpage = $wizard_table->[$page];
 # side.
 my $title = H_($wizpage->{title});
 my $picture = $wizpage->{picture};
-#$picture = "missing.jpg" if(!defined($picture));
 my $picture_alt = $wizpage->{picture_alt};
 if(defined $picture && !defined($picture_alt))
     {
@@ -195,11 +196,13 @@ Vary: accept-language
 <form action="$ENV{SCRIPT_NAME}" method="POST">
 EndOfText1
 
+my $spacer_height = $options->{height} - (2 * $options->{padding});
+
 # Start the table which holds the decorative picture on the
 # left and the functional part of the form on the right.
 print <<"EndOfText2a";
-<TABLE BORDER=$border HEIGHT=85% WIDTH=100% cellpadding=15 cols=4>
-<tr height=400>
+<table border=$border width=100% cellpadding=$options->{padding} cols=4 cellspacing=0>
+<tr height=$spacer_height>
 <td width=1 align="left" valign="top">
 EndOfText2a
 
@@ -213,6 +216,7 @@ EndOfText2b
 print <<"EndOfText2c";
   </td>
 <td align=$align valign=$valign colspan=3>
+<img src="$options->{wiz_imgdir}pixel-clear.png" width=1 height=$spacer_height align="right" border=0>
 EndOfText2c
 
 print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
@@ -250,8 +254,8 @@ if($options->{debug} > 1)
 # the error text (if any) and the submit buttons
 # labeled "Back" and "Next".
 print <<"EndOfText2";
-</TABLE>
-<TABLE BORDER=$border HEIGHT="10%" WIDTH="100%" COLS=4 cellpadding=5>
+</table>
+<table border=$border width="100%" colls=4 cellpadding=5 cellspacing=0>
 <tr>
 <td colspan=3 height=80>
 EndOfText2
@@ -271,6 +275,8 @@ EndOfText4
 print <<"EndOfText6";
 </td>
 <td nowrap align="right" valign="bottom">
+<!-- This is for IE bug -->
+<input type="image" border="0" name="buggy" src="$options->{wiz_imgdir}pixel-clear.png">
 EndOfText6
 
 {
@@ -309,14 +315,14 @@ print "</form>\n";
 &cgi_debug_data() if($options->{debug});
 
 # Snap the window size to fit snugly around the document.
-print <<"Tail05";
-<script>
-if(document.width)
-	{
-	window.resizeTo(document.width + 20, document.height + 20);
-	}
-</script>
-Tail05
+#print <<"Tail05";
+#<script>
+#if(document.width)
+#	{
+#	window.resizeTo(document.width, document.height);
+#	}
+#</script>
+#Tail05
 
 # And this is the last of the HTML document.
 print <<"Tail10";

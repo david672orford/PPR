@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 10 May 2002.
+# Last modified 28 August 2002.
 #
 
 use 5.004;
@@ -34,6 +34,9 @@ my $title = shift;		# title for window
 my $load_function = shift;	# function to load properties
 my $save_function = shift;	# function to save properties
 my $max_per = shift;		# maximum number of tabs to show at one time
+my $options = shift;
+
+$options->{height} = 450 if(!defined($options->{height}));
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.
@@ -245,7 +248,7 @@ $valign = $DEFAULT_valign if(!defined($valign));
 # Start a table.  This table serves as a frame to contain
 # the text of the selected tab.
 {
-my $spacer_height = 400 - (2 * ($cellpadding - $DEFAULT_cellpadding));
+my $spacer_height = $options->{height} - (2 * ($cellpadding - $DEFAULT_cellpadding));
 print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
 <tr align=$align valign=$valign>
@@ -292,7 +295,12 @@ StartBottomTable
 if(defined($error))
     { print "<span class=\"alert\">", html($error), "</span>\n" }
 
-print "</td><td nowrap align=\"right\">\n";
+print <<"BottomTable2";
+</td>
+<td nowrap align="right">
+<!-- This is for IE bug -->
+<input type="image" border="0" name="buggy" src="../images/pixel-clear.png">
+BottomTable2
 
 # Print the bottom buttons.
 if($bottom eq 'Save')
@@ -327,14 +335,14 @@ TableEnd10
 &cgi_debug_data() if($debug);
 
 # Snap the window size to fit snugly around the document.
-print <<"Tail05";
-<script>
-if(document.width)
-	{
-	window.resizeTo(document.width + 20, document.height + 20);
-	}
-</script>
-Tail05
+#print <<"Tail05";
+#<script>
+#if(document.width)
+#	{
+#	window.resizeTo(document.width + 20, document.height + 20);
+#	}
+#</script>
+#Tail05
 
 # Emmit HTML to end the document
 print <<"Tail10";

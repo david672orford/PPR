@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 7 August 2002.
+# Last modified 29 August 2002.
 #
 
 HOMEDIR="?"
@@ -183,14 +183,17 @@ echo "Removing obsolete man pages..."
 
 MANDIR=/usr/local/man
 
-cd $MANDIR/man1
-rm -f UPRINT.1 uprint-*.1 xfm-ppr.1 xppr.1 xpprgrant.1
+if [ -d $MANDIR ]
+    then
+    cd $MANDIR/man1
+    rm -f UPRINT.1 uprint-*.1 xfm-ppr.1 xppr.1 xpprgrant.1
 
-cd $MANDIR/man8
-rm -f indexttf.8 lprsrv.8 olprsrv.8 ppr2samba.8 samba_submitter.8 ppuser.8 pprd.8 papsrv.8
+    cd $MANDIR/man8
+    rm -f indexttf.8 lprsrv.8 olprsrv.8 ppr2samba.8 samba_submitter.8 ppuser.8 pprd.8 papsrv.8
 
-cd $MANDIR/man5
-rm -f lw-messages.conf.5 mfmodes.conf.5 fontsub.conf.5 uprint-remote.conf.5
+    cd $MANDIR/man5
+    rm -f lw-messages.conf.5 mfmodes.conf.5 fontsub.conf.5 uprint-remote.conf.5
+    fi
 
 echo "Done."
 echo

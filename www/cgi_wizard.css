@@ -1,11 +1,11 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 16 August 2002.
+** Last modified 28 August 2002.
 */
 
 BODY {
 	background: #e0e0e0;
-	margin: 10px;
+	margin: 0px;
 	}
 
 INPUT.buttons { background: #B0B0B0 }
@@ -18,7 +18,7 @@ SPAN.label {
 	}
 
 /* This is for value which should like like form text
-   fields but aren't.
+   fields but aren't editabe.
    */
 SPAN.value { background: white;
 	border-style: solid; border-width: thin; border-color: black;
@@ -26,6 +26,20 @@ SPAN.value { background: white;
 
 /* This is for error messages. */
 SPAN.alert { color: blue }
+
+/* The user can enclose the content in <div class="compact">...</div> when
+   there is a lot of it.  The reduces the padding and margins to the bare 
+   miniumum.
+   */
+DIV.compact
+	{
+	margin: -10px;
+	}
+DIV.compact P {
+	margin-top: 0pt;
+	margin-bottom: 5pt;
+	font-size: 10pt;
+	}
 
 /* A DIV and SPAN of class "section" are used to enclose controls
    in a labeled box.

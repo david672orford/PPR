@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 May 2002.
+# Last modified 30 August 2002.
 #
 
 include ../Makefile.conf
@@ -63,7 +63,7 @@ all: $(TARGETS) $(DATA)
 	$(LIBCMD) ../libuprint.$(LIBEXT) $(LIBUPRINT_OBJS)
 
 uprint-newconf$(DOTEXE): uprint-newconf.$(OBJ) $(USELIBS)
-	$(CC) $(CFLAGS) -o uprint-newconf$(DOTEXE) uprint-newconf.$(OBJ) $(USELIBS) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o uprint-newconf$(DOTEXE) uprint-newconf.$(OBJ) $(USELIBS) $(INTLLIBS)
 
 #=== Install ================================================================
 
