@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--5 April 2002.
+1.50a2, 27 February 2002--10 April 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7610,5 +7610,8 @@ line was being parsed twice.
 * www/cgi_tabbed.css: made tabbed folder borders narrower.
 
 * www/images_src/, www/images/: reorganized and added www/images/Makefile
-  to generate some of the images automatically from their FIG files.
+  to generate some of the images automatically from their FIG files.  Added
+  FIG pictures for the test page and replaced the hand-drawn exclaim.png
+  with exclaim.fig.
+
 
