@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 5 August 2003.
 #
 
 #=============================================================================
@@ -78,12 +78,14 @@ directory ()
 	chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 	chmod $perms "$RPM_BUILD_ROOT$dir"
-	echo "%dir \"$dir\"">>$fileslist
+	echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$dir\"">>$fileslist
 	}
 
+#
 # Create the top-level PPR directories.  Note that we won't be able to change
 # owner and group if we are building an RPM package as a user other than
 # root or $USER_PPR.
+#
 for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 	do
 	if [ ! -d $RPM_BUILD_ROOT$dir ]
@@ -95,21 +97,25 @@ for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	done 
 
-echo "%dir \"$HOMEDIR\"">>$fileslist
-echo "%dir \"$SHAREDIR\"">>$fileslist
-echo "%dir \"$CONFDIR\"">>$fileslist
-echo "%dir \"$VAR_SPOOL_PPR\"">>$fileslist
+echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$HOMEDIR\"">>$fileslist
+echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$SHAREDIR\"">>$fileslist
+echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$CONFDIR\"">>$fileslist
+echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$VAR_SPOOL_PPR\"">>$fileslist
 
+#
 # We have to be more careful with this one since it is probably the 
 # system-wide temporary directory and we don't want to mess up its
-# permissions.e
-if [ ! -d $RPM_BUILD_ROOT$TEMPDIR ]
+# permissions.
+#
+# Yes, the test does check the real system, not the $RPM_BUILD_ROOT!
+#
+if [ ! -d $TEMPDIR ]
 	then
 	mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
 	chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
 	chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
-	echo "%dir \"$TEMPDIR\"">>$fileslist
+	echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$TEMPDIR\"">>$fileslist
 	fi
 
 # It is necessary to create empty configuration

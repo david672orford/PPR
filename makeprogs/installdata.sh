@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -74,7 +74,7 @@ while [ "$1" != "" ]
 
 		chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1
 
-		echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
+		echo "%attr(-,$USER_PPR,$GROUP_PPR) \"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
 	shift
 	done

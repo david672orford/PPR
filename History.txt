@@ -8695,6 +8695,9 @@ Misc. Enhancements
 * www/prn_control.cgi.perl: now prints large byte counts in kilobytes or
   megabytes.
 
+* No longer defines ppradmin in /etc/services if Xinetd is used.  This
+  makes building packages much easier.
+
 Internet Printing Protocol Work
 
 * ppr/ppr_main.c: added --print-id-to-fd.  This will be used by the IPP

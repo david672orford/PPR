@@ -26,13 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
 # This script identifies the installed Inetd (Berkely, Linux, or Xinetd) and
-# configures it to start PPR's lpr and http servers (though it may leave
-# then disabled).  This script needs some more work to support RPM.
+# configures it to start PPR's lpr and http servers (though it leaves the lpd
+# service disabled).  This script needs some more work to support RPM.
 #
 
 . ../makeprogs/paths.sh
@@ -175,6 +175,7 @@ service ppradmin
 {
 		disable = no
 		socket_type		= stream
+		port			= 15010
 		wait			= no
 		user			= $USER_PPRWWW
 		server			= $HOMEDIR/lib/ppr-httpd
@@ -186,14 +187,15 @@ END
 		}
 
 #==========================================================================
-
 # Make sure we have what we need to add the services to /etc/services.
+#==========================================================================
 file_ok $GETSERVBYNAME -x
 file_ok $SERVICES -w
 
 add_service printer 515
-add_service ppradmin 15010
 
+#==========================================================================
+# If we are using Xinetd, things are pretty easy.
 #==========================================================================
 ./puts "  Checking for \"/usr/sbin/xinetd\"..."
 if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
@@ -205,7 +207,7 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 		else
 		echo "  Creating $XINETD_PPR..."
 		xinetd_config $RPM_BUILD_ROOT$XINETD_PPR
-		../makeprogs/installconf config $XINETD_PPR
+		../makeprogs/installconf 'config(noreplace)' $XINETD_PPR
 		fi
 	exit 0
 	else
@@ -214,6 +216,7 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 
 #==========================================================================
 # See if we have what we need to run with plain old Inetd.
+#==========================================================================
 file_ok $INETD -x
 file_ok $INETD_CONF -w
 
@@ -245,6 +248,7 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 	inetd_type="basic"
 	fi
 
+add_service ppradmin 15010
 add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -77,7 +77,7 @@ if [ $squeeze != 0 ]
 	chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
 	fi
 
-echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
+echo "%attr(-,$USER_PPR,$GROUP_PPR) \"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
 
 exit 0
 

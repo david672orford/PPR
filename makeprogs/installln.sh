@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -95,6 +95,6 @@ if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 
-echo "\"$target\"" >>$MYDIR/../z_install_begin/installed_files_list
+echo "%attr(-,$USER_PPR,$GROUP_PPR) \"$target\"" >>$MYDIR/../z_install_begin/installed_files_list
 
 exit 0

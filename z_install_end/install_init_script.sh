@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 5 August 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -146,6 +146,7 @@ then
 		fi
 
 	# Install the principal script if it isn't already installed.
+	# !!! Maybe we should flag this as a configuration file. !!!
 	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
 	if [ $? -ne 0 ]
 		then

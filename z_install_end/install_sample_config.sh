@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 5 August 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -45,7 +45,7 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
 	else
 	echo " exists"
 		fi
-	../makeprogs/installconf.sh config $CONFDIR/acl/$f
+	../makeprogs/installconf.sh 'config(noreplace)' $CONFDIR/acl/$f
 	done
 
 #===========================================================================
@@ -58,13 +58,16 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
 	./puts "  $f..."
 	if [ ! -f $RPM_BUILD_ROOT$CONFDIR/$f ]
 		then
-	echo " copy $CONFDIR/$f.sample --> $CONFDIR/$f"
-	# Use Sed to copy it while removing the "Last modified" comment.
+		echo " copy $CONFDIR/$f.sample --> $CONFDIR/$f"
+		# Use Sed to copy it while removing the "Last modified" comment.
 		sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $RPM_BUILD_ROOT$CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
-	else
-	echo " exists"
+		else
+		echo " exists"
 		fi
-	../makeprogs/installconf.sh config $CONFDIR/$f
+	# Using 'config(noreplace)' in place of 'config' means that RPM will write the
+	# new config files as .rpmnew and leave the old ones in place rather than
+	# moving the old ones to .rpmsave and installing the new ones.
+	../makeprogs/installconf.sh 'config(noreplace)' $CONFDIR/$f
 	done
 
 exit 0

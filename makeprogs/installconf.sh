@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -70,7 +70,7 @@ while [ "$1" != "" ]
 		chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
 
 		# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
-		echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
+		echo "%attr(-,$USER_PPR,$GROUP_PPR) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 		fi
 	shift
 	done
