@@ -1,6 +1,6 @@
 #! /usr/lib/ppr/bin/ppr-tclsh
 #
-# Last modified 19 April 2002.
+# Last modified 5 September 2002.
 #
 
 # Name the command line parameters.

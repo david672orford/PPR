@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 15 August 2002.
+# Last modified 10 September 2002.
 #
 
 use lib "?";
