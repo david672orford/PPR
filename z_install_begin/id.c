@@ -44,11 +44,11 @@ extern int optind;
 
 int main(int argc, char *argv[])
     {
-    int opt_u=0, opt_g=0, opt_n=0;
+    int opt_n=0, opt_u=0, opt_g=0, opt_r=0;
     int c;
     uid_t uid;
     gid_t gid;
-    while((c = getopt(argc, argv, "ugn")) != -1)
+    while((c = getopt(argc, argv, "nugGr")) != -1)
 	{
 	switch(c)
 	    {
@@ -61,6 +61,12 @@ int main(int argc, char *argv[])
 	    case 'n':
 	    	opt_n = 1;
 	    	break;
+	    case 'G':
+	    	fprintf(stderr, "%s: not implemented\n", argv[0]);
+	    	return 1;
+	    case 'r':
+	    	opt_r = 1;
+	    	break;
 	    default:
 	    	return 1;
 	    }
@@ -72,8 +78,16 @@ int main(int argc, char *argv[])
 	return 1;
 	}
 
-    uid = geteuid();
-    gid = getegid();
+    if(opt_r)
+	{
+	uid = getuid();
+	gid = getgid();
+	}
+    else
+	{
+	uid = geteuid();
+	gid = getegid();
+	}
 
     if(opt_n)
 	{
@@ -108,8 +122,12 @@ int main(int argc, char *argv[])
 	return 0;
 	}
 
-    fprintf(stderr, "%s: not implemented\n", argv[0]);
-    return 1;
+    {
+    struct passwd *pw = getpwuid(uid);
+    struct group  *gr = getgrgid(gid);
+    printf("uid=%ld(%s) gid=%ld(%s)\n", (long)uid, pw?pw->pw_name:"?", (long)gid, gr?gr->gr_name:"?");
+    return 0;
+    }
     }
 
 

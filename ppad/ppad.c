@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 February 2003.
+** Last modified 6 March 2003.
 */
 
 /*
@@ -279,6 +279,8 @@ static int dispatch(const char *argv[])
 	    return media_delete(&argv[2]);
 	if(gu_strcasecmp(argv[1], "export") == 0)
 	    return media_export();
+	if(gu_strcasecmp(argv[1], "import") == 0)
+	    return media_import(&argv[2]);
 	}
 
     /* new printer default */

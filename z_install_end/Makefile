@@ -47,7 +47,7 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./fixup_obsolete.sh
 	./install_sample_config.sh
-	./install_mediadb.sh >/dev/null
+	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample
 	./install_atalk_links.tcl
 	./install_crontab.sh
 	./install_bin_links.sh

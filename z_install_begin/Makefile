@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 6 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=getpwnam$(DOTEXE) getgrnam$(DOTEXE)
+ALL=id$(DOTEXE) getpwnam$(DOTEXE) getgrnam$(DOTEXE)
 
 #=== Build ==================================================================
 

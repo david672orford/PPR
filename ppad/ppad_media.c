@@ -420,9 +420,6 @@ int media_delete(const char *argv[])
     char asciiz[sizeof(media.medianame)+2];
     char padded[sizeof(media.medianame)];
 
-    if( ! am_administrator() )
-	return EXIT_DENIED;
-
     printf(_("Media Name: "));
     get_answer(asciiz,sizeof(asciiz),argv,&index);
     ASCIIZ_to_padded(padded,asciiz,sizeof(padded));
@@ -489,5 +486,23 @@ int media_export(void)
     fclose(ffile);
     return EXIT_OK;
     } /* end of media_export() */
+
+/*
+** Import a file of ppad media commands.
+*/
+int media_import(const char *argv[])
+    {
+    const char *filename;
+
+    if( ! am_administrator() )
+	return EXIT_DENIED;
+
+    if(!(filename = argv[0]))
+	{
+	fputs(_("You must supply a filename.\n"), errors);
+	return EXIT_SYNTAX;
+	}
+
+    }
 
 /* end of file */

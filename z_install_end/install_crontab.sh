@@ -32,7 +32,7 @@
 . ../makeprogs/paths.sh
 
 ./puts "Making sure we are $USER_PPR..."
-if [ "`./id -un`" = "$USER_PPR" ]
+if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]
     then
     echo " OK"
     else
