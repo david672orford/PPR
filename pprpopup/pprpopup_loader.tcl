@@ -8,7 +8,6 @@
 
 package require Tcl 8.3
 package require Tk 8.3
-package require Iwidgets
 
 #
 # Define system-dependent routines to load and save the configuration data blob.
@@ -62,13 +61,26 @@ namespace eval pprpopup_loader {
 
     # Define a procedure for displaying error messages.
     proc display_error {message} {
+	catch { destroy .splash.scale }
+
 	frame .splash.error
-        message .splash.error.message -text $message -width 350
+	pack .splash.error -side top -fill both -expand 1
+
         button .splash.error.dismiss \
-        	-text "Remove This Message" \
+        	-text "Dismiss this Error Message" \
+		-background gray \
         	-command [list destroy .splash.error]
-	pack .splash.error -side top -fill x
-        pack .splash.error.message .splash.error.dismiss -side top -fill x
+	pack .splash.error.dismiss -side bottom -fill x
+
+        text .splash.error.text -width 20 -height 7 -wrap none
+	.splash.error.text insert end $message
+	scrollbar .splash.error.vsb -command ".splash.error.text yview"
+	scrollbar .splash.error.hsb -orient horizontal -command ".splash.error.text xview"
+	.splash.error.text configure -xscrollcommand ".splash.error.hsb set" -yscrollcommand ".splash.error.vsb set"
+	pack .splash.error.vsb -side right -fill y
+	pack .splash.error.hsb -side bottom -fill x
+        pack .splash.error.text -side left -fill both -expand 1
+
         tkwait window .splash.error
         }
 
@@ -225,14 +237,13 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 
     set window_x [expr ($screen_width - $window_width) / 2]
     set window_y [expr ($screen_height - $window_height) / 2]
-    puts "window_x=$window_x, window_y=$window_y"
     wm geometry .splash +$window_x+$window_y
     update
 
     # Load the configuration.
-    puts "Loading configuration..."
+    puts "*** Loading configuration..."
     if {[catch { set config [config_load] } errormsg]} {
-	puts "    $errormsg"
+	puts "***    $errormsg"
 	set config ""
 	}
 
@@ -247,36 +258,33 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
     # from, then put up a dialog box to prompt for it.
     if {![info exists ppr_root_url]} {
 
-	# If the main window isn't visiable, the MS-Windows port won't pop up the dialog.
-	# The X-Windows port will obscure the dialog with the splash screen.
-	wm geometry . 10x10+0+30
-	wm deiconify .
+	# First we must convert the splash screen into a normal window.
 	wm withdraw .splash
+	wm overrideredirect .splash 0
+	wm deiconify .splash
 
-	iwidgets::promptdialog .pd \
-		-modality application \
-		-title "PPR Popup Loader: Server Name Required" \
-		-labeltext "Enter the name of the PPR server to load PPR Popup from\nor enter a complete URL to load it from:"
-	.pd hide Apply
+	frame .splash.pd
+	label .splash.pd.label -text "Enter the name of the PPR server to load PPR Popup from\nor enter the URL of the top-level PPR directory."
+	entry .splash.pd.entry -background white
+	button .splash.pd.button -text "Go" -background gray -command [list destroy .splash.pd.button]
+	bind .splash.pd.entry <Return> [list .splash.pd.button invoke]
+	bind .splash.pd.entry <space> {}
 
-	set x [expr $window_x - 50]
-	set y [expr $window_y - 50]
-	wm geometry .pd +$x+$y
-	raise .pd
+	pack .splash.pd -side top -fill x
+	pack .splash.pd.label -side top -fill x
+	pack .splash.pd.entry -side left -fill x -expand 1 -padx 5 -pady 5
+	pack .splash.pd.button -side left -padx 5 -pady 5
+	focus .splash.pd.entry
+	tkwait window .splash.pd.button
 
-	if {![.pd activate]} {
-	    puts "Aborting..."
-	    exit 1
-	    }
+	.splash.pd configure -background #E0E0E0
+	.splash.pd.label configure -background #E0E0E0 -foreground #505050
+	.splash.pd.entry configure -state disabled -background #C0C0C0 -foreground #505050
+	set ::ppr_root_url [.splash.pd.entry get]
 
-	set ::ppr_root_url [.pd get]
 	if {![regexp {^http://} $ppr_root_url]} {
 	    set ppr_root_url "http://$ppr_root_url:15010/"
 	    }
-	destroy .pd
-
-	wm withdraw .
-	wm deiconify .splash
 	}
 
     # Add a progress bar.
