@@ -140,7 +140,8 @@ int make_switchset_line(char *line, const char *argv[]);
 void print_switchset(char *switchset);
 int print_wrapped(const char *deffiltopts, int starting_column);
 char *list_to_string(const char *argv[]);
-
+int exception_to_exitcode(int exception_code);
+	
 /* functions in ppad_filt.c */
 void deffiltopts_open(void);
 int deffiltopts_add_ppd(const char group_name[], const char printer_name[], const char ppd_name[], const char *InstalledMemory);

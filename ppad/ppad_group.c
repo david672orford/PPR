@@ -426,27 +426,17 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 
 		/* Copy all the remaining lines. */
 		do	{
-			/*
-			** If it is a printer line, make sure it is not the
-			** printer we think we are adding.  If it is not,
-			** call deffiltopts_add_printer() so it can consider
-			** its PPD file.
-			*/
 			if((ptr = lmatchp(confline, "Printer:")))
 				{
-				if(do_add)								/* If we are adding printers, */
-					{
-					for(x=1; argv[x]; x++)				/* check for match with any we are adding. */
-						{
-						if(strcmp(ptr, argv[x]) == 0)
-							gu_Throw(_("%d Printer \"%s\" is already a member of \"%s\".\n"), EXIT_ALREADY, argv[x], group);
-						queueinfo_add_printer(qobj, ptr);
-						count++;
-						}
-					}
-				else									/* otherwise just delete it blindly */
-					{
+				if(!do_add)				/* If we are adding, just delete it. */
 					continue;
+
+				for(x=1; argv[x]; x++)	/* Is this the same as one we are adding? */
+					{
+					if(strcmp(ptr, argv[x]) == 0)
+						gu_Throw(_("%d Printer \"%s\" is already a member of \"%s\".\n"), EXIT_ALREADY, argv[x], group);
+					queueinfo_add_printer(qobj, ptr);
+					count++;
 					}
 				}
 
@@ -454,6 +444,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 			else if(lmatch(confline, "DefFiltOpts:"))
 				continue;
 
+			/* Other lines we keep. */
 			conf_printf("%s\n", confline);
 			} while(confread());
 
@@ -472,8 +463,6 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 			conf_printf("DefFiltOpts: %s\n", cp);
 		}
 
-		deffiltopts_close();
-
 		/* See if adding our printer will make the group too big. */
 		if(count > MAX_GROUPSIZE)
 			gu_Throw(_("%d Group \"%s\" would have %d members, only %d are allowed.\n"), EXIT_OVERFLOW, group, count, MAX_GROUPSIZE);
@@ -488,15 +477,9 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 		}
 	gu_Catch
 		{
-		confabort();
+		confabort();		/* roll back the changes */
 		fprintf(errors, "%s\n", gu_exception);
-		switch(gu_exception_code)
-			{
-			case EEXIST:
-				return EXIT_NOTFOUND;
-			default:
-				return EXIT_INTERNAL;
-			}
+		return exception_to_exitcode(gu_exception_code);
 		}
 
 	/* necessary because pprd keeps track of mounted media */
@@ -572,13 +555,7 @@ int group_remove_internal(const char *group, const char *member)
 		{
 		confabort();
 		fprintf(errors, "%s\n", gu_exception);
-		switch(gu_exception_code)
-			{
-			case EEXIST:
-				return EXIT_NOTFOUND;
-			default:
-				return EXIT_INTERNAL;
-			}
+		return exception_to_exitcode(gu_exception_code);
 		}
 
 	if(found)
@@ -744,27 +721,42 @@ int group_deffiltopts_internal(const char *group)
 		return EXIT_BADDEST;
 		}
 
-	deffiltopts_open();
-
-	/* Modify the group's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "Printer:"))
+	{
+	void *qobj = NULL;
+	const char *p;
+	gu_Try {
+		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
+		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_debug_level(qobj, debug_level);
+			
+		/* Modify the group's configuration file. */
+		while(confread())
 			{
-			char *p = &confline[8];
-			p += strspn(p, " \t");
-			deffiltopts_add_printer(group, p);
-			}
+			if(lmatch(confline, "DefFiltOpts:"))
+				continue;
 
-		if(!lmatch(confline, "DefFiltOpts:"))
+			if((p = lmatchp(confline, "Printer:")))
+				queueinfo_add_printer(qobj, p);
+	
 			conf_printf("%s\n", confline);
+			}
+	
+		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
+			conf_printf("DefFiltOpts: %s\n", p);
+
+		confclose();
 		}
+	gu_Final {
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch {
+		confabort();
+		fprintf(errors, "%s\n", gu_exception);
+		return exception_to_exitcode(gu_exception_code);
+		}
+	}
 
-	conf_printf("DefFiltOpts: %s\n", deffiltopts_line());
-
-	deffiltopts_close();
-
-	confclose();
 	return EXIT_OK;
 	} /* end of group_deffiltopts_internal() */
 

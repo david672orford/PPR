@@ -1713,18 +1713,9 @@ int printer_ppd(const char *argv[])
 			queueinfo_delete(qobj);
 		}
 	gu_Catch {
-
-		/* roll-back the changes */
 		confabort();
-
 		fprintf(errors, "%s\n", gu_exception);
-		switch(gu_exception_code)
-			{
-			case EEXIST:
-				return EXIT_NOTFOUND;
-			default:
-				return EXIT_INTERNAL;
-			}
+		return exception_to_exitcode(gu_exception_code);
 		}
 	
 	/* Tell pprd we have changed the printer's configuration so that
@@ -2471,22 +2462,22 @@ int printer_deffiltopts(const char *argv[])
 
 	{
 	void *qobj = NULL;
+	const char *p;
 	gu_Try {
-		qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
+		qobj = queueinfo_new_load_config(QUEUEINFO_PRINTER, printer);
+		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_debug_level(qobj, debug_level);
 
 		/* Modify the printer's configuration file. */
 		while(confread())
 			{
 			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
 				continue;
-			conf_printf("%s\n",confline);
+			conf_printf("%s\n", confline);
 			}
 
-		{
-		const char *cp;
-		if((cp = queueinfo_computedDefaultFilterOptions(qobj)))
-			conf_printf("DefFiltOpts: %s\n", cp);
-		}
+		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
+			conf_printf("DefFiltOpts: %s\n", p);
 
 		confclose();
 		}
@@ -2497,13 +2488,7 @@ int printer_deffiltopts(const char *argv[])
 	gu_Catch {
 		confabort();
 		fprintf(errors, "%s\n", gu_exception);
-		switch(gu_exception_code)
-			{
-			case EEXIST:
-				return EXIT_NOTFOUND;
-			default:
-				return EXIT_INTERNAL;
-			}
+		return exception_to_exitcode(gu_exception_code);
 		}
 	}
 
@@ -2544,10 +2529,9 @@ int printer_ppdopts(const char *argv[])
 	const char function[] = "printer_ppdopts";
 	const char *printer;				/* printer whose configuration should be edited */
 	const char **answers = (const char **)NULL;
+
 	char *PPDFile = (char*)NULL;		/* name of PPD file to open */
 	char *InstalledMemory = (char*)NULL;
-	char *ppdline;						/* a line read from the PPD file */
-	char *ui_open;						/* the UI section we are int, NULL otherwise */
 	int ui_open_mrlen;
 	char *ptr;
 	unsigned int next_value;
@@ -2567,9 +2551,7 @@ int printer_ppdopts(const char *argv[])
 
 	/* Are there answers on the command line? */
 	if(argv[1])
-		{
 		answers = &argv[1];
-		}
 
 	/* Set whole values array to NULL so we will later know what we must gu_free(). */
 	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
@@ -2585,7 +2567,6 @@ int printer_ppdopts(const char *argv[])
 	{
 	void *ppd_obj = NULL;
 	gu_Try {
-
 		/*
 		** Copy the existing printer configuration file, discarding
 		** "PPDOpt:" and "DefFiltOpts:" lines and noting which
@@ -2610,23 +2591,22 @@ int printer_ppdopts(const char *argv[])
 	
 		/* If there was no "PPDFile:" line, we can't continue. */
 		if(!PPDFile)
-			{
-			fprintf(errors, _("The printer \"%s\" has no \"PPDFile:\" line in its configuration file.\n"), printer);
-			confabort();
-			return EXIT_BADDEST;
-			}
-	
-		/* Open the PPD file. */
-		ppd_obj = ppdobj_new(PPDFile);
+			gu_Throw(_("The printer \"%s\" has no \"PPDFile:\" line in its configuration file."), printer);
 	
 		/*
 		** Read the PPD file, ask the questions, and
 		** generate "PPDOpts:" lines.
 		*/
-		ui_open = (char*)NULL;
+		{
+		char *ppdline;
+		char *ui_open = (char*)NULL;		/* the UI section we are int, NULL otherwise */
+
+		ppd_obj = ppdobj_new(PPDFile);
 		next_value = 0;
+
 		if(!answers)
 			putchar('\n');
+
 		while((ppdline = ppdobj_readline(ppd_obj)))
 			{
 			if((ptr = lmatchp(ppdline, "*OpenUI")))
@@ -2799,7 +2779,7 @@ int printer_ppdopts(const char *argv[])
 				ui_open = (char*)NULL;
 				}
 			} /* end of PPD reading loop */
-	
+
 		/* Sanity check. */
 		if(ui_open)
 			{
@@ -2809,20 +2789,24 @@ int printer_ppdopts(const char *argv[])
 	
 		/* Emmit a new "DefFiltOpts:" line. */
 		{
-		void *obj = NULL;
+		void *qobj = NULL;
 		const char *cp;
 		gu_Try {
-			obj = queueinfo_new(QUEUEINFO_PRINTER, printer);
-			queueinfo_add_hypothetical_printer(obj, printer, PPDFile, InstalledMemory);
-			if((cp = queueinfo_computedDefaultFilterOptions(obj)))
+			qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
+			queueinfo_set_warnings_file(qobj, errors);
+			queueinfo_set_debug_level(qobj, debug_level);
+			queueinfo_add_hypothetical_printer(qobj, printer, PPDFile, InstalledMemory);
+			if((cp = queueinfo_computedDefaultFilterOptions(qobj)))
 				conf_printf("DefFiltOpts: %s\n", cp);
+			}
 		gu_Final {
-			if(obj)
-				queueinfo_delete(obj);
+			if(qobj)
+				queueinfo_delete(qobj);
 			}
 		gu_Catch {
 			gu_ReThrow();
 			}
+		}
 		}
 		
 		/* Close the new configuration file and move it into place. */
@@ -2835,13 +2819,7 @@ int printer_ppdopts(const char *argv[])
 	gu_Catch {
 		confabort();
 		fprintf(errors, "%s\n", gu_exception);
-		switch(gu_exception_code)
-			{
-			case EEXIST:
-				return EXIT_NOTFOUND;
-			default:
-				return EXIT_INTERNAL;
-			}
+		return exception_to_exitcode(gu_exception_code);
 		}
 	}
 

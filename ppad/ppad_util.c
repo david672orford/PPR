@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <errno.h>
 #ifdef HAVE_SPAWN
 #include <spawn.h>
 #endif
@@ -337,5 +338,20 @@ char *list_to_string(const char *argv[])
 
 	return string;
 	} /* end of list_to_string */
+
+/*
+ * This function takes a value of gu_exception_code and converts it to 
+ * an exit code from util_exits.h.
+ */
+int exception_to_exitcode(int exception_code)
+	{
+	switch(exception_code)
+		{
+		case EEXIST:
+			return EXIT_NOTFOUND;
+		default:
+			return EXIT_INTERNAL;
+		}
+	}
 
 /* end of file */
