@@ -99,9 +99,9 @@ int yywrap(void)
 %%
 
 <INITIAL>^\*FaxSupport:[ \t]* { BEGIN FAX; }
-<FAX>[^ \t\n]+		{ if(printer->FaxSupport == (char*)NULL) /* 1st one only */
+<FAX>[^ \t\r\n]+	{ if(printer->FaxSupport == (char*)NULL) /* 1st one only */
 				printer->FaxSupport = gu_strdup(yytext); }
-<FAX>\n                 { BEGIN INITIAL; }
+<FAX>[\r\n]             { BEGIN INITIAL; }
 
 <INITIAL>^\*LanguageLevel:[ \t]*["] { BEGIN LANGLEV; }
 <LANGLEV>[0-9]+         { if(printer->LanguageLevel == 0)	/* 1st one only */
@@ -124,7 +124,7 @@ int yywrap(void)
 <FREEVM>["]             { BEGIN INITIAL; }
 
 <INITIAL>^\*VMOption[ \t]+ { BEGIN VMOPT; }
-<VMOPT>[^ \t\n/:]+	{
+<VMOPT>[^ \t\r\n/:]+	{
 			/* If there was a PPDOpt: line in the printer
 			   configuration file for *InstalledMemory and it
 			   matches this *VMOption line, */
@@ -133,25 +133,25 @@ int yywrap(void)
 			else
 				{ BEGIN INITIAL; }
 			}
-<VMOPT2>[^"\n]+["]	{ BEGIN VMOPT3; }
+<VMOPT2>[^"\r\n]+["]	{ BEGIN VMOPT3; }
 <VMOPT3>[0-9]+		{ if( printer->VMOptionFreeVM == 0 )
 				printer->VMOptionFreeVM = atoi(yytext); }
 
 <INITIAL>^\*DefaultResolution:[ \t]* { BEGIN RES; }
-<RES>[^ \t\n]+		{ if(printer->Resolution==(char*)NULL)
-				printer->Resolution=gu_strdup(yytext); }
+<RES>[^ \t\r\n]+	{ if(printer->Resolution==(char*)NULL)
+			printer->Resolution=gu_strdup(yytext); }
 
-<INITIAL>^\*Font[ \t\n]+	{ BEGIN FONT; }
-<FONT>[^:\n]+			{ BEGIN FONTJUNK;
-				add_font(yytext); }
-<FONTJUNK>.*			{ /* discard it */ }
+<INITIAL>^\*Font[ \t]+	{ BEGIN FONT; }
+<FONT>[^:\r\n]+		{ BEGIN FONTJUNK;
+			add_font(yytext); }
+<FONTJUNK>.*		{ /* discard it */ }
 
 <INITIAL>^\*TTRasterizer:[ \t]* { BEGIN TTRAS; }
-<TTRAS>[^ \t\n]+	{ if(printer->TTRasterizer == (char*)NULL)
+<TTRAS>[^ \t\r\n]+	{ if(printer->TTRasterizer == (char*)NULL)
 			    printer->TTRasterizer = gu_strdup(yytext); }
 
 <INITIAL>^\*Include:[ \t]*["]	{ BEGIN INCLUDE; }
-<INCLUDE>[^"\n]*		{
+<INCLUDE>[^"\r\n]*		{
 	char *ifname;		/* include file name */
 
 	if(++ppd_nest_level >= MAX_PPD_NEST)

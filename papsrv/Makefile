@@ -1,6 +1,6 @@
 #
-# mouse:~src/ppr/papsrv/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# mouse:~ppr/src/papsrv/Makefile
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 February 2003.
+# Last modified 10 November 2004.
 #
 
 include ../Makefile.conf
@@ -55,7 +55,7 @@ OBJS1=papsrv.$(OBJ) \
 	../libgu.$(LIBEXT) \
 	../libpprdb.$(LIBEXT)
 papsrv$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(LIB_LEX) $(ATALKLIBS) $(DBLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(LIB_LEX) $(ATALKLIBS) $(DBLIBS) $(ZLIBLIBS)
 	$(CHMOD) 6755 papsrv$(DOTEXE)
 
 # This one module might need extra flags to find the AppleTalk library 
