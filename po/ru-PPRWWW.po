@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-08-06 20:43-0400\n"
+"POT-Creation-Date: 2003-08-08 18:41-0400\n"
 "PO-Revision-Date: 2003-02-26 16:52-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -151,17 +151,17 @@ msgid "Printer or group for which \"%s\" is an alias:"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:85 ../www/grp_properties.cgi.perl:87
-#: ../www/prn_properties.cgi.perl:397
+#: ../www/prn_properties.cgi.perl:402
 msgid "Switchset"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:87 ../www/grp_properties.cgi.perl:89
-#: ../www/prn_properties.cgi.perl:399
+#: ../www/prn_properties.cgi.perl:405
 msgid "Switchset:"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:99 ../www/grp_properties.cgi.perl:101
-#: ../www/prn_properties.cgi.perl:411
+#: ../www/prn_properties.cgi.perl:417
 msgid "Samba"
 msgstr ""
 
@@ -170,22 +170,22 @@ msgid "Share with Samba (provided Samba is prepared)"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:107 ../www/grp_properties.cgi.perl:109
-#: ../www/prn_properties.cgi.perl:419
+#: ../www/prn_properties.cgi.perl:426
 msgid "Prototype Share:"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:113 ../www/grp_properties.cgi.perl:115
-#: ../www/prn_properties.cgi.perl:425
+#: ../www/prn_properties.cgi.perl:432
 msgid "Override Win95 driver name:"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:117 ../www/grp_properties.cgi.perl:119
-#: ../www/prn_properties.cgi.perl:429
+#: ../www/prn_properties.cgi.perl:436
 msgid "Assign to virtual server (Samba setup required):"
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:124 ../www/grp_properties.cgi.perl:126
-#: ../www/prn_properties.cgi.perl:436
+#: ../www/prn_properties.cgi.perl:443
 msgid ""
 "Note that if the Samba configuration file smb.conf has not been edited as "
 "described in\n"
@@ -193,7 +193,7 @@ msgid ""
 msgstr ""
 
 #: ../www/alias_properties.cgi.perl:139 ../www/grp_properties.cgi.perl:141
-#: ../www/prn_properties.cgi.perl:607
+#: ../www/prn_properties.cgi.perl:617
 msgid "Other"
 msgstr "Другие"
 
@@ -615,13 +615,13 @@ msgstr ""
 msgid "Rotate Through Members:"
 msgstr ""
 
-#: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:96
-#: ../www/prn_properties.cgi.perl:486 ../www/prn_properties.cgi.perl:610
+#: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:97
+#: ../www/prn_properties.cgi.perl:495 ../www/prn_properties.cgi.perl:621
 msgid "no"
 msgstr "нет"
 
-#: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:96
-#: ../www/prn_properties.cgi.perl:486 ../www/prn_properties.cgi.perl:610
+#: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:97
+#: ../www/prn_properties.cgi.perl:495 ../www/prn_properties.cgi.perl:621
 msgid "yes"
 msgstr "да"
 
@@ -1344,307 +1344,307 @@ msgstr ""
 msgid "Interface"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:85
+#: ../www/prn_properties.cgi.perl:86
 msgid "Printer interface program:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:88
+#: ../www/prn_properties.cgi.perl:89
 msgid "Printer address:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:91
+#: ../www/prn_properties.cgi.perl:92
 msgid "Interface options:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:94
+#: ../www/prn_properties.cgi.perl:95
 msgid "Does feedback (2-way communication) work?"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:96 ../www/prn_properties.cgi.perl:111
-#: ../www/prn_properties.cgi.perl:123
+#: ../www/prn_properties.cgi.perl:97 ../www/prn_properties.cgi.perl:112
+#: ../www/prn_properties.cgi.perl:124
 msgid "default"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:109
+#: ../www/prn_properties.cgi.perl:110
 msgid "Jobbreak method:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:112
+#: ../www/prn_properties.cgi.perl:113
 msgid "control-d"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:113
+#: ../www/prn_properties.cgi.perl:114
 msgid "pjl"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:114
+#: ../www/prn_properties.cgi.perl:115
 msgid "signal"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:115
+#: ../www/prn_properties.cgi.perl:116
 msgid "signal/pjl"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:116
+#: ../www/prn_properties.cgi.perl:117
 msgid "newinterface"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:117
+#: ../www/prn_properties.cgi.perl:118
 msgid "none"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:118
+#: ../www/prn_properties.cgi.perl:119
 msgid "save/restore"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:121
+#: ../www/prn_properties.cgi.perl:122
 msgid "Character code compatibility:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:124
+#: ../www/prn_properties.cgi.perl:125
 msgid "Clean7Bit"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:125
+#: ../www/prn_properties.cgi.perl:126
 msgid "Clean8Bit"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:126
+#: ../www/prn_properties.cgi.perl:127
 msgid "Binary"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:127
+#: ../www/prn_properties.cgi.perl:128
 msgid "TBCP"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:128
+#: ../www/prn_properties.cgi.perl:129
 msgid "UNKNOWN"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:133
+#: ../www/prn_properties.cgi.perl:134
 msgid "No interface is selected!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:135
+#: ../www/prn_properties.cgi.perl:136
 msgid "The Printer Address is blank!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:144 ../www/prn_properties.cgi.perl:629
+#: ../www/prn_properties.cgi.perl:145 ../www/prn_properties.cgi.perl:640
 msgid "PPD"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:158
+#: ../www/prn_properties.cgi.perl:159
 msgid "Current PPD File (by filename):"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:163
+#: ../www/prn_properties.cgi.perl:164
 msgid "Available PPD Files (by printer description):"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:197
+#: ../www/prn_properties.cgi.perl:198
 msgid "No PPD file is selected!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:206 ../www/ppd_select.pl:147
+#: ../www/prn_properties.cgi.perl:207 ../www/ppd_select.pl:147
 msgid "RIP"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:229
+#: ../www/prn_properties.cgi.perl:231
 msgid "The PPD file does not call for a raster image processor."
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:234 ../www/prn_properties.cgi.perl:252
+#: ../www/prn_properties.cgi.perl:236 ../www/prn_properties.cgi.perl:254
 msgid "Raster Image Processor:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:236 ../www/prn_properties.cgi.perl:257
+#: ../www/prn_properties.cgi.perl:238 ../www/prn_properties.cgi.perl:259
 msgid "Output Language:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:238 ../www/prn_properties.cgi.perl:262
+#: ../www/prn_properties.cgi.perl:240 ../www/prn_properties.cgi.perl:264
 msgid "Options:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:271
+#: ../www/prn_properties.cgi.perl:273
 msgid "Incomplete custom RIP settings."
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:294
+#: ../www/prn_properties.cgi.perl:296
 msgid "Features"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:296
+#: ../www/prn_properties.cgi.perl:299
 msgid "Optional printer features:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:341
+#: ../www/prn_properties.cgi.perl:344
 msgid "Bins"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:343
+#: ../www/prn_properties.cgi.perl:347
 msgid "Bins for forms management purposes:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:355
+#: ../www/prn_properties.cgi.perl:359
 #, c-format
 msgid "%s -- %s"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:362
+#: ../www/prn_properties.cgi.perl:366
 msgid " (not listed in PPD file)"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:372
+#: ../www/prn_properties.cgi.perl:376
 msgid "Alerts"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:375
+#: ../www/prn_properties.cgi.perl:380
 msgid "Alert method:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:377
+#: ../www/prn_properties.cgi.perl:382
 msgid "mail"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:380
+#: ../www/prn_properties.cgi.perl:385
 msgid "Alert frequency:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:382 ../www/prn_properties.cgi.perl:610
+#: ../www/prn_properties.cgi.perl:387 ../www/prn_properties.cgi.perl:621
 msgid "never"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:383
+#: ../www/prn_properties.cgi.perl:388
 msgid "after"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:384
+#: ../www/prn_properties.cgi.perl:389
 msgid "every"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:386
+#: ../www/prn_properties.cgi.perl:391
 msgid "errors"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:389
+#: ../www/prn_properties.cgi.perl:394
 msgid "Alert address:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:415
+#: ../www/prn_properties.cgi.perl:422
 msgid "Share with Samba"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:451
+#: ../www/prn_properties.cgi.perl:458
 msgid "AppleTalk"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:455
+#: ../www/prn_properties.cgi.perl:463
 msgid "Share with AppleTalk PAP"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:459
+#: ../www/prn_properties.cgi.perl:467
 msgid "Share As:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:470
+#: ../www/prn_properties.cgi.perl:478
 msgid "Limits"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:473
+#: ../www/prn_properties.cgi.perl:482
 msgid "Limits Enforced Before Printing"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:475
+#: ../www/prn_properties.cgi.perl:484
 msgid "Limit Kilobytes"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:476 ../www/prn_properties.cgi.perl:481
+#: ../www/prn_properties.cgi.perl:485 ../www/prn_properties.cgi.perl:490
 msgid "Lower limit:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:477 ../www/prn_properties.cgi.perl:482
+#: ../www/prn_properties.cgi.perl:486 ../www/prn_properties.cgi.perl:491
 msgid "Upper limit:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:480
+#: ../www/prn_properties.cgi.perl:489
 msgid "Limit Pages"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:486
+#: ../www/prn_properties.cgi.perl:495
 msgid "Grayscale documents OK:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:492
+#: ../www/prn_properties.cgi.perl:501
 msgid "Limits Enforced During Printing"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:495
+#: ../www/prn_properties.cgi.perl:504
 msgid "Per-page time limit (in seconds):"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:506
+#: ../www/prn_properties.cgi.perl:515
 msgid "Userparams"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:508
+#: ../www/prn_properties.cgi.perl:518
 msgid "PostScript Interpreter Userparams Settings:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:610
+#: ../www/prn_properties.cgi.perl:621
 msgid "always"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:612
+#: ../www/prn_properties.cgi.perl:623
 msgid "Print banner page"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:614
+#: ../www/prn_properties.cgi.perl:625
 msgid "Print trailer page"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:619
+#: ../www/prn_properties.cgi.perl:630
 msgid "Monetary Charge for Printing on this Printer"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:620
+#: ../www/prn_properties.cgi.perl:631
 msgid "Per duplex sheet:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:621
+#: ../www/prn_properties.cgi.perl:632
 msgid "Per simplex sheet:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:625
+#: ../www/prn_properties.cgi.perl:636
 msgid "Output order:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:627
+#: ../www/prn_properties.cgi.perl:638
 msgid "Normal"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:628
+#: ../www/prn_properties.cgi.perl:639
 msgid "Reverse"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:633
+#: ../www/prn_properties.cgi.perl:644
 msgid "Passthru printer languages:"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:638
+#: ../www/prn_properties.cgi.perl:649
 msgid "The charge per duplex sheet is not valid!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:640
+#: ../www/prn_properties.cgi.perl:651
 msgid "The charge per simplex sheet is not valid!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:642
+#: ../www/prn_properties.cgi.perl:653
 msgid ""
 "Both the duplex charge and the simplex charge must be set or neither must be "
 "set!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:1065
+#: ../www/prn_properties.cgi.perl:1076
 #, c-format
 msgid "PPR: Printer Properties: %s"
 msgstr ""

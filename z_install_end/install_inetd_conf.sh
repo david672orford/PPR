@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 August 2003.
+# Last modified 8 August 2003.
 #
 
 #
@@ -191,19 +191,24 @@ END
 		}
 
 #==========================================================================
-# Make sure we have what we need to add services to /etc/services.
+# /etc/services
 #==========================================================================
+
+# Make sure we have what we need to add services to /etc/services.
 file_ok $GETSERVBYNAME -x
 file_ok $SERVICES -w
 
 # Add the standard printer service if it isn't present already.
 add_service printer 515
 
+# Add the PPR web managment port.
+add_service ppradmin 15010
+
 #==========================================================================
 # If we are using Xinetd, things are pretty easy.
 #==========================================================================
 ./puts "  Checking for \"$XINETD\"..."
-if [ -f "$XINETD" -a -d "$XINETD_CONF" ]
+if [ -x "$XINETD" -a -f "$XINETD_CONF" ]
 	then
 	echo " found, assuming it is what you are using..."
 
@@ -272,7 +277,6 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 	inetd_type="basic"
 	fi
 
-add_service ppradmin 15010
 add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
 

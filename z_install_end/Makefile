@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 8 August 2003.
 #
 
 include ../Makefile.conf
@@ -53,14 +53,20 @@ install: $(ALL)
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh
+	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real
+
+# These are operations which are defered if we are building an package.
+install-real:
+	# Register in /etc/alternatives.
 	#./install_alternatives.tcl
-	if [ -z "$(RPM_BUILD_ROOT)" ]; \
-		then \
-		./install_crontab.sh; \
-		./fixup_obsolete.sh; \
-		$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null; \
-		$(HOMEDIR)/bin/ppr-index >/dev/null; \
-		fi
+	# Create PPR's crontab.
+	./install_crontab.sh
+	# Fix things left by previous installations.
+	./fixup_obsolete.sh
+	# Initialize the media database.
+	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
+	# Create indexes of fonts, PPD files, and filters.
+	$(HOMEDIR)/bin/ppr-index #>/dev/null
 
 #=== Housekeeping ===========================================================
 

@@ -8718,10 +8718,6 @@ Misc. Enhancements
 * www/prn_control.cgi.perl: now prints large byte counts in kilobytes or
   megabytes.
 
-* z_install_end/install_inetd_conf.sh: no longer defines ppradmin in
-  /etc/services if Xinetd is used.  The port number is specified directly
-  in /etc/xinetd.d/ppr.  This makes building packages much easier.
-
 * ppad/ppad_media.c: added code to create media database if it doesn't
   already exist.
 

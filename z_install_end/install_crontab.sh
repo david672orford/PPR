@@ -26,11 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 8 August 2003.
 #
 
 . ../makeprogs/paths.sh
 
+# Sanity test gauntet
 if [ "$USER_PPR" = "" -o "$HOMEDIR" = "" ]
 	then
 	echo "$0: ../makeprogs/paths.sh is bad"
@@ -42,25 +43,28 @@ if [ ! -x ../z_install_begin/id ]
 	exit 1
 	fi
 
-./puts "Making sure we are $USER_PPR..."
+./puts "  Making sure we are $USER_PPR..."
 if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]
 	then
-	echo " OK"
+	echo "    OK"
 	else
-	echo " Nope, guess we are root, doing su $USER_PPR..."
+	echo "    Nope, guess we are root, doing su $USER_PPR..."
 	su $USER_PPR -c $0	  
 	exit $?
 	fi
 
-echo "Installing crontab for the user $USER_PPR..."
+echo "  Installing crontab for the user $USER_PPR..."
 
-# Create a temporary file.	We have to do this because of limitations
-# of some versions of the crontab program.
-# Sadly, not all versions of crontab can read from stdin, at least not
-# with the same command.
+#
+# Create a temporary file.  We have to do this because of limitations of some
+# versions of the crontab program.  Sadly, not all versions of crontab can 
+# read from stdin, at least not with the same command.
+#
 tempname=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
 
-# Write the new crontab to a temporary file.
+#
+# Write the new crontab to the temporary file.
+#
 cat - >$tempname <<===EndOfHere===
 3 10,16 * * 1-5 $HOMEDIR/bin/ppad remind
 5 4 * * * $HOMEDIR/lib/cron_daily
