@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 November 2002.
+# Last modified 25 November 2002.
 #
 
 #
@@ -75,7 +75,7 @@ if {$queue != ""} {
     set height 550
     } else {
     set final_url "$base_url/cgi-bin/show_queues.cgi"
-    set width 750
+    set width 800
     set height 550
     }
 
@@ -145,7 +145,7 @@ switch -exact $selected_browser {
 		</script>
 		</head>
 		<body onload=\"doit()\">
-		<p>Javascript code executing in thsi window is trying to 
+		<p>Javascript code executing in this window is trying to 
 		remove some of its user interface features which, while appropriate
 		for browsing the WWW, only get in the way of the PPR web interface.
 		You browser may ask for your permission to allow these operations.  

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 November 2002.
+** Last modified 26 November 2002.
 */
 
 /*
@@ -127,7 +127,7 @@ static const char *snmp_printer_status(int code)
 ** Convert an SNMP hrPrinterDetectedErrorState bit position and
 ** convert it to a descriptive string.
 */
-static const char *snmp_error(int bit)
+static const char *snmp_errorstate(int bit)
     {
     switch(bit)
         {
@@ -164,7 +164,7 @@ static const char *snmp_error(int bit)
         default:
             return "[unrecognized]";
         }
-    } /* end of snmp_error() */
+    } /* end of snmp_errorstate() */
 
 /*
 ** Translate an exit code into a fault type decription.  If the exit code
@@ -222,76 +222,6 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	return 0;
 	}
 
-    /* Last %%[ status: ]%% or %%[ PrinterError: ]%% */
-    if((p = lmatchp(line, "lw-status:")))
-    	{
-	if(machine_readable)
-	    {
-	    PUTS(sep);
-	    PUTS("lw-status: ");
-	    puts_detabbed(p);
-	    return 1;
-	    }
-	else if(verbose)
-	    {
-	    PUTS(sep);
-	    printf(_("Raw LW Status: \"%s\""), p);
-	    return 1;
-	    }
-	return 0;
-    	}
-
-    /* Last PJL status message received from printer */
-    if((p = lmatchp(line, "pjl-status:")))
-    	{
-	if(machine_readable)
-	    {
-	    PUTS(sep);
-	    PUTS("pjl: ");
-	    puts_detabbed(p);
-	    return 1;
-	    }
-	else if(verbose)
-	    {
-	    PUTS(sep);
-	    printf(_("Raw PJL Status: %s"), p);
-	    return 1;
-	    }
-	return 0;
-    	}
-
-    /* Last SNMP status retrieved from the printer */
-    if((p = lmatchp(line, "snmp-status:")))
-    	{
-	if(machine_readable || verbose)
-	    {
-	    char *f1, *f2, *fx;
-
-	    PUTS(sep);
-
-	    if(machine_readable)
-		printf("snmp: ");
-	    else
-		printf(_("Raw SNMP Status: "));
-
-	    if(!(f1 = gu_strsep(&p, " ")) || !(f2 = gu_strsep(&p, " ")))
-	    	{
-		printf("[can't parse]");
-	    	}
-	    else
-	    	{
-		printf("%s, %s", snmp_device_status(atoi(f1)), snmp_printer_status(atoi(f2)));
-		while((fx = gu_strsep(&p, " ")))
-		    {
-		    printf(", %s", snmp_error(atoi(fx)));
-		    }
-	    	}
-
-	    return 1;
-	    }
-	return 0;
-    	}
-
     /* Unified SNMP-style status of the printer */
     if((p = lmatchp(line, "status:")))
 	{
@@ -319,16 +249,23 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	}
 
     /* Unified SNMP-style printer problem list item */
-    if((p = lmatchp(line, "error:")))
+    if((p = lmatchp(line, "errorstate:")))
 	{
 	int bit = -1, start = 0, last = 0, last_commentary = 0;
 	char *details = NULL;
 	int start_minutes_ago, last_minutes_ago;
+	gu_boolean print_howlong, print_ago;
 	time_t time_now = time(NULL);
 
 	gu_sscanf(p, "%d %d %d %d %Z", &bit, &start, &last, &last_commentary, &details);
+
+	/* Convert absolute times to times relative to the current time. */
 	start_minutes_ago = (int)((time_now - start + 30) / 60);
 	last_minutes_ago = (int)((time_now - last + 30) / 60);
+
+	/* Decide about "for X minutes" and "(as of X minutes ago)". */
+	print_ago = last_minutes_ago > 15;
+	print_howlong = !print_ago && start_minutes_ago > 5;
 
 	/* Skip things unconfirmed for more than 4 hours unless --verbose is used. */
 	if(last_minutes_ago > (4 * 60) && !verbose)
@@ -337,18 +274,19 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	PUTS(sep);
 
 	if(machine_readable)
-	    printf("snmp: %s", snmp_error(bit));		/* !!! */
+	    printf("errorstate: %s", snmp_errorstate(bit));		/* !!! */
 	else
-	    printf(_("Printer Problem: \"%s\""), gettext(snmp_error(bit)));
+	    printf(_("Printer Problem: \"%s\""), gettext(snmp_errorstate(bit)));
 
+	/* If there are details beyond the SNMP fault bit available, print them. */
 	if(details)
 	    {
 	    printf(" (%s)", details);
 	    gu_free(details);
 	    }
 
-	/* If the condition isn't really new, say how long it has persisted. */
-	if(start_minutes_ago > 1)
+	/* If the condition didn't arise within the last few minutes, say how long it has persisted. */
+	if(print_howlong || verbose)
 	    {
 	    if(start_minutes_ago < 120)
 	    	printf(" for %d minutes", start_minutes_ago);
@@ -356,13 +294,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    	printf(" for %d hours", (int)((start_minutes_ago + 30) / 60));
 	    }
 
-	/* If the last notification was more than 5 minutes ago, say so. */
-	if(last_minutes_ago > 5)
+	/* If the last notification was more than 15 minutes ago, say so. */
+	if(print_ago || verbose)
 	    {
 	    if(last_minutes_ago < 120)
-	    	printf(" (unconfirmed for %d minutes)", last_minutes_ago);
+	    	printf(" (as of %d minutes ago)", last_minutes_ago);
 	    else
-	    	printf(" (unconfirmed for %d hours)", (int)((last_minutes_ago + 30) / 60));
+	    	printf(" (as of %d hours ago)", (int)((last_minutes_ago + 30) / 60));
 	    }
 
 	return 1;
@@ -409,6 +347,86 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    printf(_("%s..."), p);
 
 	return 1;
+    	}
+
+    /* Last %%[ status: ]%% or %%[ PrinterError: ]%% */
+    if((p = lmatchp(line, "lw-status:")))
+    	{
+	int important = atoi(p);
+	p += strspn(p, "0123456789");
+	p += strspn(p, " \t");
+	if(machine_readable)
+	    {
+	    PUTS(sep);
+	    printf("lw-status: %d ", important ? 1 : 0);
+	    puts_detabbed(p);
+	    return 1;
+	    }
+	else if(verbose || important)
+	    {
+	    PUTS(sep);
+	    printf(_("Raw LW Status: \"%s\""), p);
+	    return 1;
+	    }
+	return 0;
+    	}
+
+    /* Last PJL status message received from printer */
+    if((p = lmatchp(line, "pjl-status:")))
+    	{
+	int important = atoi(p);
+	p += strspn(p, "0123456789");
+	p += strspn(p, " \t");
+	if(machine_readable)
+	    {
+	    PUTS(sep);
+	    printf("pjl-status: %d ", important ? 1 : 0);
+	    puts_detabbed(p);
+	    return 1;
+	    }
+	else if(verbose || important)
+	    {
+	    PUTS(sep);
+	    printf(_("Raw PJL Status: %s"), p);
+	    return 1;
+	    }
+	return 0;
+    	}
+
+    /* Last SNMP status retrieved from the printer */
+    if((p = lmatchp(line, "snmp-status:")))
+    	{
+	int important = atoi(p);
+	p += strspn(p, "0123456789");
+	p += strspn(p, " \t");
+	if(machine_readable || verbose || important)
+	    {
+	    char *f1, *f2, *fx;
+
+	    PUTS(sep);
+
+	    if(machine_readable)
+		printf("snmp-status: %d ", important ? 1 : 0);
+	    else
+		printf(_("Raw SNMP Status: "));
+
+	    if(!(f1 = gu_strsep(&p, " ")) || !(f2 = gu_strsep(&p, " ")))
+	    	{
+		printf("[can't parse]");
+	    	}
+	    else
+	    	{
+		int i;
+		printf("%s, %s", snmp_device_status(atoi(f1)), snmp_printer_status(atoi(f2)));
+		for(i=0; (fx = gu_strsep(&p, " ")); i++)
+		    {
+		    printf("%c %s", i==0 ? ';' : ',', snmp_errorstate(atoi(fx)));
+		    }
+	    	}
+
+	    return 1;
+	    }
+	return 0;
     	}
 
     /* The number of seconds on the page clock and (if it is running) at what

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 16 August 2002.
+** Last modified 26 November 2002.
 */
 
 BODY {
@@ -13,7 +13,10 @@ BODY {
 	}
 SPAN.label { font-weight: bold }
 SPAN.blank { backgroup-color: white; color: blue }
-TD TABLE TH { font-weight: bold }
+TD TABLE TH {
+	font-weight: bold;
+	vertical-align: top;
+	}
 TD TABLE TD {
 	font-weight: normal;
 	background-color: white;

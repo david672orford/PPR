@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 November 2002.
+** Last modified 26 November 2002.
 */
 
 #include "before_system.h"
@@ -53,21 +53,6 @@
 ** commentary messages when necessary.
 */
 
-/*============================================================================
-** These function take care of maintaining the status file which is used
-** to make the printer's status known to "ppop status".
-============================================================================*/
-
-static int message_exit = EXIT_PRINTED;
-static char message_lw_status[80] = {'\0'};
-static char message_pjl_status[80] = {'\0'};
-static char message_snmp_status[80] = {'\0'};
-static char message_job[80] = {'\0'};
-static char message_writemon_operation[20] = {'\0'};
-static int message_writemon_minutes = 0;
-static gu_boolean message_writemon_connecting = FALSE;
-static char message_pagemon[20];
-
 /*===================================================================
 ** This is hrDeviceStatus and hrPrinterStatus
 ===================================================================*/
@@ -87,22 +72,19 @@ static char message_pagemon[20];
 #define PST_warmup 5
 
 struct SNMP_STATUS {
-    int hrDeviceStatus;
-    int hrPrinterStatus;
-    char details[64];
-    time_t start;
-    time_t last_news;
-    time_t last_commentary;
+    int hrDeviceStatus;			/* SNMP style */
+    int hrPrinterStatus;		/* SNMP style */
+    char details[64];			/* info beyond SNMP */
+    time_t start;			/* time when condition first detected */
+    time_t last_news;			/* time when last report received */
+    time_t last_commentary;		/* time when commentary() last called about this */
     };
-
-struct SNMP_STATUS status;	/* current device status */
-struct SNMP_STATUS ostatus;	/* for detecting changes */
 
 /*===================================================================
 ** We catagorize printer error conditions according the the numbers
 ** used to represent them in the Printer MIB's variable
-** PrinterDetectedErrorState.  This is the array of structures in
-** which we keep track of which of the possible conditions are set.
+** hrPrinterDetectedErrorState.  Here we define a structure to keep
+** track of one bit.  We will use an array of these structures.
 ===================================================================*/
 
 #define SNMP_BITS 32
@@ -114,8 +96,6 @@ struct SNMP_BIT {
     char details[64];
     gu_boolean shadowed;
     };
-
-static struct SNMP_BIT snmp_bits[SNMP_BITS];
 
 #define DES_lowPaper 0
 #define DES_noPaper 1
@@ -135,9 +115,9 @@ static struct SNMP_BIT snmp_bits[SNMP_BITS];
 
 /*
 ** Experience shows that printers sometimes report overlapping conditions.
-** We use this table when sending commentary messages to eliminate mild
-** conditions which logically follow from more severe conditions which
-** are also present.
+** We use this table when sending commentary messages to eliminate milder
+** forms of more serious conditions which are present.  For example, it is
+** silly to report "paper low" when we are also reporting "paper out".
 **
 ** It will no doubt be necessary to expand this table.
 */
@@ -148,7 +128,7 @@ struct SHADOW_LIST {
     int second;		/* second bit it shadows or duplicate of first */
     };
 
-static struct SHADOW_LIST shadow_list[] = {
+static const struct SHADOW_LIST shadow_list[] = {
 	{DES_noPaper, DES_lowPaper, DES_offline},
 	{DES_noToner, DES_lowToner, DES_offline},
 	{DES_doorOpen, DES_offline, DES_offline},
@@ -162,8 +142,12 @@ static struct SHADOW_LIST shadow_list[] = {
 
 /*
 ** These are the bits that we clear when we have sucessfully printed a job.
+** We clear them because the fact that the job has finished shows that the
+** conditions have been cleared.  So we assume that we simply haven't 
+** gotten a new report during the time between when the condition was cleared
+** and when we disconnected.
 */
-static int clear_on_exit_bits[] = {
+static const int clear_on_exit_bits[] = {
     DES_noPaper,
     DES_noToner,
     DES_doorOpen,
@@ -178,6 +162,41 @@ static int clear_on_exit_bits[] = {
     };
 
 /*============================================================================
+** Here are the actual variables which we use to store the ongoing 
+** status of the printer.
+============================================================================*/
+
+static struct {
+    struct {
+	gu_boolean important;
+	char message[80];
+	} lw_status;
+    struct {
+	int online;
+	gu_boolean important;
+	int code;
+	char message[80];
+	gu_boolean important2;
+	int code2;
+	char message2[80];
+	} pjl_status;
+
+    } ppop_status;
+
+static int message_exit = EXIT_PRINTED;
+static char message_snmp_status[80] = {'\0'};
+static char message_job[80] = {'\0'};
+static char message_writemon_operation[20] = {'\0'};
+static int message_writemon_minutes = 0;
+static gu_boolean message_writemon_connecting = FALSE;
+static char message_pagemon[20];
+
+struct SNMP_STATUS status;	/* current device status */
+struct SNMP_STATUS ostatus;	/* for detecting changes */
+
+static struct SNMP_BIT snmp_bits[SNMP_BITS];
+
+/*============================================================================
 ** These functions manage the printer status file which "ppop status" reads.
 ============================================================================*/
 
@@ -189,6 +208,15 @@ static int clear_on_exit_bits[] = {
 void ppop_status_init(void)
     {
     const char function[] = "ppop_status_init";
+
+    ppop_status.lw_status.important = FALSE;
+    ppop_status.lw_status.message[0] = '\0';
+
+    ppop_status.pjl_status.online = PJL_ONLINE_UNKNOWN;
+    ppop_status.pjl_status.code = -1;
+    ppop_status.pjl_status.message[0] = '\0';
+    ppop_status.pjl_status.code2 = -1;
+    ppop_status.pjl_status.message2[0] = '\0';
 
     /* Initialize the device and printer status to unknown */
     status.hrDeviceStatus = -1;
@@ -233,7 +261,7 @@ void ppop_status_init(void)
 		    error("%s(): can't parse \"%s\"", function, line);
 		continue;
 	    	}
-	    if((count = gu_sscanf(line, "error: %d %t %t %t %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
+	    if((count = gu_sscanf(line, "errorstate: %d %t %t %t %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
 	    	{
 		if(count < 4)
 		    {
@@ -280,31 +308,59 @@ static void ppop_status_write(void)
     if(message_exit != EXIT_PRINTED)
 	gu_snprintfcat(buffer, sizeof(buffer), "exit: %d\n", message_exit);
 
-    if(message_lw_status[0] != '\0')
-	gu_snprintfcat(buffer, sizeof(buffer), "lw-status: %s\n", message_lw_status);
-
-    if(message_pjl_status[0] != '\0')
-	gu_snprintfcat(buffer, sizeof(buffer), "pjl-status: %s\n", message_pjl_status);
-
-    if(message_snmp_status[0] != '\0')
-	gu_snprintfcat(buffer, sizeof(buffer), "snmp-status: %s\n", message_snmp_status);
-
-    /* The combined SNMP-style status.  The member status.start is the time in
+    /* The combined SNMP-style status.  This includes status in other formats 
+       converted to SNMP format.  The member status.start is the time in
        Unix format when we received this information.  It will be zero if we
        haven't.
        */
     if(status.start)
     	gu_snprintfcat(buffer, sizeof(buffer), "status: %d %d %ld %ld %ld\n", status.hrDeviceStatus, status.hrPrinterStatus, (long)status.start, (long)status.last_news, (long)status.last_commentary);
 
-    /* This is the combined SNMP-style printer error state flags. */
+    /* This is the combined SNMP-style printer error state flags.  Note that 
+       this is not the raw SNMP error state since this includes status 
+       messages received by other means that have been converted to 
+       SNMP format.
+    */
     {
     int x;
     for(x=0; x<SNMP_BITS; x++)
 	{
 	if(snmp_bits[x].start > 0)
-	    gu_snprintfcat(buffer, sizeof(buffer), "error: %02d %ld %ld %ld %s\n", x, (long)snmp_bits[x].start, (long)snmp_bits[x].last_news, (long)snmp_bits[x].last_commentary, snmp_bits[x].details);
+	    gu_snprintfcat(buffer, sizeof(buffer), "errorstate: %02d %ld %ld %ld %s\n", x, (long)snmp_bits[x].start, (long)snmp_bits[x].last_news, (long)snmp_bits[x].last_commentary, snmp_bits[x].details);
 	}
     }
+
+    if(ppop_status.lw_status.message[0] != '\0')
+	{
+	gu_snprintfcat(buffer, sizeof(buffer), "lw-status: %d %s\n",
+		ppop_status.lw_status.important ? 1 : 0,
+		ppop_status.lw_status.message);
+	}
+
+    if(ppop_status.pjl_status.online != PJL_ONLINE_UNKNOWN)
+	{
+	gu_snprintfcat(buffer, sizeof(buffer), "pjl-status: 0 %s\n",
+		ppop_status.pjl_status.online == PJL_ONLINE_TRUE ? "ONLINE" : ppop_status.pjl_status.online == PJL_ONLINE_FALSE ? "OFFLINE" : "?");
+	}
+	
+    if(ppop_status.pjl_status.code > 0)
+	{
+	gu_snprintfcat(buffer, sizeof(buffer), "pjl-status: %d %d %s\n",
+		ppop_status.pjl_status.important ? 1 : 0,
+		ppop_status.pjl_status.code,
+		ppop_status.pjl_status.message);
+	}
+
+    if(ppop_status.pjl_status.code > 0)
+	{
+	gu_snprintfcat(buffer, sizeof(buffer), "pjl-status: %d %d %s\n",
+		ppop_status.pjl_status.important2 ? 1 : 0,
+		ppop_status.pjl_status.code2,
+		ppop_status.pjl_status.message2);
+	}
+
+    if(message_snmp_status[0] != '\0')
+	gu_snprintfcat(buffer, sizeof(buffer), "snmp-status: 0 %s\n", message_snmp_status);
 
     if(message_writemon_operation[0] != '\0')
 	gu_snprintfcat(buffer, sizeof(buffer), "operation: %s %d\n", message_writemon_connecting ? "CONNECT" : message_writemon_operation, message_writemon_minutes);
@@ -345,40 +401,34 @@ static void ppop_status_write(void)
 ** This function dispatches commentary for printer errors.
 ** It sends a commentary message when the error first occurs and every
 ** 5 minutes thereafter.
+**
+** This code is pretty sad, but it won't be better until we revamp the 
+** commentator system.
 ============================================================================*/
 static void dispatch_commentary(void)
     {
     int x;
+    int greatest_severity = 0;
     time_t time_now = time(NULL);
 
     /*
-    ** Dispatch a commentator message if the printer status is new or if it
-    ** it is known and not "running" and has been for at least 5 minutes.
+    ** This is where we handle status.start.  The functions that record the status in
+    ** this structure don't bother to sett status.start, they just set status.last_news
+    ** to the current time.  Here we see if the status has changed and set it to
+    ** the current time (from last_news) if it is different from what it was the last
+    ** time we were called.
     */
-    {
-    gu_boolean is_new = FALSE;
-    if(status.hrDeviceStatus != ostatus.hrDeviceStatus
-    		|| status.hrPrinterStatus != ostatus.hrPrinterStatus
-    		|| strcmp(status.details, ostatus.details)
+    if(status.hrDeviceStatus != ostatus.hrDeviceStatus			/* if device status changed */
+    		|| status.hrPrinterStatus != ostatus.hrPrinterStatus	/* if printer status changed */
+    		|| strcmp(status.details, ostatus.details)		/* if printer status details changed */
     		)
 	{
-	is_new = TRUE;
-	status.start = status.last_news;			/* !!! is done late !!! */
-	memcpy(&ostatus, &status, sizeof(struct SNMP_STATUS));	/* save to detect future changes */
+	status.start = status.last_news;
 	}
-
-    if(is_new || (status.hrDeviceStatus != DST_running && status.hrDeviceStatus != -1 && (status.last_commentary - time(NULL)) >= 300))
-	{
-	const char *message, *raw1; int severity;
-	translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
-	commentary(COM_PRINTER_STATUS, message, status.details, NULL, severity);
-	status.last_commentary = time(NULL);
-	}
-    }
 
     /*
     ** Set the shadowed flag on any error condition which can be taken for
-    ** granted because a condition that implies it is also present.
+    ** granted because a more serious condition that implies it is also true.
     */
     for(x=0; x<SNMP_BITS; x++)
 	{
@@ -408,12 +458,35 @@ static void dispatch_commentary(void)
 	    if(!snmp_bits[x].shadowed)
 		{
 		snprintf(temp, sizeof(temp), "%d", (int)((time_now - snmp_bits[x].start) / 60));
-		commentary(COM_PRINTER_ERROR, description, snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL, temp, severity);
+		commentary(COM_PRINTER_ERROR,
+			description,
+			snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL,
+			temp,
+			severity);
+		if(severity > greatest_severity)
+		    greatest_severity = severity;
 		}
 	    snmp_bits[x].last_commentary = time_now;
 	    }
 	}
 
+    /*
+    ** Does hrDeviceStatus indicate something is wrong?
+    */
+    if((status.hrDeviceStatus != -1 && status.hrDeviceStatus != DST_running) 
+    		&& (status.start != ostatus.start || (status.last_commentary - time(NULL)) >= 300))
+	{
+	/* This is suppressed unless we failed to announce something important above. */
+	if(greatest_severity <= 5)
+	    {
+	    const char *message, *raw1; int severity;
+	    translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
+	    commentary(COM_PRINTER_STATUS, message, status.details, NULL, severity);
+	    }
+	status.last_commentary = time(NULL);
+	}
+
+    memcpy(&ostatus, &status, sizeof(struct SNMP_STATUS));	/* save to detect future changes */
     } /* end of dispatch_commentary() */
 
 /*============================================================================
@@ -476,16 +549,20 @@ void ppop_status_exit_hook(int retval)
 	{
 	/* Since we sucessfully printed a job, these have surely either ceased
 	   to be true or ceased to be interesting. */
-	message_lw_status[0] = '\0';
-	message_pjl_status[0] = '\0';
+	ppop_status.lw_status.message[0] = '\0';
+	ppop_status.pjl_status.code = -1;
+	ppop_status.pjl_status.code2 = -1;
 	message_job[0] = '\0';
 
 	/* If the last report was that the printer is "operational, printing",
 	   then set status.start to zero as this will be untrue as soon as
 	   we disconnect.
 	   */
-	if(status.hrDeviceStatus == DST_running && status.hrPrinterStatus == PST_printing)
-	    status.start = 0;
+	if(status.hrPrinterStatus == PST_printing)
+	    {
+	    status.hrPrinterStatus = PST_idle;
+	    status.start = status.last_news = time(NULL);
+	    }
 
 	/* Now children, since we have printed a job we can assume that any
 	   condition that ought to have prevented us from printing a job is
@@ -509,7 +586,7 @@ void ppop_status_exit_hook(int retval)
     /* Flush the status file so that "ppop status" can read it. */
     ppop_status_write();
 
-    /* Does this call for PrinterDetectedErrorState commentary? */
+    /* Does this call for hrPrinterDetectedErrorState commentary? */
     dispatch_commentary();
     } /* end of ppop_status_exit_hook() */
 
@@ -598,7 +675,8 @@ void handle_lw_status(const char pstatus[], const char job[])
 	   understand its meaning.  That will prompt ppop to display it
 	   even if --verbose wasn't used.
 	   */
-	gu_snprintf(message_lw_status, sizeof(message_lw_status), "%d %s", unrecognized == -1 ? 1 : 0, pstatus);
+	ppop_status.lw_status.important = unrecognized;
+	gu_StrCopyMax(ppop_status.lw_status.message, sizeof(ppop_status.lw_status.message), pstatus);
 
 	/* Send this to GUI interfaces and other things that want up-to-the minute updates. */
         progress_new_status(pstatus);
@@ -607,7 +685,7 @@ void handle_lw_status(const char pstatus[], const char job[])
     /* Flush to status file for "ppop status". */
     ppop_status_write();
 
-    /* Does this call for PrinterDetectedErrorState commentary? */
+    /* Does this call for hrPrinterDetectedErrorState commentary? */
     dispatch_commentary();
     } /* end of handle_lw_status() */
 
@@ -622,20 +700,19 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
     {
     FUNCTION4DEBUG("handle_ustatus_device")
     time_t time_now = time(NULL);
+    int i;
+    struct USTATUS {
+	int code;
+	const char *message;
+	gu_boolean understood;
+	};
+    struct USTATUS ustatus[] = {
+	{code, message, FALSE},
+	{code2, message2, FALSE}
+	};
+    
 
     DODEBUG_FEEDBACK(("%s(online=%d, code=%d, message[]=\"%s\", code2=%d, message2[]=\"%s\")", function, (int)online, code, message, code2, message2));
-
-    /* This is for "ppop --verbose status". */
-    snprintf(message_pjl_status, sizeof(message_pjl_status), "%s %d (%s)",
-	online == PJL_ONLINE_TRUE ? "ONLINE" : online == PJL_ONLINE_FALSE ? "OFFLINE" : "?",
-	code,
-	message);
-    if(code2 != 0)
-	{
-	gu_snprintfcat(message_pjl_status, sizeof(message_pjl_status), " %d (%s)",
-		code2,
-		message2);
-	}
 
     /*
     ** A PJL USTATUS message can have up to two codes, each of which has a
@@ -647,51 +724,69 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
     ** translate_pjl_messages() function to do this.  It returns a category
     ** (0 printer status, 1 printer error, 2 PJL error) and a numberic code.
     ** For printer status the code is the SNMP status number.  For printer
-    ** errors it is the SNMP DetectedErrorState bit value to which the message
+    ** errors it is the SNMP hrDetectedErrorState bit value to which the message
     ** cooresponds.  For PJL errors the returned code has no meaning.
     */
-    for( ; code; code=code2,message=message2,code2=0)
+    for(i=0 ; i<2; i++)
 	{
-	int value1, value2, value3;
+	int hrDeviceStatus, hrPrinterStatus, hrPrinterDetectedErrorState;
 	const char *details;
 
-        if(translate_pjl_message(code, message, &value1, &value2, &value3, &details) != -1)
+        if(translate_pjl_message(ustatus[i].code, ustatus[i].message, &hrDeviceStatus, &hrPrinterStatus, &hrPrinterDetectedErrorState, &details) != -1)
 	    {
-	    if(value1 != -1 || value2 != -1)		/* printer status */
+	    /* If we derived an SNMP device or printer status from that code, */
+	    if(hrDeviceStatus != -1 || hrPrinterStatus != -1)
 		{
-		status.hrDeviceStatus = value1;
-		status.hrPrinterStatus = value2;
+		status.hrDeviceStatus = hrDeviceStatus;
+		status.hrPrinterStatus = hrPrinterStatus;
 		gu_StrCopyMax(status.details, sizeof(status.details), details);
-		status.last_news = time(NULL);
+		status.last_news = time_now;
+		ustatus[i].understood = TRUE;
 		}
-	    if(value3 != -1)				/* printer error */
+
+	    /* If we derived an SNMP hrPrinterDetectedErrorState from that code, */
+	    if(hrPrinterDetectedErrorState != -1)
 		{
-		if(value3 >= 0 && value3 <= SNMP_BITS)
+		if(hrPrinterDetectedErrorState >= 0 && hrPrinterDetectedErrorState <= SNMP_BITS)
 		    {
-		    if(snmp_bits[value3].start == 0)
-			snmp_bits[value3].start = time_now;
-		    snmp_bits[value3].last_news = time_now;
-		    gu_StrCopyMax(snmp_bits[value3].details, sizeof(snmp_bits[0].details), details);
+		    if(snmp_bits[hrPrinterDetectedErrorState].start == 0)
+			snmp_bits[hrPrinterDetectedErrorState].start = time_now;
+		    snmp_bits[hrPrinterDetectedErrorState].last_news = time_now;
+		    gu_StrCopyMax(snmp_bits[hrPrinterDetectedErrorState].details, sizeof(snmp_bits[0].details), details);
+		    ustatus[i].understood = TRUE;
 		    }
 		else
 		    {
-		    error("out of range bit %d", value3);
+		    error("out of range bit %d", hrPrinterDetectedErrorState);
 		    }
 		}
-	    if(value1 == -1 && value2 == -1 && value3 == -1)	/* PJL error */
+
+	    /* If we can make nothing of it, it probly was a PJL error having nothing to do
+	       with the state of the hardware.
+	       */
+	    if(hrDeviceStatus == -1 && hrPrinterStatus == -1 && hrPrinterDetectedErrorState == -1)
 		{
 		error("PJL error: %d %s \"%s\"", code, details, message);
 		}
             }
 	}
 
+    /* Copy this into the record as raw PJL status information. */
+    ppop_status.pjl_status.online = online;
+    ppop_status.pjl_status.important = !ustatus[0].understood;
+    ppop_status.pjl_status.code = ustatus[0].code;
+    gu_StrCopyMax(ppop_status.pjl_status.message, sizeof(ppop_status.pjl_status.message), ustatus[0].message);
+    ppop_status.pjl_status.important2 = !ustatus[1].understood;
+    ppop_status.pjl_status.code2 = ustatus[1].code;
+    gu_StrCopyMax(ppop_status.pjl_status.message2, sizeof(ppop_status.pjl_status.message2), ustatus[1].message);
+
     /*
-    ** Use the "ONLINE=" from the PJL message to set the PrinterDetectedErrorState
+    ** Use the "ONLINE=" from the PJL message to set the hrPrinterDetectedErrorState
     ** bit for "offline" (DES_offline, bit 6).
     */
     if(online == PJL_ONLINE_TRUE)			/* now online */
 	{
-	if(snmp_bits[DES_offline].start > 0)		/* if was off before, */
+	if(snmp_bits[DES_offline].start > 0)		/* if was offline before, */
 	    {
 	    snmp_bits[DES_offline].start = 0;
 	    snmp_bits[DES_offline].last_news = 0;
@@ -699,15 +794,15 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 	}
     else						/* now offline */
 	{
-	if(snmp_bits[DES_offline].start == 0)		/* if was already offline, */
-	    snmp_bits[DES_offline].start = time_now;
-	snmp_bits[DES_offline].last_news = time_now;
+	if(snmp_bits[DES_offline].start == 0)		/* if was online, */
+	    snmp_bits[DES_offline].start = time_now;	/* record time went offline */
+	snmp_bits[DES_offline].last_news = time_now;	/* update record of when last known to be offline */
 	}
 
     /* Flush the changes to ppop. */
     ppop_status_write();
 
-    /* Does this call for PrinterDetectedErrorState commentary? */
+    /* Does this call for hrPrinterDetectedErrorState commentary? */
     dispatch_commentary();
 
     /* Let writemon know about online state so it can start or stop clocks. */
@@ -776,7 +871,7 @@ void handle_snmp_status(int device_status, int printer_status, unsigned int erro
     /* Flush to "ppop status". */
     ppop_status_write();
 
-    /* Is it time for PrinterDetectedErrorState commentary? */
+    /* Is it time for hrPrinterDetectedErrorState commentary? */
     dispatch_commentary();
 
     /* We mustn't do this because it would expect us to tell it when

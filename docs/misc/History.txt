@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--22 November 2002.
+1.50b1, 13 November 2002--26 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -8017,4 +8017,23 @@ line was being parsed twice.
   is used.
 
 * po/ru-PPRWWW.po: added a few messages and made minor corrections.
+
+* www/show_queues.cgi.perl: set width of table cells holding things such as
+  "Add New Printer" to 150 to encourage them to wrap their labels.
+
+* pprdrv/pprdrv_ppop_status.c, pprdrv/pprdrv_commentary.c, 
+  ppop/ppop_cmds_other.c: refinements to how unrecognized status messages
+  are handled.  They are now displayed by ppop even without --verbose. 
+  Changed order of lines in status file so that standardized status will
+  be at the top.
+
+* www/prn_control.cgi.perl: fixed to display standardized status; eliminated
+  turned-off code to use form fields to format the information.
+
+* ppop/ppop_cmds_other.c: changed "ppop status" output: changed "unconfirmed
+  for X minutes" to "as of X minutes ago" and suppessed "for X minutes" when 
+  "as of" is displayed.  These two changes shorting the messages
+  considerably while still providing a useful amount of information.  Using
+  the --verbose switch gets you everything.
+
 

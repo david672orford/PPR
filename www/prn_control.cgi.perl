@@ -4,14 +4,29 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 20 November 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 26 November 2002.
 #
 
 use lib "?";
@@ -26,9 +41,13 @@ my $CHARWIDTH = 10;
 # How wide (in pixels) should a progress bar be?
 my $progress_width_total = 550;
 
-# This may be moved to a library files later.  It can change the rather terse
-# machine-readable status strings into something a little clearer.  It is also
-# where we translate the messages into languages other than English.
+=pod
+
+This may be moved to a library files later.  It can change the rather terse
+machine-readable queue status strings into something a little clearer.  It
+is also where we translate the messages into languages other than English.
+
+=cut
 sub humanify_printer_status
     {
     my($status, $job, $retry, $countdown, $message) = @_;
@@ -185,29 +204,41 @@ my $retry = shift @result_row1;
 my $countdown = shift @result_row1;
 
 # The remaining ones are auxiliary status information.
-my $printer_lw_status = "";
-my $printer_status_job = "";
+my @printer_status = ();
+my $printer_job = "";
 my $operation = "";
 my $page_clock = "";
 foreach my $i (@result_row1)
     {
-    if($i =~ /^lw-status: (.+)$/ || $i =~ /^pjl: (.+)$/)
+    if($i =~ /^status: (.+)$/)			# unified SNMP style
+	{
+	push(@printer_status, $1);
+	}
+    elsif($i =~ /^errorstate: (.+)$/)		# unified SNMP style, faults
+	{
+	push(@printer_status, $1);
+	}
+    elsif($i =~ /^.+-status: (\d+) (.+)$/)	# various raw
     	{
-    	$printer_lw_status = $1;
+	if($1)	# if important
+	    {
+	    push(@printer_status, $2);
+	    }
     	}
-    elsif($i =~ /^job: (.+)$/)
+    elsif($i =~ /^job: (.+)$/)			# name of current job
     	{
-	$printer_status_job = $1;
+	$printer_job = $1;
     	}
-    elsif($i =~ /^operation: (.+)$/)
+    elsif($i =~ /^operation: (.+)$/)		# pprdrv operation
     	{
     	$operation = $1;
     	}
-    elsif($i =~ /^page: (.+)$/)
+    elsif($i =~ /^page: (.+)$/)			# page clock value
     	{
     	$page_clock = $1;
     	}
     }
+my $printer_status = join("\n", @printer_status);
 
 # If we think it is worth it, get the alerts log.
 my $alerts = "";
@@ -229,18 +260,19 @@ else
 $control->destroy();
 
 # Convert the status to human readable form.
-$status = humanify_printer_status($status, $job, $retry, $countdown, $printer_lw_status);
+$status = humanify_printer_status($status, $job, $retry, $countdown, $printer_status);
 
 # If we are printing a job, display that job name.  If not and the printer
 # reports that it is printing a job for someone else, display that name
 # instead.
-my $display_job = $job ne "" ? $job : $printer_status_job;
+my $display_job = $job ne "" ? $job : $printer_job;
 
 # Encode everything except the numbers as HTML.
 $printer = html($printer);
 $comment = html($comment);
 $status = html($status);
-$printer_lw_status = html($printer_lw_status);
+$printer_status = html($printer_status);
+$printer_status =~ s/\n/<br>/g;
 $operation = html($operation);
 $page_clock = html($page_clock);
 $forwhom = html($forwhom);
@@ -260,88 +292,46 @@ print <<"Form10";
 <table width="100%" height="100%">
 <tr>
 <td align="left" valign="top">
-Form10
 
-if(0)
-{
-# Do it with forms.  This is a little annoying because it offers the user an
-# opportunity to enter information, when in fact doing so is useless.
-# We do our best to fix this by including the tabindex=0 and readonly
-# attributes of HTML 4.0.
-#
-# Notice that the entry widgets have no names so that they will not waste
-# bandwidth sending stuff to the server.
-print <<"Form12";
-	<span class="label">${\H_("Name:")}</span> <span class="blank">$printer</span>
-	<span class="label">${\H_("Comment:")}</span> <span class="blank">$comment</span>
-<br>
-	<label><span class="label">${\H_("Status:")}</span> <input type="text" size=28 value="$status" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Retry:")}</span> <input type="text" size=4 value="$retry" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Countdown:")}</span> <input type="text" size=4 value="$countdown" tabindex=0 readonly></label>
-<br>
-	<label><span class="label">${\H_("Operation:")}</span> <input type="text" size=25 value="$operation" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Page clock:")}</span> <input type="text" size=20 value="$page_clock" tabindex=0 readonly></label>
-<br>
-	<label><span class="label">${\H_("Printer status:")}</span> <input type="text" size=50 value="$printer_lw_status" tabindex=0 readonly></label>
-<br>
-	<label><span class="label">${\H_("Current job:")}</span> <input type="text" size=25 value="$display_job" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("For:")}</span> <input type="text" size=25 value="$forwhom" tabindex=0 readonly></label>
-<br>
-	<label><span class="label">${\H_("Total bytes:")}</span> <input type="text" size=9 value="$bytes_total" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Bytes sent:")}</span> <input type="text" size=9 value="$bytes_sent" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Percent sent:")}</span> <input type="text" size=4 value="$percent_sent" tabindex=0 readonly></label>
-<br>
-	<lable><span class="label">${\H_("Total pages:")}</span> <input type="text" size=4 value="$html_pages" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Pages started:")}</span> <input type="text" size=4 value="$html_pages_started" tabindex=0 readonly></label>
-	<label><span class="label">${\H_("Pages completed:")}</span> <input type="text" size=4 value="$html_pages_completed" tabindex=0 readonly></label>
-<br>
-Form12
-}
-
-else
-{
-# This is the other way.  We try to do it with nested tables.
-print <<"Form13";
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Name:")}</th><td width="${\($CHARWIDTH * 10)}">$printer</td>
 	<th>${\H_NB_("Comment:")}</th><td width="${\($CHARWIDTH * 32)}">$comment</td>
-</tr></table>
+	</tr></table>
 
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Status:")}</th><td width="${\($CHARWIDTH * 28)}">$status</td>
 	<th>${\H_NB_("Retry:")}</th><td width="${\($CHARWIDTH * 4)}">$retry</td>
 	<th>${\H_NB_("Countdown:")}</th><td width="${\($CHARWIDTH * 4)}">$countdown</td>
-</tr></table>
+	</tr></table>
 
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Operation:")}</th><td width="${\($CHARWIDTH * 25)}">$operation&nbsp;</td>
 	<th>${\H_NB_("Page clock:")}</th><td width="${\($CHARWIDTH * 15)}">$page_clock&nbsp;</td>
-</tr></table>
+	</tr></table>
 
-<table><tr>
-	<th>${\H_NB_("Printer status:")}</th><td width="${\($CHARWIDTH * 40)}">$printer_lw_status&nbsp;</td>
-</tr></table>
+	<table><tr>
+	<th>${\H_NB_("Printer status:")}</th><td width="${\($CHARWIDTH * 50)}">$printer_status&nbsp;</td>
+	</tr></table>
 
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Current job:")}</th><td width="${\($CHARWIDTH * 20)}">$display_job&nbsp;</td>
 	<th>${\H_NB_("For:")}</th><td width="${\($CHARWIDTH * 25)}">$forwhom&nbsp;</td>
-</tr></table>
+	</tr></table>
 
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_total&nbsp;</td>
 	<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_sent&nbsp;</td>
 	<th>${\H_NB_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
-</tr></table>
+	</tr></table>
 
-<table><tr>
+	<table><tr>
 	<th>${\H_NB_("Total pages:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages&nbsp;</td>
         <th>${\H_NB_("Pages started:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_started&nbsp;</td>
 	<th>${\H_NB_("Pages completed:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_completed&nbsp;</td>
-</tr></table>
-Form13
-}
+	</tr></table>
+Form10
 
-# If it is printing, display the progress bar.
+# If it is printing a job, display the progress bar.
 if($job ne "")
     {
     # The red part is proportional to the percentage sent.
@@ -416,26 +406,26 @@ print "</td>\n";
 
 # "Draw" all of the control buttons.
 if($controls)
-{
-print "<td align=\"right\" valign=\"top\">\n";
-isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
-print "<br>\n";
-isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");
-print "<br>\n";
-isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
-print "<br>\n";
-isubmit("action", "Media", N_("_Media"),
+    {
+    print "<td align=\"right\" valign=\"top\">\n";
+    isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
+    print "<br>\n";
+    isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");
+    print "<br>\n";
+    isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
+    print "<br>\n";
+    isubmit("action", "Media", N_("_Media"),
 	"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=700,height=300,scrollbars,resizable'); return false;\""
 	);
-print "<br><br><br>\n";
-isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
-print "<br>\n";
-# We use parent.close() in the next line so that if it opened in a frame by
-# grp_control() it will close the window rather than trying to close the
-# frame (which can't be done).
-isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"parent.close()\"");
-print "</td>\n";
-}
+    print "<br><br><br>\n";
+    isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");
+    print "<br>\n";
+    # We use parent.close() in the next line so that if it opened in a frame by
+    # grp_control() it will close the window rather than trying to close the
+    # frame (which can't be done).
+    isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"parent.close()\"");
+    print "</td>\n";
+    }
 
 print "</tr></table>\n";
 
@@ -454,9 +444,7 @@ $data{prev_status} = $status;
 # Propagate data to the next generation.
 &cgi_write_data();
 
-print <<"Form50";
-</form>
-Form50
+print "</form>\n";
 
 # This is the end of the exception handling block.  If die() was called
 # within the block, print its message.

@@ -245,12 +245,7 @@ Top8
 isubmit("action", "Refresh", N_("Refresh"), 'class="buttons" onclick="gentle_reload(); return false"', _("Refresh the page right now."));
 
 # Create a button for JavaScript Cookie login.
-print <<"TopCookie";
-<label title=${\html_value(_("Use this if your browser doesn't support Digest authentication."))}>
-<input class="buttons" type="button" value=${\html_value(_("Cookie Login"))}
-	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
-</label>
-TopCookie
+ibutton(_("Cookie Login"), "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')", _("Use this if your browser doesn't support Digest authentication."));
 
 # Try to make a "Close" button.  (They do the same thing.)
 cgi_back_possible("/");
@@ -270,7 +265,7 @@ Top10
 print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
+<td width="150"><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
 	title=${\html_value(_("Click here to open a window which will show all queued jobs."))}
 	>
 	<img $ICON_ALL_QUEUES border=0><br>
@@ -281,7 +276,7 @@ print <<"Top10";
 
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
+<td width="150"><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
 	title=${\html_value(_("Click here and you will be guided through the process of adding a new printer."))}
 	>
 	<img $ICON_ADD_PRINTER border=0><br>
@@ -292,7 +287,7 @@ print <<"Top10";
 
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
+<td width="150"><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
 	title=${\html_value(_("Click here and you will be guided through the process of adding a new group of printers."))}
 	>
 	<img $ICON_ADD_GROUP border=0><br>
@@ -303,7 +298,7 @@ print <<"Top10";
 
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="alias_addwiz.cgi?$encoded_back_stack" onclick="return wizard('alias_addwiz.cgi')"
+<td width="150"><a href="alias_addwiz.cgi?$encoded_back_stack" onclick="return wizard('alias_addwiz.cgi')"
 	title=${\html_value(_("Click here and you will be guided through the process of adding a new alias."))}
 	>
 	<img $ICON_ADD_ALIAS border=0><br>

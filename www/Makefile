@@ -153,7 +153,7 @@ install-html: $(HTML_TOP) $(HTML_GUI) $(HTML_HELP)
 
 install-images: images_subdir $(Q_ICONS_LAST)
 	$(MAKE_NEW_DIR) $(IMAGES_DIR)
-	$(INSTALLDATA) $(IMAGES_DIR) images/*.jpg images/*.png images/*.ico images/*.xpm
+	$(INSTALLDATA) $(IMAGES_DIR) images/*.jpg images/*.png images/*.ico images/*.xpm images/*.eps
 	$(MAKE_NEW_DIR) $(Q_ICONS_DIR)
 	$(INSTALLDATA) $(Q_ICONS_DIR) q_icons/*.png
 

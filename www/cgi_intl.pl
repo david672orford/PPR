@@ -3,14 +3,29 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 8 August 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 25 November 2002.
 #
 
 require "paths.ph";
@@ -302,6 +317,56 @@ sub isubmit
 	print "<input type=\"submit\" name=\"$name\" value=", html_value($value);
 	print " accesskey=\"$accesskey\"" if(defined($accesskey));
 	print " ", $other if(defined($other));
+	print ">\n";
+	}
+    print "</label>\n" if(defined $title);
+    }
+
+#
+# This is like isubmit() but for a JavaScript button.
+#
+# $value
+#	text for button (already translated)
+# $onclick
+#	onclick text
+# $title
+#	hover help 
+#
+sub ibutton
+    {
+    my($value, $onclick, $title) = @_;
+    defined($value) && defined($onclick) || die;
+    my $accesskey = undef;
+
+    # Try to get a Mozilla version number.
+    my $mozilla_version = 0;
+    if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+) /)
+	{
+	$mozilla_version = $1;
+	}
+
+    print "<label title=", html_value($title), ">\n" if(defined $title);
+
+    # <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
+    # so only enable it if we are using a Gecko Mozilla based browser.
+    if($int_on && $mozilla_version >= 5.0)
+    	{
+	$accesskey = $1 if($value =~ s/_(.)/$1/);
+	$value = html($value);
+	$value =~ s#_(.)#<u>$1</u>#g;
+
+	print "<button type=\"button\"";
+	print " accesskey=\"$accesskey\"" if(defined($accesskey));
+	print " onclick=\"$onclick\")";
+	print ">", $value, "</button>\n";
+    	}
+
+    else
+	{
+	$accesskey = $1 if($value =~ s/_(.)/$1/);
+	print "<input type=\"button\" value=", html_value($value);
+	print " accesskey=\"$accesskey\"" if(defined($accesskey));
+	print " onclick=\"$onclick\"";
 	print ">\n";
 	}
     print "</label>\n" if(defined $title);
