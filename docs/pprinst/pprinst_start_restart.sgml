@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_start_restart.sgml
-Last Modified: 14 February 2003
+Last Modified: 25 August 2003
 Last Proofread: 
 -->
 
@@ -63,21 +63,20 @@ crash.</para>
 
 <sect2><title>The Automatic Way</title>
 
-<para>
-The above paragraphs describe how to start and stop the PPR daemons individually 
-with simple Unix commands.  There are other, more automated ways to
-do it. For example, if your system uses a System V style
-<command>init</command>, you
-can stop all of the PPR daemons and once by finding the
-<filename>init.d</filename>
-directory (which is in different places in different operating systems) and
-running the <command>ppr</command> script which PPR installed there with the parameter
-<command>stop</command>.  In the example below we have a RedHat Linux system and are
-logged in as ``root''.  We start and then stop the PPR daemons:
+<para>The above paragraphs describe how to start and stop the PPR daemons
+individually with simple Unix commands.  There are other, more automated
+ways to do it. For example, if your system uses a System V style
+<command>init</command>, you can stop all of the PPR daemons and once by
+finding the <filename>init.d</filename> directory (which is in different
+places in different operating systems) and running the
+<command>ppr</command> script which PPR installed there with the parameter
+<command>stop</command>.  The example below will work on most System V
+derived and recent Linux systems.  Here we start and then stop the PPR daemons:
+
 <screen>
-# /etc/rc.d/init.d/ppr start
+# /etc/init.d/ppr start
 Starting PPR daemons: pprd papsrv
-# /etc/rc.d/init.d/ppr stop
+# /etc/init.d/ppr stop
 Stopping PPR daemons: pprd papsrv
 </screen>
 </para>
