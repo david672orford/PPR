@@ -7258,7 +7258,7 @@ line was being parsed twice.
   BSD license.
 
 
-1.44, 5 June 2001--23 July 2001
+1.44, 5 June 2001--31 July 2001
 
 * moved misc/modes-3.3.mf to filters_misc/ and improved the documentation at
   the top of filters_misc/mfmodes.conf.
@@ -7274,9 +7274,8 @@ line was being parsed twice.
 * Fixed NULL pointer problem in "ppad rip".
 
 * Changed pprdrv/pprdrv_rip.c:rip_start() to use a fixed path of
-  HOMEDIR/lib/gs for Ghostscript rather than consulting ppr.conf.  This is
-  appropriate because there will be a special Ghostscript distribution
-  for use with PPR
+  HOMEDIR/lib/ppr-gs for Ghostscript if the RIP name is "ppr-gs".  This 
+  is for a future special Ghostscript distribution for use with PPR.
 
 * Added O_EXCL to the open() calls for the port in the interfaces/parallel.c
   and serial.c as recomended in the CUPS programmer's manual.
@@ -7327,4 +7326,13 @@ line was being parsed twice.
   "cant" first.  When it is included from the makefile in ppr-gs, just
   catching "all" isn't enough since "all" has many dependencies in the
   Ghostscript build process.
+
+* fixup/fixup_inetd.sh: fixed to to recognize if the service line is already
+  in /etc/inetd.conf but commented out.
+
+* Changed samba/smb-protos.conf to use "%U@samba" instead of "%m@samba" for
+  the -X argument.
+
+* Fixed ppop/ppop.c:job_permission_check() to return 'OK' if the queue file
+  does not exist.  This brings the code back in line with the comments.
 

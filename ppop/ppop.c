@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 31 July 2001.
 */
 
 /*
@@ -678,7 +678,7 @@ int job_permission_check(struct Jobname *job)
     ** from the "User:" line.
     **
     ** If we can't open it, just say it is ok to manipulate the job.  This is
-    ** because, for non-xistent jobs we want to user to be told it does not
+    ** because, for non-existent jobs we want to user to be told it does not
     ** exist, not that he can't touch it!
     **
     ** !!! This code must be fixed for distributed printing !!!
@@ -702,8 +702,13 @@ int job_permission_check(struct Jobname *job)
     	strcmp(job->homenode, "*") ? job->homenode : ppr_get_nodename());
     if((f = fopen(fname, "r")) == (FILE*)NULL)
 	{
-	/* This is where we need code for remote printing. */
-	fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights.\n"), fname);
+	/* This is where we need code for remote printing!!! */
+
+	/* See note above. */
+	if(errno == ENOENT)
+	    return 0;
+
+	fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
 	return -1;
 	}
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 24 July 2001.
 */
 
 #include "before_system.h"
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     /* More stuff for PPR.pm. */
     if(strcmp(argv[1], "--pm") == 0)
 	{
-	printf("$SIZEOF_struct_Media=%d;\n", sizeof(struct Media));
+	printf("$SIZEOF_struct_Media=%d;\n", (int)sizeof(struct Media));
 	}
 
     /* Perl modules and libraries must end with something that evaluates to true. */
