@@ -145,9 +145,9 @@ new_pool ()
 
   memset (p, 0, size);
 
-  p->allocs = (struct _pool_allocs *) ((void *)p + sizeof (struct pool));
+  p->allocs = (struct _pool_allocs *) ((char *)p + sizeof (struct pool));
   p->cleanups = (struct _pool_cleanups *)
-	((void *)p + sizeof (struct pool) + sizeof (struct _pool_allocs)
+	((char *)p + sizeof (struct pool) + sizeof (struct _pool_allocs)
 	 + INITIAL_PA_SLOTS * sizeof (void *));
 
   p->allocs->flags = 0x80000000U | INITIAL_PA_SLOTS << 16;

@@ -62,7 +62,7 @@ new_subvector (pool pool, vector v, int i, int j)
 
   if (i < j)
 	{
-	  new_v->data = pmemdup (pool, v->data + i * v->size, (j - i) * v->size);
+	  new_v->data = pmemdup (pool, (char*)v->data + i * v->size, (j - i) * v->size);
 	  new_v->used = new_v->allocated = j - i;
 	}
   else
@@ -91,7 +91,7 @@ _vector_push_back (vector v, const void *ptr)
 	  v->data = d;
 	}
 
-  if (ptr) memcpy (v->data + v->used * v->size, ptr, v->size);
+  if (ptr) memcpy ((char*)v->data + v->used * v->size, ptr, v->size);
   v->used++;
 }
 
@@ -100,7 +100,7 @@ _vector_pop_back (vector v, void *ptr)
 {
   assert (v->used > 0);
   v->used--;
-  if (ptr) memcpy (ptr, v->data + v->used * v->size, v->size);
+  if (ptr) memcpy (ptr, (char*)v->data + v->used * v->size, v->size);
 }
 
 inline void
@@ -115,10 +115,10 @@ vector_insert_array (vector v, int i, const void *ptr, int n)
 
   /* Move the other elements up. */
   for (j = v->used-1; j > i; --j)
-	memcpy (v->data + j * v->size, v->data + (j-n) * v->size, v->size);
+	memcpy ((char*)v->data + j * v->size, (char*)v->data + (j-n) * v->size, v->size);
 
   /* Insert these elements at position i. */
-  if (ptr) memcpy (v->data + i * v->size, ptr, v->size * n);
+  if (ptr) memcpy ((char*)v->data + i * v->size, ptr, v->size * n);
 }
 
 void
@@ -155,7 +155,7 @@ vector_push_back_vector (vector v, const vector w)
 	  v->data = d;
 	}
 
-  memcpy (v->data + v->used * size, w->data, size * w->used);
+  memcpy ((char*)v->data + v->used * size, w->data, size * w->used);
   v->used += w->used;
 }
 
@@ -174,7 +174,7 @@ vector_push_front_vector (vector v, const vector w)
 	  v->data = d;
 	}
 
-  memmove (v->data + w->used * size, v->data, v->used * size);
+  memmove ((char*)v->data + w->used * size, v->data, v->used * size);
   memcpy (v->data, w->data, size * w->used);
   v->used += w->used;
 }
@@ -184,7 +184,7 @@ _vector_replace (vector v, int i, const void *ptr)
 {
   assert (0 <= i && i < v->used);
 
-  if (ptr) memcpy (v->data + i * v->size, ptr, v->size);
+  if (ptr) memcpy ((char*)v->data + i * v->size, ptr, v->size);
 }
 
 inline void
@@ -197,7 +197,7 @@ vector_erase_range (vector v, int i, int j)
 	  int n = j - i, k;
 
 	  for (k = i+n; k < v->used; ++k)
-		memcpy (v->data + (k-n) * v->size, v->data + k * v->size, v->size);
+		memcpy ((char*)v->data + (k-n) * v->size, (char*)v->data + k * v->size, v->size);
 
 	  v->used -= n;
 	}
@@ -219,14 +219,14 @@ void
 _vector_get (vector v, int i, void *ptr)
 {
   assert (0 <= i && i < v->used);
-  if (ptr) memcpy (ptr, v->data + i * v->size, v->size);
+  if (ptr) memcpy (ptr, (char*)v->data + i * v->size, v->size);
 }
 
 const void *
 _vector_get_ptr (vector v, int i)
 {
   assert (0 <= i && i < v->used);
-  return v->data + i * v->size;
+  return (char*)v->data + i * v->size;
 }
 
 void
@@ -299,8 +299,8 @@ vector_grep (pool p, vector v, int (*match_fn) (const void *))
   int i;
 
   for (i = 0; i < v->used; ++i)
-	if (match_fn (v->data + i * v->size))
-	  _vector_push_back (nv, v->data + i * v->size);
+	if (match_fn ((char*)v->data + i * v->size))
+	  _vector_push_back (nv, (char*)v->data + i * v->size);
 
   return nv;
 }
@@ -312,8 +312,8 @@ vector_grep_pool (pool p, vector v, int (*match_fn) (pool, const void *))
   int i;
 
   for (i = 0; i < v->used; ++i)
-	if (match_fn (p, v->data + i * v->size))
-	  _vector_push_back (nv, v->data + i * v->size);
+	if (match_fn (p, (char*)v->data + i * v->size))
+	  _vector_push_back (nv, (char*)v->data + i * v->size);
 
   return nv;
 }
@@ -330,7 +330,7 @@ _vector_map (pool p, vector v,
   nv->used = v->used;
 
   for (i = 0; i < v->used; ++i)
-	map_fn (v->data + i * v->size, nv->data + i * nv->size);
+	map_fn ((char*)v->data + i * v->size, (char*)nv->data + i * nv->size);
 
   return nv;
 }
@@ -347,7 +347,7 @@ _vector_map_pool (pool p, vector v,
   nv->used = v->used;
 
   for (i = 0; i < v->used; ++i)
-	map_fn (p, v->data + i * v->size, nv->data + i * nv->size);
+	map_fn (p, (char*)v->data + i * v->size, (char*)nv->data + i * nv->size);
 
   return nv;
 }
