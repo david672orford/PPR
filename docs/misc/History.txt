@@ -8130,3 +8130,10 @@ line was being parsed twice.
 * Configure, Configure_new, lib*/Makefile, nonppr_tcl/Makefile: added
   explicit call to ranlib (though for most platforms RANLIB=touch).
 
+* www/q_icons/[0-2]*.png: added to CVS (marked as binary).  I did this
+  so we will know if switching conversion tools produces different results
+  (as it has in the past, generally better) and because a lot of people
+  don't have the tools needed to build them.
+
+
+
