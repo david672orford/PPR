@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/writeqfile.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 3 January 2005.
 */
 
 #include "config.h"
@@ -54,7 +54,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 		qentry->proxy_for ? qentry->proxy_for : "");
 
 	if(qentry->lc_messages)
-		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages ? qentry->lc_messages : "");
+		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages);
 
 	fprintf(Qfile, "Priority: %d\n", qentry->priority);
 

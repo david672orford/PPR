@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ipp.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 December 2004.
+** Last modified 10 January 2005.
 */
 
 /*
@@ -285,8 +285,10 @@ static void ipp_get_jobs(struct IPP *ipp)
 		if(read_struct_QFileEntry(qfile, &qfileentry) == -1)
 			{
 			error("%s(): invalid queue file: %s", function, fname);
+			fclose(qfile);
 			continue;
 			}
+		fclose(qfile);
 
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
 			"job-id", queue[i].id);
