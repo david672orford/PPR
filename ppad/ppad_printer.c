@@ -3,14 +3,29 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 2 August 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 5 August 2002.
 */
 
 /*
@@ -586,6 +601,8 @@ int printer_show(const char *argv[])
     {
     int ret;
     char *pline, *p;
+    char *cups_filter = NULL;
+    int default_resolution = 0;
     struct PPD_PROTOCOLS prot;
     prot.TBCP = FALSE;
     prot.PJL = FALSE;
@@ -609,32 +626,47 @@ int printer_show(const char *argv[])
                     if(strcmp(f, "PJL") == 0)
                         prot.PJL = TRUE;
 		    }
+		continue;
                 } /* "*Protocols:" */
-	    if((p = lmatchp(pline, "*pprRIP:")))
+
+	    if((p = lmatchp(pline, "*pprRIP:")) && !rip_ppd_name)
 	    	{
 		char *f1, *f2, *f3;
 		if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
 		    {
-		    if(!rip_ppd_name)		/* if this is the first one, */
-		    	{
-			rip_ppd_name = gu_strdup(f1);
-			rip_ppd_output_language = gu_strdup(f2);
-			if((f3 = gu_strsep(&p, "\n")))
-			    rip_ppd_options = gu_strdup(f3);
-
-			if(!rip_name)
-		    	    {
-			    rip_name = rip_ppd_name;
-			    rip_output_language = rip_ppd_output_language;
-			    rip_options = rip_ppd_options;
-			    }
-			}
+		    rip_ppd_name = gu_strdup(f1);
+		    rip_ppd_output_language = gu_strdup(f2);
+		    if((f3 = gu_strsep(&p, "\n")))
+			rip_ppd_options = gu_strdup(f3);
 		    }
 		else
 		    {
 		    fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
 		    }
+		continue;
 	    	} /* "*pprRIP:" */
+
+	    if((p = lmatchp(pline, "*cupsFilter:")) && !cups_filter)
+		{
+		char *p2;
+		if(*p++ == '"' && (p2 = strchr(p, '"')))
+		    {
+		    *p2 = '\0';
+		    if(strcmp(gu_strsep(&p, " \t"), "application/vnd.cups-raster") == 0
+		    	&& strcmp(gu_strsep(&p, " \t"), "0") == 0
+		    	&& (p2 = gu_strsep(&p, "\t")))
+		    	{
+			cups_filter = gu_strdup(p2);
+		    	}
+		    }
+		continue;
+		} /* "*cupsFilter:" */
+
+	    if(gu_sscanf(pline, "*DefaultResolution: %d", &default_resolution) == 1)
+	    	{
+	    	continue;
+	    	}
+
             } /* while() */
         } /* if(PPDFile) */
 
@@ -642,6 +674,27 @@ int printer_show(const char *argv[])
     feedback_default = interface_default_feedback(interface, &prot);
     jobbreak_default = interface_default_jobbreak(interface, &prot);
     codes_default = interface_default_codes(interface, &prot);
+
+    /* If we didn't find a "*pprRIP:" line, use "*cupsFilter:".
+       */
+    if(!rip_ppd_name && cups_filter && default_resolution > 0)
+	{
+	rip_ppd_name = gu_strdup("ppr-gs");			/* !!! */
+	rip_ppd_output_language = gu_strdup("pcl");		/* !!! */
+	asprintf(&rip_ppd_options, "-sDEVICE=cups -r%d cupsfilter=%s", default_resolution, cups_filter);
+	}
+
+    /* If the PPD file specifies a RIP and the printer configuration file
+       doesn't override it, use the info from the PPD file.
+       */
+    if(!rip_name && rip_ppd_name)
+	{
+	rip_name = rip_ppd_name;
+	rip_output_language = rip_ppd_output_language;
+	rip_options = rip_ppd_options;
+	}
+
+    if(cups_filter) gu_free(cups_filter);
     }
 
     /*

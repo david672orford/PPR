@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 November 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 5 August 2002.
 */
 
 /*
@@ -23,6 +38,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -246,18 +262,51 @@ void ppd_callback_papersize_moveto(char *nameline)
 */
 void ppd_callback_rip(const char text[])
     {
+    DODEBUG_PPD(("ppd_callback_rip(\"%s\")", text));
     if(!printer.RIP.name)	/* if first in PPD file and not set in printer config file */
 	{
 	char *p;
 	p = gu_strdup(text);
-	if(!(printer.RIP.name = gu_strsep(&p, " \t"))
-		|| !(printer.RIP.output_language = gu_strsep(&p, "")))
+	if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, "")))
 	    {
 	    fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
 	    }
 	printer.RIP.options_storage = gu_strsep(&p, "");
 	}
     } /* end of ppd_callback_rip() */
+
+static char *cups_filter = NULL;
+static int default_resolution = 0;
+
+/*
+** Process "*cupsFilter:" information.
+*/
+void ppd_callback_cups_filter(const char text[])
+    {
+    DODEBUG_PPD(("ppd_callback_cups_filter(\"%s\")", text));
+    if(!cups_filter)
+    	{
+	char *temp, *p, *p2;
+	p = temp = gu_strdup(text);
+	if(strcmp(gu_strsep(&p, " \t"), "application/vnd.cups-raster") == 0
+	    && strcmp(gu_strsep(&p, " \t"), "0") == 0
+	    && (p2 = gu_strsep(&p, "\t")))
+		{
+		cups_filter = gu_strdup(p2);
+		}
+	gu_free(temp);
+    	}
+    DODEBUG_PPD(("ppd_callback_cups_filter(): done"));
+    }
+
+/*
+** Process "*DefaultResolution:".
+*/
+void ppd_callback_resolution(const char text[])
+    {
+    DODEBUG_PPD(("ppd_callback_resolution(\"%s\")", text));
+    default_resolution = atoi(text);
+    }
 
 /*==========================================================
 ** Read the Adobe PostScript Printer Description file.
@@ -319,6 +368,24 @@ void read_PPD_file(const char *ppd_file_name)
     /* Free the scratch spaces: */
     gu_free(ppdname);
     gu_free(ppdtext);
+
+    /* If we still haven't been told to use a RIP, see if we saw a "*cupsFilter:" 
+       line that can help us.
+       */
+    DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_filter=\"%s\", default_resolution=%d",
+    	printer.RIP.name ? printer.RIP.name : "",
+    	cups_filter ? cups_filter : "",
+    	default_resolution));
+    if(!printer.RIP.name && cups_filter && default_resolution > 0)
+	{
+	printer.RIP.name = "ppr-gs";
+	printer.RIP.output_language = "pcl";
+	asprintf(&printer.RIP.options_storage, "-sDEVICE=cups -r%d cupsfilter=%s", default_resolution, cups_filter);
+	}
+
+    if(cups_filter)
+    	gu_free(cups_filter);
+    	
     } /* read_PPD_file() */
 
 /*==========================================================

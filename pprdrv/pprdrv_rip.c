@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 August 2002.
+** Last modified 5 August 2002.
 */
 
 #include "before_system.h"
@@ -35,6 +35,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -261,6 +262,15 @@ int rip_start(int printdata_handle, int stdout_handle)
 	close(new_stdin);
 	close(new_stdout);
 	close(new_printdata);
+
+	/* Some RIPs need the PPD file to set themselves up. */
+	{
+	size_t len = 5 + strlen(printer.PPDFile);
+	char *temp = gu_alloc(len, sizeof(char));
+	snprintf(temp, len, "PPD=%s", printer.PPDFile);
+	putenv(temp);
+	gu_free(temp);
+	}
 
 	/* Launch Ghostscript. */
 	execv(rip_exe, (char**)rip_args);

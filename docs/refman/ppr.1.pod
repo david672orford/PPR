@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 7 March 2002.
+# Last modified 5 August 2002.
 #
 
 =head1 NAME
@@ -543,7 +543,9 @@ using the "ppad ppd" command.
 
 =item B<-F> "I<feature name>"
 
-This switch inserts PostScript setup code for printer features.  Since
+=item B<--feature> "I<feature name>"
+
+This option inserts PostScript setup code for printer features.  Since
 feature names, such as "*PageSize A4" contain asterisks and spaces, they
 should be quoted to get them through the Unix shell.
 
@@ -575,6 +577,54 @@ A feature which is commonly selected with the B<-F> switch is duplexing:
 Paper input trays are another example:
 
 	$ ppr -d adshp4m -F '*InputSlot Upper'
+
+=item B<--features>
+
+If you use this option, B<ppr> won't print the job.  Rather it will list all
+of the printer features in the selected printer's PPD file.  It will also list
+the B<-F> or B<--feature> options needed to select them.  For example:
+
+	$ ppr -d myprn --features
+	PageSize
+	 -->Letter                        --feature PageSize=Letter
+	    Legal                         --feature PageSize=Legal
+	    A4                            --feature PageSize=A4
+	    Envelope #10                  --feature PageSize=Env10
+	
+	PageRegion
+	 -->Letter                        --feature PageRegion=Letter
+	    Legal                         --feature PageRegion=Legal
+	    A4                            --feature PageRegion=A4
+	    Envelope #10                  --feature PageRegion=Env10
+	
+	InputSlot
+	     Tray 1                       --feature InputSlot=Upper
+	     Tray 1 (Manual)              --feature InputSlot=ManualFeed
+	 --> Tray 2                       --feature InputSlot=Middle
+	     Tray 3                       --feature InputSlot=Lower
+	     Tray 4                       --feature InputSlot=LargeCapacity
+	     Envelope Feeder              --feature InputSlot=Envelope
+	
+	Duplex
+	 -->Off (1-Sided)                 --feature Duplex=None
+	    Flip on Long Edge (Standard)  --feature Duplex=DuplexNoTumble
+	    Flip on Short Edge            --feature Duplex=DuplexTumble
+
+Suppose we want to print from tray 3.  From the above list we know that the
+proper command is:
+
+	$ ppr -d myprn --feature InputSlot=Lower
+
+Why are the paper trays refered to in an inconsistent manner?  The names on
+the left are the ones chosen by the printer manufacturer.  There is likely 
+a big "3" printed on the front of tray 3.  However, the command you must use
+to select it uses standardized PPD file naming.  Under the standardized scheme 
+for PPD files, tray use names such as "Upper", "Middle", and "Lower".
+
+The crude arrows which appear next to certain options indicate that these options
+are the defaults.  More precisely, the arrows indicate that the PPD file I<says> these 
+are the defaults.  It may be that someone has used the printers control buttons to 
+change the defaults, so don't trust them completely.
 
 =item B<-K true>
 

@@ -12,4 +12,5 @@ extern int papersizex;
 extern int ppd_nest_level;
 extern char *ppd_nest_fname[MAX_PPD_NEST];
 void ppd_callback_rip(const char text[]);
-
+void ppd_callback_cups_filter(const char text[]);
+void ppd_callback_resolution(const char text[]);

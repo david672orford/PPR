@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--2 August 2002.
+1.50a2, 27 February 2002--5 August 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7770,8 +7770,15 @@ line was being parsed twice.
   "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was already
   supplied.
 
+* Added pprdrv/ppr-gs.c which is a wrapper around Ghostscript.
+
 * www/prn_properties.cgi.perl: fixed numberous bugs in "RIP" tab which were
   related to the radio button and the "PPD" and "Custom" areas.  This work
   included adding "rip_ppd" and "rip_which" to the "ppad -M show" output.
 
+* Added ppr --features (though it presently only works for printers, not 
+  for groups).
+
+* Added support for "*cupsFilter:" in PPD files to "ppad show" and to
+  pprdrv.
 

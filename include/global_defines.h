@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_defines.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 15 March 2002.
+** This file was last modified 5 August 2002.
 */
 
 /*
@@ -490,6 +490,7 @@ enum CODES interface_default_codes(const char interface[], const struct PPD_PROT
 void valert(const char printername[], int dateflag, const char string[], va_list args);
 void alert(const char printername[], int dateflag, const char string[], ...);
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra);
+const char *dest_ppdfile(const char destnode[], const char destname[]);
 
 /*
 ** The callers of certain libppr routines must provide an error()

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 19 March 2002.
+** Last revised 5 August 2002.
 */
 
 /*
@@ -339,7 +339,7 @@ static void write_feature_lines(FILE *qfile)
     for(x=0; x < features_count; x++)
 	fprintf(qfile, "Feature: %s\n", features[x]);
 
-    } /* end of write_features() */
+    } /* end of write_feature_lines() */
 
 /*
 ** Assert that a variable contains a valid value.  We must check for invalid
@@ -895,7 +895,6 @@ static const struct gu_getopt_opt option_words[] =
 	{"use-username", 'u', TRUE},
 	{"banner", 'b', TRUE},
 	{"trailer", 't', TRUE},
-	{"feature", 'F', TRUE},
 	{"errors", 'e', TRUE},
 	{"warnings", 'w', TRUE},
 	{"proofmode", 'P', TRUE},
@@ -917,15 +916,17 @@ static const struct gu_getopt_opt option_words[] =
 	{"filter-options", 'o', TRUE},
 
 	/* These are final. */
-	{"file-type", 'T', TRUE},
-	{"copies", 'n', TRUE},
+	{"feature", 'F', TRUE},
 	{"gab", 'G', TRUE},
 	{"hack", 'H', TRUE},
+	{"file-type", 'T', TRUE},
+	{"copies", 'n', TRUE},
 	{"routing", 'i', TRUE},
 	{"title", 'C', TRUE},
 	{"proxy-for", 'X', TRUE},
 
 	/* These are final. */
+	{"features", 1000, FALSE},
 	{"lpq-filename", 1003, TRUE},
 	{"hold", 1004, FALSE},
 	{"responder", 'm', TRUE},
@@ -1031,7 +1032,9 @@ HELP(_(
 "\t                           prefer to insert resources from cache?\n"));
 
 HELP(_(
-"\t-F '<feature name>'        inserts setup code for a printer feature\n"));
+"\t-F '<feature name>'        inserts setup code for a printer feature\n"
+"\t--feature '<feature name>' same as above\n"
+"\t--features                 list available printer features\n"));
 
 HELP(_(
 "\t-K true                    keep feature code though not in PPD file\n"
@@ -1763,6 +1766,9 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    if(parse_hack_option(optarg) == -1)
 		fatal(PPREXIT_SYNTAX, _("Unrecognized %s option: %s"), true_option, optarg);
 	    break;
+
+	case 1000:				/* --features */
+	    exit(option_features(qentry.destnode, qentry.destname));
 
 	case 1003:				/* --lpq-filename */
 	    qentry.lpqFileName = optarg;

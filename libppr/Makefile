@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 17 May 2002.
+# Last modified 5 August 2002.
 #
 
 include ../Makefile.conf
@@ -40,7 +40,8 @@ LIBOBJS=\
 	tail_status.$(OBJ) \
 	query.$(OBJ) \
 	queueinfo.$(OBJ) \
-	pagemask.$(OBJ)
+	pagemask.$(OBJ) \
+	destinfo.$(OBJ)
 
 TARGETS=../libppr.$(LIBEXT)
 

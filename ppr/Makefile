@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 September 2001.
+# Last modified 5 August 2002.
 #
 
 include ../Makefile.conf
@@ -29,6 +29,7 @@ OBJS1=ppr_main.$(OBJ) ppr_infile.$(OBJ) ppr_outfile.$(OBJ) \
 	ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
 	ppr_mactt.$(OBJ) ppr_nest.$(OBJ) ppr_things.$(OBJ) \
 	ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
+	ppr_features.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)
 ppr$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(INTLLIBS)

@@ -302,4 +302,7 @@ void things_space_check(void);
 /* ppr_editps.c */
 const char **editps_identify(const unsigned char *in_ptr, int in_left);
 
+/* ppr_features.c */
+int option_features(const char destnode[], const char destname[]);
+
 /* end of file */

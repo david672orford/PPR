@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/pprdrv/ppr-gs.c
+** mouse:~ppr/src/libppr/destinfo.c
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -30,49 +30,33 @@
 
 #include "before_system.h"
 #include <stdio.h>
-#include <errno.h>
-#include <unistd.h>
-#include <string.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 
-const char myname[] = "ppr-gs";
-
-int main(int argc, char *argv[])
+const char *dest_ppdfile(const char destnode[], const char destname[])
     {
-    const char rip_exe[] = "../ppr-gs/bin/gs";
-    char *outputfile = NULL;
-    const char **rip_args;
-    int si, di;
-    char *p;
+    char fname[MAX_PPR_PATH];
+    FILE *f;
+    char *line = NULL;
+    int line_space = 128;
+    char *ppdfile = NULL;
 
-    rip_args = gu_alloc(argc + 6, sizeof(const char *));
-
-    for(si=1,di=0; si<argc; si++)
+    ppr_fnamef(fname, "%s/%s", PRCONF, destname);
+    if((f = fopen(fname, "r")))
 	{
-	if((p=lmatchp(argv[si], "cupsfilter=")))
+	while((line = gu_getline(line, &line_space, f)))
 	    {
-	    asprintf(&outputfile, "-sOutputFile=| %s x x x x '' 2>/dev/null >&3", p);
-	    }
-	else
-	    {
-	    rip_args[di++] = argv[si];
-	    }
+	    if(!ppdfile && gu_sscanf(line, "PPDFile: %Z", &ppdfile) == 1)
+	    	break;
+	    }	
+	if(line)
+	    gu_free(line);
 	}
 
-    rip_args[di++] = "-q";
-    rip_args[di++] = "-dSAFER";
-
-    if(outputfile)
-	rip_args[di++] = outputfile;
-    else
-	rip_args[di++] = "-sOutputFile=| cat - >&3";
-
-    rip_args[di++] = "-";
-
-    execv(rip_exe, (char**)rip_args);
-    fprintf(stderr, "%s: can't exec Ghostscript, errno=%d (%s)\n", myname, errno, gu_strerror(errno));
-    return 1;
-    } /* end of main() */
+    return ppdfile;
+    }
 
 /* end of file */

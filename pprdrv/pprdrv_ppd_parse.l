@@ -1,7 +1,7 @@
 %{
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd_parse.l
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 May 2001.
+** Last modified 5 August 2002.
 */
 
 /*
@@ -93,6 +93,8 @@ int yywrap(void)
 %s ORD
 %s PRTCOL
 %s RIP
+%s CUPS
+%s RES
 
 %p 3500
 
@@ -233,25 +235,6 @@ int yywrap(void)
 	BEGIN INITIAL;
 	}
 
-<INITIAL>^\*[^ \t:\n]+:[ \t]+["] {
-	BEGIN INSTR;
-	ppd_callback_new_string(yytext);
-	}
-<INITIAL>^\*[^? \t:\n]+[ \t]+[^ \t:\n]+(\/[^:\n]+)*:[ ]+["] {
-	BEGIN INSTR;
-	ppd_callback_new_string(yytext);
-	}
-<INSTR>[^"\n]* {
-	ppd_callback_string_line(yytext);
-	}
-<INSTR>[\n] {
-	/* discard the newline */
-	}
-<INSTR>["] {
-	BEGIN INITIAL;
-	ppd_callback_end_string();
-	}
-
 <INITIAL>^\*OrderDependency:[ \t]+ {
 	/* Gather info for sorting -F switches */
 	BEGIN ORD;
@@ -282,6 +265,46 @@ int yywrap(void)
 	}
 <RIP>[\n] {
 	BEGIN INITIAL;
+	}
+
+<INITIAL>^\*cupsFilter:[ \t]+["] {
+	/* Special line for CUPS to choose a RIP. */
+	BEGIN CUPS;
+	}
+<CUPS>[^"]+ {
+	ppd_callback_cups_filter(yytext);
+	}
+<CUPS>["] {
+	BEGIN INITIAL;
+	}
+
+<INITIAL>^\*DefaultResolution:[ \t]+ {
+	BEGIN RES;
+	}
+<RES>[^\n]+ {
+	ppd_callback_resolution(yytext);
+	}
+<RES>[\n] {
+	BEGIN INITIAL;
+	}
+
+<INITIAL>^\*[^ \t:\n]+:[ \t]+["] {
+	BEGIN INSTR;
+	ppd_callback_new_string(yytext);
+	}
+<INITIAL>^\*[^? \t:\n]+[ \t]+[^ \t:\n]+(\/[^:\n]+)*:[ ]+["] {
+	BEGIN INSTR;
+	ppd_callback_new_string(yytext);
+	}
+<INSTR>[^"\n]* {
+	ppd_callback_string_line(yytext);
+	}
+<INSTR>[\n] {
+	/* discard the newline */
+	}
+<INSTR>["] {
+	BEGIN INITIAL;
+	ppd_callback_end_string();
 	}
 
 .|\n	{ BEGIN INITIAL; /* discard unmatched stuff */ }
