@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 3 July 2001.
+# Last modified 31 August 2001.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -968,13 +968,16 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+
 CC=gcc
 #CC=diet
 #CC=g++ -fno-exceptions
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+
 LD=gcc
 #LD=diet
 LDFLAGS=
+
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
 LEX=flex

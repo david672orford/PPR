@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 February 2001.
+# Last modified 30 August 2001.
 #
 
 include ../makeprogs/global.mk
@@ -19,11 +19,18 @@ include ../makeprogs/global.mk
 
 PROGS=ppr2samba$(DOTEXE) \
 	ppd2win95drv \
-	samba_submitter
+	samba_submitter \
+	smb-protos.conf
 
 #=== Build ==================================================================
 
 all: $(PROGS)
+
+smb-protos.conf:
+	sed -e 's!%HOMEDIR%!$(HOMEDIR)!g' -e 's!%VAR_SPOOL_PPR%!$(VAR_SPOOL_PPR)!g' \
+		-e 's!%USER_PPR%!$(USER_PPR)!g' -e 's!%GROUP_PPR%!$(GROUP_PPR)!g' \
+		-e 's!%CONFDIR%!$(CONFDIR)!g' \
+		smb-protos.conf.template >smb-protos.conf
 
 OBJS=ppr2samba.$(OBJ) \
 	../libppr.$(LIBEXT) \
@@ -37,11 +44,8 @@ install: $(PROGS) smb-protos.conf WIN95CP.BAT
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr2samba$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2win95drv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
-	sed -e 's!%HOMEDIR%!$(HOMEDIR)!g' -e 's!%VAR_SPOOL_PPR%!$(VAR_SPOOL_PPR)!g' \
-		-e 's!%USER_PPR%!$(USER_PPR)!g' -e 's!%GROUP_PPR%!$(GROUP_PPR)!g' \
-		-e 's!%CONFDIR%!$(CONFDIR)!g' \
-		smb-protos.conf >$(RPM_BUILD_ROOT)$(HOMEDIR)/lib/smb-protos.conf
 	$(INSTALLCP) WIN95CP.BAT $(VAR_SPOOL_PPR)/drivers/win95/WIN95CP.BAT
+	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf
 
 #=== Housekeeping ===========================================================
 
