@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 December 2004.
+** Last modified 15 December 2004.
 */
 
 /*! \file */
@@ -89,6 +89,8 @@ static const char *tag_to_str(int tag)
 			return "charset";
 		case IPP_TAG_LANGUAGE:
 			return "naturalLanguage";
+		case IPP_TAG_MIMETYPE:
+			return "mimeMediaType";
 
 		default:
 			return "unknown";
@@ -728,6 +730,22 @@ void ipp_parse_request_body(struct IPP *ipp)
 
 	} /* end of ipp_parse_request() */
 
+/** validate a request, set an error if it is bad
+*/
+gu_boolean ipp_validate_request(struct IPP *ipp)
+	{
+	ipp_attribute_t *attr;
+
+	/* For now, English is all we are capable of. */
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "attributes-natural-language", "en", FALSE);
+
+/*	if(!(attr = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset")))
+*/		
+
+	return TRUE;
+	}
+
 /** append an attribute to the IPP response
 */
 void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
@@ -946,6 +964,14 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
 	return ap;
 	} /* end of ipp_add_attr() */
 
+/** copy an attribute from the request to the response
+ */
+void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr)
+	{
+	ipp_attribute_t *new_attr = ipp_add_attribute(ipp, group, attr->value_tag, attr->name, attr->num_values);
+	memcpy(new_attr->values, attr->values, sizeof(attr->values[0]) * attr->num_values);
+	}
+
 /** add an object divider to the IPP response
 */
 void ipp_add_end(struct IPP *ipp, int group)
@@ -962,6 +988,19 @@ void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int
 		gu_Throw("ipp_add_integer(): %s is a %s", name, tag_to_str(tag));
 	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 	ap->values[0].integer = value;
+	}
+
+/** add a list of integers to the IPP response
+*/
+void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[])
+	{
+	ipp_attribute_t *ap;
+	int i;
+	if(tag_simplify(tag) != IPP_TAG_INTEGER && tag != IPP_TAG_URI)
+		gu_Throw("ipp_add_integer(): %s is a %s", name, tag_to_str(tag));
+	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
+	for(i=0; i<num_values; i++)
+		ap->values[i].integer = values[i];
 	}
 
 /** add a string to the IPP response

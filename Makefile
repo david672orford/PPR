@@ -138,7 +138,7 @@ uprint-install:
 # exported from Makefile.conf.
 configure:
 	@echo "Searching for shell..."; \
-	for shell in /bin/bash /bin/ksh /bin/sh; \
+	for shell in /bin/bash /bin/ksh /bin/sh /bin/sh5; \
 		do \
 		echo " Trying $$shell..."; \
 		if [ -x $$shell ]; \

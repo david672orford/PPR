@@ -235,7 +235,7 @@ msgid ""
 msgstr ""
 
 #: ../ppr/ppr_main.c:1159
-msgid "\t-Q <string>                TrueType query answer given (for papsrv)\n"
+msgid "\t-Q <string>                TrueType query answer given (for papd)\n"
 msgstr ""
 
 #: ../ppr/ppr_main.c:1097

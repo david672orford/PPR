@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 December 2004.
+** Last modified 15 December 2004.
 */
 
 #include "config.h"
@@ -61,43 +61,64 @@
 #define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
 #endif
 
-/* Extract the URI of the requested printer from the request. */
-static const char *get_printer_uri(struct IPP *ipp)
+static const char *uri_basename(const char uri[])
 	{
-	ipp_attribute_t *p;
-	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
-		gu_Throw("no printer-uri");
-	return p->values[0].string.text;
-	}
-
-/* Extract the URI of the requested printer from the request,
- * but return only the last path element.
- */ 
-static const char *get_printer_uri_basename(struct IPP *ipp)
-	{
-	const char *p = get_printer_uri(ipp);
-	if(p && (p = strrchr(p, '/')))
+	const char *p;
+	if((p = strrchr(uri, '/')))
 		return p + 1;
-	return NULL;
-	}
-
-static const char *get_username(struct IPP *ipp)
-	{
-	ipp_attribute_t *p;
-	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name")))
-		gu_Throw("no requesting-user-name");
-	return p->values[0].string.text;
+	else
+		gu_Throw("URI \"%s\" has no basename", uri);
 	}
 
 static void do_print_job(struct IPP *ipp)
 	{
-	const char *printer, *username;
-	int toppr_fds[2] = {-1, -1};
-	int jobid_fds[2] = {-1, -1};
+	const char *printer_uri = NULL;
+	const char *username = NULL;
+	const char *args[100];			/* ppr command line */
+	char for_whom[64];
+	int iii = 0;
 		
-	printer = get_printer_uri_basename(ipp);
-	username = get_username(ipp);
+	{
+	ipp_attribute_t *attr;
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag != IPP_TAG_OPERATION)
+			continue;
+		
+		if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+			printer_uri = attr->values[0].string.text;
+		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "requesting-user-name") == 0)
+			username = attr->values[0].string.text;
+		else
+			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
 
+			
+		}
+	}
+
+	if(!printer_uri)
+		{
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+	
+	snprintf(for_whom, sizeof(for_whom),
+		"%s@%s",
+		ipp->remote_user ? ipp->remote_user : username, 
+		ipp->remote_addr ? ipp->remote_addr : "?"
+		);
+
+	args[iii++] = PPR_PATH;
+	args[iii++] = "-d";
+	args[iii++] = uri_basename(printer_uri);
+	args[iii++] = "-f";
+	args[iii++] = for_whom;
+	args[iii++] = "--proxy-for";
+	args[iii++] = for_whom;
+
+	{
+	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
+	int jobid_fds[2] = {-1, -1};	/* for ppr to send us jobid */
 	gu_Try {
 		pid_t pid;
 		int read_len, write_len;
@@ -117,7 +138,6 @@ static void do_print_job(struct IPP *ipp)
 		if(pid == 0)		/* child */
 			{
 			char fd_str[10];
-			char for_whom[64];
 	
 			close(toppr_fds[1]);
 			close(jobid_fds[0]);
@@ -127,13 +147,11 @@ static void do_print_job(struct IPP *ipp)
 			
 			snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
 
-			snprintf(for_whom, sizeof(for_whom),
-				"%s@%s",
-				ipp->remote_user ? ipp->remote_user : username, 
-				ipp->remote_addr ? ipp->remote_addr : "?"
-				);
-	
-			execl(PPR_PATH, PPR_PATH, "-d", printer, "-f", for_whom, "--print-id-to-fd", fd_str, NULL);
+			args[iii++] = "--print-id-to-fd";
+			args[iii++] = fd_str;
+			args[iii++] = NULL;
+
+			execv(PPR_PATH, args);
 	
 			_exit(242);
 			}
@@ -177,7 +195,7 @@ static void do_print_job(struct IPP *ipp)
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
-		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", get_printer_uri(ipp), jobid);
+		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", printer_uri, jobid);
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending", FALSE);
 		}
 	gu_Final
@@ -195,6 +213,8 @@ static void do_print_job(struct IPP *ipp)
 		{
 		gu_ReThrow();
 		}
+	}
+	
 	} /* end of do_print_job() */
 
 static volatile gu_boolean sigcaught;
@@ -335,7 +355,8 @@ int main(int argc, char *argv[])
 	{
 	struct IPP *ipp = NULL;
 	char *root = NULL;
-
+	void (*p_handler)(struct IPP *ipp);
+	
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
 	setlocale(LC_ALL, "");
@@ -397,41 +418,37 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request_header(ipp);
 
-		/* Process the request embodied in the IPP object. */
 		DEBUG(("dispatching operation 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
 		switch(ipp->operation_id)
 			{
-			case CUPS_GET_CLASSES:
-			case CUPS_GET_PRINTERS:
-			case IPP_GET_PRINTER_ATTRIBUTES:
-			case IPP_GET_JOBS:
-				do_passthru(ipp);
+			case IPP_PRINT_JOB:
+				p_handler = do_print_job;
 				break;
-
+			case CUPS_GET_DEFAULT:
+				p_handler = do_get_default;
+				break;
 			default:
-				ipp_parse_request_body(ipp);
+				p_handler = NULL;
+				break;
+			}
 
-				/* For now, English is all we are capable of. */
-				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
-				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en", FALSE);
+		if(p_handler)
+			{
+			ipp_parse_request_body(ipp);
 
-				switch(ipp->operation_id)
-					{
-					case IPP_PRINT_JOB:
-						do_print_job(ipp);
-						break;
-					case CUPS_GET_DEFAULT:
-						do_get_default(ipp);
-						break;
-					default:
-						gu_Throw("unsupported operation");
-						break;
-					}
+			if(ipp_validate_request(ipp))
+				{
+				DEBUG(("handler is internal"));
+				(*p_handler)(ipp);
 
 				if(ipp->response_code == IPP_OK)
 					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok", FALSE);
-
-				break;
+				}
+			}
+		else
+			{
+			DEBUG(("passing thru to pprd"));
+			do_passthru(ipp);
 			}
 
 		ipp_send_reply(ipp, TRUE);

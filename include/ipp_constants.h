@@ -105,8 +105,18 @@ RFC 2565.  The RFC 2565 names are noted in the comments.
 #define CUPS_MOVE_JOB 0x400d
 
 /* IPP request result codes */
-#define IPP_OK 0x0000
-#define IPP_NOT_FOUND 0x0406
+#define IPP_OK                      0x0000
+#define IPP_OK_SUBST                0x0001
+#define IPP_OK_CONFLICT             0x0002
+#define IPP_BAD_REQUEST             0x0400
+#define IPP_FORBIDDEN               0x0401
+#define IPP_NOT_AUTHENTICATED       0x0402
+#define IPP_NOT_AUTHORIZED          0x0403
+#define IPP_NOT_POSSIBLE            0x0404
+#define IPP_TIMEOUT                 0x0405
+#define IPP_NOT_FOUND               0x0406
+#define IPP_OPERATION_NOT_SUPPORTED 0x0500
+#define IPP_CHARSET                 0x050d
 
 /* IPP printer-state codes */
 #define IPP_PRINTER_IDLE 3

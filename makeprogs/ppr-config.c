@@ -105,7 +105,6 @@ static void do_paths(char format[], char language[])
 	printf(format, "PACKAGE_INTERFACES", PACKAGE_INTERFACES);
 	printf(format, "PACKAGE_PPRD", PACKAGE_PPRD);
 	printf(format, "PACKAGE_PPRDRV", PACKAGE_PPRDRV);
-	printf(format, "PACKAGE_PAPSRV", PACKAGE_PAPSRV);
 	printf(format, "PACKAGE_PPRWWW", PACKAGE_PPRWWW);
 
 	/* More stuff for PPR.pm. */

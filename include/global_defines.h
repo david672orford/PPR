@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 12 December 2004.
+** This file was last modified 14 December 2004.
 */
 
 /*
@@ -56,11 +56,11 @@
 /* #define BUSINESS_HOURS 1 */
 
 /*
-** These are used by lprsrv and papsrv.	 They will not accept new
+** These are used by lprsrv and papd.	 They will not accept new
 ** jobs unless at least this many inodes and blocks are free
 ** in TEMPDIR and VAR_SPOOL_PPR.
 **
-** If you change these you must recompile papsrv and lprsrv.
+** If you change these you must recompile papd and lprsrv.
 */
 #define MIN_INODES 100
 #define MIN_BLOCKS 2048
@@ -215,7 +215,6 @@ typedef short int SHORT_INT;
 #define PACKAGE_INTERFACES "PPR"
 #define PACKAGE_PPRD "PPRD"
 #define PACKAGE_PPRDRV "PPRDRV"
-#define PACKAGE_PAPSRV "PAPSRV"
 #define PACKAGE_PAPD "PAPD"
 #define PACKAGE_PPRWWW "PPRWWW"
 

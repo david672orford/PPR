@@ -245,9 +245,9 @@ msgstr ""
 "\t-P trustme                 positionne ProofMode à TrustMe\n"
 
 #: ../ppr/ppr_main.c:1051
-msgid "\t-Q <string>                TrueType query answer given (for papsrv)\n"
+msgid "\t-Q <string>                TrueType query answer given (for papd)\n"
 msgstr ""
-"\t-Q <chaîne>          réponse donnée à une requête TrueType (pour papsrv)\n"
+"\t-Q <chaîne>          réponse donnée à une requête TrueType (pour papd)\n"
 
 #: ../ppr/ppr_main.c:995
 msgid ""

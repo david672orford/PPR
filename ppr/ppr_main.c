@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 14 December 2004.
 */
 
 /*
@@ -329,7 +329,7 @@ void warning(int level, const char *message, ... )
 		fclose(wfile);					/* close what we did use */
 	else								/* if was stderr, */
 		fflush(stderr);					/* empty output buffer */
-										/* (important for papsrv) */
+										/* (important for papd) */
 	} /* end of warning() */
 
 /*=========================================================================
@@ -1156,7 +1156,7 @@ HELP(_(
 "\t-U                         unlink job file after queuing it\n"));
 
 HELP(_(
-"\t-Q <string>                TrueType query answer given (for papsrv)\n"));
+"\t-Q <string>                TrueType query answer given (for papd)\n"));
 
 HELP(_(
 "\t--lpq-filename <string>    filename for ppop lpq listings\n"));
@@ -1797,7 +1797,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			}
 			break;
 
-		case 'Q':								/* TrueType query answer (for papsrv) */
+		case 'Q':								/* TrueType query answer (for papd) */
 			if(strcmp(optarg, "None") == 0)
 				option_TrueTypeQuery = TT_NONE;
 			else if(strcmp(optarg, "Accept68K") == 0)

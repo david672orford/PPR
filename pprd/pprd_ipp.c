@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 December 2004.
+** Last modified 15 December 2004.
 */
 
 /*
@@ -158,25 +158,91 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 		if((p = strstr(printer_uri_value, "/printers/")))
 			{
 			const char *queue_name = p + sizeof("/printers/") - 1;
-			int i;
-	
-			for(i=0; printer_count; i++)
+			int iii;
+
+			/* Find the printer */
+			for(iii=0; printer_count; iii++)
 				{
-				if(strcmp(printers[i].name, queue_name) == 0)
+				if(strcmp(printers[iii].name, queue_name) == 0)
 					break;
 				}
-	
-			if(i == printer_count)
+
+			/* If we ran off the end of the list, */
+			if(iii == printer_count)
 				{
 				ipp->response_code = IPP_NOT_FOUND;
 				break;
 				}
 
-			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/printers/%s", queue_name);
-			/* ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4); */
-			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug", FALSE); */
-			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", groups[i].accepting);
-			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE); */
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+				"printer-name", printers[iii].name, FALSE);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+				"printer-make-and-model", "HP LaserJet 4200", FALSE);
+			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+				"printer-uri-supported", "/printers/%s", printers[iii].name);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+				"uri-security-supported", "none", FALSE);
+
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs", printers[iii].accepting);
+			printer_add_status(ipp, iii);
+
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+				"printer-state-reasons", "none", FALSE);
+
+			/* Which operations are supported for this printer object? */
+			{
+			int supported[] =
+				{
+				IPP_PRINT_JOB,
+				/* IPP_PRINT_URI, */
+				/* IPP_VALIDATE_JOB, */
+				/* IPP_CREATE_JOB, */
+				/* IPP_SEND_DOCUMENT, */
+				/* IPP_SEND_URI, */
+				IPP_CANCEL_JOB,
+				/* IPP_GET_JOB_ATTRIBUTES, */
+				IPP_GET_JOBS,
+				IPP_GET_PRINTER_ATTRIBUTES,
+				CUPS_GET_PRINTERS,
+				CUPS_GET_CLASSES
+				};
+			ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+				"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
+			}
+
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+				"charset-configured", "utf-8", FALSE);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+				"charset-supported", "utf-8", FALSE);
+			
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+				"natural-language-configured", "en-us", FALSE);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+				"generated-natural-language-supported", "en-us", FALSE);
+
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+				"document-format-default", "text/plain", FALSE);
+			{
+			const char *list[] = {
+				"text/plain",
+				"application/postscript",
+				"application/octet-stream"
+				};
+			ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+				"document-format-supported", sizeof(list) / sizeof(list[0]), list, FALSE);
+			}
+
+			/* On request, PPR will attempt to override job options
+			 * already selected in the job body. */
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+				"pdl-override-suported", "attempted", FALSE);
+	
+			/* measured in seconds */
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+				"printer-uptime", 1);
+
+			
 			}
 		else
 			{
@@ -222,9 +288,12 @@ static void ipp_get_jobs(struct IPP *ipp)
 			continue;
 			}
 
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", queue[i].id);
-		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", "/printers/%s", destid_to_name(queue[i].destnode_id, queue[i].destid));
-		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "/jobs/%d", queue[i].id);
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+			"job-id", queue[i].id);
+		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+			"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destnode_id, queue[i].destid));
+		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+			"job-uri", "/jobs/%d", queue[i].id);
 
 		/* Derived from "ppop lpq" */
 		{
@@ -270,7 +339,9 @@ static void cups_get_printers(struct IPP *ipp)
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
 			"printer-name", printers[i].name, FALSE);
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+
+		/* Is this valid? */
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,	
 			"printer-uri", "/printers/%s", printers[i].name);
 
 		printer_add_status(ipp, i);
@@ -336,9 +407,13 @@ static void cups_get_classes(struct IPP *ipp)
 	lock();
 	for(i=0; i < group_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", groups[i].name, FALSE);
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "/classes/%s", groups[i].name);
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", groups[i].accepting);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+			"printer-name", groups[i].name, FALSE);
+		/* Is this valid? */
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+			"printer-uri", "/classes/%s", groups[i].name);
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs", groups[i].accepting);
 		for(i2=0; i2 < groups[i].members; i2++)
 			members[i2] = printers[groups[i].printers[i2]].name;
 		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
@@ -423,27 +498,27 @@ void ipp_dispatch(const char command[])
 		}
 		
 		/* For now, English is all we are capable of. */
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en", FALSE);
-
-		debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
-		switch(ipp->operation_id)
+		if(ipp_validate_request(ipp))
 			{
-			case IPP_GET_PRINTER_ATTRIBUTES:
-				ipp_get_printer_attributes(ipp);
-				break;
-			case IPP_GET_JOBS:
-				ipp_get_jobs(ipp);
-				break;
-			case CUPS_GET_CLASSES:
-				cups_get_classes(ipp);
-				break;
-			case CUPS_GET_PRINTERS:
-				cups_get_printers(ipp);
-				break;
-			default:
-				gu_Throw("unsupported operation");
-				break;
+			debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
+			switch(ipp->operation_id)
+				{
+				case IPP_GET_PRINTER_ATTRIBUTES:
+					ipp_get_printer_attributes(ipp);
+					break;
+				case IPP_GET_JOBS:
+					ipp_get_jobs(ipp);
+					break;
+				case CUPS_GET_CLASSES:
+					cups_get_classes(ipp);
+					break;
+				case CUPS_GET_PRINTERS:
+					cups_get_printers(ipp);
+					break;
+				default:
+					gu_Throw("unsupported operation");
+					break;
+				}
 			}
 
 		if(ipp->response_code == IPP_OK)

@@ -276,9 +276,9 @@ msgstr ""
 "\t-P trustme                 sicheren Modus für TrustMe setzen\n"
 
 #: ../ppr/ppr_main.c:1159
-msgid "\t-Q <string>                TrueType query answer given (for papsrv)\n"
+msgid "\t-Q <string>                TrueType query answer given (for papd)\n"
 msgstr ""
-"\t-Q <Antwort>               Antwort in TrueType gegeben (für papsrv)\n"
+"\t-Q <Antwort>               Antwort in TrueType gegeben (für papd)\n"
 
 #: ../ppr/ppr_main.c:1097
 #, fuzzy

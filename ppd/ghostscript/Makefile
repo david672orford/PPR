@@ -25,42 +25,35 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2004.
+# Last modified 15 December 2004.
 #
 
 include ../../Makefile.conf
 
-#========================================================================
-# Choose the list of fonts which should be included in Ghostscript
-# PPD files.  Some common settings are given.  More details can be found
-# in the comments at the start of the file "ghostscript_master".
-#========================================================================
+#=== Inventory ==============================================================
 
-# Say Ghostscript has 14 fonts from Adobe Acrobat reader.
-#FONTS=-DFONTS_TO13 -DFONTS_DINGBATS
+PPDS=hpiiigs.ppd hpdj5gs.ppd dm24gs.ppd hpdj550c.ppd epsc62gs.ppd
 
-# Say Ghostscript has 35 fonts typically found in PostScript printers
-# and the URW fonts (for which the normal 35 are actually aliases).
-FONTS=-DFONTS_TO35 -DFONTS_GHOSTSCRIPT
+#=== Build ==================================================================
 
-#========================================================================
-
-all: hpiiigs.ppd hpdj5gs.ppd dm24gs.ppd hpdj550c.ppd epsc62gs.ppd
+all: $(PPDS)
 
 hpiiigs.ppd: ghostscript_master Makefile
-	$(CPP) -DPRINTER_HPIII $(FONTS) ghostscript_master >hpiiigs.ppd
+	$(CPP) -DPRINTER_HPIII ghostscript_master >hpiiigs.ppd
 
 hpdj5gs.ppd: ghostscript_master Makefile
-	$(CPP) -DPRINTER_HPDJ500 $(FONTS) ghostscript_master >hpdj5gs.ppd
+	$(CPP) -DPRINTER_HPDJ500 ghostscript_master >hpdj5gs.ppd
 
 dm24gs.ppd: ghostscript_master Makefile
-	$(CPP) -DPRINTER_DM24 $(FONTS) ghostscript_master >dm24gs.ppd
+	$(CPP) -DPRINTER_DM24 ghostscript_master >dm24gs.ppd
 
 hpdj550c.ppd: ghostscript_master Makefile
-	$(CPP) -DPRINTER_HPDJ550C $(FONTS) ghostscript_master >hpdj550c.ppd
+	$(CPP) -DPRINTER_HPDJ550C ghostscript_master >hpdj550c.ppd
 
 epsc62gs.ppd: ghostscript_master Makefile
-	$(CPP) -DPRINTER_EPSC62 $(FONTS) ghostscript_master >epsc62gs.ppd
+	$(CPP) -DPRINTER_EPSC62 ghostscript_master >epsc62gs.ppd
+
+#=== Install ================================================================
 
 install: all
 	../$(INSTALLCP) hpiiigs.ppd $(SHAREDIR)/PPDFiles/'HP LaserJet III Ghostscript'
@@ -68,6 +61,8 @@ install: all
 	../$(INSTALLCP) dm24gs.ppd $(SHAREDIR)/PPDFiles/'NEC Pinwriter 6 Ghostscript'
 	../$(INSTALLCP) hpdj550c.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 550C Ghostscript'
 	../$(INSTALLCP) epsc62gs.ppd $(SHAREDIR)/PPDFiles/'Epson Stylus C62 Ghostscript'
+
+#=== Housekeeping ===========================================================
 
 clean:
 	$(RMF) $(BACKUPS) *.ppd

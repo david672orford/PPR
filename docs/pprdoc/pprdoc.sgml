@@ -397,15 +397,13 @@ charged.</para>
 <sect2>
 <title>Accepting Jobs From Macintoshes</title>
 
-<para>
-<application>PPR</application> provides a daemon called <command>papsrv</command> which acts as a Macintosh print
-server.  It accepts connexions from Macintosh clients, answers queries using
-information in the PPD files, and accepts jobs.  Whenever
-<command>papsrv</command> accepts a
+<para><application>PPR</application> provides a daemon called
+<command>papd</command> which acts as a Macintosh print server.  It accepts
+connexions from Macintosh clients, answers queries using information in the PPD
+files, and accepts jobs.  Whenever <command>papd</command> accepts a
 connexion from a Macintosh, it forks a copy of itself to service the connexion.
-When the child daemon receives a print job, it launches <command>ppr</command> on the end of a
-pipe to process it.
-</para>
+When the child daemon receives a print job, it launches <command>ppr</command>
+on the end of a pipe to process it.</para>
 
 </sect2>
 
@@ -1300,20 +1298,20 @@ The second source is the font index.
 <para>The third source is the resource cache in <filename
 class="Directory">/var/spool/ppr/cache/</filename>. Whenever
 <application>PPR</application> processes a job with an resource it does not
-have in the cache, it adds a copy of it to the cache.  The purpose of this
-is to reduce resource download time in the future.  <application>LaserWriter
+have in the cache, it adds a copy of it to the cache.  The purpose of this is
+to reduce resource download time in the future.  <application>LaserWriter
 8</application> will generally refrain from downloading a font if the
 <application>PPR</application> <application>Macintosh printer
-server</application> <command>papsrv</command> informs it that the font is
-already in the printer.  (Of course, it is in the printer, it is in the
-cache, but from the viewpoint of the Macintosh client it is the same thing.)
-Also, some PostScript drivers for <systemitem class="OSname">Microsoft
+server</application> <command>papd</command> informs it that the font is
+already in the printer.  (Of course, it is in the printer, it is in the cache,
+but from the viewpoint of the Macintosh client it is the same thing.) Also,
+some PostScript drivers for <systemitem class="OSname">Microsoft
 Windows</systemitem> allow the downloading of the procedure set to be turned
-off.  As long as one job has been printed with it turned on, the procedure
-set will be in the cache and if downloading is subsequently turned off, the
+off.  As long as one job has been printed with it turned on, the procedure set
+will be in the cache and if downloading is subsequently turned off, the
 <systemitem class="OSname">MS-Windows</systemitem> driver will include a
-comment in each document telling where to re-insert the procedure set from
-the cache.</para>
+comment in each document telling where to re-insert the procedure set from the
+cache.</para>
 
 <sect3 id="truetype-download">
 <title>TrueType Font Downloading</title>

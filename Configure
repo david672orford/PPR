@@ -1309,8 +1309,6 @@ LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 SOCKLIBS=-lsocket -lnsl -lresolv
-LEX=lex
-LIB_LEX=-ll
 PARALLEL=generic
 
 # If you don't have NetBIOS, comment these out.
@@ -1345,8 +1343,6 @@ LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
 SOCKLIBS=-lsocket -lnsl -lresolv
-LEX=lex
-LIB_LEX=-ll
 PARALLEL=generic
 ===EndSUNOS5===
 fi
@@ -1374,8 +1370,6 @@ LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
 SOCKLIBS=-lsocket -lnsl -lresolv
-LEX=lex
-LIB_LEX=-ll
 PARALLEL=generic
 ===EndSUNOS56===
 fi
@@ -1403,8 +1397,6 @@ LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndNETBSD===
 fi
@@ -1432,8 +1424,6 @@ LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndNETBSD===
 fi
@@ -1481,8 +1471,6 @@ LDFLAGS=
 
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
-LEX=flex
-LEX_LIB=
 PARALLEL=linux
 
 # Here we clear INTLLIBS which may have been set above.  Modern Linux
@@ -1524,8 +1512,6 @@ LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndSUNOS4===
 fi
@@ -1571,8 +1557,6 @@ CPP=gcc -E -P -xc-header
 fi
 cat >&3 <<'===EndOSF4==='
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndOSF4===
 fi
@@ -1625,8 +1609,6 @@ fi
 
 cat >&3 <<'===EndIRIX4==='
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndIRIX4===
 fi
@@ -1658,8 +1640,6 @@ LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 SOCKLIBS=
-LEX=flex
-LEX_LIB=-lfl
 PARALLEL=generic
 
 .SUFFIXES: .exe
@@ -1709,8 +1689,6 @@ fi
 
 cat >&3 <<'===EndUWIN4==='
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 
 .SUFFIXES: .exe
@@ -1770,8 +1748,6 @@ fi
 
 cat >&3 <<===EndHPUX4===
 SOCKLIBS=
-LEX=lex
-LIB_LEX=-ll
 PARALLEL=generic
 ===EndHPUX4===
 fi
@@ -1819,8 +1795,6 @@ fi
 
 cat >&3 <<===EndULTRIX4===
 SOCKLIBS=
-LEX=lex
-LIB_LEX=-ll
 # For makeprogs/scriptfixup.sh to change #! lines:
 SH=/bin/sh5
 # So make will use the good shell:
@@ -1853,8 +1827,6 @@ LD=cc
 LDFLAGS=
 CPP=cpp
 SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
 PARALLEL=generic
 ===EndDarwin===
 fi

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 February 2004.
+# Last modified 14 December 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -295,17 +295,15 @@ then
 		echo "# PPR always needs pprd.
 		echo "if [ -x $HOMEDIR/bin/pprd ]"
 		echo " then"
-		echo " echo \"Starting PPRD\""
+		echo " echo \"Starting pprd\""
 		echo " $HOMEDIR/bin/pprd"
 		echo " fi"
 		echo "# Start AppleTalk server only if config file is present.
-		echo "if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]"
+		echo "if [ -x $HOMEDIR/bin/papd ]"
 		echo " then"
-		echo " echo \"Starting PAPSRV\""
-		echo " $HOMEDIR/bin/papsrv"
+		echo " echo \"Starting papd\""
+		echo " $HOMEDIR/bin/papd"
 		echo " fi"
-		echo "# Uncomment this line to run olprsrv in standalone mode."
-		echo "#${HOMEDIR}/bin/olprsrv -s printer"
 		echo "# Uncomment this line to run the new lprsrv in standalone mode."
 		echo "#${HOMEDIR}/bin/lprsrv -s printer"
 		echo "# ==== End of PPR Startup Code ===="
@@ -321,7 +319,7 @@ else
 	echo "Since your system doesn't seem to use a System V style Init nor do you have"
 	echo "have an rc.local file, you must find your own means to start PPR when the"
 	echo "system boots.  Specifically, you must arrange for root or $USER_PPR to run"
-	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papsrv."
+	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papd."
 	echo
 	echo "Please press RETURN to continue."
 	read x

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 December 2004.
+** Last modified 14 December 2004.
 */
 
 /*! \file
@@ -124,9 +124,12 @@ void ipp_put_string(struct IPP *ipp, const char string[]);
 void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr);
 void ipp_parse_request_header(struct IPP *ipp);
 void ipp_parse_request_body(struct IPP *ipp);
+gu_boolean ipp_validate_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
+void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
+void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[]);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[], gu_boolean free_value);
 void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[], gu_boolean free_values);
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)

@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/misc/ppr-sync.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 14 December 2004.
 #
 
 #
@@ -101,7 +101,7 @@ tempfile=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-sync-XXXXXX`
 # While we do so, we make a list of those files which were not replaced.
 #
 echo "Copying configuration files"
-find $CONFDIR ! -name 'lw*.conf' ! -name 'papsrv_default_zone.conf' -print \
+find $CONFDIR ! -name 'lw*.conf' -print \
 	| cpio -oc | $RSH $DESTSYS 'cpio -i' >$tempfile 2>&1
 echo
 
@@ -132,15 +132,6 @@ for group in *
 		fi
 	done
 echo
-
-# Restart papsrv if necessary
-egrep "$CONFDIR/papsrv" <$tempfile >/dev/null
-if [ $? -ne 0 ]
-	then
-	echo "Restarting papsrv on $DESTSYS"
-	$RSH $DESTSYS "$HOMEDIR/bin/papsrv_kill; $HOMEDIR/bin/papsrv"
-	echo
-	fi
 
 # remove the list which we no longer need
 rm -f $tempfile

@@ -101,9 +101,6 @@ directory contains the file <filename>printlog</filename>,
 <para>This directory contains a number of configuration files.  In also
 contains subdirectories which will be described in later sections.</para>
 
-<para>The file <filename>papsrv.conf</filename> is descibed in <ulink
-url="../refman/papsrv.8.html">the papsrv.conf(5) man page</ulink>.</para>
-
 <para>The purpose of <filename>newprn.conf</filename> is explained in Appendix <xref
 linkend="printer-config"/>.</para>
 
@@ -177,8 +174,8 @@ print jobs according to their required media.</para>
 
 <para>This directory contains the program <command>ppr</command> which
 submits jobs, various utility programs such as <command>ppop</command> and
-<command>ppad</command>, the PPR daemons <command>pprd</command>, and the
-<command>papsrv</command>.</para>
+<command>ppad</command>, and the PPR daemons <command>pprd</command> and
+<command>papd</command>.</para>
 
 </sect3>
 

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 11 Decemer 2004 for PPR version 2.00a1
+ Last revised 14 Decemer 2004 for PPR version 2.00a1
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -127,7 +127,7 @@ Most of these programs are a standard component of many Linux distributions.
 =============================================================================
 
 If you will be using PPR with CAP and you will be sharing more than about 10
-printers using papsrv, you must change two values in a CAP library header
+printers using papd, you must change two values in a CAP library header
 file and re-compile the CAP library.
 
 You should go to the directory "cap60/lib/cap" and edit the file "abpap.h".
@@ -335,12 +335,6 @@ You may also notice that compiling with GCC is not an option.  If one does,
 seteuid() and setegid() don't work correctly.  (They don't work perfectly
 with the bundled compiler either, but they are better.)  Presumably there
 is a way to fix this.
-
-The bundled compiler may have trouble compiling the Flex generated PPD
-file lexers.  If it does, do "make veryclean" in the /pprdrv/ and /papsrv/
-directories.  After this is done, the lexer code will be re-generated with
-Lex.  Using Lex should be avoided because Lex generated lexers may not work
-correctly with *Include: in PPD files.
 
 =============================================================================
  Notes for MS-Windows NT 4.0 and UWIN 2.0

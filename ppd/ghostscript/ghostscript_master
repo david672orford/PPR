@@ -17,14 +17,6 @@
 *%
 *% The symbols which determine what is included are:
 *%
-*%	FONTS_IBMCOURIER	for IBMCourier* family
-*%	FONTS_COURIER		for Courier* family
-*%	FONTS_TO13			for fonts in 13 font printers
-*%	FONTS_TO17			for fonts in 17 font printers
-*%	FONTS_TO35			for fonts in 35 font printers
-*%	FONTS_DINGBATS		for Zapf Dingbats
-*%	FONTS_GHOSTSCRIPT	for URW donated fonts
-*%
 *%	PRINTER_HPIII		HP LaserJet III with at least 1MB memory
 *%	PRINTER_HPDJ500		HP DeskJet 500, DeskWriter
 *%	PRINTER_HPDJ550C	HP DeskJet 550C, 560C
@@ -33,7 +25,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 8 December 2004.
+*% which was last revised 15 December 2004.
 *%
 #endif
 
@@ -106,7 +98,7 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
+*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c62
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=2880x720sw,Dither=Adaptive
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive
@@ -265,37 +257,75 @@
 
 *OpenUI *Cluster: PickOne
 *OrderDependency 20 AnySetup *Cluster
-*Cluster Photo: "<< /IjsParams (ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive) >> setpagedevice"
+*Cluster Photo: "<< /ImageType (2) /MediaType (Coated) /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
 *CloseUI *Cluster
-
 
 *OpenUI *Quality/Quality: PickOne
 *OrderDependency 20 AnySetup *Quality
 *DefaultQuality: 360dpi
-*Quality 360dpi:       "<< /IjsParams (Quality=360dpi) >> setpagedevice"
-*Quality 1440x1440hq2: "<< /IjsParams (Quality=1440x1440hq2) >> setpagedevice"
+*Quality 360dpi:       "<< /Quality (360dpi) >> setpagedevice"
+*Quality 1440x1440hq2: "<< /Quality (1440x1440hq2) >> setpagedevice"
 *CloseUI: *Quality
 
-*OpenUI *Inking: PickOne
-*OrderDependency 20 AnySetup *Inking
-*DefaultInking: Plain
-*Inking Plain/Plain Paper: "<< /IjsParams (MediaType=Plain) >> setpagedevice"
-*Inking PlainFast/Plain Paper Fast Load: "<< /IjsParams (Mediatype=PlainFast) >> setpagedevice"
-*% Postcard        Postcard
-*% GlossyFilm      Glossy Film
-*% Transparency    Transparencies
-*% Envelope        Envelopes
-*% BackFilm        Back Light Film
-*% Matte           Matte Paper
-*% Inkjet          Inkjet Paper
-*Inking Coated/Photo Quality Inkjet Paper: "<< /IjsParams (MediaType=Coated) >> setpagedevice"
-*% GlossyPhoto     Premium Glossy Photo Paper
-*% Luster          Premium Luster Photo Paper
-*Inking Photo/Photo Paper: "<< /IjsParams (MediaType=Photo) >> setpagedevice"
-*% Glossy          Photo Quality Glossy Paper
-*% Ilford          Ilford Heavy Paper
-*% Other           Other
-*CloseUI: *Inking
+*OpenUI *MediaType: PickOne
+*OrderDependency 10 AnySetup *MediaType
+*DefaultMediaType: Plain
+*MediaType Plain/Plain Paper: "<< /MediaType (Plain) >> setpagedevice"
+*MediaType PlainFast/Plain Paper Fast Load: "<< /MediaType (PlainFast) >> setpagedevice"
+*MediaType Postcard: "<< /MediaType (Postcard) >> setpagedevice"
+*MediaType GlossyFilm/Glossy Film: "<< /MediaType (GlossyFilm) >> setpagedevice"
+*MediaType Transparency/Transparencies: "<< /MediaType (Transparency) >> setpagedevice"
+*MediaType Envelope/Envelopes: "<< /MediaType (Envelopes) >> setpagedevice"
+*MediaType BackFilm/Back Light Film: "<< /MediaType (BackFilm) >> setpagedevice"
+*MediaType Matte/Matte Paper: "<< /MediaType (Matte) >> setpagedevice"
+*MediaType Inkjet/Inkjet Paper: "<< /MediaType (Inkjet) >> setpagedevice"
+*MediaType Coated/Photo Quality Inkjet Paper: "<< /MediaType (Coated) >> setpagedevice"
+*MediaType GlossyPhoto/Premium Glossy Photo Paper: "<< /MediaType (GlossyPhoto) >> setpagedevice"
+*MediaType Luster/Premium Luster Photo Paper: "<< /MediaType (Luster) >> setpagedevice"
+*MediaType Photo/Photo Paper: "<< /MediaType (Photo) >> setpagedevice"
+*MediaType Glossy/Photo Quality Glossy Paper: "<< /MediaType (Glossy) >> setpagedevice"
+*MediaType Ilford/Ilford Heavy Paper: "<< /MediaType (Ilford) >> setpagedevice"
+*MediaType Other: "<< /MediaType (Other) >> setpagedevice"
+*CloseUI: *MediaType
+
+*OpenUI *StpQuality/Print Quality: PickOne
+*OrderDependency: 5 AnySetup *StpQuality
+*DefaultStpQuality: Standard
+*StpQuality None/Manual Control: ""
+*StpQuality FastEconomy/Fast Economy: "<< /HWResolution [360 120] >> setpagedevice"
+*StpQuality Economy/Economy: "<< /HWResolution [360 240] >>setpagedevice"
+*StpQuality Draft/Draft: "<< /HWResolution [360 360] >> setpagedevice"
+*StpQuality Standard/Standard: "<< /HWResolution [720 360] >> setpagedevice"
+*StpQuality High/High: "<< /HWResolution [720 720] >> setpagedevice"
+*StpQuality Photo/Photo: "<< /HWResolution [1440 720] >> setpagedevice"
+*StpQuality Best/Best: "<< /HWResolution [2880 1440] >> setpagedevice"
+*CloseUI: *StpQuality
+
+*OpenUI *StpImageType/Image Type: PickOne
+*OrderDependency: 5 AnySetup *StpImageType
+*DefaultStpImageType: TextGraphics
+*StpImageType None/Manual Control: ""
+*StpImageType Text/Text: ""
+*StpImageType Graphics/Graphics: ""
+*StpImageType TextGraphics/Mixed Text and Graphics: ""
+*StpImageType Photo/Photograph: "<< /ImageType (2) >> setpagedevice"
+*StpImageType LineArt/Line Art: "<< /ImageType (1) >> setpagedevice"
+*CloseUI: *StpImageType
+
+*OpenUI *Resolution/Resolution: PickOne
+*OrderDependency: 20 AnySetup *Resolution
+*DefaultResolution: None
+*Resolution None/Automatic: ""
+*Resolution 360x120sw/360 x 120 DPI Economy:	"<</HWResolution[360 120]/cupsCompression 0>>setpagedevice"
+*Resolution 360x240sw/360 x 240 DPI Draft:	"<</HWResolution[360 240]/cupsCompression 1>>setpagedevice"
+*Resolution 360sw/360 DPI:	"<</HWResolution[360 360]/cupsCompression 2>>setpagedevice"
+*Resolution 720x360sw/720 x 360 DPI:	"<</HWResolution[720 360]/cupsCompression 3>>setpagedevice"
+*Resolution 720sw/720 DPI:	"<</HWResolution[720 720]/cupsCompression 4>>setpagedevice"
+*Resolution 1440x720sw/1440 x 720 DPI:	"<</HWResolution[1440 720]/cupsCompression 5>>setpagedevice"
+*Resolution 2880x720sw/2880 x 720 DPI:	"<</HWResolution[2880 720]/cupsCompression 6>>setpagedevice"
+*Resolution 1440x1440sw/1440 x 1440 DPI:	"<</HWResolution[1440 1440]/cupsCompression 7>>setpagedevice"
+*Resolution 2880x1440sw/2880 x 1440 DPI:	"<</HWResolution[2880 1440]/cupsCompression 8>>setpagedevice"
+*CloseUI: *Resolution
 
 *CloseGroup: PrintQuality
 
@@ -303,30 +333,11 @@
 
 *% ===== Fonts =====
 
-#ifdef FONTS_IBMCOURIER
-#ifndef COURIER_INCLUDED
-*DefaultFont: IBMCourier
-#endif
-*% PPR has the IBM versions of Courier with "IBM" prepended
-*% to their names in order to distinguish them from the
-*% Adobe versions.
-*Font IBMCourier: Standard "(001.003)" Standard Disk
-*Font IBMCourier-Bold: Standard "(001.003)" Standard Disk
-*Font IBMCourier-BoldOblique: Standard "(001.003)" Standard Disk
-*Font IBMCourier-Oblique: Standard "(001.003)" Standard Disk
-#endif
-
-#if defined(FONTS_COURIER) | defined(FONTS_TO13) | defined(FONTS_TO17) | defined(FONTS_TO35)
-#define COURIER_INCLUDED 1
 *DefaultFont: Courier
 *Font Courier: Standard "(001.005)" Standard Disk
 *Font Courier-Bold: Standard "(001.005)" Standard Disk
 *Font Courier-BoldOblique: Standard "(001.005)" Standard Disk
 *Font Courier-Oblique: Standard "(001.005)" Standard Disk
-#endif
-
-#if defined(FONTS_TO13) | defined(FONTS_TO35) | defined(FONTS_TO17)
-*% In the standard set, these fonts bring the total to 13.
 *Font Helvetica: Standard "(001.005)" Standard Disk
 *Font Helvetica-Bold: Standard "(001.005)" Standard Disk
 *Font Helvetica-BoldOblique: Standard "(001.005)" Standard Disk
@@ -336,18 +347,10 @@
 *Font Times-BoldItalic: Standard "(001.005)" Standard Disk
 *Font Times-Italic: Standard "(001.005)" Standard Disk
 *Font Times-Roman: Standard "(001.005)" Standard Disk
-#endif
-
-#if defined(FONTS_TO17) | defined(FONTS_TO35)
-*% In the standard set, these bring the count to 17
 *Font Helvetica-Narrow: Standard "(001.005)" Standard Disk
 *Font Helvetica-Narrow-Bold: Standard "(001.005)" Standard Disk
 *Font Helvetica-Narrow-BoldOblique: Standard "(001.005)" Standard Disk
 *Font Helvetica-Narrow-Oblique: Standard "(001.005)" Standard Disk
-#endif
-
-#ifdef FONTS_TO35
-*% These make 35
 *Font AvantGarde-Book: Standard "(001.005)" Standard Disk
 *Font AvantGarde-BookOblique: Standard "(001.005)" Standard Disk
 *Font AvantGarde-Demi: Standard "(001.005)" Standard Disk
@@ -365,13 +368,8 @@
 *Font Palatino-Italic: Standard "(001.005)" Standard Disk
 *Font Palatino-Roman: Standard "(001.005)" Standard Disk
 *Font ZapfChancery-MediumItalic: Standard "(001.005)" Standard Disk
-#endif
-#if defined(FONTS_TO35) | defined(FONTS_DINGBATS)
-*% Part of 35 fonts, also part of Acrobat reader set.
 *Font ZapfDingbats: Special "(001.005)" Special Disk
-#endif
 
-#ifdef FONTS_GHOSTSCRIPT
 *% These are the URW fonts for which the fonts named above are aliases.
 *Font: URWBookmanL-DemiBold: Standard "(001.005)" Standard Disk
 *Font: URWBookmanL-DemiBoldItal: Standard "(001.005)" Standard Disk
@@ -408,6 +406,5 @@
 *Font: StandardSymL: Special "(001.005)" Special Disk
 *Font: URWChanceryL-MediItal: Standard "(001.005)" Standard Disk
 *Font: Dingbats: Special "(001.005)" Special Disk
-#endif
 
 *% end of file

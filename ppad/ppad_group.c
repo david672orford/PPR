@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 14 December 2004.
 */
 
 /*
@@ -520,17 +520,14 @@ int group_remove_internal(const char *group, const char *member)
 			if(lmatch(confline, "DefFiltOpts:"))		/* delete old lines */
 				continue;
 	
-			if(lmatch(confline, "Printer:"))			/* if member name, */
+			if((ptr = lmatchp(confline, "Printer:")))	/* if member name, */
 				{
-				ptr = &confline[8];
-				ptr += strspn(ptr, " \t");
-	
-				if(strcmp(ptr,member)==0)				/* If it is the one we */
+				if(strcmp(ptr, member) == 0)			/* If it is the one we */
 					{									/* are deleting, */
 					found=TRUE;							/* set a flag */
 					continue;							/* and don't copy. */
 					}
-	
+
 				queueinfo_add_printer(qobj, ptr);		/* Otherwise, add its PPD file, */
 				}
 	
