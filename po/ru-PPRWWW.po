@@ -770,19 +770,19 @@ msgstr ""
 
 #: ../www/login_cookie.cgi.perl:45
 msgid "PPR Login"
-msgstr ""
+msgstr "Вход в систему PPR"
 
 #: ../www/login_cookie.cgi.perl:82
 msgid "Username:"
-msgstr ""
+msgstr "Пользователь:"
 
 #: ../www/login_cookie.cgi.perl:84
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: ../www/login_cookie.cgi.perl:86
 msgid "Login"
-msgstr ""
+msgstr "Вход в систему"
 
 #: ../www/login_cookie.cgi.perl:87 ../www/login_cookie.cgi.perl:141
 #: ../www/show_jobs.cgi.perl:333
@@ -791,7 +791,7 @@ msgstr "Закрыть"
 
 #: ../www/login_cookie.cgi.perl:93
 msgid "Incorrect username or password."
-msgstr ""
+msgstr "Не правелный ползователь или пороль."
 
 #: ../www/login_cookie.cgi.perl:116
 #, c-format
@@ -811,7 +811,7 @@ msgstr "Обновить"
 
 #: ../www/login_cookie.cgi.perl:120
 msgid "Logout"
-msgstr ""
+msgstr "Выйти из системы"
 
 #: ../www/login_cookie.cgi.perl:138
 #, c-format
@@ -1112,7 +1112,7 @@ msgstr "Название Принтера:"
 
 #: ../www/prn_addwiz.cgi.perl:614
 msgid "You must enter a name for the printer!"
-msgstr ""
+msgstr "Вам нада введить названое принтера!"
 
 #: ../www/prn_addwiz.cgi.perl:616
 #, c-format
@@ -1178,7 +1178,7 @@ msgstr ""
 
 #: ../www/prn_control.cgi.perl:57
 msgid "fault"
-msgstr ""
+msgstr "порок"
 
 #: ../www/prn_control.cgi.perl:59
 msgid "fault, no auto retry"
