@@ -96,7 +96,7 @@ while(<D>)
 
     print <<"BODY10";
 <table border=1 hspace=5 vspace=5 cellpadding=5 cellspacing=0 align="left">
-<tr><td><table border=0 cellspacing=0 cellpadding=0 height=100>
+<tr height=100><td><table border=0 cellspacing=0 cellpadding=0 height=100>
 		<tr><td><img width=100 height=$percent_reserved border=0 src="../images/pixel-blue.png"></td></tr>
 		<tr><td><img width=100 height=$percent_available border=0 src="../images/pixel-green.png"></td></tr>
 		<tr><td><img width=100 height=$percent_used border=0 src="../images/pixel-red.png"></td></tr>
