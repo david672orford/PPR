@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2002.
+** Last modified 2 July 2002.
 */
 
 #include "before_system.h"
@@ -90,9 +90,11 @@ void *gu_pch_new(int buckets_count)
 void gu_pch_free(void **pch)
     {
     struct PCH *p = (struct PCH *)*pch;
+    int x;
 
-
-
+    for(x=0; x < p->buckets_count; x++)
+	{
+	}
 
     gu_free(*pch);
     *pch = (void*)NULL;
@@ -106,6 +108,12 @@ void gu_pch_free(void **pch)
 void gu_pch_debug(void **pch, const char name[])
     {
     struct PCH *p = (struct PCH *)*pch;
+    int x;
+
+    for(x=0; x < p->buckets_count; x++)
+	{
+	}
+
 
     }
 

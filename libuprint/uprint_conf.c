@@ -365,10 +365,10 @@ const char *uprint_default_destinations_lpr(void)
     {
     char *p;
     uprint_read_conf();
-    if(conf.default_destinations.lpr)			/* uprint.conf */
-    	return conf.default_destinations.lpr;
     if((p = getenv("PRINTER")))				/* environment variable */
     	return p;
+    if(conf.default_destinations.lpr)			/* uprint.conf */
+    	return conf.default_destinations.lpr;
     return "lp";					/* last resort */
     }
 
@@ -379,12 +379,12 @@ const char *uprint_default_destinations_lp(void)
     {
     char *p;
     uprint_read_conf();
-    if(conf.default_destinations.lp)			/* uprint.conf */
-    	return conf.default_destinations.lp;
     if((p = getenv("LPDEST")))				/* lp's environment variable */
 	return p;
     if((p = getenv("PRINTER")))				/* lpr's environment variable */
     	return p;
+    if(conf.default_destinations.lp)			/* uprint.conf */
+    	return conf.default_destinations.lp;
     return "lp";					/* last resort */
     }
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2002.
+** Last modified 2 July 2002.
 */
 
 #include "before_system.h"
@@ -36,7 +36,7 @@
 /*
 =head1 gu_pcs
 
-This module implements string library.  This library is designed to make it
+This module implements a string library.  This library is designed to make it
 easier to port Perl code to C.  The strings are stored in objects known
 as PCS (Perl Compatible String).
 
