@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/tcpip.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 12 January 2005.
 */
 
 /*
@@ -358,7 +358,10 @@ int int_main(int argc, char *argv[])
 		}
 
 	/* If feedback is on, and control-d handshaking is on, turn on the ^T stuff. */
-	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+	if(int_cmdline.feedback 
+			&& (int_cmdline.jobbreak == JOBBREAK_CONTROL_D 
+				|| int_cmdline.jobbreak == JOBBREAK_PJL)
+		)
 		options.idle_status_interval = 15;
 
 	if(strcmp(int_cmdline.int_basename, "jetdirect") == 0)

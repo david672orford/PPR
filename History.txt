@@ -9509,6 +9509,10 @@ no final tarball was released.
 * ipp/ipp.c: fixed incorrect data type for requesting-user-name, fixed to
   ignore empty REMOTE_USER CGI environment variable.
 
+* interfaces/serial.c,parallel.c,usb.c,tcpip.c: fixed so that 
+  idle_status_interval defaults to 15 not only if the jobbreak method is 
+  control-d but for pjl also.  This appears to solve a problem with HP 
+  JetDirect cards reporting error "40 eio 2 bad transmission".
 
 
 TODO

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/editps/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 July 2004.
+# Last modified 12 January 2005.
 #
 
 include ../Makefile.conf
@@ -39,7 +39,8 @@ EDITORS=Windows_NT_4.0 Windows_95_4.0 Windows_XP \
 	LaserWriter_8_8.4 \
 	Mozilla_1.0 \
 	Mozilla_1.6 \
-	Qt_2.2.0 Qt_3.1.1
+	Qt_2.2.0 Qt_3.1.1 \
+	OpenOffice.org
 
 #=== Build ==================================================================
 
