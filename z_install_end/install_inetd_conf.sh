@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_inetd_conf.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 17 January 2005.
 #
 
 #
@@ -190,7 +190,7 @@ service printer
 		socket_type		= stream
 		wait			= no
 		user			= root
-		server			= $HOMEDIR/lib/lprsrv
+		server			= $LIBDIR/lprsrv
 		cps				= 400 30
 		instances		= 50
 		disable = yes
@@ -203,7 +203,7 @@ service ppradmin
 		port			= 15010
 		wait			= no
 		user			= $USER_PPRWWW
-		server			= $HOMEDIR/lib/ppr-httpd
+		server			= $LIBDIR/ppr-httpd
 		instances		= 50
 		disable = no
 }
@@ -215,7 +215,7 @@ service ppradmin
 		port			= ipp
 		wait			= no
 		user			= $USER_PPRWWW
-		server			= $HOMEDIR/lib/ppr-httpd --ipp
+		server			= $LIBDIR/ppr-httpd --ipp
 		instances		= 50
 		disable = yes
 }
@@ -360,9 +360,9 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 	inetd_type="basic"
 	fi
 
-add_inetd printer ".400" root $HOMEDIR/lib/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
-add_inetd ppradmin ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's web managment server"
-add_inetd ipp ".400" $USER_PPRWWW $HOMEDIR/lib/ppr-httpd "PPR's IPP server"
+add_inetd printer ".400" $USER_PPR $LIBDIR/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
+add_inetd ppradmin ".400" $USER_PPRWWW $LIBDIR/ppr-httpd "PPR's web managment server"
+add_inetd ipp ".400" $USER_PPRWWW $LIBDIR/ppr-httpd "PPR's IPP server"
 
 send_hup inetd
 

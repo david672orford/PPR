@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/misc/ppr-sync.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 6 April 2005.
 #
 
 #
@@ -138,7 +138,7 @@ egrep "$CONFDIR/papsrv" <$tempfile >/dev/null
 if [ $? -ne 0 ]
 	then
 	echo "Restarting papsrv on $DESTSYS"
-	$RSH $DESTSYS "$HOMEDIR/bin/papsrv_kill; $HOMEDIR/bin/papsrv"
+	$RSH $DESTSYS "$HOMEDIR/bin/papsrv --stop; $HOMEDIR/bin/papsrv"
 	echo
 	fi
 

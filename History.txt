@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--23 December 2004
+1.54, 11 December 2004--6 April 2005
 
 * samba/ppd2win95drv.perl: removed
 
@@ -9445,6 +9445,12 @@ no final tarball was released.
 
 * www/ppr-passwd.c: fixed --delete
 
+* z_install_end/install_inetd_conf.sh: fixed broken Xinetd config file
+
+* browsers/usb.c: fixed discrepancy between the name of the single "zone" listed
+  and the zone name accepted for browsing.
+
+* misc/ppr-sync.sh: changed papsrv_kill to papsrv --stop.
 
 
 
