@@ -17,14 +17,11 @@ ppd_ricoh/
 
 ppd_hp_mit/
 	Hewlet-Packard PPD files distributed under the MIT license (which is
-	equivelent to the PPR license).
+	equivalent to the PPR license).
 
 procset_apple/
 	A TrueType renderer from Apple which Macintoshs need when printing 
 	Truetype fonts on 68000-based level 1 PostScript printers.
-
-font_adobe/
-	AFM files which may be distributed (need to check about modification).
 
 font_ibm/
 font_paragraph/

@@ -1,6 +1,3 @@
-/* The following line was added by David Chappell on 28 January 2000: */
-#include <string.h>
-
 /*
   Copyright (C) 1999 Aladdin Enterprises.  All rights reserved.
 
@@ -37,7 +34,10 @@
  */
 /*$Id$ */
 
+/* Start of modifications for PPR */
+#include <string.h>
 #include "gu_md5.h"
+/* End of modifications for PPR */
 
 #ifdef TEST
 /*

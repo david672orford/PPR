@@ -70,13 +70,17 @@ gu_pca.$(OBJ): gu_pca.c ../include/config.h ../include/gu.h
 
 gu_run.$(OBJ): gu_run.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-gu_parse_uri.$(OBJ): gu_parse_uri.c ../include/config.h ../include/gu.h
-
 gu_pch.$(OBJ): gu_pch.c ../include/config.h ../include/gu.h
 
 gu_exceptions.$(OBJ): gu_exceptions.c ../include/config.h ../include/gu.h
 
+gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h
+
+gu_strlcpy.$(OBJ): gu_strlcpy.c ../include/gu.h
+
 gu_pca_join.$(OBJ): gu_pca_join.c ../include/config.h ../include/gu.h ../include/pcre.h
+
+gu_stresc.$(OBJ): gu_stresc.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 gu_psprintf.$(OBJ): gu_psprintf.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
@@ -88,9 +92,7 @@ gu_isdigit.$(OBJ): gu_isdigit.c ../include/config.h ../include/gu.h ../include/g
 
 gu_snprintf.$(OBJ): gu_snprintf.c ../include/config.h ../include/gu.h ../nonppr_misc/snprintf/snprintf.c
 
-gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h ../nonppr_misc/openbsd/strlcat.c
-
-gu_strlcpy.$(OBJ): gu_strlcpy.c ../include/gu.h ../nonppr_misc/openbsd/strlcpy.c
+gu_uri.$(OBJ): gu_uri.c ../include/config.h ../include/gu.h
 
 gu_strlower.$(OBJ): gu_strlower.c ../include/config.h ../include/gu.h
 

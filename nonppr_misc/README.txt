@@ -28,20 +28,13 @@ libgu/gu_strlcat.c includes nonppr_misc/openbsd/strlcat.c
 libgu/gu_strlcpy.c includes nonppr_misc/openbsd/strlcpy.c
     String functions from OpenBSD
 
-www/md5.js -> nonppr_misc/md5/md5.js
-	Copyright (c) 1996 Henri Torgemane, BSDish license described in 
-	the file.
-
 libscript/MD5pp.pm -> nonppr_misc/md5/MD5pp.pm
-	More info needed.
+	http://www.cs.ndsu.nodak.edu/~rousskov/research/cache/
 
 libttf/ps_type3.c -> nonppr_misc/ps_type3/ps_type3.c
 	The code in this file is almost all from L. S. Ng's
 	comp.sources.postscript USENET posting of a program to create
 	PostScript from a TrueType font file and a text file.
-
-pprpopup/md5pure.tcl -> nonppr_misc/md5/md5pure.tcl
-	Copyright 1999, Don Libes
 
 makeprogs/squeeze.c -> nonppr_misc/squeeze/squeeze.c
 	Copyright 1988, Radical Eye Software.  This program is a modified

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2005.
+# Last modified 10 March 2005.
 #
 
 #
@@ -182,7 +182,9 @@ symlinks-restore:
 	if [ -d CVS ]; then ./.restore_symlinks; fi
 
 # This creates the file that the symbolic links are restored from.
-symlinks-save:
+# We must do a clean first since the build process creates a few 
+# additional symbolic links to executables.
+symlinks-save: clean
 	./makeprogs/save_symlinks.sh
 
 #=== Housekeeping ===========================================================
