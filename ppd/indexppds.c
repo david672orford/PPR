@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2004.
+** Last modified 28 January 2004.
 */
 
 #include "before_system.h"
@@ -77,8 +77,9 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	char *pline, *p;
 
 	printf("  %s", base_filename);
+
 	obj = ppdobj_new(filename);
-	pool temp_pool = new_subpool(global_pool);
+	temp_pool = new_subpool(global_pool);
 
 	/* the information we are gathering */
 	char *Manufacturer = NULL;
@@ -127,7 +128,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		 */
 		if(!Product && (p = lmatchp(pline, "*Product:")) && *p == '"') 
 			{
-			p = finish_decode(p + 1);
+			p = ppd_finish_QuotedValue(obj, p + 1);
 			if(*p == '(' && p[strlen(p) - 1] == ')')
 				{
 				Product = pstrndup(temp_pool, p + 1, strlen(p) - 2);
@@ -165,7 +166,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			pcre *split_pattern;
 			vector pairs;
 
-			p = ppd_finish_quoted_string(p + 1);
+			p = ppd_finish_quoted_string(obj, p + 1);
 			ppd_decode_QuotedValue(p);
 			ptrim(p);
 

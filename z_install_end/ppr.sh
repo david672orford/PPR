@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/ppr.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 28 January 2004.
 #
 
 #
@@ -78,10 +78,16 @@ do_start ()
 		$HOMEDIR/bin/papd
 		fi
 
-	# This is the AppleTalk server daemon.
+	# This is the old AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
 		then
 		$HOMEDIR/bin/papsrv && $EECHO "papsrv \c"
+		fi
+
+	# This is the new AppleTalk server daemon.
+	if [ -x $HOMEDIR/bin/papd ]
+		then
+		$HOMEDIR/bin/papd && $EECHO "papd \c"
 		fi
 
 	# Uncomment this if you want to run the new lprsrv

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/uprint/uprint-lpstat.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 28 January 2004.
 */
 
 #include "before_system.h"
@@ -196,11 +196,11 @@ static void lpstat_o(const char list[])
 
 /*
 
-This function implementations "lpstat -p" (which displays the operational
-status of printers).  Here is are some sample commands and sample output
-from Solaris 2.6.  Note that Solaris 2.6 wraps lpstat just like we do.
-The wrapper is in /usr/bin/lpstat, the real (System V release 4.0) one is in
-/usr/lib/lp/local/lpstat.  The wrapper provides remote printing which
+This function implementations "lpstat -p" (which displays the operational 
+status of printers).  Here is are some sample commands and sample output from
+Solaris 2.6.  Note that Solaris 2.6 wraps the lpstat command just like UPRINT 
+does.  The wrapper is in /usr/bin/lpstat, the real (System V release 4.0) one
+is in /usr/lib/lp/local/lpstat.  The wrapper provides remote printing which
 System V release 4.0 lp does not.  Note the differences in the output.
 
 $ /usr/bin/lpstat -p x,dummy

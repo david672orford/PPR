@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 28 January 2004.
 */
 
 /*! \file
@@ -58,10 +58,10 @@ and abort the program if the allocation fails.
 #define DODEBUG(a)
 #endif
 
-/* number of blocks currently allocated */
+/** Number of blocks currently allocated, used for debugging */
 int gu_alloc_blocks = 0;
 
-/** allocate a memory block to hold an array
+/** Allocate a memory block to hold an array
 
 The function gu_alloc() takes two arguments.  The first is the number of items
 to allocate, the second is the size of each in bytes.  This function will return
@@ -82,7 +82,7 @@ void *gu_alloc(size_t number, size_t size)
 	return rval;
 	} /* end of gu_alloc() */
 
-/** duplicate a string
+/** Duplicate a string
 
 The function gu_strdup() takes a string pointer as its sole argument and
 returns a pointer to a new copy of the string.
@@ -107,7 +107,7 @@ char *gu_strdup(const char *string)
 	return rval;
 	} /* end of gu_strdup() */
 
-/** duplicate the initial segment of a string
+/** Duplicate the initial segment of a string
 
 The function gu_strndup() takes a string pointer and a maximum length as its
 arguments.  It returns a pointer to a new string containing a copy of the
@@ -131,7 +131,7 @@ char *gu_strndup(const char *string, size_t len)
 	return rval;
 	} /* end of gu_strndup() */
 
-/** copy a string into a preexisting block, resizing if necessary
+/** Copy a string into a preexisting block, resizing if necessary
 
 */
 char *gu_restrdup(char *ptr, size_t *number, const char *string)
@@ -150,7 +150,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 	return ptr;
 	}
 
-/** change the size of an already allocated array
+/** Change the size of an already allocated array
 
 The function gu_realloc() changes the size of a memory block.  The
 first argument is a pointer to the old block, the second is the desired new
@@ -171,10 +171,9 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
 	return rval;
 	} /* end of ppr_realloc() */
 
-/** free memory
+/** Free memory
 
-The function gu_free() is used to free any memory allocated by the other
-functions.
+The function gu_free() is used to free any memory allocated by the other functions.
 
 */
 void gu_free(void *ptr)

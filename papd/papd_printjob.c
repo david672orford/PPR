@@ -106,7 +106,7 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 			{							/* then tell the client */
 			at_reply(sesfd, "%%[ Error: spooler is out of processes ]%%\n");
 			postscript_stdin_flushfile(sesfd);
-			gu_Throw("%s(): fork() failed, errno=%d", function, errno, gu_strerror(errno));
+			gu_Throw(_("%s(): fork() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
 			}
 
 		if(ppr_pid == 0)				/* if child */

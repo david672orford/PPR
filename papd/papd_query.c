@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 28 January 2004.
 */
 
 /*
@@ -136,13 +136,14 @@ static void eat_query(int sesfd)
 */
 static void return_default(int sesfd)
 	{
+	const char function[] = "return_defualt";
 	char *ptr;
 
 	DODEBUG_QUERY(("Returning default answer"));
 
 	if((ptr = strchr(line,':')) == (char*)NULL)
 		{
-		gu_Throw("papd_query.c: return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)",line);
+		gu_Throw("%s(): return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)", function, line);
 		}
 
 	ptr++;
@@ -242,7 +243,7 @@ static void do_font_query(int sesfd, void *qc, int index)
 		** and, if this is a two mode Mac TrueType font, we already have the part
 		** the client would probably supply if we said "No".
 		*/
-		if(queueinfo_transparentMode(qc)
+		if(!queueinfo_transparentMode(qc) && !queueinfo_psPassThru(qc)
 				&& noalloc_find_cached_resource("font", tokens[x], 0.0, 0, font_search_list, (int*)NULL, &features, NULL)
 				&& ( !(features & FONT_MACTRUETYPE) || (features & wanted_mactruetype_features) ) )
 			{
@@ -371,14 +372,14 @@ void procset_query(int sesfd)
 	name = tokens[1];							/* get procset name */
 
 	if(tokens[2])								/* get version number */
-		version=gu_getdouble(tokens[2]);				/* which is a floating point */
+		version = gu_getdouble(tokens[2]);		/* which is a floating point */
 	else										/* number; if none present, */
-		version=0;								/* user zero */
+		version = 0;							/* user zero */
 
 	if(tokens[3])								/* get revision number */
 		sscanf(tokens[3],"%d",&revision);		/* which is an integer */
 	else										/* if none present, */
-		revision=0;								/* use zero */
+		revision = 0;							/* use zero */
 
 	if(noalloc_find_cached_resource("procset", name, version, revision, other_search_list, (int*)NULL, (int*)NULL))
 		{
@@ -399,6 +400,8 @@ void procset_query(int sesfd)
 static void feature_query(int sesfd, void *qc)
 	{
 	char temp[256];
+	const char *p;
+	int i;
 
 	DODEBUG_QUERY(("feature query: %s", line));
 
@@ -409,29 +412,32 @@ static void feature_query(int sesfd, void *qc)
 	switch(tokens[1][1])		/* <-- second character */
 		{
 		case 'L':
-			if(strcmp(tokens[1], "*LanguageLevel") == 0 && queueinfo_psLanguageLevel(qc))
+			if(strcmp(tokens[1], "*LanguageLevel") == 0)
 				{
-				snprintf(temp, sizeof(temp), "\"%d\"\n", queueinfo_psLanguageLevel(qc));
-				REPLY(sesfd, temp);
-				return;
+				if((i = queueinfo_psLanguageLevel(qc)))
+					{
+					snprintf(temp, sizeof(temp), "\"%d\"\n", i);
+					REPLY(sesfd, temp);
+					return;
+					}
 				}
 			break;
 
 		case 'P':
 			if(strcmp(tokens[1], "*PSVersion") == 0)
 				{
-				if(queueinfo_psVersionStr(qc))
+				if((p = queueinfo_psVersionStr(qc)))
 					{
-					snprintf(temp, sizeof(temp), "\"%s\"\n", queueinfo_psVersionStr(qc));
+					snprintf(temp, sizeof(temp), "\"%s\"\n", p);
 					REPLY(sesfd, temp);
 					return;
 					}
 				}
 			else if(strcmp(tokens[1], "*Product") == 0)
 				{
-				if(queueinfo_product(qc))
+				if((p = queueinfo_product(qc)))
 					{
-					snprintf(temp, sizeof(temp), "\"%s\"\n", queueinfo_product(qc));
+					snprintf(temp, sizeof(temp), "\"%s\"\n", p);
 					REPLY(sesfd, temp);
 					return;
 					}
@@ -441,9 +447,9 @@ static void feature_query(int sesfd, void *qc)
 		case '?':
 			if(strcmp(tokens[1], "*?Resolution") == 0)
 				{
-				if(queueinfo_resolution(qc))
+				if((p = queueinfo_resolution(qc)))
 					{
-					snprintf(temp, sizeof(temp), "%s\n", queueinfo_resolution(qc));
+					snprintf(temp, sizeof(temp), "%s\n", p);
 					REPLY(sesfd, temp);
 					return;
 					}
@@ -453,26 +459,18 @@ static void feature_query(int sesfd, void *qc)
 		case 'F':
 			if(strcmp(tokens[1], "*FreeVM") == 0)
 				{
-				#ifdef XXX
-				if(VMOptionFreeVM != 0)
+				if((i = queueinfo_psFreeVM(qc)) != 0)
 					{
-					snprintf(temp, sizeof(temp), "\"%d\"\n", qc->VMOptionFreeVM);
-					REPLY(sesfd, temp);
-					return;
-					}
-				#endif
-				if(queueinfo_psFreeVM(qc) != 0)
-					{
-					snprintf(temp, sizeof(temp), "\"%d\"\n", queueinfo_psFreeVM(qc));
+					snprintf(temp, sizeof(temp), "\"%d\"\n", i);
 					REPLY(sesfd, temp);
 					return;
 					}
 				}
 			else if(strcmp(tokens[1], "*FaxSupport") == 0)
 				{
-				if(queueinfo_faxSupport(qc))
+				if((p = queueinfo_faxSupport(qc)))
 					{
-					snprintf(temp, sizeof(temp), "%s\n", queueinfo_faxSupport(qc));
+					snprintf(temp, sizeof(temp), "%s\n", p);
 					REPLY(sesfd, temp);
 					return;
 					}
@@ -482,9 +480,9 @@ static void feature_query(int sesfd, void *qc)
 		case 'T':
 			if(strcmp(tokens[1], "*TTRasterizer") == 0)
 				{
-				if(queueinfo_ttRasterizer(qc))
+				if((p = queueinfo_ttRasterizer(qc)))
 					 {
-					 snprintf(temp, sizeof(temp), "%s\n", queueinfo_ttRasterizer(qc));
+					 snprintf(temp, sizeof(temp), "%s\n", p);
 					 REPLY(sesfd, temp);
 					 return;
 					 }
@@ -511,10 +509,9 @@ static void feature_query(int sesfd, void *qc)
 		case 'I':
 			if(strncmp(tokens[1], "*Option", 7) == 0 || strcmp(tokens[1], "*InstalledMemory") == 0)
 				{
-				const char *value;
-				if((value = queueinfo_optionValue(qc, tokens[1])))
+				if((p = queueinfo_optionValue(qc, tokens[1])))
 					{
-					snprintf(temp, sizeof(temp), "%s\n", value);
+					snprintf(temp, sizeof(temp), "%s\n", p);
 					REPLY(sesfd, temp);
 					return;
 					}

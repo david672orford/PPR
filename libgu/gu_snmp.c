@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_snmp.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 28 January 2004.
 */
 
 #include "before_system.h"
@@ -59,12 +59,12 @@ This file contains a minimal inplementation of SNMP querys.
 #define CONSTRUCTOR_FLAG	0x20
 
 /* ASN.1 Universal tag types */
-#define BOOLEAN_TAG			0x01
-#define INT_TAG				0x02
-#define BIT_STRING_TAG		0x03
-#define OCTET_STRING_TAG	0x04
-#define NULL_TAG			0x05
-#define OBJECT_ID_TAG		0x06
+#define BOOLEAN_TAG			0x01		/* datum is boolean */
+#define INT_TAG				0x02		/* datum is an integer */
+#define BIT_STRING_TAG		0x03		/* datum is a bit string */
+#define OCTET_STRING_TAG	0x04		/* datum is a string of bytes */
+#define NULL_TAG			0x05		/* datum is null (undefined) */
+#define OBJECT_ID_TAG		0x06		/* datum is an SNMP object ID number */
 #define SEQUENCE_TAG		0x10
 #define SET_TAG				0x11
 

@@ -73,6 +73,7 @@ SUBDIRS=\
 	fonts \
 	nonppr_vendors \
 	papsrv \
+	papd \
 	lprsrv \
 	samba \
 	pprpopup \
@@ -89,7 +90,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests papd browsers
+SUBDIRS_CLEAN_ONLY=filter_pcl filters_typeset ipp tests browsers
 
 #=== Build ==================================================================
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2004.
+** Last modified 28 January 2004.
 */
 
 /*+ \file
@@ -83,6 +83,7 @@ struct QUEUE_INFO {
 	gu_boolean transparentMode;
 	gu_boolean psPassThru;
 	vector printers;
+	vector fontlist;		/* fonts held in common */
 	};
 
 /* Structure used to describe an *Option entry. */
@@ -201,6 +202,7 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 		void *ppd = ppdobj_new(pip->ppdFile);
 
 		/* These flags are used to ensure that we heed only the first instance. */
+		gu_boolean saw_ColorDevice = FALSE;
 		gu_boolean saw_LanguageLevel = FALSE;
 
 		gu_Try {
@@ -212,6 +214,48 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 					{
 					switch(line[1])
 						{
+						case 'C':
+							if((p = lmatchp(line, "*ColorDevice:")))
+								{
+								if(!saw_ColorDevice)
+									{
+									gu_torf_setBOOL(&pip->colorDevice, p);	/* !!! no error trap !!! */
+									saw_ColorDevice = TRUE;
+									}
+								}
+						case 'D':
+							if((p = lmatchp(line, "*DefaultResolution:")))
+								{
+								if(!pip->resolution)
+									{
+									pip->resolution = pstrdup(qip->subpool, p);
+									}
+								continue;
+								}
+						case 'F':
+							if((p = lmatchp(line, "*FaxSupport:")))
+								{
+								if(!pip->faxSupport)
+									{
+									pip->faxSupport = pstrdup(qip->subpool, p);
+									}
+								continue;
+								}
+							if((p = lmatchp(line, "*Font")))
+								{
+								p = pstrndup(qip->subpool, p, strcspn(p, ":"));
+								sash_insert(pip->fonts, p, "");	
+								continue;
+								}
+							if((p = lmatchp(line, "*FreeVM:")))
+								{
+								if(*p == '"' && pip->psFreeVM == 0)
+									{
+									pip->psFreeVM = atoi(p+1);
+									}
+								continue;
+								}
+							break;
 						case 'L':
 							if((p = lmatchp(line, "*LanguageLevel:")))
 								{
@@ -226,7 +270,6 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 						case 'P':
 							if((p = lmatchp(line, "*Product:")))
 								{
-								printf("y\n");
 								if(*p == '"' && !pip->product)
 									{
 									pip->product = ppd_finish_QuotedValue(ppd, p+1);
@@ -236,7 +279,6 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 								}
 							if((p = lmatchp(line, "*PSVersion:")))
 								{
-								printf("*****\n");
 								if(*p == '"' && !pip->psVersionStr)
 									{
 									float version;
@@ -245,11 +287,20 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 									p[strcspn(p, "\"")] = '\0';
 									if(gu_sscanf(p, "(%f) %d", &version, &revision) == 2)
 										{
-											printf("***************\n");
 										pip->psVersionStr = pstrdup(qip->subpool, p);
 										pip->psVersion = version;
 										pip->psRevision = revision;
 										}
+									}
+								continue;
+								}
+							break;
+						case 'T':
+							if((p = lmatchp(line, "*TTRasterizer:")))
+								{
+								if(!pip->ttRasterizer)
+									{
+									pip->ttRasterizer = pstrdup(qip->subpool, p);
 									}
 								continue;
 								}
@@ -389,6 +440,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	qip->transparentMode = FALSE;
 	qip->psPassThru = FALSE;
 	qip->printers = new_vector(qip->subpool, struct PRINTER_INFO*);
+	qip->fontlist = new_vector(qip->subpool, char*);
 
 	gu_Try {
 		switch(qit)
@@ -419,6 +471,30 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 					gu_Throw("no printer called \"%s\"", qip->name);
 				break;
 			}
+
+		/* Create a font list which includes all fonts which the printers
+		 * hold in common. */
+		if(vector_size(qip->printers) > 0)
+			{
+			struct PRINTER_INFO *pip;
+			int x, y;
+			const char *fontname;
+			vector_get(qip->printers, 0, pip);
+			vector keys = sash_keys(pip->fonts);
+			for(x=0; x < vector_size(keys); x++)
+				{
+				vector_get(keys, x, fontname);
+				for(y=1; y < vector_size(qip->printers); y++)
+					{
+					vector_get(qip->printers, y, pip);
+					if(!sash_exists(pip->fonts, fontname))
+						break;
+					}
+				if(y == vector_size(qip->printers))
+					vector_push_back(qip->fontlist, fontname);
+				}
+			}
+	
 		}
 	gu_Catch {
 		queueinfo_delete(qip);
@@ -453,7 +529,7 @@ const char *queueinfo_comment(void *p)
 	return qip->comment;
 	}
 
-/** is the queue in transparent mode?
+/** Is the queue in transparent mode?
 */
 gu_boolean queueinfo_transparentMode(void *p)
 	{
@@ -461,7 +537,7 @@ gu_boolean queueinfo_transparentMode(void *p)
 	return qip->transparentMode;
 	}
 
-/** will the queue pass PostScript documents through unchanged?
+/** Will the queue pass PostScript documents through unchanged?
 */
 gu_boolean queueinfo_psPassThru(void *p)
 	{
@@ -469,25 +545,25 @@ gu_boolean queueinfo_psPassThru(void *p)
 	return qip->psPassThru;
 	}
 
-/** can all possible 8-bit character codes be passed thru to the PS interpreter?
+/** Can all possible 8-bit character codes be passed thru to the PS interpreter?
  *
- * We return true if all member printers can pass all 8-bit codes.
+ * We return TRUE if all member printers can pass all 8-bit codes.  If there
+ * are no member printers, we return FALSE.
 */
 gu_boolean queueinfo_binaryOK(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	int i;
-	gu_boolean answer = TRUE;
+	gu_boolean answer = FALSE;
 
 	for(i=0; i < vector_size(qip->printers); i++)
 		{
 		struct PRINTER_INFO *pip;
 		vector_get(qip->printers, i, pip);
 		if(!pip->binaryOK)
-			{
-			answer = FALSE;
-			break;
-			}
+			return FALSE;
+		else
+			answer = TRUE;
 		}
 
 	return answer;
@@ -508,15 +584,12 @@ const char *queueinfo_ppdFile(void *p)
 	for(i=0; i < vector_size(qip->printers); i++)
 		{
 		vector_get(qip->printers, i, pip);
+		if(!pip->ppdFile)
+			return NULL;
 		if(!answer)
-			{
 			answer = pip->ppdFile;
-			}
 		else if(strcmp(answer, pip->ppdFile))
-			{
-			answer = NULL;
-			break;
-			}
+			return NULL;
 		}
 
 	return answer;
@@ -537,22 +610,20 @@ const char *queueinfo_product(void *p)
 	for(i=0; i < vector_size(qip->printers); i++)
 		{
 		vector_get(qip->printers, i, pip);
+		if(!pip->product)
+			return NULL;
 		if(!answer)
-			{
 			answer = pip->product;
-			}
 		else if(strcmp(answer, pip->product))
-			{
-			answer = NULL;
-			break;
-			}
+			return NULL;
 		}
 
 	return answer;
 	}
 
 /*
- * Find the member with the oldest interpreter.
+ * Find the member printer with the oldest PostScript interpreter.  Several
+ * functions below use this information.
  */
 static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
 	{
@@ -562,7 +633,10 @@ static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
 	for(i=0; i < vector_size(qip->printers); i++)
 		{
 		vector_get(qip->printers, i, pip);
-		if(!lowest || pip->psVersion < lowest->psVersion || (pip->psVersion == lowest->psVersion && pip->psRevision < lowest->psRevision))
+		if(!pip->psVersion)
+			return NULL;
+		if(!lowest || pip->psVersion < lowest->psVersion 
+				|| (pip->psVersion == lowest->psVersion && pip->psRevision < lowest->psRevision))
 			{
 			lowest = pip;
 			}
@@ -583,10 +657,12 @@ int queueinfo_psLanguageLevel(void *p)
 	if(pip)
 		return pip->psLanguageLevel;
 	else
-		return 1;
+		return 0;		/* unknown */
 	}
 
 /** What is the version string of the PostScript interpreter?
+ *
+ * If the version string isn't available, this function will return NULL.
 */
 const char *queueinfo_psVersionStr(void *p)
 	{
@@ -595,10 +671,14 @@ const char *queueinfo_psVersionStr(void *p)
 	if(pip)
 		return pip->psVersionStr;
 	else
-		return "(47.0) 0";
+		return NULL;	/* unknown */
 	}
 
 /** What is the version number of the PostScript interpreter?
+ *
+ * If it can't determine the answer, this function returns 0.0.  A printer 
+ * driver might need to know this to determine which language features are
+ * available.
 */
 double queueinfo_psVersion(void *p)
 	{
@@ -607,10 +687,16 @@ double queueinfo_psVersion(void *p)
 	if(pip)
 		return pip->psVersion;
 	else
-		return 47.0;
+		return 0.0;
 	}
 
 /** What is the revision number of the printer-specific parts of the PostScript interpreter?
+ *
+ * If it can't determine the answer, this function returns 0 (which is also 
+ * a value).  This number is an integer.  While the PostScript version number
+ * indicates the version of the langauge implemenation, this number indicates
+ * the version of the software which integrates the stated PostScript version of
+ * the PostScript intepreter with a particular printer's other firmware.
 */
 int queueinfo_psRevision(void *p)
 	{
@@ -622,21 +708,57 @@ int queueinfo_psRevision(void *p)
 		return 0;
 	}
 
-#if 0
 /** How many bytes of PostScript memory are available to programs?
+ *
+ * If this function can't determine the answer, it returns 0.
 */
 int queueinfo_psFreeVM(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->psFreeVM;
+	struct PRINTER_INFO *pip;
+	int i;
+	int lowest_freevm = 0;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(pip->psFreeVM == 0)
+			return 0;
+		if(lowest_freevm == 0 || pip->psFreeVM < lowest_freevm)
+			lowest_freevm = pip->psFreeVM;
+		}
+
+	return lowest_freevm;
 	}
 
+
 /** What is the resolution (expressed as a string)?
+ *
+ * We will return the lowest resolution of all of the printers.  In
+ * determining the lowest resolution, we will examine only the first
+ * number.  Thus, "300x1200dpi" will be considered lower than "360dpi".
 */
 const char *queueinfo_resolution(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->resolution;
+	struct PRINTER_INFO *pip;
+	int i;
+	int lowest_resolution = 0;
+	char *lowest_resolution_string = NULL;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!pip->resolution)
+			return 0;
+		if(lowest_resolution == 0 || atoi(pip->resolution) < lowest_resolution)
+			{
+			lowest_resolution = atoi(pip->resolution);
+			lowest_resolution_string = pip->resolution;
+			}
+		}
+
+	return lowest_resolution_string;
 	}
 
 /** Can the printer print in color?
@@ -644,58 +766,138 @@ const char *queueinfo_resolution(void *p)
 gu_boolean queueinfo_colorDevice(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->colorDevice;
+	int i;
+	gu_boolean answer = FALSE;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		struct PRINTER_INFO *pip;
+		vector_get(qip->printers, i, pip);
+		if(!pip->binaryOK)
+			return FALSE;
+		else
+			answer = TRUE;
+		}
+
+	return answer;
 	}
 
 /** What kind of fax support does the printer have, if any?
+ *
+ * This is a string such as "None" or "Base".  If one or more printers
+ * doesn't specify its fax support or they don't all have the same
+ * type then this function will return NULL.
 */
 const char *queueinfo_faxSupport(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->faxSupport;
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *answer = NULL;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!pip->faxSupport)
+			return NULL;
+		else if(!answer)
+			answer = pip->faxSupport;
+		else if(strcmp(answer, pip->faxSupport))
+			return NULL;
+		}
+
+	return answer;
 	}
 
 /** What kind of TrueType rasterizer does the printer have, if any?
+ *
+ * This will be either "None", "Type42", or "68000" (or something like that).
+ * If one or more printers doesn't specify this value or they don't 
+ * specify the same value, then we return NULL.
 */
 const char *queueinfo_ttRasterizer(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->ttRasterizer;
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *answer = NULL;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!pip->ttRasterizer)
+			return NULL;
+		else if(!answer)
+			answer = pip->ttRasterizer;
+		else if(strcmp(answer, pip->ttRasterizer))
+			return NULL;
+		}
+
+	return answer;
 	}
 
-/** how many fonts are in the font list?
+/** How many fonts are in the font list?
 */
 int queueinfo_fontCount(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->fontCount;
+	return vector_size(qip->fontlist);
 	}
 
-/** return item index from the printer's font list
+/** Return item index from the printer's font list
 */
 const char *queueinfo_font(void *p, int index)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->fonts[index];	
+	const char *fontname;
+	if(index > vector_size(qip->fontlist))
+		return NULL;
+	vector_get(qip->fontlist, index, fontname);
+	return fontname;
 	}
 
-/** check if a specified font exists
+/** Check if a specified font exists
 */
 gu_boolean queueinfo_fontExists(void *p, const char name[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return FALSE;
+	struct PRINTER_INFO *pip;
+	int i;
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!sash_exists(pip->fonts, name))
+			return FALSE;
+		}
+	return TRUE;
 	}
 
-/**
+/** Return the value of a printer optional equipment option
+ *
+ * We can only return the option value if all printers use the same
+ * PPD file and all have the same value for the option.
 */
 const char *queueinfo_optionValue(void *p, const char name[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return NULL;
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *value;
+	const char *answer = NULL;
+	if(!queueinfo_ppdFile(p))
+		return NULL;
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!sash_get(pip->options, name, value))
+			return FALSE;
+		if(!answer)
+			answer = value;
+		else if(strcmp(answer, value))
+			return NULL;
+		}
+	return answer;
 	}
-
-#endif
 
 /*
 ** Test program
@@ -706,6 +908,7 @@ int main(int argc, char *argv[])
 	{
 	void *obj;
 	const char *p;
+	int i;
 	if(argc != 2)
 		{
 		fprintf(stderr, "%s: missing argument\n", argv[0]);
@@ -721,8 +924,19 @@ int main(int argc, char *argv[])
 	printf("product: %s\n", (p = queueinfo_product(obj)) ? p : "<NULL>");
 	printf("languagelevel: %d\n", queueinfo_psLanguageLevel(obj));
 	printf("psVersionStr[] = \"%s\"\n", queueinfo_psVersionStr(obj));	
-	printf("psVersion[] = \"%f\"\n", queueinfo_psVersion(obj));	
-	printf("psRevision[] = \"%d\"\n", queueinfo_psRevision(obj));	
+	printf("psVersion[] = %f\n", queueinfo_psVersion(obj));	
+	printf("psRevision[] = %d\n", queueinfo_psRevision(obj));	
+	printf("freeVM = %d\n", queueinfo_psFreeVM(obj));
+	printf("resolution = %s\n", queueinfo_resolution(obj));
+	printf("colorDevice = %s\n", queueinfo_colorDevice(obj) ? "true" : "false");
+	printf("faxSupport = %s\n", queueinfo_faxSupport(obj));
+	printf("ttRasterizer = %s\n", queueinfo_ttRasterizer(obj));
+	printf("font count = %d\n", queueinfo_fontCount(obj));
+	for(i=0; i < queueinfo_fontCount(obj); i++)
+		printf("\t\"%s\"\n", queueinfo_font(obj, i));
+	printf("font_exists[Times-Roman] = %s\n", queueinfo_fontExists(obj, "Times-Roman") ? "true" : "false");
+	printf("font_exists[Donald-Duck] = %s\n", queueinfo_fontExists(obj, "Donald-Duck") ? "true" : "false");
+	printf("*Option1 = \"%s\"\n", queueinfo_optionValue(obj, "*Option1"));
 	return 0;
 	}
 #endif

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/doxygen/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 28 January 2004.
 #
 
 include ../../Makefile.conf
@@ -43,7 +43,7 @@ all-docs: $(DIRS)
 html:
 	doxygen Doxyfile
 
-html: ../../libgu ../../libppr ../../libttf
+html: ../../include ../../libgu ../../libppr ../../libttf
 
 #=== Install ================================================================
 

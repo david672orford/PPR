@@ -25,7 +25,15 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 January 2004.
+** Last modified 28 January 2004.
+*/
+
+/*! \file
+    \brief Generally Useful Library
+
+This file contains the prototypes and macros for a library of functions which are 
+likely to be useful many programs, not just in PPR.
+
 */
 
 #ifndef _GU_H
@@ -69,22 +77,20 @@ typedef int gu_boolean;
 ** Macros for looking for keywords at the start of strings.
 */
 
-/* Does b match the first part of a? */
+/** If b matches the first part of a, return true. */
 #define lmatch(a, b) (!strncmp(a, b, sizeof(b) - 1))
 
-/* If b matches the first part of a, return a pointer to the first word in a that comes after the match. */
+/** If b matches the first part of a, return a pointer to the first word in a that comes after the match. */
 #define lmatchp(a, b) (!strncmp(a, b, sizeof(b) - 1) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
 
-/* Does b match the last part of a? */
+/** If b matches the last part of a, return true. */
 #define rmatch(a, b) (strlen(a) >= strlen(b) && strcmp(a + strlen(a) - strlen(b), b) == 0)
 
-/* If b matches the first part of a with a white space following, return pointer to first part 
+/** If b matches the first part of a with a white space following, return pointer to first part 
    after whitespace. */
 #define lmatchsp(a, b) (!strncmp(a, b, sizeof(b) - 1) && isspace(a[sizeof(b) - 1]) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
 
-/*
-** Macros for writing strings.
-*/
+/** Write string s to file descriptor s using write(). */
 #define gu_write_string(fd, s) (write(fd, s, sizeof(s) - 1))
 
 /*===================================================================
@@ -192,12 +198,13 @@ int gu_runl(const char *myname, FILE *errors, const char *progname, ...);
 ** Values for gu_torf(), a function which examines a string
 ** and tries to determine whether it represents a true or
 ** a false value.
+**
+** These are obsolete.  Change uses of gu_torf() to gu_torf_setBOOL().
 */
 #define ANSWER int
 #define ANSWER_UNKNOWN -1
 #define ANSWER_FALSE 0
 #define ANSWER_TRUE 1
-/* enum ANSWER { ANSWER_UNKNOWN = -1, ANSWER_FALSE = 0, ANSWER_TRUE = 1 }; */
 
 /*===================================================================
 ** Command line option parsing
@@ -276,11 +283,13 @@ extern int  gu_exception_try_depth;			/* how deap are we? */
 extern int  gu_exception_temp;
 extern int  gu_exception_debug;
 
-/* This macro starts a try block.  It creates a setjmp() context can calls
-   gu_Try_funct() which saves it in an array.  The array enables gu_Throw()
-   to find the context even if it is called from inside a function called
-   by the function which called gu_Try().
-   */
+/** Start an exception handling Try block.
+ *
+ * This macro creates a setjmp() context can calls
+ * gu_Try_funct() which saves it in an array.  The array enables gu_Throw()
+ * to find the context even if it is called from inside a function called
+ * by the function which called gu_Try().
+ */
 #define gu_Try { \
 	jmp_buf gu_exception_jmp_buf; \
 	int gu_exception_setjmp_retcode; \
@@ -343,6 +352,7 @@ if(gu_exception_temp != 0)
 ** SNMP functions
 ===================================================================*/
 
+/** An object which can make SNMP queries */
 struct gu_snmp
 	{
 	int socket;
@@ -356,9 +366,9 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
 void gu_snmp_close(struct gu_snmp *p);
 void gu_snmp_get(struct gu_snmp *p, ...);
 
-#define GU_SNMP_INT 1
-#define GU_SNMP_STR 2
-#define GU_SNMP_BIT 3
+#define GU_SNMP_INT 1		/**< tells gu_snmp_get() to fetch an integer value */
+#define GU_SNMP_STR 2		/**< tells gu_snmp_get() to fetch a string value */
+#define GU_SNMP_BIT 3		/**< tells gu_snmp_get() to fetch a bitstring value */
 
 /*===================================================================
 ** Perl Compatibility Functions

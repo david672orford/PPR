@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 28 January 2004.
 */
 
 #include "before_system.h"
@@ -60,7 +60,8 @@ struct DIRS {
 static struct DIRS dirs[] = {
 	{ALIASCONF, QUEUEINFO_ALIAS},
 	{GRCONF, QUEUEINFO_GROUP},
-	{PRCONF, QUEUEINFO_PRINTER}
+	{PRCONF, QUEUEINFO_PRINTER},
+	{NULL, QUEUEINFO_SEARCH}
 	};
 
 /*
@@ -275,7 +276,7 @@ struct ADV *conf_load(struct ADV *adv)
 		DODEBUG_STARTUP(("%s(): searching directory %s", function, dir->name));
 
 		if(!(dirobj = opendir(dir->name)))
-			gu_Throw(_("%s(): opendir(\"%s\") failed, errno=%d (%s)"), function, dir, errno, gu_strerror(errno));
+			gu_Throw(_("%s(): opendir(\"%s\") failed, errno=%d (%s)"), function, dir->name, errno, gu_strerror(errno));
 
 		while((direntp = readdir(dirobj)))
 			{

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/query.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 28 January 2004.
 */
 
 #include "before_system.h"
@@ -546,8 +546,8 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout)
 	return NULL;
 	} /* end of query_getline() */
 
-/** Send a control-d and wait for the answering handshake
-
+/*
+* Send a control-d and wait for the answering handshake
 */
 static void query_control_d(struct QUERY *q)
 	{
@@ -570,8 +570,8 @@ static void query_control_d(struct QUERY *q)
 
 /** Disconnect from the printer
 
-This query flushes the output buffer and closes the pipe to the interface
-program's stdin.
+This function close any started query job, flushes the output buffer, and 
+closes the pipe to the interface program's stdin.
 
 */
 void query_disconnect(struct QUERY *q)
@@ -672,7 +672,7 @@ void query_sendquery(struct QUERY *q, const char *query_name, const char generic
 	query_puts(q, "\n");
 	} /* end of query_sendquery() */
 
-/**
+/** Finish the current query job without disconnecting.
 */
 void query_endjob(struct QUERY *q)
 	{
@@ -687,7 +687,7 @@ void query_endjob(struct QUERY *q)
 		query_control_d(q);
 
 	q->job_started = FALSE;
-	}
+	} /* end of query_endjob() */
 
 /*
 ** gcc -I ../include -o query -DTEST query.c ../libppr.a ../libgu.a
