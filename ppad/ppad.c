@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -284,7 +284,7 @@ static void help_ppdlib(FILE *out)
 	const char *command_list[] =
 		{
 		N_("ppad ppdlib query <interface> <address> [<quoted_options_list>]"),
-		N_("ppad ppdlib list <pattern>"),
+		N_("ppad ppdlib search <pattern>"),
 		N_("ppad ppdlib get <name>"),
 		NULL
 		};
@@ -470,8 +470,8 @@ static int dispatch(const char *argv[])
 		{
 		if(gu_strcasecmp(argv[1], "query") == 0)
 			return ppdlib_query(&argv[2]);
-		if(gu_strcasecmp(argv[1], "list") == 0)
-			return ppdlib_list(&argv[2]);
+		if(gu_strcasecmp(argv[1], "search") == 0)
+			return ppdlib_search(&argv[2]);
 		if(gu_strcasecmp(argv[1], "get") == 0)
 			return ppdlib_get(&argv[2]);
 		}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 May 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -56,12 +56,26 @@ const char myname[] = "ppr-gs";
 ** (/usr/local/bin) is next, and last is Ghostscript at the system location
 ** (/usr/bin/gs).
 */
-const char *gs_exe_list[] = {
-		HOMEDIR"/../ppr-gs/bin/gs",				/* PPR Ghostscript distribution */
-		"/usr/local/bin/gs",					/* Installation from Source Tarball */
-		"/sw/bin/gs",							/* Fink on MacOS X */
-		"/usr/bin/gs",							/* System package per FHS */
-		NULL
+struct GS_EXE
+	{
+	const char *exe;
+	const char *driver_list;
+	} gs_exe_list[] = {
+		{HOMEDIR"/../ppr-gs/bin/gs",				/* PPR Ghostscript distribution */
+			SHAREDIR"/../ppr-gs/gs_drivers"
+			},
+		{"/usr/local/bin/gs",					/* Installation from Source Tarball */
+			"/usr/local/share/ghostscript/gs_drivers"
+			},
+		{"/sw/bin/gs",							/* Fink on MacOS X */
+			NULL
+			},
+		{"/usr/bin/gs",							/* System package per FHS */
+			NULL
+			},
+		{NULL,
+			NULL
+			}
 		};
 
 /* 
@@ -85,6 +99,38 @@ const char *ijs_bin_list[] = {
 		NULL
 		};
 		
+/*
+ * Is the desired driver in the list?
+ */
+static gu_boolean gs_driver_listed(const char driver[], const char driver_list_file[])
+	{
+	FILE *f;
+	char line[256];
+	
+	if((f = fopen(driver_list_file, "r")))
+		{
+		while(fgets(line, sizeof(line), f))
+			{
+			/* Skip comments. */
+			if(line[0] == '#' || line[0] == ';')
+				continue;
+
+			/* Trim trailing whitespace. */
+			line[strcspn(line, " \t\r\n")] = '\0';
+
+			/* Does it match? */
+			if(strcmp(line, driver) == 0)
+				{
+				fclose(f);
+				return TRUE;
+				}
+			}
+		fclose(f);
+		}
+
+	return FALSE;
+	} /* end of driver_listed() */
+
 /*===========================================================================
 ** Here we go.  We must either find the necessary components and exec 
 ** Ghostscript or print an error message on stderr in a format that pprdrv 
@@ -247,22 +293,28 @@ int main(int argc, char *argv[])
 	gs_args[di++] = NULL;
 
 	/*
-	** Find a copy of Ghostscript which we can use.  We use
-	** the list specified above.
+	** Find a copy of Ghostscript which we can use.  We use the search list 
+	** specified above.
 	*/
 	{
 	int i;
-	for(i=0 ; gs_exe_list[i]; i++)
+	for(i=0; gs_exe_list[i].exe; i++)
 		{
-		if(access(gs_exe_list[i], X_OK) == 0)
-			{
-			/* temporary hack !!! */
-			if(i == 0 && strcmp(device, "cups") != 0 && strcmp(device, "ijs") != 0)
-				continue;
-				
-			gs_exe = gs_exe_list[i];
-			break;
-			}
+		/* Skip if exe missing. */
+		if(access(gs_exe_list[i].exe, X_OK) != 0)
+			continue;
+
+		/* Skip if there is a driver list file name defined, the file exists,
+		 * and it doesn't list the required driver.
+		 */
+		if(gs_exe_list[i].driver_list 
+				&& access(gs_exe_list[i].driver_list, R_OK) == 0
+				&& !gs_driver_listed(device, gs_exe_list[i].driver_list)
+				)
+			continue;
+
+		gs_exe = gs_exe_list[i].exe;
+		break;
 		}
 	if(!gs_exe)
 		{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 May 2004.
+** Last modified 24 May 2004.
 */
 
 #include "before_system.h"
@@ -821,11 +821,11 @@ int ppdlib_query(const char *argv[])
 	} /* end of ppd_query */
 
 /*=========================================================================
- * ppad ppdlib list
+ * ppad ppdlib search
  *
  * List PPD files matching a pattern.
 =========================================================================*/
-int ppdlib_list(const char *argv[])
+int ppdlib_search(const char *argv[])
 	{
 	const char *pattern;
 	gu_boolean wildcards;
@@ -885,7 +885,7 @@ int ppdlib_list(const char *argv[])
 	gu_free(pattern_lowered);
 
 	return EXIT_OK;
-	} /* end of ppdlib_list() */
+	} /* end of ppdlib_search() */
 
 /*=========================================================================
 ** Display the text of the requested PPD file.

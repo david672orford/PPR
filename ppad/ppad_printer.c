@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2004.
+** Last modified 24 May 2004.
 */
 
 /*==============================================================
@@ -692,11 +692,12 @@ int printer_show(const char *argv[])
 	codes_default = interface_default_codes(interface, &prot);
 
 	/* If we didn't find a "*pprRIP:" line, use "*cupsFilter:". */
-	if(!rip_ppd_name && cups_filter && default_resolution > 0)
+	if(!rip_ppd_name && cups_filter) /* && default_resolution > 0) */
 		{
-		rip_ppd_name = gu_strdup("ppr-gs");						/* !!! */
-		rip_ppd_output_language = gu_strdup("pcl");				/* !!! */
-		gu_asprintf(&rip_ppd_options, "cups=%s -r%d", cups_filter, default_resolution);
+		rip_ppd_name = gu_strdup("ppr-gs");
+		rip_ppd_output_language = gu_strdup("pcl");				/* !!! a wild guess !!! */
+		/* gu_asprintf(&rip_ppd_options, "cups=%s -r%d", cups_filter, default_resolution); */
+		gu_asprintf(&rip_ppd_options, "cups=%s", cups_filter);
 		}
 
 	/* If the PPD file specifies a RIP and the printer configuration file

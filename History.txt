@@ -9240,6 +9240,9 @@ Internet Printing Protocol Work
   is using it on an existing installation, it wasn't added to 
   z_install_end/fixup_obsolete.sh.
 
+* z_install_end/install_bin_links.sh: added link for ppr-testpage.
+
+* ppad/: renamed "ppad ppdlib list" to "ppad ppdlib search".
 
 
 TODO

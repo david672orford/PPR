@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_end/install_bin_links.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 24 May 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -41,6 +41,7 @@ if [ ! -d $RPM_BUILD_ROOT$SYSBINDIR ]
 	mkdir -p $RPM_BUILD_ROOT$SYSBINDIR || exit 1
     fi
 for i in ppr ppop ppad ppuser ppdoc \
+	ppr-testpage \
 	ppr-config \
 	ppr-followme ppr-xgrant ppr-popup \
 	ppr-panel ppr-web ppr-passwd

@@ -660,11 +660,12 @@ void read_PPD_file(const char *ppd_file_name)
 		printer.RIP.name ? printer.RIP.name : "",
 		cups_filter ? cups_filter : "",
 		default_resolution));
-	if(!printer.RIP.name && cups_filter && default_resolution > 0)
+	if(!printer.RIP.name && cups_filter) /* && default_resolution > 0) */
 		{
 		printer.RIP.name = "ppr-gs";
-		printer.RIP.output_language = "pcl";
-		gu_asprintf(&printer.RIP.options_storage, "cups=%s -r%d", cups_filter, default_resolution);
+		printer.RIP.output_language = "pcl";	/* !!! a wild guess !!! */
+		/* gu_asprintf(&printer.RIP.options_storage, "cups=%s -r%d", cups_filter, default_resolution); */
+		gu_asprintf(&printer.RIP.options_storage, "cups=%s", cups_filter);
 		}
 
 	if(cups_filter)

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 January 2004.
+# Last modified 24 May 2004.
 #
 
 =head1 NAME
@@ -1069,15 +1069,16 @@ export>.
 
 =over 4
 
-=item B<ppad ppdlib list> I<pattern>
+=item B<ppad ppdlib search> I<pattern>
 
-This command searches PPR's library of PPD files and displays the names of those PPD files which
-match I<pattern>.  If I<pattern> 
-contains the wildcard characters '*', '?', or '[', then pattern is understood to be a shell-style wildcard.  Any PPD files 
-whose names match the pattern are listed.  If no wildcard characters are present in I<pattern>, then 
-PPD files whose names which contain the substring I<pattern> are listed.  For example:
+This command searches PPR's library of PPD files and displays the names of 
+those PPD files which match I<pattern>.  If I<pattern> contains the wildcard 
+characters '*', '?', or '[', then pattern is understood to be a shell-style 
+wildcard.  Any PPD files whose names match the pattern are listed.  If no 
+wildcard characters are present in I<pattern>, then PPD files whose names 
+which contain the substring I<pattern> are listed.  For example:
 
-	$ ppad ppd list laserwriter
+	$ ppad ppd search laserwriter
 	"Apple LaserWriter v23.0"
 	"Apple LaserWriter II NT v47.0"
 	"Apple LaserWriter Plus v38.0"
@@ -1086,7 +1087,7 @@ PPD files whose names which contain the substring I<pattern> are listed.  For ex
 	"Apple LaserWriter Select 360 v2013.112"
 	"Apple Personal LaserWriter 320 v2013.112"
 
-	$ ppad ppd list ""HP*4m*"
+	$ ppad ppd search "HP*4m*"
 	"HP LaserJet 4M DSC"
 	"HP LaserJet 4M Plus DSC"
 	"HP LaserJet 4/4M PS 600 dpi"

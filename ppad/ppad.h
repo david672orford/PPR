@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -145,7 +145,7 @@ int exception_to_exitcode(int exception_code);
 /* functions in ppad_ppd.c */
 int ppd_query_core(const char printer[], struct QUERY *q);
 int ppdlib_query(const char *argv[]);
-int ppdlib_list(const char *argv[]);
+int ppdlib_search(const char *argv[]);
 int ppdlib_get(const char *argv[]);
 
 /* end of file */
