@@ -80,7 +80,7 @@ unsafe.$(OBJ): unsafe.c ../include/before_system.h ../include/gu.h ../include/gl
 
 writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
-int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
-
 destinfo.$(OBJ): destinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 

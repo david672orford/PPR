@@ -25,9 +25,36 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 8 April 2003.
 */
 
+/* This union holds any kind of IPP value. */
+typedef union
+	{
+	int integer;
+	gu_boolean boolean;
+	struct
+		{
+		char *text;
+		} string;
+	struct
+		{
+		int length;
+		void *data;
+		} unknown;
+	} ipp_value_t;
+
+/* This structure holds any kind of IPP attribute. */
+typedef struct ipp_attribute_s
+	{
+	struct ipp_attribute_s *next;
+	int group_tag;
+	char *name;
+	int num_values;
+	ipp_value_t values[1];
+	} ipp_attribute_t;
+
+/* The IPP object. */
 struct IPP
 	{
 	int bytes_left;
@@ -37,10 +64,19 @@ struct IPP
 	unsigned char writebuf[512];
 	int writebuf_i;
 	int writebuf_remaining;
+	
+	int version_minor;
+	int version_major;
+	int operation_id;
+	int request_id;
+	
+	ipp_attribute_t *request_attrs;
+	ipp_attribute_t *response_attrs;	
 	};
 
-struct IPP *ipp_new(int content_length);
-void ipp_end(struct IPP *p);
+/* IPP object methods */
+struct IPP *ipp_new(void);
+void ipp_delete(struct IPP *p);
 unsigned char ipp_get_byte(struct IPP *p);
 void ipp_put_byte(struct IPP *p, unsigned char val);
 int ipp_get_sb(struct IPP *p);
@@ -50,6 +86,10 @@ void ipp_put_sb(struct IPP *p, int val);
 void ipp_put_ss(struct IPP *p, int val);
 void ipp_put_si(struct IPP *p, int val);
 unsigned char *ipp_get_bytes(struct IPP *p, int len);
+void ipp_parse_request(struct IPP *p);
+void ipp_send_reply(struct IPP *p);
+
+/* Other functions */
 void debug(const char message[], ...);
 
 /* end of file */

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 7 April 2003.
 #
 
 #
@@ -42,7 +42,7 @@ require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_wizard.pl';
 require "cgi_intl.pl";
-require 'cgi_run.pl';
+require 'cgi_widgets.pl';
 
 defined($HOMEDIR) || die;
 defined($INTDIR) || die;
@@ -59,18 +59,18 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 #===========================================
 %interface_descriptions = (
 		'dummy' => "--hide",
-		'simple' => N_("Server Generic Port"),
-		'serial' => N_("Server Serial Port"),
-		'parallel' => N_("Server Parallel Port"),
-		'usblp' => N_("Server USB Port"),
-		'atalk' => N_("AppleTalk PAP"),
-		'tcpip' => N_("Generic raw TCP/IP"),
-		'socketapi' => N_("SocketAPI"),
-		'appsocket' => N_("AppSocket"),
-		'jetdirect' => N_("HP JetDirect"),
-		'pros' => N_("AXIS PROS"),
-		'lpr' => N_("RFC 1179 (lpr/lpd protocol)"),
-		'smb' => N_("LAN Manager/MS-Windows"),
+		'simple' =>		N_("Server Generic Port"),
+		'serial' =>		N_("Server Serial Port"),
+		'parallel' =>	N_("Server Parallel Port"),
+		'usblp' =>		N_("Server USB Port"),
+		'atalk' =>		N_("Network via AppleTalk PAP"),
+		'tcpip' =>		N_("Network via raw TCP"),
+		'socketapi' =>	N_("Network via SocketAPI"),
+		'appsocket' =>	N_("Network via AppSocket"),
+		'jetdirect' =>	N_("Network via HP JetDirect"),
+		'pros' =>		N_("Network via AXIS PROS"),
+		'lpr' =>		N_("Network via LPD"),
+		'smb' =>		N_("Network via LAN Manager/MS-Windows"),
 		'ppromatic' => "--hide",
 		'foomatic-rip' => "--hide",
 		'gssimple' => "--hide",
@@ -206,7 +206,12 @@ $addprn_wizard_table = [
 		'dopage' => sub {
 				# Get a sorted list of the available interfaces.
 				opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
-				my @interfaces = sort(grep(!/^\./, readdir(I)));
+				my @interfaces = ();
+				foreach my $i (sort(grep(!/^\./, readdir(I))))
+					{
+					my $desc = $interface_descriptions{$i};
+					push(@interfaces, $i) if(!defined $desc || $desc ne "--hide");
+					}
 				closedir(I);
 
 				print "<p>", H_("Please select an interface program.  PPR uses an interface\n"
@@ -221,15 +226,16 @@ $addprn_wizard_table = [
 				my $interface;
 				my $checked_interface = cgi_data_move('interface', '');
 				my $thiscol = 0;
+				my $percol = int(scalar(@interfaces) / 2 + 0.5);
+				print STDERR "\$percol=$percol\n";
 				while(defined($interface = shift @interfaces))
 					{
-					my $desc = $interface_descriptions{$interface};
-					next if(defined($desc) && $desc eq "--hide");
-					if($thiscol++ > 9)
+					if(++$thiscol > $percol)
 						{
 						print "</td><td>\n";
 						$thiscol = 0;
 						}
+					my $desc = $interface_descriptions{$interface};
 					print "<input tabindex=1 TYPE=\"radio\" NAME=\"interface\" VALUE=", html_value($interface);
 					print " checked" if($interface eq $checked_interface);
 					print "> $interface";
@@ -381,9 +387,8 @@ $addprn_wizard_table = [
 				print "</p>\n";
 
 				print "<p>", H_("HP JetDirect cards accept jobs on TCP port 9100.\n"
-								. "With some other equipment, the port number the printer\n"
-								. "accepts jobs on can be changed but is 9100 when they\n"
-								. "come from the factory."), "</p>\n";
+								. "For AXIS print servers it is 9900.  For other brands,\n"
+								. "consult the product manual."), "</p>\n";
 
 				print "<p>", H_("TCP Port Number:"), " ";
 				print "<input tabindex=1 name=\"int_tcpip_port\" size=8 value=", html_value(cgi_data_move('int_tcpip_port', '9100')), ">\n";
@@ -400,10 +405,12 @@ $addprn_wizard_table = [
 				# Otherwise, this is a question for the user.
 				else
 					{
-					print "<p>", H_("Internal JetDirect cards support bidirectional communication.\n"
-						. "External print servers will only support bidirectional\n"
-						. "communication if they communicate with the printer\n"
-						. "through a serial port or through a bidirectional parallel port."), "</p>\n";
+					print "<p>",
+						H_("Internal JetDirect cards support bidirectional communication.  External print\n"
+						. "servers will only support bidirectional communication if they communicate with\n"
+						. "the printer through a serial port or through a bidirectional parallel port.  If\n"
+						. "you say Yes here and the correct answer is No, the queue will get stuck at the\n"
+						. "end of the first job."), "</p>\n";
 
 					print "<p>", H_("Bidirectional:"), " ";
 					print "<select tabindex=1 name=\"int_tcpip_feedback\">\n";
@@ -441,21 +448,28 @@ $addprn_wizard_table = [
 		'title' => N_("LPR Interface: Choose an Address"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
-				print "<p>", H_("It is necessary to know the IP address of the server,\n"
-						. "or preferably a DNS name which represents that address.\n"
-						. "An example of a DNS name is \"myhost.myorg.org\".  An example\n"
-						. "of an IP address is \"157.252.200.52\"."), "</p>\n";
+				print "<p>",
+						H_("PPR needs to know the name or IP address of the printer or of the print server\n"
+						. "to which it is attached.  An example of a DNS name is \"myhost.myorg.org\".  An\n"
+						. "example of an IP address is \"157.252.200.52\".  A name is preferred."), "</p>\n";
 
-				print "<p>", H_("DNS Name or IP Address:"), " ";
-				print "<input tabindex=1 name=\"int_xaty_host\" size=32 value=", html_value(cgi_data_move('int_xaty_host', '')), ">\n";
+				print "<p>";
+				labeled_entry("int_xaty_host", _("DNS Name or IP Address:"), cgi_data_move("int_xaty_host", ""), 32);
 				print "</p>\n";
 
-				print "<p>", H_("The remote queue name may be different from the local queue name.\n"
-						. "If so, change it below."), "</p>\n";
+				print "<p>", H_("What is the name of the printer on the remote print server?  See the table below."), "</p>\n";
 
-				print "<p>", H_("Remote Queue Name:"), " ";
-				print "<input tabindex=1 name=\"int_xaty_printer\" size=16 value=", html_value(cgi_data_move('int_xaty_printer', $data{'name'})), ">\n";
+				print "<p>";
+				labeled_entry("int_xaty_printer", _("Remote Queue Name:"), cgi_data_move('int_xaty_printer', ""), 16);
 				print "</p>\n";
+
+				print "<table class=\"lines\" cellspacing=0>\n";
+				print "<tr><th>", H_("Brand"), "</th><th>", H_("Product"), "</th><th>", H_("Remote Queue Name"), "</th></tr>\n";
+				print "<tr><td>HP</td>					<td>Jetdirect</td>			<td>raw</td></tr>\n";
+				print "<tr><td>Ricoh</td>				<td>Aficio</td>				<td>PORT1</td></tr>\n";
+				print "<tr><td>Extended Systems</td>	<td>PocketPrintServer</td>	<td>PPSQueue</td></tr>\n";
+				print "<tr><td>AXIS Communications</td>	<td>540+/542+</td>			<td>LPT1</td></tr>\n";
+				print "</table>\n";
 				},
 		'onnext' => sub {
 				if($data{int_xaty_host} eq '')
@@ -686,6 +700,7 @@ $addprn_wizard_table = [
 		'title' => N_("Save New Printer"),
 		'picture' => "wiz-save.jpg",
 		'dopage' => sub {
+				require 'cgi_run.pl';
 				print "<p><span class=\"label\">", H_("Saving new printer:"), "</span></p>\n";
 				print "<pre>\n";
 				run("id");

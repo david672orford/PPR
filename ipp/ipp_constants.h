@@ -26,7 +26,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 8 April 2003.
 */
 
 /*! \file
@@ -107,32 +107,5 @@ also saved me the trouble of designing that part of the API.  :-)
 #define CUPS_GET_DEVICES 0x400b
 #define CUPS_GET_PPDS 0x400c
 #define CUPS_MOVE_JOB 0x400d
-
-/* This union holds any kind of IPP value. */
-typedef union
-	{
-	int integer;
-	gu_boolean boolean;
-	struct
-		{
-		char *language;
-		char *text;
-		} string;
-	struct
-		{
-		int length;
-		void *data;
-		} unknown;
-	} ipp_value_t;
-
-/* This structure holds any kind of IPP attribute. */
-typedef struct
-	{
-	struct ipp_attributes_s *next;
-	int group_tag;
-	char *name;
-	int num_values;
-	ipp_value_t values[1];
-	} ipp_attribute_t;
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 22 November 2002.
+** Last modified 7 April 2003.
 */
 
 /* The <body> element of the main window uses this class.  This is so that
@@ -25,19 +25,13 @@ A {	font-weight: normal;
 	}
 
 /* Try to make buttons gray. */
-INPUT.buttons,BUTTON
+INPUT.buttons,BUTTON.buttons
 	{
 	background: #b0b0b0;
 	margin: 0pt;
 	padding: 2pt;
-	padding-left: -0.5cm;
-	}
-
-/* In Mozilla (at least up to 1.0rc1) these settings of <button>
-   are incompatible with <input type="button">. */
-BUTTON {
-	padding: 0pt;
 	vertical-align: bottom;
+	//padding-left: -0.5cm;
 	}
 
 /* This is used to set button bars off from the rest of the page. */

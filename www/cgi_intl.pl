@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 7 April 2003.
 #
 
 require "paths.ph";
@@ -334,7 +334,7 @@ sub isubmit
 #
 sub ibutton
 	{
-	my($value, $onclick, $title) = @_;
+	my($value, $onclick, $other, $title) = @_;
 	defined($value) && defined($onclick) || die;
 	my $accesskey = undef;
 
@@ -358,6 +358,7 @@ sub ibutton
 		print "<button type=\"button\"";
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
 		print " onclick=\"$onclick\")";
+		print " ", $other if(defined $other);
 		print ">", $value, "</button>\n";
 		}
 
@@ -367,6 +368,7 @@ sub ibutton
 		print "<input type=\"button\" value=", html_value($value);
 		print " accesskey=\"$accesskey\"" if(defined($accesskey));
 		print " onclick=\"$onclick\"";
+		print " ", $other if(defined $other);
 		print ">\n";
 		}
 	print "</label>\n" if(defined $title);

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 8 April 2003.
 */
 
 /*! \file */
@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
@@ -48,17 +49,20 @@ types can be read from the request and appended to the response using the
 member functions.
 
 */
-struct IPP *ipp_new(int content_length)
+struct IPP *ipp_new(void)
 	{
 	struct IPP *p = gu_alloc(1, sizeof(struct IPP));
 
-	p->bytes_left = content_length;
+	p->bytes_left = 0;
 
 	p->readbuf_i = 0;
 	p->readbuf_remaining = 0;
 
 	p->writebuf_i = 0;
 	p->writebuf_remaining = sizeof(p->writebuf);
+
+	p->request_attrs = NULL;
+	p->response_attrs = NULL;
 
 	return p;
 	}
@@ -72,6 +76,7 @@ static void ipp_readbuf_load(struct IPP *p)
 		{
 		Throw("Read failed");
 		}
+    p->bytes_left -= p->readbuf_remaining;
 	p->readbuf_i = 0;
 	}
 
@@ -100,8 +105,10 @@ in the The response output buffer are sent on their way.  Finally, the IPP
 service object is destroyed.
 
 */
-void ipp_end(struct IPP *p)
+void ipp_delete(struct IPP *p)
 	{
+	debug("%d leftover bytes", p->bytes_left);
+
 	while(p->bytes_left > 0)
 		{
 		ipp_readbuf_load(p);
@@ -209,6 +216,127 @@ unsigned char *ipp_get_bytes(struct IPP *p, int len)
 	ptr[len] = '\0';
 	return ptr;
     }
+
+/** read the IPP request and store it in the IPP object
+
+*/
+void ipp_parse_request(struct IPP *ipp)
+	{
+	char *p;
+	char *path_info;
+	int tag, delimiter_tag = 0, value_tag, name_length, value_length;
+	char *name;
+	ipp_attribute_t *ap, *ap_prev = NULL, *ap_prev_prev = NULL;
+	int ap_i = 0;
+
+	/* Do basic input validation */
+	if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
+		Throw("REQUEST_METHOD is not POST");
+	if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
+		Throw("CONTENT_TYPE is not application/ipp");
+	if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
+		Throw("PATH_INFO is missing");
+	if(!(p = getenv("CONTENT_LENGTH")) || (ipp->bytes_left = atoi(p)) < 0)
+		Throw("CENTENT_LENGTH is missing or invalid");
+	if(ipp->bytes_left < 9)
+		Throw("request is too short to be an IPP request");
+
+	debug("request for %s, %d bytes", path_info, ipp->bytes_left);
+
+	ipp->version_major = ipp_get_sb(ipp);
+	ipp->version_minor = ipp_get_sb(ipp);
+	ipp->operation_id = ipp_get_ss(ipp);
+	ipp->request_id = ipp_get_si(ipp);
+
+	debug("version-number: %d.%d, operation-id: 0x%.4X, request-id: %d",
+			ipp->version_major, ipp->version_minor, ipp->operation_id, ipp->request_id
+			);
+
+	while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
+		{
+		if(tag >= 0x00 && tag <= 0x0f)
+			{
+			delimiter_tag = tag;
+			}
+		else if(tag >= 0x10 && tag <= 0xff)
+			{
+			value_tag = tag;
+
+			name_length = ipp_get_ss(ipp);
+			if(name_length > 0)
+				name = ipp_get_bytes(ipp, name_length);
+			else
+				name = NULL;
+			debug("0x%.2x 0x%.2x name[%d]=\"%s\"", delimiter_tag, value_tag, name_length, name ? name : "");
+
+			value_length = ipp_get_ss(ipp);
+
+			if(name_length > 0)
+				{
+				ap = gu_alloc(1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t));
+				if(ipp->request_attrs)
+					ap_prev->next = ap;
+				else
+					ipp->request_attrs = ap;
+			
+				ap->next = NULL;
+				ap->group_tag = delimiter_tag;
+				ap->name = name;
+				ap->num_values = 1;
+
+				ap_i = 0;
+
+				ap_prev_prev = ap_prev;
+				ap_prev = ap;
+				}
+			else
+				{
+				Throw("multiple values not supported");
+				}
+
+			switch(value_tag)
+				{
+				case IPP_TAG_INTEGER:
+					ap->values[ap_i].integer = ipp_get_si(ipp);
+					debug("    integer[%d]=%d", value_length, ap->values[ap_i].integer);
+					break;
+				case IPP_TAG_NAME:
+					debug("    nameWithoutLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					break;
+				case IPP_TAG_URI:
+					debug("    uri[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					break;
+				case IPP_TAG_KEYWORD:
+					debug("    keyword[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					break;
+				case IPP_TAG_CHARSET:
+					debug("    charset[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					break;
+				case IPP_TAG_LANGUAGE:
+					debug("    naturalLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					break;
+				default:
+					ipp_get_bytes(ipp, value_length);
+					debug("    ?????????[%d]", value_length);
+					break;
+				}
+			}
+		else
+			{
+			Throw("invalid tag value");
+			}
+		}
+
+    debug("end of request read");
+	}
+
+/** send the IPP response in the IPP object
+
+*/
+void ipp_send_reply(struct IPP *p)
+	{
+
+	}
 
 /** Send a debug message to the HTTP server's error log
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 February 2003.
+# Last modified 7 April 2003.
 #
 
 use lib "?";
@@ -407,7 +407,7 @@ print "</td>\n";
 # "Draw" all of the control buttons.
 if($controls)
 	{
-	print "<td align=\"right\" valign=\"top\">\n";
+	print "<td class=\"right_buttons\" align=\"right\" valign=\"top\">\n";
 	isubmit("action", "Start", N_("_Start"), "class=\"buttons\"");
 	print "<br>\n";
 	isubmit("action", "Stop", N_("Sto_p"), "class=\"buttons\"");

@@ -46,6 +46,8 @@ gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
 
 gu_throw.$(OBJ): gu_throw.c ../include/before_system.h ../include/gu.h
 
+gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
+
 gu_trim.$(OBJ): gu_trim.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
@@ -70,7 +72,27 @@ snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
 
 gu_wildmat.$(OBJ): gu_wildmat.c
 
-gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
-
 gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+pcre.$(OBJ): pcre.c ../nonppr_misc/pcre/internal.h ../nonppr_misc/pcre/chartables.c
+
+c2lib_hash.$(OBJ): c2lib_hash.c ../nonppr_misc/c2lib/config.h
+
+pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
+
+pcre_maketables.$(OBJ): pcre_maketables.c ../nonppr_misc/pcre/internal.h
+
+pcre_study.$(OBJ): pcre_study.c ../nonppr_misc/pcre/internal.h
+
+c2lib_matvec.$(OBJ): c2lib_matvec.c ../nonppr_misc/c2lib/config.h ../include/matvec.h
+
+c2lib_pool.$(OBJ): c2lib_pool.c ../nonppr_misc/c2lib/config.h
+
+c2lib_pre.$(OBJ): c2lib_pre.c ../nonppr_misc/c2lib/config.h
+
+c2lib_pstring.$(OBJ): c2lib_pstring.c ../nonppr_misc/c2lib/config.h
+
+c2lib_tree.$(OBJ): c2lib_tree.c ../nonppr_misc/c2lib/config.h ../include/tree.h
+
+c2lib_vector.$(OBJ): c2lib_vector.c ../nonppr_misc/c2lib/config.h
 

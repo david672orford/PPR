@@ -18,5 +18,7 @@ tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/glob
 
 throw.$(OBJ): throw.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
+pros.$(OBJ): pros.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
 usblp.$(OBJ): usblp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 

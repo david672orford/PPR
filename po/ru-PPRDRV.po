@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2003-02-16 20:04-0500\n"
+"POT-Creation-Date: 2003-04-07 14:55-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -139,9 +139,8 @@ msgstr ""
 msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:67
-#: ../pprdrv/pprdrv_log.c:80 ../pprdrv/pprdrv_lw_messages.c:48
-#: ../pprdrv/pprdrv_pjl_messages.c:55
+#: ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
+#: ../pprdrv/pprdrv_lw_messages.c:48 ../pprdrv/pprdrv_pjl_messages.c:70
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr ""
@@ -210,7 +209,7 @@ msgstr ""
 msgid "Balance before printing this job: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:125
+#: ../pprdrv/pprdrv_interface.c:140
 #, c-format
 msgid ""
 "The printer interface program terminated abruptly after receiving\n"
@@ -218,57 +217,62 @@ msgid ""
 "the OS kernel)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:135
+#: ../pprdrv/pprdrv_interface.c:150
 msgid "The interface program dumped core."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:150
+#: ../pprdrv/pprdrv_interface.c:165
 msgid ""
 "The interface performed a controlled shutdown because a non-spoolerprocess "
 "(possibly the OS kernel) sent it a signal."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:160
+#: ../pprdrv/pprdrv_interface.c:175
 #, c-format
 msgid "Mischief afoot, interface program stopped by signal \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:162
+#: ../pprdrv/pprdrv_interface.c:177
 msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:176
+#: ../pprdrv/pprdrv_interface.c:191
 #, c-format
 msgid "Interface program malfunction: it returned invalid exit code %d."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:217
+#: ../pprdrv/pprdrv_interface.c:232
 msgid ""
 "Interface program malfunction: it quit before accepting\n"
 "\tall of the job but didn't return an error code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:294
+#: ../pprdrv/pprdrv_interface.c:309
 #, c-format
 msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:73 ../pprdrv/pprdrv_pjl_messages.c:78
+#: ../pprdrv/pprdrv_interface.c:313 ../pprdrv/pprdrv_interface.c:317
+#, c-format
+msgid "%s(): pipe() failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_lw_messages.c:73 ../pprdrv/pprdrv_pjl_messages.c:93
 #, c-format
 msgid "Not enough fields in \"%s\" line %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:82 ../pprdrv/pprdrv_pjl_messages.c:89
+#: ../pprdrv/pprdrv_lw_messages.c:82 ../pprdrv/pprdrv_pjl_messages.c:104
 #, c-format
 msgid "Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:84 ../pprdrv/pprdrv_pjl_messages.c:91
+#: ../pprdrv/pprdrv_lw_messages.c:84 ../pprdrv/pprdrv_pjl_messages.c:106
 #, c-format
 msgid "Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"
 msgstr ""
 
-#: ../pprdrv/pprdrv_lw_messages.c:86 ../pprdrv/pprdrv_pjl_messages.c:93
+#: ../pprdrv/pprdrv_lw_messages.c:86 ../pprdrv/pprdrv_pjl_messages.c:108
 #, c-format
 msgid ""
 "Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"
@@ -330,39 +334,74 @@ msgstr ""
 msgid "PFB file \"%s\" is currupt (defect type %d)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_pjl_messages.c:109
+#: ../pprdrv/pprdrv_pjl_messages.c:124
 #, c-format
 msgid "%s: no match for %d \"%s\""
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:276
+#: ../pprdrv/pprdrv_ppd.c:284
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:280
+#: ../pprdrv/pprdrv_ppd.c:288
 msgid ""
 "Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:605
+#: ../pprdrv/pprdrv_ppd.c:877
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:671
+#: ../pprdrv/pprdrv_ppd.c:943
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:681
+#: ../pprdrv/pprdrv_ppd.c:953
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", removing existing code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:212
+#, c-format
+msgid "%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:217
+#, c-format
+msgid "%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:221
+#, c-format
+msgid "%s(): read() failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:223
+#, c-format
+msgid "%s(): read() read %d bytes instead of %d"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:229
+#, c-format
+msgid "%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:251
+#, c-format
+msgid "%s(): write() failed, errno=%d (%s)"
+msgstr ""
+
+#: ../pprdrv/pprdrv_progress.c:253
+#, c-format
+msgid "%s(): write() wrote %d bytes instead of %d"
 msgstr ""
 
 #: ../pprdrv/pprdrv_reason.c:102

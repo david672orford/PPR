@@ -1,6 +1,6 @@
-squeeze.$(OBJ): squeeze.c
-
 ppr-config.$(OBJ): ppr-config.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+
+squeeze.$(OBJ): squeeze.c
 
 readlink.$(OBJ): readlink.c
 

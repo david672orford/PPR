@@ -10,7 +10,7 @@ tclAsync.$(OBJ): tclAsync.c tclInt.h
 
 tclBasic.$(OBJ): tclBasic.c tclInt.h patchlevel.h
 
-tclCkalloc.$(OBJ): tclCkalloc.c tclInt.h tclPort.h
+tclCkalloc.$(OBJ): tclCkalloc.c tclInt.h tcl.h tclPort.h
 
 tclCmdAH.$(OBJ): tclCmdAH.c tclInt.h tclPort.h gu.h
 
