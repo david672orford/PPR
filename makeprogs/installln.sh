@@ -81,7 +81,7 @@ if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 		exit 1
 		fi
 	fi
-ls -l $RPM_BUILD_ROOT$target
+#ls -l $RPM_BUILD_ROOT$target
 chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 

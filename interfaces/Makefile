@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 6 April 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=dummy simple parallel$(DOTEXE) serial$(DOTEXE) \
-	tcpip$(DOTEXE) lpr$(DOTEXE) smb usblp$(DOTEXE)
+	tcpip$(DOTEXE) lpr$(DOTEXE) smb usblp$(DOTEXE) pros$(DOTEXE)
 
 ATALK_PROGS=atalk$(DOTEXE)
 
@@ -49,8 +49,8 @@ all-netbios: $(NETBIOS_PROGS)
 # Extra stuff to build if we have AppleTalk.
 all-atalk: $(ATALK_PROGS)
 
-# Build the AppleTalk interface by linking the atalk.o created by the rule 
-# below with the AppleTalk libraries for this system as defined in 
+# Build the AppleTalk interface by linking the atalk.o created by the rule
+# below with the AppleTalk libraries for this system as defined in
 # Makefile.conf as ATALKLIBS.
 atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o atalk$(DOTEXE) atalk_$(ATALKTYPE).$(OBJ) \
@@ -82,19 +82,27 @@ serial$(DOTEXE): serial.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEX
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # HP JetDirect style TCP/IP interface
-tcpip$(DOTEXE): tcpip.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) tcpip.$(OBJ) \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+OBJS_TCPIP=tcpip.$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+tcpip$(DOTEXE): $(OBJS_TCPIP)
+	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) $(OBJS_TCPIP) $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
 usblp$(DOTEXE): usblp.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o usblp$(DOTEXE) usblp.$(OBJ) \
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
+# Axis PROS protocol
+OBJS_PROS=pros.$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+pros$(DOTEXE): $(OBJS_PROS)
+	$(LD) $(LDFLAGS) -o pros$(DOTEXE) $(OBJS_PROS) $(SOCKLIBS) $(INTLLIBS)
+
 #=== Install ================================================================
 
 install: $(INSTALL_NETBIOS) $(INSTALL_ATALK) $(PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(PROGS)
+	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/socketapi$(DOTEXE)
+	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/appsocket$(DOTEXE)
+	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/jetdirect$(DOTEXE)
 	-chown root $(HOMEDIR)/interfaces/lpr$(DOTEXE) && chmod 4711 $(HOMEDIR)/interfaces/lpr$(DOTEXE)
 
 # Extra stuff to install if we have AppleTalk.

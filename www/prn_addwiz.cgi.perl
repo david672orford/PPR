@@ -9,7 +9,7 @@
 #
 # * Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 # notice, this list of conditions and the following disclaimer in the
 # documentation and/or other materials provided with the distribution.
@@ -17,16 +17,16 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 6 April 2003.
 #
 
 #
@@ -64,10 +64,15 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 		'parallel' => N_("Server Parallel Port"),
 		'usblp' => N_("Server USB Port"),
 		'atalk' => N_("AppleTalk PAP"),
-		'tcpip' => N_("SocketAPI (JetDirect)"),
+		'tcpip' => N_("Generic raw TCP/IP"),
+		'socketapi' => N_("SocketAPI"),
+		'appsocket' => N_("AppSocket"),
+		'jetdirect' => N_("HP JetDirect"),
+		'pros' => N_("AXIS PROS"),
 		'lpr' => N_("RFC 1179 (lpr/lpd protocol)"),
 		'smb' => N_("LAN Manager/MS-Windows"),
 		'ppromatic' => "--hide",
+		'foomatic-rip' => "--hide",
 		'gssimple' => "--hide",
 		'gsatalk' => "--hide",
 		'gstcpip' => "--hide",
@@ -76,6 +81,11 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 		'gslpr' => "--hide",
 		'gssmb' => "--hide"
 		);
+
+$tcpip_list{"tcpip"} = 1;
+$tcpip_list{"socketapi"} = 1;
+$tcpip_list{"appsocket"} = 1;
+$tcpip_list{"jetdirect"} = 1;
 
 #====================================================================
 # On the basis of the interface name and printer address, take a
@@ -90,20 +100,45 @@ sub suggest_queue_name
 	# Don't treat Ghostscript versions differently.
 	$interface =~ s/^gs//;
 
+	# AppleTalk is pretty easy.  We just remove noise.
 	if($interface eq "atalk" && $address =~ /^([^:]+):/)
 		{
 		$name = $1;
 		$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;			# Hack for Canon
 		}
-	elsif($interface eq "tcpip" && $address =~ /^([^\.:]+)/)
+
+	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
+	elsif(defined($tcpip_list{$interface}) && $address =~ /^([^\.:]+)/)
 		{
 		$name = $1;
 		}
-	elsif($interface eq "smb" && $address =~ /^\\\\[^\\]+\\([^\\]+)$/)
+
+	# If this looks like an embedded print server sharename, go with
+	# the server name, otherwise, go with the share name.
+	elsif($interface eq "smb" && $address =~ /^\\\\([^\\]+)\\([^\\]+)$/)
 		{
-		$name = $1;
+		my($server, $share) = ($1, $2);
+		$share =~ tr/[A-Z]/[a-z]/;
+		if($share eq "print" || $share eq "direct" || $share eq "hold" || $share =~ /^lpt/)
+			{
+			$name = $server;
+			}
+		else
+			{
+			$name = $share;
+			}
 		}
+
+	# Assuming this is a real host and not an embedded print server,
+	# the queue name is the most meaningful part.
 	elsif($interface eq "lpr" && $address =~ /^([^\@]+)\@/)
+		{
+		$name = $1;
+		}
+
+	# Since most PROS servers generall one port jobs, assume the
+	# hostname is the most meaningful thing.
+	elsif($interface eq "pros" && $address =~ /\@([^\@]+)$/)
 		{
 		$name = $1;
 		}
@@ -188,13 +223,13 @@ $addprn_wizard_table = [
 				my $thiscol = 0;
 				while(defined($interface = shift @interfaces))
 					{
+					my $desc = $interface_descriptions{$interface};
+					next if(defined($desc) && $desc eq "--hide");
 					if($thiscol++ > 9)
 						{
 						print "</td><td>\n";
 						$thiscol = 0;
 						}
-					my $desc = $interface_descriptions{$interface};
-					next if(defined($desc) && $desc eq "--hide");
 					print "<input tabindex=1 TYPE=\"radio\" NAME=\"interface\" VALUE=", html_value($interface);
 					print " checked" if($interface eq $checked_interface);
 					print "> $interface";
@@ -217,18 +252,13 @@ $addprn_wizard_table = [
 					$data{'int_atalk_type'} = 'LaserWriter';
 					return 'int_atalk';
 					}
-				if($interface eq 'tcpip' || $interface eq 'gstcpip')
+				if(defined($tcpip_list{$interface}))
 					{
 					return 'int_tcpip';
 					}
-				if($interface eq 'lpr')
+				if($interface eq "lpr" || $interface eq "pros")
 					{
-					return 'int_lpr';
-					}
-				if($interface eq 'gsatalk')
-					{
-					$data{'int_atalk_type'} = 'DeskWriter';
-					return 'int_atalk';
+					return 'int_xaty';
 					}
 				return 'int_generic';
 				}
@@ -403,10 +433,11 @@ $addprn_wizard_table = [
 		},
 
 		#===========================================
-		# Interface setup for RFC 1179 servers.
+		# Interface setup for RFC 1179 and PROS
+		# servers
 		#===========================================
 		{
-		'label' => 'int_lpr',
+		'label' => 'int_xaty',
 		'title' => N_("LPR Interface: Choose an Address"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
@@ -416,22 +447,22 @@ $addprn_wizard_table = [
 						. "of an IP address is \"157.252.200.52\"."), "</p>\n";
 
 				print "<p>", H_("DNS Name or IP Address:"), " ";
-				print "<input tabindex=1 name=\"int_lpr_host\" size=32 value=", html_value(cgi_data_move('int_lpr_host', '')), ">\n";
+				print "<input tabindex=1 name=\"int_xaty_host\" size=32 value=", html_value(cgi_data_move('int_xaty_host', '')), ">\n";
 				print "</p>\n";
 
 				print "<p>", H_("The remote queue name may be different from the local queue name.\n"
 						. "If so, change it below."), "</p>\n";
 
 				print "<p>", H_("Remote Queue Name:"), " ";
-				print "<input tabindex=1 name=\"int_lpr_printer\" size=16 value=", html_value(cgi_data_move('int_lpr_printer', $data{'name'})), ">\n";
+				print "<input tabindex=1 name=\"int_xaty_printer\" size=16 value=", html_value(cgi_data_move('int_xaty_printer', $data{'name'})), ">\n";
 				print "</p>\n";
 				},
 		'onnext' => sub {
-				if($data{int_lpr_host} eq '')
+				if($data{int_xaty_host} eq '')
 					{ return _("You must fill in the remote host's DNS name or IP address!") }
-				if($data{int_lpr_printer} eq '')
+				if($data{int_xaty_printer} eq '')
 					{ return _("You must fill in the remote queue name!") }
-				$data{address} = $data{int_lpr_printer} . '@' . $data{int_lpr_host};
+				$data{address} = $data{int_xaty_printer} . '@' . $data{int_xaty_host};
 				$data{options} = '';
 				$data{jobbreak} = 'default';
 				$data{feedback} = 'default';

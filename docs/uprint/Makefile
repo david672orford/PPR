@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 6 April 2003.
 #
 
 # Pull in settings from Configure.
@@ -66,8 +66,10 @@ install-troff: $(ALL_TROFF)
 	       ../$(INSTALLCP) $$f $(MANDIR)/man$$d/`basename $$f .man`; \
 	    done;\
 	  done
-	../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man5/uprint.conf.5
-	../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man8/uprint-newconf.8
+	#../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man5/uprint.conf.5
+	#../$(INSTALLLN) $(MANDIR)/man1/UPRINT.1 $(MANDIR)/man8/uprint-newconf.8
+	../$(INSTALLLN) UPRINT.1 $(MANDIR)/man5/uprint.conf.5
+	../$(INSTALLLN) UPRINT.1 $(MANDIR)/man8/uprint-newconf.8
 
 # Install the man pages and other stuff in HTML format.
 install-html: $(ALL_HTML)

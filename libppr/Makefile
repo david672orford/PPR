@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2003.
+# Last modified 6 April 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 LIBOBJS=\
 	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
 	int_acache.$(OBJ) int_debug.$(OBJ) int_exit.$(OBJ) \
-	int_copy_job.$(OBJ) \
+	int_copy_job.$(OBJ) int_tcp_connect.$(OBJ) \
 	datestamp.$(OBJ) \
 	tokenize.$(OBJ) \
 	readqfile.$(OBJ) writeqfile.$(OBJ) unreadqfile.$(OBJ) parse_qfname.$(OBJ) \

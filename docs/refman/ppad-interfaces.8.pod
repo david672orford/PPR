@@ -1,5 +1,5 @@
 #
-# ppad-interfaces.8.pod
+# mouse:~ppr/src/docs/refman/ppad-interfaces.8.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -8,7 +8,7 @@
 #
 # * Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 # notice, this list of conditions and the following disclaimer in the
 # documentation and/or other materials provided with the distribution.
@@ -16,16 +16,16 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 February 2003.
+# Last modified 6 April 2003.
 #
 
 =head1 NAME
@@ -37,6 +37,9 @@ ppad-interfaces - PPR Printer Interface Programs
 PPR uses interface programs to communicate with printers.  An interface is
 selecte with the B<ppad interface> command.  Its options are set with the
 B<ppad options> command.  Please see the L<ppad.8> manpage for details.
+
+At the end of this document there is a discussion of various printer devices
+and the recomended interfaces.
 
 These are the interfaces which are distributed with PPR:
 
@@ -283,17 +286,15 @@ interface or the address has changed.
 
 =head2 B<tcpip>
 
-The interface B<tcpip> opens a TCP/IP connection to a specific socket on a
-specific host and sends the data.  End of job is indicated with a
-control-d, just like on a serial interface.  Canon calls this the Universal
-Printing Protocol.  HP JetDirect cards and Extended Systems
-PockPrintServers will accept jobs sent in this manner.  Other printer
-Ethernet adapters may or may not support this protocol.  Those that
-don't will almost certainly work with the B<lpr> interface.
+The interface B<tcpip> opens a connection to a specified TCP socket
+on a specific host and sends the data.  Aliases for this interface
+automatically select appropriate options to implement the SocketAPI,
+AppSocket, and JetDirect protocols.
 
-The address format for the B<tcpip> interface is "host:port".  For
-example: "bigjohn.prn.trincoll.edu:9100".  Port 9100 is the default port
-for HP JetDirect cards and print servers which strive to imitate them.
+The address format for the B<tcpip> interface is I<host> or I<host>:I<port>.
+For example: "bigjohn.prn.trincoll.edu:9100".  If I<port> is omitted, 9100
+will be used.  Port 9100 is the default port for many devices which use this
+protocol including those from HP, and Extended Systems.
 
 This interface currently supports all jobbreak methods except B<signal> and
 B<signal/pjl>.  (See the B<ppad jobbreak> section of this man page.)
@@ -375,14 +376,13 @@ them the timeout.  The control-T's will reset the JetDirect card's timeout.
 This option will instruct the interface program to send SNMP printer status
 queries every so many seconds.  Unlike the control-T's sent by
 "idle_status_interval=", these queries will be sent constantly, without
-waiting for a lull in communications.  Since this is a new feature, the
-default for this option is 0 (which disables SNMP status queries), but in a
-future version of PPR the default will be changed.
+waiting for a lull in communications.  The default for this option is 0
+(which disables SNMP status queries).
 
 =item snmp_community=
 
 This option tell the interface what community name (password) to use when
-using SNMP to fetch the printer status.  The default value is "public". 
+using SNMP to fetch the printer status.  The default value is "public".
 Almost all printers allow read-only access with the community name "public".
 
 =item appsocket_status_interval=
@@ -403,6 +403,44 @@ connect retry code which takes care of this problem.  The default is
 
 =back
 
+=head2 B<socketapi>
+
+This interface is the same as B<tcpip>.
+
+=head2 B<appsocket>
+
+This interface differs from the B<tcpip> interface only in its default
+options and jobbreak method.  The default jobbreak method is B<newinterface>
+and the default option that differs is "appsocket_status_interval=15".
+
+=head2 B<jetdirect>
+
+This interace differs from the B<tcpip> only in its default options.  The
+default option that differs is "snmp_status_interval=15".
+
+=head2 B<pros>
+
+This interface implements the PROS protocol used by Axis print servers.  The
+address format is I<printer>@I<host>:I<portnum>.  For example
+C<LPT1@myprn.myorg.org:35>.  If you leave off I<printer>@, C<LPT1> is assumed.
+If you leave off :I<portnum>, C<35> is assumed.
+
+This interface accepts the options B<connect_timeout=>, B<refused_retires=>,
+B<refused=>, and B<sndbuf_size=>.  They work exactly as they do for the
+B<tcpip> interface.
+
+In addition, this interface accepts the option B<password=>.  You should use
+this if you have set the printing password on your Axis print server to
+something other than the default which is "netprinter".
+
+Some may wonder whether this interface supports PROS A or PROS B.  While the
+Axis documentation claims that their print servers support two
+variants of PROS, called PROS A and PROS B, this is not actually the case.
+PROS A and PROS B are simply two different implementations of the client.
+One accepts the print data on stdin, the other runs as a daemon and accepts
+the print data over a named pipe.  Thus the protocol which this interface
+program supports is simply PROS.
+
 =head2 B<lpr>
 
 The interface B<lpr> sends the job to another system using the Berkeley
@@ -416,7 +454,7 @@ a temporary file before transmitting it to the printer, it is much better
 to use the B<tcpip> interface when the printer's network card supports its
 protocol.
 
-The address format for the B<lpr> interface is "printer@system".  For
+The address format for the B<lpr> interface is I<printer>@I<host>.  For
 example: "pooh@sanders.trincoll.edu".  If you really
 want to, you can specify a port to connect to instead of the normal B<lpd>
 port.  Do it like this: "pooh@sanders.trincoll.edu:2000".
@@ -468,7 +506,7 @@ compatible with the client spooling system found in ATE<amp>T's LAN Manager
 for Unix.  An ATE<amp>T client spooler consists a an MS-DOS computer running
 LAN Manager client software, the MS-DOS background spooler PRINT, and a
 program called CLISPOOL.  CLISPOOL advertises an NetBIOS name on the
-network.  This name consists of the NetBIOS machine name with ".P" appended. 
+network.  This name consists of the NetBIOS machine name with ".P" appended.
 The print server writes the print data to a temporary file in a LAN Manager
 accesable directory, opens a NetBIOS connexion to CLISPOOL, and sends a
 packet giving the LAN Manager path and name of the temporary file.  CLISPOOL
@@ -511,6 +549,244 @@ printer server.
 PostScript errors will not be detected when using the B<smb> interface
 because the protocol it implements does not support bidirectional
 communication with the printer.
+
+
+
+
+
+=head1 RECOMENDATIONS
+
+This section contains notes about various printers and embedded print
+servers as recommendations as to which PPR interface programs to use with
+them.
+
+Please send contributions to this section to ppr-bugs@trincoll.edu.
+
+
+
+
+
+=head2 Apple LaserWriter II
+
+
+The Apple LaserWriter II and many other printers of that era have internal
+networking such as the QMS-PS 810 support only the LocalTalk variant of
+AppleTalk.
+
+=over 4
+
+=item B<atalk>
+
+Fully functional.  The AppleTalk type is C<LaserWriter>.
+
+=back
+
+
+
+
+
+
+=head2 HP DeskWriter with AppleTalk
+
+HP made a version of the DeskJet with LocalTalk support.  They called it the
+DeskWriter.  Since these printers don't have internal PostScript
+interpreters, they were tested with Ghostscript.
+
+=over 4
+
+=item B<atalk>
+
+Works well.  The AppleTalk type is "DeskWriter".
+
+=back
+
+
+
+
+
+=head2 HP JetDirect (Internal)
+
+PPR has been extensively tested with HP printers with internal JetDirect
+cards.
+
+=over 4
+
+=item B<atalk>
+
+This interface is highly recommended.  It works in bidirectional mode. 
+These printer advertize AppleTalk names with several types, including
+C<LaserWriter>, which is probably what you should use in the address.
+
+Some printers will give better status reporting if one selects the
+B<signal/pjl> jobbreak method.  However the 4M will malfunction.  The 4M+
+works fine though.
+
+=item B<jetdirect>
+
+This interface is highly recommended.  It works in bidirectional mode.
+Uses port 9100.
+
+=item B<lpr>
+
+Works as well as the B<lpr> interface ever works.  Use a queue name of
+C<RAW>.
+
+=back
+
+
+
+
+
+=head2 HP JetDirect (External)
+
+HP external JetDirect devices which strap to the backs of DeskJets 
+have received basic testing.  The printers tested did not have 
+internal PostScript interpreters and so were used with Ghostscript.
+
+=over 4
+
+=item B<jetdirect>
+
+Works well.  The port number is 9100.
+
+=back
+
+
+
+
+
+=head2 Extended Systems PocketPrintServer
+
+This product works but does not support bidirectional communication at all.
+It is a small box with a parallel port on one end and 10BaseT and 2BaseT
+connectors on the other.
+
+=over 4
+
+=item B<tcpip>
+
+Works.  The default port for these devices is 9100.
+
+=item B<lpr>
+
+Works as well as the B<lpr> interface ever works.
+
+
+
+
+
+=head2 AXIS Communications 540+/542+ print server
+
+This print server is a small box with a parallel connector at one end and a
+10BaseT Ethernet connection at the other.  It supports numberous networking
+protocols including PROS, SMB, SocketAPI, LPR, FTP, and AppleTalk PAP. The
+product information page is at
+L<http://www.axis.com/techsup/prtsrv/axis_540/>.  It costs less than US$100.
+
+=over 4
+
+=item B<pros>
+
+This option is recommended since it allows reporting of off-line and
+paper-out and should support bidirectional communication.  It is recommended
+that you use a queue name of C<LPT1>.
+
+=item B<tcpip>
+
+This works.  It is not known if the print server support bidirectional
+communication using this protocol.  The default port is 9900.
+
+=item B<lpr>
+
+Works as well as the B<lpr> interface ever works.  It is recommended that
+you use a queue name of C<LPT1>.
+
+=item B<atalk>
+
+Untested but supposedly supported.
+
+=item B<smb>
+
+Untested but supposedly supported.
+
+=back
+
+
+
+
+
+=head2 Canon ImageRunner
+
+=over 4
+
+=item B<atalk>
+
+Works, including bindirectional communication if one selects the name ending
+in "DIRECT".
+
+=item B<tcpip>
+
+Works, but not bidirectional.  The port number is ????.  Canon calls this
+the Universal Printing Protocol.
+
+=item B<smb>
+
+Works.  Offers three queues called C<HOLD>, C<PRINT>, and C<DIRECT>.
+
+=item B<lpr>
+
+Works as well as the B<lpr> interface ever works.
+
+=back
+
+
+
+
+=head2 NIB 450-E Ricoh Aficio 450
+
+This is a network interface board for a Ricoh Aficio 450 combination photo
+copier and laser printer.  At the time of testing in 1999 it performed
+poorly, manifesting numberous bugs in its network protocol implementations.
+Among other things, the bidirectional communication was slow and jerky and
+lost characters.  End of job handshaking generally didn't work.  It also
+frequently dropt off the network.
+
+This entry is here to give you some ideas as to how to work around crippling
+bugs.
+
+=over 4
+
+=item B<atalk>
+
+Has serious problems due to the end of job handshaking failures.  Might work
+if one were to disable feedback.  The B<signal/pjl> jobbreak method will not
+work at all over this interface, appearently because the embedded print
+server TBCP encodes the PJL universal exit language sequence before sending
+it to the printer.  Using this interface method is not recommended.
+
+=item B<tcpip>
+
+Even though bidirectional communication is supported using this protocol,
+control-d handshaking is defective, so jobbreak method B<control-d> will
+result in a hung queue unless feedback is disabled (which has the effect of
+disabling PPR's end-of-job handshaking).  Since characters from the printer
+to the PPR server are lost, jobbreak method B<pjl> may sometimes result
+in a hung queue unless feedback is disabled.  The default port number is
+10001.  If you wish to change the port number on the printer, select a "Base
+Port" number which is one less than the desired port number.  For example,
+select 9099 if you want the printer to listen on port 9100.
+
+=item B<lpr>
+
+Works as long as one uses a queue name of C<PORT1>.  The capitalization is
+said to be important.  The printer will accept other queue names but will
+drop the connexion right after replying that they are OK.
+
+=back
+
+
+
+
 
 =head1 SEE ALSO
 

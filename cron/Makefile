@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2003.
+# Last modified 6 April 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
-PROGS_BIN=ppr-clean ppr-index$(DOTEXE)
+PROGS_BIN=ppr-clean
 PROGS_BIN_SETUID=ppr-index$(DOTEXE)
 PROGS=$(PROGS_LIB) $(PROGS_BIN) $(PROGS_BIN_SETUID)
 USELIBS=../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 

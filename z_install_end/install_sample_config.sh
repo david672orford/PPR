@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 6 April 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -45,7 +45,7 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
 	else
 	echo " exists"
 		fi
-	../makeprogs/installconf.sh conf $CONFDIR/acl/$f
+	../makeprogs/installconf.sh config $CONFDIR/acl/$f
 	done
 
 #===========================================================================
@@ -64,7 +64,7 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
 	else
 	echo " exists"
 		fi
-	../makeprogs/installconf.sh conf $CONFDIR/$f
+	../makeprogs/installconf.sh config $CONFDIR/$f
 	done
 
 exit 0

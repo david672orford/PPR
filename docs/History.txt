@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--28 March 2003.
+1.51, 15 February 2003--5 April 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -402,7 +402,7 @@ more information about RIPs and *pprRIP:.
 
 * Changed all DocBook tags to lower case.
 
-* Moved misc/misc_dir_contents.txt back to ../misc/README.txt and made a 
+* Moved misc/misc_dir_contents.txt back to ../misc/README.txt and made a
   symbolic link to it.  (Previously it was the other way around.)
 
 * Moved misc/History.txt back up to the top level, leaving a link
@@ -436,6 +436,15 @@ more information about RIPs and *pprRIP:.
 * shared/legal.sgml: added aknowledgement for PCRE.
 
 * index.html: added links to PCRE and C2lib docs.
+
+* refman/, uprint/: fixed many L<> links by changing L<prog(1)> to L<prog.1>.
+
+* refman/ppad-interfaces.8.pod: added section for pros and noted that
+  the tcpip interface now has a default port.
+
+* refman/ppad-interfaces.8.pod: described the socketapi, appsocket, and
+  jetdirect interface aliases.
+
 
 
 

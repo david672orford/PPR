@@ -8,7 +8,7 @@
 **
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
-** 
+**
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
@@ -16,20 +16,20 @@
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 29 January 2003.
+** Last modified 6 April 2003.
 */
 
 /*
-** This interface program uses raw TCP/IP to communicating with devices such 
+** This interface program uses raw TCP/IP to communicating with devices such
 ** as HP Jetdirect cards or Extended Systems Pocket Print Servers.
 **
 ** There are at least two variants of this protocol, known as SocketAPI and
@@ -44,26 +44,32 @@
 **
 ** $ ppad myprn jobbreak newinterface
 ** $ ppad myprn options appsocket_status_interval=15
+**
+** If one uses this interface under its alias "appsocket" these options
+** will be selected automatically.
+**
+** If one uses it under the alias "jetdirect", the option
+** snmp_status_interval=15 will be selected.
 */
 
 #include "before_system.h"
 #include <sys/types.h>
-#include <errno.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include <ctype.h>
 #include <time.h>
 #include <sys/time.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #ifndef INADDR_NONE
 #define INADDR_NONE -1
 #endif
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <ctype.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -87,16 +93,16 @@
 define_exception_type(const char *);
 static struct exception_context the_exception_context[1];
 
+/* Default port (9100 is the port used by HP JetDirect) */
+#define DEFAULT_PORT 9100
+
 /*
 ** This structure is used to store the result of parsing the name=value pairs
 ** in the interface options parameter on our command line.
 */
 struct OPTIONS
 	{
-	int connect_timeout;
-	int sndbuf_size;
-	int refused_retries;
-	gu_boolean refused_engaged;
+	struct TCP_CONNECT_OPTIONS connect;
 	char *snmp_community;
 	int idle_status_interval;
 	int snmp_status_interval;
@@ -106,194 +112,8 @@ struct OPTIONS
 	};
 
 /*
-** This is the SIGALRM handler which detects if the alarm goes off before the
-** remote system responds to connect().  Notice that it does nothing but set 
-** a flag.
-*/
-static volatile int sigalrm_caught = FALSE;
-static void sigalrm_handler(int sig)
-	{
-	DODEBUG(("SIGALRM"));
-	sigalrm_caught = TRUE;
-	} /* end of sigalrm_handler() */
-
-/*
-** Parse a printer address and return an IP address and port.  The program is
-** aborted if the parse fails or a DNS lookup fails.
-*/
-static void parse_address(const char address[], struct sockaddr_in *printer_addr)
-	{
-	char *ptr;
-	struct hostent *hostinfo;
-
-	/* Clear the printer address structure. */
-	memset(printer_addr, 0, sizeof(printer_addr));
-
-	/* Parse the address into host and port. */
-	if(strpbrk(address, " \t") != (char*)NULL)
-		{
-		alert(int_cmdline.printer, TRUE, _("Spaces and tabs not allowed in a TCP/IP printer address."
-								"\"%s\" does not conform to this requirement."), address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	if((ptr = strchr(address, ':')) == (char*)NULL || ! isdigit(ptr[1]))
-		{
-		alert(int_cmdline.printer, TRUE, _("TCP/IP printer address must be in form \"host:portnum\","
-										"\"%s\" does not conform to this requirement."), address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	/* Put the port number in the structure. */
-	printer_addr->sin_port = htons(atoi(ptr+1));
-
-	/* Terminate the host part so that the port number will be ignored for now. */
-	*ptr = '\0';
-
-	/*
-	** If convertion of a dotted address works, use it,
-	** otherwise, use gethostbyname().
-	*/
-	if((printer_addr->sin_addr.s_addr = inet_addr(address)) != INADDR_NONE)
-		{
-		printer_addr->sin_family = AF_INET;
-		}
-	else
-		{
-		if((hostinfo = gethostbyname(address)) == (struct hostent *)NULL)
-			{
-			alert(int_cmdline.printer, TRUE, _("TCP/IP interface can't determine IP address for \"%s\"."), address);
-			int_exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
-			}
-		printer_addr->sin_family = hostinfo->h_addrtype;
-		memcpy(&printer_addr->sin_addr, hostinfo->h_addr_list[0], hostinfo->h_length);
-		}
-
-	/*
-	** Now that inet_addr() and gethostbyname() have had a chance to
-	** examine it, put the address back the way it was.  That way it
-	** will look ok in alert messages.
-	*/
-	*ptr = ':';
-	} /* end of parse_address() */
-
-/*
-** Make the connection to the printer.
-** Return the file descriptor.
-*/
-static int open_connexion(const char address[], struct sockaddr_in *printer_addr, struct OPTIONS *options, void (*status_function)(void *), void *status_obj)
-	{
-	int sockfd;
-	int retval;
-	int try_count;
-
-	/* Install SIGALRM handler for connect() timeouts. */
-	signal_interupting(SIGALRM, sigalrm_handler);
-
-	/*
-	** Connect the socket to the printer.
-	** Some systems, noteably Linux, fail to reliably implement
-	** connect() timeouts; that is why we use alarm() to
-	** create our own timeout.
-	*/
-	for(try_count=0; TRUE; try_count++)
-		{
-		/* Create a socket.  We do this every time because Linux
-		   won't let us try again. */
-		if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-			{
-			alert(int_cmdline.printer, TRUE, "%s interface: socket() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-			int_exit(EXIT_PRNERR);
-			}
-
-		DODEBUG(("calling connect()"));
-		alarm(options->connect_timeout);
-		retval = connect(sockfd, (struct sockaddr*)printer_addr, sizeof(struct sockaddr_in));
-		alarm(0);
-		DODEBUG(("connect() returned %d", retval));
-
-		/* If a timeout occured, */
-		if(sigalrm_caught)
-			{
-			alert(int_cmdline.printer, TRUE, _("Printer \"%s\" is not responding.\n"
-											"(Aborted after connect() blocked for %d seconds.)"), address, options->connect_timeout);
-			close(sockfd);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
-			}
-
-		/* If connect() failed, */
-		if(retval < 0)
-			{
-			int saved_errno = errno;
-			close(sockfd);
-
-			DODEBUG(("connect() failed, errno=%d (%s)", saved_errno, gu_strerror(saved_errno)));
-			switch(saved_errno)
-				{
-				case ETIMEDOUT:
-					alert(int_cmdline.printer, TRUE, _("Timeout while trying to connect to printer."
-										"(Connect() reported error ETIMEDOUT.)"));
-					int_exit(EXIT_PRNERR_NOT_RESPONDING);
-					break;
-				case ECONNREFUSED:
-					if(try_count < options->refused_retries)
-						{
-						sleep(2);
-						continue;
-						}
-					if(options->refused_engaged && status_function)
-						{
-						(*status_function)(status_obj);
-						int_exit(EXIT_ENGAGED);
-						}
-					else
-						{
-						alert(int_cmdline.printer, TRUE, _("Printer at \"%s\" has refused connection."), address);
-						int_exit(EXIT_PRNERR);
-						}
-					break;
-				default:
-					alert(int_cmdline.printer, TRUE, "%s interface: connect() failed, errno=%d (%s)", int_cmdline.int_basename, saved_errno, gu_strerror(saved_errno));
-					int_exit(EXIT_PRNERR);
-					break;
-				}
-			}
-
-		/* If we get here it was a sucess */
-		break;
-		} /* end of connect retry loop */
-
-	/*
-	** Turn on the socket option which detects dead connexions.
-	*/
-	{
-	int true_variable = 1;
-	if(setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, (void*)&true_variable, sizeof(true_variable)) < 0)
-		{
-		alert(int_cmdline.printer, TRUE, "%s interface: setsockopt() failed for SO_KEEPALIVE, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR_NORETRY);
-		}
-	}
-
-	/*
-	** If the user has supplied an explicit output
-	** buffer size setting, use it.
-	*/
-	if(options->sndbuf_size != 0)
-		{
-		DODEBUG(("setting SO_SNDBUF to %d", sndbuf_size));
-		if(setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (void*)&options->sndbuf_size, sizeof(options->sndbuf_size) ) < 0)
-			{
-			alert(int_cmdline.printer, TRUE, "%s interface: setsockopt() failed SO_SNDBUF, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-			int_exit(EXIT_PRNERR_NORETRY);
-			}
-		}
-
-	return sockfd;
-	} /* end of open_connexion() */
-
-/*
-** Explain why reading from or writing to the TCP connnection to the printer failed.
+** Explain why reading from or writing to the TCP connnection to the printer
+** failed.
 */
 static void explain_error_in_context(int error_number)
 	{
@@ -415,7 +235,7 @@ static void appsocket_status(void *p)
 	{
 	struct appsocket *obj = (struct appsocket *)p;
 	const char *e;
-	
+
 	/* If we get "connection refused" on recv(), don't try again. */
 	if(obj->refused)
 		return;
@@ -427,7 +247,7 @@ static void appsocket_status(void *p)
 		fd_set rfds;
 		struct timeval timeout;
 		int len;
-		
+
 		for(attempt=0; attempt < 5; attempt++)
 			{
 			/* Send the request (an empty UDP packet). */
@@ -487,16 +307,16 @@ int main(int argc, char *argv[])
 	int sockfd;
 	struct sockaddr_in printer_address;
 
-	options.refused_retries = 5;
-	options.sndbuf_size = 0;					/* size for SO_SNDBUF, 0 means don't set it */
-	options.sleep = 0;							/* time to sleep() after printing */
-	options.connect_timeout = 20;				/* connexion timeout in seconds */
+	options.connect.refused_retries = 5;
+	options.connect.refused_engaged = TRUE;
+	options.connect.sndbuf_size = 0;			/* size for SO_SNDBUF, 0 means don't set it */
+	options.connect.timeout = 20;				/* connexion timeout in seconds */
 	options.idle_status_interval = 0;			/* frequency of ^T transmission */
 	options.snmp_status_interval = 0;
 	options.appsocket_status_interval = 0;
-	options.refused_engaged = TRUE;
 	options.snmp_community = NULL;
 	options.use_shutdown = FALSE;
+	options.sleep = 0;							/* time to sleep() after printing */
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
@@ -510,7 +330,8 @@ int main(int argc, char *argv[])
 	int_cmdline_set(argc, argv);
 
 	DODEBUG(("============================================================"));
-	DODEBUG(("tcpip printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, jobname=\"%s\", routing=\"%s\", forline=\"%s\", barbarlang=\"%s\"",
+	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, jobname=\"%s\", routing=\"%s\", forline=\"%s\", barbarlang=\"%s\"",
+		int_cmdline.int_basename,
 		int_cmdline.printer,
 		int_cmdline.address,
 		int_cmdline.options,
@@ -535,6 +356,15 @@ int main(int argc, char *argv[])
 	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
 		options.idle_status_interval = 15;
 
+	if(strcmp(int_cmdline.int_basename, "jetdirect") == 0)
+		{
+		options.snmp_status_interval = 15;
+		}
+	else if(strcmp(int_cmdline.int_basename, "appsocket") == 0)
+		{
+		options.appsocket_status_interval = 15;
+		}
+
 	/* Parse the options string, searching for name=value pairs. */
 	{
 	struct OPTIONS_STATE o;
@@ -545,39 +375,11 @@ int main(int argc, char *argv[])
 	options_start(int_cmdline.options, &o);
 	while((retval = options_get_one(&o, name, sizeof(name), value, sizeof(value))) > 0)
 		{
-		/*
-		** The delay after closing connection, before exiting.
-		*/
-		if(strcmp(name, "sleep") == 0)
+		if((retval = int_tcp_connect_option(name, value, &o, &options.connect)))
 			{
-			if((options.sleep = atoi(value)) < 0)
+			if(retval == -1)
 				{
-				o.error = N_("value must be 0 or a positive integer");
-				retval = -1;
-				break;
-				}
-			}
-		/*
-		** Size for TCP/IP send buffer
-		*/
-		else if(strcmp(name, "sndbuf_size") == 0)
-			{
-			if((options.sndbuf_size = atoi(value)) < 1)
-				{
-				o.error = N_("value must be a positive integer");
-				retval = -1;
-				break;
-				}
-			}
-		/*
-		** Connect timeout
-		*/
-		else if(strcmp(name, "connect_timeout") == 0)
-			{
-			if((options.connect_timeout = atoi(value)) < 1)
-				{
-				o.error = N_("value must be a positive integer");
-				retval = -1;
+				/* o.error is already set */
 				break;
 				}
 			}
@@ -627,35 +429,6 @@ int main(int argc, char *argv[])
 				}
 			}
 		/*
-		** refused=engaged
-		** refused=error
-		*/
-		else if(strcmp(name, "refused") == 0)
-			{
-			if(strcmp(value, "engaged") == 0)
-				options.refused_engaged = TRUE;
-			else if(strcmp(value, "error") == 0)
-				options.refused_engaged = FALSE;
-			else
-				{
-				o.error = N_("value must be \"engaged\" or \"error\"");
-				retval = -1;
-				break;
-				}
-			}
-		/*
-		** refused_retries
-		*/
-		else if(strcmp(name, "refused_retries") == 0)
-			{
-			if((options.refused_retries = atoi(value)) < 0)
-				{
-				o.error = N_("value must be 0 or a positive integer");
-				retval = -1;
-				break;
-				}
-			}
-		/*
 		** use_shutdown
 		*/
 		else if(strcmp(name, "use_shutdown") == 0)
@@ -668,6 +441,18 @@ int main(int argc, char *argv[])
 				break;
 				}
 			options.use_shutdown = answer ? TRUE : FALSE;
+			}
+		/*
+		** The delay after closing connection, before exiting.
+		*/
+		else if(strcmp(name, "sleep") == 0)
+			{
+			if((options.sleep = atoi(value)) < 0)
+				{
+				o.error = N_("value must be 0 or a positive integer");
+				retval = -1;
+				break;
+				}
 			}
 		/*
 		** Catch anything else.
@@ -699,14 +484,14 @@ int main(int argc, char *argv[])
 		}
 
 	/* Describe the options in the debuging output. */
-	DODEBUG(("sleep=%d, connect_timeout=%d, sndbuf_size=%d, idle_status_interval=%d",
+	DODEBUG(("sleep=%d, connect.timeout=%d, connect.sndbuf_size=%d, idle_status_interval=%d",
 		options.sleep,
-		options.connect_timeout,
-		options.sndbuf_size,
+		options.connect.timeout,
+		options.connect.sndbuf_size,
 		options.idle_status_interval));
 
 	/* Parse the printer address and do a DNS lookup if necessary. */
-	parse_address(int_cmdline.address, &printer_address);
+	int_tcp_parse_address(int_cmdline.address, DEFAULT_PORT, &printer_address);
 
 	{
 	void (*status_function)(void *) = NULL;
@@ -714,7 +499,7 @@ int main(int argc, char *argv[])
 	int status_interval = 0;
 	int error_code;
 	const char *error_str;
-	
+
 	if(options.snmp_status_interval > 0)
 		{
 		if(!(status_obj = gu_snmp_open(printer_address.sin_addr.s_addr, options.snmp_community, &error_code)))
@@ -744,7 +529,7 @@ int main(int argc, char *argv[])
 
 	/* Connect to the printer */
 	gu_write_string(1, "%%[ PPR connecting ]%%\n");
-	sockfd = open_connexion(int_cmdline.address, &printer_address, &options, status_function, status_obj);
+	sockfd = int_tcp_open_connexion(int_cmdline.address, &printer_address, &options.connect, status_function, status_obj);
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
 	/* Disable SIGPIPE.  We will catch the error on write(). */
@@ -768,14 +553,16 @@ int main(int argc, char *argv[])
 	}
 
 	/*
-	** Pocket print servers have been known to reject a new
-	** connection for a few seconds after closing the previous one.
-	** If more than one job is in the queue at one time, this can result
-	** in every other print attempt producing a fault.  This
-	** problem is minor and can go unnoticed, but we will have
-	** an option to sleep for a specified number of seconds
-	** after closing the connection.
+	** Extended Systems Pocket print servers have been known to reject a new
+	** connection for a few seconds after closing the previous one.  If more
+	** than one job is in the queue at one time, this can result in every
+	** other print attempt producing a fault.  This problem is minor and can
+	** go unnoticed, but we have the an option to sleep for a specified number
+	** of seconds after closing the connection.
 	**
+    ** Note that this option has been made obsolete by the connection retry
+    ** code.
+    **
 	** options.sleep is set with the option "sleep=SECONDS".
 	*/
 	if(options.sleep > 0)

@@ -90,6 +90,8 @@ rm -rf $RPM_BUILD_ROOT
 
 find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -group 0 | xargs chown ppr:ppr
 
+/usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
+
 /usr/lib/ppr/bin/ppr-index >/dev/null
 
 /sbin/chkconfig --add ppr

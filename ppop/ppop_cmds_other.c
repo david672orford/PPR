@@ -654,7 +654,7 @@ int ppop_status(char *argv[])
 		while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
 			{
 			print_aux_status(line, status,
-				machine_readable ? "\t" : "\n				  ");
+				machine_readable ? "\t" : "\n                 ");
 			}
 
 		PUTC('\n');

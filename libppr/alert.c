@@ -29,7 +29,7 @@
 */
 
 /*
-** This module contains routines for posting printer alerts.  
+** This module contains routines for posting printer alerts.
 **
 ** Normally the alert is posted to the printer's alert log file, but if
 ** the printer name is "-" then the alert message is sent to stderr.
@@ -48,7 +48,6 @@
 #include <stdarg.h>
 #include "gu.h"
 #include "global_defines.h"
-#include "libppr_int.h"
 
 void valert(const char printer[], int dateflag, const char string[], va_list args)
 	{
@@ -60,7 +59,7 @@ void valert(const char printer[], int dateflag, const char string[], va_list arg
 	if(printer == (char*)NULL)
 		return;
 
-	/* We will be comparing the current time to the alert file modification time. 
+	/* We will be comparing the current time to the alert file modification time.
 	   Not only that, but we might use it for a time stamp. */
 	time(&now);
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 6 April 2003.
 #
 
 # Pull in settings from Configure.
@@ -119,9 +119,12 @@ install-troff: $(ALL_TROFF)
 	         fi;\
 	    done;\
 	  done
-	../$(INSTALLLN) $(MANDIR)/man8/ppr2samba.8 $(MANDIR)/man8/ppd2win95drv.8
-	../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
-	../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
+	#../$(INSTALLLN) $(MANDIR)/man8/ppr2samba.8 $(MANDIR)/man8/ppd2win95drv.8
+	#../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
+	#../$(INSTALLLN) $(MANDIR)/man8/lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
+	../$(INSTALLLN) ppr2samba.8 $(MANDIR)/man8/ppd2win95drv.8
+	../$(INSTALLLN) lprsrv.8 $(MANDIR)/man5/lprsrv.conf.5
+	../$(INSTALLLN) lprsrv.8 $(MANDIR)/man8/lprsrv-test.8
 
 # Install the man pages and other stuff in HTML format.
 install-html: $(ALL_HTML)

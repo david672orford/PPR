@@ -45,19 +45,22 @@ ppr.conf.sample: make_ppr_conf_sample.sh
 
 install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
-	./fixup_obsolete.sh
 	./install_sample_config.sh
-	touch $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
-	chown $(USER_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
-	chgrp $(GROUP_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
-	$(RPM_BUILD_ROOT)$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
 	./install_atalk_links.tcl
 	./install_crontab.sh
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh
 	#./install_alternatives.tcl
-	$(HOMEDIR)/bin/ppr-index >/dev/null
+	if [ -z "$(RPM_BUILD_ROOT)" ]; \
+		then \
+		./fixup_obsolete.sh; \
+		touch $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
+		chown $(USER_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
+		chgrp $(GROUP_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db; \
+		$(RPM_BUILD_ROOT)$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null; \
+		$(HOMEDIR)/bin/ppr-index >/dev/null; \
+		fi
 
 #=== Housekeeping ===========================================================
 

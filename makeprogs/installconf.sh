@@ -66,7 +66,7 @@ while [ "$1" != "" ]
 	echo "  chmod 644 \"$1\""
 	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
 	# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
-	echo "%$TYPE $1" >>`dirname $0`/../z_install_begin/installed_files_list
+	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
 	shift
 	done

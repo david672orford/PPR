@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--5 April 2003.
+1.51, 15 February 2003--6 April 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8448,7 +8448,7 @@ line was being parsed twice.
 * z_install_end/install_bin_links.sh: added ppr-panel.
 
 * libppr/readppd.c: added code to remove whitespace from the ends of lines
-  and skip blank lines.  Did a quick sweep of programs that use these 
+  and skip blank lines.  Did a quick sweep of programs that use these
   functions, made a few minor adjustments.  Everything looks ok.
 
 * pprpopup/ppr-popup: fixed to not throw error if ~/.ppr/pprpopup doesn't
@@ -8460,7 +8460,7 @@ line was being parsed twice.
 
 * Configure_new: renamed to Configure, added Zlib detection.
 
-* libppr/readppd.c: added Gzip decompression using Zlib.  My that was easy! 
+* libppr/readppd.c: added Gzip decompression using Zlib.  My that was easy!
   Gzip decompression is important for compatibility with CUPS and GIMP-Print.
 
 * libscript/readppd.pl: added Gzip uncompression using gunzip.
@@ -8471,7 +8471,7 @@ line was being parsed twice.
 * www/ppd_select.pl: exclude "PPR" manufacture PPD's since they aren't meant
   for printer queues.
 
-* ppd/generic/generic_master: added explicit warning against trying to use 
+* ppd/generic/generic_master: added explicit warning against trying to use
   the PPR Generic PPD files on the print server.  They are only for clients.
 
 * pprdrv/pprdrv_feedback.c: fixed bugs in Ghostscript command line parsing
@@ -8514,7 +8514,7 @@ line was being parsed twice.
   of the arrival of messages from pprd relative to the timeing of messages
   from pprdrv.
 
-* printdesk/ppr-panel.perl: added -d for selecting queue; added print dialog 
+* printdesk/ppr-panel.perl: added -d for selecting queue; added print dialog
   for printing files named on the ppr-panel command line so that ppr-panel
   can be used as a desktop drag-and-drop printing target; added menu bar to
   queue listing so that the printer status windows can be opened from there;
@@ -8542,6 +8542,25 @@ line was being parsed twice.
 
 * ppop/ppop_cmds_listq.c: added #warnings about y2k warnings.
 
+* Numberous fixes to the build system and ppr.spec.
+
+* Moved TCP connect code and TCP connect option parsing out of
+  interfaces/tcpip.c and into libppr/int_tcp_connect.c so that
+  it could be shared with interfaces/pros.c.
+
+* interfaces/pros.c: added
+
+* libppr/interfaces.c,interfaces/tcpip.c: added "socketapi", "appsocket",
+  and "jetdirect" as aliases for the tcpip interface.  Some of them have
+  different default options.
+
+* libppr/interfaces.c: added pros, socketapi, appsocket, and jetdirect.
+
+* www/prn_addwiz.cgi.perl: added pros, socketapi, appsocket, and jetdirect.
+
+* www/show_queues_nojs.cgi.perl: fixed test page menu item to pass the
+  variable "name" in stead of "printer".
+
 
 
 
@@ -8550,7 +8569,7 @@ TODO
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not
-  cacheable.  It is probably that Dillo is exposing a bug by not having 
+  cacheable.  It is probably that Dillo is exposing a bug by not having
   a workaround for buggy sites.
 
 * Finish papd.

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 6 April 2003.
 */
 
 #include "before_system.h"
@@ -57,13 +57,18 @@ struct INTERFACE_INFO interfaces[] = {
 		{"usblp",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"dummy",		JOBBREAK_NONE,			JOBBREAK_NONE,			FALSE,			CODES_Binary,			CODES_Binary},
 
+		{"tcpip",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},
+		{"socketapi",	JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},
+		{"appsocket",	JOBBREAK_NEWINTERFACE,	JOBBREAK_NEWINTERFACE,	TRUE,			CODES_Clean8Bit,		CODES_TBCP},
+		{"jetdirect",	JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},
+
 /* PJL in PAP is not on by default because of problems with the HP 4M. */
 /*		{"atalk",		JOBBREAK_SIGNAL,		JOBBREAK_SIGNAL_PJL,	TRUE,			CODES_Binary,			CODES_Binary}, */
 		{"atalk",		JOBBREAK_SIGNAL,		JOBBREAK_SIGNAL,		TRUE,			CODES_Binary,			CODES_Binary},
-		{"tcpip",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			TRUE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"lpr",			JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"clispool",	JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 		{"smb",			JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
+		{"pros",		JOBBREAK_CONTROL_D,		JOBBREAK_PJL,			FALSE,			CODES_Clean8Bit,		CODES_TBCP},
 
 		{"gssimple",	JOBBREAK_NEWINTERFACE,	JOBBREAK_NEWINTERFACE,	TRUE,			CODES_Binary,			CODES_Binary},
 		{"gsserial",	JOBBREAK_NEWINTERFACE,	JOBBREAK_NEWINTERFACE,	TRUE,			CODES_Binary,			CODES_Binary},
