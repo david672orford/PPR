@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--30 August 2001
+1.50a1, 1 August 2001--31 August 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7395,3 +7395,6 @@ line was being parsed twice.
 
 * www/prn_properties.cgi: added [RIP] tab, added information extracted from
   the PPD file to the [PPD] tab.
+
+* Moved nonppr/tcl7.5_hacked into tcl/ and integrated the Makefile with the 
+  PPR build system.

@@ -1,7 +1,7 @@
 =============================================================================
  mouse:~ppr/src/docs/misc/LICENSE.txt
  mouse:~ppr/src/LICENSE.txt (symbolic link)
- Last modified 5 June 2001.
+ Last modified 31 August 2001.
 =============================================================================
 
 Most of the PPR distribution is licensed under the BSD license, the terms of
@@ -41,3 +41,7 @@ vendors/
 
 nonppr/
 	See nonppr/README.txt for information about these files.
+
+tcl/
+	See tcl/license.terms for information about these files.
+

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 1 August 2001.
+# Last modified 31 August 2001.
 #
 
 #
@@ -50,6 +50,7 @@ CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 SUBDIRS=\
 	makeprogs \
 	libgu \
+	tcl \
 	libppr \
 	libscript \
 	libpprdb \
@@ -85,7 +86,6 @@ SUBDIRS=\
 	po \
 	fixup \
 	init_and_cron \
-	tcl \
 	templates \
 	docs
 
