@@ -9248,6 +9248,7 @@ Internet Printing Protocol Work
   option with default resolutions to Ghostscript options derived
   from *cupsFilter lines.
 
+* added nonppr_vendors/ppd_hp/hp_laserjet_4100_series.ppd.
 
 
 TODO
