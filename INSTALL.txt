@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 16 March 2004.
+ Last revised 24 May 2004.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -260,8 +260,17 @@ installation procedures.  When you run Configure, it will give you
 the option of using the C compiler that comes with the operating system.
 
 =============================================================================
- Notes for SGI IRIX 6.3
+ Notes for SGI IRIX 6.3 and 6.5
 =============================================================================
+
+Make sure you have Bash installed and that /bin/bash is a either Bash or
+a link to it.
+
+The make provided with IRIX has mysterious problems with some of the PPR
+makefiles.  Use Gmake instead.  The required commands are:
+
+$ gmake MAKE=gmake
+$ gmake MAKE=gmake install
 
 If you want to use lprsrv, then you must make lpsched stop binding to the lpd
 port.  To do this, add -nobsd to the line in /etc/init.d/lp that starts

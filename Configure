@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 May 2004.
+# Last modified 24 May 2004.
 #
 
 # Find an echo that will supports escapes.
@@ -1362,7 +1362,7 @@ if [ $SYSTEM = "IRIX" ]
 then
 echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
-MAKE=make
+MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
 OBJ=o
@@ -1380,7 +1380,7 @@ cat >&3 <<===EndIRIX2===
 CC=/usr/bin/cc
 CFLAGS=$CFLAGS -I /usr/local/include -L /usr/local/lib -I ../include \$(MISC_OPTS)
 LD=/usr/bin/cc
-LDFLAGS=
+LDFLAGS=-L/usr/freeware/lib32
 # /lib/cpp doesn't handle #elif correctly so we
 # must use the one in the C compiler.
 #CPP=/lib/cpp
@@ -1392,7 +1392,7 @@ cat >&3 <<===EndIRIX3===
 CC=gcc
 CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
-LDFLAGS=
+LDFLAGS=-L/usr/freeware/lib32
 CPP=gcc -E -P -xc-header
 ===EndIRIX3===
 fi

@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	#else
 	if(setgid(pw->pw_gid) == -1)
 		{
-		fprintf(stderr, "%s: setgid(%ld) failed, errno=%d (%s)\n", myname, (long)ppr_gid, errno, gu_strerror(errno));
+		fprintf(stderr, "%s: setgid(%ld) failed, errno=%d (%s)\n", myname, (long)pw->pw_gid, errno, gu_strerror(errno));
 		return 1;
 		}
 	#endif

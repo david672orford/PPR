@@ -40,7 +40,8 @@
 GETSERVBYNAME="./getservbyname"
 SERVICES="/etc/services"
 
-INETD="/usr/sbin/inetd"
+#INETD="/usr/sbin/inetd"
+INETD="/usr/etc/inetd"
 INETD_CONF="/etc/inetd.conf"
 
 XINETD="/usr/sbin/xinetd"

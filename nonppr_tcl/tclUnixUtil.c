@@ -695,7 +695,7 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	if (execName == NULL) {
 	    goto error;
 	}
-	pid = vfork();
+	pid = fork();		/* was vfork() -- DSC */
 	if (pid == 0) {
 	    if (((inputId != -1) && (dup2(inputId, 0) == -1))
 		    || ((curOutputId != -1) && (dup2(curOutputId, 1) == -1))

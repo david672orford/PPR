@@ -41,7 +41,7 @@ all: $(ALL)
 #=== Install ================================================================
 
 install: $(ALL)
-	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) || true
+	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR)
 	./install_create_dirs.sh $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) $(CONFDIR) $(HOMEDIR) $(SHAREDIR) $(VAR_SPOOL_PPR) $(TEMPDIR)
 
 #=== Housekeeping ===========================================================

@@ -9250,6 +9250,12 @@ Internet Printing Protocol Work
 
 * added nonppr_vendors/ppd_hp/hp_laserjet_4100_series.ppd.
 
+* nonppr_tcl/tclUnixUtil.c: changed vfork() to fork().
+
+* pprdrv/pprdrv_buf.c:printer_flush(): added code to handle EAGAIN from write().
+  (Problem showed up on IRIX 6.5.)
+
+
 
 TODO
 

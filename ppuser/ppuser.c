@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -178,7 +178,7 @@ static int parse_float(const char string[], float *store_here)
 	{
 	char *stop_ptr;
 
-	*store_here = strtof(string, (char**)&stop_ptr);
+	*store_here = (float)strtod(string, (char**)&stop_ptr);
 
 	if(!*stop_ptr && isspace(*stop_ptr))
 		return 1;

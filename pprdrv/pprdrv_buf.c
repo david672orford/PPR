@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_buf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -188,6 +188,10 @@ int printer_flush(void)
 				DODEBUG_INTERFACE_GRITTY(("%s(): restarting write()", function));
 				continue;
 				}
+
+			/* If wasn't really ready, */
+			if(errno == EAGAIN)
+				continue;
 
 			/* If we can't write because the pipe is broken, that means that
 			   the interface (or possible a RIP) died.  Wait 10 seconds to
