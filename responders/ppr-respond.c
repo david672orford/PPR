@@ -25,7 +25,17 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 March 2002.
+** Last modified 20 March 2002.
+*/
+
+/*
+** This program is called by ppr and pprd when they want to respond to the 
+** user.  It receives the job id (or if there isn't one yet, just the 
+** destination id), the responder code number, and an additional parameter
+** (the meaning of which depends on the code number).  If there is a queue
+** file, it is opened and information is read from it.  A well formed
+** message is generated and then the responder program is run to transmit
+** the message to the user.
 */
 
 #include "before_system.h"
@@ -56,6 +66,8 @@ struct RINFO
     char *jobname;
     int response_code;
     char *extra;
+
+    char *lc_messages;
 
     char *responder;
     char *responder_address;
@@ -137,6 +149,8 @@ static int respond_get_info(struct RINFO *rinfo, int qffd, int charge_per_duplex
     	else if(strncmp(line, "Charge-To:", 10) == 0)
     	    charge_to = TRUE;
 	else if(gu_sscanf(line, "PageList: %d", &pagelist_pages) == 1)
+	    {}
+	else if(gu_sscanf(line, "LC_MESSAGES: %S", &rinfo->lc_messages) == 1)
 	    {}
 	} /* while(gu_getline()) */
 
@@ -352,13 +366,16 @@ int main(int argc, char *argv[])
     char time_in_ascii[16];
     char numpages_in_ascii[16];
 
+    /* all formats have these parameters in common */
     rinfo.jobname = argv[2];
     rinfo.response_code = atoi(argv[3]);
     rinfo.extra = argv[4];
 
+    /* clear these in case we don't get them */
     rinfo.responder = NULL;
     rinfo.responder_address = NULL;
     rinfo.responder_options = "";
+    rinfo.lc_messages = NULL;
     rinfo.ForLine = "";
     rinfo.Title = "";
     rinfo.Time = 0;
@@ -366,6 +383,7 @@ int main(int argc, char *argv[])
     rinfo.pages_printed = -1;
     rinfo.charge.total = 0;
 
+    /* pprd provides 2 additional parameters and a queue file on fd 3 */
     if(strcmp(argv[1], "pprd") == 0)
 	{
 	int charge_per_duplex, charge_per_simplex;
@@ -375,6 +393,7 @@ int main(int argc, char *argv[])
 	    return 1;
 	}
 
+    /* pprd provides no queue file but it makes up for it in parameters */
     else if(strcmp(argv[1], "ppr") == 0)
 	{
 	rinfo.responder = argv[5];
@@ -382,6 +401,7 @@ int main(int argc, char *argv[])
 	rinfo.responder_options = argv[7];
 	rinfo.ForLine = argv[8];
 	rinfo.Title = argv[9];
+	rinfo.lc_messages = argv[10];
 	}
 
     else if(strcmp(argv[1], "pprdrv") == 0)
@@ -407,7 +427,7 @@ int main(int argc, char *argv[])
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
+    setlocale(LC_MESSAGES, rinfo.lc_messages);
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
     #endif

@@ -1,0 +1,14 @@
+ppr-papd.$(OBJ): ppr-papd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr-papd.h ../include/ppr_exits.h ../include/util_exits.h ../include/version.h
+
+ppr-papd_ali.$(OBJ): ppr-papd_ali.c ../include/before_system.h
+
+ppr-papd_authorize.$(OBJ): ppr-papd_authorize.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h ../include/papsrv.h
+
+ppr-papd_cap.$(OBJ): ppr-papd_cap.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr-papd.h
+
+ppr-papd_conf.$(OBJ): ppr-papd_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr-papd.h
+
+ppr-papd_ppd_parse.$(OBJ): ppr-papd_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+ppr-papd_query.$(OBJ): ppr-papd_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr-papd.h
+

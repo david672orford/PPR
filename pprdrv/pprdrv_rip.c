@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2002.
+** Last modified 20 March 2002.
 */
 
 #include "before_system.h"
@@ -84,6 +84,7 @@ static int rip_exit_screen(void)
 	{
 	if(WTERMSIG(rip_wait_status) == SIGSEGV)
 	    {
+	    give_reason("RIP malfunction");
 	    alert(printer.Name, TRUE,
 		_("The RIP (Ghostscript) malfunctioned while printing the job\n"
 		"%s.  Presumably it can print other jobs that don't\n"

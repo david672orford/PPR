@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--19 March 2002.
+1.50a1, 27 February 2002--20 March 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7595,5 +7595,9 @@ line was being parsed twice.
 * Allowed spaces in proxy-for strings.
 
 * pprdrv/pprdrv_capable.c: moved the handling of internal resources to a
-  table.  Added CIDInit.
+  table.  Added CIDInit, assuming that level three printers have it.  This
+  will have to be checked in the Adobe technical documents concerning
+  CID keyed fonts.
+
+
 

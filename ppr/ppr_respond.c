@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 8 March 2002.
+** Last modified 20 March 2002.
 */
 
 /*
@@ -126,6 +126,7 @@ int respond(int response_code, const char extra[])
 		qentry.responder_options ? qentry.responder_options : "",
 		qentry.For ? qentry.For : "",
 		qentry.Title ? qentry.Title : "",
+		qentry.lc_messages ? qentry.lc_messages : "",
 	    	(char*)NULL);
 	    _exit(242);
 	}

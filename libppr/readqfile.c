@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 March 2002.
+** Last modified 20 March 2002.
 */
 
 #include "before_system.h"
@@ -76,7 +76,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     int retcode = 0;
     int tempint;
 
-    /* Clear these things because we won't read them.
+    /* Clear the job id variables because we won't read them.
        (They are encoded in the queue file name.) */
     job->destnode = (char*)NULL;
     job->destname = (char*)NULL;
@@ -84,34 +84,39 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->subid = 0;
     job->homenode = (char*)NULL;
 
+    /* Some more defaults */
     job->PPRVersion = 0.0;
-    job->username = (char*)NULL;
-    job->lc_messages = (char*)NULL;
-    job->For = (char*)NULL;
-    job->proxy_for = (char*)NULL;		/* optional */
     job->priority = 20;
-    job->magic_cookie = (const char *)NULL;
-    job->responder = (char*)NULL;
-    job->responder_address = (char*)NULL;
-    job->responder_options = (char*)NULL;	/* optional */
     job->time = 0;
-    job->Title = (char*)NULL;			/* optional */
-    job->charge_to = (char*)NULL;		/* optional */
-    job->Creator = (char*)NULL;			/* optional */
-    job->Routing = (char*)NULL;			/* optional */
-    job->lpqFileName = (char*)NULL;		/* optional */
-    job->draft_notice = (char*)NULL;		/* optional */
     job->commentary = 0;			/* optional */
-    job->PassThruPDL = (const char *)NULL;	/* optional */
-    job->Filters = (const char *)NULL;		/* optional */
     job->CachePriority = CACHE_PRIORITY_LOW;	/* optional for now */
     job->StripPrinter = TRUE;
     job->commentary = 0;
-    job->page_list.mask = NULL;
-    job->question = NULL;
 
-    /* We do not actually read these items: */
-    job->PJL = (const char *)NULL;
+    /* More pointer defaults which we set to NULL to show they haven't 
+       been read (yet).  This order is the same as in readqfile.c so 
+       as to make it easier to compare the lists. */
+    job->username = (char*)NULL;
+    job->proxy_for = (char*)NULL;		/* optional */
+    job->For = (char*)NULL;
+    job->charge_to = (char*)NULL;		/* optional */
+    job->magic_cookie = (const char *)NULL;
+    job->responder = (const char*)NULL;
+    job->responder_address = (const char*)NULL;
+    job->responder_options = (const char*)NULL;	/* optional */
+    job->lc_messages = (char*)NULL;
+
+    job->Creator = (char*)NULL;			/* optional */
+    job->Title = (char*)NULL;			/* optional */
+    job->Routing = (char*)NULL;			/* optional */
+    job->lpqFileName = (char*)NULL;		/* optional */
+    job->PassThruPDL = (const char *)NULL;	/* optional */
+    job->Filters = (const char *)NULL;		/* optional */
+    job->PJL = (const char *)NULL;		/* not read by us */
+
+    job->page_list.mask = NULL;
+    job->draft_notice = (char*)NULL;		/* optional */
+    job->question = NULL;
 
     while((line = gu_getline(line, &line_available, qfile)))
 	{
@@ -211,7 +216,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		break;
 
 	    case 'L':
-	    	MATCH("LC_MESSAGES: ", _2("%Z", &job->lc_messages), !=1, found_other)
+	    	MATCH("LC_MESSAGES: ", _2("%S", &job->lc_messages), !=1, found_other)
 
 	    case 'l':
 		MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)

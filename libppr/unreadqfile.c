@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 March 2002.
+** Last modified 20 March 2002.
 */
 
 #include "before_system.h"
@@ -33,59 +33,45 @@
 #include "global_defines.h"
 #include "global_structs.h"
 
-/* Define a version of gu_free() which can free const stuff: */
-#define gu_free_const(a) gu_free((void*)a)
+static void free_and_zero(void **p)
+    {
+    if(*p)
+	{
+	gu_free(*p);
+	*p = (void*)NULL;
+	}
+    }
 
 /*
 ** depopulate the structure
 */
 void destroy_struct_QFileEntry(struct QFileEntry *job)
     {
-    if(job->destnode)
-    	gu_free_const(job->destnode);
-    if(job->destname)
-    	gu_free_const(job->destname);
-    if(job->homenode)
-    	gu_free_const(job->homenode);
-    if(job->magic_cookie)
-    	gu_free_const(job->magic_cookie);
-    if(job->username)
-    	gu_free_const(job->username);
-    if(job->proxy_for)
-    	gu_free_const(job->proxy_for);
-    if(job->For)
-	gu_free_const(job->For);
-    if(job->charge_to)
-	gu_free_const(job->charge_to);
-    if(job->Creator)
-	gu_free_const(job->Creator);
-    if(job->Title)
-	gu_free_const(job->Title);
-    if(job->lpqFileName)
-    	gu_free_const(job->lpqFileName);
-    if(job->draft_notice)
-	gu_free_const(job->draft_notice);
-    if(job->responder)
-	gu_free_const(job->responder);
-    if(job->responder_address)
-	gu_free_const(job->responder_address);
-    if(job->responder_options)
-    	gu_free_const(job->responder_options);
-    if(job->PassThruPDL)
-    	gu_free_const(job->PassThruPDL);
-    if(job->Filters)
-    	gu_free_const(job->Filters);
-    if(job->page_list.mask)
-    	gu_free(job->page_list.mask);
-    if(job->question)
-    	gu_free_const(job->question);
-    if(job->lc_messages)
-    	gu_free_const(job->lc_messages);
+    free_and_zero((void**)&job->destnode);
+    free_and_zero((void**)&job->destname);
+    free_and_zero((void**)&job->homenode);
 
-    /* Things not read by read_struct_QFileEntry() */
-    if(job->PJL)
-    	gu_free_const(job->PJL);
+    free_and_zero((void**)&job->username);
+    free_and_zero((void**)&job->proxy_for);
+    free_and_zero((void**)&job->For);
+    free_and_zero((void**)&job->charge_to);
+    free_and_zero((void**)&job->magic_cookie);
+    free_and_zero((void**)&job->responder);
+    free_and_zero((void**)&job->responder_address);
+    free_and_zero((void**)&job->responder_options);
+    free_and_zero((void**)&job->lc_messages);
 
+    free_and_zero((void**)&job->Creator);
+    free_and_zero((void**)&job->Title);
+    free_and_zero((void**)&job->Routing);
+    free_and_zero((void**)&job->lpqFileName);
+    free_and_zero((void**)&job->PassThruPDL);
+    free_and_zero((void**)&job->Filters);
+    free_and_zero((void**)&job->PJL);
+
+    free_and_zero((void**)&job->page_list.mask);
+    free_and_zero((void**)&job->draft_notice);
+    free_and_zero((void**)&job->question);
     } /* end of destroy_struct_QFileEntry() */
 
 /* end of file */

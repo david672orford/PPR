@@ -1,0 +1,90 @@
+#! /bin/sh
+#
+# Make sure page rangers work correctly.
+#
+
+#---------------------------------
+# pages in order
+#---------------------------------
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes --page-list 1,4 <<EndOfSample
+%!PS-Adobe-3.0
+%%Pages: 5
+%%PageOrder: Ascend
+
+%%EndProlog
+
+%%BeginSetup
+%%EndSetup
+
+%%Page: 1 1
+% page 1
+showpage
+
+%%Page: 2 2
+% page 2
+showpage
+
+%%Page: 3 3
+% page 3
+showpage
+
+%%Page: 4 4
+% page 4
+showpage
+
+%%Page: 5 5
+% page 5
+showpage
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+#---------------------------------
+# pages in reverse order
+#---------------------------------
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes --page-list 1,4 <<EndOfSample
+%!PS-Adobe-3.0
+%%Pages: 5
+%%PageOrder: Descend
+
+%%EndProlog
+
+%%BeginSetup
+%%EndSetup
+
+%%Page: 5 5
+% page 5
+showpage
+
+%%Page: 4 4
+% page 4
+showpage
+
+%%Page: 3 3
+% page 3
+showpage
+
+%%Page: 2 2
+% page 2
+showpage
+
+%%Page: 1 1
+% page 1
+showpage
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0

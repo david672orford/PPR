@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_reason.c
-** Copyright 1995--2001, Trinity College Computing Center
+** Copyright 1995--2002, Trinity College Computing Center
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 13 November 2001.
+** Last modified 20 March 2002.
 */
 
 /*
@@ -30,7 +30,7 @@
 #include "interface.h"
 
 /*
-** Append a reason line with the provided content to the
+** Append a "Reason:" line with the provided content to the
 ** job's queue file.  This will tell why the job was arrested.
 **
 ** This routine is called by described_postscript_error(), below,
@@ -51,6 +51,14 @@ void give_reason(const char reason[])
     fclose(f);
     } /* end of give_reason() */
 
+/*
+** This routine is passed information about a PostScript error.  It looks
+** up the error in a list and hopefully finds a description.  In addition to
+** the name of the failed PostScript command and the PostScript error message
+** it receives the string from the "%%Creator:" line in the document.  Since
+** this often indicates the program or printer driver that generated
+** the document, it can help us to explain the error in context.
+*/
 void describe_postscript_error(const char creator[], const char errormsg[], const char command[])
     {
     const char function[] = "describe_postscript_error";
