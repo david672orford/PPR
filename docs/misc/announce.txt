@@ -1,14 +1,14 @@
-15 January 2003
+12 February 2003
 
 This is announce.txt from:
 
-ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50b1.tar.gz
-http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50b1.tar.gz
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50.tar.gz
 
 
 ==========================================================================
 
-Version 1.50b1 of PPR has been released.
+Version 1.50 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -48,7 +48,8 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 * Fixed numberous bugs, including bugs which caused spooler crashes.
 
-* Made numberous small improvements to the web interface.
+* Made numberous improvements to the web interface.  The web interface is no
+  longer considered experimental.
 
 * Added support for AppSocket (in addition to the existing support
   for SocketAPI).
@@ -244,7 +245,7 @@ most useful they describe the exact steps necessary to reproduce the
 problem.  Of course, if you can if include a fix or point out the
 offending source file and function, please do so.
 
-Bug reports should be sent to "ppr-bugs@mail.trincoll.edu".
+Bug reports should be sent to <ppr-bugs@mail.trincoll.edu>.
 
 If you have PostScript questions, it might be well to post them to the
 Usenet news group "comp.languages.postscript".  Questions related to
@@ -286,6 +287,5 @@ PPR may be obtained from <ftp://ppr-dist.trincoll.edu/pub/ppr/> or
 <http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes
 the following files:
 
-ppr-1.50a1.tar.gz         Source code for PPR
-ppr-speach-1.44b1.tar.gz  Optional sound files for PPR
+ppr-1.50.tar.gz           Source code for PPR
 natali-1.25.tar.gz        A library needed for Netatalk support under Linux

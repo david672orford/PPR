@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 12 February 2003.
 #
 
 # Pull in settings from Configure.
@@ -52,7 +52,8 @@ ALL_HTML=ppr.1.html \
 	ppuser.8.html \
 	lprsrv.8.html \
 	olprsrv.8.html \
-	ppr-hexdump.1.html
+	ppr-hexdump.1.html \
+	ppr-config.8.html
 
 # List of man pages in nroff format
 ALL_TROFF=ppr.1.man \
@@ -71,7 +72,8 @@ ALL_TROFF=ppr.1.man \
 	ppuser.8.man \
 	lprsrv.8.man \
 	olprsrv.8.man \
-	ppr-hexdump.1.man
+	ppr-hexdump.1.man \
+	ppr-config.8.man
 
 # List of PODs for cross references
 LIBPODS=ppr.1,ppr-filters.1,ppr2samba.8,ppr-indexfonts.8,ppr-indexppds.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1

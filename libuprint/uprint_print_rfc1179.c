@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/uprint/uprint_print_rfc1179.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 12 February 2003.
 */
 
 #include "before_system.h"
@@ -500,7 +515,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     	return -1;
     	}
 
-    /* Check that the information from /etc/ppr/lprlpd.conf
+    /* Check that the information from /etc/ppr/uprint-remote.conf
        has been filled in. */
     if(scratchpad->node[0] == '\0' || scratchpad->printer[0] == '\0')
     	{
@@ -542,7 +557,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     if(strlen(local_nodename) > LPR_MAX_H || strlen(upr->user) > LPR_MAX_P)
     	{
 	uprint_errno = UPE_BADARG;
-	uprint_error_callback("%s(): local nodename or user too long", function);
+	uprint_error_callback(_("%s(): local nodename or username is too long"), function);
 	return -1;
     	}
 
@@ -620,4 +635,3 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     } /* end of uprint_print_rfc1179() */
 
 /* end of file */
-

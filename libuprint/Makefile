@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2003.
+# Last modified 12 February 2003.
 #
 
 include ../Makefile.conf
@@ -48,8 +48,9 @@ LIBUPRINT_OBJS=lpr_connect.$(OBJ) lpr_failover.$(OBJ) lpr_sendfile.$(OBJ) \
 	uprint_conf.$(OBJ) uprint_sysv.$(OBJ)
 
 LIBS=../libuprint.$(LIBEXT)
-PROGS=uprint-newconf$(DOTEXE)
-TARGETS=$(LIBS) $(PROGS)
+BIN_PROGS=uprint-newconf$(DOTEXE)
+LIB_PROGS=uprint_rfc1179$(DOTEXE)
+TARGETS=$(LIBS) $(BIN_PROGS) $(LIB_PROGS)
 USELIBS=../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 DATA=uprint.conf.sample uprint-remote.conf.sample
 
@@ -65,11 +66,15 @@ all: $(TARGETS) $(DATA)
 uprint-newconf$(DOTEXE): uprint-newconf.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o uprint-newconf$(DOTEXE) uprint-newconf.$(OBJ) $(USELIBS) $(INTLLIBS)
 
+uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
+	$(LD) $(LDFLAGS) -o uprint_rfc1179$(DOTEXE) uprint_rfc1179.$(OBJ) $(USELIBS) $(INTLLIBS)
+
 #=== Install ================================================================
 
 install: $(TARGETS) $(DATA)
 	$(INSTALLDATA) $(CONFDIR) $(DATA)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(BIN_PROGS)
 
 #=== Housekeeping ===========================================================
 

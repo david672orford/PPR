@@ -8121,7 +8121,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--6 February 2003.
+1.50, 22 January 2003--12 February 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
@@ -8154,13 +8154,16 @@ line was being parsed twice.
 * www/ppr-httpd.perl: added "Accept-Ranges: bytes" to the response headers
   for GET.  According to <http://www.mozilla.org/projects/netlib/Link_Prefetching_FAQ.html>,
   this will allow Mozilla to cache partially downloaded files which result
-  from aborted prefetching.
+  from aborted prefetch operations.
 
 * pprd/pprd_pprdrv.c: added code to post an alert suggesting that
-  LD_LIBRARY_PATH needs to be set if pprdrv dies "killed by signal 0".
+  suggests a dynamic linking problem if pprdrv dies "killed by signal 0".
 
 * pprdrv/pprdrv_log.c: added
 
 * pprdrv/pprdrv_capable.c, pprdrv_feedback.c: replace job log handling code
   with calls to functions in pprdrv_log.c.
+
+* pprdrv/pprdrv_reason.c: added code to log the name of the printer and the
+  probable reason to the job log.
 
