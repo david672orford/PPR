@@ -3,342 +3,342 @@ Filename: pprhack_files.sgml
 Last Modified: 4 March 2003
 Last Proofread: 
 -->
-<Sect1>
-<Title>Directories and Files</Title>
+<sect1>
+<title>Directories and Files</title>
 
-<Para>
+<para>
 This section describes the directory structure found within PPR's home
-directory (<Filename class="Directory">/usr/lib/ppr/</Filename>), in its spooling directory,
-(<Filename class="Directory">/var/spool/ppr/</Filename>) and in its configuration directory
-(<Filename class="Directory">/etc/ppr/</Filename>).
-</Para>
+directory (<filename class="Directory">/usr/lib/ppr/</filename>), in its spooling directory,
+(<filename class="Directory">/var/spool/ppr/</filename>) and in its configuration directory
+(<filename class="Directory">/etc/ppr/</filename>).
+</para>
 
 <!-- ========================== /var/spool/ppr/ ========================= -->
-<Sect2>
-<Title>The <Filename class="Directory">/var/spool/ppr/</Filename> Directory</Title>
+<sect2>
+<title>The <filename class="Directory">/var/spool/ppr/</filename> Directory</title>
 
-<Sect3>
-<Title>The <Filename class="Directory">/var/spool/ppr/queue/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/var/spool/ppr/queue/</filename> Directory</title>
 
-<Para>
-The <Filename class="Directory">/var/spool/ppr/queue/</Filename> directory contains one file for each print
+<para>
+The <filename class="Directory">/var/spool/ppr/queue/</filename> directory contains one file for each print
 job currently in the queue.  Each file name is the same as the queue id of the
-job is describes.  These files are created by the program <Command>ppr</Command> and removed
-by the print daemon <Command>pprd</Command> when the job has been printed or is canceled.
-</Para>
+job is describes.  These files are created by the program <command>ppr</command> and removed
+by the print daemon <command>pprd</command> when the job has been printed or is canceled.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/var/spool/ppr/jobs/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/var/spool/ppr/jobs/</filename> Directory</title>
 
-<Para>
-The <Filename class="Directory">/var/spool/ppr/jobs/</Filename> directory contains three to five files for
+<para>
+The <filename class="Directory">/var/spool/ppr/jobs/</filename> directory contains three to five files for
 each job currently in the queue.
-</Para>
+</para>
 
-<Para>
+<para>
 The first part of each file name is the queue id of the job.  The file whose
-name ends in <Filename>-comments</Filename> contains any header and trailer comment lines
+name ends in <filename>-comments</filename> contains any header and trailer comment lines
 which have not been removed and represented by parameters in the file in the
 queue directory.
-</Para>
+</para>
 
-<Para>
-The file whose name ends in <Filename>-pages</Filename> contains the text of the document
+<para>
+The file whose name ends in <filename>-pages</filename> contains the text of the document
 default section, if it exists, and a list of the pages in the document.  The
-record for each page includes the offset in the <Filename>-text</Filename> file at which it
+record for each page includes the offset in the <filename>-text</filename> file at which it
 begins and any page header and trailer comments for that page.
-</Para>
+</para>
 
-<Para>
-The file whose name ends in <Filename>-text</Filename> contains most of the text of the
-job.  If the <Option>-S true</Option> switch was used when <Command>ppr</Command> was invoked, then
+<para>
+The file whose name ends in <filename>-text</filename> contains most of the text of the
+job.  If the <option>-S true</option> switch was used when <command>ppr</command> was invoked, then
 resources will be missing from this file, having been stript out and replaced
 by comments which will later be used to put them back.
-</Para>
+</para>
 
-<Para>
-The files with names ending in <Filename>-log</Filename> contain the print job logs.  If
-<Command>ppr</Command> was invoked with the <Option>-w log</Option> switch then any warnings will be in
+<para>
+The files with names ending in <filename>-log</filename> contain the print job logs.  If
+<command>ppr</command> was invoked with the <option>-w log</option> switch then any warnings will be in
 this file.  Any text received from the printer, including printer error
 messages, will also be in this file.  Messages which explain why the job was
 routed away from a particular printer will be in this file, but each line of
 such messages will begin with a "+".  Whenever a banner or trailer page is
 printed, the contents of the log file  is printed and the log file is deleted.
-</Para>
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/var/spool/ppr/printers/alerts/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/var/spool/ppr/printers/alerts/</filename> Directory</title>
 
-<Para>
+<para>
 Each time a fault message is generated for a printer, it is appended to a
 file in this directory.  There is one file for each printer.  If the file is
 more than one hour old, the file is truncated to zero length before writing the
 new alert instead of appending.  This ensures that only recent messages will be
 sent to the operator.
-</Para>
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/var/spool/ppr/printers/status/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/var/spool/ppr/printers/status/</filename> Directory</title>
 
-<Para>
+<para>
 This file may contain one file for each printer.  If present, the file
 contains the last status message received from the printer.
-</Para>
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/var/spool/ppr/logs/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/var/spool/ppr/logs/</filename> Directory</title>
 
-<Para>
+<para>
 This directory contains log files.  Error messages may be written in these
-log files when <Application>PPR</Application> component fail.  If this directory contains the file
-<Filename>printlog</Filename>, <Application>PPR</Application> will append a line for each file printed.  (See Appendix
-<XRef linkend="printlog"/>.)
-</Para>
+log files when <application>PPR</application> component fail.  If this directory contains the file
+<filename>printlog</filename>, <application>PPR</application> will append a line for each file printed.  (See Appendix
+<xref linkend="printlog"/>.)
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/etc/ppr/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/etc/ppr/</filename> Directory</title>
 
-<Para>
+<para>
 This directory contains a number of configuration files.  In also contains
 subdirectories which will be described in later sections.
-</Para>
+</para>
 
-<Para>
-The file <Filename>papsrv.conf</Filename> is descibed in <ULink url="../refman/papsrv.8.html">the papsrv.conf(5) man page</ULink>.
-</Para>
+<para>
+The file <filename>papsrv.conf</filename> is descibed in <ulink url="../refman/papsrv.8.html">the papsrv.conf(5) man page</ulink>.
+</para>
 
-<Para>The purpose of <Filename>newprn.conf</Filename> is explained in Appendix <XRef
-linkend="printer-config"/>.</Para>
+<para>The purpose of <filename>newprn.conf</filename> is explained in Appendix <xref
+linkend="printer-config"/>.</para>
 
-<Para>
-The file <Filename>smb-include.conf</Filename> is a segment of Samba configuration file.  It
-is generated by the program <Command>ppr2samba</Command>.
-</Para>
+<para>
+The file <filename>smb-include.conf</filename> is a segment of Samba configuration file.  It
+is generated by the program <command>ppr2samba</command>.
+</para>
 
-<Para>
-The file <Filename>charge_users.db</Filename> is the user charge accounts database.  The
-program <ULink url="../refman/ppuser.8.html"><Command>ppuser</Command></ULink> can be used to read and modify this file.
-</Para>
+<para>
+The file <filename>charge_users.db</filename> is the user charge accounts database.  The
+program <ulink url="../refman/ppuser.8.html"><command>ppuser</command></ulink> can be used to read and modify this file.
+</para>
 
-<Para>
-The documentation for the file <Filename>lw-messages.conf</Filename> can be found in
-<Filename>lw-messages.conf.sample</Filename>.
-</Para>
+<para>
+The documentation for the file <filename>lw-messages.conf</filename> can be found in
+<filename>lw-messages.conf.sample</filename>.
+</para>
 
-<Para>
-The file <Filename>media.db</Filename> is the list of known media
+<para>
+The file <filename>media.db</filename> is the list of known media
 types.  It is consulted
-by <Command>ppr</Command> and <Command>pprdrv</Command>.  It may be read
+by <command>ppr</command> and <command>pprdrv</command>.  It may be read
 and modified by the
-<Command>ppad media</Command> series of commands.
-</Para>
+<command>ppad media</command> series of commands.
+</para>
 
-</Sect3>
+</sect3>
 
-</Sect2>
+</sect2>
 
 <!-- ========================== /etc/ppr/ ========================= -->
-<Sect2>
-<Title>The <Filename class="Directory">/etc/ppr/</Filename> Directory</Title>
+<sect2>
+<title>The <filename class="Directory">/etc/ppr/</filename> Directory</title>
 
-<Sect3>
-<Title>The <Filename class="Directory">/etc/ppr/printers/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/etc/ppr/printers/</filename> Directory</title>
 
-<Para>
+<para>
 There is one file in this directory for each printer.  Each file has the
 same name as the printer it describes.  The format of one of these files is
-described in Appendix <XRef linkend="printer-config"/>.
-</Para>
+described in Appendix <xref linkend="printer-config"/>.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/etc/ppr/groups/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/etc/ppr/groups/</filename> Directory</title>
 
-<Para>
+<para>
 There is one file in this directory for each group.  Each file has the same
 name as the group it describes.  The format of these files is described in
-Appendix <XRef linkend="group-config"/>.
-</Para>
+Appendix <xref linkend="group-config"/>.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/etc/ppr/mounted/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/etc/ppr/mounted/</filename> Directory</title>
 
-<Para>
+<para>
 This directory contains one file for each printer.  Each file contains a
 list of a printer's bins and the medium mounted on each bin.  This file is
-created by the main print daemon <Command>pprd</Command>.  When <Command>pprd</Command> starts up it looks
+created by the main print daemon <command>pprd</command>.  When <command>pprd</command> starts up it looks
 in this directory to determine what media was mounted last time it was
 running.  It automatically re-mounts all those media.
-</Para>
+</para>
 
-<Para>
-The program <Command>pprdrv</Command> also uses this file in order to select bins for
+<para>
+The program <command>pprdrv</command> also uses this file in order to select bins for
 printing banner pages and to automatically select bins for print jobs according
 to their required media.
-</Para>
+</para>
 
-</Sect3>
+</sect3>
 
-</Sect2>
+</sect2>
 
 <!-- ========================== /usr/lib/ppr/ ========================= -->
-<Sect2>
-<Title>The <Filename class="Directory">/usr/lib/ppr/</Filename> Directory</Title>
+<sect2>
+<title>The <filename class="Directory">/usr/lib/ppr/</filename> Directory</title>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/bin/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/bin/</filename> Directory</title>
 
-<Para>
+<para>
 This directory contains
-the program <Command>ppr</Command> which submits jobs,
-various utility programs such as <Command>ppop</Command> and <Command>ppad</Command>,
-the PPR daemons <Command>pprd</Command>,
-and the <Command>papsrv</Command>.
-</Para>
+the program <command>ppr</command> which submits jobs,
+various utility programs such as <command>ppop</command> and <command>ppad</command>,
+the PPR daemons <command>pprd</command>,
+and the <command>papsrv</command>.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/lib/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/lib/</filename> Directory</title>
 
-<Para>
-This directory contains <Command>pprdrv</Command> and as well as other
+<para>
+This directory contains <command>pprdrv</command> and as well as other
 programs a user
 or administrator wouldn't normally execute directly.  It also contains
 some configuration files which even a system administrator wouldn't
 ordinarily modify.  These files would be modified by people who are creating
 new components for PPR.
-</Para>
+</para>
 
-<Para>
-The documenation for the file file <Filename>lw-messages.conf</Filename> is
+<para>
+The documenation for the file file <filename>lw-messages.conf</filename> is
 in the file itself.
-</Para>
+</para>
 
-<Para>
-The file <Filename>mfmodes.conf</Filename> is used by <Command>ppad</Command>
+<para>
+The file <filename>mfmodes.conf</filename> is used by <command>ppad</command>
 when determining the default filter options for a printer or group.  The
-format of this file is described in Section <XRef linkend="dvi"/>.
-</Para>
+format of this file is described in Section <xref linkend="dvi"/>.
+</para>
 
-<Para>
-The file <Filename>fontsub.conf</Filename> is used to find substitutes for
-missing fonts.  It is described in <XRef linkend="fontsub"/>.
-</Para>
+<para>
+The file <filename>fontsub.conf</filename> is used to find substitutes for
+missing fonts.  It is described in <xref linkend="fontsub"/>.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/interfaces/</filename> Directory</title>
 
-<Para>Each file in this directory is a program which is responsible for making
+<para>Each file in this directory is a program which is responsible for making
 contact with any printer which has a particular kind of interface.  For
-instance, <Filename>interfaces/atalk</Filename> is used to communicate with printers
+instance, <filename>interfaces/atalk</filename> is used to communicate with printers
 connected through Apple's Printer Access Protocol.  The requirements imposed on
-such an interface program are described in Appendix <XRef
-linkend="interfaces2"/>.</Para>
+such an interface program are described in Appendix <xref
+linkend="interfaces2"/>.</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/responders/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/responders/</filename> Directory</title>
 
-<Para>
-Each file in the <Filename class="Directory">responders/</Filename> directory is a program which can be used to
+<para>
+Each file in the <filename class="Directory">responders/</filename> directory is a program which can be used to
 attempt to send a message to the user who submitted the job.  A responder
-program is selected at the time the user invokes <Command>ppr</Command>, by using the <Option>-m</Option>
-switch.  The parameter for the <Option>-m</Option> switch is the name of the program in the
-<Filename class="Directory">responders/</Filename> directory which should be used.  If the <Option>-m</Option>
+program is selected at the time the user invokes <command>ppr</command>, by using the <option>-m</option>
+switch.  The parameter for the <option>-m</option> switch is the name of the program in the
+<filename class="Directory">responders/</filename> directory which should be used.  If the <option>-m</option>
 switch is not
-used, the default responder, <Literal>write</Literal>, is used.  (You can change the default
-by setting the environment variable <EnVar>PPR_RESPONDER</EnVar>.)  The manner in which a
-responder is invoked is described in Appendix <XRef linkend="responders"/>.
-</Para>
+used, the default responder, <literal>write</literal>, is used.  (You can change the default
+by setting the environment variable <envar>PPR_RESPONDER</envar>.)  The manner in which a
+responder is invoked is described in Appendix <xref linkend="responders"/>.
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/filters/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/filters/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/commentators/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/commentators/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/cgi-bin/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/cgi-bin/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/lib/ppr/fixup/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/lib/ppr/fixup/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-</Sect2>
+</sect2>
 
 <!-- ========================== /usr/share/ppr/ ========================= -->
-<Sect2>
-<Title>The <Filename class="Directory">/usr/share/ppr/</Filename> Directory</Title>
+<sect2>
+<title>The <filename class="Directory">/usr/share/ppr/</filename> Directory</title>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/cache/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/cache/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/www/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/www/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/fonts/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/fonts/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/man/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/man/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/PPDFiles/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/PPDFiles/</filename> Directory</title>
 
-<Para>This is the default location for PPD files.  It contains a collection
+<para>This is the default location for PPD files.  It contains a collection
 of PPD files for common printers.  Most of these were provided by the
-manufacturers or by Adobe<FOOTNOTE><Para>Adobe makes a large collection of
-PPD files available by anonymouse FTP.  See <ULink
-url="ftp://ftp.adobe.com/pub/adobe/">ftp://ftp.adobe.com/pub/adobe/</ULink>
-to find their latest PPD file library.</Para></FOOTNOTE> but a few are part
-of PPR.</Para>
+manufacturers or by Adobe<footnote><para>Adobe makes a large collection of
+PPD files available by anonymouse FTP.  See <ulink
+url="ftp://ftp.adobe.com/pub/adobe/">ftp://ftp.adobe.com/pub/adobe/</ulink>
+to find their latest PPD file library.</para></footnote> but a few are part
+of PPR.</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/locale/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/locale/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>The <Filename class="Directory">/usr/share/ppr/speach/</Filename> Directory</Title>
+<sect3>
+<title>The <filename class="Directory">/usr/share/ppr/speach/</filename> Directory</title>
 <para>[This section hasn't been written yet.]</para>
-</Sect3>
+</sect3>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>

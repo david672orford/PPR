@@ -1,79 +1,79 @@
-<Sect1 id="user-notification">
-<Title>User Notification</Title>
+<sect1 id="user-notification">
+<title>User Notification</title>
 
-<Para>
+<para>
 PPR is capable to notifying the user when the job is finished, is deleted
 before completion, or cannot be completed for some reason.  Since PPR can
 accept jobs from so many different sources, it needs to use many methods to
 send messages to users.  Each of the available methods is implemented by a
 small program called a responder.
-</Para>
+</para>
 
-<Para> The <Command>ppr</Command> <Option>-m</Option> option selects the
-responder to be used to notify the user.  The option <Option>-r</Option>
-sets the address to pass to the responder program. </Para>
+<para> The <command>ppr</command> <option>-m</option> option selects the
+responder to be used to notify the user.  The option <option>-r</option>
+sets the address to pass to the responder program. </para>
 
-<Para>
+<para>
 The default responder is called ``write''.  It writes a message to the users terminal if he is
 logged in or sends him an email messages if he is not.  The default notification address
-is the name of the user who ran <Command>ppr</Command>.
-</Para>
+is the name of the user who ran <command>ppr</command>.
+</para>
 
-<Para>The default responder and address may be changed by setting the
-<EnVar>PPR_RESPONDER</EnVar> and <EnVar>PPR_RESPONDER_ADDRESS</EnVar>
-environment variables respectively.</Para>
+<para>The default responder and address may be changed by setting the
+<envar>PPR_RESPONDER</envar> and <envar>PPR_RESPONDER_ADDRESS</envar>
+environment variables respectively.</para>
 
-<Sect2>
-<Title>Notifying X Windows Users</Title>
+<sect2>
+<title>Notifying X Windows Users</title>
 
-<Para>
+<para>
 X windows users may prefer to have a notification window pop up rather than have
 a message written so an xterm.  To enable this, put the following commands in
-<Filename>.xsession</Filename> or some other appropriate X startup file:
-</Para>
+<filename>.xsession</filename> or some other appropriate X startup file:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 /usr/ppr/bin/ppr-xgrant
 PPR_RESPONDER=xwin
 PPR_RESPONDER_ADDRESS=$DISPLAY
 export PPR_RESPONDER PPR_RESPONDER_ADDRESS
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Naturally, these environment variables should be set before any X clients are started.  That
 means that these should be near the begining of
-<Filename>.xsession</Filename>.
-</Para>
+<filename>.xsession</filename>.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Notifying Samba Users</Title>
+<sect2>
+<title>Notifying Samba Users</title>
 
-<Para>
-There is a responder called ``samba'' which uses <Command>smbclient</Command> to send a message to the user.
+<para>
+There is a responder called ``samba'' which uses <command>smbclient</command> to send a message to the user.
 If you set up Samba printing as described in this manual then the ``samba'' responder will be used
 automatically.
-</Para>
+</para>
 
-<Para>
+<para>
 If the user must have the message receiver running to receive the message.  In MS-Windows for
 Workgroups and MS-Windows 95 the message receiver is a program called ``winpopup''.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Notifying <Command>lprsrv</Command> Users</Title>
+<sect2>
+<title>Notifying <command>lprsrv</command> Users</title>
 
-<Para>
+<para>
 The RFC 1179 protocol has provision for notifying users by email.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>

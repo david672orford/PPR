@@ -4,62 +4,62 @@ Last Modified: 14 February 2003
 Last Proofread:
 -->
 
-<Sect2 id="adding-samba">
-<Title>Adding <application>PPR</application> Printers to <application>Samba</application></Title>
+<sect2 id="adding-samba">
+<title>Adding <application>PPR</application> Printers to <application>Samba</application></title>
 
-<Para>If you are using the SMB server called
-<Application><application>Samba</application></Application> you can use it to share <application>PPR</application> printers.  It
+<para>If you are using the SMB server called
+<application><application>Samba</application></application> you can use it to share <application>PPR</application> printers.  It
 is recomended that you use <application>Samba</application> version 1.9.18 or later.  For information
-about obtaining refer to <ULink
-url="http://www.samba.org/">http://www.samba.org/</ULink>.</Para>
+about obtaining refer to <ulink
+url="http://www.samba.org/">http://www.samba.org/</ulink>.</para>
 
-<Para>
+<para>
 To share <application>PPR</application> printers through <application>Samba</application>, you must add a few lines to
 <application>Samba</application>'s configuration file.  <application>Samba</application>'s configuration file is often called
-<Filename>/usr/local/samba/lib/smb.conf</Filename>.
-</Para>
+<filename>/usr/local/samba/lib/smb.conf</filename>.
+</para>
 
-<Para>
-Somewhere after the section called <Literal>[global]</Literal> you should add two lines
+<para>
+Somewhere after the section called <literal>[global]</literal> you should add two lines
 which read:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 include = /usr/lib/ppr/lib/smb-protos.conf
 include = /etc/ppr/smb-include.conf
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-After you have modified <Filename>smb.conf</Filename>, you should run
-<Command>ppr2samba</Command> which is a utility which creates the file
-<Filename>/etc/ppr/smb-include.conf</Filename>.  This file will contain a
-<Application><application>Samba</application></Application> share
+<para>
+After you have modified <filename>smb.conf</filename>, you should run
+<command>ppr2samba</command> which is a utility which creates the file
+<filename>/etc/ppr/smb-include.conf</filename>.  This file will contain a
+<application><application>Samba</application></application> share
 definition section for each printer and group you have set up in <application>PPR</application>.
-You should re-run <Command>ppr2samba</Command> after every time you create or delete a
+You should re-run <command>ppr2samba</command> after every time you create or delete a
 printer or group in <application>PPR</application>.
-</Para>
+</para>
 
-<Para>
+<para>
 To allow guest users to have meaningful names in the queue listing and to
 delete their jobs, you should add the <application>Samba</application> guest user to the access control
-file <Filename>/etc/ppr/acl/pprprox.allow</Filename>.  All that is needed is a line with
+file <filename>/etc/ppr/acl/pprprox.allow</filename>.  All that is needed is a line with
 the user name on it.
-</Para>
+</para>
 
-<Para>
+<para>
 This procedure will share all <application>PPR</application> printers through <application>Samba</application>.  If you want to
 exclude certain printers you should refer to the ppr2samba(8) man page.
-</Para>
+</para>
 
-<Para>You should also refer to <ULink url="../refman/ppr2samba.8.html">the
-ppr2samba(8) man page</ULink> if you want to set up special features for
+<para>You should also refer to <ulink url="../refman/ppr2samba.8.html">the
+ppr2samba(8) man page</ulink> if you want to set up special features for
 public access computers or if you want to set up <application>Samba</application> so it can offer
-printer drivers to <SystemItem class="OSname">Microsoft Windows
-95</SystemItem> clients for automatic installation.</Para>
+printer drivers to <systemitem class="OSname">Microsoft Windows
+95</systemitem> clients for automatic installation.</para>
 
-</Sect2>
+</sect2>
 

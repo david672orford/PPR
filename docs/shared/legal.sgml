@@ -4,7 +4,7 @@
 <sect2>
 <title>Copyright and Disclaimer</title>
 
-<para>Most of the <Application>PPR</Application> distribution, including the
+<para>Most of the <application>PPR</application> distribution, including the
 documentation is licensed under the BSD license, the terms of which are as
 follows:</para>
 
@@ -119,31 +119,31 @@ Corporation.</para>
 <sect2>
 <title>Other Acknowledgements</title>
 
-<para><Application>PPR</Application>'s N-Up dictionary is derived from the work of Don Markuson which he
+<para><application>PPR</application>'s N-Up dictionary is derived from the work of Don Markuson which he
 has placed in the public domain.</para>
 
-<para>Some of <Application>PPR</Application>'s TrueType to PostScrip type 3 font conversion code is
-derived from a program called <Application>ttf2ps</Application> which L. S. Ng posted to the Usenet
-news group <Literal>comp.sources.postscript</Literal>.</para>
+<para>Some of <application>PPR</application>'s TrueType to PostScrip type 3 font conversion code is
+derived from a program called <application>ttf2ps</application> which L. S. Ng posted to the Usenet
+news group <literal>comp.sources.postscript</literal>.</para>
 
-<para>The <Application>PPR</Application> distribution includes PPD files owned by Adobe Systems, Apple
+<para>The <application>PPR</application> distribution includes PPD files owned by Adobe Systems, Apple
 Computer, and Hewlett Packard.</para>
 
-<para>The <Application>PPR</Application> distribution contains procedure sets extracted form the output of
-Adobe and Apple PostScript drivers.  <Application>PPR</Application> inserts this extracted code into jobs
+<para>The <application>PPR</application> distribution contains procedure sets extracted form the output of
+Adobe and Apple PostScript drivers.  <application>PPR</application> inserts this extracted code into jobs
 created by these drivers in order to correct cases in which the driver failed
 to include all of the necessary procedure sets.</para>
 
-<para>The <Application>PPR</Application> code includes Rich Salz's wildmat() function which he has
+<para>The <application>PPR</application> code includes Rich Salz's wildmat() function which he has
 placed in the public domain.</para>
 
-<para><Application>PPR</Application> contains Alladin Enterprises' implementation of the MD5 algorithm
+<para><application>PPR</application> contains Alladin Enterprises' implementation of the MD5 algorithm
 described in RFC 1321.</para>
 
-<para>The <Application>PPR</Application> distribution includes the IBM Courier typeface under the terms of
+<para>The <application>PPR</application> distribution includes the IBM Courier typeface under the terms of
 the "IBM/MIT X Consortium Courier Typefont agreement".</para>
 
-<para>The <Application>PPR</Application> distribution contains Patrick Powell's snprintf()
+<para>The <application>PPR</application> distribution contains Patrick Powell's snprintf()
 implementation.</para>
 
 </sect2>

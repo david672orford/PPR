@@ -1,37 +1,37 @@
-<Sect1 id="canceling-jobs">
-<Title>Canceling Jobs</Title>
+<sect1 id="canceling-jobs">
+<title>Canceling Jobs</title>
 
-<Para>
+<para>
 If John Smith wants to delete his job should use this command:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppop cancel chipmunk-2715
 1 job was canceled.
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 He could have used another form of the command, a form which deletes all
 jobs which he has queued for chipmunk:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppop cancel chipmunk
 1 job was canceled.
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Since on this occasion he had only one job, this command has the save effect
 as the first one.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 

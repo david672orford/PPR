@@ -1,5 +1,6 @@
-<?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<?xml version='1.0'?>
+<!DOCTYPE Article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 <!ENTITY pprhack-conf SYSTEM "pprhack_conf.sgml">
 <!ENTITY pprhack-files SYSTEM "pprhack_files.sgml">
 <!ENTITY pprhack-filters SYSTEM "pprhack_filters.sgml">
@@ -13,27 +14,27 @@
 
 <article>
 
-<Articleinfo>
-	<Title>The PPR Hacker's Guide</Title>
-	<Author>
+<articleinfo>
+	<title>The PPR Hacker's Guide</title>
+	<author>
 		<firstname>David</firstname>
-		<Surname>Chappell</Surname>
-	</Author>
-	<PubDate>6 March 2003</PubDate>
-	<Copyright>
+		<surname>Chappell</surname>
+	</author>
+	<pubdate>6 March 2003</pubdate>
+	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
-	</Copyright>
-</Articleinfo>
+	</copyright>
+</articleinfo>
 
-<Abstract>
+<abstract>
 
-<Para>This document provides information of interest to those wishing to
-modify the <Application>PPR</Application> source code or to add plugin
+<para>This document provides information of interest to those wishing to
+modify the <application>PPR</application> source code or to add plugin
 modules such as printer interface programs and programs that send messages
-to users.</Para>
+to users.</para>
 
-</Abstract>
+</abstract>
 
 &pprhack-conf;
 &pprhack-files;

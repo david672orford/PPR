@@ -23,7 +23,7 @@ include ./rules.mk
 PROGS=ppdoc
 HTML=index.html
 
-SUBDIRS=refman uprint pprdoc pprinst pprhack misc pprpopup
+SUBDIRS=refman uprint pprdoc pprinst pprhack pprlibs misc pprpopup
 
 #=== Build ==================================================================
 

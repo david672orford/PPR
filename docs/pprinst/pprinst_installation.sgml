@@ -47,8 +47,8 @@ Compiling and installing <application>PPR</application> consists of 4 basic step
 <listitem><para>Running <command>make install</command></para></listitem>
 </orderedlist>
 
-These steps are described in detail in the file <Ulink
-url="../misc/INSTALL.txt"><filename>INSTALL.txt</filename></Ulink> which may
+These steps are described in detail in the file <ulink
+url="../misc/INSTALL.txt"><filename>INSTALL.txt</filename></ulink> which may
 be found in the top level source code directory.  There you will find list
 the of packages which it is required or recomended that you install before
 building and runing <application>PPR</application>.  That file also has and

@@ -1,506 +1,506 @@
-<Sect1>
-<Title>Configuration File Formats</Title>
+<sect1>
+<title>Configuration File Formats</title>
 
-<Para>Configuration files which the system administrator is expected to modify
+<para>Configuration files which the system administrator is expected to modify
 directly are described within the reference manual.  The files described
 in this section are modified automatically by programs such as ppad.  That
-is why they are described here in the Hacker's Guide.</Para>
+is why they are described here in the Hacker's Guide.</para>
 
-<Sect2 id="printer-config">
-<Title>Format of a Printer Configuration File</Title>
+<sect2 id="printer-config">
+<title>Format of a Printer Configuration File</title>
 
-<Para>Each file in the directory <Filename
-class="Directory">/etc/ppr/printers/</Filename> represents one printer.  It
+<para>Each file in the directory <filename
+class="Directory">/etc/ppr/printers/</filename> represents one printer.  It
 is permissible to create and edit these files manually, however the command
-<Command>ppad</Command> has been provided to do this automatically.</Para>
+<command>ppad</command> has been provided to do this automatically.</para>
 
-<Para>A new printer configuration file is created by the <command>ppad
+<para>A new printer configuration file is created by the <command>ppad
 interface</command> command. The new configuration file is created by
 turning the arguments of the <command>ppad interface</command> command into
-a <Literal>Interface:</Literal> and an <Literal>Address:</Literal> line and
-appending the file <Filename>/etc/ppr/newprn.conf</Filename>. The
-<Filename>newprn.conf</Filename> file is normally created by the
-<Command>ppad new alerts</Command> command.</Para>
+a <literal>Interface:</literal> and an <literal>Address:</literal> line and
+appending the file <filename>/etc/ppr/newprn.conf</filename>. The
+<filename>newprn.conf</filename> file is normally created by the
+<command>ppad new alerts</command> command.</para>
 
-<Para>Any lines begining with <Literal>;</Literal> or <Literal>#</Literal> are comments.  Blank lines
+<para>Any lines begining with <literal>;</literal> or <literal>#</literal> are comments.  Blank lines
 are ignored.  All other lines should begin with a keyword which is followed
-by one or more values.  Only the <Literal>Bin:</Literal> and
-<Literal>PPDOpt:</Literal> lines should occur more than once.  If any other
-line occurs multiple times, all but the last instance are ignored.</Para>
+by one or more values.  Only the <literal>Bin:</literal> and
+<literal>PPDOpt:</literal> lines should occur more than once.  If any other
+line occurs multiple times, all but the last instance are ignored.</para>
 
-<Para>Any line that begins with an unrecognized keyword is ignored.  This is so that
+<para>Any line that begins with an unrecognized keyword is ignored.  This is so that
 you can add lines of your own which will be understood and acted on by other
-programs.  The program <Command>ppr2samba</Command> works on this principle.</Para>
+programs.  The program <command>ppr2samba</command> works on this principle.</para>
 
-<VariableList>
+<variablelist>
 
-<VarListEntry>
-<Term><Literal>Comment:</Literal> <Replaceable>string</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Comment:</literal> <replaceable>string</replaceable></term>
+<listitem>
+<para>
 This line contains a comment which describes the printer. The comment is
-displayed when the <Command>ppad show</Command> command is used to display the printer
+displayed when the <command>ppad show</command> command is used to display the printer
 configuration.  This line is optional.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Interface:</Literal> <Replaceable>interface</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Interface:</literal> <replaceable>interface</replaceable></term>
+<listitem>
+<para>
 This line is required.  It gives the name of the program which the spooler
 should invoke in order to make contact with the printer.  If the
-<Replaceable>interface</Replaceable> does not
+<replaceable>interface</replaceable> does not
 begin with a slash, then it refers to a subdirectory of the
-<Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> directory.
-Common values for this line are <Literal>atalk</Literal>,
-<Literal>tcpip</Literal>, and <Literal>serial</Literal>.
-</Para>
-</ListItem>
-</VarListEntry>
+<filename class="Directory">/usr/lib/ppr/interfaces/</filename> directory.
+Common values for this line are <literal>atalk</literal>,
+<literal>tcpip</literal>, and <literal>serial</literal>.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Address:</Literal> <Replaceable>address_string</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>Address:</literal> <replaceable>address_string</replaceable></term>
+<listitem>
 
-<Para>The address string is passed to the interface program as its second
+<para>The address string is passed to the interface program as its second
 parameter. The proper format for this string depends on the interface. 
 Reasonable values for use with the interfaces named in the above paragraph
-are <Literal>Mac Laser Printer: LaserWriter@MYZONE</Literal>,
-<Literal>smith.prn.myorg.org:9100</Literal>, and
-<Literal>/dev/ttys05</Literal>.  If the address contains leading or trailing
+are <literal>Mac Laser Printer: LaserWriter@MYZONE</literal>,
+<literal>smith.prn.myorg.org:9100</literal>, and
+<literal>/dev/ttys05</literal>.  If the address contains leading or trailing
 spaces it should be enclosed in double quotes.  Technically, this line is
 not required, but the default address is the name of the printer which is
-unlikely to be useful.</Para>
+unlikely to be useful.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Options:</Literal> <Replaceable>string</Replaceable></Term>
-<ListItem>
-<Para>
-This line is optional.  The value <Replaceable>string</Replaceable> is passed to the
+<varlistentry>
+<term><literal>Options:</literal> <replaceable>string</replaceable></term>
+<listitem>
+<para>
+This line is optional.  The value <replaceable>string</replaceable> is passed to the
 interface as its third parameter.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PPDFile:</Literal> <Replaceable>filename</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>PPDFile:</literal> <replaceable>filename</replaceable></term>
+<listitem>
+<para>
 This line specifies the path and name of an Adobe Post Script Printer
 Description file which describes the printer.  If the name does not begin with
-a slash, it referes to a file in the directory <Filename class="Directory">/usr/lib/ppr/PPDFiles</Filename>.
+a slash, it referes to a file in the directory <filename class="Directory">/usr/lib/ppr/PPDFiles</filename>.
 This line may not be required but it really ought to be present.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Alert:</Literal> <Replaceable>interval</Replaceable> <Replaceable>method</Replaceable> <Replaceable>address</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Alert:</literal> <replaceable>interval</replaceable> <replaceable>method</replaceable> <replaceable>address</replaceable></term>
+<listitem>
+<para>
 This line is optional.  If it is present, then messages will be sent to the
 designated person when faults occur on the printer.
-</Para>
-<Para>
-The integer <Replaceable>interval</Replaceable> indicates how often these messages will be sent.
-For instance, if the value is <Literal>5</Literal>, then a message will be sent for every 5th
+</para>
+<para>
+The integer <replaceable>interval</replaceable> indicates how often these messages will be sent.
+For instance, if the value is <literal>5</literal>, then a message will be sent for every 5th
 fault.
-</Para>
-<Para>
-The <Replaceable>method</Replaceable> parameter indicates the method by which the message should be
-sent.  Currently, this parameter is ignored.  Set it to <Literal>mail</Literal>.
-</Para>
-<Para>
-The <Replaceable>address</Replaceable> indicates the person to whom the message should be sent.
-Since <Literal>mail</Literal> is currently the only supported method, this should be a
+</para>
+<para>
+The <replaceable>method</replaceable> parameter indicates the method by which the message should be
+sent.  Currently, this parameter is ignored.  Set it to <literal>mail</literal>.
+</para>
+<para>
+The <replaceable>address</replaceable> indicates the person to whom the message should be sent.
+Since <literal>mail</literal> is currently the only supported method, this should be a
 e-mail address.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>FlagPages:</Literal> <Replaceable>integer</Replaceable> <Replaceable>integer</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>FlagPages:</literal> <replaceable>integer</replaceable> <replaceable>integer</replaceable></term>
+<listitem>
+<para>
 This line is optional.  The first integer refers to banner pages, the second
 to trailer pages.  Four different values are allowed.  They are
-<Literal>0</Literal> for
-'never', <Literal>1</Literal> for 'preferably not', <Literal>2</Literal> for
+<literal>0</literal> for
+'never', <literal>1</literal> for 'preferably not', <literal>2</literal> for
 'preferably yes', and
-<Literal>3</Literal> for 'always'.
-</Para>
-</ListItem>
-</VarListEntry>
+<literal>3</literal> for 'always'.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Feedback:</Literal> <Replaceable>boolean</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Feedback:</literal> <replaceable>boolean</replaceable></term>
+<listitem>
+<para>
 This line is optional.  It indicates whether or not the connexion to the
 printer allows it to send messages back to the spooler.  There is a list of
 default values for all the interfaces supplied with PPR compiled into
-<Command>pprdrv</Command>.  (This list is defined in <Filename
-class="HeaderFile">include/interfaces.h</Filename>.)  If this
+<command>pprdrv</command>.  (This list is defined in <filename
+class="HeaderFile">include/interfaces.h</filename>.)  If this
 line is not present and the interface is not in the list, it is assumed to be
-<Literal>false</Literal>.  Any instances of this line which occur before the
-<Literal>Interface:</Literal>
+<literal>false</literal>.  Any instances of this line which occur before the
+<literal>Interface:</literal>
 line are ignored.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>JobBreak:</Literal> <Replaceable>integer</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>JobBreak:</literal> <replaceable>integer</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  The integer is the code number of a job break
+<para>This line is optional.  The integer is the code number of a job break
 method. This line is only necessary if a job break method other than the
 default for the interface is desired.  Default job break numbers for the
-interfaces which come with PPR are defined in the source file <Filename
-class="HeaderFile">include/interfaces.h</Filename>. The meaning of the
-values in <Filename class="HeaderFile">interfaces.h</Filename> can be
-understood by reading the <Command>ppad jobbreak</Command> section of 
-<ULink url="../refman/ppad.8.html">the ppad(8) man page</ULink>.
-Any instances of this line which occur before the <Literal>Interface:</Literal> line are
-ignored.</Para>
+interfaces which come with PPR are defined in the source file <filename
+class="HeaderFile">include/interfaces.h</filename>. The meaning of the
+values in <filename class="HeaderFile">interfaces.h</filename> can be
+understood by reading the <command>ppad jobbreak</command> section of 
+<ulink url="../refman/ppad.8.html">the ppad(8) man page</ulink>.
+Any instances of this line which occur before the <literal>Interface:</literal> line are
+ignored.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Codes:</Literal> <Replaceable>integer</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>Codes:</literal> <replaceable>integer</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  It indicates the range of character codes
+<para>This line is optional.  It indicates the range of character codes
 which the interface can transmit to the printer.  The acceptable values are
-<Literal>1</Literal> for Clean7Bit, <Literal>2</Literal> for Clean8Bit,
-<Literal>3</Literal> for Binary and <Literal>4</Literal> for Binary if TBCP
-is used.</Para>
+<literal>1</literal> for Clean7Bit, <literal>2</literal> for Clean8Bit,
+<literal>3</literal> for Binary and <literal>4</literal> for Binary if TBCP
+is used.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>GrayOK:</Literal> <Replaceable>boolean</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>GrayOK:</literal> <replaceable>boolean</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  The default value is <Literal>true</Literal>. 
-If this parameter is set to <Literal>false</Literal>, the printer will
-refuse to print any job which does not have <Literal>color</Literal> in a
-<Literal>%%Requirements:</Literal> line in its header. A
-<Literal>GrayOK:</Literal> line can be used to prevent black-and-white or
-grayscale jobs from begin printed on an expensive colour printer.</Para>
+<para>This line is optional.  The default value is <literal>true</literal>. 
+If this parameter is set to <literal>false</literal>, the printer will
+refuse to print any job which does not have <literal>color</literal> in a
+<literal>%%Requirements:</literal> line in its header. A
+<literal>GrayOK:</literal> line can be used to prevent black-and-white or
+grayscale jobs from begin printed on an expensive colour printer.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Charge:</Literal> <Replaceable>money</Replaceable> [<Replaceable>money</Replaceable>]</Term>
-<ListItem>
+<varlistentry>
+<term><literal>Charge:</literal> <replaceable>money</replaceable> [<replaceable>money</replaceable>]</term>
+<listitem>
 
-<Para>This line is optional.  If this line is present, then the printer
+<para>This line is optional.  If this line is present, then the printer
 becomes a protected printer.  Each parameter
-<Replaceable>money</Replaceable> will normally be a positive number with two
-decimal places.  If both are <Literal>0.00</Literal>, then the printer is
+<replaceable>money</replaceable> will normally be a positive number with two
+decimal places.  If both are <literal>0.00</literal>, then the printer is
 protected, but no actual charges are mode to the user's account.  The first
 number is the amount that should be charged for each sheet of paper printed
 on both sides. The second is the amount that should be charged for each
 sheet printed on only one side.  If the second number is missing it is
-assumed to be the same as the first.</Para>
+assumed to be the same as the first.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>OutputOrder:</Literal> <Replaceable>direction</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>OutputOrder:</literal> <replaceable>direction</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  If it is absent, it is assumed that direction
-is <Literal>Normal</Literal>.  If direction is set to
-<Literal>Reverse</Literal>, the spooler will cause the pages to be printed
+<para>This line is optional.  If it is absent, it is assumed that direction
+is <literal>Normal</literal>.  If direction is set to
+<literal>Reverse</literal>, the spooler will cause the pages to be printed
 in reverse order, if possible.  The value of this line can be set with the
-command <Command>ppad outputorder printer Normal</Command>, <Command>ppad
-outputorder printer Reverse</Command>, or <Command>ppad outputorder printer
-ppd</Command>.  The command <Command>ppad outputorder printer ppd</Command>
-deletes any <Literal>OutputOrder:</Literal> line which may exist.</Para>
+command <command>ppad outputorder printer Normal</command>, <command>ppad
+outputorder printer Reverse</command>, or <command>ppad outputorder printer
+ppd</command>.  The command <command>ppad outputorder printer ppd</command>
+deletes any <literal>OutputOrder:</literal> line which may exist.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Bin:</Literal> <Replaceable>binname</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>Bin:</literal> <replaceable>binname</replaceable></term>
+<listitem>
 
-<Para>The <Replaceable>binname</Replaceable> parameter is the bin name as it
-appears in a <Literal>*InputSlot</Literal> line of the PPD
-file.  Common values are <Literal>Upper</Literal>, <Literal>Lower</Literal>, and
-<Literal>Cassette</Literal>.  If
+<para>The <replaceable>binname</replaceable> parameter is the bin name as it
+appears in a <literal>*InputSlot</literal> line of the PPD
+file.  Common values are <literal>Upper</literal>, <literal>Lower</literal>, and
+<literal>Cassette</literal>.  If
 automatic bin selection and media handling are desired, there should be one
-<Literal>Bin:</Literal> line for each installed bin.  Removing
-all the <Literal>Bin:</Literal> lines disables automatic bin
-selection and media handling.</Para>
+<literal>Bin:</literal> line for each installed bin.  Removing
+all the <literal>Bin:</literal> lines disables automatic bin
+selection and media handling.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>DefFiltOpts:</Literal> <Replaceable>options</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>DefFiltOpts:</literal> <replaceable>options</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  If present, it contains input filter options
+<para>This line is optional.  If present, it contains input filter options
 in the form of name-value pairs.  (If the user employs one or more
-<Option>-o</Option> switches when submitting a job with
-<Command>ppr</Command>, then the argument of each <Option>-o</Option> switch
-is appended to this list.  Thus, <Option>-o</Option> switches can be used to
+<option>-o</option> switches when submitting a job with
+<command>ppr</command>, then the argument of each <option>-o</option> switch
+is appended to this list.  Thus, <option>-o</option> switches can be used to
 override settings in this list.) This line is automatically updated whenever
-the <Command>ppad ppd</Command> command is used to select a new PPD file or
-the <Command>ppad ppdopts</Command> command is used to change the PPD
-options.  An update may be forced at any time with the <Command>ppad
-deffiltopts</Command> command.</Para>
+the <command>ppad ppd</command> command is used to select a new PPD file or
+the <command>ppad ppdopts</command> command is used to change the PPD
+options.  An update may be forced at any time with the <command>ppad
+deffiltopts</command> command.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Switchset:</Literal> <Replaceable>switch_description</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>Switchset:</literal> <replaceable>switch_description</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  If present, it contains a compressed
-description of the switch settings which were saved with the <Command>ppad
-switchset</Command> command.</Para>
+<para>This line is optional.  If present, it contains a compressed
+description of the switch settings which were saved with the <command>ppad
+switchset</command> command.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PassThru:</Literal> <Replaceable>typelist</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>PassThru:</literal> <replaceable>typelist</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  If present, it contains a space separated list
-of file types which should be passed directly through to the printer.</Para>
+<para>This line is optional.  If present, it contains a space separated list
+of file types which should be passed directly through to the printer.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PagesLimit:</Literal> <Replaceable>integer</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>PagesLimit:</literal> <replaceable>integer</replaceable></term>
+<listitem>
 
-<Para>This line is optional.  If present it indicates the maximum number of
+<para>This line is optional.  If present it indicates the maximum number of
 pages this printer is allowed to print in a single job.  Jobs with more
 pages than the number indicated are rejected.  If the job was submitted to a
 group, it may be printed on another member of the group.  If no printer will
-print it, then it is arrested.</Para>
+print it, then it is arrested.</para>
 
-<Para>This line may be edited with the <Command>ppad pageslimit</Command>
-command.</Para>
+<para>This line may be edited with the <command>ppad pageslimit</command>
+command.</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PageCountQuery:</Literal> <Replaceable>integer</Replaceable></Term>
-<ListItem>
+<varlistentry>
+<term><literal>PageCountQuery:</literal> <replaceable>integer</replaceable></term>
+<listitem>
 
-<Para>
+<para>
 This line can be used to enable pair of queries which fetch the printers
 lifetime page count before and after the printing of the job (exclusive
 of banner and trailer pages).
-</Para>
+</para>
 
-<Para>
+<para>
 The information obtained through these queries can be logged.  See Section
-<XRef linkend="printlog"/>.
-</Para>
+<xref linkend="printlog"/>.
+</para>
 
-<Para>
-If this line is absent or the <Replaceable>integer</Replaceable> is 0, then this feature is disabled.
-</Para>
+<para>
+If this line is absent or the <replaceable>integer</replaceable> is 0, then this feature is disabled.
+</para>
 
-<Para>
+<para>
 If the value is 1, then then the PostScript code
-<Command>statusdict /pagecount get exec ==</Command> is used to get the page count.  No
+<command>statusdict /pagecount get exec ==</command> is used to get the page count.  No
 attempt is made to make sure that the print engine has come to a stop and the
 printer has updated the count before making the query.  On some printers this
 does not cause a problem because the page count is updated imediately.  On
-others it may be solved by using the <Literal>pjl</Literal> or <Literal>signal/pjl</Literal> jobbreak
+others it may be solved by using the <literal>pjl</literal> or <literal>signal/pjl</literal> jobbreak
 method which causes PPR to wait until all of the pages have hit the
 output bin before considering the job complete.
-</Para>
+</para>
 
-<Para>
+<para>
 In the future, additional values for this parameter may be defined.  These
 additional values will use different techniques to obtain the page count.
-</Para>
+</para>
 
-</ListItem>
-</VarListEntry>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Commentator:</Literal> <Replaceable>number name address options</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Commentator:</literal> <replaceable>number name address options</replaceable></term>
+<listitem>
+<para>
 A printer configuration file may have zero or more of these lines.  Their
-purpose is explained in Appendix <XRef linkend="commentators"/>.
-</Para>
-</ListItem>
-</VarListEntry>
+purpose is explained in Appendix <xref linkend="commentators"/>.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PPDOpt:</Literal> <Replaceable>option value</Replaceable> (<Replaceable>description</Replaceable>)</Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>PPDOpt:</literal> <replaceable>option value</replaceable> (<replaceable>description</replaceable>)</term>
+<listitem>
+<para>
 A printer configuration file may have zero or more of these lines.  Each line
 describes the setting of the options listed in the PPD file.  These settings
 generally describe optional equipment which may be installed in or attatched to
 the printer such as additional paper trays or duplex attachements.  The
-<Replaceable>option</Replaceable> is the option name from the PPD file, without the translation
-string (the part which may follow a slash).  The <Replaceable>value</Replaceable> is one of the
+<replaceable>option</replaceable> is the option name from the PPD file, without the translation
+string (the part which may follow a slash).  The <replaceable>value</replaceable> is one of the
 possible option values listed  in the PPD file, again without the translation
 string.  The description is formed by combining the translation strings for the
 option and the value.  (Option settings and the related terminology are
 explained in Adobe's PostScript Printer Description File Format
-Specification.)  These lines can be generated automatically with the <Command>ppad
-ppdopts</Command> command.
-</Para>
-</ListItem>
-</VarListEntry>
+Specification.)  These lines can be generated automatically with the <command>ppad
+ppdopts</command> command.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>ppr2samba:</Literal> <Replaceable>include</Replaceable> <Replaceable>prototype</Replaceable></Term>
-<ListItem>
-<Para>
-Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
-</Para>
-</ListItem>
-</VarListEntry>
+<varlistentry>
+<term><literal>ppr2samba:</literal> <replaceable>include</replaceable> <replaceable>prototype</replaceable></term>
+<listitem>
+<para>
+Used by <command>ppr2samba</command>.  See the man page ppr2samba(8).
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>ppr2samba-drivername:</Literal> <Replaceable>name</Replaceable></Term>
-<ListItem>
-<Para>
-Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
-</Para>
-</ListItem>
-</VarListEntry>
+<varlistentry>
+<term><literal>ppr2samba-drivername:</literal> <replaceable>name</replaceable></term>
+<listitem>
+<para>
+Used by <command>ppr2samba</command>.  See the man page ppr2samba(8).
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>ms-driver-name:</Literal> <Replaceable>name</Replaceable></Term>
-<ListItem>
-<Para>
-Formerly used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
-</Para>
-</ListItem>
-</VarListEntry>
+<varlistentry>
+<term><literal>ms-driver-name:</literal> <replaceable>name</replaceable></term>
+<listitem>
+<para>
+Formerly used by <command>ppr2samba</command>.  See the man page ppr2samba(8).
+</para>
+</listitem>
+</varlistentry>
 
-</VariableList>
+</variablelist>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="group-config">
-<Title>Format of a Group Configuration File</Title>
+<sect2 id="group-config">
+<title>Format of a Group Configuration File</title>
 
-<Para>
-Each file in the <Filename class="Directory">/etc/ppr/groups/</Filename> directory represents a group.  It
+<para>
+Each file in the <filename class="Directory">/etc/ppr/groups/</filename> directory represents a group.  It
 is permissible to create and edit these files manually, however it is generally
-more convient to use the command <Command>ppad</Command> to do it automatically.  The
-<Literal>Printer:</Literal> line is the only one which should appear more than once.  If any
+more convient to use the command <command>ppad</command> to do it automatically.  The
+<literal>Printer:</literal> line is the only one which should appear more than once.  If any
 other line occurs more than once, all but the last instance are ignored.  Lines
-with <Literal>;</Literal> or <Literal>#</Literal> in the first column are comments.  The remaining lines are
+with <literal>;</literal> or <literal>#</literal> in the first column are comments.  The remaining lines are
 of two types:
-</Para>
+</para>
 
-<VariableList>
+<variablelist>
 
-<VarListEntry>
-<Term><Literal>Comment:</Literal> <Replaceable>string</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Comment:</literal> <replaceable>string</replaceable></term>
+<listitem>
+<para>
 This line contains a comment describing the group. This comment is displayed by
-the <Command>ppad group show</Command> command.  This line is optional.
-</Para>
-</ListItem>
-</VarListEntry>
+the <command>ppad group show</command> command.  This line is optional.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Printer:</Literal> <Replaceable>name</Replaceable></Term>
-<ListItem>
-<Para>
-The <Replaceable>name</Replaceable> is the name a printer that should be a member of the group.
+<varlistentry>
+<term><literal>Printer:</literal> <replaceable>name</replaceable></term>
+<listitem>
+<para>
+The <replaceable>name</replaceable> is the name a printer that should be a member of the group.
 There should be one line for each group member.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Rotate:</Literal> <Replaceable>boolean</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Rotate:</literal> <replaceable>boolean</replaceable></term>
+<listitem>
+<para>
 This value indicates if the spooler should attempt to distribute the load
-evenly among the printers.  If it is <Literal>False</Literal>, the spooler will always take
-the first idle printer in the group.  If it is <Literal>True</Literal>, the spooler will
-attempt to use each printer in turn.  The default is <Literal>True</Literal>.
-</Para>
-</ListItem>
-</VarListEntry>
+evenly among the printers.  If it is <literal>False</literal>, the spooler will always take
+the first idle printer in the group.  If it is <literal>True</literal>, the spooler will
+attempt to use each printer in turn.  The default is <literal>True</literal>.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>DefFiltOpts:</Literal> <Replaceable>options</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>DefFiltOpts:</literal> <replaceable>options</replaceable></term>
+<listitem>
+<para>
 This line is optional.  If present, it contains some name-value pairs to be
-prepended to any the user supplies with <Command>ppr</Command>'s <Command>-o</Command> switch. This line
-will be automatically updated by <Command>ppad</Command> whenever a group member is added or
+prepended to any the user supplies with <command>ppr</command>'s <command>-o</command> switch. This line
+will be automatically updated by <command>ppad</command> whenever a group member is added or
 deleted.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>Switchset:</Literal> <Replaceable>switch_description</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>Switchset:</literal> <replaceable>switch_description</replaceable></term>
+<listitem>
+<para>
 If this line is present, it contains a compress representation if the switches
-saved with the <Command>ppad group switchset</Command> command.
-</Para>
-</ListItem>
-</VarListEntry>
+saved with the <command>ppad group switchset</command> command.
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>PassThru:</Literal> <Replaceable>type_list</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>PassThru:</literal> <replaceable>type_list</replaceable></term>
+<listitem>
+<para>
 This line is optional.  If present, it contains a space separated list
 of file types which should be passed directly through to the printer.
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>ms-driver-name:</Literal> <Replaceable>name</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>ms-driver-name:</literal> <replaceable>name</replaceable></term>
+<listitem>
+<para>
 Used by ppr2samba.  See the man page ppr2samba(8).
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term><Literal>ppr2samba:</Literal> <Replaceable>include</Replaceable> <Replaceable>prototype</Replaceable></Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term><literal>ppr2samba:</literal> <replaceable>include</replaceable> <replaceable>prototype</replaceable></term>
+<listitem>
+<para>
 Used by ppr2samba.  See the man page ppr2samba(8).
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-</VariableList>
+</variablelist>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>

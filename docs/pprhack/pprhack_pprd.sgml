@@ -1,95 +1,95 @@
-<Sect1>
-<Title>Protocol for Comunicating with <Command>pprd</Command></Title>
+<sect1>
+<title>Protocol for Comunicating with <command>pprd</command></title>
 
-<Para>
-This section describes the protocol which use commands such as <Command>ppr</Command>,
-<Command>ppop</Command>, and <Command>ppad</Command> use to communicate with <Command>pprd</Command> and <Command>rpprd</Command>.
+<para>
+This section describes the protocol which use commands such as <command>ppr</command>,
+<command>ppop</command>, and <command>ppad</command> use to communicate with <command>pprd</command> and <command>rpprd</command>.
 This information may assist those attempting to understand the source code.
-</Para>
+</para>
 
-<Para>
-The main printing daemon, <Command>pprd</Command> receives commands over a named pipe and
-acts on them.  The program <Command>ppr</Command> uses one such command it sends to <Command>pprd</Command>
+<para>
+The main printing daemon, <command>pprd</command> receives commands over a named pipe and
+acts on them.  The program <command>ppr</command> uses one such command it sends to <command>pprd</command>
 to tell it that a new jobs has been placed in the queue directories.  The
-program <Command>ppad</Command> has two such commands which it uses to inform <Command>pprd</Command> that
-a printer or group configuration file has been modified.  Finally, <Command>ppop</Command>
-has many commands which it uses to control <Command>pprd</Command> or to request information
+program <command>ppad</command> has two such commands which it uses to inform <command>pprd</command> that
+a printer or group configuration file has been modified.  Finally, <command>ppop</command>
+has many commands which it uses to control <command>pprd</command> or to request information
 from it.
-</Para>
+</para>
 
-<Sect2>
-<Title>Accepting Jobs</Title>
+<sect2>
+<title>Accepting Jobs</title>
 
-<Para>
-Once the job submission program <Command>ppr</Command> has created the queue files it
-sends a command to <Command>pprd</Command> or <Command>rpprd</Command> telling it that the job is there and
+<para>
+Once the job submission program <command>ppr</command> has created the queue files it
+sends a command to <command>pprd</command> or <command>rpprd</command> telling it that the job is there and
 is ready for printing or transfer to the remote system.  This command takes the
 form:
-</Para>
+</para>
 
-<Para>
-j <Replaceable>destination_node destination_queue id subid home_node initial_priority</Replaceable>
-</Para>
+<para>
+j <replaceable>destination_node destination_queue id subid home_node initial_priority</replaceable>
+</para>
 
-<Para>
-The <Replaceable>destination_node</Replaceable> is the node to which the job should be sent.  If the
-command is written to <Command>pprd</Command>'s named pipe, this field must contain the node
-name of the local system.  The <Replaceable>destination_queue</Replaceable> is the name of the print
-queue on the destination node.  The <Replaceable>id</Replaceable> and <Replaceable>subid</Replaceable> are the queue id and
-the job fragment number respectively.  The <Replaceable>subid</Replaceable> will most often be zero.
-The <Replaceable>home_node</Replaceable> is the node name of the system on which the job origionated.
-</Para>
+<para>
+The <replaceable>destination_node</replaceable> is the node to which the job should be sent.  If the
+command is written to <command>pprd</command>'s named pipe, this field must contain the node
+name of the local system.  The <replaceable>destination_queue</replaceable> is the name of the print
+queue on the destination node.  The <replaceable>id</replaceable> and <replaceable>subid</replaceable> are the queue id and
+the job fragment number respectively.  The <replaceable>subid</replaceable> will most often be zero.
+The <replaceable>home_node</replaceable> is the node name of the system on which the job origionated.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Re-loading Configuration Files</Title>
+<sect2>
+<title>Re-loading Configuration Files</title>
 
-<Para>
+<para>
 Whenever a printer or group configuration files is modified or a new one
-created, <Command>pprd</Command> must be directed to read it.  To inform <Command>pprd</Command> that it
+created, <command>pprd</command> must be directed to read it.  To inform <command>pprd</command> that it
 must read a new or revised printer configuration file, a command line of this
 form is sent:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
-NP <Replaceable>printername</Replaceable>
-</Screen>
+<screen>
+NP <replaceable>printername</replaceable>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 To indicate that a group configuration file
 must be re-read or that a new group configuration file must be read for the
 first time:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
-NG <Replaceable>groupname</Replaceable>
-</Screen>
+<screen>
+NG <replaceable>groupname</replaceable>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 There will be no acknowledgement of either command.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Yielding Information to <Command>ppop</Command></Title>
+<sect2>
+<title>Yielding Information to <command>ppop</command></title>
 
-<Para>
-The utility <Command>ppop</Command> must communicate with <Command>pprd</Command> and <Command>rpprd</Command> in
+<para>
+The utility <command>ppop</command> must communicate with <command>pprd</command> and <command>rpprd</command> in
 order to list the queue, show the status of printers, mount forms, and do other
-tasks.  As work on <Command>rpprd</Command> continue, descriptions of the necessary commands
+tasks.  As work on <command>rpprd</command> continue, descriptions of the necessary commands
 will be added to this document.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>

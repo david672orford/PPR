@@ -1,18 +1,18 @@
-<Sect1 id="removing">
-<Title>Removing PPR</Title>
+<sect1 id="removing">
+<title>Removing PPR</title>
 
-<Para>
+<para>
 The entire PPR spooling system, including any printer and group
 configuration files may be removed with the command:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # /usr/ppr/fixup/remove_ppr
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 

@@ -1,7 +1,7 @@
-<Sect2 id="adding-groups">
-<Title>Making Groups of Printers</Title>
+<sect2 id="adding-groups">
+<title>Making Groups of Printers</title>
 
-<Para>
+<para>
 You may wish to form groups of printers.  A group is assigned a name and
 member printers are specified.  Jobs may be submitted to the group and PPR will
 decide which printer the job will be printed on. It is simplest if all the
@@ -9,94 +9,94 @@ member printers are of the the same make and model, but PPR can often smooth
 over the differences, especially when using automatic bin selection and
 reasonably good printer drivers such as LaserWriter 8.  A group is formed when
 the first member is assigned.  Members are assigned to a group like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group add ourgroup myprn
 # ppad group add ourgroup yourprn
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Members may be removed from groups like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group remove ourgroup myprn
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Removing all members from a group does not delete it. A group is deleted
 like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group delete ourgroup
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Members may be added and removed even while jobs are being printed.  If a
 printer is removed while it is printing a job for that group, it will finish
 that job, but it will not print any more jobs for that group.  If a printer
 is added, it will be used as soon as it is idle and there is a job which
 needs a printer. If the group has no members, its jobs will not be printed
 until members are added.
-</Para>
+</para>
 
-<Para>
+<para>
 It is recomended that you set a group's comment
 field.  The comment field is set in this manner:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group comment ourgroup 'The printers we share'
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-Each group has a parameter called <Option>Rotate</Option>.  If
-<Option>Rotate</Option> is
-<Literal>false</Literal>, then when the time comes to print a job,
-<Application>PPR</Application> uses the first idle
+<para>
+Each group has a parameter called <option>Rotate</option>.  If
+<option>Rotate</option> is
+<literal>false</literal>, then when the time comes to print a job,
+<application>PPR</application> uses the first idle
 printer, starting with the first member of the group.  This will probably mean
 that the printers at the begining of the group's members list will get used
-more often.  If <Option>Rotate</Option> is set to <Literal>true</Literal>, PPR will try to use the
-printers in round-robin fashion.  <Option>Rotate</Option> is
-<Literal>true</Literal> by default, it may
-be set to <Literal>false</Literal> with a command like this one:
-</Para>
+more often.  If <option>Rotate</option> is set to <literal>true</literal>, PPR will try to use the
+printers in round-robin fashion.  <option>Rotate</option> is
+<literal>true</literal> by default, it may
+be set to <literal>false</literal> with a command like this one:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group rotate ourgroup false
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-The configuration of a group may be viewed with the <Command>ppad group
-show</Command>
+<para>
+The configuration of a group may be viewed with the <command>ppad group
+show</command>
 command, like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad group show ourgroup
 Group name: ourgroup
 Comment: A printer at random
@@ -104,8 +104,8 @@ Members: myprn, yourprn
 Rotate: True
 Default Filter Options:
 Switchset:
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>

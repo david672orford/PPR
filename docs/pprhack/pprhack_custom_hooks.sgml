@@ -1,8 +1,9 @@
 <!--
 Filename: pprhack_custom_hooks.sgml
-Last Modified: 4 March 2003
+Last Modified: 6 March 2003
 Last Proofread: 
 -->
+
 <sect1>
 <title>Custom Hooks</title>
 
@@ -14,7 +15,5 @@ the characteristics of the job.  For example, you could write a custom hook
 program which printed a banner page.  If a print queue is properly
 configured, your program will be used to print banner pages instead of
 <application>PPR</application>'s internal banner page printing code.</para>
-
-
 
 </sect1>

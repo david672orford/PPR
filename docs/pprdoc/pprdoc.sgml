@@ -1,190 +1,192 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
-<Article>
+<article>
 
-<ArticleInfo>
-	<Title>PPR, a Print Spooler for PostScript</Title>
-	<Author>
-		<FirstName>David</FirstName>
-		<Surname>Chappell</Surname>
-		</Author>
-	<PubDate>21 February 2003</PubDate>
-	<Copyright>
-		<Year>1995--2003</Year>
-		<Holder>Trinity College Computing Center</Holder>
-		</Copyright>
-</ArticleInfo>
+<articleinfo>
+	<title>PPR, a Print Spooler for PostScript</title>
+	<author>
+		<firstname>David</firstname>
+		<surname>Chappell</surname>
+		</author>
+	<pubdate>21 February 2003</pubdate>
+	<copyright>
+		<year>1995--2003</year>
+		<holder>Trinity College Computing Center</holder>
+		</copyright>
+</articleinfo>
 
-<Abstract>
+<abstract>
 
-<Para>This document is intended to describe <Application>PPR</Application>'s features and theory of
-operation more deaply than <CiteTitle>Installing and Using PPR</CiteTitle>
-does.  Unfortunately, this document has never been finished.</Para>
+<para>This document is intended to describe <application>PPR</application>'s features and theory of
+operation more deaply than <citetitle>Installing and Using PPR</citetitle>
+does.  Unfortunately, this document has never been finished.</para>
 
-</Abstract>
+</abstract>
 
-<Sect1>
-<Title>Introduction to <Application>PPR</Application></Title>
+<sect1>
+<title>Introduction to <application>PPR</application></title>
 
-<Para><Application>PPR</Application> is designed to operate printers which use page description
-languages compatible with the PostScript language defined by Adobe Systems.
-It is true that a PostScript printer can generally be made to work with an
-ordinary print spooler.  Enhancements, generally in the form of special
-filters or interface programs, are available for both the System V LP
-spooler and the Berkeley LPR spooler. However, these are generally rather
-limited adaptations written to fulfill a pressing need, such as the need to
-print banner pages. In order to fully exploit the more sophisticated
-features of PostScript and the Adobe Document Structuring Convention, it
-seemed best to start from scratch, writing a print spooler designed with
-modern PostScript laser printers in mind.</Para>
+<para><application>PPR</application> is designed to operate printers which
+use page description languages compatible with the PostScript language
+defined by Adobe Systems. It is true that a PostScript printer can generally
+be made to work with an ordinary print spooler.  Enhancements, generally in
+the form of special filters or interface programs, are available for both
+the <application>System V LP</application> spooler and the
+<application>Berkeley LPR</application> spooler.  However, these are
+generally rather limited adaptations written to fulfill a pressing need,
+such as the need to print banner pages. In order to fully exploit the more
+sophisticated features of PostScript and the Adobe Document Structuring
+Convention, it seemed best to start from scratch, writing a print spooler
+designed with modern PostScript laser printers in mind.</para>
 
-<Para>It is one of the goals of this project to produce a print spooler
+<para>It is one of the goals of this project to produce a print spooler
 which can accept print jobs from many different types of computer systems
 simultaneously.  This includes logged-in Unix users, MS-DOS and MS-Windows
 users, Unix users on remote systems through the LPR/LPD protocol, and Apple
-Macintosh computers.</Para>
+Macintosh computers.</para>
 
-<Para>The spooler is designed to provide services such as font and resource
+<para>The spooler is designed to provide services such as font and resource
 caching which should reduce the time a Macintosh computer requires to
-generate and transmit the print file.</Para>
+generate and transmit the print file.</para>
 
-<Para>On MS-DOS systems, many application programs are not able to generate
-PostScript themselves.  For this reason, <Application>PPR</Application> has an automatic conversion
+<para>On MS-DOS systems, many application programs are not able to generate
+PostScript themselves.  For this reason, <application>PPR</application> has an automatic conversion
 system which attempts to determine the format of an incoming document and
 convert it to PostScript, if necessary.  Filters to convert simple line
 printer files or files for popular dot matrix printers are included with
-<Application>PPR</Application>.</Para>
+<application>PPR</application>.</para>
 
-<Para>
-<Application>PPR</Application> will read Adobe PostScript Printer Description (PPD) files in order to
-obtain information about the printers under its control.  <Application>PPR</Application> will replace
+<para>
+<application>PPR</application> will read Adobe PostScript Printer Description (PPD) files in order to
+obtain information about the printers under its control.  <application>PPR</application> will replace
 specially marked code fragments in the document with the code fragments from
 the PPD file.  Apple's LaserWriter 8 driver properly marks the relevent code
 fragments.  If one uses Apple's LaserWriter driver version 8 or later it is
 possible for a document to print correctly even if it is printed on a different
 printer from that originally intended and the job uses special commands such as
 those for bin selection.  It is also possible for an application to request
-that <Application>PPR</Application> insert code fragments from the PPD file in order to invoke specific
+that <application>PPR</application> insert code fragments from the PPD file in order to invoke specific
 features of the printer, such as duplexing or legal size paper.
-</Para>
+</para>
 
-<Para><Application>PPR</Application> provides a mechanism whereby the operator specifies the size and
+<para><application>PPR</application> provides a mechanism whereby the operator specifies the size and
 type of paper in each of a printer's bins.  When printing, users will
 request the desired paper.  Print jobs will be held back until the operator
 changes the paper and indicates to the spooler that he has done so.  If a
 job is being held back for this reason, the names of the types of media
 required will be indicated in the queue listing.  When the document is
-printed, <Application>PPR</Application> will insert code to select the input tray which holds the
-desired medium.</Para>
+printed, <application>PPR</application> will insert code to select the input tray which holds the
+desired medium.</para>
 
-<Para>
-Where the printer and its interface support it, <Application>PPR</Application> will capture PostScript
+<para>
+Where the printer and its interface support it, <application>PPR</application> will capture PostScript
 error messages resulting from the execution of a job and put them in a log
 file which may be printed on the banner or trailer page or later viewed by the
 user.  If a PostScript error occurs during the printing of a job, that job is
 held in the queue so that it may be examined to determine the reason for the
 failure.
-</Para>
+</para>
 
-<Para>
-<Application>PPR</Application> can detect printer malfunctions and deal `intelligently' with
+<para>
+<application>PPR</application> can detect printer malfunctions and deal `intelligently' with
 them.  If problems persist, it will inform an operator.
-</Para>
+</para>
 
-<Para>
-It is desireable that <Application>PPR</Application> be able to reliably identify the users on
+<para>
+It is desireable that <application>PPR</application> be able to reliably identify the users on
 various computer systems, employing passwords when necessary, so that users
 can be made to pay for their use of the printers.  Unfortunately, the necessary
 client-side software is not always available.
-</Para>
+</para>
 
-<Para>
-<Application>PPR</Application> can maintain a list of user accounts, each of which contains money. When
-<Application>PPR</Application> prints a job for a user on a printer which has a per page charge, <Application>PPR</Application>
+<para>
+<application>PPR</application> can maintain a list of user accounts, each of which contains money. When
+<application>PPR</application> prints a job for a user on a printer which has a per page charge, <application>PPR</application>
 computes the number of sheets of paper used and deducts the corresponding
 amount of money from the user's account. The system administrator may set a
-credit limit for each user. When the credit limit is exceeded, <Application>PPR</Application> will refuse
+credit limit for each user. When the credit limit is exceeded, <application>PPR</application> will refuse
 to accept more jobs for the user.
-</Para>
+</para>
 
-<Para>
-<Application>PPR</Application> can convert a document for N-Up printing, thereby saving paper.  It
+<para>
+<application>PPR</application> can convert a document for N-Up printing, thereby saving paper.  It
 can also convert many documents to signatures or booklets.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>A Brief Note On Terminology</Title>
+<sect1>
+<title>A Brief Note On Terminology</title>
 
-<Para>
+<para>
 This document describes a complete system which accepts print jobs, places
 them in a queue, and prints them as soon as it becomes possible. This printing
-system is called <Application><Application>PPR</Application></Application>.  Unix users
+system is called <application><application>PPR</application></application>.  Unix users
 submit jobs to this system by means of a
-program called <Command>ppr</Command>.  Unfortunately, in discussing this system it is
+program called <command>ppr</command>.  Unfortunately, in discussing this system it is
 possible to confuse the two.  This document attempts to ease that confusion by
 refering to the two in slightly different ways.  When the spooling system as a
-whole is meant, it is refered to simply as <Application>PPR</Application>, in all upper case.  When
-the program users employ to submit jobs to <Application>PPR</Application> is meant, it is refered to as
-<Command>ppr</Command> in all lower case and bold face.  Further, the program for submitting
-jobs will frequently be refered to as, "the program <Command>ppr</Command>."
-</Para>
+whole is meant, it is refered to simply as <application>PPR</application>, in all upper case.  When
+the program users employ to submit jobs to <application>PPR</application> is meant, it is refered to as
+<command>ppr</command> in all lower case and bold face.  Further, the program for submitting
+jobs will frequently be refered to as, "the program <command>ppr</command>."
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Core <Application>PPR</Application> Components and How They Work Together</Title>
+<sect1>
+<title>Core <application>PPR</application> Components and How They Work Together</title>
 
-<Para>
-This section describes the subprograms which comprise the core of <Application>PPR</Application> and
+<para>
+This section describes the subprograms which comprise the core of <application>PPR</application> and
 the r&ocirc;le of each.
-</Para>
+</para>
 
-<Sect2>
-<Title>How Jobs Enter the Queue</Title>
+<sect2>
+<title>How Jobs Enter the Queue</title>
 
-<Para>
+<para>
 All jobs which enter the queue pass through the program called
-<Command>ppr</Command>.  This is true even of those which pass first through the
+<command>ppr</command>.  This is true even of those which pass first through the
 Macintosh print server, the LPR compatible server, or Samba.  (These additional
-server components will be described later.)  The program <Command>ppr</Command> reads a
+server components will be described later.)  The program <command>ppr</command> reads a
 PostScript file and splits it into 3 files.  These three files are placed in a
 spool directory and a fourth file, called the queue file, is created which
 describes the job and the options the user has selected.  Once all the files
-are ready, <Command>ppr</Command> sends a message to the print daemon, which is called,
-<Command>pprd</Command>, telling it that a new job is in the queue.  This process is
-illustrated in figure <XRef linkend="pprdoc-enter"/>.
-</Para>
+are ready, <command>ppr</command> sends a message to the print daemon, which is called,
+<command>pprd</command>, telling it that a new job is in the queue.  This process is
+illustrated in figure <xref linkend="pprdoc-enter"/>.
+</para>
 
-<Para>
+<para>
 
-<Figure id="pprdoc-enter">
-<Title>A job Enters the Queue</Title>
+<figure id="pprdoc-enter">
+<title>A job Enters the Queue</title>
 <mediaobject>
 	<imageobject><imagedata fileref="pprdoc-enter.eps" format="eps"/></imageobject>
 	<imageobject><imagedata fileref="pprdoc-enter.png" format="png"/></imageobject>
 </mediaobject>
-</Figure>
+</figure>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>How Jobs are Printed</Title>
+<sect2>
+<title>How Jobs are Printed</title>
 
-<Para>When <Command>pprd</Command> determines that the time has come to print a file on a printer,
-it invokes a program called <Command>pprdrv</Command> which reads the 3 job files and
+<para>When <command>pprd</command> determines that the time has come to print a file on a printer,
+it invokes a program called <command>pprdrv</command> which reads the 3 job files and
 reasembles them into a PostScript file.  While doing so it will consult
 information read from the printer configuration file and the queue file and
 a PostScript Printer Description (PPD) file.  It may also include fonts and
-other resources in the data stream.  This process is illustrated in figure <XRef
+other resources in the data stream.  This process is illustrated in figure <xref
 linkend="pprdoc-printing2"/>.  (The inclusion of fonts and other resources has been
-ommited from the figure for the sake of simplicity.)</Para>
+ommited from the figure for the sake of simplicity.)</para>
 
-<Para>
+<para>
 
 <figure id="pprdoc-printing2">
 <title><application>PPR</application> Prints a Job</title>
@@ -194,292 +196,292 @@ ommited from the figure for the sake of simplicity.)</Para>
 </mediaobject>
 </figure>
 
-</Para>
+</para>
 
 <figure id="pprdoc-printing1">
-<title>Multiple Instances of <Command>pprdrv</Command> for Multiple Printers</title>
+<title>Multiple Instances of <command>pprdrv</command> for Multiple Printers</title>
 <mediaobject>
 	<imageobject><imagedata fileref="pprdoc-printing1.eps" format="eps"/></imageobject>
 	<imageobject><imagedata fileref="pprdoc-printing1.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
 
-<Para>
-The program <Command>pprdrv</Command> sends the file to the printer by invoking an interface
+<para>
+The program <command>pprdrv</command> sends the file to the printer by invoking an interface
 program.  It is the responsibility of the interface program to accept the print
 job on standard input, send it the printer, if possible receive any error
-messages, and pass them back to <Command>pprdrv</Command> by writing them to stdout.
-</Para>
+messages, and pass them back to <command>pprdrv</command> by writing them to stdout.
+</para>
 
-<Para>
-Notice in figure <XRef linkend="pprdoc-printing1"/> that printing is taking place on
-<Hardware>PRINTER 1</Hardware> and <Hardware>PRINTER 3</Hardware>.
-</Para>
+<para>
+Notice in figure <xref linkend="pprdoc-printing1"/> that printing is taking place on
+<hardware>PRINTER 1</hardware> and <hardware>PRINTER 3</hardware>.
+</para>
 
-<Para>
-<Hardware>PRINTER 2</Hardware> is idle, so the processes necessary to print on it are shown
+<para>
+<hardware>PRINTER 2</hardware> is idle, so the processes necessary to print on it are shown
 with dotted line boxes, indicating that they do not exist at present.
-</Para>
+</para>
 
-<Para>
+<para>
 Once the job has been printed, the interfaces program exits, after which
-<Command>pprdrv</Command> exits.  The main spooling daemon,
-<Command>pprd</Command> detects this and
+<command>pprdrv</command> exits.  The main spooling daemon,
+<command>pprd</command> detects this and
 removes the job from the queue and attempts to inform the user that the job is
 done.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Job Errors</Title>
+<sect2>
+<title>Job Errors</title>
 
-<Para>When exiting, <Command>pprdrv</Command> will indicate to
-<Command>pprd</Command> that printing was successful or that it was not.  If
-<Command>pprdrv</Command> indicates that a problem occured which was caused
+<para>When exiting, <command>pprdrv</command> will indicate to
+<command>pprd</command> that printing was successful or that it was not.  If
+<command>pprdrv</command> indicates that a problem occured which was caused
 by the particular job being printed, a PostScript error for instance, then
 the job is placed in the "arrested" state, the user who submitted it is
-informed, and <Command>pprd</Command> looks for another job to print on that
+informed, and <command>pprd</command> looks for another job to print on that
 printer.  The arrested state is a special case of the "held" state.  An
-arrested job remains in that state until it is canceled or released.</Para>
+arrested job remains in that state until it is canceled or released.</para>
 
-<Para>
+<para>
 When a job is arrested, the user who submitted it is informed, however if
 the arrested job is subsequently deleted by an operator, the user will not
 be informed as he would be if a normal job of his were canceled.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="printer-errors">
-<Title>Printer Errors</Title>
+<sect2 id="printer-errors">
+<title>Printer Errors</title>
 
-<Para>
-If <Command>pprdrv</Command> indicates that the problem is with the printer, then the job
+<para>
+If <command>pprdrv</command> indicates that the problem is with the printer, then the job
 is returned to the queue, the printer is placed in fault mode, and
-<Command>pprd</Command>
+<command>pprd</command>
 looks for another printer on which to print the job.  When
-<Command>pprdrv</Command>
-discovers a problem with a printer, it indicates to <Command>pprd</Command> whether or not it
+<command>pprdrv</command>
+discovers a problem with a printer, it indicates to <command>pprd</command> whether or not it
 is a problem from which the printer is likely to recover without the
 intervention of the system operator.  Problems from which it is likely to
 recover on its own include those which are transient or which an ordinary user
 might correct, such as printer-turned-off and out-of-paper.  If the problem is
 one from which the printer may recover, then it is placed in fault-retry mode;
 if it is not expected to recover, it is placed in fault-no-retry mode.
-</Para>
+</para>
 
-<Para>
-In fault-retry mode, <Command>pprd</Command> tries to restart the printer at intervals.  The
+<para>
+In fault-retry mode, <command>pprd</command> tries to restart the printer at intervals.  The
 delay before the retry is 10 seconds the first time and increases by 10 seconds
 after each failure until the interval reaches about 10 minutes, at which point
 it does not continue to increase.  In fault-no-retry mode, the printer is not
 restarted until a system operator restarts it.  An operator may restart a
-printer with the command <Command>ppop start printer</Command>.
-</Para>
+printer with the command <command>ppop start printer</command>.
+</para>
 
-<Para>
-When <Command>pprdrv</Command> detects a printer fault, it writes a description of it to a
-file in the <Filename class="Directory">alerts/</Filename> directory, a file which is named after the
-printer.  At intervals, <Command>pprd</Command> may send the contents of this file to a
+<para>
+When <command>pprdrv</command> detects a printer fault, it writes a description of it to a
+file in the <filename class="Directory">alerts/</filename> directory, a file which is named after the
+printer.  At intervals, <command>pprd</command> may send the contents of this file to a
 system operator.  The interval is defined in the printer configuration file.
-The interval is expressed as 'every <VarName>N</VarName> faults.'  If the interval is set
-to <Literal>1</Literal>, the alerts log is sent after each printer fault; if the interval is set
-to <Literal>5</Literal>, the alerts log is sent after every 5th printer fault.  If the interval is
-set to <Literal>0</Literal>, the alerts are never sent.
-</Para>
+The interval is expressed as 'every <varname>N</varname> faults.'  If the interval is set
+to <literal>1</literal>, the alerts log is sent after each printer fault; if the interval is set
+to <literal>5</literal>, the alerts log is sent after every 5th printer fault.  If the interval is
+set to <literal>0</literal>, the alerts are never sent.
+</para>
 
-<Para>
+<para>
 If the alert interval is negative, it is treated differently.  First of all,
 the absolute value is used as the alert interval.  Second, the alerts are
 only sent to the system operator once.  Third, a notice is sent to the
 system operator if the printer sucessfully prints a job after incurring at
-least abs(<VarName>N</VarName>) alerts.
-</Para>
+least abs(<varname>N</varname>) alerts.
+</para>
 
-<Para>
+<para>
 Each time a fault occurs, the alert message is appended to the alert log. The
 exception is that if the previous alert occured more than one hour previously,
 the alert log is truncated to zero length and a new one started.  Whether or
 not the alerts have been dispatched to an operator, the alert log may be read
-at any time with the command <Command>ppop alerts <Replaceable>printer</Replaceable></Command>.
-</Para>
+at any time with the command <command>ppop alerts <replaceable>printer</replaceable></command>.
+</para>
 
-<Para>
+<para>
 It is in the printer configuration file that the alert interval is specified,
 as well as the method by which alerts are to be dispatched and the address to
 send them to.  A typical alert dispatch method (indeed, the only one supported
-at this time) is <Literal>mail</Literal>.  This means that the alerts are sent by electronic
+at this time) is <literal>mail</literal>.  This means that the alerts are sent by electronic
 mail to the indicated address.  The alert parameters may be set with the
-<Command>ppad alerts</Command> command.
-</Para>
+<command>ppad alerts</command> command.
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Printers and Groups of Printers</Title>
+<sect1>
+<title>Printers and Groups of Printers</title>
 
-<Para>When printing a document with <Application>PPR</Application> it is
+<para>When printing a document with <application>PPR</application> it is
 necessary to specify a set of one more more printer on which it may be
 printed.  If you specify the name of a printer,
-<Application>PPR</Application> will print the document on that printer if it
+<application>PPR</application> will print the document on that printer if it
 determines that the printer has the necessary capabilities.  If you indicate
-a group of printers to print the document on, <Application>PPR</Application>
+a group of printers to print the document on, <application>PPR</application>
 will print the document on the first available printer with the necessary
 capabilities.  Both printers and groups are identified by name.  A printer
 or group name may be up to 16 characters long and may contain any printable
-characters except, slash (<Literal>/</Literal>).  It also must not begin
-with tilde (<Literal>~</Literal>) or period (<Literal>.</Literal>).</Para>
+characters except, slash (<literal>/</literal>).  It also must not begin
+with tilde (<literal>~</literal>) or period (<literal>.</literal>).</para>
 
-<Para>Each printer is described by a printer configuration file in the
-directory <Filename class="Directory">/etc/ppr/conf/printers/</Filename>. 
+<para>Each printer is described by a printer configuration file in the
+directory <filename class="Directory">/etc/ppr/conf/printers/</filename>. 
 Each group is defined by a group configuration file in the directory
-<Filename class="Directory">/etc/ppr/conf/groups</Filename>.  The format of
-a printer configuration file is described in Appendix <XRef
+<filename class="Directory">/etc/ppr/conf/groups</filename>.  The format of
+a printer configuration file is described in Appendix <xref
 linkend="printer-config"/> and the format of a group configuation file is
-described in Appendix <XRef linkend="group-config"/>.  The desired printer or
-group may be specified with the <Option>-d</Option> switch to the
-<Command>ppr</Command> command.  If the <Option>-d</Option> switch is
-ommited, <Command>ppr</Command> takes the printer or group name from the
-environment variable <EnVar>PPRDEST</EnVar>.  If <EnVar>PPRDEST</EnVar> is
-not defined, <Command>ppr</Command> attempts to send the job to a printer or
-group called ``default''.</Para>
+described in Appendix <xref linkend="group-config"/>.  The desired printer or
+group may be specified with the <option>-d</option> switch to the
+<command>ppr</command> command.  If the <option>-d</option> switch is
+ommited, <command>ppr</command> takes the printer or group name from the
+environment variable <envar>PPRDEST</envar>.  If <envar>PPRDEST</envar> is
+not defined, <command>ppr</command> attempts to send the job to a printer or
+group called ``default''.</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Accepting Jobs From a Network</Title>
+<sect1>
+<title>Accepting Jobs From a Network</title>
 
-<Para>Users on the machine running <Application>PPR</Application> can submit
-jobs simply by running the program <Command>ppr</Command>.  But, when the
+<para>Users on the machine running <application>PPR</application> can submit
+jobs simply by running the program <command>ppr</command>.  But, when the
 user is on a remote machine connected by a network to the machine with the
-<Application>PPR</Application> spooler, things get a little more
-complicated.</Para>
+<application>PPR</application> spooler, things get a little more
+complicated.</para>
 
-<Para>
+<para>
 Accepting network jobs requires a daemon process which waits new connexions.
 When it receives a connexion, it must launch a server process.  The server
-process will accept the print job and run <Command>ppr</Command> to submit it.
-</Para>
+process will accept the print job and run <command>ppr</command> to submit it.
+</para>
 
-<Para>Often, the user on the remote computer will not have an account on the
-computer that is running <Application>PPR</Application>.  Therefor, the
-server process must run <Command>ppr</Command> under some system user ID. 
-This system ID may be <Literal>ppr</Literal> or any user listed in
-<Filename>/etc/ppr/acl/pprprox.allow</Filename>. The system user will invoke
-<Command>ppr</Command> with switches such as <Option>-f</Option>,
-<Option>-X</Option>, and <Option>--charge-to</Option>. These switches will
+<para>Often, the user on the remote computer will not have an account on the
+computer that is running <application>PPR</application>.  Therefor, the
+server process must run <command>ppr</command> under some system user ID. 
+This system ID may be <literal>ppr</literal> or any user listed in
+<filename>/etc/ppr/acl/pprprox.allow</filename>. The system user will invoke
+<command>ppr</command> with switches such as <option>-f</option>,
+<option>-X</option>, and <option>--charge-to</option>. These switches will
 indicate that the system user is submitting the job on behalf of a user on a
-remote machine.</Para>
+remote machine.</para>
 
-<Para>
-The <Option>-f</Option> switch sets the name of the user who submitted the job.  This name
+<para>
+The <option>-f</option> switch sets the name of the user who submitted the job.  This name
 will appear in queue listings and on banner and trailer pages.
-</Para>
+</para>
 
-<Para>The <Option>-X</Option> switch is used to provide a string which
+<para>The <option>-X</option> switch is used to provide a string which
 uniquely identifies the user on the remote machine.  Generally, this string
 will be the user's name on the remote machine, followed by an
-<Literal>@</Literal>, followed by the network address of the remote
-machine.</Para>
+<literal>@</literal>, followed by the network address of the remote
+machine.</para>
 
-<Para>The <Option>--charge-to</Option> switch is useful when using the
-charge accounts which can be set up with <Command>ppuser</Command>.  If the
-argument of the <Option>-f</Option> switch is the user's real name, the
-<Option>--charge-to</Option> switch can be used to specify a more cryptic
+<para>The <option>--charge-to</option> switch is useful when using the
+charge accounts which can be set up with <command>ppuser</command>.  If the
+argument of the <option>-f</option> switch is the user's real name, the
+<option>--charge-to</option> switch can be used to specify a more cryptic
 account name to which the cost of printing printing should be
-charged.</Para>
+charged.</para>
 
-<Sect2>
-<Title>Accepting Jobs From Macintoshes</Title>
+<sect2>
+<title>Accepting Jobs From Macintoshes</title>
 
-<Para>
-<Application>PPR</Application> provides a daemon called <Command>papsrv</Command> which acts as a Macintosh print
+<para>
+<application>PPR</application> provides a daemon called <command>papsrv</command> which acts as a Macintosh print
 server.  It accepts connexions from Macintosh clients, answers queries using
 information in the PPD files, and accepts jobs.  Whenever
-<Command>papsrv</Command> accepts a
+<command>papsrv</command> accepts a
 connexion from a Macintosh, it forks a copy of itself to service the connexion.
-When the child daemon receives a print job, it launches <Command>ppr</Command> on the end of a
+When the child daemon receives a print job, it launches <command>ppr</command> on the end of a
 pipe to process it.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Accepting Jobs Using the LPD Protocol</Title>
+<sect2>
+<title>Accepting Jobs Using the LPD Protocol</title>
 
-<Para>
-<Application>PPR</Application> provides a daemon called <Command>lprsrv</Command> which can be launched by the internet
-super daemon, <Command>inetd</Command>.  The daemon <Command>lprsrv</Command> implements the Berkeley LPD protocol.
-</Para>
+<para>
+<application>PPR</application> provides a daemon called <command>lprsrv</command> which can be launched by the internet
+super daemon, <command>inetd</command>.  The daemon <command>lprsrv</command> implements the Berkeley LPD protocol.
+</para>
 
-<Para> When a print job is received, <Command>lprsrv</Command> checks to see
-if the destination specified matches the name of any <Application>PPR</Application> printer or group.
-If it does, <Command>ppr</Command> is invoked to accept the job.  If not,
+<para> When a print job is received, <command>lprsrv</command> checks to see
+if the destination specified matches the name of any <application>PPR</application> printer or group.
+If it does, <command>ppr</command> is invoked to accept the job.  If not,
 the job is fed to the system's default spooler through the
-<Command>lp</Command> or <Command>lpr</Command> command.  There is a
-<Command>lprsrv</Command> configuration file,
-<Filename>/etc/ppr/lprsrv.conf</Filename>, but it is used for access
-control, not for choosing which queues will be shared. All <Application>PPR</Application> printers as
+<command>lp</command> or <command>lpr</command> command.  There is a
+<command>lprsrv</command> configuration file,
+<filename>/etc/ppr/lprsrv.conf</filename>, but it is used for access
+control, not for choosing which queues will be shared. All <application>PPR</application> printers as
 well as all the printers belonging to the normal system spooler are
-automatically made available. </Para>
+automatically made available. </para>
 
-<Para>
-However, unless <Command>inetd</Command> invokes <Command>lprsrv</Command> with the
-<Option>-p</Option> (permissive) switch, it
+<para>
+However, unless <command>inetd</command> invokes <command>lprsrv</command> with the
+<option>-p</option> (permissive) switch, it
 will only accept jobs from machines listed in
-<Filename>/etc/hosts.equiv</Filename> or
-<Filename>/etc/hosts.lpd</Filename> which are also not listed in
-<Filename>/etc/hosts.lpd_deny</Filename>.  (It is also ok to list a whole domain in these
+<filename>/etc/hosts.equiv</filename> or
+<filename>/etc/hosts.lpd</filename> which are also not listed in
+<filename>/etc/hosts.lpd_deny</filename>.  (It is also ok to list a whole domain in these
 files.  Any name begining with a period is interpreted as a domain name.)
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Accepting Jobs From a LAN Manager For Unix Server</Title>
+<sect2>
+<title>Accepting Jobs From a LAN Manager For Unix Server</title>
 
-<Para>
+<para>
 AT&amp;T's LAN Manager for Unix can invoke a print processor script when a
-job is received for a certain printer.  <Application>PPR</Application> provides a print processor script
-which submits the job using the <Command>ppr</Command> command.  If the directory
-<Filename>/var/opt/lanman/customs</Filename> exists when <Application>PPR</Application> is installed, then the script
-is installed as <Filename>/var/opt/lanman/customs/ppr</Filename>.  While it is possible to
-prepare several versions of this script to invoke <Command>ppr</Command> with various
-options, it will probably prove more convenient to use the <Command>ppad
-switchset</Command>
-or <Command>ppad group switchset</Command> command (depending on whether it is a printer of a
+job is received for a certain printer.  <application>PPR</application> provides a print processor script
+which submits the job using the <command>ppr</command> command.  If the directory
+<filename>/var/opt/lanman/customs</filename> exists when <application>PPR</application> is installed, then the script
+is installed as <filename>/var/opt/lanman/customs/ppr</filename>.  While it is possible to
+prepare several versions of this script to invoke <command>ppr</command> with various
+options, it will probably prove more convenient to use the <command>ppad
+switchset</command>
+or <command>ppad group switchset</command> command (depending on whether it is a printer of a
 group) to store the desired switches in the printer or group's configuration
 file.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Accepting Jobs From a Samba Server</Title>
+<sect2>
+<title>Accepting Jobs From a Samba Server</title>
 
-<Para>
+<para>
 The free Unix file and print server Samba has a very flexible printing system.
 The print command for any given print queue can be specified in Samba's
-configuration file.  The Samba server sends jobs to <Application>PPR</Application> by writing the job to a
-temporary file and then invoking <Command>ppr</Command>.  The
-<Option>-U</Option> switch should be used to
-tell <Command>ppr</Command> to delete the temporary file once it is done reading it.  It is
-advisable to append <Literal>&amp;</Literal> to the print command because for very large files
-which must be filtered, the client will time out before <Command>ppr</Command> exits.  Sample
-Samba print commands are given in <ULink url="../refman/ppr2samba.8.html">the ppr2samba(8) man page</ULink>.
-</Para>
+configuration file.  The Samba server sends jobs to <application>PPR</application> by writing the job to a
+temporary file and then invoking <command>ppr</command>.  The
+<option>-U</option> switch should be used to
+tell <command>ppr</command> to delete the temporary file once it is done reading it.  It is
+advisable to append <literal>&amp;</literal> to the print command because for very large files
+which must be filtered, the client will time out before <command>ppr</command> exits.  Sample
+Samba print commands are given in <ulink url="../refman/ppr2samba.8.html">the ppr2samba(8) man page</ulink>.
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Identifying Users</Title>
+<sect1>
+<title>Identifying Users</title>
 
-<Para>
+<para>
 It is often necessary to identify the user who submitted a job.  In the case
 of
 a printer which is shared by may users, a banner page giving the user's name may
@@ -488,14 +490,14 @@ user
 of each job.  When it is desired to restrict printing privledges or to charge
 for
 printing, passwords may be in order.
-</Para>
+</para>
 
-<Para>
-Because <Application>PPR</Application> accepts print jobs from many different kinds of computer systems it
+<para>
+Because <application>PPR</application> accepts print jobs from many different kinds of computer systems it
 employs several techniques for determining and verifying the identity of users.
-Basically, <Application>PPR</Application> has two user validation modes.  The first is called system
-validation mode.  In system validation mode, <Application>PPR</Application> assumes that since the user
-gained access to the system and managed to execute <Command>ppr</Command> he must be
+Basically, <application>PPR</application> has two user validation modes.  The first is called system
+validation mode.  In system validation mode, <application>PPR</application> assumes that since the user
+gained access to the system and managed to execute <command>ppr</command> he must be
 authorized.  In system validation mode security efforts are concentrated on
 preventing the user from disguising his identity to avoid printing charges.  The
 other validation mode is authorization code validation mode.  In that mode, an
@@ -503,449 +505,449 @@ authorization code (password) is embedded in the job as a PostScript comment or
 communicated using a special protocol.  Such a password scheme is advisable when
 the jobs are arriving over an unsecured channel, such as an AppleTalk or LAN
 Manager network.
-</Para>
+</para>
 
-<Para>The means by which the user name is determined depends on the
+<para>The means by which the user name is determined depends on the
 validation mode. In system validation mode, it is the user name of the user
-who invoked <Command>ppr</Command>, unless the user is
-<Literal>ppr</Literal>, <Literal>root</Literal>, or is listed in
-<Filename>/etc/ppr/acl/pprprox.allow</Filename>.  These are priveledged
-users who may accept jobs over the network on behalf of remote users.</Para>
+who invoked <command>ppr</command>, unless the user is
+<literal>ppr</literal>, <literal>root</literal>, or is listed in
+<filename>/etc/ppr/acl/pprprox.allow</filename>.  These are priveledged
+users who may accept jobs over the network on behalf of remote users.</para>
 
-<Para>When a privledged user is submitting a job on behalf of another, the name may
-be supplied with <Command>ppr</Command>'s <Option>-f</Option> switch.  A privledged user may also use the
-<Option>-R for</Option> switch to indicate that
-<Literal>%%For:</Literal> lines in the
+<para>When a privledged user is submitting a job on behalf of another, the name may
+be supplied with <command>ppr</command>'s <option>-f</option> switch.  A privledged user may also use the
+<option>-R for</option> switch to indicate that
+<literal>%%For:</literal> lines in the
 input file are to be scanned for the user name.  Of course, if the privledged
 user employs none of these options then the job will be identified as belonging
 to the privledged user who submitted it.
-</Para>
+</para>
 
-<Para>The name that the priveledged user supplies with the
-<Option>-f</Option> switch will often be a 'real name' such as "Joseph
+<para>The name that the priveledged user supplies with the
+<option>-f</option> switch will often be a 'real name' such as "Joseph
 Andrews".  If printer charge accounts use a shorter name such as
-<Literal>jandrews</Literal> then the <Option>--charge-to</Option> option
+<literal>jandrews</literal> then the <option>--charge-to</option> option
 will be used to indicate that name.  In that case, the privledged user might
-invoke <Command>ppr</Command> like this:</Para>
+invoke <command>ppr</command> like this:</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppr -d thatprn -f "Joseph Andrews" --charge-to jandrews
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 There must also be some mechanism to make sure that a user can't delete another
 user's jobs.  For that reason it is necessary to unambiguously identify each
 remote user from which a privledged user accepts jobs.  The privledged user
-uses the <Option>-X</Option> switch to inform <Command>ppr</Command> of this identification.  So, the
+uses the <option>-X</option> switch to inform <command>ppr</command> of this identification.  So, the
 command above would become:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppr -d thatprn -f "Joseph Andrews" --charge-to jandrews -X jandrews@somehost.someorg.org
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>This will allow <Application>PPR</Application> to subsequently
+<para>This will allow <application>PPR</application> to subsequently
 distinguish between identically named users on different hosts without
 choking up the queue listings and banner pages with a level of detail which
-is generally unnecessary.  The <Option>-X</Option> switch is often referred
-to as the "proxy-for switch" for reasons which I hope are obvious.</Para>
+is generally unnecessary.  The <option>-X</option> switch is often referred
+to as the "proxy-for switch" for reasons which I hope are obvious.</para>
 
-<Para>In authorization code validation mode, the user name is the one
-specified in the PostScript <Literal>%%For:</Literal> line, or if the
-<Literal>%%For:</Literal> line is absent, it is the name specified with the
-<Option>-f</Option> switch.  If both are absent, it is the name of the user
-who invoked <Command>ppr</Command>.  In authorization code validation mode,
+<para>In authorization code validation mode, the user name is the one
+specified in the PostScript <literal>%%For:</literal> line, or if the
+<literal>%%For:</literal> line is absent, it is the name specified with the
+<option>-f</option> switch.  If both are absent, it is the name of the user
+who invoked <command>ppr</command>.  In authorization code validation mode,
 the document must contain a PostScript comment with the correct
 authorization code.  If it does not, the job will be canceled and the user
-will be informed.</Para>
+will be informed.</para>
 
-<Para>
+<para>
 The use name and authorization code may be specified like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 %%For: smith
 %TCHCTAuthCode: abr9yg
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-Authorization code validation mode is selected with <Command>ppr</Command>'s
-<Option>-a</Option> switch.
-</Para>
+<para>
+Authorization code validation mode is selected with <command>ppr</command>'s
+<option>-a</option> switch.
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Banner and Trailer Pages</Title>
+<sect1>
+<title>Banner and Trailer Pages</title>
 
-<Para>
+<para>
 When many people will be using a printer it is sometimes desirable to
 identify each print job with an extra page on which appears the name of the
 person who sent it as well as other information such as the name of the
-application which generated it and a job title.  <Application>PPR</Application> is capable of printing
+application which generated it and a job title.  <application>PPR</application> is capable of printing
 banner pages as well as trailer pages.
-</Para>
+</para>
 
-<Para>
+<para>
 When a user submits a print job he may request or reject a banner page and
-request or reject a trailer page.  However <Application>PPR</Application> considers the user's request as
+request or reject a trailer page.  However <application>PPR</application> considers the user's request as
 a suggestion only, making its final descision based on the user's suggestion,
 and the configuration of the printer.
-</Para>
+</para>
 
-<Para>
+<para>
 If bins are defined for the printer, the suitability of the printer's mounted
 forms for printing banner pages is also a factor.  When printing a banner page,
-<Application>PPR</Application> will use the currently mounted medium with the highest suitability rating.
+<application>PPR</application> will use the currently mounted medium with the highest suitability rating.
 If all mounted media have a suitability rating of 1, no banner or trailer pages
-can be printed.  If bins are defined for the printer and media is mounted, <Application>PPR</Application>
+can be printed.  If bins are defined for the printer and media is mounted, <application>PPR</application>
 will adjust the size, shape, and character size of the banner page to suit the
 medium (paper type) being used.
-</Para>
+</para>
 
-<Para>
+<para>
 If no bins are defined, the banner page will be formated for 8.5 by 11 inch paper
 (or whatever "default medium =" is set to in the [internationalization] section
-if <Filename>/etc/ppr/ppr.conf</Filename>), but no attempt will be made to
+if <filename>/etc/ppr/ppr.conf</filename>), but no attempt will be made to
 select a specific input tray or to request a specific page size of the printer.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Printer Accounting</Title>
+<sect1>
+<title>Printer Accounting</title>
 
-<Sect2>
-<Title>Running Accounts</Title>
+<sect2>
+<title>Running Accounts</title>
 
-<Para>
+<para>
 [This section has not been written yet.]
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="printlog">
-<Title>Printer Use Logging</Title>
+<sect2 id="printlog">
+<title>Printer Use Logging</title>
 
-<Para>
-<Application>PPR</Application> can keep a running log of jobs printed.  To enable this logging, create
-an empty file <Filename>/var/spool/ppr/logs/printlog</Filename>.  One line will be appended
+<para>
+<application>PPR</application> can keep a running log of jobs printed.  To enable this logging, create
+an empty file <filename>/var/spool/ppr/logs/printlog</filename>.  One line will be appended
 to this file for each job which is successfully printed.
-</Para>
+</para>
 
-<Para>
+<para>
 Note:  prior to version 1.30, the printlog file format was different.  Two
 digits, representing the seconds were added to the time stamp (in the first
 field). Also, fields 5, 6, 7, and 9 were inserted between existing fields and
 field 11 was added at the end.  The contents of the old fields did not change,
 only the positions of some of them did.  Therefore, existing software will
 have to be modified to use the new field numbering.
-</Para>
+</para>
 
-<Para>
-<Application>PPR</Application> releases since 1.30 have added new fields, so some of the fields at the end
-may not be present in log files created by old versions of <Application>PPR</Application>.  You should keep
+<para>
+<application>PPR</application> releases since 1.30 have added new fields, so some of the fields at the end
+may not be present in log files created by old versions of <application>PPR</application>.  You should keep
 this in mind when writing software that parses this log file.
-</Para>
+</para>
 
-<Para>
+<para>
 A typical print log entry looks like this:
 
-<Screen>
+<screen>
 19961115131401,rotate-1375.0(mouse),chipmunk,"David Chappell",chappell,"",7,1,2,166,30.12,0.00,-1,80123,2
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 The meanings of the fields in the above log line is as follows:
 
-<ItemizedList>
+<itemizedlist>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 1st field is the date and time at which the job was submitted.  In
 this case the date is November 15th, 1996.  The time is 1:14pm.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 2nd field is the job id.  This job was submitted to the group
-called <Literal>rotate</Literal>.
-</Para>
-</ListItem>
+called <literal>rotate</literal>.
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 3rd field is the printer it was printed on.  This job was printed on
-the printer named <Literal>chipmunk</Literal> which is presumably a member of the group
-<Literal>rotate</Literal>.
-</Para>
-</ListItem>
+the printer named <literal>chipmunk</literal> which is presumably a member of the group
+<literal>rotate</literal>.
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 4th field is the name of the person who printed it.  This is the
 name as it appeared in the queue listing and on banner pages.  This is a
 quoted field.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
-The 5th field is the name of the Unix user who invoked <Command>ppr</Command> to
+<listitem>
+<para>
+The 5th field is the name of the Unix user who invoked <command>ppr</command> to
 submit the job.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
-The 6th field is the argument to <Command>ppr</Command>'s <Option>-X</Option> switch, if it was
+<listitem>
+<para>
+The 6th field is the argument to <command>ppr</command>'s <option>-X</option> switch, if it was
 used.  In this case it wasn't used, so the field contains a string of
 zero length.  This is a quoted field.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 7th field is the number of logical pages in the job.  This ought
-to be the number of <Literal>%%Page:</Literal> comments in the PostScript
+to be the number of <literal>%%Page:</literal> comments in the PostScript
 file.  If the number of pages is unknown this field will contain the value -1.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 8th field is the number of sheets of paper used.  This job was
 printed 4-Up in duplex mode so only one sheet was used.  If 5 copies had
 been printed, this number would have been 5.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 9th field is the number of actual pages (sides) printed.  Since this
 job prints four reduced-size pages to an actual page, this field is 2.  If
 5 copies had been printed, this field would have contained a 10.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 10th field is the number of seconds which elapsed between the time
 the job was queued and the time printing was completed.  (To be more precise,
-the interval between when the program <Command>ppr</Command> was invoked and the time
-<Command>pprdrv</Command> wrote the log entry.)  This job was finished two minutes and 46
+the interval between when the program <command>ppr</command> was invoked and the time
+<command>pprdrv</command> wrote the log entry.)  This job was finished two minutes and 46
 seconds after it entered the queue.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
-The 11th field is the number of seconds between the time <Command>pprdrv</Command>
+<listitem>
+<para>
+The 11th field is the number of seconds between the time <command>pprdrv</command>
 started up and the time if wrote the log entry.  It is expressed in seconds
 and hundredths of a second.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 12th field shows the amount of money charged.  This is a fixed point number
 with two digits after the decimal point.  No monetary unit is indicated.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 13th field shows the number of sides the printer says it printed.
 This number will likely be obtained though HP PJL.  Note that at this time,
 the value in this field is not used to compute the charge in the 12th field.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 14th field reports the number of pages the printer claimed to have
 printed over its lifetime.  This field is -1 if the number was not retrieved.
 An attempt to retrieve it will only be made if the printer's configuration
-file contains a <Literal>PageCountQuery:</Literal> line which enables this feature and the
-<Option>feedback</Option> setting is <Literal>true</Literal>.  When this feature is enabled, the
+file contains a <literal>PageCountQuery:</literal> line which enables this feature and the
+<option>feedback</option> setting is <literal>true</literal>.  When this feature is enabled, the
 page count is fetched just after printing the banner page and just before
 printing the job itself.  If printing is sucessful, the resulting value will
 ultimately be logged in the 14th field.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
+<listitem>
 
-<Para>The 15th field is meaningful only if the value in the 14th field is
+<para>The 15th field is meaningful only if the value in the 14th field is
 not -1.  Once the job has been printed, but before a trailer page is
 printed, the page count query is repeated.  If the query is sucessful, then
 the difference between the before and after page counts is logged in this
 field. If the query is not performed or is not sucessful, then a -1 is
 loggged in this field.  See the discussion of the
-<Literal>PageCountQuery:</Literal> line in <XRef linkend="printer-config"/>
+<literal>PageCountQuery:</literal> line in <xref linkend="printer-config"/>
 for a discussion of why the value logged in this field may not accurately
-reflect the number of pages printed.</Para>
+reflect the number of pages printed.</para>
 
-</ListItem>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 16th field is the size of the PostScript job in bytes.  If the input file
 was PostScript, then this is the size of the input file.  If the job had to be
 converted to PostScript, then this is the size of the PostScript output of the
 filter.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 17th field is the number of bytes that were sent to the printer in order to
 print this job.  This number may be significantly greater than the number in
 field 16.  For example, it may have been necessary to print multiple copies by
-sending the job several times or <Application>PPR</Application> may have inserted fonts into the job.
-</Para>
-</ListItem>
+sending the job several times or <application>PPR</application> may have inserted fonts into the job.
+</para>
+</listitem>
 
-<ListItem>
-<Para>
+<listitem>
+<para>
 The 18th field is the title of the job.  If the job had no title, then the name
 of the input file is used.  If there was no input file (such as if the job was
 read from stdin), then this field will be blank.  This is a quoted field.
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-</ItemizedList>
-</Para>
+</itemizedlist>
+</para>
 
-<Para>
+<para>
 If left uncontrolled, the printlog file will grow indefinitely, so steps should
 be taken to truncate it regularly.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>User Notification</Title>
+<sect1>
+<title>User Notification</title>
 
-<Para>
+<para>
 After a job has been printed, an attempt is made to inform the user.  The user
 is also informed if a job is rejected, arrested, or canceled.  The agent which
 performs the actual communication with the user is called a responder.  A
 responder is a small program, generally a shell script, found in the
-<Filename class="Directory">/usr/ppr/responders/</Filename> directory.  No one responder will be appropriate
+<filename class="Directory">/usr/ppr/responders/</filename> directory.  No one responder will be appropriate
 under all circumstances.  For instance, different responders are used to send
 message to Unix shell users and Macintosh clients.
-</Para>
+</para>
 
-<Para>
-The responder to use is chosen when <Command>ppr</Command> is invoked.  It is chosen with the
-<Option>-r</Option> switch. If no  <Option>-r</Option> switch is used, the default responder
-<Literal>write</Literal> is
-used.  If you wish to suppress user notification you should use the <Option>-m
-none</Option>
+<para>
+The responder to use is chosen when <command>ppr</command> is invoked.  It is chosen with the
+<option>-r</option> switch. If no  <option>-r</option> switch is used, the default responder
+<literal>write</literal> is
+used.  If you wish to suppress user notification you should use the <option>-m
+none</option>
 switch.
-</Para>
+</para>
 
-<Para> Among its parameters the responder program is given an address to
+<para> Among its parameters the responder program is given an address to
 send the message to.  The correct format for the address depends on the
-responder.  For example, for the responder <Literal>write</Literal> it is
-simply a Unix user name.  For the responder <Literal>mail</Literal> is it an
-electronic mail address.  For the responder <Literal>atalk</Literal> it is
+responder.  For example, for the responder <literal>write</literal> it is
+simply a Unix user name.  For the responder <literal>mail</literal> is it an
+electronic mail address.  For the responder <literal>atalk</literal> it is
 an AppleTalk network and node number seperated by a colon. The address
-should be specified with the <Option>-r</Option> switch when
-<Command>ppr</Command> is invoked. If the <Option>-r</Option> switch is
+should be specified with the <option>-r</option> switch when
+<command>ppr</command> is invoked. If the <option>-r</option> switch is
 ommitted, the default address, the name of the user who is invoking ppr will
 be used.  This address is suitable for the default responder,
-<Literal>write</Literal>.  A list of the supplied responders may be found in
-the <ULink url="../refman/ppr.1.html">ppr(1) man page</ULink> in the section
-which describes the <Option>-m</Option> switch. Instructions for writing a
-responder are found in Appendix <XRef linkend="responders"/>. </Para>
+<literal>write</literal>.  A list of the supplied responders may be found in
+the <ulink url="../refman/ppr.1.html">ppr(1) man page</ulink> in the section
+which describes the <option>-m</option> switch. Instructions for writing a
+responder are found in Appendix <xref linkend="responders"/>. </para>
 
-<Para>
-Additional responder options may be specified with <Command>ppr</Command>'s
-<Option>--responder-options</Option> switch.  These options are a space separated list of
-name=value pairs.  If no <Option>--responder-options</Option> switch is used then the list
+<para>
+Additional responder options may be specified with <command>ppr</command>'s
+<option>--responder-options</option> switch.  These options are a space separated list of
+name=value pairs.  If no <option>--responder-options</option> switch is used then the list
 will be empty.
-</Para>
+</para>
 
-<Para>
+<para>
 You can change the default responder, responder address, and responder options
-by setting the environment variables <Application>PPR</Application>_RESPONDER, <Application>PPR</Application>_RESPONDER_ADDRESS, and
-<Application>PPR</Application>_RESPONDER_OPTIONS respectively.  For example, if you are using X-Windows,
+by setting the environment variables <application>PPR</application>_RESPONDER, <application>PPR</application>_RESPONDER_ADDRESS, and
+<application>PPR</application>_RESPONDER_OPTIONS respectively.  For example, if you are using X-Windows,
 you might want to add the following lines to your
-<Filename>.xsession</Filename> file:
-</Para>
+<filename>.xsession</filename> file:
+</para>
 
-<Para>
+<para>
 
-<Screen>
-# Authorize the <Application>PPR</Application> responder:
+<screen>
+# Authorize the <application>PPR</application> responder:
 /usr/ppr/bin/ppr-xgrant
 
 # Make the xwin responder the default:
-<Application>PPR</Application>_RESPONDER=xwin
-<Application>PPR</Application>_RESPONDER_ADDRESS=$DISPLAY
-export <Application>PPR</Application>_RESPONDER <Application>PPR</Application>_RESPONDER_ADDRESS
-</Screen>
+<application>PPR</application>_RESPONDER=xwin
+<application>PPR</application>_RESPONDER_ADDRESS=$DISPLAY
+export <application>PPR</application>_RESPONDER <application>PPR</application>_RESPONDER_ADDRESS
+</screen>
 
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1 id="progress-reporting">
-<Title>Progress Reporting</Title>
+<sect1 id="progress-reporting">
+<title>Progress Reporting</title>
 
-<Para>
-While a job is being printed, <Application>PPR</Application> queue listings will show how far along it
+<para>
+While a job is being printed, <application>PPR</application> queue listings will show how far along it
 is.  Up to three figures are reported.  The first is the percentage of the file
 which has been transmitted, the second is the number of the page which is
 currently being transmitted (an ordinal with the first page transmitted
 being one), the third is the number of pages which the printer reports it
 has deposited in the output bin.  (The number of pages in the output bin
 will only be reported if the jobbreak method is "pjl" or "signal/pjl".)
-</Para>
+</para>
 
-<Para> The data which <Command>ppop</Command> uses to make these reports is
-deposited in the job's queue file by <Command>pprdrv</Command>.  It takes
-the form of a line that begins with <Literal>Progress:</Literal> which
-<Command>pprdrv</Command> appends to the queue file.  This line has three
+<para> The data which <command>ppop</command> uses to make these reports is
+deposited in the job's queue file by <command>pprdrv</command>.  It takes
+the form of a line that begins with <literal>Progress:</literal> which
+<command>pprdrv</command> appends to the queue file.  This line has three
 numbers on it.  The first is the number of bytes written so far.  The second
-is the number of <Literal>%%Pages:</Literal> comments written
+is the number of <literal>%%Pages:</literal> comments written
 so far. The third number is the number of pages which the printer says it
 has dropt into the output tray.  All three numbers are padded with leading
-zeros so that as they increase their length does not change. </Para>
+zeros so that as they increase their length does not change. </para>
 
-<Para>If the job is not printed sucessfully the first time, provided the
-<Literal>Progress:</Literal> line is still the last line in the file,
-<Command>pprdrv</Command> does not append a new line on the second and
+<para>If the job is not printed sucessfully the first time, provided the
+<literal>Progress:</literal> line is still the last line in the file,
+<command>pprdrv</command> does not append a new line on the second and
 subsequent attempts, rather it overwrites the old one.  If a queue file
-contains more than one <Literal>Progress:</Literal> line, only the last one
-should be accepted as correct.  Multiple <Literal>Progress:</Literal> lines
-will generally only be found if a <Literal>Reason:</Literal> <FOOTNOTE>
-<Para> A <Literal>Reason:</Literal> line is appended each time a job is
-arrested. </Para> </FOOTNOTE> line was appended after a
-<Literal>Progress:</Literal> line.</Para>
+contains more than one <literal>Progress:</literal> line, only the last one
+should be accepted as correct.  Multiple <literal>Progress:</literal> lines
+will generally only be found if a <literal>Reason:</literal> <footnote>
+<para> A <literal>Reason:</literal> line is appended each time a job is
+arrested. </para> </footnote> line was appended after a
+<literal>Progress:</literal> line.</para>
 
-<Para>
+<para>
 The percentage of the file transmitted, as reported by
-<Command>ppop</Command>, is obtained
+<command>ppop</command>, is obtained
 by dividing the number of bytes transmitted by the size of the origional
 PostScript file and multiplying the result by 100.  The origional PostScript
 file is the input file if it was PostScript or the output of the last filter in
@@ -958,167 +960,167 @@ result in a total transmission which is several times the size of the origional
 file.  Occasionally a job will be printed which has large unnecessary
 downloaded fonts.  If these are stript out the result will be that only a small
 amount, say 20% of the job will be transmitted.  If switches such as
-<Option>-s</Option> or <Option>-p</Option> are used to print only a portion of the job the total
+<option>-s</option> or <option>-p</option> are used to print only a portion of the job the total
 percentage printed will be reduced accordingly.  All of these circumstances are
 rare, however, so the total printed will almost always be within 5% of
 the origional file size.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1 id="user-name-display">
-<Title>PJL and User Name Display</Title>
+<sect1 id="user-name-display">
+<title>PJL and User Name Display</title>
 
-<Para>
+<para>
 If your printer and interface support it and you use a jobbreak method of
-<Literal>pjl</Literal> or <Literal>signal/pjl</Literal>, <Application>PPR</Application> will display the name of the user who
+<literal>pjl</literal> or <literal>signal/pjl</literal>, <application>PPR</application> will display the name of the user who
 submitted the job being printed on the printer's display panel.
-</Para>
+</para>
 
-<Para>
+<para>
 If you use PJL with a two-way communications channel to the printer, the printer
 will report back whenever it drops a page into the output tray.  These messages
 will be used to imcrease the detail of the progress information described in
-section <XRef linkend="progress-reporting"/>.
-</Para>
+section <xref linkend="progress-reporting"/>.
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1 id="media-handling">
-<Title>Media Handling</Title>
+<sect1 id="media-handling">
+<title>Media Handling</title>
 
-<Para>
+<para>
 Modern laser printers very often have multiple input trays.  At the same
 time, version 3.0 of the Document Structuring Convention describes a
 method whereby the type of medium required for each page in a job may be
 specified.
-</Para>
+</para>
 
-<Para>When a job enters the queue, <Application>PPR</Application> attempts
+<para>When a job enters the queue, <application>PPR</application> attempts
 to determine what media types are required to print it.  If the document
 contains comments which explicitly indicate this, that information is used. 
-If not, <Application>PPR</Application> assumes that only one type of medium
+If not, <application>PPR</application> assumes that only one type of medium
 is required and attempts to deduce what that is.  It starts with a default
 medium.  The default medium is defined by "default medium =" in the
-[internationalization] section of <Filename>/etc/ppr/ppr.conf</Filename>. 
+[internationalization] section of <filename>/etc/ppr/ppr.conf</filename>. 
 The default medium should be US Letter or A4. 
-<Application>PPR</Application> then looks for comments in the document setup
-section, such as <Literal>%%PageSize:</Literal> comments and invokations of
-the features <Literal>*MediaType</Literal>, <Literal>*MediaColor</Literal>,
-and <Literal>*MediaWeight</Literal> which would seem to indicate a
+<application>PPR</application> then looks for comments in the document setup
+section, such as <literal>%%PageSize:</literal> comments and invokations of
+the features <literal>*MediaType</literal>, <literal>*MediaColor</literal>,
+and <literal>*MediaWeight</literal> which would seem to indicate a
 different sort of medium. Each time one of these comments is encountered
-<Application>PPR</Application> revises it idea of what the required medium
-is like.</Para>
+<application>PPR</application> revises it idea of what the required medium
+is like.</para>
 
-<Para>Once the characteristics of all the requested media are determined,
-<Application>PPR</Application> attempts, for each one, to select a medium
+<para>Once the characteristics of all the requested media are determined,
+<application>PPR</application> attempts, for each one, to select a medium
 known to it that matches the requirements.  The list of known types is
-stored in the file <Filename>/etc/ppr/media.db</Filename>.  For each
-required medium type, <Application>PPR</Application> makes multiple passes
+stored in the file <filename>/etc/ppr/media.db</filename>.  For each
+required medium type, <application>PPR</application> makes multiple passes
 over the known media list, relaxing its standards each time until if finds a
-match.  If the proofmode is <Literal>NotifyMe</Literal> and <Application>PPR</Application>
+match.  If the proofmode is <literal>NotifyMe</literal> and <application>PPR</application>
 has to relax its standards more than a little, it will reject the job.  The
-list of known media types may be edited with the <Command>ppad
-media</Command> commands.</Para>
+list of known media types may be edited with the <command>ppad
+media</command> commands.</para>
 
-<Para>
+<para>
 For each printer the operator has the option of describing what known media type
 is available in each bin or of forgoing automatic media handling entirely.  The
-<Command>ppad bins</Command> series of commands tells <Application>PPR</Application> what input bins are available.  If the
-bin list is empty, <Application>PPR</Application> assumes that the printer can immediately print any job
+<command>ppad bins</command> series of commands tells <application>PPR</application> what input bins are available.  If the
+bin list is empty, <application>PPR</application> assumes that the printer can immediately print any job
 queued for it, regardless of what media are required.  If the bin list is not
-empty, <Application>PPR</Application> will not attempt to print a job until all the required media are
+empty, <application>PPR</application> will not attempt to print a job until all the required media are
 mounted on one or more bins.  In the case of a group, the job will be started on
 the first member of the group which has the required media in place.
-</Para>
+</para>
 
-<Para>The operator must indicate what type of medium is in each bin by using
-the <Command>ppop mount</Command> command.  The media currently mounted on
+<para>The operator must indicate what type of medium is in each bin by using
+the <command>ppop mount</command> command.  The media currently mounted on
 all the bins of a printer or of a group may be seen by using the
-<Command>ppop media</Command> command.  If a job is not being printed
+<command>ppop media</command> command.  If a job is not being printed
 because the required media are not mounted on any candidate printer, its
-queue status (as indicated by <Command>ppop list</Command>) will be "waiting
+queue status (as indicated by <command>ppop list</command>) will be "waiting
 for media".  A list of the required media will also be displayed.  Media
 handling is closely related to but not the same as automatic bin selection
-which is described in section <XRef
-linkend="automatic-bin-selection"/>.</Para>
+which is described in section <xref
+linkend="automatic-bin-selection"/>.</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Automatic Modification of Print Jobs</Title>
+<sect1>
+<title>Automatic Modification of Print Jobs</title>
 
-<Para>
-The <Application>PPR</Application> spooler has the ability to modify the print job by inserting PostScript
+<para>
+The <application>PPR</application> spooler has the ability to modify the print job by inserting PostScript
 code to turn on special printer features such as duplex printing, or to select the
 bin which contains the required paper.  Features or this sort are described in
 this section.
-</Para>
+</para>
 
-<Sect2>
-<Title>Inclusion of Feature Code</Title>
+<sect2>
+<title>Inclusion of Feature Code</title>
 
-<Para>When <Command>ppr</Command> is invoked, the user may specify the names
+<para>When <command>ppr</command> is invoked, the user may specify the names
 of printer features which should be invoked.  These features are specified
-with the <Option>-F</Option> switch. The names are those used in the
+with the <option>-F</option> switch. The names are those used in the
 printer's PPD file.  These are the same names as appear in the PPD file. 
-Here is an example: to print a file called <Filename>mydoc.test</Filename>
-on the printer <Literal>myprn</Literal> with duplex mode turned on, we would
-use this command:</Para>
+Here is an example: to print a file called <filename>mydoc.test</filename>
+on the printer <literal>myprn</literal> with duplex mode turned on, we would
+use this command:</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.test
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-The code for the features selected by <Option>-F</Option> switches is inserted in the
+<para>
+The code for the features selected by <option>-F</option> switches is inserted in the
 Document Setup Section of DSC conforming documents.  For documents which do
 not conform, the code is inserted at the begining of the document.  The code
 to insert is taken directly from the printer's PPD file.
-</Para>
+</para>
 
-<Para>
+<para>
 When inserted, the code is enclosed in
-<Literal>%%Begin(End)Feature:</Literal> comments.  When the spooler inserts
+<literal>%%Begin(End)Feature:</literal> comments.  When the spooler inserts
 duplex code, it brackets the duplex code with code to save and restore the
 current transform matrix since for at least some printers, the duplex code
 given in the PPD file seems to execute "initmatrix".  The two extra lines of
 bracketing code generated by the spooler end with the comment
-<Literal>%PPR</Literal>.  When the spooler inserts code requested with the
-<Option>-F</Option>
+<literal>%PPR</literal>.  When the spooler inserts code requested with the
+<option>-F</option>
 switch in a DSC conformant document, it inserts it at the top of the document
 setup section, right after the automatic bin selection code described in the
 next section, unless it is duplex code.  Duplex code is inserted at the very
 end of the document-setup section.  This is done to give it a better chance of
 overriding duplex setting code already in the document.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="automatic-bin-selection">
-<Title>Automatic Bin Selection</Title>
+<sect2 id="automatic-bin-selection">
+<title>Automatic Bin Selection</title>
 
-<Para>
+<para>
 Automatic bin selection is a feature which is closely related to media
-handling (see section <XRef linkend="media-handling"/>), but it
+handling (see section <xref linkend="media-handling"/>), but it
 is not the same since it may be disabled for any given job even if media
 handling is being used.  Automatic bin selection will only work if media
 handling is also used, that is, if the bin list for the printer is not empty.
-</Para>
+</para>
 
-<Para>
+<para>
 If a print job requires only one type of medium and automatic bin selection
 is in effect, then the spooler will insert code in the job to select the
 paper tray which contains the required medium. (Does automatic bin selection
 work for jobs with multiple media types?  Maybe, but it has not been well
 tested.)
-</Para>
+</para>
 
-<Para>
+<para>
 Since many documents already contains code which influences input tray selection,
 automatic tray selection is not always successful.  This is the strategy used:  In
 the case of non-conforming documents, the code is inserted at the begining of the
@@ -1130,51 +1132,51 @@ whether the bin select code the document already contains is properly commented.
 For example, it works better with Apple's LaserWriter 8 than with earlier versions
 of the LaserWriter driver.  LaserWriter 8 encloses the code which selects paper
 source and size in standard comments.  These comments allow the spooler to modify
-this code.  This is how <Application>PPR</Application> modifies the code: It removes any
-<Literal>*InputSlot</Literal> code
-and changes <Literal>*PageSize</Literal> code to equivelent
-<Literal>*PageRegion</Literal> code.  The spooler
+this code.  This is how <application>PPR</application> modifies the code: It removes any
+<literal>*InputSlot</literal> code
+and changes <literal>*PageSize</literal> code to equivelent
+<literal>*PageRegion</literal> code.  The spooler
 removes code by placing a percent sign and a space in front of each line,
 converting the code into comments.  It also changes the DSC comments it replaces
 into ordinary comments by placing a percent sign and space in front of each line.
 Thus, you can examine the spooler output and see what code it has replaced. (You
 can examine the spooler output by setting up a printer with the interface
-<Literal>dummy</Literal>. If you wish to know what code is being sent to a real printer, set up
+<literal>dummy</literal>. If you wish to know what code is being sent to a real printer, set up
 the dummy printer with the same options, including PPD file, bins, and mounted
 media.)
-</Para>
+</para>
 
-<Para>Combined with the automatic bin selection feature is the automatic
+<para>Combined with the automatic bin selection feature is the automatic
 autoswitch selection feature.  If the bin selected is named
-<Literal>Upper</Literal> or <Literal>Lower</Literal>, and there is another
-bin named <Literal>Lower</Literal> or <Literal>Upper</Literal>, the
+<literal>Upper</literal> or <literal>Lower</literal>, and there is another
+bin named <literal>Lower</literal> or <literal>Upper</literal>, the
 autoswitch selection feature comes into play.  If the bin with the opposite
 name has the same medium mounted, then the automatic tray switch feature is
 turned on using the code from the PPD file.  If the opposite bin has a
 different type of medium mounted, then the automatic tray switch feature is
 turned off using the code from the PPD file.  (The HP 4 series of printers
 do not seem to have a command to turn off the automatic tray switch feature.
-This should be regarded as a defect.)</Para>
+This should be regarded as a defect.)</para>
 
-<Para>
+<para>
 The automatic bin selection feature may be disabled by deleting all of the defined
-bins with the <Command>ppad bins delete</Command> command.  It may be suppressed for the current
-job with <Command>ppr</Command>'s <Option>-B false</Option> switch.
-</Para>
+bins with the <command>ppad bins delete</command> command.  It may be suppressed for the current
+job with <command>ppr</command>'s <option>-B false</option> switch.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Multiple Copies</Title>
+<sect2>
+<title>Multiple Copies</title>
 
-<Para>
+<para>
 The spooler can insert code to change the number of copies of a document
 which are printed.  You may ask to have this code inserted by using the
-<Option>-n</Option>
-switch when invoking <Command>ppr</Command>.
-</Para>
+<option>-n</option>
+switch when invoking <command>ppr</command>.
+</para>
 
-<Para>
+<para>
 If the document is DSC conforming, the code to
 select the number of copies is inserted at the end of the Document Setup
 Section.  If the document sets the number of copies, the code inserted by
@@ -1183,185 +1185,185 @@ a job sets the number of copies after the end of the Document Setup
 Section, this technique will not work.  (A document which defines the number
 of copies outside the Document Setup Section breaks the rules of DSC
 conformance.)
-</Para>
+</para>
 
-<Para>If a document does not have the DSC comments necessary to identify
+<para>If a document does not have the DSC comments necessary to identify
 the Document Setup Section, the code is inserted at the top of the document. 
 This code takes a different form from that inserted in a Document Setup
-Section: the code redefines <Command>showpage</Command> as a procedure which
-sets the number of copies before executing the real showpage.</Para>
+Section: the code redefines <command>showpage</command> as a procedure which
+sets the number of copies before executing the real showpage.</para>
 
-<Para>If you invoke ppr with the <Option>-n collate</Option> switch, then
-<Application>PPR</Application> will print collated copies.  It will do this
+<para>If you invoke ppr with the <option>-n collate</option> switch, then
+<application>PPR</application> will print collated copies.  It will do this
 by either sending the whole document multiple times, for non DSC conforming
 documents, or by sending only the pages multiple times, for DSC conforming
 documents.  The number of copies desired as well as collated copies may also
-be requested by means of a <Literal>%%Requirements:</Literal>
-comment in the document header if the <Option>-R copies</Option> switch
-was used when invoking <Command>ppr</Command>.</Para>
+be requested by means of a <literal>%%Requirements:</literal>
+comment in the document header if the <option>-R copies</option> switch
+was used when invoking <command>ppr</command>.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>N-Up Printing</Title>
+<sect2>
+<title>N-Up Printing</title>
 
-<Para><Application>PPR</Application> can insert code to cause several
+<para><application>PPR</application> can insert code to cause several
 virtual pages to be printed on one physical page, possibly reducing the size
 of the pages in order to do so. This feature may be invoked with the
-<Option>-N <Replaceable>n</Replaceable></Option> switch where
-<Replaceable>n</Replaceable> indicates the number of virtual pages to be put
-on each side of the physical page.</Para>
+<option>-N <replaceable>n</replaceable></option> switch where
+<replaceable>n</replaceable> indicates the number of virtual pages to be put
+on each side of the physical page.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Signature Printing</Title>
+<sect2>
+<title>Signature Printing</title>
 
-<Para>A signature is a booklet-like unit of a book which is sewn or glued
+<para>A signature is a booklet-like unit of a book which is sewn or glued
 together with other signatures to make a book complete.  A signature is
 printed in such a way that the sheets of paper on which it is printed may be
 stacked and folded in the center.  When they are thus folded and glued,
 stapled, or sewn at the fold, the pages will be in the correct order. 
-<Application>PPR</Application> can print a DSC conforming document as one or
+<application>PPR</application> can print a DSC conforming document as one or
 more signatures.  2-Up mode is used to accomplish this. The pages are
 re-ordered before they are sent to the printer.  It is necessary to send the
 pages to the printer out of sequence so that when the signatures are folded
 the pages will be in the correct order. Signiture printing is invoked with
-the <Option>-s</Option> switch.  This switch takes an argument which is the
+the <option>-s</option> switch.  This switch takes an argument which is the
 number of sheets of paper which should be used to make each signature.  This
 switch also turns on 2-Up mode and duplex mode.  The number of pages which
-will fit in a signature is the number of sheets multiplied by 4.</Para>
+will fit in a signature is the number of sheets multiplied by 4.</para>
 
-<Para>Signiture printing works best with a duplex printer, however it is
+<para>Signiture printing works best with a duplex printer, however it is
 possible to print signatures without a duplex-capable printer.  The
-<Option>-s fronts</Option> and <Option>-s backs</Option> switches make this
-possible.  It will be necessary to submit the job once, with the <Option>-s
-fronts</Option> switch (in addition to the <Option>-s</Option> switch which
+<option>-s fronts</option> and <option>-s backs</option> switches make this
+possible.  It will be necessary to submit the job once, with the <option>-s
+fronts</option> switch (in addition to the <option>-s</option> switch which
 specifies the number of sheets); take the paper from the output tray, turn
 it around, and put it back in the input tray, and submit the job again with
-the <Option>-s backs</Option> switch.  This works, but it is tricky since
+the <option>-s backs</option> switch.  This works, but it is tricky since
 you must first make sure no one else is using the printer, and figuring out
-which way to insert the paper the second time is not easy.</Para>
+which way to insert the paper the second time is not easy.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Booklet Printing</Title>
+<sect2>
+<title>Booklet Printing</title>
 
-<Para>Booklet printing is just like signature printing, except
-<Application>PPR</Application> automatically selects the minimum number of
+<para>Booklet printing is just like signature printing, except
+<application>PPR</application> automatically selects the minimum number of
 signature sheets needed to print the entire document in one booklet. 
-Booklet mode is invoked with the <Option>-s booklet</Option> switch.  As
+Booklet mode is invoked with the <option>-s booklet</option> switch.  As
 with signature mode, booklets can be printed on a simplex printer by passing
-the paper through twice the first time with the <Option>-s fronts</Option>
-switch and the second time with the <Option>-s backs</Option> switch.</Para>
+the paper through twice the first time with the <option>-s fronts</option>
+switch and the second time with the <option>-s backs</option> switch.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Page Reversal</Title>
+<sect2>
+<title>Page Reversal</title>
 
-<Para>
-<Application>PPR</Application> can often re-order the pages of a document so that they will stack in the
+<para>
+<application>PPR</application> can often re-order the pages of a document so that they will stack in the
 proper order in a printer's face-up output tray.  In the case of duplex and N-Up
-printing, <Application>PPR</Application> will work back and forth through the document and will generate
+printing, <application>PPR</application> will work back and forth through the document and will generate
 blank pages where necessary in order to achieve correctly stacked output.  The
-desired output order for a printer may be specified with the <Command>ppad
-outputorder</Command>
+desired output order for a printer may be specified with the <command>ppad
+outputorder</command>
 command.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Automatic Resource Downloading</Title>
+<sect2>
+<title>Automatic Resource Downloading</title>
 
-<Para>Whenever <Application>PPR</Application> prints a job which contains
-<Literal>%%Include:</Literal> comments it attempts to insert
+<para>Whenever <application>PPR</application> prints a job which contains
+<literal>%%Include:</literal> comments it attempts to insert
 the resources requested.  There are three sources of resources available to
-<Application>PPR</Application>.</Para>
+<application>PPR</application>.</para>
 
-<Para>One source is the resource library in the directory <Filename
-class="Directory">/usr/ppr/cache/</Filename>.  These several procedure sets
-used by <Application>PPR</Application>, a few vendor's procedure sets which
+<para>One source is the resource library in the directory <filename
+class="Directory">/usr/ppr/cache/</filename>.  These several procedure sets
+used by <application>PPR</application>, a few vendor's procedure sets which
 are included because there are broken versions out there which we don't want
-corrupting the cache, and a few patched vendor procedure sets.</Para>
+corrupting the cache, and a few patched vendor procedure sets.</para>
 
-<Para>
+<para>
 The second source is the font index.
 [This section has not been written yet.]
-</Para>
+</para>
 
-<Para>The third source is the resource cache in <Filename
-class="Directory">/var/spool/ppr/cache/</Filename>. Whenever
-<Application>PPR</Application> processes a job with an resource it does not
+<para>The third source is the resource cache in <filename
+class="Directory">/var/spool/ppr/cache/</filename>. Whenever
+<application>PPR</application> processes a job with an resource it does not
 have in the cache, it adds a copy of it to the cache.  The purpose of this
-is to reduce resource download time in the future.  <Application>LaserWriter
-8</Application> will generally refrain from downloading a font if the
-<Application>PPR</Application> <Application>Macintosh printer
-server</Application> <Command>papsrv</Command> informs it that the font is
+is to reduce resource download time in the future.  <application>LaserWriter
+8</application> will generally refrain from downloading a font if the
+<application>PPR</application> <application>Macintosh printer
+server</application> <command>papsrv</command> informs it that the font is
 already in the printer.  (Of course, it is in the printer, it is in the
 cache, but from the viewpoint of the Macintosh client it is the same thing.)
-Also, some PostScript drivers for <SystemItem class="OSname">Microsoft
-Windows</SystemItem> allow the downloading of the procedure set to be turned
+Also, some PostScript drivers for <systemitem class="OSname">Microsoft
+Windows</systemitem> allow the downloading of the procedure set to be turned
 off.  As long as one job has been printed with it turned on, the procedure
 set will be in the cache and if downloading is subsequently turned off, the
-<SystemItem class="OSname">MS-Windows</SystemItem> driver will include a
+<systemitem class="OSname">MS-Windows</systemitem> driver will include a
 comment in each document telling where to re-insert the procedure set from
-the cache.</Para>
+the cache.</para>
 
-<Sect3 id="truetype-download">
-<Title>TrueType Font Downloading</Title>
+<sect3 id="truetype-download">
+<title>TrueType Font Downloading</title>
 
-<Para>
+<para>
 [This section has not been written yet.]
-</Para>
+</para>
 
-</Sect3>
+</sect3>
 
-<Sect3>
-<Title>Font Substitution</Title>
+<sect3>
+<title>Font Substitution</title>
 
-<Para>Sometimes a font manufacturer changes the name of a font.  For
-example, MonoType's font <Literal>MBembo</Literal> became
-<Literal>Bembo</Literal>.  At other times, fonts within the same family will
+<para>Sometimes a font manufacturer changes the name of a font.  For
+example, MonoType's font <literal>MBembo</literal> became
+<literal>Bembo</literal>.  At other times, fonts within the same family will
 differ only in width.  In that case, a reasonable substitute may be achieved
-by adjusting the width of the substitute font.</Para>
+by adjusting the width of the substitute font.</para>
 
-<Para>If the required fonts are called out with DSC comments, then
-<Application>PPR</Application> can automatically substitutes fonts.  The
-file <Filename>fontsub.conf</Filename> is consulted to help locate a
-suitable substitute font.</Para>
+<para>If the required fonts are called out with DSC comments, then
+<application>PPR</application> can automatically substitutes fonts.  The
+file <filename>fontsub.conf</filename> is consulted to help locate a
+suitable substitute font.</para>
 
-<Para>
-The format of <Filename>fontsub.conf</Filename>
-is described in Appendex <XRef linkend="fontsub"/>.
-</Para>
+<para>
+The format of <filename>fontsub.conf</filename>
+is described in Appendex <xref linkend="fontsub"/>.
+</para>
 
-<Para>
+<para>
 The substitution file will only be consulted if the ProofMode is
-<Literal>Substitute</Literal>.  The ProofMode is Substitute by default.  It can be changed
-by a <Literal>%%ProofMode:</Literal> line in the document comments or by
-<Command>ppr</Command>'s <Option>-P</Option> switch.
-</Para>
+<literal>Substitute</literal>.  The ProofMode is Substitute by default.  It can be changed
+by a <literal>%%ProofMode:</literal> line in the document comments or by
+<command>ppr</command>'s <option>-P</option> switch.
+</para>
 
-</Sect3>
+</sect3>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1 id="interfaces1">
-<Title>Printer Interface Programs</Title>
+<sect1 id="interfaces1">
+<title>Printer Interface Programs</title>
 
-<Para>
-The <Command>pprdrv</Command> communicates with the printer through an interface program.
+<para>
+The <command>pprdrv</command> communicates with the printer through an interface program.
 An interface program must read the PostScript code from stdin and send it to
 the printer.  If the interface receives messages from the printer it must copy
 them to stdout.
-</Para>
+</para>
 
-<Para>
+<para>
 An interface may also have a r&ocirc;le in indicating to the printer were
 one PostScript job begins and another ends.  For example, if a flag page is
 printed before the job it is necessary that the PostScript interpreter be reset
@@ -1374,15 +1376,15 @@ the job, and since it has know way of knowing when the job ends and the banner
 page begins it will throw away the flag page too.  Even if the job prints
 correctly, if it leaves the device space transformed or standard commands
 redefined, the flag page may not print correctly.
-</Para>
+</para>
 
-<Para>The method used to indicate job boundaries to the printer is known as
+<para>The method used to indicate job boundaries to the printer is known as
 the job break method.  The job break method for a printer may be set with
-the <Command>ppad jobbreak</Command> command.  There are four basic
-catagories of job break methodes:</Para>
+the <command>ppad jobbreak</command> command.  There are four basic
+catagories of job break methodes:</para>
 
-<Para>There are two unsatisfactory jobbreak methods provided for testing
-purposes.  One is a job break method <Literal>none</Literal>.  As its name
+<para>There are two unsatisfactory jobbreak methods provided for testing
+purposes.  One is a job break method <literal>none</literal>.  As its name
 implies, it does not attempt to indicate job boundaries.  It will seldom if
 ever prove satisfactory.  On a serial connexion, for example, the printer
 will be unable to distinguish sucessive jobs.  With some interfaces it may
@@ -1390,23 +1392,23 @@ work because the very act of starting the interface indicates the start of a
 new job.  This may be true of interfaces which invoke Ghostscript or
 interfaces which make network connexions using certain protocols such as
 AppleTalk. However even in these cases, the job break method
-<Literal>none</Literal> will cause problems if banner or trailer pages are
-printed or if <Application>PPR</Application> elects to print multiple copies
-of the job by sending the whole job multiple times.</Para>
+<literal>none</literal> will cause problems if banner or trailer pages are
+printed or if <application>PPR</application> elects to print multiple copies
+of the job by sending the whole job multiple times.</para>
 
-<Para>The other unsatisfactory method is called
-<Literal>save/restore</Literal>.  This is only a slight improvement on
-<Literal>none</Literal>.  When using the <Literal>save/restore</Literal> job
-break method <Command>pprdrv</Command> brackets each job with the PostScript
-commands <Command>save</Command> and <Command>restore</Command>.</Para>
+<para>The other unsatisfactory method is called
+<literal>save/restore</literal>.  This is only a slight improvement on
+<literal>none</literal>.  When using the <literal>save/restore</literal> job
+break method <command>pprdrv</command> brackets each job with the PostScript
+commands <command>save</command> and <command>restore</command>.</para>
 
-<Para>The job break methods in the second catagory employ the control
+<para>The job break methods in the second catagory employ the control
 character control-d (character code 4) to separate jobs.  If the method is
-<Literal>control-d</Literal>, <Command>pprdrv</Command> sends a control-D to
+<literal>control-d</literal>, <command>pprdrv</command> sends a control-D to
 terminate any old job which may be lingering in the printer and then sends
-the jobs one at a time, ending each job with a control-D.</Para>
+the jobs one at a time, ending each job with a control-D.</para>
 
-<Para>When a PostScript printer receives a control-D over a serial interface
+<para>When a PostScript printer receives a control-D over a serial interface
 or, in the case of HP printers with JetDirect cards, over a TCP/IP
 interface, it finishes processing the job and then responds with a
 control-D.  Thus when all the jobs have been completed, the number of
@@ -1417,901 +1419,901 @@ doing can it know that the jobs have been completely processed and that it
 has received all of the messages (such as PostScript error notifications)
 that are coming.  If the communictions channel is in fact one-way it will
 never receive any control-D's and will wait forever. For this reason it is
-necessary to set the queue up corectly with the <Command>ppad
-feedback</Command> command.  See the <ULink
-url="../refman/ppad.8.html">ppad(8) man page</ULink> for further information
-on this topic.</Para>
+necessary to set the queue up corectly with the <command>ppad
+feedback</command> command.  See the <ulink
+url="../refman/ppad.8.html">ppad(8) man page</ulink> for further information
+on this topic.</para>
 
-<Para>The job break method <Literal>pjl</Literal> is the same as
-<Literal>control-d</Literal> except that it adds HP PJL commands to display
+<para>The job break method <literal>pjl</literal> is the same as
+<literal>control-d</literal> except that it adds HP PJL commands to display
 the user name on the printer's message panel and to turn on reporting of
-page completion (see sections <XRef linkend="user-name-display"/> and <XRef
-linkend="progress-reporting"/>).</Para>
+page completion (see sections <xref linkend="user-name-display"/> and <xref
+linkend="progress-reporting"/>).</para>
 
-<Para>Two more job break methods depend on the interface to indicate job
-breaks to the printer.  These are <Literal>signal</Literal> and
-<Literal>signal/pjl</Literal>.  Whenever a job break is required,
-<Command>pprdrv</Command> finishes sending the current job to the interface
+<para>Two more job break methods depend on the interface to indicate job
+breaks to the printer.  These are <literal>signal</literal> and
+<literal>signal/pjl</literal>.  Whenever a job break is required,
+<command>pprdrv</command> finishes sending the current job to the interface
 and then sends the interace SIGUSR1.  When the interface receives SIGUSR1,
-it reads all it can from <Command>pprdrv</Command>, sends it to the printer
+it reads all it can from <command>pprdrv</command>, sends it to the printer
 and then indicates the job break to the printer.  When the printer has
 acknowledged the job break, the interface will send SIGUSR1 to
-<Command>pprdrv</Command>.  This method is implemented by the interface
-<Literal>atalk</Literal> which indicates the division between
+<command>pprdrv</command>.  This method is implemented by the interface
+<literal>atalk</literal> which indicates the division between
 jobs to the printer by means of a special feature of the AppleTalk Printer
-Access Protocol.</Para>
+Access Protocol.</para>
 
-<Para>The final job break method is <Literal>newinterface</Literal>.  When using this method,
-<Command>pprdrv</Command> runs the interface repeately, once for each actual print job or
-flag page.  This was used by the now obsolete <Literal>gs*</Literal> interfaces. 
+<para>The final job break method is <literal>newinterface</literal>.  When using this method,
+<command>pprdrv</command> runs the interface repeately, once for each actual print job or
+flag page.  This was used by the now obsolete <literal>gs*</literal> interfaces. 
 It may be used in the future to support AppSocket.  It will also work with
-<Literal>atalk</Literal>, but it is more effecient and reliable to use
-<Literal>signal</Literal></Para>
+<literal>atalk</literal>, but it is more effecient and reliable to use
+<literal>signal</literal></para>
 
-<Para>
+<para>
 Detailed technical specifications for a printer interface can be found in
-Appendix <XRef linkend="interfaces2"/>.
-</Para>
+Appendix <xref linkend="interfaces2"/>.
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Printer Fault Handling</Title>
+<sect1>
+<title>Printer Fault Handling</title>
 
-<Para>
-This topic has already been touched on in section <XRef
+<para>
+This topic has already been touched on in section <xref
 linkend="printer-errors"/>.  It is the responsibility of the interface program to
 connect to the printer, accept the data and send it to the printer.  If it cannot
 accomplish its job it will exit with a code which indicates the reason for the
 failure.  It will generally also append a diagnostic message to the printer's
 alert log.
-</Para>
+</para>
 
-<Para>
+<para>
 One of these codes is EXIT_PRNERR.  This code indicates that an error has
 occured which prevents effective communication with the printer, but the error
-is of a sort that may clear up.  The first time such an error occurs, <Command>pprd</Command>
+is of a sort that may clear up.  The first time such an error occurs, <command>pprd</command>
 will wait for 10 seconds and then try printing again.  After each failure the
 delay time is increased by 10 seconds until it reaches 10 minutes after which
 point it does not continue to increase.  Errors of this sort may result in
 alert message being sent to an operator.
-</Para>
+</para>
 
-<Para>
+<para>
 Another code is EXIT_PRNERR_NORETRY.  This code is similiar to the one
 above, but it is used for conditions which are unlikely to be self correcting.
 An invalid printer address or interface option is an example of such an error.
 These errors too may result in an alert message being sent to an operator.
-</Para>
+</para>
 
-<Para>
+<para>
 A third code is EXIT_SIGNAL.  An interface should terminate with this code
 if it catches the TERM signal.  When a printer is halted or a printing job is
-canceled, <Command>pprdrv</Command> sends SIGTERM in order to kill the interface.  An
+canceled, <command>pprdrv</command> sends SIGTERM in order to kill the interface.  An
 interface is not required to have a handler for this signal since the default
 action is to die, but if the interface has any special shutdown action it must
 take, it should catch this signal and then exit with the code EXIT_SIGNAL.
-</Para>
+</para>
 
-<Para>
+<para>
 A fourth code is EXIT_ENGAGED.  An interface should exit with this code if
 has good reason to believe that the printer is present and turned on but is
 busy printing a job from another computer or is off-line.  When an interface
-exits with this code, <Command>pprd</Command> delays for 60 seconds and then tries again.  No
+exits with this code, <command>pprd</command> delays for 60 seconds and then tries again.  No
 alert notice will be sent to the operator.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1 id="commentators">
-<Title>Commentators</Title>
+<sect1 id="commentators">
+<title>Commentators</title>
 
-<Para>Note: everything in this chapter will soon be obsolete.</Para>
+<para>Note: everything in this chapter will soon be obsolete.</para>
 
-<Para>
+<para>
 A commentator is a file or external program which is fed information which
-allows it to keep up a running commentary on the activities of <Application>PPR</Application> as they
+allows it to keep up a running commentary on the activities of <application>PPR</application> as they
 relate to a certain printer.
-</Para>
+</para>
 
-<Para>
+<para>
 A commentator may be activated full-time for a certain printer.  In this case,
 it will send messages whenever a selected event occurs on a specific printer
 queue regardless of whose job is being printed.
-</Para>
+</para>
 
-<Para>
+<para>
 In contrast, a user can ask for commentary at the time he submits a job.  The
 commentary messages will only be sent while that job is printing and no matter
 which printer it is printed on.
-</Para>
+</para>
 
-<Sect2>
-<Title>Activating a Full-Time Commentator</Title>
+<sect2>
+<title>Activating a Full-Time Commentator</title>
 
-<Para>
+<para>
 A full-time commentator may be activated by editing a printer's configuration
 file and adding a line like this one:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 Commentator: 5 audio yourpc.trincoll.edu:15009 "level=3 voice=male1"
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 Commentator: 15 samba yourpc ""
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>In the first example, whenever something interesting happens (what is
+<para>In the first example, whenever something interesting happens (what is
 interesting is defined by the number 5) the program
-<Filename>/usr/lib/ppr/commentators/audio</Filename> is invoked.  In the second example, the
+<filename>/usr/lib/ppr/commentators/audio</filename> is invoked.  In the second example, the
 number which descibes what the commentator wants to hear about is different.
 The commentator program is also different:
-<Filename>/usr/ppr/commentators/samba</Filename>
-will be invoked.  You may put as many <Literal>Commentator:</Literal> lines in a printer
+<filename>/usr/ppr/commentators/samba</filename>
+will be invoked.  You may put as many <literal>Commentator:</literal> lines in a printer
 configuration file as you wish.
-</Para>
+</para>
 
-<Para>
+<para>
 In these examples, the first parameter, (5 and 15 in the examples) is a
 bitmask which defines what we find interesting.  You should determine
 this value by adding together the values which stand for the types of
 events you are interested in.  The value 5 is formed by adding 1, for
 printer errors, and 4 for printer stalls.
-</Para>
+</para>
 
-<Para>
+<para>
 Here are the values which should be added together to form the first parameter:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<ItemizedList>
-<ListItem>
+<itemizedlist>
+<listitem>
 
-<Para>
+<para>
 COM_PRINTER_ERROR 1
 Printer status messages when are prefixed with "PrinterError: ".
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 COM_PRINTER_STATUS 2
 Other printer status messages.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 COM_STALL 4
 Printer is accepting data too slowly.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 COM_EXIT 8
-The printer driver program (<Command>pprdrv</Command>) has exited due to some unuasual circumstance.
+The printer driver program (<command>pprdrv</command>) has exited due to some unuasual circumstance.
 
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-</ItemizedList>
+</itemizedlist>
 
-</Para>
+</para>
 
-<Para>Whenever an even occurs and all of its categories to which it belongs
+<para>Whenever an even occurs and all of its categories to which it belongs
 to are specified by the number in the first field of the
-<Literal>Commentator:</Literal> line, the commentator program specified in
+<literal>Commentator:</literal> line, the commentator program specified in
 the second parameter is invoked. If no path is specified, the commentator
 program is assumed to reside in
-<Filename>/usr/ppr/commentators</Filename>.</Para>
+<filename>/usr/ppr/commentators</filename>.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Activating a Commentator for a Specific Job</Title>
+<sect2>
+<title>Activating a Commentator for a Specific Job</title>
 
-<Para>
+<para>
 [This section has not been written yet.]
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>How Commentator Programs Work</Title>
+<sect2>
+<title>How Commentator Programs Work</title>
 
-<Para>
+<para>
 The commentator program is invoked with the following arguments:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<OrderedList>
-<ListItem>
+<orderedlist>
+<listitem>
 
-<Para>
-1) The address from the third field of the <Literal>Commentator:</Literal> line.
+<para>
+1) The address from the third field of the <literal>Commentator:</literal> line.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
-2) The commentator options (<Literal>Commentator:</Literal> line field three).
+<para>
+2) The commentator options (<literal>Commentator:</literal> line field three).
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 3) The name of the printer.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 4) The category value for this event.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 5) A very brief text message describing the event.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 6 and 7) An unprocessed or raw form of the information in the text
 message.  At times the raw data fields will contain information which
 is not preserved in the fifth argument.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
-8) <Application>PPR</Application>'s assessment of the serverity of the situation.  This
+<para>
+8) <application>PPR</application>'s assessment of the serverity of the situation.  This
 assessment takes the form of a number between 1 and 10 with 1 being
 not at all serious and 10 being very serious (something that will
 probably require the attention of the system administrator.)
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 9) A longer text message describing the problem in complete sentences.
 This messages can be used by simple commentators instead of creating their
 own messages from the information provided by means of the arguments described
 above.
 
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-</OrderedList>
+</orderedlist>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Thus, a commentator might be invoked like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/audio yourpc.trincoll.edu:15009 'level=3 voice=male1' yourprn 4 'stalled for 12 minutes' 'WRITE' '23'
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 when the printer has not been accepting data or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/audio yourpc.trincoll.edu:15009 'level=3 voice=male1' yourprn 4 'no longer stalled' 'WRITE' '-12'
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 when it begins accepting data again, or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 8 'has printed a job' EXIT_PRINTED "" 1
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 whenever a job is printed, or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 8 "job error" EXIT_JOBERR ""
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 if there is something wrong with a job, or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 8 "PostScript error" EXIT_JOBERR ""
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 when the specific thing wrong with the job is a PostScript error, or like
 this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 8 "interface program killed" EXIT_SIGNAL ""
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 when somebody kills the interface program, or like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 8 "printing halted" EXIT_SIGNAL ""
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-when <Application>PPR</Application> killed the interface program itself, or like this:
-</Para>
+<para>
+when <application>PPR</application> killed the interface program itself, or like this:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 1 "out of paper" "Out of Paper" 0
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 In this example, the first raw data field contains a message received from the
 printer.  The normal message field contains a standard version of this
 message.  (Believe it or not, printers don't all phrase these messages the
 same.)  The various forms are converted to standardized forms using the
-information in the file <Filename>/etc/ppr/lw_messages.conf</Filename>.
-</Para>
+information in the file <filename>/etc/ppr/lw_messages.conf</filename>.
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 commentators/samba yourpc "" yourprn 1 "" "Fatal error 1001" 0
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Notice that in this last example the field which ought to contain the message
 for the user is blank.  However, first raw data field contains the message
-exactly as it was received from the printer.  Apperenly, <Application>PPR</Application> did find a
+exactly as it was received from the printer.  Apperenly, <application>PPR</application> did find a
 standard form of this message in its data files.
-</Para>
+</para>
 
-<Para>
+<para>
 Also notice that in the last two examples the second raw data field is blank.
 The second raw data field is currently blank for this type of message but in a
-future version of <Application>PPR</Application> will contain the translated version of this message from
+future version of <application>PPR</application> will contain the translated version of this message from
 the printer's PPD file.  The language will be indicated by the first word of
 the message.
-</Para>
+</para>
 
-<Para>
-If the program name in the printer configuration file is <Literal>file</Literal>, the event is
+<para>
+If the program name in the printer configuration file is <literal>file</literal>, the event is
 appended to the file which is named in the address field.  When the file is
-opened, the <Application>PPR</Application> home directory, (usually /usr/ppr) is the current directory.
-You can rely on this or you can begin your file name with a <Filename>/</Filename>.  If the
-commentator program name is not <Literal>file</Literal> and does not begin with a
-<Filename>/</Filename>, it is
-understood to be a program in the <Filename
-class="Directory">/usr/ppr/commentators/</Filename> directory.  If
+opened, the <application>PPR</application> home directory, (usually /usr/ppr) is the current directory.
+You can rely on this or you can begin your file name with a <filename>/</filename>.  If the
+commentator program name is not <literal>file</literal> and does not begin with a
+<filename>/</filename>, it is
+understood to be a program in the <filename
+class="Directory">/usr/ppr/commentators/</filename> directory.  If
 you want to use a program in another directory, you must begin its name with a
-<Filename>/</Filename>.  Commentators should exit as soon as possible because <Command>pprdrv</Command> will
+<filename>/</filename>.  Commentators should exit as soon as possible because <command>pprdrv</command> will
 wait for up to 60 seconds for all the commentators it has launced to exit.  If
 necessary, commentators should place their work in the background or in a queue
 and then exit.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Samba Commentator</Title>
+<sect2>
+<title>The Samba Commentator</title>
 
-<Para>
-This commentator uses Samba's <Command>smbclient</Command> to send a popup message.  The
+<para>
+This commentator uses Samba's <command>smbclient</command> to send a popup message.  The
 address is the NetBIOS name of the machine to send the message to.  If you think
-<Command>smbclient</Command> is going to have trouble determining the IP address, you can
+<command>smbclient</command> is going to have trouble determining the IP address, you can
 append a hyphen and the IP address.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The X-Windows Commentator</Title>
+<sect2>
+<title>The X-Windows Commentator</title>
 
-<Para>
-This commentator uses <Command>xmessage</Command> or <Command>xterm</Command> to display a message.  The
-address is an X-Windows display name.  The user <Literal>ppr</Literal> must have permission to
+<para>
+This commentator uses <command>xmessage</command> or <command>xterm</command> to display a message.  The
+address is an X-Windows display name.  The user <literal>ppr</literal> must have permission to
 create windows on the display.  This can be granted with
-<Command>xhost</Command>
-<FOOTNOTE>
-<Para>Part of X-Windows.  See xhost(1). </Para>
-</FOOTNOTE>
-or <Command>ppr-xgrant</Command>
-<FOOTNOTE>
-<Para>
-See the ppr-xgrant(1) man page for a description of the <Command>ppr-xgrant</Command> command.
-</Para>
-</FOOTNOTE>
-.</Para>
+<command>xhost</command>
+<footnote>
+<para>Part of X-Windows.  See xhost(1). </para>
+</footnote>
+or <command>ppr-xgrant</command>
+<footnote>
+<para>
+See the ppr-xgrant(1) man page for a description of the <command>ppr-xgrant</command> command.
+</para>
+</footnote>
+.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Audio Commentator</Title>
+<sect2>
+<title>The Audio Commentator</title>
 
-<Para>This is the most elaborate commentator by far.  It makes spoken
+<para>This is the most elaborate commentator by far.  It makes spoken
 announcements concerning the printer's condition.  To use the audio
 commentator you must have Perl 5.  You must also install the sound files. 
-To install the sound files, get <Filename>ppr-speach-1.30.tar.gz</Filename>
-and unpack it in the <Application>PPR</Application> home directory (which is
-usually <Filename class="Directory">/usr/ppr/lib/</Filename>).  To set up
-the audio commentator you need a commentator line like this one:</Para>
+To install the sound files, get <filename>ppr-speach-1.30.tar.gz</filename>
+and unpack it in the <application>PPR</application> home directory (which is
+usually <filename class="Directory">/usr/ppr/lib/</filename>).  To set up
+the audio commentator you need a commentator line like this one:</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 Commentator: 13 audio /dev/xxx level=8
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Or like this one:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 Commentator: 13 audio smith.pc.myorg.org:15009 level=10
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>Both these lines This will cause events of certain types (indicated by
+<para>Both these lines This will cause events of certain types (indicated by
 the bitmask 13 or 31) to be reported using the audio commentator.  The
-commentator is also passed the option <Literal>level=10</Literal> which it
+commentator is also passed the option <literal>level=10</literal> which it
 uses to furthur filter the events which have been selected by the bitmask. 
 A level of 10 will result in the reporting of all events, even the sucessful
 printing of a job.  Lower numbers will exclude mundane events.  Remember,
 the bitmask is formed by summing the desired catagories of messages.  The
-catagories are:</Para>
+catagories are:</para>
 
-<VariableList>
+<variablelist>
 
-<VarListEntry>
-<Term>1</Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term>1</term>
+<listitem>
+<para>
 printer errors, such as paper jams
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term>2</Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term>2</term>
+<listitem>
+<para>
 printer status messages such as off line
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term>4</Term>
-<ListItem>
-<Para>
+<varlistentry>
+<term>4</term>
+<listitem>
+<para>
 notices that the printer isn't accepting data
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term>8</Term>
-<ListItem>
-<Para>
-<Command>pprdrv</Command> exited, returning a code which indicates an abnormal
+<varlistentry>
+<term>8</term>
+<listitem>
+<para>
+<command>pprdrv</command> exited, returning a code which indicates an abnormal
 condition such as communications error or PostScript error or the job was
 canceled
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-<VarListEntry>
-<Term>16</Term>
-<ListItem>
-<Para>
-<Command>pprdrv</Command> exited but for a rather booring reason, such as "job was
+<varlistentry>
+<term>16</term>
+<listitem>
+<para>
+<command>pprdrv</command> exited but for a rather booring reason, such as "job was
 printed."
-</Para>
-</ListItem>
-</VarListEntry>
+</para>
+</listitem>
+</varlistentry>
 
-</VariableList>
+</variablelist>
 
-<Para>The address indicates the means of playing the sound file.  The
+<para>The address indicates the means of playing the sound file.  The
 current version of the audio commentator provides two ways to do this.  If
-the address begins with <Filename>/</Filename>, as in the first example, then the sound is
+the address begins with <filename>/</filename>, as in the first example, then the sound is
 played on the local machine.  The code to accomplish this is in the file
-<Filename>/usr/ppr/lib/play_local.pl</Filename>.  This code is
+<filename>/usr/ppr/lib/play_local.pl</filename>.  This code is
 presently very redimentry and requires a program which will take the name of
 the file to be played as its argument.  As distributed, the program
-<Filename>/usr/local/bin/play</Filename> is used and the address is ignored. 
-Because the address is ignored, the silly address <Literal>/dev/xxx</Literal> is used in
+<filename>/usr/local/bin/play</filename> is used and the address is ignored. 
+Because the address is ignored, the silly address <literal>/dev/xxx</literal> is used in
 the example above.  Any help with improving this would be greatly
-appreciated.</Para>
+appreciated.</para>
 
-<Para>Whatever method of playing the sound you select, the easiest way to
+<para>Whatever method of playing the sound you select, the easiest way to
 test the commentator is to set the bitmask to 31, the options to
-<Option>level=10</Option> and print a job. You should hear something such
+<option>level=10</option> and print a job. You should hear something such
 as, "The printer emm cee ee cee underscore one has just printed a
-document."</Para>
+document."</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Input Filters</Title>
+<sect1>
+<title>Input Filters</title>
 
-<Para>
-One of the most noteworthy features of <Application>PPR</Application> is its ability to determine the
+<para>
+One of the most noteworthy features of <application>PPR</application> is its ability to determine the
 type of the input file and automatically convert it to PostScript if
 necessary.  The type of the input file is determined by two methods.  The first
 method is the most reliable.  The second is employed only if the first fails.
-</Para>
+</para>
 
-<Para>
+<para>
 The first method is to look for a "magic number" at the start of the
 file.  Many file format specifications dictate that files conforming to them
 always begin with certain signature bytes.  Formats which specify a signature
 or magic number include DSC conforming PostScript, JFIF, GIF, PNG, DVI,
 WordPerfect documents, PBM, XPM and others.
-</Para>
+</para>
 
-<Para>
+<para>
 If no recognized magic number is found, then the first 8192 bytes of the
 file are scanned and the number of times certain characters and constructs are
 found are counted.  The things counted include ASCII control characters,
 non-ASCII characters, HP escape sequences, Troff-style dot commands, TeX style
 backslash commands, and PostScript procedure definitions.  When these things
 have been counted, the totals are used to try to guess at the file format.
-</Para>
+</para>
 
-<Para>
-If <Application>PPR</Application> ever fails to determine a file's format correctly or you wish to
+<para>
+If <application>PPR</application> ever fails to determine a file's format correctly or you wish to
 print a file in a format for which auto-detection is not available, you can
-override the auto-detection mechanism with <Command>ppr</Command>'s
-<Option>-T</Option> switch
-<FOOTNOTE>
+override the auto-detection mechanism with <command>ppr</command>'s
+<option>-T</option> switch
+<footnote>
 
-<Para>
+<para>
 See the
 ppr(1) man page for details.
-</Para>
+</para>
 
-</FOOTNOTE>
+</footnote>
 .
-</Para>
+</para>
 
-<Para>
+<para>
 Once the file format has been determined, unless it is PostScript, it is
-necessary to pass the file through a filter.  A <Application>PPR</Application> filter is a program which
+necessary to pass the file through a filter.  A <application>PPR</application> filter is a program which
 reads the file from its standard input and writes PostScript on its standard
-output.  It is the PostScript code emmited by the filter that <Application>PPR</Application> sends to the
+output.  It is the PostScript code emmited by the filter that <application>PPR</application> sends to the
 printer.
-</Para>
+</para>
 
-<Para>
-A number of filters are supplied with <Application>PPR</Application>.  <Application>PPR</Application> also includes a number of
+<para>
+A number of filters are supplied with <application>PPR</application>.  <application>PPR</application> also includes a number of
 shell and Perl scripts which work together with programs such as TeX, Troff,
 PBMPlus, and other programs often found on Unix systems to form filters.  If
 the supporting programs can not be found, the script filters will not be
 installed.
-</Para>
+</para>
 
-<Para><Application>PPR</Application> can automatically recognize a number of
+<para><application>PPR</application> can automatically recognize a number of
 file types for which it does not have filters. 
-<Application>PPR</Application> determines whether it has a filter for a file
-of a certain type by looking in the <Filename
-class="Directory">/usr/lib/ppr/filters/</Filename> directory for a file with
+<application>PPR</application> determines whether it has a filter for a file
+of a certain type by looking in the <filename
+class="Directory">/usr/lib/ppr/filters/</filename> directory for a file with
 a name in the form
-<Filename>filter_<Replaceable>type</Replaceable></Filename>.  For
-instance, if the input file is of type <Literal>fortran</Literal>, it will
-look for <Filename>/usr/ppr/filters/filter_fortran</Filename>.  You
-may write your own filters and install them in the <Filename
-class="Directory">/usr/lib/ppr/lib/</Filename> directory.  For explicit
-information on writing filters, see Appendix <XRef
-linkend="filters"/>.</Para>
+<filename>filter_<replaceable>type</replaceable></filename>.  For
+instance, if the input file is of type <literal>fortran</literal>, it will
+look for <filename>/usr/ppr/filters/filter_fortran</filename>.  You
+may write your own filters and install them in the <filename
+class="Directory">/usr/lib/ppr/lib/</filename> directory.  For explicit
+information on writing filters, see Appendix <xref
+linkend="filters"/>.</para>
 
-<Para>Each filter receives a list of filter options.  This option list is
+<para>Each filter receives a list of filter options.  This option list is
 created by concatenating the default filter options with all of the filter
-options specified with <Command>ppr</Command>'s <Option>-o</Option> switch. 
-Before invoking the filter, <Command>ppr</Command> culls the option list. 
+options specified with <command>ppr</command>'s <option>-o</option> switch. 
+Before invoking the filter, <command>ppr</command> culls the option list. 
 It removes any option which is intended to apply only to a specific filter
 other than the one being used.  An option may be applied to a single filter
 by prefixing its name with the name of the filter and a hyphen.  For
-example, the option <Option>noisy=yes</Option> should apply to all filters
-and hence won't be culled but the option <Option>dvi-noisy=yes</Option> will
-be deleted by <Command>ppr</Command> except when it is invoking the DVI
-filter.  A filter, such as the <Literal>tex</Literal> filter, may invoke
-another filter such as the <Literal>dvi</Literal> filter to do part of its
+example, the option <option>noisy=yes</option> should apply to all filters
+and hence won't be culled but the option <option>dvi-noisy=yes</option> will
+be deleted by <command>ppr</command> except when it is invoking the DVI
+filter.  A filter, such as the <literal>tex</literal> filter, may invoke
+another filter such as the <literal>dvi</literal> filter to do part of its
 work.  The first filter will generally pass its options on to the second
 filter, however, since the filter list has already been culled, the DVI
 filter will receive options whose names begin with "tex-" but will not
-receive options whose names begin with "dvi-" <FOOTNOTE>
+receive options whose names begin with "dvi-" <footnote>
 
-<Para>
+<para>
 More on the handling of the option list can be found in Appendix
-<XRef linkend="filters"/> and in the ppr(1) man
-page in the section which describes the <Option>-o</Option> switch.
-</Para>
+<xref linkend="filters"/> and in the ppr(1) man
+page in the section which describes the <option>-o</option> switch.
+</para>
 
-</FOOTNOTE>
+</footnote>
 .
-</Para>
+</para>
 
-<Para>
-What follows is a description of some of the filters supplied with <Application>PPR</Application>.
-<FOOTNOTE>
+<para>
+What follows is a description of some of the filters supplied with <application>PPR</application>.
+<footnote>
 
-<Para>
+<para>
 A complete list of filters can be found in the ppr(1) man page in the
-section for the <Option>-T</Option> switch.
-</Para>
+section for the <option>-T</option> switch.
+</para>
 
-</FOOTNOTE>
+</footnote>
 
-</Para>
+</para>
 
-<Sect2>
-<Title>The Line Printer Emulator</Title>
+<sect2>
+<title>The Line Printer Emulator</title>
 
-<Para>
+<para>
 [Not written yet.]
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The <Command>pr</Command> Filter</Title>
+<sect2>
+<title>The <command>pr</command> Filter</title>
 
-<Para> The <Command>pr</Command> filter passes the input through the Unix
-<Command>pr</Command> program and then through the Line Printer Emulator. 
-It supports the options <Option>width=</Option> and
-<Option>length=</Option> which are passed to <Command>pr</Command> as the
-arguments to its <Option>-w</Option> and <Option>-l</Option> switches
+<para> The <command>pr</command> filter passes the input through the Unix
+<command>pr</command> program and then through the Line Printer Emulator. 
+It supports the options <option>width=</option> and
+<option>length=</option> which are passed to <command>pr</command> as the
+arguments to its <option>-w</option> and <option>-l</option> switches
 respectively.  Since the this filter invokes the Line Printer Emulator, it
-supports all the options of that filter too. </Para>
+supports all the options of that filter too. </para>
 
-<Para>
+<para>
 This filter will never be invoked automatically since plain text files are
 normally processed by the Line Printer Emulator.  In order to employ this
-filter you must invoke <Command>ppr</Command> with the switch <Option>-T pr</Option>.
-</Para>
+filter you must invoke <command>ppr</command> with the switch <option>-T pr</option>.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Dot Matrix Printer Emulator</Title>
+<sect2>
+<title>The Dot Matrix Printer Emulator</title>
 
-<Para>
+<para>
 [Not written yet.]
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Fortran Filter</Title>
+<sect2>
+<title>The Fortran Filter</title>
 
-<Para>
+<para>
 This filter prints files encoded with fortran carriage control.  This filter
-supports the options <Option>width=</Option> and <Option>length=</Option> which specify the page width
+supports the options <option>width=</option> and <option>length=</option> which specify the page width
 in columns and the page length in lines respectively.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Various Image File Filters</Title>
+<sect2>
+<title>Various Image File Filters</title>
 
-<Para>
+<para>
 Depending on which image file utilities your system has, filters may be
 available for various image file formats.  These filters are shell scripts
 which invoke programs such as the PBM utilities and the Independent JPEG
 Group's programs.  These filters will be installed and edited to fit your
 configuration if the required utilies are in the PATH when you invoke
 <command>ppr_indexfilters</command>.  These filters support some options,
-but they are generally ones such as <Option>resolution=</Option> and
-<Option>color=</Option> which
-<Application>PPR</Application> supplies automatically as default filter options.
-</Para>
+but they are generally ones such as <option>resolution=</option> and
+<option>color=</option> which
+<application>PPR</application> supplies automatically as default filter options.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Hex Dump Filter</Title>
+<sect2>
+<title>The Hex Dump Filter</title>
 
-<Para>
+<para>
 This filter prints side-by-side hexadecimal and ASCII dump of the first few
 hundred bytes of the input file (as much as will fit on one page).  This filter
 will sometimes be used to print input files for which no filter is available.
-This filter will only be used if either the <Option>-e
-hexdump</Option> switch was used
-when invoking <Command>ppr</Command> or if it was not possible to inform the user of the
+This filter will only be used if either the <option>-e
+hexdump</option> switch was used
+when invoking <command>ppr</command> or if it was not possible to inform the user of the
 problem by means of a message on stderr or by invoking a resonder
 
-<FOOTNOTE>
-<Para>
+<footnote>
+<para>
 See the
-section on the <Option>-e hexdump</Option> in ppr(1).
-</Para>
-</FOOTNOTE>
+section on the <option>-e hexdump</option> in ppr(1).
+</para>
+</footnote>
 
 .
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The TeX Source Filter</Title>
+<sect2>
+<title>The TeX Source Filter</title>
 
-<Para>This filter is written in Perl, so it will not be available if Perl
+<para>This filter is written in Perl, so it will not be available if Perl
 was not installed last time you ran
 <command>ppr-indexfilters</command>. This filter will read
 the input file and attempt to identify it as either Plain TeX or LaTeX.  It
 will then copy the file to a temporary directory and run TeX on it with
 either the Plain or LaTeX macros.  It will run TeX multiple times if it is
-necessary to get the cross references right.</Para>
+necessary to get the cross references right.</para>
 
-<Para>If running TeX results in a fatal error, TeX's output is passed
+<para>If running TeX results in a fatal error, TeX's output is passed
 through the Line Printer Emulator and becomes the output of the filter and
 hence what gets printed.  On the other hand, if TeX ran successfully, the
-DVI file is passed to the DVI filter.</Para>
+DVI file is passed to the DVI filter.</para>
 
-<Para>
-This filter has one option, <Option>noisy=</Option>.  If
-<Option>noisy=</Option> is set to <Literal>true</Literal> then
+<para>
+This filter has one option, <option>noisy=</option>.  If
+<option>noisy=</option> is set to <literal>true</literal> then
 progress messages and the terminal output of TeX are printed on stderr.  The
-<Option>noisy=</Option> option is also passed through to the DVI filter.  (This filter passes
+<option>noisy=</option> option is also passed through to the DVI filter.  (This filter passes
 all of its options on the the DVI filter, the DVI filter will ignore those it does
 not understand.)  Remember, if you intend an option to apply only to this filter
 and the instance of the DVI filter which it invokes, you should prefix
 "tex-" to
 the option name even if you want the option to be passed through to the DVI
-filter.  For example, if you invoke <Command>ppr</Command> with the option
-<Option>-o 'noisy=false
-tex-noisy=true'</Option> then the DVI filter will be quiet if you submit a DVI file but
-will print noisy messages if you submit a LaTeX file to <Command>ppr</Command>.
-</Para>
+filter.  For example, if you invoke <command>ppr</command> with the option
+<option>-o 'noisy=false
+tex-noisy=true'</option> then the DVI filter will be quiet if you submit a DVI file but
+will print noisy messages if you submit a LaTeX file to <command>ppr</command>.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>The Texinfo Filter</Title>
+<sect2>
+<title>The Texinfo Filter</title>
 
-<Para>
+<para>
 This filter is a shell script which converts documents from the Texinfo
 format used by the GNU project to PostScript.  It first passes them through
 texi2dvi (which you must provide).  It then passes the resulting DVI file
-through the DVI filter.</Para>
+through the DVI filter.</para>
 
-<Para>
-This filter supports the option <Option>noisy=</Option>.  If one uses a command such as:
-</Para>
+<para>
+This filter supports the option <option>noisy=</option>.  If one uses a command such as:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppr -d aardvark -o noisy=yes
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 a running commentary will be printed as the file is converted.  This commentary
-includes whatever TeX sends to stdout.  The <Option>noisy=</Option> option is also passed
+includes whatever TeX sends to stdout.  The <option>noisy=</option> option is also passed
 on to the DVI filter, so it produces lots of messages too, including the
 terminal output of DVIPS.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="dvi">
-<Title>The DVI Filter</Title>
+<sect2 id="dvi">
+<title>The DVI Filter</title>
 
-<Para>This filter is a shell script which converts TeX DVI files to PostScript. It
+<para>This filter is a shell script which converts TeX DVI files to PostScript. It
 uses the program DVIPS to do this.  Unfortunately DVIPS was not designed to use
 PPD files, rather it uses a printer configuration file format of its own.  The
-<Application>PPR</Application> DVI filter generates these configuration files automatically.  Once
+<application>PPR</application> DVI filter generates these configuration files automatically.  Once
 generated, a DVIPS configuration file is stored in
-<Filename class="Directory">/var/spool/ppr/dvips/</Filename>.  The file's name contains the MetaFont mode, the
+<filename class="Directory">/var/spool/ppr/dvips/</filename>.  The file's name contains the MetaFont mode, the
 resolution, and the amount of free memory in the printer.  These values will
 also appear in the appropriate places in the configuration file.  The DVI
 filter obtains these values from its options.  The options
-<Option>resolution=</Option>,
-<Option>freevm=</Option>, and <Option>mfmode=</Option> are among the automatically supplied to augment
-any the user specifies by invoking <Command>ppr</Command> with the
-<Option>-o</Option> switch.  The
+<option>resolution=</option>,
+<option>freevm=</option>, and <option>mfmode=</option> are among the automatically supplied to augment
+any the user specifies by invoking <command>ppr</command> with the
+<option>-o</option> switch.  The
 automatically generated options are regenerated every time a printer's PPD file
-is changed.  The options are stored in the <Literal>DefFiltOpts:</Literal> line in the printer's
+is changed.  The options are stored in the <literal>DefFiltOpts:</literal> line in the printer's
 or group's configuration file.
-</Para>
+</para>
 
-<Para>
+<para>
 [Not finished yet. Explain about /etc/ppr/mfmodes.conf here.]
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 
-<Sect1>
-<Title>Printer Qualification</Title>
+<sect1>
+<title>Printer Qualification</title>
 
-<Para>
+<para>
 Not all PostScript printers have the same capabilities.
-</Para>
+</para>
 
-<Para>
+<para>
 [That is a good start, but not finished yet.]
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-</Article>
+</article>

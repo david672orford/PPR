@@ -1,46 +1,46 @@
-<Sect2 id="adding-lmx">
-<Title>Adding PPR Printers to LAN Manager For Unix</Title>
+<sect2 id="adding-lmx">
+<title>Adding PPR Printers to LAN Manager For Unix</title>
 
-<Para> If you are using NCR's <ProductName>LAN Manager for
-Unix</ProductName>, sometimes refered to as LANMAN/X, you can set it up to
-feed jobs to PPR.  A printer is added to LAN Manager with the <Command>net
-share</Command> command.  <ProductName>LAN Manager for Unix</ProductName>
+<para> If you are using NCR's <productname>LAN Manager for
+Unix</productname>, sometimes refered to as LANMAN/X, you can set it up to
+feed jobs to PPR.  A printer is added to LAN Manager with the <command>net
+share</command> command.  <productname>LAN Manager for Unix</productname>
 can use PPR by means of something called a ``print processor script'':
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # net share myprn /print
 # net print myprn /processor:ppr
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-These commands create a LAN Manager printer called <Literal>myprn</Literal> (the same name
+<para>
+These commands create a LAN Manager printer called <literal>myprn</literal> (the same name
 as we gave the printer in PPR).  The processor indicated as ``ppr'' is the
-script <Filename>/var/opt/lanman/customs/ppr</Filename> which is installed by the PPR
-<Command>fixup</Command> script.  A group of printers may be added to LAN Manager in the
+script <filename>/var/opt/lanman/customs/ppr</filename> which is installed by the PPR
+<command>fixup</command> script.  A group of printers may be added to LAN Manager in the
 same way:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # net share ourgroup /print
 # net print ourgroup /processor:ppr
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 You could create your own versions of the print processor script to invoke the
-program <Command>ppr</Command> with differents sets of options.  However, it
-will generally be more convenient to set options with the <Command>ppad
-switchset</Command>
-command as described in section <XRef linkend="switchsets"/>.
-</Para>
+program <command>ppr</command> with differents sets of options.  However, it
+will generally be more convenient to set options with the <command>ppad
+switchset</command>
+command as described in section <xref linkend="switchsets"/>.
+</para>
 
-</Sect2>
+</sect2>
 

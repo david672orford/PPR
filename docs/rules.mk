@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 6 March 2003.
 #
 
 # Where do we install the documentation?
@@ -34,7 +34,7 @@ DOCSDIR=$(WWWDIR)/docs
 # Where are the document formatting and conversion programs?
 POD2MAN=pod2man
 POD2HTML=pod2html
-FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$PATH fig2dev
+FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$(PATH) fig2dev
 XSLTPROC=xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
@@ -46,7 +46,8 @@ FOP=/usr/local/src/apache_fop/xml-fop/fop.sh
 # Where are the style sheets?
 XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
 XSL_SPEC_PRINT=../../nonppr_misc/docbook-xsl/fo/docbook.xsl
-SGML_CATALOG_FILES=../catalog
+#SGML_CATALOG_FILES=../catalog
+SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 
 # Additional file extensions to be used in our rules.
 .SUFFIXES: .pod .sgml .fo .html .man .eps .ps .pdf .fig .gif .jpeg .png
@@ -73,7 +74,7 @@ SGML_CATALOG_FILES=../catalog
 #============================================================================
 
 .sgml.html:
-	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --docbook --nonet --output $*.html $(XSL_SPEC_HTML) $*.sgml
+	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --nonet --output $*.html $(XSL_SPEC_HTML) $*.sgml
 
 #============================================================================
 # Rules to convert HTML to PostScript and PDF using HTMLDOC

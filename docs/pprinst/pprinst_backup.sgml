@@ -1,29 +1,29 @@
-<Sect1 id="backup">
-<Title>Backing Up PPR's Data</Title>
+<sect1 id="backup">
+<title>Backing Up PPR's Data</title>
 
-<Para><Application>PPR</Application> stores its configuration entirely in
-<Filename class="Directory">/etc/ppr/</Filename>.  The PPR spooling system
+<para><application>PPR</application> stores its configuration entirely in
+<filename class="Directory">/etc/ppr/</filename>.  The PPR spooling system
 can be adequately rebuilt by installing PPR from scratch and then restoring
-<Filename class="Directory">/etc/ppr/</Filename>. </Para>
+<filename class="Directory">/etc/ppr/</filename>. </para>
 
-<Para>The directories 
-<Filename class="Directory">/usr/lib/ppr/</Filename>, and <Filename
-class="Directory">/usr/share/ppr/</Filename> 
-contain only static data.</Para>
+<para>The directories 
+<filename class="Directory">/usr/lib/ppr/</filename>, and <filename
+class="Directory">/usr/share/ppr/</filename> 
+contain only static data.</para>
 
-<Para>PPR stores temporary data (print jobs, client printing transfer files
-and such) in <Filename class="Directory">/var/spool/ppr</Filename>. PPR
-continually adds files to <Filename
-class="Directory">/var/spool/ppr/cache</Filename>, but these will be
+<para>PPR stores temporary data (print jobs, client printing transfer files
+and such) in <filename class="Directory">/var/spool/ppr</filename>. PPR
+continually adds files to <filename
+class="Directory">/var/spool/ppr/cache</filename>, but these will be
 replaced automatically, so it is not essential that they be backed up.  No
-files are added to <Filename
-class="Directory">/usr/lib/ppr/cache</Filename>.  PPR also writes into
-<Filename class="Directory">/var/spool/ppr/logs/</Filename> and the
-subdirectories of <Filename
-class="Directory">/var/spool/ppr/printers/</Filename> but these are throw
+files are added to <filename
+class="Directory">/usr/lib/ppr/cache</filename>.  PPR also writes into
+<filename class="Directory">/var/spool/ppr/logs/</filename> and the
+subdirectories of <filename
+class="Directory">/var/spool/ppr/printers/</filename> but these are throw
 away files.  A possible exception is
-<Filename>/var/spool/ppr/logs/printlog</Filename> which you will want to
-back up if it is important to you.</Para>
+<filename>/var/spool/ppr/logs/printlog</filename> which you will want to
+back up if it is important to you.</para>
 
-</Sect1>
+</sect1>
 

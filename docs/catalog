@@ -1,3 +1,0 @@
- -- Catalog to find the DTD DocBook XML file--
-PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-	"../nonppr_misc/docbook-xml/docbookx.dtd"

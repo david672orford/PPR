@@ -1,237 +1,237 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
-<Article>
+<article>
 
-<Articleinfo>
-  <Title>Comments on RFC 1179</Title>
-  <AUTHOR>
-    <FirstName>David</FirstName>
-    <Surname>Chappell</Surname>
-  </AUTHOR>
-  <PubDate>7 May 2001</PubDate>
-  <Copyright>
-    <Year>1995--2001</Year>
-    <Holder>Trinity College Computing Center</Holder>
-  </Copyright>
-</Articleinfo>
+<articleinfo>
+  <title>Comments on RFC 1179</title>
+  <author>
+    <firstname>David</firstname>
+    <surname>Chappell</surname>
+  </author>
+  <pubdate>7 May 2001</pubdate>
+  <copyright>
+    <year>1995--2001</year>
+    <holder>Trinity College Computing Center</holder>
+  </copyright>
+</articleinfo>
 
-<sect1><Title>Introduction</Title>
+<sect1><title>Introduction</title>
+
+<para>This document is a collection of notes about the lpr/lpd printing
+protocol described in RFC 1179.  RFC 1179 is not an Internet standard,
+rather was an attempt to describe current practice.  As a result it does not
+contain as rigourous a description of the protocol as a true Internet
+standard would.  This document provides information not included in RFC 1179
+or which is not clearly explained there.  It also provides information about
+vendor extensions to the RFC 1179 protocol.</para>
+
+</sect1>
+
+<sect1><title>Who's Job?</title>
 
 <para>
-This document is a collection of notes about the lpr/lpd printing
-protocol described in RFC 1179.  RFC 1179 is not an Internet standard,
-rather was an attempt to describe current practice.  As a result it
-does not contain as rigourous a description of the protocol as a true
-Internet standard would.  This document provides information not included
-in RFC 1179 or which is not clearly explained there.  It also provides
-information about vendor extensions to the RFC 1179 protocol.
+The queue files lines that begin with ``H'' and ``P'' are present in every
+job.  They identify the node from which the job is printed and the name by which
+the user is known on that node.
 </para>
 
 </sect1>
 
-<Sect1><Title>Who's Job?</Title>
+<sect1><title>Banner Page</title>
 
-<Para>
-The queue files lines that begin with ``H'' and ``P'' are present in every
-job.  They identify the node from which the job is printed and the name by which
-the user is known on that node.
-</Para>
-
-</Sect1>
-
-<Sect1><Title>Banner Page</Title>
-
-<Para>
+<para>
 If the user wants a banner page, then the ``J'', ``C'', and ``L'' lines will
 be present.  BSD lpr ommits these lines when the user uses the
-<Emphasis remap="bf">lpr -h</Emphasis> option.
-</Para>
+<emphasis remap="bf">lpr -h</emphasis> option.
+</para>
 
-<Para>
+<para>
 The ``J'' line indicates the name of the job for the banner page and the
 lpq listing.  This is norally composed of a list of the names of the files
-printed, but the user may override this by using the <Emphasis remap="bf">lpr -J</Emphasis>
+printed, but the user may override this by using the <emphasis remap="bf">lpr -J</emphasis>
 switch.  The ``C'' normally is the name of the node from which the job was
-sent, but the user may substitute an arbitrary string by using the <Emphasis remap="bf">lpr -C</Emphasis>
+sent, but the user may substitute an arbitrary string by using the <emphasis remap="bf">lpr -C</emphasis>
 switch.  The ``L'' line is the name of the user.  The value is appearently
 redundant.  (It is the same as the value for ``P''.)
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1><Title>Text File Processing</Title>
+<sect1><title>Text File Processing</title>
 
-<Para>
-If the <Emphasis remap="bf">lpr -p</Emphasis> switch was used then a ``T'' line will be included.  This gives
-the title for <Emphasis remap="bf">pr</Emphasis> to print at the top of each page.
-</Para>
+<para>
+If the <emphasis remap="bf">lpr -p</emphasis> switch was used then a ``T'' line will be included.  This gives
+the title for <emphasis remap="bf">pr</emphasis> to print at the top of each page.
+</para>
 
-<Para>
+<para>
 The width of the page will be indicated by a ``W'' line.
-</Para>
+</para>
 
-<Para>
+<para>
 The left hand indent will be indicated by a ``I'' line.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1><Title>Notification</Title>
+<sect1><title>Notification</title>
 
-<Para>
+<para>
 If the user should be notified by email when the job is done, then
 there will be a ``M'' line.  In jobs from BSD lpr, the paramter will
 be the same as the one in the ``P'' line.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1><Title>OSF Extensions</Title>
+<sect1><title>OSF Extensions</title>
 
-<Para>
+<para>
 OSF/1 may include additional queue file lines.  They are as follows:
 
 <variablelist>
 
 <varlistentry><term>&lt; -- input tray</term>
-<ListItem>
-<Para>
-This line is generated when the <Emphasis remap="bf">lpr -I</Emphasis> switch is used.  No restrictions are placed
-on the argument to the <Emphasis remap="bf">-I</Emphasis> switch.  The <Emphasis remap="bf">lpr</Emphasis> man page mentions a number of likely
+<listitem>
+<para>
+This line is generated when the <emphasis remap="bf">lpr -I</emphasis> switch is used.  No restrictions are placed
+on the argument to the <emphasis remap="bf">-I</emphasis> switch.  The <emphasis remap="bf">lpr</emphasis> man page mentions a number of likely
 bin names including "upper", "lower", "cassette", "envelope_feeder", and "manual".
-</Para>
-</ListItem>
+</para>
+</listitem>
 </varlistentry>
 
 <varlistentry><term>&gt; -- output tray</term>
-<ListItem>
-<Para>
-This line is generated when the <Emphasis remap="bf">lpr -o</Emphasis> switch is used.  No restrictions
-are placed on the arguments which may be used with the <Emphasis remap="bf">-o</Emphasis> switch, however the
-<Emphasis remap="bf">lpr</Emphasis> man page says it will be an integer value.
-</Para>
-</ListItem>
+<listitem>
+<para>
+This line is generated when the <emphasis remap="bf">lpr -o</emphasis> switch is used.  No restrictions
+are placed on the arguments which may be used with the <emphasis remap="bf">-o</emphasis> switch, however the
+<emphasis remap="bf">lpr</emphasis> man page says it will be an integer value.
+</para>
+</listitem>
 </varlistentry>
 
 <varlistentry><term>O -- orientation</term>
-<ListItem>
-<Para>
-This line is generated when the <Emphasis remap="bf">lpr -O</Emphasis> switch is used.  According to the
-<Emphasis remap="bf">lpr</Emphasis> man page, the value may be either "portrait" or "landscape", however
+<listitem>
+<para>
+This line is generated when the <emphasis remap="bf">lpr -O</emphasis> switch is used.  According to the
+<emphasis remap="bf">lpr</emphasis> man page, the value may be either "portrait" or "landscape", however
 no restriction is actually placed on the value.
-</Para>
-</ListItem>
+</para>
+</listitem>
 </varlistentry>
 
 <varlistentry><term>K -- duplex</term>
-<ListItem>
-<Para>
-This line is generated whenever the <Emphasis remap="bf">lpr -K</Emphasis> switch is used.  Though the <Emphasis remap="bf">-K</Emphasis>
-switch accepts a number of alias values, the only values which will appear in
-the queue file are "one", "two", "tumble", "one_sided_duplex", "one_sided_tumble",
-and "two_sided_simplex".  (The last three print in the mode described by the left
-hand part of the name but retain the layout appropriate for the right hand part.)
-</Para>
-</ListItem>
+<listitem>
+
+<para> This line is generated whenever the <emphasis remap="bf">lpr
+-K</emphasis> switch is used.  Though the <emphasis remap="bf">-K</emphasis>
+switch accepts a number of alias values, the only values which will appear
+in the queue file are "one", "two", "tumble", "one_sided_duplex",
+"one_sided_tumble", and "two_sided_simplex".  (The last three print in the
+mode described by the left hand part of the name but retain the layout
+appropriate for the right hand part.) </para>
+
+</listitem>
 </varlistentry>
 
-<varlistentry><Term>G -- N-Up</Term>
-<ListItem>
-<Para>
-This line is used when the <Emphasis remap="bf">lpr -N</Emphasis> switch is used.  The value must be an integer
+<varlistentry><term>G -- N-Up</term>
+<listitem>
+<para>
+This line is used when the <emphasis remap="bf">lpr -N</emphasis> switch is used.  The value must be an integer
 between 0 and 100 inclusive.
-</Para>
-</ListItem>
+</para>
+</listitem>
 </varlistentry>
 
 </variablelist>
 
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1><Title>Solaris Extensions</Title>
+<sect1><title>Solaris Extensions</title>
 
-<Para>
+<para>
 Solaris systems (at least since version 2.6) may include additional queue file
 lines.  They include the following:
 
 <variablelist>
 
 <varlistentry>
-<Term>5f -- form required (lp -f switch)</Term>
-<ListItem>
+<term>5f -- form required (lp -f switch)</term>
+<listitem>
 <para>Description missing.</para>
-</ListItem>
+</listitem>
 </varlistentry>
 
 <varlistentry>
-<Term>5H -- special handling (lp -H switch)</Term>
-<ListItem>
-<Para>Description missing.</Para>
-</ListItem>
-</varlistentry>
-
-<varlistentry>
-<Term>O -- lp -o options</Term>
-<ListItem>
+<term>5H -- special handling (lp -H switch)</term>
+<listitem>
 <para>Description missing.</para>
-</ListItem>
+</listitem>
 </varlistentry>
 
 <varlistentry>
-<Term>5P -- page list (lp -P switch)</Term>
-<ListItem>
-<Para>Description missing.</Para>
-</ListItem>
-</varlistentry>
-
-<varlistentry>
-<Term>5S -- character set (lp -S switch)</Term>
-<ListItem>
-<Para>Description missing.</Para>
-</ListItem>
-</varlistentry>
-
-<varlistentry>
-<Term>5T -- System V content type (lp -T switch)</Term>
-<ListItem>
+<term>O -- lp -o options</term>
+<listitem>
 <para>Description missing.</para>
-</ListItem>
+</listitem>
 </varlistentry>
 
 <varlistentry>
-<Term>5y -- "Modes" (lp -y switch)</Term>
-<ListItem>
+<term>5P -- page list (lp -P switch)</term>
+<listitem>
 <para>Description missing.</para>
-</ListItem>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>5S -- character set (lp -S switch)</term>
+<listitem>
+<para>Description missing.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>5T -- System V content type (lp -T switch)</term>
+<listitem>
+<para>Description missing.</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>5y -- "Modes" (lp -y switch)</term>
+<listitem>
+<para>Description missing.</para>
+</listitem>
 </varlistentry>
 
 </variablelist>
 
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-<Sect1><Title>The Files</Title>
+<sect1><title>The Files</title>
 
-<Para>
+<para>
 Each file is indicated by a line which has a lower case letter as a type code
 at its begining and has the name of the queue data file as the rest of the line.
 If the file is to be printed multiple times then this line is repeated the
 required number of times.
-</Para>
+</para>
 
-<Para>
+<para>
 After that comes an ``N'' line which indicates what name the file origionally had.
-</Para>
+</para>
 
-<Para>
+<para>
 Finally, there is a ``U'' line which repeates the name of the file.
-</Para>
+</para>
 
-</Sect1>
+</sect1>
 
-</Article>
-
+</article>

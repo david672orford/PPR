@@ -1,26 +1,26 @@
-<Sect1 id="replacing-printer">
-<Title>Replacing a Printer</Title>
+<sect1 id="replacing-printer">
+<title>Replacing a Printer</title>
 
-<Para>
+<para>
 Printers are frequently replaced with newer models.  What should the PPR
 operator do when this happens?  One solution is to create a whole new queue for
 the new printer.  An alternative is to adjust the configuration of the existing
 queue so that it points to the new printer.  This latter method may minimize the
 disruption experienced by the users of the printer.
-</Para>
+</para>
 
-<Sect2>
-<Title>Basic Queue Modifications</Title>
+<sect2>
+<title>Basic Queue Modifications</title>
 
-<Para>
+<para>
 In order to correctly modify a queue's configuration, it is necessary to
 understand its current configuration. The current configuration may be viewed
-with the <Command>ppad show</Command> command, like this:
-</Para>
+with the <command>ppad show</command> command, like this:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad show sea305
 Printer name: sea305
 Comment: QMS-PS 410 in Seabury Room 305
@@ -40,28 +40,28 @@ Bins:
 OutputOrder: ppd
 Default Filter Options:
 Switchset:
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Notice that the printer in this example is currently a QMS-PS 410 connected
 through a serial port.  We will replace it with an HP 4M connected over
 the AppleTalk network.  To do this, we must modify the settings of the
 ``Interface'', ``Address'', ``Jobbreak'', ``PPD File'', and, if we want to
 do things right, ``Comment''.  First, we will set the new interface and
 address:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad interface sea305 atalk "Seabury Room 305:LaserShared@Seabury Zone"
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Notice that the AppleTalk address is enclosed in quotes.  This is necessary
 because it contains spaces.  Also, notice that the device type portion of
 the AppleTalk address is ``LaserShared'' rather than ``LaserWriter''.  This
@@ -69,11 +69,11 @@ causes PPR to `hide' the printer by automatically changing its device type
 from ``LaserWriter'' to ``Laser Shared''; if you don't want this to happen,
 use ``LaserWriter'' instead of ``LaserShared''.  Here is what the
 configuration looks like now:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad show sea305
 Printer name: sea305
 Comment: QMS-PS 410 in Seabury Room 305
@@ -93,80 +93,80 @@ Bins:
 OutputOrder: ppd
 Default Filter Options:
 Switchset:
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> Notice that changing the interface from <Literal>serial</Literal> to
-<Literal>atalk</Literal> automatically changed the <Option>jobbreak</Option>
-setting from <Literal>control-d</Literal> to <Literal>signal</Literal> which
-is the the default for the <Literal>atalk</Literal> interface.  This is
-fine, but since the new printer is an <ProductName>HP 4M</ProductName>, we
-might want to use a Jobbreak setting of <Literal>signal/pjl</Literal>
+<para> Notice that changing the interface from <literal>serial</literal> to
+<literal>atalk</literal> automatically changed the <option>jobbreak</option>
+setting from <literal>control-d</literal> to <literal>signal</literal> which
+is the the default for the <literal>atalk</literal> interface.  This is
+fine, but since the new printer is an <productname>HP 4M</productname>, we
+might want to use a Jobbreak setting of <literal>signal/pjl</literal>
 instead so that we can get nifty messages on the printer's display panel.
-We can make the change with this command: </Para>
+We can make the change with this command: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad jobbreak sea305 signal/pjl
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Next, we must change the PPD file:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad ppd sea305 "HP LaserJet 4M DSC"
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Finally, any good system administrator will change the comment:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad comment sea305 "HP 4M in Seabury room 305"
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 If this printer had had bins defined for automatic bin selection, we would
 have had to alter the bin list to reflect the bins available on the new
 printer.  The easiest way to do this would be to execute the command:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad bins ppd sea305
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 This would add all possible bins for the new printer.  After doing this it
-would have been necessary to use <Command>ppad show sea305</Command> to display the
-configuration and then use several commands along the lines of <Command>ppad bins
-delete sea305 Envelope</Command> to delete optional bins that are not installed
+would have been necessary to use <command>ppad show sea305</command> to display the
+configuration and then use several commands along the lines of <command>ppad bins
+delete sea305 Envelope</command> to delete optional bins that are not installed
 on the new printer and bins that were present on the old printer but are not
 present on the new.  Of course, once this is done, it is necessary to use
-the <Command>ppop mount</Command> command to mount media on the new bins.  But, as we
+the <command>ppop mount</command> command to mount media on the new bins.  But, as we
 said, this print queue does not have bins defined, so we did not have to do
 any of this.  Here we display the final configuration:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad show sea305
 Printer name: sea305
 Comment: HP 4M in Seabury room 305
@@ -186,72 +186,72 @@ Bins:
 OutputOrder: ppd
 Default Filter Options:
 Switchset:
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Changes for the Macintosh Print Server</Title>
+<sect2>
+<title>Changes for the Macintosh Print Server</title>
 
-<Para>
-The printer we are changing has an entry in <Filename>/etc/ppr/papsrv.conf</Filename>
+<para>
+The printer we are changing has an entry in <filename>/etc/ppr/papsrv.conf</filename>
 that looks like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 [Seabury Room 305]
 PPRname=sea305
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> Since this entry makes no mention of the make and model of the
-printer, there is nothing to change, however, when <Command>papsrv</Command>
+<para> Since this entry makes no mention of the make and model of the
+printer, there is nothing to change, however, when <command>papsrv</command>
 starts it reads the printer's configuration and reads its PPD file.  It uses
 the information it takes from the PPD file to answer questions put to it by
 the Macintosh client.  Theirfore, until you restart
-<Command>papsrv</Command>, <Application>LaserWriter 8</Application>'s auto
+<command>papsrv</command>, <application>LaserWriter 8</application>'s auto
 setup feature will continue to select the PPD file for the old printer.
 Also, if the font lists of the old and new printers differ, documents may
 print incorrectly.  To prevent this sort of problem, kill
-<Command>papsrv</Command> and restart it as described in section <XRef
-linkend="start-restart"/>. </Para>
+<command>papsrv</command> and restart it as described in section <xref
+linkend="start-restart"/>. </para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Changes for LAN Manager X</Title>
+<sect2>
+<title>Changes for LAN Manager X</title>
 
-<Para>
+<para>
 If you are using NCR's LAN Manager for Unix, you will want to change the
 comment attached to the LAN Manager queue:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # net share sea305 "HP 4M in Seabury 305"
 # net print sea305 "HP 4M in Seabury 305"
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Changes for Samba</Title>
+<sect2>
+<title>Changes for Samba</title>
 
-<Para>
-If you are using Samba, you should edit <Filename>smb.conf</Filename> and change the printer's
-comment, unless you are also using <Command>ppr2samba</Command>, in which case you can
-simply run <Command>ppr2samba</Command>.
-</Para>
+<para>
+If you are using Samba, you should edit <filename>smb.conf</filename> and change the printer's
+comment, unless you are also using <command>ppr2samba</command>, in which case you can
+simply run <command>ppr2samba</command>.
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 

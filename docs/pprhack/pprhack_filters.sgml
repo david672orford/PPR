@@ -1,42 +1,42 @@
-<Sect1 id="filters">
-<Title>Requirements for an Input Filter</Title>
+<sect1 id="filters">
+<title>Requirements for an Input Filter</title>
 
-<Para>
-If <Command>ppr</Command> determines that the input file is not PostScript, it will seek
+<para>
+If <command>ppr</command> determines that the input file is not PostScript, it will seek
 to use a filter to convert it to PostScript.  This appendix provides the
-information you will need to write your own <Application>PPR</Application> input filters.
-</Para>
+information you will need to write your own <application>PPR</application> input filters.
+</para>
 
-<Para>The filters are found in the directory <Filename class="Directory">/usr/lib/ppr/filters/</Filename>.  Each of these
-files has a name that consists of <Filename>filter_</Filename> followed by the <Application>PPR</Application>
+<para>The filters are found in the directory <filename class="Directory">/usr/lib/ppr/filters/</filename>.  Each of these
+files has a name that consists of <filename>filter_</filename> followed by the <application>PPR</application>
 input type
 name.  For example, the filter for JPEG files is called
-<Filename>/usr/lib/ppr/filters/filter_jpeg</Filename>.</Para>
+<filename>/usr/lib/ppr/filters/filter_jpeg</filename>.</para>
 
-<Para>
+<para>
 A filter should read the file from STDIN and write PostScript code on STDOUT.
 If it must, it can write messages on STDERR.  STDIN is guaranteed to be
 seekable.  Messages sent to STDERR will go wherever STDERR was going when
-<Command>ppr</Command> was invoked.
-</Para>
+<command>ppr</command> was invoked.
+</para>
 
-<Para>
+<para>
 The parameters are as follows:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<OrderedList>
-<ListItem>
+<orderedlist>
+<listitem>
 
-<Para>
+<para>
 The first parameter is the list of filter options.  These are expressed as a
 space seperated list of name-value pairs.  The name and value are joined by an
 equal sign.  The options list is formed by concatrnating the contents of the
-<Literal>DefFiltOpts:</Literal> line in the printer or group configuration file with the
-contents of any <Option>-o</Option> lines the user put on the <Command>ppr</Command> command line.
+<literal>DefFiltOpts:</literal> line in the printer or group configuration file with the
+contents of any <option>-o</option> lines the user put on the <command>ppr</command> command line.
 
-Before passing the option list to the filter, <Command>ppr</Command> pre-processes it.  Any
+Before passing the option list to the filter, <command>ppr</command> pre-processes it.  Any
 options whose names begin with a file type name and a hyphen will have the file
 type name and the hyphen removed if the file type name matches the filter being
 invoked, otherwise, such options are discarded.  The names of the parameters (the
@@ -47,111 +47,111 @@ A responder should ignore any option it does not recognize.  If the same option
 appears more than once, the value from the last instance is the one that should be
 used.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 The name of the printer or group to which the job was submitted.  This will
 generally be ignored.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
+<para>
 The third is the job title.  This may be used by filters which format
 their input as pages with headers and footers.
 
-</Para>
-</ListItem>
-<ListItem>
+</para>
+</listitem>
+<listitem>
 
-<Para>
-The directory which was current when <Command>ppr</Command> was invoked.  This is used
+<para>
+The directory which was current when <command>ppr</command> was invoked.  This is used
 by the TeX, TeXinfo, and DVI filters when searching for include files.
 
-</Para>
-</ListItem>
+</para>
+</listitem>
 
-</OrderedList>
+</orderedlist>
 
-</Para>
+</para>
 
-<Para>
-When a filter is invoked, the environment variable <EnVar>IFS</EnVar> is set to a space and a
-tab, and the variable <EnVar>PATH</EnVar> is set to a value which is just adequate to find
+<para>
+When a filter is invoked, the environment variable <envar>IFS</envar> is set to a space and a
+tab, and the variable <envar>PATH</envar> is set to a value which is just adequate to find
 standard shell script helper programs such as test, sed, and grep.  On most
-systems, that value of <EnVar>PATH</EnVar> is <Literal>/bin:/usr/bin</Literal>.
-</Para>
+systems, that value of <envar>PATH</envar> is <literal>/bin:/usr/bin</literal>.
+</para>
 
-<Para>
+<para>
 Here is an example.  Suppose this line is in the printer's configuration file:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 DefFiltOpts: level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 and the user submits a JPEG (JFIF) file with this command:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppr -d myprn -o noisy=no -o 'fortran-width=130 jpeg-noisy=yes' picture.jpg
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 The filter will be invoked like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX noisy=no noisy=yes' myprn 'picture.jpg' /home/me
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 A filter should interpret any options it recognizes and ignore any it does
 not.  If it finds two contradictory options, it should obey the last one.  In
-the example above, the option <Option>noisy=yes</Option> is the one that prevails.  The
-options <Option>freevm=1048576</Option> and <Option>mfmodes=CanonCX</Option> would be ignored simply
+the example above, the option <option>noisy=yes</option> is the one that prevails.  The
+options <option>freevm=1048576</option> and <option>mfmodes=CanonCX</option> would be ignored simply
 because the JPEG filter has no code to use them.
-</Para>
+</para>
 
-<Para>
+<para>
 If the filter exits with a value other than 0, the job will not be discarded.
 A message may be informed by printing on stderr or invoking a responder, the
-exect behaviour being controled by the <Option>-e</Option> switch.
-</Para>
+exect behaviour being controled by the <option>-e</option> switch.
+</para>
 
-<Para>
+<para>
 When a filter is executed, the real user id is that of the user who executed
-<Command>ppr</Command>.  The effective user id and the saved user id's are
-<Literal>ppr</Literal>.  The real
-group id is the same as it was when <Command>ppr</Command> was executed.  The effective and
-saved group id's are <Literal>ppop</Literal>.
-</Para>
+<command>ppr</command>.  The effective user id and the saved user id's are
+<literal>ppr</literal>.  The real
+group id is the same as it was when <command>ppr</command> was executed.  The effective and
+saved group id's are <literal>ppop</literal>.
+</para>
 
-<Para>
+<para>
 It is possible to determine precisely what filter is being executed with what
-arguments by running <Command>ppr</Command> with the <Option>-G infile:filter</Option> option.
+arguments by running <command>ppr</command> with the <option>-G infile:filter</option> option.
 
-</Para>
+</para>
 
-<Para>The filters supplied with PPR, together with their options are
-described in <ULink url="../refman/ppr.1.html">the ppr(1) man page</ULink>,
-under the section for the <Option>-T</Option> switch.</Para>
+<para>The filters supplied with PPR, together with their options are
+described in <ulink url="../refman/ppr.1.html">the ppr(1) man page</ulink>,
+under the section for the <option>-T</option> switch.</para>
 
-</Sect1>
+</sect1>
 

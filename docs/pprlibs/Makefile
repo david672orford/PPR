@@ -43,7 +43,7 @@ all:
 
 install: 
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprlibs
-	../$(INSTALLDATA) $(DOCSDIR)/pprlibs *.html *.css *.png
+	../$(INSTALLDATA) $(DOCSDIR)/pprlibs html/*
 
 #=== Housekeeping ===========================================================
 

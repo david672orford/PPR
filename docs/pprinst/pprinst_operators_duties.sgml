@@ -1,128 +1,128 @@
-<Sect1 id="operators-duties">
-<Title>Operator's Duties for the PPR Spooler</Title>
+<sect1 id="operators-duties">
+<title>Operator's Duties for the PPR Spooler</title>
 
-<Para> There are certain commands which can only be used by an operator.
-The users <Literal>root</Literal> and <Literal>ppr</Literal> are operators.
+<para> There are certain commands which can only be used by an operator.
+The users <literal>root</literal> and <literal>ppr</literal> are operators.
 Any user whose name appears in the file
-<Filename>/etc/ppr/acl/ppop.allow</Filename> is an operator too. </Para>
+<filename>/etc/ppr/acl/ppop.allow</filename> is an operator too. </para>
 
-<Sect2>
-<Title>Deleting Jobs</Title>
+<sect2>
+<title>Deleting Jobs</title>
 
-<Para>
+<para>
 An operator has at his disposal an additional command for deleting jobs:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppop purge chipmunk
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 This command will delete all jobs queue for the printer ``chipmunk'' no matter
 to whom they belong.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Mounting Media</Title>
+<sect2>
+<title>Mounting Media</title>
 
-<Para>
+<para>
 If you have defined bins for a printer, before you can print on it you must
 indicate to PPR what kind of paper is in each bin.  To see what kinds of paper
-(media) are mounted on a printer, use use the <Command>ppop media</Command> command:
-</Para>
+(media) are mounted on a printer, use use the <command>ppop media</command> command:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop media mrhp3si
 Printer    Bin        Media
 ---------------------------------------------------------------
 mrhp3si    Upper      letter
 	   Lower      letter
 	   Envelope   com10
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-To mount a different medium, use the <Command>ppop mount</Command> command:
-</Para>
+<para>
+To mount a different medium, use the <command>ppop mount</command> command:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop mount mrhp3si Upper 3hole
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 You view the current contents of the list of known media types by issuing
-the command <Command>ppad media show all</Command>.
-</Para>
+the command <command>ppad media show all</command>.
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Stopping and Starting Printers</Title>
+<sect2>
+<title>Stopping and Starting Printers</title>
 
-<Para>
-You can determine a printer's status with the <Command>ppop status</Command> command:
-</Para>
+<para>
+You can determine a printer's status with the <command>ppop status</command> command:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop status mrhp3si
 Printer       Status
 ------------------------------------------------------------
 mrhp3si       idle
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 We see that the printer is ``idle''.  This means it is not printing right
 now but it is willing to begin printing.  When it is printing, the name of
 the job it is printing is indicated:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop status mrhp3si
 Printer       Status
 ------------------------------------------------------------
 mrhp3si       printing mrhp3si-3876
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-A printer is stopped with the <Command>ppop stop</Command> command:
-</Para>
+<para>
+A printer is stopped with the <command>ppop stop</command> command:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop stop mrhp3si
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 If the printer was idle, it is stopped immediately:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop status mrhp3si
 Printer       Status
 ------------------------------------------------------------
@@ -132,18 +132,18 @@ mrhp3si       idle
 Printer       Status
 ------------------------------------------------------------
 mrhp3si       stopt
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> If the printer is in the middle of a job, it will be stopped when the
-job is done.  Until it stops, <Command>ppop status</Command> continues to
+<para> If the printer is in the middle of a job, it will be stopped when the
+job is done.  Until it stops, <command>ppop status</command> continues to
 display the name of the job being printed, but it also indicates that the
-printer is stopping: </Para>
+printer is stopping: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop status mrhp3si
 Printer       Status
 ------------------------------------------------------------
@@ -153,63 +153,63 @@ mrhp3si       printing mrhp3si-3876
 Printer       Status
 ------------------------------------------------------------
 mrhp3si       printing mrhp3si-3876 (stopping)
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> If you want to force a printer to stop immediately, you must use the
-<Command>ppop halt</Command> command: </Para>
+<para> If you want to force a printer to stop immediately, you must use the
+<command>ppop halt</command> command: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop halt mrhp3si
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 If the printer was printing a job, it stops in the middle of the job and the
 job is returned to the queue.  If the job was submitted to a group of
 printers, it will be printed on the next member of the group to become idle.
 This means that the job may begin printing on another printer the moment you
 halt the printer on which it was origionally printing.
-</Para>
+</para>
 
-<Para> If a printer is stopt or stopping, you can start it again with the
-<Command>ppop start</Command> command: </Para>
+<para> If a printer is stopt or stopping, you can start it again with the
+<command>ppop start</command> command: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop start mrhp3si
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>The <Command>ppop start</Command> command can also be used when a
-printer is not printing due to a fault.  In that case, the <Command>ppop
-start</Command> command will cause an immediate retry. Printer faults are
-discussed in section <XRef linkend="printerfaults"/>.</Para>
+<para>The <command>ppop start</command> command can also be used when a
+printer is not printing due to a fault.  In that case, the <command>ppop
+start</command> command will cause an immediate retry. Printer faults are
+discussed in section <xref linkend="printerfaults"/>.</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>More On Mounting Media</Title>
+<sect2>
+<title>More On Mounting Media</title>
 
-<Para>The information in this section only applies if you have set the printer up
-for media management as described in section <XRef linkend="adding-autobin"/>.</Para>
+<para>The information in this section only applies if you have set the printer up
+for media management as described in section <xref linkend="adding-autobin"/>.</para>
 
-<Para>
+<para>
 Each job which enters the print queue requires one or more types of paper.
-Most jobs require only one.  If the required medium is not mounted, <Command>ppop
-list</Command> will indicate the types of media (generally various kinds of paper)
+Most jobs require only one.  If the required medium is not mounted, <command>ppop
+list</command> will indicate the types of media (generally various kinds of paper)
 that the job requires.  Here is an example:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 $ ppop list chipmunk
 Queue ID         For               Time    Pgs Status
 ------------------------------------------------------------------
@@ -218,22 +218,22 @@ chipmunk-2353    chappell          02:59PM 034 printing on chipmunk
 chipmunk-2354    chappell          03:09PM 031 waiting for printer
 chipmunk-2357    chappell          03:09PM 302 waiting for media
 					       letterhead
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 The safest way to change media is to stop the printer first.  Obviously, it
 is best not to remove a paper tray until the printer has stopped.  For this
-reason, the <Command>ppop wstop</Command> command is provided.  This command stops the
+reason, the <command>ppop wstop</command> command is provided.  This command stops the
 printer as soon as the current job is completed.  The important point is that
-<Command>ppop wstop</Command> does not exit until the printer has stopped. That means
+<command>ppop wstop</command> does not exit until the printer has stopped. That means
 you can make a shell script like this one:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 #!/bin/sh
 # Mount letterhead in chipmunk's upper bin.
 echo "Please wait while the printer stops..."
@@ -244,55 +244,55 @@ read response
 ppop mount chipmunk Upper letterhead
 ppop start chipmunk
 echo "Thank you."
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2 id="printerfaults">
-<Title>Dealing With Printer Faults
-</Title>
+<sect2 id="printerfaults">
+<title>Dealing With Printer Faults
+</title>
 
-<Para>
-After most printer faults, PPR will try again soon.  You can use <Command>ppop
-status printer</Command> to check on the status of a printer:
-</Para>
+<para>
+After most printer faults, PPR will try again soon.  You can use <command>ppop
+status printer</command> to check on the status of a printer:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop status chipmunk
 Printer       Status
 ------------------------------------------------------------
 chipmunk      fault, retry 5 in 70 seconds
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
-You may ask PPR to try a printer again immediately with the <Command>ppop
-start</Command> command:
-</Para>
+<para>
+You may ask PPR to try a printer again immediately with the <command>ppop
+start</command> command:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop start chipmunk
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Each time a printer fault occurs a message is appended to the printer's alerts
 file.  (If the previous fault occured more than one hour before, the alerts
 file is cleared first.)  You may view a printer's alerts file at any time
 in this manner:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop alerts chipmunk
 Subject: Faults on "chipmunk"
 
@@ -303,76 +303,76 @@ Printer placed in auto-retry mode.
 Fri Feb 18 11:02:56 1994
 "Mac Laser Printer:LaserWriter@MCEC" not found.
 Printer placed in auto-retry mode.
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 If chipmunk is a new printer, the problem may be that the printer was given a
 name which ends with a space.  If this is the case, PPR will not find it
 since it is looking for the printer without a space.  We can either rename
 the printer, removing the space, or we can tell PPR to look for it with a
 space.  Here is the command to do the latter:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppad interface chipmunk atalk "Mac Laser Printer :LaserWriter@MCEC"
 # ppad start chipmunk
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>Holding and Releasing Jobs</Title>
+<sect2>
+<title>Holding and Releasing Jobs</title>
 
-<Para> If a job is in the queue but has not ues begun to print, it is
+<para> If a job is in the queue but has not ues begun to print, it is
 possible to place it in the ``held'' state.  You do this with the
-<Command>ppop hold</Command> command, like this: </Para>
+<command>ppop hold</command> command, like this: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop hold chipmunk-2532
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 While it is held, a job will remain in the queue but it will not be
-printed.  The ``Status'' field in the <Command>ppop list</Command> output will say
+printed.  The ``Status'' field in the <command>ppop list</command> output will say
 ``held''.  When you are ready to have it printed, you must use the command
-<Command>ppop release</Command>, like this:
-</Para>
+<command>ppop release</command>, like this:
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop release chipmunk-2532
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-<Sect2>
-<Title>PostScript Errors and Arrested Jobs</Title>
+<sect2>
+<title>PostScript Errors and Arrested Jobs</title>
 
-<Para>
+<para>
 If the printer reports a PostScript error while the job is printing, PPR
 will finish transmitting the job but when it is done and would
 normally delete the job from the queue, it instead places the job in a special
 held state called ``arrested''.  The defective job is preserved so that an
 attempt may be made to discover the cause of the PostScript error.  For
 example, the following queue listing shows two arrested jobs:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 Queue ID     For                 Time    Pgs Status
 ----------------------------------------------------------------------------
 rat-2717     jandrews            12:10PM 001 arrested
@@ -381,87 +381,87 @@ rat-2718     Abraham Adams       12:10PM 007 printing on rat
 					     14%, page 1
 adshp4m-2719 jones               12:11PM 005 arrested
 					     (PostScript error)
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> You may view the error message, along with any other output the print
-job returned over the interface, by using the <Command>ppop log</Command>
-command.  For instance, if the job <Literal>adshp4m-2719</Literal> is
-arrested, you can view the log like this: </Para>
+<para> You may view the error message, along with any other output the print
+job returned over the interface, by using the <command>ppop log</command>
+command.  For instance, if the job <literal>adshp4m-2719</literal> is
+arrested, you can view the log like this: </para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop log adshp4m-2719
 %%[ Error: syntaxerror; OffendingCommand: --nostringval-- ]%%
 %%[ Flushing: rest of job (to end-of-file) will be ignored ]%%
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 In this case, the PostScript code was probably generated incorrectly, so all
 you can do is cancel the job.  If you think it might print on another
-printer, you can use the <Command>ppop move</Command> command to move it to another
-print queue and then use the <Command>ppop release</Command> command to take it out of
+printer, you can use the <command>ppop move</command> command to move it to another
+print queue and then use the <command>ppop release</command> command to take it out of
 the arrested state, like this:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop move adshp4m-2719 mylaser
 # ppop release mylaser-2719
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 Notice that moving the job changed its name, so we had to use the new name
 in the second command.  While an arrested job can be deleted just like any
 other job, the administrators have a special command just for that purpose:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop clean rat adshp4m
 2 jobs were canceled.
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para> The command above will delete all arrested jobs in the queues
-<Literal>rat</Literal> and <Literal>adshp4m</Literal>.  If we imagine that
+<para> The command above will delete all arrested jobs in the queues
+<literal>rat</literal> and <literal>adshp4m</literal>.  If we imagine that
 the command above acted on the jobs shown in the queue listing at the start
-of this section, then it deleted the jobs <Literal>adshp4m-2719</Literal>
-and <Literal>rat-2717</Literal> but left the job
-<Literal>rat-2718</Literal>.  The <Command>ppop clean</Command> command will
-only delete arrested jobs. </Para>
+of this section, then it deleted the jobs <literal>adshp4m-2719</literal>
+and <literal>rat-2717</literal> but left the job
+<literal>rat-2718</literal>.  The <command>ppop clean</command> command will
+only delete arrested jobs. </para>
 
-<Para>
+<para>
 We can also could have deleted all arrested jobs in the system:
-</Para>
+</para>
 
-<Para>
+<para>
 
-<Screen>
+<screen>
 # ppop clean all
 2 jobs were canceled
-</Screen>
+</screen>
 
-</Para>
+</para>
 
-<Para>
+<para>
 If the printer does not have an interface which supports two way
 communication, then PostScript errors will not be detected.  The interface
-<Literal>atalk</Literal> is one that supports two way communication, the interface
-<Literal>simple</Literal>
+<literal>atalk</literal> is one that supports two way communication, the interface
+<literal>simple</literal>
 is one that does not.
-</Para>
+</para>
 
-</Sect2>
+</sect2>
 
-</Sect1>
+</sect1>
 

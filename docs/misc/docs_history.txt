@@ -401,6 +401,8 @@ more information about RIPs and *pprRIP:.
 * refman/: added ppr-web.1.pod, ppr-panel.1.pod, ppr-testpage.1.pod, and
   ppr-ttf2ps.1.pod, ppd2macosdrv.8.pod, ppdoc.1.pod.
 
+* Changed all DocBook tags to lower case.
+
 
 
 
