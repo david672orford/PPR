@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 9 February 2001.
+# Last modified 20 June 2001.
 #
 
 include ../makeprogs/global.mk
@@ -44,7 +44,6 @@ depend:
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(TARGETS)
 	$(RMF) installed_files_list
-	touch paths.mk
 
 # end of file
 
