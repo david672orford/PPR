@@ -26,12 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 May 2002.
+# Last modified 19 November 2002.
 #
 
 #
 # This script attempts to open the PPR web interface in the best web
 # browser available.  Right now we only have code for Mozilla.
 #
-puts [exec mozilla-xremote-client "openurl(http://localhost:15010/cgi-bin/window_open.cgi?url=http://localhost:15010/cgi-bin/show_queues.cgi;width=700,new-window)"]
+exec mozilla-xremote-client \
+	"openurl(http://localhost:15010/cgi-bin/window_open.cgi?url=http://localhost:15010/cgi-bin/show_queues.cgi;width=700,new-window)"
+	\ >@stdout 2>@stderr
+
+exit 0
 
