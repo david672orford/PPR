@@ -3,7 +3,7 @@
 ;
 ; Run "ppdoc ppr2samba" for an explanation of this file's purpose.
 ;
-; Last revised 4 February 2002.
+; Last revised 1 May 2002.
 ;
 
 ;
@@ -48,8 +48,8 @@
    writable = no
    create mode = 0700
    path = %VAR_SPOOL_PPR%/sambaspool
-   printer driver location = \\%L\pprwin95
-   printer driver file = %VAR_SPOOL_PPR%/drivers/win95/printers.def
+   printer driver location = \\%L\print$
+   printer driver file = %VAR_SPOOL_PPR%/drivers/WIN40/printers.def
 
    ; Minimum space in kilobytes which must be free in sambaspool/ before
    ; print jobs will be accepted.
@@ -70,10 +70,10 @@
 ; This section is for the automatic installation of
 ; Microsoft Windows 95 printer drivers.
 ;
-[pprwin95]
-   comment = Windows 95 Printer Drivers
-   path = %VAR_SPOOL_PPR%/drivers/win95
-   public = yes
+[pprdrvs$]
+   comment = PPR MS-Windows Printer Drivers
+   path = %VAR_SPOOL_PPR%/drivers
+   guest ok = yes
    browsable = yes
    case sensitive = yes
    preserve case = yes

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 April 2001.
+** Last modified 1 May 2002.
 */
 
 /*
@@ -557,7 +557,7 @@ static void check_for_problems(void)
 
 	if(strncmp(line, "[pprproto]", 10) == 0)
 	    pprproto = TRUE;
-	else if(strncmp(line, "[pprwin95]", 10) == 0)
+	else if(strncmp(line, "[pprdrvs$]", 10) == 0)
 	    pprwin95 = TRUE;
     	}
 
@@ -570,7 +570,7 @@ static void check_for_problems(void)
 
     if(!pprwin95)
 	{
-	warning(_("The \"%s\" file doesn't contain a [pprwin95] section."), smb_protos_conf);
+	warning(_("The \"%s\" file doesn't contain a [pprdrv$] section."), smb_protos_conf);
 	}
 
     } /* end of check_for_problems() */

@@ -31,13 +31,13 @@ $PPD_LIB_DIR = "$SHAREDIR/PPDFiles";
 
 # These are the directories from which clients download drivers.
 $DRVDIR = "$VAR_SPOOL_PPR/drivers";
+$DRVDIR_SHARE = "\\pprdrvs\$";
+$W32X86 = "W32X86";				# Windows NT x86
 $WIN40 = "WIN40";				# Windows 4.0 (95)
 $WINPPD = "WINPPD";				# PPD files in MS-DOS text format
+$DRVDIR_W32X86 = "$DRVDIR/$W32X86";
 $DRVDIR_WIN40 = "$DRVDIR/$WIN40";
 $DRVDIR_WINPPD = "$DRVDIR/$WINPPD";
-
-# This file is read by Samba to get Windows 95 driver information.
-$PRINTERS_DEF = "$DRVDIR_WIN40/printers.def";
 
 # We use this when copying in new PPD files.
 $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
@@ -53,6 +53,9 @@ $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
 # List of files for the Adobe version 4.2 PostScript driver.  This driver
 # can drive level 2 but not level 1 PostScript printers.
 @FILES_WIN40_ADOBE_4_2 = qw(ADOBEPS4.DRV ADOBEPS4.HLP ADFONTS.MFM ICONLIB.DLL PSMON.DLL PSCRIPT.INI);
+
+# List of files for the Adobe version 5.x PostScript driver for Windows NT 
+@FILES_W32X86_ADOBE_5 = qw(2/ADOBEPS5.DLL 2/ADOBEPSU.DLL 2/ADOBEPSU.HLP 2/ADOBEPS5.NTF);
 
 #
 # Parse the arguments:
@@ -74,19 +77,15 @@ foreach $arg (@ARGV)
 # Create the output directory if it doesn't already exist.
 #
 mkdir($DRVDIR_WIN40, 0755);	# Win95
+mkdir($DRVDIR_W32X86, 0755);	# WinNT
 mkdir($DRVDIR_WINPPD, 0755);	# PPD Files
-
-#
-# Remove any incorrect case "printers.def".
-#
-unlink("$DRVDIR_WIN40/PRINTERS.DEF");
 
 #
 # Convert all of the filenames in the driver directories to upper case.
 #
-foreach my $dir ($DRVDIR_WIN40)
+foreach my $dir ($DRVDIR_WIN40, "$DRVDIR_W32X86/2")
     {
-    print "Changing filenames in \"$dir\" to upper case...\n" if($opt_verbose);
+    print STDERR "Changing filenames in \"$dir\" to upper case...\n" if($opt_verbose);
     opendir(DIR, $dir) || die "Can't open directory \"$dir\", $!\n";
     while(defined($file = readdir(DIR)))
 	{
@@ -121,25 +120,25 @@ sub allfound
     my $description = shift;
     my $directory = shift;
     my $result = 1;
-    print "Looking for $description...\n" if($opt_verbose);
+    print STDERR "Looking for $description...\n" if($opt_verbose);
     foreach $file (@_)
     	{
-	print "\t\t$file" if($opt_verbose);
+	print STDERR "\t\t$file" if($opt_verbose);
 	if(-f "$directory/$file")
 	    {
-	    print ", found\n" if($opt_verbose);
+	    print STDERR ", found\n" if($opt_verbose);
 	    }
 	else
 	    {
-	    print ", not found\n" if($opt_verbose);
+	    print STDERR ", not found\n" if($opt_verbose);
 	    $result = 0;
 	    }
     	}
     if($opt_verbose)
     	{
-	print "\tUsable driver ";
-	if(!$result) { print "not " }
-	print "present.\n\n";
+	print STDERR "\tUsable driver ";
+	if(!$result) { print STDERR "not " }
+	print STDERR "present.\n\n";
     	}
     return $result;
     }
@@ -147,17 +146,15 @@ sub allfound
 $HAVE_WIN40_MS = allfound("Win95 Microsoft driver", $DRVDIR_WIN40, @FILES_WIN40_MS);
 $HAVE_WIN40_ADOBE_4_1 = allfound("Win95 Adobe driver 4.1", $DRVDIR_WIN40, @FILES_WIN40_ADOBE_4_1);
 $HAVE_WIN40_ADOBE_4_2 = allfound("Win95 Adobe driver 4.2x", $DRVDIR_WIN40, @FILES_WIN40_ADOBE_4_2);
+$HAVE_W32X86_ADOBE_5 = allfound("WinNT Adobe driver 5.x", $DRVDIR_W32X86, @FILES_W32X86_ADOBE_5);
 
 #
-# Convert the PPD files and create printers.def
+# Convert the PPD files and print the driver descriptions.
 #
 if($opt_verbose)
     {
-    print "Scanning \"$PPD_LIB_DIR\", converting PPD files,\n";
-    print "and creating \"$PRINTERS_DEF\"...\n\n";
+    print STDERR "Scanning \"$PPD_LIB_DIR\", converting PPD files...\n";
     }
-
-open(DEF, ">$PRINTERS_DEF") || die "Can't create \"$PRINTERS_DEF\", $!\n";
 
 # List of PPD files to copy into the driver distribution share.
 %ppd_files = ();
@@ -206,7 +203,7 @@ closedir(DIR) || die;
 # name.
 foreach $file (keys %ppd_files)
     {
-    print "Processing \"$file\":\n" if($opt_verbose);
+    print STDERR "Processing \"$file\":\n" if($opt_verbose);
 
     open(OUT, ">$TEMP_PPD_FILE") || die "Can't create \"$TEMP_PPD_FILE\", $!\n";
     undef $mswin_name;
@@ -224,7 +221,7 @@ foreach $file (keys %ppd_files)
 	    close($inlevel) || die;
 	    last if($inlevel eq 'IN0');
 	    print OUT "*% end of include\r\n";
-	    print "\t    End of include file.\n" if($opt_verbose);
+	    print STDERR "\t    End of include file.\n" if($opt_verbose);
 	    $inlevel =~ /^IN([0-9]+)$/;
 	    $inlevel = $1 - 1;
 	    $inlevel = "IN$inlevel";
@@ -249,7 +246,7 @@ foreach $file (keys %ppd_files)
 		$include_file_name = "$basepath/$include_file_name"
 	    	}
 
-	    print "\tIncluding \"$include_file_name\"...\n" if($opt_verbose);
+	    print STDERR "\tIncluding \"$include_file_name\"...\n" if($opt_verbose);
 	    $inlevel++;
 	    open($inlevel, "<$include_file_name") ||
 		die "Can't open include file \"$include_file_name\", $!\n";
@@ -309,49 +306,90 @@ foreach $file (keys %ppd_files)
 
     if($opt_verbose)
 	{
-	print "\tPC File Name: $mswin_name\n";
-	print "\tDriver Name: $nickname\n";
-	print "\tLanguage Level: $languagelevel\n";
+	print STDERR "\tPC File Name: $mswin_name\n";
+	print STDERR "\tDriver Name: $nickname\n";
+	print STDERR "\tLanguage Level: $languagelevel\n";
 	}
 
     rename($TEMP_PPD_FILE, "$DRVDIR_WINPPD/$mswin_name") || die;
 
+    #=================================================================
     # Windows 95 driver
+    #=================================================================
+    {
+    my @filelist = ();
+
+    # If we can use the lastest Adobe driver, do so.
     if($languagelevel > 1 && $HAVE_WIN40_ADOBE_4_2)
 	{
-	print "\tWin95 driver chosen: Adobe 4.2.x\n" if($opt_verbose);
-	print DEF "$nickname:WIN40\\ADOBEPS4.DRV:WINPPD\\$mswin_name:WIN40\\ADOBEPS4.HLP:PostScript Language Monitor:RAW:";
-	print DEF "WINPPD\\$mswin_name,", join(',', map("$WIN40\\$_", @FILES_WIN40_ADOBE_4_2)), "\n";
+	print STDERR "\tWin95 driver chosen: Adobe 4.2.x\n" if($opt_verbose);
+	@filelist = @FILES_WIN40_ADOBE_4_2;
+	}
+    # If we have a renamed copy of the Adobe 4.1 driver,
+    # use it.
+    elsif($HAVE_WIN40_ADOBE_4_1)
+	{
+ 	print STDERR "\tWin95 driver chosen: Adobe 4.1\n" if($opt_verbose);
+	@filelist = @FILES_WIN40_ADOBE_4_1;
+	}
+    # If not, fall back to the one that came with MS-Windows 95.
+    elsif($HAVE_WIN40_MS)
+	{
+	print STDERR "\tWin95 driver chosen: MS-Windows 95 (PSCRIPT.DRV 4.0)\n" if($opt_verbose);
+	@filelist = @FILES_WIN40_MS;
 	}
     else
 	{
-	# If we have a renamed copy of the Adobe 4.1 driver,
-	# use it.
-	if($HAVE_WIN40_ADOBE_4_1)
-	    {
- 	    print "\tWin95 driver chosen: Adobe 4.1\n" if($opt_verbose);
-	    print DEF "$nickname:WIN40\\ADBEPS41.DRV:WINPPD\\$mswin_name:WIN40\\ADOBEPS4.HLP:PostScript Language Monitor:RAW:";
-	    print DEF "WINPPD\\$mswin_name,", join(',', map("$WIN40\\$_", @FILES_WIN40_ADOBE_4_1)), "\n";
-	    }
-	# If not, fall back to the one that came with MS-Windows 95.
-	elsif($HAVE_WIN40_MS)
-	    {
-	    print "\tWin95 driver chosen: MS-Windows 95 (PSCRIPT.DRV 4.0)\n" if($opt_verbose);
-	    print DEF "$nickname:WIN40\\PSCRIPT.DRV:WINPPD\\$mswin_name:WIN40\\PSCRIPT.HLP:PostScript Language Monitor:RAW:";
-	    print DEF "WINPPD\\$mswin_name,", join(',', map("$WIN40\\$_", @FILES_WIN40_MS)), "\n";
-	    }
-	else
-	    {
-	    warn "No suitable Win95 driver found for \"$file\".\n";
-	    }
+	print STDERR "No suitable Win95 driver found for \"$file\".\n";
 	}
+
+    if(scalar @filelist > 0)
+	{
+	foreach (@filelist)
+	    {
+	    s#/#\\#g;
+	    $_ = "$DRVDIR_SHARE\\$WIN40\\$_";
+	    }
+	my $driverpath = $filelist[0];
+	my $helpfile = $filelist[1];
+	print "Windows 4.0:0:$nickname:$driverpath:$DRVDIR_SHARE\\$WINPPD\\$mswin_name:NULL:$helpfile:NULL:RAW:", join(":", @filelist), "\n";
+	}
+    }
+
+    #=================================================================
+    # Windows NT driver
+    #=================================================================
+    {
+    my @filelist = ();
+
+    if($languagelevel > 1 && $HAVE_W32X86_ADOBE_5)
+	{
+	print STDERR "\tWinNT driver chosen: Adobe 5.x\n" if($opt_verbose);
+	@filelist = @FILES_W32X86_ADOBE_5;
+	}
+    else
+	{
+	print STDERR "No suitable WinNT driver found for \"$file\".\n";
+	}
+
+    if(scalar @filelist > 0)
+	{
+	foreach (@filelist)
+	    {
+	    s#/#\\#g;
+	    $_ = "$DRVDIR_SHARE\\$W32X86\\$_";
+	    }
+	my $driverpath = $filelist[0];
+	my $configfile = $filelist[1];
+	my $helpfile = $filelist[2];
+	print "Windows NT x86:2:$nickname:$driverpath:$DRVDIR_SHARE\\$WINPPD\\$mswin_name:$configfile:$helpfile:NULL:RAW:", join(":", @filelist), "\n";
+	}
+    }
 
     print "\n" if($opt_verbose);
     } # end of PPD file iteration
 
 print "Done.\n" if($opt_verbose);
-
-close(DEF) || die;
 
 exit(0);
 
