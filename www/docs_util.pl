@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 April 2002. 
+# Last modified 18 April 2002. 
 #
   
 require "cgi_data.pl";
@@ -68,7 +68,7 @@ sub docs_open
     else
 	{
 	require Fcntl;
-	sysopen($handle, $path, O_RDONLY) || die $!;
+	sysopen($handle, $path, &Fcntl::O_RDONLY) || die "Can't open \"$path\", $!";
 	}
 
     return $path;
