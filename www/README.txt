@@ -1,21 +1,37 @@
 ==========================================================================
  mouse:~ppr/src/www/README.txt
- 16 February 2001.
+ 13 February 2003.
 ==========================================================================
 
 This directory contains HTML pages, CGI scripts, and images which together
 form an interface for managing and monitoring PPR from a web browser.
 
+Most of the programs in this directory require Perl 5 to run.  Rebuilding
+the images requires Perl5, Transfig, Ghostscript, and NetPBM.
+
+==========================================================================
+ Status of the PPR WWW Interface
+==========================================================================
+
 The web interface is now pretty reliable, though it is still far from
-complete.  So far you can browse the printers, view the queue, manipulate
-jobs, add and delete printers and groups, and stop and start printers.
+complete.  So far you can:
+
+* browse the printers, groups and aliases
+
+* view the queue and manipulate jobs
+
+* add and delete printers, groups, and aliases
+
+* change the properties printers, groups, and aliases
+
+* monitor, stop, and start printers
 
 ==========================================================================
  Setting up the PPR WWW Interface with ppr-httpd
 ==========================================================================
 
-PPR has a mini web server called  ppr-httpd which runs out of Inetd.  That way
-it will put no additional load the system when it is not being used.
+PPR has a mini web server called ppr-httpd which runs out of Inetd.  That way
+it will put no load the system when it is not being used.
 
 To enable ppr-httpd, add this line to /etc/services:
 
@@ -26,39 +42,79 @@ and one like this to /etc/inetd.conf:
 ppradmin stream tcp	nowait.400	pprwww	/usr/sbin/tcpd /usr/ppr/lib/ppr-httpd
 
 The fixup program should have added these lines for you already, but it will
-have left the line in inetd.conf commented out.  After uncommenting the line,
-send Inetd the the HUP signal to tell it to reload inetd.conf.
+have left the line in /etc/inetd.conf commented out.  After uncommenting the
+line, send Inetd the the HUP signal to tell it to reload inetd.conf.
+
+If the fixup program discovers that you are using xinetd rather than inetd,
+it will create the file /etc/xinetd.d/ppr which will contain configuration
+sections for ppr-httpd as well as lprsrv.  Both will be disabled.  In order 
+to enable ppr-httpd, you will have to change the line which says:
+
+	disable = yes
+
+to
+	disable = no
+
+You must send xinetd the HUP signal to tell it to reload its configuration
+file.  (If it doesn't seem to work, check the xinetd(8) man page.  Some 
+versions may require a different signal.)
 
 Since the PPR WWW interface may contain security flaws, it is suggested that
 you limited its use to specific networks.  That is why the inetd.conf line
 will use TCP Wrappers if available.  Be sure that you set /etc/hosts.deny
 and /etc/hosts.allow to limit access appropriately.
 
+==========================================================================
+ Logging On
+==========================================================================
+
 Features which do anything beyond merely viewing the status of printers and
-jobs are password protected.  Passwords are checked using the new digest
-authentication method.  Unfortunately, most web browsers don't support digest
-authentication yet.  Netscape doesn't as of version 6.0.  Microsoft Internet
-Explorer 5.0 and Amaya 3.1 do.
+jobs are limited to authorized users, just as they would be if one were
+using the command-line tools.  For example, one must be listed in
+/etc/ppr/acl/ppop.allow before one may manipulate other people's jobs or
+start and stop printers and must be listed in /etc/ppr/acl/ppad.allow before
+one is permitted to modify queues.
 
-New in PPR version 1.41 is the ability to authenticate by means of a system
-that uses cookies, JavaScript, and MD5 hashes.  Look for the "Cookie Login" 
-button in the Printer Control Panel.
+There are three ways that the identity of a user of the web interface can be
+verified.  They are Linux localhost authentication, HTTP digest, and a
+cookie based MD5 scheme.  The PPR web interface does not support HTTP Basic
+authentication.
 
-If you are running under Linux and you run the web browser on the same machine
-as ppr-httpd and you connect through localhost (127.0.0.1), then you won't
-need to use digest or any other kind of HTTP authentication because ppr-httpd
-will be able to examine /proc/net/tcp to figure out which Linux user opened
-the connexion.
+If you are running under Linux and you run the web browser on the same
+machine as ppr-httpd and you connect through localhost (127.0.0.1), then
+ppr-httpd will be able to examine /proc/net/tcp to figure out the user id
+under which the browser that opened the connexion is running.  Thus no logon
+will be necessary (or possible).
 
-In order to set passwords for digest authenication, make sure that the Apache
-web server's htdigest program is in your PATH and then run
-/usr/ppr/bin/ppr-passwd.  An entry will be created in /etc/ppr/htpasswd.
+HTTP digest requires a browser that supports a relatively new authentication
+scheme called HTTP Digest.  HTTP Digest improves upon the more widely
+implekmented HTTP Basic authentication in that it does not send the password
+over the network where it might been seen by other users.  Mozilla started
+supporting this new scheme shortly before version 1.0.  Netscape 6.0 doesn't
+support it but 7.0 probably does.  Microsoft Internet Explorer 5.0 does. 
+Amaya 3.1 does too.
 
-The usernames you use in /etc/ppr/htpasswd can be the same as Unix usernames,
-but they don't have to be.  If they are the same, then the user will be able
-to manipulate the cooresponding Unix user's print jobs.  List a user in
-/etc/ppr/acl/ppop.allow if you want him to be able to manipulate other people's
-jobs and start and stop printers, /etc/ppr/acl/ppad.allow if you want him to be
-able to change the configuration of printers.  (Notice that the permission
-granted by putting a username in one of these files is also granted to any Unix
-user of the same name.)
+If your browser doesn't support HTTP digest but does support JavaScript and
+cookies, then you can use a fallback password authentication system which
+PPR provides.  Look for the "Cookie Login" button in the Printer Control
+Panel.  It brings up a small window with a place to enter your username and
+password.  If you enter them sucessfully you are logged in and will remain
+logged in for as long as you keep the little window open.  This scheme does
+not send the password over the network, but may not be as secure as HTTP
+Digest authentication.
+
+==========================================================================
+ Setting Passwords and Granting Access
+==========================================================================
+
+In order to set passwords for digest authenication or cookie authentication,
+make sure that the Apache web server's htdigest program is in your PATH and
+then run /usr/ppr/bin/ppr-passwd.  An entry will be created in
+/etc/ppr/htpasswd.  (Obviously, this is a silly dependency.)
+
+You can add users to /etc/ppr/passwd even if there aren't corresponding
+users in /etc/passwd, but be careful because if you add the account name to
+access control lists in /etc/ppr/acl and later add an account with the same
+username to /etc/passwd, the new shell account will have those rights too,
+which could be bad if you carelessly created them for different people.
+

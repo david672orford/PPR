@@ -8181,4 +8181,5 @@ line was being parsed twice.
 
 * ppop/README.txt: added
 
+* www/README.txt: updated
 

@@ -1,4 +1,20 @@
 #! /bin/sh
+#
+# mouse:~ppr/src/www/images/fig2png
+# Last modified 13 February 2003.
+#
+
+#
+# This script converts FIG vector drawings to PPM using fig2dev from the
+# Trasnfig package (which converts them to PostScript and then passes
+# them through Ghostscript).  The transparent parts of the drawing are 
+# replaced with a color that is almost white.  The output is then scaled
+# down using pnmscale which uses anti-aliasing to produce a much better
+# looking image than Ghostscript would if asked to produce an image at 
+# the final resolution.  In the final step, pnmtopng which converts
+# the image to PNG format while replacing the almost white color with
+# transparent pixels.
+#
 
 case $1 in
     --wiz )
@@ -19,4 +35,11 @@ case $1 in
 	;;
     esac
 
-exit $?
+result=$?
+if [ $result -ne 0 ]
+    then
+    echo "Image convsion failed, removing useless output file."
+    rm -f $2
+    fi
+
+exit $result
