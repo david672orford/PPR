@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 July 2001.
+# Last modified 30 August 2001.
 #
 
 include ../../makeprogs/global.mk
@@ -55,11 +55,6 @@ install: all
 	../$(INSTALLCP) pprgene3.ppd $(SHAREDIR)/PPDFiles/'PPR Generic Level 2 TTF'
 
 #=== Housekeeping ===========================================================
-
-include .depend
-
-depend:
-	$(PPR_MAKE_DEPEND) ../include
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(PPDS)
