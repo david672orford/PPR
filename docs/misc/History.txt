@@ -7998,6 +7998,10 @@ line was being parsed twice.
 * ppop/ppop_cmds_other.c:ppop_dest(): fixed to show only those aliases which
   match what the user specified.
 
+# www/q_icons/make_composit_figs.perl: fixed to make the icons have
+  transparent backgrounds.  This feature was left out of the current
+  conversion command but was present in the past.
+
 * www/Makefile: fixed to only install image file from www/images/ and skip
   the .fig and build files.
 
@@ -8011,5 +8015,4 @@ line was being parsed twice.
 * ppop/ppop_cmds_other.c:ppop_status(): changed code to hide printer
   problems that are unconfirmed for more than 4 hours unless --verbose
   is used.
-
 

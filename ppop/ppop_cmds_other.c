@@ -308,7 +308,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    printf("status: %s, %s", device_status_string, printer_status_string);
 	    return 1;
 	    }
-	else if(verbose || printer_status != PRNSTATUS_IDLE)
+	else
 	    {
 	    PUTS(sep);
 	    printf(_("Printer Status: %s, %s"), device_status_string, printer_status_string);
