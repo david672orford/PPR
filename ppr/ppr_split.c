@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -129,7 +129,7 @@ void Y_switch(const char *optarg)
 ** pieces and will not call write_queue_file() or submit
 ** the job to the spooler.
 */
-int split_job(struct QFile *qentry)
+int split_job(struct QEntryFile *qentry)
 	{
 	int x;
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -75,7 +75,7 @@ int test_mode = FALSE;
 /* Queue entry variables. */
 const char *QueueFile;							/* name of queue file of job to print */
 FILE *qstream;									/* queue file "handle" */
-struct QFile job;							/* queue file entry */
+struct QEntryFile job;							/* queue file entry */
 
 /* List of resource refered to in this job. */
 struct DRVRES *drvres = (struct DRVRES *)NULL;
@@ -2027,8 +2027,8 @@ int real_main(int argc, char *argv[])
 	** Read miscelaneous data from the queue file
 	** into the structure "job".
 	*/
-	qfile_clear(&job);
-	if(qfile_load(&job, qstream))
+	qentryfile_clear(&job);
+	if(qentryfile_load(&job, qstream))
 		fatal(EXIT_JOBERR, "Defective queue file data.");
 
 	/*

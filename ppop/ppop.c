@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -781,10 +781,10 @@ int job_permission_check(struct Jobname *job)
 ** The global variables uid and proxy_for are used by
 ** this function.
 */
-int is_my_job(const struct QEntry *qentry, const struct QFile *qfileentry)
+int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile)
 	{
 	/* If the user names don't match, it isn't. */
-	if(strcmp(su_user, qfileentry->username))
+	if(strcmp(su_user, qentryfile->username))
 		return FALSE;
 
 	/* If the user says he is acting as a proxy, the party he is
@@ -792,10 +792,10 @@ int is_my_job(const struct QEntry *qentry, const struct QFile *qfileentry)
 	   when he submitted the job. */
 	if(proxy_for)
 		{
-		if(!qfileentry->proxy_for)						/* if not a proxy job, */
+		if(!qentryfile->proxy_for)						/* if not a proxy job, */
 			return FALSE;
 
-		if(!proxy_for_match(qfileentry->proxy_for, proxy_for))
+		if(!proxy_for_match(qentryfile->proxy_for, proxy_for))
 			return FALSE;
 		}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 24 March 2005.
 */
 
 #include "config.h"
@@ -57,21 +57,17 @@ void responder_child_hook(pid_t pid, int wstat)
 void respond2(const char *destname, int id, int subid, int prnid, const char *prnname, int response_code)
 	{
 	const char function[] = "respond2";
-	char jobname_long[256];
-	const char *jobname_short;
+	char job[256];
 	char filename[MAX_PPR_PATH];
-	int fd;
-	pid_t pid;									/* Process id of responder */
+	int qfile_fd;
+	pid_t pid;							/* Process id of ppr-respond */
 
-	/* Format the job name as a string.  This will be the 1st parameter. */
-    jobname_short = jobid(destname, id, subid);
-
-    /* Formate the job name is verbose format.  This will be used to build queue file names. */
-	snprintf(jobname_long, sizeof(jobname_long), "%s-%d.%d", destname, id, subid);
+    /* Format the job name is verbose format.  This will be used to build queue file names. */
+	snprintf(job, sizeof(job), "%s-%d.%d", destname, id, subid);
 
 	/* Open the queue file before the fork since it may be deleted when we return. */
-	ppr_fnamef(filename, "%s/%s", QUEUEDIR, jobname_long);
-	if((fd = open(filename, O_RDONLY)) == -1)
+	ppr_fnamef(filename, "%s/%s", QUEUEDIR, job);
+	if((qfile_fd = open(filename, O_RDONLY)) == -1)
 		{
 		fprintf(stderr, "Can't open \"%s\", errno=%d (%s)\n", filename, errno, gu_strerror(errno));
 		return;
@@ -83,7 +79,6 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 		}
 	else if(pid == 0)							/* if child, */
 		{
-		char code_str[5];
 		char per_duplex_str[8];
 		char per_simplex_str[8];
 
@@ -91,18 +86,15 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 		child_unblock_all();
 
 		/* Move the queue file to file descriptor 3 if it isn't there already. */
-		if(fd != 3)
+		if(qfile_fd != 3)
 			{
-			dup2(fd, 3);
-			close(fd);
+			dup2(qfile_fd, 3);
+			close(qfile_fd);
 			}
 
 		/* Connect stdin to the job log file, and stdout and stderr to the pprd log file. */
-		ppr_fnamef(filename, "%s/%s-log", DATADIR, jobname_long);
+		ppr_fnamef(filename, "%s/%s-log", DATADIR, job);
 		child_stdin_stdout_stderr(filename, PPRD_LOGFILE);
-
-		/* The 2nd parameter is the response code number. */
-		snprintf(code_str, sizeof(code_str), "%d", response_code);
 
 		/* 4th and 5th are the printer charge rates */
 		per_duplex_str[0] = '\0';
@@ -115,19 +107,19 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 
 		/* Here we go! */
 		execl(LIBDIR"/ppr-respond", "ppr-respond",
-				"pprd",
-				jobname_short,
-				code_str,
-				prnname,
-				per_duplex_str,
-				per_simplex_str,
-				NULL);
+			"qfile_fd3",
+			gu_name_str_value("job", job),
+			gu_name_int_value("response_code", response_code),
+			gu_name_str_value("printer", prnname),
+			gu_name_str_value("charge_per_duplex", per_duplex_str),
+			gu_name_str_value("charge_per_simplex", per_simplex_str),
+			NULL);
 		debug("child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		exit(12);
 		} /* end of child clause */
 
 	/* parent drops through */
-	close(fd);
+	close(qfile_fd);
 
 	} /* end of respond2() */
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*! \file
@@ -214,6 +214,8 @@ __attribute__ (( format (printf, 1, 2) ))
 char *gu_strlower(char *string);
 char *gu_strtrim(char *string);
 char *gu_stresc_convert(char *string);
+char *gu_name_int_value(const char name[], int value);
+char *gu_name_str_value(const char name[], const char value[]);
 
 /*===================================================================
 ** Command line option parsing

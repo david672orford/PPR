@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--23 March 2005
+2.00a1, 11 December 2004--24 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9646,5 +9646,8 @@ no final tarball was released.
   config file.  Removed support for "file" commentator.
 
 * Merged include/commentary.h into include/respond.h.
+
+* Renamed struct QFileEntry to QEntryFile and renamed its manipulation 
+  functions to conform to current PPR style.
 
 

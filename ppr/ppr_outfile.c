@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -54,7 +54,7 @@
 ** and incremented making the new id, and the new id is written back
 ** to the file, the file is closed, and the new id is returned.
 */
-void get_next_id(struct QFile *q)
+void get_next_id(struct QEntryFile *q)
 	{
 	const char function[] = "get_next_id";
 	const char filename[] = NEXTIDFILE;

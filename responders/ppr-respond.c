@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -74,7 +74,7 @@ struct RESPONSE_INFO
 	char *jobname;					/* destname-id of job */
 	int response_code;				/* what happened to the job? */
 	char *extra;					/* extra parameter supplementing response_code */
-	struct QFile job;
+	struct QEntryFile job;
 	int pages_printed;
 	struct COMPUTED_CHARGE charge;	/* the amount of money to charge */
 	} ;
@@ -326,8 +326,8 @@ static int job_message(int argc, char *argv[])
 			return -1;
 			}
 
-		qfile_clear(&rinfo.job);
-		qfile_load(&rinfo.job, f);
+		qentryfile_clear(&rinfo.job);
+		qentryfile_load(&rinfo.job, f);
 	
 		fclose(f);
 		}

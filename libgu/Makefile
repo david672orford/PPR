@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 February 2005.
+# Last modified 24 March 2005.
 #
 
 include ../Makefile.conf
@@ -78,7 +78,8 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_strtrim.$(OBJ) \
 	gu_stresc.$(OBJ) \
 	pcre.$(OBJ) \
-	pcre_study.$(OBJ) 
+	pcre_study.$(OBJ) \
+	gu_name_value.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libppr/qfile_save.c
+** mouse:~ppr/src/libppr/qentryfile_save.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*! \file */
@@ -37,10 +37,10 @@
 #include "global_structs.h"
 #include "version.h"
 
-/** write a string QFile to a file
+/** write a string QEntryFile to a file
  *
  */
-int qfile_save(const struct QFile *qentry, FILE *Qfile)
+int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	{
 	/* This line will be useful once distributed printing is implemented. */
 	fprintf(Qfile, "PPRVersion: %s\n", SHORT_VERSION);

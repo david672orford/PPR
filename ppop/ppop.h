@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -79,7 +79,7 @@ int print_reply(void);
 
 int assert_am_operator(void);
 int job_permission_check(struct Jobname *job);
-int is_my_job(const struct QEntry *qentry, const struct QFile *qfileentry);
+int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile);
 
 /* ============== Functions in ppop_cmds_listq.c =================== */
 
@@ -97,7 +97,7 @@ int custom_list(char *argv[],
 				void(*help)(void),
 				void(*banner)(void),
 				int(*item)(const struct QEntry *qentry,
-					const struct QFile*,
+					const struct QEntryFile*,
 					const char *onprinter,
 					FILE *qstream),
 				int suppress,

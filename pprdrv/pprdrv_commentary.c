@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 #include "config.h"
@@ -130,11 +130,7 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	if((category & job.commentary) == category)
 		{
 		int fd;
-		char category_str[4];
-		char severity_str[4];
 		DODEBUG_COMMENTARY(("commentary(): job submitter is interested"));
-		snprintf(category_str, sizeof(category_str), "%d", category);
-		snprintf(severity_str, sizeof(severity_str), "%d", severity);
 
 		switch( fork() )
 			{
@@ -157,17 +153,16 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 					if(fd > 2) close(fd);
 					}
 				execl(LIBDIR"/ppr-respond", "ppr-respond",
-					"pprdrv_commentary",
-					job.responder.name,
-					job.responder.address,
-					job.responder.options ? job.responder.options : "",
-					QueueFile,
-					printer.Name,
-					category_str,
-					cooked,
-					raw1 ? raw1 : "",
-					raw2 ? raw2 : "",
-					severity_str,
+					gu_name_str_value("responder_name", job.responder.name),
+					gu_name_str_value("responder_address", job.responder.address),
+					gu_name_str_value("responder_options", job.responder.options),
+					gu_name_int_value("response_code", RESP_TYPE_COMMENTARY | category),
+					gu_name_str_value("job", QueueFile),
+					gu_name_str_value("printer", printer.Name),
+					gu_name_str_value("commentary_cooked", cooked),
+					gu_name_str_value("commentary_raw1", raw1),
+					gu_name_str_value("commentary_raw2", raw2),
+					gu_name_str_value("commentary_severity", severity),
 					(char*)NULL
 					);
 				error("exec(\"%s\", ...) failed, errno=%d (%s)", LIBDIR"/ppr-respond", errno, gu_strerror(errno));

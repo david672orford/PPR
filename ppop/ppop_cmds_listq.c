@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -142,7 +142,7 @@ static char **allow_PPRDEST(char *argv[])
 ** the required media names.  Lastly, it is passed the indent to use when
 ** printing continuation lines.
 */
-static void job_status(const struct QEntry *qentry, const struct QFile *qfileentry,
+static void job_status(const struct QEntry *qentry, const struct QEntryFile *qentryfile,
 		 const char *onprinter, FILE *vfile, int indent, int reason_indent)
 	{
 	/* Print a message appropriate to the status. */
@@ -156,7 +156,7 @@ static void job_status(const struct QEntry *qentry, const struct QFile *qfileent
 				{								/* assume it is a group */
 				for(x=0; x < indent; x++)		/* and explain. */
 					PUTC(' ');
-				printf("(Not all \"%s\"\n", qfileentry->destname);
+				printf("(Not all \"%s\"\n", qentryfile->destname);
 				for(x=0; x < indent; x++)
 					PUTC(' ');
 				printf("members are suitable.)\n");
@@ -293,9 +293,9 @@ static void job_status(const struct QEntry *qentry, const struct QFile *qfileent
 					/* Print percent of bytes sent. */
 					{
 					int total_bytes =
-						qfileentry->PassThruPDL
-								? qfileentry->attr.input_bytes
-								: qfileentry->attr.postscript_bytes;
+						qentryfile->PassThruPDL
+								? qentryfile->attr.input_bytes
+								: qentryfile->attr.postscript_bytes;
 
 					if(total_bytes == 0)						/* !!! a bug somewhere !!! */
 						printf("bug%%");
@@ -304,7 +304,7 @@ static void job_status(const struct QEntry *qentry, const struct QFile *qfileent
 					}
 
 					/* Print number of pages started. */
-					if(qfileentry->attr.pages > 0 || pages_started > 0 || pages_printed)
+					if(qentryfile->attr.pages > 0 || pages_started > 0 || pages_printed)
 						printf(", page %d", pages_started);
 
 					/* How many pages does the printer report are completed? */
@@ -432,7 +432,7 @@ int custom_list(char *argv[],
 		void(*help)(void),		/* function for syntax error */
 		void(*banner)(void),	/* function to print column labels */
 		int(*item)(const struct QEntry *qentry,
-			const struct QFile*,
+			const struct QEntryFile*,
 			const char *onprinter,
 			FILE *qstream),		/* file to read Media: from */
 		int suppress,			/* True if should suppress header on empty queue */
@@ -441,7 +441,7 @@ int custom_list(char *argv[],
 	int arg_index;
 	FILE *FIFO, *reply_file;
 	struct Jobname job;					/* Split up job name */
-	struct QFile qfileentry;		/* full queue entry */
+	struct QEntryFile qentryfile;		/* full queue entry */
 	struct QEntry qentry;
 	int header_printed = FALSE;
 	char *line = NULL;
@@ -518,8 +518,8 @@ int custom_list(char *argv[],
 			** Read additional information from the queue file included
 			** in the reply file.
 			*/
-			qfile_clear(&qfileentry);
-			if(qfile_load(&qfileentry, reply_file) == -1)
+			qentryfile_clear(&qentryfile);
+			if(qentryfile_load(&qentryfile, reply_file) == -1)
 				printf("Invalid queue entry:\n");
 
 			/* Copy everything into a QEntry structure for easy parameter passing. */
@@ -531,10 +531,10 @@ int custom_list(char *argv[],
 			qentry.notnow = notnow;
 			qentry.pass = pass;
 
-			/* And into the QFile structure too, this will take care of deallocation. */
-			qfileentry.destname = destname;
-			qfileentry.id = id;
-			qfileentry.subid = subid;
+			/* And into the QEntryFile structure too, this will take care of deallocation. */
+			qentryfile.destname = destname;
+			qentryfile.id = id;
+			qentryfile.subid = subid;
 
 			/*
 			** Normally we print the column headings if they have not
@@ -556,7 +556,7 @@ int custom_list(char *argv[],
 					header_printed = TRUE;
 					}
 
-				stop = (*item)(&qentry, &qfileentry, onprinter, reply_file);
+				stop = (*item)(&qentry, &qentryfile, onprinter, reply_file);
 				}
 
 			/*
@@ -565,10 +565,10 @@ int custom_list(char *argv[],
 			while((line = gu_getline(line, &line_available, reply_file)) && strcmp(line, CHOPT_QF_ENDTAG2)) ;
 
 			/*
-			** Free memory in the qfileentry.
+			** Free memory in the qentryfile.
 			** This will free destname as well.
 			*/
-			qfile_free(&qfileentry);
+			qentryfile_free(&qentryfile);
 			gu_free(onprinter);
 			} /* end of while, loop back for next job */
 
@@ -598,23 +598,23 @@ static void ppop_short_banner(void)
 	}
 
 static int ppop_short_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
 	int len;
 
-	len = printf("%s", jobid(qfileentry->destname, qfileentry->id, qfileentry->subid));
+	len = printf("%s", jobid(qentryfile->destname, qentryfile->id, qentryfile->subid));
 
 	while(len++ < 24)					/* print padded job id */
 		PUTC(' ');
 
-	len = printf("%s",qfileentry->For); /* print it */
+	len = printf("%s",qentryfile->For); /* print it */
 	while(len++ < 21)					/* pad to 21 characters */
 		PUTC(' ');
 
 	/* now print the status */
-	job_status(qentry, qfileentry, onprinter, (FILE*)NULL, 45, 45);
+	job_status(qentry, qentryfile, onprinter, (FILE*)NULL, 45, 45);
 										/* media indent, reason indent */
 	return FALSE;
 	} /* end of ppop_short_item() */
@@ -654,7 +654,7 @@ printf(  "----------------------------------------------------------------------
 	}
 
 static int ppop_list_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -662,23 +662,23 @@ static int ppop_list_item(const struct QEntry *qentry,
 	char pagesstr[4];
 	const char *jobname;
 
-	format_time(timestr, sizeof(timestr), (time_t)qfileentry->time);
+	format_time(timestr, sizeof(timestr), (time_t)qentryfile->time);
 
 	/* Convert the number of pages to ASCII. */
-	if(qfileentry->attr.pages < 0 || qfileentry->attr.pages > 999)
+	if(qentryfile->attr.pages < 0 || qentryfile->attr.pages > 999)
 		strcpy(pagesstr,"???");
 	else
-		snprintf(pagesstr, sizeof(pagesstr), "%3.3d", qfileentry->attr.pages);
+		snprintf(pagesstr, sizeof(pagesstr), "%3.3d", qentryfile->attr.pages);
 
-	jobname = jobid(qfileentry->destname, qentry->id, qentry->subid);
+	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
 	if(strlen(jobname) > 15)
 		printf("%s\n               ", jobname);
 	else
 		printf("%-15.15s", jobname);
 
-	printf(" %-24.24s %-9.9s %s ", qfileentry->For ? qfileentry->For : "???", timestr, pagesstr);
+	printf(" %-24.24s %-9.9s %s ", qentryfile->For ? qentryfile->For : "???", timestr, pagesstr);
 
-	job_status(qentry, qfileentry, onprinter, qstream, 55, 55);
+	job_status(qentry, qentryfile, onprinter, qstream, 55, 55);
 												/* media indent, reason indent */
 	return FALSE;
 	} /* end of ppop_list_item() */
@@ -951,7 +951,7 @@ static void ppop_lpq_banner(void)
 ** This is called for each job in the queue.
 */
 static int ppop_lpq_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -981,19 +981,19 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		size_t user_len;
 		#endif
 
-		if(qfileentry->proxy_for)
+		if(qentryfile->proxy_for)
 			{
-			user = qfileentry->proxy_for;
+			user = qentryfile->proxy_for;
 			user_len = strcspn(user, "@");
 			}
-		else if(qfileentry->For)		/* probably never false */
+		else if(qentryfile->For)		/* probably never false */
 			{
-			user = qfileentry->For;
-			user_len = strlen(qfileentry->For);
+			user = qentryfile->For;
+			user_len = strlen(qentryfile->For);
 			}
 		else							/* probably never invoked */
 			{
-			user = qfileentry->username;
+			user = qentryfile->username;
 			user_len = strlen(user);
 			}
 
@@ -1011,7 +1011,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 
 	/* Build a gramaticaly correct size string. */
 	{
-	long int bytes = qfileentry->PassThruPDL ? qfileentry->attr.input_bytes : qfileentry->attr.postscript_bytes;
+	long int bytes = qentryfile->PassThruPDL ? qentryfile->attr.input_bytes : qentryfile->attr.postscript_bytes;
 
 	if(bytes == 1)
 		strcpy(sizestr, "1 byte");
@@ -1036,9 +1036,9 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	** Change spaces in the user name to underscores because some programs
 	** which parse LPQ output, such as Samba get confused by them.
 	*/
-	if(qfileentry->For)
+	if(qentryfile->For)
 		{
-		const char *ptr = qfileentry->For;
+		const char *ptr = qentryfile->For;
 		int x;
 
 		for(x=0; ptr[x] && x < fixed_for_MAXLENGTH; x++)
@@ -1070,8 +1070,8 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	{
 	const char *ptr;
 	int x;
-	if(!(ptr = qfileentry->lpqFileName))
-		if(!(ptr = qfileentry->Title))
+	if(!(ptr = qentryfile->lpqFileName))
+		if(!(ptr = qentryfile->Title))
 			ptr = "stdin";
 
 	for(x=0; ptr[x] && x < fixed_name_MAXLENGTH; x++)
@@ -1194,84 +1194,84 @@ static void ppop_details_banner(void)
 	}
 
 static int ppop_details_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
 	/* print job name */
-	printf("Job ID: %s\n", jobid(qfileentry->destname,qentry->id,qentry->subid));
+	printf("Job ID: %s\n", jobid(qentryfile->destname,qentry->id,qentry->subid));
 
 	/* Say which part of the whole this is. */
-	if(qfileentry->attr.parts == 1)
+	if(qentryfile->attr.parts == 1)
 		printf("Part: 1 of 1\n");
 	else
-		printf("Part: %d of %d\n", qentry->subid,qfileentry->attr.parts);
+		printf("Part: %d of %d\n", qentry->subid,qentryfile->attr.parts);
 
 	/* Give the input filter chain description */
-	printf("Filters: %s\n", qfileentry->Filters ? qfileentry->Filters : "");
+	printf("Filters: %s\n", qentryfile->Filters ? qentryfile->Filters : "");
 
 	/* Print submitting user id. */
-	printf("User: %s (%ld)\n", qfileentry->username,(long)qfileentry->user);
+	printf("User: %s (%ld)\n", qentryfile->username,(long)qentryfile->user);
 
 	/* Proxy information */
-	printf("Proxy For: %s\n", qfileentry->proxy_for ? qfileentry->proxy_for : "");
+	printf("Proxy For: %s\n", qentryfile->proxy_for ? qentryfile->proxy_for : "");
 
 	/* Who is it for? */
-	printf("For: %s\n",qfileentry->For ? qfileentry->For : "(unknown)" );
+	printf("For: %s\n",qentryfile->For ? qentryfile->For : "(unknown)" );
 
 	/* print the date it was submitted */
-	printf("Submission Time: %s", ctime((time_t*)&qfileentry->time) );
+	printf("Submission Time: %s", ctime((time_t*)&qentryfile->time) );
 
 	/* print priority */
 	printf("Current Priority: %d\n", qentry->priority);
-	printf("Origional Priority: %d\n", qfileentry->priority);
+	printf("Origional Priority: %d\n", qentryfile->priority);
 
 	/* What was the file name? */
-	printf("lpq filename: %s\n", qfileentry->lpqFileName ? qfileentry->lpqFileName : "");
+	printf("lpq filename: %s\n", qentryfile->lpqFileName ? qentryfile->lpqFileName : "");
 
 	/* What is the title? */
-	printf("Title: %s\n", qfileentry->Title ? qfileentry->Title : "");
+	printf("Title: %s\n", qentryfile->Title ? qentryfile->Title : "");
 
 	/* Who or what is the creator? */
-	printf("Creator: %s\n", qfileentry->Creator ? qfileentry->Creator : "");
+	printf("Creator: %s\n", qentryfile->Creator ? qentryfile->Creator : "");
 
 	/* what are the routing instructions */
-	printf("Routing: %s\n", qfileentry->Routing ? qfileentry->Routing : "");
+	printf("Routing: %s\n", qentryfile->Routing ? qentryfile->Routing : "");
 
 	/* Flag pages */
-	printf("Banner: %s\n",describe_flag_page_setting(qfileentry->do_banner));
-	printf("Trailer: %s\n",describe_flag_page_setting(qfileentry->do_trailer));
+	printf("Banner: %s\n",describe_flag_page_setting(qentryfile->do_banner));
+	printf("Trailer: %s\n",describe_flag_page_setting(qentryfile->do_trailer));
 
 	/* response methode and address */
-	printf("Respond by: %s \"%s\"\n", qfileentry->responder.name, qfileentry->responder.address);
-	if(qfileentry->responder.options)
-		printf("Responder options: %s\n", qfileentry->responder.options);
+	printf("Respond by: %s \"%s\"\n", qentryfile->responder.name, qentryfile->responder.address);
+	if(qentryfile->responder.options)
+		printf("Responder options: %s\n", qentryfile->responder.options);
 
-	if(qfileentry->commentary)
-		printf("Commentary: %d\n", qfileentry->commentary);
+	if(qentryfile->commentary)
+		printf("Commentary: %d\n", qentryfile->commentary);
 
 	/* attributes */
-	printf("Required Language Level: %d\n", qfileentry->attr.langlevel);
-	printf("Required Extensions: %d\n", qfileentry->attr.extensions);
-	printf("DSC Level: %f\n", qfileentry->attr.DSClevel);
-	if(qfileentry->attr.pages >= 0)
-		printf("Pages: %d\n", qfileentry->attr.pages);
+	printf("Required Language Level: %d\n", qentryfile->attr.langlevel);
+	printf("Required Extensions: %d\n", qentryfile->attr.extensions);
+	printf("DSC Level: %f\n", qentryfile->attr.DSClevel);
+	if(qentryfile->attr.pages >= 0)
+		printf("Pages: %d\n", qentryfile->attr.pages);
 	else
 		printf("Pages: ?\n");
-	printf("Page Order: %s\n", describe_pageorder(qfileentry->attr.pageorder));
+	printf("Page Order: %s\n", describe_pageorder(qentryfile->attr.pageorder));
 	PUTS("Page List: ");
-	pagemask_print(qfileentry);
+	pagemask_print(qentryfile);
 	PUTC('\n');
-	printf("Prolog Present: %s\n", qfileentry->attr.prolog ? "True" : "False");
-	printf("DocSetup Present: %s\n", qfileentry->attr.docsetup ? "True" : "False");
-	printf("Script Present: %s\n", qfileentry->attr.script ? "True" : "False");
-	printf("ProofMode: %s\n", describe_proofmode(qfileentry->attr.proofmode));
-	printf("Orientation: %s\n", describe_orientation(qfileentry->attr.orientation));
-	printf("Pages Per Sheet: %d\n", qfileentry->attr.pagefactor);
-	printf("Unfiltered Size: %ld\n", qfileentry->attr.input_bytes);
-	printf("PostScript Size: %ld\n", qfileentry->attr.postscript_bytes);
+	printf("Prolog Present: %s\n", qentryfile->attr.prolog ? "True" : "False");
+	printf("DocSetup Present: %s\n", qentryfile->attr.docsetup ? "True" : "False");
+	printf("Script Present: %s\n", qentryfile->attr.script ? "True" : "False");
+	printf("ProofMode: %s\n", describe_proofmode(qentryfile->attr.proofmode));
+	printf("Orientation: %s\n", describe_orientation(qentryfile->attr.orientation));
+	printf("Pages Per Sheet: %d\n", qentryfile->attr.pagefactor);
+	printf("Unfiltered Size: %ld\n", qentryfile->attr.input_bytes);
+	printf("PostScript Size: %ld\n", qentryfile->attr.postscript_bytes);
 	printf("DocumentData: ");
-	switch(qfileentry->attr.docdata)
+	switch(qentryfile->attr.docdata)
 		{
 		case CODES_UNKNOWN:
 			printf("UNKNOWN");
@@ -1292,26 +1292,26 @@ static int ppop_details_item(const struct QEntry *qentry,
 	printf("\n");
 
 	/* N-Up */
-	printf("N-Up N: %d\n", qfileentry->N_Up.N);
-	printf("N-Up Borders: %s\n", qfileentry->N_Up.borders ? "True" : "False");
-	printf("Signiture Sheets: %d\n", qfileentry->N_Up.sigsheets);
-	printf("Signiture Part: %s\n", describe_sigpart(qfileentry->N_Up.sigpart));
+	printf("N-Up N: %d\n", qentryfile->N_Up.N);
+	printf("N-Up Borders: %s\n", qentryfile->N_Up.borders ? "True" : "False");
+	printf("Signiture Sheets: %d\n", qentryfile->N_Up.sigsheets);
+	printf("Signiture Part: %s\n", describe_sigpart(qentryfile->N_Up.sigpart));
 
 	/* options */
-	if(qfileentry->opts.copies < 0)
+	if(qentryfile->opts.copies < 0)
 		fputs("Copies: ?\n", stdout);
 	else
-		printf("Copies: %d\n", qfileentry->opts.copies);
-	printf("Collate: %s\n", qfileentry->opts.collate ? "True" : "False");
-	printf("Auto Bin Select: %s\n", qfileentry->opts.binselect ? "True" : "False");
-	printf("Keep Bad Features: %s\n", qfileentry->opts.keep_badfeatures ? "True" : "False");
+		printf("Copies: %d\n", qentryfile->opts.copies);
+	printf("Collate: %s\n", qentryfile->opts.collate ? "True" : "False");
+	printf("Auto Bin Select: %s\n", qentryfile->opts.binselect ? "True" : "False");
+	printf("Keep Bad Features: %s\n", qentryfile->opts.keep_badfeatures ? "True" : "False");
 
 	/* "Draft" notice */
-	printf("Draft Notice: %s\n", qfileentry->draft_notice ? qfileentry->draft_notice : "");
+	printf("Draft Notice: %s\n", qentryfile->draft_notice ? qentryfile->draft_notice : "");
 
 	/* Print the job status */
 	printf("Status: ");
-	job_status(qentry, qfileentry, onprinter, (FILE*)NULL, 8, 8);
+	job_status(qentry, qentryfile, onprinter, (FILE*)NULL, 8, 8);
 
 	/* show the never and notnow masks */
 	printf("Never mask: %d\n", qentry->never);
@@ -1372,7 +1372,7 @@ static void ppop_qquery_banner(void)
 	{ /* empty */ }
 
 static int ppop_qquery_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1478,7 +1478,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		case STATUS_WAITING:			/* <--- waiting for printer */
 			status = "waiting for printer";
 			if(qentry->never)			/* If one or more counted out, */
-				snprintf(explain, sizeof(explain), "Not all \"%s\" members are suitable", qfileentry->destname);
+				snprintf(explain, sizeof(explain), "Not all \"%s\" members are suitable", qentryfile->destname);
 			else
 				explain[0] = '\0';
 			break;
@@ -1524,13 +1524,13 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		switch(qquery_query[x])
 			{
 			case 0:						/* jobname */
-				PUTS(jobid(qfileentry->destname,qfileentry->id,qfileentry->subid));
+				PUTS(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
 				break;
 			case 1:						/* for */
-				puts_detabbed(qfileentry->For ? qfileentry->For : "?");
+				puts_detabbed(qentryfile->For ? qentryfile->For : "?");
 				break;
 			case 2:						/* title */
-				puts_detabbed(qfileentry->Title ? qfileentry->Title : "");
+				puts_detabbed(qentryfile->Title ? qentryfile->Title : "");
 				break;
 			case 3:						/* status */
 				PUTS(status);
@@ -1539,117 +1539,117 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				puts_detabbed(explain);
 				break;
 			case 5:						/* copies */
-				if(qfileentry->opts.copies >= 0)
-					printf("%d", qfileentry->opts.copies);
+				if(qentryfile->opts.copies >= 0)
+					printf("%d", qentryfile->opts.copies);
 				break;
 			case 6:						/* copiescollate */
-				if(qfileentry->opts.collate)
+				if(qentryfile->opts.collate)
 					PUTS("true");
 				else
 					PUTS("false");
 				break;
 			case 7:						/* pagefactor */
-				printf("%d", qfileentry->attr.pagefactor);
+				printf("%d", qentryfile->attr.pagefactor);
 				break;
 			case 8:						/* routing */
-				if(qfileentry->Routing)
-					puts_detabbed(qfileentry->Routing);
+				if(qentryfile->Routing)
+					puts_detabbed(qentryfile->Routing);
 				break;
 			case 9:						/* creator */
-				if(qfileentry->Creator)
-					puts_detabbed(qfileentry->Creator);
+				if(qentryfile->Creator)
+					puts_detabbed(qentryfile->Creator);
 				break;
 			case 10:					/* nupn */
-				printf("%d", qfileentry->N_Up.N);
+				printf("%d", qentryfile->N_Up.N);
 				break;
 			case 11:					/* nupborders */
-				fputs( qfileentry->N_Up.borders ? "true" : "false", stdout);
+				fputs( qentryfile->N_Up.borders ? "true" : "false", stdout);
 				break;
 			case 12:					/* sigsheets */
-				printf("%d", qfileentry->N_Up.sigsheets);
+				printf("%d", qentryfile->N_Up.sigsheets);
 				break;
 			case 13:					/* sigpart */
-				fputs(describe_sigpart(qfileentry->N_Up.sigpart), stdout);
+				fputs(describe_sigpart(qentryfile->N_Up.sigpart), stdout);
 				break;
 			case 14:					/* pageorder */
-				fputs(describe_pageorder(qfileentry->attr.pageorder), stdout);
+				fputs(describe_pageorder(qentryfile->attr.pageorder), stdout);
 				break;
 			case 15:					/* proofmode */
-				fputs(describe_proofmode(qfileentry->attr.proofmode), stdout);
+				fputs(describe_proofmode(qentryfile->attr.proofmode), stdout);
 				break;
 			case 16:					/* priority */
 				printf("%d", qentry->priority);
 				break;
 			case 17:					/* opriority */
-				printf("%d", qfileentry->priority);
+				printf("%d", qentryfile->priority);
 				break;
 			case 18:					/* banner */
-				fputs(describe_flag_page_setting(qfileentry->do_banner), stdout);
+				fputs(describe_flag_page_setting(qentryfile->do_banner), stdout);
 				break;
 			case 19:					/* trailer */
-				fputs(describe_flag_page_setting(qfileentry->do_trailer), stdout);
+				fputs(describe_flag_page_setting(qentryfile->do_trailer), stdout);
 				break;
 			case 20:					/* inputbytes */
-				printf("%ld", qfileentry->attr.input_bytes);
+				printf("%ld", qentryfile->attr.input_bytes);
 				break;
 			case 21:					/* postscriptbytes */
-				printf("%ld", qfileentry->attr.postscript_bytes);
+				printf("%ld", qentryfile->attr.postscript_bytes);
 				break;
 			case 22:					/* prolog */
-				fputs( (qfileentry->attr.prolog ? "yes" : "no"), stdout);
+				fputs( (qentryfile->attr.prolog ? "yes" : "no"), stdout);
 				break;
 			case 23:					/* docsetup */
-				fputs( (qfileentry->attr.docsetup ? "yes" : "no"), stdout);
+				fputs( (qentryfile->attr.docsetup ? "yes" : "no"), stdout);
 				break;
 			case 24:					/* script */
-				fputs( (qfileentry->attr.script ? "yes" : "no"), stdout);
+				fputs( (qentryfile->attr.script ? "yes" : "no"), stdout);
 				break;
 			case 25:					/* orientation */
-				fputs( describe_orientation(qfileentry->attr.orientation), stdout);
+				fputs( describe_orientation(qentryfile->attr.orientation), stdout);
 				break;
 			case 26:					/* draft-notice */
-				if(qfileentry->draft_notice)
-					puts_detabbed(qfileentry->draft_notice);
+				if(qentryfile->draft_notice)
+					puts_detabbed(qentryfile->draft_notice);
 				break;
 			case 27:					/* username */
-				fputs(qfileentry->username, stdout);
+				fputs(qentryfile->username, stdout);
 				break;
 			case 28:					/* userid */
-				printf("%ld", (long)qfileentry->user);
+				printf("%ld", (long)qentryfile->user);
 				break;
 			case 29:					/* proxy-for */
-				if(qfileentry->proxy_for)
-					puts_detabbed(qfileentry->proxy_for);
+				if(qentryfile->proxy_for)
+					puts_detabbed(qentryfile->proxy_for);
 				break;
 			case 30:					/* longsubtime */
 				{
-				const char *t = ctime((time_t*)&qfileentry->time);
+				const char *t = ctime((time_t*)&qentryfile->time);
 				printf("%.*s", (int)strcspn(t, "\n"), t);
 				}
 				break;
 			case 31:					/* subtime */
 				{
 				char timestr[10];
-				format_time(timestr, sizeof(timestr), (time_t)qfileentry->time);
+				format_time(timestr, sizeof(timestr), (time_t)qentryfile->time);
 				fputs(timestr, stdout);
 				}
 				break;
 			case 32:					/* pages */
-				if(qfileentry->attr.pages >= 0)
-					printf("%d", pagemask_count(qfileentry));
+				if(qentryfile->attr.pages >= 0)
+					printf("%d", pagemask_count(qentryfile));
 				else
 					fputs("?", stdout);
 				break;
 			case 33:					/* lpqfilename */
-				if(qfileentry->lpqFileName)
-					puts_detabbed(qfileentry->lpqFileName);
-				else if(qfileentry->Title)
-					puts_detabbed(qfileentry->Title);
+				if(qentryfile->lpqFileName)
+					puts_detabbed(qentryfile->lpqFileName);
+				else if(qentryfile->Title)
+					puts_detabbed(qentryfile->Title);
 				break;
 			case 34:					/* totalpages */
 				{
-				int total = qfileentry->attr.pages;
-				if(qfileentry->opts.copies > 1) total *= qfileentry->opts.copies;
+				int total = qentryfile->attr.pages;
+				if(qentryfile->opts.copies > 1) total *= qentryfile->opts.copies;
 				if(total >= 0)
 					printf("%d", total);
 				else
@@ -1658,10 +1658,10 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 35:					/* totalsides */
 				{
-				int total = qfileentry->attr.pages;
-				if(qfileentry->opts.copies > 1)
-					total *= qfileentry->opts.copies;
-				total = (total + qfileentry->N_Up.N - 1) / qfileentry->N_Up.N;
+				int total = qentryfile->attr.pages;
+				if(qentryfile->opts.copies > 1)
+					total *= qentryfile->opts.copies;
+				total = (total + qentryfile->N_Up.N - 1) / qentryfile->N_Up.N;
 				if(total >= 0)
 					printf("%d", total);
 				else
@@ -1670,10 +1670,10 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 36:					/* totalsheets */
 				{
-				int total = qfileentry->attr.pages;
-				if(qfileentry->opts.copies > 1)
-					total *= qfileentry->opts.copies;
-				total = (total + qfileentry->attr.pagefactor - 1) / qfileentry->attr.pagefactor;
+				int total = qentryfile->attr.pages;
+				if(qentryfile->opts.copies > 1)
+					total *= qentryfile->opts.copies;
+				total = (total + qentryfile->attr.pagefactor - 1) / qentryfile->attr.pagefactor;
 				if(total >= 0)
 					printf("%d", total);
 				else
@@ -1681,30 +1681,30 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				}
 				break;
 			case 37:					/* fulljobname */
-				printf("%s-%d.%d", qfileentry->destname, qfileentry->id, qfileentry->subid);
+				printf("%s-%d.%d", qentryfile->destname, qentryfile->id, qentryfile->subid);
 				break;
 			case 38:					/* intype */
-				if(qfileentry->Filters)
-					PUTS(qfileentry->Filters);
+				if(qentryfile->Filters)
+					PUTS(qentryfile->Filters);
 				break;
 			case 39:					/* commentary */
-				printf("%d", qfileentry->commentary);
+				printf("%d", qentryfile->commentary);
 				break;
 
 			case 43:					/* destname */
-				PUTS(qfileentry->destname);
+				PUTS(qentryfile->destname);
 				break;
 			case 44:					/* responder */
-				if(qfileentry->responder.name)
-					PUTS(qfileentry->responder.name);
+				if(qentryfile->responder.name)
+					PUTS(qentryfile->responder.name);
 				break;
 			case 45:					/* responder-address */
-				if(qfileentry->responder.address);
-					PUTS(qfileentry->responder.address);
+				if(qentryfile->responder.address);
+					PUTS(qentryfile->responder.address);
 				break;
 			case 46:					/* responder-options */
-				if(qfileentry->responder.options)
-					PUTS(qfileentry->responder.options);
+				if(qentryfile->responder.options)
+					PUTS(qentryfile->responder.options);
 				break;
 			case 47:					/* status/explain */
 				PUTS(status);
@@ -1716,15 +1716,15 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 					}
 				break;
 			case 48:					/* pagesxcopies */
-				if(qfileentry->attr.pages >= 0)
-					printf("%d", qfileentry->attr.pages);
+				if(qentryfile->attr.pages >= 0)
+					printf("%d", qentryfile->attr.pages);
 				else
 					printf("?");
-				if(qfileentry->opts.copies > 1)
-					printf("x%d", qfileentry->opts.copies);
+				if(qentryfile->opts.copies > 1)
+					printf("x%d", qentryfile->opts.copies);
 				break;
 			case 49:					/* page-list */
-				pagemask_print(qfileentry);
+				pagemask_print(qentryfile);
 				break;
 
 			default:
@@ -1933,7 +1933,7 @@ static void ppop_progress_banner(void)
 	}
 
 static int ppop_progress_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1960,15 +1960,15 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	}
 
 	/* Format the job name. */
-	jobname = jobid(qfileentry->destname, qentry->id, qentry->subid);
+	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
 
 	/* Compute the percentage of progress.  We do this by figuring out
 	   how many bytes have to be sent and the comparing it to the
 	   number that have been sent. */
 	bytes_total =
-		qfileentry->PassThruPDL
-				? qfileentry->attr.input_bytes
-				: qfileentry->attr.postscript_bytes;
+		qentryfile->PassThruPDL
+				? qentryfile->attr.input_bytes
+				: qentryfile->attr.postscript_bytes;
 
 	if(bytes_total == 0)
 		fatal(EXIT_INTERNAL, "%s(): assertion failed", function);
@@ -1977,16 +1977,16 @@ static int ppop_progress_item(const struct QEntry *qentry,
 
 	/* Compute total number of pages.  This is the number
 	   of page descriptions times the page count. */
-	total_pages = qfileentry->attr.pages;
-	if(qfileentry->opts.copies > 1)
-		total_pages *= qfileentry->opts.copies;
+	total_pages = qentryfile->attr.pages;
+	if(qentryfile->opts.copies > 1)
+		total_pages *= qentryfile->opts.copies;
 
 	/* Print our assembled results. */
 	if(machine_readable)
 		{
 		printf("%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%d\n",
 				jobname,
-				qfileentry->For ? qfileentry->For : "",
+				qentryfile->For ? qentryfile->For : "",
 				bytes_sent,
 				bytes_total,
 				percent_sent,
@@ -1997,7 +1997,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	else
 		{
 		printf("%-16s|%-20s|%10ld|%10ld|%3d|%4d|%4d|%4d\n",
-				jobname, qfileentry->For ? qfileentry->For : "",
+				jobname, qentryfile->For ? qentryfile->For : "",
 				bytes_sent,
 				bytes_total,
 				percent_sent,

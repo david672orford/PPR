@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -455,7 +455,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 	int i;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
-	struct QFile qfileentry;
+	struct QEntryFile qentryfile;
 	struct OPERATION *req;
 
 	req = request_new(ipp, OP_SUPPORTS_PRINTER);
@@ -485,9 +485,9 @@ static void ipp_get_jobs(struct IPP *ipp)
 			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
 			continue;
 			}
-		qfile_clear(&qfileentry);
+		qentryfile_clear(&qentryfile);
 		{
-		int ret = qfile_load(&qfileentry, qfile);
+		int ret = qentryfile_load(&qentryfile, qfile);
 		fclose(qfile);
 		if(ret == -1)
 			{
@@ -516,8 +516,8 @@ static void ipp_get_jobs(struct IPP *ipp)
 		if(request_attr_requested(req, "job-name"))
 			{
 			const char *ptr;
-			if(!(ptr = qfileentry.lpqFileName))
-				ptr = qfileentry.Title;
+			if(!(ptr = qentryfile.lpqFileName))
+				ptr = qentryfile.Title;
 			if(ptr)
 				ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
 			}
@@ -526,25 +526,25 @@ static void ipp_get_jobs(struct IPP *ipp)
 		if(request_attr_requested(req, "job-originating-user-name"))
 			{
 			const char *user;
-			if(qfileentry.proxy_for)
-				user = qfileentry.proxy_for;
-			else if(qfileentry.For)				/* probably never false */
-				user = qfileentry.For;
+			if(qentryfile.proxy_for)
+				user = qentryfile.proxy_for;
+			else if(qentryfile.For)				/* probably never false */
+				user = qentryfile.For;
 			else								/* probably never invoked */
-				user = qfileentry.username;
+				user = qentryfile.username;
 			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(user), TRUE);
 			}
 
 		/* Derived from "ppop lpq" */
 		if(request_attr_requested(req, "job-k-octets"))
 			{
-			long int bytes = qfileentry.PassThruPDL ? qfileentry.attr.input_bytes : qfileentry.attr.postscript_bytes;
+			long int bytes = qentryfile.PassThruPDL ? qentryfile.attr.input_bytes : qentryfile.attr.postscript_bytes;
 			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
 			}
 
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
-		qfile_free(&qfileentry);
+		qentryfile_free(&qentryfile);
 		}
 
 	unlock();

@@ -78,13 +78,13 @@ query_wrapper.$(OBJ): query_wrapper.c ../include/config.h ../include/gu.h ../inc
 
 int_main.$(OBJ): int_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-qentry_clear.$(OBJ): qentry_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
-
 get_device_id.$(OBJ): get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-qentry_load.$(OBJ): qentry_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+qentryfile_clear.$(OBJ): qentryfile_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-qentry_save.$(OBJ): qentry_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+qentryfile_free.$(OBJ): qentryfile_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-qentry_free.$(OBJ): qentry_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+qentryfile_load.$(OBJ): qentryfile_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+
+qentryfile_save.$(OBJ): qentryfile_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 

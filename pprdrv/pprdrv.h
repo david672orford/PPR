@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -128,7 +128,7 @@ int copies_auto;
 int copies_auto_collate;
 char *dgetline(FILE *infile);
 extern const char *QueueFile;
-extern struct QFile job;
+extern struct QEntryFile job;
 extern int group_pass;
 extern gu_boolean doing_primary_job;
 extern gu_boolean doing_prolog;

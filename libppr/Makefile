@@ -40,7 +40,7 @@ LIBOBJS=\
 	int_tcp_probe.$(OBJ) \
 	datestamp.$(OBJ) \
 	tokenize.$(OBJ) \
-	qentry_clear.$(OBJ) qentry_load.$(OBJ) qentry_save.$(OBJ) qentry_free.$(OBJ) parse_qfname.$(OBJ) \
+	qentryfile_clear.$(OBJ) qentryfile_load.$(OBJ) qentryfile_save.$(OBJ) qentryfile_free.$(OBJ) parse_qfname.$(OBJ) \
 	quote.$(OBJ) \
 	findres.$(OBJ) \
 	protected.$(OBJ) money.$(OBJ) \

@@ -28,13 +28,14 @@
 ** Last modified 14 January 2005.
 */
 
+/*! \file */
+
 #include "config.h"
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 
-/*
-** This one is for printing full jobid.
+/** Format the job id in standard format
 */
 const char *jobid(const char *destname, int id, int subid)
 	{
@@ -53,6 +54,6 @@ const char *jobid(const char *destname, int id, int subid)
 		}
 
 	return return_str;
-	} /* end of remote_jobid() */
+	} /* end of jobid() */
 
 /* end of file */

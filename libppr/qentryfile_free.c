@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libppr/qfile_free.c
+** mouse:~ppr/src/libppr/qentryfile_free.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*! \file */
@@ -44,11 +44,11 @@ static void free_and_zero(void **p)
 		}
 	}
 
-/** Free the storage used by a struct QFile
+/** Free the storage used by a struct QEntryFile
  *
- * Frees the memory blocks used by a struct QFile's data members.
+ * Frees the memory blocks used by a struct QEntryFile's data members.
 */
-void qfile_free(struct QFile *job)
+void qentryfile_free(struct QEntryFile *job)
 	{
 	free_and_zero((void**)&job->destname);
 
@@ -73,7 +73,7 @@ void qfile_free(struct QFile *job)
 	free_and_zero((void**)&job->page_list.mask);
 	free_and_zero((void**)&job->draft_notice);
 	free_and_zero((void**)&job->question);
-	} /* end of qfile_free() */
+	} /* end of qentryfile_free() */
 
 /* end of file */
 

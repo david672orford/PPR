@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 24 March 2005.
 */
 
 /* =================== for queue entries =====================*/
@@ -37,12 +37,12 @@ struct RESPONDER {
 	};
 
 /** Holds the contents of a queue file.
- * This structure is loaded using read_struct_QFile(), saved using
- * write_struct_QFile(), and destroyed using destroy_struct_QFile().
+ * This structure is loaded using read_struct_QEntryFile(), saved using
+ * write_struct_QEntryFile(), and destroyed using destroy_struct_QEntryFile().
  * The members are minipulated directly by the caller as there are no
  * member functions for that purpose.
 */
-struct QFile
+struct QEntryFile
 	{
 	float PPRVersion;					/* version number of PPR that created queue entry */
 
@@ -116,7 +116,7 @@ struct QFile
 	const char *ripopts;				/* name=value pairs for Ghostscript and such */
 	} ;
 
-/* Possible values for orientation member of struct QFile. */
+/* Possible values for orientation member of struct QEntryFile. */
 #define ORIENTATION_UNKNOWN 0
 #define ORIENTATION_PORTRAIT 1
 #define ORIENTATION_LANDSCAPE 2
@@ -172,16 +172,16 @@ struct QFile
 #define WILDCARD_JOBID -1
 #define WILDCARD_SUBID -1
 
-void qfile_clear(struct QFile *job);
-int qfile_load(struct QFile *job, FILE *qfile);
-int qfile_save(const struct QFile *qentry, FILE *Qfile);
-void qfile_free(struct QFile *job);
+void qentryfile_clear(struct QEntryFile *job);
+int qentryfile_load(struct QEntryFile *job, FILE *qfile);
+int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile);
+void qentryfile_free(struct QEntryFile *job);
 
 int parse_qfname(char *buffer, const char **destname, short int *id, short int *subid);
-int pagemask_encode(struct QFile *job, const char pages[]);
-void  pagemask_print(const struct QFile *job);
-int pagemask_get_bit(const struct QFile *job, int page);
-int pagemask_count(const struct QFile *job);
+int pagemask_encode(struct QEntryFile *job, const char pages[]);
+void  pagemask_print(const struct QEntryFile *job);
+int pagemask_get_bit(const struct QEntryFile *job, int page);
+int pagemask_count(const struct QEntryFile *job);
 
 /* ======================== Media file format =========================== */
 struct Media

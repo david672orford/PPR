@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -109,10 +109,6 @@ int respond(int response_code, const char extra[])
 	if(pid == 0)			   /* if child */
 		{
 		int fd;
-		char response_code_str[6];
-
-		/* Convert the response code to a string. */
-		snprintf(response_code_str, sizeof(response_code_str), "%d", response_code);
 
 		/* Make sure the responder has a nice, safe stdin. */
 		if((fd = open("/dev/null", O_RDONLY)) != -1)
@@ -145,17 +141,17 @@ int respond(int response_code, const char extra[])
 		** write anything that uses it!
 		*/
 		execl(LIBDIR"/ppr-respond", "ppr-respond",
-				"ppr",
-				qentry.destname,
-				response_code_str,
-				extra ? extra : "",
-				qentry.responder,
-				qentry.responder.address,
-				qentry.responder.options ? qentry.responder.options : "",
-				qentry.For ? qentry.For : "",
-				qentry.Title ? qentry.Title : "",
-				qentry.lc_messages ? qentry.lc_messages : "",
-				(char*)NULL);
+			gu_name_str_value("responder_name", qentry.responder.name),
+			gu_name_str_value("responder_address", qentry.responder.address),
+			gu_name_str_value("responder_options", qentry.responder.options),
+			gu_name_str_value("destname", qentry.destname),
+			gu_name_int_value("response_code", response_code),
+			gu_name_str_value("extra", extra),
+			gu_name_str_value("for", qentry.For),
+			gu_name_str_value("title", qentry.Title),
+			gu_name_str_value("lc_messages", qentry.lc_messages),
+			(char*)NULL
+			);
 		_exit(242);
 		}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -969,18 +969,18 @@ static void ppop_cancel_byuser_banner(void)
 	{ }
 
 static int ppop_cancel_byuser_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
 	FILE *FIFO, *reply_file;
 	int count;
 
-	if( ! is_my_job(qentry, qfileentry) )
+	if( ! is_my_job(qentry, qentryfile) )
 		return FALSE;	/* don't stop */
 
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d %d\n", qfileentry->destname, qentry->id, qentry->subid, ppop_cancel_byuser_inform);
+	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->destname, qentry->id, qentry->subid, ppop_cancel_byuser_inform);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1136,7 +1136,7 @@ static void ppop_clean_banner(void)
 	}
 
 static int ppop_clean_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1152,7 +1152,7 @@ static int ppop_clean_item(const struct QEntry *qentry,
 	** of the deletion of arrested jobs.
 	*/
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d 1\n", qfileentry->destname, qentry->id, qentry->subid);
+	fprintf(FIFO, "c %s %d %d 1\n", qentryfile->destname, qentry->id, qentry->subid);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1214,7 +1214,7 @@ static void ppop_cancel_active_banner(void)
 	}
 
 static int ppop_cancel_active_item(const struct QEntry *qentry,
-		const struct QFile *qfileentry,
+		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
 	{
@@ -1224,11 +1224,11 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 	if(qentry->status < 0)
 		return FALSE;
 
-	if( ppop_cancel_active_my && ! is_my_job(qentry, qfileentry) )
+	if( ppop_cancel_active_my && ! is_my_job(qentry, qentryfile) )
 		return TRUE;
 
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d %d\n", qfileentry->destname, qentry->id, qentry->subid, ppop_cancel_active_inform);
+	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->destname, qentry->id, qentry->subid, ppop_cancel_active_inform);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 March 2005.
+** Last modified 24 March 2005.
 */
 
 /*
@@ -56,7 +56,7 @@
 ** Note that we use C++ comments here to disable the ones we don't want.  This
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
-#if 1
+#if 0
 #define DEBUG 1							/* define function[] strings */
 //#define DEBUG_STARTUP 1				/* initialization routines */
 //#define DEBUG_MAINLOOP 1				/* main loop */
@@ -161,7 +161,7 @@ struct Group
 	} ;
 
 /* A queue entry as stored by pprd and passed back to ppop.
-   Notice that this is shorter than struct QFile. */
+   Notice that this is shorter than struct QEntryFile. */
 struct QEntry
 	{
 	SHORT_INT destnode_id;				/* destination node by key number */
