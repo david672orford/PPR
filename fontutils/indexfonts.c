@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 1 August 2003.
 */
 
 #include "before_system.h"
@@ -87,7 +87,8 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
 	/* Extract the PostScript name. */
 	if((psname = ttf_get_psname(font)) == NULL)
 		{
-		fprintf(stderr, "%s: ttf_get_psname() failed while processing \"%s\", %s\n", myname, filename, ttf_strerror(ttf_errno(font)));
+		/*fprintf(stderr, "%s: ttf_get_psname() failed while processing \"%s\", %s\n", myname, filename, ttf_strerror(ttf_errno(font)));*/
+		printf(" -- no PostScript name");
 		return NULL;
 		}
 
@@ -282,14 +283,16 @@ static int do_file(FILE *indexfile, const char filename[])
 	int fd;
 	ssize_t len;
 	struct FONT_INFO *p;
-
+    
 	if((fd = open(filename, O_RDONLY)) == -1)
 		{
+		#if 0		/* appearently redundant code */
 		if(errno == ENOENT)
 			{
-			printf(" -- Broken symbolic link\n");
+			printf(" -- Broken symbolic link");
 			return EXIT_OK;
 			}
+		#endif
 		fprintf(stderr, "\tCan't open \"%s\", errno=%d (%s)\n", filename, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
@@ -309,27 +312,27 @@ static int do_file(FILE *indexfile, const char filename[])
 
 	if(len > 4 && memcmp(sample, "\000\001\000\000", 4) == 0)
 		{
-		printf(" -- TrueType font file\n");
+		printf(" -- TrueType font file");
 		p = study_truetype_font(filename);
 		}
 	else if(len > 14 && memcmp(sample, "%!PS-AdobeFont", 14) == 0)
 		{
-		printf(" -- PostScript font (PFA format)\n");
+		printf(" -- PostScript font (PFA format)");
 		p = study_pfa_font(filename);
 		}
 	else if(len > 1 && sample[0] == 128)
 		{
-		printf(" -- PostScript font (PFB format)\n");
+		printf(" -- PostScript font (PFB format)");
 		p = study_pfb_font(filename);
 		}
 	else if(len > 15 && memcmp(sample, "StartFontMetrics", 15) == 0)
 		{
-		printf(" -- Adobe Font Metrics file\n");
+		printf(" -- Adobe Font Metrics file");
 		p = study_afm_file(filename);
 		}
 	else
 		{
-		printf(" -- Probably not a scalable font\n");
+		printf(" -- Probably not a scalable font");
 		p = NULL;
 		}
 
@@ -339,12 +342,12 @@ static int do_file(FILE *indexfile, const char filename[])
 		fprintf(indexfile, "%s:%s:%s\n", p->font_psname, p->font_type ? p->font_type : "?", filename);
 		font_info_delete(p);
 		}
-#if 0
+	#if 0
 	else
 		{
 		fprintf(indexfile, "# %s\n", filename);
 		}
-#endif
+	#endif
 
 	return EXIT_OK;
 	} /* end of do_file() */
@@ -386,6 +389,8 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 			{
 			if(errno == ENOENT)
 				{
+				indent((level * 4) + 2);
+				printf("%s", fileobj->d_name);
 				printf(" -- Broken symbolic link\n");
 				continue;
 				}
@@ -415,7 +420,9 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 
 			indent((level * 4) + 2);
 			printf("%s", fileobj->d_name);
-			if((retval = do_file(indexfile, filename)) != EXIT_OK)
+			retval = do_file(indexfile, filename);
+			printf("\n");
+			if(retval != EXIT_OK)
 				break;
 			continue;
 			}

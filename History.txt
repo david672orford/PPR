@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--31 July 2003.
+1.52, 24 July 2003--1 August 2003.
 
 Bug Fixes
 
@@ -8636,6 +8636,11 @@ Bug Fixes
 
 * www/ppr-httpd.perl: changed code to close connexion on error.  (The
   alternative is to swallow the entity body.)
+
+* fontutils/indexfonts.c: removed message to stderr when a TTF font doesn't 
+  have a PostScript name (stored in one of its tables).  Previously one could
+  come away with the impression that the bad font had halted the indexing
+  process.
 
 Misc. Added Material
 
