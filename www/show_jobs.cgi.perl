@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 15 August 2002.
+# Last modified 16 August 2002.
 #
 
 use 5.005;
@@ -220,8 +220,8 @@ if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\
     if($mozilla_version >= 5.0)
 	{
 	$fixed_html_style = "margin-top: 2em";
-	$fixed_div_style_top = "position:fixed; top:0; left: 0;";
-	$fixed_div_style_bottom = "position:fixed; bottom: -5pt; left: 0;";
+	$fixed_div_style_top = "position:fixed; top:0pt; left: 0pt;";
+	$fixed_div_style_bottom = "position:fixed; bottom: 0pt; left: 0pt;";
 	}
     }
 

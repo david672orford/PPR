@@ -463,10 +463,10 @@ Form50
 	print "<p>$message</p>\n";
 	}
 
-# Use Javascript to arrange for this page to be refreshed and then close the
-# document.  Notice that for pre-5.0 Netscape we don't use submit() because
-# Netscape submits the value of the first button!
-print <<"Tail";
+# Use Javascript to arrange for this page to be refreshed.  Notice that for
+# pre-5.0 Netscape we don't use submit() because Netscape submits the value
+# of the first button!
+print <<"Tail01";
 <script>
 var browser_version = parseFloat(navigator.appVersion);
 if(browser_version < 5.0 && navigator.appName.indexOf("Microsoft") == -1)
@@ -474,9 +474,22 @@ if(browser_version < 5.0 && navigator.appName.indexOf("Microsoft") == -1)
 else
 	{ window.setTimeout("document.forms[0].submit()", 10000); }
 </script>
+Tail01
+
+# Snap the window size to fit snugly around the document.
+print <<"Tail05";
+<script>
+if(document.width)
+	{
+	window.resizeTo(document.width, document.height);
+	}
+</script>
+Tail05
+
+print <<"Tail10";
 </body>
 </html>
-Tail
+Tail10
 
 exit 0;
 

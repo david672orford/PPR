@@ -1,11 +1,12 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 8 August 2002.
+** Last modified 16 August 2002.
 */
 
 BODY {
 	background-color: #C0C0C0;
 	color: black;
+	margin: 10px;
 	}
 
 /* This gets rid of the bottom margin in Mozilla 1.0rc2.  Without this

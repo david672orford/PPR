@@ -333,12 +333,22 @@ TableEnd10
 # unless he scrolls down.
 &cgi_debug_data() if($debug);
 
+# Snap the window size to fit snugly around the document.
+print <<"Tail05";
+<script>
+if(document.width)
+	{
+	window.resizeTo(document.width + 20, document.height + 20);
+	}
+</script>
+Tail05
+
 # Emmit HTML to end the document
-print <<"Tail1";
+print <<"Tail10";
 </form>
 </body>
 </html>
-Tail1
+Tail10
 }
 
 1;

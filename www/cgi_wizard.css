@@ -1,9 +1,12 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 8 August 2002.
+** Last modified 16 August 2002.
 */
 
-BODY { background: #e0e0e0 }
+BODY {
+	background: #e0e0e0;
+	margin: 10px;
+	}
 
 INPUT.buttons { background: #B0B0B0 }
 

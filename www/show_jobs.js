@@ -84,7 +84,7 @@ function do_modify()
 	    {
 	    if(element.value != "")
 		{
-		window.open('job_modify.cgi?jobname=' + element.value, '_blank', 'width=650,height=550,scrollbars,resizable');
+		window.open('job_modify.cgi?jobname=' + element.value, '_blank', 'width=650,height=550,resizable');
 		count++;
 		}
 	    element.checked = false;

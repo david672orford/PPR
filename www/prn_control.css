@@ -1,11 +1,15 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 24 April 2002.
+** Last modified 16 August 2002.
 */
 
 BODY {
 	background-color: #ffff00;	/* yellow */
 	color: black;
+	/* We set this so that window size and <body> size are the
+	   This lets the JavaScript code that snaps the window size
+	   to the document size work predictable. */
+	margin: 0px;
 	}
 SPAN.label { font-weight: bold }
 SPAN.blank { backgroup-color: white; color: blue }

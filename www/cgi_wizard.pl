@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 8 August 2002.
+# Last modified 16 August 2002.
 #
 
 use 5.004;
@@ -253,7 +253,7 @@ print <<"EndOfText2";
 </TABLE>
 <TABLE BORDER=$border HEIGHT="10%" WIDTH="100%" COLS=4 cellpadding=5>
 <tr>
-<td colspan=3>
+<td colspan=3 height=80>
 EndOfText2
 
 # If there is error text, put it here in red.
@@ -270,7 +270,7 @@ EndOfText4
 # the buttons if called for.
 print <<"EndOfText6";
 </td>
-<td nowrap align="right">
+<td nowrap align="right" valign="bottom">
 EndOfText6
 
 {
@@ -308,11 +308,21 @@ print "</form>\n";
 # Print data at bottom of page for debugging.
 &cgi_debug_data() if($options->{debug});
 
+# Snap the window size to fit snugly around the document.
+print <<"Tail05";
+<script>
+if(document.width)
+	{
+	window.resizeTo(document.width + 20, document.height + 20);
+	}
+</script>
+Tail05
+
 # And this is the last of the HTML document.
-print <<"EndOfText10";
+print <<"Tail10";
 </body>
 </html>
-EndOfText10
+Tail10
 } # end of do_wizard()
 
 1;

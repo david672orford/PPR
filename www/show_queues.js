@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 14 August 2002.
+// Last revised 16 August 2002.
 //
 
 //
@@ -132,7 +132,7 @@ function prn_control(w, printer_name)
 	}
 function prn_properties(w, printer_name)
 	{
-	window.open('prn_properties.cgi?name=' + printer_name, '_blank', 'width=750,height=580,resizable');
+	window.open('prn_properties.cgi?name=' + printer_name, '_blank', 'width=675,height=580,resizable');
 	menu_hide(w);
 	return false;
 	}
@@ -278,7 +278,7 @@ function printer(event, name)
 	lnks[6].onclick = function () { return delete_queue(w, 'printer', name); };
 	lnks[6].href = 'delete_queue.cgi?type=printer&name=' + name;
 	menu_show(w);
-	if(ie5_dom || nav4_dom) { 
+	if(ie5_dom || nav4_dom) {
 		w.onmouseout = function () { menu_hide(w) };
 		}
 	return false;
