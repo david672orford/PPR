@@ -27,9 +27,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-set about_text "PPR Popup 1.50a2
-27 August 2002
-Copyright 1995--2002, Trinity College Computing Center
+set about_text "PPR Popup 1.51
+10 March 2003
+Copyright 1995--2003, Trinity College Computing Center
 Written by David Chappell"
 
 # This is the URL that is loaded when the user selects Help/Contents.
@@ -166,11 +166,17 @@ switch -exact -- $tcl_platform(platform) {
     unix {
 	proc get_client_id {} {
 		global env
-		if { ! [info exists env(PPR_RESPONDER_ADDRESS)] } {
-		    alert "The environment variable PPR_RESPONDER_ADDRESS must be defined.\nPlease set it to user@host."
-		    exit 1
+		if { [info exists env(PPR_RESPONDER_ADDRESS)] } {
+		    return $env(PPR_RESPONDER_ADDRESS)
 		    }
-		return $env(PPR_RESPONDER_ADDRESS)
+		if { [ info exists env(USER)] } {
+		    return "$env(USER)@localhost"
+		    } 
+		if { [ info exists env(LOGNAME)] } {
+		    return "$env(LOGNAME)@localhost"
+		    } 
+		alert "Neither the environment variable PPR_RESPONDER_ADDRESS nor USER nor LOGNAME is defined."
+		exit 1
 		}
 	}
     }

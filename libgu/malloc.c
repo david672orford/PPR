@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 10 March 2003.
 */
 
 /*! \file
@@ -154,7 +154,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
     return ptr;
     }
 
-/* change the size of an already allocated array
+/** change the size of an already allocated array
 
 The function gu_realloc() changes the size of a memory block.  The
 first argument is a pointer to the old block, the second is the desired new
@@ -175,7 +175,7 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
     return rval;
     } /* end of ppr_realloc() */
 
-/* free memory
+/** free memory
 
 The function gu_free() is used to free any memory allocated by the other
 functions.

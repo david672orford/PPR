@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 10 March 2003.
 */
 
 /*
@@ -68,11 +68,13 @@ int main(int argc, char *argv[])
     textdomain(PACKAGE);
     #endif
 
+    #if 0
     if(geteuid() == getuid())
 	{
 	fprintf(stderr, _("%s: This program must be setuid %s!\n"), argv[0], USER_PPR);
 	return EXIT_INTERNAL;
 	}
+    #endif
 
     /*
     ** Make sure the environment variable "DISPLAY" is defined.

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 10 March 2003.
 #
 
 include ../../Makefile.conf
@@ -42,6 +42,8 @@ all-docs: $(DIRS)
 
 html:
 	doxygen Doxyfile
+
+html: ../../libgu ../../libppr ../../libttf
 
 #=== Install ================================================================
 

@@ -8428,6 +8428,11 @@ line was being parsed twice.
 
 * Added unixuser/ppr-followme.c.
 
+* Added ppr-followme and ppr-popup to z_install_end/install_bin_links.sh.
+
+* pprpopup/pprpopup_main.tcl: added code to use "$USER@localhost" or
+  "$LOGNAME@localhost" if PPR_RESPONDER_ADDRESS isn't defined.
+
 
 
 TODO

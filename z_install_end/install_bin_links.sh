@@ -36,7 +36,7 @@
 #======================================================================
 
 echo "Creating symbolic links in \"$SYSBINDIR\"..."
-for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd ppr-followme
+for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd ppr-followme ppr-popup
     do
     ../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
     done

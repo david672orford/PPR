@@ -25,17 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 10 March 2003.
 */
 
 #include "before_system.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <wait.h>
-#include <errno.h>
-#include <string.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -82,6 +76,7 @@ int main(int argc, char *argv[])
     {
     gu_boolean opt_delete = FALSE;
     int i;
+    int ret;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -125,49 +120,27 @@ int main(int argc, char *argv[])
     if(i < argc)
 	{
 	for( ;i < argc; i++)
-	    do_index(argv[i], opt_delete);
+	    if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
+	    	break;
 	}
     else
 	{
 	for(i = 0; indexes[i]; i++)
-	    do_index(indexes[i], opt_delete);
+	    if((ret = do_index(indexes[i], opt_delete)) != EXIT_OK)
+	    	break;
 	}
-	
-    return EXIT_OK;
+
+    if(ret == -1)
+	return EXIT_INTERNAL;
+    else
+	return ret;    
     } /* end of main() */
 
 static int do_index(const char name[], gu_boolean delete_index)
     {
     char fname[MAX_PPR_PATH];
-    pid_t pid;
-    int wstat;
-    
     ppr_fnamef(fname, "%s/lib/index%s", HOMEDIR, name);
-
-    if((pid = fork()) == 1)
-	{
-	fprintf(stderr, "%s: fork() failed, errno=%d (%s)\n", myname, errno, gu_strerror(errno));
-	return -1;
-	}
-    else if(pid == 0)	/* child */
-	{
-	execl(fname, fname, delete_index ? "--delete" : NULL, NULL);
-	_exit(242);
-	}
-
-    if(wait(&wstat) == -1)
-	{
-	fprintf(stderr, "%s: wait() failed, errno=%d (%s)\n", myname, errno, gu_strerror(errno));
-	return -1;
-	}
-
-    if(!WIFEXITED(wstat) || WEXITSTATUS(wstat) != 0)
-	{
-	fprintf(stderr, "%s: %s failed.\n", myname, fname);
-	return -1;
-	}
-
-    return 0;
+    return gu_runl(myname, stderr, fname, delete_index ? "--delete" : NULL, NULL);
     }
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 10 March 2003.
 */
 
 #ifndef _GU_H
@@ -177,6 +177,7 @@ void gu_timeval_sub(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_add(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_zero(struct timeval *t);
+int gu_runl(const char *myname, FILE *errors, const char *progname, ...);
 
 /*
 ** Values for gu_torf(), a function which examines a string

@@ -34,6 +34,7 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -100,7 +101,7 @@ int main(int argc, char *argv[])
     {
     int i;
     struct passwd *pw;
-    const char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
+    char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -168,6 +169,8 @@ int main(int argc, char *argv[])
 	{
 	if(strcmp(responder, "xwin") == 0)
 	    responder_address = ":0.0";
+	else if(strcmp(responder, "pprpopup") == 0)
+	    asprintf(&responder_address, "%s@localhost", pw->pw_name);
 	else
 	    responder_address = pw->pw_name;
 	}
@@ -175,8 +178,15 @@ int main(int argc, char *argv[])
     if(!responder_options)
 	responder_options = "";
 
+    printf("responder=%s, responder-address=%s, responder-options=\"%s\"\n", responder, responder_address, responder_options);
+
     if(write_record(pw->pw_name, responder, responder_address, responder_options) == -1)
 	return EXIT_INTERNAL;   
+
+    if(strcmp(responder, "xwin") == 0)
+	{
+	gu_runl(myname, stderr, HOMEDIR"/bin/ppr-xgrant", NULL);
+	}
 
     return EXIT_OK;
     } /* end of main() */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 March 2003.
+** Last modified 10 March 2003.
 */
 
 /*
@@ -454,6 +454,7 @@ int main(int argc, char *argv[])
     /* handle the followme meta responder */
     if(strcmp(rinfo.responder, "followme") == 0)
 	{
+	gu_boolean found = FALSE;
 	char fname[MAX_PPR_PATH];
 	FILE *f;
 	ppr_fnamef(fname, "%s/followme.db/%s", VAR_SPOOL_PPR, rinfo.responder_address);
@@ -463,18 +464,16 @@ int main(int argc, char *argv[])
 	    char *line = NULL;
 	    if((line = gu_getline(line, &line_available, f)))
 		{
-		char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
-		if(gu_sscanf(line, "%S %S %Q", &responder, &responder_address, &responder_options) == 2)
-		if(responder && responder_address && responder_options)
+		char *responder, *responder_address, *responder_options;
+		if(gu_sscanf(line, "%S %S %Q", &responder, &responder_address, &responder_options) == 3)
 		    {
-		    gu_free(rinfo.responder);
+		    found = TRUE;
+
+		    /* Yes, we leak memory here when run by pprd, but it doesn't matter. */
+
 		    rinfo.responder = responder;
 
-		    if(strcmp(rinfo.responder_address, responder_address) != 0)
-			{
-			gu_free(rinfo.responder_address);
-			rinfo.responder_address = responder_address;
-			}
+		    rinfo.responder_address = responder_address;
 
 		    /* If both the job and followme supply responder options, 
 		       we will use the ones from the job followed by those 
@@ -485,13 +484,11 @@ int main(int argc, char *argv[])
 			    {
 			    char *p;
 			    asprintf(&p, "%s %s", responder_options, rinfo.responder_options);
-			    gu_free(rinfo.responder_options);
 			    gu_free(responder_options);
 			    rinfo.responder_options = p;
 			    }
 			else					/* if just from followme, */
 			    {
-			    gu_free(rinfo.responder_options);
 			    rinfo.responder_options = responder_options;
 			    }
 		        }
@@ -500,6 +497,8 @@ int main(int argc, char *argv[])
 		}
 	    fclose(f);
 	    }
+	if(!found)
+	    rinfo.responder = "write";
 	}
 
     /* Build path to responder. */

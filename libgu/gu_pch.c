@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_pch.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 July 2002.
+** Last modified 10 March 2003.
 */
 
 #include "before_system.h"
@@ -138,6 +138,7 @@ void gu_pch_debug(void **pch, const char name[])
 ** This internal function returns a pointer to the pointer which should be set
 ** to point to a given key.
 */
+#if 0
 static struct PCH_BUCKET **gu_pch_find(void **pch, void **pcs_key)
     {
     struct PCH *p = (struct PCH *)*pch;
@@ -145,6 +146,7 @@ static struct PCH_BUCKET **gu_pch_find(void **pch, void **pcs_key)
     hash = gu_pcs_hash(pcs_key) % p->buckets_count;
     return &p->buckets[hash];
     }
+#endif
 
 /*
 =head2 void gu_pch_set(void **pch, void **pcs_key, void **pcs_value)
@@ -155,7 +157,7 @@ This function sets a given key of a given hash object to a given value.
 */
 void gu_pch_set(void **pch, void **pcs_key, void **pcs_value)
     {
-    struct PCH *p = (struct PCH *)*pch;
+    /* struct PCH *p = (struct PCH *)*pch; */
 
     }
 
@@ -167,10 +169,12 @@ NULL if the key is not found).
 
 =cut
 */
+#if 0
 void *gu_pch_get(void **pch, void **pcs_key)
     {
 
     }
+#endif
 
 /*
 =head2 void gu_pch_delete(void **pch, void **pcs_key)
@@ -179,11 +183,13 @@ This function deletes a key from the hash table.
 
 =cut
 */
+#if 0
 void gu_pch_delete(void **pch, void **pcs_key)
     {
     struct PCH *p = (struct PCH *)*pch;
 
     }
+#endif
 
 /*
 =head2 void gu_pch_rewind(void **pch)
@@ -220,11 +226,12 @@ Do it like this:
 
 =cut
 */
+#if 0
 void *gu_pch_nextkey(void **pch)
     {
 
-
     }
+#endif
 
 /*
 ** Test program

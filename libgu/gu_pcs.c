@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 10 March 2003.
 */
 
 /*! \file
@@ -53,7 +53,7 @@ struct PCS {
 };
 
 /** create a PCS object
-  
+
 This function creates a new PCS (Perl compatible string) object and returns
 a void pointer which should be passed to other gu_pcs_*() functions in order
 to use it.
@@ -340,6 +340,8 @@ int gu_pcs_hash(void **pcs_key)
 	    total ^= temp;			/* and remove it from the top */
 	    }
 	}
+
+    return total;
     }
 
 /** compare PCSs

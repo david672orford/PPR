@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2003.
+# Last modified 10 March 2003.
 #
 
 include ../Makefile.conf
@@ -65,7 +65,8 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_snprintfcat.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
-	gu_pcs.$(OBJ) gu_pch.$(OBJ)
+	gu_pcs.$(OBJ) gu_pch.$(OBJ) \
+	gu_run.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 
