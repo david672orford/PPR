@@ -11,7 +11,7 @@ network, you must edit the file and restart <Command>papsrv</Command>.  The
 <Command>papsrv</Command> configuration file has one record for each printer name
 it should advertise on the AppleTalk network.  Each record is a block of
 lines seperated from other records by a blank line.  Comment lines may be
-included as long as then have ``;'' or ``&num;'' in the first column.
+included as long as then have <Literal>;</Literal> or <Literal>#</Literal> in the first column.
 </Para>
 
 <Para>
@@ -76,7 +76,7 @@ appear in.  Also, Netatalk does not provide a way to manualy specify a
 default zone, the default zone being determined automatically by consulting
 the AppleTalk routers.  If the default zone assigned in this manner is
 unacceptable you can create a file called
-<Filename>/etc/ppr/papsrv&lowbar;default&lowbar;zone.conf</Filename>, this file should contain a
+<Filename>/etc/ppr/papsrv_default_zone.conf</Filename>, this file should contain a
 single line which contains only the name of the desired default zone.
 </Para>
 
@@ -177,10 +177,10 @@ none</Option>; the default is
 <ListItem>
 <Para>
 If this option is used, then jobs which do not end with a
-line which says <Literal>&percnt;&percnt;EOF</Literal> will be discarded.  This might be a good idea
+line which says <Literal>%%EOF</Literal> will be discarded.  This might be a good idea
 because jobs which do not end with that line may have been truncated.  Prior to PPR
 version 1.30, <Command>papsrv</Command> inserted this option automatically, but QuickDraw GX
-omits the <Literal>&percnt;&percnt;EOF</Literal> line, so this option is no longer used automatically.
+omits the <Literal>%%EOF</Literal> line, so this option is no longer used automatically.
 </Para>
 </listitem>
 </VarListEntry>
@@ -190,7 +190,7 @@ omits the <Literal>&percnt;&percnt;EOF</Literal> line, so this option is no long
 </Sect3>
 
 <Sect3>
-<Title>Overriding the ``Product'' Name</Title>
+<Title>Overriding the "Product" Name</Title>
 
 <Para>
 Another <Command>papsrv</Command> configuration line which may prove useful is the
@@ -209,9 +209,9 @@ Why would you want to do this?  You might do this if you wanted to use
 PPR's booklet making feature from a Macintosh.  If the Macintosh attempts
 to invoke a pseudo feature called "Booklet" then PPR will modify the document
 to turn it into a booklet.
-The PPD file ``PPR Generic'' which describes an imaginary printer with
+The PPD file <Filename>PPR Generic</Filename> which describes an imaginary printer with
 options for selecting media by colour, and making booklets.
-The PPD file ``PPR Generic Level 2'' describes an imaginary printer which
+The PPD file <Filename>PPR Generic Level 2</Filename> describes an imaginary printer which
 supports PostScript Level 2 but is otherwise identical.
 </Para>
 
@@ -230,15 +230,15 @@ Product = (PPR Generic)
 
 </Para>
 
-<Para>
-Notice that the parameter to the <Literal>Product=</Literal> line is enclosed in
-parentheses.  (The PPD file ``PPR Generic'' is part of the PPR distribution.
-You can use FTP to transfer it from <Filename
-class="Directory">/usr/ppr/PPDFiles/</Filename> to the folder
-<Filename>System Folder:Extensions:Printer Descriptions</Filename> of a Macintosh which has
-LaserWriter 8.)  Remember, for a more complete description of the format the of
-<Command>papsrv</Command> configuration file refer to the man page papsrv.conf(5).
-</Para>
+<Para>Notice that the parameter to the <Literal>Product=</Literal> line is
+enclosed in parentheses.  (The PPD file <Filename>PPR Generic</Filename> is
+part of the <Application>PPR</Application> distribution. You can use FTP to
+transfer it from <Filename class="Directory">/usr/ppr/PPDFiles/</Filename>
+to the folder <Filename>System Folder:Extensions:Printer
+Descriptions</Filename> of a Macintosh which has LaserWriter 8.) Remember,
+for a more complete description of the format the of
+<Command>papsrv</Command> configuration file refer to the papsrv.conf(5) man
+page.</Para>
 
 </Sect3>
 
@@ -255,7 +255,7 @@ tracked down, some have adopted a temporary solution.  This is to have
 <Para>
 You might create a special name on the network to which users can submit
 jobs which include the problematic EPS files.  In the example below, there
-is both a normal and a transparent mode entry for ``myprn''.
+is both a normal and a transparent mode entry for <Literal>myprn</Literal>.
 </Para>
 
 <Para>

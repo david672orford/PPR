@@ -177,14 +177,14 @@ features of the printer, PPR may not be able to correctly determine the number o
 pages printed.  Thus, the number of sheets quoted on the banner page and in the
 print log could be wrong.  This changes if you have specified an amount of money to
 be charged for each page which is printed on the printer that is being used.  If
-you have specified an amount, even &dollar;0.00, then the number of copies is
+you have specified an amount, even $0.00, then the number of copies is
 forced to 1 if you do not specify it.
 </Para>
 
 <Para> You may wish to allow the number of copies desired to be specified in
 the document.  If you invoke <Command>ppr</Command> with the <Option>-R
 copies</Option> option, PPR will read any
-<Literal>&percnt;&percnt;Requirement:</Literal> comments which specify the
+<Literal>%%Requirement:</Literal> comments which specify the
 number of copies or collating mode and obey them.  You might use this
 command: </Para>
 
@@ -225,11 +225,13 @@ queue and the <Command>ppad group switchset</Command> command for a group queue.
 
 <Para>
 For example, imagine that we have
-a printer called ``mcec&lowbar;1''.  We want to create two queues for it called
-``mcec&lowbar;sim'' and ``mcec&lowbar;dup''.  We want ``mcec&lowbar;sim'' to print in simplex
-mode by default and ``mcec&lowbar;dup'' to print in duplex mode by default.  First
-we create the groups ``mcec&lowbar;sim'' and ``mcec dup'' each of which contains
-the lone member ``mcec&lowbar;1'':
+a printer called <Literal>mcec_1</Literal>.  We want to create two queues for it called
+<Literal>mcec_sim</Literal> and <Literal>mcec_dup</Literal>.  We want
+<Literal>mcec_sim</Literal> to print in simplex
+mode by default and <Literal>mcec_dup</Literal> to print in duplex mode by default.  First
+we create the groups <Literal>mcec_sim</Literal> and <Literal>mcec
+dup</Literal> each of which contains
+the lone member <Literal>mcec_1</Literal>:
 </Para>
 
 <Para>
@@ -255,13 +257,13 @@ each group a different set of options:
 
 </Para>
 
-<Para> Now, when a job is submitted to ``mcec&lowbar;sim'' or
-``mcec&lowbar;dup'', the the option <Option>-R duplex:simplex</Option> or
+<Para> Now, when a job is submitted to <Literal>mcec_sim</Literal> or
+<Literal>mcec_dup</Literal>, the the option <Option>-R duplex:simplex</Option> or
 <Option>-R duplex:duplex</Option> to be inserted. </Para>
 
 <Para>
 A switchset may be deleted by setting it to nothing.  This command deletes
-the switchset for the printer ``chipmunk'':
+the switchset for the printer <Literal>chipmunk</Literal>:
 </Para>
 
 <Para>

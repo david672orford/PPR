@@ -14,7 +14,7 @@ Samba's configuration file.  Samba's configuration file is often called
 </Para>
 
 <Para>
-Somewhere after the section called <Literal>&lsqb;global]</Literal> you should add two lines
+Somewhere after the section called <Literal>[global]</Literal> you should add two lines
 which read:
 </Para>
 
@@ -49,12 +49,11 @@ This procedure will share all PPR printers through Samba.  If you want to
 exclude certain printers you should refer to the ppr2samba(8) man page.
 </Para>
 
-<Para>
-You should also refer to the ppr2samba(8) man page if you want to set up
-special features for public access computers or if you want to set up Samba
-so it can offer printer drivers to Microsoft Windows 95 clients for
-automatic installation.
-</Para>
+<Para>You should also refer to <ULink URL="../refman/ppr2samba.8.html">the
+ppr2samba(8) man page</ULink> if you want to set up special features for
+public access computers or if you want to set up Samba so it can offer
+printer drivers to <SystemItem class="OSname">Microsoft Windows
+95</SystemItem> clients for automatic installation.</Para>
 
 </Sect2>
 

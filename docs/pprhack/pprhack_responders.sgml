@@ -23,7 +23,7 @@ exit 0
 <Para>
 The responder shown above is a stript down version of the responder <Command>write</Command>.
 If the <Command>-m</Command> switch is not used then the name of the responder will be read
-from the environment variable PPR&lowbar;RESPONDER.  If PPR&lowbar;RESPONDER is not defined
+from the environment variable PPR_RESPONDER.  If PPR_RESPONDER is not defined
 then the responder <Command>write</Command> will be used.
 </Para>
 
@@ -38,16 +38,16 @@ The address to which the message should be sent is the second parameter.  The
 address is specified at the time <Command>ppr</Command> is invoked by using the <Command>-r</Command>
 switch.  The proper format for the address depends on the responder.  If the
 <Command>-r</Command> switch is absent then the value of the environment variable
-PPR&lowbar;RESPONDER&lowbar;ADDRESS is used.  If that too is absent then the name of the Unix
+PPR_RESPONDER_ADDRESS is used.  If that too is absent then the name of the Unix
 user who invoked <Command>ppr</Command> is used.  The value used in the absence of both
-<Command>-r</Command> and PPR&lowbar;RESPONDER&lowbar;ADDRESS is appropriate since the default responder is
+<Command>-r</Command> and PPR_RESPONDER_ADDRESS is appropriate since the default responder is
 a script which invokes the Unix program <Command>write</Command>.
 </Para>
 
 <Para>
 The third parameter is the suggested message text.  The message text will
 contain embedded line feeds.  The length of the lines will depend on the
-responder.  The routine get&lowbar;responder&lowbar;width() in <Filename>libppr/reswidth.c</Filename>
+responder.  The routine get_responder_width() in <Filename>libppr/reswidth.c</Filename>
 determines what length to limit the lines to.  For most responders, this
 routine returns 0 which means to use a predetermined set of line breaks which
 generally results in lines less than 80 characters long.
@@ -63,7 +63,7 @@ The fifth parameter is a space separated list of responder options.  Each of
 this options is a name=value pair.  Common options include <Command>printed=no</Command> and
 <Command>timeout=60</Command>.  The value of this option comes from the <Command>ppr</Command>
 <Command>--responder-options</Command> switch or from the environment variable
-PPR&lowbar;RESPONDER&lowbar;OPTIONS.  A responder should ignore any options it does not
+PPR_RESPONDER_OPTIONS.  A responder should ignore any options it does not
 recognize.
 </Para>
 
@@ -87,8 +87,8 @@ In stead, the elements are separated by spaces.  The elements are, in order,
 destination node, <Replaceable>destination name</Replaceable>, <Replaceable>queue id number</Replaceable>,
 <Replaceable>sub id number</Replaceable>, 
 and <Replaceable>home node</Replaceable>.  For example, <Literal>mouse chipmunk 1000 0 mouse</Literal>.
-This id would normally appear as ``mouse:chipmunk-1000.0(mouse)'' or more
-likely in abreviated form as ``chipmunk-1000''.
+This id would normally appear as <Literal>mouse:chipmunk-1000.0(mouse)</Literal> or more
+likely in abreviated form as <Literal>chipmunk-1000</Literal>.
 </Para>
 
 <Para>
@@ -102,7 +102,7 @@ At other times the piece of text will be an error message.
 
 <Para>
 The ninth parameter is the title of the job.  This title will be derived from a
-"&percnt;&percnt;Title:" line if present.  Failing that, the title will be the
+"%%Title:" line if present.  Failing that, the title will be the
 name of the file being printed.  If the file was received on stdin, this field
 will generally be blank.
 </Para>
@@ -110,7 +110,7 @@ will generally be blank.
 <Para>
 The tenth parameter is the time at which the job was submitted.  It is
 represented in Unix format (as a count of the seconds since 12:00am, January
-1, 1970).  The program <Command>lib/time&lowbar;elapsed</Command> may be used to express this
+1, 1970).  The program <Command>lib/time_elapsed</Command> may be used to express this
 time in terms of how far in the past it is.
 </Para>
 
@@ -123,7 +123,7 @@ the job has been arrested, this string will be blank.
 <Para>
 The twelth parameter contains the number of pages printed.  If this is unknown,
 it is "?".  If the response code (the fourth parameter) has a value other than
-<Command>RESP&lowbar;FINISHED</Command> then the contents of this field is undefined.
+<Command>RESP_FINISHED</Command> then the contents of this field is undefined.
 </Para>
 
 <Para>
@@ -145,9 +145,10 @@ on which one invoked the responder.
 
 <Para>
 When the responder is invoked by <Command>pprd</Command>, it will always have a real uid,
-effective uid and saved uid of ``ppr''.  When it is invoked by <Command>ppr</Command> (due to
+effective uid and saved uid of <Literal>ppr</Literal>.  When it is invoked by <Command>ppr</Command> (due to
 the use of the <Command>-e</Command> responder option) things will be different.  The program
-<Command>ppr</Command> is setuid ``ppr'', so the effective and saved uids are ``ppr'' and the
+<Command>ppr</Command> is setuid <Literal>ppr</Literal>, so the effective and saved uids are
+<Literal>ppr</Literal> and the
 real uid is the id of the user who invoked it.  Just before executing the
 responder <Command>ppr</Command> sets the effective user id equal to the real user id.  This
 last feature is not intended as a security measure, rather, the <Command>xwin</Command>
@@ -156,7 +157,7 @@ on the .Xauthority file before trying to open it which means that the
 .Xauthority file in the user's home directory must be readable under both the
 real and the effective uids.  This feature may be overridden by setting the
 setuid bit on the responder.  If this is done then the effective uid will remain
-``ppr''.
+<Literal>ppr</Literal>.
 </Para>
 
 </Sect1>

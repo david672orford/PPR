@@ -30,17 +30,17 @@ exits.
 For the purpose of setting up signal handlers, POSIX provides a function
 called sigaction().  Unfortunately, since one of its arguments is a structure,
 about 10 lines of code are needed to use it.  To simplify the source code,
-PPR has two functions, one called signal&lowbar;interupting() which works like BSD
-signal() and signal&lowbar;restarting() which works differs only in that it passes
-the option SA&lowbar;RESTART to sigaction().  SA&lowbar;RESTART requests that system calls
+PPR has two functions, one called signal_interupting() which works like BSD
+signal() and signal_restarting() which works differs only in that it passes
+the option SA_RESTART to sigaction().  SA_RESTART requests that system calls
 interupted by the signal be restarted automatically.
 </Para>
 
 <Para>
 The PPR source code assumes that whenever it calls signal() it will be
 calling a version conforms to BSD semantics.  To make sure this holds true
-on all systems, global&lowbar;defines.h defines a macro
-which equates signal() with signal&lowbar;interupting().
+on all systems, global_defines.h defines a macro
+which equates signal() with signal_interupting().
 </Para>
 
 <Sect2>
@@ -55,7 +55,7 @@ adjust before compiling the programs.  These are described below:
 <Title><Filename class="HeaderFile">include/version.h</Filename></Title>
 
 <Para>
-This file defines the pre-processor macros VERSION, SHORT&lowbar;VERSION, and
+This file defines the pre-processor macros VERSION, SHORT_VERSION, and
 COPYRIGHT.  If you modify PPR you may want to note that fact in the VERSION
 macro.
 </Para>
@@ -76,7 +76,7 @@ generates this file.
 <Title><Filename class="Headerfile">include/sysdep.h</Filename></Title>
 
 <Para>
-This file is included by <Filename>include/global&lowbar;defines.h</Filename> (described
+This file is included by <Filename>include/global_defines.h</Filename> (described
 below).  This file contains one section for each system to which PPR has
 been ported.  For each of these it defines some macros and possibly some
 function prototypes.  You should add a section to this file
@@ -87,15 +87,15 @@ can be defined in this file are described in comments at its head.
 </Sect3>
 
 <Sect3>
-<Title><Filename class="HeaderFile">include/global&lowbar;defines.h</Filename></Title>
+<Title><Filename class="HeaderFile">include/global_defines.h</Filename></Title>
 
 <Para>
 An important part of this file is the list of definitions of files and
 directories.  Any file or directory names in this section which do not begin
 with a slash are relative to the directory defined as <Literal>HOMEDIR</Literal>. There are
 other parameters below the file names, but these should be modified with care.
-Probably, you should only modify <Literal>QUEUE&lowbar;SIZE</Literal>, <Literal>MAX&lowbar;DOCMEDIA</Literal>,
-<Literal>MAX&lowbar;LINE</Literal>, <Literal>MAX&lowbar;BINS</Literal>, <Literal>MAX&lowbar;GROUPS</Literal>, and <Literal>MAX&lowbar;PRINTERS</Literal>.
+Probably, you should only modify <Literal>QUEUE_SIZE</Literal>, <Literal>MAX_DOCMEDIA</Literal>,
+<Literal>MAX_LINE</Literal>, <Literal>MAX_BINS</Literal>, <Literal>MAX_GROUPS</Literal>, and <Literal>MAX_PRINTERS</Literal>.
 </Para>
 
 </Sect3>
@@ -133,7 +133,7 @@ the limit is defined in the CAP sources in the file
 </Sect3>
 
 <Sect3>
-<Title><Filename class="HeaderFile">filter&lowbar;lp/filter&lowbar;lp.h</Filename></Title>
+<Title><Filename class="HeaderFile">filter_lp/filter_lp.h</Filename></Title>
 
 <Para>
 One may desire to edit this file in order to change the paper size, margins
@@ -146,7 +146,7 @@ PPR, the lp filter has options which can be used to change these parameters
 without re-compiling.  These values are specified by using the <Command>ppr</Command> <Command>-o</Command>
 switch when submitting a print job.  The <Command>ppad switchset</Command> command can be
 useful here, especially when the jobs are arriving through <Command>lprsrv</Command>.  It is
-still necessary to edit <Filename>include/filter&lowbar;lp.h</Filename> and re-compile if you wish
+still necessary to edit <Filename>include/filter_lp.h</Filename> and re-compile if you wish
 to change the system-wide defaults.
 </Para>
 

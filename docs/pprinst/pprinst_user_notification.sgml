@@ -19,10 +19,9 @@ logged in or sends him an email messages if he is not.  The default notification
 is the name of the user who ran <Command>ppr</Command>.
 </Para>
 
-<Para>
-The default responder and address may be changed by setting the PPR&lowbar;RESPONDER
-and PPR&lowbar;RESPONDER&lowbar;ADDRESS environment variables respectively.
-</Para>
+<Para>The default responder and address may be changed by setting the
+<EnVar>PPR_RESPONDER</EnVar> and <EnVar>PPR_RESPONDER_ADDRESS</EnVar>
+environment variables respectively.</Para>
 
 <Sect2>
 <Title>Notifying X Windows Users</Title>

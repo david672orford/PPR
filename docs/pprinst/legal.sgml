@@ -4,22 +4,26 @@
 <sect2>
 <title>Copyright and Disclaimer</title>
 
-<para>Both the software and all the documentation are subject to the following
-copyright and license:</para>
+<para>Most of the <Application>PPR</Application> distribution, including the 
+documentation is licensed under the BSD license, the terms of which are as
+follows:</para>
 
-<para>Copyright 1995--2001, Trinity College Computing Center, Hartford
+<para>Copyright 1995--2003, Trinity College Computing Center, Hartford
 Connecticut, U.S.A.  All rights reserved.</para>
 
 <para>
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
+
 <itemizedlist mark=bullet>
+
 <listitem>
 <para>
 Redistributions of source code must retain the above copyright notice,
 this list of conditions and the following disclaimer.
 </para>
 </listitem>
+
 <listitem>
 <para>
 Redistributions in binary form must reproduce the above copyright
@@ -27,6 +31,7 @@ notice, this list of conditions and the following disclaimer in the
 documentation and/or other materials provided with the distribution.
 </para>
 </listitem>
+
 </itemizedlist>
 </para>
 
@@ -114,31 +119,31 @@ Corporation.</para>
 <sect2>
 <title>Other Acknowledgements</title>
 
-<para>PPR's N-Up dictionary is derived from the work of Don Markuson which he
+<para><Application>PPR</Application>'s N-Up dictionary is derived from the work of Don Markuson which he
 has placed in the public domain.</para>
 
-<para>Some of PPR's TrueType to PostScrip type 3 font conversion code is
-derived from a program called ``ttf2ps'' which L. S. Ng posted to the Usenet
-news group ``comp.sources.postscript''.</para>
+<para>Some of <Application>PPR</Application>'s TrueType to PostScrip type 3 font conversion code is
+derived from a program called <Application>ttf2ps</Application> which L. S. Ng posted to the Usenet
+news group <Literal>comp.sources.postscript</Literal>.</para>
 
-<para>The PPR distribution includes PPD files owned by Adobe Systems, Apple
+<para>The <Application>PPR</Application> distribution includes PPD files owned by Adobe Systems, Apple
 Computer, and Hewlett Packard.</para>
 
-<para>The PPR distribution contains procedure sets extracted form the output of
-Adobe and Apple PostScript drivers.  PPR inserts this extracted code into jobs
+<para>The <Application>PPR</Application> distribution contains procedure sets extracted form the output of
+Adobe and Apple PostScript drivers.  <Application>PPR</Application> inserts this extracted code into jobs
 created by these drivers in order to correct cases in which the driver failed
 to include all of the necessary procedure sets.</para>
 
-<para>The PPR code includes Rich Salz's wildmat() function which he has
+<para>The <Application>PPR</Application> code includes Rich Salz's wildmat() function which he has
 placed in the public domain.</para>
 
-<para>PPR contains Alladin Enterprises' implementation of the MD5 algorithm
+<para><Application>PPR</Application> contains Alladin Enterprises' implementation of the MD5 algorithm
 described in RFC 1321.</para>
 
-<para>The PPR distribution includes the IBM Courier typeface under the terms of
-the ``IBM/MIT X Consortium Courier Typefont agreement''.</para>
+<para>The <Application>PPR</Application> distribution includes the IBM Courier typeface under the terms of
+the "IBM/MIT X Consortium Courier Typefont agreement".</para>
 
-<para>The PPR distribution contains Patrick Powell's snprintf()
+<para>The <Application>PPR</Application> distribution contains Patrick Powell's snprintf()
 implementation.</para>
 
 </sect2>

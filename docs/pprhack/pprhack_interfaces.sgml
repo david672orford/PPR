@@ -59,22 +59,22 @@ in <Filename>include/interface.h</Filename>.
 
 <Para>
 The seventh parameter is set to the name of the job.  (For example,
-``mouse:chipmunk-148.0(mouse)''.  This will not generally be used.  The
+<Literal>mouse:chipmunk-148.0(mouse)</Literal>.  This will not generally be used.  The
 <Command>lpr</Command> interface passes this information on to the remote system.
 </Para>
 
 <Para>
-The eight parameter is set the the text of the &percnt;&percnt;Routing:
-comment in the print job.  If the &percnt;&percnt;Routing: comment is absent, then the
+The eight parameter is set the the text of the %%Routing:
+comment in the print job.  If the %%Routing: comment is absent, then the
 fourth parameter is blank.  This parameter will generally be ignored.  If a fax
 interface is every written it will read the telephone number from this
 parameter.
 </Para>
 
 <Para>
-The ninth parameter is the text of the <Literal>&percnt;&percnt;For:</Literal> comment in the
-print job.  (The <Literal>&percnt;&percnt;For:</Literal> line in the job as sent to the
-printer which is not necessarily the same as the <Literal>&percnt;&percnt;For:</Literal> line
+The ninth parameter is the text of the <Literal>%%For:</Literal> comment in the
+print job.  (The <Literal>%%For:</Literal> line in the job as sent to the
+printer which is not necessarily the same as the <Literal>%%For:</Literal> line
 in the input file.)  If this information is unavailable, the field is blank.
 The <Command>lpr</Command> interface passes this on to the remote system.
 </Para>
@@ -90,7 +90,7 @@ PostScript format.
 If passthru mode is in effect (see <Command>ppad passthru</Command> and <Command>ppad group
 passthru</Command>), that is if the file to be transmitted to the printer is not
 a PostScript file, then this parameter will be the name of the file type,
-such as ``pcl'' or ``pdf''.  (The file type names which appear in this
+such as <Literal>pcl</Literal> or <Literal>pdf</Literal>.  (The file type names which appear in this
 parameter are the same names as are used with the <Command>ppr -T</Command> switch.
 A non-empty tenth parameter <Emphasis>does not</Emphasis> necessarily indicate that
 a <Command>-T</Command> switch was used.)
@@ -101,12 +101,15 @@ Also, if transparent mode is in effect (see <Command>ppr -H transparent</Command
 this parameter will contain a space separated list of the filters which
 would be required (and may actually have been invoked) to convert the
 input file to PostScript.  Uncompression with <Command>uncompress</Command>
-and <Command>gunzip</Command> are indicated by the strings ``uncompress'' and ``gunzip''
+and <Command>gunzip</Command> are indicated by the strings
+<Literal>uncompress</Literal> and <Literal>gunzip</Literal>
 respectively.  Here are some examples:  if the input file is already PostScript,
 then this parameter will be empty.  If the file is PCL data, then this
-paramater will be ``pcl''.  If the file is <Command>gzip</Command> compressed
-PostScript, then this parameter will be ``gunzip''.  If the file is
-<Command>gzip</Command> compressed PCL, then this parameter will be ``gunzip pcl''.
+paramater will be <Literal>pcl</Literal>.  If the file is <Command>gzip</Command> compressed
+PostScript, then this parameter will be <Literal>gunzip</Literal>.  If the file is
+<Command>gzip</Command> compressed PCL, then this parameter will be
+<Literal>gunzip
+pcl</Literal>.
 </Para>
 
 <Para>
@@ -126,41 +129,41 @@ The exit codes which interface programs should use are defined in
 
 <Para>
 If the interface prints the job successfully, it should return an exit code of
-<Command>EXIT&lowbar;PRINTED</Command>.
+<Command>EXIT_PRINTED</Command>.
 </Para>
 
 <Para>
 If there was a printer error, the interface should exit with code
-<Command>EXIT&lowbar;PRNERR</Command> and the printer will be placed in fault-auto-retry mode.
+<Command>EXIT_PRNERR</Command> and the printer will be placed in fault-auto-retry mode.
 </Para>
 
 <Para>
 If the printer error was caused by a circumstance which will not disappear
 spontainiously, such as a syntactically invalid printer address, then the
-interface should return <Command>EXIT&lowbar;PRNERR&lowbar;NORETRY</Command> and the printer will be placed
+interface should return <Command>EXIT_PRNERR_NORETRY</Command> and the printer will be placed
 in fault-no-auto-retry mode.
 </Para>
 
 <Para>
 If a PostScript error occured in the job and the interface detects it it should
-use the code <Command>EXIT&lowbar;JOBERR</Command>.  Generally the interface will leave the job of detecting
+use the code <Command>EXIT_JOBERR</Command>.  Generally the interface will leave the job of detecting
 PostScript errors to <Command>pprdrv</Command> which examines the messages received from the
 printer.
 </Para>
 
 <Para>
 If the interface program catches a signal such as SIGTERM, it should exit
-with code <Command>EXIT&lowbar;SIGNAL</Command> at the end of the signal handler function.
+with code <Command>EXIT_SIGNAL</Command> at the end of the signal handler function.
 </Para>
 
 <Para>
 If no printer error occured but the printer was busy or off line, the
-interface should return <Command>EXIT&lowbar;ENGAGED</Command>.
+interface should return <Command>EXIT_ENGAGED</Command>.
 </Para>
 
 <Para>
 The interface program should not return any value other than those defined
-above.  Any undefined value will be interpreted as a <Command>EXIT&lowbar;PRNERR</Command>.
+above.  Any undefined value will be interpreted as a <Command>EXIT_PRNERR</Command>.
 </Para>
 
 </Sect2>
@@ -170,7 +173,7 @@ above.  Any undefined value will be interpreted as a <Command>EXIT&lowbar;PRNERR
 
 <Para>
 If the <Replaceable>jobbreak</Replaceable> value for the printer (the firth parameter) is
-<Command>JOBBREAK&lowbar;SIGNAL</Command>, or  <Command>JOBBREAK&lowbar;SIGNAL&lowbar;PJL</Command> then the interface should
+<Command>JOBBREAK_SIGNAL</Command>, or  <Command>JOBBREAK_SIGNAL_PJL</Command> then the interface should
 send its parent SIGUSR1 as soon as it has established its own SIGUSR1 handler.
 Thereafter, whenever it receives SIGUSR1, it should read all bytes currently
 available from the pipe, send them to the printer and then send the printer an

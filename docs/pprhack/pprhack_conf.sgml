@@ -24,7 +24,7 @@ appending the file <Filename>/etc/ppr/newprn.conf</Filename>. The
 <Filename>newprn.conf</Filename> file is normally created by the
 <Command>ppad new alerts</Command> command.</Para>
 
-<Para>Any lines begining with ``;'' or ``&num;'' are comments.  Blank lines
+<Para>Any lines begining with <Literal>;</Literal> or <Literal>#</Literal> are comments.  Blank lines
 are ignored.  All other lines should begin with a keyword which is followed
 by one or more values.  Only the <Literal>Bin:</Literal> and
 <Literal>PPDOpt:</Literal> lines should occur more than once.  If any other
@@ -50,11 +50,12 @@ configuration.  This line is optional.
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>Interface:</Literal> <Replaceable>interface&lowbar;path</Replaceable></Term>
+<Term><Literal>Interface:</Literal> <Replaceable>interface</Replaceable></Term>
 <ListItem>
 <Para>
 This line is required.  It gives the name of the program which the spooler
-should invoke in order to make contact with the printer.  If the path does not
+should invoke in order to make contact with the printer.  If the
+<Replaceable>interface</Replaceable> does not
 begin with a slash, then it refers to a subdirectory of the
 <Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> directory.
 Common values for this line are <Literal>atalk</Literal>,
@@ -64,17 +65,19 @@ Common values for this line are <Literal>atalk</Literal>,
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>Address:</Literal> <Replaceable>address&lowbar;string</Replaceable></Term>
+<Term><Literal>Address:</Literal> <Replaceable>address_string</Replaceable></Term>
 <ListItem>
-<Para>
-The address string is passed to the interface program as its second parameter.
-The proper format for this string depends on the interface.  Reasonable values
-for use with the interfaces named in the above paragraph are ``Mac Laser
-Printer: LaserWriter@MYZONE'', ``smith.prn.myorg.org:9100'', and
-``/dev/ttys05''.  If the address contains leading or trailing spaces it should
-be enclosed in double quotes.  Technically, this line is not required, but the
-default address is the name of the printer which is unlikely to be useful.
-</Para>
+
+<Para>The address string is passed to the interface program as its second
+parameter. The proper format for this string depends on the interface. 
+Reasonable values for use with the interfaces named in the above paragraph
+are <Literal>Mac Laser Printer: LaserWriter@MYZONE</Literal>,
+<Literal>smith.prn.myorg.org:9100</Literal>, and
+<Literal>/dev/ttys05</Literal>.  If the address contains leading or trailing
+spaces it should be enclosed in double quotes.  Technically, this line is
+not required, but the default address is the name of the printer which is
+unlikely to be useful.</Para>
+
 </listitem>
 </VarListEntry>
 
@@ -114,7 +117,7 @@ fault.
 </Para>
 <Para>
 The <Replaceable>method</Replaceable> parameter indicates the method by which the message should be
-sent.  Currently, this parameter is ignored.  Set it to ``mail''.
+sent.  Currently, this parameter is ignored.  Set it to <Literal>mail</Literal>.
 </Para>
 <Para>
 The <Replaceable>address</Replaceable> indicates the person to whom the message should be sent.
@@ -131,8 +134,9 @@ e-mail address.
 This line is optional.  The first integer refers to banner pages, the second
 to trailer pages.  Four different values are allowed.  They are
 <Literal>0</Literal> for
-``never'', <Literal>1</Literal> for ``preferably not'', <Literal>2</Literal> for ``preferably yes'', and
-<Literal>3</Literal> for ``always''.
+'never', <Literal>1</Literal> for 'preferably not', <Literal>2</Literal> for
+'preferably yes', and
+<Literal>3</Literal> for 'always'.
 </Para>
 </listitem>
 </VarListEntry>
@@ -191,7 +195,7 @@ is used.</Para>
 
 <Para>This line is optional.  The default value is <Literal>true</Literal>.  If this parameter is
 set to <Literal>false</Literal>, the printer will refuse to print any job which does not have
-<Literal>color</Literal> in a <Literal>&percnt;&percnt;Requirements:</Literal> line in its header.
+<Literal>color</Literal> in a <Literal>%%Requirements:</Literal> line in its header.
 A <Literal>GrayOK:</Literal>
 line can be used to prevent black-and-white or grayscale jobs from begin
 printed on an expensive colour printer.</Para>
@@ -200,7 +204,7 @@ printed on an expensive colour printer.</Para>
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>Charge:</Literal> <Replaceable>money</Replaceable> &lsqb;<Replaceable>money</Replaceable>&rsqb;</Term>
+<Term><Literal>Charge:</Literal> <Replaceable>money</Replaceable> [<Replaceable>money</Replaceable>]</Term>
 <ListItem>
 
 <Para>This line is optional.  If this line is present, then the printer
@@ -238,7 +242,8 @@ deletes any <Literal>OutputOrder:</Literal> line which may exist.</Para>
 
 <Para>The <Replaceable>binname</Replaceable> parameter is the bin name as it
 appears in a <Literal>*InputSlot</Literal> line of the PPD
-file.  Common values are ``Upper'', ``Lower'', and ``Cassette''.  If
+file.  Common values are <Literal>Upper</Literal>, <Literal>Lower</Literal>, and
+<Literal>Cassette</Literal>.  If
 automatic bin selection and media handling are desired, there should be one
 <Literal>Bin:</Literal> line for each installed bin.  Removing
 all the <Literal>Bin:</Literal> lines disables automatic bin
@@ -266,7 +271,7 @@ deffiltopts</Command> command.</Para>
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>Switchset:</Literal> <Replaceable>switch&lowbar;description</Replaceable></Term>
+<Term><Literal>Switchset:</Literal> <Replaceable>switch_description</Replaceable></Term>
 <ListItem>
 
 <Para>This line is optional.  If present, it contains a compressed
@@ -374,7 +379,7 @@ Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 </VarListEntry>
 
 <VarListEntry>
-<Term><Command>ppr2samba-drivername:</Command> <Replaceable>name</Replaceable></Term>
+<Term><Literal>ppr2samba-drivername:</Literal> <Replaceable>name</Replaceable></Term>
 <ListItem>
 <Para>
 Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
@@ -383,7 +388,7 @@ Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 </VarListEntry>
 
 <VarListEntry>
-<Term><Command>ms-driver-name:</Command> <Replaceable>name</Replaceable></Term>
+<Term><Literal>ms-driver-name:</Literal> <Replaceable>name</Replaceable></Term>
 <ListItem>
 <Para>
 Formerly used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
@@ -404,7 +409,7 @@ is permissible to create and edit these files manually, however it is generally
 more convient to use the command <Command>ppad</Command> to do it automatically.  The
 <Literal>Printer:</Literal> line is the only one which should appear more than once.  If any
 other line occurs more than once, all but the last instance are ignored.  Lines
-with ``;'' or ``&num;'' in the first column are comments.  The remaining lines are
+with <Literal>;</Literal> or <Literal>#</Literal> in the first column are comments.  The remaining lines are
 of two types:
 </Para>
 
@@ -455,7 +460,7 @@ deleted.
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>Switchset:</Literal> <Replaceable>switch&lowbar;description</Replaceable></Term>
+<Term><Literal>Switchset:</Literal> <Replaceable>switch_description</Replaceable></Term>
 <ListItem>
 <Para>
 If this line is present, it contains a compress representation if the switches
@@ -465,7 +470,7 @@ saved with the <Command>ppad group switchset</Command> command.
 </VarListEntry>
 
 <VarListEntry>
-<Term><Literal>PassThru:</Literal> <Replaceable>type&lowbar;list</Replaceable></Term>
+<Term><Literal>PassThru:</Literal> <Replaceable>type_list</Replaceable></Term>
 <ListItem>
 <Para>
 This line is optional.  If present, it contains a space separated list

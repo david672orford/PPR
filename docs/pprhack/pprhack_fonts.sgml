@@ -16,7 +16,7 @@ fonts.
 </Para>
 
 <Para>
-Any line that has <Literal>&num;</Literal> or <Literal>;</Literal> in the first column is a comment.
+Any line that has <Literal>#</Literal> or <Literal>;</Literal> in the first column is a comment.
 Blank lines are ignored.  A font substitution record begins with the name of
 the font for which there are substitutes.  The name should start in column
 one and be on a line by
@@ -58,19 +58,19 @@ is an example:
 
 <Screen>
 Helvetica-Condensed
-	Helvetica &lsqb;0.80 0 0 1 0 0]
+	Helvetica [0.80 0 0 1 0 0]
 Helvetica-Condensed-Bold
-	Helvetica-Bold &lsqb;0.80 0 0 1 0 0]
+	Helvetica-Bold [0.80 0 0 1 0 0]
 Helvetica-Condensed-Oblique
-	Helvetica-Oblique &lsqb;0.80 0 0 1 0 0]
+	Helvetica-Oblique [0.80 0 0 1 0 0]
 Helvetica-Condensed-BoldOblique
-	Helvetica-BoldOblique &lsqb;0.80 0 0 1 0 0]
+	Helvetica-BoldOblique [0.80 0 0 1 0 0]
 </Screen>
 
 </Para>
 
 <Para>
-This approximates Helvetica Condensed by scaling Helvetica to 80&percnt; of
+This approximates Helvetica Condensed by scaling Helvetica to 80% of
 its normal width.  The role of the other members of the matrix, refer to the
 PostScript language reference manual.
 </Para>
@@ -161,8 +161,8 @@ value is acceptable for product, modelname, and resolution.
 <Title>Identification by ModelName</Title>
 
 <Para>
-The GhostScript interpreter has a product string of ``Ghostscript''
-or ``Alladin GhostScript''.  Therefor, the printer must be identified by means of its PPD
+The GhostScript interpreter has a product string of <Literal>Ghostscript</Literal>
+or <Literal>Alladin GhostScript</Literal>.  Therefor, the printer must be identified by means of its PPD
 files <Literal>*ModelName:</Literal> line.  Here are some reasonable configuration lines for
 printers driven by Ghostscript:
 </Para>
@@ -187,13 +187,13 @@ In a PPD file obtained from Adobe or the printer's manufacture,
 the <Literal>*NickName:</Literal> line is identical to the <Literal>*ModelName:</Literal> line.
 You might change it if you make a special hacked-up copy of
 the PPD file for a particular printer.  For example, you might change it to
-``David's HP DeskJet 500 Ghostscript''.
+<Literal>David's HP DeskJet 500 Ghostscript</Literal>.
 </Para>
 
 <Para>
 There are valid reasons for using a modified PPD file, but why changes to the
 PPD file should dictate a different MetaFont mode is hard to say.  (Changes to
-the ``*DefaultResolution:'' line are covered by the next section.)  Unless you
+the <Literal>*DefaultResolution:</Literal> line are covered by the next section.)  Unless you
 know a good reason not to, you should always put a "*" in this field.
 </Para>
 

@@ -28,16 +28,16 @@ form:
 </Para>
 
 <Para>
-j <Replaceable>destination&lowbar;node destination&lowbar;queue id subid home&lowbar;node initial&lowbar;priority</Replaceable>
+j <Replaceable>destination_node destination_queue id subid home_node initial_priority</Replaceable>
 </Para>
 
 <Para>
-The <Replaceable>destination&lowbar;node</Replaceable> is the node to which the job should be sent.  If the
+The <Replaceable>destination_node</Replaceable> is the node to which the job should be sent.  If the
 command is written to <Command>pprd</Command>'s named pipe, this field must contain the node
-name of the local system.  The <Replaceable>destination&lowbar;queue</Replaceable> is the name of the print
+name of the local system.  The <Replaceable>destination_queue</Replaceable> is the name of the print
 queue on the destination node.  The <Replaceable>id</Replaceable> and <Replaceable>subid</Replaceable> are the queue id and
 the job fragment number respectively.  The <Replaceable>subid</Replaceable> will most often be zero.
-The <Replaceable>home&lowbar;node</Replaceable> is the node name of the system on which the job origionated.
+The <Replaceable>home_node</Replaceable> is the node name of the system on which the job origionated.
 </Para>
 
 </Sect2>

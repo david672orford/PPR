@@ -58,7 +58,8 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_replacing_printer.sgml \
 		pprinst_start_restart.sgml \
 		pprinst_user_notification.sgml \
-		pprinst_viewing_queue.sgml
+		pprinst_viewing_queue.sgml \
+		legal.sgml
 	touch pprinst.sgml
 
 #=== Install ================================================================

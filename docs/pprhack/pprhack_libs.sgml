@@ -8,7 +8,7 @@ functions in this library.  This library is contained in a file <Filename>libppr
 which is created in the top level source directory.  Its source code is found
 in the <Filename class="Directory">libppr/</Filename> directory.  The prototypes for PPR library functions are
 found in the file <Filename>include/global defines.h</Filename> with a few in
-<Filename class="HeaderFile">include/global&lowbar;structs.h</Filename>.
+<Filename class="HeaderFile">include/global_structs.h</Filename>.
 </Para>
 
 <Sect3>
@@ -39,12 +39,12 @@ abort the program if the allocation fails.
 </Para>
 
 <Para>
-A program calling these functions must provide a function called ``fatal()''.
+A program calling these functions must provide a function called fatal().
 This function should print an error message and exit.  The first argument is
 the value to pass to exit(), the second is a printf() style format string for
 the error message.  Any remaining arguments are the values specified by the
 format string.  The caller should create a global integer variable called
-``lib&lowbar;memory&lowbar;fatal'' which contains the value these routines should pass as the
+<VarName>lib_memory_fatal</VarName> which contains the value these routines should pass as the
 first argument to fatal().
 </Para>
 
@@ -81,7 +81,7 @@ string truncated to the maximum length.
 </Sect3>
 
 <Sect3>
-<Title>ppr&lowbar;sscanf()</Title>
+<Title>ppr_sscanf()</Title>
 
 <Para>
 This function is similiar to sscanf().  It implements the following formats:
@@ -90,7 +90,7 @@ This function is similiar to sscanf().  It implements the following formats:
 <VariableList>
 
 <VarListEntry>
-<Term>&percnt;d</Term>
+<Term>%d</Term>
 <ListItem>
 <Para>
 read an int.  The argument should be a pointer to an int.
@@ -99,7 +99,7 @@ read an int.  The argument should be a pointer to an int.
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;ld</Term>
+<Term>%ld</Term>
 <ListItem>
 <Para>
 read a long int.  The argument should be a pointer to a long
@@ -109,7 +109,7 @@ int.
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;hd</Term>
+<Term>%hd</Term>
 <ListItem>
 <Para>
 read a short int.  The argument should be a pointer to a short
@@ -119,22 +119,23 @@ int.
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;s</Term>
+<Term>%s</Term>
 <ListItem>
 <Para>
 read characters up to the next whitespace.  The argument should
 be a pointer to a char array with enough space to hold the string and the
 terminating NULL.  To prevent overruns, the size of the array may be specified
-by a decimal number between the ``&percnt;'' and the ``s'' or by a ``&num;''.
-If the length of the array is specified with a ``&num;'' then the actuall
-length is read from ppr&lowbar;sscanf()'s next argument (the one before the pointer to
+by a decimal number between the <Literal>%</Literal> and the <Literal>s</Literal> 
+or by a <Literal>#</Literal>.
+If the length of the array is specified with a <Literal>#</Literal> then the actuall
+length is read from ppr_sscanf()'s next argument (the one before the pointer to
 the char array).
 </Para>
 </listitem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;S</Term>
+<Term>%S</Term>
 <ListItem>
 <Para>
 read characters up to the next whitespace, allocate memory, and
@@ -145,18 +146,18 @@ pointer which will be set to the address of the allocated memory.
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;z</Term>
+<Term>%z</Term>
 <ListItem>
 <Para>
 read characters up to the end of the string.  The argument
 should be a char array.  To prevent overruns, the size of the char array may be
-specified in the same manner as for the &percnt;s format.
+specified in the same manner as for the %s format.
 </Para>
 </listitem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>&percnt;Z</Term>
+<Term>%Z</Term>
 <ListItem>
 <Para>
 read characters up to the end of the string, allocate storeage
@@ -171,7 +172,7 @@ a pointer to a char array.
 </Sect3>
 
 <Sect3>
-<Title>ppr&lowbar;get&lowbar;nodename()</Title>
+<Title>ppr_get_nodename()</Title>
 
 <Para>
 This function should return the node name which other nodes will use when
@@ -183,12 +184,13 @@ characters.
 </Sect3>
 
 <Sect3>
-<Title>fname&lowbar;sprintf()</Title>
+<Title>fname_sprintf()</Title>
 
 <Para>
 This is a special version of sprintf().  It will never write more than
-MAX&lowbar;PATH characters.  It only understands &percnt;s and &percnt;d.  On
-MS-Windows systems it will convert ``:'' to ``!'' because they are confused
+MAX_PATH characters.  It only understands %s and %d.  On
+MS-Windows systems it will convert <Literal>:</Literal> to
+<Literal>!</Literal> because they are confused
 by colons in filenames.
 </Para>
 
