@@ -51,10 +51,13 @@
 
 static const char myname[] = "sambaprint";
 
-static const char tdb_drivers_file[] = "/usr/local/samba/var/locks/ntdrivers.tdb";
+static const char tdb_base_path[] = "/var/lib/samba";
+
+static const char tdb_drivers_file[] = "ntdrivers.tdb";
 
 static int drivers_import(void)
 	{
+	char fname[MAX_PPR_PATH];
 	TDB_CONTEXT *tdb_drivers;
 	char *line = NULL;
 	int line_available = 256;
@@ -88,9 +91,10 @@ static int drivers_import(void)
 	int scratch_len;
 
 	/* Open the TDB database that contains NT driver information. */
-	if(!(tdb_drivers = tdb_open((char*)tdb_drivers_file, 0, TDB_DEFAULT, O_RDWR|O_CREAT, 0600)))
+	ppr_fnamef(fname, "%s/%s", tdb_base_path, tdb_drivers_file);
+	if(!(tdb_drivers = tdb_open(fname, 0, TDB_DEFAULT, O_RDWR|O_CREAT, 0600)))
 		{
-		fprintf(stderr, "%s: can't open \"%s\", errno=%d (%s)\n", myname, tdb_drivers_file, errno, strerror(errno));
+		fprintf(stderr, "%s: can't open \"%s\", errno=%d (%s)\n", myname, fname, errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
