@@ -137,9 +137,9 @@ $addprn_wizard_table = [
 					{
 					$options .= " --test-cmyk";
 					}
-				if(cgi_data_move("test_spoked", 0))
+				if(cgi_data_move("test_spokes", 0))
 					{
-					$options .= " --test-spoked";
+					$options .= " --test-spokes";
 					}
 
 				print "<pre>\n";
