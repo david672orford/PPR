@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/samba/ppr2samba.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 1 May 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 4 December 2002.
 */
 
 /*
@@ -536,8 +551,8 @@ static void check_for_problems(void)
     FILE *f;
     char *line = NULL;
     int line_space = 80;
-    gu_boolean pprproto = FALSE;
-    gu_boolean pprwin95 = FALSE;
+    gu_boolean saw_pprproto = FALSE;
+    gu_boolean saw_pprprnt = FALSE;
     char *si, *di;
 
     if(!(f = fopen(smb_protos_conf, "r")))
@@ -556,21 +571,21 @@ static void check_for_problems(void)
 	*di = '\0';
 
 	if(strncmp(line, "[pprproto]", 10) == 0)
-	    pprproto = TRUE;
-	else if(strncmp(line, "[pprdrvs$]", 10) == 0)
-	    pprwin95 = TRUE;
+	    saw_pprproto = TRUE;
+	else if(strncasecmp(line, "[pprprnt$]", 10) == 0)
+	    saw_pprprnt = TRUE;
     	}
 
     fclose(f);
 
-    if(!pprproto)
+    if(!saw_pprproto)
 	{
 	warning(_("The \"%s\" file doesn't contain a [pprproto] section."), smb_protos_conf);
 	}
 
-    if(!pprwin95)
+    if(!saw_pprprnt)
 	{
-	warning(_("The \"%s\" file doesn't contain a [pprdrv$] section."), smb_protos_conf);
+	warning(_("The \"%s\" file doesn't contain a [pprprnt$] section."), smb_protos_conf);
 	}
 
     } /* end of check_for_problems() */

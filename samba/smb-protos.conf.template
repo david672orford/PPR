@@ -3,7 +3,7 @@
 ;
 ; Run "ppdoc ppr2samba" for an explanation of this file's purpose.
 ;
-; Last revised 7 May 2002.
+; Last revised 4 December 2002.
 ;
 
 ;
@@ -57,12 +57,15 @@
    min print space = 2048
 
 ;
-; Alternative prototype for use with pprpopup.tcl on the clients.
+; Old alternative prototype for use with pprpopup.tcl on the clients.
 ;
 [pprproto_pprpopup]
    copy = pprproto
    print command = %HOMEDIR%/lib/samba_submitter %m %I 15009 %a %U %p %s &
 
+;
+; New alternative prototype for use with PPR Popup on the clients.
+;
 [pprproto_pprpopup2]
    copy = pprproto
    print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@%m.samba -f %U -U %s &
@@ -71,7 +74,7 @@
 ; This section is for the automatic installation of
 ; Microsoft Windows 95 printer drivers.
 ;
-[PPRPRNT$]
+[pprprnt$]
    comment = PPR Printer Drivers
    path = %VAR_SPOOL_PPR%/drivers
    guest ok = yes

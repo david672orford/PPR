@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 November 2002.
+** Last modified 4 December 2002.
 */
 
 #include "before_system.h"
@@ -554,7 +554,7 @@ void ppop_status_exit_hook(int retval)
 	ppop_status.pjl_status.code2 = -1;
 	message_job[0] = '\0';
 
-	/* If the last report was that the printer is "operational, printing",
+	/* If the last report was that the printer is "printing",
 	   then set status.start to zero as this will be untrue as soon as
 	   we disconnect.
 	   */

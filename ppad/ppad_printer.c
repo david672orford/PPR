@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 4 December 2002.
 */
 
 /*
@@ -654,9 +654,9 @@ int printer_show(const char *argv[])
 		    *p1 = '\0';
 		    if((p1 = gu_strsep(&p, " \t"))					/* first exists */
 				&& strcmp(p1, "application/vnd.cups-raster") == 0	/* and mime type matches */
-				&& (p2 = gu_strsep(&p, " \t"))				/* second exists */
-				&& strspn(p2, "0123456789") == strlen(p2)		/* and is numberic */
-				&& (p3 = gu_strsep(&p, "\t"))				/* third exists */
+				&& (p2 = gu_strsep(&p, " \t"))				/* and second parameter exists */
+				&& strspn(p2, "0123456789") == strlen(p2)		/* and it is numberic */
+				&& (p3 = gu_strsep(&p, "\t"))				/* and third parameter exists */
 			)
 			{
 			cups_filter = gu_strdup(p3);
