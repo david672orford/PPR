@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 20 July 2001.
 */
 
 /*
@@ -1427,13 +1427,14 @@ static void pprdrv_read_printer_conf(void)
 	si = di = printer.RIP.options_storage;
 	while(*si)
 	    {
-	    si += strspn(si, " \t");
-	    if(*si)
+	    si += strspn(si, " \t");	/* skip whitespace */
+	    if(*si)			/* if anything left, */
 		{
 		int c, quote = 0; 
 		printer.RIP.options[printer.RIP.options_count++] = di;
-		while((c = *si++))
+		while((c = *si))
 		    {
+		    si++;		/* Mustn't this until after we know it isn't a NULL! */
 		    switch(c)
 		    	{
 			case '\"':
@@ -1449,10 +1450,7 @@ static void pprdrv_read_printer_conf(void)
 			case ' ':
 			case '\t':
 			    if(!quote)
-				{
-				*di++ = '\0';
 			    	goto break_break;
-			    	}
 			    *di++ = c;
 			    break;
 
@@ -1462,6 +1460,8 @@ static void pprdrv_read_printer_conf(void)
 		    	}
 		    }
 		break_break:
+		*di++ = '\0';
+		/* debug("RIP option: \"%s\"", printer.RIP.options[printer.RIP.options_count - 1]); */
 		}
 	    }
 
@@ -1856,8 +1856,10 @@ void fault_check(void)
 	hooked_exit(EXIT_SIGNAL, "printing halted");
 	}
 
+    /* Check to see if the interface has exited prematurely. */
     interface_fault_check();
 
+    /* Check to see if the RIP (if we are using one) has exited prematurely. */
     rip_fault_check();
 
     DODEBUG_INTERFACE(("%s(): done", function));

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 19 July 2001.
+** Last revised 20 July 2001.
 */
 
 /*
@@ -155,6 +155,7 @@ __attribute__ (( format (printf, 1, 2) ))
 enum JOBTYPE {JOBTYPE_QUERY, JOBTYPE_FLAG, JOBTYPE_THEJOB, JOBTYPE_THEJOB_TRANSPARENT, JOBTYPE_THEJOB_BARBAR};
 void interface_fault_check(void);
 void kill_interface(void);
+int interface_close(gu_boolean flushit);
 extern int intstdin;
 extern int intstdout;
 gu_boolean interface_sigchld_hook(pid_t pid, int wait_status);
@@ -165,7 +166,7 @@ int job_nomore(void);
 /* pprdrv_rip.c: */
 void rip_fault_check(void);
 int rip_start(int printdata_handle, int stdout_handle);
-int rip_stop(int printdata_handle2);
+int rip_stop(int printdata_handle2, gu_boolean flushit);
 void rip_cancel(void);
 gu_boolean rip_sigchld_hook(pid_t pid, int wait_status);
 

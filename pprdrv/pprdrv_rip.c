@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 20 July 2001.
 */
 
 #include "before_system.h"
@@ -25,6 +25,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
 
@@ -98,13 +99,25 @@ void rip_fault_check(void)
 	int exit_code;
 	DODEBUG_INTERFACE(("%s(): rip_wait_status=0x%04x", function, rip_wait_status));
 
-	/* Try to get the interface to claim blame. */
-	rip_died = FALSE;
-	sleep(1);
-	fault_check();
+	/* Disconnect the dead RIP without flushing.  This code like this is also in job_end(). */
+	intstdin = rip_stop(intstdin, FALSE);
+	gu_nonblock(intstdin, TRUE);
 
-	/* Check for unpleasant stuff such as core dumps. */
+	/* Close the interface without flushing. */
+	interface_close(FALSE);
+
+	/* If it core dumped or something, that is not a job error. */
 	exit_code = rip_exit_screen();
+
+	/* Did Ghostscript indicate a command line problem?
+	   This is our lame solution.  It would be better to get the
+	   error message into the alerts file!!! */
+	if(exit_code == 1)
+	    {
+	    fatal(EXIT_PRNERR_NORETRY, "Possible error on Ghostscript command line.  Check options.\n"
+	    				"(Use \"ppop log %s:%s-%d.%d\" to view the error message.)",
+	    					job.destnode, job.destname, job.id, job.subid);
+	    }
 
 	/* It still shouldn't have exited. */
 	fatal(EXIT_JOBERR, "The RIP exited with code %d before accepting all of the data.", exit_code);
@@ -160,7 +173,6 @@ int rip_start(int printdata_handle, int stdout_handle)
     for(si = 0; si < printer.RIP.options_count; si++)
 	{
 	rip_args[di++] = printer.RIP.options[si];
-	debug("RIP option: %s", printer.RIP.options[si]);
 	}
     rip_args[di++] = "-q";
     rip_args[di++] = "-dSAFER";
@@ -217,15 +229,18 @@ int rip_start(int printdata_handle, int stdout_handle)
 /*
 ** This is called from job_end().
 */
-int rip_stop(int printdata_handle2)
+int rip_stop(int printdata_handle2, gu_boolean flushit)
     {
     FUNCTION4DEBUG("rip_stop")
     DODEBUG_INTERFACE(("%s()", function));
 
     /* Flush the last of the PostScript to the RIP. */
-    DODEBUG_INTERFACE(("%s(): calling printer_flush()", function));
-    printer_flush();
-    DODEBUG_INTERFACE(("%s(): return from printer_flush()", function));
+    if(flushit)
+	{
+	DODEBUG_INTERFACE(("%s(): calling printer_flush()", function));
+	printer_flush();
+	DODEBUG_INTERFACE(("%s(): return from printer_flush()", function));
+	}
 
     /* We can handle it from here. */
     rip_fault_check_disable = TRUE;
