@@ -12,12 +12,10 @@ the first member is assigned.  Members are assigned to a group like this:
 </para>
 
 <para>
-
 <screen>
 # ppad group add ourgroup myprn
 # ppad group add ourgroup yourprn
 </screen>
-
 </para>
 
 <para>

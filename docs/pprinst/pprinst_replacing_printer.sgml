@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_replacing_printer.sgml
-Last Modified: 11 September 2003
+Last Modified: 29 January 2004
 Last Proofread: 
 -->
 
@@ -209,37 +209,7 @@ commands show above will then be generated and executed automatically.</para>
 
 </sect2>
 
-<sect2>
-<title>Changes for the Macintosh Print Server</title>
-
-<para>
-The printer we are changing has an entry in <filename>/etc/ppr/papsrv.conf</filename>
-that looks like this:
-</para>
-
-<para>
-
-<screen>
-[Seabury Room 305]
-PPRname=sea305
-</screen>
-
-</para>
-
-<para> Since this entry makes no mention of the make and model of the
-printer, there is nothing to change, however, when <command>papsrv</command>
-starts it reads the printer's configuration and reads its PPD file.  It uses
-the information it takes from the PPD file to answer questions put to it by
-the Macintosh client.  Theirfore, until you restart
-<command>papsrv</command>, <application>LaserWriter 8</application>'s auto
-setup feature will continue to select the PPD file for the old printer.
-Also, if the font lists of the old and new printers differ, documents may
-print incorrectly.  To prevent this sort of problem, kill
-<command>papsrv</command> and restart it as described in section <xref
-linkend="start-restart"/>. </para>
-
-</sect2>
-
+<!--
 <sect2>
 <title>Changes for LAN Manager X</title>
 
@@ -258,6 +228,7 @@ comment attached to the LAN Manager queue:
 </para>
 
 </sect2>
+-->
 
 <sect2>
 <title>Changes for Samba</title>

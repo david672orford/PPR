@@ -8,9 +8,9 @@ Last Proofread:
 <title>Submitting Jobs to PPR</title>
 
 <para>All jobs enter <application>PPR</application>'s queue through the program
-<command>ppr</command>. The LANMAN/X print processor script invokes
+<command>ppr</command>.  The LANMAN/X print processor script invokes
 <command>ppr</command> as do the Macintosh print server,
-<command>papsrv</command>, <ulink
+<command>papd</command>, <ulink
 url="http://www.samba.org"><application>Samba</application></ulink> and the
 LPR/LPD compatible server <command>lprsrv</command>.</para>
 
@@ -60,7 +60,7 @@ such as duplex, or select paper trays.</para>
 
 <para>When submitting the job from the Unix shell, you just add the options to
 the <command>ppr</command> command line. When the job arrives through a network
-server such as Samba, <command>papsrv</command>, or <command>lprsrv</command>
+server such as Samba, <command>papd</command>, or <command>lprsrv</command>
 it is more difficult to select options.</para>
 
 <para>The easiest thing to do in this latter case is to set a switchset. A
@@ -270,35 +270,6 @@ the switchset for the printer <literal>chipmunk</literal>:
 # ppad switchset chipmunk
 </screen>
 </para>
-
-</sect3>
-
-<sect3 id="optsformac">
-<title>Options for Jobs from Macintoshs
-</title>
-
-<para>If we are printing from a Macintosh, the job will enter the print
-server through <command>papsrv</command>.  If we wanted to make duplex
-printing the default, we could place the <option>-R duplex:duplex</option>
-option in the <filename>papsrv.conf</filename>. We could make an entry such
-as this one:<screen>
-[My Printer]
-PPRname=myprn
-PPRparms=-R duplex:duplex
-</screen>
-</para>
-
-<para>In like manner, if we wanted to make tumble duplexing the default, we could
-create an entry like this one:
-<screen>
-[My Printer]
-PPRname=myprn
-PPRparms=-R duplex:duplextumble
-</screen>
-</para>
-
-<para>However, as noted earlier, it may be better to use a switchset since a
-switchset will apply to all submission methods.</para>
 
 </sect3>
 

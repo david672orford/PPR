@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2004.
+** Last modified 29 January 2004.
 */
 
 #include "queueinfo.h"
@@ -33,18 +33,14 @@
 #define PIDFILE RUNDIR"/papd.pid"
 #define LOGFILE LOGDIR"/papd"
 
-/* These two timeouts aren't implemented. */
-#define READ_TIMEOUT 60*60*1000					/* 1 hour in milliseconds */
-#define WRITE_TIMEOUT 60*1000					/* 1 minute in milliseconds */
-
 #define MY_QUANTUM 8							/* the flow quantum at our end */
 #define READBUF_SIZE MY_QUANTUM * 512			/* For reading from the client */
 
 #define MAX_REMOTE_QUANTUM 1					/* don't increase this, Mac client can't take it! */
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
-#define DEBUG 1
-#ifdef DEBUG
+#define DEBUG 0
+#if DEBUG
 #define DEBUG_STARTUP 1					/* debug reading config, adding names and such */
 #define DEBUG_QUERY 1					/* debug query handling */
 #define DEBUG_LOOP 1					/* debug main loop */
@@ -111,12 +107,6 @@
 #define DODEBUG_REAPCHILD(a)
 #endif
 
-#ifdef DEBUG_AUTHORIZE
-#define DODEBUG_AUTHORIZE(a) debug a
-#else
-#define DODEBUG_AUTHORIZE(a)
-#endif
-
 #ifdef DEBUG_PPD
 #define DODEBUG_PPD(a) debug a
 #else
@@ -136,15 +126,12 @@ struct ADV
 	} ;
 
 extern char line[];				/* input line */
-extern int children;			/* count of children */
 
 /* routines in papd.c */
 void debug(const char string[], ...);
 char *debug_string(char *s);
-gu_boolean reload_callback(void);
 char *pap_getline(int sesfd);
 void postscript_stdin_flushfile(int sesfd);
-void sigpipe_handler(int signum);
 void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node);
 
 /* routines in papd_ali.c and papd_cap.c */
@@ -161,8 +148,6 @@ void at_remove_name(const char papname[], int fd);
 /* routines in papd_printjob.c */
 void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const char log_file_name[]);
 void printjob_abort(void);
-void printjob_reapchild(int sig);
-void printjob_sigpipe(int sig);
 
 /* routines in papd_query.c */
 void answer_query(int sesfd, void *qc);

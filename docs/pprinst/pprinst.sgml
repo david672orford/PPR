@@ -8,7 +8,7 @@
 <!ENTITY section-adding-groups SYSTEM "pprinst_adding_groups.sgml">
 <!ENTITY section-adding-lmx SYSTEM "pprinst_adding_lmx.sgml">
 <!ENTITY section-adding-samba SYSTEM "pprinst_adding_samba.sgml">
-<!ENTITY section-adding-papsrv SYSTEM "pprinst_adding_papsrv.sgml">
+<!ENTITY section-adding-papd SYSTEM "pprinst_adding_papd.sgml">
 <!ENTITY section-adding-lprsrv SYSTEM "pprinst_adding_lprsrv.sgml">
 <!ENTITY section-adding-autobin SYSTEM "pprinst_adding_autobin.sgml">
 <!ENTITY section-job-submit SYSTEM "pprinst_job_submit.sgml">
@@ -29,9 +29,9 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>24 September 2003</pubdate>
+	<pubdate>29 January 2004</pubdate>
 	<copyright>
-		<year>1995--2003</year>
+		<year>1995--2004</year>
 		<holder>Trinity College Computing Center</holder>
 	</copyright>
 </articleinfo>
@@ -65,9 +65,9 @@ shared by PPR's AppleTalk print server.</para>
 
 &section-adding-spooler;
 &section-adding-groups;
-&section-adding-lmx;
+<!-- &section-adding-lmx; -->
 &section-adding-samba;
-&section-adding-papsrv;
+&section-adding-papd;
 &section-adding-lprsrv;
 &section-adding-autobin;
 </sect1>

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2003.
+** Last modified 29 January 2004.
 */
 
 /*
@@ -847,10 +847,10 @@ int group_addon(const char *argv[])
 	const char *name = argv[1];
 	const char *value = argv[2];
 
-	if(!group || !name || argv[3])
+	if(!group || !name || (value && argv[3]))
 		{
-		fputs(_("You must supply the name of an existing group, the name of an addon\n"
-				"parameter.  A value for the paremeter is optional.  If you do not\n"
+		fputs(_("You must supply the name of an existing group, and the name of an addon\n"
+				"parameter.  A value for the parameter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

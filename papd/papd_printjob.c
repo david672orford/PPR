@@ -32,7 +32,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <setjmp.h>
 #include <errno.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -47,7 +46,6 @@
 #include "papd.h"
 
 static pid_t ppr_pid = (pid_t)0;
-static jmp_buf printjob_env;
 
 /*===========================================================================
 ** Accept a print job and send it to ppr.
@@ -95,134 +93,123 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 	/*
 	** Fork and exec a copy of ppr and accept the job.
 	*/
-	if(setjmp(printjob_env) == 0)		/* setjmp() returns zero when it is called, */
-		{								/* non-zero when longjump() is called */
-		DODEBUG_PRINTJOB(("%s(): setjmp() returned zero, spawning ppr", function));
+	if(pipe(pipefds))				/* pipe for sending data to ppr */
+		gu_Throw("%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
-		if(pipe(pipefds))				/* pipe for sending data to ppr */
-			gu_Throw("%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	if((ppr_pid = fork()) == -1)	/* if we can't fork, */
+		{							/* then tell the client */
+		at_reply(sesfd, "%%[ Error: spooler is out of processes ]%%\n");
+		postscript_stdin_flushfile(sesfd);
+		gu_Throw(_("%s(): fork() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+		}
 
-		if((ppr_pid = fork()) == -1)	/* if we can't fork, */
-			{							/* then tell the client */
-			at_reply(sesfd, "%%[ Error: spooler is out of processes ]%%\n");
-			postscript_stdin_flushfile(sesfd);
-			gu_Throw(_("%s(): fork() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
-			}
+	if(ppr_pid == 0)				/* if child */
+		{
+		const char *argv[36];		/* 22 used by last count */
+		int x;
+		int fd;
 
-		if(ppr_pid == 0)				/* if child */
-			{
-			const char *argv[36];		/* 22 used by last count */
-			int x;
-			int fd;
+		close(pipefds[1]);			/* don't need write end */
+		dup2(pipefds[0],0);			/* as for read end, duplicate to stdin */
+		close(pipefds[0]);			/* and close origional */
 
-			close(pipefds[1]);			/* don't need write end */
-			dup2(pipefds[0],0);			/* as for read end, duplicate to stdin */
-			close(pipefds[0]);			/* and close origional */
+		if((fd = open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1)
+			gu_Throw("%s(): can't open log file", function);
+		if(fd != 1) dup2(fd,1);		/* stdout and */
+		if(fd != 2) dup2(fd,2);		/* stderr */
+		if(fd > 2) close(fd);
 
-			if((fd = open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1)
-				gu_Throw("%s(): can't open log file", function);
-			if(fd != 1) dup2(fd,1);		/* stdout and */
-			if(fd != 2) dup2(fd,2);		/* stderr */
-			if(fd > 2) close(fd);
+		/* Build the argument array. */
+		x = 0;
+		argv[x++] = "ppr";			/* name of program */
 
-			/* Build the argument array. */
-			x = 0;
-			argv[x++] = "ppr";			/* name of program */
-
-			/* destination printer or group */
-			argv[x++] = "-d";
-			argv[x++] = adv->PPRname;
-
-			/*
-			** If we have a username from "%Login", use it,
-			** otherwise, tell ppr to read "%%For:" comments.
-			**/
-			if(username)
-				{
-				argv[x++] = "-f";
-				argv[x++] = username;
-				}
-			else
-				{
-				argv[x++] = "-R";
-				argv[x++] = "for";
-				}
-
-			/* Indicate for whom the user "ppr" is acting as proxy. */
-			argv[x++] = "-X";
-			argv[x++] = proxy_for;
-
-			/* Answer for TTRasterizer query */
-			if(queueinfo_ttRasterizer(qc))
-				{
-				argv[x++] = "-Q";
-				argv[x++] = queueinfo_ttRasterizer(qc);
-				}
-
-			/* no responder */
-			argv[x++] = "-m";
-			argv[x++] = "pprpopup";
-
-			/* default response address */
-			argv[x++] = "-r";
-			argv[x++] = netnode;
-
-			/* default is already -w severe */
-			argv[x++] = "-w";
-			argv[x++] = "log";
-
-			/*
-			** Throw away truncated jobs.  This doesn't
-			** work with QuickDraw GX so it is commented out.
-			*/
-			#if 0
-			argv[x++]="-Z";
-			argv[x++]="true";
-			#endif
-
-			/* LaserWriter 8.x benefits from a cache that stores stuff. */
-			argv[x++] = "--cache-store=uncached";
-			argv[x++] = "--cache-priority=high";
-			argv[x++] = "--strip-cache=true";
-
-			/* end of argument list */
-			argv[x] = (char*)NULL;
-
-			#ifdef DEBUG_PPR_ARGV
-			{
-			int y;
-			for(y=0; argv[y]; y++)
-				debug("argv[%d] = \"%s\"", y, argv[y]);
-			}
-			#endif
-
-			execv(PPR_PATH, (char **)argv);		/* execute ppr */
-
-			_exit(255);					/* exit if exec fails */
-			}
+		/* destination printer or group */
+		argv[x++] = "-d";
+		argv[x++] = adv->PPRname;
 
 		/*
-		** Parent only from here on.  Parent clone of papd daemon, child is ppr.)
-		*/
-		close(pipefds[0]);			/* we don't need read end */
+		** If we have a username from "%Login", use it,
+		** otherwise, tell ppr to read "%%For:" comments.
+		**/
+		if(username)
+			{
+			argv[x++] = "-f";
+			argv[x++] = username;
+			}
+		else
+			{
+			argv[x++] = "-R";
+			argv[x++] = "for";
+			}
+
+		/* Indicate for whom the user "ppr" is acting as proxy. */
+		argv[x++] = "-X";
+		argv[x++] = proxy_for;
+
+		/* Answer for TTRasterizer query */
+		if(queueinfo_ttRasterizer(qc))
+			{
+			argv[x++] = "-Q";
+			argv[x++] = queueinfo_ttRasterizer(qc);
+			}
+
+		/* no responder */
+		argv[x++] = "-m";
+		argv[x++] = "pprpopup";
+
+		/* default response address */
+		argv[x++] = "-r";
+		argv[x++] = netnode;
+
+		/* default is already -w severe */
+		argv[x++] = "-w";
+		argv[x++] = "log";
 
 		/*
-		** Call the AppleTalk dependent code to copy the job.
+		** Throw away truncated jobs.  This doesn't
+		** work with QuickDraw GX so it is commented out.
 		*/
-		DODEBUG_PRINTJOB(("%s(): calling at_printjob_copy()", function));
-		if(! at_printjob_copy(sesfd, pipefds[1]))
-			gu_Throw("%s(): print job was truncated", function);
-		DODEBUG_PRINTJOB(("%s(): at_printjob_copy() returned", function));
+		#if 0
+		argv[x++]="-Z";
+		argv[x++]="true";
+		#endif
 
-		/* We will no longer be wanting to kill ppr, so we can forget its PID. */
-		ppr_pid = (pid_t)0;
-		} /* end of if(setjump()) */
+		/* LaserWriter 8.x benefits from a cache that stores stuff. */
+		argv[x++] = "--cache-store=uncached";
+		argv[x++] = "--cache-priority=high";
+		argv[x++] = "--strip-cache=true";
 
-	/*--------------------------------------------------------------*/
-	/* We end up here when the job is done or longjmp() is called.	*/
-	/* longjmp() is called from within the SIGCHLD handler.			*/
-	/*--------------------------------------------------------------*/
-	DODEBUG_PRINTJOB(("%s(): after setjmp() clause", function));
+		/* end of argument list */
+		argv[x] = (char*)NULL;
+
+		#ifdef DEBUG_PPR_ARGV
+		{
+		int y;
+		for(y=0; argv[y]; y++)
+			debug("argv[%d] = \"%s\"", y, argv[y]);
+		}
+		#endif
+
+		execv(PPR_PATH, (char **)argv);		/* execute ppr */
+
+		_exit(255);					/* exit if exec fails */
+		}
+
+	/*
+	** Parent only from here on.  Parent clone of papd daemon, child is ppr.)
+	*/
+	close(pipefds[0]);			/* we don't need read end */
+
+	/*
+	** Call the AppleTalk dependent code to copy the job.
+	*/
+	DODEBUG_PRINTJOB(("%s(): calling at_printjob_copy()", function));
+	if(! at_printjob_copy(sesfd, pipefds[1]))
+		gu_Throw("%s(): print job was truncated", function);
+	DODEBUG_PRINTJOB(("%s(): at_printjob_copy() returned", function));
+
+	/* We will no longer be wanting to kill ppr, so we can forget its PID. */
+	ppr_pid = (pid_t)0;
 
 	/* Close the pipe to ppr.  (This tells ppr it has the whole job.) */
 	DODEBUG_PRINTJOB(("%s(): closing pipe to ppr", function));
@@ -301,8 +288,9 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 	} /* end of printjob() */
 
 /*
-** This will be called from main()'s exception handler, possibly as the result of receiving
-** a signal telling us to shut down.
+** This will be called from main()'s exception handler just before
+** process shutdown.  It gives us a chance to kill ppr if we are
+** running one.
 */
 void printjob_abort(void)
 	{
@@ -310,22 +298,5 @@ void printjob_abort(void)
 		kill(ppr_pid, SIGTERM);			/* then kill it. */
 	ppr_pid = (pid_t)0;					/* We won't do it twice. */
 	} /* end of printjob_abort() */
-
-/*
-** This will be the SIGCHILD handler when printjob() is called.
-*/
-void printjob_reapchild(int sig)
-	{
-	if(ppr_pid)
-		longjmp(printjob_env, 1);
-	}
-
-/*
-** This will be the SIGPIPE handler when printjob() is called.
-*/
-void printjob_sigpipe(int sig)
-	{
-	gu_Throw("SIGPIPE received");
-	} /* end of sigpipe_handler() */
 
 /* end of file */

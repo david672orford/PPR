@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 29 January 2004.
 */
 
 #include "before_system.h"
@@ -76,7 +76,8 @@ static const char *default_zone(void)
 	}
 
 /*
-** This is called for each config file that conf_load() finds.
+** This is called for each alias, group, or printer configuration file that
+** conf_load() finds.
 */
 static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, const char qname[], FILE *f)
 	{
@@ -86,15 +87,13 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	char *p;
 	char *papname = NULL;
 
-	/* DODEBUG_STARTUP(("%s(adv=%p, qtype=%d, qname[]=\"%s\", f=%p)", function, adv, (int)qtype, qname, f)); */
-
 	/*
 	** Search the configuration file for a line the specifies an AppleTalk name
 	** on which to provide PAP services.
 	*/
 	while((line = gu_getline(line, &line_available, f)))
 		{
-		if((p = lmatchp(line, "papd-papname:")))
+		if((p = lmatchp(line, "papd:")))
 			{
 			if(papname)
 				gu_free(papname);
@@ -102,6 +101,8 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 			}
 		}
 
+	debug("| %-16s | %s", qname, papname ? papname : "");
+	
 	/*
 	** Parse the AppleTalk name and insert defaults for missing parts.
 	*/
@@ -164,33 +165,38 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		DODEBUG_STARTUP(("%s(): papname[]=\"%s\"", function, papname));
 
 		/*
-		** If the array is already allocated, look for an existing entry, 
+		** Look for an existing entry for this queue, 
 		** or failing that, a deleted entry to reuse.
 		*/
-		if(adv)
+		{
+		int freespot = -1;
+		for(i = 0; adv[i].adv_type != ADV_LAST; i++)
 			{
-			int freespot = -1;
-			for(i = 0; adv[i].adv_type != ADV_LAST; i++)
+			if(adv[i].adv_type == ADV_DELETED)
 				{
-				if(adv[i].adv_type == ADV_DELETED)
+				if(freespot == -1)		/* if first free spot, */
 					freespot = i;
-				else if(adv[i].adv_type == qtype && strcmp(adv[i].PPRname, qname) == 0)
-					break;
 				}
-			if(adv[i].adv_type == ADV_LAST)
+			else if(adv[i].queue_type == qtype && strcmp(adv[i].PPRname, qname) == 0)
 				{
-				if(freespot != -1)
-					i = freespot;
+				break;
 				}
 			}
+		/* If we didn't find it, but did find a free spot, move back to the first one. */
+		if(adv[i].adv_type == ADV_LAST)
+			{
+			if(freespot != -1)
+				i = freespot;
+			}
+		}
 
-		/* If we didn't find an existing entry, expand the array. */
-		if(!adv || adv[i].adv_type == ADV_LAST)
+		/* If we didn't find an existing entry or a blank space, expand the array. */
+		if(adv[i].adv_type == ADV_LAST)
 			{
 			adv = (struct ADV *)gu_realloc(adv, i + 2, sizeof(struct ADV));
-			adv[i].PPRname = NULL;
-			adv[i].PAPname = NULL;
 			adv[i+1].adv_type = ADV_LAST;
+			adv[i+1].PPRname = NULL;
+			adv[i+1].PAPname = NULL;
 			}
 
 		/* If this is a new entry, its name and type won't have been stored yet. */
@@ -207,7 +213,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		*/
 		if(adv[i].PAPname && strcmp(adv[i].PAPname, papname) != 0)
 			{
-			DODEBUG_STARTUP(("%s(): removing previous name for %s (%s)", function, adv[i].PPRname, adv[i].PAPname));
+			debug("|                  | unbinding \"%s\" (old name)...", adv[i].PAPname);
 			at_remove_name(adv[i].PAPname, adv[i].fd);
 			gu_free((char*)adv[i].PAPname);
 			adv[i].PAPname = NULL;
@@ -216,7 +222,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		/* If we haven't an advertised PAP name, add it to the AppleTalk network. */
 		if(!adv[i].PAPname)
 			{
-			DODEBUG_STARTUP(("%s(): advertising %s as %s", function, adv[i].PPRname, papname));
+			debug("|                  | binding \"%s\"...", papname);
 			adv[i].fd = at_add_name(papname);
 			adv[i].PAPname = papname;
 			}
@@ -229,7 +235,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		}
 
 	return adv;
-	}
+	} /* end of do_config_file() */
 
 /*
 ** This function is called from main().
@@ -246,12 +252,42 @@ struct ADV *conf_load(struct ADV *adv)
 	FILE *f;
 	
 	DODEBUG_STARTUP(("%s(%p)", function, adv));
+	debug("| Queue            | PAP Name");
+	debug("+==================+============================================");
 
 	if(!adv)
 		{
-		DODEBUG_STARTUP(("%s(): allocating initial adv[]"));
+		DODEBUG_STARTUP(("%s(): allocating initial adv[]", function));
 		adv = gu_alloc(1, sizeof(struct ADV));
 		adv[0].adv_type = ADV_LAST;
+		adv[0].PPRname = NULL;
+		adv[0].PAPname = NULL;
+
+		/*
+		** This Linux code sets up monitoring of the configuration directories.
+		** Whenever one of the monitored directories changes, this process
+		** will receive SIGIO.  A handler in papd.c will call this function
+		** to reload the configuration.
+		** 
+		** This code will only be complied if we are using a suffiently new 
+		** version of GNU libc.  The fcntl() call will fail on kernels
+		** earlier than 2.4.19.
+		*/
+		#ifdef F_NOTIFY
+		DODEBUG_STARTUP(("%s(): installing directory change handler", function));
+		for(dir=dirs; dir->name; dir++)
+			{
+			int fd;
+			if((fd = open(dir->name, O_RDONLY)) < 0)
+				gu_Throw("%s(): open(\"%s\", O_RDONLY) failed, errno=%d (%s)", function, dir->name, errno, gu_strerror(errno));
+			if(fcntl(fd, F_NOTIFY, DN_MULTISHOT | DN_MODIFY | DN_CREATE | DN_DELETE) == -1)
+				{
+				DODEBUG_STARTUP(("%s(): dnotify doesn't work", function));
+				close(fd);
+				break;
+				}
+			}
+		#endif
 		}
 		
 	/*
@@ -265,7 +301,6 @@ struct ADV *conf_load(struct ADV *adv)
 		if(adv[i].adv_type == ADV_ACTIVE)
 			adv[i].adv_type = ADV_RELOADING;
 		}
-
 
 	/*
 	** Step through the alias, group, and printer configuration directories
@@ -301,26 +336,9 @@ struct ADV *conf_load(struct ADV *adv)
 			}
 
 		closedir(dirobj);
+		}
 
-		/*
-		** This Linux code sets up monitoring of the configuration directories.
-		** This code will only be complied if we are using a suffiently new 
-		** version of GNU libc.  The fcntl() call will fail on kernels
-		** earlier than 2.4.19.
-		*/
-		#ifdef F_NOTIFY
-		{
-		int fd;
-		if((fd = open(dir->name, O_RDONLY)) < 0)
-			gu_Throw("%s(): open(\"%s\", O_RDONLY) failed, errno=%d (%s)", function, dir->name, errno, gu_strerror(errno));
-		if(fcntl(fd, F_NOTIFY, DN_MULTISHOT | DN_MODIFY | DN_CREATE | DN_DELETE) == -1)
-			{
-			DODEBUG_STARTUP(("%s(): dnotify doesn't work", function));
-			close(fd);
-			}
-		}
-		#endif
-		}
+	debug("+==================+============================================");
 
 	/*
 	** Unadvertise any entries which were set to ADV_RELOADING above and 
@@ -330,7 +348,7 @@ struct ADV *conf_load(struct ADV *adv)
 		{
 		if(adv[i].adv_type == ADV_RELOADING)
 			{
-			DODEBUG_STARTUP(("%s(): printer %s is no longer advertised", function, adv[i].PPRname));
+			debug("%s: unbinding \"%s\" (no longer advertised)", adv[i].PPRname, adv[i].PAPname);
 			at_remove_name(adv[i].PAPname, adv[i].fd);
 			gu_free((char*)adv[i].PPRname);
 			adv[i].PPRname = NULL;
@@ -343,6 +361,6 @@ struct ADV *conf_load(struct ADV *adv)
 	DODEBUG_STARTUP(("%s(): done", function));
 
 	return adv;
-	}
+	} /* end of conf_load() */
 
 /* end of file */

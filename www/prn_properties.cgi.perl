@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_properties.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 29 January 2004.
 #
 
 use lib "?";
@@ -476,20 +476,27 @@ my $tabbed_table = [
 		'tabname' => N_("AppleTalk"),
 		'help' => "appletalk",
 		'dopage' => sub {
+				my $papd = cgi_data_move("addon papd", "");
+				$data{appletalk_save_papd} = $papd;
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
-				labeled_boolean("addon papd", _("Share with AppleTalk PAP"), cgi_data_move("addon papd", 0));
+				labeled_boolean("appletalk_share", _("Share with AppleTalk PAP"), $papd ne "");
 				print "</span>\n";
 
 				print "<p>";
-				labeled_entry("addon papd-papname", _("Share As:"), cgi_data_move("addon papd-papname", ""), 32);
+				labeled_entry("addon papd", _("Share As:"), $papd, 32);
 				print "</p>\n";
 
 				print "</div>\n";
 				},
 		'onleave' => sub {
-				# This gives it a value of 0 if it wasn't checked and blank if it was.
-				$data{"addon addon papd"} = (cgi_data_move("addon papd", 0) ? "" : "0");
+				if(!cgi_data_peek("appletalk_share", undef) 
+						&& $data{"addon papd"} eq $data{appletalk_save_papd})
+					{
+					$data{"addon papd"} = "";
+					}
+				delete $data{appletalk_share};
+				delete $data{appletalk_share_save};
 				return undef;
 				}
 		},

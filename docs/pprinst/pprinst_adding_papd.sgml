@@ -1,0 +1,43 @@
+<!--
+Filename: pprinst_adding_papd.sgml
+Last Modified: 29 January 2004
+Last Proofread: 
+-->
+
+<sect2 id="adding-papd">
+<title>Adding PPR Printers to the PPR AppleTalk Server</title>
+
+<para>Sharing a printer with Macintosh clients over AppleTalk is simple.  Simply
+use a command like this:
+</para>
+
+<para>
+<screen>
+# ppad addon myprn "My Printer"
+</screen>
+</para>
+
+<para>To share a group, do this:</para>
+
+<para>
+<screen>
+# ppad group addon ourgroup papd "Our Group"
+</screen>
+</para>
+
+<para>If you can't see the new names in the chooser within a minute or so, make sure that
+<command>papd</command> is running.  If it is, it may not be able to automatically detect
+that the configuration has changed.  Try doing this:
+</para>
+
+<para>
+<screen>
+# /usr/lib/ppr/bin/papd --reload
+</screen>
+</para>
+
+<para>If that doesn't do the trick, you may find clues in 
+<filename>/var/spool/ppr/logs/papd</filename>.</para>
+
+</sect2>
+

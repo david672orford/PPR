@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 29 January 2004.
 */
 
 /*
@@ -62,37 +62,37 @@ char line[257];
 int line_len;
 
 /* Other globals: */
-pid_t master_pid = (pid_t)0;
-gu_boolean opt_foreground = FALSE;
-int children = 0;						/* The number of our children living. (master daemon) */
-char *default_zone = "*";				/* for advertised names */
+static pid_t master_pid = (pid_t)0;
+static gu_boolean opt_foreground = FALSE;
 
-/* The names of various files. */
-static const char *log_file_name = LOGFILE;
-static const char *pid_file_name = PIDFILE;
+/*===========================================================================
+** Debugging and Logging Code
+===========================================================================*/
 
 /*
-** This function is called by fatal() and debug().
+** This writes a line to the log.  It is called by debug and by the
+** exception handler in main().
 */
-static void log(const char category[], const char format[], va_list va)
+static void write_logline(const char category[], const char message[])
 	{
-	FILE *file;
+	int fd;
 	pid_t mypid;
+	char temp[100];
 	
-	if(opt_foreground)
-		file = stderr;
-	else if((file = fopen(log_file_name, "a")) == (FILE*)NULL)
-		return;
+	if(master_pid != 0 && master_pid != (mypid = getpid()))
+		snprintf(temp, sizeof(temp), "%s: %s: child %ld: %s\n", category, datestamp(), (long)mypid, message);
+	else
+		snprintf(temp, sizeof(temp), "%s: %s: %s\n", category, datestamp(), message);
 
-	fprintf(file, "%s: %s: ", category, datestamp());
-	mypid = getpid();
-	if(master_pid != 0 && master_pid != mypid)
-		fprintf(file, "child %ld: ", (long)mypid);
-	vfprintf(file, format, va);
-	fputc('\n', file);
-
-	if(!opt_foreground)
-		fclose(file);
+	if(opt_foreground || master_pid == 0)
+		{
+		write(2, temp, strlen(temp));		/* to stderr */
+		}
+	else if((fd = open(LOGFILE, O_WRONLY | O_APPEND | O_CREAT, UNIX_644)) != -1)
+		{
+		write(fd, temp, strlen(temp));
+		close(fd);
+		}
 	} /* end of log() */
 
 /*
@@ -101,14 +101,16 @@ static void log(const char category[], const char format[], va_list va)
 ** This is compiled in even if debugging per-say is
 ** not compiled in because we always make some calls
 ** to put some very basic messages in the log file
-** and becuase papd_query.c uses this when query_trace
+** and because papd_query.c uses this when query_trace
 ** is non-zero.
 */
 void debug(const char string[], ... )
 	{
 	va_list va;
+	char temp[100];
 	va_start(va,string);
-	log("DEBUG", string, va);
+	vsnprintf(temp, sizeof(temp), string, va);
+	write_logline("DEBUG", temp);
 	va_end(va);
 	} /* end of debug() */
 
@@ -118,6 +120,7 @@ void debug(const char string[], ... )
 ** This is used when representing the data stream in
 ** debugging output.
 */
+#ifdef DEBUG
 char *debug_string(char *s)
 	{
 	static char result[80];
@@ -135,6 +138,11 @@ char *debug_string(char *s)
 
 	return result;
 	} /* end of debug_string() */
+#endif
+
+/*===========================================================================
+** Signal Handlers
+===========================================================================*/
 
 /*
 ** This is the handler for the signals that are likely to be used to terminate
@@ -174,6 +182,46 @@ static void sigio_handler(int sig)
 	{
 	alarm(5);
 	}
+
+/*
+** This do-nothing signal hanlder is used to ignore SIGPIPE.
+*/
+static void sig_empty_handler(int sig)
+	{
+	}
+
+/*
+** We don't actually do anything other than logging on child termination.
+*/
+static void sigchld_handler(int signum)
+	{
+	pid_t pid;
+	int wstat;
+
+	while((pid = waitpid((pid_t)-1,&wstat,WNOHANG)) > (pid_t)0)
+		{
+		if(WCOREDUMP(wstat))
+			{
+			debug("Child papd (pid=%i) dumped core",pid);
+			}
+		else if(WIFSIGNALED(wstat))
+			{
+			debug("Child papd (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
+			}
+		else if(WIFEXITED(wstat))
+			{
+			#ifndef DEBUG_REAPCHILD
+			if(WEXITSTATUS(wstat))
+			#endif
+			debug("Child papd (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
+			}
+		else
+			{
+			debug("unexpected return from wait(), pid=%i",pid);
+			}
+		}
+
+	} /* end of sigchld_handler() */
 
 /*========================================================================
 ** Get a line from the client and store it in line[],
@@ -232,41 +280,6 @@ void postscript_stdin_flushfile(int sesfd)
 	at_close_reply(sesfd);						/* Close connexion to printer. */
 	} /* end of postscript_stdin_flushfile() */
 
-/*===========================================================
-** SIGCHLD handler
-===========================================================*/
-static void reapchild(int signum)
-	{
-	pid_t pid;
-	int wstat;
-
-	while((pid = waitpid((pid_t)-1,&wstat,WNOHANG)) > (pid_t)0)
-		{
-		children--;				/* reduce the count of our progeny */
-
-		if(WCOREDUMP(wstat))
-			{
-			debug("Child papd (pid=%i) dumped core",pid);
-			}
-		else if(WIFSIGNALED(wstat))
-			{
-			debug("Child papd (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
-			}
-		else if(WIFEXITED(wstat))
-			{
-			#ifndef DEBUG_REAPCHILD
-			if(WEXITSTATUS(wstat))
-			#endif
-			debug("Child papd (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
-			}
-		else
-			{
-			debug("unexpected return from wait(), pid=%i",pid);
-			}
-		}
-
-	} /* end of reapchild() */
-
 /*=========================================================================
 ** This is the main loop function for the child processes which handle
 ** client connexions.  (The daemon papd forks off a child every time 
@@ -287,12 +300,6 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	/* Load more queue configuration information so we can answer queries. */
 	if(!(queue_config = queueinfo_new(this_adv->queue_type, this_adv->PPRname)))
 		gu_Throw("%s(): can't information about queue \"%s\"", function, this_adv->PPRname);
-
-	/* We don't want to use our parent's SIGCHLD handler. */
-	signal_restarting(SIGCHLD, printjob_reapchild);
-
-	/* We want to be prepared for the possibility that ppr will die. */
-	signal_interupting(SIGPIPE, printjob_sigpipe);
 
 	while(TRUE)									/* will loop until we break out */
 		{
@@ -321,7 +328,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			{
 			DODEBUG_LOOP(("start of print job: \"%s\"", line));
 
-			printjob(sesfd, this_adv, &queue_config, net, node, log_file_name);
+			printjob(sesfd, this_adv, &queue_config, net, node, LOGFILE);
 
 			DODEBUG_LOOP(("print job processing complete"));
 			}
@@ -352,14 +359,17 @@ static void help(FILE *out)
 	fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"), myname);
 	}
 
-/* Send the specified signal to an already running instance of this daemon. */
-static int do_signal(int signal_number)
+/*
+** Send the specified signal to an already running instance of this daemon.
+** This is used for --stop and --reload.
+*/
+static int signal_daemon(int signal_number)
 	{
 	FILE *f;
 	int count;
 	long int pid;
 
-	if(!(f = fopen(pid_file_name, "r")))
+	if(!(f = fopen(PIDFILE, "r")))
 		{
 		fprintf(stderr, _("%s: not running\n"), myname);
 		return 1;
@@ -386,17 +396,20 @@ static int do_signal(int signal_number)
 	return 0;
 	}
 
-/* Send SIGTERM to the daemon and waits for the papd.pid file to disappear. */
+/*
+** Action routine for papd --stop.
+** Send SIGTERM to the daemon and waits for the papd.pid file to disappear.
+*/
 static int do_stop(void)
 	{
 	int ret;
 	struct stat statbuf;
 
-	if((ret = do_signal(SIGTERM)))
+	if((ret = signal_daemon(SIGTERM)))
 		return ret;
 
 	printf(_("Waiting while %s shuts down..."), myname);
-	while(stat(pid_file_name, &statbuf) == 0)
+	while(stat(PIDFILE, &statbuf) == 0)
 		{
 		printf(".");
 		fflush(stdout);
@@ -407,7 +420,7 @@ static int do_stop(void)
 	printf(_("Shutdown complete.\n"));
 
 	return 0;
-	}
+	} /* end of do_stop() */
 
 /*
 ** If this program was invoked with excessive permissions (i.e. as root),
@@ -471,10 +484,18 @@ static int drop_privs(void)
 		}
 
 	return 0;
-	}
+	} /* end of drop_privs() */
 
-
-/* This is startup code called from main(). */
+/*
+** This routine parses the command line arguments.  Some arguments, suchas
+** as --help and --reload cause a function to be called from this routine
+** and then this routine returns without furthur command line parsing.
+** In such cases, papd exits with the return code from this routine as 
+** the exit code.
+**
+** If daemon startup should procede, this routine returns -1 (which is not
+** a valid exit code).
+*/
 static int parse_cmdline(int argc, char *argv[])
 	{
 	int optchar;
@@ -505,7 +526,7 @@ static int parse_cmdline(int argc, char *argv[])
 				break;
 
 			case 1004:					/* --reload */
-				return do_signal(SIGHUP);
+				return signal_daemon(SIGHUP);
 				break;
 
 			case '?':					/* help or unrecognized switch */
@@ -532,11 +553,25 @@ static int parse_cmdline(int argc, char *argv[])
 			}
 		}
 
-	return EXIT_OK;
-	}
+	return -1;
+	} /* end of parse_cmdline() */
 
-static void daemon_mode(void)
+/*
+ * This function takes care of initialization tasks such as setting
+ * environment variables, becoming a background process, creating
+ * the PID file, and setting signal handlers.  It is called once
+ * from main().
+ */
+static void init(void)
 	{
+	FILE *f;
+
+	if((f = fopen(PIDFILE, "r")))
+		{
+		fclose(f);
+		gu_Throw("daemon already running");
+		}
+
 	/* Set environment variables such as PATH and PPR_VERSION. */
 	set_ppr_env();
 
@@ -551,36 +586,35 @@ static void daemon_mode(void)
 	chdir(HOMEDIR);
 
 	/* Remove any old log file. */
-	unlink(log_file_name);
+	unlink(LOGFILE);
 
-	/* Stash our PID in a file so that it is easier to find the daemon
-	   to shut it down.  This file also serves as a lock file. */
-	{
-	FILE *f;
-
+	/*
+	 * Stash our PID in a file so that it is easier to find the daemon
+	 * to shut it down.  This file also serves as a lock file.  If we
+	 * can't create this file for some reason, we just skip it.
+	 */ 
 	master_pid = getpid();
 	debug("Daemon starting, master_pid=%ld", (long)master_pid);
-
-	if((f = fopen(pid_file_name, "w")) != (FILE*)NULL)
+	if((f = fopen(PIDFILE, "w")))
 		{
 		fprintf(f, "%ld\n", (long)master_pid);
 		fclose(f);
 		}
-	}
 
 	/*
 	** Install signal handlers for child termination, shutdown, log
 	** level bumping, and broken pipe.
 	*/
-	signal_restarting(SIGCHLD, reapchild);
+	signal_restarting(SIGCHLD, sigchld_handler);
 	signal_interupting(SIGHUP, termination_handler);
 	signal_interupting(SIGINT, termination_handler);
 	signal_interupting(SIGTERM, termination_handler);
-	signal_restarting(SIGUSR1, sigusr1_handler);
-	signal_restarting(SIGHUP, sighup_sigalrm_handler);
-	signal_restarting(SIGALRM, sighup_sigalrm_handler);
-	signal_restarting(SIGIO, sigio_handler);
-	}
+	signal_restarting(SIGUSR1, sigusr1_handler);			/* debug step */
+	signal_restarting(SIGHUP, sighup_sigalrm_handler);		/* reload */
+	signal_restarting(SIGALRM, sighup_sigalrm_handler);		/* reload */
+	signal_restarting(SIGIO, sigio_handler);				/* reload in 5 seconds */
+	signal_interupting(SIGPIPE, sig_empty_handler);
+	} /* end of init() */
 
 /*
 ** The main loop alternates between calling at_service() (which 
@@ -590,27 +624,33 @@ static void daemon_mode(void)
 static int main_loop(void)
 	{
 	struct ADV *adv = NULL;
-	debug("Entering main loop");
 	gu_Try {
+		debug("Starting up...");
 		while(keep_running)
 			{
 			if(reload_config)
 				{
+				debug("Loading configuration...");
 				adv = conf_load(adv);
 				reload_config = FALSE;
+				debug("Waiting for connexions...");
 				}
 			at_service(adv);
 			}
+		debug("Shutting down...");
 		}
 	gu_Final {
 		if(adv)
 			{
 			int i;
-			debug("Removing advertised names");
+			debug("Removing advertised names...");
 			for(i = 0; adv[i].adv_type != ADV_LAST; i++)
 				{
 				if(adv[i].adv_type == ADV_ACTIVE)
+					{
+					debug("%s: unbinding PAP name \"%s\"", adv[i].PPRname, adv[i].PAPname);
 					at_remove_name(adv[i].PAPname, adv[i].fd);
+					}
 				}
 			}
 		}
@@ -619,7 +659,7 @@ static int main_loop(void)
 		}
 	debug("Shutdown complete");
 	return 0;
-	}
+	} /* end of main_loop() */
 
 int main(int argc, char *argv[])
 	{
@@ -636,22 +676,23 @@ int main(int argc, char *argv[])
 		return ret;
 	
 	gu_Try {
-		if((ret = parse_cmdline(argc, argv)) != 0)
+		if((ret = parse_cmdline(argc, argv)) >= 0)
 			return ret;
 	
-		daemon_mode();
+		init();
 
 		ret = main_loop();
 		}
 	gu_Catch {
-		log("FATAL", "%s", gu_exception);
+		write_logline("FATAL", gu_exception);
 
 		/* This is for children which might have a copy of ppr running. */
 		printjob_abort();
 		}
 
 	/* remove file with our pid in it */
-	unlink(pid_file_name);
+	if(master_pid && master_pid == getpid())
+		unlink(PIDFILE);
 	
 	return ret;
 	} /* end of main() */

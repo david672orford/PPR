@@ -90,7 +90,7 @@ typedef int gu_boolean;
    after whitespace. */
 #define lmatchsp(a, b) (!strncmp(a, b, sizeof(b) - 1) && isspace(a[sizeof(b) - 1]) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
 
-/** Write string s to file descriptor s using write(). */
+/** Write constant string s to file descriptor s using write(). */
 #define gu_write_string(fd, s) (write(fd, s, sizeof(s) - 1))
 
 /*===================================================================

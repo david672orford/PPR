@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/papd.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 29 January 2004.
 #
 
 =head1 NAME
@@ -65,9 +65,40 @@ server.
 
 Re-examine the alias, group, and printer configuration files and unadvertise
 names which are no longer called for and advertise any new ones.  On Linux
-2.4.19 and later this will happen automatically.
+2.4.19 and later (with a sufficiently recent version of Glibc) this will 
+happen automatically.
 
 =back
+
+By default, queues are not shared using AppleTalk.  To share a queue, you must assign
+it an AppleTalk name.  The name is stored in the queue's configuration file as an
+add-on parameter.  You can do that with the B<ppad addon> command.  For example:
+
+	$ ppad addon myprn papd "My Printer"
+
+If the name should appear on the network within a few seconds.  If not, look in
+F</var/spool/ppr/logs/papd> to see what went wrong.  You may have to tell 
+B<papd> to reload its configuration file, like so:
+
+	$ papd --reload
+	Sending Hangup to papd (PID=31791).
+
+To remove the name, simply set the papd parameter but leave off the value.
+
+	$ ppad addon myprn papd
+
+If necessary, tell B<papd> to reload.  If you look F</var/spool/ppr/logs/papd>, you will
+see that B<papd> has rescanned the queue configuration files and that this time the
+papd add-on parameter is absent, so the name was removed from the network.
+
+To change the name, simply set a new one.  The old one will be removed and the new one added 
+when B<papd> reloads.
+
+Sharing aliases and groups is quite simple.  One simply uses the B<ppad> commands for 
+setting alias and group add-on parameters:
+
+	$ ppad group addon mygroup "My Group"
+	$ ppad alias addon myalias "My Alias"
 
 =head1 FILES
 
@@ -83,7 +114,7 @@ Its actions are logged in F</var/spool/ppr/logs/papd>.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

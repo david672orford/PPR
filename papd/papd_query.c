@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 29 January 2004.
 */
 
 /*
@@ -54,10 +54,10 @@
 ** The variable "query_trace" can be cycled thru its meaningful
 ** values by sending SIGUSR1 to papd.
 **
-** Should we print minimal query debugging information?
-** (This variable can have the values 0 (no debugging),
-** 1 (trace queries, default replies and replies), and
-** 2 (also print PostScript).)
+** Meaningful values:
+** 0 -- no query debugging
+** 1 -- show queries, default replies, and actual replies
+** 2 -- show queries, default replies, actual replies, and PostScript code
 */
 static int query_trace = 0;						/* debug level */
 
@@ -84,7 +84,7 @@ void sigusr1_handler(int sig)
 			debug("Query tracing turned off");
 			break;
 		default:
-			debug("Query tracing set to level %d",query_trace);
+			debug("Query tracing set to level %d", query_trace);
 			break;
 		}
 	} /* end of sigusr1_handler() */

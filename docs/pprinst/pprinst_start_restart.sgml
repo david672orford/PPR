@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_start_restart.sgml
-Last Modified: 25 August 2003
+Last Modified: 29 January 2004
 Last Proofread: 
 -->
 
@@ -19,20 +19,18 @@ to start the spooler daemons for the first time.
 You can start it manually with the following commands:
 <screen>
 # /usr/lib/ppr/bin/pprd
-# /usr/lib/ppr/bin/papsrv
+# /usr/lib/ppr/bin/papd
 </screen>
 The first command starts the spooler daemon, the second starts the server
-for Macintosh clients. (Note that until you create a
-configuration file for <command>papsrv</command>, it will only run long enough to
-discover that the configuration file is missing.)
+for Macintosh clients.
 </para>
 
 <para>
 To shut them down, use these commands:
 <screen>
-# /usr/lib/ppr/bin/papsrv --stop
-Sending SIGTERM to papsrv (PID=10163).
-Waiting while papsrv shuts down....
+# /usr/lib/ppr/bin/papd --stop
+Sending SIGTERM to papd (PID=10163).
+Waiting while papd shuts down....
 Shutdown complete.
 # /usr/lib/ppr/bin/pprd --stop
 Sending SIGTERM to pprd (PID=25524).
@@ -44,18 +42,18 @@ Shutdown complete.
 <para>
 You may of course use the <command>kill</command> command to kill the processes.
 If you do though, remember that it is important to never kill
-<command>papsrv</command>
+<command>papd</command>
 with the command <command>kill -9</command> or <command>kill -KILL</command> unless gentler means 
 have already failed.
 </para>
 
 <para>One reason this is important is because, depending on which AppleTalk
-implementation you are using, <command>papsrv</command> may have to call
+implementation you are using, <command>papd</command> may have to call
 shutdown code to remove the advertised names from the AppleTalk network. If
-killed by SIGKILL, <command>papsrv</command> will be unable to call the
+killed by SIGKILL, <command>papd</command> will be unable to call the
 shutdown code and the names will remain.  You might then have to stop and
 restart the AppleTalk protocol stack to get rid of them. Until you get rid
-of them, you will be unable to restart <command>papsrv</command> and any
+of them, you will be unable to restart <command>papd</command> and any
 Macintosh clients which attempt to print to the now dead names will probably
 crash.</para>
 
@@ -75,9 +73,9 @@ derived and recent Linux systems.  Here we start and then stop the PPR daemons:
 
 <screen>
 # /etc/init.d/ppr start
-Starting PPR daemons: pprd papsrv
+Starting PPR daemons: pprd papd
 # /etc/init.d/ppr stop
-Stopping PPR daemons: pprd papsrv
+Stopping PPR daemons: pprd papd
 </screen>
 </para>
 

@@ -446,7 +446,7 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.52, 24 July 2003--24 September 2003.
+1.52, 24 July 2003--29 January 2004.
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
@@ -490,6 +490,15 @@ more information about RIPs and *pprRIP:.
   lprng.sourceforge.net.
 
 * refman/ppad.8.pod: changed "ppad ppd" subcommands to "ppad ppdlib".
+
+* refman/papd.8.pod: added information about using "ppad addon" with 
+  examples.
+
+* pprinst/: removed all references to papsrv, added brief information
+  about papd.
+
+* refman/papsrv.8.pod: added a note saying that papsrv is obsolete
+  and one should use papd instead.
 
 
 TODO

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 29 January 2004.
 */
 
 /*============================================================================
@@ -345,7 +345,7 @@ int at_add_name(const char papname[])
 	unsigned char status[257];
 	at_entity_t entity;
 
-	debug("registering name: %s", papname);
+	DODEBUG_STARTUP(("registering name: %s", papname));
 
 	if(nbp_parse_entity(&entity, papname))
 		{
@@ -384,7 +384,7 @@ void at_remove_name(const char papname[], int fd)
 
 	if(fd != -1)
 		{
-		debug("Removing name: %s", papname);
+		DODEBUG_STARTUP(("Removing name: %s", papname));
 
 		if(nbp_parse_entity(&name, papname) == -1)
 			{
@@ -543,7 +543,7 @@ void at_service(struct ADV *adv)
 			*/
 			while((pid = fork()) == -1)					/* if we can't fork() */
 				{										/* then wait and try again */
-				debug("main loop: out of processes");	/* (of course, forking for ppr */
+				debug("%s(): out of processes", function);	/* (of course, forking for ppr */
 				sleep(60);								/* may fail later) */
 				}
 
@@ -597,8 +597,6 @@ void at_service(struct ADV *adv)
 
 			else						/* if parent */
 				{
-				children++;				/* add to count of children */
-
 				/* pap_sync(sesfd); */			/* <-- don't do this! */
 				/* pap_close(sesfd); */			/* <-- don't do this! */
 				pap_abrupt_close(sesfd);		/* Close without tearing down child's connexion */

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 29 January 2004.
 #
 
 =head1 NAME
@@ -43,8 +43,12 @@ B<papsrv> B<--stop>
 
 =head1 DESCRIPTION
 
-This document describes PPR's PAP server which accepts print jobs from
-computers running MacOS.  The server sends these jobs on to the PPR spooler
+This document describes an obsolete version of PPR's PAP server which 
+accepts print jobs from computers running MacOS.  One should use the
+new server which is called B<papd>.  The obsolete server described
+in this man page will be removed in a future release.
+
+The server sends these jobs on to the PPR spooler
 using the L<ppr.1> command.
 
 The program B<papsrv> resides in F</usr/lib/ppr/bin>.  The configuration
@@ -364,10 +368,9 @@ Additional examples may be found in the document "Installing and Using PPR".
 
 It is not possible to add or remove Macintosh shared printers without
 editing the configuration file and restarting B<papsrv>.  While it is
-restarting, which with a long list of printers to share may take several
-minutes, all the printer shares are unusable.  One possible work-around is
-to run several B<papsrv> daemons, each with a different configuration, log,
-and PID files.  That is the purpose of the B<-f>, B<-l>, and B<-p> switches.
+restarting (which with a long list of printers to share may take several
+minutes) all the printer shares are unusable.  The new AppleTalk server
+(B<papd>) can reload the configuration without shutting down.
 
 =head1 SEE ALSO
 
@@ -377,7 +380,7 @@ L<ppr.1>,
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2004.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHORS

@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--28 January 2004.
+1.53a1, 24 September 2003--29 January 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8866,7 +8866,8 @@ Internet Printing Protocol Work
   improvements in libppr/query.c and the addition of ppad/ppad_ppd.c.
 
 * www/test_components.cgi.perl: supplied internal PATH since security
-  changes left many of the tests non-functional due to the lack of a PATH.
+  changes in recent Perl releases left many of the tests non-functional 
+  due to the lack of a PATH.
 
 * moved include/ppr_query.h to libppr_query.h.
 
@@ -8898,8 +8899,8 @@ Internet Printing Protocol Work
   using cat.  (This is from foomatic-gswrapper.  It also uses the cat trick.
   It looks like ideas are flowing in both directions.)
 
-* libppr/writeqfile.c: changed printf() to print a float to gu_dtostr() in
-  order to get around locale problems.
+* libppr/writeqfile.c: changed code that used fprintf() to print a float to 
+  code that uses gu_dtostr() in order to get around locale problems.
 
 * pprdrv/pprdrv_ppd_parse.l: removed
 
@@ -8915,7 +8916,7 @@ Internet Printing Protocol Work
   identical in fuction to gu_strlcpy() and gu_strlcat().
 
 * libgu/gu_pch.c: removed since never finished, c2lib provides Perl-compatible
-  hashes, we can always get it out of CVS if we want to finish it.
+  hashes, we can always get this file out of CVS if we want to finish it.
 
 * libppr/enc2font.c,pprdrv/pprdrv_lw_messages.c,pprdrv/pprdrv_pjl_messages.c:
   eliminated use of gu_trim_whitespace_right().
@@ -8984,9 +8985,10 @@ Internet Printing Protocol Work
 
 * ppd/indexppds.c: moved two PPD file related functions to libppr/readppd.c.
 
-* libgu/gu_throw.c: removed this function and edit everything that defined
-  its own libppr_throw() to wrap main().  That is the last of the old
-  library exception handling.
+* libgu/gu_throw.c: removed this file and modified all programs which defined
+  their own libppr_throw() to wrap main().  That is the last of the old
+  library exception handling.  We have finally eliminated callback library
+  error handling!
 
 * cron/ppr-clean.perl: fixed so works again.  It was appearently broken by the
   partial renaming of some of the file handles.
@@ -9009,6 +9011,10 @@ Internet Printing Protocol Work
   will be regenerated every time.  Unfortunately, this means that files 
   with which some editor may have replaced the link will be silently
   deleted.
+
+* ppad/ppad_group.c:group_addon(): fixed bug which caused omision of the value 
+  for "ppad group addon" to be tagged as too many parameters (this was fixed 
+  some time ago for "ppad addon".
 
 
 

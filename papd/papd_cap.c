@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 29 January 2004.
 */
 
 /*============================================================================
@@ -284,7 +284,7 @@ int at_add_name(const char papname[])
 		status.StatusStr[0] = (unsigned char)strlen(&status.StatusStr[1]);
 		}
 
-	debug("registering name: %s", papname);
+	DODEBUG_STARTUP(("registering name: %s", papname));
 
 	while((err = SLInit(&fd, papname, MY_QUANTUM, &status)) != 0)
 		{
@@ -316,7 +316,7 @@ void at_remove_name(const char papname[], int fd)
 	{
 	if(fd != -1)
 		{
-		debug("Removing name: %s", papname);
+		DODEBUG_STARTUP(("Removing name: %s", papname));
 		PAPRemName(fd, papname);
 		}
 	} /* end of at_remove_name() */
@@ -452,7 +452,6 @@ void at_service(struct ADV *adv)
 
 			else						/* if parent */
 				{
-				children++;				/* add to count of children */
 				PAPShutdown(sesfd);		/* close server's copy of connection */
 				}
 
