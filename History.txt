@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--20 April 2004.
+1.53a2, 20 February 2004--21 April 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9151,6 +9151,17 @@ Internet Printing Protocol Work
 * ppad/ppad_ppd.c: fixed crash bug due to failure to clear all members 
   of structure which contains gathered information about the printer.
 
+* www/ppr-web.tcl: adjusted sizes of Mozilla windows.
+
+* www/show_jobs.cgi.perl: reduced table width from 100% to 99% to avoid 
+  unnecessary horizontal scrollbar in Mozilla.
+
+* www/prn_properties.cgi.perl: fixed problem with syncronization of the
+  text entry field and the select box on the PPD tab (this entailed changes
+  to cgi_tabbed.pl (adding 'sync') as well).
+
+* www/prn_properties.cgi.perl, prn_addwiz.cgi.perl: added detection of auto
+  detection failures.
 
 
 TODO

@@ -1295,7 +1295,7 @@ msgstr "Показывать все PPD файлов"
 
 #: ../www/prn_addwiz.cgi.perl:670
 msgid "You must choose a PPD file first!"
-msgstr "Вы PPD файла не выбрали!"
+msgstr "Вы PPD файл не выбрали!"
 
 #: ../www/prn_addwiz.cgi.perl:679
 msgid "PPR: Add a Printer: Name the Printer"

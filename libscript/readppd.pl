@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/readppd.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 November 2003.
+# Last modified 21 April 2004.
 #
 
 require "paths.ph";
@@ -37,17 +37,20 @@ $current_handle = undef;
 
 #
 # This function uses the PPD file index (if it exists) to convert a PPD name
-# to an actual file name.
+# to an actual file name with complete path.
 #
 sub _ppd_find_file
 	{
 	my $ppdname = shift;
+	defined $ppdname || die;
 
+	# if is already an absolute path
 	if($ppdname =~ m#^/#)
 		{
 		return $ppdname;
 		}
 
+	# Search for it in the index creadeb by "ppr-index ppds".
 	if(open(INDEX, $main::PPD_INDEX))
 		{
 		my $filename = undef;
@@ -64,7 +67,8 @@ sub _ppd_find_file
 		return $filename if(defined $filename);
 		}
 
-	return "$main::PPDDIR/$filename";
+	# Take a guess.
+	return "$main::PPDDIR/$ppdname";
 	}
 
 #

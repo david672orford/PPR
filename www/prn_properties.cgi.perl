@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 March 2004.
+# Last modified 21 April 2004.
 #
 
 use lib "?";
@@ -150,36 +150,53 @@ my $tabbed_table = [
 		'tabname' => N_("PPD"),
 		'help' => "ppd",
 		'cellpadding' => 10,
+		'sync' => sub {
+				my $error = undef;
+
+				# The textbox wins if it isn't empty and it doesn't have 
+				# the value it had last time.
+				my $ppd = cgi_data_move('ppd', "");
+				my $ppd_text = cgi_data_move('ppd_text', "");
+				my $ppd_text_prev = cgi_data_move('ppd_text_prev', undef);
+				if($ppd_text ne "" && defined $ppd_text_prev && $ppd_text ne $ppd_text_prev)
+					{
+					$ppd = $ppd_text;
+					}
+				$data{ppd_text_prev} = $ppd;
+				$data{ppd} = $ppd;
+				},
 		'dopage' => sub {
 				require 'ppd_select.pl';
 
-				my $ppd = cgi_data_move('ppd', undef);				# select box
-				my $ppd_select = cgi_data_move('ppd_select', "");	# text entry box
-
-				# The textbox wins if it isn't empty and it doesn't have its initial value.
-				$ppd = $ppd_select if($ppd_select ne "" && $ppd_select ne cgi_data_peek("_ppd", ""));
+				my $ppd = cgi_data_move("ppd", undef);
 
 				print "<table class=\"ppd\"><tr><td>\n";
 				print '<p><label>', H_("Current PPD File:"), "<br>\n";
-				print '<input tabindex=1 name="ppd" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
+				print '<input tabindex=1 name="ppd_text" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
 				print "</label></p>\n";
 
+				# Handle the button under the list of PPD files which
+				# is labeled alternatately "Auto Detect" and
+				# "Show all PPD Files".
 				{
 				my $ppd_probe = cgi_data_move("ppd_probe", "");
-				if($ppd_probe eq "probe")
+				if($ppd_probe eq "Auto Detect")
 					{
 					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
+					if(! defined $data{ppd_probe_list})
+						{
+						$error = _("Auto detection failed.");
+						}
 					}
-				elsif($ppd_probe eq "clear")
+				elsif($ppd_probe eq "Show all PPD Files")
 					{
 					delete $data{ppd_probe_list};
 					}
 				}
 
 				# Print the HTML for a select box.
-				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
 				print '<p><label>';
-				if($ppd_probe_list ne "")
+				if(defined cgi_data_peek("ppd_probe_list", undef))
 					{
 					print H_("Suitable PPD Files:");
 					}
@@ -188,9 +205,9 @@ my $tabbed_table = [
 					print H_("All Available PPD Files:");
 					}
 				print "<br>\n";
-				print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
+				print '<select tabindex=2 name="ppd" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
 				my $lastgroup = "";
-				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
+				foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
 					{
 					my($item_manufacturer, $item_modelname) = @{$item};
 					if($item_manufacturer ne $lastgroup)
@@ -214,13 +231,18 @@ my $tabbed_table = [
 
 				print "</td></tr></table>\n";
 
-				if(cgi_data_peek("ppd_probe_list","") eq "")
+				if(!defined cgi_data_peek("ppd_probe_list", undef))
 					{
-					isubmit("ppd_probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
+					isubmit("ppd_probe", "Auto Detect", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
 					}
 				else
 					{
-					isubmit("ppd_probe", "clear", N_("Show All PPD Files"));
+					isubmit("ppd_probe", "Show all PPD Files", N_("Show All PPD Files"));
+					}
+
+				if(defined $error)
+					{
+					print "<p>", html($error), "</p>\n";
 					}
 				},
 		'onleave' => sub {
@@ -1097,8 +1119,11 @@ print "<script>window.opener.gentle_reload()</script>\n";
 # main
 #========================================
 
-# Should debugging messages be added to the html?
-$debug = 0;
+# Should debugging messages be added to the HTML or sent to STDERR?
+{
+no warnings;
+$debug = 1;
+}
 
 # Swap the real and effective user ids.
 ($<,$>) = ($>,$<);

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/pprinst/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2003.
+# Last modified 21 April 2004.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -57,7 +57,7 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_adding_groups.sgml \
 		pprinst_adding_lmx.sgml \
 		pprinst_adding_lprsrv.sgml \
-		pprinst_adding_papsrv.sgml \
+		pprinst_adding_papd.sgml \
 		pprinst_adding_samba.sgml \
 		pprinst_adding_spooler.sgml \
 		pprinst_backup.sgml \

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 April 2004.
+** Last modified 22 April 2004.
 */
 
 #include "before_system.h"
@@ -301,7 +301,7 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 			}
 		else
 			{
-			timeout.tv_sec = 5;
+			timeout.tv_sec = 2;
 			timeout.tv_usec = 0;
 			done_sending = TRUE;
 			}
@@ -406,12 +406,10 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 					{
 					if(!hit)
 						{
-						printf("[%s", dns_name);
-						if(states[ip_index].sysName && states[ip_index].sysName[0] && strcmp(states[ip_index].sysName, dns_name) != 0)
-							printf(", %s", states[ip_index].sysName);
+						printf("[%s]\n", dns_name);
+
 						if(states[ip_index].sysLocation && states[ip_index].sysLocation[0])
-							printf(", %s", states[ip_index].sysLocation);
-						printf("]\n");
+							printf("location=%s\n", states[ip_index].sysLocation);
 
 						if(states[ip_index].hrDeviceDescr)
 							printf("manufacturer-model=%s\n", states[ip_index].hrDeviceDescr);

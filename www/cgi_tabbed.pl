@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 March 2004.
+# Last modified 22 April 2004.
 #
 
 use 5.004;
@@ -130,6 +130,7 @@ DocStart
 
 # Figure out which tab is currently selected.
 my $page = 0;
+my $prevpage = &cgi_data_move("tab_prevpage", undef);
 my $tab = &cgi_data_move("tab_tab", undef);
 my $prev_hscroll = &cgi_data_move('tab_hscroll', 0);
 my $hscroll = $prev_hscroll;
@@ -163,34 +164,73 @@ if(defined($tab))		# if one was pressed,
 	}
 else	# if no tab pressed,
 	{
-	if(defined($data{tab_prevpage}))
+	if(defined($prevpage))
 		{
-		$page = $data{tab_prevpage};
+		$page = $prevpage;
 		}
 	}
 
-# If there was a previous page, make sure it was left
-# in a valid state.
+# Validate the previous page (if different from the current one)
+# and then validate the current page.  We validate a page by
+# calling its sync function (if any) and then calling its onleave
+# function.  If the onleave function returns a value, we return to
+# or remain on the page which threw the error.  Actions such as
+# [Save] are canceled.
 my $error = undef;
 {
-my $prevpage = $data{tab_prevpage};
-if(defined($prevpage))
+print STDERR "\$page=$page \$prevpage=$prevpage, \$hscroll=$hscroll, \$prev_hscroll=$prev_hscroll\n" if($debug);
+# If we are switching pages,
+if(defined $prevpage && $page != $prevpage)
 	{
-	my $prevpage_validate = $tabbed_table->[$prevpage]->{onleave};
-	if(defined($prevpage_validate))
+	# Give the page which we are leaving a chance to make itself 
+	# internaly consistent.  We must do this before calling onleave.
+	if(defined(my $page_sync = $tabbed_table->[$prevpage]->{sync}))
 		{
-		print STDERR "Calling onleave function...\n" if($debug);
-		if(defined($error = &$prevpage_validate))
+		print STDERR "Calling tab $prevpage sync function...\n" if($debug);
+		&$page_sync;
+		}
+	# Give the page a chance to object to invalid values.
+	if(defined(my $page_onleave = $tabbed_table->[$prevpage]->{onleave}))
+		{
+		print STDERR "Calling tab $prevpage onleave function...\n" if($debug);
+		if(defined($error = &$page_onleave))
 			{
-			$page = $prevpage;
-			$hscroll = $prev_hscroll;
-			$bottom = "";
+			print STDERR "Page $prevpage not valid: $error\n" if($debug);
 			}
 		}
 	}
-}
+# If we can't leave the previous page,
+if(defined($error))
+	{
+	$page = $prevpage;
+	$hscroll = $prev_hscroll;
+	$bottom = "";
+	}
+# If we can do the desired page,
+else
+	{
+	# Let the page make itself internally consistent.
+	if(defined(my $page_sync = $tabbed_table->[$page]->{sync}))
+		{
+		print STDERR "Calling tab $page sync function...\n" if($debug);
+		&$page_sync;
+		}
+	# If the user pressed [Save], give the page an change to say why
+	# it is not ready to be saved.
+	if($bottom eq "Save" && defined(my $page_onleave = $tabbed_table->[$page]->{onleave}))
+		{
+		print STDERR "Calling tab $page onleave function...\n" if($debug);
+		if(defined($error = &$page_onleave))
+			{
+			print STDERR "Page $page not valid: $error\n" if($debug);
+			$bottom = "";	# cancel [Save]
+			}
+		}
+	}
+print STDERR "\$page=$page \$prevpage=$prevpage, \$hscroll=$hscroll, \$prev_hscroll=$prev_hscroll\n" if($debug);
 $data{tab_prevpage} = $page;
 $data{tab_hscroll} = $hscroll;
+}
 
 # The save window doesn't have tabs.  We just insert a spacer
 # image to take up their space.
@@ -264,7 +304,6 @@ $valign = $DEFAULT_valign if(!defined($valign));
 # Start a table.  This table serves as a frame to contain
 # the text of the selected tab.
 {
-#my $spacer_height = $options->{height} - (2 * ($cellpadding - $DEFAULT_cellpadding));
 my $spacer_height = $options->{height};
 print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100%>

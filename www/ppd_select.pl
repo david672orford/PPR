@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 March 2004.
+# Last modified 22 April 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -43,7 +43,7 @@ sub ppd_list
 	my @list = ();
 
 	# If we have been passed an old list, just decode it and return it.
-	if(defined $cached && $cached ne "")
+	if(defined $cached)
 		{
 		@list = ppd_list_decode($cached);
 		}
@@ -77,7 +77,7 @@ sub ppd_list
 
 	@list = sort { my $x = ($a->[0] cmp $b->[0]); if($x) { $x } else {$a->[1] cmp $b->[1]} } @list;
 	return @list;
-	}
+	} # ppd_list()
 
 #
 # This function prints a table with a brief summary of the contents
@@ -158,8 +158,13 @@ sub ppd_summary
 	$rip =~ s/\+/<wbr>+/g;
 	print "<tr><th>", H_("RIP"), "</th><td>", $rip, "</td></tr>\n";
 	print "</table>\n";
-	}
+	} # ppd_summary()
 
+#
+# This function probes the printer and returns a list of suitable 
+# PPD files.  The list might be empty.  If the printer can't be
+# probed for any reason, undef will be returned.
+#
 sub ppd_probe
 	{
 	my($interface, $address, $options) = @_;
@@ -170,10 +175,17 @@ sub ppd_probe
 		chomp;
 		push(@list, $_);
 		}
-	close(RESULTS); # || die $!;
+	if(!close(RESULTS))
+		{
+		return undef;
+		}
 	return join("\n", @list);
-	}
+	} # ppd_probe()
 
+#
+# This function takes the value returned by ppd_probe() and breaks
+# it up into a list.
+#
 sub ppd_list_decode
 	{
 	my $ppd_detect_list = shift;
@@ -184,6 +196,6 @@ sub ppd_list_decode
 		push(@list, [$mfg, $mdl]);
 		}
 	return @list;
-	}
+	} # ppd_list_decode()
 
 1;

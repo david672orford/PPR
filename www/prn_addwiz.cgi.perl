@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2004.
+# Last modified 22 April 2004.
 #
 
 #
@@ -508,10 +508,11 @@ $addprn_wizard_table = [
 			my($browser, $zone) = split(/:/, $browser_zone, 2);
 			$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 			$browser = $1;
+
+			# Search the zone and build of list of the printer we find.
 			opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
-			print '<p><label>', html(sprintf(_("Printers Available in Zone %s %s"), $browser, $zone)), '<br>', "\n";
-			print '<select tabindex=1 name="browser_printer" size="20" style="min-width: 450px; max-width: 550px;">', "\n";
 			my @browser_comments = ();
+			my %printers = ();
 			outer:
 			while(1)
 				{
@@ -519,6 +520,7 @@ $addprn_wizard_table = [
 				my $manufacturer = "";
 				my $model = "";
 				my $manufacturer_model = "";
+				my $location = "";
 				my @interfaces = ();
 				while(my $line = <PRINTERS>)
 					{
@@ -532,10 +534,6 @@ $addprn_wizard_table = [
 						{
 						$name = $1;
 						}
-					elsif($line =~ /^interface=(.+)$/)
-						{
-						push(@interfaces, $1);
-						}
 					elsif($line =~ /^manufacturer=(.*)$/)
 						{
 						$manufacturer = $1;
@@ -548,27 +546,21 @@ $addprn_wizard_table = [
 						{
 						$manufacturer_model = $1;
 						}
+					elsif($line =~ /^location=(.*)$/)
+						{
+						$location = $1;
+						}
+					elsif($line =~ /^interface=(.+)$/)
+						{
+						push(@interfaces, $1);
+						}
 					elsif($line =~ /^$/)	# end of record
 						{
-						my $label = $name;
 						if($manufacturer ne "" && $model ne "")
 							{
-							$label .= " ($manufacturer $model)";
+							$manufacturer_model = "$manufacturer $model";
 							}
-						elsif($manufacturer_model ne "")
-							{
-							$label .= " ($manufacturer_model)";
-							}
-						print "<optgroup label=", html_value($label), ">\n";
-						foreach my $interface (@interfaces)
-							{
-							my($interface_name, $interface_address) = split(/,/, $interface, 2);
-							my $interface_label = "$interface_name $interface_address";
-							print "<option value=", html_value($interface), ">",
-								html($interface_label),
-								"</option>\n";
-							}
-						print "</optgroup>\n";
+						$printers{$name} = [$manufacturer_model, $location, \@interfaces];
 						next outer;
 						}
 					else
@@ -578,15 +570,48 @@ $addprn_wizard_table = [
 					}
 				last;
 				}
+			close(PRINTERS) || die "\$!=$!, \$?=$?";
+
+			# Print a select box containing the printers which we found
+			# in the above step.
+			print '<p><label>', html(sprintf(_("Printers Available in Zone %s %s"), $browser, $zone)), '<br>', "\n";
+			print '<select tabindex=1 name="browser_printer" size="20" style="min-width: 450px; max-width: 550px;">', "\n";
+			foreach my $name (sort keys %printers)
+				{
+				my($manufacturer_model, $location, $interfaces) = @{$printers{$name}};
+				my $label = $name;
+				if($manufacturer_model ne "")
+					{
+					$label .= sprintf(_(", Model: %s"), $manufacturer_model)
+					}
+				if($location ne "")
+					{
+					$label .= sprintf(_(", Location: %s"), $location)
+					}
+				print "<optgroup label=", html_value($label), ">\n";
+				foreach my $interface (@$interfaces)
+					{
+					my($interface_name, $interface_address) = split(/,/, $interface, 2);
+					my $interface_label = "$interface_name $interface_address";
+					print "<option value=", html_value($interface), ">",
+						html($interface_label),
+						"</option>\n";
+					}
+				print "</optgroup>\n";
+				}
 			print "</select>\n";
 			print "</span></p>\n";
-			close(PRINTERS) || die "\$!=$!, \$?=$?";
+
+			# If the browser chattered while producing the zone
+			# list, return what it said so that it can be displayed
+			# under the list of printers.
 			if(scalar @browser_comments > 0)
 				{
 				my $html = html(join("\n", @browser_comments));
 				$html =~ s/\n/<br>\n/g;
 				return $html;
 				}
+
 			return "";
 			},
 		'onnext' => sub {
@@ -614,6 +639,7 @@ $addprn_wizard_table = [
 		'title' => N_("PPR: Add a Printer: Choose a PPD File"),
 		'dopage' => sub {
 				require "ppd_select.pl";
+				my $error = undef;
 
 				# PPD file, if any, selected on a previous pass through this form.
 				my $ppd = cgi_data_move('ppd', undef);
@@ -625,21 +651,25 @@ $addprn_wizard_table = [
 
 				print "<table class=\"ppd\"><tr><td>\n";
 
+				# Handle the auto-probing button.
 				{
 				my $ppd_probe = cgi_data_move("ppd_probe", "");
-				if($ppd_probe eq "probe")
+				if($ppd_probe eq "Auto Detect")
 					{
 					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
+					if(! defined $data{ppd_probe_list})
+						{
+						$error = _("Auto detection failed.");
+						}
 					}
-				elsif($ppd_probe eq "clear")
+				elsif($ppd_probe eq "Show all PPD Files")
 					{
 					delete $data{ppd_probe_list};
 					}
 				}
-
-				my $ppd_probe_list = cgi_data_peek('ppd_probe_list', "");
+				
 				print '<p><label>';
-				if($ppd_probe_list ne "")
+				if(defined cgi_data_peek('ppd_probe_list', undef))
 					{
 					print H_("Suitable PPD Files:");
 					}
@@ -650,7 +680,7 @@ $addprn_wizard_table = [
 				print "<br>\n";
 				print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit();">', "\n";
 				my $lastgroup = "";
-				foreach my $item (ppd_list(cgi_data_peek('ppd_probe_list', "")))
+				foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
 					{
 					my($item_manufacturer, $item_modelname) = @{$item};
 					if($item_manufacturer ne $lastgroup)
@@ -677,13 +707,18 @@ $addprn_wizard_table = [
 
 				print "</td></tr></table>\n";
 
-				if(cgi_data_peek("ppd_probe_list","") eq "")
+				if(! defined cgi_data_peek("ppd_probe_list",undef))
 					{
-					isubmit("ppd_probe", "probe", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
+					isubmit("ppd_probe", "Auto Detect", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
 					}
 				else
 					{
-					isubmit("ppd_probe", "clear", N_("Show All PPD Files"));
+					isubmit("ppd_probe", "Show all PPD Files", N_("Show all PPD Files"));
+					}
+
+				if(defined $error)
+					{
+					print "<p>", html($error), "</p>\n";
 					}
 				},
 		'onnext' => sub {
