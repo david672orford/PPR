@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 13 January 2003.
 */
 
 #include "queueinfo.h"
@@ -33,10 +33,7 @@
 #define PIDFILE RUNDIR"/ppr-papd.pid"
 #define LOGFILE LOGDIR"/ppr-papd"
 
-#define PPR_PAPD_MAX_NAMES 64			/* maximum number of advertized names */
-#define MAX_ARGV 25				/* max arg vector length for invoking ppr */
-
-/* These two timeouts may not be implemented: */
+/* These two timeouts aren't implemented. */
 #define READ_TIMEOUT 60*60*1000			/* 1 hour in milliseconds */
 #define WRITE_TIMEOUT 60*1000			/* 1 minute in milliseconds */
 
@@ -46,29 +43,21 @@
 #define MAX_REMOTE_QUANTUM 1 			/* don't increase this, Mac client can't take it! */
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
-/* #define DEBUG 1 */
-
+#define DEBUG 1
 #ifdef DEBUG
-#define DEBUG_STARTUP 1			/* reading config, adding names and such */
-/* #define DEBUG_QUERY 1 */		/* answering queries */
+#define DEBUG_STARTUP 1			/* debug reading config, adding names and such */
+#define DEBUG_QUERY 1			/* debug query handling */
 #define DEBUG_LOOP 1 			/* debug main loop */
-/* #define DEBUG_PRINTJOB 1 */		/* debug printjob() */
-/* #define DEBUG_PRINTJOB_DETAILED 1 */	/* debug printjob() */
-/* #define DEBUG_PPR_ARGV 1 */		/* print argv[] when execting ppr */
+#define DEBUG_PRINTJOB			/* debug printjob() */
+/* #define DEBUG_PRINTJOB_DETAILED 1 */	/* debug printjob() in more detail */
+#define DEBUG_PPR_ARGV 1		/* print argv[] when execting ppr */
 /* #define DEBUG_READBUF 1 */		/* debug input buffering */
 /* #define DEBUG_WRITEBUF 1 */		/* debug output buffering */
-/* #define DEBUG_REAPCHILD 1 */		/* debug child daemon termination */
+#define DEBUG_REAPCHILD 1		/* debug child daemon termination */
 /* #define DEBUG_PPD 1 */		/* PPD file parsing */
 #endif
 
 /*============ end of stuff user might wish to modify ==============*/
-
-/*
-** AppleTalk name, type, and zone must not exceed this length.
-** (This is part of the AppleTalk protocol definition, so there
-** is no reason to change it.)
-*/
-#define MAX_ATALK_NAME_COMPONENT_LEN 32
 
 /*
 ** Define macros for debugging.  Which version of each one
@@ -175,61 +164,42 @@ struct QUEUE_CONFIG
     gu_boolean query_font_cache;
     } ;
 
-extern struct ADV *adv;
-extern int name_count;          /* total advertised names */
 extern char line[];             /* input line */
-extern int onebuffer;           /* buffer control flag */
 extern int children;		/* count of children */
-extern char *default_zone;	/* default zone for advertised names, initialy set to "*" */
-extern int i_am_master;
 
 /* routines in ppr-papd.c */
 void fatal(int exitvalue, const char string[], ...);
 void debug(const char string[], ...);
 char *debug_string(char *s);
+gu_boolean reload_callback(void);
 char *pap_getline(int sesfd);
 void postscript_stdin_flushfile(int sesfd);
 void sigpipe_handler(int signum);
-void child_main_loop(int sesfd, int prnid, int net, int node);
-void child_reapchild(int signum);
+void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node);
 
 /* routines in ppr-papd_ali.c and ppr-papd_cap.c */
-void appletalk_dependent_daemon_main_loop(struct ADV *adv);
-int appletalk_dependent_printjob(int sesfd, int pipe);
-int cli_getc(int sesfd);
-void reset_buffer(int hard);
-void reply(int sesfd, char *string);
-void reply_eoj(int sesfd);
-void close_reply(int sesfd);
-int add_name(const char papname[]);
-void remove_name(const char papname[], int fd);
+void at_service(struct ADV *adv);
+int  at_printjob_copy(int sesfd, int pipe);
+int  at_getc(int sesfd);
+void at_reset_buffer(void);
+void at_reply(int sesfd, char *string);
+void at_reply_eoj(int sesfd);
+void at_close_reply(int sesfd);
+int  at_add_name(const char papname[]);
+void at_remove_name(const char papname[], int fd);
 
 /* routines in ppr-papd_printjob.c */
 void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[]);
 void printjob_abort(void);
-void printjob_reapchild(void);
+void printjob_reapchild(int sig);
+void printjob_sigpipe(int sig);
 
 /* routines in ppr-papd_query.c */
 void answer_query(int sesfd, struct QUEUE_CONFIG *qc);
+void sigusr1_handler(int sig);
 
 /* routines in ppr-papd_conf.c */
 struct ADV *conf_load(struct ADV *old_config);
 void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
-
-/*
-** Simulated PostScript error messages to send to a client when errors occur.
-*/
-#define MSG_NOCHARGEACCT "%%[ Error: you don't have a charge account ]%%\n"
-#define MSG_BADAUTH "%%[ Error: password incorrect ]%%\n"
-#define MSG_NOFOR "%%[ Error: No \"%%For:\" line in PostScript ]%%\n"
-#define MSG_OVERDRAWN "%%[ Error: account overdrawn ]%%\n"
-#define MSG_NONCONFORMING "%%[ Error: insufficient DSC conformance ]%%\n"
-#define MSG_SYNTAX "%%[ Error: bad ppr invokation syntax ]%%\n"
-#define MSG_NOSPOOLER "%%[ Error: spooler is not running ]%%\n"
-#define MSG_FATALPPR "%%[ Error: fatal error, see ppr-papd log ]%%\n"
-#define MSG_NOPROC "%%[ Error: spooler is out of processes ]%%\n"
-#define MSG_NODISK "%%[ Error: spooler is out of disk space ]%%\n"
-#define MSG_TRUNCATED "%%[ Error: input file is truncated ]%%\n"
-#define MSG_ACL "%%[ Error: ACL forbids you access to selected print destination ]%%\n"
 
 /* end of file */

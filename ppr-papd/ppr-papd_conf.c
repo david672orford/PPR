@@ -25,13 +25,16 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 14 January 2003.
 */
 
 #include "before_system.h"
+#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <dirent.h>
+#include <fcntl.h>
+#include <signal.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -39,10 +42,10 @@
 #include "global_defines.h"
 #include "ppr-papd.h"
 
-/*
+/*============================================================================
 ** The code in this module opens each alias, group, and printer config file 
 ** and gets a list of the AppleTalk names to advertise.
-*/
+============================================================================*/
 
 /*
 ** The DIRS structure is used to describe a list of directories which contain
@@ -61,14 +64,25 @@ static struct DIRS dirs[] = {
     };
 
 /*
+** This function retrieves the default zone name from ppr.conf.
+*/
+static const char *default_zone(void)
+    {
+    return gu_ini_query(PPR_CONF, "ppr-papd", "defaultzone", 0, "*");
+    }
+
+/*
 ** This is called for each config file that conf_load() finds.
 */
 static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, const char qname[], FILE *f)
     {
+    const char function[] = "do_config_file";
     char *line = NULL;
     int line_available = 80;
     char *p;
     char *papname = NULL;
+
+    DODEBUG_STARTUP(("%s(adv=%p, qtype=%d, qname[]=\"%s\", f=%p)", function, adv, (int)qtype, qname, f));
 
     /*
     ** Search the configuration file for a line the specifies an AppleTalk name
@@ -85,6 +99,55 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	}
 
     /*
+    ** Parse the AppleTalk name and insert defaults for missing parts.
+    */
+    if(papname)
+	{
+	char *p = papname;
+	const char *name = p;
+	const char *type = NULL;
+	const char *zone = NULL;
+	int len;
+	int c;
+
+	len = strcspn(p, ":@");
+	if((c = p[len]))
+	    {
+	    p[len] = '\0';
+	    p += len + 1;
+	    if(c == ':')
+		{
+		len = strcspn(p, "@");
+		c = p[len];
+		p[len] = '\0';
+		type = p;
+		p += len + 1;
+		}
+	    if(c == '@')
+		{
+		zone = p + 1;
+		}
+	    }	    
+
+	if(!type)
+	    type = "LaserWriter";
+	if(!zone)
+	    zone = default_zone();
+
+	gu_asprintf(&p, "%s:%s@%s", name, type, zone);
+
+	if(strlen(name) > 32 || strlen(name) < 1 || strlen(type) > 32 || strlen(type) < 1 || strlen(zone) > 32 || strlen(zone) < 1)
+	    {
+	    debug("%s(): papname \"%s\" has at least one component of invalid length", function, p);
+	    gu_free(p);
+	    p = NULL;
+	    }
+
+	gu_free(papname);
+	papname = p;
+	}
+
+    /*
     ** If we found a PAP name, we take action.  If this queue had used to 
     ** have a PAP name, that is ok because conf_load() will notice that 
     ** we didn't switch the adv_type back to ADV_ACTIVE and will
@@ -94,6 +157,8 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	{
 	int i = 0;
 	
+	DODEBUG_STARTUP(("%s(): papname[]=\"%s\"", function, papname));
+
 	/*
 	** If the array is already allocated, look for an existing entry, 
 	** or failing that, a deleted entry to reuse.
@@ -119,9 +184,9 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	if(!adv || adv[i].adv_type == ADV_LAST)
 	    {
 	    adv = (struct ADV *)gu_realloc(adv, i + 2, sizeof(struct ADV));
-	    adv[i+1].adv_type = ADV_LAST;
 	    adv[i].PPRname = NULL;
 	    adv[i].PAPname = NULL;
+	    adv[i+1].adv_type = ADV_LAST;
 	    }
 
 	/* If this is a new entry, its name and type won't have been stored yet. */
@@ -138,7 +203,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	*/
 	if(adv[i].PAPname && strcmp(adv[i].PAPname, papname) != 0)
 	    {
-	    remove_name(adv[i].PAPname, adv[i].fd);
+	    at_remove_name(adv[i].PAPname, adv[i].fd);
 	    gu_free((char*)adv[i].PAPname);
 	    adv[i].PAPname = NULL;
 	    }
@@ -146,7 +211,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	/* If we haven't an advertised PAP name, add it to the AppleTalk network. */
 	if(!adv[i].PAPname)
 	    {
-	    adv[i].fd = add_name(papname);
+	    adv[i].fd = at_add_name(papname);
 	    adv[i].PAPname = papname;
 	    }
 	else
@@ -165,7 +230,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 */
 struct ADV *conf_load(struct ADV *adv)
     {
-    const char function[] = "read_conf";
+    const char function[] = "conf_load";
     int i;
     struct DIRS *dir;
     DIR *dirobj;
@@ -174,6 +239,15 @@ struct ADV *conf_load(struct ADV *adv)
     int len;
     FILE *f;
     
+    DODEBUG_STARTUP(("%s(%p)", function, adv));
+
+    if(!adv)
+	{
+	DODEBUG_STARTUP(("%s(): allocating initial adv[]"));
+	adv = gu_alloc(1, sizeof(struct ADV));
+	adv[0].adv_type = ADV_LAST;
+	}
+	
     /*
     ** Mark all of the active advertised names with a special temporary 
     ** status.  Any which are still present in the config file will
@@ -186,15 +260,18 @@ struct ADV *conf_load(struct ADV *adv)
 	    adv[i].adv_type = ADV_RELOADING;
     	}
 
+
     /*
     ** Step through the alias, group, and printer configuration directories
     ** processing each file.
     */
     for(dir=dirs; dir->name; dir++)
 	{
-	DODEBUG_STARTUP(("%s", dir->name));
+	DODEBUG_STARTUP(("%s(): searching directory %s", function, dir->name));
+
 	if(!(dirobj = opendir(dir->name)))
 	    fatal(0, _("%s(): opendir(\"%s\") failed, errno=%d (%s)"), function, dir, errno, gu_strerror(errno));
+
 	while((direntp = readdir(dirobj)))
 	    {
 	    /* Skip . and .. and hidden files. */
@@ -206,7 +283,8 @@ struct ADV *conf_load(struct ADV *adv)
 	    if(len > 0 && direntp->d_name[len-1] == '~')
 		continue;
 
-	    DODEBUG_STARTUP(("  %s", direntp->d_name));
+	    DODEBUG_STARTUP(("%s():    %s", function, direntp->d_name));
+
 	    ppr_fnamef(fname, "%s/%s", dir->name, direntp->d_name);
 	    if(!(f = fopen(fname, "r")))
 	    	fatal(0, "%s(): fopen(\"%s\", \"r\") failed, errno=%d (%s)", function, fname, errno, gu_strerror(errno));
@@ -215,7 +293,26 @@ struct ADV *conf_load(struct ADV *adv)
 
 	    fclose(f);
 	    }
+
 	closedir(dirobj);
+
+	/*
+	** This Linux code sets up monitoring of the configuration directories.
+	** This code will only be complied if we are using a suffiently new 
+	** version of GNU libc.  It requires a 2.4.x kernel to work.
+	*/
+	#ifdef F_NOTIFY
+	{
+	int fd;
+	if((fd = open(dir->name, O_RDONLY)) < 0)
+	    fatal(0, "%s(): open(\"%s\", O_RDONLY) failed, errno=%d (%s)", function, dir->name, errno, gu_strerror(errno));
+	if(fcntl(fd, F_NOTIFY, DN_MULTISHOT | DN_MODIFY | DN_CREATE | DN_DELETE) == -1)
+	    {
+	    DODEBUG_STARTUP(("%s(): dnotify doesn't work", function));
+	    close(fd);
+	    }
+	}
+	#endif
 	}
 
     /*
@@ -226,14 +323,17 @@ struct ADV *conf_load(struct ADV *adv)
     	{
 	if(adv[i].adv_type == ADV_RELOADING)
 	    {
-	    remove_name(adv[i].PAPname, adv[i].fd);
+	    DODEBUG_STARTUP(("%s(): printer %s is no longer advertised", function, adv[i].PPRname));
+	    at_remove_name(adv[i].PAPname, adv[i].fd);
 	    gu_free((char*)adv[i].PPRname);
 	    adv[i].PPRname = NULL;
 	    gu_free((char*)adv[i].PAPname);
 	    adv[i].PAPname = NULL;
 	    adv[i].adv_type = ADV_DELETED;
 	    }
-    	}
+	}
+
+    DODEBUG_STARTUP(("%s(): done", function));
 
     return adv;
     }

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd/ppr-papd.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 December 2002.
+** Last modified 13 January 2003.
 */
 
 /*
@@ -59,17 +59,15 @@
 const char myname[] = "ppr-papd";
 
 /* Globals related to the input line buffer. */
-char line[257];         /* 255 characters plus one null plus extra for my CR */
-int line_len;		/* tokenize() insists that we set this */
+char line[257];
+int line_len;
 
 /* Other globals: */
-struct ADV *adv = NULL; 
-int name_count = 0;          		/* total advertised names */
-int i_am_master = TRUE;			/* set to FALSE in child ppr-papd's */
-int children = 0;			/* The number of our children living. (master daemon) */
-int query_trace = 0;			/* debug level */
-char *default_zone = "*";		/* for advertised names */
+static struct ADV *adv_for_fatal = NULL; 
+pid_t master_pid = (pid_t)0;
 gu_boolean opt_foreground = FALSE;
+int children = 0;			/* The number of our children living. (master daemon) */
+char *default_zone = "*";		/* for advertised names */
 
 /* The names of various files. */
 static const char *log_file_name = LOGFILE;
@@ -82,15 +80,17 @@ static const char *pid_file_name = PIDFILE;
 static void log(const char category[], const char atfunction[], const char format[], va_list va)
     {
     FILE *file;
-
+    pid_t mypid;
+    
     if(opt_foreground)
 	file = stderr;
     else if((file = fopen(log_file_name, "a")) == (FILE*)NULL)
 	return;
 
     fprintf(file, "%s: %s: ", category, datestamp());
-    if(! i_am_master)
-	fprintf(file, "child %ld: ", (long)getpid());
+    mypid = getpid();
+    if(master_pid != 0 && master_pid != mypid)
+	fprintf(file, "child %ld: ", (long)mypid);
     if(atfunction)
 	fprintf(file, "%s(): ", atfunction);
     vfprintf(file, format, va);
@@ -131,13 +131,16 @@ void fatal(int rval, const char string[], ... )
     va_end(va);
 
     /* Master daemon cleanup: */
-    if(i_am_master)
+    if(master_pid == 0 || master_pid == getpid())
 	{
-	int i;
-	for(i = 0; adv[i].adv_type != ADV_LAST; i++)
+	if(adv_for_fatal)
 	    {
-	    if(adv[i].adv_type == ADV_ACTIVE)
-	        remove_name(adv[i].PAPname, adv[i].fd);
+	    int i;
+	    for(i = 0; adv_for_fatal[i].adv_type != ADV_LAST; i++)
+		{
+		if(adv_for_fatal[i].adv_type == ADV_ACTIVE)
+		    at_remove_name(adv_for_fatal[i].PAPname, adv_for_fatal[i].fd);
+		}
 	    }
 	
 	unlink(pid_file_name);		/* remove file with our pid in it */
@@ -193,23 +196,43 @@ char *debug_string(char *s)
     } /* end of debug_string() */
 
 /*
-** This is the handler for the signals that are likely to
-** be used to terminate the AppleTalk Printer Server.
+** This is the handler for the signals that are likely to be used to terminate
+** ppr-papd.  This routine is left in place for the children as it should
+** do no harm.
 **
-** The first time such a signal is caught, this routine
-** calls fatal().
-**
-** If more signals are received before the server exits,
-** they have no effect.
+** The first time such a signal is caught, this routine calls fatal(). If more 
+** signals are received before the server exits, they have no effect other
+** other than to provide a peevish message in the log.
 */
 static void termination_handler(int sig)
     {
     static int count = 0;
     if(count++ > 0)
-    	debug("Signal \"%s\" received, termination routine already initiated", gu_strsignal(sig));
+    	debug("Signal \"%s\" received, but shutdown already in progress", gu_strsignal(sig));
     else
-	fatal(1, "Received signal \"%s\", shutdown started", gu_strsignal(sig));
+	fatal(1, "Received signal \"%s\", shutting down", gu_strsignal(sig));
     } /* end of termination_handler() */
+
+/*
+** This SIGHUP and SIGALRM handler tells the main loop to reload the config.
+*/
+static volatile gu_boolean reload_config = TRUE;
+static void sighup_sigalrm_handler(int sig)
+    {
+    reload_config = TRUE;
+    }
+
+/*
+** If this is Linux, then we will receive SIGIO every time one of the queue
+** configuration directories changes.  So as to not reload many times
+** during a batched series of edits, we don't actually start the reload
+** but rather schedual it (or reschedual it) for five seconds into the
+** future.
+*/
+static void sigio_handler(int sig)
+    {
+    alarm(5);
+    }
 
 /*========================================================================
 ** Get a line from the client and store it in line[],
@@ -225,7 +248,7 @@ char *pap_getline(int sesfd)
 
     for(x=0; x < 255; x++)	/* read up to 255 characters */
 	{
-	c = cli_getc(sesfd);	/* get the next character */
+	c = at_getc(sesfd);	/* get the next character */
 
 	if(c=='\r' || c=='\n' || c==-1)
 	    {			/* If carriage return or line feed or end of file, */
@@ -242,7 +265,7 @@ char *pap_getline(int sesfd)
 	return (char*)NULL;	/* return NULL pointer. */
 
     if(x == 255)		/* If line overflow, eat up extra characters. */
-	while( ((c=cli_getc(sesfd)) != '\r') && (c != '\n') && (c != -1) );
+	while( ((c = at_getc(sesfd)) != '\r') && (c != '\n') && (c != -1) );
 
     return line;
     } /* end of pap_getline() */
@@ -258,39 +281,24 @@ void postscript_stdin_flushfile(int sesfd)
     debug("postscript_stdin_flushfile(sesfd=%d)",sesfd);
     #endif
 
-    reply(sesfd,"%%[ Flushing: rest of job (to end-of-file) will be ignored ]%%\n");
+    at_reply(sesfd,"%%[ Flushing: rest of job (to end-of-file) will be ignored ]%%\n");
 
-    onebuffer = FALSE;				/* Flush the rest of the job */
-    while(pap_getline(sesfd) != (char*)NULL);	/* by reading it and */
+    while(pap_getline(sesfd) != (char*)NULL)	/* by reading it and */
+	{
 						/* throwing it away. */
-    reply_eoj(sesfd); 			/* Acknowledge receipt of end of job. */
-    close_reply(sesfd);			/* Close connexion to printer. */
+	}
+    at_reply_eoj(sesfd); 			/* Acknowledge receipt of end of job. */
+    at_close_reply(sesfd);			/* Close connexion to printer. */
     } /* end of postscript_stdin_flushfile() */
 
-/*
-** SIGPIPE handler, used by child ppr-papd processes.
-*/
-void sigpipe_handler(int sig)
-    {
-    fatal(1, "SIGPIPE received");
-    } /* end of sigpipe_handler() */
-
 /*===========================================================
-** Note child termination.
-** This handler is used only by the main daemon.
+** SIGCHLD handler
 ===========================================================*/
 static void reapchild(int signum)
     {
     pid_t pid;
     int wstat;
 
-    if(!i_am_master)
-	{
-	DODEBUG_PRINTJOB(("SIGCHLD received (ppr exited)"));
-	printjob_reapchild();
-	return;
-	}
-	
     while((pid = waitpid((pid_t)-1,&wstat,WNOHANG)) > (pid_t)0)
 	{
 	children--;             /* reduce the count of our progeny */
@@ -319,26 +327,33 @@ static void reapchild(int signum)
     } /* end of reapchild() */
 
 /*=========================================================================
-** This is the main loop function for the child.  (The daemon ppr-papd
-** forks off a child every time it accepts a connection.)  This function
-** answers queries and dispatches print jobs until the client closes
-** the connection.
+** This is the main loop function for the child processes which handle
+** client connexions.  (The daemon ppr-papd forks off a child every time 
+** it accepts a connection.)  This function answers queries and dispatches 
+** print jobs until the client closes the connection.
 **
-** This is called from within the AppleTalk
-** Dependent module.  This routine is not AppleTalk
-** dependent because it deals with the network by
-** calling routines in the AppleTalk Dependent module.
+** This is a callback function for at_service().  This routine is not
+** AppleTalk-implementation-dependent because it deals with the network
+** exclusively through routines in the AppleTalk-implementation-dependent
+** module.
 =========================================================================*/
-void child_main_loop(int sesfd, int prnid, int net, int node)
+void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
     {
     char *cptr;
     struct QUEUE_CONFIG queue_config;
 
-    conf_load_queue_config(&adv[prnid], &queue_config);
+    /* Load more queue configuration information so we can answer queries. */
+    conf_load_queue_config(this_adv, &queue_config);
 
-    while(TRUE)			/* will loop until we break out */
+    /* We don't want to use our parent's SIGCHLD handler. */
+    signal_restarting(SIGCHLD, printjob_reapchild);
+
+    /* We want to be prepared for the possibility that ppr will die. */
+    signal_interupting(SIGPIPE, printjob_sigpipe);
+
+    while(TRUE)					/* will loop until we break out */
 	{
-	reset_buffer(TRUE);			/* fully reset the input buffering code */
+	at_reset_buffer();			/* fully reset the input buffering code */
 
 	if(pap_getline(sesfd) == (char*)NULL)	/* If we can't get a line, */
 	    break;				/* the client has hung up. */
@@ -363,32 +378,13 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 	    {
 	    DODEBUG_LOOP(("start of print job: \"%s\"", line));
 
-	    printjob(sesfd, &adv[prnid], &queue_config, net, node, log_file_name);
+	    printjob(sesfd, this_adv, &queue_config, net, node, log_file_name);
 
 	    DODEBUG_LOOP(("print job processing complete"));
 	    }
 	}
     DODEBUG_LOOP(("child daemon done"));
-    } /* end of child_main_loop() */
-
-/*=====================================================================
-** Turn query tracing on or off.
-=====================================================================*/
-static void sigusr1_handler(int sig)
-    {
-    if(++query_trace > 2)
-	query_trace = 0;
-
-    switch(query_trace)
-	{
-	case 0:
-	    debug("Query tracing turned off");
-	    break;
-	default:
-	    debug("Query tracing set to level %d",query_trace);
-	    break;
-	}
-    } /* end of sigusr1_handler() */
+    } /* end of connexion_callback() */
 
 /*=====================================================================
 ** main() and command line parsing
@@ -401,15 +397,16 @@ static const struct gu_getopt_opt option_words[] =
 	{"help", 1001, FALSE},
 	{"foreground", 1002, FALSE},
 	{"stop", 1003, FALSE},
+	{"reload", 1004, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
 static void help(FILE *out)
     {
-    fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop]\n"), myname);
+    fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"), myname);
     }
 
-static int do_stop(void)
+static int do_signal(int signal_number)
     {
     FILE *f;
     int count;
@@ -431,16 +428,26 @@ static int do_stop(void)
     	return 2;
     	}
 
-    printf(_("Sending SIGTERM to %s (PID=%ld).\n"), myname, pid);
+    printf(_("Sending %s to %s (PID=%ld).\n"), gu_strsignal(signal_number), myname, pid);
 
-    if(kill((pid_t)pid, SIGTERM) < 0)
+    if(kill((pid_t)pid, signal_number) < 0)
     	{
-	fprintf(stderr, "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n", myname, pid, errno, gu_strerror(errno));
+	fprintf(stderr, "%s: kill(%ld, %s) failed, errno=%d (%s)\n", myname, pid, gu_strsignal(signal_number), errno, gu_strerror(errno));
 	return 3;
     	}
 
+    return 0;
+    }
+
+
+static int do_stop(void)
     {
+    int ret;
     struct stat statbuf;
+
+    if((ret = do_signal(SIGTERM)))
+    	return ret;
+
     printf(_("Waiting while %s shuts down..."), myname);
     while(stat(pid_file_name, &statbuf) == 0)
     	{
@@ -449,15 +456,20 @@ static int do_stop(void)
 	sleep(1);
     	}
     printf("\n");
-    }
 
     printf(_("Shutdown complete.\n"));
 
     return 0;
     }
 
+static int do_reload(void)
+    {
+    return do_signal(SIGHUP);
+    }
+
 int main(int argc, char *argv[])
     {
+    struct ADV *adv = NULL;
     int optchar;
     struct gu_getopt_state getopt_state;
 
@@ -526,6 +538,10 @@ int main(int argc, char *argv[])
 		exit(do_stop());
 	    	break;
 
+	    case 1004:			/* --reload */
+	    	exit(do_reload());
+	    	break;
+
 	    case '?':			/* help or unrecognized switch */
 		fprintf(stderr, "Unrecognized switch: %s\n\n", getopt_state.name);
 		help(stderr);
@@ -570,14 +586,13 @@ int main(int argc, char *argv[])
        to shut it down.  This file also serves as a lock file. */
     {
     FILE *f;
-    pid_t pid;
 
-    pid = getpid();
-    debug("Daemon starting, pid=%ld", (long)pid);
+    master_pid = getpid();
+    debug("Daemon starting, master_pid=%ld", (long)master_pid);
 
     if((f = fopen(pid_file_name, "w")) != (FILE*)NULL)
     	{
-    	fprintf(f, "%ld\n", (long)pid);
+    	fprintf(f, "%ld\n", (long)master_pid);
 	fclose(f);
     	}
     }
@@ -591,21 +606,25 @@ int main(int argc, char *argv[])
     signal_interupting(SIGINT, termination_handler);
     signal_interupting(SIGTERM, termination_handler);
     signal_restarting(SIGUSR1, sigusr1_handler);
-    signal_interupting(SIGPIPE, sigpipe_handler);
+    signal_restarting(SIGHUP, sighup_sigalrm_handler);
+    signal_restarting(SIGALRM, sighup_sigalrm_handler);
+    signal_restarting(SIGIO, sigio_handler);
 
     /*
-    ** Read the configuration file and advertise
-    ** the printer names on the AppleTalk.
-    */
-    adv = conf_load(adv);
-
-    /*
-    ** Call the Appletalk dependent main loop which will fork off a
-    ** child daemon to handle each incoming connection.
-    ** This function contains the main loop.  It never returns.
+    ** The main loop alternates between calling at_service() (which 
+    ** contains AppleTalk-implementation-dependent code) and calling
+    ** conf_load().
     */
     debug("Entering main loop");
-    appletalk_dependent_daemon_main_loop(adv);
+    while(TRUE)
+	{
+	if(reload_config)
+	    {
+	    adv_for_fatal = adv = conf_load(adv);
+	    reload_config = FALSE;
+	    }
+	at_service(adv);
+	}
 
     return 0;				/* <-- this makes GNU-C happy */
     } /* end of main() */

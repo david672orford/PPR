@@ -25,16 +25,19 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 14 January 2003.
 */
 
-/*
+/*============================================================================
 ** AT&T/Apple AppleTalk Library Interface (ALI) module.
 **
 ** This works with the AppleTalk Network Program which comes with StarLAN LAN 
 ** Manager.  It also works with Netatalk and David Chappell's Netatalk ALI 
 ** compatibility library.
-*/
+**
+** The names of all exported functions in this module begin with "at_".
+** It should not use any global variables.
+============================================================================*/
 
 #include "before_system.h"
 #include <signal.h>
@@ -52,23 +55,11 @@
 #include "global_defines.h"	/* PPR global include file */
 #include "ppr-papd.h"		/* prototypes for this program */
 
-int onebuffer = FALSE;		/* When TRUE, we are not allowed to start the second buffer */
-
-/*
-** The input buffer
-*/
-static char readbuf[READBUF_SIZE];	/* Data we have just read from client */
-static u_char eoj;			/* detects end of file from client */
-static int bytestotal;
-static int bytesleft;
-static char *cptr;			/* next byte for cli_getc() */
-static int buffer_count;		/* Number of full or partial buffers we have read */
-
 /*========================================================================
 ** Output buffer routines.
 ========================================================================*/
 
-static char out[10000];			/* the output buffer */
+static char out[10240];			/* the output buffer */
 static int blocked = FALSE;		/* TRUE if last write was blocked and data remains in 2ndary buffer */
 static int hindex=0;			/* output buffer head index */
 static int tindex=0;			/* output buffer tail index */
@@ -79,22 +70,23 @@ static int write_unit;			/* max size client will allow us to send */
 /*
 ** Place a string in the reply buffer.
 */
-void reply(int sesfd, char *s)
+void at_reply(int sesfd, char *s)
     {
-    DODEBUG_WRITEBUF(("reply(sesfd=%d, s=\"%s\")", sesfd, debug_string(s) ));
+    const char function[] = "at_reply";
+    DODEBUG_WRITEBUF(("%s(sesfd=%d, s=\"%s\")", function, sesfd, debug_string(s) ));
 
     while(*s)
 	{
-	if(ocount==sizeof(out))
-	    fatal(1,"reply(): output buffer overflow");
+	if(ocount == sizeof(out))
+	    fatal(1, "%s(): output buffer overflow", function);
 
-	out[hindex++]=*(s++);
+	out[hindex++] = *(s++);
 	ocount++;
 
 	if(hindex==sizeof(out))
 	    hindex=0;
 	}
-    } /* end of reply() */
+    } /* end of at_reply() */
 
 /*
 ** Attempt to take data from the big output buffer and send
@@ -106,9 +98,10 @@ void reply(int sesfd, char *s)
 */
 static void do_xmit(int sesfd)
     {
+    const char function[] = "do_xmit";
     static int wcnt = 0;	/* initialized to zero to satisfy GNU-C */
 
-    DODEBUG_WRITEBUF(("do_xmit(%d): ocount=%d, wcnt=%d, blocked=%s", sesfd, ocount, wcnt, blocked ? "TRUE" : "FALSE"));
+    DODEBUG_WRITEBUF(("%s(sesfd=%d): ocount=%d, wcnt=%d, blocked=%s", function, sesfd, ocount, wcnt, blocked ? "TRUE" : "FALSE"));
 
     /*
     ** Loop while buffer is not empty or
@@ -132,18 +125,18 @@ static void do_xmit(int sesfd)
 	/*
 	** Send the packet on its way.
 	*/
-	DODEBUG_WRITEBUF(("do_xmit(): writing %d bytes", wcnt));
+	DODEBUG_WRITEBUF(("%s(): writing %d bytes", function, wcnt));
 	if(pap_write(sesfd, writebuf, wcnt, 0, PAP_NOWAIT ) == -1)
 	    {
 	    if(pap_errno==PAPBLOCKED)
 	    	{
-		DODEBUG_WRITEBUF(("do_xmit(): writes are blocked"));
+		DODEBUG_WRITEBUF(("%s(): writes are blocked", function));
 		blocked = TRUE;
 		return;
 	    	}
 	    else
 	    	{
-		fatal(1,"do_xmit(): pap_write() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+		fatal(1, "%s(): pap_write() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 		}
 	    }
 
@@ -156,13 +149,14 @@ static void do_xmit(int sesfd)
 /*
 ** Send an end of job indication to the client.
 */
-void reply_eoj(int sesfd)
+void at_reply_eoj(int sesfd)
     {
-    DODEBUG_WRITEBUF(("reply_eoj(sesfd=%d)", sesfd));
+    const char function[] = "at_reply_eoj";
+    DODEBUG_WRITEBUF(("%s(sesfd=%d)", function, sesfd));
 
     while(ocount || blocked)	/* Wait until every last character */
 	{			/* has been sent. */
-	DODEBUG_WRITEBUF(("reply_eoj(): draining output buffer first"));
+	DODEBUG_WRITEBUF(("%s(): draining output buffer first", function));
 	sleep(1);
     	do_xmit(sesfd);
     	}
@@ -175,49 +169,46 @@ void reply_eoj(int sesfd)
 	    }
 	else
 	    {
-	    fatal(1,"reply_eoj(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
+	    fatal(1, "%s(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
+		function,
 	    	pap_errno, pap_strerror(pap_errno),
 	    	errno, gu_strerror(errno));
 	    }
     	}
-    } /* end of reply_eoj() */
+    } /* end of at_reply_eoj() */
 
 /*
 ** Now that all replies are done, close the chanel to the client.
 ** Notice that we assume the buffer has already been flushed
-** by reply_eoj().
+** by at_reply_eoj().
 */
-void close_reply(int sesfd)
+void at_close_reply(int sesfd)
     {
-    DODEBUG_WRITEBUF(("close_reply(%d)", sesfd));
+    DODEBUG_WRITEBUF(("at_close_reply(%d)", sesfd));
     pap_close(sesfd);
-    } /* end of close_reply() */
+    } /* end of at_close_reply() */
 
 /*=====================================================================
 ** Input buffer routines
 =====================================================================*/
 
+static char readbuf[READBUF_SIZE];	/* Data we have just read from client */
+static u_char eoj;			/* detects end of file from client, size dictated by pap_read() */
+static int bytestotal;
+static int bytesleft;
+static char *cptr;			/* next byte for at_getc() */
+static int buffer_count;		/* Number of full or partial buffers we have read */
+
 /*
 ** Start buffering the input.
-**
-** If the parameter is TRUE, we do a hard reset, that is,
-** we throw away any buffer we have got.  If it is FALSE,
-** we do a soft reset, that is, we just go back to the
-** begining of the buffer.
 */
-void reset_buffer(int hard)	/* this resets the end of file stuff */
+void at_reset_buffer(void)	/* this resets the end of file stuff */
     {				/* and resets the buffer variables to */
-    eoj=0;			/* show that nothing is in the buffer */
-
-    if(hard)
-	{
-	buffer_count = 0;
-	bytestotal = 0;
-	}
-
+    eoj = 0;			/* show that nothing is in the buffer */
+    buffer_count = 0;
+    bytestotal = 0;
     bytesleft = bytestotal;
-    onebuffer = FALSE;
-    } /* end of reset_buffer() */
+    } /* end of at_reset_buffer() */
 
 /*
 ** Get a character from the client.
@@ -233,11 +224,12 @@ void reset_buffer(int hard)	/* this resets the end of file stuff */
 ** Netatalk defines _NATALI_PAP.  Current versions of this library have
 ** dificiencies which require work-arounds.
 */
-int cli_getc(int sesfd)
+int at_getc(int sesfd)
     {
-    int look_result;		/* the value pap_look() returns */
-    fd_set read_fd;		/* lists of file descriptors */
-    #ifdef _NATALI_PAP		/* if using NATALI atalk library, */
+    const char function[] = "at_getc";
+    int look_result;		/* The value pap_look() returns */
+    fd_set read_fd;		/* lists of file descriptors. */
+    #ifdef _NATALI_PAP		/* If using NATALI atalk library, */
     struct timeval tv;		/* we will need this to */
     #endif			/* prevent select() from blocking too long. */
 
@@ -248,15 +240,12 @@ int cli_getc(int sesfd)
     */
     while(bytesleft==0)
 	{
-	if(onebuffer && buffer_count>0)	/* if one buffer mode */
-	    return -1;			/* and one read, don't read more */
-
 	if(eoj)			/* If end of job, don't */
 	    return -1;		/* try to read any more. */
 
 	buffer_count++;		/* Add to count of buffers read. */
 
-	DODEBUG_READBUF(("cli_getc(): waiting to reload buffer"));
+	DODEBUG_READBUF(("%s(): waiting to reload buffer", function));
 
 	/* See what is happening. */
 	while(TRUE)
@@ -264,17 +253,20 @@ int cli_getc(int sesfd)
 	    /* Find out what is happening on the PAP endpoint. */
 	    look_result = pap_look(sesfd);
 
-	    DODEBUG_READBUF(("cli_getc(): pap_look(%d) = %d", sesfd, look_result));
+	    DODEBUG_READBUF(("%s(): pap_look(%d) = %d", function, sesfd, look_result));
 
 	    /* Error */
 	    if( look_result == -1 )
-	    	fatal(1,"cli_getc(): pap_look() failed");
+	    	fatal(1, "%s(): pap_look() failed", function);
+
 	    /* Other end hung up */
 	    else if( look_result == PAP_DISCONNECT )
 	    	return -1;
+
 	    /* If data was received, break out */
 	    else if( look_result == PAP_DATA_RECVD )
 		break;
+
 	    /* Time to try to write */
 	    else if( (ocount || blocked) && (!blocked || look_result == PAP_WRITE_ENABLED) )
 	    	do_xmit(sesfd);
@@ -297,7 +289,7 @@ int cli_getc(int sesfd)
 		{
 		if( errno == EINTR )
 		    continue;
-		fatal(1,"cli_getc(): select() failed, errno=%d (%s)", errno, gu_strerror(errno) );
+		fatal(1, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
 		}
 	    } /* end of while(TRUE) */
 
@@ -307,26 +299,26 @@ int cli_getc(int sesfd)
 	**
 	** Read a block from the client.
 	*/
-	DODEBUG_READBUF(("cli_getc(): calling pap_read()"));
+	DODEBUG_READBUF(("%s(): calling pap_read()", function));
 	bytesleft = bytestotal = pap_read(sesfd, readbuf, READBUF_SIZE, &eoj);
 
 	#ifdef DEBUG_READBUF
 	if(bytesleft != -1)	/* if no error */
-	    debug("cli_getc(): pap_read(): %d bytes, eoj=%d", bytestotal, eoj);
+	    debug("%s(): pap_read(): %d bytes, eoj=%d", function, bytestotal, eoj);
 	#endif
 
 	if(bytesleft == -1)		/* if pap_read() error */
 	    {
 	    if(pap_errno==PAPHANGUP)	/* hangup is just end of file */
 		{
-		DODEBUG_READBUF(("cli_getc(): other party hung up first"));
+		DODEBUG_READBUF(("%s(): other party hung up first", function));
 		eoj = 1;
 		return -1;
 		}
 	    else
 		{
-		fatal(1,"cli_getc(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
-		    pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+		fatal(1, "%s(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
+		    function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 		}
 	    }
 
@@ -335,7 +327,8 @@ int cli_getc(int sesfd)
 
     bytesleft--;                /* take a byte */
     return *(cptr++);           /* from the buffer */
-    } /* end of cli_getc() */
+    } /* end of at_getc() */
+
 
 /*==============================================================
 ** Put a name on the network and return the file descriptor.
@@ -346,7 +339,7 @@ int cli_getc(int sesfd)
 ** which indicates a dead entry.
 ==============================================================*/
 
-int add_name(const char papname[])
+int at_add_name(const char papname[])
     {
     int fd;                     /* server endpoint file descriptor */
     unsigned char status[257];
@@ -382,10 +375,11 @@ int add_name(const char papname[])
 	}
 
     return fd;
-    } /* end of add_name() */
+    } /* end of at_add_name() */
 
-void remove_name(const char papname[], int fd)
+void at_remove_name(const char papname[], int fd)
     {
+    const char function[] = "at_remove_name";
     at_entity_t name;
 
     if(fd != -1)
@@ -400,19 +394,20 @@ void remove_name(const char papname[], int fd)
 
 	if(nbp_remove(&name, fd) == -1)
 	    {
-	    debug("nbp_remove() failed, nbp_errno=%d (%s), errno=%d (%s)", nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
+	    debug("%s(): nbp_remove() failed, nbp_errno=%d (%s), errno=%d (%s)", function, nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
 	    }
 	}
-    }
+    } /* end of at_remove_name() */
     
 /*===========================================================================
-** AppleTalk dependent part of printjob()
+** AppleTalk-implementation-dependent part of printjob()
 **
 ** Copy the job to ppr.  We will not use the buffering routines to do this, 
 ** though we will use the buffer and the buffering routine global variables.
 ===========================================================================*/
-int appletalk_dependent_printjob(int sesfd, int pipe)
+int at_printjob_copy(int sesfd, int pipe)
     {
+    const char function[] = "at_printjob_copy";
     int writelen;
 
     bytesleft = bytestotal;	/* undo the pap_getline() which read %!PS-Adobe- */
@@ -420,132 +415,128 @@ int appletalk_dependent_printjob(int sesfd, int pipe)
 	while(bytesleft > 0)	/* call write() while there are bytes in the buffer */
 	    {
 	    #ifdef DEBUG_PRINTJOB_DETAILED
-	    debug("appletalk_dependent_printjob(): pipe write, %d bytes",bytesleft);
+	    debug("%s(): pipe write, %d bytes", function, bytesleft);
 	    #endif
 
 	    writelen = write(pipe, readbuf, bytesleft);
 
-	    #ifdef DEBUG_PRINTJOB_DETAILED
-	    debug("appletalk_dependent_printjob(): wrote %d bytes",writelen);
-	    #endif
+	    DODEBUG_PRINTJOB_DETAILED(("%s(): wrote %d bytes", function, writelen));
 
 	    if(writelen == -1)
-		fatal(1,"appletalk_dependent_printjob(): write error on pipe, errno=%d (%s)", errno, gu_strerror(errno));
+		fatal(1, "%s(): write error on pipe, errno=%d (%s)", function, errno, gu_strerror(errno));
 
 	    bytesleft -= writelen;
 	    }
 
 	if(!eoj)		/* If end of job not yet received, */
 	    {			/* read from the PAP client. */
-	    #ifdef DEBUG_PRINTJOB_DETAILED
-	    debug("appletalk_dependent_printjob(): reading from PAP connection");
-	    #endif
+	    DODEBUG_PRINTJOB_DETAILED(("%s(): reading from PAP connection", function));
 
 	    bytesleft = pap_read(sesfd, readbuf, READBUF_SIZE, &eoj);
 
 	    if(bytesleft==-1)
-		fatal(1,"appletalk_dependent_printjob(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
+		fatal(1, "(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
 			pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
-	    #ifdef DEBUG_PRINTJOB_DETAILED
-	    debug("appletalk_dependent_printjob(): pap_read(): %d bytes, eoj=%d",bytesleft,eoj);
-	    #endif
+	    DODEBUG_PRINTJOB_DETAILED(("%s(): pap_read(): %d bytes, eoj=%d", function, bytesleft, eoj));
 	    }
 	} while(bytesleft);	/* If the PAP client gave us something, */
 
     return eoj;
-    } /* end of appletalk_dependent_printjob() */
+    } /* end of at_printjob_copy() */
 
 /*==========================================================================
 ** This is the daemon's main loop where we accept incoming connections.
-** This loop never ends.
+** This loop never ends of its own accord.
 ==========================================================================*/
-void appletalk_dependent_daemon_main_loop(struct ADV *adv)
+
+void at_service(struct ADV *adv)
     {
+    const char function[] = "at_service";
     int x;
+    fd_set select_fds;		/* List of fds we will look for activity on */
+    int maxfd;			/* first argument for select() */
+    at_inet_t remote_addr;	/* AppleTalk "internet" address of client */
     u_short rquantum;		/* remote flow quantum */
-    at_inet_t other_end;	/* "internet" address of client */
     int look_result;		/* result of pap_look() */
-    int papfd;			/* server endpoint handle */
     int sesfd;			/* session handle */
     pid_t pid;			/* pid of child which handles connexion */
-    fd_set select_fds;
 
     /*
-    ** The actual daemon main loop starts here.
+    ** Wait forever for activity on AppleTalk file descriptors.
     */
-    while(TRUE)					/* loop until killed */
+    DODEBUG_LOOP(("waiting for connexion"));
+
+    FD_ZERO(&select_fds);		/* clear list of files desciptors we want watched */
+
+    for(maxfd=-1, x=0; adv[x].adv_type != ADV_LAST; x++)
 	{
-	/*
-	** Wait forever for activity on AppleTalk file descriptors.
-	*/
-	DODEBUG_LOOP(("waiting for connexion"));
-
-	FD_ZERO( &select_fds );		/* clear list of files desciptors we want watched */
-
-	for(x=0; adv[x].adv_type != ADV_LAST; x++)
+	if(adv[x].adv_type == ADV_ACTIVE && adv[x].fd != -1)
 	    {
-	    if(adv[x].fd != -1)
-		FD_SET(adv[x].fd, &select_fds);
+	    FD_SET(adv[x].fd, &select_fds);
+	    if(adv[x].fd > maxfd)
+		maxfd = adv[x].fd;
 	    }
+	}
 	    
-	while(select(FD_SETSIZE, &select_fds, (fd_set*)NULL, (fd_set*)NULL, (struct timeval*)NULL) == -1)
+    while(select(maxfd + 1, &select_fds, (fd_set*)NULL, (fd_set*)NULL, (struct timeval*)NULL) == -1)
+	{
+	if(errno == EINTR)
 	    {
-	    if(errno == EINTR)
-		{
-		DODEBUG_LOOP(("main loop: EINTR, restarting select()"));
-	    	continue;
-	    	}
-	    fatal(1, "main loop: select() failed, errno=%d (%s)", errno, gu_strerror(errno) );
+	    DODEBUG_LOOP(("%s(): EINTR", function));
+	    return;
 	    }
+	fatal(1, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	}
 
-	/*
-	** Something happened!  Find the file descriptor
-	** it happened on and act on it.
-	*/
-	for(x=0; adv[x].adv_type != ADV_LAST; x++)		/* try each file descriptor */
+    /*
+    ** Something happened!  Find the file descriptor
+    ** it happened on and act on it.
+    */
+    for(x=0; adv[x].adv_type != ADV_LAST; x++)
 	    {
+	    if(adv[x].adv_type != ADV_ACTIVE)
+	    	continue;
+
 	    if(adv[x].fd == -1)
 	    	continue;
 
 	    if( ! FD_ISSET(adv[x].fd, &select_fds) )
 	    	continue;
 
-	    DODEBUG_LOOP(("main loop: something happened on fd %d", adv[x].fd));
+	    DODEBUG_LOOP(("%s(): something happened on fd %d", function, adv[x].fd));
 
 	    /* The only event we expect is connection received. */
 	    if((look_result = pap_look(adv[x].fd)) != PAP_CONNECT_RECVD)
 		{
 		if(look_result == -1)
 		    {
-		    fatal(1,"pap_look() failed, pap_errno=%d (%s), errno=%d (%s)",
-		    	pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+		    fatal(1, "%s(): pap_look() failed, pap_errno=%d (%s), errno=%d (%s)",
+		    	function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 		    }
 		else if(look_result == 0)	/* No real activity. */
 		    {				/* (Netatalk ALI compatibility only.) */
-		    DODEBUG_LOOP(("main loop: status request?"));
+		    DODEBUG_LOOP(("%s(): status request?", function));
 		    continue;
 		    }
 		else
 		    {
-		    debug("main loop: unexpected activity on \"%s\", pap_look() returned %d", adv[x].PAPname, look_result);
+		    debug("%s(): unexpected activity on fd %d (\"%s\"), pap_look() returned %d", function, adv[x].fd, adv[x].PAPname, look_result);
 		    continue;
 		    }
 		}
 
-	    papfd = adv[x].fd;	    /* something happened, use this one! */
-
-	    DODEBUG_LOOP(("main loop: connection received on fd %d for \"%s\"", papfd, adv[x].PAPname));
+	    DODEBUG_LOOP(("%s(): connection received on fd %d (\"%s\")", function, adv[x].fd, adv[x].PAPname));
 
 	    /* Accept the new job. */
 	    rquantum = 1;		/* meaningless operation */
-	    if((sesfd = paps_get_next_job(papfd, &rquantum, &other_end)) == -1)
-		fatal(1,"paps_get_next_job() failed, pap_errno=%d (%s), errno=%d (%s)",
-			pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+	    if((sesfd = paps_get_next_job(adv[x].fd, &rquantum, &remote_addr)) == -1)
+		fatal(1, "%s(): paps_get_next_job() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
-	    DODEBUG_LOOP(("main loop: remote fd=%d quantum=%hd, net=%d, node=%d, socket=%d",
-		sesfd, rquantum, other_end.net,
-		other_end.node, other_end.socket));
+	    DODEBUG_LOOP(("%s(): remote fd=%d quantum=%hd, net=%d, node=%d, socket=%d",
+		function,
+		sesfd, rquantum, remote_addr.net,
+		remote_addr.node, remote_addr.socket));
 
 	    /*
 	    ** Fork off a child to handle this new connexion.
@@ -558,19 +549,14 @@ void appletalk_dependent_daemon_main_loop(struct ADV *adv)
 
 	    if(pid == 0)                  	/* if we are the child */
 		{
-		/* remove the termination signal handler */
-		signal(SIGHUP,SIG_DFL);
-		signal(SIGINT, SIG_DFL);
-		signal(SIGTERM, SIG_DFL);
-
-		/* Set flag to show this is the child. */
-		i_am_master = FALSE;
-
-		/* close the server endpoints */
+		/* Close our copies of the server endpoints. */
 		{
 		int y;
 		for(y=0; adv[y].adv_type != ADV_LAST; y++)
-		    pap_abrupt_close(adv[y].fd);
+		    {
+		    if(adv[y].adv_type == ADV_ACTIVE && adv[y].fd != -1)
+			pap_abrupt_close(adv[y].fd);
+		    }
 		}
 
 		/*
@@ -590,20 +576,21 @@ void appletalk_dependent_daemon_main_loop(struct ADV *adv)
 		write_unit = (rquantum <= MAX_REMOTE_QUANTUM ? rquantum : MAX_REMOTE_QUANTUM) * 512;
 
 		/*
-		** Accept all the queries and jobs.
+		** This callback function contains the loop which services a client connexion.
+		** It recognizes the start of queries and print jobs and dispatches them
+		** to the proper service functions.
 		**
-		** We invoke child_main_loop() with the file descriptor
-		** of the connection to the client, the index of the
-		** name the client connected to, and a string describing
-		** the network and node of the client.
+		** We invoke connexion_callback() with the file descriptor of the connexion 
+		** to the client, the ADV record for the advertised AppleTalk name which the client
+		** connected to, and a string describing the network and node of the client.
 		*/
-		child_main_loop(sesfd, x, (int)other_end.net, (int)other_end.node);
+		connexion_callback(sesfd, &adv[x], (int)remote_addr.net, (int)remote_addr.node);
 
 		DODEBUG_LOOP(("shutting down child server"));
 
 		if(pap_close(sesfd) == -1)
-		    fatal(1,"pap_close() failed, pap_errno=%d (%s), errno=%d (%s)",
-		    	pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+		    fatal(1, "%s(): pap_close() failed, pap_errno=%d (%s), errno=%d (%s)",
+		    	function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
 		exit(0);                /* child exits here */
 		}
@@ -614,12 +601,11 @@ void appletalk_dependent_daemon_main_loop(struct ADV *adv)
 
 		/* pap_sync(sesfd); */		/* <-- don't do this! */
 		/* pap_close(sesfd); */		/* <-- don't do this! */
-		pap_abrupt_close(sesfd);	/* close without tearing down child's connexion */
+		pap_abrupt_close(sesfd);	/* Close without tearing down child's connexion */
 		}				/* (If we are using AT&T ALI, this is a macro for close().) */
 
 	    } /* end of for loop which tries each fd after select() returns */
 
-	} /* end of outside loop which never ends */
-    } /* end of appletalk_dependent_main_loop() */
+    } /* end of at_service() */
 
 /* end of file */

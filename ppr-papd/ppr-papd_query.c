@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 January 2003.
+** Last modified 13 January 2003.
 */
 
 /*
@@ -59,7 +59,7 @@
 ** 1 (trace queries, default replies and replies), and
 ** 2 (also print PostScript).)
 */
-extern int query_trace;
+static int query_trace = 0;			/* debug level */
 
 /*
 ** This determines where we look to find things requested by resource queries.
@@ -71,6 +71,25 @@ static const enum RES_SEARCH font_search_list[] = { RES_SEARCH_CACHE, RES_SEARCH
 static const enum RES_SEARCH other_search_list[] = { RES_SEARCH_CACHE, RES_SEARCH_END };
 
 /*
+** SIGUSR1 changes the query logging level.
+*/
+void sigusr1_handler(int sig)
+    {
+    if(++query_trace > 2)
+	query_trace = 0;
+
+    switch(query_trace)
+	{
+	case 0:
+	    debug("Query tracing turned off");
+	    break;
+	default:
+	    debug("Query tracing set to level %d",query_trace);
+	    break;
+	}
+    } /* end of sigusr1_handler() */
+
+/*
 ** A version of reply() which can be instructed print debugging
 ** information in the log file.
 */
@@ -78,7 +97,7 @@ static void REPLY(int sesfd, char *ptr)
     {
     if(query_trace)
 	debug("REPLY <-- %.*s", strcspn(ptr,"\n"), ptr);
-    reply(sesfd,ptr);
+    at_reply(sesfd, ptr);
     } /* end of REPLY() */
 
 /*
@@ -159,7 +178,7 @@ static void font_list_query(int sesfd, struct QUEUE_CONFIG *qc)
 	DODEBUG_QUERY(("%s", tempstr));
     	}
 
-    REPLY(sesfd,"*\n");			/* send an astrisk to indicate end of reply */
+    REPLY(sesfd, "*\n");		/* send an astrisk to indicate end of reply */
 
     eat_query(sesfd);			/* eat up the PostScript code and %?End line */
     } /* end of font_list_query() */
@@ -623,10 +642,9 @@ void answer_query(int sesfd, struct QUEUE_CONFIG *qc)
 	    return_default(sesfd);
 	    }
 
-	/* flush_reply(sesfd); */ 	/* flush reply buffer if possible */
 	} /* end of while(not end of file) */
 
-    reply_eoj(sesfd);                   /* respond with end of job */
+    at_reply_eoj(sesfd);		/* respond with end of job */
     } /* end of answer_query() */
 
 /* end of file */

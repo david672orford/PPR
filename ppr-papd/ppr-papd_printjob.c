@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 January 2003.
+** Last modified 14 January 2003.
 */
 
 #include "before_system.h"
@@ -45,14 +45,16 @@
 #include "ppr_exits.h"
 #include "ppr-papd.h"
 
-static pid_t pid = (pid_t)0;			/* pid of ppr */
+static pid_t ppr_pid = (pid_t)0;
 static jmp_buf printjob_env;
 
 /*===========================================================================
 ** Accept a print job and send it to ppr.
 **
-** This is called from child_main_loop() which it turn is called
-** from appletalk_dependent_main_loop().
+** This is called from connexion_callback() which it turn is called
+** from at_service_loop().  It launches ppr and then calls 
+** at_printjob_copy() to copy the printjob from the AppleTalk PAP socket
+** to the pipe connected to ppr.
 ===========================================================================*/
 void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[])
     {
@@ -65,24 +67,23 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
     char netnode[10];
     char proxy_for[64];
 
-    DODEBUG_PRINTJOB(("printjob(sesfd=%d, prnid=%d, net=%d, node=%d)",
-	sesfd, prnid, net, node));
+    DODEBUG_PRINTJOB(("printjob(sesfd=%d, adv=%p, qc=%p, net=%d, node=%d, log_file_name[]=\"%s\")", sesfd, adv, qc, net, node, log_file_name));
 
     /*
     ** Measure free space in the PPR spool area.  If it is
     ** unreasonably low, refuse to accept the job.
     */
-    if(disk_space(QUEUEDIR,&free_blocks,&free_files) == -1)
+    if(disk_space(QUEUEDIR, &free_blocks, &free_files) == -1)
     	{
-    	debug("failed to get file system statistics");
+    	debug("%s(): failed to get file system statistics", function);
     	}
     else
     	{
-	if( (free_blocks < MIN_BLOCKS) || (free_files < MIN_INODES) )
+	if((free_blocks < MIN_BLOCKS) || (free_files < MIN_INODES))
 	    {
-	    reply(sesfd,MSG_NODISK);
+	    at_reply(sesfd, "%%[ Error: spooler is out of disk space ]%%\n");
 	    postscript_stdin_flushfile(sesfd);
-	    fatal(1,"insufficient disk space");
+	    fatal(1, "insufficient disk space");
 	    }
     	}
 
@@ -95,21 +96,21 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
     */
     if(setjmp(printjob_env) == 0) 	/* setjmp() returns zero when it is called, */
 	{				/* non-zero when longjump() is called */
-	DODEBUG_PRINTJOB(("setjmp() returned zero, spawning ppr"));
+	DODEBUG_PRINTJOB(("%s(): setjmp() returned zero, spawning ppr", function));
 
 	if(pipe(pipefds))		/* pipe for sending data to ppr */
-	    fatal(0,"printjob(): pipe() failed, errno=%d (%s)",errno,gu_strerror(errno));
+	    fatal(0, "%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
-	if( (pid=fork()) == -1 )	/* if we can't fork, */
+	if((ppr_pid = fork()) == -1)	/* if we can't fork, */
 	    {				/* then tell the client */
-	    reply(sesfd,MSG_NOPROC);
+	    at_reply(sesfd, "%%[ Error: spooler is out of processes ]%%\n");
 	    postscript_stdin_flushfile(sesfd);
-	    fatal(1,"printjob(): fork() failed, errno=%d",errno);
+	    fatal(1, "%s(): fork() failed, errno=%d", function, errno, gu_strerror(errno));
 	    }
 
-	if(pid==0)			/* if child */
+	if(ppr_pid == 0)		/* if child */
 	    {
-	    const char *argv[MAX_ARGV+20];
+	    const char *argv[36];	/* 22 used by last count */
 	    int x;
 	    int fd;
 
@@ -118,7 +119,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	    close(pipefds[0]);		/* and close origional */
 
 	    if((fd = open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1)
-	    	fatal(0, "printjob(): can't open log file");
+	    	fatal(0, "%s(): can't open log file", function);
 	    if(fd != 1) dup2(fd,1);	/* stdout and */
 	    if(fd != 2) dup2(fd,2);	/* stderr */
 	    if(fd > 2) close(fd);
@@ -136,12 +137,19 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	    ** otherwise, tell ppr to read "%%For:" comments.
 	    **/
 	    if(username)
-	    	{ argv[x++] = "-f"; argv[x++] = username; }
+	    	{
+	    	argv[x++] = "-f";
+	    	argv[x++] = username;
+	    	}
 	    else
-	    	{ argv[x++] = "-R"; argv[x++] = "for"; }
+	    	{
+	    	argv[x++] = "-R";
+	    	argv[x++] = "for";
+	    	}
 
 	    /* Indicate for whom the user "ppr" is acting as proxy. */
-	    argv[x++] = "-X"; argv[x++] = proxy_for;
+	    argv[x++] = "-X";
+	    argv[x++] = proxy_for;
 
 	    /* Answer for TTRasterizer query */
 	    if(qc->TTRasterizer)
@@ -183,7 +191,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	    {
 	    int y;
 	    for(y=0; argv[y]; y++)
-	    	debug("argv[%d] = \"%s\"",y,argv[y]);
+	    	debug("argv[%d] = \"%s\"", y, argv[y]);
 	    }
 	    #endif
 
@@ -200,10 +208,10 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	/*
 	** Call the AppleTalk dependent code to copy the job.
 	*/
-	DODEBUG_PRINTJOB(("%s(): calling appletalk_dependent_printjob()", function));
-	if(! appletalk_dependent_printjob(sesfd, pipefds[1]))
-	    fatal(1,"Print job was truncated.");
-	DODEBUG_PRINTJOB(("%s(): appletalk_dependent_printjob() returned", function));
+	DODEBUG_PRINTJOB(("%s(): calling at_printjob_copy()", function));
+	if(! at_printjob_copy(sesfd, pipefds[1]))
+	    fatal(1, "%s(): print job was truncated", function);
+	DODEBUG_PRINTJOB(("%s(): at_printjob_copy() returned", function));
 
 	} /* end of if(setjump()) */
 
@@ -214,16 +222,16 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
     DODEBUG_PRINTJOB(("%s(): after setjmp() clause", function));
 
     /* We will no longer be wanting to kill ppr, so we can forget its PID. */
-    pid = (pid_t)0;
+    ppr_pid = (pid_t)0;
 
     /* Close the pipe to ppr.  (This tells ppr it has the whole job.) */
     DODEBUG_PRINTJOB(("%s(): closing pipe to ppr", function));
     close(pipefds[1]);
 
     /* Wait for ppr to terminate. */
-    DODEBUG_PRINTJOB(("%s(): waiting for PPR to exit", function));
+    DODEBUG_PRINTJOB(("%s(): waiting for ppr to exit", function));
     wait(&wstat);
-    DODEBUG_PRINTJOB(("%s(): PPR exit code: %d", function, WEXITSTATUS(wstat)));
+    DODEBUG_PRINTJOB(("%s(): ppr exit code: %d", function, WEXITSTATUS(wstat)));
 
     /*
     ** If the return value from ppr is non-zero, then send an
@@ -237,48 +245,45 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	switch(WEXITSTATUS(wstat))
 	    {
 	    case PPREXIT_OK:			/* Normal ppr termination, */
-		error=FALSE;
+		error = FALSE;
 		break;
 	    case PPREXIT_NOCHARGEACCT:
-		reply(sesfd,MSG_NOCHARGEACCT);
-		break;
-	    case PPREXIT_BADAUTH:
-		reply(sesfd,MSG_BADAUTH);
+		at_reply(sesfd, "%%[ Error: you don't have a charge account ]%%\n");
 		break;
 	    case PPREXIT_OVERDRAWN:
-		reply(sesfd,MSG_OVERDRAWN);
+		at_reply(sesfd, "%%[ Error: account overdrawn ]%%\n");
 		break;
 	    case PPREXIT_TRUNCATED:
-	    	reply(sesfd,MSG_TRUNCATED);
+	    	at_reply(sesfd, "%%[ Error: input file is truncated ]%%\n");
 	    	break;
 	    case PPREXIT_NONCONFORMING:
-		reply(sesfd,MSG_NONCONFORMING);
+		at_reply(sesfd, "%%[ Error: insufficient DSC conformance ]%%\n");
 		break;
 	    case PPREXIT_ACL:
-	    	reply(sesfd,MSG_ACL);
+	    	at_reply(sesfd, "%%[ Error: ACL forbids you access to selected print destination ]%%\n");
 	    	break;
 	    case PPREXIT_NOSPOOLER:
-		reply(sesfd,MSG_NOSPOOLER);
+		at_reply(sesfd, "%%[ Error: spooler is not running ]%%\n");
 		break;
 	    case PPREXIT_SYNTAX:
-		reply(sesfd,MSG_SYNTAX);
+		at_reply(sesfd, "%%[ Error: bad ppr invokation syntax ]%%\n");
 		break;
 	    default:
-		reply(sesfd,MSG_FATALPPR);
+		at_reply(sesfd, "%%[ Error: fatal error, see ppr-papd log ]%%\n");
 		break;
 	    }
 	}
     else if(WCOREDUMP(wstat))		/* If core dump created, */
 	{
-	reply(sesfd,"%%[ Error: ppr-papd: ppr dumped core ]%%\n");
+	at_reply(sesfd, "%%[ Error: ppr-papd: ppr dumped core ]%%\n");
 	}
     else if(WIFSIGNALED(wstat))		/* If child caught a signal, */
 	{
-	reply(sesfd, "%%[ Error: ppr-papd: ppr killed ]%%\n");
+	at_reply(sesfd, "%%[ Error: ppr-papd: ppr killed ]%%\n");
 	}
     else				/* Other return from wait(), such as stopped, */
 	{
-	reply(sesfd, "%%[ Error: ppr-papd: unexpected return from wait() ]%%\n");
+	at_reply(sesfd, "%%[ Error: ppr-papd: unexpected return from wait() ]%%\n");
 	}
 
     /*
@@ -291,20 +296,25 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	exit(2);
 	}
 
-    DODEBUG_PRINTJOB(("printjob(): calling reply_eoj()"));
-    reply_eoj(sesfd);
+    DODEBUG_PRINTJOB(("%s(): calling at_reply_eoj()", function));
+    at_reply_eoj(sesfd);
     } /* end of printjob() */
 
 void printjob_abort(void)
     {
-    if(pid)				/* If we have launched ppr, */
-	kill(pid, SIGTERM);		/* then kill it. */
-    pid = (pid_t)0;
+    if(ppr_pid)				/* If we have launched ppr, */
+	kill(ppr_pid, SIGTERM);		/* then kill it. */
+    ppr_pid = (pid_t)0;			/* We won't do it twice. */
     } /* end of printjob_abort() */
 
-void printjob_reapchild(void)
+void printjob_reapchild(int sig)
     {
     longjmp(printjob_env, 1);
     }
+
+void printjob_sigpipe(int sig)
+    {
+    fatal(1, "SIGPIPE received");
+    } /* end of sigpipe_handler() */
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 December 2002.
+** Last modified 14 January 2002.
 */
 
-/*
+/*==============================================================
 ** This module is part of the printer administrator's utility.
 ** It contains the code to implement those sub-commands which
 ** manipulate printers.
-*/
+==============================================================*/
 
 #include "before_system.h"
 #include <stdlib.h>
@@ -1576,10 +1576,12 @@ int printer_rip(const char *argv[])
 /*
 ** Set a printer's PPD file.
 **
-** We do this by modifying the configuration file's
-** "PPDFile:" line.  Since the spooler does not cache
-** this information, there is no need to tell it that
-** we have done so.
+** We do this by modifying the configuration file's "PPDFile:" line.  The 
+** spooler doesn't keep track of the PPD file, but it needs to know if
+** we change it because a printer that wasn't capable of printing a given
+** job with one PPD file may be capable according to the new PPD file.
+** Thus we tell the spooler that the config file has changed so that it
+** will clear the "never" bits.
 */
 int printer_ppd(const char *argv[])
     {
@@ -3005,7 +3007,7 @@ int printer_addon(const char *argv[])
     const char *name = argv[1];
     const char *value = argv[2];
 
-    if(!printer || !name)
+    if(!printer || !name || (value && argv[3]))
     	{
 	fputs(_("You must supply the name of an existing printer, the name of an addon\n"
 		"parameter.  A value for the paremeter is optional.  If you do not\n"
@@ -3015,8 +3017,7 @@ int printer_addon(const char *argv[])
 
     if(!(name[0] >= 'a' && name[0] <= 'z'))
     	{
-	fputs(_("Addon parameter names must begin with a lower-case ASCII\n"
-		"letter.\n"), errors);
+	fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), errors);
 	return EXIT_SYNTAX;
     	}
 

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2001, Trinity College Computing Center
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 19 April 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 14 January 2003.
 */
 
 /*
@@ -29,7 +44,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "util_exits.h"
 #include "ppad.h"
 
@@ -825,7 +839,7 @@ int group_addon(const char *argv[])
     const char *name = argv[1];
     const char *value = argv[2];
 
-    if(!group || !name)
+    if(!group || !name || argv[3])
     	{
 	fputs(_("You must supply the name of an existing group, the name of an addon\n"
 		"parameter.  A value for the paremeter is optional.  If you do not\n"
@@ -835,8 +849,7 @@ int group_addon(const char *argv[])
 
     if(!(name[0] >= 'a' && name[0] <= 'z'))
     	{
-	fputs(_("Addon parameter names must begin with a lower-case ASCII\n"
-		"letter.\n"), errors);
+	fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), errors);
 	return EXIT_SYNTAX;
     	}
 
@@ -844,4 +857,3 @@ int group_addon(const char *argv[])
     }
 
 /* end of file */
-
