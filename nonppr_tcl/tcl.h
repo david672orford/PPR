@@ -439,8 +439,7 @@ EXTERN void		Tcl_AddErrorInfo _ANSI_ARGS_((Tcl_Interp *interp,
 EXTERN void		Tcl_AllowExceptions _ANSI_ARGS_((Tcl_Interp *interp));
 EXTERN void		Tcl_AppendElement _ANSI_ARGS_((Tcl_Interp *interp,
 			    char *string));
-EXTERN void		Tcl_AppendResult _ANSI_ARGS_(
-			    VARARGS(Tcl_Interp *interp));
+EXTERN void		Tcl_AppendResult(Tcl_Interp *interp, ...);
 EXTERN int		Tcl_AppInit _ANSI_ARGS_((Tcl_Interp *interp));
 EXTERN void		Tcl_AsyncMark _ANSI_ARGS_((Tcl_AsyncHandler async));
 EXTERN Tcl_AsyncHandler	Tcl_AsyncCreate _ANSI_ARGS_((Tcl_AsyncProc *proc,
@@ -571,8 +570,7 @@ EXTERN int		Tcl_ScanElement _ANSI_ARGS_((char *string,
 			    int *flagPtr));
 EXTERN int		Tcl_SetCommandInfo _ANSI_ARGS_((Tcl_Interp *interp,
 			    char *cmdName, Tcl_CmdInfo *infoPtr));
-EXTERN void		Tcl_SetErrorCode _ANSI_ARGS_(
-			    VARARGS(Tcl_Interp *interp));
+EXTERN void		Tcl_SetErrorCode(Tcl_Interp *interp, ...);
 EXTERN int		Tcl_SetRecursionLimit _ANSI_ARGS_((Tcl_Interp *interp,
 			    int depth));
 EXTERN void		Tcl_SetResult _ANSI_ARGS_((Tcl_Interp *interp,
@@ -614,7 +612,7 @@ EXTERN int		Tcl_UpVar _ANSI_ARGS_((Tcl_Interp *interp,
 EXTERN int		Tcl_UpVar2 _ANSI_ARGS_((Tcl_Interp *interp,
 			    char *frameName, char *part1, char *part2,
 			    char *localName, int flags));
-EXTERN int		Tcl_VarEval _ANSI_ARGS_(VARARGS(Tcl_Interp *interp));
+EXTERN int		Tcl_VarEval(Tcl_Interp *interp, ...);
 EXTERN ClientData	Tcl_VarTraceInfo _ANSI_ARGS_((Tcl_Interp *interp,
 			    char *varName, int flags,
 			    Tcl_VarTraceProc *procPtr,

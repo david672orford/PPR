@@ -137,7 +137,7 @@ Tcl_EvalFile(interp, fileName)
 	 * Record information telling where the error occurred.
 	 */
 
-	sprintf(msg, "\n    (file \"%.150s\" line %d)", fileName,
+	snprintf(msg, sizeof(msg), "\n    (file \"%.150s\" line %d)", fileName,
 		interp->errorLine);
 	Tcl_AddErrorInfo(interp, msg);
     }
@@ -708,7 +708,7 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 		    || (joinThisError && (dup2(1, 2) == -1))
 		    || (!joinThisError && (errorId != -1)
 			    && (dup2(errorId, 2) == -1))) {
-		sprintf(errSpace,
+		snprintf(errSpace, sizeof(errSpace),
 			"%dforked process couldn't set up input/output: ",
 			errno);
 		write(errPipeIds[1], errSpace, (size_t) strlen(errSpace));
@@ -721,7 +721,7 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	    }
 	    RestoreSignals();
 	    execvp(execName, &argv[firstArg]);
-	    sprintf(errSpace, "%dcouldn't execute \"%.150s\": ", errno,
+	    snprintf(errSpace, sizeof(errSpace), "%dcouldn't execute \"%.150s\": ", errno,
 		    argv[firstArg]);
 	    write(errPipeIds[1], errSpace, (size_t) strlen(errSpace));
 	    _exit(1);
@@ -1192,7 +1192,7 @@ Tcl_EnterFile(interp, file, permissions)
 	    interp->result = "stderr";
 	}
     } else {
-	sprintf(interp->result, "file%d", fd);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "file%d", fd);
     }
 }
 

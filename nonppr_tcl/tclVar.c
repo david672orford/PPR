@@ -1582,7 +1582,7 @@ Tcl_ArrayCmd(dummy, interp, argc, argv)
 		size++;
 	    }
 	}
-	sprintf(interp->result, "%d", size);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", size);
     } else if ((c == 's') && (strncmp(argv[1], "startsearch", length) == 0)
 	    && (length >= 2)) {
 	ArraySearch *searchPtr;
@@ -1603,7 +1603,7 @@ Tcl_ArrayCmd(dummy, interp, argc, argv)
 	    char string[20];
 
 	    searchPtr->id = varPtr->searchPtr->id + 1;
-	    sprintf(string, "%d", searchPtr->id);
+	    snprintf(string, TCL_RESULT_SIZE+1, "%d", searchPtr->id);
 	    Tcl_AppendResult(interp, "s-", string, "-", argv[2],
 		    (char *) NULL);
 	}

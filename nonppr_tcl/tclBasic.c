@@ -1051,7 +1051,6 @@ Tcl_Eval(interp, cmd)
 		iPtr->result = "invoked \"continue\" outside of a loop";
 	    } else {
 		iPtr->result = iPtr->resultSpace;
-		/* sprintf(iPtr->resultSpace, "command returned bad code: %d", result); */
 		snprintf(iPtr->resultSpace, TCL_RESULT_SIZE+1, "command returned bad code: %d", result);
 	    }
 	    result = TCL_ERROR;
@@ -1108,10 +1107,8 @@ Tcl_Eval(interp, cmd)
 	}
 
 	if (!(iPtr->flags & ERR_IN_PROGRESS)) {
-	    /* sprintf(copyStorage, "\n    while executing\n\"%.*s%s\"", numChars, cmdStart, ellipsis); */
 	    snprintf(copyStorage, sizeof(copyStorage), "\n    while executing\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
 	} else {
-	    sprintf(copyStorage, "\n    invoked from within\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
 	    snprintf(copyStorage, sizeof(copyStorage), "\n    invoked from within\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
 	}
 	Tcl_AddErrorInfo(interp, copyStorage);
@@ -1301,17 +1298,11 @@ Tcl_AddErrorInfo(interp, message)
  *
  *----------------------------------------------------------------------
  */
-	/* VARARGS2 */ /* ARGSUSED */
-int
-#ifndef lint
-Tcl_VarEval(va_alist)
-#else
-Tcl_VarEval(iPtr, p, va_alist)
-    Tcl_Interp *iPtr;		/* Interpreter in which to execute command. */
-    char *p;			/* One or more strings to concatenate,
-				 * terminated with a NULL string. */
-#endif
-    va_dcl
+
+int Tcl_VarEval(
+    Tcl_Interp *iPtr,		/* Interpreter in which to execute command. */
+    ...				/* one or more strings to concatentate to make command */
+    )
 {
     va_list argList;
     Tcl_DString buf;
@@ -1321,21 +1312,14 @@ Tcl_VarEval(iPtr, p, va_alist)
 
     /*
      * Copy the strings one after the other into a single larger
-     * string.  Use stack-allocated space for small commands, but if
-     * the command gets too large than call ckalloc to create the
-     * space.
+     * string.
      */
 
-    va_start(argList);
+    va_start(argList, iPtr);
     interp = va_arg(argList, Tcl_Interp *);
     Tcl_DStringInit(&buf);
-    while (1) {
-	string = va_arg(argList, char *);
-	if (string == NULL) {
-	    break;
-	}
+    while((string = va_arg(argList, char *)))
 	Tcl_DStringAppend(&buf, string, -1);
-    }
     va_end(argList);
 
     result = Tcl_Eval(interp, Tcl_DStringValue(&buf));

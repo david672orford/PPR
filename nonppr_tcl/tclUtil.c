@@ -162,7 +162,7 @@ TclFindElement(interp, list, elementPtr, nextPtr, sizePtr, bracePtr)
 		    }
 		    if (interp != NULL) {
 			Tcl_ResetResult(interp);
-			sprintf(interp->result,
+			snprintf(interp->result, TCL_RESULT_SIZE+1,
 				"list element in braces followed by \"%.*s\" instead of space",
 				(int) (p2-p), p);
 		    }
@@ -221,7 +221,7 @@ TclFindElement(interp, list, elementPtr, nextPtr, sizePtr, bracePtr)
 		    }
 		    if (interp != NULL) {
 			Tcl_ResetResult(interp);
-			sprintf(interp->result,
+			snprintf(interp->result, TCL_RESULT_SIZE+1,
 				"list element in quotes followed by \"%.*s\" %s", (int) (p2-p), p,
 				"instead of space");
 		    }
@@ -1027,23 +1027,13 @@ Tcl_SetResult(interp, string, freeProc)
  *----------------------------------------------------------------------
  */
 
-	/* VARARGS2 */
-#ifndef lint
-void
-Tcl_AppendResult(va_alist)
-#else
-void
-	/* VARARGS2 */ /* ARGSUSED */
-Tcl_AppendResult(interp, p, va_alist)
-    Tcl_Interp *interp;		/* Interpreter whose result is to be
-				 * extended. */
-    char *p;			/* One or more strings to add to the
-				 * result, terminated with NULL. */
-#endif
-    va_dcl
+void Tcl_AppendResult(
+    Tcl_Interp *interp,		/* Interpreter whose result is to be extended. */
+    ...				/* One or more strings to add to the result, terminated with NULL. */
+    )
 {
     va_list argList;
-    register Interp *iPtr;
+    register Interp *iPtr = (Interp *)interp;
     char *string;
     int newSpace;
 
@@ -1051,24 +1041,16 @@ Tcl_AppendResult(interp, p, va_alist)
      * First, scan through all the arguments to see how much space is
      * needed.
      */
-
-    va_start(argList);
-    iPtr = va_arg(argList, Interp *);
+    va_start(argList, interp);
     newSpace = 0;
-    while (1) {
-	string = va_arg(argList, char *);
-	if (string == NULL) {
-	    break;
-	}
+    while((string = va_arg(argList, char *)))
 	newSpace += strlen(string);
-    }
     va_end(argList);
 
     /*
      * If the append buffer isn't already setup and large enough
      * to hold the new data, set it up.
      */
-
     if ((iPtr->result != iPtr->appendResult)
 	    || (iPtr->appendResult[iPtr->appendUsed] != 0)
 	    || ((newSpace + iPtr->appendUsed) >= iPtr->appendAvl)) {
@@ -1079,17 +1061,12 @@ Tcl_AppendResult(interp, p, va_alist)
      * Final step:  go through all the argument strings again, copying
      * them into the buffer.
      */
-
-    va_start(argList);
-    (void) va_arg(argList, Tcl_Interp *);
-    while (1) {
-	string = va_arg(argList, char *);
-	if (string == NULL) {
-	    break;
-	}
+    va_start(argList, interp);
+    while((string = va_arg(argList, char *)))
+	{
 	strcpy(iPtr->appendResult + iPtr->appendUsed, string);
 	iPtr->appendUsed += strlen(string);
-    }
+	}
     va_end(argList);
 }
 
@@ -1280,45 +1257,30 @@ Tcl_ResetResult(interp)
  *
  *----------------------------------------------------------------------
  */
-	/* VARARGS2 */
-#ifndef lint
-void
-Tcl_SetErrorCode(va_alist)
-#else
-void
-	/* VARARGS2 */ /* ARGSUSED */
-Tcl_SetErrorCode(interp, p, va_alist)
-    Tcl_Interp *interp;		/* Interpreter whose errorCode variable is
-				 * to be set. */
-    char *p;			/* One or more elements to add to errorCode,
-				 * terminated with NULL. */
-#endif
-    va_dcl
+
+void Tcl_SetErrorCode(
+    Tcl_Interp *interp,		/* Interpreter whose errorCode variable is to be set. */
+    ...				/* One or more elements to add to errorCode, terminated with NULL. */
+    )
 {
     va_list argList;
     char *string;
     int flags;
-    Interp *iPtr;
 
     /*
      * Scan through the arguments one at a time, appending them to
      * $errorCode as list elements.
      */
 
-    va_start(argList);
-    iPtr = va_arg(argList, Interp *);
+    va_start(argList, interp);
     flags = TCL_GLOBAL_ONLY | TCL_LIST_ELEMENT;
-    while (1) {
-	string = va_arg(argList, char *);
-	if (string == NULL) {
-	    break;
-	}
-	(void) Tcl_SetVar2((Tcl_Interp *) iPtr, "errorCode",
-		(char *) NULL, string, flags);
+    while((string = va_arg(argList, char *)))
+	{
+	(void)Tcl_SetVar2(interp, "errorCode", (char *)NULL, string, flags);
 	flags |= TCL_APPEND_VALUE;
-    }
+	}
     va_end(argList);
-    iPtr->flags |= ERROR_CODE_SET;
+    ((Interp*)interp)->flags |= ERROR_CODE_SET;
 }
 
 /*
@@ -2011,7 +1973,7 @@ Tcl_PrintDouble(interp, value, dst)
 					 * characters. */
 {
     register char *p;
-    sprintf(dst, ((Interp *) interp)->pdFormat, value);
+    snprintf(dst, TCL_DOUBLE_SPACE, ((Interp *) interp)->pdFormat, value);
 
     /*
      * If the ASCII result looks like an integer, add ".0" so that it
@@ -2087,11 +2049,11 @@ TclPrecTraceProc(clientData, interp, name1, name2, flags)
 	    (end == value) || (*end != 0)) {
 	char oldValue[10];
 
-	sprintf(oldValue, "%d", iPtr->pdPrec);
+	snprintf(oldValue, sizeof(oldValue), "%d", iPtr->pdPrec);
 	Tcl_SetVar2(interp, name1, name2, oldValue, flags & TCL_GLOBAL_ONLY);
 	return "improper value for precision";
     }
-    sprintf(iPtr->pdFormat, "%%.%dg", prec);
+    snprintf(iPtr->pdFormat, sizeof(iPtr->pdFormat), "%%.%dg", prec);
     iPtr->pdPrec = prec;
     return (char *) NULL;
 }

@@ -15,11 +15,12 @@
  *
  * Copyright (c) 1991-1994 The Regents of the University of California.
  * Copyright (c) 1994 Sun Microsystems, Inc.
+ * Copyright (c) 2002 Trinity College Computing Center.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * @(#) tclPort.h 1.6 95/05/11 10:46:38
+ * Last modified 18 January 2002.
  */
 
 #ifndef _TCLPORT

@@ -89,7 +89,7 @@ Tcl_Main(argc, argv, appInitProc)
     args = Tcl_Merge(argc-1, argv+1);
     Tcl_SetVar(interp, "argv", args, TCL_GLOBAL_ONLY);
     ckfree(args);
-    sprintf(buffer, "%d", argc-1);
+    snprintf(buffer, sizeof(buffer), "%d", argc-1);
     Tcl_SetVar(interp, "argc", buffer, TCL_GLOBAL_ONLY);
     Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
 	    TCL_GLOBAL_ONLY);
@@ -228,7 +228,7 @@ Tcl_Main(argc, argv, appInitProc)
      */
 
     done:
-    sprintf(buffer, "exit %d", exitCode);
+    snprintf(buffer, sizeof(buffer), "exit %d", exitCode);
     Tcl_Eval(interp, buffer);
 }
 

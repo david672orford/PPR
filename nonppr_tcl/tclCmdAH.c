@@ -413,13 +413,12 @@ Tcl_EvalCmd(dummy, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_ExprCmd(dummy, interp, argc, argv)
-    ClientData dummy;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
-    int argc;				/* Number of arguments. */
-    char **argv;			/* Argument strings. */
+int Tcl_ExprCmd(
+    ClientData dummy,			/* Not used. */
+    Tcl_Interp *interp,			/* Current interpreter. */
+    int argc,				/* Number of arguments. */
+    char **argv				/* Argument strings. */
+    )
 {
     Tcl_DString buffer;
     int i, result;
@@ -461,13 +460,12 @@ Tcl_ExprCmd(dummy, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_ForCmd(dummy, interp, argc, argv)
-    ClientData dummy;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
-    int argc;				/* Number of arguments. */
-    char **argv;			/* Argument strings. */
+int Tcl_ForCmd(
+    ClientData dummy,			/* Not used. */
+    Tcl_Interp *interp,			/* Current interpreter. */
+    int argc,				/* Number of arguments. */
+    char **argv				/* Argument strings. */
+    )
 {
     int result, value;
 
@@ -537,13 +535,12 @@ Tcl_ForCmd(dummy, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_ForeachCmd(dummy, interp, argc, argv)
-    ClientData dummy;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
-    int argc;				/* Number of arguments. */
-    char **argv;			/* Argument strings. */
+int Tcl_ForeachCmd(
+    ClientData dummy,			/* Not used. */
+    Tcl_Interp *interp,			/* Current interpreter. */
+    int argc,				/* Number of arguments. */
+    char **argv				/* Argument strings. */
+    )
 {
     int listArgc, i, result;
     char **listArgv;
@@ -611,13 +608,25 @@ Tcl_ForeachCmd(dummy, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_FormatCmd(dummy, interp, argc, argv)
-    ClientData dummy;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
-    int argc;				/* Number of arguments. */
-    char **argv;			/* Argument strings. */
+int gu_snprintfcat(char *buffer, size_t max, const char *format, ...)
+    {
+    va_list va;
+    size_t len = strlen(buffer);
+    int ret;
+    max -= len;
+    buffer += len;
+    va_start(va, format);
+    ret = vsnprintf(buffer, max, format, va);
+    va_end(va);
+    return ret;
+    }
+
+int Tcl_FormatCmd(
+    ClientData dummy,			/* Not used. */
+    Tcl_Interp *interp,			/* Current interpreter. */
+    int argc,				/* Number of arguments. */
+    char **argv				/* Argument strings. */
+    )
 {
     register char *format;	/* Used to read characters from the format
 				 * string. */
@@ -629,19 +638,20 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
     int size;			/* Number of bytes needed for result of
 				 * conversion, based on type of conversion
 				 * ("e", "s", etc.), width, and precision. */
-    int intValue;		/* Used to hold value to pass to sprintf, if
+    int intValue;		/* Used to hold value to pass to snprintf, if
 				 * it's a one-word integer or char value */
-    char *ptrValue = NULL;	/* Used to hold value to pass to sprintf, if
+    char *ptrValue = NULL;	/* Used to hold value to pass to snprintf, if
 				 * it's a one-word value. */
-    double doubleValue;		/* Used to hold value to pass to sprintf if
+    double doubleValue;		/* Used to hold value to pass to snprintf if
 				 * it's a double value. */
     int whichValue;		/* Indicates which of intValue, ptrValue,
 				 * or doubleValue has the value to pass to
-				 * sprintf, according to the following
+				 * snprintf, according to the following
 				 * definitions: */
-#   define INT_VALUE 0
-#   define PTR_VALUE 1
-#   define DOUBLE_VALUE 2
+    #define INT_VALUE 0
+    #define PTR_VALUE 1
+    #define DOUBLE_VALUE 2
+
     char *dst = interp->result;	/* Where result is stored.  Starts off at
 				 * interp->resultSpace, but may get dynamically
 				 * re-allocated if this isn't enough. */
@@ -662,16 +672,16 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
     char *end;			/* Used to locate end of numerical fields. */
 
     /*
-     * This procedure is a bit nasty.  The goal is to use sprintf to
+     * This procedure is a bit nasty.  The goal is to use snprintf to
      * do most of the dirty work.  There are several problems:
      * 1. this procedure can't trust its arguments.
      * 2. we must be able to provide a large enough result area to hold
      *    whatever's generated.  This is hard to estimate.
      * 2. there's no way to move the arguments from argv to the call
-     *    to sprintf in a reasonable way.  This is particularly nasty
+     *    to snprintf in a reasonable way.  This is particularly nasty
      *    because some of the arguments may be two-word values (doubles).
      * So, what happens here is to scan the format string one % group
-     * at a time, making many individual calls to sprintf.
+     * at a time, making many individual calls to snprintf.
      */
 
     if (argc < 2) {
@@ -680,37 +690,34 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	return TCL_ERROR;
     }
     argIndex = 2;
-    for (format = argv[1]; *format != 0; ) {
-	register char *newPtr = newFormat;
-
+    for(format = argv[1]; *format != 0; )
+	{
 	width = precision = noPercent = useShort = 0;
 	whichValue = PTR_VALUE;
 
-	/*
-	 * Get rid of any characters before the next field specifier.
-	 */
-
-	if (*format != '%') {
-	    register char *p;
-
-	    ptrValue = p = format;
-	    while ((*format != '%') && (*format != 0)) {
-		*p = *format;
-		p++;
-		format++;
-	    }
-	    size = p - ptrValue;
+	/* Handle any characters before the next field specifier. */
+	if (*format != '%')
+	    {
+	    ptrValue = format;
+	    size = strcspn(ptrValue, "%");
 	    noPercent = 1;
 	    goto doField;
-	}
+	    }
 
-	if (format[1] == '%') {
+	/* Is it a double %%? */
+	if (format[1] == '%')
+	    {
 	    ptrValue = format;
 	    size = 1;
 	    noPercent = 1;
 	    format += 2;
 	    goto doField;
-	}
+	    }
+
+	/* Start the new format specifier. */
+	newFormat[0] = '%';
+	newFormat[1] = '\0';
+	format++;
 
 	/*
 	 * Parse off a field specifier, compute how many characters
@@ -718,10 +725,8 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	 * "*" size specifiers.
 	 */
 
-	*newPtr = '%';
-	newPtr++;
-	format++;
-	if (isdigit(UCHAR(*format))) {
+	if(isdigit(UCHAR(*format)))
+	    {
 	    int tmp;
 
 	    /*
@@ -729,11 +734,11 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	     * must not be a mixture of XPG3 specs and non-XPG3 specs
 	     * in the same format string.
 	     */
-
 	    tmp = strtoul(format, &end, 10);
 	    if (*end != '$') {
 		goto notXpg;
 	    }
+
 	    format = end+1;
 	    gotXpg = 1;
 	    if (gotSequential) {
@@ -753,81 +758,81 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	}
 
 	xpgCheckDone:
-	while ((*format == '-') || (*format == '#') || (*format == '0')
-		|| (*format == ' ') || (*format == '+')) {
-	    *newPtr = *format;
-	    newPtr++;
-	    format++;
+	{
+	int len = strspn(format, "-#0 +");
+	gu_snprintfcat(newFormat, sizeof(newFormat), "%.*s", len, format);
+	format += len;
 	}
-	if (isdigit(UCHAR(*format))) {
+
+	/* width */
+	if(isdigit(UCHAR(*format)))
+	    {
 	    width = strtoul(format, &end, 10);
 	    format = end;
-	} else if (*format == '*') {
-	    if (argIndex >= argc) {
+	    }
+	else if(*format == '*')
+	    {
+	    if (argIndex >= argc)
 		goto badIndex;
-	    }
-	    if (Tcl_GetInt(interp, argv[argIndex], &width) != TCL_OK) {
+	    if (Tcl_GetInt(interp, argv[argIndex], &width) != TCL_OK)
 		goto fmtError;
-	    }
 	    argIndex++;
 	    format++;
-	}
-	if (width != 0) {
-	    sprintf(newPtr, "%d", width);
-	    while (*newPtr != 0) {
-		newPtr++;
 	    }
-	}
-	if (*format == '.') {
-	    *newPtr = '.';
-	    newPtr++;
+	if(width != 0)
+	    gu_snprintfcat(newFormat, sizeof(newFormat), "%d", width);
+
+	/* separator between width and precision */
+	if(*format == '.')
+	    {
+	    gu_snprintfcat(newFormat, sizeof(newFormat), ".");
 	    format++;
-	}
-	if (isdigit(UCHAR(*format))) {
+	    }
+
+	/* precision */
+	if(isdigit(UCHAR(*format)))
+	    {
 	    precision = strtoul(format, &end, 10);
 	    format = end;
-	} else if (*format == '*') {
-	    if (argIndex >= argc) {
+	    }
+	else if (*format == '*')
+	    {
+	    if(argIndex >= argc)
 		goto badIndex;
-	    }
-	    if (Tcl_GetInt(interp, argv[argIndex], &precision) != TCL_OK) {
+	    if(Tcl_GetInt(interp, argv[argIndex], &precision) != TCL_OK)
 		goto fmtError;
-	    }
 	    argIndex++;
 	    format++;
-	}
-	if (precision != 0) {
-	    sprintf(newPtr, "%d", precision);
-	    while (*newPtr != 0) {
-		newPtr++;
 	    }
-	}
-	if (*format == 'l') {
+	if(precision != 0)
+	    gu_snprintfcat(newFormat, sizeof(newFormat), "%d", precision);
+
+	if(*format == 'l')
+	    {
 	    format++;
-	} else if (*format == 'h') {
+	    }
+	else if(*format == 'h')
+	    {
 	    useShort = 1;
-	    *newPtr = 'h';
-	    newPtr++;
+	    gu_snprintfcat(newFormat, sizeof(newFormat), "h");
 	    format++;
-	}
-	*newPtr = *format;
-	newPtr++;
-	*newPtr = 0;
-	if (argIndex >= argc) {
+	    }
+	gu_snprintfcat(newFormat, sizeof(newFormat), "%c", *format);
+
+	if(argIndex >= argc)
 	    goto badIndex;
-	}
-	switch (*format) {
+
+	switch(*format)
+	    {
 	    case 'i':
-		newPtr[-1] = 'd';
+		newFormat[strlen(newFormat)-1] = 'd';	/* why is this needed ??? */
 	    case 'd':
 	    case 'o':
 	    case 'u':
 	    case 'x':
 	    case 'X':
-		if (Tcl_GetInt(interp, argv[argIndex], (int *) &intValue)
-			!= TCL_OK) {
+		if(Tcl_GetInt(interp, argv[argIndex], (int *) &intValue) != TCL_OK)
 		    goto fmtError;
-		}
 		whichValue = INT_VALUE;
 		size = 40 + precision;
 		break;
@@ -836,10 +841,8 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 		size = strlen(argv[argIndex]);
 		break;
 	    case 'c':
-		if (Tcl_GetInt(interp, argv[argIndex], (int *) &intValue)
-			!= TCL_OK) {
+		if(Tcl_GetInt(interp, argv[argIndex], (int *) &intValue) != TCL_OK)
 		    goto fmtError;
-		}
 		whichValue = INT_VALUE;
 		size = 1;
 		break;
@@ -848,15 +851,12 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	    case 'f':
 	    case 'g':
 	    case 'G':
-		if (Tcl_GetDouble(interp, argv[argIndex], &doubleValue)
-			!= TCL_OK) {
+		if(Tcl_GetDouble(interp, argv[argIndex], &doubleValue) != TCL_OK)
 		    goto fmtError;
-		}
 		whichValue = DOUBLE_VALUE;
 		size = 320;
-		if (precision > 10) {
+		if(precision > 10)
 		    size += precision;
-		}
 		break;
 	    case 0:
 		interp->result =
@@ -865,7 +865,7 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	    default:
 		sprintf(interp->result, "bad field specifier \"%c\"", *format);
 		goto fmtError;
-	}
+	    }
 	argIndex++;
 	format++;
 
@@ -899,15 +899,15 @@ Tcl_FormatCmd(dummy, interp, argc, argv)
 	    dst[dstSize] = 0;
 	} else {
 	    if (whichValue == DOUBLE_VALUE) {
-		sprintf(dst+dstSize, newFormat, doubleValue);
+		snprintf(dst+dstSize, dstSpace-dstSize, newFormat, doubleValue);
 	    } else if (whichValue == INT_VALUE) {
 		if (useShort) {
-		    sprintf(dst+dstSize, newFormat, (short) intValue);
+		    snprintf(dst+dstSize, dstSpace-dstSize, newFormat, (short) intValue);
 		} else {
-		    sprintf(dst+dstSize, newFormat, intValue);
+		    snprintf(dst+dstSize, dstSpace-dstSize, newFormat, intValue);
 		}
 	    } else {
-		sprintf(dst+dstSize, newFormat, ptrValue);
+		snprintf(dst+dstSize, dstSpace-dstSize, newFormat, ptrValue);
 	    }
 	    dstSize += strlen(dst+dstSize);
 	}

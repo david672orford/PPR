@@ -1287,7 +1287,7 @@ ExprMakeString(interp, valuePtr)
 	(*valuePtr->pv.expandProc)(&valuePtr->pv, shortfall);
     }
     if (valuePtr->type == TYPE_INT) {
-	sprintf(valuePtr->pv.buffer, "%ld", valuePtr->intValue);
+	snprintf(valuePtr->pv.buffer, sizeof(valuePtr->pv.buffer), "%ld", valuePtr->intValue);
     } else if (valuePtr->type == TYPE_DOUBLE) {
 	Tcl_PrintDouble(interp, valuePtr->doubleValue, valuePtr->pv.buffer);
     }
@@ -1505,7 +1505,7 @@ Tcl_ExprString(interp, string)
     result = ExprTopLevel(interp, string, &value);
     if (result == TCL_OK) {
 	if (value.type == TYPE_INT) {
-	    sprintf(interp->result, "%ld", value.intValue);
+	    snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", value.intValue);
 	} else if (value.type == TYPE_DOUBLE) {
 	    Tcl_PrintDouble(interp, value.doubleValue, interp->result);
 	} else {
@@ -1796,7 +1796,7 @@ TclExprFloatError(interp, value)
 		    (char *) NULL);
 	}
     } else {
-	sprintf(buf, "%d", errno);
+	snprintf(buf, sizeof(buf), "%d", errno);
 	Tcl_AppendResult(interp, "unknown floating-point error, ",
 		"errno = ", buf, (char *) NULL);
 	Tcl_SetErrorCode(interp, "ARITH", "UNKNOWN", interp->result,

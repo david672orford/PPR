@@ -328,19 +328,22 @@ Tcl_HashStats(Tcl_HashTable *tablePtr)
      * Print out the histogram and a few other pieces of information.
      */
 
-    result = (char *) ckalloc((unsigned) ((NUM_COUNTERS*60) + 300));
-    sprintf(result, "%d entries in table, %d buckets\n",
-	    tablePtr->numEntries, tablePtr->numBuckets);
-    p = result + strlen(result);
-    for (i = 0; i < NUM_COUNTERS; i++) {
-	sprintf(p, "number of buckets with %d entries: %d\n",
-		i, count[i]);
-	p += strlen(p);
+    {
+    int space_available = ((NUM_COUNTERS*60) + 300);
+    result = (char *) ckalloc((unsigned)space_available);
+    p = result;
+    snprintf(p, space_available, "%d entries in table, %d buckets\n", tablePtr->numEntries, tablePtr->numBuckets);
+    space_available -= strlen(p); p += strlen(p);
+    for (i = 0; i < NUM_COUNTERS; i++)
+	{
+	snprintf(p, space_available, "number of buckets with %d entries: %d\n", i, count[i]);
+	space_available -= strlen(p); p += strlen(p);
+	}
+    snprintf(p, space_available, "number of buckets with %d or more entries: %d\n", NUM_COUNTERS, overflow);
+    space_available -= strlen(p); p += strlen(p);
+    snprintf(p, space_available, "average search distance for entry: %.1f", average);
     }
-    sprintf(p, "number of buckets with %d or more entries: %d\n",
-	    NUM_COUNTERS, overflow);
-    p += strlen(p);
-    sprintf(p, "average search distance for entry: %.1f", average);
+
     return result;
 }
 

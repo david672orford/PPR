@@ -323,7 +323,7 @@ StringValue(Link *linkPtr, char *buffer)
     switch (linkPtr->type) {
 	case TCL_LINK_INT:
 	    linkPtr->lastValue.i = *(int *)(linkPtr->addr);
-	    sprintf(buffer, "%d", linkPtr->lastValue.i);
+	    snprintf(buffer, TCL_DOUBLE_SPACE, "%d", linkPtr->lastValue.i);
 	    return buffer;
 	case TCL_LINK_DOUBLE:
 	    linkPtr->lastValue.d = *(double *)(linkPtr->addr);

@@ -319,7 +319,7 @@ Tcl_ExecCmd(dummy, interp, argc, argv)
 	}
 	Tcl_DetachPids(numPids, pidPtr);
 	for (i = 0; i < numPids; i++) {
-	    sprintf(id, "%d", pidPtr[i]);
+	    snprintf(id, sizeof(id), "%d", pidPtr[i]);
 	    Tcl_AppendElement(interp, id);
 	}
 	ckfree((char *) pidPtr);
@@ -594,7 +594,7 @@ Tcl_FileCmd(dummy, interp, argc, argv)
 	if (stat(fileName, &statBuf) == -1) {
 	    goto badStat;
 	}
-	sprintf(interp->result, "%ld", statBuf.st_atime);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", statBuf.st_atime);
 	goto done;
     } else if ((c == 'i') && (strncmp(argv[1], "isdirectory", length) == 0)
 	    && (length >= 3)) {
@@ -634,7 +634,7 @@ Tcl_FileCmd(dummy, interp, argc, argv)
 	if (stat(fileName, &statBuf) == -1) {
 	    goto badStat;
 	}
-	sprintf(interp->result, "%ld", statBuf.st_mtime);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", statBuf.st_mtime);
 	goto done;
     } else if ((c == 'o') && (strncmp(argv[1], "owned", length) == 0)) {
 	if (argc != 3) {
@@ -684,7 +684,7 @@ Tcl_FileCmd(dummy, interp, argc, argv)
 	if (stat(fileName, &statBuf) == -1) {
 	    goto badStat;
 	}
-	sprintf(interp->result, "%ld", statBuf.st_size);
+	snprintf(interp->result, TCL_RESULT_SIZE, "%ld", statBuf.st_size);
 	goto done;
     } else if ((c == 's') && (strncmp(argv[1], "stat", length) == 0)
 	    && (length >= 2)) {
@@ -781,52 +781,52 @@ StoreStatData(interp, varName, statPtr)
 {
     char string[30];
 
-    sprintf(string, "%ld", statPtr->st_dev);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_dev);
     if (Tcl_SetVar2(interp, varName, "dev", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_ino);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_ino);
     if (Tcl_SetVar2(interp, varName, "ino", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_mode);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_mode);
     if (Tcl_SetVar2(interp, varName, "mode", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_nlink);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_nlink);
     if (Tcl_SetVar2(interp, varName, "nlink", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", (long) statPtr->st_uid);
+    snprintf(string, sizeof(string), "%ld", (long) statPtr->st_uid);
     if (Tcl_SetVar2(interp, varName, "uid", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", (long) statPtr->st_gid);
+    snprintf(string, sizeof(string), "%ld", (long) statPtr->st_gid);
     if (Tcl_SetVar2(interp, varName, "gid", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_size);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_size);
     if (Tcl_SetVar2(interp, varName, "size", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_atime);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_atime);
     if (Tcl_SetVar2(interp, varName, "atime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_mtime);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_mtime);
     if (Tcl_SetVar2(interp, varName, "mtime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    sprintf(string, "%ld", statPtr->st_ctime);
+    snprintf(string, sizeof(string), "%ld", statPtr->st_ctime);
     if (Tcl_SetVar2(interp, varName, "ctime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
@@ -1019,7 +1019,7 @@ Tcl_GetsCmd(notUsed, interp, argc, argv)
     }
 
     if (argc == 3) {
-	sprintf(interp->result, "%d", totalCount);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", totalCount);
     }
     return TCL_OK;
 }
@@ -1374,14 +1374,14 @@ Tcl_PidCmd(dummy, interp, argc, argv)
 	return TCL_ERROR;
     }
     if (argc == 1) {
-	sprintf(interp->result, "%ld", (long) getpid());
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", (long) getpid());
     } else {
 	if (Tcl_GetOpenFile(interp, argv[1], 0, 0, &f) != TCL_OK) {
 	    return TCL_ERROR;
 	}
 	oFilePtr = tclOpenFiles[fileno(f)];
 	for (i = 0; i < oFilePtr->numPids; i++) {
-	    sprintf(string, "%d", oFilePtr->pidPtr[i]);
+	    snprintf(string, sizeof(string), "%d", oFilePtr->pidPtr[i]);
 	    Tcl_AppendElement(interp, string);
 	}
     }
@@ -1773,7 +1773,7 @@ Tcl_TellCmd(notUsed, interp, argc, argv)
     if (Tcl_GetOpenFile(interp, argv[1], 0, 0, &f) != TCL_OK) {
 	return TCL_ERROR;
     }
-    sprintf(interp->result, "%ld", (long int) ftell(f));
+    snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", (long int) ftell(f));
     return TCL_OK;
 }
 
@@ -1834,7 +1834,7 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
 	if (result != TCL_OK) {
 	    if (result == TCL_ERROR) {
 		char msg[60];
-		sprintf(msg, "\n    (\"time\" body line %d)",
+		snprintf(msg, sizeof(msg), "\n    (\"time\" body line %d)",
 			interp->errorLine);
 		Tcl_AddErrorInfo(interp, msg);
 	    }
@@ -1851,7 +1851,7 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
     timePer = micros;
 #endif
     Tcl_ResetResult(interp);
-    sprintf(interp->result, "%.0f microseconds per iteration",
+    snprintf(interp->result, TCL_RESULT_SIZE+1, "%.0f microseconds per iteration",
 	(count <= 0) ? 0 : timePer/count);
     return TCL_OK;
 }
@@ -1924,9 +1924,9 @@ CleanupChildren(interp, numPids, pidPtr, errorId, keepNewline)
 	    char msg1[20], msg2[20];
 
 	    result = TCL_ERROR;
-	    sprintf(msg1, "%d", pid);
+	    snprintf(msg1, sizeof(msg1), "%d", pid);
 	    if (WIFEXITED(waitStatus)) {
-		sprintf(msg2, "%d", WEXITSTATUS(waitStatus));
+		snprintf(msg2, sizeof(msg2), "%d", WEXITSTATUS(waitStatus));
 		Tcl_SetErrorCode(interp, "CHILDSTATUS", msg1, msg2,
 			(char *) NULL);
 		abnormalExit = 1;

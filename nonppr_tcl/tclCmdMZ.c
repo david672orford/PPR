@@ -170,7 +170,6 @@ Tcl_RegexpCmd(dummy, interp, argc, argv)
 	    }
 	} else {
 	    if (indices) {
-		/* sprintf(info, "%d %d", start - string, end - string - 1); */
 		snprintf(info, sizeof(info), "%d %d", start - string, end - string - 1);
 		result = Tcl_SetVar(interp, argPtr[i+2], info, 0);
 	    } else {
@@ -433,7 +432,6 @@ Tcl_RegsubCmd(dummy, interp, argc, argv)
 	    goto cantSet;
 	}
     }
-    /* sprintf(interp->result, "%d", numMatches); */
     snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", numMatches);
     code = TCL_OK;
 
@@ -827,7 +825,7 @@ Tcl_ScanCmd(dummy, interp, argc, argv)
 	    char string[TCL_DOUBLE_SPACE];
 
 	    case 'd':
-		sprintf(string, "%d", *((int *) curField->location));
+		snprintf(string, sizeof(string), "%d", *((int *) curField->location));
 		if (Tcl_SetVar(interp, argv[i+3], string, 0) == NULL) {
 		    storeError:
 		    Tcl_AppendResult(interp,
@@ -839,14 +837,14 @@ Tcl_ScanCmd(dummy, interp, argc, argv)
 		break;
 
 	    case 'u':
-		sprintf(string, "%u", *((int *) curField->location));
+		snprintf(string, sizeof(string), "%u", *((int *) curField->location));
 		if (Tcl_SetVar(interp, argv[i+3], string, 0) == NULL) {
 		    goto storeError;
 		}
 		break;
 
 	    case 'c':
-		sprintf(string, "%d", *((char *) curField->location) & 0xff);
+		snprintf(string, sizeof(string), "%d", *((char *) curField->location) & 0xff);
 		if (Tcl_SetVar(interp, argv[i+3], string, 0) == NULL) {
 		    goto storeError;
 		}
@@ -868,7 +866,7 @@ Tcl_ScanCmd(dummy, interp, argc, argv)
 		break;
 	}
     }
-    sprintf(interp->result, "%d", numScanned);
+    snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", numScanned);
     done:
     if (results != NULL) {
 	ckfree(results);
@@ -1030,7 +1028,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 		}
 	    }
 	}
-	sprintf(interp->result, "%d", match);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", match);
 	return TCL_OK;
     } else if ((c == 'i') && (strncmp(argv[1], "index", length) == 0)) {
 	int index;
@@ -1064,7 +1062,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 		    " length string\"", (char *) NULL);
 	    return TCL_ERROR;
 	}
-	sprintf(interp->result, "%d", strlen(argv[2]));
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", strlen(argv[2]));
 	return TCL_OK;
     } else if ((c == 'm') && (strncmp(argv[1], "match", length) == 0)) {
 	if (argc != 4) {
@@ -1237,7 +1235,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 	    cur = index+1;
 	}
 	wordendDone:
-	sprintf(interp->result, "%d", cur);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", cur);
 	return TCL_OK;
     } else if ((c == 'w') && (strncmp(argv[1], "wordstart", length) == 0)
 	    && (length > 4)) {
@@ -1271,7 +1269,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 	    cur += 1;
 	}
 	wordstartDone:
-	sprintf(interp->result, "%d", cur);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%d", cur);
 	return TCL_OK;
     } else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
@@ -1558,7 +1556,7 @@ Tcl_SwitchCmd(dummy, interp, argc, argv)
 	code = Tcl_Eval(interp, switchArgv[body]);
 	if (code == TCL_ERROR) {
 	    char msg[100];
-	    sprintf(msg, "\n    (\"%.50s\" arm line %d)", switchArgv[i],
+	    snprintf(msg, sizeof(msg), "\n    (\"%.50s\" arm line %d)", switchArgv[i],
 		    interp->errorLine);
 	    Tcl_AddErrorInfo(interp, msg);
 	}
@@ -1899,7 +1897,7 @@ Tcl_WhileCmd(dummy, interp, argc, argv)
 	if ((result != TCL_OK) && (result != TCL_CONTINUE)) {
 	    if (result == TCL_ERROR) {
 		char msg[60];
-		sprintf(msg, "\n    (\"while\" body line %d)",
+		snprintf(msg, sizeof(msg), "\n    (\"while\" body line %d)",
 			interp->errorLine);
 		Tcl_AddErrorInfo(interp, msg);
 	    }
