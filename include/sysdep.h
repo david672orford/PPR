@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 December 2002.
+** Last modified 5 December 2002.
 */
 
 /*
@@ -458,6 +458,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #undef HAVE_SNPRINTF
 #undef HAVE_VSNPRINTF
 #undef HAVE_MKFIFO
+#undef HAVE_NETGROUP
 
 #endif
 #ifdef PASS2

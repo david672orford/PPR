@@ -684,7 +684,7 @@ int printer_show(const char *argv[])
 	{
 	rip_ppd_name = gu_strdup("ppr-gs");			/* !!! */
 	rip_ppd_output_language = gu_strdup("pcl");		/* !!! */
-	gu_asprintf(&rip_ppd_options, "cupsfilter=%s -r%d", cups_filter, default_resolution);
+	gu_asprintf(&rip_ppd_options, "cups=%s -r%d", cups_filter, default_resolution);
 	}
 
     /* If the PPD file specifies a RIP and the printer configuration file
