@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--25 January 2002.
+1.50a1, 1 August 2001--2 February 2002.
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7527,3 +7527,4 @@ line was being parsed twice.
   Previously it was a fatal error.  This meant that pprd would kill itself
   if the temporary file space filled up!
 
+* Updated INSTALL.txt somewhat and added a mention of RPM_BUILD_ROOT.

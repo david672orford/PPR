@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.50a1
-25 January 2002
+28 January 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -808,6 +808,7 @@ proc menu_file_quit {} {
     global button_color
     global wserial
 
+    # Create a unique window name.
     set w .quit_confirm_[incr wserial]
 
     # This is a GIF file converted to base64 with uuencode -m.
@@ -836,11 +837,11 @@ jsMP++uPxBPby5HFSQycSaoKu8rwuQV/PCDG2wJMMqMhW6MxtRw3M3LKgv2p
 Zc1a7ipztSHJHK5QPEea08890yQ00CvtUQAAOw==
 }]
 
+    # For some reason, the -justify option doesn't work on MacOS.
     iwidgets::messagedialog $w \
             -modality application \
             -title "Confirmation" \
 	    -image $stop_image \
-	    -justify left \
             -text \
 "If you close this program, this computer will be unable to print to 
 the public printers.  As a courtesy to the next user, you should
