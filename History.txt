@@ -9490,6 +9490,8 @@ no final tarball was released.
 
 * libscript/readppd.pl: added ppd_level().
 
+* www/ppr-passwd.c: fixed --delete (merged into 1.54)
+
 
 TODO
 
