@@ -117,6 +117,7 @@ struct QFileEntry
 	char *mask;			/* which pages should be printed? */
 	int count;			/* how many 1's in the mask? */
 	} page_list;
+    const char *question;		/* partial URL for question */
     } ;
 
 /* Possible values for orientation member of struct QFileEntry. */

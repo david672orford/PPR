@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 24 April 2001.
+# Last modified 7 December 2001.
 #
 
 #===============================================================
@@ -111,8 +111,9 @@ sub opencmd
     # tainted PATHs.
     $ENV{PATH} = "" if($_[0] =~ /^\//);
 
-    # This is the child.
-    exec(@_);
+    # This is the child.  Exec the program we want.  The exec() is in 
+    # a block by itself to suppress a Perl warning.
+    { exec(@_); }
 
     # We must actually execute something because if we don't, then this
     # copy of Perl will dump its buffers.

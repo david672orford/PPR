@@ -36,7 +36,7 @@ open_connexion(SEND, $response_address) || exit(2);
 
 # Send the message to open the web page.
 SEND->autoflush(1);
-print SEND "HTML http://localhost:15010/$question 6i 4i\n";
+print SEND "HTML http://localhost:15010/$question 6i 2i\n";
 
 # Wait for a reply to our command.
 my $result = '';

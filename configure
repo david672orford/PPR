@@ -1,0 +1,6 @@
+#! /bin/sh
+cd makeprogs
+./configure $*
+echo
+echo "Oh, by the way, autoconf doesn't work yet.  You should use ./Configure"
+echo "for now."

@@ -171,6 +171,7 @@
 **			colons into excalmation points.
 */
 
+/* This doesn't work yet. */
 #ifdef PPR_AUTOCONF
 #include "config.h"
 #else
@@ -618,6 +619,8 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #endif /* PASS2 */
 #endif /* WIN32_TESTING */
+
+/*========================================================================*/
 
 #endif /* Not autoconf */
 

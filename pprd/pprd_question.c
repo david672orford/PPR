@@ -127,7 +127,7 @@ static int question_launch(struct QEntry *job)
         if(!(qfile = fopen(filename, "r")))
             {
             error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
-            return 0;
+            exit(10);
             }
 
         while((line = gu_getline(line, &line_available, qfile)))
@@ -150,10 +150,10 @@ static int question_launch(struct QEntry *job)
         fclose(qfile);
 
 	if(!question || !response_responder || !response_address)
-	    fatal(10, "child: %s(): required parameter missing", function);
+	    fatal(11, "child: %s(): required parameter missing", function);
 
 	execl("lib/pprd-question", "pprd-question", response_responder, response_address, response_options ? response_options : "", question, jobname, NULL);
-	fatal(11, "child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	fatal(12, "child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	}
 
     DODEBUG_QUESTIONS(("%s(): pid is %ld", function, (long)active_question[x].pid));
@@ -168,6 +168,7 @@ static int question_launch(struct QEntry *job)
     active_question[x].subid = job->subid;
     active_question[x].homenode_id = job->homenode_id;
 
+    DODEBUG_QUESTIONS(("%s()", function));
     return 0;
     } /* end of question_launch() */
 
@@ -217,6 +218,8 @@ static void question_look_for_work(void)
 
         unlock();
 	}
+
+    DODEBUG_QUESTIONS(("%s(): done", function));
     } /* end of question_look_for_work() */
 
 /*
@@ -232,6 +235,7 @@ void question_job(struct QEntry *job)
     outstanding_questions++;
     if(active_questions < MAX_ACTIVE_QUESTIONS)
 	question_launch(job);
+    DODEBUG_QUESTIONS(("%s(): done", function));
     } /* end of question_job() */
 
 /*
@@ -314,6 +318,7 @@ void question_tick(void)
     FUNCTION4DEBUG("question_tick")
     DODEBUG_QUESTIONS(("%s()", function));
     question_look_for_work();
+    DODEBUG_QUESTIONS(("%s(): done", function));
     }
 
 /* end of file */

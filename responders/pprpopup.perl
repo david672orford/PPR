@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/responders/pprpopup.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,12 +11,12 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 May 2000.
+# Last modified 7 December 2001.
 #
 
 #
 # This program will send a response to the Tcl/Tk script "pprpopup"
-# which is likely running # on a MS-Windows 95 machine.
+# which is likely running on a MS-Windows 95 machine.
 #
 
 require 5.000;
@@ -25,7 +25,7 @@ require 'respond.ph';
 require 'pprpopup.pl';
 
 # Set a maximum time this script can run.
-alarm(600);
+alarm(30);
 
 # Split the arguments out into individually named variables.
 my($for, $addr, $msg, $msg2, $options, $code, $jobid, $extra, $title, $time, $reason, $pages, $charge) = @ARGV;

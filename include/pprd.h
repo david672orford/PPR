@@ -37,8 +37,8 @@
 /*
 ** pprd Debugging Options.
 */
-#if 0
-#define DEBUG 1				/* function name strings */
+#if 1
+#define DEBUG 1				/* define function[] strings */
 #define DEBUG_STARTUP 1			/* initialization routines */
 #define DEBUG_MAINLOOP 1		/* main loop */
 /* #define DEBUG_RECOVER 1 */		/* reloading jobs and mounted media on restart */
@@ -50,10 +50,11 @@
 #define DEBUG_MEDIA 1			/* media operations */
 /* #define DEBUG_TICK 1 */		/* debug timer tick routine */
 /* #define DEBUG_RESPOND 1 */		/* launching of responders */
-#define DEBUG_PPOPINT 1			/* interface to ppop */
+/* #define DEBUG_PPOPINT 1 */		/* interface to ppop */
 /* #define DEBUG_ALERTS 1 */            /* sending of operator alerts */
-#define DEBUG_NODEID 1			/* allocating and deallocating node id numbers */
+/* #define DEBUG_NODEID 1 */		/* allocating and deallocating node id numbers */
 #define DEBUG_REMOTE 1			/* sending of jobs to remote systems */
+#define DEBUG_QUESTIONS 1
 #endif
 
 /*
@@ -148,7 +149,7 @@ struct QEntry
 
     SHORT_INT status;			/* printer id if printing, < 0 for other status */
     unsigned short int flags;		/* --keep, responding, etc. */
-    time_t resend_response_at;		/* time at which to retry responder to questioner */
+    time_t resend_message_at;		/* time at which to retry responder to questioner */
 
     SHORT_INT priority;			/* priority number (0=highest, 39=lowest) */
     unsigned char never;		/* bitmap of group member which can't print */
@@ -298,6 +299,12 @@ struct fcommand2
 #define DODEBUG_REMOTE(a) debug a
 #else
 #define DODEBUG_REMOTE(a)
+#endif
+
+#ifdef DEBUG_QUESTIONS
+#define DODEBUG_QUESTIONS(a) debug a
+#else
+#define DODEBUG_QUESTIONS(a)
 #endif
 
 /* end of file */

@@ -3,14 +3,29 @@
 ** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last revised 5 December 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last revised 6 December 2001.
 */
 
 /*
@@ -853,6 +868,8 @@ static const struct gu_getopt_opt option_words[] =
 	{"strip-cache", 'S', TRUE},
 	{"strip-fontindex", 1015, TRUE},
 	{"strip-printer", 1016, TRUE},
+	{"save", 1017, FALSE},
+	{"question", 1018, TRUE},
 	{"commentary", 1100, TRUE},
 	{"commentator", 1101, TRUE},
 	{"commentator-address", 1102, TRUE},
@@ -1035,7 +1052,10 @@ HELP(_(
 "\t--hold                     job should be held immediately\n"));
 
 HELP(_(
-"\t--keep                     job should be kept after printing\n"));
+"\t--question <path>          path of HTML question page\n"));
+
+HELP(_(
+"\t--save                     job should be saved after printing\n"));
 
 HELP(_(
 "\t-q <integer>               sets priority of print job\n"));
@@ -1772,6 +1792,15 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	case 1016:				/* --strip-printer */
 	    if(gu_torf_setBOOL(&qentry.StripPrinter, optarg) == -1)
 	    	fatal(PPREXIT_SYNTAX, _("%s must be followed by \"true\" or \"false\""), true_option);
+	    break;
+
+	case 1017:				/* --save */
+	    qentry.flags |= JOB_FLAG_SAVE;
+	    break;
+
+	case 1018:				/* --question */
+	    qentry.question = optarg;
+	    qentry.flags |= JOB_FLAG_QUESTION_UNANSWERED;
 	    break;
 
 	case 1100:				/* --commentary */
