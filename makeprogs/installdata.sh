@@ -69,7 +69,7 @@ while [ "$1" != "" ]
 		cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
 
 		# This may fail during RPM build.  We don't care.
-		chown $USER_PPR "$RPM_BUILD_ROOT$dest" \
+		chown $USER_PPR "$RPM_BUILD_ROOT$dest" 2>/dev/null \
 			&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dest" 2>/dev/null
 
 		chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -72,8 +72,8 @@ if [ $squeeze != 0 ]
 	else
 	echo "    \"$source\" --> \"$target\""
 	cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
-	chown $USER_PPR "$RPM_BUILD_ROOT$target"
-	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target"
+	chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null \
+		&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 	chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
 	fi
 

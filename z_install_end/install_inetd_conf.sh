@@ -26,7 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 3 August 2003.
+#
+
+#
+# This script identifies the installed Inetd (Berkely, Linux, or Xinetd) and
+# configures it to start PPR's lpr and http servers (though it may leave
+# then disabled).  This script needs some more work to support RPM.
 #
 
 . ../makeprogs/paths.sh
@@ -193,12 +199,13 @@ add_service ppradmin 15010
 if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 	then
 	echo " found, assuming it is what you are using..."
-	if [ -f $XINETD_PPR ]
+	if [ -f $RPM_BUILD_ROOT$XINETD_PPR ]
 		then
 		echo "  $XINETD_PPR already exists, good."
 		else
 		echo "  Creating $XINETD_PPR..."
-		xinetd_config $XINETD_PPR
+		xinetd_config $RPM_BUILD_ROOT$XINETD_PPR
+		../makeprogs/installconf config $XINETD_PPR
 		fi
 	exit 0
 	else

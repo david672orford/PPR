@@ -1,16 +1,32 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 2 August 2003.
+# Last modified 3 August 2003.
 #
 
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
 #
-# In order to use this file, move the PPR source archive to 
-# /usr/src/RPM/SOURCES and run "rpm -ba ppr-X.XX.spec".  It is possible to
-# build the thing elsewhere, such as in one's home dirctory, but I don't know
-# how.
+
+#
+# Building RPM packages as root is not recomended and is uncessary, at least
+# in the case of PPR.  Instead, it is suggested that you run these commands 
+# in your home directory to set up an RPM build space for yourself.
+# 
+# for d in BUILD SOURCES SPECS SRPMS RPMS/i386 RPMS/i486 RPMS/i586 RPMS/k6 RPMS/athlon RPMS/noarch
+#	do
+#	mkdir -p rpmbuild/$d
+#	done
+# echo "%_topdir $HOME/rpmbuild" >>.rpmmacros
+# 
+# You should then copy the PPR source archive into rpmbuild/SOURCES/ and
+# run the following command:
+# 
+# rpmbuild -ba ppr.spec
+#
+# The source package will appear in rpmbuild/SOURCES and the binary package
+# will appear in rpmbuild/RPMS/ in the directory for the appropriate
+# architecture.
 #
 
 Summary: A spooler for PostScript printers
@@ -24,6 +40,26 @@ URL: http://ppr.trincoll.edu/
 Vendor: Trinity College, Hartford, Connecticut, U.S.A.
 Packager: Trinity College, Hartford, Connecticut, U.S.A.
 BuildRoot: /var/tmp/%{name}-buildroot
+
+#
+# The as of 2 August 2003, Mandrake Cooker dependency scripts fill the 
+# requires and provides list with very strange stuff, including an error
+# message.  Among other things, the thing can't deal with script interpreters
+# which are in the package itself.  It also generates dependencies for PPR's 
+# *.pl files. 
+#
+# Selecting the program rpmdeps cuts down on the outright errors.  The grep
+# commands filters out the really bad stuff.  No, PPR doesn't not depend on 
+# Perl even though it can use it.
+# 
+AutoReq: yes
+%define __find_requires       sh -c '/usr/lib/rpm/rpmdeps --requires $* | grep -v perl | grep -v tclsh | grep -v wish'
+
+#
+# Turn auto provides generation off completely since it doesn't find anything 
+# useful to other packages, just a list of PPR's internal Perl modules.
+#
+AutoProv: no
 
 %description
 PPR is a print spooler for PostScript printers.  It can print to parallel,
@@ -40,17 +76,24 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 # This configures and builds the source.  The current directory is already
 # the root of the source code.
 #
-# Note: We have to work %_target_cpu in here somewhere.  Right now
-# it configures for the CPU it runs on.
+# Note: Configure will take the CFLAGS from $RPM_OPT_FLAGS in preference
+# to what it would have picked.
+#
+# Also note that we set the path so that Configure is less likely to pick
+# things from /usr/local/bin.
 #============================================================================
 %build
-./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --with-tdb
+PATH=/usr/bin:/bin:$PATH ./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --without-tdb
 make
 
 #============================================================================
 # This does a dummy install of the program into a directory identified
 # by $RPM_BUILD_ROOT.  This clean directory is used to create the cpio
 # portion of the binary .rpm file.
+#
+# In case you are wondering, the PPR makefiles and the install scripts in 
+# makeprogs/ automatically adjust their behavior when they see that
+# $RPM_BUILD_ROOT is defined.
 #============================================================================
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -73,7 +116,13 @@ rm -rf $RPM_BUILD_ROOT
 
 #============================================================================
 # This is run before unpacking the cpio archive from the binary .rpm file.
-# This is similiar to what make install in z_install_begin/ does.
+# This is similiar to what "make install" in z_install_begin/ does.
+#
+# It is annoying that the RPM documentation doesn't discuss the issue of
+# creating users and groups.  It would be nice to specify the ID numbers,
+# but we dasn't since something else might have them already.  We are
+# reduced to doing a mass chown in the %post section.  Will this cause
+# "rpm --verify" to report that PPR is corrupt?
 #============================================================================
 %pre
 
@@ -152,7 +201,8 @@ if [ -f /etc/inetd.conf ]
 #============================================================================
 %postun
 
-# Let Inetd pick up the new configuration.
+# Let Inetd pick up the new configuration.  We don't know if Inetd or Xinetd
+# is being used, so we use the shotgun approach.
 killall -HUP inetd
 killall -HUP xinetd
 

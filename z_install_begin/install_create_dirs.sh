@@ -90,8 +90,8 @@ for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 		then
 		mkdir -p $RPM_BUILD_ROOT$dir
 		fi
-	chown $USER_PPR $RPM_BUILD_ROOT$dir #|| exit 1
-	chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir #|| exit 1
+	chown $USER_PPR $RPM_BUILD_ROOT$dir 2>/dev/null &&
+		chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir 2>/dev/null
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	done 
 

@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 May 2003.
+# Last modified 2 August 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -805,6 +805,8 @@ if [ -z "$PERL" ]
     PERL="/usr/bin/perl"
     fi
 
+echo
+
 #
 # If we will be using GCC, devise a set of options
 # appropriate to this processor and version.
@@ -813,7 +815,7 @@ if [ $NATIVE_CC = "no" ]
   then
   echo "Selecting appropriate processor options for GCC."
 
-  GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -O2"
+  GCC_CFLAGS="-O2"
   PROCESSOR=`uname -m`
   GCC_VERSION=`gcc --version | head -1`
   GCC_VERSION_SHORT=`echo $GCC_VERSION | sed -e 's/^[^0-9]*\([0-9][0-9]*\.[0-9\.][0-9\.]*\).*$/\1/'`
@@ -837,7 +839,7 @@ if [ $NATIVE_CC = "no" ]
     esac
 
   #
-  # add options for each processor
+  # Add additional options for certain CPUs.  Suggestions are welcome.
   #
   case $PROCESSOR in
     i386 )			# default anyway?
@@ -864,6 +866,17 @@ if [ $NATIVE_CC = "no" ]
 
   echo
   fi
+
+if [ -n "$RPM_OPT_FLAGS" ]
+  then
+  echo "Compiler flags from \$RPM_OPT_FLAGS override those selected above."
+  echo "Our choice: $GCC_CFLAGS"
+  echo "Replaced with: $RPM_OPT_FLAGS"
+  GCC_CFLAGS="$RPM_OPT_FLAGS"
+  echo
+  fi
+
+GCC_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations $GCC_CFLAGS"
 
 #
 # See if we can find Zlib.

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 March 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -132,7 +132,8 @@ dist-docs:
 dist: dist-docs clean unconfigure
 	( cd po; ./extract_to_pot.sh )
 	#( cd /usr/local/src; tar cf - ppr-$(SHORT_VERSION) | gzip --best >~ppr/ppr-$(SHORT_VERSION).tar.gz )
-	( cd /usr/local/src; tar zcf ~ppr/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
+	#( cd /usr/local/src; tar zcf ~ppr/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
+	( cd /usr/local/src; tar zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
 	@echo
 	@echo "Distribution archive built."
 	@echo

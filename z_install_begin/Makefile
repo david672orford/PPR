@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 2 August 2003.
 #
 
 include ../Makefile.conf
@@ -41,7 +41,7 @@ all: $(ALL)
 #=== Install ================================================================
 
 install: $(ALL)
-	./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR)
+	[ -z "$RPM_BUILD_ROOT" ] && ./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) || true
 	./install_create_dirs.sh $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR) $(CONFDIR) $(HOMEDIR) $(SHAREDIR) $(VAR_SPOOL_PPR) $(TEMPDIR)
 
 #=== Housekeeping ===========================================================
