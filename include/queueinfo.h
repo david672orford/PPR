@@ -30,6 +30,15 @@
 
 enum QUEUEINFO_TYPE { QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
 
+struct QUEUEINFO
+    {
+    const char *name;
+    enum QUEUEINFO_TYPE type;
+    
+    };
+
+void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
+void queueinfo_delete(void *p);
 
 
 /* end of file */

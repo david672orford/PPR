@@ -84,3 +84,5 @@ unsafe.$(OBJ): unsafe.c ../include/before_system.h ../include/gu.h ../include/gl
 
 writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
+queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
+

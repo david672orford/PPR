@@ -33,5 +33,15 @@
 #include "global_defines.h"
 #include "queueinfo.h"
 
+void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
+    {
 
+    }
+    
+void queueinfo_delete(void *qip)
+    {
+
+    gu_free(qip);
+    }
+    
 /* end of file */
