@@ -453,11 +453,11 @@ static void pprdrv_exited(int prnid, int wstat)
 		    {
 		    char *LD_LIBRARY_PATH = getenv("LD_LIBRARY_PATH");
 		    alert(printers[prnid].name, TRUE,
-		    	_("Printing aborted because pprdrv died.  The stated reasion for its death\n"
-		    	  "(killed by signal 0) may indicate that dynamic linking failed.  You may\n"
-		    	  "need to restart pprd with LD_LIBRARY_PATH set or take some other operating\n"
-		    	  "system specific action to help pprdrv to find the libraries it needs to run.\n"
-		    	  "LD_LIBRARY_PATH=\"%s\"\n"),
+		    	_("Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
+		    	  "by signal 0) may indicate that dynamic linking failed.  You may need to\n"
+		    	  "restart pprd with LD_LIBRARY_PATH set or take some other operating system-\n"
+		    	  "specific action to help pprdrv to find the libraries it needs to run.\n"
+		    	  "LD_LIBRARY_PATH=\"%s\""),
 		    	  LD_LIBRARY_PATH ? LD_LIBRARY_PATH : ""
 		    	  );
 		    }
