@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 21 June 2001.
 */
 
 #ifndef LIBPPR_INT_H
@@ -56,7 +56,7 @@ void int_cmdline_set(int argc, char *argv[]);
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[]);
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);
 int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_engaged, int refused_retries, const char snmp_community[], unsigned int *address_ptr);
-void int_snmp_status(struct gu_snmp *s);
+void int_snmp_status(void *s);
 void int_printer_error_tcpip(int error_number);
 void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*snmp_function)(void *address), void *address, int snmp_status_interval);
 void int_exit(int exitvalue)

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 10 May 2001.
+** Last revised 21 June 2001.
 */
 
 /*
@@ -19,7 +19,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 1
+#if 0
 #define DEBUG 1				/* include function debug() */
 #define DEBUG_MAIN 1			/* main() */
 #define DEBUG_INTERFACE 1		/* show opening, closing, etc. */

@@ -104,7 +104,7 @@ echo "9) AT&T UWIN 2.9 with NT 4.0 (Doesn't work yet) *"
 echo "10) HP-UX 10.2 *"
 echo "11) ULTRIX 4.4 RISC *"
 echo "12) SunOS 5.6--5.8 (Solaris 2.6--8.0)"
-echo "13) FreeBSD 3.1R"
+echo "13) FreeBSD 3.1R, 4.3R"
 echo
 echo " * See INSTALL.txt for notes on this port."
 echo
@@ -203,7 +203,7 @@ case "$answer" in
 	13 )
 		SYSTEM="FREEBSD"
 		DESCRIPTION="FreeBSD 3.1R"
-		ACTUAL_SYSTEM=`uname -s`
+		ACTUAL_SYSTEM=`uname -s | sed -e 's/^FreeBSD/FREEBSD/'`
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
@@ -858,6 +858,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSYSATTWGS===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -886,6 +887,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS5===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -910,6 +912,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS56===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -934,6 +937,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndNETBSD===
 MAKE=gmake
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -957,7 +961,8 @@ if [ $SYSTEM = "LINUX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndLINUX===
-MAKE=make --no-print-directory
+MAKE=make
+MAKEFLAGS=--no-print-directory
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -985,6 +990,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS4===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1009,6 +1015,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndOSF1==='
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1049,6 +1056,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1100,7 +1108,8 @@ cat >&3 <<===EndCYGWIN===
 .c.exe:
 	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
 
-MAKE=make --no-print-directory
+MAKE=make
+MAKEFLAGS=--no-print-directory
 STRIP=strip
 OBJ=o
 DOTEXE=.exe
@@ -1130,6 +1139,7 @@ cat >&3 <<===EndUWIN1===
 	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
 
 MAKE=make
+MAKEFLAGS=
 STRIP=touch
 OBJ=o
 DOTEXE=.exe
@@ -1172,6 +1182,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndHPUX1===
 MAKE=make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1214,6 +1225,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndULTRIX1===
 MAKE=s5make
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
@@ -1261,6 +1273,7 @@ then
 echo "      Emitting section for $DESCRIPTION"
 cat >&3 <<===EndFreeBSD===
 MAKE=gmake
+MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=

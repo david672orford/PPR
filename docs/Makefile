@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 20 April 2001.
+# Last modified 21 June 2001.
 #
 
 # Pull in settings from Configure.
@@ -27,8 +27,10 @@ SUBDIRS=refman uprint pprdoc pprinst pprhack misc
 
 #=== Build ==================================================================
 
-all: $(PROGS) $(HTML)
-	for i in $(SUBDIRS); do ( cd $$i; make ); done
+all: $(PROGS) all-docs
+
+all-docs: $(HTML)
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) $(MAKEFLAGS) ); done
 
 #=== Install ================================================================
 
@@ -36,7 +38,7 @@ install: $(PROGS) $(HTML)
 	$(MAKE_NEW_DIR) $(DOCSDIR)
 	$(INSTALLDATA) $(DOCSDIR) $(HTML)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	for i in $(SUBDIRS); do ( cd $$i && make install ); done
+	for i in $(SUBDIRS); do ( cd $$i && $(MAKE) $(MAKEFLAGS) install ); done
 
 #=== Housekeeping ===========================================================
 
@@ -44,11 +46,11 @@ depend:
 
 clean:
 	$(RMF) $(BACKUPS) $(PROGS)
-	for i in $(SUBDIRS); do ( cd $$i; make clean ); done
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make clean ); done
 
 veryclean:
 	$(RMF) $(BACKUPS) $(PROGS)
-	for i in $(SUBDIRS); do ( cd $$i; make veryclean ); done
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make veryclean ); done
 
 # end of file
 
