@@ -8779,6 +8779,10 @@ Misc. Enhancements
   it to run only on the first time.  This should take care of the
   a-few-pixels-at-a-time creap problems.
 
+* www/show_queus.cgi.perl: added target="_blank" to <a> tags that try to
+  open a new window using JavaScript.  This makes the no-JavaScript behavior
+  more like the behavior with JavaScript.
+
 Internet Printing Protocol Work
 
 * ppr/ppr_main.c: added --print-id-to-fd.  This will be used by the IPP

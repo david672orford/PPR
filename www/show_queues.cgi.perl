@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2003.
+# Last modified 30 August 2003.
 #
 
 use 5.005;
@@ -282,6 +282,7 @@ print <<"Top10";
 <tr align=center>
 <td width="150"><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
 		title=${\html_value(_("Click here to open a window which will show all queued jobs."))}
+		target="_blank"
 		>
 		<img $ICON_ALL_QUEUES border=0><br>
 		<span class="qname">${\H_("Show All Queues")}</span>
@@ -293,6 +294,7 @@ print <<"Top10";
 <tr align=center>
 <td width="150"><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
 		title=${\html_value(_("Click here and you will be guided through the process of adding a new printer."))}
+		target="_blank"
 		>
 		<img $ICON_ADD_PRINTER border=0><br>
 		<span class="qname">${\H_("Add New Printer")}</span>
@@ -304,6 +306,7 @@ print <<"Top10";
 <tr align=center>
 <td width="150"><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
 		title=${\html_value(_("Click here and you will be guided through the process of adding a new group of printers."))}
+		target="_blank"
 		>
 		<img $ICON_ADD_GROUP border=0><br>
 		<span class="qname">${\H_("Add New Group")}</span>
@@ -315,6 +318,7 @@ print <<"Top10";
 <tr align=center>
 <td width="150"><a href="alias_addwiz.cgi?$encoded_back_stack" onclick="return wizard('alias_addwiz.cgi')"
 		title=${\html_value(_("Click here and you will be guided through the process of adding a new alias."))}
+		target="_blank"
 		>
 		<img $ICON_ADD_ALIAS border=0><br>
 		<span class="qname">${\H_("Add New Alias")}</span>
@@ -494,7 +498,7 @@ foreach my $qname (sort(keys(%queues)))
 	if($qdescription eq '') { $qdescription = '-- No Description --' }
 
 	# Define these here to avoid code duplication.
-	my $a_tag = "<a href=\"show_queues_nojs.cgi?type=$qtype;" . form_urlencoded("name", $qname) . ";$encoded_back_stack\" onclick=\"return $qtype(event," . javascript_string($qname) . ")\">";
+	my $a_tag = "<a href=\"show_queues_nojs.cgi?type=$qtype;" . form_urlencoded("name", $qname) . ";$encoded_back_stack\" onclick=\"return $qtype(event," . javascript_string($qname) . ")\" target=\"_blank\">";
 	my $img_tag = "<img src=\"$Q_ICONS/$icon$Q_ICONS_EXT\" $Q_ICONS_DIMS alt=\"[$qtype]\" border=0>";
 	my $jcount = ($queues_counts{$qname} > 0 ? "<span class=\"qjobs\">($queues_counts{$qname})</span>" : "");
 
