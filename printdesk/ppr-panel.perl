@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 March 2003.
+# Last modified 29 March 2003.
 #
 
 use strict;
@@ -42,8 +42,10 @@ use PrintDesk::GENprnbuttons;
 use PrintDesk::PPRprintdialog;
 use PPR::PPOP;
 
+my $main_window;
+
 #==========================================================================
-# This allows us to make subroutines which will create the main window
+# This allows us to make subroutines which will use the main window
 # if they aren't passed a pointer to it but will create a new toplevel
 # if they are passed a pointer to a main window.
 #==========================================================================
@@ -59,7 +61,7 @@ sub my_window
 	}
     else
 	{
-	$toplevel = MainWindow->new();
+	$toplevel = $main_window;
 	}
 
     $toplevel->title($title);
@@ -282,6 +284,9 @@ sub do_panel
 # Main
 #==========================================================================
 
+$main_window = MainWindow->new();
+#$main_window->bisque;
+
 my $opt_dest = undef;
 while(my $arg = shift @ARGV)
     {
@@ -322,4 +327,3 @@ MainLoop;
 # We should get here after $main->destroy() terminates
 # the GUI event handler.
 exit 0;
-

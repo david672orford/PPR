@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2003.
+# Last modified 29 March 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -34,6 +34,7 @@ require 5.003;
 use PrintDesk;
 use PPR::PPOP;
 use Tk::LabFrame;
+use Tk::Tree;
 
 #======================================================================
 =item $dialog = new PrintDesk::PPRprintdialog(I<$container>);
@@ -51,6 +52,7 @@ sub new
     $self->{inputslot} = "";
     $self->{page_start} = "";
     $self->{page_end} = "";
+    $self->{features} = {};
     return $self;
     }
 
@@ -90,17 +92,61 @@ sub Show
 		$self->{window}->destroy();
 		}
 	)->pack(-side => 'right');
-    $br_frame->Button(-text => "Cancel", -command => 
+    $br_frame->Button(-text => "Cancel", -command =>
 	sub {
 		$self->{pressed} = "Cancel";
 		$self->{window}->destroy();
 		}
 	)->pack(-side => 'right');
-#    $br_frame->Button(-text => "More Options"
-#	)->pack(-side => 'left');
+    $br_frame->Button(-text => "More Options"
+	)->pack(-side => 'left');
 
     #======================================================================
-    # The top frame contains a queue select widget and a 
+    # Create a toplevel for the PPD options
+    #======================================================================
+    $self->{window_ppd} = $w->Toplevel(
+	);
+    $self->{window_ppd}->Label(
+	-text => "Printer Options"
+	)->pack(-side => 'top', -anchor => 'w');
+    $self->{window_ppd}->Button(
+    	-text => "Close",
+	-command => sub { $self->{window_ppd}->withdraw() }
+    	)->pack(-side => 'bottom', -anchor => 'e');
+    $self->{window_ppd_listbox} = $self->{window_ppd}->Scrolled('Listbox',
+    	-scrollbars => 'osoe',
+	-background => 'white',
+    	-width => 60,
+    	-height => 6
+	)->pack(-side => 'bottom', -fill => 'x');
+    $self->{window_ppd_listbox_label_text} = "";
+    $self->{window_ppd_listbox_label} = $self->{window_ppd}->Label(
+	-textvariable => \$self->{window_ppd_listbox_label_text}
+	)->pack(-side => 'bottom', -anchor => 'w');
+    $self->{window_ppd_tree} = $self->{window_ppd}->Scrolled('Tree',
+    	-scrollbars => 'osoe',
+	-background => 'white',
+	-separator => '/',
+    	-browsecmd => sub {
+		my $item = shift;
+		my $data = $self->{window_ppd_tree}->info('data', $item);
+		if(defined $data && $self->{window_ppd_listbox_label_text} ne $item)
+		    {
+		    $self->{window_ppd_listbox_label_text} = $item;
+		    print $data, "\n";
+		    my $lb = $self->{window_ppd_listbox};
+		    $lb->delete(0, 'end');
+		    for my $i (@{$self->{features}{$data}})
+		    	{
+			my($option, $description) = @{$i};
+			$lb->insert('end', $description);
+		    	}
+		    }
+    		}
+	)->pack(-side => 'top', -fill => 'both', -expand => 1);
+
+    #======================================================================
+    # The top frame contains a queue select widget and a
     # [Options] button.
     #======================================================================
     my $tl_frame = $w->Frame(
@@ -112,12 +158,12 @@ sub Show
 	-variable => \$self->{dest},
 	-textvariable => \$self->{dest_longname},
 	-justify => 'left',
-	-command => sub { $self->dest_features_load() },
+	-command => sub { $self->dest_features_load() }
 	)->pack(-side => 'left');
-#    $tl_frame->Button(-text => 'Options', -command =>
-#	sub {
-#		}
-#	)->pack(-side => 'right');
+    $tl_frame->Button(
+    	-text => 'Options',
+    	-command => sub { $self->{window_ppd}->deiconify() }
+	)->pack(-side => 'right');
 
 
     #======================================================================
@@ -127,7 +173,9 @@ sub Show
 	)->pack(-side => 'top', -fill => 'x');
 
     # ===== Middle frame 1 left: Page range =====
-    my $pages_frame = $mid_frame_1->LabFrame(-label => 'Print Range', -labelside => 'top'
+    my $pages_frame = $mid_frame_1->LabFrame(
+	-label => 'Print Range',
+	-labelside => 'acrosstop'
 	)->pack(-side => 'left', -fill => 'y', -padx => 5, -pady => 5);
     my $pages_which = ($self->{page_start} eq "" && $self->{page_end} eq "") ? 1 : 2;
     my $pages_frame1 = $pages_frame->Frame(
@@ -175,7 +223,9 @@ sub Show
 	});
 
     # Middle frame 1 right: Number of copies
-    my $copies_frame = $mid_frame_1->LabFrame(-label => 'Copies', -labelside => 'top'
+    my $copies_frame = $mid_frame_1->LabFrame(
+	-label => 'Copies',
+	-labelside => 'acrosstop'
 	)->pack(-side => 'left', -fill => 'y', -padx => 5, -pady => 5);
     $copies_frame->Label(-text => 'Number of Copies:'
 	)->pack(-side => 'left', -anchor => 'n');
@@ -247,7 +297,7 @@ sub Show
     foreach my $dest ($control->list_destinations_comments())
 	{
 	my($dest_name, $dest_type, $dest_comment) = @$dest[0, 1, 4];
-	my $longname = "$dest_name - $dest_comment";
+	my $longname = sprintf("%s - %-32s", $dest_name, $dest_comment);
 	$self->{dest_longname} = $longname if($dest_name eq $self->{dest});
 	push(@qlist, [$longname, $dest_name]);
 	}
@@ -271,7 +321,7 @@ sub Show
     #======================================================================
     my @args = ();
 
-    print STDERR "User pressed $self->{pressed}\n";
+    print STDERR "User pressed [$self->{pressed}]\n";
     if($self->{pressed} eq "Print")
 	{
 	push(@args, "-d", $self->{dest});
@@ -290,26 +340,75 @@ sub Show
 # Internal function
 # This is called whenever the selected queue changes.
 #======================================================================
+$generals{"PageSize"} = 1;
+$generals{"Media Type"} = 1;
 sub dest_features_load
     {
     my $self = shift;
 
-    my @duplex_list = (
-		["None", "None"],
-		["Long Edge", "DuplexNoTumble"],
-		["Short Edge", "DuplexTumble"]
-		);
+    # Get a handle to the [Options] window and clear it.
+    my $w = $self->{window_ppd_tree};
+    $w->delete('all');
+    $self->{window_ppd_listbox}->delete(0, 'end');
+    $self->{window_ppd_listbox_label_text} = "";
 
-    my @inputslot_list = (
-		["Upper Tray", "Upper"],
-		["Lower Tray", "Lower"]
-		);
+    my @duplex_list = ();
+    my @inputslot_list = ();
+    my %groups = ();
+    my $group = "";
+    my %feature_translations = ();
+    my $feature_translation = "";
+    $self->{features} = {};
 
-if($self->{dest} eq "dummy")
+    $w->add("General", -text => "General");
+    $groups{"General"} = 1;
+    $w->add("Extra", -text => "Extra");
+    $groups{"Extra"} = 1;
+
+    open(PPR, "$PPR::HOMEDIR/bin/ppr -d $self->{dest} --features |") || die $!;
+    while(<PPR>)
 	{
-	@duplex_list = ();
-	@inputslot_list = ();
+	print;
+	if(m#^(\S+.*)$#)
+	    {
+	    $feature_translation = $1;
+	    $group = defined($generals{$feature_translation}) ? "General" : "Extra";
+	    }
+	elsif(/^\s+(-->)?(.*\S+)\s+--feature (\S+)=(\S+)$/)
+	    {
+	    my($description, $feature, $option) = ($2, $3, $4);
+	    if($feature eq "Duplex")
+	    	{
+		push(@duplex_list, [$description, $option]);
+	    	}
+	    elsif($feature eq "InputSlot")
+	    	{
+		push(@inputslot_list, [$description, $option]);
+	    	}
+	    else
+		{
+		print "no match for \"$feature_translation\" \"$description\" ($feature $option)\n";
+		if(!defined $groups{$group})
+		    {
+		    $w->add($group, -text => $group);
+		    $groups{$group} = 1;
+		    }
+		if(!defined $feature_translations{"$group/$feature_translation"})
+		    {
+		    $w->add("$group/$feature_translation", -text => $feature_translation, -data => $feature);
+		    $feature_translations{"$group/$feature_translation"} = [];
+		    }
+		push(@{$self->{features}->{$feature}}, [$option, $description]);
+		}
+	    }
+	elsif(!/^$/)
+	    {
+	    die;
+	    }
 	}
+    close(PPR) || die $!;
+
+    $w->autosetmode();
 
     $self->{duplex_longname} = "";
     for my $i (@duplex_list)
@@ -319,7 +418,6 @@ if($self->{dest} eq "dummy")
 	}
     $self->{duplex_optionmenu}->configure(-options => \@duplex_list);
 
-
     $self->{inputslot_longname} = "";
     for my $i (@inputslot_list)
 	{
@@ -328,5 +426,5 @@ if($self->{dest} eq "dummy")
 	}
     $self->{inputslot_optionmenu}->configure(-options => \@inputslot_list);
     }
-	
+
 1;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 29 March 2003.
 */
 
 #include "before_system.h"
@@ -40,7 +40,9 @@
 #include "ppr_exits.h"
 
 /*
-** This is for the --features option.
+** This function is what the --features option calls.  It parses the PPD file
+** and prints a list of the --feature options that will work with that
+** PPD file.
 */
 int option_features(const char destnode[], const char destname[])
     {
@@ -51,7 +53,7 @@ int option_features(const char destnode[], const char destname[])
     char *ui = NULL;
     char *ui_default = NULL;
     char *group = NULL;
-    
+
     if(!(ppdfile = dest_ppdfile(destnode, destname)))
     	{
 	fprintf(stderr, "%s: don't know which PPD file\n", myname);
@@ -77,7 +79,11 @@ int option_features(const char destnode[], const char destname[])
 	    group = NULL;
 	    continue;
 	    }
-	if(!ui && (p = lmatchp(line, "*OpenUI")) && *p == '*' && (!group || strcmp(group, "InstallableOptions")))
+	/* If this is the start of a User Interface option cluster and we are not inside
+	   a group or the group is not the InstallableOptions group, print the option
+	   cluster name as a subheading.
+	   */
+	if(!ui && (p = lmatchp(line, "*OpenUI")) && *p == '*' && (!group || strcmp(group, "InstallableOptions") != 0))
 	    {
 	    p++;
 	    len = strcspn(p, "/:");
@@ -94,6 +100,20 @@ int option_features(const char destnode[], const char destname[])
 	    	}
 	    continue;
 	    }
+	if(ui && lmatch(line, "*CloseUI:"))
+	    {
+	    gu_free(ui);
+	    ui = NULL;
+	    if(ui_default)
+	    	gu_free(ui_default);
+	    ui_default = NULL;
+	    printf("\n");
+	    continue;
+	    }
+	/* If we are in a User Interface option cluster and we haven't seen
+	   the default setting for this option yet, and this is a default
+	   setting, accept it.
+	   */
 	if(ui && !ui_default && lmatch(line, "*Default") && strncmp((p=line+8), ui, strlen(ui)) == 0 && p[strlen(ui)] == ':')
 	    {
 	    p += strlen(ui);
@@ -101,17 +121,22 @@ int option_features(const char destnode[], const char destname[])
 	    p += strspn(p, " \t");
 	    ui_default = gu_strndup(p, strcspn(p, " "));
 	    /*printf("default: %s\n", ui_default);*/
-	    } 
+	    continue;
+	    }
+	/* If this is an option that matches the User Interface option
+	   cluster, print it as a possible --feature switch.
+	   */
 	if(ui && line[0] == '*' && strncmp(line+1, ui, strlen(ui)) == 0 && isspace(line[1+strlen(ui)]))
 	    {
 	    char *translation;
-	    p = line + 1 + strlen(ui);		/* Set p to point after "*Feature ". */
-	    p += strspn(p, " \t");
-	    len = strcspn(p, "/:");		/* Get length to end of feature option name. */
+	    p = line + 1 + strlen(ui);		/* Set p to point after "*Feature". */
+	    p += strspn(p, " \t");		/* eat up separator whitespace */
 
+	    len = strcspn(p, "/:");		/* Get length to end of feature option name. */
 	    if(p[len] == '/')			/* If there is a translation string, */
 	    	{
 	    	translation = p + len + 1;
+	    	translation += strspn(translation, " \t");	/* eat spurious whitespace */
 	    	translation[strcspn(translation, ":")] = '\0';
 	    	}
 	    else
@@ -125,16 +150,6 @@ int option_features(const char destnode[], const char destname[])
 		translation,
 		ui,
 		p);
-	    continue;
-	    }
-	if(ui && lmatch(line, "*CloseUI:"))
-	    {
-	    gu_free(ui);
-	    ui = NULL;
-	    if(ui_default)
-	    	gu_free(ui_default);
-	    ui_default = NULL;
-	    printf("\n");
 	    continue;
 	    }
 
