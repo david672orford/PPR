@@ -1,8 +1,8 @@
 //
 // mouse:~ppr/src/www/show_queues.js
-// Copyright 1995--2003, Trinity College Computing Center.
+// Copyright 1995--2004, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 19 December 2003.
+// Last revised 5 October 2004.
 //
 
 // Width in pixels of invisible border round the table.
@@ -39,12 +39,19 @@ windows['df_html.cgi'] =			'width=600,height=500,resizable,scrollbars';
 // doesn't work since Opera sets both.
 function scrolled_x()
 	{
-	if(window.document.documentElement.scrollLeft)			// IE 6.0 w3c mode, Mozilla 1.5, Konqueror 3.1.3, Opera 7.23
+	// IE 6.0 w3c mode, Mozilla 1.5, Konqueror 3.1.3, Opera 7.23
+	if(window.document.documentElement.scrollLeft)
 		return window.document.documentElement.scrollLeft;
-	if(window.scrollX)										// Netscape 4.x, Mozilla 1.5
+
+	// Netscape 4.x, Mozilla 1.5
+	if(window.scrollX)
 		return window.scrollX;
-	if(window.document.body.scrollLeft)						// IE 5.x, IE 6.0 compatibility mode, Opera 7.23
+
+	// IE 5.x, IE 6.0 compatibility mode, Opera 7.23
+	if(window.document.body.scrollLeft)
 		return window.document.body.scrollLeft;
+
+	// Either none of the above, or window not scrolled.
 	return 0;
 	}
 
