@@ -528,6 +528,12 @@ more information about RIPs and *pprRIP:.
 * uprint/uprint-lpc.8.pod: added
 
 
+1.53, 5 October 2004--5 October 2004.
+
+* misc/ppr.lsm: removed
+
+
+
 TODO
 
 * refman: describe editps.conf and editps system

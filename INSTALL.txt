@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 22 September 2004.
+ Last revised 5 October 2004.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See

@@ -1,11 +1,11 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 22 September 2004.
+# Last modified 5 October 2004.
 #
 
 Name: ppr
 Summary: A spooler for PostScript printers
-Version: 1.52b1
+Version: 1.53
 Release: 1
 License: BSD
 URL: http://ppr.trincoll.edu/

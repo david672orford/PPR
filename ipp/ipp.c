@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 September 2004.
+** Last modified 20 October 2004.
 */
 
 #include "before_system.h"
@@ -47,6 +47,12 @@
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
+
+#if 0
+#define DEBUG(a) debug a
+#else
+#define DEBUG(a)
+#endif
 
 /* Are we using a real FIFO or just an append to a file? */
 #ifdef HAVE_MKFIFO
@@ -124,18 +130,18 @@ static void do_print_job(struct IPP *ipp)
 		/* Copy the job data to ppr. */
 		while((read_len = ipp_get_block(ipp, &p)) > 0)
 			{
-			debug("Got %d bytes", read_len);
+			DEBUG(("Got %d bytes", read_len));
 			while(read_len > 0)
 				{
 				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
 					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-				debug("Wrote %d bytes", write_len);
+				DEBUG(("Wrote %d bytes", write_len));
 				read_len -= write_len;
 				p += write_len;
 				}
 			}
 	
-		debug("Done sending job data to ppr");
+		DEBUG(("Done sending job data to ppr"));
 
 		close(toppr_fds[1]);
 		toppr_fds[1] = -1;
@@ -147,7 +153,7 @@ static void do_print_job(struct IPP *ipp)
 			gu_Throw("read %d bytes as jobid", read_len);
 		jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
 		jobid = atoi(jobid_buf);
-		debug("jobid is %d", jobid);
+		DEBUG(("jobid is %d", jobid));
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
@@ -192,7 +198,7 @@ static void do_passthru(struct IPP *ipp)
 	char fname_out[MAX_PPR_PATH];
 	long int pid;
 	
-	debug("do_passthru()");
+	DEBUG(("do_passthru()"));
 
 	pid = (long int)getpid();
 	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/ppr-ipp-%ld-in",  TEMPDIR, pid);
@@ -330,7 +336,7 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request_header(ipp);
 
-		debug("dispatching operation 0x%.2x", ipp->operation_id);
+		DEBUG(("dispatching operation 0x%.2x", ipp->operation_id));
 		switch(ipp->operation_id)
 			{
 			case CUPS_GET_CLASSES:

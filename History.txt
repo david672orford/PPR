@@ -9388,8 +9388,18 @@ no final tarball was released.
 
 * added uprint/uprint-lpc.c.
 
+
+1.53, 5 October 2004--15 October 2004
+
+* z_install_end/ppr.sh: added code it bail out if PPR is no longer installed.
+  This is needed because initscripts are considered configuration files in
+  Debian and aren't automatically deleted with the package.
+
+* editps/editps.conf: adjusted Mozilla 1.6 rule to include Mozilla 1.7.
+
 * libppr/readppd.c: removed extra newline from message about
   missing PPD file.
+
 
 TODO
 

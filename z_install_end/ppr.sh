@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 May 2004.
+# Last modified 8 October 2004.
 #
 
 #
@@ -52,6 +52,11 @@ HOMEDIR="?"
 CONFDIR="?"
 VAR_SPOOL_PPR="?"
 EECHO="?"
+
+# Bail out if PPR isn't installed.  (On Debian systems, this initscript is
+# considered to be a configuration file and isn't deleted if the package is
+# simply removed, only if it is purged.
+test -x $HOMEDIR/bin/pprd || exit 0
 
 # Read default file such as is found on Debian systems.
 LPRSRV_STANDALONE_PORT=""

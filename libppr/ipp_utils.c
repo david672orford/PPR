@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 20 October 2004.
 */
 
 /*! \file */
@@ -41,6 +41,12 @@
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
+
+#if 0
+#define DEBUG(a) debug a
+#else
+#define DEBUG(a)
+#endif
 
 /*
 ** Convert a tag to a string (for debugging purposes).  The names printed
@@ -238,7 +244,7 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 */
 static void ipp_readbuf_load(struct IPP *p)
 	{
-	debug("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left);
+	DEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));
 	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		gu_Throw("Read failed");
 	if(p->readbuf_remaining < 1)
@@ -255,17 +261,17 @@ static void ipp_writebuf_flush(struct IPP *p)
 	char *write_ptr;
 	int to_write, len;
 
-	debug("ipp_writebuf_flush(): %d bytes to flush to fd %d", p->writebuf_i, p->out_fd);
+	DEBUG(("ipp_writebuf_flush(): %d bytes to flush to fd %d", p->writebuf_i, p->out_fd));
 	
 	to_write = p->writebuf_i;
 	write_ptr = p->writebuf;
 
 	while(to_write > 0)
 		{
-		debug("  trying to write %d bytes", to_write);
+		DEBUG(("  trying to write %d bytes", to_write));
 		if((len = write(p->out_fd, write_ptr, to_write)) == -1)
 			gu_Throw("writing response failed, errno=%d (%s)", errno, gu_strerror(errno));
-		debug("    wrote %d bytes", len);
+		DEBUG(("    wrote %d bytes", len));
 		to_write -= len;
 		write_ptr += len;
 		}
@@ -283,7 +289,7 @@ service object is destroyed.
 */
 void ipp_delete(struct IPP *p)
 	{
-	debug("ipp_delete(): %d leftover bytes", p->bytes_left + p->readbuf_remaining);
+	DEBUG(("ipp_delete(): %d leftover bytes", p->bytes_left + p->readbuf_remaining));
 
 	if(p->magic != 0xAABB)
 		gu_Throw("ipp_delete(): not an IPP object");
@@ -374,7 +380,7 @@ void ipp_set_remote_addr(struct IPP *p, const char remote_addr[])
 void ipp_request_to_fd(struct IPP *p, int fd)
 	{
 	int writelen;
-	debug("ipp_request_to_fd(): p->readbuf_remaining=%d, p->readbuf_i=%d, p->bytes_left=%d", p->readbuf_remaining, p->readbuf_i, p->bytes_left);
+	DEBUG(("ipp_request_to_fd(): p->readbuf_remaining=%d, p->readbuf_i=%d, p->bytes_left=%d", p->readbuf_remaining, p->readbuf_i, p->bytes_left));
 	p->readbuf_remaining += p->readbuf_i;	/* rewind */
 	p->readbuf_i = 0;
 	while(p->readbuf_remaining > 0)
@@ -408,13 +414,13 @@ static void send_subst_reply(struct IPP *p, gu_boolean header)
 	struct stat statbuf;
 	int bytes_left;
 
-	debug("sending substitute reply to fd %d", p->subst_reply_fd);
+	DEBUG(("sending substitute reply to fd %d", p->subst_reply_fd));
 	
 	if(fstat(p->subst_reply_fd, &statbuf) == -1)
 		gu_Throw("fstat() failed, errno=%d (%s)", errno, gu_strerror(errno));
 	bytes_left = statbuf.st_size;
 
-	debug("substitute reply is %d bytes long", bytes_left);
+	DEBUG(("substitute reply is %d bytes long", bytes_left));
 	
 	if(header)
 		{
@@ -435,7 +441,7 @@ static void send_subst_reply(struct IPP *p, gu_boolean header)
 		ipp_writebuf_flush(p);
 		}
 
-	debug("done sending substitute reply");
+	DEBUG(("done sending substitute reply"));
 	} /* send_subst_reply() */
 
 /** fetch a block from the IPP request
@@ -597,18 +603,18 @@ void ipp_parse_request_header(struct IPP *ipp)
 	if(ipp->bytes_left < 9)
 		gu_Throw("request is too short to be an IPP request");
 
-	debug("request for %s, %d bytes", ipp->path_info, ipp->bytes_left);
+	DEBUG(("request for %s, %d bytes", ipp->path_info, ipp->bytes_left));
 
 	ipp->version_major = ipp_get_sb(ipp);
 	ipp->version_minor = ipp_get_sb(ipp);
 	ipp->operation_id = ipp_get_ss(ipp);
 	ipp->request_id = ipp_get_si(ipp);
 
-	debug("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
-			ipp->version_major, ipp->version_minor,
-			ipp->operation_id, operation_to_str(ipp->operation_id),
-			ipp->request_id
-			);
+	DEBUG(("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
+		ipp->version_major, ipp->version_minor,
+		ipp->operation_id, operation_to_str(ipp->operation_id),
+		ipp->request_id
+		));
 	}
 
 /** read more of the IPP request
@@ -694,18 +700,18 @@ void ipp_parse_request_body(struct IPP *ipp)
 				{
 				case IPP_TAG_INTEGER:
 					ap->values[ap_i].integer = ipp_get_si(ipp);
-					debug("    %s[%d]=%d", tag_to_str(value_tag), value_length, ap->values[ap_i].integer);
+					DEBUG(("    %s[%d]=%d", tag_to_str(value_tag), value_length, ap->values[ap_i].integer));
 					break;
 				case IPP_TAG_STRING:
 					p = ipp_get_bytes(ipp, value_length);
 					ap->values[ap_i].string.text = p;
-					debug("    %s[%d]=\"%s\"", tag_to_str(value_tag), value_length, p);
+					DEBUG(("    %s[%d]=\"%s\"", tag_to_str(value_tag), value_length, p));
 					break;
 				default:
 					p = ipp_get_bytes(ipp, value_length);
 					ap->values[ap_i].unknown.length = value_length;
 					ap->values[ap_i].unknown.data = p;
-					debug("    %s[%d]", tag_to_str(value_tag), value_length);
+					DEBUG(("    %s[%d]", tag_to_str(value_tag), value_length));
 					break;
 				}
 			}
@@ -715,7 +721,7 @@ void ipp_parse_request_body(struct IPP *ipp)
 			}
 		}
 
-    debug("end of request read");
+    DEBUG(("end of request read"));
     
 	/* This will be the default. */
     ipp->response_code = IPP_OK;
@@ -802,7 +808,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	{
 	ipp_attribute_t *p;
 	
-	debug("ipp_send_reply()");
+	DEBUG(("ipp_send_reply()"));
 
 	if(ipp->subst_reply_fd != -1)
 		{
@@ -821,7 +827,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	
 	if(!(p = ipp->response_attrs_operation))
 		gu_Throw("no response_attrs_operation");
-	debug("encoding operation tags");
+	DEBUG(("encoding operation tags"));
 	ipp_put_byte(ipp, IPP_TAG_OPERATION);
 	for( ; p; p = p->next)
 		{
@@ -830,7 +836,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 
 	if((p = ipp->response_attrs_printer))
 		{
-		debug("encoding printer tags");
+		DEBUG(("encoding printer tags"));
 		ipp_put_byte(ipp, IPP_TAG_PRINTER);
 		for( ; p; p = p->next)
 			{
@@ -846,7 +852,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	
 	if((p = ipp->response_attrs_job))
 		{
-		debug("encoding job tags");
+		DEBUG(("encoding job tags"));
 		ipp_put_byte(ipp, IPP_TAG_JOB);
 		for( ; p; p = p->next)
 			{
@@ -862,7 +868,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 
 	if((p = ipp->response_attrs_unsupported))
 		{
-		debug("encoding unsupported tags");
+		DEBUG(("encoding unsupported tags"));
 		ipp_put_byte(ipp, IPP_TAG_UNSUPPORTED);
 		for( ; p; p = p->next)
 			{

@@ -1,6 +1,7 @@
-uprint-cancel
 uprint-lp
-uprint-lpq
-uprint-lpr
-uprint-lprm
+uprint-cancel
 uprint-lpstat
+uprint-lpr
+uprint-lpq
+uprint-lprm
+uprint-lpc
