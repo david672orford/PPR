@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 7 February 2001.
+# Last modified 1 June 2001.
 #
 
 #
@@ -24,19 +24,18 @@
 # $4 is the directory ppr was invoked in
 #
 
+# These are filled in when the script is installed.
 HOMEDIR="?"
 TEMPDIR="?"
 PR="?"
 
+# Process the options
 title="$3"
 width=""
 length=""
-
-tempfile=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-pr-XXXXXX`
-
-# Process the options
-for option in $1
+for option in "$1"
 	do
+	echo "option: $option" >&2
 	case $option in
 		width=*)
 			width="-w `echo $option | cut -f2 -d'='`"
@@ -51,6 +50,9 @@ for option in $1
 			;;
 	esac
 	done
+
+# Create a temporary file.
+tempfile=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-pr-XXXXXX`
 
 # Now, run pr.
 $PR -f -h "$title" $width $length >$tempfile

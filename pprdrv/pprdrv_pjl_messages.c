@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -73,7 +73,7 @@ int translate_pjl_message(int code, const char display[], int *value1, int *valu
 		|| !(f2 = gu_strsep(&p, ":"))			/* value1 */
 		|| !(f3 = gu_strsep(&p, ":"))			/* value2 */
 		|| !(f4 = gu_strsep(&p, ":"))			/* value3 */
-		|| !(f5 = gu_strsep_quoted(&p, ":")))		/* details */
+		|| !(f5 = gu_strsep_quoted(&p, ":", NULL)))	/* details */
             {
             error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
             continue;

@@ -7016,7 +7016,7 @@ line was being parsed twice.
   store fonts in $SHAREDIR/cache/font.
 
 * www/*.css: replaced "font-family: serif" with "font-family: times,serif"
-  due to a bug in IE 5.5 prior to SP1.  This bug causes it to display 
+  due to a bug in IE 5.5 prior to SP1.  This bug causes it to display
   rectangles for the characters of the "serif" font.
 
 * www/commentary_select.cgi.perl: removed checkboxes for status and errors
@@ -7115,11 +7115,11 @@ line was being parsed twice.
   labels the LaserWriter status.  More changes will be needed later to display
   the new status information.
 
-* pprdrv/pprdrv_feedback.c: Added code to bail out if a 50xxx PJL code is 
+* pprdrv/pprdrv_feedback.c: Added code to bail out if a 50xxx PJL code is
   received.  This seems to be necessary because the HP 5Si sometimes loses
   track of the job after throwing error 50028.
 
-* Added --verbose to ppop to limit the information displayed by 
+* Added --verbose to ppop to limit the information displayed by
   "ppop status".  Currently it hides the raw status information (from
   LaserWriter messages, PJL, and SNMP).
 
@@ -7133,10 +7133,130 @@ line was being parsed twice.
   that it displays long descriptions of the columns.
 
 
-1.44b2, 8 May 2001--8 May 2001
+1.44b2, 8 May 2001--5 June 2001
 
 * Makefile: changed "make realclean" to "make distclean".  Added "make
   veryclean" to remove the generated documentation files as well.
 
+* Added libgu/gu_nonblock.c:gu_nonblock() and changed all code that called
+  fcntl() directly.  This included interfaces/atalk_ali.c,atalk_cap.c,
+  and libppr/int_copy_job.c.
 
+* Fixed papsrv/papsrv_ali.c to use gu_set_cloexec() rather than calling
+  fcntl() (which is was doing in the old fashioned way, setting the flags
+  to 1.)
+
+* Added pprdrv/pprdrv_rip.c and hooked it into pprdrv.
+
+* Added display of RIP information to "ppad show".
+
+* pprdrv/pprdrv_interface.c: changed code so that control-d's aren't sent for
+  non-PostScript jobs even if the jobbreak method is "control-d".
+
+* Fixed pprd and pprdrv to set the close-on-exec flag on more file
+  descriptors.
+
+* libppr/int_copy_job.c: Fixed a problems which caused control-T's to be
+  schedualed when there was still data in the transmit buffer.  (An
+  assertion check caught this.)
+
+* Added libgu/gu_fscanf.c, an very limited implementation of fscanf() that can 
+  only understands %d, literals, and whitespace, and changed ppr/ppr_outfile.c 
+  and ppop/*.c to use it.  (This was done because dietlibc doesn't provide 
+  an fscanf().)
+
+* pprd/pprd_pprdrv.c:pprdrv_exit(): Cleaned up code, revised messages,
+  and added support for 5 new more specific exit codes which are
+  equated with EXIT_PRNERR and EXIT_PRNERR_NORETRY.
+
+* pprdrv/pprdrv_ppop_status.c: added code to put an "exit:" line in the
+  printer status file to indicate the exit status.
+
+* ppop/ppop_cmds_other.c: added code to display the exit status if it
+  indicates a fault.
+
+* Added create= option to the dummy interface.
+
+* libuprint/lpr_connection.c:uprint_lpr_make_connection(): changed error
+  code for DNS failure from UPE_TEMPFAIL to UPE_BADSYS.
+
+* Fixed all of the interfaces to use the new more explicit exit codes
+  where appropriate.
+
+* makeprogs/gen_paths.c: added "1;" at end of file for --pm and --ph.
+
+* pprdrv/: added code to parse a "*pprRIP:" line in the PPD file.
+
+* ppd/ghostscript/ghostscript_master: added *pprRIP: lines the the sample
+  PPD files, but left them commented out.
+
+* fixup/fixup_inetd.sh: added "disabled = yes" to the Xinetd configuration
+  for consistency with the configuration generated for Inetd.
+
+* makeprogs/gen_paths.c: added "$SIZEOF_struct_Media=" for --pm.
+
+* www/prn_media.cgi.perl: used $SIZEOF_struct_Media instead of a hard-coded
+  value of 76.
+
+* libppr/int_snmp.c:int_snmp_status(): changed it so that it takes an
+  already created gu_snmp object rather than creating one of its own.
+  Changed libppr/int_con_tcpip.c and interfaces/tcpip.c to match.  This
+  not only saves the cost (probably negligible of creating and destroying
+  the UDP socket for every query, it also allows interfaces/tcpip.c to
+  set the SNMP community string.
+
+* interfaces/tcpip.c: added option "snmp_community=".
+
+* libgu/gu_strsep2.c: added "discard" option (which may be NULL).  It is a
+  list if characters which should be discarded on either side of the quoted
+  string.  It will generally be NULL or " \t".
+
+* pprdrv/pprdrv_lw_messages.c: Fixed a few bugs which caused parse errors
+  and garbled status.
+
+* filter_dotmatric/prop.c: fixed bug which caused core dump with dietlibc.
+  The problem was that it would exceed an array bound by one if a PostScript
+  character name in the AFM file wasn't used in the CP437 character encoding.
+  This is a very old bug.  I wonder why no one found it before.
+
+* libppr/int_acache.c: changed sprintf() to snprintf() and fixed unnoticed
+  buffer overflow.
+
+* ppr/, interfaces/, pprdrv/: Eliminated sprintf().  That leaves only the
+  libgu/gu_sprintf() test code and lprsrv/olprsrv.c (which is obsolete).
+
+* test/test-ppad/: accepted appearance of "rip" line in "ppad -M show"
+  output.
+
+* init_and_cron/ppr-clean.perl: fixed typo in directory name which was
+  causing the script to die.
+
+* www/show_queues.js: fixed some problems related to scrolling and Mozilla.
+
+* libuprint/*: Removed use of the "ppr -C" switch in favour of the newer
+  form "ppr --title".
+
+* libuprint/uprint_argv_ppr.c: changed to put quotes around the argument 
+  to "-o title=".  This will need more work to handle embedded quotes.
+
+* ppr/ppr_main.c, ppr_infile.c: fixed to handle quoted filter option values.
+
+* libppr/options.c: fixed to handle quoted option values.
+
+* Removed vendors/ppd_hp/"HP LaserJet 4050 N", and "HP LaserJet 4050 Series"
+  since they both have the same ModelName and there have been reports that
+  they result in the production of bad PostScript and because the "HP
+  LaserJet 4000 Series" PPD file probably works for these printers as well.  
+  Added code to remove them to fixup/fixup_obsolete.sh but left it commented 
+  out until more is known.
+
+* Changed the statement of the PPR license to be exactly the same as the 
+  new BSD license (the one with the advertising restriction removed).  Of
+  course, the references to "the regents" have been changed to "copyrigh
+  holders".  The previous statement was the same in substances.  I have done
+  this to avoid any possible question that PPR is distributed under the
+  BSD license.
+
+
+1.44, 5 June 2001--5 June 2001
 

@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 10 April 2001.
+# Last modified 11 April 2001.
 #
 
 include ../makeprogs/global.mk
@@ -57,8 +57,7 @@ include .depend
 atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o atalk$(DOTEXE) atalk_$(ATALKTYPE).$(OBJ) \
 		$(ATALKLIBS) \
-		throw.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 atalk_$(ATALKTYPE).$(OBJ): atalk_$(ATALKTYPE).c
 	$(CC) $(ATALKFLAGS) $(CFLAGS) -c atalk_$(ATALKTYPE).c
@@ -67,33 +66,27 @@ atalk_$(ATALKTYPE).$(OBJ): atalk_$(ATALKTYPE).c
 clispool$(DOTEXE): clispool.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o clispool$(DOTEXE) clispool.$(OBJ) \
 		-lnsl \
-		throw.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Berkely LPR/LPD protocol client:
 lpr$(DOTEXE): lpr.$(OBJ) throw.$(OBJ) ../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o lpr$(DOTEXE) lpr.$(OBJ) \
-		throw.$(OBJ) \
-		../libuprint.$(LIBEXT) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+		throw.$(OBJ) ../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
 
 # Parallel port interface:
 parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o parallel$(DOTEXE) parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) \
-		throw.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Serial port interface
 serial$(DOTEXE): serial.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o serial$(DOTEXE) serial.$(OBJ) \
-		throw.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # HP JetDirect style TCP/IP interface
 tcpip$(DOTEXE): tcpip.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) tcpip.$(OBJ) \
-		throw.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
 
 gssimple.sh: gs_master.sh
 	$(CPP) -DBACKEND_SIMPLE gs_master.sh | $(SEDCMD) >gssimple.sh

@@ -1,6 +1,6 @@
 /*
-** mouse.trincoll.edu:~ppr/src/pprdrv/pprdrv_notppd.c
-** Copyright 1996, 1997, 1998, Trinity College Computing Center.
+** mouse:~ppr/src/pprdrv/pprdrv_notppd.c
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 24 March 1998.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -21,7 +21,6 @@
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "pprdrv.h"
 
 void set_jobname(void)
@@ -53,7 +52,7 @@ void set_copies(int copies)
 	printer_putline("[0 0 0 0 0 0] currentmatrix %PPR");
 	begin_stopped();
 	printer_printf("<< /NumCopies %d >> setpagedevice %%PPR\n", copies);
-	sprintf(temp, "%d", copies);
+	snprintf(temp, sizeof(temp), "%d", copies);
 	end_stopped("NumCopies", temp);
 	printer_putline("setmatrix %PPR");
 	}

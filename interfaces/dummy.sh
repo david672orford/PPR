@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/interfaces/dummy.sh
-# Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 6 November 1998.
+# Last modified 11 May 2001.
 #
 
 #
@@ -28,16 +28,24 @@ ADDRESS="$2"
 OPTIONS="$3"
 FEEDBACK="$5"
 
+# Parse the options.
 SLEEP=""
+CREATE=1
 for opt in $OPTIONS
     do
     case $opt in
 	sleep=* )
 	    SLEEP=`echo $opt | cut -d'=' -f2`
 	    ;;
+	create=[yYtT1]* )
+	    CREATE=1
+	    ;;
+	create=[nNfF0]* )
+	    CREATE=0
+	    ;;
 	* )
 	    lib/alert $PRINTER TRUE "Unrecognized interface option: $opt"
-	    exit $EXIT_PRNERR_NORETRY
+	    exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	    ;;
     esac
     done
@@ -46,7 +54,7 @@ for opt in $OPTIONS
 if [ -z "$ADDRESS" ]
 	then
 	lib/alert $PRINTER TRUE "Address is empty"
-	exit $EXIT_PRNERR_NORETRY
+	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
 # Make sure no one has said we can do feedback.
@@ -55,14 +63,31 @@ if [ $FEEDBACK -ne 0 ]
 	lib/alert $PRINTER TRUE "This interface doesn't support bidirectional communication."
 	lib/alert $PRINTER FALSE "Use the command \"ppad feedback $PRINTER false\" to"
 	lib/alert $PRINTER FALSE "correct this problem."
-	exit $EXIT_PRNERR_NORETRY
+	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
+# If the file exists already, make sure we can write to it.  If it doesn't, 
+# make sure that that is ok.
+if [ -f $ADDRESS ]
+    then
+    if [ ! -w $ADDRESS ]
+	then
+	lib/alert $PRINTER TRUE "Access to the file or character device \"$ADDRESS\" is denied."
+	exit $EXIT_PRNERR_NORETRY_ACCESS_DENIED
+	fi
+    else
+    if [ $CREATE -eq 0 ]
+	then
+	lib/alert $PRINTER TRUE "There is no file or character device \"$ADDRESS\"."
+	exit $EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
+	fi
+    fi
+
 # copy the file
-cat - >$ADDRESS
+/bin/cat - >$ADDRESS
 if [ $? -ne 0 ]
 	then
-	lib/alert $PRINTER TRUE "cat failed"
+	lib/alert $PRINTER TRUE "dummy interface: cat failed"
 	exit $EXIT_PRNERR_NORETRY
 	fi
 
@@ -76,5 +101,3 @@ if [ -n "$SLEEP" ]
 exit $EXIT_OK
 
 # end of file
-
-

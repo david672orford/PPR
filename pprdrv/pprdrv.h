@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 7 May 2001.
+** Last revised 10 May 2001.
 */
 
 /*
@@ -103,6 +103,7 @@ enum PJL_ONLINE
 
 /* pprdrv.c: */
 extern volatile gu_boolean sigterm_caught;
+extern volatile gu_boolean sigalrm_caught;
 extern int test_mode;
 extern char line[];
 extern int line_len;
@@ -121,6 +122,7 @@ extern char *drvreq[MAX_DRVREQ];
 extern int drvreq_count;
 extern int strip_binselects;	/* for pprdrv_ppd.c */
 extern int strip_signature;	/* for pprdrv_ppd.c */
+void fault_check(void);
 
 /* pprdrv_fault_debug.c: */
 void hooked_exit(int rval, const char *explain)
@@ -155,11 +157,17 @@ void interface_fault_check(void);
 void kill_interface(void);
 extern int intstdin;
 extern int intstdout;
+gu_boolean interface_sigchld_hook(pid_t pid, int wait_status);
 void job_start(enum JOBTYPE jobtype);
 void job_end(void);
 int job_nomore(void);
-void printer_universal_exit_language(void);
-void printer_display_printf(const char message[], ...);
+
+/* pprdrv_rip.c: */
+void rip_fault_check(void);
+int rip_start(int printdata_handle, int stdout_handle);
+int rip_stop(int printdata_handle2);
+void rip_cancel(void);
+gu_boolean rip_sigchld_hook(pid_t pid, int wait_status);
 
 /* pprdrv_flag.c: */
 void print_flag_page(int flagtype, int position);
@@ -184,20 +192,6 @@ void include_feature(const char *featuretype, const char *option);
 void begin_feature(char *featuretype, char *option, FILE *infile);
 void include_resource(void);
 gu_boolean ppd_font_present(const char fontname[]);
-
-/* pprdrv_ppd.c stuff for pprdrv_ppd_parse.l: */
-void add_font(char *fontname);
-void new_string(const char name[]);
-void string_line(char *string);
-void end_string(void);
-void order_dependency_1(int order);
-void order_dependency_2(int section);
-void order_dependency_3(const char *name1);
-void order_dependency_4(const char *name2);
-void papersize_moveto(char *paper);
-extern int papersizex;
-extern int ppd_nest_level;
-extern char *ppd_nest_fname[MAX_PPD_NEST];
 
 /* pprdrv_res.c: */
 void insert_noinclude_fonts(void);
@@ -235,6 +229,8 @@ void printer_printf(const char *str, ...);
 void printer_puts_QuotedValue(const char *str);
 void printer_putc_escaped(int c);
 void printer_puts_escaped(const char *str);
+void printer_universal_exit_language(void);
+void printer_display_printf(const char message[], ...);
 
 /* pprdrv_writemon.c: */
 void writemon_init(void);
@@ -353,6 +349,14 @@ struct PPRDRV {
 	gu_boolean Feedback;			/* true or false */
 	int Jobbreak;				/* enum of jobbreak methods */
 	enum CODES Codes;			/* Passable Codes */
+
+	struct					/* Raster Image Processor (such as Ghostscript) */
+	    {
+	    char *name;
+	    char *driver;
+	    char *driver_output_language;
+	    char *options;
+	    } RIP;
 
 	struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */
 	gu_boolean do_banner;

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 1 June 2001.
 */
 
 /*
@@ -1730,7 +1730,7 @@ static void exec_filter(const char *filter_path, ...)
 ** This function uses the global option_filter_options which is set
 ** by the command line parser.
 */
-static void exec_tops_filter(const char *filter_path, const char *filter_name, const char *title)
+static void exec_tops_filter(const char filter_path[], const char filter_name[], const char title[])
     {
     char *clean_options
     #ifdef GNUC_HAPPY
@@ -1806,13 +1806,28 @@ static void exec_tops_filter(const char *filter_path, const char *filter_name, c
 	    }
 
 	while( *si && *si != '=' )	/* Copy the keyword, */
-	    *(di++)=tolower(*(si++));	/* converting it to lower case. */
+	    *di++ = tolower(*si++);	/* converting it to lower case. */
 
-	while( *si && ! isspace(*si) )	/* Then, copy the equals sign and */
-	    *(di++)=(*si++);		/* the value. */
+	if( *si && *si == '=' )		/* Copy the equals sign. */
+	    *di++ = *si++;	
+
+	if(*si != '"')
+	    {
+	    while( *si && ! isspace(*si) )	/* Then, value. */
+		*di++ = *si++;
+	    }
+	else
+	    {
+	    int c, lastc = '\0';
+	    *di++ = *si++;
+	    while((c = *di++ = *si++) != '"' || lastc == '\\')
+		{
+		lastc = c;
+		}
+	    }	    
 
 	if( isspace(*si) )		/* Finally, copy the space */
-	    *(di++)=*(si++);		/* which follows. */
+	    *di++ = *si++;		/* which follows. */
 
 	while( isspace(*si) )		/* Eat extra spaces. */
 	    si++;
@@ -2058,7 +2073,7 @@ static void save_infile(void)
     /*
     ** Unless someone changes main(), this if will always be
     ** true.  We must assign the id now because we will be
-    ** using it in the sprintf() below.  The code in main()
+    ** using it in the ppr_fnamef() below.  The code in main()
     ** will see that we have assingned the id and will
     ** not do it again.
     */

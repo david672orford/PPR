@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_argv_ppr.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 5 June 2001.
 */
 
 #include "before_system.h"
@@ -22,7 +22,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -180,7 +179,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
     /* Job name?  (Such as specified by the lpr -J switch.) */
     if(upr->jobname)
 	{
-	ppr_argv[i++] = "-C";
+	ppr_argv[i++] = "--title";
 	ppr_argv[i++] = upr->jobname;
 	}
 
@@ -228,8 +227,19 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
     /* Title for pr: */
     if(upr->pr_title)
 	{
+	char temp[LPR_MAX_T * 2 + 1];
+	int si, di;
+	int c;
+
+	for(si=di=0;si < LPR_MAX_T && (c = upr->pr_title[si]); si++)
+	    {
+	    if(c == '"' || c == '\\')
+	    	temp[di++] = '\\';
+	    temp[di++] = c;
+	    }
+
 	ppr_argv[i++] = "-o";
-	snprintf(upr->str_pr_title, sizeof(upr->str_pr_title), "title=%.*s", LPR_MAX_T, upr->pr_title);
+	snprintf(upr->str_pr_title, sizeof(upr->str_pr_title), "title=\"%s\"", temp);
 	ppr_argv[i++] = upr->str_pr_title;
 	}
 

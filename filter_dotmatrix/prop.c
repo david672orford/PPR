@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/dotmatrix/prop.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** mouse:~ppr/src/filter_dotmatrix/prop.c
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 27 December 1999.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -34,7 +34,6 @@
 #include <errno.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "filter_dotmatrix.h"
 
 /*
@@ -283,22 +282,26 @@ int width(int c, int italic)
     	return width_epson[c-32][0] * (HORIZONTAL_UNITS/120);
     } /* end of width */
 
-/*
+/*=========================================================================
 ** These routines are compiled only when this is a standalone program for
 ** generating the Metrics dictionaries.
-*/
+=========================================================================*/
+
 #ifdef GENMETRICS
 
-int HORIZONTAL_UNITS=120;
+static int HORIZONTAL_UNITS=120;
 
-char CP437_names[256][16];		/* name from CP437 file */
+static char CP437_names[256][16];		/* name from CP437 file */
 
-void load_cp437(void)
+/*
+** Load the mapping from Code Page 437 to PostScript names.
+*/
+static void load_cp437(void)
     {
     FILE *f;
     int x;
 
-    if((f = fopen("CP437", "r")) == (FILE*)NULL)
+    if(!(f = fopen("CP437", "r")))
     	{
     	fprintf(stderr, "Can't open CP437\n");
     	exit(1);
@@ -318,7 +321,12 @@ void load_cp437(void)
     fclose(f);
     } /* end of load_cp437() */
 
-void genmetrics(char *infile, int italic)
+/*
+** Read the font's AFM file and use the bounding box information and the
+** desired width from the above table to produce PostScript code to
+** adjust the left side and width.
+*/
+static void genmetrics(char *infile, int italic)
     {
     FILE *in;
     char line[256];
@@ -340,9 +348,9 @@ void genmetrics(char *infile, int italic)
 
     while(strncmp(line,"StartCharMetrics",16))
 	{
-     	if( fgets(line,sizeof(line),in) == (char*)NULL )
+     	if(fgets(line,sizeof(line),in) == (char*)NULL)
 	    {
-	    fprintf(stderr,"CharMetrics section not found in %s\n",infile);
+	    fprintf(stderr, "CharMetrics section not found in \"%s\".\n", infile);
 	    exit(1);
 	    }
     	}
@@ -376,7 +384,7 @@ void genmetrics(char *infile, int italic)
 	    exit(1);
 	    }
 
-	/* find the CP437 encoding */
+	/* Find the CP437 encoding position of this character. */
 	for(i=0; i < 256; i++)
 	    {
 	    if(strcmp(name, CP437_names[i]) == 0)	/* if match */
@@ -414,12 +422,12 @@ void genmetrics(char *infile, int italic)
 		    	}
 		    }
 
+		/* Blank out the name to prevent re-use. */
+		CP437_names[i][0] = '\0';
 	    	break;
-	    	}
+	    	} /* end if if match */
 	    } /* end of for loop to find name */
 
-	/* Blank out the name to prevent re-use. */
-	CP437_names[i][0] = '\0';
     	} /* end of line loop */
 
     fclose(in);
@@ -446,6 +454,7 @@ int main(int argc, char *argv[])
 
     puts("end % pprdotmatrix");
     puts("%%EOF");
+
     return 0;
     } /* end of main() */
 

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -227,7 +227,7 @@ FILE *wait_for_pprd(int do_timeout)
     if(unlink(temp_file_name) < 0)
     	fprintf(errors, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
 
-    if(fscanf(reply_file, "%d\n", &pprd_retcode) != 1)
+    if(gu_fscanf(reply_file, "%d\n", &pprd_retcode) != 1)
 	{
 	fprintf(errors, "%s(): return code missing in reply file.\n", function);
 	fclose(reply_file);
@@ -1002,7 +1002,7 @@ static int interactive_mode(void)
 	** Break the string into white-space separated "words".  A quoted string
 	** will be treated as one word.
 	*/
-	for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n")); x++)
+	for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
 	    {
             if(x == MAX_CMD_WORDS)
             	{

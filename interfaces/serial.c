@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 1 May 2001.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -127,7 +127,7 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 	if( ! (statbuf.st_mode & S_IFCHR) )
 	    {
 	    alert(int_cmdline.printer, TRUE, "The file \"%s\" is not a tty.");
-	    int_exit(EXIT_PRNERR_NORETRY);
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	    }
 	}
 
@@ -144,7 +144,7 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 	    {
 	    case EACCES:
 	    	alert(int_cmdline.printer, TRUE, "Access to port \"%s\" is denied.", printer_address);
-		int_exit(EXIT_PRNERR_NORETRY);
+		int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 	    case EIO:
 	    	alert(int_cmdline.printer, TRUE, "Hangup or other error while opening \"%s\".", printer_address);
 		int_exit(EXIT_PRNERR);
@@ -154,10 +154,10 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 	    case ENOENT:	/* file not found */
 	    case ENOTDIR:	/* path not found */
 	    	alert(int_cmdline.printer, TRUE, "The port \"%s\" does not exist.", printer_address);
-	    	int_exit(EXIT_PRNERR_NORETRY);
+	    	int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 	    case ENXIO:
 	    	alert(int_cmdline.printer, TRUE, "The device file \"%s\" exists, but the device doesn't.", printer_address);
-		int_exit(EXIT_PRNERR_NORETRY);
+		int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 	    #ifdef ENOSR
 	    case ENOSR:
 	    	alert(int_cmdline.printer, TRUE, "System is out of STREAMS.");
@@ -431,7 +431,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
     	alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* We can't use control-T status updates if the job
@@ -445,7 +445,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
     		&& int_cmdline.codes != CODES_UNKNOWN)
     	{
     	alert(int_cmdline.printer, TRUE, _("%s interface: \"codes\" setting must be \"Clean7Bit\" if the option \"bits=7\" is set."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* If detect_hangups was set to true, clear CLOCAL: */
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE,
     		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
     		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Check for unusable codes settings. */
@@ -535,7 +535,7 @@ int main(int argc, char *argv[])
 	alert(int_cmdline.printer, TRUE,
 		_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
 		"program \"%s\"."), int_cmdline.int_basename);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Open the printer port and esablish default settings: */

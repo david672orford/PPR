@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_standalone.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 September 2000.
+** Last modified 23 May 2001.
 */
 
 #include "before_system.h"
@@ -75,7 +75,7 @@ static void create_lock_file(void)
     if(gu_lock_exclusive(lockfilefd, FALSE))
 	fatal(1, _("lprsrv is already running in standalone mode"));
 
-    sprintf(temp, "%ld\n", (long)getpid());
+    snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
     write(lockfilefd, temp, strlen(temp));
     } /* end of create_lock_file() */
 

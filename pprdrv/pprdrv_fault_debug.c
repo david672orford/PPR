@@ -123,6 +123,7 @@ void hooked_exit(int rval, const char *explain)
     ppop_status_shutdown();
 
     /* Now we can do a real exit. */
+    DODEBUG_MAIN(("hooked_exit(): calling exit(%d)", rval));
     exit(rval);
     } /* end of hooked_exit() */
 

@@ -10,8 +10,13 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 1 May 2001.
+** Last modified 11 May 2001.
 */
+
+#ifndef LIBPPR_INT_H
+#define LIBPPR_INT_H 1
+
+#include "gu.h"
 
 /*
 ** This is a structure into which interface arguments are stored
@@ -30,7 +35,7 @@ struct INT_CMDLINE
     const char *address;		/* "My Laser Printer:LaserWriter@Computing Center" */
     const char *options;		/* "idle_status_interval=60 open_retries=5" */
     int jobbreak;			/* 1 (signal) */
-    gu_boolean feedback;			/* 1 (True) */
+    gu_boolean feedback;		/* 1 (True) */
     enum CODES codes;			/* 3 (Binary) */
     const char *jobname;		/* "mouse:myprn-1001.0(mouse)" */
     const char *routing;		/* "Call David Chappell at 2114 when ready" */
@@ -50,8 +55,8 @@ void print_pap_status(const unsigned char *status);
 void int_cmdline_set(int argc, char *argv[]);
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[]);
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);
-int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_engaged, int refused_retries, unsigned int *address_ptr);
-void int_snmp_status(void *addr_ptr);
+int int_connect_tcpip(int connect_timeout, int sndbuf_size, gu_boolean refused_engaged, int refused_retries, const char snmp_community[], unsigned int *address_ptr);
+void int_snmp_status(struct gu_snmp *s);
 void int_printer_error_tcpip(int error_number);
 void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*snmp_function)(void *address), void *address, int snmp_status_interval);
 void int_exit(int exitvalue)
@@ -59,6 +64,8 @@ void int_exit(int exitvalue)
 __attribute__ (( noreturn ))
 #endif
 ;
+
+#endif
 
 /* end of file */
 

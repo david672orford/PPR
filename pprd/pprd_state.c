@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 19 April 2001.
+** Last modified 9 May 2001.
 */
 
 #include "before_system.h"
@@ -61,6 +61,8 @@ void state_update(const char *string, ... )
 
 	snprintf(line, sizeof(line), "SERIAL %d\n", serial++);
 	write(handle, line, strlen(line));
+
+	gu_set_cloexec(handle);
     	}
 
     va_start(va, string);

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 April 2001.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -26,7 +26,6 @@
 
 #include "before_system.h"
 #include <sys/time.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
@@ -37,7 +36,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "libppr_int.h"
 
@@ -161,7 +159,7 @@ static void hide_printer(int fd, const char newtype[])
     ** or exitserver password from the PPD file.  This could
     ** be considered a deficiency, but it is not a serious one.
     */
-    sprintf(writebuf,
+    snprintf(writebuf, sizeof(writebuf),
 	"%%!PS-Adobe-3.0 ExitServer\n"
 	"0 serverdict begin exitserver\n"
 	"statusdict begin\n"
@@ -294,7 +292,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
     if(nbp_parse_entity(&entity, atalk_name))
 	{
 	alert(int_cmdline.printer, TRUE, _("Syntax error in printer address \"%s\"."), atalk_name);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
 
     if(address_status != ADDRESS_STATUS_UNKNOWN)
@@ -334,26 +332,26 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 	*/
 	if( (entity.type.len==11 && strncmp(entity.type.str,"LaserWriter",11)==0) || renamed || !opt_is_laserwriter )
 	    {
-	    alert(int_cmdline.printer,TRUE,"Printer \"%s\" not found.", atalk_name);
-	    int_exit(EXIT_PRNERR);
+	    alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found.", atalk_name);
+	    int_exit(EXIT_PRNERR_NOT_RESPONDING);
 	    }
 
 	/* Save the type we looked for in "newtype". */
 	strncpy(newtype, entity.type.str, entity.type.len);
-	newtype[(int)entity.type.len] = (char)NULL;	/* (int) is for GNU-C */
+	newtype[(int)entity.type.len] = '\0';			/* <-- (int) is for GNU-C */
 
 	/* Change the type to "LaserWriter". */
 	strcpy(entity.type.str, "LaserWriter");
 	entity.type.len = 11;
 
 	/* Try again with the type of "LaserWriter". */
-	if( (fd = basic_open_printer(&entity, addr, wlen, TRUE)) == -1 )
+	if((fd = basic_open_printer(&entity, addr, wlen, TRUE)) == -1)
 	    {
 	    alert(int_cmdline.printer,TRUE,"Printer \"%s\" not found,", atalk_name);
 	    alert(int_cmdline.printer,FALSE,"nor is \"%.*s:LaserWriter@%.*s\".",
 		(int)entity.object.len,entity.object.str,
 		(int)entity.zone.len,entity.zone.str);
-	    int_exit(EXIT_PRNERR);
+	    int_exit(EXIT_PRNERR_NOT_RESPONDING);
 	    }
 
 	/* Now, hide the printer. */
@@ -729,7 +727,7 @@ int main(int argc, char *argv[])
     if(strlen(int_cmdline.address) > (32+1+32+1+32))
 	{
     	alert(int_cmdline.printer, TRUE, _("Printer address \"%s\" is too long."), int_cmdline.address);
-	int_exit(EXIT_PRNERR_NORETRY);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* Parse the options string, searching for name=value pairs. */
@@ -814,7 +812,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE, _("Option parsing error: %s"), gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
     }
 
@@ -823,7 +821,7 @@ int main(int argc, char *argv[])
     sigaddset(&sigset_sigusr1, SIGUSR1);
 
     /* Make sure stdin is in non-blocking mode. */
-    fcntl(0, F_SETFL, O_NONBLOCK);
+    gu_nonblock(0, TRUE);
 
     /*
     ** Install a signal handler for the end of job signal

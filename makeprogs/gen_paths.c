@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 12 April 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -18,6 +18,7 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "version.h"
 
 const char myname[] = "gen_paths";
@@ -104,6 +105,16 @@ int main(int argc, char *argv[])
     printf(format, "PACKAGE_PPRDRV", PACKAGE_PPRDRV);
     printf(format, "PACKAGE_PAPSRV", PACKAGE_PAPSRV);
     printf(format, "PACKAGE_PPRWWW", PACKAGE_PPRWWW);
+
+    /* More stuff for PPR.pm. */
+    if(strcmp(argv[1], "--pm") == 0)
+	{
+	printf("$SIZEOF_struct_Media=%d;\n", sizeof(struct Media));
+	}
+
+    /* Perl modules and libraries must end with something that evaluates to true. */
+    if(strcmp(argv[1], "--ph") == 0 || strcmp(argv[1], "--pm") == 0)
+    	printf("1;\n");
 
     return 0;
     }

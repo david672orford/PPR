@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/lpr_connect.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell and Damian Ivereigh.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 27 July 2000.
+** Last modified 10 May 2001.
 */
 
 #include "before_system.h"
@@ -37,7 +37,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 #include "uprint.h"
 #include "uprint_private.h"
@@ -114,9 +113,8 @@ int uprint_lpr_make_connection(const char *address)
     	{
 	if((hostinfo = gethostbyname(address)) == (struct hostent *)NULL)
 	    {
-	    /* Maybe it should be EXIT_PRNERR_NORETRY?  Hard to decide. */
 	    uprint_error_callback(_("IP address lookup for \"%s\" failed."), address);
-	    uprint_errno = UPE_TEMPFAIL;
+	    uprint_errno = UPE_BADSYS;
 	    return -1;
 	    }
 

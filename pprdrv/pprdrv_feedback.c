@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 9 May 2001.
 */
 
 /*
@@ -34,7 +34,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
@@ -46,7 +45,7 @@
 static const char hexchars[] = "0123456789ABCDEF";
 
 static int intfd = -1;			/* fd to read from */
-static gu_boolean posterror = FALSE;		/* true if a PostScript error is detected */
+static gu_boolean posterror = FALSE;	/* true if a PostScript error is detected */
 static gu_boolean ghostscript = FALSE;	/* We think we are talking to Ghostscript */
 static int logfile = -1;		/* fd of possibly open log file */
 
@@ -752,7 +751,7 @@ int feedback_wait(int timeout, gu_boolean return_on_signal)
             {
             if(errno == EINTR)
                 {
-                interface_fault_check();
+                fault_check();
 		if(return_on_signal)
 		    break;
                 continue;
@@ -765,7 +764,7 @@ int feedback_wait(int timeout, gu_boolean return_on_signal)
             if(!FD_ISSET(intstdout, &rfds))
                 fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed", function);
 
-            interface_fault_check();
+            fault_check();
 
             DODEBUG_FEEDBACK(("%s(): data glob ready", function));
             if(feedback_reader() > 0)
@@ -810,7 +809,7 @@ void feedback_pjl_wait(void)
 	int t = 0;
 
 	/*
-	** Be careful!  It may be that the first PJL message hasn't arrived 
+	** Be careful!  It may be that the first PJL message hasn't arrived
 	** yet.  We wouldn't want to conclude that the jobs was done just
 	** because we weren't between the start and end messages.
 	*/
@@ -826,8 +825,8 @@ void feedback_pjl_wait(void)
 	    }
 
 	/*
-	** Inform the progress monitoring code that we are entering the 
-	** waiting-for-job-to-end-monitored-by-PJL phase of operations. 
+	** Inform the progress monitoring code that we are entering the
+	** waiting-for-job-to-end-monitored-by-PJL phase of operations.
 	*/
 	writemon_start("WAIT_PJL");
 
@@ -876,7 +875,7 @@ void feedback_pjl_wait(void)
 	    ** the message changes until the job is done!
 	    **
 	    ** Though the message setting code is disabled, the skeleton
-	    ** has been left since the traffic it generates serves to 
+	    ** has been left since the traffic it generates serves to
 	    ** reset the printer's communications timeout.  (Remember that
 	    ** the interfaces have a non-zero default for idle_status_interval
 	    ** only if the jobbreak method is "control-d".)
@@ -901,7 +900,7 @@ void feedback_pjl_wait(void)
 	    #endif
 
 	    /* Flush the commands to the printer but remove those bytes from the total transmitted count. */
-	      
+
 	    progress_bytes_sent_correction(printer_flush());
 	    }
 

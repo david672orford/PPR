@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_res.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 July 1999.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -29,7 +29,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 
@@ -58,31 +57,25 @@ static char *resname_to_str(const char *type, const char *name, double version, 
     if(strcmp(type, "procset") == 0)
     	{
     	version_str = gu_dtostr(version);
-
-    	if(revision >= 0 && revision <= 999999999)	/* if positive and 9 digits or fewer, */
-    	    sprintf(revision_str, "%d", revision);	/* (Actually we have space for 10 */
-    	else						/* this test isn't need w/ 32 bit int.) */
-    	    strcpy(revision_str, "<overflow>");
+	snprintf(revision_str, sizeof(revision_str), "%d", revision);
 
     	len += strlen(version_str);
     	len += strlen(revision_str);
-    	len += 2;			/* two spaces */
+    	len += 2;			/* plus two spaces */
     	}
 
     if(result_len < len)		/* If the existing result space is */
     	{				/* not big enough, get a new one. */
-    	if(result != (char*)NULL)	/* Free the old one if it exists. */
+    	if(result)			/* Free the old one if it exists. */
     	    gu_free(result);
-
     	result = (char*)gu_alloc(len,sizeof(char));
-
 	result_len = len;		/* Update length of result space. */
     	}
 
-    if(version_str != (char*)NULL)	/* If Procset, */
-    	sprintf(result,"%s %s %s %s",type,name,version_str,revision_str);
-    else
-    	sprintf(result,"%s %s",type,name);
+    if(version_str)			/* If Procset, */
+    	snprintf(result, result_len, "%s %s %s %s", type, name, version_str, revision_str);
+    else				/* other kind if resource */
+    	snprintf(result, result_len, "%s %s", type, name);
 
     return result;
     } /* end of resname_to_str() */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/uprint_private.h
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 5 June 2001.
 */
 
 /* Do not turn this on when linking with lprsrv!  Such
@@ -73,11 +73,11 @@ struct UPRINT
 	const char *content_type_lp;	/* argument for lp -T or "raw" for -r */
 	char content_type_lpr;		/* lpr switch such as -f, -c, or -d */
 	int copies;			/* number of copies */
-	gu_boolean banner;			/* should we ask for a banner page? */
-	gu_boolean nobanner;			/* should we ask for suppression? */
+	gu_boolean banner;		/* should we ask for a banner page? */
+	gu_boolean nobanner;		/* should we ask for suppression? */
 	gu_boolean filebreak;
 	int priority;			/* queue priority */
-	gu_boolean immediate_copy;		/* should we copy file before exiting? */
+	gu_boolean immediate_copy;	/* should we copy file before exiting? */
 
 	const char *form;		/* form name */
 	const char *charset;		/* job character set */
@@ -104,10 +104,10 @@ struct UPRINT
 	const char *osf_K_duplex;
 	int nup;	 		/* N-Up setting */
 
-	gu_boolean unlink;			/* should job files be unlinked? */
+	gu_boolean unlink;		/* should job files be unlinked? */
 	gu_boolean show_jobid;		/* should be announce the jobid? */
-	gu_boolean notify_email;		/* send mail when job complete? */
-	gu_boolean notify_write;		/* use write(1) when job complete? */
+	gu_boolean notify_email;	/* send mail when job complete? */
+	gu_boolean notify_write;	/* use write(1) when job complete? */
 
 	/* PPR options: */
 	const char *ppr_responder;
@@ -119,8 +119,8 @@ struct UPRINT
 	char str_typeswitch[3];
 	char str_mailaddr[MAX_MAILADDR + 1];
 	char str_principal[MAX_PRINCIPAL + 1];		/* argument for ppr -X switch */
-	char str_for[MAX_FOR + 1];				/* argument for ppr -f switch */
-	char str_pr_title[6 + LPR_MAX_T + 1];		/* space for "title=my title" */
+	char str_for[MAX_FOR + 1];			/* argument for ppr -f switch */
+	char str_pr_title[8 + LPR_MAX_T * 2 + 1];	/* space for "title=\"my title\"" */
 	char str_width[12];
 	char str_length[12];
 	char str_lpi[12];

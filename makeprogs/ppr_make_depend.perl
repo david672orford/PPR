@@ -1,8 +1,8 @@
 #! /usr/bin/perl
 #
-# mouse:~ppr/tools4make/ppr_make_depend.perl
+# mouse:~ppr/makeprogs/ppr_make_depend.perl
 #
-# Last modified 17 September 1998.
+# Last modified 10 May 2001.
 #
 
 defined($INCDIR = $ARGV[0]) || die;

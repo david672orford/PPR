@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv_ali.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 November 2000.
+** Last modified 9 May 2001.
 */
 
 /*
@@ -25,11 +25,11 @@
 #include "before_system.h"
 
 #include <signal.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/time.h>
+#include <fcntl.h>
 
 #include <at/appletalk.h>
 #include <at/nbp.h>
@@ -529,7 +529,7 @@ void appletalk_dependent_daemon_main_loop(void)
 		/*
 		** We don't want ppr in inherit the PAP endpoint.
 		*/
-		fcntl(sesfd, F_SETFD, 1);
+		gu_set_cloexec(sesfd);
 
 		/*
 		** Change SIGCHLD handler to the one for catching ppr termination.

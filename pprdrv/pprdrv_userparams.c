@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_userparams.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 8 December 2000.
+** Last modified 1 June 2001.
 */
 
 #include "before_system.h"
@@ -30,7 +30,7 @@ static void pre(const char setting[])
 static void post(const char setting[])
     {
     printer_printf("}stopped{(Failed to set %s\\n)print}if cleartomark\n", setting);
-    printer_putline("%% PPR done.");
+    printer_putline("% PPR done.");
     }
 
 /*

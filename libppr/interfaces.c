@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/interfaces.c
-** Copyright 1995--1999, Trinity College Computing Center
+** Copyright 1995--2001, Trinity College Computing Center
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,14 +10,13 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 June 1999.
+** Last modified 9 May 2001.
 */
 
 #include "before_system.h"
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "interface.h"
 
 /*
@@ -103,4 +102,3 @@ enum CODES interface_default_codes(const char interface[], const struct PPD_PROT
     }
 
 /* end of file */
-

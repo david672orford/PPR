@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr-1.44.spec
-# Last modified 20 April 2001.
+# Last modified 5 June 2001.
 #
 # This is my first attempt at a RPM spec file for PPR.  I think I have made
 # a few mistakes.  Please point them out.
@@ -10,6 +10,7 @@
 # build the thing elsewhere, such as in ones home dirctory, but I don't know
 # how.
 #
+
 Summary: A spooler for PostScript printers
 Name: ppr
 Version: 1.44
@@ -24,7 +25,7 @@ BuildRoot: /var/tmp/%{name}-buildroot
 
 %description
 PPR is a print spooler for PostScript printers.  It can print to parallel,
-serial, AppleTalk, LPR/LPD, AppSocket, and SMB printers.  It works well
+serial, AppleTalk, LPR/LPD, SocketAPI, and SMB printers.  It works well
 with Ghostscript, Netatalk, CAP60, and Samba.
 
 #============================================================================

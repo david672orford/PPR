@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_simplify.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 August 1999.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -34,7 +34,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "ppr_infile.h"
@@ -266,7 +265,7 @@ static gu_boolean simplify_continuation(void)
 	int x = 3;
 	while(isspace(line[x]))	/* eat up space after %%+ */
 	    x++;
-	line_len = sprintf(tempstr, "%%%%%s %s", lastDSC, &line[x]);
+	line_len = snprintf(tempstr, sizeof(tempstr), "%%%%%s %s", lastDSC, &line[x]);
 	strcpy(line, tempstr);	/* then expand to full comment */
 	return TRUE;
 	}

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 7 May 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -64,12 +64,11 @@ int translate_lw_message(const char raw_message[], int *value1, int *value2, int
 	   continue;
 
 	p = line;
-	if(!(f1 = gu_strsep_quoted(&p, ":"))
-		|| !(p += strspn(p, " \t:"))		/* should always be true */
+	if(!(f1 = gu_strsep_quoted(&p, ":", " \t"))
 		|| !(f2 = gu_strsep(&p, ":"))
 		|| !(f3 = gu_strsep(&p, ":"))
 		|| !(f4 = gu_strsep(&p, ":"))
-		|| !(f5 = gu_strsep_quoted(&p, ":")))
+		|| !(f5 = gu_strsep_quoted(&p, ":", NULL)))
 	    {
 	    error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
 	    continue;
@@ -83,7 +82,7 @@ int translate_lw_message(const char raw_message[], int *value1, int *value2, int
 		error(_("Unrecognized hrDeviceStatus \"%s\" in \"%s\" line %d field 2"), f2, filename, linenum);
 	    if(*f3 && (*value2 = snmp_PrinterStatus(f3)) == -1)
 		error(_("Unrecognized hrPrinterStatus \"%s\" in \"%s\" line %d field 3"), f3, filename, linenum);
-	    if(*f4 && (*value1 = snmp_PrinterDetectedErrorState(f4)) == -1)
+	    if(*f4 && (*value3 = snmp_PrinterDetectedErrorState(f4)) == -1)
 		error(_("Unrecognized hrPrinterDetectedErrorState \"%s\" in \"%s\" line %d field 4"), f4, filename, linenum);
 
 	    snprintf(static_details, sizeof(static_details), "%s", f5);

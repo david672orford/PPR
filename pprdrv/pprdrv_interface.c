@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 February 2001.
+** Last modified 21 May 2001.
 */
 
 /*
@@ -18,9 +18,14 @@
 ** and setting up the printer.
 **
 ** The external interface to this module is:
-**	job_start()		called before each PS job (banner, body, etc.)
-**	job_end()		called after each PS job
-**	job_nomore()		called after last time job_end() called
+**
+**	job_start()				called before each PS job (banner, body, etc.)
+**	job_end()				called after each PS job
+**	job_nomore()				called after last time job_end() called
+**
+**	interface_sigchld_hook()		called by sigchld_handler() only
+**	interface_fault_check()			called by fault_check() only
+**	kill_interface()			called by hooked_exit() only
 */
 
 #include "before_system.h"
@@ -29,96 +34,53 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
-#include <fcntl.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
 
 int intstdin = -1;				/* pipe to interface program */
 int intstdout;					/* pipe from interface program */
-static pid_t intpid = 0;			/* interface process id */
-static int interface_wait_status;
-static volatile gu_boolean sigusr1_caught;
-static volatile gu_boolean sigalrm_caught;
-static volatile gu_boolean interface_died;
-extern volatile gu_boolean sigterm_caught;		/* set by handler in pprdrv.c */
+static int intstdout_write_end;
+
+static volatile pid_t intpid = 0;		/* interface process id */
+static volatile gu_boolean interface_died;	/* set by interface_sigchld_hook() */
+static volatile int interface_wait_status;	/* wait() status of interface */
+static volatile gu_boolean sigusr1_caught;	/* for "signal" and "signal/pjl" jobbreak methods */
+static gu_boolean interface_fault_check_disable;
 
 /*
-** Catch child death signals.  This handler is in placed during those
-** time when we don't expect the interface to terminate.  We ignore
-** the termination of things other than the interface, such as
-** commentators and custom hooks.
+** This is called from the SIGCHLD handler.  It checks pid to see it if is
+** the interface that has exited and if it has it stores the exit code
+** in interface_wait_status and returns TRUE (so that the SIGCHLD handler
+** won't go on asking subsystems if they own the child).
+**
+** Since this is called from signal handler, we may only call reentrant
+** functions.  In other words, set a flag and get out.
 */
-static void sigchld_handler(int sig)
+gu_boolean interface_sigchld_hook(pid_t pid, int wait_status)
     {
-    const char function[] = "sigchld_handler";
-    pid_t waitid;
-    int wait_status;
-
-    /*
-    ** In this loop we retrieve process exit status until there
-    ** are no more children whose exit status is available.  When
-    ** there are no more, we return.  If the child is the interface,
-    ** we drop out of the loop and let the code below handle it.
-    **
-    ** Notice that it is important to test for a return value of
-    ** 0 before we test for a return value that is equal to intpid
-    ** since if there is no interface intpid will be 0.
-    */
-    while(TRUE)
+    FUNCTION4DEBUG("interface_sigchld_hook")
+    if(pid == intpid)
 	{
-	waitid = waitpid((pid_t)-1, &wait_status, WNOHANG);
-
-	/* If no more children have exited or no more children exist, */
-	if(waitid == 0)
-	    break;
-
-	if(waitid == -1)
-	    {
-	    if(errno == ECHILD)
-		break;
-	    if(errno == EINTR)
-	    	continue;
-	    signal_fatal(EXIT_PRNERR, "%s(): waitpid() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    }
-
-	/* If the child that died was the interface, */
-	if(waitid == intpid)
-	    {
-	    #ifdef DEBUG_INTERFACE
-	    signal_debug("%s(): interface terminated", function);
-	    #endif
-	    interface_wait_status = wait_status;
-	    interface_died  = TRUE;
-	    alarm(0);
-	    kill(getpid(), SIGALRM);	/* <-- interupt system calls */
-	    continue;
-	    }
-
-	/* If we get this far, a commentator terminated. */
 	#ifdef DEBUG_INTERFACE
-	signal_debug("%s(): process %ld terminated", function, (long int)waitid);
+	signal_debug("%s(): interface terminated", function);
 	#endif
-    	}
-    } /* end of sigchld_handler() */
-
-/*
-** We use this rather than setting the action to SIG_IGN because
-** POSIX does not specify what happens when SIGCHLD is ignored.
-** It might work to set it to SIG_DFL, but I haven't tried that.
-*/
-static void empty_sigchld_handler(int sig)
-    {
-    }
+	interface_wait_status = wait_status;
+	interface_died  = TRUE;
+	intpid = 0;
+	return TRUE;
+	}
+    return FALSE;
+    } /* end of interface_sigchld_hook() */
 
 /*
 ** Handler for signal from interface (user signal 1).
+**
 ** If we are using the JobBreak method "signal" or "signal/pjl",
 ** the interface will send us this signal as soon as it has
 ** set-up its SIGUSR1 handler.  It will also send us that signal
@@ -132,26 +94,18 @@ static void sigusr1_handler(int sig)
     sigusr1_caught = TRUE;
     } /* end of sigusr1_handler() */
 
-static void sigalrm_handler(int sig)
-    {
-    #ifdef DEBUG_INTERFACE
-    signal_debug("SIGALRM caught");
-    #endif
-    sigalrm_caught = TRUE;
-    }
-
-static void sigpipe_handler(int sig)
-    {
-    #ifdef DEBUG_INTERFACE
-    signal_debug("SIGPIPE caught");
-    #endif
-    }
-
 /*
-** We call this no matter when the interface exits.  If this function
-** finds that the interface didn't exit in a well-controlled fashion
-** (i. e., clearly indicating sucess or failure), it treats the
-** circumstance as a fatal error.
+** We call this no matter when the interface exits.  In other words, it is
+** called from interface_fault_check() if it sees that interface_sigchld_hook()
+** has set interface_died and it is called from close_interface().  It is
+** never called from a signal handler!
+**
+** If this function finds that the interface didn't exit in a well-controlled
+** fashion (i. e., clearly indicating success or failure), it treats the
+** circumstance as a fatal error.  (I.E., it calls alert() and then exits.)
+**
+** This function examines interface_wait_status which is set by
+** interface_sigchld_hook().
 */
 static void interface_exit_screen(void)
     {
@@ -166,17 +120,22 @@ static void interface_exit_screen(void)
 	** issue a rather complicated message.  We will make calls
 	** to alert(), and hooked_exit().
 	*/
-	alert(printer.Name, TRUE, "Interface terminated abruptly after receiving signal %d (%s)", WTERMSIG(interface_wait_status), gu_strsignal(WTERMSIG(interface_wait_status)));
-	alert(printer.Name, FALSE, "from a non-spooler process (possibly the OS kernel).");
+	alert(printer.Name, TRUE,
+		_("The printer interface program terminated abruptly after receiving\n"
+		"signal %d (%s) from a non-spooler process (possibly\n"
+		"the OS kernel)."),
+		WTERMSIG(interface_wait_status),
+		gu_strsignal(WTERMSIG(interface_wait_status))
+		);
 
 	/* If the signal caused the interface to dump core, say so. */
-	if( WCOREDUMP(interface_wait_status) )
+	if(WCOREDUMP(interface_wait_status))
 	    {
-	    alert(printer.Name, FALSE, "Interface dumped core.");
+	    alert(printer.Name, FALSE, _("The interface program dumped core."));
 	    hooked_exit(EXIT_PRNERR_NORETRY, "interface core dump");
 	    }
 
-	hooked_exit(EXIT_SIGNAL, "interface program killed");
+	hooked_exit(EXIT_PRNERR, "interface program killed");
 	} /* end of if interface died due to the receipt of a signal */
 
     /*
@@ -197,9 +156,9 @@ static void interface_exit_screen(void)
     ** why that might be, but it is possible.
     */
     if(WIFSTOPPED(interface_wait_status))
-	fatal(EXIT_PRNERR_NORETRY, _("Interface stopped by signal \"%s\"."), gu_strsignal(WSTOPSIG(interface_wait_status)));
+	fatal(EXIT_PRNERR_NORETRY, _("Mischief afoot, interface program stopped by signal \"%s\"."), gu_strsignal(WSTOPSIG(interface_wait_status)));
     if(! WIFEXITED(interface_wait_status))
-	fatal(EXIT_PRNERR_NORETRY, _("Bizaar interface program malfunction: SIGCHLD w/out signal or exit."));
+	fatal(EXIT_PRNERR_NORETRY, _("Bizaar interface program malfunction: SIGCHLD w/out signal or exit()."));
 
     /*
     ** If the exit code is a legal one for an interface, use it;
@@ -215,39 +174,36 @@ static void interface_exit_screen(void)
     } /* end of interface_exit_screen() */
 
 /*
-** This is called by this module's clients whenever they want to assure
-** themselves that the interface program hasn't died.
+** This is called by pprdrv.c:fault_check().
 */
 void interface_fault_check(void)
     {
     FUNCTION4DEBUG("interface_fault_check")
     DODEBUG_INTERFACE(("%s()", function));
 
-    /* Not strictly an interface fault, but we catch it here. */
-    if(sigterm_caught)
-	{
-	DODEBUG_INTERFACE(("%s(): exiting because sigterm_caught is TRUE", function));
-	hooked_exit(EXIT_SIGNAL, "printing halted");
-	}
-
-    if(interface_died)
+    if(interface_died && !interface_fault_check_disable)
     	{
-	DODEBUG_INTERFACE(("%s(): interface terminated", function));
+	DODEBUG_INTERFACE(("%s(): interface terminated, exit code=0x%04x", function, interface_wait_status));
 
-        /* Make a note of the fact that the interface is dead. */
-        intpid = 0;
+	/* Very important to close this, otherwise feedback_drain() will never return. */
+	close(intstdout_write_end);
 
-	/* If we don't turn this off, then feedback_drain() won't work! */
+	/* We must also kill the RIP (if present), otherwise when SIGPIPE kills
+	   it it will claim all the glory of the disaster. */
+	rip_cancel();
+
+	/* If we don't turn this off, then feedback_drain() won't work
+	   since it calls interface_fault_check(). */
 	interface_died = FALSE;
+
+        /* Read final output from interface: */
+        feedback_drain();
 
 	/* Check for really wierd stuff */
         interface_exit_screen();
 
 	/* It is now safe to say we have a real exit code. */
 	DODEBUG_INTERFACE(("%s(): interface exit code is %d", function, WEXITSTATUS(interface_wait_status)));
-
-        /* Read final output from interface: */
-        feedback_drain();
 
         /*
         ** Test for a very strange termination.  Notice that normal
@@ -277,7 +233,7 @@ void interface_fault_check(void)
         hooked_exit(WEXITSTATUS(interface_wait_status), (char*)NULL);
         }
 
-    DODEBUG_INTERFACE(("%s(): done", function));
+    DODEBUG_INTERFACE(("%s(): done, no fault", function));
     } /* end of interface_fault_check() */
 
 /*
@@ -291,7 +247,6 @@ static void start_interface(const char *BarBarPDL)
     const char *function = "start_interface";
     int _stdin[2];           		/* for opening pipe to interface */
     int _stdout[2];			/* for pipe from interface */
-    int new_stdin, new_stdout;
     char fname[MAX_PPR_PATH];		/* possibly holds path of interface program */
     char *fname_ptr;
     char jobbreak_str[2];		/* jobbreak setting converted to ASCII */
@@ -300,11 +255,11 @@ static void start_interface(const char *BarBarPDL)
 
     DODEBUG_INTERFACE(("%s(\"%s\")", function, BarBarPDL ? BarBarPDL : ""));
 
+    /* Clear a flag which is set by close_interface(). */
+    interface_fault_check_disable = FALSE;
+
     /* Install our signal handlers. */
-    signal_restarting(SIGCHLD, sigchld_handler);
-    signal_interupting(SIGALRM, sigalrm_handler);
     signal_restarting(SIGUSR1, sigusr1_handler);
-    signal_interupting(SIGPIPE, sigpipe_handler);
     interface_died = FALSE;
 
     /* Initialize output routines. */
@@ -316,6 +271,7 @@ static void start_interface(const char *BarBarPDL)
     	{
 	intstdin = 1;
 	intstdout = 0;
+	intstdout_write_end = 1;
 	feedback_setup(intstdout);
     	return;
     	}
@@ -367,6 +323,7 @@ static void start_interface(const char *BarBarPDL)
     /* Child */
     if(intpid == 0)
 	{
+	int new_stdin, new_stdout;
 	umask(PPR_INTERFACE_UMASK);	/* for temporary file security */
 	setpgid(0, 0);			/* for easier killing */
 	new_stdin=dup(_stdin[0]);	/* read end of stdin is for us */
@@ -418,11 +375,12 @@ static void start_interface(const char *BarBarPDL)
 	}
 
     /* Parent */
-    setpgid(intpid, 0);         /* in case we kill before it runs (race condition) */
-    close(_stdin[0]);           /* close our copy of read end */
-    close(_stdout[1]);          /* close unneeded write end */
+    setpgid(intpid, 0);			/* in case we kill before it runs (race condition) */
+    close(_stdin[0]);			/* close our copy of read end */
     intstdin = _stdin[1];
     intstdout = _stdout[0];
+    gu_set_cloexec(intstdout);		/* <-- don't do this on the other two! */
+    intstdout_write_end = _stdout[1];
 
     /* Unblock SIGCHLD which was blocked before the fork(): */
     {
@@ -437,19 +395,8 @@ static void start_interface(const char *BarBarPDL)
     ** interface non-blocking.  We will be using select() to figure out
     ** when they are ready.
     */
-    {
-    int flags;
-
-    flags = fcntl(intstdin, F_GETFL);
-    flags |= O_NONBLOCK;
-    if(fcntl(intstdin, F_SETFL, flags) < 0)
-    	fatal(EXIT_PRNERR, "%s(): fcntl() failed (on intstdin), errno=%d (%s)", function, errno, gu_strerror(errno));
-
-    flags = fcntl(intstdout, F_GETFL);
-    flags |= O_NONBLOCK;
-    if(fcntl(intstdout, F_SETFL, flags) < 0)
-    	fatal(EXIT_PRNERR, "%s(): fcntl() failed (on intstdout), errno=%d (%s)", function, errno, gu_strerror(errno));
-    }
+    gu_nonblock(intstdin, TRUE);
+    gu_nonblock(intstdout, TRUE);
 
     /* Tell the feedback reader which fd to read on.  This must be done
        before there is any chance that anyone will call feedback_wait();
@@ -469,28 +416,34 @@ static void start_interface(const char *BarBarPDL)
     */
     if(printer.Jobbreak == JOBBREAK_SIGNAL || printer.Jobbreak == JOBBREAK_SIGNAL_PJL)
 	{
-	sigset_t nset, oset;            /* newset, oldset */
+	sigset_t new_set, saved_set;
 
 	DODEBUG_INTERFACE(("%s(): waiting for SIGUSR1", function));
 
-	sigemptyset(&nset);             /* Block SIGUSR1. */
-	sigaddset(&nset, SIGUSR1);
-	sigaddset(&nset, SIGUSR1);
-	sigprocmask(SIG_BLOCK, &nset, &oset);
+	sigemptyset(&new_set);					/* Block SIGUSR1 and SIGCHLD. */
+	sigaddset(&new_set, SIGUSR1);
+	sigaddset(&new_set, SIGCHLD);
+	sigprocmask(SIG_BLOCK, &new_set, &saved_set);
 
-	sigalrm_caught = FALSE;
+	sigalrm_caught = FALSE;					/* Start the timeout timer. */
 	alarm(30);
 
-	while(! sigusr1_caught && ! sigalrm_caught)
-	    sigsuspend(&oset);
+	while(! sigusr1_caught && ! sigalrm_caught && ! interface_died)
+	    sigsuspend(&saved_set);
 
-	alarm(0);
+	alarm(0);						/* stop the timeout timer */
 
-	sigprocmask(SIG_SETMASK, &oset, (sigset_t*)NULL);	/* Unblock SIGUSR1. */
+	sigprocmask(SIG_SETMASK, &saved_set, (sigset_t*)NULL);	/* Unblock SIGUSR1. */
+
+	if(interface_died)
+	    {
+	    fault_check();
+	    fatal(EXIT_PRNERR_NORETRY, "%s(): interface exited during initial SIGUSR1 handshake", function);
+	    }
 
 	if(!sigusr1_caught)
 	    {
-	    interface_fault_check();
+	    fault_check();
 	    fatal(EXIT_PRNERR_NORETRY, "%s(): timeout during SIGUSR1 handshaking startup", function);
 	    }
 	}
@@ -507,7 +460,6 @@ static void start_interface(const char *BarBarPDL)
 static int close_interface(void)
     {
     const char function[] = "close_interface";
-    pid_t pid;
     int exit_code;
 
     DODEBUG_INTERFACE(("%s()", function));
@@ -519,26 +471,41 @@ static int close_interface(void)
     if(test_mode)
     	return EXIT_PRINTED;
 
-    /* We will handle reaping from here. */
-    signal_restarting(SIGCHLD, empty_sigchld_handler);
+    /* Close the copy of the write end of the pipe from the interface's
+       stdout to us.  We kept this copy in case we have to interpose
+       a RIP such as Ghostscript since we would want the RIP's error
+       output to mingle with the output of the interface program
+       (which is presumably messages from the printer).  We must close it
+       now before calling feedback_drain() since it would prevent it from
+       detecting EOF from the read end of the pipe.
+       */
+    close(intstdout_write_end);
 
-    /* Close the pipe to the interface. */
+    /* Set a flag to disable int_fault_check(). */
+    interface_fault_check_disable = TRUE;
+
+    /* Close the pipe to the interface.  (Which we just flushed.) */
     close(intstdin);
 
     /* Wait last output and for the interface to terminate: */
     feedback_drain();
+
+    /* We have read EOF, we can close this now. */
     close(intstdout);
 
-    /* Get the interface's exit code. */
-    while((pid = wait(&interface_wait_status)) != intpid)
-	{
-	if(pid == -1)
-	    {
-	    if(errno == EINTR)
-	    	continue;
-	    fatal(EXIT_PRNERR, "%s(): wait() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    }
-	}
+    /* Wait for the interface to exit. */
+    {
+    sigset_t nset, oset;            /* newset, oldset */
+
+    sigemptyset(&nset);             /* Block SIGCHLD */
+    sigaddset(&nset, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &nset, &oset);
+
+    while(! interface_died)
+	sigsuspend(&oset);
+
+    sigprocmask(SIG_SETMASK, &oset, (sigset_t*)NULL);	/* Unblock SIGUSR1. */
+    }
 
     /* Look for really wierd stuff. */
     interface_exit_screen();
@@ -558,14 +525,17 @@ void kill_interface(void)
     FUNCTION4DEBUG("kill_interface")
     DODEBUG_INTERFACE(("%s()", function));
 
-    /* Disable interface failure detection. */
-    signal_restarting(SIGCHLD, empty_sigchld_handler);
-
-    if(intpid)
+    /* If the interface is running, kill it. */
+    if(intpid > 0)	/* 0 means not running, -1 means fork() failed */
 	{
 	DODEBUG_INTERFACE(("%s(): killing interface, intpid=%d", function, intpid));
-	kill((intpid*(-1)), SIGTERM);	/* kill the interface */
-	}                               /* and its children */
+
+	/* Kill the Raster Image Processor (Ghostscript) if it is running. */
+	rip_cancel();
+
+	/* Kill the interface (actually its whole process group). */
+	kill((intpid*(-1)), SIGTERM);
+	}
     #ifdef DEBUG_INTERFACE
     else
     	{
@@ -584,8 +554,6 @@ void kill_interface(void)
 static void signal_jobbreak(void)
     {
     FUNCTION4DEBUG("signal_jobbreak")
-    int timeout;
-
     DODEBUG_INTERFACE(("%s()", function));
 
     /* Force buffered data into pipe. */
@@ -600,6 +568,8 @@ static void signal_jobbreak(void)
     kill(intpid, SIGUSR1);
 
     /* and wait for the response */
+    {
+    int timeout;
     writemon_start("WAIT_SIGNAL");
     for(timeout=1; !sigusr1_caught; timeout++)
 	{
@@ -607,34 +577,10 @@ static void signal_jobbreak(void)
 	feedback_wait(timeout, TRUE);
 	}
     writemon_unstalled("WAIT_SIGNAL");
+    }
 
     DODEBUG_INTERFACE(("%s(): done", function));
     } /* end of signal_jobbreak() */
-
-/*
-** Send the PJL Universal Exit Language command to the printer.
-*/
-void printer_universal_exit_language(void)
-    {
-    printer_puts("\33%-12345X");
-    }
-
-/*
-** Use a PJL command to set the display message on a printer.
-**
-** This code is a little more complicated than would seem necessary
-** because printer_printf() does not support "%.*".
-*/
-#define PJL_DISPLAY_LEN 32 /* 16 */
-void printer_display_printf(const char message[], ...)
-    {
-    char temp[PJL_DISPLAY_LEN + 1];
-    va_list va;
-    va_start(va, message);
-    vsnprintf(temp, sizeof(temp), message, va);
-    va_end(va);
-    printer_printf("@PJL RDYMSG DISPLAY = \"%s\"\n", temp);
-    }
 
 /*
 ** Send setup strings to the printer.  We use the information
@@ -653,8 +599,12 @@ static void printer_setup(const char *BarBarPDL, int iteration)
     switch(printer.Jobbreak)
     	{
      	case JOBBREAK_CONTROL_D:		/* <-- `Serial' control-d protocol */
-	    if(iteration == 1)			/* if first time called, */
-		printer_putc(4);		/* send a control-d to clear the printer */
+	    /* If this is a PostScript job and this is the first job, then
+	       send a control-d to clear the printer.
+	       */
+	    if(iteration == 1 && !BarBarPDL)
+		printer_putc(4);
+
     	    break;
 
     	case JOBBREAK_PJL:			/* <-- PJL without signals */
@@ -666,7 +616,7 @@ static void printer_setup(const char *BarBarPDL, int iteration)
 	    if(BarBarPDL && job.PJL)
 		printer_puts(job.PJL);
 
-	    /* Set message on printer's LCD.  We know of no reason why job.For 
+	    /* Set message on printer's LCD.  We know of no reason why job.For
 	       should ever be NULL, but we are paranoid. */
 	    printer_display_printf("%s", job.For ? job.For : "???");
 	    /* printer_puts("@PJL RDYMSG2 DISPLAY = \"xxxx\"\n"); */
@@ -719,19 +669,27 @@ static void printer_cleanup(void)
 
     switch(printer.Jobbreak)
     	{
-    	case JOBBREAK_CONTROL_D:		/* <-- simple ``serial'' control-D protocol */
-	    printer_putc(4);
-	    printer_flush();
-            if(printer.Feedback)
-                {
-		writemon_start("WAIT_CONTROL-D");
-                while(control_d_count > 0)	/* continue until all matched */
-                    {
-                    DODEBUG_INTERFACE(("%s(): control_d_count = %d", function, control_d_count));
-                    feedback_wait(0, FALSE);	/* wait for data from printer */
-                    }
-		writemon_unstalled("WAIT_CONTROL-D");
-                }
+    	case JOBBREAK_CONTROL_D:		/* <-- simple 'serial' control-D protocol */
+	    /* If this is a PostScript job, */
+	    if(!setup_BarBarPDL)
+		{
+		/* Send a control-d */
+		printer_putc(4);
+		printer_flush();
+
+		/* and wait for one control-d for every one we sent. */
+		if(printer.Feedback)
+		    {
+		    writemon_start("WAIT_CONTROL-D");
+		    while(control_d_count > 0)	/* continue until all matched */
+			{
+			DODEBUG_INTERFACE(("%s(): control_d_count = %d", function, control_d_count));
+			feedback_wait(0, FALSE);	/* wait for data from printer */
+			}
+		    writemon_unstalled("WAIT_CONTROL-D");
+		    }
+		}
+
     	    break;
 
     	case JOBBREAK_PJL:			/* <-- PJL with control-D */
@@ -773,7 +731,7 @@ static void printer_cleanup(void)
 	    printer_universal_exit_language();
 	    printer_display_printf("");
 	    #ifdef DEBUG_INTERFACE
-	    printer_display_printf("Sucessful!");
+	    printer_display_printf("Successful!");
 	    #endif
 	    printer_puts("@PJL RESET\n");
 	    printer_puts("@PJL USTATUSOFF\n");
@@ -831,7 +789,10 @@ void job_start(enum JOBTYPE jobtype)
 
     /* If this is the main job and the main job is going to
        be in some PDL other than PostScript, then set BarBarPDL
-       to the string which identifies that PDL. */
+       to the string which identifies that PDL.  Or, if
+       neither of the above is true and we are doing the RIPing,
+       then set the BarBarPDL to the name of the RIP's output
+       format. */
     switch(jobtype)
     	{
     	case JOBTYPE_THEJOB_BARBAR:
@@ -841,7 +802,10 @@ void job_start(enum JOBTYPE jobtype)
 	    BarBarPDL = job.Filters;
 	    break;
 	default:
-	    BarBarPDL = NULL;
+	    if(printer.RIP.driver_output_language)
+	    	BarBarPDL = printer.RIP.driver_output_language;
+	    else
+		BarBarPDL = NULL;
 	    break;
 	}
 
@@ -869,8 +833,26 @@ void job_start(enum JOBTYPE jobtype)
 	}
 
     iteration++;
+
+    /* Transparent jobs don't get printer setup strings. */
     if(jobtype != JOBTYPE_THEJOB_TRANSPARENT)
+	{
+	/* Send the printer setup string (which may be quite long). */
 	printer_setup(BarBarPDL, iteration);
+
+	/* If this is a PostScript job and we are doing the RIPing, */
+	if(jobtype != JOBTYPE_THEJOB_BARBAR && printer.RIP.name)
+	    {
+	    /* Clear our output buffer since rip_start() will switch our file descriptors. */
+	    printer_flush();
+
+	    /* Turn O_NONBLOCK back off since the RIP may not expect it to be on. */
+	    gu_nonblock(intstdin, FALSE);
+
+	    /* Interpose the RIP. */
+	    intstdin = rip_start(intstdin, intstdout_write_end);
+	    }
+	}
 
     DODEBUG_INTERFACE(("job_start(): done"));
     } /* end of job_start() */
@@ -884,7 +866,18 @@ void job_end(void)
     DODEBUG_INTERFACE(("job_end()"));
 
     if(start_jobtype != JOBTYPE_THEJOB_TRANSPARENT)
+	{
+	if(start_jobtype != JOBTYPE_THEJOB_BARBAR && printer.RIP.name)
+	    {
+	    /* Shut down the RIP and switch our file intstdin descriptor back. */
+	    intstdin = rip_stop(intstdin);
+
+	    /* Turn O_NONBLOCK back on because that is the way we like it. */
+	    gu_nonblock(intstdin, TRUE);
+	    }
+
 	printer_cleanup();
+	}
 
     DODEBUG_INTERFACE(("job_end(): done"));
     } /* end of job_end() */
@@ -903,4 +896,3 @@ int job_nomore(void)
     } /* end of job_nomore() */
 
 /* end of file */
-

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/printdesk/nbp_lookup_ali.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 22 November 2000.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -20,6 +20,7 @@
 ** This program must be linked with Netatalk and NATALI.
 */
 
+#include "before_system.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -29,7 +30,7 @@
 #include <at/nbp.h>
 #include "gu.h"
 
-int basic(char *argv[])
+static int basic(char *argv[])
     {
     char *name = argv[0];
     int max = 100;
@@ -128,7 +129,7 @@ int basic(char *argv[])
 
 struct NAME { int iteration; char *str; };
 
-int gui_backend(char *argv[])
+static int gui_backend(char *argv[])
     {
     char *name = argv[0];
     at_retry_t retries;
@@ -203,7 +204,7 @@ int gui_backend(char *argv[])
 	    at_nbptuple_t *t = &buffer[x];
 	    int cmp;
 
-	    sprintf(temp, "%.*s:%.*s@%.*s",
+	    snprintf(temp, sizeof(temp), "%.*s:%.*s@%.*s",
 		(int)t->enu_entity.object.len, t->enu_entity.object.str,
 		(int)t->enu_entity.type.len, t->enu_entity.type.str,
 		(int)t->enu_entity.zone.len, t->enu_entity.zone.str);

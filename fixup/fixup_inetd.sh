@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 23 April 2001.
+# Last modified 11 May 2001.
 #
 
 HOMEDIR="?"
@@ -112,6 +112,7 @@ service printer
 	server		= $HOMEDIR/lib/lprsrv
 	cps		= 400 30
 	instances	= 50
+	disabled	= yes
 }
 
 # WWW interface HTTP server
@@ -123,6 +124,7 @@ service ppradmin
 	user		= $USER_PPRWWW
 	server		= $HOMEDIR/lib/ppr-httpd
 	instances	= 50
+	disabled	= yes
 }
 
 # end of file

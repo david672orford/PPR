@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 1 May 2001.
+** Last revised 11 May 2001.
 */
 
 /*
@@ -57,10 +57,12 @@ int main(int argc, char *argv[])
     int connect_timeout = 20;		/* connexion timeout in seconds */
     int idle_status_interval = 0;	/* frequency of ^T transmission */
     int snmp_status_interval = 0;
+    const char *snmp_community = NULL;
     gu_boolean refused_engaged = TRUE;
     int refused_retries = 5;
     int sockfd;
     unsigned int address;		/* IP address of printer */
+    struct gu_snmp *snmp_obj = NULL;	/* Object for SNMP queries */
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE,
     		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
     		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
 
     /* If feedback is on, and control-d handshaking is on, turn on the ^T stuff. */
@@ -170,6 +172,13 @@ int main(int argc, char *argv[])
 	    	}
 	    }
 	/*
+	** SNMP community name.
+	*/
+	else if(strcmp(name, "snmp_community") == 0)
+	    {
+	    snmp_community = gu_strdup(value);
+	    }
+	/*
 	** refused=engaged
 	** refused=error
 	*/
@@ -216,7 +225,7 @@ int main(int argc, char *argv[])
     	alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
     	alert(int_cmdline.printer, FALSE, "%s", o.options);
     	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY);
+    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
     	}
     }
 
@@ -236,14 +245,29 @@ int main(int argc, char *argv[])
 
     /* Connect to the printer */
     gu_write_string(1, "%%[ PPR connecting ]%%\n");
-    sockfd = int_connect_tcpip(connect_timeout, sndbuf_size, refused_engaged, refused_retries, &address);
+    sockfd = int_connect_tcpip(connect_timeout, sndbuf_size, refused_engaged, refused_retries, snmp_community, &address);
     gu_write_string(1, "%%[ PPR connected ]%%\n");
 
     /* Disable SIGPIPE.  We will catch the error on write(). */
     signal_interupting(SIGPIPE, SIG_IGN);
 
+    /* If we will be doing SNMP queries, create the SNMP object. */
+    if(snmp_status_interval > 0)
+    	{
+	int error_code;
+       	if(!(snmp_obj = gu_snmp_open(address, snmp_community, &error_code)))
+	    {
+	    alert(int_cmdline.printer, TRUE, "gu_snmp_open() failed, error_code=%d", error_code);
+	    return EXIT_PRNERR;
+	    }
+	}
+
     /* Copy the file from STDIN to the printer. */
-    int_copy_job(sockfd, idle_status_interval, int_printer_error_tcpip, int_snmp_status, &address, snmp_status_interval);
+    int_copy_job(sockfd, idle_status_interval, int_printer_error_tcpip, int_snmp_status, snmp_obj, snmp_status_interval);
+
+    /* Destroy the SNMP object. */
+    if(snmp_status_interval > 0)
+	gu_snmp_close(snmp_obj);
 
     /* Close the connection */
     close(sockfd);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 15 June 2000.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -28,27 +28,27 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
+#include "pprdrv_ppd.h"
 
-extern FILE *yyin;                  /* lex's input file */
-int yylex(void);                    /* lex's principle function */
+static struct PPDSTR **ppdstr;		/* PPD strings hash table */
+static struct PPDFONT **ppdfont;	/* PPD fontlist hash table */
 
-/*
-** Globals
-*/
-struct PPDSTR **ppdstr;		/* PPD strings hash table */
-struct PPDFONT **ppdfont;	/* PPD fontlist hash table */
-char *ppdname;			/* name of next PPD string */
-char *ppdtext;			/* text of next PPD string */
+/* We use these when receiving feature code from the lexer. */
+static char *ppdname;		/* name of next PPD string */
+static char *ppdtext;		/* text of next PPD string */
+static int tindex;		/* index of next free byte in ppdtext */
 
+/* This is for handling included PPD files. */
 char *ppd_nest_fname[MAX_PPD_NEST];	/* names of all nested PPD files */
 int ppd_nest_level;			/* number of PPD files now open */
 
-int tindex;
-struct FEATURES Features;			/* list of features */
+/* */
+struct FEATURES Features;
+
+/* */
 struct PAPERSIZE papersize[MAX_PAPERSIZES];
 int papersizex = 0;				/* index into papersize[] */
 int num_papersizes = 0;
@@ -95,11 +95,11 @@ static int hash2(const char *s1, const char *s2, int tabsize)
 ** Functions called by the lexer.
 =========================================================*/
 /*
-** add_font() is called for each *Font: line.
+** ppd_callback_add_font() is called for each "*Font:" line.
 ** The hash structure used by this routine and find_font() is
 ** different from that used by the others in this module.
 */
-void add_font(char *fontname)
+void ppd_callback_add_font(char *fontname)
     {
     int h;
     struct PPDFONT *p;
@@ -112,14 +112,14 @@ void add_font(char *fontname)
     h = hash(fontname,FONT_TABSIZE);
     p->next = ppdfont[h];
     ppdfont[h] = p;
-    }
+    } /* end of ppd_callback_add_font() */
 
 /*
 ** This is called by the lexer when it detects the start of
 ** a new string.  The argument is cleaned up and stored in
 ** ppdname[] until we are ready to use it.
 */
-void new_string(const char name[])
+void ppd_callback_new_string(const char name[])
     {
     int c;                              /* next character */
     int x = 0;				/* index into string */
@@ -145,7 +145,7 @@ void new_string(const char name[])
     ppdname[x] = '\0';		/* terminate it */
     tindex = 0;			/* initialize text buffer index */
     ppdtext[0] = '\0';
-    } /* end of new_string() */
+    } /* end of ppd_callback_new_string() */
 
 /*
 ** The lexer calls this each time it reads a line of the string value.
@@ -153,7 +153,7 @@ void new_string(const char name[])
 **
 ** The argument is the line of string data that has been read.
 */
-void string_line(char *string)
+void ppd_callback_string_line(char *string)
     {
     const char function[] = "string_line";
     int string_len;
@@ -174,12 +174,12 @@ void string_line(char *string)
 	ppdtext[tindex++] = *string++;
 
     ppdtext[tindex] = '\0';			/* terminate but don't advance */
-    } /* end of string_line() */
+    } /* end of ppd_callback_string_line() */
 
 /*
 ** All of the string is found, put it in the hash table.
 */
-void end_string(void)
+void ppd_callback_end_string(void)
     {
     struct PPDSTR *s;
     struct PPDSTR **p;
@@ -200,50 +200,30 @@ void end_string(void)
 	p = &((*p)->next);
     *p = s;					/* set it to point to new entry */
     s->next = (struct PPDSTR *)NULL;		/* and nullify its next pointer */
-    } /* end of end_string() */
+    } /* end of ppd_callback_end_string() */
 
 /*
 ** Process *OrderDependency information.
 */
-void order_dependency_1(int order)
+void ppd_callback_order_dependency(const char text[])
     {
 
-
-    } /* end of of order_dependency_1() */
-
-void order_dependency_2(int section)
-    {
-
-
-    } /* end of of order_dependency_2() */
-
-void order_dependency_3(const char *name1)
-    {
-
-
-    } /* end of of order_dependency_3() */
-
-void order_dependency_4(const char *name2)
-    {
-
-
-    } /* end of of order_dependency_4() */
+    } /* end of ppd_callback_order_dependency() */
 
 /*
 ** Move the paper size array index.
 */
-void papersize_moveto(char *nameline)
+void ppd_callback_papersize_moveto(char *nameline)
     {
     struct PAPERSIZE *p;
     char name[32];
     char *ptr;
     int len;
 
-    ptr=&nameline[strcspn(nameline," \t")];	/* extract the */
-    ptr+=strspn(ptr," \t");			/* PageSize name */
-    len=strcspn(ptr," \t:/");			/* from the line */
-    len=len<=31?len:31;				/* truncate if necessary */
-    sprintf(name, "%.*s", len, ptr);
+    ptr = &nameline[strcspn(nameline," \t")];	/* extract the */
+    ptr += strspn(ptr," \t");			/* PageSize name */
+    len = strcspn(ptr," \t:/");			/* from the line */
+    snprintf(name, sizeof(name), "%.*s", len, ptr);
 
     DODEBUG_PPD(("papersize_moveto(\"%s\")", name ? name : "<NULL>"));
 
@@ -253,13 +233,32 @@ void papersize_moveto(char *nameline)
     	    return;
     	}
 
-    if( (papersizex=num_papersizes++) >= MAX_PAPERSIZES )
+    if((papersizex = num_papersizes++) >= MAX_PAPERSIZES)
     	fatal(EXIT_PRNERR_NORETRY, "pprdrv: MAX_PAPERSIZES is not large enough");
 
     p = &papersize[papersizex];
     p->name = gu_strdup(name);
     p->width = p->height = p->lm = p->tm = p->rm = p->bm = 0;
-    } /* end of papersize_moveto() */
+    } /* end of ppd_callback_papersize_moveto() */
+
+/*
+** Process "*pprRIP:" information.
+*/
+void ppd_callback_rip(const char text[])
+    {
+    if(!printer.RIP.name)	/* if first in PPD file and not set in printer config file */
+	{
+	char *p;
+	p = gu_strdup(text);
+	if(!(printer.RIP.name = gu_strsep(&p, " \t"))
+		|| !(printer.RIP.driver = gu_strsep(&p, " \t"))
+		|| !(printer.RIP.driver_output_language = gu_strsep(&p, " \t")))
+	    {
+	    fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
+	    }
+	printer.RIP.options = gu_strsep_quoted(&p, " \t", NULL);	/* optional */
+	}
+    } /* end of ppd_callback_rip() */
 
 /*==========================================================
 ** Read the Adobe PostScript Printer Description file.
@@ -428,7 +427,7 @@ void include_feature(const char *featuretype, const char *option)
 	    #ifdef KEEP_OLD_CODE
 	    printer_printf("%% %%%%IncludeFeature: *PageSize %s\n", option ? option : "");
 	    #endif
-	    featuretype = "*PageRegion";	/* to *PageRegion */
+	    featuretype = "*PageRegion";		/* to *PageRegion */
 	    }
 	}
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_mactt.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 August 1999.
+** Last modified 23 May 2001.
 */
 
 /*
@@ -213,7 +213,7 @@ void truetype_merge_fonts(char *fontname, char *oldfont, char *newfont)
     #endif
 
     /* Create a name for a temporary file to hold the merged font. */
-    sprintf(fname, "%s.temp%ld", oldfont, (long int)getpid());
+    ppr_fnamef(fname, "%s.temp%ld", oldfont, (long int)getpid());
 
     /* Open the temporary file for output. */
     if((out = fopen(fname, "w")) == (FILE*)NULL)

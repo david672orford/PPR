@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 4 May 2001.
+** Last modified 11 May 2001.
 */
 
 #include "before_system.h"
@@ -20,13 +20,18 @@
 
 /*
 ** Like gu_strsep(), but is returns a double-quoted string as a single word.
-** A double quote may be escaped with a backslash.
+** A double quote may be escaped with a backslash.  There is also a 
+** parameter "discard" which describes junk that we should swallow if it
+** is outside the quotes.
 */
-char *gu_strsep_quoted(char **stringp, const char *delim)
+char *gu_strsep_quoted(char **stringp, const char *delim, const char *discard)
     {
     char *start, *si, *di;
 
     start = di = si = *stringp;
+
+    if(discard)
+    	si += strspn(si, discard);
 
     if(*si != '\"')				/* If not a quoted string, */
     	return gu_strsep(stringp, delim);	/* fall back to regular strsep(). */
@@ -47,6 +52,9 @@ char *gu_strsep_quoted(char **stringp, const char *delim)
 
     *di = '\0';					/* terminate copy */
 
+    if(discard)
+    	si += strspn(si, discard);
+
     if(*si && strchr(delim, *si))		/* If the next character is a delimiter, */
 	si++;					/* move past it. */
 
@@ -56,4 +64,3 @@ char *gu_strsep_quoted(char **stringp, const char *delim)
     }
 
 /* end of file */
-

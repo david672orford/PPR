@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 14 December 2000.
+# Last revised 11 May 2001.
 #
 
 =head1 NAME
@@ -144,6 +144,9 @@ The available options depend on which interface was selected.  See the
 appropriate section in the L<ppad_interfaces(8)> manpage to learn what
 options are available for any given interface.
 
+The options can be removed either by specifying an empty string or omitting the options
+string entirely.
+
 =item B<ppad jobbreak I<printer> {none, signal, signal/pjl, control-d, pjl, save/restore, newinterface, default}>>
 
 Specifies the method used to indicate the end of one job and the start of
@@ -204,7 +207,7 @@ testing.
 =item B<save/restore>
 
 Enclose each section of the job in save/restore.  This is only a little
-better than B<none>.  Don't use it.
+better than B<none>.  Do not use this except for testing.
 
 =back
 
@@ -289,6 +292,42 @@ will have different defaults.  The default may also change according to
 whether the printer's PPD file indicates that the printer supports TBCP.
 
 =back
+
+
+=item B<ppad rip> I<printer> [I<rip> I<driver> I<driver_output_language> [I<options>]]
+
+This option is new and experimental in PPR version 1.44.
+
+PPR has the ability to execute external Raster Image Processors such as Ghostscript to
+convert PostScript to a form usable by non-PostScript printers.  It does so when it
+finds a "*pprRIP:" line in the PPD file or if this command has been used to set a RIP
+in the printer's configuration file.  RIP settings set with this command override those
+in the PPD file.
+
+The parameter I<rip> indicates the Raster Image Processor to use.  Currently only B<gs>
+which selects GhostScript is supported.  PPR will find the actual Ghostscript executable by
+fetching the first value of B<gs=> in the B<[ghostscript]> section of F</etc/ppr/ppr.conf>.
+
+The parameter I<driver> selects the Ghostscript driver.  Run B<gs -h> to get a list
+of the drivers compiled into your copy of Ghostscript.  For example, you might choose
+"cdj550" to use the HP DeskJet 550C driver.
+
+If your copy of Ghostscript includes the driver called "uniprint", then you may instead
+specify the name of a F<.upp> file.  For example, you might choose "cdj550.upp" to select
+the Uniprint driver for the same printer.  If the F<.upp> file is in Ghostscript's search
+path, there is no need to specify the directory.
+
+The parameter I<driver_output_language> is the name of the printer language which the
+selected Ghostscript driver will produce output in.  It is used as the parameter to the
+PJL B<@PJL ENTER LANGUAGE> command.  If you will not be using the B<pjl> or B<signal/pjl>
+jobbreak method, then the actual value doesn't matter, you can set it to "?".
+
+The option I<options> contains additional options for Ghostscript.  The syntax has not
+yet been defined and any value you enter will be ignored.  This option is optional.
+
+To revert to the RIP settings in the PPD file, execute this command with just the
+printer name.
+
 
 =item B<ppad ppd> I<printer> I<filename>
 

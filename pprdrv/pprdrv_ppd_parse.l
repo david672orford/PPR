@@ -11,7 +11,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 March 2001.
+** Last modified 10 May 2001.
 */
 
 /*
@@ -34,6 +34,7 @@
 #include "global_defines.h"	/* for feature values */
 #include "pprdrv.h"		/* for feature structure */
 #include "interface.h"		/* for exit codes */
+#include "pprdrv_ppd.h"
 
 /* This is where we save the original input file while we
    are reading from an include file.  The array size is
@@ -89,11 +90,9 @@ int yywrap(void)
 %s PAPDIM
 %s IMGAREA
 %s INC
-%s ORD1
-%s ORD2
-%s ORD3
-%s ORD4
+%s ORD
 %s PRTCOL
+%s RIP
 
 %p 3500
 
@@ -105,8 +104,7 @@ int yywrap(void)
 <EXT>CMYK/[ \t\n]         { Features.Extensions|=EXTENSION_CMYK; }
 <EXT>Composite/[ \t\n]    { Features.Extensions|=EXTENSION_Composite; }
 <EXT>FileSystem/[ \t\n]   { Features.Extensions|=EXTENSION_FileSystem; }
-<EXT>[^ \t\n]+/[ \t\n]    { error("Invalid \"*Extensions:\" in PPD file: \"%s\"",
-			    yytext); }
+<EXT>[^ \t\n]+/[ \t\n]    { error("Invalid \"*Extensions:\" in PPD file: \"%s\"", yytext); }
 <EXT>\n                   { BEGIN INITIAL; }
 
 <INITIAL>^\*FaxSupport: { BEGIN FAX; }
@@ -135,7 +133,7 @@ int yywrap(void)
 
 <INITIAL>^\*Font[ \t]+	{ BEGIN FONT; }
 <FONT>[^:\n]+		{
-			add_font(yytext);
+			ppd_callback_add_font(yytext);
 			BEGIN FONTJUNK;
 			}
 <FONTJUNK>.*		{ /* discard it */ }
@@ -158,32 +156,34 @@ int yywrap(void)
 <JUNKSTR>["]				{ BEGIN INITIAL; }
 
 <INITIAL>^\*PaperDimension[ \t]+[^\n:]+[:][ \t]+["] {
-	papersize_moveto(yytext);
-	new_string(yytext);
+	ppd_callback_papersize_moveto(yytext);
+	ppd_callback_new_string(yytext);
 	BEGIN PAPDIM;
 	}
 <PAPDIM>[0-9]+[ ]+[0-9]+ {
 	sscanf(yytext,"%lf %lf",
 		&papersize[papersizex].width,
 		&papersize[papersizex].height);
-		string_line(yytext);
+		ppd_callback_string_line(yytext);
 		}
 <PAPDIM>["]	{ BEGIN INITIAL; }
 
 <INITIAL>^\*ImageableArea[ \t]+[^\n:]+[:][ \t]+["] {
-	papersize_moveto(yytext);
-	new_string(yytext);
+	ppd_callback_papersize_moveto(yytext);
+	ppd_callback_new_string(yytext);
 	BEGIN IMGAREA;
 	}
-<IMGAREA>[0-9]+[ ]+[0-9]+ { sscanf(yytext,"%lf %lf %lf %lf",
-					&papersize[papersizex].lm,
-					&papersize[papersizex].tm,
-					&papersize[papersizex].rm,
-					&papersize[papersizex].bm);
-					string_line(yytext); }
-<IMGAREA>["]			{ BEGIN INITIAL; }
+<IMGAREA>[0-9]+[ ]+[0-9]+ {
+	sscanf(yytext,"%lf %lf %lf %lf",
+		&papersize[papersizex].lm,
+		&papersize[papersizex].tm,
+		&papersize[papersizex].rm,
+		&papersize[papersizex].bm);
+	ppd_callback_string_line(yytext);
+	}
+<IMGAREA>["] { BEGIN INITIAL; }
 
-<INITIAL>^\*Include:[ \t]+["]	{ BEGIN INC; }
+<INITIAL>^\*Include:[ \t]+["] { BEGIN INC; }
 <INC>[^"\n]* {
 	char *ifname;		/* include file name */
 
@@ -198,15 +198,16 @@ int yywrap(void)
 	    {
 	    char *pathend;
 	    int len;
+	    int space_needed;
 
 	    if((pathend = strrchr(ppd_nest_fname[ppd_nest_level-1], '/')) == (char*)NULL)
 		fatal(EXIT_PRNERR_NORETRY, "pprdrv: internal error: no /");
 
 	    len = pathend - ppd_nest_fname[ppd_nest_level-1];
 
-	    ifname = (char*)gu_alloc(len + 1 + strlen(yytext) + 1, sizeof(char));
-
-	    sprintf(ifname, "%.*s/%s", len, ppd_nest_fname[ppd_nest_level-1], yytext);
+	    space_needed = len + 1 + strlen(yytext) + 1;
+	    ifname = (char*)gu_alloc(space_needed, sizeof(char));
+	    snprintf(ifname, space_needed, "%.*s/%s", len, ppd_nest_fname[ppd_nest_level-1], yytext);
 	    }
 
 	ppd_nest_fname[ppd_nest_level] = ifname;
@@ -234,56 +235,55 @@ int yywrap(void)
 
 <INITIAL>^\*[^ \t:\n]+:[ \t]+["] {
 	BEGIN INSTR;
-	new_string(yytext);
+	ppd_callback_new_string(yytext);
 	}
 <INITIAL>^\*[^? \t:\n]+[ \t]+[^ \t:\n]+(\/[^:\n]+)*:[ ]+["] {
 	BEGIN INSTR;
-	new_string(yytext);
+	ppd_callback_new_string(yytext);
 	}
-<INSTR>[^"\n]*	{ string_line(yytext); }
-<INSTR>[\n]	{ /* discard the newline */ }
-<INSTR>["]	{ BEGIN INITIAL; end_string(); }
+<INSTR>[^"\n]* {
+	ppd_callback_string_line(yytext);
+	}
+<INSTR>[\n] {
+	/* discard the newline */
+	}
+<INSTR>["] {
+	BEGIN INITIAL;
+	ppd_callback_end_string();
+	}
 
-<INITIAL>^\*OrderDependency:[ \t]+	{
-					/* Gather info for sorting -F switches */
-					BEGIN ORD1;
-					}
-<ORD1>[0-9]+				{ order_dependency_1(atoi(yytext));
-					BEGIN ORD2; }
-<ORD2>[ \t]+				{ }
-<ORD2>ExitServer			{ order_dependency_2(ORD_EXITSERVER);
-					BEGIN ORD3; }
-<ORD2>Prolog				{ order_dependency_2(ORD_PROLOG);
-					BEGIN ORD3; }
-<ORD2>DocumentSetup			{ order_dependency_2(ORD_DOCUMENTSETUP);
-					BEGIN ORD3; }
-<ORD2>PageSetup				{ order_dependency_2(ORD_PAGESETUP);
-					BEGIN ORD3; }
-<ORD2>JCLSetup				{ order_dependency_2(ORD_JCLSETUP);
-					BEGIN ORD3; }
-<ORD2>AnySetup				{ order_dependency_2(ORD_ANYSETUP);
-					BEGIN ORD3; }
-<ORD3>[ \t]+				{ }
-<ORD3>\*[^ \t\n]+			{ order_dependency_3(yytext);
-					BEGIN ORD4; }
-<ORD4>[ \t]+				{ }
-<ORD4>[^ \t\n]+				{ order_dependency_4(yytext);
-					BEGIN INITIAL; }
-<ORD4>[\n]				{ order_dependency_4("");
-					BEGIN INITIAL; }
+<INITIAL>^\*OrderDependency:[ \t]+ {
+	/* Gather info for sorting -F switches */
+	BEGIN ORD;
+	}
+<ORD>[^\n]+ {
+	ppd_callback_order_dependency(yytext);
+	}
+<ORD>[\n] {
+	BEGIN INITIAL;
+	}
 
-<INITIAL>^\*Protocols:	{
+<INITIAL>^\*Protocols:[ \t]* {
 	/* This is not perfect code since it doesn't test
-	   for words, just substrings.  Note the absence
-	   of [ \t\n]+ for consistency with code in ppad_printer.c */
-			BEGIN PRTCOL;
-			}
-<PRTCOL>[ \t]+				{ }
-<PRTCOL>TBCP				{ printer.prot.TBCP = TRUE; }
-<PRTCOL>PJL				{ printer.prot.PJL = TRUE; }
-<PRTCOL>[\n]				{ BEGIN INITIAL; }
+	   for words, just substrings. */
+	BEGIN PRTCOL;
+	}
+<PRTCOL>[ \t]+	{ }
+<PRTCOL>TBCP	{ printer.prot.TBCP = TRUE; }
+<PRTCOL>PJL	{ printer.prot.PJL = TRUE; }
+<PRTCOL>[\n]	{ BEGIN INITIAL; }
 
-.|\n         { BEGIN INITIAL; /* discard unmatched stuff */ }
+<INITIAL>^\*pprRIP:[ \t]+ {
+	/* Special line for PPR to choose a RIP. */
+	BEGIN RIP;
+	}
+<RIP>[^\n]+ {
+	ppd_callback_rip(yytext);
+	}
+<RIP>[\n] {
+	BEGIN INITIAL;
+	}
+
+.|\n	{ BEGIN INITIAL; /* discard unmatched stuff */ }
 
 %%
-

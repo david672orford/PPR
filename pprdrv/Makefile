@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 3 May 2001.
+# Last modified 8 May 2001.
 #
 
 include ../makeprogs/global.mk
@@ -26,6 +26,7 @@ LIB_DATA=lw-messages.conf pjl-messages.conf pserrors.conf
 all: $(BIN_PROGS)
 
 OBJS1=pprdrv.$(OBJ) pprdrv_interface.$(OBJ) pprdrv_feedback.$(OBJ) \
+	pprdrv_rip.$(OBJ) \
 	pprdrv_flag.$(OBJ) pprdrv_custom_hook.$(OBJ) \
 	pprdrv_buf.$(OBJ) pprdrv_ppd.$(OBJ) pprdrv_ppd_parse.$(OBJ) \
 	pprdrv_res.$(OBJ) pprdrv_capable.$(OBJ) pprdrv_media.$(OBJ) \

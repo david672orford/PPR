@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_pprdrv.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 December 2000.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -30,7 +30,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "pprd.auto_h"
@@ -197,36 +196,37 @@ static void pprdrv_exited(int prnid, int wstat)
     int job_status = STATUS_WAITING;	/* job status will be set to this (as modified) */
     int prn_status = PRNSTATUS_IDLE;	/* printer status will be set to this (as modified) */
 
+    DODEBUG_PRNSTOP(("%s(prnid=%d, wstat=0x%04x)", prnid, wstat));
+
     printers[prnid].pid = 0;		/* prevent future false match */
     active_printers--;                  /* a printer is no longer active */
 
     /*
-    ** Normal exit, fetch exit code from pprdrv.
+    ** This is good.
     */
     if(WIFEXITED(wstat))
-        {
-        estat = WEXITSTATUS(wstat);
-
-	if(estat > EXIT_MAX)
-	    {
-	    alert(printers[prnid].name, FALSE, "pprdrv exited returning unknown value %d.", estat);
-	    estat = EXIT_PRNERR;
-	    }
-        }
+    	{
+	estat = WEXITSTATUS(wstat);
+    	}
 
     /*
-    ** If pprdrv died as the result of a signal that it didn't catch, if there was no core dump
-    ** treat the event as if it had caught the signal by using EXIT_SIGNAL as the error code.
+    ** If it caught a signal and core dumped, that is a major error.  If it
+    ** caught a signal and didn't core dump it may be that we sent it that
+    ** signal to cancel a job that was already printing or to halt a printer.
+    ** We will handle the latter case below.
     */
     else if(WIFSIGNALED(wstat))
         {
-        estat = EXIT_SIGNAL;
-
-        if(WCOREDUMP(wstat))            /* if signal caused a core dump, */
+        if(WCOREDUMP(wstat))
             {
-            alert(printers[prnid].name, TRUE, "pprdrv dumped core.");
+            alert(printers[prnid].name, FALSE, _("Internal error, pprdrv core dumped after receiving signal %d (%s)."),
+            	WSTOPSIG(wstat), gu_strsignal(WSTOPSIG(wstat)));
             estat = EXIT_PRNERR_NORETRY;
             }
+	else
+	    {
+	    estat = EXIT_SIGNAL;
+	    }
         }
 
     /*
@@ -234,7 +234,7 @@ static void pprdrv_exited(int prnid, int wstat)
     */
     else if(WIFSTOPPED(wstat))
         {
-        alert(printers[prnid].name, TRUE, "pprdrv stopt by signal %d (%s).", WSTOPSIG(wstat), gu_strsignal(WSTOPSIG(wstat)));
+        alert(printers[prnid].name, TRUE, _("Mischief afoot, pprdrv stopt by signal %d (%s)."), WSTOPSIG(wstat), gu_strsignal(WSTOPSIG(wstat)));
         estat = EXIT_PRNERR_NORETRY;
         }
 
@@ -243,17 +243,18 @@ static void pprdrv_exited(int prnid, int wstat)
     */
     else
         {
-        alert(printers[prnid].name, TRUE, "pprdrv didn't exit, wasn't killed, wasn't stopt, what happened?");
+        alert(printers[prnid].name, TRUE, X_("Bizaar pprdrv malfunction, exit status not understood."));
         estat = EXIT_PRNERR_NORETRY;
         }
 
     /*
-    ** Act on pprdrv exit code.
+    ** Act on pprdrv exit code.  Note that we wait until the next switch to
+    ** handle EXIT_PRNERR and EXIT_PRNERR_NORETRY.  Also note that in this
+    ** switch we replace certain more specific exit codes with those codes.
     */
     switch(estat)
         {
         case EXIT_PRINTED:              /* no error */
-
             DODEBUG_PRNSTOP(("(printed normally)"));
 
 	    /* If we were trying to cancel the job, it is too late now. */
@@ -301,6 +302,7 @@ static void pprdrv_exited(int prnid, int wstat)
             break;
 
         case EXIT_INCAPABLE:            /* capabilities exceeded */
+            DODEBUG_PRNSTOP(("(printer is incapable)"));
             {
             int y;
             int id,subid;
@@ -378,80 +380,107 @@ static void pprdrv_exited(int prnid, int wstat)
             }
             break;
 
+        case EXIT_ENGAGED:
+            DODEBUG_PRNSTOP(("(otherwise engaged or off-line)"));
+	    printers[prnid].next_engaged_retry++;		/* increment retry count */
+	    printers[prnid].countdown = ENGAGED_RETRY;		/* and set time for retry */
+	    prn_status = PRNSTATUS_ENGAGED;
+	    break;
+
+        case EXIT_STARVED:
+            DODEBUG_PRNSTOP(("(starved for system resources)"));
+	    starving_printers++;
+	    prn_status = PRNSTATUS_STARVED;
+	    break;
+
         case EXIT_SIGNAL:           /* clean shutdown after receiving a signal */
             DODEBUG_PRNSTOP(("(aborted due to signal)"));
 
             if(printers[prnid].status == PRNSTATUS_HALTING)
-                {
 		break;
-		}
 
             if(printers[prnid].status == PRNSTATUS_SEIZING)
-                {
                 break;
-                }
 
             if(printers[prnid].status == PRNSTATUS_CANCELING)
-                {
                 break;
-                }
 
-	    if(WIFSIGNALED(wstat))
-		alert(printers[prnid].name, TRUE, "Unexpected pprdrv death at the hand of signal %d (%s).", WTERMSIG(wstat), gu_strsignal(WTERMSIG(wstat)));
-	    else
-	    	alert(printers[prnid].name, TRUE, "Unexpected pprdrv shutdown.  It claims to have received a signal to terminate.");
-
-	    /* fall thru */
-
-        case EXIT_PRNERR:                       /* printer error */
-        case EXIT_PRNERR_NORETRY:
-
-            DODEBUG_PRNSTOP(("(pprdrv indicates printer error)"));
-
-	    prn_status = PRNSTATUS_FAULT;
-
-            if(estat == EXIT_PRNERR_NORETRY)
-                {
-                alert(printers[prnid].name, FALSE, _("Printer placed in fault mode, no auto-retry."));
-		printers[prnid].next_error_retry = 0;
-		printers[prnid].countdown = 0;
+	    if(WIFSIGNALED(wstat))	/* if it was a real signal, */
+		{			/* (Note: we know that there was no core dump) */
+		alert(printers[prnid].name, TRUE,
+			_("Printing aborted because pprdrv was killed by signal %d (%s).\n"
+			"This was not expected and the cause is unknown."), WSTOPSIG(wstat), gu_strsignal(WSTOPSIG(wstat)));
 		}
-            else
-                {
-                alert(printers[prnid].name, FALSE, _("Printer placed in auto-retry mode."));
-		printers[prnid].next_error_retry++;
-		printers[prnid].countdown = printers[prnid].next_error_retry * RETRY_MULTIPLIER;
-		if(printers[prnid].countdown > MIN_RETRY)
-		    printers[prnid].countdown = MIN_RETRY;
-                }
-
-	    /* Possibly inform operator */
-	    alert_printer_failed(printers[prnid].name,
-                    printers[prnid].alert_interval,
-                    printers[prnid].alert_method,
-                    printers[prnid].alert_address,
-                    printers[prnid].next_error_retry);
-
-            break;                      /* end of EXIT_PRNERR case */
-
-        case EXIT_ENGAGED:
-	    prn_status = PRNSTATUS_ENGAGED;
-	    printers[prnid].next_engaged_retry++;		/* increment retry count */
-	    printers[prnid].countdown = ENGAGED_RETRY;		/* and set time for retry */
+	    else			/* Otherwise, pprdrv caught the signal and exited gracefully, */
+	    	{
+	    	alert(printers[prnid].name, TRUE, _("Unexpected pprdrv shutdown.  It claims to have received a signal to terminate."));
+	    	}
+	    estat = EXIT_PRNERR;
 	    break;
 
-        case EXIT_STARVED:
-	    prn_status = PRNSTATUS_STARVED;
-	    starving_printers++;
+	case EXIT_PRNERR:
+	case EXIT_PRNERR_NOT_RESPONDING:
+	case EXIT_PRNERR_NO_SUCH_ADDRESS:
+	    estat = EXIT_PRNERR;
 	    break;
-        }                               /* end of pprdrv exit code switch */
 
-    /* If there is an outstanding hold request, prepare to set job state to "held". */
+	case EXIT_PRNERR_NORETRY:
+	case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
+	case EXIT_PRNERR_NORETRY_BAD_SETTINGS:
+	case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
+	    estat = EXIT_PRNERR_NORETRY;
+	    break;
+
+	default:
+            DODEBUG_PRNSTOP(("(unknown exit code)"));
+	    alert(printers[prnid].name, FALSE, _("Unrecognized exit code %d returned by pprdrv."), estat);
+	    estat = EXIT_PRNERR;
+	    break;
+	}
+
+    /*
+    ** Here we go again.  This time we only pay attention to two generic
+    ** error codes.  More specific error codes have been converted by
+    ** now.
+    */
+    switch(estat)
+	{
+        case EXIT_PRNERR_NORETRY:
+            DODEBUG_PRNSTOP(("(fault, no retry)"));
+            alert(printers[prnid].name, FALSE, _("Printer placed in fault mode, no auto-retry."));
+	    printers[prnid].next_error_retry = 0;
+	    printers[prnid].countdown = 0;
+	    prn_status = PRNSTATUS_FAULT;
+	    break;
+
+        case EXIT_PRNERR:
+            DODEBUG_PRNSTOP(("(fault)"));
+            alert(printers[prnid].name, FALSE, _("Printer placed in auto-retry mode."));
+	    printers[prnid].next_error_retry++;
+	    printers[prnid].countdown = printers[prnid].next_error_retry * RETRY_MULTIPLIER;
+	    if(printers[prnid].countdown > MIN_RETRY)
+		printers[prnid].countdown = MIN_RETRY;
+	    prn_status = PRNSTATUS_FAULT;
+            break;
+        }
+
+    /* If the printer is in fault mode (either with or without retries,
+       give the alert system a chance to inform the operator if it
+       wants to. */
+    if(prn_status == PRNSTATUS_FAULT)
+	{
+	alert_printer_failed(printers[prnid].name,
+		printers[prnid].alert_interval, printers[prnid].alert_method, printers[prnid].alert_address,
+		printers[prnid].next_error_retry);
+	}
+
+    /* If there is an outstanding hold request, prepare to set job
+       state to "held". */
     if(printers[prnid].hold_job)
-    	{
+	{
 	job_status = STATUS_HELD;
-    	printers[prnid].hold_job = FALSE;
-    	}
+	printers[prnid].hold_job = FALSE;
+	}
 
     /* If there is an outstanding cancel request, inform the user.
        But we leave the flag set because the next if() tests it. */

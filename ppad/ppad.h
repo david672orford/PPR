@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 15 December 2000.
+** Last modified 11 May 2001.
 */
 
 /*
@@ -50,6 +50,7 @@ int printer_options(const char *argv[]);
 int printer_jobbreak(const char *argv[]);
 int printer_feedback(const char *argv[]);
 int printer_codes(const char *argv[]);
+int printer_rip(const char *argv[]);
 int printer_ppd(const char *argv[]);
 int printer_alerts(const char *argv[]);
 int printer_frequency(const char *argv[]);
