@@ -4,7 +4,7 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 18 January 2002.
+# Last modified 25 March 2002.
 #
 
 package require Tcl 8.3
@@ -311,7 +311,7 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	    set ppr_root_url "http://$ppr_root_url:15010/"
 	    }
 	}
-puts [info vars]
+
     # Define a callback procedure to adjust the progress bar.
     # It can take the bar from 20% to 90% done.
     proc scale_callback {token total current} {
