@@ -36,7 +36,7 @@
 
 source ../makeprogs/paths.tcl
 
-if [info exists $env(RPM_BUILD_ROOT)] {
+if [info exists env(RPM_BUILD_ROOT)] {
     set RPM_BUILD_ROOT $env(RPM_BUILD_ROOT)
     } else {
     set RPM_BUILD_ROOT ""
