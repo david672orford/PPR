@@ -9437,9 +9437,9 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--11 December 2004
+1.54a1, 11 December 2004--11 December 2004
 
-
+*
 
 
 TODO

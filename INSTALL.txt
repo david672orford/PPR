@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 11 Decemer 2004 for PPR version 2.00a1
+ Last revised 11 Decemer 2004 for PPR version 1.53
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -29,8 +29,6 @@ information about other packages still applies.
 * Notes for MS-Windows NT 4.0 and UWIN 2.0
 * Notes for MS-Windows NT 4.0 and Cygwin
 * Simple Compiling Instructions
-* Compiling from CVS
-* Hacking Without Being Root
 * Upgrading from previous versions
 
 =============================================================================
@@ -454,8 +452,6 @@ $ tar zcvf ../ppr-binary.tar.gz .
 
 An RPM spec file (called ppr.spec) can be found in the top-level source
 directory.
-
-An incomplete Debian package can be found in debian/.
 
 ============================================================================
  Upgrading from previous versions
