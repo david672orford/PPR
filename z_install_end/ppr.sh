@@ -58,7 +58,7 @@ RUNDIR="$VAR_SPOOL_PPR/run"
 
 do_start ()
 	{
-	$EECHO -n "Starting PPR spooler: \c"
+	$EECHO "Starting PPR spooler: \c"
 
 	# What language should messages be printed in?
 	lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
@@ -70,7 +70,7 @@ do_start ()
 		fi
 
 	# This is the spooler daemon.
-	$HOMEDIR/bin/pprd && $EECHO -n "pprd \c"
+	$HOMEDIR/bin/pprd && $EECHO "pprd \c"
 
 	# This is the new AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papd ]
@@ -81,18 +81,18 @@ do_start ()
 	# This is the AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
 		then
-		$HOMEDIR/bin/papsrv && $EECHO -n "papsrv \c"
+		$HOMEDIR/bin/papsrv && $EECHO "papsrv \c"
 		fi
 
 	# Uncomment this if you want to run the new lprsrv
 	# in standalone mode:
-	#$HOMEDIR/lib/lprsrv -s printer && $EECHO -n "lprsrv \c"
+	#$HOMEDIR/lib/lprsrv -s printer && $EECHO "lprsrv \c"
 
 	# Uncomment this if you want to run olprsrv in standalone mode:
-	#$HOMEDIR/lib/olprsrv -s printer && $EECHO -n "olprsrv \c"
+	#$HOMEDIR/lib/olprsrv -s printer && $EECHO "olprsrv \c"
 
 	# This updates links for lp, lpr, lprm, lpq, etc.
-	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO -n "uprint-newconf\c"
+	$HOMEDIR/bin/uprint-newconf >/dev/null && $EECHO "uprint-newconf\c"
 
 	echo
 
@@ -102,30 +102,30 @@ do_start ()
 
 do_stop ()
 	{
-	$EECHO -n "Stopping PPR daemons: \c"
+	$EECHO  "Stopping PPR daemons: \c"
 	if [ -r $RUNDIR/pprd.pid ]
 		then
-		kill `cat $RUNDIR/pprd.pid` && $EECHO -n "pprd \c"
+		kill `cat $RUNDIR/pprd.pid` && $EECHO "pprd \c"
 		rm -f $RUNDIR/pprd.pid
 		fi
 	if [ -r $RUNDIR/papd.pid ]
 		then
-		kill `cat $RUNDIR/papd.pid` && $EECHO -n "papd \c"
+		kill `cat $RUNDIR/papd.pid` && $EECHO "papd \c"
 		rm -f $RUNDIR/papd.pid
 		fi
 	if [ -r $RUNDIR/papsrv.pid ]
 		then
-		kill `cat $RUNDIR/papsrv.pid` && $EECHO -n "papsrv \c"
+		kill `cat $RUNDIR/papsrv.pid` && $EECHO "papsrv \c"
 		rm -f $RUNDIR/papsrv.pid
 		fi
 	if [ -r $RUNDIR/lprsrv.pid ]
 		then
-		kill `cat $RUNDIR/lprsrv.pid` && $EECHO -n "lprsrv \c"
+		kill `cat $RUNDIR/lprsrv.pid` && $EECHO "lprsrv \c"
 		rm -f $RUNDIR/lprsrv.pid
 		fi
 	if [ -r $RUNDIR/olprsrv.pid ]
 		then
-		kill `cat $RUNDIR/olprsrv.pid` && $EECHO -n "olprsrv \c"
+		kill `cat $RUNDIR/olprsrv.pid` && $EECHO "olprsrv \c"
 		rm -f $RUNDIR/olprsrv.pid
 		fi
 	echo
@@ -193,12 +193,9 @@ case "$1" in
 		;;
 
 	probe)
-		if [ -r $RUNDIR/pprd.pid ]
+		if [ -f $RUNDIR/pprd.pid ]
 			then
-			if kill -0 `cat $RUNDIR/pprd.pid` 2>/dev/null
-				then
-				echo "restart"
-				fi
+			echo "restart"
 			fi
 		;;
 

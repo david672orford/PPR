@@ -126,12 +126,12 @@ rm -rf $RPM_BUILD_ROOT
 #============================================================================
 %pre
 
-echo "pre of %{name}-%{version}-%{release}: count=$1"
+#echo "pre of %{name}-%{version}-%{release}: count=$1"
 
 # If this is a first time install, and not an upgrade,
 if [ $1 -lt 2 ]
 	then
-	echo "  Is a new install."
+	#echo "  Is a new install."
 
 	# Create the PPR users and groups.
 	/usr/sbin/groupadd ppr
@@ -139,13 +139,15 @@ if [ $1 -lt 2 ]
 	/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System" -g ppr pprwww
 	fi
 
+true
+
 #============================================================================
 # This is run after unpacking the archive from the binary .rpm file.
 # This is similiar to what make install in z_install_end/ does.
 #============================================================================
 %post
 
-echo "post of %{name}-%{version}-%{release}: count=$1"
+#echo "post of %{name}-%{version}-%{release}: count=$1"
 
 # Sample empty files are not of value.
 #rm -f /etc/ppr/acl/*.rpmnew
@@ -153,13 +155,13 @@ echo "post of %{name}-%{version}-%{release}: count=$1"
 # These will just be copies of the .sample files.  Nix them.
 #rm -f /etc/ppr/*.rpmnew
 
-# Initialize the binary media database.
+# Import standard media types into the media database.
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
 
 # Generate or re-generate index of fonts, PPD files, etc.
 /usr/lib/ppr/bin/ppr-index >/dev/null
 
-# Install user ppr's crontab.
+# Install user ppr's current crontab.
 /usr/bin/crontab -u ppr - <<END
 3 10,16 * * 1-5 /usr/lib/ppr/bin/ppad remind
 5 4 * * * /usr/lib/ppr/lib/cron_daily
@@ -169,7 +171,7 @@ END
 # If this isn't an upgrade,
 if [ $1 -lt 2 ]
 	then
-	echo "  Is a new install, not an upgrade."
+	#echo "  Is a new install, not an upgrade."
 
 	# Setup init scripts to start PPR daemons at boot.
 	/sbin/chkconfig --add ppr
@@ -179,23 +181,26 @@ if [ $1 -lt 2 ]
 	killall -HUP xinetd
 	fi
 
-# Start PPR's daemons.  Should we really do this?
-#/etc/rc.d/init.d/ppr start
+# If PPR is running, restart it.
+command=`/etc/rc.d/init.d/ppr probe`
+[ -n "$command" ] && /etc/rc.d/init.d/ppr $command
+
+true
 
 #============================================================================
 # This is run before uninstalling.
 #============================================================================
 %preun
 
-echo "preun of %{name}-%{version}-%{release}: count=$1"
-
-# Stop the PPR daemons while the stop script is still available.
-/etc/rc.d/init.d/ppr stop
+#echo "preun of %{name}-%{version}-%{release}: count=$1"
 
 # If this is an actual removal and not an upgrade,
 if [ $1 -lt 2 ]
 	then
-	echo "  Is an actual removal, not an upgrade."
+	#echo "  Is an actual removal, not an upgrade."
+
+	# Stop the PPR daemons while the stop script is still available.
+	/etc/rc.d/init.d/ppr stop >/dev/null
 
 	# Remove init script links.
 	/sbin/chkconfig --del ppr
@@ -210,18 +215,20 @@ if [ $1 -lt 2 ]
 	/usr/bin/crontab -u ppr -r
 	fi
 
+true
+
 #============================================================================
 # This is run after uninstalling (and possibly after installing a newer
 # version).
 #============================================================================
 %postun
 
-echo "postun of %{name}-%{version}-%{release}: count=$1"
+#echo "postun of %{name}-%{version}-%{release}: count=$1"
 
 # If this is an actual removal and not an upgrade,
 if [ $1 -lt 1 ]
 	then
-	echo "  Is an actual removal, not an upgrade."
+	#echo "  Is an actual removal, not an upgrade."
 
 	# Tell Xinetd to reload its configuration files.
 	killall -HUP xinetd 2>/dev/null
@@ -231,5 +238,7 @@ if [ $1 -lt 1 ]
 	/usr/sbin/userdel pprwww
 	/usr/sbin/groupdel ppr
 	fi
+
+true
 
 # end of file
