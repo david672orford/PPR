@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 April 2003.
+# Last modified 30 July 2003.
 #
 
 include ../Makefile.conf
@@ -36,7 +36,7 @@ CGI_PROGS=ipp$(DOTEXE)
 
 PROGS=$(CGI_PROGS)
 
-OBJS_IPP=ipp.$(OBJ) ipp_utils.$(OBJ)
+OBJS_IPP=ipp.$(OBJ) ipp_utils.$(OBJ) ipp_print.$(OBJ)
 
 #=== Build ==================================================================
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2003.
+** Last modified 30 July 2003.
 */
 
 #include "before_system.h"
@@ -38,21 +38,24 @@
 #include "ipp_constants.h"
 #include "ipp_except.h"
 #include "ipp_utils.h"
+#include "ipp.h"
 
 struct exception_context the_exception_context[1];
 
-static void do_print(struct IPP *ipp)
-	{
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "us-ascii");
+static void do_printer_attributes(struct IPP *ipp)
+    {
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
 	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
 	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
-	
-	ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", 140);
-	ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "http://localhost:15010/cgi-bin/ipp/x/147");
-	ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
-	
-	
-	}
+
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
+	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
+
+	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
+
+    }
 
 int main(int argc, char *argv[])
 	{
@@ -67,9 +70,13 @@ int main(int argc, char *argv[])
 		switch(ipp->operation_id)
 			{
 			case IPP_PRINT_JOB:
-				do_print(ipp);
+				do_print_job(ipp);
 				break;
 				
+			case IPP_GET_PRINTER_ATTRIBUTES:
+				do_printer_attributes(ipp);
+				break;
+
 			default:
 				Throw("unsupported operation");
 				break;

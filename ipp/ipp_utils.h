@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2003.
+** Last modified 30 July 2003.
 */
 
 /* This union holds any kind of IPP value. */
@@ -84,6 +84,7 @@ struct IPP
 /* IPP object methods */
 struct IPP *ipp_new(void);
 void ipp_delete(struct IPP *p);
+int ipp_get_block(struct IPP *p, char **pptr);
 unsigned char ipp_get_byte(struct IPP *p);
 void ipp_put_byte(struct IPP *p, unsigned char val);
 int ipp_get_sb(struct IPP *p);
@@ -100,6 +101,8 @@ void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
+void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
+ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 
 /* Other functions */
 void debug(const char message[], ...);

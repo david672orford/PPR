@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2003.
+** Last modified 30 July 2003.
 */
 
 /*! \file */
@@ -126,6 +126,71 @@ void ipp_delete(struct IPP *p)
 	ipp_writebuf_flush(p);
 
 	gu_free(p);
+	}
+
+/*
+** Convert a tag to a string (for debugging purposes).  The names printed
+** are from the RFC 2565.
+*/
+static const char *tag_to_str(int tag)
+	{
+	switch(tag)
+		{
+		case IPP_TAG_OPERATION:
+			return "operation-attributes-tag";
+		case IPP_TAG_JOB:
+			return "job-attributes-tag";
+		case IPP_TAG_END:
+			return "end-of-attributes-tag";
+		case IPP_TAG_PRINTER:
+			return "printer-attributes-tag";
+		case IPP_TAG_UNSUPPORTED:
+			return "unsupported-attributes-tag";
+
+		case IPP_TAG_INTEGER:
+			return "integer";
+		case IPP_TAG_BOOLEAN:
+			return "boolean";
+		case IPP_TAG_ENUM:
+			return "enum";
+
+		case IPP_TAG_TEXT:
+			return "text";
+		case IPP_TAG_NAME:
+			return "name";
+		case IPP_TAG_KEYWORD:
+			return "keyword";
+		case IPP_TAG_URI:
+			return "uri";
+		case IPP_TAG_LANGUAGE:
+			return "naturalLanguage";
+
+		default:
+			return "unknown";
+		}
+	}
+
+/** fetch a block from the IPP request
+
+This is used to read file data.
+
+*/
+int ipp_get_block(struct IPP *p, char **pptr)
+	{
+	int len = 0;
+	
+	if(p->readbuf_remaining < 1)
+		ipp_readbuf_load(p);
+
+	if(p->readbuf_remaining > 0)
+		{
+		*pptr = &p->readbuf[p->readbuf_i];
+		len = p->readbuf_remaining;
+		p->readbuf_i += len;
+		p->readbuf_remaining = 0;
+		}
+
+	return len;
 	}
 
 /** fetch an unsigned byte from the IPP request
@@ -246,47 +311,6 @@ void ipp_put_string(struct IPP *ipp, const char string[])
 		ipp_put_byte(ipp, string[i]);
 	}
 
-/** append an attribute to the IPP response
-*/
-void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
-	{
-	ipp_value_t *p;
-	int i, len;
-	
-	for(i=0 ; i < attr->num_values; i++)
-		{
-		p = &attr->values[i];
-		ipp_put_byte(ipp, attr->group_tag);
-		if(i == 0)
-			{
-			len = strlen(attr->name);
-			ipp_put_ss(ipp, len);
-			ipp_put_bytes(ipp, attr->name, len);
-			}
-		else
-			{
-			ipp_put_ss(ipp, 0);
-			}
-
-		switch(attr->group_tag)
-			{
-			case IPP_TAG_INTEGER:
-				ipp_put_si(ipp, 4);
-				ipp_put_si(ipp, p->integer);
-				break;
-			case IPP_TAG_NAME:
-			case IPP_TAG_URI:
-			case IPP_TAG_KEYWORD:
-			case IPP_TAG_CHARSET:
-			case IPP_TAG_LANGUAGE:
-				len = strlen(p->string.text);
-				ipp_put_si(ipp, len);
-				ipp_put_bytes(ipp, p->string.text, len);
-				break;
-			}
-		}
-	}
-
 /** read the IPP request and store it in the IPP object
 */
 void ipp_parse_request(struct IPP *ipp)
@@ -322,7 +346,7 @@ void ipp_parse_request(struct IPP *ipp)
 
 	while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
 		{
-		if(tag >= 0x00 && tag <= 0x0f)
+		if(tag >= 0x00 && tag <= 0x0f)		/* changes interpretation of subsequent tags */
 			{
 			delimiter_tag = tag;
 			name = NULL;
@@ -338,33 +362,47 @@ void ipp_parse_request(struct IPP *ipp)
 
 			value_length = ipp_get_ss(ipp);
 
-			debug("0x%.2x 0x%.2x name[%d]=\"%s\", value_len=%d", delimiter_tag, value_tag, name_length, name ? name : "", value_length);
+			debug("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
+				delimiter_tag, tag_to_str(delimiter_tag),
+				value_tag, tag_to_str(value_tag),
+				name_length,
+				name ? name : "",
+				value_length);
 
 			if(name_length > 0)
 				{
+				/* Where is the pointer to this ipp_attribute_t going to be?  We need to know because
+				   we will have to adjust it if we have to enlarge this object in the future. */
 				if(ap_prev)
-					ap_resize = &ap_prev->next;
+					ap_resize = &ap_prev->next;				/* in the previous one in the chain */
 				else
-					ap_resize = &ipp->request_attrs;
+					ap_resize = &ipp->request_attrs;		/* no previous one, it is in the IPP struct */
 
+				/* We allocate an initial one with room for only one value.  Note that 
+				   a pointer to it is written to the location determined above. */
 				ap = *ap_resize = gu_alloc(1, sizeof(ipp_attribute_t));
 
-				ap->next = NULL;
+				ap->next = NULL;					/* last in chain */
 				ap->group_tag = delimiter_tag;
 				ap->name = name;
-				ap->num_values = 1;
+				ap->num_values = 1;					/* only one value (for now) */
 
 				ap_i = 0;
 
 				ap_prev = ap;
 				}
-			else
+			else			/* same name as last one */
 				{
+				/* If there wasn't a previous one, something is seriously wrong. */
 				if(!name)
 					Throw("no name!");
-				ap_i++;
-				/* The storeage for ipp_attribute_t contains one ipp_value_t */
-				ap = *ap_resize = gu_realloc(ap, 1, sizeof(ipp_attribute_t) - sizeof(ipp_value_t) * ap_i);
+
+				ap_i++;		/* advance value array index */
+
+				/* Expand the storeage to make room for an additional ipp_value_t.  Because the storeage 
+				   for ipp_attribute_t contains one ipp_value_t, we don't need to use one more than ap_i.
+				   */
+				ap = *ap_resize = gu_realloc(ap, 1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * ap_i);
 				}
 
 			switch(value_tag)
@@ -398,6 +436,11 @@ void ipp_parse_request(struct IPP *ipp)
 					ap->values[ap_i].string.text = p;
 					debug("    naturalLanguage[%d]=\"%s\"", value_length, p);
 					break;
+				case IPP_TAG_MIMETYPE:
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    mimeMediaType[%d]=\"%s\"", value_length, p);
+					break;
 				default:
 					p = ipp_get_bytes(ipp, value_length);
 					ap->values[ap_i].unknown.length = value_length;
@@ -414,7 +457,68 @@ void ipp_parse_request(struct IPP *ipp)
 
     debug("end of request read");
     
+	/* This will be the default. */
     ipp->response_code = IPP_OK;
+	} /* end of ipp_parse_request() */
+
+/** append an attribute to the IPP response
+*/
+void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
+	{
+	ipp_value_t *p;
+	int i, len;
+	
+	for(i=0 ; i < attr->num_values; i++)
+		{
+		debug("encoding 0x%.2x (%s) name=\"%s\"",
+			attr->value_tag, tag_to_str(attr->value_tag),
+			attr->name
+			);
+
+		p = &attr->values[i];
+		ipp_put_byte(ipp, attr->value_tag);
+
+		/* If this is the first value, we need to store the name. */
+		if(i == 0)
+			{
+			len = strlen(attr->name);
+			ipp_put_ss(ipp, len);
+			ipp_put_bytes(ipp, attr->name, len);
+			}
+
+		/* Otherwise, we store a zero-length name which means "same name as previous". */
+		else
+			{
+			ipp_put_ss(ipp, 0);
+			}
+
+		switch(attr->value_tag)
+			{
+			case IPP_TAG_INTEGER:
+			case IPP_TAG_ENUM:
+				ipp_put_ss(ipp, 4);
+				ipp_put_si(ipp, p->integer);
+				break;
+			case IPP_TAG_TEXT:
+			case IPP_TAG_NAME:
+			case IPP_TAG_KEYWORD:
+			case IPP_TAG_URI:
+			case IPP_TAG_CHARSET:
+			case IPP_TAG_LANGUAGE:
+			case IPP_TAG_MIMETYPE:
+				len = strlen(p->string.text);
+				ipp_put_ss(ipp, len);
+				ipp_put_bytes(ipp, p->string.text, len);
+				break;
+			case IPP_TAG_BOOLEAN:
+				ipp_put_ss(ipp, 1);
+				ipp_put_sb(ipp, p->boolean ? 1 : 0);
+				break;
+			default:
+				debug("value tag: 0x%.2x", attr->value_tag);
+				Throw("missing case for value tag in ipp_put_attr()");
+			}
+		}
 	}
 
 /** send the IPP response in the IPP object
@@ -435,6 +539,7 @@ void ipp_send_reply(struct IPP *ipp)
 	
 	if(!(p = ipp->response_attrs_operation))
 		Throw("no response_attrs_operation");
+	debug("encoding operation tags");
 	ipp_put_byte(ipp, IPP_TAG_OPERATION);
 	for( ; p; p = p->next)
 		{
@@ -443,6 +548,7 @@ void ipp_send_reply(struct IPP *ipp)
 
 	if((p = ipp->response_attrs_printer))
 		{
+		debug("encoding printer tags");
 		ipp_put_byte(ipp, IPP_TAG_PRINTER);
 		for( ; p; p = p->next)
 			{
@@ -452,7 +558,18 @@ void ipp_send_reply(struct IPP *ipp)
 	
 	if((p = ipp->response_attrs_job))
 		{
+		debug("encoding job tags");
 		ipp_put_byte(ipp, IPP_TAG_JOB);
+		for( ; p; p = p->next)
+			{
+			ipp_put_attr(ipp, p);
+			}
+		}
+
+	if((p = ipp->response_attrs_unsupported))
+		{
+		debug("encoding unsupported tags");
+		ipp_put_byte(ipp, IPP_TAG_UNSUPPORTED);
 		for( ; p; p = p->next)
 			{
 			ipp_put_attr(ipp, p);
@@ -510,6 +627,29 @@ void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], cons
 	{
 	ipp_attribute_t *ap = ipp_add_attribute(ipp, group, tag, name);
 	ap->values[0].string.text = value;
+	}
+
+/** add an enum to the IPP response 
+*/
+void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value)
+	{
+	ipp_attribute_t *ap = ipp_add_attribute(ipp, group, tag, name);
+	ap->values[0].boolean = value;
+	}
+
+/** find an attribute in the IPP request
+*/
+ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[])
+	{
+	ipp_attribute_t *p;
+	
+	for(p = ipp->request_attrs; p; p = p->next)
+		{
+		if(p->group_tag == group && p->value_tag == tag && strcmp(p->name, name) == 0)
+			break;
+		}
+		
+	return p;
 	}
 
 /** Send a debug message to the HTTP server's error log
