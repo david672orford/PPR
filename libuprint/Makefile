@@ -53,7 +53,7 @@ LIBS=../libuprint.$(LIBEXT)
 BIN_PROGS=uprint-newconf$(DOTEXE)
 LIB_PROGS=uprint_rfc1179$(DOTEXE)
 TARGETS=$(LIBS) $(BIN_PROGS) $(LIB_PROGS)
-USELIBS=../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+USELIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 DATA=uprint.conf.sample uprint-remote.conf.sample
 
 #=== Build ==================================================================

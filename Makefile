@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 October 2003.
+# Last modified 18 November 2003.
 #
 
 #
@@ -106,10 +106,30 @@ all: symlinks-restore
 	@echo "Done making binaries.  You must now run \"$(MAKE) install\"."
 	@echo
 
+uprint: symlinks-restore
+	@for i in z_install_begin makeprogs libgu libuprint uprint; \
+		do \
+		echo "==========================================="; \
+		echo "=    running $(MAKE) in $$i"; \
+		echo "==========================================="; \
+		( cd $$i && $(MAKE) ) || exit 1; \
+		echo; \
+		done
+
 #=== Install ================================================================
 
 install: symlinks-restore
 	@for i in $(SUBDIRS); \
+		do \
+		echo "==========================================="; \
+		echo "    running $(MAKE) install in $$i"; \
+		echo "==========================================="; \
+		( cd $$i && $(MAKE) install ) || exit 1; \
+		echo; \
+		done
+
+uprint-install:
+	@for i in z_install_begin libgu libuprint uprint; \
 		do \
 		echo "==========================================="; \
 		echo "    running $(MAKE) install in $$i"; \

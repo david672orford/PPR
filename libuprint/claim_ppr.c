@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 18 November 2003.
 */
 
 #include "before_system.h"
@@ -42,16 +42,16 @@ int printdest_claim_ppr(const char destname[])
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
 
-	ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);	/* try alias */
-	if(stat(fname, &statbuf) == 0)						/* if file found, */
+	snprintf(fname, sizeof(fname), "%s/%s", ALIASCONF, destname);	/* try alias */
+	if(stat(fname, &statbuf) == 0)									/* if file found, */
 		return TRUE;
 
-	ppr_fnamef(fname, "%s/%s", GRCONF, destname);		/* try group */
-	if(stat(fname, &statbuf) == 0)						/* if file found, */
+	snprintf(fname, sizeof(fname), "%s/%s", GRCONF, destname);		/* try group */
+	if(stat(fname, &statbuf) == 0)									/* if file found, */
 		return TRUE;
 
-	ppr_fnamef(fname, "%s/%s", PRCONF, destname);		/* try printer */
-	if(stat(fname, &statbuf) == 0)						/* if it exists, */
+	snprintf(fname, sizeof(fname), "%s/%s", PRCONF, destname);		/* try printer */
+	if(stat(fname, &statbuf) == 0)									/* if it exists, */
 		return TRUE;
 
 	return FALSE;

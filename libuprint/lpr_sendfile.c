@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 18 November 2003.
 */
 
 #include "before_system.h"
@@ -145,7 +145,7 @@ int uprint_file_stdin(int *length)
 
 	{
 	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/uprint-%ld-XXXXXX", TEMPDIR, (long)getpid());
+	snprintf(fname, sizeof(fname), "%s/uprint-%ld-XXXXXX", TEMPDIR, (long)getpid());
 
 	if((copyfd = mkstemp(fname)) == -1)
 		{

@@ -31,7 +31,6 @@
 #include "before_system.h"
 #include <string.h>
 #include "gu.h"
-#include "global_defines.h"
 #include "uprint.h"
 #include "uprint_private.h"
 

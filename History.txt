@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--14 November 2003.
+1.53a1, 24 September 2003--18 November 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8931,6 +8931,13 @@ Internet Printing Protocol Work
 
 * libscripts/readppd.pl,libppr/readppd.c,ppad/ppad_printer.c,pprdrv/pprdrv.c:
   Added support for finding PPD files by their indexed ModelName.
+
+* libppr/ppr_gcmd.c: changed to remove trailing whitespace.
+
+* Makefile: added uprint and uprint-install build targets.  This is a first 
+  step toward a uprint-only distribution.
+
+* libuprint/,uprint/: removed dependencies on libppr.
 
 
 

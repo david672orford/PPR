@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 18 November 2003.
 */
 
 #include "before_system.h"
@@ -57,7 +57,7 @@ int printdest_claim_sysv(const char destname[])
 		** Presumably we are looking for a file which contains
 		** a list of the members.
 		*/
-		ppr_fnamef(fname, "%s/%s", uprint_lp_classes(), destname);
+		snprintf(fname, sizeof(fname), "%s/%s", uprint_lp_classes(), destname);
 		if(stat(fname, &statbuf) == 0)
 			{
 			return TRUE;
@@ -79,7 +79,7 @@ int printdest_claim_sysv(const char destname[])
 		** non-executable file begining with the string "#UPRINT"
 		** in /var/spool/lp/interface.
 		*/
-		ppr_fnamef(fname, "%s/%s", uprint_lp_printers(), destname);
+		snprintf(fname, sizeof(fname), "%s/%s", uprint_lp_printers(), destname);
 		if(stat(fname, &statbuf) == 0)
 			{
 			if(S_ISDIR(statbuf.st_mode))		/* Solaris 5.x */

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 February 2003.
+# Last modified 18 November 2003.
 #
 
 include ../Makefile.conf
@@ -35,7 +35,7 @@ include ../Makefile.conf
 PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
 SETUID_PROGS=uprint-lpr$(DOTEXE) uprint-lp$(DOTEXE) 
 
-PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 
 PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 

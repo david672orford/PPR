@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 June 2003.
+** Last modified 18 November 2003.
 */
 
 #include "before_system.h"
@@ -35,7 +35,6 @@
 #include <errno.h>
 #include <string.h>
 #include "gu.h"
-#include "global_defines.h"
 #include "uprint.h"
 #include "uprint_private.h"
 

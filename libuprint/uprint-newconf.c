@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 18 November 2003.
 */
 
 #include "before_system.h"
@@ -121,7 +121,7 @@ static void install_mainstream_link(const char linkname[], const char linkto[], 
 					{
 					char newname[MAX_PPR_PATH];
 
-					ppr_fnamef(newname, "%s-old-%d", sidelinename, x);
+					snprintf(newname, sizeof(newname), "%s-old-%d", sidelinename, x);
 
 					if(lstat(newname, &junk) >= 0)
 						continue;
