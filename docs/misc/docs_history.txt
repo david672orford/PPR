@@ -342,5 +342,7 @@ more information about RIPs and *pprRIP:.
   PostScript and PDF with TeX and substituted rules for building them with
   HTMLDOC.
 
+* catalog, refman/pod2docbook.xsl: added
+
 
 

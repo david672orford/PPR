@@ -8121,7 +8121,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--24 January 2003.
+1.50, 22 January 2003--27 January 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
