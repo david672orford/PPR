@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 2 March 2005.
 */
 
 /*! \file
@@ -275,6 +275,13 @@ char *gu_pch_nextkey(void *pch, void **value)
 		return key;
 		}
 	return NULL;
+	}
+
+/** return number of members in hash */
+int gu_pch_size(void *pch)
+	{
+	struct PCH *p = (struct PCH *)pch;
+	return p->key_count;
 	}
 
 /** create a hash value from a string

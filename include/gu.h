@@ -419,6 +419,7 @@ void *gu_pch_get(void *pch, const char key[]);
 void *gu_pch_delete(void *pch, char key[]);
 void gu_pch_rewind(void *pch);
 char *gu_pch_nextkey(void *pch, void **value);
+int gu_pch_size(void *pch);
 int gu_hash(const char string[], int modus);
 
 /* Perl Compatible Array */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2005.
+** Last modified 2 March 2005.
 */
 
 /*
@@ -36,7 +36,8 @@
  * the ipp CGI and a list of HTTP headers and CGI variables.  The POSTed
  * data is in a temporary file (whose name can be derived from the PID)
  * and we send the response document to another temporary file.  Then
- * we send SIGUSR1 to the ipp CGI to tell it that the response is ready.
+ * we send SIGUSR1 to the CGI program "ipp" to tell it that the response 
+ * is ready.
  */
 
 #include "config.h"
@@ -49,6 +50,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -60,76 +62,228 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-static void printer_add_status(struct IPP *ipp, int prnid)
+struct OPERATION {
+	void *requested_attributes;
+	gu_boolean requested_attributes_all;
+	char *printer_uri;
+	struct URI *printer_uri_obj;
+	char *printer_name;
+	};
+
+/** Create an object which can tell us if an attribute was requested. */
+static struct OPERATION *request_new(struct IPP *ipp)
+	{
+	struct OPERATION *this;
+	ipp_attribute_t *attr;
+
+	this = gu_alloc(1, sizeof(struct OPERATION));
+	this->requested_attributes = gu_pch_new(25);
+	this->requested_attributes_all = FALSE;
+	this->printer_uri = NULL;
+	this->printer_uri_obj = NULL;
+	this->printer_name = NULL;
+
+	/* Traverse the request's operation attributes. */
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag != IPP_TAG_OPERATION)
+			continue;
+		if(attr->value_tag == IPP_TAG_KEYWORD && strcmp(attr->name, "requested-attributes") == 0)
+			{
+			int iii;
+			for(iii=0; iii<attr->num_values; iii++)
+				gu_pch_set(this->requested_attributes, attr->values[iii].string.text, "TRUE");
+			}
+		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+			this->printer_uri = attr->values[0].string.text;
+		else if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-name") == 0)
+			this->printer_name = attr->values[0].string.text;
+		else
+			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
+		}
+
+	/* If no attributes were requested or "all" were requested, */
+	if(gu_pch_size(this->requested_attributes) == 0 || gu_pch_get(this->requested_attributes, "all"))
+		this->requested_attributes_all = TRUE;
+
+	if(this->printer_uri)
+		this->printer_uri_obj = gu_uri_new(this->printer_uri);
+
+	return this;
+	}
+
+/** Destroy a requested attributes object.
+ *
+ * Remember that we mustn't try to free printer_uri or printer_name since
+ * they are simply pointers to the values allocated in the IPP object.
+ */ 
+static void request_free(struct OPERATION *this)
+	{
+	char *name, *value;
+	for(gu_pch_rewind(this->requested_attributes); (name = gu_pch_nextkey(this->requested_attributes, (void*)&value)); )
+		{
+		if(strcmp(value, "TOUCHED") != 0)
+			{
+			debug("requested attribute \"%s\" not implemented", name);
+			}
+		}
+	gu_pch_free(this->requested_attributes);
+	if(this->printer_uri_obj)
+		gu_uri_free(this->printer_uri_obj);
+	gu_free(this);
+	}
+
+/** Return true if the indicate attributes was requested. */
+static gu_boolean request_attr_requested(struct OPERATION *this, char name[])
+	{
+	if(this->requested_attributes_all)
+		return TRUE;
+	if(gu_pch_get(this->requested_attributes, name))
+		{
+		gu_pch_set(this->requested_attributes, name, "TOUCHED");
+		return TRUE;
+		}
+	return FALSE;
+	}
+
+/** Return the requested queue name or NULL if none requested. */
+static char *request_destname(struct OPERATION *this)
+	{
+	if(this->printer_name)
+		return this->printer_name;
+	if(this->printer_uri)
+		return this->printer_uri_obj->basename;		/* possibly null */
+	return NULL;
+	}
+
+/** Convert PPR printer status to IPP status */
+static void printer_add_status(struct IPP *ipp, int prnid, struct OPERATION *req)
 	{
 	const char function[] = "printer_add_status";
 	switch(printers[prnid].status)
 		{
 		case PRNSTATUS_IDLE:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_IDLE);
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_IDLE);
+				}
 			break;
 		case PRNSTATUS_PRINTING:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_PROCESSING);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("printing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
-			break;
-		case PRNSTATUS_CANCELING:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_PROCESSING);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("canceling %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
-			break;
-		case PRNSTATUS_SEIZING:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_PROCESSING);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("seizing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
-			break;
-		case PRNSTATUS_STOPPING:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_PROCESSING);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("stopping (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
-			break;
-		case PRNSTATUS_HALTING:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_PROCESSING);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("halting (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
-			break;
-		case PRNSTATUS_STOPT:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_STOPPED);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("stopt"), FALSE);
-			break;
-		case PRNSTATUS_FAULT:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_STOPPED);
-			if(printers[prnid].next_error_retry)
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_PROCESSING);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("fault, retry %d in %d seconds"), printers[prnid].next_error_retry, printers[prnid].countdown);
+					"printer-state-message", _("printing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 				}
-			else
+			break;
+		case PRNSTATUS_CANCELING:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_PROCESSING);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("canceling %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+				}
+			break;
+		case PRNSTATUS_SEIZING:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_PROCESSING);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("seizing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+				}
+			break;
+		case PRNSTATUS_STOPPING:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_PROCESSING);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("stopping (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+				}
+			break;
+		case PRNSTATUS_HALTING:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_PROCESSING);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("halting (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+				}
+			break;
+		case PRNSTATUS_STOPT:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_STOPPED);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("fault, no auto retry"), FALSE);
+					"printer-state-message", _("stopt"), FALSE);
+				}
+			break;
+		case PRNSTATUS_FAULT:
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_STOPPED);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				if(printers[prnid].next_error_retry)
+					{
+					ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+						"printer-state-message", _("fault, retry %d in %d seconds"), printers[prnid].next_error_retry, printers[prnid].countdown);
+					}
+				else
+					{
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+						"printer-state-message", _("fault, no auto retry"), FALSE);
+					}
 				}
 			break;
 		case PRNSTATUS_ENGAGED:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_STOPPED);
-			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), printers[prnid].next_engaged_retry, printers[prnid].countdown);
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_STOPPED);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), printers[prnid].next_engaged_retry, printers[prnid].countdown);
+				}
 			break;
 		case PRNSTATUS_STARVED:
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"printer-state", IPP_PRINTER_STOPPED);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("waiting for resource ration"), FALSE);
+			if(request_attr_requested(req, "printer-state"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+					"printer-state", IPP_PRINTER_STOPPED);
+				}
+			if(request_attr_requested(req, "printer-state-message"))
+				{
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+					"printer-state-message", _("waiting for resource ration"), FALSE);
+				}
 			break;
 
 		default:
@@ -138,152 +292,169 @@ static void printer_add_status(struct IPP *ipp, int prnid)
 		}
 	}
 
-/* IPP_GET_PRINTER_ATTRIBUTES */
+/** Handler for IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
     {
 	FUNCTION4DEBUG("ipp_get_printer_attributes")
-	ipp_attribute_t *printer_uri;
-	const char *printer_uri_value;
 	const char *destname;
 	int destid;
+	struct OPERATION *req;
 
-	if(!(printer_uri = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
+	req = request_new(ipp);
+
+	if(!(destname = request_destname(req)) || (destid = destid_by_name(destname)) == -1)
 		{
+		request_free(req);
 		ipp->response_code = IPP_NOT_FOUND;
 		return;
 		}
-	printer_uri_value = printer_uri->values[0].string.text;
-	DODEBUG_IPP(("%s(): printer_uri=\"%s\"", function, printer_uri_value));
 		
-	if(!(destname = strrchr(printer_uri_value, '/')) || strlen(++destname) == 0)
+	if(request_attr_requested(req, "printer-name"))
 		{
-		ipp->response_code = IPP_NOT_FOUND;
-		return;
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+			"printer-name", gu_strdup(destname), TRUE);
 		}
-	DODEBUG_IPP(("%s(): destname=\"%s\"", function, destname));
-
-	if((destid = destid_by_name(destname)) == -1)
+	if(request_attr_requested(req, "printer-uri-supported"))
 		{
-		ipp->response_code = IPP_NOT_FOUND;
-		return;
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+			"printer-uri-supported", destid_is_group ? "/classes/%s" : "/printers/%s", destname);
 		}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-		"printer-name", destname, FALSE);
-	ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-		"printer-uri-supported", destid_is_group ? "/classes/%s" : "/printers/%s", destname);
+	if(request_attr_requested(req, "uri_security_supported"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+			"uri-security-supported", "none", FALSE);
+		}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-		"uri-security-supported", "none", FALSE);
-
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-		"printer-make-and-model", "HP LaserJet 4200", FALSE);
+	if(request_attr_requested(req, "printer-make-and-model"))
+		{	/* dummy code */
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+			"printer-make-and-model", "HP LaserJet 4200", FALSE);
+		}
 
 	if(destid_is_group(destid))
 		{
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs", groups[destid_to_gindex(destid)].accepting);
+		if(request_attr_requested(req, "printer-is-accepting-jobs"))
+			{
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs", groups[destid_to_gindex(destid)].accepting);
+			}
 		}
 	else
 		{
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs", printers[destid].accepting);
-		printer_add_status(ipp, destid);
+		if(request_attr_requested(req, "printer-is-accepting-jobs"))
+			{
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs", printers[destid].accepting);
+			}
+		printer_add_status(ipp, destid, req);
 		}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-		"printer-state-reasons", "none", FALSE);
+	if(request_attr_requested(req, "printer-state-reasons"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+			"printer-state-reasons", "none", FALSE);
+		}
 
 	/* Which operations are supported for this printer object? */
-	{
-	int supported[] =
+	if(request_attr_requested(req, "operations-supported"))
 		{
-		IPP_PRINT_JOB,
-		/* IPP_PRINT_URI, */
-		/* IPP_VALIDATE_JOB, */
-		/* IPP_CREATE_JOB, */
-		/* IPP_SEND_DOCUMENT, */
-		/* IPP_SEND_URI, */
-		IPP_CANCEL_JOB,
-		/* IPP_GET_JOB_ATTRIBUTES, */
-		IPP_GET_JOBS,
-		IPP_GET_PRINTER_ATTRIBUTES,
-		CUPS_GET_PRINTERS,
-		CUPS_GET_CLASSES
-		};
-	ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-		"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
-	}
+		int supported[] =
+			{
+			IPP_PRINT_JOB,
+			/* IPP_PRINT_URI, */
+			/* IPP_VALIDATE_JOB, */
+			/* IPP_CREATE_JOB, */
+			/* IPP_SEND_DOCUMENT, */
+			/* IPP_SEND_URI, */
+			IPP_CANCEL_JOB,
+			/* IPP_GET_JOB_ATTRIBUTES, */
+			IPP_GET_JOBS,
+			IPP_GET_PRINTER_ATTRIBUTES,
+			CUPS_GET_PRINTERS,
+			CUPS_GET_CLASSES
+			};
+		ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+			"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
+		}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-		"charset-configured", "utf-8", FALSE);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-		"charset-supported", "utf-8", FALSE);
+	if(request_attr_requested(req, "charset-configured"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+			"charset-configured", "utf-8", FALSE);
+		}
+	if(request_attr_requested(req, "charset-supported"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+			"charset-supported", "utf-8", FALSE);
+		}
 	
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-		"natural-language-configured", "en-us", FALSE);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-		"generated-natural-language-supported", "en-us", FALSE);
+	if(request_attr_requested(req, "natural-language-configured"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+			"natural-language-configured", "en-us", FALSE);
+		}
+	if(request_attr_requested(req, "generated-natural-language-supported"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+			"generated-natural-language-supported", "en-us", FALSE);
+		}
 
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-		"document-format-default", "text/plain", FALSE);
+	if(request_attr_requested(req, "document-format-default"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+			"document-format-default", "text/plain", FALSE);
+		}
 
-	{
-	const char *list[] = {
-		"text/plain",
-		"application/postscript",
-		"application/octet-stream"
-		};
-	ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-		"document-format-supported", sizeof(list) / sizeof(list[0]), list, FALSE);
-	}
+	if(request_attr_requested(req, "document-format-supported"))
+		{
+		const char *list[] = {
+			"text/plain",
+			"application/postscript",
+			"application/octet-stream"
+			};
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+			"document-format-supported", sizeof(list) / sizeof(list[0]), list, FALSE);
+		}
 
 	/* On request, PPR will attempt to override job options
 	 * already selected in the job body. */
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-		"pdl-override-supported", "attempted", FALSE);
+	if(request_attr_requested(req, "pdl-override-supported"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+			"pdl-override-supported", "attempted", FALSE);
+		}
 	
 	/* measured in seconds */
-	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
-		"printer-uptime", 1);
-    }
+	if(request_attr_requested(req, "printer-uptime"))
+		{
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+			"printer-uptime", time(NULL) - daemon_start_time);
+		}
 
-/* IPP_GET_JOBS */
+	request_free(req);
+    } /* ipp_get_printer_attributes() */
+
+/** Handler for IPP_GET_JOBS */
 static void ipp_get_jobs(struct IPP *ipp)
 	{
 	const char function[] = "ipp_get_jobs";
-	const char *printer_uri = NULL;
+	const char *destname = NULL;
 	int destname_id = -1;
 	int i;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
 	struct QFileEntry qfileentry;
+	struct OPERATION *req;
 
-	{
-	ipp_attribute_t *attr;
-	for(attr = ipp->request_attrs; attr; attr = attr->next)
-		{
-		if(attr->group_tag != IPP_TAG_OPERATION)
-			continue;
-		if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
-			printer_uri = attr->values[0].string.text;
-		else
-			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
-		}
-	}
+	req = request_new(ipp);
 
-	if(printer_uri)
+	if((destname = request_destname(req)))
 		{
-		char *destname;
-		if(!(destname = strrchr(printer_uri, '/')))
-			{
-			/* add code to set error code */
-			return;
-			}
-		destname++;
 		if((destname_id = destid_by_name(destname)) == -1)
 			{
-			/* add code to set error code */
+			request_free(req);
+			ipp->response_code = IPP_NOT_FOUND;
 			return;
 			}
 		}
@@ -313,39 +484,51 @@ static void ipp_get_jobs(struct IPP *ipp)
 			}
 		}
 
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
-			"job-id", queue[i].id);
-		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-			"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
-		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-			"job-uri", "/jobs/%d", queue[i].id);
+		if(request_attr_requested(req, "job-id"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+				"job-id", queue[i].id);
+			}
+		if(request_attr_requested(req, "job-printer-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+				"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
+			}
+		if(request_attr_requested(req, "job-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+				"job-uri", "/jobs/%d", queue[i].id);
+			}
 
 		/* Derived from "ppop lpq" */
-		{
-		const char *ptr;
-		if(!(ptr = qfileentry.lpqFileName))
-			ptr = qfileentry.Title;
-		if(ptr)
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
-		}
+		if(request_attr_requested(req, "job-name"))
+			{
+			const char *ptr;
+			if(!(ptr = qfileentry.lpqFileName))
+				ptr = qfileentry.Title;
+			if(ptr)
+				ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
+			}
 
 		/* Derived from "ppop lpq" */
-		{
-		const char *user;
-		if(qfileentry.proxy_for)
-			user = qfileentry.proxy_for;
-		else if(qfileentry.For)				/* probably never false */
-			user = qfileentry.For;
-		else								/* probably never invoked */
-			user = qfileentry.username;
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(user), TRUE);
-		}
+		if(request_attr_requested(req, "job-originating-user-name"))
+			{
+			const char *user;
+			if(qfileentry.proxy_for)
+				user = qfileentry.proxy_for;
+			else if(qfileentry.For)				/* probably never false */
+				user = qfileentry.For;
+			else								/* probably never invoked */
+				user = qfileentry.username;
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(user), TRUE);
+			}
 
 		/* Derived from "ppop lpq" */
-		{
-		long int bytes = qfileentry.PassThruPDL ? qfileentry.attr.input_bytes : qfileentry.attr.postscript_bytes;
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
-		}
+		if(request_attr_requested(req, "job-k-octets"))
+			{
+			long int bytes = qfileentry.PassThruPDL ? qfileentry.attr.input_bytes : qfileentry.attr.postscript_bytes;
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
+			}
 
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
@@ -353,75 +536,91 @@ static void ipp_get_jobs(struct IPP *ipp)
 		}
 
 	unlock();
-	}
 
-/* CUPS_GET_PRINTERS */
+	request_free(req);
+	} /* ipp_get_jobs() */
+
+/** Handler for CUPS_GET_PRINTERS */
 static void cups_get_printers(struct IPP *ipp)
 	{
+	struct OPERATION *req;
 	int i;
+
+	req = request_new(ipp);
+	
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-			"printer-name", printers[i].name, FALSE);
-
-		/* Is this valid? */
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,	
-			"printer-uri", "/printers/%s", printers[i].name);
-
-		printer_add_status(ipp, i);
-
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs", printers[i].accepting);
-
-		{
-		char fname[MAX_PPR_PATH];
-		FILE *f;
-		char *line = NULL;
-		int line_len = 80;
-		char *p;
-		char *interface = NULL;
-		char *address = NULL;
-
-		ppr_fnamef(fname, "%s/%s", PRCONF, printers[i].name);
-		if((f = fopen(fname, "r")))
+		if(request_attr_requested(req, "printer-name"))
 			{
-			while((line = gu_getline(line, &line_len, f)))
-				{
-				if(gu_sscanf(line, "Interface: %S", &p) == 1)
-					{
-					if(interface)
-						gu_free(interface);
-					interface = p;
-					}
-				if(gu_sscanf(line, "Address: %A", &p) == 1)
-					{
-					if(address)
-						gu_free(address);
-					address = p;
-					}
-				}
-			fclose(f);
-	
-			if(interface && address)
-				{
-				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri",
-					"%s:%s",
-					address[0] == '/' ? "file" : interface,		/* for benefit of CUPS lpc */
-					address);
-				}
-	
-			if(interface)
-				gu_free(interface);
-			if(address)
-				gu_free(address);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+				"printer-name", printers[i].name, FALSE);
 			}
-					
-			ipp_add_end(ipp, IPP_TAG_PRINTER);
-			}
-		}
 
+		if(request_attr_requested(req, "printer-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,	
+				"printer-uri", "/printers/%s", printers[i].name);
+			}
+
+		printer_add_status(ipp, i, req);
+
+		if(request_attr_requested(req, "printer-is-accepting-jobs"))
+			{
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs", printers[i].accepting);
+			}
+
+		if(request_attr_requested(req, "device-uri"))
+			{
+			char fname[MAX_PPR_PATH];
+			FILE *f;
+			char *line = NULL;
+			int line_len = 80;
+			char *p;
+			char *interface = NULL;
+			char *address = NULL;
+	
+			ppr_fnamef(fname, "%s/%s", PRCONF, printers[i].name);
+			if((f = fopen(fname, "r")))
+				{
+				while((line = gu_getline(line, &line_len, f)))
+					{
+					if(gu_sscanf(line, "Interface: %S", &p) == 1)
+						{
+						if(interface)
+							gu_free(interface);
+						interface = p;
+						}
+					if(gu_sscanf(line, "Address: %A", &p) == 1)
+						{
+						if(address)
+							gu_free(address);
+						address = p;
+						}
+					}
+				fclose(f);
+		
+				if(interface && address)
+					{
+					ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri",
+						"%s:%s",
+						address[0] == '/' ? "file" : interface,		/* for benefit of CUPS lpc */
+						address);
+					}
+		
+				if(interface)
+					gu_free(interface);
+				if(address)
+					gu_free(address);
+				}
+			} /* device-uri */
+
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		}
 	unlock();
+
+	request_free(req);
 	}
 	
 /* CUPS_GET_CLASSES */
@@ -429,23 +628,37 @@ static void cups_get_classes(struct IPP *ipp)
 	{
 	int i, i2;
 	const char *members[MAX_GROUPSIZE];
+	struct OPERATION *req;
+	req = request_new(ipp);
 	lock();
 	for(i=0; i < group_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-			"printer-name", groups[i].name, FALSE);
-		/* Is this valid? */
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-			"printer-uri", "/classes/%s", groups[i].name);
-		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-			"printer-is-accepting-jobs", groups[i].accepting);
-		for(i2=0; i2 < groups[i].members; i2++)
-			members[i2] = printers[groups[i].printers[i2]].name;
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
+		if(request_attr_requested(req, "printer-name"))
+			{
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+				"printer-name", groups[i].name, FALSE);
+			}
+		if(request_attr_requested(req, "printer-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+				"printer-uri", "/classes/%s", groups[i].name);
+			}
+		if(request_attr_requested(req, "printer-is-accepting-jobs"))
+			{
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs", groups[i].accepting);
+			}
+		if(request_attr_requested(req, "member-names"))
+			{
+			for(i2=0; i2 < groups[i].members; i2++)
+				members[i2] = printers[groups[i].printers[i2]].name;
+			ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
+			}
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	unlock();
-	}
+	request_free(req);
+	} /* cups_get_classes() */
 
 void ipp_dispatch(const char command[])
 	{

@@ -42,7 +42,10 @@ implemented.  Slicing is not.
 #include <string.h>
 #include "gu.h"
 
+#define MAGIC 0x4202
+
 struct PCA {
+	int magic;
 	int removed_at_start;		/* number of elements shifted off the start */
 	int size_used;				/* number of slots used (including removed_at_start) */
 	int size_allocated;			/* number of members in storage[] */
@@ -61,6 +64,7 @@ void *gu_pca_new(int initial_size, int increment)
 	if(increment < 0)
 		gu_Throw("gu_pca_new(): increement must not be negative");
 	p = gu_alloc(1, sizeof(struct PCA));
+	p->magic = MAGIC;
 	p->removed_at_start = 0;
 	p->size_used = 0;
 	p->size_allocated = initial_size;
@@ -77,6 +81,8 @@ void *gu_pca_new(int initial_size, int increment)
 void gu_pca_free(void *pca)
 	{
 	struct PCA *p = pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_free(): bad magic");
 	if(p->storage)
 		gu_free(p->storage);
 	gu_free(p);
@@ -96,6 +102,8 @@ static void gu_pca_expand(void *pca)
 int gu_pca_size(void *pca)
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_size(): bad magic");
 	return (p->size_used - p->removed_at_start);
 	}
 
@@ -104,6 +112,8 @@ int gu_pca_size(void *pca)
 void *gu_pca_index(void *pca, int index)
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_index(): bad magic");
 	index += p->removed_at_start;
 	if(index >= 0 && index <= p->size_used)
 		return p->storage[index];
@@ -115,6 +125,8 @@ void *gu_pca_index(void *pca, int index)
 void *gu_pca_pop(void *pca) 
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_pop(): bad magic");
 	if(p->size_used > p->removed_at_start)
 		{
 		p->size_used--;
@@ -128,6 +140,8 @@ void *gu_pca_pop(void *pca)
 void gu_pca_push(void *pca, void *item)
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_push(): bad magic");
 	if(p->size_used == p->size_allocated)
 		{
 		if(p->removed_at_start > 0)		/* if we can slide the array down in storage, */
@@ -149,6 +163,8 @@ void gu_pca_push(void *pca, void *item)
 void *gu_pca_shift(void *pca)
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_shift(): bad magic");
 	if(p->size_used > p->removed_at_start)
 		{
 		return p->storage[p->removed_at_start++];
@@ -161,6 +177,8 @@ void *gu_pca_shift(void *pca)
 void gu_pca_unshift(void *pca, void *item)
 	{
 	struct PCA *p = (struct PCA *)pca;
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pca_unshift(): bad magic");
 	if(p->removed_at_start > 0)
 		{
 		p->removed_at_start--;

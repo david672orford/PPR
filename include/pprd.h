@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2005.
+** Last modified 2 March 2005.
 */
 
 /*
@@ -72,7 +72,7 @@
 //#define DEBUG_PPOPINT 1				/* interface to ppop */
 //#define DEBUG_ALERTS 1				/* sending of operator alerts */
 //#define DEBUG_NODEID 1				/* allocating and deallocating node id numbers */
-#define DEBUG_QUESTIONS 1				/* sending questions to job submitters */
+//#define DEBUG_QUESTIONS 1				/* sending questions to job submitters */
 #define DEBUG_IPP 1						/* Internet Printing Protocol operations */
 #endif
 
@@ -86,6 +86,7 @@
 /*============ User: don't change anything below this line. ============*/
 
 /* A few global variables: */
+extern time_t daemon_start_time;
 extern gu_boolean lockfile_created;
 
 /* A few critical declarations: */

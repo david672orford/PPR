@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 2 March 2005.
 */
 
 /*
@@ -43,6 +43,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <time.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -57,6 +58,7 @@
 /*
 ** Misc global variables
 */
+time_t daemon_start_time;		/* time at which this daemon started */
 struct QEntry *queue;			/* array holding terse queue */
 int queue_size;					/* number of entries for which there is room */
 int queue_entries = 0;			/* entries currently used */
@@ -319,6 +321,8 @@ static int real_main(int argc, char *argv[])
 	int FIFO;					/* First-in-first-out which feeds us requests */
 	sigset_t lock_set;
 	struct timeval next_tick;
+
+	time(&daemon_start_time);
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
