@@ -8727,7 +8727,9 @@ Bug Fixes
 * filter_dotmatrix/: serious bug magnified page dimensions 1440x leaving
   cursor way off the page.  I guess no one is using this filter.  Also
   fixed bug which prevented similtanious bold and italic from working.
-  See below for enhancements.
+  Fixed so that setting left or right margin forces current position
+  inside the new margin.  Fixed so that setting page skip forces current
+  position inside top margin.  See below for enhancements.
 
 Misc. Added Material
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 September 2003.
+** Last modified 13 September 2003.
 */
 
 /*
@@ -546,46 +546,58 @@ void escape(void)
 			select_font();
 			#endif
 			break;
-		case 'N':				/* perforation skip to N lines */
+		case 'N':						/* perforation skip to N lines */
 			NEWC;
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% perforation skip: %d line(s)\n",c);
 			#endif
-
 			if(c < 128 && c > 1)
-				perforation_skip=c*current_line_spacing;
+				perforation_skip = (c * current_line_spacing);
 			else
-				fprintf(stderr,"Illegal value for ESC N\n");
+				fprintf(stderr, "Illegal value for ESC N\n");
+
+			/* If no explicit top margin is set, then the top margin will be half of
+			   the perforation skip.  If the current position is higher than the
+			   top margin, move it down to the top margin.
+			   */
+			if(top_margin == 0)
+				{
+				int top_ypos = page_length - (perforation_skip/2);
+				if(ypos > top_ypos)
+					ypos = top_ypos;
+				}
 			#endif
 			break;
-		case 'O':				/* turns perforation skip mode off */
+		case 'O':						/* turns perforation skip mode off */
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% perforation skip off");
 			#endif
-			perforation_skip=0;
+			perforation_skip = 0;
 			#endif
 			break;
-		case 'P':				/* elite mode off */
+		case 'P':						/* elite mode off */
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% Elite off");
 			#endif
-			current_charmode&=(~MODE_ELITE);
+			current_charmode &= (~MODE_ELITE);
 			select_font();
 			#endif
 			break;
-		case 'Q':				/* set right margin */
+		case 'Q':						/* set right margin (typewriter style, at stated column from left) */
 			NEWC;
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% right margin: %d\n",c);
 			#endif
-			right_margin=c * current_char_spacing;
+			right_margin = (c * current_char_spacing);
+			if(xpos > right_margin)
+				xpos = right_margin;
 			#endif
 			break;
-		case 'R':				/* set international character set */
+		case 'R':						/* set international character set */
 			NEWC;
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
@@ -598,7 +610,7 @@ void escape(void)
 				fprintf(stderr,"Illegal value for ESC R\n");
 			#endif
 			break;
-		case 'S':				/* Turns script mode on */
+		case 'S':						/* Turns super/sub-script mode on */
 			NEWC;
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
@@ -609,20 +621,20 @@ void escape(void)
 				{
 				case 0:			/* superscript */
 				case '0':
-					script_mode=SCRIPT_SUPER;
+					script_mode = SCRIPT_SUPER;
 					break;
 				case 1:			/* subscript */
 				case '1':
-					script_mode=SCRIPT_SUB;
+					script_mode = SCRIPT_SUB;
 					break;
 				default:
-					fprintf(stderr,"Invalid ESC S %d command\n",c);
+					fprintf(stderr, "Invalid ESC S %d command\n",c);
 					break;
 				}
 			select_font();
 			#endif
 			break;
-		case 'T':				/* Turns script mode off */
+		case 'T':						/* Turns super/sub-script mode off */
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			puts("% script mode off");
@@ -632,8 +644,8 @@ void escape(void)
 			select_font();
 			#endif
 			break;
-		case 'U':				/* Turn unidirectional mode on or off */
-			NEWC;				/* ignore this command */
+		case 'U':						/* Turn unidirectional mode on or off */
+			NEWC;						/* ignore this command since this isn't a real dotmatrix printer */
 			#ifndef COMPILING_PASS1
 			#ifdef DEBUG_COMMENTS
 			printf("%% unidirectional mode: %d (ignored)\n",c);
@@ -823,8 +835,9 @@ void escape(void)
 			#ifdef DEBUG_COMMENTS
 			printf("%% left margin: %d\n",c);
 			#endif
-
-			left_margin = c * current_char_spacing;
+			left_margin = (c * current_char_spacing);
+			if(xpos < left_margin)
+				xpos = left_margin;
 			#endif
 			break;
 		case 'm':				/* Upper controls */
@@ -989,16 +1002,16 @@ void escape(void)
 				{
 				NEWC;							/* build number from */
 				#ifndef COMPILING_PASS1
-				length=c;						/* next two bytes */
+				length = c;						/* next two bytes */
 				#endif
 				NEWC;
 				#ifndef COMPILING_PASS1
 				length += 256 * c;
 
 				if(length > 32768)				/* undo two's complement */
-					length=length-65536;
+					length = length - 65536;
 
-				if( (emulation & EMULATION_P6_INTERPRETATION) && nlq_mode )
+				if((emulation & EMULATION_P6_INTERPRETATION) && nlq_mode)
 				/* if(nlq_mode) */
 					{							/* for P6 in NLQ mode, 180ths of an inch */
 					length *= (HORIZONTAL_UNITS/180);
@@ -1012,8 +1025,8 @@ void escape(void)
 				printf("%% horizontal move: %d/%dths inch\n",length,HORIZONTAL_UNITS);
 				#endif
 
-				/* If in allowable range, use it. */
-				if( (xpos + length) >= left_margin && (xpos + length) <= right_margin )
+				/* If proposed position is between left and right margins, use it. */
+				if((xpos + length) >= left_margin && (xpos + length) <= right_margin)
 					xpos += length;
 				#endif
 				}

@@ -174,11 +174,14 @@ int tabs_vertical[8][16];
 int tabs_horizontal[32];
 int vertical_tab_channel;
 
-/* Margins.  All are expressed in terms of *_UNITS. */
+/*
+** Margins.  All are expressed in terms of *_UNITS.  If top_margin is
+** zero then half of perforation_skip is used instead.
+*/
 int left_margin;
 int right_margin;
-int perforation_skip;
 int top_margin;			/* always zero for most printers */
+int perforation_skip;	/* amount to skip between pages */
 
 /* Automatic line feed and carriage return. */
 int auto_cr = TRUE;
@@ -381,7 +384,7 @@ void reset(int hard)
 	left_margin = 0;
 	right_margin = page_width;
 	perforation_skip = initial_perfskip * (HORIZONTAL_UNITS/10);
-	top_margin=0;
+	top_margin = 0;
 
 	/* return the graphics modes to their defaults. */
 	graphic_mode_K = GRAPHICS_60;
@@ -398,7 +401,7 @@ void reset(int hard)
 static void page_reset(int consumed)
 	{
 	/* move to top of page */
-	if(top_margin==0)									/* If we don't use top margin, */
+	if(top_margin == 0)									/* If we don't use top margin, */
 		ypos = page_length - (perforation_skip/2);		/* top margin is half of perforation skip. */
 	else												/* If explicit top magin, */
 		ypos = page_length - top_margin;				/* use it. */
