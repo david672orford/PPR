@@ -36,12 +36,13 @@ BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 	rewind_stdin$(DOTEXE) tail_status$(DOTEXE) \
 	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
 
-BUILT_LIBS=respond.sh respond.ph \
+BUILT_LIBS=\
+	respond.sh respond.ph \
 	signal.sh \
 	commentary.sh commentary.ph \
-	interface.sh
+	interface.sh interface.tcl \
 
-UNBUILT_LIBS=libppr_int.sh \
+UNBUILT_LIBS=\
 	responder_argv.pl \
 	pprpopup.pl \
 	speach.pl speach_play.pl speach_commentary.pl speach_response.pl \
@@ -111,6 +112,12 @@ interface.sh: ../include/interface.h
 	echo "# Bourne shell translation of interface.h" >interface.sh
 	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/\1=\2\3#\4/p' \
 		<../include/interface.h >>interface.sh
+
+# Tcl version of interface.h.
+interface.tcl: ../include/interface.h
+	echo "# Tcl translation of interface.h" >interface.sh
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/set \1 \2/p' \
+		<../include/interface.h >>interface.tcl
 
 #=== Install ================================================================
 

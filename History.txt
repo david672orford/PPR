@@ -9492,11 +9492,10 @@ no final tarball was released.
 
 * libscript/readppd.pl: added ppd_level().
 
-* interfaces/smb.sh: clarified error message about proper address format.
-
-* interfaces/smb.sh: switched from using smbclient's exit code (which is
-  appearently useless) to looking for patterns in its output as a way
-  to detect errors.
+* interfaces/smb.sh: clarified error message about proper address format; 
+  switched from using smbclient's exit code (which is appearently useless) to
+  looking for patterns in its output as a way to detect errors; converted from
+  Borne Shell to Tcl and renamed to smb.tcl.
 
 * www/ppr-passwd.c: fixed --delete (merged into 1.54)
 
@@ -9505,8 +9504,8 @@ no final tarball was released.
 
 * ppr/ppr_main.c:write_queue_file(): added check for lc_messages validity
 
-* pprd/pprd_ipp.c:ipp_get_jobs(): fixed file-decriptor leak, added code to 
-  select only jobs from the requested queue.
+* pprd/pprd_ipp.c:ipp_get_jobs(): fixed file-decriptor leak, added missing 
+  code to select only jobs from the requested queue.
 
 * ipp/ipp.c: fixed incorrect data type for requesting-user-name, fixed to
   ignore empty REMOTE_USER CGI environment variable.
@@ -9536,6 +9535,10 @@ no final tarball was released.
   modifications out of snprintf.c and into gu_snprintf.c.  Previously, there
   was a libgu/snprintf.c symbolic link to nonppr_misc/snprintf/snprintf.c.
 
+* libscript/libppr_int.sh: removed (it implemented int_exit() for shell
+  scripts)
+
+* libscript/Makefile: added code to generate and install interface.tcl.
 
 
 

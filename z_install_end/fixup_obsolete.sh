@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_end/fixup_obsolete.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 December 2004.
+# Last modified 13 January 2005.
 #
 
 . ../makeprogs/paths.sh
@@ -179,5 +179,7 @@ outdated $HOMEDIR/interfaces/usblp
 # PPR 2.00
 outdated $HOMEDIR/bin/papsrv
 outdated $HOMEDIR/bin/ppd2win95drv
+outdated $HOMEDIR/bin/ppd2windrv
+outdated $HOMEDIR/lib/libppr_int.sh
 
 exit 0

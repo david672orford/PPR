@@ -1102,9 +1102,6 @@ export PPR_TCLSH=$(HOMEDIR)/bin/ppr-tclsh
 ===EndOfHere16===
 
 cat >&3 <<===EndOfHere20===
-# New program to substitute the variables defined in Makefile.conf.
-SUBST_TOOL=../subst_tool
-
 # A shell script which copies executable files into place.  It also attempts
 # to strip them.  We don't use "install" because the BSD and System V versions
 # are very different.  There is no reason to change this setting.
@@ -1847,14 +1844,17 @@ cat >&3 <<'===MakeRules==='
 # Convert .sh files to shell scripts.
 .sh:
 	../subst_tool <$*.sh >$*
+	chmod 755 $*
 
 # Convert .perl files to Perl scripts.
 .perl:
 	../subst_tool <$*.perl >$*
+	chmod 755 $*
 
 # Convert .tcl files to Tcl scripts.
 .tcl:
 	../subst_tool <$*.tcl >$*
+	chmod 755 $*
 
 # Build an object file from a single .c file.
 .c.$(OBJ):
