@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 9 March 2003.
 #
 
 include ../Makefile.conf
@@ -50,7 +50,7 @@ indexppds$(DOTEXE): $(OBJS1)
 
 #=== Install ================================================================
 
-install: $(BIN_PROGS)
+install: $(PROGS)
 	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 	( cd ghostscript; $(MAKE) install )
@@ -63,7 +63,7 @@ install: $(BIN_PROGS)
 depend:
 
 clean:
-	$(RMF) $(BACKUPS) $(PROGS) *.$(OBJ)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
 	( cd ghostscript; $(MAKE) clean )
 	( cd generic; $(MAKE) clean )
 	( cd other; $(RMF) $(BACKUPS) )
