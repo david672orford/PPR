@@ -20,16 +20,14 @@ DIV.menubar {
 
 /* The table with the queue listing is 80% as high as the page. */
 DIV.queue {
-	height: 80%;
-	overflow: hidden;
+	/* overflow: auto; */
+	margin-top: 2pt;
+	margin-bottom: 2pt;
 	}
 
 /* This is for the queue display table. */
 TABLE.queue {
 	width: 100%;
-	/* height: 100%; */
-	margin-top: 2pt;
-	margin-bottom: 2pt;
 	border-style: solid;
 	border-color: black;
 	}
@@ -45,8 +43,13 @@ TABLE.queue THEAD TH {
 	}
 
 TABLE.queue TBODY {
-	/* height: 90%; */
-	overflow: scroll;
+	height: 9cm;
+	overflow: auto;
+	}
+
+/* IE 5.5 stupidly passes the height of <TBODY> on to <TR>. */
+TABLE.queue TBODY TR {
+	height: 14pt;
 	}
 
 TABLE.queue TBODY TH, TD {

@@ -9,7 +9,7 @@
 #
 # * Redistributions of source code must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
-# 
+#
 # * Redistributions in binary form must reproduce the above copyright
 # notice, this list of conditions and the following disclaimer in the
 # documentation and/or other materials provided with the distribution.
@@ -17,16 +17,16 @@
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 January 2002.
+# Last modified 11 January 2002.
 #
 
 
@@ -41,7 +41,7 @@ sub validate_password
     my $domain = shift;
     my $username = shift;
     my $password = shift;
-    
+
     if($username eq "")
     	{
 	return "You didn't enter your username.\n";
@@ -54,9 +54,9 @@ sub validate_password
 
     if($response ne $correct_response)
 	{
-	return "Password is incorrect." 
+	return "Password is incorrect."
 	}
-	
+
     eval {
 	if(!digest_nonce_validate($domain, $nonce))
 	    {
@@ -70,7 +70,7 @@ sub validate_password
 
     return undef;
     }
-    
+
 # Initialize the internationalization libraries and determine the
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
@@ -98,7 +98,7 @@ Vary: accept-language
 <head>
 <title>${\html($jobname)}</title>
 </head>
-<body>
+<body bgcolor="#a4b6dd" fgcolor="black">
 <form method="POST" action="$ENV{SCRIPT_NAME}">
 Head
 
@@ -113,12 +113,13 @@ eval {
 	run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "cancel", $jobname);
 	print "<p>The job has been canceled.</p>\n";
 	print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+	print "<script>window.close()</script>\n";
 	}
 
     else
 	{
 	my $error = undef;
-	
+
 	# If [OK] pressed with a valid username and password pair,
 	if($action eq "OK" && !defined($error = validate_password($protection_domain, $username, $password)))
 	    {
@@ -127,9 +128,10 @@ eval {
 	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "release", $jobname);
 	    print "<p>Changed owner and released job.</p>\n";
 	    print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+	    print "<script>window.close()</script>\n";
 	    }
 
-	# Anything else pressed or bad username or password,
+	# First time or invalid login.  We will distinguish them in a momement.
 	else
 	    {
 	    print "<p>", html(sprintf(

@@ -3,7 +3,7 @@
 # Portions Copyright (c) 1996 DSC Technologies Corporation
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 9 January 2002.
+# Last modified 11 January 2002.
 #
 
 package require Itcl
@@ -156,9 +156,9 @@ itcl::class Browser::form_element_input_button {
 
   public method press {} {
     puts "input button press"
-    if {$onclick == "window.close()"} {
-	puts "  Trying to close browser..."
-	[$containing_form get_browser] close
+    if {[string compare $onclick ""] != 0} {
+	puts "  Calling onclick handler"
+	[$containing_form get_browser] fake_javascript $onclick
 	}
     }
 
@@ -564,6 +564,7 @@ itcl::class Browser {
   public method write {html}
   public method img_callback {label code message content_type data}
   public method get_bgcolor {} { return $_bgcolor }
+  public method fake_javascript {script}
 
   protected method _entity_!doctype {args} {
     #puts "Browser::_entity_!doctype"
@@ -594,6 +595,10 @@ itcl::class Browser {
   protected method _entity_/select {}
   protected method _entity_textarea {args}
   protected method _entity_/textarea {args}
+  protected method _entity_script {args}
+  protected method _entity_/script {args}
+  protected method _entity_style {args}
+  protected method _entity_/style {args}
 
   public variable closecommand
   public variable getcommand
@@ -605,9 +610,12 @@ itcl::class Browser {
   protected variable _anchorname
   protected variable _current_select
   protected variable _current_textarea
+  protected variable _in_script
+  protected variable _script_text
+  protected variable _in_style
+  protected variable _style_text
 
   protected method _append_text {text}
-  #protected method _parse_fields {array_var string}
   protected method to_anchor {}
   protected method parse_url {url}
 }
@@ -671,6 +679,10 @@ itcl::body Browser::clear {} {
   set _current_form {}
   set _current_select {}
   set _current_textarea {}
+  set _in_script 0
+  set _script_text ""
+  set _in_style 0
+  set _style_text ""
 }
 
 #----------------------------------------------------------------------------
@@ -860,8 +872,16 @@ itcl::body Browser::_append_text {text} {
 	}
 
     # Swallow <style></style>
+    if $_in_style {
+	append _style_text $text
+	return
+	}
 
     # Swallow <script></script>
+    if $_in_script {
+	append _script_text $text
+	return
+	}
 
     # If not in <pre></pre>, then convert each instance of whitespace
     # to a single space.
@@ -1262,5 +1282,70 @@ itcl::body Browser::_entity_/textarea {args} {
   $_hottext insert end "\n"
   set _current_textarea {}
 }
+
+#-----------------------------------------------------------
+# <script> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_script {args} {
+  puts "Browser::_entity_script"
+  _parse_fields ar $args
+  set _in_script 1
+  }
+
+#-----------------------------------------------------------
+# </script> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/script {args} {
+  puts "Browser::_entity_/script"
+
+  fake_javascript $_script_text
+
+  set _in_script 0
+  set _script_text ""
+  }
+
+#-----------------------------------------------------------
+# <style> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_style {args} {
+  puts "Browser::_entity_style"
+  _parse_fields ar $args
+  set _in_style 1
+  }
+
+#-----------------------------------------------------------
+# </style> tag handler
+#-----------------------------------------------------------
+itcl::body Browser::_entity_/style {args} {
+  puts "Browser::_entity_/style"
+
+  # Add style handling code here.
+
+  set _in_style 0
+  set _style_text ""
+  }
+
+#-----------------------------------------------------------
+# Handle a few common JavaScript cases.
+#-----------------------------------------------------------
+itcl::body Browser::fake_javascript {script} {
+  puts "Browser::fake_javascript $script"
+
+  # Remove leading and trailing spaces.
+  regsub {^[ ]+} $script {} script
+  regsub {[ ]+$} $script {} script
+
+  puts "    $script"
+
+  switch -- $script {
+    "window.close()" {
+	puts "    Closing window"
+	close
+	}
+    default {
+	puts "    Not recognized"
+	}
+    }
+  }
 
 # end of file

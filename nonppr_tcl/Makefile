@@ -1,7 +1,7 @@
 #
-# mouse:~ppr/src/tcl/Makefile
+# mouse:~ppr/src/nonppr_tcl/Makefile
 #
-# Last modified 31 August 2001.
+# Last modified 11 January 2002.
 #
 
 include ../makeprogs/global.mk
@@ -37,11 +37,11 @@ UNIX_OBJS = panic.o tclEnv.o tclGlob.o tclMain.o tclUnixAZ.o tclUnixStr.o tclUni
 
 OBJS = ${GENERIC_OBJS} ${UNIX_OBJS}
 
-LIB_PROGS=tclsh$(DOTEXE)
+BIN_PROGS=ppr-tclsh$(DOTEXE)
 
 #=== Build ==================================================================
 
-all: libtcl.a tclsh
+all: libtcl.a $(BIN_PROGS)
 
 .c.$(OBJ):
 	$(CC) $(MORE_CFLAGS) -c $*.c
@@ -50,13 +50,13 @@ libtcl.a: ${OBJS}
 	$(RMF) libtcl.a
 	ar cr libtcl.a ${OBJS}
 
-tclsh: tclAppInit.o libtcl.a
-	${CC} ${CC_SWITCHES} tclAppInit.o libtcl.a ${MATH_LIBS} -o tclsh
+ppr-tclsh: tclAppInit.o libtcl.a
+	${CC} ${CC_SWITCHES} tclAppInit.o libtcl.a ${MATH_LIBS} -o ppr-tclsh
 
 #=== Install ================================================================
 
 install: $(LIB_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
 
 #=== Housekeeping ===========================================================
 
