@@ -358,7 +358,3 @@ more information about RIPs and *pprRIP:.
 
 * pprinst/pprinst_adding_spooler.sgml: brought up-to-date and proofread,
   added description of new Ghostscript support.
-
-
-
-

@@ -1,7 +1,7 @@
 Begin3
 Title:          PPR, a PostScript Print Spooler
 Version:        1.50
-Entered-date:   12FEB03
+Entered-date:   14FEB03
 Description:    PPR is a print spooler specificaly designed for
 		PostScript printers.  It contains modules to print to AppleTalk
 		printers using CAP or Netatalk. It has modules to receive jobs
@@ -14,7 +14,7 @@ Keywords:       PPR PostScript Ghostscript AppleTalk Netatalk CAP
 Author:         David.Chappell@mail.trincoll.edu
 Maintained-by:  David.Chappell@mail.trincoll.edu
 Primary-site:   ftp://ppr-dist.trincoll.edu/pub/ppr/
-		3784837 ppr-1.50.tar.gz
+		3900021 ppr-1.50.tar.gz
 Alternate-site: ftp://ftp.ibiblio/pub/Linux/system/printing/
 Original-site:
 Copying-policy: BSD

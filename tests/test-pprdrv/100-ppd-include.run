@@ -8,7 +8,7 @@ echo "ppad: $?"
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes <<EndOfSample
+$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes <<EndOfSample
 %!PS-Adobe-3.0
 
 %%EndProlog

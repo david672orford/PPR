@@ -9,7 +9,7 @@
 $TESTBIN/clear_output
 
 # Send an error laced job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample1 || echo "ppr failed: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr failed: $?"
 %!PS-Adobe-99.0
 %%Pages:
 %%Pages: 2 1
@@ -63,7 +63,7 @@ $TESTBIN/cat_output
 $TESTBIN/clear_output
 
 # Send another error laced job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample2 || echo "ppr failed: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample2 || echo "ppr failed: $?"
 %!
 %%Title: sample 2
 %%Pages: 1
@@ -89,7 +89,7 @@ $TESTBIN/cat_output
 $TESTBIN/clear_output
 
 # Send a 3rd error laced job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample3
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample3
 %!
 %%Pages: 1
 %%Title: Sample 3
@@ -118,7 +118,7 @@ $TESTBIN/cat_output
 $TESTBIN/clear_output
 
 # Send a job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample4 || echo "ppr failed: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample4 || echo "ppr failed: $?"
 %!PS-Adobe-3.0
 %%Title: sample 4
 %%Pages: 2

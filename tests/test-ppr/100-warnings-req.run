@@ -9,7 +9,7 @@
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -R copies <<EndOfSample
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none -R copies <<EndOfSample
 %!PS-Adobe-3.0
 %%Requirements: duplex numcopies(0)
 %%Pages: 2

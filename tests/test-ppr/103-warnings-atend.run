@@ -7,7 +7,7 @@
 
 # Make sure a trailer comment doesn't work without atend.
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample1 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%PageOrder: Ascend
 %%Title: atend test 1
@@ -28,7 +28,7 @@ $TESTBIN/cat_output || echo "error!"
 
 # Make sure an overriden atend comment doesn't provoke a warning.
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample2 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample2 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%PageOrder: Ascend
 %%Title: atend test 2
@@ -55,7 +55,7 @@ $TESTBIN/cat_output || echo "error!"
 
 # Make sure header comments are overridden:
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample3 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample3 || echo "ppr: $?"
 %!PS-Adobe-1.0
 %%Title: documentfonts override test
 %%DocumentFonts: Courier
@@ -81,7 +81,7 @@ $TESTBIN/cat_output || echo "error!"
 
 # Make sure trailer comments are overridden:
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample4 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample4 || echo "ppr: $?"
 %!PS-Adobe-1.0
 %%Title: documentfonts override test
 %%DocumentFonts: (atend)
@@ -109,7 +109,7 @@ $TESTBIN/cat_output || echo "error!"
 # Demonstrate that old and new resource syntaxes
 # add to one another in the header
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample5 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample5 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%Title: resource override test 5
 %%DocumentFonts: (atend)
@@ -145,7 +145,7 @@ $TESTBIN/cat_output || echo "error!"
 # add to one another in the trailer as no comment
 # appears twice.
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample6 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample6 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%Title: resource override test 6
 %%DocumentFonts: (atend)
@@ -185,7 +185,7 @@ $TESTBIN/cat_output || echo "error!"
 #
 # For header 
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample7 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample7 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%Title: resource override test 7
 %%DocumentFonts: Courier
@@ -223,7 +223,7 @@ $TESTBIN/cat_output || echo "error!"
 #
 # For trailer
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample8 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample8 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%Title: resource override test 8
 %%DocumentFonts: (atend)
@@ -260,7 +260,7 @@ $TESTBIN/cat_output || echo "error!"
 
 # Test warnings for unrecognized (atend) comments:
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample9 || echo "ppr: $?"
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample9 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%Title: unrecognized atend test
 %%Pages: (atend)

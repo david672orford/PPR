@@ -2,7 +2,7 @@
 #
 # Test the handling of various ppr_infile.c features.
 #
-# Last modified 17 November 2002.
+# Last modified 14 February 2003.
 #
 
 FILES="nospec none tumble notumble simplextumble"
@@ -15,7 +15,7 @@ for file in $FILES
 	echo "test: $file -F $duplexopt"
 	echo "===================================================================="
 	$TESTBIN/clear_output
-	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -F Duplex=$duplexopt $TEST_BASENAME-$file.ps
+	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none -F Duplex=$duplexopt $TEST_BASENAME-$file.ps
 	$TESTBIN/cat_output
 	echo
 	done
@@ -26,7 +26,7 @@ for file in $FILES
 	echo "test: $file -R $readopt"
 	echo "===================================================================="
 	$TESTBIN/clear_output
-	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -R $readopt $TEST_BASENAME-$file.ps
+	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none -R $readopt $TEST_BASENAME-$file.ps
 	$TESTBIN/cat_output
 	echo
 	done

@@ -7358,8 +7358,8 @@ line was being parsed twice.
 * Added the job title to the arguments passed to the interface programs.
   Changed the lpr interface program to pass it to the remote system.
 
-* pprd/pprd_ppopint.c: Fixed message in case where "ppop move" moves no files
-  because they are all printing.
+* pprd/pprd_ppopint.c: Fixed incorrect message in case where "ppop move" moves
+  no files because they are all being printed.
 
 * pprd/pprd_destid.c:destid_local_is_group(): fixed to return the current
   answer for the first group id when the printer table is full.  It was
@@ -7404,7 +7404,7 @@ line was being parsed twice.
 * ppr/ppr_conffile.c: Fixed so that aliases don't inherit the switchset,
   passthru or acls of the thing they are an alias for.  I haven't firmly
   decided if they should inherit ACLs or not, but inheriting passthru really
-  reduces their usefulness.
+  reduced their usefulness.
 
 * samba/smb-protos.conf: added "min print space = 2048" to [pprproto]
   section.
@@ -7451,6 +7451,8 @@ line was being parsed twice.
 * pprdrv/pprdrv_rip.c: Changed to exit with EXIT_JOBERR rather than
   EXIT_PRNERR_NORETRY when the RIP core dumps.  This makes more sense since
   the most likely reason for a RIP to core dump is a job it can't deal with.
+  It is probably better for it to skip such a job than to bring the whole
+  queue to a grinding halt.
 
 * pprdrv/pprdrv_ppd.c: Fixed code that called fatal() before give_reason()
   (so that give_reason() was never called).
@@ -7465,8 +7467,9 @@ line was being parsed twice.
   that are shell scripts may return unexpected error codes if the system
   is starved for resources such as file descriptors.
 
-* www/show_printlog.cgi.perl: Added better message when printlog doesn't
-  exist.
+* www/show_printlog.cgi.perl: Improvied the workign of the error message
+  which is displayed when it is found that $VAR_SPOOL_PPR/logs/printlog 
+  doesn't exist.
 
 * fixup/fixup_inetd.sh: changed Xinetd configuration for the lpd port from
   "disabled = no" to "disabled = yes".
@@ -7479,13 +7482,14 @@ line was being parsed twice.
 * Added "Status-and-Flags:" to queue file and stopped using the execute bits
   to save this information.
 
-* Added ppr --save (but it doesn't do anything yet.
+* Added ppr --save, but not the implementation code.  (This switch will tell
+  PPR to keep the job in the queue after it is printed.)
 
 * Removed autoconf/ and moved configure.in into makeprogs/.
 
 * Added pprpopup/ and removed samba/pprpopup.tcl.  The pprpopup/ directory
   contains a very heavily re-written PPR Popup program.  It now contains
-  a mini web browser based in the IWidgets Scrolledhtml widget.  This allows
+  a mini web browser based on the IWidgets Scrolledhtml widget.  This allows
   us to ask the user arbitrary questions.
 
 * Added nonppr_misc/md5/md5pure.tcl.
@@ -7496,14 +7500,16 @@ line was being parsed twice.
 * Changed -r option from net:node to net.node to match the Netatalk
   nbplkup output.
 
-* Changed libscript/pprpopup.pl to look up names in
+* Changed libscript/pprpopup.pl to look up names in 
   $VAR_SPOOL_PPR/pprpopup.db/.
 
-* Added www/pprpopup_register.cgi.perl.
+* Added www/pprpopup_register.cgi.perl.  This receives registration requests
+  from the new PPR Popup and stores them in $VAR_SPOOL_PPR/pprpopup.db/.
 
-* Added www/job_public.cgi.perl.
+* Added www/job_public.cgi.perl.  This is used, along with PPR Popup, in a
+  lab printing environment to allow users to claim their jobs.
 
-* Added docs/pprpopup/.
+* Added docs/pprpopup/.  This will store the help files for PPR Popup.
 
 * Removed unixuser/pprpopupd.perl and added it to fixup/fixup_obsolete.sh
   (but left the latter commented out).
@@ -7513,7 +7519,8 @@ line was being parsed twice.
 
 * Fixed pprd so that fatal() doesn't delete the lock file unless pprd
   created the lock file.  The problem was that if it found a lock file from
-  another instance, it called fatal() which removed it.
+  another instance, it called fatal() (to say that there was already an
+  instance of pprd running) which removed the lock file!
 
 * Added --stop option to pprd.
 
@@ -7522,7 +7529,8 @@ line was being parsed twice.
 
 * Changed pprd so that it no longer uses SIGALRM and no longer does anything
   but set a flag in the SIGCHLD handler.  It now uses select() to dispatch
-  events.
+  events.  This eliminates reentrancy problems which were previously handled
+  by avoiding unsafe functions such as malloc() and all of stdio.
 
 * Broke the www/ppr-httpd.perl standalone code out into libscript/tcpserver.pl.
 
@@ -7560,7 +7568,8 @@ line was being parsed twice.
   printer_query.ps, and ttquery.ps.
 
 * ppr/: removed --commentator, --commentator-address,
-  and --commentator-options.
+  and --commentator-options.  Commentators will be combined with responders
+  soon, so this is a move in the right direction.
 
 * ppr/: moved calls to respond() into the new function ppr_abort().
   Changed fatal() to call ppr_abort().  ppr_abort() should now be
@@ -7570,7 +7579,8 @@ line was being parsed twice.
   by SIGSEGV as a sign of a bad job.  Previously WCOREDUMP() was used
   to determine if the error was a bad job but this didn't work
   because (at least on Linux) WCOREDUMP() was returning false if
-  core would have been dumped but the ulimit prohibited it.
+  core would have been dumped but the ulimit prohibited it.  I do not
+  know if Linux is right to behave in this way.
 
 * Configure: changed everything but Linux to include -lint if international
   messages is selected.
@@ -7578,25 +7588,26 @@ line was being parsed twice.
 * Added "ppop question" command to cancel a question attached to a job.
   Added support for this to pprd and www/job_public.cgi.perl.  (These
   questions are a request for user feedback which can be attached to
-  a job.)
+  a job.  PPR Popup is used to present the questions to the user.)
 
 * pprd/pprd_question.perl: fix to recognize "+OK" as success.
 
-* lprsrv/lprdrv_conf.c: netgroup support from Gerard Verdier
+* lprsrv/lprdrv_conf.c: added netgroup support contributed by Gerard Verdier
   <Gerard.Verdier@ensic.inpl-nancy.fr>.
 
 * lprsrv/lprsrv_conf.c: code cleanup
 
 * lprsrv/lprsrv-test.c: added paragraph of explanation before the table.
 
-* Removed limits on length of responder name, address, and options.
+* Removed limits on length of responder name, address, and options.  (System
+  wide edits.)
 
 * Allowed spaces in proxy-for strings.
 
 * pprdrv/pprdrv_capable.c: moved the handling of internal resources to a
-  table.  Added CIDInit, assuming that level three printers have it.  This
-  will have to be checked in the Adobe technical documents concerning
-  CID keyed fonts.
+  table, replacing hand-written C code implementation.  Added CIDInit to the
+  table, assuming that level three printers have it.  This will have to be 
+  checked in the Adobe technical documents concerning CID keyed fonts.
 
 * makeprogs/save_symlinks.sh: added -f to ln command.
 
@@ -7613,7 +7624,9 @@ line was being parsed twice.
   FIG pictures for the test page and replaced the hand-drawn exclaim.png
   with exclaim.fig.
 
-* www/docs_info.cgi.perl: added
+* www/docs_info.cgi.perl: added (This script can display system GNU Info
+  pages.  It is intended mainly to allow the PPR documentation to link
+  to Info pages.)
 
 * www/docs_man.cgi.perl: added support for MANPATH searching
 
@@ -7624,14 +7637,16 @@ line was being parsed twice.
 
 * www/df_html.cgi.perl, df_img.cgi.perl: removed df_img.cgi.perl and changed
   df_html.cgi.perl to make a percentage line graph with stretched
-  single-pixel images; added df_img.cgi to fixup/fixup_obsolete.sh.
+  single-pixel images; added df_img.cgi to fixup/fixup_obsolete.sh.  This
+  removes PPR's dependency on the GD graphics library and a bunch of Perl
+  modules.
 
 * www/show_queues.cgi.perl: added "Add New Alias"; added menu item "Member
   Printer Control" for the groups menu; corrected stated size of icons
   for "Add Printer", "Add Group", "Show All Queues"; moved "Show All Queues"
   to the front.
 
-* www/show_queues.js: Set href on popup menu items so that users can
+* www/show_queues.js: Set href= on popup menu items so that users can
   right-click on them and choose to open them in a new tab.
 
 * pprdrv/pprdrv_rip.c: Added an exception to the rule that Ghostscript
@@ -7647,8 +7662,8 @@ line was being parsed twice.
 * www/alias_addwiz.cgi.perl, alias_properties.cgi.perl: added
 
 * ppad/ppad_printer.c: ppad_show(): fixed bug which caused it to always
-  display the PPD file RIP setting even if the RIP setting came from the
-  printer's configuration file.
+  display the PPD file RIP setting even if the actual RIP setting (the one
+  taht pprdrv would use) came from the printer's configuration file.
 
 * libppr/int_copy_job.c: added USE_SHUTDOWN stuff.
 
@@ -7688,18 +7703,21 @@ line was being parsed twice.
   job is moved.
 
 * Changed pprdrv so that "Reason:" lines don't have parentheses around them
-  in the queue file and changed ppop to print them itself.
+  in the queue file and changed ppop to add the parentheses itself before
+  printing the message.
 
-* Added www/window_open.cgi.perl.
+* Added www/window_open.cgi.perl.  This script may prove useful for shedding
+  browser decorations.
 
 * printdesk/: converted to use PPR.pm instead of paths.ph, fixing bugs
   introduced by changes to paths.ph.
 
 * Added fixup/fixup_atalk.tcl to find getzones, fixed printdesk/Printdesk.pm
-  and www/prn_addwiz.cgi.perl the value it finds.
+  and www/prn_addwiz.cgi.perl the to use the one it finds.
 
 * www/show_jobs.cgi.perl: added support for fixed positioning in Mozilla.
-  Added JavaScript onclick to check boxes to highlight selected rows.
+  Added JavaScript onclick= handler to checkboxes which highlights selected 
+  rows.
 
 * www/cliconf.cgi.perl: fixed typos in generated /etc/printcap fragment.
 
@@ -7707,12 +7725,12 @@ line was being parsed twice.
   the case where SIGTERM doesn't interupt a system call and the interface
   program (such as simple) doesn't send anything which would cause a call to
   fault_check() (before feedback_reader()).  I am wondering if all those calls
-  to fault_check() are really necessary if if just one just before the select
+  to fault_check() are really necessary if just one just before the select
   is enough.
 
 * interfaces/simple.sh: removed code to send control-d when killed, moved
-  opening out output device to the cat call rather than using exec since exec
-  quits the script if it fails.
+  opening of the output device to the cat call rather than using exec since 
+  exec quits the script if it fails.
 
 * pprpopup/pprpopup_loader.tcl: changed Win32 registry key from
   HKEY_LOCAL_MACHINE\Software\PPR\PPR Popup\config
@@ -7726,15 +7744,16 @@ line was being parsed twice.
   the configuration.  The random seed is stored raw (not as Tcl code) in
   ~/.ppr/random, HKEY_CURRENT_USER\Software\PPR\random, resid -8002.
 
-* pprpopup/pprpopup_main.tcl: fixed problem with registration that fails
-  imediately not triggering a retry.
+* pprpopup/pprpopup_main.tcl: fixed problem wherin a registration attempt that
+  failed imediately would not triggering a retry.
 
 * www/: removed all uses of <spacer> since it is not supported by Mozilla
   or IE (in fact I think it is only supported by Netscape 4.x and earlier).
 
-* www/: changed some instance of the "strict" documentation type
-  specification to "transitional" since they use HTML 4.01 features that are
-  deprecated since their effect can now be achived with CSS.
+* www/: changed some instance of the "strict" documentation type specification 
+  to "transitional" for certain pages that use certian HTML 4.01 features that 
+  are declared deprecated in the standard because their effect can now be 
+  achieved with CSS.
 
 * nonppr_vendors/ppd_hp/, MIT licensed files: commented out N-Up and watermark
   stuff, removed *ScalePatterns code since it doesn't work on many versions of
@@ -7743,9 +7762,10 @@ line was being parsed twice.
 
 * www/cgi_widgets.pl: added <span class="widget"> </span> around widgets.
 
-* Configure: added Darwin (Mac OS X)
+* Configure: added Darwin (Mac OS X) to the list of OSs from which one
+  may choose.  (Whether it works or not is as yet unknown.)
 
-* Fixed fix bug that hide errors in libpprdb/gdbm_dbtrans.c.  (Thanks to
+* Fixed fix bug that hid errors in libpprdb/gdbm_dbtrans.c.  (Thanks to
   Jacques Sansdrap.)
 
 * pprdrv/pprdrv.c: fixed messed up decimal point splitting in formatting of
@@ -7764,10 +7784,10 @@ line was being parsed twice.
   cups-config, etc.
 
 * pprdrv/pprdrv_rip.c: removed special treatment for RIP "ppr-gs" (which means
-  that it will have to supply things like "-q -dSAFER" and "-sOutputFile=".
-  Added option for Ghostscript with specified path.  Added code to omit
-  "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was already
-  supplied.
+  that it will have to supply things like "-q -dSAFER" and "-sOutputFile="
+  itself).  Added option for Ghostscript with specified path.  Added code to 
+  omit "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was 
+  already supplied.
 
 * Added pprdrv/ppr-gs.c which is a wrapper around Ghostscript.
 
@@ -7782,14 +7802,17 @@ line was being parsed twice.
   pprdrv.
 
 * Added strace hooks to pprd/pprd_pprdrv.c so that pprdrv can be traced from
-  the very start.
+  the very start.  (Turning this on requires changing an option at the top
+  of the file and a recompile.)
 
 * Added ppd/ppr-indexppds.c.
 
 * Renamed "Dot Matrix 24 pin Ghostscript" PPD file to "NEC Pinwriter 7
-  Ghostscript".
+  Ghostscript".  If Ghostscript is specific in its name for the driver,
+  we can be too.
 
-* Changed www/prn_properties.cgi.perl to use the output of ppr-indexppds.
+* Changed www/prn_properties.cgi.perl to use the output of ppr-indexppds to
+  generate a PPD file list.
 
 * Extended www/cgi_intl.pl:ibutton() to include hover help (using the
   title attribute of a span).
@@ -7806,9 +7829,10 @@ line was being parsed twice.
 * pprdrv/pprdrv_feedback.c, pprdrv_rip.c: changed Ghostscript error message
   parsing code to identify error messages associated with the RIP's
   configuration and distinguish them from PostScript errors caused by errors
-  in the job.
+  in the job.  For example, this new code will catch the message that 
+  Ghostscript prints if a driver that is not available is requested.
 
-* pprdrv/pprdrv_rip.c:rip_start(): added missing call go gu_nonblock() to
+* pprdrv/pprdrv_rip.c:rip_start(): added missing call to gu_nonblock() to
   put pprdrv's end of the pipe to the RIP into nonblocking mode.
 
 * www/ppr-httpd.perl: added "delete $ENV{PATH}" since Perl 5.8.0 isn't happy
@@ -7823,7 +7847,8 @@ line was being parsed twice.
 
 * www/: Added code to various programs to snap the window size to the size of
   the document.  (This is disabled right now due to browser compatibility
-  problems.)
+  problems.  The problem is that the computed size is a few pixels off
+  which causes the windows to shrink by a few pixels on each refresh.)
 
 * www/show_jobs.cgi.perl: enhanced "?controls=" option to limit the list of
   controls which will be shown.  The control bars are completely removed if
@@ -7837,7 +7862,10 @@ line was being parsed twice.
 * www/prn_testpage.cgi.perl: added -m and -r options to the ppr command.
 
 * www/pprpopup_register.cgi.perl: added code to create an alias registration
-  based on the stuff to the left of the @ and the client IP address.
+  based on the stuff to the left of the @ and the client IP address.  With
+  the above change, this should allow users who are running PPR Popup on 
+  the same machine as the web browser to receive notification of the fate
+  of their test pages.
 
 * init_and_cron/ppr-clean.perl: added code to remove old files from
   $VAR_SPOOL_PPR/pprpopup.db/.
@@ -7855,7 +7883,8 @@ line was being parsed twice.
   puts commands.
 
 * pprpopup/ppr-popup: added code to set the session restart command to
-  /bin/true.
+  /bin/true.  (This may be intended to prevent duplicate instances when
+  session management restarts it and session startup starts one too.)
 
 * libuprint/Makefile, uprint/Makefile: changed CC to LD and CFLAGS to
   LDFLAGS when linking the executables.
@@ -7863,7 +7892,7 @@ line was being parsed twice.
 * responders/mail.sh: fixed so that EECHO= gets filled in.
 
 * editps/: added Mozilla_1.0 (but left entry in editps.conf commented
-  out).
+  out since it works with Ghostscript but not with real PostScript).
 
 * libppr/: int_con_tcpip.c, int_pe_tcpip.c: moved code back into
   interfaces/tcpip.c.
@@ -7999,8 +8028,8 @@ line was being parsed twice.
   match what the user specified.
 
 # www/q_icons/make_composit_figs.perl: fixed to make the icons have
-  transparent backgrounds.  This feature was left out of the current
-  conversion command but was present in the past.
+  transparent backgrounds.  This feature had been left out of the last
+  conversion command but was present at some point in the past.
 
 * www/Makefile: fixed to only install image file from www/images/ and skip
   the .fig and build files.
@@ -8090,13 +8119,15 @@ line was being parsed twice.
 
 * interfaces/serial.c: Marked open_port() messages for i18n.
 
-* interfaces/usblp.c: added.
+* interfaces/usblp.c: added.  So far only device node addresses are
+  supported.  In other words, there is no prevision for specifying the
+  desired device by make or serial number or by USB bus location.
 
 * www/prn_addwiz.cgi.perl, libppr/interfaces.c: added entries for usblp
   interface program.
 
 * ppr-papd/: renamed everything from ppr-papd to papd.  This violates my
-  convention, but the name was really annoying me.
+  convention, but the old name was really annoying me.
 
 * po/: added PAPD.po.
 
@@ -8121,7 +8152,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--13 February 2003.
+1.50, 22 January 2003--14 February 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
@@ -8161,7 +8192,8 @@ line was being parsed twice.
 
 * libppr/alert.c:alert(): expanded formatting buffer from 256 to 512 bytes.
 
-* pprdrv/pprdrv_log.c: added
+* pprdrv/pprdrv_log.c: added as a central repository for code that deals 
+  with the job log.
 
 * pprdrv/pprdrv_capable.c, pprdrv_feedback.c: replace job log handling code
   with calls to functions in pprdrv_log.c.
@@ -8177,9 +8209,14 @@ line was being parsed twice.
   user that GDBM and TDB are licensed under the GPL.
 
 * libuprint/uprint_rfc1179.c: added (but won't use until the next
-  PPR minor release).
+  PPR minor release when it will allow us to take the setuid root
+  bits off of most of the uprint-* programs).
 
 * ppop/README.txt: added
 
 * www/README.txt: updated
+
+* tests/: fixed widspread use of "-r none" instead of "-m none" in ppr
+  command lines.  This problem resulted in a flood of e-mail to the user
+  who run the regression tests.
 
