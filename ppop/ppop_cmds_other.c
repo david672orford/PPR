@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 31 March 2005.
 */
 
 /*
@@ -78,93 +78,8 @@ static void say_canceled(int count, int mine_only)
 	} /* end of say_canceled() */
 
 /*===================================================================
-** Routines for displaying SNMP error codes.
+** 
 ===================================================================*/
-
-static const char *snmp_device_status(int code)
-	{
-	switch(code)
-		{
-		case -1:
-			return "?";
-		case 1:							/* unknown */
-			return _("unknown");
-		case 2:							/* running */
-			return _("operational");
-		case 3:							/* warning */
-			return _("problem exists");
-		case 4:							/* testing */
-			return _("testing");
-		case 5:							/* down */
-			return _("inoperative");
-		default:
-			return "[unrecognized]";
-		}
-	}
-
-static const char *snmp_printer_status(int code)
-	{
-	switch(code)
-		{
-		case -1:
-			return "?";
-		case 1:							/* other */
-			return _("other");
-		case 2:							/* unknown */
-			return _("unknown");
-		case 3:							/* idle */
-			return _("idle");
-		case 4:							/* printing */
-			return _("printing");
-		case 5:							/* warmup */
-			return _("warming up");
-		default:
-			return "[unrecognized]";
-		}
-	}
-
-/*
-** Convert an SNMP hrPrinterDetectedErrorState bit position and
-** convert it to a descriptive string.
-*/
-static const char *snmp_errorstate(int bit)
-	{
-	switch(bit)
-		{
-		case 0:
-			return N_("paper low");
-		case 1:
-			return N_("out of paper");
-		case 2:
-			return N_("toner/ink is low");
-		case 3:
-			return N_("out of toner/ink");
-		case 4:
-			return N_("cover open");
-		case 5:
-			return N_("paper jam");
-		case 6:
-			return N_("off line");
-		case 7:
-			return N_("service requested");
-		case 8:
-			return N_("no paper tray");
-		case 9:
-			return N_("no output tray");
-		case 10:
-			return N_("toner/ink cartridge missing");
-		case 11:
-			return N_("output tray near full");
-		case 12:
-			return N_("output tray full");
-		case 13:
-			return N_("input tray empty");
-		case 14:
-			return N_("overdue preventative maintainance");
-		default:
-			return "[unrecognized]";
-		}
-	} /* end of snmp_errorstate() */
 
 /*
 ** Translate an exit code into a fault type decription.  If the exit code
@@ -226,22 +141,21 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	if((p = lmatchp(line, "status:")))
 		{
 		int device_status_code = -1, printer_status_code = -1;
-		const char *device_status_string, *printer_status_string;
+		const char *description;
 
 		gu_sscanf(p, "%d %d", &device_status_code, &printer_status_code);
-		device_status_string = snmp_device_status(device_status_code);
-		printer_status_string = snmp_printer_status(printer_status_code);
+		translate_snmp_status(device_status_code, printer_status_code, &description, NULL, NULL);
 
 		if(machine_readable)
 			{
 			PUTS(sep);
-			printf("status: %s, %s", device_status_string, printer_status_string);
+			printf("status: %s", description);
 			return 1;
 			}
 		else if(verbose || printer_status != PRNSTATUS_IDLE)
 			{
 			PUTS(sep);
-			printf(_("Printer Status: %s, %s"), device_status_string, printer_status_string);
+			printf(_("Printer Status: %s"), gettext(description));
 			return 1;
 			}
 
@@ -273,10 +187,14 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 		PUTS(sep);
 
+		{
+		const char *description;
+		translate_snmp_error(bit, &description, NULL, NULL);
 		if(machine_readable)
-			printf("errorstate: %s", snmp_errorstate(bit));				/* !!! */
+			printf("errorstate: %s", description);
 		else
-			printf(_("Printer Problem: \"%s\""), gettext(snmp_errorstate(bit)));
+			printf(_("Printer Problem: \"%s\""), gettext(description));
+		}
 
 		/* If there are details beyond the SNMP fault bit available, print them. */
 		if(details)
@@ -298,7 +216,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		if(print_ago || verbose)
 			{
 			if(last_minutes_ago < 120)
-				printf(" (as of %d minutes ago)", last_minutes_ago);
+				printf(" (as of %d minute(s) ago)", last_minutes_ago);
 			else
 				printf(" (as of %d hours ago)", (int)((last_minutes_ago + 30) / 60));
 			}
@@ -419,10 +337,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			else
 				{
 				int i;
-				printf("%s, %s", snmp_device_status(atoi(f1)), snmp_printer_status(atoi(f2)));
+				const char *raw1;
+				translate_snmp_status(atoi(f1), atoi(f2), NULL, &raw1, NULL);
+				printf("%s", raw1);
 				for(i=0; (fx = gu_strsep(&p, " ")); i++)
 					{
-					printf("%c %s", i==0 ? ';' : ',', snmp_errorstate(atoi(fx)));
+					translate_snmp_error(atoi(fx), NULL, &raw1, NULL);
+					printf("%c %s", i==0 ? ';' : ',', raw1);
 					}
 				}
 

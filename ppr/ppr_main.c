@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 30 March 2005.
 */
 
 /*
@@ -940,7 +940,8 @@ HELP(_(
 "\t--responder-options <list> list of name=value responder options\n"));
 
 HELP(_(
-"\t--commentary <n>           send commentary messages of types <n>\n"));
+"\t--commentary {error,status,stall,exit}\n"
+"\t                           requested commentary of listed types\n"));
 
 HELP(_(
 "\t-b {yes,no,dontcare}       express banner page preference\n"
@@ -1321,6 +1322,30 @@ int parse_hack_option(const char name[])
 
 	return -1;
 	} /* end of parse_hack_option */
+
+/*
+ * Parse the --commentary option or PPR_COMMENTARY value.
+ */
+static int parse_commentary_option(const char source[], const char list[])
+	{
+	int mask = 0;
+	char *temp, *place, *next;
+	for(place=temp=gu_strdup(list); (next = gu_strsep(&place, ", ")); )
+		{
+		if(strcmp(next, "error") == 0)
+			mask |= COM_PRINTER_ERROR;
+		else if(strcmp(next, "status") == 0)
+			mask |= COM_PRINTER_STATUS;
+		else if(strcmp(next, "stall") == 0)
+			mask |= COM_STALL;
+		else if(strcmp(next, "exit") == 0)
+			mask |= COM_EXIT;
+		else
+			fatal(PPREXIT_SYNTAX, _("Invalid category in %s: %s"), source, next);
+		}
+	gu_free(temp);
+	return mask;
+	} /* parse_commentary_option() */
 
 /*
 ** These are the action routines which are called to process the
@@ -1765,7 +1790,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1100:								/* --commentary */
-			qentry.commentary = atoi(optarg);
+			qentry.commentary = parse_commentary_option("--commentary", optarg);
 			break;
 
 		case 9000:								/* --help */
@@ -1975,7 +2000,9 @@ int main(int argc, char *argv[])
 		char *p;
 		if((p = getenv("LOGNAME")) || (p = getenv("USER")))
 			{
-			/* Duplicate because prune_env() may obliterate. */
+			/* We make our own copy of the string because prune_env() may delete 
+			 * the copy in the environment.
+			 */ 
 			qentry.responder.address = gu_strdup(p);
 			}
 		else
@@ -1998,7 +2025,7 @@ int main(int argc, char *argv[])
 	*/
 	qentry.commentary = 0;
 	if((ptr = getenv("PPR_COMMENTARY")))
-		qentry.commentary = atoi(ptr);
+		qentry.commentary = parse_commentary_option("PPR_COMMENTARY", ptr);
 
 	/*
 	** Remove unnecessary variables from the environment.

@@ -104,7 +104,7 @@ void writemon_start(const char operation[])
 	}
 
 /*
-** How long the the writemon code want pprdrv to sleep before
+** How long does the writemon code want pprdrv to sleep before
 ** calling it if nothing happens?
 **
 ** The actual stall messages are dispatched from inside this routine.

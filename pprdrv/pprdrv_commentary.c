@@ -86,8 +86,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	FUNCTION4DEBUG("commentary")
 	static int commentary_seq_number = 0;
 
-	DODEBUG_COMMENTARY(("%s(category=%d, cooked=\"%s\", raw1=\"%s\", duration=\"%s\", severity=%d)",
-		function, category, cooked, raw1 ? raw1 : "", duration ? duration : "", severity));
+	DODEBUG_COMMENTARY(("%s(category=%d, cooked=\"%s\", raw1=\"%s\", raw2=\"%s\", duration=\"%d\", severity=%d)",
+		function, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", duration, severity));
 
 	commentary_seq_number++;
 
@@ -138,6 +138,7 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 				error("Fork() failed while executing commentator, errno=%d (%s)", errno, gu_strerror(errno) );
 				break;
 			case 0:				/* child */
+				/* connect stdin to /dev/null */
 				if((fd = open("/dev/null", O_RDWR)) != -1)
 					{
 					if(fd != 0)
@@ -146,18 +147,24 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 						close(fd);
 						}
 					}
+				/* connect stdout and stderr to the pprdrv log file */
 				if((fd = open(PPRDRV_LOGFILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) != -1)
 					{
-					if(fd != 1) dup2(fd, 1);
-					if(fd != 2) dup2(fd, 2);
-					if(fd > 2) close(fd);
+					if(fd != 1)
+						dup2(fd, 1);
+					if(fd != 2)
+						dup2(fd, 2);
+					if(fd > 2)
+						close(fd);
 					}
 				execl(LIBDIR"/ppr-respond", "ppr-respond",
 					gu_name_str_value("responder_name", job.responder.name),
 					gu_name_str_value("responder_address", job.responder.address),
 					gu_name_str_value("responder_options", job.responder.options),
 					gu_name_int_value("response_code", RESP_TYPE_COMMENTARY | category),
+					gu_name_str_value("for", job.For),
 					gu_name_str_value("job", QueueFile),
+					gu_name_str_value("title", job.Title),
 					gu_name_str_value("printer", printer.Name),
 					gu_name_str_value("commentary_cooked", cooked),
 					gu_name_str_value("commentary_raw1", raw1),
@@ -180,7 +187,13 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	{
 	char buffer[256];
 	snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d %d\n",
-		printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", duration, severity);
+		printer.Name,
+		category,
+		cooked, raw1 ? raw1 : "",
+		raw2 ? raw2 : "",
+		duration,
+		severity
+		);
 	state_update_pprdrv_puts(buffer);
 	}
 

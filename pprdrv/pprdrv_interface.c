@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 30 March 2005.
 */
 
 /*
@@ -696,7 +696,7 @@ static void printer_cleanup(void)
 		{
 		case JOBBREAK_CONTROL_D:				/* <-- simple 'serial' control-D protocol */
 			/* If this is a PostScript job, */
-			if(!setup_PDL)
+			if(strcmp(setup_PDL, "postscript") == 0)
 				{
 				/* Send a control-d */
 				printer_putc(4);
@@ -719,7 +719,7 @@ static void printer_cleanup(void)
 
 		case JOBBREAK_PJL:						/* <-- PJL with control-D */
 		case JOBBREAK_SIGNAL_PJL:				/* <-- PJL with signals */
-			if(!setup_PDL)						/* If PostScript, */
+			if(strcmp(setup_PDL, "postscript") == 0)						/* If PostScript, */
 				{
 				if(printer.Codes == CODES_TBCP)
 					printer_TBCP_off();
@@ -730,9 +730,10 @@ static void printer_cleanup(void)
 					printer_putc(4);			/* <-- serial/parallel/JetDirect end of job */
 				}
 
-			/* Send "Universal Exit Language" command to place printer
-			   in PJL mode.	 (Unfortunately, this drives an HP 4M nuts
-			   if it is on AppleTalk!  I haven't found a solution yet.) */
+			/* Send "Universal Exit Language" command to place printer in PJL 
+			 * mode.  (Unfortunately, this command drives an HP 4M nuts if it
+			 * is received over AppleTalk!  I haven't found a solution yet.) 
+			 */
 			printer_universal_exit_language();
 
 			/* Use PJL to tell the printer that the job is over.

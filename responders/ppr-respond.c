@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 30 March 2005.
 */
 
 /*
@@ -462,18 +462,18 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					case 2:
 						gu_pcs_append_sprintf(&message,
 							_("The printer \"%s\" which is printing your job %s (%s) may be stalled."),
-							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+							rinfo->printer, rinfo->job, title);
 						break;
 					case 3:
 					case 4:
 						gu_pcs_append_sprintf(&message,
 							_("The printer \"%s\" which is printing your job %s (%s) is probably stalled."),
-							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+							rinfo->printer, rinfo->job, title);
 						break;
 					default:
 						gu_pcs_append_sprintf(&message,
 							_("The printer \"%s\" which is printing your job %s (%s) has been stalled for %d minutes."),
-							rinfo->printer, rinfo->job, rinfo->qentry.Title, rinfo->commentary_duration / 60);
+							rinfo->printer, rinfo->job, title, rinfo->commentary_duration / 60);
 						break;
 					}
 				}
@@ -487,12 +487,12 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					case 4:
 						gu_pcs_append_sprintf(&message,
 							_("The printer \"%s\" which is printing your job %s (%s) was not actually stalled."),
-							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+							rinfo->printer, rinfo->job, title);
 						break;
 					default:
 						gu_pcs_append_sprintf(&message,
 							_("The printer \"%s\" which is printing your job %s (%s) is no longer stalled."),
-							rinfo->printer, rinfo->job, rinfo->qentry.Title);
+							rinfo->printer, rinfo->job, title);
 						break;
 					}
 				}
@@ -502,13 +502,13 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 			if(rinfo->commentary_severity > 5)
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\", which could print your job \"%s\" %s."),
+					_("The printer \"%s\", which could print your job \"%s\" cannot at present: %s."),
 					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
 				}
 			else
 				{
 				gu_pcs_append_sprintf(&message,
-					_("The printer \"%s\", completed an attempt to print your job \"%s\" with exit condition %s."),
+					_("The printer \"%s\", completed an attempt to print your job \"%s\".  The result was: %s."),
 					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
 				}
 			break;
@@ -555,9 +555,13 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					}
 				gu_pcs_append_sprintf(&message, _("This print job was submitted %d day(s) %d hours ago."), days, hours);
 				}
-			else
+			else if(hours >= 1)
 				{
 				gu_pcs_append_sprintf(&message, _("This print job was submitted %d hour(s) %d minute(s) ago."), hours, minutes);
+				}
+			else if(hours >= 1)
+				{
+				gu_pcs_append_sprintf(&message, _("This print job was submitted %d minute(s) ago."), minutes);
 				}
 			}
 		}
@@ -656,7 +660,7 @@ int main(int argc, char *argv[])
 	rinfo.charge_per_duplex = 0;
 	rinfo.charge_per_simplex = 0;
 	rinfo.reason = NULL;
-	rinfo.elapsed_time_threshold = 600;
+	rinfo.elapsed_time_threshold = 0;
 
 	for(iii=1; iii < argc; iii++)
 		{
@@ -720,11 +724,13 @@ int main(int argc, char *argv[])
 			}
 		else if((p = gu_name_matchp(argv[iii], "title")))
 			{
-			rinfo.qentry.Title = p;
+			if(*p)	/* value is optional */
+				rinfo.qentry.Title = p;
 			}
 		else if((p = gu_name_matchp(argv[iii], "lc_messages")))
 			{
-			rinfo.qentry.lc_messages = p;
+			if(*p)	/* value is optional */
+				rinfo.qentry.lc_messages = p;
 			}
 		else if((p = gu_name_matchp(argv[iii], "charge_per_duplex")))
 			{
@@ -819,9 +825,12 @@ int main(int argc, char *argv[])
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_ALL, rinfo.qentry.lc_messages);
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	if(rinfo.qentry.lc_messages)
+		{
+		setlocale(LC_ALL, rinfo.qentry.lc_messages);
+		bindtextdomain(PACKAGE, LOCALEDIR);
+		textdomain(PACKAGE);
+		}
 	#endif
 
 	/* Add job information from queue file */

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/pprdrv/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 31 March 2005.
 #
 
 include ../Makefile.conf
@@ -63,7 +63,7 @@ pprdrv$(DOTEXE): \
 		pprdrv_progress.$(OBJ) \
 		pprdrv_writemon.$(OBJ) \
 		pprdrv_snmp.$(OBJ) \
-		pprdrv_lw_messages.$(OBJ) pprdrv_pjl_messages.$(OBJ) pprdrv_snmp_messages.$(OBJ) \
+		pprdrv_lw_messages.$(OBJ) pprdrv_pjl_messages.$(OBJ) \
 		pprdrv_tt.$(OBJ) pprdrv_pfb.$(OBJ) pprdrv_mactt.$(OBJ) \
 		pprdrv_notppd.$(OBJ) \
 		pprdrv_persistent.$(OBJ) pprdrv_fault_debug.$(OBJ) \

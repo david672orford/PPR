@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--29 March 2005
+2.00a1, 11 December 2004--31 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9673,6 +9673,15 @@ no final tarball was released.
 
 * responders/audio_flite.tcl: added
 
+* ppr/ppr_main.c: changed --commentary parameters to words.
 
+* moved pprdrv/pprdrv_snmp_messages.c to libppr/snmp_messages.c and revamped
+  the message generation and the severity codes.
+
+* ppop/ppop_cmds_other.c: removed private functions and replaced them with 
+  calls to the functions in libppr/snmp_messages.c.
+
+* tests/test-ppr/400-infile-header*: removed since the features tested
+  has been removed.
 
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2005.
+# Last modified 31 March 2005.
 #
 
 =head1 NAME
@@ -258,11 +258,6 @@ The method B<mail> causes the notification to be address is the name of the
 user who invoked B<ppr>.  If the desired address is not the username of the
 user who invokes B<ppr>, it should be indicated with the B<-r> switch.
 
-The obsolete method B<errmail> causes a response to be sent by email,
-however the response if discarded if it mearly indicates that the job is
-done. This responder is simply the B<mail> method with a default option
-of "printed=no".  This responder will be removed in a future version of PPR.
-
 The value B<netsend> is for use with LAN Manager X.  LAN Manager X is a port
 of OS/2 Lan Manager 2.0 to Unix.  LAN Manager's B<net send> command is used
 to send the message.  The name of the client to receive the message should
@@ -286,12 +281,6 @@ neater if B<xmessage> or B<wish> is available.  This responder has an option
 the indicated number of seconds if the user does not dismiss it manually. 
 The "timeout=" option will not work if the reponder is forced to use
 B<xterm>.
-
-The method B<pprpopup> causes the notification to be sent to the PPR popup
-program.  PPR Popup is a Tcl/Tk script designed to be on computers in a
-public area such as a computer lab.  The PPR popup program is primarily part
-of a mechanism whereby users are required to enter their names each time
-they print.  However it can also receive responder messages.
 
 The method B<audio> causes a voice announcement to be made.  If the address
 is in the form "smith.pc.trincoll.edu:15009", then PPR Popup on the
@@ -354,7 +343,7 @@ that the job was canceled.  This is supported by most of the responder.
 =item timeout=I<seconds>
 
 This option instructs the responder to remove its message after the
-indicated number of seconds.  Currently this is supported only by the xwin
+indicated number of seconds.  Currently this is supported only by the B<xwin>
 responder and then only when B<xmessage> is available.
 
 =back
@@ -401,11 +390,11 @@ or B<-e responder> has been used and B<-m none> has been used as well.  In
 other words, it will only be used when there is no other way to report the
 problem.
 
-=item B<--commentary> I<integer>
+=item B<--commentary> B<error,status,stall,exit}
 
 This option indicates that, while this job is being printed, the responder
-should be used to send commentary on the printer's behavior.  The commentary
-will be limited to those categories respresented by the I<integer>.
+should be used to send the submitter comments on the printer's behavior.  The commentary
+will be limited to those categories listed.
 
 If this option is not specified, then the value is read from the environment
 variable PPR_COMMENTARY.  If that environment variable is not defined, then a

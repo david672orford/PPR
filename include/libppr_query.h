@@ -28,6 +28,8 @@
 ** Last modified 16 March 2005.
 */
 
+/*! \file */
+
 /** Query object
  *
  * This is the definition of the query object.  Call one of the query_new_*() functions

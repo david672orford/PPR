@@ -72,12 +72,12 @@
 #define PST_warmup 5
 
 struct SNMP_STATUS {
-	int hrDeviceStatus;					/* SNMP style */
-	int hrPrinterStatus;				/* SNMP style */
-	char details[64];					/* info beyond SNMP */
-	time_t start;						/* time when condition first detected */
-	time_t last_news;					/* time when last report received */
-	time_t last_commentary;				/* time when commentary() last called about this */
+	int hrDeviceStatus;				/* SNMP style */
+	int hrPrinterStatus;			/* SNMP style */
+	char details[64];				/* info beyond SNMP */
+	time_t start;					/* time when condition first was detected */
+	time_t last_news;				/* time when last report received */
+	time_t last_commentary;			/* time when commentary() last called about this */
 	};
 
 /*===================================================================
@@ -499,20 +499,26 @@ static void dispatch_commentary(void)
 		}
 
 	/*
-	** Does hrDeviceStatus indicate something is wrong?  If so and we didn't
-	** anounced anything important above, then send a COM_PRINTER_STATUS
-	** message based on hrDeviceStatus and hrPrinterStatus.
+	** Does hrDeviceStatus indicate that the condition of the printer is
+	** something other than "idle" or "printing"?  If so and the condition
+	** is more serious than what we announced above (or we announced nothing),
+	** then send a COM_PRINTER_STATUS message based on hrDeviceStatus and 
+	** hrPrinterStatus.
+	**
+	** Notice that the message is sent whenever the printer enters an unhappy
+	** state and is repeated every five minutes thereafter.
+	** 
 	*/
 	if((status.hrDeviceStatus != -1 && status.hrDeviceStatus != DST_running) 
-				&& (status.start != ostatus.start || (status.last_commentary - time(NULL)) >= 300))
+			&& (status.start != ostatus.start || (status.last_commentary - time(NULL)) >= 300))
 		{
-		if(greatest_severity <= 5)
+		const char *message, *raw1; int severity;
+		translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
+		if(severity > greatest_severity)
 			{
-			const char *message, *raw1; int severity;
-			translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
-			commentary(COM_PRINTER_STATUS, message, raw1, status.details, 0, severity);
+			commentary(COM_PRINTER_STATUS, message, raw1, status.details, time(NULL) - status.start, severity);
+			status.last_commentary = time(NULL);
 			}
-		status.last_commentary = time(NULL);
 		}
 
 	memcpy(&ostatus, &status, sizeof(struct SNMP_STATUS));		/* save to detect future changes */
