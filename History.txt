@@ -9019,8 +9019,9 @@ Internet Printing Protocol Work
 * ipp/: moved ipp_utils.h into ../include/, ipp_utils.c into ../libppr/, and
   ipp_constants.h into ../include/.
 
-* ppad/: moved ppad_filt.c stuff into ../libppr/queueinfo.c, adjusted all
-  of the subcommands to use it.
+* ppad/: moved all ppad_filt.c stuff which ../libppr/queueinfo.c couldn't yet
+  do into the latter, adjusted all of the subcommands to queueinfo, deleted
+  ppad_filter.c.
 
 
 
@@ -9039,11 +9040,11 @@ TODO
 * Change commentators to support the new status handling code and merge them
   with responders.
 
-* Implement automatic PPD file download
+* Implement automatic PPD file download URL.
 
-* Create Debian package
+* Create Debian package.
 
-* Add queue aliases support to ppr2samba (or added PPR support to Samba)
+* Add queue aliases support to ppr2samba (or added PPR support to Samba).
 
 * Finish support for automatic driver download in Samba 2.2.x.
 

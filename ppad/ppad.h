@@ -142,13 +142,6 @@ int print_wrapped(const char *deffiltopts, int starting_column);
 char *list_to_string(const char *argv[]);
 int exception_to_exitcode(int exception_code);
 	
-/* functions in ppad_filt.c */
-void deffiltopts_open(void);
-int deffiltopts_add_ppd(const char group_name[], const char printer_name[], const char ppd_name[], const char *InstalledMemory);
-int deffiltopts_add_printer(const char group_name[], const char printer_name[]);
-char *deffiltopts_line(void);
-void deffiltopts_close(void);
-
 /* functions in ppad_ppd.c */
 int ppd_query_core(const char printer[], struct QUERY *q);
 int ppdlib_query(const char *argv[]);

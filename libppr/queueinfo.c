@@ -1239,7 +1239,11 @@ const char *queueinfo_computedMetaFontMode(void *p)
 		{
 		vector_get(qip->printers, i, pip);
 		if(!(temp = get_mfmode(qip, pip)))
+			{
+			if(qip->warnings)
+				fprintf(qip->warnings, _("Warning: no MetaFont mode found for printer \"%s\".\n"), pip->name);
 			return NULL;
+			}
 		else if(!answer)
 			answer = temp;
 		else if(strcmp(answer, temp))
