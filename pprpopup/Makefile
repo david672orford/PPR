@@ -62,4 +62,3 @@ clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT_PROGS) *.gif *.gif.base64
 
 # end of file
-
