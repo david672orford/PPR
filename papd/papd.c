@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -485,7 +485,7 @@ int main(int argc, char *argv[])
 
     /*
     ** If this program was invoked with excessive permissions (i.e. as root),
-    ** renounce them now.  This program should be setuid "ppr" and setgid "ppop".
+    ** renounce them now.  This program should be setuid "ppr" and setgid "ppr".
     **
     ** We use fputs() and exit() here because fatal() would put the
     ** message into the log file which is not where we want it.  Besides,
@@ -500,16 +500,42 @@ int main(int argc, char *argv[])
     gid = getgid();		/* should be "ppr" or "root" */
     egid = getegid();		/* should be "ppop" */
 
+    /* If effective UID is root, either we are setuid root or not setuid and being run by root. */
+    if(euid == 0)
+	{
+	fprintf(stderr, "%s: this program must be setuid %s\n", USER_PPR);
+	exit(EXIT_INTERNAL);
+	}
+
     if(uid == 0)		/* if user is root */
 	{			/* then switch to "ppr" */
 	setuid(0);		/* set all three group IDs to "root" */
 	setgid(0);		/* set all three group IDs to "root" (Is this necessary?) */
-	setuid(euid);		/* now we may set all three UIDs to "ppr" */
-	setgid(egid);		/* Make sure we don't keep "root" group */
+
+	/* Make sure we don't keep "root" group */
+	if(setregid(egid, egid) == -1)
+	    {
+	    fprintf(stderr, "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)egid, (long)egid, errno, gu_strerror(errno));
+	    exit(EXIT_INTERNAL);
+	    }
+
+	/* now we may set all three UIDs to "ppr" */
+	if(setreuid(euid, euid) == -1)
+	    {
+	    fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)euid, (long)euid, errno, gu_strerror(errno));
+	    exit(EXIT_INTERNAL);
+	    }
+
+	/* Now be paranoid. */
+	if(setuid(0) != -1)
+	    {
+	    fprintf(stderr, "%s: setuid(0) didn't fail!\n");
+	    exit(EXIT_INTERNAL;
+	    }
 	}
     else			/* not root */
 	{
-	if(uid != euid)		/* if user id is not same as owner of papd, */
+	if(uid != euid)		/* if real user id is not same as owner of papd (euid), */
 	    {
 	    fputs("Only \"ppr\" or \"root\" may start papd.\n", stderr);
 	    exit(EXIT_DENIED);

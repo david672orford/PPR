@@ -32,8 +32,8 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS= uprint-lpr$(DOTEXE) uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) \
-	uprint-lp$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
+PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
+SETUID_PROGS=uprint-lpr$(DOTEXE) uprint-lp$(DOTEXE) 
 
 PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
@@ -43,7 +43,7 @@ LINK_LIBS=$(PRIVATE_LIBS) $(PUBLIC_LIBS)
 
 #=== Build ==================================================================
 
-all: $(PROGS)
+all: $(PROGS) $(SETUID_PROGS)
 
 uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ uprint-lp.$(OBJ) $(LINK_LIBS)
@@ -65,8 +65,9 @@ uprint-lpstat$(DOTEXE): uprint-lpstat.$(OBJ) $(PRIVATE_LIBS)
 
 #=== Install ================================================================
 
-install: $(PROGS)
+install: $(PROGS) $(SETUID_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin $(SETUID_PROGS)
 
 #=== Housekeeping ===========================================================
 
@@ -76,6 +77,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS) $(SETUID_PROGS)
 
 # end of file

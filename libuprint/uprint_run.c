@@ -24,7 +24,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -46,9 +46,9 @@
 ** return the command's exit code.
 **
 ** If uid is not -1, then the child sets its user id to the
-** indicated value.  This feature may be removed at some point.
+** indicated value.  The same goes for gid.
 */
-int uprint_run(uid_t uid, const char *exepath, const char *const argv[])
+int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv[])
     {
     const char function[] = "uprint_run";
     pid_t pid;
@@ -78,21 +78,25 @@ int uprint_run(uid_t uid, const char *exepath, const char *const argv[])
 	}
     else if(pid == 0)		/* child */
     	{
+	if(gid != -1)
+	    {
+	    seteuid(0);
+	    if(setregid(gid, gid) == -1)
+		{
+		fprintf(stderr, "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n", function, (long)gid, (long)gid, errno, gu_strerror(errno));
+		exit(242);
+		}
+	    }
 	if(uid != -1)
 	    {
-	    if(setuid(0) == -1)
+	    if(setreuid(uid, uid) == -1)
 		{
-		fprintf(stderr, "%s(): setuid(0) failed, errno=%d (%s)\n", function, errno, gu_strerror(errno));
+		fprintf(stderr, "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n", function, (long)uid, (long)uid, errno, gu_strerror(errno));
 		exit(242);
 		}
-	    if(setuid(uid) == -1)
-		{
-		fprintf(stderr, "%s(): setuid(%ld) failed, errno=%d (%s)\n", function, (long)uid, errno, gu_strerror(errno));
-		exit(242);
-		}
-	    if(setuid(0) != -1)
+	    if(uid != 0 && seteuid(0) != -1)	/* paranoid */
 	    	{
-	    	fprintf(stderr, "%s(): setuid(0) didn't fail!");
+	    	fprintf(stderr, "%s(): seteuid(0) didn't fail!", function);
 	    	exit(242);
 	    	}
 	    }
@@ -140,7 +144,8 @@ int uprint_run(uid_t uid, const char *exepath, const char *const argv[])
 	    else
 		{
 		uprint_errno = UPE_CHILD;
-		/* The program can presumable explain its own failure: */
+		/* The program has presumably already explained its failure.  We needn't, so this
+		   is commented out. */
 		/* uprint_error_callback("%s exited with code %d", argv[0], WEXITSTATUS(wstatus)); */
 		return WEXITSTATUS(wstatus);
 		}

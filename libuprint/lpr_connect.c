@@ -156,8 +156,8 @@ int uprint_lpr_make_connection(const char address[])
 
     if(sockfd == -1)
 	{
-	uprint_error_callback("socket() failed, errno=%d (%s).", errno, gu_strerror(errno));
 	uprint_errno = UPE_INTERNAL;
+	uprint_error_callback("socket() failed, errno=%d (%s).", errno, gu_strerror(errno));
 	return -1;
 	}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -38,7 +38,7 @@
 #include "uprint.h"
 #include "uprint_private.h"
 
-static int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class[], const char *queue, const char **arglist)
+static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char *queue, const char **arglist)
     {
     int result_code = 0;
     char proxy_for[MAX_PRINCIPAL + 1];
@@ -170,7 +170,7 @@ static int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class
 
 	args[i] = (const char *)NULL;
 
-	if(uprint_run(uid, PPOP_PATH, args) == -1)
+	if(uprint_run(uid, gid, PPOP_PATH, args) == -1)
 	    result_code = -1;
 	} /* end of jobs/users list loop */
 
@@ -227,14 +227,14 @@ static int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class
 
 	args[i] = (const char*)NULL;
 
-	if(uprint_run(uid, PPOP_PATH, args) == -1)
+	if(uprint_run(uid, gid, PPOP_PATH, args) == -1)
 	    result_code = 1;
     	}
 
     return result_code;
     } /* end of uprint_lprm_ppr() */
 
-static int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
+static int uprint_lprm_lp(uid_t uid, uid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
     int x;
@@ -291,7 +291,7 @@ static int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[
 	    args[4] = (const char *)NULL;
 	    }
 
-	if(uprint_run(uid, uprint_path_cancel(), args) == -1)
+	if(uprint_run(uid, gid, uprint_path_cancel(), args) == -1)
 	    retval = 1;
 	}
 
@@ -299,14 +299,14 @@ static int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[
     	{
     	args[1] = queue;
     	args[2] = (const char *)NULL;
-    	if(uprint_run(uid, uprint_path_cancel(), args) == -1)
+    	if(uprint_run(uid, gid, uprint_path_cancel(), args) == -1)
     	    retval = 1;
     	}
 
     return retval;
     } /* end of uprint_lprm_lp() */
 
-static int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
+static int uprint_lprm_lpr(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
     int x, item_length;
@@ -335,7 +335,7 @@ static int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class
 
     args[y++] = (const char *)NULL;
 
-    if(uprint_run(uid, uprint_path_lprm(), args) == -1)
+    if(uprint_run(uid, gid, uprint_path_lprm(), args) == -1)
     	retval = 1;
 
     return retval;
@@ -352,16 +352,16 @@ static int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class
 ** if it is the local host whose users are allowed to submit jobs
 ** directly as the corresponding local users.
 */
-int uprint_lprm(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist, gu_boolean remote_too)
+int uprint_lprm(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist, gu_boolean remote_too)
     {
     if(printdest_claim_ppr(queue))
-    	return uprint_lprm_ppr(uid, agent, proxy_class, queue, arglist);
+    	return uprint_lprm_ppr(uid, gid, agent, proxy_class, queue, arglist);
 
     if(printdest_claim_sysv(queue))
-    	return uprint_lprm_lp(uid, agent, proxy_class, queue, arglist);
+    	return uprint_lprm_lp(uid, gid, agent, proxy_class, queue, arglist);
 
     if(printdest_claim_bsd(queue))
-    	return uprint_lprm_lpr(uid, agent, proxy_class, queue, arglist);
+    	return uprint_lprm_lpr(uid, gid, agent, proxy_class, queue, arglist);
 
     {
     struct REMOTEDEST info;

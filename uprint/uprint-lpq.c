@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     int return_code;
 
     /* Print the queue. */
-    if((return_code = uprint_lpq((uid_t)-1, "???", queue, format, (const char **)&argv[optind], TRUE)) != -1)
+    if((return_code = uprint_lpq((uid_t)-1, (gid_t)-1, "???", queue, format, (const char **)&argv[optind], TRUE)) != -1)
 	{
 	/* Child ran, nothing more to do. */
 	}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 /* Maximum lengths of control file fields. */
@@ -103,7 +103,7 @@ const char *uprint_set_dest(void *p, const char *dest);
 const char *uprint_get_dest(void *p);
 int uprint_set_files(void *p, const char *files[]);
 
-const char *uprint_set_user(void *p, uid_t uid, const char *user);
+const char *uprint_set_user(void *p, uid_t uid, gid_t gid, const char *user);
 const char *uprint_get_user(void *p);
 const char *uprint_set_from_format(void *p, const char *from_format);
 const char *uprint_set_lpr_mailto(void *p, const char *lpr_mailto);
@@ -157,11 +157,8 @@ const char *uprint_set_ppr_responder_options(void *p, const char *ppr_responder_
 /* uprint_loop.c: */
 int uprint_loop_check(const char *myname);
 
-/* uprint_uid(): */
-int uprint_re_uid_setup(uid_t *uid, uid_t *safe_uid);
-
 /* uprint_run.c: */
-int uprint_run(uid_t uid, const char *exepath, const char *const argv[]);
+int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv[]);
 
 /* uprint_strerror.c: */
 const char *uprint_strerror(int errnum);
@@ -174,13 +171,13 @@ int uprint_print_argv_ppr(void *p, const char **argv, int argv_len);
 int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad);
 
 /* uprint_lpq.c: */
-int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too);
+int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too);
 
 /* uprint_lpq_rfc1179.c: */
 int uprint_lpq_rfc1179(const char *queue, int format, const char **arglist, struct REMOTEDEST *scratchpad);
 
 /* uprint_lprm.c: */
-int uprint_lprm(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist, gu_boolean remote_too);
+int uprint_lprm(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist, gu_boolean remote_too);
 
 /* uprint_lprm_rfc1179.c: */
 int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue, const char **arglist, struct REMOTEDEST *scratchpad);
@@ -218,6 +215,6 @@ gu_boolean uprint_lp_installed(void);
 #define UPE_NOFILE 17	/* file not found */
 #define UPE_BADORDER 18	/* functions called in wrong order */
 #define UPE_BADCONFIG 19 /* error in configuration file */
-#define UPE_SETUID 20	/* setuid() failed */
+#define UPE_SETUID 20	/* setuid(), seteuid(), setreuid(), etc. failed */
 
 /* end of file */

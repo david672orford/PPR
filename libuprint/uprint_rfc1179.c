@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -58,22 +58,24 @@
 void uprint_error_callback(const char *format, ...)
     {
     va_list va;
-    fprintf(stderr, "%s: ", "uprint_rfc1179");
+    fprintf(stderr, "uprint_errno: %d\n", uprint_errno);
+    fprintf(stderr, "uprint_error_callback: ");
     va_start(va, format);
     vfprintf(stderr, format, va);
     fputc('\n', stderr);
     va_end(va);
     } /* end of uprint_error_callback() */
 
-static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
+static int do_print(int sockfd, const char server_node[], char *argv[])
     {
     const char function[] = "do_lpr";
     char command[64];
     int code;
     const char *local_nodename = argv[0];
-    const char *printer = argv[1];
-    const char *control_file = argv[2];
-    char **files_list = &argv[3];
+    int lpr_queueid = atoi(argv[1]);
+    const char *printer = argv[2];
+    const char *control_file = argv[3];
+    char **files_list = &argv[4];
     const char *filename;
     int x;
 
@@ -92,8 +94,8 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
 	}
     else if(code)
 	{
-	uprint_error_callback(_("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\" (%d)."), node, printer, code);
 	uprint_errno = UPE_DENIED;
+	uprint_error_callback(_("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\" (%d)."), server_node, printer, code);
 	return -1;
 	}
 
@@ -112,8 +114,8 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
 	}
     else if(code)
     	{
-    	uprint_error_callback(_("Remote LPR/LPD system does not have room for control file."));
 	uprint_errno = UPE_TEMPFAIL;
+    	uprint_error_callback(_("Remote LPR/LPD system does not have room for control file."));
     	return -1;
     	}
 
@@ -134,8 +136,8 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
 	}
     else if(code)
     	{
-    	uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of control file."), node);
 	uprint_errno = UPE_TEMPFAIL;
+    	uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of control file."), server_node);
 	uprint_lpr_send_cmd(sockfd, "\1\n", 2);		/* cancel the job */
     	return -1;
     	}
@@ -209,7 +211,7 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
 	    }
         else if(code)
 	    {
-	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" does not have room for data file."), node);
+	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" does not have room for data file."), server_node);
 	    uprint_errno = UPE_TEMPFAIL;
 	    close(pffd);				/* close print file */
 	    uprint_lpr_send_cmd(sockfd, "\1\n", 2);	/* cancel the job */
@@ -238,7 +240,7 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
 	    }
 	else if(code)
 	    {
-	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of data file."), node);
+	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of data file."), server_node);
 	    uprint_errno = UPE_TEMPFAIL;
 	    uprint_lpr_send_cmd(sockfd, "\1\n", 2);	/* cancel the job */
 	    return -1;
@@ -248,37 +250,9 @@ static int do_lpr(const char node[], int lpr_queueid, int sockfd, char *argv[])
     return 0;
     }
 
-static int do_lpq(int sockfd, char *argv[])
+static int do_command(int sockfd, char *argv[])
     {
-    const char function[] = "do_lpq";
-    int x;
-    char temp[512];
-
-    /* Transmit the command: */
-    if(uprint_lpr_send_cmd(sockfd, argv[0], strlen(argv[0])) == -1)
-	return -1;
-
-    /* Copy from the socket to stdout until the connexion
-       is closed by the server. */
-    while((x = read(sockfd, temp, sizeof(temp))) > 0)
-	{
-	write(1, temp, x);
-	}
-
-    /* If there was an error, */
-    if(x == -1)
-	{
-	uprint_errno = UPE_TEMPFAIL;
-	uprint_error_callback("%s(): read() from remote system failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	return -1;
-	}
-
-    return 0;
-    }
-
-static int do_lprm(int sockfd, char *argv[])
-    {
-    const char function[] = "do_lpq";
+    const char function[] = "do_command";
     int x;
     char temp[512];
 
@@ -308,8 +282,7 @@ int main(int argc, char *argv[])
     {
     int ret = 0;
     int sockfd;
-    const char *node;
-    int lpr_queueid;
+    const char *subcommand, *server_node;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -320,72 +293,56 @@ int main(int argc, char *argv[])
 
     if(argc < 4)
     	{
+	uprint_error_callback("too few arguments");
 	return 1;
     	}
 
-    node = argv[2];
-    if((sockfd = uprint_lpr_make_connection_with_failover(node)) == -1)
-    	return 1;
-
-    if(strcmp(argv[1], "lpr") == 0)
+    if(geteuid() != 0)
 	{
-	struct stat statbuf;
-
-	/* We will run under the effective id of the owner of
-	   uprint.conf.  Stat uprint.conf to find out which ID that is. */
-	if(stat(UPRINTCONF, &statbuf) == -1)
-	    {
-	    uprint_errno = UPE_INTERNAL;
-	    uprint_error_callback("can't stat() \"%s\", errno=%d (%s)", UPRINTCONF, errno, gu_strerror(errno));
-	    return -1;
-	    }
-
-	/* Set the effective id to "ppr" but leave the real and saved IDs alone. */
-	if(seteuid(statbuf.st_uid) == -1)
-	    {
-	    uprint_errno = UPE_INTERNAL;
-	    uprint_error_callback("seteuid(%ld) failed, errno=%d (%s)", (long)statbuf.st_uid, errno, gu_strerror(errno));
-	    return -1;
-	    }
-
-        /* Generate a queue id.  Notice that the effective
-           user is "ppr" (or more precisely, the owner of
-           /etc/ppr/uprint.conf) when we call this. */
-        if((lpr_queueid = uprint_lpr_nextid()) == -1)
-            {
-            return 1;
-            }
-
-	/* Go back to being root so that setuid() will work. */
-	seteuid(0);
+	uprint_error_callback("warning: %s is not setuid root", argv[0]);
 	}
 
-    if(setuid(getuid()) != 0)
+    subcommand = argv[1];
+    server_node = argv[2];
+    
+    if((sockfd = uprint_lpr_make_connection_with_failover(server_node)) == -1)
+    	return 1;
+
+    /* Drop setuid root privledges. */
+    {
+    uid_t real_uid = getuid();
+
+    if(setreuid(real_uid, real_uid) == -1)
 	{
-	uprint_error_callback("setuid() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	uprint_error_callback("setreuid(%ld, %ld) failed, errno=%d (%s)", (long)real_uid, (long)real_uid, errno, gu_strerror(errno));
     	return 1;
     	}
 
-    if(strcmp(argv[1], "lpr") == 0)
+    /* Be paranoid.  If the real user isn't root, then the ability to setuid(0) should be gone. */
+    if(real_uid != 0 && setuid(0) != -1)
 	{
-	ret = do_lpr(node, sockfd, lpr_queueid, &argv[2]);
+	uprint_error_callback("setuid(0) didn't fail");
+    	return 1;
+    	}
+    }
+
+    if(strcmp(subcommand, "print") == 0)
+	{
+	ret = do_print(sockfd, server_node, &argv[3]);
 	}
-    else if(strcmp(argv[1], "lpq") == 0)
+    else if(strcmp(subcommand, "command") == 0)
 	{
-	ret = do_lpq(sockfd, &argv[2]);
-	}
-    else if(strcmp(argv[1], "lprm") == 0)
-	{
-	ret = do_lprm(sockfd, &argv[2]);
+	ret = do_command(sockfd, &argv[3]);
 	}
     else
 	{
+	uprint_error_callback("unknown subcommand: %s", subcommand);
 	return 1;
 	}
 
     close(sockfd);
 
-    return ret == -1 ? 1 : 0;
+    return (ret == -1) ? 1 : 0;
     } /* end of main() */
 
 /* end of file */

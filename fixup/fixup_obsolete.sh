@@ -1,16 +1,31 @@
 #
 # mouse:~ppr/src/fixup/fixup_obsolete.sh
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 29 August 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 19 February 2003.
 #
 
 HOMEDIR="?"
@@ -81,7 +96,7 @@ outdated $VAR_SPOOL_PPR/ttfonts.db		# 3rd?
 outdated $HOMEDIR/bin/xfm-ppr $HOMEDIR/bin/ppr-xfm
 outdated $HOMEDIR/bin/xpprgrant $HOMEDIR/bin/ppr-xgrant
 outdated $HOMEDIR/bin/pprclean
-outdated $HOMEDIR/bin/papsrv_kill $HOMEDIR/bin/papsrv-kill
+outdated $HOMEDIR/bin/papsrv_kill
 outdated $HOMEDIR/lib/xerox_ticket_submitter
 outdated $HOMEDIR/bin/indexttf
 outdated_dir $SHAREDIR/globalconf
@@ -167,6 +182,7 @@ outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
 
 outdated $HOMEDIR/bin/ppr-web-control			# renamed
+outdated $HOMEDIR/bin/papsrv-kill			# replaced by papsrv --stop
 
 echo "Done."
 echo

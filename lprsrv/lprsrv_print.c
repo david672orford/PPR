@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -332,7 +332,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 	switch(line[0])
 	    {
 	    case 'P':				/* User identification (a required line) */
-		uprint_set_user(upr, getuid(), line+1);
+		uprint_set_user(upr, (uid_t)-1, (gid_t)-1, line+1);
 		break;
 
 	    case 'H':				/* Host identification (a required line) */
@@ -480,8 +480,10 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 ** Run the spooler submission command indicated by prog, pass it the
 ** arguments indicated by args, and pass it the data file indicated
 ** by n.
+**
+** The run_uid and run_gid are the user ID and group ID which the child should switch to.
 */
-static void dispatch_files_run(uid_t run_uid, const char *prog, const char *args[], int tempfile, off_t start, size_t length)
+static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, const char *args[], int tempfile, off_t start, size_t length)
     {
     const char function[] = "dispatch_files_run";
     pid_t pid;				/* process id of PPR or LP */
@@ -575,7 +577,7 @@ static void dispatch_files_run(uid_t run_uid, const char *prog, const char *args
 		    debug("%s(): setuid(0) failed in child", function);
 		    break;
 		case 241:
-		    debug("%s(): setuid(%ld) failed in child", function, (long int)run_uid);
+		    debug("%s(): setreuid(%ld, %ld) failed in child", function, (long int)run_uid, (long int)run_uid);
 		    break;
 	    	case 242:
 	    	    debug("%s(): Child can't open log file", function);
@@ -616,8 +618,12 @@ static void dispatch_files_run(uid_t run_uid, const char *prog, const char *args
 	close(log);		/* We don't need this descriptor any more. */
 
 	/* Fully relinquish root authority and become designated user. */
-	if(setuid(0) == -1) _exit(240);
-	if(setuid(run_uid) == -1) _exit(241);
+	if(setuid(0) == -1)
+	    _exit(240);
+	if(setregid(run_gid, run_gid) == -1)
+	    _exit(241);
+	if(setreuid(run_uid, run_uid) == -1)
+	    _exit(241);
 
 	execv(prog, (char **)args);
 
@@ -634,6 +640,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
     #define MAX_PRINT_ARGV 100
     const char *args[MAX_PRINT_ARGV+3];		/* space to build command line */
     uid_t uid_to_use;				/* uid to run spooler program as */
+    gid_t gid_to_use;
     const char *proxy_class = (const char *)NULL;
     int args_used = 0;				/* arguments filled in already */
     int findex;					/* index of file we are working on */
@@ -643,7 +650,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
     DODEBUG_PRINT(("dispatch_files()"));
 
     /* Choose local user to run as and possibly choose proxy mode. */
-    get_proxy_identity(&uid_to_use, &proxy_class, fromhost, uprint_get_user(upr), printdest_claim_ppr(printer), access_info);
+    get_proxy_identity(&uid_to_use, &gid_to_use, &proxy_class, fromhost, uprint_get_user(upr), printdest_claim_ppr(printer), access_info);
     if(proxy_class)
     	uprint_set_proxy_class(upr, proxy_class);
 
@@ -694,7 +701,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 	    }
 
 	args[i] = (const char *)NULL;
-	dispatch_files_run(uid_to_use, prog, args, tempfile, data->start, data->length);
+	dispatch_files_run(uid_to_use, gid_to_use, prog, args, tempfile, data->start, data->length);
 	} /* end of for() loop */
 
     DODEBUG_PRINT(("dispatch_files(): done"));

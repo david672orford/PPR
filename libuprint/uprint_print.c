@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -80,15 +80,15 @@ int uprint_print(void *p, gu_boolean remote_too)
 
     if(upr->dest == (const char *)NULL)
     	{
-	uprint_error_callback("%s(): dest not set", function);
 	uprint_errno = UPE_NODEST;
+	uprint_error_callback("%s(): dest not set", function);
     	return -1;
     	}
 
     if(upr->user == (const char *)NULL)
     	{
-	uprint_error_callback("%s(): user not set", function);
 	uprint_errno = UPE_BADORDER;
+	uprint_error_callback("%s(): user not set", function);
     	return -1;
     	}
 
@@ -165,7 +165,7 @@ int uprint_print(void *p, gu_boolean remote_too)
     	{
 	if(upr->argc > 0)
 	    logit(command_path, upr->argv);
-	ret = uprint_run(upr->uid, command_path, upr->argv);
+	ret = uprint_run(upr->uid, upr->gid, command_path, upr->argv);
 	}
 
     /*
@@ -185,7 +185,7 @@ int uprint_print(void *p, gu_boolean remote_too)
 	argv[i] = (const char *)NULL;
 	if(upr->argc > 0)
 	    logit(command_path, argv);
-	ret = uprint_run(upr->uid, command_path, argv);
+	ret = uprint_run(upr->uid, upr->gid, command_path, argv);
     	}
 
     /* If files specified and the command must
@@ -208,7 +208,7 @@ int uprint_print(void *p, gu_boolean remote_too)
 	    if(upr->argc > 0)
 	        logit(command_path, argv);
 
-	    if((ret = uprint_run(upr->uid, command_path, argv)) != 0)
+	    if((ret = uprint_run(upr->uid, upr->gid, command_path, argv)) != 0)
 	    	break;
 	    }
 	}
@@ -231,7 +231,7 @@ int uprint_print(void *p, gu_boolean remote_too)
 	if(upr->argc > 0)
 	    logit(command_path, argv);
 
-	ret = uprint_run(upr->uid, command_path, argv);
+	ret = uprint_run(upr->uid, upr->gid, command_path, argv);
 	}
 
     #ifdef UPRINT_LOGFILE

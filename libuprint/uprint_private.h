@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 /* Do not turn this on when linking with lprsrv!  Such
@@ -62,6 +62,9 @@ int uprint_parse_lp_filter_modes(void *p);
 #define MAX_PRINCIPAL 127
 #define MAX_FOR 127
 
+/* This is our setuid root helper. */
+#define UPRINT_RFC1179 HOMEDIR"/lib/uprint_rfc1179"
+
 /* A structure to describe a print job: */
 struct UPRINT
 	{
@@ -75,6 +78,7 @@ struct UPRINT
 	const char **files;		/* list of files to print */
 
 	uid_t uid;			/* user id number */
+	gid_t gid;
 	const char *user;		/* user name */
 	const char *from_format;	/* queue display from field format */
 	const char *lpr_mailto;		/* lpr style address to send email to */
@@ -165,6 +169,8 @@ gu_boolean uprint_lp_printers_conf(void);
 /* uprint_print_bsd.c */
 char uprint_get_content_type_lpr(void *p);
 
+/* uprint_run_rfc1179.c */
+int uprint_run_rfc1179(const char exepath[], const char *const argv[]);
 
 /* end of file */
 

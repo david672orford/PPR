@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 March 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 /*
@@ -727,12 +742,38 @@ int main(int argc, char *argv[])
     gid = getgid();		/* should be "ppr" or "root" */
     egid = getegid();		/* should be "ppop" */
 
+    /* If effective UID is root, either we are setuid root or not setuid and being run by root. */
+    if(euid == 0)
+	{
+	fprintf(stderr, "%s: this program must be setuid %s\n", myname, USER_PPR);
+	exit(EXIT_INTERNAL);
+	}
+
     if(uid == 0)		/* if user is root */
 	{			/* then switch to "ppr" */
 	setuid(0);		/* set all three group IDs to "root" */
 	setgid(0);		/* set all three group IDs to "root" (Is this necessary?) */
-	setuid(euid);		/* now we may set all three UIDs to "ppr" */
-	setgid(egid);		/* Make sure we don't keep "root" group */
+
+	/* Make sure we don't keep "root" group */
+	if(setregid(egid, egid) == -1)
+	    {
+	    fprintf(stderr, "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)egid, (long)egid, errno, gu_strerror(errno));
+	    exit(EXIT_INTERNAL);
+	    }
+
+	/* now we may set all three UIDs to "ppr" */
+	if(setreuid(euid, euid) == -1)
+	    {
+	    fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)euid, (long)euid, errno, gu_strerror(errno));
+	    exit(EXIT_INTERNAL);
+	    }
+
+	/* Now be paranoid. */
+	if(setuid(0) != -1)
+	    {
+	    fprintf(stderr, "%s: setuid(0) didn't fail!\n", myname);
+	    exit(EXIT_INTERNAL);
+	    }
 	}
     else			/* not root */
 	{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 	uprint_delete(upr);
     	return 1;
     	}
-    uprint_set_user(upr, (uid_t)-1, pw->pw_name);
+    uprint_set_user(upr, uid, -1, pw->pw_name);
     }
 
     /*

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 28 March 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 /*
@@ -23,13 +38,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/utsname.h>
+#include <errno.h>
+#include <pwd.h>
+#include <grp.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "lprsrv.h"
 #include "util_exits.h"
 #include "version.h"
@@ -131,6 +148,7 @@ void libppr_throw(int exception_type, const char exception_function[], const cha
     exit(1);
     }
 
+
 /*=============================================================================
 ** main() and its support routines:
 =============================================================================*/
@@ -178,14 +196,14 @@ static void help(FILE *outfile)
 */
 int main(int argc,char *argv[])
     {
-#ifdef STANDALONE
-    int standalone_port = 0;
-#endif
+    const char function[] = "main";
     char client_dns_name[MAX_HOSTNAME+1];
     char client_ip[16];
     int client_port;
     struct ACCESS_INFO access_info;
-    uid_t root_uid, safe_uid;
+    #ifdef STANDALONE
+    int standalone_port = 0;
+    #endif
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -213,21 +231,32 @@ int main(int argc,char *argv[])
     prune_env();
 
     /*
-    ** Change the effective user id to one that uprint
-    ** considers safe but leave the real user id as root
-    ** so that we can run the spooler programs under that id.
-    **
-    ** It is essential that we run as "root".  This will
-    ** take people by supprise since pre-1.31 lprsrv
-    ** was run as "ppr".
+    ** It is essential that this program run as "root" if it is to act as the user.
     */
-    if(uprint_re_uid_setup(&root_uid, &safe_uid) == -1)
-	{
-	if(root_uid != 0)
-	    fatal(1, _("new lprsrv must run as root"));
+    if(getuid())
+	fatal(1, _("new lprsrv must run as root"));
 
-    	fatal(1, "uprint_re_uid_setup() failed: %s", uprint_strerror(uprint_errno));
-	}
+    /*
+    ** Switch the effective UID to that of the PPR user in order to gain a 
+    ** little safety but leave the real UID as root so that we can bind
+    ** to priveledged ports (in standalone mode) or become users in order
+    ** to print jobs for them.
+    */
+    {
+    struct passwd *user_ppr;
+
+    if((user_ppr = getpwnam(USER_PPR)) == (struct passwd *)NULL)
+    	fatal(1, _("%s(): getpwnam(\"%s\") failed, errno=%d (%s)"), function, USER_PPR, errno, gu_strerror(errno));
+
+    if(setgroups(0, &user_ppr->pw_gid) == -1)
+	fatal(1, _("%s(): setgroups() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+
+    if(setegid(user_ppr->pw_gid) == -1)
+	fatal(1, _("%s(): setegid(%ld) failed, errno=%d (%s)"), function, (long)user_ppr->pw_gid, errno, gu_strerror(errno));
+
+    if(seteuid(user_ppr->pw_uid) == -1)
+	fatal(1, _("%s(): seteuid(%ld) failed, errno=%d (%s)"), function, (long)user_ppr->pw_uid, errno, gu_strerror(errno));
+    }
 
     /*
     ** Parse the command line options.  We use the parsing routine
@@ -245,7 +274,7 @@ int main(int argc,char *argv[])
 	switch(optchar)
 	    {
 	    case 's':
-#ifdef STANDALONE
+		#ifdef STANDALONE
 		{
 	    	if(strspn(getopt_state.optarg, "0123456789") == strlen(getopt_state.optarg))
 	    	    {
@@ -261,10 +290,10 @@ int main(int argc,char *argv[])
 		    }
 	    	}
 		break;
-#else
+		#else
 		fputs(_("Standalone mode code not present.\n"), stderr);
 		exit(EXIT_SYNTAX);
-#endif
+		#endif
 
 	    case 'A':			/* -A or --arrest-interest-interval */
 		uprint_arrest_interest_interval = getopt_state.optarg;
@@ -310,10 +339,10 @@ int main(int argc,char *argv[])
     ** The parent will never return from this function call
     ** but the children will.
     */
-#ifdef STANDALONE
+    #ifdef STANDALONE
     if(standalone_port)
-	run_standalone(standalone_port, root_uid, safe_uid);
-#endif
+	run_standalone(standalone_port);
+    #endif
 
     DODEBUG_MAIN(("connexion received"));
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -92,6 +92,7 @@ static struct
 
 int main(int argc, char *argv[])
     {
+    uid_t uid = getuid();
     void *upr;
     struct passwd *pw;
     int c;
@@ -125,8 +126,6 @@ int main(int argc, char *argv[])
     /*
     ** Set the UID number and name of the user:
     */
-    {
-    uid_t uid = getuid();
     if( (pw=getpwuid(uid)) == (struct passwd *)NULL)
 	{
 	fprintf(stderr, _("%s: getpwuid(%ld) failed to find your account\n"), myname, (long int)uid);
@@ -139,8 +138,7 @@ int main(int argc, char *argv[])
 	uprint_delete(upr);
     	return 1;
     	}
-    uprint_set_user(upr, (uid_t)-1, pw->pw_name);
-    }
+    uprint_set_user(upr, uid, -1, pw->pw_name);
 
     /*
     ** Set the defaults for a few options:
@@ -221,7 +219,7 @@ int main(int argc, char *argv[])
 	        break;
 
 	    case 'U':		/* user name */
-		uprint_set_user(upr, (uid_t)-1, optarg);	/* !!! */
+		uprint_set_user(upr, uid, -1, optarg);	/* !!! */
 	        break;
 
 	    case 'i':		/* indent */

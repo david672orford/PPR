@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 February 2003.
+# Last modified 19 February 2003.
 #
 
 include ../Makefile.conf
@@ -34,6 +34,7 @@ include ../makeprogs/paths.mk
 #=== Inventory ==============================================================
 
 LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
+	uprint_conf.$(OBJ) uprint_sysv.$(OBJ) \
 	uprint_xlate.$(OBJ) \
 	lpr_connect.$(OBJ) lpr_failover.$(OBJ) lpr_sendfile.$(OBJ) \
 	claim_ppr.$(OBJ) claim_sysv.$(OBJ) claim_bsd.$(OBJ) claim_remote.$(OBJ) \
@@ -44,9 +45,9 @@ LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
 	uprint_print_rfc1179.$(OBJ) \
 	uprint_lpq.$(OBJ) uprint_lpq_rfc1179.$(OBJ) \
 	uprint_lprm.$(OBJ) uprint_lprm_rfc1179.$(OBJ) \
-	uprint_loop.$(OBJ) uprint_uid.$(OBJ) \
-	uprint_run.$(OBJ) uprint_strerror.$(OBJ) \
-	uprint_conf.$(OBJ) uprint_sysv.$(OBJ)
+	uprint_run.$(OBJ) uprint_run_rfc1179.$(OBJ) \
+	uprint_loop.$(OBJ) \
+	uprint_strerror.$(OBJ) \
 
 LIBS=../libuprint.$(LIBEXT)
 BIN_PROGS=uprint-newconf$(DOTEXE)
@@ -75,7 +76,7 @@ uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
 install: $(TARGETS) $(DATA)
 	$(INSTALLDATA) $(CONFDIR) $(DATA)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 
 #=== Housekeeping ===========================================================
 

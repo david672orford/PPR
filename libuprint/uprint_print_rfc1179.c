@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -57,12 +57,10 @@
 /*
 ** Build and send the control file.
 */
-static int do_control_file(void *p, struct REMOTEDEST *scratchpad, const char *local_nodename, int lpr_queueid, int sockfd, const char **files_list)
+static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const char *local_nodename, int lpr_queueid, const char **files_list)
     {
-    const char function[] = "do_control_file";
+    const char function[] = "create_control_file";
     struct UPRINT *upr = (struct UPRINT *)p;
-    char command[64];		/* command scratch space */
-    int code;			/* result byte from remote system */
     char control_file[10000];
     char file_type;
     int copies;
@@ -269,9 +267,7 @@ static int do_control_file(void *p, struct REMOTEDEST *scratchpad, const char *l
 	    {
 	    uprint_errno = UPE_INTERNAL;
 	    uprint_error_callback("%s(): out of space in control file buffer", function);
-	    /* Cancel the job: */
-	    uprint_lpr_send_cmd(sockfd, "\1\n", 2);
-	    return -1;
+	    return NULL;
 	    }
 	for(copy = 0; copy < copies; copy++)
 	    {
@@ -282,198 +278,8 @@ static int do_control_file(void *p, struct REMOTEDEST *scratchpad, const char *l
 	i += strlen(&control_file[i]);
     	}
 
-    /* Tell the other end that we want to send the control file: */
-    snprintf(command, sizeof(command), "\002%d cfA%03d%s\n", (int)strlen(control_file), lpr_queueid, local_nodename);
-    if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-	{
-	return -1;
-	}
-
-    /* Check if response is favourable. */
-    if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
-	{
-	uprint_error_callback(_("(Connection lost while negotiating to send control file failed.)"));
-	return -1;
-	}
-    else if(code)
-    	{
-    	uprint_error_callback(_("Remote LPR/LPD system does not have room for control file."));
-	uprint_errno = UPE_TEMPFAIL;
-    	return -1;
-    	}
-
-    /* Send the control file. */
-    if(uprint_lpr_send_cmd(sockfd, control_file, i) == -1)
-    	return -1;
-
-    /* Send the zero byte */
-    command[0] = '\0';
-    if(uprint_lpr_send_cmd(sockfd, command, 1) == -1)
-    	return -1;
-
-    /* Check if response if favourable. */
-    if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
-	{
-	uprint_error_callback(_("(Connection lost while transmitting control file.)"));
-	return -1;
-	}
-    else if(code)
-    	{
-    	uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of control file."), scratchpad->node);
-	uprint_errno = UPE_TEMPFAIL;
-	uprint_lpr_send_cmd(sockfd, "\1\n", 2);		/* cancel the job */
-    	return -1;
-    	}
-
-    return 0;
+    return gu_strdup(control_file);
     } /* end of control file */
-
-/*
-** Send the data files.
-*/
-static int do_data_files(void *p, struct REMOTEDEST *scratchpad, const char *local_nodename, int lpr_queueid, int sockfd, const char **files_list)
-    {
-    const char function[] = "do_data_files";
-    struct UPRINT *upr = (struct UPRINT *)p;
-    char command[64];		/* command scratch space */
-    int code;			/* result byte from remote system */
-    int x;
-    const char *filename;	/* file we are working on */
-
-    for(x = 0; (filename = files_list[x]) != (const char *)NULL; x++)
-	{
-	int pffd = -1;	/* file being printed */
-	int df_length;	/* length of file being printed */
-
-	/* STDIN */
-	if(strcmp(filename, "-") == 0)
-	    {
-	    /* copy stdin to a temporary file */
-	    if((pffd = uprint_file_stdin(&df_length)) == -1)
-		{
-		/* Failed, cancel the job: */
-		uprint_lpr_send_cmd(sockfd, "\1\n", 2);
-		return -1;
-		}
-	    }
-
-	/* Disk file */
-	else
-	    {
-	    uid_t saved_euid;
-	    struct stat statbuf;
-	    int saved_errno;
-
-	    /* We will be switching to the real id in a moment: */
-	    saved_euid = geteuid();
-
-	    /* Try */
-	    uprint_errno = UPE_NONE;
-	    do  {
-		/* Switch to the real id indicated in the UPRINT structure: */
-		seteuid(0);
-		if(seteuid(upr->uid) == -1)
-		    {
-		    uprint_errno = UPE_INTERNAL;
-		    uprint_error_callback("%s(): seteuid(%ld) failed, errno=%d (%s)", function, (long)upr->uid, errno, gu_strerror(errno));
-		    break;
-		    }
-
-		/* Try to open the file to be printed: */
-		pffd = open(filename, O_RDONLY);
-		saved_errno = errno;
-
-		/* Switch back to the id for "ppr": */
-		seteuid(0);
-		if(seteuid(saved_euid) == -1)
-		    {
-		    uprint_errno = UPE_INTERNAL;
-		    uprint_error_callback("%s(): seteuid(%ld) failed, errno=%d (%s)", function, (long)saved_euid, saved_errno, gu_strerror(saved_errno));
-		    break;
-		    }
-
-		/* If the open() failed, */
-		if(pffd == -1)
-		    {
-		    uprint_errno = UPE_NOFILE;
-		    uprint_error_callback(_("Can't open \"%s\", errno=%d (%s)."), filename, errno, gu_strerror(errno));
-		    break;
-		    }
-
-		/* Use fstat() to determine the file's length: */
-		if(fstat(pffd, &statbuf) == -1)
-		    {
-		    uprint_errno = UPE_INTERNAL;
-		    uprint_error_callback("%s(): fstat() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-		    break;
-		    }
-	    	df_length = (int)statbuf.st_size;
-	        } while(FALSE);
-
-	    /* Catch */
-	    if(uprint_errno != UPE_NONE)
-	    	{
-		/* Cancel the job: */
-		uprint_lpr_send_cmd(sockfd, "\1\n", 2);
-		return -1;
-	    	}
-	    } /* end of if disk file */
-
-	/* Ask permission to send the data file: */
-	snprintf(command, sizeof(command), "\003%d dfA%03d.%03d%s\n", df_length, lpr_queueid, x, local_nodename);
-	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-	    {
-	    close(pffd);
-	    return -1;
-	    }
-
-	/* Check if response is favourable: */
-	if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
-	    {
-	    uprint_error_callback(_("(Connection lost while negotiating to send data file.)"));
-	    close(pffd);				/* couldn't read response */
-	    return -1;
-	    }
-        else if(code)
-	    {
-	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" does not have room for data file."), scratchpad->node);
-	    uprint_errno = UPE_TEMPFAIL;
-	    close(pffd);				/* close print file */
-	    uprint_lpr_send_cmd(sockfd, "\1\n", 2);	/* cancel the job */
-	    return -1;
-	    }
-
-	/* Send and close the data file and
-	   catch any error in sending the data file. */
-	{
-	int ret = uprint_lpr_send_data_file(pffd, sockfd);
-	close(pffd);
-	if(ret == -1)
-	    return -1;
-	}
-
-	/* Send the zero byte */
-	command[0] = '\0';
-	if(uprint_lpr_send_cmd(sockfd, command, 1) == -1)
-	    return -1;
-
-	/* Check if response if favourable. */
-	if((code = uprint_lpr_response(sockfd, TIMEOUT_PRINT)) == -1)
-	    {
-	    uprint_error_callback(_("(Connection lost while sending data file.)"));
-	    return -1;
-	    }
-	else if(code)
-	    {
-	    uprint_error_callback(_("Remote LPR/LPD system \"%s\" denies correct receipt of data file."), scratchpad->node);
-	    uprint_errno = UPE_TEMPFAIL;
-	    uprint_lpr_send_cmd(sockfd, "\1\n", 2);	/* cancel the job */
-	    return -1;
-	    }
-	} /* end of for each file */
-
-    return x;
-    }
 
 /*
 ** Dispatch the job using the LPR/LPD protocol described
@@ -485,13 +291,12 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     struct UPRINT *upr = (struct UPRINT *)p;
     const char *local_nodename;	/* this node */
     int lpr_queueid;		/* queue id of this new job */
-    int sockfd;			/* connexion to other node */
-    char command[64];		/* command scratch space */
-    int code;			/* remote command result code */
+    char lpr_queueid_str[10];
     const char **files_list;	/* list of files to be printed */
     const char *default_files_list[] = {"-", NULL};
+    char *control_file;
     int files_count = 0;	/* number of files sent */
-    int retcode;
+    const char *args[100];
 
     DODEBUG(("%s(p=%p, scratchpad=%p)", function, p, scratchpad));
     DODEBUG(("scratchpad={node=\"%s\", printer=\"%s\", osf_extensions=%s, solaris_extensions=%s, ppr_extensions=%s}",
@@ -524,7 +329,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
 	return -1;
     	}
 
-    /* Make sure user is filled in: */
+    /* Make sure username is filled in. */
     if(! upr->user)
     	{
 	uprint_error_callback("%s(): user is NULL", function);
@@ -541,7 +346,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
     	return -1;
     	}
 
-    /* Get our nodename: */
+    /* Get our nodename to state as the job source. */
     if(upr->fromhost)
 	{
 	local_nodename = upr->fromhost;
@@ -561,77 +366,60 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
 	return -1;
     	}
 
-    /* Connect to the remote system: */
-    if((sockfd = uprint_lpr_make_connection_with_failover(scratchpad->node)) == -1)
-	return -1;
-
-    /* Try block: */
-    retcode = 0;
-    while(TRUE)
+    /* Generate a queue id.  Notice that the effective
+       user is "ppr" (or more precisely, the owner of
+       /etc/ppr/uprint.conf) when we call this. */
+    if((lpr_queueid = uprint_lpr_nextid()) == -1)
 	{
-        /* Say we want to send a job: */
-        snprintf(command, sizeof(command), "\002%s\n", scratchpad->printer);
-        if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-            {
-            retcode = -1;
-            break;
-            }
+	return -1;
+	}
+    snprintf(lpr_queueid_str, sizeof(lpr_queueid_str), "%d", lpr_queueid);
 
-        /* Check if the response if favorable: */
-        if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
-            {
-	    uprint_error_callback(_("(Connection lost while negotiating to send job.)"));
-            retcode = -1;
-            break;
-            }
-        else if(code)
-            {
-            uprint_error_callback(_("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\" (%d)."), scratchpad->node, scratchpad->printer, code);
-            uprint_errno = UPE_DENIED;
-            retcode = -1;
-            break;
-            }
+    /* Find the files list. */
+    if(upr->files)
+	files_list = upr->files;
+    else
+	files_list = default_files_list;
 
-        /* Generate a queue id.  Notice that the effective
-           user is "ppr" (or more precisely, the owner of
-           /etc/ppr/uprint.conf) when we call this. */
-        if((lpr_queueid = uprint_lpr_nextid()) == -1)
-            {
-            retcode = -1;
-            break;
-            }
-
-        /* Find the files list: */
-        if(upr->files)
-            files_list = upr->files;
-        else
-            files_list = default_files_list;
-
-        /* Build and send the control file: */
-        if(do_control_file(p, scratchpad, local_nodename, lpr_queueid, sockfd, files_list) == -1)
-            {
-            retcode = -1;
-            break;
-            }
-
-        /* Send each data file: */
-        if((files_count = do_data_files(p, scratchpad, local_nodename, lpr_queueid, sockfd, files_list)) == -1)
-            {
-            retcode = -1;
-            break;
-            }
-
-	/* end of Try block */
-	break;
+    /* Build and send the control file. */
+    if(!(control_file = create_control_file(p, scratchpad, local_nodename, lpr_queueid, files_list)))
+	{
+	return -1;
 	}
 
-    /* Close the connexion to the remote system. */
-    close(sockfd);
+    {
+    int si, di;
+    di = 0;
+    args[di++] = UPRINT_RFC1179;
+    args[di++] = "print";
+    args[di++] = scratchpad->node;
+    args[di++] = local_nodename;
+    args[di++] = lpr_queueid_str;    
+    args[di++] = scratchpad->printer;
+    args[di++] = control_file;
+    for(si = 0; files_list[si]; si++)
+	{
+	if(di >= ((sizeof(args) / sizeof(char*)) - 1))
+	    {
+	    uprint_errno = UPE_TOOMANY;
+	    return -1;
+	    }
+	args[di++] = files_list[si];
+	}
+    args[di++] = NULL;
+    }
 
-    if(upr->show_jobid && files_count > 0)
+    {
+    int retcode;
+    retcode = uprint_run_rfc1179(UPRINT_RFC1179, args);
+
+    gu_free((char*)control_file);
+
+    if(retcode == 0 && upr->show_jobid && files_count > 0)
 	printf("job id is %s-0 (%d file%s)\n", upr->dest, files_count, files_count > 1 ? "s" : "");
 
     return retcode;
+    }
     } /* end of uprint_print_rfc1179() */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -48,9 +48,9 @@
 int uprint_lpq_rfc1179(const char *queue, int format, const char **arglist, struct REMOTEDEST *scratchpad)
     {
     const char function[] = "uprint_lpq_rfc1179";
-    int sockfd;
     int x, y;
     char temp[1024];
+    const char *args[5];
 
     DODEBUG(("%s(queue = \"%s\", format = %d, arglist = ?)", function, queue != (const char *)NULL ? queue : "", format));
 
@@ -104,32 +104,13 @@ int uprint_lpq_rfc1179(const char *queue, int format, const char **arglist, stru
 
     temp[y++] = '\n';
 
-    /* Connect to the remote system: */
-    if((sockfd = uprint_lpr_make_connection_with_failover(scratchpad->node)) == -1)
-    	return -1;
+    args[0] = UPRINT_RFC1179;
+    args[1] = "command";
+    args[2] = scratchpad->node;
+    args[3] = temp;
+    args[4] = NULL;
 
-    /* Transmit the command: */
-    if(uprint_lpr_send_cmd(sockfd, temp, y) == -1)
-	return -1;
-
-    /* Copy from the socket to stdout until the connexion
-       is closed by the server. */
-    while((x = read(sockfd, temp, sizeof(temp))) > 0)
-	{
-	write(1, temp, x);
-	}
-
-    /* If there was an error, */
-    if(x == -1)
-	{
-	uprint_errno = UPE_TEMPFAIL;
-	uprint_error_callback("%s(): read() from remote system failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	return -1;
-	}
-
-    close(sockfd);
-
-    return 0;
+    return uprint_run_rfc1179(UPRINT_RFC1179, args);
     } /* end of uprint_lpq_rfc1179() */
 
 /* end of file */

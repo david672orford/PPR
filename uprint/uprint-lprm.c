@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
     {
     int return_code;
 
-    if((return_code = uprint_lprm(-1, user, (const char *)NULL, queue, (const char **)&argv[optind], TRUE)) >= 0)
+    if((return_code = uprint_lprm(-1, -1, user, (const char *)NULL, queue, (const char **)&argv[optind], TRUE)) >= 0)
     	{
 	/* Child ran, nothing more to do. */
 	}

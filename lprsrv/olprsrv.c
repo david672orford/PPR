@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -2273,10 +2273,10 @@ void remove_jobs(char *command)
 ===========================================================*/
 
 /*
-** This sets the effective uid and gid to "ppr" and "ppop"
+** This sets the effective uid and gid to "ppr" and "ppr"
 ** respectively but does not change the real ids.
 **
-** After it looks up the ids for user "ppr" and the group "ppop"
+** After it looks up the ids for user "ppr" and the group "ppr"
 ** it saves them in the variables pointed to by its arguments.
 */
 void half_demote_self(uid_t *uid_ppr, gid_t *gid_ppop)
@@ -2296,14 +2296,14 @@ void half_demote_self(uid_t *uid_ppr, gid_t *gid_ppop)
     if(setegid(*gid_ppop) == -1)
     	fatal(1, "half_demote_self(): setegid(%ld) failed", (long)*gid_ppop);
     if(seteuid(*uid_ppr) == -1)
-	fatal(1, "halt_demote_self(): seteuid(%ld) failed", (long)*uid_ppr);
+	fatal(1, "half_demote_self(): seteuid(%ld) failed", (long)*uid_ppr);
     }
 
 /*
-** This sets all user and all group ids to "ppr" and "ppop"
+** This sets all user and all group ids to "ppr" and "ppr"
 ** respectively.
 */
-void fully_demote_self(uid_t uid_ppr, gid_t gid_ppop)
+void fully_demote_self(uid_t uid_ppr, gid_t gid_ppr)
     {
     if(setuid(0) == -1)
     	fatal(1, "fully_demote_self(): setuid(0) failed");
@@ -2311,11 +2311,11 @@ void fully_demote_self(uid_t uid_ppr, gid_t gid_ppop)
     if(setgid(0) == -1)
  	fatal(1, "fully_demote_self(): setgid(0) failed");
 
-    if(setgid(gid_ppop) == -1)
-    	fatal(1, "fully_demote_self(): setgid(%ld) failed", (long)gid_ppop);
+    if(setregid(gid_ppr, gid_ppr) == -1)
+    	fatal(1, "fully_demote_self(): setregid(%ld, %ld) failed", (long)gid_ppr, (long)gid_ppr);
 
-    if(setuid(uid_ppr) == -1)
-    	fatal(1, "fully_demote_self(): setuid(%ld) failed", (long)uid_ppr);
+    if(setreuid(uid_ppr, uid_ppr) == -1)
+    	fatal(1, "fully_demote_self(): setreuid(%ld, %ld) failed", (long)uid_ppr, (long)uid_ppr);
     }
 
 /*

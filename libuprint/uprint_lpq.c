@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -47,7 +47,7 @@
 ** The term "agent" is from RFC-1179 and should probably
 ** be "remote_user".  Notice that it is not used.
 */
-int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too)
+int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too)
     {
     DODEBUG(("uprint_lpq(agent = \"%s\", queue = \"%s\", format = %d, arglist = ?)", agent, queue ? queue : "", format));
 
@@ -93,7 +93,7 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
 
 	args[i] = (const char *)NULL;
 
-	return uprint_run(uid, PPOP_PATH, args);
+	return uprint_run(uid, gid, PPOP_PATH, args);
     	}
 
     /*
@@ -136,7 +136,7 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
 	/* Terminate the argument list. */
 	args[i] = (const char *)NULL;
 
-	return uprint_run(uid, uprint_path_lpstat(), args);
+	return uprint_run(uid, gid, uprint_path_lpstat(), args);
     	}
 
     /*
@@ -165,7 +165,7 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
 
 	args[i] = (const char *)NULL;
 
-	return uprint_run(uid, uprint_path_lpq(), args);
+	return uprint_run(uid, gid, uprint_path_lpq(), args);
 	}
 
     /*

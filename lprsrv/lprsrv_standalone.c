@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_standalone.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 23 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -83,15 +98,19 @@ static void create_lock_file(void)
 ** Create the server well known port and return a
 ** file descriptor for it.
 */
-static int bind_server(int server_port, uid_t root_uid, uid_t safe_uid)
+static int bind_server(int server_port)
     {
+    const char function[] = "bind_server";
+    uid_t saved_euid;
     int sockfd;
     struct sockaddr_in serv_addr;
 
-    seteuid(root_uid);
+    saved_euid = geteuid();
+    if(seteuid(0) == -1)
+	fatal(1, "%s(): seteuid(0) failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
     if((sockfd = socket(AF_INET, SOCK_STREAM,0)) == -1)
-	fatal(1, "be_server(): socket() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	fatal(1, "%s(): socket() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
     /* We will accept from any IP address and will listen on server_port. */
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -103,7 +122,7 @@ static int bind_server(int server_port, uid_t root_uid, uid_t safe_uid)
     {
     int one = 1;
     if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&one, sizeof(one)) == -1)
-	fatal(1, "be_server(): setsockopt() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	fatal(1, "%s(): setsockopt() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
     }
 
     /* Bind to the port. */
@@ -114,11 +133,12 @@ static int bind_server(int server_port, uid_t root_uid, uid_t safe_uid)
 	fatal(1, "be_server(): bind() failed, errno=%d (%s)", errno, gu_strerror(errno));
 	}
 
-    seteuid(safe_uid);
+    if(seteuid(saved_euid) == -1)
+	fatal(1, "%s(): seteuid(%ld) failed, errno=%d (%s)", function, (long)saved_euid, errno, gu_strerror(errno));
 
     /* Set the backlog queue length. */
     if(listen(sockfd, 5) == -1)
-	fatal(1, "be_server(): listen() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	fatal(1, "%s(): listen() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
     return sockfd;
     } /* end of bind_server() */
@@ -191,7 +211,7 @@ static void standalone_main_loop(int sockfd)
 ** Since the last thing it does is call get_connexion(),
 ** the parent never returns but the child does numberous times.
 */
-void run_standalone(int server_port, uid_t root_uid, uid_t safe_uid)
+void run_standalone(int server_port)
     {
     int fd;
 
@@ -210,7 +230,7 @@ void run_standalone(int server_port, uid_t root_uid, uid_t safe_uid)
     create_lock_file();
 
     DODEBUG_MAIN(("starting server on port %d", server_port));
-    fd = bind_server(server_port, root_uid, safe_uid);
+    fd = bind_server(server_port);
 
     signal_restarting(SIGCHLD, reapchild);
 

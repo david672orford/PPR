@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_conf.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 March 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -454,7 +469,7 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 /*
 ** Convert a user name to a user id number.
 */
-static int username_to_uid(const char username[], uid_t *uid)
+static int username_to_uid(const char username[], uid_t *uid, gid_t *gid)
     {
     struct passwd *pw;
 
@@ -462,6 +477,7 @@ static int username_to_uid(const char username[], uid_t *uid)
 	return -1;
 
     *uid = pw->pw_uid;
+    *gid = pw->pw_gid;
     return 0;
     }
 
@@ -473,7 +489,7 @@ static int username_to_uid(const char username[], uid_t *uid)
 ** information but on whether the queue is a PPR queue or belongs
 ** to some other spooling system.
 */
-void get_proxy_identity(uid_t *uid_to_use, const char **proxy_class, const char fromhost[], const char *requested_user, gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info)
+void get_proxy_identity(uid_t *uid_to_use, gid_t *gid_to_use, const char **proxy_class, const char fromhost[], const char *requested_user, gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info)
     {
     const char *proxy_user = is_ppr_queue ? access_info->ppr_proxy_user : access_info->other_proxy_user;
 
@@ -489,7 +505,7 @@ void get_proxy_identity(uid_t *uid_to_use, const char **proxy_class, const char 
 	    	user = access_info->other_root_as;
 	    }
 
-	if(username_to_uid(user, uid_to_use) == -1)
+	if(username_to_uid(user, uid_to_use, gid_to_use) == -1)
 	    {
 	    if(user != requested_user)
 	    	fatal(1, "Root substitute user \"%s\" does not exist", user);
@@ -501,7 +517,7 @@ void get_proxy_identity(uid_t *uid_to_use, const char **proxy_class, const char 
 	if(user != proxy_user) return;
 	}
 
-    if(username_to_uid(proxy_user, uid_to_use) == -1)
+    if(username_to_uid(proxy_user, uid_to_use, gid_to_use) == -1)
 	fatal(1, "Proxy user \"%s\" does not exist", proxy_user);
 
     if(strcmp(access_info->ppr_proxy_class, "$cname") == 0)

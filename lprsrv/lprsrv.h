@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/include/lprsrv.h
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 9 August 1999.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 February 2003.
 */
 
 /*
@@ -88,7 +103,7 @@ void get_client_info(char *client_dns_name, char *client_ip, int *client_port);
 /* lprsrv_conf.c: */
 void clipcopy(char *dest, const char *source, int maxlen);
 void get_access_settings(struct ACCESS_INFO *access_info, const char hostname[]);
-void get_proxy_identity(uid_t *uid_to_use, const char **proxy_class, const char fromhost[], const char requested_user[], gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info);
+void get_proxy_identity(uid_t *uid_to_use, gid_t *gid_to_use, const char **proxy_class, const char fromhost[], const char requested_user[], gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info);
 
 /* lprsrv_print.c: */
 void do_request_take_job(const char printer[], const char fromhost[], const struct ACCESS_INFO *access_info);
@@ -101,7 +116,7 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 
 /* lprsrv_standalone.c: */
 int port_name_lookup(const char *name);
-void run_standalone(int server_port, uid_t root_uid, uid_t safe_uid);
+void run_standalone(int server_port);
 extern int am_standalone_parent;
 
 /* Debugging macros: */

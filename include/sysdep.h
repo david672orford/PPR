@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2003.
+** Last modified 19 February 2003.
 */
 
 /*
@@ -110,43 +110,33 @@
 ** =====================================================================
 **
 ** #define NEEDS_TLI_PROTOS 1
-**			include files don't have modern prototypes
+**			Include files don't have modern prototypes
 **			for certain TLI functions.  This only appears
 **			in the interface called "client".
 **
 ** #define SENDMAIL_PATH "/usr/lib/sendmail"
-**			the path to sendmail or compatible program
+**			The path to sendmail or compatible program
 **			If you wish to change this, you must #undef
 **			it first since it is already defined as
 **			"/usr/lib/sendmail".
-**
-** #define HAVE_LPR 1	Give lprsrv, fake_lp, fake_lpr, etc. the ability
-**			to send jobs off to BSD LPR.
 **
 ** #define LPR_EXTENSIONS_OSF 1
 **			Define this if your lpr has the DEC OSF extensions
 **			such as the -I, -j, -K, -N, -o, -O, and -x switches.
 **
-** #define HAVE_LP 1	Give lprsrv, fake_lp, fake_lpr the ability to
-**			send jobs off to System V lp.
-**
 ** #define LP_LIST_PRINTERS "/etc/lp/printers"
-**			If HAVE_LP is defined, this can be defined as
+**			This can be defined as
 **			the name of a directory which will contain
 **			one entry (either a file or a subdirectory)
 **			named after each printer.  There is no
 **			default value.
 **
 ** #define LP_LIST_CLASSES "/etc/lp/classes"
-**			If HAVE_LP is defined, this can be defined as the
+**			This can be defined as the
 **			name of a directory which will contain one entry
 **			(either a file or a subdirectory) named after
 **			each class (group).  There is no default
 **			value.
-**
-** #define LP_PRINTERS_CONF "/etc/printers.conf"
-**			This is where the new printing system introduced
-**			in Solaris 2.6 keeps its printers database.
 **
 ** #define LP_LPSTAT_BROKEN 1
 **			This is defined if lpstat is so old that it cannot
@@ -244,7 +234,6 @@
 #define SENDMAIL_PATH "/usr/ucblib/sendmail"
 
 /* The LP paths are just a guess!!! */
-#define HAVE_LP 1
 #define LP_LIST_PRINTERS "/var/spool/lp/admins/lp/interfaces"
 #define LP_LIST_CLASSES "/var/spool/lp/admins/lp/classes"
 
@@ -292,10 +281,8 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-#define HAVE_LP 1
 #define LP_LIST_PRINTERS "/etc/lp/printers"
 #define LP_LIST_CLASSES "/etc/lp/classes"
-#define LP_PRINTERS_CONF "/etc/printers.conf"
 
 /* Work around difference in when access
    to reserved ports is permitted. */
@@ -320,7 +307,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #define setsid() setpgrp(0, getpid()) /* setsid() (Posix?) is missing */
 #undef SENDMAIL_PATH
 #define SENDMAIL_PATH "/usr/sbin/sendmail"
-#define HAVE_LPR 1
 
 #endif /* PASS2 */
 #endif /* PPR_NETBSD */
@@ -353,7 +339,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif
 #ifdef PASS2
 
-#define HAVE_LPR 1
 #undef SENDMAIL_PATH
 #define SENDMAIL_PATH "/usr/sbin/sendmail"
 
@@ -380,8 +365,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 /* /bin is a link to /usr/bin */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
-
-#define HAVE_LPR 1
 
 #ifndef WCOREDUMP
 #define WCOREDUMP(stat) ((stat)&0200)
@@ -415,7 +398,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #define SAFE_PATH "/usr/bin"
 
 /* It looks like lp is just a front end to lpr: */
-#define HAVE_LPR 1
 #define LPR_EXTENSIONS_OSF 1
 
 #endif /* PASS2 */
@@ -441,7 +423,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-#define HAVE_LP 1
 #define LP_LIST_PRINTERS "/var/spool/lp/interface"
 #define LP_LIST_CLASSES "/var/spool/lp/class"
 
@@ -527,7 +508,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-#define HAVE_LP 1
 #define LP_LPSTAT_BROKEN 1
 #define LP_LIST_PRINTERS "/etc/lp/interface"
 #define LP_LIST_CLASSES "/etc/lp/class"
@@ -555,7 +535,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif
 #ifdef PASS2
 
-#define HAVE_LP 1
 #define LPR_EXTENSIONS_OSF 1
 
 #ifndef S_ISLNK
@@ -586,10 +565,8 @@ int seteuid(uid_t);		/* not defined in header files */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-#define HAVE_LP 1
 #define LP_LIST_PRINTERS "/etc/lp/printers"
 #define LP_LIST_CLASSES "/etc/lp/classes"
-#define LP_PRINTERS_CONF "/etc/printers.conf"
 
 /* Work around difference in when access
    to reserved ports is permitted. */
@@ -617,7 +594,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #define SAFE_PATH "/bin:/usr/bin:/usr/local/bin"
 #undef SENDMAIL_PATH
 #define SENDMAIL_PATH "/usr/sbin/sendmail"
-#define HAVE_LPR 1
 
 #endif /* PASS2 */
 #endif /* PPR_FREEBSD */
@@ -652,7 +628,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #endif
 #ifdef PASS2
 
-#undef HAVE_LPR
 #define COLON_FILENAME_BUG 1
 
 #endif /* PASS2 */

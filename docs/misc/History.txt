@@ -8261,8 +8261,9 @@ line was being parsed twice.
   in most cases where the reference was not to a command but to a spooler.
   [More description coming as work progresses.]
 
-* uprint/: removed all setuid bits and calls to setuid business in
-  libuprint.
+* uprint/: removed all setuid root and calls to setuid business in
+  libuprint.  Made uprint-lpr and uprint-lp setuid ppr so that they can get
+  the next lpr jobid.
 
 * unixuser/ppr-xgrant.c: by using setreuid() in stead of setuid() was able
   to set the real uid (necessary because xauth is a stinker and calls 
@@ -8276,6 +8277,24 @@ line was being parsed twice.
 * lprsrv/olprsrv.c: fixed to work with libuprint changes and to always 
   compile support for all supported spoolers.
 
-* lprsrv/lprsrv_print.c: fixed to work with renamed dest_claim_*() functions
-  from libuprint.
+* lprsrv/ fixed to work with renamed dest_claim_*() functions from libuprint 
+  and other changes in libuprint.  Changed to run most of the time with the 
+  euid and egid set to those of the user ppr (previousy the egid wasn't 
+  changed and the euid was set to that of the owner of /etc/ppr/uprint.conf).
+  When running a command as a user, the gid is now set as well since Inetd,
+  when asked to run lprsrv as root may run it under a gid that could allow
+  excessive access.
+
+* Changed all calls to setuid() and setgid(), except setuid(0) to setreuid()
+  and setregid() respectively and made sure that the return value is checked
+  except for setuid(0) calls that just prepare the way for the important ones.
+  Added paranoid checks too.  (setuid() is bad because it does completely
+  different things depending on whether the EUID is 0 or not.)
+
+* include/sysdep.h: deleted all references to HAVE_LP, HAVE_LPR, 
+  LP_PRINTERS_CONF.
+
+* papsrv/papsrv-kill.sh: removed, added to fixup/fixup_obsolete.sh.
+
+
 

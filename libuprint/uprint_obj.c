@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2003.
+** Last modified 19 February 2003.
 */
 
 #include "before_system.h"
@@ -261,10 +261,11 @@ int uprint_set_files(void *p, const char *files[])
     return 0;
     } /* end of uprint_set_files() */
 
-const char *uprint_set_user(void *p, uid_t uid, const char *user)
+const char *uprint_set_user(void *p, uid_t uid, gid_t gid, const char *user)
     {
     DODEBUG(("uprint_set_user(p=%p, uid=%ld, user=\"%s\")", p, (long int)uid, user));
     ((struct UPRINT *)p)->uid = uid;
+    ((struct UPRINT *)p)->gid = gid;
     ((struct UPRINT *)p)->user = user;
     return user;
     }
