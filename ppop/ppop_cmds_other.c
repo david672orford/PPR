@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 27 February 2004.
 */
 
 /*
@@ -1001,7 +1001,7 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 	return FALSE;		/* don't stop */
 	} /* end of ppop_cancel_byuser_item() */
 
-/* This is the function that ppop_cancel() calls: */
+/* This function is called by ppop_cancel() when no specific job is specified (I think). */
 static int ppop_cancel_byuser(char *destname, int inform)
 	{
 	char *list[2];
@@ -1067,6 +1067,9 @@ int ppop_cancel(char *argv[], int inform)
 		say_canceled(count, FALSE);
 
 		fclose(reply_file);
+
+		if(count == 0)
+			return EXIT_NOTFOUND;
 		}
 
 	return EXIT_OK;

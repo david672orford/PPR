@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_digest.pl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2002.
+# Last modified 27 February 2004.
 #
 
 require "paths.ph";
@@ -67,7 +67,7 @@ sub digest_nonce_create
 	{
 	my $domain = shift;
 	my $nonce_time = time();
-	print STDERR "digest_nonce_create(): \$nonce_time=$nonce_time, \$domain=\"$domain\"\n";
+	#print STDERR "digest_nonce_create(): \$nonce_time=$nonce_time, \$domain=\"$domain\"\n";
 	my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
 	return "$nonce_time:$nonce_hash";
 	}
@@ -82,7 +82,7 @@ sub digest_nonce_validate
 	my($nonce_time, $nonce_hash) = ($1, $2);
 
 	my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-	print STDERR "digest_nonce_validate(): \$nonce_time=$nonce_time, \$domain=\"$domain\", \$nonce_hash=\"$nonce_hash\", \$correct_nonce_hash=\"$correct_nonce_hash\"\n";
+	#print STDERR "digest_nonce_validate(): \$nonce_time=$nonce_time, \$domain=\"$domain\", \$nonce_hash=\"$nonce_hash\", \$correct_nonce_hash=\"$correct_nonce_hash\"\n";
 	die "Nonce hash is incorrect.\n" if($nonce_hash ne $correct_nonce_hash);
 
 	my $time_now = time();

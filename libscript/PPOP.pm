@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/PPOP.pm
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 November 2003.
+# Last modified 27 February 2004.
 #
 
 =head1 NAME
@@ -219,27 +219,27 @@ sub launch
 # Internal function
 #
 sub shutdown
-  {
-  my $self = shift;
-  defined($self) || croak;
+	{
+	my $self = shift;
+	defined($self) || croak;
 
-  # Flush and close the write pipe.
-  close($wtr);
+	# Flush and close the write pipe.
+	close($wtr);
 
-  # Drain the read pipe.
-  while(<$rdr>)
-    {
-    }
+	# Drain the read pipe.
+	while(<$rdr>)
+		{
+		}
 
-  # Close the read pipe.
-  close($rdr);
+	# Close the read pipe.
+	close($rdr);
 
-  # Get the exit status of the process.
-  waitpid($ppop_launched, 0);
+	# Get the exit status of the process.
+	waitpid($ppop_launched, 0);
 
-  # Clear the process-alive flag.
-  $ppop_launched = 0;
-  }
+	# Clear the process-alive flag.
+	$ppop_launched = 0;
+	}
 
 #
 # Internal function
@@ -253,21 +253,21 @@ sub read_lists
     #print STDERR "PPR::PPOP::read_lists()\n";
 
     while(<$rdr>)
-	{
-	#print STDERR $_;
-	chomp;
-	if(/^\*DONE\t([0-9]+)/)
-	    {
-	    return undef if($1 != 0);
-	    last;
-	    }
-	if(/^\*/)
-	    {
-	    croak "Unexpected line from ppop: $_\n";
-	    }
-	my @columns = split(/\t/, $_, 1000);
-	push(@result_rows, \@columns);
-	}
+		{
+		#print STDERR $_;
+		chomp;
+		if(/^\*DONE\t([0-9]+)/)
+		    {
+		    return undef if($1 != 0);
+		    last;
+		    }
+		if(/^\*/)
+		    {
+		    croak "Unexpected line from ppop: $_\n";
+		    }
+		my @columns = split(/\t/, $_, 1000);
+		push(@result_rows, \@columns);
+		}
 
     return @result_rows;
     }
@@ -290,26 +290,26 @@ sub do_it
     print $wtr join(' ', @_), "\n";
 
     while(1)
-	{
-	defined($_ = <$rdr>) || croak;
-	#print STDERR $_;
-	chomp;
-	if(/^\*DONE\t([0-9]+)/)
-	    {
-	    $exit_code = $1;
-	    last;
-	    }
-	if(/^\*/)
-	    {
-	    croak "Unexpected line from ppop: $_\n";
-	    }
-	push(@output, $_);
-	}
+		{
+		defined($_ = <$rdr>) || croak;
+		#print STDERR $_;
+		chomp;
+		if(/^\*DONE\t([0-9]+)/)
+			{
+			$exit_code = $1;
+			last;
+			}
+		if(/^\*/)
+			{
+			croak "Unexpected line from ppop: $_\n";
+			}
+		push(@output, $_);
+		}
 
     if($exit_code != 0)
-	{
-	return @output;
-	}
+		{
+		return @output;
+		}
 
     return ();
     }

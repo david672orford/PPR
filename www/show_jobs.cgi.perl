@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 February 2004.
+# Last modified 27 February 2004.
 #
 
 use 5.005;
@@ -370,7 +370,8 @@ if(defined($action))
 		# This should have been caught already.
 		die if(undef_to_empty($ENV{REMOTE_USER}) eq "");
 
-		# Become the remote user for PPR purposes.
+		# Become the remote user for PPR purposes.  If the remove user cooresponds to a 
+		# local user, become that user, otherwise let pprwww act as his proxy.
 		require "acl.pl";
 		if(defined(getpwnam($ENV{REMOTE_USER})) || user_acl_allows($ENV{REMOTE_USER}, "ppop"))
 			{
@@ -384,6 +385,8 @@ if(defined($action))
 		# Fetch the list of jobs to act on.
 		my @joblist = split(/ /, cgi_data_move("jobs", ""));
 
+		#print STDERR "Performing action $action using $action_routine() on jobs " . join(", ", @joblist), "\n";
+
 		# If empty list of jobs to action on,
 		if((scalar @joblist) < 1)
 			{
@@ -391,7 +394,7 @@ if(defined($action))
 			}
 
 		# If action is to move jobs,
-		elsif($action_routine eq 'move')
+		elsif($action_routine eq "move")
 			{
 			if($move_to eq "")
 				{
@@ -413,6 +416,8 @@ if(defined($action))
 			}
 		}
 
+	#print STDERR "Result: " . join(" ", @action_result), "\n";
+
 	# If any of the code above pushed unpleasant news onto the error message
 	# list, call the error_window() function to create a window with each list
 	# item as a line.  error_window() takes care of HTML() escaping the lines.
@@ -425,7 +430,8 @@ if(defined($action))
 }
 
 #----------------------------------------------------------------------------
-# If we haven't done it already, fetch a list of the available destinations.
+# If we haven't done it already, fetch a list of the available destinations
+# to which jobs could potentially be moved.
 #----------------------------------------------------------------------------
 if(!defined($data{dests}))
 	{

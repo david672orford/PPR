@@ -8838,7 +8838,7 @@ Internet Printing Protocol Work
 
 * libgu/gu_sscanf.c: added %f, replaced isdigit() with own function that
   returns true only for ASCII digits.  Added note to documentation to the
-  effect that it really is our purpose not to support locales since the
+  effect that we don't intend this function to support locales since the
   purpose of the function is to read configuration and queue files.
 
 * libppr/readqfile.c: changed sscanf() calls that read floats to gu_sscanf()
@@ -9056,18 +9056,23 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--20 February 2004.
+1.53a2, 20 February 2004--27 February 2004.
 
+* Put in a request for removal of junk and corrupt entries from the 
+  Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
+  fulfilled.
 
+* ppop/ppop_cmds_other.c:ppop_cancel(): fixed so that exit code is EXIT_NOTFOUND if
+  no jobs were found to delete.
 
+* www/cgi_error.pl: added code to present the message using alert() if window.open()
+  fails.
 
 
 +++++++++++++++++++++
 TODO
 
 * Make a script to convert papsrv.conf to "ppad addon papname" commands.
-
-* Get CVS cleaned up.
 
 * Create Debian package.
 

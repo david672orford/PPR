@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_error.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 December 2003.
+# Last modified 27 February 2004.
 #
 
 require 'cgi_intl.pl';
@@ -95,26 +95,34 @@ my $intro2 = $introduction;
 $intro2 =~ s/'/\\'/g;
 my $height = 150 + (25 * (scalar @lines));
 
+
 print <<"EndOfError1";
 <script>
 var w = window.open('', '_blank', 'width=600,height=$height');
-var d = w.document;
-d.write('<html><head><title>Operation Failed<' + '/title><' + '/head><body>\\n');
-d.write('<p>$intro2<br>\\n<pre>\\n');
+if(!w)
+	{
+	alert(${\javascript_string(join("\\n", @lines))});
+	}
+else
+	{
+	var di = w.document;
+	d.write('<html><head><title>Operation Failed<' + '/title><' + '/head><body>\\n');
+	d.write('<p>$intro2<br>\\n<pre>\\n');
 EndOfError1
 
 foreach my $i (@lines)
 	{
 	$i = html($i);
 	$i =~ s/'/\\'/g;
-	print "d.write('$i\\n');\n";
+	print "\td.write('$i\\n');\n";
 	}
 
 print <<"EndOfError2";
-d.write('<' + '/pre>\\n');
-d.write('<form><input type="submit" value="Close" onclick="window.close(self);return false"><' + '/form>\\n');
-d.write('<' + '/body><' + '/html>\\n');
-d.close();
+	d.write('<' + '/pre>\\n');
+	d.write('<form><input type="submit" value="Close" onclick="window.close(self);return false"><' + '/form>\\n');
+	d.write('<' + '/body><' + '/html>\\n');
+	d.close();
+	}
 </script>
 EndOfError2
 }

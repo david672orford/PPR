@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 July 2003.
+# Last modified 27 February 2004.
 #
 
 use lib "?";
@@ -1223,14 +1223,14 @@ sub do_cgi
 		{
 		print STDERR "CGI script demands authentication.\n";
 		my $challenge = auth_challenge($protection_domain, $stale);
-		print STDERR "WWW-Authenticate: $challenge\n";
+		#print STDERR "WWW-Authenticate: $challenge\n";
 		print "WWW-Authenticate: $challenge\r\n";
 		}
 
 	# If auth_verify() saved value for this header,
 	if(defined($auth_info))
 		{
-		print STDERR "Authentication-Info: $auth_info\n";
+		#print STDERR "Authentication-Info: $auth_info\n";
 		print "Authentication-Info: $auth_info\n";
 		}
 
