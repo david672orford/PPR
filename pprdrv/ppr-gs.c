@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 9 April 2003.
 */
 
 /*
@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
 	*/
 	if(!saw_DEVICE)
 		{
-		fprintf(stderr, "Unknown device: unspecified\n");
+		fprintf(stderr, "RIP: no device specified in RIP options\n");
 		return 1;
 		}
 

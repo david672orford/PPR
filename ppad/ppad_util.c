@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 9 April 2003.
 */
 
 #include "before_system.h"
@@ -223,7 +223,7 @@ void print_switchset(char *switchset)
 		argument[strcspn(argument, "|\n")] = '\0';	/* NULL terminate */
 
 		if(count > 0)
-			PUTC(' ');
+			putchar(' ');
 
 		/* if a long option, argument is actually option=argument */
 		if(optchar == '-')

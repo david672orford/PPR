@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 9 April 2003.
 */
 
 /*
@@ -34,7 +34,6 @@
 
 /* A useful macro considering how often we write to stdout. */
 #define PUTS(string) fputs(string, stdout)
-#define PUTC(c) fputc(c, stdout)
 
 /* functions and global variables in ppad.c */
 extern const char myname[];

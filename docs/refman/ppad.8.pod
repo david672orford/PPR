@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 April 2003.
+# Last modified 9 April 2003.
 #
 
 =head1 NAME
@@ -315,13 +315,12 @@ PPR has the ability to execute external Raster Image Processors such as
 Ghostscript to convert PostScript to a form usable by non-PostScript
 printers.  It does so when it finds a "*pprRIP:" line in the PPD file or if
 B<ppad rip> has been used to set a RIP in the printer's configuration file. 
-RIP settings set with this command override those in the PPD file.
+RIP settings set with the B<ppad rip> command override those in the PPD
+file.
 
 The parameter I<rip> indicates the Raster Image Processor to use.  Normally
 you will want to use a value of B<ppr-gs>.  The B<ppr-gs> RIP is a small
-wrapper program for Ghostscript.  It will look for the B<gs> program first
-in F</usr/lib/ppr-gs/bin>, then in F</usr/local/bin>, and finally in
-F</usr/bin>.
+wrapper program for Ghostscript.
 
 The parameter I<output_language> is the name of the printer language which
 the selected Ghostscript driver will produce output in.  It is used as the
@@ -331,36 +330,69 @@ doesn't matter, you can set it to "x".
 
 The option I<options> contains options for the RIP.  When using the
 B<ppr-gs> RIP these should include the Ghostscript option to select the
-proper output device driver.  For example, for an HP DeskJet 500, you would
-use a B<ppad> command like this:
+proper output device driver.
+
+Here is an example command which will choose B<ppr-gs> as the RIP and select
+Ghostscript's driver for a HP DeskJet 500:
 
     $ ppad rip myprn ppr-gs pcl -sDEVICE=djet500
 
 You should include such other Ghostscript options as well help to configure
-Ghostscript for your particular printer.  You should options such as
-B<-sOutputFile=>, B<-q>, or B<-dSAFER> since these are supplied
+Ghostscript for your particular printer.  You should not include options
+such as B<-sOutputFile=>, B<-q>, or B<-dSAFER> since these are supplied
 automatically by B<ppr-gs>.
 
-If you are writing a PPD file, the C<*pprRIP:> line that would coorespond to
-the example above is:
+The RIP B<ppr-gs> also supports CUPS drivers.  Simply select the special
+CUPS PPD file.  PPR understands the special lines in a CUPS PPD file that
+identify the CUPS driver program that converts the output of Ghostscript to
+the printer's language.  CUPS drivers will not work unless their PPD files
+are selected using the B<ppad ppd> command, so there generally isn't much
+need to using the B<ppad rip> command with them as PPR reads the RIP
+information right out of the PPD file.  Use B<ppad show> to see what it
+comes up with.  You will notice that CUPS drivers use an option called
+B<cups=> which specifies the name of the CUPS driver program.
+
+The RIP B<ppr-gs> also supports IJS drivers.  To select an IJS driver, use a
+command like this one:
+
+    $ ppad rip myprn ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
+
+The B<ijs=> option takes three arguments.  They are IJS program name,
+printer make, and printer model.  The set of allowable values for the last
+two depends on the IJS program.  The example above is for an Epson C60
+inkjet printer.  Of course, additional options may be specified:
+
+    $ ppad rip myprn ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 \
+        -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
+
+You will have to consult the documentation for the IJS driver to find out
+about available options.
+
+If you are writing a PPD file and want to include default PPR RIP
+information, you should include a line like this one.
 
     *pprRIP: ppr-gs pcl -sDEVICE=djet500
 
-Any printer to which you assign a PPD file with this line will behave just
-as if you had entered the B<ppad rip> command shown previously.  That is,
-unless you use the B<ppad rip> command to override the RIP name, output
-language, and options specified in the PPD file.  If you do override them
-and later wish to revert to the RIP specified in the PPD file, execute
-B<ppad rip> with just the printer name, like this:
+If you assign a PPD file with this line to a new printer but don't use the
+B<ppad rip> command, it will behave as if you had entered a B<ppad rip>
+command like this:
+
+    $ ppad rip myprn ppr-gs pcl -sDEVICE=djet500
+
+Remember though that this is a default which the system administrator will be
+able to override using the B<ppad rip> command.  If he does override the
+default and later wants to revert to the default, he can use this command.
 
     $ ppad rip myprn
 
-Of course, if there are no RIP settings in the PPD file, then no external
-RIP will be used and the printer will be expected to handle PostScript
-itself.  To see if an external RIP is being used, run B<ppad show> and look
-for a line begining with "RIP:".
+Of course, if he were using a different PPD file, one with no RIP settings,
+then this command would disable the external RIP and the printer will be
+expected to handle PostScript itself.  To see if an external RIP is being
+used, run B<ppad show> and look for a line begining with "RIP:".  If a
+default from the PPD file is being used, there will be a note that so
+indicates.
 
-If you want to supply your own RIP to use instead of B<ppr-gs>, you should
+If you want make a RIP that you can use instead of B<ppr-gs>, you should
 create a program and put it in F</usr/lib/ppr/lib/>.  It should connect
 stdin, stdout, and stderr to the cooresponding file descriptors of the
 PostScript interpreter and should send the print date to file descriptor 3. 

@@ -8572,6 +8572,10 @@ line was being parsed twice.
 
 * www/: minor style fixes for buttons.
 
+* ppad/ppad_printer.c: changed human-readable ppad show output to better
+  groups things and to indent second and subsequent lines of logical groups.
+
+
 
 
 +++++++++++++++++++++
