@@ -31,4 +31,3 @@ clean:
 	rm -f $(INTERMEDIATES) $(OBJS) $(PROGS) *~
 
 # end of file
-

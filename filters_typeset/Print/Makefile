@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/filters_typeset/Print/Makefile
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,11 +10,10 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 25 December 1999.
-#
+# Last modified 5 August 2002.
 #
 
-include ../../include/global.mk
+include ../../Makefile.conf
 
 all:
 

@@ -303,40 +303,40 @@ else
 # This is the other way.  We try to do it with nested tables.
 print <<"Form13";
 <table><tr>
-	<th>${\H_("Name:")}</th><td width="${\($CHARWIDTH * 10)}">$printer</td>
-	<th>${\H_("Comment:")}</th><td width="${\($CHARWIDTH * 32)}">$comment</td>
+	<th>${\H_NB_("Name:")}</th><td width="${\($CHARWIDTH * 10)}">$printer</td>
+	<th>${\H_NB_("Comment:")}</th><td width="${\($CHARWIDTH * 32)}">$comment</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Status:")}</th><td width="${\($CHARWIDTH * 28)}">$status</td>
-	<th>${\H_("Retry:")}</th><td width="${\($CHARWIDTH * 4)}">$retry</td>
-	<th>${\H_("Countdown:")}</th><td width="${\($CHARWIDTH * 4)}">$countdown</td>
+	<th>${\H_NB_("Status:")}</th><td width="${\($CHARWIDTH * 28)}">$status</td>
+	<th>${\H_NB_("Retry:")}</th><td width="${\($CHARWIDTH * 4)}">$retry</td>
+	<th>${\H_NB_("Countdown:")}</th><td width="${\($CHARWIDTH * 4)}">$countdown</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Operation:")}</th><td width="${\($CHARWIDTH * 25)}">$operation&nbsp;</td>
-	<th>${\H_("Page clock:")}</th><td width="${\($CHARWIDTH * 15)}">$page_clock&nbsp;</td>
+	<th>${\H_NB_("Operation:")}</th><td width="${\($CHARWIDTH * 25)}">$operation&nbsp;</td>
+	<th>${\H_NB_("Page clock:")}</th><td width="${\($CHARWIDTH * 15)}">$page_clock&nbsp;</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Printer status:")}</th><td width="${\($CHARWIDTH * 40)}">$printer_lw_status&nbsp;</td>
+	<th>${\H_NB_("Printer status:")}</th><td width="${\($CHARWIDTH * 40)}">$printer_lw_status&nbsp;</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Current job:")}</th><td width="${\($CHARWIDTH * 20)}">$display_job&nbsp;</td>
-	<th>${\H_("For:")}</th><td width="${\($CHARWIDTH * 25)}">$forwhom&nbsp;</td>
+	<th>${\H_NB_("Current job:")}</th><td width="${\($CHARWIDTH * 20)}">$display_job&nbsp;</td>
+	<th>${\H_NB_("For:")}</th><td width="${\($CHARWIDTH * 25)}">$forwhom&nbsp;</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_total&nbsp;</td>
-	<th>${\H_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_sent&nbsp;</td>
-	<th>${\H_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
+	<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_total&nbsp;</td>
+	<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">$bytes_sent&nbsp;</td>
+	<th>${\H_NB_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
 </tr></table>
 
 <table><tr>
-	<th>${\H_("Total pages:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages&nbsp;</td>
-        <th>${\H_("Pages started:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_started&nbsp;</td>
-	<th>${\H_("Pages completed:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_completed&nbsp;</td>
+	<th>${\H_NB_("Total pages:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages&nbsp;</td>
+        <th>${\H_NB_("Pages started:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_started&nbsp;</td>
+	<th>${\H_NB_("Pages completed:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_completed&nbsp;</td>
 </tr></table>
 Form13
 }
@@ -387,9 +387,9 @@ if($pages > 0 && $pages_started <= $pages && $pages_completed <= $pages && $page
     die if($width3 < 0 || $width3 > $progress_width_total);
 
     print "<span class=\"label\">\n";
-        print "<span class=\"completed\">", H_("Pages Completed"), "</span>/" if($width1 > 0);
-    	print "<span class=\"started\">", H_("Pages Started"), "</span>/";
-    	print "<span class=\"unstarted\">", H_("Pages Unstarted"), "</span>";
+        print "<span class=\"completed\">", H_NB_("Pages Completed"), "</span>/" if($width1 > 0);
+    	print "<span class=\"started\">", H_NB_("Pages Started"), "</span>/";
+    	print "<span class=\"unstarted\">", H_NB_("Pages Unstarted"), "</span>";
     print "</span><br>\n";
 	print "<img class=\"left\" src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>"; # no "\n"!
 	print "<img class=\"middle\" src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width2>"; # no "\n"!

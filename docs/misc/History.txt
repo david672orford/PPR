@@ -7770,4 +7770,8 @@ line was being parsed twice.
   "-sOutputFile="| cat - >&3" for Ghostscript if "-sOutputFile=" was already
   supplied.
 
+* www/prn_properties.cgi.perl: fixed numberous bugs in "RIP" tab which were
+  related to the radio button and the "PPD" and "Custom" areas.  This work
+  included adding "rip_ppd" and "rip_which" to the "ppad -M show" output.
+
 
