@@ -1,4 +1,6 @@
 *.cgi
 ppr-web
 ppr-passwd
+ppr-httpd
+ppr-push-httpd
 
