@@ -803,10 +803,31 @@ feature is very new, this list is subject to change.</para>
 <variablelist>
 
 <varlistentry>
-	<term>product</term>
+	<term>Product=</term>
 	<listitem>
 		<para>The PostScript product name.  The value should be the
 		bare name without surounding partheses.</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>Version=</term>
+	<listitem>
+		<para>The PostScript interpreter's version number.</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>Revision==</term>
+	<listitem>
+		<para>The PostScript interpreter's revision number.</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>hrDeviceDescr=</term>
+	<listitem>
+		<para>???</para>
 	</listitem>
 </varlistentry>
 
