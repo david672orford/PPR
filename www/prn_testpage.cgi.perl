@@ -42,15 +42,15 @@ require "cgi_run.pl";
 $GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
 %IMAGES = (
 	"Ghostscript Golfer" =>
-		["$GS_EXAMPLES/golfer.eps", 0.40],
+		["$GS_EXAMPLES/golfer.eps", 0.25],
 	"Ghostscript Tiger" => 
-		["$GS_EXAMPLES/tiger.eps", 0.40]
+		["$GS_EXAMPLES/tiger.eps", 0.25]
 	"Ghostscript Color Circle" => 
-		["$GS_EXAMPLES/colorcir.ps", 0.40]
+		["$GS_EXAMPLES/colorcir.ps", 0.25]
 	"Ghostscript Escher" => 
-		["$GS_EXAMPLES/escher.ps", 0.40]
+		["$GS_EXAMPLES/escher.ps", 0.25]
 	"Ghostscript Dore Tree" => 
-		["$GS_EXAMPLES/doretree.ps", 0.40]
+		["$GS_EXAMPLES/doretree.ps", 0.25]
 	);
 
 # Eliminate those that aren't installed.

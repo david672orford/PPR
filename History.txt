@@ -9281,7 +9281,7 @@ Internet Printing Protocol Work
 * ppuser/ppuser.c: changed call to strtof() to call to (float)strtod() 
   because strtof() is part of C99 whereas strtod() is part of C89.
 
-* misc/ppr-testpage.c: added --test-spoked
+* misc/ppr-testpage.c: added --test-spoked; reduced default --eps-scale to 0.4.
 
 * libscripts/readppd.pl: ppd_open() now returns the name of the PPD file which
   it opened.
@@ -9290,7 +9290,9 @@ Internet Printing Protocol Work
 
 * www/prn_testpage.cgi.perl: added support for --test-spoked; changed from
   run() to the new run_pipeline(); added [Back] button on the last page so 
-  that one may go back, choose new options, and print another test page.
+  that one may go back, choose new options, and print another test page;
+  changed scaling factor for Ghostscript test pages to 0.25; added additional
+  Ghostscript test pages.
 
 * samba/ppr2samba.c: changed message produced by --nocreate when 
   smb-include.conf is absent to make it clearer that it is not an error 
@@ -9302,7 +9304,7 @@ Internet Printing Protocol Work
 
 * z_install_end/install_inetd_conf.sh: added check for Inetd at
   /usr/etc/inetd.  (This is the wierd location used by some early System V
-  TCP/IP implemenations.)
+  TCP/IP implementations.)
 
 * libgu/wordwrap.c: added gu_wrap_printf() and gu_wrap_eprintf().
 
@@ -9316,6 +9318,9 @@ Internet Printing Protocol Work
   to test the copies count rather than the LPR/LPD mechanism.  (Many thanks
   to Francisco Gonzalez of UC Davis for doing the legwork required to narrow
   this problem down.)
+
+* z_install_end/install_bin_links.sh: added ppr-index.
+
 
 
 TODO

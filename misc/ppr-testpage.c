@@ -393,7 +393,7 @@ int main(int argc, char *argv[])
 	const char *PageSize = "Letter";
 	const char *eps_file = SHAREDIR"/www/images/pprlogo2.eps";
 	int eps_margin = 40;
-	double eps_scale = 1.0;
+	double eps_scale = 0.40;
 	double ph, pw;				/* page width and height */
 	int x, y;					/* work variables */
 	gu_boolean test_grayscale = FALSE;

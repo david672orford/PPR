@@ -60,7 +60,7 @@ indicated EPS file.
 =item --eps-scale=I<float>
 
 Multiply the size of the EPS file by the indicated factor.  A factor of 1.0
-will print the EPS figure out its intrisic size.
+will print the EPS figure at its intrisic size.
 
 =item --test-grayscale
 
