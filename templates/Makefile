@@ -46,8 +46,8 @@ xxx$(DOTEXE): xxx.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
 
 #=== Housekeeping ===========================================================
 

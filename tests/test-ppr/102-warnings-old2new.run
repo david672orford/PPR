@@ -9,7 +9,7 @@
 $TESTBIN/clear_output
 
 # Send a job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -P TrustMe -w peeve --responder none --cache-store=uncached <<EndOfSample || echo "ppr failed: $?"
+$PPR_PATH -d regression-test1 -P TrustMe -w peeve --responder none --cache-store=uncached <<EndOfSample || echo "ppr failed: $?"
 %!PS-Adobe-3.0
 %%Pages: 2
 %%EndComments

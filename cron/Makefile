@@ -51,9 +51,9 @@ ppr-index$(DOTEXE): ppr-index.$(OBJ) $(USELIBS)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib $(PROGS_LIB)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin $(PROGS_BIN)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(PROGS_BIN_SETUID)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIBDIR) $(PROGS_LIB)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(BINDIR) $(PROGS_BIN)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) $(PROGS_BIN_SETUID)
 
 #=== Housekeeping ===========================================================
 

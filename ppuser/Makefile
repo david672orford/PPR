@@ -49,7 +49,7 @@ ppuser$(DOTEXE): \
 #=== Install ================================================================
 
 install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(BINDIR) $(BIN_PROGS)
 
 #=== Housekeeping ===========================================================
 

@@ -70,7 +70,7 @@ uprint_rfc1179$(DOTEXE): uprint_rfc1179.$(OBJ) $(USELIBS)
 
 install: $(TARGETS) $(DATA)
 	$(INSTALLDATA) $(CONFDIR) $(DATA)
-	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib uprint_rfc1179$(DOTEXE)
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(LIBDIR) uprint_rfc1179$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

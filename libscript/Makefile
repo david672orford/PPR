@@ -122,10 +122,10 @@ interface.tcl: ../include/interface.h
 #=== Install ================================================================
 
 install: all
-	$(INSTALLDATA) $(HOMEDIR)/lib $(BUILT_LIBS) $(UNBUILT_LIBS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(BUILT_BINS)
-	$(MAKE_NEW_DIR) $(HOMEDIR)/lib/PPR
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib/PPR $(PPR_LIBS)
+	$(INSTALLDATA) $(LIBDIR) $(BUILT_LIBS) $(UNBUILT_LIBS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(BUILT_BINS)
+	$(MAKE_NEW_DIR) $(LIBDIR)/PPR
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR)/PPR $(PPR_LIBS)
 
 #=== Housekeeping ===========================================================
 

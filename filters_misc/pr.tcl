@@ -41,9 +41,9 @@
 #
 
 # These are filled in when the script is installed.
-set HOMEDIR "/usr/lib/ppr"
-set TEMPDIR "/tmp"
-set PR "/usr/bin/pr"
+set LIBDIR "?"
+set TEMPDIR "?"
+set PR "?"
 
 # Process the options
 regsub "title=\"" [lindex $argv 0] "\"title=" options
@@ -72,7 +72,7 @@ set tempfile ""
 set result [catch {
 
     # Create a temporary file.
-    set tempfile [exec $HOMEDIR/lib/mkstemp $TEMPDIR/ppr-pr-XXXXXX]
+    set tempfile [exec $LIBDIR/mkstemp $TEMPDIR/ppr-pr-XXXXXX]
 
     # Now, run pr. 
     exec $PR $arglist -h $title >$tempfile 2>@stderr

@@ -224,7 +224,7 @@ void run_standalone(int server_port)
 
 	/* By convention, PPR processes run in the PPR home
 	   directory. */
-	chdir(HOMEDIR);
+	chdir(LIBDIR);
 
 	DODEBUG_MAIN(("entering standalone mode"));
 	create_lock_file();

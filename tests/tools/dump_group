@@ -5,12 +5,12 @@ cat $CONFDIR/groups/$1
 echo
 
 echo "Use ppad to dump the configuration..."
-$HOMEDIR/bin/ppad group show $1
+$PPAD_PATH group show $1
 echo "ppad: $?"
 echo
 
 echo "Do it again in machine-readable mode..."
-$HOMEDIR/bin/ppad -M group show $1
+$PPAD_PATH -M group show $1
 echo "ppad: $?"
 echo
 

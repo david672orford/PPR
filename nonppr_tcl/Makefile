@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/nonppr_tcl/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
@@ -34,14 +34,14 @@ include ../Makefile.conf
 # There are additional things needed for install.
 #CC=gcc
 #CFLAGS=-O2
-#HOMEDIR=
+#BINDIR=
 #OBJ=o
 #LIBCMD=ar -cr
 #RANLIB=ranlib
 #DOTEXE=
 
 # Directory from which applications will reference the library of Tcl scripts.
-TCL_LIBRARY = $(HOMEDIR)/lib
+TCL_LIBRARY = $(LIBDIR)
 
 #
 # Mathematical functions like sin and atan2 are enabled for expressions
@@ -83,8 +83,7 @@ GENERIC_OBJS=regexp.$(OBJ) \
 	tclParse.$(OBJ) \
 	tclProc.$(OBJ) \
 	tclUtil.$(OBJ) \
-	tclVar.$(OBJ) \
-	gu.$(OBJ)
+	tclVar.$(OBJ) 
 
 UNIX_OBJS=panic.$(OBJ) \
 	tclEnv.$(OBJ) \
@@ -110,7 +109,7 @@ libtcl.$(LIBEXT): $(OBJS)
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
 
-ppr-tclsh$(DOTEXE): tclAppInit.$(OBJ) libtcl.$(LIBEXT)
+ppr-tclsh$(DOTEXE): ppr-tclsh.$(OBJ) libtcl.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(CC) $(CC_SWITCHES) -o $@ $^ $(MATH_LIBS)
 
 #=== Test ===================================================================
@@ -124,7 +123,7 @@ tcltest$(DOTEXE): tclTest.$(OBJ) libtcl.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(BIN_PROGS)
 
 #=== Housekeeping ===========================================================
 

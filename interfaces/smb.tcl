@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 21 January 2005.
 #
 
 #########################################################################
@@ -43,10 +43,10 @@
 #
 #########################################################################
 
-cd @HOMEDIR@
+cd @LIBDIR@
 
 # source the file which defines the exit codes
-source "lib/interface.tcl"
+source "./interface.tcl"
 
 if {[string compare [lindex $argv 0] "--probe"] == 0} {
 	puts stderr "The interface program \"`basename $0`\" does not support probing."
@@ -59,10 +59,10 @@ set address [lindex $argv 1]
 set options [lindex $argv 2]
 
 # Look in ppr.conf to find out where smbclient is.
-set SMBCLIENT [exec lib/ppr_conf_query samba smbclient 0 /usr/local/samba/bin/smbclient]
+set SMBCLIENT [ppr_conf_query samba smbclient 0 /usr/local/samba/bin/smbclient]
 
 if {![file exists $SMBCLIENT]} {
-	exec lib/alert $printer TRUE "$SMBCLIENT does not exist.  Install it or adjust @CONFDIR@/ppr.conf." >@stdout 2>@stderr
+	ppr_alert $printer TRUE "$SMBCLIENT does not exist.  Install it or adjust @CONFDIR@/ppr.conf."
 	exit $EXIT_PRNERR_NORETRY
 	}
 
@@ -72,12 +72,12 @@ switch -regexp -- $address {
 		#puts "Address $address is ok"
 		}	
 	{^$} {
-		exec lib/alert $printer TRUE "The printer address is empty." >@stdout 2>@stderr
+		ppr_alert $printer TRUE "The printer address is empty."
 		exit $EXIT_PRNERR_NORETRY
 		}	
 	default {
-		exec lib/alert $printer TRUE  "Syntax error in printer address.  Address syntax is \\\\server\\printer where server" >@stdout 2>@stderr
-		exec lib/alert $printer FALSE "is the NetBIOS name of the server and printer is the SMB share name of the queue." >@stdout 2>@stderr
+		ppr_alert $printer TRUE  "Syntax error in printer address.  Address syntax is \\\\server\\printer where server"
+		ppr_alert $printer FALSE "is the NetBIOS name of the server and printer is the SMB share name of the queue."
 		exit $EXIT_PRNERR_NORETRY
 		}	
 	}
@@ -95,7 +95,7 @@ foreach opt $options {
 			set smbpassword $value
 			}
 		default {
-			exec lib/alert "$printer" TRUE "Unrecognized interface option: $opt" >@stdout 2>@stderr
+			ppr_alert "$printer" TRUE "Unrecognized interface option: $opt"
 			exit $EXIT_PRNERR_NORETRY
 			}
 		}
@@ -138,25 +138,26 @@ while {[gets $f line] >= 0} {
 			}
 		"*Error writing file:*" {
 			regexp {Error writing file: (.+)} $line junk error
-			set err_msg "Smbclient reports error \"$error\" when writing to $address."
+			set err_msg "Smbclient reports error \"$error\" when writing to \"$address\"."
 			}
 		"NT_STATUS_ACCESS_DENIED opening remote file *" {
-			set err_msg "Access to $address is denied to user $smbuser."
+			set err_msg "Access to \"$address\" is denied to user \"$smbuser\"."
 			}
 		default { 
-			# anything else goes into the alert log just in case
-			exec lib/alert $printer $first "smbclient: $line" >@stdout 2>@stderr
+			# Anything else goes into the alert log just in case.  We set
+			# first to "FALSE" so that the date/time line won't appear 
+			# twice if another message is sent to the printer's alert log.
+			ppr_alert $printer $first "smbclient: $line"
 			set first "FALSE"
 			}
 		}	
 	}
 
 if {[string length $err_msg] != 0} {
-		exec lib/alert $printer TRUE "$err_msg" >@stdout 2>@stderr
+		ppr_alert $printer $first "$err_msg"
 		exit $EXIT_PRNERR
 	} else {
 		exit $EXIT_PRINTED
 	}
 
-# vim: set tabstop=4:
-
+# vim: set tabstop=4 nowrap:

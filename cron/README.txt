@@ -1,5 +1,5 @@
 mouse:~ppr/src/cron/README.txt
-5 March 2003
+17 January 2005
 
 ======================
  cron_daily.sh
@@ -14,7 +14,7 @@ These scripts run things such as ppr-clean and ppr-fontindex.
 ======================
 
 This program removes lost temporary files left behind by PPR.  It is
-installed in $HOMEDIR/bin/.  This is run from cron_daily.
+installed in $BINDIR.  This is run from cron_daily.
 
 
 

@@ -78,7 +78,7 @@ ppr-gs$(DOTEXE): ppr-gs.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(LIB_PROGS) $(LIB_DATA)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
 	$(INSTALLDATA) $(SHAREDIR)/lib $(LIB_DATA)
 
 #=== Housekeeping ===========================================================

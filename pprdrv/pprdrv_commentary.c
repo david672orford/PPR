@@ -126,7 +126,7 @@ static void commentary_spawn(const struct COMMENTATOR *com, int category, const 
 		}
 	else
 		{
-		ppr_fnamef(fname, "%s/%s", COMDIR, com->progname);
+		ppr_fnamef(fname, "%s/%s", RESPONDERDIR, com->progname);
 		progfile = fname;
 		}
 

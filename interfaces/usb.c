@@ -252,7 +252,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 		}
 
 	/* We can't use control-T status updates if the job isn't PostScript. */
-	if(int_cmdline.barbarlang[0])
+	if(strcmp(int_cmdline.PDL, "postscript") != 0)
 		options->idle_status_interval = 0;
 
 	} /* end of parse_options() */
@@ -408,13 +408,20 @@ int int_main(int argc, char *argv[])
 	int_cmdline_set(argc, argv);
 
 	DODEBUG(("============================================================"));
-	DODEBUG(("\"%s\", \"%s\", \"%s\", %d, %d, %d",
+	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, PDL=\"%s\", routing=\"%s\", jobname=\"%s\", forline=\"%s\", title=\"%s\"",
+		int_cmdline.int_basename,
 		int_cmdline.printer,
 		int_cmdline.address,
 		int_cmdline.options,
 		int_cmdline.jobbreak,
 		int_cmdline.feedback,
-		int_cmdline.codes));
+		int_cmdline.codes,
+		int_cmdline.PDL,
+		int_cmdline.routing,
+		int_cmdline.jobname,
+		int_cmdline.forline,
+		int_cmdline.title
+		));
 
 	/* If the address begins with a slash, it must be a device node name.
 	 * Otherwise, pass it to the function which looks thru the USB devices

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -132,8 +132,8 @@ $addprn_wizard_table = [
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "_missing_");
 
-		my @ppr_testpage = ("$HOMEDIR/bin/ppr-testpage");
-		my @ppr = ("$HOMEDIR/bin/ppr", "-d", $name,
+		my @ppr_testpage = ("$BINDIR/ppr-testpage");
+		my @ppr = ("$PPR_PATH", "-d", $name,
 			"-m", "pprpopup",
 			"-r", "$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}"
 			);

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -390,7 +390,7 @@ if [ "$NATIVE_CC" = "yes" ]
 #
 # Create a list of default install locations.
 #
-HOMEDIR=$opt_libdir/ppr
+LIBDIR=$opt_libdir/ppr
 SHAREDIR=$opt_datadir/ppr
 CONFDIR=$opt_sysconfdir/ppr
 VAR_SPOOL_PPR=$opt_spooldir/ppr
@@ -411,9 +411,9 @@ echo "you accept the defaults as all the documentation assumes"
 echo "that you are using the default directories."
 echo
 
-$EECHO "PPR home directory [$HOMEDIR]: \c"
+$EECHO "PPR lib directory [$LIBDIR]: \c"
 read answer
-if [ -n "$answer" ]; then HOMEDIR="$answer"; fi
+if [ -n "$answer" ]; then LIBDIR="$answer"; fi
 echo
 
 $EECHO "PPR share directory [$SHAREDIR]: \c"
@@ -456,7 +456,7 @@ echo
 fi
 
 echo "\$CONFDIR=$CONFDIR"
-echo "\$HOMEDIR=$HOMEDIR"
+echo "\$LIBDIR=$LIBDIR"
 echo "\$SHAREDIR=$SHAREDIR"
 echo "\$VAR_SPOOL_PPR=$VAR_SPOOL_PPR"
 echo "\$TEMPDIR=$TEMPDIR"
@@ -933,7 +933,7 @@ export GROUP_PPR=$GROUP_PPR
 export USER_PPRWWW=$USER_PPRWWW
 
 # Directory for program files and such.
-export HOMEDIR=$HOMEDIR
+export LIBDIR=$LIBDIR
 
 # Directory for architecture independent files
 export SHAREDIR=$SHAREDIR
@@ -964,10 +964,10 @@ export WWWDIR=$(SHAREDIR)/www
 export MANDIR=$(SHAREDIR)/man
 
 # Directory for the CGI programs for the WWW interface
-export CGI_BIN=$(HOMEDIR)/cgi-bin
+export CGI_BIN=$(LIBDIR)/cgi-bin
 
 # Directory for Perl libraries
-export PERL_LIBDIR=$(HOMEDIR)/lib
+export PERL_LIBDIR=$(LIBDIR)
 
 #----------------------------------------
 # Various configuration directories
@@ -988,6 +988,7 @@ export MOUNTEDDIR=$(CONFDIR)/mounted
 #----------------------------------------
 export RUNDIR=$(VAR_SPOOL_PPR)/run
 export VAR_PRINTERS=$(VAR_SPOOL_PPR)/printers
+export BINDIR=$(LIBDIR)/bin
 
 #----------------------------------------
 # Various configuration files
@@ -1018,7 +1019,7 @@ export LW_MESSAGES_CONF=$(SHAREDIR)/lib/lw-messages.conf
 # PJL USTATUS DEVICE errors file
 export PJL_MESSAGES_CONF=$(SHAREDIR)/lib/pjl-messages.conf
 # for ppr -H editps
-export EDITPSCONF=$(HOMEDIR)/editps/editps.conf
+export EDITPSCONF=$(LIBDIR)/editps/editps.conf
 # map characters set to PostScript encodings
 export CHARSETSCONF=$(SHAREDIR)/lib/charsets.conf
 # list of fonts and the PostScript encodings they support
@@ -1042,13 +1043,11 @@ export PPRD_LOCKFILE=$(RUNDIR)/pprd.pid
 # Directories where the spooler and friends find components:
 #----------------------------------------
 # directory for input filter programs
-export FILTDIR=$(HOMEDIR)/filters
+export FILTDIR=$(LIBDIR)/filters
 # directory for interface programs
-export INTDIR=$(HOMEDIR)/interfaces
-# directory for commentator programs
-export COMDIR=$(HOMEDIR)/commentators
+export INTDIR=$(LIBDIR)/interfaces
 # responder programs
-export RESPONDERDIR=$(HOMEDIR)/responders
+export RESPONDERDIR=$(LIBDIR)/responders
 # our PPD file library (must be absolute)
 export PPDDIR=$(SHAREDIR)/PPDFiles
 # pre-loaded cache files
@@ -1090,14 +1089,14 @@ export PRINTLOG_PATH=$(LOGDIR)/printlog
 #----------------------------------------
 # Paths to invoke various PPR components
 #----------------------------------------
-export PPRDRV_PATH=$(HOMEDIR)/lib/pprdrv
-export PPAD_PATH=$(HOMEDIR)/bin/ppad
-export PPOP_PATH=$(HOMEDIR)/bin/ppop
-export PPR_PATH=$(HOMEDIR)/bin/ppr
-export TBCP2BIN_PATH=$(HOMEDIR)/lib/tbcp2bin
-export PPR2SAMBA_PATH=$(HOMEDIR)/bin/ppr2samba
-export TAIL_STATUS_PATH=$(HOMEDIR)/lib/tail_status
-export PPR_TCLSH=$(HOMEDIR)/bin/ppr-tclsh
+export PPRDRV_PATH=$(LIBDIR)/pprdrv
+export PPAD_PATH=$(LIBDIR)/bin/ppad
+export PPOP_PATH=$(LIBDIR)/bin/ppop
+export PPR_PATH=$(LIBDIR)/bin/ppr
+export TBCP2BIN_PATH=$(LIBDIR)/tbcp2bin
+export PPR2SAMBA_PATH=$(BINDIR)/ppr2samba
+export TAIL_STATUS_PATH=$(LIBDIR)/tail_status
+export PPR_TCLSH=$(BINDIR)/ppr-tclsh
 
 ===EndOfHere16===
 

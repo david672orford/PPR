@@ -1,9 +1,9 @@
 #! /bin/sh
 
 # Make sure the test queue is ok:
-$HOMEDIR/bin/ppop list regression-test1
+$PPOP_PATH list regression-test1
 echo "clear_output: ppop: $?"
-$HOMEDIR/bin/ppop status regression-test1
+$PPOP_PATH status regression-test1
 echo "clear_output: ppop: $?"
 
 # Remove any previous output:

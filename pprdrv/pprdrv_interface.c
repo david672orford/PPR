@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_interface.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -260,7 +260,7 @@ void interface_fault_check(void)
 ** This routine sets the global variables intstdout,
 ** intstdin, and intpid.
 */
-static void start_interface(const char *BarBarPDL)
+static void start_interface(const char *PDL)
 	{
 	const char *function = "start_interface";
 	int _stdin[2];						/* for opening pipe to interface */
@@ -271,7 +271,7 @@ static void start_interface(const char *BarBarPDL)
 	char feedback_str[2];				/* feedback setting converted to ASCII */
 	char codes_str[2];
 
-	DODEBUG_INTERFACE(("%s(\"%s\")", function, BarBarPDL ? BarBarPDL : ""));
+	DODEBUG_INTERFACE(("%s(PDL=\"%s\")", function, PDL ? PDL : ""));
 
 	/* Clear a flag which is set by interface_close(). */
 	interface_fault_check_disable = FALSE;
@@ -383,10 +383,10 @@ static void start_interface(const char *BarBarPDL)
 			printer.Address,
 			printer.Options,
 			jobbreak_str, feedback_str, codes_str,
-			QueueFile,
+			PDL,
 			job.Routing ? job.Routing : "",
+			QueueFile,
 			job.For ? job.For : "",
-			BarBarPDL ? BarBarPDL : "",
 			job.Title ? job.Title : "",
 			(char*)NULL);
 
@@ -611,12 +611,12 @@ static void signal_jobbreak(void)
 ** Send setup strings to the printer.  We use the information
 ** from the "JobBreak: " line to decide what to send.
 */
-static const char *setup_BarBarPDL;
-static void printer_setup(const char *BarBarPDL, int iteration)
+static const char *setup_PDL;
+static void printer_setup(const char *PDL, int iteration)
 	{
-	DODEBUG_INTERFACE(("printer_setup(\"%s\")", BarBarPDL ? BarBarPDL : ""));
+	DODEBUG_INTERFACE(("printer_setup(PDL=\"%s\")", PDL ? PDL : ""));
 
-	setup_BarBarPDL = BarBarPDL;
+	setup_PDL = PDL;
 
 	/*
 	** Now, act according to jobbreak method.
@@ -627,7 +627,7 @@ static void printer_setup(const char *BarBarPDL, int iteration)
 			/* If this is a PostScript job and this is the first job, then
 			   send a control-d to clear the printer.
 			   */
-			if(iteration == 1 && !BarBarPDL)
+			if(iteration == 1 && strcmp(PDL, "postscript") == 0)
 				printer_putc(4);
 
 			break;
@@ -638,7 +638,7 @@ static void printer_setup(const char *BarBarPDL, int iteration)
 
 			/* If this is a non-PostScript job with a PJL header,
 			   emmit the PJL header stuff here. */
-			if(BarBarPDL && job.PJL)
+			if(strcmp(PDL, "postscript") != 0 && job.PJL)
 				printer_puts(job.PJL);
 
 			/* Set message on printer's LCD.  We know of no reason why job.For
@@ -661,10 +661,10 @@ static void printer_setup(const char *BarBarPDL, int iteration)
 			printer_puts("@PJL JOB\n");
 
 			/* Manually select PostScript personality. */
-			printer_printf("@PJL ENTER LANGUAGE = %s\n", BarBarPDL ? BarBarPDL : "postscript");
+			printer_printf("@PJL ENTER LANGUAGE = %s\n", PDL);
 
 			/* If this is PostScript and TBCP is called for, turn it on. */
-			if(!BarBarPDL && printer.Codes == CODES_TBCP)
+			if(strcmp(PDL, "postscript") == 0 && printer.Codes == CODES_TBCP)
 				{
 				printer_puts("\1M");
 				printer_TBCP_on();
@@ -696,7 +696,7 @@ static void printer_cleanup(void)
 		{
 		case JOBBREAK_CONTROL_D:				/* <-- simple 'serial' control-D protocol */
 			/* If this is a PostScript job, */
-			if(!setup_BarBarPDL)
+			if(!setup_PDL)
 				{
 				/* Send a control-d */
 				printer_putc(4);
@@ -719,7 +719,7 @@ static void printer_cleanup(void)
 
 		case JOBBREAK_PJL:						/* <-- PJL with control-D */
 		case JOBBREAK_SIGNAL_PJL:				/* <-- PJL with signals */
-			if(!setup_BarBarPDL)				/* If PostScript, */
+			if(!setup_PDL)						/* If PostScript, */
 				{
 				if(printer.Codes == CODES_TBCP)
 					printer_TBCP_off();
@@ -804,7 +804,7 @@ static void printer_cleanup(void)
 static enum JOBTYPE start_jobtype;
 void job_start(enum JOBTYPE jobtype)
 	{
-	const char *BarBarPDL;
+	const char *PDL;
 	static int iteration = 0;
 
 	DODEBUG_INTERFACE(("job_start(jobtype=%d)", jobtype));
@@ -812,25 +812,22 @@ void job_start(enum JOBTYPE jobtype)
 	/* Save the jobtype for job_end(). */
 	start_jobtype = jobtype;
 
-	/* If this is the main job and the main job is going to
-	   be in some PDL other than PostScript, then set BarBarPDL
-	   to the string which identifies that PDL.  Or, if
-	   neither of the above is true and we are doing the RIPing,
-	   then set the BarBarPDL to the name of the RIP's output
-	   format. */
+	/* Set PDL to a description of the format of the data which we are
+	 * sending to the interface program.
+	 */
 	switch(jobtype)
 		{
 		case JOBTYPE_THEJOB_BARBAR:
-			BarBarPDL = job.PassThruPDL;
+			PDL = job.PassThruPDL;
 			break;
 		case JOBTYPE_THEJOB_TRANSPARENT:
-			BarBarPDL = job.Filters;
+			PDL = job.Filters;
 			break;
 		default:
 			if(printer.RIP.output_language)
-				BarBarPDL = printer.RIP.output_language;
+				PDL = printer.RIP.output_language;
 			else
-				BarBarPDL = NULL;
+				PDL = "postscript";
 			break;
 		}
 
@@ -845,7 +842,7 @@ void job_start(enum JOBTYPE jobtype)
 
 	if(intstdin == -1)
 		{
-		start_interface(BarBarPDL);
+		start_interface(PDL);
 		}
 	else if(printer.Jobbreak == JOBBREAK_SIGNAL)
 		{
@@ -854,7 +851,7 @@ void job_start(enum JOBTYPE jobtype)
 	else if(printer.Jobbreak == JOBBREAK_NEWINTERFACE)
 		{
 		interface_close(TRUE);			/* Error code ignored. */
-		start_interface(BarBarPDL);
+		start_interface(PDL);
 		}
 
 	iteration++;
@@ -863,7 +860,7 @@ void job_start(enum JOBTYPE jobtype)
 	if(jobtype != JOBTYPE_THEJOB_TRANSPARENT)
 		{
 		/* Send the printer setup string (which may be quite long). */
-		printer_setup(BarBarPDL, iteration);
+		printer_setup(PDL, iteration);
 
 		/* If this is a PostScript job and we are doing the RIPing, */
 		if(jobtype != JOBTYPE_THEJOB_BARBAR && printer.RIP.name)

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_rip.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2004.
+** Last modified 17 January 2005.
 */
 
 #include "config.h"
@@ -206,13 +206,13 @@ int rip_start(int printdata_handle, int stdout_handle)
 			}
 
 		/* Since the program isn't named "gs", assume that it is some
-		   sort of Ghostscript wrapper in $HOMEDIR/lib, probably
+		   sort of Ghostscript wrapper in $LIBDIR, probably
 		   our own ppr-gs.
 		   */
 		else
 			{
 			char *p;
-			gu_asprintf(&p, "%s/lib/%s", HOMEDIR, printer.RIP.name);
+			gu_asprintf(&p, "%s/%s", LIBDIR, printer.RIP.name);
 			rip_exe = p;
 			}
 		}

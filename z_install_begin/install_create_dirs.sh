@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_begin/install_create_dirs.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,32 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 20 January 2005.
 #
 
 #=============================================================================
 # This script is called by the top level PPR Makefile to create the 
 # directories necessary to build and install PPR.
-#
-# Changes to this should be coordinated with ../fixup/fixup_perms.sh.
 #=============================================================================
-
-USER_PPR=$1
-USER_PPRWWW=$2
-GROUP_PPR=$3
-CONFDIR=$4
-HOMEDIR=$5
-SHAREDIR=$6
-VAR_SPOOL_PPR=$7
-TEMPDIR=$8
 
 # Blank the list of files for RPM.
 fileslist="`dirname $0`/../z_install_begin/installed_files_list"
 rm -f $fileslist
 
 # If global.mk is global.mk.unconfigured it won't
-# contain a definition of HOMEDIR.
-if [ -z "$HOMEDIR" ]
+# contain a definition of LIBDIR.
+if [ -z "$LIBDIR" ]
 	then
 	echo "You haven't run Configure yet."
 	exit 1
@@ -86,7 +75,7 @@ directory ()
 # owner and group if we are building an RPM package as a user other than
 # root or $USER_PPR.
 #
-for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
+for dir in $CONFDIR $LIBDIR $SHAREDIR $VAR_SPOOL_PPR
 	do
 	if [ ! -d $RPM_BUILD_ROOT$dir ]
 		then
@@ -97,7 +86,7 @@ for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	done 
 
-echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$HOMEDIR\"">>$fileslist
+echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$LIBDIR\"">>$fileslist
 echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$SHAREDIR\"">>$fileslist
 echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$CONFDIR\"">>$fileslist
 echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$VAR_SPOOL_PPR\"">>$fileslist
@@ -134,15 +123,13 @@ directory $SHAREDIR/cache/file 755
 directory $SHAREDIR/cache/encoding 755
 
 # Make the miscelaineous directories in /usr/lib/ppr.
-directory $HOMEDIR/bin 755
-directory $HOMEDIR/lib 755
-directory $HOMEDIR/filters 755
-directory $HOMEDIR/interfaces 755
-directory $HOMEDIR/responders 755
-directory $HOMEDIR/commentators 755
-directory $HOMEDIR/browsers 755
-directory $HOMEDIR/fixup 755
-directory $HOMEDIR/editps 755
+directory $BINDIR 755
+directory $FILTDIR 755
+directory $INTDIR 755
+directory $RESPONDERDIR 755
+directory $LIBDIR/browsers 755
+directory $LIBDIR/fixup 755
+directory $LIBDIR/editps 755
 
 # Architecture indendent stuff
 directory $SHAREDIR/PPDFiles 755
@@ -179,7 +166,7 @@ directory $VAR_SPOOL_PPR/pprpopup.db 770		# <-- group can write
 directory $VAR_SPOOL_PPR/followme.db 770		# <-- group can write
 
 # Make the directories for web documentation and managment tools
-directory $HOMEDIR/cgi-bin 755
+directory $CGI_BIN 755
 directory $SHAREDIR/www 755
 
 exit 0

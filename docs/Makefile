@@ -52,7 +52,7 @@ all-docs: $(HTML)
 install: $(PROGS) $(HTML)
 	$(MAKE_NEW_DIR) $(DOCSDIR)
 	$(INSTALLDATA) $(DOCSDIR) $(HTML)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(PROGS)
 	for i in $(SUBDIRS); do ( cd $$i && $(MAKE) install ); done
 
 #=== Housekeeping ===========================================================

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_end/install_bin_links.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 May 2004.
+# Last modified 17 January 2005.
 #
-
-. ../makeprogs/paths.sh
 
 #======================================================================
 # Create links so that the PPR bin directory need
@@ -41,12 +39,12 @@ if [ ! -d $RPM_BUILD_ROOT$SYSBINDIR ]
 	mkdir -p $RPM_BUILD_ROOT$SYSBINDIR || exit 1
     fi
 for i in ppr ppop ppad ppuser ppdoc \
-	ppr-testpage \
-	ppr-config ppr-index \
-	ppr-followme ppr-xgrant ppr-popup \
-	ppr-panel ppr-web ppr-passwd
+		ppr-testpage \
+		ppr-config ppr-index \
+		ppr-followme ppr-xgrant ppr-popup \
+		ppr-panel ppr-web ppr-passwd
 	do
-	../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
+	../makeprogs/installln.sh $BINDIR/$i $SYSBINDIR/$i || exit 1
 	done
 
 exit 0

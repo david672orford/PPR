@@ -3,12 +3,12 @@
 # Make sure PPD *Include works correctly.
 #
 
-$HOMEDIR/bin/ppad ppd regression-test1 "HP LaserJet 4000 Series"
+$PPAD_PATH ppd regression-test1 "HP LaserJet 4000 Series"
 echo "ppad: $?"
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes <<EndOfSample
+$PPR_PATH -d regression-test1 -m none -u yes <<EndOfSample
 %!PS-Adobe-3.0
 %%LanguageLevel: 2
 

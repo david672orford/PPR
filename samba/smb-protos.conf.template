@@ -3,16 +3,16 @@
 ;
 ; Run "ppdoc ppr2samba" for an explanation of this file's purpose.
 ;
-; Last revised 4 December 2002.
+; Last revised 17 January 2005.
 ;
 
 ;
 ; Did you remember to put this in [global]?
-;	printer driver file = %VAR_SPOOL_PPR%/drivers/WIN40.def
+;	printer driver file = @VAR_SPOOL_PPR@/drivers/WIN40.def
 ;
 ; And did you put these lines after the end of [global]?
-;	include = %HOMEDIR%/lib/smb-protos.conf
-;	include = %CONFDIR%/smb-include.conf
+;	include = @LIBDIR@/smb-protos.conf
+;	include = @CONFDIR@/smb-include.conf
 ;
 
 ;
@@ -24,22 +24,22 @@
    ; The line below must go in [global] if Samba older than 1.9.18.
    printing = bsd
 
-   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a -X %U@%m.samba -f %U -U %s &
-   lpq command = %HOMEDIR%/bin/ppop lpq %p
-   lprm command = %HOMEDIR%/bin/ppop -X %U@%m.samba cancel %p-%j
-   lppause command = %HOMEDIR%/bin/ppop -X %U@%m.samba hold %p-%j
-   lpresume command = %HOMEDIR%/bin/ppop -X %U@%m.samba release %p-%j
+   print command = @PPR_PATH@ -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a -X %U@%m.samba -f %U -U %s &
+   lpq command = @PPOP_PATH@ lpq %p
+   lprm command = @PPOP_PATH@ -X %U@%m.samba cancel %p-%j
+   lppause command = @PPOP_PATH@ -X %U@%m.samba hold %p-%j
+   lpresume command = @PPOP_PATH@ -X %U@%m.samba release %p-%j
 
    ; Samba 1.9.18.p10 and later allows us to pause queues.  There are two
    ; possible queuepause commands.  The first one pauses the queue once
    ; any job currently printing is finished.  The second one pauses
    ; the queue immediately, interupting any job that is currently printing.
    ; Uncomment the one you want of the two below.
-   queuepause command = %HOMEDIR%/bin/ppop stop %p
-   ;queuepause command = %HOMEDIR%/bin/ppop halt %p
+   queuepause command = @PPOP_PATH@ stop %p
+   ;queuepause command = @PPOP_PATH@ halt %p
 
    ; Samba 1.9.18.p10 and later also allows us to start paused queues.
-   queueresume command = %HOMEDIR%/bin/ppop start %p
+   queueresume command = @PPOP_PATH@ start %p
 
    browseable = no
    printer = null
@@ -50,7 +50,7 @@
    path = %VAR_SPOOL_PPR%/sambaspool
 
    printer driver location = \\%L\PPRPRNT$\WIN40
-   printer driver file = %VAR_SPOOL_PPR%/drivers/WIN40.def
+   printer driver file = @VAR_SPOOL_PPR@/drivers/WIN40.def
 
    ; Minimum space in kilobytes which must be free in sambaspool/ before
    ; print jobs will be accepted.
@@ -61,14 +61,14 @@
 ;
 [pprproto_pprpopup]
    copy = pprproto
-   print command = %HOMEDIR%/lib/samba_submitter %m %I 15009 %a %U %p %s &
+   print command = @LIBDIR@/samba_submitter %m %I 15009 %a %U %p %s &
 
 ;
 ; New alternative prototype for use with PPR Popup on the clients.
 ;
 [pprproto_pprpopup2]
    copy = pprproto
-   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@%m.samba -f %U -U %s &
+   print command = @PPR_PATH@ -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@%m.samba -f %U -U %s &
 
 ;
 ; This section is for the automatic installation of
@@ -76,7 +76,7 @@
 ;
 [pprprnt$]
    comment = PPR Printer Drivers
-   path = %VAR_SPOOL_PPR%/drivers
+   path = @VAR_SPOOL_PPR@/drivers
    guest ok = yes
    browsable = yes
    case sensitive = yes
@@ -92,7 +92,7 @@
 [pprclipr]
   comment = PPR Client Spooling Area
   printable = no
-  path = %VAR_SPOOL_PPR%/pprclipr
+  path = @VAR_SPOOL_PPR@/pprclipr
   writable = no
   public = yes
 

@@ -1,10 +1,10 @@
-gu.$(OBJ): gu.c gu.h
+gu.$(OBJ): gu.c ../include/gu.h
 
 panic.$(OBJ): panic.c
 
-regexp.$(OBJ): regexp.c tclInt.h tclPort.h gu.h
+regexp.$(OBJ): regexp.c tclInt.h tclPort.h ../include/gu.h
 
-tclAppInit.$(OBJ): tclAppInit.c tcl.h
+tclAppInit.$(OBJ): tclAppInit.c ../include/config.h ../include/gu.h ../include/global_defines.h tcl.h
 
 tclAsync.$(OBJ): tclAsync.c tclInt.h
 
@@ -12,7 +12,7 @@ tclBasic.$(OBJ): tclBasic.c tclInt.h patchlevel.h
 
 tclCkalloc.$(OBJ): tclCkalloc.c tclInt.h tcl.h tclPort.h
 
-tclCmdAH.$(OBJ): tclCmdAH.c tclInt.h tclPort.h gu.h
+tclCmdAH.$(OBJ): tclCmdAH.c tclInt.h tclPort.h ../include/gu.h
 
 tclCmdIL.$(OBJ): tclCmdIL.c tclInt.h tclPort.h
 
@@ -42,7 +42,7 @@ tclUnixAZ.$(OBJ): tclUnixAZ.c tclInt.h tclPort.h
 
 tclUnixStr.$(OBJ): tclUnixStr.c tclInt.h tclPort.h
 
-tclUnixUtil.$(OBJ): tclUnixUtil.c tclInt.h tclPort.h gu.h
+tclUnixUtil.$(OBJ): tclUnixUtil.c tclInt.h tclPort.h ../include/gu.h
 
 tclUtil.$(OBJ): tclUtil.c tclInt.h tclPort.h
 

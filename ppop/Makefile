@@ -53,8 +53,8 @@ ppop$(DOTEXE): \
 #=== Install =====================================================================
 
 install: $(BIN_PROGS) $(LIB_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/lib $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(BINDIR) $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(LIBDIR) $(LIB_PROGS)
 
 #=== Housekeeping ================================================================
 

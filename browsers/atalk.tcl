@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
 # mouse:~ppr/src/browsers/parallel.tcl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2004.
+# Last modified 17 January 2005.
 #
 
-set HOMEDIR "?"
+set LIBDIR "?"
 
 # Name the command line parameters.
 set domain [lindex $argv 0]
@@ -81,7 +81,7 @@ proc add_printer {address name_name name} {
 	lappend printers($address) [list $name_name $name]
 	}
 
-set f [open "| $HOMEDIR/lib/nbp_lookup \"=:=@$domain\"" "r"]
+set f [open "| $LIBDIR/nbp_lookup \"=:=@$domain\"" "r"]
 while {[gets $f line] >= 0} {
     #puts $line
     if [regexp {^([0-9]+:[0-9]+):[0-9]+ [0-9]+ (([^:]+):([^@]+)@.+)$} $line junk address name name_name name_type] {

@@ -67,8 +67,8 @@ pprd.auto_h:
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin pprd$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib pprd-question
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) pprd$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIBDIR) pprd-question
 
 #=== Housekeeping ===========================================================
 

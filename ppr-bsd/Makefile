@@ -25,15 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2005.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-lpc$(DOTEXE)
-SETUID_PROGS=uprint-lpr$(DOTEXE)
+PROGS=ppr-lpr$(DOTEXE) ppr-lpq$(DOTEXE) ppr-lprm$(DOTEXE) ppr-lpc$(DOTEXE)
 
 PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 
@@ -43,23 +42,22 @@ PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 
 all: $(PROGS) $(SETUID_PROGS)
 
-uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
+ppr-lpr$(DOTEXE): ppr-lpr.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
+ppr-lpq$(DOTEXE): ppr-lpq.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
+ppr-lprm$(DOTEXE): ppr-lprm.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
+ppr-lpc$(DOTEXE): ppr-lpc.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 #=== Install ================================================================
 
 install: $(PROGS) $(SETUID_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin $(SETUID_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(PROGS)
 
 #=== Housekeeping ===========================================================
 

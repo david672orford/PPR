@@ -53,8 +53,8 @@ ppr$(DOTEXE): \
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin ppr$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib tbcp2bin$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) ppr$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIBDIR) tbcp2bin$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

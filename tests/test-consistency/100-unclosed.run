@@ -6,7 +6,7 @@
 $TESTBIN/clear_output
 
 # Send an error laced job thru the queue:
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr failed: $?"
+$PPR_PATH -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr failed: $?"
 %!PS-Adobe-3.0
 %%Title: Unclosed Resource Test
 %%Pages: (atend)

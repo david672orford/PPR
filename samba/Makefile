@@ -47,10 +47,7 @@ all-tdb: $(PROGS_TDB)
 
 smb-protos.conf: smb-protos.conf.template
 	$(RMF) smb-protos.conf
-	sed -e 's!%HOMEDIR%!$(HOMEDIR)!g' -e 's!%VAR_SPOOL_PPR%!$(VAR_SPOOL_PPR)!g' \
-		-e 's!%USER_PPR%!$(USER_PPR)!g' -e 's!%GROUP_PPR%!$(GROUP_PPR)!g' \
-		-e 's!%CONFDIR%!$(CONFDIR)!g' \
-		smb-protos.conf.template >smb-protos.conf
+	../subst_tool <smb-protos.conf.template >smb-protos.conf
 	chmod 444 smb-protos.conf
 
 ppr2samba$(DOTEXE): ppr2samba.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
@@ -62,13 +59,13 @@ sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(PROGS) smb-protos.conf $(INSTALL_TDB)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr2samba$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin indexwindrivers
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
-	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(BINDIR) ppr2samba$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(BINDIR) indexwindrivers
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(LIBDIR) samba_submitter
+	$(INSTALLCP) smb-protos.conf $(LIBDIR)/smb-protos.conf
 
 install-tdb: $(PROGS_TDB)
-	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib sambaprint$(DOTEXE)
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(LIBDIR) sambaprint$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

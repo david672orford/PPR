@@ -57,7 +57,7 @@ ppad$(DOTEXE): \
 #=== Install ================================================================
 
 install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) $(BIN_PROGS)
 	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_1)
 	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_2)
 

@@ -1,91 +1,91 @@
 #! /bin/sh
 
 echo "Setting jobbreak to signal/pjl..."
-$HOMEDIR/bin/ppad jobbreak regression-test1 signal/pjl
+$PPAD_PATH jobbreak regression-test1 signal/pjl
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting jobbreak to default..."
-$HOMEDIR/bin/ppad jobbreak regression-test1 default
+$PPAD_PATH jobbreak regression-test1 default
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting feedback to true..."
-$HOMEDIR/bin/ppad feedback regression-test1 true
+$PPAD_PATH feedback regression-test1 true
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting feedback to false..."
-$HOMEDIR/bin/ppad feedback regression-test1 false
+$PPAD_PATH feedback regression-test1 false
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting feedback to default..."
-$HOMEDIR/bin/ppad feedback regression-test1 default
+$PPAD_PATH feedback regression-test1 default
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting codes to Clean7Bit..."
-$HOMEDIR/bin/ppad codes regression-test1 clean7bit
+$PPAD_PATH codes regression-test1 clean7bit
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting codes to default..."
-$HOMEDIR/bin/ppad codes regression-test1 default
+$PPAD_PATH codes regression-test1 default
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting interface options..."
-$HOMEDIR/bin/ppad options regression-test1 "sleep=10 retry=5"
+$PPAD_PATH options regression-test1 "sleep=10 retry=5"
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Shooting for warning..."
-$HOMEDIR/bin/ppad options regression-test1 none
+$PPAD_PATH options regression-test1 none
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting interface options..."
-$HOMEDIR/bin/ppad options regression-test1 sleep=10 retry=5
+$PPAD_PATH options regression-test1 sleep=10 retry=5
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Clearing interface options..."
-$HOMEDIR/bin/ppad options regression-test1
+$PPAD_PATH options regression-test1
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting up for next test..."
-$HOMEDIR/bin/ppad jobbreak regression-test1 signal/pjl
+$PPAD_PATH jobbreak regression-test1 signal/pjl
 echo "ppad: $?"
-$HOMEDIR/bin/ppad feedback regression-test1 false
+$PPAD_PATH feedback regression-test1 false
 echo "ppad: $?"
-$HOMEDIR/bin/ppad options regression-test1 sleep=10 retry=5
+$PPAD_PATH options regression-test1 sleep=10 retry=5
 echo "ppad: $?"
-$HOMEDIR/bin/ppad codes regression-test1 Clean7Bit
+$PPAD_PATH codes regression-test1 Clean7Bit
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Testing auto-clearing of jobbreak, feedback, codes, and options..."
-$HOMEDIR/bin/ppad interface regression-test1 tcpip localhost:9100
+$PPAD_PATH interface regression-test1 tcpip localhost:9100
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Putting things back the way they were..."
-$HOMEDIR/bin/ppad interface regression-test1 atalk "Imaginary Printer:LaserWriter@Imaginary Zone"
+$PPAD_PATH interface regression-test1 atalk "Imaginary Printer:LaserWriter@Imaginary Zone"
 echo "ppad: $?"
 echo
 

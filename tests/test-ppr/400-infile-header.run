@@ -6,7 +6,7 @@
 #
 
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <${TEST_BASENAME}-1.ps
+$PPR_PATH -d regression-test1 -w peeve -m none <${TEST_BASENAME}-1.ps
 $TESTBIN/cat_output
 
 exit 0

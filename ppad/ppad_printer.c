@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 17 January 2005.
 */
 
 /*==============================================================
@@ -180,7 +180,7 @@ int printer_new_alerts(const char *argv[])
 
 	if((newprn = fopen(NEWPRN_CONFIG,"w")) == (FILE*)NULL)
 		{
-		fprintf(errors, _("Unable to create \"%s/%s\", errno=%d (%s).\n"), HOMEDIR, NEWPRN_CONFIG, errno, gu_strerror(errno));
+		fprintf(errors, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 

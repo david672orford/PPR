@@ -90,7 +90,7 @@ TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0: prop_genmetrics$(DOTEXE)
 #=== Install ================================================================
 
 install: $(TARGETS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/filters filter_dotmatrix$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(FILTDIR) filter_dotmatrix$(DOTEXE)
 	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-1-2 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-1-2
 	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G1-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-G1-1-0
 	$(INSTALLCP) --squeeze TrinColl-PPR-Dotmatrix-G2-1-0 $(SHAREDIR)/cache/procset/TrinColl-PPR-Dotmatrix-G2-1-0

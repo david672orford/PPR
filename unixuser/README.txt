@@ -1,5 +1,5 @@
 mouse:~ppr/src/unixuser/README.txt
-4 January 2002.
+17 January 2005.
 
 
 ======================
@@ -8,7 +8,7 @@ mouse:~ppr/src/unixuser/README.txt
 ======================
 
 These programs are described in the ppr-xfm(1) and ppr-xgrant(1) man pages.
-They are installed in $HOMEDIR/bin/ by "make install".
+They are installed in $BINDIR by "make install".
 
 
 =========================

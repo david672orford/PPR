@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -333,7 +333,7 @@ int int_main(int argc, char *argv[])
 	int_cmdline_set(argc, argv);
 
 	DODEBUG(("============================================================"));
-	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, jobname=\"%s\", routing=\"%s\", forline=\"%s\", barbarlang=\"%s\"",
+	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, PDL=\"%s\", routing=\"%s\", jobname=\"%s\", forline=\"%s\", title=\"%s\"",
 		int_cmdline.int_basename,
 		int_cmdline.printer,
 		int_cmdline.address,
@@ -341,10 +341,12 @@ int int_main(int argc, char *argv[])
 		int_cmdline.jobbreak,
 		int_cmdline.feedback,
 		int_cmdline.codes,
-		int_cmdline.jobname,
+		int_cmdline.PDL,
 		int_cmdline.routing,
+		int_cmdline.jobname,
 		int_cmdline.forline,
-		int_cmdline.barbarlang));
+		int_cmdline.title
+		));
 
 	/* Check for unusable job break methods. */
 	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
@@ -485,10 +487,11 @@ int int_main(int argc, char *argv[])
 	}
 
 	/* We can't use control-T status updates if the job isn't PostScript. */
-	if(int_cmdline.barbarlang[0])
+	if(strcmp(int_cmdline.PDL, "postscript") != 0)
 		{
 		options.idle_status_interval = 0;
-		DODEBUG(("barbarlang=\"%s\", setting idle_status_interval to 0", int_cmdline.barbarlang));		}
+		DODEBUG(("PDL=\"%s\", setting idle_status_interval to 0", int_cmdline.PDL));
+		}
 
 	/* Describe the options in the debuging output. */
 	DODEBUG(("sleep=%d, connect.timeout=%d, connect.sndbuf_size=%d, idle_status_interval=%d",

@@ -1,25 +1,25 @@
 #! /bin/sh
 
 echo "Setting passthru..."
-$HOMEDIR/bin/ppad passthru regression-test1 pcl
+$PPAD_PATH passthru regression-test1 pcl
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting passthru..."
-$HOMEDIR/bin/ppad passthru regression-test1 pcl pdf
+$PPAD_PATH passthru regression-test1 pcl pdf
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting passthru..."
-$HOMEDIR/bin/ppad passthru regression-test1 "xyz abc" def jhk "lmn opq"
+$PPAD_PATH passthru regression-test1 "xyz abc" def jhk "lmn opq"
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Setting passthru..."
-$HOMEDIR/bin/ppad passthru regression-test1
+$PPAD_PATH passthru regression-test1
 echo "ppad: $?"
 echo
 $TESTBIN/dump_printer regression-test1

@@ -89,19 +89,19 @@ pros$(DOTEXE): pros.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(INSTALL_NETBIOS) $(INSTALL_ATALK) $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(PROGS)
-	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/socketapi$(DOTEXE)
-	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/appsocket$(DOTEXE)
-	$(INSTALLLN) tcpip$(DOTEXE) $(HOMEDIR)/interfaces/jetdirect$(DOTEXE)
-	-chown root $(HOMEDIR)/interfaces/lpr$(DOTEXE) && chmod 4711 $(HOMEDIR)/interfaces/lpr$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(INTDIR) $(PROGS)
+	$(INSTALLLN) tcpip$(DOTEXE) $(INTDIR)/socketapi$(DOTEXE)
+	$(INSTALLLN) tcpip$(DOTEXE) $(INTDIR)/appsocket$(DOTEXE)
+	$(INSTALLLN) tcpip$(DOTEXE) $(INTDIR)/jetdirect$(DOTEXE)
+	-chown root $(INTDIR)/lpr$(DOTEXE) && chmod 4711 $(INTDIR)/lpr$(DOTEXE)
 
 # Extra stuff to install if we have AppleTalk.
 install-atalk: $(ATALK_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(ATALK_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(INTDIR) $(ATALK_PROGS)
 
 # Extra stuff to install if we have NetBIOS.
 install-netbios: $(NETBIOS_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(NETBIOS_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(INTDIR) $(NETBIOS_PROGS)
 
 #=== Housekeeping ===========================================================
 

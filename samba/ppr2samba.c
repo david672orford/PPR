@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/samba/ppr2samba.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 December 2004.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -56,7 +56,7 @@
 /* Here we define the names of the files we use. */
 const char smb_include_conf[] = CONFDIR"/smb-include.conf";
 const char smb_include_x_conf[] = CONFDIR"/smb-include-%d.conf";
-const char smb_protos_conf[] = HOMEDIR"/lib/smb-protos.conf";
+const char smb_protos_conf[] = LIBDIR"/lib/smb-protos.conf";
 
 /* And here are the directories we search. */
 struct DIRS {

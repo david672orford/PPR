@@ -389,7 +389,7 @@ sub dest_features_load
 	$w->add("Extra", -text => "Extra");
 	$groups{"Extra"} = 1;
 
-	open(PPR, "$PPR::HOMEDIR/bin/ppr -d $self->{dest} --features |") || die $!;
+	open(PPR, "$PPR::PPR_PATH -d $self->{dest} --features |") || die $!;
 	while(<PPR>)
 		{
 		#print;

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 # Fool Perl so it will not complain about our already secure PATH and IFS.
@@ -38,12 +38,6 @@ $ENV{'PATH'} =~ /^(.*)$/;
 $ENV{'PATH'} = $1;
 $ENV{'IFS'} =~ /^(.*)$/;
 $ENV{'IFS'} = $1;
-
-# These will be filled in when this script is installed:
-$HOMEDIR="@HOMEDIR@";
-$SHAREDIR="@SHAREDIR@";
-$VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
-$TEMPDIR="@TEMPDIR@";
 
 use lib "@PERL_LIBDIR@";
 require 'responder_argv.pl';

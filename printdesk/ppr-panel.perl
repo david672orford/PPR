@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 use strict;
@@ -246,8 +246,8 @@ sub do_drop
 		{
 		foreach my $file (@_)
 			{
-			print join(' ', "$PPR::HOMEDIR/bin/ppr", @args, $file), "\n";
-			system("$PPR::HOMEDIR/bin/ppr", @args, $file) && die;
+			print join(' ', "$PPR::PPR_PATH", @args, $file), "\n";
+			system("$PPR::PPR_PATH", @args, $file) && die;
 			}
 		}
 

@@ -87,7 +87,7 @@ query_wrapper$(DOTEXE): query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: all
-	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib query_wrapper$(DOTEXE)
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(LIBDIR) query_wrapper$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

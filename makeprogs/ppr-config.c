@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/makeprogs/ppr-config.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 December 2004.
+** Last modified 17 January 2005.
 */
 
 #include "config.h"
@@ -57,7 +57,7 @@ static void do_paths(char format[], char language[])
 		printf(format, "USER_PPRWWW", USER_PPRWWW);
 		printf(format, "GROUP_PPR", GROUP_PPR);
 		printf(format, "CONFDIR", CONFDIR);
-		printf(format, "HOMEDIR", HOMEDIR);
+		printf(format, "LIBDIR", LIBDIR);
 		printf(format, "SHAREDIR", SHAREDIR);
 		printf(format, "VAR_SPOOL_PPR", VAR_SPOOL_PPR);
 		printf(format, "TEMPDIR", TEMPDIR);
@@ -69,6 +69,7 @@ static void do_paths(char format[], char language[])
 		}
 
 	/* Second Level Directories */
+	printf(format, "BINDIR", BINDIR);
 	printf(format, "PRCONF", PRCONF);
 	printf(format, "GRCONF", GRCONF);
 	printf(format, "ALIASCONF", ALIASCONF);
@@ -155,8 +156,8 @@ int main(int argc, char *argv[])
 			do_paths("set %s \"%s\"\n", argv[i]);
 		else if(strcmp(argv[i], "--confdir") == 0)
 			printf("%s\n", CONFDIR);
-		else if(strcmp(argv[i], "--homedir") == 0)
-			printf("%s\n", HOMEDIR);
+		else if(strcmp(argv[i], "--libdir") == 0)
+			printf("%s\n", LIBDIR);
 		else if(strcmp(argv[i], "--sharedir") == 0)
 			printf("%s\n", SHAREDIR);
 		else if(strcmp(argv[i], "--var-spool-ppr") == 0)

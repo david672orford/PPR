@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -44,7 +44,7 @@ require 'cgi_wizard.pl';
 require "cgi_intl.pl";
 require 'cgi_widgets.pl';
 
-defined($HOMEDIR) || die;
+defined($LIBDIR) || die;
 defined($INTDIR) || die;
 defined($CONFDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
@@ -453,7 +453,7 @@ $addprn_wizard_table = [
 	'dopage' => sub {
 	require 'cgi_run.pl';
 	my $browser_zone = cgi_data_move("browser_zone", "");
-	opendir(BROWSERS, "$HOMEDIR/browsers") || die $!;
+	opendir(BROWSERS, "$LIBDIR/browsers") || die $!;
 	print '<p><label>', H_("Zones Available for Browsing"), '<br>', "\n";
 	print '<select tabindex=1 name="browser_zone" size="20" style="min-width: 450px; max-width: 450px;">', "\n";
 	while(my $browser = readdir(BROWSERS))
@@ -462,7 +462,7 @@ $addprn_wizard_table = [
 		$browser =~ /^([a-z0-9_-]+)$/ || die "browser=$browser";
 		$browser = $1;
 		print "<optgroup label=", html_value($browser), ">\n";
-		opencmd(ZONES, "$HOMEDIR/browsers/$browser") || die "Unable to get zone list";
+		opencmd(ZONES, "$LIBDIR/browsers/$browser") || die "Unable to get zone list";
 		while(my $zone = <ZONES>)
 			{
 			chomp $zone;
@@ -508,7 +508,7 @@ $addprn_wizard_table = [
 	$browser = $1;
 
 	# Search the zone and build of list of the printer we find.
-	opencmd(PRINTERS, "$HOMEDIR/browsers/$browser", $zone) || die;
+	opencmd(PRINTERS, "$LIBDIR/browsers/$browser", $zone) || die;
 	my @browser_comments = ();
 	my %printers = ();
 	outer:

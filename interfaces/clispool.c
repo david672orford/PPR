@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -187,7 +187,7 @@ int int_main(int argc, char *argv[])
 	printer_name = argv[1];				/* assign the arguments */
 	printer_address = argv[2];			/* to global variables */
 
-	chdir(HOMEDIR);						/* change to PPR's home directory */
+	chdir(LIBDIR);						/* change to PPR's home directory */
 
 	/* get the system name which we will use in building the */
 	/* local network name and in building the share area name */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -313,7 +313,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 		}
 
 	/* We can't use control-T status updates if the job isn't PostScript. */
-	if(int_cmdline.barbarlang[0])
+	if(strcmp(int_cmdline.PDL, "postscript") != 0)
 		options->idle_status_interval = 0;
 
 	} /* end of parse_options() */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -96,8 +96,8 @@ int respond(int response_code, const char extra[])
 	signal(SIGCHLD, empty_reapchild);
 
 	/* Change to /usr/lib/ppr so we can find responders and responders can find stuff. */
-	if(chdir(HOMEDIR) == -1)
-		fprintf(stderr, "%s(): chdir(\"%s\") failed, errno=%d (%s)\n", function, HOMEDIR, errno, gu_strerror(errno));
+	if(chdir(LIBDIR) == -1)
+		fprintf(stderr, "%s(): chdir(\"%s\") failed, errno=%d (%s)\n", function, LIBDIR, errno, gu_strerror(errno));
 
 	/* Fork and exec a responder. */
 	if((pid = fork()) == -1)

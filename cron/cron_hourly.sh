@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
-HOMEDIR="@HOMEDIR@"
+LIBDIR="@LIBDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 
 # This is a list of files which might be lists of installed packages.  The
@@ -46,9 +46,9 @@ for i in $PACKAGE_LISTS
 	do
 	if [ -f $i ]
 	then
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
+	if $LIBDIR/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
 		then
-		$HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
+		$BINDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
 		fi
 	fi
 	done

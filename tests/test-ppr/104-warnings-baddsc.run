@@ -7,7 +7,7 @@
 
 # Make sure a trailer comment doesn't work without atend.
 $TESTBIN/clear_output
-$HOMEDIR/bin/ppr -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr: $?"
+$PPR_PATH -d regression-test1 -w peeve -m none <<EndOfSample1 || echo "ppr: $?"
 %!PS-Adobe-3.0
 %%PageOrder:Ascend
 %%Title: atend test 1

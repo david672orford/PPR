@@ -26,14 +26,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
-HOMEDIR="@HOMEDIR@"
+BINDIR="@BINDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 
-$HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
+$BINDIR/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
 
-$HOMEDIR/bin/ppr-clean >$VAR_SPOOL_PPR/logs/ppr-clean 2>&1
+$BINDIR/ppr-clean >$VAR_SPOOL_PPR/logs/ppr-clean 2>&1
 
 exit 0

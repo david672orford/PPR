@@ -58,21 +58,21 @@ make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(
 #=== Install ================================================================
 
 install: $(BUILT) $(SCRIPTS_SH) $(SCRIPTS_PERL) $(SCRIPTS_TCL)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/filters filter_hexdump$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 2755 $(HOMEDIR)/lib make_dvips_conf$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib indexfilters
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(FILTDIR) filter_hexdump$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 2755 $(LIBDIR) make_dvips_conf$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIBDIR) indexfilters
 	$(INSTALLDATA) $(SHAREDIR)/lib mfmodes.conf
 	for f in $(SCRIPTS_SH);\
 		do\
-		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .sh`;\
+		$(INSTALLCP) $$f $(LIBDIR)/fixup/filter_`basename $$f .sh`;\
 		done
 	for f in $(SCRIPTS_PERL);\
 		do\
-		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .perl`;\
+		$(INSTALLCP) $$f $(LIBDIR)/fixup/filter_`basename $$f .perl`;\
 		done
 	for f in $(SCRIPTS_TCL);\
 		do\
-		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .tcl`;\
+		$(INSTALLCP) $$f $(LIBDIR)/fixup/filter_`basename $$f .tcl`;\
 		done
 	#./ppr-index filters >/dev/null
 

@@ -1,7 +1,7 @@
 #! ../nonppr_tcl/ppr-tclsh
 #
 # mouse:~ppr/src/z_install_end/install_alternatives.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 March 2003.
+# Last modified 17 January 2005.
 #
 
 source ../makeprogs/paths.tcl
@@ -38,23 +38,23 @@ set list {
 	{lp 1}
 	{lpstat 1}
 	{cancel 1}
-	}
+}
 
 if {[file isdirectory /etc/alternatives] && [file executable /usr/sbin/update-alternatives]} {
     puts "  Registering PPR programs with alternatives system..."
     foreach i $list {
-	puts "    $i"
-	set prog [lindex $i 0]
-	set mans [lindex $i 1]
-	puts "/usr/sbin/update-alternatives
-		--install /usr/bin/$prog
-			$prog
-			$HOMEDIR/bin/uprint-$prog
-			9
-		--slave /usr/share/man/man$mans/$prog.$mans
-			man-${prog}
-			$SHAREDIR/man/man$mans/uprint-${prog}.$mans"
-	}
+		puts "    $i"
+		set prog [lindex $i 0]
+		set mans [lindex $i 1]
+		puts "/usr/sbin/update-alternatives
+			--install /usr/bin/$prog
+				$prog
+				$BINDIR/bin/ppr-$prog
+				9
+			--slave /usr/share/man/man$mans/$prog.$mans
+				man-${prog}
+				$SHAREDIR/man/man$mans/uprint-${prog}.$mans"
+		}
     }
 
 exit 0

@@ -60,8 +60,8 @@ paths.tcl: ppr-config$(DOTEXE)
 #=== Install ================================================================
 
 install: all
-	$(INSTALLDATA) $(HOMEDIR)/lib paths.ph PPR.pm
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-config$(DOTEXE)
+	$(INSTALLDATA) $(LIBDIR) paths.ph PPR.pm
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) ppr-config$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--14 January 2005
+2.00a1, 11 December 2004--21 January 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9552,46 +9552,24 @@ no final tarball was released.
 * Split uprint/ into ppr-bsd and ppr-sysv/.  Renamed all the programs from
   uprint-* to ppr-*.
 
+* commentators/: removed
 
-TODO
+* Renamed HOMEDIR to LIBDIR, added BINDIR (LIBDIR/bin) (Very many files changed.)
 
-* Finish Debian package.
+* z_install_end/fixup_obsolete.sh: removed since we will recomment that users delete 
+  or rename their PPR 1.x directories before installing PPR 2.x.
 
-* Make a stripped-down GtkEmbed or Mozilla chrome Mozilla browser
+* nonppr_tcl/gu.h, gu.c: removed
 
-* Make a stripped-down browser with the Mozilla ActiveX control
+* pprdrv/pprdrv_interface.c: changed the order of interface parameters 7 thru 11,
+  changed the BarBarPDL parameter to PDL (in other words, for PostScript jobs 
+  it is now "postscript" rather than "").
 
-* Finish the IPP server.
+* nonppr_tcl/: replaced tclAppInit.c with ppr-tclsh.c, added ppr_version,
+  ppr_alert, and ppr_conf_query commands to TCL interpreter.
 
-* Finish support for automatic driver download in Samba 2.2.x and 3.x.
+* libscript/alert.c: added format string ("%s") to call to alert().
 
-* Fix Dillo caching problem when deleting printer in the web interface.  It
-  may be necessary to emit an header to say that certain CGI output is not
-  cacheable.  It is probably that Dillo is exposing a bug by not having
-  a workaround for buggy sites.
-
-* Change responder interface to use name=value pairs on the command line.
-  Change commentators to support the new status handling code and merge them
-  with responders.
-
-* Implement automatic PPD file download URL.
-
-* Implement PPD file installable options handling in pprdrv.
-
-* Add IPP support to UPRINT so that jobs can be sent to CUPS queues.  This
-  should probably be done with libcups which is LGPL.
-
-* Make uprint-cancel and uprint-lpstat actually do something
-
-* Implement -F switch sorting in pprdrv.
-
-* Add code to convert command line option value strings and DSC text fields
-  to utf-8.  Add --dsc-charset to ppr.
-
-* Support banner page "news" messages.
-
-* pprdrv: separate output of RIP from output of the printer and the interface
-  so that "ERROR:" messages from smbclient won't be falsely ascribed to CUPS.
-
-* Stop printer control refresh during scrolling of alerts window
+* libscript/ppr_conf_query.c: made failure to open ppr.conf a fatal
+  error rather than a warning.
 

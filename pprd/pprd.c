@@ -345,7 +345,7 @@ static int real_main(int argc, char *argv[])
 		umask(PPR_PPRD_UMASK);
 
 	/* Change the home directory to the PPR home directory: */
-	chdir(HOMEDIR);
+	chdir(LIBDIR);
 
 	/* Create /var/spool/ppr/pprd.pid. */
 	create_lock_file();

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -36,17 +36,18 @@
 #
 
 # System configuration information:
-HOMEDIR="@HOMEDIR@"
+LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 TEMPDIR="@TEMPDIR@"
 USER_PPR=@USER_PPR@
 GROUP_PPR=@GROUP_PPR@
+FILTDIR="@FILTDIR@"
 
 # Derived things
-STORE="$HOMEDIR/fixup"
-FILTERS="$RPM_BUILD_ROOT$HOMEDIR/filters"
-PPR_TCLSH="$HOMEDIR/bin/ppr-tclsh";
+STORE="$LIBDIR/fixup"
+FILTDIR="$RPM_BUILD_ROOT$LIBDIR/filters"
+PPR_TCLSH="$LIBDIR/bin/ppr-tclsh";
 
 # Function to find a program in the $PATH list.
 findprog_prog ()
@@ -103,7 +104,8 @@ sedit ()
 		-e "s#^\\(\$*\\)POSTPLOT=\"[^\"]*\"#\\1POSTPLOT=\"$POSTPLOT\"#" \
 		-e "s#^\\(\$*\\)FIG2DEV=\"[^\"]*\"#\\1FIG2DEV=\"$FIG2DEV\"#" \
 		-e "s#^\\(\$*\\)HTMLDOC=\"[^\"]*\"#\\1HTMLDOC=\"$HTMLDOC\"#" \
-		-e "s#^\\(\$*\\)HOMEDIR=\"[^\"]*\"#\\1HOMEDIR=\"$HOMEDIR\"#" \
+		-e "s#^\\(\$*\\)LIBDIR=\"[^\"]*\"#\\1LIBDIR=\"$LIBDIR\"#" \
+		-e "s#^\\(\$*\\)FILTDIR=\"[^\"]*\"#\\1FILTDIR=\"$FILTDIR\"#" \
 		-e "s#^\\(\$*\\)CONFDIR=\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
 		-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 		-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
@@ -119,10 +121,10 @@ sedit ()
 	}
 
 # Make sure we have permission.
-if [ ! -w $FILTERS ]
+if [ ! -w $FILTDIR ]
 	then
 	echo "In order to run this program, you must have write access"
-	echo "to the directory \"$FILTERS\".  You do not."
+	echo "to the directory \"$FILTDIR\".  You do not."
 	exit 1
 	fi
 
@@ -132,7 +134,7 @@ if [ "$1" != "" ]
 		then
 		for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd tiff png plot fig
 			do
-			rm -f $HOMEDIR/filters/filter_$t
+			rm -f $FILTDIR/filter_$t
 			done
 		exit 0
 		else
@@ -275,12 +277,12 @@ echo
 #
 # Install the PR filter
 #
-rm -f $FILTERS/filter_pr
+rm -f $FILTDIR/filter_pr
 HAVE_PR=""
 if [ -n "$PR" ]
 	then
 	echo "Installing PR filter."
-	sedit "$STORE/filter_pr" "$FILTERS/filter_pr"
+	sedit "$STORE/filter_pr" "$FILTDIR/filter_pr"
 	HAVE_PR="YES"
 	fi
 if [ -z "$HAVE_PR" ]
@@ -291,18 +293,18 @@ if [ -z "$HAVE_PR" ]
 #
 # Install Ditroff output filter
 #
-rm -f $FILTERS/filter_ditroff			# remove old filter
+rm -f $FILTDIR/filter_ditroff			# remove old filter
 HAVE_DITROFF=""							# say we don't have one yet
 if [ -n "$GROPS" ]						# try Grops
 	then
 	echo "Installing filter for Ditroff output (from the Groff package)."
-	sedit $STORE/filter_ditroff_groff $FILTERS/filter_ditroff
+	sedit $STORE/filter_ditroff_groff $FILTDIR/filter_ditroff
 	HAVE_DITROFF="YES"
 	fi
 if [ -n "$DPOST" -a -n "$POSTREVERSE" ] # try dpost/postreverse
 	then
 	echo "Installing filter for Ditroff output (dpost, postreverse)."
-	sedit $STORE/filter_ditroff_real $FILTERS/filter_ditroff
+	sedit $STORE/filter_ditroff_real $FILTDIR/filter_ditroff
 	HAVE_DITROFF="YES"
 	fi
 if [ -z "$HAVE_DITROFF" ]
@@ -314,12 +316,12 @@ if [ -z "$HAVE_DITROFF" ]
 # Install Troff filter
 # This is only installed if a Ditroff output filter was installed.
 #
-rm -f $FILTERS/filter_troff		# remove old filter
+rm -f $FILTDIR/filter_troff		# remove old filter
 HAVE_TROFF=""							# say we don't have one yet
 if [ -n "$GROFF" -a -n "$HAVE_DITROFF" ]
 	then
 	echo "Installing Troff filter (From the Groff package)."
-	sedit $STORE/filter_troff_groff $FILTERS/filter_troff
+	sedit $STORE/filter_troff_groff $FILTDIR/filter_troff
 	HAVE_TROFF="YES"
 	fi
 if [ -n "$TROFF" -a -n "$HAVE_DITROFF" ]
@@ -336,7 +338,7 @@ if [ -n "$TROFF" -a -n "$HAVE_DITROFF" ]
 	if [ -z "$TBL" ]; then TBL="$CAT"; fi
 	if [ -z "$REFER" ]; then REFER="$CAT"; fi
 	if [ -z "$PIC" ]; then PIC="$CAT"; fi
-	sedit $STORE/filter_troff_real $FILTERS/filter_troff
+	sedit $STORE/filter_troff_real $FILTDIR/filter_troff
 	HAVE_TROFF="YES"
 	fi
 if [ -z "$HAVE_TROFF" ]
@@ -347,13 +349,13 @@ if [ -z "$HAVE_TROFF" ]
 #
 # Install DVI filter
 #
-rm -f $FILTERS/filter_dvi		# remove old one
+rm -f $FILTDIR/filter_dvi		# remove old one
 HAVE_DVI=""
 if [ -n "$DVIPS" ]				# try dvips
 	then
 	echo "Installing DVIPS DVI filter."
-	sedit $STORE/filter_dvi $FILTERS/filter_dvi
-	chmod g+s $FILTERS/filter_dvi
+	sedit $STORE/filter_dvi $FILTDIR/filter_dvi
+	chmod g+s $FILTDIR/filter_dvi
 	HAVE_DVI="YES"
 	fi
 if [ -z "$HAVE_DVI" ]
@@ -365,12 +367,12 @@ if [ -z "$HAVE_DVI" ]
 # Install TeX filter
 # This is only installed if the DVI filter was installed.
 #
-rm -f $FILTERS/filter_tex
+rm -f $FILTDIR/filter_tex
 HAVE_TEX=""
 if [ -n "$HAVE_DVI" -a -n "$TEX" -a -n "$LATEX" ]
 	then
 	echo "Installing TeX/LaTeX filter."
-	sedit $STORE/filter_tex $FILTERS/filter_tex
+	sedit $STORE/filter_tex $FILTDIR/filter_tex
 	HAVE_TEX="YES"
 	fi
 if [ -z "$HAVE_TEX" ]
@@ -382,12 +384,12 @@ if [ -z "$HAVE_TEX" ]
 # Install TexInfo filter
 # This is only installed if the DVI filter was installed.
 #
-rm -f $FILTERS/filter_texinfo
+rm -f $FILTDIR/filter_texinfo
 HAVE_TEXINFO="YES"
 if [ -n "$HAVE_DVI" -a -n "$TEXI2DVI" ]
 	then
 	echo "Installing TexInfo filter"
-	sedit $STORE/filter_texinfo $FILTERS/filter_texinfo
+	sedit $STORE/filter_texinfo $FILTDIR/filter_texinfo
 	HAVE_TEXINFO="YES"
 	fi
 if [ -z "$HAVE_TEXINFO" ]
@@ -398,18 +400,18 @@ if [ -z "$HAVE_TEXINFO" ]
 #
 # Install PDF filter
 #
-rm -f $FILTERS/filter_pdf
+rm -f $FILTDIR/filter_pdf
 HAVE_PDF=""
 if [ -n "$ACROREAD" ]
 	then
 	echo "Installing PDF filter (Acroread)."
-	sedit $STORE/filter_pdf_acroread $FILTERS/filter_pdf
+	sedit $STORE/filter_pdf_acroread $FILTDIR/filter_pdf
 	HAVE_PDF="YES"
 	fi
 if [ -n "$PDFTOPS" ]
 	then
 	echo "Installing PDF filter (from Xpdf)."
-	sedit $STORE/filter_pdf_xpdf $FILTERS/filter_pdf
+	sedit $STORE/filter_pdf_xpdf $FILTDIR/filter_pdf
 	HAVE_PDF="YES"
 	fi
 if [ -z "$HAVE_PDF" ]
@@ -420,12 +422,12 @@ if [ -z "$HAVE_PDF" ]
 #
 # Install HTML filter
 #
-rm -f $FILTERS/filter_html
+rm -f $FILTDIR/filter_html
 HAVE_HTML=""
 if [ -n "$HTMLDOC" ]
 	then
 	echo "Installing HTML filter (HTMLDOC)."
-	sedit $STORE/filter_html_htmldoc $FILTERS/filter_html
+	sedit $STORE/filter_html_htmldoc $FILTDIR/filter_html
 	HAVE_HTML="YES"
 	fi
 if [ -z "$HAVE_HTML" ]
@@ -436,12 +438,12 @@ if [ -z "$HAVE_HTML" ]
 #
 # Install JPEG filter
 #
-rm -f $FILTERS/filter_jpeg
+rm -f $FILTDIR/filter_jpeg
 HAVE_JPEG=""
 if [ -n "$DJPEG" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing JPEG filter."
-	sedit $STORE/filter_jpeg $FILTERS/filter_jpeg
+	sedit $STORE/filter_jpeg $FILTDIR/filter_jpeg
 	HAVE_JPEG="YES"
 	fi
 if [ -z "$HAVE_JPEG" ]
@@ -452,12 +454,12 @@ if [ -z "$HAVE_JPEG" ]
 #
 # Install GIF filter
 #
-rm -f $FILTERS/filter_gif
+rm -f $FILTDIR/filter_gif
 HAVE_GIF=""
 if [ -n "$GIFTOPNM" -a -n "$PPMTOPGM" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing GIF filter."
-	sedit $STORE/filter_gif $FILTERS/filter_gif
+	sedit $STORE/filter_gif $FILTDIR/filter_gif
 	HAVE_GIF="YES"
 	fi
 if [ -z "$HAVE_GIF" ]
@@ -468,12 +470,12 @@ if [ -z "$HAVE_GIF" ]
 #
 # Install BMP filter
 #
-rm -f $FILTERS/filter_bmp
+rm -f $FILTDIR/filter_bmp
 HAVE_BMP=""
 if [ -n "$BMPTOPPM" -a -n "$PPMTOPGM" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing BMP filter."
-	sedit $STORE/filter_bmp $FILTERS/filter_bmp
+	sedit $STORE/filter_bmp $FILTDIR/filter_bmp
 	HAVE_BMP="YES"
 	fi
 if [ -z "$HAVE_BMP" ]
@@ -484,12 +486,12 @@ if [ -z "$HAVE_BMP" ]
 #
 # Install PNM filter
 #
-rm -f $FILTERS/filter_pnm
+rm -f $FILTDIR/filter_pnm
 HAVE_PNM=""
 if [ -n "$PPMTOPGM" -a -n "$PNMDEPTH" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing PNM filter."
-	sedit $STORE/filter_pnm $FILTERS/filter_pnm
+	sedit $STORE/filter_pnm $FILTDIR/filter_pnm
 	HAVE_PNM="YES"
 	fi
 if [ -z "$HAVE_PNM" ]
@@ -500,12 +502,12 @@ if [ -z "$HAVE_PNM" ]
 #
 # Install XBM filter
 #
-rm -f $FILTERS/filter_xbm
+rm -f $FILTDIR/filter_xbm
 HAVE_XBM=""
 if [ -n "$XBMTOPBM" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing XBM filter"
-	sedit $STORE/filter_xbm $FILTERS/filter_xbm
+	sedit $STORE/filter_xbm $FILTDIR/filter_xbm
 	HAVE_XBM="YES"
 	fi
 if [ -z "$HAVE_XBM" ]
@@ -516,12 +518,12 @@ if [ -z "$HAVE_XBM" ]
 #
 # Install XPM filter
 #
-rm -f $FILTERS/filter_xpm
+rm -f $FILTDIR/filter_xpm
 HAVE_XPM=""
 if [ -n "$XPMTOPPM" -a -n "$PPMTOPGM" -a -n "$PNMDEPTH" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing XPM filter"
-	sedit $STORE/filter_xpm $FILTERS/filter_xpm
+	sedit $STORE/filter_xpm $FILTDIR/filter_xpm
 	HAVE_XPM="YES"
 	fi
 if [ -z "$HAVE_XPM" ]
@@ -532,12 +534,12 @@ if [ -z "$HAVE_XPM" ]
 #
 # Install XWD filter
 #
-rm -f $FILTERS/filter_xwd
+rm -f $FILTDIR/filter_xwd
 HAVE_XWD=""
 if [ -n "$XWDTOPNM" -a -n "$PPMTOPGM" -a -n "$PNMDEPTH" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing XWD filter"
-	sedit $STORE/filter_xwd $FILTERS/filter_xwd
+	sedit $STORE/filter_xwd $FILTDIR/filter_xwd
 	HAVE_XWD="YES"
 	fi
 if [ -z "$HAVE_XWD" ]
@@ -548,12 +550,12 @@ if [ -z "$HAVE_XWD" ]
 #
 # Install TIFF filter
 #
-rm -f $FILTERS/filter_tiff
+rm -f $FILTDIR/filter_tiff
 HAVE_TIFF=""
 if [ -n "$TIFFTOPNM" -a -n "$PPMTOPGM" -a -n "$PNMDEPTH" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing TIFF filter"
-	sedit $STORE/filter_tiff $FILTERS/filter_tiff
+	sedit $STORE/filter_tiff $FILTDIR/filter_tiff
 	HAVE_TIFF="YES"
 	fi
 if [ -z "$HAVE_TIFF" ]
@@ -564,12 +566,12 @@ if [ -z "$HAVE_TIFF" ]
 #
 # Install PNG filter
 #
-rm -f $FILTERS/filter_png
+rm -f $FILTDIR/filter_png
 HAVE_PNG=""
 if [ -n "$PNGTOPNM" -a -n "$PPMTOPGM" -a -n "$PNMDEPTH" -a -n "$PNMTOPS" ]
 	then
 	echo "Installing PNG filter."
-	sedit $STORE/filter_png $FILTERS/filter_png
+	sedit $STORE/filter_png $FILTDIR/filter_png
 	HAVE_PNG="YES"
 	fi
 if [ -z "$HAVE_PNG" ]
@@ -580,18 +582,18 @@ if [ -z "$HAVE_PNG" ]
 #
 # Install plot filter
 #
-rm -f $FILTERS/filter_plot
+rm -f $FILTDIR/filter_plot
 HAVE_PLOT=""
 if [ -n "$PLOT2PS" ]
 	then
 	echo "Installing Plot filter (plot2ps)."
-	sedit $STORE/filter_plot_plot2ps $FILTERS/filter_plot
+	sedit $STORE/filter_plot_plot2ps $FILTDIR/filter_plot
 	HAVE_PLOT="YES"
 	fi
 if [ -n "$POSTPLOT" ]
 	then
 	echo "Installing Plot filter (postplot)."
-	sedit $STORE/filter_plot_postplot $FILTERS/filter_plot
+	sedit $STORE/filter_plot_postplot $FILTDIR/filter_plot
 	HAVE_PLOT="YES"
 	fi
 if [ -z "$HAVE_PLOT" ]
@@ -602,12 +604,12 @@ if [ -z "$HAVE_PLOT" ]
 #
 # FIG filter.
 #
-rm -f $FILTERS/filter_fig
+rm -f $FILTDIR/filter_fig
 HAVE_FIG=""
 if [ -n "$FIG2DEV" ]
 	then
 	echo "Installing FIG filter"
-	sedit $STORE/filter_fig $FILTERS/filter_fig
+	sedit $STORE/filter_fig $FILTDIR/filter_fig
 	HAVE_FIG="YES"
 	fi
 if [ -z "$HAVE_FIG" ]

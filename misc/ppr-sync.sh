@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -37,10 +37,10 @@
 PATH="/usr/local/bin:/usr/bin:/bin"
 export PATH
 
-# The directories in which we will work.
-HOMEDIR="@HOMEDIR@"
+LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
 TEMPDIR="@TEMPDIR@"
+PPAD_PATH="@PPAD_PATH@"
 
 # Determine the user name of the current user.
 MYUID=`id | sed -ne 's/^uid=[0-9][0-9]*(\([^)]*\)).*$/\1/p'`
@@ -76,7 +76,7 @@ if [ -z "$DESTSYS" ]
 #
 # Figure out if we should use rsh or ssh.
 #
-if [ -d "$HOMEDIR/.ssh" ]
+if [ -d "$LIBDIR/.ssh" ]
 	then
 	RSH="ssh"
 	RCP="scp"
@@ -94,7 +94,7 @@ rm -f $CONFDIR/groups/*~ $CONFDIR/groups/*.bak
 #
 # Create a temporary file.
 #
-tempfile=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-sync-XXXXXX`
+tempfile=`$LIBDIR/mkstemp $TEMPDIR/ppr-sync-XXXXXX`
 
 #
 # Copy the configuration directory to the destination system.
@@ -114,7 +114,7 @@ for printer in *
 	if [ $? -ne 0 ]
 		then
 		echo "    Touching printer \"$printer\""
-		$RSH $DESTSYS "$HOMEDIR/bin/ppad touch $printer"
+		$RSH $DESTSYS "$PPAD_PATH touch $printer"
 		fi
 	done
 echo
@@ -128,7 +128,7 @@ for group in *
 	if [ $? -ne 0 ]
 		then
 		echo "    Touching group \"$group\""
-		$RSH $DESTSYS "$HOMEDIR/bin/ppad group touch $group"
+		$RSH $DESTSYS "$PPAD_PATH group touch $group"
 		fi
 	done
 echo

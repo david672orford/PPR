@@ -5,7 +5,7 @@
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes <<EndOfSample
+$PPR_PATH -d regression-test1 -m none -u yes <<EndOfSample
 %!PS-Adobe-3.0
 %%Pages: 0
 
@@ -26,7 +26,7 @@ $TESTBIN/cat_output
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -K false -m none -u yes <<EndOfSample
+$PPR_PATH -d regression-test1 -K false -m none -u yes <<EndOfSample
 %!PS-Adobe-3.0
 %%Pages: 0
 

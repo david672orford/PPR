@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_begin/install_create_accounts.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 17 January 2005.
 #
 
-# The makefile has to feed us this information since ../makeprogs/paths.sh
-# doesn't exist yet.
-HOMEDIR=$1
-USER_PPR=$2
-USER_PPRWWW=$3
-GROUP_PPR=$4
 COMMENT="PPR Spooling System"
 
 my_uid=`./id -u`
@@ -122,28 +116,28 @@ for user in $USER_PPR $USER_PPRWWW
 	# System V release 4
 	if [ -x /usr/sbin/passmgmt ]
 		then
-		/usr/sbin/passmgmt -a -h $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
+		/usr/sbin/passmgmt -a -h $LIBDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# Linux
 	else
 	if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
 		then
-		/usr/sbin/useradd -M -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $sup $user
+		/usr/sbin/useradd -M -d $LIBDIR -c "$COMMENT" -g $group_ppr_gid $sup $user
 		exitval=$?
 
 	# OSF?
 	else
 	if [ -x /usr/sbin/useradd ]
 		then
-		/usr/sbin/useradd -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
+		/usr/sbin/useradd -d $LIBDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# FreeBSD
 	else
 	if [ -x /usr/sbin/pw ]
 		then
-		/usr/sbin/pw useradd -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
+		/usr/sbin/pw useradd -d $LIBDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# MacOS X
@@ -156,7 +150,7 @@ for user in $USER_PPR $USER_PPRWWW
 		else
 		uid=101
 		fi
-		echo "$user:*:$uid:$group_ppr_gid:0:0::$COMMENT:$HOMEDIR:" | niload passwd .
+		echo "$user:*:$uid:$group_ppr_gid:0:0::$COMMENT:$LIBDIR:" | niload passwd .
 		exitval=$?
 
 	else				# no user passmgmt or useradd

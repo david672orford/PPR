@@ -5,12 +5,12 @@ cat $CONFDIR/printers/$1
 echo
 
 echo "Use ppad to dump the configuration..."
-$HOMEDIR/bin/ppad show $1
+$PPAD_PATH show $1
 echo "ppad: $?"
 echo
 
 echo "Do it again in machine-readable mode..."
-$HOMEDIR/bin/ppad -M show $1
+$PPAD_PATH -M show $1
 echo "ppad: $?"
 echo
 

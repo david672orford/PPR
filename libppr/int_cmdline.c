@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 #include "config.h"
@@ -98,11 +98,11 @@ void int_cmdline_set(int argc, char *argv[])
 	else
 		int_cmdline.codes = CODES_UNKNOWN;
 
-	/* jobname */
+	/* PDL */
 	if(argc >= 8)
-		int_cmdline.jobname = argv[7];
+		int_cmdline.PDL = argv[10];
 	else
-		int_cmdline.jobname = "???";
+		int_cmdline.PDL = "";
 
 	/* routing */
 	if(argc >= 9)
@@ -110,17 +110,17 @@ void int_cmdline_set(int argc, char *argv[])
 	else
 		int_cmdline.routing = "";
 
-	/* forline */
+	/* jobname */
 	if(argc >= 10)
+		int_cmdline.jobname = argv[7];
+	else
+		int_cmdline.jobname = "???";
+
+	/* forline */
+	if(argc >= 11)
 		int_cmdline.forline = argv[9];
 	else
 		int_cmdline.forline = "???";
-
-	/* barbarlang */
-	if(argc >= 11)
-		int_cmdline.barbarlang = argv[10];
-	else
-		int_cmdline.barbarlang = "";
 
 	/* title */
 	if(argc >= 12)

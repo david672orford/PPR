@@ -22,7 +22,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   that figures work correctly as GIF files.
 
 
-1.40a5, 23 November 1998--18 February 1999.
+1.40a5, 23 November 1998--18 February 1999
 
 * Updated "Acknowledgements" section of pprinst.
 
@@ -272,7 +272,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   them with pprd --stop and papsrv --stop.
 
 
-1.50a2, 27 February 2002--8 November 2002.
+1.50a2, 27 February 2002--8 November 2002
 
 * misc/release_steps.html: added CVS information and hyperlinked URLs.
 
@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--22 January 2003.
+1.50b1, 8 November 2002--22 January 2003
 
 * Removed completed items from TODO.txt.
 
@@ -332,7 +332,7 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
-1.50, 22 January 2003--14 February 2003.
+1.50, 22 January 2003--14 February 2003
 
 * misc/PORTING.txt: changed references to makeprogs/global.mk to
   Makefile.conf.
@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--24 July 2003.
+1.51, 15 February 2003--24 July 2003
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -446,7 +446,7 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.52, 24 July 2003--29 January 2004.
+1.52, 24 July 2003--29 January 2004
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
@@ -468,7 +468,7 @@ more information about RIPs and *pprRIP:.
 * refman/ppr-panel.1.pod: expanded the section about desktop icons.
 
 
-1.53a1, 24 September 2003--20 February 2004.
+1.53a1, 24 September 2003--20 February 2004
 
 * index.html: added links to RFC's relevant to SNMP.
 
@@ -501,7 +501,7 @@ more information about RIPs and *pprRIP:.
   and one should use papd instead.
 
 
-1.53a2, 20 February 2004--21 September 2004.
+1.53a2, 20 February 2004--21 September 2004
 
 * uprint/uprint-lpr.1.pod, uprint-lp.1.pod: added ENVIRONMENT
   VARIABLES sections, expanded BUGS sections.
@@ -525,12 +525,12 @@ more information about RIPs and *pprRIP:.
 * refman/, uprint/: fixed sundry formatting typos.
 
 
-1.53b1, 22 September 2004--2 October 2004.
+1.53b1, 22 September 2004--2 October 2004
 
 * uprint/uprint-lpc.8.pod: added
 
 
-1.53, 5 October 2004--11 December 2004.
+1.53, 5 October 2004--21 January 2005
 
 * misc/ppr.lsm: removed
 
@@ -555,28 +555,6 @@ more information about RIPs and *pprRIP:.
 * refman/: removed the few meager references to destination node and
   job home node names.
 
-
-TODO
-
-* refman: describe editps.conf and editps system
-
-* pprhack: explain meaning of !!! in source code
-
-* uprint: describe uprint responder extensions to the lpr protocol
-
-* refman: describe pagesizes.conf
-
-* refman: describe pserrors.conf
-
-* refman: describe lwstatus.conf, pjlstatus.conf
-
-* pprhack: describe the "Userparams:" printer configuration line
-
-* pprhack: describe the "LimitPages:" printer configuration line
-
-* pprhack: describe the "LimitKilobytes:" printer configuration line
-
-* uprint: finish uprint-lpstat(1) manpage
-
-* refman: finish ppr-followme(1) manpage
+* pprhack/pprhack_interfaces.sgml: adjustments to match change to 
+  interface command line parameters.
 

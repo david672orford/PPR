@@ -218,7 +218,8 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 						close(new_stderr);
 						}
 
-						chdir(HOMEDIR);
+						/* Interfaces have the right to expect that this will be the current directory. */
+						chdir(LIBDIR);
 
 						/* Set real to effective because query_wrapper is
 						 * setuid root and wouldn't otherwise know that

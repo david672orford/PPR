@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -44,8 +44,6 @@ int main(int argc, char *argv[])
 	{
 	int stamp;
 
-	chdir(HOMEDIR);
-
 	if(argc != 4)
 		{
 		fprintf(stderr,"%s: wrong number of parameters (3 required, %d received)\n", argv[0], argc - 1);
@@ -59,7 +57,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Call the library alert function to post the alert. */
-	alert(argv[1], stamp, argv[3]);
+	alert(argv[1], stamp, "%s", argv[3]);
 
 	/* We assume it worked, exit. */
 	return EXIT_OK;

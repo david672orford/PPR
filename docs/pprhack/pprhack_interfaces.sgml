@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_interfaces.sgml
-Last Modified: 28 June 2004
+Last Modified: 20 January 2005
 Last Proofread: never
 -->
 
@@ -63,30 +63,32 @@ to work is explaned in more detail.</para>
 <sect2>
 <title>The Command Line Parameters</title>
 
-<para>There are 10 parameters in all.  That seems a lot, but very few
-interface programs will examine any beyond the first six.  Most will use
-parameters one through three and simply verify that four through six have
-acceptable values.  It is perfectly acceptable to write an interface which
-uses only the first two.</para>
+<para>There are 11 parameters in all.  That seems a lot, but it is perfectly
+acceptable to write an interface which uses only the first two.  Most also
+examine parameters four through six to make sure that they are compatible with
+the protocol used when communicating with the printer.</para>
 
-<para>It is helpful if the interface program also examines parameters four
-through six, if for nothing else, to make sure that it and the
-communications channel which it opens to the printer are able to cope with
-the implications of the values of these parameters.  If it cannot, it should
-call <function>alert()</function> to post an explanatory message to the
-printer's alert log and then exit with the code EXIT_PRNERR_BAD_</para>
+<para>If the interface program determines that the values of parameters four
+through six are unacceptable, it should call <function>alert()</function> to 
+post an explanatory message to the printer's alert log and then exit with the
+code <errorcode>EXIT_PRNERR_NORETRY_BAD_SETTINGS</errorcode>.</para>
 
 <para>Some of the parameters are small integers which represent enumerated
 values.  These values are defined symbolically in the C include file
 <filename>include/interface.h</filename> and in the shell script fragment
 <filename>interface.sh</filename>.</para>
 
+<para>The order to some of the parameters between 7 and 11 inclusive changed
+with <program>PPR</program> 2.00.  Also, the name and semantics of what is now
+parameter number 7 changed slightly.</para>  
+
 <sect3>
 <title>Parameter One--The Printer's Name</title>
 
-<para>The interface is invoked with the first parameter set to the name of
-the printer.  The interface should use this name when posting alerts using
-either the alert() function in libppr.a or lib/alert.</para>
+<para>The interface is invoked with the first parameter set to the name of the
+printer.  The interface should use this name when posting alerts using either
+the alert() function in <filename>libppr.a</filename> or
+<filename>/usr/lib/ppr/alert</filename>.</para>
 
 </sect3>
 
@@ -94,11 +96,7 @@ either the alert() function in libppr.a or lib/alert.</para>
 <title>Parameter Two--The Printer's Address</title>
 
 <para>The second parameter is set to the string following the
-<literal>Address:</literal> keyword in the printer configuration file or to
-the printer name if there is no address line.  (That last feature is a
-holdover from very old versions of PPR.  Printer configuration files created
-by <command>ppad</command> always have <literal>Address:</literal>
-lines.)</para>
+<literal>Address:</literal> keyword in the printer configuration file.  </para>
 
 <para>What constitutes a syntatically valid address is entirely up to the
 designer of the interface program.  If the address is syntactically invalid,
@@ -119,10 +117,9 @@ This will be zero or more space separated name=value pairs.</para>
 designer of the interface program.  However, when devising options for a new
 interface program, he should be aware of the options of similiar existing
 interfaces and avoid creating new options or option sementics.  If the
-interface program does not recognize one of the options or finds an option
-with an invalid or out-of-range value, it must call
-<function>alert()</function> to post an error message to that effect and then
-exit with the value
+interface program does not recognize one or more of the options or finds an option with
+an invalid or out-of-range value, it must call <function>alert()</function> to
+post an error message to that effect and then exit with the value
 <errorcode>EXIT_PRNERR_NORETRY_BAD_SETTINGS</errorcode>.</para>
 
 </sect3>
@@ -195,13 +192,11 @@ channel are not capable of passing the set of codes indicated.</para>
 </sect3>
 
 <sect3>
-<title>Parameter Seven--The Job Name</title>
+<title>Parameter Seven--The File Type</title>
 
-<para>The seventh parameter is set to the name of the job.  (For example,
-<literal>mouse:chipmunk-148.0(mouse)</literal>.  This parameter will be of
-no interest to most interface programs.  An exception is the
-<command>lpr</command> interface which passes this information on to the
-remote system.</para>
+<para>The tenth parameter indicates the type of the file which the interface 
+program will be reading from stdin, that is, the file which the interface 
+program is begin asked transmit to the printer.</para>
 
 </sect3>
 
@@ -211,70 +206,44 @@ remote system.</para>
 <para>The eight parameter is set the the text of the
 <literal>%%Routing:</literal> comment in the print job.  If the
 <literal>%%Routing:</literal> comment is absent, then this parameter will be
-blank.  The routing comment is intended to convey written instructions to a
-human printer operator.  For example, its value might be "deliver to room
-101".  If your interface program can somehow make this message appear on an
-operator console, it may do so.  If it is an interface to a fax server, then
-it may read the telephone number from this parameter.  This is acceptable
-because a telephone number can be considered a delivery instruction.  This
-parameter should not use this parameter for any other purpose. 
-Particularly, it should not be used as a way to pass options which control
-the printing process.</para>
+blank.  The routing comment is intended to convey delivery instructions to a
+human printer operator.  For example, its value might be "deliver to room 101".
+If your interface program can somehow make this message appear on an operator
+console, it may do so.  If it is an interface to an outgoing fax modem, then it
+might be reasonable for it to read the telephone number from this parameter.
+This is acceptable because a telephone number can be considered a delivery
+instruction.  This parameter should not be used for any purpose other than to
+indicate wither the printed job should be sent.  Particularly, it should not be
+used as a way to pass options which control the printing process.</para>
 
 </sect3>
 
 <sect3>
-<title>Parameter Nine--The User's Name</title>
+<title>Parameter Nine--The LPR Job Name</title>
 
-<para>The ninth parameter is the text of the <literal>%%For:</literal>
-comment in the print job.  (The <literal>%%For:</literal> line in the job as
-sent to the printer which is not necessarily the same as the
-<literal>%%For:</literal> line in the input file.) If this information is
-unavailable, the field is blank. The <command>lpr</command> interface passes
-this on to the remote system.  Unless your interface passes the job on to
-another spooler (as the lpr interface may), it should ignore this
-parameter.</para>
+<para>The seventh parameter is set to the name of the job.  (For example,
+<literal>chipmunk-148.0</literal>.
+This parameter is provided for the
+<command>lpr</command> interface which passes this information on to the remote spooler.</para>
 
 </sect3>
 
 <sect3>
-<title>Parameter Ten--The File Type</title>
+<title>Parameter Nine--The LPR User's Name</title>
 
-<para>The tenth was once used by special interface programs which ran the
-input file through Ghostscript if this parameter was empty.  Since
-<command>pprdrv</command> now performs this function, these interface
-programs are are obsolete.  This parameter will probably be removed in a
-future version of <application>PPR</application>.  This only possible reason
-for preserving it is if someone can show that some printer comuncation
-method requires the file type to be communicated out-of-band.</para>
+<para>The ninth parameter is the text of the name of the user to whom the
+job belongs.
+This parameter is provided for the
+<command>lpr</command> interface which passes this information on to the remote spooler.</para>
 
-<para>The tenth parameter indicates the type of the file on stdin, that is,
-the file which the interface program is begin asked transmit to the printer. 
-Normally this parameter is an empty string, which indicates that the file is
-in PostScript format. </para>
+</sect3>
 
-<para>If passthru mode is in effect (see <command>ppad passthru</command>
-and <command>ppad group passthru</command>), that is if the file to be
-transmitted to the printer is not a PostScript file, then this parameter
-will be the name of the file type, such as <literal>pcl</literal> or
-<literal>pdf</literal>.  (The file type names which appear in this parameter
-are the same names as are used with the <command>ppr -T</command> switch. A
-non-empty tenth parameter <emphasis>does not</emphasis> necessarily indicate
-that a <command>-T</command> switch was used.) </para>
+<sect3>
+<title>Parameter Eleven--The LPR Job Title</title>
 
-<para>Also, if transparent mode is in effect (see <command>ppr -H
-transparent</command>), then this parameter will contain a space separated
-list of the filters which would be required (and may actually have been
-invoked) to convert the input file to PostScript.  Uncompression with
-<command>uncompress</command> and <command>gunzip</command> are indicated by
-the strings <literal>uncompress</literal> and <literal>gunzip</literal>
-respectively.  Here are some examples: if the input file is already
-PostScript, then this parameter will be empty.  If the file is PCL data,
-then this paramater will be <literal>pcl</literal>.  If the file is
-<command>gzip</command> compressed PostScript, then this parameter will be
-<literal>gunzip</literal>.  If the file is <command>gzip</command>
-compressed PCL, then this parameter will be <literal>gunzip
-pcl</literal>.</para>
+<para>The eleventh parameter is the job title.
+This parameter is provided for the
+<command>lpr</command> interface which passes this information on to the remote spooler.</para>
 
 </sect3>
 
@@ -302,20 +271,20 @@ structure <varname>int_cmdline</varname> is an instance of
 <programlisting>
 struct INT_CMDLINE
 	{
-	gu_boolean probe;		/* TRUE if --probe used */
+	gu_boolean probe;			/* TRUE if --probe used */
 	const char *int_name;		/* example: "interfaces/atalk" */
 	const char *int_basename;	/* example: "atalk" */
 	const char *printer;		/* example: "myprn" */
 	const char *address;		/* example: "My Laser Printer:LaserWriter@Computing Center" */
 	const char *options;		/* example: "idle_status_interval=60 open_retries=5" */
-	int jobbreak;			/* example: 1 (JOBBREAK_SIGNAL) */
+	int jobbreak;				/* example: 1 (JOBBREAK_SIGNAL) */
 	gu_boolean feedback;		/* example: 1 (TRUE) */
-	enum CODES codes;		/* example: 3 (CODES_Binary) */
-	const char *jobname;		/* example: "mouse:myprn-1001.0(mouse)" */
+	enum CODES codes;			/* example: 3 (CODES_Binary) */
+	const char *PDL;			/* example: "postscript" */
 	const char *routing;		/* example: "Call David Chappell at 2114 when ready" */
+	const char *jobname;		/* example: "myprn-1001.0" */
 	const char *forline;		/* example: "David Chappell" */
-	const char *barbarlang;		/* example: "" (PostScript) */
-	const char *title;		/* example: "My Print Job" */
+	const char *title;			/* example: "My Print Job" */
 	} ;
 </programlisting>
 
@@ -359,7 +328,7 @@ if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_S
 <title>The Return Codes</title>
 
 <para>The exit codes which interface programs should use are defined in
-<filename>include/interface.h</filename> and <filename>/lib/interface.sh</filename>.</para>
+<filename>include/interface.h</filename> and <filename>/usr/lib/ppr/interface.sh</filename>.</para>
 
 <variablelist>
 
@@ -635,11 +604,11 @@ if(strncmp(argv[2], "/dev/", 5) != 0)
 used like this:</para>
 
 <programlisting>
-. lib/interface.sh
+. /interface.sh
 
 if [ "`echo $2 | cut -c1-5`" != "/dev/" ]
 	then
-	lib/alert $1 TRUE "The address \"$2\" is syntactically invalid."
+	./alert $1 TRUE "The address \"$2\" is syntactically invalid."
 	exit(EXIT_PRNERR_BAD_SETTINGS);
 	fi
 </programlisting>

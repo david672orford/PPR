@@ -1,5 +1,5 @@
 mouse:~ppr/src/tcl/README.txt
-Last modified 18 January 2002.
+Last modified 19 January 2005.
 
 This directory contains a modified version of Tcl 7.4p2.  The modifications
 are as follows:
@@ -20,4 +20,7 @@ are as follows:
 * Converted prototypes to ANSI C (not finished yet).
 
 * Fixed tests/lsort.test for strtod() which can parse 0x40.
+
+* tclAppInit.c: replaced with version which includes PPR Tcl commands
+  (ppr-tclsh.c)
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -661,7 +661,7 @@ static void init(void)
 		gu_daemon(PPR_UMASK);
 
 	/* Change to the PPR home directory. */
-	chdir(HOMEDIR);
+	chdir(LIBDIR);
 
 	/* Remove any old log file. */
 	unlink(LOGFILE);

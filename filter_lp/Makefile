@@ -44,9 +44,9 @@ filter_lp$(DOTEXE): filter_lp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/filters filter_lp$(DOTEXE)
-	$(INSTALLLN) filter_lp$(DOTEXE) $(HOMEDIR)/filters/filter_lp_autolf$(DOTEXE)
-	$(INSTALLLN) filter_lp$(DOTEXE) $(HOMEDIR)/filters/filter_fortran$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(FILTDIR) filter_lp$(DOTEXE)
+	$(INSTALLLN) filter_lp$(DOTEXE) $(FILTDIR)/filter_lp_autolf$(DOTEXE)
+	$(INSTALLLN) filter_lp$(DOTEXE) $(FILTDIR)/filter_fortran$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

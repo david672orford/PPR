@@ -72,7 +72,7 @@ install: $(INSTALL_ATALK)
 
 # List if things to install if we have AppleTalk.
 install-atalk: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin papd
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(BINDIR) papd
 
 #=== Housekeeping ===========================================================
 

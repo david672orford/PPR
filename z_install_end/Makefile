@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/templates/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
@@ -61,13 +61,11 @@ install-real:
 	#./install_alternatives.tcl
 	# Create PPR's crontab.
 	./install_crontab.sh
-	# Fix things left by previous installations.
-	./fixup_obsolete.sh
 	# Initialize the media database.
-	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
-	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.german >/dev/null
+	$(PPAD_PATH) media import $(CONFDIR)/media.sample >/dev/null
+	$(PPAD_PATH) media import $(CONFDIR)/media.german >/dev/null
 	# Create indexes of fonts, PPD files, and filters.
-	$(HOMEDIR)/bin/ppr-index #>/dev/null
+	$(BINDIR)/ppr-index #>/dev/null
 
 #=== Housekeeping ===========================================================
 

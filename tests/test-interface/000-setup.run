@@ -5,10 +5,10 @@
 id | sed -e 's/[ \t]*groups=.*$//' -e 's/=[0-9]*(/=?(/g'
 
 # Set up a test print queue:
-$HOMEDIR/bin/ppad delete regression-test1 >/dev/null 2>&1
-$HOMEDIR/bin/ppad interface regression-test1 $TESTBIN/test_interface_2 $REGTEST_INTERFACE_OUTPUT
+$PPAD_PATH delete regression-test1 >/dev/null 2>&1
+$PPAD_PATH interface regression-test1 $TESTBIN/test_interface_2 $REGTEST_INTERFACE_OUTPUT
 echo "ppad: $?"
-$HOMEDIR/bin/ppad jobbreak regression-test1 none
+$PPAD_PATH jobbreak regression-test1 none
 echo "ppad: $?"
 
 exit 0

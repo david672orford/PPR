@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -1238,7 +1238,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Change to the home directory of PPR. */
-	chdir(HOMEDIR);
+	chdir(LIBDIR);
 
 	/*
 	** Determine and store our process id.

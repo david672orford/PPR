@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_init_script.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 December 2004.
+# Last modified 17 January 2005.
 #
-
-. ../makeprogs/paths.sh
 
 #========================================================================
 # Part 1, figure out what we have
@@ -293,19 +291,22 @@ then
 		echo
 		echo "# ==== Start PPR ===="
 		echo "# PPR always needs pprd.
-		echo "if [ -x $HOMEDIR/bin/pprd ]"
+		echo "if [ -x $BINDIR/pprd ]"
 		echo " then"
 		echo " echo \"Starting pprd\""
-		echo " $HOMEDIR/bin/pprd"
+		echo " $BINDIR/pprd"
 		echo " fi"
 		echo "# Start AppleTalk server only if config file is present.
-		echo "if [ -x $HOMEDIR/bin/papd ]"
+		echo "if [ -x $BINDIR/papd ]"
 		echo " then"
 		echo " echo \"Starting papd\""
-		echo " $HOMEDIR/bin/papd"
+		echo " $BINDIR/papd"
 		echo " fi"
 		echo "# Uncomment this line to run the new lprsrv in standalone mode."
-		echo "#${HOMEDIR}/bin/lprsrv -s printer"
+		echo "#if [ -x $BINDIR/lprdrv ]"
+		echo "# then"
+		echo "# $BINDIR/lprsrv -s printer"
+		echo "# fi"
 		echo "# ==== End of PPR Startup Code ===="
 		} >>$RC_LOCAL
 
@@ -319,7 +320,7 @@ else
 	echo "Since your system doesn't seem to use a System V style Init nor do you have"
 	echo "have an rc.local file, you must find your own means to start PPR when the"
 	echo "system boots.  Specifically, you must arrange for root or $USER_PPR to run"
-	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papd."
+	echo "$BINDIR/pprd and possibly $BINDIR/papd."
 	echo
 	echo "Please press RETURN to continue."
 	read x

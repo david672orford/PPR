@@ -48,8 +48,8 @@ indexppds$(DOTEXE): indexppds.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(PROGS)
-	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
 	( cd ghostscript; $(MAKE) install )
 	$(INSTALLDATA) $(SHAREDIR)/PPDFiles other/*
 	( cd generic; $(MAKE) install )

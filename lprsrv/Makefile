@@ -54,8 +54,8 @@ lprsrv-test$(DOTEXE): lprsrv-test.$(OBJ) lprsrv_conf.$(OBJ) $(USELIBS)
 #=== Install ================================================================
 
 install: $(PROGS) lprsrv.conf.sample
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(BIN_PROGS)
 	$(INSTALLCP) lprsrv.conf.sample $(CONFDIR)/lprsrv.conf.sample
 
 #=== Housekeeping ===========================================================

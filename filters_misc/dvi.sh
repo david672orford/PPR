@@ -1,17 +1,32 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/filters_misc/dvi.sh
-# Copyright 1995--2001, Trinity College Computing Center
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 February 2001.
+# Last modified 17 January 2005.
 #
 
 #
@@ -32,7 +47,7 @@
 #
 
 # Standard directories
-HOMEDIR="?"
+LIBDIR="?"
 TEMPDIR="?"
 VAR_SPOOL_PPR="?"
 
@@ -40,7 +55,7 @@ VAR_SPOOL_PPR="?"
 DVIPS="?"
 
 # We will use this temporary file for divps's error output
-TEMPFILE=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-dvi-XXXXXX`
+TEMPFILE=`$LIBDIR/mkstemp $TEMPDIR/ppr-dvi-XXXXXX`
 
 # Directory in which to create configuration files
 DVIPS_CONFDIR="$VAR_SPOOL_PPR/dvips"
@@ -119,7 +134,7 @@ if [ -z "$NOISY" ]	# if not noisy
 	echo "Command: $DVIPS $DVIPS_CONFIG -f -R" >&2
 	$DVIPS $DVIPS_CONFIG -f -R		 | grep -v '^Got a new papersize$'
 	fi
-cd $HOMEDIR
+cd $LIBDIR
 
 # If there were errors and we are not in noisy mode, try to print the
 # DVIPS error messages instead of the DVIPS output.

@@ -33,10 +33,10 @@ include ../Makefile.conf
 #== Install Locations ========================================================
 
 # Programs not invoked from the WWW interface.
-BIN_DIR=$(HOMEDIR)/bin
+BIN_DIR=$(BINDIR)
 
 # Library files and programs such as the cgi_*.pl libraries and the web server.
-LIB_DIR=$(HOMEDIR)/lib
+LIB_DIR=$(LIBDIR)
 
 # Images that are part of the GUI.
 IMAGES_DIR=$(WWWDIR)/images

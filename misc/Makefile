@@ -53,12 +53,12 @@ ppr-testpage$(DOTEXE): ppr-testpage.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-sync ppd2macosdrv ppr-testpage
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) ppr-sync ppd2macosdrv ppr-testpage
 	if [ `uname -s` = "IRIX" ];\
 		then\
-		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin sgi_glp_hack;\
+		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) sgi_glp_hack;\
 		fi
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib custom_hook_docutech xmessage
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) custom_hook_docutech xmessage
 
 #=== Housekeeping ===========================================================
 

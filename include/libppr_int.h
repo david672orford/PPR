@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/libppr_int.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 20 January 2005.
 */
 
 #ifndef LIBPPR_INT_H
@@ -51,10 +51,10 @@ struct INT_CMDLINE
 	int jobbreak;						/* example: 1 (signal) */
 	gu_boolean feedback;				/* example: 1 (True) */
 	int codes;							/* example: 3 (Binary) */
-	const char *jobname;				/* example: "mouse:myprn-1001.0(mouse)" */
+	const char *PDL;					/* example: "" (PostScript) */
 	const char *routing;				/* example: "Call David Chappell at 2114 when ready" */
+	const char *jobname;				/* example: "mouse:myprn-1001.0(mouse)" */
 	const char *forline;				/* example: "David Chappell" */
-	const char *barbarlang;				/* example: "" (PostScript) */
 	const char *title;					/* example: "My Print Job" */
 	} ;
 

@@ -47,10 +47,10 @@ all: $(PROGS)
 #=== Install ================================================================
 
 install: $(PROGS) PrintDesk.pm $(PRINTDESK_SUB_SCRIPTS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	$(INSTALLDATA) $(HOMEDIR)/lib PrintDesk.pm
-	$(MAKE_NEW_DIR) $(HOMEDIR)/lib/PrintDesk
-	$(INSTALLDATA) $(HOMEDIR)/lib/PrintDesk $(PRINTDESK_SUB_SCRIPTS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(PROGS)
+	$(INSTALLDATA) $(LIBDIR) PrintDesk.pm
+	$(MAKE_NEW_DIR) $(LIBDIR)/PrintDesk
+	$(INSTALLDATA) $(LIBDIR)/PrintDesk $(PRINTDESK_SUB_SCRIPTS)
 
 #=== Housekeeping ===========================================================
 

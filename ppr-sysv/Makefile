@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/uprint/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-lpc$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
-SETUID_PROGS=uprint-lpr$(DOTEXE) uprint-lp$(DOTEXE) 
+PROGS=ppr-lp$(DOTEXE) ppr-cancel$(DOTEXE) ppr-lpstat$(DOTEXE) 
 
 PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 
@@ -41,34 +40,21 @@ PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 
 #=== Build ==================================================================
 
-all: $(PROGS) $(SETUID_PROGS)
+all: $(PROGS)
 
-uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
+ppr-lp$(DOTEXE): ppr-lp.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
+ppr-cancel$(DOTEXE): ppr-cancel.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
-uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
-
-uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
-
-uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
-
-uprint-cancel$(DOTEXE): uprint-cancel.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
-
-uprint-lpstat$(DOTEXE): uprint-lpstat.$(OBJ) $(PRIVATE_LIBS)
+ppr-lpstat$(DOTEXE): ppr-lpstat.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 #=== Install ================================================================
 
-install: $(PROGS) $(SETUID_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin $(SETUID_PROGS)
+install: $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(PROGS)
 
 #=== Housekeeping ===========================================================
 
@@ -78,6 +64,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS) $(SETUID_PROGS)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
 
 # end of file

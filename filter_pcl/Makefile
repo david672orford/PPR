@@ -48,7 +48,7 @@ filter_pcl: filter_pcl.class PCLparse.class PSout.class PSfont.class AssertionFa
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/filters $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(FILTDIR) $(PROGS)
 
 #=== Housekeeping ===========================================================
 

@@ -63,7 +63,7 @@ int uprint_parse_lp_filter_modes(void *p);
 #define MAX_FOR 127
 
 /* This is our setuid root helper. */
-#define UPRINT_RFC1179 HOMEDIR"/lib/uprint_rfc1179"
+#define UPRINT_RFC1179 LIBDIR"/uprint_rfc1179"
 
 /* A structure to describe a print job: */
 struct UPRINT

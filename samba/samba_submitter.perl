@@ -26,24 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
-# System configuration values:
-$HOMEDIR="@HOMEDIR@";
-$TEMPDIR="@TEMPDIR@";
-
+use lib "@PERL_LIBDIR@";
 use FileHandle;
 use Socket;
-unshift(@INC, "$HOMEDIR/lib");
+use PPR;
 require 'pprpopup.pl';
 
 # Turning this on can cause incorrect operation.
 #$DEBUG = 1;
 
 # Values derived from system configuration values:
-$PPR = "$HOMEDIR/bin/ppr";
-$LOGFILE = "$TEMPDIR/samba_submitter.log";
+$LOGFILE = "$PPR::LOGDIR/samba_submitter.log";
 
 # Assign names to our arguments.
 my($CLIENT_NBNAME, $CLIENT_IP, $CLIENT_PORT, $CLIENT_OS, $USER, $PRINTER, $FILE) = @ARGV;
@@ -111,7 +107,7 @@ else
 	}
 
 # Replace ourself with ppr:
-exec($PPR, '-d', $PRINTER, '-e', 'responder', '-w', 'log',
+exec($PPR::PPR_PATH, '-d', $PRINTER, '-e', 'responder', '-w', 'log',
 		@responder, @for,
 		'-X', "$CLIENT_NBNAME\@samba",
 		'-C', '', '-U', '-I', $FILE);

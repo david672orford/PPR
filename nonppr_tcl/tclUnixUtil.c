@@ -18,7 +18,7 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
-#include "gu.h"
+#include "gu.h"		/* for gu_mkstemp() */
 
 /*
  * A linked list of the following structures is used to keep track

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -691,7 +691,6 @@ int main(int argc, char *argv[])
 
 	errors = stderr;			/* set default */
 
-	/* chdir(HOMEDIR); */
 	umask(PPR_UMASK);
 
 	/* Figure out the user's name and make it the initial value for su_user. */

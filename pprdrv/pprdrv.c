@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 17 January 2005.
 */
 
 /*
@@ -1959,7 +1959,7 @@ int real_main(int argc, char *argv[])
 		{
 		argi++;
 		test_mode = TRUE;
-		chdir(HOMEDIR);
+		chdir(LIBDIR);
 		}
 
 	/*

@@ -6,7 +6,7 @@
 #============================================================================
 # PPR filters need a seekable file as input.
 #============================================================================
-my $tempname = `$ENV{HOMEDIR}/lib/mkstemp $ENV{TEMPDIR}/ppr_test_XXXXXX`;
+my $tempname = `$ENV{LIBDIR}/mkstemp $ENV{TEMPDIR}/ppr_test_XXXXXX`;
 chomp $tempname;
 
 #============================================================================
@@ -108,10 +108,10 @@ print P "End of test.\r\n";
 close(P) || die $!;
 
 # Level 1 PostScript
-system("$ENV{HOMEDIR}/filters/filter_dotmatrix <$tempname") && die $!;
+system("$ENV{FILTDIR}/filter_dotmatrix <$tempname") && die $!;
 
 # Level 2 PostScript (RLL compression of graphics)
-system("$ENV{HOMEDIR}/filters/filter_dotmatrix level=2 <$tempname") && die $!;
+system("$ENV{FILTDIR}/filter_dotmatrix level=2 <$tempname") && die $!;
 
 #============================================================================
 # Try non-ASCII handling.
@@ -145,7 +145,7 @@ print P "Now is the time for all good men to come to the aid of the party.\r\n";
 
 close(P) || die $!;
 
-system("$ENV{HOMEDIR}/filters/filter_dotmatrix charset=koi8-r <$tempname") && die $!;
+system("$ENV{FILTDIR}/filter_dotmatrix charset=koi8-r <$tempname") && die $!;
 
 #============================================================================
 # Close up shop

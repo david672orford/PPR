@@ -18,16 +18,10 @@
 # This filter takes Plain TeX or LaTeX source and passes it thru
 # TeX or LaTeX and then passes it on the the DVI filter.
 #
-# The program "~ppr/install/setup_filters" passes this program thru a sed
-# script before installing it.
+# The program indexfilters passes this program thru a sed script before 
+# installing it.
 #
-
-# PPR directories:
-$HOMEDIR="?";
 $TEMPDIR="?";
-
-# Set the path for TeX and LaTeX.  These are
-# changed by setup_filters.
 $TEX="?";
 $LATEX="?";
 

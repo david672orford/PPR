@@ -1,5 +1,5 @@
 mouse:~ppr/src/misc/README.txt
-7 March 2003
+17 January 2005
 
 The PPR source directory "misc/" contains a number of small programs and other
 files.  Some of these are not described in the primary documentation.  Some
@@ -36,7 +36,7 @@ which is handy for popuping up simple dialog boxes from shell scripts.
 Sadly, many X-Windows distributions don't include this neat little program.
 This is not a perfect clone, but it is close enough to work for PPR.
 
-This program is installed in $HOMEDIR/lib/.  The xwin responder and xwin
+This program is installed in $LIBDIR.  The xwin responder and xwin
 commentator will use it if xmessage is not found and wish is.
 
 
@@ -70,7 +70,7 @@ programs such as glp (a graphical front-end for lp) will work correctly.
 If you don't do this, their browse lists of print queues will be empty.
 
 If the operating system is IRIX, then this script will be installed in
-$HOMEDIR/bin/.
+$BINDIR.
 
 
 ====================================
@@ -78,7 +78,7 @@ $HOMEDIR/bin/.
 ====================================
 
 This script is for use with a Xerox Docutech 135 in Trinity College's print
-shop.  Use it as an example.  It is installed in $HOMEDIR/lib/.
+shop.  Use it as an example.  It is installed in $LIBDIR.
 
 
 ====================================

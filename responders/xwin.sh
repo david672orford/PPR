@@ -41,7 +41,7 @@
 XWINBINDIR="@XWINBINDIR@"
 
 # This helps use find our mkstemp.
-HOMEDIR="@HOMEDIR@"
+LIBDIR="@LIBDIR@"
 
 # We may need to write the message into a temporary file.
 # It is normally "/tmp".
@@ -189,7 +189,7 @@ if [ -x $XWINBINDIR/xmessage ]
 	else
 	if [ -x /usr/local/bin/wish ]
 	then
-	sender="/usr/local/bin/wish $HOMEDIR/lib/xmessage \
+	sender="/usr/local/bin/wish $LIBDIR/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
@@ -198,7 +198,7 @@ if [ -x $XWINBINDIR/xmessage ]
 	else
 	if [ -x /usr/bin/wish ]
 	then
-	sender="/usr/bin/wish $HOMEDIR/lib/xmessage \
+	sender="/usr/bin/wish $LIBDIR/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -

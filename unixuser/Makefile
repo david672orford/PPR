@@ -53,9 +53,9 @@ ppr-followme$(DOTEXE): ppr-followme.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS_SUID)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/lib $(LIB_PROGS) 
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) $(BIN_PROGS_SUID)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(BINDIR) $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(LIBDIR) $(LIB_PROGS) 
 
 #=== Housekeeping ===========================================================
 

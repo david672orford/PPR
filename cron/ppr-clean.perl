@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -36,7 +36,7 @@
 # end since it reports on infractions.
 #
 
-$HOMEDIR="@HOMEDIR@";
+$LIBDIR="@LIBDIR@";
 $VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
 $CONFDIR="@CONFDIR@";
 $TEMPDIR="@TEMPDIR@";
@@ -203,13 +203,11 @@ if($opt_all_removable)
 	sweepdir("$VAR_SPOOL_PPR/run", undef, 0.0);
 
 	# Remove all of the indexes.
-	system("$HOMEDIR/bin/ppr-index --delete");
+	system("$BINDIR/ppr-index --delete");
 
-	# Remove all of the converted PPD files.
-	#system("$HOMEDIR/bin/ppr2samba --remove");
-	#system("$HOMEDIR/bin/ppr2win95drv --remove");
-	#system("$HOMEDIR/bin/ppr2windrv --remove");
-	#system("$HOMEDIR/bin/ppr2macosdrv --remove");
+	# Remove all of the Samba configuration and converted PPD files.
+	#system("$BINDIR/ppr2samba --remove");
+	#system("$BINDIR/ppd2macosdrv --remove");
 
 	exit 0;
 	}

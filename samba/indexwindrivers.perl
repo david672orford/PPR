@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -38,7 +38,7 @@ use lib "@PERL_LIBDIR@";
 require "readppd.pl";
 
 $CONFDIR="@CONFDIR@";
-$HOMEDIR="@HOMEDIR@";
+$LIBDIR="@LIBDIR@";
 $VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
 
 # This is the directory which contains PPR's collection of PPD files.
@@ -174,7 +174,7 @@ if($opt_verbose)
 open(INDEX, $PPD_INDEX) || die "Can't open index file \"$PPD_INDEX\", $!\n";
 
 # Open sambaprint to accept the driver definitions for Samba.
-open(DRIVERS, "| $HOMEDIR/lib/sambaprint drivers import") || die $!;
+open(DRIVERS, "| $LIBDIR/sambaprint drivers import") || die $!;
 
 # For each PPD file, convert it to MS-DOS line termination and store it in the
 # WINPPD subdirectory of the driver distribution share under its MS-DOS file

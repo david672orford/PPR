@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -35,7 +35,7 @@
 #
 
 # source the file which defines the exit codes
-. lib/interface.sh
+. ./interface.sh
 
 # Detect the --probe option.  We are a fake, so we fake it.
 if [ "$1" == "--probe" ]
@@ -67,7 +67,7 @@ for opt in $OPTIONS
 		CREATE=0
 		;;
 	* )
-		lib/alert $PRINTER TRUE "Unrecognized interface option: $opt"
+		./alert $PRINTER TRUE "Unrecognized interface option: $opt"
 		exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 		;;
 	esac
@@ -76,18 +76,18 @@ for opt in $OPTIONS
 # Make sure the address parameter is not empty.
 if [ -z "$ADDRESS" ]
 	then
-	lib/alert $PRINTER TRUE "Address is empty"
+	./alert $PRINTER TRUE "Address is empty"
 	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
 # Make sure no one has said we can do feedback.
 if [ "0$FEEDBACK" -ne 0 ]
 	then
-	lib/alert $PRINTER TRUE "The PPR interface program \"dummy\" is incapable of sending feedback."
+	./alert $PRINTER TRUE "The PPR interface program \"dummy\" is incapable of sending feedback."
 	if [ "$PRINTER" != "-" ]
 		then
-		lib/alert $PRINTER FALSE "Use the command \"ppad feedback $PRINTER false\" to"
-		lib/alert $PRINTER FALSE "correct this problem."
+		./alert $PRINTER FALSE "Use the command \"ppad feedback $PRINTER false\" to"
+		./alert $PRINTER FALSE "correct this problem."
 		fi
 	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
@@ -98,13 +98,13 @@ if [ -f $ADDRESS ]
 	then
 	if [ ! -w $ADDRESS ]
 	then
-	lib/alert $PRINTER TRUE "Access to the file or character device \"$ADDRESS\" is denied."
+	./alert $PRINTER TRUE "Access to the file or character device \"$ADDRESS\" is denied."
 	exit $EXIT_PRNERR_NORETRY_ACCESS_DENIED
 	fi
 	else
 	if [ $CREATE -eq 0 ]
 	then
-	lib/alert $PRINTER TRUE "There is no file or character device \"$ADDRESS\"."
+	./alert $PRINTER TRUE "There is no file or character device \"$ADDRESS\"."
 	exit $EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
 	fi
 	fi
@@ -113,7 +113,7 @@ if [ -f $ADDRESS ]
 /bin/cat - >$ADDRESS
 if [ $? -ne 0 ]
 	then
-	lib/alert $PRINTER TRUE "dummy interface: cat failed"
+	./alert $PRINTER TRUE "dummy interface: cat failed"
 	exit $EXIT_PRNERR
 	fi
 

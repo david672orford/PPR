@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_crontab.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 17 January 2005.
 #
 
 . ../makeprogs/paths.sh
 
 # Sanity test gauntet
-if [ "$USER_PPR" = "" -o "$HOMEDIR" = "" ]
+if [ "$USER_PPR" = "" -o "$LIBDIR" = "" ]
 	then
 	echo "$0: ../makeprogs/paths.sh is bad"
 	exit 1
@@ -60,15 +60,15 @@ echo "  Installing crontab for the user $USER_PPR..."
 # versions of the crontab program.  Sadly, not all versions of crontab can 
 # read from stdin, at least not with the same command.
 #
-tempname=`$HOMEDIR/lib/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
+tempname=`$LIBDIR/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
 
 #
 # Write the new crontab to the temporary file.
 #
 cat - >$tempname <<===EndOfHere===
-3 10,16 * * 1-5 $HOMEDIR/bin/ppad remind
-5 4 * * * $HOMEDIR/lib/cron_daily
-17 * * * * $HOMEDIR/lib/cron_hourly
+3 10,16 * * 1-5 $PPAD_PATH remind
+5 4 * * * $LIBDIR/cron_daily
+17 * * * * $LIBDIR/cron_hourly
 ===EndOfHere===
 
 crontab $tempname

@@ -8,7 +8,7 @@
 
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 --responder none <<EndOfSample1
+$PPR_PATH -d regression-test1 --responder none <<EndOfSample1
 %!PS-Adobe-
 %%Pages: 1
 

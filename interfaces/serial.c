@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -454,7 +454,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
 
 	/* We can't use control-T status updates if the job
 	   isn't PostScript, so override it in that case. */
-	if(int_cmdline.barbarlang[0])
+	if(strcmp(int_cmdline.PDL, "postscript") != 0)
 		options->idle_status_interval = 0;
 
 	/* Make sure the codes setting is ok. */

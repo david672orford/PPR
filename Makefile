@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -63,7 +63,6 @@ SUBDIRS=\
 	interfaces \
 	browsers \
 	responders \
-	commentators \
 	ppr \
 	editps \
 	ppop \

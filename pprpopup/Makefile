@@ -59,7 +59,7 @@ images: $(IMAGES)
 install: $(PROGS)
 	$(MAKE_NEW_DIR) $(SHAREDIR)/www/clientsoft
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(SHAREDIR)/www/clientsoft pprpopup.tcl
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-popup
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) ppr-popup
 
 #=== Housekeeping ===========================================================
 

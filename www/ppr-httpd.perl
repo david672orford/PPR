@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -38,11 +38,12 @@ use Socket;
 # Suppress mistaken warnings about things defined in paths.ph.	Otherwise,
 # if we use them only once, Perl with the -w switch complains that they
 # have been refered to only once!
-defined($HOMEDIR) || die;
+defined($LIBDIR) || die;
 defined($SHAREDIR) || die;
 defined($LOGDIR) || die;
 defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
+defined($CGI_BIN) || die;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -50,9 +51,6 @@ my $SERVER = "PPR-httpd/$SHORT_VERSION";
 
 # The real directory which coresponse to the web server root directory.
 my $WEBROOT = "$SHAREDIR/www";
-
-# The real directory which coresponses to the virtual directory "/cgi-bin/".
-my $CGI_BIN = "$HOMEDIR/cgi-bin";
 
 # The time in seconds that we will wait for the next request on a
 # persistent connexion.
@@ -1356,7 +1354,7 @@ sub do_push
 		close(QUERY_WRITE) || die $!;
 		open(STDIN, "<&QUERY_READ") || die $!;
 		close(QUERY_READ) || die $!;
-		exec("$HOMEDIR/lib/ppr-push-httpd") || die $!;
+		exec("$LIBDIR/ppr-push-httpd") || die $!;
 		}
 
 	# If we get here, we are the parent.  Send the header to the child.

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 January 2005.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
@@ -49,8 +49,8 @@ all:
 #=== Install ================================================================
 
 install: editps.conf $(EDITORS)
-	$(INSTALLDATA) $(HOMEDIR)/editps editps.conf
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/editps $(EDITORS)
+	$(INSTALLDATA) $(LIBDIR)/editps editps.conf
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR)/editps $(EDITORS)
 
 #=== Housekeeping ===========================================================
 

@@ -8,7 +8,7 @@
 #---------------------------------
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes --page-list 1,4 <<EndOfSample
+$PPR_PATH -d regression-test1 -m none -u yes --page-list 1,4 <<EndOfSample
 %!PS-Adobe-3.0
 %%Pages: 5
 %%PageOrder: Ascend
@@ -50,7 +50,7 @@ $TESTBIN/cat_output
 #---------------------------------
 $TESTBIN/clear_output
 
-$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes --page-list 1,4 <<EndOfSample
+$PPR_PATH -d regression-test1 -m none -u yes --page-list 1,4 <<EndOfSample
 %!PS-Adobe-3.0
 %%Pages: 5
 %%PageOrder: Descend

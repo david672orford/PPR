@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 static int do_index(const char name[], gu_boolean delete_index, gu_boolean skip_missing)
 	{
 	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/lib/index%s", HOMEDIR, name);
+	ppr_fnamef(fname, "%s/index%s", LIBDIR, name);
 	if(skip_missing)
 		{
 		if(access(fname, X_OK) == -1)

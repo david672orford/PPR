@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/browsers/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 17 January 2005.
 #
 
 include ../Makefile.conf
@@ -52,11 +52,11 @@ usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(BROWSERS) $(INSTALL_ATALK)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/browsers $(BROWSERS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR)/browsers $(BROWSERS)
 
 install-atalk: $(ATALK_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib nbp_lookup$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/browsers atalk$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) nbp_lookup$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR)/browsers atalk$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 
@@ -66,7 +66,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BROWSERS)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BROWSERS) atalk
 
 # end of file
 

@@ -76,7 +76,7 @@ my @tests = (
 				},
 		{'name' => _("PPR-GS Ghostscript distribution"),
 				'testproc' => sub {
-						return -x "$HOMEDIR/../ppr-gs/bin/gs";
+						return -x "$LIBDIR/../ppr-gs/bin/gs";
 						},
 				'role' => "printer drivers" 
 				},

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2005.
 */
 
 /*
@@ -60,7 +60,7 @@
 #include "interface.h"
 
 /* Change the 0 below to a 1 and recompile to turn on debugging. */
-#if 0
+#if 1
 #define DEBUG 1
 #define DODEBUG(a) int_debug a
 #else
@@ -444,7 +444,7 @@ int int_main(int argc, char *argv[])
 	int_cmdline_set(argc, argv);
 
 	DODEBUG(("============================================================"));
-	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, jobname=\"%s\", routing=\"%s\", forline=\"%s\", barbarlang=\"%s\"",
+	DODEBUG(("%s printer=\"%s\", address=\"%s\", options=\"%s\", jobbreak=%d, feedback=%d, codes=%d, PDL=\"%s\", routing=\"%s\", jobname=\"%s\", forline=\"%s\", title=\"%s\"",
 		int_cmdline.int_basename,
 		int_cmdline.printer,
 		int_cmdline.address,
@@ -452,10 +452,12 @@ int int_main(int argc, char *argv[])
 		int_cmdline.jobbreak,
 		int_cmdline.feedback,
 		int_cmdline.codes,
-		int_cmdline.jobname,
+		int_cmdline.PDL,
 		int_cmdline.routing,
+		int_cmdline.jobname,
 		int_cmdline.forline,
-		int_cmdline.barbarlang));
+		int_cmdline.title
+		));
 
 	/* Check for --probe. */
 	if(int_cmdline.probe)

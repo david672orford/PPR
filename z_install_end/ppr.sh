@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 17 January 2005.
 #
 
 #
@@ -48,7 +48,7 @@
 
 # System configuration values in this section are filled in when the
 # script is installed.
-HOMEDIR="@HOMEDIR@"
+LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 EECHO="@EECHO@"
@@ -57,7 +57,7 @@ EECHO="@EECHO@"
 # considered to be a configuration file and isn't deleted if the package is
 # simply removed, only if it is purged.)  Exit code 5 is required by LSB.
 # Debian policy supposedly requires exit code 0.
-test -x $HOMEDIR/bin/pprd || exit 5
+test -x $BINDIR/pprd || exit 5
 
 # Read default file such as is found on Debian systems.
 LPRSRV_STANDALONE_PORT=""
@@ -71,7 +71,7 @@ do_start ()
 	$EECHO "Starting PPR spooler: \c"
 
 	# What language should messages be printed in?
-	lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
+	lang=`$LIBDIR/ppr_conf_query internationalization daemonlang`
 	if [ -n "$lang" ]
 		then
 		$EECHO -n "(language is $lang) \c"
@@ -80,20 +80,20 @@ do_start ()
 		fi
 
 	# This is the spooler daemon.
-	$HOMEDIR/bin/pprd && $EECHO "pprd \c"
+	$BINDIR/pprd && $EECHO "pprd \c"
 
 	# This is the new AppleTalk server daemon.  We start it if it was built
 	# and installed.
-	if [ -x $HOMEDIR/bin/papd ]
+	if [ -x $BINDIR/papd ]
 		then
-		$HOMEDIR/bin/papd && $EECHO "papd \c"
+		$BINDIR/papd && $EECHO "papd \c"
 		fi
 
 	# Define LPRSRV_STANDALONE_PORT in /etc/default/ppr if you want to run 
 	# lprsrv in standalone mode.
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
-		$HOMEDIR/lib/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
+		$LIBDIR/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
 		fi
 
 	echo

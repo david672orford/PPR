@@ -46,9 +46,9 @@ ppr-respond$(DOTEXE): ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 #=== Install ================================================================
 
 install: $(RESPONDERS) $(LIBPROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/responders $(RESPONDERS)
-	$(INSTALLLN) mail $(HOMEDIR)/responders/errmail
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIBPROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(RESPONDERDIR) $(RESPONDERS)
+	$(INSTALLLN) mail $(RESPONDERDIR)/errmail
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIBPROGS)
 
 #=== Housekeeping ===========================================================
 
