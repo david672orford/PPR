@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--8 August 2003.
+1.52, 24 July 2003--11 August 2003.
 
 Bug Fixes
 
@@ -8664,7 +8664,7 @@ Bug Fixes
 * libuprint/Makefile: added $(SOCKLIBS) to build line for uprint_rfc1179.
 
 * z_install_end/Makefile: added explicit build rule for getservbyname so
-  $that (SOCKLIBS) could be included.
+  that $(SOCKLIBS) could be included.
 
 * z_install_end/ppr.sh, makeprogs/scriptfixup.sh, Configure: removed all use 
   of $NECHO (echo -n) and replaced it with echo "\c" since echo -n isn't 
