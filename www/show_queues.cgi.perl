@@ -166,7 +166,7 @@ Content-Type: text/html;charset=$charset
 Content-Language: $content_language
 Vary: user-agent, accept-language
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
 <html style="$fixed_html_style">
 <head>
 <title>$title</title>

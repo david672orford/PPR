@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 7 April 2003.
+** Last modified 8 August 2003.
 */
 
 BODY {
@@ -34,6 +34,8 @@ TEXTAREA.alerts { font-size: 8pt; }
 
 INPUT.buttons,BUTTON {
 	background: #b0b0b0;
+	padding: 1px 3px 1px 3px;
+	margin: 2pt;
 	}
 
 IMG {

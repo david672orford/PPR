@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2003.
+# Last modified 8 August 2003.
 #
 
 sub labeled_checkbox
@@ -122,9 +122,9 @@ my $helpfile = "$helpdir$basename$append.$lang.html";
 my $fragment = defined($topic) ? "#$topic" : "";
 
 print <<"HelpLink";
-<span class="button">
-<a href="$helpfile#$fragment" target="_blank"
-		onclick="window.open('$helpfile#$fragment','_blank','width=600,height=400,resizable,scrollbars');return false;">
+<span class="buttons">
+<a href="$helpfile$fragment" target="_blank"
+		onclick="window.open('$helpfile$fragment','_blank','width=600,height=400,resizable,scrollbars');return false;">
 		${\H_("Help")}</a>
 </span>
 HelpLink

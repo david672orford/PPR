@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 8 August 2003.
 #
 
 use lib "?";
@@ -71,6 +71,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Interface"),
+		'help' => "interface",
 		'dopage' => sub {
 				# Read a list of available interfaces into @interface_list.
 				opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
@@ -205,6 +206,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("RIP"),
+		'help' => "rip",
 		'dopage' => sub {
 
 				fix_rip_which();
@@ -293,6 +295,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Features"),
+		'help' => "features",
 		'dopage' => sub {
 				print "<span class=\"label\">", H_("Optional printer features:"), "</span><br>\n";
 
@@ -340,6 +343,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Bins"),
+		'help' => "bins",
 		'dopage' => sub {
 				print "<span class=\"label\">", H_("Bins for forms management purposes:"), "</span><br>\n";
 
@@ -371,6 +375,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Alerts"),
+		'help' => "alerts",
 		'dopage' => sub {
 				print "<p>";
 				labeled_select("alerts_method", _("Alert method:"),
@@ -396,6 +401,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Switchset"),
+		'help' => "switchset",
 		'dopage' => sub {
 				print "<p><span class=\"label\">", H_("Switchset:"), "</span><br>\n";
 				print "<textarea name=switchset cols=50 rows=10>\n";
@@ -410,6 +416,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Samba"),
+		'help' => "samba",
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
@@ -450,6 +457,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("AppleTalk"),
+		'help' => "appletalk",
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
@@ -469,6 +477,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Limits"),
+		'help' => "limits",
 		'dopage' => sub {
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">", H_("Limits Enforced Before Printing"), "</span>\n";
@@ -505,6 +514,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Userparams"),
+		'help' => "userparams",
 		'dopage' => sub {
 				print '<span class="label">', H_("PostScript Interpreter Userparams Settings:"), "</span><br>\n";
 
@@ -606,6 +616,7 @@ my $tabbed_table = [
 		#====================================================
 		{
 		'tabname' => N_("Other"),
+		'help' => "other",
 		'dopage' => sub {
 				{
 				my @flags_list = (N_("never"), N_("no"), N_("yes"), N_("always"));

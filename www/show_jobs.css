@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 20 November 2002.
+** Last modified 8 August 2003.
 */
 
 BODY {
@@ -56,30 +56,19 @@ TABLE.queue TR.checked TD {
 	}
 
 /* This style is for form buttons. */
-INPUT.buttons,BUTTON {
-	background: #b0b0b0;
-	}
-
-/* In Mozilla (at least up to 1.0rc1) these settings of <button>
-   are incompatible with <input type="button">. */
-BUTTON {
-	padding: 0pt;
-	vertical-align: bottom;
+INPUT.buttons,BUTTON,SPAN.buttons {
+	background-color: #b0b0b0;
+	vertical-align: middle; /* IE 6 doesn't like baseline */
+	border: 2px solid;
+	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
+	padding: 1px 3px 1px 3px;
+	margin: 0mm 2mm 0mm 0mm;
 	}
 
 /* This is a span that looks like a button.  We use it for the [Help] button. */
-SPAN.button {
-	background-color: #b0b0b0;
-	border: 2px solid;
-	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
-	padding: 3px 2mm 3px 2mm;
-	margin: 1mm;
-	/* lame but works with Mozilla 1.0rc2 */
-	position: relative; bottom: 4px;
-	}
-SPAN.button A {
+SPAN.buttons A {
 	text-decoration: none;
-	font-family: sans-serif;
+	font-family: serif;
 	color: black;
 	}
 

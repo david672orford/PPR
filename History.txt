@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--7 August 2003.
+1.52, 24 July 2003--8 August 2003.
 
 Bug Fixes
 
@@ -8681,6 +8681,14 @@ Bug Fixes
   documentation, fixed to convert hard links to symbolic links, init script
   is now considered a config file for RPM building purposes.
 
+* www/show_queues.cgi.perl: commented out the doctype declaration so that
+  Internet Explorer 6 will go back into compatibility mode and restore the
+  JavaScript variables which indicate how far down the window is scrolled.
+
+* www/prn_control.css,cgi_tabbed.css,show_jobs.css: refined styles to get
+  close-to-proper button sizes, alignment, and spacing in both IE and
+  Mozilla 1.4.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
@@ -8726,6 +8734,8 @@ Misc. Enhancements
 * makeproge/installconf.sh: change to allow specifying of the owner, group,
   and permissions.  This means that it can now be used to register the PPR
   init script.
+
+* www/prn_properties.cgi.perl,prn_properties.en.html: added new help topics.
 
 Internet Printing Protocol Work
 
