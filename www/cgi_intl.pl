@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 12 April 2002.
+# Last modified 8 August 2002.
 #
 
 require "paths.ph";
@@ -267,7 +267,7 @@ sub H_NB_
 #
 sub isubmit
     {
-    my($name, $value, $translatable, $other) = @_;
+    my($name, $value, $translatable, $other, $title) = @_;
     defined($name) && defined($value) && defined($translatable) || die;
     my $accesskey = undef;
 
@@ -279,6 +279,8 @@ sub isubmit
 	{
 	$mozilla_version = $1;
 	}
+
+    print "<label title=", html_value($title), ">\n" if(defined $title);
 
     # <button> isn't implemented in Netscape 4.7 and doesn't work in IE 5.0,
     # so only enable it if we are using a Gecko Mozilla based browser.
@@ -302,6 +304,7 @@ sub isubmit
 	print " ", $other if(defined($other));
 	print ">\n";
 	}
+    print "</label>\n" if(defined $title);
     }
 
 1;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 24 May 2002.
+** Last modified 8 August 2002.
 */
 
 BODY {
@@ -159,11 +159,13 @@ TABLE.lines {
 	border-width: 1px 0px 0px 1px;
 	}
 TABLE.lines TH, TABLE.lines TD {
-	white-space: nowrap;
 	text-align: left;
 	padding: 3pt;
 	border: solid black;
 	border-width: 0px 1px 1px 0px;
+	}
+TABLE.lines TH {
+	white-space: nowrap;
 	}
 
 /* end of file */

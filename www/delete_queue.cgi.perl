@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 10 May 2002.
+# Last modified 8 August 2002.
 #
 
 use lib "?";
@@ -89,11 +89,10 @@ elsif($type eq "alias")
 else
     { print html(sprintf("Delete the %s \"%s\"?", $type, $name)) }
 
-print <<"Del1";
-<input type="submit" name="action" value="Yes">
-<input type="submit" name="action" value="No" onclick="window.close()">
-</p>
-Del1
+isubmit("action", "Yes", N_("Yes"));
+isubmit("action", "No", N_("No"), 'onclick="window.close()"');
+
+print "</p>\n";
 }
 
 #
@@ -134,9 +133,7 @@ if($ret == 0)
     print "<script>opener.gentle_reload()</script>\n";
     }
 
-print <<"Del2";
-<input type="submit" name="action" value="Close" onclick="window.close()">
-Del2
+isubmit("action", "Close", N_("_Close"), 'onclick="window.close()"');
 }
 
 #

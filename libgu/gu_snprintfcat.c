@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_snprintfcat.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 21 March 2001.
+** Last modified 10 August 2002.
 */
 
 #include "before_system.h"
@@ -18,6 +18,9 @@
 #include <string.h>
 #include "gu.h"
 
+/*
+** This was inspired by trio_snprintfcat().
+*/
 int gu_snprintfcat(char *buffer, size_t max, const char *format, ...)
     {
     va_list va;

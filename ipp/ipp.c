@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 February 2002.
+** Last modified 12 August 2002.
 */
 
 #include "before_system.h"
@@ -35,10 +35,9 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
-#include "ipp_utils.h"
 #include "ipp_constants.h"
 #include "ipp_except.h"
+#include "ipp_utils.h"
 
 struct exception_context the_exception_context[1];
 
@@ -47,10 +46,11 @@ int main(int argc, char *argv[])
     const char *e;
 
     Try {
-	char *p;			/* for work */
+	char *p;
 	int content_length;
 	char *path_info;
-	char *buffer;
+	struct IPP *ipp;
+	int operation_id, request_id;
 
 	/* Do basic input validation */
 	if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
@@ -66,27 +66,15 @@ int main(int argc, char *argv[])
 
 	debug("request for %s, %d bytes", path_info, content_length);
 
-	/* Allocate a buffer and read the IPP request into it. */
-	buffer = gu_alloc(content_length, sizeof(char));
-	{
-	int len;
-	if((len = read(0, buffer, content_length)) == -1)
-	    {
-	    Throw("read() failed");
-	    }
-	else if(len != content_length)
-	    {
-	    Throw("Short read");
-	    }
-	}
+	ipp = ipp_new(content_length);
 
 	debug("version-number: %d.%d, operation-id: 0x%.4X, request-id: %d",
-		ipp_gsb(buffer), ipp_gsb(buffer + 1),
-		ipp_gss(buffer + 2),
-		ipp_gsi(buffer + 4)
+		ipp_get_sb(ipp), ipp_get_sb(ipp),
+		(operation_id = ipp_get_ss(ipp)),
+		(request_id = ipp_get_si(ipp))
 		);
 
-	switch(ipp_gsi(buffer + 2))
+	switch(operation_id)
 	    {
 
 

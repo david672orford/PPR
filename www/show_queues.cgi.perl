@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 10 May 2002.
+# Last modified 8 August 2002.
 #
 
 use 5.005;
@@ -160,13 +160,37 @@ Vary: user-agent, accept-language
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
 <link rel="icon" href="../images/icon-16.png" type="image/png">
 <link rel="SHORTCUT ICON" href="../images/icon-16.ico">
+<script>
+var xlate=new Array();
+Head10
+
+foreach my $i (
+	N_("View Queue"),
+	N_("Printer Control"),
+	N_("Printer Properties"),
+	N_("Test Page"),
+	N_("Client Configuration"),
+	N_("Printlog"),
+	N_("Delete Printer"),
+	N_("Member Printer Control"),
+	N_("Group Properties"),
+	N_("Delete Group"),
+	N_("Alias Properties"),
+	N_("Delete Alias")
+	)
+    {
+    print 'xlate["', html($i), '"]="', H_($i), '";', "\n";
+    }
+
+print <<"Head11";
+</script>
 </head>
 <body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
 <div id="popup" class="menu">
 This text is supposed to be hidden.
 </div>
 <form method="post" action="$ENV{SCRIPT_NAME}">
-Head10
+Head11
 
 # Begin an exception handling block
 eval {
@@ -182,7 +206,7 @@ eval {
 {
 print <<"Top5";
 <div class="menubar" style="$fixed_div_style">
-<label title="Choose the display format.">
+<label title=${\html_value(_("Choose the display format."))}>
 <span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()">
 Top5
 
@@ -212,21 +236,17 @@ Top7
 
 # Add a control for the refresh interval.
 print <<"Top8";
-<label title="This page will be reloaded at the indicated interval (in seconds).">
+<label title=${\html_value(_("This page will be reloaded at the indicated interval (in seconds)."))}>
 <span class="label">${\H_NB_("Refresh Interval:")}</span>&nbsp;<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
 </label>
 Top8
 
 # Add a refresh button.
-print <<"Top9";
-<label title="Refresh the page right now.">
-	<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
-</label>
-Top9
+isubmit("action", "Refresh", N_("Refresh"), 'class="buttons" onclick="gentle_reload(); return false"', _("Refresh the page right now."));
 
 # Create a button for JavaScript Cookie login.
 print <<"TopCookie";
-<label title="Use this if your browser doesn't support Digest authentication.">
+<label title=${\html_value(_("Use this if your browser doesn't support Digest authentication."))}>
 <input class="buttons" type="button" value=${\html_value(_("Cookie Login"))}
 	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
 </label>
@@ -234,7 +254,7 @@ TopCookie
 
 # Try to make a "Close" button.  (They do the same thing.)
 cgi_back_possible("/");
-print "<label title=\"Close this window.\">\n";
+print "<label title=", html_value(_("Close this window.")), ">\n";
 isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
 print "</label>\n";
 
@@ -251,7 +271,7 @@ print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
-	title="Click here to open a window which will show all queued jobs."
+	title=${\html_value(_("Click here to open a window which will show all queued jobs."))}
 	>
 	<img $ICON_ALL_QUEUES border=0><br>
 	<span class="qname">${\H_("Show All Queues")}</span>
@@ -262,7 +282,7 @@ print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
-	title="Click here and you will be guided through the process of adding a new printer."
+	title=${\html_value(_("Click here and you will be guided through the process of adding a new printer."))}
 	>
 	<img $ICON_ADD_PRINTER border=0><br>
 	<span class="qname">${\H_("Add New Printer")}</span>
@@ -273,7 +293,7 @@ print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
-	title="Click here and you will be guided through the process of adding a new group of printers."
+	title=${\html_value(_("Click here and you will be guided through the process of adding a new group of printers."))}
 	>
 	<img $ICON_ADD_GROUP border=0><br>
 	<span class="qname">${\H_("Add New Group")}</span>
@@ -284,7 +304,7 @@ print <<"Top10";
 <table align="left" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
 <td><a href="alias_addwiz.cgi?$encoded_back_stack" onclick="return wizard('alias_addwiz.cgi')"
-	title="Click here and you will be guided through the process of adding a new alias."
+	title=${\html_value(_("Click here and you will be guided through the process of adding a new alias."))}
 	>
 	<img $ICON_ADD_ALIAS border=0><br>
 	<span class="qname">${\H_("Add New Alias")}</span>
@@ -471,7 +491,7 @@ foreach my $qname (sort(keys(%queues)))
     if($columns > 0)		# multicolumn or single column w/out details
 	{
 	print "<tr align=center>\n" if(($col % $columns) == 0);
-	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
+	print '<td title="', html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
 	$col++;
 	print "</tr>\n" if(($col % $columns) == 0);
 	}
@@ -479,7 +499,7 @@ foreach my $qname (sort(keys(%queues)))
         {
 	print "<table align=\"left\" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>";
 	print "<tr align=\"center\">";
-	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
+	print '<td title="', html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
 	print "</tr></table>\n";
         }
     else			# Details (-1) or Many Details (-2)

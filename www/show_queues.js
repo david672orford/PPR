@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 21 May 2002.
+// Last revised 8 August 2002.
 //
 
 //
@@ -185,13 +185,13 @@ function delete_queue(w, type, name)
 function printer(event, name)
 	{
 	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>View Queue</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>Printer Control</nobr></a><br>\n'
-		+ '<a href="" name="L3" id="L3"><nobr>Printer Properties</nobr></a><br>\n'
-		+ '<a href="" name="L4" id="L4"><nobr>Test Page</nobr></a><br>\n'
-		+ '<a href="" name="L5" id="L5"><nobr>Client Configuration</nobr></a><br>\n'
-		+ '<a href="" name="L6" id="L6"><nobr>Printlog</nobr></a><br>\n'
-		+ '<a href="" name="L7" id="L7"><nobr>Delete Printer</nobr></a><br>\n'
+		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["View Queue"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Printer Control"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L3" id="L3"><nobr>' + xlate["Printer Properties"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L4" id="L4"><nobr>' + xlate["Test Page"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L5" id="L5"><nobr>' + xlate["Client Configuration"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L6" id="L6"><nobr>' + xlate["Printlog"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L7" id="L7"><nobr>' + xlate["Delete Printer"] + '</nobr></a><br>\n'
 		+ '</td></tr></table>\n';
 	var w;
 	var lnks;
@@ -287,12 +287,12 @@ function printer(event, name)
 function group(event, name)
 	{
 	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>View Queue</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>Member Printer Control</nobr></a><br>\n'
-		+ '<a href="" name="L3" id="L3"><nobr>Group Properties</nobr></a><br>\n'
-		+ '<a href="" name="L4" id="L4"><nobr>Client Configuration</nobr></a><br>\n'
-		+ '<a href="" name="L5" id="L5"><nobr>Printlog</nobr></a><br>\n'
-		+ '<a href="" name="L6" id="L6"><nobr>Delete Group</nobr></a><br>\n'
+		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["View Queue"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Member Printer Control"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L3" id="L3"><nobr>' + xlate["Group Properties"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L4" id="L4"><nobr>' + xlate["Client Configuration"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L5" id="L5"><nobr>' + xlate["Printlog"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L6" id="L6"><nobr>' + xlate["Delete Group"] + '</nobr></a><br>\n'
 		+ '</td></tr></table>\n';
 	var w;
 	var lnks;
@@ -357,8 +357,8 @@ function group(event, name)
 function alias(event, name)
 	{
 	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>Alias Properties</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>Delete Alias</nobr></a><br>\n'
+		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["Alias Properties"] + '</nobr></a><br>\n'
+		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Delete Alias"] + '</nobr></a><br>\n'
 		+ '</td></tr></table>\n';
 	var w;
 	var lnks;

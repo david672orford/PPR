@@ -88,10 +88,11 @@
 #endif
 
 #ifdef PRINTER_DM24
-*Product: "(Dot Matrix 24 pin Ghostscript)"
-*ModelName: "Dot Matrix 24 pin Ghostscript"
-*ShortNickName: "Dot Matrix 24 pin Ghostscript"
-*NickName: "Dot Matrix 24 pin Ghostscript"
+*Manufacturer: "NEC"
+*Product: "(NEC Pinwriter 6 Ghostscript)"
+*ModelName: "NEC Pinwriter 6 Ghostscript"
+*ShortNickName: "NEC Pinwriter 6 Ghostscript"
+*NickName: "NEC Pinwriter 6 Ghostscript"
 *PCFileName: "DM24GS.PPD"
 *DefaultResolution: 360dpi
 *ColorDevice: False

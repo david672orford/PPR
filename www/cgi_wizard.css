@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 26 April 2002.
+** Last modified 8 August 2002.
 */
 
 BODY { background: #e0e0e0 }
@@ -45,6 +45,31 @@ SPAN.section_label {
 DIV.section P {
 	margin-top: 0pt;
 	margin-bottom: 0pt;
+	}
+
+/* This is the table that puts the PPD list on the left and the
+   summary of the PPD file on the right.
+   */
+TABLE.ppd TD {
+	padding-right: 10pt;
+	text-align: left;
+	vertical-align: top;
+	}
+
+/* This is for real tables with fine rules. */
+TABLE.lines {
+	background-color: white;
+	border: solid black;
+	border-width: 1px 0px 0px 1px;
+	}
+TABLE.lines TH, TABLE.lines TD {
+	text-align: left;
+	padding: 3pt;
+	border: solid black;
+	border-width: 0px 1px 1px 0px;
+	}
+TABLE.lines TH {
+	white-space: nowrap;
 	}
 
 /* end of file */

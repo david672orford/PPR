@@ -648,16 +648,19 @@ int printer_show(const char *argv[])
 
 	    if((p = lmatchp(pline, "*cupsFilter:")) && !cups_filter)
 		{
-		char *p2;
-		if(*p++ == '"' && (p2 = strchr(p, '"')))
+		char *p1, *p2, *p3;
+		if(*p++ == '"' && (p1 = strchr(p, '"')))
 		    {
-		    *p2 = '\0';
-		    if(strcmp(gu_strsep(&p, " \t"), "application/vnd.cups-raster") == 0
-		    	&& strcmp(gu_strsep(&p, " \t"), "0") == 0
-		    	&& (p2 = gu_strsep(&p, "\t")))
-		    	{
-			cups_filter = gu_strdup(p2);
-		    	}
+		    *p1 = '\0';
+		    if((p1 = gu_strsep(&p, " \t"))					/* first exists */
+				&& strcmp(p1, "application/vnd.cups-raster") == 0	/* and mime type matches */
+				&& (p2 = gu_strsep(&p, " \t"))				/* second exists */
+				&& strspn(p2, "0123456789") == strlen(p2)		/* and is numberic */
+				&& (p3 = gu_strsep(&p, "\t"))				/* third exists */
+			)
+			{
+			cups_filter = gu_strdup(p3);
+			}
 		    }
 		continue;
 		} /* "*cupsFilter:" */

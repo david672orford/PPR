@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 April 2002.
+# Last modified 9 August 2002.
 #
 
 #
@@ -170,6 +170,13 @@ if_dir_print "/usr/share/texmf/fonts/type1"
 if_dir_print "/usr/share/texmf/fonts/afm"
 
 echo >&5
+
+cat - >&5 <<===EndHere60===
+# Where are the PPD files?
+[PPDs]
+  "$SHAREDIR/PPDFiles"
+
+===EndHere60===
 
 cat - >&5 <<===EndHere90===
 # end of file

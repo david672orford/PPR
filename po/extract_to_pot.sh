@@ -53,7 +53,7 @@ rm PAPSRV.po
 
 echo "PPRWWW.pot"
 ./perl_to_pseudo_c.perl ../www/*.perl ../www/*.pl \
-	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --sort-output --language=c -
+	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ --sort-output --language=c -
 ./sort_by_file.perl <PPRWWW.po >PPRWWW.pot
 rm PPRWWW.po
 

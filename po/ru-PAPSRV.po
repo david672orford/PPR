@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-02-25 16:05-0500\n"
+"POT-Creation-Date: 2002-08-08 20:05-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -13,27 +13,27 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../papsrv/papsrv.c:657
+#: ../papsrv/papsrv.c:659
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../papsrv/papsrv.c:667
+#: ../papsrv/papsrv.c:669
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../papsrv/papsrv.c:671
+#: ../papsrv/papsrv.c:673
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../papsrv/papsrv.c:681
+#: ../papsrv/papsrv.c:683
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../papsrv/papsrv.c:691
+#: ../papsrv/papsrv.c:693
 msgid "Shutdown complete.\n"
 msgstr ""
 

@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 8 May 2002.
+# Last modified 8 August 2002.
 #
 
 #
@@ -51,6 +51,7 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 	'tcpip' => N_("SocketAPI (JetDirect)"),
 	'lpr' => N_("RFC 1179 (lpr/lpd protocol)"),
 	'smb' => N_("LAN Manager/MS-Windows"),
+	'ppromatic' => "--hide",
 	'gssimple' => "--hide",
 	'gsatalk' => "--hide",
 	'gstcpip' => "--hide",
@@ -497,40 +498,53 @@ $addprn_wizard_table = [
 	#===========================================
 	# Select a PPD file
 	#===========================================
+	#'picture' => "wiz-ppd.jpg",
 	{
 	'label' => 'ppd',
 	'title' => N_("Choose a PPD File"),
-	'picture' => "wiz-ppd.jpg",
 	'dopage' => sub {
-		# PPD file, if any, selected on a previous pass through this form.
-		my $checked_ppd = cgi_data_move('ppd', undef);
+		require "ppd_select.pl";
 
-		# Sorted list of available PPD files.
-		opendir(P, $PPDDIR) || die "Can't open directory \"$PPDDIR\": $!";
-		my @ppd_list = sort(readdir(P));
-		closedir(P) || die;
+		# PPD file, if any, selected on a previous pass through this form.
+		my $ppd = cgi_data_move('ppd', undef);
+		my $ppd_description = "";
 
 		print "<p><span class=\"label\">", H_("Please select a appropriate PostScript Printer\n"
 			. "Description (PPD) file for this printer:"), "</span><br><br>\n";
+		print "<table class=\"ppd\"><tr><td>\n";
 
-		print "<select tabindex=1 name=\"ppd\" size=12>\n";
-
-		# Make an extra entry at the top (where it will be visible)
-		# for the checked one.
-		if(defined($checked_ppd))
+		print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit()">', "\n";
+		#print "<option>\n";
+		my $lastgroup = "";
+		foreach my $item (ppd_list())
 		    {
-		    print "<option value=\"$checked_ppd\" selected>$checked_ppd\n";
+		    my($item_file, $item_manufacturer, $item_description) = @{$item};
+		    if($item_manufacturer ne $lastgroup)
+			{
+			print "</optgroup>\n" if($lastgroup ne "");
+			print "<optgroup label=", html_value($item_manufacturer), ">\n";
+			$lastgroup = $item_manufacturer;
+			}
+		    print "<option value=", html_value($item_file);
+		    print " selected" if($item_file eq $ppd);
+		    print ">", html($item_description), "\n";
+		    if($item_file eq $ppd)
+			{
+			$ppd_description = $item_description;
+			}
 		    }
-
-		# List all available, including (presumably) the one listed above.
-		foreach my $ppd (@ppd_list)
-		    {
-		    next if($ppd =~ /^\./);
-		    print "<option value=\"$ppd\">$ppd\n";
-		    }
-
 		print "</select>\n";
 		print "</p>\n";
+
+		print "</td><td>\n";
+
+		# Print a small table with a summary of what the PPD files says.
+		if($ppd ne "")
+		    {
+		    ppd_summary($ppd, $ppd_description);
+		    }
+
+		print "</td></tr></table>\n";
 		},
 	'onnext' => sub {
 		if(! defined($data{ppd}))

@@ -26,7 +26,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 August 2002.
+** Last modified 14 August 2002.
 */
 
 #ifndef _GU_H
@@ -164,7 +164,9 @@ void gu_wordwrap(char *string, int width);
 void (*signal_interupting(int signum, void (*handler)(int sig)))(int);
 void (*signal_restarting(int signum, void (*handler)(int sig)))(int);
 int gu_vsnprintf (char *str, size_t count, const char *fmt, va_list args);
-int gu_snprintf (char *str,size_t count,const char *fmt,...);
+int gu_snprintf(char *str, size_t count, const char *fmt, ...);
+int gu_vasprintf(char **ptr, const char *format, va_list ap);
+int gu_asprintf(char **ptr, const char *format, ...);
 int gu_mkstemp(char *template);
 char *gu_strsignal(int signum);
 char *gu_StrCopyMax(char *target, size_t max, const char *source);

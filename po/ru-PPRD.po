@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-02-25 16:05-0500\n"
+"POT-Creation-Date: 2002-08-08 20:05-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -217,77 +217,78 @@ msgstr ""
 msgid "\"%s\" is not a valid destination.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1163 ../pprd/pprd_ppop.c:1172 ../pprd/pprd_ppop.c:1388
+#: ../pprd/pprd_ppop.c:1163 ../pprd/pprd_ppop.c:1172 ../pprd/pprd_ppop.c:1396
+#: ../pprd/pprd_ppop.c:1482
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1321
+#: ../pprd/pprd_ppop.c:1329
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1330
+#: ../pprd/pprd_ppop.c:1338
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1335
+#: ../pprd/pprd_ppop.c:1343
 msgid "1 file was moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1339
+#: ../pprd/pprd_ppop.c:1347
 #, c-format
 msgid "%d files where moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1347
+#: ../pprd/pprd_ppop.c:1355
 msgid "1 file was not moved because it was being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1349
+#: ../pprd/pprd_ppop.c:1357
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1438
+#: ../pprd/pprd_ppop.c:1446 ../pprd/pprd_ppop.c:1507
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:231
+#: ../pprd/pprd_pprdrv.c:260
 #, c-format
 msgid "Internal error, pprdrv core dumped after receiving signal %d (%s)."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:246
+#: ../pprd/pprd_pprdrv.c:275
 #, c-format
 msgid "Mischief afoot, pprdrv stopt by signal %d (%s)."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:424
+#: ../pprd/pprd_pprdrv.c:453
 #, c-format
 msgid ""
 "Printing aborted because pprdrv was killed by signal %d (%s).\n"
 "This was not expected and the cause is unknown."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:429
+#: ../pprd/pprd_pprdrv.c:458
 msgid ""
 "Unexpected pprdrv shutdown.  It claims to have received a signal to "
 "terminate."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:449
+#: ../pprd/pprd_pprdrv.c:478
 #, c-format
 msgid "Unrecognized exit code %d returned by pprdrv."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:463
+#: ../pprd/pprd_pprdrv.c:492
 msgid "Printer placed in fault mode, no auto-retry."
 msgstr ""
 
-#: ../pprd/pprd_pprdrv.c:471
+#: ../pprd/pprd_pprdrv.c:500
 msgid "Printer placed in auto-retry mode."
 msgstr ""
 
@@ -311,59 +312,4 @@ msgstr ""
 #, c-format
 msgid ""
 "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
-msgstr ""
-
-#: ../pprd/pprd_respond.c:237
-#, c-format
-msgid "Your print job \"%s\" has been printed on \"%s\"."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:242
-#, c-format
-msgid ""
-"Your print job \"%s\" was arrested after an attempt\n"
-"to print it on \"%s\" resulted in a job error."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:248
-#, c-format
-msgid "Your print job \"%s\" has been canceled."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:253
-#, c-format
-msgid "Your print job \"%s\" was canceled while printing on \"%s\"."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:258
-#, c-format
-msgid ""
-"Your print job \"%s\" was canceled because\n"
-"\"%s\" is not a known destination."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:264
-#, c-format
-msgid ""
-"Your print job \"%s\" was canceled because\n"
-"the destination \"%s\" is not acceping requests."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:270
-#, c-format
-msgid ""
-"Your print job \"%s\" is stranded because\n"
-"the printer \"%s\" is incapable of printing it."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:276
-#, c-format
-msgid ""
-"Your print job \"%s\" is stranded because no\n"
-"member of the group \"%s\" is capable of printing it."
-msgstr ""
-
-#: ../pprd/pprd_respond.c:282
-#, c-format
-msgid "Undefined response code %d for your job \"%s\"."
 msgstr ""

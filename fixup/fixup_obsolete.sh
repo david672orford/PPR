@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 13 May 2002.
+# Last modified 7 August 2002.
 #
 
 HOMEDIR="?"
@@ -52,7 +52,6 @@ outdated $VAR_SPOOL_PPR/pprd.lock
 outdated $VAR_SPOOL_PPR/cache/file
 outdated $BINDIR/xppr $BINDIR/xpprstat
 outdated $HOMEDIR/interfaces/gs
-outdated "$SHAREDIR/PPDFiles/HP DeskJet 870C Ghostscript"
 outdated $HOMEDIR/bin/fake_lp
 outdated $HOMEDIR/bin/fake_lpr
 outdated $HOMEDIR/bin/fake_lpq
@@ -156,12 +155,16 @@ outdated $SHAREDIR/www/docs/rfc/index.html
 outdated $HOMEDIR/lib/ppr-commentary-httpd
 outdated_dir $SHAREDIR/www/docs/rfc
 outdated $SHAREDIR/www/html/docbrowse.html
-outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 outdated $HOMEDIR/lib/login_ppr.sh
 outdated $HOMEDIR/lib/login_ppr.csh
 #outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
 outdated $HOMEDIR/cgi-bin/df_img.cgi
+
+outdated "$SHAREDIR/PPDFiles/HP DeskJet 870C Ghostscript"
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 #outdated "$SHAREDIR/PPDFiles/HP C LaserJet 4500-PS"
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
+outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
 
 echo "Done."
 echo

@@ -46,6 +46,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 

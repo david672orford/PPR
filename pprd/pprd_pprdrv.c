@@ -25,13 +25,21 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 January 2002.
+** Last modified 7 August 2002.
 */
 
 /*
 ** This module contains routines for launching pprdrv and interpreting
 ** the result when it exits.
 */
+
+/* This is for debugging.  Every time pprdrv is launched, strace will be launched
+   to trace it and put the output in this file.  The file will be overwritten each
+   time.  This debugging code is not intended for production systems.
+   */
+#if 0
+#define STRACE_OUTPUT LOGDIR"/pprdrv_strace"
+#endif
 
 #include "before_system.h"
 #include <sys/types.h>
@@ -162,6 +170,13 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	*/
 	snprintf(pass_str, sizeof(pass_str), "%d", job->pass);
 
+	/*
+	** If we will be tracked with strace, stop ourselves until strace is ready.
+	*/
+	#ifdef STRACE_OUTPUT
+	kill(getpid(), SIGSTOP);
+	#endif
+
 	/* Overlay this child process with pprdrv. */
 	execl(PPRDRV_PATH, "pprdrv",			/* execute the driver program */
 	    destid_local_to_name(prnid),		/* printer name */
@@ -185,6 +200,20 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	alert(destid_local_to_name(prnid), TRUE, "Can't execute \"%s\", errno=%d (%s)", PPRDRV_PATH, errno, gu_strerror(errno));
 	exit(EXIT_PRNERR);
 	}
+
+    #ifdef STRACE_OUTPUT
+    {
+    char temp[10];
+    snprintf(temp, sizeof(temp), "%ld", (long)pid);
+    if(fork() == 0)
+	{
+	execl("/usr/bin/strace", "/usr/bin/strace", "-f", "-F", "-v", "-t", "-s", "128", "-o", STRACE_OUTPUT, "-p", temp, NULL);
+	_exit(1);
+	}
+    sleep(1);
+    kill(SIGCONT, pid);
+    }
+    #endif
 
     return 0;
     } /* end of pprdrv_start() */

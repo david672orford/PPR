@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 2 August 2002.
+# Last modified 9 August 2002.
 #
 
 use lib "?";
@@ -35,7 +35,7 @@ my $tabbed_table = [
 	'dopage' => sub {
 
 		print "<p>";
-		labeled_blank(_("Printer name:"), cgi_data_peek("name", "???"), 50);
+		labeled_blank(_("Printer Name:"), cgi_data_peek("name", "???"), 50);
 
 		print "<p>";
 		labeled_entry("comment", _("Comment:"), cgi_data_move("comment", ""), 50);
@@ -130,42 +130,51 @@ my $tabbed_table = [
 	'tabname' => N_("PPD"),
 	'help' => "ppd",
 	'dopage' => sub {
-		my $checked_ppd = cgi_data_move('ppd', undef);
+		require 'ppd_select.pl';
+		my $ppd = cgi_data_move('ppd', undef);
+		my $ppd_description = "";
+		my $ppd_select = cgi_data_move('ppd_select', "");
 
-		print "<span class=\"label\">", H_("PPD file:"), "</span>\n";
+		if($ppd_select ne "" && $ppd_select ne cgi_data_peek("_ppd", ""))
+		    {
+		    $ppd = $ppd_select;
+		    }
 
 		print "<table class=\"ppd\"><tr><td>\n";
-
-		# Read the PPD File list (and unfortunately "." and "..") into
-		# the array @ppd_list.
-		opendir(P, $PPDDIR) || die "opendir() failed on \"$PPDDIR\", $!";
-		my @ppd_list = sort(readdir(P));
-		closedir(P) || die;
+		print '<p><span class="label">', H_("Current PPD File (by filename):"), "</span><br>\n";
+		print '<input tabindex=1 name="ppd" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
+		print "</p>\n";
 
 		# Print the HTML for a select box.
-		print "<select name=\"ppd\" size=12>\n";
-		if(defined($checked_ppd))
+		print '<p><span class="label">', H_("Available PPD Files (by printer description):"), "</span><br>\n";
+		print '<select tabindex=2 name="ppd_select" size="15" style="max-width: 300px" onchange="forms[0].submit()">', "\n";
+		#print "<option>\n";
+		my $lastgroup = "";
+		foreach my $item (ppd_list())
 		    {
-		    print "<option value=", html_value($checked_ppd), " selected>", html($checked_ppd), "\n";
+		    my($item_file, $item_manufacturer, $item_description) = @{$item};
+		    if($item_manufacturer ne $lastgroup)
+			{
+			print "</optgroup>\n" if($lastgroup ne "");
+			print "<optgroup label=", html_value($item_manufacturer), ">\n";
+			$lastgroup = $item_manufacturer;
+			}
+		    print "<option value=", html_value($item_file);
+		    print " selected" if($item_file eq $ppd);
+		    print ">", html($item_description), "\n";
+		    if($item_file eq $ppd)
+			{
+			$ppd_description = $item_description;
+			}
 		    }
-		foreach my $ppd (@ppd_list)
-		    {
-		    next if($ppd =~ /^\./);
-		    print "<option value=", html_value($ppd), ">", html($ppd), "\n";
-		    }
+		print "</optgroup>\n" if($lastgroup ne "");
 		print "</select>\n";
+		print "</p>\n";
 
 		print "</td><td>\n";
 
-		my @trivia = ppd_trivia($checked_ppd);
-		print "<table class=\"lines\" cellspacing=0>\n";
-		print "<tr><th colspan=2>", html(sprintf(_("Features of %s"), $checked_ppd)), "</th></tr>\n";
-		print "<tr><th>", H_("PPD File Version"), "</th><td>", html($trivia[0]), "</td></tr>\n";
-		print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($trivia[1]), "</td></tr>\n";
-		print "<tr><th>", H_("PostScript Version"), "</th><td>", html($trivia[2]), "</td></tr>\n";
-		print "<tr><th>", H_("Number of Fonts"), "</th><td>", html($trivia[3]), "</td></tr>\n";
-		print "<tr><th>", H_("TrueType Rasterizer"), "</th><td>", html($trivia[4]), "</td></tr>\n";
-		print "</table>\n";
+		# Print a small table with a summary of what the PPD files says.
+		ppd_summary($ppd, $ppd_description);
 
 		print "</td></tr></table>\n";
 		},
@@ -765,6 +774,7 @@ sub ppd_trivia
     my $psversion = "?";
     my $fonts = 0;
     my $ttrasterizer = "None";
+    my $rip = "Internal";
 
     ppd_open($filename);
 
@@ -795,9 +805,36 @@ sub ppd_trivia
 	    $ttrasterizer = $1;
 	    next;
 	    }
+	if($line =~ /^\*cupsFilter:\s*"([^"]+)"/)
+	    {
+	    my $options = $1;
+	    my @options = split(/ /, $options);
+	    $rip = "Ghostscript+CUPS";
+	    $rip .= "+GIMP" if($options[2] eq "rastertoprinter");
+	    next;
+	    }
+	if($line =~ /^\*pprRIP:\s*(.+)$/)
+	    {
+	    my $options = $1;
+	    my @options = split(/ /, $options);
+	    $rip = "Ghostscript";
+	    if(grep(/^-sDEVICE=cups$/, @options))
+		{ $rip .= "+CUPS" }
+	    elsif(my($temp) = grep(s/^-sDEVICE=(.+)$/$1/, @options))
+		{ $rip .= " ($temp)" }
+	    $rip .= "+GIMP" if(grep(/^cupsfilter=rastertoprinter$/, @options));
+	    next;
+	    }
 	}
 
-    return ($fileversion, $languagelevel, $psversion, $fonts, $ttrasterizer);
+    return (
+	"fileversion" => $fileversion,
+	"languagelevel" => $languagelevel,
+	"psversion" => $psversion,
+	"fonts" => $fonts,
+	"ttrasterizer" => $ttrasterizer,
+	"rip" => $rip
+	);
     }
 
 #============================================

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-01-17 13:25-0500\n"
+"POT-Creation-Date: 2002-08-08 20:05-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -13,94 +13,94 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprdrv/pprdrv.c:1224 ../pprdrv/pprdrv.c:1247 ../pprdrv/pprdrv.c:1313
-#: ../pprdrv/pprdrv.c:1350 ../pprdrv/pprdrv.c:1356 ../pprdrv/pprdrv.c:1361
-#: ../pprdrv/pprdrv.c:1366 ../pprdrv/pprdrv.c:1379
+#: ../pprdrv/pprdrv.c:1239 ../pprdrv/pprdrv.c:1262 ../pprdrv/pprdrv.c:1328
+#: ../pprdrv/pprdrv.c:1365 ../pprdrv/pprdrv.c:1371 ../pprdrv/pprdrv.c:1376
+#: ../pprdrv/pprdrv.c:1381 ../pprdrv/pprdrv.c:1394
 #, c-format
 msgid "Invalid \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1396
+#: ../pprdrv/pprdrv.c:1411
 #, c-format
 msgid "Syntax error in \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1408
+#: ../pprdrv/pprdrv.c:1423
 #, c-format
 msgid "Value of \"%s\" in \"%s\" must be boolean."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1413
+#: ../pprdrv/pprdrv.c:1428
 #, c-format
 msgid "Unrecognized userparams variable \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1426
+#: ../pprdrv/pprdrv.c:1441
 #, c-format
 msgid "No \"Interface:\" line in %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:69 ../pprdrv/pprdrv_flag.c:241
+#: ../pprdrv/pprdrv_capable.c:87 ../pprdrv/pprdrv_flag.c:240
 #: ../pprdrv/pprdrv_lw_messages.c:48 ../pprdrv/pprdrv_pjl_messages.c:55
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:98
+#: ../pprdrv/pprdrv_capable.c:116
 #, c-format
 msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:127
+#: ../pprdrv/pprdrv_capable.c:145
 #, c-format
 msgid ""
 "+Printer \"%s\" may not print this job correctly for the following reason"
 "(s):\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:355
+#: ../pprdrv/pprdrv_capable.c:391
 #, c-format
 msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:410 ../pprdrv/pprdrv_capable.c:421
+#: ../pprdrv/pprdrv_capable.c:446 ../pprdrv/pprdrv_capable.c:457
 #, c-format
 msgid "Resource \"%s %s %s %d\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:412 ../pprdrv/pprdrv_capable.c:423
+#: ../pprdrv/pprdrv_capable.c:448 ../pprdrv/pprdrv_capable.c:459
 #, c-format
 msgid "Resource \"%s %s\" not available."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:518 ../pprdrv/pprdrv_capable.c:523
+#: ../pprdrv/pprdrv_capable.c:554 ../pprdrv/pprdrv_capable.c:559
 #, c-format
 msgid "Requirement \"%s\" can't be met."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:533
+#: ../pprdrv/pprdrv_capable.c:569
 #, c-format
 msgid "Required language level (%d) exceeds printer's language level (%d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:547
+#: ../pprdrv/pprdrv_capable.c:583
 msgid "Printer does not have all required extensions."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:561
+#: ../pprdrv/pprdrv_capable.c:597
 msgid "Printer is not permitted to print grayscale documents."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:618
+#: ../pprdrv/pprdrv_capable.c:654
 msgid "Communications channel cannot pass required codes."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:630
+#: ../pprdrv/pprdrv_capable.c:666
 #, c-format
 msgid "Job has %d pages but allowed range for this printer is %d--%d."
 msgstr ""
 
-#: ../pprdrv/pprdrv_capable.c:643
+#: ../pprdrv/pprdrv_capable.c:679
 #, c-format
 msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
 msgstr ""
@@ -145,7 +145,7 @@ msgstr ""
 msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:312
+#: ../pprdrv/pprdrv_flag.c:311
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -154,57 +154,57 @@ msgid ""
 "\t\t%s =\n"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:517
+#: ../pprdrv/pprdrv_flag.c:516
 #, c-format
 msgid "End of job %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:520 ../pprdrv/pprdrv_flag.c:538
+#: ../pprdrv/pprdrv_flag.c:519 ../pprdrv/pprdrv_flag.c:537
 #, c-format
 msgid "Title: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:529
+#: ../pprdrv/pprdrv_flag.c:528
 #, c-format
 msgid "Job ID: %s:%s-%d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:532
+#: ../pprdrv/pprdrv_flag.c:531
 #, c-format
 msgid "Routing: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:535
+#: ../pprdrv/pprdrv_flag.c:534
 #, c-format
 msgid "Creator: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:550
+#: ../pprdrv/pprdrv_flag.c:549
 #, c-format
 msgid "Print Date: %s"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:557
+#: ../pprdrv/pprdrv_flag.c:556
 #, c-format
 msgid "Pages: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:558
+#: ../pprdrv/pprdrv_flag.c:557
 #, c-format
 msgid "Sheets: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:564
+#: ../pprdrv/pprdrv_flag.c:563
 #, c-format
 msgid "Copies: %d"
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:583
+#: ../pprdrv/pprdrv_flag.c:582
 #, c-format
 msgid "User \"%s\" is inexplicably absent from the charge account database."
 msgstr ""
 
-#: ../pprdrv/pprdrv_flag.c:589
+#: ../pprdrv/pprdrv_flag.c:588
 #, c-format
 msgid "Balance before printing this job: %s"
 msgstr ""
@@ -334,43 +334,52 @@ msgstr ""
 msgid "%s: no match for %d \"%s\""
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:256
+#: ../pprdrv/pprdrv_ppd.c:272
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:496
+#: ../pprdrv/pprdrv_ppd.c:563
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:619
+#: ../pprdrv/pprdrv_ppd.c:686
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", removing existing code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:671
+#: ../pprdrv/pprdrv_ppd.c:738
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:71
+#: ../pprdrv/pprdrv_rip.c:90
 #, c-format
 msgid ""
-"The RIP terminated abruptly after receiving signal %d (%s)\n"
-"from a non-spooler process (possibly the OS kernel)."
+"The RIP (Ghostscript) malfunctioned while printing the job\n"
+"%s.  Presumably it can print other jobs that don't\n"
+"trigger the bug, so the spooler will arrest the job and move on."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:85
+#: ../pprdrv/pprdrv_rip.c:100
+#, c-format
+msgid ""
+"The RIP (Ghostscript) was killed by signal %d (%s).\n"
+"Perhaps a system operator did it or perhaps the system\n"
+"is shutting down."
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:112
 #, c-format
 msgid "RIP stopped by signal \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:87
+#: ../pprdrv/pprdrv_rip.c:114
 msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
 msgstr ""

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 July 2002.
+# Last modified 7 August 2002.
 #
 
 use lib "?";
@@ -43,11 +43,13 @@ $GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
 	"Ghostscript Golfer" => ["$GS_EXAMPLES/golfer.ps", 0.40],
 	"Ghostscript Tiger" => ["$GS_EXAMPLES/tiger.ps", 0.40]
 	);
+
+# Eliminate those that aren't installed.
 foreach my $i (keys %IMAGES)
 	{
-	if(! -f $IMAGES{$i}->{file})
+	if(! -f $IMAGES{$i}->[0])
 	    {
-	    undef $IMAGES{$i};
+	    delete $IMAGES{$i};
 	    }
 	}
 
@@ -75,7 +77,7 @@ $addprn_wizard_table = [
 		print "<p>\n";
 		my $default_image = "PPR Logo";
 		my $image = cgi_data_move("image", $default_image);
-		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", keys($IMAGES)));
+		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", keys(%IMAGES)));
 		print "</p>\n";
 
 		print "<div class=\"section\">\n";
@@ -109,9 +111,9 @@ $addprn_wizard_table = [
 		$options .= " --pagesize=$pagesize";
 
 		my $image = cgi_data_move("image", "");
-		if($IMAGES{$image})
+		if($image ne "PPR Logo")
 		    {
-		    $options .= " --eps-file=$IMAGES{$image}->{file} --eps-scale=$IMAGES{$image}->{scale}";
+		    $options .= " --eps-file=$IMAGES{$image}->[0] --eps-scale=$IMAGES{$image}->[1]";
 		    }
 
 		if(cgi_data_move("test_grayscale", 0))

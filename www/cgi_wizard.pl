@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2002.
+# Last modified 8 August 2002.
 #
 
 use 5.004;
@@ -163,9 +163,9 @@ $wizpage = $wizard_table->[$page];
 # side.
 my $title = H_($wizpage->{title});
 my $picture = $wizpage->{picture};
-$picture = "missing.jpg" if(!defined($picture));
+#$picture = "missing.jpg" if(!defined($picture));
 my $picture_alt = $wizpage->{picture_alt};
-if(!defined($picture_alt))
+if(defined $picture && !defined($picture_alt))
     {
     if($picture =~ /([^\/]+)\.[^\/]+$/)
 	{ $picture_alt = "[$1]" }
@@ -197,15 +197,23 @@ EndOfText1
 
 # Start the table which holds the decorative picture on the
 # left and the functional part of the form on the right.
-print <<"EndOfText2";
-<TABLE BORDER=$border HEIGHT=85% WIDTH=100% cellpadding=15 cols=5>
+print <<"EndOfText2a";
+<TABLE BORDER=$border HEIGHT=85% WIDTH=100% cellpadding=15 cols=4>
 <tr height=400>
 <td width=1 align="left" valign="top">
+EndOfText2a
+
+if(defined $picture)
+{
+print <<"EndOfText2b";
   <img src="$options->{imgdir}$picture" height=$options->{imgheight} width=$options->{imgwidth} alt=${\&html_value($picture_alt)}>
+EndOfText2b
+}
+
+print <<"EndOfText2c";
   </td>
-<td align=$align valign=$valign>
-EndOfText2
-#  <img src="../images/pixel-clear.png" width=1 height=400 align="left">
+<td align=$align valign=$valign colspan=3>
+EndOfText2c
 
 print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
 

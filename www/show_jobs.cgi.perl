@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 10 May 2002.
+# Last modified 8 August 2002.
 #
 
 use 5.005;
@@ -176,7 +176,7 @@ foreach my $i (@qquery_available)
 
 print "</p>\n";
 
-print "<p>", html(_("Refresh interval (in seconds):"));
+print "<p>", html(_("Refresh Interval (in seconds):"));
 print "<input type=\"text\" name=\"refresh_interval\" value=", html_value($refresh_interval), " size=4></p>\n";
 
 # Emmit the hidden fields.

@@ -44,6 +44,8 @@ jobbreak	signal/pjl signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -107,6 +109,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -171,6 +175,8 @@ jobbreak	default signal
 feedback	yes yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -235,6 +241,8 @@ jobbreak	default signal
 feedback	no yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -298,6 +306,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -362,6 +372,8 @@ jobbreak	default signal
 feedback	default yes
 codes	Clean7Bit Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -425,6 +437,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -489,6 +503,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -553,6 +569,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -617,6 +635,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -680,6 +700,8 @@ jobbreak	default signal
 feedback	default yes
 codes	default Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -750,6 +772,8 @@ jobbreak	signal/pjl signal
 feedback	no yes
 codes	Clean7Bit Binary
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 
@@ -813,6 +837,8 @@ jobbreak	default control-d
 feedback	default yes
 codes	default Clean8Bit
 rip			
+rip_ppd			
+rip_which	PPD
 alerts	7 mail nobody@localhost
 flags	no no
 charge	 

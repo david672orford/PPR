@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 April 2002.
+# Last modified 9 August 2002.
 #
 
 #
@@ -42,10 +42,13 @@ sub search_infopath
 	{
 	next if(! -d $dir);		# skip directories that don't exist
 
-	foreach my $compext ("", ".gz", ".bz2")
+	foreach my $ext (".info", "")
 	    {
-	    my $filename = "$dir/$name.info$compext";
-	    return $filename if(-f $filename);
+	    foreach my $compext ("", ".gz", ".bz2")
+		{
+		my $filename = "$dir/$name$ext$compext";
+		return $filename if(-f $filename);
+		}
 	    }
 	}
 
