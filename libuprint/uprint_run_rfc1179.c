@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 June 2003.
+** Last modified 15 July 2003.
 */
 
 #include "before_system.h"
@@ -52,10 +52,16 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 	int pipefds[2];
 	pid_t pid;
 
-	/* Adobe's Acroread 5.0 appearently sets SIGCHLD to SIG_IGN.  This causes us problems,
-	   so we explicitly set the default behavior.
+	/* This code block fixes a problem with Adobe Acroread 5.0 for Linux.  Without this
+	   code, wait() fails with ECHILD.  I cannot explain this.  Nor can I explain why
+	   this isn't a problem in uprint_run.c.
 	   */
 	signal_interupting(SIGCHLD, SIG_DFL);
+	{
+	sigset_t empty;
+	sigemptyset(&empty);
+	sigprocmask(SIG_SETMASK, &empty, NULL);
+	}
 	
 	/* Create a pipe to receive uprint_rfc1179's output. */
 	if(pipe(pipefds) == -1)

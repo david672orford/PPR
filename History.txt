@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--1 July 2003.
+1.51, 15 February 2003--15 July 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8599,7 +8599,10 @@ line was being parsed twice.
   mismatch.  This has the effect of correcting the behavior of
   printdesk/nbp_lookup_ali.c when run with the --gui-backend option.
 
-
+* libuprint/uprint_run_rfc1179.c: added hack to set SIGCHLD handling to
+  default and clear all signal masks.  Without this, wait() fails with ECHLD
+  when lpr or lp is invoked from Acroread 5.0 for Linux.  The reason is
+  unclear.
 
 
 
