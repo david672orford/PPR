@@ -8518,13 +8518,18 @@ line was being parsed twice.
   ppr-panel command line.  This means it can be used as a desktop 
   drag-and-drop printing target.  Added menu bar to queue listing so that
   the printer status windows can be opened from there.  Made queue listing
-  background white.  Made backgrounds changing status fields in the printer
+  background white.  Made backgrounds of changing status fields in the printer
   status windows white as well.
 
 
 
 +++++++++++++++++++++
 TODO
+
+* Fix Dillo caching problem when deleting printer in the web interface.  It
+  may be necessary to emit an header to say that certain CGI output is not
+  cacheable.  It is probably that Dillo is exposing a bug by not having 
+  a workaround for buggy sites.
 
 * Finish papd.
 
