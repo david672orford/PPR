@@ -38,7 +38,7 @@ BROWSERS=parallel ip_scan_snmp
 
 all: $(BROWSERS) $(ALL_ATALK)
 
-all-atalk: atalk$(DOTEXE) nbp_lookup$(DOTEXE)
+all-atalk: atalk nbp_lookup$(DOTEXE)
 
 nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o nbp_lookup nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT) $(ATALKLIBS)

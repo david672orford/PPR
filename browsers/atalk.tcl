@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 April 2004.
+# Last modified 19 April 2004.
 #
 
 set HOMEDIR "?"
@@ -37,7 +37,7 @@ set node [lindex $argv 1]
 
 # We need Netatalk's or CAP's getzones.  Find it.
 foreach dir {/usr/local/atalk/bin /usr/local/bin /usr/bin} {
-	if {![file executable $dir/getzones]} {
+	if [file executable $dir/getzones] {
 		set getzones $dir/getzones
 		break
 		}
@@ -52,12 +52,12 @@ if {![info exists getzones]} {
 # If we are run without a domain specified, then we are to print a list of 
 # the domains which the user may choose to browse.
 if { $domain == "" } {
-    set f [open "| $HOMEDIR/lib/getzones" "r"]
+    set f [open "| $getzones" "r"]
 	set zones {}
 	while {[gets $f line] >= 0} {
 		lappend zones $line
 		}
-	puts -nonewline [join [lsort $zones] "\n"]
+	puts [join [lsort $zones] "\n"]
     exit 0
     }
 

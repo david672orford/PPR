@@ -501,7 +501,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		fprintf(stderr, "\n");
 		return 0;
 		}
@@ -577,7 +577,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		fprintf(stderr, "\n");
 		return 0;
 		}
@@ -674,7 +674,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		fprintf(stderr, "\n");
 		return 0;
 		}
@@ -771,7 +771,7 @@ int ppdlib_query(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(stderr, _("Query failed: %s\n"), gu_exception);
+		fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 
@@ -867,7 +867,7 @@ int ppdlib_get(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(errors, "%s", gu_exception);
+		fprintf(errors, "%s: %s", myname, gu_exception);
 		return EXIT_NOTFOUND;	/* a guess */
 		}
 
@@ -882,7 +882,7 @@ int ppdlib_get(const char *argv[])
 		ppdobj_delete(ppd);
 		}
 	gu_Catch {
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 	

@@ -681,7 +681,7 @@ int printer_show(const char *argv[])
 				ppdobj_delete(ppdobj);
 			}
 		gu_Catch {
-			fprintf(errors, "Error: %s\n", gu_exception);
+			fprintf(errors, "%s: %s\n", myname, gu_exception);
 			}
 
 		} /* if(PPDFile) */
@@ -1723,7 +1723,7 @@ int printer_ppd(const char *argv[])
 		}
 	gu_Catch {
 		confabort();
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	
@@ -2496,7 +2496,7 @@ int printer_deffiltopts(const char *argv[])
 		}
 	gu_Catch {
 		confabort();
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -2827,7 +2827,7 @@ int printer_ppdopts(const char *argv[])
 		}
 	gu_Catch {
 		confabort();
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -3082,7 +3082,7 @@ int printer_ppdq(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(stderr, _("Query failed: %s\n"), gu_exception);
+		fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 

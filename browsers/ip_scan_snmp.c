@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 19 April 2004.
 */
 
 #include "before_system.h"
@@ -399,22 +399,19 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 			{
 			struct KNOWN_DEVICE_TYPES *device_type;
 			gu_boolean hit = FALSE;
+			const char *dns_name = dns_lookup(first_ip + ip_index);
 			for(device_type = known_device_types; device_type->match_string; device_type++)
 				{
 				if(strstr(states[ip_index].sysDescr, device_type->match_string))
 					{
 					if(!hit)
 						{
-						const char *name;
-						
+						printf("[%s", dns_name);
+						if(states[ip_index].sysName && states[ip_index].sysName[0] && strcmp(states[ip_index].sysName, dns_name) != 0)
+							printf(", %s", states[ip_index].sysName);
 						if(states[ip_index].sysLocation && states[ip_index].sysLocation[0])
-							name = states[ip_index].sysLocation;
-						else if(states[ip_index].sysName && states[ip_index].sysName[0])
-							name = states[ip_index].sysName;
-						else
-							name = "-- no description --";
-
-						printf("[%s]\n", name);
+							printf(", %s", states[ip_index].sysLocation);
+						printf("]\n");
 
 						if(states[ip_index].hrDeviceDescr)
 							printf("manufacturer-model=%s\n", states[ip_index].hrDeviceDescr);
@@ -423,14 +420,13 @@ static void do_scan(in_addr_t first_ip, in_addr_t last_ip)
 						}
 
 					printf("interface=%s,\"", device_type->interface);
-						printf(device_type->address_format, dns_lookup(first_ip + ip_index));
+						printf(device_type->address_format, dns_name);
 						printf("\"");
 					printf(",\"%s\"", device_type->options ? device_type->options : "");
 					printf(",%s", device_type->jobbreak ? device_type->jobbreak : "");
 					printf(",%s", device_type->feedback ? device_type->feedback : "");
 					printf(",%s", device_type->codes ? device_type->codes : "");
 					printf("\n");
-						
 					}
 				}
 			if(hit)

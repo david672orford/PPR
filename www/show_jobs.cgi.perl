@@ -260,7 +260,7 @@ if(defined($action) && $action eq 'View')
 {
 &cgi_data_move('fields', undef);
 
-my $title = html(_("Queue Display Settings"));
+my $title = _("Queue Display Settings");
 
 print <<"Settings10";
 Content-Type: text/html;charset=$charset
@@ -269,7 +269,7 @@ Vary: accept-language
 
 <html>
 <head>
-<title>$title</title>
+<title>${\html($title)}</title>
 <link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
 </head>
@@ -340,7 +340,7 @@ if($data{controls})
 		}
 	}
 
-my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue_name, $ENV{SERVER_NAME}));
+my $title = sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue_name, $ENV{SERVER_NAME});
 
 #print "Expires: ", cgi_time_format(time() + $refresh_interval + 10), "\n";
 
@@ -351,7 +351,7 @@ Vary: user-agent, accept-language
 
 <html style="$fixed_html_style">
 <head>
-<title>$title</title>
+<title>${\html($title)}</title>
 <link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/show_jobs.css" type="text/css">
 <HTA:APPLICATION navigable="yes"></HTA:APPLICATION>
@@ -536,11 +536,13 @@ if(!defined($data{dests}))
 #=============================================================
 print <<"THEAD10";
 <div class="queue">
-<table class="queue" title="$title" border=1 cellpadding=5 cellspacing=0
-summary="This table has one row for each print job.	 The left hand column has
-a checkbox for each print job.	Elsewhere on the page there are buttons which
-act on all checked jobs.  The other columns display information about each
-print job.	There may be blank rows at the end of the table.">
+<table class="queue" title=${\html_value($title)} border=1 cellpadding=5 cellspacing=0
+summary=${\html_value(
+	_("This table has one row for each print job.  The left hand column has\n"
+	. "a checkbox for each print job.  Elsewhere on the page there are\n"
+	. "buttons which act on all checked jobs.  The other columns display\n"
+	. "information about each print job.  There may be blank rows at the\n"
+	. "end of the table."))}>
 <thead>
 THEAD10
 

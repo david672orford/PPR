@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2004.
+# Last modified 21 April 2004.
 #
 
 #
@@ -82,12 +82,12 @@ if {$files != {}} {
 # control panel.
 if {$queue != ""} {
     set final_url "$base_url/cgi-bin/show_jobs.cgi?name=$queue"
-    set width 750
-    set height 550
+    set width 800
+    set height 300
     } else {
     set final_url "$base_url/cgi-bin/show_queues.cgi"
-    set width 800
-    set height 550
+    set width 700
+    set height 400
     }
 
 # These are the browsers in order of preference.  Again, this is according

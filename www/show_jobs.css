@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_jobs.css
-** Last modified 5 March 2004.
+** Last modified 20 April         2004.
 */
 
 BODY {
@@ -12,7 +12,7 @@ BODY {
 
 /* These are for the queue display table. */
 TABLE.queue {
-	width: 100%;
+	width: 99%;
 	border-style: solid;
 	border-color: black;
 	margin: 2pt;

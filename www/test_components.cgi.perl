@@ -49,13 +49,13 @@ my @tests = (
 						require "speach.pl";
 						return speach_soundfiles_installed();
 						},
-				'required' => 0,
+				'role' => "enhancements",
 				},
 		{'name' => _("Perl 5.005 or later"),
 				'testproc' => sub {
 						return ($] >= 5.005);
 						},
-				'required' => 1,
+				'role' => "enhancements",
 				'redhat' => "perl",
 				'debian' => "perl-base",
 				'source' => "http://www.cpan.org/src/stable.tar.gz"
@@ -64,63 +64,71 @@ my @tests = (
 				'testproc' => sub {
 						return defined(eval { require Locale::gettext });
 						},
-				'required' => 0,
+				'role' => "non-English messages",
 				'debian' => "perl-tk"
 				},
 		{'name' => _("Perl Tk module"),
 				'testproc' => sub {
 						return defined(eval { require Tk });
 						},
-				'required' => 0,
+				'role' => "GUI interface",
 				'debian' => "liblocale-gettext-perl"
-				},
-		{'name' => _("NetPBM image converters"),
-				'testproc' => sub {
-						return inpath("pnmtops");
-						},
-				'required' => 0
 				},
 		{'name' => _("PPR-GS Ghostscript distribution"),
 				'testproc' => sub {
 						return -x "$HOMEDIR/../ppr-gs/bin/gs";
 						},
-				'required' => 0
+				'role' => "printer drivers" 
 				},
 		{'name' => _("Other Ghostscript distribution"),
 				'testproc' => sub {
 						return inpath("gs");
 						},
-				'required' => 0
+				'role' => "printer drivers" 
 				},
 		{'name' => _("IJS Gimp Print drivers"),
 				'testproc' => sub {
 						return inpath("ijsgimpprint");
 						},
-				'required' => 0
+				'role' => "additional printer drivers",
+				'debian' => "ijsgimpprint"
+				},
+		{'name' => _("IJS Gimp Print drivers"),
+				'testproc' => sub {
+						return inpath("hpijs");
+						},
+				'role' => "additional printer drivers",
+				'debian' => "hpijs"
+				},
+		{'name' => _("NetPBM image converters"),
+				'testproc' => sub {
+						return inpath("pnmtops");
+						},
+				'role' => "input filters"
 				},
 		{'name' => _("Groff"),
 				'testproc' => sub {
 						return inpath("groff");
 						},
-				'required' => 0
+				'role' => "input filter" 
 				},
 		{'name' => _("HTMLDOC"),
 				'testproc' => sub {
 						return inpath("htmldoc");
 						},
-				'required' => 0
+				'role' => "input filter"
 				},
 		{'name' => _("Acroread"),
 				'testproc' => sub {
 						return inpath("acroread");
 						},
-				'required' => 0
+				'role' => "input filter" 
 				},
 		{'name' => _("JPEG utilities"),
 				'testproc' => sub {
 						return inpath("djpeg");
 						},
-				'required' => 0
+				'role' => "input filters" 
 				},
 );
 
@@ -177,8 +185,12 @@ Vary: accept-language
 <style type="text/css">
 BODY { background: white; color: black; }
 TH, TD { text-align: left; padding: 0.5mm 1.0mm; }
-TD.yes { color: green; }
-TD.no  { color: red; }
+TD.yes {
+	color: green;
+	}
+TD.no {
+	color: red;
+	}
 </style>
 </head>
 <body>
@@ -192,7 +204,7 @@ Quote10
 {
 print "<tr>";
 my $i;
-foreach $i (_("Component"), _("Present?"), _("Critical?"), _("Redhat Package Name"), _("Debian Package Name"), _("Source Download"))
+foreach $i (_("Component"), _("Present?"), _("Role"), _("Redhat Package Name"), _("Debian Package Name"), _("Source Download"))
 	{
 	print "<th>", html_nb($i), "</th>";
 	}
@@ -209,13 +221,9 @@ foreach my $test (@tests)
 	my $found_text = $found ? _("Yes") : _("No");
 	my $found_class = $found ? "yes" : "no";
 
-	my $critical = $test->{critical};
-	my $critical_text = $critical ? _("Yes") : _("No");
-	my $critical_class = $critical ? "yes" : "no";
-	
 	print "<tr>", cell($test->{name}),
 				cell($found_text, $found_class),
-				cell($critical_text, $critical_class),
+				cell($test->{role}),
 				cell($test->{redhat}),
 				cell($test->{debian}),
 				cell_url($test->{source}),

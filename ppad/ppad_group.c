@@ -478,7 +478,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	gu_Catch
 		{
 		confabort();		/* roll back the changes */
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
@@ -554,7 +554,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Catch
 		{
 		confabort();
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
@@ -752,7 +752,7 @@ int group_deffiltopts_internal(const char *group)
 		}
 	gu_Catch {
 		confabort();
-		fprintf(errors, "%s\n", gu_exception);
+		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
