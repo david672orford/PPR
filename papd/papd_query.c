@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 3 December 2004.
 */
 
 /*
@@ -599,7 +599,7 @@ void answer_query(int sesfd, void *qc)
 			debug("QUERY --> %s", line);
 
 		/* If it is not the start of a query, ignore it. */
-		if(strncmp(line, "%%?", 3) != 0)
+		if(!lmatch(line, "%%?Begin"))
 			continue;
 
 		/* If query trace mode is on, put the line in the log. */
@@ -611,19 +611,19 @@ void answer_query(int sesfd, void *qc)
 			font_list_query(sesfd, qc);
 
 		/* New style font query */
-		else if(strncmp(line, "%%?BeginFontQuery:", 18) == 0)
+		else if(lmatch(line, "%%?BeginFontQuery:"))
 			font_query(sesfd, qc);
 
 		/* Resource Query */
-		else if(strncmp(line, "%%?BeginResourceQuery:", 22) == 0)
+		else if(lmatch(line, "%%?BeginResourceQuery:"))
 			resource_query(sesfd, qc);
 
 		/* Feature query */
-		else if(strncmp(line, "%%?BeginFeatureQuery:", 21) == 0)
+		else if(lmatch(line, "%%?BeginFeatureQuery:"))
 			feature_query(sesfd, qc);
 
 		/* Generic query */
-		else if(strncmp(line, "%%?BeginQuery:", 14) == 0)
+		else if(lmatch(line, "%%?BeginQuery:"))
 			generic_query(sesfd, qc);
 
 		/* Unrecognized query, just return the default. */
