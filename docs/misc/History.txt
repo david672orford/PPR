@@ -8121,7 +8121,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--28 January 2003.
+1.50, 22 January 2003--29 January 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
@@ -8130,10 +8130,10 @@ line was being parsed twice.
 * Configure, Configure_new, lib*/Makefile, nonppr_tcl/Makefile: added
   explicit call to ranlib (though for most platforms RANLIB=touch).
 
-* www/q_icons/[0-2]*.png: added to CVS (marked as binary).  I did this
-  so we will know if switching conversion tools produces different results
-  (as it has in the past, generally better) and because a lot of people
-  don't have the tools needed to build them.
+* www/q_icons/[0-2]*.png, www/images/*.png, *.eps: added to CVS (marked as 
+  binary).  I did this so we will know if switching conversion tools produces 
+  different results (as it has in the past, generally better) and because a 
+  lot of people don't have the tools needed to build them.
 
 * fixup/fixup_conf.sh: fixed messed up [papd] section code.
 
