@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/ppr_fnamef.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 12 December 2000.
+** Last modified 16 May 2002.
 */
 
 #include "before_system.h"
@@ -64,7 +64,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 			if(len > space_left)
 			    {
 			    *di = '\0';
-			    libppr_throw(EXCEPTION_BADUSAGE, function, "overflow: \"%s\" -> \"%s\" item %d: str=\"%s\", len=%d, space_left=%d", pattern, target, item_number, str, len, space_left);
+			    libppr_throw(EXCEPTION_BADUSAGE, function, "overflow: \"%s\" -> \"%s\" item %d: str=\"%s\", len=%ld, space_left=%ld", pattern, target, item_number, str, (long int)len, (long int)space_left);
 			    }
 
 			/* debug("y1 pattern=\"%s\", target=%p, di=%p, str=%p, str=\"%s\", space_left=%d", pattern, target, di, str, str, space_left); */
