@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 4 February 2004.
 */
 
 /** \file
@@ -1540,7 +1540,7 @@ void ppop_dispatch(const char command[])
 	ppr_fnamef(reply_fname, "%s/ppr-ppop-%ld", TEMPDIR, reply_pid);
 	{
 	int fd;
-	if((fd = open(reply_fname, O_WRONLY | O_EXCL | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
+	if((fd = open(reply_fname, O_WRONLY | O_EXCL | O_CREAT, S_IRUSR | S_IWUSR, UNIX_600)) == -1)
 		{
 		error("%s(): can't open \"%s\", errno=%d (%s)", function, reply_fname, errno, gu_strerror(errno));
 		return;
@@ -1711,7 +1711,7 @@ void ppop_dispatch(const char command[])
 		   delete the communications file. */
 		if(kill((pid_t)reply_pid, SIGUSR1) == -1)
 			{
-			debug("%s(): kill() failed, errno=%d (%s), deleting reply file", function, errno, gu_strerror(errno));
+			debug("%s(): kill(%ld, SIGUSR1) failed, errno=%d (%s), deleting reply file", function, (long)reply_pid, errno, gu_strerror(errno));
 			unlink(reply_fname);
 			}
 		}

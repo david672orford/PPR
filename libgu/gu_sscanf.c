@@ -318,9 +318,9 @@ int gu_sscanf(const char *input, const char *format, ...)
 						sign = -1;
 						string++;
 						}
-					if(! gu_isdigit(*string))				/* if no number present, */
+					if(! gu_isdigit(*string))			/* if no number present, */
 						goto break_break;
-					while(gu_isdigit(*string))				/* convert digits to left of decimal point */
+					while(gu_isdigit(*string))			/* convert digits to left of decimal point */
 						{
 						whole *= 10;
 						whole += (*(string++) - '0');

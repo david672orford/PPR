@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 4 February 2004.
 */
 
 /*+ \file
@@ -177,6 +177,9 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		{
 		void *ppd = ppdobj_new(pip->ppdFile);
 
+		if(qip->debug_level > 1)
+			printf(_("Extracting information about printer \"%s\" from PPD file \"%s\".\n"), pip->name, pip->ppdFile);
+
 		/* These flags are used to ensure that we heed only the first instance. */
 		gu_boolean saw_ColorDevice = FALSE;
 		gu_boolean saw_LanguageLevel = FALSE;
@@ -186,7 +189,8 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 			char *p;
 			while((line = ppdobj_readline(ppd)))
 				{
-				DODEBUG(("PPD: %s", line));
+				if(qip->debug_level > 5)
+					printf("PPD: %s\n", line);
 				if(line[0] == '*')
 					{
 					switch(line[1])
@@ -196,7 +200,13 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								{
 								if(!saw_ColorDevice)
 									{
-									gu_torf_setBOOL(&pip->colorDevice, p);	/* !!! no error trap !!! */
+									if(strcmp(p, "True") == 0)
+										pip->colorDevice = TRUE;
+									else if(strcmp(p, "False") == 0)
+										pip->colorDevice = FALSE;
+									else if(qip->warnings)
+										fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"), pip->ppdFile, p);
+
 									saw_ColorDevice = TRUE;
 									}
 								}
@@ -204,19 +214,27 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 							if((p = lmatchp(line, "*DefaultResolution:")) || (p = lmatchp(line, "*DefaultJCLResolution:")))
 								{
 								/* if not seen yet and looks reasonable */
-								if(!pip->resolution && *p >= '0' && *p <= '9')
+								if(!pip->resolution)
 									{
-									/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
-									char *p2;
-									if((p2 = strchr(p, 'x')))
+									if(*p < '0' && *p > '9')
 										{
-										int nlen = (p2 - p);
-										if(strncmp(p, p + nlen + 1, nlen) == 0 && strcmp(p + nlen + nlen + 1, "dpi") == 0)
-											{
-											p = p + nlen + 1;
-											}
+										if(qip->warnings)
+											fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid DefaultResolution value of \"%s\".\n"), pip->ppdFile, p);
 										}
-									pip->resolution = pstrdup(qip->subpool, p);
+									else
+										{
+										/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
+										char *p2;
+										if((p2 = strchr(p, 'x')))
+											{
+											int nlen = (p2 - p);
+											if(strncmp(p, p + nlen + 1, nlen) == 0 && strcmp(p + nlen + nlen + 1, "dpi") == 0)
+												{
+												p = p + nlen + 1;
+												}
+											}
+										pip->resolution = pstrdup(qip->subpool, p);
+										}
 									}
 								continue;
 								}
@@ -699,7 +717,12 @@ void queueinfo_add_hypothetical_printer(void *p, const char name[], const char p
 	do_printer_ppd(qip, pip);
 	}
 
-/** set a file object to which warning messages may be sent.
+/** Set a file object to which warning messages may be sent
+ *
+ * The queueinfo object can spew warnings about problems with the
+ * PPD file and the like.  These are off by default, but you can
+ * turn them on by supplying a FILE object (such as stderr) to 
+ * which to send them.  This feature is used by ppad(1).
  */
 void queueinfo_set_warnings_file(void *p, FILE *warnings)
 	{
@@ -707,7 +730,12 @@ void queueinfo_set_warnings_file(void *p, FILE *warnings)
 	qip->warnings = warnings;
 	}
 
-/** set a debug level for debug messages to stdout.
+/** Set a debug level for debug messages to stdout
+ *
+ * If the debug level is set to non-zero, then messages describing
+ * the parsing process will be written to stdout.  Obviously you
+ * should only do this if there is a stdout to write to.  In other
+ * words, you probably don't want to do this in a daemon.
  */
 void queueinfo_set_debug_level(void *p, int debug_level)
 	{
@@ -724,6 +752,8 @@ const char *queueinfo_name(void *p)
 	}
 
 /** return the description of the queue
+ *
+ * The description is the one set with "ppad (group, alias) comment".
 */
 const char *queueinfo_comment(void *p)
 	{
@@ -732,6 +762,8 @@ const char *queueinfo_comment(void *p)
 	}
 
 /** Is the queue in transparent mode?
+ *
+ * This function returns TRUE if "-H transparent" is in the switchset.
 */
 gu_boolean queueinfo_transparentMode(void *p)
 	{
@@ -740,6 +772,9 @@ gu_boolean queueinfo_transparentMode(void *p)
 	}
 
 /** Will the queue pass PostScript documents through unchanged?
+ *
+ * This function returns TRUE if "postscript" is in the list set
+ * with "ppad (group, alias) passthru".
 */
 gu_boolean queueinfo_psPassThru(void *p)
 	{
@@ -750,7 +785,8 @@ gu_boolean queueinfo_psPassThru(void *p)
 /** Can all possible 8-bit character codes be passed thru to the PS interpreter?
  *
  * We return TRUE if all member printers can pass all 8-bit codes.  If there
- * are no member printers, we return FALSE.
+ * are no member printers, we return FALSE.  A "ppad codes" setting of "Binary"
+ * or "TBCP".
 */
 gu_boolean queueinfo_binaryOK(void *p)
 	{
@@ -771,7 +807,7 @@ gu_boolean queueinfo_binaryOK(void *p)
 	return answer;
 	}
 
-/** read the name of the queue's printer(s)'s PPD file(s)
+/** Return the name of the queue's printer(s)'s PPD file
  *
  * If these is more than one printer and not all have the same PPD file, then
  * this function returns NULL.
@@ -864,6 +900,7 @@ int queueinfo_psLanguageLevel(void *p)
 
 /** What is the version string of the PostScript interpreter?
  *
+ * The version string is returned exactly as it appears in the PPD file.
  * If the version string isn't available, this function will return NULL.
 */
 const char *queueinfo_psVersionStr(void *p)
@@ -880,7 +917,8 @@ const char *queueinfo_psVersionStr(void *p)
  *
  * If it can't determine the answer, this function returns 0.0.  A printer 
  * driver might need to know this to determine which language features are
- * available.
+ * available.  Note that the value is stored in a float, so it may differ
+ * slightly from the number in the PPD file.
 */
 double queueinfo_psVersion(void *p)
 	{
@@ -1158,7 +1196,11 @@ static const char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	r = pip->resolution ? pip->resolution : "";
 
 	if(qip->debug_level >= 2)
-		printf(X_("Looking up mfmode for product \"%s\", modelname \"%s\", nickname \"%s\", resolution \"%s\".\n"), p, m, n, r);
+		{
+		printf(X_("Looking up mfmode for product=\"%s\",\n"
+					"\tmodelname=\"%s\", nickname=\"%s\",\n"
+					"\tresolution \"%s\" in \"%s\".\n"), p, m, n, r, MFMODES);
+		}
 
 	if((modefile = fopen(MFMODES, "r")) == (FILE*)NULL)
 		gu_Throw(_("Can't open \"%s\", errno=%d (%s)"), MFMODES, errno, gu_strerror(errno));
@@ -1192,7 +1234,7 @@ static const char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		if(x < (sizeof(f) / sizeof(f[0]))) continue;	/* skip line if error detected in the for() loop */
 
 		if(qip->debug_level >= 3)
-			printf(X_("line %d: product \"%s\", modelname \"%s\", nickname \"%s\", resolution \"%s\", mfmode \"%s\"\n"), linenum, f[0], f[1], f[2], f[3], f[4]);
+			printf(X_("line %d: product=\"%s\", modelname=\"%s\", nickname=\"%s\", resolution=\"%s\", mfmode=\"%s\"\n"), linenum, f[0], f[1], f[2], f[3], f[4]);
 
 		if(f[0][0] != '*' && strcmp(p, f[0]))
 			continue;
@@ -1209,7 +1251,7 @@ static const char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		answer = gu_strdup(f[4]);
 
 		if(qip->debug_level >= 2)
-			printf(_("Match at \"%s\" line %d, mfmode=%s.\n"), MFMODES, linenum, answer);
+			printf(_("Match at \"%s\" line %d, mfmode=\"%s\".\n"), MFMODES, linenum, answer);
 
 		gu_free(line);			/* didn't hit EOF so must do it ourselves */
 		break;
@@ -1245,13 +1287,19 @@ const char *queueinfo_computedMetaFontMode(void *p)
 			return NULL;
 			}
 		else if(!answer)
+			{
 			answer = temp;
+			}
 		else if(strcmp(answer, temp))
+			{
+			if(qip->warnings)
+				fprintf(qip->warnings, _("Warning: not all members of group \"%s\" have the save MetaFont mode.\n"), qip->name);
 			return NULL;
+			}
 		}
 
 	return answer;
-	}
+	} /* end of queueinfo_computedMetaFontMode() */
 	
 /** Compute the default filter options for this queue
  */
@@ -1279,6 +1327,9 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 
 	if((sp = queueinfo_computedMetaFontMode(p)))
 		gu_snprintfcat(result_line, sizeof(result_line), " mfmode=%s", sp);
+
+	if(qip->debug_level >= 2)
+		printf("New default filter options for \"%s\" are: %s\n", qip->name, result_line);
 
 	return pstrdup(qip->subpool, result_line);
 	} /* end of queueinfo_computedDefaultFilterOptions() */

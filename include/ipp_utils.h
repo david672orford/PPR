@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 4 February 2004.
 */
 
 /* This union holds any kind of IPP value. */
@@ -108,6 +108,10 @@ void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 
 /* Other functions */
-void debug(const char message[], ...);
+void debug(const char message[], ...)
+#ifdef __GNUC__
+__attribute__ (( format (printf, 1, 2) ))
+#endif
+;
 
 /* end of file */

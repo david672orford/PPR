@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 4 February 2004.
 */
 
 /*! \file */
@@ -754,22 +754,5 @@ ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const c
 		
 	return p;
 	}
-
-/** Send a debug message to the HTTP server's error log
-
-This function sends a message to stderr.  Messages sent to stderr end up in
-the HTTP server's error log.  The function takes a printf() style format
-string and argument list.  The marker "ipp: " is prepended to the message.
-
-*/
-void debug(const char message[], ...)
-	{
-	va_list va;
-	va_start(va, message);
-	fputs("ipp: ", stderr);
-	vfprintf(stderr, message, va);
-	fputc('\n', stderr);
-	va_end(va);
-	} /* end of debug() */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 4 February 2004.
 */
 
 #include "before_system.h"
@@ -262,6 +262,7 @@ int main(int argc, char *argv[])
 		ipp = ipp_new(path_info, content_length, 0, 1);
 		ipp_parse_request(ipp);
 
+		/* For now, English is all we are capable of. */
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
 
@@ -316,5 +317,22 @@ int main(int argc, char *argv[])
 
 	return 0;
 	}
+
+/** Send a debug message to the HTTP server's error log
+
+This function sends a message to stderr.  Messages sent to stderr end up in
+the HTTP server's error log.  The function takes a printf() style format
+string and argument list.  The marker "ipp: " is prepended to the message.
+
+*/
+void debug(const char message[], ...)
+	{
+	va_list va;
+	va_start(va, message);
+	fputs("ipp: ", stderr);
+	vfprintf(stderr, message, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of debug() */
 
 /* end of file */
