@@ -1,29 +1,9 @@
 //
 // mouse:~ppr/src/www/show_queues.js
-// Copyright 1995--2002, Trinity College Computing Center.
+// Copyright 1995--2003, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 20 November 2002.
+// Last revised 10 December 2003.
 //
-
-//
-// Detect Netscape Navigator 4.x and Microsoft Internet Explorer 4.x both of
-// which use their own non-standard Document Object Models.  If neither
-// is detected, we will assume that the browser conforms to the w3 standards.
-//
-var nav4_dom = 0;
-var ie5_dom = 0;
-var browser_version = parseFloat(navigator.appVersion);
-if(browser_version >= 4.0 && browser_version < 5.0)
-	{
-	if(navigator.appName.indexOf("Microsoft") >= 0)
-		{
-		ie5_dom = 1;
-		}
-	else
-		{
-		nav4_dom = 1;
-		}
-	}
 
 //
 // The gentle_reload() function is called to save the current scrolling
@@ -53,21 +33,8 @@ function gentle_reload()
 		(document.forms[0].y.value != null) || alert("Assertion failed: y value missing");
 		(document.forms[0].seq.value != null) || alert("Assertion failed: seq value missing");
 
-		if(nav4_dom)
-			{
-			document.forms[0].x.value = window.pageXOffset;
-			document.forms[0].y.value = window.pageYOffset;
-			}
-		else if(ie5_dom)
-			{
-			document.forms[0].x.value = window.document.body.scrollLeft;
-			document.forms[0].y.value = window.document.body.scrollTop;
-			}
-		else		// Mozilla
-			{
-			document.forms[0].x.value = window.scrollX;
-			document.forms[0].y.value = window.scrollY;
-			}
+		document.forms[0].x.value = window.scrollX;
+		document.forms[0].y.value = window.scrollY;
 
 		document.forms[0].seq.value++;
 		document.forms[0].submit();
@@ -81,29 +48,23 @@ function gentle_reload()
 //
 // These 2 functions reveal and hide the popup menu.
 //
-function menu_show(w)
+function popup(event, name)
 	{
-	if(nav4_dom)
-		{
-		w.visibility = 'show';
-		}
-	else	// W3C DOM and IE 4.x
-		{
-		w.style.visibility = 'visible';
-		}
+	var w;
+	w = document.getElementById(name);
+	w.style.left = window.scrollX + event.clientX - 40 + "px";      // scrollX, scrollY may be Mozilla only
+	w.style.top = window.scrollY + event.clientY - 60 + "px";
+	w.style.visibility = 'visible';
 	page_lock();
+	return false;
 	}
-function menu_hide(w)
+function menu_hide(event)
 	{
-	if(nav4_dom)
+	if(event.currentTarget == event.target)
 		{
-		w.visibility = 'hide';
+		event.currentTarget.style.visibility = 'hidden';
+		page_unlock();
 		}
-	else	// W3C DOM and IE 4.x
-		{
-		w.style.visibility = 'hidden';
-		}
-	page_unlock();
 	}
 
 // Open a wizard in a window of the right size.
@@ -114,295 +75,63 @@ function wizard(wizard_url)
 	}
 
 // Open a queue listing window.
-function show_jobs(queue)
+function show_jobs_window(queue)
 	{
 	window.open('show_jobs.cgi?name=' + queue, '_blank', 'width=775,height=500,resizable,scrollbars');
-	// Don't call menu_hide() here!
 	}
 
 //
 // These functions are called from the popup menu.  They open a new window
 // and then hide the menu.
 //
-function prn_control(w, printer_name)
+function show_jobs(event, queue)
+	{
+	show_jobs_window(queue);
+	return false;
+	}
+function prn_control(event, printer_name)
 	{
 	window.open('prn_control.cgi?name=' + printer_name, '_blank', 'width=750,height=350,resizable');
-	menu_hide(w);
 	return false;
 	}
-function prn_properties(w, printer_name)
-	{
-	window.open('prn_properties.cgi?name=' + printer_name, '_blank', 'width=675,height=580,resizable');
-	menu_hide(w);
-	return false;
-	}
-function prn_testpage(w, printer_name)
-	{
-	window.open('prn_testpage.cgi?name=' + printer_name, '_blank', 'width=775,height=525,resizable');
-	menu_hide(w);
-	return false;
-	}
-function grp_control(w, printer_name)
+function grp_control(event, printer_name)
 	{
 	window.open('grp_control.cgi?name=' + printer_name, '_blank', 'width=750,height=400,resizable');
-	menu_hide(w);
 	return false;
 	}
-function grp_properties(w, name)
+function prn_properties(event, printer_name)
+	{
+	window.open('prn_properties.cgi?name=' + printer_name, '_blank', 'width=675,height=580,resizable');
+	return false;
+	}
+function grp_properties(event, name)
 	{
 	window.open('grp_properties.cgi?name=' + name, '_blank', 'width=675,height=580,resizable');
-	menu_hide(w);
 	return false;
 	}
-function alias_properties(w, name)
+function alias_properties(event, name)
 	{
 	window.open('alias_properties.cgi?name=' + name, '_blank', 'width=675,height=580,resizable');
-	menu_hide(w);
 	return false;
 	}
-function cliconf(w, name)
+function prn_testpage(event, printer_name)
+	{
+	window.open('prn_testpage.cgi?name=' + printer_name, '_blank', 'width=775,height=525,resizable');
+	return false;
+	}
+function cliconf(event, name)
 	{
 	window.open('cliconf.cgi?name=' + name, '_blank', 'width=700,height=525,resizable');
-	menu_hide(w);
 	return false;
 	}
-function show_printlog(w, type, name)
+function show_printlog(event, type, name)
 	{
 	window.open('show_printlog.cgi?' + type + '=' + name, '_blank', 'width=800,height=600,resizable,scrollbars');
-	menu_hide(w);
 	return false;
 	}
-function delete_queue(w, type, name)
+function delete_queue(event, type, name)
 	{
 	window.open('delete_queue.cgi?type=' + type + '&name=' + name, '_blank', 'width=600,height=150');
-	menu_hide(w);
-	return false;
-	}
-
-//
-// These are the functions for the popup menus.
-//
-function printer(event, name)
-	{
-	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["View Queue"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Printer Control"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L3" id="L3"><nobr>' + xlate["Printer Properties"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L4" id="L4"><nobr>' + xlate["Test Page"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L5" id="L5"><nobr>' + xlate["Client Configuration"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L6" id="L6"><nobr>' + xlate["Printlog"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L7" id="L7"><nobr>' + xlate["Delete Printer"] + '</nobr></a><br>\n'
-		+ '</td></tr></table>\n';
-	var w;
-	var lnks;
-	if(nav4_dom)
-		{
-		w = window.document.popup;
-		var d = w.document;
-		d.write(body);
-		d.close();
-
-		w.moveTo((event.x - 40), (event.y - 15));
-
-		lnks = [d.links[0],
-			d.links[1],
-			d.links[2],
-			d.links[3],
-			d.links[4],
-			d.links[5],
-			d.links[6]
-			];
-		}
-	else if(ie5_dom)
-		{
-		w = window.document.all.popup;
-		w.innerHTML = body;
-
-		// Figure out what document the event came from and where it is scrolled
-		// to and add the offsets within the window and fudge a little.
-		w.style.pixelLeft = (event.srcElement.document.body.scrollLeft + event.x - 40);
-		w.style.pixelTop = (event.srcElement.document.body.scrollTop + event.y - 15);
-
-		lnks = [w.all.L1,
-			w.all.L2,
-			w.all.L3,
-			w.all.L4,
-			w.all.L5,
-			w.all.L6,
-			w.all.L7
-			];
-
-		// IE 5.0 makes everthing so complicated!
-		lnks[0].onmouseout = function () { event.cancelBubble = true };
-		lnks[1].onmouseout = function () { event.cancelBubble = true };
-		lnks[2].onmouseout = function () { event.cancelBubble = true };
-		lnks[3].onmouseout = function () { event.cancelBubble = true };
-		lnks[4].onmouseout = function () { event.cancelBubble = true };
-		lnks[5].onmouseout = function () { event.cancelBubble = true };
-		lnks[6].onmouseout = function () { event.cancelBubble = true };
-		}
-	else	// W3C DOM, Mozilla
-		{
-		w = document.getElementById("popup");
-
-		w.style.left = window.scrollX + event.clientX - 40 + "px";	// scrollX, scrollY may be Mozilla only
-		w.style.top = window.scrollY + event.clientY - 50 + "px";
-
-		var rng = document.createRange();
-		rng.selectNodeContents(w);
-		rng.deleteContents();
-		var htmlfrag = rng.createContextualFragment(body);
-		w.appendChild(htmlfrag);
-
-		lnks = [document.getElementById("L1"),
-			document.getElementById("L2"),
-			document.getElementById("L3"),
-			document.getElementById("L4"),
-			document.getElementById("L5"),
-			document.getElementById("L6"),
-			document.getElementById("L7")
-			];
-		}
-	lnks[0].onclick = function () { show_jobs(name); menu_hide(w); return false; };
-	lnks[0].href = 'show_jobs.cgi?name=' + name;
-	lnks[1].onclick = function () { return prn_control(w, name); };
-	lnks[1].href = 'prn_control.cgi?name=' + name;
-	lnks[2].onclick = function () { return prn_properties(w, name); };
-	lnks[2].href = 'prn_properties.cgi?name=' + name;
-	lnks[3].onclick = function () { return prn_testpage(w, name); };
-	lnks[3].href = 'prn_testpage.cgi?name=' + name;
-	lnks[4].onclick = function () { return cliconf(w, name); };
-	lnks[4].href = 'cliconf.cgi?name=' + name;
-	lnks[5].onclick = function () { return show_printlog(w, 'printer', name); };
-	lnks[5].href = 'show_printlog.cgi?printer=' + name;
-	lnks[6].onclick = function () { return delete_queue(w, 'printer', name); };
-	lnks[6].href = 'delete_queue.cgi?type=printer&name=' + name;
-	menu_show(w);
-	if(ie5_dom || nav4_dom) {
-		w.onmouseout = function () { menu_hide(w) };
-		}
-	return false;
-	}
-
-function group(event, name)
-	{
-	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["View Queue"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Member Printer Control"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L3" id="L3"><nobr>' + xlate["Group Properties"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L4" id="L4"><nobr>' + xlate["Client Configuration"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L5" id="L5"><nobr>' + xlate["Printlog"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L6" id="L6"><nobr>' + xlate["Delete Group"] + '</nobr></a><br>\n'
-		+ '</td></tr></table>\n';
-	var w;
-	var lnks;
-	if(nav4_dom)
-		{
-		w = window.document.popup;
-		var d = w.document;
-		d.write(body);
-		d.close();
-		w.moveTo((event.x - 40), (event.y - 15));
-		lnks = [ d.links[0], d.links[1], d.links[2], d.links[3], d.links[4], d.links[5] ];
-		}
-	else if(ie5_dom)
-		{
-		w = window.document.all.popup;
-		w.innerHTML = body;
-		w.style.pixelLeft = (event.srcElement.document.body.scrollLeft + event.x - 40);
-		w.style.pixelTop = (event.srcElement.document.body.scrollTop + event.y - 15);
-		lnks = [ w.all.L1, w.all.L2, w.all.L3, w.all.L4, w.all.L5, w.all.L6 ];
-		lnks[0].onmouseout = function () { event.cancelBubble = true };
-		lnks[1].onmouseout = function () { event.cancelBubble = true };
-		lnks[2].onmouseout = function () { event.cancelBubble = true };
-		lnks[3].onmouseout = function () { event.cancelBubble = true };
-		lnks[4].onmouseout = function () { event.cancelBubble = true };
-		lnks[5].onmouseout = function () { event.cancelBubble = true };
-		}
-	else	// W3C DOM, Mozilla
-		{
-		w = document.getElementById("popup");
-		w.style.left = window.scrollX + event.clientX - 40 + "px";
-		w.style.top = window.scrollY + event.clientY - 50 + "px";
-		var rng = document.createRange();
-		rng.selectNodeContents(w);
-		rng.deleteContents();
-		var htmlfrag = rng.createContextualFragment(body);
-		w.appendChild(htmlfrag);
-		lnks = [document.getElementById("L1"),
-			document.getElementById("L2"),
-			document.getElementById("L3"),
-			document.getElementById("L4"),
-			document.getElementById("L5"),
-			document.getElementById("L6")
-			];
-		}
-	lnks[0].onclick = function () { show_jobs(name); menu_hide(w); return false; };
-	lnks[0].href = 'show_jobs.cgi?name=' + name;
-	lnks[1].onclick = function () { return grp_control(w, name); };
-	lnks[1].href = 'grp_control.cgi?name=' + name;
-	lnks[2].onclick = function () { return grp_properties(w, name); };
-	lnks[2].href = 'grp_properties.cgi?name=' + name;
-	lnks[3].onclick = function () { return cliconf(w, name); };
-	lnks[3].href = 'cliconf.cgi?name=' + name;
-	lnks[4].onclick = function () { return show_printlog(w, 'queue', name); };
-	lnks[4].href = 'show_printlog.cgi?printer=' + name;
-	lnks[5].onclick = function () { return delete_queue(w, 'group', name); };
-	lnks[5].href = 'delete_queue.cgi?type=group&name=' + name;
-	menu_show(w);
-	if(ie5_dom || nav4_dom) {
-		w.onmouseout = function () { menu_hide(w) };
-		}
-	return false;
-	}
-
-function alias(event, name)
-	{
-	var body = '<table class="menu"><tr><td>\n'
-		+ '<a href="" name="L1" id="L1"><nobr>' + xlate["Alias Properties"] + '</nobr></a><br>\n'
-		+ '<a href="" name="L2" id="L2"><nobr>' + xlate["Delete Alias"] + '</nobr></a><br>\n'
-		+ '</td></tr></table>\n';
-	var w;
-	var lnks;
-	if(nav4_dom)
-		{
-		w = window.document.popup;
-		var d = w.document;
-		d.write(body);
-		d.close();
-		w.moveTo((event.x - 40), (event.y - 15));
-		lnks = [ d.links[0], d.links[1] ];
-		}
-	else if(ie5_dom)
-		{
-		w = window.document.all.popup;
-		w.innerHTML = body;
-		w.style.pixelLeft = (event.srcElement.document.body.scrollLeft + event.x - 40);
-		w.style.pixelTop = (event.srcElement.document.body.scrollTop + event.y - 15);
-		lnks = [ w.all.L1, w.all.L2 ];
-		lnks[0].onmouseout = function () { event.cancelBubble = true };
-		lnks[1].onmouseout = function () { event.cancelBubble = true };
-		}
-	else	// W3C DOM, Mozilla
-		{
-		w = document.getElementById("popup");
-		w.style.left = window.scrollX + event.clientX - 40 + "px";
-		w.style.top = window.scrollY + event.clientY - 50 + "px";
-		var rng = document.createRange();
-		rng.selectNodeContents(w);
-		rng.deleteContents();
-		var htmlfrag = rng.createContextualFragment(body);
-		w.appendChild(htmlfrag);
-		lnks = [document.getElementById("L1"),
-			document.getElementById("L2"),
-			];
-		}
-	lnks[0].onclick = function () { return alias_properties(w, name); };
-	lnks[0].href = 'alias_properties.cgi?name=' + name;
-	lnks[1].onclick = function () { return delete_queue(w, 'alias', name); };
-	lnks[1].href = 'delete_queue.cgi?type=alias&name=' + name;
-	menu_show(w);
-	if(ie5_dom || nav4_dom) { w.onmouseout = function () { menu_hide(w) }; }
 	return false;
 	}
 
