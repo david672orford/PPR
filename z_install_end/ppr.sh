@@ -153,6 +153,7 @@ case "$1" in
     restart)
 	do_stop
 	do_start
+	;;
 
     *)
 	echo "Usage: ppr {start, stop, restart}"

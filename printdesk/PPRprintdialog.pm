@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 17 March 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -54,25 +54,13 @@ sub Show
     my $cancel_button = $right_buttons_frame->Button(-text, "Cancel");
     $cancel_button->pack(-side, 'top', -fill, 'x');
 
-
+    $self->{window} = $window;
     }
 
 sub destroy
     {
-
-    }
-
-sub printFile
-    {
     my $self = shift;
-
-    }
-
-sub get_printHandle
-    {
-    my $self = shift;
-
+    $self->{window}->destroy();
     }
 
 1;
-

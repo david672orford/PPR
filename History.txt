@@ -8488,8 +8488,8 @@ line was being parsed twice.
 * libppr/destinfo.c: added code to handle aliases and to return the PPD file
   for the first printer in the case of groups.
 
-* added tests/test-pprdrv/300-custom-hook.*.
-
+* added tests/test-pprdrv/300-custom-hook.* and
+  tests/tools/test_custom_hook.
 
 
 
