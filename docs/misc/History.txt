@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--20 November 2002.
+1.50b1, 13 November 2002--21 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -7997,4 +7997,19 @@ line was being parsed twice.
 
 * ppop/ppop_cmds_other.c:ppop_dest(): fixed to show only those aliases which
   match what the user specified.
+
+* www/Makefile: fixed to only install image file from www/images/ and skip
+  the .fig and build files.
+
+* www/images/icon-48.xbm: added
+
+* ppop/ppop_cmds_other.c:ppop_status(): changed descriptions in verbose mode
+  to "Raw LW Status", "Raw SNMP Status", and "Raw PJL Status" (added the
+  word "Raw".  This should prevent confusion by distinguishing them from
+  the amalgamated status.
+
+* ppop/ppop_cmds_other.c:ppop_status(): changed code to hide printer
+  problems that are unconfirmed for more than 4 hours unless --verbose
+  is used.
+
 

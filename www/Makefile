@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 November 2002.
+# Last modified 21 November 2002.
 #
 
 include ../Makefile.conf
@@ -54,7 +54,7 @@ STYLE_DIR=$(WWWDIR)/style
 WWWDIR_GUI=$(WWWDIR)/html
 
 # Last Queue Icon to be build.
-Q_ICONS_LAST=q_icons/11110.png
+Q_ICONS_LAST=q_icons/20000.png
 
 # Where to HTML help files go?
 HELPDIR=$(WWWDIR)/help
@@ -153,7 +153,7 @@ install-html: $(HTML_TOP) $(HTML_GUI) $(HTML_HELP)
 
 install-images: images_subdir $(Q_ICONS_LAST)
 	$(MAKE_NEW_DIR) $(IMAGES_DIR)
-	$(INSTALLDATA) $(IMAGES_DIR) images/*
+	$(INSTALLDATA) $(IMAGES_DIR) images/*.jpg images/*.png images/*.ico images/*.xpm
 	$(MAKE_NEW_DIR) $(Q_ICONS_DIR)
 	$(INSTALLDATA) $(Q_ICONS_DIR) q_icons/*.png
 

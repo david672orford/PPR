@@ -4,14 +4,29 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 22 January 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 21 November 2002.
 #
 
 my $SCALING_FACTOR = 30.0;
@@ -19,12 +34,12 @@ my $SCALING_FACTOR = 30.0;
 #
 # Write a Fig file header.
 #
-sub write_header
-{
-my $handle = shift;
-my $mag = shift;
+sub fig_write_header
+    {
+    my $handle = shift;
+    my $mag = shift;
 
-print $handle <<"EndHeader";
+    print $handle <<"EndHeader";
 #FIG 3.2
 Landscape
 Center
@@ -36,48 +51,47 @@ Single
 1200 2
 0 32 #8e8e8e
 EndHeader
-}
+    }
 
 #
 # Write a Fig file body that combines several Fig files.
 #
-sub write_file_body
-{
-my $handle = shift;
-my $files = shift;
-my @list;
+sub fig_write_body
+    {
+    my $handle = shift;
+    my $files = shift;
+    my @list;
 
-if(ref($files) eq 'ARRAY')
-    {
-    @list = @$files;
-    }
-elsif($files eq '')
-    {
-    return;
-    }
-else
-    {
-    @list = ($files);
-    }
+    if(ref($files) eq 'ARRAY')
+	{
+	@list = @$files;
+	}
+    elsif($files eq '')
+	{
+	return;
+	}
+    else
+	{
+	@list = ($files);
+	}
 
-my $file;
-foreach $file (@list)
-    {
-    print " $file ";
-    open(F, "<$file") || die "Can't open \"$file\", $!";
-    while(<F>)
-        {
-        if(/^[1-5] /)
-            { $skip = 0; print $handle $_; }
-        elsif(/^\t/)
-            { if(!$skip) { print $handle $_ } }
-        else
-            { $skip = 1 }
+    foreach my $file (@list)
+	{
+	print " $file ";
+	open(F, "<$file") || die "Can't open \"$file\", $!";
+	while(<F>)
+	    {
+	    if(/^[1-5] /)
+		{ $skip = 0; print $handle $_; }
+	    elsif(/^\t/)
+		{ if(!$skip) { print $handle $_ } }
+	    else
+		{ $skip = 1 }
 
-        }
-    close(F) || die;
+	    }
+	close(F) || die;
+	}
     }
-}
 
 #
 # Convert a FIG file to a PNG file.
@@ -112,7 +126,7 @@ sub fig_to_png
 
     # ImageMagic with PBM utilities:
     system("convert $fig_name temp.ppm") && die;
-    system("pnmflip -cw temp.ppm | pnmcut 352 262 88 88 | pnmtopng -compression 9 >$png_name") && die;
+    system("pnmflip -cw temp.ppm | pnmcut 352 262 88 88 | pnmtopng -transparent white -compression 9 >$png_name") && die;
     unlink("temp.ppm") || die $!;
     }
 
@@ -154,20 +168,22 @@ $filename_map = [
 	]
 ];
 
-#
+#=============================================================================
 # Main
-#
+#=============================================================================
+
 $| = 1;
-my($type, $accepting, $charge, $queued, $status);
-for($type=0; $type <= 1; $type++)
+
+# Do the printer and group icons.
+for(my $type=0; $type <= 1; $type++)
   {
-  for($accepting=0; $accepting <= 1; $accepting++)
+  for(my $accepting=0; $accepting <= 1; $accepting++)
     {
-    for($charge=0; $charge <= 1; $charge++)
+    for(my $charge=0; $charge <= 1; $charge++)
       {
-      for($queued=0; $queued <= 1; $queued++)
+      for(my $queued=0; $queued <= 1; $queued++)
         {
-        for($status=0; $status <= 11; $status++)
+        for(my $status=0; $status <= 11; $status++)
           {
 	  # Groups don't have complicated status, so skip those images 
 	  # which don't apply.
@@ -181,15 +197,15 @@ for($type=0; $type <= 1; $type++)
 	  open(OUT, ">$basic_name.fig") || die;
 
 	  # Write a header while setting the scaling factor.
-	  write_header(OUT, $SCALING_FACTOR);
+	  fig_write_header(OUT, $SCALING_FACTOR);
 
 	  # Copy the bodies of several Fig files.
-	  write_file_body(OUT, "boundingbox.fig");
-	  write_file_body(OUT, $filename_map->[0]->[$type]);
-	  write_file_body(OUT, $filename_map->[1]->[$accepting]);
-	  write_file_body(OUT, $filename_map->[2]->[$charge]);
-	  write_file_body(OUT, $filename_map->[3]->[$queued]);
-	  write_file_body(OUT, $filename_map->[4]->[$status]);
+	  fig_write_body(OUT, "boundingbox.fig");
+	  fig_write_body(OUT, $filename_map->[0]->[$type]);
+	  fig_write_body(OUT, $filename_map->[1]->[$accepting]);
+	  fig_write_body(OUT, $filename_map->[2]->[$charge]);
+	  fig_write_body(OUT, $filename_map->[3]->[$queued]);
+	  fig_write_body(OUT, $filename_map->[4]->[$status]);
 
 	  # Close the new Fig file.
 	  close(OUT) || die;
@@ -204,11 +220,12 @@ for($type=0; $type <= 1; $type++)
     }
   }
 
+# Do the alias icon.
 print "20000 (";
 open(OUT, ">20000.fig") || die;
-write_header(OUT, $SCALING_FACTOR);
-write_file_body(OUT, "boundingbox.fig");
-write_file_body(OUT, "alias1.fig");
+fig_write_header(OUT, $SCALING_FACTOR);
+fig_write_body(OUT, "boundingbox.fig");
+fig_write_body(OUT, "alias1.fig");
 close(OUT) || die $!;
 fig_to_png("20000.fig", "20000.png");
 unlink("20000.fig") || die $!;

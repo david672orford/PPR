@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppop_status.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 23 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 21 November 2002.
 */
 
 #include "before_system.h"
@@ -52,6 +67,36 @@ static char message_writemon_operation[20] = {'\0'};
 static int message_writemon_minutes = 0;
 static gu_boolean message_writemon_connecting = FALSE;
 static char message_pagemon[20];
+
+/*===================================================================
+** This is hrDeviceStatus and hrPrinterStatus
+===================================================================*/
+
+/* hrDeviceStatus values */
+#define DST_unknown 1
+#define DST_running 2
+#define DST_warning 3
+#define DST_testing 4
+#define DST_down 5
+
+/* hrPrinterStatus values */
+#define PST_other 1
+#define PST_unknown 2
+#define PST_idle 3
+#define PST_printing 4
+#define PST_warmup 5
+
+struct SNMP_STATUS {
+    int hrDeviceStatus;
+    int hrPrinterStatus;
+    char details[64];
+    time_t start;
+    time_t last_news;
+    time_t last_commentary;
+    };
+
+struct SNMP_STATUS status;	/* current device status */
+struct SNMP_STATUS ostatus;	/* for detecting changes */
 
 /*===================================================================
 ** We catagorize printer error conditions according the the numbers
@@ -132,36 +177,6 @@ static int clear_on_exit_bits[] = {
     -1
     };
 
-/*===================================================================
-** This is hrDeviceStatus and hrPrinterStatus
-===================================================================*/
-
-/* hrDeviceStatus values */
-#define DST_unknown 1
-#define DST_running 2
-#define DST_warning 3
-#define DST_testing 4
-#define DST_down 5
-
-/* hrPrinterStatus values */
-#define PST_other 1
-#define PST_unknown 2
-#define PST_idle 3
-#define PST_printing 4
-#define PST_warmup 5
-
-struct SNMP_STATUS {
-    int hrDeviceStatus;
-    int hrPrinterStatus;
-    char details[64];
-    time_t start;
-    time_t last_news;
-    time_t last_commentary;
-    };
-
-struct SNMP_STATUS status;	/* current device status */
-struct SNMP_STATUS ostatus;	/* for detecting changes */
-
 /*============================================================================
 ** These functions manage the printer status file which "ppop status" reads.
 ============================================================================*/
@@ -218,7 +233,7 @@ void ppop_status_init(void)
 		    error("%s(): can't parse \"%s\"", function, line);
 		continue;
 	    	}
-	    if((count = gu_sscanf(line, "snmp: %d %t %t %t %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
+	    if((count = gu_sscanf(line, "error: %d %t %t %t %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
 	    	{
 		if(count < 4)
 		    {
@@ -274,11 +289,14 @@ static void ppop_status_write(void)
     if(message_snmp_status[0] != '\0')
 	gu_snprintfcat(buffer, sizeof(buffer), "snmp-status: %s\n", message_snmp_status);
 
-    /* The combined SNMP-style status. */
-    if(status.start > 0)
+    /* The combined SNMP-style status.  The member status.start is the time in
+       Unix format when we received this information.  It will be zero if we
+       haven't.
+       */
+    if(status.start)
     	gu_snprintfcat(buffer, sizeof(buffer), "status: %d %d %ld %ld %ld\n", status.hrDeviceStatus, status.hrPrinterStatus, (long)status.start, (long)status.last_news, (long)status.last_commentary);
 
-    /* The combined SNMP-style error state. */
+    /* This is the combined SNMP-style printer error state flags. */
     {
     int x;
     for(x=0; x<SNMP_BITS; x++)
@@ -462,6 +480,13 @@ void ppop_status_exit_hook(int retval)
 	message_pjl_status[0] = '\0';
 	message_job[0] = '\0';
 
+	/* If the last report was that the printer is "operational, printing",
+	   then set status.start to zero as this will be untrue as soon as
+	   we disconnect.
+	   */
+	if(status.hrDeviceStatus == DST_running && status.hrPrinterStatus == PST_printing)
+	    status.start = 0;
+
 	/* Now children, since we have printed a job we can assume that any
 	   condition that ought to have prevented us from printing a job is
 	   no longer present. */
@@ -513,6 +538,9 @@ void ppop_status_shutdown(void)
 **	%%[ status: xxx ]%%
 **	%%[ job: xxx ]%%
 **	%%[ job: xxx; status: yyy ]%%
+**
+** The parameter pstatus[] is the text after "status:" while job[] is the text
+** after "job:".
 */
 void handle_lw_status(const char pstatus[], const char job[])
     {
@@ -529,15 +557,17 @@ void handle_lw_status(const char pstatus[], const char job[])
 	    gu_StrCopyMax(message_job, sizeof(message_job), job);
     	}
 
+    /* If we got the printer status, */
     if(pstatus)
 	{
+	int unrecognized;
 	int value1, value2, value3;
 	const char *details;
 
-	/* This is for "ppop --verbose status". */
-	gu_StrCopyMax(message_lw_status, sizeof(message_lw_status), pstatus);
-
-	if(translate_lw_message(pstatus, &value1, &value2, &value3, &details) == 0)
+	/* Now we look it up in a dictionary of LW status messages.  We are trying
+	   to integrate it into the SNMP way of describing printer condition.
+	   */
+	if((unrecognized = translate_lw_message(pstatus, &value1, &value2, &value3, &details)) != 0)
 	    {
 	    if(value1 != -1 || value2 != -1)		/* printer status */
 		{
@@ -546,7 +576,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 		gu_StrCopyMax(status.details, sizeof(status.details), details);
 		status.last_news = time(NULL);
 		}
-	    if(value3 != -1)				/* printer error */
+	    if(value3 != -1)				/* printer errors */
 		{
 		time_t time_now = time(NULL);
 		if(value3 >= 0 && value3 <= SNMP_BITS)
@@ -563,6 +593,14 @@ void handle_lw_status(const char pstatus[], const char job[])
 		}
 	    }
 
+	/* This is for "ppop --verbose status".  It will be described as
+	   "Raw LW Status".  The number in front of it will be 1 if we didn't
+	   understand its meaning.  That will prompt ppop to display it
+	   even if --verbose wasn't used.
+	   */
+	gu_snprintf(message_lw_status, sizeof(message_lw_status), "%d %s", unrecognized == -1 ? 1 : 0, pstatus);
+
+	/* Send this to GUI interfaces and other things that want up-to-the minute updates. */
         progress_new_status(pstatus);
 	}
 
@@ -679,6 +717,13 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 /*
 ** This is called every time a "%%[ PPR SNMP: XX XX XXXXXXXX ]%%" message
 ** is received from the interface program.
+**
+** device_status (hrDeviceStatus)
+**
+** printer_status (hrPrinterStatus)
+**
+** errorstate (hrPrinterDetectedErrorState)
+**	This is a bitmap of current printer error conditions.
 */
 void handle_snmp_status(int device_status, int printer_status, unsigned int errorstate)
     {
@@ -689,14 +734,17 @@ void handle_snmp_status(int device_status, int printer_status, unsigned int erro
 
     time(&time_now);
 
+    /* Note when this message came in. */
+    status.last_news = time(NULL);
+
     /* for "ppop --verbose status". */
     snprintf(message_snmp_status, sizeof(message_snmp_status), "%d %d", device_status, printer_status);
 
+    /* These are easy.  We just save them. */
     status.hrDeviceStatus = device_status;
     status.hrPrinterStatus = printer_status;
-    status.last_news = time(NULL);
 
-    /* step thru the bits */
+    /* For hrPrinterDetectedErrorState we must step thru the bits. */
     for(x=0; x<SNMP_BITS; x++)
 	{
 	/* If the bit is set right now, */
@@ -731,12 +779,12 @@ void handle_snmp_status(int device_status, int printer_status, unsigned int erro
     /* Is it time for PrinterDetectedErrorState commentary? */
     dispatch_commentary();
 
-    /* We mustn't do this because it will expect us to tell it when
+    /* We mustn't do this because it would expect us to tell it when
        pages drop too! */
     #if 0
     /* Let writemon know about online state so it can start or stop clocks. */
     writemon_online(snmp_bits[DES_offline].start == 0);
     #endif
-    } /* end of handle_snmp_errorstate() */
+    } /* end of handle_snmp_status() */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 November 2002.
+** Last modified 21 November 2002.
 */
 
 /*
@@ -206,6 +206,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
     {
     char *p;
 
+    /* This has something to do with elaborating on failt conditions. */
     if((p = lmatchp(line, "exit:")))
 	{
 	const char *cp;
@@ -220,6 +221,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    }
 	return 0;
 	}
+
+    /* Last %%[ status: ]%% or %%[ PrinterError: ]%% */
     if((p = lmatchp(line, "lw-status:")))
     	{
 	if(machine_readable)
@@ -232,11 +235,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	else if(verbose)
 	    {
 	    PUTS(sep);
-	    printf(_("LW Status: \"%s\""), p);
+	    printf(_("Raw LW Status: \"%s\""), p);
 	    return 1;
 	    }
 	return 0;
     	}
+
+    /* Last PJL status message received from printer */
     if((p = lmatchp(line, "pjl-status:")))
     	{
 	if(machine_readable)
@@ -249,11 +254,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	else if(verbose)
 	    {
 	    PUTS(sep);
-	    printf(_("PJL Status: %s"), p);
+	    printf(_("Raw PJL Status: %s"), p);
 	    return 1;
 	    }
 	return 0;
     	}
+
+    /* Last SNMP status retrieved from the printer */
     if((p = lmatchp(line, "snmp-status:")))
     	{
 	if(machine_readable || verbose)
@@ -265,7 +272,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    if(machine_readable)
 		printf("snmp: ");
 	    else
-		printf(_("SNMP Status: "));
+		printf(_("Raw SNMP Status: "));
 
 	    if(!(f1 = gu_strsep(&p, " ")) || !(f2 = gu_strsep(&p, " ")))
 	    	{
@@ -284,6 +291,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    }
 	return 0;
     	}
+
+    /* Unified SNMP-style status of the printer */
     if((p = lmatchp(line, "status:")))
 	{
 	int device_status_code = -1, printer_status_code = -1;
@@ -308,21 +317,29 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 	return 0;
 	}
+
+    /* Unified SNMP-style printer problem list item */
     if((p = lmatchp(line, "error:")))
 	{
 	int bit = -1, start = 0, last = 0, last_commentary = 0;
 	char *details = NULL;
-	const char *string;
+	int start_minutes_ago, last_minutes_ago;
+	time_t time_now = time(NULL);
 
 	gu_sscanf(p, "%d %d %d %d %Z", &bit, &start, &last, &last_commentary, &details);
-	string = snmp_error(bit);
+	start_minutes_ago = (int)((time_now - start + 30) / 60);
+	last_minutes_ago = (int)((time_now - last + 30) / 60);
+
+	/* Skip things unconfirmed for more than 4 hours unless --verbose is used. */
+	if(last_minutes_ago > (4 * 60) && !verbose)
+	    return 0;
 
 	PUTS(sep);
 
 	if(machine_readable)
-	    printf("snmp: %s", string);		/* !!! */
+	    printf("snmp: %s", snmp_error(bit));		/* !!! */
 	else
-	    printf(_("Printer Problem: \"%s\""), gettext(string));
+	    printf(_("Printer Problem: \"%s\""), gettext(snmp_error(bit)));
 
 	if(details)
 	    {
@@ -330,10 +347,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    gu_free(details);
 	    }
 
-	{
-	time_t time_now = time(NULL);
-	int start_minutes_ago = (int)((time_now - start + 30) / 60);
-	int last_minutes_ago = (int)((time_now - last + 30) / 60);
+	/* If the condition isn't really new, say how long it has persisted. */
 	if(start_minutes_ago > 1)
 	    {
 	    if(start_minutes_ago < 120)
@@ -341,6 +355,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    else
 	    	printf(" for %d hours", (int)((start_minutes_ago + 30) / 60));
 	    }
+
+	/* If the last notification was more than 5 minutes ago, say so. */
 	if(last_minutes_ago > 5)
 	    {
 	    if(last_minutes_ago < 120)
@@ -348,10 +364,11 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    else
 	    	printf(" (unconfirmed for %d hours)", (int)((last_minutes_ago + 30) / 60));
 	    }
-	}
 
 	return 1;
 	}
+
+    /* What pprdrv is doing right now */
     if((p = lmatchp(line, "operation:")))
     	{
 	char operation[16];
@@ -393,6 +410,11 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 	return 1;
     	}
+
+    /* The number of seconds on the page clock and (if it is running) at what
+       time (wall clock) the clock was observed to have that many seconds
+       on it.
+       */
     if((p = lmatchp(line, "page:")))
     	{
 	int seconds, asof;
@@ -423,6 +445,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	    }
 	return 1;
     	}
+
+    /* The name of the job the printer is printing, if it isn't our's. */
     if((p = lmatchp(line, "job:")))
     	{
 	PUTS(sep);

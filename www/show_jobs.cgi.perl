@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 20 November 2002.
+# Last modified 21 November 2002.
 #
 
 use 5.005;
@@ -106,8 +106,19 @@ else
 #=============================================================
 if(defined($action))
     {
+    if($action eq "Queue")
+	{
+	require 'cgi_redirect.pl';
+	cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}/cgi-bin/show_queues_nojs.cgi?"
+		. join(";", form_urlencoded("type", $queue_type),
+			form_urlencoded("name", $queue),
+			form_urlencoded("HIST", $data{HIST})
+		));
+	exit 0;
+	}
+
     # These actions load other CGI URLs.
-    if($action eq "Modify" || $action eq "Log")
+    elsif($action eq "Modify" || $action eq "Log")
         {
         if(defined($data{jobs}))
             {

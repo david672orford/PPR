@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 November 2002.
+# Last modified 21 November 2002.
 #
 
 use lib "?";
@@ -45,12 +45,19 @@ $printcap_wizard_table = [
 	'title' => N_("Downloadable Client Configuation Files"),
 	'picture' => "cliconf1.png",
 	'dopage' => sub {
+		my $name = cgi_data_peek("name", "?");
+
+		if(!defined $data{comment})
+		    {
+		    $data{comment} = (split(/\t/, `$PPOP_PATH -M ldest $name`))[4];
+		    }
+
 		print "<p>", 
 			H_("Using this program you can download various files which help you to use PPR.\n"
 			. "These include shell scripts for configuring client computers to send print\n"
 			. "jobs to PPR, PPD files, and icons for opening the PPR web interface."), "</p>\n";
 
-		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), cgi_data_peek("name", "?")), "</span><br>\n";
+		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), $name), "</span><br>\n";
 
 		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
 		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Shortcut"), "<br>\n";
@@ -233,7 +240,7 @@ sub gen_kde_shortcut
     my $name = cgi_data_move("name", "?");
     my $filename = $name;
 
-    my $comment = (split(/\t/, `$PPOP_PATH -M ldest $name`))[4];
+    my $comment = cgi_data_move("comment", "");
 
     print <<"EndIcon";
 Content-Type: application/octet-stream; name=$filename
@@ -243,7 +250,7 @@ Content-Disposition: inline; filename=$filename
 Comment=$comment
 Encoding=UTF-8
 Exec=ppr-web $name
-Icon=$SHAREDIR/www/q_icons/00000.png
+Icon=$SHAREDIR/www/images/icon-48.xpm
 MimeType=
 Name=$name
 Path=
