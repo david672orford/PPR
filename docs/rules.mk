@@ -52,7 +52,7 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 # Rule to convert POD to HTML using Perl's pod2html
 #============================================================================
 .pod.html:
-	$(POD2HTML) --podpath=.:../refman:../uprint --libpods=$(LIBPODS) $*.pod >$*.html
+	$(POD2HTML) --htmlroot=. --podpath=.:../refman:../uprint --libpods=$(LIBPODS) $*.pod >$*.html
 
 #============================================================================
 # Rule to convert POD to Nroff format using Perl's pod2man

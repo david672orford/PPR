@@ -68,7 +68,7 @@ install-atalk: $(ATALK_PROGS)
 include .depend
 
 clean:
-	$(RMF) $(BACKUPS) $(OBJ) $(PROGS) $(ATALK_PROGS)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS) $(ATALK_PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

@@ -1,10 +1,10 @@
 <!--
 Filename: pprhack_custom_hooks.sgml
-Last Modified: 17 March 2003
+Last Modified: 6 November 2003
 Last Proofread: 
 -->
 
-<sect1>
+<sect1 id="custom_hooks">
 <title>Custom Hooks</title>
 
 <para>A custom hooks is a small program which <application>PPR</application>
