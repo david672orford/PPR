@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 1 May 2002.
+# Last modified 2 May 2002.
 #
 
 #
@@ -54,8 +54,14 @@ $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
 # can drive level 2 but not level 1 PostScript printers.
 @FILES_WIN40_ADOBE_4_2 = qw(ADOBEPS4.DRV ADOBEPS4.HLP ADFONTS.MFM ICONLIB.DLL PSMON.DLL PSCRIPT.INI);
 
-# List of files for the Adobe version 5.x PostScript driver for Windows NT 
+# List of files for the MS-Windows NT 4.0 PostScript driver.
+@FILES_W32X86_MS = qw(2/PSCRIPT.DLL 2/PSCRPTUI.DLL 2/PSCRIPT.HLP);
+
+# List of files for the Adobe version 5.x PostScript driver for Windows NT 4.0
 @FILES_W32X86_ADOBE_5 = qw(2/ADOBEPS5.DLL 2/ADOBEPSU.DLL 2/ADOBEPSU.HLP 2/ADOBEPS5.NTF);
+
+# List of files for the MS-Windows NT 5.0 PostScript driver.
+@FILES_W32X86_MS_3 = qw(3/PSCRIPT5.DLL 3/PS5UI.DLL 3/PSCRIPT.HLP 3/PSCRIPT.NTF);
 
 #
 # Parse the arguments:
@@ -78,12 +84,13 @@ foreach $arg (@ARGV)
 #
 mkdir($DRVDIR_WIN40, 0755);	# Win95
 mkdir($DRVDIR_W32X86, 0755);	# WinNT
+mkdir("$DRVDIR_W32X86/2", 0755);
 mkdir($DRVDIR_WINPPD, 0755);	# PPD Files
 
 #
 # Convert all of the filenames in the driver directories to upper case.
 #
-foreach my $dir ($DRVDIR_WIN40, "$DRVDIR_W32X86/2")
+foreach my $dir ($DRVDIR_WIN40, $DRVDIR_W32X86, "$DRVDIR_W32X86/2")
     {
     print STDERR "Changing filenames in \"$dir\" to upper case...\n" if($opt_verbose);
     opendir(DIR, $dir) || die "Can't open directory \"$dir\", $!\n";
@@ -147,6 +154,8 @@ $HAVE_WIN40_MS = allfound("Win95 Microsoft driver", $DRVDIR_WIN40, @FILES_WIN40_
 $HAVE_WIN40_ADOBE_4_1 = allfound("Win95 Adobe driver 4.1", $DRVDIR_WIN40, @FILES_WIN40_ADOBE_4_1);
 $HAVE_WIN40_ADOBE_4_2 = allfound("Win95 Adobe driver 4.2x", $DRVDIR_WIN40, @FILES_WIN40_ADOBE_4_2);
 $HAVE_W32X86_ADOBE_5 = allfound("WinNT Adobe driver 5.x", $DRVDIR_W32X86, @FILES_W32X86_ADOBE_5);
+$HAVE_W32X86_MS = allfound("WinNT 4.0 Microsoft driver", $DRVDIR_W32X86, @FILES_W32X86_MS);
+$HAVE_W32X86_MS_3 = allfound("WinNT 5.0 Microsoft driver", $DRVDIR_W32X86, @FILES_W32X86_MS_3);
 
 #
 # Convert the PPD files and print the driver descriptions.
@@ -357,19 +366,24 @@ foreach $file (keys %ppd_files)
     }
 
     #=================================================================
-    # Windows NT driver
+    # Windows NT 4.0 driver
     #=================================================================
     {
     my @filelist = ();
 
-    if($languagelevel > 1 && $HAVE_W32X86_ADOBE_5)
+    if(0 && $languagelevel > 1 && $HAVE_W32X86_ADOBE_5)
 	{
-	print STDERR "\tWinNT driver chosen: Adobe 5.x\n" if($opt_verbose);
+	print STDERR "\tWinNT 4.0 driver chosen: Adobe 5.x\n" if($opt_verbose);
 	@filelist = @FILES_W32X86_ADOBE_5;
+	}
+    elsif($HAVE_W32X86_MS)
+	{
+	print STDERR "\tWinNT 4.0 driver chosen: MS-Windows NT\n" if($opt_verbose);
+	@filelist = @FILES_W32X86_MS;
 	}
     else
 	{
-	print STDERR "No suitable WinNT driver found for \"$file\".\n";
+	print STDERR "No suitable WinNT 4.0 driver found for \"$file\".\n";
 	}
 
     if(scalar @filelist > 0)
@@ -385,6 +399,42 @@ foreach $file (keys %ppd_files)
 	print "Windows NT x86:2:$nickname:$driverpath:$DRVDIR_SHARE\\$WINPPD\\$mswin_name:$configfile:$helpfile:NULL:RAW:", join(":", @filelist), "\n";
 	}
     }
+
+    #=================================================================
+    # Windows NT 5.0 driver
+    #=================================================================
+    {
+    my @filelist = ();
+
+    if(0 && $languagelevel > 1 && $HAVE_W32X86_ADOBE_5)
+	{
+	print STDERR "\tWinNT 5.0 driver chosen: Adobe 5.x\n" if($opt_verbose);
+	@filelist = @FILES_W32X86_ADOBE_5;
+	}
+    elsif($HAVE_W32X86_MS_3)
+	{
+	print STDERR "\tWinNT 5.0 driver chosen: MS-Windows NT\n" if($opt_verbose);
+	@filelist = @FILES_W32X86_MS_3;
+	}
+    else
+	{
+	print STDERR "No suitable WinNT 5.0 driver found for \"$file\".\n";
+	}
+
+    if(scalar @filelist > 0)
+	{
+	foreach (@filelist)
+	    {
+	    s#/#\\#g;
+	    $_ = "$DRVDIR_SHARE\\$W32X86\\$_";
+	    }
+	my $driverpath = shift @filelist;
+	my $configfile = shift @filelist;
+	my $helpfile = shift @filelist;
+	print "Windows NT x86:3:$nickname:$driverpath:$DRVDIR_SHARE\\$WINPPD\\$mswin_name:$configfile:$helpfile:NULL:RAW:", join(":", @filelist), "\n";
+	}
+    }
+
 
     print "\n" if($opt_verbose);
     } # end of PPD file iteration
