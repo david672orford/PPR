@@ -18,24 +18,24 @@
 #include <sys/types.h>
 
 int main(int argc, char *argv[])
-    {
-    struct group *gr;
+	{
+	struct group *gr;
 
-    if(argc != 2)
-    	{
-	fprintf(stderr, "Usage: %s <username>\n", argv[0]);
-	return 10;
-    	}
+	if(argc != 2)
+		{
+		fprintf(stderr, "Usage: %s <username>\n", argv[0]);
+		return 10;
+		}
 
-    if(!(gr = getgrnam(argv[1])))
-    	{
-    	printf("-1\n");
-    	return 1;
-    	}
+	if(!(gr = getgrnam(argv[1])))
+		{
+		printf("-1\n");
+		return 1;
+		}
 
-    printf("%ld\n", (long)gr->gr_gid);
-    return 0;
-    }
+	printf("%ld\n", (long)gr->gr_gid);
+	return 0;
+	}
 
 /* end of file */
 

@@ -26,10 +26,10 @@
 #include "userdb.h"
 
 enum USERDB_RESULT db_auth(struct userdb *entry_copy, const char *username)
-    {
-    error("db_auth(): user database support not compiled in");
-    return USER_ERROR;
-    } /* end of db_auth() */
+	{
+	error("db_auth(): user database support not compiled in");
+	return USER_ERROR;
+	} /* end of db_auth() */
 
 /* end of file */
 

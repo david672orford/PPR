@@ -23,34 +23,34 @@
 ** Quote a PostScript string if necessary.
 */
 const char *quote(const char *string)
-    {
-    static char temp[256];
-
-    /*
-    ** If the string contains spaces or tabs or it is all
-    ** digits and so looks like a number, quote it.
-    ** The second clause accidentally causes empty strings
-    ** to be quoted which is what we want anyway.
-    */
-    if( (strpbrk(string," \t") != (char *)NULL)
-	    || (strspn(string,"0123456789")==strlen(string)) )
 	{
-	temp[0]='(';
-	strcpy(&temp[1],string);
-	strcat(temp,")");
+	static char temp[256];
 
-	return temp;
-	}
+	/*
+	** If the string contains spaces or tabs or it is all
+	** digits and so looks like a number, quote it.
+	** The second clause accidentally causes empty strings
+	** to be quoted which is what we want anyway.
+	*/
+	if( (strpbrk(string," \t") != (char *)NULL)
+			|| (strspn(string,"0123456789")==strlen(string)) )
+		{
+		temp[0]='(';
+		strcpy(&temp[1],string);
+		strcat(temp,")");
 
-    /*
-    ** Otherwise, just return a pointer to it
-    ** so that the user may print it.
-    */
-    else
-	{
-	return string;
-	}
+		return temp;
+		}
 
-    } /* end of quote() */
+	/*
+	** Otherwise, just return a pointer to it
+	** so that the user may print it.
+	*/
+	else
+		{
+		return string;
+		}
+
+	} /* end of quote() */
 
 /* end of file */

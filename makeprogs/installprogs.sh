@@ -31,7 +31,7 @@
 
 #
 # This script is used in Makefiles to copy programs (both binary and executable
-# scripts) into place.  It is not used for Perl library or module (*.pl and
+# scripts) into place.	It is not used for Perl library or module (*.pl and
 # *.pm) files.
 #
 
@@ -60,49 +60,49 @@ if [ ! -d "$RPM_BUILD_ROOT$DESTDIR" ]
   fi
 
 while [ "$1" != "" ]
-    do
-    file=$1
-    shift
-    name=`basename "$file"`
-    dest="$DESTDIR/$name"
-    echo "    \"$file\" --> \"$RPM_BUILD_ROOT$dest\""
+	do
+	file=$1
+	shift
+	name=`basename "$file"`
+	dest="$DESTDIR/$name"
+	echo "	  \"$file\" --> \"$RPM_BUILD_ROOT$dest\""
 
-    # If this file is to be owned by root, try very hard to to replace
-    # it unless is has really changed.  We do this so that make install
-    # may be run by a non-root user after it has been run once by root.
-    if [ "$USER" = "root" -a -f "$RPM_BUILD_ROOT$dest" -a ! -w "$RPM_BUILD_ROOT$dest" ]
+	# If this file is to be owned by root, try very hard to to replace
+	# it unless is has really changed.	We do this so that make install
+	# may be run by a non-root user after it has been run once by root.
+	if [ "$USER" = "root" -a -f "$RPM_BUILD_ROOT$dest" -a ! -w "$RPM_BUILD_ROOT$dest" ]
 	then
 	strip $file 2>/dev/null
 	if diff $file "$RPM_BUILD_ROOT$dest" >/dev/null 2>&1
-	    then
-	    echo "        (skipping copy because root ownership and unchanged)"
-	    continue
-	    fi
+		then
+		echo "		  (skipping copy because root ownership and unchanged)"
+		continue
+		fi
 	fi
 
-    rm -f "$RPM_BUILD_ROOT$dest" || exit 1
-    cp "$file" "$dest" || exit 1
-    strip "$RPM_BUILD_ROOT$dest" 2>/dev/null
+	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
+	cp "$file" "$dest" || exit 1
+	strip "$RPM_BUILD_ROOT$dest" 2>/dev/null
 
-    chown $USER "$RPM_BUILD_ROOT$dest" \
+	chown $USER "$RPM_BUILD_ROOT$dest" \
 	&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" \
 	&& chmod $MODE "$RPM_BUILD_ROOT$dest"
-    if [ $? -ne 0 ]
+	if [ $? -ne 0 ]
 	then
 	if [ "$USER" = "root" ]
-	    then
-	    echo "============================================================================="
-	    echo "The above error almost certainly means that you must re-run make install as"
-	    echo "root (as least in this one directory).  This will happen the first time and"
-	    echo "every time you modify a setuid root program."
-	    echo "============================================================================="
-	    fi
+		then
+		echo "============================================================================="
+		echo "The above error almost certainly means that you must re-run make install as"
+		echo "root (as least in this one directory).  This will happen the first time and"
+		echo "every time you modify a setuid root program."
+		echo "============================================================================="
+		fi
 	exit 1
 	fi
 
-    echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
+	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 
-    done
+	done
 
 exit 0
 

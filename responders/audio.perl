@@ -16,7 +16,7 @@
 
 # Fool Perl so it will not complain about our already secure PATH and IFS.
 # This is necessary because this script will sometimes be run from ppr
-# rather than pprd.  In that case, the real and effective user ids will
+# rather than pprd.	 In that case, the real and effective user ids will
 # probably be different.  That difference triggers Perl's taint checking
 # mechanism.
 $ENV{'PATH'} =~ /^(.*)$/;
@@ -54,30 +54,30 @@ foreach $option (split(/[\s]+/, $args->{OPTIONS}))
   my($name, $value) = split(/=/, $option);
 
   if($name eq "printed")
-    {
-    if($value =~ /^[1-9ty]/io)
-    	{ $OPTION_PRINTED = 1 }
-    else
-    	{ $OPTION_PRINTED = 0 }
-    }
+	{
+	if($value =~ /^[1-9ty]/io)
+		{ $OPTION_PRINTED = 1 }
+	else
+		{ $OPTION_PRINTED = 0 }
+	}
   if($name eq "canceled")
-    {
-    if($value =~ /^[1-9ty]/io)
-    	{ $OPTION_CANCELED = 1 }
-    else
-    	{ $OPTION_CANCELED = 0 }
-    }
+	{
+	if($value =~ /^[1-9ty]/io)
+		{ $OPTION_CANCELED = 1 }
+	else
+		{ $OPTION_CANCELED = 0 }
+	}
   elsif($name eq "voice")
-    {
-    speach_set_voice($value);
-    }
+	{
+	speach_set_voice($value);
+	}
   elsif($name eq "silly_sounds")
-    {
-    if($value =~ /^[ty1-9]/io)
-	{ $OPTION_SILLY_SOUNDS = 1 }
-    else
-	{ $OPTION_SILLY_SOUNDS = 0 }
-    }
+	{
+	if($value =~ /^[ty1-9]/io)
+		{ $OPTION_SILLY_SOUNDS = 1 }
+	else
+		{ $OPTION_SILLY_SOUNDS = 0 }
+	}
   }
 
 # If we should not play job done messages and this is one of them, bail out now.

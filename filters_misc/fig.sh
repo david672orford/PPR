@@ -14,7 +14,7 @@
 # Last modified 4 September 1998.
 #
 
-# Paths of the filter.  This is filled
+# Paths of the filter.	This is filled
 # in when the filter is installed.
 FIG2DEV="?"
 

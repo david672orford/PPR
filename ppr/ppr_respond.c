@@ -57,7 +57,7 @@
 
 /*
 ** This do-nothing signal handler is intalled before
-** launching the responder.  If we left the normal
+** launching the responder.	 If we left the normal
 ** SIGCHLD handler in place, it would report that
 ** a filter had failed.
 **
@@ -65,8 +65,8 @@
 ** we will not re-install the normal signal handler.
 */
 static void empty_reapchild(int sig)
-    {
-    } /* end of empty_reapchild() */
+	{
+	} /* end of empty_reapchild() */
 
 /*
 ** Send a response to the user.
@@ -78,126 +78,126 @@ static void empty_reapchild(int sig)
 ** always be zero and qentry.homenode will always be the value returned
 ** from ppr_get_nodename().
 **
-** This function returns 0 if it succedest, -1 if it fails.  The return
+** This function returns 0 if it succedest, -1 if it fails.	 The return
 ** code is used by ppr_infile.c.  If there is no filter to convert the file
 ** to PostScript and calling this function returns -1, it will use the
 ** hexdump filter to report the error.
 */
 int respond(int response_code, const char extra[])
-    {
-    const char function[] = "respond";
-    pid_t pid;			/* Process id of responder */
-    int wstat;			/* wait() status */
-    int wret;			/* wait() return code */
-
-    if(strcmp(qentry.responder, "none") == 0)
-    	return -1;
-
-    /* Set a harmless SIGCHLD handler. */
-    signal(SIGCHLD, empty_reapchild);
-
-    /* Change to /usr/lib/ppr so we can find responders and responders can find stuff. */
-    if(chdir(HOMEDIR) == -1)
-    	fprintf(stderr, "%s(): chdir(\"%s\") failed, errno=%d (%s)\n", function, HOMEDIR, errno, gu_strerror(errno));
-
-    /* Fork and exec a responder. */
-    if((pid = fork()) == -1)
 	{
-	fprintf(stderr, "%s(): can't fork(), errno=%d (%s)\n", function, errno, gu_strerror(errno));
-	return -1;
-	}
+	const char function[] = "respond";
+	pid_t pid;					/* Process id of responder */
+	int wstat;					/* wait() status */
+	int wret;					/* wait() return code */
 
-    if(pid == 0)               /* if child */
-	{
-	int fd;
-	char response_code_str[6];
+	if(strcmp(qentry.responder, "none") == 0)
+		return -1;
 
-	/* Convert the response code to a string. */
-	snprintf(response_code_str, sizeof(response_code_str), "%d", response_code);
+	/* Set a harmless SIGCHLD handler. */
+	signal(SIGCHLD, empty_reapchild);
 
-	/* Make sure the responder has a nice, safe stdin. */
-	if((fd = open("/dev/null", O_RDONLY)) != -1)
-	    {
-	    if(fd != 0) dup2(fd, 0);
-	    if(fd > 0) close(fd);
-	    }
+	/* Change to /usr/lib/ppr so we can find responders and responders can find stuff. */
+	if(chdir(HOMEDIR) == -1)
+		fprintf(stderr, "%s(): chdir(\"%s\") failed, errno=%d (%s)\n", function, HOMEDIR, errno, gu_strerror(errno));
+
+	/* Fork and exec a responder. */
+	if((pid = fork()) == -1)
+		{
+		fprintf(stderr, "%s(): can't fork(), errno=%d (%s)\n", function, errno, gu_strerror(errno));
+		return -1;
+		}
+
+	if(pid == 0)			   /* if child */
+		{
+		int fd;
+		char response_code_str[6];
+
+		/* Convert the response code to a string. */
+		snprintf(response_code_str, sizeof(response_code_str), "%d", response_code);
+
+		/* Make sure the responder has a nice, safe stdin. */
+		if((fd = open("/dev/null", O_RDONLY)) != -1)
+			{
+			if(fd != 0) dup2(fd, 0);
+			if(fd > 0) close(fd);
+			}
+
+		/*
+		** Switch all of the user and group ids to PPR's.  This is necessary 
+		** because the responder often have to read secret files to get
+		** magic cookies that allow them access to the user's screen.
+		*/
+		if(setreuid(ppr_uid, ppr_uid) == -1)
+			{
+			fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
+			exit(241);
+			}		
+		if(setregid(ppr_gid, ppr_uid) == -1)
+			{
+			fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
+			exit(241);
+			}		
+
+		/*
+		** Execute the responder wrapper.
+		**
+		** The responder wrapper command line is not a stable interface!
+		** That means that it will change between PPR versions, so don't
+		** write anything that uses it!
+		*/
+		execl("lib/ppr-respond", "ppr_respond",
+				"ppr",
+				qentry.destname,
+				response_code_str,
+				extra ? extra : "",
+				qentry.responder,
+				qentry.responder_address,
+				qentry.responder_options ? qentry.responder_options : "",
+				qentry.For ? qentry.For : "",
+				qentry.Title ? qentry.Title : "",
+				qentry.lc_messages ? qentry.lc_messages : "",
+				(char*)NULL);
+		_exit(242);
+		}
 
 	/*
-	** Switch all of the user and group ids to PPR's.  This is necessary 
-	** because the responder often have to read secret files to get
-	** magic cookies that allow them access to the user's screen.
+	** Wait for the responder to finish.  If we detect that it
+	** finished abnormally, don't call fatal(), as that would
+	** call respond() which could have nasty results.
 	*/
-	if(setreuid(ppr_uid, ppr_uid) == -1)
-	    {
-	    fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
-	    exit(241);
-	    }	    
-	if(setregid(ppr_gid, ppr_uid) == -1)
-	    {
-	    fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
-	    exit(241);
-	    }	    
+	while((wret = wait(&wstat)) != pid)
+		{
+		if(wret == -1 && errno != EINTR)
+			{
+			fprintf(stderr, _("%s(): wait() failed, errno=%d (%s)\n"), function, errno, gu_strerror(errno) );
+			return -1;
+			}
+		}
 
-	/*
-	** Execute the responder wrapper.
-	**
-	** The responder wrapper command line is not a stable interface!
-	** That means that it will change between PPR versions, so don't
-	** write anything that uses it!
-	*/
-	execl("lib/ppr-respond", "ppr_respond",
-		"ppr",
-		qentry.destname,
-		response_code_str,
-		extra ? extra : "",
-		qentry.responder,
-		qentry.responder_address,
-		qentry.responder_options ? qentry.responder_options : "",
-		qentry.For ? qentry.For : "",
-		qentry.Title ? qentry.Title : "",
-		qentry.lc_messages ? qentry.lc_messages : "",
-	    	(char*)NULL);
-	_exit(242);
-	}
+	if(WIFEXITED(wstat))
+		{
+		if(WEXITSTATUS(wstat) != 0)
+			{
+			error("ppr-respond exited with code %d", (int)WEXITSTATUS(wstat));
+			return -1;
+			}
+		}
+	else if(WIFSIGNALED(wstat))
+		{
+		error("ppr-respond killed by signal %d (%s)%s",
+				WTERMSIG(wstat),
+				gu_strsignal(WTERMSIG(wstat)),
+				WCOREDUMP(wstat) ? ", core dumped" : ""
+				);
+		return -1;
+		}
+	else
+		{
+		error("ppr-respond suffered some really bizzar accident");
+		return -1;
+		}
 
-    /*
-    ** Wait for the responder to finish.  If we detect that it
-    ** finished abnormally, don't call fatal(), as that would
-    ** call respond() which could have nasty results.
-    */
-    while((wret = wait(&wstat)) != pid)
-	{
-	if(wret == -1 && errno != EINTR)
-	    {
-	    fprintf(stderr, _("%s(): wait() failed, errno=%d (%s)\n"), function, errno, gu_strerror(errno) );
-	    return -1;
-	    }
-	}
-
-    if(WIFEXITED(wstat))
-	{
-	if(WEXITSTATUS(wstat) != 0)
-	    {
-	    error("ppr-respond exited with code %d", (int)WEXITSTATUS(wstat));
-	    return -1;
-	    }
-	}
-    else if(WIFSIGNALED(wstat))
-	{
-	error("ppr-respond killed by signal %d (%s)%s",
-		WTERMSIG(wstat),
-		gu_strsignal(WTERMSIG(wstat)),
-		WCOREDUMP(wstat) ? ", core dumped" : ""
-		);
-	return -1;
-	}
-    else
-	{
-	error("ppr-respond suffered some really bizzar accident");
-	return -1;
-	}
-
-    return 0;
-    } /* end of respond() */
+	return 0;
+	} /* end of respond() */
 
 /* end of file */

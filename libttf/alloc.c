@@ -19,57 +19,57 @@
 #include "libttf_private.h"
 
 void *ttf_alloc(struct TTFONT *font, size_t number, size_t size)
-    {
-    void *rval;
+	{
+	void *rval;
 
-    if((rval = malloc(size*number)) == (void*)NULL)
-	longjmp(font->exception, (int)TTF_NOMEM);
+	if((rval = malloc(size*number)) == (void*)NULL)
+		longjmp(font->exception, (int)TTF_NOMEM);
 
-    return rval;
-    }
+	return rval;
+	}
 
 char *ttf_strdup(struct TTFONT *font, const char *string)
-    {
-    char *rval;
+	{
+	char *rval;
 
-    if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
-	longjmp(font->exception, (int)TTF_NOMEM);
+	if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
+		longjmp(font->exception, (int)TTF_NOMEM);
 
-    strcpy(rval, string);
+	strcpy(rval, string);
 
-    return rval;
-    }
+	return rval;
+	}
 
 char *ttf_strndup(struct TTFONT *font, const char *string, size_t len)
-    {
-    char *rval;
+	{
+	char *rval;
 
-    if((rval = (char*)malloc(len+1)) == (char*)NULL)
-	longjmp(font->exception, (int)TTF_NOMEM);
+	if((rval = (char*)malloc(len+1)) == (char*)NULL)
+		longjmp(font->exception, (int)TTF_NOMEM);
 
-    strncpy(rval, string, len);
-    rval[len] = '\0';
+	strncpy(rval, string, len);
+	rval[len] = '\0';
 
-    return rval;
-    }
+	return rval;
+	}
 
 void *ttf_realloc(struct TTFONT *font, void *ptr, size_t number, size_t size)
-    {
-    void *rval;
+	{
+	void *rval;
 
-    if((rval = realloc(ptr, number*size)) == (void*)NULL)
-	longjmp(font->exception, (int)TTF_NOMEM);
+	if((rval = realloc(ptr, number*size)) == (void*)NULL)
+		longjmp(font->exception, (int)TTF_NOMEM);
 
-    return rval;
-    }
+	return rval;
+	}
 
 void ttf_free(struct TTFONT *font, void *ptr)
-    {
-    if(!ptr)
-    	longjmp(font->exception, TTF_BADFREE);
+	{
+	if(!ptr)
+		longjmp(font->exception, TTF_BADFREE);
 
-    free(ptr);
-    }
+	free(ptr);
+	}
 
 /* end of file */
 

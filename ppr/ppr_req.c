@@ -48,84 +48,84 @@
 ** The parameter "reftype" is either REQ_DOC or REQ_PAGE.
 */
 void requirement(int reftype, const char req_name[])
-    {
-    int x;
-    char *sptr;
-    char scratch[9];
-
-    #ifdef DEBUG_REQUIREMENTS
-    printf("Requirement: %s, reftype=%d\n", req_name, reftype);
-    #endif
-
-    /* Convert the old style punch options to the new ones. */
-    if(gu_sscanf(req_name, "punch%d", &x) == 1 && x < 10)
-    	{
-    	if(qentry.attr.DSClevel >= 3.0)
-    	    warning(WARNING_PEEVE, "Requirement punch%d should be punch(%d) in DSC >= 3.0", x, x);
-	snprintf(scratch, sizeof(scratch), "punch(%d)", x);
-	req_name = scratch;
-	}
-
-    if(strcmp(req_name, "collate") == 0)	/* If it is collated copies */
-	{					/* and we should pay attention */
-	if(read_copies)				/* to copies data, */
-	    qentry.opts.collate = TRUE;		/* Then, set collate to true */
-	return;					/* <-- and filter out */
-	}
-
-    if(strncmp(req_name, "numcopies(", 10) == 0)
 	{
-	if(read_copies)
-	    {
-	    int x;
-	    if((x = atoi(&req_name[10])) < 1)
-		warning(WARNING_SEVERE, "Unreasonable requirement \"%s\" ignored", req_name);
-	    else
-	    	qentry.opts.copies = x;
-	    }
-	return;					/* <-- filter out */
-	}
+	int x;
+	char *sptr;
+	char scratch[9];
 
-    /* Look for this requirement in the list of known ones. */
-    for(x=0; x<thing_count; x++)
-	{
-	if(things[x].th_type != TH_REQUIREMENT)
-	    continue;
+	#ifdef DEBUG_REQUIREMENTS
+	printf("Requirement: %s, reftype=%d\n", req_name, reftype);
+	#endif
 
-	sptr = (char*)things[x].th_ptr;
-	if(strcmp(sptr, req_name) == 0)
-	    break;
-	}
+	/* Convert the old style punch options to the new ones. */
+	if(gu_sscanf(req_name, "punch%d", &x) == 1 && x < 10)
+		{
+		if(qentry.attr.DSClevel >= 3.0)
+			warning(WARNING_PEEVE, "Requirement punch%d should be punch(%d) in DSC >= 3.0", x, x);
+		snprintf(scratch, sizeof(scratch), "punch(%d)", x);
+		req_name = scratch;
+		}
 
-    /* If it is not found, */
-    if(x == thing_count)
-	{
-	/* A page requirement should have been mentioned in the header. */
-	if(reftype == REQ_PAGE)
-	    warning(WARNING_PEEVE, "Requirement \"%s\" missing from \"%%%%Requirements:\" comment", req_name);
+	if(strcmp(req_name, "collate") == 0)		/* If it is collated copies */
+		{										/* and we should pay attention */
+		if(read_copies)							/* to copies data, */
+			qentry.opts.collate = TRUE;			/* Then, set collate to true */
+		return;									/* <-- and filter out */
+		}
 
-	things_space_check();		/* make room in the array */
+	if(strncmp(req_name, "numcopies(", 10) == 0)
+		{
+		if(read_copies)
+			{
+			int x;
+			if((x = atoi(&req_name[10])) < 1)
+				warning(WARNING_SEVERE, "Unreasonable requirement \"%s\" ignored", req_name);
+			else
+				qentry.opts.copies = x;
+			}
+		return;									/* <-- filter out */
+		}
 
-	things[x].th_type = TH_REQUIREMENT;
-	things[x].R_Flags = reftype;
-	things[x].th_ptr = (void*)gu_strdup(req_name);
+	/* Look for this requirement in the list of known ones. */
+	for(x=0; x<thing_count; x++)
+		{
+		if(things[x].th_type != TH_REQUIREMENT)
+			continue;
 
-	thing_count++;
-	}
+		sptr = (char*)things[x].th_ptr;
+		if(strcmp(sptr, req_name) == 0)
+			break;
+		}
 
-    else                            /* if already present, */
-	{                           /* add this reference to ref flags */
-	things[x].R_Flags |= reftype;
-	}
+	/* If it is not found, */
+	if(x == thing_count)
+		{
+		/* A page requirement should have been mentioned in the header. */
+		if(reftype == REQ_PAGE)
+			warning(WARNING_PEEVE, "Requirement \"%s\" missing from \"%%%%Requirements:\" comment", req_name);
 
-    if(reftype == REQ_PAGE)	    /* If it was in a %%PageRequirement: comment, */
-	set_thing_bit(x);	    /* set the bit for this page. */
+		things_space_check();			/* make room in the array */
 
-    } /* end of requirement() */
+		things[x].th_type = TH_REQUIREMENT;
+		things[x].R_Flags = reftype;
+		things[x].th_ptr = (void*)gu_strdup(req_name);
+
+		thing_count++;
+		}
+
+	else							/* if already present, */
+		{							/* add this reference to ref flags */
+		things[x].R_Flags |= reftype;
+		}
+
+	if(reftype == REQ_PAGE)			/* If it was in a %%PageRequirement: comment, */
+		set_thing_bit(x);			/* set the bit for this page. */
+
+	} /* end of requirement() */
 
 /*
 ** Delete a requirement we don't need after all.  This deletes all 
-** requirements of the specified type.  In other words, calling
+** requirements of the specified type.	In other words, calling
 **
 ** delete_requirement("duplex");
 **
@@ -135,84 +135,84 @@ void requirement(int reftype, const char req_name[])
 ** we change the duplex mode of a job.
 */
 void delete_requirement(const char req_name[])
-    {
-    int x;
-    const char *sptr;
-    const char *nptr;
-
-    for(x=0; x<thing_count; x++)	/* look for this one */
 	{
-	if(things[x].th_type != TH_REQUIREMENT)
-	    continue;
+	int x;
+	const char *sptr;
+	const char *nptr;
 
-	sptr = (char*)things[x].th_ptr;	/* pointer to requirement */
-	nptr = req_name;		/* name of what deleteing */
+	for(x=0; x<thing_count; x++)		/* look for this one */
+		{
+		if(things[x].th_type != TH_REQUIREMENT)
+			continue;
 
-	while(*sptr)                    /* compare */
-	    {
-	    if(*(sptr++) != *(nptr++))  /* is mis-match, stop here */
-		break;
-	    }
+		sptr = (char*)things[x].th_ptr; /* pointer to requirement */
+		nptr = req_name;				/* name of what deleteing */
 
-	if(*sptr=='\0' && (*nptr=='(' || *nptr=='\0') )
-	    things[x].R_Flags|=REQ_DELETED; /* if all matched, delete */
-	}
+		while(*sptr)					/* compare */
+			{
+			if(*(sptr++) != *(nptr++))	/* is mis-match, stop here */
+				break;
+			}
 
-    } /* end of delete_requirement() */
+		if(*sptr=='\0' && (*nptr=='(' || *nptr=='\0') )
+			things[x].R_Flags|=REQ_DELETED; /* if all matched, delete */
+		}
+
+	} /* end of delete_requirement() */
 
 /*
 ** Dump PostScript requirements for the current page.
 */
 void dump_page_requirements(void)
-    {
-    int x;
-    int started=FALSE;
-
-    for(x=0;x<thing_count;x++)                      /* try each thing */
 	{
-	if(things[x].th_type != TH_REQUIREMENT)     /* only interested in */
-	    continue;                               /* requirements */
+	int x;
+	int started=FALSE;
 
-	if( things[x].R_Flags & REQ_DELETED )       /* ignore those reqs */
-	    continue;                               /* we have deleted */
+	for(x=0;x<thing_count;x++)						/* try each thing */
+		{
+		if(things[x].th_type != TH_REQUIREMENT)		/* only interested in */
+			continue;								/* requirements */
 
-	if( ! (things[x].R_Flags & REQ_PAGE) )      /* only if in this page */
-	    continue;
+		if( things[x].R_Flags & REQ_DELETED )		/* ignore those reqs */
+			continue;								/* we have deleted */
 
-	if(started)                                 /* if 2nd or subsequent */
-	    {                                       /* then use cont line */
-	    fprintf(page_comments,"%%%%+ %s\n",(char*)things[x].th_ptr);
-	    }
-	else                                        /* otherwise, use 1st */
-	    {                                       /* line format */
-	    fprintf(page_comments,"%%%%PageRequirements: %s\n",
-		(char*)things[x].th_ptr);
-	    started=TRUE;
-	    }
+		if( ! (things[x].R_Flags & REQ_PAGE) )		/* only if in this page */
+			continue;
 
-	things[x].R_Flags &= ~ REQ_PAGE;            /* clear for next page */
-	}
-    } /* end of dump_page_requirements() */
+		if(started)									/* if 2nd or subsequent */
+			{										/* then use cont line */
+			fprintf(page_comments,"%%%%+ %s\n",(char*)things[x].th_ptr);
+			}
+		else										/* otherwise, use 1st */
+			{										/* line format */
+			fprintf(page_comments,"%%%%PageRequirements: %s\n",
+				(char*)things[x].th_ptr);
+			started=TRUE;
+			}
+
+		things[x].R_Flags &= ~ REQ_PAGE;			/* clear for next page */
+		}
+	} /* end of dump_page_requirements() */
 
 /*
 ** Write one "Req:" lines for each requirement.
 */
 void write_requirement_lines(FILE *out, int fragment)
-    {
-    int x;
-
-    for(x=0;x<thing_count;x++)
 	{
-	if( things[x].th_type != TH_REQUIREMENT )
-	    continue;
+	int x;
 
-	if( ! is_thing_in_current_fragment(x, fragment) )
-	    continue;
+	for(x=0;x<thing_count;x++)
+		{
+		if( things[x].th_type != TH_REQUIREMENT )
+			continue;
 
-	fprintf(out,"Req: %s\n",(char*)things[x].th_ptr);
-	}
+		if( ! is_thing_in_current_fragment(x, fragment) )
+			continue;
 
-    } /* end of write_requirement_lines() */
+		fprintf(out,"Req: %s\n",(char*)things[x].th_ptr);
+		}
+
+	} /* end of write_requirement_lines() */
 
 /* end of file */
 

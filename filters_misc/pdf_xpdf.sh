@@ -29,7 +29,7 @@ PDFTOPS="?"
 LEVEL=""
 for option in $1
 	do
-        case $option in
+		case $option in
 		level=1)
 			LEVEL="-level1"
 			;;

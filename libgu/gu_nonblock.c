@@ -22,18 +22,18 @@
 ** Set or clear the POSIX non-blocking flag.
 */
 void gu_nonblock(int fd, gu_boolean on)
-    {
-    int flags;
+	{
+	int flags;
 
-    flags = fcntl(fd, F_GETFL);
+	flags = fcntl(fd, F_GETFL);
 
-    if(on)			/* set the flag */
-    	flags |= O_NONBLOCK;
-    else			/* clear the flag */
-    	flags &= ~O_NONBLOCK;
-    	
-    fcntl(fd, F_SETFL, flags);
-    }
+	if(on)						/* set the flag */
+		flags |= O_NONBLOCK;
+	else						/* clear the flag */
+		flags &= ~O_NONBLOCK;
+		
+	fcntl(fd, F_SETFL, flags);
+	}
 
 /* end of file */
 

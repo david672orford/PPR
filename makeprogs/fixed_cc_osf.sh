@@ -18,7 +18,7 @@
 # This shell script is a wrapper for the DEC OSF C compiler.  This compiler
 # manifests a couple bizzar features.  The strangest is that C preprocessor
 # directives must all begin in column 1.  This script runs each source
-# file thru sed to work around the bug.  (Incidentally, this behavior is
+# file thru sed to work around the bug.	 (Incidentally, this behavior is
 # documented in the cc(1) man page, so I guess that makes it a feature.)
 #
 # This script is also useful with the ULTRIX C compiler.
@@ -46,18 +46,18 @@ command="cc -I."
 for i in $*
   do
   if echo $i | grep '\.c$' >/dev/null
-    then
-    sed -e 's/^[ 	][ 	]*#/#/' $i >$TEMPFILE
-    command="$command $TEMPFILE"
-    module_name=`echo $i | sed -e 's/\.c$//'`
-    else
-    if [ "$last_i" = "-I" ]
-      then
-      command="$command$i"
-      else
-      command="$command $i"
-      fi
-    fi
+	then
+	sed -e 's/^[	][	]*#/#/' $i >$TEMPFILE
+	command="$command $TEMPFILE"
+	module_name=`echo $i | sed -e 's/\.c$//'`
+	else
+	if [ "$last_i" = "-I" ]
+	  then
+	  command="$command$i"
+	  else
+	  command="$command $i"
+	  fi
+	fi
   last_i=$i
   done
 
@@ -74,7 +74,7 @@ RESULT=$?
 rm -f $TEMPFILE
 
 # If the compiler generated an output file it generated it with a
-# name based uppon the name of the sed output file.  Rename the
+# name based uppon the name of the sed output file.	 Rename the
 # file to the name it would have had if the source file had been
 # compiled directly.
 if [ -f $TEMP_FILE_BASE.o ]

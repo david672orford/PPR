@@ -17,22 +17,22 @@
 #include "libttf_private.h"
 
 char *ttf_get_psname(void *p)
-    {
-    struct TTFONT *font = (struct TTFONT *)p;
-    int ret;
-
-    if(font->signiture != TTF_SIGNITURE)
-    	return NULL;
-
-    if((ret = setjmp(font->exception)) != 0)
 	{
-	font->errno = (TTF_RESULT)ret;
-    	return NULL;
-    	}
+	struct TTFONT *font = (struct TTFONT *)p;
+	int ret;
 
-    if(!font->PostName) font->PostName = ttf_loadname(font, 1, 6);
+	if(font->signiture != TTF_SIGNITURE)
+		return NULL;
 
-    return font->PostName;
-    }
+	if((ret = setjmp(font->exception)) != 0)
+		{
+		font->errno = (TTF_RESULT)ret;
+		return NULL;
+		}
+
+	if(!font->PostName) font->PostName = ttf_loadname(font, 1, 6);
+
+	return font->PostName;
+	}
 
 /* end of file */

@@ -15,8 +15,8 @@
 #
 
 #
-# This commentator uses Samba's smbclient.  No attempt is made to format the 
-# message in a pretty or readable fashion.  The address must be in one of 
+# This commentator uses Samba's smbclient.	No attempt is made to format the 
+# message in a pretty or readable fashion.	The address must be in one of 
 # these forms:
 #
 # COMPUTERNAME
@@ -42,8 +42,8 @@ for opt in $options
    do
    case $opt in
 	severity=* )
-	    severity_threshold=`echo $opt | cut -d'=' -f2`
-	    ;;
+		severity_threshold=`echo $opt | cut -d'=' -f2`
+		;;
    esac
    done
 
@@ -51,7 +51,7 @@ for opt in $options
 if [ $severity -lt $severity_threshold ]
    then
    echo "samba commentator: not important enough to send:"
-   echo "    $printer $code $cooked $raw1 $raw2"
+   echo "	 $printer $code $cooked $raw1 $raw2"
    exit 0
    fi
 

@@ -41,20 +41,20 @@ my ($charset, $content_language) = cgi_intl_init();
 my $mime;
 
 # This first try block catches errors in operations which must be done before the
-# HTTP header is generated.  If an error is caught, it produces an error document.
+# HTTP header is generated.	 If an error is caught, it produces an error document.
 eval {
-    my $path = docs_open($ENV{PATH_INFO});
-    $mime = cgi_data_move("mime", undef);
-    $mime = guess_mime($path) if(! defined $mime);
-    docs_last_modified(DOC, $path);
-    };
+	my $path = docs_open($ENV{PATH_INFO});
+	$mime = cgi_data_move("mime", undef);
+	$mime = guess_mime($path) if(! defined $mime);
+	docs_last_modified(DOC, $path);
+	};
 if($@)
-    {
-    my $message = $@;
-    require 'cgi_error.pl';
-    error_doc(_("Can't Display File"), html($message), $charset, $content_language);
-    exit 0;
-    }
+	{
+	my $message = $@;
+	require 'cgi_error.pl';
+	error_doc(_("Can't Display File"), html($message), $charset, $content_language);
+	exit 0;
+	}
 
 # From this point there is no going back.  We don't understand this MIME
 # type, so there is no way to display errors in the browser.
@@ -62,9 +62,9 @@ print "Content-Type: $mime\n";
 print "\n";
 
 while(<DOC>)
-    {
-    print;
-    }
+	{
+	print;
+	}
 
 close(DOC) || die $!;
 

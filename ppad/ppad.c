@@ -29,7 +29,7 @@
 */
 
 /*
-** Administration program for PostScript page printers.  This program
+** Administration program for PostScript page printers.	 This program
 ** edits the media database and edits printer and group configuration
 ** files.
 */
@@ -62,52 +62,52 @@ static char *su_user = NULL;
 ** Print a message and exit.
 */
 void fatal(int exitval, const char *message, ...)
-    {
-    va_list va;
+	{
+	va_list va;
 
-    va_start(va,message);
-    fputs(_("Fatal: "), errors);
-    vfprintf(errors,message,va);
-    fputc('\n',errors);
-    va_end(va);
+	va_start(va,message);
+	fputs(_("Fatal: "), errors);
+	vfprintf(errors,message,va);
+	fputc('\n',errors);
+	va_end(va);
 
-    exit(exitval);
-    } /* end of fatal() */
+	exit(exitval);
+	} /* end of fatal() */
 
 /*
-** Is the user privileged?  In other words, is the user in the ppad
-** access control list?  If the user identity has been changed
+** Is the user privileged?	In other words, is the user in the ppad
+** access control list?	 If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
 static gu_boolean privileged(void)
-    {
-    static gu_boolean answer = FALSE;
-    static char *answer_username = NULL;
-
-    if(!answer_username || strcmp(su_user, answer_username))
 	{
-	if(answer_username) gu_free(answer_username);
-	answer_username = gu_strdup(su_user);
-	answer = user_acl_allows(su_user, "ppad");
+	static gu_boolean answer = FALSE;
+	static char *answer_username = NULL;
 
-	/* This breaks --su for user ppr! */
-	#if 0
-	/* This special exception comes into play when "make install"
-	   is done by a non-root user.  Basically, says that if
-	   we are not running setuid, we will let the file system
-	   permissions take care of security.  This allows the
-	   "ppad media put" command to work during "make install".
-	   This is not really a new feature, it simply restores a
-	   behavior of the old privileged() implementation.
-	   */
-	if(!answer && getuid() == geteuid())
-	   answer = TRUE;
-	#endif
-	}
+	if(!answer_username || strcmp(su_user, answer_username))
+		{
+		if(answer_username) gu_free(answer_username);
+		answer_username = gu_strdup(su_user);
+		answer = user_acl_allows(su_user, "ppad");
 
-    return answer;
-    } /* end of privileged() */
+		/* This breaks --su for user ppr! */
+		#if 0
+		/* This special exception comes into play when "make install"
+		   is done by a non-root user.	Basically, says that if
+		   we are not running setuid, we will let the file system
+		   permissions take care of security.  This allows the
+		   "ppad media put" command to work during "make install".
+		   This is not really a new feature, it simply restores a
+		   behavior of the old privileged() implementation.
+		   */
+		if(!answer && getuid() == geteuid())
+		   answer = TRUE;
+		#endif
+		}
+
+	return answer;
+	} /* end of privileged() */
 
 /*
 ** Set the user who should be considered to be running this program.
@@ -117,335 +117,335 @@ static gu_boolean privileged(void)
 ** not to gain additional access.
 **
 ** Generally, this will be used by servers running under privileged
-** user identities.  They will use this so as not to exceed the privledge
+** user identities.	 They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
 static int su(const char username[])
-    {
-    if(privileged())
-    	{
-	gu_free(su_user);
-	su_user = gu_strdup(username);
-	return 0;
-    	}
-    else
 	{
-	return -1;
+	if(privileged())
+		{
+		gu_free(su_user);
+		su_user = gu_strdup(username);
+		return 0;
+		}
+	else
+		{
+		return -1;
+		}
 	}
-    }
 
 /*
 ** Return TRUE if the user has PPR administrative privledges.
 ** If not, print an error message and return FALSE.
 */
 gu_boolean am_administrator(void)
-    {
-    if( privileged() )
 	{
-	return TRUE;
-	}
-    else
-	{
-	fputs("You are not allowed to perform the requested operation\n"
-		"because you are not a PPR administrator.\n", errors);
-	return FALSE;
-	}
-    } /* end of am_administrator() */
+	if( privileged() )
+		{
+		return TRUE;
+		}
+	else
+		{
+		fputs("You are not allowed to perform the requested operation\n"
+				"because you are not a PPR administrator.\n", errors);
+		return FALSE;
+		}
+	} /* end of am_administrator() */
 
 /*
 ** Print the help screen.
 */
 static void help_media(FILE *out)
-    {
-    fputs("Media Management:\n"
-	"\tppad media show <name>\n"
-	"\tppad media put <name> <width> <length> <weight> <colour> <type> <banner>\n"
-	"\tppad media delete <name>\n"
-	"\tppad media export\n"
-	"\tppad media import\n", out);
-    } /* end of help_media() */
+	{
+	fputs("Media Management:\n"
+		"\tppad media show <name>\n"
+		"\tppad media put <name> <width> <length> <weight> <colour> <type> <banner>\n"
+		"\tppad media delete <name>\n"
+		"\tppad media export\n"
+		"\tppad media import\n", out);
+	} /* end of help_media() */
 
 static void help_printer(FILE *out)
-    {
-    fputs("Printer Managment:\n"
-	"\tppad show <printer>\n"
-	"\tppad interface <printer> <interface> <address>\n"
-	"\tppad delete <printer>\n"
-	"\tppad comment <printer> <string>\n"
-	"\tppad location <printer> <string>\n"
-	"\tppad department <printer> <string>\n"
-	"\tppad contact <printer> <string>\n"
-	"\tppad options <printer> <quoted_list>\n"
-	"\tppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}\n"
-	"\tppad feedback <printer> {True, False}\n"
-	"\tppad codes <printer> {Clean7Bit, Clean8Bit, Binary,\n"
-		"\t\tTBCP, UNKNOWN, DEFAULT}\n"
-	"\tppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]\n"
-	"\tppad ppd <printer> <filename>\n"
-	"\tppad alerts <printer> <frequency> <method> <address>\n"
-	"\tppad frequency <printer> <integer>\n"
-	"\tppad flags <printer> {never, no, yes, always} {never, no, yes, always}\n"
-	"\tppad charge <printer> {<money>, none} [<money>]\n"
-	"\tppad outputorder <printer> {Normal, Reverse, PPD}\n"
-	"\tppad bins ppd <printer>\n"
-	"\tppad bins add <printer> <bin>\n"
-	"\tppad bins delete <printer> <bin>\n"
-	"\tppad touch <printer>\n"
-	"\tppad switchset <printer> <list>\n"
-	"\tppad deffiltopts <printer>\n"
-	"\tppad passthru <printer> <list>\n"
-	"\tppad ppdopts <printer>\n"
-	"\tppad limitpages <printer> <number> <number>\n"
-	"\tppad limitkilobytes <printer> <number> <number>\n"
-	"\tppad grayok <printer> <boolean>\n"
-	"\tppad acls <name> <acl> ...\n"
-	"\tppad userparams <name> <list>\n"
-	"\tppad pagetimelimit <name> <value>\n"
-	"\tppad addon <name> <value>\n", out);
-    } /* end of help_printer() */
+	{
+	fputs("Printer Managment:\n"
+		"\tppad show <printer>\n"
+		"\tppad interface <printer> <interface> <address>\n"
+		"\tppad delete <printer>\n"
+		"\tppad comment <printer> <string>\n"
+		"\tppad location <printer> <string>\n"
+		"\tppad department <printer> <string>\n"
+		"\tppad contact <printer> <string>\n"
+		"\tppad options <printer> <quoted_list>\n"
+		"\tppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}\n"
+		"\tppad feedback <printer> {True, False}\n"
+		"\tppad codes <printer> {Clean7Bit, Clean8Bit, Binary,\n"
+				"\t\tTBCP, UNKNOWN, DEFAULT}\n"
+		"\tppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]\n"
+		"\tppad ppd <printer> <filename>\n"
+		"\tppad alerts <printer> <frequency> <method> <address>\n"
+		"\tppad frequency <printer> <integer>\n"
+		"\tppad flags <printer> {never, no, yes, always} {never, no, yes, always}\n"
+		"\tppad charge <printer> {<money>, none} [<money>]\n"
+		"\tppad outputorder <printer> {Normal, Reverse, PPD}\n"
+		"\tppad bins ppd <printer>\n"
+		"\tppad bins add <printer> <bin>\n"
+		"\tppad bins delete <printer> <bin>\n"
+		"\tppad touch <printer>\n"
+		"\tppad switchset <printer> <list>\n"
+		"\tppad deffiltopts <printer>\n"
+		"\tppad passthru <printer> <list>\n"
+		"\tppad ppdopts <printer>\n"
+		"\tppad limitpages <printer> <number> <number>\n"
+		"\tppad limitkilobytes <printer> <number> <number>\n"
+		"\tppad grayok <printer> <boolean>\n"
+		"\tppad acls <name> <acl> ...\n"
+		"\tppad userparams <name> <list>\n"
+		"\tppad pagetimelimit <name> <value>\n"
+		"\tppad addon <name> <value>\n", out);
+	} /* end of help_printer() */
 
 static void help_group(FILE *out)
-    {
-    fputs("Group Management:\n"
-	"\tppad group show <group>\n"
-	"\tppad group members <group> <printer> ...\n"
-	"\tppad group add <group> <printer>\n"
-	"\tppad group remove <group> <printer>\n"
-	"\tppad group delete <group>\n"
-	"\tppad group comment <group> <comment>\n"
-	"\tppad group rotate <group> {true, false}\n"
-	"\tppad group touch <group>\n"
-	"\tppad group switchset <printer> <list>\n"
-	"\tppad group deffiltopts <group>\n"
-	"\tppad group passthru <group> <list>\n"
-	"\tppad group acls <name> <acl> ...\n"
-	"\tppad group addon <name> <value>\n", out);
-    } /* end of help_group() */
+	{
+	fputs("Group Management:\n"
+		"\tppad group show <group>\n"
+		"\tppad group members <group> <printer> ...\n"
+		"\tppad group add <group> <printer>\n"
+		"\tppad group remove <group> <printer>\n"
+		"\tppad group delete <group>\n"
+		"\tppad group comment <group> <comment>\n"
+		"\tppad group rotate <group> {true, false}\n"
+		"\tppad group touch <group>\n"
+		"\tppad group switchset <printer> <list>\n"
+		"\tppad group deffiltopts <group>\n"
+		"\tppad group passthru <group> <list>\n"
+		"\tppad group acls <name> <acl> ...\n"
+		"\tppad group addon <name> <value>\n", out);
+	} /* end of help_group() */
 
 static void help_alias(FILE *out)
-    {
-    fputs("Alias Management:\n"
-	"\tppad alias show <alias>\n"
-	"\tppad alias forwhat <alias> <queuename>\n"
-	"\tppad alias delete <alias>\n"
-	"\tppad alias comment <alias> <comment>\n"
-	"\tppad alias switchset <alias> <list>\n"
-	"\tppad alias passthru <alias> <list>\n"
-	"\tppad alias addon <name> <value>\n", out);
-    }
+	{
+	fputs("Alias Management:\n"
+		"\tppad alias show <alias>\n"
+		"\tppad alias forwhat <alias> <queuename>\n"
+		"\tppad alias delete <alias>\n"
+		"\tppad alias comment <alias> <comment>\n"
+		"\tppad alias switchset <alias> <list>\n"
+		"\tppad alias passthru <alias> <list>\n"
+		"\tppad alias addon <name> <value>\n", out);
+	}
 
 static void help_other(FILE *out)
-    {
-    fputs("New printer default:\n"
-	"\tppad new alerts <frequency> <method> <address>\n", out);
+	{
+	fputs("New printer default:\n"
+		"\tppad new alerts <frequency> <method> <address>\n", out);
 
-    fputs("\nDispatch reminder email to user \""USER_PPR"\":\n"
-	"\tppad remind\n", out);
-    } /* end of help_other() */
+	fputs("\nDispatch reminder email to user \""USER_PPR"\":\n"
+		"\tppad remind\n", out);
+	} /* end of help_other() */
 
 /*
 ** Print help information on switches.
 */
 static void help(FILE *out)
-    {
-    fputs("Valid switches:\n"
-	"\t--version\t\tprint version\n"
-	"\t--help\t\t\tprint help\n"
-	"\t-M\t\t\tmachine readable output\n"
-	"\t--machine-readable\n"
-	"\t-d <n>\t\t\tset debug level to <n>\n"
-	"\t--debug=<n>\n", out);
+	{
+	fputs("Valid switches:\n"
+		"\t--version\t\tprint version\n"
+		"\t--help\t\t\tprint help\n"
+		"\t-M\t\t\tmachine readable output\n"
+		"\t--machine-readable\n"
+		"\t-d <n>\t\t\tset debug level to <n>\n"
+		"\t--debug=<n>\n", out);
 
-    fputs("\nAdditional help:\n"
-    	"\tppad help printer\n"
-    	"\tppad help group\n"
-	"\tppad help alias\n"
-    	"\tppad help media\n"
-    	"\tppad help other\n", out);
-    } /* end of help() */
+	fputs("\nAdditional help:\n"
+		"\tppad help printer\n"
+		"\tppad help group\n"
+		"\tppad help alias\n"
+		"\tppad help media\n"
+		"\tppad help other\n", out);
+	} /* end of help() */
 
 /*
 ** Command dispatcher.
 */
 static int dispatch(const char *argv[])
-    {
-    /* media commands */
-    if(gu_strcasecmp(argv[0], "media") == 0 && argv[1])
 	{
-	if(gu_strcasecmp(argv[1], "show") == 0)
-	    return media_show(&argv[2]);
-	if(gu_strcasecmp(argv[1], "put") == 0)
-	    return media_put(&argv[2]);
-	if(gu_strcasecmp(argv[1], "delete") == 0)
-	    return media_delete(&argv[2]);
-	if(gu_strcasecmp(argv[1], "export") == 0)
-	    return media_export();
-	if(gu_strcasecmp(argv[1], "import") == 0)
-	    return media_import(&argv[2]);
-	}
+	/* media commands */
+	if(gu_strcasecmp(argv[0], "media") == 0 && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "show") == 0)
+			return media_show(&argv[2]);
+		if(gu_strcasecmp(argv[1], "put") == 0)
+			return media_put(&argv[2]);
+		if(gu_strcasecmp(argv[1], "delete") == 0)
+			return media_delete(&argv[2]);
+		if(gu_strcasecmp(argv[1], "export") == 0)
+			return media_export();
+		if(gu_strcasecmp(argv[1], "import") == 0)
+			return media_import(&argv[2]);
+		}
 
-    /* new printer default */
-    if(gu_strcasecmp(argv[0], "new") == 0 && argv[1])
-    	{
-    	if(gu_strcasecmp(argv[1], "alerts") == 0)
-    	    return printer_new_alerts(&argv[2]);
-	}
+	/* new printer default */
+	if(gu_strcasecmp(argv[0], "new") == 0 && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "alerts") == 0)
+			return printer_new_alerts(&argv[2]);
+		}
 
-    /* Remind (nag) command. */
-    if(gu_strcasecmp(argv[0], "remind") == 0)
-    	{
-	write_fifo("n\n");
-	return 0;
-    	}
+	/* Remind (nag) command. */
+	if(gu_strcasecmp(argv[0], "remind") == 0)
+		{
+		write_fifo("n\n");
+		return 0;
+		}
 
-    /* Help commands */
-    if(gu_strcasecmp(argv[0], "help") == 0)
-    	{
-	if(argv[1] == (char*)NULL)
-	    help(stdout);
-	else if(gu_strcasecmp(argv[1], "printer") == 0)
-	    help_printer(stdout);
-	else if(gu_strcasecmp(argv[1], "group") == 0)
-	    help_group(stdout);
-	else if(gu_strcasecmp(argv[1], "alias") == 0)
-	    help_alias(stdout);
-	else if(gu_strcasecmp(argv[1], "media") == 0)
-	    help_media(stdout);
-	else if(gu_strcasecmp(argv[1], "other") == 0)
-	    help_other(stdout);
-	else
-	    {
-	    help(errors);
-	    return EXIT_SYNTAX;
-	    }
-	return EXIT_OK;
-    	}
+	/* Help commands */
+	if(gu_strcasecmp(argv[0], "help") == 0)
+		{
+		if(argv[1] == (char*)NULL)
+			help(stdout);
+		else if(gu_strcasecmp(argv[1], "printer") == 0)
+			help_printer(stdout);
+		else if(gu_strcasecmp(argv[1], "group") == 0)
+			help_group(stdout);
+		else if(gu_strcasecmp(argv[1], "alias") == 0)
+			help_alias(stdout);
+		else if(gu_strcasecmp(argv[1], "media") == 0)
+			help_media(stdout);
+		else if(gu_strcasecmp(argv[1], "other") == 0)
+			help_other(stdout);
+		else
+			{
+			help(errors);
+			return EXIT_SYNTAX;
+			}
+		return EXIT_OK;
+		}
 
-    /* alias commands */
-    if(gu_strcasecmp(argv[0], "alias") == 0 && argv[1])
-	{
-	if(gu_strcasecmp(argv[1], "show") == 0)
-	    return alias_show(&argv[2]);
-	if(gu_strcasecmp(argv[1], "forwhat") == 0)
-	    return alias_forwhat(&argv[2]);
-	if(gu_strcasecmp(argv[1], "delete") == 0)
-	    return alias_delete(&argv[2]);
-	if(gu_strcasecmp(argv[1], "comment") == 0)
-	    return alias_comment(&argv[2]);
-        if(gu_strcasecmp(argv[1], "switchset") == 0)
-            return alias_switchset(&argv[2]);
-        if(gu_strcasecmp(argv[1], "passthru") == 0)
-            return alias_passthru(&argv[2]);
-        if(gu_strcasecmp(argv[1], "addon") == 0)
-            return alias_addon(&argv[2]);
-	}
+	/* alias commands */
+	if(gu_strcasecmp(argv[0], "alias") == 0 && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "show") == 0)
+			return alias_show(&argv[2]);
+		if(gu_strcasecmp(argv[1], "forwhat") == 0)
+			return alias_forwhat(&argv[2]);
+		if(gu_strcasecmp(argv[1], "delete") == 0)
+			return alias_delete(&argv[2]);
+		if(gu_strcasecmp(argv[1], "comment") == 0)
+			return alias_comment(&argv[2]);
+		if(gu_strcasecmp(argv[1], "switchset") == 0)
+			return alias_switchset(&argv[2]);
+		if(gu_strcasecmp(argv[1], "passthru") == 0)
+			return alias_passthru(&argv[2]);
+		if(gu_strcasecmp(argv[1], "addon") == 0)
+			return alias_addon(&argv[2]);
+		}
 
-    /* group commands */
-    if(gu_strcasecmp(argv[0], "group") == 0 && argv[1])
-    	{
-	if(gu_strcasecmp(argv[1], "show") == 0)
-	    return group_show(&argv[2]);
-	if(gu_strcasecmp(argv[1], "comment") == 0)
-	    return group_comment(&argv[2]);
-	if(gu_strcasecmp(argv[1], "rotate") == 0)
-	    return group_rotate(&argv[2]);
-	if(gu_strcasecmp(argv[1], "members") == 0)
-	    return group_members_add(&argv[2], FALSE);
-	if(gu_strcasecmp(argv[1], "add") == 0)
-	    return group_members_add(&argv[2], TRUE);
-	if(gu_strcasecmp(argv[1], "remove") == 0)
-	    return group_remove(&argv[2]);
-	if(gu_strcasecmp(argv[1], "delete") == 0)
-	    return group_delete(&argv[2]);
-	if(gu_strcasecmp(argv[1], "touch") == 0)
-	    return group_touch(&argv[2]);
-	if(gu_strcasecmp(argv[1], "switchset") == 0)
-	    return group_switchset(&argv[2]);
-	if(gu_strcasecmp(argv[1], "deffiltopts") == 0)
-	    return group_deffiltopts(&argv[2]);
-	if(gu_strcasecmp(argv[1], "passthru") == 0)
-	    return group_passthru(&argv[2]);
-        if(gu_strcasecmp(argv[1], "acls") == 0)
-            return group_acls(&argv[2]);
-        if(gu_strcasecmp(argv[1], "addon") == 0)
-            return group_addon(&argv[2]);
-    	}
+	/* group commands */
+	if(gu_strcasecmp(argv[0], "group") == 0 && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "show") == 0)
+			return group_show(&argv[2]);
+		if(gu_strcasecmp(argv[1], "comment") == 0)
+			return group_comment(&argv[2]);
+		if(gu_strcasecmp(argv[1], "rotate") == 0)
+			return group_rotate(&argv[2]);
+		if(gu_strcasecmp(argv[1], "members") == 0)
+			return group_members_add(&argv[2], FALSE);
+		if(gu_strcasecmp(argv[1], "add") == 0)
+			return group_members_add(&argv[2], TRUE);
+		if(gu_strcasecmp(argv[1], "remove") == 0)
+			return group_remove(&argv[2]);
+		if(gu_strcasecmp(argv[1], "delete") == 0)
+			return group_delete(&argv[2]);
+		if(gu_strcasecmp(argv[1], "touch") == 0)
+			return group_touch(&argv[2]);
+		if(gu_strcasecmp(argv[1], "switchset") == 0)
+			return group_switchset(&argv[2]);
+		if(gu_strcasecmp(argv[1], "deffiltopts") == 0)
+			return group_deffiltopts(&argv[2]);
+		if(gu_strcasecmp(argv[1], "passthru") == 0)
+			return group_passthru(&argv[2]);
+		if(gu_strcasecmp(argv[1], "acls") == 0)
+			return group_acls(&argv[2]);
+		if(gu_strcasecmp(argv[1], "addon") == 0)
+			return group_addon(&argv[2]);
+		}
 
-    /* printer commands */
-    if(gu_strcasecmp(argv[0], "show") == 0)
-	return printer_show(&argv[1]);
-    if(gu_strcasecmp(argv[0], "comment") == 0)
-	return printer_comment(&argv[1]);
-    if(gu_strcasecmp(argv[0], "location") == 0)
-	return printer_location(&argv[1]);
-    if(gu_strcasecmp(argv[0], "department") == 0)
-	return printer_department(&argv[1]);
-    if(gu_strcasecmp(argv[0], "contact") == 0)
-	return printer_contact(&argv[1]);
-    if(gu_strcasecmp(argv[0], "interface") == 0)
-    	return printer_interface(&argv[1]);
-    if(gu_strcasecmp(argv[0], "options") == 0)
-	return printer_options(&argv[1]);
-    if(gu_strcasecmp(argv[0], "jobbreak") == 0)
-    	return printer_jobbreak(&argv[1]);
-    if(gu_strcasecmp(argv[0], "feedback") == 0)
-    	return printer_feedback(&argv[1]);
-    if(gu_strcasecmp(argv[0], "codes") == 0)
-    	return printer_codes(&argv[1]);
-    if(gu_strcasecmp(argv[0], "rip") == 0)
-    	return printer_rip(&argv[1]);
-    if(gu_strcasecmp(argv[0], "ppd") == 0)
-    	return printer_ppd(&argv[1]);
-    if(gu_strcasecmp(argv[0], "alerts") == 0)
-    	return printer_alerts(&argv[1]);
-    if(gu_strcasecmp(argv[0], "frequency") == 0)
-    	return printer_frequency(&argv[1]);
-    if(gu_strcasecmp(argv[0], "flags") == 0)
-    	return printer_flags(&argv[1]);
-    if(gu_strcasecmp(argv[0], "outputorder") == 0)
-    	return printer_outputorder(&argv[1]);
-    if(gu_strcasecmp(argv[0], "charge") == 0)
-    	return printer_charge(&argv[1]);
-    if((gu_strcasecmp(argv[0], "bins") == 0) && argv[1])
-    	{
-	if(gu_strcasecmp(argv[1], "set") == 0)
-	    return printer_bins_set_or_add(FALSE, &argv[2]);
-	if(gu_strcasecmp(argv[1], "add") == 0)
-	    return printer_bins_set_or_add(TRUE, &argv[2]);
-	if(gu_strcasecmp(argv[1], "ppd") == 0)
-	    return printer_bins_ppd(&argv[2]);
-	if(gu_strcasecmp(argv[1], "delete") == 0)
-	    return printer_bins_delete(&argv[2]);
-	}
-    if(gu_strcasecmp(argv[0], "delete") == 0)
-	return printer_delete(&argv[1]);
-    if(gu_strcasecmp(argv[0], "touch") == 0)
-    	return printer_touch(&argv[1]);
-    if(gu_strcasecmp(argv[0], "switchset") == 0)
-    	return printer_switchset(&argv[1]);
-    if(gu_strcasecmp(argv[0], "deffiltopts") == 0)
-	return printer_deffiltopts(&argv[1]);
-    if(gu_strcasecmp(argv[0], "passthru") == 0)
-    	return printer_passthru(&argv[1]);
-    if(gu_strcasecmp(argv[0], "ppdopts") == 0)
-    	return printer_ppdopts(&argv[1]);
-    if(gu_strcasecmp(argv[0], "limitpages") == 0)
-    	return printer_limitpages(&argv[1]);
-    if(gu_strcasecmp(argv[0], "limitkilobytes") == 0)
-    	return printer_limitkilobytes(&argv[1]);
-    if(gu_strcasecmp(argv[0], "grayok") == 0)
-	return printer_grayok(&argv[1]);
-    if(gu_strcasecmp(argv[0], "acls") == 0)
-    	return printer_acls(&argv[1]);
-    if(gu_strcasecmp(argv[0], "userparams") == 0)
-	return printer_userparams(&argv[1]);
-    if(gu_strcasecmp(argv[0], "pagetimelimit") == 0)
-    	return printer_pagetimelimit(&argv[1]);
-    if(gu_strcasecmp(argv[0], "addon") == 0)
-    	return printer_addon(&argv[1]);
+	/* printer commands */
+	if(gu_strcasecmp(argv[0], "show") == 0)
+		return printer_show(&argv[1]);
+	if(gu_strcasecmp(argv[0], "comment") == 0)
+		return printer_comment(&argv[1]);
+	if(gu_strcasecmp(argv[0], "location") == 0)
+		return printer_location(&argv[1]);
+	if(gu_strcasecmp(argv[0], "department") == 0)
+		return printer_department(&argv[1]);
+	if(gu_strcasecmp(argv[0], "contact") == 0)
+		return printer_contact(&argv[1]);
+	if(gu_strcasecmp(argv[0], "interface") == 0)
+		return printer_interface(&argv[1]);
+	if(gu_strcasecmp(argv[0], "options") == 0)
+		return printer_options(&argv[1]);
+	if(gu_strcasecmp(argv[0], "jobbreak") == 0)
+		return printer_jobbreak(&argv[1]);
+	if(gu_strcasecmp(argv[0], "feedback") == 0)
+		return printer_feedback(&argv[1]);
+	if(gu_strcasecmp(argv[0], "codes") == 0)
+		return printer_codes(&argv[1]);
+	if(gu_strcasecmp(argv[0], "rip") == 0)
+		return printer_rip(&argv[1]);
+	if(gu_strcasecmp(argv[0], "ppd") == 0)
+		return printer_ppd(&argv[1]);
+	if(gu_strcasecmp(argv[0], "alerts") == 0)
+		return printer_alerts(&argv[1]);
+	if(gu_strcasecmp(argv[0], "frequency") == 0)
+		return printer_frequency(&argv[1]);
+	if(gu_strcasecmp(argv[0], "flags") == 0)
+		return printer_flags(&argv[1]);
+	if(gu_strcasecmp(argv[0], "outputorder") == 0)
+		return printer_outputorder(&argv[1]);
+	if(gu_strcasecmp(argv[0], "charge") == 0)
+		return printer_charge(&argv[1]);
+	if((gu_strcasecmp(argv[0], "bins") == 0) && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "set") == 0)
+			return printer_bins_set_or_add(FALSE, &argv[2]);
+		if(gu_strcasecmp(argv[1], "add") == 0)
+			return printer_bins_set_or_add(TRUE, &argv[2]);
+		if(gu_strcasecmp(argv[1], "ppd") == 0)
+			return printer_bins_ppd(&argv[2]);
+		if(gu_strcasecmp(argv[1], "delete") == 0)
+			return printer_bins_delete(&argv[2]);
+		}
+	if(gu_strcasecmp(argv[0], "delete") == 0)
+		return printer_delete(&argv[1]);
+	if(gu_strcasecmp(argv[0], "touch") == 0)
+		return printer_touch(&argv[1]);
+	if(gu_strcasecmp(argv[0], "switchset") == 0)
+		return printer_switchset(&argv[1]);
+	if(gu_strcasecmp(argv[0], "deffiltopts") == 0)
+		return printer_deffiltopts(&argv[1]);
+	if(gu_strcasecmp(argv[0], "passthru") == 0)
+		return printer_passthru(&argv[1]);
+	if(gu_strcasecmp(argv[0], "ppdopts") == 0)
+		return printer_ppdopts(&argv[1]);
+	if(gu_strcasecmp(argv[0], "limitpages") == 0)
+		return printer_limitpages(&argv[1]);
+	if(gu_strcasecmp(argv[0], "limitkilobytes") == 0)
+		return printer_limitkilobytes(&argv[1]);
+	if(gu_strcasecmp(argv[0], "grayok") == 0)
+		return printer_grayok(&argv[1]);
+	if(gu_strcasecmp(argv[0], "acls") == 0)
+		return printer_acls(&argv[1]);
+	if(gu_strcasecmp(argv[0], "userparams") == 0)
+		return printer_userparams(&argv[1]);
+	if(gu_strcasecmp(argv[0], "pagetimelimit") == 0)
+		return printer_pagetimelimit(&argv[1]);
+	if(gu_strcasecmp(argv[0], "addon") == 0)
+		return printer_addon(&argv[1]);
 
-    return -1;
-    } /* end of dispatch() */
+	return -1;
+	} /* end of dispatch() */
 
 /*
 ** interactive mode function
@@ -455,109 +455,109 @@ static int dispatch(const char *argv[])
 ** lines, and execute them.
 */
 static int interactive_mode(void)
-    {
-    #define MAX_CMD_WORDS 64
-    char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
-    char *ptr;			/* used to parse arguments */
-    unsigned int x;		/* used to parse arguments */
-    int errorlevel = 0;		/* return value from last command */
-
-    if( ! machine_readable )
 	{
-	puts(_("PPAD, Page Printer Administrator's utility"));
-	puts(VERSION);
-	puts(COPYRIGHT);
-	puts(AUTHOR);
-	puts("");
-	puts(_("Type \"help\" for command list, \"exit\" to quit."));
-	puts("");
-	}
-    else		/* terse, machine readable banner */
-	{
-    	puts("*READY\t"VERSION);
-    	fflush(stdout);
-    	}
+	#define MAX_CMD_WORDS 64
+	char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
+	char *ptr;					/* used to parse arguments */
+	unsigned int x;				/* used to parse arguments */
+	int errorlevel = 0;			/* return value from last command */
 
-    /*
-    ** Read input lines until end of file.
-    */
-    while((ptr = ppr_get_command("ppad>", machine_readable)))
-	{
-	/*
-	** Break the string into white-space separated "words".  A quoted string
-	** will be treated as one word.
-	*/
-	for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
-	    {
-            if(x == MAX_CMD_WORDS)
-            	{
-		puts(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
-		ar[x] = NULL;
-		break;
-            	}
-	    }
+	if( ! machine_readable )
+		{
+		puts(_("PPAD, Page Printer Administrator's utility"));
+		puts(VERSION);
+		puts(COPYRIGHT);
+		puts(AUTHOR);
+		puts("");
+		puts(_("Type \"help\" for command list, \"exit\" to quit."));
+		puts("");
+		}
+	else				/* terse, machine readable banner */
+		{
+		puts("*READY\t"VERSION);
+		fflush(stdout);
+		}
 
 	/*
-	** The variable x will be an index into ar[] which will
-	** indicate the first element that has any significance.
-	** If the line begins with the word "ppad" will will
-	** increment x.
+	** Read input lines until end of file.
 	*/
-	x=0;
-	if(ar[0] && strcmp(ar[0], "ppad") == 0)
-	    x++;
+	while((ptr = ppr_get_command("ppad>", machine_readable)))
+		{
+		/*
+		** Break the string into white-space separated "words".	 A quoted string
+		** will be treated as one word.
+		*/
+		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
+			{
+			if(x == MAX_CMD_WORDS)
+				{
+				puts(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
+				ar[x] = NULL;
+				break;
+				}
+			}
 
-	/*
-	** If no tokens remain in this command line,
-	** go on to the next command line.
-	*/
-	if(ar[x] == (char*)NULL)
-	    continue;
+		/*
+		** The variable x will be an index into ar[] which will
+		** indicate the first element that has any significance.
+		** If the line begins with the word "ppad" will will
+		** increment x.
+		*/
+		x=0;
+		if(ar[0] && strcmp(ar[0], "ppad") == 0)
+			x++;
 
-	/*
-	** If the command is "exit", break out of
-	** the line reading loop.
-	*/
-	if(strcmp(ar[x], "exit") == 0 || strcmp(ar[x], "quit") == 0)
-	    break;
+		/*
+		** If no tokens remain in this command line,
+		** go on to the next command line.
+		*/
+		if(ar[x] == (char*)NULL)
+			continue;
 
-	/*
-	** Call the dispatch() function to execute the command.  If the
-	** command is not recognized, dispatch() will return -1.  In that
-	** case we print a helpful message and change the errorlevel to
-	** zero since -1 is not a valid exit code for a program.
-	*/
-	if((errorlevel = dispatch((const char **)&ar[x])) == -1)
-	    {
-	    if( ! machine_readable )			/* A human gets english */
-		puts("Try \"help\" or \"exit\".");
-	    else					/* A program gets a code */
-	    	puts("*UNKNOWN");
+		/*
+		** If the command is "exit", break out of
+		** the line reading loop.
+		*/
+		if(strcmp(ar[x], "exit") == 0 || strcmp(ar[x], "quit") == 0)
+			break;
 
-	    errorlevel = EXIT_SYNTAX;
-	    }
-	else if(machine_readable)		/* If a program is reading our output, */
-	    {					/* say the command is done */
-	    printf("*DONE\t%d\n ", errorlevel);	/* and tell the exit code. */
-	    }
+		/*
+		** Call the dispatch() function to execute the command.	 If the
+		** command is not recognized, dispatch() will return -1.  In that
+		** case we print a helpful message and change the errorlevel to
+		** zero since -1 is not a valid exit code for a program.
+		*/
+		if((errorlevel = dispatch((const char **)&ar[x])) == -1)
+			{
+			if( ! machine_readable )					/* A human gets english */
+				puts("Try \"help\" or \"exit\".");
+			else										/* A program gets a code */
+				puts("*UNKNOWN");
 
-	if(machine_readable)			/* In machine readable mode output */
-	    fflush(stdout);			/* is probably a pipe which must be flushed. */
-	} /* While not end of file */
+			errorlevel = EXIT_SYNTAX;
+			}
+		else if(machine_readable)				/* If a program is reading our output, */
+			{									/* say the command is done */
+			printf("*DONE\t%d\n ", errorlevel); /* and tell the exit code. */
+			}
 
-    return errorlevel;			/* return result of last command (not counting exit) */
-    } /* end of interactive_mode() */
+		if(machine_readable)					/* In machine readable mode output */
+			fflush(stdout);						/* is probably a pipe which must be flushed. */
+		} /* While not end of file */
+
+	return errorlevel;					/* return result of last command (not counting exit) */
+	} /* end of interactive_mode() */
 
 static const char *option_chars = "Md:";
 static const struct gu_getopt_opt option_words[] =
-	{
-	{"machine-readable", 'M', FALSE},
-	{"debug", 'd', TRUE},
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
-	{"su", 1002, TRUE},
-	{(char*)NULL, 0, FALSE}
-	} ;
+		{
+		{"machine-readable", 'M', FALSE},
+		{"debug", 'd', TRUE},
+		{"help", 1000, FALSE},
+		{"version", 1001, FALSE},
+		{"su", 1002, TRUE},
+		{(char*)NULL, 0, FALSE}
+		} ;
 
 /*
 ** Main function.
@@ -566,98 +566,98 @@ static const struct gu_getopt_opt option_words[] =
 ** a NULL character pointer.
 */
 int main(int argc, char *argv[])
-    {
-    int optchar;
-    int retval;
-    struct gu_getopt_state getopt_state;
+	{
+	int optchar;
+	int retval;
+	struct gu_getopt_state getopt_state;
 
-    /* Initialize internation messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
+	/* Initialize internation messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
 
-    errors = stderr;		/* set default */
+	errors = stderr;			/* set default */
 
-    /* chdir(HOMEDIR); */
-    umask(PPR_UMASK);
+	/* chdir(HOMEDIR); */
+	umask(PPR_UMASK);
 
-    /* Figure out the user's name and make it the initial value for su_user. */
-    {
-    struct passwd *pw;
-    uid_t uid = getuid();
-    if((pw = getpwuid(uid)) == (struct passwd *)NULL)
-        {
-        fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
-        exit(EXIT_INTERNAL);
-        }
-    su_user = gu_strdup(pw->pw_name);
-    }
-
-    /*
-    ** Parse any dash options which appear before the subcommand.
-    */
-    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
-    while((optchar = ppr_getopt(&getopt_state)) != -1)
-    	{
-    	switch(optchar)
-    	    {
-	    case 'M':				/* machine readable */
-	    	machine_readable = TRUE;
-	    	errors = stdout;		/* send error messages to stdout */
-	    	break;
-
-	    case 'd':				/* debug */
-	        debug_level = atoi(getopt_state.optarg);
-	        break;
-
-	    case 1000:				/* --help */
-	        help(stdout);
-	        exit(EXIT_OK);
-
-	    case 1001:				/* --version */
-		if(machine_readable)
-		    {
-		    puts(SHORT_VERSION);
-		    }
-		else
-		    {
-	    	    puts(VERSION);
-	    	    puts(COPYRIGHT);
-	    	    puts(AUTHOR);
-	    	    }
-	    	exit(EXIT_OK);
-
-	    case 1002:				/* --su */
-                su(getopt_state.optarg);
-                break;
-
-	    default:
-		gu_getopt_default(myname, optchar, &getopt_state, errors);
-	    	exit(EXIT_SYNTAX);
-	    	break;
-    	    }
-    	}
-
-    /*
-    ** If there is a command, dispatch it, otherwise
-    ** invoke interactive mode.
-    */
-    if(getopt_state.optind < argc)
-	retval = dispatch((const char **)&argv[getopt_state.optind]);
-    else
-    	retval = interactive_mode();
-
-    /* command was not recognized, give help */
-    if(retval == -1)
-    	{
-	fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
-	retval = EXIT_SYNTAX;
+	/* Figure out the user's name and make it the initial value for su_user. */
+	{
+	struct passwd *pw;
+	uid_t uid = getuid();
+	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
+		{
+		fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
+		exit(EXIT_INTERNAL);
+		}
+	su_user = gu_strdup(pw->pw_name);
 	}
 
-    return retval;
-    } /* end of main() */
+	/*
+	** Parse any dash options which appear before the subcommand.
+	*/
+	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
+	while((optchar = ppr_getopt(&getopt_state)) != -1)
+		{
+		switch(optchar)
+			{
+			case 'M':							/* machine readable */
+				machine_readable = TRUE;
+				errors = stdout;				/* send error messages to stdout */
+				break;
+
+			case 'd':							/* debug */
+				debug_level = atoi(getopt_state.optarg);
+				break;
+
+			case 1000:							/* --help */
+				help(stdout);
+				exit(EXIT_OK);
+
+			case 1001:							/* --version */
+				if(machine_readable)
+					{
+					puts(SHORT_VERSION);
+					}
+				else
+					{
+					puts(VERSION);
+					puts(COPYRIGHT);
+					puts(AUTHOR);
+					}
+				exit(EXIT_OK);
+
+			case 1002:							/* --su */
+				su(getopt_state.optarg);
+				break;
+
+			default:
+				gu_getopt_default(myname, optchar, &getopt_state, errors);
+				exit(EXIT_SYNTAX);
+				break;
+			}
+		}
+
+	/*
+	** If there is a command, dispatch it, otherwise
+	** invoke interactive mode.
+	*/
+	if(getopt_state.optind < argc)
+		retval = dispatch((const char **)&argv[getopt_state.optind]);
+	else
+		retval = interactive_mode();
+
+	/* command was not recognized, give help */
+	if(retval == -1)
+		{
+		fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
+		retval = EXIT_SYNTAX;
+		}
+
+	return retval;
+	} /* end of main() */
 
 /* end of file */
 

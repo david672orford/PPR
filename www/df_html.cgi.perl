@@ -17,7 +17,7 @@
 #
 # This script runs the df command to get the disk spaces statistics for all
 # of the local file systems.  It then generates a series of little tables
-# which hold captions and inline images of pie charts.  The inline images
+# which hold captions and inline images of pie charts.	The inline images
 # are generated later by another CGI script called df_img.cgi.
 #
 
@@ -39,7 +39,7 @@ my ($charset, $content_language) = cgi_intl_init();
 # Unset LANG for fear df will change its output.
 delete $ENV{LANG};
 
-# We consider these results good for 5 minutes.  If people
+# We consider these results good for 5 minutes.	 If people
 # want better than that, they can reload.
 my $expires_time = cgi_time_format((time() + 300));
 
@@ -71,65 +71,65 @@ eval {
 # Run df and generate a table holding an inline image of a pie chart and
 # a caption for each file system listed in the df output.
 open(D, "df -kl |") || die sprintf(_("Failed to run df (%s)"), $!);
-my $junk = <D>;		# header line
+my $junk = <D>;			# header line
 while(<D>)
-    {
-    my($dev, $total, $used, $available, $percent, $mountpt) = split(/\s+/, $_);
+	{
+	my($dev, $total, $used, $available, $percent, $mountpt) = split(/\s+/, $_);
 
-    # Some pseudo file systems have a total size of 0.  We aren't interested
-    # in them.
-    next if($total <= 0);
+	# Some pseudo file systems have a total size of 0.	We aren't interested
+	# in them.
+	next if($total <= 0);
 
-    # Some things aren't real devices.  Skip them.
-    next if($dev !~ m#^/#);
+	# Some things aren't real devices.	Skip them.
+	next if($dev !~ m#^/#);
 
-    # Deduce the amount of space reserved for use only be root.
-    my $reserved = ($total - $used - $available);
+	# Deduce the amount of space reserved for use only be root.
+	my $reserved = ($total - $used - $available);
 
-    # Convert the amounts in kilobytes to percentages of the total
-    # disk space.
-    my $percent_used = int($used / $total * 100.0 + 0.5);
-    my $percent_available = int($available / $total * 100.0 + 0.5);
-    my $percent_reserved = int($reserved / $total * 100.0 + 0.5);
+	# Convert the amounts in kilobytes to percentages of the total
+	# disk space.
+	my $percent_used = int($used / $total * 100.0 + 0.5);
+	my $percent_available = int($available / $total * 100.0 + 0.5);
+	my $percent_reserved = int($reserved / $total * 100.0 + 0.5);
 
-    # Create a version of the total disk size in kilobytes which has
-    # commas every 3 decimal places.
-    my $total_with_commas = $total;
-    $total_with_commas =~ s/(\d)(\d\d\d)$/$1,$2/;
-    while($total_with_commas =~ s/(\d)(\d\d\d,)/$1,$2/) { }
+	# Create a version of the total disk size in kilobytes which has
+	# commas every 3 decimal places.
+	my $total_with_commas = $total;
+	$total_with_commas =~ s/(\d)(\d\d\d)$/$1,$2/;
+	while($total_with_commas =~ s/(\d)(\d\d\d,)/$1,$2/) { }
 
-    print <<"BODY10";
+	print <<"BODY10";
 <table border=1 hspace=5 vspace=5 cellpadding=5 cellspacing=0 align="left">
 <tr><td><table border=0 cellspacing=0 cellpadding=0>
-		${\percent_bar($percent_reserved, "blue")}
-		${\percent_bar($percent_available, "green")}
-		${\percent_bar($percent_used, "red")}
-		</table>
-	</td>
-    <td>
-	<img width=10 height=10 src="../images/pixel-blue.png"> ${percent_reserved}% Reserved
-	<br>
-	<img width=10 height=10 src="../images/pixel-green.png"> ${percent_available}% Available
-	<br>
-	<img width=10 height=10 src="../images/pixel-red.png"> ${percent_used}% Used
-	</td>
-    </tr>
+				${\percent_bar($percent_reserved, "blue")}
+				${\percent_bar($percent_available, "green")}
+				${\percent_bar($percent_used, "red")}
+				</table>
+		</td>
+	<td>
+		<img width=10 height=10 src="../images/pixel-blue.png"> ${percent_reserved}% Reserved
+		<br>
+		<img width=10 height=10 src="../images/pixel-green.png"> ${percent_available}% Available
+		<br>
+		<img width=10 height=10 src="../images/pixel-red.png"> ${percent_used}% Used
+		</td>
+	</tr>
 <tr><td align="center" colspan=2>Partition $mountpt<br>Device $dev<br>${total_with_commas}K</td></tr>
 </table>
 BODY10
 
-    }
+	}
 
 # Close the pipe from df.
 close(D) || die sprintf(_("Error while closing pipe from df (%s)"), $!);
 
-# End of exception handling block.  If die was called,
+# End of exception handling block.	If die was called,
 # print the message.
 }; if($@)
-    {
-    my $message = html($@);
-    print "<br clear=\"left\">$message\n";
-    }
+	{
+	my $message = html($@);
+	print "<br clear=\"left\">$message\n";
+	}
 
 # Close the HTML.
 print <<"TAIL10";
@@ -140,15 +140,15 @@ TAIL10
 # This is done in a function because browsers don't always render a zero 
 # height image with zero pixels.
 sub percent_bar
-    {
-    my $percent = shift;
-    my $color = shift;
-    if($percent > 0)
 	{
-	return <<"EndBar";
+	my $percent = shift;
+	my $color = shift;
+	if($percent > 0)
+		{
+		return <<"EndBar";
 <tr><td><img width=100 height=$percent border=0 src="../images/pixel-$color.png"></td></tr>
 EndBar
+		}
 	}
-    }
 
 exit 0;

@@ -31,31 +31,31 @@
 ** is called from interfaces/atalk_*.c.
 */
 void print_pap_status(const unsigned char *status)
-    {
-    #ifndef DESKJET_STATUS_FIX
-    printf("%%%%[ %.*s ]%%%%\n", (int)status[0], &status[1]);
-
-    #else
-    const unsigned char *p = &status[1];
-    int len = (int)status[0];
-    unsigned char lastc = '\0';
-
-    while(len > 0 && p[len - 1] == '\n')
-    	len--;
-
-    fputs("%%[ ", stdout);
-
-    while(len--)
 	{
-	if((lastc == ':' || lastc == ';') && *p != ' ')
-	    fputc(' ', stdout);
+	#ifndef DESKJET_STATUS_FIX
+	printf("%%%%[ %.*s ]%%%%\n", (int)status[0], &status[1]);
 
-	fputc((lastc = *p++), stdout);
-	}
+	#else
+	const unsigned char *p = &status[1];
+	int len = (int)status[0];
+	unsigned char lastc = '\0';
 
-    fputs(" ]%%\n", stdout);
-    #endif
-    } /* end of print_lw_message() */
+	while(len > 0 && p[len - 1] == '\n')
+		len--;
+
+	fputs("%%[ ", stdout);
+
+	while(len--)
+		{
+		if((lastc == ':' || lastc == ';') && *p != ' ')
+			fputc(' ', stdout);
+
+		fputc((lastc = *p++), stdout);
+		}
+
+	fputs(" ]%%\n", stdout);
+	#endif
+	} /* end of print_lw_message() */
 
 /*
 ** This is called from interfaces/atalk_*.c.  It returns true
@@ -63,16 +63,16 @@ void print_pap_status(const unsigned char *status)
 ** the interface's stdout even if the PAPOpen() suceeds.
 */
 gu_boolean is_pap_PrinterError(const unsigned char *status)
-    {
-    if(status[0] > 21 && strncmp("status: PrinterError:", (char*)&status[1], 21) == 0)
-    	return TRUE;
+	{
+	if(status[0] > 21 && strncmp("status: PrinterError:", (char*)&status[1], 21) == 0)
+		return TRUE;
 
-    #ifdef DESKJET_STATUS_FIX
-    if(status[0] > 20 && strncmp("status:PrinterError:", (char*)&status[1], 20) == 0)
-    	return TRUE;
-    #endif
+	#ifdef DESKJET_STATUS_FIX
+	if(status[0] > 20 && strncmp("status:PrinterError:", (char*)&status[1], 20) == 0)
+		return TRUE;
+	#endif
 
-    return FALSE;
-    } /* is_pap_PrinterError() */
+	return FALSE;
+	} /* is_pap_PrinterError() */
 
 /* end of file */

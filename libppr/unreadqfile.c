@@ -34,45 +34,45 @@
 #include "global_structs.h"
 
 static void free_and_zero(void **p)
-    {
-    if(*p)
 	{
-	gu_free(*p);
-	*p = (void*)NULL;
+	if(*p)
+		{
+		gu_free(*p);
+		*p = (void*)NULL;
+		}
 	}
-    }
 
 /*
 ** depopulate the structure
 */
 void destroy_struct_QFileEntry(struct QFileEntry *job)
-    {
-    free_and_zero((void**)&job->destnode);
-    free_and_zero((void**)&job->destname);
-    free_and_zero((void**)&job->homenode);
+	{
+	free_and_zero((void**)&job->destnode);
+	free_and_zero((void**)&job->destname);
+	free_and_zero((void**)&job->homenode);
 
-    free_and_zero((void**)&job->username);
-    free_and_zero((void**)&job->proxy_for);
-    free_and_zero((void**)&job->For);
-    free_and_zero((void**)&job->charge_to);
-    free_and_zero((void**)&job->magic_cookie);
-    free_and_zero((void**)&job->responder);
-    free_and_zero((void**)&job->responder_address);
-    free_and_zero((void**)&job->responder_options);
-    free_and_zero((void**)&job->lc_messages);
+	free_and_zero((void**)&job->username);
+	free_and_zero((void**)&job->proxy_for);
+	free_and_zero((void**)&job->For);
+	free_and_zero((void**)&job->charge_to);
+	free_and_zero((void**)&job->magic_cookie);
+	free_and_zero((void**)&job->responder);
+	free_and_zero((void**)&job->responder_address);
+	free_and_zero((void**)&job->responder_options);
+	free_and_zero((void**)&job->lc_messages);
 
-    free_and_zero((void**)&job->Creator);
-    free_and_zero((void**)&job->Title);
-    free_and_zero((void**)&job->Routing);
-    free_and_zero((void**)&job->lpqFileName);
-    free_and_zero((void**)&job->PassThruPDL);
-    free_and_zero((void**)&job->Filters);
-    free_and_zero((void**)&job->PJL);
+	free_and_zero((void**)&job->Creator);
+	free_and_zero((void**)&job->Title);
+	free_and_zero((void**)&job->Routing);
+	free_and_zero((void**)&job->lpqFileName);
+	free_and_zero((void**)&job->PassThruPDL);
+	free_and_zero((void**)&job->Filters);
+	free_and_zero((void**)&job->PJL);
 
-    free_and_zero((void**)&job->page_list.mask);
-    free_and_zero((void**)&job->draft_notice);
-    free_and_zero((void**)&job->question);
-    } /* end of destroy_struct_QFileEntry() */
+	free_and_zero((void**)&job->page_list.mask);
+	free_and_zero((void**)&job->draft_notice);
+	free_and_zero((void**)&job->question);
+	} /* end of destroy_struct_QFileEntry() */
 
 /* end of file */
 

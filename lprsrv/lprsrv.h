@@ -35,16 +35,16 @@
 
 /* Which operations do we want debugging information generated for? */
 #if 0
-/* #define DEBUG_MAIN 1 */		/* main loop */
-/* #define DEBUG_STANDALONE 1 */	/* standalone daemon operation */
-#define DEBUG_SECURITY 1		/* gethostbyname() and gethostbyaddr() */
-#define DEBUG_PRINT 1			/* take job command */
-#define DEBUG_CONTROL_FILE 1		/* read control file */
-/* #define DEBUG_GRITTY 1 */		/* details of many things */
-/* #define DEBUG_DISKSPACE 1 */		/* disk space checks */
-#define DEBUG_LPQ 1			/* queue listing */
-#define DEBUG_LPRM 1			/* job removal */
-/* #define DEBUG_CONF 1	*/		/* lprsrv.conf parsing */
+/* #define DEBUG_MAIN 1 */				/* main loop */
+/* #define DEBUG_STANDALONE 1 */		/* standalone daemon operation */
+#define DEBUG_SECURITY 1				/* gethostbyname() and gethostbyaddr() */
+#define DEBUG_PRINT 1					/* take job command */
+#define DEBUG_CONTROL_FILE 1			/* read control file */
+/* #define DEBUG_GRITTY 1 */			/* details of many things */
+/* #define DEBUG_DISKSPACE 1 */			/* disk space checks */
+#define DEBUG_LPQ 1						/* queue listing */
+#define DEBUG_LPRM 1					/* job removal */
+/* #define DEBUG_CONF 1 */				/* lprsrv.conf parsing */
 #endif
 
 /* Configuration file: */
@@ -78,18 +78,18 @@
 #define MAX_PROXY_CLASS 64
 #define MAX_FROM_FORMAT 16
 struct ACCESS_INFO
-    {
-    gu_boolean allow;
-    gu_boolean insecure_ports;
-    gu_boolean ppr_become_user;
-    gu_boolean other_become_user;
-    char ppr_root_as[MAX_USERNAME+1];
-    char other_root_as[MAX_USERNAME+1];
-    char ppr_proxy_user[MAX_USERNAME+1];
-    char other_proxy_user[MAX_USERNAME+1];
-    char ppr_proxy_class[MAX_PROXY_CLASS+1];
-    char ppr_from_format[MAX_FROM_FORMAT+1];
-    } ;
+	{
+	gu_boolean allow;
+	gu_boolean insecure_ports;
+	gu_boolean ppr_become_user;
+	gu_boolean other_become_user;
+	char ppr_root_as[MAX_USERNAME+1];
+	char other_root_as[MAX_USERNAME+1];
+	char ppr_proxy_user[MAX_USERNAME+1];
+	char other_proxy_user[MAX_USERNAME+1];
+	char ppr_proxy_class[MAX_PROXY_CLASS+1];
+	char ppr_from_format[MAX_FROM_FORMAT+1];
+	} ;
 
 /* lprsrv.c: */
 const char *this_node(void);

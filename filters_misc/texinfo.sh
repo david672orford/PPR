@@ -28,15 +28,15 @@ INVOKEDIR="$4"
 # Look for parameters we should pay attention to
 NOISY=0
 for pair in $OPTIONS
-    do
-    case "$pair" in
+	do
+	case "$pair" in
 	noisy=[yYtT1]* )
-	    NOISY=1
-	    ;;
-    esac
-    done
+		NOISY=1
+		;;
+	esac
+	done
 
-# If INVOKEDIR is defined, add it to TEXINPUTS.  The trailing
+# If INVOKEDIR is defined, add it to TEXINPUTS.	 The trailing
 # colon means to search the system directories after.
 if [ -n "$INVOKEDIR" ]
 	then
@@ -46,7 +46,7 @@ if [ -n "$INVOKEDIR" ]
 
 # It seems that the shell may cause the euid to revert to the real uid
 # in that case, the user who invoked ppr must be able to read and
-# write in the temporary directory.  This does not provide the
+# write in the temporary directory.	 This does not provide the
 # tightest security, but it works.
 umask 0
 
@@ -78,14 +78,14 @@ exval2=0
 if [ $exval = 0 ]
   then
   if [ ! -r tempfile.dvi ]
-    then
-    if [ $NOISY -ne 0 ]; then echo "$TEXI2DVI did not generate any output" >&2; fi
-    else
-    if [ $NOISY -ne 0 ]; then echo "Running DVI filter" >&2; fi
-    $HOMEDIR/filters/filter_dvi "$OPTIONS" "$PRINTER" "$TITLE" "$INVOKEDIR" <tempfile.dvi
-    exval2=$?
-    if [ $NOISY -ne 0 ]; then echo "filter_dvi returned $exval2" >&2; fi
-    fi
+	then
+	if [ $NOISY -ne 0 ]; then echo "$TEXI2DVI did not generate any output" >&2; fi
+	else
+	if [ $NOISY -ne 0 ]; then echo "Running DVI filter" >&2; fi
+	$HOMEDIR/filters/filter_dvi "$OPTIONS" "$PRINTER" "$TITLE" "$INVOKEDIR" <tempfile.dvi
+	exval2=$?
+	if [ $NOISY -ne 0 ]; then echo "filter_dvi returned $exval2" >&2; fi
+	fi
   fi
 
 # Remove the temporary files and directory
@@ -95,10 +95,10 @@ rmdir $TEXITEMPDIR
 
 # If either stage failed, we failed.
 if [ $exval != 0 -o $exval2 != 0 ]
-    then
-    if [ $NOISY -ne 0 ]; then echo "Failed" >&2; fi
-    exit 1
-    fi
+	then
+	if [ $NOISY -ne 0 ]; then echo "Failed" >&2; fi
+	exit 1
+	fi
 
 if [ $NOISY -ne 0 ]; then echo "Done" >&2; fi
 exit 0

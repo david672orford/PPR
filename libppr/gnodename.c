@@ -29,7 +29,7 @@
 */
 
 /*! \file
-    \brief determine name of this node
+	\brief determine name of this node
 */
 
 #include "before_system.h"
@@ -42,55 +42,55 @@
 /** determine name of this node
 
 This function returns the nodename which identifies this PPR node.
-All jobs coming from this node will be stamped with this name.  Other
-nodes will use this name to send jobs to this node.  In the current
+All jobs coming from this node will be stamped with this name.	Other
+nodes will use this name to send jobs to this node.	 In the current
 implementation this is the system name truncated before the first period (if
 present) and furthur truncated to 16 characters.
 
 Notice that this routine is call frequently.  It should determine
-the node name only the first time it is called.  It should save
+the node name only the first time it is called.	 It should save
 that name and returned the saved name on subsequent calls.
 
 */
 const char *ppr_get_nodename(void)
-    {
-    static char *nodename = (char*)NULL;
+	{
+	static char *nodename = (char*)NULL;
 
-    if(nodename == (char*)NULL)
-    	{
-	struct utsname s;
-	int len;
+	if(nodename == (char*)NULL)
+		{
+		struct utsname s;
+		int len;
 
-	/*
-	** Ask the system for system name information.
-	** What we really care about is the nodename.
-	*/
-	if(uname(&s) == -1)
-	     libppr_throw(EXCEPTION_OTHER, "ppr_get_nodename", "uname() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		/*
+		** Ask the system for system name information.
+		** What we really care about is the nodename.
+		*/
+		if(uname(&s) == -1)
+			 libppr_throw(EXCEPTION_OTHER, "ppr_get_nodename", "uname() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-	/*
-	** If the domain name is included in the node name,
-	** only use the part before the first dot.
-	*/
-	len = strcspn(s.nodename,".");
+		/*
+		** If the domain name is included in the node name,
+		** only use the part before the first dot.
+		*/
+		len = strcspn(s.nodename,".");
 
-	/*
-	** If the node name is too long, truncate it.
-	** That nodenames be unique in the first 16 characters
-	** does not seem unreasonable.
-	*/
-	if(len > MAX_NODENAME) len = MAX_NODENAME;
+		/*
+		** If the node name is too long, truncate it.
+		** That nodenames be unique in the first 16 characters
+		** does not seem unreasonable.
+		*/
+		if(len > MAX_NODENAME) len = MAX_NODENAME;
 
-	/*
-	** Allocate memory for and make a copy of the
-	** nodename we have determined uppon.
-	*/
-	nodename = (char*)gu_alloc(len+1, sizeof(char));
-	strncpy(nodename, s.nodename, len);
-	nodename[len] = '\0';
-    	}
+		/*
+		** Allocate memory for and make a copy of the
+		** nodename we have determined uppon.
+		*/
+		nodename = (char*)gu_alloc(len+1, sizeof(char));
+		strncpy(nodename, s.nodename, len);
+		nodename[len] = '\0';
+		}
 
-    return nodename;
-    } /* end of ppr_get_nodename() */
+	return nodename;
+	} /* end of ppr_get_nodename() */
 
 /* end of file */

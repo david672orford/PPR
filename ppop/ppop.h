@@ -24,19 +24,19 @@
 /* ========================== Things in ppop.c ================================= */
 
 struct Jobname
-    {
-    char destnode[MAX_NODENAME+1];
-    char destname[MAX_DESTNAME+1];
-    int id;
-    int subid;
-    char homenode[MAX_NODENAME+1];
-    } ;
+	{
+	char destnode[MAX_NODENAME+1];
+	char destname[MAX_DESTNAME+1];
+	int id;
+	int subid;
+	char homenode[MAX_NODENAME+1];
+	} ;
 
 struct Destname
-    {
-    char destnode[MAX_NODENAME+1];
-    char destname[MAX_NODENAME+1];
-    } ;
+	{
+	char destnode[MAX_NODENAME+1];
+	char destname[MAX_NODENAME+1];
+	} ;
 
 int parse_job_name(struct Jobname *job, const char *jobname);
 int parse_dest_name(struct Destname *dest, const char *destname);
@@ -82,14 +82,14 @@ int ppop_progress(char *argv[]);
 /* This function is needed by some commands in ppop_cmds_other.c which
    need to use a queue listing internally. */
 int custom_list(char *argv[],
-		void(*help)(void),
-		void(*banner)(void),
-		int(*item)(const struct QEntry *qentry,
-		    const struct QFileEntry*,
-		    const char *onprinter,
-		    FILE *qstream),
-		int suppress,
-		int arrested_drop_time);
+				void(*help)(void),
+				void(*banner)(void),
+				int(*item)(const struct QEntry *qentry,
+					const struct QFileEntry*,
+					const char *onprinter,
+					FILE *qstream),
+				int suppress,
+				int arrested_drop_time);
 
 /* ================ Functions in ppop_cmds_other.c ================ */
 

@@ -32,23 +32,23 @@ FEEDBACK="$5"
 SLEEP=""
 CREATE=1
 for opt in $OPTIONS
-    do
-    case $opt in
+	do
+	case $opt in
 	sleep=* )
-	    SLEEP=`echo $opt | cut -d'=' -f2`
-	    ;;
+		SLEEP=`echo $opt | cut -d'=' -f2`
+		;;
 	create=[yYtT1]* )
-	    CREATE=1
-	    ;;
+		CREATE=1
+		;;
 	create=[nNfF0]* )
-	    CREATE=0
-	    ;;
+		CREATE=0
+		;;
 	* )
-	    lib/alert $PRINTER TRUE "Unrecognized interface option: $opt"
-	    exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
-	    ;;
-    esac
-    done
+		lib/alert $PRINTER TRUE "Unrecognized interface option: $opt"
+		exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
+		;;
+	esac
+	done
 
 # Make sure the address parameter is not empty.
 if [ -z "$ADDRESS" ]
@@ -66,22 +66,22 @@ if [ $FEEDBACK -ne 0 ]
 	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
 	fi
 
-# If the file exists already, make sure we can write to it.  If it doesn't, 
+# If the file exists already, make sure we can write to it.	 If it doesn't, 
 # make sure that that is ok.
 if [ -f $ADDRESS ]
-    then
-    if [ ! -w $ADDRESS ]
+	then
+	if [ ! -w $ADDRESS ]
 	then
 	lib/alert $PRINTER TRUE "Access to the file or character device \"$ADDRESS\" is denied."
 	exit $EXIT_PRNERR_NORETRY_ACCESS_DENIED
 	fi
-    else
-    if [ $CREATE -eq 0 ]
+	else
+	if [ $CREATE -eq 0 ]
 	then
 	lib/alert $PRINTER TRUE "There is no file or character device \"$ADDRESS\"."
 	exit $EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS
 	fi
-    fi
+	fi
 
 # copy the file
 /bin/cat - >$ADDRESS

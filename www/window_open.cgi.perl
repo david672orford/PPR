@@ -32,12 +32,12 @@
 =pod
 
 The script ppr-web-control may instruct the browser to load this script from
-localhost.  This script in turn will load the page that the users really
+localhost.	This script in turn will load the page that the users really
 wants to see.  Why, you ask, not just load the desired page in the first
-place?  Because we want to load that page without those user interface
-elements which are part of the web browser.  This is easier said than done
+place?	Because we want to load that page without those user interface
+elements which are part of the web browser.	 This is easier said than done
 since browsers often forbid this because it is not desirable that web sites
-should be able to deprive the user of the controls to his web browser.  Of
+should be able to deprive the user of the controls to his web browser.	Of
 course, ppr-web-control is launched as an application, so being nice to the
 user isn't an issue, but the protects still get in our way.
 
@@ -57,8 +57,8 @@ The second method involves the Netscape security manager and requsting
 sufficient privledges to remove the troublesome decorations.  Normally
 Mozilla/Netscape will deny such a request without even consulting the user,
 but there are two exceptions.  The first is if the script is signed, the
-second is if it was loaded from a file:// URL.  We have implemented this
-method as well, but in ppr-web-control itself.  It writes the 'nasty code'
+second is if it was loaded from a file:// URL.	We have implemented this
+method as well, but in ppr-web-control itself.	It writes the 'nasty code'
 to a file in the user's PPR preferences directory and has Mozilla load that.
 
 So, Mozilla uses the trusted script method while other browers such as
@@ -96,7 +96,7 @@ Content-Type: text/html
 </head>
 <body>
 
-<p>This window should go away in a moment.  If it doesn't, you have 
+<p>This window should go away in a moment.	If it doesn't, you have 
 probably outsmarted yourself in an attempt to avoid popup ads.
 </p>
 <form>
@@ -106,12 +106,12 @@ probably outsmarted yourself in an attempt to avoid popup ads.
 <script>
 window.resizeTo(500, 300);
 function open_ppr ()
-    {
-    if(window.open('$url', '$target', '$options') != null)
-	window.close();
-    else
-	document.forms[0].manualy.value = "Yes, you have, click here please.";
-    }
+	{
+	if(window.open('$url', '$target', '$options') != null)
+		window.close();
+	else
+		document.forms[0].manualy.value = "Yes, you have, click here please.";
+	}
 open_ppr();
 </script>
 

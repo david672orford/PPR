@@ -52,10 +52,10 @@
 /* This structure stores a 16.16 bit fixed
    point number. */
 typedef struct
-    {
-    short int whole;
-    unsigned short int fraction;
-    } Fixed;
+	{
+	short int whole;
+	unsigned short int fraction;
+	} Fixed;
 
 /* We use this magic value to be sure that the
    pointer passed to a libttf routine really points
@@ -67,50 +67,50 @@ typedef struct
 ** the current font.
 */
 struct TTFONT
-    {
-    int signiture;
+	{
+	int signiture;
 
-    TTF_RESULT errno;			/* last error code */
+	TTF_RESULT errno;					/* last error code */
 
-    jmp_buf exception;			/* exception handling job */
+	jmp_buf exception;					/* exception handling job */
 
-    const char *filename;		/* Name of TT file */
-    FILE *file;				/* the open TT file */
+	const char *filename;				/* Name of TT file */
+	FILE *file;							/* the open TT file */
 
-    unsigned int numTables;		/* number of tables present */
-    char *PostName;			/* Font's PostScript name */
-    char *FullName;			/* Font's full name */
-    char *FamilyName;			/* Font's family name */
-    char *Style;			/* Font's style string */
-    char *Copyright;			/* Font's copyright string */
-    char *Trademark;			/* Font's trademark string */
-    char *Version;			/* Font's version string */
-    int llx,lly,urx,ury;		/* bounding box */
+	unsigned int numTables;				/* number of tables present */
+	char *PostName;						/* Font's PostScript name */
+	char *FullName;						/* Font's full name */
+	char *FamilyName;					/* Font's family name */
+	char *Style;						/* Font's style string */
+	char *Copyright;					/* Font's copyright string */
+	char *Trademark;					/* Font's trademark string */
+	char *Version;						/* Font's version string */
+	int llx,lly,urx,ury;				/* bounding box */
 
-    Fixed TTVersion;			/* Truetype version number from offset table */
-    Fixed MfrRevision;			/* Revision number of this font */
+	Fixed TTVersion;					/* Truetype version number from offset table */
+	Fixed MfrRevision;					/* Revision number of this font */
 
-    BYTE *offset_table; 		/* Offset is loaded right away. */
+	BYTE *offset_table;					/* Offset is loaded right away. */
 
-    /* These table are loaded when they are first needed. */
-    BYTE *post_table;
-    BYTE *loca_table;
-    BYTE *glyf_table;
-    BYTE *hmtx_table;
-    BYTE *name_table;
+	/* These table are loaded when they are first needed. */
+	BYTE *post_table;
+	BYTE *loca_table;
+	BYTE *glyf_table;
+	BYTE *hmtx_table;
+	BYTE *name_table;
 
-    USHORT numberOfHMetrics;
-    int unitsPerEm;			/* unitsPerEm converted to int */
-    int HUPM;				/* half of above */
+	USHORT numberOfHMetrics;
+	int unitsPerEm;						/* unitsPerEm converted to int */
+	int HUPM;							/* half of above */
 
-    int numGlyphs;			/* from 'post' table */
+	int numGlyphs;						/* from 'post' table */
 
-    int indexToLocFormat;		/* short or long offsets */
+	int indexToLocFormat;				/* short or long offsets */
 
-    void (*putc)(int c);
-    void (*puts)(const char *string);
-    void (*printf)(const char *format, ...);
-    } ;
+	void (*putc)(int c);
+	void (*puts)(const char *string);
+	void (*printf)(const char *format, ...);
+	} ;
 
 /*===================================================================
 ** Prototype for endian conversion routines

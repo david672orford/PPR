@@ -40,20 +40,20 @@
 
 /*
 ** This sets the maximum number of PPD file features to insert code for.
-** It is ok to change this.  It is the max number of -F switches.
+** It is ok to change this.	 It is the max number of -F switches.
 */
 #define MAX_FEATURES 16
 
 /*
 ** The size in bytes of input buffer to request.  There is no really
-** good reasons to change this.  Whatever you do, don't decrease this
+** good reasons to change this.	 Whatever you do, don't decrease this
 ** below 8192 bytes.  If you make it smaller, automatic type detection
 ** may start to fail for certain hard-to-identify formats.
 */
 #define IN_BSIZE 8192
 
 /*
-** Amount of extra space for ungetting characters.  This is for
+** Amount of extra space for ungetting characters.	This is for
 ** the in_ungetc() function in ppr_infile.c.
 */
 #define IN_UNGETC_SIZE 10
@@ -68,61 +68,61 @@
 /*
 ** Types of warnings
 */
-#define WARNING_PEEVE 0                 /* PPr fixed it but was annoyed */
-#define WARNING_SEVERE 1                /* could mean something will happen */
-#define WARNING_ALMOST_FATAL 2          /* internal table overflow, etc. */
-#define WARNING_NONE 10000              /* higher than anything */
+#define WARNING_PEEVE 0					/* PPr fixed it but was annoyed */
+#define WARNING_SEVERE 1				/* could mean something will happen */
+#define WARNING_ALMOST_FATAL 2			/* internal table overflow, etc. */
+#define WARNING_NONE 10000				/* higher than anything */
 
 /*
 ** Values for current duplex.
 */
-#define DUPLEX_NONE 0			/* not duplex, simplex */
-#define DUPLEX_SIMPLEX_TUMBLE 1		/* simplex variant */
-#define DUPLEX_DUPLEX_NOTUMBLE 2	/* normal duplex */
-#define DUPLEX_DUPLEX_TUMBLE 3		/* duplex(tumble) */
+#define DUPLEX_NONE 0					/* not duplex, simplex */
+#define DUPLEX_SIMPLEX_TUMBLE 1			/* simplex variant */
+#define DUPLEX_DUPLEX_NOTUMBLE 2		/* normal duplex */
+#define DUPLEX_DUPLEX_TUMBLE 3			/* duplex(tumble) */
 
 /*
 ** Types of references to resources.
 ** For multiple reference types, these are ORed together.
 */
-#define REREF_NEEDED 1              /* %%DocumentNeededResources: */
-#define REREF_SUPPLIED 2            /* %%DocumentSuppliedResources: */
-#define REREF_INCLUDE 4             /* %%IncludeResource: */
-#define REREF_REALLY_SUPPLIED 8     /* %%BeginResource: */
-#define REREF_PAGE 16               /* %%PageResources: */
-#define REREF_UNCLEAR 32            /* %%DocumentFonts:, etc. */
-#define REREF_REMOVED 64            /* if resource stript out */
-#define REREF_FIXINCLUDE 128        /* missing %%IncludeResource: */
+#define REREF_NEEDED 1				/* %%DocumentNeededResources: */
+#define REREF_SUPPLIED 2			/* %%DocumentSuppliedResources: */
+#define REREF_INCLUDE 4				/* %%IncludeResource: */
+#define REREF_REALLY_SUPPLIED 8		/* %%BeginResource: */
+#define REREF_PAGE 16				/* %%PageResources: */
+#define REREF_UNCLEAR 32			/* %%DocumentFonts:, etc. */
+#define REREF_REMOVED 64			/* if resource stript out */
+#define REREF_FIXINCLUDE 128		/* missing %%IncludeResource: */
 
 /* structure to describe one resource
    we will have an array of these */
 struct Resource
-    {
-    char *R_Type;                   /* resource type */
-    char *R_Name;                   /* resource name */
-    double R_Version;               /* incompatiblity version number */
-    int R_Revision;                 /* upward compatible version number */
-    } ;
+	{
+	char *R_Type;					/* resource type */
+	char *R_Name;					/* resource name */
+	double R_Version;				/* incompatiblity version number */
+	int R_Revision;					/* upward compatible version number */
+	} ;
 
 /* types of references to media */
-#define MREF_DOC 1                  /* need for document */
-#define MREF_PAGE 2                 /* if for this page */
+#define MREF_DOC 1					/* need for document */
+#define MREF_PAGE 2					/* if for this page */
 
 /* types of references to requirments */
-#define REQ_DOC 1                   /* needed for document */
-#define REQ_PAGE 2                  /* needed for page */
-#define REQ_DELETED 4               /* if -F switch removes */
+#define REQ_DOC 1					/* needed for document */
+#define REQ_PAGE 2					/* needed for page */
+#define REQ_DELETED 4				/* if -F switch removes */
 
 /* structure of a requirement */
 /* --- no structure, it is just a string --- */
 
 /* structure of a thing, any of Resource, Media, or Requirement */
 struct Thing
-    {
-    int th_type;		/* type of this thing */
-    unsigned int R_Flags;	/* types of reference */
-    void *th_ptr;		/* pointer to this thing */
-    } ;
+	{
+	int th_type;				/* type of this thing */
+	unsigned int R_Flags;		/* types of reference */
+	void *th_ptr;				/* pointer to this thing */
+	} ;
 
 /* possible Thing types */
 #define TH_RESOURCE 0
@@ -130,10 +130,10 @@ struct Thing
 #define TH_REQUIREMENT 2
 
 /* ppr respond options (-e switch) */
-#define PPR_RESPOND_BY_NONE 0		/* respond() does nothing */
-#define PPR_RESPOND_BY_STDERR 1		/* respond() writes to stderr */
-#define PPR_RESPOND_BY_RESPONDER 2	/* respond() exec()s responder */
-#define PPR_RESPOND_BY_BOTH 3		/* respond() does both */
+#define PPR_RESPOND_BY_NONE 0			/* respond() does nothing */
+#define PPR_RESPOND_BY_STDERR 1			/* respond() writes to stderr */
+#define PPR_RESPOND_BY_RESPONDER 2		/* respond() exec()s responder */
+#define PPR_RESPOND_BY_BOTH 3			/* respond() does both */
 
 /* Possible --cache-store settings: */
 enum CACHE_STORE { CACHE_STORE_NONE, CACHE_STORE_UNAVAILABLE, CACHE_STORE_UNCACHED };
@@ -146,41 +146,41 @@ enum CACHE_STORE { CACHE_STORE_NONE, CACHE_STORE_UNAVAILABLE, CACHE_STORE_UNCACH
 extern char *starting_directory;
 
 /* output files */
-extern FILE *comments;		/* file for header & trailer comments */
-extern FILE *page_comments;	/* file for page level comments */
-extern FILE *text;		/* file for remainder of text */
-extern FILE *cache_file;	/* file to copy resource into */
+extern FILE *comments;			/* file for header & trailer comments */
+extern FILE *page_comments;		/* file for page level comments */
+extern FILE *text;				/* file for remainder of text */
+extern FILE *cache_file;		/* file to copy resource into */
 
-extern uid_t user_uid;		/* uid/gid of person submitting the job */
+extern uid_t user_uid;			/* uid/gid of person submitting the job */
 extern gid_t user_gid;
-extern uid_t ppr_uid;		/* uid/gid of spooler owner */
+extern uid_t ppr_uid;			/* uid/gid of spooler owner */
 extern gid_t ppr_gid;
 
-extern int read_copies;			/* TRUE if should auto copies */
-extern int read_duplex;			/* TRUE for auto duplex */
-extern int read_signature;		/* TRUE for auto signature */
-extern int read_nup;			/* TRUE for auto N-Up */
-extern int read_For;			/* TRUE to heed "%%For:" */
+extern int read_copies;					/* TRUE if should auto copies */
+extern int read_duplex;					/* TRUE for auto duplex */
+extern int read_signature;				/* TRUE for auto signature */
+extern int read_nup;					/* TRUE for auto N-Up */
+extern int read_For;					/* TRUE to heed "%%For:" */
 extern int read_Title;
-extern int read_ProofMode;		/* TRUE to heed "%%ProofMode:" */
+extern int read_ProofMode;				/* TRUE to heed "%%ProofMode:" */
 extern int read_Routing;
 
 extern int current_duplex;
 extern gu_boolean current_duplex_enforce;
 
-extern struct QFileEntry qentry;	/* where we build our queue entry */
-extern int pagenumber;			/* count of %%Page: comments */
+extern struct QFileEntry qentry;		/* where we build our queue entry */
+extern int pagenumber;					/* count of %%Page: comments */
 
 /* Command line option settings. */
-extern const char *features[MAX_FEATURES];		/* -F switch features to add */
-extern int features_count;				/* number asked for (number of -F switches?) */
-extern int ppr_respond_by;		/* should ppr use responder or stderr or both? */
-extern int option_nofilter_hexdump;	/* if TRUE, always use hexdump when no filter */
-extern char *option_filter_options;	/* Options from -o switch */
+extern const char *features[MAX_FEATURES];				/* -F switch features to add */
+extern int features_count;								/* number asked for (number of -F switches?) */
+extern int ppr_respond_by;				/* should ppr use responder or stderr or both? */
+extern int option_nofilter_hexdump;		/* if TRUE, always use hexdump when no filter */
+extern char *option_filter_options;		/* Options from -o switch */
 extern unsigned int option_gab_mask;
 extern int option_editps_level;
 enum MARKUP {MARKUP_FORMAT, MARKUP_LP, MARKUP_PR, MARKUP_FALLBACK_LP, MARKUP_FALLBACK_PR};
-extern enum MARKUP option_markup;	/* handling of markup languages */
+extern enum MARKUP option_markup;		/* handling of markup languages */
 
 /* Things */
 extern struct Thing *things;
@@ -188,10 +188,10 @@ extern int thing_count;
 
 /* lines */
 extern char line[MAX_LINE+2];	/* current input line */
-extern int line_len;		/* length of line */
-extern gu_boolean line_overflow;	/* true or false */
-extern char *tokens[];		/* array of tokens broken out of line[] */
-extern int cont;                /* is this comment a continuation? */
+extern int line_len;			/* length of line */
+extern gu_boolean line_overflow;		/* true or false */
+extern char *tokens[];			/* array of tokens broken out of line[] */
+extern int cont;				/* is this comment a continuation? */
 
 extern char *AuthCode;
 extern struct Media guess_media;

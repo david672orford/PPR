@@ -43,14 +43,14 @@ PACKAGE_LISTS="/var/lib/rpm/packages.rpm /var/sadm/install/contents /var/lib/dpk
 # generated, rebuild the indexes now.
 #
 for i in $PACKAGE_LISTS
-    do
-    if [ -f $i ]
+	do
+	if [ -f $i ]
 	then
 	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
-	    fi
+		then
+		$HOMEDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
+		fi
 	fi
-    done
+	done
 
 exit 0

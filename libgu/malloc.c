@@ -29,15 +29,15 @@
 */
 
 /*! \file
-    \brief memory allocator for PPR programs
+	\brief memory allocator for PPR programs
 
 This file contains the routines which PPR uses to allocate and free memory.
 
 The normal Unix memory allocation routines return a NULL pointer if they
-fail to allocate the requested memory.  Since it is very rare that a Unix
+fail to allocate the requested memory.	Since it is very rare that a Unix
 system will refuse to allocate any reasonable amount of memory, programers
 are often emboldened to ignore the possiblity of malloc() and friends
-returning NULL.  We don't ignore such a possibility, but since a memory
+returning NULL.	 We don't ignore such a possibility, but since a memory
 allocation failure is highly unlikely, PPR programs treats it as a fatal
 error, but, rather than test the return value of malloc() after each call,
 the calls are encapsulated in special functions which test the return value
@@ -72,22 +72,22 @@ int gu_alloc_blocks = 0;
 
 The function gu_alloc() takes two arguments.  The first is the number of items
 to allocate, the second is the size of each in bytes.  This function will return
-a void pointer to the allocated memory.  The memory is not initialized.
+a void pointer to the allocated memory.	 The memory is not initialized.
 
 */
 void *gu_alloc(size_t number, size_t size)
-    {
-    void *rval;
+	{
+	void *rval;
 
-    DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
+	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
 
-    if((rval = malloc(size*number)) == (void*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_alloc", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	if((rval = malloc(size*number)) == (void*)NULL)
+		libppr_throw(EXCEPTION_STARVED, "gu_alloc", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-    gu_alloc_blocks++;
+	gu_alloc_blocks++;
 
-    return rval;
-    } /* end of gu_alloc() */
+	return rval;
+	} /* end of gu_alloc() */
 
 /** duplicate a string
 
@@ -96,84 +96,84 @@ and returns a pointer to a new copy of the string.
 
 */
 char *gu_strdup(const char *string)
-    {
-    char *rval;
+	{
+	char *rval;
 
-    DODEBUG(("gu_strdup(\"%s\")", string));
+	DODEBUG(("gu_strdup(\"%s\")", string));
 
-    if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
+		libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-    gu_alloc_blocks++;
+	gu_alloc_blocks++;
 
-    strcpy(rval, string);
+	strcpy(rval, string);
 
-    return rval;
-    } /* end of gu_strdup() */
+	return rval;
+	} /* end of gu_strdup() */
 
 /** duplicate the initial segment of a string
 
 The function gu_strndup() takes a string pointer and a maximum length as its
-arguments.  It returns a pointer to a new string containing a copy of the
+arguments.	It returns a pointer to a new string containing a copy of the
 string truncated to the maximum length.
 
 */
 char *gu_strndup(const char *string, size_t len)
-    {
-    char *rval;
+	{
+	char *rval;
 
-    DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
+	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
 
-    if((rval = (char*)malloc(len+1)) == (char*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_strndup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	if((rval = (char*)malloc(len+1)) == (char*)NULL)
+		libppr_throw(EXCEPTION_STARVED, "gu_strndup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
-    gu_alloc_blocks++;
+	gu_alloc_blocks++;
 
-    strncpy(rval, string, len);
-    rval[len] = '\0';
+	strncpy(rval, string, len);
+	rval[len] = '\0';
 
-    return rval;
-    } /* end of gu_strndup() */
+	return rval;
+	} /* end of gu_strndup() */
 
 /** copy a string into a preexisting block, resizing if necessary
 
 */
 char *gu_restrdup(char *ptr, size_t *number, const char *string)
-    {
-    size_t len = strlen(string);
+	{
+	size_t len = strlen(string);
 
-    DODEBUG(("gu_restrdup(ptr=%p, number=%d, string=\"%s\")", ptr, number, string));
+	DODEBUG(("gu_restrdup(ptr=%p, number=%d, string=\"%s\")", ptr, number, string));
 
-    if(!ptr || *number <= len)		/* must be at least one greater */
-    	{
-	*number = (len + 1);
-	if((ptr = (char*)realloc(ptr, *number)) == (char*)NULL)
-	    libppr_throw(EXCEPTION_STARVED, "gu_restrdup", "realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
-    	}
-    strcpy(ptr, string);
-    return ptr;
-    }
+	if(!ptr || *number <= len)			/* must be at least one greater */
+		{
+		*number = (len + 1);
+		if((ptr = (char*)realloc(ptr, *number)) == (char*)NULL)
+			libppr_throw(EXCEPTION_STARVED, "gu_restrdup", "realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		}
+	strcpy(ptr, string);
+	return ptr;
+	}
 
 /** change the size of an already allocated array
 
 The function gu_realloc() changes the size of a memory block.  The
 first argument is a pointer to the old block, the second is the desired new
-number of members, the third argument is the size of each member in bytes.  This
+number of members, the third argument is the size of each member in bytes.	This
 function returns a pointer to a resized block, possibly at a different
 location.
 
 */
 void *gu_realloc(void *ptr, size_t number, size_t size)
-    {
-    void *rval;
+	{
+	void *rval;
 
-    DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
+	DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
 
-    if((rval = realloc(ptr, number*size)) == (void*)NULL)
-	libppr_throw(EXCEPTION_STARVED, "gu_realloc", "realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
+	if((rval = realloc(ptr, number*size)) == (void*)NULL)
+		libppr_throw(EXCEPTION_STARVED, "gu_realloc", "realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
 
-    return rval;
-    } /* end of ppr_realloc() */
+	return rval;
+	} /* end of ppr_realloc() */
 
 /** free memory
 
@@ -182,16 +182,16 @@ functions.
 
 */
 void gu_free(void *ptr)
-    {
-    DODEBUG(("gu_free(%p)", ptr));
+	{
+	DODEBUG(("gu_free(%p)", ptr));
 
-    if(!ptr)
-    	libppr_throw(EXCEPTION_BADUSAGE, "gu_free", "attempt to free NULL pointer");
+	if(!ptr)
+		libppr_throw(EXCEPTION_BADUSAGE, "gu_free", "attempt to free NULL pointer");
 
-    free(ptr);
+	free(ptr);
 
-    gu_alloc_blocks--;
-    } /* end of gu_free() */
+	gu_alloc_blocks--;
+	} /* end of gu_free() */
 
 /* end of file */
 

@@ -39,41 +39,41 @@
 ** especially daemons.
 */
 void set_ppr_env()
-    {
-    #ifdef HAVE_PUTENV
-    putenv("PPR_VERSION=" SHORT_VERSION);
-    putenv("PATH=" SAFE_PATH);
-    putenv("IFS= \t\n");
-    putenv("SHELL=/bin/sh");
-    putenv("HOME=" HOMEDIR);
-    putenv("XAUTHORITY=" RUNDIR "/Xauthority");
-    #endif
-    } /* end of set_ppr_env() */
+	{
+	#ifdef HAVE_PUTENV
+	putenv("PPR_VERSION=" SHORT_VERSION);
+	putenv("PATH=" SAFE_PATH);
+	putenv("IFS= \t\n");
+	putenv("SHELL=/bin/sh");
+	putenv("HOME=" HOMEDIR);
+	putenv("XAUTHORITY=" RUNDIR "/Xauthority");
+	#endif
+	} /* end of set_ppr_env() */
 
 /*
 ** Remove unnecessary of misleading variables from the environment.
 */
 void prune_env(void)
-    {
-    #ifdef HAVE_UNSETENV
-    unsetenv("TERM");
-    unsetenv("TERMINFO");
-    unsetenv("USER");
-    unsetenv("LOGNAME");
-    unsetenv("MAIL");
-    unsetenv("MANPATH");
-    unsetenv("DISPLAY");
-    unsetenv("WINDOWID");
-    #elif defined(HAVE_PUTENV)
-    putenv("TERM=");
-    putenv("TERMINFO=");
-    putenv("USER=");
-    putenv("LOGNAME=");
-    putenv("MAIL=");
-    putenv("MANPATH=");
-    putenv("DISPLAY=");
-    putenv("WINDOWID=");
-    #endif
-    } /* end of prune_env() */
+	{
+	#ifdef HAVE_UNSETENV
+	unsetenv("TERM");
+	unsetenv("TERMINFO");
+	unsetenv("USER");
+	unsetenv("LOGNAME");
+	unsetenv("MAIL");
+	unsetenv("MANPATH");
+	unsetenv("DISPLAY");
+	unsetenv("WINDOWID");
+	#elif defined(HAVE_PUTENV)
+	putenv("TERM=");
+	putenv("TERMINFO=");
+	putenv("USER=");
+	putenv("LOGNAME=");
+	putenv("MAIL=");
+	putenv("MANPATH=");
+	putenv("DISPLAY=");
+	putenv("WINDOWID=");
+	#endif
+	} /* end of prune_env() */
 
 /* end of file */

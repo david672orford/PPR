@@ -40,10 +40,10 @@ DESTDIR="$1"
 shift
 
 if [ "$DESTDIR" = "" ]
-    then
-    echo "Usage: installdata.sh <destdir> [<file1> ...]"
-    exit 1
-    fi
+	then
+	echo "Usage: installdata.sh <destdir> [<file1> ...]"
+	exit 1
+	fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   then
@@ -52,18 +52,18 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   fi
 
 if [ ! -d "$RPM_BUILD_ROOT$DESTDIR" ]
-    then
-    echo "The destination directory \"$RPM_BUILD_ROOT$DESTDIR\" doesn't exist."
-    exit 1
-    fi
+	then
+	echo "The destination directory \"$RPM_BUILD_ROOT$DESTDIR\" doesn't exist."
+	exit 1
+	fi
 
 while [ "$1" != "" ]
-    do
-    name=`basename "$1"`
-    if [ "$name" != "CVS" ]
+	do
+	name=`basename "$1"`
+	if [ "$name" != "CVS" ]
 	then
 	dest="$DESTDIR/$name"
-	echo "    \"$1\" --> \"$RPM_BUILD_ROOT$dest\""
+	echo "	  \"$1\" --> \"$RPM_BUILD_ROOT$dest\""
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
 	cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
 	chown $USER_PPR "$RPM_BUILD_ROOT$dest"
@@ -71,7 +71,7 @@ while [ "$1" != "" ]
 	chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1
 	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
-    shift
-    done
+	shift
+	done
 
 exit 0

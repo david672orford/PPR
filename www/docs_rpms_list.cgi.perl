@@ -43,37 +43,37 @@ my %groups = ();
 
 open(RPM, "rpm -qa --queryformat \"%{GROUP}\\t%{NAME}-%{VERSION}\\t%{SUMMARY}\\n\" |") || die "open() failed, $!";
 while(<RPM>)
-    {
-    my($group, $package, $summary) = split(/\t/);
-    if(!exists $groups{$group})
-    	{
-    	$groups{$group} = [];
-    	}
-    push(@{$groups{$group}}, [$package, $summary]);
-    }
+	{
+	my($group, $package, $summary) = split(/\t/);
+	if(!exists $groups{$group})
+		{
+		$groups{$group} = [];
+		}
+	push(@{$groups{$group}}, [$package, $summary]);
+	}
 close(RPM) || die "close() failed, \$! = $!, \$? = $?";
 
 foreach my $group (sort(keys %groups))
-    {
-    my $gp = $groups{$group};
-    print "<h2>", html($group), "</h2>\n";
-    print "<table border=1>\n";
-    foreach $pp (@{$gp})
 	{
-	my($package, $description) = @{$pp};
-	print "<tr>\n";
-	print " <td><a href=\"docs_rpm.cgi?", form_urlencoded("pkg", $package), "\">", html($package), "</td>\n";
-	print " <td>", html($description), "</td>\n";
-	print "</tr>\n";
+	my $gp = $groups{$group};
+	print "<h2>", html($group), "</h2>\n";
+	print "<table border=1>\n";
+	foreach $pp (@{$gp})
+		{
+		my($package, $description) = @{$pp};
+		print "<tr>\n";
+		print " <td><a href=\"docs_rpm.cgi?", form_urlencoded("pkg", $package), "\">", html($package), "</td>\n";
+		print " <td>", html($description), "</td>\n";
+		print "</tr>\n";
+		}
+	print "</table>\n";
 	}
-    print "</table>\n";
-    }
 
 }; if($@)
-    {
-    my $error = $@;
-    print "<p>", html($error), "\n";
-    }
+	{
+	my $error = $@;
+	print "<p>", html($error), "\n";
+	}
 
 print <<"EndTail";
 </body>

@@ -33,41 +33,41 @@
 ** This will be removed soon since the gs* interfaces are obsolete.
 */
 void int_exit(int exitvalue)
-    {
-    char *p;
-
-    if((p = getenv("PPR_GS_INTERFACE_PID")))
 	{
-	long int patron = atol(p);
+	char *p;
 
-	switch(exitvalue)
-	    {
-	    case EXIT_PRINTED:
-	    	break;
-	    case EXIT_PRNERR:
-	    case EXIT_PRNERR_NOT_RESPONDING:
-	    case EXIT_PRNERR_NO_SUCH_ADDRESS:
-	    default:
-		kill((pid_t)patron, SIGUSR1);
-		break;
-	    case EXIT_PRNERR_NORETRY:
-	    case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
-	    case EXIT_PRNERR_NORETRY_BAD_SETTINGS:
-		kill((pid_t)patron, SIGUSR2);
-		break;
-	    case EXIT_ENGAGED:
-	    	kill((pid_t)patron, SIGTTIN);
-	    	break;
-	    }
+	if((p = getenv("PPR_GS_INTERFACE_PID")))
+		{
+		long int patron = atol(p);
 
-	/* Allow time for the signal to be caught before
-	   Ghostscript and the interface script are
-	   distracted by our exit. */
-	sleep(1);
-	}
+		switch(exitvalue)
+			{
+			case EXIT_PRINTED:
+				break;
+			case EXIT_PRNERR:
+			case EXIT_PRNERR_NOT_RESPONDING:
+			case EXIT_PRNERR_NO_SUCH_ADDRESS:
+			default:
+				kill((pid_t)patron, SIGUSR1);
+				break;
+			case EXIT_PRNERR_NORETRY:
+			case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
+			case EXIT_PRNERR_NORETRY_BAD_SETTINGS:
+				kill((pid_t)patron, SIGUSR2);
+				break;
+			case EXIT_ENGAGED:
+				kill((pid_t)patron, SIGTTIN);
+				break;
+			}
 
-    exit(exitvalue);
-    } /* end of do_exit() */
+		/* Allow time for the signal to be caught before
+		   Ghostscript and the interface script are
+		   distracted by our exit. */
+		sleep(1);
+		}
+
+	exit(exitvalue);
+	} /* end of do_exit() */
 
 /* end of int_exit.c */
 

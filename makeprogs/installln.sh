@@ -30,9 +30,9 @@
 #
 
 #
-# This script is used to install links to programs.  If the link is already
+# This script is used to install links to programs.	 If the link is already
 # ok, we don't remove it.  This allows us to run to completion even if we
-# wouldn't be able to modify the link.  This allows us to do make install
+# wouldn't be able to modify the link.	This allows us to do make install
 # as the ppr user if it has previously been done as root.
 #
 
@@ -63,17 +63,17 @@ if [ ! -f "$RPM_BUILD_ROOT$source" ]
   exit 1
   fi
 
-echo "    \"$source\" --> \"$target\" (link)"
+echo "	  \"$source\" --> \"$target\" (link)"
 if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
-    then
-    rm -f "$RPM_BUILD_ROOT$target"
-    ln -s "$RPM_BUILD_ROOT$source" "$RPM_BUILD_ROOT$target"
-    if [ $? -ne 0 ]
+	then
+	rm -f "$RPM_BUILD_ROOT$target"
+	ln -s "$RPM_BUILD_ROOT$source" "$RPM_BUILD_ROOT$target"
+	if [ $? -ne 0 ]
 	then
 	echo "$0: can't create \"$target\" because not running as root."
 	exit 1
 	fi
-    fi
+	fi
 chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 

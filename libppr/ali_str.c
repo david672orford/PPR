@@ -33,83 +33,83 @@
 ** Convert a pap_errno value to a string.
 */
 const char *pap_strerror(int err)
-    {
-    switch(err)
-    	{
-	case 0:
-	    return "No error";
-	case PAPBADPARM:
-	    return "Bad parameter";
-	case PAPSYSERR:
-	    return "System error";
-	case PAPTOOMANY:
-	    return "Too many sessions";
-	case PAPBUSY:
-	    return "PAP is busy";
-	case PAPTIMEOUT:
-	    return "Timeout";
-	case PAPHANGUP:
-	    return "Hangup";
-	case PAPSIZERR:
-	    return "Size error";
-	case PAPBLOCKED:
-	    return "Writes are blocked";
-	case PAPDATARECD:
-	    return "Incoming data";
-	default:
-	    return "Unknown";
-    	}
-    } /* end of pap_strerror() */
+	{
+	switch(err)
+		{
+		case 0:
+			return "No error";
+		case PAPBADPARM:
+			return "Bad parameter";
+		case PAPSYSERR:
+			return "System error";
+		case PAPTOOMANY:
+			return "Too many sessions";
+		case PAPBUSY:
+			return "PAP is busy";
+		case PAPTIMEOUT:
+			return "Timeout";
+		case PAPHANGUP:
+			return "Hangup";
+		case PAPSIZERR:
+			return "Size error";
+		case PAPBLOCKED:
+			return "Writes are blocked";
+		case PAPDATARECD:
+			return "Incoming data";
+		default:
+			return "Unknown";
+		}
+	} /* end of pap_strerror() */
 
 /*
 ** Convert an nbp_errno value to a string.
 */
 const char *nbp_strerror(int err)
-    {
-    switch(err)
-    	{
-	case 0:
-	    return "No error";
-	case NBPSYSERR:
-	    return "System error";
-	case NBPBADNAME:
-	    return "Name is invalid";
-	case NBPBADPARM:
-	    return "Bad parameter";
-	case NBPNORESOURCE:
-	    return "Out of resources";
-	case NBPTABLEFULL:
-	    return "Name table full";
-	case NBPDUPNAME:
-	    return "Duplicate name";
-	case NBPNONAME:
-	    return "Name no longer registered";
-	default:
-	    return "Unknown";
-    	}
-    } /* end of nbp_strerror() */
+	{
+	switch(err)
+		{
+		case 0:
+			return "No error";
+		case NBPSYSERR:
+			return "System error";
+		case NBPBADNAME:
+			return "Name is invalid";
+		case NBPBADPARM:
+			return "Bad parameter";
+		case NBPNORESOURCE:
+			return "Out of resources";
+		case NBPTABLEFULL:
+			return "Name table full";
+		case NBPDUPNAME:
+			return "Duplicate name";
+		case NBPNONAME:
+			return "Name no longer registered";
+		default:
+			return "Unknown";
+		}
+	} /* end of nbp_strerror() */
 
 /*
 ** Convert a pap_look() return value to a descriptive string.
 */
 const char *pap_look_string(int n)
-    {
-    switch(n)
-    	{
-	case 0:
-	    return "nothing";
-	case PAP_CONNECT_RECVD:
-	    return "PAP_CONNECT_RECVD";
-	case PAP_DATA_RECVD:
-	    return "PAP_DATA_RECVD";
-	case PAP_WRITE_ENABLED:
-	    return "PAP_WRITE_ENABLED";
-	case PAP_DISCONNECT:
-	    return "PAP_DISCONNECT";
-	default:
-	    return "<invalid>";
-    	}
-    } /* end of pap_look_string() */
+	{
+	switch(n)
+		{
+		case 0:
+			return "nothing";
+		case PAP_CONNECT_RECVD:
+			return "PAP_CONNECT_RECVD";
+		case PAP_DATA_RECVD:
+			return "PAP_DATA_RECVD";
+		case PAP_WRITE_ENABLED:
+			return "PAP_WRITE_ENABLED";
+		case PAP_DISCONNECT:
+			return "PAP_DISCONNECT";
+		default:
+			return "<invalid>";
+		}
+	} /* end of pap_look_string() */
 
 #endif
 

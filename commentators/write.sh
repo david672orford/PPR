@@ -36,8 +36,8 @@ for opt in $options
    do
    case $opt in
 	severity=* )
-	    severity_threshold=`echo $opt | cut -d'=' -f2`
-	    ;;
+		severity_threshold=`echo $opt | cut -d'=' -f2`
+		;;
    esac
    done
 
@@ -45,7 +45,7 @@ for opt in $options
 if [ $severity -lt $severity_threshold ]
    then
    echo "write commentator: not important enough to send"
-   echo "    $printer $code $cooked $raw1 $raw2"
+   echo "	 $printer $code $cooked $raw1 $raw2"
    exit 0
    fi
 
@@ -61,8 +61,8 @@ EndOfMessage
 
 # If that didn't work, try the mail commentator.
 if [ $? -ne 0 ]
-    then
-    exec commentator/mail "$@"
-    fi
+	then
+	exec commentator/mail "$@"
+	fi
 
 exit 0

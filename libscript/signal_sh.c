@@ -21,21 +21,21 @@
 ** shell scripts.
 */
 int main(int argc, char *argv[])
-    {
-    printf(	"#\n"
-		"# This file was automatically generated.\n"
-    		"#\n");
-    printf("SIGHUP=%d\n", SIGHUP);
-    printf("SIGINT=%d\n", SIGINT);
-    printf("SIGQUIT=%d\n", SIGQUIT);
-    printf("SIGKILL=%d\n", SIGKILL);
-    printf("SIGTERM=%d\n", SIGTERM);
-    printf("SIGUSR1=%d\n", SIGUSR1);
-    printf("SIGUSR2=%d\n", SIGUSR2);
-    printf("SIGTTIN=%d\n", SIGTTIN);
-    printf("SIGTTOU=%d\n", SIGTTOU);
-    return 0;
-    }
+	{
+	printf(		"#\n"
+				"# This file was automatically generated.\n"
+				"#\n");
+	printf("SIGHUP=%d\n", SIGHUP);
+	printf("SIGINT=%d\n", SIGINT);
+	printf("SIGQUIT=%d\n", SIGQUIT);
+	printf("SIGKILL=%d\n", SIGKILL);
+	printf("SIGTERM=%d\n", SIGTERM);
+	printf("SIGUSR1=%d\n", SIGUSR1);
+	printf("SIGUSR2=%d\n", SIGUSR2);
+	printf("SIGTTIN=%d\n", SIGTTIN);
+	printf("SIGTTOU=%d\n", SIGTTOU);
+	return 0;
+	}
 
 /* end of file */
 

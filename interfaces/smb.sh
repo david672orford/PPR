@@ -20,11 +20,11 @@
 # (Microsoft LAN Manager, Windows) print queues.
 #
 # OPTIONS:
-#   smbuser=
-#   smbpassword=
+#	smbuser=
+#	smbpassword=
 #
 # EXAMPLE
-#   smbprint pprprinter '\\server\lp1' "smbuser=pprxx smbpassword=xx"
+#	smbprint pprprinter '\\server\lp1' "smbuser=pprxx smbpassword=xx"
 #
 #########################################################################
 
@@ -64,13 +64,13 @@ SMBPASSWORD=""
 for opt in $OPTIONS
   do
   case "$opt" in
-    smbuser=* )
+	smbuser=* )
 	SMBUSER="`echo "$opt" | cut -d'=' -s -f2`"
 	;;
-    smbpassword=* )
+	smbpassword=* )
 	SMBPASSWORD="`echo "$opt" | cut -d'=' -s -f2`"
 	;;
-    * )
+	* )
 	lib/alert "$PRINTER" TRUE "Unrecognized interface option: $opt"
 	int_exit $EXIT_PRNERR_NORETRY
 	;;
@@ -82,12 +82,12 @@ $SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER"
 retval=$?
 case $retval in
   0 )
-    int_exit $EXIT_PRINTED
-    ;;
+	int_exit $EXIT_PRINTED
+	;;
   * )
-    lib/alert "$PRINTER" TRUE "Smbclient failed, exit code: $retval"
-    int_exit $EXIT_PRNERR
-    ;;
+	lib/alert "$PRINTER" TRUE "Smbclient failed, exit code: $retval"
+	int_exit $EXIT_PRNERR
+	;;
 esac
 
 # end of file

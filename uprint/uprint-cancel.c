@@ -50,51 +50,51 @@ extern int optind;
 static const char *const myname = "uprint-cancel";
 
 void uprint_error_callback(const char *format, ...)
-    {
-    va_list va;
-    fprintf(stderr, "%s: ", myname);
-    va_start(va, format);
-    vfprintf(stderr, format, va);
-    fputc('\n', stderr);
-    va_end(va);
-    } /* end of uprint_error_callback() */
+	{
+	va_list va;
+	fprintf(stderr, "%s: ", myname);
+	va_start(va, format);
+	vfprintf(stderr, format, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of uprint_error_callback() */
 
 static const char *option_list = "";
 
 int main(int argc, char *argv[])
-    {
-    int c;
-
-    /* Initialize internation messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
-
-    /* Trap loops: */
-    if(uprint_loop_check(myname) == -1)
-    	return 1;
-
-    execv(uprint_path_cancel(), argv);
-    fprintf(stderr, "Can't exec \"%s\", errno=%d (%s)\n", uprint_path_cancel(), errno, gu_strerror(errno));
-    return 1;
-
-    /*
-    ** Parse the switches.  Mostly, we will call uprint
-    ** member functions.
-    */
-    while((c = getopt(argc, argv, option_list)) != -1)
 	{
-	switch(c)
-	    {
-	    default:
-		fprintf(stderr, _("%s: Syntax error, unrecognized switch: -%c\n"), myname, c);
-		return 1;
-	    }
-	}
+	int c;
 
-    return 0;
-    } /* end of main() */
+	/* Initialize internation messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* Trap loops: */
+	if(uprint_loop_check(myname) == -1)
+		return 1;
+
+	execv(uprint_path_cancel(), argv);
+	fprintf(stderr, "Can't exec \"%s\", errno=%d (%s)\n", uprint_path_cancel(), errno, gu_strerror(errno));
+	return 1;
+
+	/*
+	** Parse the switches.	Mostly, we will call uprint
+	** member functions.
+	*/
+	while((c = getopt(argc, argv, option_list)) != -1)
+		{
+		switch(c)
+			{
+			default:
+				fprintf(stderr, _("%s: Syntax error, unrecognized switch: -%c\n"), myname, c);
+				return 1;
+			}
+		}
+
+	return 0;
+	} /* end of main() */
 
 /* end of file */

@@ -29,19 +29,19 @@ my $title = H_("PPR Printer Commentary Selection");
 # Function which returns " selected" if this browser is likely
 # to support Microsoft's Active X.
 sub activex
-    {
-    if(defined $ENV{HTTP_USER_AGENT}
-		&& $ENV{HTTP_USER_AGENT} =~ /; MSIE (\d+\.\d+);/
-		&& $1 > 4.0
-	)
-    	{
-    	return " selected";
-    	}
-    else
 	{
-	return "";
+	if(defined $ENV{HTTP_USER_AGENT}
+				&& $ENV{HTTP_USER_AGENT} =~ /; MSIE (\d+\.\d+);/
+				&& $1 > 4.0
+		)
+		{
+		return " selected";
+		}
+	else
+		{
+		return "";
+		}
 	}
-    }
 
 # Give a future expiration date so that the browser will not reload
 # and destroy the form if we go back.  I need a better solution to
@@ -128,7 +128,7 @@ QUOTE10
 # List the printers with a checkbox next to each.
 eval {
 print "<p>", H_("To limit the commentary to certain printers, check one or\n"
-		. "more or the boxes below."), "\n";
+				. "more or the boxes below."), "\n";
 
 print <<"QUOTE30";
 <table border=2 cellpadding=5 cellspacing=0>
@@ -140,18 +140,18 @@ my $control = new PPR::PPOP("all");
 my %printers;
 my $row;
 foreach $row ($control->list_destinations_comments())
-    {
-    my($name, $type, $accepting, $protected, $comment) = @$row;
-    next if($type ne "printer");
-    $printers{$name} = $comment;
-    }
+	{
+	my($name, $type, $accepting, $protected, $comment) = @$row;
+	next if($type ne "printer");
+	$printers{$name} = $comment;
+	}
 
 my $name;
 foreach $name (sort(keys(%printers)))
-    {
-    print "<tr><td><input type=\"checkbox\" name=\"printer\" value=", html_value($name), "></td>";
-    print "<td>", html($name), "</td><td>", html($printers{$name}), "&nbsp;</td></tr>\n";
-    }
+	{
+	print "<tr><td><input type=\"checkbox\" name=\"printer\" value=", html_value($name), "></td>";
+	print "<td>", html($name), "</td><td>", html($printers{$name}), "&nbsp;</td></tr>\n";
+	}
 
 print <<"QUOTE40";
 </table>
@@ -162,10 +162,10 @@ QUOTE40
 # of the printers.
 #
 }; if($@)
-    {
-    my $message = html($@);
-    print "<p>$message</p>\n";
-    }
+	{
+	my $message = html($@);
+	print "<p>$message</p>\n";
+	}
 
 print <<"TAIL10";
 </form>

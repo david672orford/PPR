@@ -24,32 +24,32 @@
 #include "userdb.h"
 
 /*
-** Add a user to the database.  Return non-zero if
+** Add a user to the database.	Return non-zero if
 ** the operation fails for any reason.
 */
 enum USERDB_RESULT db_add_user(const char *username, struct userdb *user)
-    {
-    error("db_add_user(): user database support not compiled in");
-    return USER_ERROR;
-    } /* end of db_add_user() */
+	{
+	error("db_add_user(): user database support not compiled in");
+	return USER_ERROR;
+	} /* end of db_add_user() */
 
 /*
-** Delete a user from the database.  Return non-zero if
+** Delete a user from the database.	 Return non-zero if
 ** the operation fails for any reason.
 */
 enum USERDB_RESULT db_delete_user(const char *username)
-    {
-    error("db_delete_user(): user database support not compiled in");
-    return USER_ERROR;
-    } /* en dof db_delete_user() */
+	{
+	error("db_delete_user(): user database support not compiled in");
+	return USER_ERROR;
+	} /* en dof db_delete_user() */
 
 /*
 ** Change a user's authcode.
 */
 enum USERDB_RESULT db_new_authcode(const char *username, const char *newauthcode)
-    {
-    error("db_new_authcode(): user database support not compiled in");
-    return USER_ERROR;
-    } /* end of db_new_authcode() */
+	{
+	error("db_new_authcode(): user database support not compiled in");
+	return USER_ERROR;
+	} /* end of db_new_authcode() */
 
 /* end of file */

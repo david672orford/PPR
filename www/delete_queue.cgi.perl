@@ -21,11 +21,11 @@ require 'cgi_intl.pl';
 defined($PPAD_PATH) || die;
 
 if($ENV{REMOTE_USER} eq "")
-    {
-    require "cgi_auth.pl";
-    demand_authentication();
-    exit 0;
-    }
+	{
+	require "cgi_auth.pl";
+	demand_authentication();
+	exit 0;
+	}
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.
@@ -40,24 +40,24 @@ my $action = cgi_data_move('action', undef);
 # Second screen "No" or third screen "Close" are caught here.
 # Actually, we never get here if the JavaScript onclick handlers worked.
 if(defined($action) && ($action eq 'No' || $action eq 'Close'))
-    {
-    require 'cgi_back.pl';
-    cgi_back_doit();
-    exit 0;
-    }
+	{
+	require 'cgi_back.pl';
+	cgi_back_doit();
+	exit 0;
+	}
 
 my $type = $data{type};
 my $name = $data{name};
 
 my $title;
 if($type eq "printer")
-    { $title = sprintf(_("Delete Printer \"%s\""), $name) }
+	{ $title = sprintf(_("Delete Printer \"%s\""), $name) }
 elsif($type eq "group")
-    { $title = sprintf(_("Delete Group \"%s\""), $name) }
+	{ $title = sprintf(_("Delete Group \"%s\""), $name) }
 elsif($type eq "alias")
-    { $title = sprintf(_("Delete Alias \"%s\""), $name) }
+	{ $title = sprintf(_("Delete Alias \"%s\""), $name) }
 else
-    { $title = sprintf("Delete the %s \"%s\"", $type, $name) }
+	{ $title = sprintf("Delete the %s \"%s\"", $type, $name) }
 $title = html($title);
 
 print <<"DelHead";
@@ -81,13 +81,13 @@ if(!defined($action))
 print "<p>\n";
 
 if($type eq "printer")
-    { print html(sprintf(_("Delete the printer \"%s\"?"), $name)) }
+	{ print html(sprintf(_("Delete the printer \"%s\"?"), $name)) }
 elsif($type eq "group")
-    { print html(sprintf(_("Delete the group \"%s\"?"), $name)) }
+	{ print html(sprintf(_("Delete the group \"%s\"?"), $name)) }
 elsif($type eq "alias")
-    { print html(sprintf(_("Delete the alias \"%s\"?"), $name)) }
+	{ print html(sprintf(_("Delete the alias \"%s\"?"), $name)) }
 else
-    { print html(sprintf("Delete the %s \"%s\"?", $type, $name)) }
+	{ print html(sprintf("Delete the %s \"%s\"?", $type, $name)) }
 
 isubmit("action", "Yes", N_("Yes"));
 isubmit("action", "No", N_("No"), 'onclick="window.close()"');
@@ -108,30 +108,30 @@ my $ret;
 
 print "<pre>\n";
 if($type eq "printer")
-    { $ret = run(@PPAD, "delete", $name) }
+	{ $ret = run(@PPAD, "delete", $name) }
 elsif($type eq "group")
-    { $ret = run(@PPAD, "group", 'delete', $name) }
+	{ $ret = run(@PPAD, "group", 'delete', $name) }
 elsif($type eq "alias")
-    { $ret = run(@PPAD, "alias", "delete", $name) }
+	{ $ret = run(@PPAD, "alias", "delete", $name) }
 else
-    { die "missing case" }
+	{ die "missing case" }
 print "</pre>\n";
 
 if($ret == 0)
-    {
-    print "<p>";
-    if($type eq "printer")
-    	{ print H_("The printer has been deleted.") }
-    elsif($type eq "group")
-    	{ print H_("The group has been deleted.") }
-    elsif($type eq "alias")
-    	{ print H_("The alias has been deleted.") }
-    else
-	{ html(sprintf("The %s has been deleted.", $type)) }
-    print "</p>\n";
+	{
+	print "<p>";
+	if($type eq "printer")
+		{ print H_("The printer has been deleted.") }
+	elsif($type eq "group")
+		{ print H_("The group has been deleted.") }
+	elsif($type eq "alias")
+		{ print H_("The alias has been deleted.") }
+	else
+		{ html(sprintf("The %s has been deleted.", $type)) }
+	print "</p>\n";
 
-    print "<script>opener.gentle_reload()</script>\n";
-    }
+	print "<script>opener.gentle_reload()</script>\n";
+	}
 
 isubmit("action", "Close", N_("_Close"), 'onclick="window.close()"');
 }

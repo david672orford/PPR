@@ -21,70 +21,70 @@
 ** file.
 */
 int ttf_psout(void *p, void (*out_putc)(int c), void (*out_puts)(const char *string), void (*out_printf)(const char *format, ...), int target_type)
-    {
-    struct TTFONT *font = (struct TTFONT *)p;
-    int ret;
-
-    if(font->signiture != TTF_SIGNITURE)
-    	return -1;
-
-    if((ret = setjmp(font->exception)) != 0)
 	{
-	font->errno = (TTF_RESULT)ret;
-    	return -1;
-    	}
+	struct TTFONT *font = (struct TTFONT *)p;
+	int ret;
 
-    font->putc = out_putc;
-    font->puts = out_puts;
-    font->printf = out_printf;
+	if(font->signiture != TTF_SIGNITURE)
+		return -1;
 
-    /* Load the "head" table and extract information from it. */
-    ttf_Read_head(font);
+	if((ret = setjmp(font->exception)) != 0)
+		{
+		font->errno = (TTF_RESULT)ret;
+		return -1;
+		}
 
-    /* Load information from the "name" table. */
-    ttf_Read_name(font);
+	font->putc = out_putc;
+	font->puts = out_puts;
+	font->printf = out_printf;
 
-    /* We need to have the PostScript table around. */
-    if(!font->post_table) font->post_table = ttf_LoadTable(font, "post");
-    font->numGlyphs = getUSHORT(font->post_table + 32);
+	/* Load the "head" table and extract information from it. */
+	ttf_Read_head(font);
 
-    /* Write the header for the PostScript font. */
-    ttf_PS_header(font, target_type);
+	/* Load information from the "name" table. */
+	ttf_Read_name(font);
 
-    /* Define the encoding. */
-    ttf_PS_encoding(font);
+	/* We need to have the PostScript table around. */
+	if(!font->post_table) font->post_table = ttf_LoadTable(font, "post");
+	font->numGlyphs = getUSHORT(font->post_table + 32);
 
-    /* Insert FontInfo dictionary. */
-    ttf_PS_FontInfo(font);
+	/* Write the header for the PostScript font. */
+	ttf_PS_header(font, target_type);
 
-    /* If we are generating a type 42 font,
-       emmit the sfnts array. */
-    if(target_type == 42)
-	ttf_PS_sfnts(font);
+	/* Define the encoding. */
+	ttf_PS_encoding(font);
 
-    /* If we are generating a Type 3 font, we will need to
-       have the 'loca' and 'glyf' tables around while
-       we are generating the CharStrings. */
-    if(target_type == 3)
-    	{
-	BYTE *ptr;			/* We need only one value */
-	ptr = ttf_LoadTable(font, "hhea");
-	font->numberOfHMetrics = getUSHORT(ptr + 34);
-	ttf_free(font, ptr);
+	/* Insert FontInfo dictionary. */
+	ttf_PS_FontInfo(font);
 
-	if(!font->loca_table) font->loca_table = ttf_LoadTable(font, "loca");
-	if(!font->glyf_table) font->glyf_table = ttf_LoadTable(font, "glyf");
-	if(!font->hmtx_table) font->hmtx_table = ttf_LoadTable(font, "hmtx");
-	}
+	/* If we are generating a type 42 font,
+	   emmit the sfnts array. */
+	if(target_type == 42)
+		ttf_PS_sfnts(font);
 
-    /* Emmit the CharStrings array. */
-    ttf_PS_CharStrings(font, target_type);
+	/* If we are generating a Type 3 font, we will need to
+	   have the 'loca' and 'glyf' tables around while
+	   we are generating the CharStrings. */
+	if(target_type == 3)
+		{
+		BYTE *ptr;						/* We need only one value */
+		ptr = ttf_LoadTable(font, "hhea");
+		font->numberOfHMetrics = getUSHORT(ptr + 34);
+		ttf_free(font, ptr);
 
-    /* Send the font trailer. */
-    ttf_PS_trailer(font, target_type);
+		if(!font->loca_table) font->loca_table = ttf_LoadTable(font, "loca");
+		if(!font->glyf_table) font->glyf_table = ttf_LoadTable(font, "glyf");
+		if(!font->hmtx_table) font->hmtx_table = ttf_LoadTable(font, "hmtx");
+		}
 
-    return 0;
-    } /* end of ttf_PS() */
+	/* Emmit the CharStrings array. */
+	ttf_PS_CharStrings(font, target_type);
+
+	/* Send the font trailer. */
+	ttf_PS_trailer(font, target_type);
+
+	return 0;
+	} /* end of ttf_PS() */
 
 /* end of file */
 

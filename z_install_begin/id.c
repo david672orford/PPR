@@ -43,92 +43,92 @@ extern char *optarg;
 extern int optind;
 
 int main(int argc, char *argv[])
-    {
-    int opt_n=0, opt_u=0, opt_g=0, opt_r=0;
-    int c;
-    uid_t uid;
-    gid_t gid;
-    while((c = getopt(argc, argv, "nugGr")) != -1)
 	{
-	switch(c)
-	    {
-	    case 'u':
-		opt_u = 1;
-		break;
-	    case 'g':
-		opt_g = 1;
-		break;
-	    case 'n':
-	    	opt_n = 1;
-	    	break;
-	    case 'G':
-	    	fprintf(stderr, "%s: not implemented\n", argv[0]);
-	    	return 1;
-	    case 'r':
-	    	opt_r = 1;
-	    	break;
-	    default:
-	    	return 1;
-	    }
-	}
+	int opt_n=0, opt_u=0, opt_g=0, opt_r=0;
+	int c;
+	uid_t uid;
+	gid_t gid;
+	while((c = getopt(argc, argv, "nugGr")) != -1)
+		{
+		switch(c)
+			{
+			case 'u':
+				opt_u = 1;
+				break;
+			case 'g':
+				opt_g = 1;
+				break;
+			case 'n':
+				opt_n = 1;
+				break;
+			case 'G':
+				fprintf(stderr, "%s: not implemented\n", argv[0]);
+				return 1;
+			case 'r':
+				opt_r = 1;
+				break;
+			default:
+				return 1;
+			}
+		}
 
-    if(opt_u && opt_g)
-	{
-	fprintf(stderr, "%s: can't print both\n", argv[0]);
-	return 1;
-	}
+	if(opt_u && opt_g)
+		{
+		fprintf(stderr, "%s: can't print both\n", argv[0]);
+		return 1;
+		}
 
-    if(opt_r)
-	{
-	uid = getuid();
-	gid = getgid();
-	}
-    else
-	{
-	uid = geteuid();
-	gid = getegid();
-	}
+	if(opt_r)
+		{
+		uid = getuid();
+		gid = getgid();
+		}
+	else
+		{
+		uid = geteuid();
+		gid = getegid();
+		}
 
-    if(opt_n)
-	{
+	if(opt_n)
+		{
+		if(opt_u)
+			{
+			struct passwd *pw;
+			if((pw = getpwuid(uid)))
+				{
+				printf("%s\n", pw->pw_name);
+				return 0;
+				}
+			}
+		else if(opt_g)
+			{
+			struct group *gr;
+			if((gr = getgrgid(gid)))
+				{
+				printf("%s\n", gr->gr_name);
+				return 0;
+				}
+			}
+		}
+
 	if(opt_u)
-	    {
-	    struct passwd *pw;
-	    if((pw = getpwuid(uid)))
-	    	{
-		printf("%s\n", pw->pw_name);
+		{
+		printf("%ld\n", (long)uid);
 		return 0;
-	    	}
-	    }
-	else if(opt_g)
-	    {
-	    struct group *gr;
-	    if((gr = getgrgid(gid)))
-	    	{
-	    	printf("%s\n", gr->gr_name);
-	    	return 0;
-	    	}
-	    }
-	}
+		}
+	if(opt_g)
+		{
+		printf("%ld\n", (long)gid);
+		return 0;
+		}
 
-    if(opt_u)
 	{
-	printf("%ld\n", (long)uid);
+	struct passwd *pw = getpwuid(uid);
+	struct group  *gr = getgrgid(gid);
+	printf("uid=%ld(%s) gid=%ld(%s)\n", (long)uid, pw?pw->pw_name:"?", (long)gid, gr?gr->gr_name:"?");
 	return 0;
 	}
-    if(opt_g)
-	{
-	printf("%ld\n", (long)gid);
-	return 0;
 	}
-
-    {
-    struct passwd *pw = getpwuid(uid);
-    struct group  *gr = getgrgid(gid);
-    printf("uid=%ld(%s) gid=%ld(%s)\n", (long)uid, pw?pw->pw_name:"?", (long)gid, gr?gr->gr_name:"?");
-    return 0;
-    }
-    }
 
 
 

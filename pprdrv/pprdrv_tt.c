@@ -14,7 +14,7 @@
 */
 
 /*
-** This modules has is used for TrueType font support.  It has one function
+** This modules has is used for TrueType font support.	It has one function
 ** which can be called to make a best effort to make sure a TrueType 
 ** rasterizer is present.  The other function converts a Microsoft Windows
 ** .TTF file to either a Type 3 or a Type 42 PostScript font.
@@ -43,98 +43,98 @@
 ** assume that TrueType fonts are not acceptable.
 */
 void want_ttrasterizer(void)
-    {
-    static int decided = FALSE;
+	{
+	static int decided = FALSE;
 
-    if( ! decided )
-    	{
-	decided = TRUE;
-
-    	if(Features.TTRasterizer == TT_TYPE42)
-	    {
-	    printer.type42_ok = TRUE;
-	    }
-
-	else if(Features.TTRasterizer == TT_ACCEPT68K)
-	    {
-	    int x;
-
-	    /*
-	    ** If this is a Laserwriter 8.x job which already contains
-	    ** TrueDict, that is acceptable.
-	    */
-	    for(x=0; x < drvres_count; x++)
+	if( ! decided )
 		{
-		if(strcmp(drvres[x].type,"file")==0 && strcmp(drvres[x].name,"adobe_psp_TrueType")==0 )
-		    {
-		    printer.type42_ok = TRUE;
-		    return;
-		    }
+		decided = TRUE;
+
+		if(Features.TTRasterizer == TT_TYPE42)
+			{
+			printer.type42_ok = TRUE;
+			}
+
+		else if(Features.TTRasterizer == TT_ACCEPT68K)
+			{
+			int x;
+
+			/*
+			** If this is a Laserwriter 8.x job which already contains
+			** TrueDict, that is acceptable.
+			*/
+			for(x=0; x < drvres_count; x++)
+				{
+				if(strcmp(drvres[x].type,"file")==0 && strcmp(drvres[x].name,"adobe_psp_TrueType")==0 )
+					{
+					printer.type42_ok = TRUE;
+					return;
+					}
+				}
+
+			/*
+			** If we can arrange to have TrueDict downloaded,
+			** then type 42 fonts are acceptable.
+			*/
+			if(add_resource("procset", "TrueDict", 27, 0) == 0)
+				printer.type42_ok = TRUE;
+			else
+				printer.type42_ok = FALSE;
+			}
+
+		else									/* TTRaserizer "None" or Unknown: */
+			{									/* don't allow type 42 fonts. */
+			printer.type42_ok = FALSE;
+			}
 		}
-
-	    /*
-	    ** If we can arrange to have TrueDict downloaded,
-	    ** then type 42 fonts are acceptable.
-	    */
-	    if(add_resource("procset", "TrueDict", 27, 0) == 0)
-	        printer.type42_ok = TRUE;
-	    else
-	    	printer.type42_ok = FALSE;
-	    }
-
-	else					/* TTRaserizer "None" or Unknown: */
-	    {					/* don't allow type 42 fonts. */
-	    printer.type42_ok = FALSE;
-	    }
-	}
-    } /* end of want_ttrasterizer() */
+	} /* end of want_ttrasterizer() */
 
 /*
 ** Use libttf to insert the TrueType font into the output stream.
 */
 void send_font_tt(const char filename[])
-    {
-    const char function[] = "send_font_tt";
-    void *font;
-    int target_type;
+	{
+	const char function[] = "send_font_tt";
+	void *font;
+	int target_type;
 
-    DODEBUG_TRUETYPE(("%s(\"%s\")", function, filename));
+	DODEBUG_TRUETYPE(("%s(\"%s\")", function, filename));
 
-    {
-    TTF_RESULT ttf_result;
-    if((ttf_result = ttf_new(&font, filename)) != TTF_OK)
-    	fatal(EXIT_TTFONT, "%s(): ttf_new() failed for %s, %s", function, filename, ttf_strerror(ttf_result));
-    }
+	{
+	TTF_RESULT ttf_result;
+	if((ttf_result = ttf_new(&font, filename)) != TTF_OK)
+		fatal(EXIT_TTFONT, "%s(): ttf_new() failed for %s, %s", function, filename, ttf_strerror(ttf_result));
+	}
 
-    /* Decide what type of PostScript font we will be generating. */
-    if(printer.type42_ok)
-	target_type = 42;
-    else
-	target_type = 3;
+	/* Decide what type of PostScript font we will be generating. */
+	if(printer.type42_ok)
+		target_type = 42;
+	else
+		target_type = 3;
 
-    /*
-    ** These words are inserted before the "%!" signiture so
-    ** that if this output file is every fed to PPR as input,
-    ** PPR will not cache the font.  This is important because
-    ** if the font were cached, PPR would lose its ability to
-    ** generate the font in a format acceptable to a particular
-    ** printer.
-    */
-    printer_puts("%PPR-don't-cache ");	/* <-- note absence of newline! */
+	/*
+	** These words are inserted before the "%!" signiture so
+	** that if this output file is every fed to PPR as input,
+	** PPR will not cache the font.	 This is important because
+	** if the font were cached, PPR would lose its ability to
+	** generate the font in a format acceptable to a particular
+	** printer.
+	*/
+	printer_puts("%PPR-don't-cache ");	/* <-- note absence of newline! */
 
-    /*
-    ** This call converts the font to PostScript and sends
-    ** it to the output routines defined above.
-    */
-    if(ttf_psout(font, printer_putc, printer_puts, printer_printf, target_type) == -1)
-	fatal(EXIT_TTFONT, "%s(): ttf_psout() failed for %s, %s", function, filename, ttf_strerror(ttf_errno(font)));
+	/*
+	** This call converts the font to PostScript and sends
+	** it to the output routines defined above.
+	*/
+	if(ttf_psout(font, printer_putc, printer_puts, printer_printf, target_type) == -1)
+		fatal(EXIT_TTFONT, "%s(): ttf_psout() failed for %s, %s", function, filename, ttf_strerror(ttf_errno(font)));
 
-    /*
-    ** Close the file and free the memory.
-    */
-    if(ttf_delete(font) == -1)
-    	fatal(EXIT_TTFONT, "%s(): ttf_delete() failed, %s", function, ttf_strerror(ttf_errno(font)));
-    } /* end of send_font_tt() */
+	/*
+	** Close the file and free the memory.
+	*/
+	if(ttf_delete(font) == -1)
+		fatal(EXIT_TTFONT, "%s(): ttf_delete() failed, %s", function, ttf_strerror(ttf_errno(font)));
+	} /* end of send_font_tt() */
 
 /* end of file */
 

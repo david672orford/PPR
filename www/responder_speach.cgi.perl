@@ -46,25 +46,25 @@ exit 0;
 # Possibly select a voice from those for which sound files
 # are available.
 if(defined($data{voice}))
-    {
-    speach_set_voice($data{voice});
-    }
+	{
+	speach_set_voice($data{voice});
+	}
 
 # Copy selected CGI variables into the parameters list for the
 # speach_ppr_response() function.
 @values = (
-	["JOBID", "jobid" => "x y 1 0 x"],
-	["TIME", "time" => ""],
-	["CODE", "code" => "0"],
-	["PAGES", "pages" => "?"],
-	["EXTRA", "extra" => "z"]
-	);
+		["JOBID", "jobid" => "x y 1 0 x"],
+		["TIME", "time" => ""],
+		["CODE", "code" => "0"],
+		["PAGES", "pages" => "?"],
+		["EXTRA", "extra" => "z"]
+		);
 my %args = ();
 while(my $i = shift @values)
-    {
-    my ($name, $cgi_name, $default_value) = @$i;
-    $args{$name} = cgi_data_move($cgi_name, $default_value);
-    }
+	{
+	my ($name, $cgi_name, $default_value) = @$i;
+	$args{$name} = cgi_data_move($cgi_name, $default_value);
+	}
 
 # Assemble a list of sound files.
 my @playlist = speach_ppr_response(\%args, $data{silly_sounds});

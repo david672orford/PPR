@@ -28,13 +28,13 @@ RESOLUTION=""
 
 # Look for parameters we should pay attention to
 for pair in $OPTIONS
-    do
-    case "$pair" in
+	do
+	case "$pair" in
 	resolution=* )
-	    RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
-	    ;;
-    esac
-    done
+		RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
+		;;
+	esac
+	done
 
 $XBMTOPBM | $PNMTOPS $RESOLUTION | grep -v '^%%Title:'
 

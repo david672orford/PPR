@@ -46,111 +46,111 @@
 ** of a valid LP destination.
 */
 int printdest_claim_sysv(const char destname[])
-    {
-    if(uprint_lp_installed())
 	{
-	char fname[MAX_PPR_PATH];
-	struct stat statbuf;
-
-	/*
-	** Test for a group of printers which LP calls a "class".
-	** Presumably we are looking for a file which contains
-	** a list of the members.
-	*/
-	ppr_fnamef(fname, "%s/%s", uprint_lp_classes(), destname);
-	if(stat(fname, &statbuf) == 0)
-	    {
-	    return TRUE;
-	    } /* classes */
-
-	/*
-	** Try for a printer.
-	**
-	** On most systems we are looking for the interface
-	** program, but on Solaris 5.x we are looking for a
-	** directory which contains configuration files.
-	**
-	** On SGI systems we have to contend with the program
-	** "glp" and friends which go snooping in the LP
-	** configuration directories to build a list of
-	** printers.  The script sgi_glp_hack for each PPR queue
-	** creates a file in /var/spool/lp/members
-	** which contains something like "/dev/null" and
-	** non-executable file begining with the string "#UPRINT"
-	** in /var/spool/lp/interface.
-	*/
-	ppr_fnamef(fname, "%s/%s", uprint_lp_printers(), destname);
-	if(stat(fname, &statbuf) == 0)
-	    {
-	    if(S_ISDIR(statbuf.st_mode))	/* Solaris 5.x */
-		return TRUE;
-	    if(statbuf.st_mode & S_IXUSR)	/* Executable */
-		return TRUE;
-
-	    /*
-	    ** Check for the string "#UPRINT" at the start of the
-	    ** first line and return FALSE if we find it since
-	    ** its presence would indicate that it is not a real
-	    ** printer but rather a fake one we made for some reason
-	    ** such as to satisfy SGI printing utilities.
-	    */
-	    {
-	    int f;
-	    if((f = open(fname, O_RDONLY)) != -1)
+	if(uprint_lp_installed())
 		{
-		char magic[7];
-		int compare = -1;
+		char fname[MAX_PPR_PATH];
+		struct stat statbuf;
 
-		if(read(f, magic, 7) == 7)
-		    compare = memcmp(magic, "#UPRINT", 7);
+		/*
+		** Test for a group of printers which LP calls a "class".
+		** Presumably we are looking for a file which contains
+		** a list of the members.
+		*/
+		ppr_fnamef(fname, "%s/%s", uprint_lp_classes(), destname);
+		if(stat(fname, &statbuf) == 0)
+			{
+			return TRUE;
+			} /* classes */
 
-		close(f);
+		/*
+		** Try for a printer.
+		**
+		** On most systems we are looking for the interface
+		** program, but on Solaris 5.x we are looking for a
+		** directory which contains configuration files.
+		**
+		** On SGI systems we have to contend with the program
+		** "glp" and friends which go snooping in the LP
+		** configuration directories to build a list of
+		** printers.  The script sgi_glp_hack for each PPR queue
+		** creates a file in /var/spool/lp/members
+		** which contains something like "/dev/null" and
+		** non-executable file begining with the string "#UPRINT"
+		** in /var/spool/lp/interface.
+		*/
+		ppr_fnamef(fname, "%s/%s", uprint_lp_printers(), destname);
+		if(stat(fname, &statbuf) == 0)
+			{
+			if(S_ISDIR(statbuf.st_mode))		/* Solaris 5.x */
+				return TRUE;
+			if(statbuf.st_mode & S_IXUSR)		/* Executable */
+				return TRUE;
 
-		if(compare == 0)
-		    return FALSE;
-	        }
-	    }
+			/*
+			** Check for the string "#UPRINT" at the start of the
+			** first line and return FALSE if we find it since
+			** its presence would indicate that it is not a real
+			** printer but rather a fake one we made for some reason
+			** such as to satisfy SGI printing utilities.
+			*/
+			{
+			int f;
+			if((f = open(fname, O_RDONLY)) != -1)
+				{
+				char magic[7];
+				int compare = -1;
 
-	    return TRUE;
-	    } /* printers */
+				if(read(f, magic, 7) == 7)
+					compare = memcmp(magic, "#UPRINT", 7);
 
-	/*
-	** If the macro specifying its name is defined, try the
-	** Solaris 2.6 printing system configuration file.
-	*/
-	if(uprint_lp_printers_conf())
-	    {
-	    FILE *f;
+				close(f);
 
-	    if((f = fopen("/etc/printers.conf", "r")))
-	    	{
-		char line[256];
-		char *p;
-	
-		while(fgets(line, sizeof(line), f))
-		    {
-		    if(isspace(line[0]))
-		    	continue;
+				if(compare == 0)
+					return FALSE;
+				}
+			}
 
-		    if((p = strchr(line, ':')) == (char*)NULL)
-		    	continue;
+			return TRUE;
+			} /* printers */
 
-		    *p = '\0';
+		/*
+		** If the macro specifying its name is defined, try the
+		** Solaris 2.6 printing system configuration file.
+		*/
+		if(uprint_lp_printers_conf())
+			{
+			FILE *f;
 
-		    if(strcmp(line, destname) == 0)
-		    	{
-		    	fclose(f);
-		    	return TRUE;
-		    	}
-		    }
+			if((f = fopen("/etc/printers.conf", "r")))
+				{
+				char line[256];
+				char *p;
+		
+				while(fgets(line, sizeof(line), f))
+					{
+					if(isspace(line[0]))
+						continue;
 
-		fclose(f);
-	    	}
-	    } /* printers.conf */
+					if((p = strchr(line, ':')) == (char*)NULL)
+						continue;
 
-	} /* lp installed */
+					*p = '\0';
 
-    return FALSE;
-    } /* end of printdest_claim_sysv() */
+					if(strcmp(line, destname) == 0)
+						{
+						fclose(f);
+						return TRUE;
+						}
+					}
+
+				fclose(f);
+				}
+			} /* printers.conf */
+
+		} /* lp installed */
+
+	return FALSE;
+	} /* end of printdest_claim_sysv() */
 
 /* end of file */

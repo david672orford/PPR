@@ -46,13 +46,13 @@ These are the PPR documents available in man format:
 EndOfHereFile
 
 for s in 1 5 8
-    do
-    echo "Section $s"
-    for f in $SHAREDIR/man/man$s/*.[1-8]
 	do
-	echo "   " `basename $f | sed -e 's/\.[^\.]*$//'`
+	echo "Section $s"
+	for f in $SHAREDIR/man/man$s/*.[1-8]
+	do
+	echo "	 " `basename $f | sed -e 's/\.[^\.]*$//'`
 	done
-    done
+	done
 
 } | more
 exit 0

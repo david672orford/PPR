@@ -66,10 +66,10 @@ my $title = html(sprintf(_("PPR log \"%s\""), $filename));
 {
 my($mtime) = (stat($filename))[9];
 if(defined($mtime))
-    {
-    print "Last-Modified: ", cgi_time_format($mtime), "\n";
-    print "Expires: ", cgi_time_format(time() + $LIFETIME), "\n";
-    }
+	{
+	print "Last-Modified: ", cgi_time_format($mtime), "\n";
+	print "Expires: ", cgi_time_format(time() + $LIFETIME), "\n";
+	}
 }
 
 print <<"LogHead";
@@ -88,19 +88,19 @@ Vary: accept-language
 LogHead
 
 if(open(LOG, "< $filename"))
-    {
-    print "<pre>\n";
-    while(<LOG>)
 	{
-	print html($_);
+	print "<pre>\n";
+	while(<LOG>)
+		{
+		print html($_);
+		}
+	close(LOG);
+	print "</pre>\n";
 	}
-    close(LOG);
-    print "</pre>\n";
-    }
 else
-    {
-    print "<p>", html(sprintf(_("Can't read log file: %s"), $!)), "\n";
-    }
+	{
+	print "<p>", html(sprintf(_("Can't read log file: %s"), $!)), "\n";
+	}
 
 print <<"LogTail";
 <hr>

@@ -1,8 +1,8 @@
 /* 
  * tclHash.c --
  *
- *	Implementation of in-memory hash tables for Tcl and Tcl-based
- *	applications.
+ *		Implementation of in-memory hash tables for Tcl and Tcl-based
+ *		applications.
  *
  * Copyright (c) 1991-1993 The Regents of the University of California.
  * Copyright (c) 1994 Sun Microsystems, Inc.
@@ -18,7 +18,7 @@
  * the hash table to make it larger.
  */
 
-#define REBUILD_MULTIPLIER	3
+#define REBUILD_MULTIPLIER		3
 
 
 /*
@@ -30,76 +30,76 @@
  */
 
 #define RANDOM_INDEX(tablePtr, i) \
-    (((((long) (i))*1103515245) >> (tablePtr)->downShift) & (tablePtr)->mask)
+	(((((long) (i))*1103515245) >> (tablePtr)->downShift) & (tablePtr)->mask)
 
 /*
  * Procedure prototypes for static procedures in this file:
  */
 
 static Tcl_HashEntry *	ArrayFind _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key));
+							char *key));
 static Tcl_HashEntry *	ArrayCreate _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key, int *newPtr));
+							char *key, int *newPtr));
 static Tcl_HashEntry *	BogusFind _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key));
+							char *key));
 static Tcl_HashEntry *	BogusCreate _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key, int *newPtr));
-static unsigned int	HashString _ANSI_ARGS_((char *string));
-static void		RebuildTable _ANSI_ARGS_((Tcl_HashTable *tablePtr));
+							char *key, int *newPtr));
+static unsigned int		HashString _ANSI_ARGS_((char *string));
+static void				RebuildTable _ANSI_ARGS_((Tcl_HashTable *tablePtr));
 static Tcl_HashEntry *	StringFind _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key));
+							char *key));
 static Tcl_HashEntry *	StringCreate _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key, int *newPtr));
+							char *key, int *newPtr));
 static Tcl_HashEntry *	OneWordFind _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key));
+							char *key));
 static Tcl_HashEntry *	OneWordCreate _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    char *key, int *newPtr));
+							char *key, int *newPtr));
 
 /*
  *----------------------------------------------------------------------
  *
  * Tcl_InitHashTable --
  *
- *	Given storage for a hash table, set up the fields to prepare
- *	the hash table for use.
+ *		Given storage for a hash table, set up the fields to prepare
+ *		the hash table for use.
  *
  * Results:
- *	None.
+ *		None.
  *
  * Side effects:
- *	TablePtr is now ready to be passed to Tcl_FindHashEntry and
- *	Tcl_CreateHashEntry.
+ *		TablePtr is now ready to be passed to Tcl_FindHashEntry and
+ *		Tcl_CreateHashEntry.
  *
  *----------------------------------------------------------------------
  */
 
 void
 Tcl_InitHashTable(register Tcl_HashTable *tablePtr, int keyType)
-                                     	/* Pointer to table record, which
-					 * is supplied by the caller. */
-                			/* Type of keys to use in table:
-					 * TCL_STRING_KEYS, TCL_ONE_WORD_KEYS,
-					 * or an integer >= 2. */
+										/* Pointer to table record, which
+										 * is supplied by the caller. */
+										/* Type of keys to use in table:
+										 * TCL_STRING_KEYS, TCL_ONE_WORD_KEYS,
+										 * or an integer >= 2. */
 {
-    tablePtr->buckets = tablePtr->staticBuckets;
-    tablePtr->staticBuckets[0] = tablePtr->staticBuckets[1] = 0;
-    tablePtr->staticBuckets[2] = tablePtr->staticBuckets[3] = 0;
-    tablePtr->numBuckets = TCL_SMALL_HASH_TABLE;
-    tablePtr->numEntries = 0;
-    tablePtr->rebuildSize = TCL_SMALL_HASH_TABLE*REBUILD_MULTIPLIER;
-    tablePtr->downShift = 28;
-    tablePtr->mask = 3;
-    tablePtr->keyType = keyType;
-    if (keyType == TCL_STRING_KEYS) {
-	tablePtr->findProc = StringFind;
-	tablePtr->createProc = StringCreate;
-    } else if (keyType == TCL_ONE_WORD_KEYS) {
-	tablePtr->findProc = OneWordFind;
-	tablePtr->createProc = OneWordCreate;
-    } else {
-	tablePtr->findProc = ArrayFind;
-	tablePtr->createProc = ArrayCreate;
-    };
+	tablePtr->buckets = tablePtr->staticBuckets;
+	tablePtr->staticBuckets[0] = tablePtr->staticBuckets[1] = 0;
+	tablePtr->staticBuckets[2] = tablePtr->staticBuckets[3] = 0;
+	tablePtr->numBuckets = TCL_SMALL_HASH_TABLE;
+	tablePtr->numEntries = 0;
+	tablePtr->rebuildSize = TCL_SMALL_HASH_TABLE*REBUILD_MULTIPLIER;
+	tablePtr->downShift = 28;
+	tablePtr->mask = 3;
+	tablePtr->keyType = keyType;
+	if (keyType == TCL_STRING_KEYS) {
+		tablePtr->findProc = StringFind;
+		tablePtr->createProc = StringCreate;
+	} else if (keyType == TCL_ONE_WORD_KEYS) {
+		tablePtr->findProc = OneWordFind;
+		tablePtr->createProc = OneWordCreate;
+	} else {
+		tablePtr->findProc = ArrayFind;
+		tablePtr->createProc = ArrayCreate;
+	};
 }
 
 /*
@@ -107,16 +107,16 @@ Tcl_InitHashTable(register Tcl_HashTable *tablePtr, int keyType)
  *
  * Tcl_DeleteHashEntry --
  *
- *	Remove a single entry from a hash table.
+ *		Remove a single entry from a hash table.
  *
  * Results:
- *	None.
+ *		None.
  *
  * Side effects:
- *	The entry given by entryPtr is deleted from its table and
- *	should never again be used by the caller.  It is up to the
- *	caller to free the clientData field of the entry, if that
- *	is relevant.
+ *		The entry given by entryPtr is deleted from its table and
+ *		should never again be used by the caller.  It is up to the
+ *		caller to free the clientData field of the entry, if that
+ *		is relevant.
  *
  *----------------------------------------------------------------------
  */
@@ -124,23 +124,23 @@ Tcl_InitHashTable(register Tcl_HashTable *tablePtr, int keyType)
 void
 Tcl_DeleteHashEntry(Tcl_HashEntry *entryPtr)
 {
-    register Tcl_HashEntry *prevPtr;
+	register Tcl_HashEntry *prevPtr;
 
-    if (*entryPtr->bucketPtr == entryPtr) {
-	*entryPtr->bucketPtr = entryPtr->nextPtr;
-    } else {
-	for (prevPtr = *entryPtr->bucketPtr; ; prevPtr = prevPtr->nextPtr) {
-	    if (prevPtr == NULL) {
-		panic("malformed bucket chain in Tcl_DeleteHashEntry");
-	    }
-	    if (prevPtr->nextPtr == entryPtr) {
-		prevPtr->nextPtr = entryPtr->nextPtr;
-		break;
-	    }
+	if (*entryPtr->bucketPtr == entryPtr) {
+		*entryPtr->bucketPtr = entryPtr->nextPtr;
+	} else {
+		for (prevPtr = *entryPtr->bucketPtr; ; prevPtr = prevPtr->nextPtr) {
+			if (prevPtr == NULL) {
+				panic("malformed bucket chain in Tcl_DeleteHashEntry");
+			}
+			if (prevPtr->nextPtr == entryPtr) {
+				prevPtr->nextPtr = entryPtr->nextPtr;
+				break;
+			}
+		}
 	}
-    }
-    entryPtr->tablePtr->numEntries--;
-    ckfree((char *) entryPtr);
+	entryPtr->tablePtr->numEntries--;
+	ckfree((char *) entryPtr);
 }
 
 /*
@@ -148,53 +148,53 @@ Tcl_DeleteHashEntry(Tcl_HashEntry *entryPtr)
  *
  * Tcl_DeleteHashTable --
  *
- *	Free up everything associated with a hash table except for
- *	the record for the table itself.
+ *		Free up everything associated with a hash table except for
+ *		the record for the table itself.
  *
  * Results:
- *	None.
+ *		None.
  *
  * Side effects:
- *	The hash table is no longer useable.
+ *		The hash table is no longer useable.
  *
  *----------------------------------------------------------------------
  */
 
 void
 Tcl_DeleteHashTable(register Tcl_HashTable *tablePtr)
-                                     		/* Table to delete. */
+												/* Table to delete. */
 {
-    register Tcl_HashEntry *hPtr, *nextPtr;
-    int i;
+	register Tcl_HashEntry *hPtr, *nextPtr;
+	int i;
 
-    /*
-     * Free up all the entries in the table.
-     */
+	/*
+	 * Free up all the entries in the table.
+	 */
 
-    for (i = 0; i < tablePtr->numBuckets; i++) {
-	hPtr = tablePtr->buckets[i];
-	while (hPtr != NULL) {
-	    nextPtr = hPtr->nextPtr;
-	    ckfree((char *) hPtr);
-	    hPtr = nextPtr;
+	for (i = 0; i < tablePtr->numBuckets; i++) {
+		hPtr = tablePtr->buckets[i];
+		while (hPtr != NULL) {
+			nextPtr = hPtr->nextPtr;
+			ckfree((char *) hPtr);
+			hPtr = nextPtr;
+		}
 	}
-    }
 
-    /*
-     * Free up the bucket array, if it was dynamically allocated.
-     */
+	/*
+	 * Free up the bucket array, if it was dynamically allocated.
+	 */
 
-    if (tablePtr->buckets != tablePtr->staticBuckets) {
-	ckfree((char *) tablePtr->buckets);
-    }
+	if (tablePtr->buckets != tablePtr->staticBuckets) {
+		ckfree((char *) tablePtr->buckets);
+	}
 
-    /*
-     * Arrange for panics if the table is used again without
-     * re-initialization.
-     */
+	/*
+	 * Arrange for panics if the table is used again without
+	 * re-initialization.
+	 */
 
-    tablePtr->findProc = BogusFind;
-    tablePtr->createProc = BogusCreate;
+	tablePtr->findProc = BogusFind;
+	tablePtr->createProc = BogusCreate;
 }
 
 /*
@@ -202,33 +202,33 @@ Tcl_DeleteHashTable(register Tcl_HashTable *tablePtr)
  *
  * Tcl_FirstHashEntry --
  *
- *	Locate the first entry in a hash table and set up a record
- *	that can be used to step through all the remaining entries
- *	of the table.
+ *		Locate the first entry in a hash table and set up a record
+ *		that can be used to step through all the remaining entries
+ *		of the table.
  *
  * Results:
- *	The return value is a pointer to the first entry in tablePtr,
- *	or NULL if tablePtr has no entries in it.  The memory at
- *	*searchPtr is initialized so that subsequent calls to
- *	Tcl_NextHashEntry will return all of the entries in the table,
- *	one at a time.
+ *		The return value is a pointer to the first entry in tablePtr,
+ *		or NULL if tablePtr has no entries in it.  The memory at
+ *		*searchPtr is initialized so that subsequent calls to
+ *		Tcl_NextHashEntry will return all of the entries in the table,
+ *		one at a time.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 Tcl_HashEntry *
 Tcl_FirstHashEntry(Tcl_HashTable *tablePtr, Tcl_HashSearch *searchPtr)
-                            		/* Table to search. */
-                              		/* Place to store information about
-					 * progress through the table. */
+										/* Table to search. */
+										/* Place to store information about
+										 * progress through the table. */
 {
-    searchPtr->tablePtr = tablePtr;
-    searchPtr->nextIndex = 0;
-    searchPtr->nextEntryPtr = NULL;
-    return Tcl_NextHashEntry(searchPtr);
+	searchPtr->tablePtr = tablePtr;
+	searchPtr->nextIndex = 0;
+	searchPtr->nextEntryPtr = NULL;
+	return Tcl_NextHashEntry(searchPtr);
 }
 
 /*
@@ -236,40 +236,40 @@ Tcl_FirstHashEntry(Tcl_HashTable *tablePtr, Tcl_HashSearch *searchPtr)
  *
  * Tcl_NextHashEntry --
  *
- *	Once a hash table enumeration has been initiated by calling
- *	Tcl_FirstHashEntry, this procedure may be called to return
- *	successive elements of the table.
+ *		Once a hash table enumeration has been initiated by calling
+ *		Tcl_FirstHashEntry, this procedure may be called to return
+ *		successive elements of the table.
  *
  * Results:
- *	The return value is the next entry in the hash table being
- *	enumerated, or NULL if the end of the table is reached.
+ *		The return value is the next entry in the hash table being
+ *		enumerated, or NULL if the end of the table is reached.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 Tcl_HashEntry *
 Tcl_NextHashEntry(register Tcl_HashSearch *searchPtr)
-                                       	/* Place to store information about
-					 * progress through the table.  Must
-					 * have been initialized by calling
-					 * Tcl_FirstHashEntry. */
+										/* Place to store information about
+										 * progress through the table.	Must
+										 * have been initialized by calling
+										 * Tcl_FirstHashEntry. */
 {
-    Tcl_HashEntry *hPtr;
+	Tcl_HashEntry *hPtr;
 
-    while (searchPtr->nextEntryPtr == NULL) {
-	if (searchPtr->nextIndex >= searchPtr->tablePtr->numBuckets) {
-	    return NULL;
+	while (searchPtr->nextEntryPtr == NULL) {
+		if (searchPtr->nextIndex >= searchPtr->tablePtr->numBuckets) {
+			return NULL;
+		}
+		searchPtr->nextEntryPtr =
+				searchPtr->tablePtr->buckets[searchPtr->nextIndex];
+		searchPtr->nextIndex++;
 	}
-	searchPtr->nextEntryPtr =
-		searchPtr->tablePtr->buckets[searchPtr->nextIndex];
-	searchPtr->nextIndex++;
-    }
-    hPtr = searchPtr->nextEntryPtr;
-    searchPtr->nextEntryPtr = hPtr->nextPtr;
-    return hPtr;
+	hPtr = searchPtr->nextEntryPtr;
+	searchPtr->nextEntryPtr = hPtr->nextPtr;
+	return hPtr;
 }
 
 /*
@@ -277,74 +277,74 @@ Tcl_NextHashEntry(register Tcl_HashSearch *searchPtr)
  *
  * Tcl_HashStats --
  *
- *	Return statistics describing the layout of the hash table
- *	in its hash buckets.
+ *		Return statistics describing the layout of the hash table
+ *		in its hash buckets.
  *
  * Results:
- *	The return value is a malloc-ed string containing information
- *	about tablePtr.  It is the caller's responsibility to free
- *	this string.
+ *		The return value is a malloc-ed string containing information
+ *		about tablePtr.	 It is the caller's responsibility to free
+ *		this string.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 char *
 Tcl_HashStats(Tcl_HashTable *tablePtr)
-                            		/* Table for which to produce stats. */
+										/* Table for which to produce stats. */
 {
 #define NUM_COUNTERS 10
-    int count[NUM_COUNTERS], overflow, i, j;
-    double average, tmp;
-    register Tcl_HashEntry *hPtr;
-    char *result, *p;
+	int count[NUM_COUNTERS], overflow, i, j;
+	double average, tmp;
+	register Tcl_HashEntry *hPtr;
+	char *result, *p;
 
-    /*
-     * Compute a histogram of bucket usage.
-     */
+	/*
+	 * Compute a histogram of bucket usage.
+	 */
 
-    for (i = 0; i < NUM_COUNTERS; i++) {
-	count[i] = 0;
-    }
-    overflow = 0;
-    average = 0.0;
-    for (i = 0; i < tablePtr->numBuckets; i++) {
-	j = 0;
-	for (hPtr = tablePtr->buckets[i]; hPtr != NULL; hPtr = hPtr->nextPtr) {
-	    j++;
+	for (i = 0; i < NUM_COUNTERS; i++) {
+		count[i] = 0;
 	}
-	if (j < NUM_COUNTERS) {
-	    count[j]++;
-	} else {
-	    overflow++;
+	overflow = 0;
+	average = 0.0;
+	for (i = 0; i < tablePtr->numBuckets; i++) {
+		j = 0;
+		for (hPtr = tablePtr->buckets[i]; hPtr != NULL; hPtr = hPtr->nextPtr) {
+			j++;
+		}
+		if (j < NUM_COUNTERS) {
+			count[j]++;
+		} else {
+			overflow++;
+		}
+		tmp = j;
+		average += (tmp+1.0)*(tmp/tablePtr->numEntries)/2.0;
 	}
-	tmp = j;
-	average += (tmp+1.0)*(tmp/tablePtr->numEntries)/2.0;
-    }
 
-    /*
-     * Print out the histogram and a few other pieces of information.
-     */
+	/*
+	 * Print out the histogram and a few other pieces of information.
+	 */
 
-    {
-    int space_available = ((NUM_COUNTERS*60) + 300);
-    result = (char *) ckalloc((unsigned)space_available);
-    p = result;
-    snprintf(p, space_available, "%d entries in table, %d buckets\n", tablePtr->numEntries, tablePtr->numBuckets);
-    space_available -= strlen(p); p += strlen(p);
-    for (i = 0; i < NUM_COUNTERS; i++)
 	{
-	snprintf(p, space_available, "number of buckets with %d entries: %d\n", i, count[i]);
+	int space_available = ((NUM_COUNTERS*60) + 300);
+	result = (char *) ckalloc((unsigned)space_available);
+	p = result;
+	snprintf(p, space_available, "%d entries in table, %d buckets\n", tablePtr->numEntries, tablePtr->numBuckets);
 	space_available -= strlen(p); p += strlen(p);
+	for (i = 0; i < NUM_COUNTERS; i++)
+		{
+		snprintf(p, space_available, "number of buckets with %d entries: %d\n", i, count[i]);
+		space_available -= strlen(p); p += strlen(p);
+		}
+	snprintf(p, space_available, "number of buckets with %d or more entries: %d\n", NUM_COUNTERS, overflow);
+	space_available -= strlen(p); p += strlen(p);
+	snprintf(p, space_available, "average search distance for entry: %.1f", average);
 	}
-    snprintf(p, space_available, "number of buckets with %d or more entries: %d\n", NUM_COUNTERS, overflow);
-    space_available -= strlen(p); p += strlen(p);
-    snprintf(p, space_available, "average search distance for entry: %.1f", average);
-    }
 
-    return result;
+	return result;
 }
 
 /*
@@ -352,52 +352,52 @@ Tcl_HashStats(Tcl_HashTable *tablePtr)
  *
  * HashString --
  *
- *	Compute a one-word summary of a text string, which can be
- *	used to generate a hash index.
+ *		Compute a one-word summary of a text string, which can be
+ *		used to generate a hash index.
  *
  * Results:
- *	The return value is a one-word summary of the information in
- *	string.
+ *		The return value is a one-word summary of the information in
+ *		string.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 static unsigned int
 HashString(register char *string)
-                          	/* String from which to compute hash value. */
+								/* String from which to compute hash value. */
 {
-    register unsigned int result;
-    register int c;
+	register unsigned int result;
+	register int c;
 
-    /*
-     * I tried a zillion different hash functions and asked many other
-     * people for advice.  Many people had their own favorite functions,
-     * all different, but no-one had much idea why they were good ones.
-     * I chose the one below (multiply by 9 and add new character)
-     * because of the following reasons:
-     *
-     * 1. Multiplying by 10 is perfect for keys that are decimal strings,
-     *    and multiplying by 9 is just about as good.
-     * 2. Times-9 is (shift-left-3) plus (old).  This means that each
-     *    character's bits hang around in the low-order bits of the
-     *    hash value for ever, plus they spread fairly rapidly up to
-     *    the high-order bits to fill out the hash value.  This seems
-     *    works well both for decimal and non-decimal strings.
-     */
+	/*
+	 * I tried a zillion different hash functions and asked many other
+	 * people for advice.  Many people had their own favorite functions,
+	 * all different, but no-one had much idea why they were good ones.
+	 * I chose the one below (multiply by 9 and add new character)
+	 * because of the following reasons:
+	 *
+	 * 1. Multiplying by 10 is perfect for keys that are decimal strings,
+	 *	  and multiplying by 9 is just about as good.
+	 * 2. Times-9 is (shift-left-3) plus (old).	 This means that each
+	 *	  character's bits hang around in the low-order bits of the
+	 *	  hash value for ever, plus they spread fairly rapidly up to
+	 *	  the high-order bits to fill out the hash value.  This seems
+	 *	  works well both for decimal and non-decimal strings.
+	 */
 
-    result = 0;
-    while (1) {
-	c = *string;
-	string++;
-	if (c == 0) {
-	    break;
+	result = 0;
+	while (1) {
+		c = *string;
+		string++;
+		if (c == 0) {
+			break;
+		}
+		result += (result<<3) + c;
 	}
-	result += (result<<3) + c;
-    }
-    return result;
+	return result;
 }
 
 /*
@@ -405,46 +405,46 @@ HashString(register char *string)
  *
  * StringFind --
  *
- *	Given a hash table with string keys, and a string key, find
- *	the entry with a matching key.
+ *		Given a hash table with string keys, and a string key, find
+ *		the entry with a matching key.
  *
  * Results:
- *	The return value is a token for the matching entry in the
- *	hash table, or NULL if there was no matching entry.
+ *		The return value is a token for the matching entry in the
+ *		hash table, or NULL if there was no matching entry.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 StringFind(Tcl_HashTable *tablePtr, char *key)
-                            	/* Table in which to lookup entry. */
-              			/* Key to use to find matching entry. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find matching entry. */
 {
-    register Tcl_HashEntry *hPtr;
-    register char *p1, *p2;
-    int index;
+	register Tcl_HashEntry *hPtr;
+	register char *p1, *p2;
+	int index;
 
-    index = HashString(key) & tablePtr->mask;
+	index = HashString(key) & tablePtr->mask;
 
-    /*
-     * Search all of the entries in the appropriate bucket.
-     */
+	/*
+	 * Search all of the entries in the appropriate bucket.
+	 */
 
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	for (p1 = key, p2 = hPtr->key.string; ; p1++, p2++) {
-	    if (*p1 != *p2) {
-		break;
-	    }
-	    if (*p1 == '\0') {
-		return hPtr;
-	    }
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		for (p1 = key, p2 = hPtr->key.string; ; p1++, p2++) {
+			if (*p1 != *p2) {
+				break;
+			}
+			if (*p1 == '\0') {
+				return hPtr;
+			}
+		}
 	}
-    }
-    return NULL;
+	return NULL;
 }
 
 /*
@@ -452,77 +452,77 @@ StringFind(Tcl_HashTable *tablePtr, char *key)
  *
  * StringCreate --
  *
- *	Given a hash table with string keys, and a string key, find
- *	the entry with a matching key.  If there is no matching entry,
- *	then create a new entry that does match.
+ *		Given a hash table with string keys, and a string key, find
+ *		the entry with a matching key.	If there is no matching entry,
+ *		then create a new entry that does match.
  *
  * Results:
- *	The return value is a pointer to the matching entry.  If this
- *	is a newly-created entry, then *newPtr will be set to a non-zero
- *	value;  otherwise *newPtr will be set to 0.  If this is a new
- *	entry the value stored in the entry will initially be 0.
+ *		The return value is a pointer to the matching entry.  If this
+ *		is a newly-created entry, then *newPtr will be set to a non-zero
+ *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
- *	A new entry may be added to the hash table.
+ *		A new entry may be added to the hash table.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 StringCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
-                            	/* Table in which to lookup entry. */
-              			/* Key to use to find or create matching
-				 * entry. */
-                		/* Store info here telling whether a new
-				 * entry was created. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find or create matching
+								 * entry. */
+								/* Store info here telling whether a new
+								 * entry was created. */
 {
-    register Tcl_HashEntry *hPtr;
-    register char *p1, *p2;
-    int index;
+	register Tcl_HashEntry *hPtr;
+	register char *p1, *p2;
+	int index;
 
-    index = HashString(key) & tablePtr->mask;
+	index = HashString(key) & tablePtr->mask;
 
-    /*
-     * Search all of the entries in this bucket.
-     */
+	/*
+	 * Search all of the entries in this bucket.
+	 */
 
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	for (p1 = key, p2 = hPtr->key.string; ; p1++, p2++) {
-	    if (*p1 != *p2) {
-		break;
-	    }
-	    if (*p1 == '\0') {
-		*newPtr = 0;
-		return hPtr;
-	    }
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		for (p1 = key, p2 = hPtr->key.string; ; p1++, p2++) {
+			if (*p1 != *p2) {
+				break;
+			}
+			if (*p1 == '\0') {
+				*newPtr = 0;
+				return hPtr;
+			}
+		}
 	}
-    }
 
-    /*
-     * Entry not found.  Add a new one to the bucket.
-     */
+	/*
+	 * Entry not found.	 Add a new one to the bucket.
+	 */
 
-    *newPtr = 1;
-    hPtr = (Tcl_HashEntry *) ckalloc((unsigned)
-	    (sizeof(Tcl_HashEntry) + strlen(key) - (sizeof(hPtr->key) -1)));
-    hPtr->tablePtr = tablePtr;
-    hPtr->bucketPtr = &(tablePtr->buckets[index]);
-    hPtr->nextPtr = *hPtr->bucketPtr;
-    hPtr->clientData = 0;
-    strcpy(hPtr->key.string, key);
-    *hPtr->bucketPtr = hPtr;
-    tablePtr->numEntries++;
+	*newPtr = 1;
+	hPtr = (Tcl_HashEntry *) ckalloc((unsigned)
+			(sizeof(Tcl_HashEntry) + strlen(key) - (sizeof(hPtr->key) -1)));
+	hPtr->tablePtr = tablePtr;
+	hPtr->bucketPtr = &(tablePtr->buckets[index]);
+	hPtr->nextPtr = *hPtr->bucketPtr;
+	hPtr->clientData = 0;
+	strcpy(hPtr->key.string, key);
+	*hPtr->bucketPtr = hPtr;
+	tablePtr->numEntries++;
 
-    /*
-     * If the table has exceeded a decent size, rebuild it with many
-     * more buckets.
-     */
+	/*
+	 * If the table has exceeded a decent size, rebuild it with many
+	 * more buckets.
+	 */
 
-    if (tablePtr->numEntries >= tablePtr->rebuildSize) {
-	RebuildTable(tablePtr);
-    }
-    return hPtr;
+	if (tablePtr->numEntries >= tablePtr->rebuildSize) {
+		RebuildTable(tablePtr);
+	}
+	return hPtr;
 }
 
 /*
@@ -530,40 +530,40 @@ StringCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
  *
  * OneWordFind --
  *
- *	Given a hash table with one-word keys, and a one-word key, find
- *	the entry with a matching key.
+ *		Given a hash table with one-word keys, and a one-word key, find
+ *		the entry with a matching key.
  *
  * Results:
- *	The return value is a token for the matching entry in the
- *	hash table, or NULL if there was no matching entry.
+ *		The return value is a token for the matching entry in the
+ *		hash table, or NULL if there was no matching entry.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 OneWordFind(Tcl_HashTable *tablePtr, register char *key)
-                            	/* Table in which to lookup entry. */
-                       		/* Key to use to find matching entry. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find matching entry. */
 {
-    register Tcl_HashEntry *hPtr;
-    int index;
+	register Tcl_HashEntry *hPtr;
+	int index;
 
-    index = RANDOM_INDEX(tablePtr, key);
+	index = RANDOM_INDEX(tablePtr, key);
 
-    /*
-     * Search all of the entries in the appropriate bucket.
-     */
+	/*
+	 * Search all of the entries in the appropriate bucket.
+	 */
 
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	if (hPtr->key.oneWordValue == key) {
-	    return hPtr;
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		if (hPtr->key.oneWordValue == key) {
+			return hPtr;
+		}
 	}
-    }
-    return NULL;
+	return NULL;
 }
 
 /*
@@ -571,70 +571,70 @@ OneWordFind(Tcl_HashTable *tablePtr, register char *key)
  *
  * OneWordCreate --
  *
- *	Given a hash table with one-word keys, and a one-word key, find
- *	the entry with a matching key.  If there is no matching entry,
- *	then create a new entry that does match.
+ *		Given a hash table with one-word keys, and a one-word key, find
+ *		the entry with a matching key.	If there is no matching entry,
+ *		then create a new entry that does match.
  *
  * Results:
- *	The return value is a pointer to the matching entry.  If this
- *	is a newly-created entry, then *newPtr will be set to a non-zero
- *	value;  otherwise *newPtr will be set to 0.  If this is a new
- *	entry the value stored in the entry will initially be 0.
+ *		The return value is a pointer to the matching entry.  If this
+ *		is a newly-created entry, then *newPtr will be set to a non-zero
+ *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
- *	A new entry may be added to the hash table.
+ *		A new entry may be added to the hash table.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 OneWordCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
-                            	/* Table in which to lookup entry. */
-                       		/* Key to use to find or create matching
-				 * entry. */
-                		/* Store info here telling whether a new
-				 * entry was created. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find or create matching
+								 * entry. */
+								/* Store info here telling whether a new
+								 * entry was created. */
 {
-    register Tcl_HashEntry *hPtr;
-    int index;
+	register Tcl_HashEntry *hPtr;
+	int index;
 
-    index = RANDOM_INDEX(tablePtr, key);
+	index = RANDOM_INDEX(tablePtr, key);
 
-    /*
-     * Search all of the entries in this bucket.
-     */
+	/*
+	 * Search all of the entries in this bucket.
+	 */
 
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	if (hPtr->key.oneWordValue == key) {
-	    *newPtr = 0;
-	    return hPtr;
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		if (hPtr->key.oneWordValue == key) {
+			*newPtr = 0;
+			return hPtr;
+		}
 	}
-    }
 
-    /*
-     * Entry not found.  Add a new one to the bucket.
-     */
+	/*
+	 * Entry not found.	 Add a new one to the bucket.
+	 */
 
-    *newPtr = 1;
-    hPtr = (Tcl_HashEntry *) ckalloc(sizeof(Tcl_HashEntry));
-    hPtr->tablePtr = tablePtr;
-    hPtr->bucketPtr = &(tablePtr->buckets[index]);
-    hPtr->nextPtr = *hPtr->bucketPtr;
-    hPtr->clientData = 0;
-    hPtr->key.oneWordValue = key;
-    *hPtr->bucketPtr = hPtr;
-    tablePtr->numEntries++;
+	*newPtr = 1;
+	hPtr = (Tcl_HashEntry *) ckalloc(sizeof(Tcl_HashEntry));
+	hPtr->tablePtr = tablePtr;
+	hPtr->bucketPtr = &(tablePtr->buckets[index]);
+	hPtr->nextPtr = *hPtr->bucketPtr;
+	hPtr->clientData = 0;
+	hPtr->key.oneWordValue = key;
+	*hPtr->bucketPtr = hPtr;
+	tablePtr->numEntries++;
 
-    /*
-     * If the table has exceeded a decent size, rebuild it with many
-     * more buckets.
-     */
+	/*
+	 * If the table has exceeded a decent size, rebuild it with many
+	 * more buckets.
+	 */
 
-    if (tablePtr->numEntries >= tablePtr->rebuildSize) {
-	RebuildTable(tablePtr);
-    }
-    return hPtr;
+	if (tablePtr->numEntries >= tablePtr->rebuildSize) {
+		RebuildTable(tablePtr);
+	}
+	return hPtr;
 }
 
 /*
@@ -642,52 +642,52 @@ OneWordCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
  *
  * ArrayFind --
  *
- *	Given a hash table with array-of-int keys, and a key, find
- *	the entry with a matching key.
+ *		Given a hash table with array-of-int keys, and a key, find
+ *		the entry with a matching key.
  *
  * Results:
- *	The return value is a token for the matching entry in the
- *	hash table, or NULL if there was no matching entry.
+ *		The return value is a token for the matching entry in the
+ *		hash table, or NULL if there was no matching entry.
  *
  * Side effects:
- *	None.
+ *		None.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 ArrayFind(Tcl_HashTable *tablePtr, char *key)
-                            	/* Table in which to lookup entry. */
-              			/* Key to use to find matching entry. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find matching entry. */
 {
-    register Tcl_HashEntry *hPtr;
-    int *arrayPtr = (int *) key;
-    register int *iPtr1, *iPtr2;
-    int index, count;
+	register Tcl_HashEntry *hPtr;
+	int *arrayPtr = (int *) key;
+	register int *iPtr1, *iPtr2;
+	int index, count;
 
-    for (index = 0, count = tablePtr->keyType, iPtr1 = arrayPtr;
-	    count > 0; count--, iPtr1++) {
-	index += *iPtr1;
-    }
-    index = RANDOM_INDEX(tablePtr, index);
-
-    /*
-     * Search all of the entries in the appropriate bucket.
-     */
-
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words,
-		count = tablePtr->keyType; ; count--, iPtr1++, iPtr2++) {
-	    if (count == 0) {
-		return hPtr;
-	    }
-	    if (*iPtr1 != *iPtr2) {
-		break;
-	    }
+	for (index = 0, count = tablePtr->keyType, iPtr1 = arrayPtr;
+			count > 0; count--, iPtr1++) {
+		index += *iPtr1;
 	}
-    }
-    return NULL;
+	index = RANDOM_INDEX(tablePtr, index);
+
+	/*
+	 * Search all of the entries in the appropriate bucket.
+	 */
+
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words,
+				count = tablePtr->keyType; ; count--, iPtr1++, iPtr2++) {
+			if (count == 0) {
+				return hPtr;
+			}
+			if (*iPtr1 != *iPtr2) {
+				break;
+			}
+		}
+	}
+	return NULL;
 }
 
 /*
@@ -695,86 +695,86 @@ ArrayFind(Tcl_HashTable *tablePtr, char *key)
  *
  * ArrayCreate --
  *
- *	Given a hash table with one-word keys, and a one-word key, find
- *	the entry with a matching key.  If there is no matching entry,
- *	then create a new entry that does match.
+ *		Given a hash table with one-word keys, and a one-word key, find
+ *		the entry with a matching key.	If there is no matching entry,
+ *		then create a new entry that does match.
  *
  * Results:
- *	The return value is a pointer to the matching entry.  If this
- *	is a newly-created entry, then *newPtr will be set to a non-zero
- *	value;  otherwise *newPtr will be set to 0.  If this is a new
- *	entry the value stored in the entry will initially be 0.
+ *		The return value is a pointer to the matching entry.  If this
+ *		is a newly-created entry, then *newPtr will be set to a non-zero
+ *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
- *	A new entry may be added to the hash table.
+ *		A new entry may be added to the hash table.
  *
  *----------------------------------------------------------------------
  */
 
 static Tcl_HashEntry *
 ArrayCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
-                            	/* Table in which to lookup entry. */
-                       		/* Key to use to find or create matching
-				 * entry. */
-                		/* Store info here telling whether a new
-				 * entry was created. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find or create matching
+								 * entry. */
+								/* Store info here telling whether a new
+								 * entry was created. */
 {
-    register Tcl_HashEntry *hPtr;
-    int *arrayPtr = (int *) key;
-    register int *iPtr1, *iPtr2;
-    int index, count;
+	register Tcl_HashEntry *hPtr;
+	int *arrayPtr = (int *) key;
+	register int *iPtr1, *iPtr2;
+	int index, count;
 
-    for (index = 0, count = tablePtr->keyType, iPtr1 = arrayPtr;
-	    count > 0; count--, iPtr1++) {
-	index += *iPtr1;
-    }
-    index = RANDOM_INDEX(tablePtr, index);
-
-    /*
-     * Search all of the entries in the appropriate bucket.
-     */
-
-    for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
-	    hPtr = hPtr->nextPtr) {
-	for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words,
-		count = tablePtr->keyType; ; count--, iPtr1++, iPtr2++) {
-	    if (count == 0) {
-		*newPtr = 0;
-		return hPtr;
-	    }
-	    if (*iPtr1 != *iPtr2) {
-		break;
-	    }
+	for (index = 0, count = tablePtr->keyType, iPtr1 = arrayPtr;
+			count > 0; count--, iPtr1++) {
+		index += *iPtr1;
 	}
-    }
+	index = RANDOM_INDEX(tablePtr, index);
 
-    /*
-     * Entry not found.  Add a new one to the bucket.
-     */
+	/*
+	 * Search all of the entries in the appropriate bucket.
+	 */
 
-    *newPtr = 1;
-    hPtr = (Tcl_HashEntry *) ckalloc((unsigned) (sizeof(Tcl_HashEntry)
-	    + (tablePtr->keyType*sizeof(int)) - 4));
-    hPtr->tablePtr = tablePtr;
-    hPtr->bucketPtr = &(tablePtr->buckets[index]);
-    hPtr->nextPtr = *hPtr->bucketPtr;
-    hPtr->clientData = 0;
-    for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words, count = tablePtr->keyType;
-	    count > 0; count--, iPtr1++, iPtr2++) {
-	*iPtr2 = *iPtr1;
-    }
-    *hPtr->bucketPtr = hPtr;
-    tablePtr->numEntries++;
+	for (hPtr = tablePtr->buckets[index]; hPtr != NULL;
+			hPtr = hPtr->nextPtr) {
+		for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words,
+				count = tablePtr->keyType; ; count--, iPtr1++, iPtr2++) {
+			if (count == 0) {
+				*newPtr = 0;
+				return hPtr;
+			}
+			if (*iPtr1 != *iPtr2) {
+				break;
+			}
+		}
+	}
 
-    /*
-     * If the table has exceeded a decent size, rebuild it with many
-     * more buckets.
-     */
+	/*
+	 * Entry not found.	 Add a new one to the bucket.
+	 */
 
-    if (tablePtr->numEntries >= tablePtr->rebuildSize) {
-	RebuildTable(tablePtr);
-    }
-    return hPtr;
+	*newPtr = 1;
+	hPtr = (Tcl_HashEntry *) ckalloc((unsigned) (sizeof(Tcl_HashEntry)
+			+ (tablePtr->keyType*sizeof(int)) - 4));
+	hPtr->tablePtr = tablePtr;
+	hPtr->bucketPtr = &(tablePtr->buckets[index]);
+	hPtr->nextPtr = *hPtr->bucketPtr;
+	hPtr->clientData = 0;
+	for (iPtr1 = arrayPtr, iPtr2 = hPtr->key.words, count = tablePtr->keyType;
+			count > 0; count--, iPtr1++, iPtr2++) {
+		*iPtr2 = *iPtr1;
+	}
+	*hPtr->bucketPtr = hPtr;
+	tablePtr->numEntries++;
+
+	/*
+	 * If the table has exceeded a decent size, rebuild it with many
+	 * more buckets.
+	 */
+
+	if (tablePtr->numEntries >= tablePtr->rebuildSize) {
+		RebuildTable(tablePtr);
+	}
+	return hPtr;
 }
 
 /*
@@ -782,27 +782,27 @@ ArrayCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
  *
  * BogusFind --
  *
- *	This procedure is invoked when an Tcl_FindHashEntry is called
- *	on a table that has been deleted.
+ *		This procedure is invoked when an Tcl_FindHashEntry is called
+ *		on a table that has been deleted.
  *
  * Results:
- *	If panic returns (which it shouldn't) this procedure returns
- *	NULL.
+ *		If panic returns (which it shouldn't) this procedure returns
+ *		NULL.
  *
  * Side effects:
- *	Generates a panic.
+ *		Generates a panic.
  *
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
+		/* ARGSUSED */
 static Tcl_HashEntry *
 BogusFind(Tcl_HashTable *tablePtr, char *key)
-                            	/* Table in which to lookup entry. */
-              			/* Key to use to find matching entry. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find matching entry. */
 {
-    panic("called Tcl_FindHashEntry on deleted table");
-    return NULL;
+	panic("called Tcl_FindHashEntry on deleted table");
+	return NULL;
 }
 
 /*
@@ -810,30 +810,30 @@ BogusFind(Tcl_HashTable *tablePtr, char *key)
  *
  * BogusCreate --
  *
- *	This procedure is invoked when an Tcl_CreateHashEntry is called
- *	on a table that has been deleted.
+ *		This procedure is invoked when an Tcl_CreateHashEntry is called
+ *		on a table that has been deleted.
  *
  * Results:
- *	If panic returns (which it shouldn't) this procedure returns
- *	NULL.
+ *		If panic returns (which it shouldn't) this procedure returns
+ *		NULL.
  *
  * Side effects:
- *	Generates a panic.
+ *		Generates a panic.
  *
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
+		/* ARGSUSED */
 static Tcl_HashEntry *
 BogusCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
-                            	/* Table in which to lookup entry. */
-              			/* Key to use to find or create matching
-				 * entry. */
-                		/* Store info here telling whether a new
-				 * entry was created. */
+								/* Table in which to lookup entry. */
+								/* Key to use to find or create matching
+								 * entry. */
+								/* Store info here telling whether a new
+								 * entry was created. */
 {
-    panic("called Tcl_CreateHashEntry on deleted table");
-    return NULL;
+	panic("called Tcl_CreateHashEntry on deleted table");
+	return NULL;
 }
 
 /*
@@ -841,81 +841,81 @@ BogusCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
  *
  * RebuildTable --
  *
- *	This procedure is invoked when the ratio of entries to hash
- *	buckets becomes too large.  It creates a new table with a
- *	larger bucket array and moves all of the entries into the
- *	new table.
+ *		This procedure is invoked when the ratio of entries to hash
+ *		buckets becomes too large.	It creates a new table with a
+ *		larger bucket array and moves all of the entries into the
+ *		new table.
  *
  * Results:
- *	None.
+ *		None.
  *
  * Side effects:
- *	Memory gets reallocated and entries get re-hashed to new
- *	buckets.
+ *		Memory gets reallocated and entries get re-hashed to new
+ *		buckets.
  *
  *----------------------------------------------------------------------
  */
 
 static void
 RebuildTable(register Tcl_HashTable *tablePtr)
-                                     	/* Table to enlarge. */
+										/* Table to enlarge. */
 {
-    int oldSize, count, index;
-    Tcl_HashEntry **oldBuckets;
-    register Tcl_HashEntry **oldChainPtr, **newChainPtr;
-    register Tcl_HashEntry *hPtr;
+	int oldSize, count, index;
+	Tcl_HashEntry **oldBuckets;
+	register Tcl_HashEntry **oldChainPtr, **newChainPtr;
+	register Tcl_HashEntry *hPtr;
 
-    oldSize = tablePtr->numBuckets;
-    oldBuckets = tablePtr->buckets;
+	oldSize = tablePtr->numBuckets;
+	oldBuckets = tablePtr->buckets;
 
-    /*
-     * Allocate and initialize the new bucket array, and set up
-     * hashing constants for new array size.
-     */
+	/*
+	 * Allocate and initialize the new bucket array, and set up
+	 * hashing constants for new array size.
+	 */
 
-    tablePtr->numBuckets *= 4;
-    tablePtr->buckets = (Tcl_HashEntry **) ckalloc((unsigned)
-	    (tablePtr->numBuckets * sizeof(Tcl_HashEntry *)));
-    for (count = tablePtr->numBuckets, newChainPtr = tablePtr->buckets;
-	    count > 0; count--, newChainPtr++) {
-	*newChainPtr = NULL;
-    }
-    tablePtr->rebuildSize *= 4;
-    tablePtr->downShift -= 2;
-    tablePtr->mask = (tablePtr->mask << 2) + 3;
-
-    /*
-     * Rehash all of the existing entries into the new bucket array.
-     */
-
-    for (oldChainPtr = oldBuckets; oldSize > 0; oldSize--, oldChainPtr++) {
-	for (hPtr = *oldChainPtr; hPtr != NULL; hPtr = *oldChainPtr) {
-	    *oldChainPtr = hPtr->nextPtr;
-	    if (tablePtr->keyType == TCL_STRING_KEYS) {
-		index = HashString(hPtr->key.string) & tablePtr->mask;
-	    } else if (tablePtr->keyType == TCL_ONE_WORD_KEYS) {
-		index = RANDOM_INDEX(tablePtr, hPtr->key.oneWordValue);
-	    } else {
-		register int *iPtr;
-		int count;
-
-		for (index = 0, count = tablePtr->keyType,
-			iPtr = hPtr->key.words; count > 0; count--, iPtr++) {
-		    index += *iPtr;
-		}
-		index = RANDOM_INDEX(tablePtr, index);
-	    }
-	    hPtr->bucketPtr = &(tablePtr->buckets[index]);
-	    hPtr->nextPtr = *hPtr->bucketPtr;
-	    *hPtr->bucketPtr = hPtr;
+	tablePtr->numBuckets *= 4;
+	tablePtr->buckets = (Tcl_HashEntry **) ckalloc((unsigned)
+			(tablePtr->numBuckets * sizeof(Tcl_HashEntry *)));
+	for (count = tablePtr->numBuckets, newChainPtr = tablePtr->buckets;
+			count > 0; count--, newChainPtr++) {
+		*newChainPtr = NULL;
 	}
-    }
+	tablePtr->rebuildSize *= 4;
+	tablePtr->downShift -= 2;
+	tablePtr->mask = (tablePtr->mask << 2) + 3;
 
-    /*
-     * Free up the old bucket array, if it was dynamically allocated.
-     */
+	/*
+	 * Rehash all of the existing entries into the new bucket array.
+	 */
 
-    if (oldBuckets != tablePtr->staticBuckets) {
-	ckfree((char *) oldBuckets);
-    }
+	for (oldChainPtr = oldBuckets; oldSize > 0; oldSize--, oldChainPtr++) {
+		for (hPtr = *oldChainPtr; hPtr != NULL; hPtr = *oldChainPtr) {
+			*oldChainPtr = hPtr->nextPtr;
+			if (tablePtr->keyType == TCL_STRING_KEYS) {
+				index = HashString(hPtr->key.string) & tablePtr->mask;
+			} else if (tablePtr->keyType == TCL_ONE_WORD_KEYS) {
+				index = RANDOM_INDEX(tablePtr, hPtr->key.oneWordValue);
+			} else {
+				register int *iPtr;
+				int count;
+
+				for (index = 0, count = tablePtr->keyType,
+						iPtr = hPtr->key.words; count > 0; count--, iPtr++) {
+					index += *iPtr;
+				}
+				index = RANDOM_INDEX(tablePtr, index);
+			}
+			hPtr->bucketPtr = &(tablePtr->buckets[index]);
+			hPtr->nextPtr = *hPtr->bucketPtr;
+			*hPtr->bucketPtr = hPtr;
+		}
+	}
+
+	/*
+	 * Free up the old bucket array, if it was dynamically allocated.
+	 */
+
+	if (oldBuckets != tablePtr->staticBuckets) {
+		ckfree((char *) oldBuckets);
+	}
 }

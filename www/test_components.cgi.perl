@@ -23,100 +23,100 @@ require 'cgi_intl.pl';
 # This is a table of tests.
 #
 my @tests = (
-	{'name' => _("Perl 5.005 or later"),
-		'testproc' => sub {
-			return ($] >= 5.005);
-			},
-		'required' => 1,
-		'source' => "http://www.cpan.org/src/stable.tar.gz"
-		},
-	{'name' => _("PPR sound files"),
-		'testproc' => sub {
-			require "speach.pl";
-			return speach_soundfiles_installed();
-			},
-		'required' => 0,
-		},
-	{'name' => _("Perl GNU Gettext module"),
-		'testproc' => sub {
-			return defined(eval { require Locale::gettext });
-			},
-		'required' => 0,
-		'debian' => "liblocale-gettext-perl"
-		},
-	{'name' => _("NetPBM image converters"),
-		'testproc' => sub {
-			return inpath("pnmtops");
-			},
-		'required' => 0
-		},
-	{'name' => _("PPR-GS Ghostscript distribution"),
-		'testproc' => sub {
-			return -x "$HOMEDIR/../ppr-gs/bin/gs";
-			},
-		'required' => 0
-		},
-	{'name' => _("Groff"),
-		'testproc' => sub {
-			return inpath("groff");
-			},
-		'required' => 0
-		},
-	{'name' => _("HTMLDOC"),
-		'testproc' => sub {
-			return inpath("htmldoc");
-			},
-		'required' => 0
-		},
-	{'name' => _("Acroread"),
-		'testproc' => sub {
-			return inpath("acroread");
-			},
-		'required' => 0
-		},
-	{'name' => _("JPEG utilities"),
-		'testproc' => sub {
-			return inpath("djpeg");
-			},
-		'required' => 0
-		},
+		{'name' => _("Perl 5.005 or later"),
+				'testproc' => sub {
+						return ($] >= 5.005);
+						},
+				'required' => 1,
+				'source' => "http://www.cpan.org/src/stable.tar.gz"
+				},
+		{'name' => _("PPR sound files"),
+				'testproc' => sub {
+						require "speach.pl";
+						return speach_soundfiles_installed();
+						},
+				'required' => 0,
+				},
+		{'name' => _("Perl GNU Gettext module"),
+				'testproc' => sub {
+						return defined(eval { require Locale::gettext });
+						},
+				'required' => 0,
+				'debian' => "liblocale-gettext-perl"
+				},
+		{'name' => _("NetPBM image converters"),
+				'testproc' => sub {
+						return inpath("pnmtops");
+						},
+				'required' => 0
+				},
+		{'name' => _("PPR-GS Ghostscript distribution"),
+				'testproc' => sub {
+						return -x "$HOMEDIR/../ppr-gs/bin/gs";
+						},
+				'required' => 0
+				},
+		{'name' => _("Groff"),
+				'testproc' => sub {
+						return inpath("groff");
+						},
+				'required' => 0
+				},
+		{'name' => _("HTMLDOC"),
+				'testproc' => sub {
+						return inpath("htmldoc");
+						},
+				'required' => 0
+				},
+		{'name' => _("Acroread"),
+				'testproc' => sub {
+						return inpath("acroread");
+						},
+				'required' => 0
+				},
+		{'name' => _("JPEG utilities"),
+				'testproc' => sub {
+						return inpath("djpeg");
+						},
+				'required' => 0
+				},
 );
 
 sub cell
-    {
-    my $text = shift;
-    if(defined $text)
 	{
-	return "<td>" . html_nb($text) . "</td>";
+	my $text = shift;
+	if(defined $text)
+		{
+		return "<td>" . html_nb($text) . "</td>";
+		}
+	else
+		{
+		return "<td>&nbsp;</td>";
+		}
 	}
-    else
-	{
-	return "<td>&nbsp;</td>";
-	}
-    }
 
 sub cell_url
-    {
-    my $text = shift;
-    if(defined $text)
 	{
-	return "<td><a href=" . html_value($text) . ">" . html($text) . "</a></td>";
+	my $text = shift;
+	if(defined $text)
+		{
+		return "<td><a href=" . html_value($text) . ">" . html($text) . "</a></td>";
+		}
+	else
+		{
+		return "<td>&nbsp;</td>";
+		}
 	}
-    else
-	{
-	return "<td>&nbsp;</td>";
-	}
-    }
 
 sub inpath
-    {
-    my $prog = shift;
-    foreach my $dir (split(/:/, $ENV{PATH}))
 	{
-	return 1 if(-x "$dir/$prog");
+	my $prog = shift;
+	foreach my $dir (split(/:/, $ENV{PATH}))
+		{
+		return 1 if(-x "$dir/$prog");
+		}
+	return 0;
 	}
-    return 0;
-    }
 
 #
 # Create the top of the page.
@@ -148,9 +148,9 @@ Quote10
 print "<tr>";
 my $i;
 foreach $i (_("Component"), _("Present?"), _("Critical?"), _("Redhat Package Name"), _("Debian Package Name"), _("Source Download"))
-    {
-    print "<th>", html_nb($i), "</th>";
-    }
+	{
+	print "<th>", html_nb($i), "</th>";
+	}
 print "</tr>\n";
 }
 
@@ -159,17 +159,17 @@ print "</tr>\n";
 #
 {
 foreach my $test (@tests)
-    {
-    my $found = &{$test->{testproc}} ? _("Yes") : _("No");
-    my $critical = $test->{critical} ? _("Yes") : _("No");
-    print "<tr>", cell($test->{name}),
-		cell($found),
-		cell($critical),
-		cell($test->{redhat}),
-		cell($test->{debian}),
-		cell_url($test->{source}),
-		"</tr>\n";
-    }
+	{
+	my $found = &{$test->{testproc}} ? _("Yes") : _("No");
+	my $critical = $test->{critical} ? _("Yes") : _("No");
+	print "<tr>", cell($test->{name}),
+				cell($found),
+				cell($critical),
+				cell($test->{redhat}),
+				cell($test->{debian}),
+				cell_url($test->{source}),
+				"</tr>\n";
+	}
 }
 
 #

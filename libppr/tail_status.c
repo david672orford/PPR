@@ -42,57 +42,57 @@
 
 
 static int do_tail(gu_boolean (*callback)(char *p, void *extra), FILE **fd, const char filename[], int *file_count, void *extra)
-    {
-    char buffer[256];
-    struct stat statbuf;
-    int callback_hits = 0;
+	{
+	char buffer[256];
+	struct stat statbuf;
+	int callback_hits = 0;
 
-    /* If the file isn't open yet, */
-    if(!(*fd))
-        {
-	/* Open it. */
-        if(!(*fd = fopen(filename, "r")))
-            {
-	    return -1;
-            }
+	/* If the file isn't open yet, */
+	if(!(*fd))
+		{
+		/* Open it. */
+		if(!(*fd = fopen(filename, "r")))
+			{
+			return -1;
+			}
 
-	/* If this is the first file, skip to the end. */
-        if((*file_count)++ == 0)
-            {
-            fseek(*fd, 0, SEEK_END);
-            }
-        }
+		/* If this is the first file, skip to the end. */
+		if((*file_count)++ == 0)
+			{
+			fseek(*fd, 0, SEEK_END);
+			}
+		}
 
-    /* Read lines from the file until there are no more. */
-    while(fgets(buffer, sizeof(buffer), *fd))
-        {
-	char *p;
-	if((p = strchr(buffer, '\n')))		/* remove line-feed */
-	    *p = '\0';
-	if((*callback)(buffer, extra))		/* call callback routine */
-	    callback_hits++;
-        }
+	/* Read lines from the file until there are no more. */
+	while(fgets(buffer, sizeof(buffer), *fd))
+		{
+		char *p;
+		if((p = strchr(buffer, '\n')))			/* remove line-feed */
+			*p = '\0';
+		if((*callback)(buffer, extra))			/* call callback routine */
+			callback_hits++;
+		}
 
-    /* Get the file status so we can see the user execute bit. */
-    if(fstat(fileno(*fd), &statbuf) < 0)
-        {
-	return -1;
-        }
+	/* Get the file status so we can see the user execute bit. */
+	if(fstat(fileno(*fd), &statbuf) < 0)
+		{
+		return -1;
+		}
 
-    /* If the user execute bit is set, this file is done, close it. */
-    if(statbuf.st_mode & S_IXOTH)
-    	{
-	fclose(*fd);
-	*fd = NULL;
-    	}
+	/* If the user execute bit is set, this file is done, close it. */
+	if(statbuf.st_mode & S_IXOTH)
+		{
+		fclose(*fd);
+		*fd = NULL;
+		}
 
-    /* Return the number of lines that the callback routines says it
-       forwarded to its client. */
-    return callback_hits;
-    } /* end of do_tail() */
+	/* Return the number of lines that the callback routines says it
+	   forwarded to its client. */
+	return callback_hits;
+	} /* end of do_tail() */
 
 /*
-** This function never returns.  It just keeps monitoring the status files and
+** This function never returns.	 It just keeps monitoring the status files and
 ** feeding lines to the callback routine.  The callback routine should return
 ** TRUE for lines it acts on, FALSE for those it ignores.  If more than
 ** timeout seconds pass without the callback routine returning TRUE (perhaps
@@ -102,33 +102,33 @@ static int do_tail(gu_boolean (*callback)(char *p, void *extra), FILE **fd, cons
 ** communicating is still alive.
 */
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra)
-    {
-    int countup = 0;
-    FILE *pprd_fd = NULL;
-    int pprd_file_count = 0;
-    FILE *pprdrv_fd = NULL;
-    int pprdrv_file_count = 0;
-
-    while(TRUE)
 	{
-	if(     (tail_pprdrv && do_tail(callback, &pprdrv_fd, STATE_UPDATE_PPRDRV_FILE, &pprdrv_file_count, extra) > 0)
-	     || (tail_pprd   && do_tail(callback, &pprd_fd,   STATE_UPDATE_FILE,        &pprd_file_count,   extra) > 0)
-	    )
-	    {
-	    countup = 0;
-	    continue;
-	    }
+	int countup = 0;
+	FILE *pprd_fd = NULL;
+	int pprd_file_count = 0;
+	FILE *pprdrv_fd = NULL;
+	int pprdrv_file_count = 0;
 
-	if(countup >= timeout)
-	    {
-	    (*callback)(NULL, extra);
-	    countup = 0;
-	    }
+	while(TRUE)
+		{
+		if(		(tail_pprdrv && do_tail(callback, &pprdrv_fd, STATE_UPDATE_PPRDRV_FILE, &pprdrv_file_count, extra) > 0)
+			 || (tail_pprd	 && do_tail(callback, &pprd_fd,	  STATE_UPDATE_FILE,		&pprd_file_count,	extra) > 0)
+			)
+			{
+			countup = 0;
+			continue;
+			}
 
-	sleep(1);
-	countup++;
+		if(countup >= timeout)
+			{
+			(*callback)(NULL, extra);
+			countup = 0;
+			}
+
+		sleep(1);
+		countup++;
+		}
 	}
-    }
 
 /* end of file */
 

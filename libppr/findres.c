@@ -15,10 +15,10 @@
 
 /*
 ** The purpose of the functions in this module is to search for PostScript
-** resources in the resource cache.  This cache has two parts.  The first
-** one is the "permanent cache".  This is located in /usr/share/ppr/cache.  Files
+** resources in the resource cache.	 This cache has two parts.	The first
+** one is the "permanent cache".  This is located in /usr/share/ppr/cache.	Files
 ** must be deliverately placed in the cache.  The second is the "automatic
-** cache".  Files are placed in this cache automatically when they are found
+** cache".	Files are placed in this cache automatically when they are found
 ** in incoming print jobs.
 */
 
@@ -33,93 +33,93 @@
 static char resource_fname[MAX_PPR_PATH];
 
 static char *try_cachedir(const char cachedir[],
-		const char res_type[], const char res_name[],
-		double version, int revision, int *newrev, int *features)
-    {
-    struct stat statbuf;
-
-    if(strcmp(res_type, "procset") == 0)
-    	ppr_fnamef(resource_fname, "%s/procset/%s-%s-%d", cachedir, res_name, gu_dtostr(version), revision);
-    else
-    	ppr_fnamef(resource_fname, "%s/%s/%s", cachedir, res_type, res_name);
-
-    /* Try the permanent cache. */
-    if(stat(resource_fname, &statbuf) == 0)
+				const char res_type[], const char res_name[],
+				double version, int revision, int *newrev, int *features)
 	{
-    	if(features)
-	    {
-	    *features = 0;		/* redundant */
-	    if(strcmp(res_type, "font") == 0)
+	struct stat statbuf;
+
+	if(strcmp(res_type, "procset") == 0)
+		ppr_fnamef(resource_fname, "%s/procset/%s-%s-%d", cachedir, res_name, gu_dtostr(version), revision);
+	else
+		ppr_fnamef(resource_fname, "%s/%s/%s", cachedir, res_type, res_name);
+
+	/* Try the permanent cache. */
+	if(stat(resource_fname, &statbuf) == 0)
 		{
-		if(statbuf.st_mode & FONT_MODE_MACTRUETYPE)
-		    *features |= FONT_MACTRUETYPE;
-		if(statbuf.st_mode & FONT_MODE_TYPE_1)
-		    *features |= FONT_TYPE_1;
-		if(statbuf.st_mode & FONT_MODE_TYPE_42)
-		    *features |= FONT_TYPE_42;
+		if(features)
+			{
+			*features = 0;				/* redundant */
+			if(strcmp(res_type, "font") == 0)
+				{
+				if(statbuf.st_mode & FONT_MODE_MACTRUETYPE)
+					*features |= FONT_MACTRUETYPE;
+				if(statbuf.st_mode & FONT_MODE_TYPE_1)
+					*features |= FONT_TYPE_1;
+				if(statbuf.st_mode & FONT_MODE_TYPE_42)
+					*features |= FONT_TYPE_42;
+				}
+			}
+		return resource_fname;
 		}
-    	    }
-    	return resource_fname;
-    	}
 
-    /* Looks like it is not in either cache. */
-    return (char*)NULL;
-    }
-
-static char *try_fontindex(const char res_name[], int *features)
-    {
-    const char function[] = "try_fontindex";
-    const char filename[] = FONT_INDEX;
-    FILE *dbf;
-    char *line = NULL;
-    int line_space = 256;
-    int linenum = 0;
-    char *ptr;
-    char *f1, *f2, *f3;
-    char *answer = NULL;
-
-    if(!(dbf = fopen(filename, "r")))
-	{
-	error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, gu_strerror(errno));
-	return NULL;
+	/* Looks like it is not in either cache. */
+	return (char*)NULL;
 	}
 
-    while((line = gu_getline(line, &line_space, dbf)))
-        {
-	linenum++;
-        if(line[0] == '#' || line[0] == ';' || line[0] == '\0') continue;
+static char *try_fontindex(const char res_name[], int *features)
+	{
+	const char function[] = "try_fontindex";
+	const char filename[] = FONT_INDEX;
+	FILE *dbf;
+	char *line = NULL;
+	int line_space = 256;
+	int linenum = 0;
+	char *ptr;
+	char *f1, *f2, *f3;
+	char *answer = NULL;
 
-	ptr = line;
-        if((f1 = gu_strsep(&ptr, ":")))
-            {
-            if(strcmp(f1, res_name) == 0)
+	if(!(dbf = fopen(filename, "r")))
 		{
-		if(!(f2 = gu_strsep(&ptr, ":")) || !f2[0] || !(f3 = gu_strsep(&ptr, ":")) || !f3[0])
-                    {
-                    error("%s(): \"%s\" line %d is invalid", function, filename, linenum);
-                    continue;
-                    }
+		error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, gu_strerror(errno));
+		return NULL;
+		}
 
-                ppr_fnamef(resource_fname, "%s", f3);
-                answer = resource_fname;
+	while((line = gu_getline(line, &line_space, dbf)))
+		{
+		linenum++;
+		if(line[0] == '#' || line[0] == ';' || line[0] == '\0') continue;
 
-                if(features)
-                    {
-		    *features = 0;		/* redundant */
-                    if(strcmp(f2, "ttf") == 0)
-                        *features |= FONT_TYPE_TTF;
-                    }
+		ptr = line;
+		if((f1 = gu_strsep(&ptr, ":")))
+			{
+			if(strcmp(f1, res_name) == 0)
+				{
+				if(!(f2 = gu_strsep(&ptr, ":")) || !f2[0] || !(f3 = gu_strsep(&ptr, ":")) || !f3[0])
+					{
+					error("%s(): \"%s\" line %d is invalid", function, filename, linenum);
+					continue;
+					}
 
-		gu_free(line);
-		break;
-                }
-            }
-        }
+				ppr_fnamef(resource_fname, "%s", f3);
+				answer = resource_fname;
 
-    fclose(dbf);
+				if(features)
+					{
+					*features = 0;				/* redundant */
+					if(strcmp(f2, "ttf") == 0)
+						*features |= FONT_TYPE_TTF;
+					}
 
-    return answer;
-    } /* end of try_fontindex() */
+				gu_free(line);
+				break;
+				}
+			}
+		}
+
+	fclose(dbf);
+
+	return answer;
+	} /* end of try_fontindex() */
 
 /*
 ** Return a pointer to the filename of a resource in the cache.
@@ -128,58 +128,58 @@ static char *try_fontindex(const char res_name[], int *features)
 ** number in the integer pointed to by "newrev".  This isn't implemented yet.
 */
 const char *noalloc_find_cached_resource(const char res_type[], const char res_name[], double version, int revision,
-		const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
-    {
-    int x;
-    char *ptr;
-
-    if(features) *features = 0;
-
-    for(x=0; sequence[x] != RES_SEARCH_END; x++)
+				const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
 	{
-	switch(sequence[x])
-	    {
-	    case RES_SEARCH_FONTINDEX:
-                if(strcmp(res_type, "font") == 0 && (ptr = try_fontindex(res_name, features)))
-		    {
-		    if(where_found) *where_found = RES_SEARCH_FONTINDEX;
-                    return ptr;
-                    }
-                break;
+	int x;
+	char *ptr;
 
-	    case RES_SEARCH_CACHE:
-                if((ptr = try_cachedir(STATIC_CACHEDIR, res_type, res_name, version, revision, newrev, NULL))
-			|| (ptr = try_cachedir(CACHEDIR, res_type, res_name, version, revision, newrev, features)))
-		    {
-		    if(where_found) *where_found = RES_SEARCH_CACHE;
-                    return ptr;
-                    }
-                break;
+	if(features) *features = 0;
 
-	    #ifdef GNUC_HAPPY
-	    case RES_SEARCH_END:
-	        break;
-	    #endif
-            }
-	}
+	for(x=0; sequence[x] != RES_SEARCH_END; x++)
+		{
+		switch(sequence[x])
+			{
+			case RES_SEARCH_FONTINDEX:
+				if(strcmp(res_type, "font") == 0 && (ptr = try_fontindex(res_name, features)))
+					{
+					if(where_found) *where_found = RES_SEARCH_FONTINDEX;
+					return ptr;
+					}
+				break;
 
-    return (char*)NULL;
-    } /* end of noalloc_find_cached_resource() */
+			case RES_SEARCH_CACHE:
+				if((ptr = try_cachedir(STATIC_CACHEDIR, res_type, res_name, version, revision, newrev, NULL))
+						|| (ptr = try_cachedir(CACHEDIR, res_type, res_name, version, revision, newrev, features)))
+					{
+					if(where_found) *where_found = RES_SEARCH_CACHE;
+					return ptr;
+					}
+				break;
+
+			#ifdef GNUC_HAPPY
+			case RES_SEARCH_END:
+				break;
+			#endif
+			}
+		}
+
+	return (char*)NULL;
+	} /* end of noalloc_find_cached_resource() */
 
 /*
 ** In this version, if the pointer is not NULL, it points
 ** into newly allocated memory.
 */
 char *find_cached_resource(const char res_type[], const char res_name[], double version, int revision,
-	const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
-    {
-    const char *ptr;
+		const enum RES_SEARCH sequence[], int *newrev, int *features, enum RES_SEARCH *where_found)
+	{
+	const char *ptr;
 
-    if((ptr = noalloc_find_cached_resource(res_type, res_name, version, revision, sequence, newrev, features, where_found)))
-    	return gu_strdup(ptr);
+	if((ptr = noalloc_find_cached_resource(res_type, res_name, version, revision, sequence, newrev, features, where_found)))
+		return gu_strdup(ptr);
 
-    return (char*)NULL;
-    } /* end of find_cached_resource() */
+	return (char*)NULL;
+	} /* end of find_cached_resource() */
 
 /* end of file */
 

@@ -30,43 +30,43 @@ static int eof = FALSE;
 ** Get a character from the input buffer.
 */
 int input(void)
-    {
-    static unsigned char inbuf[INPUT_BUFFER_SIZE];
-    static unsigned char *ptr;
-    int c;
+	{
+	static unsigned char inbuf[INPUT_BUFFER_SIZE];
+	static unsigned char *ptr;
+	int c;
 
-    while(bytes_left==0)
-    	{
-    	if(eof)
-    	    return EOF;
+	while(bytes_left==0)
+		{
+		if(eof)
+			return EOF;
 
-	if( (bytes_left=read(0,inbuf,sizeof(inbuf))) == -1 )
-	    {
-	    fprintf(stderr,"input(): read() failed, errno=%d",errno);
-	    exit(10);
-	    }
+		if( (bytes_left=read(0,inbuf,sizeof(inbuf))) == -1 )
+			{
+			fprintf(stderr,"input(): read() failed, errno=%d",errno);
+			exit(10);
+			}
 
-	if(bytes_left < (int)sizeof(inbuf))
-	    eof=TRUE;
+		if(bytes_left < (int)sizeof(inbuf))
+			eof=TRUE;
 
-	ptr=inbuf;
-    	}
+		ptr=inbuf;
+		}
 
-    bytes_left--;
-    c=*(ptr++);
+	bytes_left--;
+	c=*(ptr++);
 
-    return ( (c & clear8th) | set8th );
-    } /* end of input() */
+	return ( (c & clear8th) | set8th );
+	} /* end of input() */
 
 /*
 ** Return to the begining of the input file.
 */
 void rewind_input(void)
-    {
-    bytes_left=0;
-    eof=FALSE;
+	{
+	bytes_left=0;
+	eof=FALSE;
 
-    lseek(0,(off_t)0,SEEK_SET);
-    } /* end of rewind_input() */
+	lseek(0,(off_t)0,SEEK_SET);
+	} /* end of rewind_input() */
 
 /* end of file */

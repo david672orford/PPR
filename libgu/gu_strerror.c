@@ -23,12 +23,12 @@
 ** to 2 the first time it is called.
 */
 char *gu_strerror(int n)
-    {
-    int saved_errno = errno;
-    char *s = strerror(n);
-    errno = saved_errno;
-    return s;
-    }
+	{
+	int saved_errno = errno;
+	char *s = strerror(n);
+	errno = saved_errno;
+	return s;
+	}
 
 /* end of file */
 

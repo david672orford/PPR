@@ -40,77 +40,77 @@
 /*
 ** Handle an lpq style queue request.  The file names
 ** list is filled with a list of job numbers and
-** user names.  The queue has previously been specified
-** with uprint_set_dest().  This function can be
+** user names.	The queue has previously been specified
+** with uprint_set_dest().	This function can be
 ** used from uprint-lpq or from an lpd emulator in order
 ** to process requests from across the network.
 */
 int uprint_lpq_rfc1179(const char *queue, int format, const char **arglist, struct REMOTEDEST *scratchpad)
-    {
-    const char function[] = "uprint_lpq_rfc1179";
-    int x, y;
-    char temp[1024];
-    const char *args[5];
-
-    DODEBUG(("%s(queue = \"%s\", format = %d, arglist = ?)", function, queue != (const char *)NULL ? queue : "", format));
-
-    if(queue == (const char *)NULL)
-    	{
-	uprint_error_callback("%s(): queue is NULL", function);
-	uprint_errno = UPE_BADARG;
-    	return -1;
-    	}
-
-    if(arglist == (const char **)NULL)
-    	{
-	uprint_error_callback("%s(): arglist is NULL", function);
-	uprint_errno = UPE_BADARG;
-    	return -1;
-    	}
-
-    if(scratchpad == (struct REMOTEDEST *)NULL)
-    	{
-	uprint_error_callback("%s(): scratchpad is NULL", function);
-	uprint_errno = UPE_BADARG;
-    	return -1;
-    	}
-
-    /* Check that the information from /etc/ppr/uprint-remote.conf
-       has been filled in. */
-    if(scratchpad->node[0] == '\0' || scratchpad->printer[0] == '\0')
-    	{
-	uprint_error_callback("%s(): printdest_claim_rfc1179() must suceed first", function);
-	uprint_errno = UPE_BADORDER;
-	return -1;
-    	}
-
-    /* Build the list queue command: */
-    snprintf(temp, sizeof(temp), "%c%s", format ? 4 : 3, scratchpad->printer);
-    y = strlen(temp);
-
-    for(x = 0; arglist[x] != (const char *)NULL; x++)
 	{
-	if((y + 2 + strlen(arglist[x])) > sizeof(temp))
-	    {
-	    uprint_errno = UPE_BADARG;
-	    uprint_error_callback("%s(): arglist too long", function);
-	    return -1;
-	    }
+	const char function[] = "uprint_lpq_rfc1179";
+	int x, y;
+	char temp[1024];
+	const char *args[5];
 
-	temp[y++] = ' ';
-	strcpy(temp + y, arglist[x]);
-	y += strlen(arglist[x]);
-	}
+	DODEBUG(("%s(queue = \"%s\", format = %d, arglist = ?)", function, queue != (const char *)NULL ? queue : "", format));
 
-    temp[y++] = '\n';
+	if(queue == (const char *)NULL)
+		{
+		uprint_error_callback("%s(): queue is NULL", function);
+		uprint_errno = UPE_BADARG;
+		return -1;
+		}
 
-    args[0] = UPRINT_RFC1179;
-    args[1] = "command";
-    args[2] = scratchpad->node;
-    args[3] = temp;
-    args[4] = NULL;
+	if(arglist == (const char **)NULL)
+		{
+		uprint_error_callback("%s(): arglist is NULL", function);
+		uprint_errno = UPE_BADARG;
+		return -1;
+		}
 
-    return uprint_run_rfc1179(UPRINT_RFC1179, args);
-    } /* end of uprint_lpq_rfc1179() */
+	if(scratchpad == (struct REMOTEDEST *)NULL)
+		{
+		uprint_error_callback("%s(): scratchpad is NULL", function);
+		uprint_errno = UPE_BADARG;
+		return -1;
+		}
+
+	/* Check that the information from /etc/ppr/uprint-remote.conf
+	   has been filled in. */
+	if(scratchpad->node[0] == '\0' || scratchpad->printer[0] == '\0')
+		{
+		uprint_error_callback("%s(): printdest_claim_rfc1179() must suceed first", function);
+		uprint_errno = UPE_BADORDER;
+		return -1;
+		}
+
+	/* Build the list queue command: */
+	snprintf(temp, sizeof(temp), "%c%s", format ? 4 : 3, scratchpad->printer);
+	y = strlen(temp);
+
+	for(x = 0; arglist[x] != (const char *)NULL; x++)
+		{
+		if((y + 2 + strlen(arglist[x])) > sizeof(temp))
+			{
+			uprint_errno = UPE_BADARG;
+			uprint_error_callback("%s(): arglist too long", function);
+			return -1;
+			}
+
+		temp[y++] = ' ';
+		strcpy(temp + y, arglist[x]);
+		y += strlen(arglist[x]);
+		}
+
+	temp[y++] = '\n';
+
+	args[0] = UPRINT_RFC1179;
+	args[1] = "command";
+	args[2] = scratchpad->node;
+	args[3] = temp;
+	args[4] = NULL;
+
+	return uprint_run_rfc1179(UPRINT_RFC1179, args);
+	} /* end of uprint_lpq_rfc1179() */
 
 /* end of file */

@@ -45,31 +45,31 @@ $ENV{'IFS'}=$1;
 # the child.
 #
 sub run_with_stdin
-    {
-    local($pid);
-    local($infile,$progname) = @_;
+	{
+	local($pid);
+	local($infile,$progname) = @_;
 
-    $pid = fork();
+	$pid = fork();
 
-    if($pid == -1)			# error
-	{				# not much we can do
-	die "Fork() failed\n";
-	}
-    elsif($pid == 0)			# child
-	{				# exec the program
-	open(STDIN,"<$infile") || die "child: failed to open $infile as stdin, $!\n";
-	exec($progname);
-	exit(242);
-	}
-    else				# parent
-	{				# wait for child to exit
-	wait;
-	if($? != 0)
-	    {
-	    die "Failure while runing $progname, \$? = $?\n";
-	    }
-	}
-    } # end of run()
+	if($pid == -1)						# error
+		{								# not much we can do
+		die "Fork() failed\n";
+		}
+	elsif($pid == 0)					# child
+		{								# exec the program
+		open(STDIN,"<$infile") || die "child: failed to open $infile as stdin, $!\n";
+		exec($progname);
+		exit(242);
+		}
+	else								# parent
+		{								# wait for child to exit
+		wait;
+		if($? != 0)
+			{
+			die "Failure while runing $progname, \$? = $?\n";
+			}
+		}
+	} # end of run()
 
 # We need a directory to work in
 $TEXTEMPDIR="$TEMPDIR/ppr-tex-$$";
@@ -89,167 +89,167 @@ $noisy=0;
 
 # Read the parameters
 foreach $pair (split(/[ \t]+/,$options))
-    {
-    if( $pair =~ /^noisy=[ty1]/i )
 	{
-	$noisy=1;
+	if( $pair =~ /^noisy=[ty1]/i )
+		{
+		$noisy=1;
+		}
 	}
-    }
 
 # If we are told what the invokedir is, set it in TEXINPUTS
 # with a trailing colon which means to search the system
 # default directories after.
 if( defined($invokedir) )
-    { $ENV{"TEXINPUTS"}="$invokedir:"; }
+	{ $ENV{"TEXINPUTS"}="$invokedir:"; }
 
 # Read in the TeX source, analyzing it as we go
 print STDERR "Reading and analyzing document\n" if $noisy;
 open(TEMPFILE,"> $TEXTEMPDIR/document.tex") || die "Failed to create \"$TEXTEMPDIR/document.tex\", $!\n";
-while(<STDIN>)		# Read all of the TeX source
-	{		# and copy it into a temporary file
-	if( /\\begin *{[^}]+}/ )
-	    { $count_begin++; }
+while(<STDIN>)			# Read all of the TeX source
+		{				# and copy it into a temporary file
+		if( /\\begin *{[^}]+}/ )
+			{ $count_begin++; }
 
-	elsif( /\\end *{[^}]+}/ )
-	    { $count_end++; }
+		elsif( /\\end *{[^}]+}/ )
+			{ $count_end++; }
 
-	print TEMPFILE $_;
-	}
+		print TEMPFILE $_;
+		}
 close(TEMPFILE);
 
 # See if \begin{} and \end{} are mismatched
 if( $count_begin && $count_begin != $count_end)
-    {
-    print STDERR "\\begin{} \\end{} mismatch\n" if $noisy;
+	{
+	print STDERR "\\begin{} \\end{} mismatch\n" if $noisy;
 
-    open(E,"> $TEXTEMPDIR/error") || die "Can't create $TEXTEMPDIR/error\n";
+	open(E,"> $TEXTEMPDIR/error") || die "Can't create $TEXTEMPDIR/error\n";
 
-    print E "Your LaTeX job was not submitted to LaTeX because a preliminary\n";
-    print E "inspection revealed that while it has $count_begin \\begin{}\n";
-    print E "commands, its has $count_end \\end{} commands.\n";
+	print E "Your LaTeX job was not submitted to LaTeX because a preliminary\n";
+	print E "inspection revealed that while it has $count_begin \\begin{}\n";
+	print E "commands, its has $count_end \\end{} commands.\n";
 
-    close(E);
+	close(E);
 
-    &run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
-    unlink("$TEXTEMPDIR/error");
-    unlink("$TEXTEMPDIR/document.tex");
-    rmdir($TEXTEMPDIR);
-    exit(0);		# In a sense, we were sucessfull
-    }
+	&run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
+	unlink("$TEXTEMPDIR/error");
+	unlink("$TEXTEMPDIR/document.tex");
+	rmdir($TEXTEMPDIR);
+	exit(0);			# In a sense, we were sucessfull
+	}
 
 # Decide which program to use
 if($count_begin)
-    {
-    $PROGRAM=$LATEX;
-    }
+	{
+	$PROGRAM=$LATEX;
+	}
 else
-    {
-    $PROGRAM=$TEX;
-    }
+	{
+	$PROGRAM=$TEX;
+	}
 
 # Now, run it thru TeX or LaTeX
 for($times_run=0,$run_needed=1; $run_needed && $times_run < 3; $times_run++)
-    {
-    $run_needed=0;				# assume this run will do it
-    $texerror=0;
-
-    print STDERR "Running \"$PROGRAM\"\n" if $noisy;
-
-    pipe(TEX,CHILD) || die "pipe() failed, $!\n";
-    $pid=fork();
-
-    if(!defined($pid))
-	{ die "fork() failed, $!\n"; }
-
-    if($pid==0)					# child
 	{
-	close(TEX);
-	open(STDOUT,">&CHILD");
-	open(STDERR,">&STDOUT");		# direct stderr to pipe too
-	close(CHILD);
-	chdir($TEXTEMPDIR);			# Let TeX work in temporary directory
-	exec($PROGRAM,"document.tex");
-	exit(255);
-	}
+	$run_needed=0;								# assume this run will do it
+	$texerror=0;
 
-    close(CHILD);				# parent doesn't need this
+	print STDERR "Running \"$PROGRAM\"\n" if $noisy;
 
-    $texoutput="";
-    while(<TEX>)
-	{
-	$texoutput .= $_;			# Save it
+	pipe(TEX,CHILD) || die "pipe() failed, $!\n";
+	$pid=fork();
 
-	print STDERR $_ if $noisy;		# If running noisy, let user see it
+	if(!defined($pid))
+		{ die "fork() failed, $!\n"; }
 
-	if( /^Overfull/ || /^Underfull/ )	# ignore lines which may
-	    { next; }				# contain source text
+	if($pid==0)									# child
+		{
+		close(TEX);
+		open(STDOUT,">&CHILD");
+		open(STDERR,">&STDOUT");				# direct stderr to pipe too
+		close(CHILD);
+		chdir($TEXTEMPDIR);						# Let TeX work in temporary directory
+		exec($PROGRAM,"document.tex");
+		exit(255);
+		}
 
- 	if( /Rerun/ )				# note any lines which say
-	    { $run_needed=1; }			# TeX should be run again
+	close(CHILD);								# parent doesn't need this
 
-	if( /^! Emergency stop/ )
-	    { $texerror=1; }
-	}
+	$texoutput="";
+	while(<TEX>)
+		{
+		$texoutput .= $_;						# Save it
 
-    close(TEX);		# close the pipe from TeX
-    wait();		# wait for TeX to die
-    $retval=$?;		# save TeX's return value
+		print STDERR $_ if $noisy;				# If running noisy, let user see it
 
-    if($retval == 255)
-	{
-	die "exec($PROGRAM) failed, $!\n";
-	}
+		if( /^Overfull/ || /^Underfull/ )		# ignore lines which may
+			{ next; }							# contain source text
 
-    # If TeX reported errors, print TeX's output
-    # instead of the file.
-    elsif($retval != 0 || $texerror)
-	{
-	print STDERR "Printing errors\n" if $noisy;
+		if( /Rerun/ )							# note any lines which say
+			{ $run_needed=1; }					# TeX should be run again
 
-	open(ERR,">$TEXTEMPDIR/error") || die "Failed to create temporary file, $!\n";
-	print ERR $texoutput;
-	close(ERR);
+		if( /^! Emergency stop/ )
+			{ $texerror=1; }
+		}
 
-	&run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
+	close(TEX);			# close the pipe from TeX
+	wait();				# wait for TeX to die
+	$retval=$?;			# save TeX's return value
 
-	last;
-	}
-    } # end of for() loop which runs TeX or LaTeX multiple times
+	if($retval == 255)
+		{
+		die "exec($PROGRAM) failed, $!\n";
+		}
+
+	# If TeX reported errors, print TeX's output
+	# instead of the file.
+	elsif($retval != 0 || $texerror)
+		{
+		print STDERR "Printing errors\n" if $noisy;
+
+		open(ERR,">$TEXTEMPDIR/error") || die "Failed to create temporary file, $!\n";
+		print ERR $texoutput;
+		close(ERR);
+
+		&run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
+
+		last;
+		}
+	} # end of for() loop which runs TeX or LaTeX multiple times
 
 # If TeX suceeded, pass the file to the dvi filter
 if($retval == 0 && $texerror == 0)
-    {
-    print "Running filter_dvi\n" if $noisy;
-
-    if( ! defined($pid=fork()) )
-	{ die "Can't fork()\n"; }
-
-    if($pid==0)		# child
 	{
-	open(STDIN,"< $TEXTEMPDIR/document.dvi") || die "failed to open $TEXTEMPDIR/document.dvi\n";
-	exec("filters/filter_dvi", $options, $printer, $title, $invokedir);
-	die "exec(\"$FILTER_DVI\") failed, $!\n";
+	print "Running filter_dvi\n" if $noisy;
+
+	if( ! defined($pid=fork()) )
+		{ die "Can't fork()\n"; }
+
+	if($pid==0)			# child
+		{
+		open(STDIN,"< $TEXTEMPDIR/document.dvi") || die "failed to open $TEXTEMPDIR/document.dvi\n";
+		exec("filters/filter_dvi", $options, $printer, $title, $invokedir);
+		die "exec(\"$FILTER_DVI\") failed, $!\n";
+		}
+	else				# parent
+		{
+		wait();
+		}
 	}
-    else		# parent
-	{
-	wait();
-	}
-    }
 
 # remove all the temporary files
 print STDERR "Removing temporary files:\n" if $noisy;
 chdir($TEXTEMPDIR);
 opendir(DIR,".") || die "opendir() failed\n";
 while(defined($file=readdir(DIR)))
-    {
-    if($file !~ /^\./)
 	{
-	print STDERR "\t$file\n" if $noisy;
-	# Workaround for new Perl paranoia:
-	$file =~ /^(.*)$/;
-    	unlink($1);
+	if($file !~ /^\./)
+		{
+		print STDERR "\t$file\n" if $noisy;
+		# Workaround for new Perl paranoia:
+		$file =~ /^(.*)$/;
+		unlink($1);
+		}
 	}
-    }
 closedir(DIR);
 chdir("..");
 rmdir($TEXTEMPDIR);

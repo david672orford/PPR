@@ -50,7 +50,7 @@
 #define DODEBUG(a)
 #endif
 
-/* This the the size of the read and write buffers.  8192 is bigger than any pipe. */
+/* This the the size of the read and write buffers.	 8192 is bigger than any pipe. */
 #define BUFFER_SIZE 8192
 
 /* There is one of these for each data flow direction. */
@@ -82,7 +82,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
 ** use of select() and non-blocking file descriptors.  He says that write()
 ** and possible even read() can fail with errno set to EAGAIN even if select()
-** has stated that the file descriptor is open for writing.  In a private e-mail 
+** has stated that the file descriptor is open for writing.	 In a private e-mail 
 ** to PPR's author, he cited three of the possible reasons:
 **
 ** >a) select can't tell how big the next write is going to be
@@ -118,277 +118,277 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** Most man pages for select(2) do a pretty poor job of describing its 
 ** behavior and say almost nothing about proper use.  The vagueness of the 
 ** origional 4.2BSD man page is probably why various implementations of 
-** select() display subtle differences in behavior.  Some of these differences
+** select() display subtle differences in behavior.	 Some of these differences
 ** are described in the Linux select(2) man page and by W. Richard Stevens in
 ** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
 ** 399-400.
 */
 void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*status_function)(void * status_address), void *status_address, int status_interval)
-    {
-    char xmit_buffer[BUFFER_SIZE];	/* data going to printer */
-    char *xmit_ptr = xmit_buffer;
-    int xmit_len = 0;
-    char recv_buffer[BUFFER_SIZE]; 	/* data coming from printer */
-    char *recv_ptr = xmit_buffer;
-    int recv_len = 0;
-    gu_boolean recv_eoj = FALSE;	/* Has the printer closed its end? */
-    enum COPYSTATE xmit_state = COPYSTATE_READING;
-    enum COPYSTATE recv_state = COPYSTATE_READING;
-    fd_set rfds, wfds;
-    int last_stdin_read = 1;		/* how many bytes from stdin last time? */
-    int selret;
-    time_t time_next_control_t = 0;	/* time of next schedualed control-T (if not postponed) */
-    time_t time_next_status = 0;	/* time of next schedualed status function call */
-    struct timeval *timeout, timeout_workspace;
+	{
+	char xmit_buffer[BUFFER_SIZE];		/* data going to printer */
+	char *xmit_ptr = xmit_buffer;
+	int xmit_len = 0;
+	char recv_buffer[BUFFER_SIZE];		/* data coming from printer */
+	char *recv_ptr = xmit_buffer;
+	int recv_len = 0;
+	gu_boolean recv_eoj = FALSE;		/* Has the printer closed its end? */
+	enum COPYSTATE xmit_state = COPYSTATE_READING;
+	enum COPYSTATE recv_state = COPYSTATE_READING;
+	fd_set rfds, wfds;
+	int last_stdin_read = 1;			/* how many bytes from stdin last time? */
+	int selret;
+	time_t time_next_control_t = 0;		/* time of next schedualed control-T (if not postponed) */
+	time_t time_next_status = 0;		/* time of next schedualed status function call */
+	struct timeval *timeout, timeout_workspace;
 
-    DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
+	DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
-    /*
-    ** Set the printer port to O_NONBLOCK.  This is important because we don't
-    ** want to block if it can't accept BUFFER_SIZE bytes.
-    **
-    ** We could set stdin and stdout to O_NONBLOCK too, but they are much less
-    ** likely to block for an appreciatable period of time and we aren't
-    ** such if the code that prints %%[ ... ]%% messages can deal with a
-    ** non-blocking stdout.
-    */
-    gu_nonblock(portfd, TRUE);
+	/*
+	** Set the printer port to O_NONBLOCK.	This is important because we don't
+	** want to block if it can't accept BUFFER_SIZE bytes.
+	**
+	** We could set stdin and stdout to O_NONBLOCK too, but they are much less
+	** likely to block for an appreciatable period of time and we aren't
+	** such if the code that prints %%[ ... ]%% messages can deal with a
+	** non-blocking stdout.
+	*/
+	gu_nonblock(portfd, TRUE);
 
-    /*
-    ** Initialize these timers to their first-fire times.  If we didn't, they
-    ** would fire as soon as we enter the loop.
-    */
-    if(idle_status_interval > 0)
-	time_next_control_t = (time(NULL) + idle_status_interval);
-    if(status_interval > 0)
-        time_next_status = (time(NULL) + status_interval);
+	/*
+	** Initialize these timers to their first-fire times.  If we didn't, they
+	** would fire as soon as we enter the loop.
+	*/
+	if(idle_status_interval > 0)
+		time_next_control_t = (time(NULL) + idle_status_interval);
+	if(status_interval > 0)
+		time_next_status = (time(NULL) + status_interval);
 
-    /*
-    ** Copy stdin to the printer and from the printer to stdout.  Continue
-    ** to do so for as long as read() on stdin doesn't return 0 and we
-    ** have data in the receive buffer from the printer that we haven't
-    ** sent to pprdrv yet.
-    **
-    ** If send_eoj_funct is defined, then also wait for a definite end-
-    ** of-job indication from the printer.
-    */
-    while(last_stdin_read || recv_len > 0 
-		|| (send_eoj_funct && !recv_eoj)
-    		)
-    	{
-	FD_ZERO(&rfds);
-	FD_ZERO(&wfds);
-
-	/* Which file descriptor in the path from pprdrv to printer? */
-	switch(xmit_state)
-	    {
-	    case COPYSTATE_READING:
-		if(last_stdin_read)			/* if read() on fd 0 hasn't reported zero bytes yet, */
-		    {
-		    DODEBUG(("wish to read stdin"));
-		    FD_SET(0, &rfds);
-		    }
-		break;
-	    case COPYSTATE_WRITING:
-		DODEBUG(("wish to write to printer"));
-		FD_SET(portfd, &wfds);
-		break;
-	    }
-
-	/* Which file descriptor in the path from printer to pprdrv? */
-	if(int_cmdline.feedback)
-	    {
-	    switch(recv_state)
+	/*
+	** Copy stdin to the printer and from the printer to stdout.  Continue
+	** to do so for as long as read() on stdin doesn't return 0 and we
+	** have data in the receive buffer from the printer that we haven't
+	** sent to pprdrv yet.
+	**
+	** If send_eoj_funct is defined, then also wait for a definite end-
+	** of-job indication from the printer.
+	*/
+	while(last_stdin_read || recv_len > 0 
+				|| (send_eoj_funct && !recv_eoj)
+				)
 		{
-		case COPYSTATE_READING:
-		    DODEBUG(("wish to read from printer"));
-		    FD_SET(portfd, &rfds);
-		    break;
-		case COPYSTATE_WRITING:
-		    DODEBUG(("wish to write to stdout"));
-		    FD_SET(1, &wfds);
-		    break;
-		}
-	    }
+		FD_ZERO(&rfds);
+		FD_ZERO(&wfds);
 
-	/* If we don't have data to write and have not already queued a 
-	   control-T, determine how long select() can block without 
-	   violating the idle_status_interval setting. */
-	if(time_next_control_t > 0 || time_next_status > 0)
-	    {
-	    time_t next_schedualed = time_next_control_t > 0 && (time_next_control_t < time_next_status || time_next_status <= 0) ? time_next_control_t : time_next_status;
-	    next_schedualed -= time(NULL);
-	    DODEBUG(("remaining time before next schedualed action: %ld", (long)next_schedualed));
-	    if(next_schedualed < 0)
-		next_schedualed = 0;
-	    timeout_workspace.tv_sec = next_schedualed;
-	    timeout_workspace.tv_usec = 0;
-	    timeout = &timeout_workspace;
-	    }
-	else
-	    {
-	    timeout = NULL;
-	    }
+		/* Which file descriptor in the path from pprdrv to printer? */
+		switch(xmit_state)
+			{
+			case COPYSTATE_READING:
+				if(last_stdin_read)						/* if read() on fd 0 hasn't reported zero bytes yet, */
+					{
+					DODEBUG(("wish to read stdin"));
+					FD_SET(0, &rfds);
+					}
+				break;
+			case COPYSTATE_WRITING:
+				DODEBUG(("wish to write to printer"));
+				FD_SET(portfd, &wfds);
+				break;
+			}
 
-	/* Wait until the there is date to read or write or
-	   the timeout expires. */
-	if((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
-	    {
-	    DODEBUG(("select() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-	    (*fatal_prn_err)(errno);
-	    }
+		/* Which file descriptor in the path from printer to pprdrv? */
+		if(int_cmdline.feedback)
+			{
+			switch(recv_state)
+				{
+				case COPYSTATE_READING:
+					DODEBUG(("wish to read from printer"));
+					FD_SET(portfd, &rfds);
+					break;
+				case COPYSTATE_WRITING:
+					DODEBUG(("wish to write to stdout"));
+					FD_SET(1, &wfds);
+					break;
+				}
+			}
 
-	DODEBUG(("select() returned %d", selret));
-
-	/* Paranoid */
-	if((FD_ISSET(0, &rfds) && xmit_state != COPYSTATE_READING)
-		|| (FD_ISSET(portfd, &wfds) && xmit_state != COPYSTATE_WRITING)
-		|| (FD_ISSET(portfd, &rfds) && recv_state != COPYSTATE_READING)
-		|| (FD_ISSET(1, &wfds) && recv_state != COPYSTATE_WRITING))
-	    {
-	    alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-	    int_exit(EXIT_PRNERR_NORETRY);
-	    }
-
-	/* If select() timed out, then it is either time to put a control-T 
-	   in the transmit buffer or to send an SNMP query. */
-	if(selret == 0)
-	    {
-	    time_t time_now;
-	    time(&time_now);
-	    if(time_next_control_t > 0 && time_now >= time_next_control_t)
-		{
-		DODEBUG(("time for ^T"));
-		if(xmit_state != COPYSTATE_READING)
-		    {
-		    alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-		    int_exit(EXIT_PRNERR_NORETRY);
-		    }
-		xmit_ptr = "\24";
-		xmit_len = 1;
-		xmit_state = COPYSTATE_WRITING;
-		time_next_control_t = 0;		/* don't schedual another yet */
-		}
-	    if(time_next_status > 0 && time_now >= time_next_status)
-		{
-		(*status_function)(status_address);
-		time_next_status = (time_now + status_interval);
-		}
-	    continue;
-	    }
-
-	if(FD_ISSET(0, &rfds))
-	    {
-	    DODEBUG(("data available on stdin"));
-	    if((xmit_len = last_stdin_read = read(0, xmit_ptr = xmit_buffer, sizeof(xmit_buffer))) < 0)
-	    	{
-		if(errno == EAGAIN)	/* may be possible under wacko circumstances */
-		    {
-		    xmit_len = 0;	/* this is ok, last_stdin_read will keep the loop alive */
-		    }
+		/* If we don't have data to write and have not already queued a 
+		   control-T, determine how long select() can block without 
+		   violating the idle_status_interval setting. */
+		if(time_next_control_t > 0 || time_next_status > 0)
+			{
+			time_t next_schedualed = time_next_control_t > 0 && (time_next_control_t < time_next_status || time_next_status <= 0) ? time_next_control_t : time_next_status;
+			next_schedualed -= time(NULL);
+			DODEBUG(("remaining time before next schedualed action: %ld", (long)next_schedualed));
+			if(next_schedualed < 0)
+				next_schedualed = 0;
+			timeout_workspace.tv_sec = next_schedualed;
+			timeout_workspace.tv_usec = 0;
+			timeout = &timeout_workspace;
+			}
 		else
-		    {
-		    alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		    int_exit(EXIT_PRNERR);
-		    }
-	    	}
+			{
+			timeout = NULL;
+			}
 
-	    DODEBUG(("read %d byte%s from stdin", xmit_len, xmit_len != 1 ? "s" : ""));
+		/* Wait until the there is date to read or write or
+		   the timeout expires. */
+		if((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
+			{
+			DODEBUG(("select() failed, errno=%d (%s)", errno, gu_strerror(errno)));
+			(*fatal_prn_err)(errno);
+			}
 
-	    if(xmit_len > 0)
-		{
-	    	xmit_state = COPYSTATE_WRITING;
-	    	time_next_control_t = 0;		/* cancel control-T */
-	    	}
-	    else if(send_eoj_funct)
-	   	{
-		(*send_eoj_funct)(portfd);
-	   	}
-	    }
+		DODEBUG(("select() returned %d", selret));
 
-	else if(FD_ISSET(portfd, &wfds))
-	    {
-	    int len;
-	    DODEBUG(("space available on printer"));
-	    if((len = write(portfd, xmit_ptr, xmit_len)) < 0)
-	    	{
-	    	DODEBUG(("write() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-		if(errno == EAGAIN)
-		    len = 0;
-		else
-		    (*fatal_prn_err)(errno);
+		/* Paranoid */
+		if((FD_ISSET(0, &rfds) && xmit_state != COPYSTATE_READING)
+				|| (FD_ISSET(portfd, &wfds) && xmit_state != COPYSTATE_WRITING)
+				|| (FD_ISSET(portfd, &rfds) && recv_state != COPYSTATE_READING)
+				|| (FD_ISSET(1, &wfds) && recv_state != COPYSTATE_WRITING))
+			{
+			alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
+			int_exit(EXIT_PRNERR_NORETRY);
+			}
+
+		/* If select() timed out, then it is either time to put a control-T 
+		   in the transmit buffer or to send an SNMP query. */
+		if(selret == 0)
+			{
+			time_t time_now;
+			time(&time_now);
+			if(time_next_control_t > 0 && time_now >= time_next_control_t)
+				{
+				DODEBUG(("time for ^T"));
+				if(xmit_state != COPYSTATE_READING)
+					{
+					alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
+					int_exit(EXIT_PRNERR_NORETRY);
+					}
+				xmit_ptr = "\24";
+				xmit_len = 1;
+				xmit_state = COPYSTATE_WRITING;
+				time_next_control_t = 0;				/* don't schedual another yet */
+				}
+			if(time_next_status > 0 && time_now >= time_next_status)
+				{
+				(*status_function)(status_address);
+				time_next_status = (time_now + status_interval);
+				}
+			continue;
+			}
+
+		if(FD_ISSET(0, &rfds))
+			{
+			DODEBUG(("data available on stdin"));
+			if((xmit_len = last_stdin_read = read(0, xmit_ptr = xmit_buffer, sizeof(xmit_buffer))) < 0)
+				{
+				if(errno == EAGAIN)		/* may be possible under wacko circumstances */
+					{
+					xmit_len = 0;		/* this is ok, last_stdin_read will keep the loop alive */
+					}
+				else
+					{
+					alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
+					int_exit(EXIT_PRNERR);
+					}
+				}
+
+			DODEBUG(("read %d byte%s from stdin", xmit_len, xmit_len != 1 ? "s" : ""));
+
+			if(xmit_len > 0)
+				{
+				xmit_state = COPYSTATE_WRITING;
+				time_next_control_t = 0;				/* cancel control-T */
+				}
+			else if(send_eoj_funct)
+				{
+				(*send_eoj_funct)(portfd);
+				}
+			}
+
+		else if(FD_ISSET(portfd, &wfds))
+			{
+			int len;
+			DODEBUG(("space available on printer"));
+			if((len = write(portfd, xmit_ptr, xmit_len)) < 0)
+				{
+				DODEBUG(("write() failed, errno=%d (%s)", errno, gu_strerror(errno)));
+				if(errno == EAGAIN)
+					len = 0;
+				else
+					(*fatal_prn_err)(errno);
+				}
+
+			DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
+			DODEBUG(("--->\"%.*s\"<---", len, xmit_ptr));
+
+			xmit_ptr += len;
+			xmit_len -= len;
+
+			if(xmit_len == 0)
+				{
+				xmit_state = COPYSTATE_READING;
+
+				if(idle_status_interval)
+					time_next_control_t = (time(NULL) + idle_status_interval);
+				}
+			}
+
+		if(FD_ISSET(portfd, &rfds))
+			{
+			DODEBUG(("data available on printer"));
+			if((recv_len = read(portfd, recv_ptr = recv_buffer, sizeof(recv_buffer))) < 0)
+				{
+				DODEBUG(("read() failed, errno=%d (%s)", errno, gu_strerror(errno)));
+				if(errno == EAGAIN)
+					recv_len = 0;
+				else
+					(*fatal_prn_err)(errno);
+				}
+
+			DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));
+			DODEBUG(("--->\"%.*s\"<---", recv_len, recv_ptr));
+
+			if(recv_len > 0)
+				recv_state = COPYSTATE_WRITING;
+			else
+				recv_eoj = TRUE;
+			}
+
+		else if(FD_ISSET(1, &wfds))
+			{
+			int len;
+			DODEBUG(("space available on stdout"));
+			if((len = write(1, recv_ptr, recv_len)) < 0)
+				{
+				if(errno == EAGAIN)		/* If available space is less than PIPE_BUF bytes, */
+					{
+					len = 0;
+					}
+				else
+					{
+					alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
+					int_exit(EXIT_PRNERR);
+					}
+				}
+
+			DODEBUG(("wrote %d byte%s to stdout", len, len != 1 ? "s" : ""));
+
+			recv_ptr += len;
+			recv_len -= len;
+			if(recv_len == 0)
+				recv_state = COPYSTATE_READING;
+			}
+
+		/* Paranoid */
+		if(xmit_len < 0 || recv_len < 0)
+			{
+			alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
+			int_exit(EXIT_PRNERR_NORETRY);
+			}
 		}
 
-	    DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
-	    DODEBUG(("--->\"%.*s\"<---", len, xmit_ptr));
-
-	    xmit_ptr += len;
-	    xmit_len -= len;
-
-	    if(xmit_len == 0)
-		{
-	    	xmit_state = COPYSTATE_READING;
-
-		if(idle_status_interval)
-		    time_next_control_t = (time(NULL) + idle_status_interval);
-		}
-	    }
-
-	if(FD_ISSET(portfd, &rfds))
-	    {
-	    DODEBUG(("data available on printer"));
-	    if((recv_len = read(portfd, recv_ptr = recv_buffer, sizeof(recv_buffer))) < 0)
-	    	{
-	    	DODEBUG(("read() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-		if(errno == EAGAIN)
-		    recv_len = 0;
-		else
-		    (*fatal_prn_err)(errno);
-		}
-
-	    DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));
-	    DODEBUG(("--->\"%.*s\"<---", recv_len, recv_ptr));
-
-	    if(recv_len > 0)
-		recv_state = COPYSTATE_WRITING;
-	    else
-	    	recv_eoj = TRUE;
-	    }
-
-	else if(FD_ISSET(1, &wfds))
-	    {
-	    int len;
-	    DODEBUG(("space available on stdout"));
-	    if((len = write(1, recv_ptr, recv_len)) < 0)
-	    	{
-		if(errno == EAGAIN)	/* If available space is less than PIPE_BUF bytes, */
-		    {
-		    len = 0;
-		    }
-		else
-		    {
-		    alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		    int_exit(EXIT_PRNERR);
-		    }
-	    	}
-
-	    DODEBUG(("wrote %d byte%s to stdout", len, len != 1 ? "s" : ""));
-
-	    recv_ptr += len;
-	    recv_len -= len;
-	    if(recv_len == 0)
-		recv_state = COPYSTATE_READING;
-	    }
-
-	/* Paranoid */
-	if(xmit_len < 0 || recv_len < 0)
-	    {
-	    alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-	    int_exit(EXIT_PRNERR_NORETRY);
-	    }
-    	}
-
-    } /* end of int_copy_job() */
+	} /* end of int_copy_job() */
 
 /* end of file */
 

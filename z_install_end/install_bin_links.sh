@@ -40,8 +40,8 @@ for i in ppr ppop ppad ppuser ppdoc \
 	ppr-config \
 	ppr-followme ppr-xgrant ppr-popup \
 	ppr-panel ppr-web ppr-passwd
-    do
-    ../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
-    done
+	do
+	../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
+	done
 
 exit 0

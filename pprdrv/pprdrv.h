@@ -30,30 +30,30 @@
 
 /*
 ** Uncomment the defines for the debugging
-** code you want to have included.  Most of
+** code you want to have included.	Most of
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
 #if 0
-#define DEBUG 1				/* include function debug() */
-#define DEBUG_MAIN 1			/* main() */
-#define DEBUG_INTERFACE 1		/* show opening, closing, etc. */
+#define DEBUG 1							/* include function debug() */
+#define DEBUG_MAIN 1					/* main() */
+#define DEBUG_INTERFACE 1				/* show opening, closing, etc. */
 /* #define DEBUG_INTERFACE_GRITTY 1 */	/* show what we send to and receive from the interface */
-/* #define DEBUG_FEEDBACK 1 */		/* show twoway operations */
-#define DEBUG_FEEDBACK_LINES 1		/* show the lines read from printer */
-#define DEBUG_PPD 1		/* PPD file parsing */
+/* #define DEBUG_FEEDBACK 1 */			/* show twoway operations */
+#define DEBUG_FEEDBACK_LINES 1			/* show the lines read from printer */
+#define DEBUG_PPD 1				/* PPD file parsing */
 #define DEBUG_PPD_DETAILED 1
-/* #define DEBUG_FLAGS 1 */		/* banner and trailer pages */
-/* #define DEBUG_RESOURCES 1 */		/* fonts, procset, etc. */
-/* #define DEBUG_QUERY 1 */		/* patch queries? */
+/* #define DEBUG_FLAGS 1 */				/* banner and trailer pages */
+/* #define DEBUG_RESOURCES 1 */			/* fonts, procset, etc. */
+/* #define DEBUG_QUERY 1 */				/* patch queries? */
 /* #define DEBUG_BINSELECT_INLINE 1 */	/* add comments about binselection to output */
 /* #define DEBUG_SIGNITURE_INLINE 1 */	/* add comments about signitures to output */
-#define DEBUG_LW_MESSAGES 1		/* LaserWriter message interpretation */
-/* #define DEBUG_DIE_DELAY 60 */	/* seconds to delay after receiving sigterm */
+#define DEBUG_LW_MESSAGES 1				/* LaserWriter message interpretation */
+/* #define DEBUG_DIE_DELAY 60 */		/* seconds to delay after receiving sigterm */
 #define DEBUG_COMMENTARY 1
-/* #define DEBUG_TRUETYPE 1 */		/* truetype fonts, conversion to Postscript */
+/* #define DEBUG_TRUETYPE 1 */			/* truetype fonts, conversion to Postscript */
 /* #define DEBUG_CUSTOM_HOOK 1 */
-/* #define DEBUG_PPOP_STATUS 1 */	/* code to leave info for "ppop status" */
+/* #define DEBUG_PPOP_STATUS 1 */		/* code to leave info for "ppop status" */
 #endif
 
 /*
@@ -83,12 +83,12 @@
 ** requiring MAX_PPDTEXT to be increased.  Probably this limit should
 ** be removed altogether.
 */
-#define PPD_TABSIZE 128		/* slots in PPD file string hash table */
-#define FONT_TABSIZE 64		/* slots in font hash table */
-#define MAX_PPDNAME 50		/* max length of PPD string name */
-#define MAX_PPDTEXT 8192	/* max length of PPD string value (including multiline values) */
-#define MAX_DRVREQ 40		/* maximum # requirements in a document */
-#define MAX_PAPERSIZES 100	/* maximum # "*PaperDimension:" lines in PPD file */
+#define PPD_TABSIZE 128			/* slots in PPD file string hash table */
+#define FONT_TABSIZE 64			/* slots in font hash table */
+#define MAX_PPDNAME 50			/* max length of PPD string name */
+#define MAX_PPDTEXT 8192		/* max length of PPD string value (including multiline values) */
+#define MAX_DRVREQ 40			/* maximum # requirements in a document */
+#define MAX_PAPERSIZES 100		/* maximum # "*PaperDimension:" lines in PPD file */
 
 /*
 ** What should be done if we have trouble converting a MS-Windows
@@ -110,11 +110,11 @@
 /*==================== No tunables below this line. =====================*/
 
 enum PJL_ONLINE
-	{
-	PJL_ONLINE_UNKNOWN,
-	PJL_ONLINE_FALSE,
-	PJL_ONLINE_TRUE
-	};
+		{
+		PJL_ONLINE_UNKNOWN,
+		PJL_ONLINE_FALSE,
+		PJL_ONLINE_TRUE
+		};
 
 /* pprdrv.c: */
 extern volatile gu_boolean sigterm_caught;
@@ -138,7 +138,7 @@ extern int print_direction;
 extern char *drvreq[MAX_DRVREQ];
 extern int drvreq_count;
 extern int strip_binselects;	/* for pprdrv_ppd.c */
-extern int strip_signature;	/* for pprdrv_ppd.c */
+extern int strip_signature;		/* for pprdrv_ppd.c */
 void fault_check(void);
 
 /* pprdrv_fault_debug.c: */
@@ -371,68 +371,68 @@ void log_close(void);
 ** the current job.
 */
 struct PPRDRV {
-	char *Name;				/* Name of printer */
+		char *Name;								/* Name of printer */
 
-	char *Interface;			/* Interface program */
-	char *Address;				/* Address for interface program */
-	char *Options;				/* Options for interface program */
-	gu_boolean Feedback;			/* true or false */
-	int Jobbreak;				/* enum of jobbreak methods */
-	enum CODES Codes;			/* Passable Codes */
+		char *Interface;						/* Interface program */
+		char *Address;							/* Address for interface program */
+		char *Options;							/* Options for interface program */
+		gu_boolean Feedback;					/* true or false */
+		int Jobbreak;							/* enum of jobbreak methods */
+		enum CODES Codes;						/* Passable Codes */
 
-	struct					/* Raster Image Processor (such as Ghostscript) */
-	    {
-	    char *name;
-	    char *output_language;
-	    char *options_storage;
-	    const char **options;
-	    int options_count;
-	    } RIP;
+		struct									/* Raster Image Processor (such as Ghostscript) */
+			{
+			char *name;
+			char *output_language;
+			char *options_storage;
+			const char **options;
+			int options_count;
+			} RIP;
 
-	struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */
-	gu_boolean do_banner;
-	gu_boolean do_trailer;
-	int OutputOrder;			/* 1 or -1 or 0 if unknown */
-	char *PPDFile;				/* name of description file */
-	gu_boolean type42_ok;			/* Can we use type42 fonts? */
-	gu_boolean GrayOK;			/* permission to print non-colour jobs? */
-	struct PPD_PROTOCOLS prot;              /* List of protocols such as TBCP and PJL PPD files says are supported */
-	int PageCountQuery;			/* Which method?  0 means don't. */
-	int PageTimeLimit;			/* max seconds to allow per page */
+		struct COMMENTATOR *Commentators;		/* the list of processes to tell about things */
+		gu_boolean do_banner;
+		gu_boolean do_trailer;
+		int OutputOrder;						/* 1 or -1 or 0 if unknown */
+		char *PPDFile;							/* name of description file */
+		gu_boolean type42_ok;					/* Can we use type42 fonts? */
+		gu_boolean GrayOK;						/* permission to print non-colour jobs? */
+		struct PPD_PROTOCOLS prot;				/* List of protocols such as TBCP and PJL PPD files says are supported */
+		int PageCountQuery;						/* Which method?  0 means don't. */
+		int PageTimeLimit;						/* max seconds to allow per page */
 
-	struct					/* Limit allowed page sizes for jobs. */
-	    {
-	    int lower;
-	    int upper;
-	    } limit_pages;
+		struct									/* Limit allowed page sizes for jobs. */
+			{
+			int lower;
+			int upper;
+			} limit_pages;
 
-	struct					/* Limit allowed sizes in kilobytes. */
-	    {
-	    int lower;
-	    int upper;
-	    } limit_kilobytes;
+		struct									/* Limit allowed sizes in kilobytes. */
+			{
+			int lower;
+			int upper;
+			} limit_kilobytes;
 
-	struct
-	    {
-	    int per_duplex;			/* duplexed sheet charge in cents */
-	    int per_simplex;			/* simplex sheet sharge in cents */
-	    } charge;
+		struct
+			{
+			int per_duplex;						/* duplexed sheet charge in cents */
+			int per_simplex;					/* simplex sheet sharge in cents */
+			} charge;
 
-	struct
-	    {
-	    int flags;                          /* call for banner, trailer, header, etc. */
-	    const char *path;			/* program to call */
-	    } custom_hook;
+		struct
+			{
+			int flags;							/* call for banner, trailer, header, etc. */
+			const char *path;					/* program to call */
+			} custom_hook;
 
-	struct
-	    {
-	    int JobTimeout;
-	    int WaitTimeout;
-	    int ManualfeedTimeout;
-	    int DoPrintErrors;
-	    } userparams;
+		struct
+			{
+			int JobTimeout;
+			int WaitTimeout;
+			int ManualfeedTimeout;
+			int DoPrintErrors;
+			} userparams;
 
-	} ;
+		} ;
 
 /* This structure is in pprdrv.c */
 extern struct PPRDRV printer;
@@ -441,30 +441,30 @@ extern struct PPRDRV printer;
 ** A PPD file string entry.
 */
 struct PPDSTR {
-	char *name;
-	char *value;
-	struct PPDSTR *next;
-	} ;
+		char *name;
+		char *value;
+		struct PPDSTR *next;
+		} ;
 
 /*
 ** A PPD file font entry.
 */
 struct PPDFONT {
-	char *name;
-	struct PPDFONT *next;
-	} ;
+		char *name;
+		struct PPDFONT *next;
+		} ;
 
 /*
 ** The list of device features
 */
 struct FEATURES {
-    int ColorDevice;                /* TRUE or FALSE, real colour printing */
-    int Extensions;                 /* 0 or EXTENSION_* */
-    int FaxSupport;                 /* FAXSUPPORT_* */
-    int FileSystem;                 /* TRUE or FALSE */
-    int LanguageLevel;              /* 1, 2, etc. */
-    int TTRasterizer;		    /* TT_NONE, TT_ACCEPT68K, TT_TYPE42 */
-    } ;
+	int ColorDevice;				/* TRUE or FALSE, real colour printing */
+	int Extensions;					/* 0 or EXTENSION_* */
+	int FaxSupport;					/* FAXSUPPORT_* */
+	int FileSystem;					/* TRUE or FALSE */
+	int LanguageLevel;				/* 1, 2, etc. */
+	int TTRasterizer;				/* TT_NONE, TT_ACCEPT68K, TT_TYPE42 */
+	} ;
 
 /* This structure is in pprdrv_ppd.c */
 extern struct FEATURES Features;
@@ -480,10 +480,10 @@ extern struct FEATURES Features;
 ** not use this structure.
 */
 struct MOUNTED
-    {
-    char bin[MAX_BINNAME];
-    char media[MAX_MEDIANAME];
-    } ;
+	{
+	char bin[MAX_BINNAME];
+	char media[MAX_MEDIANAME];
+	} ;
 
 /* this structure is in pprdrv_media.c */
 extern struct MOUNTED mounted[MAX_BINS];
@@ -492,24 +492,24 @@ extern struct MOUNTED mounted[MAX_BINS];
 ** Structure used by pprdrv to describe a resource:
 */
 struct DRVRES
-    {
-    const char *type;		/* procset, font, etc. */
-    const char *name;		/* name of this resource */
-    double version;		/* procset only, 0.0 for others */
-    int revision;		/* procset only, 0 for others */
-    int needed;			/* TRUE or FALSE */
-    const char *former_name;	/* name of substituted resource */
-    const char *subst_code;	/* PostScript code to aid font substitution */
-    const char *filename;	/* NULL or file to load cached resource from */
-    int dot_ttf;		/* resource is a TrueType font in Microsoft Windows format */
-    int mactt;			/* resource is a TrueType font converted by a Mac to PostScript */
-    int force_into_docsetup;	/* relocate inclusion to docsetup? */
-    int force_into_prolog;	/* relocate inclusion to prolog? */
-    } ;
+	{
+	const char *type;			/* procset, font, etc. */
+	const char *name;			/* name of this resource */
+	double version;				/* procset only, 0.0 for others */
+	int revision;				/* procset only, 0 for others */
+	int needed;					/* TRUE or FALSE */
+	const char *former_name;	/* name of substituted resource */
+	const char *subst_code;		/* PostScript code to aid font substitution */
+	const char *filename;		/* NULL or file to load cached resource from */
+	int dot_ttf;				/* resource is a TrueType font in Microsoft Windows format */
+	int mactt;					/* resource is a TrueType font converted by a Mac to PostScript */
+	int force_into_docsetup;	/* relocate inclusion to docsetup? */
+	int force_into_prolog;		/* relocate inclusion to prolog? */
+	} ;
 
 extern struct DRVRES *drvres;	/* in pprdrv.c */
-extern int drvres_count;	/* in pprdrv.c */
-extern int drvres_space;	/* in pprdrv.c */
+extern int drvres_count;		/* in pprdrv.c */
+extern int drvres_space;		/* in pprdrv.c */
 
 /*
 ** Structure in pprdrv_ppd.c for paper sizes.
@@ -519,15 +519,15 @@ extern int drvres_space;	/* in pprdrv.c */
 ** PPD file.
 */
 struct PAPERSIZE
-    {
-    char *name;			/* name of paper size */
-    double width;		/* width in 1/72ths */
-    double height;
-    double lm;			/* left margin */
-    double tm;			/* top margin */
-    double rm;			/* right margin */
-    double bm;			/* bottom margin */
-    } ;
+	{
+	char *name;					/* name of paper size */
+	double width;				/* width in 1/72ths */
+	double height;
+	double lm;					/* left margin */
+	double tm;					/* top margin */
+	double rm;					/* right margin */
+	double bm;					/* bottom margin */
+	} ;
 
 extern struct PAPERSIZE papersize[];
 extern int num_papersizes;
@@ -536,10 +536,10 @@ extern int num_papersizes;
 ** The structure which is used to translate between PPR media names and
 ** the media names in the "%%Media:" lines.
 */
-struct 	Media_Xlate {
-	char *pprname;
-	char *dscname;
-	} ;
+struct	Media_Xlate {
+		char *pprname;
+		char *dscname;
+		} ;
 
 /*
 ** Define the debugging macros based on what was chosen above.

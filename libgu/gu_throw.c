@@ -19,15 +19,15 @@
 #include "gu.h"
 
 void libppr_throw(int exception_type, const char function[], const char format[], ...)
-    {
-    va_list va;
-    fprintf(stderr, "Fatal exception of type %d in %s(): ", exception_type, function);
-    va_start(va, format);
-    vfprintf(stderr, format, va);
-    va_end(va);
-    fputc('\n', stderr);
-    exit(255);
-    } /* end of libppr_throw() */
+	{
+	va_list va;
+	fprintf(stderr, "Fatal exception of type %d in %s(): ", exception_type, function);
+	va_start(va, format);
+	vfprintf(stderr, format, va);
+	va_end(va);
+	fputc('\n', stderr);
+	exit(255);
+	} /* end of libppr_throw() */
 
 /* end of file */
 

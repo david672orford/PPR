@@ -21,26 +21,26 @@
 . lib/signal.sh
 
 int_exit ()
-    {
-    if [ "$PPR_GS_INTERFACE_PID" != "" ]
-	then
-	case $1 in
-	    $EXIT_PRINTED )
-	    	;;
-	    $EXIT_PRNERR_NORETRY )
-		kill -$SIGUSR2 $PPR_GS_INTERFACE_PID
-		;;
-	    $EXIT_ENGAGED )
-	    	kill -$SIGINT $PPR_GS_INTERFACE_PID
-	    	;;
-	    * )
-		kill -$SIGUSR1 $PPR_GS_INTERFACE_PID
-		;;
-	esac
-	sleep 1
-	fi
-    exit $1
-    }
+	{
+	if [ "$PPR_GS_INTERFACE_PID" != "" ]
+		then
+		case $1 in
+			$EXIT_PRINTED )
+				;;
+			$EXIT_PRNERR_NORETRY )
+				kill -$SIGUSR2 $PPR_GS_INTERFACE_PID
+				;;
+			$EXIT_ENGAGED )
+				kill -$SIGINT $PPR_GS_INTERFACE_PID
+				;;
+			* )
+				kill -$SIGUSR1 $PPR_GS_INTERFACE_PID
+				;;
+		esac
+		sleep 1
+		fi
+	exit $1
+	}
 
 # end of file
 

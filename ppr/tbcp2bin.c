@@ -27,28 +27,28 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[])
-    {
-    int c;
-
-    while((c = fgetc(stdin)) != EOF)
 	{
-	if(c == 4)		/* control-D's have no real meaning */
-	    continue;
+	int c;
 
-	if(c == 1)
-	    {
-	    c = fgetc(stdin);
+	while((c = fgetc(stdin)) != EOF)
+		{
+		if(c == 4)				/* control-D's have no real meaning */
+			continue;
 
-	    if( c == 'M' )	/* This simply activates TBCP mode */
-	    	continue;
+		if(c == 1)
+			{
+			c = fgetc(stdin);
 
-	    c = c ^ 0x40;	/* decode byte */
-	    }
+			if( c == 'M' )		/* This simply activates TBCP mode */
+				continue;
 
-	fputc(c, stdout);
-	}
+			c = c ^ 0x40;		/* decode byte */
+			}
 
-    return 0;
-    } /* end of main() */
+		fputc(c, stdout);
+		}
+
+	return 0;
+	} /* end of main() */
 
 /* end of file */

@@ -32,29 +32,29 @@
 . ../makeprogs/paths.sh
 
 if [ "$USER_PPR" = "" -o "$HOMEDIR" = "" ]
-    then
-    echo "$0: ../makeprogs/paths.sh is bad"
-    exit 1
-    fi
+	then
+	echo "$0: ../makeprogs/paths.sh is bad"
+	exit 1
+	fi
 if [ ! -x ../z_install_begin/id ]
-    then
-    echo "$0: ../z_install_begin/id doesn't exist"
-    exit 1
-    fi
+	then
+	echo "$0: ../z_install_begin/id doesn't exist"
+	exit 1
+	fi
 
 ./puts "Making sure we are $USER_PPR..."
 if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]
-    then
-    echo " OK"
-    else
-    echo " Nope, guess we are root, doing su $USER_PPR..."
-    su $USER_PPR -c $0    
-    exit $?
-    fi
+	then
+	echo " OK"
+	else
+	echo " Nope, guess we are root, doing su $USER_PPR..."
+	su $USER_PPR -c $0	  
+	exit $?
+	fi
 
 echo "Installing crontab for the user $USER_PPR..."
 
-# Create a temporary file.  We have to do this because of limitations
+# Create a temporary file.	We have to do this because of limitations
 # of some versions of the crontab program.
 # Sadly, not all versions of crontab can read from stdin, at least not
 # with the same command.

@@ -44,33 +44,33 @@
 ** job or as one from a previous life of pprd.
 */
 void remote_job(struct QEntry *qentry)
-    {
-    FUNCTION4DEBUG("remote_new_job")
-    DODEBUG_REMOTE(("%s()", function));
+	{
+	FUNCTION4DEBUG("remote_new_job")
+	DODEBUG_REMOTE(("%s()", function));
 
-    }
+	}
 
 /*
-** This is called from reapchild().  It should return TRUE if the pid is that
+** This is called from reapchild().	 It should return TRUE if the pid is that
 ** of a pprd_xmit process.
 */
 gu_boolean remote_child_hook(pid_t pid, int wstat)
-    {
-    FUNCTION4DEBUG("remote_child_hook")
-    DODEBUG_REMOTE(("%s()", function));
+	{
+	FUNCTION4DEBUG("remote_child_hook")
+	DODEBUG_REMOTE(("%s()", function));
 
-    return FALSE;
-    }
+	return FALSE;
+	}
 
 /*
 ** This is our chance to retry transmission to destination nodes.
 */
 void remote_tick(void)
-    {
-    FUNCTION4DEBUG("remote_tick")
-    DODEBUG_TICK(("%s()", function));
+	{
+	FUNCTION4DEBUG("remote_tick")
+	DODEBUG_TICK(("%s()", function));
 
-    }
+	}
 
 /* end of file */
 

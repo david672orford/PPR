@@ -28,24 +28,24 @@
 ** If waitmode is TRUE, block until lock is obtained.
 */
 int gu_lock_exclusive(int filenum, gu_boolean waitmode)
-    {
-    struct flock lock;
-    int retval;
+	{
+	struct flock lock;
+	int retval;
 
-    lock.l_type = F_WRLCK;		/* exclusive lock */
-    lock.l_whence = SEEK_SET;		/* absolute offset */
-    lock.l_start = (off_t)0;		/* from begining */
-    lock.l_len = (off_t)0;		/* to future end */
+	lock.l_type = F_WRLCK;				/* exclusive lock */
+	lock.l_whence = SEEK_SET;			/* absolute offset */
+	lock.l_start = (off_t)0;			/* from begining */
+	lock.l_len = (off_t)0;				/* to future end */
 
-    if(waitmode)
-	retval = fcntl(filenum, F_SETLKW, &lock);
-    else
-	retval = fcntl(filenum, F_SETLK, &lock);
+	if(waitmode)
+		retval = fcntl(filenum, F_SETLKW, &lock);
+	else
+		retval = fcntl(filenum, F_SETLK, &lock);
 
-    if(retval == -1)
-	return -1;
-    else
-	return 0;
-    } /* end of gu_lock_exclusive() */
+	if(retval == -1)
+		return -1;
+	else
+		return 0;
+	} /* end of gu_lock_exclusive() */
 
 /* end of file */

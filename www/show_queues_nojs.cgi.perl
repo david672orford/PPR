@@ -50,21 +50,21 @@ my $encoded_type = form_urlencoded("type", $type);
 
 my $html_title;
 if($type eq "printer")
-    {
-    $html_title = html(sprintf(_("Printer \"%s\""), $name));
-    }
+	{
+	$html_title = html(sprintf(_("Printer \"%s\""), $name));
+	}
 elsif($type eq "group")
-    {
-    $html_title = html(sprintf(_("Group \"%s\""), $name));
-    }
+	{
+	$html_title = html(sprintf(_("Group \"%s\""), $name));
+	}
 elsif($type eq "alias")
-    {
-    $html_title = html(sprintf(_("Alias \"%s\""), $name));
-    }
+	{
+	$html_title = html(sprintf(_("Alias \"%s\""), $name));
+	}
 else
-    {
-    die;
-    }
+	{
+	die;
+	}
 
 my $html_text = <<"HTML1";
 <html>
@@ -126,9 +126,9 @@ print "Expires: ", cgi_time_format(time() + 86400), "\n";
 # Get the time of this CGI script itself.
 my($mtime) = (stat($0))[9];
 if(defined($mtime))
-    {
-    print "Last-Modified: ", cgi_time_format($mtime), "\n";
-    }
+	{
+	print "Last-Modified: ", cgi_time_format($mtime), "\n";
+	}
 }
 
 # Emmit the HTTP header, including the length of the content

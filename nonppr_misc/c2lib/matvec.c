@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -58,8 +58,8 @@ new_zero_vec (pool pool)
 /* This code is taken from Mesa 3.0. I have exchanged degrees for radians. */
 void
 make_rotation_matrix (float angle,
-		      float x, float y, float z,
-		      float *m)
+					  float x, float y, float z,
+					  float *m)
 {
   /* This function contributed by Erich Boleyn (erich@uruk.org) */
   float mag, s, c;
@@ -71,31 +71,31 @@ make_rotation_matrix (float angle,
   mag = sqrt ( x*x + y*y + z*z );
 
   if (mag == 0.0) {
-    /* generate an identity matrix and return */
-    make_identity_matrix (m);
-    return;
+	/* generate an identity matrix and return */
+	make_identity_matrix (m);
+	return;
   }
 
   x /= mag;
   y /= mag;
   z /= mag;
 
-#define M(row,col)  m[col*4+row]
+#define M(row,col)	m[col*4+row]
 
   /*
-   *     Arbitrary axis rotation matrix.
+   *	 Arbitrary axis rotation matrix.
    *
    *  This is composed of 5 matrices, Rz, Ry, T, Ry', Rz', multiplied
-   *  like so:  Rz * Ry * T * Ry' * Rz'.  T is the final rotation
+   *  like so:	Rz * Ry * T * Ry' * Rz'.  T is the final rotation
    *  (which is about the X-axis), and the two composite transforms
    *  Ry' * Rz' and Rz * Ry are (respectively) the rotations necessary
-   *  from the arbitrary axis to the X-axis then back.  They are
+   *  from the arbitrary axis to the X-axis then back.	They are
    *  all elementary rotations.
    *
    *  Rz' is a rotation about the Z-axis, to bring the axis vector
    *  into the x-z plane.  Then Ry' is applied, rotating about the
-   *  Y-axis to bring the axis vector parallel with the X-axis.  The
-   *  rotation about the X-axis is then performed.  Ry and Rz are
+   *  Y-axis to bring the axis vector parallel with the X-axis.	 The
+   *  rotation about the X-axis is then performed.	Ry and Rz are
    *  simply the respective inverse transforms to bring the arbitrary
    *  axis back to it's original orientation.  The first transforms
    *  Rz' and Ry' are considered inverses, since the data from the
@@ -194,30 +194,30 @@ make_scaling_matrix (float x, float y, float z, float *m)
 /* Quickly convert 3 Euler angles to a rotation matrix. */
 void
 matrix_euler_to_rotation (float angle_x, float angle_y, float angle_z,
-			  float *mat)
+						  float *mat)
 {
-  float A       = cos(angle_x);
-  float B       = sin(angle_x);
-  float C       = cos(angle_y);
-  float D       = sin(angle_y);
-  float E       = cos(angle_z);
-  float F       = sin(angle_z);
+  float A		= cos(angle_x);
+  float B		= sin(angle_x);
+  float C		= cos(angle_y);
+  float D		= sin(angle_y);
+  float E		= cos(angle_z);
+  float F		= sin(angle_z);
 
-  float AD      =   A * D;
-  float BD      =   B * D;
+  float AD		=	A * D;
+  float BD		=	B * D;
 
-  mat[0]  =   C * E;
-  mat[4]  =  -C * F;
-  mat[8]  =  -D;
+  mat[0]  =	  C * E;
+  mat[4]  =	 -C * F;
+  mat[8]  =	 -D;
   mat[1]  = -BD * E + A * F;
-  mat[5]  =  BD * F + A * E;
-  mat[9]  =  -B * C;
-  mat[2]  =  AD * E + B * F;
+  mat[5]  =	 BD * F + A * E;
+  mat[9]  =	 -B * C;
+  mat[2]  =	 AD * E + B * F;
   mat[6]  = -AD * F + B * E;
-  mat[10] =   A * C;
+  mat[10] =	  A * C;
 
   mat[12]  =  mat[13] = mat[14] = mat[3] = mat[7] = mat[11] = 0;
-  mat[15] =  1;
+  mat[15] =	 1;
 }
 
 static inline float
@@ -234,32 +234,32 @@ clamp (float v, float low, float high)
 /* Convert a rotation matrix to 3 Euler angles. */
 void
 matrix_rotation_to_euler (const float *mat,
-			  float *angle_x, float *angle_y, float *angle_z)
+						  float *angle_x, float *angle_y, float *angle_z)
 {
   float C, trx, try;
 
-  *angle_y = -asin( mat[8]);        /* Calculate Y-axis angle */
-  C           =  cos( *angle_y );
+  *angle_y = -asin( mat[8]);		/* Calculate Y-axis angle */
+  C			  =	 cos( *angle_y );
 
-  if ( fabs( C ) > 0.005 )             /* Gimball lock? */
-    {
-      trx      =  mat[10] / C;           /* No, so get X-axis angle */
-      try      = -mat[9]  / C;
+  if ( fabs( C ) > 0.005 )			   /* Gimball lock? */
+	{
+	  trx	   =  mat[10] / C;			 /* No, so get X-axis angle */
+	  try	   = -mat[9]  / C;
 
-      *angle_x  = atan2( try, trx );
+	  *angle_x	= atan2( try, trx );
 
-      trx      =  mat[0] / C;            /* Get Z-axis angle */
-      try      = -mat[4] / C;
+	  trx	   =  mat[0] / C;			 /* Get Z-axis angle */
+	  try	   = -mat[4] / C;
 
-      *angle_z  = atan2( try, trx );
-    }
-  else                                 /* Gimball lock has occurred */
-    {
-      trx      = mat[5];                 /* And calculate Z-axis angle */
-      try      = mat[1];
+	  *angle_z	= atan2( try, trx );
+	}
+  else								   /* Gimball lock has occurred */
+	{
+	  trx	   = mat[5];				 /* And calculate Z-axis angle */
+	  try	   = mat[1];
 
-      *angle_z  = atan2( try, trx );
-    }
+	  *angle_z	= atan2( try, trx );
+	}
 
   /* Clamp all angles to range */
   *angle_x = clamp (*angle_x, 0, 2 * M_PI);
@@ -271,22 +271,22 @@ matrix_rotation_to_euler (const float *mat,
  */
 void
 matrix_multiply (const float *a, const float *b,
-		 float *product)
+				 float *product)
 {
    /* This matmul was contributed by Thomas Malik */
   int i;
 
-#define A(row,col)  a[(col<<2)+row]
-#define B(row,col)  b[(col<<2)+row]
-#define P(row,col)  product[(col<<2)+row]
+#define A(row,col)	a[(col<<2)+row]
+#define B(row,col)	b[(col<<2)+row]
+#define P(row,col)	product[(col<<2)+row]
 
    /* i-te Zeile */
    for (i = 0; i < 4; i++) {
-     float ai0=A(i,0),  ai1=A(i,1),  ai2=A(i,2),  ai3=A(i,3);
-     P(i,0) = ai0 * B(0,0) + ai1 * B(1,0) + ai2 * B(2,0) + ai3 * B(3,0);
-     P(i,1) = ai0 * B(0,1) + ai1 * B(1,1) + ai2 * B(2,1) + ai3 * B(3,1);
-     P(i,2) = ai0 * B(0,2) + ai1 * B(1,2) + ai2 * B(2,2) + ai3 * B(3,2);
-     P(i,3) = ai0 * B(0,3) + ai1 * B(1,3) + ai2 * B(2,3) + ai3 * B(3,3);
+	 float ai0=A(i,0),	ai1=A(i,1),	 ai2=A(i,2),  ai3=A(i,3);
+	 P(i,0) = ai0 * B(0,0) + ai1 * B(1,0) + ai2 * B(2,0) + ai3 * B(3,0);
+	 P(i,1) = ai0 * B(0,1) + ai1 * B(1,1) + ai2 * B(2,1) + ai3 * B(3,1);
+	 P(i,2) = ai0 * B(0,2) + ai1 * B(1,2) + ai2 * B(2,2) + ai3 * B(3,2);
+	 P(i,3) = ai0 * B(0,3) + ai1 * B(1,3) + ai2 * B(2,3) + ai3 * B(3,3);
    }
 
 #undef A
@@ -297,7 +297,7 @@ matrix_multiply (const float *a, const float *b,
 /* Multiply matrix by vector. */
 void
 matrix_vec_multiply (const float *m, const float *v,
-		     float *result)
+					 float *result)
 {
   result[0] = m[0]*v[0] + m[1]*v[1] + m[2]*v[2] + m[3]*v[3];
   result[1] = m[4]*v[0] + m[5]*v[1] + m[6]*v[2] + m[7]*v[3];
@@ -433,7 +433,7 @@ point_distance_to_point (const float *p1, const float *p2)
 /* Cross product of vectors v and w.
  * The cross product is a vector:
  *
- *   v x w = |v| |w| sin t n^
+ *	 v x w = |v| |w| sin t n^
  *
  * where t is the angle between a and
  * b, and n^ is a normal vector perpendicular
@@ -502,15 +502,15 @@ point_is_inside_plane (const float *plane, const float *point)
 /* See: http://www.greuer.de/efaq.html */
 void
 point_footprint_on_line (const float *point,
-			 const float *line_point, const float *line_vector,
-			 float *footprint)
+						 const float *line_point, const float *line_vector,
+						 float *footprint)
 {
   float t;
   float s[3];
 
   vec_subtract (point, line_point, s);
   t = vec_dot_product (s, line_vector) /
-      vec_dot_product (line_vector, line_vector);
+	  vec_dot_product (line_vector, line_vector);
 
   vec_scale (line_vector, t, s);
   vec_add (line_point, s, footprint);
@@ -518,7 +518,7 @@ point_footprint_on_line (const float *point,
 
 float
 point_distance_to_line (const float *point,
-			const float *line_point, const float *line_vector)
+						const float *line_point, const float *line_vector)
 {
 #if 0
   float footprint[3];
@@ -544,8 +544,8 @@ point_distance_to_line (const float *point,
 
 float
 point_distance_to_line_segment (const float *point,
-				const float *line_point0,
-				const float *line_point1)
+								const float *line_point0,
+								const float *line_point1)
 {
   float t;
   float s[3], v[3];
@@ -553,18 +553,18 @@ point_distance_to_line_segment (const float *point,
   vec_subtract (line_point1, line_point0, v);
   vec_subtract (point, line_point0, s);
   t = vec_dot_product (s, v) /
-      vec_dot_product (v, v);
+	  vec_dot_product (v, v);
 
   if (t >= 0 && t <= 1)
-    {
-      float footprint[3];
+	{
+	  float footprint[3];
 
-      vec_scale (v, t, s);
-      vec_add (line_point0, s, footprint);
-      return point_distance_to_point (point, footprint);
-    }
+	  vec_scale (v, t, s);
+	  vec_add (line_point0, s, footprint);
+	  return point_distance_to_point (point, footprint);
+	}
   else if (t < 0)
-    return point_distance_to_point (point, line_point0);
+	return point_distance_to_point (point, line_point0);
   /* else t > 1 */
   return point_distance_to_point (point, line_point1);
 }
@@ -584,35 +584,35 @@ point_face_angle_sum (const float *points, int nr_points, const float *point)
   int i, next;
 
   for (i = 0, next = 1; i < nr_points; ++i, ++next)
-    {
-      float p1[3], p2[3], m1, m2, costheta;
+	{
+	  float p1[3], p2[3], m1, m2, costheta;
 
-      if (next == nr_points) next = 0;
+	  if (next == nr_points) next = 0;
 
-      p1[0] = points[i*3] - point[0];
-      p1[1] = points[i*3+1] - point[1];
-      p1[2] = points[i*3+2] - point[2];
-      p2[0] = points[next*3] - point[0];
-      p2[1] = points[next*3+1] - point[1];
-      p2[2] = points[next*3+2] - point[2];
+	  p1[0] = points[i*3] - point[0];
+	  p1[1] = points[i*3+1] - point[1];
+	  p1[2] = points[i*3+2] - point[2];
+	  p2[0] = points[next*3] - point[0];
+	  p2[1] = points[next*3+1] - point[1];
+	  p2[2] = points[next*3+2] - point[2];
 
-      m1 = vec_magnitude (p1);
-      m2 = vec_magnitude (p2);
+	  m1 = vec_magnitude (p1);
+	  m2 = vec_magnitude (p2);
 
-      if (m1 * m2 < 1e-5)
-	return 2 * M_PI;
-      else
-	costheta = (p1[0]*p2[0] + p1[1]*p2[1] + p1[2]*p2[2]) / (m1*m2);
+	  if (m1 * m2 < 1e-5)
+		return 2 * M_PI;
+	  else
+		costheta = (p1[0]*p2[0] + p1[1]*p2[1] + p1[2]*p2[2]) / (m1*m2);
 
-      sum += acos (costheta);
-    }
+	  sum += acos (costheta);
+	}
 
   return sum;
 }
 
 float
 point_distance_to_face (const float *points, int nr_points,
-			const float *plane, const float *point, int *edge)
+						const float *plane, const float *point, int *edge)
 {
   float my_plane_coeffs[4];
   float a, b, c, d, tq, q[3], dist;
@@ -620,10 +620,10 @@ point_distance_to_face (const float *points, int nr_points,
 
   /* Calculate plane coefficients, if necessary. */
   if (plane == 0)
-    {
-      plane = my_plane_coeffs;
-      plane_coefficients (&points[0], &points[3], &points[6], (float *) plane);
-    }
+	{
+	  plane = my_plane_coeffs;
+	  plane_coefficients (&points[0], &points[3], &points[6], (float *) plane);
+	}
 
   a = plane[0];
   b = plane[1];
@@ -642,36 +642,36 @@ point_distance_to_face (const float *points, int nr_points,
 
   /* Is q on the bounded face? */
   if (point_lies_in_face (points, nr_points, q))
-    {
-      /* Compute the distance from the point to the plane. */
-      float t2 = tq*tq;
+	{
+	  /* Compute the distance from the point to the plane. */
+	  float t2 = tq*tq;
 
-      dist = sqrt (t2*a*a + t2*b*b + t2*c*c);
+	  dist = sqrt (t2*a*a + t2*b*b + t2*c*c);
 
-      if (edge) *edge = -1;
+	  if (edge) *edge = -1;
 
-      return tq < 0 ? dist : -dist;
-    }
+	  return tq < 0 ? dist : -dist;
+	}
 
   /* Find the closest edge. */
   e = -1;
   dist = 0;
 
   for (i = 0, next = 1; i < nr_points; ++i, ++next)
-    {
-      float d;
-
-      if (next == nr_points) next = 0;
-
-      d = point_distance_to_line_segment (point,
-					  &points[i*3], &points[next*3]);
-
-      if (e == -1 || d < dist)
 	{
-	  dist = d;
-	  e = i;
+	  float d;
+
+	  if (next == nr_points) next = 0;
+
+	  d = point_distance_to_line_segment (point,
+										  &points[i*3], &points[next*3]);
+
+	  if (e == -1 || d < dist)
+		{
+		  dist = d;
+		  e = i;
+		}
 	}
-    }
 
   if (edge) *edge = e;
 
@@ -687,7 +687,7 @@ point_distance_to_face (const float *points, int nr_points,
  */
 void
 plane_coefficients (const float *p, const float *q, const float *r,
-		    float *co)
+					float *co)
 {
   float x2 = p[0];
   float y2 = p[1];
@@ -716,7 +716,7 @@ plane_coefficients (const float *p, const float *q, const float *r,
 
 void
 plane_translate_along_normal (const float *plane, float distance,
-			      float *new_plane)
+							  float *new_plane)
 {
   float w = vec_magnitude (plane);
 
@@ -728,8 +728,8 @@ plane_translate_along_normal (const float *plane, float distance,
 
 void
 face_translate_along_normal (const float *points, int nr_points,
-			     const float *plane, float distance,
-			     float *new_points, float *new_plane)
+							 const float *plane, float distance,
+							 float *new_points, float *new_plane)
 {
   float w = vec_magnitude (plane), nv[3];
   int i;
@@ -741,11 +741,11 @@ face_translate_along_normal (const float *points, int nr_points,
 
   vec_scale (plane, distance / w, nv);
   for (i = 0; i < nr_points; ++i)
-    {
-      new_points[i*3] = points[i*3] + nv[0];
-      new_points[i*3+1] = points[i*3+1] + nv[1];
-      new_points[i*3+2] = points[i*3+2] + nv[2];
-    }
+	{
+	  new_points[i*3] = points[i*3] + nv[0];
+	  new_points[i*3+1] = points[i*3+1] + nv[1];
+	  new_points[i*3+2] = points[i*3+2] + nv[2];
+	}
 }
 
 /* All these quaternion functions are modified from the matrix FAQ again. */
@@ -798,28 +798,28 @@ quaternion_to_rotation_matrix (const float *q, float *mat)
   float Z = q[2];
   float W = q[3];
 
-  float xx      = X * X;
-  float xy      = X * Y;
-  float xz      = X * Z;
-  float xw      = X * W;
+  float xx		= X * X;
+  float xy		= X * Y;
+  float xz		= X * Z;
+  float xw		= X * W;
 
-  float yy      = Y * Y;
-  float yz      = Y * Z;
-  float yw      = Y * W;
+  float yy		= Y * Y;
+  float yz		= Y * Z;
+  float yw		= Y * W;
 
-  float zz      = Z * Z;
-  float zw      = Z * W;
+  float zz		= Z * Z;
+  float zw		= Z * W;
 
   mat[0]  = 1 - 2 * ( yy + zz );
-  mat[4]  =     2 * ( xy - zw );
-  mat[8]  =     2 * ( xz + yw );
+  mat[4]  =		2 * ( xy - zw );
+  mat[8]  =		2 * ( xz + yw );
 
-  mat[1]  =     2 * ( xy + zw );
+  mat[1]  =		2 * ( xy + zw );
   mat[5]  = 1 - 2 * ( xx + zz );
-  mat[9]  =     2 * ( yz - xw );
+  mat[9]  =		2 * ( yz - xw );
 
-  mat[2]  =     2 * ( xz - yw );
-  mat[6]  =     2 * ( yz + xw );
+  mat[2]  =		2 * ( xz - yw );
+  mat[6]  =		2 * ( yz + xw );
   mat[10] = 1 - 2 * ( xx + yy );
 
   mat[3]  = mat[7] = mat[11] = mat[12] = mat[13] = mat[14] = 0;
@@ -828,7 +828,7 @@ quaternion_to_rotation_matrix (const float *q, float *mat)
 
 void
 make_quaternion_from_axis_angle (const float *axis, float angle,
-				 float *q)
+								 float *q)
 {
   double sin_a = sin (angle / 2);
   double cos_a = cos (angle / 2);
@@ -843,20 +843,20 @@ make_quaternion_from_axis_angle (const float *axis, float angle,
 
 int
 collision_moving_sphere_and_face (const float *p0, const float *p1,
-				  float radius,
-				  const float *points, int nr_points,
-				  const float *plane,
-				  float *collision_point)
+								  float radius,
+								  const float *points, int nr_points,
+								  const float *plane,
+								  float *collision_point)
 {
   float my_plane_coeffs[4], raised_plane[4], t, v[3], quot;
   float raised_points[3 * nr_points];
 
   /* Get the plane coefficients. */
   if (plane == 0)
-    {
-      plane = my_plane_coeffs;
-      plane_coefficients (&points[0], &points[3], &points[6], (float *) plane);
-    }
+	{
+	  plane = my_plane_coeffs;
+	  plane_coefficients (&points[0], &points[3], &points[6], (float *) plane);
+	}
 
   /* Raise the plane up by the distance of one radius. Then we can
    * just test for the intersection of the ray and the face.This is
@@ -865,7 +865,7 @@ collision_moving_sphere_and_face (const float *p0, const float *p1,
    * code. (XXX)
    */
   face_translate_along_normal (points, nr_points, plane, radius,
-			       raised_points, raised_plane);
+							   raised_points, raised_plane);
 
   /* Get the intersection point of the ray and the plane, as a
    * parameter, t.
@@ -874,25 +874,25 @@ collision_moving_sphere_and_face (const float *p0, const float *p1,
   quot = raised_plane[0]*v[0] + raised_plane[1]*v[1] + raised_plane[2]*v[2];
   if (fabs (quot)
 #if 0
-      < 1e-5
+	  < 1e-5
 #else
-      == 0
+	  == 0
 #endif
-      )
-    {
-      /* The path of the sphere is nearly parallel to the plane. Don't
-       * count this as a collision at all.
-       */
-      return 0;
-    }
+	  )
+	{
+	  /* The path of the sphere is nearly parallel to the plane. Don't
+	   * count this as a collision at all.
+	   */
+	  return 0;
+	}
 
   t = - (raised_plane[0]*p0[0] + raised_plane[1]*p0[1] + raised_plane[2]*p0[2]
-	 + raised_plane[3]) / quot;
+		 + raised_plane[3]) / quot;
   if (t < 0 || t > 1)
-    {
-      /* There is no collision. */
-      return 0;
-    }
+	{
+	  /* There is no collision. */
+	  return 0;
+	}
 
   /* Calculate the actual point of collision. NOTE: This is the centre
    * of the sphere, NOT the point where the sphere and plane touch.

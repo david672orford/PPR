@@ -37,7 +37,7 @@
 =head1 gu_pch
 
 This module implements a hash table library.  This library is designed to make it
-easier to port Perl code to C.  The hash tables are stored in objects known
+easier to port Perl code to C.	The hash tables are stored in objects known
 as PCH (Perl Compatible Hash).
 
 PCH objects can contain PCS (Perl Compatible String) objects.
@@ -46,42 +46,42 @@ PCH objects can contain PCS (Perl Compatible String) objects.
 */
 
 struct PCH_BUCKET {
-    void *key;
-    void *value;
-    struct PCH_BUCKET *next;
-    };
+	void *key;
+	void *value;
+	struct PCH_BUCKET *next;
+	};
 
 struct PCH {
-    struct PCH_BUCKET **buckets;
-    int buckets_count;
-    int current_bucket;
-    int current_bucket_index;
-    };
+	struct PCH_BUCKET **buckets;
+	int buckets_count;
+	int current_bucket;
+	int current_bucket_index;
+	};
 
 /*
 =head2 void *gu_pch_new(int buckets_count)
 
 This function creates a new PCH (Perl compatible hash) object and returns a
 void pointer which should be passed to other gu_pch_*() functions in order
-to use it.  It takes a single integer argument which is the number of
+to use it.	It takes a single integer argument which is the number of
 hash that the new hash should have.
 
 =cut
 */
 void *gu_pch_new(int buckets_count)
-    {
-    struct PCH *p = gu_alloc(1, sizeof(struct PCH));
-    int x;
-    p->buckets_count = buckets_count;
-    p->buckets = gu_alloc(sizeof(struct PCH_BUCKET *), p->buckets_count);
-    for(x=0; x < p->buckets_count; x++)
 	{
-	p->buckets[x] = (struct PCH_BUCKET *)NULL;
+	struct PCH *p = gu_alloc(1, sizeof(struct PCH));
+	int x;
+	p->buckets_count = buckets_count;
+	p->buckets = gu_alloc(sizeof(struct PCH_BUCKET *), p->buckets_count);
+	for(x=0; x < p->buckets_count; x++)
+		{
+		p->buckets[x] = (struct PCH_BUCKET *)NULL;
+		}
+	p->current_bucket = 0;
+	p->current_bucket_index = 0;
+	return (void *)p;
 	}
-    p->current_bucket = 0;
-    p->current_bucket_index = 0;
-    return (void *)p;
-    }
 
 /*
 =head2 void gu_pch_free(void **I<pch>)
@@ -93,20 +93,20 @@ references to (which may result in their being freed too).
 =cut
 */
 void gu_pch_free(void **pch)
-    {
-    struct PCH *p = (struct PCH *)*pch;
-    int x;
-
-    /* Decrement the reference count on each PCS which is a key or a value. */
-    for(x=0; x < p->buckets_count; x++)
 	{
+	struct PCH *p = (struct PCH *)*pch;
+	int x;
 
+	/* Decrement the reference count on each PCS which is a key or a value. */
+	for(x=0; x < p->buckets_count; x++)
+		{
+
+		}
+
+	gu_free(p->buckets);		/* free the buckets within the object */
+	gu_free(*pch);				/* free the object itself */
+	*pch = (void*)NULL;			/* voiding the pointer will prevent accidental reuse */
 	}
-
-    gu_free(p->buckets);	/* free the buckets within the object */
-    gu_free(*pch);		/* free the object itself */
-    *pch = (void*)NULL;		/* voiding the pointer will prevent accidental reuse */
-    }
 
 /*
 =head2 void gu_pch_debug(void **I<pcs>)
@@ -116,23 +116,23 @@ This function prints a dump of a hash object.
 =cut
 */
 void gu_pch_debug(void **pch, const char name[])
-    {
-    struct PCH *p = (struct PCH *)*pch;
-    int x;
-
-    printf("%p ->\n", pch);
-
-    for(x=0; x < p->buckets_count; x++)
 	{
-	struct PCH_BUCKET *bucket = p->buckets[x];
-	printf("  buckets[%d]\n", x);
-	while(bucket)
-	    {
-	    printf("    {%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
-	    bucket = bucket->next;
-	    }
+	struct PCH *p = (struct PCH *)*pch;
+	int x;
+
+	printf("%p ->\n", pch);
+
+	for(x=0; x < p->buckets_count; x++)
+		{
+		struct PCH_BUCKET *bucket = p->buckets[x];
+		printf("  buckets[%d]\n", x);
+		while(bucket)
+			{
+			printf("	{%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
+			bucket = bucket->next;
+			}
+		}
 	}
-    }
 
 /*
 ** This internal function returns a pointer to the pointer which should be set
@@ -140,12 +140,12 @@ void gu_pch_debug(void **pch, const char name[])
 */
 #if 0
 static struct PCH_BUCKET **gu_pch_find(void **pch, void **pcs_key)
-    {
-    struct PCH *p = (struct PCH *)*pch;
-    int hash;
-    hash = gu_pcs_hash(pcs_key) % p->buckets_count;
-    return &p->buckets[hash];
-    }
+	{
+	struct PCH *p = (struct PCH *)*pch;
+	int hash;
+	hash = gu_pcs_hash(pcs_key) % p->buckets_count;
+	return &p->buckets[hash];
+	}
 #endif
 
 /*
@@ -156,10 +156,10 @@ This function sets a given key of a given hash object to a given value.
 =cut
 */
 void gu_pch_set(void **pch, void **pcs_key, void **pcs_value)
-    {
-    /* struct PCH *p = (struct PCH *)*pch; */
+	{
+	/* struct PCH *p = (struct PCH *)*pch; */
 
-    }
+	}
 
 /*
 =head2 void gu_pch_get(void **pch, void **pcs_key)
@@ -171,9 +171,9 @@ NULL if the key is not found).
 */
 #if 0
 void *gu_pch_get(void **pch, void **pcs_key)
-    {
+	{
 
-    }
+	}
 #endif
 
 /*
@@ -185,10 +185,10 @@ This function deletes a key from the hash table.
 */
 #if 0
 void gu_pch_delete(void **pch, void **pcs_key)
-    {
-    struct PCH *p = (struct PCH *)*pch;
+	{
+	struct PCH *p = (struct PCH *)*pch;
 
-    }
+	}
 #endif
 
 /*
@@ -200,11 +200,11 @@ gu_pch_nextkey()).
 =cut
 */
 void gu_pch_rewind(void **pch)
-    {
-    struct PCH *p = (struct PCH *)*pch;
-    p->current_bucket = 0;
-    p->current_bucket_index = 0;
-    }
+	{
+	struct PCH *p = (struct PCH *)*pch;
+	p->current_bucket = 0;
+	p->current_bucket_index = 0;
+	}
 
 /*
 =head2 void gu_pch_nextkey(void **pch)
@@ -212,25 +212,25 @@ void gu_pch_rewind(void **pch)
 This function returns the next key as a Perl Compatible String (PCS).
 Use this for constructs like:
 
-	foreach my $key (keys %myhash)
+		foreach my $key (keys %myhash)
 
 Do it like this:
 
-	void *key;
-	for(gu_pch_rewind(&myhash); (key = gu_pcsh_nextkey(&myhash)); gu_pcs_free(&key))
-	    {
+		void *key;
+		for(gu_pch_rewind(&myhash); (key = gu_pcsh_nextkey(&myhash)); gu_pcs_free(&key))
+			{
 
 
 
-	    }
+			}
 
 =cut
 */
 #if 0
 void *gu_pch_nextkey(void **pch)
-    {
+	{
 
-    }
+	}
 #endif
 
 /*
@@ -239,15 +239,15 @@ void *gu_pch_nextkey(void **pch)
 */
 #ifdef TEST
 int main(int argc, char *argv[])
-    {
-    void *thash = gu_pch_new(10);
+	{
+	void *thash = gu_pch_new(10);
 
-    gu_pch_debug(&thash, "thash");
+	gu_pch_debug(&thash, "thash");
 
-    gu_pch_free(&thash);
+	gu_pch_free(&thash);
 
-    return 0;
-    }
+	return 0;
+	}
 #endif
 
 /* end of file */

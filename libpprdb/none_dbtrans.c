@@ -15,7 +15,7 @@
 
 /*
 ** Dummies for functions to make a printing charge to
-** a user's database entry.  Also, make a deposit or
+** a user's database entry.	 Also, make a deposit or
 ** a correction.
 */
 
@@ -26,10 +26,10 @@
 #include "userdb.h"
 
 enum USERDB_RESULT db_transaction(const char *username, int amount, enum TRANSACTION transaction_type)
-    {
-    error("db_transaction(): user database support not compiled in");
-    return USER_ERROR;
-    } /* end of db_transaction() */
+	{
+	error("db_transaction(): user database support not compiled in");
+	return USER_ERROR;
+	} /* end of db_transaction() */
 
 /* end of file */
 

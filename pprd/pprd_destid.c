@@ -37,126 +37,126 @@
 ** Convert a local destination (group or printer) id to a destination name.
 */
 const char *destid_local_to_name(int destid)
-    {
-    if(destid_local_is_group(destid))
-        {
-	int group_index = destid_local_to_gindex(destid);
-        if(group_index < group_count && !groups[group_index].deleted)
-            return groups[group_index].name;
-        else
-            return "<invalid>";
-        }
-    else
-        {
-        if(destid < printer_count && printers[destid].status != PRNSTATUS_DELETED)
-            return printers[destid].name;
-        else
-            return "<invalid>";
-        }
-    } /* end of destid_local_to_name() */
+	{
+	if(destid_local_is_group(destid))
+		{
+		int group_index = destid_local_to_gindex(destid);
+		if(group_index < group_count && !groups[group_index].deleted)
+			return groups[group_index].name;
+		else
+			return "<invalid>";
+		}
+	else
+		{
+		if(destid < printer_count && printers[destid].status != PRNSTATUS_DELETED)
+			return printers[destid].name;
+		else
+			return "<invalid>";
+		}
+	} /* end of destid_local_to_name() */
 
 /*
 ** Return the destid which matches the specified local printer name.  If the
 ** printer does not exist, return -1.
 */
 int destid_local_by_printer(const char name[])
-    {
-    int x;
-
-    for(x=0; x < printer_count; x++)
 	{
-	if(strcmp(printers[x].name, name) == 0 && printers[x].status != PRNSTATUS_DELETED)
-	    return x;
-	}
+	int x;
 
-    return -1;
-    } /* end of destid_local_by_printer() */
+	for(x=0; x < printer_count; x++)
+		{
+		if(strcmp(printers[x].name, name) == 0 && printers[x].status != PRNSTATUS_DELETED)
+			return x;
+		}
+
+	return -1;
+	} /* end of destid_local_by_printer() */
 
 /*
-** Return the destid which matches the specified local group name.  If the
+** Return the destid which matches the specified local group name.	If the
 ** group does not exist, return -1.
 */
 static int destid_local_by_group(const char name[])
-    {
-    int x;
-
-    for(x=0; x < group_count; x++)		/* try all groups */
 	{
-	if(strcmp(groups[x].name, name) == 0 && !groups[x].deleted)
-	    return destid_local_by_gindex(x);
-	}
+	int x;
 
-    return -1;
-    } /* end of destid_local_by_group() */
+	for(x=0; x < group_count; x++)				/* try all groups */
+		{
+		if(strcmp(groups[x].name, name) == 0 && !groups[x].deleted)
+			return destid_local_by_gindex(x);
+		}
+
+	return -1;
+	} /* end of destid_local_by_group() */
 
 /*
-** This is the one we normally use.  If there is both a group and a printer
+** This is the one we normally use.	 If there is both a group and a printer
 ** with the name we are looking for, this one returns the ID of the group.
 ** If neither a group nor a printer is found, return -1.
 */
 int destid_local_by_name(const char name[])
-    {
-    int ret;
+	{
+	int ret;
 
-    if((ret = destid_local_by_group(name)) != -1)
-    	return ret;
+	if((ret = destid_local_by_group(name)) != -1)
+		return ret;
 
-    if((ret = destid_local_by_printer(name)) != -1)
-    	return ret;
+	if((ret = destid_local_by_printer(name)) != -1)
+		return ret;
 
-    return -1;
-    } /* end of destid_local_by_name() */
+	return -1;
+	} /* end of destid_local_by_name() */
 
 /*
-** This one is rarely used.  If there are a printer and a group
+** This one is rarely used.	 If there are a printer and a group
 ** with the same name, it will return the printer's destid.
 */
 int destid_local_by_name_reversed(char *name)
-    {
-    int ret;
+	{
+	int ret;
 
-    if((ret = destid_local_by_printer(name)) != -1)
-    	return ret;
+	if((ret = destid_local_by_printer(name)) != -1)
+		return ret;
 
-    if((ret = destid_local_by_group(name)) != -1)
-    	return ret;
+	if((ret = destid_local_by_group(name)) != -1)
+		return ret;
 
-    return -1;              /* we didn't find it */
-    } /* end of destid_local_by_name_reversed() */
+	return -1;				/* we didn't find it */
+	} /* end of destid_local_by_name_reversed() */
 
 /*
 ** Return TRUE if the destination id in question is a group id.
 */
 int destid_local_is_group(int id)
-    {
-    if(id >= printer_count)	/* printers run 0 - (printer_count - 1) */
-	return -1;
-    else
-	return 0;
-    } /* end of destid_local_is_group() */
+	{
+	if(id >= printer_count)		/* printers run 0 - (printer_count - 1) */
+		return -1;
+	else
+		return 0;
+	} /* end of destid_local_is_group() */
 
 /*
 ** Get the offset of a certain printer into a certain group array.
 ** Return -1 if the printer is not a member.
 */
 int destid_local_get_member_offset(int destid, int prnid)
-    {
-    struct Group *cl;
-    int x;
-
-    if(!destid_local_is_group(destid))
-    	fatal(1, "destid_local_get_member_offset(): assertion failed, destid=%d, prnid=%d", destid, prnid);
-
-    cl = &groups[destid_local_to_gindex(destid)];
-
-    for(x=0; x < cl->members; x++)
 	{
-	if(cl->printers[x] == prnid)
-	    return x;
-	}
+	struct Group *cl;
+	int x;
 
-    return -1;
-    } /* end of destid_local_get_member_offset() */
+	if(!destid_local_is_group(destid))
+		fatal(1, "destid_local_get_member_offset(): assertion failed, destid=%d, prnid=%d", destid, prnid);
+
+	cl = &groups[destid_local_to_gindex(destid)];
+
+	for(x=0; x < cl->members; x++)
+		{
+		if(cl->printers[x] == prnid)
+			return x;
+		}
+
+	return -1;
+	} /* end of destid_local_get_member_offset() */
 
 /*
 ** Get the bitmask which identifies a particular printer in the "never" and
@@ -169,48 +169,48 @@ int destid_local_get_member_offset(int destid, int prnid)
 ** If the destination is the printer, return 1.
 */
 int destid_printer_bit(int destid, int prnid)
-    {
-    int off;
+	{
+	int off;
 
-    /* If the destination is the printer, set bit one. */
-    if(prnid == destid)
-	return 1;
+	/* If the destination is the printer, set bit one. */
+	if(prnid == destid)
+		return 1;
 
-    /* If not but the destination is a printer, set no bits. */
-    if(!destid_local_is_group(destid))
-    	return 0;
+	/* If not but the destination is a printer, set no bits. */
+	if(!destid_local_is_group(destid))
+		return 0;
 
-    /* Since it is a group, get the bit number. */
-    off = destid_local_get_member_offset(destid , prnid);
+	/* Since it is a group, get the bit number. */
+	off = destid_local_get_member_offset(destid , prnid);
 
-    /* If the printer is not a member, set no bits. */
-    if(off == -1)
-	return 0;
+	/* If the printer is not a member, set no bits. */
+	if(off == -1)
+		return 0;
 
-    /* It is a member, set the correct bit. */
-    return 1 << off;
-    } /* end of destid_printer_bit() */
+	/* It is a member, set the correct bit. */
+	return 1 << off;
+	} /* end of destid_printer_bit() */
 
 /*
 ** Convert a local node destination id to a group array index.
 */
 int destid_local_to_gindex(int destid)
-    {
-    int answer = (destid - MAX_PRINTERS);
-    if(answer < 0 || answer >= MAX_GROUPS)
-    	fatal(1, "destid_local_to_gindex(): assertion failed, destid=%d, answer=%d", destid, answer);
-    return answer;
-    } /* end of destid_local_to_gindex() */
+	{
+	int answer = (destid - MAX_PRINTERS);
+	if(answer < 0 || answer >= MAX_GROUPS)
+		fatal(1, "destid_local_to_gindex(): assertion failed, destid=%d, answer=%d", destid, answer);
+	return answer;
+	} /* end of destid_local_to_gindex() */
 
 /*
 ** Convert a group array index to a local node destination id.
 */
 int destid_local_by_gindex(int gindex)
-    {
-    if(gindex < 0 || gindex >= MAX_GROUPS)
-    	fatal(1, "destid_local_by_gindex(): assertion failed, gindex=%d", gindex);
-    return (gindex + MAX_PRINTERS);
-    } /* end of destid_local_by_gindex() */
+	{
+	if(gindex < 0 || gindex >= MAX_GROUPS)
+		fatal(1, "destid_local_by_gindex(): assertion failed, gindex=%d", gindex);
+	return (gindex + MAX_PRINTERS);
+	} /* end of destid_local_by_gindex() */
 
 /*===========================================================================
 ** Functions which work on both local and remote destination IDs.
@@ -222,69 +222,69 @@ int destid_local_by_gindex(int gindex)
 ** remote jobs it may dynamically allocate a destination id.
 */
 int destid_assign(int destnode_id, const char name[])
-    {
-    if(nodeid_is_local_node(destnode_id))
-	return destid_local_by_name(name);
-    else
-    	return nodeid_assign(name);	/* nasty hack!!! */
-    }
+	{
+	if(nodeid_is_local_node(destnode_id))
+		return destid_local_by_name(name);
+	else
+		return nodeid_assign(name);		/* nasty hack!!! */
+	}
 
 /*
-** Free a dynamically allocated destination id.  Local destination IDs are
+** Free a dynamically allocated destination id.	 Local destination IDs are
 ** not dynamically allocated, so in such a case there is nothing to do.
 */
 void destid_free(int destnode_id, int destid)
-    {
-    if(!nodeid_is_local_node(destnode_id))
-    	{
-	nodeid_free(destid);		/* nasty hack!!! */
-    	}
-    } /* end of destid_free() */
+	{
+	if(!nodeid_is_local_node(destnode_id))
+		{
+		nodeid_free(destid);			/* nasty hack!!! */
+		}
+	} /* end of destid_free() */
 
 /*
 ** Convert a destination (group or printer) id to a destination name.
 */
 const char *destid_to_name(int destnode_id, int destid)
-    {
-    if(nodeid_is_local_node(destnode_id))
 	{
-	return destid_local_to_name(destid);
-	}
-    else
-    	{
-    	return nodeid_to_name(destid);	/* nasty hack!!! */
-    	}
-    } /* end of destid_to_name() */
+	if(nodeid_is_local_node(destnode_id))
+		{
+		return destid_local_to_name(destid);
+		}
+	else
+		{
+		return nodeid_to_name(destid);	/* nasty hack!!! */
+		}
+	} /* end of destid_to_name() */
 
 /*
 ** Given a (possibly remote) destination name, return the
 ** id number.
 */
 int destid_by_name(int destnode_id, const char name[])
-    {
-    if(nodeid_is_local_node(destnode_id))
-	return destid_local_by_name(name);
-    else
-    	return nodeid_by_name(name);	/* nasty hack!!! */
-    }
+	{
+	if(nodeid_is_local_node(destnode_id))
+		return destid_local_by_name(name);
+	else
+		return nodeid_by_name(name);	/* nasty hack!!! */
+	}
 
 /*
 ** Return true if the indicated destination is accepting requests.
 */
 gu_boolean destid_accepting(int destnode_id, int destid)
-    {
-    if(nodeid_is_local_node(destnode_id))
 	{
-        if(destid_local_is_group(destid))
-            return groups[destid_local_to_gindex(destid)].accepting;
-        else
-            return printers[destid].accepting;
-	}
-    else
-	{
-	return TRUE;		/* !!! */
-	}
-    } /* end of destid_accepting() */
+	if(nodeid_is_local_node(destnode_id))
+		{
+		if(destid_local_is_group(destid))
+			return groups[destid_local_to_gindex(destid)].accepting;
+		else
+			return printers[destid].accepting;
+		}
+	else
+		{
+		return TRUE;			/* !!! */
+		}
+	} /* end of destid_accepting() */
 
 /* end of file */
 

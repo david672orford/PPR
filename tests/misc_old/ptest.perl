@@ -11,10 +11,10 @@ printf("This is %c4italic%c5 text.\r\n",27,27);
 
 # Print colour samples
 for($m=0; $m < 8; $m++)
-	{
-	printf("%cr%cTHIS IS COLOUR %d\r\n",27,$m,$m);
-	}
-printf("%cr%c",27,0);		# return to black
+		{
+		printf("%cr%cTHIS IS COLOUR %d\r\n",27,$m,$m);
+		}
+printf("%cr%c",27,0);			# return to black
 print "\r\n";
 
 # Part expanded
@@ -41,16 +41,16 @@ print "\r\n";
 
 # Inter-character spacing
 for($n=0; $n <= 10; $n++)
-	{
-	printf("%c %cAt this spacing (n) equals %d\r\n",27,$n,$n);
-	}
+		{
+		printf("%c %cAt this spacing (n) equals %d\r\n",27,$n,$n);
+		}
 printf("%c@",27);
 
 # Line spacing
 for($i=2; $i <=60; $i+=2)
-	{
-	printf("%c3%c%d/360 - inch line spacing\r\n",28,$i,$i);
-	}
+		{
+		printf("%c3%c%d/360 - inch line spacing\r\n",28,$i,$i);
+		}
 
 printf("%c@",27);
 
@@ -58,30 +58,30 @@ printf("%c@",27);
 printf("%c",12);
 
 sub g8pin
-	{
-	print "This is 8-pin grapics, M = $m ";
-	printf("%c*%c%c%c",27,$m,60,0);
-	for($z=1; $z <= 60; $z++)
 		{
-		printf("%c",255);
+		print "This is 8-pin grapics, M = $m ";
+		printf("%c*%c%c%c",27,$m,60,0);
+		for($z=1; $z <= 60; $z++)
+				{
+				printf("%c",255);
+				}
+		print "\r\n\r\n";
 		}
-	print "\r\n\r\n";
-	}
 
 sub g24pin
-	{
-	print "This is 24-pin grapics, M = $m ";
-	printf("%c*%c%c%c",27,$m,60,0);
-	for($z=1; $z <= 180; $z++)
 		{
-		printf("%c",255);
+		print "This is 24-pin grapics, M = $m ";
+		printf("%c*%c%c%c",27,$m,60,0);
+		for($z=1; $z <= 180; $z++)
+				{
+				printf("%c",255);
+				}
+		print "\r\n\r\n";
 		}
-	print "\r\n\r\n";
-	}
 
 # Test 8 pin graphics modes
 for($m=0; $m <= 4; $m++)
-	{ &g8pin(); }
+		{ &g8pin(); }
 $m=6; &g8pin();
 print "\r\n";
 

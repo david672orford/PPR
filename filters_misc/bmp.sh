@@ -34,22 +34,22 @@ colour=""
 
 # Look for parameters we should pay attention to
 for pair in $OPTIONS
-    do
-    case "$pair" in
+	do
+	case "$pair" in
 	colour=[yY]* )
-	    colour="YES"
-	    ;;
+		colour="YES"
+		;;
 	colour=[nN]* )
-	    colour=""
-	    ;;
+		colour=""
+		;;
 	color=[yY]* )
-	    colour="YES"
-	    ;;
+		colour="YES"
+		;;
 	color=[nN]* )
-	    colour=""
-	    ;;
-    esac
-    done
+		colour=""
+		;;
+	esac
+	done
 
 # Run the filters
 if [ -n "$colour" ]

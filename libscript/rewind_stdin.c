@@ -23,11 +23,11 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[])
-    {
-    if(lseek(0, 0, SEEK_SET) < 0)
-    	write(2, "rewind_stdin: failed\n", 21);
-    return 0;
-    }
+	{
+	if(lseek(0, 0, SEEK_SET) < 0)
+		write(2, "rewind_stdin: failed\n", 21);
+	return 0;
+	}
 
 /* end of file */
 

@@ -26,57 +26,57 @@
 ** There is probably a way to do this with snprintf().
 */
 const char *gu_dtostr(double n)
-    {
-    int whole;
-    int frac;
-    int neg = 0;
-    static char stat_str[16];
-    char *s = &stat_str[15];
-    int x,y,z;
-
-    if( n < 0 )		/* if n is negative */
 	{
-	neg = -1;	/* make a not of that fact */
-	n *= -1;	/* and make n possitive */
-	}
+	int whole;
+	int frac;
+	int neg = 0;
+	static char stat_str[16];
+	char *s = &stat_str[15];
+	int x,y,z;
 
-    /*
-    ** Break the floating point value into integers which
-    ** represent the whole and fractional parts.
-    */
-    whole= (int)n;
-    frac = (int)( ((n-(double)whole) + 0.00005) * 10000.0 );
+	if( n < 0 )			/* if n is negative */
+		{
+		neg = -1;		/* make a not of that fact */
+		n *= -1;		/* and make n possitive */
+		}
 
-    if(whole > 999999999 )
-	return "<overflow>";
+	/*
+	** Break the floating point value into integers which
+	** represent the whole and fractional parts.
+	*/
+	whole= (int)n;
+	frac = (int)( ((n-(double)whole) + 0.00005) * 10000.0 );
 
-    *s--=(char)NULL;        /* terminate the string */
+	if(whole > 999999999 )
+		return "<overflow>";
 
-    for(x=0,z=0;x<4;x++)    /* print the fractional part */
-	{
-	y=frac % 10;
-	if(y || z)          /* if digit non-zero or prev non-zero */
-	    {
-	    *s-- = y + '0';
-	    z=1;
-	    }
-	frac/=10;
-	}
+	*s--=(char)NULL;		/* terminate the string */
 
-    if(z)               /* if any place was non-zero, */
-	*s-- = '.';     /* store a decimal point */
+	for(x=0,z=0;x<4;x++)	/* print the fractional part */
+		{
+		y=frac % 10;
+		if(y || z)			/* if digit non-zero or prev non-zero */
+			{
+			*s-- = y + '0';
+			z=1;
+			}
+		frac/=10;
+		}
 
-    do                  /* do the whole part, digit by digit */
-	{
-	*s-- = (whole % 10) + '0';
-	whole/=10;
-	} while(whole);
+	if(z)				/* if any place was non-zero, */
+		*s-- = '.';		/* store a decimal point */
 
-    if(neg)             /* if negative, add a sign */
-	*s-- = '-';
+	do					/* do the whole part, digit by digit */
+		{
+		*s-- = (whole % 10) + '0';
+		whole/=10;
+		} while(whole);
 
-    return s+1;
-    } /* end of gu_dtostr() */
+	if(neg)				/* if negative, add a sign */
+		*s-- = '-';
+
+	return s+1;
+	} /* end of gu_dtostr() */
 
 /* end of file */
 

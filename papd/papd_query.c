@@ -59,7 +59,7 @@
 ** 1 (trace queries, default replies and replies), and
 ** 2 (also print PostScript).)
 */
-static int query_trace = 0;			/* debug level */
+static int query_trace = 0;						/* debug level */
 
 /*
 ** This determines where we look to find things requested by resource queries.
@@ -74,31 +74,31 @@ static const enum RES_SEARCH other_search_list[] = { RES_SEARCH_CACHE, RES_SEARC
 ** SIGUSR1 changes the query logging level.
 */
 void sigusr1_handler(int sig)
-    {
-    if(++query_trace > 2)
-	query_trace = 0;
-
-    switch(query_trace)
 	{
-	case 0:
-	    debug("Query tracing turned off");
-	    break;
-	default:
-	    debug("Query tracing set to level %d",query_trace);
-	    break;
-	}
-    } /* end of sigusr1_handler() */
+	if(++query_trace > 2)
+		query_trace = 0;
+
+	switch(query_trace)
+		{
+		case 0:
+			debug("Query tracing turned off");
+			break;
+		default:
+			debug("Query tracing set to level %d",query_trace);
+			break;
+		}
+	} /* end of sigusr1_handler() */
 
 /*
 ** A version of reply() which can be instructed print debugging
 ** information in the log file.
 */
 static void REPLY(int sesfd, char *ptr)
-    {
-    if(query_trace)
-	debug("REPLY <-- %.*s", strcspn(ptr,"\n"), ptr);
-    at_reply(sesfd, ptr);
-    } /* end of REPLY() */
+	{
+	if(query_trace)
+		debug("REPLY <-- %.*s", strcspn(ptr,"\n"), ptr);
+	at_reply(sesfd, ptr);
+	} /* end of REPLY() */
 
 /*
 ** Before we answer a query, call this to eat up the PostScript
@@ -108,53 +108,53 @@ static void REPLY(int sesfd, char *ptr)
 ** Return with the endquery line in line[].
 */
 static void eat_query(int sesfd)
-    {
-    while(pap_getline(sesfd))
 	{
-	if(strncmp(line, "%%?End", 6) == 0)		/* If we have found the line that */
-	    {						/* marks the end of the query, */
-	    if(query_trace)
+	while(pap_getline(sesfd))
 		{
-	    	char *ptr;
-	    	ptr = line;
-	    	ptr += strcspn(ptr, " ");
-	    	ptr += strspn(ptr, " ");
-	    	debug("DEFAULT --> %s", ptr);
-	    	}
-	    break;
-	    }
+		if(strncmp(line, "%%?End", 6) == 0)				/* If we have found the line that */
+			{											/* marks the end of the query, */
+			if(query_trace)
+				{
+				char *ptr;
+				ptr = line;
+				ptr += strcspn(ptr, " ");
+				ptr += strspn(ptr, " ");
+				debug("DEFAULT --> %s", ptr);
+				}
+			break;
+			}
 
-	if(query_trace > 1)					/* If level two query tracing */
-	    debug("PS --> %.*s",strcspn(line,"\n"),line);	/* is enabled, print PostScript code. */
-	}
-    } /* end of eat_query() */
+		if(query_trace > 1)										/* If level two query tracing */
+			debug("PS --> %.*s",strcspn(line,"\n"),line);		/* is enabled, print PostScript code. */
+		}
+	} /* end of eat_query() */
 
 /*
 ** If we can't answer a query, we call this routine after
-** calling eat_query().  This routine will return the default
+** calling eat_query().	 This routine will return the default
 ** answer which at that point will be in line[].
 */
 static void return_default(int sesfd)
-    {
-    char *ptr;
-
-    DODEBUG_QUERY(("Returning default answer"));
-
-    if((ptr = strchr(line,':')) == (char*)NULL)
 	{
-	fatal(0, "papd_query.c: return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)",line);
-	}
+	char *ptr;
 
-    ptr++;
-    while(*ptr==' ')                    /* eat up spaces */
+	DODEBUG_QUERY(("Returning default answer"));
+
+	if((ptr = strchr(line,':')) == (char*)NULL)
+		{
+		fatal(0, "papd_query.c: return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)",line);
+		}
+
 	ptr++;
+	while(*ptr==' ')					/* eat up spaces */
+		ptr++;
 
-    DODEBUG_QUERY(("default answer: %s",ptr));    /* we now have answer */
+	DODEBUG_QUERY(("default answer: %s",ptr));	  /* we now have answer */
 
-    strcat(line,"\n");                  /* put the return back on */
+	strcat(line,"\n");					/* put the return back on */
 
-    REPLY(sesfd,ptr);
-    } /* end of return_default() */
+	REPLY(sesfd,ptr);
+	} /* end of return_default() */
 
 /*
 ** Font list query.
@@ -165,23 +165,23 @@ static void return_default(int sesfd)
 ** to tell the spooler where to download the fonts.
 */
 static void font_list_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    int x;
-    char tempstr[75];    	/* space for creating font name lines */
+	{
+	int x;
+	char tempstr[75];			/* space for creating font name lines */
 
-    DODEBUG_QUERY(("font list query"));
+	DODEBUG_QUERY(("font list query"));
 
-    for(x=0; x < qc->fontcount; x++)	/* send the whole list */
-    	{				/* item by item */
-	snprintf(tempstr, sizeof(tempstr), "%.64s\n", qc->fontlist[x]);
-	REPLY(sesfd, tempstr);
-	DODEBUG_QUERY(("%s", tempstr));
-    	}
+	for(x=0; x < qc->fontcount; x++)	/* send the whole list */
+		{								/* item by item */
+		snprintf(tempstr, sizeof(tempstr), "%.64s\n", qc->fontlist[x]);
+		REPLY(sesfd, tempstr);
+		DODEBUG_QUERY(("%s", tempstr));
+		}
 
-    REPLY(sesfd, "*\n");		/* send an astrisk to indicate end of reply */
+	REPLY(sesfd, "*\n");				/* send an astrisk to indicate end of reply */
 
-    eat_query(sesfd);			/* eat up the PostScript code and %?End line */
-    } /* end of font_list_query() */
+	eat_query(sesfd);					/* eat up the PostScript code and %?End line */
+	} /* end of font_list_query() */
 
 /*
 ** Support routine for use by font_query() and resource_query() when
@@ -197,158 +197,158 @@ static void font_list_query(int sesfd, struct QUEUE_CONFIG *qc)
 ** the missing half.
 */
 static void do_font_query(int sesfd, struct QUEUE_CONFIG *qc, int index)
-    {
-    char *type, *space;
-    char temp[256];		/* stuff from line[] can't overflow this buffer */
-    int x, y;			/* outer and inner loop counters */
-    int wanted_mactruetype_features;
-    int features;
-
-    if(index == 1)		/* FontQuery */
-    	{
-    	type = "";		/* needn't say it is a font */
-    	space = "";		/* no space after colon */
-    	}
-    else			/* ResourceQuery: font */
-    	{
-    	type = "font ";		/* must specify type as font */
-    	space = " ";		/* one space after the colon */
-    	}
-
-    if(qc->TTRasterizer
-    		&& (strcmp(qc->TTRasterizer, "Type42") == 0
-    			|| strcmp(qc->TTRasterizer, "Accept68K")==0))
-    	wanted_mactruetype_features = FONT_TYPE_42;
-    else
-    	wanted_mactruetype_features = FONT_TYPE_1;
-
-    /* Loop thru the font list */
-    for(x=index; tokens[x]; x++)
 	{
-	/* Check if the font is in the printer. */
-	for(y=0; y < qc->fontcount; y++)
-	    {
-	    if(strcmp(tokens[x], qc->fontlist[y]) == 0)		/* If match, */
-		{						/* acknowledge that we have it. */
-		DODEBUG_QUERY(("%s/%s:%sYes (printer has it)", type, tokens[x], space));
-		snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
-		REPLY(sesfd, temp);
-		break;				/* terminate for(y... */
+	char *type, *space;
+	char temp[256];				/* stuff from line[] can't overflow this buffer */
+	int x, y;					/* outer and inner loop counters */
+	int wanted_mactruetype_features;
+	int features;
+
+	if(index == 1)				/* FontQuery */
+		{
+		type = "";				/* needn't say it is a font */
+		space = "";				/* no space after colon */
 		}
-	    }
-	if(y < qc->fontcount)			/* If we hit break above, */
-	    continue;				/* go on to next font */
+	else						/* ResourceQuery: font */
+		{
+		type = "font ";			/* must specify type as font */
+		space = " ";			/* one space after the colon */
+		}
 
-	/*
-	** If we are allowed to query the cache and if the font is in the cache,
-	** and, if this is a two mode Mac TrueType font, we already have the part
-	** the client would probably supply if we said "No".
-	*/
-	if(qc->query_font_cache
-		&& noalloc_find_cached_resource("font", tokens[x], 0.0, 0, font_search_list, (int*)NULL, &features, NULL)
-		&& ( !(features & FONT_MACTRUETYPE) || (features & wanted_mactruetype_features) ) )
-	    {
-	    DODEBUG_QUERY(("%s/%s:%sYes (in cache)", type, tokens[x], space));
-	    snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
-	    }
-
-	/*
-	** Font is not in the cache or we don't have the part the client
-	** is likely willing to supply.
-	*/
+	if(qc->TTRasterizer
+				&& (strcmp(qc->TTRasterizer, "Type42") == 0
+						|| strcmp(qc->TTRasterizer, "Accept68K")==0))
+		wanted_mactruetype_features = FONT_TYPE_42;
 	else
-	    {
-	    DODEBUG_QUERY(("%s/%s:No", type, tokens[x]));
-	    snprintf(temp, sizeof(temp), "%s/%s:No\n", type, tokens[x]);
-	    }
+		wanted_mactruetype_features = FONT_TYPE_1;
 
-	REPLY(sesfd, temp);
-	}
+	/* Loop thru the font list */
+	for(x=index; tokens[x]; x++)
+		{
+		/* Check if the font is in the printer. */
+		for(y=0; y < qc->fontcount; y++)
+			{
+			if(strcmp(tokens[x], qc->fontlist[y]) == 0)			/* If match, */
+				{												/* acknowledge that we have it. */
+				DODEBUG_QUERY(("%s/%s:%sYes (printer has it)", type, tokens[x], space));
+				snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
+				REPLY(sesfd, temp);
+				break;							/* terminate for(y... */
+				}
+			}
+		if(y < qc->fontcount)					/* If we hit break above, */
+			continue;							/* go on to next font */
 
-    REPLY(sesfd, "*\n");	/* Terminate the returned list */
-    } /* end of do_font_query() */
+		/*
+		** If we are allowed to query the cache and if the font is in the cache,
+		** and, if this is a two mode Mac TrueType font, we already have the part
+		** the client would probably supply if we said "No".
+		*/
+		if(qc->query_font_cache
+				&& noalloc_find_cached_resource("font", tokens[x], 0.0, 0, font_search_list, (int*)NULL, &features, NULL)
+				&& ( !(features & FONT_MACTRUETYPE) || (features & wanted_mactruetype_features) ) )
+			{
+			DODEBUG_QUERY(("%s/%s:%sYes (in cache)", type, tokens[x], space));
+			snprintf(temp, sizeof(temp), "%s/%s:%sYes\n", type, tokens[x], space);
+			}
+
+		/*
+		** Font is not in the cache or we don't have the part the client
+		** is likely willing to supply.
+		*/
+		else
+			{
+			DODEBUG_QUERY(("%s/%s:No", type, tokens[x]));
+			snprintf(temp, sizeof(temp), "%s/%s:No\n", type, tokens[x]);
+			}
+
+		REPLY(sesfd, temp);
+		}
+
+	REPLY(sesfd, "*\n");		/* Terminate the returned list */
+	} /* end of do_font_query() */
 
 /*
 ** Specific font query.
 */
 static void font_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    DODEBUG_QUERY(("font query"));
+	{
+	DODEBUG_QUERY(("font query"));
 
-    tokenize();			/* Parse query line to locate words */
+	tokenize();					/* Parse query line to locate words */
 
-    eat_query(sesfd);		/* Throw away the PostScript */
+	eat_query(sesfd);			/* Throw away the PostScript */
 
-    do_font_query(sesfd, qc, 1);
-    } /* end of font_query() */
+	do_font_query(sesfd, qc, 1);
+	} /* end of font_query() */
 
 /*
 ** Resource query.
 **
 ** This is similiar to font_query(), the diffence being that the
-** resource type is the 1st parameter.  I am not sure if this code
-** is correct.  Should the name of a procedure set be returned
+** resource type is the 1st parameter.	I am not sure if this code
+** is correct.	Should the name of a procedure set be returned
 ** with a leading slash, for instance?
 */
 static void resource_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    char temp[256];		/* stuff from line[] can't overflow this buffer */
-    int x;
-    int areprocsets = FALSE;	/* TRUE if resources are procedure sets */
-    double version;
-    int revision;
-
-    DODEBUG_QUERY(("Resource Query"));
-
-    tokenize();			/* Break the query line into words */
-
-    eat_query(sesfd);		/* Throw away the PostScript */
-
-    /*
-    ** If the resources in question are fonts, let the special font
-    ** query answering code handle it.
-    */
-    if(strcmp(tokens[1], "font") == 0)
-    	{
-    	do_font_query(sesfd, qc, 2);
-    	return;
-    	}
-
-    /* If procedure sets, set a flag. */
-    if(strcmp(tokens[1], "procset") == 0)
-	areprocsets = TRUE;
-
-    /* All right, work through the list. */
-    for(x=2; tokens[x]; x++)
 	{
-	version = 0.0;
-	revision = 0;
+	char temp[256];				/* stuff from line[] can't overflow this buffer */
+	int x;
+	int areprocsets = FALSE;	/* TRUE if resources are procedure sets */
+	double version;
+	int revision;
 
-	/* get procset version and revision */
-	if(areprocsets && tokens[x+1] && tokens[x+2])
-	    {
-	    version = gu_getdouble(tokens[x+1]);
-	    revision = atoi(tokens[x+2]);
-	    x += 2;
-	    }
+	DODEBUG_QUERY(("Resource Query"));
 
-	/* Now look in the cache and build a suitable reply in temp[]. */
-	if(noalloc_find_cached_resource(tokens[1], tokens[2], version, revision, other_search_list, (int*)NULL, (int*)NULL, NULL))
-	    {
-	    snprintf(temp, sizeof(temp), "%s %s: Yes\n", tokens[1], tokens[x]);
-	    DODEBUG_QUERY(("%s %s: Yes", tokens[1], tokens[x]));
-	    }
-	else
-	    {
-	    snprintf(temp, sizeof(temp), "%s %s: No\n", tokens[1], tokens[x]);
-	    DODEBUG_QUERY(("%s %s: No", tokens[1], tokens[x]));
-	    }
+	tokenize();					/* Break the query line into words */
 
-	REPLY(sesfd, temp);   			/* Dispatch the reply */
-	}
+	eat_query(sesfd);			/* Throw away the PostScript */
 
-    REPLY(sesfd, "*\n");			/* Terminate the returned list */
-    } /* end of resource_query() */
+	/*
+	** If the resources in question are fonts, let the special font
+	** query answering code handle it.
+	*/
+	if(strcmp(tokens[1], "font") == 0)
+		{
+		do_font_query(sesfd, qc, 2);
+		return;
+		}
+
+	/* If procedure sets, set a flag. */
+	if(strcmp(tokens[1], "procset") == 0)
+		areprocsets = TRUE;
+
+	/* All right, work through the list. */
+	for(x=2; tokens[x]; x++)
+		{
+		version = 0.0;
+		revision = 0;
+
+		/* get procset version and revision */
+		if(areprocsets && tokens[x+1] && tokens[x+2])
+			{
+			version = gu_getdouble(tokens[x+1]);
+			revision = atoi(tokens[x+2]);
+			x += 2;
+			}
+
+		/* Now look in the cache and build a suitable reply in temp[]. */
+		if(noalloc_find_cached_resource(tokens[1], tokens[2], version, revision, other_search_list, (int*)NULL, (int*)NULL, NULL))
+			{
+			snprintf(temp, sizeof(temp), "%s %s: Yes\n", tokens[1], tokens[x]);
+			DODEBUG_QUERY(("%s %s: Yes", tokens[1], tokens[x]));
+			}
+		else
+			{
+			snprintf(temp, sizeof(temp), "%s %s: No\n", tokens[1], tokens[x]);
+			DODEBUG_QUERY(("%s %s: No", tokens[1], tokens[x]));
+			}
+
+		REPLY(sesfd, temp);						/* Dispatch the reply */
+		}
+
+	REPLY(sesfd, "*\n");						/* Terminate the returned list */
+	} /* end of resource_query() */
 
 /*
 ** Do we have a certain proceedure set?
@@ -359,292 +359,292 @@ static void resource_query(int sesfd, struct QUEUE_CONFIG *qc)
 */
 #ifdef UNTESTED
 void procset_query(int sesfd)
-    {
-    char *name;
-    double version;
-    int revision;
-
-    DODEBUG_QUERY(("procset_query(sesfd=%d)", sesfd));
-
-    tokenize();					/* make tokens of line[] */
-
-    eat_query(sesfd);				/* eat up PostScript, etc. */
-
-    name = tokens[1];				/* get procset name */
-
-    if(tokens[2])				/* get version number */
-	version=gu_getdouble(tokens[2]);		/* which is a floating point */
-    else					/* number; if none present, */
-	version=0;				/* user zero */
-
-    if(tokens[3])				/* get revision number */
-	sscanf(tokens[3],"%d",&revision);	/* which is an integer */
-    else					/* if none present, */
-	revision=0;				/* use zero */
-
-    if(noalloc_find_cached_resource("procset", name, version, revision, other_search_list, (int*)NULL, (int*)NULL))
 	{
-	DODEBUG_QUERY(("procset not present"));
-	REPLY(sesfd,"0\n");
-	}
-    else					/* no error, */
-	{					/* the file must be there */
-	DODEBUG_QUERY(("procset present"));
-	REPLY(sesfd, "1\n");
-	}
-    } /* end of procset_query() */
+	char *name;
+	double version;
+	int revision;
+
+	DODEBUG_QUERY(("procset_query(sesfd=%d)", sesfd));
+
+	tokenize();									/* make tokens of line[] */
+
+	eat_query(sesfd);							/* eat up PostScript, etc. */
+
+	name = tokens[1];							/* get procset name */
+
+	if(tokens[2])								/* get version number */
+		version=gu_getdouble(tokens[2]);				/* which is a floating point */
+	else										/* number; if none present, */
+		version=0;								/* user zero */
+
+	if(tokens[3])								/* get revision number */
+		sscanf(tokens[3],"%d",&revision);		/* which is an integer */
+	else										/* if none present, */
+		revision=0;								/* use zero */
+
+	if(noalloc_find_cached_resource("procset", name, version, revision, other_search_list, (int*)NULL, (int*)NULL))
+		{
+		DODEBUG_QUERY(("procset not present"));
+		REPLY(sesfd,"0\n");
+		}
+	else										/* no error, */
+		{										/* the file must be there */
+		DODEBUG_QUERY(("procset present"));
+		REPLY(sesfd, "1\n");
+		}
+	} /* end of procset_query() */
 #endif
 
 /*
 ** Feature Query
 */
 static void feature_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    char temp[256];
-
-    DODEBUG_QUERY(("feature query: %s", line));
-
-    tokenize();			/* break query into words */
-
-    eat_query(sesfd);		/* throw away the PostScript */
-
-    switch(tokens[1][1])	/* <-- second character */
 	{
-	case 'L':
-	    if(strcmp(tokens[1], "*LanguageLevel") == 0)
+	char temp[256];
+
+	DODEBUG_QUERY(("feature query: %s", line));
+
+	tokenize();					/* break query into words */
+
+	eat_query(sesfd);			/* throw away the PostScript */
+
+	switch(tokens[1][1])		/* <-- second character */
 		{
-		snprintf(temp, sizeof(temp), "\"%d\"\n", qc->LanguageLevel != 0 ? qc->LanguageLevel : 1 );
-		REPLY(sesfd, temp);
-		return;
-		}
-	    break;
+		case 'L':
+			if(strcmp(tokens[1], "*LanguageLevel") == 0)
+				{
+				snprintf(temp, sizeof(temp), "\"%d\"\n", qc->LanguageLevel != 0 ? qc->LanguageLevel : 1 );
+				REPLY(sesfd, temp);
+				return;
+				}
+			break;
 
-	case 'P':
-	    if(strcmp(tokens[1], "*PSVersion") == 0)
-		{
-		if(qc->PSVersion)
-		    {
-		    snprintf(temp, sizeof(temp), "\"%s\"\n", qc->PSVersion);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		}
-	    else if(strcmp(tokens[1], "*Product") == 0)
-		{
-		if(qc->Product)
-		    {
-		    snprintf(temp, sizeof(temp), "\"%s\"\n", qc->Product);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		}
-	    break;
+		case 'P':
+			if(strcmp(tokens[1], "*PSVersion") == 0)
+				{
+				if(qc->PSVersion)
+					{
+					snprintf(temp, sizeof(temp), "\"%s\"\n", qc->PSVersion);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			else if(strcmp(tokens[1], "*Product") == 0)
+				{
+				if(qc->Product)
+					{
+					snprintf(temp, sizeof(temp), "\"%s\"\n", qc->Product);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			break;
 
-	case '?':
-	    if(strcmp(tokens[1], "*?Resolution") == 0)
-		{
-		if(qc->Resolution)
-		    {
-		    snprintf(temp, sizeof(temp), "%s\n", qc->Resolution);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		}
-	    break;
+		case '?':
+			if(strcmp(tokens[1], "*?Resolution") == 0)
+				{
+				if(qc->Resolution)
+					{
+					snprintf(temp, sizeof(temp), "%s\n", qc->Resolution);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			break;
 
-	case 'F':
-	    if(strcmp(tokens[1], "*FreeVM") == 0)
-		{
-		if(qc->VMOptionFreeVM != 0)
-		    {
-		    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->VMOptionFreeVM);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		if(qc->FreeVM != 0)	/* If line was present, */
-		    {
-		    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->FreeVM);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		}
-	    else if(strcmp(tokens[1], "*FaxSupport") == 0)
-		{
-		if(qc->FaxSupport)
-		    {
-		    snprintf(temp, sizeof(temp), "%s\n", qc->FaxSupport);
-		    REPLY(sesfd, temp);
-		    return;
-		    }
-		}
-	    break;
+		case 'F':
+			if(strcmp(tokens[1], "*FreeVM") == 0)
+				{
+				if(qc->VMOptionFreeVM != 0)
+					{
+					snprintf(temp, sizeof(temp), "\"%d\"\n", qc->VMOptionFreeVM);
+					REPLY(sesfd, temp);
+					return;
+					}
+				if(qc->FreeVM != 0)		/* If line was present, */
+					{
+					snprintf(temp, sizeof(temp), "\"%d\"\n", qc->FreeVM);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			else if(strcmp(tokens[1], "*FaxSupport") == 0)
+				{
+				if(qc->FaxSupport)
+					{
+					snprintf(temp, sizeof(temp), "%s\n", qc->FaxSupport);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			break;
 
-	case 'T':
-	    if(strcmp(tokens[1], "*TTRasterizer") == 0)
-		{
-		if(qc->TTRasterizer)
-		     {
-		     snprintf(temp, sizeof(temp), "%s\n", qc->TTRasterizer);
-		     REPLY(sesfd, temp);
-		     return;
-		     }
-		}
-	    break;		/* return default */
+		case 'T':
+			if(strcmp(tokens[1], "*TTRasterizer") == 0)
+				{
+				if(qc->TTRasterizer)
+					 {
+					 snprintf(temp, sizeof(temp), "%s\n", qc->TTRasterizer);
+					 REPLY(sesfd, temp);
+					 return;
+					 }
+				}
+			break;				/* return default */
 
-	case 'C':
-	    if(strcmp(tokens[1], "*ColorDevice") == 0)
-		{
-		if(qc->ColorDevice == ANSWER_TRUE)
-		    {
-		    REPLY(sesfd, "True\n");
-		    return;
-		    }
-		else if(qc->ColorDevice == ANSWER_FALSE)
-		    {
-		    REPLY(sesfd, "False\n");
-		    return;
-		    }
-		}
-	    break;
+		case 'C':
+			if(strcmp(tokens[1], "*ColorDevice") == 0)
+				{
+				if(qc->ColorDevice == ANSWER_TRUE)
+					{
+					REPLY(sesfd, "True\n");
+					return;
+					}
+				else if(qc->ColorDevice == ANSWER_FALSE)
+					{
+					REPLY(sesfd, "False\n");
+					return;
+					}
+				}
+			break;
 
-	case 'O':
-	    if(strncmp(tokens[1], "*Option", 7) == 0)
-		{
-		struct OPTION *opt;
+		case 'O':
+			if(strncmp(tokens[1], "*Option", 7) == 0)
+				{
+				struct OPTION *opt;
 
-		opt = qc->options;
+				opt = qc->options;
 
-		while(opt != (struct OPTION *)NULL)
-		    {
-		    if(strcmp(tokens[1], opt->name) == 0)
-		    	{
-			snprintf(temp, sizeof(temp), "%s\n", opt->value);
-			REPLY(sesfd, temp);
-			return;
-		    	}
-		    opt = opt->next;
-		    }
-		}
-	    break;
+				while(opt != (struct OPTION *)NULL)
+					{
+					if(strcmp(tokens[1], opt->name) == 0)
+						{
+						snprintf(temp, sizeof(temp), "%s\n", opt->value);
+						REPLY(sesfd, temp);
+						return;
+						}
+					opt = opt->next;
+					}
+				}
+			break;
 
-	case 'I':
-	    if(strcmp(tokens[1], "*InstalledMemory") == 0)
-	    	{
-		if(qc->InstalledMemory)
-		    {
-		    snprintf(temp, sizeof(temp), "%s\n", qc->InstalledMemory);
-		    REPLY(sesfd, temp);
-	    	    return;
-	    	    }
-	    	}
-	    break;
+		case 'I':
+			if(strcmp(tokens[1], "*InstalledMemory") == 0)
+				{
+				if(qc->InstalledMemory)
+					{
+					snprintf(temp, sizeof(temp), "%s\n", qc->InstalledMemory);
+					REPLY(sesfd, temp);
+					return;
+					}
+				}
+			break;
 
-	} /* end of switch */
+		} /* end of switch */
 
-    /*
-    ** Unknown feature query, return the
-    ** default answer.
-    */
-    return_default(sesfd);
-    } /* feature_query() */
+	/*
+	** Unknown feature query, return the
+	** default answer.
+	*/
+	return_default(sesfd);
+	} /* feature_query() */
 
 /*
 ** Generic query
 ** We answer a few queries generated by LaserWriter 8.x.
 */
 static void generic_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    char temp[256];
-
-    DODEBUG_QUERY(("generic_query(sesfd=%d, destid=%p) line=\"%s\"", sesfd, qc, line));
-
-    tokenize();
-    eat_query(sesfd);
-
-    /* Adobe is binary data OK query: */
-    if(strcmp(tokens[1], "ADOIsBinaryOK?") == 0)
 	{
-	if(qc->BinaryOK == ANSWER_TRUE)
-	    {
-	    REPLY(sesfd, "True\n");
-	    return;
-	    }
-	if(qc->BinaryOK == ANSWER_FALSE)
-	    {
-	    REPLY(sesfd, "False\n");
-	    return;
-	    }
-	}
+	char temp[256];
 
-    /* Adobe how much RAM is install query: */
-    else if(strcmp(tokens[1], "ADORamSize") == 0)
-	{
-	if(qc->RamSize)         /* If not zero which indicates unknown, */
-	    {				/* return the value. */
-	    snprintf(temp, sizeof(temp), "\"%d\"\n", qc->RamSize);
-	    REPLY(sesfd,temp);
-	    return;
-	    }
-	}
+	DODEBUG_QUERY(("generic_query(sesfd=%d, destid=%p) line=\"%s\"", sesfd, qc, line));
 
-    /* unrecognized generic query */
-    return_default(sesfd);
-    } /* end of generic_query() */
+	tokenize();
+	eat_query(sesfd);
+
+	/* Adobe is binary data OK query: */
+	if(strcmp(tokens[1], "ADOIsBinaryOK?") == 0)
+		{
+		if(qc->BinaryOK == ANSWER_TRUE)
+			{
+			REPLY(sesfd, "True\n");
+			return;
+			}
+		if(qc->BinaryOK == ANSWER_FALSE)
+			{
+			REPLY(sesfd, "False\n");
+			return;
+			}
+		}
+
+	/* Adobe how much RAM is install query: */
+	else if(strcmp(tokens[1], "ADORamSize") == 0)
+		{
+		if(qc->RamSize)			/* If not zero which indicates unknown, */
+			{							/* return the value. */
+			snprintf(temp, sizeof(temp), "\"%d\"\n", qc->RamSize);
+			REPLY(sesfd,temp);
+			return;
+			}
+		}
+
+	/* unrecognized generic query */
+	return_default(sesfd);
+	} /* end of generic_query() */
 
 /*
 ** Read a query job from the client and answer it to the
-** best of our ability.  This is called just after the line
+** best of our ability.	 This is called just after the line
 ** "%!PS-Adobe-x.x Query" is received.
 */
 void answer_query(int sesfd, struct QUEUE_CONFIG *qc)
-    {
-    while(pap_getline(sesfd))		/* `til end of job */
 	{
-	/* If we should print all PostScript in the query, print this line. */
-	if(query_trace >= 2)
-	    debug("QUERY --> %s", line);
+	while(pap_getline(sesfd))			/* `til end of job */
+		{
+		/* If we should print all PostScript in the query, print this line. */
+		if(query_trace >= 2)
+			debug("QUERY --> %s", line);
 
-	/*
-	** If it was not claimed as a command above
-	** and it is not a query line, skip it.
-	*/
-	if(strncmp(line, "%%?", 3))
-	    continue;
+		/*
+		** If it was not claimed as a command above
+		** and it is not a query line, skip it.
+		*/
+		if(strncmp(line, "%%?", 3))
+			continue;
 
-	/* If query trace mode is on, put the line in the log. */
-	if(query_trace == 1)
-	    debug("QUERY --> %s", line);
+		/* If query trace mode is on, put the line in the log. */
+		if(query_trace == 1)
+			debug("QUERY --> %s", line);
 
-	/* Old style font list query */
-	if(strcmp(line, "%%?BeginFontListQuery") == 0)
-	    font_list_query(sesfd, qc);
+		/* Old style font list query */
+		if(strcmp(line, "%%?BeginFontListQuery") == 0)
+			font_list_query(sesfd, qc);
 
-	/* New style font query */
-	else if(strncmp(line, "%%?BeginFontQuery:", 18) == 0)
-	    font_query(sesfd, qc);
+		/* New style font query */
+		else if(strncmp(line, "%%?BeginFontQuery:", 18) == 0)
+			font_query(sesfd, qc);
 
-	/* Resource Query */
-	else if(strncmp(line, "%%?BeginResourceQuery:", 22) == 0)
-	    resource_query(sesfd, qc);
+		/* Resource Query */
+		else if(strncmp(line, "%%?BeginResourceQuery:", 22) == 0)
+			resource_query(sesfd, qc);
 
-	/* Feature query */
-	else if(strncmp(line, "%%?BeginFeatureQuery:", 21) == 0)
-	    feature_query(sesfd, qc);
+		/* Feature query */
+		else if(strncmp(line, "%%?BeginFeatureQuery:", 21) == 0)
+			feature_query(sesfd, qc);
 
-	/* Generic query */
-	else if(strncmp(line, "%%?BeginQuery:", 14) == 0)
-	    generic_query(sesfd, qc);
+		/* Generic query */
+		else if(strncmp(line, "%%?BeginQuery:", 14) == 0)
+			generic_query(sesfd, qc);
 
-	/* Unrecognized query, just return the default. */
-	else
-	    {
-	    eat_query(sesfd);
-	    return_default(sesfd);
-	    }
+		/* Unrecognized query, just return the default. */
+		else
+			{
+			eat_query(sesfd);
+			return_default(sesfd);
+			}
 
-	} /* end of while(not end of file) */
+		} /* end of while(not end of file) */
 
-    at_reply_eoj(sesfd);		/* respond with end of job */
-    } /* end of answer_query() */
+	at_reply_eoj(sesfd);				/* respond with end of job */
+	} /* end of answer_query() */
 
 /* end of file */

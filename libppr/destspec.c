@@ -26,22 +26,22 @@
 ** This is probably used when printing messages.
 */
 const char *network_destspec(const char *destnode, const char *destname)
-    {
-    static char return_str[MAX_NODENAME+MAX_DESTNAME+1];
-
-    if(!destname)
-    	{
-    	return "???";
-    	}
-    else if( destnode && strcmp(destnode, ppr_get_nodename()) )
 	{
-    	snprintf(return_str, sizeof(return_str), "%s:%s", destnode, destname);
-	return return_str;
-	}
-    else
-    	{
-    	return destname;
-    	}
-    } /* end of network_destspec() */
+	static char return_str[MAX_NODENAME+MAX_DESTNAME+1];
+
+	if(!destname)
+		{
+		return "???";
+		}
+	else if( destnode && strcmp(destnode, ppr_get_nodename()) )
+		{
+		snprintf(return_str, sizeof(return_str), "%s:%s", destnode, destname);
+		return return_str;
+		}
+	else
+		{
+		return destname;
+		}
+	} /* end of network_destspec() */
 
 /* end of file */

@@ -23,26 +23,26 @@
 ** If the strings differ, return non-zero.
 */
 int gu_strcasecmp(const char *s1, const char *s2)
-    {
-    while( (toupper(*s1) == toupper(*s2)) )
 	{
-	if(*s1 == '\0' && *s2 == '\0')
-	    return 0;
-	else
-	    { s1++; s2++; }
-	}
-    return -1;
-    } /* end of gu_strcasecmp() */
+	while( (toupper(*s1) == toupper(*s2)) )
+		{
+		if(*s1 == '\0' && *s2 == '\0')
+			return 0;
+		else
+			{ s1++; s2++; }
+		}
+	return -1;
+	} /* end of gu_strcasecmp() */
 
 /*
 ** Perform a case insensitive comparison for up to n characters.
 ** If the strings differ, return non-zero.
 */
 int gu_strncasecmp(const char *s1, const char *s2, int n)
-    {
-    while( n > 0 && (toupper(*(s1++)) == toupper(*(s2++))) )
-    	n--;
-    return n;
-    } /* end of gu_strncasecmp() */
+	{
+	while( n > 0 && (toupper(*(s1++)) == toupper(*(s2++))) )
+		n--;
+	return n;
+	} /* end of gu_strncasecmp() */
 
 /* end of file */

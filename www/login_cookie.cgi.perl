@@ -68,15 +68,15 @@ if(! defined $ENV{REMOTE_USER} || $ENV{REMOTE_USER} eq "")
 print <<"EndLoginScript";
 <script>
 function login()
-    {
-    var myform = document.forms[0];
-    var saveform = window.parent.frames[1].document.forms[0];
-    saveform.ha1.value = MD5(myform.username.value + ':' + myform.realm.value + ":" + myform.password.value);
-    myform.password.value = "";
-    saveform.response.value = MD5(saveform.ha1.value + ':' + myform.nonce.value);
-    document.cookie = "auth_md5=" + myform.username.value + ' ' + myform.nonce.value + ' ' + saveform.response.value;
-    myform.submit();
-    }
+	{
+	var myform = document.forms[0];
+	var saveform = window.parent.frames[1].document.forms[0];
+	saveform.ha1.value = MD5(myform.username.value + ':' + myform.realm.value + ":" + myform.password.value);
+	myform.password.value = "";
+	saveform.response.value = MD5(saveform.ha1.value + ':' + myform.nonce.value);
+	document.cookie = "auth_md5=" + myform.username.value + ' ' + myform.nonce.value + ' ' + saveform.response.value;
+	myform.submit();
+	}
 </script>
 EndLoginScript
 print "<p>\n";
@@ -90,9 +90,9 @@ print "</p>\n";
 
 # If the user tried to log in and failed,
 if(cgi_data_peek("nonce", "") ne "")
-    {
-    print '<p class="error">', H_("Incorrect username or password."), "</p>\n";
-    }
+	{
+	print '<p class="error">', H_("Incorrect username or password."), "</p>\n";
+	}
 }
 
 #=============================================================================
@@ -103,20 +103,20 @@ elsif($ENV{AUTH_TYPE} eq "Cookie")
 print <<"LogoutScript";
 <script>
 function logout()
-    {
-    var saveform = window.parent.frames[1].document.forms[0];
-    saveform.ha1.value = "";
-    saveform.response.value = "";
-    document.cookie = "auth_md5=";
-    document.forms[0].nonce.value = "";
-    document.forms[0].submit();
-    }
+	{
+	var saveform = window.parent.frames[1].document.forms[0];
+	saveform.ha1.value = "";
+	saveform.response.value = "";
+	document.cookie = "auth_md5=";
+	document.forms[0].nonce.value = "";
+	document.forms[0].submit();
+	}
 </script>
 LogoutScript
 print '<input type="hidden" name="username" value=', html_value(cgi_data_move("username", "")), " size=16>\n";
 print "<p>", html(sprintf(_("You are logged in as \"%s\".  Leave this window open to remain logged in.\n"
-	. "If you close this window without logging out, you will be automatically logged\n"
-	. "out after %d seconds.\n"), $ENV{REMOTE_USER}, $MAX_NONCE_AGE)), "</p>\n";
+		. "If you close this window without logging out, you will be automatically logged\n"
+		. "out after %d seconds.\n"), $ENV{REMOTE_USER}, $MAX_NONCE_AGE)), "</p>\n";
 print '<p><input type="submit", name="renew" value="', H_("Renew"), '">', "\n";
 print '<input type="button", value="', H_("Logout"), '" onclick="logout()">', "</p>\n";
 print <<"LogoutScript2";

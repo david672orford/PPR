@@ -76,27 +76,27 @@ option_printed=1
 option_timeout=""
 option_canceled=1
 for opt in $responder_options
-    do
-    case $opt in
+	do
+	case $opt in
 	printed=[nNfF0]* )
-	    option_printed=0
-	    ;;
+		option_printed=0
+		;;
 	printed=[yYtT1-9]* )
-	    option_printed=1
-	    ;;
+		option_printed=1
+		;;
 	timeout=* )
-	    option_timeout="-timeout `echo $opt | cut -d= -f2`"
-	    ;;
+		option_timeout="-timeout `echo $opt | cut -d= -f2`"
+		;;
 	canceled=[nNfF0]* )
-	    option_canceled=0
-	    ;;
+		option_canceled=0
+		;;
 	canceled=[yYtT1-9]* )
-	    option_canceled=1
-	    ;;
+		option_canceled=1
+		;;
 	* )
-	    ;;
-    esac
-    done
+		;;
+	esac
+	done
 
 #==========================================
 # Decide if this message is worth sending.
@@ -125,54 +125,54 @@ message="$canned_message
 ";
 
 if [ -n "$why_arrested" ]
-    then 
-    message="${message}
-Probable cause:  $why_arrested
+	then 
+	message="${message}
+Probable cause:	 $why_arrested
 "
-    fi
+	fi
 
 # Possible add the title.
 if [ -n "$title" ]
-    then
-    message="${message}
+	then
+	message="${message}
 The title of this job is \"$title\".
 "
-    fi
+	fi
 
 if [ "$pages_printed" != "?" ]		# if printed,
-    then
-    if [ "$pages_printed" -ne -1 ]	# if number of pages is known,
+	then
+	if [ "$pages_printed" -ne -1 ]	# if number of pages is known,
 	then
 	if [ "$pages_printed" -eq 1 ]
-	    then
-	    message="${message}
+		then
+		message="${message}
 It is 1 page long."
-	    else
-	    message="${message}
+		else
+		message="${message}
 It is $pages_printed pages long."
-	    fi
+		fi
 
 	if [ -n "$charge" ]
-	    then 
-	    message="${message}  You have been charged $charge."
-	    fi
+		then 
+		message="${message}	 You have been charged $charge."
+		fi
 
 	message="${message}
 "
 	fi
-    fi
+	fi
 
 # If it was submitted more than 10 minutes ago, tell when.
 if [ $time_submitted -gt 0 ]
-    then
-    when=`lib/time_elapsed $time_submitted 600`
-    if [ -n "$when" ]
+	then
+	when=`lib/time_elapsed $time_submitted 600`
+	if [ -n "$when" ]
 	then
 	message="${message}
 You submitted this job $when ago.
 "
 	fi
-    fi
+	fi
 
 #===========================================================
 # Worry about .Xauthority
@@ -185,54 +185,54 @@ echo $HOME
 #===========================================================
 
 if [ -x $XWINBINDIR/xmessage ]
-    then
-    sender="$XWINBINDIR/xmessage \
+	then
+	sender="$XWINBINDIR/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
 "
 
-    else
-    if [ -x /usr/local/bin/wish ]
-    then
-    sender="/usr/local/bin/wish $HOMEDIR/lib/xmessage \
+	else
+	if [ -x /usr/local/bin/wish ]
+	then
+	sender="/usr/local/bin/wish $HOMEDIR/lib/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
 "
 
-    else
-    if [ -x /usr/bin/wish ]
-    then
-    sender="/usr/bin/wish $HOMEDIR/lib/xmessage \
+	else
+	if [ -x /usr/bin/wish ]
+	then
+	sender="/usr/bin/wish $HOMEDIR/lib/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
 "
 
-    else
-    if [ -x $XWINBINDIR/rxvt ]
-    then
-    sender="$XWINBINDIR/rxvt \
+	else
+	if [ -x $XWINBINDIR/rxvt ]
+	then
+	sender="$XWINBINDIR/rxvt \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
 
-    else
-    if [ -x $XWINBINDIR/xterm ]
-    then
-    sender="$XWINBINDIR/xterm \
+	else
+	if [ -x $XWINBINDIR/xterm ]
+	then
+	sender="$XWINBINDIR/xterm \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
 
-    else
-    echo "Can't find a program to respond with!"
-    fi
-    fi
-    fi
-    fi
-    fi
+	else
+	echo "Can't find a program to respond with!"
+	fi
+	fi
+	fi
+	fi
+	fi
 
 #====================================
 # Dispatch the message.

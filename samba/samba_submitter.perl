@@ -45,61 +45,61 @@ my @responder;
 # Make a connexion to the client's pprpopup.
 print "Attempting to open connexion...\n";
 if( open_connexion(CLIENTCON, "$CLIENT_IP:$CLIENT_PORT") )
-    {
-    # Demand a user name.
-    print "Sending request for user name...\n" if($DEBUG);
-    sleep(1);
-    print CLIENTCON "USER\n";
-
-    # Wait for an answer.
-    my $answer = <CLIENTCON>;
-    $answer =~ s/\s+$//;
-    print "\$answer = \"$answer\"\n" if($DEBUG);
-
-    close(CLIENTCON);
-
-    my $username;
-
-    # If we got a user name,
-    if( $answer =~ /^\+OK (.+)$/ )
 	{
-	$username = $1;
-	}
+	# Demand a user name.
+	print "Sending request for user name...\n" if($DEBUG);
+	sleep(1);
+	print CLIENTCON "USER\n";
 
-    # If the user canceled the job, dump it.
-    elsif( $answer =~ /^-ERR/ )
-	{
-	print "Discarding job\n" if($DEBUG);
-	unlink($FILE);
-	exit(0);
-	}
+	# Wait for an answer.
+	my $answer = <CLIENTCON>;
+	$answer =~ s/\s+$//;
+	print "\$answer = \"$answer\"\n" if($DEBUG);
 
-    else
-	{
-	print "Received null answer!\n";
-	$username = '?';
-	}
+	close(CLIENTCON);
 
-    @responder = ('-m', 'pprpopup', '-r', "$CLIENT_IP:$CLIENT_PORT");
-    @for = ('-f', $username);
-    }
+	my $username;
+
+	# If we got a user name,
+	if( $answer =~ /^\+OK (.+)$/ )
+		{
+		$username = $1;
+		}
+
+	# If the user canceled the job, dump it.
+	elsif( $answer =~ /^-ERR/ )
+		{
+		print "Discarding job\n" if($DEBUG);
+		unlink($FILE);
+		exit(0);
+		}
+
+	else
+		{
+		print "Received null answer!\n";
+		$username = '?';
+		}
+
+	@responder = ('-m', 'pprpopup', '-r', "$CLIENT_IP:$CLIENT_PORT");
+	@for = ('-f', $username);
+	}
 
 # Since pprpopup is not running on the client computer, we will
-# so this best we can.  This includes instructing PPR to use
+# so this best we can.	This includes instructing PPR to use
 # the "samba" responder.
 else
-    {
-    @responder = ('-m', 'samba',
-    		'-r', "$CLIENT_NBNAME-$CLIENT_IP",
-		'--responder-options', "os=$CLIENT_OS");
-    @for = ('-f', $USER);
-    }
+	{
+	@responder = ('-m', 'samba',
+				'-r', "$CLIENT_NBNAME-$CLIENT_IP",
+				'--responder-options', "os=$CLIENT_OS");
+	@for = ('-f', $USER);
+	}
 
 # Replace ourself with ppr:
 exec($PPR, '-d', $PRINTER, '-e', 'responder', '-w', 'log',
-	@responder, @for,
-	'-X', "$CLIENT_NBNAME\@samba",
-	'-C', '', '-U', '-I', $FILE);
+		@responder, @for,
+		'-X', "$CLIENT_NBNAME\@samba",
+		'-C', '', '-U', '-I', $FILE);
 
 die "Exec failed!";
 

@@ -28,17 +28,17 @@
 #include "userdb.h"
 
 char *dbstrlower(const char *s)
-    {
-    char *ns;           /* new string */
-    char *ptr;          /* pointer into new string */
+	{
+	char *ns;			/* new string */
+	char *ptr;			/* pointer into new string */
 
-    ptr = ns = (char*)gu_alloc(strlen(s) + 1, sizeof(char));
+	ptr = ns = (char*)gu_alloc(strlen(s) + 1, sizeof(char));
 
-    while(*s)
-	*(ptr++) = tolower(*(s++));
+	while(*s)
+		*(ptr++) = tolower(*(s++));
 
-    return ns;
-    } /* end of dbstrlower() */
+	return ns;
+	} /* end of dbstrlower() */
 
 /* end of file */
 

@@ -21,14 +21,14 @@
 ** A special structure is used to return the value.
 */
 Fixed getFixed(BYTE *s)
-    {
-    Fixed val={0,0};
+	{
+	Fixed val={0,0};
 
-    val.whole = ((s[0] * 256) + s[1]);
-    val.fraction = ((s[2] * 256) + s[3]);
+	val.whole = ((s[0] * 256) + s[1]);
+	val.fraction = ((s[2] * 256) + s[3]);
 
-    return val;
-    } /* end of getFixed() */
+	return val;
+	} /* end of getFixed() */
 
 /* end of file */
 

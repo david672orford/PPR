@@ -67,230 +67,230 @@
 #endif
 
 struct OPTIONS {
-	int idle_status_interval;
-	int status_interval;
-	} ;
+		int idle_status_interval;
+		int status_interval;
+		} ;
 
 /*
 ** Open the printer port.
 */
 static int connect_usblp(void)
-    {
-    struct stat statbuf;		/* buffer for stat on the port */
-    int portfd;
-    int open_flags;
+	{
+	struct stat statbuf;				/* buffer for stat on the port */
+	int portfd;
+	int open_flags;
 
-    DODEBUG(("connect_parallel()"));
+	DODEBUG(("connect_parallel()"));
 
-    /*
-    ** Make sure the address we were given is a tty.
-    ** If stat() fails, we will ignore the error
-    ** for now, we will let open() catch it.
-    */
-    if(stat(int_cmdline.address, &statbuf) == 0)
-    	{
-	if( ! (statbuf.st_mode & S_IFCHR) )
-	    {
-	    alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-	    }
+	/*
+	** Make sure the address we were given is a tty.
+	** If stat() fails, we will ignore the error
+	** for now, we will let open() catch it.
+	*/
+	if(stat(int_cmdline.address, &statbuf) == 0)
+		{
+		if( ! (statbuf.st_mode & S_IFCHR) )
+			{
+			alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
+			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			}
+		}
+
+	/*
+	** Set the open flags according to whether we are doing
+	** feedback or not.
+	*/
+	open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY | O_EXCL;
+
+	/*
+	** Open the port.  If the error EBUSY occurs, we will retry up to
+	** 30 times at 2 second intervals.
+	*/
+	{
+	int x;
+	for(x=0; (portfd = open(int_cmdline.address, open_flags)) < 0 && errno == EBUSY && x < 30; x++)
+		sleep(2);
 	}
 
-    /*
-    ** Set the open flags according to whether we are doing
-    ** feedback or not.
-    */
-    open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY | O_EXCL;
+	if(portfd == -1)	/* If error, */
+		{
+		switch(errno)
+			{
+			case EBUSY:
+				int_exit(EXIT_ENGAGED);
+			case EACCES:
+				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), int_cmdline.address);
+				int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+			case ENOENT:		/* file not found */
+			case ENOTDIR:		/* path not found */
+				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
+				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+			case ENXIO:
+				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
+				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+			case ENFILE:
+				alert(int_cmdline.printer, TRUE, _("System open file table is full."));
+				int_exit(EXIT_STARVED);
+			default:
+				alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
+				int_exit(EXIT_PRNERR_NORETRY);
+			}
+		}
 
-    /*
-    ** Open the port.  If the error EBUSY occurs, we will retry up to
-    ** 30 times at 2 second intervals.
-    */
-    {
-    int x;
-    for(x=0; (portfd = open(int_cmdline.address, open_flags)) < 0 && errno == EBUSY && x < 30; x++)
-    	sleep(2);
-    }
-
-    if(portfd == -1)	/* If error, */
-    	{
-	switch(errno)
-	    {
-	    case EBUSY:
-	    	int_exit(EXIT_ENGAGED);
-	    case EACCES:
-	    	alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
-	    case ENOENT:	/* file not found */
-	    case ENOTDIR:	/* path not found */
-	    	alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
-	    	int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
-	    case ENXIO:
-	    	alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
-	    case ENFILE:
-	    	alert(int_cmdline.printer, TRUE, _("System open file table is full."));
-	    	int_exit(EXIT_STARVED);
-	    default:
-	    	alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR_NORETRY);
-	    }
-    	}
-
-    return portfd;
-    } /* end of connect_parallel() */
+	return portfd;
+	} /* end of connect_parallel() */
 
 /*
 ** Explain why reading from or writing to the printer port failed.
 */
 static void printer_error(int error_number)
-    {
-    alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-    int_exit(EXIT_PRNERR);
-    }
+	{
+	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
+	int_exit(EXIT_PRNERR);
+	}
 
 /*
 ** If status_interval= is greater than zero, then this will be called
 ** every status_interval seconds.
 */
 static void status_function(void *p)
-    {
-    }
+	{
+	}
 
 /*
 ** Parse the name=value pairs in the options parameter.
 */
 static void parse_options(int portfd, struct OPTIONS *options)
-    {
-    struct OPTIONS_STATE o;
-    char name[16];
-    char value[16];
-    int retval;
+	{
+	struct OPTIONS_STATE o;
+	char name[16];
+	char value[16];
+	int retval;
 
-    /* Set default values. */
-    options->idle_status_interval = 0;
-    options->status_interval = 0;
+	/* Set default values. */
+	options->idle_status_interval = 0;
+	options->status_interval = 0;
 
-    /* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
-    if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
-	options->idle_status_interval = 15;
+	/* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
+	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+		options->idle_status_interval = 15;
 
-    options_start(int_cmdline.options, &o);
-    while((retval = options_get_one(&o, name, sizeof(name), value, sizeof(value))) > 0)
-    	{
-	DODEBUG(("name=\"%s\", value=\"%s\"", name, value));
+	options_start(int_cmdline.options, &o);
+	while((retval = options_get_one(&o, name, sizeof(name), value, sizeof(value))) > 0)
+		{
+		DODEBUG(("name=\"%s\", value=\"%s\"", name, value));
 
-	/* Interpret the keyword. */
-	if(strcmp(name, "idle_status_interval") == 0)
-	    {
-	    if((options->idle_status_interval = atoi(value)) < 0)
-	    	{
-		o.error = N_("Negative value not allowed");
-		retval = -1;
-		break;
-	    	}
-	    }
-	else if(strcmp(name, "status_interval") == 0)
-	    {
-	    if((options->status_interval = atoi(value)) < 0)
-	    	{
-		o.error = N_("value must be 0 or a positive integer");
-		retval = -1;
-		break;
-	    	}
-	    }
-	else
-	    {
-	    o.error = N_("unrecognized keyword");
-	    o.index = o.index_of_name;
-	    retval = -1;
-	    break;
-	    }
-	} /* end of while() */
+		/* Interpret the keyword. */
+		if(strcmp(name, "idle_status_interval") == 0)
+			{
+			if((options->idle_status_interval = atoi(value)) < 0)
+				{
+				o.error = N_("Negative value not allowed");
+				retval = -1;
+				break;
+				}
+			}
+		else if(strcmp(name, "status_interval") == 0)
+			{
+			if((options->status_interval = atoi(value)) < 0)
+				{
+				o.error = N_("value must be 0 or a positive integer");
+				retval = -1;
+				break;
+				}
+			}
+		else
+			{
+			o.error = N_("unrecognized keyword");
+			o.index = o.index_of_name;
+			retval = -1;
+			break;
+			}
+		} /* end of while() */
 
-    /* See if final call to options_get_one() detected an error: */
-    if(retval == -1)
-    	{
-    	alert(int_cmdline.printer, TRUE, "Option parsing error:  %s", gettext(o.error));
-    	alert(int_cmdline.printer, FALSE, "%s", o.options);
-    	alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-    	}
+	/* See if final call to options_get_one() detected an error: */
+	if(retval == -1)
+		{
+		alert(int_cmdline.printer, TRUE, "Option parsing error:	 %s", gettext(o.error));
+		alert(int_cmdline.printer, FALSE, "%s", o.options);
+		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
+		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
-    /* We can't use control-T status updates if the job isn't PostScript. */
-    if(int_cmdline.barbarlang[0])
-    	options->idle_status_interval = 0;
+	/* We can't use control-T status updates if the job isn't PostScript. */
+	if(int_cmdline.barbarlang[0])
+		options->idle_status_interval = 0;
 
-    } /* end of parse_options() */
+	} /* end of parse_options() */
 
 /*
 ** Tie it all together.
 */
 int main(int argc, char *argv[])
-    {
-    int portfd;				/* file handle of the printer port */
-    struct OPTIONS options;
+	{
+	int portfd;							/* file handle of the printer port */
+	struct OPTIONS options;
 
-    /* Initialize international messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE_INTERFACES, LOCALEDIR);
-    textdomain(PACKAGE_INTERFACES);
-    #endif
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE_INTERFACES, LOCALEDIR);
+	textdomain(PACKAGE_INTERFACES);
+	#endif
 
-    /* Copy command line and substitute env variables
-       into the structure called "int_cmdline". */
-    int_cmdline_set(argc, argv);
+	/* Copy command line and substitute env variables
+	   into the structure called "int_cmdline". */
+	int_cmdline_set(argc, argv);
 
-    DODEBUG(("============================================================"));
-    DODEBUG(("\"%s\", \"%s\", \"%s\", %d, %d, %d",
-    	int_cmdline.printer,
-    	int_cmdline.address,
-    	int_cmdline.options,
-    	int_cmdline.jobbreak,
-    	int_cmdline.feedback,
-    	int_cmdline.codes));
+	DODEBUG(("============================================================"));
+	DODEBUG(("\"%s\", \"%s\", \"%s\", %d, %d, %d",
+		int_cmdline.printer,
+		int_cmdline.address,
+		int_cmdline.options,
+		int_cmdline.jobbreak,
+		int_cmdline.feedback,
+		int_cmdline.codes));
 
-    /* Check for unusable job break methods. */
-    if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
-    	{
-    	alert(int_cmdline.printer, TRUE,
-    		_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
-    		"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-    	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-    	}
+	/* Check for unusable job break methods. */
+	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
+		{
+		alert(int_cmdline.printer, TRUE,
+				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
+				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
+		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
-    /* Check for unusable codes settings. */
-    /* !!! Is the true for USB ??? */
-    if(int_cmdline.codes == CODES_Binary)
-    	{
-	alert(int_cmdline.printer, TRUE,
-		_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
-		"program \"%s\"."), int_cmdline.int_basename);
-	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-    	}
+	/* Check for unusable codes settings. */
+	/* !!! Is the true for USB ??? */
+	if(int_cmdline.codes == CODES_Binary)
+		{
+		alert(int_cmdline.printer, TRUE,
+				_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
+				"program \"%s\"."), int_cmdline.int_basename);
+		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
-    /* Open the printer port and esablish default settings: */
-    portfd = connect_usblp();
+	/* Open the printer port and esablish default settings: */
+	portfd = connect_usblp();
 
-    /* Parse printer_options and set struct OPTIONS and
-       printer port apropriately: */
-    parse_options(portfd, &options);
+	/* Parse printer_options and set struct OPTIONS and
+	   printer port apropriately: */
+	parse_options(portfd, &options);
 
-    /* Read the job data from stdin and send it to portfd. */
-    int_copy_job(portfd,
-	options.idle_status_interval,
-	printer_error,
-	NULL,
-	status_function,
-	(void*)&portfd,
-	options.status_interval);
+	/* Read the job data from stdin and send it to portfd. */
+	int_copy_job(portfd,
+		options.idle_status_interval,
+		printer_error,
+		NULL,
+		status_function,
+		(void*)&portfd,
+		options.status_interval);
 
-    close(portfd);
+	close(portfd);
 
-    DODEBUG(("sucessful completion"));
-    int_exit(EXIT_PRINTED);
-    } /* end of main() */
+	DODEBUG(("sucessful completion"));
+	int_exit(EXIT_PRINTED);
+	} /* end of main() */
 
 /* end of file */
 

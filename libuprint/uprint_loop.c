@@ -29,25 +29,25 @@
 ** Break loops.
 */
 int uprint_loop_check(const char *myname)
-    {
-    #ifdef HAVE_PUTENV
-
-    static char temp[64];
-    char *p;
-
-    if((p = getenv(VARIABLE)))
 	{
-	uprint_error_callback(_("Loop detected, %s called %s!\n"
-		"(Probably uprint.conf has been changed since uprint-newconf was run.)"), p, myname);
-	return -1;
-	}
+	#ifdef HAVE_PUTENV
 
-    snprintf(temp, sizeof(temp), "%s=%.45s", VARIABLE, myname);
-    putenv(temp);
+	static char temp[64];
+	char *p;
 
-    #endif
+	if((p = getenv(VARIABLE)))
+		{
+		uprint_error_callback(_("Loop detected, %s called %s!\n"
+				"(Probably uprint.conf has been changed since uprint-newconf was run.)"), p, myname);
+		return -1;
+		}
 
-    return 0;
-    } /* end of uprint_loop_check() */
+	snprintf(temp, sizeof(temp), "%s=%.45s", VARIABLE, myname);
+	putenv(temp);
+
+	#endif
+
+	return 0;
+	} /* end of uprint_loop_check() */
 
 /* end of file */

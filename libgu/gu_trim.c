@@ -20,10 +20,10 @@
 #include "global_defines.h"
 
 void gu_trim_whitespace_right(char *p)
-    {
-    int len = strlen(p);
-    while(--len >= 0 && isspace(p[len]))
-        p[len] = '\0';
-    }
+	{
+	int len = strlen(p);
+	while(--len >= 0 && isspace(p[len]))
+		p[len] = '\0';
+	}
 
 /* end of file */

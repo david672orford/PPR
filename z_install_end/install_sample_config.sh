@@ -36,17 +36,17 @@
 echo "Creating missing ACL files..."
 
 for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
-    do
-    ./puts "  $CONFDIR/acl/$f..."
-    if [ ! -f $RPM_BUILD_ROOT$CONFDIR/acl/$f ]
-    	then
+	do
+	./puts "  $CONFDIR/acl/$f..."
+	if [ ! -f $RPM_BUILD_ROOT$CONFDIR/acl/$f ]
+		then
 	echo " creating"
-    	touch $RPM_BUILD_ROOT$CONFDIR/acl/$f
+		touch $RPM_BUILD_ROOT$CONFDIR/acl/$f
 	else
 	echo " exists"
-    	fi
-    ../makeprogs/installconf.sh conf $CONFDIR/acl/$f
-    done
+		fi
+	../makeprogs/installconf.sh conf $CONFDIR/acl/$f
+	done
 
 #===========================================================================
 # Make configuration files with sample versions
@@ -54,17 +54,17 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
 echo "Making missing configuration files from the samples..."
 
 for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
-    do
-    ./puts "  $f..."
-    if [ ! -f $RPM_BUILD_ROOT$CONFDIR/$f ]
-    	then
+	do
+	./puts "  $f..."
+	if [ ! -f $RPM_BUILD_ROOT$CONFDIR/$f ]
+		then
 	echo " copy $CONFDIR/$f.sample --> $CONFDIR/$f"
 	# Use Sed to copy it while removing the "Last modified" comment.
-    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $RPM_BUILD_ROOT$CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
+		sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $RPM_BUILD_ROOT$CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
 	else
 	echo " exists"
-    	fi
-    ../makeprogs/installconf.sh conf $CONFDIR/$f
-    done
+		fi
+	../makeprogs/installconf.sh conf $CONFDIR/$f
+	done
 
 exit 0

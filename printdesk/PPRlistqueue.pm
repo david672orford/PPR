@@ -63,23 +63,23 @@ sub new
   my $self = {};
   bless $self;
 
-  shift;				# junk
-  $self->{window} = shift;		# frame or toplevel it build it in
-  $self->{queue} = shift;		# queue to display
+  shift;								# junk
+  $self->{window} = shift;				# frame or toplevel it build it in
+  $self->{queue} = shift;				# queue to display
 
   #print "PrintDesk::PPRlistqueue::new(): \"$self->{queue}\"\n";
 
   # Define the columns to display, their ppop qquery names,
   # and their widths.
   $self->{columns} = [
-	{-title, "Job", -name, "jobname", -width, 15},
-	{-title, "User", -name, "for", -width, 15},
-	{-title, "Title", -name, "title", -width, 30},
-	{-title, "Submitted", -name, "subtime", -width, 9},
-	{-title, "Pages", -name, "pages", -width, 4},
-	{-title, "Status", -name, "status", -width, 17},
-	{-title, "", -name, "explain", -width, 15}
-	];
+		{-title, "Job", -name, "jobname", -width, 15},
+		{-title, "User", -name, "for", -width, 15},
+		{-title, "Title", -name, "title", -width, 30},
+		{-title, "Submitted", -name, "subtime", -width, 9},
+		{-title, "Pages", -name, "pages", -width, 4},
+		{-title, "Status", -name, "status", -width, 17},
+		{-title, "", -name, "explain", -width, 15}
+		];
 
   # Create a jobcontrol object which we will use to
   # get information about jobs.
@@ -94,47 +94,47 @@ Destroy this listqueue widget
 
 =cut
 sub destroy
-    {
-    my $self = shift;
-    #print "PrintDesk::PPRlistqueue::destroy()\n";
-    $self->{jobcontrol}->destroy();
-    $self->{updater}->destroy();
-    #$self->{window}->destroy();
-    }
+	{
+	my $self = shift;
+	#print "PrintDesk::PPRlistqueue::destroy()\n";
+	$self->{jobcontrol}->destroy();
+	$self->{updater}->destroy();
+	#$self->{window}->destroy();
+	}
 
 #
 # Return the job control object for use by the job control
 # button box.
 #
 sub get_jobcontrol
-    {
-    my $self = shift;
-    return $self->{jobcontrol};
-    }
+	{
+	my $self = shift;
+	return $self->{jobcontrol};
+	}
 
 #
 # This routine is bound to Button-1 or B1-Motion for each
-# listbox.  For Button-1 , the drag argument is 0, for B1-Motion
+# listbox.	For Button-1 , the drag argument is 0, for B1-Motion
 # it is 1.
 #
 sub parallel_select {
-	my $lb = shift;
-	my $lbs = shift;
-	my $drag = shift;
-	my $y = $lb->XEvent->y;
-	my $nearest = $lb->nearest($y);
+		my $lb = shift;
+		my $lbs = shift;
+		my $drag = shift;
+		my $y = $lb->XEvent->y;
+		my $nearest = $lb->nearest($y);
 
-	foreach $box (@{$lbs})
-		{
-		if(!$drag)
-			{
-			$box->selectionClear(0, 'end');
-			$box->selectionAnchor($nearest);
-			}
-		$box->selectionSet($nearest);
-		$box->see($nearest);
+		foreach $box (@{$lbs})
+				{
+				if(!$drag)
+						{
+						$box->selectionClear(0, 'end');
+						$box->selectionAnchor($nearest);
+						}
+				$box->selectionSet($nearest);
+				$box->see($nearest);
+				}
 		}
-	}
 
 #
 # This public routine should be called when it is time
@@ -156,85 +156,85 @@ sub Show
 
   # Create a scrollbar to scroll the queue listing:
   $self->{scrollbar} = $w->Scrollbar()->
-	pack(-side, 'right', -anchor, 'ne', -fill, 'y');
+		pack(-side, 'right', -anchor, 'ne', -fill, 'y');
 
   # Create the columns:
   foreach $field (@{$self->{columns}})
-    {
-    # Create a frame for this column and push a label and
-    # a divider to the top.
-    $temp = $field->{frame} = $w->Frame(
-	)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
-    $field->{titlelabel} = $temp->Label(
-	-text => $field->{-title}
-	)->pack(-side, 'top', -anchor, 'nw');
-    $field->{titledivider} = $temp->Frame(
-	-height => 1,
-	-background => 'black'
-	)->pack(-side, 'top', -anchor, 'nw', -fill, 'x');
+	{
+	# Create a frame for this column and push a label and
+	# a divider to the top.
+	$temp = $field->{frame} = $w->Frame(
+		)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
+	$field->{titlelabel} = $temp->Label(
+		-text => $field->{-title}
+		)->pack(-side, 'top', -anchor, 'nw');
+	$field->{titledivider} = $temp->Frame(
+		-height => 1,
+		-background => 'black'
+		)->pack(-side, 'top', -anchor, 'nw', -fill, 'x');
 
-    # Create the listbox which displays the rows for this column.
-    $field->{listbox} = $temp->Listbox(
-	-width => $field->{-width},
-	-bd => 0,
-	-setgrid => 1,
-	-exportselection => 0,
-	-background => 'white'
-	)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
+	# Create the listbox which displays the rows for this column.
+	$field->{listbox} = $temp->Listbox(
+		-width => $field->{-width},
+		-bd => 0,
+		-setgrid => 1,
+		-exportselection => 0,
+		-background => 'white'
+		)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
 
-    # Renounce all of the default bindings and
-    # bind button on to the selection routine.
-    $field->{listbox}->bindtags([$field->{listbox}]);
-    $field->{listbox}->bind("<Button-1>",
-	[\&parallel_select, \@listboxes, 0]);
-    $field->{listbox}->bind("<B1-Motion>",
-	[\&parallel_select, \@listboxes, 1]);
+	# Renounce all of the default bindings and
+	# bind button on to the selection routine.
+	$field->{listbox}->bindtags([$field->{listbox}]);
+	$field->{listbox}->bind("<Button-1>",
+		[\&parallel_select, \@listboxes, 0]);
+	$field->{listbox}->bind("<B1-Motion>",
+		[\&parallel_select, \@listboxes, 1]);
 
-    # If this is the first column we have created then we must tie
-    # it to the scrollbar so that the thumb will move and
-    # change size.  To have all the listboxes move the scrollbar
-    # would be wasteful.
-    if($#listboxes == -1)
-	{ $field->{listbox}->configure(-yscrollcommand, ['set', $self->{scrollbar}]); }
+	# If this is the first column we have created then we must tie
+	# it to the scrollbar so that the thumb will move and
+	# change size.	To have all the listboxes move the scrollbar
+	# would be wasteful.
+	if($#listboxes == -1)
+		{ $field->{listbox}->configure(-yscrollcommand, ['set', $self->{scrollbar}]); }
 
-    # Pack a narrow black bar on the right to divide this column
-    # from the next one.
-    $field->{sidedivider} = $w->Frame(-width, 1, -background, 'black')->
-	pack(-side, 'left', -anchor, 'nw', -fill, 'y');
+	# Pack a narrow black bar on the right to divide this column
+	# from the next one.
+	$field->{sidedivider} = $w->Frame(-width, 1, -background, 'black')->
+		pack(-side, 'left', -anchor, 'nw', -fill, 'y');
 
-    # We want to note the column number of the jobname column.
-    if($field->{'-name'} eq "jobname") { $jobname_column = $columns_count; }
+	# We want to note the column number of the jobname column.
+	if($field->{'-name'} eq "jobname") { $jobname_column = $columns_count; }
 
-    # Add this column to the list of columns to be
-    # retrieved using "ppop qquery".
-    push(@qquery_columns, $field->{'-name'});
+	# Add this column to the list of columns to be
+	# retrieved using "ppop qquery".
+	push(@qquery_columns, $field->{'-name'});
 
-    # Index this column by its qquery name so that we can find the
-    # status and extra columns easily.
-    $listboxes_by_qquery->{$field->{'-name'}} = $field->{listbox};
+	# Index this column by its qquery name so that we can find the
+	# status and extra columns easily.
+	$listboxes_by_qquery->{$field->{'-name'}} = $field->{listbox};
 
-    # Add to list of boxes which will scroll together.
-    push(@listboxes, $field->{listbox});
+	# Add to list of boxes which will scroll together.
+	push(@listboxes, $field->{listbox});
 
-    $columns_count++;
-    }
+	$columns_count++;
+	}
 
   $self->{scrollbar}->configure(-command,
-	[sub {my $listboxes = shift;
-	my $box;
-	foreach $box (@{$listboxes})
-	    {
-	    $box->yview(@_);
-	    }
-	}, \@listboxes]);
+		[sub {my $listboxes = shift;
+		my $box;
+		foreach $box (@{$listboxes})
+			{
+			$box->yview(@_);
+			}
+		}, \@listboxes]);
 
   # We must have a jobname column, even if it is hidden.
   # If it is hidden, it is not in $columns_count.
   if($jobname_column == -1)
-    {
-    push(@qquery_columns, "jobname");
-    $jobname_column = $columns_count;
-    }
+	{
+	push(@qquery_columns, "jobname");
+	$jobname_column = $columns_count;
+	}
 
   #
   # Get a list of the current queue contents.
@@ -250,15 +250,15 @@ sub Show
   #
   my $job_list = [];
   foreach $entry (@answer)
-    {
-    push(@$job_list, $entry->[$jobname_column]);
-    my $i = 0;
-    foreach $field (@{$self->{columns}})
 	{
-	$field->{listbox}->insert('end', $entry->[$i]);
-	$i++;
+	push(@$job_list, $entry->[$jobname_column]);
+	my $i = 0;
+	foreach $field (@{$self->{columns}})
+		{
+		$field->{listbox}->insert('end', $entry->[$i]);
+		$i++;
+		}
 	}
-    }
 
   #print "\$jobname_column = $jobname_column\n";
   #print "job_list = ", join(' ', @$job_list), "\n";
@@ -286,22 +286,22 @@ sub Show
 # of selected print jobs.
 #
 sub getSelection
-    {
-    my $self = shift;
-    my $job_list = $self->{job_list};
-
-    my $a_listbox = $self->{listboxes}->[0];
-    my @selected_rows = $a_listbox->curselection();
-
-    my $row;
-    my @selected_jobs = ();
-    foreach $row (@selected_rows)
 	{
-	push(@selected_jobs, $job_list->[$row]);
-	}
+	my $self = shift;
+	my $job_list = $self->{job_list};
 
-    return @selected_jobs;
-    }
+	my $a_listbox = $self->{listboxes}->[0];
+	my @selected_rows = $a_listbox->curselection();
+
+	my $row;
+	my @selected_jobs = ();
+	foreach $row (@selected_rows)
+		{
+		push(@selected_jobs, $job_list->[$row]);
+		}
+
+	return @selected_jobs;
+	}
 
 #
 # State update callback:
@@ -310,25 +310,25 @@ sub getSelection
 # added to the listing.
 #
 sub add
-    {
-    my($self, $jobname, $rank) = @_;
-
-    #print "Add job $jobname at row $rank\n";
-
-    # Get the columns of data for this job.
-    my @columns = $self->{jobcontrol}->qquery_1job($jobname, @{$self->{qquery_columns}});
-
-    # Store the job name in the list of jobs.
-    splice(@{$self->{job_list}}, $rank, 0, @columns[$self->{jobname_column}]);
-
-    # Put the columns data in the listboxes.
-    my $i = 0;
-    foreach $field (@{$self->{columns}})
 	{
-	$field->{listbox}->insert($rank, $columns[$i]);
-	$i++;
+	my($self, $jobname, $rank) = @_;
+
+	#print "Add job $jobname at row $rank\n";
+
+	# Get the columns of data for this job.
+	my @columns = $self->{jobcontrol}->qquery_1job($jobname, @{$self->{qquery_columns}});
+
+	# Store the job name in the list of jobs.
+	splice(@{$self->{job_list}}, $rank, 0, @columns[$self->{jobname_column}]);
+
+	# Put the columns data in the listboxes.
+	my $i = 0;
+	foreach $field (@{$self->{columns}})
+		{
+		$field->{listbox}->insert($rank, $columns[$i]);
+		$i++;
+		}
 	}
-    }
 
 #
 # State update callback:
@@ -336,33 +336,33 @@ sub add
 # This routine is called to remove jobs from the listing.
 #
 sub delete
-    {
-    my($self, $jobname) = @_;
-
-    #print "Delete job $jobname\n";
-
-    my $columns = $self->{columns};		# columns of the queue listing
-    my $job_list = $self->{job_list};
-
-    my $x = 0;
-    my $y;
-    foreach $entry (@$job_list)
 	{
-	if($entry eq $jobname)
-	    {
-	    # Delete this job from the job_list array.
-	    splice(@$job_list, $x, 1);
+	my($self, $jobname) = @_;
 
-	    # Delete this row from all columns
-	    my $stop = $self->{columns_count};
-	    for($y = 0; $y < $stop; $y++)
-		{ $columns->[$y]->{listbox}->delete($x); }
+	#print "Delete job $jobname\n";
 
-	    last;
-	    }
-	$x++;
+	my $columns = $self->{columns};				# columns of the queue listing
+	my $job_list = $self->{job_list};
+
+	my $x = 0;
+	my $y;
+	foreach $entry (@$job_list)
+		{
+		if($entry eq $jobname)
+			{
+			# Delete this job from the job_list array.
+			splice(@$job_list, $x, 1);
+
+			# Delete this row from all columns
+			my $stop = $self->{columns_count};
+			for($y = 0; $y < $stop; $y++)
+				{ $columns->[$y]->{listbox}->delete($x); }
+
+			last;
+			}
+		$x++;
+		}
 	}
-    }
 
 #
 # State update callback:
@@ -370,47 +370,47 @@ sub delete
 # This routine is called every time a job's status changes.
 #
 sub newstatus
-    {
-    my($self, $jobname, $status) = @_;
-
-    #print "New status for job $jobname: \"$status\"\n";
-
-    my $job_list = $self->{job_list};
-
-    my $status_listbox = $self->{listboxes_by_qquery}->{status};
-    my $extra_listbox = $self->{listboxes_by_qquery}->{extra};
-
-    # If we aren't displaying either of these two columns,
-    # there is nothing for us to do.
-    if( ! defined($status_listbox) && ! defined($extra_listbox) )
-	{ return; }
-
-    my $x = 0;
-    foreach $entry (@$job_list)
 	{
-	if($entry eq $jobname)
-	    {
-	    if(defined($status_listbox))
-		{
-		my $selected = $status_listbox->selectionIncludes($x);
-		$status_listbox->delete($x);
-		$status_listbox->insert($x, $status);
-		if($selected) { $status_listbox->selectionSet($x); }
-		}
+	my($self, $jobname, $status) = @_;
 
-	    if(defined($extra_listbox))
+	#print "New status for job $jobname: \"$status\"\n";
+
+	my $job_list = $self->{job_list};
+
+	my $status_listbox = $self->{listboxes_by_qquery}->{status};
+	my $extra_listbox = $self->{listboxes_by_qquery}->{extra};
+
+	# If we aren't displaying either of these two columns,
+	# there is nothing for us to do.
+	if( ! defined($status_listbox) && ! defined($extra_listbox) )
+		{ return; }
+
+	my $x = 0;
+	foreach $entry (@$job_list)
 		{
-		my($extra) = $self->{jobcontrol}->qquery_1job($jobname, "extra");
-		my $selected = $status_listbox->selectionIncludes($x);
-		$extra_listbox->delete($x);
-		$extra_listbox->insert($x, $extra);
-		if($selected) { $status_listbox->selectionSet($x); }
+		if($entry eq $jobname)
+			{
+			if(defined($status_listbox))
+				{
+				my $selected = $status_listbox->selectionIncludes($x);
+				$status_listbox->delete($x);
+				$status_listbox->insert($x, $status);
+				if($selected) { $status_listbox->selectionSet($x); }
+				}
+
+			if(defined($extra_listbox))
+				{
+				my($extra) = $self->{jobcontrol}->qquery_1job($jobname, "extra");
+				my $selected = $status_listbox->selectionIncludes($x);
+				$extra_listbox->delete($x);
+				$extra_listbox->insert($x, $extra);
+				if($selected) { $status_listbox->selectionSet($x); }
+				}
+			last;
+			}
+		$x++;
 		}
-	    last;
-	    }
-	$x++;
 	}
-    }
 
 #
 # State update callback:
@@ -420,33 +420,33 @@ sub newstatus
 # of using the ppop rush command.
 #
 sub move
-    {
-    my($self, $jobname, $newrank) = @_;
-    my $job_list = $self->{job_list};
-
-    #print "Move job $jobname to row $newrank\n";
-
-    my $x = 0;
-    foreach $entry (@$job_list)
 	{
-	if($entry eq $jobname)
-  	    {
-	    my $stop = $self->{columns_count};
-	    my $listboxes = $self->{listboxes};
-	    for($y = 0; $y < $stop; $y++)
+	my($self, $jobname, $newrank) = @_;
+	my $job_list = $self->{job_list};
+
+	#print "Move job $jobname to row $newrank\n";
+
+	my $x = 0;
+	foreach $entry (@$job_list)
 		{
-		my $listbox = $listboxes->[$y];;
-		my $data = $listbox->get($x);
-		$listbox->delete($x);
-		$listbox->insert($newrank, $data);
+		if($entry eq $jobname)
+			{
+			my $stop = $self->{columns_count};
+			my $listboxes = $self->{listboxes};
+			for($y = 0; $y < $stop; $y++)
+				{
+				my $listbox = $listboxes->[$y];;
+				my $data = $listbox->get($x);
+				$listbox->delete($x);
+				$listbox->insert($newrank, $data);
+				}
+			splice(@$job_list, $x, 1);
+			splice(@$job_list, $newrank, 0, $jobname);
+			last;
+			}
+		$x++;
 		}
-	    splice(@$job_list, $x, 1);
-	    splice(@$job_list, $newrank, 0, $jobname);
-	    last;
-	    }
-	$x++;
 	}
-    }
 
 #
 # State update callback:
@@ -455,29 +455,29 @@ sub move
 # be called if we are viewing "all".
 #
 sub rename
-    {
-    my($self, $oldname, $newname) = @_;
-
-    #print "Change name of job $oldname to $newname\n";
-
-    # Obtain a reference to the listbox which contains the jobnames.
-    my $jobname_listbox = $self->{listboxes_by_qquery}->{jobname};
-
-    # If we are not displaying the jobname, we don't care.
-    if( ! defined($jobname_listbox) )
-	{ return; }
-
-    my $x = 0;
-    foreach $entry (@{$self->{job_list}})
 	{
-	if($entry eq $oldname)
-	    {
-	    $jobname_listbox->delete($x);
-	    $jobname_listbox->insert($x, $newname);
-	    last;
-	    }
-	$x++;
+	my($self, $oldname, $newname) = @_;
+
+	#print "Change name of job $oldname to $newname\n";
+
+	# Obtain a reference to the listbox which contains the jobnames.
+	my $jobname_listbox = $self->{listboxes_by_qquery}->{jobname};
+
+	# If we are not displaying the jobname, we don't care.
+	if( ! defined($jobname_listbox) )
+		{ return; }
+
+	my $x = 0;
+	foreach $entry (@{$self->{job_list}})
+		{
+		if($entry eq $oldname)
+			{
+			$jobname_listbox->delete($x);
+			$jobname_listbox->insert($x, $newname);
+			last;
+			}
+		$x++;
+		}
 	}
-    }
 
 1;

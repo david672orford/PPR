@@ -37,25 +37,25 @@ RESOLUTION=""
 
 # Look for parameters we should pay attention to
 for pair in $OPTIONS
-    do
-    case "$pair" in
+	do
+	case "$pair" in
 	colour=[yYtT1]* )
-	    COLOUR=""
-	    ;;
+		COLOUR=""
+		;;
 	colour=[nNfF0]* )
-	    colour="-grayscale"
-	    ;;
+		colour="-grayscale"
+		;;
 	color=[yYtT1]* )
-	    colour=""
-	    ;;
+		colour=""
+		;;
 	color=[nNfF0]* )
-	    colour="-grayscale"
-	    ;;
+		colour="-grayscale"
+		;;
 	resolution=* )
-	    RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
-	    ;;
-    esac
-    done
+		RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
+		;;
+	esac
+	done
 
 # Run the filters
 $DJPEG $COLOUR | $PNMTOPS $RESOLUTION | grep -v '^%%Title:'

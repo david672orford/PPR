@@ -14,44 +14,44 @@
 */
 
 struct PATH_SET
-    {
-    const char *lpr;
-    const char *lpq;
-    const char *lprm;
-    const char *lp;
-    const char *lpstat;
-    const char *cancel;
-    };
+	{
+	const char *lpr;
+	const char *lpq;
+	const char *lprm;
+	const char *lp;
+	const char *lpstat;
+	const char *cancel;
+	};
 
 struct UPRINT_CONF
-    {
-    struct PATH_SET well_known;
-    struct PATH_SET sidelined;
+	{
+	struct PATH_SET well_known;
+	struct PATH_SET sidelined;
 
-    struct
-    	{
-	gu_boolean installed;
-    	gu_boolean sidelined;
-	const char *printers;
-	const char *classes;
-	const char *flavor;
-	float flavor_version;
-    	} lp;
-    struct
-    	{
-	gu_boolean installed;
-    	gu_boolean sidelined;
-	const char *flavor;
-	float flavor_version;
-    	} lpr;
+	struct
+		{
+		gu_boolean installed;
+		gu_boolean sidelined;
+		const char *printers;
+		const char *classes;
+		const char *flavor;
+		float flavor_version;
+		} lp;
+	struct
+		{
+		gu_boolean installed;
+		gu_boolean sidelined;
+		const char *flavor;
+		float flavor_version;
+		} lpr;
 
-    struct
-        {
-        const char *lp;
-        const char *lpr;
-        } default_destinations;
+	struct
+		{
+		const char *lp;
+		const char *lpr;
+		} default_destinations;
 
-    } ;
+	} ;
 
 void uprint_read_conf(void);
 extern struct UPRINT_CONF conf;

@@ -25,33 +25,33 @@
 ** in the argument which is the basic unit times 100.
 */
 char *money(int amount)
-    {
-    static char temp[32];
-    static const char *pos_values = NULL;
-    static const char *neg_values = NULL;
-    int dollars, cents;
-
-    if(!pos_values || !neg_values)
 	{
-	if(gu_ini_scan_list(PPR_CONF, "internationalization", "money",
-	       	GU_INI_TYPE_NONEMPTY_STRING, &pos_values,
-	       	GU_INI_TYPE_NONEMPTY_STRING, &neg_values,
-	    	GU_INI_TYPE_END))
-	    {		/* if error message returned, */
-            pos_values = "%d.%02d";
-            neg_values = "-%d.%02d";
-	    }
-	}
+	static char temp[32];
+	static const char *pos_values = NULL;
+	static const char *neg_values = NULL;
+	int dollars, cents;
 
-    dollars = abs(amount / 100);
-    cents = abs(amount % 100);
+	if(!pos_values || !neg_values)
+		{
+		if(gu_ini_scan_list(PPR_CONF, "internationalization", "money",
+				GU_INI_TYPE_NONEMPTY_STRING, &pos_values,
+				GU_INI_TYPE_NONEMPTY_STRING, &neg_values,
+				GU_INI_TYPE_END))
+			{			/* if error message returned, */
+			pos_values = "%d.%02d";
+			neg_values = "-%d.%02d";
+			}
+		}
 
-    if(amount < 0)
-    	snprintf(temp, sizeof(temp), neg_values, dollars, cents);
-    else
-    	snprintf(temp, sizeof(temp), pos_values, dollars, cents);
+	dollars = abs(amount / 100);
+	cents = abs(amount % 100);
 
-    return temp;
-    } /* end of money() */
+	if(amount < 0)
+		snprintf(temp, sizeof(temp), neg_values, dollars, cents);
+	else
+		snprintf(temp, sizeof(temp), pos_values, dollars, cents);
+
+	return temp;
+	} /* end of money() */
 
 /* end of file */

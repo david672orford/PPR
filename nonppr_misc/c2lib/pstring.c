@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -109,19 +109,19 @@ find_re (const char *str, const void *sep, const char **end_match)
   int ovector[ovecsize];
   int r = pcre_exec (re, 0, str, strlen (str), 0, 0, ovector, ovecsize);
 
-  if (r >= 0)			/* Successful match. */
-    {
-      int so = ovector[0];
-      int eo = ovector[1];
+  if (r >= 0)					/* Successful match. */
+	{
+	  int so = ovector[0];
+	  int eo = ovector[1];
 
-      if (so == -1) abort ();	/* Bad pattern. */
-      *end_match = str + eo;
-      return str + so;
-    }
+	  if (so == -1) abort ();	/* Bad pattern. */
+	  *end_match = str + eo;
+	  return str + so;
+	}
   else if (r == PCRE_ERROR_NOMATCH)
-    return 0;
+	return 0;
   else
-    abort ();			/* Some other error reported by PCRE. */
+	abort ();					/* Some other error reported by PCRE. */
 #undef ovecsize
 }
 
@@ -152,9 +152,9 @@ pstrresplit2 (pool pool, const char *str, const pcre *re)
 /* Generic split function. */
 static vector
 generic_split (pool pool, const char *str, const void *sep,
-	       const char *(*find) (const char *str, const void *sep,
-				    const char **end_match),
-	       int keep)
+			   const char *(*find) (const char *str, const void *sep,
+									const char **end_match),
+			   int keep)
 {
   const char *start_match, *end_match;
   char *s;
@@ -166,25 +166,25 @@ generic_split (pool pool, const char *str, const void *sep,
   /* Find the splitting point. */
   start_match = find (str, sep, &end_match);
 
-  if (start_match != 0)		/* Successful match. */
-    {
-      s = start_match > str ? pstrndup (pool, str, start_match - str) : 0;
-      v = generic_split (pool, end_match, sep, find, keep);
-      if (keep)			/* Keep the matching text. */
+  if (start_match != 0)			/* Successful match. */
 	{
-	  const char *match;
+	  s = start_match > str ? pstrndup (pool, str, start_match - str) : 0;
+	  v = generic_split (pool, end_match, sep, find, keep);
+	  if (keep)					/* Keep the matching text. */
+		{
+		  const char *match;
 
-	  match = pstrndup (pool, start_match, end_match - start_match);
-	  vector_push_front (v, match);
+		  match = pstrndup (pool, start_match, end_match - start_match);
+		  vector_push_front (v, match);
+		}
+	  if (s) vector_push_front (v, s);
 	}
-      if (s) vector_push_front (v, s);
-    }
-  else				/* Not successful match. */
-    {
-      s = pstrdup (pool, str);
-      v = new_vector (pool, char *);
-      vector_push_back (v, s);
-    }
+  else							/* Not successful match. */
+	{
+	  s = pstrdup (pool, str);
+	  v = new_vector (pool, char *);
+	  vector_push_back (v, s);
+	}
 
   return v;
 }
@@ -197,12 +197,12 @@ pconcat (pool pool, vector v)
   char *s = pstrdup (pool, "");
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      char *t;
+	{
+	  char *t;
 
-      vector_get (v, i, t);
-      s = pstrcat (pool, s, t);
-    }
+	  vector_get (v, i, t);
+	  s = pstrcat (pool, s, t);
+	}
 
   return s;
 }
@@ -215,13 +215,13 @@ pjoin (pool pool, vector v, const char *sep)
   char *s = pstrdup (pool, "");
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      char *t;
+	{
+	  char *t;
 
-      vector_get (v, i, t);
-      s = pstrcat (pool, s, t);
-      if (i < vector_size (v) - 1) s = pstrcat (pool, s, sep);
-    }
+	  vector_get (v, i, t);
+	  s = pstrcat (pool, s, t);
+	  if (i < vector_size (v) - 1) s = pstrcat (pool, s, sep);
+	}
 
   return s;
 }
@@ -233,7 +233,7 @@ pchrs (pool pool, char c, int n)
   int i;
 
   for (i = 0; i < n; ++i)
-    s[i] = c;
+	s[i] = c;
   s[n] = '\0';
 
   return s;
@@ -247,7 +247,7 @@ pstrs (pool pool, const char *str, int n)
   int i, j;
 
   for (i = j = 0; i < n; ++i, j += len)
-    memcpy (&s[j], str, len);
+	memcpy (&s[j], str, len);
 
   s[len * n] = '\0';
 
@@ -263,7 +263,7 @@ pvector (pool pool, ...)
 
   va_start (args, pool);
   while ((s = va_arg (args, const char *)) != 0)
-    vector_push_back (v, s);
+	vector_push_back (v, s);
   va_end (args);
 
   return v;
@@ -276,7 +276,7 @@ pvectora (pool pool, const char *array[], int n)
   vector v = new_vector (pool, const char *);
 
   for (i = 0; i < n; ++i)
-    vector_push_back (v, array[i]);
+	vector_push_back (v, array[i]);
 
   return v;
 }
@@ -295,7 +295,7 @@ pchomp (char *line)
   int len = strlen (line);
 
   while (line[len-1] == '\n' || line[len-1] == '\r')
-    line[--len] = '\0';
+	line[--len] = '\0';
 
   return line;
 }
@@ -307,7 +307,7 @@ ptrimfront (char *str)
   int len;
 
   for (p = str; *p && isspace ((int) *p); ++p)
-    ;
+	;
 
   len = strlen (p);
   memmove (str, p, len + 1);
@@ -323,7 +323,7 @@ ptrimback (char *str)
 
   len = strlen (str);
   for (p = str + len - 1; p >= str && isspace ((int) *p); --p)
-    ;
+	;
 
   p[1] = '\0';
 
@@ -361,7 +361,7 @@ pvsprintf (pool pool, const char *format, va_list args)
   char *s;
 
   vasprintf (&s, format, args);
-  if (s == 0) abort ();		/* XXX Should call bad_malloc_handler. */
+  if (s == 0) abort ();			/* XXX Should call bad_malloc_handler. */
 
   /* The pool will clean up the malloc when it goes. */
   pool_register_malloc (pool, s);
@@ -382,28 +382,28 @@ pvsprintf (pool pool, const char *format, va_list args)
   r = vsnprintf (s, n, format, args);
 
   if (r < n)
-    {
-      /* Copy the string into a pool-allocated area of the correct size
-       * and return it.
-       */
-      n = r + 1;
-      t = pmalloc (pool, n);
-      memcpy (t, s, n);
+	{
+	  /* Copy the string into a pool-allocated area of the correct size
+	   * and return it.
+	   */
+	  n = r + 1;
+	  t = pmalloc (pool, n);
+	  memcpy (t, s, n);
 
-      return t;
-    }
+	  return t;
+	}
   else
-    {
-      /* String was truncated. Allocate enough space for the string
-       * in the pool and repeat the vsnprintf into this buffer.
-       */
-      n = r + 1;
-      t = pmalloc (pool, n);
+	{
+	  /* String was truncated. Allocate enough space for the string
+	   * in the pool and repeat the vsnprintf into this buffer.
+	   */
+	  n = r + 1;
+	  t = pmalloc (pool, n);
 
-      vsnprintf (t, n, format, args);
+	  vsnprintf (t, n, format, args);
 
-      return t;
-    }
+	  return t;
+	}
 
 #endif /* !HAVE_VASPRINTF */
 }
@@ -443,14 +443,14 @@ pvitostr (pool pool, vector v)
   vector_reallocate (nv, vector_size (v));
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      char *s;
-      int j;
+	{
+	  char *s;
+	  int j;
 
-      vector_get (v, i, j);
-      s = pitoa (pool, j);
-      vector_push_back (nv, s);
-    }
+	  vector_get (v, i, j);
+	  s = pitoa (pool, j);
+	  vector_push_back (nv, s);
+	}
 
   return nv;
 }
@@ -464,14 +464,14 @@ pvdtostr (pool pool, vector v)
   vector_reallocate (nv, vector_size (v));
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      char *s;
-      double j;
+	{
+	  char *s;
+	  double j;
 
-      vector_get (v, i, j);
-      s = pdtoa (pool, j);
-      vector_push_back (nv, s);
-    }
+	  vector_get (v, i, j);
+	  s = pdtoa (pool, j);
+	  vector_push_back (nv, s);
+	}
 
   return nv;
 }
@@ -485,14 +485,14 @@ pvxtostr (pool pool, vector v)
   vector_reallocate (nv, vector_size (v));
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      char *s;
-      unsigned j;
+	{
+	  char *s;
+	  unsigned j;
 
-      vector_get (v, i, j);
-      s = pxtoa (pool, j);
-      vector_push_back (nv, s);
-    }
+	  vector_get (v, i, j);
+	  s = pxtoa (pool, j);
+	  vector_push_back (nv, s);
+	}
 
   return nv;
 }
@@ -535,20 +535,20 @@ psubstr (pool pool, const char *str, int offset, int len)
   char *new_str;
 
   if (len >= 0)
-    {
-      new_str = pmalloc (pool, len + 1);
-      memcpy (new_str, str + offset, len);
-      new_str[len] = '\0';
-      return new_str;
-    }
+	{
+	  new_str = pmalloc (pool, len + 1);
+	  memcpy (new_str, str + offset, len);
+	  new_str[len] = '\0';
+	  return new_str;
+	}
   else
-    {
-      len = strlen (str + offset);
-      new_str = pmalloc (pool, len + 1);
-      memcpy (new_str, str + offset, len);
-      new_str[len] = '\0';
-      return new_str;
-    }
+	{
+	  len = strlen (str + offset);
+	  new_str = pmalloc (pool, len + 1);
+	  memcpy (new_str, str + offset, len);
+	  new_str[len] = '\0';
+	  return new_str;
+	}
 }
 
 char *
@@ -585,23 +585,23 @@ pgetline (pool pool, FILE *fp, char *line)
 
   /* Read in the line until we reach EOF or a '\n' character. */
   while ((c = getc (fp)) != EOF && c != '\n')
-    {
-      if (len == allocated)
-	line = prealloc (pool, line, allocated += _PGETL_INCR_BUFFER);
-      line[len++] = c;
-    }
+	{
+	  if (len == allocated)
+		line = prealloc (pool, line, allocated += _PGETL_INCR_BUFFER);
+	  line[len++] = c;
+	}
 
   /* EOF and no content? */
   if (c == EOF && len == 0)
-    return 0;
+	return 0;
 
   /* Last character is '\r'? Remove it. */
   if (line[len-1] == '\r')
-    len--;
+	len--;
 
   /* Append a '\0' character to the buffer. */
   if (len == allocated)
-    line = prealloc (pool, line, ++allocated);
+	line = prealloc (pool, line, ++allocated);
   line[len] = '\0';
 
   return line;
@@ -609,7 +609,7 @@ pgetline (pool pool, FILE *fp, char *line)
 
 char *
 pgetlinex (pool pool, FILE *fp, char *line, const char *comment_set,
-	   int flags)
+		   int flags)
 {
   int i, len;
 
@@ -622,63 +622,63 @@ pgetlinex (pool pool, FILE *fp, char *line, const char *comment_set,
 
   /* Concatenate? */
   if (!(flags & PGETL_NO_CONCAT))
-    {
-    another_concat:
-      if (line[len-1] == '\\')
 	{
-	  char *next;
+	another_concat:
+	  if (line[len-1] == '\\')
+		{
+		  char *next;
 
-	  line[--len] = '\0';	/* Remove backslash char from first line. */
+		  line[--len] = '\0';	/* Remove backslash char from first line. */
 
-	  next = pgetline (pool, fp, 0);
-	  if (next)
-	    {
-	      line = pstrcat (pool, line, next);
-	      len = strlen (line);
-	      goto another_concat;
-	    }
+		  next = pgetline (pool, fp, 0);
+		  if (next)
+			{
+			  line = pstrcat (pool, line, next);
+			  len = strlen (line);
+			  goto another_concat;
+			}
+		}
 	}
-    }
 
   /* Remove comments? */
   if (!(flags & PGETL_INLINE_COMMENTS))
-    {
-      /* No inline comments. We're searching for whitespace followed
-       * by a comment character. If we find it, remove the line following
-       * the comment character.
-       */
-      for (i = 0; i < len; ++i)
-	if (!isspace ((int) line[i]))
-	  {
-	    if (strchr (comment_set, line[i]) != 0)
-	      {
-		line[i] = '\0';
-		len = i;
-	      }
-	    break;
-	  }
-    }
+	{
+	  /* No inline comments. We're searching for whitespace followed
+	   * by a comment character. If we find it, remove the line following
+	   * the comment character.
+	   */
+	  for (i = 0; i < len; ++i)
+		if (!isspace ((int) line[i]))
+		  {
+			if (strchr (comment_set, line[i]) != 0)
+			  {
+				line[i] = '\0';
+				len = i;
+			  }
+			break;
+		  }
+	}
   else
-    {
-      /* Inline comments. Search for the first occurance of any
-       * comment character and just remove the rest of the line
-       * from that point.
-       */
-      for (i = 0; i < len; ++i)
-	if (strchr (comment_set, line[i]) != 0)
-	  {
-	    line[i] = '\0';
-	    len = i;
-	    break;
-	  }
-    }
+	{
+	  /* Inline comments. Search for the first occurance of any
+	   * comment character and just remove the rest of the line
+	   * from that point.
+	   */
+	  for (i = 0; i < len; ++i)
+		if (strchr (comment_set, line[i]) != 0)
+		  {
+			line[i] = '\0';
+			len = i;
+			break;
+		  }
+	}
 
   /* Trim the line. */
   ptrim (line);
 
   /* Ignore blank lines. */
   if (line[0] == '\0')
-    goto again;
+	goto again;
 
   return line;
 }
@@ -690,14 +690,14 @@ pmap (pool p, const vector v, char *(*map_fn) (pool, const char *))
   vector nv = new_vector (p, char *);
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      const char *s;
-      char *r;
+	{
+	  const char *s;
+	  char *r;
 
-      vector_get (v, i, s);
-      r = map_fn (p, s);
-      vector_push_back (nv, r);
-    }
+	  vector_get (v, i, s);
+	  r = map_fn (p, s);
+	  vector_push_back (nv, r);
+	}
 
   return nv;
 }
@@ -709,13 +709,13 @@ pgrep (pool p, const vector v, int (*grep_fn) (pool, const char *))
   vector nv = new_vector (p, char *);
 
   for (i = 0; i < vector_size (v); ++i)
-    {
-      const char *s;
+	{
+	  const char *s;
 
-      vector_get (v, i, s);
-      if (grep_fn (p, s))
-	vector_push_back (nv, s);
-    }
+	  vector_get (v, i, s);
+	  if (grep_fn (p, s))
+		vector_push_back (nv, s);
+	}
 
   return nv;
 }

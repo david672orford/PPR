@@ -51,18 +51,18 @@ open_connexion(SEND, $address) || die;
 # Turn off autoflush because the message could be long.
 SEND->autoflush(0);
 
-# Tell the other end that we are going to send the message.  
+# Tell the other end that we are going to send the message.	 
 print SEND "MESSAGE $address\n";
 
 # Send the message text.
 if($canned_message ne "")
-    {
-    print SEND "$canned_message\n";
-    }
+	{
+	print SEND "$canned_message\n";
+	}
 else
-    {
-    print SEND "$cooked\n";
-    }
+	{
+	print SEND "$cooked\n";
+	}
 
 # Mark end of message, flush it, and get the result.
 {

@@ -46,24 +46,24 @@ charge="$4"
 option_printed=1
 option_canceled=1
 for opt in $responder_options
-    do
-    case $opt in
+	do
+	case $opt in
 	printed=[nNfF0]* )
-	    option_printed=0
-	    ;;
+		option_printed=0
+		;;
 	printed=[yYtT1-9]* )
-	    option_printed=1
-	    ;;
+		option_printed=1
+		;;
 	canceled=[nNfF0]* )
-	    option_canceled=0
-	    ;;
+		option_canceled=0
+		;;
 	canceled=[yYtT1-9]* )
-	    option_canceled=1
-	    ;;
+		option_canceled=1
+		;;
 	* )
-	    ;;
-    esac
-    done
+		;;
+	esac
+	done
 
 # If invoked as "errmail" or with the printed=no option, bail out
 # if we were about to report that a job has been printed:
@@ -105,39 +105,39 @@ message=""
 
 # If there is a reason parameter, add it.
 if [ -n "$why_arrested" ]
-    then
-    message="$message$why_arrested\n"
-    fi
+	then
+	message="$message$why_arrested\n"
+	fi
 
 # Possible add the title.
 if [ -n "$title" ]
-    then
-    message="${message}\nThe title of this job is \"$title\".\n"
-    fi
+	then
+	message="${message}\nThe title of this job is \"$title\".\n"
+	fi
 
 if [ "$pages_printed" != "?" ]		# if printed,
-    then
-    if [ $pages_printed -ne -1 ]	# if number of pages is know,
+	then
+	if [ $pages_printed -ne -1 ]	# if number of pages is know,
 	then
 	if [ $pages_printed -eq 1 ]
-	    then
-	    message="${message}\nIt is 1 page long."
-	    else
-	    message="${message}\nIt is $pages_printed pages long."
-	    fi
+		then
+		message="${message}\nIt is 1 page long."
+		else
+		message="${message}\nIt is $pages_printed pages long."
+		fi
 
 	if [ -n "$charge" ]
-	    then message="${message}  You have been charged $charge."; fi
+		then message="${message}  You have been charged $charge."; fi
 
 	message="${message}\n"
 	fi
-    fi
+	fi
 
 # If it was submitted more than 10 minutes ago, tell when.
 when=`lib/time_elapsed $time_submitted 600`
 if [ -n "$when" ]
-    then message="${message}\nYou submitted this job $when ago.\n"
-    fi
+	then message="${message}\nYou submitted this job $when ago.\n"
+	fi
 
 job_log=`cat -`
 if [ -n "$job_log" ]

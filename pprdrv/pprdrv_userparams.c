@@ -37,74 +37,74 @@
 #include "pprdrv.h"
 
 static void pre(const char setting[], int value)
-    {
-    printer_printf("%%%%BeginNonPPDFeature: %s %d\n", setting, value);
-    printer_putline("[{");
-    }
+	{
+	printer_printf("%%%%BeginNonPPDFeature: %s %d\n", setting, value);
+	printer_putline("[{");
+	}
 
 static void pre_str(const char setting[], const char value[])
-    {
-    printer_printf("%%%%BeginNonPPDFeature: %s %s\n", setting, value);
-    printer_putline("[{");
-    }
+	{
+	printer_printf("%%%%BeginNonPPDFeature: %s %s\n", setting, value);
+	printer_putline("[{");
+	}
 
 static void post(const char setting[])
-    {
-    printer_printf("}stopped{(Failed to set %s\\n)print}if cleartomark\n", setting);
-    printer_putline("%%EndNonPPDFeature");
-    }
+	{
+	printer_printf("}stopped{(Failed to set %s\\n)print}if cleartomark\n", setting);
+	printer_putline("%%EndNonPPDFeature");
+	}
 
 /*
 ** This is called at the end of document setup.
 */
 void insert_userparams(void)
-    {
-    if(printer.userparams.WaitTimeout >= 0)
 	{
-	pre("WaitTimeout", printer.userparams.WaitTimeout);
-	if(Features.LanguageLevel >= 2)
-	    printer_printf("<</WaitTimeout %d>>setuserparams %%PPR\n", printer.userparams.WaitTimeout);
-	else
-	    printer_printf("%d statusdict /setwaittimeout get exec\n", printer.userparams.WaitTimeout);
-	post("WaitTimeout");
-	}
+	if(printer.userparams.WaitTimeout >= 0)
+		{
+		pre("WaitTimeout", printer.userparams.WaitTimeout);
+		if(Features.LanguageLevel >= 2)
+			printer_printf("<</WaitTimeout %d>>setuserparams %%PPR\n", printer.userparams.WaitTimeout);
+		else
+			printer_printf("%d statusdict /setwaittimeout get exec\n", printer.userparams.WaitTimeout);
+		post("WaitTimeout");
+		}
 
-    if(printer.userparams.ManualfeedTimeout >= 0)
-	{
-	pre("ManualfeedTimeout", printer.userparams.ManualfeedTimeout);
-	if(Features.LanguageLevel >= 2)
-	    printer_printf("<</ManualFeedTimeout %d>>setpagedevice %%PPR\n", printer.userparams.ManualfeedTimeout);
-	else
-	    printer_printf("%d statusdict /setmanualfeedtimeout get exec %%PPR\n", printer.userparams.ManualfeedTimeout);
-	post("ManualfeedTimeout");
-	}
+	if(printer.userparams.ManualfeedTimeout >= 0)
+		{
+		pre("ManualfeedTimeout", printer.userparams.ManualfeedTimeout);
+		if(Features.LanguageLevel >= 2)
+			printer_printf("<</ManualFeedTimeout %d>>setpagedevice %%PPR\n", printer.userparams.ManualfeedTimeout);
+		else
+			printer_printf("%d statusdict /setmanualfeedtimeout get exec %%PPR\n", printer.userparams.ManualfeedTimeout);
+		post("ManualfeedTimeout");
+		}
 
-    if(printer.userparams.DoPrintErrors != -1)
-	{
-	if(Features.LanguageLevel >= 2)
-	    {
-	    pre_str("DoPrintErrors", printer.userparams.DoPrintErrors ? "True" : "False");
-	    printer_printf("<</DoPrintErrors %s>>setuserparams %%PPR\n", printer.userparams.DoPrintErrors ? "true" : "false");
-	    post("WaitTimeout");
-	    }
-	}
+	if(printer.userparams.DoPrintErrors != -1)
+		{
+		if(Features.LanguageLevel >= 2)
+			{
+			pre_str("DoPrintErrors", printer.userparams.DoPrintErrors ? "True" : "False");
+			printer_printf("<</DoPrintErrors %s>>setuserparams %%PPR\n", printer.userparams.DoPrintErrors ? "true" : "false");
+			post("WaitTimeout");
+			}
+		}
 
-    } /* end of insert_userparams() */
+	} /* end of insert_userparams() */
 
 /*
 ** This is called at the start of each page.  It resets the job timeout.
 */
 void insert_userparams_jobtimeout(void)
-    {
-    if(printer.userparams.JobTimeout >= 0)
 	{
-	pre("JobTimeout", printer.userparams.JobTimeout);
-	if(Features.LanguageLevel >= 2)
-	    printer_printf("<</JobTimeout %d>>setuserparams %%PPR\n", printer.userparams.JobTimeout);
-	else
-	    printer_printf("%d statusdict /setjobtimeout get exec %%PPR\n", printer.userparams.JobTimeout);
-	post("JobTimeout");
-	}
-    } /* end of insert_userparams_jobtimeout() */
+	if(printer.userparams.JobTimeout >= 0)
+		{
+		pre("JobTimeout", printer.userparams.JobTimeout);
+		if(Features.LanguageLevel >= 2)
+			printer_printf("<</JobTimeout %d>>setuserparams %%PPR\n", printer.userparams.JobTimeout);
+		else
+			printer_printf("%d statusdict /setjobtimeout get exec %%PPR\n", printer.userparams.JobTimeout);
+		post("JobTimeout");
+		}
+	} /* end of insert_userparams_jobtimeout() */
 
 /* end of file */

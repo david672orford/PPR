@@ -19,12 +19,12 @@
 #include "gu.h"
 
 void gu_set_cloexec(int fd)
-    {
-    int flags;
-    flags = fcntl(fd, F_GETFD);
-    flags |= FD_CLOEXEC;
-    fcntl(fd, F_SETFD, flags);
-    }
+	{
+	int flags;
+	flags = fcntl(fd, F_GETFD);
+	flags |= FD_CLOEXEC;
+	fcntl(fd, F_SETFD, flags);
+	}
 
 /* end of file */
 

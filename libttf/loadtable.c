@@ -29,44 +29,44 @@
 ** padding spaces.
 -----------------------------------------------------------------------*/
 BYTE *ttf_LoadTable(struct TTFONT *font, const char name[])
-    {
-    BYTE *ptr;
-    unsigned int x;
+	{
+	BYTE *ptr;
+	unsigned int x;
 
-    DODEBUG(("ttf_LoadTable(font=%p, name=\"%s\", tp=%p)", font, name, tp));
+	DODEBUG(("ttf_LoadTable(font=%p, name=\"%s\", tp=%p)", font, name, tp));
 
-    /* We must search the table directory. */
-    ptr = font->offset_table + 12;
-    x = 0;
-    while(TRUE)
-    	{
-	if(strncmp((const char*)ptr, name, 4) == 0)
-	    {
-	    ULONG offset,length;
-	    BYTE *table;
+	/* We must search the table directory. */
+	ptr = font->offset_table + 12;
+	x = 0;
+	while(TRUE)
+		{
+		if(strncmp((const char*)ptr, name, 4) == 0)
+			{
+			ULONG offset,length;
+			BYTE *table;
 
-	    offset = getULONG(ptr + 8);
-	    length = getULONG(ptr + 12);
-	    table = (BYTE*)ttf_alloc(font, sizeof(BYTE), length );
+			offset = getULONG(ptr + 8);
+			length = getULONG(ptr + 12);
+			table = (BYTE*)ttf_alloc(font, sizeof(BYTE), length );
 
-	    DODEBUG(("Loading table \"%s\" from offset %d, %d bytes",name,offset,length));
+			DODEBUG(("Loading table \"%s\" from offset %d, %d bytes",name,offset,length));
 
-	    if(fseek(font->file, (long)offset, SEEK_SET ) )
-	    	longjmp(font->exception, (int)TTF_TBL_CANTSEEK);
+			if(fseek(font->file, (long)offset, SEEK_SET ) )
+				longjmp(font->exception, (int)TTF_TBL_CANTSEEK);
 
-	    if(fread(table,sizeof(BYTE),length,font->file) != (sizeof(BYTE) * length))
-		longjmp(font->exception, (int)TTF_TBL_CANTREAD);
+			if(fread(table,sizeof(BYTE),length,font->file) != (sizeof(BYTE) * length))
+				longjmp(font->exception, (int)TTF_TBL_CANTREAD);
 
-	    return table;
-	    }
+			return table;
+			}
 
-    	x++;
-    	ptr += 16;
-    	if(x == font->numTables)
-	    longjmp(font->exception, (int)TTF_TBL_NOTFOUND);
-    	}
+		x++;
+		ptr += 16;
+		if(x == font->numTables)
+			longjmp(font->exception, (int)TTF_TBL_NOTFOUND);
+		}
 
-    } /* end of ttf_LoadTable() */
+	} /* end of ttf_LoadTable() */
 
 /* end of file */
 

@@ -52,7 +52,7 @@ typedef int gu_boolean;
 #endif
 
 /*
-** Define unix permissions 755 and 644.  We do this because just
+** Define unix permissions 755 and 644.	 We do this because just
 ** saying 0755 or 644 is at least theoretically non-portable and
 ** because these portable expressions are long and unsightly.
 */
@@ -111,22 +111,22 @@ void _gu_alloc_assert(const char *file, int line, int assertion);
 ===================================================================*/
 
 struct GU_INI_ENTRY
-    {
-    char *name;		/* left hand side (not const so we can free) */
-    const char *values;	/* list from right hand side (const so we can't free) */
-    int nvalues;	/* number of members in right hand side list */
-    } ;
+	{
+	char *name;			/* left hand side (not const so we can free) */
+	const char *values; /* list from right hand side (const so we can't free) */
+	int nvalues;		/* number of members in right hand side list */
+	} ;
 
 
 enum GU_INI_TYPES {
-    GU_INI_TYPE_SKIP,
-    GU_INI_TYPE_NONNEG_INT,
-    GU_INI_TYPE_STRING,
-    GU_INI_TYPE_NONEMPTY_STRING,
-    GU_INI_TYPE_POSITIVE_DOUBLE,
-    GU_INI_TYPE_NONNEG_DOUBLE,
-    GU_INI_TYPE_END
-    } ;
+	GU_INI_TYPE_SKIP,
+	GU_INI_TYPE_NONNEG_INT,
+	GU_INI_TYPE_STRING,
+	GU_INI_TYPE_NONEMPTY_STRING,
+	GU_INI_TYPE_POSITIVE_DOUBLE,
+	GU_INI_TYPE_NONNEG_DOUBLE,
+	GU_INI_TYPE_END
+	} ;
 
 struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[]);
 const struct GU_INI_ENTRY *gu_ini_section_get_value(const struct GU_INI_ENTRY *section, const char key_name[]);
@@ -203,26 +203,26 @@ int gu_runl(const char *myname, FILE *errors, const char *progname, ...);
 ===================================================================*/
 
 struct gu_getopt_opt
-	{
-	const char *name;
-	int code;
-	gu_boolean needsarg;
-	} ;
+		{
+		const char *name;
+		int code;
+		gu_boolean needsarg;
+		} ;
 
 struct gu_getopt_state
-	{
-	int argc;					/* private */
-	char **argv;					/* private */
-	const char *opt_chars;				/* private */
-	const struct gu_getopt_opt *opt_words;		/* private */
-	int optind;					/* public */
-	char *optarg;					/* public */
-	const char *name;				/* public */
-	int x;						/* very private */
-	int len;					/* very private */
-	char scratch[3];				/* very private */
-	char *putback;
-	} ;
+		{
+		int argc;										/* private */
+		char **argv;									/* private */
+		const char *opt_chars;							/* private */
+		const struct gu_getopt_opt *opt_words;			/* private */
+		int optind;										/* public */
+		char *optarg;									/* public */
+		const char *name;								/* public */
+		int x;											/* very private */
+		int len;										/* very private */
+		char scratch[3];								/* very private */
+		char *putback;
+		} ;
 
 void gu_getopt_init(struct gu_getopt_state *state, int argc, char **argv, const char *opt_chars, const struct gu_getopt_opt *opt_words);
 int ppr_getopt(struct gu_getopt_state *state);
@@ -233,18 +233,18 @@ void gu_getopt_default(const char myname[], int optchar, const struct gu_getopt_
 ===================================================================*/
 
 struct OPTIONS_STATE {
-    int magic;				/* should be 689 */
+	int magic;							/* should be 689 */
 
-    const char *options;		/* the string we are working on */
+	const char *options;				/* the string we are working on */
 
-    int index;				/* index of where we are working now */
-    int index_of_name;			/* index of start of this name=value pair */
-    int index_of_prev_name;		/* index of start of prev pair */
+	int index;							/* index of where we are working now */
+	int index_of_name;					/* index of start of this name=value pair */
+	int index_of_prev_name;				/* index of start of prev pair */
 
-    const char *error;			/* an error message */
+	const char *error;					/* an error message */
 
-    int next_time_skip;			/* distance from index to start of next name */
-    };
+	int next_time_skip;					/* distance from index to start of next name */
+	};
 
 void options_start(const char *options_str, struct OPTIONS_STATE *o);
 int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *value, int maxvaluelen);
@@ -271,12 +271,12 @@ __attribute__ (( noreturn, format (printf, 3, 4) ))
 ===================================================================*/
 
 struct gu_snmp
-    {
-    int socket;
-    const char *community;
-    unsigned int request_id;
-    char result[1024];
-    };
+	{
+	int socket;
+	const char *community;
+	unsigned int request_id;
+	char result[1024];
+	};
 
 struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[], int *error_code);
 void gu_snmp_close(struct gu_snmp *p);

@@ -30,7 +30,7 @@
 
 /*
 ** This module contains functions which write a "Progress:" line to the end of
-** the queue file.  The format of this line is:
+** the queue file.	The format of this line is:
 **
 ** Progress: xxxxxx yyyyyy zzzzzz
 **
@@ -74,98 +74,98 @@ static long total_bytes = 0;
 ** Note that this is also called from pprdrv_commentary.c.
 */
 void state_update_pprdrv_puts(const char line[])
-    {
-    const char function[] = "state_update_pprdrv_puts";
-    const char filename[] = STATE_UPDATE_PPRDRV_FILE;
-    static int handle = -1;
-    int retry;
-    struct stat statbuf;
-
-    /*
-    ** If pprdrv was invoked with the --test switch, then do nothing.
-    */
-    if(test_mode)
-	return;
-
-    /*
-    ** We will break out of this loop as soon as we have
-    ** a satisfactory progress file to write to.
-    */
-    for(retry=0; TRUE; retry++)
 	{
-	/* If not open, */
-	if(handle == -1)
-	    {
-    	    if((handle = open(filename, O_WRONLY | O_APPEND | O_CREAT, UNIX_644)) < 0)
-		fatal(EXIT_PRNERR_NORETRY, "%s(): open() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    }
-
-	/* Get the file size: */
-	if(fstat(handle, &statbuf) < 0)
-	    fatal(EXIT_PRNERR_NORETRY, "%s(): fstat() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	const char function[] = "state_update_pprdrv_puts";
+	const char filename[] = STATE_UPDATE_PPRDRV_FILE;
+	static int handle = -1;
+	int retry;
+	struct stat statbuf;
 
 	/*
-	** Use fstat() to examine the "other execute" to see if
-	** another process has `rewound' the file.  If another process
-	** has `rewound' the file, we can't use it any more.
-	** If all is well, the other process will have unlinked
-	** this one just after we opened it.  Of course it is possible
-	** that someone left a file with the "other execute" bit set.  To
-	** avoid a never ending loop we will unlink the file ourselves on
-	** the second time thru.  We are reluctant to unlink it because
-	** we don't want to unlink the new one which the other process
-	** just created.
+	** If pprdrv was invoked with the --test switch, then do nothing.
 	*/
-#ifdef UNNECESSARY_CODE
-	if(statbuf.st_mode & S_IXOTH)
-	    {
-	    if(close(handle) < 0)
-	    	fatal(EXIT_PRNERR_NORETRY, "%s(): close() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    handle = -1;
+	if(test_mode)
+		return;
 
-	    if(retry)
+	/*
+	** We will break out of this loop as soon as we have
+	** a satisfactory progress file to write to.
+	*/
+	for(retry=0; TRUE; retry++)
 		{
-		unlink(filename);
-		}
+		/* If not open, */
+		if(handle == -1)
+			{
+			if((handle = open(filename, O_WRONLY | O_APPEND | O_CREAT, UNIX_644)) < 0)
+				fatal(EXIT_PRNERR_NORETRY, "%s(): open() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			}
 
-	    continue;
-	    }
+		/* Get the file size: */
+		if(fstat(handle, &statbuf) < 0)
+			fatal(EXIT_PRNERR_NORETRY, "%s(): fstat() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+
+		/*
+		** Use fstat() to examine the "other execute" to see if
+		** another process has `rewound' the file.	If another process
+		** has `rewound' the file, we can't use it any more.
+		** If all is well, the other process will have unlinked
+		** this one just after we opened it.  Of course it is possible
+		** that someone left a file with the "other execute" bit set.  To
+		** avoid a never ending loop we will unlink the file ourselves on
+		** the second time thru.  We are reluctant to unlink it because
+		** we don't want to unlink the new one which the other process
+		** just created.
+		*/
+#ifdef UNNECESSARY_CODE
+		if(statbuf.st_mode & S_IXOTH)
+			{
+			if(close(handle) < 0)
+				fatal(EXIT_PRNERR_NORETRY, "%s(): close() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			handle = -1;
+
+			if(retry)
+				{
+				unlink(filename);
+				}
+
+			continue;
+			}
 #endif
 
-	/* If file is too long, we must `rewind' it, that is delete the file
-	   and start another of the same name. */
-	if(statbuf.st_size > STATE_UPDATE_PPRDRV_MAXBYTES)
-	    {
-	    if(unlink(filename) == -1 && errno != ENOENT)
-	    	fatal(EXIT_PRNERR_NORETRY, "%s(): unlink() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		/* If file is too long, we must `rewind' it, that is delete the file
+		   and start another of the same name. */
+		if(statbuf.st_size > STATE_UPDATE_PPRDRV_MAXBYTES)
+			{
+			if(unlink(filename) == -1 && errno != ENOENT)
+				fatal(EXIT_PRNERR_NORETRY, "%s(): unlink() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
-	    /* Set the "other execute" bit on the old file. */
-	    if(fchmod(handle, UNIX_644 | S_IXOTH) < 0)
-	    	fatal(EXIT_PRNERR_NORETRY, "%s(): fchmod() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			/* Set the "other execute" bit on the old file. */
+			if(fchmod(handle, UNIX_644 | S_IXOTH) < 0)
+				fatal(EXIT_PRNERR_NORETRY, "%s(): fchmod() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
-	    /* We close the file and set handle to -1 so that
-	       next time this function is called it will create
-	       a new file. */
-	    if(close(handle) < 0)
-	    	fatal(EXIT_PRNERR_NORETRY, "%s(): close() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	    handle = -1;
+			/* We close the file and set handle to -1 so that
+			   next time this function is called it will create
+			   a new file. */
+			if(close(handle) < 0)
+				fatal(EXIT_PRNERR_NORETRY, "%s(): close() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			handle = -1;
 
-	    /* Go back to the top and try again. */
-	    continue;
-	    }
+			/* Go back to the top and try again. */
+			continue;
+			}
 
-	break;
-	}
+		break;
+		}
 
-    /* Set the close-on-exec flag so that this file won't be available to our children. */
-    gu_set_cloexec(handle);
+	/* Set the close-on-exec flag so that this file won't be available to our children. */
+	gu_set_cloexec(handle);
 
-    /* Write the line, ignoring out of space errors since
-       there is not much we can do about them anyway.
-       */
-    if(write(handle, line, strlen(line)) < 0 && errno != ENOSPC)
-	fatal(EXIT_PRNERR_NORETRY, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-    } /* end of state_update_pprdrv_puts() */
+	/* Write the line, ignoring out of space errors since
+	   there is not much we can do about them anyway.
+	   */
+	if(write(handle, line, strlen(line)) < 0 && errno != ENOSPC)
+		fatal(EXIT_PRNERR_NORETRY, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	} /* end of state_update_pprdrv_puts() */
 
 /*
 
@@ -182,148 +182,148 @@ the printer at all.
 
 */
 static void queuefile_progress_write(void)
-    {
-    const char function[] = "queuefile_progress_write";
-    static char qfname[MAX_PPR_PATH];	/* The name of the queue file */
-    static int handle = -1;		/* The handle of the open queue file */
-    static off_t spot;			/* The offset at which we will write the line */
-
-    char buffer[80];
-    int len = 31;		/* Length of progress line. */
-    int retval;
-
-    /*
-    ** If we are running in test mode, we have no
-    ** business writing to the queue file, so we
-    ** will write to stderr.
-    */
-    if(test_mode)
 	{
-	fprintf(stderr, "Progress: %010ld %04d %04d\n", total_bytes, total_pages_started, total_pages_printed);
-	return;
-	}
+	const char function[] = "queuefile_progress_write";
+	static char qfname[MAX_PPR_PATH];	/* The name of the queue file */
+	static int handle = -1;				/* The handle of the open queue file */
+	static off_t spot;					/* The offset at which we will write the line */
 
-    /* If the job's queue file is not open yet, */
-    if(handle == -1)
-    	{
-	/* Open the file for read and write. */
-    	ppr_fnamef(qfname, "%s/%s", QUEUEDIR, QueueFile);
-    	if((handle = open(qfname, O_RDWR)) == -1)
-    	    fatal(EXIT_PRNERR_NORETRY, _("%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"), function, qfname, errno, gu_strerror(errno));
-	gu_set_cloexec(handle);
+	char buffer[80];
+	int len = 31;				/* Length of progress line. */
+	int retval;
 
-	/* Seek to a spot 31 bytes from the end. */
-	if((spot = lseek(handle, (off_t)(0-len), SEEK_END)) < 0)
-	    fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"), function, handle, (0-len), errno, gu_strerror(errno));
+	/*
+	** If we are running in test mode, we have no
+	** business writing to the queue file, so we
+	** will write to stderr.
+	*/
+	if(test_mode)
+		{
+		fprintf(stderr, "Progress: %010ld %04d %04d\n", total_bytes, total_pages_started, total_pages_printed);
+		return;
+		}
 
-	/* Read what will be "Progress: " if this was done before. */
-	if((retval = read(handle, buffer, 10)) == -1)
-	    fatal(EXIT_PRNERR_NORETRY, _("%s(): read() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
-	else if(retval != 10)
-	    fatal(EXIT_PRNERR_NORETRY, _("%s(): read() read %d bytes instead of %d"), function, retval, 10);
+	/* If the job's queue file is not open yet, */
+	if(handle == -1)
+		{
+		/* Open the file for read and write. */
+		ppr_fnamef(qfname, "%s/%s", QUEUEDIR, QueueFile);
+		if((handle = open(qfname, O_RDWR)) == -1)
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"), function, qfname, errno, gu_strerror(errno));
+		gu_set_cloexec(handle);
 
-	/* If it isn't, seek to the end. */
-	if(memcmp(buffer, "Progress: ", 10) != 0)
-	    {
-	    if((spot = lseek(handle, (off_t)0, SEEK_END)) < 0)
-		fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"), function, handle, errno, gu_strerror(errno));
-	    }
-    	}
+		/* Seek to a spot 31 bytes from the end. */
+		if((spot = lseek(handle, (off_t)(0-len), SEEK_END)) < 0)
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"), function, handle, (0-len), errno, gu_strerror(errno));
 
-    /* Return to the proper position for the "Progress:" line. */
-    if(lseek(handle, spot, SEEK_SET) < 0)
-	fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): lseek(%d,%ld,SEEK_SET) failed, errno=%d (%s)", __FILE__, handle, (long)spot, errno, gu_strerror(errno));
+		/* Read what will be "Progress: " if this was done before. */
+		if((retval = read(handle, buffer, 10)) == -1)
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): read() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+		else if(retval != 10)
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): read() read %d bytes instead of %d"), function, retval, 10);
 
-    /* Format the progress line while suppressing small byte counts. */
-    snprintf(buffer, sizeof(buffer), "Progress: %010ld %04d %04d\n", (total_bytes > SLACK_BYTES_COUNT) ? total_bytes : 0, total_pages_started, total_pages_printed);
+		/* If it isn't, seek to the end. */
+		if(memcmp(buffer, "Progress: ", 10) != 0)
+			{
+			if((spot = lseek(handle, (off_t)0, SEEK_END)) < 0)
+				fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"), function, handle, errno, gu_strerror(errno));
+			}
+		}
 
-    /*
-    ** Write the new "Progress:" line.
-    ** I can't remember why this might be
-    ** interupted by a system call and not restarted.
-    */
-    while((retval = write(handle, buffer, len)) != len)
-	{
-	if(retval == -1 && errno == EINTR)
-	    continue;
+	/* Return to the proper position for the "Progress:" line. */
+	if(lseek(handle, spot, SEEK_SET) < 0)
+		fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): lseek(%d,%ld,SEEK_SET) failed, errno=%d (%s)", __FILE__, handle, (long)spot, errno, gu_strerror(errno));
 
-	if(retval == -1)
-	    fatal(EXIT_PRNERR_NORETRY, _("%s(): write() failed, errno=%d (%s)"), function, errno, gu_strerror(errno) );
-	else
-	    fatal(EXIT_PRNERR, _("%s(): write() wrote %d bytes instead of %d"), function, retval, len);
-    	}
+	/* Format the progress line while suppressing small byte counts. */
+	snprintf(buffer, sizeof(buffer), "Progress: %010ld %04d %04d\n", (total_bytes > SLACK_BYTES_COUNT) ? total_bytes : 0, total_pages_started, total_pages_printed);
 
-    } /* end of queuefile_progress_write() */
+	/*
+	** Write the new "Progress:" line.
+	** I can't remember why this might be
+	** interupted by a system call and not restarted.
+	*/
+	while((retval = write(handle, buffer, len)) != len)
+		{
+		if(retval == -1 && errno == EINTR)
+			continue;
+
+		if(retval == -1)
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): write() failed, errno=%d (%s)"), function, errno, gu_strerror(errno) );
+		else
+			fatal(EXIT_PRNERR, _("%s(): write() wrote %d bytes instead of %d"), function, retval, len);
+		}
+
+	} /* end of queuefile_progress_write() */
 
 /*
-** This routine is called just after each "%%Page:" comment is emitted.  Thus,
+** This routine is called just after each "%%Page:" comment is emitted.	 Thus,
 ** it reflects the number of page descriptions and not necessarily the
 ** number of physical pages.
 */
 void progress_page_start_comment_sent(void)
-    {
-    char buffer[80];
+	{
+	char buffer[80];
 
-    total_pages_started++;
+	total_pages_started++;
 
-    queuefile_progress_write();
+	queuefile_progress_write();
 
-    snprintf(buffer, sizeof(buffer), "PGSTA %s %d\n", printer.Name, total_pages_started);
-    state_update_pprdrv_puts(buffer);
-    }
+	snprintf(buffer, sizeof(buffer), "PGSTA %s %d\n", printer.Name, total_pages_started);
+	state_update_pprdrv_puts(buffer);
+	}
 
 /*
 ** This is called each time we get an HP PJL message from the printer
-** indicating that a page has hit the output tray.  The argument
+** indicating that a page has hit the output tray.	The argument
 ** indicates the number of page descriptions on the page.
 */
 void progress_pages_truly_printed(int n)
-    {
-    char buffer[80];
+	{
+	char buffer[80];
 
-    total_pages_printed += n;
+	total_pages_printed += n;
 
-    queuefile_progress_write();
+	queuefile_progress_write();
 
-    snprintf(buffer, sizeof(buffer), "PGFIN %s %d\n", printer.Name, total_pages_printed);
-    state_update_pprdrv_puts(buffer);
-    }
+	snprintf(buffer, sizeof(buffer), "PGFIN %s %d\n", printer.Name, total_pages_printed);
+	state_update_pprdrv_puts(buffer);
+	}
 
 /*
 ** This is called as each block in flushed into the
 ** pipe leading to the interface.
 */
 void progress_bytes_sent(int n)
-    {
-    total_bytes += n;
-
-    queuefile_progress_write();
-
-    if(total_bytes > SLACK_BYTES_COUNT)
 	{
-	char buffer[80];
-	snprintf(buffer, sizeof(buffer), "BYTES %s %ld %ld\n", printer.Name, total_bytes, job.attr.postscript_bytes);
-	state_update_pprdrv_puts(buffer);
+	total_bytes += n;
+
+	queuefile_progress_write();
+
+	if(total_bytes > SLACK_BYTES_COUNT)
+		{
+		char buffer[80];
+		snprintf(buffer, sizeof(buffer), "BYTES %s %ld %ld\n", printer.Name, total_bytes, job.attr.postscript_bytes);
+		state_update_pprdrv_puts(buffer);
+		}
 	}
-    }
 
 /*
 ** This is called every time the printer's status file is updated.
-** The text[] is a status message from the printer.  The status
+** The text[] is a status message from the printer.	 The status
 ** file is used by the "ppop status" command to explain the specific
 ** reason for the printer status.
 */
 void progress_new_status(const char text[])
-    {
-    char buffer[80];
-    snprintf(buffer, sizeof(buffer), "STATUS %s %s\n", printer.Name, text);
-    state_update_pprdrv_puts(buffer);
-    }
+	{
+	char buffer[80];
+	snprintf(buffer, sizeof(buffer), "STATUS %s %s\n", printer.Name, text);
+	state_update_pprdrv_puts(buffer);
+	}
 
 /*
 ** This is used to subtract bytes we are using to constantly update the 
-** printers LCD or LED display.  This routine doesn't cause anything to 
-** be written to the queue file or the status update file.  It just changes 
+** printers LCD or LED display.	 This routine doesn't cause anything to 
+** be written to the queue file or the status update file.	It just changes 
 ** the next value written.
 **
 ** (It should be noted that the LCD/LED update feature described above
@@ -332,16 +332,16 @@ void progress_new_status(const char text[])
 ** all of the changes very quicly.)
 */
 void progress_bytes_sent_correction(int n)
-    {
-    total_bytes -= n;
-    }
+	{
+	total_bytes -= n;
+	}
 
 /*
 ** This is used to fetch the total of bytes set so that it can be logged.
 */
 long int progress_bytes_sent_get(void)
-    {
-    return total_bytes;
-    }
+	{
+	return total_bytes;
+	}
 
 /* end of file */

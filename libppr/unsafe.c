@@ -44,14 +44,14 @@ colour names.
 
 */
 gu_boolean is_unsafe_ps_name(const char name[])
-    {
-    if(strspn(name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    		"abcdefghijklmnopqrstuvwxyz"
-    		"0123456789-_") != strlen(name))
-    	return TRUE;
+	{
+	if(strspn(name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+				"abcdefghijklmnopqrstuvwxyz"
+				"0123456789-_") != strlen(name))
+		return TRUE;
 
-    return FALSE;
-    } /* end of is_unsafe_ps_name() */
+	return FALSE;
+	} /* end of is_unsafe_ps_name() */
 
 /* end of file */
 

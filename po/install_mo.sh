@@ -40,10 +40,10 @@ instdir="$2"
 fileslist="../z_install_begin/installed_files_list"
 
 if [ -z "$instdir" -o -z "$lang" ]
-    then
-    echo "Usage: install_mo.sh <language> <locale_directory>"
-    exit 1
-    fi
+	then
+	echo "Usage: install_mo.sh <language> <locale_directory>"
+	exit 1
+	fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   then
@@ -54,44 +54,44 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
 full_instdir="$RPM_BUILD_ROOT$instdir"
 
 if [ ! -d "$full_instdir" ]
-    then
-    echo "The directory \"$full_instdir\" does not exist."
-    exit 1
-    fi
+	then
+	echo "The directory \"$full_instdir\" does not exist."
+	exit 1
+	fi
 
 echo "Installing language \"$lang\" in \"$full_instdir\"."
 
 # Create the directory to hold the translation files for this language.
 # the top level locale directory should have been already created.
 if [ ! -d "$full_instdir/$lang" ]
-    then
-    mkdir "$full_instdir/$lang"
-    fi
+	then
+	mkdir "$full_instdir/$lang"
+	fi
 echo "%dir \"$instdir/$lang\"" >>$fileslist
 if [ ! -d "$full_instdir/$lang/LC_MESSAGES" ]
-    then
-    mkdir "$full_instdir/$lang/LC_MESSAGES"
-    fi
+	then
+	mkdir "$full_instdir/$lang/LC_MESSAGES"
+	fi
 echo "%dir \"$instdir/$lang/LC_MESSAGES\"" >>$fileslist
 
-echo -n "    "
+echo -n "	 "
 for potfile in *.pot
-    do
-    division=`basename $potfile .pot`
-    if [ "$division" = "*" ]
+	do
+	division=`basename $potfile .pot`
+	if [ "$division" = "*" ]
 	then
 	echo "No .pot files!"
 	exit 1
 	fi
-    if [ -f "$lang-$division.po" ]
-        then
-        echo -n " $division"
-        msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" || exit 1
+	if [ -f "$lang-$division.po" ]
+		then
+		echo -n " $division"
+		msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" || exit 1
 	echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
-        else
-        echo -n " $division(missing)"
-        fi
-    done
+		else
+		echo -n " $division(missing)"
+		fi
+	done
 echo
 
 exit 0

@@ -54,66 +54,66 @@ Head10
 
 # If we are the frame,
 if(!defined $data{members})
-    {
-    opencmd(PPOP, $PPOP_PATH, "-M", "status", $name) || die;
-    my @members = ();
-    while(<PPOP>)
 	{
-	my($queue, $status) = split(/\t/, $_);
-	push(@members, $queue);
-	}
-    close(PPOP) || die;
+	opencmd(PPOP, $PPOP_PATH, "-M", "status", $name) || die;
+	my @members = ();
+	while(<PPOP>)
+		{
+		my($queue, $status) = split(/\t/, $_);
+		push(@members, $queue);
+		}
+	close(PPOP) || die;
 
-    my $title = html(sprintf(_("Status of \"%s\" Member Printers"), $name));
-    print <<"Head20";
+	my $title = html(sprintf(_("Status of \"%s\" Member Printers"), $name));
+	print <<"Head20";
 <title>$title</title>
 </head>
 <frameset rows="50,*" scrolling="no">
 Head20
 
-    print "<frame src=\"$ENV{SCRIPT_NAME}?", form_urlencoded("members", join(' ', @members)), "\">\n";
+	print "<frame src=\"$ENV{SCRIPT_NAME}?", form_urlencoded("members", join(' ', @members)), "\">\n";
 
-    my $encoded_HIST = form_urlencoded("HIST", $data{HIST});
-    print "<frame name=\"bottom\" src=\"prn_control.cgi?$encoded_HIST;", form_urlencoded("name", $members[0]), "\">\n";
+	my $encoded_HIST = form_urlencoded("HIST", $data{HIST});
+	print "<frame name=\"bottom\" src=\"prn_control.cgi?$encoded_HIST;", form_urlencoded("name", $members[0]), "\">\n";
 
-    print "</frameset>\n";
-    }
+	print "</frameset>\n";
+	}
 
 # If we are the top frame,
 else
-    {
+	{
 print <<"Head30";
 </head>
 <style>
 BODY {
-	background-color: yellow; color: black;
-	margin: 5mm 0mm 0mm 5mm;
-	}
+		background-color: yellow; color: black;
+		margin: 5mm 0mm 0mm 5mm;
+		}
 SPAN.button {
-	background: #a0a0a0;
-	color: black;
-	padding: 2mm;
-	border: medium solid black;
-	-moz-border-radius: 3mm 3mm 0mm 0mm;
-	margin: 0mm 5mm 0mm 0mm;
-	}
+		background: #a0a0a0;
+		color: black;
+		padding: 2mm;
+		border: medium solid black;
+		-moz-border-radius: 3mm 3mm 0mm 0mm;
+		margin: 0mm 5mm 0mm 0mm;
+		}
 A {
-	text-decoration: none;
-	}
+		text-decoration: none;
+		}
 </style>
 <body>
 Head30
 
-    foreach my $member (split(/\s+/, cgi_data_move("members", "")))
-	{
-	print "<a target=\"bottom\" href=\"prn_control.cgi?", form_urlencoded("name", $member), "\">\n";
-	print "<span class=\"button\">\n";
-	print "\t", html($member), "\n";
-	print "</span>\n";
-	print "</a>\n\n";
+	foreach my $member (split(/\s+/, cgi_data_move("members", "")))
+		{
+		print "<a target=\"bottom\" href=\"prn_control.cgi?", form_urlencoded("name", $member), "\">\n";
+		print "<span class=\"button\">\n";
+		print "\t", html($member), "\n";
+		print "</span>\n";
+		print "</a>\n\n";
+		}
+	print "</body>\n";
 	}
-    print "</body>\n";
-    }
 
 print "</html>\n";
 

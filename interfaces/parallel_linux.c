@@ -30,7 +30,7 @@
 
 /*
 ** This is parallel_generic.c with the functions filled in with
-** Linux-specific code.  The necessary information was found
+** Linux-specific code.	 The necessary information was found
 ** in the lp(4) man page.
 */
 
@@ -41,10 +41,10 @@
 #include <unistd.h>
 #ifndef LP_PSELECD
 #warning "Your linux/lp.h file is buggy, compensating!"
-#define LP_PERRORP	0x08
-#define LP_PSELECD	0x10
-#define LP_POUTPA	0x20
-#define LP_PBUSY	0x80
+#define LP_PERRORP		0x08
+#define LP_PSELECD		0x10
+#define LP_POUTPA		0x20
+#define LP_PBUSY		0x80
 #endif
 #include "gu.h"
 #include "global_defines.h"
@@ -57,34 +57,34 @@
 */
 static int printer_fd;
 static void sigterm_handler(int sig)
-    {
-    parallel_port_reset(printer_fd);
-    _exit(EXIT_SIGNAL);
-    }
+	{
+	parallel_port_reset(printer_fd);
+	_exit(EXIT_SIGNAL);
+	}
 
 /*
-** This routine is called just after the port has been opened.  It should
+** This routine is called just after the port has been opened.	It should
 ** take interface options, as stored in the supplied structure, and
 ** use the supplied file descriptor to set up the driver accordingly.
 */
 void parallel_port_setup(int fd, const struct OPTIONS *options)
-    {
-    if(options->reset_on_cancel)
-    	{
-	printer_fd = fd;
-	signal_interupting(SIGTERM, sigterm_handler);
-    	}
+	{
+	if(options->reset_on_cancel)
+		{
+		printer_fd = fd;
+		signal_interupting(SIGTERM, sigterm_handler);
+		}
 
-    }
+	}
 
 /*
 ** This routine is called to reset the printer by the use of
 ** the reset line in the parallel cable.
 */
 void parallel_port_reset(int fd)
-    {
-    ioctl(fd, LPRESET);
-    }
+	{
+	ioctl(fd, LPRESET);
+	}
 
 /*
 ** This routine reports on the state of the ONLINE, PAPEROUT
@@ -98,34 +98,34 @@ void parallel_port_reset(int fd)
 ** PARALLEL_PORT_BUSY
 **
 ** The raw parallel port signals should be returned.  Don't try
-** guess what they might mean.  That is done in parallel.c.
+** guess what they might mean.	That is done in parallel.c.
 */
 int parallel_port_status(int fd)
-    {
-    int raw_status = 0, status = 0;
+	{
+	int raw_status = 0, status = 0;
 
-    ioctl(fd, LPGETSTATUS, &raw_status);
+	ioctl(fd, LPGETSTATUS, &raw_status);
 
-    if(!(raw_status & LP_PSELECD))		/* selected input, active high */
-    	status |= PARALLEL_PORT_OFFLINE;
-    if(raw_status & LP_POUTPA)                  /* out-of-paper input, active high */
-    	status |= PARALLEL_PORT_PAPEROUT;
-    if(!(raw_status & LP_PERRORP))		/* error input, active low */
-    	status |= PARALLEL_PORT_FAULT;
-    if(!(raw_status & LP_PBUSY))		/* helps to detect turned off printers */
-	status |= PARALLEL_PORT_BUSY;
+	if(!(raw_status & LP_PSELECD))				/* selected input, active high */
+		status |= PARALLEL_PORT_OFFLINE;
+	if(raw_status & LP_POUTPA)					/* out-of-paper input, active high */
+		status |= PARALLEL_PORT_PAPEROUT;
+	if(!(raw_status & LP_PERRORP))				/* error input, active low */
+		status |= PARALLEL_PORT_FAULT;
+	if(!(raw_status & LP_PBUSY))				/* helps to detect turned off printers */
+		status |= PARALLEL_PORT_BUSY;
 
-    return status;
-    }
+	return status;
+	}
 
 /*
 ** This routine is called just before closing the parallel port.
 ** It probably doesn't have to do anything.
 */
 void parallel_port_cleanup(int fd)
-    {
-    /* Cancel the reset printer on cancel handler. */
-    signal_interupting(SIGTERM, SIG_DFL);
-    }
+	{
+	/* Cancel the reset printer on cancel handler. */
+	signal_interupting(SIGTERM, SIG_DFL);
+	}
 
 /* end of file */

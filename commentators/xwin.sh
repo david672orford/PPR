@@ -16,8 +16,8 @@
 
 #
 # This simple commentator pops up an Xterm or Xmessage on the
-# X display indicated by the address parameter.  This commentator
-# is intended as a demonstratation.  It does not attempt to produce
+# X display indicated by the address parameter.	 This commentator
+# is intended as a demonstratation.	 It does not attempt to produce
 # well formatted or attractive messages.
 #
 
@@ -42,8 +42,8 @@ for opt in $options
    do
    case $opt in
 	severity=* )
-	    severity_threshold=`echo $opt | cut -d'=' -f2`
-	    ;;
+		severity_threshold=`echo $opt | cut -d'=' -f2`
+		;;
    esac
    done
 
@@ -51,7 +51,7 @@ for opt in $options
 if [ $severity -lt $severity_threshold ]
    then
    echo "xwin commentator: not important enough to send:"
-   echo "    $printer $code $cooked $raw1 $raw2"
+   echo "	 $printer $code $cooked $raw1 $raw2"
    exit 0
    fi
 
@@ -59,54 +59,54 @@ if [ $severity -lt $severity_threshold ]
 # Figure out which program we can use so send the message.
 #
 if [ -x $XWINBINDIR/xmessage ]
-    then
-    sender="$XWINBINDIR/xmessage \
+	then
+	sender="$XWINBINDIR/xmessage \
 		-geometry +100+100 \
 		-default okay -timeout 60 \
 		-file -
 "
 
-    else
-    if [ -x /usr/local/bin/wish ]
-    then
-    sender="/usr/local/bin/wish $HOMEDIR/lib/xmessage \
+	else
+	if [ -x /usr/local/bin/wish ]
+	then
+	sender="/usr/local/bin/wish $HOMEDIR/lib/xmessage \
 		-geometry +100+100 \
 		-default okay -timeout 60 \
 		-file -
 "
 
-    else
-    if [ -x /usr/bin/wish ]
-    then
-    sender="/usr/bin/wish $HOMEDIR/lib/xmessage \
+	else
+	if [ -x /usr/bin/wish ]
+	then
+	sender="/usr/bin/wish $HOMEDIR/lib/xmessage \
 		-geometry +100+100 \
 		-default okay -timeout 60 \
 		-file -
 "
 
-    else
-    if [ -x $XWINBINDIR/rxvt ]
-    then
-    sender="$XWINBINDIR/rxvt \
+	else
+	if [ -x $XWINBINDIR/rxvt ]
+	then
+	sender="$XWINBINDIR/rxvt \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
 
-    else
-    if [ -x $XWINBINDIR/xterm ]
-    then
-    sender="$XWINBINDIR/xterm \
+	else
+	if [ -x $XWINBINDIR/xterm ]
+	then
+	sender="$XWINBINDIR/xterm \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
 
-    else
-    echo "Can't find a program to respond with!"
-    fi
-    fi
-    fi
-    fi
-    fi
+	else
+	echo "Can't find a program to respond with!"
+	fi
+	fi
+	fi
+	fi
+	fi
 
 #
 # Send the message.

@@ -50,134 +50,134 @@ my $main_window;
 # if they are passed a pointer to a main window.
 #==========================================================================
 sub my_window
-	{
-	my $main = shift;
-	my $title = shift;
-	my $toplevel;
-
-	if(defined $main)
 		{
-		$toplevel = $main->Toplevel();
-		}
-	else
-		{
-		$toplevel = $main_window;
-		}
+		my $main = shift;
+		my $title = shift;
+		my $toplevel;
 
-	$toplevel->title($title);
+		if(defined $main)
+				{
+				$toplevel = $main->Toplevel();
+				}
+		else
+				{
+				$toplevel = $main_window;
+				}
 
-	return $toplevel;
-	}
+		$toplevel->title($title);
+
+		return $toplevel;
+		}
 
 #==========================================================================
 # This is called when the user double-clicks on a printer
 # or group icon.
 #==========================================================================
 sub do_queue
-	{
-	my($main, $queuename) = @_;
-
-	#print "do_queue(\"$main\", \"$queuename\")\n";
-
-	my $w = my_window($main, "Queue \"$queuename\"");
-
-	# Create a menu bar at the top.
-	my $menuframe = $w->Frame(
-		)->pack(-side => 'top', -fill => 'x');
-
-	# Create the Queue menu.
-	{
-	my $menu_queue = $menuframe->Menubutton(
-		-text => 'Queue',
-		-tearoff => 0
-		)->pack(-side => 'left');
-	$menu_queue->command(
-		-label => defined($main) ? "Close" : "Exit",
-		-command => sub { $w->destroy() });
-	}
-
-	# Create the Printer menu
-	{
-	my $menu_printer = $menuframe->Menubutton(
-		-text => 'Printer',
-		-tearoff => 0
-		)->pack(-side => 'left');
-	my $ppr_control = new PPR::PPOP($queuename);
-	foreach my $printer ($ppr_control->list_members())
 		{
-		$menu_printer->command(-label => "Status of $printer",
-				-command => sub{do_prnstatus($w, $printer)});
-		}
-	$ppr_control->destroy();
-	}
+		my($main, $queuename) = @_;
 
-	# Create queue listing frame, divider and button frame.
-	$w->Frame(
-		-height => 1,
-		-bg => 'black'
-		)->pack(-side => 'top', -fill => 'x');
-	my $queue_frame = $w->Frame(
-		)->pack(-side, 'top', -fill, 'both', -expand, 1);
-	$w->Frame(
-		-height => 1,
-		-bg => 'black'
-		)->pack(-side => 'top', -fill => 'x');
-	my $job_buttons_frame = $w->Frame(
-		)->pack(-side => 'top' => -fill, 'x');
+		#print "do_queue(\"$main\", \"$queuename\")\n";
 
-	# Put a queue lister in the top frame.
-	my $queue = new PrintDesk::PPRlistqueue($queue_frame, $queuename);
+		my $w = my_window($main, "Queue \"$queuename\"");
 
-	# Put job control buttons in the bottom frame.
-	my $job_buttons = new PrintDesk::GENjobbuttons($job_buttons_frame, $queue);
-	$job_buttons->AddButton("Close", sub { $w->destroy() });
+		# Create a menu bar at the top.
+		my $menuframe = $w->Frame(
+				)->pack(-side => 'top', -fill => 'x');
 
-	# Make the queue appear.
-	$queue->Show();
-	$job_buttons->Show();
-
-	# When this window is closed, destroy the queue display
-	# and button box widgets.
-	$w->OnDestroy(sub
+		# Create the Queue menu.
 		{
-		$queue->destroy();
-		$job_buttons->destroy()
+		my $menu_queue = $menuframe->Menubutton(
+				-text => 'Queue',
+				-tearoff => 0
+				)->pack(-side => 'left');
+		$menu_queue->command(
+				-label => defined($main) ? "Close" : "Exit",
+				-command => sub { $w->destroy() });
 		}
-		);
-	}
+
+		# Create the Printer menu
+		{
+		my $menu_printer = $menuframe->Menubutton(
+				-text => 'Printer',
+				-tearoff => 0
+				)->pack(-side => 'left');
+		my $ppr_control = new PPR::PPOP($queuename);
+		foreach my $printer ($ppr_control->list_members())
+				{
+				$menu_printer->command(-label => "Status of $printer",
+								-command => sub{do_prnstatus($w, $printer)});
+				}
+		$ppr_control->destroy();
+		}
+
+		# Create queue listing frame, divider and button frame.
+		$w->Frame(
+				-height => 1,
+				-bg => 'black'
+				)->pack(-side => 'top', -fill => 'x');
+		my $queue_frame = $w->Frame(
+				)->pack(-side, 'top', -fill, 'both', -expand, 1);
+		$w->Frame(
+				-height => 1,
+				-bg => 'black'
+				)->pack(-side => 'top', -fill => 'x');
+		my $job_buttons_frame = $w->Frame(
+				)->pack(-side => 'top' => -fill, 'x');
+
+		# Put a queue lister in the top frame.
+		my $queue = new PrintDesk::PPRlistqueue($queue_frame, $queuename);
+
+		# Put job control buttons in the bottom frame.
+		my $job_buttons = new PrintDesk::GENjobbuttons($job_buttons_frame, $queue);
+		$job_buttons->AddButton("Close", sub { $w->destroy() });
+
+		# Make the queue appear.
+		$queue->Show();
+		$job_buttons->Show();
+
+		# When this window is closed, destroy the queue display
+		# and button box widgets.
+		$w->OnDestroy(sub
+				{
+				$queue->destroy();
+				$job_buttons->destroy()
+				}
+				);
+		}
 
 #==========================================================================
 # This is called to display a printer's status window.
 #==========================================================================
 sub do_prnstatus
-	{
-	my($main, $printer) = @_;
-
-	#print "do_prnstatus(\"$main\", \"$printer\")\n";
-
-	my $toplevel = my_window($main, "Status of printer \"$printer\"");
-
-	# Printer status frames:
-	my $printer_frame_left = $toplevel->Frame()->pack(-side, 'left', -fill, 'y');
-	my $printer_frame_right = $toplevel->Frame()->pack(-side, 'right', -fill, 'y');
-
-	# Put printer status in its frame.
-	my $printer_status = new PrintDesk::PPRprnstatus($printer_frame_left, $printer);
-
-	# Put printer buttons into their frame.
-	my $prn_buttons = new PrintDesk::GENprnbuttons($printer_frame_right, $printer_status);
-	$prn_buttons->AddButton('Close', sub{ $toplevel->destroy() });
-
-	$printer_status->Show();
-	$prn_buttons->Show();
-
-	$toplevel->OnDestroy(sub
 		{
-		$printer_status->destroy();
-		$prn_buttons->destroy();
+		my($main, $printer) = @_;
+
+		#print "do_prnstatus(\"$main\", \"$printer\")\n";
+
+		my $toplevel = my_window($main, "Status of printer \"$printer\"");
+
+		# Printer status frames:
+		my $printer_frame_left = $toplevel->Frame()->pack(-side, 'left', -fill, 'y');
+		my $printer_frame_right = $toplevel->Frame()->pack(-side, 'right', -fill, 'y');
+
+		# Put printer status in its frame.
+		my $printer_status = new PrintDesk::PPRprnstatus($printer_frame_left, $printer);
+
+		# Put printer buttons into their frame.
+		my $prn_buttons = new PrintDesk::GENprnbuttons($printer_frame_right, $printer_status);
+		$prn_buttons->AddButton('Close', sub{ $toplevel->destroy() });
+
+		$printer_status->Show();
+		$prn_buttons->Show();
+
+		$toplevel->OnDestroy(sub
+				{
+				$printer_status->destroy();
+				$prn_buttons->destroy();
+				}
+				);
 		}
-		);
-	}
 
 #==========================================================================
 # This is called when the user clicks on a printer or group icon with
@@ -185,105 +185,105 @@ sub do_prnstatus
 #==========================================================================
 my $previous_menu = undef;
 sub do_menu
-	{
-	my($parent, $queuename, $desttype) = @_;
-
-	#print "do_menu(\"$parent\", \"$queuename\", \"$desttype\")\n";
-
-	# Destroy the previous popup menu
-	if(defined($previous_menu))
 		{
-		$previous_menu->destroy();
+		my($parent, $queuename, $desttype) = @_;
+
+		#print "do_menu(\"$parent\", \"$queuename\", \"$desttype\")\n";
+
+		# Destroy the previous popup menu
+		if(defined($previous_menu))
+				{
+				$previous_menu->destroy();
+				}
+
+		# Create the menu
+		my $menu = $parent->Menu(-tearoff, 0);
+		$menu->command(
+				-label => "Queue",
+				-command => sub{do_queue($parent, $queuename)});
+
+		# Add one item for each member
+		if($desttype eq 'printer')
+				{
+				$menu->command(-label => "Status of $queuename",
+						-command => sub{do_prnstatus($parent, $queuename)});
+				}
+		else
+				{
+				my $ppr_control = new PPR::PPOP($queuename);
+				foreach my $printer ($ppr_control->list_members())
+						{
+						$menu->command(-label => "Status of $printer",
+								-command => sub{do_prnstatus($parent, $printer)});
+						}
+				$ppr_control->destroy();
+				}
+
+		# Make the menu appear
+		$menu->post($menu->pointerxy());
+
+		# Arrange for future destruction.
+		$previous_menu = $menu;
 		}
-
-	# Create the menu
-	my $menu = $parent->Menu(-tearoff, 0);
-	$menu->command(
-		-label => "Queue",
-		-command => sub{do_queue($parent, $queuename)});
-
-	# Add one item for each member
-	if($desttype eq 'printer')
-		{
-		$menu->command(-label => "Status of $queuename",
-			-command => sub{do_prnstatus($parent, $queuename)});
-		}
-	else
-		{
-		my $ppr_control = new PPR::PPOP($queuename);
-		foreach my $printer ($ppr_control->list_members())
-			{
-			$menu->command(-label => "Status of $printer",
-				-command => sub{do_prnstatus($parent, $printer)});
-			}
-		$ppr_control->destroy();
-		}
-
-	# Make the menu appear
-	$menu->post($menu->pointerxy());
-
-	# Arrange for future destruction.
-	$previous_menu = $menu;
-	}
 
 #==========================================================================
 # Print some files
 #==========================================================================
 sub do_drop
-	{
-	my $main = shift;
-	my $dest = shift;
-
-	my $w = my_window($main, "Print");
-
-	my $dialog = new PrintDesk::PPRprintdialog($w);
-
-	my @args = $dialog->Show($dest);
-
-	if(scalar @args > 0)
 		{
-		foreach my $file (@_)
-			{
-			print join(' ', "$PPR::HOMEDIR/bin/ppr", @args, $file), "\n";
-		
-			system("$PPR::HOMEDIR/bin/ppr", @args, $file) && die;
-			}
-		}
+		my $main = shift;
+		my $dest = shift;
 
-	$dialog->destroy();
-	}
+		my $w = my_window($main, "Print");
+
+		my $dialog = new PrintDesk::PPRprintdialog($w);
+
+		my @args = $dialog->Show($dest);
+
+		if(scalar @args > 0)
+				{
+				foreach my $file (@_)
+						{
+						print join(' ', "$PPR::HOMEDIR/bin/ppr", @args, $file), "\n";
+				
+						system("$PPR::HOMEDIR/bin/ppr", @args, $file) && die;
+						}
+				}
+
+		$dialog->destroy();
+		}
 
 #==========================================================================
 # Create the PPR control panel.
 #==========================================================================
 
 sub do_panel
-	{
-	my $main = shift;
+		{
+		my $main = shift;
 
-	my $w = my_window($main, "PPR Queues");
+		my $w = my_window($main, "PPR Queues");
 
-	# Create a menu bar at the top.
-	my $menuframe = $w->Frame();
-	$menuframe->pack(-fill => 'x');
+		# Create a menu bar at the top.
+		my $menuframe = $w->Frame();
+		$menuframe->pack(-fill => 'x');
 
-	# Create the File menu.
-	my $menu_file = $menuframe->Menubutton(-text => 'File', -tearoff, 0);
-	$menu_file->pack(-side => 'left');
-	$menu_file->command(-label => 'Exit', -command => sub { $w->destroy() });
+		# Create the File menu.
+		my $menu_file = $menuframe->Menubutton(-text => 'File', -tearoff, 0);
+		$menu_file->pack(-side => 'left');
+		$menu_file->command(-label => 'Exit', -command => sub { $w->destroy() });
 
-	$w->Frame(
-		-height => 1,
-		-bg => 'black'
-		)->pack(-side => 'top', -fill => 'x');
+		$w->Frame(
+				-height => 1,
+				-bg => 'black'
+				)->pack(-side => 'top', -fill => 'x');
 
-	# Create an instance of the object which displays a list
-	# of printers and groups.
-	my $folder = new PrintDesk::GENfolder($w, \&do_queue, \&do_menu);
+		# Create an instance of the object which displays a list
+		# of printers and groups.
+		my $folder = new PrintDesk::GENfolder($w, \&do_queue, \&do_menu);
 
-	# Make the folder appear.
-	$folder->Show();
-	}
+		# Make the folder appear.
+		$folder->Show();
+		}
 
 #==========================================================================
 # Main
@@ -294,34 +294,34 @@ $main_window = MainWindow->new();
 
 my $opt_dest = undef;
 while(my $arg = shift @ARGV)
-	{
-	if($arg eq "-d" || $arg eq "--dest")
 		{
-		$opt_dest = shift @ARGV;
+		if($arg eq "-d" || $arg eq "--dest")
+				{
+				$opt_dest = shift @ARGV;
+				}
+		elsif($arg !~ /^-/ || $arg eq "-")
+				{
+				unshift(@ARGV, $arg);
+				last;
+				}
+		else
+				{
+				die;
+				}
 		}
-	elsif($arg !~ /^-/ || $arg eq "-")
-		{
-		unshift(@ARGV, $arg);
-		last;
-		}
-	else
-		{
-		die;
-		}
-	}
 
 if(scalar @ARGV > 0)
-	{
-	do_drop(undef, $opt_dest, @ARGV);
-	}
+		{
+		do_drop(undef, $opt_dest, @ARGV);
+		}
 elsif(defined $opt_dest)
-	{
-	do_queue(undef, $opt_dest, undef);
-	}
+		{
+		do_queue(undef, $opt_dest, undef);
+		}
 else
-	{
-	do_panel();
-	}
+		{
+		do_panel();
+		}
 
 # Start the GUI event loop.
 MainLoop;

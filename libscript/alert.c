@@ -26,28 +26,28 @@
 #include "util_exits.h"
 
 int main(int argc, char *argv[])
-    {
-    int stamp;
-
-    chdir(HOMEDIR);
-
-    if(argc != 4)
 	{
-	fprintf(stderr,"%s: wrong number of parameters\n", argv[0]);
-	return EXIT_SYNTAX;
-	}
+	int stamp;
 
-    if((stamp = gu_torf(argv[2])) == ANSWER_UNKNOWN)
-	{
-	fprintf(stderr, "%s: second parameter must be TRUE or FALSE\n", argv[0]);
-	return EXIT_SYNTAX;
-	}
+	chdir(HOMEDIR);
 
-    /* Call the library alert function to post the alert. */
-    alert(argv[1], stamp, argv[3]);
+	if(argc != 4)
+		{
+		fprintf(stderr,"%s: wrong number of parameters\n", argv[0]);
+		return EXIT_SYNTAX;
+		}
 
-    /* We assume it worked, exit. */
-    return EXIT_OK;
-    } /* end of main() */
+	if((stamp = gu_torf(argv[2])) == ANSWER_UNKNOWN)
+		{
+		fprintf(stderr, "%s: second parameter must be TRUE or FALSE\n", argv[0]);
+		return EXIT_SYNTAX;
+		}
+
+	/* Call the library alert function to post the alert. */
+	alert(argv[1], stamp, argv[3]);
+
+	/* We assume it worked, exit. */
+	return EXIT_OK;
+	} /* end of main() */
 
 /* end of file */

@@ -1,5 +1,5 @@
 /*************************************************
-*      Perl-Compatible Regular Expressions       *
+*	   Perl-Compatible Regular Expressions		 *
 *************************************************/
 
 /*
@@ -8,7 +8,7 @@ and semantics are as close as possible to those of the Perl 5 language.
 
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
-           Copyright (c) 1997-2001 University of Cambridge
+		   Copyright (c) 1997-2001 University of Cambridge
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -45,7 +45,7 @@ DFTABLES is defined. */
 
 
 /*************************************************
-*           Create PCRE character tables         *
+*			Create PCRE character tables		 *
 *************************************************/
 
 /* This function builds a set of character tables for use by PCRE and returns
@@ -54,8 +54,8 @@ their contents will depend upon the current locale setting. When compiled as
 part of the library, the store is obtained via pcre_malloc(), but when compiled
 inside dftables, use malloc().
 
-Arguments:   none
-Returns:     pointer to the contiguous block of data
+Arguments:	 none
+Returns:	 pointer to the contiguous block of data
 */
 
 const unsigned char *
@@ -88,27 +88,27 @@ memset(p, 0, cbit_length);
 for (i = 0; i < 256; i++)
   {
   if (isdigit(i))
-    {
-    p[cbit_digit  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
+	{
+	p[cbit_digit  + i/8] |= 1 << (i&7);
+	p[cbit_word	  + i/8] |= 1 << (i&7);
+	}
   if (isupper(i))
-    {
-    p[cbit_upper  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
+	{
+	p[cbit_upper  + i/8] |= 1 << (i&7);
+	p[cbit_word	  + i/8] |= 1 << (i&7);
+	}
   if (islower(i))
-    {
-    p[cbit_lower  + i/8] |= 1 << (i&7);
-    p[cbit_word   + i/8] |= 1 << (i&7);
-    }
-  if (i == '_')   p[cbit_word   + i/8] |= 1 << (i&7);
-  if (isspace(i)) p[cbit_space  + i/8] |= 1 << (i&7);
+	{
+	p[cbit_lower  + i/8] |= 1 << (i&7);
+	p[cbit_word	  + i/8] |= 1 << (i&7);
+	}
+  if (i == '_')	  p[cbit_word	+ i/8] |= 1 << (i&7);
+  if (isspace(i)) p[cbit_space	+ i/8] |= 1 << (i&7);
   if (isxdigit(i))p[cbit_xdigit + i/8] |= 1 << (i&7);
-  if (isgraph(i)) p[cbit_graph  + i/8] |= 1 << (i&7);
-  if (isprint(i)) p[cbit_print  + i/8] |= 1 << (i&7);
-  if (ispunct(i)) p[cbit_punct  + i/8] |= 1 << (i&7);
-  if (iscntrl(i)) p[cbit_cntrl  + i/8] |= 1 << (i&7);
+  if (isgraph(i)) p[cbit_graph	+ i/8] |= 1 << (i&7);
+  if (isprint(i)) p[cbit_print	+ i/8] |= 1 << (i&7);
+  if (ispunct(i)) p[cbit_punct	+ i/8] |= 1 << (i&7);
+  if (iscntrl(i)) p[cbit_cntrl	+ i/8] |= 1 << (i&7);
   }
 p += cbit_length;
 

@@ -37,45 +37,45 @@ require "cgi_intl.pl";
 require "cgi_digest.pl";
 
 sub validate_password
-    {
-    my $domain = shift;
-    my $username = shift;
-    my $password = shift;
+	{
+	my $domain = shift;
+	my $username = shift;
+	my $password = shift;
 
-    eval {
-	if($username eq "")
-	    {
-	    die "You didn't enter your username.\n";
-	    }
+	eval {
+		if($username eq "")
+			{
+			die "You didn't enter your username.\n";
+			}
 
-	# Split the password (as encoded by the HTML form) into the nonce
-	# and response portions.
-	$password =~ /^(\S+) (\S+)$/ || die;
-	my($nonce, $response) = ($1, $2);
+		# Split the password (as encoded by the HTML form) into the nonce
+		# and response portions.
+		$password =~ /^(\S+) (\S+)$/ || die;
+		my($nonce, $response) = ($1, $2);
 
-	# Get the password from the password file.
-	my $H1 = digest_getpw($username);
+		# Get the password from the password file.
+		my $H1 = digest_getpw($username);
 
-	# Compute a correct response based on the correct password.
-	my $correct_response = md5hex("$H1:$nonce");
+		# Compute a correct response based on the correct password.
+		my $correct_response = md5hex("$H1:$nonce");
 
-	if($response ne $correct_response)
-	    {
-	    die "Password is incorrect."
-	    }
+		if($response ne $correct_response)
+			{
+			die "Password is incorrect."
+			}
 
-	if(!digest_nonce_validate($domain, $nonce))
-	    {
-	    die "MD5 digest authentication nonce was too stale.  Please try again.";
-	    }
-	};
-    if($@)
-    	{
-	return $@;
-    	}
+		if(!digest_nonce_validate($domain, $nonce))
+			{
+			die "MD5 digest authentication nonce was too stale.	 Please try again.";
+			}
+		};
+	if($@)
+		{
+		return $@;
+		}
 
-    return undef;
-    }
+	return undef;
+	}
 
 # Initialize the internationalization libraries and determine the
 # content language and charset.
@@ -110,42 +110,42 @@ Head
 
 eval {
 
-    #
-    # [Cancel Job] pressed screen.
-    #
-    if($action eq "Cancel Job")
-	{
-	require "cgi_run.pl";
-	run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "cancel", $jobname);
-	print "<p>The job has been canceled.</p>\n";
-	print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
-	print "<script>window.close()</script>\n";
-	}
+	#
+	# [Cancel Job] pressed screen.
+	#
+	if($action eq "Cancel Job")
+		{
+		require "cgi_run.pl";
+		run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "cancel", $jobname);
+		print "<p>The job has been canceled.</p>\n";
+		print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+		print "<script>window.close()</script>\n";
+		}
 
-    else
-	{
-	my $error = undef;
-
-	# If [OK] pressed with a valid username and password pair,
-	if(($action eq "OK" || $username ne "") && !defined($error = validate_password($protection_domain, $username, $password)))
-	    {
-	    require "cgi_run.pl";
-	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "modify", $jobname, "for=$username", "question=");
-	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "release", $jobname);
-	    print "<p>Changed owner and released job.</p>\n";
-	    print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
-	    print "<script>window.close()</script>\n";
-	    }
-
-	# First time or invalid login.  We will distinguish them in a momement.
 	else
-	    {
-	    print "<p>", html(sprintf(
-		_("You have submitted a print job entitled \"%s\".  You may either enter your\n"
-		. "username and password to print it or you may cancel it."), $title)),
-		"</p>\n";
+		{
+		my $error = undef;
 
-	    print <<"Login";
+		# If [OK] pressed with a valid username and password pair,
+		if(($action eq "OK" || $username ne "") && !defined($error = validate_password($protection_domain, $username, $password)))
+			{
+			require "cgi_run.pl";
+			run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "modify", $jobname, "for=$username", "question=");
+			run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "release", $jobname);
+			print "<p>Changed owner and released job.</p>\n";
+			print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+			print "<script>window.close()</script>\n";
+			}
+
+		# First time or invalid login.	We will distinguish them in a momement.
+		else
+			{
+			print "<p>", html(sprintf(
+				_("You have submitted a print job entitled \"%s\".	You may either enter your\n"
+				. "username and password to print it or you may cancel it."), $title)),
+				"</p>\n";
+
+			print <<"Login";
 <p>
 Username: <input type="text" name="username" value=${\html_value($username)} size=16>
 <br>
@@ -157,20 +157,20 @@ Password: <input type="password" name="password" value="" size=16 auth_md5="user
 </p>
 Login
 
-	    # If there is a password error, print it here.
-	    if(defined $error)
-		{
-		print "<br><p><font color=\"red\" size=\"+2\">", html($error), "</font></p>\n";
+			# If there is a password error, print it here.
+			if(defined $error)
+				{
+				print "<br><p><font color=\"red\" size=\"+2\">", html($error), "</font></p>\n";
+				}
+			}
 		}
-	    }
-	}
 
 
-    # Catch exceptions and print them on the browser.
-    }; if($@)
-	{
-	print "<p>Error: ", html($@), "</p>\n";
-	}
+	# Catch exceptions and print them on the browser.
+	}; if($@)
+		{
+		print "<p>Error: ", html($@), "</p>\n";
+		}
 
 cgi_write_data();
 

@@ -30,7 +30,7 @@
 
 /*
 ** These functions emmit PostScript code fragments for things the PPD files
-** does not tell us how to do.  Some of the code in this module reads or
+** does not tell us how to do.	Some of the code in this module reads or
 ** creates NonPPDFeature comments as described in Adobe Technical Note #????.
 */
 
@@ -46,54 +46,54 @@
 ** places on some printers.
 */
 void set_jobname(const char jobname[])
-    {
-    if(Features.LanguageLevel < 2)
 	{
-	printer_puts("/statusdict where {pop statusdict /jobname (");
-	printer_puts_escaped(jobname);
-	printer_puts(") put } if % PPR\n");
-	}
-    else
-	{
-	printer_puts("<< /JobName (");
-	printer_puts_escaped(jobname);
-	printer_puts(") >> setuserparams % PPR\n");
-	}
+	if(Features.LanguageLevel < 2)
+		{
+		printer_puts("/statusdict where {pop statusdict /jobname (");
+		printer_puts_escaped(jobname);
+		printer_puts(") put } if % PPR\n");
+		}
+	else
+		{
+		printer_puts("<< /JobName (");
+		printer_puts_escaped(jobname);
+		printer_puts(") >> setuserparams % PPR\n");
+		}
 
-    } /* end of set_jobname() */
+	} /* end of set_jobname() */
 
 /*
 ** This function sends to the printer the bare code needed to set auto copies.
 ** This is called from two functions below.
 */
 static void set_numcopies_bare(int copies)
-    {
-    if(Features.LanguageLevel < 2)
 	{
-	printer_printf("/#copies %d def %%PPR\n", copies);
+	if(Features.LanguageLevel < 2)
+		{
+		printer_printf("/#copies %d def %%PPR\n", copies);
+		}
+	else
+		{
+		char temp[25];
+		begin_stopped();
+		printer_printf("<< /NumCopies %d >> setpagedevice %%PPR\n", copies);
+		snprintf(temp, sizeof(temp), "%d", copies);
+		end_stopped("NumCopies", temp);
+		}
 	}
-    else
-	{
-	char temp[25];
-	begin_stopped();
-	printer_printf("<< /NumCopies %d >> setpagedevice %%PPR\n", copies);
-	snprintf(temp, sizeof(temp), "%d", copies);
-	end_stopped("NumCopies", temp);
-	}
-    }
 
 /*
 ** This is called from other modules to generate a properly commented
 ** code block to set auto copies.
 */
 void set_numcopies(int copies)
-    {
-    printer_printf("%%%%BeginNonPPDFeature: NumCopies %d\n", copies);
-    printer_putline("[0 0 0 0 0 0] currentmatrix %PPR");
-    set_numcopies_bare(copies);
-    printer_putline("setmatrix %PPR");
-    printer_putline("%%EndNonPPDFeature\n");
-    } /* end of set_numcopies() */
+	{
+	printer_printf("%%%%BeginNonPPDFeature: NumCopies %d\n", copies);
+	printer_putline("[0 0 0 0 0 0] currentmatrix %PPR");
+	set_numcopies_bare(copies);
+	printer_putline("setmatrix %PPR");
+	printer_putline("%%EndNonPPDFeature\n");
+	} /* end of set_numcopies() */
 
 /*
 ** This is called whenever a "%%BeginNonPPDFeature:" comment is encountered.
@@ -101,52 +101,52 @@ void set_numcopies(int copies)
 ** "%%EndNonPPDFeature" line in line[].
 */
 void begin_nonppd_feature(const char feature_name[], const char feature_value[], FILE *infile)
-    {
-    const char *function = "begin_nonppd_feature";
-    int copies = -1;
-    gu_boolean keep = TRUE;
-
-    if(!feature_name || ! feature_value)
-	return;
-
-    if(strcmp(feature_name, "NumCopies") == 0 && copies_auto != -1)
-    	{
-	printer_printf("%% %%%%BeginNonPPDFeature: %s %s\n", feature_name, feature_value);
-	copies = copies_auto;
-	printer_printf("%%%%BeginNonPPDFeature: %s %d\n", feature_name, copies);
-	keep = FALSE;
-    	}
-    else
 	{
-	printer_printf("%%%%BeginNonPPDFeature: %s %s\n", feature_name, feature_value);
-	}
+	const char *function = "begin_nonppd_feature";
+	int copies = -1;
+	gu_boolean keep = TRUE;
 
-    /* Copy the code until we see "%%EndNonPPDFeature". */
-    while(TRUE)
-	{
-	if(!dgetline(infile))
-	    {
-	    give_reason("defective NonPPDFeature invokation");
-	    fatal(EXIT_JOBERR, "%s(): unterminated NonPPDFeature code", function);
-	    }
+	if(!feature_name || ! feature_value)
+		return;
 
-	if(strcmp(line, "%%EndNonPPDFeature") == 0)
-	    break;
-
-	if(keep)
-	    printer_putline(line);
-	#ifdef KEEP_OLD_CODE
+	if(strcmp(feature_name, "NumCopies") == 0 && copies_auto != -1)
+		{
+		printer_printf("%% %%%%BeginNonPPDFeature: %s %s\n", feature_name, feature_value);
+		copies = copies_auto;
+		printer_printf("%%%%BeginNonPPDFeature: %s %d\n", feature_name, copies);
+		keep = FALSE;
+		}
 	else
-	    printer_printf("%% %s\n", line);
-	#endif
-	}
+		{
+		printer_printf("%%%%BeginNonPPDFeature: %s %s\n", feature_name, feature_value);
+		}
 
-    if(copies != -1)
-	{
-	set_numcopies_bare(copies);
-	}
+	/* Copy the code until we see "%%EndNonPPDFeature". */
+	while(TRUE)
+		{
+		if(!dgetline(infile))
+			{
+			give_reason("defective NonPPDFeature invokation");
+			fatal(EXIT_JOBERR, "%s(): unterminated NonPPDFeature code", function);
+			}
 
-    printer_puts("%%EndNonPPDFeature\n");
-    } /* end of begin_nonppd_feature() */
+		if(strcmp(line, "%%EndNonPPDFeature") == 0)
+			break;
+
+		if(keep)
+			printer_putline(line);
+		#ifdef KEEP_OLD_CODE
+		else
+			printer_printf("%% %s\n", line);
+		#endif
+		}
+
+	if(copies != -1)
+		{
+		set_numcopies_bare(copies);
+		}
+
+	printer_puts("%%EndNonPPDFeature\n");
+	} /* end of begin_nonppd_feature() */
 
 /* end of file */

@@ -62,26 +62,26 @@ do_start ()
 	# What language should messages be printed in?
 	lang=`$HOMEDIR/lib/ppr_conf_query internationalization daemonlang`
 	if [ -n "$lang" ]
-	    then
-	    $NECHO -n "(language is $lang) "
-	    LANG=$lang
-	    export LANG
-	    fi
+		then
+		$NECHO -n "(language is $lang) "
+		LANG=$lang
+		export LANG
+		fi
 
 	# This is the spooler daemon.
 	$HOMEDIR/bin/pprd && $NECHO -n "pprd "
 
 	# This is the new AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papd ]
-	    then
-	    $HOMEDIR/bin/papd
-	    fi
+		then
+		$HOMEDIR/bin/papd
+		fi
 
 	# This is the AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
-	    then
-	    $HOMEDIR/bin/papsrv && $NECHO -n "papsrv "
-	    fi
+		then
+		$HOMEDIR/bin/papsrv && $NECHO -n "papsrv "
+		fi
 
 	# Uncomment this if you want to run the new lprsrv
 	# in standalone mode:
@@ -103,30 +103,30 @@ do_stop ()
 	{
 	$NECHO -n "Stopping PPR daemons: "
 	if [ -r $RUNDIR/pprd.pid ]
-	    then
-	    kill `cat $RUNDIR/pprd.pid` && $NECHO -n "pprd "
-	    rm -f $RUNDIR/pprd.pid
-	    fi
+		then
+		kill `cat $RUNDIR/pprd.pid` && $NECHO -n "pprd "
+		rm -f $RUNDIR/pprd.pid
+		fi
 	if [ -r $RUNDIR/papd.pid ]
-	    then
-	    kill `cat $RUNDIR/papd.pid` && $NECHO -n "papd "
-	    rm -f $RUNDIR/papd.pid
-	    fi
+		then
+		kill `cat $RUNDIR/papd.pid` && $NECHO -n "papd "
+		rm -f $RUNDIR/papd.pid
+		fi
 	if [ -r $RUNDIR/papsrv.pid ]
-	    then
-	    kill `cat $RUNDIR/papsrv.pid` && $NECHO -n "papsrv "
-	    rm -f $RUNDIR/papsrv.pid
-	    fi
+		then
+		kill `cat $RUNDIR/papsrv.pid` && $NECHO -n "papsrv "
+		rm -f $RUNDIR/papsrv.pid
+		fi
 	if [ -r $RUNDIR/lprsrv.pid ]
-	    then
-	    kill `cat $RUNDIR/lprsrv.pid` && $NECHO -n "lprsrv "
-	    rm -f $RUNDIR/lprsrv.pid
-	    fi
+		then
+		kill `cat $RUNDIR/lprsrv.pid` && $NECHO -n "lprsrv "
+		rm -f $RUNDIR/lprsrv.pid
+		fi
 	if [ -r $RUNDIR/olprsrv.pid ]
-	    then
-	    kill `cat $RUNDIR/olprsrv.pid` && $NECHO -n "olprsrv "
-	    rm -f $RUNDIR/olprsrv.pid
-	    fi
+		then
+		kill `cat $RUNDIR/olprsrv.pid` && $NECHO -n "olprsrv "
+		rm -f $RUNDIR/olprsrv.pid
+		fi
 	echo
 	# For RedHat Linux:
 	if [ -d /var/lock/subsys ]; then rm -f /var/lock/subsys/ppr; fi
@@ -134,28 +134,28 @@ do_stop ()
 
 case "$1" in
 
-    start_msg)
+	start_msg)
 	echo "Start PPR spooler"
 	;;
 
-    stop_msg)
+	stop_msg)
 	echo "Stopping PPR spooler"
 	;;
 
-    start)
+	start)
 	do_start
 	;;
 
-    stop)
+	stop)
 	do_stop
 	;;
 
-    restart)
+	restart)
 	do_stop
 	do_start
 	;;
 
-    *)
+	*)
 	echo "Usage: ppr {start, stop, restart}"
 	exit 1
 	;;

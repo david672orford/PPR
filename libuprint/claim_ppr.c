@@ -38,23 +38,23 @@
 ** of a valid PPR destination.
 */
 int printdest_claim_ppr(const char destname[])
-    {
-    char fname[MAX_PPR_PATH];
-    struct stat statbuf;
+	{
+	char fname[MAX_PPR_PATH];
+	struct stat statbuf;
 
-    ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);	/* try alias */
-    if(stat(fname, &statbuf) == 0)			/* if file found, */
-	return TRUE;
+	ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);	/* try alias */
+	if(stat(fname, &statbuf) == 0)						/* if file found, */
+		return TRUE;
 
-    ppr_fnamef(fname, "%s/%s", GRCONF, destname);	/* try group */
-    if(stat(fname, &statbuf) == 0)			/* if file found, */
-	return TRUE;
+	ppr_fnamef(fname, "%s/%s", GRCONF, destname);		/* try group */
+	if(stat(fname, &statbuf) == 0)						/* if file found, */
+		return TRUE;
 
-    ppr_fnamef(fname, "%s/%s", PRCONF, destname);	/* try printer */
-    if(stat(fname, &statbuf) == 0)			/* if it exists, */
-	return TRUE;
+	ppr_fnamef(fname, "%s/%s", PRCONF, destname);		/* try printer */
+	if(stat(fname, &statbuf) == 0)						/* if it exists, */
+		return TRUE;
 
-    return FALSE;
-    } /* end of printdest_claim_ppr() */
+	return FALSE;
+	} /* end of printdest_claim_ppr() */
 
 /* end of file */

@@ -61,7 +61,7 @@
 /* #define BUSINESS_HOURS 1 */
 
 /*
-** These are used by lprsrv and papsrv.  They will not accept new
+** These are used by lprsrv and papsrv.	 They will not accept new
 ** jobs unless at least this many inodes and blocks are free
 ** in TEMPDIR and VAR_SPOOL_PPR.
 **
@@ -81,7 +81,7 @@
 /*
 ** Allow Apple's non-standard quote mark quoting.  (Apple LaserWriter
 ** drivers may enclose a procset name in ASCII double quotes with the
-** PostScript () quotes inside.  Don't change this, you won't like
+** PostScript () quotes inside.	 Don't change this, you won't like
 ** the results.
 */
 #define APPLE_QUOTE 1
@@ -96,7 +96,7 @@
 /*
 ** This is the prefix that PPR uses for any comments
 ** which have been created especially for it.  I do
-** not recommend changing this.  The value below stands
+** not recommend changing this.	 The value below stands
 ** for "Trinity College, Hartford, Connecticut".  See
 ** RBIIpp 696-698 for furthur information on this topic.
 */
@@ -127,30 +127,30 @@
 /*
 ** These are the basic PPR directories in which its files and
 ** other directories are placed.  Notice that these are defined
-** only if they have not been defined already.  Often, Configure
+** only if they have not been defined already.	Often, Configure
 ** will have generated an include/global.mk which defines these
 ** values first.
 */
 #ifndef CONFDIR
-#define CONFDIR "/etc/ppr"		/* configuration files */
+#define CONFDIR "/etc/ppr"				/* configuration files */
 #endif
 #ifndef HOMEDIR
-#define HOMEDIR "/usr/lib/ppr"		/* architechture dependent files */
+#define HOMEDIR "/usr/lib/ppr"			/* architechture dependent files */
 #endif
 #ifndef SHAREDIR
-#define SHAREDIR "/usr/share/ppr"	/* architechture independent files */
+#define SHAREDIR "/usr/share/ppr"		/* architechture independent files */
 #endif
 #ifndef VAR_SPOOL_PPR
 #define VAR_SPOOL_PPR "/var/spool/ppr"	/* work files */
 #endif
 #ifndef TEMPDIR
-#define TEMPDIR "/tmp"			/* short life temporary files */
+#define TEMPDIR "/tmp"					/* short life temporary files */
 #endif
 #ifndef SYSBINDIR
-#define SYSBINDIR "/usr/bin"		/* for standard system programs */
+#define SYSBINDIR "/usr/bin"			/* for standard system programs */
 #endif
 #ifndef XWINBINDIR
-#define XWINBINDIR "/usr/bin/X11"	/* for standard X-Windows programs */
+#define XWINBINDIR "/usr/bin/X11"		/* for standard X-Windows programs */
 #endif
 
 /* Subdirectories */
@@ -161,50 +161,50 @@
 #define PPR_CONF CONFDIR"/ppr.conf"
 
 /* Various configuration files: */
-#define DBNAME CONFDIR"/charge_users.db"			/* users database file name */
-#define MEDIAFILE CONFDIR"/media.db"				/* media definitions */
-#define NEWPRN_CONFIG CONFDIR"/newprn.conf"			/* new printer configuration lines */
-#define UPRINTCONF CONFDIR"/uprint.conf"			/* for libuprint.a */
-#define UPRINTREMOTECONF CONFDIR"/uprint-remote.conf"		/* list of remote printers */
+#define DBNAME CONFDIR"/charge_users.db"						/* users database file name */
+#define MEDIAFILE CONFDIR"/media.db"							/* media definitions */
+#define NEWPRN_CONFIG CONFDIR"/newprn.conf"						/* new printer configuration lines */
+#define UPRINTCONF CONFDIR"/uprint.conf"						/* for libuprint.a */
+#define UPRINTREMOTECONF CONFDIR"/uprint-remote.conf"			/* list of remote printers */
 
 /* Configuration files that aren't meant to be changed: */
-#define MFMODES SHAREDIR"/lib/mfmodes.conf"			/* MetaFont modes for various printers */
-#define FONTSUB SHAREDIR"/lib/fontsub.conf"			/* font substitution database */
-#define LW_MESSAGES_CONF SHAREDIR"/lib/lw-messages.conf"	/* LaserWriter errors file */
-#define PJL_MESSAGES_CONF SHAREDIR"/lib/pjl-messages.conf"	/* PJL USTATUS DEVICE errors file */
-#define EDITPSCONF HOMEDIR"/editps/editps.conf"			/* for ppr -H editps */
-#define CHARSETSCONF SHAREDIR"/lib/charsets.conf"		/* map characters set to PostScript encodings */
-#define FONTSCONF SHAREDIR"/lib/fonts.conf"			/* list of fonts and the PostScript encodings they support */
-#define PAGESIZES_CONF SHAREDIR"/lib/pagesizes.conf"		/* additional PostScript *PageSize names */
-#define PSERRORS_CONF SHAREDIR"/lib/pserrors.conf"		/* additional PostScript error explainations */
+#define MFMODES SHAREDIR"/lib/mfmodes.conf"						/* MetaFont modes for various printers */
+#define FONTSUB SHAREDIR"/lib/fontsub.conf"						/* font substitution database */
+#define LW_MESSAGES_CONF SHAREDIR"/lib/lw-messages.conf"		/* LaserWriter errors file */
+#define PJL_MESSAGES_CONF SHAREDIR"/lib/pjl-messages.conf"		/* PJL USTATUS DEVICE errors file */
+#define EDITPSCONF HOMEDIR"/editps/editps.conf"					/* for ppr -H editps */
+#define CHARSETSCONF SHAREDIR"/lib/charsets.conf"				/* map characters set to PostScript encodings */
+#define FONTSCONF SHAREDIR"/lib/fonts.conf"						/* list of fonts and the PostScript encodings they support */
+#define PAGESIZES_CONF SHAREDIR"/lib/pagesizes.conf"			/* additional PostScript *PageSize names */
+#define PSERRORS_CONF SHAREDIR"/lib/pserrors.conf"				/* additional PostScript error explainations */
 
 /* Various configuration directories: */
-#define PRCONF CONFDIR"/printers"		/* printer configuration files */
-#define GRCONF CONFDIR"/groups"			/* group configuration files */
-#define ALIASCONF CONFDIR"/aliases"		/* queue alias configuration files */
-#define MOUNTEDDIR CONFDIR"/mounted"		/* directory for media mounted files */
-#define ACLDIR CONFDIR"/acl"			/* Access Control Lists */
+#define PRCONF CONFDIR"/printers"				/* printer configuration files */
+#define GRCONF CONFDIR"/groups"					/* group configuration files */
+#define ALIASCONF CONFDIR"/aliases"				/* queue alias configuration files */
+#define MOUNTEDDIR CONFDIR"/mounted"			/* directory for media mounted files */
+#define ACLDIR CONFDIR"/acl"					/* Access Control Lists */
 
 /* Special files used by the spooler: */
-#define NEXTIDFILE RUNDIR"/lastid_ppr"		/* file with previous queue id number */
-#define FIFO_NAME VAR_SPOOL_PPR"/PIPE"		/* name of pipe between ppr & pprd */
-#define PPRD_LOCKFILE RUNDIR"/pprd.pid"		/* created and locked by pprd */
+#define NEXTIDFILE RUNDIR"/lastid_ppr"			/* file with previous queue id number */
+#define FIFO_NAME VAR_SPOOL_PPR"/PIPE"			/* name of pipe between ppr & pprd */
+#define PPRD_LOCKFILE RUNDIR"/pprd.pid"			/* created and locked by pprd */
 
 /* Directories where the spooler and friends find components: */
-#define FILTDIR HOMEDIR"/filters"		/* directory for input filter programs */
-#define INTDIR HOMEDIR"/interfaces"		/* directory for interface programs */
-#define COMDIR HOMEDIR"/commentators"		/* directory for commentator programs */
-#define RESPONDERDIR HOMEDIR"/responders"	/* responder programs */
-#define PPDDIR SHAREDIR"/PPDFiles"		/* our PPD file library (must be absolute) */
-#define STATIC_CACHEDIR SHAREDIR"/cache"	/* pre-loaded cache files */
+#define FILTDIR HOMEDIR"/filters"				/* directory for input filter programs */
+#define INTDIR HOMEDIR"/interfaces"				/* directory for interface programs */
+#define COMDIR HOMEDIR"/commentators"			/* directory for commentator programs */
+#define RESPONDERDIR HOMEDIR"/responders"		/* responder programs */
+#define PPDDIR SHAREDIR"/PPDFiles"				/* our PPD file library (must be absolute) */
+#define STATIC_CACHEDIR SHAREDIR"/cache"		/* pre-loaded cache files */
 
 /* Directories where the spooler writes stuff: */
-#define QUEUEDIR VAR_SPOOL_PPR"/queue"		/* queue directory */
-#define DATADIR VAR_SPOOL_PPR"/jobs"		/* job data directory */
-#define ALERTDIR VAR_PRINTERS"/alerts"		/* directory for printer alert files */
-#define STATUSDIR VAR_PRINTERS"/status"		/* directory for printer status files */
-#define LOGDIR VAR_SPOOL_PPR"/logs"		/* directory for log files */
-#define CACHEDIR VAR_SPOOL_PPR"/cache"		/* directory for automatically cached files */
+#define QUEUEDIR VAR_SPOOL_PPR"/queue"			/* queue directory */
+#define DATADIR VAR_SPOOL_PPR"/jobs"			/* job data directory */
+#define ALERTDIR VAR_PRINTERS"/alerts"			/* directory for printer alert files */
+#define STATUSDIR VAR_PRINTERS"/status"			/* directory for printer status files */
+#define LOGDIR VAR_SPOOL_PPR"/logs"				/* directory for log files */
+#define CACHEDIR VAR_SPOOL_PPR"/cache"			/* directory for automatically cached files */
 #define ADDRESS_CACHE VAR_PRINTERS"/addr_cache" /* directory for cache of printer addresses */
 #define FONT_INDEX VAR_SPOOL_PPR"/fontindex.db"
 
@@ -231,33 +231,33 @@
 ** Some Practical Limits
 =====================================================================*/
 
-#define MAX_LINE 1024			/* maximum PostScript input line length (now pretty meaningless) */
-#define MAX_CONT 32			/* maximum segment represented by "%%+" */
-#define MAX_TOKENIZED 512		/* longest line we may pass to tokenize() */
-#define MAX_TOKENS 20			/* limit on words per comment line */
-#define MAX_PPR_PATH 128		/* space to reserve for building a file name */
+#define MAX_LINE 1024					/* maximum PostScript input line length (now pretty meaningless) */
+#define MAX_CONT 32						/* maximum segment represented by "%%+" */
+#define MAX_TOKENIZED 512				/* longest line we may pass to tokenize() */
+#define MAX_TOKENS 20					/* limit on words per comment line */
+#define MAX_PPR_PATH 128				/* space to reserve for building a file name */
 
-#define MAX_BINNAME 16			/* max chars in name of input bin */
-#define MAX_MEDIANAME 16		/* max chars in media name */
-#define MAX_COLOURNAME 16		/* max chars in colour name */
-#define MAX_TYPENAME 16			/* max chars media type name */
+#define MAX_BINNAME 16					/* max chars in name of input bin */
+#define MAX_MEDIANAME 16				/* max chars in media name */
+#define MAX_COLOURNAME 16				/* max chars in colour name */
+#define MAX_TYPENAME 16					/* max chars media type name */
 
-#define MAX_DOCMEDIA 4			/* max media types per job */
+#define MAX_DOCMEDIA 4					/* max media types per job */
 
-#define MAX_DESTNAME 16			/* max length of destination name */
-#define MAX_NODENAME 16			/* max length of node name */
-#define MAX_NODES 25			/* max number of nodes pprd can keep track of */
-#define MAX_PRINTERS 250		/* no more than 250 printers */
-#define MAX_BINS 10			/* max bins per printer */
-#define MAX_GROUPS 150			/* no more than this may groups */
-#define MAX_GROUPSIZE 8			/* no more than 8 printers per group */
-#define MAX_ALIASES 150			/* no more than 150 queue aliases */
+#define MAX_DESTNAME 16					/* max length of destination name */
+#define MAX_NODENAME 16					/* max length of node name */
+#define MAX_NODES 25					/* max number of nodes pprd can keep track of */
+#define MAX_PRINTERS 250				/* no more than 250 printers */
+#define MAX_BINS 10						/* max bins per printer */
+#define MAX_GROUPS 150					/* no more than this may groups */
+#define MAX_GROUPSIZE 8					/* no more than 8 printers per group */
+#define MAX_ALIASES 150					/* no more than 150 queue aliases */
 
-#define MAX_STATUS_MESSAGE 80		/* maximum length of last message from printer */
+#define MAX_STATUS_MESSAGE 80			/* maximum length of last message from printer */
 
-#define MAX_PPD_NEST 10			/* maximum PPD file include levels */
-#define MAX_PPD_LINE 255		/* maximum line length for PPD files */
-#define MAX_VMOPTIONS 50		/* maximun number of *VMOption lines in PPD file */
+#define MAX_PPD_NEST 10					/* maximum PPD file include levels */
+#define MAX_PPD_LINE 255				/* maximum line length for PPD files */
+#define MAX_VMOPTIONS 50				/* maximun number of *VMOption lines in PPD file */
 
 /*=========================================================================
 ** End of values which an end user might want to change.
@@ -289,9 +289,9 @@ typedef short int SHORT_INT;
 **
 ** _()	returns the internationalized version of a string.
 ** N_() marks a string for internationalization but returns the
-**	uninternationalized version.
+**		uninternationalized version.
 ** X_() marks a string which could be internationalized but won't be
-**	because it is not worth it.
+**		because it is not worth it.
 =======================================================================*/
 
 #define LOCALEDIR SHAREDIR"/locale"
@@ -343,7 +343,7 @@ typedef short int SHORT_INT;
 **
 ** The tilde is not allowed because at the head of the name it is a
 ** shell user name interpolation character and at the end it is an
-** Emacs-style backup file.  A period is not allowed as the initial
+** Emacs-style backup file.	 A period is not allowed as the initial
 ** character because it would make for a hidden configuration file.
 */
 #define DEST_DISALLOWED "/\n\r\t \b~"
@@ -362,14 +362,14 @@ typedef short int SHORT_INT;
 #define PPR_JOBS_UMASK S_IRWXO
 
 /*
-** The umasks used when running interfaces and filters.  These are
+** The umasks used when running interfaces and filters.	 These are
 ** very restrictive so as to protect the privacy of temporary
 ** files.
 */
 #define PPR_INTERFACE_UMASK UNIX_077
 #define PPR_FILTER_UMASK UNIX_077
 
-/* Types of PostScript language extensions.  This is used by ppr and pprdrv. */
+/* Types of PostScript language extensions.	 This is used by ppr and pprdrv. */
 #define EXTENSION_DPS 1
 #define EXTENSION_CMYK 2
 #define EXTENSION_Composite 4
@@ -389,18 +389,18 @@ typedef short int SHORT_INT;
 #define BANNER_DISCOURAGED 1
 #define BANNER_ENCOURAGED 2
 #define BANNER_REQUIRED 3
-#define BANNER_INVALID 4	    /* used internally in ppad */
+#define BANNER_INVALID 4			/* used internally in ppad */
 
 /*
 ** Flags stored in the unix file permissions of a font in
-** the resource cache.  Both pprdrv and ppr use these
+** the resource cache.	Both pprdrv and ppr use these
 ** values.
 */
-#define FONT_TYPE_1 1		/* Font has Type 1 components present */
+#define FONT_TYPE_1 1			/* Font has Type 1 components present */
 #define FONT_TYPE_3 2
-#define FONT_TYPE_42 4		/* Font has Type 42 components present */
-#define FONT_MACTRUETYPE 8	/* Is a Macintosh TrueType font in PostScript form */
-#define FONT_TYPE_TTF 16		/* Font is MS-Windows .ttf format file (file mode isn't really set) */
+#define FONT_TYPE_42 4			/* Font has Type 42 components present */
+#define FONT_MACTRUETYPE 8		/* Is a Macintosh TrueType font in PostScript form */
+#define FONT_TYPE_TTF 16				/* Font is MS-Windows .ttf format file (file mode isn't really set) */
 
 /* File modes used to represent some of those above in the file system. */
 #define FONT_MODE_MACTRUETYPE S_IXUSR
@@ -408,7 +408,7 @@ typedef short int SHORT_INT;
 #define FONT_MODE_TYPE_42 S_IXOTH
 
 /*
-** Valid TrueType rasterizer settings.  These values
+** Valid TrueType rasterizer settings.	These values
 ** are not communicated between ppr and pprdrv, but
 ** both use them.
 */
@@ -420,11 +420,11 @@ typedef short int SHORT_INT;
 /*
 ** Job Flags Bitmap Values
 */
-#define JOB_FLAG_SAVE 1			/* job should be kept after printed */
-#define JOB_FLAG_DO_NOTIFY 2		/* please schedual notification */
-#define JOB_FLAG_NOTIFYING 4		/* notify in progress */
+#define JOB_FLAG_SAVE 1					/* job should be kept after printed */
+#define JOB_FLAG_DO_NOTIFY 2			/* please schedual notification */
+#define JOB_FLAG_NOTIFYING 4			/* notify in progress */
 #define JOB_FLAG_QUESTION_UNANSWERED 8	/* there is a "Question:" not yet answered */
-#define JOB_FLAG_QUESTION_ASKING_NOW 16	/* are we asking it now? */
+#define JOB_FLAG_QUESTION_ASKING_NOW 16 /* are we asking it now? */
 
 /*=========================================================================
 ** Stuff in libppr.a
@@ -432,10 +432,10 @@ typedef short int SHORT_INT;
 
 /* Description of the protocol abilities of a printer. */
 struct PPD_PROTOCOLS
-    {
-    gu_boolean TBCP;
-    gu_boolean PJL;
-    } ;
+	{
+	gu_boolean TBCP;
+	gu_boolean PJL;
+	} ;
 
 /* Possible Codes values: */
 enum CODES { CODES_DEFAULT = -1, CODES_UNKNOWN = 0, CODES_Clean7Bit = 1, CODES_Clean8Bit = 2, CODES_Binary = 3, CODES_TBCP = 4 };
@@ -444,11 +444,11 @@ enum CODES { CODES_DEFAULT = -1, CODES_UNKNOWN = 0, CODES_Clean7Bit = 1, CODES_C
 ** This is for find_cached_resource().
 */
 enum RES_SEARCH
-    {
-    RES_SEARCH_CACHE,
-    RES_SEARCH_FONTINDEX,
-    RES_SEARCH_END
-    };
+	{
+	RES_SEARCH_CACHE,
+	RES_SEARCH_FONTINDEX,
+	RES_SEARCH_END
+	};
 
 /* Function prototypes */
 char *datestamp(void);

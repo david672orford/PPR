@@ -34,46 +34,46 @@
 ** it should not call non-reentrant routines such as malloc().
 */
 void state_update(const char *string, ... )
-    {
-    static int countdown = 0;	/* countdown til start of next file */
-    static int handle = -1;	/* handle of open file */
-    static int serial = 1;	/* file serial number */
-    va_list va;
-    char line[128];
+	{
+	static int countdown = 0;	/* countdown til start of next file */
+	static int handle = -1;		/* handle of open file */
+	static int serial = 1;		/* file serial number */
+	va_list va;
+	char line[128];
 
-    while(handle == -1 || countdown <= 0)
-    	{
-    	if(handle == -1)
-    	    {
-    	    if((handle = open(STATE_UPDATE_FILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) == -1)
-    	    	fatal(0, "Failed to open \"%s\" for append, errno=%d (%s)", STATE_UPDATE_FILE, errno, gu_strerror(errno));
-    	    }
+	while(handle == -1 || countdown <= 0)
+		{
+		if(handle == -1)
+			{
+			if((handle = open(STATE_UPDATE_FILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) == -1)
+				fatal(0, "Failed to open \"%s\" for append, errno=%d (%s)", STATE_UPDATE_FILE, errno, gu_strerror(errno));
+			}
 
-	if(countdown <= 0)		/* If this file is full, */
-	    {
-	    fchmod(handle, UNIX_644 | S_IXOTH);
-	    close(handle);
-	    handle = -1;
-	    unlink(STATE_UPDATE_FILE);
-	    countdown = STATE_UPDATE_MAXLINES;
-	    continue;
-	    }
+		if(countdown <= 0)				/* If this file is full, */
+			{
+			fchmod(handle, UNIX_644 | S_IXOTH);
+			close(handle);
+			handle = -1;
+			unlink(STATE_UPDATE_FILE);
+			countdown = STATE_UPDATE_MAXLINES;
+			continue;
+			}
 
-	snprintf(line, sizeof(line), "SERIAL %d\n", serial++);
-	write(handle, line, strlen(line));
+		snprintf(line, sizeof(line), "SERIAL %d\n", serial++);
+		write(handle, line, strlen(line));
 
-	gu_set_cloexec(handle);
-    	}
+		gu_set_cloexec(handle);
+		}
 
-    va_start(va, string);
-    vsnprintf(line, sizeof(line), string, va);
-    strcat(line, "\n");
-    va_end(va);
+	va_start(va, string);
+	vsnprintf(line, sizeof(line), string, va);
+	strcat(line, "\n");
+	va_end(va);
 
-    write(handle, line, strlen(line) );
+	write(handle, line, strlen(line) );
 
-    countdown--;
-    } /* end of state_update() */
+	countdown--;
+	} /* end of state_update() */
 
 /* end of file */
 

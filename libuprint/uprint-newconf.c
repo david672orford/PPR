@@ -60,184 +60,184 @@ const char *path_uprint_lprm = BINDIR"/uprint-lprm";
 const char *path_uprint_lpq = BINDIR"/uprint-lpq";
 
 void uprint_error_callback(const char *format, ...)
-    {
-    va_list va;
-    fprintf(stderr, "%s: ", myname);
-    va_start(va, format);
-    vfprintf(stderr, format, va);
-    fputc('\n', stderr);
-    va_end(va);
-    } /* end of uprint_error_callback() */
+	{
+	va_list va;
+	fprintf(stderr, "%s: ", myname);
+	va_start(va, format);
+	vfprintf(stderr, format, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of uprint_error_callback() */
 
 static void fatal(int exitcode, const char *format, ...)
-    {
-    va_list va;
-    va_start(va, format);
-    fprintf(stderr, "%s: ", myname);
-    vfprintf(stderr, format, va);
-    fputc('\n', stderr);
-    va_end(va);
-    exit(exitcode);
-    }
+	{
+	va_list va;
+	va_start(va, format);
+	fprintf(stderr, "%s: ", myname);
+	vfprintf(stderr, format, va);
+	fputc('\n', stderr);
+	va_end(va);
+	exit(exitcode);
+	}
 
 /*
 ** This function creates a link in a mainstream directory
-** such as "/usr/bin".  The link points to a uprint substitute
+** such as "/usr/bin".	The link points to a uprint substitute
 ** for a standard Unix program.
 **
 ** The standard Unix program is renamed first to the name
-** specified by the parameter "sidelined".  If the sidelined
+** specified by the parameter "sidelined".	If the sidelined
 ** name already exists, then it is renamed too.
 */
 static void install_mainstream_link(const char linkname[], const char linkto[], const char sidelinename[])
-    {
-    struct stat statbuf, junk;
-
-    #ifdef DEBUG
-    printf("install_mainstream_link(linkname=\"%s\", linkto=\"%s\", sidelinename=\"%s\")\n", linkname, linkto, sidelinename);
-    #endif
-
-    /* If the well known name (such as "/usr/bin/lp") exists, */
-    if(lstat(linkname, &statbuf) >= 0)
 	{
-	/* If it is a symbolic link, simply delete it. */
-	if(S_ISLNK(statbuf.st_mode))
-	    {
-	    if(unlink(linkname) < 0)
-	    	fatal(1, "unlink(\"%s\") failed, errno=%d (%s)", linkname, errno, gu_strerror(errno));
-	    }
-	/*
-	** If it is not a symbolic link, rename it to the name
-	** specified by sidelinename.
-	*/
-	else
-	    {
-	    int x;
+	struct stat statbuf, junk;
 
-	    /* Rename any existing sidelined. */
-	    if(lstat(sidelinename, &junk) >= 0)		/* if exists, */
+	#ifdef DEBUG
+	printf("install_mainstream_link(linkname=\"%s\", linkto=\"%s\", sidelinename=\"%s\")\n", linkname, linkto, sidelinename);
+	#endif
+
+	/* If the well known name (such as "/usr/bin/lp") exists, */
+	if(lstat(linkname, &statbuf) >= 0)
 		{
-                for(x=1; TRUE; x++)
-                    {
-                    char newname[MAX_PPR_PATH];
+		/* If it is a symbolic link, simply delete it. */
+		if(S_ISLNK(statbuf.st_mode))
+			{
+			if(unlink(linkname) < 0)
+				fatal(1, "unlink(\"%s\") failed, errno=%d (%s)", linkname, errno, gu_strerror(errno));
+			}
+		/*
+		** If it is not a symbolic link, rename it to the name
+		** specified by sidelinename.
+		*/
+		else
+			{
+			int x;
 
-                    ppr_fnamef(newname, "%s-old-%d", sidelinename, x);
+			/* Rename any existing sidelined. */
+			if(lstat(sidelinename, &junk) >= 0)			/* if exists, */
+				{
+				for(x=1; TRUE; x++)
+					{
+					char newname[MAX_PPR_PATH];
 
-                    if(lstat(newname, &junk) >= 0)
-                    	continue;
+					ppr_fnamef(newname, "%s-old-%d", sidelinename, x);
 
-                    if(errno != ENOENT)
-                        fatal(1, "Can't stat \"%s\", errno=%d (%s)", newname, errno, gu_strerror(errno));
+					if(lstat(newname, &junk) >= 0)
+						continue;
 
-                    printf(_("Renaming \"%s\" -> \"%s\".\n"), sidelinename, newname);
-                    if(rename(sidelinename, newname) < 0)
-                        fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", linkname, sidelinename, errno, gu_strerror(errno));
-		    break;
-                    }
-                }
-	    else					/* if probably doesn't exist, */
-	    	{
-                if(errno != ENOENT)
-                    fatal(1, "Can't stat \"%s\", errno=%d (%s)", sidelinename, errno, gu_strerror(errno));
-	    	}
+					if(errno != ENOENT)
+						fatal(1, "Can't stat \"%s\", errno=%d (%s)", newname, errno, gu_strerror(errno));
 
-	    /* Do the actually renaming. */
-	    printf(_("Renaming \"%s\" -> \"%s\".\n"), linkname, sidelinename);
-	    if(rename(linkname, sidelinename) < 0)
-	    	fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", linkname, sidelinename, errno, gu_strerror(errno));
-	    }
+					printf(_("Renaming \"%s\" -> \"%s\".\n"), sidelinename, newname);
+					if(rename(sidelinename, newname) < 0)
+						fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", linkname, sidelinename, errno, gu_strerror(errno));
+					break;
+					}
+				}
+			else										/* if probably doesn't exist, */
+				{
+				if(errno != ENOENT)
+					fatal(1, "Can't stat \"%s\", errno=%d (%s)", sidelinename, errno, gu_strerror(errno));
+				}
+
+			/* Do the actually renaming. */
+			printf(_("Renaming \"%s\" -> \"%s\".\n"), linkname, sidelinename);
+			if(rename(linkname, sidelinename) < 0)
+				fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", linkname, sidelinename, errno, gu_strerror(errno));
+			}
+		}
+
+	/* Create the link to the UPRINT version. */
+	printf(_("Creating symbolic link \"%s\" -> \"%s\".\n"), linkname, linkto);
+	if(symlink(linkto, linkname) < 0)
+		fatal(1, "symlink(\"%s\", \"%s\") failed, errno=%d (%s)", linkto, linkname, errno, gu_strerror(errno));
+
+	/* Do a few checks on the sidelined spooler program. */
+	if(lstat(sidelinename, &statbuf) < 0)
+		{
+		if(errno != ENOENT)
+			fatal(1, "Can't stat \"%s\", errno=%d (%s)", sidelinename, errno, gu_strerror(errno));
+		printf(_("	(Note: \"%s\" does not exist.)\n"), sidelinename);
+		}
+	else
+		{
+		if(! S_ISREG(statbuf.st_mode) || ! (S_IXUSR & statbuf.st_mode))
+			printf(_("	(Warning: \"%s\" is not executable.)\n"), sidelinename);
+		}
 	}
-
-    /* Create the link to the UPRINT version. */
-    printf(_("Creating symbolic link \"%s\" -> \"%s\".\n"), linkname, linkto);
-    if(symlink(linkto, linkname) < 0)
-	fatal(1, "symlink(\"%s\", \"%s\") failed, errno=%d (%s)", linkto, linkname, errno, gu_strerror(errno));
-
-    /* Do a few checks on the sidelined spooler program. */
-    if(lstat(sidelinename, &statbuf) < 0)
-    	{
-	if(errno != ENOENT)
-	    fatal(1, "Can't stat \"%s\", errno=%d (%s)", sidelinename, errno, gu_strerror(errno));
-	printf(_("  (Note: \"%s\" does not exist.)\n"), sidelinename);
-	}
-    else
-	{
-	if(! S_ISREG(statbuf.st_mode) || ! (S_IXUSR & statbuf.st_mode))
-	    printf(_("  (Warning: \"%s\" is not executable.)\n"), sidelinename);
-	}
-    }
 
 /*
 ** Remove a symbolic link from the mainstream directory and move the
 ** sidelined program back into place.
 */
 static void uninstall_mainstream_link(const char linkname[], const char linkto[], const char sidelinename[])
-    {
-    struct stat statbuf, junk;
-
-    #ifdef DEBUG
-    printf("uninstall_mainstream_link(linkname=\"%s\", linkto=\"%s\", sidelinename=\"%s\")\n", linkname, linkto, sidelinename);
-    #endif
-
-    if(lstat(linkname, &statbuf) >= 0)
 	{
-	/* If it is a symbolic link, simply delete it. */
-	if(S_ISLNK(statbuf.st_mode))
-	    {
-	    printf(_("Removing symbolic link \"%s\".\n"), linkname);
-	    if(unlink(linkname) < 0)
-	    	fatal(1, "unlink(\"%s\") failed, errno=%d (%s)", linkname, errno, gu_strerror(errno));
-	    }
-	else if(lstat(sidelinename, &junk) >= 0)
-	    {
-	    fprintf(stderr, _("Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"), linkname, sidelinename);
-	    return;
-	    }
+	struct stat statbuf, junk;
+
+	#ifdef DEBUG
+	printf("uninstall_mainstream_link(linkname=\"%s\", linkto=\"%s\", sidelinename=\"%s\")\n", linkname, linkto, sidelinename);
+	#endif
+
+	if(lstat(linkname, &statbuf) >= 0)
+		{
+		/* If it is a symbolic link, simply delete it. */
+		if(S_ISLNK(statbuf.st_mode))
+			{
+			printf(_("Removing symbolic link \"%s\".\n"), linkname);
+			if(unlink(linkname) < 0)
+				fatal(1, "unlink(\"%s\") failed, errno=%d (%s)", linkname, errno, gu_strerror(errno));
+			}
+		else if(lstat(sidelinename, &junk) >= 0)
+			{
+			fprintf(stderr, _("Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"), linkname, sidelinename);
+			return;
+			}
+		else
+			{
+			printf(_("Appearently, \"%s\" never was sidelined.\n"), linkname);
+			return;
+			}
+		}
+
+	if(lstat(sidelinename, &junk) < 0)
+		{
+		printf(_("No \"%s\" to move to \"%s\".\n"), sidelinename, linkname);
+		}
 	else
-	    {
-	    printf(_("Appearently, \"%s\" never was sidelined.\n"), linkname);
-	    return;
-	    }
+		{
+		printf(_("Moving \"%s\" back to \"%s\".\n"), sidelinename, linkname);
+		if(rename(sidelinename, linkname) < 0)
+			fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", sidelinename, linkname, errno, gu_strerror(errno));
+		}
 	}
-
-    if(lstat(sidelinename, &junk) < 0)
-	{
-	printf(_("No \"%s\" to move to \"%s\".\n"), sidelinename, linkname);
-	}
-    else
-	{
-	printf(_("Moving \"%s\" back to \"%s\".\n"), sidelinename, linkname);
-	if(rename(sidelinename, linkname) < 0)
-	    fatal(1, "rename(\"%s\", \"%s\") failed, errno=%d (%s)", sidelinename, linkname, errno, gu_strerror(errno));
-	}
-    }
 
 /*
 ** Command line options:
 */
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
-	{
-	{"remove", 1000, FALSE},
-	{"force", 1001, FALSE},
-	{"help", 9000, FALSE},
-	{"version", 9001, FALSE},
-	{(char*)NULL, 0, FALSE}
-	} ;
+		{
+		{"remove", 1000, FALSE},
+		{"force", 1001, FALSE},
+		{"help", 9000, FALSE},
+		{"version", 9001, FALSE},
+		{(char*)NULL, 0, FALSE}
+		} ;
 
 /*
 ** Print help.
 */
 static void help_switches(FILE *outfile)
-    {
-    fputs(_("Valid switches:\n"), outfile);
+	{
+	fputs(_("Valid switches:\n"), outfile);
 
-    fputs(_(    "\t--remove     back out changes\n"
-    		"\t--force      change system against advice\n"), outfile);
+	fputs(_(	"\t--remove		back out changes\n"
+				"\t--force		change system against advice\n"), outfile);
 
-    fputs(_(	"\t--version\n"
-		"\t--help\n"), outfile);
-    }
+	fputs(_(	"\t--version\n"
+				"\t--help\n"), outfile);
+	}
 
 /*
 ** We are linked into the guts of the uprint_conf.c code.
@@ -245,105 +245,105 @@ static void help_switches(FILE *outfile)
 ** the file system conform to uprint.conf.
 */
 int main(int argc, char *argv[])
-    {
-    gu_boolean opt_remove = FALSE;
-    gu_boolean opt_force = FALSE;
-
-    /* Initialize international messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
-
-    /* Parse the options. */
-    {
-    struct gu_getopt_state getopt_state;
-    int optchar;
-    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
-    while((optchar = ppr_getopt(&getopt_state)) != -1)
-    	{
-    	switch(optchar)
-    	    {
-	    case 1000:			/* --remove */
-	    	opt_remove = TRUE;
-	    	break;
-	    
-	    case 1001:			/* --force */
-	    	opt_force = TRUE;
-		break;
-
-	    case 9000:			/* --help */
-	    	help_switches(stdout);
-	    	exit(EXIT_OK);
-
-	    case 9001:			/* --version */
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-	    	exit(EXIT_OK);
-
-	    default:			/* other getopt errors or missing case */
-		gu_getopt_default(myname, optchar, &getopt_state, stderr);
-	    	exit(EXIT_SYNTAX);
-		break;
-    	    }
-    	}
-    }
-
-    if(getuid() != 0)
-    	fatal(1, _("must be run by root"));
-
-    #if 0
-    if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
-    	{
-	fprintf(stderr, _("This system uses /etc/alternatives.  Using uprint-newconf\n"
-			"is not advised and it will not run without --force or --remove.\n"));
-	return 1;
-    	}
-    #endif
-
-    printf(_("Adjusting file system to conform to %s:\n"), UPRINTCONF);
-    printf("\n");
-
-    uprint_read_conf();
-
-    if(conf.lp.sidelined && !opt_remove)
-    	{
-	printf(_("Files for lp should be in their sidelined locations.\n"));
-	install_mainstream_link(conf.well_known.lp, path_uprint_lp, conf.sidelined.lp);
-	install_mainstream_link(conf.well_known.cancel, path_uprint_cancel, conf.sidelined.cancel);
-	install_mainstream_link(conf.well_known.lpstat, path_uprint_lpstat, conf.sidelined.lpstat);
-    	}
-    else
-    	{
-	printf(_("Files for lp should be in their normal locations.\n"));
-	uninstall_mainstream_link(conf.well_known.lp, path_uprint_lp, conf.sidelined.lp);
-	uninstall_mainstream_link(conf.well_known.cancel, path_uprint_cancel, conf.sidelined.cancel);
-	uninstall_mainstream_link(conf.well_known.lpstat, path_uprint_lpstat, conf.sidelined.lpstat);
-    	}
-    printf("\n");
-
-    if(conf.lpr.sidelined && !opt_remove)
-    	{
-	printf(_("Files for lpr should be in their sidelined locations.\n"));
-	install_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
-	install_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
-	install_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
-    	}
-    else
 	{
-	printf(_("Files for lpr should be in their normal locations.\n"));
-	uninstall_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
-	uninstall_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
-	uninstall_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
+	gu_boolean opt_remove = FALSE;
+	gu_boolean opt_force = FALSE;
+
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* Parse the options. */
+	{
+	struct gu_getopt_state getopt_state;
+	int optchar;
+	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
+	while((optchar = ppr_getopt(&getopt_state)) != -1)
+		{
+		switch(optchar)
+			{
+			case 1000:					/* --remove */
+				opt_remove = TRUE;
+				break;
+			
+			case 1001:					/* --force */
+				opt_force = TRUE;
+				break;
+
+			case 9000:					/* --help */
+				help_switches(stdout);
+				exit(EXIT_OK);
+
+			case 9001:					/* --version */
+				puts(VERSION);
+				puts(COPYRIGHT);
+				puts(AUTHOR);
+				exit(EXIT_OK);
+
+			default:					/* other getopt errors or missing case */
+				gu_getopt_default(myname, optchar, &getopt_state, stderr);
+				exit(EXIT_SYNTAX);
+				break;
+			}
+		}
 	}
-    printf("\n");
 
-    printf("Done.\n");
+	if(getuid() != 0)
+		fatal(1, _("must be run by root"));
 
-    return 0;
-    } /* end of main() */
+	#if 0
+	if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
+		{
+		fprintf(stderr, _("This system uses /etc/alternatives.	Using uprint-newconf\n"
+						"is not advised and it will not run without --force or --remove.\n"));
+		return 1;
+		}
+	#endif
+
+	printf(_("Adjusting file system to conform to %s:\n"), UPRINTCONF);
+	printf("\n");
+
+	uprint_read_conf();
+
+	if(conf.lp.sidelined && !opt_remove)
+		{
+		printf(_("Files for lp should be in their sidelined locations.\n"));
+		install_mainstream_link(conf.well_known.lp, path_uprint_lp, conf.sidelined.lp);
+		install_mainstream_link(conf.well_known.cancel, path_uprint_cancel, conf.sidelined.cancel);
+		install_mainstream_link(conf.well_known.lpstat, path_uprint_lpstat, conf.sidelined.lpstat);
+		}
+	else
+		{
+		printf(_("Files for lp should be in their normal locations.\n"));
+		uninstall_mainstream_link(conf.well_known.lp, path_uprint_lp, conf.sidelined.lp);
+		uninstall_mainstream_link(conf.well_known.cancel, path_uprint_cancel, conf.sidelined.cancel);
+		uninstall_mainstream_link(conf.well_known.lpstat, path_uprint_lpstat, conf.sidelined.lpstat);
+		}
+	printf("\n");
+
+	if(conf.lpr.sidelined && !opt_remove)
+		{
+		printf(_("Files for lpr should be in their sidelined locations.\n"));
+		install_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
+		install_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
+		install_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
+		}
+	else
+		{
+		printf(_("Files for lpr should be in their normal locations.\n"));
+		uninstall_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
+		uninstall_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
+		uninstall_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
+		}
+	printf("\n");
+
+	printf("Done.\n");
+
+	return 0;
+	} /* end of main() */
 
 /* end of file */
 

@@ -67,24 +67,24 @@ my $title = "";
 # Read the above values from the queue file.
 open(QF, $qfile) || die "Can't open \"$qfile\", $!";
 while(<QF>)
-    {
-    if(/^Question: (.+)$/)
-    	{
-    	$question = $1;
-    	}
-    elsif(/^Response: (\S+) (\S+) (.+)?$/)
-    	{
-    	($response_responder, $response_address, $response_options) = ($1, $2, $3);
-    	}
-    elsif(/^MagicCookie: (.+)$/)
-    	{
-    	$magic_cookie = $1;
-    	}
-    elsif(/^Title: (.+)$/)
-    	{
-    	$title = $1;
-    	}
-    }
+	{
+	if(/^Question: (.+)$/)
+		{
+		$question = $1;
+		}
+	elsif(/^Response: (\S+) (\S+) (.+)?$/)
+		{
+		($response_responder, $response_address, $response_options) = ($1, $2, $3);
+		}
+	elsif(/^MagicCookie: (.+)$/)
+		{
+		$magic_cookie = $1;
+		}
+	elsif(/^Title: (.+)$/)
+		{
+		$title = $1;
+		}
+	}
 close(QF) || die $!;
 
 # Make sure we got everthing that is required.
@@ -94,17 +94,17 @@ defined($magic_cookie) || die "No magic cookie";
 
 # Construct the query string.
 my $query = join(';',
-	form_urlencoded("jobname", $jobname),
-	form_urlencoded("magic_cookie", $magic_cookie),
-	form_urlencoded("title", $title)
-	);
+		form_urlencoded("jobname", $jobname),
+		form_urlencoded("magic_cookie", $magic_cookie),
+		form_urlencoded("title", $title)
+		);
 print STDERR "\$query=\"$query\"\n";
 
 # Open a connexion to pprpopup
 if(!open_connexion(SEND, $response_address))
-    {
-    die "open_conexion() failed\n";
-    }
+	{
+	die "open_conexion() failed\n";
+	}
 
 # Buffering would cause a lockup, so turn it off.
 SEND->autoflush(1);
@@ -121,17 +121,17 @@ $result = <SEND>;
 close(SEND);
 
 if($result !~ /^\+OK/)
-    {
-    die $result;
-    }
+	{
+	die $result;
+	}
 
 # This is where we catch errors.
 };
 if($@)
-    {
-    print "pprd-question ", join(" ", @ARGV), ": $@";
-    exit 1;
-    }
+	{
+	print "pprd-question ", join(" ", @ARGV), ": $@";
+	exit 1;
+	}
 
 exit 0;
 

@@ -33,7 +33,7 @@
 ** It works like the tail(1) command.  That is, it watches special PPR
 ** log files.  Actually, these files don't grow continually, but the
 ** PPR library function tail_status() takes care of all of those messy
-** details.  C programs that want to do the same thing naturaly call
+** details.	 C programs that want to do the same thing naturaly call
 ** tail_status() themselves and don't use this wrapper.
 */
 
@@ -44,35 +44,35 @@
 #include "version.h"
 
 static gu_boolean print_function(char *p, void *extra)
-    {
-    if(!p)			/* If this is a keepalive tick, */
-    	{
-    	printf("\n");
-    	}
-    else			/* otherwise it must be real data. */
-    	{
-    	printf("%s\n", p);
-    	}
-    fflush(stdout);
-    return TRUE;
-    }
+	{
+	if(!p)						/* If this is a keepalive tick, */
+		{
+		printf("\n");
+		}
+	else						/* otherwise it must be real data. */
+		{
+		printf("%s\n", p);
+		}
+	fflush(stdout);
+	return TRUE;
+	}
 
 int main(int argc, char *argv[])
-    {
-    /* We print the PPR version since the script may not be distributed 
-       with PPR and may want to verify that it is listening to a version
-       of PPR with which it is compatible.
-       */
-    printf("VERSION %s\n", SHORT_VERSION);
+	{
+	/* We print the PPR version since the script may not be distributed 
+	   with PPR and may want to verify that it is listening to a version
+	   of PPR with which it is compatible.
+	   */
+	printf("VERSION %s\n", SHORT_VERSION);
 
-    tail_status(TRUE, TRUE, print_function, 60, (void*)NULL);
+	tail_status(TRUE, TRUE, print_function, 60, (void*)NULL);
 
-    /* I don't think we ever actually reach this line.  Violence (such
-       as SIGTERM or SIGPIPE) is the only incentive to leave off that 
-       we understand.
-       */
-    return 0;
-    } /* end of main */
+	/* I don't think we ever actually reach this line.	Violence (such
+	   as SIGTERM or SIGPIPE) is the only incentive to leave off that 
+	   we understand.
+	   */
+	return 0;
+	} /* end of main */
 
 /* end of file */
 

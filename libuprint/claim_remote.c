@@ -47,25 +47,25 @@
 ** will match.
 */
 struct	{
-	const char *name;
-	float version;
-	gu_boolean osf_extensions;
-	gu_boolean solaris_extensions;
-	gu_boolean ppr_extensions;
-	} systems[] =
-	{
-	{"BSD", 4.2, FALSE, FALSE, FALSE},
-	{"SUNOS", 0.00, FALSE, FALSE, FALSE},
-	{"SUNOS", 5.00, FALSE, TRUE, FALSE},
-	{"Solaris", 1.0, FALSE, FALSE, FALSE},
-	{"Solaris", 2.0, FALSE, TRUE, FALSE},
-	{"PPR", 1.00, FALSE, FALSE, FALSE},
-	{"PPR", 1.32, TRUE, FALSE, TRUE},
-	{"PPR", 1.40, TRUE, TRUE, TRUE},
-	{"WinNT", 3.10, FALSE, FALSE, FALSE},
-	{"RedHat", 0.00, FALSE, FALSE, FALSE},
-	{NULL, 0.0, FALSE, FALSE, FALSE}
-	};
+		const char *name;
+		float version;
+		gu_boolean osf_extensions;
+		gu_boolean solaris_extensions;
+		gu_boolean ppr_extensions;
+		} systems[] =
+		{
+		{"BSD", 4.2, FALSE, FALSE, FALSE},
+		{"SUNOS", 0.00, FALSE, FALSE, FALSE},
+		{"SUNOS", 5.00, FALSE, TRUE, FALSE},
+		{"Solaris", 1.0, FALSE, FALSE, FALSE},
+		{"Solaris", 2.0, FALSE, TRUE, FALSE},
+		{"PPR", 1.00, FALSE, FALSE, FALSE},
+		{"PPR", 1.32, TRUE, FALSE, TRUE},
+		{"PPR", 1.40, TRUE, TRUE, TRUE},
+		{"WinNT", 3.10, FALSE, FALSE, FALSE},
+		{"RedHat", 0.00, FALSE, FALSE, FALSE},
+		{NULL, 0.0, FALSE, FALSE, FALSE}
+		};
 
 /*
 ** This function test whether the specified queue is among those
@@ -77,230 +77,230 @@ struct	{
 ** to be before we return false.
 */
 gu_boolean printdest_claim_remote(const char dest[], struct REMOTEDEST *scratchpad)
-    {
-    FILE *conf;
-    int linenum = 0;
-    char line[256];
-    size_t destlen;
-    char *name, *value;
-
-    DODEBUG(("uprint_claim_remote(dest = \"%s\", scratchpad = ?)", dest != (const char *)NULL ? dest : ""));
-
-    if(dest == (const char *)NULL)
 	{
-	uprint_errno = UPE_BADARG;
-    	return FALSE;
-    	}
+	FILE *conf;
+	int linenum = 0;
+	char line[256];
+	size_t destlen;
+	char *name, *value;
 
-    /* If no uprint.conf file, the queue isn't ours. */
-    if((conf = fopen(UPRINTREMOTECONF, "r")) == (FILE *)NULL)
-	{
-	if(errno != ENOENT)
-	    {
-	    uprint_errno = UPE_BADCONFIG;
-	    uprint_error_callback(_("Can't open \"%s\", errno=%d (%s)."), UPRINTREMOTECONF, errno, gu_strerror(errno));
-	    }
-	else
-	    {
-	    uprint_errno = UPE_UNDEST;	/* unknown destination */
-	    }
-	return FALSE;
-	}
+	DODEBUG(("uprint_claim_remote(dest = \"%s\", scratchpad = ?)", dest != (const char *)NULL ? dest : ""));
 
-    destlen = strlen(dest);
-    scratchpad->node = NULL;
-    scratchpad->printer[0] = '\0';
-    scratchpad->osf_extensions = FALSE;
-    scratchpad->solaris_extensions = FALSE;
-    scratchpad->ppr_extensions = FALSE;
-
-    while(TRUE)
-	{
-	/* If ran off end of file, the queue isn't
-	   in uprint-remote.conf. */
-	if(fgets(line, sizeof(line), conf) == (char *)NULL)
-	    {
-	    uprint_errno = UPE_NONE;
-	    fclose(conf);
-	    return FALSE;
-	    }
-
-	linenum++;
-
-	/* Ignore lines that aren't section headings. */
-	if(line[0] != '[')
-	    continue;
-
-	/* Turn the "]" into a line termination. */
-	line[strcspn(line, "]")] = '\0';
-
-	/* Compare the destionation name to the shell
-	   pattern in this line. */
-	if(!ppr_wildmat(dest, line+1))
-	    continue;
-
-	/* All tests passed, it is a match! */
-
-	/* If it is within the length limit, copy the
-	   requested name to the remote queue name so
-	   that it will be the default. */
-	if(strlen(dest) <= LPR_MAX_QUEUE)
-	    strcpy(scratchpad->printer, dest);
-
-	/* Read the lines in this section. */
-	while(fgets(line, sizeof(line), conf))
-	    {
-	    linenum++;
-
-	    /* Ignore comment lines. */
-	    if(line[0] == '#' || line[0] == ';')
-		continue;
-
-	    /* If we hit the next section, stop. */
-	    if(line[0] == '[')
-	    	break;
-
-	    /* Lines will be in the form "name=value".
-	       Extract name and value.  We will
-	       eliminate spaces before the name, within
-	       the name, before and after the "=", and
-	       at the end of the line. */
-	    {
-	    char *si, *di;
-	    int c;
-
-	    for(si=di=line; (c=*(si++)) && c != '='; )
-	    	{
-	    	if(! isspace(c))
-	    	    *(di++) = tolower(c);
-		}
-	    *di = '\0';
-	    name = line;
-
-	    for(; isspace(*si); si++);
-	    value = si;
-	    for(si=&value[strlen(value)]; --si >= value && isspace(*si); ) *si = '\0';
-	    }
-
-	    /* an action for each possible name */
-	    if(strcmp(name, "remotehost") == 0)
+	if(dest == (const char *)NULL)
 		{
-		if(scratchpad->node) gu_free(scratchpad->node);
-		scratchpad->node = gu_strdup(value);
+		uprint_errno = UPE_BADARG;
+		return FALSE;
 		}
 
-	    else if(strcmp(name, "remoteprinter") == 0)
+	/* If no uprint.conf file, the queue isn't ours. */
+	if((conf = fopen(UPRINTREMOTECONF, "r")) == (FILE *)NULL)
 		{
-		if(strlen(value) > LPR_MAX_QUEUE)
-		    {
-		    uprint_errno = UPE_BADCONFIG;
-		    uprint_error_callback(_("Value of \"%s\" too long in \"%s\" section \"[%s]\", line %d."), "remoteprinter", UPRINTREMOTECONF, dest, linenum);
-		    }
-		else
-		    {
-		    strcpy(scratchpad->printer, value);
-		    }
-		}
-
-	    else if(strcmp(name, "osfextensions") == 0)
-	    	{
-	    	int answer;
-	    	if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
-		    {
-		    uprint_errno = UPE_BADCONFIG;
-	    	    uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "osfextensions", UPRINTREMOTECONF, dest, linenum);
-	    	    }
-	    	else
-	    	    {
-	    	    scratchpad->osf_extensions = answer ? TRUE : FALSE;
-	    	    }
-		}
-
-	    else if(strcmp(name, "solarisextensions") == 0)
-	    	{
-	    	int answer;
-	    	if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
-		    {
-		    uprint_errno = UPE_BADCONFIG;
-	    	    uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "solarisextensions", UPRINTREMOTECONF, dest, linenum);
-	    	    }
-	    	else
-	    	    {
-	    	    scratchpad->solaris_extensions = answer ? TRUE : FALSE;
-	    	    }
-		}
-
-	    else if(strcmp(name, "pprextensions") == 0)
-	    	{
-	    	int answer;
-	    	if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
-		    {
-		    uprint_errno = UPE_BADCONFIG;
-	    	    uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "pprextensions", UPRINTREMOTECONF, dest, linenum);
-	    	    }
-	    	else
-	    	    {
-	    	    scratchpad->ppr_extensions = answer ? TRUE : FALSE;
-	    	    }
-
-		}
-
-	    else if(strcmp(name, "remotesystemtype") == 0)
-	    	{
-		char system[17];
-		float version;
-		int x;
-		gu_boolean match = FALSE;
-
-		if(sscanf(value, "%16s %f", system, &version) != 2)
-		    {
-		    uprint_errno = UPE_BADCONFIG;
-		    uprint_error_callback(_("Wrong format for \"systemtype\" value in \"%s\" section \"[%s]\", line %d."), UPRINTREMOTECONF, dest, linenum);
-		    }
-
-		else
-		    {
-		    for(x=0; systems[x].name; x++)
-			{
-			if(gu_strcasecmp(system, systems[x].name) == 0
-				&& version >= systems[x].version)
-			    {
-			    scratchpad->osf_extensions = systems[x].osf_extensions;
-			    scratchpad->solaris_extensions = systems[x].solaris_extensions;
-			    scratchpad->ppr_extensions = systems[x].ppr_extensions;
-			    match = TRUE;
-			    }
-			}
-		    if(!match)
+		if(errno != ENOENT)
 			{
 			uprint_errno = UPE_BADCONFIG;
-			uprint_error_callback(_("Unrecognized system \"%s\" %.2f in \"%s\" section \"[%s]\", line %d."), system, version, UPRINTREMOTECONF, dest, linenum);
+			uprint_error_callback(_("Can't open \"%s\", errno=%d (%s)."), UPRINTREMOTECONF, errno, gu_strerror(errno));
 			}
-		    }
-	    	}
-
-	    else
-	    	{
-		/* don't discourage undefined lines */
+		else
+			{
+			uprint_errno = UPE_UNDEST;	/* unknown destination */
+			}
+		return FALSE;
 		}
 
-	    } /* end of loop to read section */
+	destlen = strlen(dest);
+	scratchpad->node = NULL;
+	scratchpad->printer[0] = '\0';
+	scratchpad->osf_extensions = FALSE;
+	scratchpad->solaris_extensions = FALSE;
+	scratchpad->ppr_extensions = FALSE;
 
-	break;
-	} /* end of loop to read whole file */
+	while(TRUE)
+		{
+		/* If ran off end of file, the queue isn't
+		   in uprint-remote.conf. */
+		if(fgets(line, sizeof(line), conf) == (char *)NULL)
+			{
+			uprint_errno = UPE_NONE;
+			fclose(conf);
+			return FALSE;
+			}
 
-    fclose(conf);
+		linenum++;
 
-    if(scratchpad->node == NULL || scratchpad->printer[0] == '\0')
-	{
-	uprint_errno = UPE_BADCONFIG;
-	uprint_error_callback(_("Invalid section for queue \"%s\" in \"%s\"."), dest, UPRINTREMOTECONF);
-	if(scratchpad->node) gu_free(scratchpad->node);
-	return FALSE;
-	}
+		/* Ignore lines that aren't section headings. */
+		if(line[0] != '[')
+			continue;
 
-    return TRUE;
-    } /* end of printdest_claim_remote() */
+		/* Turn the "]" into a line termination. */
+		line[strcspn(line, "]")] = '\0';
+
+		/* Compare the destionation name to the shell
+		   pattern in this line. */
+		if(!ppr_wildmat(dest, line+1))
+			continue;
+
+		/* All tests passed, it is a match! */
+
+		/* If it is within the length limit, copy the
+		   requested name to the remote queue name so
+		   that it will be the default. */
+		if(strlen(dest) <= LPR_MAX_QUEUE)
+			strcpy(scratchpad->printer, dest);
+
+		/* Read the lines in this section. */
+		while(fgets(line, sizeof(line), conf))
+			{
+			linenum++;
+
+			/* Ignore comment lines. */
+			if(line[0] == '#' || line[0] == ';')
+				continue;
+
+			/* If we hit the next section, stop. */
+			if(line[0] == '[')
+				break;
+
+			/* Lines will be in the form "name=value".
+			   Extract name and value.	We will
+			   eliminate spaces before the name, within
+			   the name, before and after the "=", and
+			   at the end of the line. */
+			{
+			char *si, *di;
+			int c;
+
+			for(si=di=line; (c=*(si++)) && c != '='; )
+				{
+				if(! isspace(c))
+					*(di++) = tolower(c);
+				}
+			*di = '\0';
+			name = line;
+
+			for(; isspace(*si); si++);
+			value = si;
+			for(si=&value[strlen(value)]; --si >= value && isspace(*si); ) *si = '\0';
+			}
+
+			/* an action for each possible name */
+			if(strcmp(name, "remotehost") == 0)
+				{
+				if(scratchpad->node) gu_free(scratchpad->node);
+				scratchpad->node = gu_strdup(value);
+				}
+
+			else if(strcmp(name, "remoteprinter") == 0)
+				{
+				if(strlen(value) > LPR_MAX_QUEUE)
+					{
+					uprint_errno = UPE_BADCONFIG;
+					uprint_error_callback(_("Value of \"%s\" too long in \"%s\" section \"[%s]\", line %d."), "remoteprinter", UPRINTREMOTECONF, dest, linenum);
+					}
+				else
+					{
+					strcpy(scratchpad->printer, value);
+					}
+				}
+
+			else if(strcmp(name, "osfextensions") == 0)
+				{
+				int answer;
+				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+					{
+					uprint_errno = UPE_BADCONFIG;
+					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "osfextensions", UPRINTREMOTECONF, dest, linenum);
+					}
+				else
+					{
+					scratchpad->osf_extensions = answer ? TRUE : FALSE;
+					}
+				}
+
+			else if(strcmp(name, "solarisextensions") == 0)
+				{
+				int answer;
+				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+					{
+					uprint_errno = UPE_BADCONFIG;
+					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "solarisextensions", UPRINTREMOTECONF, dest, linenum);
+					}
+				else
+					{
+					scratchpad->solaris_extensions = answer ? TRUE : FALSE;
+					}
+				}
+
+			else if(strcmp(name, "pprextensions") == 0)
+				{
+				int answer;
+				if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+					{
+					uprint_errno = UPE_BADCONFIG;
+					uprint_error_callback(_("Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."), "pprextensions", UPRINTREMOTECONF, dest, linenum);
+					}
+				else
+					{
+					scratchpad->ppr_extensions = answer ? TRUE : FALSE;
+					}
+
+				}
+
+			else if(strcmp(name, "remotesystemtype") == 0)
+				{
+				char system[17];
+				float version;
+				int x;
+				gu_boolean match = FALSE;
+
+				if(sscanf(value, "%16s %f", system, &version) != 2)
+					{
+					uprint_errno = UPE_BADCONFIG;
+					uprint_error_callback(_("Wrong format for \"systemtype\" value in \"%s\" section \"[%s]\", line %d."), UPRINTREMOTECONF, dest, linenum);
+					}
+
+				else
+					{
+					for(x=0; systems[x].name; x++)
+						{
+						if(gu_strcasecmp(system, systems[x].name) == 0
+								&& version >= systems[x].version)
+							{
+							scratchpad->osf_extensions = systems[x].osf_extensions;
+							scratchpad->solaris_extensions = systems[x].solaris_extensions;
+							scratchpad->ppr_extensions = systems[x].ppr_extensions;
+							match = TRUE;
+							}
+						}
+					if(!match)
+						{
+						uprint_errno = UPE_BADCONFIG;
+						uprint_error_callback(_("Unrecognized system \"%s\" %.2f in \"%s\" section \"[%s]\", line %d."), system, version, UPRINTREMOTECONF, dest, linenum);
+						}
+					}
+				}
+
+			else
+				{
+				/* don't discourage undefined lines */
+				}
+
+			} /* end of loop to read section */
+
+		break;
+		} /* end of loop to read whole file */
+
+	fclose(conf);
+
+	if(scratchpad->node == NULL || scratchpad->printer[0] == '\0')
+		{
+		uprint_errno = UPE_BADCONFIG;
+		uprint_error_callback(_("Invalid section for queue \"%s\" in \"%s\"."), dest, UPRINTREMOTECONF);
+		if(scratchpad->node) gu_free(scratchpad->node);
+		return FALSE;
+		}
+
+	return TRUE;
+	} /* end of printdest_claim_remote() */
 
 /* end of file */
 

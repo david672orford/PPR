@@ -16,7 +16,7 @@
 
 #
 # This script is meant for use with the uprint_* programs
-# on SGI programs.  Some SGI programs use a print dialog
+# on SGI programs.	Some SGI programs use a print dialog
 # box which gets a list of printers by examining certain
 # files and directories in /var/spool/lp.  This script
 # creates dummy entries in /var/spool/lp for all of the
@@ -49,19 +49,19 @@ $PPR_GROUPS = "$CONFDIR/groups";
 # for a uprint printer.
 #
 sub do_dest
-    {
-    my $dest = shift;
+	{
+	my $dest = shift;
 
-    print "  Adding \"$dest\".\n";
+	print "	 Adding \"$dest\".\n";
 
-    $OK_LIST{$dest} = 1;
+	$OK_LIST{$dest} = 1;
 
-    open(PORT, ">$PORT_DIR/$dest") || die;
-    print PORT "/dev/null\n";
-    close(PORT);
+	open(PORT, ">$PORT_DIR/$dest") || die;
+	print PORT "/dev/null\n";
+	close(PORT);
 
-    open(INT, ">$INTERFACE_DIR/$dest") || die;
-    print INT <<"End";
+	open(INT, ">$INTERFACE_DIR/$dest") || die;
+	print INT <<"End";
 #UPRINT
 #
 # This interface script is a dummy created by
@@ -73,30 +73,30 @@ sub do_dest
 #
 End
 
-    close(PORT);
-    }
+	close(PORT);
+	}
 
 #
 # Scan a directory and consider each file
 # to be a queue configuration.
 #
 sub do_dir
-    {
-    my $dir = shift;
-    my $file;
+	{
+	my $dir = shift;
+	my $file;
 
-    print "Searching \"$dir\":\n";
+	print "Searching \"$dir\":\n";
 
-    opendir(D, $dir) || die;
-    while($file = readdir(D))
-    	{
-	next if($file =~ /^\./);
-	next if($file =~ /~$/);
-	if(-f "$dir/$file")
-	    { do_dest($file) }
+	opendir(D, $dir) || die;
+	while($file = readdir(D))
+		{
+		next if($file =~ /^\./);
+		next if($file =~ /~$/);
+		if(-f "$dir/$file")
+			{ do_dest($file) }
+		}
+	closedir(D);
 	}
-    closedir(D);
-    }
 
 #
 # Start
@@ -116,16 +116,16 @@ print "Updating fake lp queues:\n";
 #
 print "Searching \"$UPRINT_CONF\":\n";
 if(open(U, "<$UPRINT_CONF"))
-    {
-    while(<U>)
 	{
-	if(/^\[([^]]+)\]/)
-	    {
-	    do_dest($1);
-	    }
+	while(<U>)
+		{
+		if(/^\[([^]]+)\]/)
+			{
+			do_dest($1);
+			}
+		}
+	close(U);
 	}
-    close(U);
-    }
 
 #
 # Remove those that are no longer needed:
@@ -134,26 +134,26 @@ print "Removing old queues:\n";
 opendir(D, $INTERFACE_DIR) || die "Can't search \"$INTERFACE_DIR\", $!.\n";
 my $dir;
 while($dir = readdir(D))
-    {
-    next if($dir =~ /^\./);
-
-    if(! defined($OK_LIST{$dir}))
 	{
-	# Examine the interface.
-	open(I, "<$INTERFACE_DIR/$dir") || die "Can't open \"$INTERFACE_DIR/$dir\", $!.\n";
-	my $line1 = <I>;
-	close(I);
+	next if($dir =~ /^\./);
 
-	# If it is one of our's, delete it.
-	if($line1 eq "#UPRINT\n")
-	    {
-	    print "  Removing \"$dir\".\n";
-	    unlink("$INTERFACE_DIR/$dir") || die "Can't delete \"$INTERFACE_DIR/$dir\", $!.\n";
-	    if( ! unlink("$PORT_DIR/$dir"))
-		{ print "\tFailed to remove \"$PORT_DIR/$dir\"!\n" }
-	    }
-    	}
-    }
+	if(! defined($OK_LIST{$dir}))
+		{
+		# Examine the interface.
+		open(I, "<$INTERFACE_DIR/$dir") || die "Can't open \"$INTERFACE_DIR/$dir\", $!.\n";
+		my $line1 = <I>;
+		close(I);
+
+		# If it is one of our's, delete it.
+		if($line1 eq "#UPRINT\n")
+			{
+			print "	 Removing \"$dir\".\n";
+			unlink("$INTERFACE_DIR/$dir") || die "Can't delete \"$INTERFACE_DIR/$dir\", $!.\n";
+			if( ! unlink("$PORT_DIR/$dir"))
+				{ print "\tFailed to remove \"$PORT_DIR/$dir\"!\n" }
+			}
+		}
+	}
 closedir(D);
 
 print "Done.\n";

@@ -14,28 +14,28 @@
 */
 
 struct ENCODING_INFO {
-    const char *charset;
-    const char *encoding;
-    gu_boolean encoding_ascii_compatible;
-    char line[256];
-    } ;
+	const char *charset;
+	const char *encoding;
+	gu_boolean encoding_ascii_compatible;
+	char line[256];
+	} ;
 
 int charset_to_encoding(const char charset[], struct ENCODING_INFO *encinfo);
 
 struct FONT_INFO
-    {
-    char *font_family;
-    char *font_weight;
-    char *font_slant;
-    char *font_width;
-    char *font_psname;		/* font's PostScript name */
-    char *font_encoding;	/* font's default encoding */
-    char *font_type;		/* font format type name */
+	{
+	char *font_family;
+	char *font_weight;
+	char *font_slant;
+	char *font_width;
+	char *font_psname;			/* font's PostScript name */
+	char *font_encoding;		/* font's default encoding */
+	char *font_type;			/* font format type name */
 
-    char *ascii_subst_font;	/* use instead for ASCII only */
+	char *ascii_subst_font;		/* use instead for ASCII only */
 
-    char line[256];		/* storage space for strings */
-    };
+	char line[256];				/* storage space for strings */
+	};
 
 int encoding_to_font(const char encoding[], const char fontfamily[], const char fontweight[], const char fontslant[], const char fontwidth[], struct FONT_INFO *fontinfo);
 struct FONT_INFO *font_info_new(void);

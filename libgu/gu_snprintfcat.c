@@ -22,16 +22,16 @@
 ** This was inspired by trio_snprintfcat().
 */
 int gu_snprintfcat(char *buffer, size_t max, const char *format, ...)
-    {
-    va_list va;
-    size_t len = strlen(buffer);
-    int ret;
-    max -= len;
-    buffer += len;
-    va_start(va, format);
-    ret = vsnprintf(buffer, max, format, va);
-    va_end(va);
-    return ret;
-    }
+	{
+	va_list va;
+	size_t len = strlen(buffer);
+	int ret;
+	max -= len;
+	buffer += len;
+	va_start(va, format);
+	ret = vsnprintf(buffer, max, format, va);
+	va_end(va);
+	return ret;
+	}
 
 /* end of file */

@@ -42,33 +42,33 @@
 **
 ** p = line;
 ** if(!(f1 = gu_strsep(&p, ":")) || !(f2 = gu_strsep(&p, ":")))
-**    {
-**    error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
-**    return -1;
-**    }
+**	  {
+**	  error(_("Not enough fields in \"%s\" line %d"), filename, linenum);
+**	  return -1;
+**	  }
 */
 char *gu_strsep(char **stringp, const char *delim)
-    {
-    char *start;
-    size_t len;
+	{
+	char *start;
+	size_t len;
 
-    start = *stringp;			/* first token starts immediately */
+	start = *stringp;					/* first token starts immediately */
 
-    if(!*start)				/* if no more line left, no token */
-    	return NULL;
+	if(!*start)							/* if no more line left, no token */
+		return NULL;
 
-    len = strcspn(start, delim);	/* token length is length of run without delimiters */
+	len = strcspn(start, delim);		/* token length is length of run without delimiters */
 
-    *stringp += len;			/* for next time, move past the token */
+	*stringp += len;					/* for next time, move past the token */
 
-    if(start[len])			/* if terminated by delimiter rather than end of string, */
-    	{
-    	start[len] = '\0';		/* insert a ASCIIz string terminator */
-    	(*stringp)++;			/* and move past the delimiter for next time */
-    	}
+	if(start[len])						/* if terminated by delimiter rather than end of string, */
+		{
+		start[len] = '\0';				/* insert a ASCIIz string terminator */
+		(*stringp)++;					/* and move past the delimiter for next time */
+		}
 
-    return start;			/* return the token we found */
-    }
+	return start;						/* return the token we found */
+	}
 
 /* end of file */
 

@@ -36,94 +36,94 @@
 #include "queueinfo.h"
 
 struct QI {
-    enum QUEUEINFO_TYPE type;
-    void *name;
-    void *comment;
-    void *ppdfile;
-    gu_boolean transparent_mode;
+	enum QUEUEINFO_TYPE type;
+	void *name;
+	void *comment;
+	void *ppdfile;
+	gu_boolean transparent_mode;
 
-    };
+	};
 
 static void do_printer(struct QI *qip, const char name[])
-    {
-    char fname[MAX_PPR_PATH];
-    FILE *pconf;
-    char *line = NULL;
-    int line_available = 80;
-    char *p;
-
-    ppr_fnamef(fname, "%s/%s", PRCONF, name);
-    if(!(pconf = fopen(fname, "r")))
-	libppr_throw(EXCEPTION_MISSING, "do_printer", "file not found");
-
-    while((line = gu_getline(line, &line_available, pconf)))
 	{
-	switch(line[0])
-	    {
-	    case 'C':
-	    	if((p = lmatchp(line, "Comment:")))
-	    	    {
-	    	    
-	    	    continue;
-	    	    }
-		break;
-	    case 'P':
-		if((p = lmatchp(line, "PPDFile:")))
-		    {
+	char fname[MAX_PPR_PATH];
+	FILE *pconf;
+	char *line = NULL;
+	int line_available = 80;
+	char *p;
 
-		    continue;
-		    }
-		if((p = lmatchp(line, "PPDOpt:")))
-		    {
-	    
-		    continue;
-		    }
-		break;
-	    }
+	ppr_fnamef(fname, "%s/%s", PRCONF, name);
+	if(!(pconf = fopen(fname, "r")))
+		libppr_throw(EXCEPTION_MISSING, "do_printer", "file not found");
 
+	while((line = gu_getline(line, &line_available, pconf)))
+		{
+		switch(line[0])
+			{
+			case 'C':
+				if((p = lmatchp(line, "Comment:")))
+					{
+					
+					continue;
+					}
+				break;
+			case 'P':
+				if((p = lmatchp(line, "PPDFile:")))
+					{
+
+					continue;
+					}
+				if((p = lmatchp(line, "PPDOpt:")))
+					{
+			
+					continue;
+					}
+				break;
+			}
+
+		}
+
+	fclose(pconf);
 	}
-
-    fclose(pconf);
-    }
 
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
-    {
-    struct QI *qip = gu_alloc(1, sizeof(struct QI));
-    
-    qip->type = qit;
-    qip->name = gu_pcs_new_cstr(name);
-    qip->name = gu_pcs_new();
-    qip->comment = gu_pcs_new();
-    qip->ppdfile = gu_pcs_new();
-    qip->transparent_mode = FALSE;
-
-    if(qit == QUEUEINFO_ALIAS)
 	{
+	struct QI *qip = gu_alloc(1, sizeof(struct QI));
+	
+	qip->type = qit;
+	qip->name = gu_pcs_new_cstr(name);
+	qip->name = gu_pcs_new();
+	qip->comment = gu_pcs_new();
+	qip->ppdfile = gu_pcs_new();
+	qip->transparent_mode = FALSE;
 
+	if(qit == QUEUEINFO_ALIAS)
+		{
+
+		}
+
+	if(qit == QUEUEINFO_GROUP)
+		{
+
+		}
+
+	else if(qit == QUEUEINFO_PRINTER)
+		{
+		do_printer(qip, name);
+		}
+
+	else
+		{
+		libppr_throw(EXCEPTION_BADUSAGE, "queueinfo_new", "unknown queue type");
+		}
+
+	return (void *)qip;
 	}
-
-    if(qit == QUEUEINFO_GROUP)
-	{
-
-	}
-
-    else if(qit == QUEUEINFO_PRINTER)
-	{
-	do_printer(qip, name);
-	}
-
-    else
-	{
-	libppr_throw(EXCEPTION_BADUSAGE, "queueinfo_new", "unknown queue type");
-	}
-
-    return (void *)qip;
-    }
-    
+	
 void queueinfo_delete(void *qip)
-    {
+	{
 
-    gu_free(qip);
-    }
-    
+	gu_free(qip);
+	}
+	
 /* end of file */

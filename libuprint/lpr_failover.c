@@ -41,30 +41,30 @@
 ** and/or space separated list of hostnames.
 */
 int uprint_lpr_make_connection_with_failover(const char *address)
-    {
-    int sockfd = -1;
-    char *copy, *p, *p2;
-    int x = 0;
+	{
+	int sockfd = -1;
+	char *copy, *p, *p2;
+	int x = 0;
 
-    p = copy = gu_strdup(address);
+	p = copy = gu_strdup(address);
 
-    while((p2 = gu_strsep(&p, ", \t")))
-    	{
-	if(p2[0] == '\0')	/* skip "empty fields" */
-	    continue;
+	while((p2 = gu_strsep(&p, ", \t")))
+		{
+		if(p2[0] == '\0')		/* skip "empty fields" */
+			continue;
 
-	if(x > 0)
-	    uprint_error_callback(_("Resorting to backup server \"%s\"."), p2);
+		if(x > 0)
+			uprint_error_callback(_("Resorting to backup server \"%s\"."), p2);
 
-	if((sockfd = uprint_lpr_make_connection(p2)) >= 0)
-	    break;
+		if((sockfd = uprint_lpr_make_connection(p2)) >= 0)
+			break;
 
-	x++;
-    	}
+		x++;
+		}
 
-    gu_free(copy);
+	gu_free(copy);
 
-    return sockfd;
-    }
+	return sockfd;
+	}
 
 /* end of file */

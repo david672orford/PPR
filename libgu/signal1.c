@@ -29,18 +29,18 @@
 ** this function.
 */
 void (*signal_interupting(int signum, void (*handler)(int)))(int)
-    {
-    struct sigaction new_handler, old_handler;
-    sigemptyset(&new_handler.sa_mask);
-    #ifdef SA_INTERUPT
-    new_handler.sa_flags = SA_INTERUPT;
-    #else
-    new_handler.sa_flags = 0;
-    #endif
-    new_handler.sa_handler = handler;
-    sigaction(signum, &new_handler, &old_handler);
-    return old_handler.sa_handler;
-    }
+	{
+	struct sigaction new_handler, old_handler;
+	sigemptyset(&new_handler.sa_mask);
+	#ifdef SA_INTERUPT
+	new_handler.sa_flags = SA_INTERUPT;
+	#else
+	new_handler.sa_flags = 0;
+	#endif
+	new_handler.sa_handler = handler;
+	sigaction(signum, &new_handler, &old_handler);
+	return old_handler.sa_handler;
+	}
 
 /* end of file */
 

@@ -18,17 +18,17 @@
 #include "gu.h"
 
 /*
-** This function was inspired by Trio.  Trio's version has assertions,
+** This function was inspired by Trio.	Trio's version has assertions,
 ** we don't have them yet.
 */
 char *gu_StrAppendMax(char *target, size_t max, const char *source)
-    {
-    size_t len = strlen(target);
-    max -= len;
-    if(max > 0)
-	strncpy(target + len, source, max - 1);
-    target[len + max - 1] = '\0';
-    return target; 
-    }
+	{
+	size_t len = strlen(target);
+	max -= len;
+	if(max > 0)
+		strncpy(target + len, source, max - 1);
+	target[len + max - 1] = '\0';
+	return target; 
+	}
 
 /* end of file */

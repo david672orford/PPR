@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -54,13 +54,13 @@ copy_tree (pool pool, tree t)
 
   /* Copy each subnode, recursively. */
   for (i = 0; i < tree_size (t); ++i)
-    {
-      tree st, nst;
+	{
+	  tree st, nst;
 
-      tree_get (t, i, st);
-      nst = copy_tree (pool, st);
-      tree_push_back (nt, nst);
-    }
+	  tree_get (t, i, st);
+	  nst = copy_tree (pool, st);
+	  tree_push_back (nt, nst);
+	}
 
   return nt;
 }

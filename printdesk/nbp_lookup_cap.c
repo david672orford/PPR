@@ -24,10 +24,10 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[])
-    {
-    fprintf(stderr, "nbp_lookup: CAP version doesn't work\n");
-    return 1;
-    }
+	{
+	fprintf(stderr, "nbp_lookup: CAP version doesn't work\n");
+	return 1;
+	}
 
 /* end of file */
 

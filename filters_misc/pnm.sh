@@ -14,7 +14,7 @@
 # Last modified 8 April 1999.
 #
 
-# Paths of filters.  These are filled
+# Paths of filters.	 These are filled
 # in when the filter is installed.
 PPMTOPGM="?"
 PNMDEPTH="?"
@@ -32,25 +32,25 @@ RESOLUTION=""
 
 # Look for parameters we should pay attention to.
 for pair in $OPTIONS
-    do
-    case "$pair" in
+	do
+	case "$pair" in
 	colour=[yYtT1]* )
-	    COLOUR="YES"
-	    ;;
+		COLOUR="YES"
+		;;
 	colour=[nNfF0]* )
-	    COLOUR=""
-	    ;;
+		COLOUR=""
+		;;
 	color=[yYtT1]* )
-	    COLOUR="YES"
-	    ;;
+		COLOUR="YES"
+		;;
 	color=[nNfF0]* )
-	    COLOUR=""
-	    ;;
+		COLOUR=""
+		;;
 	resolution=* )
-	    RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
-	    ;;
-    esac
-    done
+		RESOLUTION="-dpi `echo $pair | cut -d'=' -f2`"
+		;;
+	esac
+	done
 
 # Run the filters
 if [ -n "$COLOUR" ]

@@ -37,23 +37,23 @@
 outdated ()
   {
   if [ -f "$1" ]
-    then
-    echo "$1"
-    rm -f "$1" || exit 1
-    if [ "$2" != "" ]
-      then
-      echo "    (Linking to $2 for backward compatibility.)"
-      ln -s "$2" "$1" || exit 1
-      fi
+	then
+	echo "$1"
+	rm -f "$1" || exit 1
+	if [ "$2" != "" ]
+	  then
+	  echo "	(Linking to $2 for backward compatibility.)"
+	  ln -s "$2" "$1" || exit 1
+	  fi
   fi
   }
 
 outdated_dir ()
   {
   if [ -d "$1" ]
-    then
-    echo "$1"
-    rm -rf "$1" || exit 1
+	then
+	echo "$1"
+	rm -rf "$1" || exit 1
   fi
   }
 
@@ -85,28 +85,28 @@ outdated $SHAREDIR/www/docs/rfc/index.html
 
 # PPR 1.41
 if [ $HOMEDIR != "/usr/ppr" -a -d /usr/ppr -a ! -d /usr/ppr_old ]
-    then
-    echo "Moving \"/usr/ppr\" to \"/usr/ppr_old\"."
-    mv /usr/ppr /usr/ppr_old || exit 1
-    echo "Creating a new /usr/ppr for compatibility links."
-    mkdir /usr/ppr || exit 1
-    ln -s $SHAREDIR/fonts /usr/ppr/fonts || exit 1
-    ln -s $HOMEDIR/lib /usr/ppr/lib || exit 1
-    ln -s $HOMEDIR/bin /usr/ppr/bin || exit 1
-    cat >/usr/ppr/README.txt <<EndOfQuote
+	then
+	echo "Moving \"/usr/ppr\" to \"/usr/ppr_old\"."
+	mv /usr/ppr /usr/ppr_old || exit 1
+	echo "Creating a new /usr/ppr for compatibility links."
+	mkdir /usr/ppr || exit 1
+	ln -s $SHAREDIR/fonts /usr/ppr/fonts || exit 1
+	ln -s $HOMEDIR/lib /usr/ppr/lib || exit 1
+	ln -s $HOMEDIR/bin /usr/ppr/bin || exit 1
+	cat >/usr/ppr/README.txt <<EndOfQuote
 This directory was once part of PPR.  Its contents have been moved to
-$SHAREDIR and $HOMEDIR.  Only a few symbolic links have been left
+$SHAREDIR and $HOMEDIR.	 Only a few symbolic links have been left
 here in case $CONFDIR/ppr.conf, /etc/inetd.conf, /etc/passwd, or
-Samba's smb.conf refer to them.  Once you have corrected all three
+Samba's smb.conf refer to them.	 Once you have corrected all three
 of those files, you may remove this directory.
 
 The former contents of this directory are preserved as /usr/ppr_old.
 EndOfQuote
-    if [ ! -d $SHAREDIR/speach -a -d /usr/ppr_old/speach ]
+	if [ ! -d $SHAREDIR/speach -a -d /usr/ppr_old/speach ]
 	then
 	echo "Moving \"/usr/ppr_old/speach\" to \"$SHAREDIR/speach\"." || exit 1
 	fi
-    fi
+	fi
 
 # PPR 1.42
 outdated $HOMEDIR/lib/ppr-commentary-httpd

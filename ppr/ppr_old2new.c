@@ -42,23 +42,23 @@
 ** calls tokenize() to parse the resulting line.
 */
 static void fixcomment(const char comment[], char *tail)
-    {
-    const char function[] = "fixcomment";
-    char tempstr[256];
-    int x;
+	{
+	const char function[] = "fixcomment";
+	char tempstr[256];
+	int x;
 
-    x = 0;
-    while((tail[x] == ' ' || tail[x] == '\t') && tail[x] != '\0')
-	x++;			/* eat whitespace leading to tail */
+	x = 0;
+	while((tail[x] == ' ' || tail[x] == '\t') && tail[x] != '\0')
+		x++;					/* eat whitespace leading to tail */
 
-    if(snprintf(tempstr, sizeof(tempstr), "%s", &tail[x]) < 0)
-    	fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
+	if(snprintf(tempstr, sizeof(tempstr), "%s", &tail[x]) < 0)
+		fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
 
-    if((line_len = snprintf(line, sizeof(line), "%%%%%s %s", comment, tempstr)) < 0)
-     	fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
+	if((line_len = snprintf(line, sizeof(line), "%%%%%s %s", comment, tempstr)) < 0)
+		fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
 
-    tokenize();			/* re-tokenize */
-    } /* end of fixcomment() */
+	tokenize();					/* re-tokenize */
+	} /* end of fixcomment() */
 
 /*
 ** This function is like fixcomment(), but it takes its instructions in
@@ -68,15 +68,15 @@ static void fixcomment(const char comment[], char *tail)
 static void fixcommentf(const char format[], ...) __attribute__ (( format (printf, 1, 2) )) ;
 #endif
 static void fixcommentf(const char format[], ...)
-    {
-    const char function[] = "fixcommentf";
-    va_list va;
-    va_start(va, format);
-    if((line_len = vsnprintf(line, sizeof(line), format, va)) < 0)
-    	fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
-    va_end(va);
-    tokenize();
-    } /* end of fixcommentf() */
+	{
+	const char function[] = "fixcommentf";
+	va_list va;
+	va_start(va, format);
+	if((line_len = vsnprintf(line, sizeof(line), format, va)) < 0)
+		fatal(PPREXIT_OTHERERR, "%s(): assertion failed in line %d", function, __LINE__);
+	va_end(va);
+	tokenize();
+	} /* end of fixcommentf() */
 
 /*
 ** This function translates pre-DSC 3.0 comments to the equivelent DSC 3.0
@@ -85,181 +85,181 @@ static void fixcommentf(const char format[], ...)
 ** without the help of this routine because they often require complex
 ** handling in the resource code.
 **
-** This is called from getline_simplify().  It is necessary for tokenize()
+** This is called from getline_simplify().	It is necessary for tokenize()
 ** to be called before calling this function.  If this function alters
 ** the line it will call tokenize() again to update the tokens list.
 */
 void old_DSC_to_new(void)
-    {
-    switch(tokens[0][2])
 	{
-	case 'B':
-	    if(strcmp(tokens[0], "%%BeginBinary:") == 0)
+	switch(tokens[0][2])
 		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginBinary:");
-		    }
-		else
-		    {
-		    fixcommentf("%%%%BeginData: %s Binary Bytes", tokens[1]);
-		    return;
-		    }
-		}
-	    if(strcmp(tokens[0], "%%BeginFile:") == 0)
-		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginFile:");
-		    nest_push(NEST_BADRES, "[file name missing]");
-		    }
-		else
-		    {
-		    fixcommentf("%%%%BeginResource: file %s", tokens[1]);
-		    return;
-		    }
-		}
-	    if(strcmp(tokens[0], "%%BeginFont:") == 0)
-		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginFont:");
-		    nest_push(NEST_BADRES, "[font name missing]");
-		    }
-		else
-		    {
-		    fixcommentf("%%%%BeginResource: font %s", tokens[1]);
-		    return;
-		    }
-		}
-	    if(strcmp(tokens[0], "%%BeginProcSet:") == 0)
-		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no arguments"), "%%BeginProcSet:");
-		    nest_push(NEST_BADRES, "[procset name missing]");
-		    }
-		else
-		    {
-		    fixcomment("BeginResource: procset", line+15);
-		    }
-		return;
-		}
-	    if(strcmp(tokens[0], "%%BeginDocumentSetup") == 0 && !tokens[1])
-		{
-		warning(WARNING_PEEVE, _("\"%s\" should be \"%s\""), "%%BeginDocumentSetup", "%%BeginSetup");
-		fixcommentf("%s", "%%BeginSetup");
-		return;
-		}
-	    if(strcmp(tokens[0], "%%BeginPaperSize:") == 0)
-		{
-		if(qentry.attr.DSClevel >= 3.0)
-		    warning(WARNING_PEEVE, _("\"%s\" is discontinued in DSC versions >= %s"), "%%BeginPaperSize:", "3.0");
-		fixcomment("BeginFeature: *PageSize", line+17);
-		return;
-		}
-	    return;
+		case 'B':
+			if(strcmp(tokens[0], "%%BeginBinary:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginBinary:");
+					}
+				else
+					{
+					fixcommentf("%%%%BeginData: %s Binary Bytes", tokens[1]);
+					return;
+					}
+				}
+			if(strcmp(tokens[0], "%%BeginFile:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginFile:");
+					nest_push(NEST_BADRES, "[file name missing]");
+					}
+				else
+					{
+					fixcommentf("%%%%BeginResource: file %s", tokens[1]);
+					return;
+					}
+				}
+			if(strcmp(tokens[0], "%%BeginFont:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%BeginFont:");
+					nest_push(NEST_BADRES, "[font name missing]");
+					}
+				else
+					{
+					fixcommentf("%%%%BeginResource: font %s", tokens[1]);
+					return;
+					}
+				}
+			if(strcmp(tokens[0], "%%BeginProcSet:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no arguments"), "%%BeginProcSet:");
+					nest_push(NEST_BADRES, "[procset name missing]");
+					}
+				else
+					{
+					fixcomment("BeginResource: procset", line+15);
+					}
+				return;
+				}
+			if(strcmp(tokens[0], "%%BeginDocumentSetup") == 0 && !tokens[1])
+				{
+				warning(WARNING_PEEVE, _("\"%s\" should be \"%s\""), "%%BeginDocumentSetup", "%%BeginSetup");
+				fixcommentf("%s", "%%BeginSetup");
+				return;
+				}
+			if(strcmp(tokens[0], "%%BeginPaperSize:") == 0)
+				{
+				if(qentry.attr.DSClevel >= 3.0)
+					warning(WARNING_PEEVE, _("\"%s\" is discontinued in DSC versions >= %s"), "%%BeginPaperSize:", "3.0");
+				fixcomment("BeginFeature: *PageSize", line+17);
+				return;
+				}
+			return;
 
-	case 'E':
-	    if(strcmp(tokens[0], "%%EndBinary") == 0 && !tokens[1])
-		{		/* convert to new style */
-		fixcommentf("%s", "%%EndData");
-		return;
-		}
+		case 'E':
+			if(strcmp(tokens[0], "%%EndBinary") == 0 && !tokens[1])
+				{				/* convert to new style */
+				fixcommentf("%s", "%%EndData");
+				return;
+				}
 
-	    /* Fix some errors and fall thru. */
-	    if(strcmp(tokens[0], "%%EndProcSet:") == 0)
-	    	{
-		warning(WARNING_PEEVE, _("\"%s\" does not take arguments"), "%%EndProcSet");
-		fixcommentf("%s", "%%EndProcSet");
-	    	}
-	    else if(strcmp(tokens[0], "%%EndProcset") == 0)
-	        {
-		warning(WARNING_PEEVE, _("\"%s\" should be \"%s\""), "%%EndProcset", "%%EndProcSet");
-		fixcommentf("%s", "%%EndProcSet");
-	        }
+			/* Fix some errors and fall thru. */
+			if(strcmp(tokens[0], "%%EndProcSet:") == 0)
+				{
+				warning(WARNING_PEEVE, _("\"%s\" does not take arguments"), "%%EndProcSet");
+				fixcommentf("%s", "%%EndProcSet");
+				}
+			else if(strcmp(tokens[0], "%%EndProcset") == 0)
+				{
+				warning(WARNING_PEEVE, _("\"%s\" should be \"%s\""), "%%EndProcset", "%%EndProcSet");
+				fixcommentf("%s", "%%EndProcSet");
+				}
 
-	    if(strcmp(tokens[0], "%%EndFile") == 0
-		|| strcmp(tokens[0], "%%EndFont") == 0
-		|| strcmp(tokens[0], "%%EndProcSet") == 0)
-		{
-		/* If the opening comment was ok and was converted to the new format, convert
-		   the closing comment too. */
-		if(nest_inermost_type() != NEST_BADRES)
-		    {
-		    fixcommentf("%s", "%%EndResource");
-		    }
-		else	/* otherwise, pop the bad resource from the stack */
-		    {
-		    nest_pop(NEST_BADRES);
-		    }
-		return;
-		}
-	    if(strcmp(tokens[0], "%%EndDocumentSetup") == 0 && !tokens[1])
-		{
-		warning(WARNING_PEEVE, "\"%%%%EndDocumentSetup\" should be \"%%%%EndSetup\"");
-		fixcommentf("%s", "%%EndSetup");
-		return;
-		}
-	    if(strcmp(tokens[0], "%%ExecuteFile:") == 0)
-	    	{
-		if(qentry.attr.DSClevel >= 3.0)
-		    warning(WARNING_PEEVE, "\"%%%%ExecuteFile:\" should be \"%%%%IncludeDocument:\" in DSC >= 3.0");
-	    	fixcomment("IncludeDocument:", line+14);
-		return;
-	    	}
-	    if(strcmp(tokens[0], "%%EndPaperSize") == 0 && !tokens[1])
-	    	{
-		fixcommentf("%s", "%%EndFeature");
-		return;
-	    	}
-	    return;
+			if(strcmp(tokens[0], "%%EndFile") == 0
+				|| strcmp(tokens[0], "%%EndFont") == 0
+				|| strcmp(tokens[0], "%%EndProcSet") == 0)
+				{
+				/* If the opening comment was ok and was converted to the new format, convert
+				   the closing comment too. */
+				if(nest_inermost_type() != NEST_BADRES)
+					{
+					fixcommentf("%s", "%%EndResource");
+					}
+				else	/* otherwise, pop the bad resource from the stack */
+					{
+					nest_pop(NEST_BADRES);
+					}
+				return;
+				}
+			if(strcmp(tokens[0], "%%EndDocumentSetup") == 0 && !tokens[1])
+				{
+				warning(WARNING_PEEVE, "\"%%%%EndDocumentSetup\" should be \"%%%%EndSetup\"");
+				fixcommentf("%s", "%%EndSetup");
+				return;
+				}
+			if(strcmp(tokens[0], "%%ExecuteFile:") == 0)
+				{
+				if(qentry.attr.DSClevel >= 3.0)
+					warning(WARNING_PEEVE, "\"%%%%ExecuteFile:\" should be \"%%%%IncludeDocument:\" in DSC >= 3.0");
+				fixcomment("IncludeDocument:", line+14);
+				return;
+				}
+			if(strcmp(tokens[0], "%%EndPaperSize") == 0 && !tokens[1])
+				{
+				fixcommentf("%s", "%%EndFeature");
+				return;
+				}
+			return;
 
-	case 'F':
-	    if(strcmp(tokens[0], "%%Feature:") == 0)
-		{
-		if(qentry.attr.DSClevel >= 3.0)
-		    warning(WARNING_PEEVE, "\"%%%%Feature:\" should be \"%%%%IncludeFeature:\" in DSC >= 3.0");
-		fixcomment("IncludeFeature:", line+10);
-		return;
-		}
-	    return;
+		case 'F':
+			if(strcmp(tokens[0], "%%Feature:") == 0)
+				{
+				if(qentry.attr.DSClevel >= 3.0)
+					warning(WARNING_PEEVE, "\"%%%%Feature:\" should be \"%%%%IncludeFeature:\" in DSC >= 3.0");
+				fixcomment("IncludeFeature:", line+10);
+				return;
+				}
+			return;
 
-	case 'I':
-	    if(strcmp(tokens[0], "%%IncludeFont:") == 0)
-		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%IncludeFont:");
-		    }
-		else
-		    {
-		    fixcommentf("%%%%IncludeResource: font %s", tokens[1]);
-		    return;
-		    }
+		case 'I':
+			if(strcmp(tokens[0], "%%IncludeFont:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%IncludeFont:");
+					}
+				else
+					{
+					fixcommentf("%%%%IncludeResource: font %s", tokens[1]);
+					return;
+					}
+				}
+			if(strcmp(tokens[0], "%%IncludeFile:") == 0)
+				{
+				if(!tokens[1])
+					{
+					warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%IncludeFile:");
+					}
+				else
+					{
+					fixcommentf("%%%%IncludeResource: file %s", tokens[1]);
+					return;
+					}
+				}
+			if(strcmp(tokens[0], "%%IncludeProcSet:") == 0)
+				{
+				fixcomment("IncludeResource: procset", line+17);
+				return;			/* must allow version and revision */
+				}
+			return;
+		default:
+			return;
 		}
-	    if(strcmp(tokens[0], "%%IncludeFile:") == 0)
-		{
-		if(!tokens[1])
-		    {
-		    warning(WARNING_SEVERE, _("\"%s\" line has no argument"), "%%IncludeFile:");
-		    }
-		else
-		    {
-		    fixcommentf("%%%%IncludeResource: file %s", tokens[1]);
-		    return;
-		    }
-		}
-	    if(strcmp(tokens[0], "%%IncludeProcSet:") == 0)
-		{
-		fixcomment("IncludeResource: procset", line+17);
-		return;         /* must allow version and revision */
-		}
-	    return;
-	default:
-	    return;
-	}
-    } /* end of old_to_new() */
+	} /* end of old_to_new() */
 
 /* end of file */
 

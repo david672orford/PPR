@@ -30,7 +30,7 @@
 #
 
 #
-# The purpose of this shell script is to generate ppr.conf.sample.  It will be
+# The purpose of this shell script is to generate ppr.conf.sample.	It will be
 # installed as /etc/ppr/ppr.conf.sample.  On a clean install it will also
 # be installed as /etc/ppr/ppr.conf.
 #
@@ -40,38 +40,38 @@
 SAMPLE="ppr.conf.sample"
 
 # Function to find a program in the specified $PATH style
-# search list.  The first argument is the program to find,
+# search list.	The first argument is the program to find,
 # the second is the search list.
 findfile_test_basename_path_default ()
-    {
-    echo "  Searching for $2..." >&3
-    for i in `echo $3 | tr ':' ' '`
-	do
-	if [ `echo $i | cut -c1` = '/' ]
-	    then
-	    # echo "Trying $i/$2" >&3
-	    if [ $1 "$i/$2" ]
-		then
-		echo "    Found $i/$2." >&3
-		echo "$i/$2"
-		return
-		fi
-	    fi
-	done
-    echo "    Not found, using $4." >&3
-    echo "$4"
-    }
+	{
+	echo "	Searching for $2..." >&3
+	for i in `echo $3 | tr ':' ' '`
+		do
+		if [ `echo $i | cut -c1` = '/' ]
+			then
+			# echo "Trying $i/$2" >&3
+			if [ $1 "$i/$2" ]
+				then
+				echo "	  Found $i/$2." >&3
+				echo "$i/$2"
+				return
+				fi
+			fi
+		done
+	echo "	  Not found, using $4." >&3
+	echo "$4"
+	}
 
 # If the specified directory exists, print its name in
 # quotes with 2 leading spaces.
 if_dir_print ()
-    {
-    if [ -d "$1" ]
-        then
-	echo "  Found directory $1."
-        echo "  \"$1\"" >&5
-        fi
-    }
+	{
+	if [ -d "$1" ]
+		then
+		echo "	Found directory $1."
+		echo "	\"$1\"" >&5
+		fi
+	}
 
 # Direct file descriptor 3 to 1 so that we can print to stdout from
 # within backticks
@@ -119,33 +119,33 @@ cat - >&5 <<===EndHere40===
 
 cat - >&5 <<'===EndHere41==='
   # Choose a default medium, "Letter" for the USA, A4 for
-  # most other places.  You must uncomment one of these.
+  # most other places.	You must uncomment one of these.
   default medium  = Letter, 612, 792, 75, white, ""
   #default medium = A4, 595, 842, 75, white, ""
 
   # Choose a money format for banner pages and ppuser output.  There should
-  # be two values.  The first is a sprintf() template for positive quantities,
+  # be two values.	The first is a sprintf() template for positive quantities,
   # the second is a template for negative quantities.
   #
   # The first example is the default.  It doesn't specify the currency.
   # The second and third examples are for US dollars.  They differn only
   # in who negative quantities are represented.
-  #money = "%d.%02d", "-%d.%02d"		# Default generic: 1.25 -1.25
-  #money = "\$%d.%02d", "(\$%d.%02d)"		# USA: $1.25 ($1.25)
-  #money = "\$%d.%02d", "-\$%d.%02d"		# USA: $1.25 -$1.25
+  #money = "%d.%02d", "-%d.%02d"				# Default generic: 1.25 -1.25
+  #money = "\$%d.%02d", "(\$%d.%02d)"			# USA: $1.25 ($1.25)
+  #money = "\$%d.%02d", "-\$%d.%02d"			# USA: $1.25 -$1.25
 
   # Choose a format for dates printed on banner and trailer pages.
   # This is in strftime() format.
-  #flag date format = "%d-%b-%Y, %I:%M%p"	# Default: 26-Jul-2000, 12:49pm
-  #flag date format = "%d-%b-%y, %I:%M%p"	# 26-Jul-00, 12:49pm
-  #flag date format = "%b %d, %Y, %I:%M%p"	# Jul 26, 2000, 12:49pm
-  #flag date format = "%B %d, %Y, %I:%M%p"	# July 26, 2000, 12:49pm
+  #flag date format = "%d-%b-%Y, %I:%M%p"		# Default: 26-Jul-2000, 12:49pm
+  #flag date format = "%d-%b-%y, %I:%M%p"		# 26-Jul-00, 12:49pm
+  #flag date format = "%b %d, %Y, %I:%M%p"		# Jul 26, 2000, 12:49pm
+  #flag date format = "%B %d, %Y, %I:%M%p"		# July 26, 2000, 12:49pm
 
 ===EndHere41===
 
 cat - >&5 <<===EndHere50===
 #
-# Where are the Type 1 and TrueType fonts?  These directories will be
+# Where are the Type 1 and TrueType fonts?	These directories will be
 # searched recursively.
 #
 # After changing this section, you must run this command in order for your

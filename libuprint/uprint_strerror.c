@@ -28,36 +28,36 @@
 ** like that is up to the caller.
 */
 static const char *uprint_errors[] =
-	{
-	N_("not an error"),
-	N_("malloc() failure"),
-	N_("bad argument"),
-	N_("fork() failed"),
-	N_("child dumped core"),
-	N_("child killed"),
-	N_("wait() failed"),
-	N_("exec() failed"),
-	N_("child failed"),
-	N_("no print destination specified"),
-	N_("non-existent print destination specified"),
-	N_("too many files"),
-	N_("unknown remote system"),
-	N_("temporary failure"),
-	N_("out of disk space"),
-	N_("internal error"),
-	N_("permission denied"),
-	N_("file not found"),
-	N_("bad function call order"),
-	N_("error in configuration file")
-	} ;
+		{
+		N_("not an error"),
+		N_("malloc() failure"),
+		N_("bad argument"),
+		N_("fork() failed"),
+		N_("child dumped core"),
+		N_("child killed"),
+		N_("wait() failed"),
+		N_("exec() failed"),
+		N_("child failed"),
+		N_("no print destination specified"),
+		N_("non-existent print destination specified"),
+		N_("too many files"),
+		N_("unknown remote system"),
+		N_("temporary failure"),
+		N_("out of disk space"),
+		N_("internal error"),
+		N_("permission denied"),
+		N_("file not found"),
+		N_("bad function call order"),
+		N_("error in configuration file")
+		} ;
 
 const char *uprint_strerror(int errnum)
-    {
-    if(errnum < 0 || (size_t)errnum > (sizeof(uprint_errors) / sizeof(uprint_errors[0])))
-	return _("Unknown error code");
+	{
+	if(errnum < 0 || (size_t)errnum > (sizeof(uprint_errors) / sizeof(uprint_errors[0])))
+		return _("Unknown error code");
 
-    return gettext(uprint_errors[errnum]);
-    } /* end of uprint_strerror() */
+	return gettext(uprint_errors[errnum]);
+	} /* end of uprint_strerror() */
 
 /* end of file */
 

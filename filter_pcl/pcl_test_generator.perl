@@ -6,38 +6,38 @@
 #
 
 sub do_reset
-    {
-    print "\x1bE";
-    }
+	{
+	print "\x1bE";
+	}
 
 sub do_pagesize
-    {
-    my $pagesize = shift;
-    if($pagesize eq "Letter")
-	{ print "\x1b&l2A" }
-    elsif($pagesize eq "Legal")
-	{ print "\x1b&l3A" }
-    else
-	{ die }
-    }
+	{
+	my $pagesize = shift;
+	if($pagesize eq "Letter")
+		{ print "\x1b&l2A" }
+	elsif($pagesize eq "Legal")
+		{ print "\x1b&l3A" }
+	else
+		{ die }
+	}
 
 sub do_bin
-    {
-    my $bin = shift;
-    if($bin eq "main")
-	{ print "\x1b&l1H" }
-    elsif($bin eq "lower")
-	{ print "\x1b&l4H" }
-    elsif($bin eq "large")
-	{ print "\x1b&l5H" }
-    else
-	{ die }
-    }
+	{
+	my $bin = shift;
+	if($bin eq "main")
+		{ print "\x1b&l1H" }
+	elsif($bin eq "lower")
+		{ print "\x1b&l4H" }
+	elsif($bin eq "large")
+		{ print "\x1b&l5H" }
+	else
+		{ die }
+	}
 
 sub do_formfeed
-    {
-    print "\x1b&l0H";
-    }
+	{
+	print "\x1b&l0H";
+	}
 
 do_reset();
 #do_pagesize("Letter");

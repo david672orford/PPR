@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -61,15 +61,15 @@ new_subvector (pool pool, vector v, int i, int j)
   new_v->size = v->size;
 
   if (i < j)
-    {
-      new_v->data = pmemdup (pool, v->data + i * v->size, (j - i) * v->size);
-      new_v->used = new_v->allocated = j - i;
-    }
+	{
+	  new_v->data = pmemdup (pool, v->data + i * v->size, (j - i) * v->size);
+	  new_v->used = new_v->allocated = j - i;
+	}
   else
-    {
-      new_v->data = 0;
-      new_v->used = new_v->allocated = 0;
-    }
+	{
+	  new_v->data = 0;
+	  new_v->used = new_v->allocated = 0;
+	}
 
   return new_v;
 }
@@ -84,12 +84,12 @@ inline void
 _vector_push_back (vector v, const void *ptr)
 {
   if (v->used >= v->allocated)
-    {
-      int a = v->allocated + INCREMENT;
-      void *d = prealloc (v->pool, v->data, a * v->size);
-      v->allocated = a;
-      v->data = d;
-    }
+	{
+	  int a = v->allocated + INCREMENT;
+	  void *d = prealloc (v->pool, v->data, a * v->size);
+	  v->allocated = a;
+	  v->data = d;
+	}
 
   if (ptr) memcpy (v->data + v->used * v->size, ptr, v->size);
   v->used++;
@@ -115,7 +115,7 @@ vector_insert_array (vector v, int i, const void *ptr, int n)
 
   /* Move the other elements up. */
   for (j = v->used-1; j > i; --j)
-    memcpy (v->data + j * v->size, v->data + (j-n) * v->size, v->size);
+	memcpy (v->data + j * v->size, v->data + (j-n) * v->size, v->size);
 
   /* Insert these elements at position i. */
   if (ptr) memcpy (v->data + i * v->size, ptr, v->size * n);
@@ -148,12 +148,12 @@ vector_push_back_vector (vector v, const vector w)
   assert (size == w->size);
 
   if (v->used + w->used > v->allocated)
-    {
-      int a = v->used + w->used;
-      void *d = prealloc (v->pool, v->data, a * size);
-      v->allocated = a;
-      v->data = d;
-    }
+	{
+	  int a = v->used + w->used;
+	  void *d = prealloc (v->pool, v->data, a * size);
+	  v->allocated = a;
+	  v->data = d;
+	}
 
   memcpy (v->data + v->used * size, w->data, size * w->used);
   v->used += w->used;
@@ -167,12 +167,12 @@ vector_push_front_vector (vector v, const vector w)
   assert (size == w->size);
 
   if (v->used + w->used > v->allocated)
-    {
-      int a = v->used + w->used;
-      void *d = prealloc (v->pool, v->data, a * size);
-      v->allocated = a;
-      v->data = d;
-    }
+	{
+	  int a = v->used + w->used;
+	  void *d = prealloc (v->pool, v->data, a * size);
+	  v->allocated = a;
+	  v->data = d;
+	}
 
   memmove (v->data + w->used * size, v->data, v->used * size);
   memcpy (v->data, w->data, size * w->used);
@@ -193,14 +193,14 @@ vector_erase_range (vector v, int i, int j)
   assert (0 <= i && i < v->used && 0 <= j && j <= v->used);
 
   if (i < j)
-    {
-      int n = j - i, k;
+	{
+	  int n = j - i, k;
 
-      for (k = i+n; k < v->used; ++k)
-	memcpy (v->data + (k-n) * v->size, v->data + k * v->size, v->size);
+	  for (k = i+n; k < v->used; ++k)
+		memcpy (v->data + (k-n) * v->size, v->data + k * v->size, v->size);
 
-      v->used -= n;
-    }
+	  v->used -= n;
+	}
 }
 
 void
@@ -237,7 +237,7 @@ _vector_sort (vector v, int (*compare_fn) (const void *, const void *))
 
 int
 _vector_compare (vector v1, vector v2,
-		 int (*compare_fn) (const void *, const void *))
+				 int (*compare_fn) (const void *, const void *))
 {
   int i, r;
   void *p1, *p2;
@@ -246,14 +246,14 @@ _vector_compare (vector v1, vector v2,
   else if (vector_size (v1) > vector_size (v2)) return 1;
 
   for (i = 0; i < vector_size (v1); ++i)
-    {
-      vector_get_ptr (v1, i, p1);
-      vector_get_ptr (v2, i, p2);
+	{
+	  vector_get_ptr (v1, i, p1);
+	  vector_get_ptr (v2, i, p2);
 
-      r = compare_fn (p1, p2);
+	  r = compare_fn (p1, p2);
 
-      if (r != 0) return r;
-    }
+	  if (r != 0) return r;
+	}
 
   return 0;
 }
@@ -262,7 +262,7 @@ void
 _vector_fill (vector v, const void *ptr, int n)
 {
   while (n--)
-    _vector_push_back (v, ptr);
+	_vector_push_back (v, ptr);
 }
 
 void
@@ -285,11 +285,11 @@ void
 vector_reallocate (vector v, int n)
 {
   if (n > v->allocated)
-    {
-      void *d = prealloc (v->pool, v->data, n * v->size);
-      v->allocated = n;
-      v->data = d;
-    }
+	{
+	  void *d = prealloc (v->pool, v->data, n * v->size);
+	  v->allocated = n;
+	  v->data = d;
+	}
 }
 
 vector
@@ -299,8 +299,8 @@ vector_grep (pool p, vector v, int (*match_fn) (const void *))
   int i;
 
   for (i = 0; i < v->used; ++i)
-    if (match_fn (v->data + i * v->size))
-      _vector_push_back (nv, v->data + i * v->size);
+	if (match_fn (v->data + i * v->size))
+	  _vector_push_back (nv, v->data + i * v->size);
 
   return nv;
 }
@@ -312,16 +312,16 @@ vector_grep_pool (pool p, vector v, int (*match_fn) (pool, const void *))
   int i;
 
   for (i = 0; i < v->used; ++i)
-    if (match_fn (p, v->data + i * v->size))
-      _vector_push_back (nv, v->data + i * v->size);
+	if (match_fn (p, v->data + i * v->size))
+	  _vector_push_back (nv, v->data + i * v->size);
 
   return nv;
 }
 
 vector
 _vector_map (pool p, vector v,
-	     void (*map_fn) (const void *, void *),
-	     size_t result_size)
+			 void (*map_fn) (const void *, void *),
+			 size_t result_size)
 {
   vector nv = _vector_new (p, result_size);
   int i;
@@ -330,15 +330,15 @@ _vector_map (pool p, vector v,
   nv->used = v->used;
 
   for (i = 0; i < v->used; ++i)
-    map_fn (v->data + i * v->size, nv->data + i * nv->size);
+	map_fn (v->data + i * v->size, nv->data + i * nv->size);
 
   return nv;
 }
 
 vector
 _vector_map_pool (pool p, vector v,
-		  void (*map_fn) (pool, const void *, void *),
-		  size_t result_size)
+				  void (*map_fn) (pool, const void *, void *),
+				  size_t result_size)
 {
   vector nv = _vector_new (p, result_size);
   int i;
@@ -347,7 +347,7 @@ _vector_map_pool (pool p, vector v,
   nv->used = v->used;
 
   for (i = 0; i < v->used; ++i)
-    map_fn (p, v->data + i * v->size, nv->data + i * nv->size);
+	map_fn (p, v->data + i * v->size, nv->data + i * nv->size);
 
   return nv;
 }

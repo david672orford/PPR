@@ -71,78 +71,78 @@ static char *Apple_CharStrings[]={
 ** It is also called from pprdrv_tt2.c
 */
 const char *ttf_charindex2name(struct TTFONT *font, int charindex)
-    {
-    unsigned int GlyphIndex;
-    static char temp[80];
-    BYTE *ptr;
-    size_t len;
-
-    GlyphIndex = (unsigned int)getUSHORT( font->post_table + 34 + (charindex * 2) );
-
-    if(GlyphIndex <= 257)		/* If a standard Apple name, */
 	{
-	return Apple_CharStrings[GlyphIndex];
-	}
-    else				/* Otherwise, use one */
-	{				/* of the pascal strings. */
-	GlyphIndex -= 258;
+	unsigned int GlyphIndex;
+	static char temp[80];
+	BYTE *ptr;
+	size_t len;
 
-	/* Set pointer to start of Pascal strings. */
-	ptr = ( font->post_table + 34 + (font->numGlyphs * 2) );
+	GlyphIndex = (unsigned int)getUSHORT( font->post_table + 34 + (charindex * 2) );
 
-	len = (size_t)*(ptr++);		/* Step thru the strings */
-	while(GlyphIndex--)		/* until we get to the one */
-	    {				/* that we want. */
-	    ptr += len;
-	    len = (size_t)*(ptr++);	/* cast BTYE to unsigned int */
-	    }
+	if(GlyphIndex <= 257)				/* If a standard Apple name, */
+		{
+		return Apple_CharStrings[GlyphIndex];
+		}
+	else								/* Otherwise, use one */
+		{								/* of the pascal strings. */
+		GlyphIndex -= 258;
 
- 	if(len >= sizeof(temp))
-	    longjmp(font->exception, (int)TTF_LONGPSNAME);
+		/* Set pointer to start of Pascal strings. */
+		ptr = ( font->post_table + 34 + (font->numGlyphs * 2) );
 
-	strncpy(temp, (char*)ptr, len);	/* Copy the pascal string into */
-	temp[len] = '\0';		/* a buffer and make it ASCIIz. */
+		len = (size_t)*(ptr++);			/* Step thru the strings */
+		while(GlyphIndex--)				/* until we get to the one */
+			{							/* that we want. */
+			ptr += len;
+			len = (size_t)*(ptr++);		/* cast BTYE to unsigned int */
+			}
 
-	return temp;
-	}
-    } /* end of ttfont_charindex2name() */
+		if(len >= sizeof(temp))
+			longjmp(font->exception, (int)TTF_LONGPSNAME);
+
+		strncpy(temp, (char*)ptr, len); /* Copy the pascal string into */
+		temp[len] = '\0';				/* a buffer and make it ASCIIz. */
+
+		return temp;
+		}
+	} /* end of ttfont_charindex2name() */
 
 /*
 ** This is the central routine of this section.
 */
 void ttf_PS_CharStrings(struct TTFONT *font, int target_type)
-    {
-    Fixed post_format;
-    int x;
+	{
+	Fixed post_format;
+	int x;
 
-    /* The 'post' table format number. */
-    post_format = getFixed( font->post_table );
+	/* The 'post' table format number. */
+	post_format = getFixed( font->post_table );
 
-    if(post_format.whole != 2 || post_format.fraction != 0)
-    	longjmp(font->exception, (int)TTF_UNSUP_POST);
+	if(post_format.whole != 2 || post_format.fraction != 0)
+		longjmp(font->exception, (int)TTF_UNSUP_POST);
 
-    /* Emmit the start of the PostScript code to define the dictionary. */
-    (*font->printf)("/CharStrings %d dict dup begin\n", font->numGlyphs);
+	/* Emmit the start of the PostScript code to define the dictionary. */
+	(*font->printf)("/CharStrings %d dict dup begin\n", font->numGlyphs);
 
-    /* Emmit one key-value pair for each glyph. */
-    for(x=0; x < font->numGlyphs; x++)
-    	{
-	if(target_type == 42)		/* type 42 */
- 	    {
- 	    (*font->printf)("/%s %d def\n", ttf_charindex2name(font,x), x);
-	    }
-	else				/* type 3 */
- 	    {
- 	    (*font->printf)("/%s{", ttf_charindex2name(font, x));
+	/* Emmit one key-value pair for each glyph. */
+	for(x=0; x < font->numGlyphs; x++)
+		{
+		if(target_type == 42)			/* type 42 */
+			{
+			(*font->printf)("/%s %d def\n", ttf_charindex2name(font,x), x);
+			}
+		else							/* type 3 */
+			{
+			(*font->printf)("/%s{", ttf_charindex2name(font, x));
 
-	    ttf_PS_type3_charproc(font,x);
+			ttf_PS_type3_charproc(font,x);
 
-	    (*font->puts)("}_d\n");	/* "} bind def" */
- 	    }
-    	}
+			(*font->puts)("}_d\n");		/* "} bind def" */
+			}
+		}
 
-    (*font->puts)("end readonly def\n");
-    } /* end of ttf_PS_CharStrings() */
+	(*font->puts)("end readonly def\n");
+	} /* end of ttf_PS_CharStrings() */
 
 /* end of file */
 

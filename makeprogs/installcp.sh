@@ -66,16 +66,16 @@ if [ ! -f "$source" ]
 rm -f "$RPM_BUILD_ROOT$target"
 
 if [ $squeeze != 0 ]
-    then
-    echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\" (squeezing)"
-    `dirname $0`/squeeze "$source" "$RPM_BUILD_ROOT$target" || exit 1
-    else
-    echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\""
-    cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
-    chown $USER_PPR "$RPM_BUILD_ROOT$target"
-    chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target"
-    chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
-    fi
+	then
+	echo "	  \"$source\" --> \"$RPM_BUILD_ROOT$target\" (squeezing)"
+	`dirname $0`/squeeze "$source" "$RPM_BUILD_ROOT$target" || exit 1
+	else
+	echo "	  \"$source\" --> \"$RPM_BUILD_ROOT$target\""
+	cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
+	chown $USER_PPR "$RPM_BUILD_ROOT$target"
+	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target"
+	chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
+	fi
 
 echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
 

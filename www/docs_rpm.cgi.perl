@@ -58,10 +58,10 @@ my($name, $version, $release, $summary, $url, $distribution, $vendor, $source, $
 
 # Read the long description.
 while(<RPM>)
-    {
-    last if(/^%/);		# other languages than English
-    $description .= $_;
-    }
+	{
+	last if(/^%/);				# other languages than English
+	$description .= $_;
+	}
 
 # We are done with that instance of rpm.  Ignore the exit code.
 close(RPM) || die $!;
@@ -83,43 +83,43 @@ print "<p>", html($description), "\n";
 open(RPM, "rpm -qdl $pkg |") || die $!;
 print "<ul>\n";
 while(my $file = <RPM>)
-    {
-    chomp $file;
-    my $mime = docs_guess_mime($file);
-    next if($mime =~ m#^image/#);
-
-    my $encoded_path = $file;
-    $encoded_path =~ s/([^a-zA-Z0-9 \/\.-])/sprintf("%%%02X",unpack("C",$1))/ge;
-
-    if($mime eq "text/plain")
 	{
-	$url = "docs_plain.cgi$encoded_path";
-	}
-    elsif($mime eq "application/x-troff-man")
-	{
-	$url = "docs_man.cgi$encoded_path";
-	}
-    elsif($mime eq "application/x-info")
-	{
-	# The info viewer isn't designed to view individual files.
-	#$url = "docs_info.cgi$encoded_path";
-    	$url = ("docs_cat.cgi$encoded_path?" . form_urlencoded("mime", $mime));
-	}
-    else
-    	{
-    	$url = ("docs_cat.cgi$encoded_path?" . form_urlencoded("mime", $mime));
-    	}
+	chomp $file;
+	my $mime = docs_guess_mime($file);
+	next if($mime =~ m#^image/#);
 
-    print "<li><a href=\"$url\">", html($file), "</a>\n";
-    }
+	my $encoded_path = $file;
+	$encoded_path =~ s/([^a-zA-Z0-9 \/\.-])/sprintf("%%%02X",unpack("C",$1))/ge;
+
+	if($mime eq "text/plain")
+		{
+		$url = "docs_plain.cgi$encoded_path";
+		}
+	elsif($mime eq "application/x-troff-man")
+		{
+		$url = "docs_man.cgi$encoded_path";
+		}
+	elsif($mime eq "application/x-info")
+		{
+		# The info viewer isn't designed to view individual files.
+		#$url = "docs_info.cgi$encoded_path";
+		$url = ("docs_cat.cgi$encoded_path?" . form_urlencoded("mime", $mime));
+		}
+	else
+		{
+		$url = ("docs_cat.cgi$encoded_path?" . form_urlencoded("mime", $mime));
+		}
+
+	print "<li><a href=\"$url\">", html($file), "</a>\n";
+	}
 print "</ul>\n";
 close(RPM) || die $!;
 
 }; if($@)
-    {
-    my $error = $@;
-    print "<p>", html($error), "\n";
-    }
+	{
+	my $error = $@;
+	print "<p>", html($error), "\n";
+	}
 
 print <<"EndTail";
 </body>

@@ -6,13 +6,13 @@
 $CONFDIR = "/etc/ppr/printers";
 
 format STDOUT_TOP =
-Name       Description                                               PPD                             Address
+Name	   Description												 PPD							 Address
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
 .
 
 format STDOUT =
 @<<<<<<<<<<@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$p,        $comment,                                                 $ppdfile,                       $address
+$p,		   $comment,												 $ppdfile,						 $address
 .
 
 $= = 70;
@@ -31,16 +31,16 @@ foreach $p (sort(readdir(DIR)))
   $ppdfile = "";
 
   while(<FILE>)
-    {
-    if( $_ =~ /^Comment: +(.+)$/ )
-      { $comment = $1; }
-    elsif ( $_ =~ /^Interface: +(.+)$/ )
-      { $interface = $1; }
-    elsif( $_ =~ /^Address: +["]?([^"]+)["]?$/ )
-      { $address = $1; }
-    elsif( $_ =~ /^PPDFile: +(.+)$/ )
-      { $ppdfile = $1; }
-    }
+	{
+	if( $_ =~ /^Comment: +(.+)$/ )
+	  { $comment = $1; }
+	elsif ( $_ =~ /^Interface: +(.+)$/ )
+	  { $interface = $1; }
+	elsif( $_ =~ /^Address: +["]?([^"]+)["]?$/ )
+	  { $address = $1; }
+	elsif( $_ =~ /^PPDFile: +(.+)$/ )
+	  { $ppdfile = $1; }
+	}
 
   write;
 

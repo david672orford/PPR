@@ -7,14 +7,14 @@
 # from xgettext, but it is good enough for now.
 
 while(defined(my $file = shift(@ARGV)))
-    {
-    open F, "<$file" || die;
-    print "# line 0 \"$file\"\n";
-    while(<F>)
-    	{
-	s/#.*$//;	# very crude and incorrect
-	s/^\s*\.\s*"/"/;
-	print;
-    	}
-    }
+	{
+	open F, "<$file" || die;
+	print "# line 0 \"$file\"\n";
+	while(<F>)
+		{
+		s/#.*$//;		# very crude and incorrect
+		s/^\s*\.\s*"/"/;
+		print;
+		}
+	}
 

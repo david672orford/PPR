@@ -26,9 +26,9 @@ extern int gu_alloc_blocks;
 ** Save the value of gu_alloc_blocks.
 */
 void gu_alloc_checkpoint(void)
-    {
-    gu_alloc_blocks_saved = gu_alloc_blocks;
-    } /* end of gu_alloc_checkpoint() */
+	{
+	gu_alloc_blocks_saved = gu_alloc_blocks;
+	} /* end of gu_alloc_checkpoint() */
 
 /*
 ** Routines to get and put the difference between gu_alloc_blocks
@@ -45,18 +45,18 @@ void gu_alloc_checkpoint_put(int n) { gu_alloc_blocks_saved = gu_alloc_blocks - 
 /*
 ** This is called to assert that gu_alloc_blocks differs
 ** from the figure saved by gu_alloc_checkpoint by a
-** certain amount.  This is called by a macro called
+** certain amount.	This is called by a macro called
 ** gu_alloc_assert().  A positive amount is increase, a negative
 ** amount is decrease.
 */
 void _gu_alloc_assert(const char *file, int line, int assertion)
-    {
-    if((gu_alloc_blocks_saved + assertion) != gu_alloc_blocks)
 	{
-    	libppr_throw(EXCEPTION_BADUSAGE, "gu_alloc_assert", "assertion failed at %s line %d (is %d, expected %d)",
-    		file, line, gu_alloc_blocks, (gu_alloc_blocks_saved + assertion) );
-	}
-    } /* end of _gu_alloc_assert() */
+	if((gu_alloc_blocks_saved + assertion) != gu_alloc_blocks)
+		{
+		libppr_throw(EXCEPTION_BADUSAGE, "gu_alloc_assert", "assertion failed at %s line %d (is %d, expected %d)",
+				file, line, gu_alloc_blocks, (gu_alloc_blocks_saved + assertion) );
+		}
+	} /* end of _gu_alloc_assert() */
 
 /* end of gu_alloc_debug.c */
 

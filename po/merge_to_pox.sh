@@ -22,16 +22,16 @@
 
 lang=$1
 if [ -z "$lang" ]
-    then
-    echo "Usage: install_mo.sh <language>"
-    exit 1
-    fi
+	then
+	echo "Usage: install_mo.sh <language>"
+	exit 1
+	fi
 
 for potfile in *.pot
-    do
-    division=`basename $potfile .pot`
-    echo -n "$lang-$division.pox: "
-    if [ -f "$lang-$division.po" ]
+	do
+	division=`basename $potfile .pot`
+	echo -n "$lang-$division.pox: "
+	if [ -f "$lang-$division.po" ]
 	then
 	echo "merging old and new messages"
 	#tupdate $division.pot $lang-$division.po >$lang-$division.pox
@@ -40,7 +40,7 @@ for potfile in *.pot
 	echo "creating new"
 	cp $division.pot $lang-$division.pox
 	fi
-    done
+	done
 echo
 
 exit 0

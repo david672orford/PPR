@@ -26,22 +26,22 @@
 ** Write lines to the debug file.
 */
 void int_debug(const char format[], ... )
-    {
-    char fname[MAX_PPR_PATH];
-    va_list va;
-    FILE *file;
-
-    ppr_fnamef(fname, "%s/interface_%s", LOGDIR, int_cmdline.int_basename);
-    if((file = fopen(fname, "a")) != NULL)
 	{
-	fprintf(file, "DEBUG: (%ld) ", (long)getpid());
-	va_start(va, format);
-	vfprintf(file, format, va);
-	va_end(va);
-	fprintf(file, "\n");
-	fclose(file);
-	}
-    } /* end of int_debug() */
+	char fname[MAX_PPR_PATH];
+	va_list va;
+	FILE *file;
+
+	ppr_fnamef(fname, "%s/interface_%s", LOGDIR, int_cmdline.int_basename);
+	if((file = fopen(fname, "a")) != NULL)
+		{
+		fprintf(file, "DEBUG: (%ld) ", (long)getpid());
+		va_start(va, format);
+		vfprintf(file, format, va);
+		va_end(va);
+		fprintf(file, "\n");
+		fclose(file);
+		}
+	} /* end of int_debug() */
 
 /* end of file */
 

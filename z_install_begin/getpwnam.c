@@ -18,24 +18,24 @@
 #include <sys/types.h>
 
 int main(int argc, char *argv[])
-    {
-    struct passwd *pw;
+	{
+	struct passwd *pw;
 
-    if(argc != 2)
-    	{
-	fprintf(stderr, "Usage: %s <username>\n", argv[0]);
-	return 10;
-    	}
+	if(argc != 2)
+		{
+		fprintf(stderr, "Usage: %s <username>\n", argv[0]);
+		return 10;
+		}
 
-    if(!(pw = getpwnam(argv[1])))
-    	{
-    	printf("-1\n");
-    	return 1;
-    	}
+	if(!(pw = getpwnam(argv[1])))
+		{
+		printf("-1\n");
+		return 1;
+		}
 
-    printf("%ld\n", (long)pw->pw_uid);
-    return 0;
-    }
+	printf("%ld\n", (long)pw->pw_uid);
+	return 0;
+	}
 
 /* end of file */
 

@@ -38,13 +38,13 @@ system("ppop --arrest-interest-interval 1200 list mcec_dup mcec_sim mcec_2up");
 
 print "</pre>\n";
 
-# This is the end of the exception handling block.  If die() was called
+# This is the end of the exception handling block.	If die() was called
 # within the block, print its message.
 }; if($@)
-    {
-    my $message = html($@);
-    print "<p>$message</p>\n";
-    }
+	{
+	my $message = html($@);
+	print "<p>$message</p>\n";
+	}
 
 print <<"EndOfTail";
 </body>

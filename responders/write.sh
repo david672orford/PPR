@@ -16,7 +16,7 @@
 
 #
 # This responder attempts to send the message with the write
-# program.  If that fails, it invokes the mail responder.
+# program.	If that fails, it invokes the mail responder.
 #
 
 # Pull in definitions of $RESP_*:
@@ -34,47 +34,47 @@ response_code_number="$6"
 option_printed=1
 option_canceled=1
 for opt in $responder_options
-    do
-    case $opt in
+	do
+	case $opt in
 	printed=[nNfF0]* )
-	    option_printed=0
-	    ;;
+		option_printed=0
+		;;
 	printed=[yYtT1-9]* )
-	    option_printed=1
-	    ;;
+		option_printed=1
+		;;
 	canceled=[nNfF0]* )
-	    option_canceled=0
-	    ;;
+		option_canceled=0
+		;;
 	canceled=[yYtT1-9]* )
-	    option_canceled=1
-	    ;;
+		option_canceled=1
+		;;
 	* )
-	    ;;
-    esac
-    done
+		;;
+	esac
+	done
 
 # If invoked with the printed=no option, bail out
 # if we were about to report that a job has been printed:
 if [ $option_printed -eq 0 ]
-    then
-    if [ $response_code_number -eq $RESP_FINISHED ]
+	then
+	if [ $response_code_number -eq $RESP_FINISHED ]
 	then
 	exit 0
 	fi
-    fi
+	fi
 
 # If invoked with the canceled=no option, bail out if canceled.
 if [ $option_canceled -eq 0 ]
-    then
-    if [ $response_code_number -eq $RESP_CANCELED_PRINTING ]
+	then
+	if [ $response_code_number -eq $RESP_CANCELED_PRINTING ]
 	then
 	exit 0
 	fi
-    if [ $response_code_number -eq $RESP_CANCELED ]
+	if [ $response_code_number -eq $RESP_CANCELED ]
 	then
 	exit 0
 	fi
-    fi
+	fi
 
 # Send the message with write.
 write $addr >/dev/null 2>&1 <<EndOfMessage
@@ -84,8 +84,8 @@ EndOfMessage
 
 # If that didn't work, try the mail responder.
 if [ $? -ne 0 ]
-    then
-    exec responders/mail "$@"
-    fi
+	then
+	exec responders/mail "$@"
+	fi
 
 exit 0

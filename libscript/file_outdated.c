@@ -21,39 +21,39 @@
 const char myname[] = "file_outdated";
 
 int main(int argc, char *argv[])
-    {
-    struct stat statbuf_depending, statbuf_source;
-    int x;
-
-    /* The depending name file is mandatory. */
-    if(argc < 2)
 	{
-	fprintf(stderr, "%s: Usage: file_outdated <file> <master> ...\n", myname);
+	struct stat statbuf_depending, statbuf_source;
+	int x;
+
+	/* The depending name file is mandatory. */
+	if(argc < 2)
+		{
+		fprintf(stderr, "%s: Usage: file_outdated <file> <master> ...\n", myname);
+		return 1;
+		}
+
+	if(stat(argv[1], &statbuf_depending) == -1)
+		{
+		fprintf(stdout, "%s: Target file \"%s\" does not exist.\n", myname, argv[1]);
+		return 0;
+		}
+
+	for(x=2; x < argc; x++)
+		{
+		if(stat(argv[x], &statbuf_source) == -1)
+			{
+			fprintf(stderr, "%s: Source file \"%s\" does not exist.\n", myname, argv[x]);
+			return 0;
+			}
+
+		if(statbuf_source.st_mtime >= statbuf_depending.st_mtime)
+			{
+			fprintf(stdout, "%s: Source file \"%s\" is newer than \"%s\".\n", myname, argv[x], argv[1]);
+			return 0;
+			}
+		}
+
 	return 1;
-	}
-
-    if(stat(argv[1], &statbuf_depending) == -1)
-    	{
-	fprintf(stdout, "%s: Target file \"%s\" does not exist.\n", myname, argv[1]);
-    	return 0;
-    	}
-
-    for(x=2; x < argc; x++)
-	{
-	if(stat(argv[x], &statbuf_source) == -1)
-	    {
-	    fprintf(stderr, "%s: Source file \"%s\" does not exist.\n", myname, argv[x]);
-	    return 0;
-	    }
-
-        if(statbuf_source.st_mtime >= statbuf_depending.st_mtime)
-	    {
-	    fprintf(stdout, "%s: Source file \"%s\" is newer than \"%s\".\n", myname, argv[x], argv[1]);
-            return 0;
-            }
-	}
-
-    return 1;
-    } /* end of main() */
+	} /* end of main() */
 
 /* end of file */

@@ -20,47 +20,47 @@
 
 /*
 ** Like gu_strsep(), but is returns a double-quoted string as a single word.
-** A double quote may be escaped with a backslash.  There is also a 
+** A double quote may be escaped with a backslash.	There is also a 
 ** parameter "discard" which describes junk that we should swallow if it
 ** is outside the quotes.
 */
 char *gu_strsep_quoted(char **stringp, const char *delim, const char *discard)
-    {
-    char *start, *si, *di;
+	{
+	char *start, *si, *di;
 
-    start = di = si = *stringp;
+	start = di = si = *stringp;
 
-    if(discard)
-    	si += strspn(si, discard);
+	if(discard)
+		si += strspn(si, discard);
 
-    if(*si != '\"')				/* If not a quoted string, */
-    	return gu_strsep(stringp, delim);	/* fall back to regular strsep(). */
+	if(*si != '\"')								/* If not a quoted string, */
+		return gu_strsep(stringp, delim);		/* fall back to regular strsep(). */
 
-    si++;					/* move past opening quote */
-    while(*si && *si != '\"')			/* until closing quote or end of string, */
-    	{
-	if(*si == '\\')				/* if character is a backslash */
-	    {
-	    si++;				/* don't copy the backslash, copy what is after it */
-	    if(!*si) break;			/* and stop if there is nothing after it */
-	    }
-	*(di++) = *(si++);			/* copy this character */
-    	}
+	si++;										/* move past opening quote */
+	while(*si && *si != '\"')					/* until closing quote or end of string, */
+		{
+		if(*si == '\\')							/* if character is a backslash */
+			{
+			si++;								/* don't copy the backslash, copy what is after it */
+			if(!*si) break;						/* and stop if there is nothing after it */
+			}
+		*(di++) = *(si++);						/* copy this character */
+		}
 
-    if(*(si++) != '\"')				/* If it didn't end with a quote */
-    	return NULL;				/* we failed. */
+	if(*(si++) != '\"')							/* If it didn't end with a quote */
+		return NULL;							/* we failed. */
 
-    *di = '\0';					/* terminate copy */
+	*di = '\0';									/* terminate copy */
 
-    if(discard)
-    	si += strspn(si, discard);
+	if(discard)
+		si += strspn(si, discard);
 
-    if(*si && strchr(delim, *si))		/* If the next character is a delimiter, */
-	si++;					/* move past it. */
+	if(*si && strchr(delim, *si))				/* If the next character is a delimiter, */
+		si++;									/* move past it. */
 
-    *stringp = si;				/* update caller's progress pointer */
+	*stringp = si;								/* update caller's progress pointer */
 
-    return start;				/* return start of string with quoting removed */
-    }
+	return start;								/* return start of string with quoting removed */
+	}
 
 /* end of file */

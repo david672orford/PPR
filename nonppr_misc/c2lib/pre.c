@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -64,17 +64,17 @@ precomp (pool pool, const char *pattern, int options)
   /* Compile the pattern. */
   result = pcre_compile (pattern, options, &errptr, &erroffset, 0);
   if (result == 0)
-    {
-      fprintf (stderr,
-	       "pcre: internal error compiling regular expression:\n"
-	       "pcre: %s\n"
-	       "pcre: %s\n"
-	       "pcre: %s^\n",
-	       errptr,
-	       pattern,
-	       pchrs (pool, ' ', erroffset-1));
-      exit (1);
-    }
+	{
+	  fprintf (stderr,
+			   "pcre: internal error compiling regular expression:\n"
+			   "pcre: %s\n"
+			   "pcre: %s\n"
+			   "pcre: %s^\n",
+			   errptr,
+			   pattern,
+			   pchrs (pool, ' ', erroffset-1));
+	  exit (1);
+	}
 
   /* Restore memory allocation. */
   pcre_malloc = old_malloc;
@@ -101,7 +101,7 @@ prematch (pool pool, const char *str, const pcre *pattern, int options)
 
   /* Get the number of capturing substrings in the pattern (n). */
   if ((err = pcre_fullinfo (pattern, 0, PCRE_INFO_CAPTURECOUNT, &n)) != 0)
-    abort ();
+	abort ();
 
   /* Allocate a vector large enough to contain the resulting substrings. */
   ovecsize = (n+1) * 3;
@@ -115,35 +115,35 @@ prematch (pool pool, const char *str, const pcre *pattern, int options)
   pcre_free = old_free;
 
   if (n == PCRE_ERROR_NOMATCH) /* No match, return NULL. */
-    return 0;
-  else if (n <= 0)		/* Some other error. */
-    abort ();
+	return 0;
+  else if (n <= 0)				/* Some other error. */
+	abort ();
 
   /* Some matches. Construct the vector. */
   result = new_vector (pool, char *);
   for (i = 0; i < n; ++i)
-    {
-      char *s = 0;
-      int start = ovector[i*2];
-      int end = ovector[i*2+1];
+	{
+	  char *s = 0;
+	  int start = ovector[i*2];
+	  int end = ovector[i*2+1];
 
-      if (start >= 0)
-	s = pstrndup (pool, str + start, end - start);
-      vector_push_back (result, s);
-    }
+	  if (start >= 0)
+		s = pstrndup (pool, str + start, end - start);
+	  vector_push_back (result, s);
+	}
 
   return result;
 }
 
 static int do_match_and_sub (pool pool, const char *str, char **newstrp,
-			     const pcre *pattern, const char *sub,
-			     int startoffset, int options, int cc,
-			     int *ovector, int ovecsize, int placeholders);
+							 const pcre *pattern, const char *sub,
+							 int startoffset, int options, int cc,
+							 int *ovector, int ovecsize, int placeholders);
 
 const char *
 presubst (pool pool, const char *str,
-	  const pcre *pattern, const char *sub,
-	  int options)
+		  const pcre *pattern, const char *sub,
+		  int options)
 {
   char *newstr = pstrdup (pool, "");
   int cc, err, n, ovecsize;
@@ -164,7 +164,7 @@ presubst (pool pool, const char *str,
 
   /* Get the number of capturing substrings in the pattern. */
   if ((err = pcre_fullinfo (pattern, 0, PCRE_INFO_CAPTURECOUNT, &cc)) != 0)
-    abort ();
+	abort ();
 
   /* Allocate a vector large enough to contain the resulting substrings. */
   ovecsize = (cc+1) * 3;
@@ -172,23 +172,23 @@ presubst (pool pool, const char *str,
 
   /* Find a match and substitute. */
   n = do_match_and_sub (pool, str, &newstr, pattern, sub, 0, options, cc,
-			ovector, ovecsize, placeholders);
+						ovector, ovecsize, placeholders);
 
   if (global)
-    {
-      /* Do the remaining matches. */
-      while (n > 0)
 	{
-	  n = do_match_and_sub (pool, str, &newstr, pattern, sub, n,
-				options, cc,
-				ovector, ovecsize, placeholders);
+	  /* Do the remaining matches. */
+	  while (n > 0)
+		{
+		  n = do_match_and_sub (pool, str, &newstr, pattern, sub, n,
+								options, cc,
+								ovector, ovecsize, placeholders);
+		}
 	}
-    }
   else if (n > 0)
-    {
-      /* Concatenate the remainder of the string. */
-      newstr = pstrcat (pool, newstr, str + n);
-    }
+	{
+	  /* Concatenate the remainder of the string. */
+	  newstr = pstrcat (pool, newstr, str + n);
+	}
 
   /* Restore memory allocation. */
   pcre_malloc = old_malloc;
@@ -199,31 +199,31 @@ presubst (pool pool, const char *str,
 
 static int
 do_match_and_sub (pool pool, const char *str, char **newstrp,
-		  const pcre *pattern, const char *sub,
-		  int startoffset, int options, int cc,
-		  int *ovector, int ovecsize, int placeholders)
+				  const pcre *pattern, const char *sub,
+				  int startoffset, int options, int cc,
+				  int *ovector, int ovecsize, int placeholders)
 {
   int so, eo, err;
   char *newstr = *newstrp;
 
   /* Find the next match. */
   err = pcre_exec (pattern, 0, str, strlen (str), startoffset,
-		   options, ovector, ovecsize);
+				   options, ovector, ovecsize);
   if (err == PCRE_ERROR_NOMATCH) /* No match. */
-    {
-      if (startoffset == 0)
-	/* Special case: we can just return the original string. */
-	*newstrp = (char *) str;
-      else
 	{
-	  /* Concatenate the end of the string. */
-	  newstr = pstrcat (pool, newstr, str + startoffset);
-	  *newstrp = newstr;
+	  if (startoffset == 0)
+		/* Special case: we can just return the original string. */
+		*newstrp = (char *) str;
+	  else
+		{
+		  /* Concatenate the end of the string. */
+		  newstr = pstrcat (pool, newstr, str + startoffset);
+		  *newstrp = newstr;
+		}
+	  return -1;
 	}
-      return -1;
-    }
-  else if (err != cc+1)		/* Some other error. */
-    abort ();
+  else if (err != cc+1)			/* Some other error. */
+	abort ();
 
   /* Get position of the match. */
   so = ovector[0];
@@ -232,34 +232,34 @@ do_match_and_sub (pool pool, const char *str, char **newstrp,
   /* Substitute for the match. */
   newstr = pstrncat (pool, newstr, str + startoffset, so - startoffset);
   if (placeholders)
-    {
-      int i;
-
-      /* Substitute $1, $2, ... placeholders with captured substrings. */
-      for (i = 0; i < strlen (sub); ++i)
 	{
-	  if (sub[i] == '$' && (sub[i+1] >= '0' && sub[i+1] <= '9'))
-	    {
-	      int n = sub[i+1] - '0';
+	  int i;
 
-	      if (n > cc)
-		newstr = pstrncat (pool, newstr, &sub[i], 2);
-	      else
+	  /* Substitute $1, $2, ... placeholders with captured substrings. */
+	  for (i = 0; i < strlen (sub); ++i)
 		{
-		  int nso = ovector[n*2];
-		  int neo = ovector[n*2+1];
+		  if (sub[i] == '$' && (sub[i+1] >= '0' && sub[i+1] <= '9'))
+			{
+			  int n = sub[i+1] - '0';
 
-		  newstr = pstrncat (pool, newstr, str+nso, neo-nso);
+			  if (n > cc)
+				newstr = pstrncat (pool, newstr, &sub[i], 2);
+			  else
+				{
+				  int nso = ovector[n*2];
+				  int neo = ovector[n*2+1];
+
+				  newstr = pstrncat (pool, newstr, str+nso, neo-nso);
+				}
+
+			  i++;
+			}
+		  else
+			newstr = pstrncat (pool, newstr, &sub[i], 1);
 		}
-
-	      i++;
-	    }
-	  else
-	    newstr = pstrncat (pool, newstr, &sub[i], 1);
 	}
-    }
   else
-    newstr = pstrcat (pool, newstr, sub);
+	newstr = pstrcat (pool, newstr, sub);
 
   *newstrp = newstr;
   return eo;

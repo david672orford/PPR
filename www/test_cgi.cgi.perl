@@ -37,11 +37,11 @@ QUOTE10
 my $name;
 my $value;
 foreach $name (sort(keys(%ENV)))
-    {
-    $value = $ENV{$name};
-    $value =~ s/</&lt;/g;
-    print "\$ENV{$name} = \"$value\"<br>\n";
-    }
+	{
+	$value = $ENV{$name};
+	$value =~ s/</&lt;/g;
+	print "\$ENV{$name} = \"$value\"<br>\n";
+	}
 
 print <<"QUOTE20";
 </p>
@@ -51,11 +51,11 @@ print <<"QUOTE20";
 QUOTE20
 
 foreach $name (sort(keys(%data)))
-    {
-    $value = $data{$name};
-    $value =~ s/</&lt;/g;
-    print "\$data{$name} = \"$value\"<br>\n";
-    }
+	{
+	$value = $data{$name};
+	$value =~ s/</&lt;/g;
+	print "\$data{$name} = \"$value\"<br>\n";
+	}
 
 print <<"TAIL10";
 </p>

@@ -16,7 +16,7 @@
 
 #
 # This is a very simple interface which copies the file to a
-# port such as a parallel port.  Since most parallel ports
+# port such as a parallel port.	 Since most parallel ports
 # are unidirecitonal, this interface does not attempt to receive
 # PostScript error messages.
 #

@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -59,7 +59,7 @@ HASH (const void *key, size_t key_size, int nr_buckets)
   const char *s = (const char *) key;
 
   while (key_size--)
-    h = h * 33 + *s++;
+	h = h * 33 + *s++;
 
   return h & (nr_buckets - 1);
 }
@@ -105,28 +105,28 @@ copy_hash (pool pool, hash h)
 
   /* Copy the buckets. */
   for (b = 0; b < vector_size (new_h->buckets); ++b)
-    {
-      vector v;
-
-      vector_get (new_h->buckets, b, v);
-
-      if (v)
 	{
-	  v = copy_vector (pool, v);
-	  vector_replace (new_h->buckets, b, v);
+	  vector v;
 
-	  /* Copy the keys/values in this vector. */
-	  for (i = 0; i < vector_size (v); ++i)
-	    {
-	      struct hash_bucket_entry entry;
+	  vector_get (new_h->buckets, b, v);
 
-	      vector_get (v, i, entry);
-	      entry.key = pmemdup (pool, entry.key, h->key_size);
-	      entry.value = pmemdup (pool, entry.value, h->value_size);
-	      vector_replace (v, i, entry);
-	    }
+	  if (v)
+		{
+		  v = copy_vector (pool, v);
+		  vector_replace (new_h->buckets, b, v);
+
+		  /* Copy the keys/values in this vector. */
+		  for (i = 0; i < vector_size (v); ++i)
+			{
+			  struct hash_bucket_entry entry;
+
+			  vector_get (v, i, entry);
+			  entry.key = pmemdup (pool, entry.key, h->key_size);
+			  entry.value = pmemdup (pool, entry.value, h->value_size);
+			  vector_replace (v, i, entry);
+			}
+		}
 	}
-    }
 
   return new_h;
 }
@@ -154,17 +154,17 @@ _hash_get_ptr (hash h, const void *key)
   vector_get (h->buckets, b, bucket);
 
   if (bucket == 0)
-    return 0;
+	return 0;
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      struct hash_bucket_entry entry;
+	{
+	  struct hash_bucket_entry entry;
 
-      vector_get (bucket, i, entry);
-      if (memcmp (entry.key, key, h->key_size) == 0)
-	return entry.value;
-    }
+	  vector_get (bucket, i, entry);
+	  if (memcmp (entry.key, key, h->key_size) == 0)
+		return entry.value;
+	}
 
   return 0;
 }
@@ -182,26 +182,26 @@ _hash_insert (hash h, const void *key, const void *value)
 
   /* If there is no bucket there, we have to allocate a fresh vector. */
   if (bucket == 0)
-    {
-      bucket = new_vector (h->pool, struct hash_bucket_entry);
-      vector_replace (h->buckets, b, bucket);
-    }
+	{
+	  bucket = new_vector (h->pool, struct hash_bucket_entry);
+	  vector_replace (h->buckets, b, bucket);
+	}
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (memcmp (entry.key, key, h->key_size) == 0)
 	{
-	  memcpy (entry.value, value, h->value_size);
-	  /*entry.value = pmemdup (h->pool, value, h->value_size);*/
+	  vector_get (bucket, i, entry);
+	  if (memcmp (entry.key, key, h->key_size) == 0)
+		{
+		  memcpy (entry.value, value, h->value_size);
+		  /*entry.value = pmemdup (h->pool, value, h->value_size);*/
 
-	  /* Replace this entry. */
-	  vector_replace (bucket, i, entry);
+		  /* Replace this entry. */
+		  vector_replace (bucket, i, entry);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   /* Append to this bucket. */
   entry.key = pmemdup (h->pool, key, h->key_size);
@@ -226,16 +226,16 @@ _hash_erase (hash h, const void *key)
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (memcmp (entry.key, key, h->key_size) == 0)
 	{
-	  /* Remove this entry. */
-	  vector_erase (bucket, i);
+	  vector_get (bucket, i, entry);
+	  if (memcmp (entry.key, key, h->key_size) == 0)
+		{
+		  /* Remove this entry. */
+		  vector_erase (bucket, i);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   return 0;
 }
@@ -250,16 +250,16 @@ hash_keys_in_pool (hash h, pool p)
   keys = _vector_new (p, h->key_size);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    vector_get (bucket, j, entry);
-	    _vector_push_back (keys, entry.key);
-	  }
-    }
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			vector_get (bucket, j, entry);
+			_vector_push_back (keys, entry.key);
+		  }
+	}
 
   return keys;
 }
@@ -280,16 +280,16 @@ hash_values_in_pool (hash h, pool p)
   values = _vector_new (p, h->value_size);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    vector_get (bucket, j, entry);
-	    _vector_push_back (values, entry.value);
-	  }
-    }
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			vector_get (bucket, j, entry);
+			_vector_push_back (values, entry.value);
+		  }
+	}
 
   return values;
 }
@@ -307,10 +307,10 @@ hash_size (hash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? vector_size (bucket) : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? vector_size (bucket) : 0;
+	}
 
   return n;
 }
@@ -322,10 +322,10 @@ hash_get_buckets_used (hash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? 1 : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? 1 : 0;
+	}
 
   return n;
 }
@@ -345,9 +345,9 @@ hash_set_buckets_allocated (hash h, int new_size)
    * inserted into the hash, and to make NEW_SIZE a power of 2.
    */
   if (vector_size (h->buckets) > new_size)
-    vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
+	vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
   else if (vector_size (h->buckets) < new_size)
-    vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
+	vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
 }
 
 /*----- SASHes -----*/
@@ -389,28 +389,28 @@ copy_sash (pool pool, sash h)
 
   /* Copy the buckets. */
   for (b = 0; b < vector_size (new_h->buckets); ++b)
-    {
-      vector v;
-
-      vector_get (new_h->buckets, b, v);
-
-      if (v)
 	{
-	  v = copy_vector (pool, v);
-	  vector_replace (new_h->buckets, b, v);
+	  vector v;
 
-	  /* Copy the string keys/values in this vector. */
-	  for (i = 0; i < vector_size (v); ++i)
-	    {
-	      struct sash_bucket_entry entry;
+	  vector_get (new_h->buckets, b, v);
 
-	      vector_get (v, i, entry);
-	      entry.key = pstrdup (pool, entry.key);
-	      entry.value = pstrdup (pool, entry.value);
-	      vector_replace (v, i, entry);
-	    }
+	  if (v)
+		{
+		  v = copy_vector (pool, v);
+		  vector_replace (new_h->buckets, b, v);
+
+		  /* Copy the string keys/values in this vector. */
+		  for (i = 0; i < vector_size (v); ++i)
+			{
+			  struct sash_bucket_entry entry;
+
+			  vector_get (v, i, entry);
+			  entry.key = pstrdup (pool, entry.key);
+			  entry.value = pstrdup (pool, entry.value);
+			  vector_replace (v, i, entry);
+			}
+		}
 	}
-    }
 
   return new_h;
 }
@@ -426,23 +426,23 @@ _sash_get (sash h, const char *key, const char **ptr)
   vector_get (h->buckets, b, bucket);
 
   if (bucket == 0)
-    {
-      if (ptr) *ptr = 0;
-      return 0;
-    }
+	{
+	  if (ptr) *ptr = 0;
+	  return 0;
+	}
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      struct sash_bucket_entry entry;
-
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
 	{
-	  if (ptr) *ptr = entry.value;
-	  return 1;
+	  struct sash_bucket_entry entry;
+
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		{
+		  if (ptr) *ptr = entry.value;
+		  return 1;
+		}
 	}
-    }
 
   if (ptr) *ptr = 0;
   return 0;
@@ -461,37 +461,37 @@ sash_insert (sash h, const char *key, const char *value)
 
   /* If there is no bucket there, we have to allocate a fresh vector. */
   if (bucket == 0)
-    {
-      bucket = new_vector (h->pool, struct sash_bucket_entry);
-      vector_replace (h->buckets, b, bucket);
-    }
+	{
+	  bucket = new_vector (h->pool, struct sash_bucket_entry);
+	  vector_replace (h->buckets, b, bucket);
+	}
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
 	{
-	  /* To avoid unnecessarily allocating more memory, we try to
-	   * be clever here. If the existing allocation is large enough
-	   * to store the new string, use it. Otherwise reallocate it
-	   * to make it bigger.
-	   */
-	  if (len < entry.value_allocated)
-	    memcpy (entry.value, value, len + 1);
-	  else
-	    {
-	      entry.value = prealloc (h->pool, entry.value, len + 1);
-	      memcpy (entry.value, value, len + 1);
-	      entry.value_allocated = len + 1;
-	    }
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		{
+		  /* To avoid unnecessarily allocating more memory, we try to
+		   * be clever here. If the existing allocation is large enough
+		   * to store the new string, use it. Otherwise reallocate it
+		   * to make it bigger.
+		   */
+		  if (len < entry.value_allocated)
+			memcpy (entry.value, value, len + 1);
+		  else
+			{
+			  entry.value = prealloc (h->pool, entry.value, len + 1);
+			  memcpy (entry.value, value, len + 1);
+			  entry.value_allocated = len + 1;
+			}
 
-	  /* Replace this entry. */
-	  vector_replace (bucket, i, entry);
+		  /* Replace this entry. */
+		  vector_replace (bucket, i, entry);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   /* Append to this bucket. */
   entry.key = pstrdup (h->pool, key);
@@ -517,16 +517,16 @@ sash_erase (sash h, const char *key)
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
 	{
-	  /* Remove this entry. */
-	  vector_erase (bucket, i);
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		{
+		  /* Remove this entry. */
+		  vector_erase (bucket, i);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   return 0;
 }
@@ -541,19 +541,19 @@ sash_keys_in_pool (sash h, pool p)
   keys = new_vector (p, char *);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    char *key;
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			char *key;
 
-	    vector_get (bucket, j, entry);
-	    key = pstrdup (p, entry.key);
-	    vector_push_back (keys, key);
-	  }
-    }
+			vector_get (bucket, j, entry);
+			key = pstrdup (p, entry.key);
+			vector_push_back (keys, key);
+		  }
+	}
 
   return keys;
 }
@@ -574,19 +574,19 @@ sash_values_in_pool (sash h, pool p)
   values = new_vector (p, char *);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    char *value;
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			char *value;
 
-	    vector_get (bucket, j, entry);
-	    value = pstrdup (p, entry.value);
-	    vector_push_back (values, value);
-	  }
-    }
+			vector_get (bucket, j, entry);
+			value = pstrdup (p, entry.value);
+			vector_push_back (values, value);
+		  }
+	}
 
   return values;
 }
@@ -604,10 +604,10 @@ sash_size (sash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? vector_size (bucket) : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? vector_size (bucket) : 0;
+	}
 
   return n;
 }
@@ -619,10 +619,10 @@ sash_get_buckets_used (sash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? 1 : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? 1 : 0;
+	}
 
   return n;
 }
@@ -642,9 +642,9 @@ sash_set_buckets_allocated (sash h, int new_size)
    * inserted into the sash, and to make NEW_SIZE a power of 2.
    */
   if (vector_size (h->buckets) > new_size)
-    vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
+	vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
   else if (vector_size (h->buckets) < new_size)
-    vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
+	vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
 }
 
 /*----- SHASHes -----*/
@@ -687,28 +687,28 @@ copy_shash (pool pool, shash h)
 
   /* Copy the buckets. */
   for (b = 0; b < vector_size (new_h->buckets); ++b)
-    {
-      vector v;
-
-      vector_get (new_h->buckets, b, v);
-
-      if (v)
 	{
-	  v = copy_vector (pool, v);
-	  vector_replace (new_h->buckets, b, v);
+	  vector v;
 
-	  /* Copy the string keys in this vector. */
-	  for (i = 0; i < vector_size (v); ++i)
-	    {
-	      struct shash_bucket_entry entry;
+	  vector_get (new_h->buckets, b, v);
 
-	      vector_get (v, i, entry);
-	      entry.key = pstrdup (pool, entry.key);
-	      entry.value = pmemdup (pool, entry.value, h->value_size);
-	      vector_replace (v, i, entry);
-	    }
+	  if (v)
+		{
+		  v = copy_vector (pool, v);
+		  vector_replace (new_h->buckets, b, v);
+
+		  /* Copy the string keys in this vector. */
+		  for (i = 0; i < vector_size (v); ++i)
+			{
+			  struct shash_bucket_entry entry;
+
+			  vector_get (v, i, entry);
+			  entry.key = pstrdup (pool, entry.key);
+			  entry.value = pmemdup (pool, entry.value, h->value_size);
+			  vector_replace (v, i, entry);
+			}
+		}
 	}
-    }
 
   return new_h;
 }
@@ -736,17 +736,17 @@ _shash_get_ptr (shash h, const char *key)
   vector_get (h->buckets, b, bucket);
 
   if (bucket == 0)
-    return 0;
+	return 0;
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      struct shash_bucket_entry entry;
+	{
+	  struct shash_bucket_entry entry;
 
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
-	return entry.value;
-    }
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		return entry.value;
+	}
 
   return 0;
 }
@@ -764,26 +764,26 @@ _shash_insert (shash h, const char *key, const void *value)
 
   /* If there is no bucket there, we have to allocate a fresh vector. */
   if (bucket == 0)
-    {
-      bucket = new_vector (h->pool, struct shash_bucket_entry);
-      vector_replace (h->buckets, b, bucket);
-    }
+	{
+	  bucket = new_vector (h->pool, struct shash_bucket_entry);
+	  vector_replace (h->buckets, b, bucket);
+	}
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
 	{
-	  memcpy (entry.value, value, h->value_size);
-	  /*entry.value = pmemdup (h->pool, value, h->value_size);*/
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		{
+		  memcpy (entry.value, value, h->value_size);
+		  /*entry.value = pmemdup (h->pool, value, h->value_size);*/
 
-	  /* Replace this entry. */
-	  vector_replace (bucket, i, entry);
+		  /* Replace this entry. */
+		  vector_replace (bucket, i, entry);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   /* Append to this bucket. */
   entry.key = pstrdup (h->pool, key);
@@ -808,16 +808,16 @@ shash_erase (shash h, const char *key)
 
   /* Search this bucket linearly. */
   for (i = 0; i < vector_size (bucket); ++i)
-    {
-      vector_get (bucket, i, entry);
-      if (strcmp (entry.key, key) == 0)
 	{
-	  /* Remove this entry. */
-	  vector_erase (bucket, i);
+	  vector_get (bucket, i, entry);
+	  if (strcmp (entry.key, key) == 0)
+		{
+		  /* Remove this entry. */
+		  vector_erase (bucket, i);
 
-	  return 1;
+		  return 1;
+		}
 	}
-    }
 
   return 0;
 }
@@ -832,19 +832,19 @@ shash_keys_in_pool (shash h, pool p)
   keys = new_vector (p, char *);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    char *key;
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			char *key;
 
-	    vector_get (bucket, j, entry);
-	    key = pstrdup (p, entry.key);
-	    vector_push_back (keys, key);
-	  }
-    }
+			vector_get (bucket, j, entry);
+			key = pstrdup (p, entry.key);
+			vector_push_back (keys, key);
+		  }
+	}
 
   return keys;
 }
@@ -865,16 +865,16 @@ shash_values_in_pool (shash h, pool p)
   values = _vector_new (p, h->value_size);
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
+	{
+	  vector_get (h->buckets, i, bucket);
 
-      if (bucket)
-	for (j = 0; j < vector_size (bucket); ++j)
-	  {
-	    vector_get (bucket, j, entry);
-	    _vector_push_back (values, entry.value);
-	  }
-    }
+	  if (bucket)
+		for (j = 0; j < vector_size (bucket); ++j)
+		  {
+			vector_get (bucket, j, entry);
+			_vector_push_back (values, entry.value);
+		  }
+	}
 
   return values;
 }
@@ -892,10 +892,10 @@ shash_size (shash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? vector_size (bucket) : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? vector_size (bucket) : 0;
+	}
 
   return n;
 }
@@ -907,10 +907,10 @@ shash_get_buckets_used (shash h)
   int n = 0, i;
 
   for (i = 0; i < vector_size (h->buckets); ++i)
-    {
-      vector_get (h->buckets, i, bucket);
-      n += bucket ? 1 : 0;
-    }
+	{
+	  vector_get (h->buckets, i, bucket);
+	  n += bucket ? 1 : 0;
+	}
 
   return n;
 }
@@ -930,7 +930,7 @@ shash_set_buckets_allocated (shash h, int new_size)
    * inserted into the shash, and to make NEW_SIZE a power of 2.
    */
   if (vector_size (h->buckets) > new_size)
-    vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
+	vector_erase_range (h->buckets, new_size, vector_size (h->buckets));
   else if (vector_size (h->buckets) < new_size)
-    vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
+	vector_fill (h->buckets, null, new_size - vector_size (h->buckets));
 }

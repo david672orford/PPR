@@ -39,9 +39,9 @@ exit 0;
 # Possibly select a voice from those for which sound files
 # are available.
 if(defined($data{voice}))
-    {
-    speach_set_voice($data{voice});
-    }
+	{
+	speach_set_voice($data{voice});
+	}
 
 # Choose defaults (some of then quite absurd) for missing CGI query values.
 $data{printer} = "" if(!defined($data{printer}));

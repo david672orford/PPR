@@ -29,22 +29,22 @@
 */
 
 /* Maximum lengths of control file fields. */
-#define LPR_MAX_QUEUE 31	/* my guess */
-#define LPR_MAX_P 31		/* RFC 1179 */
-#define LPR_MAX_C 31		/* RFC 1179 */
-#define LPR_MAX_H 31		/* RFC 1179 */
-#define LPR_MAX_J 99		/* RFC 1179 */
-#define LPR_MAX_L 31		/* my guess */
-#define LPR_MAX_M 31		/* my guess */
-#define LPR_MAX_N 131		/* RFC 1179 */
-#define LPR_MAX_P 31		/* RFC 1179 */
-#define LPR_MAX_T 79		/* RFC 1179 */
-#define LPR_MAX_I 8		/* my guess */
-#define LPR_MAX_W 8		/* my guess */
-#define LPR_MAX_1 131		/* my guess */
-#define LPR_MAX_2 131		/* my guess */
-#define LPR_MAX_3 131		/* my guess */
-#define LPR_MAX_4 131		/* my guess */
+#define LPR_MAX_QUEUE 31		/* my guess */
+#define LPR_MAX_P 31			/* RFC 1179 */
+#define LPR_MAX_C 31			/* RFC 1179 */
+#define LPR_MAX_H 31			/* RFC 1179 */
+#define LPR_MAX_J 99			/* RFC 1179 */
+#define LPR_MAX_L 31			/* my guess */
+#define LPR_MAX_M 31			/* my guess */
+#define LPR_MAX_N 131			/* RFC 1179 */
+#define LPR_MAX_P 31			/* RFC 1179 */
+#define LPR_MAX_T 79			/* RFC 1179 */
+#define LPR_MAX_I 8				/* my guess */
+#define LPR_MAX_W 8				/* my guess */
+#define LPR_MAX_1 131			/* my guess */
+#define LPR_MAX_2 131			/* my guess */
+#define LPR_MAX_3 131			/* my guess */
+#define LPR_MAX_4 131			/* my guess */
 
 /* DEC OSF extensions, my guess */
 #define LPR_MAX_DEC 31
@@ -61,13 +61,13 @@
 /* Structure to describe a remote queue selected
    by claim_printdest_remote(). */
 struct REMOTEDEST
-    {
-    char *node;				/* DNS name of remote node */
-    char printer[LPR_MAX_QUEUE + 1];	/* name of remote printer */
-    gu_boolean osf_extensions;		/* send OSF/1 control file extensions */
-    gu_boolean solaris_extensions;		/* send Solaris control file extensions */
-    gu_boolean ppr_extensions;		/* send PPR control file extensions */
-    } ;
+	{
+	char *node;							/* DNS name of remote node */
+	char printer[LPR_MAX_QUEUE + 1];	/* name of remote printer */
+	gu_boolean osf_extensions;			/* send OSF/1 control file extensions */
+	gu_boolean solaris_extensions;				/* send Solaris control file extensions */
+	gu_boolean ppr_extensions;			/* send PPR control file extensions */
+	} ;
 
 /* Provided by the caller: */
 #ifdef __GNUC__
@@ -195,25 +195,25 @@ gu_boolean uprint_lpr_installed(void);
 gu_boolean uprint_lp_installed(void);
 
 /* Values for uprint_errno: */
-#define UPE_NONE 0	/* not an error */
+#define UPE_NONE 0		/* not an error */
 #define UPE_MALLOC 1	/* malloc(), calloc(), etc. failed */
 #define UPE_BADARG 2	/* bad argument */
-#define UPE_FORK 3	/* fork() failed */
-#define UPE_CORE 4	/* child dumped core */
+#define UPE_FORK 3		/* fork() failed */
+#define UPE_CORE 4		/* child dumped core */
 #define UPE_KILLED 5	/* child killed */
-#define UPE_WAIT 6	/* wait() failed */
-#define UPE_EXEC 7	/* execl() failed */
-#define UPE_CHILD 8	/* child did non-zero exit */
+#define UPE_WAIT 6		/* wait() failed */
+#define UPE_EXEC 7		/* execl() failed */
+#define UPE_CHILD 8		/* child did non-zero exit */
 #define UPE_NODEST 9	/* no print destination specified */
 #define UPE_UNDEST 10	/* unknown print destination specified */
 #define UPE_TOOMANY 11	/* too many files to print */
 #define UPE_BADSYS 12	/* unknown remote system */
-#define UPE_TEMPFAIL 13	/* temporary failure */
+#define UPE_TEMPFAIL 13 /* temporary failure */
 #define UPE_NOSPACE 14	/* not enough spool room for file */
-#define UPE_INTERNAL 15	/* internal library error */
+#define UPE_INTERNAL 15 /* internal library error */
 #define UPE_DENIED 16	/* permission denied */
 #define UPE_NOFILE 17	/* file not found */
-#define UPE_BADORDER 18	/* functions called in wrong order */
+#define UPE_BADORDER 18 /* functions called in wrong order */
 #define UPE_BADCONFIG 19 /* error in configuration file */
 #define UPE_SETUID 20	/* setuid(), seteuid(), setreuid(), etc. failed */
 

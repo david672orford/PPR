@@ -47,68 +47,68 @@ const char myname[] = "template";
 */
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
-	{
-	{"help", 9000, FALSE},
-	{"version", 9001, FALSE},
-	{(char*)NULL, 0, FALSE}
-	} ;
+		{
+		{"help", 9000, FALSE},
+		{"version", 9001, FALSE},
+		{(char*)NULL, 0, FALSE}
+		} ;
 
 /*
 ** Print help.
 */
 static void help_usage(FILE *outfile)
-    {
-    fprintf(outfile, _("Usage: %s [switches]\n"), myname);
+	{
+	fprintf(outfile, _("Usage: %s [switches]\n"), myname);
 
-    fputc('\n', outfile);
+	fputc('\n', outfile);
 
-    fputs(_("Valid switches:\n"), outfile);
+	fputs(_("Valid switches:\n"), outfile);
 
-    fputs(_(	"\t--version\n"
-		"\t--help\n"), outfile);
-    }
+	fputs(_(	"\t--version\n"
+				"\t--help\n"), outfile);
+	}
 
 int main(int argc, char *argv[])
-    {
-    /* Initialize international messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
-
-    /* Parse the options. */
-    {
-    struct gu_getopt_state getopt_state;
-    int optchar;
-    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
-    while((optchar = ppr_getopt(&getopt_state)) != -1)
-    	{
-    	switch(optchar)
-    	    {
-	    case 9000:			/* --help */
-	    	help_usage(stdout);
-	    	return EXIT_OK;
-
-	    case 9001:			/* --version */
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-	    	return EXIT_OK;
-
-	    default:			/* other getopt errors or missing case */
-		gu_getopt_default(myname, optchar, &getopt_state, stderr);
-	    	return EXIT_SYNTAX;
-    	    }
-    	}
-    if(argc > getopt_state.optind)
 	{
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
 
+	/* Parse the options. */
+	{
+	struct gu_getopt_state getopt_state;
+	int optchar;
+	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
+	while((optchar = ppr_getopt(&getopt_state)) != -1)
+		{
+		switch(optchar)
+			{
+			case 9000:					/* --help */
+				help_usage(stdout);
+				return EXIT_OK;
+
+			case 9001:					/* --version */
+				puts(VERSION);
+				puts(COPYRIGHT);
+				puts(AUTHOR);
+				return EXIT_OK;
+
+			default:					/* other getopt errors or missing case */
+				gu_getopt_default(myname, optchar, &getopt_state, stderr);
+				return EXIT_SYNTAX;
+			}
+		}
+	if(argc > getopt_state.optind)
+		{
+
+		}
 	}
-    }
 
-    /* Main code continues here */
+	/* Main code continues here */
 
-    } /* end of main() */
+	} /* end of main() */
 
 /* end of file */

@@ -30,37 +30,37 @@
 ** Return true if we must verify that the user is in the users database.
 */
 int destination_protected(const char *destnode, const char *destname)
-    {
-    char fname[MAX_PPR_PATH];
-    struct stat statbuf;
-
-    /*
-    ** For the time being we will asume that remote
-    ** printers are not protected.
-    */
-    if(strcmp(destnode, ppr_get_nodename()) != 0)
-    	return FALSE;
-
-    /* A group? */
-    ppr_fnamef(fname, "%s/%s", GRCONF, destname);
-    if(stat(fname, &statbuf) == 0)		/* if file found, */
 	{
-	if(statbuf.st_mode & S_IXOTH)		/* if ``other'' execute bit set, */
-	    return TRUE;			/* it is protected */
-	}
+	char fname[MAX_PPR_PATH];
+	struct stat statbuf;
 
-    /* A printer? */
-    else
-	{
-	ppr_fnamef(fname, "%s/%s", PRCONF, destname);
-	if( stat(fname, &statbuf) == 0 )	/* if it exists, */
-	    {					/* and other execute set, */
-	    if(statbuf.st_mode & S_IXOTH)
-		return TRUE;			/* it is protected */
-	    }
-	}
+	/*
+	** For the time being we will asume that remote
+	** printers are not protected.
+	*/
+	if(strcmp(destnode, ppr_get_nodename()) != 0)
+		return FALSE;
 
-    return FALSE;   /* if it doen't exist, sombody else will notice */
-    } /* end of destination_protected() */
+	/* A group? */
+	ppr_fnamef(fname, "%s/%s", GRCONF, destname);
+	if(stat(fname, &statbuf) == 0)				/* if file found, */
+		{
+		if(statbuf.st_mode & S_IXOTH)			/* if ``other'' execute bit set, */
+			return TRUE;						/* it is protected */
+		}
+
+	/* A printer? */
+	else
+		{
+		ppr_fnamef(fname, "%s/%s", PRCONF, destname);
+		if( stat(fname, &statbuf) == 0 )		/* if it exists, */
+			{									/* and other execute set, */
+			if(statbuf.st_mode & S_IXOTH)
+				return TRUE;					/* it is protected */
+			}
+		}
+
+	return FALSE;	/* if it doen't exist, sombody else will notice */
+	} /* end of destination_protected() */
 
 /* end of file */

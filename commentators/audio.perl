@@ -20,17 +20,17 @@
 # commentators/audio <address> <options> <printer> <code> <cooked_message> <raw1> <raw2> <severity>
 #
 # This commentator passes <address> to the the routine speach_play_many()
-# (in speach_play.pl).  Thus you may use any form of address acceptable
-# to that routine.  Currently it supports two forms of address:
+# (in speach_play.pl).	Thus you may use any form of address acceptable
+# to that routine.	Currently it supports two forms of address:
 #
 # chappell.pc.trincoll.edu:15009
-#	This address causes the file to be copied to a Samba share area 
-#	and a TCP/IP connexion is opened to a MS-Windows computer running
-#	pprpopup which is then instructed to play the sound in the share area.  
+#		This address causes the file to be copied to a Samba share area 
+#		and a TCP/IP connexion is opened to a MS-Windows computer running
+#		pprpopup which is then instructed to play the sound in the share area.	
 #
 # /dev/dsp
-# 	This address causes the file to be played in the indicated audio
-#	device.
+#		This address causes the file to be played in the indicated audio
+#		device.
 #
 
 # These will be filled in when this script is installed:
@@ -46,7 +46,7 @@ require 'speach_commentary.pl';
 
 #
 # If this is non-zero, debugging messages will be printed on stdout.  Higher
-# levels produce more messages.  Any message written on stdout or stderr will
+# levels produce more messages.	 Any message written on stdout or stderr will
 # find their way into the pprdrv log file.
 #
 # This will include messages about missing sounds.
@@ -70,24 +70,24 @@ foreach $option (split(/[\s]+/, $OPTIONS))
   my($name, $value) = split(/=/, $option);
 
   if($name eq "level")
-    {
-    $severity_threshold = $value;
-    }
+	{
+	$severity_threshold = $value;
+	}
   elsif( $name eq "voice" )
-    {
-    speach_set_voice($value);
-    }
+	{
+	speach_set_voice($value);
+	}
   elsif( $name eq "silly_sounds" )
-    {
-    if($value =~ /^[1ty]/i)
-	{ $silly_sounds = 1 }
-    else
-	{ $silly_sounds = 0 }
-    }
+	{
+	if($value =~ /^[1ty]/i)
+		{ $silly_sounds = 1 }
+	else
+		{ $silly_sounds = 0 }
+	}
   else
-    {
-    die "Audio commentator: unrecognized option: $name\n";
-    }
+	{
+	die "Audio commentator: unrecognized option: $name\n";
+	}
   }
 
 # Debugging code:
@@ -101,7 +101,7 @@ if($DEBUG > 1)
 
 if($SEVERITY < $severity_thresold)
   {
-  print "audio commentator:  not not important enough to play.\n" if($DEBUG > 1);
+  print "audio commentator:	 not not important enough to play.\n" if($DEBUG > 1);
   exit 0;
   }
 

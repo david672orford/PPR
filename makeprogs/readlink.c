@@ -37,18 +37,18 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[])
-    {
-    char buffer[256];
-    int len;
+	{
+	char buffer[256];
+	int len;
 
-    if(argc != 2)
-	return 1;
+	if(argc != 2)
+		return 1;
 
-    if((len = readlink(argv[1], buffer, sizeof(buffer))) == -1)
-	return 1;
+	if((len = readlink(argv[1], buffer, sizeof(buffer))) == -1)
+		return 1;
 
-    printf("%.*s\n", len, buffer);
-    return 0;
-    } /* end of main() */
+	printf("%.*s\n", len, buffer);
+	return 0;
+	} /* end of main() */
 
 /* end of file */

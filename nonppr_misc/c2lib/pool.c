@@ -8,7 +8,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
@@ -52,7 +52,7 @@ struct _pool_allocs
   struct _pool_allocs *next;
 
   /* The flags field contains:
-   * bit  31    == if set, this structure shouldn't be freed
+   * bit  31	== if set, this structure shouldn't be freed
    * bits 30-16 == number of slots in the structure
    * bits 15- 0 == number of slots used in the structure.
    */
@@ -76,7 +76,7 @@ struct _pool_cleanups
   struct _pool_cleanups *next;
 
   /* The flags field contains:
-   * bit  31    == if set, this structure shouldn't be freed
+   * bit  31	== if set, this structure shouldn't be freed
    * bits 30-16 == number of slots in the structure
    * bits 15- 0 == number of slots used in the structure.
    */
@@ -90,9 +90,9 @@ struct _pool_cleanups
 } __attribute__((packed));
 
 #define INITIAL_PA_SLOTS 16U
-#define MAX_PA_SLOTS     16384U	/* Must be <= 16384 */
+#define MAX_PA_SLOTS	 16384U /* Must be <= 16384 */
 #define INITIAL_PC_SLOTS 2U
-#define MAX_PC_SLOTS     16384U	/* Must be <= 16384 */
+#define MAX_PC_SLOTS	 16384U /* Must be <= 16384 */
 
 struct pool
 {
@@ -134,11 +134,11 @@ new_pool ()
 {
   /* The amount of space required for pool + allocs + cleanups. */
   const int size
-    = sizeof (struct pool) +
-    sizeof (struct _pool_allocs) +
-    INITIAL_PA_SLOTS * sizeof (void *) +
-    sizeof (struct _pool_cleanups) +
-    INITIAL_PC_SLOTS * sizeof (struct _pool_cleanup_slot);
+	= sizeof (struct pool) +
+	sizeof (struct _pool_allocs) +
+	INITIAL_PA_SLOTS * sizeof (void *) +
+	sizeof (struct _pool_cleanups) +
+	INITIAL_PC_SLOTS * sizeof (struct _pool_cleanup_slot);
 
   pool p = malloc (size);
   if (p == 0) bad_malloc_handler ();
@@ -147,8 +147,8 @@ new_pool ()
 
   p->allocs = (struct _pool_allocs *) ((void *)p + sizeof (struct pool));
   p->cleanups = (struct _pool_cleanups *)
-    ((void *)p + sizeof (struct pool) + sizeof (struct _pool_allocs)
-     + INITIAL_PA_SLOTS * sizeof (void *));
+	((void *)p + sizeof (struct pool) + sizeof (struct _pool_allocs)
+	 + INITIAL_PA_SLOTS * sizeof (void *));
 
   p->allocs->flags = 0x80000000U | INITIAL_PA_SLOTS << 16;
   p->cleanups->flags = 0x80000000U | INITIAL_PC_SLOTS << 16;
@@ -179,14 +179,14 @@ _do_cleanups (pool p)
   int i;
 
   for (pc = p->cleanups; pc; pc = pc_next)
-    {
-      pc_next = pc->next;
+	{
+	  pc_next = pc->next;
 
-      for (i = 0; i < _PC_SLOTS_USED (pc); ++i)
-	pc->slot[i].fn (pc->slot[i].data);
-      if (!_PC_NO_FREE (pc))
-	free (pc);
-    }
+	  for (i = 0; i < _PC_SLOTS_USED (pc); ++i)
+		pc->slot[i].fn (pc->slot[i].data);
+	  if (!_PC_NO_FREE (pc))
+		free (pc);
+	}
 }
 
 static inline void
@@ -196,14 +196,14 @@ _do_frees (pool p)
   int i;
 
   for (pa = p->allocs; pa; pa = pa_next)
-    {
-      pa_next = pa->next;
+	{
+	  pa_next = pa->next;
 
-      for (i = 0; i < _PA_SLOTS_USED (pa); ++i)
-	free (pa->slot[i]);
-      if (!_PA_NO_FREE (pa))
-	free (pa);
-    }
+	  for (i = 0; i < _PA_SLOTS_USED (pa); ++i)
+		free (pa->slot[i]);
+	  if (!_PA_NO_FREE (pa))
+		free (pa);
+	}
 }
 
 void
@@ -220,26 +220,26 @@ delete_pool (pool p)
    * list.
    */
   if (p->parent_pool)
-    {
-      pool parent = p->parent_pool, this, last = 0;
-
-      for (this = parent->subpool_list; this; last = this, this = this->next)
 	{
-	  if (this == p)
-	    {
-	      /* Remove this one. */
-	      if (last != 0)
-		last->next = this->next;
-	      else
-		parent->subpool_list = this->next;
+	  pool parent = p->parent_pool, this, last = 0;
 
-	      goto found_me;
-	    }
+	  for (this = parent->subpool_list; this; last = this, this = this->next)
+		{
+		  if (this == p)
+			{
+			  /* Remove this one. */
+			  if (last != 0)
+				last->next = this->next;
+			  else
+				parent->subpool_list = this->next;
+
+			  goto found_me;
+			}
+		}
+
+	  abort ();					/* Oops - self not found on subpool list. */
+	found_me:;
 	}
-
-      abort ();			/* Oops - self not found on subpool list. */
-    found_me:;
-    }
 
   free (p);
 
@@ -281,7 +281,7 @@ prealloc (pool p, void *ptr, size_t n)
   void *new_ptr;
 
   if (ptr == 0)
-    return pmalloc (p, n);
+	return pmalloc (p, n);
 
   new_ptr = realloc (ptr, n);
   if (new_ptr == 0) bad_malloc_handler ();
@@ -290,20 +290,20 @@ prealloc (pool p, void *ptr, size_t n)
    * allocations to find this one and update the pointer.
    */
   if (ptr != new_ptr)
-    {
-      for (pa = p->allocs; pa; pa = pa->next)
 	{
-	  for (i = 0; i < _PA_SLOTS_USED (pa); ++i)
-	    if (pa->slot[i] == ptr)
-	      {
-		pa->slot[i] = new_ptr;
-		goto found;
-	      }
-	}
-      abort ();
+	  for (pa = p->allocs; pa; pa = pa->next)
+		{
+		  for (i = 0; i < _PA_SLOTS_USED (pa); ++i)
+			if (pa->slot[i] == ptr)
+			  {
+				pa->slot[i] = new_ptr;
+				goto found;
+			  }
+		}
+	  abort ();
 
-    found:;
-    }
+	found:;
+	}
 
   TRACE (p, ptr, new_ptr, n);
 
@@ -317,21 +317,21 @@ pool_register_cleanup_fn (pool p, void (*fn) (void *), void *data)
   struct _pool_cleanups *pc;
 
   if (_PC_SLOTS_USED (p->cleanups) < _PC_SLOTS (p->cleanups))
-    {
-    again:
-      p->cleanups->slot[_PC_SLOTS_USED(p->cleanups)].fn = fn;
-      p->cleanups->slot[_PC_SLOTS_USED(p->cleanups)].data = data;
-      p->cleanups->flags++;
-      return;
-    }
+	{
+	again:
+	  p->cleanups->slot[_PC_SLOTS_USED(p->cleanups)].fn = fn;
+	  p->cleanups->slot[_PC_SLOTS_USED(p->cleanups)].data = data;
+	  p->cleanups->flags++;
+	  return;
+	}
 
   /* Allocate a new block of cleanup slots. */
   nr_slots = _PC_SLOTS (p->cleanups);
   if (nr_slots < MAX_PC_SLOTS)
-    nr_slots *= 2;
+	nr_slots *= 2;
 
   pc = malloc (sizeof (struct _pool_cleanups) +
-	       nr_slots * sizeof (struct _pool_cleanup_slot));
+			   nr_slots * sizeof (struct _pool_cleanup_slot));
   if (pc == 0) bad_malloc_handler ();
   pc->next = p->cleanups;
   pc->flags = nr_slots << 16;
@@ -347,17 +347,17 @@ pool_register_malloc (pool p, void *ptr)
   struct _pool_allocs *pa;
 
   if (_PA_SLOTS_USED (p->allocs) < _PA_SLOTS (p->allocs))
-    {
-    again:
-      p->allocs->slot[_PA_SLOTS_USED(p->allocs)] = ptr;
-      p->allocs->flags++;
-      return;
-    }
+	{
+	again:
+	  p->allocs->slot[_PA_SLOTS_USED(p->allocs)] = ptr;
+	  p->allocs->flags++;
+	  return;
+	}
 
   /* Allocate a new block of slots. */
   nr_slots = _PA_SLOTS (p->allocs);
   if (nr_slots < MAX_PA_SLOTS)
-    nr_slots *= 2;
+	nr_slots *= 2;
 
   pa = malloc (sizeof (struct _pool_allocs) + nr_slots * sizeof (void *));
   if (pa == 0) bad_malloc_handler ();
@@ -414,15 +414,15 @@ _get_struct_size (const pool p)
   size = sizeof (*p);
 
   for (pa = p->allocs; pa; pa = pa->next)
-    size += sizeof (struct _pool_allocs)
-            + _PA_SLOTS (pa) * sizeof (void *);
+	size += sizeof (struct _pool_allocs)
+			+ _PA_SLOTS (pa) * sizeof (void *);
 
   for (pc = p->cleanups; pc; pc = pc->next)
-    size += sizeof (struct _pool_cleanups)
-            + _PC_SLOTS (pc) * sizeof (struct _pool_cleanup_slot);
+	size += sizeof (struct _pool_cleanups)
+			+ _PC_SLOTS (pc) * sizeof (struct _pool_cleanup_slot);
 
   for (subpool = p->subpool_list; subpool; subpool = subpool->next)
-    size += _get_struct_size (subpool);
+	size += _get_struct_size (subpool);
 
   return size;
 }
@@ -434,7 +434,7 @@ _get_nr_subpools (const pool p)
   int count = 1;
 
   for (subpool = p->subpool_list; subpool; subpool = subpool->next)
-    count += _get_nr_subpools (subpool);
+	count += _get_nr_subpools (subpool);
 
   return count;
 }
@@ -454,26 +454,26 @@ static void
 open_trace_file ()
 {
   char msg1[] =
-    "\n"
-    "Pool allocator running in trace mode.\n"
-    "Trace is being saved to file ";
+	"\n"
+	"Pool allocator running in trace mode.\n"
+	"Trace is being saved to file ";
   char msg2[] = "\n\n";
 
   trace_filename = getenv ("POOL_TRACE");
 
   if (trace_filename)
-    {
-      trace_fd = open (trace_filename, O_WRONLY|O_CREAT|O_TRUNC, 0644);
-      if (trace_fd == -1)
 	{
-	  perror (trace_filename);
-	  exit (1);
-	}
+	  trace_fd = open (trace_filename, O_WRONLY|O_CREAT|O_TRUNC, 0644);
+	  if (trace_fd == -1)
+		{
+		  perror (trace_filename);
+		  exit (1);
+		}
 
-      write (2, msg1, sizeof msg1);
-      write (2, trace_filename, strlen (trace_filename));
-      write (2, msg2, sizeof msg2);
-    }
+	  write (2, msg1, sizeof msg1);
+	  write (2, trace_filename, strlen (trace_filename));
+	  write (2, msg2, sizeof msg2);
+	}
 }
 
 static void
@@ -482,7 +482,7 @@ trace (const char *fn, void *caller, struct pool *ptr1, void *ptr2, void *ptr3, 
   char buffer[128];
 
   sprintf (buffer,
-	   "%s caller: %p ptr1: %p ptr2: %p ptr3: %p i1: %d\n",
-	   fn, caller, ptr1, ptr2, ptr3, i1);
+		   "%s caller: %p ptr1: %p ptr2: %p ptr3: %p i1: %d\n",
+		   fn, caller, ptr1, ptr2, ptr3, i1);
   write (trace_fd, buffer, strlen (buffer));
 }

@@ -52,10 +52,10 @@ rm -f $fileslist
 # If global.mk is global.mk.unconfigured it won't
 # contain a definition of HOMEDIR.
 if [ -z "$HOMEDIR" ]
-    then
-    echo "You haven't run Configure yet."
-    exit 1
-    fi
+	then
+	echo "You haven't run Configure yet."
+	exit 1
+	fi
 
 # If we are building a binary RPM, make sure the root of the destination
 # directory tree exists.
@@ -67,42 +67,42 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
 
 # This function creates a directory
 directory ()
-    {
-    dir="$1"
-    perms="$2"
-    echo "$RPM_BUILD_ROOT$dir"
-    if [ ! -d "$RPM_BUILD_ROOT$dir" ]
-	then
-	mkdir "$RPM_BUILD_ROOT$dir" || exit 1
-	fi
-    chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
-    chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
-    chmod $perms "$RPM_BUILD_ROOT$dir"
-    echo "%dir \"$dir\"">>$fileslist
-    }
+	{
+	dir="$1"
+	perms="$2"
+	echo "$RPM_BUILD_ROOT$dir"
+	if [ ! -d "$RPM_BUILD_ROOT$dir" ]
+		then
+		mkdir "$RPM_BUILD_ROOT$dir" || exit 1
+		fi
+	chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
+	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
+	chmod $perms "$RPM_BUILD_ROOT$dir"
+	echo "%dir \"$dir\"">>$fileslist
+	}
 
 # Create the top-level PPR directories.
 for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
-    do
-    if [ ! -d $RPM_BUILD_ROOT$dir ]
-	then
-	mkdir -p $RPM_BUILD_ROOT$dir
-	fi
-    chown $USER_PPR $RPM_BUILD_ROOT$dir || exit 1
-    chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir || exit 1
-    chmod 755 $RPM_BUILD_ROOT$dir
-    done 
+	do
+	if [ ! -d $RPM_BUILD_ROOT$dir ]
+		then
+		mkdir -p $RPM_BUILD_ROOT$dir
+		fi
+	chown $USER_PPR $RPM_BUILD_ROOT$dir || exit 1
+	chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir || exit 1
+	chmod 755 $RPM_BUILD_ROOT$dir
+	done 
 
 # We have to be more careful with this one since it is probably the 
 # system-wide temporary directory and we don't want to mess up its
 # permissions.e
 if [ ! -d $RPM_BUILD_ROOT$TEMPDIR ]
-    then
-    mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
-    chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
-    chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
-    chmod 755 $RPM_BUILD_ROOT$dir
-    fi
+	then
+	mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
+	chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
+	chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
+	chmod 755 $RPM_BUILD_ROOT$dir
+	fi
 
 echo "%dir \"$HOMEDIR\"">>$fileslist
 echo "%dir \"$SHAREDIR\"">>$fileslist
@@ -151,7 +151,7 @@ directory $VAR_SPOOL_PPR/printers 755
 directory $VAR_SPOOL_PPR/printers/alerts 755
 directory $VAR_SPOOL_PPR/printers/status 755
 directory $VAR_SPOOL_PPR/printers/addr_cache 755
-directory $VAR_SPOOL_PPR/logs 775	# <-- group can write
+directory $VAR_SPOOL_PPR/logs 775		# <-- group can write
 directory $VAR_SPOOL_PPR/cache 755
 directory $VAR_SPOOL_PPR/cache/font 755
 directory $VAR_SPOOL_PPR/cache/procset 755
@@ -161,14 +161,14 @@ directory $VAR_SPOOL_PPR/cache/procset 755
 directory $VAR_SPOOL_PPR/cache/encoding 755
 directory $VAR_SPOOL_PPR/dvips 755
 directory $VAR_SPOOL_PPR/drivers 755
-directory $VAR_SPOOL_PPR/drivers/W32X86 755	# MS-Windows 95/98
-directory $VAR_SPOOL_PPR/drivers/WIN40 755	# MS-Windows NT 4.0
-directory $VAR_SPOOL_PPR/drivers/WINPPD 755	# PPD files in MS-DOS text format
+directory $VAR_SPOOL_PPR/drivers/W32X86 755		# MS-Windows 95/98
+directory $VAR_SPOOL_PPR/drivers/WIN40 755		# MS-Windows NT 4.0
+directory $VAR_SPOOL_PPR/drivers/WINPPD 755		# PPD files in MS-DOS text format
 directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755
-directory $VAR_SPOOL_PPR/pprpopup.db 770	# <-- group can write
-directory $VAR_SPOOL_PPR/followme.db 770	# <-- group can write
+directory $VAR_SPOOL_PPR/pprpopup.db 770		# <-- group can write
+directory $VAR_SPOOL_PPR/followme.db 770		# <-- group can write
 
 # Make the directories for web documentation and managment tools
 directory $HOMEDIR/cgi-bin 755

@@ -29,15 +29,15 @@
 */
 
 struct IPP
-    {
-    int bytes_left;
-    unsigned char readbuf[512];
-    int readbuf_i;
-    int readbuf_remaining;
-    unsigned char writebuf[512];
-    int writebuf_i;
-    int writebuf_remaining;
-    };
+	{
+	int bytes_left;
+	unsigned char readbuf[512];
+	int readbuf_i;
+	int readbuf_remaining;
+	unsigned char writebuf[512];
+	int writebuf_i;
+	int writebuf_remaining;
+	};
 
 struct IPP *ipp_new(int content_length);
 void ipp_end(struct IPP *p);

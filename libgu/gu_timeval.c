@@ -37,67 +37,67 @@
 ==========================================================================*/
 
 /*
-** This utility function is used to compare times.  It returns 1 if t1 is
+** This utility function is used to compare times.	It returns 1 if t1 is
 ** greater than t2, zero if t1 is equal to t2, and -1 if t1 is less than
 ** t2.
 */
 int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2)
-    {
-    if(t1->tv_sec > t2->tv_sec)
-    	return 1;
-    if(t1->tv_sec < t2->tv_sec)
-    	return -1;
-    if(t1->tv_usec > t2->tv_usec)
-    	return 1;
-    if(t1->tv_usec < t2->tv_usec)
-    	return -1;
-    return 0;
-    }
+	{
+	if(t1->tv_sec > t2->tv_sec)
+		return 1;
+	if(t1->tv_sec < t2->tv_sec)
+		return -1;
+	if(t1->tv_usec > t2->tv_usec)
+		return 1;
+	if(t1->tv_usec < t2->tv_usec)
+		return -1;
+	return 0;
+	}
 
 /*
 ** This utility function is used to subtract time t2 from time t1.
 */
 void gu_timeval_sub(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec -= t2->tv_sec;
-    t1->tv_usec -= t2->tv_usec;
-    if(t1->tv_usec < 0)
-        {
-        t1->tv_usec += 1000000;
-        t1->tv_sec--;
-        }
-    }
+	{
+	t1->tv_sec -= t2->tv_sec;
+	t1->tv_usec -= t2->tv_usec;
+	if(t1->tv_usec < 0)
+		{
+		t1->tv_usec += 1000000;
+		t1->tv_sec--;
+		}
+	}
 
 /*
 ** This utility function adds t2 to t1.
 */
 void gu_timeval_add(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec += t2->tv_sec;
-    t1->tv_usec += t2->tv_usec;
-    if(t1->tv_usec > 1000000)
-        {
-        t1->tv_usec -= 1000000;
-        t1->tv_sec++;
-        }
-    }
+	{
+	t1->tv_sec += t2->tv_sec;
+	t1->tv_usec += t2->tv_usec;
+	if(t1->tv_usec > 1000000)
+		{
+		t1->tv_usec -= 1000000;
+		t1->tv_sec++;
+		}
+	}
 
 /*
 ** This utility function copies time t2 to time t1.
 */
 void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec = t2->tv_sec;
-    t1->tv_usec = t2->tv_usec;
-    }
+	{
+	t1->tv_sec = t2->tv_sec;
+	t1->tv_usec = t2->tv_usec;
+	}
 
 /*
 ** This utility function zeros a time.
 */
 void gu_timeval_zero(struct timeval *t)
-    {
-    t->tv_sec = 0;
-    t->tv_usec = 0;
-    }
+	{
+	t->tv_sec = 0;
+	t->tv_usec = 0;
+	}
 
 /* end of file */

@@ -31,20 +31,20 @@
 ** the version of libppr_throw() in ../libppr.a.
 */
 void libppr_throw(int exception_type, const char exception_function[], const char format[], ...)
-    {
-    va_list va;
-    DODEBUG(("libppr_throw(exception_type=%d, function[]=\"%s\", format[]=\"%s\", ...)", exception_type, function, format));
+	{
+	va_list va;
+	DODEBUG(("libppr_throw(exception_type=%d, function[]=\"%s\", format[]=\"%s\", ...)", exception_type, function, format));
 
-    alert(int_cmdline.printer, TRUE, "libppr exception in %s:", exception_function);
-    va_start(va, format);
-    valert(int_cmdline.printer, FALSE, format, va);
-    va_end(va);
+	alert(int_cmdline.printer, TRUE, "libppr exception in %s:", exception_function);
+	va_start(va, format);
+	valert(int_cmdline.printer, FALSE, format, va);
+	va_end(va);
 
-    if(exception_type == EXCEPTION_STARVED)
-    	int_exit(EXIT_PRNERR);
-    else
-    	int_exit(EXIT_PRNERR_NORETRY);
-    } /* end of libppr_throw() */
+	if(exception_type == EXCEPTION_STARVED)
+		int_exit(EXIT_PRNERR);
+	else
+		int_exit(EXIT_PRNERR_NORETRY);
+	} /* end of libppr_throw() */
 
 /* end of file */
 

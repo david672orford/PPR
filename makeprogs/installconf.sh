@@ -30,7 +30,7 @@
 
 #
 # This script is used in Makefiles set the permissions on config files and
-# add them to the installed files list.  Unlike the other install*.sh
+# add them to the installed files list.	 Unlike the other install*.sh
 # scripts, this one does not actually copy files.
 #
 
@@ -40,10 +40,10 @@ TYPE="$1"
 shift
 
 if [ "$TYPE" = "" ]
-    then
-    echo "Usage: installconf.sh <type> [<file1> ...]"
-    exit 1
-    fi
+	then
+	echo "Usage: installconf.sh <type> [<file1> ...]"
+	exit 1
+	fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   then
@@ -52,22 +52,22 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   fi
 
 while [ "$1" != "" ]
-    do
-    if [ "$name" != "CVS" ]
+	do
+	if [ "$name" != "CVS" ]
 	then
 	if [ ! -f "$RPM_BUILD_ROOT$1" ]
-	    then
-	    echo "$1 doesn't exist!"
-	    exit 1
-	    fi
-	echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
+		then
+		echo "$1 doesn't exist!"
+		exit 1
+		fi
+	echo "	chown $USER_PPR:$GROUP_PPR \"$1\""
 	chown $USER_PPR "$RPM_BUILD_ROOT$1"
 	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1"
-	echo "  chmod 644 \"$1\""
+	echo "	chmod 644 \"$1\""
 	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
 	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
-    shift
-    done
+	shift
+	done
 
 exit 0

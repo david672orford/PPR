@@ -25,12 +25,12 @@ static int things_space = 0;
 ** Make sure there is space to add at least one more entry to things[].
 */
 void things_space_check(void)
-    {
-    if( (things_space - thing_count) < 1 )
-    	{
-	things_space += 100;
-	things = (struct Thing *)gu_realloc(things, things_space, sizeof(struct Thing));
-    	}
-    } /* end of things_space_check() */
+	{
+	if( (things_space - thing_count) < 1 )
+		{
+		things_space += 100;
+		things = (struct Thing *)gu_realloc(things, things_space, sizeof(struct Thing));
+		}
+	} /* end of things_space_check() */
 
 /* end of file */

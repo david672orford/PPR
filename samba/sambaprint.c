@@ -54,179 +54,179 @@ static const char myname[] = "sambaprint";
 static const char tdb_drivers_file[] = "/usr/local/samba/var/locks/ntdrivers.tdb";
 
 static int drivers_import(void)
-    {
-    TDB_CONTEXT *tdb_drivers;
-    char *line = NULL;
-    int line_available = 256;
-    int linenum = 0;
-    char keytext[256];
-    TDB_DATA key, data;
-    char *lineptr;
-    char *field_cversion,		/* OS Print Driver Version */
-	*field_drivername,		/* Long Name of Printer Driver */
-	*field_os,			/* Long OS Name */
-	*field_driverpath,		/* Path the Driver DLL */
-	*field_datafile,		/* Path the Configuration DLL */
-	*field_configfile,		/* Path the PPD file */
-	*field_helpfile,		/* Path to .HLP file */
-	*field_monitorname,		/* Port Monitor (NULL for Samba) */
-	*field_defaultdatatype,		/* Default Data Type (RAW) */
-	*field_dependentfile;
-    char **packlist[] = {
-	&field_drivername,
-	&field_os,
-	&field_driverpath,
-	&field_datafile,
-	&field_configfile,
-	&field_helpfile,
-	&field_monitorname,
-	&field_defaultdatatype,
-	NULL};
-    const char *architecture;
-    char *scratch = NULL;
-    int scratch_available = 0;
-    int scratch_len;
-
-    /* Open the TDB database that contains NT driver information. */
-    if(!(tdb_drivers = tdb_open((char*)tdb_drivers_file, 0, TDB_DEFAULT, O_RDWR|O_CREAT, 0600)))
 	{
-	fprintf(stderr, "%s: can't open \"%s\", errno=%d (%s)\n", myname, tdb_drivers_file, errno, strerror(errno));
-	return EXIT_INTERNAL;
+	TDB_CONTEXT *tdb_drivers;
+	char *line = NULL;
+	int line_available = 256;
+	int linenum = 0;
+	char keytext[256];
+	TDB_DATA key, data;
+	char *lineptr;
+	char *field_cversion,				/* OS Print Driver Version */
+		*field_drivername,				/* Long Name of Printer Driver */
+		*field_os,						/* Long OS Name */
+		*field_driverpath,				/* Path the Driver DLL */
+		*field_datafile,				/* Path the Configuration DLL */
+		*field_configfile,				/* Path the PPD file */
+		*field_helpfile,				/* Path to .HLP file */
+		*field_monitorname,				/* Port Monitor (NULL for Samba) */
+		*field_defaultdatatype,			/* Default Data Type (RAW) */
+		*field_dependentfile;
+	char **packlist[] = {
+		&field_drivername,
+		&field_os,
+		&field_driverpath,
+		&field_datafile,
+		&field_configfile,
+		&field_helpfile,
+		&field_monitorname,
+		&field_defaultdatatype,
+		NULL};
+	const char *architecture;
+	char *scratch = NULL;
+	int scratch_available = 0;
+	int scratch_len;
+
+	/* Open the TDB database that contains NT driver information. */
+	if(!(tdb_drivers = tdb_open((char*)tdb_drivers_file, 0, TDB_DEFAULT, O_RDWR|O_CREAT, 0600)))
+		{
+		fprintf(stderr, "%s: can't open \"%s\", errno=%d (%s)\n", myname, tdb_drivers_file, errno, strerror(errno));
+		return EXIT_INTERNAL;
+		}
+
+	while((line = gu_getline(line, &line_available, stdin)))
+		{
+		linenum++;
+		lineptr = line;
+
+		if(!(field_os = gu_strsep(&lineptr, ":"))
+				|| !(field_cversion = gu_strsep(&lineptr, ":"))
+				|| !(field_drivername = gu_strsep(&lineptr, ":"))
+				|| !(field_driverpath = gu_strsep(&lineptr, ":"))
+				|| !(field_datafile = gu_strsep(&lineptr, ":"))
+				|| !(field_configfile = gu_strsep(&lineptr, ":"))
+				|| !(field_helpfile = gu_strsep(&lineptr, ":"))
+				|| !(field_monitorname = gu_strsep(&lineptr, ":"))
+				|| !(field_defaultdatatype = gu_strsep(&lineptr, ":"))
+			)
+			{
+			fprintf(stderr, "%s: parse error on line %d.\n", myname, linenum);
+			break;
+			}
+				
+		if(strcmp(field_os, "Windows NT x86") == 0)
+			architecture = "W32X86";
+		else if(strcmp(field_os, "Windows 4.0") == 0)
+			architecture = "WIN40";
+		else
+			{
+			fprintf(stderr, "Unrecognized OS: %s\n", field_os);
+			break;
+			}
+
+		/* Create the TDB key.	Note that the Samba code converts this to the Unix
+		   codepage but we don't. */
+		snprintf(keytext, sizeof(keytext), "DRIVERS/%s/%d/%s", architecture, atoi(field_cversion), field_drivername);
+
+		/* Make sure scratch buffer is big enough. */
+		if((line_available + 10) > scratch_available)
+			{
+			scratch_available = line_available + 10;
+			scratch = gu_realloc(scratch, scratch_available, sizeof(char));
+			}
+
+		scratch_len = 0;
+
+		/* Copy the little-endian 32 bit integer field. */
+		{
+		unsigned int val = atoi(field_cversion);
+		int x;
+		for(x=0; x<4; x++)
+			{
+			scratch[scratch_len++] = val & 0xFF;
+			val >>= 8;
+			}
+		}
+
+		/* Copy the text fields. */
+		{
+		int x;
+		char **p;
+		for(x = 0; (p = packlist[x]); x++)
+			{
+			int len = strlen(*p) + 1;
+			memcpy(&scratch[scratch_len], *p, len);
+			scratch_len += len;
+			}
+		}
+
+		/* Now add the list of other files that must be downloaded. */
+		for( ; (field_dependentfile = gu_strsep(&lineptr, ":")); )
+			{
+			int len = strlen(field_dependentfile) + 1;
+			memcpy(&scratch[scratch_len], field_dependentfile, len);
+			scratch_len += len;
+			}
+
+		key.dptr = keytext;
+		key.dsize = strlen(keytext)+1;
+		data.dptr = scratch;
+		data.dsize = scratch_len;
+		
+		if(tdb_store(tdb_drivers, key, data, TDB_REPLACE))
+			{
+			fprintf(stderr, "Failed to insert key \"%s\", %s.\n", keytext, tdb_errorstr(tdb_drivers));
+			break;
+			}
+		}
+
+	tdb_close(tdb_drivers);
+
+	/* If the line buffer hasn't been freed, it means there was an error. */
+	if(line)
+		{
+		gu_free(line);
+		return EXIT_INTERNAL;
+		}
+
+	return EXIT_OK;
 	}
-
-    while((line = gu_getline(line, &line_available, stdin)))
-	{
-	linenum++;
-	lineptr = line;
-
-	if(!(field_os = gu_strsep(&lineptr, ":"))
-		|| !(field_cversion = gu_strsep(&lineptr, ":"))
-		|| !(field_drivername = gu_strsep(&lineptr, ":"))
-		|| !(field_driverpath = gu_strsep(&lineptr, ":"))
-		|| !(field_datafile = gu_strsep(&lineptr, ":"))
-		|| !(field_configfile = gu_strsep(&lineptr, ":"))
-		|| !(field_helpfile = gu_strsep(&lineptr, ":"))
-		|| !(field_monitorname = gu_strsep(&lineptr, ":"))
-		|| !(field_defaultdatatype = gu_strsep(&lineptr, ":"))
-	    )
-	    {
-	    fprintf(stderr, "%s: parse error on line %d.\n", myname, linenum);
-	    break;
-	    }
-	    	
-	if(strcmp(field_os, "Windows NT x86") == 0)
-	    architecture = "W32X86";
-	else if(strcmp(field_os, "Windows 4.0") == 0)
-	    architecture = "WIN40";
-	else
-	    {
-	    fprintf(stderr, "Unrecognized OS: %s\n", field_os);
-	    break;
-	    }
-
-	/* Create the TDB key.  Note that the Samba code converts this to the Unix
-	   codepage but we don't. */
-	snprintf(keytext, sizeof(keytext), "DRIVERS/%s/%d/%s", architecture, atoi(field_cversion), field_drivername);
-
-	/* Make sure scratch buffer is big enough. */
-	if((line_available + 10) > scratch_available)
-	    {
-	    scratch_available = line_available + 10;
-	    scratch = gu_realloc(scratch, scratch_available, sizeof(char));
-	    }
-
-	scratch_len = 0;
-
-	/* Copy the little-endian 32 bit integer field. */
-	{
-	unsigned int val = atoi(field_cversion);
-	int x;
-	for(x=0; x<4; x++)
-	    {
-	    scratch[scratch_len++] = val & 0xFF;
-	    val >>= 8;
-	    }
-	}
-
-	/* Copy the text fields. */
-	{
-	int x;
-	char **p;
-	for(x = 0; (p = packlist[x]); x++)
-	    {
-	    int len = strlen(*p) + 1;
-	    memcpy(&scratch[scratch_len], *p, len);
-	    scratch_len += len;
-	    }
-	}
-
-	/* Now add the list of other files that must be downloaded. */
-	for( ; (field_dependentfile = gu_strsep(&lineptr, ":")); )
-	    {
-	    int len = strlen(field_dependentfile) + 1;
-	    memcpy(&scratch[scratch_len], field_dependentfile, len);
-	    scratch_len += len;
-	    }
-
-	key.dptr = keytext;
-	key.dsize = strlen(keytext)+1;
-	data.dptr = scratch;
-	data.dsize = scratch_len;
-	
-	if(tdb_store(tdb_drivers, key, data, TDB_REPLACE))
-	    {
-	    fprintf(stderr, "Failed to insert key \"%s\", %s.\n", keytext, tdb_errorstr(tdb_drivers));
-	    break;
-	    }
-	}
-
-    tdb_close(tdb_drivers);
-
-    /* If the line buffer hasn't been freed, it means there was an error. */
-    if(line)
-	{
-	gu_free(line);
-	return EXIT_INTERNAL;
-	}
-
-    return EXIT_OK;
-    }
 
 int main(int argc, char *argv[])
-    {
-    {
-    struct passwd *pw;
-    if((pw = getpwuid(getuid())) == (struct passwd *)NULL)
-        {
-        fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)getuid(), errno, gu_strerror(errno));
-        return EXIT_INTERNAL;
-        }
-    if(strcmp(pw->pw_name, USER_PPR))
-    	{
-	fprintf(stderr, "%s: you are not %s\n", myname, USER_PPR);
-	return EXIT_DENIED;
-    	}
-    }
-
-    /* Initialize international messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
-
-    /* We don't have real command line parsing yet, so just make sure the 
-       user has asked for the one feature we already support.
-       */
-    if(argc == 3 && strcmp(argv[1], "drivers") == 0 && strcmp(argv[2], "import") == 0)
 	{
-	return drivers_import();
+	{
+	struct passwd *pw;
+	if((pw = getpwuid(getuid())) == (struct passwd *)NULL)
+		{
+		fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)getuid(), errno, gu_strerror(errno));
+		return EXIT_INTERNAL;
+		}
+	if(strcmp(pw->pw_name, USER_PPR))
+		{
+		fprintf(stderr, "%s: you are not %s\n", myname, USER_PPR);
+		return EXIT_DENIED;
+		}
 	}
-    else
-    	{
-	fprintf(stderr, "Bad usage.\n");
-	return EXIT_SYNTAX;
-    	}
-    }
+
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* We don't have real command line parsing yet, so just make sure the 
+	   user has asked for the one feature we already support.
+	   */
+	if(argc == 3 && strcmp(argv[1], "drivers") == 0 && strcmp(argv[2], "import") == 0)
+		{
+		return drivers_import();
+		}
+	else
+		{
+		fprintf(stderr, "Bad usage.\n");
+		return EXIT_SYNTAX;
+		}
+	}
 
 /* end of file */

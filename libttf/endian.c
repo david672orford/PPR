@@ -28,35 +28,35 @@
 ** Get an Unsigned 32 bit number.
 */
 ULONG getULONG(BYTE *p)
-    {
-    int x;
-    ULONG val=0;
-
-    for(x=0; x<4; x++)
 	{
-	val *= 0x100;
-	val += p[x];
-	}
+	int x;
+	ULONG val=0;
 
-    return val;
-    } /* end of getULONG() */
+	for(x=0; x<4; x++)
+		{
+		val *= 0x100;
+		val += p[x];
+		}
+
+	return val;
+	} /* end of getULONG() */
 
 /*
 ** Get an unsigned 16 bit number.
 */
 USHORT getUSHORT(BYTE *p)
-    {
-    int x;
-    USHORT val=0;
-
-    for(x=0; x<2; x++)
 	{
-	val *= 0x100;
-	val += p[x];
-	}
+	int x;
+	USHORT val=0;
 
-    return val;
-    } /* end of getUSHORT() */
+	for(x=0; x<2; x++)
+		{
+		val *= 0x100;
+		val += p[x];
+		}
+
+	return val;
+	} /* end of getUSHORT() */
 
 /* end of file */
 

@@ -21,28 +21,28 @@
 /*
 ** This is a structure into which interface arguments are stored
 ** for handy reference later.  The storing is done by
-** interface_parse_argv().  To the right of each member is a sample
+** interface_parse_argv().	To the right of each member is a sample
 ** of what it might contain.  If you want a real explaination of
 ** the significance of the interface options, looks at the
 ** appendix "Requirements for an Interface" in "PPR, a Print Spooler for
 ** PostScript".
 */
 struct INT_CMDLINE
-    {
-    const char *int_name;		/* example: "interfaces/atalk" */
-    const char *int_basename;		/* example: "atalk" */
-    const char *printer;		/* example: "myprn" */
-    const char *address;		/* example: "My Laser Printer:LaserWriter@Computing Center" */
-    const char *options;		/* example: "idle_status_interval=60 open_retries=5" */
-    int jobbreak;			/* example: 1 (signal) */
-    gu_boolean feedback;		/* example: 1 (True) */
-    enum CODES codes;			/* example: 3 (Binary) */
-    const char *jobname;		/* example: "mouse:myprn-1001.0(mouse)" */
-    const char *routing;		/* example: "Call David Chappell at 2114 when ready" */
-    const char *forline;		/* example: "David Chappell" */
-    const char *barbarlang;		/* example: "" (PostScript) */
-    const char *title;			/* example: "My Print Job" */
-    } ;
+	{
+	const char *int_name;				/* example: "interfaces/atalk" */
+	const char *int_basename;			/* example: "atalk" */
+	const char *printer;				/* example: "myprn" */
+	const char *address;				/* example: "My Laser Printer:LaserWriter@Computing Center" */
+	const char *options;				/* example: "idle_status_interval=60 open_retries=5" */
+	int jobbreak;						/* example: 1 (signal) */
+	gu_boolean feedback;				/* example: 1 (True) */
+	enum CODES codes;					/* example: 3 (Binary) */
+	const char *jobname;				/* example: "mouse:myprn-1001.0(mouse)" */
+	const char *routing;				/* example: "Call David Chappell at 2114 when ready" */
+	const char *forline;				/* example: "David Chappell" */
+	const char *barbarlang;				/* example: "" (PostScript) */
+	const char *title;					/* example: "My Print Job" */
+	} ;
 
 extern struct INT_CMDLINE int_cmdline;
 

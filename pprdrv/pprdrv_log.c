@@ -50,76 +50,76 @@ static FILE *log = NULL;
 
 /* This opens the job log for write.  This is called from some of the functions below. */
 static void log_open(void)
-    {
-    /* Open the log file for write. */
-    if(test_mode)
 	{
-	int dfd;
-	if((dfd = dup(2)) == -1)
-	    fatal(EXIT_PRNERR, X_("dup(2) failed, errno=%d, (%s)"), errno, gu_strerror(errno));
-	if(!(log = fdopen(dfd, "w")))
-	    fatal(EXIT_PRNERR, X_("fdopen(%d, \"w\") failed, errno=%d (%s)"), dfd, errno, gu_strerror(errno));
-	}
-    else
-	{
-        char fname[MAX_PPR_PATH];
-        ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-        if((log = fopen(fname, "a")) == (FILE*)NULL)
-	    fatal(EXIT_PRNERR, _("Can't open \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
-	}
+	/* Open the log file for write. */
+	if(test_mode)
+		{
+		int dfd;
+		if((dfd = dup(2)) == -1)
+			fatal(EXIT_PRNERR, X_("dup(2) failed, errno=%d, (%s)"), errno, gu_strerror(errno));
+		if(!(log = fdopen(dfd, "w")))
+			fatal(EXIT_PRNERR, X_("fdopen(%d, \"w\") failed, errno=%d (%s)"), dfd, errno, gu_strerror(errno));
+		}
+	else
+		{
+		char fname[MAX_PPR_PATH];
+		ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
+		if((log = fopen(fname, "a")) == (FILE*)NULL)
+			fatal(EXIT_PRNERR, _("Can't open \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
+		}
 
-    /* Be paranoid. */
-    gu_set_cloexec(fileno(log));
-    }
+	/* Be paranoid. */
+	gu_set_cloexec(fileno(log));
+	}
 
 /* This is called by the banner page printing code in pprdrv_flag.c. */
 FILE *log_reader(void)
-    {
-    char fname[MAX_PPR_PATH];
-    ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
-    return fopen(fname, "r");
-    }
+	{
+	char fname[MAX_PPR_PATH];
+	ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
+	return fopen(fname, "r");
+	}
 
 void log_putc(int c)
-    {
-    if(!log)
-    	log_open();
-    fputc(c, log);
-    }
+	{
+	if(!log)
+		log_open();
+	fputc(c, log);
+	}
 
 void log_puts(const char data[])
-    {
-    if(!log)
-    	log_open();
-    fputs(data, log);
-    }
+	{
+	if(!log)
+		log_open();
+	fputs(data, log);
+	}
 
 void log_vprintf(const char format[], va_list va)
-    {
-    if(!log)
-    	log_open();
-    vfprintf(log, format, va);
-    }
+	{
+	if(!log)
+		log_open();
+	vfprintf(log, format, va);
+	}
 
 void log_printf(const char format[], ...)
-    {
-    va_list va;
-    va_start(va, format);
-    log_vprintf(format, va);
-    va_end(va);
-    }
+	{
+	va_list va;
+	va_start(va, format);
+	log_vprintf(format, va);
+	va_end(va);
+	}
 
 void log_flush(void)
-    {
-    if(log)
-    	fflush(log);
-    }
+	{
+	if(log)
+		fflush(log);
+	}
 
 void log_close(void)
-    {
-    if(log)
-    	fclose(log);
-    log = NULL;
-    }
+	{
+	if(log)
+		fclose(log);
+	log = NULL;
+	}
 
 /* end of file */

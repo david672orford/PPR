@@ -46,7 +46,7 @@ alarm(30);
 my($for, $addr, $msg, $msg2, $options, $code, $jobid, $extra, $title, $time, $reason, $pages, $charge) = @ARGV;
 
 # Uncomment this code if you don't understand responder parameters and
-# want to get a chance to see what they look like.  The output will
+# want to get a chance to see what they look like.	The output will
 # appear on ppr's stdout or in the pprd log file.
 if(0)
 {
@@ -70,9 +70,9 @@ $reason =~ s/[|]/ /g;
 # reference.
 my $user = "";
 if($addr =~ /^([^\@]+)\@.+$/)
-    {
-    $user = $1;
-    }
+	{
+	$user = $1;
+	}
 
 # Open a TCP connexion to pprpopup on the user's machine.
 if(!open_connexion(SEND, $addr))
@@ -83,24 +83,24 @@ my $result;
 
 # Remove the job from the list.
 if(1)
-    {
-    my $jobname;
-    ($jobname = $jobid) =~ s/^(\S+) (\S+) (\d+) (\d+) (\S+)$/$1:$2-$3.$4($5)/;
-    print SEND "JOB REMOVE $jobname\n";
-    $result = <SEND>;
-    print "JOB REMOVE failed: $result\n" if(/^-ERR/);
-    }
+	{
+	my $jobname;
+	($jobname = $jobid) =~ s/^(\S+) (\S+) (\d+) (\d+) (\S+)$/$1:$2-$3.$4($5)/;
+	print SEND "JOB REMOVE $jobname\n";
+	$result = <SEND>;
+	print "JOB REMOVE failed: $result\n" if(/^-ERR/);
+	}
 
 # Turn off autoflush because the message could be long.
 SEND->autoflush(0);
 
 # Tell the other end that we are going to send
-# the message.  If the formal user name was specified,
+# the message.	If the formal user name was specified,
 # use a different format of the MESSAGE command.
 if($user ne '')
-    { print SEND "MESSAGE $user ($for)\n" }
+	{ print SEND "MESSAGE $user ($for)\n" }
 else
-    { print SEND "MESSAGE $for\n" }
+	{ print SEND "MESSAGE $for\n" }
 
 # Send the message text.
 print SEND "$msg\n";
@@ -112,11 +112,11 @@ print SEND "\nThe title of this job is \"$title\".\n" if($title ne "");
 if($pages > 0)
   {
   if($pages == 1)
-     { print SEND "\nIt is 1 page long." }
+	 { print SEND "\nIt is 1 page long." }
   else
-     { print SEND "\nIt is $pages pages long." }
+	 { print SEND "\nIt is $pages pages long." }
   if($charge ne '')
-     { print SEND "  You have been charged $charge." }
+	 { print SEND "	 You have been charged $charge." }
   print SEND "\n";
   }
 
@@ -124,16 +124,16 @@ if($code == $RESP_ARRESTED || $code == $RESP_STRANDED_PRINTER_INCAPABLE || $code
   {
   my $heading_sent = 0;
   while($line=<STDIN>)
-    {
-    if(! $heading_sent)
 	{
-	print SEND "\nYour job's log file follows:\n";
-	print SEND "===================================================================\n";
-	$heading_sent = 1;
+	if(! $heading_sent)
+		{
+		print SEND "\nYour job's log file follows:\n";
+		print SEND "===================================================================\n";
+		$heading_sent = 1;
+		}
+	chomp $line;
+	print SEND "$line\n";
 	}
-    chomp $line;
-    print SEND "$line\n";
-    }
   }
 
 # Mark end of message, flush it, and get the result.

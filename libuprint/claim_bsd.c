@@ -44,86 +44,86 @@
 ** the cases we have met so far.  Here is a sample /etc/printcap:
 
 lp|labprn:\
-	:lp=:\
-	:rm=labserver.trincoll.edu:\
-	:rp=labprn:\
-	:sd=/var/spool/lpd/labprn:\
-	:lf=/var/spool/lpd/labprn/log:
-	
+		:lp=:\
+		:rm=labserver.trincoll.edu:\
+		:rp=labprn:\
+		:sd=/var/spool/lpd/labprn:\
+		:lf=/var/spool/lpd/labprn/log:
+		
 lab-color:\
-	:lp=:\
-	:rm=labserver.trincoll.edu:\
-	:rp=lab-color:\
-	:sd=/var/spool/lpd/lab-color:\
-	:lf=/var/spool/lpd/lab-color/log:
-										
+		:lp=:\
+		:rm=labserver.trincoll.edu:\
+		:rp=lab-color:\
+		:sd=/var/spool/lpd/lab-color:\
+		:lf=/var/spool/lpd/lab-color/log:
+																				
 */
 int printdest_claim_bsd(const char destname[])
-    {
-    if(uprint_lpr_installed())
 	{
-	FILE *f;
-
-	if((f = fopen(uprint_lpr_printcap(), "r")) != (FILE*)NULL)
-	    {
-	    char *line = NULL;
-	    int line_len = 80;
-	    char *p, *fnbp;
-
-	    /* Loop through the lines.  The gu_getline() function can 
-	       handle lines of any length and will strip trailing whitespace.
-	       */
-	    while((line = gu_getline(line, &line_len, f)))
+	if(uprint_lpr_installed())
 		{
-		if(!line[0])		/* empty or whitespace-only lines */
-		    continue;
+		FILE *f;
 
-		/* Make a pointer to the first non-blank character.  This is to 
-		   deal with a RedHat printconf-0.2 bug.  (It puts a single 
-		   space in front of the first line of each printer configuration
-		   that it generates.)
-		   */
-		fnbp = line + strspn(line, " \t");
-
-		/* If the line begins with a pound sign, it is a comment
-                   */
-		if(fnbp[0] == '#')
-		    continue;
-                                                       
-		/* If the line _begins_ with a colon, it is a continuation 
-		   line while probably has a lot for boring information for 
-		   lpr about this queue.  We will skip lines like that.
-		   */
-		if(fnbp[0] == ':')
-		    continue;		 
-
-		/* Find the first colon.  If there is none, there isn't a name
-		   list here, so skip this line.  (The colon marks the end of
-		   the list of names for this queue.)
-		   */
-		if((p = strchr(fnbp, ':')) == (char*)NULL)
-		    continue;
-
-		*p = '\0';	/* truncate line at first colon */
-
-		/* Iterate through a |-separated listed of queue names and aliases. */
-		for(p = fnbp; (p = strtok(p, "|")); p = (char*)NULL)
-		    {
-		    if(strcmp(p, destname) == 0)
+		if((f = fopen(uprint_lpr_printcap(), "r")) != (FILE*)NULL)
 			{
-			gu_free(line);
+			char *line = NULL;
+			int line_len = 80;
+			char *p, *fnbp;
+
+			/* Loop through the lines.	The gu_getline() function can 
+			   handle lines of any length and will strip trailing whitespace.
+			   */
+			while((line = gu_getline(line, &line_len, f)))
+				{
+				if(!line[0])			/* empty or whitespace-only lines */
+					continue;
+
+				/* Make a pointer to the first non-blank character.	 This is to 
+				   deal with a RedHat printconf-0.2 bug.  (It puts a single 
+				   space in front of the first line of each printer configuration
+				   that it generates.)
+				   */
+				fnbp = line + strspn(line, " \t");
+
+				/* If the line begins with a pound sign, it is a comment
+				   */
+				if(fnbp[0] == '#')
+					continue;
+													   
+				/* If the line _begins_ with a colon, it is a continuation 
+				   line while probably has a lot for boring information for 
+				   lpr about this queue.  We will skip lines like that.
+				   */
+				if(fnbp[0] == ':')
+					continue;			 
+
+				/* Find the first colon.  If there is none, there isn't a name
+				   list here, so skip this line.  (The colon marks the end of
+				   the list of names for this queue.)
+				   */
+				if((p = strchr(fnbp, ':')) == (char*)NULL)
+					continue;
+
+				*p = '\0';		/* truncate line at first colon */
+
+				/* Iterate through a |-separated listed of queue names and aliases. */
+				for(p = fnbp; (p = strtok(p, "|")); p = (char*)NULL)
+					{
+					if(strcmp(p, destname) == 0)
+						{
+						gu_free(line);
+						fclose(f);
+						return TRUE;
+						}
+					}
+
+				} /* end of line loop */
+
 			fclose(f);
-			return TRUE;
-			}
-		    }
+			} /* If fopen() suceded */
+		} /* if lpr installed */
 
-		} /* end of line loop */
-
-	    fclose(f);
-	    } /* If fopen() suceded */
-	} /* if lpr installed */
-
-    return FALSE;
-    } /* end of printdest_claim_bsd() */
+	return FALSE;
+	} /* end of printdest_claim_bsd() */
 
 /* end of file */

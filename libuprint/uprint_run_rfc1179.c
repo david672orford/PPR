@@ -43,121 +43,121 @@
 #include "uprint_private.h"
 
 int uprint_run_rfc1179(const char exepath[], const char *const argv[])
-    {
-    const char function[] = "uprint_run_rfc1179";
-    int pipefds[2];
-    pid_t pid;
-
-    if(pipe(pipefds) == -1)
 	{
-	uprint_errno = UPE_INTERNAL;
-	uprint_error_callback(_("%s(): pipe() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
-	return -1;
-	}
+	const char function[] = "uprint_run_rfc1179";
+	int pipefds[2];
+	pid_t pid;
 
-    if((pid = fork()) == -1)	/* failed */
-	{
-	uprint_errno = UPE_FORK;
-    	uprint_error_callback("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	close(pipefds[0]);
-	close(pipefds[1]);
-	return -1;
-	}
-    else if(pid == 0)		/* child */
-    	{
-	uid_t uid;
-
-	close(pipefds[0]);
-	if(pipefds[1] != 2)
-	    {
-	    dup2(pipefds[1], 2);
-	    close(pipefds[1]);
-	    }
-
-	uid = getuid();
-	if(setreuid(uid, uid) == -1)
-	    {
-	    uprint_errno = UPE_SETUID;
-	    uprint_error_callback(_("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)"), function, (long)uid, (long)uid, errno, gu_strerror(errno));
-	    exit(241);
-	    }
-
-	execv(exepath, (char *const *)argv);	/* <-- it's OK, execv() won't modify argv[] */
-
-	uprint_errno = UPE_EXEC;
-	uprint_error_callback(_("%s(): execv(\"%s\", ...) failed, errno=%d (%s)\n"), function, exepath, errno, gu_strerror(errno));
-	exit(242);
-	}
-    else			/* parent */
-	{
-	FILE *reader;
-	char *line = NULL;
-	int line_available = 80;
-	char *p;
-	int wstatus;
-
-	close(pipefds[1]);
-	if(!(reader = fdopen(pipefds[0], "r")))
-	    {
-	    uprint_errno = UPE_INTERNAL;
-	    uprint_error_callback(_("%s(): fdopen(\"%d\", \"%s\") failed, errno=%d (%s)"), function, pipefds[0], "r", errno, gu_strerror(errno));
-	    }
-
-	while((line = gu_getline(line, &line_available, reader)))
-	    {
-	    if((p = lmatchp(line, "uprint_error_callback:")))
+	if(pipe(pipefds) == -1)
 		{
-		uprint_error_callback(p);
-		}
-	    else if((p = lmatchp(line, "uprint_errno:")))
-		{
-		uprint_errno = atoi(p);
-		}
-	    else
-		{
-		fprintf(stderr, "*** %s\n", line);
-		}
-	    }
-
-    	if(wait(&wstatus) == -1)
-    	    {
-	    uprint_errno = UPE_WAIT;
-    	    uprint_error_callback(_("%s(): wait() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
-	    return -1;
-    	    }
-
-	/* If it died due to a signal, */
-	if(! WIFEXITED(wstatus))
-	    {
-	    if(WCOREDUMP(wstatus))
-		{
-		uprint_errno = UPE_CORE;
-		uprint_error_callback("%s(): Child \"%s\" dumped core", function, exepath);
-		}
-	    else
-		{
-		uprint_errno = UPE_KILLED;
-		uprint_error_callback("%s(): Child \"%s\" was killed", function, exepath);
-		}
-	    return -1;
-	    }
-
-	/* If it exited deliberately, */
-	else
-	    {
-	    if(WEXITSTATUS(wstatus) != 0)
-	    	{
+		uprint_errno = UPE_INTERNAL;
+		uprint_error_callback(_("%s(): pipe() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
 		return -1;
 		}
-	    else
-	    	{
-	    	return 0;
-	    	}
-	    }
-	} /* parent */
 
-    /* NOTREACHED */
-    return -1;
-    } /* end of uprint_run_rfc1179() */
+	if((pid = fork()) == -1)	/* failed */
+		{
+		uprint_errno = UPE_FORK;
+		uprint_error_callback("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		close(pipefds[0]);
+		close(pipefds[1]);
+		return -1;
+		}
+	else if(pid == 0)			/* child */
+		{
+		uid_t uid;
+
+		close(pipefds[0]);
+		if(pipefds[1] != 2)
+			{
+			dup2(pipefds[1], 2);
+			close(pipefds[1]);
+			}
+
+		uid = getuid();
+		if(setreuid(uid, uid) == -1)
+			{
+			uprint_errno = UPE_SETUID;
+			uprint_error_callback(_("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)"), function, (long)uid, (long)uid, errno, gu_strerror(errno));
+			exit(241);
+			}
+
+		execv(exepath, (char *const *)argv);	/* <-- it's OK, execv() won't modify argv[] */
+
+		uprint_errno = UPE_EXEC;
+		uprint_error_callback(_("%s(): execv(\"%s\", ...) failed, errno=%d (%s)\n"), function, exepath, errno, gu_strerror(errno));
+		exit(242);
+		}
+	else						/* parent */
+		{
+		FILE *reader;
+		char *line = NULL;
+		int line_available = 80;
+		char *p;
+		int wstatus;
+
+		close(pipefds[1]);
+		if(!(reader = fdopen(pipefds[0], "r")))
+			{
+			uprint_errno = UPE_INTERNAL;
+			uprint_error_callback(_("%s(): fdopen(\"%d\", \"%s\") failed, errno=%d (%s)"), function, pipefds[0], "r", errno, gu_strerror(errno));
+			}
+
+		while((line = gu_getline(line, &line_available, reader)))
+			{
+			if((p = lmatchp(line, "uprint_error_callback:")))
+				{
+				uprint_error_callback(p);
+				}
+			else if((p = lmatchp(line, "uprint_errno:")))
+				{
+				uprint_errno = atoi(p);
+				}
+			else
+				{
+				fprintf(stderr, "*** %s\n", line);
+				}
+			}
+
+		if(wait(&wstatus) == -1)
+			{
+			uprint_errno = UPE_WAIT;
+			uprint_error_callback(_("%s(): wait() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+			return -1;
+			}
+
+		/* If it died due to a signal, */
+		if(! WIFEXITED(wstatus))
+			{
+			if(WCOREDUMP(wstatus))
+				{
+				uprint_errno = UPE_CORE;
+				uprint_error_callback("%s(): Child \"%s\" dumped core", function, exepath);
+				}
+			else
+				{
+				uprint_errno = UPE_KILLED;
+				uprint_error_callback("%s(): Child \"%s\" was killed", function, exepath);
+				}
+			return -1;
+			}
+
+		/* If it exited deliberately, */
+		else
+			{
+			if(WEXITSTATUS(wstatus) != 0)
+				{
+				return -1;
+				}
+			else
+				{
+				return 0;
+				}
+			}
+		} /* parent */
+
+	/* NOTREACHED */
+	return -1;
+	} /* end of uprint_run_rfc1179() */
 
 /* end of file */

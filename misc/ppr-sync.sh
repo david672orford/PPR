@@ -62,13 +62,13 @@ if [ -z "$DESTSYS" ]
 # Figure out if we should use rsh or ssh.
 #
 if [ -d "$HOMEDIR/.ssh" ]
-    then
-    RSH="ssh"
-    RCP="scp"
-    else
-    RSH="rsh"
-    RCP="rcp"
-    fi
+	then
+	RSH="ssh"
+	RCP="scp"
+	else
+	RSH="rsh"
+	RCP="rcp"
+	fi
 
 #
 # Remove editor backup files before they cause trouble:
@@ -98,7 +98,7 @@ for printer in *
 	egrep "$CONFDIR/printers/$printer" <$tempfile >/dev/null
 	if [ $? -ne 0 ]
 		then
-		echo "    Touching printer \"$printer\""
+		echo "	  Touching printer \"$printer\""
 		$RSH $DESTSYS "$HOMEDIR/bin/ppad touch $printer"
 		fi
 	done
@@ -112,7 +112,7 @@ for group in *
 	egrep "$CONFDIR/groups/$group" <$tempfile >/dev/null
 	if [ $? -ne 0 ]
 		then
-		echo "    Touching group \"$group\""
+		echo "	  Touching group \"$group\""
 		$RSH $DESTSYS "$HOMEDIR/bin/ppad group touch $group"
 		fi
 	done
@@ -121,11 +121,11 @@ echo
 # Restart papsrv if necessary
 egrep "$CONFDIR/papsrv" <$tempfile >/dev/null
 if [ $? -ne 0 ]
-    then
-    echo "Restarting papsrv on $DESTSYS"
-    $RSH $DESTSYS "$HOMEDIR/bin/papsrv_kill; $HOMEDIR/bin/papsrv"
-    echo
-    fi
+	then
+	echo "Restarting papsrv on $DESTSYS"
+	$RSH $DESTSYS "$HOMEDIR/bin/papsrv_kill; $HOMEDIR/bin/papsrv"
+	echo
+	fi
 
 # remove the list which we no longer need
 rm -f $tempfile

@@ -21,18 +21,18 @@
 */
 
 /* This you might want to change */
-#define TICK_INTERVAL 5			/* seconds between calls to tick() */
-#define UPGRADE_INTERVAL 20		/* number of ticks to gain one pri point */
-#define RETRY_MULTIPLIER 30		/* extra seconds per retry */
-#define MIN_RETRY 600			/* retry at least this often (seconds) */
-#define ENGAGED_RETRY 60		/* interval to retry ``otherwise engaged'' printers */
-#define MAX_ACTIVE 15			/* maximum simultainiously active printers */
-#define STARVING_RETRY_INTERVAL 5	/* how often to retry starving printers */
-#define ENGAGED_NAG_TIME 20		/* Engaged time to qualify as "remaining printer problem" */
+#define TICK_INTERVAL 5					/* seconds between calls to tick() */
+#define UPGRADE_INTERVAL 20				/* number of ticks to gain one pri point */
+#define RETRY_MULTIPLIER 30				/* extra seconds per retry */
+#define MIN_RETRY 600					/* retry at least this often (seconds) */
+#define ENGAGED_RETRY 60				/* interval to retry ``otherwise engaged'' printers */
+#define MAX_ACTIVE 15					/* maximum simultainiously active printers */
+#define STARVING_RETRY_INTERVAL 5		/* how often to retry starving printers */
+#define ENGAGED_NAG_TIME 20				/* Engaged time to qualify as "remaining printer problem" */
 
-#define QUEUE_SIZE_INITIAL 200		/* entries allocated at startup */
-#define QUEUE_SIZE_GROWBY 50		/* additional entries allocated at each overflow */
-#define QUEUE_SIZE_MAX 10000		/* absolute maximum size we will attempt to allocate */
+#define QUEUE_SIZE_INITIAL 200			/* entries allocated at startup */
+#define QUEUE_SIZE_GROWBY 50			/* additional entries allocated at each overflow */
+#define QUEUE_SIZE_MAX 10000			/* absolute maximum size we will attempt to allocate */
 
 /*
 ** These are the pprd debugging options.  Change "#if 0" to "#if 1" to turn 
@@ -42,23 +42,23 @@
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
 #if 0
-#define DEBUG 1				/* define function[] strings */
-//#define DEBUG_STARTUP 1		/* initialization routines */
-//#define DEBUG_MAINLOOP 1		/* main loop */
-//#define DEBUG_RECOVER 1		/* reloading jobs and mounted media on restart */
-//#define DEBUG_NEWJOBS 1		/* receipt of new jobs */
-//#define DEBUG_PRNSTART 1		/* starting of printers */
-//#define DEBUG_PRNSTART_GRITTY 1	/* details of starting printers */
-//#define DEBUG_PRNSTOP 1		/* analysis of pprdrv exit */
-//#define DEBUG_DEQUEUE 1		/* removal from the queue */
-//#define DEBUG_MEDIA 1			/* media operations */
-//#define DEBUG_TICK 1			/* debug timer tick routine */
-//#define DEBUG_RESPOND 1		/* launching of responders */
-//#define DEBUG_PPOPINT 1		/* interface to ppop */
-//#define DEBUG_ALERTS 1		/* sending of operator alerts */
-//#define DEBUG_NODEID 1		/* allocating and deallocating node id numbers */
-#define DEBUG_REMOTE 1			/* sending of jobs to remote systems */
-#define DEBUG_QUESTIONS 1		/* sending questions to job submitters */
+#define DEBUG 1							/* define function[] strings */
+//#define DEBUG_STARTUP 1				/* initialization routines */
+//#define DEBUG_MAINLOOP 1				/* main loop */
+//#define DEBUG_RECOVER 1				/* reloading jobs and mounted media on restart */
+//#define DEBUG_NEWJOBS 1				/* receipt of new jobs */
+//#define DEBUG_PRNSTART 1				/* starting of printers */
+//#define DEBUG_PRNSTART_GRITTY 1		/* details of starting printers */
+//#define DEBUG_PRNSTOP 1				/* analysis of pprdrv exit */
+//#define DEBUG_DEQUEUE 1				/* removal from the queue */
+//#define DEBUG_MEDIA 1					/* media operations */
+//#define DEBUG_TICK 1					/* debug timer tick routine */
+//#define DEBUG_RESPOND 1				/* launching of responders */
+//#define DEBUG_PPOPINT 1				/* interface to ppop */
+//#define DEBUG_ALERTS 1				/* sending of operator alerts */
+//#define DEBUG_NODEID 1				/* allocating and deallocating node id numbers */
+#define DEBUG_REMOTE 1					/* sending of jobs to remote systems */
+#define DEBUG_QUESTIONS 1				/* sending questions to job submitters */
 #endif
 
 /*
@@ -102,83 +102,83 @@ __attribute__ (( format (printf, 1, 2) ))
 
 /* structure to describe a printer */
 struct Printer
-    {
-    char name[MAX_DESTNAME+1];		/* name of the printer */
-    int alert_interval;			/* every this many retries */
-    char *alert_method;			/* means of communicating with operator */
-    char *alert_address;		/* address of operator */
-    gu_boolean protect;			/* TRUE if "Charge:" line in conf file */
-    int charge_per_duplex;		/* per-sheet charge */
-    int charge_per_simplex;		/* half-sheet charge */
-    gu_boolean accepting;		/* TRUE if is accepting as destination */
-    int nbins;				/* number of bins */
-    int bins[MAX_BINS];			/* binname id of each bin */
-    gu_boolean AutoSelect_exists;	/* TRUE if any bin is named "AutoSelect" */
-    int media[MAX_BINS];		/* media id of media in each bin */
-    int previous_status;		/* saved previous status */
-    int status;				/* idle, disabled, etc */
-    gu_boolean cancel_job;		/* cancel the job at pprdrv exit */
-    gu_boolean hold_job;		/* hold the job at pprdrv exit */
-    int next_error_retry;		/* number of next retry */
-    int next_engaged_retry;		/* number of times otherwise engaged or off-line */
-    int countdown;			/* seconds till next retry */
-    pid_t pid;				/* pid of process driving the printer */
-    int jobdestid;			/* dest id of the job we are printing */
-    int id;				/* queue id of job being printed */
-    int subid;				/* queue subid of job being printed */
-    int homenode_id;			/* id number of node which submitted the job */
-    pid_t ppop_pid;			/* send SIGUSR1 to this process when stopt */
-    } ;
+	{
+	char name[MAX_DESTNAME+1];			/* name of the printer */
+	int alert_interval;					/* every this many retries */
+	char *alert_method;					/* means of communicating with operator */
+	char *alert_address;				/* address of operator */
+	gu_boolean protect;					/* TRUE if "Charge:" line in conf file */
+	int charge_per_duplex;				/* per-sheet charge */
+	int charge_per_simplex;				/* half-sheet charge */
+	gu_boolean accepting;				/* TRUE if is accepting as destination */
+	int nbins;							/* number of bins */
+	int bins[MAX_BINS];					/* binname id of each bin */
+	gu_boolean AutoSelect_exists;		/* TRUE if any bin is named "AutoSelect" */
+	int media[MAX_BINS];				/* media id of media in each bin */
+	int previous_status;				/* saved previous status */
+	int status;							/* idle, disabled, etc */
+	gu_boolean cancel_job;				/* cancel the job at pprdrv exit */
+	gu_boolean hold_job;				/* hold the job at pprdrv exit */
+	int next_error_retry;				/* number of next retry */
+	int next_engaged_retry;				/* number of times otherwise engaged or off-line */
+	int countdown;						/* seconds till next retry */
+	pid_t pid;							/* pid of process driving the printer */
+	int jobdestid;						/* dest id of the job we are printing */
+	int id;								/* queue id of job being printed */
+	int subid;							/* queue subid of job being printed */
+	int homenode_id;					/* id number of node which submitted the job */
+	pid_t ppop_pid;						/* send SIGUSR1 to this process when stopt */
+	} ;
 
 /* a group */
 struct Group
-    {
-    char name[MAX_DESTNAME+1];		/* name of group */
-    int printers[MAX_GROUPSIZE];	/* printer id's of members */
-    int members;			/* number of members */
-    int last;				/* member offset of member last used */
-    gu_boolean accepting;		/* TRUE if accepting new jobs */
-    gu_boolean held;			/* TRUE if jobs for group held */
-    gu_boolean rotate;			/* TRUE if we should use in rotation */
-    gu_boolean protect;			/* TRUE if we should restrict use */
-    gu_boolean deleted;			/* TRUE if group has been deleted */
-    } ;
+	{
+	char name[MAX_DESTNAME+1];			/* name of group */
+	int printers[MAX_GROUPSIZE];		/* printer id's of members */
+	int members;						/* number of members */
+	int last;							/* member offset of member last used */
+	gu_boolean accepting;				/* TRUE if accepting new jobs */
+	gu_boolean held;					/* TRUE if jobs for group held */
+	gu_boolean rotate;					/* TRUE if we should use in rotation */
+	gu_boolean protect;					/* TRUE if we should restrict use */
+	gu_boolean deleted;					/* TRUE if group has been deleted */
+	} ;
 
 /* A queue entry as stored by pprd and passed back to ppop.
    Notice that this is shorter than struct QFileEntry. */
 struct QEntry
-    {
-    SHORT_INT destnode_id;		/* destination node by key number */
-    SHORT_INT destid;			/* destination key number */
-    SHORT_INT id;			/* queue id */
-    SHORT_INT subid;			/* fractional queue id */
-    SHORT_INT homenode_id;		/* id of node job come from */
+	{
+	SHORT_INT destnode_id;				/* destination node by key number */
+	SHORT_INT destid;					/* destination key number */
+	SHORT_INT id;						/* queue id */
+	SHORT_INT subid;					/* fractional queue id */
+	SHORT_INT homenode_id;				/* id of node job come from */
 
-    SHORT_INT status;			/* printer id if printing, < 0 for other status */
-    unsigned short int flags;		/* --keep, responding, etc. */
-    time_t resend_message_at;		/* time at which to retry responder to questioner */
+	SHORT_INT status;					/* printer id if printing, < 0 for other status */
+	unsigned short int flags;			/* --keep, responding, etc. */
+	time_t resend_message_at;			/* time at which to retry responder to questioner */
 
-    SHORT_INT priority;			/* priority number (0=highest, 39=lowest) */
-    unsigned char never;		/* bitmap of group member which can't print */
-    unsigned char notnow;		/* bitmap of group members without media mntd */
-    SHORT_INT media[MAX_DOCMEDIA]; 	/* list of id numbers of media types req. */
-    SHORT_INT pass;			/* number of current pass thru printers in group */
-    } ;
+	SHORT_INT priority;					/* priority number (0=highest, 39=lowest) */
+	unsigned char never;				/* bitmap of group member which can't print */
+	unsigned char notnow;				/* bitmap of group members without media mntd */
+	SHORT_INT media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
+	SHORT_INT pass;						/* number of current pass thru printers in group */
+	} ;
 
 /*
 ** Printer status values
 */
-#define PRNSTATUS_IDLE 0		/* idle but ready to print */
-#define PRNSTATUS_PRINTING 1		/* printing right now */
-#define PRNSTATUS_CANCELING 2		/* canceling a job */
-#define PRNSTATUS_SEIZING 3		/* stopping printing current job and holding it */
-#define PRNSTATUS_FAULT 4		/* waiting for auto retry */
-#define PRNSTATUS_ENGAGED 5		/* printer is printing for another computer */
-#define PRNSTATUS_STARVED 6		/* starved for system resources */
-#define PRNSTATUS_STOPT 7		/* stopt by user */
-#define PRNSTATUS_STOPPING 8		/* will go to PRNSTATUS_STOPT at job end */
-#define PRNSTATUS_HALTING 9		/* pprdrv being killed */
-#define PRNSTATUS_DELETED 10		/* printer has been deleted */
+#define PRNSTATUS_IDLE 0				/* idle but ready to print */
+#define PRNSTATUS_PRINTING 1			/* printing right now */
+#define PRNSTATUS_CANCELING 2			/* canceling a job */
+#define PRNSTATUS_SEIZING 3				/* stopping printing current job and holding it */
+#define PRNSTATUS_FAULT 4				/* waiting for auto retry */
+#define PRNSTATUS_ENGAGED 5				/* printer is printing for another computer */
+#define PRNSTATUS_STARVED 6				/* starved for system resources */
+#define PRNSTATUS_STOPT 7				/* stopt by user */
+#define PRNSTATUS_STOPPING 8			/* will go to PRNSTATUS_STOPT at job end */
+#define PRNSTATUS_HALTING 9				/* pprdrv being killed */
+#define PRNSTATUS_DELETED 10			/* printer has been deleted */
 #define PRNSTATUS_DELIBERATELY_DOWN 7	/* 1st non-printing value (stopt) */
 
 /*
@@ -187,15 +187,15 @@ struct QEntry
 ** because the format is not network portable.
 */
 struct fcommand1
-    {
-    int nbins;                      /* number of bins in this printer */
-    char prnname[MAX_DESTNAME+1];   /* name of the printer */
-    } ;
+	{
+	int nbins;						/* number of bins in this printer */
+	char prnname[MAX_DESTNAME+1];	/* name of the printer */
+	} ;
 struct fcommand2
-    {
-    char bin[MAX_BINNAME+1];        /* name of this bin */
-    char media[MAX_MEDIANAME+1];    /* name of mounted media */
-    } ;
+	{
+	char bin[MAX_BINNAME+1];		/* name of this bin */
+	char media[MAX_MEDIANAME+1];	/* name of mounted media */
+	} ;
 
 /*
 ** Debugging macros.

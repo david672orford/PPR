@@ -1,5 +1,5 @@
 /*************************************************
-*      Perl-Compatible Regular Expressions       *
+*	   Perl-Compatible Regular Expressions		 *
 *************************************************/
 
 /*
@@ -12,7 +12,7 @@ functions.
 
 Written by: Philip Hazel <ph10@cam.ac.uk>
 
-           Copyright (c) 1997-2001 University of Cambridge
+		   Copyright (c) 1997-2001 University of Cambridge
 
 -----------------------------------------------------------------------------
 Permission is granted to anyone to use this software for any purpose on any
@@ -44,7 +44,7 @@ restrictions:
 /* Corresponding tables of PCRE error messages and POSIX error codes. */
 
 static const char *estring[] = {
-  ERR1,  ERR2,  ERR3,  ERR4,  ERR5,  ERR6,  ERR7,  ERR8,  ERR9,  ERR10,
+  ERR1,	 ERR2,	ERR3,  ERR4,  ERR5,	 ERR6,	ERR7,  ERR8,  ERR9,	 ERR10,
   ERR11, ERR12, ERR13, ERR14, ERR15, ERR16, ERR17, ERR18, ERR19, ERR20,
   ERR21, ERR22, ERR23, ERR24, ERR25, ERR26, ERR27, ERR29, ERR29, ERR30,
   ERR31 };
@@ -90,31 +90,31 @@ static int eint[] = {
 /* Table of texts corresponding to POSIX error codes */
 
 static const char *pstring[] = {
-  "",                                /* Dummy for value 0 */
-  "internal error",                  /* REG_ASSERT */
-  "invalid repeat counts in {}",     /* BADBR      */
-  "pattern error",                   /* BADPAT     */
-  "? * + invalid",                   /* BADRPT     */
-  "unbalanced {}",                   /* EBRACE     */
-  "unbalanced []",                   /* EBRACK     */
-  "collation error - not relevant",  /* ECOLLATE   */
-  "bad class",                       /* ECTYPE     */
-  "bad escape sequence",             /* EESCAPE    */
-  "empty expression",                /* EMPTY      */
-  "unbalanced ()",                   /* EPAREN     */
-  "bad range inside []",             /* ERANGE     */
-  "expression too big",              /* ESIZE      */
-  "failed to get memory",            /* ESPACE     */
-  "bad back reference",              /* ESUBREG    */
-  "bad argument",                    /* INVARG     */
-  "match failed"                     /* NOMATCH    */
+  "",								 /* Dummy for value 0 */
+  "internal error",					 /* REG_ASSERT */
+  "invalid repeat counts in {}",	 /* BADBR	   */
+  "pattern error",					 /* BADPAT	   */
+  "? * + invalid",					 /* BADRPT	   */
+  "unbalanced {}",					 /* EBRACE	   */
+  "unbalanced []",					 /* EBRACK	   */
+  "collation error - not relevant",	 /* ECOLLATE   */
+  "bad class",						 /* ECTYPE	   */
+  "bad escape sequence",			 /* EESCAPE	   */
+  "empty expression",				 /* EMPTY	   */
+  "unbalanced ()",					 /* EPAREN	   */
+  "bad range inside []",			 /* ERANGE	   */
+  "expression too big",				 /* ESIZE	   */
+  "failed to get memory",			 /* ESPACE	   */
+  "bad back reference",				 /* ESUBREG	   */
+  "bad argument",					 /* INVARG	   */
+  "match failed"					 /* NOMATCH	   */
 };
 
 
 
 
 /*************************************************
-*          Translate PCRE text code to int       *
+*		   Translate PCRE text code to int		 *
 *************************************************/
 
 /* PCRE compile-time errors are given as strings defined as macros. We can just
@@ -132,7 +132,7 @@ return REG_ASSERT;
 
 
 /*************************************************
-*          Translate error code to string        *
+*		   Translate error code to string		 *
 *************************************************/
 
 size_t
@@ -152,12 +152,12 @@ addlength = (preg != NULL && (int)preg->re_erroffset != -1)?
 if (errbuf_size > 0)
   {
   if (addlength > 0 && errbuf_size >= length + addlength)
-    sprintf(errbuf, "%s%s%-6d", message, addmessage, (int)preg->re_erroffset);
+	sprintf(errbuf, "%s%s%-6d", message, addmessage, (int)preg->re_erroffset);
   else
-    {
-    strncpy(errbuf, message, errbuf_size - 1);
-    errbuf[errbuf_size-1] = 0;
-    }
+	{
+	strncpy(errbuf, message, errbuf_size - 1);
+	errbuf[errbuf_size-1] = 0;
+	}
   }
 
 return length + addlength;
@@ -167,7 +167,7 @@ return length + addlength;
 
 
 /*************************************************
-*           Free store held by a regex           *
+*			Free store held by a regex			 *
 *************************************************/
 
 void
@@ -180,17 +180,17 @@ regfree(regex_t *preg)
 
 
 /*************************************************
-*            Compile a regular expression        *
+*			 Compile a regular expression		 *
 *************************************************/
 
 /*
 Arguments:
-  preg        points to a structure for recording the compiled expression
-  pattern     the pattern to compile
-  cflags      compilation flags
+  preg		  points to a structure for recording the compiled expression
+  pattern	  the pattern to compile
+  cflags	  compilation flags
 
-Returns:      0 on success
-              various non-zero codes on failure
+Returns:	  0 on success
+			  various non-zero codes on failure
 */
 
 int
@@ -216,7 +216,7 @@ return 0;
 
 
 /*************************************************
-*              Match a regular expression        *
+*			   Match a regular expression		 *
 *************************************************/
 
 /* Unfortunately, PCRE requires 3 ints of working space for each captured
@@ -235,7 +235,7 @@ int *ovector = NULL;
 if ((eflags & REG_NOTBOL) != 0) options |= PCRE_NOTBOL;
 if ((eflags & REG_NOTEOL) != 0) options |= PCRE_NOTEOL;
 
-preg->re_erroffset = (size_t)(-1);   /* Only has meaning after compile */
+preg->re_erroffset = (size_t)(-1);	 /* Only has meaning after compile */
 
 if (nmatch > 0)
   {
@@ -246,16 +246,16 @@ if (nmatch > 0)
 rc = pcre_exec(preg->re_pcre, NULL, string, (int)strlen(string), 0, options,
   ovector, nmatch * 3);
 
-if (rc == 0) rc = nmatch;    /* All captured slots were filled in */
+if (rc == 0) rc = nmatch;	 /* All captured slots were filled in */
 
 if (rc >= 0)
   {
   size_t i;
   for (i = 0; i < rc; i++)
-    {
-    pmatch[i].rm_so = ovector[i*2];
-    pmatch[i].rm_eo = ovector[i*2+1];
-    }
+	{
+	pmatch[i].rm_so = ovector[i*2];
+	pmatch[i].rm_eo = ovector[i*2+1];
+	}
   if (ovector != NULL) free(ovector);
   for (; i < nmatch; i++) pmatch[i].rm_so = pmatch[i].rm_eo = -1;
   return 0;
@@ -265,15 +265,15 @@ else
   {
   if (ovector != NULL) free(ovector);
   switch(rc)
-    {
-    case PCRE_ERROR_NOMATCH: return REG_NOMATCH;
-    case PCRE_ERROR_NULL: return REG_INVARG;
-    case PCRE_ERROR_BADOPTION: return REG_INVARG;
-    case PCRE_ERROR_BADMAGIC: return REG_INVARG;
-    case PCRE_ERROR_UNKNOWN_NODE: return REG_ASSERT;
-    case PCRE_ERROR_NOMEMORY: return REG_ESPACE;
-    default: return REG_ASSERT;
-    }
+	{
+	case PCRE_ERROR_NOMATCH: return REG_NOMATCH;
+	case PCRE_ERROR_NULL: return REG_INVARG;
+	case PCRE_ERROR_BADOPTION: return REG_INVARG;
+	case PCRE_ERROR_BADMAGIC: return REG_INVARG;
+	case PCRE_ERROR_UNKNOWN_NODE: return REG_ASSERT;
+	case PCRE_ERROR_NOMEMORY: return REG_ESPACE;
+	default: return REG_ASSERT;
+	}
   }
 }
 

@@ -23,21 +23,21 @@
 
 
 int main(int argc, char *argv[])
-    {
-    if(argc != 2)
-    	{
-	fprintf(stderr, "usage: mkstemp /tmp/fileXXXXXX\n");
-	return 10;
-    	}
+	{
+	if(argc != 2)
+		{
+		fprintf(stderr, "usage: mkstemp /tmp/fileXXXXXX\n");
+		return 10;
+		}
 
-    if(mkstemp(argv[1]) == -1)
-    	{
-	fprintf(stderr, "mkstemp: mkstemp(\"%s\") failed, errno=%d, (%s)\n", argv[1], errno, gu_strerror(errno));
-	return 1;
-    	}
-    	
-    printf("%s\n", argv[1]);
-    return 0;
-    }
+	if(mkstemp(argv[1]) == -1)
+		{
+		fprintf(stderr, "mkstemp: mkstemp(\"%s\") failed, errno=%d, (%s)\n", argv[1], errno, gu_strerror(errno));
+		return 1;
+		}
+		
+	printf("%s\n", argv[1]);
+	return 0;
+	}
 
 /* end of file */

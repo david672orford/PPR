@@ -50,97 +50,97 @@ static int do_index(const char name[], gu_boolean delete_index);
 */
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
-	{
-	{"delete", 1000, FALSE},
-	{"help", 9000, FALSE},
-	{"version", 9001, FALSE},
-	{(char*)NULL, 0, FALSE}
-	} ;
+		{
+		{"delete", 1000, FALSE},
+		{"help", 9000, FALSE},
+		{"version", 9001, FALSE},
+		{(char*)NULL, 0, FALSE}
+		} ;
 
 /*
 ** Print help.
 */
 static void help_usage(FILE *outfile)
-    {
-    fprintf(outfile, _("Usage: %s [switches]\n"), myname);
+	{
+	fprintf(outfile, _("Usage: %s [switches]\n"), myname);
 
-    fputc('\n', outfile);
+	fputc('\n', outfile);
 
-    fputs(_("Valid switches:\n"), outfile);
+	fputs(_("Valid switches:\n"), outfile);
 
-    fputs(_(	"\t--version\n"
-		"\t--help\n"), outfile);
-    }
+	fputs(_(	"\t--version\n"
+				"\t--help\n"), outfile);
+	}
 
 int main(int argc, char *argv[])
-    {
-    gu_boolean opt_delete = FALSE;
-    int i;
-    int ret;
-
-    /* Initialize international messages library. */
-    #ifdef INTERNATIONAL
-    setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
-    #endif
-
-    /* Parse the options. */
-    {
-    struct gu_getopt_state getopt_state;
-    int optchar;
-    gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
-    while((optchar = ppr_getopt(&getopt_state)) != -1)
-    	{
-    	switch(optchar)
-    	    {
-	    case 1000:			/* --delete */
-	    	opt_delete = TRUE;
-	    	break;
-
-	    case 9000:			/* --help */
-	    	help_usage(stdout);
-	    	return EXIT_OK;
-
-	    case 9001:			/* --version */
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-	    	return EXIT_OK;
-
-	    default:			/* other getopt errors or missing case */
-		gu_getopt_default(myname, optchar, &getopt_state, stderr);
-	    	return EXIT_SYNTAX;
-    	    }
-    	}
-    i = getopt_state.optind;
-    }
-
-    /* Main code continues here */
-    if(i < argc)
 	{
-	for( ;i < argc; i++)
-	    if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
-	    	break;
-	}
-    else
+	gu_boolean opt_delete = FALSE;
+	int i;
+	int ret;
+
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* Parse the options. */
 	{
-	for(i = 0; indexes[i]; i++)
-	    if((ret = do_index(indexes[i], opt_delete)) != EXIT_OK)
-	    	break;
+	struct gu_getopt_state getopt_state;
+	int optchar;
+	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
+	while((optchar = ppr_getopt(&getopt_state)) != -1)
+		{
+		switch(optchar)
+			{
+			case 1000:					/* --delete */
+				opt_delete = TRUE;
+				break;
+
+			case 9000:					/* --help */
+				help_usage(stdout);
+				return EXIT_OK;
+
+			case 9001:					/* --version */
+				puts(VERSION);
+				puts(COPYRIGHT);
+				puts(AUTHOR);
+				return EXIT_OK;
+
+			default:					/* other getopt errors or missing case */
+				gu_getopt_default(myname, optchar, &getopt_state, stderr);
+				return EXIT_SYNTAX;
+			}
+		}
+	i = getopt_state.optind;
 	}
 
-    if(ret == -1)
-	return EXIT_INTERNAL;
-    else
-	return ret;    
-    } /* end of main() */
+	/* Main code continues here */
+	if(i < argc)
+		{
+		for( ;i < argc; i++)
+			if((ret = do_index(argv[i], opt_delete)) != EXIT_OK)
+				break;
+		}
+	else
+		{
+		for(i = 0; indexes[i]; i++)
+			if((ret = do_index(indexes[i], opt_delete)) != EXIT_OK)
+				break;
+		}
+
+	if(ret == -1)
+		return EXIT_INTERNAL;
+	else
+		return ret;	   
+	} /* end of main() */
 
 static int do_index(const char name[], gu_boolean delete_index)
-    {
-    char fname[MAX_PPR_PATH];
-    ppr_fnamef(fname, "%s/lib/index%s", HOMEDIR, name);
-    return gu_runl(myname, stderr, fname, delete_index ? "--delete" : NULL, NULL);
-    }
+	{
+	char fname[MAX_PPR_PATH];
+	ppr_fnamef(fname, "%s/lib/index%s", HOMEDIR, name);
+	return gu_runl(myname, stderr, fname, delete_index ? "--delete" : NULL, NULL);
+	}
 
 /* end of file */

@@ -24,18 +24,18 @@
 ** system calls be restarted automatically.
 */
 void (*signal_restarting(int signum, void (*handler)(int)))(int)
-    {
-    struct sigaction new_handler, old_handler;
-    sigemptyset(&new_handler.sa_mask);
-    #ifdef SA_RESTART
-    new_handler.sa_flags = SA_RESTART;
-    #else
-    new_handler.sa_flags = 0;
-    #endif
-    new_handler.sa_handler = handler;
-    sigaction(signum, &new_handler, &old_handler);
-    return old_handler.sa_handler;
-    }
+	{
+	struct sigaction new_handler, old_handler;
+	sigemptyset(&new_handler.sa_mask);
+	#ifdef SA_RESTART
+	new_handler.sa_flags = SA_RESTART;
+	#else
+	new_handler.sa_flags = 0;
+	#endif
+	new_handler.sa_handler = handler;
+	sigaction(signum, &new_handler, &old_handler);
+	return old_handler.sa_handler;
+	}
 
 /* end of file */
 

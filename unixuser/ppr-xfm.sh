@@ -31,7 +31,7 @@
 
 #
 # This shell script is intended to be invoked from an X-Windows file
-# manager.  The first parameter is the name of the printer to print on,
+# manager.	The first parameter is the name of the printer to print on,
 # the second and subsequent parameters are the names of the files to print.
 #
 # If ppr reports an error, the entire output of ppr is displayed using
@@ -46,12 +46,12 @@ shift
 # If we do not have at least two parameters,
 # then we are a queue display program.
 if [ -z "$1" ]
-    then
-    if [ -z "$PRINTER" ]
+	then
+	if [ -z "$PRINTER" ]
 	then
 	PRINTER="all"
 	fi
-    xterm -title "$PRINTER's queue" \
+	xterm -title "$PRINTER's queue" \
 	-e /bin/sh -c "while true
 		do
 		clear
@@ -62,33 +62,33 @@ if [ -z "$1" ]
 		echo \"Please press control-C when you want to remove this window.\"
 		sleep 5
 		done"
-    exit 0
-    fi
+	exit 0
+	fi
 
 # In this loop, we process each file.
 while [ -n "$1" ]
-    do
-    # Run ppr on this file, capturing the output.
-    OUTPUT=`ppr -d $PRINTER -C "$1" -m xwin -r "$DISPLAY" -w log "$1" 2>&1`;
+	do
+	# Run ppr on this file, capturing the output.
+	OUTPUT=`ppr -d $PRINTER -C "$1" -m xwin -r "$DISPLAY" -w log "$1" 2>&1`;
 
-    # If there was an error, print it using xmessage if we have it,
-    # if not, pass a shell script to xterm.
-    if [ $? -ne 0 ]
+	# If there was an error, print it using xmessage if we have it,
+	# if not, pass a shell script to xterm.
+	if [ $? -ne 0 ]
 	then
 	if [ -x /usr/bin/X11/xmessage ]
-	    then
-	    echo "$OUTPUT" \
+		then
+		echo "$OUTPUT" \
 		| xmessage -geometry +100+100 \
 			-title "Printing Errors For \"$1\""\
 			-default okay -file -
-	    else
-	    xterm \
+		else
+		xterm \
 		-geometry 80x10+100+100 -sb \
 		-title "Printing Errors for \"$1\"" \
 		-e /bin/sh -c "echo \"$OUTPUT\"; echo; echo 'Please press RETURN to clear this message.'; read x"
-	    fi
+		fi
 	fi
-    shift 1	# shift to the next file
-    done
+	shift 1 # shift to the next file
+	done
 
 exit 0

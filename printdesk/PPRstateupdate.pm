@@ -69,83 +69,83 @@ status.
 
 =cut
 sub new
-    {
-    shift;
-    my $self = {};
-    bless $self;
-    $self->{widget} = shift;
-    $self->{queue} = shift;
-
-    print STDERR "PrintDesk::PPRstateupdate::new(): widget=$self->{widget}, queue=\"$self->{queue}\" " if($debug);
-
-    # Create a unique id so that we can later locate this instance
-    # in the array @instances.  This is necessary because its possition
-    # will change if other objects of this type created before it are
-    # destroyed.
-    $self->{unique_id} = $unique_id;
-    $unique_id++;
-
-    # Push this instance onto a list which will be searched whenever
-    # an event is detected.
-    push(@instances, $self);
-
-    # Start tail_status if it is not already started.
-    if(! $tail_status_launched)
 	{
-	open(UPDATES, "$PrintDesk::TAIL_STATUS_PATH |") || die;
-	fcntl(UPDATES, &F_SETFL, &O_NONBLOCK);
-	$self->{widget}->fileevent(UPDATES, 'readable', \&handler);
-	$tail_status_launched = 1;
+	shift;
+	my $self = {};
+	bless $self;
+	$self->{widget} = shift;
+	$self->{queue} = shift;
+
+	print STDERR "PrintDesk::PPRstateupdate::new(): widget=$self->{widget}, queue=\"$self->{queue}\" " if($debug);
+
+	# Create a unique id so that we can later locate this instance
+	# in the array @instances.	This is necessary because its possition
+	# will change if other objects of this type created before it are
+	# destroyed.
+	$self->{unique_id} = $unique_id;
+	$unique_id++;
+
+	# Push this instance onto a list which will be searched whenever
+	# an event is detected.
+	push(@instances, $self);
+
+	# Start tail_status if it is not already started.
+	if(! $tail_status_launched)
+		{
+		open(UPDATES, "$PrintDesk::TAIL_STATUS_PATH |") || die;
+		fcntl(UPDATES, &F_SETFL, &O_NONBLOCK);
+		$self->{widget}->fileevent(UPDATES, 'readable', \&handler);
+		$tail_status_launched = 1;
+		}
+
+	# Keep track of how many we have.
+	$instances_count++;
+
+	print STDERR "\$instances_count = $instances_count\n" if($debug);
+
+	return $self;
 	}
-
-    # Keep track of how many we have.
-    $instances_count++;
-
-    print STDERR "\$instances_count = $instances_count\n" if($debug);
-
-    return $self;
-    }
 
 =item $updater->destroy()
 
-Destroy the object.  All of its event handlers are unregistered.
+Destroy the object.	 All of its event handlers are unregistered.
 
 =cut
 sub destroy
-    {
-    my $self = shift;
-    print STDERR "PrintDesk::PPRstateupdate::destroy(): " if($debug);
+	{
+	my $self = shift;
+	print STDERR "PrintDesk::PPRstateupdate::destroy(): " if($debug);
 
-    my $x;
-    print STDERR "\tSearching for this instance (unique_id = $self->{unique_id}) ... " if($debug);
-    for($x=0; $x < $instances_count; $x++)
-    	{
-	if($instances[$x]->{unique_id} == $self->{unique_id})
-	    {
-	    print STDERR "match at instance $x\n" if($debug);
-	    splice(@instances, $x, 1);
-	    last;
-	    }
-    	}
-    print STDERR "no match !!!\n" if($debug && $x >= $instances_count);
+	my $x;
+	print STDERR "\tSearching for this instance (unique_id = $self->{unique_id}) ... " if($debug);
+	for($x=0; $x < $instances_count; $x++)
+		{
+		if($instances[$x]->{unique_id} == $self->{unique_id})
+			{
+			print STDERR "match at instance $x\n" if($debug);
+			splice(@instances, $x, 1);
+			last;
+			}
+		}
+	print STDERR "no match !!!\n" if($debug && $x >= $instances_count);
 
-    $instances_count--;
-    print STDERR "\$instances_count = $instances_count\n" if($debug);
-    }
+	$instances_count--;
+	print STDERR "\$instances_count = $instances_count\n" if($debug);
+	}
 
 =item $updater->register(I<$event>, I<$object>, I<$method>)
 
-Register a hander for a specific type of event.  Method I<$method> will be
-called in object I<$object> whenever the event occurs.  The parameters
+Register a hander for a specific type of event.	 Method I<$method> will be
+called in object I<$object> whenever the event occurs.	The parameters
 passed to the callback function depend on the event type.
 
 =cut
 sub register
-    {
-    my($self, $event, $object, $method) = @_;
-    print STDERR "PPRstateupdate::register(\$self=$self, \$event=$event, \$object=$object, \$method=$method)\n" if($debug);
-    $self->{$event} = [$object, $method];
-    }
+	{
+	my($self, $event, $object, $method) = @_;
+	print STDERR "PPRstateupdate::register(\$self=$self, \$event=$event, \$object=$object, \$method=$method)\n" if($debug);
+	$self->{$event} = [$object, $method];
+	}
 
 =pod
 
@@ -162,111 +162,111 @@ The valid event types are as follows:
 # from tail_status.
 #
 sub handler
-    {
-    my $instance;
-    my $finfo;
-
-    #
-    # Read update messages from pprd or pprdrv.
-    #
-    while(<UPDATES>)
 	{
-	chomp;
-	print STDERR "> $_\n" if($debug);
+	my $instance;
+	my $finfo;
 
-	#=====================
-	# pprd messages
-	#=====================
+	#
+	# Read update messages from pprd or pprdrv.
+	#
+	while(<UPDATES>)
+		{
+		chomp;
+		print STDERR "> $_\n" if($debug);
+
+		#=====================
+		# pprd messages
+		#=====================
 
 =item queue
 
 New job
 
 =cut
-	if($_ =~ /^JOB ([^ ]+) ([0-9]+) ([0-9]+)/o)
-	    {
-	    my($jobname, $rank1, $rank2) = ($1, $2, $3);
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{add}))
-		    {
-		    if($instance->{queue} eq "all")
+		if($_ =~ /^JOB ([^ ]+) ([0-9]+) ([0-9]+)/o)
 			{
-			&{$finfo->[1]}($finfo->[0], $jobname, $rank1);
+			my($jobname, $rank1, $rank2) = ($1, $2, $3);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{add}))
+					{
+					if($instance->{queue} eq "all")
+						{
+						&{$finfo->[1]}($finfo->[0], $jobname, $rank1);
+						}
+					elsif($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue})
+						{
+						&{$finfo->[1]}($finfo->[0], $jobname, $rank2);
+						}
+					}
+				}
+			next;
 			}
-		    elsif($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue})
-			{
-			&{$finfo->[1]}($finfo->[0], $jobname, $rank2);
-			}
-		    }
-		}
-	    next;
-	    }
 
 =item delete
 
 Job removed
 
 =cut
-	if($_ =~ /^DEL ([^ ]+)/)
-	    {
-	    my $jobname = $1;
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{'delete'}))
-		    {
-		    if($instance->{queue} eq "all" || ($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue}))
+		if($_ =~ /^DEL ([^ ]+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $jobname);
+			my $jobname = $1;
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{'delete'}))
+					{
+					if($instance->{queue} eq "all" || ($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue}))
+						{
+						&{$finfo->[1]}($finfo->[0], $jobname);
+						}
+					}
+				}
+			next;
 			}
-		    }
-		}
-	    next;
-	    }
 
 =item newstatus
 
 Job status changed
 
 =cut
-	if($_ =~ /^JST ([^ ]+) (.*)/)
-	    {
-	    my ($jobname, $status) = ($1, $2);
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{newstatus}))
-		    {
-		    if($instance->{queue} eq "all" || ($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue}))
+		if($_ =~ /^JST ([^ ]+) (.*)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $jobname, $status);
+			my ($jobname, $status) = ($1, $2);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{newstatus}))
+					{
+					if($instance->{queue} eq "all" || ($jobname =~ /([^-]+)[-]/o && $1 eq $instance->{queue}))
+						{
+						&{$finfo->[1]}($finfo->[0], $jobname, $status);
+						}
+					}
+				}
+			next;
 			}
-		    }
-		}
-	    next;
-	    }
 
-	# Move a job from one queue to another.  We will issue
-	# appropriate add, delete, or rename calls.
-	if($_ =~ /^MOV ([^-]+)-([^ ]+) ([^ ]+) ([0-9]+)/)
-	    {
-	    my($olddest, $id, $newdest, $rank2) = ($1, $2, $3, $4);
+		# Move a job from one queue to another.	 We will issue
+		# appropriate add, delete, or rename calls.
+		if($_ =~ /^MOV ([^-]+)-([^ ]+) ([^ ]+) ([0-9]+)/)
+			{
+			my($olddest, $id, $newdest, $rank2) = ($1, $2, $3, $4);
 
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{"rename"}) && $instance->{"queue"} eq "all")
-		    {
-		    &{$finfo->[1]}($finfo->[0], "$olddest-$id", "$newdest-$id");
-		    }
-		if(defined($finfo=$instance->{"add"}) && $instance->{"queue"} eq $newdest)
-		    {
-		    &{$finfo->[1]}($finfo->[0], "$newdest-$id", $rank2);
-		    }
-		if(defined($finfo=$instance->{"delete"}) && $instance->{"queue"} eq $olddest)
-		    {
-		    &{$finfo->[1]}($finfo->[0], "$olddest-$id");
-		    }
-		}
-	    }
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{"rename"}) && $instance->{"queue"} eq "all")
+					{
+					&{$finfo->[1]}($finfo->[0], "$olddest-$id", "$newdest-$id");
+					}
+				if(defined($finfo=$instance->{"add"}) && $instance->{"queue"} eq $newdest)
+					{
+					&{$finfo->[1]}($finfo->[0], "$newdest-$id", $rank2);
+					}
+				if(defined($finfo=$instance->{"delete"}) && $instance->{"queue"} eq $olddest)
+					{
+					&{$finfo->[1]}($finfo->[0], "$olddest-$id");
+					}
+				}
+			}
 
 # Rush a job.  (Move it to the head of the queue.)
 =item move
@@ -274,61 +274,61 @@ Job status changed
 Change a job's position in the queue
 
 =cut
-	if($_ =~ /^RSH ([^-]+)-([^ ]+)/)
-	    {
-	    my($dest, $id) = ($1, $2);
-	    my $finfo;
-
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{move}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $dest)
+		if($_ =~ /^RSH ([^-]+)-([^ ]+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], "$dest-$id", 0);
+			my($dest, $id) = ($1, $2);
+			my $finfo;
+
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{move}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $dest)
+						{
+						&{$finfo->[1]}($finfo->[0], "$dest-$id", 0);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
 =item pstatus
 
 Printer status change
 
 =cut
-	if($_ =~ /^PST (\S+) (.+)/)
-	    {
-	    my($printer, $status, $retry, $countdown) = ($1, $2, 0, 0);
-
-	    if($status =~ /^fault (\d+) (\d+)/)
-		{
-		($retry, $countdown) = ($1, $2);
-		if($retry != -1)
-		    { $status = "fault"; }
-		else
-		    { $status = "fault, no auto retry"; }
-		}
-
-	    elsif($status =~ /^(printing \S+) (\d+)/)
-		{ ($status, $retry) = ($1, $2); }
-
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{pstatus}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $printer)
+		if($_ =~ /^PST (\S+) (.+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $printer, $status, $retry, $countdown);
+			my($printer, $status, $retry, $countdown) = ($1, $2, 0, 0);
+
+			if($status =~ /^fault (\d+) (\d+)/)
+				{
+				($retry, $countdown) = ($1, $2);
+				if($retry != -1)
+					{ $status = "fault"; }
+				else
+					{ $status = "fault, no auto retry"; }
+				}
+
+			elsif($status =~ /^(printing \S+) (\d+)/)
+				{ ($status, $retry) = ($1, $2); }
+
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{pstatus}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $printer)
+						{
+						&{$finfo->[1]}($finfo->[0], $printer, $status, $retry, $countdown);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
-	# add more pprd messages here
+		# add more pprd messages here
 
-	#=====================
-	# pprdrv messages
-	#=====================
+		#=====================
+		# pprdrv messages
+		#=====================
 
 # PGSTA myprn 5
 =item ppages
@@ -336,19 +336,19 @@ Printer status change
 Start of page transmission
 
 =cut
-	if($_ =~ /^PGSTA (\S+) (\d+)/)
-	    {
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{ppages}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+		if($_ =~ /^PGSTA (\S+) (\d+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $1, $2);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{ppages}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+						{
+						&{$finfo->[1]}($finfo->[0], $1, $2);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
 # PGFIN myprn 3
 =item pfpages
@@ -356,19 +356,19 @@ Start of page transmission
 Page hit output tray
 
 =cut
-	elsif($_ =~ /^PGFIN (\S+) (\d+)/)
-	    {
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{pfpages}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+		elsif($_ =~ /^PGFIN (\S+) (\d+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $1, $2);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{pfpages}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+						{
+						&{$finfo->[1]}($finfo->[0], $1, $2);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
 # BYTES myprn 10020 25040
 =item pbytes
@@ -376,19 +376,19 @@ Page hit output tray
 Update on total bytes sent
 
 =cut
-	elsif($_ =~ /^BYTES (\S+) (\d+) (\d+)/)
-	    {
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{pbytes}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+		elsif($_ =~ /^BYTES (\S+) (\d+) (\d+)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $1, $2, $3);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{pbytes}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+						{
+						&{$finfo->[1]}($finfo->[0], $1, $2, $3);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
 # STATUS myprn off line
 =item pmessage
@@ -396,19 +396,19 @@ Update on total bytes sent
 Printer status message
 
 =cut
-	elsif($_ =~ /^STATUS (\S+) (.*)/)
-	    {
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{pmessage}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+		elsif($_ =~ /^STATUS (\S+) (.*)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $1, $2);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{pmessage}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+						{
+						&{$finfo->[1]}($finfo->[0], $1, $2);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
 # EXIT myprn EXIT_PRINTED
 =item exit
@@ -416,25 +416,25 @@ Printer status message
 Printer status message
 
 =cut
-	elsif($_ =~ /^PEXIT (\S+) (.*)/)
-	    {
-	    foreach $instance (@instances)
-		{
-		if(defined($finfo=$instance->{pexit}))
-		    {
-		    if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+		elsif($_ =~ /^PEXIT (\S+) (.*)/)
 			{
-			&{$finfo->[1]}($finfo->[0], $1, $2);
+			foreach $instance (@instances)
+				{
+				if(defined($finfo=$instance->{pexit}))
+					{
+					if($instance->{queue} eq "all" || $instance->{queue} eq $1)
+						{
+						&{$finfo->[1]}($finfo->[0], $1, $2);
+						}
+					}
+				}
 			}
-		    }
-		}
-	    }
 
-	# add more pprdrv messages here
+		# add more pprdrv messages here
 
-	} # end of state_update loop
+		} # end of state_update loop
 
-    } # end of handler()
+	} # end of handler()
 
 =back
 
@@ -444,11 +444,11 @@ Remove an event handler.
 
 =cut
 sub unregister
-    {
-    my($self, $event) = @_;
-    print STDERR "PPRstateupdate::unregister(\$self=$self, \$event=$event)\n" if($debug);
-    undef($self->{$event});
-    }
+	{
+	my($self, $event) = @_;
+	print STDERR "PPRstateupdate::unregister(\$self=$self, \$event=$event)\n" if($debug);
+	undef($self->{$event});
+	}
 
 =back
 

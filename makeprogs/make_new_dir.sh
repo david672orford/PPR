@@ -40,10 +40,10 @@
 dir="$1"
 
 if [ -z "$dir" ]
-    then
-    echo "Usage: make_new_dir.sh <dirname>"
-    exit 1
-    fi
+	then
+	echo "Usage: make_new_dir.sh <dirname>"
+	exit 1
+	fi
 
 if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   then
@@ -52,18 +52,18 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
   fi
 
 if [ -d "$RPM_BUILD_ROOT$dir" ]
-    then
-    echo "    Removing old directory \"$RPM_BUILD_ROOT$dir\"..."
-    rm -rf "$RPM_BUILD_ROOT$dir"
-    fi
+	then
+	echo "	  Removing old directory \"$RPM_BUILD_ROOT$dir\"..."
+	rm -rf "$RPM_BUILD_ROOT$dir"
+	fi
 
 if [ -d "$RPM_BUILD_ROOT$dir" ]
-    then
-    echo "Failed to remove \"$RPM_BUILD_ROOT$dir\"."
-    exit 1
-    fi
+	then
+	echo "Failed to remove \"$RPM_BUILD_ROOT$dir\"."
+	exit 1
+	fi
 
-echo "    Creating new directory \"$RPM_BUILD_ROOT$dir\"..."
+echo "	  Creating new directory \"$RPM_BUILD_ROOT$dir\"..."
 mkdir "$RPM_BUILD_ROOT$dir" || exit 1
 chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
