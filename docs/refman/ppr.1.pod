@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 10 March 2003.
 #
 
 =head1 NAME
@@ -227,83 +227,87 @@ to the submitting user.
 =item B<--responder> I<method>
 
 Specifies the method which should be used to send responses to the user who
-submitted the job.  Typical values include "B<write>", "B<mail>",
-"B<samba>", and "B<none>".  The default is read from the environment
-variable PPR_RESPONDER if it is defined, otherwise the default is "B<write>".
+submitted the job.  Available methods include, B<write>, B<samba>, and
+B<xwin>.  The default is read from the environment variable PPR_RESPONDER if
+it is defined, otherwise the default is B<followme>.
 
-The value "B<write>" causes the message to be written to the user's terminal
-if he is logged in, and to be sent by mail is he is not.  The default
-address is usually appropriate.  If it is desired to send the message to a
-user other than the one who invoked ppr, the B<-r> switch may be used to
-specify a user name.
+Of course, sucessfully sending a method to a user requires more than
+selecting an appropriate response method.  One must also have the user's
+address.  By default, the address will be the username.  If a particular
+responder requires some other kind of address, you will have to supply it
+using the B<-r> switch (described below).  In the description below
+responders which require or can accept an address other than the username
+are noted.
 
-The value "B<mail>" causes the notification to be sent by email.  The default
-address is the name of the user who invoked B<ppr>.  The address may be
-change by means of the B<-r> switch.
+The method B<followme> (which is the default) is not a real method at all. 
+It instead it is a codeword for whatever method and address the user
+indicated by the responder address has registered using the B<ppr-followme>
+command.  If the user has not used B<ppr-followme> to register a current
+responder, then B<write> is used with the address unaltered.
 
-The value "B<errmail>" causes a response to be sent by email, however
-the response if discarded if it mearly indicates that the job is done.
-This responder is simply the B<mail> responder with a default option of
-"printed=no".  This responder will be removed in a future version of PPR.
+The method B<write> causes the message to be written to the user's terminal
+if he is logged in.  If he is not logged it, this responder method daisy
+chains to the B<mail> method.  The default address is usually appropriate. 
+If it is desired to send the message to a user other than the one who
+invoked ppr, the B<-r> switch may be used to specify a user name.
 
-The value "B<netsend>" is for use with LAN Manager X.  LAN Manager X is a
-port of OS/2 Lan Manager 2.0 to Unix.  LAN Manager's B<net send> command
-is used to send the message.  The name of the client to receive the message
-should be specified by means of the B<-r> switch.  The sample LAN Manager
-print processor B<customs.ppr> invokes B<ppr> with the options required for
-this responder.
+The method B<mail> causes the notification to be address is the name of the
+user who invoked B<ppr>.  If the desired address is not the username of the
+user who invokes B<ppr>, it should be indicated with the B<-r> switch.
 
-The value "B<samba>" causes the notification to be sent by means of the
-messaging facilities of the LAN Manager compatible Unix server Samba.
-The name of the client to receive the message should be specified with the
-B<-r> switch.  This responder accepts an option B<os=>.  The value should be
-obtained from Samba's %a.  For a discussion of setting Samba up to use PPR,
-see L<ppr2samba(8)>.
+The obsolete method B<errmail> causes a response to be sent by email,
+however the response if discarded if it mearly indicates that the job is
+done. This responder is simply the B<mail> method with a default option
+of "printed=no".  This responder will be removed in a future version of PPR.
 
-The value "B<xwin>" causes the notification to be sent to an X-Windows
-display.  The display must be specified with the B<-r> switch.  This will
-not work if the user "ppr" can not open the display.  The B<ppr-xgrant>
-command, described in the B<ppr-xgrant> man page, can be used to grant the
-necessary permission.  This responder uses B<xmessage>, or in a pinch B<xterm>
-to display the message.  The message will look much neater if B<xmessage>
-is available.  This responder has an option "timeout=".  This
-parameter specifies that the message should disapear after the indicated
-number of seconds if the user does not dismiss it manually.  The "timeout="
-option will not work if B<xmessage> is not available and this responder is
-forced to use B<xterm>.  If your system doesn't have B<xmessage>, but you do
-have Tcl/Tk installed, consider installing the re-implementation of B<xmessage>
-which can be found in PPR F<misc/> source directory.
+The value B<netsend> is for use with LAN Manager X.  LAN Manager X is a port
+of OS/2 Lan Manager 2.0 to Unix.  LAN Manager's B<net send> command is used
+to send the message.  The name of the client to receive the message should
+be specified by means of the B<-r> switch.
 
-The value "B<pprpopup>" causes the notification to be sent to the PPR popup
-program for MS-Windows 95.  The PPR popup program is a Tcl/Tk script
-designed to be on a MS-Windows 95 machine in a public area such as a
-computer lab.  The PPR popup program is primarily part of a mechanism
-whereby users are required to enter their names each time they print.  When
-a job is received through Samba and the B<samba_submitter> program is used
-as the "print command", the B<samba_submitter> program attempts to open a
-connexion to the PPR popup program on the client and requests it to ask the
-user for his name.  If the transaction is sucessful, B<samba_submitter> will
-subsequently run B<ppr> with the B<-m pprpopup> switch.  Thus the PPR popup
-program will also be used to inform the user of what happened to his job.
+The method B<samba> causes the notification to be sent by means of the
+messaging facilities of the LAN Manager compatible Unix server known as
+Samba.  (See L<http://www.samba.org/>.)  The name of the client to receive
+the message should be specified with the B<-r> switch.  This responder
+accepts an option B<os=>.  The value should be obtained from Samba's %a. 
+For instructions for setting Samba up to use PPR, see L<ppr2samba(8)>.
 
-The value "B<audio>" causes a voice announcement to be made.  If the address
-is in the form "smith.pc.trincoll.edu:15009", then the announcement will be
-played through the Tcl/Tk script mentioned in the previous paragraph.  If
-the address begins with "/dev/" then it will be played through the indicated
-sound device on the local machine, assuming that the user "ppr" has write
-access to that device.  (Playing on a server audio device is accomplished by
-invoking an operating system specific audio-play command.  See the function
-speach_play_many_local() in F</usr/lib/ppr/lib/speach_play.pl> to add support for
-your operating system.)  The responder option "voice=" may be used to
-specify a set of audio files to build the message from.  The default is
-"voice=male1".  Currently, no alternate audio files exist, so this option has
-no practical effect.
+The method B<xwin> causes the notification to be sent to an X-Windows
+display.  The display must be specified with the B<-r> switch.  This method
+will not work if the user "ppr" is not allowed to connct to the X display. 
+The B<ppr-xgrant> command (see L<ppr-xgrant>) can be used to grant the
+necessary permission.  This responder uses L<xmessage(1)>, L<wish(1)> or in
+a pinch L<xterm(1)> to display the message.  The message will look much
+neater if B<xmessage> or B<wish> is available.  This responder has an option
+"timeout=".  This parameter specifies that the message should disapear after
+the indicated number of seconds if the user does not dismiss it manually. 
+The "timeout=" option will not work if the reponder is forced to use
+B<xterm>.
 
-With the exception of the value "B<none>", the B<-m> parameter actually
-specifies the name of the program in F</usr/lib/ppr/responders/> which should
-be executed to notify the user.  A description of the operation of a
-responder program may be found in the document "PPR, a PostScript
-Print Spooler".
+The method B<pprpopup> causes the notification to be sent to the PPR popup
+program.  PPR Popup is a Tcl/Tk script designed to be on computers in a
+public area such as a computer lab.  The PPR popup program is primarily part
+of a mechanism whereby users are required to enter their names each time
+they print.  However it can also receive responder messages.
+
+The method B<audio> causes a voice announcement to be made.  If the address
+is in the form "smith.pc.trincoll.edu:15009", then PPR Popup on the
+indicated machine will be contacted and asked to download and play the
+message.  If the address begins with "/dev/" then it will be played through
+the indicated sound device on the local machine, assuming that the user
+"ppr" has write access to that device.  (Playing on a server audio device is
+accomplished by invoking an operating system specific audio-play command. 
+See the function speach_play_many_local() in
+F</usr/lib/ppr/lib/speach_play.pl> to add support for your operating
+system.) The responder option "voice=" may be used to specify a set of audio
+files to build the message from.  The default is "voice=male1".  Currently,
+no alternate audio files exist, so this option has no practical effect.
+
+With the exception of the methods B<followme> and B<none>, the B<-m>
+parameter actually specifies the name of the program in
+F</usr/lib/ppr/responders/> which should be executed to notify the user.  A
+description of the operation of a responder program may be found in the
+document "The PPR Hacker's Guide".
 
 =item B<-r> I<address>
 
@@ -312,7 +316,7 @@ Print Spooler".
 Specifies the address which is to be passed to the responder program.  The
 default value is read from the environment variable PPR_RESPONDER_ADDRESS if
 it is defined, otherwise the default is the name of the user who invoked
-B<ppr>, which is appropriate for the default responder which is B<write>.
+B<ppr>, which is appropriate for the default responder which is B<followme>.
 The exact correct format for this parameter depends, of course, on the
 responder that is being used.
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 19 February 2003.
+** Last modified 10 March 2003.
 */
 
 /*
@@ -2083,23 +2083,23 @@ int main(int argc, char *argv[])
 
     /*
     ** We would like to find a default response method in the variable
-    ** PPR_RESPONDER.  If we don't we will use "write".
+    ** PPR_RESPONDER.  If we don't we will use "followme".
     */
     if(!(qentry.responder = getenv("PPR_RESPONDER")))
-    	qentry.responder = "write";
+    	qentry.responder = "followme";
 
     /*
-    ** Since a responder address may not be specified with the -r switch,
-    ** we will look for a default value in the environment variable
-    ** PPR_RESPONDER_ADDRESS.  If no such variable exists,
-    ** we must use the user name which the user logged in with.
-    ** The login user name is the proper address for the default
-    ** responder "write".  Notice that if the user used su to become
-    ** a different user after loging in, the current user id will differ
-    ** from the current user id.  In order for the responder to use the
-    ** "write" command sucessfully, we must determine the login name.
-    ** That is why we try the environment variables "USER" and "LOGNAME"
-    ** before resorting to the current user id.
+    ** Since a responder address may not be specified with the -r switch, we 
+    ** will look for a default value in the environment variable
+    ** PPR_RESPONDER_ADDRESS.  If no such variable exists, we must use the user
+    ** name which the user logged in with.  The login user name is the proper
+    ** address for the default responder "followme" (which is a meta-responder
+    ** which by default delegates to the responder called "write").  Notice
+    ** that if the user used su to become a different user after loging in, the
+    ** current user id will differ from the current user id.  In order for the
+    ** responder to use the "write" command sucessfully, we must determine the
+    ** login name.  That is why we try the environment variables "USER" and 
+    ** "LOGNAME" before resorting to the current user id.
     */
     if(!(qentry.responder_address = getenv("PPR_RESPONDER_ADDRESS")))
 	{

@@ -167,8 +167,11 @@ int main(int argc, char *argv[])
 
     if(!responder_address)
 	{
+	if(strcmp(responder, "xwin") == 0)
+	    responder_address = ":0.0";
+	else
+	    responder_address = pw->pw_name;
 	}
-
 
     if(!responder_options)
 	responder_options = "";

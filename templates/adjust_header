@@ -2,7 +2,7 @@
 
 my $COPYRIGHT_YEARS = "1995--2003";
 my $COPYRIGHT_HOLDER = "Trinity College Computing Center";
-my $DATE = "9 March 2003";
+my $DATE = "10 March 2003";
 
 my @LICENSE = split(/\n/, <<"==========END==========");
 Redistribution and use in source and binary forms, with or without
@@ -198,7 +198,7 @@ sub do_file
 	}
     if(!$found)
 	{
-	print STDERR "Can't find revision date.\n";
+	print STDERR "Can't find last modified date.\n";
 	return 0;
 	}
     }

@@ -25,15 +25,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 10 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
-BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE) ppr-followme$(DOTEXE)
+BIN_PROGS_SUID=ppr-xgrant$(DOTEXE) ppr-followme$(DOTEXE)
+BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE)
 LIB_PROGS=
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
