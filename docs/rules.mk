@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 17 January 2003.
 #
 
 # Where do we install the documentation?
@@ -75,8 +75,7 @@ DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/stylesheet/dsssl/modular/print/docbook.
 	$(PS2PDF) $*.ps $*.pdf
 
 .sgml.html:
-	$(JADE) -t sgml -i html -V nochunks -d $(DSSSL_SPEC_HTML) $*.sgml \
-		| sed -e 's/SRC="\([^"]*\)"/SRC="\1.png"/' >$*.html
+	-$(JADE) -t sgml -i html -V nochunks -d $(DSSSL_SPEC_HTML) $*.sgml >$*.html
 
 .fig.eps:
 	$(FIG2DEV) -L ps $*.fig $*.eps

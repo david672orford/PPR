@@ -8107,3 +8107,9 @@ line was being parsed twice.
 
 * fixup/fixup_conf.sh: added code to generate [papd] section.
 
+* nonppr_misc/misc/: moved gu_wildmat.* to nonppr_misc/wildmat/, moved 
+  snprintf.c to nonppr_misc/snprintf/, deleted modes-3.3.mf, moved 
+  squeeze.c to nonppr_misc/squeeze/squeeze.c, moved ps_type3.c to 
+  nonppr_misc/ps_type3/ps_type3.c.
+
+

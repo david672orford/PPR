@@ -161,7 +161,10 @@ illustrated in figure <XRef LinkEnd="pprdoc-enter">.
 
 <Figure id="pprdoc-enter">
 <Title>A job Enters the Queue</Title>
-<Graphic FileRef="pprdoc-enter">
+<mediaobject>
+	<imageobject><imagedata fileref="pprdoc-enter.eps" format="eps"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-enter.png" format="png"></imageobject>
+</mediaobject>
 </Figure>
 
 </Para>
@@ -183,19 +186,23 @@ ommited from the figure for the sake of simplicity.)
 
 <Para>
 
-<Figure id="pprdoc-printing2">
-<Title><Application>PPR</Application> Prints a Job</Title>
-
-<Graphic FileRef="pprdoc-printing2">
-
-</Figure>
+<figure id="pprdoc-printing2">
+<title><application>PPR</application> Prints a Job</title>
+<mediaobject>
+	<imageobject><imagedata fileref="pprdoc-printing2.eps" format="eps"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing2.png" format="png"></imageobject>
+</mediaobject>
+</figure>
 
 </Para>
 
-<Figure id="pprdoc-printing1">
-<Title>Multiple Instances of <Command>pprdrv</Command> for Multiple Printers</Title>
-<Graphic FileRef="pprdoc-printing1">
-</Figure>
+<figure id="pprdoc-printing1">
+<title>Multiple Instances of <Command>pprdrv</Command> for Multiple Printers</title>
+<mediaobject>
+	<imageobject><imagedata fileref="pprdoc-printing1.eps" format="eps"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing1.png" format="png"></imageobject>
+</mediaobject>
+</figure>
 
 <Para>
 The program <Command>pprdrv</Command> sends the file to the printer by invoking an interface
