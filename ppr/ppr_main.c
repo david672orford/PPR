@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 5 August 2002.
+** Last revised 16 August 2002.
 */
 
 /*
@@ -169,7 +169,7 @@ static struct {const char *name; unsigned int bit;} gab_table[]=
 =========================================================================*/
 
 /*
-** This should be used for _all_ abnormal terminations.  We figure
+** This should get called for _all_ abnormal terminations.  We figure
 ** out the cause from the exit code and print an error message
 ** on stderr or run a responder or both.
 */
@@ -235,13 +235,13 @@ void ppr_abort(int exitval, const char *extra)
 
     if(ppr_respond_by & PPR_RESPOND_BY_RESPONDER)
 	{
-	respond(responder_code, extra);
+	respond(responder_code, extra ? extra : "(null)");
 	}
 
     file_cleanup();
 
     exit(exitval);
-    }
+    } /* end of ppr_abort() */
 
 /*
 ** Handle fatal errors by formatting a message and then calling
@@ -759,8 +759,7 @@ void file_cleanup(void)
 */
 static void gallows_speach(int signum)
     {
-    fprintf(stderr, _("PPR: mortally wounded by signal %d (%s).\n"), signum, gu_strsignal(signum));
-    ppr_abort(PPREXIT_KILLED, (char*)NULL);
+    fatal(PPREXIT_KILLED, _("mortally wounded by signal %d (%s)."), signum, gu_strsignal(signum));
     } /* end of gallows_speach() */
 
 /*
