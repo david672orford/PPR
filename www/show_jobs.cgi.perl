@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/show_jobs.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 16 February 2004.
 #
 
 use 5.005;
@@ -282,7 +282,7 @@ Quote10
 if($data{controls})
 {
 print <<"Quote20";
-<div class="menubar" style="$fixed_div_style_top">
+<div id="menubar" class="menubar" style="$fixed_div_style_top">
 	<!-- This is for a Netscape 4.x bug: -->
 	<input type="image" border="0" name="action" value="Refresh" src="../images/pixel-clear.png" alt="">
 Quote20

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_widgets.pl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 December 2003.
+# Last modified 16 February 2004.
 #
 
 # This creates a checkbox followed by a label.  If the box is checked,
@@ -239,7 +239,7 @@ sub menu_start
     {
 	my($id, $name) = @_;
 	print "\t<a href=\"#\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
-	print '<div class="popup" name="menubar"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
+	print '<div class="popup"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
 	}
 
 sub menu_end

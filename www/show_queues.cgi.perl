@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/show_queues.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 December 2003.
+# Last modified 16 February 2004.
 #
 
 use 5.005;
@@ -163,7 +163,7 @@ eval {
 #=============================================================================
 
 {
-print "<div class=\"menubar\" style=\"$fixed_div_style\">\n";
+print "<div id=\"menubar\" class=\"menubar\" style=\"$fixed_div_style\">\n";
 
 my @col_values = (
 	["0", _("Free Flow")],

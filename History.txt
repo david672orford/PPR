@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--12 February 2004.
+1.53a1, 24 September 2003--16 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9057,11 +9057,9 @@ Internet Printing Protocol Work
 +++++++++++++++++++++
 TODO
 
-* Make a script to convert papsrv.conf to ppad addon commands
+* Make a script to convert papsrv.conf to "ppad addon papname" commands.
 
 * Get CVS cleaned up.
-
-* Fix menu bar in IE and Konq.
 
 * Create Debian package.
 

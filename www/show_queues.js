@@ -106,17 +106,12 @@ function popup(event, name)
 function popup2(container, name)
 	{
 	// Close any other menus
-	var menus = document.getElementsByName('menubar');
+	var menubar = document.getElementById('menubar');
+	var menus = menubar.getElementsByTagName('div');
 	for(var i=0; i < menus.length; i++)
 		{
 		menus.item(i).style.visibility = 'hidden';
 		}
-
-	// !!!	
-	menus = document.getElementById('m_file');
-	menus.style.visibility = 'hidden';
-	menus = document.getElementById('m_view');
-	menus.style.visibility = 'hidden';
 	
 	// Find the popup menu.
 	var w = document.getElementById(name);
