@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 16 December 2004.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -960,11 +960,14 @@ cat >&3 <<'===EndOfHere16==='
 # you will have to fix makeprogs/make_install_dirs.sh too.
 export WWWDIR=$(SHAREDIR)/www
 
-# Directory for man pages to be installed in.
+# Directory into which man pages wll beinstalled
 export MANDIR=$(SHAREDIR)/man
 
-# Directory for the CGI programs for the WWW interface.
+# Directory for the CGI programs for the WWW interface
 export CGI_BIN=$(HOMEDIR)/cgi-bin
+
+# Directory for Perl libraries
+export PERL_LIBDIR=$(HOMEDIR)/lib
 
 #----------------------------------------
 # Various configuration directories
@@ -1847,15 +1850,18 @@ cat >&3 <<'===MakeRules==='
 
 # Convert .sh files to shell scripts.
 .sh:
-	$(SCRIPTFIXUP) $*.sh $*
+	#$(SCRIPTFIXUP) $*.sh $*
+	../makeprogs/script_convert.sh <$*.sh | ../subst_tool >$*
 
 # Convert .perl files to Perl scripts.
 .perl:
-	$(SCRIPTFIXUP) $*.perl $*
+	#$(SCRIPTFIXUP) $*.perl $*
+	../makeprogs/script_convert.perl <$*.sh | ../subst_tool >$*
 
 # Convert .tcl files to Tcl scripts.
 .tcl:
-	$(SCRIPTFIXUP) $*.tcl $*
+	#$(SCRIPTFIXUP) $*.tcl $*
+	../makeprogs/script_convert.sh <$*.tcl | ../subst_tool >$*
 
 # Build an object file from a single .c file.
 .c.$(OBJ):

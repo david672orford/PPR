@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 May 2004.
+** Last modified 17 December 2004.
 */
 
 /*
@@ -291,13 +291,13 @@ static void do_config_file(struct DIRS *dir, const char qname[], int *total_expo
 		switch(dir->type)
 			{
 			case QUEUEINFO_ALIAS:
-				gu_wrap_eprintf(_("Skipping alias \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping alias \"%s\": %s\n"), qname, gu_exception);
 				break;
 			case QUEUEINFO_GROUP:
-				gu_wrap_eprintf(_("Skipping group \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping group \"%s\": %s\n"), qname, gu_exception);
 				break;
 			case QUEUEINFO_PRINTER:
-				gu_wrap_eprintf(_("Skipping printer \"%s\": %s"), qname, gu_exception);
+				gu_wrap_eprintf(_("Skipping printer \"%s\": %s\n"), qname, gu_exception);
 				break;
 			case QUEUEINFO_SEARCH:
 				gu_Throw("assertion failed");

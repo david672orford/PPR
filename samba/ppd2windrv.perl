@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
-# mouse:~ppr/src/misc/ppd2win95drv.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# mouse:~ppr/src/misc/ppd2windrv.perl
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 17 December 2004.
 #
 
 #
@@ -36,14 +36,13 @@
 
 $CONFDIR="?";
 $HOMEDIR="?";
-$SHAREDIR="?";
 $VAR_SPOOL_PPR="?";
 
 # This is the directory which contains the PPR printer configuration files.
 $PRINTERSDIR = "$CONFDIR/printers";
 
 # This is the directory which contains PPR's collection of PPD files.
-$PPD_LIB_DIR = "$SHAREDIR/PPDFiles";
+$PPD_INDEX = "$VAR_SPOOL_PPR/ppdindex.db";
 
 # These are the directories from which clients download drivers.
 $DRVDIR = "$VAR_SPOOL_PPR/drivers";
@@ -54,9 +53,6 @@ $WINPPD = "WINPPD";								# PPD files in MS-DOS text format
 $DRVDIR_W32X86 = "$DRVDIR/$W32X86";
 $DRVDIR_WIN40 = "$DRVDIR/$WIN40";
 $DRVDIR_WINPPD = "$DRVDIR/$WINPPD";
-
-# This file is read by Samba to get Windows 95 driver information.
-$PRINTERS_DEF = "$DRVDIR/WIN40.def";
 
 # We use this when copying in new PPD files.
 $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
@@ -94,8 +90,6 @@ foreach $arg (@ARGV)
 	if($arg eq '--verbose')
 		{
 		$opt_verbose = 1;
-		#open(STDERR, ">&1") || die;
-		#$| = 1;
 		}
 	else
 		{ die "Unrecognized option: $arg\n" }
@@ -136,7 +130,7 @@ foreach my $dir ($DRVDIR_WIN40, $DRVDIR_W32X86, "$DRVDIR_W32X86/2")
 	}
 
 #
-# This function is used to figure out which Win95 drivers are
+# This function is used to figure out which MS-Windows drivers are
 # installed.  It is passed a list of files.	 If all of them
 # exist, then it returns true, otherwise it returns false.
 # The first argument is a text string describing the driver
@@ -184,28 +178,26 @@ $HAVE_W32X86_3_ADOBE_5 = allfound("WinNT 5.0 Adobe Drivers", $DRVDIR_W32X86, @FI
 #
 if($opt_verbose)
 	{
-	print STDERR "Scanning \"$PPD_LIB_DIR\", converting PPD files...\n";
+	print STDERR "Converting PPD files...\n";
 	}
 
 # List of PPD files to copy into the driver distribution share.
 %ppd_files = ();
 
-# First include all of the PPD files distributed with PPR.
-opendir(DIR, $PPD_LIB_DIR) || die "Can't open directory \"$PPD_LIB_DIR\", $!\n";
-while(defined($file = readdir(DIR)))
+# First include all of the PPD files indexed by PPR.
+open(INDEX, $PPD_INDEX) || die "Can't open index file \"$PPD_INDEX\", $!\n";
+while(defined(my $line = <INDEX>))
 	{
-	next if($file =~ /\./);		# skip hidden files
-	next if($file =~ /~$/);		# skip backup files
-	next if($file =~ /\.bak$/i);
-
-	$ppd_files{"$PPD_LIB_DIR/$file"} = '';
+	next if($line =~ /^#/);		# skip comments (in header)
+	my($filename) = (split(/:/, $line))[1];
+	defined $filename || die "bad index";
+	-f $filename || die "index is out of date";
+	$ppd_files{$filename} = '';
 	}
-closedir(DIR) || die;
+close(INDEX) || die;
 
-# Now, include the files used by the printers.	Generally these
-# files will be some of the ones found in the step above, but
-# some printers may be using PPD files outside PPR's PPDFiles
-# directory.
+# Now, include any files mentioned by absolute paths in the printer
+# configuration files.
 opendir(DIR, $PRINTERSDIR) || die "Can't open directory \"$PRINTERSDIR\", $!\n";
 while(defined($file = readdir(DIR)))
 	{
@@ -214,14 +206,15 @@ while(defined($file = readdir(DIR)))
 	next if($file =~ /\.bak$/i);
 
 	open(FILE, "<$PRINTERSDIR/$file") || die "Can't open \"$PRINTERSDIR/$file\", $!\n";
-	while(<FILE>)
+	while(my $line = <FILE>)
 		{
-		if(/^PPDFile:\s+(.+?)\s*$/)
+		if($line =~ /^PPDFile:\s+(.+?)\s*$/)
 			{
-			$_ = $1;
-			if(/^[^\/]/)
-				{ $_ = "$PPD_LIB_DIR/$_" }
-			$ppd_files{$_} = '';
+			my $ppd_file = $1;
+			if($ppd_file =~ m#^/# && -f $ppd_file)
+				{
+				$ppd_files{$ppd_file} = '';
+				}
 			last;
 			}
 		}
@@ -231,9 +224,6 @@ closedir(DIR) || die;
 
 # Open sambaprint to accept the data.
 open(DRIVERS, "| $HOMEDIR/lib/sambaprint drivers import") || die $!;
-
-# Open the .def file for the Win95 information.
-open(DEF, ">$PRINTERS_DEF") || die $!;
 
 # For each PPD file, convert it to MS-DOS line termination and store it in the
 # WINPPD subdirectory of the driver distribution share under its MS-DOS file
@@ -356,7 +346,7 @@ foreach $file (keys %ppd_files)
 	{
 	my @filelist = ();
 
-	# If we can use the lastest Adobe driver, do so.
+	# If we can use the latest Adobe driver, do so.
 	if($languagelevel > 1 && $HAVE_WIN40_ADOBE_4_2)
 		{
 		print STDERR "\tWin95 driver chosen: Adobe 4.2.x\n" if($opt_verbose);
@@ -386,7 +376,6 @@ foreach $file (keys %ppd_files)
 		my $helpfile = $filelist[1];
 		unlink("$DRVDIR_WIN40/$mswin_name");
 		link("$DRVDIR_WINPPD/$mswin_name", "$DRVDIR_WIN40/$mswin_name") || die $!;
-		print DEF "$nickname:$driverpath:$mswin_name:$helpfile:PostScript Language Monitor:RAW:$mswin_name,", join(",", @filelist), "\n";
 		}
 	}
 
@@ -464,8 +453,6 @@ foreach $file (keys %ppd_files)
 	} # end of PPD file iteration
 
 close(DRIVERS) || die $!;
-
-close(DEF) || die $!;
 
 print STDERR "Done.\n" if($opt_verbose);
 

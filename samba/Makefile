@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 17 December 2004.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,6 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=ppr2samba$(DOTEXE) \
-	ppd2win95drv \
 	ppd2windrv \
 	samba_submitter \
 	smb-protos.conf
@@ -62,12 +61,10 @@ sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
 #=== Install ================================================================
 
-install: $(PROGS) smb-protos.conf WIN95CP.BAT $(INSTALL_TDB)
+install: $(PROGS) smb-protos.conf $(INSTALL_TDB)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr2samba$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2win95drv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2windrv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
-	$(INSTALLCP) WIN95CP.BAT $(VAR_SPOOL_PPR)/drivers/WIN40/WIN95CP.BAT
 	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf
 
 install-tdb: $(PROGS_TDB)

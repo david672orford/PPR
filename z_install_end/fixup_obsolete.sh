@@ -178,6 +178,6 @@ outdated $HOMEDIR/interfaces/usblp
 
 # PPR 2.00
 outdated $HOMEDIR/bin/papsrv
-
+outdated $HOMEDIR/bin/ppd2win95drv
 
 exit 0

@@ -539,13 +539,15 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--16 December 2004
+2.00a1, 11 December 2004--17 December 2004
 
 * refman/: removed references to papsrv.
 
 * uprint/: removed references to UPRINT(8), uprint-newconf(8), and
   uprint.conf(5).
 
+* refman/ppr2samba.c: removed references to ppd2win95drv (which was
+  removed)
 
 
 TODO

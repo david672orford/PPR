@@ -9437,10 +9437,10 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--16 December 2004
+2.00a1, 11 December 2004--17 December 2004
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
-  Makefile.conf which exports numberous variables rather than writting them
+  Makefile.conf which exports numberous variables rather than writing them
   directly to config.h or adding them to CFLAGS; moved path variables
   from include/global_defines.h to config.h.in.
 
@@ -9451,11 +9451,11 @@ no final tarball was released.
 
 * Removed papsrv/
 
-* www/docs_info.cgi.perl: fixed problems related to rendering of definition lists,
-  some of them caused by the tab conversion.  (candidate for 1.54)
+* www/docs_info.cgi.perl: fixed problems related to rendering of definition
+  lists, some of them caused by the tab conversion.  (merged into 1.54)
 
-* README.txt: removed reference to papsrv/, fixed damage to indentation appearently
-  caused by tab conversion.
+* README.txt: removed reference to papsrv/, fixed damage to indentation
+  appearently caused by tab conversion.
 
 * include sysdep.h: removed LPR_* and LP_* things since the features of UPRINT
   that need them are being removed.
@@ -9467,12 +9467,22 @@ no final tarball was released.
   config.h.
 
 * libppr/queueinfo.c:queueinfo_add_printer() fixed error message about
-  non-existent printer.
+  non-existent printer.  (merged into 1.54)
 
 * ppd/ghostscript/Makefile, ppd/ghostscript/ghostscript_master: removed the
   FONT_ options since Ghostscript has long had a full set of 35 fonts.  Added
   options for Epson C62 to complement patches to Ghostscript's IJS driver.
+  (candidate for 1.54)
 
+* samba/ppr2samba.c: added missing newline to end of "Skipping" messages.
+  (merged into 1.54)
+
+* samba/ppd2win95drv.perl: removed (merged into 1.54)
+
+* samba/ppd2windrv.perl: fixed to work with indexed PPD files.
+  (merged into 1.54)
+
+* samba/Makefile: no longer install WIN95CP.BAT (merged into 1.54)
 
 
 TODO
