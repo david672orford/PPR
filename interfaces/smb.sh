@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/interfaces/smb.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by Klaus Reimann.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 October 2003.
+# Last modified 22 December 2004.
 #
 
 #########################################################################
@@ -74,7 +74,8 @@ case "${ADDRESS}x" in
   '\\'?*'\'?*x)
 	;;
   *)
-	lib/alert "$PRINTER" TRUE 'Address must be of type \\server\printer'
+	lib/alert "$PRINTER" TRUE  'Address syntax is \\server\printer where server is the NetBIOS name'
+	lib/alert "$PRINTER" FALSE 'of the server and printer is the SMB share name of the queue.'
 	int_exit $EXIT_PRNERR_NORETRY
 	;;
 esac
@@ -83,34 +84,62 @@ esac
 SMBUSER="ppr"
 SMBPASSWORD=""
 for opt in $OPTIONS
-  do
-  case "$opt" in
-	smbuser=* )
-	SMBUSER="`echo "$opt" | cut -d'=' -s -f2`"
-	;;
-	smbpassword=* )
-	SMBPASSWORD="`echo "$opt" | cut -d'=' -s -f2`"
-	;;
-	* )
-	lib/alert "$PRINTER" TRUE "Unrecognized interface option: $opt"
-	int_exit $EXIT_PRNERR_NORETRY
-	;;
-  esac
-done
+	do
+		case "$opt" in
+			smbuser=* )
+				SMBUSER="`echo "$opt" | cut -d'=' -s -f2`"
+				;;
+			smbpassword=* )
+				SMBPASSWORD="`echo "$opt" | cut -d'=' -s -f2`"
+				;;
+			* )
+				lib/alert "$PRINTER" TRUE "Unrecognized interface option: $opt"
+				int_exit $EXIT_PRNERR_NORETRY
+				;;
+		esac
+	done
 
-#$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" -z 600000
-$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER"
+set -x
+err_msg=""
+#$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" -z 600000'
+$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" | \
+	while read line
+		do
+		lib/alert "$PRINTER" TRUE "line: $line, err_msg: $err_msg"
+		case $line in
+			ERROR:* )
+				;;
+			adding\ interface* )
+				;;
+			Got\ a\ positive* )
+				;;
+			Domain*)
+				;;
+			Connection\ to\ *\ failed )
+				err_msg="Can't connect to server for $ADDRESS."
+				;;
+			*ERRinvnetname* )				
+				err_msg="Share name part of $ADDRESS does not exist."
+				;;
+			*Error\ writing\ file:* )
+				err_msg="Error writing to $ADDRESS."
+				lib/alert "$PRINTER" TRUE "hit: $err_msg"
+				;;
+			* )
+				lib/alert "$PRINTER" TRUE "debug $line, err_msg: $err_msg"
+				;;
+			esac
+		done
 
-retval=$?
-case $retval in
-  0 )
-	int_exit $EXIT_PRINTED
-	;;
-  * )
-	lib/alert "$PRINTER" TRUE "Smbclient failed, exit code: $retval"
-	int_exit $EXIT_PRNERR
-	;;
-esac
+lib/alert "$PRINTER" TRUE "err_msg: $err_msg"
+if [ -n "$err_msg" ]
+	then
+		lib/alert "$PRINTER" TRUE "$err_msg"
+		int_exit $EXIT_PRNERR
+	else
+		int_exit $EXIT_PRINTED
+	fi
 
+# vim: set tabstop=4:
 # end of file
 
