@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 April 2004.
+** Last modified 29 May 2004.
 */
 
 #include "before_system.h"
@@ -51,7 +51,7 @@
 #include "util_exits.h"
 #include "version.h"
 
-gu_boolean debug = FALSE;
+static gu_boolean debug = FALSE;
 #define SNMP_ATTEMPTS 3
 #define MAX_ITEMS 4
 #define NSTEPS 2

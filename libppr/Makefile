@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2004.
+# Last modified 29 May 2004.
 #
 
 include ../Makefile.conf
@@ -59,7 +59,8 @@ LIBOBJS=\
 	queueinfo.$(OBJ) \
 	pagemask.$(OBJ) \
 	destinfo.$(OBJ) \
-	ipp_utils.$(OBJ)
+	ipp_utils.$(OBJ) \
+	get_device_id.$(OBJ)
 
 TARGETS=../libppr.$(LIBEXT) query_wrapper$(DOTEXE)
 

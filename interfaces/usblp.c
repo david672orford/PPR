@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 29 May 2004.
 */
 
 /*
@@ -48,10 +48,6 @@
 #include <ctype.h>
 #include <termios.h>
 #include <string.h>
-#ifdef PPR_LINUX
-#include <sys/ioctl.h>
-#include <linux/lp.h>
-#endif
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -246,45 +242,20 @@ static void parse_options(int portfd, struct OPTIONS *options)
 static int usblp_port_probe(const char address[])
 	{
 	#ifdef PPR_LINUX
-	int fd;								/* printer port */
-	unsigned char deviceid[1024];		/* IEEE 1284 DeviceID string */
-	int deviceid_len;
+	unsigned char device_id[1024];		/* IEEE 1284 DeviceID string */
 	char *p, *item, *name, *value;
 
-	/* Reference for these two macros is the CUPS USB backend. */
-	#define IOCNR_GET_DEVICE_ID	1
-	#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
-
-	if((fd = open(address, O_RDWR | O_EXCL)) == -1)
+	if(get_device_id(address, device_id, sizeof(device_id)) == -1)
 		{
 		if(errno == EACCES)
 			return EXIT_PRNERR_NORETRY_ACCESS_DENIED;
 		if(errno == EEXIST)
 			return EXIT_PRNERR_NO_SUCH_ADDRESS;
-		fprintf(stderr, "open() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
+		fprintf(stderr, "device_id() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
 		return EXIT_PRNERR;
 		}
 
-	if(ioctl(fd, LPIOC_GET_DEVICE_ID(sizeof(deviceid)), deviceid) == -1)
-		{
-		fprintf(stderr, "ioctl() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
-		return EXIT_PRNERR;
-		}
-
-	/* First try big endian (per IEEE 1284 standard). */
-	deviceid_len = ((deviceid[0] << 8) + deviceid[1]);
-
-	/* if that is unreasonable, try little endian (This is from CUPS too.) */
-	if(deviceid_len > (sizeof(deviceid) - 2))
-		deviceid_len = ((deviceid[1] << 8) + deviceid[0]);
-
-	/* Limit to buffer size with space for NUL. */
-	if(deviceid_len > (sizeof(deviceid) - 3))
-		deviceid_len = (sizeof(deviceid) - 3);
-
-	deviceid[2 + deviceid_len] = '\0';
-
-	for(p = deviceid + 2; (item = gu_strsep(&p, ";")); )
+	for(p = device_id + 2; (item = gu_strsep(&p, ";")); )
 		{
 		if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
 			{
@@ -292,10 +263,7 @@ static int usblp_port_probe(const char address[])
 			}
 		}
 
-	close(fd);
-
 	return EXIT_PRINTED;
-
 	#else
 	return EXIT_PRNERR_NORETRY;
 	#endif

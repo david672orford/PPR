@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 April 2004.
+# Last modified 29 May 2004.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BROWSERS=parallel ip_scan_snmp
+BROWSERS=parallel ip_scan_snmp$(DOTEXE) usb$(DOTEXE)
 
 #=== Build ==================================================================
 
@@ -46,6 +46,9 @@ nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT)
 ip_scan_snmp$(DOTEXE): ip_scan_snmp.$(OBJ) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o ip_scan_snmp$(DOTEXE) ip_scan_snmp.$(OBJ) \
 		../libgu.$(LIBEXT) $(SOCKLIBS)
+
+usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o usb$(DOTEXE) usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
 #=== Install ================================================================
 

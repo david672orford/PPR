@@ -522,6 +522,7 @@ void valert(const char printername[], int dateflag, const char string[], va_list
 void alert(const char printername[], int dateflag, const char string[], ...);
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra);
 const char *dest_ppdfile(const char destnode[], const char destname[]);
+int get_device_id(const char port[], unsigned char *device_id, int device_id_max);
 
 /*
 ** The callers of certain libppr routines must provide an error()
