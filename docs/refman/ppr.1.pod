@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 30 July 2003.
 #
 
 =head1 NAME
@@ -1110,6 +1110,53 @@ This switch causes PPR to unlink (delete) the file which it prints as soon
 as the file has been copied to the queue.  Samba print commands should use
 this option.
 
+=item B<--show-jobid>
+
+Causes the job ID to be printed when the job is submitted.  If the job is broken up into 
+parts (using the B<-Y> option), multiple job IDs are printed, one per line.
+
+=item B<--show-long-jobid>
+
+Same as B<--show-jobid> but the job IDs is printed in long format.
+
+=item B<--print-id-to-fd> I<integer>
+
+The numberic part of the job ID is sent to the indicated file descriptor.  The job ID is formatted as
+as ASCII integer followed by a linefeed.  Only one job ID is printed, even
+if the job is broken up into subjobs.  This is used by the IPP server.
+
+=item B<--save>
+
+Keep the job in the queue after it has been printed.  This option is accepted, but as of now it has 
+no effect since the necessary backend code is missing.
+
+=item B<--question> <path>
+
+This feature is used when we want the user to answer some question about the job before it is 
+released for printing.  Note that this option doesn't automatically hold the job, that should be
+done with the B<--hold> option.
+
+This feature might be used to require the user to fill out a job ticket or supply a username and password
+before the job is accepted for printing.
+
+The I<path> is the path of a CGI script in PPR's web interface that the user should load in order to
+answer the question.  An example would be C<cgi-bin/job_public.cgi>.  PPR will send messages to the 
+user's responder instructing it to load this page into a web browser.  These messages will be repeated
+at intervals until the question is canceled with the command C<ppop modify> I<jobname> C<question=> 
+command.  The CGI script should cancel the question once it has received a satisfactory answer.  It will
+then likely release the job.
+
+The supplied I<path> will be assembled into a complete URL, including method, host, and port as well as
+a query string which defines the variables B<jobname>, B<magic_cookie>, and B<title>.  The B<jobname> and
+B<title> should be used by the CGI script to generate text which will help the user to idenfity the job.  
+The CGI script should store the B<magic_cookie> in a hidden field of the form which the user uses to
+answer the question.  That way it will be passed back in 
+the response to the question.  The CGI script should use the B<magic_cookie> as the argument to 
+B<ppop>'s B<--magic-cookie> option thereby ensuring that only answers from the party to whom the question 
+was sent have any effect.
+
+This option is new and somewhat experimental.  Currently it will only work with the B<pprpopup> responder.
+
 =back
 
 =head2 N-Up and other Special PPR Features
@@ -1118,8 +1165,8 @@ this option.
 
 =item B<-N> I<integer>
 
-Print pages N-Up.  The I<integer> specifies the number
-of virtual pages to put on each side of the physical page.
+Print pages N-Up.  The I<integer> specifies the number of virtual pages to put on each side of the 
+physical page.
 
 =item B<-N noborders>
 

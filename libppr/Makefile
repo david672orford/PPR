@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 May 2003.
+# Last modified 31 July 2003.
 #
 
 include ../Makefile.conf
@@ -74,6 +74,9 @@ ali_str.$(OBJ): ali_str.c
 	$(LIBCMD) ../libppr.$(LIBEXT) $(LIBOBJS)
 	$(RANLIB) ../libppr.$(LIBEXT)
 
+query$(DOTEXE): query.c
+	$(CC) $(CFLAGS) -o query -DTEST query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+
 #=== Install ================================================================
 
 install: all
@@ -86,7 +89,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS) query$(DOTEXE)
 
 # end of file
 

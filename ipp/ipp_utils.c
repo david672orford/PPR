@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 July 2003.
+** Last modified 31 July 2003.
 */
 
 /*! \file */
@@ -39,7 +39,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
-#include "ipp_except.h"
 #include "ipp_utils.h"
 
 /** create IPP request handling object
@@ -78,7 +77,7 @@ static void ipp_readbuf_load(struct IPP *p)
 	{
 	if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		{
-		Throw("Read failed");
+		gu_Throw("Read failed");
 		}
     p->bytes_left -= p->readbuf_remaining;
 	p->readbuf_i = 0;
@@ -98,7 +97,7 @@ static void ipp_writebuf_flush(struct IPP *p)
 	while(to_write > 0)
 		{
 		if((len = write(1, write_ptr, to_write)) == -1)
-			Throw("Write error");
+			gu_Throw("Write error");
 		to_write -= len;
 		write_ptr += len;
 		}
@@ -154,6 +153,9 @@ static const char *tag_to_str(int tag)
 		case IPP_TAG_ENUM:
 			return "enum";
 
+		case IPP_TAG_STRING:
+			return "octetString";
+
 		case IPP_TAG_TEXT:
 			return "text";
 		case IPP_TAG_NAME:
@@ -162,6 +164,8 @@ static const char *tag_to_str(int tag)
 			return "keyword";
 		case IPP_TAG_URI:
 			return "uri";
+		case IPP_TAG_CHARSET:
+			return "charset";
 		case IPP_TAG_LANGUAGE:
 			return "naturalLanguage";
 
@@ -169,6 +173,82 @@ static const char *tag_to_str(int tag)
 			return "unknown";
 		}
 	}
+
+/*
+** Convert an operation code to a string.
+*/
+static const char *operation_to_str(int op)
+	{
+	switch(op)
+		{
+		case IPP_PRINT_JOB:
+			return "Print-Job";
+		case IPP_PRINT_URI:
+			return "Print-URI";
+		case IPP_VALIDATE_JOB:
+			return "Validate-Job";
+		case IPP_CREATE_JOB:
+			return "Create-Job";
+		case IPP_SEND_DOCUMENT:
+			return "Send-Document";
+		case IPP_SEND_URI:
+			return "Send-URI";
+		case IPP_CANCEL_JOB:
+			return "Cancel-Job";
+		case IPP_GET_JOB_ATTRIBUTES:
+			return "Get-Job-Attributes";
+		case IPP_GET_JOBS:
+			return "Get-Jobs";
+		case IPP_GET_PRINTER_ATTRIBUTES:
+			return "Get-Printer-Attributes";
+		case IPP_HOLD_JOB:
+			return "Get-Jobs";
+		case IPP_RELEASE_JOB:
+			return "Release-Job";
+		case IPP_RESTART_JOB:
+			return "Restart-Job";
+		case IPP_PAUSE_PRINTER:
+			return "Pause-Printer";
+		case IPP_RESUME_PRINTER:
+			return "Resume-Printer";
+		case IPP_PURGE_JOBS:
+			return "Purge-Jobs";
+		case IPP_SET_PRINTER_ATTRIBUTES:
+			return "Set-Printer-Attributes";
+		case IPP_SET_JOB_ATTRIBUTES:
+			return "Set-Job-Attributes";
+		case IPP_GET_PRINTER_SUPPORTED_VALUES:
+			return "Get-Printer-Supported-Values";
+		case CUPS_GET_DEFAULT:
+			return "CUPS-Get-Default";
+		case CUPS_GET_PRINTERS:
+			return "CUPS-Get-Printers";
+		case CUPS_ADD_PRINTER:
+			return "CUPS-Add-Printer";
+		case CUPS_DELETE_PRINTER:
+			return "CUPS-Delete-Printer";
+		case CUPS_GET_CLASSES:
+			return "CUPS-Get-Classes";
+		case CUPS_ADD_CLASS:
+			return "CUPS-Add-Class";
+		case CUPS_DELETE_CLASS:
+			return "CUPS-Delete-Class";
+		case CUPS_ACCEPT_JOBS:
+			return "CUPS-Accept-Jobs";
+		case CUPS_REJECT_JOBS:
+			return "CUPS-Reject-Jobs";
+		case CUPS_SET_DEFAULT:
+			return "CUPS-Set-Default";
+		case CUPS_GET_DEVICES:
+			return "CUPS-Get-Devices";
+		case CUPS_GET_PPDS:
+			return "CUPS-Get-PPDS";
+		case CUPS_MOVE_JOB:
+			return "CUPS-Move-Job";
+		default:
+			return "unknown";
+		}
+	} /* end of operation_to_str() */
 
 /** fetch a block from the IPP request
 
@@ -203,7 +283,7 @@ unsigned char ipp_get_byte(struct IPP *p)
 	if(p->readbuf_remaining < 1)
 		ipp_readbuf_load(p);
 	if(p->readbuf_remaining < 1)
-		Throw("Data runoff!");
+		gu_Throw("Data runoff!");
 	p->readbuf_remaining--;
 	return p->readbuf[p->readbuf_i++];
 	}
@@ -323,15 +403,15 @@ void ipp_parse_request(struct IPP *ipp)
 
 	/* Do basic input validation */
 	if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
-		Throw("REQUEST_METHOD is not POST");
+		gu_Throw("REQUEST_METHOD is not POST");
 	if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
-		Throw("CONTENT_TYPE is not application/ipp");
+		gu_Throw("CONTENT_TYPE is not application/ipp");
 	if(!(ipp->path_info = getenv("PATH_INFO")) || strlen(ipp->path_info) < 1)
-		Throw("PATH_INFO is missing");
+		gu_Throw("PATH_INFO is missing");
 	if(!(p = getenv("CONTENT_LENGTH")) || (ipp->bytes_left = atoi(p)) < 0)
-		Throw("CENTENT_LENGTH is missing or invalid");
+		gu_Throw("CENTENT_LENGTH is missing or invalid");
 	if(ipp->bytes_left < 9)
-		Throw("request is too short to be an IPP request");
+		gu_Throw("request is too short to be an IPP request");
 
 	debug("request for %s, %d bytes", ipp->path_info, ipp->bytes_left);
 
@@ -340,8 +420,10 @@ void ipp_parse_request(struct IPP *ipp)
 	ipp->operation_id = ipp_get_ss(ipp);
 	ipp->request_id = ipp_get_si(ipp);
 
-	debug("version-number: %d.%d, operation-id: 0x%.4X, request-id: %d",
-			ipp->version_major, ipp->version_minor, ipp->operation_id, ipp->request_id
+	debug("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
+			ipp->version_major, ipp->version_minor,
+			ipp->operation_id, operation_to_str(ipp->operation_id),
+			ipp->request_id
 			);
 
 	while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
@@ -384,6 +466,7 @@ void ipp_parse_request(struct IPP *ipp)
 
 				ap->next = NULL;					/* last in chain */
 				ap->group_tag = delimiter_tag;
+				ap->value_tag = value_tag;
 				ap->name = name;
 				ap->num_values = 1;					/* only one value (for now) */
 
@@ -395,7 +478,7 @@ void ipp_parse_request(struct IPP *ipp)
 				{
 				/* If there wasn't a previous one, something is seriously wrong. */
 				if(!name)
-					Throw("no name!");
+					gu_Throw("no name!");
 
 				ap_i++;		/* advance value array index */
 
@@ -451,7 +534,7 @@ void ipp_parse_request(struct IPP *ipp)
 			}
 		else
 			{
-			Throw("invalid tag value");
+			gu_Throw("invalid tag value 0x%.2x", tag);
 			}
 		}
 
@@ -459,6 +542,7 @@ void ipp_parse_request(struct IPP *ipp)
     
 	/* This will be the default. */
     ipp->response_code = IPP_OK;
+
 	} /* end of ipp_parse_request() */
 
 /** append an attribute to the IPP response
@@ -470,7 +554,7 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 	
 	for(i=0 ; i < attr->num_values; i++)
 		{
-		debug("encoding 0x%.2x (%s) name=\"%s\"",
+		debug("  encoding 0x%.2x (%s) name=\"%s\"",
 			attr->value_tag, tag_to_str(attr->value_tag),
 			attr->name
 			);
@@ -515,11 +599,10 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 				ipp_put_sb(ipp, p->boolean ? 1 : 0);
 				break;
 			default:
-				debug("value tag: 0x%.2x", attr->value_tag);
-				Throw("missing case for value tag in ipp_put_attr()");
+				gu_Throw("ipp_put_attr(): missing case for value tag 0x%.2x in ipp_put_attr()", attr->value_tag);
 			}
 		}
-	}
+	} /* end of ipp_put_attr() */
 
 /** send the IPP response in the IPP object
 */
@@ -538,7 +621,7 @@ void ipp_send_reply(struct IPP *ipp)
 	ipp_put_si(ipp, ipp->request_id);
 	
 	if(!(p = ipp->response_attrs_operation))
-		Throw("no response_attrs_operation");
+		gu_Throw("no response_attrs_operation");
 	debug("encoding operation tags");
 	ipp_put_byte(ipp, IPP_TAG_OPERATION);
 	for( ; p; p = p->next)
@@ -552,7 +635,13 @@ void ipp_send_reply(struct IPP *ipp)
 		ipp_put_byte(ipp, IPP_TAG_PRINTER);
 		for( ; p; p = p->next)
 			{
-			ipp_put_attr(ipp, p);
+			if(p->value_tag == IPP_TAG_END)
+				{
+				if(p->next)
+					ipp_put_byte(ipp, IPP_TAG_PRINTER);
+				}
+			else
+				ipp_put_attr(ipp, p);
 			}
 		}
 	
@@ -562,7 +651,13 @@ void ipp_send_reply(struct IPP *ipp)
 		ipp_put_byte(ipp, IPP_TAG_JOB);
 		for( ; p; p = p->next)
 			{
-			ipp_put_attr(ipp, p);
+			if(p->value_tag == IPP_TAG_END)
+				{
+				if(p->next)
+					ipp_put_byte(ipp, IPP_TAG_JOB);
+				}
+			else
+				ipp_put_attr(ipp, p);
 			}
 		}
 
@@ -577,40 +672,54 @@ void ipp_send_reply(struct IPP *ipp)
 		}
 
 	ipp_put_byte(ipp, IPP_TAG_END);
-	}
+	} /* end of ipp_send_reply() */
 
 /*
 ** add an attribute to the IPP response
 */
 static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[])
 	{
+	ipp_attribute_t **ap1;
 	ipp_attribute_t	*ap = gu_alloc(1, sizeof(ipp_attribute_t));
-	ap->group_tag = group;
+	ap->group_tag = 0;		/* consider this unused */
 	ap->value_tag = tag;
 	ap->name = name;
 	ap->num_values = 1;
+	ap->next = NULL;
 
 	switch(group)
 		{
 		case IPP_TAG_OPERATION:
-			ap->next = ipp->response_attrs_operation;
-			ipp->response_attrs_operation = ap;
+			ap1 = &ipp->response_attrs_operation;
 			break;
 		case IPP_TAG_PRINTER:
-			ap->next = ipp->response_attrs_printer;
-			ipp->response_attrs_printer = ap;
+			ap1 = &ipp->response_attrs_printer;
 			break;
 		case IPP_TAG_JOB:
-			ap->next = ipp->response_attrs_job;
-			ipp->response_attrs_job = ap;
+			ap1 = &ipp->response_attrs_job;
 			break;
 		case IPP_TAG_UNSUPPORTED:
-			ap->next = ipp->response_attrs_unsupported;
-			ipp->response_attrs_unsupported = ap;
+			ap1 = &ipp->response_attrs_unsupported;
 			break;
 		}
 
+	/* chug to the end */
+	while(*ap1)
+		{
+		ap1 = &(*ap1)->next;
+		}
+
+	/* update the next pointer to point to this new one. */
+	*ap1 = ap;
+
 	return ap;
+	} /* end of ipp_add_attr() */
+
+/** add an object divider to the IPP response
+*/
+void ipp_add_end(struct IPP *ipp, int group)
+	{
+	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL);
 	}
 
 /** add an integer to the IPP response

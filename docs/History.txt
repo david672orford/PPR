@@ -446,12 +446,15 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.60, 24 July 2003--25 July 2003.
+1.52, 24 July 2003--30 July 2003.
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
 
+* docs/refman/ppr.1.pod: added documentation for --show-jobid, --show-long-jobid, and
+  --print-id-to-fd, --question, and --save (noting that the backend code is missing).
 
+* ppop/ppop.1.pod: added documentation for --magic-cookie.
 
 
 

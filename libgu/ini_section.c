@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 March 2003.
+** Last modified 31 July 2003.
 */
 
 /*+ \file
@@ -461,7 +461,7 @@ int gu_ini_section_from_sample(const char filename[], const char section_name[])
 	/* Open the sample configuration file for read. */
 	{
 	char *filename_sample;
-	asprintf(&filename_sample, "%s.sample", filename);
+	gu_asprintf(&filename_sample, "%s.sample", filename);
 	file_sample = fopen(filename_sample, "r");
 	gu_free(filename_sample);
 	}

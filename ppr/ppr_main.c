@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 30 July 2003.
 */
 
 /*
@@ -68,9 +68,9 @@
 const char *myname = "ppr";
 
 /* input line */
-char line[MAX_LINE+2];				/* input line plus one, plus NULL */
-int line_len;						/* length of input line in bytes */
-gu_boolean line_overflow;					/* is lines truncated? true or false */
+char line[MAX_LINE+2];					/* input line plus one, plus NULL */
+int line_len;							/* length of input line in bytes */
+gu_boolean line_overflow;				/* is lines truncated? true or false */
 
 /* output files */
 FILE *comments = (FILE*)NULL;			/* file for header & trailer comments */
@@ -82,7 +82,7 @@ static int spool_files_created = FALSE; /* TRUE once we have created some files,
 /* Information used for determining privledges and such. */
 uid_t user_uid;							/* Unix user id of person submitting the job */
 gid_t user_gid;
-uid_t ppr_uid;					/* uid of spooler owner (ppr) */
+uid_t ppr_uid;							/* uid of spooler owner (ppr) */
 gid_t ppr_gid;
 
 /* Command line option settings, static */
@@ -92,6 +92,7 @@ static int option_unlink_jobfile = FALSE;		/* Was the -U switch used? */
 static int use_username = FALSE;				/* User username instead of comment as default For: */
 static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF */
 static int option_show_jobid = 0;				/* 0 for don't , 1 for short, 2 for long */
+static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
 static int use_authcode = FALSE;				/* true if using authcode line to id */
 static int preauthorized = FALSE;				/* set true by -A switch */
 static const char *option_page_list = (char*)NULL;
@@ -885,7 +886,7 @@ static const char *option_description_string = "ad:e:f:i:m:r:b:t:w:D:F:T:S:q:B:N
 */
 static const struct gu_getopt_opt option_words[] =
 		{
-		/* These are preliminary assignments and are not yet documented. */
+		/* These aliases are preliminary assignments and are not yet documented. */
 		{"queue", 'd', TRUE},
 		{"for", 'f', TRUE},
 		{"use-username", 'u', TRUE},
@@ -894,7 +895,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"errors", 'e', TRUE},
 		{"warnings", 'w', TRUE},
 		{"proofmode", 'P', TRUE},
-		{"strip-cache", 'S', TRUE},
 		{"unlink", 'U', FALSE},
 		{"signature", 's', TRUE},
 		{"n-up", 'N', TRUE},
@@ -911,37 +911,39 @@ static const struct gu_getopt_opt option_words[] =
 		{"keep-bad-features", 'K', TRUE},
 		{"filter-options", 'o', TRUE},
 
-		/* These are final. */
-		{"feature", 'F', TRUE},
-		{"gab", 'G', TRUE},
-		{"hack", 'H', TRUE},
-		{"file-type", 'T', TRUE},
-		{"copies", 'n', TRUE},
-		{"routing", 'i', TRUE},
-		{"title", 'C', TRUE},
-		{"proxy-for", 'X', TRUE},
+		/* These are final and documented in the --help output and the ppr(1) manpage.
+		   (Note: that they are documented should be verified.)
+		   */
+		{"title",				'C', TRUE},
+		{"feature",				'F', TRUE},
+		{"gab",					'G', TRUE},
+		{"hack",				'H', TRUE},
+		{"routing",				'i', TRUE},
+		{"responder",			'm', TRUE},
+		{"copies",				'n', TRUE},
+		{"responder-address",	'r', TRUE},
+		{"strip-cache",			'S', TRUE},
+		{"file-type",			'T', TRUE},
+		{"proxy-for",			'X', TRUE},
+		{"features",			1000, FALSE},
+		{"print-id-to-fd",		1001, TRUE},
+		{"lpq-filename",		1003, TRUE},
+		{"hold",				1004, FALSE},
+		{"responder-options",	1005, TRUE},
+		{"show-jobid",			1006, FALSE},
+		{"show-long-jobid",		1007, FALSE},
+		{"charge-to",			1008, TRUE},
+		{"editps-level",		1009, TRUE},
+		{"markup",				1010, TRUE},
+		{"page-list",			1012, TRUE},
+		{"cache-store",			1013, TRUE},
+		{"cache-priority",		1014, TRUE},
+		{"strip-fontindex",		1015, TRUE},
+		{"strip-printer",		1016, TRUE},
+		{"save",				1017, FALSE},		/* not documented because not implemented */
+		{"question",			1018, TRUE},		/* not documented */
+		{"ripopts",				1019, TRUE},
 
-		/* These are final. */
-		{"features", 1000, FALSE},
-		{"lpq-filename", 1003, TRUE},
-		{"hold", 1004, FALSE},
-		{"responder", 'm', TRUE},
-		{"responder-address", 'r', TRUE},
-		{"responder-options", 1005, TRUE},
-		{"show-jobid", 1006, FALSE},
-		{"show-long-jobid", 1007, FALSE},
-		{"charge-to", 1008, TRUE},
-		{"editps-level", 1009, TRUE},
-		{"markup", 1010, TRUE},
-		{"page-list", 1012, TRUE},
-		{"cache-store", 1013, TRUE},
-		{"cache-priority", 1014, TRUE},
-		{"strip-cache", 'S', TRUE},
-		{"strip-fontindex", 1015, TRUE},
-		{"strip-printer", 1016, TRUE},
-		{"save", 1017, FALSE},
-		{"question", 1018, TRUE},
-		{"ripopts", 1019, TRUE},
 		{"commentary", 1100, TRUE},
 
 		/* These are also documented and final. */
@@ -968,7 +970,8 @@ HELP((
 
 HELP(_(
 "\t-X <string>				  used by network servers to tell PPR the\n"
-"\t							  identity of alien users for whom they act\n"));
+"\t							  identity of alien users for whom they act\n"
+"\t--proxy-for <string>       same as -X\n"));
 
 HELP(_(
 "\t--charge-to <string>		  PPR charge account to bill for job\n"));
@@ -985,7 +988,9 @@ HELP(_(
 HELP(_(
 "\t-m <method>				  response method\n"
 "\t-m none					  no response\n"
+"\t--responder                same as -m\n"
 "\t-r <address>				  response address\n"
+"\t--responder-address        same as -r\n"
 "\t--responder-options <list> list of name=value responder options\n"));
 
 HELP(_(
@@ -1050,6 +1055,9 @@ HELP(_(
 minus_tee_help(outfile);		/* drag in -T stuff */
 
 HELP(_(
+"\t--file-type <option>       same as -T\n"));
+
+HELP(_(
 "\t-o <string>				  specify filter options\n"
 "\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
 "\t							  set handling of LaTeX, HTML, and such\n"));
@@ -1060,7 +1068,8 @@ HELP(_(
 
 HELP(_(
 "\t-n <positive integer>	  print n copies\n"
-"\t-n collate				  print collated copies\n"));
+"\t-n collate				  print collated copies\n"
+"\t--copies <option>          same as -n\n"));
 
 HELP(_(
 "\t-R for					  read \"%%For:\" line\n"
@@ -1149,6 +1158,9 @@ HELP(_(
 HELP(_(
 "\t--show-jobid				  print the queue id of submitted jobs\n"
 "\t--show-long-jobid		  print queue id in long format\n"));
+
+HELP(_(
+"\t--print-id-to-fd           print the numberic queue id file descriptor\n"));
 
 HELP(_(
 "\t--version				  print PPR version information\n"
@@ -1699,7 +1711,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'I':										/* insert switch set */
-			/* I_switch(); */
 			fprintf(stderr, "%s: -I switch is obsolete\n", myname);
 			break;
 
@@ -1782,6 +1793,10 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 
 		case 1000:								/* --features */
 			exit(option_features(qentry.destnode, qentry.destname));
+
+		case 1001:								/* --print-id-to-fd */
+			option_print_id_to_fd = atoi(optarg);
+			break;
 
 		case 1003:								/* --lpq-filename */
 			qentry.lpqFileName = optarg;
@@ -2759,6 +2774,16 @@ int main(int argc, char *argv[])
 	** the spooler, we can close it now.
 	*/
 	fclose(FIFO);
+
+	/*
+	** The IPP server will have invoked this program with the option --print-id-to-fd=3.
+	*/
+	if(option_print_id_to_fd != -1)
+		{
+		char temp[10];
+		snprintf(temp, sizeof(temp), "%d\n", qentry.id);
+		write(option_print_id_to_fd, temp, strlen(temp));
+		}
 
 	/*
 	** This goto target is used when the length of the input file is zero.

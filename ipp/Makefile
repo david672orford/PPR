@@ -36,7 +36,7 @@ CGI_PROGS=ipp$(DOTEXE)
 
 PROGS=$(CGI_PROGS)
 
-OBJS_IPP=ipp.$(OBJ) ipp_utils.$(OBJ) ipp_print.$(OBJ)
+OBJS_IPP=ipp.$(OBJ) ipp_utils.$(OBJ)
 
 #=== Build ==================================================================
 

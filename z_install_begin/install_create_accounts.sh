@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 30 July 2003.
 #
 
 # The makefile has to feed us this information since ../makeprogs/paths.sh
@@ -122,28 +122,28 @@ for user in $USER_PPR $USER_PPRWWW
 	# System V release 4
 	if [ -x /usr/sbin/passmgmt ]
 		then
-		/usr/sbin/passmgmt -a -h $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+		/usr/sbin/passmgmt -a -h $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# Linux
 	else
 	if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
 		then
-		/usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $sup $user
+		/usr/sbin/useradd -M -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $sup $user
 		exitval=$?
 
 	# OSF?
 	else
 	if [ -x /usr/sbin/useradd ]
 		then
-		/usr/sbin/useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+		/usr/sbin/useradd -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# FreeBSD
 	else
 	if [ -x /usr/sbin/pw ]
 		then
-		/usr/sbin/pw useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+		/usr/sbin/pw useradd -d $HOMEDIR -c "$COMMENT" -g $group_ppr_gid $user
 		exitval=$?
 
 	# MacOS X

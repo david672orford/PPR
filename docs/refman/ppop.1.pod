@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 30 July 2003.
 #
 
 =head1 NAME
@@ -100,8 +100,21 @@ theory that they are unimportant.  It takes an integer as its argument.
 This integer is an interval in seconds.  Jobs which were arrested more than
 I<integer> seconds ago are ommited from queue listings.
 
+The B<--magic-cookie> switch can be used to specify magic cookie (a secret
+token) which the spooler has associated with the job.  The spooler assigns
+a magic cookie to each job when it is created.  If the magic cookie
+supplied to B<ppop> is not correct, access to the job will be denied even if 
+it would have been granted if a magic cookie were not specified.  The spooler
+reveals this magic cookie when sending questions as directed by B<ppr>'s
+B<--question> option.  The user's answer will include this magic cookie.  A 
+question CGI script will use the magic cookie supplied with the answer in order to make
+sure it doesn't act on answers from people other than the one to whom the 
+question was sent.
+
 The B<--verbose> switch will cause some subcommands to display more
 detailed information.  The B<ppop status> subcommand is one such.
+
+=head2 Access Control
 
 Most operations performed by the ppop command require PPR operator privileges.
 Only those operations which do not alter the spooler state (such as listing

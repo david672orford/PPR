@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 July 2003.
+** Last modified 31 July 2003.
 */
 
 /*
@@ -483,7 +483,7 @@ int main(int argc, char *argv[])
 						if(strlen(rinfo.responder_options) > 0) /* if any from job too, */
 							{
 							char *p;
-							asprintf(&p, "%s %s", responder_options, rinfo.responder_options);
+							gu_asprintf(&p, "%s %s", responder_options, rinfo.responder_options);
 							gu_free(responder_options);
 							rinfo.responder_options = p;
 							}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 July 2003.
+** Last modified 31 July 2003.
 */
 
 #include "before_system.h"
@@ -35,38 +35,36 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <errno.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
-#include "ipp_except.h"
 #include "ipp_utils.h"
-
-struct exception_context the_exception_context[1];
 
 static void do_print_job(struct IPP *ipp)
 	{
 	pid_t pid;
-	int toppr_fds[2];
-	int jobid_fds[2];
+	int toppr_fds[2] = {-1, -1};
+	int jobid_fds[2] = {-1, -1};
 	const char *printer_uri;
 	int jobid;
 		
 	{
 	ipp_attribute_t *p;
 	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
-		Throw("no printer-uri");
+		gu_Throw("no printer-uri");
 	printer_uri = p->values[0].string.text;
 	}
 
 	if(pipe(toppr_fds) == -1)
-		Throw("pipe() failed");
+		gu_Throw("pipe() failed");
 
 	if(pipe(jobid_fds) == -1)
-		Throw("pipe() failed");
+		gu_Throw("pipe() failed");
 
 	if((pid = fork()) == -1)
 		{
-		Throw("fork() failed");
+		gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		}
 
 	if(pid == 0)		/* child */
@@ -100,7 +98,7 @@ static void do_print_job(struct IPP *ipp)
 		while(len > 0)
 			{
 			if((write_len = write(toppr_fds[1], ptr, len)) < 0)
-				Throw("write() failed");
+				gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
 			debug("Wrote %d bytes", write_len);
 			len -= write_len;
 			ptr += write_len;
@@ -115,7 +113,7 @@ static void do_print_job(struct IPP *ipp)
 	int len;
 	char buf[10];
 	if((len = read(jobid_fds[0], buf, sizeof(buf))) == -1)
-		Throw("read() failed");
+		gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
 	debug("read %d bytes as jobid", len);
 
 	buf[len < sizeof(buf) ? len : sizeof(buf) - 1] = '\0';
@@ -124,10 +122,6 @@ static void do_print_job(struct IPP *ipp)
 
 	close(jobid_fds[0]);
 	}
-
-
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
 
 	if(jobid > 0)
 		{	
@@ -142,14 +136,40 @@ static void do_print_job(struct IPP *ipp)
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
 		}
-	
+	else
+		{
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+		}
+
 	} /* end of do_print_job() */
 
-static void do_printer_attributes(struct IPP *ipp)
+static void do_get_jobs(struct IPP *ipp)
+	{
+	const char *printer_uri;
+	int x;
+
+	for(x=0; x < 10; x++)
+		
+	{
+	ipp_attribute_t *p;
+	if(!(p = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
+		gu_Throw("no printer-uri");
+	printer_uri = p->values[0].string.text;
+	}
+
+	for(x=0; x < 10; x++)
+		{
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", x * 4);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", x + 100);
+		ipp_add_end(ipp, IPP_TAG_JOB);
+		}
+	}
+
+static void do_get_printer_attributes(struct IPP *ipp)
     {
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
 
 	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
 	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
@@ -160,42 +180,84 @@ static void do_printer_attributes(struct IPP *ipp)
 
     }
 
+static void do_get_default(struct IPP *ipp)
+	{
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
+	}
+
+static void do_get_printers(struct IPP *ipp)
+	{
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "test");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "test2");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	}
+	
+static void do_get_classes(struct IPP *ipp)
+	{
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "rotate");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	}
+
 int main(int argc, char *argv[])
 	{
-	const char *e;
 	struct IPP *ipp;
 
-	Try {
+	gu_Try {
 		ipp = ipp_new();
 		ipp_parse_request(ipp);
 
-		debug("dispatching");
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+
+		debug("dispatching operation 0x.2x", ipp->operation_id);
 		switch(ipp->operation_id)
 			{
 			case IPP_PRINT_JOB:
 				do_print_job(ipp);
 				break;
-				
+
+			case IPP_GET_JOBS:
+				do_get_jobs(ipp);
+				break;
+			
 			case IPP_GET_PRINTER_ATTRIBUTES:
-				do_printer_attributes(ipp);
+				do_get_printer_attributes(ipp);
+				break;
+
+			case CUPS_GET_DEFAULT:
+				do_get_default(ipp);
+				break;
+			
+			case CUPS_GET_PRINTERS:
+				do_get_printers(ipp);
+				break;
+
+			case CUPS_GET_CLASSES:
+				do_get_classes(ipp);
 				break;
 
 			default:
-				Throw("unsupported operation");
+				gu_Throw("unsupported operation");
 				break;
 			}
 		
+		if(ipp->response_code == IPP_OK)
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+
 		ipp_send_reply(ipp);
 		ipp_delete(ipp);
 		}
 
-	Catch(e)
+	gu_Catch
 		{
 		printf("Content-Type: text/plain\n");
 		printf("Status: 500\n");
 		printf("\n");
-		printf("ipp: exception caught: %s\n", e);
-		fprintf(stderr, "ipp: exception caught: %s\n", e);
+		printf("ipp: exception caught: %s\n", gu_exception);
+		fprintf(stderr, "ipp: exception caught: %s\n", gu_exception);
 		return 1;
 		}
 

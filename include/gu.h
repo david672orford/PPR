@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 May 2003.
+** Last modified 31 July 2003.
 */
 
 #ifndef _GU_H
@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <setjmp.h>
 
 /*===================================================================
 ** Useful macros
@@ -269,6 +270,28 @@ __attribute__ (( noreturn, format (printf, 3, 4) ))
 ;
 
 /*===================================================================
+** New exception handling code
+===================================================================*/
+
+extern char gu_exception[];
+extern int gu_exception_exitcode;
+extern int _gu_exception_try_depth;
+extern int _gu_exception_setjmp_retcode;
+
+#define gu_Try { \
+	jmp_buf _gu_exception_jmp_buf; \
+	_gu_Try(&_gu_exception_jmp_buf); \
+	if((_gu_exception_setjmp_retcode = setjmp(_gu_exception_jmp_buf)) == 0)
+	
+void _gu_Try(jmp_buf *p_jmp_buf);
+
+void gu_Throw(const char message[], ...);
+
+void gu_ReThrow(void);
+
+#define gu_Catch _gu_exception_try_depth--; } if(_gu_exception_setjmp_retcode != 0)
+
+/*===================================================================
 ** SNMP functions
 ===================================================================*/
 
@@ -319,7 +342,6 @@ void *gu_pch_get(void **pch, void **pcs_key);
 void gu_pch_delete(void **pch, void **pcs_key);
 void gu_pch_rewind(void **pch);
 void *gu_pch_nextkey(void **pch);
-
 
 /*===================================================================
 ** Replacements for missing functions

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 31 July 2003.
 */
 
 #include "before_system.h"
@@ -153,7 +153,7 @@ static int do_set(char username[], int argc, char *argv[], int i)
 				responder_address = ":0.0";
 			}
 		else if(strcmp(responder, "pprpopup") == 0)
-			asprintf(&responder_address, "%s@localhost", username);
+			gu_asprintf(&responder_address, "%s@localhost", username);
 		else
 			responder_address = username;
 		}

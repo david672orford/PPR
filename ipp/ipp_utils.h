@@ -99,6 +99,7 @@ void ipp_put_string(struct IPP *ipp, const char string[]);
 void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr);
 void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp);
+void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);

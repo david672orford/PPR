@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 May 2003.
+# Last modified 31 July 2003.
 #
 
 include ../Makefile.conf
@@ -69,6 +69,7 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_timeval.$(OBJ) \
 	gu_pcs.$(OBJ) gu_pch.$(OBJ) \
 	gu_run.$(OBJ) \
+	gu_exceptions.$(OBJ) \
 	pcre.$(OBJ) \
 	pcre_get.$(OBJ) \
 	pcre_maketables.$(OBJ) \

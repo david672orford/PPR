@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 30 July 2003.
 #
 
 use lib "?";
@@ -163,12 +163,16 @@ umask(002);
 # to process them.
 #===========================================================
 my $standalone_port = undef;
+my $root_xlate = undef;
 if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
-	if(!Getopt::Long::GetOptions("standalone-port=s" => \$standalone_port))
+	if(!Getopt::Long::GetOptions(
+			"standalone-port=s" => \$standalone_port,
+			"root-xlate=s" => \$root_xlate
+			))
 		{
-		print STDERR "Usage: ppr-httpd [--standalone-port=<port>]\n";
+		print STDERR "Usage: ppr-httpd [--standalone-port=<port>] [--root-xlate=<path>]\n";
 		exit 1;
 		}
 	}
@@ -474,6 +478,16 @@ while(1)
 			}
 
 		#
+		# If the --root-xlate option was used, translate the root to somewhere deaper.
+		#
+		if(defined $root_xlate)
+			{
+			my $xlated_path = "$root_xlate/$path";
+			print STDERR "Translating /$path to /$xlated_path\n";
+			$path = $xlated_path;
+			}
+
+		#
 		# If the request is for a CGI script,
 		#
 		if($path =~ /^cgi-bin\/([^\/]+)(.*)$/)
@@ -579,7 +593,9 @@ EndExceptionEntity
 		print "$body";
 
 		print STDERR "$code $explanation\n";
-		}
+
+		$resp_header_connection = "close";
+		} # end of exception handling
 
 	# Flush the output buffer so that the last of
 	# the response is transmitted to the client.
@@ -587,7 +603,7 @@ EndExceptionEntity
 
 	# If this is not to be a persistent connection,
 	# close it now.
-	last if($resp_header_connection eq 'close');
+	last if($resp_header_connection eq "close");
 
 	print STDERR "Ready for next request.\n\n";
 	}

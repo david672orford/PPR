@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 31 July 2003.
 */
 
 #include "before_system.h"
@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include "gu.h"
 #include "global_defines.h"
-#include "cexcept.h"
 #include "interface.h"
 #include "ppr_query.h"
 
@@ -48,11 +47,6 @@ This file contains routines for sending queries to printers.
 
 */
 
-
-
-define_exception_type(int);
-static struct exception_context the_exception_context[1];
-
 /** create a query object with interface and address
 
 */
@@ -61,9 +55,9 @@ struct QUERY *query_new_byaddress(const char interface[], const char address[])
 	struct QUERY *q;
 
 	if(!interface)
-		Throw(-1);
+		gu_Throw("No interface specified");
 	if(!address)
-		Throw(-2);
+		gu_Throw("No address specified");
 
 	q = gu_alloc(1, sizeof(struct QUERY));
 
@@ -90,14 +84,13 @@ struct QUERY *query_new_byprinter(const char printer[])
 	char *interface = NULL;
 	char *address = NULL;
 	char *tptr;
-	int e;
 
 	if(!printer)
-		Throw(-3);
+		gu_Throw("No printer specified");
 
 	ppr_fnamef(fname, "%s/%s", PRCONF, printer);
 	if(!(f = fopen(fname, "r")))
-		Throw(-104);
+		gu_Throw("Can't open printer configuration");
 
 	while((line = gu_getline(line, &line_len, f)))
 		{
@@ -115,19 +108,19 @@ struct QUERY *query_new_byprinter(const char printer[])
 
 	fclose(f);
 
-	Try {
+	gu_Try {
 		if(!interface)
-			Throw(-4);
+			gu_Throw("interface is NULL");
 		if(!address)
-			Throw(-5);
+			gu_Throw("address is NULL");
 		}
-	Catch(e)
+	gu_Catch
 		{
 		if(interface)
 			gu_free(interface);
 		if(address)
 			gu_free(address);
-		Throw(e);
+		gu_ReThrow();
 		}
 
 	return query_new_byaddress(interface, address);
@@ -138,10 +131,8 @@ struct QUERY *query_new_byprinter(const char printer[])
 */
 void query_connect(struct QUERY *q)
 	{
-	int e;
-
 	if(q->connected)
-		Throw(-100);
+		gu_Throw("already connected");
 
 	q->buf_stdin_len = q->buf_stdout_len = q->buf_stderr_len = 0;
 	q->buf_stdout_eaten = q->buf_stderr_eaten = 0;
@@ -151,19 +142,19 @@ void query_connect(struct QUERY *q)
 	q->last_stdout_crlf = 0;
 
 	/* Open three pipes for the interface program's stdin, stdout, and stderr. */
-	Try {
+	gu_Try {
 		if(pipe(q->pipe_stdin) == -1)
 			{
-			Throw(-101);
+			gu_Throw("pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
 			}
-		Try {
+		gu_Try {
 			if(pipe(q->pipe_stdout) == -1)
 				{
-				Throw(-102);
+				gu_Throw("pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
 				}
-			Try {
+			gu_Try {
 				if(pipe(q->pipe_stderr) == -1)
-					Throw(-103);
+					gu_Throw("pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 				q->maxfd = 0;
 				if(q->pipe_stdin[1] > q->maxfd)
@@ -176,7 +167,7 @@ void query_connect(struct QUERY *q)
 				switch(fork())
 					{
 					case -1:							/* fork failed */
-						Throw(-104);
+						gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
 						break;
 					case 0:								/* child */
 						/* paranoid code */
@@ -211,51 +202,54 @@ void query_connect(struct QUERY *q)
 						}
 						break;
 					default:							/* parent */
-						if(close(q->pipe_stdin[0]) == -1) Throw(-105);
-						if(close(q->pipe_stdout[1]) == -1) Throw(-106);
-						if(close(q->pipe_stderr[1]) == -1) Throw(-107);
+						if(close(q->pipe_stdin[0]) == -1)
+							gu_Throw("close() failed, errno=%d (%s)", errno, gu_strerror(errno));
+						if(close(q->pipe_stdout[1]) == -1)
+							gu_Throw("close() failed, errno=%d (%s)", errno, gu_strerror(errno));
+						if(close(q->pipe_stderr[1]) == -1)
+							gu_Throw("close() failed, errno=%d (%s)", errno, gu_strerror(errno));
 						break;
 					}
 				}
-			Catch(e)
+			gu_Catch
 				{
 				close(q->pipe_stdout[0]);
 				close(q->pipe_stdout[1]);
-				Throw(e);
+				gu_ReThrow();
 				}
 			}
-		Catch(e)
+		gu_Catch
 			{
 			close(q->pipe_stdin[0]);
 			close(q->pipe_stdin[1]);
-			Throw(e);
+			gu_ReThrow();
 			}
 		}
-	Catch(e)
+	gu_Catch
 		{
-		Throw(e);
+		gu_ReThrow();
 		}
 
 	q->connected = TRUE;
 	}
 
-/** send a line to the printer
+/** Send a line to the printer
 
 */
 void query_puts(struct QUERY *q, const char s[])
 	{
 	int len = strlen(s);
 	if(!q->connected)
-		Throw(-201);
+		gu_Throw("not connected");
 	if(q->disconnecting)
-		Throw(-202);
+		gu_Throw("already disconnecting");
 	if((q->buf_stdin_len + len) > sizeof(q->buf_stdin))
-		Throw(-203);
+		gu_Throw("buffer full");
 	memcpy(q->buf_stdin + q->buf_stdin_len, s, len);
 	q->buf_stdin_len += len;
 	}
 
-/** receive a line from the printer
+/** Receive a line from the printer
 
 */
 char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
@@ -310,7 +304,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 				}
 			else if(q->buf_stdout_len == sizeof(q->buf_stdout))
 				{
-				Throw(-120);
+				gu_Throw("??? 1 ???");
 				}
 			}
 
@@ -327,7 +321,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 				}
 			else if(q->buf_stderr_len == sizeof(q->buf_stderr))
 				{
-				Throw(-121);
+				gu_Throw("??? 2 ???");
 				}
 			}
 
@@ -335,7 +329,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 		if(q->buf_stdin_len == 0 && q->disconnecting)
 			{
 			if(close(q->pipe_stdin[1]) == -1)
-				Throw(-213);
+				gu_Throw("close() failed");
 			}
 
 		/* Create a list of the file descriptors that we are waiting for. */
@@ -352,7 +346,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 		while(select(q->maxfd + 1, &rfds, &wfds, NULL, NULL) == -1)
 			{
 			if(errno != EINTR)
-				Throw(-210);
+				gu_Throw("select() failed, errno=%d (%s)", errno, gu_strerror(errno));
 			}
 
 		/* If there is room to write data, */
@@ -362,10 +356,10 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 			while((len = write(q->pipe_stdin[1], q->buf_stdin, q->buf_stdin_len)) == -1)
 				{
 				if(errno != EINTR)
-					Throw(-211);
+					gu_Throw("write() failed, errno=%d (%s)");
 				}
 			if(len < 0)
-				Throw(-212);
+				gu_Throw("%d < 0", len);
 			q->buf_stdin_len -= len;
 			if(q->buf_stdin_len > 0)
 				memmove(q->buf_stdin, q->buf_stdin + len, q->buf_stdin_len);
@@ -378,10 +372,10 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 			while((len = read(q->pipe_stdout[0], q->buf_stdout + q->buf_stdout_len, sizeof(q->buf_stdout) - q->buf_stdout_len)) == -1)
 				{
 				if(errno != EINTR)
-					Throw(-214);
+					gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
 				}
 			if(len < 0)
-				Throw(-215);
+				gu_Throw("%d < 0", errno);
 
 			/* If the read size was zero, that means that the interface closed its end. */
 			if(len == 0)
@@ -397,10 +391,10 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr)
 			while((len = read(q->pipe_stderr[0], q->buf_stderr + q->buf_stderr_len, sizeof(q->buf_stderr) - q->buf_stderr_len)) == -1)
 				{
 				if(errno != EINTR)
-					Throw(-216);
+					gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
 				}
 			if(len < 0)
-				Throw(-217);
+				gu_Throw("%d < 0", len);
 
 			if(len == 0)
 				q->eof_stderr = TRUE;
@@ -488,7 +482,7 @@ void query_disconnect(struct QUERY *q)
 	char *line;
 
 	if(!q->connected)
-		Throw(-150);
+		gu_Throw("not connected");
 
 	if(q->started)
 		{
@@ -523,7 +517,6 @@ void query_delete(struct QUERY *q)
 int main(int argc, char *argv[])
 	{
 	struct QUERY *q;
-	int e;
 	char *line;
 	gu_boolean is_stderr;
 	int countdown;
@@ -534,7 +527,7 @@ int main(int argc, char *argv[])
 		return 10;
 		}
 
-	Try {
+	gu_Try {
 		q = query_new_byprinter(argv[1]);
 		query_connect(q);
 
@@ -561,9 +554,9 @@ int main(int argc, char *argv[])
 		query_disconnect(q);
 		query_delete(q);
 		}
-	Catch(e)
+	gu_Catch
 		{
-		fprintf(stderr, "Caught exception %d, errno=%d (%s)\n", e, errno, strerror(errno));
+		fprintf(stderr, "Caught exception %s\n", gu_exception);
 		return 1;
 		}
 

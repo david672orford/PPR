@@ -8615,25 +8615,68 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--29 July 2003.
+1.52, 24 July 2003--31 July 2003.
+
+Bug Fixes
 
 * Actually removed include/version.mk which somehow didn't get removed when
   it was taken out of service.
 
-* added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
-
 * makeprogs/installln.sh: fixed source existence check to work properly when
   installing relative symbolic links.
 
+* z_install_begin/install_create_accounts.sh: fixed missing quotes around
+  account "$COMMENT".
+
+* libgu/ini_section.c, responders/ppr-respond.c, unixuser/ppr-followme.c:
+  changed asprintf() to gu_asprintf().
+  
+* nonppr_misc/c2lib/c2lib_pstring.c: changed vasprintf() to gu_vasprintf().
+
+* www/ppr-httpd.perl: changed code to close connexion on error.  (The
+  alternative is to swallow the entity body.)
+
+Misc. Added Material
+
+* added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
+
+* libgu/gu_exceptions.c: added.  This is intended to eventually replace
+  cexcept.h and libppr_exception().
+
+Misc. Enhancements
+
 * makeprogs/installln.sh,installprog.sh: added code to write commands that
   fail because not running as root to ../root.sh (if it exists, otherwise the
-  error is still a fatal one.
+  error is still a fatal one).
+
+* libppr/query.c: changed to use new exception handing.  (It was OK to make
+  this change since the code in query.c isn't used yet.
+
+Internet Printing Protocol Work
+
+* ppr/ppr_main.c: added --print-id-to-fd.  This will be used by the IPP
+  server to get the job ID.
+
+* www/ppr-httpd.perl: added --root-xlate.  This allows us to set up a server
+  whose root is one CGI script, such as cgi-bin/ipp/.  This is necessary
+  because IPP clients designed for CUPS expect to be able to send IPP
+  requests to the root.
+
+* ipp/: switched exception handling to new implementation
+
+* ipp/ipp_util.c: got code working
+
+* ipp/ipp.c: added do_print_job() and dummy functions for some other
+  operations.
 
 
 
 
 +++++++++++++++++++++
 TODO
+
+* Convert SNMP code and tcpip interface to new exception handling, get rid
+  of old exception handling
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not
