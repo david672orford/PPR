@@ -76,7 +76,6 @@ SUBDIRS=\
 	encodings \
 	fonts \
 	nonppr_vendors \
-	papsrv \
 	papd \
 	lprsrv \
 	samba \
@@ -224,7 +223,6 @@ clean:
 
 # This deletes difficult-to-generate files too.
 veryclean: clean unconfigure
-	( cd papsrv; make veryclean )
 	( cd docs; make veryclean )
 	( cd www; make veryclean )
 	@echo

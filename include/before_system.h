@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 12 December 2004.
 */
 
 /*
@@ -52,6 +52,7 @@
 /* Read that part of the system dependent settings which
    tell use which include files to include. */
 #define PASS1
+#include "config.h"
 #include "sysdep.h"
 #undef PASS1
 

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/docs_info.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 12 December 2004.
 #
 
 #
@@ -204,7 +204,7 @@ eval {
 		}
 
 	# Consume a list of files.	Files may be added to the end of the list
-	# as we go.
+	# as we go.  Print an HTML version of each file.
 	{
 	my $dirname;
 	my $dotext = "";
@@ -242,6 +242,13 @@ eval {
 
 			if(/^\x1f/)					# This character marks the start of
 				{						# non-text data
+				if($state eq "dl")
+					{
+					print "</dd>\n";
+					print "</dl>\n";
+					$state = "normal";
+					}
+				
 				if(/^\x1f\nFile:/s)		# Navigation point
 					{
 					print "<p class=\"navigation\">";
@@ -337,34 +344,50 @@ eval {
 			# Dictionary list:
 			#
 			# 'r'
-			#	   the permission the USERS have to read the file
+			#      the permission the USERS have to read the file
 			#
 			# 'a'
 			# 'b'
-			#	   the definition
+			#      the definition
 			#
 			#  - Option: -x
-			#	   the definition of the -x option
+			#      the definition of the -x option
 			#
-			if($state eq "normal" && /^((( - )?\S[^\n]*\n)+)	 (.+)$/s)
+			if(/^((( - )?\S[^\n]*\n)+)     (.+)$/s)	# 5 spaces
 				{
-				print "<dl>\n";
-				$state = "dl";
+				my($dt, $dd) = ($1, $4);
+				if($state eq "normal")
+					{
+					print "<dl>\n";
+					$state = "dl";
+					}
+				elsif($state eq "dl")
+					{
+					print "</dd>\n";
+					print "<dt>";
+					}
+				chomp $dt;
+				print "<dt>", linebreak(linkize($dt)), "</dt><dd><p>", linkize($dd), "</p>\n";
 				}
 			if($state eq "dl")
 				{
-				# Dictionary list
-				if(/^((( - )?\S[^\n]*\n)+)	   (.+)$/s)
+				if(/^\S/)
 					{
-					my($dt, $dd) = ($1, $4);
-					chomp $dt;
-					print "<dt>", linebreak(linkize($dt)), "</dt><dd>", linkize($dd), "</dd>\n";
-					next;
+					print "</dd>\n";
+					print "</dl>\n";
+					$state = "normal";
 					}
 				else
 					{
-					print "</dl>\n";
-					$state = "normal";
+					if(/^          / && !/^          \*/)	# 10 spaces
+						{
+						print "<pre>\n", html($_), "\n", "</pre>\n";
+						}
+					else
+						{
+						print "<p>", linkize($_), "</p>\n";
+						}
+					next;
 					}
 				}
 
@@ -458,7 +481,6 @@ eval {
 				#
 				# * Menu:
 				#
-				#if(/^\*[^\n]+\n([\*\s][^\n]+\n)*$/s)
 				if(/^\*[^:]+:[:\s]/)
 					{
 					print "<ul>\n";
@@ -501,17 +523,14 @@ eval {
 				# A preformatted section will be indented, usually by 5
 				# spaces.
 				#
-				if(/^	  /)
+				if($state eq "normal" && /^     / && !/^     \*/)	# 5 spaces
 					{
-					print "<pre>\n";
-					print html($_), "\n";
-					print "</pre>\n";
+					print "<pre>\n", html($_), "\n", "</pre>\n";
 					next;
 					}
 
-				$_ = linkize($_);
-
-				print "<p>$_</p>\n";
+				# Anything else must be a normal paragraph.
+				print "<p>", linkize($_), "</p>\n";
 				next;
 				}
 

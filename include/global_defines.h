@@ -154,7 +154,6 @@
 
 #define PASS2
 #include "sysdep.h"
-#include "config.h"
 #undef PASS2
 
 /* A signed number of at least 16 bits: */

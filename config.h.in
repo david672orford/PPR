@@ -1,19 +1,60 @@
 /*
-** mouse:~ppr/src/config.h(.in)
-** Last modified 11 December 2004.
+** mouse:~ppr/src/config.h.in
+** Copyright 1995--2003, Trinity College Computing Center.
+** Written by David Chappell.
 **
-** Generated from config.h.in by Configure on @DATE@
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+**
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 11 December 2004.
 */
 
+/*
+ * Don't edit config.h directly.  Edit Makefile.conf instead.  If you edit
+ * Makefile.conf, config.h will be regenerated.
+ */
+
+/* Which platform are we building for? */
+#define PPR_@PORT_NAME@ 1
+
+/* Sundry build options */
+#undef INTERNATIONAL
+
+/* What do we have? */
+#undef HAVE_ZLIB
+
+/* PPR users and groups */
 #define USER_PPR "@USER_PPR@"
 #define GROUP_PPR "@GROUP_PPR@"
 #define USER_PPRWWW "@USER_PPRWWW@"
 
+/* Top-level PPR directories */
 #define HOMEDIR "@HOMEDIR@"
 #define SHAREDIR "@SHAREDIR@"
 #define CONFDIR "@CONFDIR@"
 #define VAR_SPOOL_PPR "@VAR_SPOOL_PPR@"
 #define TEMPDIR "@TEMPDIR@"
+
+/* System directories */
 #define SYSBINDIR "@SYSBINDIR@"
 #define XWINBINDIR "@XWINBINDIR@"
 
@@ -70,9 +111,12 @@
 #define TAIL_STATUS_PATH "@TAIL_STATUS_PATH@"
 #define PPJOB_PATH "@PPJOB_PATH@"
 
-/* Programs for uncompressing files.  These variables are used when
-   building ppr/ppr_infile.c. */
-#define GUNZIP "@GUNZIP@"
-#define UNCOMPRESS "@UNCOMPRESS@"
-#define BUNZIP2 "@BUNZIP2@"
+/* Programs used by PPR */
+#define SENDMAIL_PATH "@SENDMAIL_PATH@"
+#define PERL_PATH "@PERL_PATH@"
+#undef GUNZIP_PATH
+#undef UNCOMPRESS_PATH
+#undef BUNZIP2_PATH
+
+/* end of file */
 

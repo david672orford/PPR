@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 12 December 2004.
 */
 
 /*
@@ -112,12 +112,6 @@
 ** have made.
 ** =====================================================================
 **
-** #define SENDMAIL_PATH "/usr/lib/sendmail"
-**			The path to sendmail or compatible program
-**			If you wish to change this, you must #undef
-**			it first since it is already defined as
-**			"/usr/lib/sendmail".
-**
 ** #define LPR_EXTENSIONS_OSF 1
 **			Define this if your lpr has the DEC OSF extensions
 **			such as the -I, -j, -K, -N, -o, -O, and -x switches.
@@ -196,7 +190,6 @@
 #endif
 
 #ifdef PASS2
-#define SENDMAIL_PATH "/usr/lib/sendmail"	/* mail program for alerting */
 #define SAFE_PATH "/bin:/usr/bin"		/* Secure path */
 #endif
 
@@ -225,9 +218,6 @@
 /* /bin is a link to /usr/bin */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
-
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/ucblib/sendmail"
 
 /* The LP paths are just a guess!!! */
 #define LP_LIST_PRINTERS "/var/spool/lp/admins/lp/interfaces"
@@ -302,8 +292,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #ifdef PASS2
 
 #define setsid() setpgrp(0, getpid()) /* setsid() (Posix?) is missing */
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
 
 #endif /* PASS2 */
 #endif /* PPR_NETBSD */
@@ -336,9 +324,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 
 #endif
 #ifdef PASS2
-
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
 
 /* uClibc doesn't support NIS.  We have to put this in pass 2 because
    no uClibc headers have been read during pass 1. */
@@ -601,8 +586,6 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #undef SAFE_PATH
 #define SAFE_PATH "/bin:/usr/bin:/usr/local/bin"
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
 
 #endif /* PASS2 */
 #endif /* PPR_FREEBSD */
@@ -633,8 +616,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #undef HAVE_STATFS
 #undef HAVE_SYS_VFS_H
 #undef HAVE_UNSETENV
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
 #endif
 #ifdef PASS2
 

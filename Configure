@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 12 December 2004.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -538,13 +538,13 @@ while [ "$answer" = "?" ]
     read answer
     case "$answer" in
 	[yY]* )
-	    answer="yes"
+	    answer="1"
 	    ;;
 	[nN]* )
-	    answer="no"
+	    answer=""
 	    ;;
 	'' )
-	    answer="yes"
+	    answer="1"
 	    ;;
 	* )
 	    answer="?";
@@ -558,14 +558,14 @@ else
 
 if [ $opt_with_gdbm -gt 0 ]
     then
-    USE_GDBM="yes"
+    USE_GDBM="1"
     else
-    USE_GDBM="no"
+    USE_GDBM=""
     fi
 
 fi
 
-if [ "$USE_GDBM" = "yes" ]
+if [ -n "$USE_GDBM" ]
   then
   echo "PPR will use GDBM."
   else
@@ -596,13 +596,13 @@ while [ "$answer" = "?" ]
     read answer
     case "$answer" in
 	[yY]* )
-	    answer="yes"
+	    answer="1"
 	    ;;
 	[nN]* )
-	    answer="no"
+	    answer=""
 	    ;;
 	'' )
-	    answer="yes"
+	    answer="1"
 	    ;;
 	* )
 	    answer="?";
@@ -616,14 +616,14 @@ else
 
 if [ $opt_with_tdb -gt 0 ]
     then
-    USE_TDB="yes"
+    USE_TDB="1"
     else
-    USE_TDB="no"
+    USE_TDB=""
     fi
 
 fi
 
-if [ "$USE_TDB" = "yes" ]
+if [ -n "$USE_TDB" ]
   then
   echo "PPR will use TDB."
   else
@@ -668,9 +668,9 @@ while [ "$answer" = "?" ]
     done
 if [ $answer = "yes" ]
     then
-    INTERNATIONAL=""	# don't comment out
+    INTERNATIONAL="1"	# don't comment out
     else
-    INTERNATIONAL="#"	# comment out
+    INTERNATIONAL=""	# comment out
     fi
 
 echo
@@ -678,13 +678,13 @@ echo
 else
 if [ $opt_with_gettext -gt 0 ]
     then
-    INTERNATIONAL=""
+    INTERNATIONAL="1"
     else
-    INTERNATIONAL="#"
+    INTERNATIONAL=""
     fi
 fi
 
-if [ -z "$INTERNATIONAL" ]
+if [ -n "$INTERNATIONAL" ]
     then
     echo "GNU Gettext will be used."
     else
@@ -737,26 +737,26 @@ echo "Looking for the Columbia AppleTalk Program (CAP)..."
 for prefix in /usr/local /usr
     do
     if [ -f "$prefix/lib/libcap.a" ]
-	then
-	echo "    Found \"$prefix/lib/libcap.a\"."
-	if [ ! -d "$prefix/include/netat" ]
-	    then
-	    echo "CAP include directory at \"$prefix/include/netat\" is missing."
-	    exit 1
-	    fi
-	if [ ! -f "$prefix/include/netat/abpap.h" ]
-	    then
-	    echo "You didn't install CAP's abpap.h in $prefix/include/netat as INSTALL.txt instructs."
-	    exit 1
-	    fi
-	ATALKTYPE="cap"
-	ATALKTYPE_LONG="Columbia AppleTalk Program"
-	ATALKFLAGS="-I $prefix/include"
-	ATALKLIBS="$prefix/lib/libcap.a \$(SOCKLIBS)"
-	break
-	fi
+		then
+		echo "    Found \"$prefix/lib/libcap.a\"."
+		if [ ! -d "$prefix/include/netat" ]
+		    then
+		    echo "CAP include directory at \"$prefix/include/netat\" is missing."
+		    exit 1
+		    fi
+		if [ ! -f "$prefix/include/netat/abpap.h" ]
+		    then
+		    echo "You didn't install CAP's abpap.h in $prefix/include/netat as INSTALL.txt instructs."
+		    exit 1
+		    fi
+		ATALKTYPE="cap"
+		ATALKTYPE_LONG="Columbia AppleTalk Program"
+		ATALKFLAGS="-I $prefix/include"
+		ATALKLIBS="$prefix/lib/libcap.a \$(SOCKLIBS)"
+		echo
+		break
+		fi
     done
-echo
 fi
 
 if [ -z "$ATALKTYPE" ]
@@ -769,6 +769,7 @@ if [ -f /usr/lib/libanp.so ]
     ATALKTYPE_LONG="AT&T/NCR AppleTalk Network Program"
     ATALKFLAGS=""
     ATALKLIBS="-lanp"
+	echo
     fi
 fi
 
@@ -778,33 +779,35 @@ if [ "$ATALKTYPE" = "" ]
     else
     echo "  Will use $ATALKTYPE_LONG AppleTalk."
     fi
+echo
 
-#
-# Find the Perl interpreter.
-#
-if [ -z "$PERL" ]
+if [ -z "$SENDMAIL_PATH" ]
     then
-    PERL=`findprog_prog_path perl $PATH`
-    if [ -z "$PERL" ]
+    SENDMAIL_PATH=`findprog_prog_path sendmail /usr/sbin /usr/lib /usr/ucblib`
+    if [ -z "$SENDMAIL_PATH" ]
 		then
-		PERL="/usr/bin/perl"
+		SENDMAIL_PATH="/usr/lib/sendmail"
 		fi
     fi
-
-#
-# See if we can find uncompress, gunzip, bunzip2.
-#
-if [ -z "$GUNZIP" ]
+if [ -z "$PERL_PATH" ]
     then
-    GUNZIP=`findprog_prog_path gunzip $PATH`
-	fi
-if [ -z "$UNCOMPRESS" ]
-	then
-	UNCOMPRESS=`findprog_prog_path uncompress $PATH`
+    PERL_PATH=`findprog_prog_path perl $PATH`
+    if [ -z "$PERL_PATH" ]
+		then
+		PERL_PATH="/usr/bin/perl"
+		fi
     fi
-if [ -z "$BUNZIP2" ]
+if [ -z "$GUNZIP_PATH" ]
+    then
+    GUNZIP_PATH=`findprog_prog_path gunzip $PATH`
+	fi
+if [ -z "$UNCOMPRESS_PATH" ]
 	then
-	BUNZIP2=`findprog_prog_path bunzip2 $PATH`
+	UNCOMPRESS_PATH=`findprog_prog_path uncompress $PATH`
+    fi
+if [ -z "$BUNZIP2_PATH" ]
+	then
+	BUNZIP2_PATH=`findprog_prog_path bunzip2 $PATH`
 	fi
 
 #
@@ -814,10 +817,10 @@ echo "Searching for Zlib..."
 if [ -f /usr/include/zlib.h -o -f /usr/local/include/zlib.h ]
     then
     echo "  Found."
-    ZLIB=""
+    HAVE_ZLIB="1"
     else
     echo "  Not found."
-    ZLIB="#"
+    HAVE_ZLIB=""
     fi
 
 echo
@@ -901,56 +904,68 @@ echo "  Building header..."
 cat >&3 <<===EndOfHere10===
 #
 # ~ppr/src/Makefile.conf
+# Generated on `date` by Configure.
 #
-
-# When was Configure run?
-export DATE=`date`
 
 # This name of the system on which PPR will be compiled.
 # You should change this if you are creating a new port.
-PORT_NAME=$SYSTEM
+export PORT_NAME=$SYSTEM
+
+# Do we want international messages support?
+# This uses GNU Gettext or Solaris Gettext.
+export INTERNATIONAL=${INTERNATIONAL}
+===EndOfHere10===
+
+if [ -n "$INTERNATIONAL" ]
+	then
+	echo "INTLLIBS=-lintl" >&3
+	echo "INTERNATIONAL_INSTALL=install-international" >&3
+	else
+	echo "#INTLLIBS=-lintl" >&3
+	echo "#INTERNATIONAL_INSTALL=install-international" >&3
+	fi
+echo >&3
+
+cat >&3 <<===EndOfHere15===
+# Define the owner and group of most PPR files.
+export USER_PPR=$USER_PPR
+export GROUP_PPR=$GROUP_PPR
+export USER_PPRWWW=$USER_PPRWWW
 
 # Directory for program files and such.
-# Default is /usr/lib/ppr.
 export HOMEDIR=$HOMEDIR
 
 # Directory for architecture independent files
-# Default is /usr/share/ppr
 export SHAREDIR=$SHAREDIR
 
 # Directory into which to install configuration files.
-# Default is /etc/ppr.
 export CONFDIR=$CONFDIR
 
 # Directory for spool files.
-# Default is /var/spool/ppr.
 export VAR_SPOOL_PPR=$VAR_SPOOL_PPR
 
 # Directory for temporary files.
-# Default is /tmp.
 export TEMPDIR=$TEMPDIR
 
 # Directory for symbolic links to PPR executables
-# Default is /usr/bin.
 export SYSBINDIR=$SYSBINDIR
 
 # Directory were we will find X-Windows programs
-# Default is /usr/bin/X11.
 export XWINBINDIR=$XWINBINDIR
 
+===EndOfHere15===
+
+cat >&3 <<'===EndOfHere16==='
 # Directory for HTML files.  If you change this
 # you will have to fix makeprogs/make_install_dirs.sh too.
-export WWWDIR=\$(SHAREDIR)/www
+export WWWDIR=$(SHAREDIR)/www
 
 # Directory for man pages to be installed in.
-export MANDIR=\$(SHAREDIR)/man
+export MANDIR=$(SHAREDIR)/man
 
 # Directory for the CGI programs for the WWW interface.
-export CGI_BIN=\$(HOMEDIR)/cgi-bin
+export CGI_BIN=$(HOMEDIR)/cgi-bin
 
-===EndOfHere10===
-
-cat >&3 <<'===EndOfHere15==='
 # Various configuration directories:
 export PRCONF $(CONFDIR)/printers				# printer configuration files
 export GRCONF $(CONFDIR)/groups					# group configuration files
@@ -959,11 +974,11 @@ export ACLDIR $(CONFDIR)/acl					# Access Control Lists
 export MOUNTEDDIR $(CONFDIR)/mounted			# directory for media mounted files
 
 # Subdirectories
-export RUNDIR $(VAR_SPOOL_PPR)/run"
-export VAR_PRINTERS $(VAR_SPOOL_PPR)/printers"
+export RUNDIR $(VAR_SPOOL_PPR)/run
+export VAR_PRINTERS $(VAR_SPOOL_PPR)/printers
 
 # The main PPR configuration file.
-export PPR_CONF $(CONFDIR)/ppr.conf"
+export PPR_CONF $(CONFDIR)/ppr.conf
 
 # Various configuration files:
 export DBNAME $(CONFDIR)/charge_users.db						# users database file name
@@ -1024,40 +1039,9 @@ export PPR2SAMBA_PATH $(HOMEDIR)/bin/ppr2samba
 export TAIL_STATUS_PATH $(HOMEDIR)/lib/tail_status
 export PPJOB_PATH $(HOMEDIR)/bin/ppjob
 
-===EndOfHere15===
-
-echo "# If all of the above have their default values then," >&3
-echo "# this line may be commented out." >&3
-if [ $HOMEDIR = "/usr/lib/ppr" -a $SHAREDIR = "/usr/share/ppr" \
-		-a $CONFDIR = "/etc/ppr" \
-		-a $VAR_SPOOL_PPR = "/var/spool/ppr" \
-		-a $TEMPDIR = "/tmp" -a $SYSBINDIR = "/usr/bin" \
-		-a $XWINBINDIR = "/usr/bin/X11" ]
-	then
-	$EECHO "#\c" >&3
-	fi
-echo >&3
+===EndOfHere16===
 
 cat >&3 <<===EndOfHere20===
-# Do we want international messages support?
-# This uses GNU Gettext or Solaris Gettext.
-#
-${INTERNATIONAL}INTERNATIONAL=-DINTERNATIONAL
-${INTERNATIONAL}INTLLIBS=-lintl
-${INTERNATIONAL}INTERNATIONAL_INSTALL=install-international
-
-# Define the owner and group of most PPR files.
-export USER_PPR=$USER_PPR
-export GROUP_PPR=$GROUP_PPR
-export USER_PPRWWW=$USER_PPRWWW
-===EndOfHere20===
-
-if [ $USER_PPR = "ppr" -a $GROUP_PPR = "ppr" -a $USER_PPRWWW = "pprwww" ]
-    then
-    $EECHO "#\c" >&3
-    fi
-
-cat >&3 <<===EndOfHere21===
 # Shell script which modifies shell and Perl scripts to use the above values.
 # Don't change this setting.
 SCRIPTFIXUP=../makeprogs/scriptfixup.sh
@@ -1090,23 +1074,19 @@ MAKE_NEW_DIR=../makeprogs/make_new_dir.sh
 # Program to rebuild .depend
 PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
 
-===EndOfHere21===
-
-cat >&3 <<===EndOfHere25===
 # Echo programs that support -n and backslash escapes.
 EECHO=$EECHO
 
-# Location of Perl interpreter
-export PERL=$PERL
+# Locations of programs used by PPR
+export SENDMAIL_PATH=$SENDMAIL_PATH
+export PERL_PATH=$PERL_PATH
+export GUNZIP_PATH=$GUNZIP_PATH
+export UNCOMPRESS_PATH=$UNCOMPRESS_PATH
+export BUNZIP2_PATH=$BUNZIP2_PATH
 
-# Locations of uncompression programs
-export GUNZIP=$GUNZIP
-export UNCOMPRESS=$UNCOMPRESS
-export BUNZIP2=$BUNZIP2
+===EndOfHere20===
 
-===EndOfHere25===
-
-if [ "$USE_GDBM" = "yes" ]
+if [ -n "$USE_GDBM" ]
 then
 cat >&3 <<===EndOfHere30===
 # Decide which user database module to use.
@@ -1133,7 +1113,7 @@ DBLIBS=
 ===EndOfHere40===
 fi
 
-if [ "$USE_TDB" = "yes" ]
+if [ -n "$USE_TDB" ]
 then
 cat >&3 <<===EndOfHere30===
 # Enable building and installing of programs that require Samba's TDB.
@@ -1150,16 +1130,19 @@ cat >&3 <<===EndOfHere40===
 ===EndOfHere40===
 fi
 
-cat >&3 <<===EndOfHere50===
-# Do we have Zlib?
-${ZLIB}ZLIBOPTS=-DHAVE_ZLIB
-${ZLIB}ZLIBLIBS=-lz
-
-===EndOfHere50===
+echo "# Do we have zlib?" >&3
+echo "export HAVE_ZLIB=$HAVE_ZLIB" >&3
+if [ -n "$HAVE_ZLIB" ]
+	then
+	echo "ZLIBLIBS=-lz" >&3
+	else
+	echo "#ZLIBLIBS=-lz" >&3
+	fi
+echo >&3
 
 cat >&3 <<'===EndOfHere52==='
 # Wrap several options together into one
-MISC_OPTS=-DPPR_$(PORT_NAME) $(INTERNATIONAL) $(ZLIBOPTS)
+MISC_OPTS=$(ZLIBOPTS)
 
 # Backup files to delete
 BACKUPS=*~ *.bak *.bck
@@ -1728,6 +1711,7 @@ fi
 echo "  Emitting trailer..."
 cat >&3 <<===EndEOF===
 
+# vim:set tabstop=4:
 # end of file
 
 ===EndEOF===
@@ -1737,7 +1721,7 @@ cat >&3 <<===EndEOF===
 #========================================================================
 
 echo
-echo "Done.  Take a look at Makefile.conf and config.h if you like, then run \"make\"."
+echo "Done.  Take a look at Makefile.conf, if you like, then run \"make\"."
 echo
 
 exit 0

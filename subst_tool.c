@@ -14,9 +14,33 @@ int main(int argc, char *argv[])
 
 	while(fgets(line, sizeof(line), stdin))
 		{
+		linenum++;
+
+		if(strncmp(line, "#undef ", 7) == 0)
+			{
+			char *p2, *value;
+			p = line + 7;
+			if((p2 = strchr(p, '\n')))
+				{
+				*p2 = NULL;
+				if((value = getenv(p)) && *value)
+					{
+					if(strspn(value, "-.0123456789") == strlen(value))	/* if numberic */
+						printf("#define %s %s\n", p, value);
+					else
+						printf("#define %s \"%s\"\n", p, value);
+					continue;
+					}
+				else
+					{
+					*p2 = '\n';
+					/* fall thru */
+					}
+				}
+			}
+
 		for(p=line; *p; p++)
 			{
-			linenum++;
 			if(*p != '@')
 				{
 				fputc(*p, stdout);

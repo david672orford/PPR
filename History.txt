@@ -9437,9 +9437,22 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--11 December 2004
+2.00a1, 11 December 2004--12 December 2004
 
+* added config.h.in; added subst_tool.c; modified Config to generate a 
+  Makefile.conf which exports numberous variables rather than writting them
+  directly to config.h or adding them to CFLAGS; moved path variables
+  from include/global_defines.h to config.h.in.
 
+* Configure: modified to it re-invokes itself through "make configure".  This
+  1) allows us to choose the shell with which to run Configure, and 2) allows
+  Configure to receive the settings from the previous run through the
+  environment.  (Though as yet, this ability isn't exploited.)
+
+* Removed papsrv/
+
+* www/docs_info.cgi.perl: fixed problems related to rendering of definition lists,
+  some of them caused by the tab conversion.  (candidate for 1.54)
 
 
 TODO
