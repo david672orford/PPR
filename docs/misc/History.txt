@@ -8214,11 +8214,13 @@ line was being parsed twice.
 
 * ppop/README.txt: added
 
+* ppr/ppr_infile.c: implemented passthru for type postscript.
+
 * www/README.txt: updated
 
 * tests/: fixed widspread use of "-r none" instead of "-m none" in ppr
-  command lines.  This problem resulted in a flood of e-mail to the user
-  who run the regression tests.
+  command lines.  This problem resulted in a flood of e-mail to whatever
+  user ran the regression tests.
 
 
 1.51, 15 February 2003--17 February 2003.

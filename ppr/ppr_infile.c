@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_infile.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 November 2002.
+** Last modified 17 February 2003.
 */
 
 /*
@@ -105,16 +105,10 @@ struct ANALYZE {
 
 /* PostScript */
 #define IN_TYPE_POSTSCRIPT 0		/* ordinary clean PostScript */
-#define IN_TYPE_D_POSTSCRIPT 1		/* ^D, then PostScript */
-#define IN_TYPE_PJL_POSTSCRIPT 2	/* PS with PJL wrapper */
-#define IN_TYPE_TBCP_POSTSCRIPT 3	/* tagged binary communications protocol PostScript */
+#define IN_TYPE_POSTSCRIPT_D 1		/* ^D, then PostScript */
+#define IN_TYPE_POSTSCRIPT_PJL 2	/* PS with PJL wrapper */
+#define IN_TYPE_POSTSCRIPT_TBCP 3	/* tagged binary communications protocol PostScript */
 #define IN_TYPE_BADPS 4			/* tail of severed PostScript */
-
-/* The range of types which are usable PostScript.
-   This is used to determine if the -H patchps hack
-   applies to the input file. */
-#define IN_TYPE_PS_1ST IN_TYPE_POSTSCRIPT
-#define IN_TYPE_PS_LAST IN_TYPE_TBCP_POSTSCRIPT
 
 /* Basically plain text */
 #define IN_TYPE_LP 100			/* line printer format */
@@ -195,9 +189,9 @@ struct FILTER filters[]=
 
 /* PostScript types: */
 {IN_TYPE_POSTSCRIPT,	"application/postscript",	FALSE,	"postscript",		N_("input file is PostScript"),				""},
-{IN_TYPE_D_POSTSCRIPT,	NULL,				FALSE,	"internal-ctrl-d-ps",	NULL,						""},
-{IN_TYPE_PJL_POSTSCRIPT,NULL,				FALSE,	"internal-pjl-ps",	NULL,						""},
-{IN_TYPE_TBCP_POSTSCRIPT,NULL,				FALSE,	"internal-tbcp-ps",	NULL,						""},
+{IN_TYPE_POSTSCRIPT_D,	NULL,				FALSE,	"postscript-d-ps",	NULL,							""},
+{IN_TYPE_POSTSCRIPT_PJL,NULL,				FALSE,	"postscript-pjl",	NULL,							""},
+{IN_TYPE_POSTSCRIPT_TBCP,NULL,				FALSE,	"postscript-tbcp",	NULL,							""},
 
 /* Basicaly plain text types: */
 {IN_TYPE_LP,		NULL,				FALSE, 	"lp",			N_("pass file thru line printer emulator"),		N_("line printer files")},
@@ -661,7 +655,7 @@ void in_getline(void)
     ** binary data.  As a quick hack, we won't accept ^D as EOF
     ** if TBCP is being used.
     */
-    if(line[0] == 4 && line[1] == '\0' && in_type != IN_TYPE_TBCP_POSTSCRIPT)
+    if(line[0] == 4 && line[1] == '\0' && in_type != IN_TYPE_POSTSCRIPT_TBCP)
 	{
 	warning(WARNING_PEEVE, _("^D as EOF is spurious in a spooled environment"));
 	line[0] = '\0';
@@ -675,10 +669,10 @@ void in_getline(void)
     ** "Universal Exit Language" as EOF.
     **
     ** (Actually, no control-D will proceed UEL when in_type is
-    ** IN_TYPE_TBCP_POSTSCRIPT because tbcp2bin will have deleted
+    ** IN_TYPE_POSTSCRIPT_TBCP because tbcp2bin will have deleted
     ** it if it was present.)
     */
-    if( (in_type == IN_TYPE_PJL_POSTSCRIPT || in_type == IN_TYPE_TBCP_POSTSCRIPT)
+    if( (in_type == IN_TYPE_POSTSCRIPT_PJL || in_type == IN_TYPE_POSTSCRIPT_TBCP)
 	    && ( ((line[0]==27) && (strncmp(line,"\x1b%-12345X",9)==0))
 	    	|| ((line[0]==4) && (strncmp(line,"\x04\x1b%-12345X",10)==0)) ) )
 	{
@@ -893,7 +887,7 @@ static void check_for_PJL(void)
 		int c;
 
 		/* Set to special kind of PS */
-		in_type = IN_TYPE_PJL_POSTSCRIPT;
+		in_type = IN_TYPE_POSTSCRIPT_PJL;
 
 		/*
 		** Eat up control-d which some drivers insert
@@ -1156,7 +1150,7 @@ static int analyze_input(int *skip_size)
     if(*in_ptr == 4)
 	{
 	*skip_size = 1;
-	return IN_TYPE_D_POSTSCRIPT;
+	return IN_TYPE_POSTSCRIPT_D;
 	}
 
     /*
@@ -1183,7 +1177,7 @@ static int analyze_input(int *skip_size)
     if(temp_left >= 2 && p[0] == 1 && p[1] == 'M')
     	{
 	*skip_size = in_left - temp_left;
-	return IN_TYPE_TBCP_POSTSCRIPT;
+	return IN_TYPE_POSTSCRIPT_TBCP;
     	}
     }
 
@@ -2206,7 +2200,7 @@ static void save_infile(void)
 ** If we return TRUE, then the do_passthru() function below
 ** will be called.
 */
-static gu_boolean should_passthru(const struct FILTER *f)
+static gu_boolean should_passthru(const char type_name[])
     {
     gu_boolean ret = FALSE;
 
@@ -2217,7 +2211,9 @@ static gu_boolean should_passthru(const struct FILTER *f)
     if(qentry.opts.hacks & HACK_TRANSPARENT)
 	return FALSE;
 
-    /* If there is a list of file types to pass directly to the printer, */
+    /* If there is a list of file types to pass
+       directly to the printer,
+    */
     if(extract_passthru())
 	{
         char *mycopy, *ptr;
@@ -2225,19 +2221,19 @@ static gu_boolean should_passthru(const struct FILTER *f)
 
 	ptr = mycopy = gu_strdup(extract_passthru());
 
-        /* Search the list: */
+        /* Search that list. */
         while((substr = strtok(ptr, " ")))
             {
             ptr = NULL;
 
-            if(gu_strcasecmp(f->name, substr) == 0)	/* if match, */
+            if(gu_strcasecmp(type_name, substr) == 0)	/* if match, */
                 {
                 ret = TRUE;
                 break;
                 }
             }
 
-        /* Discard our copy. */
+        /* Discard our copy of the list. */
         gu_free(mycopy);
 	}
 
@@ -2441,51 +2437,51 @@ int infile_open(const char filename[])
     while(skip_size--)
     	in_getc();
 
-    /* If it is PostScript, do nothing.  If it is TBCP
-       encoded PostScript, run the tbcp2bin filter
-       Otherwise, call run_appropriate_filter(). */
-    switch(in_type)
+
+    /* Input file is PostScript (including goary mutiliations), */
+    if(lmatch(f->name, "postscript"))
 	{
-	case IN_TYPE_POSTSCRIPT:        /* PostScript is already ok */
-	case IN_TYPE_PJL_POSTSCRIPT:	/* PostScript with stript PJL header */
-	    break;
-	case IN_TYPE_TBCP_POSTSCRIPT:	/* PostScript encoded with TBCP */
-	    exec_filter(TBCP2BIN_PATH, "tbcp2bin", (char*)NULL);
-	    break;
-	case IN_TYPE_D_POSTSCRIPT:	/* Control-D is messy PostScript */
-	    warning(WARNING_PEEVE, _("spurious leading ^D"));
-	    break;
-	default:			/* Non-PostScript */
-	    temp_Filters = append_to_list(temp_Filters, f->name);
-	    if(should_passthru(f))
-		{
-		do_passthru(f);
-		break;
-		}
-	    run_appropriate_filter(f, filename);
-	    break;
-	} /* end of in_type switch */
-
-    /*
-    ** If the input type was PostScript and the editps hack is enabled,
-    ** allow the editps system to look at the buffer of data and, if it
-    ** asks us to, run a filter.
-    */
-    if(qentry.opts.hacks & HACK_EDITPS
-		&& in_type >= IN_TYPE_PS_1ST && in_type <= IN_TYPE_PS_LAST)
-	{
-	const char **arg_list;
-
-	/* editps_identify wants a zero byte terminated string.
-	   We have already allocated extra room for this. */
-	in_ptr[in_left] = '\0';
-
-	/* If the editps system wants to edit the file,
-	   execute the filter it specifies. */
-	if((arg_list = editps_identify(in_ptr, in_left)) != (const char **)NULL)
+	switch(in_type)
 	    {
-	    exec_filter_argv(arg_list[0], arg_list);
+	    case IN_TYPE_POSTSCRIPT:        	/* PostScript is already ok */
+	    case IN_TYPE_POSTSCRIPT_PJL:	/* PostScript with stript PJL header */
+		break;
+	    case IN_TYPE_POSTSCRIPT_TBCP:	/* PostScript encoded with TBCP */
+		exec_filter(TBCP2BIN_PATH, "tbcp2bin", (char*)NULL);
+		break;
+	    case IN_TYPE_POSTSCRIPT_D:		/* Control-D is messy PostScript */
+		warning(WARNING_PEEVE, _("spurious leading ^D"));
+		break;
 	    }
+
+	if(should_passthru("postscript"))
+	    do_passthru(f);
+
+	if(qentry.opts.hacks & HACK_EDITPS)
+	    {
+	    const char **arg_list;
+
+	    /* editps_identify wants a zero byte terminated string.
+	       We have already allocated extra room for this. */
+	    in_ptr[in_left] = '\0';
+
+	    /* If the editps system wants to edit the file,
+	       execute the filter it specifies. */
+	    if((arg_list = editps_identify(in_ptr, in_left)) != (const char **)NULL)
+		{
+		exec_filter_argv(arg_list[0], arg_list);
+		}
+	    }
+	}
+
+    /* Input file is not PostScript, */
+    else
+	{
+	temp_Filters = append_to_list(temp_Filters, f->name);
+	if(should_passthru(f->name))
+	    do_passthru(f);
+	else
+	    run_appropriate_filter(f, filename);
 	}
 
     qentry.Filters = temp_Filters;
