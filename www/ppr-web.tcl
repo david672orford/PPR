@@ -41,12 +41,43 @@ set base_url "http://localhost:15010"
 # decoration and then closes itself.
 set opener_url "$base_url/cgi-bin/window_open.cgi"
 
-# This is the URL of the page we really want to open.
-set final_url "$base_url/cgi-bin/show_queues.cgi"
+# Process the command line arguments.  The first one is a queue name and any
+# that follow are file names.
+set queue ""
+set files {}
+foreach arg $argv {
+    if {$queue == ""} {
+	set queue $arg
+	} else {
+	lappend files $arg
+	}
+    }
 
-# This is the size of the second window.
-set width 700
-set height 550
+# If some files were to be printed, print them now and exit.  This is to
+# support drag-and-drop when we are a desktop icon.
+if {$files != {}} {
+    foreach file $files {
+	puts "Printing file $file..."
+	set result [catch {exec ppr -d $queue -e responder $file >@stdout 2>@stderr} error]
+	if {$result != 0} {
+	    puts "Failed to print file \"$file\" due to error: $error"
+	    exit 1
+	    }
+    	}
+    exit 0
+    }
+
+# If a printer was specified, we show its queue, otherwise we show the PPR
+# control panel.
+if {$queue != 0} {
+    set final_url "$base_url/cgi-bin/show_jobs.cgi?name=$queue"
+    set width 750
+    set height 550
+    } else {
+    set final_url "$base_url/cgi-bin/show_queues.cgi"
+    set width 750
+    set height 550
+    }
 
 # These are the browsers in order of preference.  Again, this is according
 # to how well or poorly they render the PPR web interface.  They are listed

@@ -35,6 +35,8 @@ require 'cgi_data.pl';
 require 'cgi_wizard.pl';
 require "cgi_intl.pl";
 
+defined($SHAREDIR) || die;
+
 $printcap_wizard_table = [
 	#===========================================
 	# Choose What to Create
@@ -51,16 +53,40 @@ $printcap_wizard_table = [
 		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), cgi_data_peek("name", "?")), "</span><br>\n";
 
 		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
-		print '<input type="radio" name="what_to_download" value="kde_icon">', H_("KDE Icon"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Icon"), "<br>\n";
 		print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
 		},
-	'buttons' => [N_("_Cancel"), N_("_Next")]
+	'buttons' => [N_("_Cancel"), N_("_Next")],
+	'onnext' => sub {
+		if(! defined(cgi_data_peek("what_to_download", undef)))
+		    {
+		    return _("You must make a choice.");
+		    }
+		return undef;
+		},
+	'getnext' => sub { return cgi_data_peek("what_to_download", "") }
+	},
+
+	#===========================================
+	# KDE Icon
+	#===========================================
+	{
+	'label' => 'kde_shortcut',
+	'title' => N_("Downloadable KDE Icon"),
+	'picture' => "cliconf1.png",
+	'dopage' => sub {
+		print "<p>", H_("Click on the button below to download the KDE shortcut.\n"
+			. "You will probably want to save it in your Desktop folder."), "</p>\n";
+		isubmit("action", "Download", N_("_Download"), undef);
+		},
+	'buttons' => [N_("_Close")]
 	},
 
 	#===========================================
 	# Choose a Spooler
 	#===========================================
 	{
+	'label' => "spooler_config",
 	'title' => N_("Create Client Script: Choose a Spooler"),
 	'picture' => "cliconf1.png",
 	'dopage' => sub {
@@ -130,7 +156,7 @@ $printcap_wizard_table = [
 	'dopage' => sub {
 		my $localname = cgi_data_peek("localname", "?");
 		print "<p>", H_("Click on the button below to download the install script."), "</p>\n";
-		isubmit("action", "Download", N_("_Download"), undef), 
+		isubmit("action", "Download", N_("_Download"), undef); 
 		print "<p>", H_("This script must be run as root.  The command to run it is:"), "</p>\n";
 		print "<pre>\n";
 		print html("# sh setup_$localname.sh"), "\n";
@@ -200,6 +226,37 @@ EndOfBSD
     }
 
 #===========================================
+# This function creates a KDE shortcut
+#===========================================
+sub gen_kde_shortcut
+    {
+    my $name = cgi_data_move("name", "?");
+    my $filename = $name;
+
+    print <<"EndIcon";
+Content-Type: application/octet-stream; name=$filename
+Content-Disposition: inline; filename=$filename
+
+[Desktop Entry]
+Comment[en_US]=
+Encoding=UTF-8
+Exec=ppr-web $name
+Icon=$SHAREDIR/www/q_icons/00000.png
+MimeType=
+Name[en_US]=$name
+Path=
+ServiceTypes=
+SwallowExec=
+SwallowTitle=
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
+EndIcon
+    }
+
+#===========================================
 # Main
 #===========================================
 
@@ -207,9 +264,14 @@ EndOfBSD
 
 if(cgi_data_move("action", "") eq "Download")
     {
-    if(cgi_data_peek("what_to_download", "") eq "spooler_config")
+    my $what = cgi_data_peek("what_to_download", "");
+    if($what eq "spooler_config")
 	{
 	gen_spooler_config();
+	}
+    elsif($what eq "kde_shortcut")
+	{
+	gen_kde_shortcut();
 	}
     else
 	{

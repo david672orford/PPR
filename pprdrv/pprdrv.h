@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 19 November 2002.
+** Last revised 20 November 2002.
 */
 
 /*
@@ -34,7 +34,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 1
+#if 0
 #define DEBUG 1				/* include function debug() */
 #define DEBUG_MAIN 1			/* main() */
 #define DEBUG_INTERFACE 1		/* show opening, closing, etc. */

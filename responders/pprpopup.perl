@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 November 2002.
+# Last modified 20 November 2002.
 #
 
 #
@@ -74,7 +74,7 @@ if($addr =~ /^([^\@]+)\@.+$/)
     $user = $1;
     }
 
-# Open a connexion to pprpopup
+# Open a TCP connexion to pprpopup on the user's machine.
 if(!open_connexion(SEND, $addr))
   { exit(1) }
 
@@ -109,7 +109,7 @@ print SEND "\nProbable cause: $reason\n" if($reason ne "");
 
 print SEND "\nThe title of this job is \"$title\".\n" if($title ne "");
 
-if($pages ne "?")
+if($pages > 0)
   {
   if($pages == 1)
      { print SEND "\nIt is 1 page long." }

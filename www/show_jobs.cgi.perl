@@ -302,10 +302,10 @@ print <<"Quote20";
 <input type="image" border="0" name="action" value="Refresh" src="../images/pixel-clear.png">
 Quote20
 
-isubmit("action", "Queue", _("Queue"), "onclick=\"return $queue_type(event,${\javascript_string($queue)})\"") if(defined $controls{Queue});
-isubmit("action", "View", _("View")) if(defined $controls{View});
-isubmit("action", "Refresh", _("Refresh")) if(defined $controls{Refresh});
-isubmit("action", "Close", _("Close"), 'onclick="window.close()"') if(defined $controls{Close});
+isubmit("action", "Queue", _("Queue"), "class=\"buttons\" onclick=\"return $queue_type(event,${\javascript_string($queue)})\"") if(defined $controls{Queue});
+isubmit("action", "View", _("View"), 'class="buttons"') if(defined $controls{View});
+isubmit("action", "Refresh", _("Refresh"), 'class="buttons"') if(defined $controls{Refresh});
+isubmit("action", "Close", _("Close"), 'class="buttons" onclick="window.close()"') if(defined $controls{Close});
 
 print "<span style='margin-left: 9cm'></span>\n";
 if(defined $controls{Help})

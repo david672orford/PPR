@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/pprpopup.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 19 December 2001.
+# Last modified 20 November 2002.
 #
 
 #
@@ -70,6 +70,8 @@ sub open_connexion
 	{
 	my $encoded_responder_address = $responder_address;
 	$encoded_responder_address =~ s/([^a-zA-Z0-9\@\.])/sprintf("%%%02X", ord $1)/ge;
+
+	# Look for a registration file.
 	if(! open(PPRPOPUP_DB, "<$dbdir/$encoded_responder_address"))
 	    {
 	    print "open_connexion($handle, \"$responder_address\"): client not registered\n";

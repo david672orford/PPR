@@ -7990,3 +7990,10 @@ line was being parsed twice.
   pops up the menu that show_queues.cgi pops up.  Changed "Settings" to
   "View".
 
+* ppr/ppr_respond.c: switch the seteuid()/setegid() code from setting them
+  to the user's to setting them to PPR's.  Set the real IDs too.  This 
+  fixes the xwin and pprpopup responder when launched by ppr (rather than
+  pprd).
+
+
+

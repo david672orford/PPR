@@ -1,26 +1,39 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/responders/xwin.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 3 April 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 20 November 2002.
 #
 
 #
-# This responder sends the response by means of the X-Windows program
-# "xmessage" or, if xmessage is not available, by means of xterm, sh,
-# and echo.
-#
-# If you don't have xmessage but do have Tcl/Tk, you can get the xmessage
-# clone out of the misc directory of the PPR source code.
+# This responder sends the response by means of the X-Windows program 
+# "xmessage" or, if xmessage is not available, by means of wish and our
+# xmessage clone script, or if that isn't available either, by means of 
+# xterm, sh, and echo.
 #
 
 # Place where the system X-Windows binaries are kept.  It is
@@ -150,17 +163,27 @@ It is $pages_printed pages long."
     fi
 
 # If it was submitted more than 10 minutes ago, tell when.
-when=`lib/time_elapsed $time_submitted 600`
-if [ -n "$when" ]
+if [ $time_submitted -gt 0 ]
     then
-    message="${message}
+    when=`lib/time_elapsed $time_submitted 600`
+    if [ -n "$when" ]
+	then
+	message="${message}
 You submitted this job $when ago.
 "
+	fi
     fi
+
+#===========================================================
+# Worry about .Xauthority
+#===========================================================
+echo $HOME
+#if [ ! 
 
 #===========================================================
 # Figure out which program we can use so send the message.
 #===========================================================
+
 if [ -x $XWINBINDIR/xmessage ]
     then
     sender="$XWINBINDIR/xmessage \
