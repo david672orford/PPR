@@ -41,7 +41,8 @@ sub new
     my $self = {};
     bless $self;
     $self->{window} = shift;
-    $self->{pressed} = undef;
+    $self->{copies} = 1;
+    $self->{duplex} = "DuplexNoTumble";
     return $self;
     }
 
@@ -50,6 +51,7 @@ sub Show
     my $self = shift;
     $self->{dest} = shift;
 
+    $self->{pressed} = undef;
     my $w = $self->{window};
 
     # The bottom right frame contains two buttons which set a flag
@@ -116,7 +118,8 @@ sub Show
 	)->pack(-side => 'left', -fill => 'y', -padx => 5, -pady => 5);
     $copies_frame->Label(-text => 'Number of Copies:'
 	)->pack(-side => 'left', -anchor => 'n');
-    $copies_frame->Entry(-width => 4
+    $copies_frame->Entry(-width => 4,
+	-textvariable => \$self->{copies}
 	)->pack(-side => 'left', -anchor => 'n');
 
     # Middle frame 2
@@ -153,8 +156,14 @@ sub Show
     $duplex_frame->Label(
 	-text => "Duplex:"
 	)->pack(-side => 'left', -anchor => 'n');
-    $duplex_frame->Optionmenu(
+    my $dlist = $duplex_frame->Optionmenu(
 	-justify => 'left',
+	-variable => \$self->{duplex},
+	-options => [
+		["None", "None"],
+		["Long Edge", "DuplexNoTumble"],
+		["Short Edge", "DuplexTumble"]
+		]
 	)->pack(-side => 'left', -anchor => 'n');
 
     # Fill the queue select listbox.
@@ -175,13 +184,18 @@ sub Show
     $w->waitWindow;
     undef $self->{window};
 
+    my @args = ();
+
     print STDERR "User pressed $self->{pressed}\n";
-    if($self->{pressed} ne "Print")
+    if($self->{pressed} eq "Print")
 	{
-	return ();
+	push(@args, "-d", $self->{dest});
+	push(@args, "-n", $self->{copies});
+	push(@args, "--feature", "Duplex=$self->{duplex}");
+
 	}
 
-    return ("-d", $self->{dest});
+    return @args;
     }
 
 sub destroy

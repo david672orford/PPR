@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 March 2003.
+** Last modified 25 March 2003.
 */
 
 #include "before_system.h"
@@ -119,6 +119,10 @@ static int do_show(const char username[])
     return EXIT_OK;
     }
 
+/*
+** This takes up to three command line arguments and writes them to a
+** followme record.
+*/
 static int do_set(char username[], int argc, char *argv[], int i)
     {
     char *responder = NULL, *responder_address = NULL, *responder_options = NULL;
@@ -181,6 +185,7 @@ static int do_set(char username[], int argc, char *argv[], int i)
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
 	{
+	{"show", 1000, FALSE},
 	{"help", 9000, FALSE},
 	{"version", 9001, FALSE},
 	{(char*)NULL, 0, FALSE}
@@ -199,14 +204,17 @@ static void help_usage(FILE *outfile)
 
     fputs(_("Valid switches:\n"), outfile);
 
-    fputs(_(	"\t--version\n"
-		"\t--help\n"), outfile);
+    fputs(_("\t--show\n"), outfile);
+
+    fputs(_("\t--version\n"
+			"\t--help\n"), outfile);
     }
 
 int main(int argc, char *argv[])
     {
     int i;
     struct passwd *pw;
+    gu_boolean opt_show = FALSE;
 
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
@@ -224,6 +232,10 @@ int main(int argc, char *argv[])
     	{
     	switch(optchar)
     	    {
+	    case 1000:			/* --show */
+	    	opt_show = TRUE;
+	    	break;
+
 	    case 9000:			/* --help */
 	    	help_usage(stdout);
 	    	return EXIT_OK;
@@ -242,6 +254,7 @@ int main(int argc, char *argv[])
     i = getopt_state.optind;
     }
 
+    /* We have no use for more than 4 non-switch arguments. */
     if((argc - i) >= 4)
 	{
 	help_usage(stderr);
@@ -255,10 +268,10 @@ int main(int argc, char *argv[])
 	return EXIT_INTERNAL;
 	}
 
-    if((argc - i) >= 1)
-    	return do_set(pw->pw_name, argc, argv, i);
-    else
+    if(opt_show)
 	return do_show(pw->pw_name);
+    else
+	return do_set(pw->pw_name, argc, argv, i);
 
     } /* end of main() */
 

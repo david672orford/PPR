@@ -41,6 +41,9 @@ PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
 all: $(PROGS)
 
+gettargetfile:
+	@echo "ppr-followme"
+
 ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(CC) $(CFLAGS) -o ppr-xgrant$(DOTEXE) ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
