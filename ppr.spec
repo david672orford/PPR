@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 3 August 2003.
+# Last modified 5 August 2003.
 #
 
 #
@@ -107,7 +107,8 @@ RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 %docdir /usr/share/ppr/www/docs
 
 #============================================================================
-# This removes the build directory after the install.
+# This removes the build directory when starting a new build or after the
+# RPM package has been built.
 #============================================================================
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -142,6 +143,9 @@ find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr \
     | xargs -0 chown ppr:ppr
 
 # Initialize the binary media database.
+touch /etc/ppr/media.db
+chown ppr:ppr /etc/ppr/media.db
+chmod 644 /etc/ppr/media.db
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
 
 # Index fonts, PPD files, etc.
@@ -154,7 +158,7 @@ find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr \
 17 * * * * /usr/lib/ppr/lib/cron_hourly
 END
 
-# Install Inetd config.
+# Install Inetd config.  (Xinetd is taken care of.)
 # missing
 
 # Setup init scripts to start PPR daemons at boot.
@@ -178,7 +182,7 @@ END
 /usr/bin/crontab -u ppr -r
 
 # Remove the UPRINT symbolic links and put the native spooler programs back.
-/usr/lib/ppr/bin/uprint-newconf --remove
+/usr/lib/ppr/bin/uprint-newconf --remove >/dev/null
 
 # If PPR has lines in /etc/inetd.conf, remove them and tell Inetd to reload
 # its configuration file.
@@ -200,7 +204,7 @@ if [ -d /etc/xinetd.d ]
     fi
 
 # Remove almost everything PPR ever generated.  This includes the indexes.
-/usr/lib/ppr/bin/ppr-clean --all-removable
+/usr/lib/ppr/bin/ppr-clean --all-removable >/dev/null
 
 #============================================================================
 # This is run after uninstalling.

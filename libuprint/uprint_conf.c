@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 August 2003.
+** Last modified 5 August 2003.
 */
 
 #include "before_system.h"
@@ -190,7 +190,7 @@ void uprint_read_conf(void)
 				state = STATE_DEFAULT_DESTINATIONS;
 				continue;
 				}
-			else if(lmatch(line, "[cups]"))
+			else if(lmatch(line, "[CUPS]"))
 				{
 				state = STATE_CUPS;
 				continue;
@@ -336,10 +336,6 @@ void uprint_read_conf(void)
 					break;
 				continue;
 
-			case STATE_PPR:
-
-				continue;
-
 			case STATE_DEFAULT_DESTINATIONS:
 				if(strcmp(name, "uprint-lp") == 0)
 					{
@@ -350,6 +346,9 @@ void uprint_read_conf(void)
 					conf.default_destinations.lpr = uprint_strdup(value);
 					}
 				continue;
+
+			default:		/* a state created but not yet implemented */
+				break;
 			}
 
 		/* Unclaimed line: */
