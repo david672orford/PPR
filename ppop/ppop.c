@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 24 August 2001.
+** Last modified 5 November 2001.
 */
 
 /*
@@ -775,9 +775,9 @@ int job_permission_check(struct Jobname *job)
 	if(job_proxy_for[0] == '\0' || !proxy_for_match(job_proxy_for, proxy_for))
 	    {
 	    fprintf(errors,
-	    	_("You may not perform this operation because the job \"%s\"\n"
-	    	  "was not submitted on behalf of \"%s\".\n"),
-		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode), proxy_for);
+	    	_("You may not manipulate the job \"%s\" because it belongs to\n"
+	    	  "\"%s\", while you are \"%s\".\n"),
+		remote_jobid(job->destnode, job->destname, job->id, job->subid, job->homenode), job_proxy_for, proxy_for);
 
 	    return -1;
 	    }
