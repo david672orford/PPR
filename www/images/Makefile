@@ -33,7 +33,9 @@ include ../../makeprogs/global.mk
 #=== Inventory ==============================================================
 
 GENERATED_IMAGES=pprlogo2.eps pprlogo2.png \
-	prn_testpage1.png prn_testpage2.png
+	prn_testpage1.png prn_testpage2.png \
+	cliconf1.png \
+	exclaim.png
 
 #=== Build ==================================================================
 

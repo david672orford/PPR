@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 February 2002.
+# Last modified 5 April 2002.
 #
 
 use lib "?";
@@ -41,7 +41,7 @@ $printcap_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Create Client Script: Choose a Spooler"),
-	'picture' => "cliconf.png",
+	'picture' => "cliconf1.png",
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "?");
 
@@ -61,7 +61,7 @@ $printcap_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Create Client Script: Local Name"),
-	'picture' => "cliconf.png",
+	'picture' => "cliconf1.png",
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "");
 		my $host = cgi_data_peek("host", "");
@@ -76,7 +76,7 @@ $printcap_wizard_table = [
 	#===========================================
 	{
 	'title' => N_("Create Client Script: Download"),
-	'picture' => "cliconf.png",
+	'picture' => "cliconf1.png",
 	'dopage' => sub {
 
 
