@@ -1,14 +1,14 @@
-8 November 2002
+15 January 2003
 
 This is announce.txt from:
 
-ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50a1.tar.gz
-http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50a1.tar.gz
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50b1.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50b1.tar.gz
 
 
 ==========================================================================
 
-Version 1.50a2 of PPR has been released.
+Version 1.50b1 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -36,19 +36,19 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 * Fixed confusing error messages.
 
-* Vastly improved PPR Popup program for computer lab printing.  PPR Popup
+* Vastly improved the PPR Popup program for computer lab printing.  PPR Popup
   now works on Macintosh computers.
 
 * Fixed bugs in N-Up printing.
 
 * Added --stop option to pprd and papsrv.
 
-* Fixed a problem on rare ocasions caused a job to silently fail
+* Fixed a problem which on rare ocasions caused a job to silently fail
   to make it into the queue until next time pprd was restarted.
 
 * Fixed numberous bugs, including bugs which caused spooler crashes.
 
-* Numberous refinements to the web interface.
+* Made numberous small improvements to the web interface.
 
 * Added support for AppSocket (in addition to the existing support
   for SocketAPI).

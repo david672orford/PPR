@@ -1,13 +1,13 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 15 November 2002.
+# Last modified 15 January 2003.
 #
-# This is my first attempt at a RPM spec file for PPR.  I think I have made
+# This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
 #
 # In order to use this file, move the PPR source archive to
 # /usr/src/RPM/SOURCES and run "rpm -ba ppr-X.XX.spec".  It is possible to
-# build the thing elsewhere, such as in ones home dirctory, but I don't know
+# build the thing elsewhere, such as in one's home dirctory, but I don't know
 # how.
 #
 
@@ -42,7 +42,8 @@ with Ghostscript, Netatalk, CAP60, and Samba.
 
 # Use the new, experimental configure script since it can mostly run
 # non-interactively.
-# Note: We have to work %_target_cpu in here somewhere.
+# Note: We have to work %_target_cpu in here somewhere.  Right now
+# it configures for the CPU it runs on.
 ./Configure_new --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext
 
 make

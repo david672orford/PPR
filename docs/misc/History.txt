@@ -8060,7 +8060,7 @@ line was being parsed twice.
 * fixup/fixup_inetd.sh: removed spurious "disabled =" line from generated 
   xinetd.d/ppr file.
 
-* www/prn_properties.cgi.perl: fixed custom RIP saving
+* www/prn_properties.cgi.perl: fixed custom RIP saving.
 
 * fixup/fixup_perms.sh: made ppr-xgrant setgid as well as setuid
   (unixuser/Makefile already did this).
@@ -8095,7 +8095,13 @@ line was being parsed twice.
 * www/prn_addwiz.cgi.perl, libppr/interfaces.c: added entries for usblp
   interface program.
 
-* ppr-papd/: renamed everything from ppr-papd to papd.  This violations my
+* ppr-papd/: renamed everything from ppr-papd to papd.  This violates my
   convention, but the name was really annoying me.
 
+* po/: added PAPD.po.
+
+* www/prn_properties.cgi.perl: fixed papd support.
+
+* init_and_cron/init_ppr.sh: added code to start and stop papd (if it is
+  installed).
 
