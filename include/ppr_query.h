@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2003.
+** Last modified 16 October 2003.
 */
 
 /*
@@ -51,22 +51,21 @@ struct QUERY
 	int pipe_stdout[2];
 	int pipe_stderr[2];
 	int last_stdout_crlf;
-	int maxfd;
-	char *line;
-	int line_len;
+	int maxfd;						/* first argument for select() */
+	char *line;						/* last line read from printer */
+	int line_len;					/* number of bytes currently allocated to line */
 	gu_boolean connected;
-	gu_boolean disconnecting;
-	gu_boolean started;
+	gu_boolean disconnecting;		/* are we going to close() once the output buffer is empty? */
+	gu_boolean job_started;			/* has query_puts() been called yet? */
 	};
 
 struct QUERY *query_new_byaddress(const char interface[], const char address[]);
 struct QUERY *query_new_byprinter(const char printer[]);
 void query_connect(struct QUERY *q);
 void query_puts(struct QUERY *q, const char s[]);
-char *query_getline(struct QUERY *q, gu_boolean *is_stderr);
-char *query_connect_wait(struct QUERY *q);
-void query_control_d(struct QUERY *q);
+char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout);
 void query_sendquery(struct QUERY *q, const char *name, const char values[], const char default_response[], const char pstext[]);
+void query_endjob(struct QUERY *q);
 void query_disconnect(struct QUERY *q);
 void query_delete(struct QUERY *q);
 

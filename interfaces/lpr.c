@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 16 October 2003.
 */
 
 /*
@@ -452,9 +452,17 @@ int main(int argc, char *argv[])
 	if(int_cmdline.feedback)
 		{
 		alert(int_cmdline.printer, TRUE,
-				_("The PPR interface program \"%s\" does not support bidirectional\n"
-				"communication.  Use the command \"ppad feedback %s false\" to\n"
-				"correct this problem."), int_cmdline.int_basename, int_cmdline.printer);
+			_("The PPR interface program \"%s\" is incapable of sending feedback.\n"),
+			int_cmdline.int_basename
+			);
+		if(strcmp(int_cmdline.printer, "-") != 0)
+			{
+			alert(int_cmdline.printer, FALSE,
+				_("Use the command \"ppad feedback %s false\" to correct this problem."),
+				int_cmdline.int_basename,
+				int_cmdline.printer
+				);
+			}
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 

@@ -8851,7 +8851,8 @@ Internet Printing Protocol Work
   solution.
 
 * Converted SNMP code and tcpip interface to new exception handling, got rid
-  of old exception handling.
+  of old exception handling.  Also added code to prevent running off the end
+  of the packet if the packet contains invalid field length values.
 
 * pprd/pprd_queue.c: converted to new exception handing.
 
@@ -8861,12 +8862,11 @@ Internet Printing Protocol Work
   first as a way to deal with systems whose nodenames change due to dial-up
   networking.
 
-
+* Added "ppad ppdq".  This work included debugging and improvements in
+  libppr/query.c and the addition of ppad/ppad_ppd.c.
 
 +++++++++++++++++++++
 TODO
-
-* Use the query code.
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not

@@ -32,14 +32,21 @@
 #include <sys/time.h>
 #include "gu.h"
 
-/*==========================================================================
-** These are utility routines for dealing with time.
-==========================================================================*/
+/*! \file
+	\brief real-world clock routines
+	
+These are utility routines for dealing with real-world clock values (struct
+timeval).  They provide a way to zero, copy, add, subtract, and compare such
+values.
 
-/*
-** This utility function is used to compare times.  It returns 1 if t1 is
-** greater than t2, zero if t1 is equal to t2, and -1 if t1 is less than
-** t2.
+*/
+
+/** Compare two times in struct timeval format
+
+This utility function is used to compare times.  It returns 1 if t1 is
+greater than t2, zero if t1 is equal to t2, and -1 if t1 is less than
+t2.
+
 */
 int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2)
 	{
@@ -54,8 +61,10 @@ int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2)
 	return 0;
 	}
 
-/*
-** This utility function is used to subtract time t2 from time t1.
+/** Subtract one time in struct timeval format from another
+
+This utility function is used to subtract time t2 from time t1.
+
 */
 void gu_timeval_sub(struct timeval *t1, const struct timeval *t2)
 	{
@@ -68,8 +77,10 @@ void gu_timeval_sub(struct timeval *t1, const struct timeval *t2)
 		}
 	}
 
-/*
-** This utility function adds t2 to t1.
+/** Add one time in struct timeval format to another
+
+This utility function adds t2 to t1.
+
 */
 void gu_timeval_add(struct timeval *t1, const struct timeval *t2)
 	{
@@ -82,8 +93,10 @@ void gu_timeval_add(struct timeval *t1, const struct timeval *t2)
 		}
 	}
 
-/*
-** This utility function copies time t2 to time t1.
+/** Copy a struct timeval
+
+This utility function copies time t2 to time t1.
+
 */
 void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2)
 	{
