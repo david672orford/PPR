@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_dscdoc.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 10 September 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 27 September 2002.
 */
 
 /*
@@ -908,6 +923,37 @@ static void feature_spy(void)
     	}
     } /* end of feature_spy() */
 
+/*
+** This routine too is called from read_prolog(), but this one is called 
+** whenever a "%%BeginNonPPDFeature:" line is seen.  For example:
+**
+** %%BeginNonPPDFeature: NumCopies 10
+**
+** Note the absence of an astrisk (*) before "NumCopies".
+*/
+static void feature_spy_nonppd(void)
+    {
+    if(tokens[1] && tokens[2])
+	{
+	switch(tokens[1][0])
+	    {
+	    case 'N':
+	    	if(strcmp(tokens[1], "NumCopies") == 0)
+	    	    {
+		    if(read_copies)
+		    	{
+			int x;
+			if((x = atoi(tokens[2])) < 1)
+			    warning(WARNING_SEVERE, "Ignoring NonPPD Feature NumCopies which requests \"%s\" copies", tokens[2]);
+			else
+			    qentry.opts.copies = x;
+		    	}
+	    	    }
+		break;
+	    }
+	}
+    }
+
 /*=========================================================================
 ** A routine for each section of a DSC conforming document.
 =========================================================================*/
@@ -1121,7 +1167,7 @@ gu_boolean read_prolog(void)
 
 		outermost_start(OUTERMOST_DOCSETUP);
 		}
-	    else if( nest_level() == 0 && strcmp(line, "%%EndSetup") == 0 )
+	    else if(nest_level() == 0 && strcmp(line, "%%EndSetup") == 0)
 		{
 		qentry.attr.docsetup = TRUE;
 		end_setup_seen = TRUE;			/* just set flag */
@@ -1161,8 +1207,13 @@ gu_boolean read_prolog(void)
 	    ** desired media or we may be able to emulate features which
 	    ** are missing in the printer.
 	    */
-	    if(qentry.attr.docsetup && ((strncmp(line, "%%BeginFeature:", 15) == 0) || (strncmp(line, "%%IncludeFeature:", 17) == 0)))
-		feature_spy();
+	    if(qentry.attr.docsetup)
+	    	{
+	    	if(lmatch(line, "%%BeginFeature:") || lmatch(line, "%%IncludeFeature:"))
+		    feature_spy();
+		if(lmatch(line, "%%BeginNonPPDFeature:"))
+		    feature_spy_nonppd();
+		}
 	    }
 	else                /* if not comment, just copy it */
 	    {
@@ -1180,12 +1231,12 @@ gu_boolean read_prolog(void)
 /*
 ** Start and end of page processing routines.
 */
-void start_of_page_processing(void)
+static void start_of_page_processing(void)
     {
     prepare_thing_bitmap();
     } /* end of start_of_page_processing() */
 
-void end_of_page_processing(void)
+static void end_of_page_processing(void)
     {
     dump_page_resources();
     dump_page_requirements();
