@@ -5,7 +5,7 @@
 
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 December 2002.
+# Last modified 23 January 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -941,6 +941,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -sq
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -970,6 +971,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -995,6 +997,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1020,6 +1023,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1045,6 +1049,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 
 CC=gcc
 #CC=diet
@@ -1085,6 +1090,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1110,6 +1116,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndOSF1===
 if [ "$NATIVE_CC" = "yes" ]
 then
@@ -1151,6 +1158,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndIRIX===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1204,6 +1212,7 @@ OBJ=o
 DOTEXE=.exe
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1234,6 +1243,7 @@ OBJ=o
 DOTEXE=.exe
 LIBEXT=a
 LIBCMD=ar -cr
+RANLIB=touch
 ===EndUWIN1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1277,6 +1287,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndHPUX1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1320,6 +1331,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 ===EndULTRIX1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1368,6 +1380,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -cr
+RANLIB=ranlib
 CC=cc
 CFLAGS=$GCC_CFLAGS -I ../include -I /usr/local/include \$(MISC_OPTS)
 LD=cc

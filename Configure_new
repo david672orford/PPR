@@ -5,17 +5,32 @@
 
 #
 # mouse:~ppr/src/Configure_new
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 15 November 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 23 January 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -1072,6 +1087,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -sq
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1101,6 +1117,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1126,6 +1143,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1151,6 +1169,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1176,6 +1195,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 
 CC=gcc
 #CC=diet
@@ -1216,6 +1236,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1241,6 +1262,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndOSF1===
 if [ "$NATIVE_CC" = "yes" ]
 then
@@ -1282,6 +1304,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndIRIX===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1335,6 +1358,7 @@ OBJ=o
 DOTEXE=.exe
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 CC=gcc
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
 LD=gcc
@@ -1365,6 +1389,7 @@ OBJ=o
 DOTEXE=.exe
 LIBEXT=a
 LIBCMD=ar -cr
+RANLIB=touch
 ===EndUWIN1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1408,6 +1433,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -q
+RANLIB=touch
 ===EndHPUX1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1451,6 +1477,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -crs
+RANLIB=touch
 ===EndULTRIX1===
 
 if [ "$NATIVE_CC" = "yes" ]
@@ -1499,6 +1526,7 @@ OBJ=o
 DOTEXE=
 LIBEXT=a
 LIBCMD=ar -cr
+RANLIB=ranlib
 CC=cc
 CFLAGS=$GCC_CFLAGS -I ../include -I /usr/local/include \$(MISC_OPTS)
 LD=cc

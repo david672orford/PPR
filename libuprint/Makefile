@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libuprint/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2002.
+# Last modified 23 January 2003.
 #
 
 include ../Makefile.conf
@@ -59,8 +59,8 @@ all: $(TARGETS) $(DATA)
 
 ../libuprint.$(LIBEXT): $(LIBUPRINT_OBJS)
 	$(RMF) ../libuprint.$(LIBEXT)
-	-$(LIBCMD) ../libuprint.$(LIBEXT) >/dev/null 2>&1
 	$(LIBCMD) ../libuprint.$(LIBEXT) $(LIBUPRINT_OBJS)
+	$(RANLIB) ../libuprint.$(LIBEXT)
 
 uprint-newconf$(DOTEXE): uprint-newconf.$(OBJ) $(USELIBS)
 	$(LD) $(LDFLAGS) -o uprint-newconf$(DOTEXE) uprint-newconf.$(OBJ) $(USELIBS) $(INTLLIBS)
@@ -82,4 +82,3 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 # end of file
-

@@ -8121,8 +8121,12 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50b1, 22 January 2003--22 January 2003.
+1.50, 22 January 2003--23 January 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
   directories listed in ppr.conf which don't exist.
+
+* Configure, Configure_new, lib*/Makefile, nonppr_tcl/Makefile: added
+  explicit call to ranlib (though for most platforms RANLIB=touch).
+

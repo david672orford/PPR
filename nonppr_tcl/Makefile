@@ -1,7 +1,7 @@
 #
 # mouse:~ppr/src/nonppr_tcl/Makefile
 #
-# Last modified 4 December 2002.
+# Last modified 23 January 2003.
 #
 
 include ../Makefile.conf
@@ -11,6 +11,10 @@ include ../Makefile.conf
 #CC=gcc
 #CFLAGS=-O2
 #HOMEDIR=
+#OBJ=o
+#LIBCMD=ar -c
+#RANLIB=ranlib
+#DOTEXE=
 
 # Directory from which applications will reference the library of Tcl scripts.
 TCL_LIBRARY = $(HOMEDIR)/lib
@@ -42,12 +46,30 @@ MORE_CFLAGS = -I. $(MATH_FLAGS) $(MEM_DEBUG_FLAGS) -DTCL_LIBRARY=\"$(TCL_LIBRARY
 
 #=== Inventory ==============================================================
 
-GENERIC_OBJS =	regexp.o tclAsync.o tclBasic.o tclCkalloc.o \
-	tclCmdAH.o tclCmdIL.o tclCmdMZ.o tclExpr.o tclGet.o \
-	tclHash.o tclLink.o tclParse.o tclProc.o \
-	tclUtil.o tclVar.o gu.o
+GENERIC_OBJS=regexp.$(OBJ) \
+	tclAsync.$(OBJ) \
+	tclBasic.$(OBJ) \
+	tclCkalloc.$(OBJ) \
+	tclCmdAH.$(OBJ) \
+	tclCmdIL.$(OBJ) \
+	tclCmdMZ.$(OBJ) \
+	tclExpr.$(OBJ) \
+	tclGet.$(OBJ) \
+	tclHash.$(OBJ) \
+	tclLink.$(OBJ) \
+	tclParse.$(OBJ) \
+	tclProc.$(OBJ) \
+	tclUtil.$(OBJ) \
+	tclVar.$(OBJ) \
+	gu.$(OBJ)
 
-UNIX_OBJS = panic.o tclEnv.o tclGlob.o tclMain.o tclUnixAZ.o tclUnixStr.o tclUnixUtil.o
+UNIX_OBJS=panic.$(OBJ) \
+	tclEnv.$(OBJ) \
+	tclGlob.$(OBJ) \
+	tclMain.$(OBJ) \
+	tclUnixAZ.$(OBJ) \
+	tclUnixStr.$(OBJ) \
+	tclUnixUtil.$(OBJ)
 
 OBJS = $(GENERIC_OBJS) $(UNIX_OBJS)
 
@@ -55,25 +77,26 @@ BIN_PROGS=ppr-tclsh$(DOTEXE)
 
 #=== Build ==================================================================
 
-all: libtcl.a $(BIN_PROGS)
+all: libtcl.$(LIBEXT) $(BIN_PROGS)
 
 .c.$(OBJ):
 	$(CC) $(CFLAGS) $(MORE_CFLAGS) -c $*.c
 
-libtcl.a: $(OBJS)
-	$(RMF) libtcl.a
-	ar cr libtcl.a $(OBJS)
+libtcl.$(LIBEXT): $(OBJS)
+	$(RMF) libtcl.$(LIBEXT)
+	$(LIBCMD) libtcl.$(LIBEXT) $(OBJS)
+	$(RANLIB) libtcl.$(LIBEXT)
 
-ppr-tclsh$(DOTEXE): tclAppInit.o libtcl.a
-	$(CC) $(CC_SWITCHES) tclAppInit.o libtcl.a $(MATH_LIBS) -o ppr-tclsh
+ppr-tclsh$(DOTEXE): tclAppInit.$(OBJ) libtcl.$(LIBEXT)
+	$(CC) $(CC_SWITCHES) tclAppInit.$(OBJ) libtcl.$(LIBEXT) $(MATH_LIBS) -o ppr-tclsh$(DOTEXE)
 
-#=== Test == ================================================================
+#=== Test ===================================================================
 
-test: tcltest
+test: tcltest$(DOTEXE)
 	( cd tests && ../tcltest all )
 
-tcltest: tclTest.o libtcl.a
-	$(CC) $(CC_SWITCHES) tclTest.o libtcl.a $(MATH_LIBS) -o tcltest
+tcltest$(DOTEXE): tclTest.$(OBJ) libtcl.$(LIBEXT)
+	$(CC) $(CC_SWITCHES) tclTest.$(OBJ) libtcl.$(LIBEXT) $(MATH_LIBS) -o tcltest$(DOTEXE)
 
 #=== Install ================================================================
 
@@ -88,6 +111,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) libtcl.a $(BIN_PROGS) tcltest
+	$(RMF) *.$(OBJ) $(BACKUPS) libtcl.$(LIBEXT) $(BIN_PROGS) tcltest$(DOTEXE)
 
 # end of file

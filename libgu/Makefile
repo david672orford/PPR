@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libgu/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 May 2002.
+# Last modified 23 January 2003.
 #
 
 include ../Makefile.conf
@@ -75,8 +75,8 @@ all: $(TARGETS)
 
 ../libgu.$(LIBEXT): $(LIBOBJS)
 	$(RMF) ../libgu.$(LIBEXT)
-	-$(LIBCMD) ../libgu.$(LIBEXT) >/dev/null 2>&1
 	$(LIBCMD) ../libgu.$(LIBEXT) $(LIBOBJS)
+	$(RANLIB) ../libgu.$(LIBEXT)
 
 #=== Install ================================================================
 
