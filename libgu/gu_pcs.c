@@ -48,6 +48,7 @@ to the clone.
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include "gu.h"
 
 struct PCS {
@@ -355,7 +356,6 @@ void gu_pcs_append_char(void **pcs, int c)
 
 This function appends a C string the the PCS object.
 
-=cut
 */
 void gu_pcs_append_cstr(void **pcs, const char cstr[])
 	{
@@ -403,6 +403,37 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
 	p->length = new_length;
 	}
 
+/** append an sprintf() formatted string 
+ */
+void gu_pcs_append_sprintf(void **pcs, const char format[], ...)
+	{
+	struct PCS *p = (struct PCS *)*pcs;
+	int sprintf_len;
+	va_list va;
+
+	va_start(va, format);
+
+	sprintf_len = gu_vsnprintf(NULL, 0, format, va);
+	if(sprintf_len == 0)
+		return;
+	if(sprintf_len < 0)
+		gu_Throw("sprintf_len=%d < 0!", sprintf_len);
+
+	if(p->refcount > 1)
+		{
+		void *new_pcs = gu_pcs_new_pcs(pcs);
+		gu_pcs_free(pcs);
+		*pcs = new_pcs;
+		p = (struct PCS *)*pcs;
+		}
+
+	gu_pcs_grow(pcs, p->length + sprintf_len);
+	printf("yy: %d\n", gu_vsnprintf(p->storage + p->length, sprintf_len + 1, format, va));
+	p->length += sprintf_len;
+
+	va_end(va);
+	}
+
 /** compare PCSs
 
 This function does for PCSs what strcmp() does for C strings.
@@ -427,7 +458,7 @@ int gu_pcs_cmp(void **pcs1, void **pcs2)
 
 /*
 ** Test program
-** gcc -Wall -DTEST -I../include gu_pcs.c ../libgu.a
+** gcc -Wall -DTEST -I../include -o gu_pcs gu_pcs.c ../libgu.a
 */
 #ifdef TEST
 int main(int argc, char *argv[])
@@ -486,6 +517,13 @@ int main(int argc, char *argv[])
 	gu_pcs_debug(&pcs_b, "pcs_b");
 	gu_pcs_free(&pcs_b);
 	printf("pcs_a=%p, pcs_b=%p, pcs_c=%p\n", pcs_a, pcs_b, pcs_c);
+	printf("\n");
+
+	pcs_a = gu_pcs_new_cstr("test=");
+	gu_pcs_append_sprintf(&pcs_a, "%s,%s", "smith", "jones");
+	gu_pcs_debug(&pcs_a, "pcs_a");
+	gu_pcs_free(&pcs_a);
+	printf("\n");
 
 	return 0;
 	}

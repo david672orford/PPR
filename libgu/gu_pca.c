@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 25 March 2005.
 */
 
 /*! \file
@@ -192,6 +192,14 @@ void gu_pca_unshift(void *pca, void *item)
 		p->size_used++;
 		p->storage[0] = item;
 		}
+	}
+
+/** return a pointer to the C array or char*
+ */
+char **gu_pca_ptr(void *pca)
+	{
+	struct PCA *p = (struct PCA *)pca;
+	return p->storage;
 	}
 
 /* gcc -Wall -I../include -DTEST -o gu_pca gu_pca.c ../libgu.a */

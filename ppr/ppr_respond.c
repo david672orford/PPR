@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 /*
@@ -144,7 +144,7 @@ int respond(int response_code, const char extra[])
 			gu_name_str_value("responder_name", qentry.responder.name),
 			gu_name_str_value("responder_address", qentry.responder.address),
 			gu_name_str_value("responder_options", qentry.responder.options),
-			gu_name_str_value("destname", qentry.destname),
+			gu_name_str_value("destination", qentry.destname),
 			gu_name_int_value("response_code", response_code),
 			gu_name_str_value("extra", extra),
 			gu_name_str_value("for", qentry.For),

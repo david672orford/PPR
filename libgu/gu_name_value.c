@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 /*! \file */
@@ -47,7 +47,16 @@ char *gu_name_int_value(const char name[], int value)
 char *gu_name_str_value(const char name[], const char value[])
 	{
 	char *mem;
-	gu_asprintf(&mem, "%s=%s", name, value);
+	gu_asprintf(&mem, "%s=%s", name, value ? value : "");
+	return mem;
+	}
+
+/** format name and long int value in allocated memory
+ */
+char *gu_name_long_value(const char name[], long int value)
+	{
+	char *mem;
+	gu_asprintf(&mem, "%s=%ld", name, value);
 	return mem;
 	}
 

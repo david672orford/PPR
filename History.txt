@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--24 March 2005
+2.00a1, 11 December 2004--25 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9653,5 +9653,11 @@ no final tarball was released.
 * libgu/gu_name_value.c: added
 
 * Switched calling method for ppr-respond to name=value pairs.
+
+* include/gu.h: added gu_name_matchp()
+
+* libgu/gu_pcs.c: added gu_pcs_append_sprintf()
+
+* responders/Makefile: removed code to create link from mail to errmail.
 
 

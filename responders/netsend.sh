@@ -33,16 +33,26 @@
 # This responder attempts to reach the user by means of
 # AT&T StarLAN LANManager net send.
 #
-# As you can see, it is behind the times.
-#
 
-# Give the arguments names:
-for="$1"
-address="$2"
-canned_message="$3"
+while [ $# -gt 0 ]
+	do
+	name=`echo $1 | cut -d= -f1`
+	value=`echo $1 | cut -d= -f2`
+	case $name in
+		for )
+			for="$value"
+			;;
+		responder_address )
+			responder_address="$value"
+			;;
+		short_message )
+			short_message="$value"
+			;;
+	esac
+	shift
+	done
 
 # Invoke that neat OS/2 program:
-/usr/bin/net send $address "$canned_message"
+/usr/bin/net send $responder_address "$short_message"
 
-# Done
 exit 0

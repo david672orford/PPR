@@ -29,7 +29,6 @@
 */
 
 /* The upper two bits specify the type of the message. */
-#define RESP_TYPE_MASK 0xC0
 #define RESP_TYPE_JOB_FATE 0				/** response is job fate */
 #define RESP_TYPE_COMMENTARY 64				/** message is printer commentary */
 

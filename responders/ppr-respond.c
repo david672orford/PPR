@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 /*
@@ -71,169 +71,215 @@
 
 struct RESPONSE_INFO
 	{
-	char *jobname;					/* destname-id of job */
-	int response_code;				/* what happened to the job? */
-	char *extra;					/* extra parameter supplementing response_code */
-	struct QEntryFile job;
-	int pages_printed;
-	struct COMPUTED_CHARGE charge;	/* the amount of money to charge */
+	struct QEntryFile qentry;	/* contents of queue file */
+	char *job;					/* destname-id of job */
+	char *destination;
+	char *printer;
+	int response_code;			/* what happened to the job? */
+	char *extra;				/* extra parameter supplementing response_code */
+	char *commentary_cooked;
+	char *commentary_raw1;
+	char *commentary_raw2;
+	int commentary_severity;
 	} ;
+
+static char *build_subject(struct RESPONSE_INFO *rinfo)
+	{
+	return "";
+	}
 
 /*
 ** Build a message in final_str, basing it upon the code "response" and inserting
 ** particuliar information from the other arguments.
 */
-static void respond_build_message(char *response_str, size_t space_available, struct RESPONSE_INFO *rinfo)
+static char *build_short_message(struct RESPONSE_INFO *rinfo)
 	{
+	void *message;
+
+	message = gu_pcs_new_cstr("short_message=");
+	
 	switch(rinfo->response_code)
 		{
 		case RESP_FINISHED:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" has been printed on \"%s\"."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->printer);
 			break;
 
 		case RESP_ARRESTED:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" was arrested after an attempt\n"
 				"to print it on \"%s\" resulted in a job error."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->printer);
 			break;
 
 		case RESP_CANCELED:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" has been canceled."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_CANCELED_PRINTING:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" was canceled while printing on \"%s\"."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->printer);
 			break;
 
 		case RESP_CANCELED_BADDEST:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" was canceled because\n"
 				"\"%s\" is not a known destination."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->destination);
 			break;
 
 		case RESP_CANCELED_REJECTING:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" was canceled because\n"
 				"the destination \"%s\" is not acceping requests."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->destination);
 			break;
 
 		case RESP_STRANDED_PRINTER_INCAPABLE:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" is stranded because\n"
 				"the printer \"%s\" is incapable of printing it."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->printer);
 			break;
 
 		case RESP_STRANDED_GROUP_INCAPABLE:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job \"%s\" is stranded because no\n"
 				"member of the group \"%s\" is capable of printing it."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->destination);
 			break;
 
 		case RESP_CANCELED_NOCHARGEACCT:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" was rejected because\n"
 				"\"%s\" does not have a charge account."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_BADAUTH:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" was rejected because\n"
 				"you did not enter %s's authorization code."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_OVERDRAWN:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" was rejected because\n"
 				"your account is overdrawn."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_CANCELED_NONCONFORMING:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" was rejected because\n"
 				"it does not contain DSC page division information."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_NOFILTER:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected because no filter\n"
 				"is available which can convert %s to PostScript."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_FATAL:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected by PPR because of a\n"
 				"fatal error: %s."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_NOSPOOLER:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been lost because PPRD is not running."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_BADMEDIA:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected because it requires\n"
 				"a size and type of medium (paper) which is not available."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_BADPJLLANG:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected because the\n"
 				"PJL header requests an unrecognized printer language \"%s\"."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_FATAL_SYNTAX:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected because\n"
 				"the ppr command line contains an error:\n"
 				"\n"
 				"%s."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
 			break;
 
 		case RESP_CANCELED_NOPAGES:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your new print job for \"%s\" has been rejected because\n"
 				"you requested printing of only selected pages but the pages\n"
 				"are not marked by DSC comments."),
-				rinfo->jobname);
+				rinfo->job);
 			break;
 
 		case RESP_CANCELED_ACL:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Your print job for \"%s\" has been rejected because the\n"
 				"PPR access control lists do not grant \"%s\" access to\n"
 				"that destination."),
-				rinfo->jobname, rinfo->extra);
+				rinfo->job, rinfo->extra);
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
+			gu_pcs_append_sprintf(&message,
+				_("The printer \"%s\" which is printing \"%s\" reports error\n"
+				"\"%s\"."),
+				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
+			gu_pcs_append_sprintf(&message,
+				_("The printer \"%s\" which is printing \"%s\" reports status\n"
+				"\"%s\"."),
+				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_STALL:
+			gu_pcs_append_sprintf(&message,
+				_("The printer \"%s\" which is printing \"%s\" %s\n"),
+				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+			break;
+
+		case RESP_TYPE_COMMENTARY | COM_EXIT:
+			gu_pcs_append_sprintf(&message,
+				_("The printer \"%s\" which is printing \"%s\" %s."),
+				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
 			break;
 
 		default:
-			snprintf(response_str, space_available,
+			gu_pcs_append_sprintf(&message,
 				_("Undefined response code %d for your job \"%s\"."),
-				rinfo->response_code, rinfo->jobname);
+				rinfo->response_code, rinfo->job);
 			break;
 		}
+
+	return gu_pcs_free_keep_cstr(&message);
 	} /* end of respond_build_message() */
+
+static char *build_long_message(struct RESPONSE_INFO *rinfo)
+	{
+	return "";
+	}
 
 /*
  * handle the followme meta responder
@@ -266,8 +312,8 @@ static struct RESPONDER *followme(struct RESPONDER *responder)
 					   from followme. */
 					if(strlen(responder_options) > 0)			/* if any from followme, */
 						{
-						if(strlen(responder->options) > 0)		/* if any from job too, */
-							{
+						if(responder->options && strlen(responder->options) > 0)
+							{		/* if any from job too, */
 							char *p;
 							gu_asprintf(&p, "%s %s", responder_options, responder->options);
 							gu_free(responder_options);
@@ -294,117 +340,7 @@ static struct RESPONDER *followme(struct RESPONDER *responder)
 	return responder;
 	}
 
-/*
- * Handle "job fate" messages from pprd and ppr
- */
-static int job_message(int argc, char *argv[])
-	{
-	struct RESPONSE_INFO rinfo;
-	struct RESPONDER *actual_responder;
-	char response_message[256];
-	char responder_fname[MAX_PPR_PATH];
-	char time_in_ascii[16];
-	char numpages_in_ascii[16];
 
-	/* all formats have these parameters in common */
-	rinfo.jobname = argv[2];
-	rinfo.response_code = atoi(argv[3]);
-	rinfo.extra = argv[4];
-
-	/* pprd provides 2 additional parameters and a queue file on fd 3. */
-	if(strcmp(argv[1], "pprd") == 0)
-		{
-		int charge_per_duplex, charge_per_simplex;
-		FILE *f;
-
-		charge_per_duplex = atoi(argv[5]);
-		charge_per_simplex = atoi(argv[6]);
-
-		if(!(f = fdopen(3, "r")))
-			{
-			fprintf(stderr, "%s: fdopen(%d, \"r\") failed, errno=%d (%s)\n", argv[0], 3, errno, gu_strerror(errno));
-			return -1;
-			}
-
-		qentryfile_clear(&rinfo.job);
-		qentryfile_load(&rinfo.job, f);
-	
-		fclose(f);
-		}
-
-	/* ppr provides no queue file but it makes up for it in parameters. */
-	else if(strcmp(argv[1], "ppr") == 0)
-		{
-		rinfo.job.responder.name = argv[5];
-		rinfo.job.responder.address = argv[6];
-		rinfo.job.responder.options = argv[7];
-		rinfo.job.For = argv[8];
-		rinfo.job.Title = argv[9];
-		rinfo.job.lc_messages = argv[10];
-		rinfo.job.time = 0;
-		}
-
-	else
-		{
-		gu_Throw("can't happen");
-		}
-
-	rinfo.pages_printed = -1;
-	rinfo.charge.total = 0;
-
-	/* Sanity check */
-	if(!rinfo.job.responder.name && !rinfo.job.responder.address)
-		gu_Throw("responder name or address missing");
-
-	/* If no response is possible, then we are done. */
-	if(!(actual_responder = followme(&rinfo.job.responder)))
-		return 0;
-
-	/* Initialize international messages library. */
-	#ifdef INTERNATIONAL
-	setlocale(LC_ALL, rinfo.job.lc_messages);
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	#endif
-
-	/* Construct the message string. */
-	respond_build_message(response_message, sizeof(response_message), &rinfo);
-
-	/* Convert some other stuff to strings. */
-	snprintf(time_in_ascii, sizeof(time_in_ascii), "%ld", rinfo.job.time);
-	snprintf(numpages_in_ascii, sizeof(numpages_in_ascii), "%d", rinfo.pages_printed);
-
-	/* Build path to responder. */
-	ppr_fnamef(responder_fname, "%s/%s", RESPONDERDIR, actual_responder->name);
-
-	/* Replace this child program with the responder. */
-	execl(
-		responder_fname, actual_responder->name,
-		actual_responder->address,
-		actual_responder->options,
-		(char*)NULL
-		);
-
-	/* Catch execl() failures. */
-	gu_Throw("execl(\"%s\", ...) failed, errno=%d (%s)", responder_fname, errno, gu_strerror(errno));
-	}
-
-/*
- * Handle "commentary" messages from pprdrv
- */
-static int commentary_message(int argc, char *argv[])
-	{
-	char canned_message[1024];
-	char *responder_name = argv[3];
-	char *responder_address = argv[4];
-	char *responder_options = argv[5];
-	char *queuefile = argv[6];
-	char *printer_name = argv[7];
-	int category = atoi(argv[8]);
-	char *cooked = argv[9];
-	char *raw1 = argv[10];
-	char *raw2 = argv[11];
-	int severity = atoi(argv[12]);
 #if 0
 	/*
 	** Prepare the canned message.
@@ -474,7 +410,6 @@ static int commentary_message(int argc, char *argv[])
 
 	}
 #endif
-	}
 
 /*
 ** The command line interface of this program is not documented.  It will
@@ -484,30 +419,186 @@ static int commentary_message(int argc, char *argv[])
 */
 int main(int argc, char *argv[])
 	{
-	if(argc < 2)
-		gu_Throw("too few arguments");
-	if(strcmp(argv[1], "pprd") == 0)
+	struct RESPONSE_INFO rinfo;
+	struct RESPONDER *actual_responder;
+	int iii;
+	void *command;
+	char *p;
+
+	command = gu_pca_new(20,20);
+
+	qentryfile_clear(&rinfo.qentry);
+	rinfo.job = NULL;
+	rinfo.destination = NULL;
+	rinfo.printer = NULL;
+	rinfo.response_code = -1;
+	rinfo.extra = NULL;
+	rinfo.commentary_cooked = NULL;
+	rinfo.commentary_raw1 = NULL;
+	rinfo.commentary_raw2 = NULL;
+	rinfo.commentary_severity = -1;
+
+	for(iii=1; iii < argc; iii++)
 		{
-		if(argc != 7)
-			gu_Throw("wrong number of arguments");
-		job_message(argc, argv);
+		if(strcmp(argv[iii], "qfile_fd3") == 0)
+			{
+			FILE *f = fdopen(3, "r");
+			qentryfile_load(&rinfo.qentry, f);
+			fclose(f);
+			}
+		else if((p = gu_name_matchp(argv[iii], "responder_name")))
+			{
+			rinfo.qentry.responder.name = p;
+			}
+		else if((p = gu_name_matchp(argv[iii], "responder_address")))
+			{
+			rinfo.qentry.responder.address = p;
+			}
+		else if((p = gu_name_matchp(argv[iii], "responder_options")))
+			{
+			rinfo.qentry.responder.options = p;
+			}
+		else if((p = gu_name_matchp(argv[iii], "job")))
+			{
+			rinfo.job = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "destination")))
+			{
+			rinfo.destination = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "printer")))
+			{
+			rinfo.printer = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "response_code")))
+			{
+			rinfo.response_code = atoi(p);
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "extra")))
+			{
+			rinfo.extra = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "for")))
+			{
+			rinfo.qentry.For = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "title")))
+			{
+			rinfo.qentry.Title = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "lc_messages")))
+			{
+			rinfo.qentry.lc_messages = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "charge_per_duplex")))
+			{
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "charge_per_simplex")))
+			{
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_cooked")))
+			{
+			rinfo.commentary_cooked = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_raw1")))
+			{
+			rinfo.commentary_raw1 = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_raw2")))
+			{
+			rinfo.commentary_raw2 = p;
+			gu_pca_push(command, argv[iii]);
+			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_severity")))
+			{
+			rinfo.commentary_severity = atoi(p);
+			gu_pca_push(command, argv[iii]);
+			}
+		else
+			{
+			gu_pca_push(command, argv[iii]);
+			}
 		}
-	else if(strcmp(argv[1], "ppr") == 0)
+
+	/* Make sure mandatory responder information is present. */
+	if(!rinfo.qentry.responder.name)
+		gu_Throw("reponder_name is missing");
+	if(!rinfo.qentry.responder.address)
+		gu_Throw("reponder_address is missing");
+	
+	/* If no response is possible, then we are done. */
+	if(!(actual_responder = followme(&rinfo.qentry.responder)))
+		return 0;
+
+	/* Deteremine if this message should actually be sent. */
+	if(actual_responder->options && strlen(actual_responder->options) > 0)
 		{
-		if(argc != 11)
-			gu_Throw("wrong number of arguments");
-		job_message(argc, argv);
+		char *temp = gu_strdup(actual_responder->options);
+		char *item, *value;
+		gu_boolean yes;
+		for(p = temp; (item = gu_strsep(&p, " \t")); )
+			{
+			if((value = gu_name_matchp(item, "printed")))
+				{
+				if(gu_torf_setBOOL(&yes, value) != -1 && !yes && rinfo.response_code==RESP_FINISHED)
+					return 0;
+				}
+			else if((value = gu_name_matchp(item, "canceled")))
+				{
+				if(gu_torf_setBOOL(&yes, value) != -1 && !yes && (rinfo.response_code==RESP_CANCELED || rinfo.response_code==RESP_CANCELED_PRINTING))
+					return 0;
+				}
+			}
+		gu_free(temp);
 		}
-	else if(strcmp(argv[1], "pprdrv_commentary") == 0)
+	
+	/* Add the (possibly modified) responder options to the command line. */
+	gu_pca_push(command, gu_name_str_value("responder_name", actual_responder->name));
+	gu_pca_push(command, gu_name_str_value("responder_address", actual_responder->address));
+	gu_pca_push(command, gu_name_str_value("responder_options", actual_responder->options));
+
+	/* Initialize international messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_ALL, rinfo.qentry.lc_messages);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	#endif
+
+	/* Add suggested messages */
+	gu_pca_push(command, build_subject(&rinfo));
+	gu_pca_push(command, build_short_message(&rinfo));
+	gu_pca_push(command, build_long_message(&rinfo));
+
+	/* Add job information from queue file */
+	if(rinfo.qentry.time > 0)
+		gu_pca_push(command, gu_name_long_value("time", rinfo.qentry.time));
+	if(rinfo.qentry.attr.pages >= 0)
 		{
-		if(argc != 13)
-			gu_Throw("wrong number of arguments");
-		commentary_message(argc, argv);
+		int pages = rinfo.qentry.attr.pages;
+		if(rinfo.qentry.page_list.count >= 0)
+			pages = rinfo.qentry.page_list.count;
+		pages = (pages + rinfo.qentry.N_Up.N - 1) / rinfo.qentry.N_Up.N;
+		if(rinfo.qentry.opts.copies >= 0)
+			pages *= rinfo.qentry.opts.copies;
+		gu_pca_push(command, gu_name_int_value("pages", pages));
 		}
-	else
-		{
-		gu_Throw("Unrecognized category: %s", argv[1]);
-		}
+
+	gu_asprintf(&p, "%s/%s", RESPONDERDIR, actual_responder->name);
+	gu_pca_unshift(command, p);		/* argv[0] */
+	execv(p, gu_pca_ptr(command));
+
 	return 1;
 	}
 

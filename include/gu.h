@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 /*! \file
@@ -94,6 +94,9 @@ typedef int gu_boolean;
 
 /** Write constant string s to file descriptor s using write(). */
 #define gu_write_string(fd, s) (write(fd, s, sizeof(s) - 1))
+
+/** If b matches the name in name=value pair a, return pointer to value */
+#define gu_name_matchp(a, b) (!strncmp(a, b, sizeof(b) - 1) && a[sizeof(b) - 1] == '=' ? a + sizeof(b) : NULL)
 
 /*===================================================================
 ** Memory allocation routines
@@ -216,6 +219,7 @@ char *gu_strtrim(char *string);
 char *gu_stresc_convert(char *string);
 char *gu_name_int_value(const char name[], int value);
 char *gu_name_str_value(const char name[], const char value[]);
+char *gu_name_long_value(const char name[], long int value);
 
 /*===================================================================
 ** Command line option parsing
@@ -410,6 +414,7 @@ int gu_pcs_truncate(void **pcs, size_t newlen);
 void gu_pcs_append_char(void **pcs, int c);
 void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
+void gu_pcs_append_sprintf(void **pcs, const char format[], ...);
 int gu_pcs_cmp(void **pcs1, void **pcs2);
 
 /* Perl Compatible Hash */
@@ -433,6 +438,7 @@ void *gu_pca_pop(void *pca);
 void  gu_pca_push(void *pca, void *item); 
 void *gu_pca_shift(void *pca); 
 void  gu_pca_unshift(void *pca, void *item); 
+char **gu_pca_ptr(void *pca);
 char *gu_pca_join(const char separator[], void *array);
 
 /* Perl Compatible Regular Expressions */

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 25 March 2005.
 #
 
 #
@@ -36,167 +36,63 @@
 # xterm, sh, and echo.
 #
 
-# Place where the system X-Windows binaries are kept.  It is
-# normally "/usr/bin/X11".
-XWINBINDIR="@XWINBINDIR@"
+#==============================
+# Parse the command line
+#==============================
+while [ $# -gt 0 ]
+	do
+	name=`echo $1 | cut -d= -f1`
+	value=`echo $1 | cut -d= -f2`
+	case $name in
+		for )
+			for="$value"
+			;;
+		responder_address )
+			responder_address="$value"
+			;;
+		short_message )
+			short_message="$value"
+			;;
+	esac
+	shift
+	done
 
-# This helps use find our mkstemp.
-LIBDIR="@LIBDIR@"
-
-# We may need to write the message into a temporary file.
-# It is normally "/tmp".
-TEMPDIR="@TEMPDIR@"
-
-# We need the echo that will accept escape codes.
-EECHO="@EECHO@"
-
-# Give names to all the parameters.
-for="$1"
-address="$2"
-canned_message="$3"
-canned_message2="$4"
-responder_options="$5"
-response_code_number="$6"
-jobid="$7"
-extra="$8"
-title="$9"
-shift 9
-time_submitted="$1"
-why_arrested="$2"
-pages_printed="$3"
-charge="$4"
-
-# Pull in definitions of $RESP_*:
-. lib/respond.sh
+echo $short_message >&2
 
 #==============================
 # Parse the responder options
 #==============================
-option_printed=1
 option_timeout=""
-option_canceled=1
 for opt in $responder_options
 	do
 	case $opt in
-	printed=[nNfF0]* )
-		option_printed=0
-		;;
-	printed=[yYtT1-9]* )
-		option_printed=1
-		;;
-	timeout=* )
-		option_timeout="-timeout `echo $opt | cut -d= -f2`"
-		;;
-	canceled=[nNfF0]* )
-		option_canceled=0
-		;;
-	canceled=[yYtT1-9]* )
-		option_canceled=1
-		;;
-	* )
-		;;
-	esac
+		timeout=* )
+			option_timeout="-timeout `echo $opt | cut -d= -f2`"
+			;;
+		esac
 	done
-
-#==========================================
-# Decide if this message is worth sending.
-#==========================================
-
-# If the option printed=no appeared and this message mearly
-# announces that the job was printed, skip it.
-if [ $option_printed -eq 0 ]
-  then
-  if [ $response_code_number -eq $RESP_FINISHED ]; then exit 0; fi
-  fi
-
-# If invoked with the canceled=no option, bail out if canceled.
-if [ $option_canceled -eq 0 ]
-  then
-  if [ $response_code_number -eq $RESP_CANCELED_PRINTING ]; then exit 0; fi
-  if [ $response_code_number -eq $RESP_CANCELED ]; then exit 0; fi
-  fi
-
-#====================================
-# Build the message.
-#====================================
-
-# Start with the canned message.
-message="$canned_message
-";
-
-if [ -n "$why_arrested" ]
-	then 
-	message="${message}
-Probable cause:	 $why_arrested
-"
-	fi
-
-# Possible add the title.
-if [ -n "$title" ]
-	then
-	message="${message}
-The title of this job is \"$title\".
-"
-	fi
-
-if [ "$pages_printed" != "?" ]		# if printed,
-	then
-	if [ "$pages_printed" -ne -1 ]	# if number of pages is known,
-	then
-	if [ "$pages_printed" -eq 1 ]
-		then
-		message="${message}
-It is 1 page long."
-		else
-		message="${message}
-It is $pages_printed pages long."
-		fi
-
-	if [ -n "$charge" ]
-		then 
-		message="${message}  You have been charged $charge."
-		fi
-
-	message="${message}
-"
-	fi
-	fi
-
-# If it was submitted more than 10 minutes ago, tell when.
-if [ $time_submitted -gt 0 ]
-	then
-	when=`lib/time_elapsed $time_submitted 600`
-	if [ -n "$when" ]
-	then
-	message="${message}
-You submitted this job $when ago.
-"
-	fi
-	fi
 
 #===========================================================
 # Figure out which program we can use so send the message.
 #===========================================================
 
-if [ -x $XWINBINDIR/xmessage ]
+if [ -x @XWINBINDIR@/xmessage ]
 	then
-	sender="$XWINBINDIR/xmessage \
+	sender="@XWINBINDIR@/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
 "
 
-	else
-	if [ -x /usr/local/bin/wish ]
+	elif [ -x /usr/local/bin/wish ]
 	then
-	sender="/usr/local/bin/wish $LIBDIR/xmessage \
+	sender="/usr/local/bin/wish @LIBDIR@/xmessage \
 		-geometry +100+100 \
 		-default okay $option_timeout \
 		-file -
 "
 
-	else
-	if [ -x /usr/bin/wish ]
+	elif [ -x /usr/bin/wish ]
 	then
 	sender="/usr/bin/wish $LIBDIR/xmessage \
 		-geometry +100+100 \
@@ -204,18 +100,16 @@ if [ -x $XWINBINDIR/xmessage ]
 		-file -
 "
 
-	else
-	if [ -x $XWINBINDIR/rxvt ]
+	elif [ -x @XWINBINDIR@/rxvt ]
 	then
-	sender="$XWINBINDIR/rxvt \
+	sender="@XWINBINDIR@/rxvt \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
 
-	else
-	if [ -x $XWINBINDIR/xterm ]
+	elif [ -x @XWINBINDIR@/xterm ]
 	then
-	sender="$XWINBINDIR/xterm \
+	sender="@XWINBINDIR@/xterm \
 	-geometry 80x5+100+100 \
 	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
 "
@@ -223,20 +117,16 @@ if [ -x $XWINBINDIR/xmessage ]
 	else
 	echo "Can't find a program to respond with!"
 	fi
-	fi
-	fi
-	fi
-	fi
 
 #====================================
 # Dispatch the message.
 #====================================
 
-$sender -display "$address" \
+$sender -display "$responder_address" \
 	-title "Message for $for" \
 	-bg skyblue -fg black \
 	<<EndOfMessage
-$message
+$short_message
 EndOfMessage
 
 exit 0

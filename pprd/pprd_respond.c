@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 March 2005.
 */
 
 #include "config.h"
@@ -110,6 +110,7 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 			"qfile_fd3",
 			gu_name_str_value("job", job),
 			gu_name_int_value("response_code", response_code),
+			gu_name_str_value("destination", destname),
 			gu_name_str_value("printer", prnname),
 			gu_name_str_value("charge_per_duplex", per_duplex_str),
 			gu_name_str_value("charge_per_simplex", per_simplex_str),

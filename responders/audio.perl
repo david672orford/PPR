@@ -1,4 +1,4 @@
-#! @PERL_PATH@ -v
+#! @PERL_PATH@
 #
 # mouse:~ppr/src/responders/audio.perl
 # Copyright 1995--2005, Trinity College Computing Center.
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 25 March 2005.
 #
 
 # Fool Perl so it will not complain about our already secure PATH and IFS.
@@ -54,29 +54,12 @@ $DEBUG = 1;
 my $args = responder_argv(@ARGV);
 
 # Parse the options parameter which is a series of name=value pairs.
-$OPTION_PRINTED = 1;
-$OPTION_CANCELED = 1;
 $OPTION_SILLY_SOUNDS = 0;
-my $option;
-foreach $option (split(/[\s]+/, $args->{OPTIONS}))
+foreach my $option (split(/[\s]+/, $args->{responder_options}))
   {
   my($name, $value) = split(/=/, $option);
 
-  if($name eq "printed")
-	{
-	if($value =~ /^[1-9ty]/io)
-		{ $OPTION_PRINTED = 1 }
-	else
-		{ $OPTION_PRINTED = 0 }
-	}
-  if($name eq "canceled")
-	{
-	if($value =~ /^[1-9ty]/io)
-		{ $OPTION_CANCELED = 1 }
-	else
-		{ $OPTION_CANCELED = 0 }
-	}
-  elsif($name eq "voice")
+  if($name eq "voice")
 	{
 	speach_set_voice($value);
 	}
@@ -89,20 +72,12 @@ foreach $option (split(/[\s]+/, $args->{OPTIONS}))
 	}
   }
 
-# If we should not play job done messages and this is one of them, bail out now.
-if( ! $OPTION_PRINTED && $CODE == $RESP_FINISHED )
-  { exit(0) }
-
-# Same for job canceled messages.
-if( ! $OPTION_CANCELED && ($CODE == $RESP_CANCELED || $CODE == $RESP_CANCELED_PRINTING) )
-  { exit(0) }
-
 # Get a list of the sound clips to play.
 my @playlist = speach_ppr_response($args, $OPTION_SILLY_SOUNDS);
 
 print join(' ', @playlist), "\n" if($DEBUG > 2);
 
-speach_play_many($args->{ADDRESS}, @playlist);
+speach_play_many($args->{responder_address}, @playlist);
 
 print "Done\n\n" if($DEBUG > 1);
 
