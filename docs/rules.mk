@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 13 March 2003.
 #
 
 # Where do we install the documentation?
@@ -80,10 +80,10 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 #============================================================================
 
 .html.ps:
-	$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
+	-$(HTMLDOC) --no-toc -t ps --outfile $*.ps $*.html
 
 .html.pdf:
-	$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
+	-$(HTMLDOC) --no-toc -t pdf12 --outfile $*.pdf $*.html
 
 #============================================================================
 # Rules to convert Docbook SGML to PostScript and PDF by way

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/main.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 July 1999.
+** Last modified 13 March 2003.
 */
 
 /*
@@ -30,9 +45,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
-
 #include "filter_dotmatrix.h"
 
 /* Name of this program, for error messages. */
@@ -183,22 +196,6 @@ int top_margin;		/* always zero for most printers */
 /* Automatic line feed and carriage return. */
 int auto_cr = TRUE;
 int auto_lf = FALSE;
-
-/*
-** Handle fatal errors.
-** Print a message and exit.
-*/
-void fatal(int exitval, const char message[], ... )
-    {
-    va_list va;
-
-    va_start(va, message);
-    fprintf(stderr, "dotmatrix: ");
-    vfprintf(stderr, message,va);
-    fputc('\n', stderr);
-    va_end(va);
-    exit(exitval);
-    } /* end of fatal() */
 
 /*
 ** For non fatal errors (generally from libppr).
@@ -380,7 +377,7 @@ void reset(int hard)
 ** eaten up at the start of the page by an uncompleted vertical
 ** movement command.
 */
-void page_reset(int consumed)
+static void page_reset(int consumed)
     {
     /* move to top of page */
     if(top_margin==0)					/* If we don't use top margin, */
@@ -426,7 +423,7 @@ void line_feed(int how_far)
     } /* end of line_feed() */
 
 /* This routine is the main loop. */
-void process_input(void)
+static void process_input(void)
     {
     int c;
 

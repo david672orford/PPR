@@ -1,4 +1,4 @@
-mouse:~ppr/src/docs/misc/docs_history.txt
+mouse:~ppr/src/docs/History.txt
 
 This file contains a history of changes to the PPR documentation which occured
 after the documentation was moved into the PPR source tree on 12 November 1998.
@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--11 March 2003.
+1.51, 15 February 2003--13 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -427,7 +427,11 @@ more information about RIPs and *pprRIP:.
 * refman/ppr.1.pod: added description of the followme responder method,
   proofred and corrected entire -m description.
 
+* pprhack/pprhack_custom_hooks.sgml: skeletal section filled in
 
+* pprhack/pprhack_rips.sgml: skeleton created
+
+* pprhack/pprhack_pprd.sgml: proofread and corrected
 
 
 TODO

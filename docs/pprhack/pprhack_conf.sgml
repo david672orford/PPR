@@ -1,3 +1,9 @@
+<!--
+Filename: pprhack_conf.sgml
+Last Modified:
+Last Proofread: 
+-->
+
 <sect1>
 <title>Configuration File Formats</title>
 
@@ -477,15 +483,6 @@ saved with the <command>ppad group switchset</command> command.
 <para>
 This line is optional.  If present, it contains a space separated list
 of file types which should be passed directly through to the printer.
-</para>
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><literal>ms-driver-name:</literal> <replaceable>name</replaceable></term>
-<listitem>
-<para>
-Used by ppr2samba.  See the man page ppr2samba(8).
 </para>
 </listitem>
 </varlistentry>

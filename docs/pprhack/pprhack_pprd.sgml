@@ -1,81 +1,75 @@
+<!--
+Filename: pprhack_pprd.sgml
+Last Modified: 13 March 2003
+Last Proofread: 13 March 2003
+-->
+
 <sect1>
 <title>Protocol for Comunicating with <command>pprd</command></title>
 
-<para>
-This section describes the protocol which use commands such as <command>ppr</command>,
-<command>ppop</command>, and <command>ppad</command> use to communicate with <command>pprd</command> and <command>rpprd</command>.
-This information may assist those attempting to understand the source code.
-</para>
+<para>This section describes the protocol which use commands such as
+<command>ppr</command>, <command>ppop</command>, and <command>ppad</command>
+use to communicate with <command>pprd</command>. This information may assist
+those attempting to understand the source code.  However, one should not
+implement this protocol since it changes from version to version.  Instead
+one should run <command>ppop</command> with the <option>-M</option> option
+and parse its output.  For this reason, only a few example commands are
+described here.</para>
 
-<para>
-The main printing daemon, <command>pprd</command> receives commands over a named pipe and
-acts on them.  The program <command>ppr</command> uses one such command it sends to <command>pprd</command>
-to tell it that a new jobs has been placed in the queue directories.  The
-program <command>ppad</command> has two such commands which it uses to inform <command>pprd</command> that
-a printer or group configuration file has been modified.  Finally, <command>ppop</command>
-has many commands which it uses to control <command>pprd</command> or to request information
-from it.
-</para>
+<para>The spooler daemon, <command>pprd</command> receives commands over a
+named pipe and acts on them.  The program <command>ppr</command> sends one
+such command to <command>pprd</command> in order to inform it that a new
+jobs has been placed in the queue directories.  The program
+<command>ppad</command> uses two different commands which it uses to
+inform <command>pprd</command> that a printer, group configuration
+file has been modified.  Finally, <command>ppop</command> has many commands
+which it uses to control <command>pprd</command> or to request information
+from it.</para>
 
 <sect2>
 <title>Accepting Jobs</title>
 
-<para>
-Once the job submission program <command>ppr</command> has created the queue files it
-sends a command to <command>pprd</command> or <command>rpprd</command> telling it that the job is there and
-is ready for printing or transfer to the remote system.  This command takes the
-form:
-</para>
+<para>Once the job submission program <command>ppr</command> has created the
+queue files it sends a command to <command>pprd</command> telling it that
+the job is there and is ready for printing or transfer to the remote system. 
+This command takes the form:
 
-<para>
+<sourcecode>
 j <replaceable>destination_node destination_queue id subid home_node initial_priority</replaceable>
-</para>
+</sourcecode>
 
-<para>
-The <replaceable>destination_node</replaceable> is the node to which the job should be sent.  If the
-command is written to <command>pprd</command>'s named pipe, this field must contain the node
-name of the local system.  The <replaceable>destination_queue</replaceable> is the name of the print
-queue on the destination node.  The <replaceable>id</replaceable> and <replaceable>subid</replaceable> are the queue id and
-the job fragment number respectively.  The <replaceable>subid</replaceable> will most often be zero.
-The <replaceable>home_node</replaceable> is the node name of the system on which the job origionated.
-</para>
+The <replaceable>destination_node</replaceable> is the node to which the job
+should be sent.  Since transmission to remote notes is not yet supported,
+this will always be the name of the local node.  The
+<replaceable>destination_queue</replaceable> is the name of the print queue
+on the destination node.  The <replaceable>id</replaceable> and
+<replaceable>subid</replaceable> are the queue id and the job fragment
+number respectively.  The <replaceable>subid</replaceable> will most often
+be zero. The <replaceable>home_node</replaceable> is the node name of the
+system on which the job originated (again, the local node).</para>
 
 </sect2>
 
 <sect2>
-<title>Re-loading Configuration Files</title>
+<title>Reloading Configuration Files</title>
 
-<para>
-Whenever a printer or group configuration files is modified or a new one
-created, <command>pprd</command> must be directed to read it.  To inform <command>pprd</command> that it
-must read a new or revised printer configuration file, a command line of this
-form is sent:
-</para>
+<para>Whenever a printer or group configuration file is modified or
+a new one created, <command>pprd</command> must be directed to read it.  To
+inform <command>pprd</command> that it must read a new or revised printer
+configuration file, a command line of this form is sent:
 
-<para>
-
-<screen>
+<sourcecode>
 NP <replaceable>printername</replaceable>
-</screen>
+</sourcecode>
 
-</para>
+To indicate that a group configuration file must be re-read or that a new
+group configuration file must be read for the first time:
 
-<para>
-To indicate that a group configuration file
-must be re-read or that a new group configuration file must be read for the
-first time:
-</para>
-
-<para>
-
-<screen>
+<sourcecode>
 NG <replaceable>groupname</replaceable>
-</screen>
+</sourcecode>
 
-</para>
-
-<para>
-There will be no acknowledgement of either command.
+Neither command is acknowledged by <command>pprd</command>.
 </para>
 
 </sect2>
@@ -83,12 +77,39 @@ There will be no acknowledgement of either command.
 <sect2>
 <title>Yielding Information to <command>ppop</command></title>
 
-<para>
-The utility <command>ppop</command> must communicate with <command>pprd</command> and <command>rpprd</command> in
-order to list the queue, show the status of printers, mount forms, and do other
-tasks.  As work on <command>rpprd</command> continue, descriptions of the necessary commands
-will be added to this document.
-</para>
+<para>The utility <command>ppop</command> must communicate with
+<command>pprd</command> in order to list the queue, show the status of
+printers, mount forms, and do other tasks.  Most of these communications
+take the form of a query and a reply.</para>
+
+<para>As currently implemented, the interprocess communications is crude but
+effective.  The queries are sent by writing to <command>pprd</command>'s
+named pipe.  The replies are sent back in temporary files.  The command
+which <command>ppop</command> writes to the name pipe begin with
+<command>ppop</command>'s process id.  After writing the command,
+<command>ppop</command> waits for a signal, USR1 to be specific.  The
+process ID is read by <command>ppad</command> which creates a temporary file
+called <filename>/tmp/ppr-ppop-<replaceable>pid</replaceable></filename>
+where <replaceable>pid</replaceable> is the process id sent by
+<command>ppop</command>.  Once <command>pprd</command> has finished writing
+the reply, it closes the temporary file and sends SIGUSR1 to
+<command>ppop</command> which opens the file, deletes it, reads its
+contents, and formats and displays said contents.</para>
+
+<para>Many of the replies take the form of a numberic exit code for
+<command>ppop</command> and a human-language message to display.  Some
+include many additional lines of results but only if the code in the first
+line is zero (indicating success).</para>
+
+<para>Much of the code in the parts of <command>ppop</command> and
+<command>pprd</command> which communication with one another was written
+before any attempt was mode to internationalize
+<application>PPR</application>.  This is a problem because
+<command>pprd</command> may be generating messages in one language while
+<command>ppop</command> is generating them in another.  The plan is to
+eventually eliminate all user visible messages from these files leaving only
+code information.  At the same time <command>ppop</command> will be modified
+to digest this information and produce text in the users language.</para>
 
 </sect2>
 

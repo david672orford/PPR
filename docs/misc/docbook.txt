@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-7 March 2003
+13 March 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -75,7 +75,7 @@ Text which can or should be replaced by the user.
 <application>
 
 This tag encloses the name of an computer program (as opposed to the command
-that launches it.  For example: jobs are submitted to
+that launches it).  For example: jobs are submitted to
 <application>PPR</application> using the <command>ppr</command> command.
 
 <envar>
@@ -162,6 +162,14 @@ configuration file.
 		<listitem>
 			<para>
 			A definite article.
+			</para>
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>a</term>
+		<listitem>
+			<para>
+			An indefinite article.
 			</para>
 		</listitem>
 	</varlistentry>

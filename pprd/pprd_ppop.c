@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ppop.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,21 +25,23 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 May 2002.
+** Last modified 13 March 2003.
 */
 
-/*
-** This module handles requests from "ppop".
-** The only externally callable function in this module is ppop_dispatch().
-**
-** You may notice that this module often calls nodeid_by_name() when it might
-** seem it should call nodeid_assign() and later nodeid_free().  This is ok
-** because nodeid_by_name() returns NODEID_NOTFOUND for non-existent nodes
-** and NODEID_NOTFOUND won't match anything in the print queue.
-**
-** You may also notice that the ppop subcommand functions don't free the
-** memory allocated by gu_sscanf().  That is ok too because the
-** gu_sscanf_rollback() calls in ppop_dispatch() take care of that.
+/** \file
+
+This module handles requests from "ppop". The only externally callable
+function in this module is ppop_dispatch().
+
+You may notice that this module often calls nodeid_by_name() when it might
+seem it should call nodeid_assign() and later nodeid_free().  This is ok
+because nodeid_by_name() returns NODEID_NOTFOUND for non-existent nodes and
+NODEID_NOTFOUND won't match anything in the print queue.
+
+You may also notice that the ppop subcommand functions don't free the memory
+allocated by gu_sscanf().  That is ok too because the gu_sscanf_rollback()
+calls in ppop_dispatch() take care of that.
+
 */
 
 #include "before_system.h"

@@ -10,6 +10,7 @@
 <!ENTITY pprhack-status SYSTEM "pprhack_status.sgml">
 <!ENTITY pprhack-responders SYSTEM "pprhack_responders.sgml">
 <!ENTITY pprhack-custom-hooks SYSTEM "pprhack_custom_hooks.sgml">
+<!ENTITY pprhack-rips SYSTEM "pprhack_rips.sgml">
 ]>
 
 <article>
@@ -20,7 +21,7 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>7 March 2003</pubdate>
+	<pubdate>13 March 2003</pubdate>
 	<copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -45,5 +46,6 @@ to users.</para>
 &pprhack-status;
 &pprhack-responders;
 &pprhack-custom-hooks;
+&pprhack-rips;
 
 </article>

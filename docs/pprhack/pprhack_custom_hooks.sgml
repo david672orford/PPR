@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_custom_hooks.sgml
-Last Modified: 6 March 2003
+Last Modified: 13 March 2003
 Last Proofread: 
 -->
 
@@ -16,19 +16,180 @@ program which printed a banner page.  If a print queue is properly
 configured, your program will be used to print banner pages instead of
 <application>PPR</application>'s internal banner page printing code.</para>
 
+<para>In the file <filename class="headerfile">pprdrv/pprdrv.h</filename>
+the following constants are defined:
+
+<screen>
 #define CUSTOM_HOOK_BANNER 1
 #define CUSTOM_HOOK_TRAILER 2
 #define CUSTOM_HOOK_COMMENTS 4
 #define CUSTOM_HOOK_PROLOG 8
 #define CUSTOM_HOOK_DOCSETUP 16
 #define CUSTOM_HOOK_PAGEZERO 32
+</screen>
 
-gu_sscanf(confline, "CustomHook: %d %Q", &printer.custom_hook.flags, &tptr))
+We will get to what they individually mean in a minute.  For now let us say
+that they each one of them stands for a point at which your custom hook may
+be called to insert additional text into the PostScript job.  Notice that
+they are powers of two.  That means that they may be added up to produce a
+number that represents a set of choices as a bitmap.  In order to tell
+<application>PPR</application> at which insertion points in the job a custom hook
+should be run, one adds up the code numbers which represent the desired
+points.</para>
 
-execl(path, path, code_str, parameter_str, QueueFile, NULL);
+<para>Where does this value go?  You should enter it, together with the name
+of your custom hook program, on a line in the printer configuration file. 
+The line has the following format:
 
-if((fd = open(PPRDRV_LOGFILE, O_WRONLY | O_CREAT | O_APPEND, UNIX_644)) != -1)
+<programlisting>
+CustomHook: <replaceable>bitmask</replaceable> <replaceable>program</replaceable>
+</programlisting>
 
-if(line[0] == '%' && (matches = gu_sscanf(line, "%%%%IncludeFeature: %S %S", &feature, &option)) > 0)
+The <replaceable>bitmask</replaceable> is the total of the codes and the
+<replaceable>program</replaceable> is the name of your custom hook program. 
+You should probably specify the complete path.  Since
+<command>ppad</command> doesn't have a command for manipulating entries like
+this one, you should add the line using a text editor.  You will find the
+file in <filename class="directory">/etc/ppr/printers/</filename>.</para>
+
+<para>When your custom hook program is run, stdout will be connected to the
+printer.  That is, anything you print on stdout will be transmitted to the
+printer.  What you are expected to send to the printer depends on the
+insertion point and will be discussed below when the insertin points are
+described.  Stdin will be connected to <filename>/dev/null</filename>. 
+Stderr will be directed to the <command>pprdrv</command> log file
+(<filename>/var/spool/ppr/logs/pprdrv</filename>).  While developing a
+custom hook program it is helpful to print debugging messages to
+stderr.</para>
+
+<para>The custom hook program will receive three command line parameters. 
+The first parameter is the code for the part of the PostScript document that
+is being generated.  The second parameter gives details.  For most document
+parts it is zero.  The third parameter is the full queue ID of the job.  It
+may be passed to <command>ppop qquery</command> to get details about the job
+or, since it is also the name of the queue file, it may be used to open the
+queue file in <filename
+class="directory">/var/spool/ppr/queue/</filename>.</para>
+
+<para>And now for a description of the various points at which your custom
+hook program can be called.
+
+<variablelist>
+	<varlistentry>
+		<term>CUSTOM_HOOK_BANNER (1)</term>
+		<listitem>
+
+<para>The custom hook program is invoked to print a substitute banner page. 
+The regular banner page is suppressed.  Remember that a banner page comes
+before the job in the sense that it is placed in the output tray in front of
+page one.  Whether it is actually printed before the job depends on whether
+PPR thinks the tray is face up or face down.  If your code needs to know if
+is being printed (chronologically) before the job's pages or after, it
+should examine its second command line parameter which will be
+<literal>0</literal> for before the job and <literal>1</literal> for after. 
+[Note: verify that I have that right.]  Note that your custom hook program
+should generate a complete PostScript document.  The printer's PostScript
+interpreter will be reset before and after your banner page.</para>
+
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>CUSTOM_HOOK_TRAILER (2)</term>
+		<listitem>
+
+<para>The custom hook program is invoked to print a substitute trailer
+page.  Again, the second parameter indicates whether the body of the job has
+been printed yet.</para>
+
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>CUSTOM_HOOK_COMMENTS (4)</term>
+		<listitem>
+
+<para>The custom hook program is invoked at the end of the document header
+comments so that it can add any additional ones it likes.</para>
+
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>CUSTOM_HOOK_PROLOG (8)</term>
+		<listitem>
+
+<para>The custom hook program is invoked at the end of the document prolog
+maybe so that it can insert any procedure sets it might need.  It is
+unlikely you would want to do this, unless perhaps the intent of your custom
+hook is to do something like N-Up printing.  (Of course,
+<application>PPR</application> can already do N-Up printing.)</para>
+
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>CUSTOM_HOOK_DOCSETUP (16)</term>
+		<listitem>
+
+<para>The custom hook program is invoked at the end of the document setup
+section.  This is where you would turn on your replacement N-Up printing
+implementation.</para>
+
+		</listitem>
+	</varlistentry>
+	<varlistentry>
+		<term>CUSTOM_HOOK_PAGEZERO (32)</term>
+		<listitem>
+
+<para>The custom hook program is invoked just before the first page of the
+document.  It can insert one or more additional pages.  Basically, it can be
+used to add a banner page inside a job.  This is for use in environments
+where banner pages outside the job would confuse some system furthure down
+the line.  This is the case when printing to a Xerox Docutech.  Since the
+document setup section's code may have already set up transform matrixes
+which could squish or shift the page you will be generating, it should wrap
+itself in <literal>save initmatrix</literal> <replaceable>...</replaceable>
+<literal>restore</literal>.</para>
+
+		</listitem>
+	</varlistentry>
+</variablelist>
+
+</para>
+
+<para>You may have noticed that there is no provision for calling separate
+custom hook programs for separate insertion points.  Your custom hook
+program should examine its first command line parameter and select the code
+path that cooresponds to the current insertion point.  If you really need
+separate program, you will have to create a shell custom hook program that
+examines its first parameter and then executes the desired program.</para>
+
+<para>If you need to invoke any printer-specific features, such as to select
+a particular paper size, you should print a DSC comment line like this
+one:
+
+<programlisting>
+%%%%IncludeFeature: <replaceable>feature</replaceable> <replaceable>setting</replaceable>
+</programlisting>
+
+The <replaceable>features</replaceable> is a PPD feature name such as
+<literal>*PageSize</literal> and the value is on of the possible values such
+as <literal>Letter</literal> or <literal>A4</literal>.  Before your
+program's output is sent to the printer, this comment will be replaced with
+the proper code from the printer's PPD file.</para>
+
+<para>Of course, since you will be generating PostScript code or at least
+PostScript comments, the is always the possibility that you will turn a job
+into an invalid PostScript program that won't print.  In that case,
+<application>PPR</application> will come to your rescue by arresting the job
+so that you can examine its log with <command>ppop log</command> in order to
+see what the PostScript error messages are.</para>
+
+<para>You will almost certainly want to look at the final output sent to the
+printer in order to verify that your text is being inserted where you
+expect.  To do that, set up a test queue using the <command>dummy</command>
+interface.  It will print to a file which you can then examine.</para>
+
+<para><application>PPR</application> currently includes one sample custom
+hook program.  It is installed at
+<filename>/usr/lib/ppr/lib/custom_hook_docutech</filename>.  Among other
+things it demonstrates how to do CUSTOM_HOOK_PAGEZERO.</para>
 
 </sect1>

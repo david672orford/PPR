@@ -1,6 +1,13 @@
+<!--
+Filename: pprhack_fonts.sgml
+Last Modified: 13 March 2003
+Last Proofread: 
+-->
+
 <sect1>
 <title>Fonts</title>
 
+<!-- ==================================================================== -->
 <sect2 id="fontsub">
 <title>Font Substitution Configuration File</title>
 
@@ -77,6 +84,7 @@ PostScript language reference manual.
 
 </sect2>
 
+<!-- ==================================================================== -->
 <sect2>
 <title><application>MetaFont</application> Modes Configuration File</title>
 
@@ -257,7 +265,7 @@ different names that both refer to the same mode in <filename>modes.mf</filename
 would result in the generation of duplicate sets of identical pk font files.
 The <filename>mfmodes.conf</filename> file supplied with PPR always uses the first alias from
 Karl Berry's <filename>modes.mf</filename> file which may be abtained from
-<emphasis remap="bf">ftp://ftp.tug.org/tex/modes.mf</emphasis>.
+<ulink url="ftp://ftp.tug.org/tex/modes.mf">ftp://ftp.tug.org/tex/modes.mf</ulink>.
 </para>
 
 </sect3>
@@ -265,4 +273,3 @@ Karl Berry's <filename>modes.mf</filename> file which may be abtained from
 </sect2>
 
 </sect1>
-
