@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 12 April 2002.
+# Last modified 24 April 2002.
 #
 
 use 5.004;
@@ -243,30 +243,26 @@ if($options->{debug} > 1)
 # labeled "Back" and "Next".
 print <<"EndOfText2";
 </TABLE>
-<TABLE BORDER=$border HEIGHT=10% WIDTH=100% COLS=4>
+<TABLE BORDER=$border HEIGHT="10%" WIDTH="100%" COLS=4 cellpadding=5>
 <tr>
+<td colspan=3>
 EndOfText2
 
 # If there is error text, put it here in red.
 if(defined($error))
     {
 print <<"EndOfText4";
-<td align="right"><img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32></td>
-<td colspan=3 align="center" valign="center">
+<img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32>
 <span class="alert">${\&html($error)}</span>
-</td>
 EndOfText4
-    }
-else
-    {
-    print "<td colspan=3></td>\n";
     }
 
 # Now the submit buttons, then we close the table.  Note that we
 # call the subroutine isubmit() to create the buttons.  It internationalizes
 # the buttons if called for.
 print <<"EndOfText6";
-<td align="center" nowrap colspan=1>
+</td>
+<td nowrap align="right">
 EndOfText6
 
 {

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 19 April 2002.
+** Last modified 24 April 2002.
 */
 
 BODY {	background: #C0C0C0;
@@ -12,9 +12,10 @@ INPUT.tabactive,BUTTON.tabactive {
 	font-size: 8pt;
 	font-weight: bold;
 	background: beige;
-	margin: 0;
-	border-style: solid; border-color: black; border-width: 1px;
-	border-bottom-color: beige;
+	margin: 0pt;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #000000 black beige #000000;
 	-moz-border-radius: 1mm 1mm 0mm 0mm;
 	}
 
@@ -23,9 +24,18 @@ INPUT.tabinactive,BUTTON.tabinactive {
 	font-size: 8pt;
 	font-weight: normal;
 	background: beige;
-	margin: 0;
-	border-style: solid; border-color: black; border-width: 1px;
+	margin: 0pt;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #000000 black #000000 #000000;
 	-moz-border-radius: 1mm 1mm 0mm 0mm;
+	}
+
+/* In Mozilla (at least up to 1.0rc1) these settings of <button>
+   are incompatible with <input type="button">. */
+BUTTON {
+	padding: 0pt 5pt 0pt 5pt;
+	vertical-align: sub;
 	}
 
 /* Tables of this class form the background for tabbed dialog boxes. */
@@ -33,7 +43,7 @@ TABLE.tabpage {
 	background: beige;
 	margin: 0;
 	border-style: solid;
-	border-color: black;
+	border-color: black black black #000000;
 	border-width: 0px 1px 1px 1px;
 	}
 
@@ -55,13 +65,8 @@ INPUT {
 	}
 
 /* Buttons that are supposed to look like buttons. */
-INPUT.buttons {
+INPUT.buttons,BUTTON.buttons {
 	background: #b0b0b0;
-	}
-
-/* The bottons at the bottom with names like "Next". */
-P.buttons_bottom {
-	text-align: right;
 	}
 
 /* This is for error messages. */

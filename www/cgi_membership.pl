@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_membership.pl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 3 February 2000.
+# Last modified 24 April 2002.
 #
 
 #
@@ -21,16 +21,16 @@
 # then cannot be on the same screen because of the way CGI variables are used.
 #
 sub cgi_membership
-    {
-    my($members_title, $members_var, $members_size,
+{
+my($members_title, $members_var, $members_size,
 	$nonmembers_title, $nonmembers_var, $nonmembers_size) = @_;
 
-    # convert space separated members list to an array.
-    my @members = split(/ /, $data{$members_var});
-    my @nonmembers = split(/ /, $data{$nonmembers_var});
+# convert space separated members list to an array.
+my @members = split(/ /, $data{$members_var});
+my @nonmembers = split(/ /, $data{$nonmembers_var});
 
-    # Act on move buttons.
-    if(defined($data{move}))
+# Act on move buttons.
+if(defined($data{move}))
         {
         my $move = &cgi_data_move('move', '');
         my $ni = &cgi_data_move('nonmembers_select', '-1');
@@ -61,22 +61,40 @@ sub cgi_membership
             }
         }
 
-    # Start the nested table.
-    print "<table><tr>\n";
+# Start the nested table.
+print <<"EndWidgetStart";
+<!-- start of membership widget -->
+<style>
+INPUT.membership {
+	width: 7mm;
+	height: 7mm;
+	margin: 1mm;
+	background: #B0B0B0;
+	}
+SELECT.membership {
+	width: 5cm;
+	}
+</style>
+<table>
+<tr>
+EndWidgetStart
 
-    # Create the up and down move buttons to the left
-    # of the members select box.
-    print '<td align="right">', "\n";
-    vspace($members_size);
-    print '<input tabindex=10 accesskey="^" type="submit" name="move" value="^">', "\n";
-    print "<br>\n";
-    print '<input tabindex=11 accesskey="v" type="submit" name="move" value="v">', "\n";
-    print "</td>\n";
+# Create the up and down move buttons to the left
+# of the members select box.
+print <<"LeftButtons";
+<td valign="center">
+<input title="Move up"
+	tabindex=10 accesskey="^" type="submit" name="move" value="^" class="membership">
+<br>
+<input title="Move down"
+	tabindex=11 accesskey="v" type="submit" name="move" value="v" class="membership">
+</td>
+LeftButtons
 
     # Create the members select box.
-    print "<td>\n";
+    print "<td valign=\"top\">\n";
     print "<label><span class=\"label\">", html($members_title), "</span><br>\n";
-    print "<select tabindex=1 accesskey=\"m\" name=\"members_select\" size=$members_size>\n";
+    print "<select tabindex=1 accesskey=\"m\" name=\"members_select\" size=$members_size class=\"membership\">\n";
     {
     my $i = 0;
     foreach $_ (@members)
@@ -85,22 +103,25 @@ sub cgi_membership
         $i++;
         }
     }
-    print "<option value=\"-1\">________________\n";
+    #print "<option value=\"-1\">________________\n";
     print "</select></label>\n";
     print "</td>\n";
 
     # Create the left and right buttons in the middle.
-    print "<td>\n";
-    vspace($nonmembers_size);
-    print '<input tabindex=2 accesskey="&gt;" type=submit name="move" value="-&gt;">', "\n";
-    print "<br>\n";
-    print '<input tabindex=4 accesskey="&lt;" type="submit" name="move" value="&lt;-">', "\n";
-    print "</td>\n";
+    print <<"MiddleButtons";
+<td valign="center">
+<input title="Remove selected member from members"
+	tabindex=2 accesskey="&gt;" type=submit name="move" value="-&gt;" class="membership"
+<br>
+<input title="Added selected non-member to members"
+	tabindex=4 accesskey="&lt;" type="submit" name="move" value="&lt;-" class="membership">
+</td>
+MiddleButtons
 
     # Create the non-members select box.
-    print "<td>\n";
+    print "<td valign=\"top\">\n";
     print "<label><span class=\"label\">", html($nonmembers_title), "</span><br>\n";
-    print "<select tabindex=3 accesskey=\"o\" name=\"nonmembers_select\" size=$nonmembers_size>\n";
+    print "<select tabindex=3 accesskey=\"o\" name=\"nonmembers_select\" size=$nonmembers_size class=\"membership\">\n";
     {
     my $i = 0;
     foreach $_ (@nonmembers)
@@ -109,26 +130,20 @@ sub cgi_membership
         $i++;
         }
     }
-    print "<option value=\"-1\">________________\n";
+    #print "<option value=\"-1\">________________\n";
     print "</select></label>\n";
     print "</td>\n";
 
     # That is the end of the nested table.
-    print "</table>\n";
+    print <<"EndWidget";
+</tr>
+</table>
+<!-- end of membership widget -->
+EndWidget
 
     # Pack the two lists back into simple variables.
     $data{$nonmembers_var} = join(' ', @nonmembers);
     $data{$members_var} = join(' ', @members);
-    }
-
-sub vspace
-    {
-    my $x = shift;
-    $x = ($x / 2) - 2;
-    while($x-- > 0)		# Values such as 7.5 will never be 0.00!
-    	{
-    	print "<br>\n";
-    	}
     }
 
 1;

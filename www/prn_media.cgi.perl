@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 February 2002.
+# Last modified 24 April 2002.
 #
 
 use lib "?";
@@ -80,7 +80,6 @@ eval
 {
 # Get a list of the available media types.
 open(M, $PPR::MEDIAFILE) || die $!;
-print "<pre>\n";
 my @available = ();
 while(read(M, my $record, $PPR::SIZEOF_struct_Media) == $PPR::SIZEOF_struct_Media)
     {
@@ -92,8 +91,38 @@ while(read(M, my $record, $PPR::SIZEOF_struct_Media) == $PPR::SIZEOF_struct_Medi
     		$width/72.0, $height/72.0, $weight, $colour, $type, $flag_suitability)
     	]);
     }
-print "</pre>\n";
 close(M) || die;
+
+# Get the name of the PPD file
+if(!defined($data{ppd}))
+    {
+    open(CONF, "<$PPR::PRCONF/$name") || die $!;
+    while(<CONF>)
+	{
+	if(/^PPDFile: (.+)$/)
+	    {
+	    $data{ppd} = $1;
+	    last;
+	    }
+	}
+    close(CONF) || die $!;
+    }
+
+# Get the bin translations.
+if(!defined($data{ppd_bins}))
+    {
+    require "readppd.pl";
+    ppd_open($data{ppd});
+    while(defined($line = ppd_readline()))
+	{
+	if($line =~ /^\*InputSlot\s+([^\/:]+)(\/([^:]+))?/)
+	    {
+	    my ($name, $translation) = ($1, $3);
+	    $data{"xlate_$name"} = $translation;
+	    }
+	}
+    $data{ppd_bins} = 1;
+    }
 
 # Connect to ppop.
 my $control = new PPR::PPOP($name);
@@ -127,8 +156,11 @@ foreach my $b (grep(/^bin_/, keys %data))
     }
 print "</pre>\n";
 
-print "<table>\n";
+# This table will list the medium mounted on each bin in a select control so
+# that it can be changed.
+print "<table cellspacing=0>\n";
 print "<tr><th>Bin</th><th>Medium: (Size Weight, Colour, Type, Banner Suitability)</th></tr>\n";
+print "<tbody>\n";
 
 my @binlist = $control->media();
 foreach my $i (@binlist)
@@ -136,7 +168,16 @@ foreach my $i (@binlist)
     my(undef, $bin, $medium) = @{$i};
     $data{"_bin_$bin"} = $medium;
     print "<tr>\n";
-    print "<td>", html($bin), "</td>";
+
+    my $bin_description = html($bin);
+    if(defined($data{"xlate_$bin"}))
+	{
+	$bin_description = $bin . " -- " . $data{"xlate_$bin"};
+	}
+    $bin_description = html_nb($bin_description);
+    $bin_description =~ s/--/&#151;/g;
+
+    print "<th>", $bin_description, "</th>";
     print "<td><select name=", html_value("bin_$bin"), ">\n";
     print "<option value=\"\">\n";
     foreach my $i (@available)
@@ -150,6 +191,7 @@ foreach my $i (@binlist)
     print "</tr>\n";
     }
 
+print "</tbody>\n";
 print "</table>\n";
 
 print "<p class=\"buttons\">\n";

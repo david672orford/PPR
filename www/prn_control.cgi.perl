@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 February 2002.
+# Last modified 24 February 2002.
 #
 
 use lib "?";
@@ -425,7 +425,7 @@ print "<br>\n";
 isubmit("action", "Halt", N_("_Halt"), "class=\"buttons\"");
 print "<br>\n";
 isubmit("action", "Media", N_("_Media"),
-	"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=750,height=400,scrollbars,resizable'); return false;\""
+	"class=\"buttons\" onclick=\"window.open('prn_media.cgi?name=" . html($printer) . "', '_blank', 'width=700,height=300,scrollbars,resizable'); return false;\""
 	);
 print "<br><br><br>\n";
 isubmit("action", "Refresh", N_("_Refresh"), "class=\"buttons\"");

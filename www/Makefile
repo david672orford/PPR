@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 April 2002.
+# Last modified 24 April 2002.
 #
 
 include ../makeprogs/global.mk
@@ -70,7 +70,7 @@ CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
 	grp_addwiz.cgi grp_properties.cgi grp_control.cgi \
 	alias_addwiz.cgi alias_properties.cgi \
 	delete_queue.cgi \
-	show_jobs.cgi job_modify.cgi job_log.cgi job_public.cgi \
+	show_jobs.cgi job_modify.cgi job_log.cgi job_public.cgi scoreboard.cgi \
 	commentary_select.cgi commentary_speach.cgi \
 	responder_speach.cgi \
 	test_cgi.cgi test_components.cgi test_tail_status.cgi \

@@ -1,11 +1,28 @@
 /*
 ** mouse:~ppr/src/www/prn_media.css
-** Last modified 15 January 2001.
+** Last modified 24 April 2002.
 */
 
-BODY { background-color: yellow; color: black }
+BODY {
+	background-color: #fafad2;
+	color: black;
+	}
 H1 { font-weight: bold; font-size: 14pt; }
-TH { text-align: left }
+TABLE {
+	border-width: 1px;
+	border-color: black;
+	border-style: solid none none solid;
+	}
+TBODY {
+/*	overflow: auto; */
+	}
+TH,TD {
+	border-width: 1px;
+	border-color: black;
+	border-style: none solid solid none;
+	text-align: left;
+	padding: 2pt;
+	}
 P.buttons { text-align: right }
 
 /* end of file */

@@ -10,12 +10,19 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 January 2002.
+# Last modified 24 April 2002.
 #
 
 use 5.004;
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
+
+#
+# These are the values that are used if individual pages don't override.
+#
+my $DEFAULT_cellpadding = 30;
+my $DEFAULT_align = "left";
+my $DEFAULT_valign = "top";
 
 #
 # This routine implements a tabbed properties box.
@@ -170,8 +177,7 @@ $data{tab_hscroll} = $hscroll;
 # to take up their space.
 if($bottom eq 'Save')
     {
-    #print "<spacer type=vertical size=45>\n";
-    print "<br><br>\n";
+    print "<img src=\"../images/pixel-clear.png\" height=20 width=1 border=0>\n";
     }
 
 # Otherwise, we are doing the tabbed thing.
@@ -230,18 +236,21 @@ if($bottom ne "Save")
     $align = $tabbed_table->[$page]->{align};
     $valign = $tabbed_table->[$page]->{valign};
     }
-$cellpadding = 30 if(!defined($cellpadding));
-$align = "left" if(!defined($align));
-$valign = "top" if(!defined($valign));
+$cellpadding = $DEFAULT_cellpadding if(!defined($cellpadding));
+$align = $DEFAULT_align if(!defined($align));
+$valign = $DEFAULT_valign if(!defined($valign));
 
 # Start a table.  This table serves as a frame to contain
 # the text of the selected tab.
+{
+my $spacer_height = 400 - (2 * ($cellpadding - $DEFAULT_cellpadding));
 print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
 <tr align=$align valign=$valign>
 <td>
-<img src="../images/pixel-clear.png" width=1 height=400 align="left">
+<img src="../images/pixel-clear.png" width=1 height=$spacer_height align="left" border=0>
 tableStart
+}
 
 # Run the code to generate the current page.
 if($bottom eq "Save")
@@ -264,25 +273,26 @@ else
     	}
     }
 
-# Emmit HTML to end the table and start another
-# one to hold the buttons.
+# Emmit HTML to end the table.
 print <<"TableEnd1";
 </td>
 </tr>
 </table>
-<table align="right" cellpadding=10 border=0>
-<tr>
-<td>
 TableEnd1
+
+print <<"StartBottomTable";
+<table border=0 width="100%" cols=4 cellpadding=5>
+<tr>
+<td colspan=3>
+StartBottomTable
 
 # If there was an error message, print it now.
 if(defined($error))
     { print "<span class=\"alert\">", html($error), "</span>\n" }
 
-print "</td><td>\n";
+print "</td><td nowrap align=\"right\">\n";
 
 # Print the bottom buttons.
-print "<p class=\"bottom_buttons\">\n";
 if($bottom eq 'Save')
     {
     isubmit("tab_bottom", "Close", N_("_Close"), "class=\"buttons\" onclick=\"self.close()\"");
@@ -292,7 +302,6 @@ else
     isubmit("tab_bottom", "Cancel", N_("_Cancel"), "class=\"buttons\" onclick=\"self.close()\"");
     isubmit("tab_bottom", "Save", N_("_Save"), "class=\"buttons\"");
     }
-print "</p>\n";
 
 print <<"TableEnd10";
 </td>

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 5 April 2002.
+# Last modified 24 April 2002.
 #
 
 use lib "?";
@@ -311,17 +311,15 @@ my $tabbed_table = [
 	'dopage' => sub {
 		print "<span class=\"label\">", H_("Bins for forms management purposes:"), "</span><br>\n";
 
-		my @ppd_bins = ppd_bins(cgi_data_peek("ppd", "?"));
-
 		my %current_bins = ();
 		foreach my $bin (split(/ /, cgi_data_move("bins", "")))
 		    {
 		    $current_bins{$bin} = 1;
 		    }
 
-		foreach my $bin (@ppd_bins)
+		foreach my $ppd_bin (ppd_bins(cgi_data_peek("ppd", "?")))
 		    {
-		    my ($name, $translation) = @$bin;
+		    my ($name, $translation) = @$ppd_bin;
 		    my $checked = defined($current_bins{$name});
 		    labeled_checkbox("bins", sprintf($translation eq "" ? "%s" : _("%s -- %s"), $name, $translation), $name, $checked);
 		    print "<br>\n";
