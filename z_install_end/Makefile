@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 May 2004.
+# Last modified 9 June 2004.
 #
 
 include ../Makefile.conf
@@ -64,6 +64,7 @@ install-real:
 	./fixup_obsolete.sh
 	# Initialize the media database.
 	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
+	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.german >/dev/null
 	# Create indexes of fonts, PPD files, and filters.
 	$(HOMEDIR)/bin/ppr-index #>/dev/null
 

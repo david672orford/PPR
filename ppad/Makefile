@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 February 2004.
+# Last modified 9 June 2004.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,8 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 BIN_PROGS=ppad$(DOTEXE)
-CONF_DATA=media.sample
+CONF_DATA_1=media.sample
+CONF_DATA_2=media.german
 
 #=== Build ==================================================================
 
@@ -57,7 +58,8 @@ ppad$(DOTEXE): $(OBJS1)
 
 install: $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA)
+	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_1)
+	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_2)
 
 #=== Housekeeping ===========================================================
 
