@@ -8137,3 +8137,6 @@ line was being parsed twice.
 
 * fixup/fixup_conf.sh: fixed messed up [papd] section code.
 
+* fixup/fixup.sh: commented out call to fixup_login as it has caused some
+  trouble and will be obsolete in the next version.  Those who want it
+  can run it themselves.
