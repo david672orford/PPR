@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--19 November 2002.
+1.50b1, 8 November 2002--26 November 2002.
 
 * Removed completed items from TODO.txt.
 
@@ -303,7 +303,3 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 
 * refman/ppad.8.pod: improved description of "ppad rip" including
 more information about RIPs and *pprRIP:.
-
-
-
-

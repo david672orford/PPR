@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last revised 19 November 2002.
+# Last revised 26 November 2002.
 #
 
 =head1 NAME
@@ -360,8 +360,10 @@ If you want to supply your own RIP to use instead of B<ppr-gs>, you should
 create a program and put it in /usr/lib/ppr/lib.  It should connect stdin,
 stdout, and stderr to the cooresponding file descriptors of the PostScript
 interpreter and should send the print date to file descriptor 3.  The RIP
-option will be on the command line and the filename of the printer's PPD
-file will be in the environment variable PPD.
+options will be on the command line and the filename of the printer's PPD
+file will be in the environment variable PPD.  If the B<ppr --ripopts>
+option is used, the argument will be passed in the environment variable
+PPR_RIPOPTS.
 
 There is also support for specifying the path to a copy of Ghostscript, but
 you should not rely on this as it may be removed in the future.

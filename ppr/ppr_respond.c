@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 November 2002.
+** Last modified 26 November 2002.
 */
 
 /*
@@ -145,7 +145,7 @@ int respond(int response_code, const char extra[])
 		qentry.Title ? qentry.Title : "",
 		qentry.lc_messages ? qentry.lc_messages : "",
 	    	(char*)NULL);
-	    _exit(242);
+	_exit(242);
 	}
 
     /*
