@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/gu.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 25 February 2005.
 */
 
 /*! \file
@@ -85,12 +85,12 @@ typedef int gu_boolean;
 /** If b matches the first part of a, return a pointer to the first word in a that comes after the match. */
 #define lmatchp(a, b) (!strncmp(a, b, sizeof(b) - 1) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
 
-/** If b matches the last part of a, return true. */
-#define rmatch(a, b) (strlen(a) >= strlen(b) && strcmp(a + strlen(a) - strlen(b), b) == 0)
-
 /** If b matches the first part of a with a white space following, return pointer to first part 
    after whitespace. */
 #define lmatchsp(a, b) (!strncmp(a, b, sizeof(b) - 1) && isspace(a[sizeof(b) - 1]) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
+
+/** If b matches the last part of a, return true. */
+#define gu_rmatch(a, b) (strlen(a) >= strlen(b) && strcmp(a + strlen(a) - strlen(b), b) == 0)
 
 /** Write constant string s to file descriptor s using write(). */
 #define gu_write_string(fd, s) (write(fd, s, sizeof(s) - 1))
@@ -107,11 +107,17 @@ char *gu_strndup(const char *string, size_t len);
 char *gu_restrdup(char *ptr, size_t *number, const char *string);
 void gu_free(void *ptr);
 
+/* Pool functions */
+void *gu_pool_new(void);
+void gu_pool_destroy(void *p);
+void *gu_pool_return(void *block);
+void gu_pool_push(void *p);
+void *gu_pool_pop(void);
+
 /* Debugging functions */
-void gu_alloc_checkpoint(void);
-int gu_alloc_checkpoint_get(void);
-void gu_alloc_checkpoint_put(int n);
+int gu_alloc_checkpoint(void);
 void _gu_alloc_assert(const char *file, int line, int assertion);
+/** Make an assertion about the number of allocated memory blocks */
 #define gu_alloc_assert(assertion) _gu_alloc_assert(__FILE__, __LINE__, assertion)
 
 /*===================================================================
@@ -204,6 +210,8 @@ void gu_psprintf(const char *format, ...)
 __attribute__ (( format (printf, 1, 2) ))
 #endif
 ;
+char *gu_strlower(char *string);
+char *gu_strtrim(char *string);
 
 /*
 ** Values for gu_torf(), a function which examines a string
@@ -426,10 +434,29 @@ void gu_pcs_append_char(void **pcs, int c);
 void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
 int gu_pcs_cmp(void **pcs1, void **pcs2);
-int gu_pcs_hash(void **pcs_key);
+
+/* Perl Compatible Hash */
+void *gu_pch_new(int bucket_count);
+void gu_pch_free(void **pch);
+void gu_pch_debug(void **pch, const char name[]);
+void gu_pch_set(void **pch, char key[], void *value);
+void *gu_pch_get(void **pch, const char key[]);
+void gu_pch_delete(void **pch, char key[]);
+void gu_pch_rewind(void **pch);
+char *gu_pch_nextkey(void **pch, char **value);
+int gu_hash(const char string[]);
+
+/* Perl Compatible Array */
+void *gu_pca_new(int initial_size);
+void gu_pca_free(void **pca);
+void gu_pca_index(void **pca, int index);
+void *gu_pca_pop(void *pca); 
+void gu_pca_push(void *pca, void **pcs); 
+void *gu_pca_shift(void *pca); 
+void gu_pca_unshift(void *pca, void **pcs); 
 
 /*===================================================================
-** Replacements for missing functions
+** Replacements for frequently missing functions
 ** Leave this last in the file.
 ===================================================================*/
 
@@ -454,6 +481,20 @@ int gu_pcs_hash(void **pcs_key);
 #if 1
 #define strerror(err) gu_strerror(err)
 #endif
+
+/*===================================================================
+** 
+===================================================================*/
+
+struct URI {
+	char *method;
+	char *node;
+	int port;
+	char *path;
+	char *basename;
+	};
+
+/* int gu_parse_uri(struct pool *callers_pool, struct URI *uri, char uri_string[]); */
 
 #endif	/* _LIBGU */
 

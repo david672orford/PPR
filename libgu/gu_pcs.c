@@ -35,8 +35,13 @@ This module implements a string library.  This library is designed to make it
 easier to port Perl code to C.  The strings are stored in objects known
 as PCS (Perl Compatible String).
 
-PCS objects can contain strings with embedded NULLs, but such string cannot
+PCS objects can contain strings with embedded zero chars, but such string cannot
 be converted to C strings because C strings can't contain embedded NULLs.
+
+Note that most of the functions require a pointer to a pointer to the 
+PCS object.  This is because when a "snapshot" has been taken, functions 
+which modify the object must clone it and change the pointer to point
+to the clone.
 
 */
 
@@ -186,7 +191,7 @@ void gu_pcs_grow(void **pcs, int new_size)
 /** copy a char[] into an existing PCS
 
 This function copies the contents of a C string (a NULL terminated character
-array into the PCS object.  The function may have to allocate a new object
+array) into the PCS object.  The function may have to allocate a new object
 and change the pointer pointed to by I<pcs> to point to the new object.  A new
 object will be allocated if the value has a reference count greater than one
 (which means it should be copied on write).
@@ -222,13 +227,13 @@ void gu_pcs_set_pcs(void **pcs, void **pcs2)
 	
 	#if 1
 	printf("gu_pcs_set_pcs(pcs=%p{refcount=%d,length=%d}, pcs2=%p{refcount=%d,length=%d})\n",
-			pcs,
-				p->refcount,
-				p->length,
-			pcs2,
-				((struct PCS *)*pcs2)->refcount,
-				((struct PCS *)*pcs2)->length
-			);
+		pcs,
+			p->refcount,
+			p->length,
+		pcs2,
+			((struct PCS *)*pcs2)->refcount,
+			((struct PCS *)*pcs2)->length
+		);
 	#endif
 
 	if(p->refcount > 1)					/* if we share target, */
@@ -396,31 +401,6 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
 	gu_pcs_grow(pcs, new_length);
 	memcpy(p->storage + p->length, p2->storage, p2->length + 1);
 	p->length = new_length;
-	}
-
-/** create a hash value from a PCS
-
-This function hashes a PCS.  The hash function is attibuted to P. J Weinberger.
-
-*/
-int gu_pcs_hash(void **pcs_key)
-	{
-	int total;
-	const char *p;
-	int temp, count;
-
-	p = gu_pcs_get_cstr(pcs_key);
-	for(total = 0, count = gu_pcs_length(pcs_key); count-- > 0; )
-		{
-		total = (total << 4) + *p++;
-		if((temp = (total & 0xf0000000)))		/* if we are about to lose something off the top, */
-			{
-			total ^= (temp >> 24);				/* mix it into the bottom */
-			total ^= temp;						/* and remove it from the top */
-			}
-		}
-
-	return total;
 	}
 
 /** compare PCSs

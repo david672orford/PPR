@@ -173,7 +173,7 @@ FILE *get_ready(void)
 	if(FIFO == (FILE*)NULL)
 		{
 		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
-			fatal(EXIT_NOSPOOLER, _("can't open FIFO, pprd is probably not running."));
+			fatal(EXIT_NOSPOOLER, _("can't open FIFO, pprd is probably not running"));
 		FIFO = fdopen(fifo, "w");
 		}
 

@@ -1,11 +1,12 @@
 #! /bin/sh
+# Last modified 25 February 2005.
 
 #
 # This test interface is used for regression testing.
 #
 
 # source the file which defines the exit codes
-. lib/interface.sh
+. ./interface.sh
 
 # give the parameters names
 PRINTER="$1"
@@ -14,11 +15,13 @@ OPTIONS="$3"
 JOBBREAK="$4"
 FEEDBACK="$5"
 CODES="$6"
-QUEUEFILE="$7"
+PDL="$7"
 ROUTING="$8"
+JOBNAME="$9"
+shift 1
 FORLINE="$9"
 shift 1
-BARBARLANG="$9"
+TITLE="$9"
 
 # Redirect stdout to the file
 exec >$ADDRESS
@@ -30,10 +33,11 @@ echo "OPTIONS=\"$OPTIONS\""
 echo "JOBBREAK=$JOBBREAK"
 echo "FEEDBACK=$FEEDBACK"
 echo "CODES=$CODES"
-echo "QUEUEFILE=$QUEUEFILE" | sed -e 's/=.*:/=hhhh:/' -e 's/-[0-9]*\./=nnnn./' -e 's/(.*)/(hhhh)/'
+echo "PDL=\"$PDL\""
 echo "ROUTING=\"$ROUTING\""
+echo "JOBNAME=$JOBNAME" | sed -e 's/=.*:/=hhhh:/' -e 's/-[0-9]*\./=nnnn./' -e 's/(.*)/(hhhh)/'
 echo "FORLINE=\"$FORLINE\""
-echo "BARBARLANG=\"$BARBARLANG\""
+echo "TITLE=\"$TITLE\""
 
 # Default options:
 pre_sleep=0

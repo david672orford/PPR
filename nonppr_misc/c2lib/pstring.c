@@ -288,6 +288,7 @@ psort (vector v, int (*compare_fn) (const char **, const char **))
   vector_sort (v, (int (*) (const void *, const void *)) compare_fn);
 }
 
+#if 0
 /* Remove line endings (either CR, CRLF or LF) from the string. */
 char *
 pchomp (char *line)
@@ -299,7 +300,9 @@ pchomp (char *line)
 
   return line;
 }
+#endif
 
+#if 0
 char *
 ptrimfront (char *str)
 {
@@ -314,7 +317,9 @@ ptrimfront (char *str)
 
   return str;
 }
+#endif
 
+#if 0
 char *
 ptrimback (char *str)
 {
@@ -329,7 +334,9 @@ ptrimback (char *str)
 
   return str;
 }
+#endif
 
+#if 0
 char *
 ptrim (char *str)
 {
@@ -337,6 +344,7 @@ ptrim (char *str)
   ptrimfront (str);
   return str;
 }
+#endif
 
 /* This is equivalent to sprintf but it allocates the result string in POOL.*/
 char *
@@ -356,58 +364,18 @@ psprintf (pool pool, const char *format, ...)
 char *
 pvsprintf (pool pool, const char *format, va_list args)
 {
-#ifdef HAVE_VASPRINTF
-
   char *s;
 
-  vasprintf (&s, format, args);
+  gu_vasprintf (&s, format, args);
   if (s == 0) abort ();			/* XXX Should call bad_malloc_handler. */
 
   /* The pool will clean up the malloc when it goes. */
   pool_register_malloc (pool, s);
 
   return s;
-
-#else /* !HAVE_VASPRINTF */
-
-  int r, n = 256;
-  char *s = alloca (n), *t;
-
-  /* Note: according to the manual page, a return value of -1 indicates
-   * that the string was truncated. We have found that this is not
-   * actually true however. In fact, the library seems to return the
-   * number of characters which would have been written into the string
-   * excluding the '\0' (ie. r > n).
-   */
-  r = vsnprintf (s, n, format, args);
-
-  if (r < n)
-	{
-	  /* Copy the string into a pool-allocated area of the correct size
-	   * and return it.
-	   */
-	  n = r + 1;
-	  t = c2_pmalloc (pool, n);
-	  memcpy (t, s, n);
-
-	  return t;
-	}
-  else
-	{
-	  /* String was truncated. Allocate enough space for the string
-	   * in the pool and repeat the vsnprintf into this buffer.
-	   */
-	  n = r + 1;
-	  t = c2_pmalloc (pool, n);
-
-	  vsnprintf (t, n, format, args);
-
-	  return t;
-	}
-
-#endif /* !HAVE_VASPRINTF */
 }
 
+#if 0
 /* Convert various number types to strings. */
 char *
 pitoa (pool pool, int n)
@@ -496,6 +464,7 @@ pvxtostr (pool pool, vector v)
 
   return nv;
 }
+#endif
 
 /* STR is a string allocated in POOL. Append ENDING to STR, reallocating
  * STR if necessary.
@@ -525,6 +494,7 @@ pstrncat (pool pool, char *str, const char *ending, size_t n)
   return str;
 }
 
+#if 0
 /* Return the substring starting at OFFSET and of length LEN of STR, allocated
  * as a new string. If LEN is negative, everything up to the end of STR
  * is returned.
@@ -566,7 +536,9 @@ pstrlwr (char *str)
   while (*s) { *s = tolower (*s); s++; }
   return str;
 }
+#endif
 
+#if 0
 /* NB. The following figures were derived by examining a large number
  * of configuration files in /etc/ on a Red Hat Linux box.
  */
@@ -682,7 +654,9 @@ pgetlinex (pool pool, FILE *fp, char *line, const char *comment_set,
 
   return line;
 }
+#endif
 
+#if 0
 vector
 pmap (pool p, const vector v, char *(*map_fn) (pool, const char *))
 {
@@ -719,3 +693,5 @@ pgrep (pool p, const vector v, int (*grep_fn) (pool, const char *))
 
   return nv;
 }
+#endif
+

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 23 February 2005.
 */
 
 #include "config.h"
@@ -79,6 +79,7 @@ static void do_paths(char format[], char language[])
 	printf(format, "INTDIR", INTDIR);
 	printf(format, "PPDDIR", PPDDIR);
 	printf(format, "RESPONDERDIR", RESPONDERDIR);
+	printf(format, "CGI_BIN", CGI_BIN);
 
 	/* Configuration Files */
 	printf(format, "PPR_CONF", PPR_CONF);

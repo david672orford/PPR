@@ -2,8 +2,8 @@
 
 # Test lp filter underlining
 
-$FILT_PATH/filter_lp "" "testprn" "" <${TEST_BASENAME}.in1 || echo "error: $?"
+$FILTDIR/filter_lp "" "testprn" "" <${TEST_BASENAME}.in1 || echo "error: $?"
 
-$FILT_PATH/filter_lp "" "testprn" "" <${TEST_BASENAME}.in2 || echo "error: $?"
+$FILTDIR/filter_lp "" "testprn" "" <${TEST_BASENAME}.in2 || echo "error: $?"
 
 exit 0

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_torf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 25 February 2005.
 */
 
 /*! \file
@@ -36,10 +36,13 @@
 #include "gu.h"
 
 /** Parse a boolean value
- *
- * Read a True or False answer and return ANSWER_TRUE, ANSWER_FALSE,
- * or ANSWER_UNKNOWN.
- */
+
+Read a True or False answer and return ANSWER_TRUE, ANSWER_FALSE,
+or ANSWER_UNKNOWN.
+
+This function should be phased out in favor of gu_torf_setBOOL().
+
+*/
 int gu_torf(const char *s)
 	{
 	while( *s == ' ' || *s == '\t' )	/* eat up */

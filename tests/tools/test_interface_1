@@ -5,7 +5,7 @@
 #
 
 # source the file which defines the exit codes
-. lib/interface.sh
+. ./interface.sh
 
 # give the parameters names
 PRINTER="$1"

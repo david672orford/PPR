@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 25 February 2005.
 */
 
 /*
@@ -350,8 +350,6 @@ void printer_tick(void)
 	int x;
 	static int hungry_countdown = 0;	/* seconds till next mercy for starving printers */
 	static int hungry_x = 0;			/* where we left off in search for starving printers */
-	int gu_alloc_saved = gu_alloc_checkpoint_get();
-
 
 	DODEBUG_TICK(("printer_tick(): active_printers=%d, starving_printers=%d", active_printers, starving_printers));
 
@@ -416,7 +414,6 @@ void printer_tick(void)
 			}
 		}
 
-	gu_alloc_checkpoint_put(gu_alloc_saved);
 	} /* end of printer_tick() */
 
 /* end of file */

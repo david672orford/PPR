@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 24 February 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
+LIBOBJS=malloc.$(OBJ) \
 	ini_section.$(OBJ) \
 	getline.$(OBJ) \
 	gu_md5.$(OBJ) \
@@ -66,8 +66,13 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
 	gu_pcs.$(OBJ) \
+	gu_pch.$(OBJ) \
+	gu_pca.$(OBJ) \
 	gu_run.$(OBJ) \
 	gu_exceptions.$(OBJ) \
+	gu_parse_uri.$(OBJ) \
+	gu_strlower.$(OBJ) \
+	gu_strtrim.$(OBJ) \
 	pcre.$(OBJ) \
 	pcre_get.$(OBJ) \
 	pcre_maketables.$(OBJ) \
@@ -76,7 +81,6 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
  	c2lib_pool.$(OBJ) \
 	c2lib_pre.$(OBJ) \
 	c2lib_pstring.$(OBJ) \
-	c2lib_tree.$(OBJ) \
 	c2lib_vector.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)

@@ -1,10 +1,10 @@
 #! /bin/bash
 # ../../INSTALL.txt --> ./docs/misc/INSTALL.txt
 ln -sf ../../INSTALL.txt ./docs/misc/INSTALL.txt || exit 1
-# ../../po/README.txt --> ./docs/misc/internationalization.txt
-ln -sf ../../po/README.txt ./docs/misc/internationalization.txt || exit 1
 # ../../History.txt --> ./docs/misc/main_history.txt
 ln -sf ../../History.txt ./docs/misc/main_history.txt || exit 1
+# ../../po/README.txt --> ./docs/misc/internationalization.txt
+ln -sf ../../po/README.txt ./docs/misc/internationalization.txt || exit 1
 # ../History.txt --> ./docs/misc/docs_history.txt
 ln -sf ../History.txt ./docs/misc/docs_history.txt || exit 1
 # ../../misc/README.txt --> ./docs/misc/misc_dir_contents.txt
@@ -21,14 +21,14 @@ ln -sf ../nonppr_misc/c2lib/pool.h ./include/pool.h || exit 1
 ln -sf ../nonppr_misc/c2lib/pre.h ./include/pre.h || exit 1
 # ../nonppr_misc/c2lib/pstring.h --> ./include/pstring.h
 ln -sf ../nonppr_misc/c2lib/pstring.h ./include/pstring.h || exit 1
-# ../nonppr_misc/c2lib/tree.h --> ./include/tree.h
-ln -sf ../nonppr_misc/c2lib/tree.h ./include/tree.h || exit 1
 # ../nonppr_misc/c2lib/vector.h --> ./include/vector.h
 ln -sf ../nonppr_misc/c2lib/vector.h ./include/vector.h || exit 1
 # ../config.h --> ./include/config.h
 ln -sf ../config.h ./include/config.h || exit 1
 # ../nonppr_misc/md5/gu_md5.c --> ./libgu/gu_md5.c
 ln -sf ../nonppr_misc/md5/gu_md5.c ./libgu/gu_md5.c || exit 1
+# ../nonppr_misc/snprintf/snprintf.c --> ./libgu/snprintf.c
+ln -sf ../nonppr_misc/snprintf/snprintf.c ./libgu/snprintf.c || exit 1
 # ../nonppr_misc/wildmat/gu_wildmat.c --> ./libgu/gu_wildmat.c
 ln -sf ../nonppr_misc/wildmat/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1
 # ../nonppr_misc/pcre/pcre.c --> ./libgu/pcre.c
@@ -47,8 +47,6 @@ ln -sf ../nonppr_misc/c2lib/pool.c ./libgu/c2lib_pool.c || exit 1
 ln -sf ../nonppr_misc/c2lib/pre.c ./libgu/c2lib_pre.c || exit 1
 # ../nonppr_misc/c2lib/pstring.c --> ./libgu/c2lib_pstring.c
 ln -sf ../nonppr_misc/c2lib/pstring.c ./libgu/c2lib_pstring.c || exit 1
-# ../nonppr_misc/c2lib/tree.c --> ./libgu/c2lib_tree.c
-ln -sf ../nonppr_misc/c2lib/tree.c ./libgu/c2lib_tree.c || exit 1
 # ../nonppr_misc/c2lib/vector.c --> ./libgu/c2lib_vector.c
 ln -sf ../nonppr_misc/c2lib/vector.c ./libgu/c2lib_vector.c || exit 1
 # ../nonppr_misc/md5/MD5pp.pm --> ./libscript/MD5pp.pm

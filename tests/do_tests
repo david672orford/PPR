@@ -1,8 +1,10 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/tests/do_tests
-# Last modified 17 January 2004.
+# Last modified 25 February 2005.
 #
+
+use Cwd;
 
 #
 # This program is used to run PPR regression tests.  It should be invoked
@@ -15,44 +17,45 @@
 # Run a test.
 #
 sub do_test
-    {
-    my $test_basename = shift;
-
-    print "$test_basename\n";
-
-    $ENV{TEST_BASENAME} = $test_basename;
-
-    if( system("${test_basename}.run >${test_basename}.out 2>&1") )
 	{
-	print "UNTESTED test code failed\n";
-	return "UNTESTED";
-	}
+	my $test_basename = shift;
 
-    if( ! -f "${test_basename}.ok" )
-	{
-	print "UNTESTED ${test_basename}.ok missing\n";
-	return "UNTESTED";
-	}
+	print "$test_basename\n";
 
-    open(DIFF, "diff -c ${test_basename}.ok ${test_basename}.out |") || die;
-    my $diff_output = "";
-    my $diff_line;
-    while($diff_line=<DIFF>)
-	{ $diff_output .= $diff_line }
-    close(DIFF);
+	$ENV{TEST_BASENAME} = $test_basename;
 
-    if($diff_output ne "")
-	{
-	print $diff_output;
-	print "FAIL\n";
-	return "FAIL";
+	if(system("${test_basename}.run >${test_basename}.out 2>&1") != 0)
+		{
+		print "UNTESTED test code failed\n";
+		return "UNTESTED";
+		}
+
+	if( ! -f "${test_basename}.ok" )
+		{
+		print "UNTESTED ${test_basename}.ok missing\n";
+		return "UNTESTED";
+		}
+
+	open(DIFF, "diff -c ${test_basename}.ok ${test_basename}.out |") || die;
+	my $diff_output = "";
+	while(my $diff_line=<DIFF>)
+		{
+		$diff_output .= $diff_line;
+		}
+	close(DIFF);
+
+	if($diff_output ne "")
+		{
+		print $diff_output;
+		print "FAIL\n";
+		return "FAIL";
+		}
+	else
+		{
+		print "PASS\n";
+		return "PASS";
+		}
 	}
-    else
-	{
-	print "PASS\n";
-	return "PASS";
-	}
-    }
 
 #============================================================================
 # Main
@@ -81,32 +84,33 @@ delete $ENV{LC_MESSAGES};
 
 # We pass this to our children so that they can find this nice directory
 # of utilities handy for building tests.
-$ENV{TESTBIN} = "$ENV{LIBDIR}/src/tests/tools";
+$ENV{TESTBIN} = getcwd() . "/tools";
 
 # This is where the output of the simulated printer will appear.
 $ENV{REGTEST_INTERFACE_OUTPUT} = "$ENV{TEMPDIR}/regtest_interface_output";
 
 # If the utility directory doesn't exists, we are somehow sadly mistaken
 # about something.
-(-d $ENV{TESTBIN}) || die;
+(-d $ENV{TESTBIN}) || die "Can't find \"$ENV{TESTBIN}\"";
+(-x "$ENV{TESTBIN}/test_interface_1") || die;
 
 # Parse switches (command line arguments starting with "--").
 $stop = 0;
 while(defined($ARGV[0]) && $ARGV[0] =~ /^--/)
-    {
-    my $option = shift @ARGV;
-    if($option eq "--stop")
-    	{ $stop = 1 }
-    else
-    	{ die "Unrecognized option:  $option\n" }
-    }
+	{
+	my $option = shift @ARGV;
+	if($option eq "--stop")
+		{ $stop = 1 }
+	else
+		{ die "Unrecognized option: $option\n" }
+	}
 
 # If there aren't any arguments left, the user must not know what
 # he is doing.
 if($#ARGV < 0)
-    {
-    die "Usage: [--stop] do_test _testdir_\n";
-    }
+	{
+	die "Usage: [--stop] do_test _testdir_\n";
+	}
 
 my $total_tests = 0;
 my $total_groups = 0;
@@ -115,32 +119,32 @@ my $total_failures = 0;
 
 # For each test directory,
 while(defined($TESTDIR = shift @ARGV))
-    {
-    $total_groups++;
+	{
+	$total_groups++;
 
-    opendir(TESTS, $TESTDIR) || die "Can't open directory \"$TESTDIR\", $!\n";
-    my @file_list = sort(readdir(TESTS));
-    closedir(TESTS) || die;
+	opendir(TESTS, $TESTDIR) || die "Can't open directory \"$TESTDIR\", $!\n";
+	my @file_list = sort(readdir(TESTS));
+	closedir(TESTS) || die;
 
-    my @test_list = ();
-    foreach my $file (@file_list)
-        {
-        if($file =~ /^(.+)\.run$/)
-            {
-            push(@test_list, $1);
-            }
-        }
+	my @test_list = ();
+	foreach my $file (@file_list)
+		{
+		if($file =~ /^(.+)\.run$/)
+		    {
+		    push(@test_list, $1);
+		    }
+		}
 
-    foreach my $test (sort(@test_list))
-        {
-	$total_tests++;
-        my $result = do_test("$TESTDIR/$test");
-        print "\n";
-        $total_failures++ if($result eq "FAIL");
-	$total_untested++ if($result eq "UNTESTED");
-        exit 1 if($result && $stop);
-        }
-    }
+	foreach my $test (sort(@test_list))
+		{
+		$total_tests++;
+		my $result = do_test("$TESTDIR/$test");
+		print "\n";
+		$total_failures++ if($result eq "FAIL");
+		$total_untested++ if($result eq "UNTESTED");
+		exit 1 if($result && $stop);
+		}
+	}
 
 print "Ran $total_groups group(s) of tests, $total_tests individual test(s), $total_untested untested, $total_failures failure(s).\n";
 

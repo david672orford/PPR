@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_sscanf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2004.
+** Last modified 25 February 2005.
 */
 
 /*! \file
@@ -43,59 +43,7 @@ of the input string, and %S which reads a word and allocates storage for it.
 #include <string.h>
 #include "gu.h"
 
-#define MAX_ROLLBACK 10
-static int checkpoint_depth = 0;
-static char *strings[MAX_ROLLBACK];
-static int strings_count = 0;
-
-/*
-** Call this function to have gu_sscanf() keep a list of the memory blocks
-** it allocates for return values.
-*/
-void gu_sscanf_checkpoint(void)
-	{
-	const char function[] = "gu_sscanf_checkpoint";
-	if(checkpoint_depth != 0)
-		gu_Throw("%s(): checkpoint_depth is %d!", function, checkpoint_depth);
-	checkpoint_depth++;
-	}
-
-/*
-** Call this to free all of the memory blocks that gu_sscanf() allocated
-** since the last call to gu_sscanf_checkpoint().
-*/
-void gu_sscanf_rollback(void)
-	{
-	const char function[] = "gu_sscanf_checkpoint";
-	if(checkpoint_depth != 1)
-		gu_Throw("%s(): checkpoint_depth is %d!", function, checkpoint_depth);
-	while(strings_count > 0)
-		{
-		strings_count--;
-		gu_free(strings[strings_count]);
-		}
-	checkpoint_depth--;
-	}
-
-/*
-** This function is used internaly to allocate space for formats such as %S. 
-** We don't use gu_strndup() because it doesn't have hooks for the rollback
-** stack.
-*/
-static char *gu_sscanf_strndup(const char *string, size_t len)
-	{
-	const char function[] = "gu_sscanf_strndup";
-	char *p = gu_strndup(string, len);
-	if(checkpoint_depth > 0)
-		{
-		if(strings_count >= MAX_ROLLBACK)
-			gu_Throw("%s(): rollback stack overflow", function);
-		strings[strings_count++] = p;
-		}
-	return p;
-	}
-
-/** safe sscanf()
+/** a safe sscanf()
 
 This function is similiar to sscanf().  It has additional format specifiers which allocate
 memory and read quoted strings.  Since it is meant to read PPR configuration files and
@@ -349,7 +297,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 				 */
 				case 'S':
 					len = strcspn(string, " \t\n");
-					*(va_arg(va, char **)) = gu_sscanf_strndup(string, len);
+					*(va_arg(va, char **)) = gu_strndup(string, len);
 					string += len;
 					count++;
 					break;
@@ -373,7 +321,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 				 */
 				case 'Z':
 				   len = strcspn(string, "\n");
-				   *(va_arg(va,char **)) = gu_sscanf_strndup(string, len);
+				   *(va_arg(va,char **)) = gu_strndup(string, len);
 				   string += len;
 				   while(*string)
 						string++;
@@ -399,7 +347,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 							len = strcspn(string, " \t\n");
 							break;
 						}
-					*(va_arg(va, char **)) = gu_sscanf_strndup(string, len);
+					*(va_arg(va, char **)) = gu_strndup(string, len);
 					string += len;
 					if(*string == 042 || *string == 047)
 						string++;
@@ -427,7 +375,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 								len--;
 							break;
 						}
-					*(va_arg(va, char **)) = gu_sscanf_strndup(string, len);
+					*(va_arg(va, char **)) = gu_strndup(string, len);
 					string += len;
 					if(*string == 042 || *string == 047)
 						string++;

@@ -1,6 +1,6 @@
-#! ppr-tclsh
+#! @PPR_TCLSH@
 #
-# mouse:~ppr/src/browsers/parallel.tcl
+# mouse:~ppr/src/browsers/atalk.tcl
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 21 February 2005.
 #
 
-set LIBDIR "?"
+set LIBDIR "@LIBDIR@"
 
 # Name the command line parameters.
 set domain [lindex $argv 0]

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 23 February 2005.
 */
 
 /*
@@ -110,6 +110,7 @@
 #define TBCP2BIN_PATH "@TBCP2BIN_PATH@"
 #define PPR2SAMBA_PATH "@PPR2SAMBA_PATH@"
 #define TAIL_STATUS_PATH "@TAIL_STATUS_PATH@"
+#define CGI_BIN "@CGI_BIN@"
 
 /* Programs used by PPR */
 #define SENDMAIL_PATH "@SENDMAIL_PATH@"

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppd/indexppds.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2004.
+** Last modified 24 February 2005.
 */
 
 #include "config.h"
@@ -143,9 +143,10 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		 */
 		if((p = lmatchp(pline, "*PSVersion:")) && *p == '"')
 			{
-			/* this is wasteful */
+			/* this wastefully recompiles the pattern */
 			vector matches = prematch(temp_pool, p,
-					precomp(temp_pool, "^\"\\(([0-9\\.]+)\\)\\s+(\\d+)\"$", 1),
+									 /* ^"\(([0-9\.]+)\)\s+(\d+)"$ */
+					precomp(temp_pool, "^\"\\(([0-9\\.]+)\\)\\s+(\\d+)\"$", 0),
 					0);
 			if(matches && vector_size(matches) == 3)
 				{
@@ -168,7 +169,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			vector pairs;
 
 			p = ppd_finish_QuotedValue(obj, p + 1);
-			ptrim(p);
+			gu_strtrim(p);
 
 			/* use regular expression to split on semicolons */
 			split_pattern = precomp(temp_pool, ";\\s*", 0);
@@ -323,7 +324,7 @@ static int do_dir(FILE *indexfile, const char dirname[])
 		if(fileobj->d_name[0] == '.') continue;
 
 		/* Skip editor backups. */
-		if(rmatch(fileobj->d_name, "~"))
+		if(gu_rmatch(fileobj->d_name, "~"))
 			continue;
 
 		/* Build the full name of the file or directory. */

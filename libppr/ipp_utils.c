@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 23 February 2005.
 */
 
 /*! \file */
@@ -850,7 +850,8 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 
 	ipp_put_sb(ipp, 1);		/* version number 1.0 */
 	ipp_put_sb(ipp, 0);
-	
+
+	DEBUG(("response_code: %d", ipp->response_code));
 	ipp_put_ss(ipp, ipp->response_code);
 	ipp_put_si(ipp, ipp->request_id);
 	

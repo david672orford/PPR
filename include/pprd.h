@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 23 February 2005.
 */
 
 /*
@@ -56,7 +56,7 @@
 ** Note that we use C++ comments here to disable the ones we don't want.  This
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
-#if 0
+#if 1
 #define DEBUG 1							/* define function[] strings */
 //#define DEBUG_STARTUP 1				/* initialization routines */
 //#define DEBUG_MAINLOOP 1				/* main loop */
@@ -72,8 +72,8 @@
 //#define DEBUG_PPOPINT 1				/* interface to ppop */
 //#define DEBUG_ALERTS 1				/* sending of operator alerts */
 //#define DEBUG_NODEID 1				/* allocating and deallocating node id numbers */
-#define DEBUG_REMOTE 1					/* sending of jobs to remote systems */
 #define DEBUG_QUESTIONS 1				/* sending questions to job submitters */
+#define DEBUG_IPP 1						/* Internet Printing Protocol operations */
 #endif
 
 /*
@@ -317,16 +317,16 @@ struct fcommand2
 #define DODEBUG_NODEID(a)
 #endif
 
-#ifdef DEBUG_REMOTE
-#define DODEBUG_REMOTE(a) debug a
-#else
-#define DODEBUG_REMOTE(a)
-#endif
-
 #ifdef DEBUG_QUESTIONS
 #define DODEBUG_QUESTIONS(a) debug a
 #else
 #define DODEBUG_QUESTIONS(a)
+#endif
+
+#ifdef DEBUG_IPP
+#define DODEBUG_IPP(a) debug a
+#else
+#define DODEBUG_IPP(a)
 #endif
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 25 February 2005.
 */
 
 /*
@@ -1103,7 +1103,7 @@ int ppop_purge(char *argv[], int inform)
 			return EXIT_SYNTAX;
 
 		FIFO = get_ready();
-		fprintf(FIFO, "c %s -1 -1 * %d\n", dest.destname, inform);
+		fprintf(FIFO, "c %s -1 -1 %d\n", dest.destname, inform);
 		fflush(FIFO);
 
 		if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)

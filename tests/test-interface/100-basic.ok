@@ -13,10 +13,11 @@ OPTIONS=""
 JOBBREAK=0
 FEEDBACK=0
 CODES=0
-QUEUEFILE=regression-test1=nnnn.0
+PDL="postscript"
 ROUTING="My Routing Message"
+JOBNAME=regression-test1=nnnn.0
 FORLINE="ppr"
-BARBARLANG=""
+TITLE=""
 %!PS-Adobe-3.0
 %%For: (ppr)
 %%Routing: My Routing Message

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 25 February 2005.
 */
 
 /*
@@ -278,9 +278,11 @@ static void do_command(int FIFO)
 				break;
 
 			case 'n':					/* Nag operator by email */
-				gu_alloc_checkpoint();
+				{
+				int count = gu_alloc_checkpoint();
 				ppad_remind();
-				gu_alloc_assert(0);
+				gu_alloc_assert(count);
+				}
 				break;
 
 			case 'N':					/* new printer or group config */
@@ -291,9 +293,11 @@ static void do_command(int FIFO)
 				break;
 
 			case 'I':					/* Internet Printing Protocol */
-				gu_alloc_checkpoint();
+				{
+				int count = gu_alloc_checkpoint();
 				ipp_dispatch(ptr);
-				gu_alloc_assert(0);
+				gu_alloc_assert(count);
+				}
 				break;
 
 			default:					/* anything else needs a reply to ppop */

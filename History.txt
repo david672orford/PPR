@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--21 January 2005
+2.00a1, 11 December 2004--25 February 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9573,3 +9573,19 @@ no final tarball was released.
 * libscript/ppr_conf_query.c: made failure to open ppr.conf a fatal
   error rather than a warning.
 
+* nonppr_misc/c2lib/tree.*: removed
+
+* libgu/malloc.c: added gu_pool_* functions.
+
+* libgu/gu_sscanf.c: removed the rollback functions.
+
+* pprd/pprd_ppopint.c: switched from the gu_sscanf() rollback functions to
+  gu_pool_* functions.
+
+* test/*: fixed the tests to coorespond with the interface script parameter
+  changes and the directory layout changes.
+
+* libgu/gu_strlower.c,gu_strtrim.c: added
+
+* libgu/malloc_debug.c: moved a simplified version into malloc.c and deleted 
+  file

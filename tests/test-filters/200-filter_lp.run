@@ -2,20 +2,20 @@
 
 # Test the lp filter's placement of gutters
 
-$FILT_PATH/filter_lp 'duplex=undef gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=undef gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=none gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=none gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=notumble gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=notumble gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=tumble gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=tumble gutter=1.0 orientation=portrait' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=undef gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=undef gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=none gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=none gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=notumble gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=notumble gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
 
-$FILT_PATH/filter_lp 'duplex=tumble gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
+$FILTDIR/filter_lp 'duplex=tumble gutter=1.0 orientation=landscape' "testprn" "" <${TEST_BASENAME}.in
 
 exit 0

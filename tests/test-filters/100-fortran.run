@@ -1,6 +1,6 @@
 #!/bin/sh
 
-$FILT_PATH/filter_fortran "" "testprn" "This is the title" <${TEST_BASENAME}.in
+$FILTDIR/filter_fortran "" "testprn" "This is the title" <${TEST_BASENAME}.in
 echo "Exit code is $?"
 
 exit 0

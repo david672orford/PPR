@@ -2325,9 +2325,11 @@ int printer_delete(const char *argv[])
 	ppop2("reject", printer);			/* accept no more jobs */
 	ppop2("purge", printer);			/* cancel all existing jobs */
 
-	/* Remove the printer from membership in each */
-	/* and every group.  Rather laborious, don't */
-	/* you think? */
+	/*
+	 * Remove the printer from membership in each 
+	 * and every group.  Rather laborious, don't 
+	 * you think?
+	 */
 	if((dir = opendir(GRCONF)) == (DIR*)NULL)
 		{
 		fprintf(errors, "%s(): opendir() failed\n", function);

@@ -41,8 +41,6 @@
 #include "util_exits.h"
 #include "ppad.h"
 
-#include "pstring.h"
-
 #if 0
 #define DEBUG 1
 #endif
@@ -852,7 +850,7 @@ int ppdlib_search(const char *argv[])
 		}
 
 	pattern_lowered = gu_strdup(pattern);
-	pstrlwr(pattern_lowered);
+	gu_strlower(pattern_lowered);
 	wildcards = strchr(pattern, '*') || strchr(pattern, '?');
 
 	while((line = gu_getline(line, &line_len, f)))
@@ -869,7 +867,7 @@ int ppdlib_search(const char *argv[])
 			}
 
 		f_description_lowered = gu_strdup(f_description);
-		pstrlwr(f_description_lowered);
+		gu_strlower(f_description_lowered);
 		
 		if((wildcards && gu_wildmat(f_description_lowered, pattern_lowered))
 				||

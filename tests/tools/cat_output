@@ -9,10 +9,10 @@ while(1)
     {
     last if(open(OUT, "<$ENV{REGTEST_INTERFACE_OUTPUT}"));
     if($timeout-- < 0)
-	{
-	print "Timeout waiting for output.\n";
-	exit(1);
-	}
+		{
+		print "Timeout waiting for output.\n";
+		exit(1);
+		}
     sleep(1);
     }
 
@@ -22,15 +22,17 @@ while(1)
     {
     $_ = <OUT>;
     if( ! defined($_) )		# if we are getting ahead of the
-	{			# interface, pause and try again.
-	sleep(1);
-	next;
-	}
+		{					# interface, pause and try again.
+		sleep(1);
+		next;
+		}
 
     # Replace this line because it differs
     # from job to job.
-    if($_ =~ /jobname/i)
-	{ $_ = "% jobname line removed\n" }
+    if($_ =~ /\/jobname /i)
+		{
+		$_ = "% jobname line removed\n";
+		}
 
     # Removed the PPR version number from this line.
     s/^(%TCHCTSpooler: PPR)-.*/$1-x.xx/;

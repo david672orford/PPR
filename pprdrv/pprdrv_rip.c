@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 24 February 2005.
 */
 
 #include "config.h"
@@ -199,7 +199,7 @@ int rip_start(int printdata_handle, int stdout_handle)
 		   PPD files that apply only to their own computers!
 
 		   */
-		if(rmatch(printer.RIP.name, "/gs"))
+		if(gu_rmatch(printer.RIP.name, "/gs"))
 			{
 			rip_exe = printer.RIP.name;
 			rip_is_unwrapped_ghostscript = TRUE;

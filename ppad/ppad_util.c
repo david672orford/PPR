@@ -85,22 +85,22 @@ int ppop2(const char *parm1, const char *parm2)
 
 	switch(fork())
 		{
-		int fd;
-
 		case -1:				/* fork() failed */
 			return -1;
 		case 0:					/* child */
+			{
+			int fd;
 			if((fd = open("/dev/null",O_RDWR)) < 0)
 				fatal(EXIT_INTERNAL, "failed to open /dev/null");
-
 			dup2(fd,0);
 			dup2(fd,1);
 			dup2(fd,2);
 			if(fd > 2)
 				close(fd);
+			}
 			execl(PPOP_PATH, "ppop", parm1, parm2, (char*)NULL);
 			_exit(255);
-		default:				/* parent */
+		default:						/* parent */
 			if(wait(&wstat)==-1)		/* if wait failed */
 				return -1;
 			if(!WIFEXITED(wstat))		/* if ppop didn't exit normally */

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-01 14:52-0400\n"
+"POT-Creation-Date: 2005-01-26 15:19-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -157,7 +157,7 @@ msgstr ""
 
 #: ../pprdrv/pprdrv_flag.c:536
 #, c-format
-msgid "End of job %s:%s-%d"
+msgid "End of job %s-%d"
 msgstr ""
 
 #: ../pprdrv/pprdrv_flag.c:539 ../pprdrv/pprdrv_flag.c:557
@@ -167,7 +167,7 @@ msgstr ""
 
 #: ../pprdrv/pprdrv_flag.c:548
 #, c-format
-msgid "Job ID: %s:%s-%d"
+msgid "Job ID: %s-%d"
 msgstr ""
 
 #: ../pprdrv/pprdrv_flag.c:551
@@ -248,12 +248,17 @@ msgid ""
 "\tall of the job but didn't return an error code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:309
+#: ../pprdrv/pprdrv_interface.c:311
 #, c-format
-msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
+msgid "Interface program \"%s\" does not exist."
 msgstr ""
 
-#: ../pprdrv/pprdrv_interface.c:313 ../pprdrv/pprdrv_interface.c:317
+#: ../pprdrv/pprdrv_interface.c:313
+#, c-format
+msgid "access(\"%s\", X_OK) failed, errno=%d (%s)."
+msgstr ""
+
+#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
 #, c-format
 msgid "%s(): pipe() failed, errno=%d (%s)"
 msgstr ""

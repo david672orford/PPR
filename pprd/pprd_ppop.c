@@ -34,8 +34,8 @@
 * function in this module is ppop_dispatch().
 * 
 * You may notice that the ppop subcommand functions don't free the memory
-* allocated by gu_sscanf().  That is ok because the gu_sscanf_rollback()
-* calls in ppop_dispatch() take care of that.
+* allocated by gu_sscanf().  That is ok because they are assigned a memory
+* pool which is destroyed when they return.
 */
 
 #include "config.h"
@@ -84,10 +84,10 @@ static void ppop_list(const char command[])
 	** Pull the relevent information from the command we received.
 	*/
 	if(gu_sscanf(command, "l %S %d %d",
-				&destname,
-				&id,
-				&subid
-				) != 3)
+			&destname,
+			&id,
+			&subid
+			) != 3)
 		{
 		error("%s(): invalid list command: %s", function, command);
 		return;
@@ -1432,145 +1432,89 @@ void ppop_dispatch(const char command[])
 	/* The command comes after the process id. */
 	ppop_command = command + strspn(command, "0123456789 ");
 
+	{
+	int alloc_count = gu_alloc_checkpoint();
+	gu_pool_push(gu_pool_new());
+
 	/* Do the command. */
 	switch(ppop_command[0])
 		{
 		case 'l':						/* list print jobs */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_list(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 's':						/* show printer status */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_status(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 't':						/* starT a printer */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_start_stop_wstop_halt(ppop_command,0);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'p':						/* stoP a printer */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_start_stop_wstop_halt(ppop_command,1);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'P':						/* stoP a printer, wait */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_start_stop_wstop_halt(ppop_command,129);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'b':						/* stop printer with a Bang */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_start_stop_wstop_halt(ppop_command,2);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'h':						/* place job on hold */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_hold_release(ppop_command,0);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'r':						/* release a job */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
-			ppop_hold_release(ppop_command,1);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
+			gu_pool_destroy(gu_pool_pop());
 			break;
 
 		case 'c':						/* cancel */
-			gu_sscanf_checkpoint();
 			ppop_cancel_purge(ppop_command);
-			gu_sscanf_rollback();
 			break;
 
 		case 'f':						/* media */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_media(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'M':						/* mount media */
-			gu_sscanf_checkpoint();
 			ppop_mount(ppop_command);
-			gu_sscanf_rollback();
 			break;
 
 		case 'A':						/* accept for printer or group */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_accept_reject(ppop_command,1);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'R':						/* reject for printer or group */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_accept_reject(ppop_command,0);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'D':						/* show destinations */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_dest(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'm':						/* move job(s) */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_move(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'U':						/* rush job */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_rush(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		case 'q':						/* turn a question on or off */
-			gu_alloc_checkpoint();
-			gu_sscanf_checkpoint();
 			ppop_modify_question(ppop_command);
-			gu_sscanf_rollback();
-			gu_alloc_assert(0);
 			break;
 
 		default:
 			error("unknown command: %s", command);
 			break;
 		}
+
+	gu_pool_destroy(gu_pool_pop());
+	gu_alloc_assert(alloc_count);
+	}
 
 	/* The "ppop wstop" command will set reply_file to NULL (after calling fclose()
 	   in order to prevent us from sending the signal. */

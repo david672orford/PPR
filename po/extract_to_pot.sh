@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/po/extract_to_pot.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 December 2004.
+# Last modified 26 January 2005.
 #
 
 echo "Extracting master string lists..."
@@ -45,7 +45,8 @@ xgettext --default-domain=PPR --keyword=_ --keyword=N_ --sort-output  \
 	../samba/*.c \
 	../unixuser/*.c \
 	../libuprint/*.c \
-	../uprint/*.c
+	../ppr-sysv/*.c \
+	../ppr-bsd/*.c
 mv PPR.po PPR.pot
 
 echo "PPRDRV.pot"

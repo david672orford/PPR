@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 25 February 2005.
 */
 
 #include "config.h"
@@ -100,7 +100,7 @@ void int_cmdline_set(int argc, char *argv[])
 
 	/* PDL */
 	if(argc >= 8)
-		int_cmdline.PDL = argv[10];
+		int_cmdline.PDL = argv[7];
 	else
 		int_cmdline.PDL = "";
 
@@ -112,13 +112,13 @@ void int_cmdline_set(int argc, char *argv[])
 
 	/* jobname */
 	if(argc >= 10)
-		int_cmdline.jobname = argv[7];
+		int_cmdline.jobname = argv[9];
 	else
 		int_cmdline.jobname = "???";
 
 	/* forline */
 	if(argc >= 11)
-		int_cmdline.forline = argv[9];
+		int_cmdline.forline = argv[10];
 	else
 		int_cmdline.forline = "???";
 

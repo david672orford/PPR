@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 23 February 2005.
 */
 
 /*
@@ -60,10 +60,10 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-static void printer_add_status(struct IPP *ipp, int printer)
+static void printer_add_status(struct IPP *ipp, int prnid)
 	{
 	const char function[] = "printer_add_status";
-	switch(printers[printer].status)
+	switch(printers[prnid].status)
 		{
 		case PRNSTATUS_IDLE:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
@@ -73,31 +73,31 @@ static void printer_add_status(struct IPP *ipp, int printer)
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_PROCESSING);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("printing %s"), "???");
+				"printer-state-message", _("printing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 			break;
 		case PRNSTATUS_CANCELING:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_PROCESSING);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("canceling %s"), "???");
+				"printer-state-message", _("canceling %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 			break;
 		case PRNSTATUS_SEIZING:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_PROCESSING);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("seizing %s"), "???");
+				"printer-state-message", _("seizing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 			break;
 		case PRNSTATUS_STOPPING:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_PROCESSING);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("stopping (printing %s)"), "???");
+				"printer-state-message", _("stopping (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 			break;
 		case PRNSTATUS_HALTING:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_PROCESSING);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("halting (printing %s)"), "???");
+				"printer-state-message", _("halting (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
 			break;
 		case PRNSTATUS_STOPT:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
@@ -108,10 +108,10 @@ static void printer_add_status(struct IPP *ipp, int printer)
 		case PRNSTATUS_FAULT:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_STOPPED);
-			if(1)
+			if(printers[prnid].next_error_retry)
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("fault, retry %d in %d seconds"), 1, 1);
+					"printer-state-message", _("fault, retry %d in %d seconds"), printers[prnid].next_error_retry, printers[prnid].countdown);
 				}
 			else
 				{
@@ -123,7 +123,7 @@ static void printer_add_status(struct IPP *ipp, int printer)
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 				"printer-state", IPP_PRINTER_STOPPED);
 			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), 1, 2);
+				"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), printers[prnid].next_engaged_retry, printers[prnid].countdown);
 			break;
 		case PRNSTATUS_STARVED:
 			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
@@ -133,7 +133,7 @@ static void printer_add_status(struct IPP *ipp, int printer)
 			break;
 
 		default:
-			error("%s(): invalid printer_status %d", function, printers[printer].status);
+			error("%s(): invalid printer_status %d", function, printers[prnid].status);
 			break;
 		}
 	}
@@ -141,8 +141,11 @@ static void printer_add_status(struct IPP *ipp, int printer)
 /* IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
     {
+	FUNCTION4DEBUG("ipp_get_printer_attributes")
 	ipp_attribute_t *printer_uri;
 	const char *printer_uri_value;
+	const char *destname;
+	int destid;
 
 	if(!(printer_uri = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
 		{
@@ -150,107 +153,99 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 		return;
 		}
 	printer_uri_value = printer_uri->values[0].string.text;
+	DODEBUG_IPP(("%s(): printer_uri=\"%s\"", function, printer_uri_value));
 		
-	lock();
+	if(!(destname = strrchr(printer_uri_value, '/')) || strlen(++destname) == 0)
+		{
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+	DODEBUG_IPP(("%s(): destname=\"%s\"", function, destname));
 
-	do	{
-		char *p;
-		if((p = strstr(printer_uri_value, "/printers/")))
-			{
-			const char *queue_name = p + sizeof("/printers/") - 1;
-			int iii;
+	if((destid = destid_by_name(destname)) == -1)
+		{
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
 
-			/* Find the printer */
-			for(iii=0; printer_count; iii++)
-				{
-				if(strcmp(printers[iii].name, queue_name) == 0)
-					break;
-				}
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+		"printer-name", destname, FALSE);
+	ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+		"printer-uri-supported", destid_is_group ? "/classes/%s" : "/printers/%s", destname);
 
-			/* If we ran off the end of the list, */
-			if(iii == printer_count)
-				{
-				ipp->response_code = IPP_NOT_FOUND;
-				break;
-				}
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+		"uri-security-supported", "none", FALSE);
 
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-				"printer-name", printers[iii].name, FALSE);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-				"printer-make-and-model", "HP LaserJet 4200", FALSE);
-			ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-				"printer-uri-supported", "/printers/%s", printers[iii].name);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-				"uri-security-supported", "none", FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+		"printer-make-and-model", "HP LaserJet 4200", FALSE);
 
-			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
-				"printer-is-accepting-jobs", printers[iii].accepting);
-			printer_add_status(ipp, iii);
+	if(destid_is_group(destid))
+		{
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs", groups[destid_to_gindex(destid)].accepting);
+		}
+	else
+		{
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs", printers[destid].accepting);
+		printer_add_status(ipp, destid);
+		}
 
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-				"printer-state-reasons", "none", FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+		"printer-state-reasons", "none", FALSE);
 
-			/* Which operations are supported for this printer object? */
-			{
-			int supported[] =
-				{
-				IPP_PRINT_JOB,
-				/* IPP_PRINT_URI, */
-				/* IPP_VALIDATE_JOB, */
-				/* IPP_CREATE_JOB, */
-				/* IPP_SEND_DOCUMENT, */
-				/* IPP_SEND_URI, */
-				IPP_CANCEL_JOB,
-				/* IPP_GET_JOB_ATTRIBUTES, */
-				IPP_GET_JOBS,
-				IPP_GET_PRINTER_ATTRIBUTES,
-				CUPS_GET_PRINTERS,
-				CUPS_GET_CLASSES
-				};
-			ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
-				"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
-			}
+	/* Which operations are supported for this printer object? */
+	{
+	int supported[] =
+		{
+		IPP_PRINT_JOB,
+		/* IPP_PRINT_URI, */
+		/* IPP_VALIDATE_JOB, */
+		/* IPP_CREATE_JOB, */
+		/* IPP_SEND_DOCUMENT, */
+		/* IPP_SEND_URI, */
+		IPP_CANCEL_JOB,
+		/* IPP_GET_JOB_ATTRIBUTES, */
+		IPP_GET_JOBS,
+		IPP_GET_PRINTER_ATTRIBUTES,
+		CUPS_GET_PRINTERS,
+		CUPS_GET_CLASSES
+		};
+	ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+		"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
+	}
 
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-				"charset-configured", "utf-8", FALSE);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-				"charset-supported", "utf-8", FALSE);
-			
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-				"natural-language-configured", "en-us", FALSE);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-				"generated-natural-language-supported", "en-us", FALSE);
-
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-				"document-format-default", "text/plain", FALSE);
-			{
-			const char *list[] = {
-				"text/plain",
-				"application/postscript",
-				"application/octet-stream"
-				};
-			ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-				"document-format-supported", sizeof(list) / sizeof(list[0]), list, FALSE);
-			}
-
-			/* On request, PPR will attempt to override job options
-			 * already selected in the job body. */
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
-				"pdl-override-suported", "attempted", FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+		"charset-configured", "utf-8", FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+		"charset-supported", "utf-8", FALSE);
 	
-			/* measured in seconds */
-			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
-				"printer-uptime", 1);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+		"natural-language-configured", "en-us", FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+		"generated-natural-language-supported", "en-us", FALSE);
 
-			
-			}
-		else
-			{
-			ipp->response_code = IPP_NOT_FOUND;
-			}
-		} while(FALSE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+		"document-format-default", "text/plain", FALSE);
 
-	unlock();
+	{
+	const char *list[] = {
+		"text/plain",
+		"application/postscript",
+		"application/octet-stream"
+		};
+	ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+		"document-format-supported", sizeof(list) / sizeof(list[0]), list, FALSE);
+	}
+
+	/* On request, PPR will attempt to override job options
+	 * already selected in the job body. */
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+		"pdl-override-supported", "attempted", FALSE);
+	
+	/* measured in seconds */
+	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+		"printer-uptime", 1);
     }
 
 /* IPP_GET_JOBS */

@@ -1,7 +1,7 @@
 =============================================================================
  mouse:~ppr/docs/misc/internationalization.txt
  mouse:~ppr/src/po/README.txt (symbolic link)
- Last revised 16 August 2002.
+ Last revised 26 January 2005.
 =============================================================================
 
 The po/ directory in the PPR distribution contains language translation files
@@ -50,7 +50,7 @@ To start a new translation, you should first run extract_to_pot.sh to make
 sure your .pot files are up to date.
 
 You should then run merge_to_pox.sh.  The single argument should be the
-abbreviation for your language, for example, "fr" (French) or "ru"
+abbreviation for your language, for example, "fr_FR" (French) or "ru_RU"
 (Russian).  Since, if you are starting a new translation, there are no
 existing translation files (.po files) to merge, merge_to_pox.sh will simply
 copy the .pot files to .pox files.  The .pox extension indicates that this
