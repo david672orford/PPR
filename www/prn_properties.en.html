@@ -19,6 +19,8 @@ H2 {
 <body>
 <h1>Printer Properties Help</h1>
 
+<p>This help file is incomplete.</p>
+
 <a name="comment">
 <h2>Comment</h2>
 
@@ -44,14 +46,29 @@ turned on.</p>
 <a name="interface">
 <h2>Interface</h2>
 
+<p>On this screen you can select an interface program to be used for
+communicating with the printer.  You can also specify an address which the
+interface program should use when contacting the printer.  Finally, you can
+enter a list of options which should be passed to the interface program in
+order modify its behavior.</p>
+
 <a name="ppd">
 <h2>RIP</h2>
+
+<p>Here you can indicate that an external Raster Image Processor should be
+used when printing PostScript job on this printer.  This can enable you to
+print PostScript jobs on a printer that does not have an internal PostScript
+interpreter.  Generally this RIP will be Ghostscript.</p>
 
 <a name="features">
 <h2>Features</h2>
 
+<p></p>
+
 <a name="bins">
 <h2>Bins</h2>
+
+<p></p>
 
 <a name="ppd">
 <h2>PPD</h2>
@@ -69,7 +86,8 @@ choose a PPD file for a similar model or an older model from the same
 manufacturer.  Of course, it the best thing to do is the obtain the correct
 PPD file and put it on the server.  Be sure you convert the line ending to
 Unix style before you puttin it in the /usr/share/ppr/PPDFiles directory on
-the server.  You should then run this command:</p>
+the server (or in any other directory listed in the [PPD] section of
+ppr.conf).  You should then run this command:</p>
 
 <pre>
 # ~ppr/bin/ppr-index ppds
@@ -81,20 +99,32 @@ information about the currently selected PPD file.</p>
 <a name="alerts">
 <h2>Alerts</h2>
 
+<p></p>
+
 <a name="switchset">
 <h2>Switchset</h2>
+
+<p></p>
 
 <a name="samba">
 <h2>Samba</h2>
 
+<p></p>
+
 <a name="appletalk">
 <h2>AppleTalk</h2>
+
+<p></p>
 
 <a name="limits">
 <h2>Limits</h2>
 
+<p></p>
+
 <a name="userparams">
 <h2>Userparams</h2>
+
+<p></p>
 
 <a name="other">
 <h2>Other</h2>

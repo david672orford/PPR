@@ -8689,6 +8689,17 @@ Bug Fixes
   close-to-proper button sizes, alignment, and spacing in both IE and
   Mozilla 1.4.
 
+* cgi_run.pl:shell_parse(): fixed bad parsing due to gready regular
+  expression.  Specifically, it couldn't parse this correctly:
+
+	--feature='InputSlot=Upper'
+	--responder-options='printed=no'
+	--feature="Duplex=DuplexNoTumble"
+
+  The gready code caused the first four single quotes to be interpreted as
+  one quoted string with two single quotes in the middle!  The code still
+  isn't completely correct, but it does handle plausible switchsets.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".

@@ -158,13 +158,19 @@ sub run_or_die
 
 #===============================================================
 # Break a string into words more-or-less as a shell would.
-# The return value is a Perl list.
+# The return value is a Perl list.  This code is not correct,
+# but it handles most things that aren't silly or unlikely
+# for the way we are using it.
 #===============================================================
 sub shell_parse
 	{
 	my $text = shift;
 	my @list = ();
-	while($text =~ m/\s*(((\S*)"([^"]*)"(\S*))|((\S*)'([^']*)'(\S*))|(\S+))\s*/g)
+	while($text =~ m/\s* ( 				# possible leading space
+			((\S*?)"([^"]*)"(\S*)) 		# something non-space ($2), double quote, something ($3), not double quote, double quote, possibly something non-space ($3)
+			| ((\S*?)'([^']*)'(\S*)) 	# same as above but for single quote
+			| (\S+) ) 					# kist something nonspace and non-empty  
+			\s*/gx)						# possible trailing space
 		{
 		if(defined($2)) { push(@list, $3 . $4 . $5) }
 		elsif(defined($6)) { push(@list, $7 . $8 . $9) }

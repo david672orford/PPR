@@ -70,7 +70,7 @@ while [ "$1" != "" ]
 			&& chgrp $GROUP "$RPM_BUILD_ROOT$1" 2>/dev/null
 
 		echo "  chmod $MODE \"$1\""
-		chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
+		chmod $MODE "$RPM_BUILD_ROOT$1" || exit 1
 
 		# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
 		echo "%attr(-,$USER,$GROUP) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
