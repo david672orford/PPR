@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2003.
+# Last modified 4 February 2003.
 #
 
 include ../Makefile.conf
@@ -43,6 +43,11 @@ all:
 install:
 
 #=== Housekeeping ===========================================================
+
+include .depend
+
+depend:
+	$(PPR_MAKE_DEPEND) ../include
 
 clean:
 	$(RMF) $(BACKUPS)

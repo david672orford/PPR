@@ -2,7 +2,7 @@
 #
 # mouse:~ppr/makeprogs/ppr_make_depend.perl
 #
-# Last modified 10 May 2001.
+# Last modified 4 February 2003.
 #
 
 defined($INCDIR = $ARGV[0]) || die;
@@ -33,7 +33,7 @@ while($file = readdir(D))
 			my $incfile = $1;
 			if($incfile =~ /\// || -f $incfile)
 			    { print OUT " $incfile" }
-			else
+			elsif(-f "$INCDIR/$incfile")
 			    { print OUT " $INCDIR/$incfile" }
 			}
 		}

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 August 2002.
+# Last modified 5 February 2003.
 #
 
 use lib "?";
@@ -570,6 +570,7 @@ EndExceptionEntity
 
         print "HTTP/1.1 $code $code_description\r\n";
 	print $resp_headers_general;
+	print "Accept-Ranges: bytes\n";
 	if($resp_header_connection ne '')
 	    { print "Connection: $resp_header_connection\r\n" }
         print "Content-Type: text/html\r\n";

@@ -34,3 +34,5 @@ ppr_things.$(OBJ): ppr_things.c ../include/before_system.h ../include/gu.h ../in
 
 tbcp2bin.$(OBJ): tbcp2bin.c
 
+ppr_features.$(OBJ): ppr_features.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
+

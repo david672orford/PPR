@@ -14,7 +14,9 @@ parallel_linux.$(OBJ): parallel_linux.c ../include/before_system.h ../include/gu
 
 serial.$(OBJ): serial.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h ../include/cexcept.h
 
 throw.$(OBJ): throw.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
+usblp.$(OBJ): usblp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 

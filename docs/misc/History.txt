@@ -8121,7 +8121,7 @@ line was being parsed twice.
   Tar syntax).
 
 
-1.50, 22 January 2003--30 January 2003.
+1.50, 22 January 2003--6 February 2003.
 
 * fontutils/ppr-indexfonts.c: Fixed the code introduced in 1.50b1 which was
   supposed to skip broken symbolic links.  Added code to deal with
@@ -8144,6 +8144,23 @@ line was being parsed twice.
 * interfaces/tcpip.c: added emergency definition of INADDR_NONE since
   Solaris 2.8 doesn't seem to have it!
 
+* makeprogs/ppr_make_depend.perl: changed to ommit dependencies for
+  non-existent include files rather than assume they will be in ../include. 
+  This change was necessary because snprintf.c conditionally includes
+  config.h and I didn't want to change it as it is not my code and I want to
+  keep it easy to keep up-to-date with the latest version.  Generating a 
+  dependency spec. for a non-existent file doesn't do any good anyway.
+
+* www/ppr-httpd.perl: added "Accept-Ranges: bytes" to the response headers
+  for GET.  According to <http://www.mozilla.org/projects/netlib/Link_Prefetching_FAQ.html>,
+  this will allow Mozilla to cache partially downloaded files which result
+  from aborted prefetching.
+
 * pprd/pprd_pprdrv.c: added code to post an alert suggesting that
   LD_LIBRARY_PATH needs to be set if pprdrv dies "killed by signal 0".
+
+* pprdrv/pprdrv_log.c: added
+
+* pprdrv/pprdrv_capable.c, pprdrv_feedback.c: replace job log handling code
+  with calls to functions in pprdrv_log.c.
 
