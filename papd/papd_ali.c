@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 9 November 2004.
 */
 
 /*============================================================================
@@ -151,7 +151,7 @@ static void do_xmit(int sesfd, gu_boolean eoj)
 */
 void at_reply_eoj(int sesfd)
 	{
-	const char function[] = "at_reply_eoj";
+	FUNCTION4DEBUG("at_reply_eoj")
 	DODEBUG_WRITEBUF(("%s(sesfd=%d)", function, sesfd));
 
 	while(ocount || blocked)	/* Wait until every last character */

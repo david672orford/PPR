@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_res.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 December 2003.
+** Last modified 12 November 2004.
 */
 
 /*
@@ -96,11 +96,10 @@ static char *resname_to_str(const char *type, const char *name, double version, 
 	} /* end of resname_to_str() */
 
 /*
-** Called on each reference to a resource,
-** whether needed, provided, or included.
-** This is not called on %%BeginResource:
-** Return the number of "words" eaten.
+** Called on each reference to a resource, whether needed, provided, or
+** included.  
 **
+** Returns: the number of "words" eaten.
 ** This routine does not mind if it is fed NULL arguments.
 */
 int resource(int reftype, const char *restype, int first)

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_simplify.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 May 2001.
+** Last modified 12 November 2004.
 */
 
 /*
@@ -21,9 +36,11 @@
 **
 ** The hierarcy looks like this:
 **
-** getline_simplify_cache() --> getline_simplify() --> in_getline()
-**												   --> copy_data() --> in_getline();
-**																   --> in_getc();
+** getline_simplify_cache()
+**			--> getline_simplify() 
+**				--> in_getline()
+**					   --> copy_data() --> in_getline();
+**											   --> in_getc();
 */
 
 #include "before_system.h"
@@ -433,12 +450,18 @@ static void getline_simplify(void)
 					goto again;
 					}
 				if(strcmp(tokens[0], "%%BeginResource:") == 0)
-					{											/* Note the resource in the table */
+					{
+					/* Note the resource in the table.  Note that tokens[1]
+					 * may be null.  Resource must be ready that. */
 					resource(REREF_REALLY_SUPPLIED, tokens[1], 2);
-																/* (resource() must be ready for NULL resources) */
-					nest_push(NEST_RES, tokens[2]);				/* this is a new level */
-					if(nest_level() == 1)						/* if 1st level resource, */
-						begin_resource();						/* tell the cache machinery */
+
+					/* this is a new level */
+					nest_push(NEST_RES, tokens[2]);
+					
+					/* If 1st level resource, tell the cache machinery. */
+					if(nest_level() == 1)
+						begin_resource();
+					
 					break;
 					}
 				break;

@@ -1,17 +1,32 @@
 #! /usr/bin/perl -w
 #
-# mouse:~ppr/editps/Windows_NT_4.0
-# Copyright 1995--2000, Trinity College Computing Center.
+# mouse:~ppr/src/editps/Windows_NT_4.0
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last revised 18 December 2000.
+# Last modified 12 November 2004.
 #
 
 #
@@ -21,6 +36,9 @@
 # packs" include new versions of this driver.  The placement
 # of the page level save/restore commands changes a lot, so
 # we have to be very careful.
+#
+# We also have the fix for the Acroread 6.x "ProcSet" vs. "procset"
+# bug.  It has not yet been tested.
 #
 
 # Should we print debugging messages on STDERR?
@@ -118,103 +136,102 @@ if($_ eq "%%BeginProlog\n")
     print;
     while(<STDIN>)
         {
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
-
-	s/\r$//;		# MS-DOSish!
-	s/\r/\n/g;		# MacOSish!
-
-	# Fix ugly font thing that Acroread 4.0 creates.
-	while(/^%!((PS-AdobeFont)|(FontType1))-1\.0: (\S+)/)
-	    {
-	    $fontname = $4;
-	    if($prevline !~ /^%%Begin/)
-		{
-		print STDERR " (Resource font $fontname, missing begin" if($debug);
-		print "%%BeginResource: font $4\n";
-		}
-	    print;
-	    while(<STDIN>)
-	    	{
 		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
-		s/\r$//;	# MS-DOSish
-	    	s/\r/\n/g;	# MacOSish!
+		s/\r$//;		# MS-DOSish!
+		s/\r/\n/g;		# MacOSish!
 
-		last if(/^%%End/);
+		# Fix ugly font thing that Acroread 4.0 creates.
+		while(/^%!((PS-AdobeFont)|(FontType1))-1\.0: (\S+)/)
+			{
+			$fontname = $4;
+			if($prevline !~ /^%%Begin/)
+				{
+				print STDERR " (Resource font $fontname, missing begin" if($debug);
+				print "%%BeginResource: font $4\n";
+				}
+			print;
+			while(<STDIN>)
+				{
+				print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
-		if(/^(.*\n)?(((%%Begin)|(%!)).+)$/s)
-		    {
-		    #print STDERR "  Split ", length($1), " \"$2\"\n" if($debug);
-		    print STDERR ", missing end) " if($debug);
-		    print $1 if(defined($1));
-		    if($prevline =~ /^%%BeginFont:/)
-		    	{ print "%%EndFont\n" }
-		    else
-		    	{ print "%%EndResource\n" }
-		    $_ = $2;
-		    last;
-		    }
-		print;
-		$prevline = "";
-		}
+				s/\r$//;	# MS-DOSish
+				s/\r/\n/g;	# MacOSish!
+
+				last if(/^%%End/);
+
+				if(/^(.*\n)?(((%%Begin)|(%!)).+)$/s)
+					{
+					#print STDERR "  Split ", length($1), " \"$2\"\n" if($debug);
+					print STDERR ", missing end) " if($debug);
+					print $1 if(defined($1));
+					if($prevline =~ /^%%BeginFont:/)
+						{ print "%%EndFont\n" }
+					else
+						{ print "%%EndResource\n" }
+					$_ = $2;
+					last;
+					}
+				print;
+				$prevline = "";
+			}
 	    }
 
-	# Fix syntactically incorrect resource lines.
+		# Fix syntactically incorrect resource lines.
         s/^(%%BeginResource: procset \S+)$/$1 0.0 0/;
         s/^(%%BeginResource:) (\S+)$/$1 file $2/;
 
-	# Comment this one out because it is unclosed and we don't know
-	# where to close it.
-	s/^(%%BeginResource: file Pscript_T42Hdr PSVER)$/% $1/;
+		# Comment this one out because it is unclosed and we don't know
+		# where to close it.
+		s/^(%%BeginResource: file Pscript_T42Hdr PSVER)$/% $1/;
 
+		# This is an Acroread 4.0 mistake.  It seems harmless, but we delete it anyway.
+		if($acroread_sins && $_ eq "NTPSOct95 begin\n")
+			{
+			$_ = "% editps removed this: $_";
+			}
 
-	# This is an Acroread 4.0 mistake.  It seems harmless, but we delete it anyway.
-	if($acroread_sins && $_ eq "NTPSOct95 begin\n")
-	    {
-	    $_ = "% editps removed this: $_";
-	    }
-
-	# Remember the procedure sets by adding their names to a list.
+		# Remember the procedure sets by adding their names to a list.
         elsif(/^%%BeginResource: procset (.+)\r?$/)
             {
             push(@procsets, $1);
             }
 
-	# Acroread again!  Is it starting the document setup section without
-	# telling us?
-	elsif($acroread_sins && $_ eq "/currentpacking where {pop setpacking}if\n")
-	    {
-	    print "%%EndProlog\n";
-	    print "\n";
-	    $acroread_setup_boundary_found = 1;
-	    last;
-	    }
+		# Acroread again!  Is it starting the document setup section without
+		# telling us?
+		elsif($acroread_sins && $_ eq "/currentpacking where {pop setpacking}if\n")
+			{
+			print "%%EndProlog\n";
+			print "\n";
+			$acroread_setup_boundary_found = 1;
+			last;
+			}
 
-	# Print the possibly modified line.
+		# Print the possibly modified line.
         print;
 
-	# Add a blank line and break out of loop at end of prolog.
+		# Add a blank line and break out of loop at end of prolog.
         if($_ eq "%%EndProlog\n")
             {
             print "\n";
             last;
             }
 
-	# Note other things in debug output.  This should come after
-	# the test for "%%EndProlog".
-	if($debug)
-	    {
-	    if(/^%%Begin(.+): (.+)$/)
-	    	{
-	    	print STDERR " ($1 $2";
-	    	}
-	    elsif(/^%%End/)
-	    	{
-	    	print STDERR ") ";
-	    	}
-	    }
+		# Note other things in debug output.  This should come after
+		# the test for "%%EndProlog".
+		if($debug)
+			{
+			if(/^%%Begin(.+): (.+)$/)
+				{
+				print STDERR " ($1 $2";
+				}
+			elsif(/^%%End/)
+				{
+				print STDERR ") ";
+				}
+			}
 
-	$prevline = $_;
+		$prevline = $_;
         }
 
     print STDERR "\n" if($debug);
@@ -237,7 +254,7 @@ if($acroread_sins)
     # Print the saved misplaced document setup section.
     foreach my $line (@acroread_setup)
         {
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
         print $line;
         }
     print "\n";
@@ -248,23 +265,23 @@ if($acroread_sins)
     $prevline = "";
     while(<STDIN>)
     	{
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
-	s/\r$//;		# MS-DOSish!
+		s/\r$//;		# MS-DOSish!
 
-	# We are going to move this into the page prolog:
-	next if($_ eq "PDFVars begin PDF begin PDFVars/InitAll get exec\n" && $prevline eq "PDFVars/TermAll get exec end end\n");
+		# We are going to move this into the page prolog:
+		next if($_ eq "PDFVars begin PDF begin PDFVars/InitAll get exec\n" && $prevline eq "PDFVars/TermAll get exec end end\n");
 
-	# Acroread 3.0 and 4.0 done have "%%EndSetup".
-	if(/^%%Page:/)
-	    {
-	    print "%%EndSetup\n";
-	    print "\n";
-	    last;
-	    }
+		# Acroread 3.0 and 4.0 done have "%%EndSetup".
+		if(/^%%Page:/)
+			{
+			print "%%EndSetup\n";
+			print "\n";
+			last;
+			}
 
-	print;
-	$prevline = $_;
+		print;
+		$prevline = $_;
     	}
 
     print STDERR "\n" if($debug);
@@ -278,9 +295,9 @@ else
     print STDERR "Copying document setup section..." if($debug);
     while(<STDIN>)
         {
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
-	s/\r$//;	# MS-DOSish!
+		s/\r$//;	# MS-DOSish!
 
         if($_ eq "%%EndSetup\n")
             {
@@ -299,8 +316,8 @@ else
     #
     while(<STDIN>)
         {
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
-	s/\r$//;	# MS-DOSish!
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
+		s/\r$//;	# MS-DOSish!
         last if($_ eq "%%Trailer\n" || /^%%Page:/);
         next if($_ eq "NTPSOct95 begin\n");
         next if($_ eq "NTPSOct95 /PageSV save put\n");
@@ -326,33 +343,33 @@ while(/^%%Page:/)
     print "% Editps says page $pagecount starts here.\n";
 
     if($acroread_sins)
-	{
-	print "% Editps generated this page prolog for Acroread:\n";
-	print "PDFVars begin PDF begin PDFVars/InitAll get exec\n";
-	print "% End of Editps page prolog.\n";
-	}
-    elsif($dsc_compliant)
-	{
-	print "% Editps generated this page prolog:\n";
-	print "NTPSOct95 /PageSV save put\n";
-	print "% End of Editps page prolog.\n";
-	}
+		{
+		print "% Editps generated this page prolog for Acroread:\n";
+		print "PDFVars begin PDF begin PDFVars/InitAll get exec\n";
+		print "% End of Editps page prolog.\n";
+		}
+	elsif($dsc_compliant)
+		{
+		print "% Editps generated this page prolog:\n";
+		print "NTPSOct95 /PageSV save put\n";
+		print "% End of Editps page prolog.\n";
+		}
 
     while(<STDIN>)
     	{
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
-	s/\r$//;		# MS-DOSish!
+		s/\r$//;		# MS-DOSish!
 
-	last if($_ eq "%%Trailer\n" || /^%%Page:/ || $_ eq "%%EOF\n");
-	next if($_ eq "NTPSOct95 /PageSV save put\n");
-	next if($_ eq "showpage\n" || $_ eq "gsave showpage grestore\n");	# Normal, Acroread
-	next if($_ eq "PDFVars begin PDF begin PDFVars/InitAll get exec\n");	# Acroread
-	if($_ eq "PageSV restore\n")
-	    {
-	    $PageSV_restore_seen = 1;
-	    next;
-	    }
+		last if($_ eq "%%Trailer\n" || /^%%Page:/ || $_ eq "%%EOF\n");
+		next if($_ eq "NTPSOct95 /PageSV save put\n");
+		next if($_ eq "showpage\n" || $_ eq "gsave showpage grestore\n");	# Normal, Acroread
+		next if($_ eq "PDFVars begin PDF begin PDFVars/InitAll get exec\n");	# Acroread
+		if($_ eq "PageSV restore\n")
+			{
+			$PageSV_restore_seen = 1;
+			next;
+			}
 
         # Watch out for font fragments.  If we see one, comment out its
         # DSC comments so that PPR won't try to cache it.
@@ -369,9 +386,12 @@ while(/^%%Page:/)
                 print;
                 }
             next;
-            }
+            } # fragmentary font
 
-	# Print the (possibly modified) line.
+		# Acroread 6.x fragmentary fonts have their own problems.
+		s/^(%%IncludeResource:) ProcSet /$1 procset /;
+
+		# Print the (possibly modified) line.
         print;
     	}
 
@@ -384,23 +404,23 @@ while(/^%%Page:/)
     # until after the last page.
     if(!$acroread_sins && $dsc_compliant && !$PageSV_restore_seen)
     	{
-	print "% Editps thinks that this page broke page independence.\n";
-	print STDERR "    (Page independence broken.)\n" if($debug);
-	$dsc_compliant = 0;
+		print "% Editps thinks that this page broke page independence.\n";
+		print STDERR "    (Page independence broken.)\n" if($debug);
+		$dsc_compliant = 0;
     	}
 
     # Here we generate new page closing code.
     if($acroread_sins)	# Acroread
-	{
-	print "% Editps generated this for Acroread:\n";
-	print "gsave showpage grestore\n";
-	}
+		{
+		print "% Editps generated this for Acroread:\n";
+		print "gsave showpage grestore\n";
+		}
     else		# normal
     	{
-	print "% Editps generated this:\n";
-	print "PageSV restore\n" if($dsc_compliant);
+		print "% Editps generated this:\n";
+		print "PageSV restore\n" if($dsc_compliant);
         print "showpage\n";
-	}
+		}
 
     print "% Editps says page $pagecount ends here.\n";
     print "\n";
@@ -422,9 +442,8 @@ while(<STDIN>)
     {
     s/\r$//;		# MS-DOSish!
     while(defined($_))
-	{
-	print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
-
+		{
+		print STDERR "." if($debug && ($dots++ % $dot_every) == 0);
 
         # Stop at "%%EOF" because we wan't to insert stuff there.
         last OUTER if($_ eq "%%EOF\n");
@@ -438,11 +457,11 @@ while(<STDIN>)
             print;
             while(<STDIN>)
                 {
-		s/\r$//;		# MS-DOSish!
+				s/\r$//;		# MS-DOSish!
                 last if(!/^%%\+/);
                 print if(!/0\d{2,3}(\.\d\d\d)?$/);
                 }
-	    next;
+			next;
             }
 
         # We will supply this, so delete the original since it is probably
@@ -451,15 +470,15 @@ while(<STDIN>)
             {
             while(<STDIN>)
                 {
-		s/\r$//;		# MS-DOSish!
+				s/\r$//;		# MS-DOSish!
                 last if(!/^%%\+/);
                 }
-	    next;
+			next;
             }
 
-	print;
-	last;
-	}
+		print;
+		last;
+		}
     }
 print STDERR "\n" if($debug);
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 9 November 2004.
 */
 
 #include "queueinfo.h"
@@ -40,6 +40,13 @@
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
 #define DEBUG 0
+
+#if DEBUG
+#define FUNCTION4DEBUG(a) const char function[] = a ;
+#else
+#define FUNCTION4DEBUG(a)
+#endif
+
 #if DEBUG
 #define DEBUG_STARTUP 1					/* debug reading config, adding names and such */
 #define DEBUG_QUERY 1					/* debug query handling */

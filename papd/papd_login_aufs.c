@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 9 November 2004.
 */
 
 /*
@@ -49,7 +49,7 @@
 */
 void login_aufs(int net, int node, struct USER *user)
 	{
-	const char function[] = "login_aufs";
+	FUNCTION4DEBUG("login_aufs")
 	const char *aufs_security_dir;
 	char aufs_username[64];
 	struct passwd *pw;
