@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--25 July 2003.
+1.52, 24 July 2003--29 July 2003.
 
 * Actually removed include/version.mk which somehow didn't get removed when
   it was taken out of service.
