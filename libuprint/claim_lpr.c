@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2002.
+** Last modified 8 November 2002.
 */
 
 #include "before_system.h"
@@ -37,11 +37,26 @@
 #include "uprint_private.h"
 
 /*
-** Return TRUE if the destname is the name
-** of a valid LPR destination.
+** Return TRUE if the destname is the name of a valid LPR destination.
 **
-** In order to acomplish this, we search
-** /etc/printcap.
+** In order to accomplish this, we search /etc/printcap.  This is not a
+** complete or correct printcap(5) parser, it is just good enough for
+** the cases we have met so far.  Here is a sample /etc/printcap:
+
+lp|labprn:\
+	:lp=:\
+	:rm=labserver.trincoll.edu:\
+	:rp=labprn:\
+	:sd=/var/spool/lpd/labprn:\
+	:lf=/var/spool/lpd/labprn/log:
+	
+lab-color:\
+	:lp=:\
+	:rm=labserver.trincoll.edu:\
+	:rp=lab-color:\
+	:sd=/var/spool/lpd/lab-color:\
+	:lf=/var/spool/lpd/lab-color/log:
+										
 */
 int printdest_claim_lpr(const char *destname)
     {
@@ -53,21 +68,41 @@ int printdest_claim_lpr(const char *destname)
 	    {
 	    char *line = NULL;
 	    int line_len = 80;
-	    char *p;
+	    char *p, *fnbp;
 
+	    /* Loop through the lines.  The gu_getline() function can 
+	       handle lines of any length and will strip trailing whitespace.
+	       */
 	    while((line = gu_getline(line, &line_len, f)))
 		{
-		if(!line[0])
+		if(!line[0])		/* empty or whitespace-only lines */
 		    continue;
 
-		/* Find the first colon.  If there is none, skip this line. */
-		if((p = strchr(line, ':')) == (char*)NULL)
+		/* Make a pointer to the first non-blank character.  This is to 
+		   deal with a RedHat printconf-0.2 bug.  (It puts a single 
+		   space in front of the first line of each printer configuration
+		   that it generates.)
+		   */
+		fnbp = line += strspn(line, " \t");
+
+		/* If the line begins with a colon, it is a continuation line
+		   while probably has a lot for boring information for lpr
+		   about this queue.  We will skip lines like that.
+		   */
+		if(fnbp[0] == ':')
+		    continue;		 
+
+		/* Find the first colon.  If there is none, there must not be
+		   a name list here, so skip this line.  (The colon marks the
+		   end of the list of names for this queue.)
+		   */
+		if((p = strchr(fnbp, ':')) == (char*)NULL)
 		    continue;
 
 		*p = '\0';	/* truncate line at first colon */
 
 		/* Iterate through a |-separated listed of queue names and aliases. */
-		for(p = line; (p = strtok(p, "|")); p = (char*)NULL)
+		for(p = fnbp; (p = strtok(p, "|")); p = (char*)NULL)
 		    {
 		    if(strcmp(p, destname) == 0)
 			{
