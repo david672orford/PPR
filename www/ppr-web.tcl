@@ -47,33 +47,33 @@ set opt_d 0
 set queue ""
 set files {}
 foreach arg $argv {
-    if {[string compare $arg "-d"] == 0} {
-	set opt_d 1
-	} else {
-	if {$opt_d == 1} {
-	    set queue $arg
-	    set opt_d 0
-	    } else {
-	    if {[string compare $queue ""] == 0} {
-		puts stderr "Warning: specifying a queue name without -d is deprecated"
-		set queue $arg
+	if {[string compare $arg "-d"] == 0} {
+		set opt_d 1
 		} else {
-		lappend files $arg
+		if {$opt_d == 1} {
+			set queue $arg
+			set opt_d 0
+			} else {
+			if {[string compare $queue ""] == 0} {
+				puts stderr "Warning: specifying a queue name without -d is deprecated"
+				set queue $arg
+				} else {
+				lappend files $arg
+				}
+			}
 		}
-	    }
-	}
     }
 
 # If some files were to be printed, print them now and exit.  This is to
 # support drag-and-drop when we are a desktop icon.
 if {$files != {}} {
     foreach file $files {
-	puts "Printing file $file..."
-	set result [catch {exec ppr -d $queue -e responder $file >@stdout 2>@stderr} error]
-	if {$result != 0} {
-	    puts "Failed to print file \"$file\" due to error: $error"
-	    exit 1
-	    }
+		puts "Printing file $file..."
+		set result [catch {exec ppr -d $queue -e responder $file >@stdout 2>@stderr} error]
+		if {$result != 0} {
+		    puts "Failed to print file \"$file\" due to error: $error"
+		    exit 1
+		    }
     	}
     exit 0
     }
@@ -109,14 +109,16 @@ puts "Searching for suitable web browser..."
 foreach browser $browsers {
     puts "  $browser..."
     foreach dir [split $env(PATH) :] {
-	#puts "    in $dir..."
-	if [file executable $dir/$browser] {
-	    set location $dir
-	    set selected_browser $browser
-	    break
-	    }
-	}
-    if {$selected_browser != ""} { break }
+		#puts "    in $dir..."
+		if [file executable $dir/$browser] {
+		    set location $dir
+		    set selected_browser $browser
+		    break
+		    }
+		}
+    if {$selected_browser != ""} {
+		break
+		}
     }
 
 if {$selected_browser == ""} {
@@ -127,83 +129,87 @@ if {$selected_browser == ""} {
 # Now we launch the selected browser.
 switch -exact $selected_browser {
     mozilla {
-
-	# Obsolete bounce-off-cgi-script method
-	#exec $location/mozilla -remote \
-	#	"openurl($opener_url?url=$final_url;width=$width;height=$height,new-window)" \
-	#	>@stdout 2>@stderr
-
-	set file [open $env(HOME)/.ppr/ppr-web-control.html w 0600]
-
-	puts $file "<html>
-		<head>
-		<title>Transient PPR Window</title>
-		<script>
-		function doit ()
-			{
-			try	{
-				netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserWrite');
-				window.locationbar.visible = false;
-				window.toolbar.visible = false;
-				window.statusbar.visible = false;
-				window.menubar.visible = false;
-				window.personalbar.visible = false;
-				}
-			catch(e) { }
-			window.resizeTo($width,$height);
-			if(!window.open('$final_url', '_self', '', true))
-				{
-				alert('Popup blocking has messed up the close button.');
-				window.location = '$final_url';
-				}
+	
+		# Obsolete bounce-off-cgi-script method
+		#exec $location/mozilla -remote \
+		#	"openurl($opener_url?url=$final_url;width=$width;height=$height,new-window)" \
+		#	>@stdout 2>@stderr
+	
+		if [ ! -d $env(HOME)/.ppr ] {
+			mkdir $env(HOME)/.ppr
 			}
-		</script>
-		</head>
-		<body onload=\"doit()\">
-		<p>Javascript code executing in this window is trying to 
-		remove some of its user interface features which, while appropriate
-		for browsing the WWW, only get in the way of the PPR web interface.
-		You browser may ask for your permission to allow these operations.  
-		If it does, please check the box which says \"remember this descision\"
-		and then press the <b>Yes</b> button.</p>
-		</body>
-		</html>"
-
-	close $file
-
-	# first we try to contact an already-running copy
-	puts "Contacting Mozilla..."
-	set result [catch {
-		exec $location/mozilla -remote \
-			"openurl(file://$env(HOME)/.ppr/ppr-web-control.html,new-window)" \
-			>@stdout 2>@stderr
-		} error]
-
-	if {$result != 0} {
-	    #puts "\$result=$result, \$error=$error"
-	    puts "Mozilla isn't running yet, starting it..."
-	    exec $location/mozilla \
-		"$env(HOME)/.ppr/ppr-web-control.html" \
-		>@stdout 2>@stderr &
-	    }
-
-	}
+	
+		set file [open $env(HOME)/.ppr/ppr-web-control.html w 0600]
+	
+		puts $file "<html>
+			<head>
+			<title>Transient PPR Window</title>
+			<script>
+			function doit ()
+				{
+				try	{
+					netscape.security.PrivilegeManager.enablePrivilege('UniversalBrowserWrite');
+					window.locationbar.visible = false;
+					window.toolbar.visible = false;
+					window.statusbar.visible = false;
+					window.menubar.visible = false;
+					window.personalbar.visible = false;
+					}
+				catch(e) { }
+				window.resizeTo($width,$height);
+				if(!window.open('$final_url', '_self', '', true))
+					{
+					alert('Popup blocking has messed up the close button.');
+					window.location = '$final_url';
+					}
+				}
+			</script>
+			</head>
+			<body onload=\"doit()\">
+			<p>Javascript code executing in this window is trying to 
+			remove some of its user interface features which, while appropriate
+			for browsing the WWW, only get in the way of the PPR web interface.
+			You browser may ask for your permission to allow these operations.  
+			If it does, please check the box which says \"remember this descision\"
+			and then press the <b>Yes</b> button.</p>
+			</body>
+			</html>"
+	
+		close $file
+	
+		# first we try to contact an already-running copy
+		puts "Contacting Mozilla..."
+		set result [catch {
+			exec $location/mozilla -remote \
+				"openurl(file://$env(HOME)/.ppr/ppr-web-control.html,new-window)" \
+				>@stdout 2>@stderr
+			} error]
+	
+		if {$result != 0} {
+		    #puts "\$result=$result, \$error=$error"
+		    puts "Mozilla isn't running yet, starting it..."
+		    exec $location/mozilla \
+			"$env(HOME)/.ppr/ppr-web-control.html" \
+			>@stdout 2>@stderr &
+		    }
+	
+		}
     konqueror {
-	exec $location/konqueror "$opener_url?url=$final_url;width=$width;height=$height" \
-		>@stdout 2>@stderr
-	}
+		exec $location/konqueror "$opener_url?url=$final_url;width=$width;height=$height" \
+			>@stdout 2>@stderr
+		}
     links {
-	exec $location/links $final_url \
-		>@stdout 2>@stderr <@stdin
-	}
+		exec $location/links $final_url \
+			>@stdout 2>@stderr <@stdin
+		}
     w3m {
-	exec $location/w3m $final_url \
-		>@stdout 2>@stderr <@stdin
-	}
+		exec $location/w3m $final_url \
+			>@stdout 2>@stderr <@stdin
+		}
     lynx {
-	exec $location/lynx $final_url \
-		>@stdout 2>@stderr <@stdin
-	}
+		exec $location/lynx $final_url \
+			>@stdout 2>@stderr <@stdin
+		}
     }
 
 puts "Done."
