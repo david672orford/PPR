@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/interfaces/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 28 August 2001.
+# Last modified 5 September 2002.
 #
 
 include ../Makefile.conf

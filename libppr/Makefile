@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 5 August 2002.
+# Last modified 5 September 2002.
 #
 
 include ../Makefile.conf
@@ -18,8 +18,6 @@ include ../Makefile.conf
 LIBOBJS=\
 	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
 	int_acache.$(OBJ) int_debug.$(OBJ) int_exit.$(OBJ) \
-	int_con_tcpip.$(OBJ) int_pe_tcpip.$(OBJ) \
-	int_snmp.$(OBJ) \
 	int_copy_job.$(OBJ) \
 	datestamp.$(OBJ) \
 	tokenize.$(OBJ) \

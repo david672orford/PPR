@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/responders/mail.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 12 April 2001.
+# Last modified 4 September 2002.
 #
 
 #
@@ -20,8 +20,8 @@
 #
 
 # These are filled in when this script is installed:
-EECHO=?
-SENDMAIL_PATH=?
+EECHO="?"
+SENDMAIL_PATH="?"
 
 # Give names to all the parameters.
 for="$1"

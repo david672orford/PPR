@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--29 August 2002.
+1.50a2, 27 February 2002--5 September 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7860,3 +7860,12 @@ the very start.
 * libuprint/Makefile, uprint/Makefile: changed CC to LD and CFLAGS to
   LDFLAGS when linking the executables.
 
+* responders/mail.sh: fixed so that EECHO= gets filled in.
+
+* editps/: added Mozilla_1.0
+
+* libppr/: int_con_tcpip.c, int_pe_tcpip.c: moved code back into
+  interfaces/tcpip.c.
+
+* interfaces/tcpip.c: added appsocket_status_interval=, added an initial
+  status check for SNMP and AppSocket status.

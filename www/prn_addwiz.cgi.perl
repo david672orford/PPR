@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 8 August 2002.
+# Last modified 5 September 2002.
 #
 
 #
@@ -228,20 +228,8 @@ $addprn_wizard_table = [
 	'dopage' => sub {
 		my $zone = cgi_data_move('int_atalk_zone', '');
 
-		# Find the getzones program.
-		my $getzones = undef;
-		foreach my $i (@GETZONES)
-		    {
-		    if(-x $i)
-		    	{
-			$getzones = $i;
-			last;
-		    	}
-		    }
-		defined($getzones) || die "Can't find getzones.\n";
-
 		# Use the getzones program to fetch the zone list and sort it.
-		opencmd(GZ, $getzones) || die "Unable to get zone list: $!\n";
+		opencmd(GZ, $GETZONES) || die "Unable to get zone list: $!\n";
 		my @zlist = sort(<GZ>);
 		close(GZ) || die $!;
 
