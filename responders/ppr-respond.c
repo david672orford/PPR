@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/ppr-respond.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 23 March 2005.
 */
 
 /*
@@ -394,6 +394,16 @@ static int job_message(int argc, char *argv[])
 static int commentary_message(int argc, char *argv[])
 	{
 	char canned_message[1024];
+	char *responder_name = argv[3];
+	char *responder_address = argv[4];
+	char *responder_options = argv[5];
+	char *queuefile = argv[6];
+	char *printer_name = argv[7];
+	int category = atoi(argv[8]);
+	char *cooked = argv[9];
+	char *raw1 = argv[10];
+	char *raw2 = argv[11];
+	int severity = atoi(argv[12]);
 #if 0
 	/*
 	** Prepare the canned message.
@@ -476,13 +486,27 @@ int main(int argc, char *argv[])
 	if(argc < 2)
 		gu_Throw("too few arguments");
 	if(strcmp(argv[1], "pprd") == 0)
+		{
+		if(argc != 7)
+			gu_Throw("wrong number of arguments");
 		job_message(argc, argv);
+		}
 	else if(strcmp(argv[1], "ppr") == 0)
+		{
+		if(argc != 11)
+			gu_Throw("wrong number of arguments");
 		job_message(argc, argv);
+		}
 	else if(strcmp(argv[1], "pprdrv_commentary") == 0)
+		{
+		if(argc != 13)
+			gu_Throw("wrong number of arguments");
 		commentary_message(argc, argv);
+		}
 	else
+		{
 		gu_Throw("Unrecognized category: %s", argv[1]);
+		}
 	return 1;
 	}
 

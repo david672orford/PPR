@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_conf.sgml
-Last Modified: 14 January 2004
+Last Modified: 23 March 2005
 Last Proofread: 
 -->
 
@@ -344,16 +344,6 @@ In the future, additional values for this parameter may be defined.  These
 additional values will use different techniques to obtain the page count.
 </para>
 
-</listitem>
-</varlistentry>
-
-<varlistentry>
-<term><literal>Commentator:</literal> <replaceable>number name address options</replaceable></term>
-<listitem>
-<para>
-A printer configuration file may have zero or more of these lines.  Their
-purpose is explained in Appendix <xref linkend="commentators"/>.
-</para>
 </listitem>
 </varlistentry>
 

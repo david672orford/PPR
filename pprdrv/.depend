@@ -6,7 +6,7 @@ pprdrv_buf.$(OBJ): pprdrv_buf.c ../include/config.h ../include/gu.h ../include/g
 
 pprdrv_capable.$(OBJ): pprdrv_capable.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
-pprdrv_commentary.$(OBJ): pprdrv_commentary.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/commentary.h
+pprdrv_commentary.$(OBJ): pprdrv_commentary.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/respond.h
 
 pprdrv_custom_hook.$(OBJ): pprdrv_custom_hook.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
@@ -40,7 +40,7 @@ pprdrv_pjl_messages.$(OBJ): pprdrv_pjl_messages.c ../include/config.h ../include
 
 pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h ../include/util_exits.h
 
-pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/commentary.h
+pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/respond.h
 
 pprdrv_progress.$(OBJ): pprdrv_progress.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
@@ -62,7 +62,7 @@ pprdrv_tt.$(OBJ): pprdrv_tt.c ../include/config.h ../include/gu.h ../include/glo
 
 pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/commentary.h
+pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/respond.h
 
 pprdrv_log.$(OBJ): pprdrv_log.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppop_status.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 May 2004.
+** Last modified 23 March 2005.
 */
 
 #include "config.h"
@@ -43,7 +43,7 @@
 #include "global_defines.h"
 #include "interface.h"
 #include "pprdrv.h"
-#include "commentary.h"
+#include "respond.h"
 
 /*
 ** This module contains functions for writing a printer's status file.  The
@@ -472,8 +472,9 @@ static void dispatch_commentary(void)
 	time_t time_now = time(NULL);
 
 	/*
-	** Dispatch commentator messages for those errors which are new or haven't
-	** been announced in 5 minutes or more and aren't shadowed.
+	** Dispatch commentator messages for those SNMP hrPrinterDetectedErrorState-style
+	** errors which are new or haven't been announced in 5 minutes or more and aren't 
+	** shadowed.
 	*/
 	for(x=0; x<SNMP_BITS; x++)
 		{
@@ -498,12 +499,13 @@ static void dispatch_commentary(void)
 		}
 
 	/*
-	** Does hrDeviceStatus indicate something is wrong?
+	** Does hrDeviceStatus indicate something is wrong?  If so and we didn't
+	** anounced anything important above, then send a COM_PRINTER_STATUS
+	** message based on hrDeviceStatus and hrPrinterStatus.
 	*/
 	if((status.hrDeviceStatus != -1 && status.hrDeviceStatus != DST_running) 
 				&& (status.start != ostatus.start || (status.last_commentary - time(NULL)) >= 300))
 		{
-		/* This is suppressed unless we failed to announce something important above. */
 		if(greatest_severity <= 5)
 			{
 			const char *message, *raw1; int severity;

@@ -28,7 +28,7 @@ uprint_print.$(OBJ): uprint_print.c ../include/config.h ../include/gu.h ../inclu
 
 uprint_print_rfc1179.$(OBJ): uprint_print_rfc1179.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_run.$(OBJ): uprint_run.c ../include/config.h ../include/gu.h ../include/uprint.h uprint_private.h
+uprint_run.$(OBJ): uprint_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_strerror.$(OBJ): uprint_strerror.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 

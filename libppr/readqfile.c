@@ -53,29 +53,8 @@ if(strncmp(line, name, sizeof(name)-1) == 0) \
 	continue; \
 	}
 
-/*
-** Read the queue file up to but not including the first "Media:" line.
-** Return 0 if all goes well, -1 if there is an error in the queue file.
-*/
-int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
+void zero_struct_QFileEntry(struct QFileEntry *job)
 	{
-	const char function[] = "read_struct_QFileEntry";
-	gu_boolean found_time = FALSE;
-	gu_boolean found_opts = FALSE;
-	gu_boolean found_user = FALSE;
-	gu_boolean found_for = FALSE;
-	gu_boolean found_priority = FALSE;
-	gu_boolean found_response = FALSE;
-	gu_boolean found_nup = FALSE;
-	gu_boolean found_banners = FALSE;
-	gu_boolean found_other = FALSE;
-
-	char *line = NULL;
-	int line_available = 80;
-	char *p;
-	int retcode = 0;
-	int tempint;
-
 	/* Clear the job id variables because we won't read them.
 	   (They are encoded in the queue file name.) */
 	job->destname = (char*)NULL;
@@ -115,6 +94,32 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	job->draft_notice = (char*)NULL;			/* optional */
 	job->question = NULL;
 	job->ripopts = NULL;
+	}
+
+/*
+** Read the queue file up to but not including the first "Media:" line.
+** Return 0 if all goes well, -1 if there is an error in the queue file.
+*/
+int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
+	{
+	const char function[] = "read_struct_QFileEntry";
+	gu_boolean found_time = FALSE;
+	gu_boolean found_opts = FALSE;
+	gu_boolean found_user = FALSE;
+	gu_boolean found_for = FALSE;
+	gu_boolean found_priority = FALSE;
+	gu_boolean found_response = FALSE;
+	gu_boolean found_nup = FALSE;
+	gu_boolean found_banners = FALSE;
+	gu_boolean found_other = FALSE;
+
+	char *line = NULL;
+	int line_available = 80;
+	char *p;
+	int retcode = 0;
+	int tempint;
+
+	zero_struct_QFileEntry(job);
 
 	while((line = gu_getline(line, &line_available, qfile)))
 		{

@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_files.sgml
-Last Modified: 7 November 2003
+Last Modified: 23 March 2005
 Last Proofread: 
 -->
 
@@ -180,7 +180,7 @@ submits jobs, various utility programs such as <command>ppop</command> and
 </sect3>
 
 <sect3>
-<title>The <filename class="Directory">/usr/lib/ppr/lib/</filename> Directory</title>
+<title>The <filename class="Directory">/usr/lib/ppr/</filename> Directory</title>
 
 <para>This directory contains <command>pprdrv</command> and as well as other
 programs a user or administrator wouldn't normally execute directly.  It
@@ -226,15 +226,6 @@ default responder, <literal>write</literal>, is used.  (You can change the
 default by setting the environment variable <envar>PPR_RESPONDER</envar>.)
 The manner in which a responder is invoked is described in Appendix <xref
 linkend="responders"/>.</para>
-
-</sect3>
-
-<sect3>
-<title>The <filename class="Directory">/usr/lib/ppr/commentators/</filename> Directory</title>
-
-<para>This directory contains small programs similar to responders. 
-Commentators will soon be merged with responders, so don't worry about this
-directory.</para>
 
 </sect3>
 

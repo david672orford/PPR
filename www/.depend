@@ -1,4 +1,4 @@
-ppr-push-httpd.$(OBJ): ppr-push-httpd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/commentary.h
+ppr-push-httpd.$(OBJ): ppr-push-httpd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/respond.h
 
 ppr-passwd.$(OBJ): ppr-passwd.c ../include/config.h ../include/gu.h ../include/gu_md5.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 

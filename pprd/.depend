@@ -12,8 +12,6 @@ pprd_mainsup.$(OBJ): pprd_mainsup.c ../include/config.h ../include/gu.h ../inclu
 
 pprd_media.$(OBJ): pprd_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
 
-pprd_nodeid.$(OBJ): pprd_nodeid.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
-
 pprd_ppop.$(OBJ): pprd_ppop.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h ../include/util_exits.h
 
 pprd_pprdrv.$(OBJ): pprd_pprdrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h ../include/interface.h ../include/respond.h
@@ -25,8 +23,6 @@ pprd_question.$(OBJ): pprd_question.c ../include/config.h ../include/gu.h ../inc
 pprd_queue.$(OBJ): pprd_queue.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h
 
 pprd_remind.$(OBJ): pprd_remind.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
-
-pprd_remote.$(OBJ): pprd_remote.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
 
 pprd_respond.$(OBJ): pprd_respond.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
 
 #include "config.h"
@@ -47,7 +47,7 @@
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
-#include "commentary.h"
+#include "respond.h"
 
 /*
 ** This module is the guts of the PPR commentator mechanism.  Commentators

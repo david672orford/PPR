@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 March 2005.
+** Last modified 23 March 2005.
 */
 
 /*
@@ -330,7 +330,7 @@ static char *append_to_list(char *oldpart, const char *newpart)
 =====================================================================*/
 
 /* This static will be used until I can find a better way. */
-static int input_is_file;
+static gu_boolean input_is_file;
 
 /* The input file buffer */
 static int in_handle = -1;						/* input file handle */

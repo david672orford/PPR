@@ -10,11 +10,11 @@ cs2enc.$(OBJ): cs2enc.c ../include/config.h ../include/gu.h ../include/global_de
 
 datestamp.$(OBJ): datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
+findres.$(OBJ): findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
 dimens.$(OBJ): dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 enc2font.$(OBJ): enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
-
-findres.$(OBJ): findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 font.$(OBJ): font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
@@ -61,8 +61,6 @@ quote.$(OBJ): quote.c ../include/config.h ../include/gu.h ../include/global_defi
 readppd.$(OBJ): readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
 readqfile.$(OBJ): readqfile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
-
-stresc.$(OBJ): stresc.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 tail_status.$(OBJ): tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
