@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 7 May 2002.
+# Last modified 8 May 2002.
 #
 
 #
@@ -369,7 +369,9 @@ foreach $file (keys %ppd_files)
 	{
 	my $driverpath = $filelist[0];
 	my $helpfile = $filelist[1];
-	print DEF "$nickname:$driverpath:..\\$WINPPD\\$mswin_name:$helpfile:PostScript Language Monitor:RAW:..\\WINPPD\\$mswin_name,", join(",", @filelist), "\n";
+	unlink("$DRVDIR_WIN40/$mswin_name");
+	link("$DRVDIR_WINPPD/$mswin_name", "$DRVDIR_WIN40/$mswin_name") || die $!;
+	print DEF "$nickname:$driverpath:$mswin_name:$helpfile:PostScript Language Monitor:RAW:$mswin_name,", join(",", @filelist), "\n";
 	}
     }
 
