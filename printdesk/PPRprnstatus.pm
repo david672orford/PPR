@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 March 2003.
+# Last modified 26 March 2003.
 #
 
 package PrintDesk::PPRprnstatus;
@@ -133,11 +133,11 @@ sub LabeledVariable
 sub Show
   {
   my $self = shift;
-  my $window = $self->{window};
+  my $w = $self->{window};
 
   my $prncontrol = $self->{prncontrol};
 
-  my $inner_window = $window->Frame();
+  my $inner_window = $w->Frame();
   $inner_window->pack(-side, 'top', -padx, 5, -pady, 5, -fill, 'both', -expand, 1);
 
   # The printer name and comment:
@@ -202,14 +202,14 @@ sub Show
 
   # If the printer is in a state that involves a countdown, arang for
   # an update every second.
-  if($self->{countdown} > 0) { $self->{tick} = $window->repeat(1000, [\&do_tick, $self]) }
+  if($self->{countdown} > 0) { $self->{tick} = $w->repeat(1000, [\&do_tick, $self]) }
 
   # Refresh the alerts window.
   $self->update_alerts();
 
   # Create a state updater process to keep the printer
   # status current.
-  my $updater = new PrintDesk::PPRstateupdate($self->{window}, $window, $self->{printer});
+  my $updater = new PrintDesk::PPRstateupdate($w, $self->{printer});
   $updater->register('pstatus', $self, \&pstatus);
   $updater->register('pmessage', $self, \&pmessage);
   $updater->register('pbytes', $self, \&pbytes);

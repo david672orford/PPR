@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--21 March 2003.
+1.51, 15 February 2003--26 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8491,6 +8491,10 @@ line was being parsed twice.
 * added tests/test-pprdrv/300-custom-hook.* and
   tests/tools/test_custom_hook.
 
+* pprdrv/pprdrv_ppop_status.c: fixed erronious display of PJL CODE2=0 as
+  important.
+
+* www/cliconf.cgi.perl: added support for Perl/Tk interface icon.
 
 
 TODO

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 24 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -139,16 +139,13 @@ then
 	echo "  Installing the System V style start and stop scripts..."
 
 	# Install the principal script if it isn't already installed.
-	if diff $RPM_BUILD_ROOT/$INIT_BASE/init.d/ppr ppr >/dev/null 2>&1
+	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
+	if [ $? -ne 0 ]
 	    then
-	    echo "    Init script is already installed."
-	    else
-	    ../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
-	    if [ $? -ne 0 ]
-		then
-		echo "Please run again as root to update init script."
-		exit 1
-		fi
+	    echo "===================================================="
+	    echo "Please run again as root to update init script."
+	    echo "===================================================="
+	    exit 1
 	    fi
 
 	# Remove any old links and replace them with new ones.
@@ -220,7 +217,7 @@ if [ -n "$StartupItems" ]
 	echo "    Creating directory $StartupItems/PPR..."
 	mkdir $StartupItems/PPR
 	fi
-    if diff ppr $StartupItems/PPR/PPR
+    if diff ppr $StartupItems/PPR/PPR >/dev/null 2>&1
 	then
 	echo "    Startup script already installed, good."
 	else

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 24 March 2003.
 #
 
 #
@@ -34,13 +34,6 @@
 # scripts) into place.  It is not used for Perl library or module (*.pl and
 # *.pm) files.
 #
-
-opt_diff=0
-if [ "$1" = "--diff" ]
-    then
-    opt_diff=1
-    shift
-    fi
 
 USER=$1
 GROUP=$2
@@ -79,8 +72,8 @@ while [ "$1" != "" ]
     # may be run by a non-root user after it has been run once by root.
     if [ "$USER" = "root" -a -f "$RPM_BUILD_ROOT$dest" -a ! -w "$RPM_BUILD_ROOT$dest" ]
 	then
-	strip $file
-	if diff $file "$RPM_BUILD_ROOT$dest"
+	strip $file 2>/dev/null
+	if diff $file "$RPM_BUILD_ROOT$dest" >/dev/null 2>&1
 	    then
 	    echo "        (skipping copy because root ownership and unchanged)"
 	    continue

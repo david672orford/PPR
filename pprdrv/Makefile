@@ -68,8 +68,8 @@ OBJS1=pprdrv.$(OBJ) \
 	pprdrv_persistent.$(OBJ) pprdrv_fault_debug.$(OBJ) \
 	pprdrv_userparams.$(OBJ) \
 	pprdrv_log.$(OBJ) \
+	pprdrv_ppd_parse.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libttf.$(LIBEXT) ../libpprdb.$(LIBEXT)
-	#	pprdrv_ppd_parse.$(OBJ) \
 
 pprdrv$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS) $(ZLIBLIBS)

@@ -1,0 +1,429 @@
+ppad: 0
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: No "%%EndProlog" before "%%BeginSetup", inserting one
+WARNING: No valid "%%Pages:" comment
+ppr: 0
+%!PS-Adobe-3.0
+%%LanguageLevel: 2
+%%For: (ppr)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: font AvantGarde-Book
+%%+ font AvantGarde-BookOblique
+%%+ font AvantGarde-Demi
+%%+ font AvantGarde-DemiOblique
+%%+ font Bookman-Demi
+%%+ font Bookman-DemiItalic
+%%+ font Bookman-Light
+%%+ font Bookman-LightItalic
+%%+ font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Helvetica-BoldOblique
+%%+ font Helvetica-Narrow
+%%+ font Helvetica-Narrow-Bold
+%%+ font Helvetica-Narrow-BoldOblique
+%%+ font Helvetica-Narrow-Oblique
+%%+ font Helvetica-Oblique
+%%+ font NewCenturySchlbk-Bold
+%%+ font NewCenturySchlbk-BoldItalic
+%%+ font NewCenturySchlbk-Italic
+%%+ font NewCenturySchlbk-Roman
+%%+ font Palatino-Bold
+%%+ font Palatino-BoldItalic
+%%+ font Palatino-Italic
+%%+ font Palatino-Roman
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-BoldItalic
+%%+ font Times-Italic
+%%+ font Times-Roman
+%%+ font ZapfChancery-MediumItalic
+%%+ font ZapfDingbats
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+%%BeginSetup
+% jobname line removed
+% These should become %%IncludeResource: font
+%%IncludeResource: font AvantGarde-Book
+%%IncludeResource: font AvantGarde-BookOblique
+%%IncludeResource: font AvantGarde-Demi
+%%IncludeResource: font AvantGarde-DemiOblique
+%%IncludeResource: font Bookman-Demi
+%%IncludeResource: font Bookman-DemiItalic
+%%IncludeResource: font Bookman-Light
+%%IncludeResource: font Bookman-LightItalic
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier-BoldOblique
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Helvetica
+%%IncludeResource: font Helvetica-Bold
+%%IncludeResource: font Helvetica-BoldOblique
+%%IncludeResource: font Helvetica-Narrow
+%%IncludeResource: font Helvetica-Narrow-Bold
+%%IncludeResource: font Helvetica-Narrow-BoldOblique
+%%IncludeResource: font Helvetica-Narrow-Oblique
+%%IncludeResource: font Helvetica-Oblique
+%%IncludeResource: font NewCenturySchlbk-Bold
+%%IncludeResource: font NewCenturySchlbk-BoldItalic
+%%IncludeResource: font NewCenturySchlbk-Italic
+%%IncludeResource: font NewCenturySchlbk-Roman
+%%IncludeResource: font Palatino-Bold
+%%IncludeResource: font Palatino-BoldItalic
+%%IncludeResource: font Palatino-Italic
+%%IncludeResource: font Palatino-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-BoldItalic
+%%IncludeResource: font Times-Italic
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font ZapfChancery-MediumItalic
+%%IncludeResource: font ZapfDingbats
+%%EndSetup
+
+%%Page: 1 1
+
+%%BeginFeature: *FileVersion
+1.20
+%%EndFeature
+
+%%BeginFeature: *FormatVersion
+4.3
+%%EndFeature
+
+%%BeginFeature: *PCFileName
+PPRHP4K.PPD
+%%EndFeature
+
+%%BeginFeature: *ModelName
+HP LaserJet 4000 Series
+%%EndFeature
+
+%%BeginFeature: *ShortNickName
+HP LaserJet 4000 Series PS
+%%EndFeature
+
+%%BeginFeature: *NickName
+HP LaserJet 4000 Series PS
+%%EndFeature
+
+%%BeginFeature: *Product
+(HP LaserJet 4000 Series)
+%%EndFeature
+
+%%BeginFeature: *Manufacturer
+HP
+%%EndFeature
+
+%%BeginFeature: *PSVersion
+(2014.108) 1
+%%EndFeature
+
+%%BeginFeature: *LanguageLevel
+2
+%%EndFeature
+
+%%BeginFeature: *Throughput
+17
+%%EndFeature
+
+%%BeginFeature: *SuggestedJobTimeout
+0
+%%EndFeature
+
+%%BeginFeature: *SuggestedWaitTimeout
+120
+%%EndFeature
+
+% This one should be empty
+%%BeginFeature: *MediaType None
+
+%%EndFeature
+
+%%BeginFeature: *MediaType Plain
+<</MediaType (Plain)>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *MediaType Letterhead
+<</MediaType (Letterhead)>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Collate True
+<</Collate true>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Collate False
+<</Collate false>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Smoothing True
+  << /PostRenderingEnhance true /PostRenderingEnhanceDetails << /REValue 2 /Type 8 >>
+  >> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Smoothing False
+  << /PostRenderingEnhance true /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >>
+  >> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *JCLBegin
+%-12345X@PJL JOB
+
+%%EndFeature
+
+%%BeginFeature: *JCLToPSInterpreter
+@PJL ENTER LANGUAGE = POSTSCRIPT 
+
+%%EndFeature
+
+%%BeginFeature: *JCLEnd
+%-12345X@PJL EOJ
+
+%%EndFeature
+
+%%BeginFeature: *JCLResolution 300dpi
+@PJL SET RESOLUTION = 300<0A>
+%%EndFeature
+
+%%BeginFeature: *JCLResolution 600dpi
+@PJL SET RESOLUTION = 600<0A>
+%%EndFeature
+
+%%BeginFeature: *JCLEconomode False
+@PJL SET ECONOMODE = OFF<0A>
+%%EndFeature
+
+%%BeginFeature: *JCLEconomode True
+@PJL SET ECONOMODE = ON<0A>
+%%EndFeature
+
+%%BeginFeature: *Option1 True
+
+%%EndFeature
+
+%%BeginFeature: *Option1 False
+
+%%EndFeature
+
+%%BeginFeature: *InstalledMemory 4MB
+
+%%EndFeature
+
+%%BeginFeature: *InstalledMemory 8MB
+
+%%EndFeature
+
+%%BeginFeature: *FreeVM
+2200000
+%%EndFeature
+
+%%BeginFeature: *VMOption 4MB
+2200000
+%%EndFeature
+
+%%BeginFeature: *VMOption 8MB
+6000000
+%%EndFeature
+
+%%BeginFeature: *PageSize Letter
+  <</PageSize [612 792] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *PageSize Legal
+  <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *PageSize A4
+  <</PageSize [595 842] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *PageRegion Letter
+  <</PageSize [612 792] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *PageRegion Legal
+  <</PageSize [612 1008] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *PageRegion A4
+  <</PageSize [595 842] /ImagingBBox null>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *ImageableArea Letter
+12.24 12.06 599.76 780.06
+%%EndFeature
+
+%%BeginFeature: *ImageableArea Legal
+12.24 12.06 599.76 996.06
+%%EndFeature
+
+%%BeginFeature: *ImageableArea A4
+13.44 12.06 581.76 829.74
+%%EndFeature
+
+%%BeginFeature: *PaperDimension Letter
+612 792
+%%EndFeature
+
+%%BeginFeature: *PaperDimension Legal
+612 1008
+%%EndFeature
+
+%%BeginFeature: *PaperDimension A4
+595 842
+%%EndFeature
+
+%%BeginFeature: *MaxMediaWidth
+612
+%%EndFeature
+
+%%BeginFeature: *MaxMediaHeight
+1008
+%%EndFeature
+
+%%BeginFeature: *CustomPageSize True
+  pop pop pop 
+  << /PageSize [ 5 -2 roll ] /ImagingBBox null >> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *InputSlot Upper
+<</ManualFeed false /MediaPosition 3>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *InputSlot Middle
+<</ManualFeed false /MediaPosition 0>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *InputSlot Lower
+<</ManualFeed false /MediaPosition 1>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *ScreenFreq
+106.0
+%%EndFeature
+
+%%BeginFeature: *ScreenAngle
+45.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenFreq 300dpi
+60.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenAngle 300dpi
+45.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenFreq 600dpi
+106.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenAngle 600dpi
+45.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenFreq 1200dpi
+180.0
+%%EndFeature
+
+%%BeginFeature: *ResScreenAngle 1200dpi
+45.0
+%%EndFeature
+
+%%BeginFeature: *ScreenProc HPEnhanced
+  { /EnhancedHalftone /Halftone findresource }
+%%EndFeature
+
+%%BeginFeature: *ScreenProc Dot
+{abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
+sub }{dup mul exch dup mul add 1 exch sub }ifelse }
+%%EndFeature
+
+%%BeginFeature: *ScreenProc Line
+{ pop }
+%%EndFeature
+
+%%BeginFeature: *ScreenProc Ellipse
+{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }
+%%EndFeature
+
+%%BeginFeature: *Transfer Null
+{ }
+%%EndFeature
+
+%%BeginFeature: *Transfer Null.Inverse
+{ 1 exch sub }
+%%EndFeature
+
+%%BeginFeature: *Duplex None
+  <</Duplex false>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Duplex DuplexNoTumble
+  <</Duplex true /Tumble false>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *Duplex DuplexTumble
+  <</Duplex true /Tumble true>> setpagedevice
+%%EndFeature
+
+%%BeginFeature: *?Duplex
+   save
+   currentpagedevice /Duplex known
+   false ne
+     { currentpagedevice /Duplex get
+        { currentpagedevice /Tumble get
+            {(DuplexTumble)}{(DuplexNoTumble)}ifelse
+        } { (None)}    ifelse 
+     }{(None)}  ifelse = flush
+   restore
+%%EndFeature
+
+%%BeginFeature: *Password
+()
+%%EndFeature
+
+%%BeginFeature: *ExitServer
+ count 0 eq
+ { false } { true exch startjob } ifelse
+ not {
+     (WARNING: Cannot modify initial VM.) =
+     (Missing or invalid password.) =
+     (Please contact the author of this software.) = flush quit
+     } if
+%%EndFeature
+
+%%BeginFeature: *Reset
+  count 0 eq { false } { true exch startjob } ifelse
+  not {
+    (WARNING: Cannot reset printer.) =
+    (Missing or invalid password.) =
+    (Please contact the author of this software.) = flush quit
+    } if
+  systemdict /quit get exec
+  (WARNING : Printer Reset Failed.) = flush
+%%EndFeature
+
+% ============ These shouldn't work =============
+%%IncludeFeature: *Message
+%%IncludeFeature: *Status
+%%IncludeFeature: *PrinterError
+%%IncludeFeature: *Source
+
+%%Trailer
+%%EOF
+% regtest interface done %

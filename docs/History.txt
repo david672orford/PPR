@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--13 March 2003.
+1.51, 15 February 2003--24 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -432,6 +432,8 @@ more information about RIPs and *pprRIP:.
 * pprhack/pprhack_rips.sgml: skeleton created
 
 * pprhack/pprhack_pprd.sgml: proofread and corrected
+
+
 
 
 TODO

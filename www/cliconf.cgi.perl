@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 26 March 2003.
 #
 
 use lib "?";
@@ -60,7 +60,8 @@ $printcap_wizard_table = [
 		print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), $name), "</span><br>\n";
 
 		print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
-		print '<input type="radio" name="what_to_download" value="kde_shortcut">', H_("KDE Shortcut"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="kde_shortcut_web">', H_("KDE Shortcut to Web Interface"), "<br>\n";
+		print '<input type="radio" name="what_to_download" value="kde_shortcut_perltk">', H_("KDE Shortcut to Perl/Tk Interface"), "<br>\n";
  		#print '<input type="radio" name="what_to_download" value="mswin_shortcut">', H_("MS-Windows Shortcut"), "<br>\n";
 		#print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
 		},
@@ -76,14 +77,31 @@ $printcap_wizard_table = [
 	},
 
 	#===========================================
-	# KDE Icon
+	# KDE Icon for Web Interface
 	#===========================================
 	{
-	'label' => 'kde_shortcut',
+	'label' => 'kde_shortcut_web',
 	'title' => N_("Downloadable KDE Icon"),
 	'picture' => "cliconf1.png",
 	'dopage' => sub {
-		print "<p>", H_("Click on the button below to download the KDE shortcut.\n"
+		print "<p>", H_("Click on the button below to download the KDE shortcut\n"
+			. "to the PPR Web Interface.\n"
+			. "You will probably want to save it in your Desktop folder."), "</p>\n";
+		isubmit("action", "Download", N_("_Download"), 'class="buttons"');
+		},
+	'buttons' => [N_("_Close")]
+	},
+
+	#===========================================
+	# KDE Icon for Perl/Tk Interface
+	#===========================================
+	{
+	'label' => 'kde_shortcut_web',
+	'title' => N_("Downloadable KDE Icon"),
+	'picture' => "cliconf1.png",
+	'dopage' => sub {
+		print "<p>", H_("Click on the button below to download the KDE shortcut\n"
+			. "to the PPR Perl/Tk interface.\n"
 			. "You will probably want to save it in your Desktop folder."), "</p>\n";
 		isubmit("action", "Download", N_("_Download"), 'class="buttons"');
 		},
@@ -238,6 +256,7 @@ EndOfBSD
 #===========================================
 sub gen_kde_shortcut
     {
+    my $prog = shift;
     my $name = cgi_data_move("name", "?");
     my $filename = $name;
 
@@ -250,7 +269,7 @@ Content-Disposition: attachment; filename=$filename
 [Desktop Entry]
 Comment=$comment
 Encoding=UTF-8
-Exec=ppr-web -d $name
+Exec=$prog -d $name
 Icon=$SHAREDIR/www/images/icon-48.xpm
 MimeType=
 Name=$name
@@ -279,9 +298,13 @@ if(cgi_data_move("action", "") eq "Download")
 	{
 	gen_spooler_config();
 	}
-    elsif($what eq "kde_shortcut")
+    elsif($what eq "kde_shortcut_web")
 	{
-	gen_kde_shortcut();
+	gen_kde_shortcut("ppr-web");
+	}
+    elsif($what eq "kde_shortcut_perltk")
+	{
+	gen_kde_shortcut("ppr-panel");
 	}
     else
 	{

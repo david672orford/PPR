@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2003.
+# Last modified 26 March 2003.
 #
 
 package PrintDesk::PPRlistqueue;
@@ -107,7 +107,7 @@ sub parallel_select {
 sub Show
   {
   my $self = shift;
-  my $window = $self->{window};
+  my $w = $self->{window};
   my $temp;
 
   # We build stuff in these variables and store them
@@ -119,7 +119,7 @@ sub Show
   my @listboxes = ();
 
   # Create a scrollbar to scroll the queue listing:
-  $self->{scrollbar} = $window->Scrollbar()->
+  $self->{scrollbar} = $w->Scrollbar()->
 	pack(-side, 'right', -anchor, 'ne', -fill, 'y');
 
   # Create the columns:
@@ -127,12 +127,15 @@ sub Show
     {
     # Create a frame for this column and push a label and
     # a divider to the top.
-    $temp = $field->{frame} = $window->Frame()->
-	pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
-    $field->{titlelabel} = $temp->Label(-text, $field->{-title})->
-	pack(-side, 'top', -anchor, 'nw');
-    $field->{titledivider} = $temp->Frame(-height, 1, -background, 'black')->
-	pack(-side, 'top', -anchor, 'nw', -fill, 'x');
+    $temp = $field->{frame} = $w->Frame(
+	)->pack(-side, 'left', -anchor, 'nw', -fill, 'both', -expand, 1);
+    $field->{titlelabel} = $temp->Label(
+	-text => $field->{-title}
+	)->pack(-side, 'top', -anchor, 'nw');
+    $field->{titledivider} = $temp->Frame(
+	-height => 1,
+	-background => 'black'
+	)->pack(-side, 'top', -anchor, 'nw', -fill, 'x');
 
     # Create the listbox which displays the rows for this column.
     $field->{listbox} = $temp->Listbox(-width, $field->{-width}, -bd, 0, -setgrid, 1,
@@ -156,7 +159,7 @@ sub Show
 
     # Pack a narrow black bar on the right to divide this column
     # from the next one.
-    $field->{sidedivider} = $window->Frame(-width, 1, -background, 'black')->
+    $field->{sidedivider} = $w->Frame(-width, 1, -background, 'black')->
 	pack(-side, 'left', -anchor, 'nw', -fill, 'y');
 
     # We want to note the column number of the jobname column.
@@ -229,7 +232,7 @@ sub Show
 
   # Create an updater object and tell it what routines to
   # call when the queue listing changes.
-  my $updater = new PrintDesk::PPRstateupdate($self->{window}, $window, $self->{queue});
+  my $updater = new PrintDesk::PPRstateupdate($w, $self->{queue});
   $updater->register('add', $self, \&add);
   $updater->register('delete', $self, \&delete);
   $updater->register('newstatus', $self, \&newstatus);

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 March 2003.
+# Last modified 26 March 2003.
 #
 
 package PrintDesk::PPRstateupdate;
@@ -279,7 +279,7 @@ sub new
     $self->{widget} = shift;
     $self->{queue} = shift;
 
-    print STDERR "PrintDesk::PPRstateupdate::new(): main=$self->{widget}, window=$self->{window}, queue=\"$self->{queue}\" " if($debug);
+    print STDERR "PrintDesk::PPRstateupdate::new(): widget=$self->{widget}, queue=\"$self->{queue}\" " if($debug);
 
     # Create a unique id so that we can later locate this instance
     # in the array @instances.  This is necessary because its possition

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 26 March 2003.
 */
 
 /*
@@ -405,7 +405,8 @@ void read_PPD_file(const char *ppd_file_name)
 	    char *p2;
 	    if((p2 = strchr(line, '"')))
 		*p2 = '\0';
-	    ppd_callback_string_line(line);
+	    if(*line)
+	    	ppd_callback_string_line(line);
 	    if(p2)
 		ppd_callback_end_string();
 	    }
