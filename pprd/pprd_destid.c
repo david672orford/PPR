@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 10 January 2001.
+** Last modified 21 June 2001.
 */
 
 /*
@@ -23,6 +23,7 @@
 */
 
 #include "before_system.h"
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "pprd.h"
