@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 February 2004.
+# Last modified 15 April 2004.
 #
 
 #
@@ -37,6 +37,8 @@
 # BUG: doesn't set correct permissions if run as root!
 # BUG: uses echo -n
 #
+
+. `dirname $0`/../makeprogs/paths.sh
 
 lang="$1"
 instdir="$2"
@@ -70,11 +72,16 @@ if [ ! -d "$full_instdir/$lang" ]
 	then
 	mkdir "$full_instdir/$lang"
 	fi
+chown $PPR_USER "$full_instdir/$lang"
+chgrp $PPR_GROUP "$full_instdir/$lang"
 echo "%dir \"$instdir/$lang\"" >>$fileslist
+
 if [ ! -d "$full_instdir/$lang/LC_MESSAGES" ]
 	then
 	mkdir "$full_instdir/$lang/LC_MESSAGES"
 	fi
+chown $PPR_USER "$full_instdir/$lang/LC_MESSAGES"
+chgrp $PPR_GROUP "$full_instdir/$lang/LC_MESSAGES"
 echo "%dir \"$instdir/$lang/LC_MESSAGES\"" >>$fileslist
 
 echo -n "    "
@@ -90,6 +97,8 @@ for potfile in *.pot
 		then
 		echo -n " $division"
 		msgfmt -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" $lang-$division.po || exit 1
+		chown $USER_PPR "$full_instdir/$lang/LC_MESSAGES/$division.mo" 2>/dev/null \
+			&& chown $USER_PPR "$full_instdir/$lang/LC_MESSAGES/$division.mo" 2>/dev/null
 		echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
 		else
 		echo -n " $division(missing)"

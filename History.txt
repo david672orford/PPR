@@ -9115,6 +9115,8 @@ Internet Printing Protocol Work
 
 * filter_dotmatrix/: converted to use gu_psprintf().
 
+* po/install_mo.sh: added chown/chgrp calls.
+
 
 +++++++++++++++++++++
 TODO
