@@ -378,6 +378,7 @@ void *gu_pcs_new(void);
 void *gu_pcs_new_pcs(void **pcs);
 void *gu_pcs_new_cstr(const char cstr[]);
 void gu_pcs_free(void **pcs);
+char *gu_pcs_free_keep_cstr(void **pcs);
 void gu_pcs_debug(void **pcs, const char name[]);
 void *gu_pcs_snapshot(void **pcs);
 void gu_pcs_grow(void **pcs, int size);

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 31 October 2003.
 #
 
 defined($VAR_SPOOL_PPR) || die;
@@ -45,10 +45,10 @@ sub ppd_list
 			{
 			next if($line =~ /^#/);
 			chomp $line;
-			my @fields = (split(/:/, $line));	# filename, manufacturer, description
-			next if($fields[1] eq "PPR");		# these aren't for printers
-			$fields[0] =~ s#^$PPDDIR/##;		# reduce clutter by removing PPR PPD Directory name
-			push(@list, \@fields);
+			my($description, $filename, $manufacturer) = (split(/:/, $line));
+			next if($manufacturer eq "PPR");		# these aren't for printers
+			$filename =~ s#^$PPDDIR/##;				# reduce clutter by removing PPR PPD Directory name
+			push(@list, [$manufacturer, $description, $filename);
 			}
 		close(P) || die $!;
 		}
@@ -60,12 +60,12 @@ sub ppd_list
 			{
 			next if($file =~ /^\./);
 			next if($file =~ /^PPR Generic/);
-			push(@list, [$file, "", $file]);
+			push(@list, ["", $file, $file]);
 			}
 		closedir(P) || die $!;
 		}
 
-	@list = sort { my $x = ($a->[1] cmp $b->[1]); if($x) { $x } else {$a->[2] cmp $b->[2]} } @list;
+	@list = sort { my $x = ($a->[0] cmp $b->[0]); if($x) { $x } else {$a->[1] cmp $b->[1]} } @list;
 	return @list;
 	}
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 31 October 2003.
 */
 
 /*! \file
@@ -59,19 +59,23 @@ char *gu_strsep(char **stringp, const char *delim)
 
 	start = *stringp;					/* first token starts immediately */
 
-	if(!*start)							/* if no more line left, no token */
+	if(!start)							/* if we reached the end last time, no token */
 		return NULL;
 
 	len = strcspn(start, delim);		/* token length is length of run without delimiters */
 
-	*stringp += len;					/* for next time, move past the token */
-
 	if(start[len])						/* if terminated by delimiter rather than end of string, */
 		{
 		start[len] = '\0';				/* insert a ASCIIz string terminator */
+		/* don't remove parenthises from next two lines */
+		(*stringp) += len;				/* for next time, move past the token */
 		(*stringp)++;					/* and move past the delimiter for next time */
 		}
-
+	else
+		{
+		*stringp = NULL;
+		}
+	
 	return start;						/* return the token we found */
 	}
 

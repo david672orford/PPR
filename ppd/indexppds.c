@@ -58,6 +58,7 @@ const char ppdindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
 
 /*==========================================================================
 ** Extra routines for PPD parsing 
+** These should probably go into libppr eventually.
 ==========================================================================*/
 
 /*
@@ -65,7 +66,7 @@ const char ppdindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
  * substrings are described in the "PostScript Printer File Format Specification"
  * version 4.0 on page 5.
  */
-static int decode_QuotedValue(char *p)
+static int ppd_decode_QuotedValue(char *p)
 	{
 	int len;
 	int si, di;
@@ -106,13 +107,13 @@ static int decode_QuotedValue(char *p)
 		}
 	
 	return di;
-	}
+	} /* end of ppd_decode_QuotedValue() */
 
 /*
  * Take p and possibly subsequent lines (until one of them ends with a quote)
  * and assemble them into a PCS.
  */
-static void *finish_quoted_string(char *initial_segment)
+static void *ppd_finish_quoted_string(char *initial_segment)
 	{
 	char *p = initial_segment;
 	gu_boolean end_quote = FALSE;
@@ -131,8 +132,8 @@ static void *finish_quoted_string(char *initial_segment)
 		gu_pcs_append_cstr(&text, p);
 		} while(!end_quote && (p = ppd_readline()));
 
-	return text;
-	}
+	return gu_pcs_free_keep_cstr(&text);
+	} /* end of ppd_finish_quoted_string() */
 
 /*==========================================================================
 ** This routine is called for each file found in the PPD
@@ -140,54 +141,82 @@ static void *finish_quoted_string(char *initial_segment)
 ==========================================================================*/
 static int do_file(FILE *indexfile, const char filename[])
 	{
+	{
 	int ret;
-	char *pline, *p;
-	char *Manufacturer = NULL;
-	char *Product = NULL;
-	char *ModelName = NULL;
-	char *NickName = NULL;
-	char *ShortNickName = NULL;
-	gu_boolean DeviceID = FALSE;
-	char *DeviceID_MFG = NULL;
-	char *DeviceID_MDL = NULL;
-	char *PSVersion = NULL;
-
 	printf("  %s", filename);
 
 	if((ret = ppd_open(filename, stderr)) != EXIT_OK)
 		return ret;
+	}
+	{
+	pool temp_pool = new_subpool(global_pool);
+	char *pline, *p;
 
+	/* the information we are gathering */
+	char *Manufacturer = NULL;
+	char *ModelName = NULL;
+	char *NickName = NULL;
+	char *ShortNickName = NULL;
+	char *Product = NULL;
+	vector PSVersion = new_vector(temp_pool, char*);
+	gu_boolean DeviceID = FALSE;
+	char *DeviceID_MFG = NULL;
+	char *DeviceID_MDL = NULL;
+	char *pprPJLID = NULL;
+
+	/* we will choose these from those above */
+	char *vendor;
+	const char *description;
+	
 	while((pline = ppd_readline()))
 		{
 		if(!Manufacturer && (p = lmatchp(pline, "*Manufacturer:")) && *p == '"')
 			{
-			p++;
-			Manufacturer = gu_strndup(p, strcspn(p, "\""));
-			continue;
-			}
-		if(!Product && (p = lmatchp(pline, "*Product:")) && *p == '"' && p[1] == '(')
-			{
-			p += 2;
-			Product = gu_strndup(p, strcspn(p, ")"));
+			Manufacturer = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(Manufacturer);
 			continue;
 			}
 		if(!ModelName && (p = lmatchp(pline, "*ModelName:")) && *p == '"')
 			{
-			p++;
-			ModelName = gu_strndup(p, strcspn(p, "\""));
+			ModelName = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(ModelName);
 			continue;
 			}
-		if(!NickName && (p = lmatchp(pline, "*NickName:")))
+		if(!NickName && (p = lmatchp(pline, "*NickName:")) && *p == '"')
 			{
-			p++;
-			NickName = gu_strndup(p, strcspn(p, "\""));
+			NickName = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(NickName);
 			continue;
 			}
 		/* ShortNickName is only valid if it comes before NickName. */
-		if(!ShortNickName && !NickName && (p = lmatchp(pline, "*ShortNickName:")))
+		if(!ShortNickName && !NickName && (p = lmatchp(pline, "*ShortNickName:")) && *p == '"')
 			{
-			p++;
-			ShortNickName = gu_strndup(p, strcspn(p, "\""));
+			ShortNickName = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(ShortNickName);
+			continue;
+			}
+		if(!Product && (p = lmatchp(pline, "*Product:")) && *p == '"') 
+			{
+			p = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(p);
+			if(*p == '(' && p[strlen(p) - 1] == ')')
+				{
+				Product = gu_strndup(p + 1, strlen(p) - 2);
+				}
+			gu_free(p);
+			continue;
+			}
+		if((p = lmatchp(pline, "*PSVersion:")) && *p == '"')
+			{
+			/* this is wasteful */
+			vector matches = prematch(temp_pool, p,
+					precomp(temp_pool, "^\"\\(([0-9\\.]+)\\)\\s+(\\d+)\"$", 1),
+					0);
+			if(matches && vector_size(matches) == 3)
+				{
+				vector_pop_front(matches, p);	/* discard */
+				vector_push_back_vector(PSVersion, matches);
+				}
 			continue;
 			}
 		/* These are hard to parse becuase, at least in Foomatic generated PPD files:
@@ -197,78 +226,49 @@ static int do_file(FILE *indexfile, const char filename[])
 		 * 4) They have to be split again on colons into name and value
 		 * 5) The IEEE 1284 standard allows names to be abbreviated
 		 */
-		if(!DeviceID && (p = lmatchp(pline, "*1284DeviceID:")))
-			{
-			void *text;				/* stuff inside the quotes */
-			
-			/* Take the part we have, plus any continuation lines, and put them into
-			 * a Perl Compatible String.
-			 */
-			text = finish_quoted_string(p + 1);
-
-			/* Get a pointer to the C string inside the PCS, edit it place in order to
-			 * decode hexadecimal strings, then adjust the size.
-			 */
-			p = gu_pcs_get_editable_cstr(&text);
-			gu_pcs_truncate(&text, decode_QuotedValue(p));
-
-			/* Remove leading or trailing space. */
-			ptrim(p);
-
-			/* Split on semicolons, possibly followed by whitespace and iterate over the resulting list. */
+		if(!DeviceID && (p = lmatchp(pline, "*1284DeviceID:")) && *p == '"')
 			{
 			int i;
-			pool temp_pool = new_subpool(global_pool);
-			vector pairs;
 			pcre *split_pattern;
+			vector pairs;
+
+			p = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(p);
+			ptrim(p);
+
+			/* use regular expression to split on semicolons */
 			split_pattern = precomp(temp_pool, ";\\s*", 0);
 			pairs = pstrresplit(temp_pool, p, split_pattern);
+		
+			/* Iterate over the resulting list */
 			for(i = 0; i < vector_size(pairs); i++)
 				{
-				char *p2, *name, *value;
-				vector pair;
+				char *p2, *p3;
 				vector_get(pairs, i, p2);
-
-				/* Split again on colon. */
-				pair = pstrcsplit(temp_pool, p2, ':');
-				if(vector_size(pair) < 2)
+				if((p3 = lmatchp(p2, "MANUFACTURER:")) || (p3 = lmatchp(p2, "MFG:")))
 					{
-					printf("    Bad!\n");
+					DeviceID_MFG = pstrdup(temp_pool, p3);
 					}
-				else
+				else if((p3 = lmatchp(p2, "MODEL:")) || (p3 = lmatchp(p2, "MDL:")))
 					{
-					vector_get(pair, 0, name);
-					vector_get(pair, 1, value);
-
-					if(strcmp(name, "MANUFACTURER") == 0 || strcmp(name, "MFG") == 0)
-						{
-						DeviceID_MFG = gu_strdup(value);
-						}
-					if(strcmp(name, "MODEL") == 0 || strcmp(name, "MDL") == 0)
-						{
-						DeviceID_MDL = gu_strdup(value);
-						}
+					DeviceID_MDL = pstrdup(temp_pool, p3);
 					}
 				}
 			
-			delete_pool(temp_pool);
-			}
-			
-			gu_pcs_free(&text);	
-
+			gu_free(p);	
 			DeviceID = TRUE;			/* We have seen one */
 			continue;
 			}
-		if(!PSVersion && (p = lmatchp(pline, "*PSVersion:")))
+		if(pprPJLID && (p = lmatchp(pline, "*pprPJLID:")) && *p == '"')
 			{
-			p++;
-			PSVersion = gu_strndup(p, strcspn(p, "\""));
+			pprPJLID = ppd_finish_quoted_string(p + 1);
+			ppd_decode_QuotedValue(pprPJLID);
 			continue;
 			}
 		}
 
 	#ifdef DEBUG
-	printf(": Manufacturer=\"%s\", Product=\"%s\", ModelName=\"%s\", NickName=\"%s\", ShortNickName=\"%s\"",
+	printf("%s: Manufacturer=\"\", Product=\"%s\", ModelName=\"%s\", NickName=\"%s\", ShortNickName=\"%s\"",
 		Manufacturer ? Manufacturer : "",
 		Product ? Product : "",
 		ModelName ? ModelName : "",
@@ -279,10 +279,6 @@ static int do_file(FILE *indexfile, const char filename[])
 
 	fputc('\n', stdout);
 
-	{
-	char *vendor;
-	const char *description;
-
 	/*
 	** Find a vendor string.  If there was a *Manufacturer defined in the PPD file, use that.
 	** If not, use the part of the Nickname before the first space or hyphen.  If that doesn't
@@ -290,11 +286,11 @@ static int do_file(FILE *indexfile, const char filename[])
 	*/
 	if(Manufacturer)
 		{
-		vendor = gu_strdup(Manufacturer);
+		vendor = pstrdup(temp_pool, Manufacturer);
 		}
 	else if(NickName && strlen(NickName) > 3 && isupper(NickName[0]) && isalpha(NickName[1]) && strchr(NickName, ' '))
 		{
-		vendor = gu_strndup(NickName, strcspn(NickName, " -"));
+		vendor = pstrndup(temp_pool, NickName, strcspn(NickName, " -"));
 		}
 	else
 		{
@@ -303,7 +299,8 @@ static int do_file(FILE *indexfile, const char filename[])
 
 	/*
 	** If the vendor name is longer than three letters and is all upper 
-	** case latin letters, lower case all but the first.
+	** case latin letters, lower case all but the first.  The result is
+	** that "IBM" will be left as it is but "EPSON" will become "Epson".
 	*/
 	if(vendor && strlen(vendor) > 3 && strspn(vendor, "ABCDEFGHIJKLMNOPQRSTUVWXYZ") == strlen(vendor))
 		{
@@ -327,38 +324,21 @@ static int do_file(FILE *indexfile, const char filename[])
 	/*
 	** OK, here goes.
 	*/
-	fprintf(indexfile, "%s:%s:%s:%s:%s:%s:%s\n",
+	fprintf(indexfile, "%s:%s:%s:%s:%s:%s:%s:%s\n",
 		description,
 		filename,
 		vendor ? vendor : "Other",
 		Product ? Product : "",
-		PSVersion ? PSVersion : "",
+		pjoin(temp_pool, PSVersion, ","),	
 		DeviceID_MFG ? DeviceID_MFG : "",
-		DeviceID_MDL ? DeviceID_MDL : ""
+		DeviceID_MDL ? DeviceID_MDL : "",
+		pprPJLID ? pprPJLID : ""
 		);
 
-	if(vendor)
-		gu_free(vendor);
-	}
-
-	if(Manufacturer)
-		gu_free(Manufacturer);
-	if(Product)
-		gu_free(Product);
-	if(ModelName)
-		gu_free(ModelName);
-	if(NickName)
-		gu_free(NickName);
-	if(ShortNickName)
-		gu_free(ShortNickName);
-	if(DeviceID_MFG)
-		gu_free(DeviceID_MFG);
-	if(DeviceID_MDL)
-		gu_free(DeviceID_MDL);
-	if(PSVersion)
-		gu_free(PSVersion);
+	delete_pool(temp_pool);
 		
 	return EXIT_OK;
+	}
 	} /* end of do_file() */
 
 /*============================================================================
@@ -506,11 +486,11 @@ int main(int argc, char *argv[])
 			{
 			dirname = gu_ini_value_index(&section[i], 0, "<MISSING VALUE>");
 
-			printf("%s\n", PPDDIR);
+			printf("%s\n", dirname);
 	
 			if(strcmp(dirname, PPDDIR) == 0)
 				{
-				printf(_("  Skipped because it has already been indexed.\n"));
+				printf("  %s\n", _("Skipped because it has already been indexed."));
 				continue;
 				}
 

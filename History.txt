@@ -8921,7 +8921,9 @@ Internet Printing Protocol Work
 * libgu/gu_trim.c: removed since it has fallen into disuse since gu_getline()
   was added to the library.
 
-
+* libgu/gu_strsep.c,gu_strsep2.c: fixed handling of last field to conform to
+  BSD.
+  
 
 +++++++++++++++++++++
 TODO

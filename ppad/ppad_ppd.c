@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 31 October 2003.
 */
 
 #include "before_system.h"
@@ -46,11 +46,14 @@
 */
 struct THE_FACTS
 	{
-	char *hrDeviceDescr;
-	char *product;
-	char *version;
-	int revision;
-	char *pjl_info_id;
+	char *product;					/* PostScript product string */
+	float version;					/* PostScript interpreter version */
+	int revision;					/* PostScript interpreter revision */
+	char *SNMP_sysDescr;			/* SNMP node description */
+	char *SNMP_hrDeviceDescr;		/* SNMP HP printer model */
+	char *pjl_id;					/* Response to "@PJL INFO ID" */
+	char *deviceid_manufacturer;	/* IEEE 1284 */
+	char *deviceid_model;			/* IEEE 1284 */
 	};
 	
 /*
@@ -62,7 +65,15 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	const char filename[] = VAR_SPOOL_PPR"/ppdindex.db";
 	char *line = NULL;
 	int line_len = 80;
-	char *p, *f_filename, *f_vendor, *f_description, *f_product;
+	char *p;
+	char *f_description,
+		*f_filename,
+		*f_vendor,
+		*f_product,
+		*f_psversion,
+		*f_deviceid_mfg,
+		*f_deviceid_mdl,
+		*f_ppr_pjl_id;
 	int count = 0;
 
 	if(!(f = fopen(filename, "r")))
@@ -74,27 +85,44 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 			continue;
 
 		p = line;
-		if(!(f_filename = gu_strsep(&p,":"))
+		if(!(f_description = gu_strsep(&p,":"))
+				|| !(f_filename = gu_strsep(&p,":"))
 				|| !(f_vendor = gu_strsep(&p,":"))
-				|| !(f_description = gu_strsep(&p,":"))
 				|| !(f_product = gu_strsep(&p,":"))
+				|| !(f_psversion = gu_strsep(&p,":"))
+				|| !(f_deviceid_mfg = gu_strsep(&p,":"))
+				|| !(f_deviceid_mdl = gu_strsep(&p,":"))
+				|| !(f_ppr_pjl_id = gu_strsep(&p,":"))
 				)
 			{
 			if(!machine_readable)
-				fprintf(stderr, "Bad line in \"%s\":\n%s\n", filename, line);
+				{
+				char *p2;
+				for(p2 = line; p2 < p; p2++)
+					{
+					if(*p2 == '\0')
+						*p2 = ':';
+					}
+				fprintf(stderr,
+					"Bad line in \"%s\":\n"
+					"%s\n",
+					filename,
+					line
+					);
+				}
 			continue;
 			}
 
 		/*printf("Product: %s\n", f_product);*/
 		if(    (facts->product && strcmp(f_product, facts->product) == 0)
-			|| (facts->hrDeviceDescr && strcmp(f_product, facts->hrDeviceDescr) == 0)
+			|| (facts->SNMP_hrDeviceDescr && strcmp(f_product, facts->SNMP_hrDeviceDescr) == 0)
+			
 			)
 			{
-			p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
 			if(machine_readable)
 				{
 				/* This is for the web front end which needs extra fields. */
-				printf("%s:%s:%s\n", p, f_vendor, f_description);
+				printf("%s:%s:%s\n", f_description, f_filename, f_vendor);
 				}
 			else
 				{
@@ -102,6 +130,7 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 				if(count++ < 1)
 					printf("Run one of these commands to select the cooresponding PPD file:\n");
 
+				p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
 				printf("    ppad ppd %s \"%s\"\n", printer, p);
 				}
 			}
@@ -143,20 +172,28 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 					{
 					char *f1, *f2;
 
-					if((f1 = gu_strsep(&p, "=")) && (f2 = gu_strsep(&p, "=")))
+					if((f1 = gu_strsep(&p, "=")) && (f2 = gu_strsep(&p, "")))
 						{
 						if(!machine_readable)
-							printf("    %s: \"%s\"\n", f1, f2);
+							printf("    %s=\"%s\"", f1, f2);
 
-						if(strcmp(f1, "hrDeviceDescr") == 0)
+						if(strcmp(f1, "SNMP sysDescr") == 0)
 							{
-							if(!facts->hrDeviceDescr)
+							if(!facts->SNMP_sysDescr)
 								{
-								facts->hrDeviceDescr = gu_strdup(f2);
+								facts->SNMP_sysDescr = gu_strdup(f2);
+								/* retval = 1; */
+								}
+							}
+						else if(strcmp(f1, "SNMP hrDeviceDescr") == 0)
+							{
+							if(!facts->SNMP_hrDeviceDescr)
+								{
+								facts->SNMP_hrDeviceDescr = gu_strdup(f2);
 								retval = 1;
 								}
 							}
-						else if(strcmp(f1, "Product") == 0)
+						else if(strcmp(f1, "PostScript Product") == 0)
 							{
 							if(!facts->product)
 								{
@@ -164,15 +201,15 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 								retval = 1;
 								}
 							}
-						else if(strcmp(f1, "Version") == 0)
+						else if(strcmp(f1, "PostScript Version") == 0)
 							{
 							if(!facts->version)
 								{
-								facts->version = gu_strdup(f2);
+								gu_sscanf(f2, "%f", &facts->version);
 								/* retval = 1; */
 								}
 							}
-						else if(strcmp(f1, "Revision") == 0)
+						else if(strcmp(f1, "PostScript Revision") == 0)
 							{
 							if(!facts->revision)
 								{
@@ -180,12 +217,37 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 								/* retval = 1; */
 								}
 							}
+						else if(strcmp(f1, "1284DeviceID MANUFACTURER") == 0)
+							{
+							if(!facts->deviceid_manufacturer)
+								{
+								facts->deviceid_manufacturer = gu_strdup(f2);
+								retval = 1;
+								}
+							}
+						else if(strcmp(f1, "1284DeviceID MODEL") == 0)
+							{
+							if(!facts->deviceid_model)
+								{
+								facts->deviceid_model = gu_strdup(f2);
+								retval = 1;
+								}
+							}
+						else
+							{
+							if(!machine_readable)
+								printf(" (not recognized)");
+							}
+
+						if(!machine_readable)
+							printf("\n");
 						}
 
 					timeout = 60;
 					continue;
 					}
 
+				/* Not a MODEL: line, but probably of interest. */
 				printf("    %s\n", line);
 				}
 			}
@@ -245,13 +307,13 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 
 				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
 
-				if(p[0] == '"' && !facts->pjl_info_id)
+				if(p[0] == '"' && !facts->pjl_id)
 					{
 					p++;
-					facts->pjl_info_id = gu_strndup(p, strcspn(p, "\""));
+					facts->pjl_id = gu_strndup(p, strcspn(p, "\""));
 
 					if(!machine_readable)
-						printf("    INFO ID: \"%s\"\n", facts->pjl_info_id);
+						printf("    PJL ID: \"%s\"\n", facts->pjl_id);
 
 					retval = 1;
 					}
@@ -345,7 +407,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 			facts->product = gu_strdup(p);
 			gu_free(results[2]);
 
-			facts->version = results[1];
+			gu_sscanf(results[1], "%f", &facts->version);
 			facts->revision = atoi(results[0]);
 			}
 		gu_Final
@@ -383,11 +445,13 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	int total_answers = 0;
 	int matches = 0;
 
-	facts.hrDeviceDescr = NULL;
+	facts.SNMP_hrDeviceDescr = NULL;
 	facts.product = NULL;
-	facts.version = NULL;
+	facts.version = 0.0;
 	facts.revision = 0;
-	facts.pjl_info_id = NULL;
+	facts.pjl_id = NULL;
+	facts.deviceid_manufacturer = NULL;
+	facts.deviceid_model = NULL;
 
 	total_answers += ppd_query_interface_probe(printer, q, &facts);
 	if(!machine_readable)
@@ -409,14 +473,16 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 		matches = ppd_choices(printer, &facts);
 		}
 
-	if(facts.hrDeviceDescr)
-		gu_free(facts.hrDeviceDescr);
+	if(facts.SNMP_hrDeviceDescr)
+		gu_free(facts.SNMP_hrDeviceDescr);
 	if(facts.product)
 		gu_free(facts.product);
-	if(facts.version)
-		gu_free(facts.version);
-	if(facts.pjl_info_id)
-		gu_free(facts.pjl_info_id);
+	if(facts.pjl_id)
+		gu_free(facts.pjl_id);
+	if(facts.deviceid_manufacturer)
+		gu_free(facts.deviceid_manufacturer);
+	if(facts.deviceid_model)
+		gu_free(facts.deviceid_model);
 
 	if(matches < 1)
 		{

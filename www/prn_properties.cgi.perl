@@ -167,7 +167,7 @@ my $tabbed_table = [
 				my $lastgroup = "";
 				foreach my $item (ppd_list())
 					{
-					my($item_file, $item_manufacturer, $item_description) = @{$item};
+					my($item_manufacturer, $item_description, $item_file) = @{$item};
 					if($item_manufacturer ne $lastgroup)
 						{
 						print "</optgroup>\n" if($lastgroup ne "");

@@ -46,11 +46,12 @@ be converted to C strings because C strings can't contain embedded NULLs.
 #include "gu.h"
 
 struct PCS {
-	char *storage;
-	int storage_size;
-	int length;
-	int refcount;
-};
+	char *storage;			/* the actual storage for the strings chars */
+	int storage_size;		/* number of allocated byte at storage */
+	int length;				/* number currently used */
+	int refcount;			/* how many have pointers to this PCS or to its storage? */
+	int lurkers;			/* how many of those have pointers only to the storage? */
+	};
 
 /** create a PCS object
 
@@ -66,6 +67,7 @@ void *gu_pcs_new(void)
 	p->storage_size = 0;
 	p->length = 0;
 	p->refcount = 1;
+	p->lurkers = 0;
 	return (void *)p;
 	}
 
@@ -105,9 +107,10 @@ then the object is freed.
 void gu_pcs_free(void **pcs)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
-	if(p->refcount-- == 1)
+	p->refcount--;
+	if((p->refcount - p->lurkers) == 0)
 		{
-		if(p->storage)
+		if(p->storage && p->lurkers == 0)
 			{
 			gu_free(p->storage);
 			p->storage = NULL;
@@ -115,21 +118,35 @@ void gu_pcs_free(void **pcs)
 		gu_free(*pcs);
 		}
 	*pcs = (void*)NULL;
-	}
+	} /* end of gu_pcs_free() */
+
+/** Destroy a PCS object but keep the C string
+*/
+char *gu_pcs_free_keep_cstr(void **pcs)
+	{
+	struct PCS *p = (struct PCS *)*pcs;
+	char *strptr = p->storage;
+	p->lurkers++;
+	if((p->refcount - p->lurkers) == 0)
+		gu_free(*pcs);
+	*pcs = (void*)NULL;
+	return strptr;
+	} /* end of gu_pcs_free_keep_cstr() */
 
 /** print a description of a PCS object on stdout
 */
 void gu_pcs_debug(void **pcs, const char name[])
 	{
 	struct PCS *p = (struct PCS *)*pcs;
-	printf("%s (%p) = {storage=%p, storage[]=\"%s\", storage_size=%d, length=%d, refcount=%d}\n",
+	printf("%s (%p) = {storage=%p, storage[]=\"%s\", storage_size=%d, length=%d, refcount=%d, lurkers=%d}\n",
 		name,
 		p,
 		p->storage,
 		p->storage,
 		p->storage_size,
 		p->length,
-		p->refcount);
+		p->refcount,
+		p->lurkers);
 	}
 
 /** obtain a copy of a PCS object that won't be unexpectedly changed

@@ -1,17 +1,26 @@
 #! /usr/bin/perl
 
+#
 # Allow Mozilla to print a wider range or characters.
+#
+# This was origionally written for Mozilla 1.0 but seems to work 
+# with later versions such as 1.4 too.
+#
 
+# This set works
 %subs = (
 	"Times-Roman" => "TimesNewRomanPSMT",
 	"Times-Bold" => "TimesNewRomanPS-BoldMT",
 	"Times-BoldItalic" => "TimesNewRomanPS-BoldItalicMT",
-	"Times-Italic" => "TimesNewRomanPS-ItalicMT",
+	"Times-Italic" => "TimesNewRomanPS-ItalicMT"
+	);
+
+# Something in here bombs out
+%out =	(
 	"Helvetica" => "ArialMT",
 	"Helvetica-Bold" => "Arial-BoldMT",
 	"Helvetica-BoldOblique" => "Arial-BoldItalicMT",
 	"Helvetica-Oblique" => "Arial-ItalicMT",
-	"Helvetica_Oblique" => "Arial-ItalicMT",
 	"Courier" => "CourierNewPSMT",
 	"Courier-Bold" => "CourierNewPS-BoldMT",
 	"Courier-BoldOblique" => "CourierNewPS-BoldItalicMT",

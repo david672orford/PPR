@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_interfaces.sgml
-Last Modified: 23 Octoberber 2003
+Last Modified: 31 October 2003
 Last Proofread: never
 -->
 
@@ -647,6 +647,48 @@ if [ "`echo $2 | cut -c1-5`" != "/dev/" ]
 </sect2>
 
 <sect2>
+<title>Robust Bidirectional Operation</title>
+
+<para>If your interface program supports bidirectional communication with the printer (which
+is refered to elsewhere as "feedback"), care should be taken to avoid situations which
+could cause communications to lock up.  Lockups can occur if your interface program fails
+to give top priority to receiving messages from the printer.  If the printer has a large 
+amount of data to transmit to the interface program, its output buffer could fill.  When 
+a printer has a message to send, it will not process additional input until it has placed 
+the message in its output buffer.  If your interface program refuses
+to accept data from the printer until after the printer has accepted the next data block,
+a lockup will occur and both parties will wait forever.  A particularly insidious 
+aspect of this problem is that it will not happen every time.  It is most likely to happen
+when the printer has a great deal of data to send back, such as query results or
+status messages.</para>
+
+<para>This means that your interface program must place the file descriptor connected
+to the printer in non-blocking mode.  When activity is detected (perhaps by the <function>select()
+</function> function), data that can be read from the desciptor must be read.  It should
+then be sent out on stdout.  Since <command>pprdrv</command> lives by the same rules,
+giving highest priority to the data which your interface program sends to its stdout, it is
+not absolutely necessary to run stdout in non-blocking mode.</para>
+
+<para>Your interface program must not block on reads from stdin.  This is because, after the
+job has been transmitted, <command>pprdrv</command> tries to keep the connexion open until
+the job is completed.  It will stop sending data.  But your interface program must go on
+relaying messages from the printer to <command>pprdrv</command>.  These messages are used 
+by <command>pprdrv</command> not only to keep the printer status up-to-date, but also
+to determine when the job has been completed.  If your interface program blocks on stdin,
+then <application>PPR</application> will likely get stuck at the end of each job.</para>
+
+<para>The interfaces <command>tcpip</command> and <command>serial</command> are good sources
+of example code.  They share a function call <function>int_copy_job()</function>.  This function
+handles correct two-way communication between stdin, stdout, and the printer file descriptor.</para>
+
+<para>In the same directory you will find several PostScript files with names such as
+<filename>feedback_test1.ps</filename>.  If you print them using your interface program, then
+will do things such as commanding the printer to send huge amounts of data back.  They 
+will quickly smoke out interfaces with fragile two-way communication implementions.</para>
+
+</sect2>
+
+<sect2>
 <title>Special Messages</title>
 
 <para>There are special messages which an interface program can send to
@@ -803,7 +845,7 @@ feature is very new, this list is subject to change.</para>
 <variablelist>
 
 <varlistentry>
-	<term>Product=</term>
+	<term>PostScript Product=</term>
 	<listitem>
 		<para>The PostScript product name.  The value should be the
 		bare name without surounding partheses.</para>
@@ -811,21 +853,42 @@ feature is very new, this list is subject to change.</para>
 </varlistentry>
 
 <varlistentry>
-	<term>Version=</term>
+	<term>PostScript Version=</term>
 	<listitem>
 		<para>The PostScript interpreter's version number.</para>
 	</listitem>
 </varlistentry>
 
 <varlistentry>
-	<term>Revision==</term>
+	<term>PostScript Revision=</term>
 	<listitem>
 		<para>The PostScript interpreter's revision number.</para>
 	</listitem>
 </varlistentry>
 
 <varlistentry>
-	<term>hrDeviceDescr=</term>
+	<term>SNMP sysDescr=</term>
+	<listitem>
+		<para>???</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>SNMP hrDeviceDescr=</term>
+	<listitem>
+		<para>???</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>1284DeviceID MANUFACTURER=</term>
+	<listitem>
+		<para>???</para>
+	</listitem>
+</varlistentry>
+
+<varlistentry>
+	<term>1284DeviceID MODEL=</term>
 	<listitem>
 		<para>???</para>
 	</listitem>

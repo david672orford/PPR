@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2003.
+** Last modified 31 October 2003.
 */
 
 /*
@@ -318,10 +318,7 @@ static int do_probe(unsigned long int ip_address, const char snmp_community[])
 		const char *id;
 		} query_items[] =
 		{
-		{"sysName",			SYSTEM".5.0"},
 		{"sysDescr",		SYSTEM".1.0"},
-		{"sysContact",		SYSTEM".4.0"},
-		{"sysLocation",		SYSTEM".6.0"},
 		{"hrDeviceDescr",	MGMT".25.3.2.1.3.1"},
 		{NULL, NULL}
 		};
@@ -348,13 +345,13 @@ static int do_probe(unsigned long int ip_address, const char snmp_community[])
 						query_items[i].id, GU_SNMP_STR, &str,
 						NULL
 						);
-					printf("PROBE: %s=%s\n", query_items[i].name, str);
+					printf("PROBE: SNMP %s=%s\n", query_items[i].name, str);
 					}
 				gu_Catch
 					{
 					if(strstr(gu_exception, "(noSuchName)"))
 						{
-						fprintf(stderr, "%s not found\n", query_items[i].name);
+						printf("SNMP %s not found\n", query_items[i].name);
 						}
 					else
 						{
