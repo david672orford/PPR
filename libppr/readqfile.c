@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 March 2002.
+** Last modified 5 April 2002.
 */
 
 #include "before_system.h"
@@ -217,6 +217,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 	    case 'L':
 	    	MATCH("LC_MESSAGES: ", _2("%S", &job->lc_messages), !=1, found_other)
+	    	break;
 
 	    case 'l':
 		MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)

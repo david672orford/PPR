@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 March 2002.
+** Last modified 5 April 2002.
 */
 
 #include "before_system.h"
@@ -53,7 +53,8 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
     	qentry->username ? qentry->username : "?",	/* Unix user name */
 	qentry->proxy_for ? qentry->proxy_for : "");
 
-    fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages ? qentry->lc_messages : "");
+    if(qentry->lc_messages)
+	fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages ? qentry->lc_messages : "");
 
     fprintf(Qfile, "Priority: %d\n", qentry->priority);
 

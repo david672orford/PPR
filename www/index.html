@@ -39,12 +39,33 @@
 <ul>
 <li><a href="docs/index.html">
 	PPR Documentation</a>
-<li><a href="../cgi-bin/docs_rpms_list.cgi">
-	Browse Documentation by RPM Package</a>
-<li><a href="../cgi-bin/docs_man_list.cgi">
-	Browse Man Pages</a>
-<li><a href="../cgi-bin/docs_info_list.cgi">
-	Browse Texinfo Documents</a>
+<li>RPM Packages
+	<ul>
+	<li><a href="../cgi-bin/docs_rpms_list.cgi">Browsable List</a>
+	<li>
+		<form action="../cgi-bin/docs_rpm.cgi" method="POST">
+		By name: <input type="text" size=16 name="pkg">
+			<input type="submit" value="Go">
+		</form>
+	</ul>
+<li>Man Pages
+	<ul>
+	<li><a href="../cgi-bin/docs_man_list.cgi">Browsable List</a>
+	<li>
+		<form action="../cgi-bin/docs_man.cgi" method="POST">
+		By name: <input type="text" size=16 name="document">
+			<input type="submit" value="Go">
+		</form>
+	</ul>
+<li>Texinfo Documents
+	<ul>
+	<li><a href="../cgi-bin/docs_info_list.cgi">Browsable List</a>
+	<li>
+		<form action="../cgi-bin/docs_info.cgi" method="POST">
+		By name: <input type="text" size=16 name="document">
+			<input type="submit" value="Go">
+		</form>
+	</ul>
 </ul>
 
 </body>

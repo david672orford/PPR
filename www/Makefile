@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2002.
+# Last modified 11 April 2002.
 #
 
 include ../makeprogs/global.mk
@@ -76,7 +76,7 @@ CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
 	df_html.cgi df_img.cgi \
 	login_cookie.cgi \
 	show_log.cgi show_printlog.cgi \
-	docs_cat.cgi docs_man.cgi docs_plain.cgi docs_rpm.cgi docs_rpms_list.cgi \
+	docs_cat.cgi docs_man.cgi docs_plain.cgi docs_info.cgi docs_rpm.cgi docs_rpms_list.cgi \
 	pprpopup_register.cgi \
 	cliconf.cgi
 

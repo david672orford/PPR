@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/docs_man.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 30 October 2001.
+# Last modified 11 April 2002.
 #
 
 #
@@ -26,10 +26,61 @@ require "cgi_data.pl";
 require "cgi_intl.pl";
 require "docs_util.pl";
 
+@MANPATH = ("/usr/local/man", "/usr/share/man", "/usr/man");
+
 # Prevent taint problems when running gzip and such.  See Programming 
 # Perl 3rd edition, p. 565.
 defined($ENV{PATH} = $PPR::SAFE_PATH) || die;
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
+
+# This function search the MANPATH.
+sub search_manpath
+    {
+    my $manpath = shift;
+    my $name = shift;
+    my $section = shift;
+
+    foreach my $dir (@{$manpath})
+	{
+	next if(! -d $dir);		# skip directories that don't exist
+
+	# If the user has specified a section, look in that.  Otherwise
+	# scan and figure out which sections exist.
+	my @sections;
+	if(defined $section)
+	    {
+	    @sections = ($section);
+	    }
+	else
+	    {
+	    @sections = ();
+	    opendir(DIR, $dir) || die $!;
+	    while(my $d = readdir(DIR))
+		{
+		if($d =~ /^man(.+)$/)
+		    {
+		    push(@sections, $1);
+		    }
+		}
+	    closedir(DIR) || die $!;
+	    @sections = sort(@sections);
+	    }
+
+	foreach my $sect (@sections)
+	    {
+	    foreach my $compext ("", ".gz", ".bz2")
+		{
+		my $filename = "$dir/man$sect/$name.$sect$compext";
+		if(-f $filename)
+		    {
+		    return $filename;
+		    }
+		}
+	    }
+	}
+
+    return undef;
+    }
 
 # Read POST and query variables.
 &cgi_read_data();
@@ -41,8 +92,33 @@ my ($charset, $content_language) = cgi_intl_init();
 # This first try block catches errors in operations which must be done before the
 # HTTP header is generated.  If an error is caught, it produces an error document.
 eval {
-    my $path = docs_open(DOC, $ENV{PATH_INFO});
-    $path =~ m#/([^/]+)\.(\d+[a-zA-Z]*)(\.[^\./]+)?$# || die;
+    my $path;
+
+    # Hack for form searching.
+    if(defined(my $document = cgi_data_move("document", undef)))
+	{
+	$ENV{PATH_INFO} = "/MANPATH/$document";
+	}
+
+    # If the path begins with "/MANPATH/", find it.
+    if($ENV{PATH_INFO} =~ m#/MANPATH/(.+)#)
+	{
+	my $page = $1;
+	$page !~ m#/# || die "No subirectories within MANPATH";
+	$page =~ m#(^[^\(]+)(\(([^\)]+)\))?$# || die "Invalid manpage name \"$page\"";
+	my($name, $section) = ($1, $3);
+	$path = search_manpath(\@MANPATH, $name, $section);
+	defined($path) || die "Can't find $name($section) in MANPATH";
+	}
+
+    # Otherwise, accept the path that the user supplies.
+    else
+	{
+	$path = $ENV{PATH_INFO};
+	}
+
+    my $cleaned_path = docs_open(DOC, $path);
+    $cleaned_path =~ m#/([^/]+)\.(\d+[a-zA-Z]*)(\.[^\./]+)?$# || die "Filename \"$cleaned_path\" is not that of a man page";
     $html_title = html("$1($2)");
     docs_last_modified(DOC);
     };

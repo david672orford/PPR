@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/docs_util.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2001. 
+# Last modified 11 April 2002. 
 #
   
 require "cgi_data.pl";
@@ -18,7 +18,7 @@ require "cgi_time.pl";
 
 #
 # This subroutine is used to open a documentation file.  It is passed the name 
-# of a file handle and the name of a file.  The file name problably cames
+# of a file handle and the name of a file.  The file name probably cames
 # from $ENV{PATH_INFO}.  It opens the file and returns a cleaned up version
 # of the name.  It will refuse to open the file if it isn't in a recognized
 # documentation directory.  If the file is compressed, it runs an appropriate
@@ -35,18 +35,19 @@ sub docs_open
 
     # Clean up the path.  Note that PPR's own ppr-httpd already
     # does some of this.
-    $path =~ s#//##g;			# double slashes
-    $path =~ s#/\./#/#g;		# single dots
-    $path =~ s#/[^/]+/\.\./#/#g;	# double dots
+    $path =~ s#//##g;			# why?
+    $path =~ s#/\./#/#g;		# convert "/./" to "/"
+    $path =~ s#/[^/]+/\.\./#/#g;	# convert "*/../" to "/"
 
     # Accept only well-known documentation directories.
     if(!($path =~ m#^/usr/doc/#
-	|| $path =~ m#^/usr/man/#
-	|| $path =~ m#^/usr/info/#
 	|| $path =~ m#^/usr/share/doc/#
+	|| $path =~ m#^/usr/man/#
 	|| $path =~ m#^/usr/share/man/#
 	|| $path =~ m#^/usr/X11R6/man/#
 	|| $path =~ m#^/usr/local/man/#
+	|| $path =~ m#^/usr/info/#
+	|| $path =~ m#^/usr/share/info/#
 	|| $path =~ m#^/usr/local/info/#))
 	{
 	die sprintf(_("The file \"%s\" is not within a recognized document directory.\n"), $path);

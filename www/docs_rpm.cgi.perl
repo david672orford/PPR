@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/docs_rpm.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2001.
+# Last modified 11 April 2002.
 #
 
 use lib "?";
@@ -101,7 +101,9 @@ while(my $file = <RPM>)
 	}
     elsif($mime eq "application/x-info")
 	{
-	$url = "docs_info.cgi$encoded_path";
+	# The info viewer isn't designed to view individual files.
+	#$url = "docs_info.cgi$encoded_path";
+    	$url = ("docs_cat.cgi$encoded_path?" . form_urlencoded("mime", $mime));
 	}
     else
     	{
