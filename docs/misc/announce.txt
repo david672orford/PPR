@@ -1,14 +1,14 @@
-22 September 2004
+11 December 2004
 
 This is announce.txt from:
 
-ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53b1.tar.gz
-http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53b1.tar.gz
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53.tar.gz
 
 
 ==========================================================================
 
-Version 1.53b1 of PPR has been released.
+Version 1.53 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -24,7 +24,7 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 
 ==========================================================================
- New in version 1.53b1 (since 1.52)
+ New in version 1.53 (since 1.52)
 ==========================================================================
 
 * The browser compatibility of the web interface has been vastly improved
@@ -56,7 +56,7 @@ by sending them to "ppr-list@mail.trincoll.edu".
   was written by papd.
 
 * Added IPP support sufficient to print from the KDE desktop using PPR
-  a drop-in replacement for CUPS.  The IPP support is not yet standards
+  as a drop-in replacement for CUPS.  The IPP support is not yet standards
   complient and is still far from complete.
 
 * Added an editps filter for MS Windows XP.

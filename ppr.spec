@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 5 October 2004.
+# Last modified 11 December 2004.
 #
 
 Name: ppr
@@ -71,6 +71,9 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 %changelog
 * Tue Aug 5 2003 David Chappell <David.Chappell@trincoll.edu> 1.52-1
 - for PPR 1.52 release
+
+* Tue Dec 11 2004 David Chappell <David.Chappell@trincoll.edu> 1.53-1
+- for PPR 1.53 release
 
 #============================================================================
 # This unpacks the source.
