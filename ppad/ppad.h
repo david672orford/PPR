@@ -25,14 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 16 October 2003.
 */
 
 /*
 ** This is the header file for the PPR administrator's utility ppad.
 */
 
-#include "ppr_query.h"
+#include "libppr_query.h"
 
 /* A useful macro considering how often we write to stdout. */
 #define PUTS(string) fputs(string, stdout)
@@ -149,7 +149,8 @@ char *deffiltopts_line(void);
 void deffiltopts_close(void);
 
 /* functions in ppad_ppd.c */
-void ppd_ppdq(const char printer[], struct QUERY *q);
+int ppd_ppdq(const char printer[], struct QUERY *q);
+int ppd_query(const char *argv[]);
 
 /* end of file */
 

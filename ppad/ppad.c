@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 16 October 2003.
 */
 
 /*
@@ -276,7 +276,25 @@ static void help_alias(FILE *out)
 		const char *p = gettext(command_list[i]);
 		fprintf(out, "    %s\n", p);
 		}
-	}
+	} /* end of help_alias() */
+
+static void help_ppd(FILE *out)
+	{
+	int i;
+	const char *command_list[] =
+		{	
+		N_("ppad ppd query <interface> <address>"),
+		NULL
+		};
+		
+	fputs(_("PPD File Management:\n"), out);
+	for(i = 0; command_list[i]; i++)
+		{
+		const char *p = gettext(command_list[i]);
+		fprintf(out, "    %s\n", p);
+		}
+	
+	} /* end of help_ppd() */
 
 static void help_other(FILE *out)
 	{
@@ -309,6 +327,7 @@ static void help(FILE *out)
 		N_("ppad help group"),
 		N_("ppad help alias"),
 		N_("ppad help media"),
+		N_("ppad help ppd"),
 		N_("ppad help other"),
 		NULL
 		};
@@ -382,6 +401,8 @@ static int dispatch(const char *argv[])
 			help_alias(stdout);
 		else if(gu_strcasecmp(argv[1], "media") == 0)
 			help_media(stdout);
+		else if(gu_strcasecmp(argv[1], "ppd") == 0)
+			help_ppd(stdout);
 		else if(gu_strcasecmp(argv[1], "other") == 0)
 			help_other(stdout);
 		else
@@ -440,6 +461,13 @@ static int dispatch(const char *argv[])
 			return group_acls(&argv[2]);
 		if(gu_strcasecmp(argv[1], "addon") == 0)
 			return group_addon(&argv[2]);
+		}
+
+	/* PPD commands */
+	if(gu_strcasecmp(argv[0], "ppd") == 0 && argv[1])
+		{
+		if(gu_strcasecmp(argv[1], "query") == 0)
+			return ppd_query(&argv[2]);
 		}
 
 	/* printer commands */

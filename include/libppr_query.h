@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/include/ppr_query.h
+** mouse:~ppr/src/include/libppr_query.h
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -61,7 +61,7 @@ struct QUERY
 
 struct QUERY *query_new_byaddress(const char interface[], const char address[]);
 struct QUERY *query_new_byprinter(const char printer[]);
-void query_connect(struct QUERY *q);
+void query_connect(struct QUERY *q, gu_boolean probe);
 void query_puts(struct QUERY *q, const char s[]);
 char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout);
 void query_sendquery(struct QUERY *q, const char *name, const char values[], const char default_response[], const char pstext[]);

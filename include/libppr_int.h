@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 16 October 2003.
 */
 
 #ifndef LIBPPR_INT_H
@@ -44,6 +44,7 @@
 */
 struct INT_CMDLINE
 	{
+	gu_boolean probe;					/* TRUE if --probe used */
 	const char *int_name;				/* example: "interfaces/atalk" */
 	const char *int_basename;			/* example: "atalk" */
 	const char *printer;				/* example: "myprn" */

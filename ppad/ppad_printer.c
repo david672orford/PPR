@@ -3067,6 +3067,7 @@ int printer_ppdq(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct QUERY *q = NULL;
+	int ret = EXIT_OK;
 
 	if(!printer || argv[1])
 		{
@@ -3079,19 +3080,10 @@ int printer_ppdq(const char *argv[])
 		/* Create an object from the printer's configuration. */
 		q = query_new_byprinter(printer);
 
-		gu_Try
-			{
-			/* Now call the function in ppad_ppd.c that does the real work. */
-			ppd_ppdq(printer, q);
-			}
-		gu_Final
-			{
-			query_delete(q);
-			}
-		gu_Catch
-			{
-			gu_ReThrow();
-			}
+		/* Now call the function in ppad_ppd.c that does the real work. */
+		ret = ppd_ppdq(printer, q);
+
+		query_delete(q);
 		}
 	gu_Catch
 		{

@@ -1,17 +1,32 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/test_components.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2002.
+# Last modified 16 October 2003.
 #
 
 use lib "?";
@@ -20,16 +35,15 @@ require 'cgi_data.pl';
 require 'cgi_intl.pl';
 
 #
+# This is the path which we use for tests.  We have to provide one since the 
+# web server protects us from such nasty things.
+#
+my $PATH = "/usr/local/bin:/bin:/usr/bin";
+
+#
 # This is a table of tests.
 #
 my @tests = (
-		{'name' => _("Perl 5.005 or later"),
-				'testproc' => sub {
-						return ($] >= 5.005);
-						},
-				'required' => 1,
-				'source' => "http://www.cpan.org/src/stable.tar.gz"
-				},
 		{'name' => _("PPR sound files"),
 				'testproc' => sub {
 						require "speach.pl";
@@ -37,9 +51,25 @@ my @tests = (
 						},
 				'required' => 0,
 				},
+		{'name' => _("Perl 5.005 or later"),
+				'testproc' => sub {
+						return ($] >= 5.005);
+						},
+				'required' => 1,
+				'redhat' => "perl",
+				'debian' => "perl-base",
+				'source' => "http://www.cpan.org/src/stable.tar.gz"
+				},
 		{'name' => _("Perl GNU Gettext module"),
 				'testproc' => sub {
 						return defined(eval { require Locale::gettext });
+						},
+				'required' => 0,
+				'debian' => "perl-tk"
+				},
+		{'name' => _("Perl Tk module"),
+				'testproc' => sub {
+						return defined(eval { require Tk });
 						},
 				'required' => 0,
 				'debian' => "liblocale-gettext-perl"
@@ -53,6 +83,12 @@ my @tests = (
 		{'name' => _("PPR-GS Ghostscript distribution"),
 				'testproc' => sub {
 						return -x "$HOMEDIR/../ppr-gs/bin/gs";
+						},
+				'required' => 0
+				},
+		{'name' => _("Other Ghostscript distribution"),
+				'testproc' => sub {
+						return inpath("gs");
 						},
 				'required' => 0
 				},
@@ -85,9 +121,10 @@ my @tests = (
 sub cell
 	{
 	my $text = shift;
+	my $class = shift;
 	if(defined $text)
 		{
-		return "<td>" . html_nb($text) . "</td>";
+		return "<td" . (defined($class) ? " class=$class" : "") . ">" . html_nb($text) . "</td>";
 		}
 	else
 		{
@@ -111,7 +148,7 @@ sub cell_url
 sub inpath
 	{
 	my $prog = shift;
-	foreach my $dir (split(/:/, $ENV{PATH}))
+	foreach my $dir (split(/:/, $PATH))
 		{
 		return 1 if(-x "$dir/$prog");
 		}
@@ -134,6 +171,8 @@ Vary: accept-language
 <style type="text/css">
 BODY { background: white; color: black; }
 TH, TD { text-align: left; padding: 0.5mm 1.0mm; }
+TD.yes { color: green; }
+TD.no  { color: red; }
 </style>
 </head>
 <body>
@@ -160,11 +199,17 @@ print "</tr>\n";
 {
 foreach my $test (@tests)
 	{
-	my $found = &{$test->{testproc}} ? _("Yes") : _("No");
-	my $critical = $test->{critical} ? _("Yes") : _("No");
+	my $found = &{$test->{testproc}};
+	my $found_text = $found ? _("Yes") : _("No");
+	my $found_class = $found ? "yes" : "no";
+
+	my $critical = $test->{critical};
+	my $critical_text = $critical ? _("Yes") : _("No");
+	my $critical_class = $critical ? "yes" : "no";
+	
 	print "<tr>", cell($test->{name}),
-				cell($found),
-				cell($critical),
+				cell($found_text, $found_class),
+				cell($critical_text, $critical_class),
 				cell($test->{redhat}),
 				cell($test->{debian}),
 				cell_url($test->{source}),

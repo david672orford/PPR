@@ -36,10 +36,11 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <time.h>
+#include <sys/wait.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
-#include "ppr_query.h"
+#include "libppr_query.h"
 
 /*! \file
 	\brief print query routines
@@ -144,7 +145,7 @@ void query_delete(struct QUERY *q)
 /** connect to the printer
 
 */
-void query_connect(struct QUERY *q)
+void query_connect(struct QUERY *q, gu_boolean probe)
 	{
 	if(q->connected)
 		gu_Throw("already connected");
@@ -214,15 +215,22 @@ void query_connect(struct QUERY *q)
 						{
 						char fname[MAX_PPR_PATH];
 						ppr_fnamef(fname, "%s/%s", INTDIR, q->interface);
-						#define STR(a) #a
-						execl(fname, q->interface,
-							"-",					/* printer name */
-							q->address,				/* printer address */
-							"",						/* interface options */
-							q->control_d ? STR(JOBBREAK_CONTROL_D) : STR(JOBBREAK_NONE),
-							"1",					/* feedback */
-							NULL
-							);
+						if(probe)
+							{
+							execl(fname, q->interface, "--probe", "-", q->address, NULL);
+							}
+						else
+							{
+							#define STR(a) #a
+							execl(fname, q->interface,
+								"-",					/* printer name */
+								q->address,				/* printer address */
+								"",						/* interface options */
+								q->control_d ? STR(JOBBREAK_CONTROL_D) : STR(JOBBREAK_NONE),
+								"1",					/* feedback */
+								NULL
+								);
+							}
 						_exit(255);
 						}
 						break;
@@ -260,6 +268,7 @@ void query_connect(struct QUERY *q)
 	/* The interface should be up and running and trying to connect by now.  Wait
 	   for it to confirm that it has connected to the printer or report failure.
 	   */
+	gu_Try
 		{
 		char *line;
 		gu_boolean is_stderr;
@@ -295,8 +304,13 @@ void query_connect(struct QUERY *q)
 			if(strlen(temp))
 				gu_Throw("%s", temp);
 			else
-				gu_Throw("interface died");
+				gu_Throw("interface program quit");
 			}
+		}
+	gu_Catch
+		{
+		query_disconnect(q);
+		gu_ReThrow();
 		}
 	} /* end of query_connect() */
 
@@ -677,7 +691,7 @@ int main(int argc, char *argv[])
 
 	gu_Try {
 		q = query_new_byprinter(argv[1]);
-		query_connect(q);
+		query_connect(q, FALSE);
 
 		countdown = 1;
 		query_sendquery(q, NULL, "pagecount", "-1", "statusdict /pagecount get exec == flush\n");

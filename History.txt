@@ -8865,6 +8865,12 @@ Internet Printing Protocol Work
 * Added "ppad ppdq".  This work included debugging and improvements in
   libppr/query.c and the addition of ppad/ppad_ppd.c.
 
+* www/test_components.cgi.perl: supplied internal PATH since security
+  changes left many of the tests non-functional due to the lack of a PATH.
+
+* moved include/ppr_query.h to libppr_query.h.
+
+
 +++++++++++++++++++++
 TODO
 

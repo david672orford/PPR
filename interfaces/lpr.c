@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 	if(int_cmdline.feedback)
 		{
 		alert(int_cmdline.printer, TRUE,
-			_("The PPR interface program \"%s\" is incapable of sending feedback.\n"),
+			_("The PPR interface program \"%s\" is incapable of sending feedback."),
 			int_cmdline.int_basename
 			);
 		if(strcmp(int_cmdline.printer, "-") != 0)
