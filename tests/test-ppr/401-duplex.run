@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Test the handling of various ppr_infile.c features.
+#
+# Last modified 17 November 2002.
+#
+
+FILES="nospec none tumble notumble simplextumble"
+
+for file in $FILES
+    do
+    for duplexopt in None DuplexTumble DuplexNoTumble SimplexTumble
+	do
+	echo "===================================================================="
+	echo "test: $file -F $duplexopt"
+	echo "===================================================================="
+	$TESTBIN/clear_output
+	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -F Duplex=$duplexopt $TEST_BASENAME-$file.ps
+	$TESTBIN/cat_output
+	echo
+	done
+
+    for readopt in ignore-duplex duplex:simplex duplex:duplex duplex:duplextumble duplex:softsimplex 
+	do
+	echo "===================================================================="
+	echo "test: $file -R $readopt"
+	echo "===================================================================="
+	$TESTBIN/clear_output
+	$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -R $readopt $TEST_BASENAME-$file.ps
+	$TESTBIN/cat_output
+	echo
+	done
+
+    done
+
+exit 0

@@ -1,6 +1,7 @@
 #! /usr/bin/perl -w
 #
-# Last modified 8 November 2002.
+# mouse:~ppr/tests/do_tests
+# Last modified 17 November 2002.
 #
 
 #
@@ -24,13 +25,13 @@ sub do_test
     if( system("${test_basename}.run >${test_basename}.out 2>&1") )
 	{
 	print "UNTESTED test code failed\n";
-	return 1;
+	return "UNTESTED";
 	}
 
     if( ! -f "${test_basename}.ok" )
 	{
 	print "UNTESTED ${test_basename}.ok missing\n";
-	return 1;
+	return "UNTESTED";
 	}
 
     open(DIFF, "diff -c ${test_basename}.ok ${test_basename}.out |") || die;
@@ -44,33 +45,46 @@ sub do_test
 	{
 	print $diff_output;
 	print "FAIL\n";
-	return 1;
+	return "FAIL";
 	}
     else
 	{
 	print "PASS\n";
-	return 0;
+	return "PASS";
 	}
     }
 
-#
+#============================================================================
 # Main
-#
+#============================================================================
+
+# This is how things are on the test systems.
+# All this is for the benefit of our children.
 $ENV{HOMEDIR} = "/usr/lib/ppr";
 $ENV{SHAREDIR} = "/usr/share/ppr";
 $ENV{CONFDIR} = "/etc/ppr";
 $ENV{VAR_SPOOL_PPR} = "/var/spool/ppr";
 $ENV{TEMPDIR} = "/tmp";
 
+# We must unset these as otherwise the tests will fail if the test is run
+# with a language different from the one that was in effect when the 
+# .ok file was generated.
 delete $ENV{LANG};
 delete $ENV{LANGUAGE};
 delete $ENV{LC_MESSAGES};
 
+# We pass this to our children so that they can find this nice directory
+# of utilities handy for building tests.
 $ENV{TESTBIN} = "$ENV{HOMEDIR}/src/tests/tools";
+
+# This is where the output of the simulated printer will appear.
 $ENV{REGTEST_INTERFACE_OUTPUT} = "$ENV{TEMPDIR}/regtest_interface_output";
 
+# If the utility directory doesn't exists, we are somehow sadly mistaken
+# about something.
 (-d $ENV{TESTBIN}) || die;
 
+# Parse switches (command line arguments starting with "--").
 $stop = 0;
 while(defined($ARGV[0]) && $ARGV[0] =~ /^--/)
     {
@@ -81,6 +95,8 @@ while(defined($ARGV[0]) && $ARGV[0] =~ /^--/)
     	{ die "Unrecognized option:  $option\n" }
     }
 
+# If there aren't any arguments left, the user must not know what
+# he is doing.
 if($#ARGV < 0)
     {
     die "Usage: [--stop] do_test _testdir_\n";
@@ -88,35 +104,39 @@ if($#ARGV < 0)
 
 my $total_tests = 0;
 my $total_groups = 0;
+my $total_untested = 0;
 my $total_failures = 0;
+
+# For each test directory,
 while(defined($TESTDIR = shift @ARGV))
     {
-    opendir(TESTS, $TESTDIR) || die "Can't open directory \"$TESTDIR\", $!\n";
     $total_groups++;
 
+    opendir(TESTS, $TESTDIR) || die "Can't open directory \"$TESTDIR\", $!\n";
+    my @file_list = sort(readdir(TESTS));
+    closedir(TESTS) || die;
+
     my @test_list = ();
-    while($test = readdir(TESTS))
+    foreach my $file (@file_list)
         {
-        if($test =~ /^(.+)\.run$/)
+        if($file =~ /^(.+)\.run$/)
             {
             push(@test_list, $1);
             }
         }
 
-    closedir(TESTS) || die;
-
-    my $test;
-    foreach $test (sort(@test_list))
+    foreach my $test (sort(@test_list))
         {
 	$total_tests++;
         my $result = do_test("$TESTDIR/$test");
         print "\n";
-        $total_failures += $result;
+        $total_failures++ if($result eq "FAIL");
+	$total_untested++ if($result eq "UNTESTED");
         exit 1 if($result && $stop);
         }
     }
 
-print "Ran $total_groups group(s) of tests, $total_tests individual test(s), $total_failures failure(s).\n";
+print "Ran $total_groups group(s) of tests, $total_tests individual test(s), $total_untested untested, $total_failures failure(s).\n";
 
 exit(($total_failures > 0) ? 2 : 0);
 

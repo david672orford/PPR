@@ -7945,4 +7945,5 @@ line was being parsed twice.
 * ./Configure, ./Configure_new: fixed to accomondate changed format
   of GCC 3.2's gcc --version output.
 
+* Added regression test test-ppr/401-duplex.
 

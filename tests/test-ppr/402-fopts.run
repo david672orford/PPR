@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# Test the handling of various ppr_infile.c features.
+#
+# Last modified 17 November 2002.
+#
+
+for opt in None DuplexNoTumble DuplexTumble #SimplexTumble
+    do
+    echo "===================================================================="
+    echo "test: $file -F $duplexopt"
+    echo "===================================================================="
+    $TESTBIN/clear_output
+    $HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -F Duplex=$opt -G infile:filter <<EndofHerefile
+Now is the time for all good men to come to the aid of the party.
+EndofHerefile
+    $TESTBIN/cat_output >/dev/null
+    echo
+    done
+
+exit 0
