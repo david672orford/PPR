@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 April 2002.
+# Last modified 9 May 2002.
 #
 
 use lib "?";
@@ -158,7 +158,7 @@ print <<"EndOfBSD";
 cat >>/etc/printcap <<EndOfPrintcap
 
 $localname|$comment:\
-	:rp=$host:rm=$name:\
+	:rm=$host:rp=$name:\
 	:sd=/var/spool/lpd/$name:\
 	:mx#0:
 

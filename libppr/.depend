@@ -50,6 +50,8 @@ money.$(OBJ): money.c ../include/before_system.h ../include/gu.h ../include/glob
 
 options.$(OBJ): options.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
+pagemask.$(OBJ): pagemask.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+
 pagesize.$(OBJ): pagesize.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 parse_qfname.$(OBJ): parse_qfname.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
@@ -64,13 +66,13 @@ prune_env.$(OBJ): prune_env.c ../include/before_system.h ../include/gu.h ../incl
 
 query.$(OBJ): query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/cexcept.h ../include/interface.h ../include/ppr_query.h
 
+queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
+
 quote.$(OBJ): quote.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 readppd.$(OBJ): readppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
 readqfile.$(OBJ): readqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
-
-reswidth.$(OBJ): reswidth.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 stresc.$(OBJ): stresc.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
@@ -83,8 +85,4 @@ unreadqfile.$(OBJ): unreadqfile.c ../include/before_system.h ../include/gu.h ../
 unsafe.$(OBJ): unsafe.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
-
-queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
-
-pagemask.$(OBJ): pagemask.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 

@@ -20,15 +20,15 @@ pprd_pprdrv.$(OBJ): pprd_pprdrv.c ../include/before_system.h ../include/gu.h ../
 
 pprd_printer.$(OBJ): pprd_printer.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
 
+pprd_question.$(OBJ): pprd_question.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+
 pprd_queue.$(OBJ): pprd_queue.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h ../include/cexcept.h
 
 pprd_remind.$(OBJ): pprd_remind.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
 pprd_remote.$(OBJ): pprd_remote.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
 
-pprd_respond.$(OBJ): pprd_respond.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ../include/respond.h ./pprd.auto_h
+pprd_respond.$(OBJ): pprd_respond.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
 pprd_state.$(OBJ): pprd_state.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
-
-pprd_question.$(OBJ): pprd_question.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 

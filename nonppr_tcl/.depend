@@ -1,6 +1,8 @@
+gu.$(OBJ): gu.c gu.h
+
 panic.$(OBJ): panic.c
 
-regexp.$(OBJ): regexp.c tclInt.h tclPort.h
+regexp.$(OBJ): regexp.c tclInt.h tclPort.h gu.h
 
 tclAppInit.$(OBJ): tclAppInit.c tcl.h
 
@@ -10,7 +12,7 @@ tclBasic.$(OBJ): tclBasic.c tclInt.h patchlevel.h
 
 tclCkalloc.$(OBJ): tclCkalloc.c tclInt.h tclPort.h
 
-tclCmdAH.$(OBJ): tclCmdAH.c tclInt.h tclPort.h
+tclCmdAH.$(OBJ): tclCmdAH.c tclInt.h tclPort.h gu.h
 
 tclCmdIL.$(OBJ): tclCmdIL.c tclInt.h tclPort.h
 
@@ -34,11 +36,13 @@ tclParse.$(OBJ): tclParse.c tclInt.h tclPort.h
 
 tclProc.$(OBJ): tclProc.c tclInt.h
 
+tclTest.$(OBJ): tclTest.c tclInt.h tclPort.h
+
 tclUnixAZ.$(OBJ): tclUnixAZ.c tclInt.h tclPort.h
 
 tclUnixStr.$(OBJ): tclUnixStr.c tclInt.h tclPort.h
 
-tclUnixUtil.$(OBJ): tclUnixUtil.c tclInt.h tclPort.h
+tclUnixUtil.$(OBJ): tclUnixUtil.c tclInt.h tclPort.h gu.h
 
 tclUtil.$(OBJ): tclUtil.c tclInt.h tclPort.h
 
