@@ -197,7 +197,7 @@ incompatible.  It should not limit jobbreak settings to a list of those known to
 be compatible since other, compatible settings may be added in future versions of
 PPR.  The various possible jobbreak settings are briefly described in the ppad(8)
 man page under the section for the <Command>ppad jobbreak</Command> command.  A more thorough
-discussion may be found in section <XRef LinkEnd="interfaces1">.  The code numbers for the various jobbreak values are defined in the
+discussion may be found in section <XRef linkend="interfaces1"/>.  The code numbers for the various jobbreak values are defined in the
 include file <Filename>include/interface.h</Filename> and in the shell script fragment
 <Filename>/lib/interface.sh</Filename>.
 </Para>

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2003.
+# Last modified 24 January 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -61,6 +61,11 @@ pprinst.sgml: pprinst_adding_autobin.sgml \
 		pprinst_viewing_queue.sgml \
 		../shared/legal.sgml
 	touch pprinst.sgml
+
+#=== Validity Check ================================================================
+
+lint:
+	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XMLLINT) --catalogs pprinst.sgml
 
 #=== Install ================================================================
 

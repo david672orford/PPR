@@ -39,7 +39,7 @@ You could create your own versions of the print processor script to invoke the
 program <Command>ppr</Command> with differents sets of options.  However, it
 will generally be more convenient to set options with the <Command>ppad
 switchset</Command>
-command as described in section <XRef LinkEnd="switchsets">.
+command as described in section <XRef linkend="switchsets"/>.
 </Para>
 
 </Sect2>

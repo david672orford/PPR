@@ -219,7 +219,7 @@ setup feature will continue to select the PPD file for the old printer.
 Also, if the font lists of the old and new printers differ, documents may
 print incorrectly.  To prevent this sort of problem, kill
 <Command>papsrv</Command> and restart it as described in section <XRef
-LinkEnd="start-restart">. </Para>
+linkend="start-restart"/>. </Para>
 
 </Sect2>
 

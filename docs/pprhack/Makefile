@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 January 2003.
+# Last modified 24 January 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -54,6 +54,11 @@ pprhack.sgml: \
 		pprhack_srcnotes.sgml \
 		pprhack_status.sgml
 	touch pprhack.sgml
+
+#=== Validity Check ================================================================
+
+lint:
+	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XMLLINT) --catalogs pprhack.sgml
 
 #=== Install ================================================================
 

@@ -95,7 +95,7 @@ This function is similiar to sscanf().  It implements the following formats:
 <Para>
 read an int.  The argument should be a pointer to an int.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -105,7 +105,7 @@ read an int.  The argument should be a pointer to an int.
 read a long int.  The argument should be a pointer to a long
 int.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -115,7 +115,7 @@ int.
 read a short int.  The argument should be a pointer to a short
 int.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -131,7 +131,7 @@ If the length of the array is specified with a <Literal>#</Literal> then the act
 length is read from ppr_sscanf()'s next argument (the one before the pointer to
 the char array).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -142,7 +142,7 @@ read characters up to the next whitespace, allocate memory, and
 store them in the allocated memory.  The argument should be a pointer to a char
 pointer which will be set to the address of the allocated memory.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -153,7 +153,7 @@ read characters up to the end of the string.  The argument
 should be a char array.  To prevent overruns, the size of the char array may be
 specified in the same manner as for the %s format.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -164,7 +164,7 @@ read characters up to the end of the string, allocate storeage
 for them, and copy them into that storage.  The argument should be a pointer to
 a pointer to a char array.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>
@@ -188,7 +188,7 @@ characters.
 
 <Para>
 This is a special version of sprintf().  It will never write more than
-MAX_PATH characters.  It only understands %s and %d.  On
+<Constant>MAX_PPR_PATH</Constant> characters.  It only understands %s and %d.  On
 MS-Windows systems it will convert <Literal>:</Literal> to
 <Literal>!</Literal> because they are confused
 by colons in filenames.

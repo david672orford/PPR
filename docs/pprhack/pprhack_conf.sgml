@@ -46,7 +46,7 @@ This line contains a comment which describes the printer. The comment is
 displayed when the <Command>ppad show</Command> command is used to display the printer
 configuration.  This line is optional.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -61,7 +61,7 @@ begin with a slash, then it refers to a subdirectory of the
 Common values for this line are <Literal>atalk</Literal>,
 <Literal>tcpip</Literal>, and <Literal>serial</Literal>.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -78,7 +78,7 @@ spaces it should be enclosed in double quotes.  Technically, this line is
 not required, but the default address is the name of the printer which is
 unlikely to be useful.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -88,7 +88,7 @@ unlikely to be useful.</Para>
 This line is optional.  The value <Replaceable>string</Replaceable> is passed to the
 interface as its third parameter.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -100,7 +100,7 @@ Description file which describes the printer.  If the name does not begin with
 a slash, it referes to a file in the directory <Filename class="Directory">/usr/lib/ppr/PPDFiles</Filename>.
 This line may not be required but it really ought to be present.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -124,7 +124,7 @@ The <Replaceable>address</Replaceable> indicates the person to whom the message 
 Since <Literal>mail</Literal> is currently the only supported method, this should be a
 e-mail address.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -138,7 +138,7 @@ to trailer pages.  Four different values are allowed.  They are
 'preferably yes', and
 <Literal>3</Literal> for 'always'.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -155,7 +155,7 @@ line is not present and the interface is not in the list, it is assumed to be
 <Literal>Interface:</Literal>
 line are ignored.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -173,7 +173,7 @@ understood by reading the <Command>ppad jobbreak</Command> section of
 Any instances of this line which occur before the <Literal>Interface:</Literal> line are
 ignored.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -186,7 +186,7 @@ which the interface can transmit to the printer.  The acceptable values are
 <Literal>3</Literal> for Binary and <Literal>4</Literal> for Binary if TBCP
 is used.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -200,7 +200,7 @@ A <Literal>GrayOK:</Literal>
 line can be used to prevent black-and-white or grayscale jobs from begin
 printed on an expensive colour printer.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -217,7 +217,7 @@ on both sides. The second is the amount that should be charged for each
 sheet printed on only one side.  If the second number is missing it is
 assumed to be the same as the first.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -233,7 +233,7 @@ outputorder printer Reverse</Command>, or <Command>ppad outputorder printer
 ppd</Command>.  The command <Command>ppad outputorder printer ppd</Command>
 deletes any <Literal>OutputOrder:</Literal> line which may exist.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -249,7 +249,7 @@ automatic bin selection and media handling are desired, there should be one
 all the <Literal>Bin:</Literal> lines disables automatic bin
 selection and media handling.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -267,7 +267,7 @@ the <Command>ppad ppdopts</Command> command is used to change the PPD
 options.  An update may be forced at any time with the <Command>ppad
 deffiltopts</Command> command.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -278,7 +278,7 @@ deffiltopts</Command> command.</Para>
 description of the switch settings which were saved with the <Command>ppad
 switchset</Command> command.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -288,7 +288,7 @@ switchset</Command> command.</Para>
 <Para>This line is optional.  If present, it contains a space separated list
 of file types which should be passed directly through to the printer.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -304,7 +304,7 @@ print it, then it is arrested.</Para>
 <Para>This line may be edited with the <Command>ppad pageslimit</Command>
 command.</Para>
 
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -317,7 +317,7 @@ of banner and trailer pages).
 </Para>
 <Para>
 The information obtained through these queries can be logged.  See Section
-<XRef LinkEnd="printlog">.
+<XRef linkend="printlog"/>.
 </Para>
 <Para>
 If this line is absent or the <Replaceable>integer</Replaceable> is 0, then this feature is disabled.
@@ -336,7 +336,7 @@ output bin before considering the job complete.
 In the future, additional values for this parameter may be defined.  These
 additional values will use different techniques to obtain the page count.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -344,9 +344,9 @@ additional values will use different techniques to obtain the page count.
 <ListItem>
 <Para>
 A printer configuration file may have zero or more of these lines.  Their
-purpose is explained in Appendix <XRef LinkEnd="commentators">.
+purpose is explained in Appendix <XRef linkend="commentators"/>.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -366,7 +366,7 @@ explained in Adobe's PostScript Printer Description File Format
 Specification.)  These lines can be generated automatically with the <Command>ppad
 ppdopts</Command> command.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -375,7 +375,7 @@ ppdopts</Command> command.
 <Para>
 Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -384,7 +384,7 @@ Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 <Para>
 Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -393,7 +393,7 @@ Used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 <Para>
 Formerly used by <Command>ppr2samba</Command>.  See the man page ppr2samba(8).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>
@@ -422,7 +422,7 @@ of two types:
 This line contains a comment describing the group. This comment is displayed by
 the <Command>ppad group show</Command> command.  This line is optional.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -432,7 +432,7 @@ the <Command>ppad group show</Command> command.  This line is optional.
 The <Replaceable>name</Replaceable> is the name a printer that should be a member of the group.
 There should be one line for each group member.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -444,7 +444,7 @@ evenly among the printers.  If it is <Literal>False</Literal>, the spooler will 
 the first idle printer in the group.  If it is <Literal>True</Literal>, the spooler will
 attempt to use each printer in turn.  The default is <Literal>True</Literal>.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -456,7 +456,7 @@ prepended to any the user supplies with <Command>ppr</Command>'s <Command>-o</Co
 will be automatically updated by <Command>ppad</Command> whenever a group member is added or
 deleted.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -466,7 +466,7 @@ deleted.
 If this line is present, it contains a compress representation if the switches
 saved with the <Command>ppad group switchset</Command> command.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -476,7 +476,7 @@ saved with the <Command>ppad group switchset</Command> command.
 This line is optional.  If present, it contains a space separated list
 of file types which should be passed directly through to the printer.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -485,7 +485,7 @@ of file types which should be passed directly through to the printer.
 <Para>
 Used by ppr2samba.  See the man page ppr2samba(8).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -494,7 +494,7 @@ Used by ppr2samba.  See the man page ppr2samba(8).
 <Para>
 Used by ppr2samba.  See the man page ppr2samba(8).
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>

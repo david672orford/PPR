@@ -1,5 +1,5 @@
 mouse:~ppr/src/nonppr_misc/README.txt
-Last modified 17 January 2002.
+Last modified 24 January 2002.
 
 This directory contains small bits of code and documents which are not under 
 the PPR license.  There are symbolic links in other parts of the source tree 
@@ -24,27 +24,23 @@ pprppopup/md5pure.tcl -> nonppr_misc/md5/md5pure.tcl
 libscript/MD5pp.pm -> nonppr_misc/md5/MD5pp.pm
 	More info needed.
 
-libgu/snprintf.c -> nonppr_misc/misc/snprintf.c
+libgu/snprintf.c -> nonppr_misc/snprintf/snprintf.c
 	Copyright 1995, Patrick Powell, preservation of copyright notice in
 	source code required.
 
-makeprogs/squeeze.c -> nonppr_misc/misc/squeeze.c
+makeprogs/squeeze.c -> nonppr_misc/squeeze/squeeze.c
 	Copyright 1988, Radical Eye Software.  This program is a modified
 	version of squeeze.c from the DVIPS distribution.
 
-libgu/gu_wildmat.c -> nonppr_misc/misc/gu_wildmat.c
-nonppr_misc/misc/gu_wildmat.3 (no symbolic link)
+libgu/gu_wildmat.c -> nonppr_misc/wildmat/gu_wildmat.c
+nonppr_misc/wildmat/gu_wildmat.3 (no symbolic link)
 	Placed in the public domain by the author, Rich $alz.  Copyright on
 	modifications for PPR is likewise abandoned.
 
-libttf/ps_type3.c -> nonppr_misc/misc/ps_type3.c
+libttf/ps_type3.c -> nonppr_misc/ps_type3/ps_type3.c
 	The code in this file is almost all from L. S. Ng's
 	comp.sources.postscript USENET posting of a program to create
 	PostScript from a TrueType font file and a text file.
-
-misc/modes-3.3.mf -> nonppr_misc/misc/modes-3.3.mf
-	Released to the public domain by its complier, K. Berry.  There are
-	no modifications for PPR.
 
 include/cexcept.h -> nonppr_misc/cexcept-1.0.0/cexcept.h
 	Written by Adam M. Costello.  See nonppr_misc/cexcept-1.0.0/README in for

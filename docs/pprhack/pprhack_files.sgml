@@ -91,7 +91,7 @@ contains the last status message received from the printer.
 This directory contains log files.  Error messages may be written in these
 log files when <Application>PPR</Application> component fail.  If this directory contains the file
 <Filename>printlog</Filename>, <Application>PPR</Application> will append a line for each file printed.  (See Appendix
-<XRef LinkEnd="printlog">.)
+<XRef linkend="printlog"/>.)
 </Para>
 
 </Sect2>
@@ -108,9 +108,8 @@ subdirectories which will be described in later sections.
 The file <Filename>papsrv.conf</Filename> is descibed in <ULink url="../refman/papsrv.8.html">the papsrv.conf(5) man page</ULink>.
 </Para>
 
-<Para>
-The purpose of <Filename>newprn.conf</Filename> is explained in Appendix <XRef LinkEnd="printer-config">.
-</Para>
+<Para>The purpose of <Filename>newprn.conf</Filename> is explained in Appendix <XRef
+linkend="printer-config"/>.</Para>
 
 <Para>
 The file <Filename>smb-include.conf</Filename> is a segment of Samba configuration file.  It
@@ -143,7 +142,7 @@ and modified by the
 <Para>
 There is one file in this directory for each printer.  Each file has the
 same name as the printer it describes.  The format of one of these files is
-described in Appendix <XRef LinkEnd="printer-config">.
+described in Appendix <XRef linkend="printer-config"/>.
 </Para>
 
 </Sect2>
@@ -154,7 +153,7 @@ described in Appendix <XRef LinkEnd="printer-config">.
 <Para>
 There is one file in this directory for each group.  Each file has the same
 name as the group it describes.  The format of these files is described in
-Appendix <XRef LinkEnd="group-config">.
+Appendix <XRef linkend="group-config"/>.
 </Para>
 
 </Sect2>
@@ -179,15 +178,14 @@ to their required media.
 </Sect2>
 
 <Sect2>
-<Title>The <Filename class="Directory">/usr/ppr/interfaces/</Filename> Directory</Title>
+<Title>The <Filename class="Directory">/usr/lib/ppr/interfaces/</Filename> Directory</Title>
 
-<Para>
-Each file in this directory is a program which is responsible for making
+<Para>Each file in this directory is a program which is responsible for making
 contact with any printer which has a particular kind of interface.  For
 instance, <Filename>interfaces/atalk</Filename> is used to communicate with printers
 connected through Apple's Printer Access Protocol.  The requirements imposed on
-such an interface program are described in Appendix <XRef LinkEnd="interfaces2">.
-</Para>
+such an interface program are described in Appendix <XRef
+linkend="interfaces2"/>.</Para>
 
 </Sect2>
 
@@ -203,7 +201,7 @@ switch.  The parameter for the <Option>-m</Option> switch is the name of the pro
 switch is not
 used, the default responder, <Literal>write</Literal>, is used.  (You can change the default
 by setting the environment variable <EnVar>PPR_RESPONDER</EnVar>.)  The manner in which a
-responder is invoked is described in Appendix <XRef LinkEnd="responders">.
+responder is invoked is described in Appendix <XRef linkend="responders"/>.
 </Para>
 
 </Sect2>
@@ -291,12 +289,12 @@ in the file itself.
 <Para>
 The file <Filename>mfmodes.conf</Filename> is used by <Command>ppad</Command>
 when determining the default filter options for a printer or group.  The
-format of this file is described in Section <XRef LinkEnd="dvi">.
+format of this file is described in Section <XRef linkend="dvi"/>.
 </Para>
 
 <Para>
 The file <Filename>fontsub.conf</Filename> is used to find substitutes for
-missing fonts.  It is described in <XRef LinkEnd="fontsub">.
+missing fonts.  It is described in <XRef linkend="fontsub"/>.
 </Para>
 
 </Sect2>

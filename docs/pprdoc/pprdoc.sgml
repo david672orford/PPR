@@ -1,19 +1,20 @@
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
 <Article>
 
-<Articleinfo>
+<ArticleInfo>
 	<Title>PPR, a Print Spooler for PostScript</Title>
 	<Author>
-		<FirstName>David</firstname>
-		<surname>Chappell</surname>
+		<FirstName>David</FirstName>
+		<Surname>Chappell</Surname>
 		</Author>
-	<PubDate>17 January 2003</pubdate>
-	<copyright>
+	<PubDate>24 January 2003</PubDate>
+	<Copyright>
 		<Year>1995--2003</Year>
 		<Holder>Trinity College Computing Center</Holder>
-		</copyright>
-</articleinfo>
+		</Copyright>
+</ArticleInfo>
 
 <Abstract>
 
@@ -154,7 +155,7 @@ spool directory and a fourth file, called the queue file, is created which
 describes the job and the options the user has selected.  Once all the files
 are ready, <Command>ppr</Command> sends a message to the print daemon, which is called,
 <Command>pprd</Command>, telling it that a new job is in the queue.  This process is
-illustrated in figure <XRef LinkEnd="pprdoc-enter">.
+illustrated in figure <XRef linkend="pprdoc-enter"/>.
 </Para>
 
 <Para>
@@ -162,8 +163,8 @@ illustrated in figure <XRef LinkEnd="pprdoc-enter">.
 <Figure id="pprdoc-enter">
 <Title>A job Enters the Queue</Title>
 <mediaobject>
-	<imageobject><imagedata fileref="pprdoc-enter.eps" format="eps"></imageobject>
-	<imageobject><imagedata fileref="pprdoc-enter.png" format="png"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-enter.eps" format="eps"/></imageobject>
+	<imageobject><imagedata fileref="pprdoc-enter.png" format="png"/></imageobject>
 </mediaobject>
 </Figure>
 
@@ -174,23 +175,22 @@ illustrated in figure <XRef LinkEnd="pprdoc-enter">.
 <Sect2>
 <Title>How Jobs are Printed</Title>
 
-<Para>
-When <Command>pprd</Command> determines that the time has come to print a file on a printer,
+<Para>When <Command>pprd</Command> determines that the time has come to print a file on a printer,
 it invokes a program called <Command>pprdrv</Command> which reads the 3 job files and
 reasembles them into a PostScript file.  While doing so it will consult
 information read from the printer configuration file and the queue file and
 a PostScript Printer Description (PPD) file.  It may also include fonts and
-other resources in the data stream.  This process is illustrated in figure <XRef LinkEnd="pprdoc-printing2">.  (The inclusion of fonts and other resources has been
-ommited from the figure for the sake of simplicity.)
-</Para>
+other resources in the data stream.  This process is illustrated in figure <XRef
+linkend="pprdoc-printing2"/>.  (The inclusion of fonts and other resources has been
+ommited from the figure for the sake of simplicity.)</Para>
 
 <Para>
 
 <figure id="pprdoc-printing2">
 <title><application>PPR</application> Prints a Job</title>
 <mediaobject>
-	<imageobject><imagedata fileref="pprdoc-printing2.eps" format="eps"></imageobject>
-	<imageobject><imagedata fileref="pprdoc-printing2.png" format="png"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing2.eps" format="eps"/></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing2.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
 
@@ -199,8 +199,8 @@ ommited from the figure for the sake of simplicity.)
 <figure id="pprdoc-printing1">
 <title>Multiple Instances of <Command>pprdrv</Command> for Multiple Printers</title>
 <mediaobject>
-	<imageobject><imagedata fileref="pprdoc-printing1.eps" format="eps"></imageobject>
-	<imageobject><imagedata fileref="pprdoc-printing1.png" format="png"></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing1.eps" format="eps"/></imageobject>
+	<imageobject><imagedata fileref="pprdoc-printing1.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
 
@@ -212,7 +212,7 @@ messages, and pass them back to <Command>pprdrv</Command> by writing them to std
 </Para>
 
 <Para>
-Notice in figure <XRef LinkEnd="pprdoc-printing1"> that printing is taking place on
+Notice in figure <XRef linkend="pprdoc-printing1"/> that printing is taking place on
 <Hardware>PRINTER 1</Hardware> and <Hardware>PRINTER 3</Hardware>.
 </Para>
 
@@ -338,8 +338,8 @@ directory <Filename class="Directory">/etc/ppr/conf/printers/</Filename>.
 Each group is defined by a group configuration file in the directory
 <Filename class="Directory">/etc/ppr/conf/groups</Filename>.  The format of
 a printer configuration file is described in Appendix <XRef
-LinkEnd="printer-config"> and the format of a group configuation file is
-described in Appendix <XRef LinkEnd="group-config">.  The desired printer or
+linkend="printer-config"/> and the format of a group configuation file is
+described in Appendix <XRef linkend="group-config"/>.  The desired printer or
 group may be specified with the <Option>-d</Option> switch to the
 <Command>ppr</Command> command.  If the <Option>-d</Option> switch is
 ommited, <Command>ppr</Command> takes the printer or group name from the
@@ -669,7 +669,7 @@ A typical print log entry looks like this:
 
 </Para>
 
-<para>
+<Para>
 The meanings of the fields in the above log line is as follows:
 
 <ItemizedList>
@@ -797,37 +797,37 @@ printed, the page count query is repeated.  If the query is sucessful, then
 the difference between the before and after page counts is logged in this
 field. If the query is not performed or is not sucessful, then a -1 is
 loggged in this field.  See the discussion of the
-<Literal>PageCountQuery:</Literal> line in <XRef LinkEnd="printer-config">
+<Literal>PageCountQuery:</Literal> line in <XRef linkend="printer-config"/>
 for a discussion of why the value logged in this field may not accurately
 reflect the number of pages printed.</Para>
 
 </ListItem>
 
-<listitem>
-<para>
+<ListItem>
+<Para>
 The 16th field is the size of the PostScript job in bytes.  If the input file
 was PostScript, then this is the size of the input file.  If the job had to be
 converted to PostScript, then this is the size of the PostScript output of the
 filter.
-</para>
-</listitem>
+</Para>
+</ListItem>
 
-<listitem>
-<para>
+<ListItem>
+<Para>
 The 17th field is the number of bytes that were sent to the printer in order to
 print this job.  This number may be significantly greater than the number in
 field 16.  For example, it may have been necessary to print multiple copies by
 sending the job several times or <Application>PPR</Application> may have inserted fonts into the job.
-</para>
-</listitem>
+</Para>
+</ListItem>
 
-<listitem>
-<para>
+<ListItem>
+<Para>
 The 18th field is the title of the job.  If the job had no title, then the name
 of the input file is used.  If there was no input file (such as if the job was
 read from stdin), then this field will be blank.  This is a quoted field.
-</para>
-</listitem>
+</Para>
+</ListItem>
 
 </ItemizedList>
 </Para>
@@ -876,7 +876,7 @@ be used.  This address is suitable for the default responder,
 <Literal>write</Literal>.  A list of the supplied responders may be found in
 the <ULink url="../refman/ppr.1.html">ppr(1) man page</ULink> in the section
 which describes the <Option>-m</Option> switch. Instructions for writing a
-responder are found in Appendix <XRef LinkEnd="responders">. </Para>
+responder are found in Appendix <XRef linkend="responders"/>. </Para>
 
 <Para>
 Additional responder options may be specified with <Command>ppr</Command>'s
@@ -979,7 +979,7 @@ submitted the job being printed on the printer's display panel.
 If you use PJL with a two-way communications channel to the printer, the printer
 will report back whenever it drops a page into the output tray.  These messages
 will be used to imcrease the detail of the progress information described in
-section <XRef LinkEnd="progress-reporting">.
+section <XRef linkend="progress-reporting"/>.
 </Para>
 
 </Sect1>
@@ -1041,7 +1041,7 @@ queue status (as indicated by <Command>ppop list</Command>) will be "waiting
 for media".  A list of the required media will also be displayed.  Media
 handling is closely related to but not the same as automatic bin selection
 which is described in section <XRef
-LinkEnd="automatic-bin-selection">.</Para>
+linkend="automatic-bin-selection"/>.</Para>
 
 </Sect1>
 
@@ -1104,7 +1104,7 @@ overriding duplex setting code already in the document.
 
 <Para>
 Automatic bin selection is a feature which is closely related to media
-handling (see section <XRef LinkEnd="media-handling">), but it
+handling (see section <XRef linkend="media-handling"/>), but it
 is not the same since it may be disabled for any given job even if media
 handling is being used.  Automatic bin selection will only work if media
 handling is also used, that is, if the bin list for the printer is not empty.
@@ -1335,7 +1335,7 @@ suitable substitute font.</Para>
 
 <Para>
 The format of <Filename>fontsub.conf</Filename>
-is described in Appendex <XRef LinkEnd="fontsub">.
+is described in Appendex <XRef linkend="fontsub"/>.
 </Para>
 
 <Para>
@@ -1425,8 +1425,8 @@ on this topic.</Para>
 <Para>The job break method <Literal>pjl</Literal> is the same as
 <Literal>control-d</Literal> except that it adds HP PJL commands to display
 the user name on the printer's message panel and to turn on reporting of
-page completion (see sections <XRef LinkEnd="user-name-display"> and <XRef
-LinkEnd="progress-reporting">).</Para>
+page completion (see sections <XRef linkend="user-name-display"/> and <XRef
+linkend="progress-reporting"/>).</Para>
 
 <Para>Two more job break methods depend on the interface to indicate job
 breaks to the printer.  These are <Literal>signal</Literal> and
@@ -1450,7 +1450,7 @@ It may be used in the future to support AppSocket.  It will also work with
 
 <Para>
 Detailed technical specifications for a printer interface can be found in
-Appendix <XRef LinkEnd="interfaces2">.
+Appendix <XRef linkend="interfaces2"/>.
 </Para>
 
 </Sect1>
@@ -1459,7 +1459,8 @@ Appendix <XRef LinkEnd="interfaces2">.
 <Title>Printer Fault Handling</Title>
 
 <Para>
-This topic has already been touched on in section <XRef LinkEnd="printer-errors">.  It is the responsibility of the interface program to
+This topic has already been touched on in section <XRef
+linkend="printer-errors"/>.  It is the responsibility of the interface program to
 connect to the printer, accept the data and send it to the printer.  If it cannot
 accomplish its job it will exit with a code which indicates the reason for the
 failure.  It will generally also append a diagnostic message to the printer's
@@ -1939,7 +1940,7 @@ catagories are:</Para>
 <Para>
 printer errors, such as paper jams
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -1948,7 +1949,7 @@ printer errors, such as paper jams
 <Para>
 printer status messages such as off line
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -1957,7 +1958,7 @@ printer status messages such as off line
 <Para>
 notices that the printer isn't accepting data
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -1968,7 +1969,7 @@ notices that the printer isn't accepting data
 condition such as communications error or PostScript error or the job was
 canceled
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -1978,7 +1979,7 @@ canceled
 <Command>pprdrv</Command> exited but for a rather booring reason, such as "job was
 printed."
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>
@@ -2076,7 +2077,7 @@ look for <Filename>/usr/ppr/filters/filter_fortran</Filename>.  You
 may write your own filters and install them in the <Filename
 class="Directory">/usr/lib/ppr/lib/</Filename> directory.  For explicit
 information on writing filters, see Appendix <XRef
-LinkEnd="filters">.</Para>
+linkend="filters"/>.</Para>
 
 <Para>Each filter receives a list of filter options.  This option list is
 created by concatenating the default filter options with all of the filter
@@ -2097,7 +2098,7 @@ receive options whose names begin with "dvi-" <FOOTNOTE>
 
 <Para>
 More on the handling of the option list can be found in Appendix
-<XRef LinkEnd="filters"> and in the ppr(1) man
+<XRef linkend="filters"/> and in the ppr(1) man
 page in the section which describes the <Option>-o</Option> switch.
 </Para>
 

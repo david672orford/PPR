@@ -20,7 +20,8 @@ printers.
 In order to add an AppleTalk printer to PPR you must know its complete
 AppleTalk name.  The complete AppleTalk name has three parts.  The first is the
 printer's individual name, this is the name you see in the Macintosh Chooser.
-The second part is the AppleTalk type which is generally ``LaserWriter''.  The
+The second part is the AppleTalk type which is generally
+<Literal>LaserWriter</Literal>.  The
 third part is the AppleTalk zone which you can also find in the Chooser.  We
 put all this information together as in the following command:
 </Para>
@@ -34,9 +35,10 @@ put all this information together as in the following command:
 </Para>
 
 <Para>
-This command adds a printer called ``myprn''.  Its AppleTalk name, from the
-Chooser, is ``Joe's Mac Printer''.  The AppleTalk type is ``LaserWriter''.
-The zone is ``CC Zone''.
+This command adds a printer called <Literal>myprn</Literal>.  Its AppleTalk name, from the
+Chooser, is <Literal>Joe's Mac Printer</Literal>.  The AppleTalk type is
+<Literal>LaserWriter</Literal>.
+The zone is <Literal>CC Zone</Literal>.
 </Para>
 
 </Sect3>
@@ -44,15 +46,15 @@ The zone is ``CC Zone''.
 <Sect3>
 <Title>Hiding an AppleTalk Printer</Title>
 
-<Para>
-If you choose to hide an AppleTalk printer, PPR will change its AppleTalk
+<Para>If you choose to hide an AppleTalk printer, PPR will change its AppleTalk
 type.  PPR will do this the first time it sends a job to the printer. The
-AppleTalk type will revert to ``LaserWriter'' every time the printer is turned
+AppleTalk type will revert to <Literal>LaserWriter</Literal> every time the printer is turned
 off and back on again.  To have PPR change the type, just enter a string other
-than ``LaserWriter'' in the type part of the address.  When PPR tries to send a
+than <Literal>LaserWriter</Literal> in the type part of the address.  When PPR tries to send a
 job to the printer, it will first attempt to find it using the type you
-specify; if that fails, PPR will try again using a type of ``LaserWriter''.  If
-the printer is found with a type of ``LaserWriter'', PPR will change the type
+specify; if that fails, PPR will try again using a type of
+<Literal>LaserWriter</Literal>.  If
+the printer is found with a type of <Literal>LaserWriter</Literal>, PPR will change the type
 to whatever you specified.  For example, if we wanted to hide a printer, we
 could enter its address using this command:
 </Para>
@@ -69,11 +71,12 @@ could enter its address using this command:
 The exact type name you use to hide a printer matters little unless you want
 another kind of spooler to be able to print to it at the same time.  In that
 case, you should use the same type name as that spooler will use.  The type
-``ATTShared'' is compatible with the NCR server for Macintosh Clients.  The
-name ``LaserShared'' is said to be used by certain Apple spoolers.  When the
-Windows NT spooler `captures' a printer it changes the type name of the
+<Literal>ATTShared</Literal> is compatible with the NCR server for Macintosh Clients.  The
+name <Literal>LaserShared</Literal> is said to be used by certain Apple spoolers.  When the
+Windows NT spooler 'captures' a printer it changes the type name of the
 printer to the computer name of the machine the NT spooler is running on.
-For example, if PPR is sharing a printer with an NT computer name ``ALICE''
+For example, if <Application>PPR</Application> is sharing a printer with an NT computer name
+<Literal>ALICE</Literal>
 which has captured it, this would be the command to use:
 </Para>
 
@@ -105,23 +108,21 @@ example.  To set up an <ProductName>HP 4M+</ProductName> we might use this comma
 
 </Para>
 
-<Para>
-In this example, ``my4m'' is the name of the queue we are creating.
-``my4m.prn.trincoll.edu'' is the DNS name of the printer.  We could have
-used the IP address instead if we had wished.  The number ``9100'' is the port
-that the <Literal>tcpip</Literal> interface should connect to.  (On a JetDirect card
-port ``9100'' accepts a data stream in the same format as the serial
-or parallel interface would want.)
-</Para>
+<Para>In this example, <Literal>my4m</Literal> is the name of the queue we
+are creating. <SystemItem class="SystemName">
+my4m.prn.trincoll.edu</SystemItem> is the DNS name of the printer.  We could
+have used the IP address instead if we had wished.  The number
+<Literal>9100</Literal> is the port that the <Literal>tcpip</Literal>
+interface should connect to.  (On a JetDirect card port 9100 accepts a data
+stream in the same format as the serial or parallel interface would
+want.)</Para>
 
-<Para>
-We can also use this interface to print to Extended Systems Pocket Print
-Servers.  In their default configuration, the correct port to connect
-to on these devices is also ``9100''.  However, since these devices
-connect to the printer through a unidirectional parallel port, they can
-only send data in one direction.  Therefore we must tell PPR not to expect
-to receive messages from the printer:
-</Para>
+<Para>We can also use this interface to print to Extended Systems Pocket
+Print Servers.  In their default configuration, the correct port to connect
+to on these devices is also 9100.  However, since these devices connect to
+the printer through a unidirectional parallel port, they can only send data
+in one direction.  Therefore we must tell PPR not to expect to receive
+messages from the printer:</Para>
 
 <Para>
 
@@ -287,114 +288,115 @@ file names:
 <VariableList>
 
 <VarListEntry>
-<Term>``Apple LaserWriter II NT''</Term>
+<Term>Apple LaserWriter II NT</Term>
 <ListItem>
 <Para>
 Good substitute in a pinch for any printer which has only one bin.  It
 describes a level 1 PostScript printer with only one paper tray and 35
 built in fonts.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``Personal LaserWriter 320''</Term>
+<Term>Personal LaserWriter 320</Term>
 <ListItem>
 <Para>
 A typical Level 2 printer with 35 fonts and one bin.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet IIISi PostScript''</Term>
+<Term>HP LaserJet IIISi PostScript</Term>
 <ListItem>
 <Para>
 A typical 35 font level 1 printer with 2 paper trays.  This PPD file
 will work with a 4si too.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet 4Si 4SiMX PS 600dpi''</Term>
+<Term>HP LaserJet 4Si 4SiMX PS 600dpi</Term>
 <ListItem>
 <Para>
 Can't hurt to use the right one though.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet 4''</Term>
+<Term>HP LaserJet 4</Term>
 <ListItem>
 <Para>
 Works with 4M, supplied by HP, has strange bin names.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet 4M DSC''</Term>
+<Term>HP LaserJet 4M DSC</Term>
 <ListItem>
 <Para>
 David's, good bin names but every client must use this PPD file too or
 they won't be able to select bins.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet 4 Plus''</Term>
+<Term>HP LaserJet 4 Plus</Term>
 <ListItem>
 <Para>
 Works with 4M Plus, supplied by HP, same strange bin names.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``HP LaserJet 4M Plus DSC''</Term>
+<Term>HP LaserJet 4M Plus DSC</Term>
 <ListItem>
 <Para>
 Same as above, but for HP 4M Plus.
 Again, each client will need a copy of this PPD file.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``QMS-PS 410''</Term>
+<Term>QMS-PS 410</Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 45 fonts and up to two bins.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``QMS-PS 810''</Term>
+<Term>QMS-PS 810</Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 35 fonts and one bin.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
-<Term>``QMS-PS 820''</Term>
+<Term>QMS-PS 820</Term>
 <ListItem>
 <Para>
 A typical Level 1 printer with 35 fonts and two bins
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>
 
 <Para>
-If you choose either the ``HP LaserJet 4M DSC'' or ``HP LaserJet 4M Plus
-DSC'' PPD file you must equip your clients with copies of PPD file.  You
+If you choose either the <Filename>HP LaserJet 4M DSC</Filename> or
+<Filename>HP LaserJet 4M Plus
+DSC</Filename> PPD file you must equip your clients with copies of PPD file.  You
 may obtain these PPD files in distributions for Macintosh and MS-Windows
 (including Windows 95) from the place you got PPR.
 </Para>
@@ -465,12 +467,12 @@ programs are obsolete.  We will describe only the new mechanism here.
 <VariableList>
 
 <VarListEntry>
-<Term>``HP DeskJet 550C PPD Ghostscript''</Term>
+<Term>HP DeskJet 550C PPD Ghostscript</Term>
 <ListItem>
 <Para>
 A non-PostScript inkjet printer combined with Ghostscript.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>

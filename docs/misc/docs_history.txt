@@ -332,10 +332,15 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
-1.50, 22 January 2003--22 January 2003.
+1.50, 22 January 2003--24 January 2003.
 
 * misc/PORTING.txt: changed references to makeprogs/global.mk to
   Makefile.conf.
+
+* Converted all SGML DocBook files to XML (though they still have an .xml
+  extension), added a link rule to the makefiles, removed rules for building
+  PostScript and PDF with TeX and substituted rules for building them with
+  HTMLDOC.
 
 
 

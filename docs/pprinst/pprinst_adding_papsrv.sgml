@@ -43,7 +43,7 @@ should cause to appear in the Macintosh Choosers.
 
 <Para>
 After you add or delete an entry in <Filename>/etc/ppr/papsrv.conf</Filename>, you must
-restart <Command>papsrv</Command>.  Here are commands that will shut down and restart 
+restart <Command>papsrv</Command>.  Here are commands that will shut down and restart
 the server:
 <Screen>
 # /usr/lib/ppr/bin/papsrv --stop
@@ -134,7 +134,7 @@ PPRparms = -n 1
 <Para>
 Some of the more commonly used command line options for
 <Command>ppr</Command> are
-described in section <XRef LinkEnd="job-submit">.
+described in section <XRef linkend="job-submit"/>.
 A complete description of <Command>ppr</Command>'s command line options may be found
 in the man page ppr(1).  Here are some options which might be particuliarly
 useful in a <Literal>PPRparms=</Literal> line:
@@ -154,7 +154,7 @@ certain HP versions of the Macintosh LaserWriter driver.  If you must use such
 a driver, you should put a <Literal>PPRparms:</Literal> line in the <Command>papsrv</Command>
 configuration file which includes the switch <Option>-S false</Option>.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -169,7 +169,7 @@ printed.  To enable more extensive warnings, put <Option>-w peeve</Option> in th
 none</Option>; the default is
 <Option>-w severe</Option>.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 <VarListEntry>
@@ -182,7 +182,7 @@ because jobs which do not end with that line may have been truncated.  Prior to 
 version 1.30, <Command>papsrv</Command> inserted this option automatically, but QuickDraw GX
 omits the <Literal>%%EOF</Literal> line, so this option is no longer used automatically.
 </Para>
-</listitem>
+</ListItem>
 </VarListEntry>
 
 </VariableList>

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 14 January 2002.
+# Last modified 24 January 2002.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -30,6 +30,11 @@ BUILT=pprdoc.html pprdoc.ps pprdoc.pdf \
 all-docs: $(BUILT)
 
 pprdoc.ps: pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps
+
+#=== Validity Check ================================================================
+
+lint:
+	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XMLLINT) --catalogs pprdoc.sgml
 
 #=== Install ================================================================
 

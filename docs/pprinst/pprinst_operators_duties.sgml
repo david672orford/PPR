@@ -1,8 +1,8 @@
 <Sect1 id="operators-duties">
 <Title>Operator's Duties for the PPR Spooler</Title>
 
-<Para> There are certain commands which can only be used by an operator. 
-The users <Literal>root</Literal> and <Literal>ppr</Literal> are operators. 
+<Para> There are certain commands which can only be used by an operator.
+The users <Literal>root</Literal> and <Literal>ppr</Literal> are operators.
 Any user whose name appears in the file
 <Filename>/etc/ppr/acl/ppop.allow</Filename> is an operator too. </Para>
 
@@ -187,20 +187,18 @@ halt the printer on which it was origionally printing.
 
 </Para>
 
-<Para> The <Command>ppop start</Command> command can also be used when a
+<Para>The <Command>ppop start</Command> command can also be used when a
 printer is not printing due to a fault.  In that case, the <Command>ppop
 start</Command> command will cause an immediate retry. Printer faults are
-discussed in section <XRef LinkEnd="printerfaults">. </Para>
+discussed in section <XRef linkend="printerfaults"/>.</Para>
 
 </Sect2>
 
 <Sect2>
 <Title>More On Mounting Media</Title>
 
-<Para>
-The information in this section only applies if you have set the printer up
-for media management as described in section <XRef LinkEnd="adding-autobin">.
-</Para>
+<Para>The information in this section only applies if you have set the printer up
+for media management as described in section <XRef linkend="adding-autobin"/>.</Para>
 
 <Para>
 Each job which enters the print queue requires one or more types of paper.

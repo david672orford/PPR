@@ -13,7 +13,7 @@ system) directly. To make this easier, <Filename class="SymLink">/usr/bin/ppr
 </Filename> is a symbolic link to
 <Filename>/usr/ppr/bin/ppr</Filename>.  For a complete description of
 <Command>ppr</Command>'s options, see the <ULink
-url="../refman/ppr.1.html">ppr(1) man page</Ulink>.  A description of some
+url="../refman/ppr.1.html">ppr(1) man page</ULink>.  A description of some
 of the more important ones follows.</Para>
 
 <Sect2>
