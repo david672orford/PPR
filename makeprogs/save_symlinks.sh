@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/makeprogs/save_symlinks.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 April 2003.
+# Last modified 29 January 2004.
 #
 
 exec >.restore_symlinks
@@ -41,7 +41,11 @@ for link in `find . -type l`
 
 	# -h doesn't seem to work with some versions of bash.
 	#echo "if [ ! -h $link ]; then ln -sf $contents $link || exit 1; fi"
-	echo "if [ ! -f $link ]; then ln -sf $contents $link || exit 1; fi"
+
+	# and this leaves files 
+	#echo "if [ ! -f $link ]; then ln -sf $contents $link || exit 1; fi"
+
+	echo "ln -sf $contents $link || exit 1"
 
 	done
 

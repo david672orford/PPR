@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 November 2003.
+# Last modified 29 January 2004.
 #
 
 #
@@ -163,7 +163,8 @@ dist: dist-docs clean unconfigure
 # CVS doesn't preserve symlinks.  If INSTALL.txt is missing, run the hidden
 # shell script in which they are preserved.
 symlinks-restore:
-	if [ ! -f libgu/gu_md5.c ]; then bash ./.restore_symlinks; fi
+	#if [ ! -f libgu/gu_md5.c ]; then bash ./.restore_symlinks; fi
+	./.restore_symlinks
 
 # This creates the file that the symbolic links are restored from.
 symlinks-save:

@@ -9005,6 +9005,11 @@ Internet Printing Protocol Work
 
 * z_install_end/ppr.sh: added papd to the list of daemons started.
 
+* Makefile, makeprogs/symlinks_save.sh: changed so that all of the links 
+  will be regenerated every time.  Unfortunately, this means that files 
+  with which some editor may have replaced the link will be silently
+  deleted.
+
 
 
 +++++++++++++++++++++
@@ -9016,8 +9021,6 @@ TODO
   a workaround for buggy sites.
 
 * Finish the IPP server.
-
-* Finish papd.
 
 * Change responder interface to use name=value pairs on the command line.
 
