@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_pprdrv.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 August 2002.
+** Last modified 30 January 2003.
 */
 
 /*
@@ -449,9 +449,24 @@ static void pprdrv_exited(int prnid, int wstat)
 
 	    if(WIFSIGNALED(wstat))	/* if it was a real signal, */
 		{			/* (Note: we know that there was no core dump) */
-		alert(printers[prnid].name, TRUE,
+		if(WSTOPSIG(wstat) == 0)
+		    {
+		    char *LD_LIBRARY_PATH = getenv("LD_LIBRARY_PATH");
+		    alert(printers[prnid].name, TRUE,
+		    	_("Printing aborted because pprdrv died.  The stated reasion for its death\n"
+		    	  "(killed by signal 0) may indicate that dynamic linking failed.  You may\n"
+		    	  "need to restart pprd with LD_LIBRARY_PATH set or take some other operating\n"
+		    	  "system specific action to help pprdrv to find the libraries it needs to run.\n"
+		    	  "LD_LIBRARY_PATH=\"%s\"\n"),
+		    	  LD_LIBRARY_PATH ? LD_LIBRARY_PATH : ""
+		    	  );
+		    }
+		else
+		    {
+		    alert(printers[prnid].name, TRUE,
 			_("Printing aborted because pprdrv was killed by signal %d (%s).\n"
 			"This was not expected and the cause is unknown."), WSTOPSIG(wstat), gu_strsignal(WSTOPSIG(wstat)));
+		    }
 		}
 	    else			/* Otherwise, pprdrv caught the signal and exited gracefully, */
 	    	{
