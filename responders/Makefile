@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2002.
+# Last modified 14 August 2002.
 #
 
 include ../Makefile.conf
@@ -40,7 +40,7 @@ LIBPROGS=ppr-respond$(DOTEXE)
 
 all: $(RESPONDERS) $(LIBPROGS)
 
-OBJS1=ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+OBJS1=ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 ppr-respond$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLIBS)
 
