@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint-newconf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2003.
+** Last modified 22 September 2004.
 */
 
 #include "before_system.h"
@@ -58,6 +58,7 @@ const char *path_uprint_lpstat = BINDIR"/uprint-lpstat";
 const char *path_uprint_lpr = BINDIR"/uprint-lpr";
 const char *path_uprint_lprm = BINDIR"/uprint-lprm";
 const char *path_uprint_lpq = BINDIR"/uprint-lpq";
+const char *path_uprint_lpc = BINDIR"/uprint-lpc";
 
 void uprint_error_callback(const char *format, ...)
 	{
@@ -334,6 +335,7 @@ int main(int argc, char *argv[])
 		install_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
 		install_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
 		install_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
+		install_mainstream_link(conf.well_known.lpc, path_uprint_lpc, conf.sidelined.lpc);
 		}
 	else
 		{
@@ -341,6 +343,7 @@ int main(int argc, char *argv[])
 		uninstall_mainstream_link(conf.well_known.lpr, path_uprint_lpr, conf.sidelined.lpr);
 		uninstall_mainstream_link(conf.well_known.lprm, path_uprint_lprm, conf.sidelined.lprm);
 		uninstall_mainstream_link(conf.well_known.lpq, path_uprint_lpq, conf.sidelined.lpq);
+		uninstall_mainstream_link(conf.well_known.lpc, path_uprint_lpc, conf.sidelined.lpc);
 		}
 	printf("\n");
 

@@ -9057,7 +9057,11 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--10 September 2004.
+1.53a2, 20 February 2004--21 September 2004.
+
+Note:  During a2's rather long life, many users downloaded it from CVS.  By 
+the end of its life, the code was of at least beta quality.  For this reason,
+no final tarball was released.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9375,6 +9379,11 @@ Internet Printing Protocol Work
   to be swapped out.
 
 * editps/Windows_XP: added
+
+
+1.53b1, 22 September 2004--22 September 2004
+
+* 
 
 
 

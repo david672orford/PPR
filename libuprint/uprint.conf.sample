@@ -1,6 +1,6 @@
 #
 # uprint.conf.sample
-# Last modified 3 August 2003. 
+# Last modified 22 September 2004.
 #
 # This is the primary configuration file for PPR's UPRINT system.  The 
 # most important function of this file is to describe other print spoolers
@@ -23,7 +23,7 @@
   lpr = /usr/bin/lpr
   lpq = /usr/bin/lpq
   lprm = /usr/bin/lprm
-  lpc = /usr/bin/lpd
+  lpc = /usr/sbin/lpc
 
 #==========================================================================
 # These are the locations we will move the real BSD and SysV commands
@@ -38,7 +38,7 @@
   lpr = /usr/bin/real-lpr
   lpq = /usr/bin/real-lpq
   lprm = /usr/bin/real-lprm
-  lpc = /usr/bin/real-lpd
+  lpc = /usr/sbin/real-lpc
 
 #==========================================================================
 # Debian GNU/Linux and Mandrake Linux use something called alternatives.
@@ -52,7 +52,7 @@
   lpr = /usr/bin/lpr-lpd
   lpq = /usr/bin/lpq-lpd
   lprm = /usr/bin/lprm-lpd
-  lpc = /usr/bin/lpc-lpd
+  lpc = /usr/sbin/lpc-lpd
 
 #==========================================================================
 # Information about the real lp System V print spooler programs (as opposed

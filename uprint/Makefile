@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/uprint/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 November 2003.
+# Last modified 22 September 2004.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
+PROGS=uprint-lpq$(DOTEXE) uprint-lprm$(DOTEXE) uprint-lpc$(DOTEXE) uprint-cancel$(DOTEXE) uprint-lpstat$(DOTEXE)
 SETUID_PROGS=uprint-lpr$(DOTEXE) uprint-lp$(DOTEXE) 
 
 PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
@@ -45,9 +45,6 @@ LINK_LIBS=$(PRIVATE_LIBS) $(PUBLIC_LIBS)
 
 all: $(PROGS) $(SETUID_PROGS)
 
-uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lp.$(OBJ) $(LINK_LIBS)
-
 uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ uprint-lpr.$(OBJ) $(LINK_LIBS)
 
@@ -56,6 +53,12 @@ uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
 
 uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ uprint-lprm.$(OBJ) $(LINK_LIBS)
+
+uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ uprint-lpc.$(OBJ) $(LINK_LIBS)
+
+uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
+	$(LD) $(LDFLAGS) -o $@ uprint-lp.$(OBJ) $(LINK_LIBS)
 
 uprint-cancel$(DOTEXE): uprint-cancel.$(OBJ) $(PRIVATE_LIBS)
 	$(LD) $(LDFLAGS) -o $@ uprint-cancel.$(OBJ) $(LINK_LIBS)

@@ -51,7 +51,7 @@
 */
 
 /* This name will appear in certain error messages: */
-static const char *const myname = "uprint-lpstat";
+static const char myname[] = "uprint-lpstat";
 
 void uprint_error_callback(const char *format, ...)
 	{

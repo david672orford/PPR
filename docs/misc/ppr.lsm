@@ -1,7 +1,7 @@
 Begin3
 Title:          PPR, a PostScript Print Spooler
-Version:        1.53a1
-Entered-date:   20FEB04
+Version:        1.53b1
+Entered-date:   22SEP04
 Description:    PPR is a print spooler specificaly designed for
 		PostScript printers.  It can control printer features such
 		as duplexing, detect PostScript errors, and report printer
@@ -17,7 +17,7 @@ Keywords:       PPR PostScript Ghostscript AppleTalk Netatalk CAP
 Author:         David.Chappell@mail.trincoll.edu
 Maintained-by:  David.Chappell@mail.trincoll.edu
 Primary-site:   ftp://ppr-dist.trincoll.edu/pub/ppr/
-		5850000 ppr-1.53a1.tar.gz
+		5850000 ppr-1.53b1.tar.gz
 Alternate-site: ftp://ftp.ibiblio/pub/Linux/system/printing/
 Original-site:
 Copying-policy: BSD

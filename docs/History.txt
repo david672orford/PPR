@@ -501,7 +501,7 @@ more information about RIPs and *pprRIP:.
   and one should use papd instead.
 
 
-1.53a2, 20 February 2004--10 September 2004.
+1.53a2, 20 February 2004--21 September 2004.
 
 * uprint/uprint-lpr.1.pod, uprint-lp.1.pod: added ENVIRONMENT
   VARIABLES sections, expanded BUGS sections.
@@ -521,6 +521,11 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr.1.pod: fixed to indicate that all hacks are off by defaul.
   It has erroneously stated that editps is on by default.
+
+
+1.53b1, 22 September 2004--22 September 2004.
+
+No changes.
 
 
 TODO
