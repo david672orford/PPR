@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 19 December 2004.
 #
 
 require "paths.ph";
@@ -134,6 +134,15 @@ sub main::ppd_open
 	my $filename = _ppd_find_file($ppdname);
 	_ppd_open($filename);
 	return $filename;
+	}
+
+#
+# How many levels deep are we into the include tree?  The value 1 (one)
+# indicates that we are in the original file.
+#
+sub main::ppd_level
+	{
+	return scalar @nest_stack;
 	}
 
 #

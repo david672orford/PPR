@@ -1,6 +1,6 @@
 #! /usr/bin/perl -w
 #
-# mouse:~ppr/src/samba/ppd2windrv.perl
+# mouse:~ppr/src/samba/indexwindrivers.perl
 # Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -34,12 +34,12 @@
 # installations.  This script should run with Perl 4 or 5.
 #
 
+use lib "?";
+require "readppd.pl";
+
 $CONFDIR="?";
 $HOMEDIR="?";
 $VAR_SPOOL_PPR="?";
-
-# This is the directory which contains the PPR printer configuration files.
-$PRINTERSDIR = "$CONFDIR/printers";
 
 # This is the directory which contains PPR's collection of PPD files.
 $PPD_INDEX = "$VAR_SPOOL_PPR/ppdindex.db";
@@ -81,27 +81,16 @@ $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
 # List of files for the Adobe 5.x PostScript driver for Windows NT 5.0.
 @FILES_W32X86_3_ADOBE_5 = qw(3/ADOBEPS5.DLL 3/ADOBEPSU.DLL 3/ADOBEPSU.HLP 3/ADOBEPS5.NTF);
 
-#
-# Parse the arguments:
-#
-$opt_verbose = 0;
-foreach $arg (@ARGV)
-	{
-	if($arg eq '--verbose')
-		{
-		$opt_verbose = 1;
-		}
-	else
-		{ die "Unrecognized option: $arg\n" }
-	}
+$opt_verbose = 1;
 
 #
 # Create the output directory if it doesn't already exist.
 #
-mkdir($DRVDIR_WIN40, 0755);		# Win95
-mkdir($DRVDIR_W32X86, 0755);	# WinNT
+mkdir($DRVDIR_WIN40, 0755);			# Win95/98/ME
+mkdir($DRVDIR_W32X86, 0755);		# WinNT
 mkdir("$DRVDIR_W32X86/2", 0755);
-mkdir($DRVDIR_WINPPD, 0755);	# PPD Files
+mkdir("$DRVDIR_W32X86/3", 0755);	# WinNT 5.0
+mkdir($DRVDIR_WINPPD, 0755);		# PPD Files
 
 #
 # Convert all of the filenames in the driver directories to upper case.
@@ -181,55 +170,22 @@ if($opt_verbose)
 	print STDERR "Converting PPD files...\n";
 	}
 
-# List of PPD files to copy into the driver distribution share.
-%ppd_files = ();
-
-# First include all of the PPD files indexed by PPR.
+# Open the index created by "ppr-index ppds".
 open(INDEX, $PPD_INDEX) || die "Can't open index file \"$PPD_INDEX\", $!\n";
-while(defined(my $line = <INDEX>))
-	{
-	next if($line =~ /^#/);		# skip comments (in header)
-	my($filename) = (split(/:/, $line))[1];
-	defined $filename || die "bad index";
-	-f $filename || die "index is out of date";
-	$ppd_files{$filename} = '';
-	}
-close(INDEX) || die;
 
-# Now, include any files mentioned by absolute paths in the printer
-# configuration files.
-opendir(DIR, $PRINTERSDIR) || die "Can't open directory \"$PRINTERSDIR\", $!\n";
-while(defined($file = readdir(DIR)))
-	{
-	next if($file =~ /\./);		# skip hidden files
-	next if($file =~ /~$/);		# skip backup files
-	next if($file =~ /\.bak$/i);
-
-	open(FILE, "<$PRINTERSDIR/$file") || die "Can't open \"$PRINTERSDIR/$file\", $!\n";
-	while(my $line = <FILE>)
-		{
-		if($line =~ /^PPDFile:\s+(.+?)\s*$/)
-			{
-			my $ppd_file = $1;
-			if($ppd_file =~ m#^/# && -f $ppd_file)
-				{
-				$ppd_files{$ppd_file} = '';
-				}
-			last;
-			}
-		}
-	close(FILE);
-	}
-closedir(DIR) || die;
-
-# Open sambaprint to accept the data.
+# Open sambaprint to accept the driver definitions for Samba.
 open(DRIVERS, "| $HOMEDIR/lib/sambaprint drivers import") || die $!;
 
 # For each PPD file, convert it to MS-DOS line termination and store it in the
 # WINPPD subdirectory of the driver distribution share under its MS-DOS file
 # name.
-foreach $file (keys %ppd_files)
+while(defined(my $index_line = <INDEX>))
 	{
+	next if($index_line =~ /^#/);		# skip comments (which occur in header)
+	my($file) = (split(/:/, $index_line))[1];
+	defined $file || die "bad index";
+	-f $file || die "index is out of date";
+
 	print STDERR "Processing \"$file\":\n" if($opt_verbose);
 
 	open(OUT, ">$TEMP_PPD_FILE") || die "Can't create \"$TEMP_PPD_FILE\", $!\n";
@@ -237,57 +193,17 @@ foreach $file (keys %ppd_files)
 	undef $nickname;
 	undef $languagelevel;
 
-	$inlevel = 'IN0';
-	open($inlevel, "<$file") || die "Can't open \"$file\", $!\n";
+	ppd_open($file);
 
-	while(1)
+	while(defined(my $line = ppd_readline()))
 		{
-		$_ = <$inlevel>;
-		if(!defined($_))
-			{
-			close($inlevel) || die;
-			last if($inlevel eq 'IN0');
-			print OUT "*% end of include\r\n";
-			print STDERR "\t    End of include file.\n" if($opt_verbose);
-			$inlevel =~ /^IN([0-9]+)$/;
-			$inlevel = $1 - 1;
-			$inlevel = "IN$inlevel";
-			next;
-			}
-
-		chop;
-
-		# If include file, choose a new file handle and
-		# open it.
-		if(/^\*Include:\s*"([^"]+)"/)
-			{
-			$include_file_name = $1;
-
-			# If it isn't an absolute path,
-			if(!/^\//)
-				{
-				# Use the directory of the including file
-				# as the base path.
-				($basepath) = $file =~ /^(.+)\//;
-
-				$include_file_name = "$basepath/$include_file_name"
-				}
-
-			print STDERR "\tIncluding \"$include_file_name\"...\n" if($opt_verbose);
-			$inlevel++;
-			open($inlevel, "<$include_file_name") ||
-				die "Can't open include file \"$include_file_name\", $!\n";
-			print OUT "*% $_\r\n";
-			next;
-			}
-
 		# Copy the line to the output
-		print OUT "$_\r\n";
+		print OUT "$line\r\n";
 
 		# If this is the first PC file name line take it, but we
 		# ignore it if it is not in the outermost file.	 This
 		# rule isn't in the PPD spec, but it seems right.
-		if(! defined($mswin_name) && /^\*PCFileName:\s+"([^"]+)"/ && $inlevel eq 'IN0')
+		if(! defined($mswin_name) && $line =~ /^\*PCFileName:\s+"([^"]+)"/ && ppd_level() == 1)
 			{
 			$mswin_name = $1;
 			$mswin_name =~ tr/a-z/A-Z/;
@@ -296,17 +212,16 @@ foreach $file (keys %ppd_files)
 		# Take first "*NickName:" or "*ShortNickName:" line.  The PPD
 		# spec says that the "*ShortNickName:" must be first if it
 		# is present.
-		if(! defined($nickname) && /^\*(Short)?NickName:\s+"([^"]+)"/)
+		if(! defined($nickname) && $line =~ /^\*(Short)?NickName:\s+"([^"]+)"/)
 			{
 			$nickname = $2;
 			}
 
 		# Take first "*LanguageLevel:" line.
-		if(! defined($languagelevel) && /^\*LanguageLevel:\s+"([0-9]+)"/)
+		if(! defined($languagelevel) && $line =~ /^\*LanguageLevel:\s+"([0-9]+)"/)
 			{
 			$languagelevel = $1;
 			}
-
 		}
 
 	close(OUT) || die;
@@ -453,6 +368,7 @@ foreach $file (keys %ppd_files)
 	} # end of PPD file iteration
 
 close(DRIVERS) || die $!;
+close(INDEX) || die $!;
 
 print STDERR "Done.\n" if($opt_verbose);
 

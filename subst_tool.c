@@ -85,9 +85,9 @@ int main(int argc, char *argv[])
 				}
 			else
 				{
-				char *end = strchr(++p, '@');
+				char *end;
 				const char *value;
-				if(!end)
+				if(!(end = strchr(++p, '@')))
 					{
 					fprintf(stderr, "%s: unmatched @ in line %d\n", argv[0], linenum);
 					return 1;

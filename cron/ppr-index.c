@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-index.c
+** mouse:~ppr/src/cron/ppr-index.c
 ** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 December 2004.
+** Last modified 19 December 2004.
 */
 
 #include "config.h"
@@ -42,7 +42,13 @@
 
 const char myname[] = "ppr-index";
 
-const char *indexes[] = {"fonts", "ppds", "filters", NULL};
+const char *indexes[] = {
+	"fonts",
+	"ppds",
+	"filters",
+	"windrivers",
+	NULL
+	};
 
 static int do_index(const char name[], gu_boolean delete_index);
 

@@ -9484,6 +9484,12 @@ no final tarball was released.
 
 * samba/Makefile: no longer install WIN95CP.BAT (merged into 1.54)
 
+* samba/indexwindrivers.perl: added
+
+* cron/ppr-index.c: added windrivers to list of indexes.
+
+* libscript/readppd.pl: added ppd_level().
+
 
 TODO
 
