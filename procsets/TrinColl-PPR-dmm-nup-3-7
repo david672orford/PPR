@@ -3,7 +3,7 @@
 %%Creator: Donald Markuson, modified by David Chappell
 %%Copyright: 1995--2002, Trinity College Computing Center, BSD license
 %%Version: 3.0 6
-%%CreationDate: 7 January 2002
+%%CreationDate: 14 January 2002
 %%EndComments
 
 % If this version of PostScript supports it, save and change the packing
@@ -27,10 +27,10 @@ dup begin
 /xdf {exch def} bind def
 
 %
-% Make sure a statusdict exists, even if we have to build an empty one 
+% Make sure a statusdict exists, even if we have to build an empty one
 % ourselves.  According to the PS Level 2 reference manual (the Red Book), not
-% all products have one!  Doing this helps because otherwise we would have to 
-% write a lot of extra code to take account of the fact that it might exist 
+% all products have one!  Doing this helps because otherwise we would have to
+% write a lot of extra code to take account of the fact that it might exist
 % every time we wanted to see if something was defined in it.
 %
 /statusdict where
@@ -822,19 +822,20 @@ userdict /showpage
 		DMM-nup-dict begin
 		DMM-nup-state begin
 
+		% If this is the first page,
 		pp-num 0 eq lp-num 0 eq and
 		    {
-		    1 index exec	% do real tray select
-		    realinitgraphics	% In case new tray == old
-		    sense_paper
-		    ppdict begin pp-w pp-h end
+		    1 index exec		% do real tray select
+		    realinitgraphics		% <-- in case new tray == old
+		    sense_paper			% detect new phys dimensions and copy into ppdict
+		    ppdict begin pp-w pp-h end	% push the width and height onto the stack
 		    }
 		    {
-		    0 index exec	% push width and height onto the stack
+		    0 index exec		% copy values from /-dimensions- onto stack
 		    }
                     ifelse
 
-		setvpage
+		setvpage		% logical-page-width logical-page-height on stack
 
 		end %DMM-nup-state
 		end %DMM-nup-dict
