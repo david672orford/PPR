@@ -145,8 +145,11 @@ then
 		mkdir -p $RPM_BUILD_ROOT$INIT_BASE/init.d
 		fi
 
+	#
 	# Install the principal script if it isn't already installed.
 	# !!! Maybe we should flag this as a configuration file. !!!
+	# !!! That is what the Mandrake Linux people would do.   !!!
+	#
 	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
 	if [ $? -ne 0 ]
 		then

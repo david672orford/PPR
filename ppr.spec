@@ -6,6 +6,7 @@
 Name: ppr
 Summary: A spooler for PostScript printers
 Version: 1.52
+Release: 1
 License: BSD
 URL: http://ppr.trincoll.edu/
 Source: http://ppr.trincoll.edu/pub/ppr/ppr-%{version}.tar.gz
@@ -13,14 +14,14 @@ Packager: David Chappell <ppr-bugs@trincoll.edu>
 BuildRoot: %{_tmppath}/%{name}-buildroot
 
 # Mandrake
-Group: System/Servers
-Vendor: MandrakeSoft
 Distribution: Mandrake Linux
-Release: 1mdk
+Vendor: MandrakeSoft
+Group: System/Servers
 
 # RedHat
+#Distribution:
+#Vendor:
 #Group: System Environment/Daemons
-#Release: 1
 
 #============================================================================
 #
@@ -136,6 +137,7 @@ echo "pre of %{name}-%{version}-%{release}: $1"
 # If this is a first time install, and not an upgrade,
 if [ $1 -gt 1 ]
 	then
+	echo "  Is a new install."
 	# Create the PPR users and groups.
 	/usr/sbin/groupadd ppr
 	/usr/sbin/useradd -M -d /usr/lib/ppr -c "PPR Spooling System" -g ppr -G lp ppr
@@ -169,6 +171,8 @@ END
 # If this isn't an upgrade,
 if [ $1 -lt 2 ]
 	then
+	echo "  Isn't a new install, not an upgrade."
+
 	# Setup init scripts to start PPR daemons at boot.
 	/sbin/chkconfig --add ppr
 
@@ -191,8 +195,10 @@ echo "preun of %{name}-%{version}-%{release}: $1"
 /etc/rc.d/init.d/ppr stop
 
 # If this is an actual removeal and not an upgrade,
-if [ $! -lt 2 ]
+if [ $1 -lt 2 ]
 	then
+	echo "  Is an actual removal, not an upgrade."
+
 	# Remove init script links.
 	/sbin/chkconfig --del ppr
 
@@ -217,6 +223,8 @@ echo "postun of %{name}-%{version}-%{release}: $1"
 # If this is an actual removeal and not an upgrade,
 if [ $1 -lt 1 ]
 	then
+	echo "  Is a removal."
+
 	# Tell Xinetd to reload its configuration files.
 	killall -HUP xinetd 2>/dev/null
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 6 August 2003.
 #
 
 #
@@ -136,9 +136,11 @@ sweepdir("$VAR_SPOOL_PPR/pprpopup.db", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/followme.db", undef, 90.0);
 sweepdir("$VAR_SPOOL_PPR/dvips", undef, 90.0);
 
+# This program is invoked with the --all-removable when we are
+# uninstalling PPR.
 if($opt_all_removable)
 	{
-	# Remove boring log files.	Notice that printlog isn't in this list.
+	# Remove boring log files.  Notice that printlog isn't in this list.
 	foreach my $l (qw(pprd pprd.old
 		pprdrv
 		papsrv papd
