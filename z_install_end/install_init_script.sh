@@ -126,15 +126,12 @@ then
 	echo "  Installing the System V style start and stop scripts..."
 
 	# Install the principal script:
-	echo "    $INIT_BASE/init.d/ppr"
-	cp etc_init.d_ppr $INIT_BASE/init.d/ppr
+	../makeprogs/installprogs.sh root root 755 $INIT_BASE/init.d ppr
 	if [ $? -ne 0 ]
 	    then
 	    echo "Must not be running as root, aborting."
 	    exit 10
 	    fi
-	chown root $INIT_BASE/init.d/ppr
-	chmod 755 $INIT_BASE/init.d/ppr
 
 	# Remove any old links:
 	rm -f $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr

@@ -57,8 +57,7 @@ outdated_dir ()
   fi
   }
 
-echo "Removing obsolete files..."
-
+# 1.40
 outdated $HOMEDIR/lib/cgi_conf.pl
 outdated $HOMEDIR/lib/play_local.pl
 outdated $HOMEDIR/lib/pprwatch
@@ -72,6 +71,8 @@ outdated "$SHAREDIR/cache/procset/ApplDict md-71-0 "	# created accidentally
 outdated $CONFDIR/smb-protos.conf $HOMEDIR/lib/smb-protos.conf
 outdated $CONFDIR/smb-protos.conf.sample
 outdated_dir $HOMEDIR/install
+
+# PPR 1.41
 outdated $HOMEDIR/lib/paths.sh				# never was used
 outdated $HOMEDIR/lib/PrintDesk/PPRcontrol.pm
 outdated $SHAREDIR/www/logs.html
@@ -81,24 +82,8 @@ outdated $SHAREDIR/www/test-audio-commentary.html
 outdated $SHAREDIR/www/test-audio-responder.html
 outdated $SHAREDIR/www/test.html
 outdated $SHAREDIR/www/docs/rfc/index.html
-outdated $HOMEDIR/lib/ppr-commentary-httpd
-outdated_dir $SHAREDIR/www/docs/rfc
-outdated $SHAREDIR/www/html/docbrowse.html
-outdated $HOMEDIR/lib/login_ppr.sh
-outdated $HOMEDIR/lib/login_ppr.csh
-#outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
-outdated $HOMEDIR/cgi-bin/df_img.cgi
 
-outdated "$SHAREDIR/PPDFiles/HP DeskJet 870C Ghostscript"
-outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
-#outdated "$SHAREDIR/PPDFiles/HP C LaserJet 4500-PS"
-outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
-outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
-
-outdated $HOMEDIR/bin/ppr-web-control			# renamed
-outdated $HOMEDIR/bin/papsrv-kill			# replaced by papsrv --stop
-
-echo "Checking of symbolic links from old install directories are needed..."
+# PPR 1.41
 if [ $HOMEDIR != "/usr/ppr" -a -d /usr/ppr -a ! -d /usr/ppr_old ]
     then
     echo "Moving \"/usr/ppr\" to \"/usr/ppr_old\"."
@@ -121,11 +106,25 @@ EndOfQuote
 	then
 	echo "Moving \"/usr/ppr_old/speach\" to \"$SHAREDIR/speach\"." || exit 1
 	fi
-    echo "Done."
-    else
-    echo "Not needed."
     fi
-echo
+
+# PPR 1.42
+outdated $HOMEDIR/lib/ppr-commentary-httpd
+outdated_dir $SHAREDIR/www/docs/rfc
+outdated $SHAREDIR/www/html/docbrowse.html
+
+# PPR 1.50
+outdated $HOMEDIR/lib/login_ppr.sh
+outdated $HOMEDIR/lib/login_ppr.csh
+#outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
+outdated $HOMEDIR/cgi-bin/df_img.cgi
+outdated "$SHAREDIR/PPDFiles/HP DeskJet 870C Ghostscript"
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
+#outdated "$SHAREDIR/PPDFiles/HP C LaserJet 4500-PS"
+outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
+outdated "$SHAREDIR/PPDFiles/Dot Matrix 24 pin Ghostscript"
+outdated $HOMEDIR/bin/ppr-web-control			# renamed
+outdated $HOMEDIR/bin/papsrv-kill			# replaced by papsrv --stop
 
 # PPR 1.51
 outdated $HOMEDIR/fixup/fixup_login
@@ -137,5 +136,18 @@ outdated $HOMEDIR/fixup/fixup_samples
 outdated $HOMEDIR/fixup/fixup_filters
 outdated $HOMEDIR/fixup/fixup_atalk
 outdated $HOMEDIR/fixup/fixup_media
+outdated $HOMEDIR/fixup/fixup
+outdated $HOMEDIR/fixup/fixup_accounts
+outdated $HOMEDIR/fixup/fixup_cron
+outdated $HOMEDIR/fixup/fixup_inetd
+outdated $HOMEDIR/fixup/fixup_init
+outdated $HOMEDIR/fixup/fixup_links
+outdated $HOMEDIR/fixup/fixup_lmx
+outdated $HOMEDIR/fixup/fixup_obsolete
+outdated $HOMEDIR/fixup/fixup_perms
+outdated $HOMEDIR/fixup/customs.ppr
+outdated $HOMEDIR/fixup/init_ppr
+outdated $HOMEDIR/lib/getpwnam
+outdated $HOMEDIR/lib/getgrnam
 
 exit 0

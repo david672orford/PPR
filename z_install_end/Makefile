@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) id$(DOTEXE) etc_init.d_ppr
+ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) id$(DOTEXE) ppr
 
 #=== Build ==================================================================
 

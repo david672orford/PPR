@@ -26,7 +26,7 @@ BuildRoot: /var/tmp/%{name}-buildroot
 %description
 PPR is a print spooler for PostScript printers.  It can print to parallel,
 serial, AppleTalk, LPR/LPD, SocketAPI, and SMB printers.  It works well
-with Ghostscript, Netatalk, CAP60, and Samba.
+with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 
 #============================================================================
 # This unpacks the source.
@@ -81,8 +81,10 @@ rm -rf $RPM_BUILD_ROOT
 # This is run after unpacking the cpio archive from the binary .rpm file.
 #============================================================================
 %post
-/usr/lib/ppr/fixup/fixup >/dev/null
 /etc/rc.d/init.d/ppr start
+/usr/lib/ppr/bin/ppr-indexfonts >/dev/null
+/usr/lib/ppr/bin/ppr-ppds >/dev/null
+/usr/lib/ppr/bin/ppr-filterss >/dev/null
 
 #============================================================================
 # This is run before uninstalling.
@@ -97,54 +99,50 @@ rm -rf $RPM_BUILD_ROOT
 # Stop the PPR daemons.
 /etc/rc.d/init.d/ppr stop
 
-# Remove init scripts.
+# Remove init script links.
 /sbin/chkconfig --del ppr
-rm /etc/rc.d/init.d/ppr
-
-# Remove lots of removable junk.
-/usr/lib/ppr/bin/ppr-clean --aggressive
 
 # Remove the crontab.
 /usr/bin/crontab -u ppr -r
 
-# Remove the PPR entries from Inetd's config file.
-rm -f /etc/inetd.conf~
-mv /etc/inetd.conf /etc/inetd.conf~
-grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
-killall -HUP inetd
-
-# Do the same for Xinetd.
+# Do the same for Xinetd or Inetd.
 if [ -f /etc/xinetd.d/ppr ]
     then
     rm -f /etc/xinetd.d/ppr
     killall -HUP xinetd
+    else
+    rm -f /etc/inetd.conf~
+    mv /etc/inetd.conf /etc/inetd.conf~
+    grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
+    killall -HUP inetd
     fi
 
-# Remove resource cache files.
+# Remove lots of removable junk.
+/usr/lib/ppr/bin/ppr-clean --aggressive
 rm -f /var/spool/ppr/cache/*/*
+rm -f /var/spool/ppr/dvips/*
 
 # Remove boring log files.
-for l in pprd pprd.old pprdrv papsrv papd lprsrv ppr-indexfonts ppr-indexppds ppr-clean ppr-httpd uprint
+for l in pprd pprd.old \
+	pprdrv papsrv papd \
+	lprsrv \
+	ppr-indexfonts ppr-indexppds ppr-clean \
+	ppr-httpd uprint
     do
     rm -f /var/spool/ppr/logs/$l
     done
-
-# Remove shell script filters.
-for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd tiff png plot fig
-    do
-    rm -f /usr/lib/ppr/filters/filter_$t
-    done
-
-# Remove DVIPS config files.
-rm -f /var/spool/ppr/dvips/*
 
 # Remove print jobs.
 rm -f /var/spool/ppr/queue/*
 rm -f /var/spool/ppr/jobs/*
 
-# Remove the font index.
+# Remove the font, PPD file, and filter indexes.
 rm -f /var/spool/ppr/fontindex.db
 rm -f /var/spool/ppr/ppdindex.db
+for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd tiff png plot fig
+    do
+    rm -f /usr/lib/ppr/filters/filter_$t
+    done
 
 # Remove pprd's FIFO.
 rm -f /var/spool/ppr/PIPE
@@ -152,37 +150,8 @@ rm -f /var/spool/ppr/PIPE
 # Remove any linger run state files.
 rm -f /var/spool/ppr/run/*
 
-# Remove links in /usr/bin.
-rm -f /usr/bin/ppr \
-	/usr/bin/ppop \
-	/usr/bin/ppad \
-	/usr/bin/ppuser \
-	/usr/bin/ppdoc \
-	/usr/bin/ppr-xgrant \
-	/usr/bin/ppr-config \
-	/usr/bin/ppr-web \
-	/usr/bin/ppr-passwd
-
 # Remove the UPRINT symbolic links and put the native spooler programs back.
 /usr/lib/ppr/bin/uprint-newconf --remove
-
-# Remove ACL files that are still empty.
-for l in pprprox.allow ppop.allow ppad.allow ppuser.allow passwd.allow
-    do
-    if [ -f /etc/ppr/acl/$l -a ! -s /etc/ppr/acl/$l ]
-	then
-	rm -f /etc/ppr/acl/$l
-	fi
-    done
-
-# Remove configuration files that are identical to the samples.
-for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
-    do
-    if diff /etc/ppr/$f /etc/ppr/$f.sample >/dev/null
-    	then
-    	rm -f /etc/ppr/$f
-    	fi
-    done
 
 # Remove the PPR users and groups.
 /usr/sbin/userdel ppr

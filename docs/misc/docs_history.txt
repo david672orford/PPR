@@ -384,3 +384,5 @@ more information about RIPs and *pprRIP:.
 
 * pprhack/: added pprhack_custom_hooks.sgml
 
+* refman/ppr-clean.8.pod: added
+

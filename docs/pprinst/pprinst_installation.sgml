@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 21 February 2003
+Last Modified: 5 March 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -45,7 +45,6 @@ Compiling and installing <application>PPR</application> consists of 4 basic step
 <listitem><para>Running the <command>Configure</command> script</para></listitem>
 <listitem><para>Running <command>make</command></para></listitem>
 <listitem><para>Running <command>make install</command></para></listitem>
-<listitem><para>Running the <command>fixup</command> script</para></listitem>
 </orderedlist>
 
 These steps are described in detail in the file <Ulink

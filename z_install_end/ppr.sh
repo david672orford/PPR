@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/z_install_end/etc_init.d_ppr.sh
+# mouse:~ppr/src/z_install_end/ppr.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,16 +30,16 @@
 #
 
 #
-# This file is designed to work with the System V init provided with operating
+# This script is designed to work with the System V init provided with operating
 # systems such as SunOS 5 and the reimplementation used in most Linux 
 # distributions.  If invoked with the argument "start", it starts PPRD and 
 # PAPSRV, if invoked with the argument "stop", it is supposed to stop them.
 #
 
 #
-# This information in this block is read by the Linux program /sbin/chkconfig
-# which can be used to automatically install and remove the links from the 
-# init.d directory to the rc?.d directories.
+# This information in this following comments is read by the Linux program 
+# /sbin/chkconfig which can be used to automatically install and remove the
+# links from the rc?.d directories to the init.d directory.
 #
 # chkconfig: 2345 80 40
 # description: PPR is a print spooler for PostScript printers.
