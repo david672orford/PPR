@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--14 March 2003.
+1.51, 15 February 2003--17 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8484,6 +8484,12 @@ line was being parsed twice.
 
 * libgu/ini_section.c, ppd/indexppds.c, fontutils/indexfonts.c: added code
   to copy missing sections from ppr.conf.sample to ppr.conf.
+
+* libppr/destinfo.c: added code to handle aliases and to return the PPD file
+  for the first printer in the case of groups.
+
+* added tests/test-pprdrv/300-custom-hook.*.
+
 
 
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 17 March 2003.
 #
 
 =head1 NAME
@@ -611,9 +611,10 @@ in order to support certain features of Foomatic as a RIP.  See
 
 =item B<--features>
 
-If you use this option, B<ppr> won't print the job.  Rather it will list all
-of the printer features in the selected printer's PPD file.  It will also list
-the B<-F> or B<--feature> options needed to select them.  For example:
+If you use this option, B<ppr> won't accept a job for printing.  Rather it
+will list all of the printer features in the selected printer's PPD file. 
+It will also list the B<-F> or B<--feature> options needed to select them. 
+For example:
 
 	$ ppr -d myprn --features
 	PageSize
@@ -647,15 +648,20 @@ proper command is:
 	$ ppr -d myprn --feature InputSlot=Lower
 
 Why are the paper trays refered to in an inconsistent manner?  The names on
-the left are the ones chosen by the printer manufacturer.  There is likely 
-a big "3" printed on the front of tray 3.  However, the command you must use
-to select it uses standardized PPD file naming.  Under the standardized scheme 
-for PPD files, tray use names such as "Upper", "Middle", and "Lower".
+the left are the ones chosen by the printer manufacturer.  There is likely a
+big "3" printed on the front of tray 3.  However, the command you must use
+to select it uses standardized PPD file naming.  Under the standardized
+scheme for PPD files, tray use names such as "Upper", "Middle", and "Lower".
 
-The crude arrows which appear next to certain options indicate that these options
-are the defaults.  More precisely, the arrows indicate that the PPD file I<says> these 
-are the defaults.  It may be that someone has used the printers control buttons to 
-change the defaults, so don't trust them completely.
+The crude arrows which appear next to certain options indicate that these
+options are the defaults.  More precisely, the arrows indicate that the PPD
+file I<says> these are the defaults.  It may be that someone has used the
+printer's control buttons to change the defaults, so don't trust them
+completely.
+
+If a group is selected rather than a single printer, the options described
+in the PPD file belonging to the first member of the group will be
+displayed.
 
 =item B<-K true>
 

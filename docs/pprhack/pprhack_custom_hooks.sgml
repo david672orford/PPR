@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_custom_hooks.sgml
-Last Modified: 13 March 2003
+Last Modified: 17 March 2003
 Last Proofread: 
 -->
 
@@ -107,8 +107,11 @@ been printed yet.</para>
 		<term>CUSTOM_HOOK_COMMENTS (4)</term>
 		<listitem>
 
-<para>The custom hook program is invoked at the end of the document header
-comments so that it can add any additional ones it likes.</para>
+<para>The custom hook program is invoked just before the document header
+comments are sent.  Thus the program can add any additional document header
+comments it likes.  Notice that each and every line generated must begin
+with <literal>%</literal> and be followed by a printable character other
+than space tab or newline.</para>
 
 		</listitem>
 	</varlistentry>

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 13 March 2003.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -51,7 +51,8 @@ pprhack.sgml: \
 		pprhack_pprd.sgml \
 		pprhack_status.sgml \
 		pprhack_responders.sgml \
-		pprhack_custom_hooks.sgml
+		pprhack_custom_hooks.sgml \
+		pprhack_rips.sgml
 	touch pprhack.sgml
 
 #=== Validity Check ================================================================
