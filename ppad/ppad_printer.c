@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 19 June 2001.
 */
 
 /*
@@ -1484,7 +1484,7 @@ int printer_rip(const char *argv[])
 	return EXIT_SYNTAX;
 	}
 
-    return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s \"%s\"" : NULL, rip, driver, driver_output_language, options);
+    return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s \"%s\"" : NULL, rip, driver, driver_output_language, options ? options : "");
     } /* end of printer_rip() */
 
 /*
