@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2005.
+# Last modified 9 March 2005.
 #
 
 #
@@ -51,7 +51,7 @@ SUBDIRS=\
 	makeprogs \
 	libgu \
 	libppr \
-	nonppr_tcl \
+	ppr-tclsh \
 	libscript \
 	libpprdb \
 	libttf \
@@ -79,7 +79,6 @@ SUBDIRS=\
 	lprsrv \
 	samba \
 	ipp \
-	pprpopup \
 	ppr-bsd \
 	ppr-sysv \
 	unixuser \

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/README.txt
  mouse:~ppr/src/docs/misc/README.txt (symbolic link)
- Last revised 14 January 2005.
+ Last revised 9 March 2005.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -127,8 +127,8 @@ documents are also available.  You can either add PPR's man page directory
     fonts/
 		No actual fonts, just font data, actual fonts are in nonppr_vendors/.
 	ppd/
-		PPD files under PPR license.  Vendor-supplied PPD files are
-		in nonppr_vendors/.
+		BSD and MIT licenced PPD files.  PPD fiels under other licenses 
+		are in nonppr_vendors/.
     misc/
 		Odds and ends that are mostly small, experimental,
 		unimportant, or included as examples
@@ -164,7 +164,7 @@ documents are also available.  You can either add PPR's man page directory
     nonppr_misc/
 		Files, such as libraries taken from other projects. 
 		Many symbolic links point to this directory.
-    nonppr_tcl/
+    ppr-tcl/
 		A modified copy of Tcl 7.4.  It is intended to replace
 		/bin/sh as the language for PPR's simple scripts.
     z_install_start/

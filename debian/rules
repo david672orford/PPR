@@ -105,7 +105,23 @@ binary-common:
 	dh_link
 	dh_strip
 	dh_compress 
-	dh_fixperms
+	dh_fixperms \
+		-X pprd \
+		-X ppr \
+		-X ppop \
+		-X ppad \
+		-X ppuser \
+		-X papd \
+		-X ppr2samba \
+		-X ppr-xgrant \
+		-X ppr-followme \
+		-X ppr-passwd \
+		-X ppr-index \
+		-X lpr \
+		-X ipp \
+		-X query_wrapper \
+		-X uprint_rfc1179 \
+		-X sambaprint 
 #	dh_perl
 #	dh_python
 	dh_makeshlibs

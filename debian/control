@@ -1,5 +1,5 @@
 Source: ppr
-Section: unknown
+Section: net
 Priority: optional
 Maintainer: David Chappell <David.Chappell@trincoll.edu>
 Build-Depends: debhelper (>= 4.0.0)

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--8 March 2005
+2.00a1, 11 December 2004--9 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9622,4 +9622,16 @@ no final tarball was released.
 
 * debian/: added symbolic links to z_install_end/init.d,cron.d.
 
+* nonppr_vendors/font_adobe/: removed since the AFM files were unused
+
+* pprpopup/: removed (since we are hoping to use a Jabber client instead)
+
+* nonppr_misc/md5/md5pure.tcl: removed since pprpopup was deleted.
+
+* moved nonppr_tcl/ to ppr-tclsh/
+
+* moved nonppr_misc/md5/md5.js to www/md5.js
+
+* moved nonppr_misc/openbsd/strlcpy.c to libgu/gu_strlcpy.c and strlcat.c to
+  gu_strlcat.c.
 
