@@ -7653,3 +7653,9 @@ line was being parsed twice.
 
 * libppr/int_copy_job.c: added USE_SHUTDOWN stuff.
 
+* ppad/ppad_alias.c: fixed "ppad alias addon"
+
+* www/cgi_tabbed.pl: put 1mm radius on tabs.
+
+* www/grp_control.cgi.perl: added
+

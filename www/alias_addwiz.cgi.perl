@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 April 2002.
+# Last modified 19 April 2002.
 #
 
 use lib "?";
@@ -49,7 +49,7 @@ my $addalias_wizard_table = [
 			. "are not allowed.  Also, the first character may not be\n"
 			. "a period or a hyphen."), "</p>\n";
 
-		print "<p><span class=\"label\">", H_("Group Name:"), "</span><br>\n";
+		print "<p><span class=\"label\">", H_("Alias Name:"), "</span><br>\n";
 		print "<input tabindex=1 TYPE=\"text\" SIZE=16 NAME=\"name\" VALUE=", html_value(cgi_data_move('name', '')), ">\n";
 		print "</p>\n";
 		},
@@ -64,42 +64,44 @@ my $addalias_wizard_table = [
 	},
 
 	#===========================================
-	# Members list
+	# For What
 	#===========================================
 	{
-	'title' => N_("Assign Group Members"),
+	'title' => N_("For What an Alias"),
 	'picture' => "wiz-membership.jpg",
 	'valign' => 'top',
 	'dopage' => sub {
-		require 'cgi_membership.pl';
+		my $forwhat = cgi_data_move("forwhat", "");
 
-		# For first time:
-		if(!defined($data{nonmembers}))
+		require 'cgi_run.pl';
+		my @dest_list = ();
+		opencmd(PPOP, $PPOP_PATH, "-M", "dest", "all") || die;
+		while(<PPOP>)
 		    {
-		    require 'cgi_run.pl';
+		    my($queue, $type) = split(/\t/, $_);
+		    if($type ne "alias")
+			{
+			push(@dest_list, $queue);
+			}
+		    }
+		close(PPOP) || die;
 
-		    # Members list starts empty.
-		    $data{members} = '';
-
-		    # Non-Members list starts as all printers.
-                    opencmd(PPOP, $PPOP_PATH, "-M", "dest", "all") || die;
-                    my @nonmembers = ();
-                    while(<PPOP>)
-                        {
-                        my($queue, $type) = split(/\t/, $_);
-                        next if($type ne 'printer');
-                        push(@nonmembers, $queue);
-                        }
-                    close(PPOP) || die;
-		    $data{nonmembers} = join(' ', sort(@nonmembers));
-                    }
-
-		# Do double select box thing.
-		&cgi_membership(_("Members:"), "members", 10, _("Non-Members:"), "nonmembers", 15);
+		print "<p><span class=\"label\">\n";
+		print html(sprintf(_("Please select the printer or group for which \"%s\" is to be an alias."), $data{name}));
+		print "</span><br><br>\n";
+		print "<select tabindex=1 name=\"forwhat\" size=12>\n";
+		foreach my $dest (@dest_list)
+		    {
+		    print "<option value=\"$dest\"";
+		    print " selected" if($dest eq $forwhat);
+		    print ">$dest\n";
+		    }
+		print "</select>\n";
+		print "</p>\n";
 		},
 	'onnext' => sub {
-		if($data{members} eq '')
-		    { return _("The group must have at least one member!") }
+		if($data{forwhat} eq "")
+		    { return _("The alias must point to something!") }
 		return undef;
 		}
 	},
@@ -133,7 +135,7 @@ my $addalias_wizard_table = [
 	# Save the new alias
 	#===========================================
 	{
-	'title' => N_("Save the Group"),
+	'title' => N_("Save the Alias"),
 	'picture' => "wiz-save.jpg",
 	'dopage' => sub {
 		require 'cgi_run.pl';
@@ -142,7 +144,7 @@ my $addalias_wizard_table = [
 		print "<pre>\n";
 		run("/usr/bin/id");
 		my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
-		run(@PPAD, 'alias', 'forwhat', $data{name}, split(/ /, $data{members}));
+		run(@PPAD, 'alias', 'forwhat', $data{name}, $data{forwhat});
 		run(@PPAD, 'alias', 'comment', $data{name}, $data{comment});
 		run($PPR2SAMBA_PATH, '--nocreate');
 		print "</pre>\n";
@@ -161,7 +163,7 @@ my $addalias_wizard_table = [
 
 &cgi_read_data();
 
-&do_wizard($addgrp_wizard_table,
+&do_wizard($addalias_wizard_table,
 	{
 	'auth' => 1,
 	'imgdir' => "../images/"

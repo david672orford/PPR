@@ -144,7 +144,7 @@ function prn_testpage(w, printer_name)
 	}
 function grp_control(w, printer_name)
 	{
-	window.open('grp_control.cgi?name=' + printer_name, '_blank', 'width=750,height=600,resizable');
+	window.open('grp_control.cgi?name=' + printer_name, '_blank', 'width=750,height=400,resizable');
 	menu_hide(w);
 	return false;
 	}

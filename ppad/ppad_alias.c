@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 12 April 2002.
+** Last modified 19 April 2002.
 */
 
 #include "before_system.h"
@@ -290,7 +290,7 @@ int alias_addon(const char *argv[])
 	return EXIT_SYNTAX;
     	}
 
-    return conf_set_name(QUEUE_TYPE_PRINTER, alias, name, value ? "%s" : NULL, value);
+    return conf_set_name(QUEUE_TYPE_ALIAS, alias, name, value ? "%s" : NULL, value);
     }
 
 /* end of file */

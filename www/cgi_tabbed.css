@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 12 April 2002.
+** Last modified 19 April 2002.
 */
 
 BODY {	background: #C0C0C0;
@@ -15,6 +15,7 @@ INPUT.tabactive,BUTTON.tabactive {
 	margin: 0;
 	border-style: solid; border-color: black; border-width: 1px;
 	border-bottom-color: beige;
+	-moz-border-radius: 1mm 1mm 0mm 0mm;
 	}
 
 /* Buttons for concealed panes. */
@@ -24,6 +25,7 @@ INPUT.tabinactive,BUTTON.tabinactive {
 	background: beige;
 	margin: 0;
 	border-style: solid; border-color: black; border-width: 1px;
+	-moz-border-radius: 1mm 1mm 0mm 0mm;
 	}
 
 /* Tables of this class form the background for tabbed dialog boxes. */

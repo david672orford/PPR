@@ -397,8 +397,14 @@ eval {
 
 	    if($state eq "normal")
 		{
+		#
 		# Info format handles subheadings by underlining them
-		# with characters such as "*", "=", "-", and ".".
+		# with characters such as "*", "=", "-", and ".".  For
+		# example:
+		#
+		# This is a First Level Subheading
+		# ==== == = ===== ===== ==========
+		#
 		if(/^(.+)\n([\* ]+)$/ && length($1) == length($2))
 		    {
 		    print "<h2>", html($1), "</h2>\n";
@@ -420,18 +426,59 @@ eval {
 		    next;
 		    }
 
-		if(/^\* Menu:/)
+		#
+		# Menu paragraphs look like this:
+		#
+		# * Some Section::
+		# * '-w': Some Section.
+		#
+		# but not:
+		#
+		# * Menu:
+		#
+		#if(/^\*[^\n]+\n([\*\s][^\n]+\n)*$/s)
+		if(/^\*[^:]+:[:\s]/)
 		    {
-		    $state = "menu";
-		    print "<p>", html($_), "</p>\n";
 		    print "<ul>\n";
+		    s/\n[ \t]+/ /g;			# unwrap long lines
+		    foreach (split(/\n/))
+			{
+			# Ordinary menu entry.  It contains a linked section
+			# name.
+			if(/^\* ([^:]+)(::.*)$/)
+			    {
+			    my $name = $1;
+			    my $tail = $2;
+			    my $name_escaped = $name;
+			    $name_escaped =~ s/\s+/_/g;
+			    print "<li><a href=\"#$name_escaped\">", html($name), "</a>", html($tail), "\n";
+			    }
+			# Index menu entry.  It contains an index entry and a
+			# linked section name.
+			elsif(/^\* ([^:]+:)\s+(.+)\.$/)
+			    {
+			    my $head = $1;
+			    my $name = $2;
+			    my $name_escaped = $name;
+			    $name_escaped =~ s/\s+/_/g;
+			    print "<li>", html($head), " <a href=\"#$name_escaped\">", html($name), "</a>.\n";
+			    }
+			else
+			    {
+			    print "<p class=\"error\">", html($_), "</p>\n";
+			    }
+		    	}
+
+		    print "</ul>\n";
+		    $state = "normal";
 		    next;
 		    }
 
-		# Preformatted
+		#
+		# Preformatted paragraph
 		# A preformatted section will be indented, usually by 5
 		# spaces.
-		#if(/^      *[^1-9\*\s]/)
+		#
 		if(/^     /)
 		    {
 		    print "<pre>\n";
@@ -443,48 +490,6 @@ eval {
 		$_ = linkize($_);
 
 		print "<p>$_</p>\n";
-		next;
-		}
-
-	    #
-	    # Menu:
-	    #
-	    # * Some Section::
-	    # * '-w': Some Section.
-	    #
-	    if($state eq "menu")
-		{
-		s/\n[ \t]+/ /g;			# unwrap long lines
-		foreach (split(/\n/))
-		    {
-		    # Ordinary menu entry.  It contains a linked section
-		    # name.
-		    if(/^\* ([^:]+)(::.*)$/)
-			{
-			my $name = $1;
-			my $tail = $2;
-			my $name_escaped = $name;
-			$name_escaped =~ s/\s+/_/g;
-			print "<li><a href=\"#$name_escaped\">", html($name), "</a>", html($tail), "\n";
-			}
-		    # Index menu entry.  It contains an index entry and a
-		    # linked section name.
-		    elsif(/^\* ([^:]+:)\s+(.+)\.$/)
-			{
-			my $head = $1;
-			my $name = $2;
-			my $name_escaped = $name;
-			$name_escaped =~ s/\s+/_/g;
-			print "<li>", html($head), " <a href=\"#$name_escaped\">", html($name), "</a>.\n";
-			}
-		    else
-			{
-			print "<p class=\"error\">", html($_), "</p>\n";
-			}
-		    }
-
-		print "</ul>\n";
-		$state = "normal";
 		next;
 		}
 

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 12 April 2002.
+# Last modified 19 April 2002.
 #
 
 use 5.005;
@@ -110,14 +110,31 @@ $refresh_interval =~ s/\s*(\d+).*$/$1/;
 $refresh_interval = $DEFAULT_REFRESH_INTERVAL if($refresh_interval eq '');
 $refresh_interval = $MIN_REFRESH_INTERVAL if($refresh_interval < $MIN_REFRESH_INTERVAL);
 
-# Turn on table borders unless we think the web browser is likely to
-# be displaying images.  Because of this code, we must emit
+#
+# Make descisions based on the browser.  Because of this code, we must emit
 # a "Vary: user-agent" header.
+#
+# For example, we turn on table borders unless we think the web browser is
+# likely be capable of displaying images.
+#
 my $table_border = 1;
-if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\//)
+my $fixed_html_style = "";
+my $fixed_div_style = "";
+if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
     {
+    my $mozilla_version = $1;
+
     if(!cgi_data_peek("borders", "0"))
 	{ $table_border = 0 }
+
+    # If this is the new Mozilla, add style to the <html> element and the
+    # <div> element which encloses the toolbar so that the toolbar won't
+    # scroll.
+    if($mozilla_version >= 5.0)
+	{
+	$fixed_html_style = "margin-top: 2em";
+	$fixed_div_style = "position:fixed; top:0; left: 0;";
+	}
     }
 
 # We need an informative title.
@@ -135,7 +152,7 @@ Content-Language: $content_language
 Vary: user-agent, accept-language
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html style=\"$fixed_html_style\">
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -159,10 +176,12 @@ eval {
 #=============================================================================
 
 # IE 5.0 choaks on this:
-#<div style="position:fixed; top:0; left: 0; width:100%; height: 2em; background:white">
+#<div class="menubar" style="position:fixed; top:0; left: 0; width:100%; height: 2em; background:white">
+# So we use:
+#<div class="menubar">
 {
 print <<"Top5";
-<div class="menubar">
+<div class="menubar" style="$fixed_div_style">
 <label title="Choose the display format.">
 <span class="label">${\H_NB_("View:")}</span>&nbsp;<select name="columns" onchange="document.forms[0].submit()")>
 Top5

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 18 April 2002.
+# Last modified 19 April 2002.
 #
 
 use lib "?";
@@ -26,7 +26,7 @@ defined($PPAD_PATH) || die;
 
 my $tabbed_table = [
 	#====================================================
-	# Pane for the group queue comment
+	# Pane for the alias comment
 	#====================================================
 	{
 	'tabname' => N_("Comment"),
@@ -46,29 +46,36 @@ my $tabbed_table = [
 	# Alias for what?
 	#====================================================
 	{
-	'tabname' => 'Members',
-	'align' => 'left',
-	'valign' => 'top',
+	'tabname' => N_("For What"),
 	'cellpadding' => 20,
 	'dopage' => sub {
-		# For first time:
-		if(!defined($data{nonmembers}))
+		my $forwhat = cgi_data_move("forwhat", "");
+
+		require 'cgi_run.pl';
+		my @dest_list = ();
+		opencmd(PPOP, $PPOP_PATH, "-M", "dest", "all") || die;
+		while(<PPOP>)
 		    {
-		    require 'cgi_run.pl';
+		    my($queue, $type) = split(/\t/, $_);
+		    if($type ne "alias")
+			{
+			push(@dest_list, $queue);
+			}
+		    }
+		close(PPOP) || die;
 
-                    my @nonmembers = ();
-                    opencmd(PPOP, $PPOP_PATH, "-M", "dest", "all") || die;
-                    while(<PPOP>)
-                        {
-                        my($queue, $type) = split(/\t/, $_);
-                        next if($type ne 'printer');
-			next if(defined($members_hash{$queue}));
-                        push(@nonmembers, $queue);
-                        }
-                    close(PPOP) || die;
-		    $data{nonmembers} = join(' ', sort(@nonmembers));
-                    }
-
+		print "<p><span class=\"label\">\n";
+		print html(sprintf(_("Printer or group for which \"%s\" is an alias:"), $data{name}));
+		print "</span><br>\n";
+		print "<select tabindex=1 name=\"forwhat\" size=12>\n";
+		foreach my $dest (@dest_list)
+		    {
+		    print "<option value=\"$dest\"";
+		    print " selected" if($dest eq $forwhat);
+		    print ">$dest\n";
+		    }
+		print "</select>\n";
+		print "</p>\n";
 		}
 	},
 
@@ -141,8 +148,8 @@ my $tabbed_table = [
 
 #============================================
 # This function is called from do_tabbed().
-# It uses the "ppad group show" command to
-# get the current group configuration.
+# It uses the "ppad alias show" command to
+# get the current alias configuration.
 #============================================
 sub load
 {
@@ -151,9 +158,9 @@ require 'cgi_run.pl';
 my $name = $data{name};
 if(!defined($name)) { $name = '???' }
 
-# Use "ppad -M show" to dump the group's
+# Use "ppad -M show" to dump the alias's
 # current configuration.
-opencmd(PPAD, $PPAD_PATH, '-M', 'group', 'show', $name) || die;
+opencmd(PPAD, $PPAD_PATH, '-M', 'alias', 'show', $name) || die;
 while(<PPAD>)
     {
     chomp;
@@ -185,16 +192,10 @@ my $i;
 print "<p><b>", H_("Saving changes:"), "</b></p>\n";
 print "<pre>\n";
 
-foreach $i (qw(comment rotate passthru))
+foreach $i (qw(forwhat comment passthru))
     {
     if($data{$i} ne $data{"_$i"})
-	{ run(@PPAD, "group", $i, $name, $data{$i}) }
-    }
-
-foreach $i (qw(members))
-    {
-    if($data{$i} ne $data{"_$i"})
-	{ run(@PPAD, "group", $i, $name, split(/ /, $data{$i}, 100)) }
+	{ run(@PPAD, "alias", $i, $name, $data{$i}) }
     }
 
 # Switchsets are very hard to do.
@@ -203,7 +204,7 @@ my $unwrapped_switchset = $data{switchset};
 $unwrapped_switchset =~ s/\s*[\r\n]+\s*/ /g;
 if($unwrapped_switchset ne $data{"_switchset"})
     {
-    run(@PPAD, "group", "switchset", $name, &shell_parse($unwrapped_switchset));
+    run(@PPAD, "alias", "switchset", $name, &shell_parse($unwrapped_switchset));
     }
 }
 
@@ -217,7 +218,7 @@ foreach my $item (keys %data)
 	if($data{$item} ne $data{"_$item"})
 	    {
 	    $samba_addon_changed = 1 if($key =~ /^ppr2samba/);
-	    run(@PPAD, "group", "addon", $name, $key, $data{$item});
+	    run(@PPAD, "alias", "addon", $name, $key, $data{$item});
 	    }
     	}
     }

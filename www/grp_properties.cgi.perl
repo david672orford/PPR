@@ -46,9 +46,7 @@ my $tabbed_table = [
 	# Group membership list
 	#====================================================
 	{
-	'tabname' => 'Members',
-	'align' => 'left',
-	'valign' => 'top',
+	'tabname' => N_("Members"),
 	'cellpadding' => 20,
 	'dopage' => sub {
 		require 'cgi_membership.pl';

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/show_queues.css
-** Last modified 12 April 2002.
+** Last modified 19 April 2002.
 */
 
 /* The <body> element of the main window uses this class.  This is so that
@@ -31,11 +31,10 @@ INPUT.buttons,BUTTON { background: #b0b0b0 }
 DIV.menubar {
 	width: 100%;
 	padding: 2pt;
-	margin-top: 2pt;
-	margin-bottom: 2pt;
-	border-width: 2pt;
-	border-style: raised;
-	background-color: #e0e0e0;
+	margin 0pt;
+	border: solid black;
+	border-width: 0px 0px 1px 0px;
+	background-color: #d0d0d0;
 	}
 
 /* This is the ID number of the <div> into which the JavaScript
