@@ -25,8 +25,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2003.
+# Last modified 23 December 2003.
 #
+
+require 'cgi_redirect.pl';
 
 #
 # Return a new HIST encoded in QUERY_STRING form with the calling script as
@@ -68,27 +70,9 @@ EndOfText
 		{
 		$back_url = "http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$back_url";
 		}
-	print STDERR "Going back to \"$back_url\"\n";
+	#print STDERR "Going back to \"$back_url\"\n";
 
-	my $html_body = <<"EndQuote10";
-<html>
-<head>
-<title>Going Back</title>
-<meta http-equiv="refresh" content="1; URL=$back_url">
-</head>
-<body>
-<p>Going back to "<a href="$back_url">$back_url</a>"...
-</body>
-</html>
-EndQuote10
-
-	print <<"EndQuote20";
-Content-Type: text/html
-Content-Length: ${\length($html_body)}
-
-EndQuote20
-
-	print $html_body;
+	cgi_redirect($back_url);
 	}
 
 1;

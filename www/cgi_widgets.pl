@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 23 December 2003.
 #
 
 # This creates a checkbox followed by a label.  If the box is checked,
@@ -162,6 +162,7 @@ sub labeled_select2
 	print html_nb($label), '&nbsp;';
 	print '<select name=', html_value($name);
 	print " ", $extra if(defined $extra);
+	print ">\n";
 
 	foreach	my $value (@{$values})
 		{
@@ -237,7 +238,7 @@ sub menu_help
 sub menu_start
     {
 	my($id, $name) = @_;
-	print "\t<a href=\".\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
+	print "\t<a href=\"#\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
 	print '<div class="popup" name="menubar"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
 	}
 

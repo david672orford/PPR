@@ -107,15 +107,16 @@ function popup2(container, name)
 	{
 	// Close any other menus
 	var menus = document.getElementsByName('menubar');
-	if(!menus)
-		{
-		menus = document.all['menubar'];
-		alert('IE workaround, closing ' + menus.length + ' menus');
-		}
 	for(var i=0; i < menus.length; i++)
 		{
 		menus.item(i).style.visibility = 'hidden';
 		}
+
+	// !!!	
+	menus = document.getElementById('m_file');
+	menus.style.visibility = 'hidden';
+	menus = document.getElementById('m_view');
+	menus.style.visibility = 'hidden';
 	
 	// Find the popup menu.
 	var w = document.getElementById(name);
@@ -133,12 +134,16 @@ function popup2(container, name)
 // a popup menu or any of its child elements.  If the mouse pointer entered
 // the exposed part of the DIV element (which is transparent), then the
 // style of the DIV is altered so that it (and its children) are hidden.
+//
+// This is difficult because event.target.className doesn't exist in IE 5.x
+// for Mac and event.target doesn't exist in IE 6.x Win32!
 function offmenu(event)
 	{
-	//if(event.currentTarget == event.target)	<-- no .currentTarget in IE
-	if(event.target.className == 'popup')
+	var target = event.target ? event.target : event.srcElement;
+	//alert(target.className);
+	if(target.className == 'popup')
 		{
-		event.target.style.visibility = 'hidden';
+		target.style.visibility = 'hidden';
 		page_locked = 0;
 		}
 	}
@@ -165,11 +170,14 @@ function wopen(event, url)
 	// We have all the information we need.  Do it now.
 	window.open(url, '_blank', options);
 
-	// Try to pop the menu down.
+	// Try to pop the menu down.  This isn't absolutely necessary,
+	// so we put it in a try block so that we can return false
+	// even if it fails.
 	try {
 		if(event)
 			{
-			var node = event.target.parentNode;			// search upward for the popup frame
+			var target = event.target ? event.target : event.srcElement;
+			var node = target.parentNode;		// search upward for the popup frame
 			while(node.className != 'popup')
 				{
 				node = node.parentNode;
@@ -178,10 +186,14 @@ function wopen(event, url)
 			page_locked = 0;
 			}
 		}
-	catch(e) {
-		alert("Can't pop menu down: " + e);
-	}
-
+	catch(message)
+		{
+		//alert("Can't pop menu down: " + message);
+		}
+	
+	// Returning false indicates that we suceeded and that
+	// non-Javascript default actions (such as following
+	// a link) shouldn't be taken.
 	return false;
 	}
 

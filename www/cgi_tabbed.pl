@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 23 December 2003.
 #
 
 use 5.004;
@@ -268,8 +268,10 @@ my $spacer_height = $options->{height} - (2 * ($cellpadding - $DEFAULT_cellpaddi
 print <<"tableStart";
 <table class="tabpage" border=0 cellspacing=0 height=80% width=100% cellpadding=$cellpadding>
 <tr align=$align valign=$valign>
+<td width="1">
+<img src="../images/pixel-clear.png" alt="" width="1" height="$spacer_height" border=0>
+</td>
 <td>
-<img src="../images/pixel-clear.png" alt="" width=1 height=$spacer_height align="left" border=0>
 tableStart
 }
 

@@ -21,12 +21,12 @@ WARNING: "%%BeginFont:" line has no argument
 WARNING: Dubious font "Regression-Test-1" downloaded in print job
 WARNING: "%%BeginFile:" line has no argument
 WARNING: "%%BeginBinary:" line has no argument
-WARNING: Resource "procset Regression-Test-Non-Existent 1 15" has %%Include but never declared
-WARNING: Resource "procset The Name 0 0" has %%Include but never declared
-WARNING: Resource "file stuff.ps" has %%Include but never declared
-WARNING: Resource "font Ugly-Plain" has %%Include but never declared
-WARNING: Resource "font Regression-Test-1" supplied but never declared
-WARNING: Resource "file my.ps" supplied but never declared
+WARNING: Resource "procset Regression-Test-Non-Existent 1 15" has an %%Include but isn't listed as needed
+WARNING: Resource "procset The Name 0 0" has an %%Include but isn't listed as needed
+WARNING: Resource "file stuff.ps" has an %%Include but isn't listed as needed
+WARNING: Resource "font Ugly-Plain" has an %%Include but isn't listed as needed
+WARNING: Resource "font Regression-Test-1" is supplied but isn't listed as supplied
+WARNING: Resource "file my.ps" is supplied but isn't listed as supplied
 %!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Pages: 2

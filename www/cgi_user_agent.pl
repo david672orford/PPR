@@ -25,17 +25,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 23 December 2003.
 #
 
 sub cgi_user_agent
 	{
+	$mozilla_version = 0.0;
+	$opera_version = 0.0;
+	$gecko_version = 0.0;
+	$msie_version = 0.0;
+	
 	my %facts;
-	$facts{mozilla_version} = 0.0;
-	$facts{opera_version} = 0.0;
-	$facts{links_version} = 0.0;
-	$facts{gecko_version} = 0.0;
-	$facts{msie_version} = 0.0;
+	$facts{css} = 0;					# Very basic CSS support?
 	$facts{css_fixed} = 0;				# Does CSS fixed positioning work?
 	$facts{css_hover} = 0;				# Does CSS :hover work on any object?
 	$facts{css_dom} = 0;				# Can CSS attributes be manipulated using the W3C DOM?
@@ -44,54 +45,78 @@ sub cgi_user_agent
 
 	if(defined(my $ua = $ENV{HTTP_USER_AGENT}))
 		{
-		print STDERR "\$ua=\"$ua\"\n";
+		#print STDERR "\$ua=\"$ua\"\n";
+
+		# Many graphical browsers, such as Internet Explorer, claim to be
+		# Mozilla (Netscape).
 		if($ua =~ /^Mozilla\/(\d+\.\d+) \(([^\)]+)\)/)
 			{
-			$facts{mozilla_version} = $1;
+			$mozilla_version = $1;
 			my $details = $2;
+			
+			$facts{images} = 1;
+
 			foreach my $i (split(/;\s+/, $details))
 				{
 				if($i =~ /^rv:(\d+\.\d+)$/)
 					{
-					$facts{gecko_version} = $1;
+					$gecko_version = $1;
 					}
 				if($i =~ /^MSIE ([\d\.]+)$/)
 					{
-					$facts{msie_version} = $1;
+					$msie_version = $1;
 					}
 				}
-			if($ua =~ / Opera (\d+\.\d+)/)
-				{ $facts{opera_version} = $1 }
+
+			# Opera claiming to be IE will put its own name and version
+			# number after the list of attributes in parenthesis.
+			if($ua =~ / Opera (\S+)/)
+				{ $opera_version = $1 }
 			}
 
-		elsif($ua =~ /^Opera\/(\d+\.\d+)/)
-			{ $facts{opera_version} = $1 }
-
-		elsif($ua =~ /^Links \((\d+\.\d+)/)
+		elsif($ua =~ m#^Opera/(\S+)#)
 			{
-			$facts{links_version} = $1;
+			$opera_version = $1;
+			$facts{images} = 1;
 			}
-		}
 
-	# If it claims any level of Mozilla compatibility, it can probably do images.
-	if($facts{mozilla_version} > 0.0 || $facts{opera_version} > 0.0)
-		{
-		$facts{images} = 1;
+		elsif($ua =~ m#^Links \(([^\)]+)\)#)
+			{
+			my $details = $1;
+			foreach my $i (split(/;\s+/, $details))
+				{
+				if($i eq "fb" || $i eq "x")		# framebuffer or X-Windows
+					{ $facts{images} = 1 }
+				}
+			}
+
+		elsif($ua =~ m#^Dillo/(\S+)#)
+			{
+			$facts{images} = 1;
+			}
+
+		#elsif($ua =~ m#^Lynx/(\S+)#)
+		#	{
+		#	}
 		}
 
 	# If this browser claims compatility with Mozilla level five or greater
 	# or it really is Mozilla 1.0 or later
 	# or it is Opera 7 or greater, assume it supports all sorts of neat stuff.
-	if($facts{mozilla_version} >= 5.0 || $facts{gecko_version} >= 1.0 || $facts{opera_version} >= 7.0)
+	if($mozilla_version >= 5.0 || $gecko_version >= 1.0 || $opera_version >= 7.0)
 		{
+		$facts{css} = 1;
 		$facts{css_fixed} = 1;
 		$facts{css_hover} = 1;
 		$facts{css_dom} = 1;
 		$facts{button} = 1;
 		}
 
-	if($facts{msie_version} >= 4.0)
+	# If the browser claims to be Microsoft Internet Explorer version 4.0 or
+	# later, assume it has at least very basic CSS support with DOM bindings.
+	if($msie_version >= 4.0)
 		{
+		$facts{css} = 1;
 		$facts{css_dom} = 1;
 		}
 

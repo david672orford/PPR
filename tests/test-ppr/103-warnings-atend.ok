@@ -152,7 +152,7 @@ Printer          Status
 regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
-WARNING: Resource "procset WontClear 0 0" declared Needed but no %%Include
+WARNING: Resource "procset WontClear 0 0" listed as needed but there is no %%Include
 %!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (resource override test 5)
@@ -198,7 +198,7 @@ Printer          Status
 regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
-WARNING: Resource "procset WontClear 0 0" declared Needed but no %%Include
+WARNING: Resource "procset WontClear 0 0" listed as needed but there is no %%Include
 %!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (resource override test 6)
@@ -244,7 +244,7 @@ Printer          Status
 regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
-WARNING: Resource "procset WontClearMe 0 0" declared Needed but no %%Include
+WARNING: Resource "procset WontClearMe 0 0" listed as needed but there is no %%Include
 %!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (resource override test 7)

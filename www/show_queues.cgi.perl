@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 23 December 2003.
 #
 
 use 5.005;
@@ -115,8 +115,8 @@ if($user_agent->{css_fixed})
 	$fixed_div_style = "position:fixed; top:0; left: 0;";
 	}
 
-# If images aren't supported, turn on table borders so that the text will
-# be visually grouped in some way.
+# If images aren't supported, turn on table borders so that the alt text of
+# the icons and their labels will be visually grouped in some way.
 if(!$user_agent->{images})
 	{
 	$table_border = 1;
@@ -143,8 +143,8 @@ Vary: user-agent, accept-language
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">
-<script type="text/javascript" src="../js/show_queues.js?" defer></script>
-<link rel="stylesheet" href="../style/shared.css?" type="text/css">
+<script type="text/javascript" src="../js/show_queues.js" defer></script>
+<link rel="stylesheet" href="../style/shared.css" type="text/css">
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
 <link rel="icon" href="../images/icon-16.png" type="image/png">
 <link rel="SHORTCUT ICON" href="../images/icon-16.ico">

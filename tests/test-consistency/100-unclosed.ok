@@ -9,8 +9,8 @@ clear_output: rm: 0
 WARNING: Unclosed resource or resources
 WARNING: No "%%Trailer:" comment
 WARNING: No valid "%%Pages:" comment
-WARNING: Resource "file regression_test_unclosed" supplied but never declared
-WARNING: Resource "file regression_test_closed" supplied but never declared
+WARNING: Resource "file regression_test_unclosed" is supplied but isn't listed as supplied
+WARNING: Resource "file regression_test_closed" is supplied but isn't listed as supplied
 %!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (Unclosed Resource Test)

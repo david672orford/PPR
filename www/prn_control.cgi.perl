@@ -36,64 +36,13 @@ require 'cgi_time.pl';
 require 'cgi_intl.pl';
 require 'cgi_back.pl';
 require 'cgi_widgets.pl';
+require 'cgi_user_agent.pl';
 
 # How wide is a character (in pixels)?
 my $CHARWIDTH = 10;
 
 # How wide (in pixels) should a progress bar be?
 my $progress_width_total = 550;
-
-=pod
-
-This may be moved to a library files later.	 It can change the rather terse
-machine-readable queue status strings into something a little clearer.	It
-is also where we translate the messages into languages other than English.
-
-=cut
-sub humanify_printer_status
-	{
-	my($status, $job, $retry, $countdown, $message) = @_;
-
-	if($status eq "fault")
-		{
-		if($retry > 0)
-			{ $status = _("fault") }
-		else
-			{ $status = _("fault, no auto retry") }
-		}
-
-	elsif($status eq "engaged")
-		{
-		if($message =~ /off\s?line/i)
-			{ $status = _("offline") }
-		else
-			{ $status = _("otherwise engaged or offline") }
-		}
-
-	elsif($status eq "idle")
-		{
-		$status = _("idle");
-		}
-
-	elsif($status eq "stopt")
-		{
-		$status = _("stopt");
-		}
-
-	return $status;
-	}
-
-#
-# print a number of bytes, using kilobytes and megabytes for sufficiently 
-# large values.
-#
-sub bytes
-	{
-	my $count = shift;
-	return $count if($count < 8192);
-	return sprintf("%.1fK", $count / 1024) if($count < 1_048_576);
-	return sprintf("%.1fM", $count / 1_048_576);
-	}
 
 # Swap the real and effective user ids.
 ($<,$>) = ($>,$<);
@@ -292,6 +241,9 @@ my $html_pages = ($pages != -1) ? html($pages) : "";
 my $html_pages_started = ($pages_started > 0 || $pages > 0) ? html($pages_started) : "";
 my $html_pages_completed = ($pages_completed > 0) ? html($pages_completed) : "";
 
+my $user_agent = cgi_user_agent();
+my $border = $user_agent->{css} ? 0 : 1;
+
 # Start a form and within it a 2 cell table.  The left hand cell will
 # present information, the right hand one will contain the buttons.
 print <<"Form10";
@@ -300,38 +252,38 @@ print <<"Form10";
 <tr>
 <td align="left" valign="top">
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Name:")}</th><td width="${\($CHARWIDTH * 10)}">$printer</td>
 		<th>${\H_NB_("Comment:")}</th><td width="${\($CHARWIDTH * 32)}">$comment</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Status:")}</th><td width="${\($CHARWIDTH * 28)}">$status</td>
 		<th>${\H_NB_("Retry:")}</th><td width="${\($CHARWIDTH * 4)}">$retry</td>
 		<th>${\H_NB_("Countdown:")}</th><td width="${\($CHARWIDTH * 4)}">$countdown</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Operation:")}</th><td width="${\($CHARWIDTH * 25)}">$operation&nbsp;</td>
 		<th>${\H_NB_("Page clock:")}</th><td width="${\($CHARWIDTH * 15)}">$page_clock&nbsp;</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Printer status:")}</th><td width="${\($CHARWIDTH * 50)}">$printer_status&nbsp;</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Current job:")}</th><td width="${\($CHARWIDTH * 20)}">$display_job&nbsp;</td>
 		<th>${\H_NB_("For:")}</th><td width="${\($CHARWIDTH * 25)}">$forwhom&nbsp;</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_total)}&nbsp;</td>
 		<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_sent)}&nbsp;</td>
 		<th>${\H_NB_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
 		</tr></table>
 
-		<table><tr>
+		<table border=$border><tr>
 		<th>${\H_NB_("Total pages:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages&nbsp;</td>
 		<th>${\H_NB_("Pages started:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_started&nbsp;</td>
 		<th>${\H_NB_("Pages completed:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_completed&nbsp;</td>
@@ -387,7 +339,8 @@ if($pages > 0 && $pages_started <= $pages && $pages_completed <= $pages && $page
 		print "<span class=\"completed\">", H_NB_("Pages Completed"), "</span>/" if($width1 > 0);
 		print "<span class=\"started\">", H_NB_("Pages Started"), "</span>/";
 		print "<span class=\"unstarted\">", H_NB_("Pages Unstarted"), "</span>";
-	print "</span><br>\n";
+	print "</span>\n";
+	print "<br>\n";
 		print "<img class=\"left\" src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>"; # no "\n"!
 		print "<img class=\"middle\" src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width2>"; # no "\n"!
 		print "<img class=\"right\" src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width3>"; # no "\n"!
@@ -428,7 +381,8 @@ if($controls)
 	print "<br>\n";
 	# We use parent.close() in the next line so that if it opened in a frame by
 	# grp_control() it will close the window rather than trying to close the
-	# frame (which can't be done).
+	# frame (which can't be done).  If the window is not in a frame, it is its
+	# own parent, so this still works.
 	isubmit("action", "Close", N_("_Close"), _("Close this window."), "parent.close()");
 	print "</td>\n";
 	}
@@ -436,8 +390,8 @@ if($controls)
 print "</tr></table>\n";
 
 # If the printer status has changed, call for the reloading the queue list
-# window (the parent of this window) so that it will display an icon which
-# represents the current status of this printer.
+# window (the window that opened this window) so that it will display an icon 
+# which represents the current status of this printer.
 if(defined($data{prev_status}))
 	{
 	if($status ne $data{prev_status})
@@ -447,21 +401,20 @@ if(defined($data{prev_status}))
 	}
 $data{prev_status} = $status;
 
-# Snap the window size to fit snugly around the document.  This is commented
-# out because some forms of this window have a lot of blank space at the 
-# bottom.
-#if(!cgi_data_peek("resized", 0))
-#{
-#print <<"Tail05";
-#<script>
-#if(document.width)
-#	{
-#	window.resizeTo(document.width, document.height);
-#	}
-#</script>
-#Tail05
-#$data{resized} = 1;
-#}
+# Snap the window size to fit snugly around the document.  This is disabled
+# because some forms of this window have a lot of blank space at the bottom.
+if(0 && !cgi_data_peek("resized", 0))
+{
+print <<"Tail05";
+<script>
+if(document.width)
+	{
+	window.resizeTo(document.width, document.height);
+	}
+</script>
+Tail05
+$data{resized} = 1;
+}
 
 # Propagate data to the next generation.
 &cgi_write_data();
@@ -495,6 +448,58 @@ print <<"Tail10";
 Tail10
 
 exit 0;
+
+=pod
+
+This may be moved to a library files later.	 It can change the rather terse
+machine-readable queue status strings into something a little clearer.	It
+is also where we translate the messages into languages other than English.
+
+=cut
+sub humanify_printer_status
+	{
+	my($status, $job, $retry, $countdown, $message) = @_;
+
+	if($status eq "fault")
+		{
+		if($retry > 0)
+			{ $status = _("fault") }
+		else
+			{ $status = _("fault, no auto retry") }
+		}
+
+	elsif($status eq "engaged")
+		{
+		if($message =~ /off\s?line/i)
+			{ $status = _("offline") }
+		else
+			{ $status = _("otherwise engaged or offline") }
+		}
+
+	elsif($status eq "idle")
+		{
+		$status = _("idle");
+		}
+
+	elsif($status eq "stopt")
+		{
+		$status = _("stopt");
+		}
+
+	return $status;
+	}
+
+#
+# print a number of bytes, using kilobytes and megabytes for sufficiently 
+# large values.
+#
+sub bytes
+	{
+	my $count = shift;
+	return $count if($count < 8192);
+	return sprintf("%.1fK", $count / 1024) if($count < 1_048_576);
+	return sprintf("%.1fM", $count / 1_048_576);
+	}
 
 # end of file
 
