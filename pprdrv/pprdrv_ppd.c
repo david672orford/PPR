@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 March 2003.
+** Last modified 21 July 2003.
 */
 
 /*
@@ -547,6 +547,10 @@ void read_PPD_file(const char *ppd_file_name)
 						continue;
 						}
 					break;
+				case 'M':
+					if(lmatch(line, "*Message:"))
+						continue;
+					break;
 				case 'O':
 					if((p = lmatchp(line, "*OrderDependency:")))
 						{
@@ -592,6 +596,9 @@ void read_PPD_file(const char *ppd_file_name)
 							}
 						continue;
 						}
+					else if(lmatch(line, "*PrinterError:"))
+						continue;
+					break;
 					break;
 				case 'p':
 					if((p = lmatchp(line, "*pprRIP:")))
@@ -599,6 +606,12 @@ void read_PPD_file(const char *ppd_file_name)
 						ppd_callback_rip(p);
 						continue;
 						}
+					break;
+				case 'S':
+					if(lmatch(line, "*Source:"))
+						continue;
+					else if(lmatch(line, "*Status:"))
+						continue;
 					break;
 				case 'T':
 					if((p = lmatchp(line, "*TTRasterizer:")))

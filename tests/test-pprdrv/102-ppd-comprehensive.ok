@@ -296,7 +296,7 @@ HP
 %%EndFeature
 
 %%BeginFeature: *CustomPageSize True
-  pop pop pop 
+  pop pop pop
   << /PageSize [ 5 -2 roll ] /ImagingBBox null >> setpagedevice
 %%EndFeature
 
@@ -388,7 +388,7 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }
      { currentpagedevice /Duplex get
         { currentpagedevice /Tumble get
             {(DuplexTumble)}{(DuplexNoTumble)}ifelse
-        } { (None)}    ifelse 
+        } { (None)}    ifelse
      }{(None)}  ifelse = flush
    restore
 %%EndFeature

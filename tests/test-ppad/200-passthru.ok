@@ -11,23 +11,23 @@ PassThru: pcl
 
 Use ppad to dump the configuration...
 Printer name: regression-test1
-Comment: 
+  Comment: 
 Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
-Options: 
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
+  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+  Options: 
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: nobody@localhost
+  Alert method: mail
+  Alert address: nobody@localhost
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: none
-PPDFile: Apple LaserWriter Plus
-Bins: 
-OutputOrder: PPD
-Default Filter Options: level=1 colour=False resolution=300 freevm=172872
-    mfmode=CanonCX
 Switchset: 
 PassThru types: pcl
 ppad: 0
@@ -78,23 +78,23 @@ PassThru: pcl pdf
 
 Use ppad to dump the configuration...
 Printer name: regression-test1
-Comment: 
+  Comment: 
 Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
-Options: 
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
+  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+  Options: 
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: nobody@localhost
+  Alert method: mail
+  Alert address: nobody@localhost
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: none
-PPDFile: Apple LaserWriter Plus
-Bins: 
-OutputOrder: PPD
-Default Filter Options: level=1 colour=False resolution=300 freevm=172872
-    mfmode=CanonCX
 Switchset: 
 PassThru types: pcl pdf
 ppad: 0
@@ -145,23 +145,23 @@ PassThru: xyz abc def jhk lmn opq
 
 Use ppad to dump the configuration...
 Printer name: regression-test1
-Comment: 
+  Comment: 
 Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
-Options: 
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
+  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+  Options: 
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: nobody@localhost
+  Alert method: mail
+  Alert address: nobody@localhost
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: none
-PPDFile: Apple LaserWriter Plus
-Bins: 
-OutputOrder: PPD
-Default Filter Options: level=1 colour=False resolution=300 freevm=172872
-    mfmode=CanonCX
 Switchset: 
 PassThru types: xyz abc def jhk lmn opq
 ppad: 0
@@ -211,23 +211,23 @@ Alert: 7 mail nobody@localhost
 
 Use ppad to dump the configuration...
 Printer name: regression-test1
-Comment: 
+  Comment: 
 Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
-Options: 
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
+  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+  Options: 
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
-Alert method: mail
-Alert address: nobody@localhost
+  Alert method: mail
+  Alert address: nobody@localhost
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: none
-PPDFile: Apple LaserWriter Plus
-Bins: 
-OutputOrder: PPD
-Default Filter Options: level=1 colour=False resolution=300 freevm=172872
-    mfmode=CanonCX
 Switchset: 
 ppad: 0
 
