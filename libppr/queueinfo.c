@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 10 February 2004.
 */
 
 /*+ \file
@@ -73,6 +73,7 @@ struct PRINTER_INFO {
 	char *product;
 	char *modelname;
 	char *nickname;
+	char *shortNickName;
 	int psLanguageLevel;
 	char *psVersionStr;
 	float psVersion;
@@ -152,6 +153,7 @@ static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const cha
 	pip->product = NULL;
 	pip->modelname = NULL;
 	pip->nickname = NULL;
+	pip->shortNickName = NULL;
 	pip->psLanguageLevel = 1;
 	pip->psVersionStr = NULL;
 	pip->psVersion = 0.00;
@@ -296,6 +298,10 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 									{
 									pip->nickname = ppd_finish_QuotedValue(ppd, p+1);
 									pool_register_malloc(qip->subpool, pip->nickname);
+
+									/* special parsing rule */
+									if(!pip->shortNickName)
+										pip->shortNickName = pip->nickname;
 									}
 								continue;
 								}
@@ -336,6 +342,17 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 										pip->protocols.TBCP = TRUE;
 									if(strcmp(f, "PJL") == 0)
 										pip->protocols.PJL = TRUE;
+									}
+								continue;
+								}
+							break;
+						case 'S':
+							if((p = lmatchp(line, "*ShortNickName:")))
+								{
+								if(*p == '"' && !pip->shortNickName)
+									{
+									pip->shortNickName = ppd_finish_QuotedValue(ppd, p+1);
+									pool_register_malloc(qip->subpool, pip->shortNickName);
 									}
 								continue;
 								}
@@ -664,22 +681,22 @@ void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 				else if(do_printer(qip, qip->name, 0))
 					qip->type = QUEUEINFO_PRINTER;
 				else
-					gu_Throw("no alias, group, or printer called \"%s\"", qip->name);
+					gu_Throw("There is no alias, group, or printer called \"%s\"", qip->name);
 				break;
 	
 			case QUEUEINFO_ALIAS:
 				if(!do_alias(qip))
-					gu_CodeThrow(EEXIST, _("no alias called \"%s\""), qip->name);
+					gu_CodeThrow(EEXIST, _("There is no alias called \"%s\""), qip->name);
 				break;
 	
 			case QUEUEINFO_GROUP:
 				if(!do_group(qip, qip->name, 0))
-					gu_CodeThrow(EEXIST, _("no group called \"%s\""), qip->name);
+					gu_CodeThrow(EEXIST, _("There is no group called \"%s\""), qip->name);
 				break;
 	
 			case QUEUEINFO_PRINTER:
 				if(!do_printer(qip, qip->name, 0))
-					gu_CodeThrow(EEXIST, _("no printer called \"%s\""), qip->name);
+					gu_CodeThrow(EEXIST, _("There is no printer called \"%s\""), qip->name);
 				break;
 			}
 		}
@@ -858,6 +875,32 @@ const char *queueinfo_product(void *p)
 		if(!answer)
 			answer = pip->product;
 		else if(strcmp(answer, pip->product))
+			return NULL;
+		}
+
+	return answer;
+	}
+
+/** read the PostScript ShortNickName string of the queue's printer(s)
+ *
+ * If these is more than one printer and not all have the same product string, then
+ * this function returns NULL.
+*/
+const char *queueinfo_shortNickName(void *p)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *answer = NULL;
+
+	for(i=0; i < vector_size(qip->printers); i++)
+		{
+		vector_get(qip->printers, i, pip);
+		if(!pip->shortNickName)
+			return NULL;
+		if(!answer)
+			answer = pip->shortNickName;
+		else if(strcmp(answer, pip->shortNickName))
 			return NULL;
 		}
 

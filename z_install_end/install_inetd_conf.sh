@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_inetd_conf.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 September 2003.
+# Last modified 5 February 2004.
 #
 
 #
@@ -170,25 +170,25 @@ xinetd_config ()
 # RFC 1179 (LPR/LPD) server
 service printer
 {
-		disable = yes
 		socket_type		= stream
 		wait			= no
 		user			= root
 		server			= $HOMEDIR/lib/lprsrv
 		cps				= 400 30
 		instances		= 50
+		disable = yes
 }
 
 # WWW interface HTTP server
 service ppradmin
 {
-		disable = no
 		socket_type		= stream
 		port			= 15010
 		wait			= no
 		user			= $USER_PPRWWW
 		server			= $HOMEDIR/lib/ppr-httpd
 		instances		= 50
+		disable = no
 }
 
 # end of file

@@ -83,31 +83,45 @@ By default, queues are not shared using AppleTalk.  To share a queue, you must a
 it an AppleTalk name.  The name is stored in the queue's configuration file as an
 add-on parameter.  You can do that with the B<ppad addon> command.  For example:
 
-	$ ppad addon myprn papd "My Printer"
+	$ ppad addon myprn papname "My Printer"
 
-If the name should appear on the network within a few seconds.  If not, look in
-F</var/spool/ppr/logs/papd> to see what went wrong.  You may have to tell 
-B<papd> to reload its configuration file, like so:
+There is a log file which B<papd> creates.  It is F</var/spool/ppr/logs/papd>.
+Now use this handy command to look at the end of of the log:
+
+	$ papd --tail
+	
+If you are running Linux, within a few seconds of setting or changing
+B<papname> you should see messages 
+indicating that B<papd> is rescanning its queue configuration files
+and making any necessary adjustments.  These adjustments should be visible
+on the AppleTalk network within a few seconds.  If B<papd> doesn't 
+reload its configuration files, that may means that it can't automatically
+detect configuration changes.  In that case you can prompt it to reload,
+like so:
 
 	$ papd --reload
 	Sending Hangup to papd (PID=31791).
 
-To remove the name, simply set the papd parameter but leave off the value.
+If you check the log again, you should see that it is reloading the configuration.
 
-	$ ppad addon myprn papd
+To change the queues PAP name, simply set a new one.  When B<papd> reloads, the old
+name one will be removed and the new one added.
+
+	$ ppad addon myprn papname "Printer on David's Desk"
+
+To remove the name, simply set the papname parameter but leave off the value, like so:
+
+	$ ppad addon myprn papname
 
 If necessary, tell B<papd> to reload.  If you look F</var/spool/ppr/logs/papd>, you will
 see that B<papd> has rescanned the queue configuration files and that this time the
-papd add-on parameter is absent, so the name was removed from the network.
-
-To change the name, simply set a new one.  The old one will be removed and the new one added 
-when B<papd> reloads.
+B<papname> add-on parameter is absent, so the name was removed from the network.
 
 Sharing aliases and groups is quite simple.  One simply uses the B<ppad> commands for 
 setting alias and group add-on parameters:
 
-	$ ppad group addon mygroup "My Group"
-	$ ppad alias addon myalias "My Alias"
+	$ ppad group addon mygroup papname "My Group"
+	$ ppad alias addon myalias papname "My Alias"
 
 =head1 FILES
 

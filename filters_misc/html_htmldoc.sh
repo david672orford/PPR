@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/filters_misc/html_htmldoc.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,23 +26,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2003.
+# Last modified 5 February 2004.
 #
 
-# This is changed to the path of HTMLDOC by setup_filters:
+# This is changed to the path of HTMLDOC by indexfilters.
 HTMLDOC="?"
 
-# Assign names to the parameters
+# Assign names to the parameters.
 OPTIONS="$1"
 PRINTER="$2"
 TITLE="$3"
 
-# Set colour option to convert image to grayscale
+# Set defaults.
 colour=""
 charset=""
 level="1"
 
-# Look for parameters we should pay attention to
+# Look for parameters to which we should pay attention.
 for pair in $OPTIONS
 	do
 	case "$pair" in
@@ -62,10 +62,11 @@ for pair in $OPTIONS
 		charset="--charset `cut -d= -f2`"
 		;;
 	level=[1-9] )
-		level=`cut -d= -f2`
+		level=`echo $pair | cut -d= -f2`
 	esac
 	done
-# Run the filter:
+
+# Run the filter.
 $HTMLDOC --webpage $colour $charset --format ps$level -
 
 # Pass on the exit code:

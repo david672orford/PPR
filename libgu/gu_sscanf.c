@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2004.
+** Last modified 5 February 2004.
 */
 
 /*! \file
@@ -172,7 +172,10 @@ a pointer to a char array.</dd>
 
 <dt>%A</dt>
 
-<dd>Read a quoted string, or if there isn't one, to the end of the line</dd>
+<dd>If there is a quoted string, read to the closing quote.  Otherwise,
+read to the end of the line.  This is used for reading values which 
+must be quoted if they have leading or trailing spaces but needn't if
+they just have internal spaces.</dd>
 
 <dt>%t</dt>
 
@@ -417,7 +420,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 
 				/*
 				 * Get the rest of the line or a quoted string.  If the
-				 * line ends with whitespace, ommit it.
+				 * line ends with whitespace, omit the whitspace.
 				 */
 				case 'A':
 					switch(*string)

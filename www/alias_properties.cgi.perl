@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2004.
+# Last modified 5 February 2004.
 #
 
 use lib "?";
@@ -155,24 +155,24 @@ my $tabbed_table = [
 		'tabname' => N_("AppleTalk"),
 		'help' => "appletalk",
 		'dopage' => sub {
-				my $papd = cgi_data_move("addon papd", "");
-				$data{appletalk_save_papd} = $papd;
+				my $papname = cgi_data_move("addon papd", "");
+				$data{appletalk_save_papname} = $papd;
 				print "<div class=\"section\">\n";
 				print "<span class=\"section_label\">";
-				labeled_boolean("appletalk_share", _("Share with AppleTalk PAP"), $papd ne "");
+				labeled_boolean("appletalk_share", _("Share with AppleTalk PAP"), $papname ne "");
 				print "</span>\n";
 
 				print "<p>";
-				labeled_entry("addon papd", _("Share As:"), $papd, 32);
+				labeled_entry("addon papname", _("Share As:"), $papd, 32);
 				print "</p>\n";
 
 				print "</div>\n";
 				},
 		'onleave' => sub {
 				if(!cgi_data_peek("appletalk_share", undef) 
-						&& $data{"addon papd"} eq $data{appletalk_save_papd})
+						&& $data{"addon papname"} eq $data{appletalk_save_papd})
 					{
-					$data{"addon papd"} = "";
+					$data{"addon papname"} = "";
 					}
 				delete $data{appletalk_share};
 				delete $data{appletalk_share_save};

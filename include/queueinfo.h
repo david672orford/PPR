@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 10 February 2004.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_SEARCH, QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
@@ -46,6 +46,7 @@ gu_boolean  queueinfo_binaryOK(void *);
 const char *queueinfo_ppdFile(void *p);
 const char *queueinfo_product(void *p);
 int         queueinfo_psLanguageLevel(void *p);
+const char *queueinfo_shortNickName(void *p);
 const char *queueinfo_psVersionStr(void *p);
 double      queueinfo_psVersion(void *p);
 int         queueinfo_psRevision(void *p);

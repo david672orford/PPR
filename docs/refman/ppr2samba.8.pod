@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr2samba.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 10 February 2004.
 #
 
 =head1 NAME
@@ -47,7 +47,7 @@ B<ppd2windrv>
 =head1 DESCRIPTION
 
 [This manpage is somewhat out of date.  An attempt has been made to correct
-some of the more glaring problems, but it needs a therough going over.]
+some of the more glaring problems, but it needs a thorough going over.]
 
 These program are designed to make it easier to use PPR with Samba.  Samba
 is an open source file and print server for SMB clients such as Microsoft

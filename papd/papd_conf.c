@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 10 February 2004.
 */
 
 #include "before_system.h"
@@ -55,9 +55,7 @@
 struct DIRS {
 	const char *name;
 	enum QUEUEINFO_TYPE type;
-	} ;
-
-static struct DIRS dirs[] = {
+	} dirs[] = {
 	{ALIASCONF, QUEUEINFO_ALIAS},
 	{GRCONF, QUEUEINFO_GROUP},
 	{PRCONF, QUEUEINFO_PRINTER},
@@ -93,11 +91,11 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 	*/
 	while((line = gu_getline(line, &line_available, f)))
 		{
-		if((p = lmatchp(line, "papd:")))
+		if((p = lmatchp(line, "papname:")) && gu_sscanf(line, "%A", &p) == 1)
 			{
 			if(papname)
 				gu_free(papname);
-			papname = gu_strdup(p);
+			papname = p;
 			}
 		}
 

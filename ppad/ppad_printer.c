@@ -602,7 +602,6 @@ int printer_show(const char *argv[])
 	** defaults for this interface.
 	*/
 	{
-	int ret;
 	char *pline, *p;
 	char *cups_filter = NULL;
 	int default_resolution = 0;
@@ -614,66 +613,77 @@ int printer_show(const char *argv[])
 	   line to help us arrive at the defaults. */
 	if(PPDFile)
 		{
-		if((ret = ppd_open(PPDFile, errors)) != EXIT_OK)
-			return ret;
+		void *ppdobj = NULL;
+		
+		gu_Try {
+			ppdobj = ppdobj_new(PPDFile);
 
-		while((pline = ppd_readline()))
-			{
-			if((p = lmatchp(pline, "*Protocols:")))
+			while((pline = ppdobj_readline(ppdobj)))
 				{
-				char *f;
-				while((f = gu_strsep(&p, " \t")))
+				if((p = lmatchp(pline, "*Protocols:")))
 					{
-					if(strcmp(f, "TBCP") == 0)
-						prot.TBCP = TRUE;
-					if(strcmp(f, "PJL") == 0)
-						prot.PJL = TRUE;
-					}
-				continue;
-				} /* "*Protocols:" */
-
-			if((p = lmatchp(pline, "*pprRIP:")) && !rip_ppd_name)
-				{
-				char *f1, *f2, *f3;
-				if((f1 = gu_strsep(&p, " \t")) && (f2 = gu_strsep(&p, " \t")))
-					{
-					rip_ppd_name = gu_strdup(f1);
-					rip_ppd_output_language = gu_strdup(f2);
-					if((f3 = gu_strsep(&p, "")))
-						rip_ppd_options = gu_strdup(f3);
-					}
-				else
-					{
-					fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
-					}
-				continue;
-				} /* "*pprRIP:" */
-
-			if((p = lmatchp(pline, "*cupsFilter:")) && !cups_filter)
-				{
-				char *p1, *p2, *p3;
-				if(*p++ == '"' && (p1 = strchr(p, '"')))
-					{
-					*p1 = '\0';
-					if((p1 = gu_strsep(&p, " \t"))										/* first exists */
-								&& strcmp(p1, "application/vnd.cups-raster") == 0		/* and mime type matches */
-								&& (p2 = gu_strsep(&p, " \t"))							/* and second parameter exists */
-								&& strspn(p2, "0123456789") == strlen(p2)				/* and it is numberic */
-								&& (p3 = gu_strsep(&p, "\t"))							/* and third parameter exists */
-						)
+					char *f;
+					while((f = gu_strsep(&p, " \t")))
 						{
-						cups_filter = gu_strdup(p3);
+						if(strcmp(f, "TBCP") == 0)
+							prot.TBCP = TRUE;
+						if(strcmp(f, "PJL") == 0)
+							prot.PJL = TRUE;
 						}
+					continue;
+					} /* "*Protocols:" */
+	
+				if((p = lmatchp(pline, "*pprRIP:")) && !rip_ppd_name)
+					{
+					char *f1, *f2, *f3;
+					if((f1 = gu_strsep(&p, " \t")) && (f2 = gu_strsep(&p, " \t")))
+						{
+						rip_ppd_name = gu_strdup(f1);
+						rip_ppd_output_language = gu_strdup(f2);
+						if((f3 = gu_strsep(&p, "")))
+							rip_ppd_options = gu_strdup(f3);
+						}
+					else
+						{
+						fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
+						}
+					continue;
+					} /* "*pprRIP:" */
+	
+				if((p = lmatchp(pline, "*cupsFilter:")) && !cups_filter)
+					{
+					char *p1, *p2, *p3;
+					if(*p++ == '"' && (p1 = strchr(p, '"')))
+						{
+						*p1 = '\0';
+						if((p1 = gu_strsep(&p, " \t"))										/* first exists */
+									&& strcmp(p1, "application/vnd.cups-raster") == 0		/* and mime type matches */
+									&& (p2 = gu_strsep(&p, " \t"))							/* and second parameter exists */
+									&& strspn(p2, "0123456789") == strlen(p2)				/* and it is numberic */
+									&& (p3 = gu_strsep(&p, "\t"))							/* and third parameter exists */
+							)
+							{
+							cups_filter = gu_strdup(p3);
+							}
+						}
+					continue;
+					} /* "*cupsFilter:" */
+	
+				if(gu_sscanf(pline, "*DefaultResolution: %d", &default_resolution) == 1)
+					{
+					continue;
 					}
-				continue;
-				} /* "*cupsFilter:" */
+	
+				} /* while() */
+			}
+		gu_Final {
+			if(ppdobj)
+				ppdobj_delete(ppdobj);
+			}
+		gu_Catch {
+			fprintf(errors, "Error: %s\n", gu_exception);
+			}
 
-			if(gu_sscanf(pline, "*DefaultResolution: %d", &default_resolution) == 1)
-				{
-				continue;
-				}
-
-			} /* while() */
 		} /* if(PPDFile) */
 
 	/* Determine all of the defaults. */
@@ -681,8 +691,7 @@ int printer_show(const char *argv[])
 	jobbreak_default = interface_default_jobbreak(interface, &prot);
 	codes_default = interface_default_codes(interface, &prot);
 
-	/* If we didn't find a "*pprRIP:" line, use "*cupsFilter:".
-	   */
+	/* If we didn't find a "*pprRIP:" line, use "*cupsFilter:". */
 	if(!rip_ppd_name && cups_filter && default_resolution > 0)
 		{
 		rip_ppd_name = gu_strdup("ppr-gs");						/* !!! */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/samba/ppr2samba.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 10 February 2004.
 */
 
 /*
@@ -50,42 +50,24 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
+#include "queueinfo.h"
 #include "version.h"
 
-/*
-** If this is defined, then we warn about "ms-driver-name:" lines.
-*/
-#define OLD_WARNING 1
-
-/*
-** Here we define the names of the files we use.
-*/
+/* Here we define the names of the files we use. */
 const char smb_include_conf[] = CONFDIR"/smb-include.conf";
 const char smb_include_x_conf[] = CONFDIR"/smb-include-%d.conf";
 const char smb_protos_conf[] = HOMEDIR"/lib/smb-protos.conf";
 
-/*
-** Specify the sizes of certain data structures.
-** These sizes will be based upon the limits in pprd.
-*/
-#define MAX_SHAREABLE_PRINTERS MAX_PRINTERS
-#define MAX_GROUP_MEMBERS MAX_GROUPSIZE
-
-/*
-** Time string for time stamps.
-*/
-const char *timestamp_string;
-
-/*
-** A structure to hold the driver name of each printer
-** for later use while generating records for groups.
-*/
-static struct
-	{
-	char *printer;
-	char *drivername;
-	} printers[MAX_SHAREABLE_PRINTERS];
-static int printer_count = 0;
+/* And here are the directories we search. */
+struct DIRS {
+	const char *name;
+	enum QUEUEINFO_TYPE type;
+	} dirs[] = {
+	{ALIASCONF, QUEUEINFO_ALIAS},
+	{GRCONF, QUEUEINFO_GROUP},
+	{PRCONF, QUEUEINFO_PRINTER},
+	{NULL, QUEUEINFO_SEARCH}
+	};
 
 /* The files we will be sending our output to: */
 #define MAX_VSERVERS 10
@@ -95,23 +77,11 @@ FILE *outfiles[MAX_VSERVERS + 1];
 int debug = FALSE;
 FILE *errors;
 
+void warning(const char *message, ...)
 #ifdef __GNUC__
-void fatal(int exitval, const char *message, ...) __attribute__ (( noreturn, format (printf, 2, 3) ));
+	__attribute__ (( format (printf, 1, 2) ))
 #endif
-void fatal(int exitval, const char *message, ... )
-	{
-	va_list va;
-	va_start(va,message);
-	fputs(_("Fatal: "), errors);
-	vfprintf(errors, message, va);
-	fputc('\n', errors);
-	va_end(va);
-	exit(exitval);
-	} /* end of fatal() */
-
-#ifdef __GNUC__
-void warning(const char *message, ...) __attribute__ (( format (printf, 1, 2) ));
-#endif
+	;
 void warning(const char *message, ... )
 	{
 	va_list va;
@@ -132,6 +102,7 @@ static FILE *create_output_file(int vserver)
 	char fname[MAX_PPR_PATH];
 	const char *fnp;
 	FILE *f;
+    static const char *timestamp_string = NULL;
 
 	if(vserver == 0)
 		{
@@ -144,7 +115,16 @@ static FILE *create_output_file(int vserver)
 		}
 
 	if((f = fopen(fnp, "w")) == (FILE*)NULL)
-		fatal(EXIT_DENIED, _("Can't open \"%s\", errno=%d (%s)\n"), fnp, errno, gu_strerror(errno) );
+		gu_Throw(_("Can't open \"%s\", errno=%d (%s)\n"), fnp, errno, gu_strerror(errno));
+
+	if(!timestamp_string)
+		{
+		time_t time_now;
+		char *temp;
+		time(&time_now);
+		temp = ctime(&time_now);
+		timestamp_string = gu_strndup(temp, strcspn(temp, "\n"));
+		}
 
 	/* Put an explanatory header on the file: */
 	fprintf(f,
@@ -165,7 +145,7 @@ static FILE *create_output_file(int vserver)
 ** This is called from emmit_record(), once for the main file, and once
 ** for the virtual server file, if a virtual server entry was requested.
 */
-static void write_smb_conf_record(const char name[], const char comment[], const char drivername[], const char proto[], int vserver)
+static void write_smb_conf_record(const char directory[], const char name[], const char comment[], const char drivername[], const char proto[], int vserver)
 	{
 	FILE *f;
 
@@ -175,21 +155,21 @@ static void write_smb_conf_record(const char name[], const char comment[], const
 	f = outfiles[vserver];
 
 	/* Emmit the smb.conf section. */
+	fprintf(f, "; %s/%s\n", directory, name);
 	fprintf(f, "[%s]\n", name);
 	fprintf(f, "  comment = %s\n", comment ? comment : "");
 	fprintf(f, "  printer = %s\n", name);
-	if(drivername) fprintf(f, "  printer driver = %s\n", drivername);
+	if(drivername)
+		fprintf(f, "  printer driver = %s\n", drivername);
 	fprintf(f, "  copy = %s\n", proto ? proto : "pprproto");
 	fprintf(f, "  browseable = yes\n\n");
 	} /* end of write_smb_conf_record() */
 
-/*
-** This is called from do_printers() and do_groups().
-*/
-static void emmit_record(const char name[], const char comment[], const char drivername[], const char proto[], int vserver)
+static void emmit_record(const char directory[], const char name[], const char comment[], const char drivername[], const char proto[], int vserver)
 	{
-	write_smb_conf_record(name, comment, drivername, proto, 0);
-	if(vserver != 0) write_smb_conf_record(name, comment, drivername, proto, vserver);
+	write_smb_conf_record(directory, name, comment, drivername, proto, 0);
+	if(vserver != 0)
+		write_smb_conf_record(directory, name, comment, drivername, proto, vserver);
 	} /* end of emmit_record() */
 
 /*
@@ -200,348 +180,132 @@ static void emmit_record(const char name[], const char comment[], const char dri
 ** it to determine the drivername of any group which has it as
 ** a member.
 */
-static void do_printers(int *total, int *exported)
+static void do_config_file(struct DIRS *dir, const char qname[], int *total_exported, int *total_error)
 	{
-	DIR *DIRECTORY;
-	struct dirent *d;
 	char fname[MAX_PPR_PATH];
-	FILE *CONFFILE;
+	FILE *f = NULL;
 	char *line = NULL;
 	int line_len = 128;
-	int include;						/* boolean */
+	int exported = 1;					/* boolean */
 	char *p;
-	char *printer, *comment, *ppd, *drivername, *proto;
-	int vserver;
+	char *drivername = NULL;
+	char *proto = NULL;
+	int vserver = 0;
+	void *qobj = NULL;
 
-	if((DIRECTORY = opendir(PRCONF)) == (DIR*)NULL)
-		fatal(EXIT_NOTFOUND, _("opendir(\"%s\") failed, errno=%d (%s)\n"), PRCONF, errno, gu_strerror(errno) );
-
-	while((d = readdir(DIRECTORY)) != (struct dirent *)NULL)
-		{
-		/* Skip directories and hidden files.  These
-		   hidden files are likely to include temporary
-		   files created by ppad which were not deleted
-		   due to a crash. */
-		if(d->d_name[0] == '.')
-			continue;
-
-		/* Skip Emacs style backup files. */
-		if(strlen(d->d_name) > 0 && d->d_name[strlen(d->d_name) - 1] == '~')
-			continue;
-
-		/* Make a copy of the printer name that we can keep and
-		  clear the comment, ppd and drivername pointers. */
-		include = 1;
-		printer = gu_strdup(d->d_name);
-		comment = ppd = drivername = proto = (char*)NULL;
-		vserver = 0;
-
-		if(debug) printf(_("Sharing printer \"%s\"\n"), printer);
-
-		/* Make sure we have room in the array. */
-		if(printer_count >= MAX_SHAREABLE_PRINTERS)
+	if(debug)
+		printf("    %s", qname);
+	
+	gu_Try {
+		ppr_fnamef(fname, "%s/%s", dir->name, qname);
+		if(!(f = fopen(fname, "r")))
+			gu_Throw(_("can't open \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
+	
+		while((line = gu_getline(line, &line_len, f)))
 			{
-			fprintf(errors, _("Array overflow, printer \"%s\" not shared\n"), printer);
-			continue;
-			}
-
-		/* Open the printer configuration file. */
-		ppr_fnamef(fname, "%s/%s", PRCONF, d->d_name);
-		if((CONFFILE = fopen(fname,"r")) == (FILE*)NULL)
-			fatal(EXIT_NOTFOUND, _("Failed to open \"%s\", errno=%d (%s)\n"), fname, errno, gu_strerror(errno) );
-
-		/* Scan it for a "Comment:" line and a "PPDFile:" line,
-			possibly an "ppr2samba-drivername:" line and maybe
-			a "ppr2samba:" line. */
-		while((line = gu_getline(line, &line_len, CONFFILE)))
-			{
-			if(gu_sscanf(line, "Comment: %A", &p) == 1)
+			if((p = lmatchp(line, "ppr2samba:")))
 				{
-				if(comment) gu_free(comment);
-				comment = p;
-				if(debug) printf("  comment = %s\n", comment);
-				}
-			else if(gu_sscanf(line, "PPDFile: %A", &p) == 1)
-				{
-				if(ppd) gu_free(ppd);
-				ppd = p;
-				if(debug) printf("  ppd = %s\n", ppd);
-				}
-			else if(strncmp(line, "ppr2samba:", 10) == 0)
-				{
-				if(gu_sscanf(line, "ppr2samba: %d %S", &include, &proto) < 1)
-					warning(_("Printer \"%s\" has an invalid \"ppr2samba:\" line."), printer);
-				}
-			else if(lmatch(line, "ppr2samba-prototype:"))
-				{
-				if(gu_sscanf(line, "ppr2samba-prototype: %S", &proto) < 1)
-					warning(_("Printer \"%s\" has an invalid \"ppr2samba-prototype:\" line."), printer);
-				}
-#ifdef OLD_WARNING
-			else if(strncmp(line, "ms-driver-name:", 15) == 0)
-				{
-				warning(X_("Please change \"ms-driver-name:\" to the new \"ppr2samba-drivername:\"\n"
-						"  format in the config file for the printer \"%s\"."), printer);
-				}
-#endif
-			else if(gu_sscanf(line, "ppr2samba-drivername: %A", &p) == 1)
-				{
-				if(drivername) gu_free(drivername);
-				drivername = p;
-				if(debug) printf("  drivername = %s\n", drivername);
-				}
-			else if(strncmp(line, "ppr2samba-vserver:", 18) == 0)
-				{
-				vserver = atoi(line + 18);
-				if(vserver < 1 || vserver > MAX_VSERVERS)
-					{
-					warning(_("Printer \"%s\" has a \"ppr2samba-vserver:\" value that is not between 1 and %d."), printer, MAX_VSERVERS);
-					vserver = 0;
-					}
-				}
-			}
-
-		/* Close the printer configuration file. */
-		fclose(CONFFILE);
-
-		/* If the driver name was not specified with a "ppr2samba-drivername:"
-		   line we must open the PPD file and look for the "*ShortNickName:"
-		   line which MS-Windows 95 uses for the driver name.  If there
-		   is none, we will fall back to the "*NickName:" line.
-		   (The Adobe PPD documentation says that the "*ShortNickName:"
-		   line must come before the "*NickName:" line if it is to
-		   be considered valid.)
-		   */
-		if(!drivername && ppd)
-			{
-			char *ppdline;
-
-			if(ppd_open(ppd, errors) != EXIT_OK)
-				{
-				warning(_("You should select a new PPD file for printer \"%s\"."), printer);
-				}
-			else
-				{
-				while((ppdline = ppd_readline()))
-					{
-					if(!drivername
-						&& (strncmp(ppdline, "*ShortNickName:", 15) == 0
-						   || strncmp(ppdline, "*NickName:", 9) == 0) )
-						{
-						drivername = &ppdline[strcspn(ppdline, ":")];
-						drivername = &drivername[strspn(drivername, ": \t\"")];
-						drivername = gu_strndup(drivername, strcspn(drivername, "\""));
-						if(debug) printf("  drivername %s = %s\n", _("(from PPD file)"), drivername);
-						}
-					}
-				/* no need to close PPD file */
-				}
-			}
-
-		/* Emmit the printcap and smb.conf records. */
-		(*total)++;
-		if(include)
-			{
-			(*exported)++;
-			emmit_record(printer, comment, drivername, proto, vserver);
-			}
-
-		/* Stash information away for later use by do_groups(). */
-		printers[printer_count].printer = printer;
-		printers[printer_count].drivername = drivername;
-		printer_count++;
-
-		/* We don't need to save these: */
-		if(ppd) gu_free(ppd);
-		if(proto) gu_free(proto);
-
-		if(debug) printf("\n");
-		} /* end of directory reading loop */
-
-	closedir(DIRECTORY);
-	} /* end of do_printers() */
-
-static void do_groups(int *total, int *exported)
-	{
-	DIR *DIRECTORY;
-	struct dirent *d;
-	char fname[MAX_PPR_PATH];
-	FILE *CONFFILE;
-	char *line = NULL;
-	char *p;
-	int line_len = 128;
-	int include;
-	char *name, *comment, *drivername, *proto;
-	int vserver;
-	int deallocate_drivername;
-	int members[MAX_GROUP_MEMBERS];				/* printer array indexes */
-	int member_count;
-
-	if((DIRECTORY = opendir(GRCONF)) == (DIR*)NULL)
-		fatal(EXIT_NOTFOUND, _("opendir(\"%s\") failed, errno=%d (%s)\n"), GRCONF, errno, gu_strerror(errno) );
-
-	while((d = readdir(DIRECTORY)))
-		{
-		/* Skip directories and hidden files.  These
-		   hidden files are likely to include temporary
-		   files created by ppad which were not deleted
-		   due to a crash. */
-		if(d->d_name[0] == '.')
-			continue;
-
-		/* Skip Emacs style backup files. */
-		if(strlen(d->d_name) > 0 && d->d_name[strlen(d->d_name) - 1] == '~')
-			continue;
-
-		/* Clear the comment, ppd and drivername pointers. */
-		include = 1;
-		name = d->d_name;
-		comment = drivername = proto = (char*)NULL;
-		vserver = 0;
-		deallocate_drivername = FALSE;
-		member_count = 0;
-
-		if(debug) printf(_("Sharing group \"%s\"\n"), name);
-
-		/* Open the file. */
-		ppr_fnamef(fname, "%s/%s", GRCONF, d->d_name);
-		if((CONFFILE = fopen(fname,"r")) == (FILE*)NULL)
-			fatal(EXIT_NOTFOUND, _("Can't open \"%s\", errno=%d (%s)\n"), fname, errno, gu_strerror(errno));
-
-		/* Scan it for a "Comment:" line and a "PPDFile:" line. */
-		while((line = gu_getline(line, &line_len, CONFFILE)))
-			{
-			if(gu_sscanf(line, "Comment: %Z", &p) == 1)
-				{
-				if(comment) gu_free(comment);
-				comment = p;
-				if(debug) printf("  comment = %s\n", comment);
-				}
-			else if(strncmp(line, "Printer:", 8) == 0)
-				{
-				char *ptr = &line[8+strspn(&line[8], " \t")];
-				ptr[strcspn(ptr, " \t")] = '\0';
-
-				if(debug) printf(_("  Member: \"%s\"\n"), ptr);
-
-				if(member_count >= MAX_GROUP_MEMBERS)
-					{
-					warning(_("Group \"%s\" has too many members."), name);
-					}
+				char *temp = NULL;
+				if(gu_sscanf(p, "%d %S", &exported, &temp) < 1)
+					warning(_("queue has an invalid \"%s\" line"), "ppr2samba");
 				else
 					{
-					int x;
-					for(x=0; x < printer_count; x++)
-						{
-						if(strcmp(printers[x].printer, ptr) == 0)
-							{
-							members[member_count++] = x;
-							break;
-							}
-						}
-					if(x == printer_count)
-						warning(_("Group \"%s\" member \"%s\" does not exist."), name, ptr);
+					if(proto)
+						gu_free(proto);
+					proto = temp;
 					}
 				}
-#ifdef OLD_WARNING
-			else if(strncmp(line, "ms-driver-name:", 15) == 0)
+			else if((p = lmatchp(line, "ppr2samba-prototype:")))
 				{
-				warning(X_("Please change \"ms-driver-name:\" to the new \"ppr2samba-drivername:\"\n"
-						"  format in the config file for the group \"%s\"."), name);
-				}
-#endif
-			else if(gu_sscanf(line, "ppr2samba-drivername: %A", &p) == 1)
-				{
-				if(drivername && deallocate_drivername) gu_free(drivername);
-				drivername = p;
-				deallocate_drivername = TRUE;
-				if(debug) printf("  drivername = %s\n", drivername);
-				}
-			else if(strncmp(line, "ppr2samba:", 10) == 0)
-				{
-				if(gu_sscanf(line, "ppr2samba: %d %S", &include, &proto) < 1)
-					warning(_("Group \"%s\" has an invalid \"ppr2samba:\" line."), name);
-				}
-			else if(lmatch(line, "ppr2samba-prototype:"))
-				{
-				if(gu_sscanf(line, "ppr2samba-prototype: %S", &proto) < 1)
-					warning(_("Group \"%s\" has an invalid \"ppr2samba-prototype:\" line."), name);
-				}
-			else if(strncmp(line, "ppr2samba-vserver:", 18) == 0)
-				{
-				vserver = atoi(line + 18);
-				if(vserver < 1 || vserver > MAX_VSERVERS)
+				char *temp = NULL;
+				if(gu_sscanf(p, "%S", &temp) < 1)
+					warning(_("queue has an invalid \"%s\" line"), "ppr2samba-prototype");
+				else
 					{
-					warning(_("Group \"%s\" has a \"ppr2samba-vserver:\" value that is not between 1 and %d."), name, MAX_VSERVERS);
-					vserver = 0;
+					if(proto)
+						gu_free(proto);
+					proto = temp;
 					}
 				}
-			} /* end of while(the configuration file lines last) */
-
-		fclose(CONFFILE);
-
-		/* If the driver name was not specified with a "ppr2samba-drivername:"
-		   line, we must check each of the printers and hope they all have
-		   the same drivername.  Of course, if the first member doesn't
-		   have a drivername set, then there is no sense even trying.
-		   Furthur, if any subsequent member does not have a driver name
-		   set or has a different driver name set, then we have failed.
-		   */
-		if(!drivername)
-			{
-			int x, p;
-			char *ptr;
-
-			if(debug) printf(_("  Searching for a common drivername:\n"));
-
-			for(x=0; x < member_count; x++)
+			else if((p = lmatchp(line, "ppr2samba-drivername:")))
 				{
-				p = members[x];
-				if( (ptr = printers[p].drivername) == (char*)NULL
-							|| (drivername != (char*)NULL && strcmp(ptr, drivername)) )
+				char *temp;
+				if(gu_sscanf(p, "%A", &temp) != 1)
+					warning(_("queue has an invalid \"%s\" line"), "ppr2samba-drivername");
+	
+				else
 					{
+					if(drivername)
+						gu_free(drivername);
+					drivername = p;
 					if(debug)
-						{
-						if(!ptr)
-							printf(_("    Member \"%s\" has no driver name, oh well!\n"), printers[p].printer);
-						else
-							printf(_("    Member \"%s\" has \"%s\", oh well!\n"), printers[p].printer, ptr);
-						}
-					drivername = (char*)NULL;
-					break;
-					}
-				else
-					{
-					if(debug) printf(_("    Member \"%s\" has \"%s\", ok so far\n"), printers[p].printer, ptr);
-					drivername = ptr;
+						printf("  drivername = %s\n", drivername);
 					}
 				}
-			if(debug && drivername) printf(_("  drivername = %s\n"), drivername);
+			else if((p = lmatchp(line, "ppr2samba-vserver:")))
+				{
+				warning("the option \"ppr2samba-vserver\" is obsolete and will be removed");
+				vserver = atoi(p);
+				if(vserver < 1 || vserver > MAX_VSERVERS)
+					{
+					warning(_("queue has an invalid \"%s\" line"), "ppr2samba-vserver");
+					vserver = 0;
+					}
+				}
 			}
+	
+		if(exported)
+			{
+			qobj = queueinfo_new_load_config(dir->type, qname);
 
+			emmit_record(dir->name, qname,
+				queueinfo_comment(qobj),
+				drivername ? drivername : queueinfo_shortNickName(qobj),
+				proto,
+				vserver
+				);
+
+			if(debug)
+				printf(" exported");
+			(*total_exported)++;
+			}
+		else if(debug)
+			{
+			printf(" not exported");
+			}
+		}
+	gu_Final {
 		if(debug)
+			printf("\n");
+		if(line)
+			gu_free(line);
+		if(f)
+			fclose(f);
+		if(proto)
+			gu_free(proto);
+		if(drivername)
+			gu_free(drivername);
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch {
+		switch(dir->type)
 			{
-			if(!comment) printf(_("  No comment found\n"));
-			if(!drivername) printf(_("  drivername couldn't be determined\n"));
+			case QUEUEINFO_ALIAS:
+				fprintf(errors, _("skipping alias \"%s\": %s"), qname, gu_exception);
+				break;
+			case QUEUEINFO_GROUP:
+				fprintf(errors, _("skipping group \"%s\": %s"), qname, gu_exception);
+				break;
+			case QUEUEINFO_PRINTER:
+				fprintf(errors, _("skipping printer \"%s\": %s"), qname, gu_exception);
+				break;
+			case QUEUEINFO_SEARCH:
+				gu_Throw("assertion failed");
 			}
-
-		/* Emmit one printcap record and one smb.conf record. */
-		(*total)++;
-		if(include)
-			{
-			(*exported)++;
-			emmit_record(name, comment, drivername, proto, vserver);
-			}
-
-		if(comment) gu_free(comment);
-		if(deallocate_drivername) gu_free(drivername);
-		if(proto) gu_free(proto);
-
-		if(debug) printf("\n");
-		} /* end of directory reading loop */
-
-	closedir(DIRECTORY);
-	} /* end of do_groups() */
+		(*total_error)++;
+		}
+	} /* end of do_printers() */
 
 /*
 ** Look over the Samba configuration and point out problems.
@@ -603,7 +367,7 @@ int main(int argc, char *argv[])
 	{
 	int x;
 	gu_boolean opt_create = TRUE;
-	int total = 0, exported = 0;
+	int total = 0, total_exported = 0, total_errors = 0;
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
@@ -644,74 +408,100 @@ int main(int argc, char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(debug) printf("ppr2samba\n" VERSION "\n\n");
+	if(debug)
+		printf("ppr2samba\n" VERSION "\n\n");
 
-	/* If we are not supposed to create the smb.conf fragment file,
-	   then stat it first to make sure it exists. */
-	if(! opt_create)
-		{
-		struct stat statbuf;
-		if(stat(smb_include_conf, &statbuf) != 0)
+	gu_Try {
+		struct DIRS *dir;
+		DIR *dirobj;
+		struct dirent *direntp;
+		int len;
+	
+		/* If we shouldn't create smb-include.conf, make sure it exists. */
+		if(! opt_create)
 			{
-			/* If the error is something other than file not found,
-			   then say we couldn't open it since that is what would
-			   have been true if we had tried. */
-			if(errno != ENOENT)
-				fatal(EXIT_DENIED, _("Can't open \"%s\", errno=%d (%s)"), smb_include_conf, errno, gu_strerror(errno));
-
-			/* File not found, say so and get out since we
-			   have been asked not to create it. */
-			printf("No action taken because \"%s\" does not exist.\n", smb_include_conf);
-			return EXIT_OK;
+			struct stat statbuf;
+			if(stat(smb_include_conf, &statbuf) != 0)
+				{
+				/* If the error is something other than file not found,
+				   then say we couldn't open it since that is what would
+				   have been true if we had tried. */
+				if(errno != ENOENT)
+					gu_Throw(_("Can't open \"%s\", errno=%d (%s)"), smb_include_conf, errno, gu_strerror(errno));
+	
+				/* File not found, say so and get out since we
+				   have been asked not to create it. */
+				printf("No action taken because \"%s\" does not exist.\n", smb_include_conf);
+				return EXIT_OK;
+				}
 			}
-		}
+	
+		/* Clear the file array. */
+		for(x=0; x <= MAX_VSERVERS; x++)
+			outfiles[x] = NULL;
 
-	/* Get a timestamp to use in the files we create. */
-	{
-	time_t time_now;
-	char *temp;
-	time(&time_now);
-	temp = ctime(&time_now);
-	timestamp_string = gu_strndup(temp, strcspn(temp, "\n"));
-	}
-
-	/* Clear the file array. */
-	for(x=0; x <= MAX_VSERVERS; x++)
-		outfiles[x] = NULL;
-
-	/* Add an entry for each printer. */
-	do_printers(&total, &exported);
-
-	/* Add an entry for each group. */
-	do_groups(&total, &exported);
-
-	/* Close the smb.conf fragment files and delete those
-	   we didn't use. */
-	for(x=0; x < MAX_VSERVERS; x++)
-		{
-		if(outfiles[x])
+		/* Do aliases, groups, and printers. */
+		for(dir=dirs; dir->name; dir++)
 			{
-			fclose(outfiles[x]);
+			if(debug)
+				printf("Searching directory \"%s\"...\n", dir->name);
+	
+			if(!(dirobj = opendir(dir->name)))
+				gu_Throw(_("Can't open directory \"%s\", errno=%d (%s)\n"), dir->name, errno, gu_strerror(errno));
+	
+			while((direntp = readdir(dirobj)))
+				{
+				/* Skip . and .. and hidden files. */
+				if(direntp->d_name[0] == '.')
+					continue;
+	
+				/* Skip Emacs style backup files. */
+				len = strlen(direntp->d_name);
+				if(len > 0 && direntp->d_name[len-1] == '~')
+					continue;
+
+				total++;
+				do_config_file(dir, direntp->d_name, &total_exported, &total_errors);
+				}
+	
+			closedir(dirobj);
 			}
+	
+		/* Close the smb.conf fragment files and delete those
+		   we didn't use. */
+		for(x=0; x < MAX_VSERVERS; x++)
+			{
+			if(outfiles[x])
+				{
+				fclose(outfiles[x]);
+				}
+			else
+				{
+				char fname[MAX_PPR_PATH];
+				ppr_fnamef(fname, smb_include_x_conf, x);
+				unlink(fname);
+				}
+			}
+	
+		/* Report on what we did. */
+		if(total == 1)
+			printf(_("%d of 1 queue exported to \"%s\".\n"), total_exported, smb_include_conf);
 		else
-			{
-			char fname[MAX_PPR_PATH];
-			ppr_fnamef(fname, smb_include_x_conf, x);
-			unlink(fname);
-			}
+			printf(_("%d of %d queues exported to \"%s\".\n"), total_exported, total, smb_include_conf);
+		if(total_errors > 0)
+			printf(_("%d of %d queue(s) skipt due to errors.\n"), total_errors, total);
+	
+		/* Produce warning messages. */
+		check_for_problems();
+	
+		if(debug)
+			printf(_("Done.\n"));
 		}
-
-	/* Report on what we did. */
-	if(total == 1)
-		printf(_("%d of 1 queue exported to \"%s\".\n"), exported, smb_include_conf);
-	else
-		printf(_("%d of %d queues exported to \"%s\".\n"), exported, total, smb_include_conf);
-
-	/* Produce warning messages: */
-	check_for_problems();
-
-	if(debug) printf(_("Done.\n"));
-
+	gu_Catch {
+		fprintf(stderr, "%s: %s\n", argc > 0 ? argv[0] : "?", gu_exception);
+		return EXIT_INTERNAL;
+		}
+	
 	return EXIT_OK;
 	} /* end of main() */
 

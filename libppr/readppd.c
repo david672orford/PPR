@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2004.
+** Last modified 10 February 2004.
 */
 
 /*+ \file
@@ -69,7 +69,7 @@ char *ppd_find_file(const char ppdname[])
 		return gu_strdup(ppdname);
 
 	if(!(f = fopen(PPD_INDEX, "r")))
-		gu_Throw("Can't open \"%s\", errno=%d (%s)", PPD_INDEX, errno, gu_strerror(errno));
+		gu_Throw("can't open \"%s\", errno=%d (%s)", PPD_INDEX, errno, gu_strerror(errno));
 
 	while((p = line = gu_getline(line, &line_len, f)))
 		{
@@ -446,7 +446,7 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 	if(!(self->f[self->nest] = fopen(self->fname[self->nest], "r")))
 	#endif
 		{
-		gu_Throw(_("Can't open \"%s\", errno=%d (%s).\n"), self->fname[self->nest], errno, gu_strerror(errno));
+		gu_Throw(_("can't open PPD file \"%s\", errno=%d (%s)\n"), self->fname[self->nest], errno, gu_strerror(errno));
 		}
 	}
 

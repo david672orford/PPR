@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_start_restart.sgml
-Last Modified: 29 January 2004
+Last Modified: 5 February 2004
 Last Proofread: 
 -->
 
@@ -22,7 +22,9 @@ You can start it manually with the following commands:
 # /usr/lib/ppr/bin/papd
 </screen>
 The first command starts the spooler daemon, the second starts the server
-for Macintosh clients.
+for Macintosh clients.  Any daemons needed for AppleTalk should be started
+before starting B<papd>.  For example, if AppleTalk is provided be Netatalk,
+you should start Netatalk's B<atalkd> before starting B<papd>.
 </para>
 
 <para>

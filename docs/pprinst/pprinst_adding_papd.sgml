@@ -21,7 +21,7 @@ use a command like this:
 
 <para>
 <screen>
-# ppad group addon ourgroup papd "Our Group"
+# ppad group addon ourgroup papname "Our Group"
 </screen>
 </para>
 
