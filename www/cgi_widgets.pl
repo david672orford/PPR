@@ -10,15 +10,17 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 24 April 2002.
+# Last modified 24 May 2002.
 #
 
 sub labeled_checkbox
     {
     my($name, $label, $value, $checked) = @_;
+    print '<span class="widget">';
     print "<input type=\"checkbox\" name=\"$name\" value=\"$value\"";
     print " checked" if($checked);
-    print "> <span class=\"label\">", html($label), "</span>\n";
+    print "> <span class=\"label\">", html($label), "</span>";
+    print "</span>\n";
     }
 
 sub labeled_select
@@ -29,6 +31,7 @@ sub labeled_select
     my $selected = shift;
     my @options = @_;
 
+    print '<span class="widget">';
     print '<span class="label">', html($label), "</span>", " " if(defined $label);
     print "<select name=\"$name\">\n";
     foreach my $option (@options)
@@ -41,11 +44,13 @@ sub labeled_select
 	print "\n";
 	}
     print " </select>\n";
+    print "</span>\n";
     }
 
 sub labeled_entry
     {
     my($name, $label, $value, $size) = @_;
+    print '<span class="widget">';
     if(defined $label)
 	{
 	print '<span class="label">', html($label), "</span> ";
@@ -57,6 +62,7 @@ sub labeled_entry
 sub labeled_blank
     {
     my($label, $value, $size) = @_;
+    print '<span class="widget">';
     print '<span class="label">', html($label), "</span> ";
     print "<span class=\"value\">", html($value);
     $size -= length($value);
@@ -64,16 +70,18 @@ sub labeled_blank
 	{
 	print "&nbsp;";
 	}
+    print "</span>";
     print "</span>\n";
     }
 
 sub labeled_boolean
     {
     my($name, $label, $value) = @_;
+    print '<span class="widget">';
     print "<input type=\"checkbox\" name=\"$name\" value=\"1\"";
     print " checked" if($value);
     print "> <span class=\"label\">", html($label), "</span>";
-    print "\n";
+    print "</span>\n";
     }
 
 1;

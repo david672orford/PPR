@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 8 May 2002.
+# Last modified 16 July 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -105,6 +105,7 @@ echo "10) HP-UX 10.2 *"
 echo "11) ULTRIX 4.4 RISC *"
 echo "12) SunOS 5.6--5.8 (Solaris 2.6--8.0)"
 echo "13) FreeBSD 3.1R, 4.3R"
+echo "14) Darwin (Mac OS X)"
 echo
 echo " * See INSTALL.txt for notes on this port."
 echo
@@ -204,6 +205,13 @@ case "$answer" in
 		SYSTEM="FREEBSD"
 		DESCRIPTION="FreeBSD 3.1R"
 		ACTUAL_SYSTEM=`uname -s | sed -e 's/^FreeBSD/FREEBSD/'`
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	14 )
+		SYSTEM="DARWIN"
+		DESCRIPTION="Darwin (Mac OS X)"
+		ACTUAL_SYSTEM=`uname -s | tr a-z A-Z`
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
@@ -847,6 +855,8 @@ cat >&3 <<===EndofHere6===
 #============================================================
 ===EndofHere6===
 
+
+#============================================================
 if [ $SYSTEM = "ATTWGS" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -875,7 +885,7 @@ INSTALLNETBIOS=installnetbios
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "SUNOS_5" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -900,7 +910,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "SUNOS_5_6" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -925,7 +935,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "NETBSD" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -950,7 +960,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "LINUX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -990,7 +1000,7 @@ INTLLIBS=
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "SUNOS4" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1015,7 +1025,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "OSF1" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1056,7 +1066,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "IRIX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1104,7 +1114,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "CYGWIN" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1134,7 +1144,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "UWIN" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1182,7 +1192,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "HPUX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1225,7 +1235,7 @@ PARALLEL=generic
 fi
 
 
-
+#============================================================
 if [ $SYSTEM = "ULTRIX" ]
 then
 echo "      Emitting section for $DESCRIPTION"
@@ -1273,37 +1283,33 @@ PARALLEL=generic
 fi
 
 
-
-if [ $SYSTEM = "FREEBSD" ]
+#============================================================
+if [ $SYSTEM = "DARWIN" ]
 then
 echo "      Emitting section for $DESCRIPTION"
-cat >&3 <<===EndFreeBSD===
-MAKE=gmake
+cat >&3 <<===EndDarwin===
+MAKE=make
 MAKEFLAGS=
 STRIP=strip
 OBJ=o
 DOTEXE=
 LIBEXT=a
-LIBCMD=ar -crs
-CC=gcc
+LIBCMD=ar -cr
+CC=cc
 CFLAGS=$GCC_CFLAGS -I ../include -I /usr/local/include \$(MISC_OPTS)
-LD=gcc
-LDFLAGS=-L /usr/local/lib
-CPP=gcc -E -P -xc-header
+LD=cc
+LDFLAGS=
+CPP=cpp
 SOCKLIBS=
 LEX=lex
 LEX_LIB=-ll
 PARALLEL=generic
-===EndFreeBSD===
+===EndDarwin===
 fi
 
-#cat >&3 <<===EndAll===
-#LDLIBS=../libppr.\$(LIBEXT) ../libgu.\$(LIBEXT)
-#
-#===EndAll===
 
 
-
+#============================================================
 echo "      Emitting make rules"
 cat >&3 <<'===MakeRules==='
 #==============================================================

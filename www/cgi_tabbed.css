@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 23 May 2002.
+** Last modified 24 May 2002.
 */
 
 BODY {
@@ -39,7 +39,7 @@ INPUT.tabinactive,BUTTON.tabinactive {
 	}
 
 /* In Mozilla (at least up to 1.0rc1) we have to set this attributes because
-   the default settings of <button> are different from those of 
+   the default settings of <button> are different from those of
    <input type="button">. */
 BUTTON {
 	padding: 0pt 5pt 0pt 5pt;
@@ -53,6 +53,8 @@ SPAN.button {
 	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
 	padding: 3px 2mm 3px 2mm;
 	margin: 1mm;
+	/* lame but works with Mozilla 1.0rc2 */
+	position: relative; bottom: 4px;
 	}
 SPAN.button A {
 	text-decoration: none;
@@ -153,18 +155,15 @@ TABLE.ppd TD {
 /* This is for real tables with fine rules. */
 TABLE.lines {
 	background-color: white;
-	border-width: 1px;
-	border-style: solid;
-	border-color: black;
-	padding: 2px;
+	border: solid black;
+	border-width: 1px 0px 0px 1px;
 	}
 TABLE.lines TH, TABLE.lines TD {
 	white-space: nowrap;
-	text-align: 1px;
+	text-align: left;
 	padding: 3pt;
-	border-width: thin;
-	border-style: solid;
-	border-color: black;
+	border: solid black;
+	border-width: 0px 1px 1px 0px;
 	}
 
 /* end of file */

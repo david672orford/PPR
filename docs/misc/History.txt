@@ -7742,3 +7742,14 @@ line was being parsed twice.
   the MS-Windows PostScript drivers, renamed "HP C LaserJet 4500-PS" to "HP
   Color LaserJet 4500".
 
+* www/cgi_widgets.pl: added <span class="widget"> </span> around widgets.
+
+* Configure: added Darwin (Mac OS X)
+
+* Fixed fix bug that hide errors in libpprdb/gdbm_dbtrans.c.  (Thanks to
+  Jacques Sansdrap.)
+
+* pprdrv/pprdrv.c: fixed messed up decimal point splitting in formatting of
+  money in the printlog.  (Again, thanks to Jacques Sansdrap.)
+
+
