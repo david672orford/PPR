@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2002.
+** Last modified 8 March 2002.
 */
 
 #include "before_system.h"
@@ -110,7 +110,14 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 	    }
 
 	/* Here we go! */
-	execl("lib/ppr-respond", "ppr-respond", jobname, code_str, prnname, per_duplex_str, per_simplex_str, NULL);
+	execl("lib/ppr-respond", "ppr-respond",
+		"pprd",
+		jobname,
+		code_str,
+		prnname,
+		per_duplex_str,
+		per_simplex_str,
+		NULL);
 	debug("child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	exit(12);
 	} /* end of child clause */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 7 March 2002.
+** Last revised 8 March 2002.
 */
 
 /*
@@ -169,54 +169,119 @@ static struct {const char *name; unsigned int bit;} gab_table[]=
 =========================================================================*/
 
 /*
-** Delete any files we have created and exit.
+** This should be used for _all_ abnormal terminations.  We figure
+** out the cause from the exit code and print an error message
+** on stderr or run a responder or both.
 */
-void ppr_abort(int exitval)
+void ppr_abort(int exitval, const char *extra)
     {
+    int responder_code;
+    const char *template;
+
+    switch(exitval)
+	{
+	case PPREXIT_NOFILTER:
+	    responder_code = RESP_NOFILTER;
+	    template = "no filter for %s";
+	    break;
+	case PPREXIT_NOMATCH:
+	    responder_code = RESP_BADMEDIA;
+	    template = "can't match medium \"%s\"";
+	case PPREXIT_NOCHARGEACCT:
+	    responder_code = RESP_CANCELED_NOCHARGEACCT;
+	    template = "charge account \"%s\" doesn't exist";
+	    break;
+	case PPREXIT_OVERDRAWN:
+	    responder_code = RESP_CANCELED_OVERDRAWN;
+	    template = "the account \"%s\" is overdrawn";
+	    break;
+	case PPREXIT_BADAUTH:
+	    responder_code = RESP_CANCELED_BADAUTH;
+	    template = "bad authcode";
+	    break;
+	case PPREXIT_NONCONFORMING:
+	    responder_code = RESP_CANCELED_NONCONFORMING;
+	    template = "input does not conform to DSC";
+	    break;
+	case PPREXIT_ACL:
+	    responder_code = RESP_CANCELED_ACL;
+	    template = "user \"%s\" denied access by queue ACL";
+	    break;
+	case PPREXIT_NOSPOOLER:
+	    responder_code = RESP_NOSPOOLER;
+	    template = "pprd is not running";
+	    break;
+	case PPREXIT_NOTPOSSIBLE:
+	    responder_code = RESP_CANCELED_NOPAGES;
+	    template = "can't selected pages because they are not delimited";
+	    break;
+	case PPREXIT_SYNTAX:				/* from fatal() */
+	    responder_code = RESP_FATAL_SYNTAX;
+	    template = "%s";
+	    break;
+	default:					/* from fatal() */
+	    responder_code = RESP_FATAL;
+	    template = "%s";
+	    break;
+	}
+
+    if(ppr_respond_by & PPR_RESPOND_BY_STDERR)
+	{
+	fflush(stdout);				/* <-- prevent confusion */
+	fprintf(stderr, "%s: ", myname);
+	fprintf(stderr, template, extra);
+	fputs("\n", stderr);
+	}
+
+    if(ppr_respond_by & PPR_RESPOND_BY_RESPONDER)
+	{
+	respond(responder_code, extra);
+	}
+
     file_cleanup();
+
     exit(exitval);
     }
 
 /*
-** Handle fatal errors by printing a message and exiting.
-** Since this calls ppr_abort(), file cleanup will get called.
+** Handle fatal errors by formatting a message and then calling
+** ppr_abort().
 */
 void fatal(int exitval, const char *message, ... )
     {
     va_list va;
     char errbuf[256];
 
-    fflush(stdout);					/* In case we will be printing on stderr */
-
     va_start(va, message);				/* Format the error message */
     vsnprintf(errbuf, sizeof(errbuf), message, va);	/* as a string. */
     va_end(va);
 
-    if(exitval == PPREXIT_SYNTAX)
-	respond(RESP_FATAL_SYNTAX, errbuf);
-    else
-	respond(RESP_FATAL, errbuf);
-
-    ppr_abort(exitval);
+    ppr_abort(exitval, errbuf);
     } /* end of fatal() */
 
 /*
-** A few routines in libppr use this to print to stderr.
+** A few routines in libppr use this to print warnings to stderr.  They can't
+** print to stderr directly because they are also called from pprdrv, in
+** which case the messages should go to the log file.
+**
+** We also use this function ourselves to print non-fatal error messages.
+** Of course, we use warning() when the non fatal error is related to
+** the contents of the job file.
 */
 void error(const char *message, ... )
     {
     va_list va;
-
+    fprintf(stderr, "%s: ", myname);
     va_start(va,message);		/* Format the error message */
     vfprintf(stderr,message,va);	/* as a string. */
     va_end(va);
-
     fputc('\n', stderr);
     } /* end of error() */
 
 /*
-** Call this function to issue a warning.  It is printed on stderr or sent to
-** the log file, depending on whether or not the ``-w log'' switch was used.
+** Call this function to issue a warning related to the contents of the job.
+** It is printed on stderr or sent to the log file, depending on whether or
+** not the ``-w log'' switch was used.
 */
 void warning(int level, const char *message, ... )
     {
@@ -262,7 +327,7 @@ void warning(int level, const char *message, ... )
     } /* end of warning() */
 
 /*=========================================================================
-** Miscelainious support routines for main().
+** Miscelanious support routines for main().
 =========================================================================*/
 /*
 ** Write the Feature: lines to the queue file.
@@ -523,14 +588,12 @@ static void authorization_charge(void)
 
 	    if(ret == USER_ISNT)		/* If user not found, */
 		{				/* then, turn away. */
-		respond(RESP_CANCELED_NOCHARGEACCT, qentry.charge_to);
-		ppr_abort(PPREXIT_NOCHARGEACCT);
+		ppr_abort(PPREXIT_NOCHARGEACCT, qentry.charge_to);
 		}
 
 	    else if(ret == USER_OVERDRAWN)	/* If account overdrawn, */
 		{				/* then, turn away. */
-		respond(RESP_CANCELED_OVERDRAWN, qentry.charge_to);
-		ppr_abort(PPREXIT_OVERDRAWN);
+		ppr_abort(PPREXIT_OVERDRAWN, qentry.charge_to);
 		}
 
 	    /* We check for database error. */
@@ -551,11 +614,10 @@ static void authorization_charge(void)
 	    ** If -a switch and an authcode is required for this user and
 	    ** no or wrong authcode, send a message and cancel the job.
 	    */
-	    if(use_authcode && user.authcode[0] != (char)NULL &&
+	    if(use_authcode && user.authcode[0] != '\0' &&
 			(AuthCode == (char*)NULL || strcmp(AuthCode, user.authcode)) )
 		{
-		respond(RESP_CANCELED_BADAUTH, qentry.charge_to);
-		ppr_abort(PPREXIT_BADAUTH);
+		ppr_abort(PPREXIT_BADAUTH, qentry.charge_to);
 		}
 	    } /* end of if not preauthorized */
 	} /* end of if use_authcode or protected printer */
@@ -565,8 +627,7 @@ static void authorization_charge(void)
 	{
 	if(qentry.attr.pages < 0)
 	    {
-	    respond(RESP_CANCELED_NONCONFORMING, (char*)NULL);
-	    ppr_abort(PPREXIT_NONCONFORMING);
+	    ppr_abort(PPREXIT_NONCONFORMING, (char*)NULL);
 	    }
 
 	if(qentry.opts.copies == -1)	/* If `secure' printer, force */
@@ -618,14 +679,12 @@ static void authorization_acl(void)
 
 	if(!real_passes)
 	    {
-	    respond(RESP_CANCELED_ACL, qentry.username);
-	    ppr_abort(PPREXIT_ACL);
+	    ppr_abort(PPREXIT_ACL, qentry.username);
 	    }
 
 	if(!proxy_for_passes)
 	    {
-	    respond(RESP_CANCELED_ACL, qentry.proxy_for);
-	    ppr_abort(PPREXIT_ACL);
+	    ppr_abort(PPREXIT_ACL, qentry.proxy_for);
 	    }
 	}
     } /* end of authorization_acl() */
@@ -638,9 +697,9 @@ static void authorization_acl(void)
 ** Call this function before aborting if there is any chance
 ** of files existing.  It closes the open files and removes them.
 **
-** Since respond() calls this function, this function must not call
-** respond() since doing so would almost certainly create infinite
-** recursion.
+** Since ppr_abort() calls this function, this function must not call
+** ppr_abort() or fatal() since doing so would almost certainly create
+** infinite recursion.
 */
 void file_cleanup(void)
     {
@@ -701,7 +760,7 @@ void file_cleanup(void)
 static void gallows_speach(int signum)
     {
     fprintf(stderr, _("PPR: mortally wounded by signal %d (%s).\n"), signum, gu_strsignal(signum));
-    ppr_abort(PPREXIT_KILLED);
+    ppr_abort(PPREXIT_KILLED, (char*)NULL);
     } /* end of gallows_speach() */
 
 /*
@@ -1816,13 +1875,13 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 
 	case 9000:				/* --help */
 	    help(stdout);
-	    ppr_abort(PPREXIT_OK);
+	    exit(PPREXIT_OK);	/* not ppr_abort() */
 
 	case 9001:				/* --version */
 	    puts(VERSION);
 	    puts(COPYRIGHT);
 	    puts(AUTHOR);
-	    ppr_abort(PPREXIT_OK);
+	    exit(PPREXIT_OK);	/* not ppr_abort() */
 
 	case '?':				/* Unrecognized switch */
 	    fatal(PPREXIT_SYNTAX, _("Unrecognized switch %s.  Try --help"), true_option);
@@ -2269,7 +2328,7 @@ int main(int argc, char *argv[])
 	goto zero_length_file;		/* we have nothing to do. */
 
     /*
-    ** Open the FIFO now so we will know the daemon is running.
+    ** Open the FIFO now so we will find out right away if the daemon is running.
     ** In former versions, we did this sooner so that the responder
     ** in pprd could be reached, but now that we have our own
     ** responder launcher we can wait until the destination name is set so
@@ -2279,8 +2338,7 @@ int main(int argc, char *argv[])
     */
     if((FIFO = open_fifo(FIFO_NAME)) == (FILE*)NULL)
         {
-        respond(RESP_NOSPOOLER, (char*)NULL);
-        ppr_abort(PPREXIT_NOSPOOLER);
+        ppr_abort(PPREXIT_NOSPOOLER, (char*)NULL);
         }
 
     /*
@@ -2592,12 +2650,13 @@ int main(int argc, char *argv[])
     */
     if(option_page_list)
 	{
+	/* We can't do it if pages aren't marked off. */
 	if(! qentry.attr.script)
 	    {
-	    respond(RESP_CANCELED_NOPAGES, "");
-	    ppr_abort(PPREXIT_NOTPOSSIBLE);
+	    ppr_abort(PPREXIT_NOTPOSSIBLE, (char*)NULL);
  	    }
 
+	/* Try to parse the list of pages to be printed. */
 	if(pagemask_encode(&qentry, option_page_list) == -1)
  	    {
  	    fatal(PPREXIT_SYNTAX, "Can't parse page list");
@@ -2625,8 +2684,8 @@ int main(int argc, char *argv[])
     	** Create and fill the queue file.  It is sad that this
     	** is the only place we check for disk full.
     	**
-    	** Note that fatal() calls respond() which calls file_cleanup(),
-    	** to the queue file should be removed.
+    	** Note that fatal() file_cleanup(), so the queue file should be
+    	** removed.
     	*/
     	if(write_queue_file(&qentry) == -1)
     	    fatal(PPREXIT_DISKFULL, _("Disk full"));

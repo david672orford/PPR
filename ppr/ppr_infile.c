@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 March 2002.
+** Last modified 8 March 2002.
 */
 
 /*
@@ -423,6 +423,7 @@ int in_getc(void)
 */
 void in_ungetc(int c)
     {
+    const char function[] = "in_ungetc";
     if(c != EOF)
 	{
 	if(in_ptr > in_buffer_rock_bottom)
@@ -434,7 +435,7 @@ void in_ungetc(int c)
 	    }
 	else
 	    {
-	    fatal(PPREXIT_OTHERERR, "%s: in_ungetc(): too far!", __FILE__);
+	    fatal(PPREXIT_OTHERERR, "%s(): in_ungetc(): too far!", function);
 	    }
 	}
     } /* end of in_ungetc() */
@@ -1575,7 +1576,7 @@ static void stubborn_rewind(void)
 	qentry.attr.input_bytes = skip;
 
 	/* Build a temporary file name and open the file. */
-	ppr_fnamef(fname, TEMPDIR"/ppr-%d-%d-XXXXXX", (int)getpid(), tmpnum++);
+	ppr_fnamef(fname, "%s/ppr-%d-%d-XXXXXX", TEMPDIR, (int)getpid(), tmpnum++);
 	if((t_handle = mkstemp(fname)) == -1)
 	    fatal(PPREXIT_OTHERERR, "%s(): mkstemp(\"%s\") failed, errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
 
@@ -1869,12 +1870,23 @@ static void no_filter(const char *file_type_str)
     	}
 
     /*
-    ** If the -e hexdump switch has not been used, try to use responder first.
+    ** I don't like this code.
+    **
+    ** If the -e hexdump switch has not been used, and we are putting
+    ** the message on stderr or on the responder and a responder is
+    ** available, then ppr_abort() can handle it.
     */
-    else if(!option_nofilter_hexdump && respond(RESP_NOFILTER, file_type_str) == 0)
+    else if(!option_nofilter_hexdump
+		&&
+		(
+			(ppr_respond_by & PPR_RESPOND_BY_STDERR)
+			||
+			((ppr_respond_by & PPR_RESPOND_BY_RESPONDER)
+				&& strcmp(qentry.responder, "none") != 0)
+		)
+	    )
 	{
-	/* The responder worked!  We can do an abort! */
-	ppr_abort(PPREXIT_NOFILTER);
+	ppr_abort(PPREXIT_NOFILTER, file_type_str);
 	}
 
     /*

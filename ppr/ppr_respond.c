@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 March 2002.
+** Last modified 8 March 2002.
 */
 
 /*
@@ -71,55 +71,19 @@ static void empty_reapchild(int sig)
 int respond(int response_code, const char extra[])
     {
     const char function[] = "respond";
-    char jobname[128];
-    int fd;
     pid_t pid;			/* Process id of responder */
     int wstat;			/* wait() status */
     int wret;			/* wait() return code */
 
-    /* Bail out of here if we can't do anything. */
-    if(!(ppr_respond_by & PPR_RESPOND_BY_RESPONDER) && !(ppr_respond_by & PPR_RESPOND_BY_STDERR))
-    	return -1;
     if(strcmp(qentry.responder, "none") == 0)
     	return -1;
-
-    /* Build a string containing all of the queue id elements separated by spaces. */
-    snprintf(jobname, sizeof(jobname), "%s:%s",
-		qentry.destnode != (char*)NULL ? qentry.destnode : ppr_get_nodename(),
-		qentry.destname);
-
-    /* Create a temporary file that looks enough like a queue file to
-       keep ppr-respond happy. */
-    {
-    char filename[MAX_PPR_PATH];
-    char buffer[1024];
-    ppr_fnamef(filename, "%s/ppr-respond-XXXXXX", TEMPDIR);
-    if((fd = gu_mkstemp(filename)) == -1)
-	{
-	fprintf(stderr, "%s(): gu_mkstemp(\"%s\") failed, errno=%d (%s)\n", function, filename, errno, gu_strerror(errno));
-	return -1;
-	}
-    unlink(filename);
-    snprintf(buffer, sizeof(buffer),
-	"For: %s\n"
-	"Title: %s\n"
-	"Response: %.*s %.*s %.*s\n",
-		qentry.For ? qentry.For : "???",
-		qentry.Title ? qentry.Title : "",
-		MAX_RESPONSE_METHOD, qentry.responder,
-		MAX_RESPONSE_ADDRESS, qentry.responder_address,
-		MAX_RESPONDER_OPTIONS, qentry.responder_options ? qentry.responder_options : ""
-    	);
-    write(fd, buffer, strlen(buffer));
-    lseek(fd, SEEK_SET, 0);
-    }
 
     /* Set a harmless SIGCHLD handler. */
     signal(SIGCHLD, empty_reapchild);
 
     /* Change to /usr/lib/ppr so we can find responders and responders can find stuff. */
     if(chdir(HOMEDIR) == -1)
-    	fprintf(stderr, "respond(): chdir(\"%s\") failed, errno=%d (%s)\n", HOMEDIR, errno, gu_strerror(errno));
+    	fprintf(stderr, "%s(): chdir(\"%s\") failed, errno=%d (%s)\n", function, HOMEDIR, errno, gu_strerror(errno));
 
     /* Fork and exec a responder. */
     if((pid = fork()) == -1)
@@ -130,24 +94,14 @@ int respond(int response_code, const char extra[])
 
     if(pid == 0)               /* if child */
 	{
+	int fd;
 	char response_code_str[6];
 
 	/* Convert the response code to a string. */
 	snprintf(response_code_str, sizeof(response_code_str), "%d", response_code);
 
-	/* Move the queue file to file descriptor 3 if it isn't there already. */
-	if(fd != 3)
-	    {
-	    dup2(fd, 3);
-	    close(fd);
-	    }
-
 	/* Make sure the responder has a nice, safe stdin. */
-	if((fd = open("/dev/null", O_RDONLY)) < 0)
-	    {
-	    fprintf(stderr, "Warning: can't open \"/dev/null\", errno=%d (%s)\n", errno, gu_strerror(errno));
-	    }
-	else
+	if((fd = open("/dev/null", O_RDONLY)) != -1)
 	    {
 	    if(fd != 0) dup2(fd, 0);
 	    if(fd > 0) close(fd);
@@ -161,14 +115,17 @@ int respond(int response_code, const char extra[])
 	seteuid(user_uid);
 	setegid(user_gid);
 
-
 	/* Execute the responder wrapper. */
 	execl("lib/ppr-respond", "ppr_respond",
-		(ppr_respond_by & PPR_RESPOND_BY_STDERR) ? "--stderr" : "--no-stderr",
-		(ppr_respond_by & PPR_RESPOND_BY_RESPONDER) ? "--responder" : "--no-responder",
-		jobname,
+		"ppr",
+		qentry.destname,
 		response_code_str,
 		extra ? extra : "",
+		qentry.responder,
+		qentry.responder_address,
+		qentry.responder_options ? qentry.responder_options : "",
+		qentry.For ? qentry.For : "",
+		qentry.Title ? qentry.Title : "",
 	    	(char*)NULL);
 	    _exit(242);
 	}
@@ -191,20 +148,22 @@ int respond(int response_code, const char extra[])
 	{
 	if(WEXITSTATUS(wstat) != 0)
 	    {
-	    fprintf(stderr, "%s(): ppr-respond exited with code %d.\n", function, (int)WEXITSTATUS(wstat));
+	    error("ppr-respond exited with code %d", (int)WEXITSTATUS(wstat));
 	    return -1;
 	    }
 	}
     else if(WIFSIGNALED(wstat))
 	{
-	fprintf(stderr, "%s(): ppr-respond killed by signal %d (%s).\n", function, WTERMSIG(wstat), gu_strsignal(WTERMSIG(wstat)));
-	if(WCOREDUMP(wstat))
-	    fprintf(stderr, "Core dumped\n");
+	error("ppr-respond killed by signal %d (%s)%s",
+		WTERMSIG(wstat),
+		gu_strsignal(WTERMSIG(wstat)),
+		WCOREDUMP(wstat) ? ", core dumped" : ""
+		);
 	return -1;
 	}
     else
 	{
-	fprintf(stderr, "%s(): ppr-respond suffered some really bizzar accident.\n", function);
+	error("ppr-respond suffered some really bizzar accident");
 	return -1;
 	}
 

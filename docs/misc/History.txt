@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--7 March 2002.
+1.50a1, 27 February 2002--8 March 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7565,6 +7565,6 @@ line was being parsed twice.
 * ppr/: removed --commentator, --commentator-address,
   and --commentator-options.
 
-
-
-
+* ppr/: moved calls to respond() into the new function ppr_abort().
+  Changed fatal() to call ppr_abort().  ppr_abort() should now be
+  handling all abnormal exits.

@@ -33,16 +33,16 @@ my($for, $addr, $msg, $msg2, $options, $code, $jobid, $extra, $title, $time, $re
 # Uncomment this code if you don't understand responder parameters and
 # want to get a chance to see what they look like.  The output will
 # appear on ppr's stdout or in the pprd log file.
-#print "\$for = \"$for\"\n";
-#print "\$addr = \"$addr\"\n";
-#print "\$msg = \"$msg\"\n";
-#print "\$code = $code\n";
-#print "\$jobid = \"$jobid\"\n";
-#print "\$extra = \"$extra\"\n";
-#print "\$title = \"$title\"\n";
-#print "\$time = $time\n";
-#print "\$reason = \"$reason\"\n";
-#print "\$pages = $pages\n";
+print "\$for = \"$for\"\n";
+print "\$addr = \"$addr\"\n";
+print "\$msg = \"$msg\"\n";
+print "\$code = $code\n";
+print "\$jobid = \"$jobid\"\n";
+print "\$extra = \"$extra\"\n";
+print "\$title = \"$title\"\n";
+print "\$time = $time\n";
+print "\$reason = \"$reason\"\n";
+print "\$pages = $pages\n";
 
 # Undo the cryptic arrest reason encoding.
 $reason =~ s/,/, /g;

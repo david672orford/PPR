@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 March 2002.
+** Last modified 8 March 2002.
 */
 
 /*
@@ -187,7 +187,7 @@ void warning(int level, const char *message, ...)
 __attribute__ (( format (printf, 2, 3) ))
 #endif
 ;
-void ppr_abort(int exitval)
+void ppr_abort(int exitval, const char extra[])
 #ifdef __GNUC__
 __attribute__ (( noreturn ))
 #endif

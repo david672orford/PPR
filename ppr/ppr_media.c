@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_media.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 September 2001.
+** Last modified 8 March 2002.
 */
 
 /*
@@ -246,7 +246,7 @@ static int write_media_line(FILE *qfile, FILE *mfile, struct Media *m, int *matc
 	{
 	#ifdef DEBUG_MEDIA_MATCHING
 	padded_to_ASCIIZ(medianame,km.medianame,sizeof(km.medianame));
-	printf("Trying medium \"%s\"\n",medianame);
+	printf("Trying medium \"%s\"\n", medianame);
 	#endif
 
 	if( FABS(m->height - km.height) < 1.0
@@ -309,8 +309,7 @@ static int write_media_line(FILE *qfile, FILE *mfile, struct Media *m, int *matc
     /* Abort if the ProofMode is "NotifyMe". */
     if(qentry.attr.proofmode == PROOFMODE_NOTIFYME)
 	{
-    	respond(RESP_BADMEDIA, (char*)NULL);
-    	exit(PPREXIT_NOMATCH);
+    	ppr_abort(PPREXIT_NOMATCH, psmediumname);
     	}
 
     /*
@@ -320,7 +319,7 @@ static int write_media_line(FILE *qfile, FILE *mfile, struct Media *m, int *matc
     ** We will accept any paper without an explicit type (i. e., is blank)
     ** which has a size within half an inch of the desired size.
     */
-    while( fread(&km, sizeof(struct Media), 1, mfile) )
+    while(fread(&km, sizeof(struct Media), 1, mfile))
 	{
 	if( abs( (int)(m->height - km.height) ) < 36 && abs( (int)(m->width - km.width) ) < 36
   		&& km.type[0] == ' ' )
