@@ -133,15 +133,17 @@ print <<"TAIL10";
 </html>
 TAIL10
 
+# This is done in a function because browsers don't always render a zero 
+# height image with zero pixels.
 sub percent_bar
     {
     my $percent = shift;
     my $color = shift;
     if($percent > 0)
 	{
-	return <<"End";
+	return <<"EndBar";
 <tr><td><img width=100 height=$percent border=0 src="../images/pixel-$color.png"></td></tr>
-End
+EndBar
 	}
     }
 
