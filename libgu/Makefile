@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 July 2003.
+# Last modified 31 October 2003.
 #
 
 include ../Makefile.conf
@@ -49,7 +49,6 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	gu_strlcpy.$(OBJ) \
 	gu_strlcat.$(OBJ) \
 	torf.$(OBJ) \
-	gu_trim.$(OBJ) \
 	gu_strsignal.$(OBJ) \
 	gu_strerror.$(OBJ) \
 	getopt.$(OBJ) \
@@ -62,12 +61,10 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	wordwrap.$(OBJ) \
 	gu_getdouble.$(OBJ) \
 	gu_dtostr.$(OBJ) \
-	gu_StrCopyMax.$(OBJ) \
-	gu_StrAppendMax.$(OBJ) \
 	gu_snprintfcat.$(OBJ) \
 	gu_snmp.$(OBJ) \
 	gu_timeval.$(OBJ) \
-	gu_pcs.$(OBJ) gu_pch.$(OBJ) \
+	gu_pcs.$(OBJ) \
 	gu_run.$(OBJ) \
 	gu_exceptions.$(OBJ) \
 	pcre.$(OBJ) \

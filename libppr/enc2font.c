@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 September 2003.
+** Last modified 31 October 2003.
 */
 
 #include "before_system.h"
@@ -63,11 +63,20 @@ int encoding_to_font(const char encoding[], const char fontfamily[], const char 
 		if(fontinfo->line[0] == '#' || fontinfo->line[0] == ';')		/* comments */
 		   continue;
 
-		gu_trim_whitespace_right(fontinfo->line);
+		/* Trim whitespace of the end of the line.  If there is nothing left,
+		 * skip this line.  This was once in a call to a gu_ fuction, but now
+		 * that all the rest of the code has switched over to gu_getline(), 
+		 * they didn't need it anymore.
+		 */
+			{
+			int len = strlen(fontinfo->line);
+			while(--len >= 0 && isspace(fontinfo->line[len]))
+				fontinfo->line[len] = '\0';
+			if(len == 0)
+				continue;
+			}
 
-		if(strlen(fontinfo->line) == 0)									/* blank lines */
-		   continue;
-
+		/* Use gu_strsep() to split the line into eight fields separated by colons. */
 		p = fontinfo->line;
 		if(!(f1 = gu_strsep(&p, ":"))
 				|| !(f2 = gu_strsep(&p, ":"))

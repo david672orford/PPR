@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 March 2003.
+# Last modified 31 October 2003.
 #
 
 include ../Makefile.conf
@@ -69,15 +69,9 @@ OBJS1=pprdrv.$(OBJ) \
 	pprdrv_userparams.$(OBJ) \
 	pprdrv_log.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libttf.$(LIBEXT) ../libpprdb.$(LIBEXT)
-#	pprdrv_ppd_parse.$(OBJ) \
 
 pprdrv$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS) $(ZLIBLIBS)
-
-# How to build the C source for the PPD file lexer:
-pprdrv_ppd_parse.c: pprdrv_ppd_parse.l
-	$(LEX) -v pprdrv_ppd_parse.l
-	$(MV) lex.yy.c pprdrv_ppd_parse.c
 
 OBJS2=ppr-gs.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 ppr-gs$(DOTEXE): $(OBJS2)
@@ -98,9 +92,6 @@ depend:
 
 clean:
 	$(RMF) $(BACKUPS) *.$(OBJ) $(LIB_PROGS)
-
-veryclean: clean
-	$(RMF) pprdrv_ppd_parse.c
 
 # end of file
 

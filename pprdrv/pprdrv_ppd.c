@@ -25,12 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 July 2003.
+** Last modified 31 October 2003.
 */
 
 /*
-** The functions in this file read the PPD file and later
-** dispense information from it.
+** The functions in this file read the PPD file and later dispense
+** information from it.  The code is still a bit awkward because it used to
+** use a Lex lexer.  The lexer has been replaced, but the code hasn't been
+** fully simplified yet.
 */
 
 #include "before_system.h"
@@ -90,9 +92,11 @@ static int hash(const char *s, int tabsize)
 	} /* end of hash() */
 
 /*
-** Hash two strings as though they were one.
+** Hash two strings as though they were one.  They are hashed as if they
+** were concatentated with a space between them.
 **
-** s2 may be a NULL pointer.
+** If s2 is a NULL pointer, then this function does the same thing as
+** hash().
 */
 static int hash2(const char *s1, const char *s2, int tabsize)
 	{
@@ -375,22 +379,6 @@ void read_PPD_file(const char *ppd_file_name)
 	ppdname = (char*)gu_alloc(MAX_PPDNAME+1, sizeof(char));
 	ppdtext = (char*)gu_alloc(MAX_PPDTEXT, sizeof(char));
 
-	#if 0
-
-	/* open the PPD file */
-	if(!(yyin = fopen(ppd_file_name, "r")))
-		fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\", errno=%d (%s)", function, ppd_file_name, errno, gu_strerror(errno));
-
-	ppd_nest_level = 0;
-	ppd_nest_fname[ppd_nest_level] = gu_strdup(ppd_file_name);	/* !!! */
-
-	/* call the lexer to process the file */
-	yylex();
-
-	/* Now, close the outermost file, but DON'T deallocate the name: */
-	fclose(yyin);
-
-	#else
 	{
 	char *line, *p;
 
@@ -659,15 +647,15 @@ void read_PPD_file(const char *ppd_file_name)
 			}
 		}
 	}
-	#endif
 
 	/* Free the scratch spaces: */
 	gu_free(ppdname);
 	gu_free(ppdtext);
 
-	/* If we still haven't been told to use a RIP, see if we saw a "*cupsFilter:" 
-	   line that can help us.
-	   */
+	/* 
+	** If we still haven't been told to use a RIP, see if we saw a
+	** "*cupsFilter:" line that can help us.
+	*/
 	DODEBUG_PPD(("read_PPD_file(): printer.RIP.name=\"%s\", cups_filter=\"%s\", default_resolution=%d",
 		printer.RIP.name ? printer.RIP.name : "",
 		cups_filter ? cups_filter : "",
@@ -686,6 +674,9 @@ void read_PPD_file(const char *ppd_file_name)
 
 /*=========================================================================
 ** Routines for Feature Inclusion
+**
+** These routines insert feature invokation code previously discovered
+** by read_PPD_file().
 =========================================================================*/
 
 /*

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 July 2003.
+** Last modified 31 October 2003.
 */
 
 #include "before_system.h"
@@ -287,7 +287,7 @@ void ppop_status_init(void)
 				snmp_bits[bit].last_news = last_news;
 				snmp_bits[bit].last_commentary = last_commentary;
 				if(count > 4)
-					gu_StrCopyMax(snmp_bits[bit].details, sizeof(snmp_bits[0].details), &line[details_start]);
+					gu_strlcpy(snmp_bits[bit].details, &line[details_start], sizeof(snmp_bits[0].details));
 				continue;
 				}
 			}
@@ -513,7 +513,7 @@ static void dispatch_commentary(void)
 void ppop_status_writemon(const char operation[], int minutes)
 	{
 	DODEBUG_PPOP_STATUS(("ppop_status_writemon(operation=\"%s\", minutes=%d)", operation, minutes));
-	gu_StrCopyMax(message_writemon_operation, sizeof(message_writemon_operation), operation);
+	gu_strlcpy(message_writemon_operation, operation, sizeof(message_writemon_operation));
 	message_writemon_minutes = minutes;
 	ppop_status_write();
 	}
@@ -524,7 +524,7 @@ void ppop_status_writemon(const char operation[], int minutes)
 */
 void ppop_status_pagemon(const char string[])
 	{
-	gu_StrCopyMax(message_pagemon, sizeof(message_pagemon), string);
+	gu_strlcpy(message_pagemon, string, sizeof(message_pagemon));
 	ppop_status_write();
 	}
 
@@ -588,7 +588,7 @@ void ppop_status_exit_hook(int retval)
 		}
 
 	/* The next operation will be "waiting for commentators to exit". */
-	gu_StrCopyMax(message_writemon_operation, sizeof(message_writemon_operation), "COM_WAIT");
+	gu_strlcpy(message_writemon_operation, "COM_WAIT", sizeof(message_writemon_operation));
 
 	/* Erase the page clock. */
 	message_pagemon[0] = '\0';
@@ -641,7 +641,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 		if(strcmp(job, QueueFile) == 0)
 			message_job[0] = '\0';
 		else
-			gu_StrCopyMax(message_job, sizeof(message_job), job);
+			gu_strlcpy(message_job, job, sizeof(message_job));
 		}
 
 	/* If we got the printer status, */
@@ -660,7 +660,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 				{
 				status.hrDeviceStatus = value1;
 				status.hrPrinterStatus = value2;
-				gu_StrCopyMax(status.details, sizeof(status.details), details);
+				gu_strlcpy(status.details, details, sizeof(status.details));
 				status.last_news = time(NULL);
 				}
 			if(value3 != -1)							/* printer errors */
@@ -671,7 +671,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 					if(snmp_bits[value3].start == 0)
 						snmp_bits[value3].start = time_now;
 					snmp_bits[value3].last_news = time_now;
-					gu_StrCopyMax(snmp_bits[value3].details, sizeof(snmp_bits[0].details), details);
+					gu_strlcpy(snmp_bits[value3].details, details, sizeof(snmp_bits[0].details));
 					}
 				else
 					{
@@ -686,7 +686,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 		   even if --verbose wasn't used.
 		   */
 		ppop_status.lw_status.important = unrecognized;
-		gu_StrCopyMax(ppop_status.lw_status.message, sizeof(ppop_status.lw_status.message), pstatus);
+		gu_strlcpy(ppop_status.lw_status.message, pstatus, sizeof(ppop_status.lw_status.message));
 
 		/* Send this to GUI interfaces and other things that want up-to-the minute updates. */
 		progress_new_status(pstatus);
@@ -750,7 +750,7 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 				{
 				status.hrDeviceStatus = hrDeviceStatus;
 				status.hrPrinterStatus = hrPrinterStatus;
-				gu_StrCopyMax(status.details, sizeof(status.details), details);
+				gu_strlcpy(status.details, details, sizeof(status.details));
 				status.last_news = time_now;
 				ustatus[i].understood = TRUE;
 				}
@@ -763,7 +763,7 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 					if(snmp_bits[hrPrinterDetectedErrorState].start == 0)
 						snmp_bits[hrPrinterDetectedErrorState].start = time_now;
 					snmp_bits[hrPrinterDetectedErrorState].last_news = time_now;
-					gu_StrCopyMax(snmp_bits[hrPrinterDetectedErrorState].details, sizeof(snmp_bits[0].details), details);
+					gu_strlcpy(snmp_bits[hrPrinterDetectedErrorState].details, details, sizeof(snmp_bits[0].details));
 					ustatus[i].understood = TRUE;
 					}
 				else
@@ -825,11 +825,11 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 
 	ppop_status.pjl_status.important = !ustatus[0].understood;
 	ppop_status.pjl_status.code = ustatus[0].code;
-	gu_StrCopyMax(ppop_status.pjl_status.message, sizeof(ppop_status.pjl_status.message), ustatus[0].message);
+	gu_strlcpy(ppop_status.pjl_status.message, ustatus[0].message, sizeof(ppop_status.pjl_status.message));
 
 	ppop_status.pjl_status.important2 = !ustatus[1].understood;
 	ppop_status.pjl_status.code2 = ustatus[1].code;
-	gu_StrCopyMax(ppop_status.pjl_status.message2, sizeof(ppop_status.pjl_status.message2), ustatus[1].message);
+	gu_strlcpy(ppop_status.pjl_status.message2, ustatus[1].message, sizeof(ppop_status.pjl_status.message2));
 
 	/*
 	** Flush the changes to a place where "ppop status" can find them.

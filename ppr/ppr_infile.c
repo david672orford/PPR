@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 August 2003.
+** Last modified 31 October 2003.
 */
 
 /*
@@ -1779,7 +1779,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 		name = features[i];
 		if((value = lmatchp(name, "*PageSize ")) || (value = lmatchp(name, "*PageRegion ")))
 			{
-			if(gu_pcs_bytes(&clean_options) > 0)
+			if(gu_pcs_length(&clean_options) > 0)
 				gu_pcs_append_cstr(&clean_options, " ");
 			gu_pcs_append_cstr(&clean_options, "pagesize=");
 			gu_pcs_append_cstr(&clean_options, value);
@@ -1811,7 +1811,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 				break;
 			}
 
-		if(gu_pcs_bytes(&clean_options) > 0)
+		if(gu_pcs_length(&clean_options) > 0)
 			gu_pcs_append_cstr(&clean_options, " ");
 		gu_pcs_append_cstr(&clean_options, "duplex=");
 		gu_pcs_append_cstr(&clean_options, value);
@@ -1882,15 +1882,15 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 			}
 
 		/* if not first option, add a space */
-		if(gu_pcs_bytes(&clean_options) > 0)
-			gu_pcs_append_byte(&clean_options, ' ');
+		if(gu_pcs_length(&clean_options) > 0)
+			gu_pcs_append_char(&clean_options, ' ');
 
 		/* Copy the keyword while converting it to lower case. */
 		while(*si && *si != '=')
-			gu_pcs_append_byte(&clean_options, tolower(*si++));
+			gu_pcs_append_char(&clean_options, tolower(*si++));
 
 		if(*si && *si == '=')			/* Copy the equals sign. */
-			gu_pcs_append_byte(&clean_options, *si++);
+			gu_pcs_append_char(&clean_options, *si++);
 
 		/* Copy the (possibly quoted) value. */
 		{
@@ -1900,7 +1900,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 			{
 			if(c == '"' && lastc != '\\')		/* unbackslashed quote */
 				qmode = ~qmode;					/* toggles quote mode */
-			gu_pcs_append_byte(&clean_options, c);
+			gu_pcs_append_char(&clean_options, c);
 			lastc = c;
 			si++;
 			}

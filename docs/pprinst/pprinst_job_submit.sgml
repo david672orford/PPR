@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_job_submit.sgml
-Last Modified: 24 September 2003
+Last Modified: 30 October 2003
 Last Proofread:
 -->
 
@@ -79,7 +79,7 @@ later in this section.</para>
 <para>The available duplexing options are many and somewhat confusing. Let us
 start with a simple one:
 <screen>
-$ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.ps
+$ ppr -d myprn --feature Duplex=DuplexNoTumble mydoc.ps
 </screen>
 </para>
 
@@ -109,6 +109,70 @@ are found.</para>
 </sect3>
 
 <sect3>
+<title>Other Printer Options</title>
+
+<para>In addition to duplexing, you can control any feature described in the
+printer's PPD file.  You do this by using the <option>--feature</option>
+option with an appropriate value.  The list of available feature depends on
+your printer, or more precisely, on the PPD file which you have told
+<application>PPR</application> to use.  To see the full list of printer
+features described in the PPD file and the <option>--feature</option> need
+to activate then, do this:
+<screen>
+$ ppr -d myprn --feature
+PageSize
+ -->Letter 8 1/2 x 11 in          --feature PageSize=Letter
+    Legal 8 1/2 x 14 in           --feature PageSize=Legal
+    A4 210 x 297 mm               --feature PageSize=A4
+    Executive 7 1/4 x 10 1/2 in   --feature PageSize=Executive
+    Env Comm10 4 1/8 x 9 1/2 in   --feature PageSize=Comm10
+    Env Monarch 3 7/8 x 7 1/2 in  --feature PageSize=Monarch
+    Env DL 110 x 220 mm           --feature PageSize=DL
+
+PageRegion
+ -->Letter 8 1/2 x 11 in          --feature PageRegion=Letter
+    Legal 8 1/2 x 14 in           --feature PageRegion=Legal
+    A4 210 x 297 mm               --feature PageRegion=A4
+    Executive 7 1/4 x 10 1/2 in   --feature PageRegion=Executive
+    Env Comm10 4 1/8 x 9 1/2 in   --feature PageRegion=Comm10
+    Env Monarch 3 7/8 x 7 1/2 in  --feature PageRegion=Monarch
+    Env DL 110 x 220 mm           --feature PageRegion=DL
+
+InputSlot
+ -->Upper Tray                    --feature InputSlot=Upper
+    Lower Tray                    --feature InputSlot=Lower
+    Envelope Feeder               --feature InputSlot=Envelope
+
+Manual Feed
+    True                          --feature ManualFeed=True
+ -->False                         --feature ManualFeed=False
+
+Duplex
+ -->None                          --feature Duplex=None
+    Long Edge Binding             --feature Duplex=DuplexNoTumble
+    Short Edge Binding            --feature Duplex=DuplexTumble
+
+Output Bin
+ -->Upper - Face Down             --feature OutputBin=Upper
+    Lower - Face Up               --feature OutputBin=Rear
+
+Resolution Enhancement
+ -->Printer Default               --feature Smoothing=PrinterDefault
+    On                            --feature Smoothing=True
+    Off                           --feature Smoothing=False
+</screen>
+As you can see, the list of possible settings is shown below each feature.  The setting
+is described on the left and the <option>--feature</option> option needed to invoke
+it will be shown on the right.  For example, we can see that in order to
+print from the lower tray, we would use a command like this:
+<screen>
+$ ppr -d myprn --feature InputSlot=Lower mydoc.ps
+</screen>
+</para>
+
+</sect3>
+
+<sect3>
 <title>Multiple Copy Options</title>
 
 <para>PPR is capable of printing multiple copies of a job. It is also capable
@@ -131,15 +195,15 @@ $ ppr -d myprn -n 3 -n collate mydoc.ps
 </para>
 
 <para>When there is no charge for printing pages on a particular printer, if
-you do not use an <option>-n</option> switch, PPR does not attempt to influence
-the number of copies to be printed. This means that if the document contains
-code to invoke multiple copy features of the printer, PPR may not be able to
-correctly determine the number of pages printed. Thus, the number of sheets
-quoted on the banner page and in the print log could be wrong. This changes if
-you have specified an amount of money to be charged for each page which is
-printed on the printer that is being used. If you have specified an amount,
-even $0.00, then the number of copies is forced to 1 if you do not specify
-it.</para>
+you do not use an <option>-n</option> switch, <application>PPR</application>
+does not attempt to influence the number of copies to be printed. This means
+that if the document contains code to invoke multiple copy features of the
+printer, PPR may not be able to correctly determine the number of pages
+printed. Thus, the number of sheets quoted on the banner page and in the
+print log could be wrong. This changes if you have specified an amount of
+money to be charged for each page which is printed on the printer that is
+being used. If you have specified an amount, even $0.00, then the number of
+copies is forced to 1 if you do not specify it.</para>
 
 <para>You may wish to allow the number of copies desired to be specified in
 the document.  If you invoke <command>ppr</command> with the <option>-R
@@ -321,7 +385,6 @@ the dialog box opens, one could use the <option>-d</option> option, like this:
 $ ppr -d myprn myfile.ps
 </screen>
 </para>
-
 
 </sect2>
 

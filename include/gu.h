@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 31 October 2003.
 */
 
 #ifndef _GU_H
@@ -180,8 +180,6 @@ size_t gu_strlcpy(char *dst, const char *src, size_t siz);
 size_t gu_strlcat(char *dst, const char *src, size_t siz);
 int gu_mkstemp(char *template);
 char *gu_strsignal(int signum);
-char *gu_StrCopyMax(char *target, size_t max, const char *source);
-char *gu_StrAppendMax(char *target, size_t max, const char *source);
 int gu_snprintfcat(char *buffer, size_t max, const char *format, ...);
 int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2);
 void gu_timeval_sub(struct timeval *t1, const struct timeval *t2);
@@ -377,17 +375,19 @@ void gu_snmp_get(struct gu_snmp *p, ...);
 
 /* Perl Compatible String */
 void *gu_pcs_new(void);
+void *gu_pcs_new_pcs(void **pcs);
+void *gu_pcs_new_cstr(const char cstr[]);
 void gu_pcs_free(void **pcs);
 void gu_pcs_debug(void **pcs, const char name[]);
 void *gu_pcs_snapshot(void **pcs);
 void gu_pcs_grow(void **pcs, int size);
-void *gu_pcs_new_pcs(void **pcs);
-void *gu_pcs_new_cstr(const char cstr[]);
 void gu_pcs_set_cstr(void **pcs, const char cstr[]);
 void gu_pcs_set_pcs(void **pcs, void **pcs2);
 const char *gu_pcs_get_cstr(void **pcs);
-int gu_pcs_bytes(void **pcs);
-void gu_pcs_append_byte(void **pcs, int c);
+char *gu_pcs_get_editable_cstr(void **pcs);
+int gu_pcs_length(void **pcs);
+int gu_pcs_truncate(void **pcs, size_t newlen);
+void gu_pcs_append_char(void **pcs, int c);
 void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
 int gu_pcs_cmp(void **pcs1, void **pcs2);

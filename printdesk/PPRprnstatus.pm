@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2003.
+# Last modified 31 October 2003.
 #
 
 package PrintDesk::PPRprnstatus;
@@ -193,7 +193,7 @@ sub Show
   my $scrollbar = $alerts_text_frame->Scrollbar(
 		)->pack(-side => 'right', -fill => 'y');
   my $alerts_text = $alerts_text_frame->ROText(
-		-width => 75,
+		-width => 80,
 		-height => 7,
 		-setgrid => 1,
 		-yscrollcommand => [$scrollbar, 'set'],

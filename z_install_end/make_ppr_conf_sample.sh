@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 31 October 2003.
 #
 
 #
@@ -184,22 +184,37 @@ cat - >&5 <<===EndHere90===
 #
 # Where are the PPD files?
 #
+# List all directories which contain PPD files which you wish to make readily
+# available for use by PPR.  The listed directories will _not_ be searched
+# recursively, so if there are subdirectories with additional PPD files, you
+# will have to list them separately.  You needn't list PPR's own PPD file 
+# directory since it will be automatically included.
+#
 # After changing this section, you must run this command in order for your
 # changes to take effect:
 #
 # $ ppr-index ppds
 #
+# You should also re-run this commands whenever files are added to or removed
+# from any of the listed directories.
+#
 [PPDs]
-  "$SHAREDIR/PPDFiles"
-  "/usr/share/cups/model"
-  "/usr/share/cups/model/C"
-  "/Library/Printers/PPDs/Contents/Resources/en.lproj"
+===EndHere90===
 
+# CUPS filters
+if_dir_print "/usr/share/cups/model"
+if_dir_print "/usr/share/cups/model/C"
+
+# MacOS 10.x
+if_dir_print "/Library/Printers/PPDs/Contents/Resources/en.lproj"
+
+echo >&5
+
+cat - >&5 <<===EndHere90===
 # Configuration of the new AppleTalk Printer Access Protocol server
 [papd]
   #default zone = ""
 
 # end of file
-===EndHere90===
 
 exit 0

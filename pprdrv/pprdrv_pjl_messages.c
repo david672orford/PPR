@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 March 2003.
+** Last modified 31 October 2003.
 */
 
 #include "before_system.h"
@@ -75,10 +75,9 @@ int translate_pjl_message(int code, const char display[], int *value1, int *valu
 		{
 		linenum++;
 
-		if(*line == '#' || *line == ';')
+		/* Skip blank and comment lines. */
+		if(*line == '\0' || *line == '#' || *line == ';')
 		   continue;
-
-		gu_trim_whitespace_right(line);
 
 		if(strlen(line) == 0)
 		   continue;

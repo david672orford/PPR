@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 October 2003.
+# Last modified 31 October 2003.
 #
 
 #
@@ -183,7 +183,6 @@ clean:
 
 # This deletes difficult-to-generate files too.
 veryclean: clean unconfigure
-	( cd pprdrv; make veryclean )
 	( cd papsrv; make veryclean )
 	( cd docs; make veryclean )
 	( cd www; make veryclean )

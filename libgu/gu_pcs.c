@@ -69,6 +69,32 @@ void *gu_pcs_new(void)
 	return (void *)p;
 	}
 
+/** create new PCS and initialize from a PCS
+
+This function creates a new PCS and copies the string value from the a
+pre-existing PCS supplied as an argument.
+
+*/
+void *gu_pcs_new_pcs(void **pcs)
+	{
+	void *p = gu_pcs_new();
+	gu_pcs_set_pcs(&p, pcs);
+	return p;
+	}
+
+/** create new PCS and initialize from a char[]
+
+This function creates a new PCS and initializes it from the C character
+array (string) provided.
+
+*/
+void *gu_pcs_new_cstr(const char cstr[])
+	{
+	void *p = gu_pcs_new();
+	gu_pcs_set_cstr(&p, cstr);
+	return p;
+	}
+
 /** destroy a PCS object
 
 This function decrements the reference count of a PCS object and sets the
@@ -125,7 +151,8 @@ void *gu_pcs_snapshot(void **pcs)
 /** expand the internal storage of a PCS in anticipation of future growth
 
 This function enlarges the specified PCS so that it can hold a string of the
-specified size (excluding final NULL).
+specified size (excluding final NULL).  If the requested size is smaller
+than the current storage size, this has no effect.
 
 */
 void gu_pcs_grow(void **pcs, int new_size)
@@ -137,33 +164,6 @@ void gu_pcs_grow(void **pcs, int new_size)
 		p->storage = gu_realloc(p->storage, (new_size + 1), sizeof(char));
 		p->storage_size = (new_size + 1);
 		}
-	}
-
-/** create new PCS and initialize from a PCS
-
-This function creates a new PCS and copies the string value from the a
-pre-existing PCS supplied as an argument.
-
-*/
-void *gu_pcs_new_pcs(void **pcs)
-	{
-	void *p = gu_pcs_new();
-	gu_pcs_set_pcs(&p, pcs);
-	return p;
-	}
-
-
-/** create new PCS and initialize from a char[]
-
-This function creates a new PCS and initializes it from the C character
-array (string) provided.
-
-*/
-void *gu_pcs_new_cstr(const char cstr[])
-	{
-	void *p = gu_pcs_new();
-	gu_pcs_set_cstr(&p, cstr);
-	return p;
 	}
 
 /** copy a char[] into an existing PCS
@@ -181,14 +181,14 @@ void gu_pcs_set_cstr(void **pcs, const char cstr[])
 
 	if(p->refcount > 1)					/* if we share it, */
 		{
-		gu_pcs_free(pcs);
-		*pcs = gu_pcs_new();
+		gu_pcs_free(pcs);				/* detach from it */
+		*pcs = gu_pcs_new();			/* create a new object */
 		p = (struct PCS *)*pcs;
 		}
 
 	p->length = strlen(cstr);
-	gu_pcs_grow(pcs, p->length);
-	strncpy(p->storage, cstr, p->storage_size);
+	gu_pcs_grow(pcs, p->length);					/* expand if necessary */
+	memcpy(p->storage, cstr, p->length + 1);
 	}
 
 /** copy a PCS into an existing PCS
@@ -203,10 +203,10 @@ void gu_pcs_set_pcs(void **pcs, void **pcs2)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
 
-	if(p->refcount > 1)					/* if we share it, */
+	if(p->refcount > 1)					/* if we share target, */
 		{
-		gu_pcs_free(pcs);
-		*pcs = gu_pcs_new_pcs(pcs2);
+		gu_pcs_free(pcs);				/* detach from it */
+		*pcs = gu_pcs_new_pcs(pcs2);	/* replace it with a copy of pcs2 */
 		}
 	else
 		{
@@ -217,12 +217,13 @@ void gu_pcs_set_pcs(void **pcs, void **pcs2)
 		}
 	}
 
-/** get pointer to char[] within PCS
+/** get pointer to const char[] within PCS
 
 This function returns a pointer to a NULL terminated C string which contains
 the value of the PCS object.  This pointer may cease to be valid if the PCS
 object is modified or freed, so if you won't be using the value imediately,
-you should call B<gu_strdup()> on the result.
+you should call gu_strdup() on the result.  Also, the string should not be
+modified by using this pointer.
 
 */
 const char *gu_pcs_get_cstr(void **pcs)
@@ -231,14 +232,62 @@ const char *gu_pcs_get_cstr(void **pcs)
 	return p->storage;
 	}
 
-/** get length of PCS in bytes
+/** Get pointer to an editable char[] within PCS
 
-This function returns the length of the PCS in bytes.
+This function should be called if you intend to edit the string in place. 
+If anyone else has a reference to it, a new copy will be made just for you.
+If you will change the length of the string, call gu_pcs_length() to
+determine the initial length.  If you are enlarging the string, you need to
+call gu_pcs_grow() first.  If you are making the string smaller, you should
+call gu_pcs_truncate() when you are done.
 
 */
-int gu_pcs_bytes(void **pcs)
+char *gu_pcs_get_editable_cstr(void **pcs)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
+
+	if(p->refcount > 1)
+		{
+		void *new_pcs = gu_pcs_new_pcs(pcs);
+		gu_pcs_free(pcs);
+		*pcs = new_pcs;
+		p = (struct PCS *)*pcs;
+		}
+
+	return p->storage;
+	}
+
+/** get length of PCS in bytes
+
+This function returns the length in bytes of the PCS in bytes.
+
+*/
+int gu_pcs_length(void **pcs)
+	{
+	struct PCS *p = (struct PCS *)*pcs;
+	return p->length;
+	}
+
+/** Truncate a PCS to a specified length in bytes.
+
+*/
+int gu_pcs_truncate(void **pcs, size_t newlen)
+	{
+	struct PCS *p = (struct PCS *)*pcs;
+
+	if(newlen < p->length)
+		{
+		if(p->refcount > 1)
+			{
+			void *new_pcs = gu_pcs_new_pcs(pcs);
+			gu_pcs_free(pcs);
+			*pcs = new_pcs;
+			p = (struct PCS *)*pcs;
+			}
+		p->length = newlen;
+		p->storage[newlen] = '\0';
+		}
+		
 	return p->length;
 	}
 
@@ -247,7 +296,7 @@ int gu_pcs_bytes(void **pcs)
 This function appends a C char to the the PCS object.
 
 */
-void gu_pcs_append_byte(void **pcs, int c)
+void gu_pcs_append_char(void **pcs, int c)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
 	int new_length;
@@ -257,9 +306,9 @@ void gu_pcs_append_byte(void **pcs, int c)
 		void *new_pcs = gu_pcs_new_pcs(pcs);
 		gu_pcs_free(pcs);
 		*pcs = new_pcs;
+		p = (struct PCS *)*pcs;
 		}
 
-	p = (struct PCS *)*pcs;
 	new_length = p->length + 1;
 	gu_pcs_grow(pcs, new_length);
 	p->storage[p->length] = c;
@@ -283,9 +332,9 @@ void gu_pcs_append_cstr(void **pcs, const char cstr[])
 		void *new_pcs = gu_pcs_new_pcs(pcs);
 		gu_pcs_free(pcs);
 		*pcs = new_pcs;
+		p = (struct PCS *)*pcs;
 		}
 
-	p = (struct PCS *)*pcs;
 	new_length = p->length + strlen(cstr);
 	gu_pcs_grow(pcs, new_length);
 	strcpy(p->storage + p->length, cstr);
@@ -331,7 +380,7 @@ int gu_pcs_hash(void **pcs_key)
 	int temp, count;
 
 	p = gu_pcs_get_cstr(pcs_key);
-	for(total = 0, count = gu_pcs_bytes(pcs_key); count-- > 0; )
+	for(total = 0, count = gu_pcs_length(pcs_key); count-- > 0; )
 		{
 		total = (total << 4) + *p++;
 		if((temp = (total & 0xf0000000)))		/* if we are about to lose something off the top, */
@@ -409,6 +458,5 @@ int main(int argc, char *argv[])
 	return 0;
 	}
 #endif
-
 
 /* end of file */
