@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 December 2004.
+# Last modified 19 December 2004.
 #
 
 #
@@ -368,6 +368,7 @@ eval {
 					}
 				chomp $dt;
 				print "<dt>", linebreak(linkize($dt)), "</dt><dd><p>", linkize($dd), "</p>\n";
+				next;
 				}
 			if($state eq "dl")
 				{
