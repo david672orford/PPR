@@ -8660,6 +8660,8 @@ Bug Fixes
 * z_install_end/Makefile: added explicit rule for getservbyname so that
   $(SOCKLIBS) could be included.
 
+* Added missing libscript/echo.c and changed Configure to refer to it.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".

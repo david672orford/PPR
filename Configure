@@ -30,14 +30,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2003.
+# Last modified 5 August 2003.
 #
 
-# Find an echo that will support "echo -n".  If we
-# can't find one, use the default echo in this script
-# and use PPR's echo in installed scripts.
+# Find an echo that will support "echo -n".  If we can't find one, use the
+# default echo in this script and use PPR's echo in installed scripts.
 NECHO=echo
-NECHO_EXPORT=lib/pprecho
+NECHO_EXPORT=lib/echo
 for i in echo /bin/echo /usr/ucb/echo print
     do
     if [ `($i -n) 2>&1 | wc -l` -eq 0 ]
@@ -48,9 +47,9 @@ for i in echo /bin/echo /usr/ucb/echo print
 	fi
     done
 
-# Find an echo that will support escapes
+# Find an echo that will supports escapes.
 EECHO=echo
-EECHO_EXPORT=lib/pprecho
+EECHO_EXPORT=lib/echo
 for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
     do
     if [ `($i '\n') 2>/dev/null | wc -l` -eq 2 ]

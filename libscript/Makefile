@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 5 August 2003.
 #
 
 include ../Makefile.conf
@@ -34,7 +34,7 @@ include ../Makefile.conf
 
 BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 	rewind_stdin$(DOTEXE) tail_status$(DOTEXE) \
-	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
+	file_outdated$(DOTEXE) mkstemp$(DOTEXE) echo$(DOTEXE)
 
 BUILT_LIBS=respond.sh respond.ph \
 	signal.sh \

@@ -41,7 +41,7 @@ all: $(ALL)
 ppr.conf.sample: make_ppr_conf_sample.sh
 	./make_ppr_conf_sample.sh
 
-getservbyname$(DOTEXE): getservbyname.c
+getservbyname$(DOTEXE): getservbyname.$(OBJ)
 	$(CC) $(CFLAGS) -o getservbyname$(DOTEXE) getservbyname.$(OBJ) $(SOCKLIBS)
 
 #=== Install ================================================================
