@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 November 2003.
+** Last modified 5 November 2003.
 */
 
 /*
@@ -181,7 +181,7 @@ static int describe_status(int s)
 	*/
 	if((s & PARALLEL_DISABLED) == 0)
 		{
-		fputs("%%[ status: busy ]%%\n", stdout);
+		gu_write_string(1, "%%[ status: busy ]%%\n");
 		}
 	/*
 	** If one of the disabling conditions is indicated but the busy line is
@@ -193,7 +193,7 @@ static int describe_status(int s)
 	*/
 	else if(s & PARALLEL_PORT_BUSY && s & PARALLEL_DISABLED)
 		{
-		fputs("%%[ PrinterError: printer disconnected or powered down ]%%\n", stderr);
+		gu_write_string(1, "%%[ PrinterError: printer disconnected or powered down ]%%\n");
 		}
 	/*
 	** If we get this far, print a Laserwriter-style message for each fault
@@ -205,15 +205,12 @@ static int describe_status(int s)
 	else
 		{
 		if(s & PARALLEL_PORT_OFFLINE)
-			fputs("%%[ PrinterError: off line ]%%\n", stdout);
+			gu_write_string(1, "%%[ PrinterError: off line ]%%\n");
 		if(s & PARALLEL_PORT_PAPEROUT)
-			fputs("%%[ PrinterError: out of paper ]%%\n", stdout);
+			gu_write_string(1, "%%[ PrinterError: out of paper ]%%\n");
 		if(s & PARALLEL_PORT_FAULT)
-			fputs("%%[ PrinterError: miscellaneous error ]%%\n", stdout);
+			gu_write_string(1, "%%[ PrinterError: miscellaneous error ]%%\n");
 		}
-
-	/* Since stdout is a pipe, stdio may not know to flush it. */
-	fflush(stdout);
 
 	/* Return the status with extranious bits masked out. */
 	return s & PARALLEL_DISABLED;

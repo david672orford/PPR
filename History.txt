@@ -8872,8 +8872,9 @@ Internet Printing Protocol Work
 
 * libppr/int_cmdline.c: added detection of --probe option
 
-* interfaces/tcpip.c,lpr.c: added support for --probe; added "%%[ PPR address lookup ]%%"
-  message so that "ppad ppdq" will extend its timeout.
+* interfaces/tcpip.c,lpr.c: added support for --probe; added 
+  "%%[ PPR address lookup ]%%" message so that "ppad ppdq" will extend its 
+  timeout.
 
 * interfaces/atalk_ali.c,atalk_cap.c,clispool.c,dummy.sh,pros.c,
   serial.c,simple.sh,smb.sh: added code to detect --probe and say it isn't
@@ -8884,7 +8885,8 @@ Internet Printing Protocol Work
 * pprdrv/pprdrv_feedback.c,pprdrv_ppop_status.c,ppop/ppop_cmds_other.c:
   added support for "%%[ PPR address lookup ]%%".
 
-* interfaces/serial.c,parallel.c: added "%%[ PPR connecting ]%%" and "%%[ PPR connected ]%%".
+* interfaces/serial.c,parallel.c: added "%%[ PPR connecting ]%%" and 
+  "%%[ PPR connected ]%%".
 
 * filters_misc/jpeg.sh: fixed parsing of colour= option.
 
@@ -8906,15 +8908,14 @@ Internet Printing Protocol Work
 * libppr/options.c: changed uses of strncpy() and gu_StrCopyMax() to
   gu_strlcpy().
 
-* pprdrv/pprdrv_ppop_status.c: cnaged uses of gu_StrCopyMax() to
+* pprdrv/pprdrv_ppop_status.c: changed uses of gu_StrCopyMax() to
   gu_strlcpy().
 
 * libgu/gu_StrCopyMax.c,gu_StrAppendMax.c: removed since are almost
   identical in fuction to gu_strlcpy() and gu_strlcat().
 
-* libgu/gu_pch.c: removed since never finished, c2lib provides
-  Perl-compatible hashes, we can always get it out of CVS if we want to
-  finish it.
+* libgu/gu_pch.c: removed since never finished, c2lib provides Perl-compatible
+  hashes, we can always get it out of CVS if we want to finish it.
 
 * libppr/enc2font.c,pprdrv/pprdrv_lw_messages.c,pprdrv/pprdrv_pjl_messages.c:
   eliminated use of gu_trim_whitespace_right().
@@ -8925,6 +8926,14 @@ Internet Printing Protocol Work
 * libgu/gu_strsep.c,gu_strsep2.c: fixed handling of last field to conform to
   BSD.  The last field needn't be terminated by a delimiter.
   
+* www/prn_properties.cgi.perl,ppd_select.pl,cgi_run.pl: added support for
+  PPD file selection by printer probing.
+
+* libscripts/readppd.pl,libppr/readppd.c,ppad/ppad_printer.c,pprdrv/pprdrv.c:
+  Added support for finding PPD files by their indexed ModelName.
+
+
+
 
 +++++++++++++++++++++
 TODO

@@ -25,11 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 5 November 2003.
 */
 
 /*
-**
+** PPR printer interface program for the Axis PROS protocol.
 */
 
 #include "before_system.h"
@@ -59,7 +59,7 @@
 #include "libppr_int.h"
 #include "interface.h"
 
-/* Change the zero below to a one and recompile to turn on debugging. */
+/* Change the 0 below to a 1 and recompile to turn on debugging. */
 #if 0
 #define DEBUG 1
 #define DODEBUG(a) int_debug a
@@ -76,10 +76,10 @@
 #define DEFAULT_PRINTER "LPT1"
 #define DEFAULT_PASSWORD "netprinter"
 
-/* These are the error and printer (parallel port) status codes. */
+/* These are the PROS error and printer (parallel port) status codes. */
 #define PROSERR_HDR 0		/* bad header syntax */
 #define PROSERR_MEM 1		/* print server out of memory */
-#define PROSERR_NOA 2		/* access denied */
+#define PROSERR_NOA 2		/* access denied (wrong password maybe?) */
 #define PROSERR_POC 3		/* printer "occupied", whatever that means */
 #define PROSERR_BAN 4		/* bad printer name */
 #define PROSERR_OLD 5		/* unsupported protocol version */
@@ -90,7 +90,9 @@
 #define PROSERR_PRO 10		/* protocol error */
 #define PROSERR_UND 11		/* undefined error */
 
-/* These are the messages which the client can send to the print server. */
+/* These are the PROS messages which the client (this program) 
+ * can send to the print server.
+ */
 #define PROSMSG_EOF 32		/* no more data */
 #define PROSMSG_UID 33		/* user name */
 #define PROSMSG_HST 34		/* host name */
@@ -99,19 +101,21 @@
 #define PROSMSG_DTP 37		/* data block */
 #define PROSMSG_NOP 38		/* NOP - used as a tickle */
 
-/* These are the messages which the print server can send to the client. */
+/* These are the messages which the print server can send to the 
+ * client (to this program).
+ */
 #define PROSMSG_JOK 48		/* PROSMSG_EOF acknowledge */
 #define PROSMSG_JST 49		/* job start */
 #define PROSMSG_ACC 50		/* accounting data */
 #define PROSMSG_DFP 51		/* data block */
 
-/* These values may be ored with any of the above. */
+/* These values may be bitwise ored with any of the above. */
 #define PROSBIT_FATAL 0x40	/* indicate that the condition described is fatal */
 #define PROSBIT_DATA 0x80	/* indates that a data section is included */
 
 /*=========================================================================
-** This structure is used to store the result of parsing the name=value pairs
-** in the interface options parameter on our command line.
+** This structure is used to store the result of parsing the name=value 
+** pairs in the interface options parameter on our command line.
 =========================================================================*/
 struct OPTIONS
 	{
@@ -143,7 +147,10 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
     time_t time_last_tickle = 0;
     struct timeval timeout;
 
-    /* Build the PROS job header.  We will pretend we received it from stdin. */
+    /* Build the PROS job header.  We will pack it into the print data buffer
+     * as though pretend we had received it from stdin.  It will be the first 
+     * block we transmit to the print server.
+     */
 	sendbuf_off = 0;
 	sendbuf_off = pros_pack(sendbuf, sizeof(sendbuf), sendbuf_off, PROSMSG_HST, hostname);
 	sendbuf_off = pros_pack(sendbuf, sizeof(sendbuf), sendbuf_off, PROSMSG_UID, username);
@@ -151,7 +158,9 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 	sendbuf_off = pros_pack(sendbuf, sizeof(sendbuf), sendbuf_off, PROSMSG_PAS, options->password);
 	last_stdin_read = sendbuf_off;
 
-    /* Loop until there is nothing more to transmit and we have received EOJ acknowledgement. */
+    /* Loop until there is nothing more to transmit and we have received an 
+     * EOJ acknowledgement from the print server.
+     */
 	while(last_stdin_read || !recv_eoj)
 		{
 		FD_ZERO(&rfds);
@@ -268,8 +277,9 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 
 /*
 ** This function packs a PROS operation code, two byte big endian length, and
-** a string into a buffer.  It takes and offset into the bufer and returns the
-** offset which should be used next time.
+** a string into a buffer.  It takes an offset into the buffer at which it 
+** should store the bytes and returns the offset which should be used next 
+** time it is called.
 */
 static int pros_pack(unsigned char *buf, int buf_size, int buf_off, int code, const char string[])
 	{
@@ -286,14 +296,14 @@ static int pros_pack(unsigned char *buf, int buf_size, int buf_off, int code, co
 	buf_off += string_len;
 
 	return buf_off;
-	}
+	} /* end of pros_pack() */
 
 /*
 ** This function handles PROS message from the printer.  If it can't process
 ** all of the buffer (because there is a partial message), it will remove
-** any messages which it could processes which proceeded the one it couldn't
-** and returns the number of bytes in the partial message.  If all messages
-** are processed, it returns 0.
+** any messages which it is able to processes which proceeded the one it can't
+** and return the number of bytes in the partial message.  Of course, if all
+** messages are processed, it returns 0.
 */
 static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean *recv_eoj)
 	{
@@ -310,8 +320,10 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 		/* If this reply contains data, */
 	    if(code & PROSBIT_DATA)
 	    	{
+			/* If not even the header is here yet, go back and wait. */
 			if(buffer_len < 3)
 				return buffer_len;
+
 			len = (buffer[1] << 8) | buffer[2];
 			consumed += (2 + len);
 			data = &buffer[3];
@@ -337,12 +349,13 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 			}
 		else if(masked_code == PROSMSG_DFP)		/* data from printer (not print server) */
 			{
-			printf("%.*s", len, data ? (char*)data : "");
+			/*printf("%.*s", len, data ? (char*)data : "");*/
+			write(1, data ? (char*)data : "", len);
 			}
 		else									/* other non-fatal condition */
 			{
 			/* debugging code */
-			#if 1
+			#ifdef DEBUG
 			printf("%%%%[ PROS: %d %.*s ]%%%%\n", masked_code, len, data ? (char*)data : "");
 			#endif
 
@@ -352,10 +365,10 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 			switch(masked_code)
 				{
 				case PROSERR_OFL:
-					fputs("%%[ PrinterError: off line ]%%\n", stdout);
+					gu_write_string(1, "%%[ PrinterError: off line ]%%\n");
 					break;
 				case PROSERR_EOP:
-					fputs("%%[ PrinterError: out of paper ]%%\n", stdout);
+					gu_write_string(1, "%%[ PrinterError: out of paper ]%%\n");
 					break;
 				}
 			}
@@ -436,20 +449,26 @@ int main(int argc, char *argv[])
 	options_start(int_cmdline.options, &o);
 	while((retval = options_get_one(&o, name, sizeof(name), value, sizeof(value))) > 0)
 		{
+		/*
+		** First options shared with other TCP interface programs.
+		*/
 		if((retval = int_tcp_connect_option(name, value, &o, &options.connect)))
 			{
 			if(retval == -1)
 				{
-				/* o.error is already set */
+				/* o.error will be already set */
 				break;
 				}
 			}
+		/*
+		** Now any additional options for this specific program.
+		*/
 		if(strcmp(name, "password") == 0)
 			{
 			options.password = gu_strdup(value);
 			}
 		/*
-		** Catch anything else.
+		** Here we catch anything else.
 		*/
 		else
 			{
@@ -458,9 +477,11 @@ int main(int argc, char *argv[])
 			retval = -1;
 			break;
 			}
-
 		} /* end of while() loop */
 
+	/* If parsing failed, use the information the OPTION_STATE structure
+	 * to explain what happened.
+	 */
 	if(retval == -1)
 		{
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
@@ -486,7 +507,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Parse the printer address and do a DNS lookup if necessary. */
+	/* Parse the host[:port] part of the printer address doing a DNS
+	 * lookup if necessary.
+	 */
 	int_tcp_parse_address(address, PROS_PORT, &printer_address);
 
 	/* Connect to the printer */

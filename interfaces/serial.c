@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 5 November 2003.
 */
 
 /*
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 		if(x == 20)
 			{
 			DODEBUG(("offline"));
-			fputs("%%[ PrinterError: off line ]%%\n", stdout);
+			gu_write_string(1, "%%[ PrinterError: off line ]%%\n");
 			int_exit(EXIT_ENGAGED);
 			}
 		}

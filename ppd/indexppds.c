@@ -58,7 +58,7 @@ const char ppdindex_db[] = PPD_INDEX;
 
 /*==========================================================================
 ** Extra routines for PPD parsing 
-** These should probably go into libppr eventually.
+** These should probably go into libppr/readppd.c eventually.
 ==========================================================================*/
 
 /*
