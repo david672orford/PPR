@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/job_modify.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 5 November 2001.
+# Last modified 22 April 2002.
 #
 
 use lib "?";
@@ -222,7 +222,7 @@ my @read_write = qw(
         addon:datewanted
         addon:specialprocessing
         responder responder-address responder-options
-        commentary commentator commentator-address commentator-options
+        commentary
         );
 
 #=========================================
