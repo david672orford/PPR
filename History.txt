@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--3 June 2004.
+1.53a2, 20 February 2004--4 June 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9208,8 +9208,11 @@ Internet Printing Protocol Work
 * ppuser.c: added parse_float() and used it instead of sscanf() with %f.
   It tries first using strtof() and then tries gu_sscanf() with %f.
 
-* ppuser/ppuser.c:ppuser_show() use date format from banner page 
+* ppuser/ppuser.c:ppuser_show() changed use locale's date format
   (patch from Jan Kohnert)
+
+* ppop/ppop_cmds_listq.c: improvements to use of locale's date and 
+  time formats (based on patch from Jan Kohnert)
 
 * filter_dotmatrix/main.c: Fixed level= option to accept values higher
   than 2 as equivelent to 2.  (Previously it only accepted 1 and 2 which

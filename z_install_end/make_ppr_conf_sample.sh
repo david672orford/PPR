@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 June 2004.
+# Last modified 4 June 2004.
 #
 
 #
@@ -78,6 +78,7 @@ if_dir_print ()
 exec 3>&1
 
 # Open the output file on file descriptor 5.
+rm -f $SAMPLE
 exec 5>$SAMPLE
 
 echo "Generating $SAMPLE ..."
