@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 14 March 2003.
 */
 
 #include "before_system.h"
@@ -79,7 +79,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
     TTF_RESULT ttf_result;
     if((ttf_result = ttf_new(&font, filename)) != TTF_OK)
     	{
-    	fprintf(stderr, "ttf_new() failed, %s\n", ttf_strerror(ttf_result));
+    	fprintf(stderr, "%s: ttf_new() failed while processing %s, \"%s\"\n", myname, filename, ttf_strerror(ttf_result));
     	return NULL;
     	}
     }
@@ -87,7 +87,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
     /* Extract the PostScript name. */
     if((psname = ttf_get_psname(font)) == NULL)
     	{
-    	fprintf(stderr, "ttf_get_psname() failed, %s\n", ttf_strerror(ttf_errno(font)));
+    	fprintf(stderr, "%s: ttf_get_psname() failed while processing \"%s\", %s\n", myname, filename, ttf_strerror(ttf_errno(font)));
     	return NULL;
     	}
 
@@ -97,7 +97,7 @@ static struct FONT_INFO *study_truetype_font(const char filename[])
     /* Destroy the object, closing the file. */
     if(ttf_delete(font) == -1)
     	{
-    	fprintf(stderr, "ttf_delete() failed, %s\n", ttf_strerror(ttf_errno(font)));
+    	fprintf(stderr, "%s: ttf_delete() failed, %s\n", myname, ttf_strerror(ttf_errno(font)));
 	gu_free(psname);
     	return NULL;
     	}
@@ -461,22 +461,32 @@ int main(int argc, char *argv[])
 	    }
 	}
 
-    /* open ppr.conf */
-    if(!(cf = fopen(ppr_conf, "r")))
-    	{
-	fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, ppr_conf, errno, gu_strerror(errno));
-	return EXIT_INTERNAL;
-    	}
+    /* Start a retry loop. */
+    while(TRUE)
+	{
+	/* open ppr.conf */
+	if(!(cf = fopen(ppr_conf, "r")))
+	    {
+	    fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, ppr_conf, errno, gu_strerror(errno));
+	    return EXIT_INTERNAL;
+	    }
 
-    /* Fetch the [fonts] section */
-    if(!(section = gu_ini_section_load(cf, section_name)))
-    	{
-    	fprintf(stderr, _("%s: no [%s] section in \"%s\"\n"), myname, section_name, ppr_conf);
-    	return EXIT_INTERNAL;
-    	}
+	/* Fetch the [fonts] section */
+	section = gu_ini_section_load(cf, section_name);
 
-    fclose(cf);
+	fclose(cf);
 
+	if(!section)
+	    {
+	    fprintf(stderr, _("%s: warning: no [%s] section in \"%s\", copying from \"%s.sample\"\n"), myname, section_name, ppr_conf, ppr_conf);
+	    if(gu_ini_section_from_sample(ppr_conf, section_name) == -1)
+	    	return EXIT_INTERNAL;
+	    continue;
+	    }
+
+	break;
+	}
+	
     /* Create the output file */
     if(!(indexfile = fopen(fontindex_db, "w")))
     	{

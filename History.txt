@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--13 March 2003.
+1.51, 15 February 2003--14 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8481,6 +8481,9 @@ line was being parsed twice.
   paths rather than setting the PATH environment variable.
 
 * unixuser/ppr-xfm.sh: minor cleanup
+
+* libgu/ini_section.c, ppd/indexppds.c, fontutils/indexfonts.c: added code
+  to copy missing sections from ppr.conf.sample to ppr.conf.
 
 
 

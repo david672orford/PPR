@@ -1,16 +1,38 @@
 /*
 ** mouse:~ppr/src/libgu/gu_ini_section.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 July 2001.
+** Last modified 14 March 2003.
+*/
+
+/*+ \file
+
+The functions in this module read .ini files.  The .ini format is derived
+from the format of Microsoft Windows .ini files.
+
 */
 
 #include "before_system.h"
@@ -19,22 +41,24 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "gu.h"
 #include "global_defines.h"
 
-/*
-** This function reads a specified section out of a configuration file.
-** The file is in a format derived from the format of Microsoft
-** Windows .ini files.  The section is parsed and stored in a memory
-** block and a pointer to that block is returned.  Other functions
-** may be used to extract name=value pairs from the memory block.
-**
-** If the configuration file cannot be opened or the requested section
-** cannot be found, then a NULL pointer is returned.  The caller may
-** test the pointer for a NULL value, but is not required to since all
-** of the functions which take a pointer to such a memory block as an
-** argument have a reasonable default action to take when they are passed
-** a NULL pointer.
+/** Read INI file section into memory
+
+This function reads a specified section out of a configuration file.
+The section is parsed and stored in a memory block and a pointer to that
+block is returned.  Other functions may be used to extract name=value pairs
+from the memory block.
+
+If the configuration file cannot be opened or the requested section
+cannot be found, then a NULL pointer is returned.  The caller may
+test the pointer for a NULL value, but is not required to since all
+of the functions which take a pointer to such a memory block as an
+argument have a reasonable default action to take when they are passed
+a NULL pointer.
+
 */
 struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
     {
@@ -181,10 +205,12 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
     return list;
     } /* end of gu_ini_section_load() */
 
-/*
-** This function de-allocates the memory used by the return value
-** of gu_ini_section_load().  Notice that if the pointer is NULL,
-** this function does nothing.
+/** Deallocate INI section
+
+This function de-allocates the memory used by the return value of
+gu_ini_section_load().  Notice that if the pointer is NULL, this function
+does nothing.
+
 */
 void gu_ini_section_free(struct GU_INI_ENTRY *section)
     {
@@ -197,9 +223,11 @@ void gu_ini_section_free(struct GU_INI_ENTRY *section)
 	}
     } /* end of gu_ini_section_free() */
 
-/*
-** This function extracts a value from a section loaded by the
-** gu_ini_section_load() function.
+/** Extract value list from loaded section
+
+This function extracts a value from a section loaded by the
+gu_ini_section_load() function.
+
 */
 const struct GU_INI_ENTRY *gu_ini_section_get_value(const struct GU_INI_ENTRY *section, const char key_name[])
     {
@@ -220,10 +248,12 @@ const struct GU_INI_ENTRY *gu_ini_section_get_value(const struct GU_INI_ENTRY *s
     return match;
     } /* end of gu_ini_section_get_value() */
 
-/*
-** The values returned by gu_ini_section_get_value() are lists (arrays).
-** This function returns a value at a specified possition in the
-** list.  The first item is at possition 0.
+/** Extract a value from a value list
+
+The values returned by gu_ini_section_get_value() are lists (arrays).
+This function returns a value at a specified possition in the
+list.  The first item is at possition 0.
+
 */
 const char *gu_ini_value_index(const struct GU_INI_ENTRY *array, int array_index, const char *default_value)
     {
@@ -242,10 +272,10 @@ const char *gu_ini_value_index(const struct GU_INI_ENTRY *array, int array_index
     return values;
     } /* end of gu_ini_index() */
 
-/*
-** This assigns
-**
-** This function leaks memory when it fails!!!
+/** Assign value list members to a series of variables
+
+This function leaks memory when it fails!!!
+
 */
 int gu_ini_vassign(const struct GU_INI_ENTRY *array, va_list args)
     {
@@ -319,6 +349,11 @@ int gu_ini_vassign(const struct GU_INI_ENTRY *array, va_list args)
     return 0;
     } /* end of gu_ini_vassign() */
 
+/** Assign value list members to a series of variables
+
+This function leaks memory when it fails!!!
+
+*/
 int gu_ini_assign(const struct GU_INI_ENTRY *array, ...)
     {
     va_list va;
@@ -329,16 +364,18 @@ int gu_ini_assign(const struct GU_INI_ENTRY *array, ...)
     return retval;
     } /* end of gu_ini_assign() */
 
-/*
-** This is used to quickly open a file, get a section, get values off of a
-** line, close it again, and clean up.
-**
-** The arguments are as follows:
-**
-**	file_name	The name of the config file
-**	section_name	The section, without the []'s
-**	key_name	The name on the left hand side of the equals sign
-**	...		alternating enum GU_INI_TYPES and pointers
+/** Open INI and get a series of values.
+
+This is used to quickly open a file, get a section, get values off of a
+line, close it again, and clean up.
+
+The arguments are as follows:
+
+	file_name	The name of the config file
+	section_name	The section, without the []'s
+	key_name	The name on the left hand side of the equals sign
+	...		alternating enum GU_INI_TYPES and pointers
+
 */
 const char *gu_ini_scan_list(const char file_name[], const char section_name[], const char key_name[], ...)
     {
@@ -390,9 +427,11 @@ const char *gu_ini_scan_list(const char file_name[], const char section_name[], 
     return retval;
     } /* end of gu_ini_scan_list() */
 
-/*
-** This returns a string value from the INI file.  If there is none,
-** the default value is returned.
+/** Get string value from INI file
+
+This returns a string value from the INI file.  If there is none,
+the default value is returned.
+
 */
 char *gu_ini_query(const char file_name[], const char section_name[], const char key_name[], int index, const char default_value[])
     {
@@ -405,5 +444,100 @@ char *gu_ini_query(const char file_name[], const char section_name[], const char
     return value;
     } /* end of gu_ini_query() */
 
-/* end of file */
+/** Copy missing section from sample file to INI file
 
+This copies a missing section from the sample configuration file.  Note that
+the section_name must be in lower case and without spaces.
+
+*/
+int gu_ini_section_from_sample(const char filename[], const char section_name[])
+    {
+    FILE *file_sample;
+    char *line = NULL;			/* the line we are working on */
+    int line_available = 100;		/* initial buffer size */
+    gu_boolean found = FALSE;
+    int ret = 0;
+
+    /* Open the sample configuration file for read. */
+    {
+    char *filename_sample;
+    asprintf(&filename_sample, "%s.sample", filename);
+    file_sample = fopen(filename_sample, "r");
+    gu_free(filename_sample);
+    }
+    if(!file_sample)
+    	{
+	fprintf(stderr, "Can't open \"%s.sample\", errno=%d (%s).\n", filename, errno, gu_strerror(errno));
+    	return -1;
+    	}
+
+    /* Find the start of the section which we must copy. */
+    while((line = gu_getline(line, &line_available, file_sample)))
+	{
+	if(line[0] == '[' && strchr(line, ']'))
+	    {
+	    int c;
+	    char *si, *di;
+	    for(di=si=line+1; (c=*(si++)) != ']'; )
+	    	{
+		if(!isspace(c))
+		    *(di++) = tolower(c);
+	    	}
+	    *di = '\0';
+
+	    if(strcmp(line + 1, section_name) == 0)
+	    	{
+		found = TRUE;
+	    	break;
+	    	}
+	    }
+	}
+
+    if(!found)
+    	{
+	fprintf(stderr, "Can't find [%s] in \"%s.sample\".\n", section_name, filename);
+	ret = -1;
+    	}
+
+    /* If found, copy lines up to the next one that begins with a square bracket.
+       Note that we are using a while() in place of an if() for exception handling
+       purposes.
+       */
+    while(found)
+    	{
+	FILE *file;
+	int c;
+	if(!(file = fopen(filename, "a")))
+	    {
+	    fprintf(stderr, "Can't open \"%s\" for append, errno=%d (%s).\n", filename, errno, gu_strerror(errno));
+	    ret = -1;
+	    break;
+	    }	
+	fprintf(file,   "\n"
+			"# This section was automatically copied from %s.sample\n"
+			"# because it was missing from this file.  Look there to read the comments which\n"
+			"# explain what it is for.\n"
+			"[%s]\n",
+		filename, section_name);
+
+	/* copy until new section or comment */
+	while((line = gu_getline(line, &line_available, file_sample)))
+	    {
+	    if((c = line[strspn(line, " \t")]) == '[' || c == '#' || c == ';')
+	    	break; 
+	    fprintf(file, "%s\n", line);
+	    }
+
+	fclose(file);
+	break;
+    	}
+
+    if(line)
+    	gu_free(line);
+
+    fclose(file_sample);
+
+    return ret;
+    }
+    
+/* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 14 March 2003.
 */
 
 #include "before_system.h"
@@ -205,6 +205,12 @@ static int do_dir(FILE *indexfile, const char dirname[])
 
     if(!(dirobj = opendir(dirname)))
     	{
+	if(errno == ENOENT)	/* it is ok if the directory doesn't exist */
+	    {
+	    printf("  %s\n", _("Skipped because it doesn't exist."));
+	    return EXIT_OK;
+	    }
+
     	fprintf(stderr, "%s: diropen(\"%s\") failed, errno=%d (%s)\n", myname, dirname, errno, gu_strerror(errno));
     	return EXIT_INTERNAL;
     	}
@@ -272,21 +278,31 @@ int main(int argc, char *argv[])
 	    }
 	}
 
-    /* open ppr.conf */
-    if(!(cf = fopen(ppr_conf, "r")))
-    	{
-	fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, ppr_conf, errno, gu_strerror(errno));
-	return EXIT_INTERNAL;
-    	}
+    /* Start a retry loop. */
+    while(TRUE)
+	{
+	/* open ppr.conf */
+	if(!(cf = fopen(ppr_conf, "r")))
+	    {
+	    fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, ppr_conf, errno, gu_strerror(errno));
+	    return EXIT_INTERNAL;
+	    }
 
-    /* Fetch the [ppds] section */
-    if(!(section = gu_ini_section_load(cf, section_name)))
-    	{
-    	fprintf(stderr, _("%s: no [%s] section in \"%s\"\n"), myname, section_name, ppr_conf);
-    	return EXIT_INTERNAL;
-    	}
+	/* Fetch the [ppds] section */
+	section = gu_ini_section_load(cf, section_name);
 
-    fclose(cf);
+	fclose(cf);
+
+	if(!section)
+	    {
+	    fprintf(stderr, _("%s: warning: no [%s] section in \"%s\", copying from \"%s.sample\"\n"), myname, section_name, ppr_conf, ppr_conf);
+	    if(gu_ini_section_from_sample(ppr_conf, section_name) == -1)
+	    	return EXIT_INTERNAL;
+	    continue;
+	    }
+
+	break;
+	}
 
     /* Create the output file */
     if(!(indexfile = fopen(ppdindex_db, "w")))
@@ -304,6 +320,7 @@ int main(int argc, char *argv[])
 	if(section[i].name[0] == '\0')
 	    {
 	    dirname = gu_ini_value_index(&section[i], 0, "<MISSING VALUE>");
+
 	    if((retval = do_dir(indexfile, dirname)) != EXIT_OK)
 	   	break;
 	    }

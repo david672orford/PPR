@@ -25,18 +25,21 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 14 March 2003.
 */
 
-/*
-** This is a demonstration program for the libttf library.  It does
-** not actually depend on any other part of PPR such as libppr or
-** global_defines.h.  Neither is it internationalized.  This was all
-** done deliberately, to make it easier to understand.
+/** \file
+
+This is a demonstration program for the libttf library.  It does not
+actually depend on any other part of PPR such as libppr or global_defines.h. 
+Neither is it internationalized.  This was all done deliberately, to make it
+easier to understand.
+
 */
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include "libttf.h"
 
 static void out_putc(int c)

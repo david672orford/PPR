@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 14 March 2003.
 */
 
 #ifndef _GU_H
@@ -136,6 +136,7 @@ int gu_ini_assign(const struct GU_INI_ENTRY *array, ...);
 int gu_ini_vassign(const struct GU_INI_ENTRY *array, va_list args);
 const char *gu_ini_scan_list(const char file_name[], const char section_name[], const char key_name[], ...);
 char *gu_ini_query(const char file_name[], const char section_name[], const char key_name[], int index, const char default_value[]);
+int gu_ini_section_from_sample(const char filename[], const char section_name[]);
 
 /*===================================================================
 ** Other stuff

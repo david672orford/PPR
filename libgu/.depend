@@ -46,8 +46,6 @@ gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
 
 gu_throw.$(OBJ): gu_throw.c ../include/before_system.h ../include/gu.h
 
-gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
-
 gu_trim.$(OBJ): gu_trim.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
@@ -71,6 +69,8 @@ wordwrap.$(OBJ): wordwrap.c ../include/before_system.h ../include/gu.h
 snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
 
 gu_wildmat.$(OBJ): gu_wildmat.c
+
+gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
 
 gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 

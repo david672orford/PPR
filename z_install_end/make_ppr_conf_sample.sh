@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 14 March 2003.
 #
 
 #
@@ -193,7 +193,7 @@ cat - >&5 <<===EndHere90===
   "$SHAREDIR/PPDFiles"
   "/usr/share/cups/model"
   "/usr/share/cups/model/C"
-  "/Library/Printers/PPDs/Contents/Resources/en.lproj
+  "/Library/Printers/PPDs/Contents/Resources/en.lproj"
 
 # Configuration of the new AppleTalk Printer Access Protocol server
 [papd]

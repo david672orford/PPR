@@ -36,7 +36,7 @@ pprdrv_pfb.$(OBJ): pprdrv_pfb.c ../include/before_system.h ../include/gu.h ../in
 
 pprdrv_pjl_messages.$(OBJ): pprdrv_pjl_messages.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h
+pprdrv_ppd.$(OBJ): pprdrv_ppd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h ../include/util_exits.h
 
 pprdrv_ppop_status.$(OBJ): pprdrv_ppop_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/commentary.h
 
@@ -61,8 +61,6 @@ pprdrv_tt.$(OBJ): pprdrv_tt.c ../include/before_system.h ../include/gu.h ../incl
 pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
 pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/commentary.h
-
-pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h pprdrv_ppd.h
 
 ppr-gs.$(OBJ): ppr-gs.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 

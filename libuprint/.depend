@@ -12,10 +12,6 @@ lpr_sendfile.$(OBJ): lpr_sendfile.c ../include/before_system.h ../include/gu.h .
 
 uprint-newconf.$(OBJ): uprint-newconf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/uprint.h uprint_conf.h ../include/version.h
 
-uprint_obj.$(OBJ): uprint_obj.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_print_bsd.$(OBJ): uprint_print_bsd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
 uprint_print_ppr.$(OBJ): uprint_print_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_conf.$(OBJ): uprint_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h uprint_private.h
@@ -42,11 +38,15 @@ uprint_sysv.$(OBJ): uprint_sysv.c ../include/before_system.h ../include/gu.h ../
 
 uprint_xlate.$(OBJ): uprint_xlate.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-claim_sysv.$(OBJ): claim_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+uprint_print_bsd.$(OBJ): uprint_print_bsd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+uprint_rfc1179.$(OBJ): uprint_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
 uprint_print_sysv.$(OBJ): uprint_print_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_run_rfc1179.$(OBJ): uprint_run_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+uprint_obj.$(OBJ): uprint_obj.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_rfc1179.$(OBJ): uprint_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+claim_sysv.$(OBJ): claim_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+uprint_run_rfc1179.$(OBJ): uprint_run_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
