@@ -9056,6 +9056,11 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
+1.53a2, 20 February 2004--20 February 2004.
+
+
+
+
 
 +++++++++++++++++++++
 TODO

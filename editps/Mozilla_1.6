@@ -1,0 +1,111 @@
+#! /usr/bin/perl
+
+#
+# Allow Mozilla to print a wider range or characters.
+#
+# The PostScript which Mozilla generates changed in version 1.6, we there is
+# a new version of this filter.
+#
+
+@fonts = (
+	"Times-Roman",
+	"Times-Bold",
+	"Times-BoldItalic",
+	"Times-Italic",
+	"Helvetica",
+	"Helvetica-Bold",
+	"Helvetica-BoldOblique",
+	"Helvetica-Oblique",
+	"Courier",
+	"Courier-Bold",
+	"Courier-BoldOblique",
+	"Courier-Oblique",
+	"Symbol"
+	);
+
+@fonts = (
+	"College",
+	"College-Bold",
+	"College-BoldOblique",
+	"College-Oblique",
+	"Textbook",
+	"Textbook-Bold",
+	"Textbook-Italic",
+	"Textbook-Italic",
+	"CourierISOC",
+	"CourierISOC-Bold",
+	"CourierISOC-BoldOblique",
+	"CourierISOC-Oblique",
+	"Symbol"
+	);
+
+%fonts_seen = ();
+
+# Make a first pass through the file in order to figure out which fonts are required.
+while(<STDIN>)
+	{
+	if(m/^\d+ f(\d+)$/)
+		{
+		$fonts_seen{$1} = 1;
+		}
+	}
+
+seek(STDIN, 0, 0) || die $!;
+
+# Copy the first line.
+while(<STDIN>)
+	{
+	print;
+
+	# Emmit a list of required fonts.
+	my $count=0;
+	foreach my $i (keys %fonts_seen)
+		{
+		if($count++ == 0)
+			{
+			print "%%DocumentNeededResources: "
+			}
+		else
+			{
+			print "%+ ";
+			}
+		printf("font %s\n", $fonts[$i]);
+		}
+
+	 last;
+	 }
+
+# Copy the rest of the header.
+while(<STDIN>)
+	{
+	s/(%%Creator: )/$1PPR editps and /;
+	print;
+	last if(/^%%EndComments$/);
+	}
+
+# Remove the font loading code which Mozilla generated.
+while(<STDIN>)
+	 {
+	 next if(m#^/F\d+ /\S+ Mfr$#);		# remove code which creates reencoded font
+	 next if(m#^/f\d+ {#);				# remove code which creates font invoke command
+	 print;
+	 last if(/^%%EndProlog$/);
+	 }
+
+# Create our own.
+print "%%BeginSetup\n";
+foreach my $i (keys %fonts_seen)
+	 {
+	 printf("%%%%IncludeResource: font %s\n", $fonts[$i]);
+	 printf("/F%d /%s Mfr\n", $i, $fonts[$i]);
+	 printf("/f%d { dup /csize exch def /F%d Msf } bind def\n", $i, $i);
+	 }
+print "%%EndSetup\n";
+
+# Now copy the remainder of the file.
+while(<STDIN>)
+	 {
+	 print;
+	 }
+
+exit 0;

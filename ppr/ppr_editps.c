@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_editps.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 December 2003.
+** Last modified 20 February 2004.
 */
 
 #include "before_system.h"
@@ -192,8 +192,10 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 		** The 5th and subsequent fields are points of identification which
 		** must match the characteristics of the PostScript file before
 		** an identification is considered to have been made.
+		**
+		** We treat these as quoted fields because they may need to match a colon.
 		*/
-		while((item = gu_strsep(&ptr, ":")))
+		while((item = gu_strsep_quoted(&ptr, ":", NULL)))
 			{
 			if(!*item)		/* skip empty items (presumably at end) */
 				continue;
