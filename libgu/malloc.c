@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 3 February 2004.
 */
 
 /*! \file
@@ -75,7 +75,7 @@ void *gu_alloc(size_t number, size_t size)
 	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
 
 	if((rval = malloc(size*number)) == (void*)NULL)
-		gu_Throw("gu_alloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_CodeThrow(errno, "gu_alloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -98,7 +98,7 @@ char *gu_strdup(const char *string)
 		return NULL;
 
 	if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
-		gu_Throw("gu_strdup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_CodeThrow(errno, "gu_strdup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -121,7 +121,7 @@ char *gu_strndup(const char *string, size_t len)
 	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
 
 	if((rval = (char*)malloc(len+1)) == (char*)NULL)
-		gu_Throw("gu_strndup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_CodeThrow(errno, "gu_strndup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -144,7 +144,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 		{
 		*number = (len + 1);
 		if((ptr = (char*)realloc(ptr, *number)) == (char*)NULL)
-			gu_Throw("gu_restrdup(): realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			gu_CodeThrow(errno, "gu_restrdup(): realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		}
 	strcpy(ptr, string);
 	return ptr;
@@ -166,7 +166,7 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
 	DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
 
 	if((rval = realloc(ptr, number*size)) == (void*)NULL)
-		gu_Throw("gu_realloc(): realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
+		gu_CodeThrow(errno, "gu_realloc(): realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
 
 	return rval;
 	} /* end of ppr_realloc() */
@@ -181,7 +181,7 @@ void gu_free(void *ptr)
 	DODEBUG(("gu_free(%p)", ptr));
 
 	if(!ptr)
-		gu_Throw("gu_free(): attempt to free NULL pointer");
+		gu_CodeThrow(errno, "gu_free(): attempt to free NULL pointer");
 
 	free(ptr);
 

@@ -50,7 +50,7 @@ static int confline_len;
 ** Open a configuration file.  This is called by prnopen()
 ** and grpopen() below.
 */
-int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify)
+int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify, gu_boolean create)
 	{
 	const char *confdir;
 
@@ -67,6 +67,8 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 			break;
 		}
 
+	confin = NULL;
+
 	ppr_fnamef(confin_name, "%s/%s", confdir, destname);
 
 	if(debug_level >= 1)
@@ -80,19 +82,24 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 	*/
 	if(modify)
 		{
+		/* must open for update if we want an exclusive lock */
 		if((confin = fopen(confin_name, "r+")) == (FILE*)NULL)
-			return -1;			/* must open for update if we want */
-								/* an exclusive lock */
-
-		if(gu_lock_exclusive(fileno(confin), FALSE))
 			{
-			fclose(confin);
-			printf(_("Waiting for lock to clear.\n"));
-			sleep(1);
-			goto again;
+			if(!create)
+				return -1;
+			}
+		else
+			{
+			if(gu_lock_exclusive(fileno(confin), FALSE))
+				{
+				fclose(confin);
+				printf(_("Waiting for lock to clear.\n"));
+				sleep(1);
+				goto again;
+				}
 			}
 
-		/* A temporary file in same dir, hidden (from pprd). */
+		/* Create temporary file in same dir, hidden (from pprd). */
 		ppr_fnamef(confout_name,"%s/.ppad%ld", confdir, (long)getpid());
 		if((confout = fopen(confout_name, "w")) == (FILE*)NULL)
 			fatal(EXIT_INTERNAL, _("Can't open temporary file \"%s\" for write, errno=%d (%s)"), confout_name, errno, gu_strerror(errno));
@@ -123,15 +130,15 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 */
 int prnopen(const char prnname[], gu_boolean modify)
 	{
-	return confopen(QUEUE_TYPE_PRINTER, prnname, modify);
+	return confopen(QUEUE_TYPE_PRINTER, prnname, modify, FALSE);
 	} /* end of prnopen() */
 
 /*
 ** Open a group configuration file.
 */
-int grpopen(const char *grpname, gu_boolean modify)
+int grpopen(const char *grpname, gu_boolean modify, gu_boolean create)
 	{
-	return confopen(QUEUE_TYPE_GROUP, grpname, modify);
+	return confopen(QUEUE_TYPE_GROUP, grpname, modify, create);
 	} /* end of grpopen() */
 
 /*
@@ -141,11 +148,15 @@ int grpopen(const char *grpname, gu_boolean modify)
 */
 int confread(void)
 	{
+	const char function[] = "confread";
 	int len;
 
 	if(state == STATE_CLOSED)
-		fatal(EXIT_INTERNAL, "confread(): attempt to read without open file");
+		fatal(EXIT_INTERNAL, X_("%s(): attempt to read without open file"), function);
 
+	if(!confin)
+		return FALSE;
+	
 	if(fgets(confline, confline_len, confin) == (char*)NULL)
 		return FALSE;
 
@@ -320,7 +331,7 @@ int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], const cha
 		return EXIT_DENIED;
 
 	/* Open the printer or group configuration file. */
-	if(confopen(queue_type, queue_name, TRUE))
+	if(confopen(queue_type, queue_name, TRUE, FALSE))
 		{
 		switch(queue_type)
 			{

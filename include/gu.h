@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 3 February 2004.
 */
 
 /*! \file
@@ -279,6 +279,7 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
 ===================================================================*/
 
 extern char gu_exception[];					/* text of exception message */
+extern int  gu_exception_code;				/* machine readable message */
 extern int  gu_exception_try_depth;			/* how deap are we? */
 extern int  gu_exception_temp;
 extern int  gu_exception_debug;
@@ -305,6 +306,11 @@ void gu_Try_funct(jmp_buf *p_jmp_buf);
 void gu_Throw(const char message[], ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 1, 2) ))
+#endif
+;
+void gu_CodeThrow(int code, const char message[], ...)
+#ifdef __GNUC__
+__attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
 

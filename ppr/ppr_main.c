@@ -1473,7 +1473,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'u':								/* Use username in stead of comment */
-			if(gu_torf_setBOOL(use_username, optarg) == -1)
+			if(gu_torf_setBOOL(&use_username, optarg) == -1)
 				fatal(PPREXIT_SYNTAX, _("The %s option must be followed by \"yes\" or \"no\""), true_option);
 			break;
 

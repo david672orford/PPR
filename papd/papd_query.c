@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 2 February 2004.
 */
 
 /*
@@ -554,18 +554,21 @@ static void generic_query(int sesfd, void *qc)
 		}
 
 	/* Adobe how much RAM is install query: */
-	#ifdef XXX
 	else if(strcmp(tokens[1], "ADORamSize") == 0)
 		{
-		char temp[256];
-		if(qc->RamSize)					/* If not zero which indicates unknown, */
-			{							/* return the value. */
-			snprintf(temp, sizeof(temp), "\"%d\"\n", qc->RamSize);
-			REPLY(sesfd,temp);
-			return;
+		char temp[32];
+		const char *p;
+		
+		if((p = queueinfo_optionValue(qc, "*InstalledMemory")))
+			{
+			if(rmatch(p, "Meg"))
+				{
+				snprintf(temp, sizeof(temp), "\"%d\"\n", atoi(p) * 1024 * 1024);
+				REPLY(sesfd,temp);
+				return;
+				}
 			}
 		}
-	#endif
 
 	/* unrecognized generic query */
 	return_default(sesfd);

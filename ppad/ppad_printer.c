@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2004.
+** Last modified 3 February 2004.
 */
 
 /*==============================================================
@@ -50,6 +50,7 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "interface.h"
+#include "queueinfo.h"
 #include "ppad.h"
 
 /*
@@ -95,9 +96,9 @@ static int update_groups_deffiltopts(const char *printer)
 
 		is_a_member = FALSE;					/* start by assuming it is not */
 
-		if( grpopen(direntp->d_name, FALSE) )	/* open the group file for read */
+		if(grpopen(direntp->d_name, FALSE, FALSE))	/* open the group file for read */
 			{
-			fprintf(errors, "%s(): grpopen(\"%s\", FALSE) failed", function, direntp->d_name);
+			fprintf(errors, "%s(): grpopen(\"%s\", FALSE, FALSE) failed", function, direntp->d_name);
 			closedir(dir);
 			return EXIT_INTERNAL;
 			}
@@ -126,7 +127,7 @@ static int update_groups_deffiltopts(const char *printer)
 			{
 			if(debug_level > 0)
 				printf("  Updating \"DefFiltOpts:\" for group \"%s\".\n", direntp->d_name);
-			_group_deffiltopts(direntp->d_name);
+			group_deffiltopts_internal(direntp->d_name);
 			}
 		}
 
@@ -1625,7 +1626,8 @@ int printer_ppd(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *ppdname = argv[1];
-	int retval;
+	void *qobj = NULL;
+	const char *p;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1646,82 +1648,85 @@ int printer_ppd(const char *argv[])
 		return EXIT_BADDEST;
 		}
 
-	/* make sure the PPD file exists */
-	{
-	FILE *testopen;
-	char *ppdfname = ppd_find_file(ppdname);
-	if(!(testopen = fopen(ppdfname,"r")))
-		fprintf(errors, _("The PPD file \"%s\" does not exist.\n"), ppdname);
-	gu_free(ppdfname);
-	if(!testopen)
+	gu_Try
 		{
+		/* Get ready to collect information for a "DefFiltOpts:" line. */
+		qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
+		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_debug_level(qobj, debug_level);
+
+		/* Consider the printer's PPD file.  If this fails, stop. */
+		queueinfo_add_hypothetical_printer(qobj, printer, ppdname, NULL);
+
+		/*
+		** Modify the printer's configuration file.
+		**
+		** First, copy up to (but not including) the first "PPDFile:" line.
+		** As we go, delete lines which will be obsolete since the PPD
+		** file is changing.
+		*/
+		while(confread())
+			{
+			if(lmatch(confline, "PPDFile:"))				/* stop at */
+				break;
+	
+			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+				continue;
+	
+			if(lmatch(confline, "PPDOpt:"))					/* delete */
+				continue;
+	
+			conf_printf("%s\n", confline);
+			}
+	
+		/* Write the new "PPDFile:" lines. */
+		conf_printf("PPDFile: %s\n", ppdname);
+	
+		/*
+		** Copy the rest of the file, deleting "PPDFile:" lines and any
+		** lines made obsolete by the fact that the PPD file has been
+		** changed.
+		*/
+		while(confread())
+			{
+			if(lmatch(confline, "PPDFile:"))				/* delete */
+				continue;
+	
+			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+				continue;
+	
+			if(lmatch(confline, "PPDOpt:"))					/* delete */
+				continue;
+	
+			conf_printf("%s\n", confline);
+			}
+
+		/* Insert the new "DefFiltOpts:" line. */
+		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
+			conf_printf("DefFiltOpts: %s\n", p);
+
+		/* This will commit the changes. */
+		confclose();
+		}
+	gu_Final {
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch {
+
+		/* roll-back the changes */
 		confabort();
-		return EXIT_NOTFOUND;
+
+		fprintf(errors, "%s\n", gu_exception);
+		switch(gu_exception_code)
+			{
+			case EEXIST:
+				return EXIT_NOTFOUND;
+			default:
+				return EXIT_INTERNAL;
+			}
 		}
-	fclose(testopen);
-	}
-
-	/* Get ready to collect information for a "DefFiltOpts:" line. */
-	deffiltopts_open();
-
-	/* Consider the printer's PPD file.  If this fails, stop. */
-	if((retval = deffiltopts_add_ppd(printer, ppdname, (char*)NULL)) != EXIT_OK)
-		{
-		confabort();
-		deffiltopts_close();
-		return retval;
-		}
-
-	/*
-	** Modify the printer's configuration file.
-	**
-	** First, copy up to the first "PPDFile:" lines, deleting
-	** "DefFiltOpts:" lines as we go.
-	*/
-	while(confread())
-		{
-		if(lmatch(confline, "PPDFile:"))				/* stop at */
-			break;
-
-		if(lmatch(confline, "DefFiltOpts:"))			/* delete */
-			continue;
-
-		if(lmatch(confline, "PPDOpt:"))					/* delete */
-			continue;
-
-		conf_printf("%s\n", confline);
-		}
-
-	/* Write the new "PPDFile:" lines. */
-	conf_printf("PPDFile: %s\n", ppdname);
-
-	/*
-	** Copy the rest of the file, deleting "DefFiltOpts:" lines
-	** and extra "PPDFile:" lines.
-	*/
-	while(confread())
-		{
-		if(lmatch(confline, "PPDFile:"))				/* delete */
-			continue;
-
-		if(lmatch(confline, "DefFiltOpts:"))			/* delete */
-			continue;
-
-		if(lmatch(confline, "PPDOpt:"))					/* delete */
-			continue;
-
-		conf_printf("%s\n", confline);
-		}
-
-	/* Insert a new "DefFiltOpts:" line. */
-	conf_printf("DefFiltOpts: %s\n", deffiltopts_line() );
-
-	/* Free any remaining deffiltopts data space. */
-	deffiltopts_close();
-
-	/* Close the printer configuration file. */
-	confclose();
-
+	
 	/* Tell pprd we have changed the printer's configuration so that
 	   it can clear the never bits for this printer.
 	   */
@@ -1792,8 +1797,7 @@ int printer_alerts(const char *argv[])
 
 /*
 ** Change the configuration file "Alert:" line to change the
-** alert frequency.
-** The absence of an  "Alert:" line is an error.
+** alert frequency.  The absence of an  "Alert:" line is an error.
 */
 int printer_frequency(const char *argv[])
 	{
@@ -2322,9 +2326,9 @@ int printer_delete(const char *argv[])
 
 		is_a_member = FALSE;
 
-		if( grpopen(direntp->d_name,FALSE) )
+		if(grpopen(direntp->d_name, FALSE, FALSE))
 			{
-			fprintf(errors, "%s(): grpopen(\"%s\",FALSE) failed", function, direntp->d_name);
+			fprintf(errors, "%s(): grpopen(\"%s\", FALSE, FALSE) failed", function, direntp->d_name);
 			closedir(dir);
 			return EXIT_INTERNAL;
 			}
@@ -2346,7 +2350,7 @@ int printer_delete(const char *argv[])
 		confclose();
 
 		if(is_a_member)
-			_group_remove(direntp->d_name,printer);
+			group_remove_internal(direntp->d_name,printer);
 		}
 
 	closedir(dir);
@@ -2449,8 +2453,6 @@ int printer_switchset(const char *argv[])
 int printer_deffiltopts(const char *argv[])
 	{
 	const char *printer = argv[0];
-	char *PPDFile = (char*)NULL;
-	char *InstalledMemory = (char*)NULL;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -2467,59 +2469,43 @@ int printer_deffiltopts(const char *argv[])
 		return EXIT_BADDEST;
 		}
 
-	/* Get ready to collect information for the line. */
-	deffiltopts_open();
+	{
+	void *qobj = NULL;
+	gu_Try {
+		qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
 
-	/* Modify the printer's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "DefFiltOpts:"))			/* delete */
-			continue;
-
-		if(lmatch(confline, "PPDFile:"))
+		/* Modify the printer's configuration file. */
+		while(confread())
 			{
-			int len;
-
-			if(PPDFile)
-				{
-				fputs(_("WARNING: all but the last \"PPDFile:\" line ignored.\n"), errors);
-				gu_free(PPDFile);
-				}
-
-			PPDFile = &confline[8];
-			PPDFile += strspn(PPDFile, " \t");
-			len = strlen(PPDFile);
-			while( --len >= 0 )
-				if( isspace( PPDFile[len] ) )
-					PPDFile[len] = '\0';
-				else
-					break;
-
-			PPDFile = gu_strdup(PPDFile);
+			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+				continue;
+			conf_printf("%s\n",confline);
 			}
 
-		else if(lmatch(confline, "PPDOpt: *InstalledMemory "))
-			{
-			if(InstalledMemory) gu_free(InstalledMemory);
-			InstalledMemory = gu_strndup(&confline[25], strcspn(&confline[25], " "));
-			}
-
-		conf_printf("%s\n",confline);
-		}
-
-	if(PPDFile)
 		{
-		deffiltopts_add_ppd(printer, PPDFile, InstalledMemory);
-		gu_free(PPDFile);
+		const char *cp;
+		if((cp = queueinfo_computedDefaultFilterOptions(qobj)))
+			conf_printf("DefFiltOpts: %s\n", cp);
 		}
 
-	if(InstalledMemory) gu_free(InstalledMemory);
-
-	conf_printf("DefFiltOpts: %s\n", deffiltopts_line() );
-
-	deffiltopts_close();
-
-	confclose();
+		confclose();
+		}
+	gu_Final {
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch {
+		confabort();
+		fprintf(errors, "%s\n", gu_exception);
+		switch(gu_exception_code)
+			{
+			case EEXIST:
+				return EXIT_NOTFOUND;
+			default:
+				return EXIT_INTERNAL;
+			}
+		}
+	}
 
 	return EXIT_OK;
 	} /* end of printer_deffiltopts() */
@@ -2567,10 +2553,9 @@ int printer_ppdopts(const char *argv[])
 	unsigned int next_value;
 	int c;
 	char *values[100];					/* the list of possible values */
-	int ret;
 
 	/* Make sure we have the necessary authority. */
-	if( ! am_administrator() )
+	if(!am_administrator())
 		return EXIT_DENIED;
 
 	/* Make sure the required parameter is supplied. */
@@ -2586,6 +2571,10 @@ int printer_ppdopts(const char *argv[])
 		answers = &argv[1];
 		}
 
+	/* Set whole values array to NULL so we will later know what we must gu_free(). */
+	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
+		values[next_value] = (char*)NULL;
+
 	/* Open the printer's configuration file for modification. */
 	if(prnopen(printer, TRUE))
 		{
@@ -2593,256 +2582,277 @@ int printer_ppdopts(const char *argv[])
 		return EXIT_BADDEST;
 		}
 
-	/*
-	** Set whole values array to NULL so we will
-	** later know what we must gu_free().
-	*/
-	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
-		values[next_value] = (char*)NULL;
+	{
+	void *ppd_obj = NULL;
+	gu_Try {
 
-	/*
-	** Copy the existing printer configuration file, discarding
-	** "PPDOpt:" and "DefFiltOpts:" lines and noting which
-	** PPD file is to be used.
-	*/
-	while(confread())
-		{
-		if(lmatch(confline, "PPDOpt:"))					/* delete */
-			continue;
-
-		if(lmatch(confline, "DefFiltOpts:"))			/* delete */
-			continue;
-
-		conf_printf("%s\n", confline);					/* copy to output file */
-
-		if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
+		/*
+		** Copy the existing printer configuration file, discarding
+		** "PPDOpt:" and "DefFiltOpts:" lines and noting which
+		** PPD file is to be used.
+		*/
+		while(confread())
 			{
-			if(PPDFile) gu_free(PPDFile);
-			PPDFile = ptr;
-			}
-		}
-
-	/* If there was no "PPDFile:" line, we can't continue. */
-	if(!PPDFile)
-		{
-		fprintf(errors, _("The printer \"%s\" has no \"PPDFile:\" line in its configuration file.\n"), printer);
-		confabort();
-		return EXIT_BADDEST;
-		}
-
-	/* Open the PPD file. */
-	if((ret = ppd_open(PPDFile, errors)))
-		{
-		confabort();
-		return ret;
-		}
-
-	/*
-	** Read the PPD file, ask the questions, and
-	** generate "PPDOpts:" lines.
-	*/
-	ui_open = (char*)NULL;
-	next_value = 0;
-	if(!answers) putchar('\n');
-	while((ppdline = ppd_readline()))
-		{
-		if((ptr = lmatchp(ppdline, "*OpenUI")))
-			{
-			/*
-			** If we already have a pointer to the name of the current
-			** UI block, since we have just seen the start of a new one,
-			** we know that there was an unclosed one since if it had been
-			** closed the pointer would have been set to NULL.
-			**
-			** After printing the warning, we need only free the string.
-			** In order to discard the values from the unclosed block,
-			** next_value is set to 1 a little later.  We must set ui_open
-			** to NULL here since if we aren't interested in the new section,
-			** we will not save its name in ui_open.
-			*/
-			if(ui_open)
-				{
-				fprintf(errors, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
-				gu_free(ui_open);
-				ui_open = (char*)NULL;
-				}
-
-			/* If this is not an option UI block, we are not interested. */
-			if(!lmatch(ptr, "*Option") && !lmatch(ptr, "*InstalledMemory"))
+			if(lmatch(confline, "PPDOpt:"))					/* delete */
 				continue;
-
-			/* Truncate after the end of the translation string. */
-			ptr[strcspn(ptr, ":")] = '\0';
-
-			/* Print the option name and its translation string. */
-			if(!answers)
-				printf("%s\n", ptr);
-
-			/* Save the option name and translation string. */
-			ui_open = gu_strdup(ptr);
-			ui_open_mrlen = strcspn(ptr, "/");
-
-			/* Set to indicated no accumulated values. */
-			next_value = 1;
-
-			continue;
-			}
-
-		/* If between "*OpenUI" and "*CloseUI" and this is an "*Option" or "*InstalledMemory" line, */
-		if(ui_open && (lmatch(ppdline, "*Option") || lmatch(ppdline, "*InstalledMemory")) )
-			{
-			/* If the first part of the name of this option doesn't match the part of the
-			   UI section name before the start of the translation string, */
-			if(strcspn(ppdline, "/ \t") != ui_open_mrlen || strncmp(ppdline, ui_open, ui_open_mrlen))
-				{
-				fprintf(errors, _("WARNING: spurious option found in UI section \"%s\".\n"), ui_open);
+	
+			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
 				continue;
-				}
-
-			ptr = ppdline;
-			ptr += strcspn(ptr, " \t");
-			ptr += strspn(ptr, " \t");
-
-			/* Truncate after option name and translation string. */
-			ptr[strcspn(ptr, ":")] = '\0';
-
-			if(!answers) printf("%d) %s\n", next_value, ptr);
-
-			if(next_value >= (sizeof(values) / sizeof(char*)))
+	
+			conf_printf("%s\n", confline);					/* copy to output file */
+	
+			if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 				{
-				fprintf(errors, "%s(): values[] overflow\n", function);
-				confabort();
-				return EXIT_INTERNAL;
+				if(PPDFile) gu_free(PPDFile);
+				PPDFile = ptr;
 				}
-
-			if(values[next_value]) gu_free(values[next_value]);
-			values[next_value++] = gu_strdup(ptr);
-
-			continue;
 			}
-
-		/* If this is the end of an option, ask for a choice. */
-		if(ui_open && (ptr = lmatchp(ppdline, "*CloseUI:")))
+	
+		/* If there was no "PPDFile:" line, we can't continue. */
+		if(!PPDFile)
 			{
-			if( strncmp(ptr, ui_open, strcspn(ui_open, "/")) )
+			fprintf(errors, _("The printer \"%s\" has no \"PPDFile:\" line in its configuration file.\n"), printer);
+			confabort();
+			return EXIT_BADDEST;
+			}
+	
+		/* Open the PPD file. */
+		ppd_obj = ppdobj_new(PPDFile);
+	
+		/*
+		** Read the PPD file, ask the questions, and
+		** generate "PPDOpts:" lines.
+		*/
+		ui_open = (char*)NULL;
+		next_value = 0;
+		if(!answers)
+			putchar('\n');
+		while((ppdline = ppdobj_readline(ppd_obj)))
+			{
+			if((ptr = lmatchp(ppdline, "*OpenUI")))
 				{
-				fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), errors);
-				fprintf(errors, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(ptr,"/\n"), ptr);
-				}
-
-			/* If there are answers on the command line, */
-			if(answers)
-				{
-				int x, y;
-				gu_boolean found = FALSE;
-				gu_boolean valid = FALSE;
-				int value_len;
-				c = 0;
-				for(x=0; answers[x] && answers[x+1]; x+=2)
+				/*
+				** If we already have a pointer to the name of the current
+				** UI block, since we have just seen the start of a new one,
+				** we know that there was an unclosed one since if it had been
+				** closed the pointer would have been set to NULL.
+				**
+				** After printing the warning, we need only free the string.
+				** In order to discard the values from the unclosed block,
+				** next_value is set to 1 a little later.  We must set ui_open
+				** to NULL here since if we aren't interested in the new section,
+				** we will not save its name in ui_open.
+				*/
+				if(ui_open)
 					{
-					for(y=1; y < next_value; y++)
+					fprintf(errors, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
+					gu_free(ui_open);
+					ui_open = (char*)NULL;
+					}
+	
+				/* If this is not an option UI block, we are not interested. */
+				if(!lmatch(ptr, "*Option") && !lmatch(ptr, "*InstalledMemory"))
+					continue;
+	
+				/* Truncate after the end of the translation string. */
+				ptr[strcspn(ptr, ":")] = '\0';
+	
+				/* Print the option name and its translation string. */
+				if(!answers)
+					printf("%s\n", ptr);
+	
+				/* Save the option name and translation string. */
+				ui_open = gu_strdup(ptr);
+				ui_open_mrlen = strcspn(ptr, "/");
+	
+				/* Set to indicated no accumulated values. */
+				next_value = 1;
+	
+				continue;
+				}
+	
+			/* If between "*OpenUI" and "*CloseUI" and this is an "*Option" or "*InstalledMemory" line, */
+			if(ui_open && (lmatch(ppdline, "*Option") || lmatch(ppdline, "*InstalledMemory")) )
+				{
+				/* If the first part of the name of this option doesn't match the part of the
+				   UI section name before the start of the translation string, */
+				if(strcspn(ppdline, "/ \t") != ui_open_mrlen || strncmp(ppdline, ui_open, ui_open_mrlen))
+					{
+					fprintf(errors, _("WARNING: spurious option found in UI section \"%s\".\n"), ui_open);
+					continue;
+					}
+	
+				ptr = ppdline;
+				ptr += strcspn(ptr, " \t");
+				ptr += strspn(ptr, " \t");
+	
+				/* Truncate after option name and translation string. */
+				ptr[strcspn(ptr, ":")] = '\0';
+	
+				if(!answers) printf("%d) %s\n", next_value, ptr);
+	
+				if(next_value >= (sizeof(values) / sizeof(char*)))
+					{
+					fprintf(errors, "%s(): values[] overflow\n", function);
+					confabort();
+					return EXIT_INTERNAL;
+					}
+	
+				if(values[next_value]) gu_free(values[next_value]);
+				values[next_value++] = gu_strdup(ptr);
+	
+				continue;
+				}
+	
+			/* If this is the end of an option, ask for a choice. */
+			if(ui_open && (ptr = lmatchp(ppdline, "*CloseUI:")))
+				{
+				if( strncmp(ptr, ui_open, strcspn(ui_open, "/")) )
+					{
+					fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), errors);
+					fprintf(errors, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(ptr,"/\n"), ptr);
+					}
+	
+				/* If there are answers on the command line, */
+				if(answers)
+					{
+					int x, y;
+					gu_boolean found = FALSE;
+					gu_boolean valid = FALSE;
+					int value_len;
+					c = 0;
+					for(x=0; answers[x] && answers[x+1]; x+=2)
 						{
-						#if 0
-						printf("x=%d, y=%d\n", x, y);
-						printf("answers[x]=\"%s\", answers[x+1]=\"%s\", ui_open=\"%s\", ui_open_mrlen=%d, values[y]=\"%s\"\n", answers[x], answers[x+1], ui_open, ui_open_mrlen, values[y]);
-						#endif
-						if(strlen(answers[x]) == ui_open_mrlen && strncmp(answers[x], ui_open, ui_open_mrlen) == 0)
+						for(y=1; y < next_value; y++)
 							{
-							found = TRUE;
-							if(strlen(answers[x+1]) == (value_len = strcspn(values[y], "/")) && strncmp(answers[x+1], values[y], value_len) == 0)
+							#if 0
+							printf("x=%d, y=%d\n", x, y);
+							printf("answers[x]=\"%s\", answers[x+1]=\"%s\", ui_open=\"%s\", ui_open_mrlen=%d, values[y]=\"%s\"\n", answers[x], answers[x+1], ui_open, ui_open_mrlen, values[y]);
+							#endif
+							if(strlen(answers[x]) == ui_open_mrlen && strncmp(answers[x], ui_open, ui_open_mrlen) == 0)
 								{
-								c = y;
-								valid = TRUE;	/* set flag but don't break */
+								found = TRUE;
+								if(strlen(answers[x+1]) == (value_len = strcspn(values[y], "/")) && strncmp(answers[x+1], values[y], value_len) == 0)
+									{
+									c = y;
+									valid = TRUE;	/* set flag but don't break */
+									}
 								}
 							}
 						}
-					}
-				if(!found)
-					{
-					fprintf(errors, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
-					}
-				else if(!valid)
-					{
-					fprintf(errors, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
-					confabort();
-					return EXIT_SYNTAX;
-					}
-				}
-
-			/* Otherwise, present the user with the list of options we have gathered. */
-			else
-				{
-				char temp[10];
-				do	{
-					printf(_("Choose 1 thru %d or 0 if unknown> "), next_value-1);
-					fflush(stdout);
-					if(fgets(temp, sizeof(temp), stdin) == (char*)NULL)
+					if(!found)
 						{
-						c = 0;
-						break;
+						fprintf(errors, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
 						}
-					c = atoi(temp);
-					} while( ! isdigit( temp[strspn(temp," \t")] ) || c >= next_value );
-
-				fputc('\n', stdout);
+					else if(!valid)
+						{
+						fprintf(errors, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
+						confabort();
+						return EXIT_SYNTAX;
+						}
+					}
+	
+				/* Otherwise, present the user with the list of options we have gathered. */
+				else
+					{
+					char temp[10];
+					do	{
+						printf(_("Choose 1 thru %d or 0 if unknown> "), next_value-1);
+						fflush(stdout);
+						if(fgets(temp, sizeof(temp), stdin) == (char*)NULL)
+							{
+							c = 0;
+							break;
+							}
+						c = atoi(temp);
+						} while( ! isdigit( temp[strspn(temp," \t")] ) || c >= next_value );
+	
+					fputc('\n', stdout);
+					}
+	
+				/*
+				** If the user did not choose zero (unknown), write
+				** a line containing the option and the chosen value
+				** into the printer configuration file.
+				*/
+				if(c != 0)
+					{
+					/* Print a line with the selected option. */
+					conf_printf("PPDOpt: %.*s %.*s", strcspn(ui_open, "/"), ui_open, strcspn(values[c],"/"), values[c]);
+	
+					/* If translation strings are provided for both the category and the
+					   selected option, print them afterward so that they can later
+					   be shown in the "ppad show" output. */
+					if( strchr(ui_open, '/') && strchr(values[c],'/'))
+						conf_printf(" (%s %s)", (strchr(ui_open, '/') + 1), (strchr(values[c], '/') + 1));
+	
+					/* End the configuration file line. */
+					conf_printf("\n");
+	
+					/* If this is the amount of installed memory, feed the
+					   value to the code which is generating the "DefFiltOpts:" line. */
+					if(lmatch(ui_open, "*InstalledMemory"))
+						 InstalledMemory = gu_strndup(values[c], strcspn(values[c], "/"));
+					}
+	
+				gu_free(ui_open);
+				ui_open = (char*)NULL;
 				}
-
-			/*
-			** If the user did not choose zero (unknown), write
-			** a line containing the option and the chosen value
-			** into the printer configuration file.
-			*/
-			if(c != 0)
-				{
-				/* Print a line with the selected option. */
-				conf_printf("PPDOpt: %.*s %.*s", strcspn(ui_open, "/"), ui_open, strcspn(values[c],"/"), values[c]);
-
-				/* If translation strings are provided for both the category and the
-				   selected option, print them afterward so that they can later
-				   be shown in the "ppad show" output. */
-				if( strchr(ui_open, '/') && strchr(values[c],'/'))
-					conf_printf(" (%s %s)", (strchr(ui_open, '/') + 1), (strchr(values[c], '/') + 1));
-
-				/* End the configuration file line. */
-				conf_printf("\n");
-
-				/* If this is the amount of installed memory, feed the
-				   value to the code which is generating the "DefFiltOpts:" line. */
-				if(lmatch(ui_open, "*InstalledMemory"))
-					 InstalledMemory = gu_strndup(values[c], strcspn(values[c], "/"));
-				}
-
+			} /* end of PPD reading loop */
+	
+		/* Sanity check. */
+		if(ui_open)
+			{
+			fprintf(errors, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
 			gu_free(ui_open);
-			ui_open = (char*)NULL;
 			}
-		} /* end of PPD reading loop */
-
-	/* Sanity check. */
-	if(ui_open)
+	
+		/* Emmit a new "DefFiltOpts:" line. */
 		{
-		fprintf(errors, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
-		gu_free(ui_open);
+		void *obj = NULL;
+		const char *cp;
+		gu_Try {
+			obj = queueinfo_new(QUEUEINFO_PRINTER, printer);
+			queueinfo_add_hypothetical_printer(obj, printer, PPDFile, InstalledMemory);
+			if((cp = queueinfo_computedDefaultFilterOptions(obj)))
+				conf_printf("DefFiltOpts: %s\n", cp);
+		gu_Final {
+			if(obj)
+				queueinfo_delete(obj);
+			}
+		gu_Catch {
+			gu_ReThrow();
+			}
 		}
-
-	/* Emmit a new "DefFiltOpts:" line. */
-	deffiltopts_open();
-	if((ret = deffiltopts_add_ppd(printer, PPDFile, InstalledMemory)))
-		{
+		
+		/* Close the new configuration file and move it into place. */
+		confclose();
+		}
+	gu_Final {
+		if(ppd_obj)
+			ppdobj_delete(ppd_obj);
+		}
+	gu_Catch {
 		confabort();
-		return ret;
+		fprintf(errors, "%s\n", gu_exception);
+		switch(gu_exception_code)
+			{
+			case EEXIST:
+				return EXIT_NOTFOUND;
+			default:
+				return EXIT_INTERNAL;
+			}
 		}
-	conf_printf("DefFiltOpts: %s\n", deffiltopts_line() );
-	deffiltopts_close();
-
-	/* Close the new configuration file and move it into place. */
-	confclose();
+	}
 
 	/* Tell pprd, since it might want to clear the never flag for this printer. */
 	reread_printer(printer);
 
 	/* Free any lingering memory blocks */
-	if(PPDFile) gu_free(PPDFile);
-	if(InstalledMemory) gu_free(InstalledMemory);
+	if(PPDFile)
+		gu_free(PPDFile);
+	if(InstalledMemory)
+		gu_free(InstalledMemory);
 	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
 		{
 		if(values[next_value])

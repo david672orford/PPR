@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_exceptions.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 3 February 2004.
 */
 
 /*! \file
@@ -40,6 +40,7 @@
 #define GU_EXCEPTION_MAX_TRY_DEPTH 25
 
 /* our globals */
+int gu_exception_code;
 char gu_exception[100];				/* text of last exception message */
 int gu_exception_try_depth;			/* number of gu_Try statements active */
 int gu_exception_temp;
@@ -71,6 +72,19 @@ void gu_Throw(const char message[], ...)
 	{
 	va_list va;
 	char temp[100];
+	gu_exception_code = -1;
+	va_start(va, message);
+	gu_vsnprintf(temp, sizeof(temp), message, va);
+	va_end(va);
+	gu_strlcpy(gu_exception, temp, sizeof(gu_exception));
+	gu_ReThrow();
+	}
+
+void gu_CodeThrow(int code, const char message[], ...)
+	{
+	va_list va;
+	char temp[100];
+	gu_exception_code = code;
 	va_start(va, message);
 	gu_vsnprintf(temp, sizeof(temp), message, va);
 	va_end(va);

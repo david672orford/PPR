@@ -54,7 +54,7 @@ int alias_show(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(confopen(QUEUE_TYPE_ALIAS, alias, FALSE) == -1)
+	if(confopen(QUEUE_TYPE_ALIAS, alias, FALSE, FALSE) == -1)
 		{
 		fprintf(errors, _("The alias \"%s\" does not exist.\n"), alias);
 		return EXIT_BADDEST;
@@ -145,7 +145,7 @@ int alias_forwhat(const char *argv[])
 		}
 
 	/* Make sure the preposed forwhat exists. */
-	if(confopen(QUEUE_TYPE_GROUP, forwhat, FALSE) == -1 && confopen(QUEUE_TYPE_PRINTER, forwhat, FALSE) == -1)
+	if(confopen(QUEUE_TYPE_GROUP, forwhat, FALSE, FALSE) == -1 && confopen(QUEUE_TYPE_PRINTER, forwhat, FALSE, FALSE) == -1)
 		{
 		fprintf(errors, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
 		return EXIT_BADDEST;
@@ -153,7 +153,7 @@ int alias_forwhat(const char *argv[])
 	confclose();
 
 	/* If we can't open an old one, create a new one. */
-	if(confopen(QUEUE_TYPE_ALIAS, alias, TRUE) == -1)
+	if(confopen(QUEUE_TYPE_ALIAS, alias, TRUE, FALSE) == -1)
 		{
 		FILE *newconf;
 		char fname[MAX_PPR_PATH];

@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--29 January 2004.
+1.53a1, 24 September 2003--2 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 

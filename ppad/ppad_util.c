@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_util.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 April 2003.
+** Last modified 3 February 2004.
 */
 
 #include "before_system.h"
@@ -259,18 +259,18 @@ void print_switchset(char *switchset)
 ** lines by 4 spaces.  Understand that start_column is the column
 ** the cursor is when this is called.  (0 is the first column.)
 */
-int print_wrapped(const char *deffiltopts, int starting_column)
+int print_wrapped(const char *text, int starting_column)
 	{
 	int x;
 	int opts_len;
 	int out_len = starting_column;
 	int word_len;
 
-	opts_len = strlen(deffiltopts);					/* determine total length of options */
+	opts_len = strlen(text);					/* determine total length of options */
 
 	for(x=0; x < opts_len; x++)						/* while options remain */
 		{
-		word_len = strcspn(&deffiltopts[x], " \t"); /* how long is this element? */
+		word_len = strcspn(&text[x], " \t"); /* how long is this element? */
 
 		if((out_len+word_len+1) >= 80)				/* If leading space and element */
 			{										/* will not fit, */
@@ -286,7 +286,7 @@ int print_wrapped(const char *deffiltopts, int starting_column)
 
 		while(word_len--)							/* Print the element. */
 			{
-			putchar(deffiltopts[x++]);
+			putchar(text[x++]);
 			}
 		}
 

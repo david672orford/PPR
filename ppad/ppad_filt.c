@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_filt.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 2 February 2004.
 */
 
 /*
@@ -53,132 +53,30 @@
 
 /* #define DEBUG_FILT 1 */
 
+
 /*
 ** The variables we use the compile a "DefFiltOpts:" line.
 */
-static int open_called = FALSE;			/* has deffiltopts_open() been called? */
-static int level;						/* -1 if not seen yet, otherwise lowest */
-static char *resolution = (char*)NULL;
-static int resolution_conflict;			/* TRUE if not all are the same */
-static int colour;						/* TRUE if any have colour yet */
-static int freevm;						/* zero means not found yet, otherwise, smallest yet */
-static char product[64];
-static char modelname[64];
-static char nickname[64];
-static char *mfmode = (char*)NULL;
-static int mfmode_conflict;
-
-/*
-** Given a Product, ModelName, Nickname, and resolution return
-** a MetaFont mode name.
-**
-** The name will be returned in gu_alloc()ed memory.
-*/
-static char *get_mfmode(const char *product, const char *modelname, const char *nickname, const char *resolution)
+struct DEF_FILT_OPTS
 	{
-	const char filename[] = MFMODES;
-	FILE *modefile;
-	int line_space_available = 80;		/* suggested initial line buffer size */
-	char *line = NULL;
-	int linenum;
-	const char *p, *m, *n, *r;			/* for cleaned up arguments */
-	char *f[5];							/* for line fields */
-	char *ptr;
-	int x;
-	char *answer = (char*)NULL;
-
-	#ifdef DEBUG_FILT
-	printf("get_mfmode(product=\"%s\", modelname=\"%s\", nickname=\"%s\"\n",
-		product ? product : "<NULL>",
-		modelname ? modelname : "<NULL>",
-		nickname ? nickname : "<NULL>");
-	#endif
-
-	/* Assign short variable names and replace NULL pointers
-	   with zero-length strings. */
-	p = product ? product : "";
-	m = modelname ? modelname : "";
-	n = nickname ? nickname : "";
-	r = resolution ? resolution : "";
-
-	if(debug_level >= 2)
-		printf(X_("Looking up mfmode for product \"%s\", modelname \"%s\", nickname \"%s\", resolution \"%s\".\n"), p, m, n, r);
-
-	if((modefile = fopen(filename, "r")) == (FILE*)NULL)
-		{
-		fprintf(errors, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, filename, errno, gu_strerror(errno));
-		return (char*)NULL;
-		}
-
-	for(linenum=1; (line = gu_getline(line, &line_space_available, modefile)); linenum++)
-		{
-		/* Skip comments and blank lines.  gu_getline() has already removed trailing spaces. */
-		if(line[0]==';' || line[0]=='#' || line[0]=='\0')
-			continue;
-
-		ptr = line;
-		if(!(f[0] = gu_strsep(&ptr, ":"))
-				|| !(f[1] = gu_strsep(&ptr, ":"))
-				|| !(f[2] = gu_strsep(&ptr, ":"))
-				|| !(f[3] = gu_strsep(&ptr, ":"))
-				|| !(f[4] = gu_strsep(&ptr, ":")))
-			{
-			fprintf(errors, _("Warning: syntax error in \"%s\" line %d: too few fields\n"), filename, linenum);
-			continue;
-			}
-
-		for(x=0; x < (sizeof(f) / sizeof(f[0])); x++)
-			{
-			if(f[x][0] == '\0')
-				{
-				fprintf(errors, _("Warning: syntax error in \"%s\" line %d: field %d is empty\n"), filename, linenum, x);
-				}
-			}
-		if(x < (sizeof(f) / sizeof(f[0]))) continue;	/* skip line if error detected in the for() loop */
-
-		if(debug_level >= 3)
-			printf(X_("line %d: product \"%s\", modelname \"%s\", nickname \"%s\", resolution \"%s\", mfmode \"%s\"\n"), linenum, f[0], f[1], f[2], f[3], f[4]);
-
-		if(f[0][0] != '*' && strcmp(p, f[0]))
-			continue;
-
-		if(f[1][0] != '*' && strcmp(m, f[1]))
-			continue;
-
-		if(f[2][0] != '*' && strcmp(n, f[2]))
-			continue;
-
-		if(f[3][0] != '*' && strcmp(r, f[3]))
-			continue;
-
-		answer = gu_strdup(f[4]);
-
-		if(debug_level >= 2)
-			printf(_("Match at \"%s\" line %d, mfmode=%s.\n"), filename, linenum, answer);
-
-		gu_free(line);			/* didn't hit EOF so must do it ourselves */
-		break;
-		}
-
-	if(ferror(modefile))
-		fprintf(errors, _("%s: error reading \"%s\", errno=%d (%s)\n"), myname, filename, errno, gu_strerror(errno));
-
-	fclose(modefile);
-
-	if(!answer)
-		{
-		fprintf(errors, _("Warning: \"%s\" has no matching clause!  Some filters\n"
-						"\tmay not work correctly.\n"), filename);
-		}
-
-	return answer;
-	} /* end of get_mfmode() */
+	const char *group;
+	int level;							/* -1 if not seen yet, otherwise lowest */
+	char *resolution = (char*)NULL;
+	int resolution_conflict;			/* TRUE if not all are the same */
+	int colour;							/* TRUE if any have colour yet */
+	int freevm;							/* zero means not found yet, otherwise, smallest yet */
+	char product[64];
+	char modelname[64];
+	char nickname[64];
+	char *mfmode = (char*)NULL;
+	int mfmode_conflict;
+	};
 
 /*
 ** This routine initializes the variables in order to
 ** get ready to read PPD files.
 */
-void deffiltopts_open(void)
+void deffiltopts_new(const char group[])
 	{
 	#ifdef DEBUG_FILT
 	fputs("deffiltopts_open()\n", stdout);
@@ -187,16 +85,16 @@ void deffiltopts_open(void)
 	if(debug_level >= 2)
 		printf("Gathering information for \"DefFiltOpts:\" line.\n");
 
-	open_called = TRUE;					/* this routine has been called */
-	level = -1;							/* unknown */
-	resolution = (char*)NULL;			/* unknown */
-	resolution_conflict = FALSE;		/* not yet */
-	colour = FALSE;						/* assume false */
-	freevm = 0;							/* unknown */
+	self->group = group;
+	self->level = -1;						/* unknown */
+	self->resolution = (char*)NULL;			/* unknown */
+	self->resolution_conflict = FALSE;		/* not yet */
+	self->colour = FALSE;					/* assume false */
+	self->freevm = 0;						/* unknown */
 
-	mfmode = (char*)NULL;				/* unknown */
-	mfmode_conflict = FALSE;			/* not yet */
-	} /* end of deffiltopts_open() */
+	self->mfmode = (char*)NULL;				/* unknown */
+	self->mfmode_conflict = FALSE;			/* not yet */
+	} /* end of deffiltopts_new() */
 
 /*
 ** Read a PPD file and contribute its contents to
@@ -205,8 +103,10 @@ void deffiltopts_open(void)
 ** Various PPAD sub-commands call this.  They call it when they
 ** copy the "PPDFile:" line.
 */
-int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const char *InstalledMemory)
+int deffiltopts_add_ppd(void *objptr, const char printer_name[], const char ppd_name[], const char *InstalledMemory)
 	{
+	const char function[] = "deffiltopts_add_ppd";
+	struct DEF_FILT_OPTS *self = (struct DEF_FILT_OPTS*)objptr;
 	int ret;
 	char *line;							/* the line we are working on */
 	char *p;							/* pointer into that line */
@@ -220,7 +120,10 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	int thisppd_modelname = FALSE;
 	int thisppd_nickname = FALSE;
 	int vmoptions_count = 0;
-	struct { char *opt; int val; } vmoptions[MAX_VMOPTIONS];
+	struct {
+		char *opt;
+		int val;
+		} vmoptions[MAX_VMOPTIONS];
 
 	#ifdef DEBUG_FILT
 	printf("deffiltopts_add_ppd(\"%s\", \"%s\")\n", ppd_name, InstalledMemory ? InstalledMemory : "NULL");
@@ -230,11 +133,11 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 		printf("Extracting deffiltopts information from PPD file \"%s\".\n", ppd_name);
 
 	if( ! open_called )
-		fatal(EXIT_INTERNAL, "deffiltopts_add_ppd(): not open");
+		fatal(EXIT_INTERNAL, "%s(): not open", function);
 
-	product[0] = '\0';			/* clear metafont information */
-	modelname[0] = '\0';
-	nickname[0] = '\0';
+	self->product[0] = '\0';			/* clear metafont information */
+	self->modelname[0] = '\0';
+	self->nickname[0] = '\0';
 
 	/* Open the PPD file. */
 	if((ret = ppd_open(ppd_name, errors)))
@@ -258,8 +161,8 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 		*/
 		if(!thisppd_level && gu_sscanf(line, "*LanguageLevel: \"%d\"", &tempint) == 1)
 			{
-			if(level == -1 || tempint < level)
-				level = tempint;
+			if(this->level == -1 || tempint < this->level)
+				this->level = tempint;
 			thisppd_level = TRUE;
 			continue;
 			}
@@ -325,11 +228,9 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 		** If this is a "*ColorDevice:" line and it says true, set
 		** colour to TRUE.
 		*/
-		if(!thisppd_colour && lmatch(line, "*ColorDevice:"))
+		if(!thisppd_colour && (tempptr = lmatch(line, "*ColorDevice:")))
 			{
-			tempptr = &line[13];
-			tempptr += strspn(tempptr," \t");
-			if( tempptr[0] == 'T' )
+			if(tempptr[0] == 'T')
 				colour = TRUE;
 			thisppd_colour = TRUE;
 			continue;
@@ -339,35 +240,31 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 		** Collect *Product, *ModelName, and *NickName information
 		** for determining the MetaFont mode.
 		*/
-		if(!thisppd_product && lmatch(line, "*Product:"))
+		if(!thisppd_product && (tempptr = lmatchp(line, "*Product:")))
 			{
-			tempptr = &line[9];
-			tempptr += strspn(tempptr, " \t\"(");
+			tempptr += strspn(tempptr, "\"(");
 			tempptr[strcspn(tempptr,")")] = '\0';
-			strncpy(product, tempptr, sizeof(product)); /* do a */
-			product[sizeof(product)-1] = '\0';	/* truncating copy */
+			strncpy(product, tempptr, sizeof(product));
+			product[sizeof(product)-1] = '\0';
 
 			thisppd_product = TRUE;
 			continue;
 			}
-		if(!thisppd_modelname && lmatch(line, "*ModelName:"))
+		if(!thisppd_modelname && (tempptr = lmatch(line, "*ModelName:")))
 			{
-			tempptr = &line[11];
-			tempptr += strspn(tempptr, " \t\"");
 			tempptr[strcspn(tempptr,"\"")] = '\0';
-			strncpy(modelname, tempptr, sizeof(modelname));		/* do a */
-			modelname[sizeof(modelname)-1] = '\0';		/* truncating copy */
+			strncpy(modelname, tempptr, sizeof(modelname));
+			modelname[sizeof(modelname)-1] = '\0';
 
 			thisppd_modelname = TRUE;
 			continue;
 			}
-		if(!thisppd_nickname && lmatch(line, "*NickName:"))
+		if(!thisppd_nickname && (tempptr = lmatch(line, "*NickName:")))
 			{
-			tempptr = &line[10];
-			tempptr += strspn(tempptr," \t\"");
+			tempptr += strspn(tempptr,"\"");
 			tempptr[strcspn(tempptr,"\"")] = '\0';
-			strncpy(nickname, tempptr, sizeof(nickname));		/* do a */
-			nickname[sizeof(nickname)-1] = '\0';				/* truncating copy */
+			strncpy(nickname, tempptr, sizeof(nickname));
+			nickname[sizeof(nickname)-1] = '\0';
 
 			thisppd_nickname = TRUE;
 			continue;
@@ -381,7 +278,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 			char *ptr;
 			if(vmoptions_count >= MAX_VMOPTIONS)
 				{
-				fprintf(errors, "deffiltopts_add_ppd(): VMOptions overflow\n");
+				fprintf(errors, "%s(): VMOptions overflow\n", function);
 				}
 			else
 				{
@@ -429,8 +326,8 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	** If this PPD file has yielded the lowest freevm
 	** value yet, then let it prevail.
 	*/
-	if(freevm == 0 || thisppd_freevm < freevm)
-		freevm = thisppd_freevm;
+	if(self->freevm == 0 || thisppd_freevm < self->freevm)
+		self->freevm = thisppd_freevm;
 
 	/*
 	** This will help explain the subsequent warning about the failed mfmode search.
@@ -438,7 +335,8 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	if( ! thisppd_resolution && ! resolution_conflict )
 		{
 		fprintf(errors, _("Warning: PPD file \"%s\" (for printer\n"
-		"\t\"%s\") does not have a \"*DefaultResolution:\" line.\n"), ppd_name, printer_name);
+							"\t\"%s\") does not have a \"*DefaultResolution:\" line.\n"),
+			ppd_name, printer_name);
 		}
 
 	/*
@@ -470,6 +368,11 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 				gu_free(tempptr);
 				}
 			}
+		else
+			{
+			fprintf(errors, _("Warning: \"%s\" has no matching clause!  Some filters\n"
+							"\tmay not work correctly.\n"), filename);
+			}
 		}
 
 	#ifdef DEBUG_FILT
@@ -486,7 +389,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 ** Various PPAD sub-commands that edit gropu files call this.  They
 ** call it each time they copy a "Printer:" line.
 */
-int deffiltopts_add_printer(const char printer_name[])
+int deffiltopts_add_printer(const char group_name[], const char printer_name[])
 	{
 	char fname[MAX_PPR_PATH];
 	FILE *f;
@@ -497,7 +400,7 @@ int deffiltopts_add_printer(const char printer_name[])
 	int ret;
 
 	#ifdef DEBUG_FILT
-	printf("deffiltopts_add_printer(\"%s\")\n", printer_name);
+	printf("deffiltopts_add_printer(group_name[]=\"%s\", printer_name[]=\"%s\")\n", group_name, printer_name);
 	#endif
 
 	ppr_fnamef(fname, "%s/%s", PRCONF, printer_name);
@@ -533,7 +436,8 @@ int deffiltopts_add_printer(const char printer_name[])
 			}
 		else if(lmatch(line, "PPDOpt: *InstalledMemory "))
 			{
-			if(InstalledMemory) gu_free(InstalledMemory);
+			if(InstalledMemory)
+				gu_free(InstalledMemory);
 			InstalledMemory = gu_strndup(&line[25], strcspn(&line[25], " "));
 			}
 		}
@@ -542,7 +446,7 @@ int deffiltopts_add_printer(const char printer_name[])
 
 	if(PPDFile)
 		{
-		if((ret = deffiltopts_add_ppd(printer_name, PPDFile, InstalledMemory)) == EXIT_BADDEST)
+		if((ret = deffiltopts_add_ppd(group_name, printer_name, PPDFile, InstalledMemory)) == EXIT_BADDEST)
 			fprintf(errors, _("Printer \"%s\" has an invalid PPD file \"%s\".\n"), printer_name, PPDFile);
 		gu_free(PPDFile);
 		}
@@ -552,7 +456,8 @@ int deffiltopts_add_printer(const char printer_name[])
 		ret = EXIT_BADDEST;
 		}
 
-	if(InstalledMemory) gu_free(InstalledMemory);
+	if(InstalledMemory)
+		gu_free(InstalledMemory);
 
 	#ifdef DEBUG_FILT
 	printf("deffiltopts_add_printer(): done\n");

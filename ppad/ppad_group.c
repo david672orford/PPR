@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 3 February 2004.
 */
 
 /*
@@ -45,6 +45,7 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
+#include "queueinfo.h"
 #include "ppad.h"
 
 /*
@@ -84,7 +85,7 @@ int group_show(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(grpopen(group, FALSE))	/* Open the configuration file. */
+	if(grpopen(group, FALSE, FALSE))	/* Open the configuration file. */
 		{
 		fprintf(errors, _("The group \"%s\" does not exist.\n"), group);
 		return EXIT_BADDEST;
@@ -300,7 +301,7 @@ int group_rotate(const char *argv[])
 		}
 
 	/* make sure the group exists */
-	if(grpopen(group, TRUE))
+	if(grpopen(group, TRUE, FALSE))
 		{
 		fprintf(errors, _("The group \"%s\" does not exist.\n"),group);
 		return EXIT_BADDEST;
@@ -338,7 +339,9 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	{
 	const char *group = argv[0];
 	int x;
-	int retval;
+	char *ptr;
+	int count = 0;
+	void *qobj = NULL;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -382,7 +385,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 
 	/*
 	** Make sure the proposed new members really exist.
-	** We do this by trying to open its configuration file
+	** We do this by trying to open their configuration files
 	** with prnopen().
 	*/
 	for(x=1; argv[x]; x++)
@@ -402,63 +405,24 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	** If the group to which we are adding a printer
 	** does not exist, create it.
 	*/
-	if(grpopen(group, TRUE))			/* if failed, */
+	if(grpopen(group, TRUE, TRUE))
+		return EXIT_INTERNAL;
+
+	/* Copy up to but not including the 1st "Printer:" line. */
+	while(confread())
 		{
-		char fname[MAX_PPR_PATH];
-		FILE *newgroup;
+		if(lmatch(confline, "DefFiltOpts:"))		/* discard */
+			continue;
+		if(lmatch(confline, "Printer:"))			/* stop */
+			break;
+		conf_printf("%s\n", confline);				/* copy */
+		}
 
-		if(x > MAX_GROUPSIZE)
-			{
-			fprintf(errors, _("Group \"%s\" would have %d members, only %d are allowed."), group, x, MAX_GROUPSIZE);
-			return EXIT_OVERFLOW;
-			}
-
-		ppr_fnamef(fname, "%s/%s", GRCONF, group);
-		if((newgroup = fopen(fname, "w")) == (FILE*)NULL)
-			{
-			fprintf(errors, _("Failed to create group config file \"%s\", errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		deffiltopts_open();
-
-		for(x=1; argv[x]; x++)
-			{
-			fprintf(newgroup, "Printer: %s\n", argv[x]);
-			if((retval = deffiltopts_add_printer(argv[x])) != EXIT_OK)
-				{
-				fclose(newgroup);
-				unlink(fname);
-				deffiltopts_close();
-				return retval;
-				}
-			}
-
-		fprintf(newgroup, "DefFiltOpts: %s\n", deffiltopts_line());
-
-		deffiltopts_close();
-
-		fclose(newgroup);
-		} /* end of if a new group */
-
-	/* The group already exist, add a member. */
-	else
+	gu_Try
 		{
-		char *ptr;
-		int count = 0;
-
-		/* Copy up to but not including the 1st "Printer:" line. */
-		while(confread())
-			{
-			if(lmatch(confline, "DefFiltOpts:"))		/* discard */
-				continue;
-			if(lmatch(confline, "Printer:"))			/* stop */
-				break;
-			conf_printf("%s\n", confline);				/* copy */
-			}
-
-		/* Initialize the deffiltopts building routine. */
-		deffiltopts_open();
+		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
+		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_debug_level(qobj, debug_level);
 
 		/* Copy all the remaining lines. */
 		do	{
@@ -475,23 +439,18 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 					for(x=1; argv[x]; x++)				/* check for match with any we are adding. */
 						{
 						if(strcmp(ptr, argv[x]) == 0)
-							{
-							fprintf(errors, _("Printer \"%s\" is already a member of \"%s\".\n"), argv[x], group);
-							confabort();
-							deffiltopts_close();
-							return EXIT_ALREADY;
-							}
-						deffiltopts_add_printer(ptr);	/* Consider its PPD file. */
+							gu_Throw(_("%d Printer \"%s\" is already a member of \"%s\".\n"), EXIT_ALREADY, argv[x], group);
+						queueinfo_add_printer(qobj, ptr);
 						count++;
 						}
 					}
-				else
+				else									/* otherwise just delete it blindly */
 					{
 					continue;
 					}
 				}
 
-			/* Delete old "DefFiltOpts:" lines. */
+			/* Delete old "DefFiltOpts:" lines as we go. */
 			else if(lmatch(confline, "DefFiltOpts:"))
 				continue;
 
@@ -502,34 +461,43 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 		for(x=1; argv[x]; x++)
 			{
 			conf_printf("Printer: %s\n", argv[x]);
-
-			/* Consider the information in the new printer's PPD file. */
-			if((retval = deffiltopts_add_printer(argv[x])) != EXIT_OK)
-				{
-				confabort();
-				deffiltopts_close();
-				return retval;
-				}
-
+			queueinfo_add_printer(qobj, argv[x]);
 			count++;
 			}
 
 		/* Emmit the new "DefFiltOpts:" line. */
-		conf_printf("DefFiltOpts: %s\n", deffiltopts_line());
+		{
+		const char *cp = queueinfo_computedDefaultFilterOptions(qobj);
+		if(cp)
+			conf_printf("DefFiltOpts: %s\n", cp);
+		}
 
 		deffiltopts_close();
 
 		/* See if adding our printer will make the group too big. */
 		if(count > MAX_GROUPSIZE)
-			{
-			fprintf(errors, _("Group \"%s\" would have %d members, only %d are allowed.\n"), group, count, MAX_GROUPSIZE);
-			confabort();
-			return EXIT_OVERFLOW;
-			}
+			gu_Throw(_("%d Group \"%s\" would have %d members, only %d are allowed.\n"), EXIT_OVERFLOW, group, count, MAX_GROUPSIZE);
 
 		/* Commit the changes. */
 		confclose();
-		} /* end of if not a new group */
+		}
+	gu_Final
+		{
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch
+		{
+		confabort();
+		fprintf(errors, "%s\n", gu_exception);
+		switch(gu_exception_code)
+			{
+			case EEXIST:
+				return EXIT_NOTFOUND;
+			default:
+				return EXIT_INTERNAL;
+			}
+		}
 
 	/* necessary because pprd keeps track of mounted media */
 	reread_group(group);
@@ -546,47 +514,72 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 ** bad group:	EXIT_BADDEST
 ** bad member:	EXIT_NOTFOUND
 */
-int _group_remove(const char *group, const char *member)
+int group_remove_internal(const char *group, const char *member)
 	{
 	char *ptr;
 	int found = FALSE;
+	void *qobj = NULL;
 
-	if(grpopen(group, TRUE))
+	if(grpopen(group, TRUE, FALSE))
 		return EXIT_BADDEST;
 
-	deffiltopts_open();
-
-	/*
-	** Copy the configuration file.
-	*/
-	while(confread())
+	gu_Try
 		{
-		if(lmatch(confline, "DefFiltOpts:"))			/* delete old lines */
-			continue;
+		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
+		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_debug_level(qobj, debug_level);
 
-		if(lmatch(confline, "Printer:"))				/* if member name, */
+		/*
+		** Copy the configuration file.
+		*/
+		while(confread())
 			{
-			ptr = &confline[8];
-			ptr += strspn(ptr, " \t");
-
-			if(strcmp(ptr,member)==0)					/* If it is the one we */
-				{										/* are deleting, */
-				found=TRUE;								/* set a flag */
-				continue;								/* and don't copy. */
+			if(lmatch(confline, "DefFiltOpts:"))		/* delete old lines */
+				continue;
+	
+			if(lmatch(confline, "Printer:"))			/* if member name, */
+				{
+				ptr = &confline[8];
+				ptr += strspn(ptr, " \t");
+	
+				if(strcmp(ptr,member)==0)				/* If it is the one we */
+					{									/* are deleting, */
+					found=TRUE;							/* set a flag */
+					continue;							/* and don't copy. */
+					}
+	
+				queueinfo_add_printer(qobj, ptr);		/* Otherwise, add its PPD file, */
 				}
-
-			deffiltopts_add_printer(ptr);				/* Otherwise, add its PPD file, */
+	
+			conf_printf("%s\n",confline);
 			}
 
-		conf_printf("%s\n",confline);
+		/* Emmit the new "DefFiltOpts:" line. */
+		{
+		const char *cp = queueinfo_computedDefaultFilterOptions(qobj);
+		if(cp)
+			conf_printf("DefFiltOpts: %s\n", cp);
 		}
 
-	/* Write a new "DefFiltOpts:" line. */
-	conf_printf("DefFiltOpts: %s\n", deffiltopts_line());
-
-	deffiltopts_close();
-
-	confclose();
+		confclose();
+		}
+	gu_Final
+		{
+		if(qobj)
+			queueinfo_delete(qobj);
+		}
+	gu_Catch
+		{
+		confabort();
+		fprintf(errors, "%s\n", gu_exception);
+		switch(gu_exception_code)
+			{
+			case EEXIST:
+				return EXIT_NOTFOUND;
+			default:
+				return EXIT_INTERNAL;
+			}
+		}
 
 	if(found)
 		{
@@ -616,7 +609,7 @@ int group_remove(const char *argv[])
 
 	for(x=1; argv[x]; x++)
 		{
-		switch(_group_remove(group, argv[x]))
+		switch(group_remove_internal(group, argv[x]))
 			{
 			case EXIT_OK:				/* continue if no error yet */
 				break;
@@ -703,7 +696,7 @@ int group_touch(const char *argv[])
 		}
 
 	/* make sure the printer exists */
-	if(grpopen(group,FALSE))
+	if(grpopen(group, FALSE, FALSE))
 		{
 		fprintf(errors, _("The group \"%s\" does not exist.\n"),group);
 		return EXIT_BADDEST;
@@ -743,9 +736,9 @@ int group_switchset(const char *argv[])
 /*
 ** Set the DefFiltOpts: line for a group.
 */
-int _group_deffiltopts(const char *group)
+int group_deffiltopts_internal(const char *group)
 	{
-	if(grpopen(group, TRUE))
+	if(grpopen(group, TRUE, FALSE))
 		{
 		fprintf(errors, "The group \"%s\" does not exist.\n", group);
 		return EXIT_BADDEST;
@@ -760,7 +753,7 @@ int _group_deffiltopts(const char *group)
 			{
 			char *p = &confline[8];
 			p += strspn(p, " \t");
-			deffiltopts_add_printer(p);
+			deffiltopts_add_printer(group, p);
 			}
 
 		if(!lmatch(confline, "DefFiltOpts:"))
@@ -773,7 +766,7 @@ int _group_deffiltopts(const char *group)
 
 	confclose();
 	return EXIT_OK;
-	} /* end of _group_deffiltopts() */
+	} /* end of group_deffiltopts_internal() */
 
 int group_deffiltopts(const char *argv[])
 	{
@@ -788,7 +781,7 @@ int group_deffiltopts(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return _group_deffiltopts(group);
+	return group_deffiltopts_internal(group);
 	} /* end of group_deffiltopts() */
 
 /*

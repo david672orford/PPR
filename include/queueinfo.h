@@ -25,12 +25,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2004.
+** Last modified 3 February 2004.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_SEARCH, QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
 void queueinfo_delete(void *p);
+void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[]);
+void queueinfo_add_printer(void *p, const char name[]);
+void queueinfo_add_hypothetical_printer(void *p, const char name[], const char ppdfile[], const char installed_memory[]);
+
+void queueinfo_set_warnings_file(void *p, FILE *errors);
+void queueinfo_set_debug_level(void *p, int debug_level);
 
 const char *queueinfo_name(void *p);
 const char *queueinfo_comment(void *p);
@@ -52,5 +58,7 @@ int         queueinfo_fontCount(void *p);
 const char *queueinfo_font(void *p, int index);
 gu_boolean  queueinfo_fontExists(void *p, const char name[]);
 const char *queueinfo_optionValue(void *p, const char name[]);
+const char *queueinfo_computedMetaFontMode(void *p);
+const char *queueinfo_computedDefaultFilterOptions(void *p);
 
 /* end of file */

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppad/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 October 2003.
+# Last modified 3 February 2004.
 #
 
 include ../Makefile.conf
@@ -44,7 +44,6 @@ OBJS1=ppad.$(OBJ) \
 	ppad_media.$(OBJ) \
 	ppad_group.$(OBJ) \
 	ppad_conf.$(OBJ) \
-	ppad_filt.$(OBJ) \
 	ppad_util.$(OBJ) \
 	ppad_alias.$(OBJ) \
 	ppad_ppd.$(OBJ) \

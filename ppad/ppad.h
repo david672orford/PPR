@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 January 2004.
+** Last modified 3 February 2004.
 */
 
 /*
@@ -101,11 +101,11 @@ int group_comment(const char *argv[]);
 int group_rotate(const char *argv[]);
 int group_members_add(const char *argv[], gu_boolean do_add);
 int group_remove(const char *argv[]);
-int _group_remove(const char *group, const char *member);
+int group_remove_internal(const char *group, const char *member);
 int group_delete(const char *argv[]);
 int group_touch(const char *argv[]);
 int group_switchset(const char *argv[]);
-int _group_deffiltopts(const char *group);
+int group_deffiltopts_internal(const char *group);
 int group_deffiltopts(const char *argv[]);
 int group_passthru(const char *argv[]);
 int group_addon(const char *argv[]);
@@ -124,8 +124,8 @@ int alias_addon(const char *argv[]);
 extern char *confline;
 enum QUEUE_TYPE { QUEUE_TYPE_PRINTER, QUEUE_TYPE_GROUP, QUEUE_TYPE_ALIAS };
 int prnopen(const char prnname[], gu_boolean modify);
-int grpopen(const char grpname[], gu_boolean modify);
-int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify);
+int grpopen(const char grpname[], gu_boolean modify, gu_boolean create);
+int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify, gu_boolean create);
 int confread(void);
 int conf_printf(const char string[], ...);
 int conf_vprintf(const char string[], va_list va);
@@ -143,8 +143,8 @@ char *list_to_string(const char *argv[]);
 
 /* functions in ppad_filt.c */
 void deffiltopts_open(void);
-int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const char *InstalledMemory);
-int deffiltopts_add_printer(const char printer_name[]);
+int deffiltopts_add_ppd(const char group_name[], const char printer_name[], const char ppd_name[], const char *InstalledMemory);
+int deffiltopts_add_printer(const char group_name[], const char printer_name[]);
 char *deffiltopts_line(void);
 void deffiltopts_close(void);
 

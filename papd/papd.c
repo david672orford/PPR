@@ -300,7 +300,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	debug("connexion to %s (%s) from %d:%d", this_adv->PPRname, this_adv->PAPname, net, node);
 	
 	/* Load more queue configuration information so we can answer queries. */
-	if(!(queue_config = queueinfo_new(this_adv->queue_type, this_adv->PPRname)))
+	if(!(queue_config = queueinfo_new_load_config(this_adv->queue_type, this_adv->PPRname)))
 		gu_Throw("%s(): can't information about queue \"%s\"", function, this_adv->PPRname);
 
 	while(TRUE)									/* will loop until we break out */
