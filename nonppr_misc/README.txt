@@ -1,5 +1,5 @@
 mouse:~ppr/src/nonppr_misc/README.txt
-Last modified 24 January 2002.
+Last modified 4 March 2003.
 
 This directory contains small bits of code and documents which are not under 
 the PPR license.  There are symbolic links in other parts of the source tree 
@@ -45,6 +45,10 @@ libttf/ps_type3.c -> nonppr_misc/ps_type3/ps_type3.c
 include/cexcept.h -> nonppr_misc/cexcept-1.0.0/cexcept.h
 	Written by Adam M. Costello.  See nonppr_misc/cexcept-1.0.0/README in for
 	license terms.
+
+docbook-xml -> docbook-xml-4.2
+	This is the DocBook XML 4.2 DTD and the entities it needs.  It is
+	used to format the PPR documentation.
 
 If you discover any errors or omisions in this list of exceptions to the
 PPR license, please write to <ppr-bugs@mail.trincoll.edu>.

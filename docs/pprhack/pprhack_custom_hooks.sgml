@@ -6,5 +6,15 @@ Last Proofread:
 <Sect1>
 <Title>Custom Hooks</Title>
 
+<para>Custom hooks is a small program which <application>PPR</application>
+runs at predetermined points in the process of sending a job to a printer. 
+Anything that the program sends to standard output will be transmitted to
+the printer.  The program has access to the queue file, so it can determine
+the characteristics of the job.  For example, you could write a custom hook
+program which printed a banner page.  If a print queue is properly
+configured, your program will be used to print banner pages instead of
+<application>PPR</application>'s internal banner page printing code.</para>
+
+
 
 </Sect1>
