@@ -1,30 +1,34 @@
+<!--
+Filename: pprhack_srcnotes.sgml
+Last Modified: 27 February 2003
+Last Proofread: 
+-->
+
 <Sect1>
 <Title>Notes on the Source Code</Title>
 
-<Para>
-Generally, there is one subdirectory for each major program.  Smaller
-components, such as responders are gathered together into directories.
-</Para>
+<Para>Generally, there is one subdirectory for each major program.  Smaller
+components, such as responders are gathered together into directories. The
+file <filename>README.txt</filename> in the top level source directory
+contains the most up-to-date list of source directories and description of
+their purpose.</Para>
 
-<Para>
-Since PPR, in addition to being a useful tool, is intended as an instructive
-example for writers of programs which must parse DSC comments, and because it
-makes it easier to maintain, the source code is copiously commented.  In the
-source code comments, the abbreviation "RBIIp" refers to a page in the Red Book
-(PostScript Langauge Reference Manual, Second Edition).  As far as possible
-functions from the ANSI C, Posix, and Berkley Sockets libraries have been used
-in preference to function from less widely supported libraries such as the
-System V or BSD libraries.
-</Para>
+<Para> Since <application>PPR</application>, in addition to being a useful
+tool, is intended as an instructive example for writers of programs which
+must parse DSC comments, and because it makes it easier to maintain, the
+source code is copiously commented.  In the source code comments, the
+abbreviation "RBIIp" refers to a page in the Red Book (PostScript Langauge
+Reference Manual, Second Edition).  As far as possible functions from the
+ANSI C, Posix, and Berkley Sockets libraries have been used in preference to
+function from less widely supported libraries such as the System V or BSD
+libraries. </Para>
 
-<Para>
-The signal() function from the ANSI C library
-installs a signal handler.  In some implementations, such as System V, this is
-a one-shot signal handler which is removed just before it is called for the
-first time.  In other implementations, notably BSD, this signal handler remains
-installed and the signal is automatically blocked until the signal handler
-exits.
-</Para>
+<Para>The signal() function from the ANSI C library installs a signal
+handler.  In some implementations, such as System V, this is a one-shot
+signal handler which is removed just before it is called for the first time. 
+In other implementations, notably BSD, this signal handler remains installed
+and the signal is automatically blocked until the signal handler
+exits.</Para>
 
 <Para>
 For the purpose of setting up signal handlers, POSIX provides a function
@@ -46,135 +50,92 @@ which equates signal() with signal_interupting().
 <Sect2>
 <Title>Important Header Files</Title>
 
-<Para>
-There are several header files containing parameters the user may wish to
-adjust before compiling the programs.  These are described below:
+<Para>There are several header files which you will need to include if we
+are writing utilities, interface programs, responders, and other add-on
+programs for <application>PPR</application>.
 </Para>
 
 <Sect3>
 <Title><Filename class="HeaderFile">include/version.h</Filename></Title>
 
-<Para>
-This file defines the pre-processor macros VERSION, SHORT_VERSION, and
-COPYRIGHT.  If you modify PPR you may want to note that fact in the VERSION
-macro.
-</Para>
+<Para>This file defines the pre-processor macros VERSION, SHORT_VERSION, and
+COPYRIGHT.  If you produce a modified version of
+<application>PPR</application> you should note that it is modified by
+changing the VERSION macro.</Para>
 
 </Sect3>
 
 <Sect3>
 <Title><Filename>Makefile.conf</Filename></Title>
 
-<Para>
-This file is included by all the make files.  The shell script <Command>Configure</Command>
-generates this file.
-</Para>
+<Para>This file is included by all the make files.  The shell script
+<Command>Configure</Command> (in the top level of the source tree) generates
+this file.</Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Filename class="Headerfile">include/sysdep.h</Filename></Title>
-
-<Para>
-This file is included by <Filename>include/global_defines.h</Filename> (described
-below).  This file contains one section for each system to which PPR has
-been ported.  For each of these it defines some macros and possibly some
-function prototypes.  You should add a section to this file
-if you are trying to port PPR to a new system.  The macros which
-can be defined in this file are described in comments at its head.
-</Para>
+<Title><filename class="HeaderFile">include/before_system.h</filename></Title>
 
 </Sect3>
 
 <Sect3>
 <Title><Filename class="HeaderFile">include/global_defines.h</Filename></Title>
 
-<Para>
-An important part of this file is the list of definitions of files and
+<Para>An important part of this file is the list of definitions of files and
 directories.  Any file or directory names in this section which do not begin
-with a slash are relative to the directory defined as <Literal>HOMEDIR</Literal>. There are
-other parameters below the file names, but these should be modified with care.
-Probably, you should only modify <Literal>QUEUE_SIZE</Literal>, <Literal>MAX_DOCMEDIA</Literal>,
-<Literal>MAX_LINE</Literal>, <Literal>MAX_BINS</Literal>, <Literal>MAX_GROUPS</Literal>, and <Literal>MAX_PRINTERS</Literal>.
-</Para>
+with a slash are relative to the directory defined as
+<Literal>HOMEDIR</Literal>. There are other parameters below the file names,
+but these should be modified with care. Probably, you should only modify
+<Literal>QUEUE_SIZE</Literal>, <Literal>MAX_DOCMEDIA</Literal>,
+<Literal>MAX_LINE</Literal>, <Literal>MAX_BINS</Literal>,
+<Literal>MAX_GROUPS</Literal>, and <Literal>MAX_PRINTERS</Literal>.</Para>
 
 </Sect3>
 
 <Sect3>
-<Title><Filename class="HeaderFile">ppr/ppr.h</Filename></Title>
-
-<Para>
-Defined here is the maximum number of <Command>-F</Command> switches for <Command>ppr</Command>.
-</Para>
+<Title><filename class="HeaderFile">include/global_structs.h</filename></Title>
 
 </Sect3>
 
 <Sect3>
-<Title><Filename class="HeaderFile">include/pprd.h</Filename></Title>
-
-<Para>
-In this file are a few parameters related to retrying printer faults and to
-the priority system.  The present values should prove satisfactory.
-</Para>
+<Title><filename class="HeaderFile">include/gu.h</filename></Title>
 
 </Sect3>
 
 <Sect3>
-<Title><Filename class="HeaderFile">papsrv/papsrv.h</Filename></Title>
+<Title><Filename class="Headerfile">include/sysdep.h</Filename></Title>
 
-<Para>
-One might wish to edit this file in order to change the maximum number of
-PAP server names which may be advertise.  Keep in mind that the number of PAP
-server names might also be limited by your AppleTalk protocol stack.  In CAP,
-the limit is defined in the CAP sources in the file
-<Filename>cap60/lib/cap/abpap.h</Filename>.
-</Para>
-
-</Sect3>
-
-<Sect3>
-<Title><Filename class="HeaderFile">filter_lp/filter_lp.h</Filename></Title>
-
-<Para>
-One may desire to edit this file in order to change the paper size, margins
-and typefaces used by the line printer emulator.  Only monospace fonts are
-likely to give good results.  It is also possible to change the trigger values
-for selecting landscape rather than portrait mode.  Any change to the trigger
-values should be tested very thoroughly to ensure that pleasing results are
-obtained with input files of various formats.  Starting with version 1.20 of
-PPR, the lp filter has options which can be used to change these parameters
-without re-compiling.  These values are specified by using the <Command>ppr</Command> <Command>-o</Command>
-switch when submitting a print job.  The <Command>ppad switchset</Command> command can be
-useful here, especially when the jobs are arriving through <Command>lprsrv</Command>.  It is
-still necessary to edit <Filename>include/filter_lp.h</Filename> and re-compile if you wish
-to change the system-wide defaults.
-</Para>
+<Para>This file is included by <Filename>include/global_defines.h</Filename>
+(described below).  This file contains one section for each system to which
+PPR has been ported.  For each of these it defines some macros and possibly
+some function prototypes.  You should add a section to this file if you are
+trying to port PPR to a new system.  The macros which can be defined in this
+file are described in comments at its head.</Para>
 
 </Sect3>
 
 <Sect3>
 <Title><Filename>include/interface.h</Filename></Title>
 
-<Para>
-This include file defines the exit codes which printer interfaces should
-use.  It also describes the possible values of the fifth parameter to a printer
-interface which are also are possible values for the printer configuration file
-<Literal>JobBreak:</Literal> line.  Most of the definitions in this file are repeated in
-bourne shell script form in the file <Filename>interfaces/interface.sh</Filename> which is
-installed as <Filename>/usr/ppr/lib/interface.sh</Filename>.
-</Para>
+<Para>This include file defines the exit codes which printer interfaces
+should use.  It also describes the possible values of the fifth parameter to
+a printer interface which are also are possible values for the printer
+configuration file <Literal>JobBreak:</Literal> line.  Most of the
+definitions in this file are repeated in bourne shell script form in the
+file <Filename>interfaces/interface.sh</Filename> which is installed as
+<Filename>/usr/lib/ppr/lib/interface.sh</Filename>.</Para>
 
 </Sect3>
 
 <Sect3>
 <Title><Filename>libppr/interfaces.c</Filename></Title>
 
-<Para>
-This file contains an array of structures which give the default values
-which should be use with each of the printer interface programs supplied with
-PPR when <Literal>JobBreak:</Literal>, <Literal>Feedback:</Literal>, or <Literal>Codes:</Literal> lines are missing
-from printer configuration files.
-</Para>
+<Para>This file contains an array of structures which give the default
+values which should be use with each of the printer interface programs
+supplied with PPR when <Literal>JobBreak:</Literal>,
+<Literal>Feedback:</Literal>, or <Literal>Codes:</Literal> lines are missing
+from printer configuration files.</Para>
 
 </Sect3>
 

@@ -5,7 +5,8 @@
 <!ENTITY pprhack-filters SYSTEM "pprhack_filters.sgml">
 <!ENTITY pprhack-fonts SYSTEM "pprhack_fonts.sgml">
 <!ENTITY pprhack-interfaces SYSTEM "pprhack_interfaces.sgml">
-<!ENTITY pprhack-libs SYSTEM "pprhack_libs.sgml">
+<!ENTITY pprhack-libgu SYSTEM "pprhack_libgu.sgml">
+<!ENTITY pprhack-libppr SYSTEM "pprhack_libppr.sgml">
 <!ENTITY pprhack-pprd SYSTEM "pprhack_pprd.sgml">
 <!ENTITY pprhack-responders SYSTEM "pprhack_responders.sgml">
 <!ENTITY pprhack-srcnotes SYSTEM "pprhack_srcnotes.sgml">
@@ -20,7 +21,7 @@
 		<firstname>David</firstname>
 		<Surname>Chappell</Surname>
 	</Author>
-	<PubDate>16 January 2003</PubDate>
+	<PubDate>27 February 2003</PubDate>
 	<Copyright>
 		<year>1995--2003</year>
 		<holder>Trinity College Computing Center</holder>
@@ -45,7 +46,8 @@ to users.</Para>
 &pprhack-status;
 &pprhack-responders;
 &pprhack-srcnotes;
-&pprhack-libs;
+&pprhack-libgu;
+&pprhack-libppr;
 
 </Article>
 

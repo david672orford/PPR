@@ -1,5 +1,5 @@
 <Sect1>
-<Title>The PPR Library</Title>
+<Title>The Generally Useful Library</Title>
 
 <Para>
 The PPR components use a library of common code.  Persons attempting to
@@ -25,7 +25,7 @@ stdout, and stderr.
 </Sect2>
 
 <Sect2>
-<Title>myalloc(), myfree(), myrealloc(), mystrdup(), and mystrndup()</Title>
+<Title>gu_alloc(), gu_free(), gu_realloc(), gu_strdup(), and gu_strndup()</Title>
 
 <Para>
 The normal Unix memory allocation routines return a NULL pointer if they
@@ -168,18 +168,6 @@ a pointer to a char array.
 </VarListEntry>
 
 </VariableList>
-
-</Sect2>
-
-<Sect2>
-<Title>ppr_get_nodename()</Title>
-
-<Para>
-This function should return the node name which other nodes will use when
-sending jobs to this node.  In the current implementation this is the system
-name truncated before the first period (if present) and furthur truncated to 16
-characters.
-</Para>
 
 </Sect2>
 

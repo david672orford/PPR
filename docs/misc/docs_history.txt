@@ -361,7 +361,7 @@ more information about RIPs and *pprRIP:.
 
 
 
-1.51, 15 February 2003--26 February 2003.
+1.51, 15 February 2003--27 February 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -378,4 +378,7 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr.1.pod: fixed -D description to reflect knowledge that the word
   media is plural.
+
+* pprhack/: split pprhack_libs.sgml into pprhack_libgu.sgml and
+  pprhack_libppr.sgml.
 
