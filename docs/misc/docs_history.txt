@@ -332,7 +332,7 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
-1.50, 22 January 2003--24 January 2003.
+1.50, 22 January 2003--29 January 2003.
 
 * misc/PORTING.txt: changed references to makeprogs/global.mk to
   Makefile.conf.
@@ -344,5 +344,5 @@ more information about RIPs and *pprRIP:.
 
 * catalog, refman/pod2docbook.xsl: added
 
-
+* ppdoc.sh: added section headings to no-arguments help output.
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/tcpip.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 5 September 2002.
+** Last revised 29 January 2003.
 */
 
 /*
@@ -58,6 +58,9 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#ifndef INADDR_NONE
+#define INADDR_NONE -1
+#endif
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ctype.h>

@@ -8140,3 +8140,6 @@ line was being parsed twice.
 * fixup/fixup.sh: commented out call to fixup_login as it has caused some
   trouble and will be obsolete in the next version.  Those who want it
   can run it themselves.
+
+* interfaces/tcpip.c: added emergency definition of INADDR_NONE since
+  Solaris 2.8 doesn't seem to have it!
