@@ -1,0 +1,9 @@
+#! /usr/bin/perl -w
+
+while(<STDIN>)
+	{
+	s/^({restore}if)(%%EndResource)$/$1\n$2/;
+	print;
+	}
+
+exit 0;
