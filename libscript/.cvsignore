@@ -8,6 +8,7 @@ respond.ph
 ppr_conf_query
 mkstemp
 interface.sh
+interface.tcl
 file_outdated
 commentary.sh
 commentary.ph
