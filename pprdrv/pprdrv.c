@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 September 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -774,7 +774,7 @@ static int make_pagetable(void)
 
     /* How many of those will we be printing? */
     printed_pages = pagemask_count(&job);
-    
+
     /* Allocate memory to hold the table of pages. */
     pagetable = gu_alloc(printed_pages, sizeof(struct PAGETABLE));
 
@@ -815,11 +815,12 @@ static int make_pagetable(void)
 	    index++;
 	    }
 
-	/* Move head to the next page in the -pages file. */
+	/* Move ahead to the next page in the -pages file.  This
+	   involves reading up to the next blank line. */
 	while(TRUE)
 	    {
 	    if(!getpline())
-		fatal(EXIT_JOBERR, "%s(): bad job: EOF in page", function);
+		fatal(EXIT_JOBERR, "%s(): invalid job: EOF before end of page in -pages file", function);
 	    if(*pline == '\0')
 		break;
 	    }
@@ -2030,6 +2031,16 @@ int main(int argc, char *argv[])
     */
     if(read_struct_QFileEntry(qstream, &job))
 	fatal(EXIT_JOBERR, "Defective queue file data.");
+
+    /*
+    ** We really should make sure this is a queue file format
+    ** which we understand.
+    */
+    if(job.PPRVersion < 1.50)
+	{
+	give_reason("Obsolete PPR job format");
+	fatal(EXIT_JOBERR, "Obsolete PPR job format");
+	}
 
     /*
     ** Parse the queue file name into the structure "job".  Without

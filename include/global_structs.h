@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 12 November 2001.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -45,6 +45,7 @@ struct COMMENTATOR
 */
 struct QFileEntry
     {
+    float PPRVersion;			/* version number of PPR that created queue entry */
     const char *destnode;		/* node this job will be sent to */
     const char *destname;		/* destination (group or printer) */
     short int id;			/* queue id number */

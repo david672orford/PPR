@@ -26,8 +26,6 @@ ppr_res.$(OBJ): ppr_res.c ../include/before_system.h ../include/gu.h ../include/
 
 ppr_respond.$(OBJ): ppr_respond.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/respond.h ../include/ppr_exits.h
 
-ppr_selpgs.$(OBJ): ppr_selpgs.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/respond.h ../include/util_exits.h
-
 ppr_simplify.$(OBJ): ppr_simplify.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_gab.h
 
 ppr_split.$(OBJ): ppr_split.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h

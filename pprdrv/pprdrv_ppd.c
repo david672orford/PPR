@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 13 November 2001.
 */
 
 /*
@@ -557,8 +557,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    #ifdef KEEP_OLD_CODE
@@ -629,8 +629,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    if(strcmp(line, "%%EndFeature") == 0)
@@ -682,8 +682,8 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 	    {
 	    if(dgetline(infile) == (char*)NULL)
 		{
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		give_reason("defective feature invokation");
+		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
 		}
 
 	    printer_putline(line);

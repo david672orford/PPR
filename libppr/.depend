@@ -86,3 +86,5 @@ writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../in
 
 queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
 
+pagemask.$(OBJ): pagemask.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+

@@ -50,7 +50,7 @@ pprdrv_req.$(OBJ): pprdrv_req.c ../include/before_system.h ../include/gu.h ../in
 
 pprdrv_res.$(OBJ): pprdrv_res.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
-pprdrv_rip.$(OBJ): pprdrv_rip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_rip.$(OBJ): pprdrv_rip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
 pprdrv_signature.$(OBJ): pprdrv_signature.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 

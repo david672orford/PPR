@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--30 October 2001
+1.50a1, 1 August 2001--12 November 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7430,7 +7430,7 @@ line was being parsed twice.
 * libuprint/uprint_print.c:uprint_print(): changed logging so that
   uprint_errno is printed if the return value from uprint_run() is -1.
 
-* www/ppr-httpd.perl: Added BASH_ENV, IFS, and CDPATH to the environment 
+* www/ppr-httpd.perl: Added BASH_ENV, IFS, and CDPATH to the environment
   variables undefined.
 
 * www/ppr-httpd.perl: Added --standalone-port option and standalone mode.
@@ -7440,4 +7440,22 @@ line was being parsed twice.
 * Added "vendors/ppd_hp/HP LaserJet 6P".
 
 * www/*: message string internationalization fixes.
+
+* www/job_modify.cgi.perl: fixed proxy-for.
+
+* www/ppop.c: Changed wording of message that appears in case of a proxy-for
+  mismatch.  Also changed to suppress hostnames if they are the same or the
+  one from the command line is "*".  This will reduce user confusion since
+  in such cases, the hostname is not at issue.
+
+* pprdrv/pprdrv_rip.c: Changed to exit with EXIT_JOBERR rather than
+  EXIT_PRNERR_NORETRY when the RIP core dumps.  This makes more sense since
+  the most likely reason for a RIP to core dump is a job it can't deal with.
+
+* pprdrv/pprdrv_ppd.c: Fixed code that called fatal() before give_reason()
+  (so that give_reason() was never called).
+
+* pprdrv.c: added code to check the PPR version number from the queue file
+  and make sure it is high enough before proceding.  If the job was created
+  by a version of PPR that is too old, the job is arrested.
 

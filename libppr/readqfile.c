@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 13 November 2001.
 */
 
 #include "before_system.h"
@@ -69,6 +69,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->subid = 0;
     job->homenode = (char*)NULL;
 
+    job->PPRVersion = 0.0;
     job->username = (char*)NULL;
     job->For = (char*)NULL;
     job->proxy_for = (char*)NULL;		/* optional */
@@ -218,7 +219,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 	    case 'P':
 		MATCH("Priority: ", _2("%d", &job->priority), !=1, found_priority)
-		if(strncmp(line, "PPRVersion: ", 12) == 0)
+		if(sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)
 		    continue;
 		MATCH("PassThruPDL: ", _2("%Z", &job->PassThruPDL), !=1, found_other)
 		if(gu_sscanf(line, "PageList: %d %Z", &job->page_list.count, &job->page_list.mask) == 2)
