@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 February 2003.
 */
 
 #include "before_system.h"
@@ -103,6 +103,10 @@ int main(int argc, char *argv[])
 		break;
     	    }
     	}
+    if(argc > getopt_state.optind)
+	{
+
+	}
     }
 
     /* Main code continues here */

@@ -8316,3 +8316,6 @@ line was being parsed twice.
   that is what is recomended by "Secure Programming for Linux and Unix
   HOWTO".
 
+* www/: replaced ppr-passwd.sh with ppr-passwd.c.  This new implementation
+  doesn't depend on Apache's htpasswd.
+
