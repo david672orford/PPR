@@ -9248,8 +9248,12 @@ Internet Printing Protocol Work
   option with default resolutions to Ghostscript options derived
   from *cupsFilter lines.
 
-* added nonppr_vendors/ppd_hp/hp_laserjet_4100_series.ppd,
-  hp_color_laserjet_8550.ppd.
+* added nonppr_vendors/ppd_hp/
+							hp_laserjet_4100_series.ppd
+  							hp_color_laserjet_8550.ppd
+							hpc9500s.ppd
+					/ppd_canon/
+							EFNC9111.PPD							
 
 * nonppr_tcl/tclUnixUtil.c: changed vfork() to fork().
 
