@@ -10,14 +10,14 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 8 May 2001.
 #
 
 include ../makeprogs/global.mk
 
 #=== Inventory ==============================================================
 
-GROUPS=test-ppr test-pprdrv test-consistency test-filters test-interface
+GROUPS=test-ppr test-pprdrv test-consistency test-filters test-interface test-ppad
 
 #=== Build ==================================================================
 
