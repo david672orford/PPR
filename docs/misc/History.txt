@@ -8112,4 +8112,6 @@ line was being parsed twice.
   squeeze.c to nonppr_misc/squeeze/squeeze.c, moved ps_type3.c to 
   nonppr_misc/ps_type3/ps_type3.c.
 
+* filters_typeset/pod/: removed it since it was never completed and Pod:XML
+  has a program pod2xml which can already convert POD to XML.
 
