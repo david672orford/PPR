@@ -7311,3 +7311,7 @@ line was being parsed twice.
 * ppd/generic/: Replaced the two separately maintained PPR Generic PPD files 
   with three built from a common file using the C pre-processor.
 
+* ppr/: added ability to read *N-Up features to turn on PPR's internal
+  N-Up support.  The keywords are "*pprN-Up" and "*pprN-UpBorders".
+
+

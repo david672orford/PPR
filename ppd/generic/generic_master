@@ -219,20 +219,26 @@
 *%==========================================================================
 
 *% We need a way to invoke N-Up.  We have invented this.
-*OpenUI *N-Up/N-Up: PickOne
-*OrderDependency: 10 AnySetup *N-Up
-*DefaultN-Up: False
-*N-Up False/None: ""
-*N-Up 1/1: ""
-*N-Up 2/2: ""
-*N-Up 4/4: ""
-*N-Up 6/6: ""
-*N-Up 8/8: ""
-*N-Up 10/10: ""
-*N-Up 12/12: ""
-*N-Up 14/14: ""
-*N-Up 16/16: ""
-*CloseUI: *N-Up
+*OpenUI *pprN-Up/N-Up: PickOne
+*OrderDependency: 10 AnySetup *pprN-Up
+*DefaultpprN-Up: 1
+*pprN-Up 1/None: ""
+*pprN-Up 2/2: ""
+*pprN-Up 4/4: ""
+*pprN-Up 6/6: ""
+*pprN-Up 8/8: ""
+*pprN-Up 10/10: ""
+*pprN-Up 12/12: ""
+*pprN-Up 14/14: ""
+*pprN-Up 16/16: ""
+*CloseUI: *pprN-Up
+
+*OpenUI *pprN-Up/N-UpBorders: PickOne
+*OrderDependency: 10 AnySetup *pprN-UpBorders
+*DefaultpprN-UpBorders: False
+*pprN-UpBorders False/No: ""
+*pprN-UpBorders True/No: ""
+*CloseUI: *pprN-UpBorders
 
 *% Re-order the pages and print in 2-up duplex so that they can be folded and 
 *% stapled or sewn into a little booklet.

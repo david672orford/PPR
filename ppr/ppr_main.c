@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 1 June 2001.
+** Last revised 18 July 2001.
 */
 
 /*
@@ -101,6 +101,7 @@ int read_duplex = TRUE;			/* TRUE if we should guess duplex */
 int read_duplex_enforce = FALSE;	/* TRUE if we should insert duplex code after determination */
 int current_duplex = DUPLEX_NONE;	/* set when we read duplex */
 int read_signature = TRUE;		/* TRUE if we should implement signature features */
+int read_nup = TRUE;
 int read_For = FALSE;			/* Pay attention to "%%For:" lines? */
 int read_ProofMode = TRUE;
 int read_Title = TRUE;
