@@ -1,6 +1,6 @@
 ;
 ; lprsrv.conf.sample
-; Last modified 12 March 2002.
+; Last modified 5 February 2003.
 ;
 ; This is a sample security configuration file for the PPR LPR/LPD
 ; server.  The intent of this sample file is to duplicate as closely
@@ -14,12 +14,19 @@
 ; You can use the program lprsrv-test to study the effect of the
 ; rules in this file.
 ;
+; The settings which will be used for a particular client are arrived at by merging
+; the [global] section and one other section.  The names of most sections are rules
+; which match hostnames.  The longest match wins.  If no section matches, then the
+; [traditional] section (if it exists) is tried and matches if the file named above 
+; allow access.  If [traditional] doesn't exist or doesn't match, then the [other]
+; section is used.
+;
 
 ;
-; This section sets default values for the other sections.  That is,
-; any parameter setting specified here will be overridden if the
-; parameter is set in the section which matches the name of the host
-; which is sending the print job.
+; This section sets default values for the other sections.  That is, any
+; parameter setting specified here will be overridden if the parameter is set
+; in the section which matches the name of the host which is sending the print
+; job.  All 10 parameters should be set in this section.
 ;
 ; allow
 ;	Specifies whether access should be allowed to matching nodes.
@@ -69,12 +76,6 @@
 ;	switch it will only be effective when ppr is executed by a proxy
 ;	user which is listed in /etc/ppr/acl/pprprox.allow.
 ;
-
-;
-; This section sets the defaults.  Whatever section best matches
-; the client host name can override the settings in this section.
-; This section should set all 8 settings.
-;
 [global]
 allow = yes
 insecure ports = no
@@ -88,14 +89,13 @@ ppr proxy class = $cname
 ppr user format = $user@$host
 
 ;
-; This section applies to nodes which are granted access
-; by /etc/hosts.lpd, /etc/hosts.lpd_deny, and /etc/hosts.equiv.
-; However, this section does not apply if some other section
-; also matches the sending node name.
+; This section applies to nodes which are granted access by /etc/hosts.lpd,
+; /etc/hosts.lpd_deny, and /etc/hosts.equiv.  However, this section does not
+; apply if some other section also matches the sending node name.
 ;
-; The "ppr become user = yes" and "other become user = yes" indicate
-; that, if the user specified by the remote system exists on this
-; system, the spooler programs should be run under that user ID.
+; The "ppr become user = yes" and "other become user = yes" indicate that, if 
+; the user specified by the remote system exists on this system, the spooler
+; programs should be run under that user ID.
 ;
 [traditional]
 ppr become user = yes
@@ -104,9 +104,9 @@ ppr proxy class = equivalent
 ppr user format = $user
 
 ;
-; This section matches all nodes in a certain NIS netgroup.  Any section
-; which explicitly specifies a matching hostname or domain will take
-; precedence over this section.
+; This section matches all nodes in a certain NIS netgroup.  Any section which
+; explicitly specifies a matching hostname or domain will take precedence over
+; this section.
 ;
 ;[@mynetgroup]
 ;ppr become user = yes
@@ -115,33 +115,40 @@ ppr user format = $user
 ;ppr user format = $user
 
 ;
-; This section matches all nodes in a certain domain.  Notice
-; that "proxy class =" is used to indicate that a user with
-; a given name should be considered to be the same no matter which
-; of these nodes he is connecting from.  For example, the principal
-; identifier (-X switch argument) for "smith" connecting from
-; "spock.cs.trincoll.edu" will be "smith@cs.trincoll.edu".  If he
-; is connecting from "bashir.cs.trincoll.edu" it will still be
-; "smith@cs.trincoll.edu".  Thus he will be able, from Bashir, to
-; cancel a job he submitted from Spock.
+; This section applies to all hosts which match any of the pattens listed in 
+; the file /etc/desktop_lpr_hosts.  It can be overridden by a matching section
+; in this file just like netgroups can.
 ;
-;[.cs.trincoll.edu]
+;[/etc/desktop_lpr_hosts]
+;insecure ports = yes
+
+;
+; This section matches all nodes in a certain domain.  Notice that 
+; "proxy class =" is used to indicate that a user with a given name should be
+; considered to be the same no matter which of these nodes he is connecting
+; from.  For example, the principal identifier (-X switch argument) for 
+; "smith" connecting from "spock.cs.domain.org" will be 
+; "smith@cs.domain.org".  If he is connecting from "bashir.cs.domain.org"
+; it will still be "smith@cs.domain.org".  Thus he will be able, from Bashir,
+; to cancel a job he submitted from Spock.
+;
+;[.cs.domain.org]
 ;ppr become user = yes
 ;other become user = yes
-;ppr proxy class = cs.trincoll.edu
+;ppr proxy class = cs.domain.org
 ;ppr user format = $user
 
 ;
 ; This section applies to a specific host.  Since this section
 ; is empty, it simply allows access under the terms of [global].
 ;
-;[shakti.cc.trincoll.edu]
+;[shakti.cc.domain.org]
 
 ;
-; This section applies to sending nodes which do not match any
-; of the other sections including [traditional].
+; This section applies to sending nodes which do not match any of the other\
+; sections including [traditional].
 ;
-; Note that nodes in this class are locked out by "allow = no".
+; In this example, we lock out nodes of this class by setting "allow = no".
 ;
 [other]
 allow = no

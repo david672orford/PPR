@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_init_script.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 5 February 2004.
 #
 
 . ../makeprogs/paths.sh
@@ -172,7 +172,8 @@ then
 		existing=""
 		for l in `echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
 			do
-			if [ -L $l ]		# exists and is a symbolic link
+			#if [ -L $l ]		# exists and is a symbolic link (doesn't work on Solaris)
+			if [ -f $l ]		# exists
 				then
 				existing="$existing $l"
 				fi

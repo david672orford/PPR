@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2004.
+# Last modified 5 February 2004.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ B<papd> - New AppleTalk Printer Access Protocol Server
 
 =head1 SYNOPSIS
 
-B<papd> [--help] [--version] [--foreground] [--stop] [--reload]
+B<papd> [--help] [--version] [--foreground] [--stop] [--reload] [--debug-toggle] [--tail]
 
 =head1 DESCRIPTION
 
@@ -67,6 +67,15 @@ Re-examine the alias, group, and printer configuration files and unadvertise
 names which are no longer called for and advertise any new ones.  On Linux
 2.4.19 and later (with a sufficiently recent version of Glibc) this will 
 happen automatically.
+
+=item B<--debug-toggle>
+
+Sends a signal the copy of B<papd> which is running as a daemon instructing 
+to alter its debug level.
+
+=item B<--tail>
+
+Display the end of the B<papd> log file and print new lines as they are added.
 
 =back
 

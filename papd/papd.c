@@ -345,22 +345,6 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 ** main() and command line parsing
 =====================================================================*/
 
-static const char *option_chars = "";
-static const struct gu_getopt_opt option_words[] =
-		{
-		{"version", 1000, FALSE},
-		{"help", 1001, FALSE},
-		{"foreground", 1002, FALSE},
-		{"stop", 1003, FALSE},
-		{"reload", 1004, FALSE},
-		{(char*)NULL, 0, FALSE}
-		} ;
-
-static void help(FILE *out)
-	{
-	fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"), myname);
-	}
-
 /*
 ** Send the specified signal to an already running instance of this daemon.
 ** This is used for --stop and --reload.
@@ -423,6 +407,38 @@ static int do_stop(void)
 
 	return 0;
 	} /* end of do_stop() */
+
+/*
+ * Open the log file and print the end of it as tail does.
+ */
+static int do_tail(void)
+	{
+	int fd;
+	char buffer[1024];
+	int len = 0;
+	struct stat statbuf;
+
+	if(!(fd = open(LOGFILE, O_RDONLY)) == -1)
+		gu_Throw(_("Can't open \"%s\", errno=%d (%s)"), LOGFILE, errno, gu_strerror(errno));
+
+	fstat(fd, &statbuf);
+
+	if(statbuf.st_size > 1024)
+		{
+		lseek(fd, statbuf.st_size - 1024, SEEK_SET);
+		}
+	
+	while(len != -1)
+		{	
+		while((len = read(fd, buffer, sizeof(buffer))) != -1)
+			{
+			write(1, buffer, len);
+			}
+		sleep(1);
+		}
+
+	return EXIT_OK;
+	}
 
 /*
 ** If this program was invoked with excessive permissions (i.e. as root),
@@ -488,6 +504,25 @@ static int drop_privs(void)
 	return 0;
 	} /* end of drop_privs() */
 
+static const char *option_chars = "";
+static const struct gu_getopt_opt option_words[] =
+		{
+		{"version", 1000, FALSE},
+		{"help", 1001, FALSE},
+		{"foreground", 1002, FALSE},
+		{"stop", 1003, FALSE},
+		{"reload", 1004, FALSE},
+		{"debug-toggle", 1005, FALSE},
+		{"tail", 1006, FALSE},
+		{(char*)NULL, 0, FALSE}
+		} ;
+
+static void help(FILE *out)
+	{
+	fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"
+						"\t--debug-toggle --tail\n"), myname);
+	}
+
 /*
 ** This routine parses the command line arguments.  Some arguments, suchas
 ** as --help and --reload cause a function to be called from this routine
@@ -525,11 +560,15 @@ static int parse_cmdline(int argc, char *argv[])
 
 			case 1003:					/* --stop */
 				return do_stop();
-				break;
 
 			case 1004:					/* --reload */
 				return signal_daemon(SIGHUP);
-				break;
+
+			case 1005:					/* --debug-toggle */
+				return signal_daemon(SIGUSR1);
+
+			case 1006:					/* --tail */
+				return do_tail();
 
 			case '?':					/* help or unrecognized switch */
 				fprintf(stderr, "Unrecognized switch: %s\n\n", getopt_state.name);

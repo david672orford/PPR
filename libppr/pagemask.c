@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/pagemask.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 September 2001.
+** Last modified 5 February 2004.
 */
 
 #include "before_system.h"
 #include <memory.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/postscript.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 September 2003.
+** Last modified 5 February 2004.
 */
 
 #include "filter_dotmatrix.h"
@@ -93,6 +93,7 @@ void top_of_document(void)
     {
     int i;
     struct ENCODING_INFO encoding;
+    gu_boolean no_substitute;
 
 	/* Look up the selected charset in order to find the cooresponding
 	   PostScript encoding name.
@@ -103,7 +104,7 @@ void top_of_document(void)
 	/* Here we find an encoding-appropriate font in each of the required
 	   styles.
 	   */
-    gu_boolean no_substitute = FALSE;
+    no_substitute = FALSE;
     for(i=0; i<4; i++)
 		{
 		/* If this font is used at all, */

@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_adding_papd.sgml
-Last Modified: 29 January 2004
+Last Modified: 5 February 2004
 Last Proofread: 
 -->
 
@@ -36,8 +36,18 @@ that the configuration has changed.  Try doing this:
 </screen>
 </para>
 
-<para>If that doesn't do the trick, you may find clues in 
-<filename>/var/spool/ppr/logs/papd</filename>.</para>
+<para>If that doesn't do the trick, you may find clues in
+<filename>/var/spool/ppr/logs/papd</filename>.  You can use this command to
+display the end of it:</para>
+
+<para>
+<screen>
+# /usr/lib/ppr/bin/papd --tail
+</screen>
+</para>
+
+This will display the last few lines of the file and then wait, displaying new
+lines as they are added.
 
 </sect2>
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 5 February 2004.
 */
 
 #include "before_system.h"
@@ -76,18 +76,13 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	pool temp_pool;
 	char *pline, *p;
 
-	printf("  %s", base_filename);
-
-	obj = ppdobj_new(filename);
-	temp_pool = new_subpool(global_pool);
-
 	/* the information we are gathering */
 	char *Manufacturer = NULL;
 	char *ModelName = NULL;
 	char *NickName = NULL;
 	char *ShortNickName = NULL;
 	char *Product = NULL;
-	vector PSVersion = new_vector(temp_pool, char*);
+	vector PSVersion;
 	gu_boolean DeviceID = FALSE;
 	char *DeviceID_MFG = NULL;
 	char *DeviceID_MDL = NULL;
@@ -99,6 +94,12 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	char *vendor;
 	const char *description;
 	
+	printf("  %s", base_filename);
+
+	obj = ppdobj_new(filename);
+	temp_pool = new_subpool(global_pool);
+	PSVersion = new_vector(temp_pool, char*);
+
 	while((pline = ppdobj_readline(obj)))
 		{
 		if(!Manufacturer && (p = lmatchp(pline, "*Manufacturer:")) && *p == '"')

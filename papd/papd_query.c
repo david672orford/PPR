@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 February 2004.
+** Last modified 5 February 2004.
 */
 
 /*
@@ -507,7 +507,7 @@ static void feature_query(int sesfd, void *qc)
 
 		case 'O':
 		case 'I':
-			if(strncmp(tokens[1], "*Option", 7) == 0 || strcmp(tokens[1], "*InstalledMemory") == 0)
+			if(lmatch(tokens[1], "*Option") || strcmp(tokens[1], "*InstalledMemory") == 0)
 				{
 				if((p = queueinfo_optionValue(qc, tokens[1])))
 					{
@@ -561,11 +561,15 @@ static void generic_query(int sesfd, void *qc)
 		
 		if((p = queueinfo_optionValue(qc, "*InstalledMemory")))
 			{
-			if(rmatch(p, "Meg"))
+			int digits = strspn(p, "0123456789");
+			if(digits > 0)
 				{
-				snprintf(temp, sizeof(temp), "\"%d\"\n", atoi(p) * 1024 * 1024);
-				REPLY(sesfd,temp);
-				return;
+				if(p[digits] == 'M')
+					{
+					snprintf(temp, sizeof(temp), "\"%d\"\n", atoi(p) * 1024 * 1024);
+					REPLY(sesfd,temp);
+					return;
+					}
 				}
 			}
 		}

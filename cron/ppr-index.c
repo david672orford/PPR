@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-index.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 5 February 2004.
 */
 
 #include "before_system.h"
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	{
 	gu_boolean opt_delete = FALSE;
 	int i;
-	int ret;
+	int ret = EXIT_OK;
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL

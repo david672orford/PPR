@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/lprsrv.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 5 February 2004.
 */
 
 /*
@@ -101,7 +101,6 @@ void warning(const char string[], ...);
 void get_client_info(char *client_dns_name, char *client_ip, int *client_port);
 
 /* lprsrv_conf.c: */
-void clipcopy(char *dest, const char *source, int maxlen);
 void get_access_settings(struct ACCESS_INFO *access_info, const char hostname[]);
 void get_proxy_identity(uid_t *uid_to_use, gid_t *gid_to_use, const char **proxy_class, const char fromhost[], const char requested_user[], gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info);
 

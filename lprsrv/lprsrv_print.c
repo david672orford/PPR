@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_print.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 5 February 2004.
 */
 
 /*
@@ -353,7 +353,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 
 			case 'L':							/* User name for banner page */
 				uprint_set_nobanner(upr, FALSE);
-				/* clipcopy(control->Lbanner, line+1, LPR_MAX_L); */
+				/* gu_strlcpy(control->Lbanner, line+1, LPR_MAX_L); */
 				break;
 
 			case 'M':							/* User to mail to when complete */
@@ -457,7 +457,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 						data_files[files_count].type = *line;
 						data_files[files_count].copies = 1;
 						files_count++;
-						clipcopy(last_file_name, line+1, MAX_NAME_CONSIDER);
+						gu_strlcpy(last_file_name, line+1, MAX_NAME_CONSIDER);
 						}
 					else
 						{
@@ -621,7 +621,7 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 		close(fds[0]);			/* to stdin. */
 
 		/* Open the lprsrv log file */
-		if( (log=open(LPRSRV_LOGFILE, O_WRONLY | O_APPEND, 1)) == -1 )
+		if((log = open(LPRSRV_LOGFILE, O_WRONLY | O_APPEND | O_CREAT, UNIX_644)) == -1)
 			_exit(240);
 
 		/* Connect stdout and stderr to the log file. */

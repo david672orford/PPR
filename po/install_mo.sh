@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/po/install_mo.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 July 2003.
+# Last modified 5 February 2004.
 #
 
 #
@@ -34,7 +34,8 @@
 # them to index, machine dependent .mo files and installs them
 # in the locale directory.
 #
-# BUGS: doesn't set correct permissions if run as root!
+# BUG: doesn't set correct permissions if run as root!
+# BUG: uses echo -n
 #
 
 lang="$1"
@@ -88,7 +89,7 @@ for potfile in *.pot
 	if [ -f "$lang-$division.po" ]
 		then
 		echo -n " $division"
-		msgfmt $lang-$division.po -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" || exit 1
+		msgfmt -o "$full_instdir/$lang/LC_MESSAGES/$division.mo" $lang-$division.po || exit 1
 		echo "\"$instdir/$lang/LC_MESSAGES/$division.mo\"" >>$fileslist
 		else
 		echo -n " $division(missing)"

@@ -38,10 +38,10 @@ EECHO=echo
 for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
     do
     if [ `($i '\n') 2>/dev/null | wc -l` -eq 2 ]
-	then
-	EECHO=$i
-	break
-	fi
+		then
+		EECHO=$i
+		break
+		fi
     done
 
 # Function to find a program in the specified $PATH style

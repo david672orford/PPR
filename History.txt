@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--4 February 2004.
+1.53a1, 24 September 2003--5 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9028,30 +9028,58 @@ Internet Printing Protocol Work
   and setgid ppr and so could have been used by ordinary users to 
   interfer with the operation of the spooler.
 
+* lprsrv/lprsrv_conf.c: added [/filename] support.
+
+* lprsrv/lprsrv.conf.sample: improved documentation and added sample
+  [/filename] section.
+
+* lprsrv/lprsrv_print.c: changed open() call for logging the output of ppr, lp,
+  lpr, etc. so that it is allowed to create the log file.  On Starbase this 
+  bug produced a silent failure.  This may indicate another bug.
+
+* lprsrv/lprsrv_print.c: removed clipcopy() and changed all calls to it to call
+  gu_strlcpy() in its stead.
 
 
 +++++++++++++++++++++
 TODO
+
+* Make a script to convert papsrv.conf to ppad addon commands
+
+* Get CVS cleaned up.
+
+* Fix menu bar in IE and Konq.
+
+* Create Debian package.
+
+* Add support for network browers to Add Printer wizard.
+
+* Add queue aliases support to ppr2samba (or added PPR support to Samba).
+
+* Make a tiny GtkEmbed Mozilla browser
+
+* Make a tiny browser with the Mozilla ActiveX control
+
+* Finish the IPP server.
+
+* Finish support for automatic driver download in Samba 2.2.x.
 
 * Fix Dillo caching problem when deleting printer in the web interface.  It
   may be necessary to emit an header to say that certain CGI output is not
   cacheable.  It is probably that Dillo is exposing a bug by not having
   a workaround for buggy sites.
 
-* Finish the IPP server.
-
 * Change responder interface to use name=value pairs on the command line.
-
-* Change commentators to support the new status handling code and merge them
+  Change commentators to support the new status handling code and merge them
   with responders.
 
 * Implement automatic PPD file download URL.
 
-* Create Debian package.
+* Implement PPD file upload and import
 
-* Add queue aliases support to ppr2samba (or added PPR support to Samba).
+* Implement PPD file installable options handling in pprdrv.
 
-* Finish support for automatic driver download in Samba 2.2.x.
+* Implement PPR node-to-node printing, queue display, and job canceling.
 
 * Add IPP support to UPRINT so that jobs can be sent to CUPS queues.  This
   should probably be done with libcups which is LGPL.
@@ -9059,10 +9087,6 @@ TODO
 * Make uprint-cancel and uprint-lpstat actually do something
 
 * Implement -F switch sorting in pprdrv.
-
-* Implement PPD file installable options handling in pprdrv.
-
-* Implement PPR node-to-node printing, queue display, and job canceling.
 
 * Add code to convert command line option value strings and DSC text fields
   to utf-8.  Add --dsc-charset to ppr.

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 5 February 2004.
 */
 
 /*+ \file
@@ -177,12 +177,12 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		{
 		void *ppd = ppdobj_new(pip->ppdFile);
 
-		if(qip->debug_level > 1)
-			printf(_("Extracting information about printer \"%s\" from PPD file \"%s\".\n"), pip->name, pip->ppdFile);
-
 		/* These flags are used to ensure that we heed only the first instance. */
 		gu_boolean saw_ColorDevice = FALSE;
 		gu_boolean saw_LanguageLevel = FALSE;
+
+		if(qip->debug_level > 1)
+			printf(_("Extracting information about printer \"%s\" from PPD file \"%s\".\n"), pip->name, pip->ppdFile);
 
 		gu_Try {
 			char *line;
@@ -216,10 +216,15 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								/* if not seen yet and looks reasonable */
 								if(!pip->resolution)
 									{
-									if(*p < '0' && *p > '9')
+									if(*p < '0' || *p > '9')
 										{
 										if(qip->warnings)
-											fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid DefaultResolution value of \"%s\".\n"), pip->ppdFile, p);
+											{
+											if(lmatch(line, "*DefaultResolution:"))
+												fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultResolution", p);
+											else
+												fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultJCLResolution", p);
+											}
 										}
 									else
 										{
@@ -1088,8 +1093,10 @@ static void find_common_fonts(struct QUEUE_INFO *qip)
 			struct PRINTER_INFO *pip;
 			int x, y;
 			const char *fontname;
+			vector keys;
+
 			vector_get(qip->printers, 0, pip);
-			vector keys = sash_keys(pip->fonts);
+			keys = sash_keys(pip->fonts);
 			for(x=0; x < vector_size(keys); x++)
 				{
 				vector_get(keys, x, fontname);
@@ -1372,6 +1379,7 @@ int main(int argc, char *argv[])
 	printf("font_exists[Times-Roman] = %s\n", queueinfo_fontExists(obj, "Times-Roman") ? "true" : "false");
 	printf("font_exists[Donald-Duck] = %s\n", queueinfo_fontExists(obj, "Donald-Duck") ? "true" : "false");
 	printf("*Option1 = \"%s\"\n", queueinfo_optionValue(obj, "*Option1"));
+	printf("*InstalledMemory = \"%s\"\n", queueinfo_optionValue(obj, "*InstalledMemory"));
 	printf("mfmode = %s\n", queueinfo_computedMetaFontMode(obj));
 	printf("filter_options = \"%s\"\n", queueinfo_computedDefaultFilterOptions(obj));
 	return 0;

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2004.
+# Last modified 5 February 2004.
 #
 
 #
@@ -164,7 +164,7 @@ dist: dist-docs clean unconfigure
 # shell script in which they are preserved.
 symlinks-restore:
 	#if [ ! -f libgu/gu_md5.c ]; then bash ./.restore_symlinks; fi
-	./.restore_symlinks
+	if [ -d CVS ]; then ./.restore_symlinks; fi
 
 # This creates the file that the symbolic links are restored from.
 symlinks-save:

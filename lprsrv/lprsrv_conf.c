@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_conf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2003.
+** Last modified 5 February 2004.
 */
 
 #include "before_system.h"
@@ -43,21 +43,7 @@
 #include "lprsrv.h"
 #include "uprint.h"
 
-/*
-** This utility function is used by many modules in lprsrv.
-** It is here because both lprsrv and lprsrv-test are linked
-** with this module and this module requires clipcopy().
-**
-** Do a truncating string copy.  The parameter maxlen
-** specifies the maximum length to copy exclusive of the
-** NULL which terminates the string.
-*/
-void clipcopy(char *dest, const char *source, int maxlen)
-	{
-	while(maxlen-- && *source)
-		*(dest++) = *(source++);
-	*dest = '\0';
-	} /* end of clipcopy() */
+static gu_boolean authorized_file_check(const char name[], const char file[]);
 
 /*
 ** This function return TRUE if if an entry matching the
@@ -99,6 +85,12 @@ static gu_boolean node_pattern_match(const char node[], const char pattern[])
 		return TRUE;
 		}
 
+	/* If it specifies a file, */
+	else if(pattern[0] == '/' && authorized_file_check(node, pattern))
+		{
+		return TRUE;
+		}
+		
 	/* It must specify a host. */
 	else
 		{
@@ -109,7 +101,7 @@ static gu_boolean node_pattern_match(const char node[], const char pattern[])
 		}
 
 	return FALSE;
-	}
+	} /* end of node_pattern_match() */
 
 /*
 ** This function used used by authorized().  This function checks to see
@@ -262,37 +254,37 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 			{
 			if(strlen(value) > MAX_USERNAME)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->ppr_root_as, value, MAX_USERNAME);
+			gu_strlcpy(access->ppr_root_as, value, MAX_USERNAME);
 			}
 		else if(strcmp(name, "otherrootas") == 0)
 			{
 			if(strlen(value) > MAX_USERNAME)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->other_root_as, value, MAX_USERNAME);
+			gu_strlcpy(access->other_root_as, value, MAX_USERNAME);
 			}
 		else if(strcmp(name, "pprproxyuser") == 0)
 			{
 			if(strlen(value) > MAX_USERNAME)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->ppr_proxy_user, value, MAX_USERNAME);
+			gu_strlcpy(access->ppr_proxy_user, value, MAX_USERNAME);
 			}
 		else if(strcmp(name, "otherproxyuser") == 0)
 			{
 			if(strlen(value) > MAX_USERNAME)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->other_proxy_user, value, MAX_USERNAME);
+			gu_strlcpy(access->other_proxy_user, value, MAX_USERNAME);
 			}
 		else if(strcmp(name, "pprproxyclass") == 0)
 			{
 			if(strlen(value) > MAX_PROXY_CLASS)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->ppr_proxy_class, value, MAX_PROXY_CLASS);
+			gu_strlcpy(access->ppr_proxy_class, value, MAX_PROXY_CLASS);
 			}
 		else if(strcmp(name, "ppruserformat") == 0)
 			{
 			if(strlen(value) > MAX_FROM_FORMAT)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			clipcopy(access->ppr_from_format, value, MAX_FROM_FORMAT);
+			gu_strlcpy(access->ppr_from_format, value, MAX_FROM_FORMAT);
 			}
 		else
 			{
@@ -381,10 +373,11 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 			continue;
 			}
 
-		/* Pretend netgroup patterns very short so anything will override them.
-		   This may not be the best way to do it, but it is easy to code.
-		   Other ideas welcome!	 */
-		if(line[1] == '@')
+		/* Pretend netgroup and file patterns very short so anything will override 
+		   them.  This may not be the best way to do it, but it is easy to code.
+		   Other ideas welcome!
+		   */
+		if(line[1] == '@' || line[1] == '/')
 			len = 0;
 
 		/* Long matches are better than short ones. */
@@ -397,7 +390,6 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 			len_best = len;
 			offset_best = ftell(f);
 			linenum_best = linenum;
-
 			}
 		} /* end of line reading loop */
 
