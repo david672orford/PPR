@@ -1,7 +1,6 @@
 ==========================================================================
  mouse:~ppr/src/docs/misc/PORTING.txt
- mouse:~ppr/src/PORTING.txt (symbolic link)
- Last revised 9 March 2003.
+ Last revised 12 March 2003.
 ==========================================================================
 
 This document describes the PPR build process in more detail than INSTALL.txt

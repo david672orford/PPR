@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 12 March 2003.
 */
 
 #ifndef _GU_H
@@ -67,12 +67,19 @@ typedef int gu_boolean;
 /*
 ** Macros for looking for keywords at the start of strings.
 */
+
 /* Does b match the first part of a? */
 #define lmatch(a, b) (!strncmp(a, b, sizeof(b) - 1))
+
 /* If b matches the first part of a, return a pointer to the first word in a that comes after the match. */
 #define lmatchp(a, b) (!strncmp(a, b, sizeof(b) - 1) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
+
 /* Does b match the last part of a? */
 #define rmatch(a, b) (strlen(a) >= strlen(b) && strcmp(a + strlen(a) - strlen(b), b) == 0)
+
+/* If b matches the first part of a with a white space following, return pointer to first part 
+   after whitespace. */
+#define lmatchsp(a, b) (!strncmp(a, b, sizeof(b) - 1) && isspace(a[sizeof(b) - 1]) ? a + sizeof(b) - 1 + strspn(a + sizeof(b) - 1, " \t") : NULL)
 
 /*
 ** Macros for writing strings.

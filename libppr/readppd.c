@@ -1,26 +1,44 @@
 /*
 ** mouse:~ppr/src/libppr/readppd.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2000.
+** Last modified 12 March 2003.
 */
 
-/*
-** This module contains functions for opening and reading lines from PPD
-** files.  Includes are handled automatically.
+/*+ \file
+
+This module contains functions for opening and reading lines from PPD
+files.  Includes are handled automatically.
+
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
@@ -29,25 +47,24 @@ static int nest;			/* current PPD nesting level */
 static FILE *f[MAX_PPD_NEST];		/* the list of open PPD files */
 static char *fname[MAX_PPD_NEST];
 static char *line = (char*)NULL;
-static FILE *saved_errors;
+static FILE *saved_errors = NULL;
 
-/*
-** Open the indicated PPD file.  If we can't open it, print an error
-** message and return an appropriate exit code.
-**
-** This routine is called from ppd_open() and from ppd_readline()
-** whenever an "*Include:" line is encountered.
-*/
 static int _ppd_open(const char *name)
     {
-    if( ++nest >= MAX_PPD_NEST )		/* are we too deep? */
+    const char function[] = "_ppd_open";
+    
+    if(++nest >= MAX_PPD_NEST)		/* are we too deep? */
 	{
-	fprintf(saved_errors, "PPD files nested too deep:\n");
-	fprintf(saved_errors, "\t\"%s\" included by:\n", name);
+	if(saved_errors)
+	    {
+	    fprintf(saved_errors, "PPD files nested too deeply:\n"
+		"\t\"%s\" included by:\n", name);
+	    }
 	for(nest--; nest >= 0; nest--)
 	    {
 	    fclose(f[nest]);
-	    fprintf(saved_errors, "\t\"%s\"%s\n", fname[nest], nest ? " included by:" : "");
+	    if(saved_errors)
+		fprintf(saved_errors, "\t\"%s\"%s\n", fname[nest], nest ? " included by:" : "");
 	    gu_free(fname[nest]);
 	    }
 	return EXIT_BADDEST;
@@ -80,7 +97,8 @@ static int _ppd_open(const char *name)
 	       internal error. */
 	    if(!(dirend = strrchr(fname[nest-1], '/')))
 	    	{
-		fprintf(saved_errors, "readppd.c: _ppd_open(): internal error\n");
+		if(saved_errors)
+		    fprintf(saved_errors, "%s(): internal error\n", function);
 	    	return EXIT_INTERNAL;
 	    	}
 
@@ -98,12 +116,14 @@ static int _ppd_open(const char *name)
     /* Open the PPD file for reading. */
     if((f[nest] = fopen(fname[nest], "r")) == (FILE*)NULL )
     	{
-	fprintf(saved_errors, "PPD file \"%s\" does not exist.\n", fname[nest]);
+	if(saved_errors)
+	    fprintf(saved_errors, "PPD file \"%s\" does not exist.\n", fname[nest]);
 	gu_free(fname[nest--]);
 	for( ; nest >= 0; nest--)
 	    {
 	    fclose(f[nest]);
-	    fprintf(saved_errors, "\tincluded by: \"%s\"\n", fname[nest]);
+	    if(saved_errors)
+		fprintf(saved_errors, "\tincluded by: \"%s\"\n", fname[nest]);
 	    gu_free(fname[nest]);
 	    }
     	return EXIT_BADDEST;
@@ -112,21 +132,34 @@ static int _ppd_open(const char *name)
     return EXIT_OK;
     } /* end of ppd_open() */
 
-/*
-** Open the indicated PPD file.  If we can't open it, print an error
-** message and return an appropriate exit code.
+/** Open the indicated PPD file.
+
+This function opens the indicated PPD file and sets up internal structures so that it can
+be read by calling ppd_readline().  If we can't open it, print an error
+message and return an appropriate exit code.
+
+This routine is called from ppd_open() and from ppd_readline()
+whenever an "*Include:" line is encountered.
+
+The errors parameter is a stdio file object to write error messages to.  If it is NULL,
+none will be written.
+
+On success, EXIT_OK is returned.
+
 */
 int ppd_open(const char *name, FILE *errors)
     {
+    const char function[] = "ppd_open";
     int retval;
 
     /*
     ** These functions use static storage.  Only one instance
     ** is allowed at a time.
     */
-    if(line != (char*)NULL)
+    if(line)
     	{
-    	fprintf(errors, "ppd_open(): already open\n");
+    	if(errors)
+	    fprintf(errors, "%s(): already open\n", function);
     	return EXIT_INTERNAL;
     	}
 
@@ -139,23 +172,25 @@ int ppd_open(const char *name, FILE *errors)
     return retval;
     } /* end of ppd_open() */
 
-/*
-** Read the next line from the PPD file.  If we have reached the end
-** of the file, return (char*)NULL.
-**
-** Comment lines are skipt and include files are transparently followed.
+/** Read the next line from the PPD file
+
+Returns a pointer to the next line from the PPD file.  If you want to save anything in the line, 
+make a copy of it since it will be overwritten on the next call.
+If we have reached the end
+of the file, return (char*)NULL.
+Comment lines are skipt and include files are transparently followed.
+
 */
 char *ppd_readline(void)
     {
-    if( line == (char*)NULL )
-    	{	/* don't print to saved_errors, it might not be good! */
-    	fprintf(stderr, "ppd_readline(): no file open\n");
-    	return (char*)NULL;
-    	}
+    int len;
+
+    if(!line)				/* guard against usage error */
+	return (char*)NULL;
 
     while(nest >= 0)
 	{
-	while( fgets(line, MAX_PPD_LINE+2, f[nest]) == (char*)NULL )
+	while(fgets(line, MAX_PPD_LINE+2, f[nest]) == (char*)NULL)
 	    {
 	    fclose(f[nest]);
 	    gu_free(fname[nest]);	/* free the stored file name */
@@ -168,11 +203,20 @@ char *ppd_readline(void)
 	    }
 
 	/* If this is a comment line, skip it. */
-	if( strncmp(line, "*%", 2) == 0 )
+	if(strncmp(line, "*%", 2) == 0)
+	    continue;
+
+	/* Remove all trailing whitespace, including carriage return and line feed. */
+	len = strlen(line);
+	while(--len >= 0 && isspace(line[len]))
+	    line[len] = '\0';
+
+	/* Skip blank lines. */
+	if(line[0] == '\0')
 	    continue;
 
 	/* If this is an "*Include:" line, open a new file. */
-	if( strncmp(line, "*Include:", 9) == 0 )
+	if(strncmp(line, "*Include:", 9) == 0)
 	    {
 	    char *ptr;
 	    int ret;
@@ -181,7 +225,7 @@ char *ppd_readline(void)
 	    ptr += strspn(ptr, " \t\"");		/* find name start */
 	    ptr[strcspn(ptr,"\"")] = '\0';		/* terminate name */
 
-	    if( (ret=_ppd_open(ptr)) )
+	    if((ret = _ppd_open(ptr)))
 		{
 		gu_free(line);
 		line = (char*)NULL;
@@ -198,4 +242,3 @@ char *ppd_readline(void)
     } /* end of ppd_readline() */
 
 /* end of file */
-

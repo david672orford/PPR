@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 December 2002.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -48,14 +48,16 @@
 #include "pprdrv.h"
 #include "interface.h"
 #include "pprdrv_ppd.h"
+#include "util_exits.h"
 
 static struct PPDSTR **ppdstr;		/* PPD strings hash table */
 static struct PPDFONT **ppdfont;	/* PPD fontlist hash table */
 
 /* We use these when receiving feature code from the lexer. */
-static char *ppdname;		/* name of next PPD string */
-static char *ppdtext;		/* text of next PPD string */
-static int tindex;		/* index of next free byte in ppdtext */
+static char *ppdname;			/* name of next PPD string */
+static char *ppdtext;			/* text of next PPD string */
+static int tindex;			/* index of next free byte in ppdtext */
+static gu_boolean instring = FALSE;
 
 /* This is for handling included PPD files. */
 char *ppd_nest_fname[MAX_PPD_NEST];	/* names of all nested PPD files */
@@ -69,8 +71,11 @@ struct PAPERSIZE papersize[MAX_PAPERSIZES];
 int papersizex = 0;				/* index into papersize[] */
 int num_papersizes = 0;
 
+/*=========================================================
+** Hash Functions
+=========================================================*/
+
 /*
-** Hash functions:
 **
 ** Hash the string s, tabsize is the size of the hash
 ** table.  The return value will be less than tabsize.
@@ -108,8 +113,9 @@ static int hash2(const char *s1, const char *s2, int tabsize)
     } /* end of hash2() */
 
 /*=========================================================
-** Functions called by the lexer.
+** Callback Functions for the Lexer
 =========================================================*/
+
 /*
 ** ppd_callback_add_font() is called for each "*Font:" line.
 ** The hash structure used by this routine and find_font() is
@@ -117,12 +123,13 @@ static int hash2(const char *s1, const char *s2, int tabsize)
 */
 void ppd_callback_add_font(char *fontname)
     {
+    FUNCTION4DEBUG("ppd_callback_add_font")
     int h;
     struct PPDFONT *p;
 
-    DODEBUG_PPD(("add_font(\"%s\")", fontname ? fontname : "<NULL>"));
+    DODEBUG_PPD(("%s(\"%s\")", function, fontname ? fontname : "<NULL>"));
 
-    p = (struct PPDFONT*)gu_alloc(1,sizeof(struct PPDFONT));
+    p = (struct PPDFONT*)gu_alloc(1, sizeof(struct PPDFONT));
     p->name = gu_strdup(fontname);
 
     h = hash(fontname,FONT_TABSIZE);
@@ -137,10 +144,11 @@ void ppd_callback_add_font(char *fontname)
 */
 void ppd_callback_new_string(const char name[])
     {
+    FUNCTION4DEBUG("ppd_callback_new_string")
     int c;                              /* next character */
     int x = 0;				/* index into string */
 
-    DODEBUG_PPD(("new_string(name=\"%s\")", name ? name : "<NULL>"));
+    DODEBUG_PPD(("%s(name=\"%s\")", function, name ? name : "<NULL>"));
 
     while(*name && x < MAX_PPDNAME)
 	{
@@ -161,6 +169,7 @@ void ppd_callback_new_string(const char name[])
     ppdname[x] = '\0';		/* terminate it */
     tindex = 0;			/* initialize text buffer index */
     ppdtext[0] = '\0';
+    instring = TRUE;
     } /* end of ppd_callback_new_string() */
 
 /*
@@ -171,12 +180,10 @@ void ppd_callback_new_string(const char name[])
 */
 void ppd_callback_string_line(char *string)
     {
-    const char function[] = "string_line";
+    const char function[] = "ppd_callback_string_line";
     int string_len;
 
-    #ifdef DEBUG_PPD_DETAILED
-    debug("string_line(\"%s\")", string ? string : "<NULL>");
-    #endif
+    DODEBUG_PPD_DETAILED(("%s(\"%s\")", function, string ? string : "<NULL>"));
 
     if(tindex != 0 && tindex != MAX_PPDTEXT)	/* if second or later line, */
 	ppdtext[tindex++] = '\n';		/* seperate with line feed */
@@ -197,13 +204,12 @@ void ppd_callback_string_line(char *string)
 */
 void ppd_callback_end_string(void)
     {
+    FUNCTION4DEBUG("ppd_callback_end_string")
     struct PPDSTR *s;
     struct PPDSTR **p;
     int h;
 
-    #ifdef DEBUG_PPD_DETAILED
-    debug("end_string()");
-    #endif
+    DODEBUG_PPD_DETAILED(("%s()", function));
 
     s = (struct PPDSTR*)gu_alloc(1, sizeof(struct PPDSTR));
     s->name = gu_strdup(ppdname);		/* duplicate the temp values */
@@ -216,6 +222,8 @@ void ppd_callback_end_string(void)
 	p = &((*p)->next);
     *p = s;					/* set it to point to new entry */
     s->next = (struct PPDSTR *)NULL;		/* and nullify its next pointer */
+    
+    instring = FALSE;
     } /* end of ppd_callback_end_string() */
 
 /*
@@ -322,9 +330,10 @@ void ppd_callback_resolution(const char text[])
 /*==========================================================
 ** Read the Adobe PostScript Printer Description file.
 ==========================================================*/
+
 void read_PPD_file(const char *ppd_file_name)
     {
-    int x;              /* used to initialize structures */
+    const char function[] = "read_PPD_file";
 
     /* Set the default values. */
     Features.ColorDevice = FALSE;
@@ -337,20 +346,23 @@ void read_PPD_file(const char *ppd_file_name)
     printer.prot.PJL = FALSE;
 
     /* Create hash tables for code strings and fonts. */
+    {
+    int x;
     ppdstr = (struct PPDSTR**)gu_alloc(PPD_TABSIZE, sizeof(struct PPDSTR*));
-    ppdfont = (struct PPDFONT**)gu_alloc(FONT_TABSIZE, sizeof(struct PPDFONT*));
-
     for(x=0; x < PPD_TABSIZE; x++)
 	ppdstr[x] = (struct PPDSTR *)NULL;
+
+    ppdfont = (struct PPDFONT**)gu_alloc(FONT_TABSIZE, sizeof(struct PPDFONT*));
     for(x=0; x < FONT_TABSIZE; x++)
 	ppdfont[x] = (struct PPDFONT *)NULL;
-
+    }
+    
     /*
-    ** A printer configuration file is not absolutely required to name
-    ** a PPD file.  (Though the ppad command makes it pretty diffucult
-    ** not to.  You have to hand create or edit the printer configuration
-    ** file.  Obviously, this code was inserted in the early days of PPR.)
-    ** If printer has no PPD file, then stop things right here before we
+    ** If the printer configuration does not specify a PPD file, bail out.  A
+    ** printer configuration file is not absolutely required to specify a PPD
+    ** file.  (Though the ppad command makes it pretty difficult not to.  You
+    ** have to hand create or edit the printer configuration file.  Obviously,
+    ** this code was inserted in the early days of PPR.)  If printer has no PPD file, then stop things right here before we
     ** get to fopen(), which might cause a core dump.
     */
     if(ppd_file_name == (const char *)NULL)
@@ -363,9 +375,11 @@ void read_PPD_file(const char *ppd_file_name)
     ppdname = (char*)gu_alloc(MAX_PPDNAME+1, sizeof(char));
     ppdtext = (char*)gu_alloc(MAX_PPDTEXT, sizeof(char));
 
+    #if 0
+
     /* open the PPD file */
-    if((yyin = fopen(ppd_file_name, "r")) == (FILE*)NULL)
-	fatal(EXIT_PRNERR_NORETRY, "%s: read_PPD_file(): can't open \"%s\", errno=%d (%s)", __FILE__, ppd_file_name, errno, gu_strerror(errno));
+    if(!(yyin = fopen(ppd_file_name, "r")))
+	fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\", errno=%d (%s)", function, ppd_file_name, errno, gu_strerror(errno));
 
     ppd_nest_level = 0;
     ppd_nest_fname[ppd_nest_level] = gu_strdup(ppd_file_name);	/* !!! */
@@ -375,6 +389,263 @@ void read_PPD_file(const char *ppd_file_name)
 
     /* Now, close the outermost file, but DON'T deallocate the name: */
     fclose(yyin);
+
+    #else
+    {
+    char *line, *p;
+
+    /* open the PPD file */
+    if(ppd_open(ppd_file_name, NULL) != EXIT_OK)
+	fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\", errno=%d (%s)", function, ppd_file_name, errno, gu_strerror(errno));
+
+    while((line = ppd_readline()))
+	{
+	if(instring)
+	    {
+	    char *p2;
+	    if((p2 = strchr(line, '"')))
+		*p2 = '\0';
+	    ppd_callback_string_line(line);
+	    if(p2)
+		ppd_callback_end_string();
+	    }
+	else if(line[0] == '*')
+	    {
+	    switch(line[1])
+		{
+		case '%':		/* comment */
+		    continue;
+		    break;
+		case 'c':
+		    if((p = lmatchp(line, "*cupsFilter:")))
+			{
+			if(*p == '"')
+			    {
+			    p++;
+			    p[strcspn(p, "\"")] = '\0';
+			    ppd_callback_cups_filter(p);
+			    }
+			continue;
+			}
+		    break;
+		case 'D':
+		    if((p = lmatchp(line, "*DefaultOutputOrder:")))
+			{
+			DODEBUG_PPD_DETAILED(("%s(): *DefaultOutputOrder: %s", function, p));
+			if(strcmp(p, "Normal") == 0)
+			    printer.OutputOrder = 1;
+			else if(strcmp(p, "Reverse") == 0)
+			    printer.OutputOrder = -1;
+			else
+			    error("Unrecognized \"*OutputOrder:\" in PPD file: \"%s\"", p);
+			continue;
+			}
+		    else if((p = lmatchp(line, "*DefaultResolution:")))
+			{
+			ppd_callback_resolution(p);
+			continue;
+			}
+		    break;
+		case 'E':
+		    if((p = lmatchp(line, "*Extensions:")))
+			{
+			char *p2;
+			while((p2 = gu_strsep(&p, " \t")))
+			    {
+			    DODEBUG_PPD_DETAILED(("%s(): *Extensions: %s", function, p2));
+			    if(strcmp(p2, "DPS") == 0)
+				Features.Extensions |= EXTENSION_DPS;
+			    else if(strcmp(p2, "CMYK") == 0)
+				Features.Extensions |= EXTENSION_CMYK;
+			    else if(strcmp(p2, "Composite") == 0)
+				Features.Extensions |= EXTENSION_Composite;
+			    else if(strcmp(p2, "FileSystem") == 0)
+				Features.Extensions |= EXTENSION_FileSystem;
+			    else
+				error("Unrecognized \"*Extensions:\" in PPD file: \"%s\"", p2);
+			    }
+			continue;
+			}
+		    break;
+		case 'F':
+		    if((p = lmatchp(line, "*FaxSupport:")))
+			{
+			char *p2;
+			while((p2 = gu_strsep(&p, " \t")))
+			    {
+			    DODEBUG_PPD_DETAILED(("%s(): *FaxSupport: %s", function, p2));
+			    if(strcmp(p2, "Base") == 0)
+				Features.FaxSupport |= FAXSUPPORT_Base;
+			    else
+				error("Unrecognized \"*FaxSupport:\" in PPD file: \"%s\"", p2);
+			    }
+			continue;
+			}
+		    else if((p = lmatchp(line, "*FileSystem:")))
+			{
+			DODEBUG_PPD_DETAILED(("%s(): *FileSystem: %s", function, p));
+			if(strcmp(p, "True") == 0)
+			    Features.FileSystem = TRUE;
+			else if(strcmp(p, "False") == 0)
+			    Features.FileSystem = FALSE;
+			else
+			    error("Unrecognized \"*FileSystem:\" in PPD file: \"%s\"", p);
+			continue;
+			}
+		    if((p = lmatchsp(line, "*Font")))
+			{
+			p[strcspn(p, ":")] = '\0';
+			ppd_callback_add_font(p);
+			continue;
+			}
+		    break;
+		case 'I':
+		    if((p = lmatchsp(line, "*ImageableArea")))
+			{
+			p += strcspn(p, ":");
+			if(*p == ':' && strlen(p) > 1)
+			    {
+			    p++;
+			    *p++ = '\0';
+			    ppd_callback_papersize_moveto(line);
+			    ppd_callback_new_string(line);
+			    p += strspn(p, " \t");
+			    p += strspn(p, "\"");
+			    p[strcspn(p, "\"")] = '\0';
+			    DODEBUG_PPD_DETAILED(("%s(): %s \"%s\"", function, line, p));
+			    sscanf(p, "%lf %lf %lf %lf",
+				&papersize[papersizex].lm,
+				&papersize[papersizex].tm,
+    				&papersize[papersizex].rm,
+				&papersize[papersizex].bm
+				);
+			    ppd_callback_string_line(p);
+			    ppd_callback_end_string();
+			    }
+			continue;
+			}
+		    break;
+		case 'L':
+		    if((p = lmatchp(line, "*LanguageLevel:")))
+			{
+			if(*p == '"')
+			    {
+			    p++;
+			    p[strcspn(p, "\"")] = '\0';
+			    DODEBUG_PPD_DETAILED(("%s(): *LanguageLevel: %s", function, p));
+			    Features.LanguageLevel = atoi(p);
+			    line[strcspn(line, ":")] = '\0';
+			    ppd_callback_new_string(line);
+			    ppd_callback_string_line(p);
+			    ppd_callback_end_string();
+			    }
+			else
+			    {
+			    error("Invalid \"*LanguageLevel:\" in PPD file");
+			    }
+			continue;
+			}
+		    break;
+		case 'O':
+		    if((p = lmatchp(line, "*OrderDependency:")))
+			{
+			ppd_callback_order_dependency(p);
+			continue;
+			}
+		    break;
+		case 'P':
+		    if((p = lmatchsp(line, "*PaperDimension")))
+			{
+			p += strcspn(p, ":");
+			if(*p == ':' && strlen(p) > 1)
+			    {
+			    p++;
+			    *p++ = '\0';
+			    ppd_callback_papersize_moveto(line);
+			    ppd_callback_new_string(line);
+			    p += strspn(p, " \t");
+			    p += strspn(p, "\"");
+			    p[strcspn(p, "\"")] = '\0';
+			    DODEBUG_PPD_DETAILED(("%s(): %s \"%s\"", function, line, p));
+			    sscanf(p, "%lf %lf",
+				&papersize[papersizex].width,
+				&papersize[papersizex].height
+				);
+			    ppd_callback_string_line(p);
+			    ppd_callback_end_string();
+			    }
+			continue;
+			}
+		    else if((p = lmatchp(line, "*Protocols:")))
+			{
+			char *p2;
+			while((p2 = gu_strsep(&p, " \t")))
+			    {
+			    DODEBUG_PPD_DETAILED(("%s(): *Protocols: %s", function, p2));
+			    if(strcmp(p2, "TBCP") == 0)
+				printer.prot.TBCP = TRUE;
+			    else if(strcmp(p2, "PJL") == 0)
+				printer.prot.PJL = TRUE;
+			    else
+				error("Unrecognized \"*Protocols:\" in PPD file: \"%s\"", p2);
+			    }
+			continue;
+			}
+		    break;
+		case 'p':
+		    if((p = lmatchp(line, "*pprRIP:")))
+			{
+			ppd_callback_rip(p);
+			continue;
+			}
+		    break;
+		case 'T':
+		    if((p = lmatchp(line, "*TTRasterizer:")))
+			{
+			char *p2;
+			while((p2 = gu_strsep(&p, " \t")))
+			    {
+			    DODEBUG_PPD_DETAILED(("%s(): *TTRasterizer: %s", function, p2));
+			    if(strcmp(p2, "None") == 0)
+				Features.TTRasterizer = TT_NONE;
+			    else if(strcmp(p2, "Accept68K") == 0)
+				Features.TTRasterizer = TT_ACCEPT68K;
+			    else if(strcmp(p2, "Type42") == 0)
+				Features.TTRasterizer = TT_TYPE42;
+			    else
+				error("Unrecognized \"*TTRasterozer:\" in PPD file: \"%s\"", p2);
+			    }
+			continue;
+			}
+		    break;
+		default:
+		    break;
+		}
+
+	    /* Wasn't caught above */
+	    if((p = strchr(line, ':')) && strlen(p) > 1)
+		{
+		p++;
+		*p++ = '\0';
+		p += strspn(p, " \t");
+		if(*p == '"')
+		    {
+		    char *p2;
+		    p++;
+		    ppd_callback_new_string(line);
+		    if((p2 = strchr(p, '"')))
+			*p2 = '\0';
+		    ppd_callback_string_line(p);
+		    if(p2)
+			ppd_callback_end_string();
+		    }
+		}
+
+
+	    }
+	}
+    }
+    #endif
 
     /* Free the scratch spaces: */
     gu_free(ppdname);
@@ -400,7 +671,7 @@ void read_PPD_file(const char *ppd_file_name)
     } /* read_PPD_file() */
 
 /*=========================================================================
-** Routines for feature inclusion.
+** Routines for Feature Inclusion
 =========================================================================*/
 
 /*
@@ -869,6 +1140,7 @@ void insert_features(FILE *qstream, int set)
 ** ppd_find_font() returns non-zero if it can't find the font
 ** in the list from the PPD file.
 ======================================================================*/
+
 gu_boolean ppd_font_present(const char fontname[])
     {
     int h;

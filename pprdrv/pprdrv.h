@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 6 February 2003.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -41,8 +41,8 @@
 /* #define DEBUG_INTERFACE_GRITTY 1 */	/* show what we send to and receive from the interface */
 /* #define DEBUG_FEEDBACK 1 */		/* show twoway operations */
 #define DEBUG_FEEDBACK_LINES 1		/* show the lines read from printer */
-/* #define DEBUG_PPD 1 */		/* PPD file parsing */
-/* #define DEBUG_PPD_DETAILED 1 */
+#define DEBUG_PPD 1		/* PPD file parsing */
+#define DEBUG_PPD_DETAILED 1
 /* #define DEBUG_FLAGS 1 */		/* banner and trailer pages */
 /* #define DEBUG_RESOURCES 1 */		/* fonts, procset, etc. */
 /* #define DEBUG_QUERY 1 */		/* patch queries? */
@@ -566,6 +566,12 @@ struct 	Media_Xlate {
 #define DODEBUG_PPD(a) debug a
 #else
 #define DODEBUG_PPD(a)
+#endif
+
+#ifdef DEBUG_PPD_DETAILED
+#define DODEBUG_PPD_DETAILED(a) debug a
+#else
+#define DODEBUG_PPD_DETAILED(a)
 #endif
 
 #ifdef DEBUG_INTERFACE

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_features.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 12 March 2003.
 */
 
 #include "before_system.h"
@@ -63,7 +63,7 @@ int option_features(const char destnode[], const char destname[])
 
     while((line = ppd_readline()))
 	{
-	/*printf("%s", line);*/
+	/*printf("%s\n", line);*/
 	if((p = lmatchp(line, "*OpenGroup:")))
 	    {
 	    len = strcspn(p, "/ \t");
@@ -99,7 +99,7 @@ int option_features(const char destnode[], const char destname[])
 	    p += strlen(ui);
 	    p++;
 	    p += strspn(p, " \t");
-	    ui_default = gu_strndup(p, strcspn(p, " \n"));
+	    ui_default = gu_strndup(p, strcspn(p, " "));
 	    /*printf("default: %s\n", ui_default);*/
 	    } 
 	if(ui && line[0] == '*' && strncmp(line+1, ui, strlen(ui)) == 0 && isspace(line[1+strlen(ui)]))

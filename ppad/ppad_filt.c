@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 February 2003.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -248,10 +248,6 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
     /* Examine each line in the PPD file. */
     while((line = ppd_readline()))
     	{
-	/* Short circuit comments, blank lines, and such: */
-	if(line[0] != '*' || lmatch(line, "*%"))
-	    continue;
-
 	if(debug_level > 5)
 	    printf("PPD: %s", line);
 

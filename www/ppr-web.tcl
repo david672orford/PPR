@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 12 March 2003.
 #
 
 #
@@ -53,11 +53,13 @@ foreach arg $argv {
 	if {$opt_d == 1} {
 	    set queue $arg
 	    set opt_d 0
-	    } else { if {$queue == ""} {
-	    puts stderr "Warning: specifying a queue name without -d is obsolete"
-	    set queue $arg
-	    } } else {
-	    lappend files $arg
+	    } else {
+	    if {[string compare $queue ""] == 0} {
+		puts stderr "Warning: specifying a queue name without -d is deprecated"
+		set queue $arg
+		} else {
+		lappend files $arg
+		}
 	    }
 	}
     }

@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--11 March 2003.
+1.51, 15 February 2003--12 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8446,6 +8446,10 @@ line was being parsed twice.
   (probably nonexistent) system version.
 
 * z_install_end/install_bin_links.sh: added ppr-panel.
+
+* libppr/readppd.c: added code to remove whitespace from the ends of lines
+  and skip blank lines.  Did a quick sweep of programs that use these 
+  functions, made a few minor adjustments.  Everything looks ok.
 
 
 

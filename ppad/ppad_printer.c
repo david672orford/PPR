@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2002.
+** Last modified 12 March 2003.
 */
 
 /*==============================================================
@@ -632,11 +632,11 @@ int printer_show(const char *argv[])
 	    if((p = lmatchp(pline, "*pprRIP:")) && !rip_ppd_name)
 	    	{
 		char *f1, *f2, *f3;
-		if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
+		if((f1 = gu_strsep(&p, " \t")) && (f2 = gu_strsep(&p, " \t")))
 		    {
 		    rip_ppd_name = gu_strdup(f1);
 		    rip_ppd_output_language = gu_strdup(f2);
-		    if((f3 = gu_strsep(&p, "\n")))
+		    if((f3 = gu_strsep(&p, "")))
 			rip_ppd_options = gu_strdup(f3);
 		    }
 		else
@@ -2041,7 +2041,7 @@ int printer_bins_ppd(const char *argv[])
 	return ret;
 	}
 
-    while((ppdline = ppd_readline()) != (char*)NULL)
+    while((ppdline = ppd_readline()))
 	{
 	if(lmatch(ppdline, "*InputSlot"))	/* Use only "*InputSlot" */
 	    {
