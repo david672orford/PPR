@@ -1,0 +1,36 @@
+#
+# uprint-cancel.1.pod
+# Copyright 1998, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 10 April 1998.
+#
+
+=head1 NAME
+
+uprint-cancel - Cancels print jobs
+
+=head1 SYNOPSIS
+
+B<uprint-cancel>
+
+=head1 DESCRIPTION
+
+This program is part of the PPR uprint suite.  See the UPRINT(1) man page
+for an explanation of what this means.
+
+Currently, this program simply invokes the real B<cancel>.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut
+

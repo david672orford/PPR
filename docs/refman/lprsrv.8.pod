@@ -1,0 +1,263 @@
+#
+# lprsrv.8.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 13 December 2000.
+#
+
+=head1 NAME
+
+lprsrv - PPR RFC 1179 (lpr/lpd) server
+
+lprsrv.conf - Access control file
+
+lprsrv-test - Access control test program
+
+=head1 SYNOPSIS
+
+B<lprsrv> I<options>
+
+B<lprsrv-test> I<hostname> [I<username>] ...
+
+
+=head1 DESCRIPTION
+
+The B<--help> option prints a brief description of the options.
+The B<--version> option prints the PPR version information.
+
+B<lprsrv> is an RFC-1179 (Berkeley lpr/lpd) compatible print server.  It will
+accept print jobs over the network and hand them to the Uprint library for
+processing.  By means
+of the Uprint library, B<lprsrv> can deliver jobs to PPR, as well
+as the BSD and System V spoolers (if present).  It can also handle requests
+to list print queues and to delete jobs.
+
+PPR version 1.32 introduced a heavily reworked B<lprsrv>.  Most of the
+command line options were changed and the access control scheme was
+radically altered.  The pre-1.32 B<lprsrv> is preserved as B<olprsrv>.
+It will be removed completely at some point in the future.
+
+The Uprint configuration file F</etc/ppr/uprint.conf> must be correct for
+B<lprsrv> to work.  See L<UPRINT(1)> for details.
+
+
+=head2 Disabling Other RFC 1179 Servers
+
+If you want to run B<lprsrv> on the standard port (and you almost certainly do),
+you must disable any RFC 1179 server already running on that port.
+
+If you are using IRIX 6.3, you should edit F</etc/init.d/lp> and find the place
+where F</usr/lib/lpsched> is started.  Add the option "-nobsd" to the line.
+That will make sure LP doesn't grab the port at the next reboot.  So that you
+don't have to reboot after making the change, run these commands:
+
+ # /usr/lib/lpshut
+ # /usr/lib/lpsched -nobsd
+
+If you are using B<lpd> from Berkely (which is popular on Linux),
+you must either run B<lprsrv> on a port other than 515, or you must arrange
+for B<inetd> to be started before B<lpd>.  If B<inetd> is started before B<lpd>,
+B<lpd> will be unable to bind to port 515 but will still work in other respects
+and B<lprsrv> will pass remote jobs to B<lpr>.  (Unfortunately, some versions
+of B<lpd> will die when they fail to bind to the port.  Can anyone give
+better advice than this?)
+
+If you are using SunOS 5.6 (Solaris 2.6) then you need only edit /etc/inetd.conf
+and remove the line which reads:
+
+    printer stream tcp nowait root /usr/lib/print/in.lpd in.lpd
+
+Before this change will take effect, it is necessary to tell B<inetd> to reload
+F<inetd.conf> by sending it the HUP signal.  If B<inetd> has the process id 123,
+then the command for reloading F<inetd.conf> is:
+
+    kill -HUP 123
+
+or, if your B<kill> command doesn't support the modern syntax:
+
+    kill -1 123
+
+
+=head2 Setup With Inetd
+
+To have B<inetd> launch B<lprsrv> whenever a print request arrives,
+make sure a line like this is in F</etc/services>:
+
+    printer		515/tcp		spooler
+
+Then put a line like this in F</etc/inetd.conf>:
+
+    printer stream tcp nowait root /usr/lib/ppr/lib/lprsrv lprsrv
+
+Notice the above line is different from the one used with pre-1.32
+versions of B<lprsrv> or with B<olprsrv>.
+
+If you find that B<inetd> keeps temporarily disabling B<lprsrv> whenever
+it is heavily used, try using this line instead:
+
+    printer stream tcp nowait.400 root /usr/lib/ppr/lib/lprsrv lprsrv
+
+This tells B<inetd> that it is normal for B<lprsrv> to receive up to
+400 connections per minute.  Some versions of B<inetd> may not support this
+option.  In that case you will have to run B<lprsrv> in standalone mode.
+
+Before your changes to F<inetd.conf> will take effect, B<inetd> must be
+instructed to reload F<inetd.conf>, as explained in the previous section.
+
+=head2 Standalone Server Operation
+
+Standalone Operation (that is, without B<inetd>) is controled by this option:
+
+=over 4
+
+
+=item B<-s> I<port>
+
+=item B<--standalone-port> I<port>
+
+=back
+
+If this switch is used, in either form, B<lprsrv> will run as a daemon.  You
+should use this option if for some reason you can't depend on B<inetd>.
+The argument is the number or name of the port that B<lprsrv> should listen
+on.  The most common value is "printer" or its numberic equivelent "515".
+
+For you convienance, the PPR rc script (which gets installed as
+F</etc/init.d/ppr> or
+F</etc/rc.d/init.d/ppr> or something like that) has a commented out line
+to start B<lprsrv> in standalone mode.
+
+
+=head2 Queue Listing Options
+
+When a client requests a queue listing for a PPR queue, B<lprsrv> will
+return the output of B<ppop lpq> for the short format and B<ppop list> for
+the long format.  The B<ppop lpq> output is designed to look similiar to the
+output of BSD B<lpq>.
+
+If the B<-A> switch is used, B<lprsrv> will pass the switch and its argument
+on to B<ppop>.  The argument is an integer which indicates an age in
+seconds.  Arrested jobs older than the specified age will not be shown in
+queue listings.
+
+When a client requests a queue listing for an LPR/LPD queue, B<lprsrv>
+simply executes B<lpq> and returns the output.
+
+When a client requests a queue listing for a System V B<lp> queue, B<lprsrv>
+runs B<lpstat>.  Some B<lpq> options are not supported for B<lp> queues.
+
+
+=head2 Access Control
+
+Access to queues through B<lprsrv> is controled by the
+file F</etc/ppr/lprsrv.conf>.  The only documentation currently
+available is in F</etc/ppr/lprsrv.conf.sample>.
+
+If you use an unmodified F<lprsrv.conf.sample> for F<lprsrv.conf>, then
+tranditional BSD-style access control will be in effect.  Under this style
+of access control, any computer listed in F</etc/hosts.equiv> or F</etc/hosts.lpd>
+will be allowed to submit jobs.
+
+
+=head2 Access Control Testing
+
+The program B<lprsrv-test> can be used to test the rules in F<lprsrv.conf>.
+
+You can use it to find out what sort of access certain users on a certain
+host will have.  When you run it the first parameter should be a fully
+qualified hostname.  The second and subsequent parameters should be usernames.
+
+Since several sections of F<lprsrv.conf> may be combined to determine the
+access settings for a certain host, it can be difficult to determine exactly
+what access a particular host has.  B<lprsrv-test> solves this by printing
+a merged record in F<lprsrv.conf> format which shows the final settings which
+apply to the host you named on the command line.
+
+For each remote user you name on the command line, B<lprsrv-test> will print
+the name of the local user which will be used to execute spooler commands on
+the remote user's behalf.  The local user used may be different for each spooler.
+
+
+=head2 Other Options
+
+=over 4
+
+=item B<-A> I<seconds>
+
+=item B<--arrest-interest-interval> I<seconds>
+
+Whenever B<lprsrv> lists a PPR queue, the argument to either of these
+switches is passed to the B<ppop> command as an argument for its B<-A> switch.
+
+=back
+
+
+=head2 Support for DEC RFC-1179 Extensions
+
+The version of B<lpr> supplied with DEC OSF/1 has many more options than the
+BSD version.  Using these extra options results in extra lines in the queue
+file which B<lpr> sends to B<lprsrv>.  These extensions are supported by
+B<lprsrv> whenever possible.
+
+
+=head2 Support for Solaris RFC-1179 Extensions
+
+The print spooler in Solaris 2.6 (SunOS 5.6) is derived from the System V
+LP spooler.  When it sends jobs using the RFC-1179 protocol it include extra
+control file lines which represent System V B<lp> options.  These
+extensions are supported by B<lprsrv> whenever possible.
+
+
+=head2 Using Switchsets with B<lprsrv>
+
+The B<lprsrv> configuration file does not provided any way for setting
+options for individual queues.  It is suggested that you use the B<ppad switchset>,
+B<ppad group switchset> and B<ppad alias switchset> commands do do this.  See
+the B<ppad switchset> description for examples.
+
+Be aware that B<lprsrv> will sometimes override switchset options.  It will always
+override an B<-m> option (which shouldn't be in a switchset anyway).  It will also
+override duplex, paper source, and other options if conflicting instructions
+are conveyed by means of Solaris or DEC extensions to the RFC-1179 protocol.
+
+
+=head2 Banner Pages
+
+The RFC 1179 protocol provides a way for a client to ask to have banner pages
+suppressed.  (The BSD B<lpr -h> option uses this feature.)  If B<lprsrv>
+receives a job that requests suppression of the banner page, it will attempt
+to do so.  However, suppressing the banner page may not be allowed.  In that
+case, the spooler to which B<lprsrv> submits the job will likely print a banner
+page anyway.
+
+In the case of a PPR printer, if the B<ppad flags> command has been used to
+set the printer's banner option to B<always>, then it will not be possible for
+an RFC 1179 client to suppress the banner page.
+
+In the case of a System V B<lp> queue, an RFC 1179 client will probably not
+be able to suppress the banner page unless the B<lpadmin -o> option has
+been used to set a list of printer options which includes "nobanner".
+
+
+=head1 SEE ALSO
+
+See L<UPRINT(1)>.
+
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2000.
+
+=head1 AUTHORS
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

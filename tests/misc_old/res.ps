@@ -1,0 +1,29 @@
+%!PS-Adobe-3.0
+%%DocumentProcSets: silly 415.88 42 missing 55 555
+%%EndComments
+
+% This file test the handling of resource comments,
+% it is loaded with errors. 
+
+%%BeginProlog
+
+%%IncludeResource: procset what 5.0 0
+
+%%BeginProcSet: extra 0 0
+/extra { (extra code) show } def
+%%EndProcSet
+
+%%BeginProcSet: silly 415.88 42
+/silly { (silly code) show } def
+%%EndProcSet
+
+%%EndProlog
+
+%%BeginSetup
+
+%%EndSetup
+
+%%Page: one 1
+
+%%Trailer
+%%EOF

@@ -1,0 +1,144 @@
+;
+; lprsrv.conf.sample
+; Last modified 7 May 1998.
+;
+; This is a sample security configuration file for the PPR LPR/LPD
+; server.  The intent of this sample file is to duplicate as closely
+; as possible the traditional behaviour of LPD servers, including the
+; use of the access control files:
+;
+; /etc/hosts.lpd
+; /etc/hosts.lpd_deny
+; /etc/hosts.equiv
+;
+; You can use the program lprsrv-test to study the effect of the
+; rules in this file.
+;
+
+;
+; This section sets default values for the other sections.  That is,
+; any parameter setting specified here will be overridden if the
+; parameter is set in the section which matches the name of the host
+; which is sending the print job.
+;
+; allow
+;	Specifies whether access should be allowed to matching nodes.
+; insecure ports
+;	Specifies whether lprsrv should accept connexions from TCP ports
+;	above 1024.  If you set this to "yes", you should not trust the
+;	nodes in question to honestly identify the user for whom the request
+;	was generated since ordinary users can make their own requests from
+;	insecure ports therby bypassing lpr.
+; ppr become user
+;	Specifies whether lprsrv should run the PPR spooler programs under
+;	the user ID specified by the remote node.  If that user doesn't
+;	exist then the "ppr proxy user" will be used instead.
+; other become user
+;	Specifies whether lprsrv should run non-PPR spooler programs under
+;	the user ID specified by the remote node.  If that user doesn't
+;	exist then the "other proxy user" will be used instead.
+; ppr root as
+;	The user ID to run PPR spooler programs as when the remote node
+;	suggests "root".
+; other root as
+;	The user ID to run non-PPR spooler programs as when the remote
+;	node suggests "root".
+; ppr proxy user
+;	Specifies the user to run the PPR spooler programs under if
+;	"ppr become user" is set to "no" or if the specified user does
+;	not exist on this node.
+; other proxy user
+;	Specifies the user to run non-PPR spooler programs (such as
+;	lpr, lp, and lprm) under if "other become user" is set to "no"
+;	or if the specified user does not exist on this node.
+; ppr proxy class
+;	When lprsrv runs ppr or ppop, it uses the -X switch.  The argument
+;	for the -X switch is the username supplied by the client, an "@",
+;	followed by the proxy class.  You may set the proxy class to any
+;	string, or to "$cname".  If you set it to "$cname", then
+;	the canonical DNS name of the sending node will appear after the "@".
+; ppr user format
+;	Format of user name in queue display.  The options are:
+;		$user
+;			The user name
+;		$user@$host
+;			User name and host name
+;		$user@$proxyclass
+;			The user name and proxy class string
+;	Note that since the "ppr user format" option uses the ppr -f
+;	switch it will only be effective when ppr is executed by a proxy
+;	user which is listed in /etc/ppr/acl/pprprox.allow.
+;
+
+;
+; This section sets the defaults.  Whatever section best matches
+; the client host name can override the settings in this section.
+; This section should set all 8 settings.
+;
+[global]
+allow = yes
+insecure ports = no
+ppr become user = no
+other become user = no
+ppr root as = ppr
+other root as = root
+ppr proxy user = ppr
+other proxy user = nobody
+ppr proxy class = $cname
+ppr user format = $user@$host
+
+;
+; This section applies to nodes which are granted access
+; by /etc/hosts.lpd, /etc/hosts.lpd_deny, and /etc/hosts.equiv.
+; However, this section does not apply if some other section
+; also matches the sending node name.
+;
+; The "ppr become user = yes" and "other become user = yes" indicate
+; that, if the user specified by the remote system exists on this
+; system, the spooler programs should be run under that user ID.
+;
+[traditional]
+ppr become user = yes
+other become user = yes
+ppr proxy class = equivalent
+ppr user format = $user
+
+;
+; This section matches all nodes in a certain domain.  Notice
+; that "proxy class =" is used to indicate that a user with
+; a given name should be considered to be the same no matter which
+; of these nodes he is connecting from.  For example, the principal
+; identifier (-X switch argument) for "smith" connecting from
+; "spock.cs.trincoll.edu" will be "smith@cs.trincoll.edu".  If he
+; is connecting from "bashir.cs.trincoll.edu" it will still be
+; "smith@cs.trincoll.edu".  Thus he will be able, from Bashir, to
+; cancel a job he submitted from Spock.
+;
+;[.cs.trincoll.edu]
+;ppr become user = yes
+;other become user = yes
+;ppr proxy class = cs.trincoll.edu
+;ppr user format = $user
+
+;
+; This section applies to a specific host.  Since this section
+; is empty, it simply allows access under the terms of [global].
+;
+;[shakti.cc.trincoll.edu]
+
+;
+; This section applies to sending nodes which do not match any
+; of the other sections including [traditional].
+;
+; Note that nodes in this class are locked out by "allow = no".
+;
+[other]
+allow = no
+insecure ports = yes
+ppr become user = no
+other become user = no
+ppr proxy user = nobody
+other proxy user = nobody
+
+; end of file
+

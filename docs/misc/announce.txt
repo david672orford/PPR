@@ -1,0 +1,269 @@
+8 May 2001.
+
+This is announce.txt from:
+
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.44.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.44.tar.gz
+
+
+==========================================================================
+
+Version 1.44 of PPR has [not] been released.
+
+PPR is a Unix print spooler expressly designed for operating PostScript
+printers.  It was written by David Chappell at the Trinity College Computing
+Center in Hartford, Connecticut, U.S.A.
+
+
+==========================================================================
+
+If you wish to subscribe to the PPR mailing list, send mail to
+"majordomo@mail.trincoll.edu".  The message should consist of the single
+line "subscribe ppr-list".  You may post messages to the list
+by sending them to "ppr-list@mail.trincoll.edu".
+
+
+==========================================================================
+ New in this Release (Since 1.43)
+==========================================================================
+
+* New command "ppop last" (contributed by Tim Leamey)
+
+* New option "snmp_status_interval=" for tcpip interface.  The default is 
+  currently 0 (disabled) since I have only tested it on HP printers but it 
+  will presumably be enabled by default in a future version.  It is highly
+  recomended that you try this as it results in greatly improved status 
+  information and works well with the improved printer status and printer 
+  commentary system.
+
+* All new printer status tracking system which integrates information from 
+  LaserWriter style "%%[ ... ]%%" messages, PJL, and the SNMP information 
+  gathered by setting "snmp_status_interval=" for the tcpip interface program.
+
+* Support for Xinetd in install script.
+
+* New Job Title field in printlog (suggested by Espen H. Koht)
+
+* New audio files for spoken messages about jobs and printers.
+
+* New more friendly messages for printer commentary.
+
+* More example commentary and responder scripts.
+
+
+==========================================================================
+ Major Features
+==========================================================================
+
+* Operates PostScript printers connected to parallel and serial ports,
+  AppleTalk, LAN Manager X clients, LPD servers, and RAW TCP/IP adapters
+  such as Extended Systems PocketPrintServers.
+
+* If the interface to the printer supports it, captures messages returned by
+  the printer while a job is printing.  If PostScript error messages are
+  received, the job is placed in a special hold state for later examination.
+
+* Sends notices to users when jobs are completed or when jobs fail due to
+  PostScript errors or other problems.  (This is not supported on all client
+  platforms.)
+
+* Detects printer faults and attempts to clear them automatically.  If this
+  fails, an operator can be informed.
+
+* Interprets Document Structuring Convention comments in order to support
+  advanced features including printer redirection, reverse order printing,
+  collated copies, font downloading, font substitution, and forced duplex
+  mode.
+
+* Can pass print jobs through GhostScript before sending them to the printer
+  in order to print PostScript files on non-PostScript printers.
+
+* Automatically detects non-PostScript input and passes it through
+  appropriate filters.
+
+* One filter is a line printer emulator which first measures the file in
+  order to select proper margins, point size, orientation, and line
+  spacing.  It also supports overstrike bold and underlining.  The line
+  printer emulator supports many character sets including ASCII,
+  Macintosh, ISO Latin 1, and KOI8-R.
+
+* An Epson compatible dot matrix printer emulator is also
+  provided.
+
+* When PPR is installed, it searches for certain other programs such as
+  NetPBM, TeX, Groff, and the Adobe Acrobat Reader.  If these are found,
+  PPR arranges to use them as filters to automatically convert JPEG,
+  BMP, GIF, LaTeX and other files to PostScript.
+
+* Automatically detects files compressed with Unix Compress or Gzip and
+  uncompresses them before printing.
+
+* Advertises printer queues on an AppleTalk network so that Macintosh
+  computers can print to them even if the printers don't support AppleTalk.
+
+* Accepts jobs from AT&T's LAN Manager for Unix and sends notices using the
+  LAN Manager messaging facilities.
+
+* Accepts jobs from the Samba LAN Manager compatible server and sends
+  notices using Samba's messaging facilities.
+
+* When used with Samba version 1.9.18 or later, PPR supports Windows 95
+  drag-and-drop printer driver installation.
+
+* Accepts jobs from other computers using the LPD protocol.
+
+* While printing, the percentage of the job which has been sent is displayed
+  in the queue listing, together with the page the spooler is transmitting,
+  and, when the printer supportes it, the number of pages which have been
+  printed.
+
+* Prints jobs N-Up or generates signatures and booklets using Donald
+  Markuson's N-Up dictionary.
+
+* Keeps track of printer usage by means of user accounts from which money is
+  deducted for each page printed on designated printers.  (Client support
+  for this is still limited.)  PPR also has the ability to log all jobs.
+
+* Allows a form to be "mounted" on each of a printer's input bins.  When a
+  print job arrives, PPR will attempt to determine what kind of paper it
+  should be printed on and select the correct bin.  If the correct form
+  is not mounted, the job will be held until an operator mounts it.
+
+* Prints banner pages which include information gleened from the Document
+  Structure Comments, such as user name, number of pages, and warnings
+  concerning defective DSC comments.
+
+* Caches fonts received from Macintosh clients so that they need not be
+  downloaded again.  This saves time the next time the document is printed.
+  (This only works with LaserWriter 8.x.)
+
+* If MS-Windows format TrueType fonts are manually installed in the spooler,
+  it will convert them to PostScript and download them on demand.
+
+* Provides programs which can be used as substitutes for lp, lpr, lpq,
+  and lprm.  These programs will determine whether the queue selected
+  belongs to PPR, to the standard system spooling system, or to a remote
+  system listed in a special configuration file.  If the queue belongs
+  to the standard system spooler then the standard program will be invoked.
+
+
+=============================================================================
+ Compatible Systems
+=============================================================================
+
+PPR was origionally written to work on AT&T's 6386 WGS and StarServer E
+running Unix System V Release 4.0 and AT&T's port of LAN Manager to Unix
+with AT&T's AppleTalk Network Program.
+
+It was later ported to SunOS 5.x (Solaris 2.x) and CAP60 patch level 194.
+Netatalk is not yet supported on this platform.
+
+Linux is currently the principal development system.  An extra library
+called NATALI can be obtained from the place you got PPR.  This library
+allows PPR to work with Netatalk under Linux.
+
+DEC OSF/1 and Digital Unix 4.0 are also supported.  It has not been tested
+with CAP on these platforms.
+
+SGI's IRIX 6.3 is also a supported platform.  However, AppleTalk on IRIX has 
+not been attempted.
+
+The complete system has not been tested on 386BSD/NetBSD/FreeBSD/OpenBSD, 
+however it should run with only minor modifications.
+
+Support for SunOS 4.1.3 is included in the current release but nobody has
+reported whether or not it works.
+
+The Cygnus Windows NT port can be compiled but it doesn't work yet.
+
+
+============================================================================
+ Intended Audiance
+============================================================================
+
+PPR is in some sense a research project designed to explore the
+possibilities of the Adobe Document Structuring convention, PPD files,
+and automatic filtering.  The goal is to make printing easy for end users.
+
+However, PostScript can be very complex and PPR is a very complex piece of
+code.  Considerable effort has been expended to make PPR easy to set up and
+use.  All the same, a considerable level of expertise is required to
+understand PPR's operation.
+
+While PPR has been used with a number of PostScript generating applications,
+it has not been possible to test it with every one.  This problem should be
+of concern because most if not all PostScript generating applications have
+one or more errors in their conformance to the Document Structuring
+Convention.  When document structuring comments make serious factual errors
+in their description of the structure of the document or concerning the
+fonts and other resources required, PPR may fail to print it when a more
+simple minded spooler would.
+
+When unexpected results are obtained, it may be necessary to examine the
+input and the output, manually interpreting the DSC comments.  Anyone
+expecting to make serious application of PPR should first read and understand
+Appendix G of "PostScript Language Reference Manual, Second Edition" as well
+as "PostScript Printer Description File Format Specification".
+
+That said, it should be noted that PPR has been extensively tested in an
+environment containing hundreds of clients and dozens of printers.  The
+clients have included Unix, MS-DOS, MS-Windows, and MacOS.
+
+PPR is release at this time with the expectation that it will be of interest
+to people who wish to explore the possibilities opened up by the Adobe
+Document Structuring Convention.  If you are interested in that subject, you
+can install the program, study its operation, and read the source code for
+examples of how to parse DSC comments.
+
+
+============================================================================
+ Technical Support
+============================================================================
+
+Trinity College does not have a budget for providing technical support for
+this product.  As stated above, while PPR is intended to make printing easy
+to set up and use, diagnosing problems with PostScript printing still
+requires specialized knowledge.
+
+An installation manual, an incomplete technical description, and man pages
+for most of the programs are provided.  We will also endeavor to participate
+in the answering of questions sent to the PPR mailing list.  We regret that
+Trinity College is not in a possition to provide technical support beyond
+this.
+
+Bug reports and suggestions are of course welcome.  Bug reports will be
+most useful they describe the exact steps necessary to reproduce the
+problem.  Of course, if you can if include a fix or point out the
+offending source file and function, please do so.
+
+Bug reports should be sent to "ppr-bugs@mail.trincoll.edu".
+
+If you have PostScript questions, it might be well to post them to the
+Usenet news group "comp.languages.postscript".  Questions related to
+CAP should be posted to "comp.protocols.appletalk".  Questions directly
+related to PPR should be sent to the PPR mailing list.
+
+
+============================================================================
+ License Terms
+============================================================================
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software is provided "as is" without express or
+implied warranty.
+
+
+============================================================================
+ Obtaining PPR
+============================================================================
+
+PPR may be obtained from <ftp://ppr-dist.trincoll.edu/pub/ppr/> or
+<http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes 
+the following files:
+
+ppr-1.43.tar.gz           Source code for PPR
+ppr-speach-1.40.tar.gz    Optional sound files for PPR
+natali-1.25.tar.gz        A library needed for Netatalk support under Linux

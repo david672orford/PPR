@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Make PPD *Include works correctly.
+#
+# Last modified 13 November 1998.
+#
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes <<EndOfSample
+%!PS-Adobe 3.0
+%%Pages: 0
+
+%%EndProlog
+
+%%BeginSetup
+%%BeginFeature: *Duplex NotaFeature
+(I am not a duplex feature) print
+%%EndFeature
+%%EndSetup
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -K false -r none -u yes <<EndOfSample
+%!PS-Adobe 3.0
+%%Pages: 0
+
+%%EndProlog
+
+%%BeginSetup
+%%BeginFeature: *Duplex NotaFeature
+(I am not a duplex feature) print
+%%EndFeature
+%%EndSetup
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0

@@ -1,0 +1,29 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: ~ppr/src/procsets/TrinColl-PPR-NewMetrics-1-0
+%%Copyright: Copyright 1994, Trinity College Computing Center
+%%EndComments
+
+/newmetricsdict 5 dict def
+/NewMetrics
+ {newmetricsdict begin
+  /newmetrics exch def
+  /newfontname exch def
+  /oldfontname exch def
+  /oldfont oldfontname findfont def
+  oldfont maxlength 1 add
+  dict /newfont exch def
+  oldfont
+    {exch dup dup dup /FID ne exch	% ommit these entries
+	/FontBBox ne and exch
+	/XUID ne and
+	{exch newfont 3 1 roll put}	% copy
+	{pop pop}			% don't copy
+	ifelse  
+    }forall
+ newfont /FontBBox oldfont /FontBBox get aload length array astore put
+ newfont /FontName newfontname put
+ newfont /Metrics newmetrics put
+ newfontname newfont definefont pop
+ end}def
+
+%%EOF

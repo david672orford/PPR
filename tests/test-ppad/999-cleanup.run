@@ -1,0 +1,8 @@
+#! /bin/sh
+
+$HOMEDIR/bin/ppad delete regression-test1
+echo "ppad: $?"
+
+exit 0
+
+

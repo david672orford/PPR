@@ -1,0 +1,392 @@
+<Sect1 id="job-submit">
+<Title>Submitting Jobs to PPR
+</Title>
+
+<Para>
+All jobs enter PPR's queue through the program <Emphasis remap="bf">ppr</Emphasis>. The LANMAN/X
+print processor script invokes <Emphasis remap="bf">ppr</Emphasis> as do the Macintosh print server,
+<Emphasis remap="bf">papsrv</Emphasis>, Samba and the LPR/LPD compatible server <Emphasis remap="bf">lprsrv</Emphasis>.
+</Para>
+
+<Para>
+Unix users invoke <Emphasis remap="bf">ppr</Emphasis> (the program, not the spooler system)
+directly. To make this easier, <Literal remap="tt">/usr/bin/ppr</Literal> is a symbolic link to
+<Literal remap="tt">/usr/ppr/bin/ppr</Literal>.  For a complete description of <Emphasis remap="bf">ppr</Emphasis>'s
+options, see the ppr(1) man page.  A description of some of the more
+important ones follows.
+</Para>
+
+<Sect2>
+<Title>Simple Examples</Title>
+
+<Para>
+When invoking <Emphasis remap="bf">ppr</Emphasis>, the <Emphasis remap="bf">-d</Emphasis> switch may be used to specify the
+destination, that is, a printer or group of printers.  For example:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn report1.ps
+</Screen>
+
+</Para>
+
+<Para>
+If <Emphasis remap="bf">ppr</Emphasis> is invoked without specifying the name of a file to print,
+it reads the file from stdin.  For example, we can print a document using PPR
+on a remote system using this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ cat report1.ps | rsh cberry 'ppr -d hisprn'
+</Screen>
+
+</Para>
+
+<Para>
+The first thing <Emphasis remap="bf">ppr</Emphasis> does is analyze the input file to determine
+whether it is PostScript or not, and if not, what it is.  If it is not
+PostScript, <Emphasis remap="bf">ppr</Emphasis> will attempt to convert it to PostScript before it
+is placed in the queue.  For example, ASCII text files can be printed:
+</Para>
+
+<Para>
+
+<Screen>
+$ ls -l /usr/bin | ppr -d myprn
+</Screen>
+
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Choosing Options</Title>
+
+<Para>
+When submitting a job, you may want to specify additional options.  These
+options can do things such as select multiple copies, invoke printer features
+such as duplex, or select paper trays.
+</Para>
+
+<Para>
+When submitting the job from the Unix shell, you just add the options to the
+<Emphasis remap="bf">ppr</Emphasis> command line.  When the job arrives through a network server such
+as Samba, <Emphasis remap="bf">papsrv</Emphasis>, or <Emphasis remap="bf">lprsrv</Emphasis> it is more difficult to select options.
+</Para>
+
+<Para>
+The easiest thing to do in this latter case is to set a switchset.  A switchset
+is a set of options associated with a queue.  This feature is described later in
+this section.  The switchset method has the advantage that a switchset established
+in this way applied
+to all jobs no matter how they arrive.  This consistency can prevent confusion.
+</Para>
+
+<Para>
+With some network servers there are additional ways to specify options which apply only
+to jobs submitted through it.  These methods will be described later in this section.
+</Para>
+
+<Sect3>
+<Title>Duplex Options</Title>
+
+<Para>
+The available duplexing options are many and somewhat confusing.  Let us
+start with a simple one:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.ps
+</Screen>
+
+</Para>
+
+<Para>
+This instructs PPR to extract the code from the <Emphasis remap="sf">*Duplex DuplexNoTumble</Emphasis>
+line in the PPD file and insert it in the document setup section of
+<Literal remap="tt">mydoc.ps</Literal>.  Code inserted in this way will override pre-existing
+duplex code in most cases.
+</Para>
+
+<Para>
+Suppose though that you wish to allow users to continue to select the duplex
+mode, perhaps by using the Macintosh driver LaserWriter 8 with an appropriate
+PPD file, but you wish to make duplex printing the default.  On some printers
+you can use the front panel to select duplex, but PPR wouldn't know you had
+done this, it would believe the printer was operating in simplex mode, thus
+its printer accounting sheet counts would be thrown off.  Therefore, it would
+be better to invoke <Emphasis remap="bf">ppr</Emphasis> like this:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -R duplex:duplex mydoc.ps
+</Screen>
+
+</Para>
+
+<Para>
+The option <Emphasis remap="bf">-R duplex:duplex</Emphasis> instructs PPR to take note of comments
+within the PostScript which indicate which duplex mode is being invoked.
+The second occurence of the word ``duplex'', after the colon, means to invoke
+ordinary duplex mode if no such comments are found.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Multiple Copy Options</Title>
+
+<Para>
+PPR is capable of printing multiple copies of a job. It is also capable of
+printing collated copies.  The number of copies may be selected when <Emphasis remap="bf">ppr</Emphasis> is
+invoked:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -n 3 mydoc.ps
+</Screen>
+
+</Para>
+
+<Para>
+This prints 3 copies of the file <Literal remap="tt">mydoc.ps</Literal>.  By default, PPR prints
+uncollated copies, that is, 3 copies of page 1, 3 copies of page 2, etc.  In
+contrast, when printing collated copies, it prints 1 copy of page one, 1
+copy of page 2, on to the end of the document and then repeats until it has
+printed the required number of copies.  We can print collated copies with
+this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -n 3 -n collate mydoc.ps
+</Screen>
+
+</Para>
+
+<Para>
+When there is no charge for printing pages on a particular printer, if you do not
+use an <Emphasis remap="bf">-n</Emphasis> switch, PPR does not attempt to influence the number of copies to be
+printed.  This means that if the document contains code to invoke multiple copy
+features of the printer, PPR may not be able to correctly determine the number of
+pages printed.  Thus, the number of sheets quoted on the banner page and in the
+print log could be wrong.  This changes if you have specified an amount of money to
+be charged for each page which is printed on the printer that is being used.  If
+you have specified an amount, even &dollar;0.00, then the number of copies is
+forced to 1 if you do not specify it.
+</Para>
+
+<Para>
+You may wish to allow the number of copies desired to be specified in
+the document.  If you invoke <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-R copies</Emphasis> option, PPR will
+read any <Emphasis remap="sf">&percnt;&percnt;Requirement:</Emphasis> comments which specify the number of
+copies or collating mode and obey them.  You might use this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -n 1 -n collate -R copies mydoc.ps
+</Screen>
+
+</Para>
+
+<Para>
+This command tells PPR to read the copies count in <Literal remap="tt">mydoc.ps</Literal>, collate the
+copies even if <Literal remap="tt">mydoc.ps</Literal> does not request it, and to print 1 copy unless
+<Literal remap="tt">mydoc.ps</Literal> contains a comment which specifies a different number of copies.
+However, if there is no charge for printing on this printer and the <Emphasis remap="bf">-n 1</Emphasis>
+switch were absent and <Literal remap="tt">mydoc.ps</Literal> contained the PostScript code but not the
+comments for multiple copies it would achieve multiple copies on the sly.
+</Para>
+
+</Sect3>
+
+<Sect3 id="switchsets">
+<Title>Using Option Switchsets
+</Title>
+
+<Para>
+It is sometimes desirable to choose a set of options to be applied to all jobs
+entering a certain queue.
+</Para>
+
+<Para>
+To set these options, use the <Emphasis remap="bf">ppad switchset</Emphasis> command for a printer
+queue and the <Emphasis remap="bf">ppad group switchset</Emphasis> command for a group queue.
+</Para>
+
+<Para>
+For example, imagine that we have
+a printer called ``mcec&lowbar;1''.  We want to create two queues for it called
+``mcec&lowbar;sim'' and ``mcec&lowbar;dup''.  We want ``mcec&lowbar;sim'' to print in simplex
+mode by default and ``mcec&lowbar;dup'' to print in duplex mode by default.  First
+we create the groups ``mcec&lowbar;sim'' and ``mcec dup'' each of which contains
+the lone member ``mcec&lowbar;1'':
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group add mcec_sim mcec_1
+# ppad group add mcec_dup mcec_1
+</Screen>
+
+</Para>
+
+<Para>
+Now, jobs sent to either group will go to the same printer, but we will give
+each group a different set of options:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group switchset mcec_sim -R duplex:simplex
+# ppad group switchset mcec_dup -R duplex:duplex
+</Screen>
+
+</Para>
+
+<Para>
+Now, when a job is submitted to ``mcec&lowbar;sim'' or ``mcec&lowbar;dup'', the
+the option <Emphasis remap="bf">-R duplex:simplex</Emphasis> or <Emphasis remap="bf">-R duplex:duplex</Emphasis> to be inserted.
+</Para>
+
+<Para>
+A switchset may be deleted by setting it to nothing.  This command deletes
+the switchset for the printer ``chipmunk'':
+</Para>
+
+<Para>
+
+<Screen>
+# ppad switchset chipmunk
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3 id="optsformac">
+<Title>Options for Jobs from Macintoshs
+</Title>
+
+<Para>
+If we are printing from a Macintosh, the job will enter the print server
+through <Emphasis remap="bf">papsrv</Emphasis>.  If we wanted to make duplex printing the default,
+we could place the <Emphasis remap="bf">-R duplex:duplex</Emphasis> option in the <Literal remap="tt">papsrv.conf</Literal>.
+We could make an entry such as this one:
+</Para>
+
+<Para>
+
+<Screen>
+[My Printer]
+PPRname=myprn
+PPRparms=-R duplex:duplex
+</Screen>
+
+</Para>
+
+<Para>
+In like manner, if we wanted to make tumble duplexing the default, we could
+create an entry like this one:
+</Para>
+
+<Para>
+
+<Screen>
+[My Printer]
+PPRname=myprn
+PPRparms=-R duplex:duplextumble
+</Screen>
+
+</Para>
+
+<Para>
+However, as noted earlier, it may be better to use a switchset since a switchset
+will apply to all submission methods.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Options for Jobs Received through Samba</Title>
+
+<Para>
+Since Samba allows the administrator to choose any desired print command
+when creating a queue in <Literal remap="tt">smb.conf</Literal>, it is possible to give a queue
+a special <Emphasis remap="bf">ppr</Emphasis> command which includes the desired options.
+</Para>
+
+<Para>
+However, this becomes clumsy if one is using <Emphasis remap="bf">ppr2samba</Emphasis> to generate
+a <Literal remap="tt">smb-include.conf</Literal> file to include in <Literal remap="tt">smb.conf</Literal>, so this method
+is not recomended.  Use a switchset instead.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Options for Jobs Received through <Emphasis remap="bf">Lprsrv</Emphasis></Title>
+
+<Para>
+There is no way to specify <Emphasis remap="bf">ppr</Emphasis> command line options in any of the
+<Emphasis remap="bf">lprsrv</Emphasis> configuration files, so you must use switchsets to force the
+use of options.
+</Para>
+
+<Para>
+However, certain options, such as the number of copies, can be selected by the
+client and passed to <Emphasis remap="bf">lprsrv</Emphasis> using the RFC 1179 protocol.  Some operating
+systems, such as OSF and SunOS/Solaris extend the protocol to allow for furthur
+options.  When <Emphasis remap="bf">lprsrv</Emphasis> receives these options it attempts to convert them
+into appropriate <Emphasis remap="bf">ppr</Emphasis> command line options.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+<Sect2>
+<Title>Submitting Jobs Through Uprint</Title>
+
+<Para>
+If you have Unix users, they are probably accustomed to submitting jobs
+with <Emphasis remap="bf">lpr</Emphasis> or <Emphasis remap="bf">lp</Emphasis>.  You may also find that while some of your
+applications allow you to specify the command to be used for printing,
+others insist on using <Emphasis remap="bf">lpr</Emphasis> or <Emphasis remap="bf">lp</Emphasis>.  In these cases, you might
+want to try PPR's Uprint system.
+</Para>
+
+<Para>
+Uprint is a set of programs which mimic <Emphasis remap="bf">lp</Emphasis>, <Emphasis remap="bf">lpr</Emphasis>, <Emphasis remap="bf">lpq</Emphasis>,
+and <Emphasis remap="bf">lprm</Emphasis>.  You can rename the versions of these
+programs that came with your system
+and replace them with the Uprint substitutes.  When a Uprint substitute
+program is used, if the requested print queue is one that belongs to the
+system spooler, the renamed origional program will be invoked.  If however
+the requested queue is a PPR queue, an appropriate command for <Emphasis remap="bf">ppr</Emphasis>
+or <Emphasis remap="bf">ppop</Emphasis> will be created and run.
+</Para>
+
+<Para>
+For instructions for setting up Uprint, see the UPRINT(8) man page.
+</Para>
+
+</Sect2>
+
+</Sect1>
+

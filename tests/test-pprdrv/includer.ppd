@@ -1,0 +1,4 @@
+*InputSlot Upper: "uppertray"
+*Include: "includee.ppd"
+*InputSlot Lower: "lowertray_includer"
+*InputSlot Middle: "middletray"

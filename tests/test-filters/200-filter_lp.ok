@@ -1,0 +1,1390 @@
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeResource: font Courier
+/ptsize 8.1 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 10.909 def
+/lm 36.00 def
+/tm 36.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex None
+%%IncludeResource: font Courier
+/ptsize 7.0 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 10.909 def
+/lm 108.00 def
+/tm 36.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements: duplex
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex DuplexNoTumble
+%%IncludeResource: font Courier
+/ptsize 7.0 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 10.909 def
+/lm 36.00 def
+/tm 36.00 def
+/gut_lr 72.00 def
+/gut_tb 0.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements: duplex(tumble)
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex DuplexTumble
+%%IncludeResource: font Courier
+/ptsize 8.1 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 9.818 def
+/lm 36.00 def
+/tm 36.00 def
+/gut_lr 0.00 def
+/gut_tb 72.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Landscape
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeResource: font Courier
+/ptsize 8.5 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 8.455 def
+/lm 27.00 def
+/tm 27.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 612.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Landscape
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex None
+%%IncludeResource: font Courier
+/ptsize 7.4 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 7.364 def
+/lm 27.00 def
+/tm 99.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 612.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Landscape
+%%Requirements: duplex
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex DuplexNoTumble
+%%IncludeResource: font Courier
+/ptsize 7.4 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 7.364 def
+/lm 27.00 def
+/tm 27.00 def
+/gut_lr 0.00 def
+/gut_tb 72.00 def
+/ph 612.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Landscape
+%%Requirements: duplex(tumble)
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeFeature: *Duplex DuplexTumble
+%%IncludeResource: font Courier
+/ptsize 8.5 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 8.455 def
+/lm 27.00 def
+/tm 27.00 def
+/gut_lr 72.00 def
+/gut_tb 0.00 def
+/ph 612.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(total 18067)p
+(lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK)p
+(lrwxrwxrwx   1 root)B(root)H(38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir)p
+(lrwxrwxrwx   1 root)B(root)H(40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:41 X11 -> ../X11R6/bin)p
+(-rwxr-xr-x   1 root)B(root)E(65493 Sep  2  1996 Xconfigurator.pl)p
+(-rwxr-xr-x   2 root)B(root)E(15540 Aug 26  1996 [)p
+(-rwxr-xr-x   1 root)B(root)E(95319 Aug 19  1996 a2p)p
+(-rwxr-xr-x   1 root)B(root)E(17972 Jul 28  1996 addftinfo)p
+(-rwxr-xr-x   1 root)B(root)F(5836 Sep  2  1996 addr)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm)p
+(-rwxr-xr-x   1 root)B(root)F(8429 Jul 28  1996 afmtodit)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded)p
+(-rwxr-xr-x   1 root)B(bin)F(20240 Aug 26  1996 analyzer)p
+(-rwxr-xr-x   1 root)B(root)F(3440 Sep  3  1996 anytopnm)p
+(lrwxrwxrwx   1 root)B(root)H(37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db)p
+(-rwxr-xr-x   1 root)B(root)F(1689 Aug 20  1996 apropos)p
+(-rwxr-xr-x   1 root)B(root)E(27984 Sep  2  1996 ar)p
+(-rwxr-xr-x   1 root)B(root)D(150844 Sep  2  1996 as)p
+(-rwxr-xr-x   1 root)B(root)E(51680 Aug 26  1996 as86)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 asciitopgm -> pgmmerge)p
+(-rwsr-xr-x   1 root)B(daemon)C(17732 Aug  9  1996 at)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 atktopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atq -> at)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 atrm -> at)p
+(-rwxr-xr-x   1 root)B(root)F(8744 Aug 12  1996 aumix)p
+(lrwxrwxrwx   1 root)B(root)H(14 Feb  4 01:43 awk -> ../../bin/gawk)p
+(-rwxr-xr-x   1 root)B(root)F(4540 Aug 26  1996 basename)p
+(-rwxr-xr-x   1 root)B(root)F(2041 Sep  3  1996 bashbug)p
+(lrwxrwxrwx   1 root)B(root)I(2 Feb  4 01:42 batch -> at)p
+(-rwxr-xr-x   1 root)B(root)H(35 Aug 29  1996 bdftops)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex)p
+(-rwxr-xr-x   1 root)B(root)F(3316 Sep  5  1996 biff)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bioradtopgm -> pgmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(64684 Aug 27  1996 bison)p
+(-rwxr-xr-x   1 root)B(root)E(73840 Aug 26  1996 bm2font)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 bmptoppm -> ppmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 brushtopbm -> pbmmerge)p
+(lrwxrwxrwx   1 root)B(root)I(4 Feb  4 01:42 byacc -> yacc)p
+(-rwxr-xr-x   2 root)B(root)F(6452 Sep  2  1996 c++)p
+(-rwxr-xr-x   1 root)B(root)E(23532 Sep  2  1996 c++filt)p
+(-rwxr-xr-x   1 root)B(root)E(22464 Jul 26  1996 c2lout)p
+(-rwxr-xr-x   1 root)B(root)E(36272 Aug 19  1996 c2ph)p
+(-rwxr-xr-x   1 root)B(root)F(8956 Sep  9  1996 cal)p
+(-rwxr-xr-x   2 root)B(root)E(26464 Sep  4  1996 captoinfo)p
+(lrwxrwxrwx   1 root)B(root)I(3 Feb  4 01:43 cc -> gcc)p
+(-rwxr-xr-x   1 root)B(root)E(34800 Aug 12  1996 cdp)p
+(lrwxrwxrwx   1 root)B(root)H(12 Feb  4 01:43 cdplay -> /usr/bin/cdp)p
+(-rwxr-xr-x   1 root)B(root)F(7356 Sep  1  1996 chattr)p
+(-rwsr-xr-x   1 root)B(root)E(10064 Sep  9  1996 chfn)p
+(-rwxr-xr-x   1 root)B(root)F(1702 Sep  9  1996 chkdupexe)p
+(-rwsr-xr-x   1 root)B(root)F(9612 Sep  9  1996 chsh)p
+(-rwxr-xr-x   1 root)B(root)F(3436 Sep  3  1996 chvt)p
+(-rwxr-xr-x   1 root)B(root)E(63688 Jul 28  1996 ci)p
+(-rwxr-xr-x   1 root)B(root)E(24616 Aug 19  1996 cjpeg)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug  9  1996 cksum)p
+(-rwxr-xr-x   1 root)B(root)F(3088 Sep  4  1996 clear)p
+(-rwxr-xr-x   1 root)B(root)F(8224 Jul 28  1996 cmp)p
+(lrwxrwxrwx   1 root)B(root)I(8 Feb  4 14:33 cmuwmtopbm -> pbmmerge)p
+(-rwxr-xr-x   1 root)B(root)E(59428 Jul 28  1996 co)p
+(-rwxr-xr-x   1 root)B(root)F(7612 Sep  9  1996 col)p
+ep
+
+%%Page: 2 2
+%%BeginPageSetup
+/page 2 def
+sp
+90 rotate 0 612.00 neg translate
+%%EndPageSetup
+(-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
+(-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
+(-rwxr-xr-x   1 root)B(root)F(6876 Sep  9  1996 column)p
+(-rwxr-xr-x   1 root)B(root)E(15092 Aug  9  1996 comm)p
+(-rwxr-xr-x   1 root)B(root)E(14860 Aug 14  1996 compress)p
+(-rwxr-xr-x   1 root)B(root)F(6682 Aug 29  1996 control-panel)p
+(-rwxr-xr-x   1 root)B(root)E(69924 Jul 28  1996 cproto)p
+(-rwsr-xr-x   1 root)B(root)E(20036 Aug 22  1996 crontab)p
+(-rwxr-xr-x   1 root)B(root)E(23824 Aug  9  1996 csplit)p
+(-rwxr-xr-x   1 root)B(root)E(18056 Aug  9  1996 cut)p
+(-rwxr-xr-x   1 root)B(root)F(7788 Sep  9  1996 cytune)p
+(-rwxr-xr-x   1 root)B(root)F(6384 Sep  9  1996 ddate)p
+(-rwxr-xr-x   1 root)B(root)F(3888 Sep  4  1996 dfplus)p
+(-rwxr-xr-x   1 root)B(root)E(63200 Jul 28  1996 diff)p
+(-rwxr-xr-x   1 root)B(root)E(14816 Jul 28  1996 diff3)p
+(-rwxr-xr-x   1 root)B(root)E(71636 Sep  2  1996 dig)p
+(-rwxr-xr-x   1 root)B(root)E(36792 Aug 19  1996 dir)p
+(-rwxr-xr-x   1 root)B(root)E(20668 Aug 19  1996 dircolors)p
+(-rwxr-xr-x   1 root)B(root)F(4304 Aug 26  1996 dirname)p
+(-rwxr-xr-x   1 root)B(root)F(3772 Sep  3  1996 disalloc)p
+(-rwxr-xr-x   1 root)B(root)E(21608 Aug 19  1996 djpeg)p
+(-rwxr-xr-x   1 root)B(root)E(43552 Sep  2  1996 dnsquery)p
+(-rwsr-xr-x   1 root)B(root)D(572612 Sep  9  1996 dos)p
+(-rwxr-xr-x   1 root)B(root)F(4172 Sep  9  1996 dsplit)p
+(-rwxr-xr-x   1 root)B(root)E(20340 Aug 19  1996 du)p
+(-rwxr-xr-x   1 root)B(root)E(26292 Sep  3  1996 dumpkeys)p
+(-rwxr-xr-x   1 root)B(root)D(278956 Sep  2  1996 dumpreg)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp)p
+(lrwxrwxrwx   1 root)B(root)H(33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p)p
+(lrwxrwxrwx   1 root)B(root)H(34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4)p
+(lrwxrwxrwx   1 root)B(root)H(35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l)p
+ep
+
+%%Trailer
+%%Pages: 2
+%%EOF

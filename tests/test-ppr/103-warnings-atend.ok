@@ -1,0 +1,358 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Ignoring "%%Pages:" in trailer because no "%%Pages: (atend)" in header
+WARNING: No valid "%%Pages:" comment
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (atend test 1)
+%%Pages: 2
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (atend test 2)
+%%Pages: 3
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Page: 3 3
+% new page
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (documentfonts override test)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: font Courier
+%%+ font Times-Roman
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeResource: font Courier
+%%IncludeResource: font Times-Roman
+%%EndSetup
+
+%%Page: 1 1
+100 200 moveto
+/Courier testfont
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (documentfonts override test)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: font Times-Roman
+%%+ font Courier
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Courier
+%%EndSetup
+
+%%Page: 1 1
+100 200 moveto
+/Courier testfont
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Resource "procset WontClear 0 0" declared Needed but no %%Include
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (resource override test 5)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: procset WontClear 0 0
+%%+ procset Smith 0 0
+%%+ procset Jones 0 0
+%%+ font Courier
+%%+ font Times-Roman
+%%ProofMode: TrustMe
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%IncludeResource: procset WontClear 0 0
+%%IncludeResource: procset Smith 0 0
+%%IncludeResource: procset Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%IncludeResource: font Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Resource "procset WontClear 0 0" declared Needed but no %%Include
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (resource override test 6)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: procset Smith 0 0
+%%+ procset Jones 0 0
+%%+ font Courier
+%%+ font Times-Roman
+%%+ procset WontClear 0 0
+%%ProofMode: TrustMe
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%IncludeResource: procset WontClear 0 0
+%%IncludeResource: procset Smith 0 0
+%%IncludeResource: procset Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%IncludeResource: font Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Resource "procset WontClearMe 0 0" declared Needed but no %%Include
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (resource override test 7)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: font Courier
+%%+ font Times-Roman
+%%+ procset WontClearMe 0 0
+%%+ procset Smith 0 0
+%%+ procset Jones 0 0
+%%ProofMode: TrustMe
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%IncludeResource: procset WontClearMe 0 0
+%%IncludeResource: procset Smith 0 0
+%%IncludeResource: procset Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%IncludeResource: font Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (resource override test 8)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentNeededResources: procset Smith 0 0
+%%+ procset Jones 0 0
+%%+ font Courier
+%%+ font Times-Roman
+%%ProofMode: TrustMe
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%IncludeResource: procset Smith 0 0
+%%IncludeResource: procset Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%IncludeResource: font Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Keyword "%%BoundingBox:" declared (atend) in trailer
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 100 100
+%%For: (PPR Spooling System)
+%%Title: (unrecognized atend test)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

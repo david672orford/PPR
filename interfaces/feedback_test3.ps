@@ -1,0 +1,21 @@
+%!PS-Adobe-3.0
+%%Title: End of job delay tester
+%%Creator: David Chappell
+%%CreationDate: 22 January 1998
+%%Pages: 0
+
+% Time to delay:
+%/delaytime 90 def
+%/delaytime 47 def
+/delaytime 120 def
+
+% Compute the current time plus
+% delaytime thousanths of a second.
+/stoptime usertime delaytime 1000 mul add def
+
+% Wait until after stoptime
+{ usertime stoptime gt {exit} if } loop
+
+(done) = flush
+
+%%EOF

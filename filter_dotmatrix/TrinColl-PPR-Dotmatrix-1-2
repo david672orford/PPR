@@ -1,0 +1,120 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: ~ppr/src/dotmatrix/TrinColl-PPR-DotMatrix-1-2
+%%Copyright: Copyright 1995, 1996, Trinity College Computing Center
+%%CreationDate: 4 October 1996
+%%Creator: David Chappell
+%%EndComments
+
+/pprdotmatrix 50 dict def
+pprdotmatrix begin
+
+/pprdotmatrix_init {
+
+% Scale factor for x coordinates
+% (Converts 240ths to 72nds.)
+/xfactor 240 72 div def
+
+% Scale factor for y coordinates
+% (Converts 216ths to 72nds.)
+/yfactor 3 def
+
+% Basic unit, 72nds or 60ths, used by graphicX
+/bunit 72 def
+
+% The last y position
+% In PostScript units
+/lasty 0 def
+
+% What we think is the left margin
+% in PostScript units
+/lm 0 def
+
+% What we think is the line spacing
+% in PostScript units
+/ls 0 def
+
+% Amount to shift x for narrow carriage
+/xshift 0 def
+
+% Amount to shift y
+/yshift -12 def
+
+% Baseline bias (adjusted for superscript and double height)
+/blbias 0 def
+
+} def	% pprdotmatrix_init
+
+% Bind and define
+/bd{bind def}def
+
+% Translate to inches
+/inch{72 mul}bd
+
+% Set baseline bias
+/bb{/blbias exch def}bd
+
+% Select a font
+% Usage: font hscale sf
+/sf{[ exch 0 0 1 0 blbias] makefont setfont /sp 0 def}bd
+
+% Select font with width and height control
+% Usage: font hscale vscale sfh
+/sfh{exch [ exch 0 0 5 -1 roll 0 blbias] makefont setfont /sp 0 def}bd
+
+% Start page
+% Translation is to move the first baseline below the top margin
+/bp{save xshift yshift translate}def
+
+% end page
+/ep{restore showpage}def
+
+% Move x and y
+% re-computes /ls
+/mxy{yfactor div exch xfactor div 
+ dup /lm exch def
+ exch dup lasty sub /ls exch def
+ dup /lasty exch def
+ moveto}bd
+
+% Move x
+/mx{xfactor div currentpoint exch pop moveto}bd
+
+% Move y
+% does not re-compute /ls
+/my{yfactor div
+ dup /lasty exch def
+ currentpoint pop exch moveto}bd
+
+% Relative move x
+/m{xfactor div currentpoint 3 -2 roll add exch moveto}bd
+
+% Newline, move to last x in mxy and y down by last increment in mxy
+/n{lm lasty ls add dup /lasty exch def moveto}bd
+
+% Extra space between characters except space
+/esp 0 def
+
+% Adjustment of the space character
+/sp 0 def
+
+% Set the extra inter character spacing
+/e{xfactor div /esp exch def}bd
+
+% Set the width of the space
+/s{xfactor div ( ) stringwidth pop sub /sp exch def}bd
+
+% Print a string
+% /p{esp 0 3 -1 roll ashow}bd
+/p{sp esp sub 0 8#040 esp 0 6 -1 roll awidthshow}bd
+
+% Underline
+% Draw an underline from below the current point to below the 
+% point indicated by the single argument.
+/ul{currentpoint /ypos exch def /xpos exch def
+	ypos 2 sub dup xpos exch moveto
+	exch xfactor div exch lineto
+	.5 setlinewidth stroke
+	xpos ypos moveto}bd
+
+end % pprdotmatrix
+%%EOF

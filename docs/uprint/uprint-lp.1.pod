@@ -1,0 +1,191 @@
+#
+# uprint-lp.1.pod
+# Copyright 1998, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 2 December 1998.
+#
+
+=head1 NAME
+
+uprint-lp - selects spooler and submits print job
+
+=head1 SYNOPSIS
+
+B<uprint-lp> I<switches> [I<filename ...>]
+
+=head1 DESCRIPTION
+
+This program is part of the PPR uprint suite.  See the UPRINT(1) man page
+for an explanation of what this means.
+
+This program is designed to accept all of the options accepted by the System
+V Unix B<lp> program.
+
+=over 4
+
+=item B<-d> I<queue>
+
+This option specifies the print queue in which the job should be entered.
+If this option is omited then the LPDEST and PRINTER environment variables are
+searched in that order.  If they are both undefined, then a queue name
+is taken from the "uprint-lp=" setting in the "[default destinations] section
+of F<uprint.conf>.  If that too is not defined, then a setting of "lp" is
+assumed.
+
+=item B<-i> I<requestid>
+
+This switch is used to specify the request id of a job to be manipulated
+as discribed by the B<-?> switch.  This switch is not yet supported by
+B<uprint-lp>.
+
+=item B<-H> I<handling>
+
+This switch requests "special handling".  The valid values for I<handling> are
+"hold", "resume", and "immediate".  This switch does not work yet
+in B<uprint-lp>.
+
+=item B<-c>
+
+This switch indicates that the spooler should make its own copy of the job
+rather than reading the origional when it is ready to print.  This option
+should be used if you will delete or modify the origional before printing
+is likely to be finished.
+
+=item B<-f> I<formname>
+
+This switch specifies a "form" (generally a kind of paper) on which the
+job should be printed.  Naturally, this will work with B<lp> queues.
+For PPR queues, the values is considered to be a PPR medium name fed
+to B<ppr> using its B<-D> (default medium) switch.  For B<lpr> queues
+this switch will have no effect.
+
+=item B<-m>
+
+Send email when the job has been printed.
+
+=item B<-w>
+
+Write a message to the user's terminal when the job is done.
+
+=item B<-n> I<n>
+
+Print the indicated number of copies.
+
+=item B<-o> I<options>
+
+This sets "interface options".  The options are expressed as name=value pairs.
+The standard interface options were conceived in the days when line printers
+dominated.  It is often difficult to determine how they ought to apply to modern
+printers such as laser printers.
+
+If the queue is an B<lp> queue then the B<-o> swith with its option is
+simply passed on to B<lp>.  In the case of a PPR or B<lpr> queue, Uprint
+attempt to perform a suitable convertion.  Those conversions are in a state
+of flux and are undocumented at this time.
+
+The standard interface options are as follows:
+
+=over 4
+
+=item nobanner
+
+=item nofilebreak
+
+=item length=
+
+=item width=
+
+=item lpi=
+
+=item cpi=
+
+=item stty=
+
+=back
+
+=item B<-y> I<list>
+
+This switch gives a list of "modes".  These are operations performed on
+the file by filters.  The list of available modes is defined by the
+system administrator.  The effect of this switch on non-B<lp> queue is
+not yet defined.
+
+=item B<-P> I<list>
+
+This option can be used to indicate that only certain page should be printed.
+The real B<lp> man page says that requests of this type can only be
+satisfied when a filter exists that can extract pages and that the job
+will be rejected if the request cannot be satisfied.  This option is presently
+ignored when the queue is a B<lpr> queue.  PPR does not yet implement page
+selection and so will ignore such a request.
+
+=item B<-p>
+
+This option "enables notification", according to the real B<lp> man page.
+It is unclear what this means.
+
+=item B<-q> I<n>
+
+This sets the queue priority of the job.  Queue priorities range from 0
+(the highest) to 39 (the lowest).  This parameter has not effect on
+B<lpr> queues but it works with B<lp> and PPR queues.
+
+=item B<-s>
+
+This option suppresses the display of certain messages.  Precisely what
+messages ought to be suppressed is unclear but the message which indicates
+the request id of the newly created job is among them.
+
+=item B<-S> I<charset>
+
+Specify the character set.  For the B<lp> spooler it appears that the
+list of character set names is defined by the system administrator, though
+there may be some standard names.  This option is ignored by B<lpr> queues.
+For PPR queues, the I<charset> is passed using PPR's "charset=" filter option.
+Acceptable character set names for PPR include "latin1" and "cp437".
+
+=item B<-t> I<string>
+
+This switch is used to specify a job name (title) for the banner page.
+
+=item B<-T> I<type>
+
+This switch indicates the format (type) of the input file.
+
+For B<lp> queues, these types are defined by the system administrator,
+however there are a few
+common type name including "simple" and "postscript".
+
+For B<lpr> queues, a few common type names are converted to the appropriate
+B<lpr> switch.  The translation mechanism is in flux and is not documented
+at this time.
+
+For PPR queues, the indicated I<type> is passed to B<ppr>'s B<-T> switch.
+
+=item B<-r>
+
+This indicates that the input file should be passed through to the printer
+without filtering.  The precise effect of this switch on non-B<lp> queues
+is not yet defined.
+
+=back
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=head1 BUGS
+
+Many options are simply passed to the remote spooler without any validity
+checking.  Most often this will result in the option doing nothing.
+
+=cut
+

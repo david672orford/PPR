@@ -1,0 +1,5075 @@
+# PPR Utilities Messages in French
+# Copyright (C) 2001 Olivier Tharan
+# Olivier Tharan <olive@betty.minet.net>, 2001.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PPR 1.41\n"
+"POT-Creation-Date: 2001-01-02 16:23-0500\n"
+"PO-Revision-Date: 2001-01-02 12:00+GMT\n"
+"Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
+"Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: none\n"
+
+#: ../ppr/ppr_main.c:954
+msgid ""
+"\t--cache-priority {auto,low,high}\n"
+"\t                           prefer to insert resources from cache?\n"
+msgstr ""
+"\t--cache-priority {auto, low, high}\n"
+"\t           préfère insérer les ressources à partir du cache ?\n"
+
+#: ../ppr/ppr_main.c:949
+msgid ""
+"\t--cache-store none         don't store new resources (default)\n"
+"\t--cache-store unavailable  store if not in cache or fontindex\n"
+"\t--cache-store uncached     store if not already in cache\n"
+msgstr ""
+"\t--cache-store none         ne pas stocker les ressources nouvelles "
+"(défaut)\n"
+"\t--cache-store unavailable  stocker si pas présent dans le cache ou\n"
+"                                     l'index des fontes\n"
+"\t--cache-store uncached     stocker si pas déjà présent dans le cache\n"
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# msgid ""
+# msgstr ""
+# "POT-Creation-Date: 1999-02-22 17:51+0100\n"
+# "Content-Type: text/plain; charset=\n"
+# "Date: 1998-04-21 20:56:43+0200\n"
+# "From: Olivier Tharan <olive@speedy>\n"
+# "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output "
+# "--default-domain=PPR\n"
+# "Files: ../ppr/ppr_conffile.c ../ppr/ppr_dscdoc.c ../ppr/ppr_editps.c "
+# "../ppr/ppr_infile.c ../ppr/ppr_mactt.c ../ppr/ppr_main.c ../ppr/ppr_media.c "
+# "../ppr/ppr_nest.c ../ppr/ppr_old2new.c ../ppr/ppr_outfile.c "
+# "../ppr/ppr_rcache.c ../ppr/ppr_req.c ../ppr/ppr_res.c ../ppr/ppr_respond.c "
+# "../ppr/ppr_selpgs.c ../ppr/ppr_simplify.c ../ppr/ppr_split.c "
+# "../ppr/ppr_things.c ../lprsrv/lprsrv-test.c ../lprsrv/lprsrv.c "
+# "../lprsrv/lprsrv_cancel.c ../lprsrv/lprsrv_client_info.c "
+# "../lprsrv/lprsrv_conf.c ../lprsrv/lprsrv_list.c ../lprsrv/lprsrv_print.c "
+# "../lprsrv/lprsrv_standalone.c ../lprsrv/olprsrv.c ../uprint/uprint-cancel.c "
+# "../uprint/uprint-lp.c ../uprint/uprint-lpq.c ../uprint/uprint-lpr.c "
+# "../uprint/uprint-lprm.c ../uprint/uprint-lpstat.c ../libuprint/claim_lp.c "
+# "../libuprint/claim_lpr.c ../libuprint/claim_ppr.c "
+# "../libuprint/claim_remote.c ../libuprint/lpr_connect.c "
+# "../libuprint/lpr_sendfile.c ../libuprint/uprint-newconf.c "
+# "../libuprint/uprint.c ../libuprint/uprint_argv_lp.c "
+# "../libuprint/uprint_argv_lpr.c ../libuprint/uprint_argv_ppr.c "
+# "../libuprint/uprint_conf.c ../libuprint/uprint_loop.c "
+# "../libuprint/uprint_lpq.c ../libuprint/uprint_lpq_rfc1179.c "
+# "../libuprint/uprint_lprm.c ../libuprint/uprint_lprm_rfc1179.c "
+# "../libuprint/uprint_print.c ../libuprint/uprint_print_rfc1179.c "
+# "../libuprint/uprint_run.c ../libuprint/uprint_strerror.c "
+# "../libuprint/uprint_type_lp.c ../libuprint/uprint_type_lpr.c "
+# "../libuprint/uprint_type_ppr.c ../libuprint/uprint_uid.c "
+# "../libuprint/uprint_xlate.c\n"
+#: ../ppr/ppr_main.c:895
+msgid "\t--charge-to <string>       PPR charge account to bill for job\n"
+msgstr ""
+"\t--charge-to <chaîne>       compte PPR sur lequel imputer le travail\n"
+
+#: ../ppr/ppr_main.c:913
+msgid ""
+"\t--commentary <n>           send commentary messages of types <n>\n"
+"\t--commentator <method>     use commentator program <method>\n"
+"\t--commentator-address <address>\n"
+"\t                           address for commentator program\n"
+"\t--commentator-options <options>\n"
+"\t                           option list for commentator program\n"
+msgstr ""
+"\t--commentary <n>        envoie des commentaires de type <n>\n"
+"\t--commentator <méthode> utilise le programme <méthode> pour commenter\n"
+"\t--commentator-address <adresse>\n"
+"\t                        adresse du programme de commentaires\n"
+"\t--commentator-options <options>\n"
+"\t                        liste d'options pour le programme de commentaires\n"
+
+#: ../samba/ppr2samba.c:577
+msgid "\t--debug      explain what is being done\n"
+msgstr "\t--debug      explique ce qui se passe\n"
+
+#: ../ppr/ppr_main.c:1062
+msgid "\t--editps-level <pos int>   set level of editing for -H editps\n"
+msgstr ""
+"\t--editps-level <entier positif>   donne le niveau d'édition pour\n"
+"\t                                  l'option -H editps\n"
+
+#: ../samba/ppr2samba.c:580
+msgid "\t--help       print this message\n"
+msgstr "\t--help       affiche ce message\n"
+
+#: ../ppr/ppr_main.c:1042
+msgid "\t--hold                     job should be held immediately\n"
+msgstr "\t --hold                   travail à retenir immédiatement\n"
+
+#: ../ppr/ppr_main.c:1054
+msgid "\t--lpq-filename <string>    filename for ppop lpq listings\n"
+msgstr ""
+"\t--lpq-filename <chaîne>   nom de fichier pour les affichages de ppop lpq\n"
+
+#: ../samba/ppr2samba.c:578
+#, c-format
+msgid "\t--nocreate   don't create %s if it doesn't exist\n"
+msgstr "\t--nocreate   ne crée pas %s s'il n'existe pas\n"
+
+#: ../ppr/ppr_main.c:1035
+msgid "\t--page-list <page-list>    print only the pages indicated\n"
+msgstr "\t--page-list <liste-de-pages>\tn'imprime que les pages indiquées\n"
+
+#: ../ppr/ppr_main.c:904
+msgid "\t--routing <string>         set DSC routing instructions\n"
+msgstr ""
+"\t--routing <chaîne>           indique les instructions de routage DSC\n"
+
+#: ../ppr/ppr_main.c:1065
+msgid ""
+"\t--show-jobid               print the queue id of submitted jobs\n"
+"\t--show-long-jobid          print queue id in long format\n"
+msgstr ""
+"\t--show-jobid               affiche le numéro dans la queue des travaux "
+"soumis\n"
+"\t--show-long-jobid          affiche le numéro dans la queue au format long\n"
+
+#: ../ppr/ppr_main.c:937
+msgid ""
+"\t--strip-cache true         strip cached resources from job file\n"
+"\t--strip-cache false        don't strip cached resources (default)\n"
+msgstr ""
+"\t--strip-cache true    enlève les ressources en cache du fichier de "
+"travail\n"
+"\t--strip-cache false   n'enlève pas les ressources en cache (défaut)\n"
+
+#: ../ppr/ppr_main.c:941
+msgid ""
+"\t--strip-fontindex true     strip fonts in font index from job file\n"
+"\t--strip-fontindex false    don't strip fonts in font index (defualt)\n"
+msgstr ""
+"\t--strip-fontindex true     enlever les fontes de l'index du fichier de "
+"travail\n"
+"\t--strip-fontindex false    ne pas enlever les fontes de l'index (défaut)\n"
+
+#: ../ppr/ppr_main.c:945
+msgid ""
+"\t--strip-printer true       strip out resources already in printer\n"
+"\t--strip-printer false      don't strip printer resources (default)\n"
+msgstr ""
+"\t--strip-printer true     enlève les ressources déjà présentes dans "
+"l'imprimante\n"
+"\t--strip-printer false    ne pas enlever les ressources de l'imprimante "
+"(défaut)\n"
+
+#: ../ppr/ppr_main.c:898
+msgid "\t--title <string>           set default document title\n"
+msgstr "\t--title <chaîne>        positionne le titre du document par défaut\n"
+
+#: ../fontutils/ppr-indexfonts.c:422 ../ppop/ppop.c:1083
+msgid ""
+"\t--version\n"
+"\t--help\n"
+msgstr ""
+"\t--version\n"
+"\t--help\n"
+
+#: ../ppr/ppr_main.c:1069
+msgid ""
+"\t--version                  print PPR version information\n"
+"\t--help                     print this help\n"
+msgstr ""
+"\t--version                  affiche les informations sur la version de PPR\n"
+"\t--help                     affiche cette aide\n"
+
+#: ../samba/ppr2samba.c:579
+msgid "\t--version    print the PPR version number\n"
+msgstr "\t--version    affiche le numéro de version de PPR\n"
+
+#: ../ppr/ppr_main.c:934
+msgid "\t-A                         root or ppr has preauthorized\n"
+msgstr ""
+"\t-A                        root ou ppr a fait l'autorisation préalable\n"
+
+#: ../lprsrv/lprsrv.c:166
+msgid ""
+"\t-A <seconds>\n"
+"\t--arrest-interest-interval <seconds>\n"
+"\t\t(this switch is passed thru to ppop)\n"
+"\t--version\n"
+"\t\t(print PPR version number)\n"
+"\t--help\n"
+"\t\t(print this message)\n"
+msgstr ""
+"\t-A <secondes>\n"
+"\t--arrest-interest-interval <secondes>\n"
+"\t\t(cette bascule est passée directement à ppop)\n"
+"\t--version\n"
+"\t\t(affiche le numéro de version de PPR)\n"
+"\t--help\n"
+"\t\t(affiche ce message)\n"
+
+#: ../ppr/ppr_main.c:968
+msgid ""
+"\t-B false                   disable automatic bin selection\n"
+"\t-B true                    enable automatic bin selection (default)\n"
+msgstr ""
+"\t-B false                   désactive la sélection automatique du bac\n"
+"\t-B true                    permet la sélection automatique du bac "
+"(défaut)\n"
+
+#: ../ppr/ppr_main.c:965
+msgid "\t-D <mediumname>            sets default medium\n"
+msgstr "\t-D <nom de support>       positionne le support par défaut\n"
+
+#: ../ppr/ppr_main.c:958
+msgid "\t-F '<feature name>'        inserts setup code for a printer feature\n"
+msgstr ""
+"\t-F '<nom de possibilité>'   insère le code d'initialisation\n"
+"\t                            d'une possibilité d'imprimante\n"
+
+#: ../ppr/ppr_main.c:1038
+msgid ""
+"\t-G <string>                gab about subject indicated by <string>\n"
+"\t--gab <string>             same as -G\n"
+msgstr ""
+"\t-G <chaîne>                parle du sujet indiqué par <chaîne>\n"
+"\t--gab <chaîne>             pareil que -G\n"
+
+#: ../ppr/ppr_main.c:1057
+msgid ""
+"\t-H <hack name>             turn on a hack\n"
+"\t-H no-<hack name>          turn off a hack\n"
+"\t--hack [no-]<hack name>    same as -H\n"
+msgstr ""
+"\t-H <nom de bitouille>      lance une bitouille\n"
+"\t-H no-<nom de bitouille>   arrête une bitouille\n"
+"\t--hack [no-]<nom de bitouille>    identique à -H\n"
+
+#: ../ppr/ppr_main.c:961
+msgid ""
+"\t-K true                    keep feature code though not in PPD file\n"
+"\t-K false                   don't keep bad feature code (default)\n"
+msgstr ""
+"\t-K true                 garde le code de la possibilité même si elle\n"
+"\t                        ne se trouve pas dans le fichier PPD\n"
+"\t-K false                ne garde pas le mauvais code (défaut)\n"
+
+#: ../ppr/ppr_main.c:979
+msgid ""
+"\t-N <positive integer>      print pages N-Up\n"
+"\t-N noborders               turn off N-Up borders\n"
+msgstr ""
+"\t-N <entier positif>        imprime N pages par feuille\n"
+"\t-N noborders               désactive les bordures avec N-pages\n"
+
+#: ../ppr/ppr_main.c:901
+msgid "\t-O <string>                overlay `Draft' notice\n"
+msgstr ""
+"\t-O <chaîne>               indication de `Brouillon' par-dessus le texte\n"
+
+#: ../ppr/ppr_main.c:1014
+msgid ""
+"\t-P notifyme                set ProofMode to NotifyMe\n"
+"\t-P substitute              set ProofMode to Substitute\n"
+"\t-P trustme                 set ProofMode to TrustMe\n"
+msgstr ""
+"\t-P notifyme                positionne ProofMode à NotifyMe\n"
+"\t-P substitute              positionne ProofMode à Substitute\n"
+"\t-P trustme                 positionne ProofMode à TrustMe\n"
+
+#: ../ppr/ppr_main.c:1051
+msgid "\t-Q <string>                TrueType query answer given (for papsrv)\n"
+msgstr ""
+"\t-Q <chaîne>          réponse donnée à une requête TrueType (pour papsrv)\n"
+
+#: ../ppr/ppr_main.c:995
+msgid ""
+"\t-R copies                  read copy count from document\n"
+"\t-R ignore-copies           don't read copy count (default)\n"
+msgstr ""
+"\t-R copies              lit le nombre de copies dans le document\n"
+"\t-R ignore-copies       ne lit le nombre de copies (défaut)\n"
+
+#: ../ppr/ppr_main.c:999
+msgid ""
+"\t-R duplex:softsimplex      read duplex mode, assume simplex (default)\n"
+"\t-R duplex:simplex          read duplex mode, assume simplex\n"
+"\t-R duplex:duplex           read duplex mode, assume normal duplex\n"
+"\t-R duplex:duplextumble     read duplex mode, assume tumble duplex\n"
+"\t-R ignore-duplex           don't read duplex mode\n"
+msgstr ""
+"\t-R duplex:softsimplex      lit en mode duplex, suppose simplex (défaut)\n"
+"\t-R duplex:simplex          lit en mode duplex, suppose simplex\n"
+"\t-R duplex:duplex           lit en mode duplex, suppose duplex normal\n"
+"\t-R duplex:duplextumble     lit en mode duplex, suppose duplex tumble\n"
+"\t-R ignore-duplex           ne lit pas en mode duplex\n"
+
+#: ../ppr/ppr_main.c:987
+msgid ""
+"\t-R for                     read \"%%For:\" line\n"
+"\t-R ignore-for              don't read \"%%For:\" (default)\n"
+msgstr ""
+"\t-R for                  lit la ligne \"%%For:\"\n"
+"\t-R ignore-for           ne lit pas la ligne \"%%For:\" (défaut)\n"
+
+#: ../ppr/ppr_main.c:1006
+msgid ""
+"\t-R routing                 use routing from \"%%Routing:\" (default)\n"
+"\t-R ignore-routing          ignore \"%%Routing:\" comment\n"
+msgstr ""
+"\t-R routing           utilise le routage à partir de \"%%Routing:\" "
+"(défaut)\n"
+"\t-R ignore-routing    ignore le commentaire \"%%Routing:\"\n"
+
+#: ../ppr/ppr_main.c:991
+msgid ""
+"\t-R title                   use title from \"%%Title:\" (default)\n"
+"\t-R ignore-title            ignore \"%%Title:\" comment\n"
+msgstr ""
+"\t-R title                utilise le titre de \"%%Title:\" (défaut)\n"
+"\t-R ignore-title         ignore le commentaire \"%%Title:\"\n"
+
+#: ../ppr/ppr_main.c:1048
+msgid "\t-U                         unlink job file after queuing it\n"
+msgstr ""
+"\t-U             efface le fichier de travail après l'avoir mis en queue\n"
+
+#: ../ppop/ppop.c:1075
+msgid ""
+"\t-X <principal string>\n"
+"\t--proxy-for=<principal string>\n"
+"\t-M\n"
+"\t--machine-readable\n"
+"\t--su <user>\n"
+"\t-A <seconds>\n"
+"\t--arrest-interest-time=<seconds>\n"
+msgstr ""
+"\t-X <chaîne principale>\n"
+"\t--proxy-for=<chaîne principale>\n"
+"\t-M\n"
+"\t--machine-readable\n"
+"\t--version\n"
+"\t--su <utilisateur>\n"
+"\t-A <secondes>\n"
+"\t--arrest-interest-time=<secondes>\n"
+"\t--help\n"
+
+#: ../ppr/ppr_main.c:891
+msgid ""
+"\t-X <string>                used by network servers to tell PPR the\n"
+"\t                           identity of alien users for whom they act\n"
+msgstr ""
+"\t-X <chaîne>          utilisé par les serveurs réseaux pour indiquer\n"
+"\t                     à PPR l'identité des utilisateurs étrangers pour\n"
+"\t                     lesquels ils agissent\n"
+
+#: ../ppr/ppr_main.c:1032
+msgid "\t-Y                         experimental job splitting feature\n"
+msgstr ""
+"\t-Y                         possibilité expérimentale de séparation des "
+"travaux\n"
+
+#: ../ppr/ppr_main.c:1010
+msgid ""
+"\t-Z true                    ignore jobs without %%EOF\n"
+"\t-Z false                   don't ignore (default)\n"
+msgstr ""
+"\t-Z true                    ignore les travaux sans %%EOF\n"
+"\t-Z false                   ne les ignore pas (défaut)\n"
+
+#: ../ppr/ppr_main.c:931
+msgid "\t-a                         turns on authcode mode\n"
+msgstr "\t-a                     lance le mode du code d'authentification\n"
+
+#: ../ppr/ppr_main.c:921
+msgid ""
+"\t-b {yes,no,dontcare}       express banner page preference\n"
+"\t-t {yes,no,dontcare}       express trailer page preference\n"
+msgstr ""
+"\t-b {yes,no,dontcare}       exprime la préférence pour la page de garde "
+"avant\n"
+"\t-t {yes,no,dontcare}       exprime la préférence pour la page de garde "
+"arrière\n"
+"\t                           yes = oui, no = non, dontcare = peu importe\n"
+
+#: ../ppr/ppr_main.c:1019
+msgid ""
+"\t-e none                    don't user stderr or responder for errors\n"
+"\t-e stderr                  report errors on stderr (default)\n"
+"\t-e responder               report errors by responder\n"
+"\t-e both                    report errors with both\n"
+"\t-e hexdump                 always use hexdump for no filter\n"
+"\t-e no-hexdump              discourage hexdump for no filter\n"
+msgstr ""
+"\t-e none                    n'utilise pas l'erreur standard ou le répondeur "
+"pour les erreurs\n"
+"\t-e stderr                  indique les erreurs sur l'erreur standard "
+"(défaut)\n"
+"\t-e responder               indique les erreurs grâce au répondeur\n"
+"\t-e both                    indique les erreurs grâce aux deux\n"
+"\t-e hexdump                 utilise toujours hexdump quand pas de filtre\n"
+"\t-e no-hexdump              décourage hexdump quand pas de filtre\n"
+
+#: ../ppr/ppr_main.c:907
+msgid ""
+"\t-m <method>                response method\n"
+"\t-m none                    no response\n"
+"\t-r <address>               response address\n"
+"\t--responder-options <list> list of name=value responder options\n"
+msgstr ""
+"\t-m <méthode>             méthode de réponse\n"
+"\t-m none                  pas de réponse\n"
+"\t-r <adresse>             adresse de réponse\n"
+"\t--responder-options <liste>  liste d'options nom=valeur pour le répondeur\n"
+
+#: ../ppr/ppr_main.c:983
+msgid ""
+"\t-n <positive integer>      print n copies\n"
+"\t-n collate                 print collated copies\n"
+msgstr ""
+"\t-n <entier positif>        imprime n copies\n"
+"\t-n collate                 imprime des copies dans l'ordre\n"
+
+#: ../ppr/ppr_main.c:974
+msgid ""
+"\t-o <string>                specify filter options\n"
+"\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
+"\t                           set handling of LaTeX, HTML, and such\n"
+msgstr ""
+"\t-o <chaîne>                spécifie les options de filtres\n"
+"\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
+"\t                           indique la gestion de LaTeX, HTML et autres\n"
+
+#: ../ppr/ppr_main.c:1045
+msgid "\t-q <integer>               sets priority of print job\n"
+msgstr ""
+"\t-q <entier>             indique la priorité du travail d'impression\n"
+
+#: ../lprsrv/lprsrv.c:161
+msgid ""
+"\t-s <port>\n"
+"\t--standalone-port <port>\n"
+"\t\t(run standalone, bind to specified TCP port)\n"
+msgstr ""
+"\t-s <port>\n"
+"\t--standalone-port <port>\n"
+"\t\t(tourner en autonome, se lier au port TCP spécifié)\n"
+
+#: ../ppr/ppr_main.c:1027
+msgid ""
+"\t-s <positive integer>      signature sheet count\n"
+"\t-s booklet                 automatic signature sheet count\n"
+"\t-s {both,fronts,backs}     indicate part of each signature to print\n"
+msgstr ""
+"\t-s <entier positif>        compte de la feuille de signature\n"
+"\t-s booklet                 compte automatique de la feuille de signature\n"
+"\t-s {both,fronts,backs}     indique la partie de chaque signature à "
+"imprimer\n"
+
+#: ../ppr/ppr_main.c:925
+msgid ""
+"\t-w log                     routes warnings to log file\n"
+"\t-w stderr                  routes warnings to stderr (default)\n"
+"\t-w both                    routes warnings to stderr and log file\n"
+"\t-w {severe,peeve,none}     sets warning level\n"
+msgstr ""
+"\t-w log          dirige les avertissements vers le fichier de log\n"
+"\t-w stderr       dirige les avertissements vers l'erreur standard (défaut)\n"
+"\t-w both         dirige les avertissements vers le fichier de log et\n"
+"\t                l'erreur standard\n"
+"\t-w {severe,peeve,none}     indique le niveau d'avertissement\n"
+
+#: ../ppop/ppop_cmds_other.c:1136
+msgid ""
+"\n"
+"\tThis command sets the status of a destination.\n"
+"\tThe status of a destination may be displayed with\n"
+"\tthe \"ppop destination\" command.\n"
+msgstr ""
+"\n"
+"\tCette commande positionne l'état d'une destination.\n"
+"\tL'état d'une destination peut être affiché avec\n"
+"\tla commande \"ppop destination\".\n"
+
+#: ../ppop/ppop.c:822
+msgid ""
+"\n"
+"Destination commands:\n"
+"\tppop destination {<destination>, all}\n"
+"\t\tAbbreviation:  ppop dest {<destination>, all}\n"
+"\tppop destination-comment {<destination>, all}\n"
+"\t\tAbbreviation:  ppop ldest {<destination>, all}\n"
+"\tppop destination-comment-address {<destination>, all}\n"
+"\tppop accept <destination>\n"
+"\tppop reject <destination>\n"
+msgstr ""
+"\n"
+"Commandes de destination :\n"
+"\tppop destination {<destination>, all}\n"
+"\t\tabréviation :  ppop dest {<destination>, all}\n"
+"\tppop destination-comment {<destination>, all}\n"
+"\t\tabréviation :  ppop ldest {<destination>, all}\n"
+"\tppop destination-comment-address {<destination>, all}\n"
+"\tppop accept <destination>\n"
+"\tppop reject <destination>\n"
+
+#: ../ppop/ppop.c:859
+msgid ""
+"\n"
+"Media commands:\n"
+"\tppop media {<destination>, all}\n"
+"\tppop mount <printer> <bin> <medium>\n"
+msgstr ""
+"\n"
+"Commandes sur les supports :\n"
+"\tppop media {<destination>, all}\n"
+"\tppop mount <imprimante> <bac> <support>\n"
+
+#: ../ppop/ppop.c:831
+msgid ""
+"\n"
+"Print job commands:\n"
+"\tppop list {<destination>, <job>, all} ...\n"
+"\tppop short {<destination>, <job>, all} ...\n"
+"\tppop details {<destination>, <job>, all} ...\n"
+"\tppop lpq {<destination>, <job>, all} [<user>] [<id>] ...\n"
+"\tppop qquery {<destination>, <job>, all} <field name 1> ...\n"
+"\tppop move {<job>, <old_destination>} <new_destination>\n"
+"\tppop hold <job> ...\n"
+"\tppop release <job> ...\n"
+"\tppop [s]cancel {<job>, <destination>, all} ...\n"
+"\tppop [s]purge {<destination>, all} ...\n"
+"\tppop [s]cancel-active {<destination>, all} ...\n"
+"\tppop [s]cancel-my-active {<destination>, all} ...\n"
+"\tppop clean <destination> ...\n"
+"\tppop rush <job> ...\n"
+"\tppop log <job>\n"
+"\tppop progress <job>\n"
+"\tppop modify <job> <name>=<value> ...\n"
+msgstr ""
+"\n"
+"Commandes sur les travaux d'impression :\n"
+"\tppop list {<destination>, <travail>, all} ...\n"
+"\tppop short {<destination>, <travail>, all} ...\n"
+"\tppop details {<destination>, <travail>, all} ...\n"
+"\tppop lpq {<destination>, <travail>, all} [<utilisateur>] [<id>] ...\n"
+"\tppop qquery {<destination>, <travail>, all} <nom champ 1> ...\n"
+"\tppop move {<travail>, <ancienne_destination>} <nouvelle_destination>\n"
+"\tppop hold <travail> ...\n"
+"\tppop release <travail> ...\n"
+"\tppop [s]cancel {<travail>, <destination>, all} ...\n"
+"\tppop [s]purge {<destination>, all} ...\n"
+"\tppop [s]cancel-active {<destination>, all} ...\n"
+"\tppop [s]cancel-my-active {<destination>, all} ...\n"
+"\tppop clean <destination> ...\n"
+"\tppop rush <travail> ...\n"
+"\tppop log <travail>\n"
+"\tppop progress <travail>\n"
+"\tppop modify <travail> <nom>=<valeur> ...\n"
+
+#: ../ppop/ppop.c:850
+msgid ""
+"\n"
+"Printer commands:\n"
+"\tppop status {<destination>, all} ...\n"
+"\tppop start <printer> ...\n"
+"\tppop halt <printer> ...\n"
+"\tppop stop <printer> ...\n"
+"\tppop wstop <printer>\n"
+"\tppop message <printer>\n"
+"\tppop alerts <printer>\n"
+msgstr ""
+"\n"
+"Commandes sur les imprimantes :\n"
+"\tppop status {<destination>, all} ...\n"
+"\tppop start <imprimante> ...\n"
+"\tppop halt <imprimante> ...\n"
+"\tppop stop <imprimante> ...\n"
+"\tppop wstop <imprimante>\n"
+"\tppop message <imprimante>\n"
+"\tppop alerts <imprimante>\n"
+
+#: ../samba/ppr2samba.c:491
+#, c-format
+msgid "    Member \"%s\" has \"%s\", oh well!\n"
+msgstr "    Le membre \"%s\" a \"%s\", oh allez !\n"
+
+#: ../samba/ppr2samba.c:498
+#, c-format
+msgid "    Member \"%s\" has \"%s\", ok so far\n"
+msgstr "    Le membre \"%s\" a \"%s\", ok jusque là\n"
+
+#: ../samba/ppr2samba.c:489
+#, c-format
+msgid "    Member \"%s\" has no driver name, oh well!\n"
+msgstr "    Le membre \"%s\" n'a pas de nom de pilote, oh allez !\n"
+
+#: ../libuprint/uprint-newconf.c:142
+#, c-format
+msgid "  (Note: \"%s\" does not exist.)\n"
+msgstr "  (Note : \"%s\" n'existe pas.)\n"
+
+#: ../libuprint/uprint-newconf.c:147
+#, c-format
+msgid "  (Warning: \"%s\" is not executable.)\n"
+msgstr "  (Attention : \"%s\" n'est pas exécutable.)\n"
+
+#: ../samba/ppr2samba.c:408
+#, c-format
+msgid "  Member: \"%s\"\n"
+msgstr "  Membre : \"%s\"\n"
+
+#: ../samba/ppr2samba.c:507
+msgid "  No comment found\n"
+msgstr "  Pas de commentaire trouvé\n"
+
+#: ../samba/ppr2samba.c:478
+msgid "  Searching for a common drivername:\n"
+msgstr "  À la recherche d'un nom de pilote commun :\n"
+
+#: ../samba/ppr2samba.c:502
+#, c-format
+msgid "  drivername = %s\n"
+msgstr "  drivername = %s\n"
+
+#: ../samba/ppr2samba.c:508
+msgid "  drivername couldn't be determined\n"
+msgstr "  le nom du pilote n'a pas pu être déterminé\n"
+
+#: ../ppr/ppr_main.c:277 ../ppr/ppr_main.c:285 ../ppr/ppr_main.c:292
+#: ../ppr/ppr_main.c:306
+msgid " argument"
+msgstr " paramètre"
+
+#: ../ppr/ppr_simplify.c:144
+msgid "\"%%%%BeginData:\" block ran off end of file after %ld of %ld lines"
+msgstr ""
+"Le bloc \"%%%%BeginData:\" a dépassé la fin de fichier après %ld de %ld "
+"lignes"
+
+#: ../ppr/ppr_simplify.c:187
+msgid "\"%%%%BeginData:\" block ran off end of file at byte %ld of %ld"
+msgstr ""
+"Le bloc \"%%%%BeginData:\" a dépassé la fin de fichier à l'octet %ld de %ld"
+
+#: ../ppr/ppr_simplify.c:197
+msgid "\"%%%%BeginData:\" said %ld bytes, but no \"%%%%EndData\" found there"
+msgstr ""
+"\"%%%%BeginData:\" a indiqué %ld octets, mais pas de \"%%%%EndData\" à cet "
+"endroit"
+
+#: ../ppr/ppr_simplify.c:150
+msgid "\"%%%%BeginData:\" said %ld lines, but no \"%%%%EndData\" found there"
+msgstr ""
+"\"%%%%BeginData:\" a indiqué %ld lignes, mais pas de \"%%%%EndData\" à cet "
+"endroit"
+
+#: ../ppr/ppr_main.c:2487
+msgid "\"%%%%Pages:\" comment is wrong, changing it from %d to %d"
+msgstr "Le commentaire \"%%%%Pages:\" est incorrect, changé de %d en %d"
+
+#: ../ppr/ppr_dscdoc.c:92
+#, c-format
+msgid "\"%s\" comment has no argument"
+msgstr "Le commentaire \"%s\" n'a pas de paramètre"
+
+#: ../ppr/ppr_old2new.c:173
+#, c-format
+msgid "\"%s\" does not take arguments"
+msgstr "\"%s\" ne prend pas de paramètres"
+
+#: ../ppr/ppr_old2new.c:157
+#, c-format
+msgid "\"%s\" is discontinued in DSC versions >= %s"
+msgstr "\"%s\" est arrêté dans les versions DSC >= %s"
+
+#: ../ppr/ppr_old2new.c:101 ../ppr/ppr_old2new.c:113 ../ppr/ppr_old2new.c:126
+#: ../ppr/ppr_old2new.c:233 ../ppr/ppr_old2new.c:245
+#, c-format
+msgid "\"%s\" line has no argument"
+msgstr "La ligne \"%s\" n'a pas de paramètre"
+
+#: ../ppr/ppr_old2new.c:139
+#, c-format
+msgid "\"%s\" line has no arguments"
+msgstr "La ligne \"%s\" n'a pas de paramètres"
+
+#: ../ppr/ppr_old2new.c:150 ../ppr/ppr_old2new.c:178
+#, c-format
+msgid "\"%s\" should be \"%s\""
+msgstr "\"%s\" devrait être \"%s\""
+
+#: ../ppop/ppop_cmds_other.c:963
+#, c-format
+msgid "%d active jobs were canceled.\n"
+msgstr "%d travaux actifs ont été annulés.\n"
+
+#: ../ppr/ppr_main.c:2312 ../ppr/ppr_main.c:2314
+#, c-format
+msgid "%d characters follow EOF mark"
+msgstr "%d caractères suivent la marque EOF"
+
+#: ../ppop/ppop_cmds_other.c:60
+#, c-format
+msgid "%d jobs were canceled.\n"
+msgstr "%d travaux ont été annulés.\n"
+
+#: ../samba/ppr2samba.c:689
+#, c-format
+msgid "%d of %d queues exported to \"%s\".\n"
+msgstr "%d sur %d files exportées vers \"%s\".\n"
+
+#: ../samba/ppr2samba.c:687
+#, c-format
+msgid "%d of 1 queue exported to \"%s\".\n"
+msgstr "%d sur une file exportée vers \"%s\".\n"
+
+#: ../interfaces/atalk_ali.c:218
+#, c-format
+msgid "%d printers answer to the name \"%s\"."
+msgstr "%d imprimantes répondent au nom de \"%s\"."
+
+#: ../ppop/ppop_cmds_other.c:152
+#, c-format
+msgid "%d seconds"
+msgstr "%d secondes"
+
+#: ../ppop/ppop_cmds_other.c:145
+#, c-format
+msgid "%d seconds (clock stopt)"
+msgstr "%d secondes (horloge arrêtée)"
+
+#: ../ppr/ppr_media.c:461
+#, c-format
+msgid ""
+"%s\n"
+"\twhile attempting to read \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+msgstr ""
+"%s\n"
+"\tpendant la tentative de lecture de \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+
+#: ../ppr/ppr_main.c:1413
+#, c-format
+msgid "%s %s is unrecognized"
+msgstr "%s %s n'est pas reconnu"
+
+#: ../ppad/ppad_printer.c:627 ../ppad/ppad_printer.c:633
+#: ../ppad/ppad_printer.c:639
+#, c-format
+msgid "%s (by default)"
+msgstr "%s (par défaut)"
+
+#: ../interfaces/serial.c:447
+#, c-format
+msgid ""
+"%s interface: \"codes\" setting must be \"Clean7Bit\" if the option "
+"\"bits=7\" is set."
+msgstr ""
+"interface %s : le paramètre \"codes\" doit être \"Clean7Bit\" si l'option "
+"\"bits=7\" est positionnée."
+
+#: ../interfaces/serial.c:473
+#, c-format
+msgid "%s interface: serial port driver does not support selected options"
+msgstr ""
+"interface %s : le pilote de port série ne supporte pas les options "
+"sélectionnées"
+
+#: ../ppr/ppr_main.c:1585
+#, c-format
+msgid "%s must be followed by \"none\", \"stderr\", \"responder\", or \"both\""
+msgstr "%s doit être suivi de \"none\", \"stderr\", \"responder\" ou \"both\""
+
+#: ../ppr/ppr_main.c:1562
+#, c-format
+msgid "%s must be followed by \"notifyme\", \"substitute\", or \"trustme\""
+msgstr "%s doit être suivi de \"notifyme\", \"substitute\" ou \"trustme\""
+
+#: ../ppr/ppr_main.c:1418 ../ppr/ppr_main.c:1428 ../ppr/ppr_main.c:1546
+#: ../ppr/ppr_main.c:1773 ../ppr/ppr_main.c:1778
+#, c-format
+msgid "%s must be followed by \"true\" or \"false\""
+msgstr "%s doit être suivi de \"true\" ou \"false\""
+
+#: ../ppr/ppr_main.c:1568
+#, c-format
+msgid "%s must be set to \"true\" or \"false\""
+msgstr "%s doit être positionné à \"true\" ou \"false\""
+
+#: ../ppr/ppr_main.c:1440
+#, c-format
+msgid "%s option (N-Up) must be between 1 and 16"
+msgstr "L'option %s (N-pages) doit être entre 1 et 16"
+
+#: ../ppr/ppr_main.c:1600
+#, c-format
+msgid ""
+"%s option must be \"fronts\", \"backs\", \"both\", \"booklet\", or a "
+"positive integer"
+msgstr ""
+"L'option %s doit être \"fronts\", \"backs\", \"both\", \"booklet\" ou un "
+"entier positif"
+
+#: ../ppr/ppr_main.c:1423
+#, c-format
+msgid "%s option must be between 0 and 39"
+msgstr "L'option %s doit être entre 0 et 39"
+
+#: ../ppad/ppad_printer.c:681
+#, c-format
+msgid "%s per duplex sheet, "
+msgstr "%s par feuille double face, "
+
+#: ../ppad/ppad_printer.c:682
+#, c-format
+msgid "%s per simplex sheet\n"
+msgstr "%s par feuille simple face\n"
+
+#: ../ppr/ppr_main.c:292
+#, c-format
+msgid "%s%s is empty"
+msgstr "%s%s est vide"
+
+#: ../ppr/ppr_main.c:306
+#, c-format
+msgid "%s%s is entirely whitespace"
+msgstr "%s%s est uniquement des espaces blancs"
+
+#: ../ppr/ppr_rcache.c:198
+#, c-format
+msgid "%s(): Can't open \"%s\", errno=%d (%s)"
+msgstr "%s() : impossible d'ouvrir \"%s\", errno=%d (%s)"
+
+#: ../ppr/ppr_mactt.c:455
+#, c-format
+msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
+msgstr "%s() : échec de chmod(\"%s\", %o), errno=%d (%s)"
+
+#: ../ppr/ppr_mactt.c:463
+#, c-format
+msgid "%s(): rename(\"%s\", \"%s\") failed, errno=%d (%s)"
+msgstr "%s() : échec de rename(\"%s\", \"%s\"), errno=%d (%s)"
+
+#: ../ppr/ppr_mactt.c:459 ../ppr/ppr_mactt.c:467
+#, c-format
+msgid "%s(): unlink(\"%s\") failed, errno=%d (%s)"
+msgstr "%s() : échec de unlink(\"%s\"), errno=%d (%s)"
+
+#: ../ppop/ppop_cmds_other.c:129
+#, c-format
+msgid "%s, stalled for %d minutes"
+msgstr "%s, en pause pendant %d minutes"
+
+#: ../ppop/ppop_cmds_other.c:131
+#, c-format
+msgid "%s..."
+msgstr "%s..."
+
+#: ../filter_dotmatrix/main.c:580 ../filter_lp/filter_lp.c:1367
+#: ../filters_misc/filter_hexdump.c:178
+#, c-format
+msgid ""
+"%s: %s\n"
+"\twhile attempting to read \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+msgstr ""
+"%s : %s\n"
+"\tpendant la tentative de lecture de \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+
+#: ../ppr/ppr_main.c:2620
+#, c-format
+msgid "%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"
+msgstr "%s : -U : ne peut pas faire unlink(\"%s\"), errno=%d (%s)\n"
+
+#: ../unixuser/ppr-xgrant.c:79
+#, c-format
+msgid "%s: Can't find user \"ppr\" in password database.\n"
+msgstr ""
+"%s : ne trouve pas l'utilisateur \"ppr\" dans la base de données des mots de "
+"passe.\n"
+
+#: ../unixuser/ppr-xgrant.c:69
+#, c-format
+msgid "%s: DISPLAY not set.\n"
+msgstr "%s : DISPLAY non positionné.\n"
+
+#: ../uprint/uprint-lpr.c:254
+#, c-format
+msgid "%s: Invalid -K argument\n"
+msgstr "%s : argument -K invalide\n"
+
+#: ../uprint/uprint-lpr.c:264
+#, c-format
+msgid "%s: Invalid -N argument\n"
+msgstr "%s : argument -N invalide\n"
+
+#: ../uprint/uprint-lp.c:219 ../uprint/uprint-lpq.c:117
+#: ../uprint/uprint-lpr.c:315 ../uprint/uprint-lprm.c:142
+#, c-format
+msgid "%s: Print queue \"%s\" not found.\n"
+msgstr "%s : queue d'impression \"%s\" non trouvée.\n"
+
+#: ../uprint/uprint-cancel.c:88
+#, c-format
+msgid "%s: Syntax error, unrecognized switch: -%c\n"
+msgstr "%s : erreur de syntaxe, bascule non reconnue : -%c\n"
+
+#: ../unixuser/ppr-xgrant.c:99
+#, c-format
+msgid "%s: The file \"%s\" is not yours, doing nothing.\n"
+msgstr "%s : le fichier \"%s\" n'est pas le vôtre, je ne fais rien.\n"
+
+#: ../unixuser/ppr-xgrant.c:59
+#, c-format
+msgid "%s: This program must be setuid root!\n"
+msgstr "%s : ce programme doit être setuid root !\n"
+
+#: ../fontutils/ppr-indexfonts.c:488
+#, c-format
+msgid "%s: can't create \"%s\", errno=%d (%s)\n"
+msgstr "%s : impossible de créer \"%s\", errno=%d (%s)\n"
+
+#: ../fontutils/ppr-indexfonts.c:144 ../fontutils/ppr-indexfonts.c:181
+#: ../fontutils/ppr-indexfonts.c:472 ../ppad/ppad_filt.c:89
+#, c-format
+msgid "%s: can't open \"%s\", errno=%d (%s)\n"
+msgstr "%s : impossible d'ouvrir \"%s\", errno=%d (%s)\n"
+
+#: ../ppad/ppad_filt.c:144
+#, c-format
+msgid "%s: error reading \"%s\", errno=%d (%s)\n"
+msgstr "%s : erreur de lecture de \"%s\", errno=%d (%s)\n"
+
+#: ../uprint/uprint-lp.c:100 ../uprint/uprint-lpr.c:131
+#: ../uprint/uprint-lprm.c:81
+#, c-format
+msgid "%s: getpwuid(%ld) failed to find your account\n"
+msgstr "%s : getpwuid(%ld) n'a pas réussi à trouver votre compte\n"
+
+#: ../uprint/uprint-lp.c:181
+#, c-format
+msgid "%s: lp -i and -H are not yet implemented\n"
+msgstr "%s : lp -i et -H ne sont pas encore implémentés\n"
+
+#: ../fontutils/ppr-indexfonts.c:479
+#, c-format
+msgid "%s: no [%s] section in \"%s\"\n"
+msgstr "%s : pas de section [%s] dans \"%s\"\n"
+
+#: ../uprint/uprint-cancel.c:69 ../uprint/uprint-lp.c:73
+#: ../uprint/uprint-lpq.c:74 ../uprint/uprint-lpr.c:108
+#: ../uprint/uprint-lprm.c:71 ../uprint/uprint-lpstat.c:114
+#, c-format
+msgid "%s: this program must be setuid root\n"
+msgstr "%s : ce programme doit être setuid root\n"
+
+#: ../ppr/ppr_editps.c:219
+#, c-format
+msgid "%sCondition \"%s\" is not met.\n"
+msgstr "%sLa condition \"%s\" n'est pas réalisée.\n"
+
+#: ../ppr/ppr_editps.c:141
+#, c-format
+msgid "%sConsidering line: %s\n"
+msgstr "%sPrise en compte de la ligne : %s\n"
+
+#: ../ppr/ppr_editps.c:172
+#, c-format
+msgid "%sDesired editps level (%d) is not this range.\n"
+msgstr "%sLe niveau désiré pour editps (%d) n'est pas dans les limites.\n"
+
+#: ../ppr/ppr_editps.c:65
+#, c-format
+msgid "%sHeader \"%s\" not found.\n"
+msgstr "%sEn-tête \"%s\" non trouvée.\n"
+
+#: ../ppr/ppr_editps.c:60
+#, c-format
+msgid "%sHeader \"%s\" value is \"%s\".\n"
+msgstr "%sLa valeur de l'en-tête \"%s\" est \"%s\".\n"
+
+#: ../ppr/ppr_editps.c:233
+#, c-format
+msgid "%sRequired interpreter \"%s\" is not available.\n"
+msgstr "%sL'interpréteur demandé \"%s\" n'est pas disponible.\n"
+
+#: ../interfaces/lpr.c:141
+msgid "(Communication failure while negotiating to send control file.)"
+msgstr ""
+"(Échec de communication pendant la négociation de l'envoi du fichier de "
+"contrôle.)"
+
+#: ../interfaces/lpr.c:179 ../interfaces/lpr.c:257 ../interfaces/lpr.c:328
+msgid "(Communication failure while negotiating to send data file.)"
+msgstr ""
+"(Échec de communication pendant la négociation de l'envoi du fichier de "
+"données.)"
+
+#: ../interfaces/lpr.c:581
+msgid "(Communication failure while negotiating to send job.)"
+msgstr "(Échec de communication pendant la négociation de l'envoi du travail.)"
+
+#: ../interfaces/lpr.c:155
+msgid "(Communication failure while sending control file.)"
+msgstr "(Échec de communication pendant l'envoi du fichier de contrôle.)"
+
+#: ../interfaces/lpr.c:198 ../interfaces/lpr.c:289
+msgid "(Communication failure while sending data file.)"
+msgstr "(Échec de communication pendant l'envoi du fichier de données.)"
+
+#: ../libuprint/uprint_print_rfc1179.c:281
+msgid "(Connection lost while negotiating to send control file failed.)"
+msgstr ""
+"(Perte de connexion pendant la négociation de l'envoi du fichier de "
+"contrôle.)"
+
+#: ../libuprint/uprint_print_rfc1179.c:419
+msgid "(Connection lost while negotiating to send data file.)"
+msgstr ""
+"(Perte de connexion pendant la négociation de l'envoi du fichier de données.)"
+
+#: ../libuprint/uprint_print_rfc1179.c:569
+msgid "(Connection lost while negotiating to send job.)"
+msgstr "(Perte de connexion pendant la négociation de l'envoi du travail.)"
+
+#: ../libuprint/uprint_print_rfc1179.c:449
+msgid "(Connection lost while sending data file.)"
+msgstr "(Perte de connexion pendant l'envoi du fichier de données.)"
+
+#: ../libuprint/uprint_print_rfc1179.c:303
+msgid "(Connection lost while transmitting control file.)"
+msgstr "(Perte de connexion pendant la transmission du fichier de contrôle.)"
+
+#: ../ppop/ppop.c:755
+#, c-format
+msgid "(The user \"%s\" is acting as your proxy.)\n"
+msgstr "(L'utilisateur \"%s\" agit comme mandataire pour vous.)\n"
+
+#: ../samba/ppr2samba.c:317
+msgid "(from PPD file)"
+msgstr "(du fichier PPD)"
+
+#: ../ppad/ppad_printer.c:647
+msgid "(never send alerts)"
+msgstr "(ne jamais envoyer d'alertes)"
+
+#: ../ppad/ppad_printer.c:659
+#, c-format
+msgid "(send alert after %d errors, send notice on recovery)"
+msgstr ""
+"(envoyer une alerte après %d erreurs, envoyer la remarque après la remise en "
+"marche)"
+
+#: ../ppad/ppad_printer.c:657
+#, c-format
+msgid "(send alert every %d errors)"
+msgstr "(envoyer une alerte toutes les %d erreurs)"
+
+#: ../ppad/ppad_printer.c:650
+msgid "(send alert on every error)"
+msgstr "(envoyer une alerte à chaque erreur)"
+
+#: ../ppad/ppad_printer.c:653
+msgid "(send alert on first error, send notice on recovery)"
+msgstr ""
+"(envoyer une alerte à la première erreur, envoyer la remarque après la "
+"remise en marche)"
+
+#: ../ppr/ppr_main.c:2139
+msgid "-a and -A are mutually exclusive"
+msgstr "-a et -A s'excluent mutuellement"
+
+#: ../ppop/ppop_cmds_other.c:960
+msgid "1 active job was canceled.\n"
+msgstr "1 travail actif a été annulé.\n"
+
+#: ../ppr/ppr_main.c:2310
+msgid "1 character follows EOF mark"
+msgstr "1 caractère suit la marque EOF"
+
+#: ../ppop/ppop_cmds_other.c:57
+msgid "1 job was canceled.\n"
+msgstr "1 travail a été annulé.\n"
+
+#: ../ppr/ppr_editps.c:158
+#, c-format
+msgid "1st field is empty on \"%s\" line %d"
+msgstr "Le premier champ est vide sur \"%s\", ligne %d"
+
+#: ../ppr/ppr_editps.c:160
+#, c-format
+msgid "3rd field is not in the range 1--10 on \"%s\" line %d"
+msgstr "Le 3ème champ n'est pas entre 1 et 10 sur \"%s\", ligne %d"
+
+#: ../ppr/ppr_editps.c:166
+#, c-format
+msgid "3rd field must be <= 4th field on \"%s\" line %d"
+msgstr "Le 3ème champ doit être <= au 4ème sur \"%s\", ligne %d"
+
+#: ../ppr/ppr_editps.c:162
+#, c-format
+msgid "4th field is not in the range 1--10 on \"%s\" line %d"
+msgstr "Le 4ème champ n'est pas entre 1 et 10 sur \"%s\", ligne %d"
+
+#: ../lprsrv/lprsrv-test.c:130
+#, c-format
+msgid ""
+";\n"
+"; All lprsrv.conf sections which apply to \"%s\"\n"
+"; taken together have the same effect as the following\n"
+"; simplified section.\n"
+";\n"
+msgstr ""
+";\n"
+"; Toutes les sections de lprsrv.conf qui s'appliquent à\n"
+"; \"%s\" mises ensemble ont le même effet que la section\n"
+"; simplifiée suivante.\n"
+";\n"
+
+#: ../ppad/ppad_printer.c:622 ../ppad/ppad_printer.c:623
+#: ../ppad/ppad_printer.c:688
+msgid "<undefined>"
+msgstr "<indéfini>"
+
+#: ../ppad/ppad_printer.c:1762
+#, c-format
+msgid "A second parameter is not allowed because first is \"%s\"."
+msgstr "Un deuxième paramètre est interdit car le premier est \"%s\"."
+
+#: ../ppad/ppad_group.c:182 ../ppad/ppad_printer.c:747
+#, c-format
+msgid "ACLs: %s\n"
+msgstr "ACLs : %s\n"
+
+#: ../ppuser/ppuser.c:285
+#, c-format
+msgid "Account lifetime: %d\n"
+msgstr "Durée de vie du compte : %d\n"
+
+#: ../ppad/ppad_media.c:161
+msgid "Accurate height is required.\n"
+msgstr "Une hauteur précise est demandée.\n"
+
+#: ../ppad/ppad_media.c:118
+msgid "Accurate width is required.\n"
+msgstr "Une largeur précise est demandée.\n"
+
+#: ../ppad/ppad_alias.c:290 ../ppad/ppad_group.c:838
+#: ../ppad/ppad_printer.c:2846
+msgid ""
+"Addon parameter names must begin with a lower-case ASCII\n"
+"letter.\n"
+msgstr ""
+"Les noms de paramètres supplémentaires doivent débuter par un caractère "
+"ASCII\n"
+"bas de casse.\n"
+
+#: ../ppad/ppad_group.c:188 ../ppad/ppad_printer.c:761
+msgid "Addon:"
+msgstr "Ajout :"
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Address"
+msgstr "Adresse"
+
+#: ../ppad/ppad_printer.c:623
+#, c-format
+msgid "Address: \"%s\"\n"
+msgstr "Adresse : \"%s\"\n"
+
+#: ../libuprint/uprint-newconf.c:219
+#, c-format
+msgid "Adjusting file system to conform to %s:\n"
+msgstr "Ajustement du système de fichiers pour se conformer à %s :\n"
+
+#: ../ppad/ppad_printer.c:664
+#, c-format
+msgid "Alert address: %s\n"
+msgstr "Adresse d'alerte : %s\n"
+
+#: ../ppad/ppad_printer.c:643
+#, c-format
+msgid "Alert frequency: %d "
+msgstr "Fréquence d'alerte : %d "
+
+#: ../ppad/ppad_printer.c:663
+#, c-format
+msgid "Alert method: %s\n"
+msgstr "Méthode d'alerte : %s\n"
+
+#: ../ppad/ppad_alias.c:130
+msgid "Alias name begins with a disallowed character.\n"
+msgstr "Le nom d'alias commence par un caractère interdit.\n"
+
+#: ../ppad/ppad_alias.c:124
+msgid "Alias name contains a disallowed character.\n"
+msgstr "Le nom d'alias contient un caractère interdit.\n"
+
+#: ../ppad/ppad_alias.c:118
+msgid "Alias name is too long.\n"
+msgstr "Le nom d'alias est trop long.\n"
+
+#: ../ppad/ppad_alias.c:78
+#, c-format
+msgid "Alias name: %s\n"
+msgstr "Nom de l'alias : %s\n"
+
+# OTH FIXME vérifier
+#: ../libuprint/uprint-newconf.c:179
+#, c-format
+msgid "Appearently, \"%s\" never was sidelined.\n"
+msgstr "Apparemment, \"%s\" n'a jamais été aligné sur le côté.\n"
+
+#: ../ppr/ppr_main.c:1727
+#, c-format
+msgid "Argument for %s must be between 1 and 10"
+msgstr "Le paramètre de %s doit être compris entre 1 et 10"
+
+#: ../samba/ppr2samba.c:231
+#, c-format
+msgid "Array overflow, printer \"%s\" not shared\n"
+msgstr "Dépassement du tableau, imprimante \"%s\" non partagée\n"
+
+#: ../lprsrv/lprsrv-test.c:167
+msgid "As Proxy For"
+msgstr "Comme Proxy Pour"
+
+#: ../ppr/ppr_simplify.c:253
+msgid "Attempt to continue non-existent DSC comment"
+msgstr "Tentative de continuation d'un commentaire DSC non existant"
+
+#: ../filter_lp/filter_lp.c:1726
+#, c-format
+msgid "Average: default_landscape_asptrigger=%.2f\n"
+msgstr "Moyenne : default_landscape_asptrigger=%.2f\n"
+
+#: ../filter_lp/filter_lp.c:1729
+#, c-format
+msgid "Average: default_landscape_lentrigger=%d\n"
+msgstr "Moyenne : default_landscape_lentrigger=%d\n"
+
+#: ../libuprint/lpr_connect.c:83
+msgid "Bad port specification in printer address."
+msgstr "Mauvaise spécification de port dans l'adresse de l'imprimante."
+
+#: ../ppad/ppad_alias.c:243 ../ppad/ppad_group.c:714
+#: ../ppad/ppad_printer.c:2225
+msgid "Bad set of switches.\n"
+msgstr "Mauvais groupe de bascules.\n"
+
+#: ../ppuser/ppuser.c:276
+#, c-format
+msgid "Balance: %s\n"
+msgstr "Crédit : %s\n"
+
+#: ../ppad/ppad_printer.c:1688
+msgid ""
+"Banner and trailer must be set to \"never\", \"no\",\n"
+"\"yes\", or \"always\".\n"
+msgstr ""
+"Les pages de garde avant et arrière doivent être positionnées à \"never\",\n"
+"\"no\", \"yes\" ou \"always\".\n"
+
+#: ../ppad/ppad_media.c:370
+#, c-format
+msgid "Banner/Trailer suitability: %d\n"
+msgstr "Convenance des pages de garde : %d\n"
+
+#: ../ppr/ppr_infile.c:222
+msgid "Berkeley Plot files"
+msgstr "Fichiers Plot Berkeley"
+
+#: ../ppad/ppad_printer.c:700
+msgid "Bins: "
+msgstr "Bacs : "
+
+#: ../ppr/ppr_infile.c:196
+msgid "CAT/4 (old Troff) files"
+msgstr "Fichiers CAT/4 (vieux Troff)"
+
+#: ../ppr/ppr_infile.c:223
+msgid "CIF files"
+msgstr "Fichiers CIF"
+
+#: ../ppad/ppad_printer.c:1956
+#, c-format
+msgid ""
+"Can't add these %d bin%s to \"%s\" because then the printer would\n"
+"have %d bins and the %d bin limit would be exceeded.\n"
+msgstr ""
+"Impossible d'ajouter ces %d bac%s à \"%s\" parce qu'alors l'imprimante\n"
+"aurait %d bacs et la limite de %d bacs serait dépassée.\n"
+
+#: ../libppr/cs2enc.c:43 ../ppr/ppr_editps.c:127 ../ppr/ppr_main.c:412
+#: ../samba/ppr2samba.c:641
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)"
+msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)"
+
+#: ../samba/ppr2samba.c:134 ../samba/ppr2samba.c:392 ../samba/ppr2samba.c:543
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)\n"
+msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)\n"
+
+#: ../libuprint/claim_remote.c:87 ../libuprint/uprint_print_rfc1179.c:385
+#: ../ppop/ppop_cmds_other.c:507
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)."
+msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)."
+
+#: ../ppop/ppop_cmds_other.c:1356 ../ppop/ppop_modify.c:309
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s).\n"
+msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s).\n"
+
+#: ../ppr/ppr_media.c:379
+#, c-format
+msgid "Can't open media database \"%s\", errno=%d (%s)"
+msgstr "Impossible d'ouvrir la base des supports \"%s\", errno=%d (%s)"
+
+#: ../ppad/ppad_media.c:101 ../ppad/ppad_media.c:339 ../ppad/ppad_media.c:399
+#: ../ppad/ppad_media.c:441
+#, c-format
+msgid "Can't open media file \"%s\", errno=%d (%s)"
+msgstr "Impossible d'ouvrir le fichier de supports \"%s\", errno=%d (%s)"
+
+#: ../ppad/ppad_conf.c:99
+#, c-format
+msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
+msgstr ""
+"Impossible d'ouvrir le fichier temporaire \"%s\" en écriture, errno=%d (%s)"
+
+#: ../ppr/ppr_infile.c:1885
+#, c-format
+msgid "Can't print %s.\n"
+msgstr "Impossible d'imprimer %s.\n"
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Charge"
+msgstr "Coût"
+
+#: ../ppad/ppad_printer.c:674
+msgid "Charge: "
+msgstr "Prix : "
+
+#: ../ppad/ppad_printer.c:2569
+#, c-format
+msgid "Choose 1 thru %d or 0 if unknown> "
+msgstr "Choisissez entre 1 et %d ou 0 si inconnu> "
+
+#: ../ppr/ppr_media.c:331
+#, c-format
+msgid ""
+"Closest medium (\"%s %.1f %.1f %.1f (%.*s) (%.*s)\") is a\n"
+"\tvery poor match for \"%s %.1f %.1f %.1f (%.*s) (%.*s)\""
+msgstr ""
+"Le support le plus proche (\"%s %.1f %.1f %.1f (%.*s) (%.*s)\") est très\n"
+"\tloin de concorder avec \"%s %.1f %.1f %.1f (%.*s) (%.*s)\""
+
+#: ../ppr/ppr_media.c:295
+#, c-format
+msgid ""
+"Closest medium (\"%s %.1f %.1f %.1f (%.*s) (%.*s)\") is an\n"
+"\timperfect match for \"%s %.1f %.1f %.1f (%.*s) (%.*s)\""
+msgstr ""
+"Le support le plus proche (\"%s %.1f %.1f %.1f (%.*s) (%.*s)\") concorde\n"
+"\ttrès mal avec \"%s %.1f %.1f %.1f (%.*s) (%.*s)\""
+
+#: ../ppad/ppad_printer.c:637
+msgid "Codes: "
+msgstr "Codes : "
+
+#: ../ppad/ppad_media.c:225
+msgid "Colour must be specified.\n"
+msgstr "La couleur doit être spécifiée.\n"
+
+#: ../ppad/ppad_media.c:239
+msgid "Colour: "
+msgstr "Couleur : "
+
+#: ../ppad/ppad_media.c:368
+#, c-format
+msgid "Colour: %16.16s\n"
+msgstr "Couleur : %16.16s\n"
+
+#: ../ppad/ppad_media.c:229
+#, c-format
+msgid "Colour: (%s) "
+msgstr "Couleur : (%s) "
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Comment"
+msgstr "Commentaire"
+
+#: ../ppad/ppad_alias.c:79 ../ppad/ppad_group.c:151 ../ppad/ppad_printer.c:614
+#, c-format
+msgid "Comment: %s\n"
+msgstr "Commentaire : %s\n"
+
+#: ../ppr/ppr_editps.c:184
+#, c-format
+msgid "Condition \"%s\" contains no \"=\" on \"%s\" line %d"
+msgstr "La condition \"%s\" n'a pas de \"=\" sur \"%s\", ilgne %d"
+
+#: ../interfaces/serial.c:487 ../libppr_int/int_pe_tcpip.c:36
+msgid "Connection to printer lost."
+msgstr "Connexion à l'imprimante perdue."
+
+# OTH FIXME vérifier
+#: ../filter_lp/filter_lp.c:539
+#, c-format
+msgid "Constaints force columns from %d to %d.\n"
+msgstr "Les contraintes forcent les colonnes de %d à %d.\n"
+
+#: ../ppad/ppad_printer.c:617
+#, c-format
+msgid "Contact: %s\n"
+msgstr "Contact : %s\n"
+
+#: ../ppr/ppr_simplify.c:259
+#, c-format
+msgid "Continued DSC comment \"%s...\" overflows buffer"
+msgstr "Le commentaire continu DSC \"%s...\" dépasse le tampon"
+
+#: ../lprsrv/lprsrv_cancel.c:90
+#, c-format
+msgid ""
+"Could not delete the job or jobs due to a problem with the print server\n"
+"called \"%s\".  Please ask the print server's\n"
+"system administrator to examine the log file \"%s\"\n"
+"to learn the details.\n"
+msgstr ""
+"Impossible d'effacer le ou les travaux à cause d'un problème avec le "
+"serveur\n"
+"d'impression appelé \"%s\". Veuillez demander à l'administrateur du serveur\n"
+"d'impression d'examiner le fichier de log \"%s\"\n"
+"pour connaître les détails du problème.\n"
+
+#: ../lprsrv/lprsrv_list.c:82
+#, c-format
+msgid ""
+"Could not get a queue listing due to a problem with the print server\n"
+"called \"%s\".  Please ask the print server's\n"
+"system administrator to examine the log file \"%s\"\n"
+"to learn the details.\n"
+msgstr ""
+"Impossible d'obtenir une liste de la file à cause d'un problème avec le\n"
+"serveur d'impression appelé \"%s\". Veuillez demander à l'administrateur du\n"
+"serveur d'impression d'examiner le fichier de log \"%s\"\n"
+"pour connaître les détails du problème.\n"
+
+#: ../libuprint/uprint-newconf.c:133
+#, c-format
+msgid "Creating symbolic link \"%s\" -> \"%s\".\n"
+msgstr "Création du lien symbolique \"%s\" -> \"%s\".\n"
+
+# OTH FIXME vérifier
+#: ../ppuser/ppuser.c:286
+#, c-format
+msgid "Credit revoked: %s\n"
+msgstr "Crédit révoqué : %s\n"
+
+#: ../ppuser/ppuser.c:277
+#, c-format
+msgid "Cutoff point: %s\n"
+msgstr "Point de coupure : %s\n"
+
+#: ../ppuser/ppuser.c:379
+msgid "Database error, transaction not processed.\n"
+msgstr "Erreur de base de données, transaction non traitée.\n"
+
+#: ../ppuser/ppuser.c:221 ../ppuser/ppuser.c:251 ../ppuser/ppuser.c:292
+#: ../ppuser/ppuser.c:325
+msgid "Database error.\n"
+msgstr "Erreur de la base de données.\n"
+
+#: ../ppad/ppad_group.c:166 ../ppad/ppad_printer.c:717
+msgid "Default Filter Options: "
+msgstr "Options du filtre par défaut : "
+
+#: ../ppr/ppr_media.c:531
+#, c-format
+msgid ""
+"Default medium as overridden (\"%.1f %.1f %.1f (%.*s) (%.*s)\")\n"
+"\tdoes not exist, will call for fictitious medium \"UNRECOGNIZED\""
+msgstr ""
+"Le support par défaut tel qu'outrepassé (\"%.1f %.1f %.1f (%.*s) (%.*s)\")\n"
+"\tn'existe pas, appel du support fictif \"UNRECOGNIZED\""
+
+#: ../ppad/ppad_printer.c:616
+#, c-format
+msgid "Department: %s\n"
+msgstr "Département : %s\n"
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Destination"
+msgstr "Destination"
+
+#: ../ppr/ppr_main.c:2131
+msgid "Destination (printer or group) name contains a disallowed character"
+msgstr ""
+"Le nom de destination (imprimante ou groupe) contient un caractère interdit"
+
+#: ../ppr/ppr_main.c:2127
+msgid "Destination (printer or group) name is empty"
+msgstr "Le nom de destination (imprimante ou groupe) est vide"
+
+#: ../ppr/ppr_main.c:2129
+msgid "Destination (printer or group) name is too long"
+msgstr "Le nom de destination (imprimante ou groupe) est trop long"
+
+#: ../ppr/ppr_main.c:2133
+msgid "Destination (printer or group) name starts with a disallowed character"
+msgstr ""
+"Le nom de destination (imprimante ou groupe) commence par un caractère "
+"interdit"
+
+#: ../ppop/ppop.c:528
+#, c-format
+msgid "Destination name \"%*s\" begins with a disallowed character.\n"
+msgstr "Le nom de destination \"%*s\" commence par un caractère interdit.\n"
+
+#: ../ppop/ppop.c:522
+#, c-format
+msgid "Destination name \"%*s\" contains a disallowed character.\n"
+msgstr "Le nom de destination contient un caractère interdit.\n"
+
+#: ../ppop/ppop.c:400 ../ppop/ppop.c:516
+#, c-format
+msgid "Destination name \"%*s\" is too long.\n"
+msgstr "Le nom de destination \"%*s\" est trop long.\n"
+
+#: ../ppop/ppop.c:405
+msgid "Destination name is empty.\n"
+msgstr "Le nom de destination est trop long.\n"
+
+#: ../ppop/ppop.c:355
+#, c-format
+msgid "Destination node name \"%*s\" is too long.\n"
+msgstr "Le nom du noeud de destination \"%*s\" est trop long.\n"
+
+#: ../ppop/ppop.c:360
+msgid "Destination node name (the part before the colon) is missing.\n"
+msgstr ""
+"Le nom du noeud de destination (la partie devant les deux-points) manque.\n"
+
+#: ../ppop/ppop.c:477
+#, c-format
+msgid "Destination or job name \"%s\" is invalid.\n"
+msgstr "La destination ou le nom de travail \"%s\" est invalide.\n"
+
+#: ../ppr/ppr_main.c:2588
+msgid "Disk full"
+msgstr "Disque plein"
+
+#: ../ppr/ppr_infile.c:197
+msgid "Ditroff output"
+msgstr "Sortie Ditroff"
+
+#: ../ppr/ppr_dscdoc.c:923
+#, c-format
+msgid "Document uses DSC version %.1f which is > 3.0"
+msgstr "Le document utilise la version DSC %.1f qui est > 3.0"
+
+#: ../samba/ppr2samba.c:694
+msgid "Done.\n"
+msgstr "Terminé.\n"
+
+#: ../libppr/options.c:128
+msgid "Empty value is not allowed"
+msgstr "Une valeur vide n'est pas permise"
+
+#: ../ppr/ppr_nest.c:189
+#, c-format
+msgid "End %s in %s"
+msgstr "Fin de %s dans %s"
+
+#: ../ppr/ppr_nest.c:185
+#, c-format
+msgid "End %s without Begin"
+msgstr "Fin de %s sans Begin"
+
+#: ../libppr/options.c:103
+msgid "Equals sign expected"
+msgstr "Signe égal attendu"
+
+#: ../libppr/foptions.c:50
+msgid "Error in filter options:\n"
+msgstr "Erreur dans les options de filtre :\n"
+
+#: ../libppr/cs2enc.c:97
+#, c-format
+msgid "Error reading \"%s\", errno=%d (%s)"
+msgstr "Erreur de lecture de \"%s\", errno=%d (%s)"
+
+#: ../ppop/ppop.c:87
+msgid "Error: "
+msgstr "Erreur : "
+
+#: ../ppuser/ppuser.c:286
+msgid "FALSE"
+msgstr "FAUX"
+
+#: ../lprsrv/lprsrv-test.c:42
+msgid "FATAL: "
+msgstr "FATAL : "
+
+#: ../ppr/ppr_infile.c:231
+msgid "FIG files"
+msgstr "Fichiers FIG"
+
+#: ../ppad/ppad_alias.c:151
+#, c-format
+msgid "Failed to create alias config file \"%s\", errno=%d (%s).\n"
+msgstr ""
+"Échec de la création du fichier de configuration de l'alias \"%s\", errno=%d "
+"(%s).\n"
+
+#: ../ppad/ppad_group.c:397
+#, c-format
+msgid "Failed to create group config file \"%s\", errno=%d (%s).\n"
+msgstr ""
+"Échec dans l'ouverture du fichier de configuration de groupe \"%s\", "
+"errno=%d (%s).\n"
+
+#: ../ppad/ppad_printer.c:1056
+#, c-format
+msgid "Failed to create printer config file \"%s\", errno=%d (%s).\n"
+msgstr ""
+"Échec dans la création du fichier de configuration de l'imprimante \"%s\", "
+"errno=%d (%s).\n"
+
+#: ../ppr/ppr_split.c:228
+#, c-format
+msgid "Failed to open \"%s\" for read, errno=%d (%s)"
+msgstr "Échec de l'ouverture de \"%s\" en lecture, errno=%d (%s)"
+
+#: ../ppr/ppr_split.c:243
+#, c-format
+msgid "Failed to open \"%s\" for write, errno=%d, (%s)"
+msgstr "Échec de l'ouverture de \"%s\" en écriture, errno=%d (%s)"
+
+#: ../samba/ppr2samba.c:238
+#, c-format
+msgid "Failed to open \"%s\", errno=%d (%s)\n"
+msgstr "Échec de l'ouverture de \"%s\", errno=%d (%s)\n"
+
+#: ../ppr/ppr_main.c:223
+msgid "Failed to open log file, using stderr.\n"
+msgstr ""
+"Échec de l'ouverture du fichier de log, utilisation de l'erreur standard.\n"
+
+#: ../ppad/ppad_group.c:163
+msgid "False"
+msgstr "Faux"
+
+#: ../ppad/ppad.c:55 ../ppop/ppop.c:66 ../ppuser/ppuser.c:53
+#: ../samba/ppr2samba.c:92
+msgid "Fatal: "
+msgstr "Fatal : "
+
+#: ../ppad/ppad_printer.c:631
+msgid "Feedback: "
+msgstr "Remontée d'erreurs : "
+
+#: ../libuprint/uprint-newconf.c:233
+msgid "Files for lp should be in their normal locations.\n"
+msgstr "Les fichiers pour lp devraient être aux endroits normaux.\n"
+
+# OTH FIXME vérifier
+#: ../libuprint/uprint-newconf.c:226
+msgid "Files for lp should be in their sidelined locations.\n"
+msgstr "Les fichiers pour lp devraient être aux endroits de côté.\n"
+
+#: ../libuprint/uprint-newconf.c:249
+msgid "Files for lpr should be in their normal locations.\n"
+msgstr "Les fichiers pour lpr devraient être aux endroits normaux.\n"
+
+# OTH FIXME vérifier
+#: ../libuprint/uprint-newconf.c:242
+msgid "Files for lpr should be in their sidelined locations.\n"
+msgstr "Les fichiers pour lpr devraient être aux endroits de côté.\n"
+
+#: ../ppad/ppad_printer.c:669
+#, c-format
+msgid "Flags: %s %s (banners %s, trailers %s)\n"
+msgstr "Drapeaux : %s %s (pages de garde avant %s, arrière %s)\n"
+
+#: ../ppad/ppad_alias.c:80
+#, c-format
+msgid "For what: %s\n"
+msgstr "Pour quoi : %s\n"
+
+#: ../ppad/ppad_media.c:369
+#, c-format
+msgid "Form Type: %16.16s\n"
+msgstr "Type de papier : %16.16s\n"
+
+#: ../ppr/ppr_infile.c:192
+msgid "Fortran files"
+msgstr "Fichiers Fortran"
+
+#: ../ppr/ppr_simplify.c:220
+msgid "Found \"%%%%End\" after copying %ld additional bytes"
+msgstr "Trouvé \"%%%%End\" après avoir copié %ld octets supplémentaires"
+
+#: ../ppuser/ppuser.c:275
+#, c-format
+msgid "Fullname: %s\n"
+msgstr "Nom complet : %s\n"
+
+#: ../ppr/ppr_infile.c:220
+msgid "GIF pictures"
+msgstr "Images GIF"
+
+#: ../unixuser/ppr-xgrant.c:106
+#, c-format
+msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
+msgstr ""
+"Accord des permissions PPR pour que les clients X se connectent à "
+"l'affichage \"%s\".\n"
+
+#: ../ppad/ppad_printer.c:743
+#, c-format
+msgid "GrayOK: %s\n"
+msgstr "GrayOK : %s\n"
+
+#: ../samba/ppr2samba.c:458
+#, c-format
+msgid ""
+"Group \"%s\" has a \"ppr2samba-vserver:\" value that is not between 1 and %d."
+msgstr ""
+"Le groupe \"%s\" a une valeur \"ppr2samba-vserver:\" qui n'est pas entre 1 "
+"et %d."
+
+#: ../samba/ppr2samba.c:451
+#, c-format
+msgid "Group \"%s\" has an invalid \"ppr2samba-prototype:\" line."
+msgstr "Le groupe \"%s\" a une ligne \"ppr2samba-prototype\" invalide."
+
+#: ../samba/ppr2samba.c:446
+#, c-format
+msgid "Group \"%s\" has an invalid \"ppr2samba:\" line."
+msgstr "Le groupe \"%s\" a une ligne \"ppr2samba:\"."
+
+#: ../samba/ppr2samba.c:412
+#, c-format
+msgid "Group \"%s\" has too many members."
+msgstr "Le groupe \"%s\" a trop de membres."
+
+#: ../samba/ppr2samba.c:426
+#, c-format
+msgid "Group \"%s\" member \"%s\" does not exist."
+msgstr "Le groupe \"%s\", membre \"%s\", n'existe pas."
+
+#: ../ppad/ppad_group.c:390
+#, c-format
+msgid "Group \"%s\" would have %d members, only %d are allowed."
+msgstr "Le groupe \"%s\" aurait %d membres, seuls %d sont permis."
+
+#: ../ppad/ppad_group.c:503
+#, c-format
+msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
+msgstr "Le groupe \"%s\" aurait %d membres, seuls %d sont permis.\n"
+
+#: ../ppad/ppad_group.c:357
+msgid "Group name begins with a disallowed character.\n"
+msgstr "Le nom du groupe commence par un caractère interdit.\n"
+
+#: ../ppad/ppad_group.c:351
+msgid "Group name contains a disallowed character.\n"
+msgstr "Le nom du groupe contient un caractère interdit.\n"
+
+#: ../ppad/ppad_group.c:345
+msgid "Group name is too long.\n"
+msgstr "Le nom du groupe est trop long.\n"
+
+#: ../ppad/ppad_group.c:149
+#, c-format
+msgid "Group name: %s\n"
+msgstr "Nom du groupe : %s\n"
+
+#: ../ppr/ppr_infile.c:204
+msgid "HP PCL files"
+msgstr "Fichiers HP PCL"
+
+#: ../ppr/ppr_infile.c:205
+msgid "HP-GL/2 files"
+msgstr "Fichiers HP-GL/2"
+
+#: ../ppr/ppr_infile.c:214
+msgid "HTML documents"
+msgstr "Documents HTML"
+
+#: ../ppr/ppr_dscdoc.c:966
+msgid "Header comments section is unterminated"
+msgstr "La section des commentaires d'en-tête est indéterminée"
+
+#: ../ppad/ppad_media.c:188
+msgid "Height: "
+msgstr "Hauteur : "
+
+#: ../ppad/ppad_media.c:363
+#, c-format
+msgid "Height: %.2f inches, %.1f points, %.1f centimetres\n"
+msgstr "Hauteur : %.2f pouces, %.1f points, %.1f centimètres\n"
+
+#: ../ppad/ppad_media.c:166
+#, c-format
+msgid "Height: (%.2f in, %.1f pt, %.1f cm) "
+msgstr "Hauteur : (%.2f in, %.1f pr, %.1f cm) "
+
+#: ../libuprint/lpr_connect.c:118
+#, c-format
+msgid "IP address lookup for \"%s\" failed."
+msgstr "Échec de la résolution d'adresse IP pour \"%s\"."
+
+#: ../ppad/ppad_media.c:204
+msgid "If weight is unknown, enter \"0\".\n"
+msgstr "Si le poids est inconnu, entrez \"0\".\n"
+
+#: ../filter_dotmatrix/main.c:816 ../filter_lp/filter_lp.c:1597
+#, c-format
+msgid "Ignoring option \"%s=%s\".\n"
+msgstr "Ignore l'option \"%s=%s\".\n"
+
+#: ../interfaces/serial.c:275
+msgid "Illegal \"speed=\" value"
+msgstr "Valeur \"speed=\" illégale"
+
+#: ../filter_lp/filter_lp.c:558
+msgid "Input file is probably landscape.\n"
+msgstr "Le fichier en entrée est probablement au format paysage.\n"
+
+#: ../filter_lp/filter_lp.c:560
+msgid "Input file is probably portrait.\n"
+msgstr "le fichier d'entrée est probablement en mode portrait.\n"
+
+#: ../filter_lp/filter_lp.c:544
+#, c-format
+msgid "Input file's aspect ratio: %.2f (landscape_asptrigger=%.2f)\n"
+msgstr ""
+"Rapport d'aspect du fichier d'entrée : %.2f (landscape_asptrigger=%.2f)\n"
+
+#: ../ppr/ppr_simplify.c:104
+msgid "Insufficent number of arguments on \"%%%%BeginData:\" line"
+msgstr "Nombre de paramètres insuffisants sur la ligne \"%%%%BeginData:\""
+
+#: ../ppr/ppr_editps.c:154
+#, c-format
+msgid "Insufficient parameters on \"%s\" line %d"
+msgstr "Paramètres insuffisants sur \"%s\", ligne %d"
+
+#: ../ppad/ppad_printer.c:1139
+msgid "Insufficient parameters.\n"
+msgstr "Paramètres insuffisants.\n"
+
+#: ../ppad/ppad_printer.c:1747
+msgid ""
+"Insufficient parameters.  You must supply the name of a printer\n"
+"and an amount to change per sheet.  If you wish, you may specify\n"
+"an amount to charge per duplex sheet and then an amount to charge\n"
+"per simplex sheet.  If you specify only one amount, it will apply\n"
+"to both.  To remove a printer charge, set the charge to \"none\".\n"
+"In contrast, setting the charge to \"0.00\" will mean that only users\n"
+"with charge accounts may print, even though they will not be charged\n"
+"any money.\n"
+msgstr ""
+"Paramètres insuffisants. Vous devez fournir le nom d'une imprimante\n"
+"et un montant à comptabiliser par feuille. Si vous désirez, vous pouvez\n"
+"spécifier un montant à compter pour chaque feuille recto-verso et ensuite\n"
+"un montant à compter pour chaque feuille en simple face. Si vous ne "
+"spécifiez\n"
+"qu'un montant, il sera appliqué aux deux. Pour enlever un montant d'une\n"
+"imprimante, mettez le montant à \"none\".\n"
+"À l'inverse, un montant de \"0.00\" voudra dire que seuls les utilisateurs\n"
+"ayant un compte pourront imprimer, même s'il ne leur en coûtera rien.\n"
+
+#: ../ppad/ppad_printer.c:622
+#, c-format
+msgid "Interface: %s\n"
+msgstr "Interface : %s\n"
+
+#: ../ppr/ppr_rcache.c:104
+msgid ""
+"Invalid \"%%%%BeginResource:\" line:\n"
+"%s"
+msgstr ""
+"Ligne \"%%%%BeginResource:\" invalide :\n"
+"%s"
+
+#: ../ppr/ppr_main.c:1408
+#, c-format
+msgid "Invalid %s argument format"
+msgstr "Format d'argument %s invalide"
+
+#: ../ppr/ppr_main.c:1374 ../ppr/ppr_main.c:1379
+#, c-format
+msgid "Invalid %s option"
+msgstr "Option %s invalide"
+
+#: ../ppop/ppop_cmds_listq.c:1335 ../ppop/ppop_modify.c:81
+#, c-format
+msgid "Invalid Addon line: %s\n"
+msgstr "Ligne supplémentaire invalide : %s\n"
+
+#: ../ppr/ppr_rcache.c:322
+msgid "Invalid Macintosh TrueType PostScript font discarded"
+msgstr "Fonte PostScript TrueType Macintosh invalide : ignorée"
+
+#: ../ppr/ppr_infile.c:753 ../ppr/ppr_infile.c:762 ../ppr/ppr_infile.c:771
+#, c-format
+msgid "Invalid argument on .ppr header \"%s\" line: %s"
+msgstr "Paramètre invalide dans l'en-tête .ppr \"%s\" à la ligne : %s"
+
+#: ../interfaces/serial.c:285 ../interfaces/serial.c:299
+#: ../interfaces/serial.c:391 ../interfaces/serial.c:402
+msgid "Invalid boolean value"
+msgstr "Valeur booléenne invalide"
+
+#: ../ppop/ppop_cmds_other.c:1392
+#, c-format
+msgid "Invalid job id: %s\n"
+msgstr "Numéro de travail invalide : %s\n"
+
+#: ../libuprint/claim_remote.c:283
+#, c-format
+msgid "Invalid section for queue \"%s\" in \"%s\"."
+msgstr "Section invalide pour la queue \"%s\" dans \"%s\"."
+
+#: ../ppr/ppr_main.c:1742
+#, c-format
+msgid "Invalid setting for %s"
+msgstr "Paramètre invalide pour %s"
+
+#: ../ppr/ppr_infile.c:219
+msgid "JPEG (JFIF) pictures"
+msgstr "Images JPEG (JFIF)"
+
+#: ../ppop/ppop_cmds_other.c:1419
+#, c-format
+msgid "Job \"%s\" does not exist.\n"
+msgstr "Le travail \"%s\" n'existe pas.\n"
+
+#: ../ppop/ppop_cmds_other.c:90
+#, c-format
+msgid "Job on Printer: %s"
+msgstr "Travail sur l'imprimante : %s"
+
+#: ../ppad/ppad_printer.c:625
+msgid "JobBreak: "
+msgstr "Coupure de travail : "
+
+#: ../ppr/ppr_dscdoc.c:174
+#, c-format
+msgid "Keyword \"%s\" can't take (atend)"
+msgstr "Le mot-clé \"%s\" ne peut pas prendre (atend)"
+
+#: ../ppr/ppr_dscdoc.c:172
+#, c-format
+msgid "Keyword \"%s\" can't take (atend), especially not in trailer"
+msgstr ""
+"Le mot-clé \"%s\" ne peut pas prendre (atend), surtout pas dans la bannière "
+"de bas"
+
+#: ../ppr/ppr_dscdoc.c:127
+#, c-format
+msgid "Keyword \"%s\" declared (atend) in trailer"
+msgstr "Mot-clé \"%s\" déclaré (atend) dans l'en-tête arrière"
+
+#: ../filter_lp/filter_lp.c:1725
+#, c-format
+msgid "Landscape ideal asp (columns/lines): %.2f\n"
+msgstr "aspect idéal du paysage (colonnes/lignes) : %.2f\n"
+
+#: ../filter_lp/filter_lp.c:1728
+#, c-format
+msgid "Landscape ideal len for ldeflines=%d: %.2f\n"
+msgstr "longueur idéale du paysage pour ldeflines=%d : %.2f\n"
+
+#: ../filter_lp/filter_lp.c:588
+msgid "Landscape mode selected.\n"
+msgstr "Choix du mode paysage.\n"
+
+#: ../filter_lp/filter_lp.c:1723
+#, c-format
+msgid "Landscape printable area: %.2fpsu x %.2fpsu\n"
+msgstr "Zone imprimable paysage : %.2fpsu x %.2fpsu\n"
+
+#: ../ppr/ppr_infile.c:871
+#, c-format
+msgid "Language \"%s\" in PJL header not recognized"
+msgstr "Langage \"%s\" dans l'en-tête PJL non reconnu"
+
+#: ../ppuser/ppuser.c:283
+#, c-format
+msgid "Last Modified: %s\n"
+msgstr "Dernière modification : %s\n"
+
+#: ../filter_dotmatrix/main.c:764
+msgid ""
+"Legal charsets for the dotmatrix filter are \"standard\", \"ISOLatin1\", and "
+"\"cp437\"."
+msgstr ""
+"Les jeux de caractères autorisés pour le filtre d'imprimante matricielle\n"
+"sont \"standard\", \"ISOLatin1\" et \"cp437\"."
+
+#: ../filter_dotmatrix/main.c:779
+msgid "Legal values are \"1\" and \"2\"."
+msgstr "Les seules valeurs valides sont \"1\" et \"2\"."
+
+#: ../ppad/ppad_printer.c:739
+#, c-format
+msgid "LimitKilobytes: %d %d\n"
+msgstr "LimitKilobytes : %d %d\n"
+
+#: ../ppad/ppad_printer.c:735
+#, c-format
+msgid "LimitPages: %d %d\n"
+msgstr "LimitPages : %d %d\n"
+
+#: ../lprsrv/lprsrv-test.c:167
+msgid "Local User"
+msgstr "Utilisateur local"
+
+#: ../ppad/ppad_printer.c:615
+#, c-format
+msgid "Location: %s\n"
+msgstr "Emplacement : %s\n"
+
+#: ../filter_lp/filter_lp.c:536
+#, c-format
+msgid ""
+"Longest line is %d columns wide, shortest leading whitespace is %d columns "
+"wide.\n"
+msgstr ""
+"La ligne la plus longue fait %d colonnes de largeur, l'espace de tête\n"
+"le plus court fait %d colonnes de largeur.\n"
+
+#: ../filter_lp/filter_lp.c:543
+#, c-format
+msgid "Longest page is %d lines long.\n"
+msgstr "La page la plus longue fait %d lignes de long.\n"
+
+#: ../libuprint/uprint_loop.c:40
+#, c-format
+msgid ""
+"Loop detected, %s called %s!\n"
+"(Probably uprint.conf has been changed since uprint-newconf was run.)"
+msgstr ""
+"Boucle détectée, %s a appelé %s !\n"
+"(uprint.conf a probablement été modifié depuis le dernier lancement de "
+"uprint-newconf.)"
+
+#: ../ppr/ppr_infile.c:225
+msgid "MS-Windows Bitmaps"
+msgstr "Bitmaps MS-Windows"
+
+#: ../ppr/ppr_infile.c:200
+msgid "MS-Windows Enhanced Metafiles"
+msgstr "Métafichiers améliorés MS-Windows"
+
+#: ../ppr/ppr_infile.c:199
+msgid "MS-Windows Metafiles"
+msgstr "Métafichiers MS-Windows"
+
+#: ../ppr/ppr_infile.c:189
+msgid "Macintosh text"
+msgstr "Texte Macintosh"
+
+#: ../ppad/ppad_filt.c:137
+#, c-format
+msgid "Match at \"%s\" line %d, mfmode=%s.\n"
+msgstr "Concordance à \"%s\", ligne %d, mfmode = %s.\n"
+
+#: ../ppr/ppr_editps.c:227
+#, c-format
+msgid "Match found in filter \"%s\".\n"
+msgstr "Concordance trouvée dans le filtre \"%s\".\n"
+
+#: ../ppad/ppad_media.c:393
+msgid "Media Name: "
+msgstr "Nom des supports : "
+
+#: ../ppop/ppop_cmds_other.c:516
+#, c-format
+msgid "Medium \"%s\" is unknown.\n"
+msgstr "Le support \"%s\" est inconnu.\n"
+
+#: ../ppad/ppad_media.c:347 ../ppad/ppad_media.c:406
+#, c-format
+msgid "Medium \"%s\" not found.\n"
+msgstr "Support \"%s\" non trouvé.\n"
+
+#: ../ppad/ppad_media.c:95 ../ppad/ppad_media.c:324
+msgid "Medium Name: "
+msgstr "Nom du support : "
+
+#: ../ppad/ppad_media.c:357
+#, c-format
+msgid "Medium Name: %16.16s\n"
+msgstr "Nom du support : %16.16s\n"
+
+#: ../ppad/ppad_media.c:422
+msgid "Medium deleted.\n"
+msgstr "Support effacé.\n"
+
+#: ../ppad/ppad_filt.c:474
+#, c-format
+msgid "Member printer \"%s\" does not exist.\n"
+msgstr "L'imprimante membre \"%s\" n'existe pas.\n"
+
+#: ../ppad/ppad_group.c:153
+msgid "Members:"
+msgstr "Membres :"
+
+#: ../ppr/ppr_infile.c:201
+msgid "Mentor Graphics Plot Metafiles"
+msgstr "Métafichiers Mentor Graphics Plot"
+
+#: ../ppr/ppr_mactt.c:268
+#, c-format
+msgid "Merge into \"%s\" aborted because new font is not Mac TrueType"
+msgstr ""
+"Fusion avec \"%s\" arrêtée parce que la nouvelle fonte n'est pas TrueType Mac"
+
+#: ../ppr/ppr_main.c:2492
+msgid "Missing \"%%%%Page:\" comments or incorrect \"%%%%Pages:\" comment"
+msgstr ""
+"Commentaires \"%%%%Page:\" manquants ou commentaire \"%%%%Page:\" incorrect"
+
+#: ../libppr/options.c:88
+msgid "Missing option name"
+msgstr "Nom d'option manquant"
+
+#: ../libuprint/uprint-newconf.c:190
+#, c-format
+msgid "Moving \"%s\" back to \"%s\".\n"
+msgstr "Remise en place de \"%s\" dans \"%s\".\n"
+
+#: ../ppr/ppr_main.c:277
+#, c-format
+msgid "NULL value for %s%s"
+msgstr "Valeur NULL pour %s%s"
+
+#: ../ppuser/ppuser.c:274
+#, c-format
+msgid "Name: %s\n"
+msgstr "Nom : %s\n"
+
+#: ../interfaces/parallel.c:167 ../interfaces/serial.c:415
+msgid "Negative value not allowed"
+msgstr "Valeur négative non permise"
+
+#: ../lprsrv/lprsrv-test.c:85
+#, c-format
+msgid "Network node \"%s\" does not exist.\n"
+msgstr "Le noeud réseau \"%s\" n'existe pas.\n"
+
+#: ../ppr/ppr_main.c:2356
+msgid "No \"%%%%Trailer:\" comment"
+msgstr "Pas de commentaire \"%%%%Trailer:\""
+
+#: ../libuprint/uprint-newconf.c:186
+#, c-format
+msgid "No \"%s\" to move to \"%s\".\n"
+msgstr "Pas de \"%s\" à déplacer vers \"%s\".\n"
+
+#: ../ppr/ppr_res.c:433
+msgid "No %%%%IncludeFont for font \"%s\""
+msgstr "Pas de %%%%IncludeFont pour la fonte \"%s\""
+
+#: ../interfaces/serial.c:381
+msgid "No OS support for DSR or CTS state reporting"
+msgstr "Pas de support du système pour le rapport d'état DSR ou CTS"
+
+#: ../interfaces/serial.c:320
+msgid "No OS support for RTS/CTS handshaking"
+msgstr "Pas de support du système pour la prise de contact RTS/CTS"
+
+#: ../ppr/ppr_mactt.c:439
+#, c-format
+msgid "No Type 1 section found while merging Mac TT font \"%s\", merge aborted"
+msgstr ""
+"Pas de section Type 1 trouvée pendant la fusion de la fonte Mac TT \"%s\", "
+"fusion abandonnée"
+
+#: ../lprsrv/lprsrv-test.c:154
+#, c-format
+msgid "No access allowed from node \"%s\".\n"
+msgstr "Accès non autorisé depuis le noeud \"%s\".\n"
+
+#: ../ppad/ppad_printer.c:1642
+msgid "No alert method and address defined, use \"ppad alerts\".\n"
+msgstr ""
+"Pas de méthode d'alerte ni d'adresse définies, utilisez \"ppad alerts\".\n"
+
+#: ../ppop/ppop_cmds_other.c:1351
+#, c-format
+msgid "No alerts for printer \"%s\".\n"
+msgstr "Pas d'alertes pour l'imprimante \"%s\".\n"
+
+#: ../ppr/ppr_editps.c:258
+msgid "No matching filter found.\n"
+msgstr "Aucun filtre correspondant trouvé.\n"
+
+#: ../ppr/ppr_mactt.c:314
+#, c-format
+msgid "No sfnt section found while merging Mac font \"%s\", merger aborted"
+msgstr ""
+"Pas de section sfnt trouvée pendant la fusion de la fonte Mac \"%s\", fusion "
+"abandonnée"
+
+#: ../ppr/ppr_mactt.c:397
+#, c-format
+msgid ""
+"No sfntdef section found while merging Mac TT font \"%s\", merger aborted"
+msgstr ""
+"Pas de section sfntdef trouvée pendant la fusion de la fonte TT Mac \"%s\", "
+"fusion abandonnée"
+
+#: ../libppr/options.c:113
+msgid "No spaces allowed after equals sign"
+msgstr "Pas d'espaces autorisés après le signe égal"
+
+#: ../libppr/options.c:101
+msgid "No spaces allowed before equals sign"
+msgstr "Pas d'espaces autorisés devant le signe égal"
+
+#: ../libuprint/lpr_connect.c:193
+msgid "No unused TCP ports available in reserved range."
+msgstr "Aucun port TCP non utilisé disponible dans la gamme réservée."
+
+#: ../ppr/ppr_main.c:2464
+msgid "No valid \"%%%%Pages:\" comment"
+msgstr "Pas de commentaire \"%%%%Pages:\" valide"
+
+#: ../ppad/ppad_printer.c:2550
+#, c-format
+msgid "No value provided for \"%s\".\n"
+msgstr "Aucune valeur fournie pour \"%s\".\n"
+
+#: ../lprsrv/lprsrv.c:339
+#, c-format
+msgid "Node \"%s\" is not allowed to connect"
+msgstr "Le noeud \"%s\" n'est pas autorisé à se connecter"
+
+#: ../lprsrv/lprsrv.c:341
+#, c-format
+msgid "Node \"%s\" is not allowed to connect from insecure ports"
+msgstr ""
+"Le noeud \"%s\" n'est pas autorisé à se connecter à partir de ports non "
+"sécurisés"
+
+#: ../ppop/ppop.c:500
+#, c-format
+msgid "Node name \"%*s\" is too long.\n"
+msgstr "Le nom de noeud \"%*s\" est trop long.\n"
+
+#: ../libppr/cs2enc.c:82
+#, c-format
+msgid "Non-boolean value in 3rd field of \"%s\" line %d"
+msgstr "Valeur non booléenne dans le 3ème champ de \"%s\" ligne %d"
+
+#: ../ppr/ppr_main.c:1720
+#, c-format
+msgid "Non-privledged users may not use %s w/out -a"
+msgstr "Les utilisateurs non privilégiés ne peuvent pas utiliser %s sans -a"
+
+#: ../filter_lp/filter_lp.c:552
+msgid "Not one FF found, page length and asp[ect ratio] unknown\n"
+msgstr ""
+"Aucun saut de page trouvé, longueur de page et taux d'aspect inconnus\n"
+
+#: ../ppr/ppr_main.c:1452
+msgid "Number of copies must be positive"
+msgstr "Le nombre de copies doit etre positif"
+
+#: ../filter_dotmatrix/main.c:741
+msgid "Only 9 and 24 are valid values."
+msgstr "Seuls 9 et 24 sont des valeurs valides."
+
+#: ../ppr/ppr_main.c:1477
+#, c-format
+msgid "Only privledged users may use \"%s for\""
+msgstr "Seuls les utilisateurs privilégiés peuvent utiliser \"%s pour\""
+
+#: ../ppr/ppr_main.c:1458
+#, c-format
+msgid "Only privledged users may use the %s switch"
+msgstr "Seuls les utilisateurs privilégiés peuvent utiliser la bascule %s"
+
+#: ../interfaces/serial.c:376
+msgid "Only valid values are \"DSR/CTS\", \"DSR\", \"CTS\", and \"none\""
+msgstr ""
+"Les seules valeurs valides sont \"DSR/CTS\", \"DSR\", \"CTS\", et \"none\""
+
+#: ../interfaces/serial.c:343
+msgid "Only valid values are \"odd\", \"even\", and \"none\""
+msgstr "Les seules valeurs valides sont \"odd\", \"even\", et \"none\""
+
+#: ../interfaces/serial.c:353
+msgid "Only valid values are 7 and 8"
+msgstr "Les seules valeurs valides sont 7 et 8"
+
+#: ../ppop/ppop_cmds_other.c:126
+msgid "Operation: "
+msgstr "Opération : "
+
+#: ../ppr/ppr_editps.c:111
+#, c-format
+msgid "Option \"-H editps\" used, scanning \"%s\".\n"
+msgstr "Option \"-H editps\" utilisée, parcours de \"%s\".\n"
+
+#: ../ppr/ppr_main.c:1253
+#, c-format
+msgid "Option -%c inserted by -I switch has an unneeded argument"
+msgstr "L'option -%c insérée par l'option -I possède un paramètre inutile"
+
+#: ../ppr/ppr_main.c:1250
+#, c-format
+msgid "Option -%c inserted by -I switch is missing an argument"
+msgstr "L'option -%c insérée par l'option -I a un paramètre manquant"
+
+# OTH FIXME vérifier
+#: ../libppr/options.c:82
+msgid "Option name is illegaly long"
+msgstr "Le nom de l'option est trop long de manière illégale."
+
+#: ../interfaces/atalk_cap.c:544 ../interfaces/lpr.c:536
+#: ../interfaces/serial.c:431 ../interfaces/tcpip.c:202
+#, c-format
+msgid "Option parsing error:  %s"
+msgstr "Erreur dans la lecture des options : %s"
+
+#: ../interfaces/atalk_ali.c:820
+#, c-format
+msgid "Option parsing error: %s"
+msgstr "Erreur dans la lecture des options : %s"
+
+#: ../libppr/options.c:122
+msgid "Option value is illegally long"
+msgstr "La valeur de l'option est trop longue (interdit)"
+
+#: ../ppad/ppad_printer.c:624
+#, c-format
+msgid "Options: %s\n"
+msgstr "Options : %s\n"
+
+#: ../ppad/ppad_printer.c:715
+#, c-format
+msgid "OutputOrder: %s\n"
+msgstr "Ordre de sortie : %s\n"
+
+#: ../ppad/ppad.c:442
+msgid "PPAD, Page Printer Administrator's utility"
+msgstr "PPAD, Page Printer Administrator's utility (outil d'administration)"
+
+#: ../ppad/ppad_printer.c:688
+#, c-format
+msgid "PPDFile: %s\n"
+msgstr "Fichier PPD : %s\n"
+
+#: ../ppad/ppad_printer.c:695
+#, c-format
+msgid "PPDOpts: %s\n"
+msgstr "PPDOpts : %s\n"
+
+#: ../ppop/ppop.c:972
+msgid "PPOP, Page Printer Operator's utility"
+msgstr "PPOP, Page Printer Operator's utility (outil d'utilisation)"
+
+#: ../ppr/ppr_main.c:681
+#, c-format
+msgid "PPR: mortally wounded by signal %d (%s).\n"
+msgstr "PPR : blessé mortellement par le signal %d (%s).\n"
+
+#: ../ppop/ppop_cmds_other.c:140
+msgid "Page Clock: "
+msgstr "Horloge de page :"
+
+#: ../ppad/ppad_printer.c:751
+#, c-format
+msgid "PageTimeLimit: %d\n"
+msgstr "PageTimeLimit : %d\n"
+
+#: ../interfaces/parallel.c:229
+#, c-format
+msgid "Parallel port communication failed, errno=%d (%s)."
+msgstr "La communication sur le port parallèle a échoué, errno=%d (%s)."
+
+#: ../ppop/ppop_modify.c:338
+#, c-format
+msgid "Parameter \"%s\" is not a name=value pair.\n"
+msgstr "Le paramètre \"%s\" n'est pas une paire nom=valeur.\n"
+
+#: ../ppad/ppad_alias.c:82 ../ppad/ppad_group.c:178 ../ppad/ppad_printer.c:731
+#, c-format
+msgid "PassThru types: %s\n"
+msgstr "Types passe-partout : %s\n"
+
+#: ../ppr/ppr_infile.c:190
+msgid "Plain text"
+msgstr "Texte pur"
+
+#: ../interfaces/parallel.c:226
+#, c-format
+msgid "Port \"%s\" does not support 2-way communication."
+msgstr "Le port \"%s\" ne supporte pas les communications bidirectionnelles."
+
+#: ../ppr/ppr_infile.c:230
+msgid "Portable Network Graphics files"
+msgstr "Fichiers PNG (Portable Network Graphics)"
+
+#: ../ppr/ppr_infile.c:229
+msgid "Portable aNy Maps"
+msgstr "Fichiers PNM (Portable aNy Maps)"
+
+#: ../filter_lp/filter_lp.c:1724
+#, c-format
+msgid "Portrait ideal asp (columns/lines): %.2f\n"
+msgstr "aspect idéal du format portrait (colonnes/lignes) : %.2f\n"
+
+#: ../filter_lp/filter_lp.c:1727
+#, c-format
+msgid "Portrait ideal len for pdeflines=%d: %.2f\n"
+msgstr "longueur idéale du format portrait=%d : %.2f\n"
+
+#: ../filter_lp/filter_lp.c:604
+msgid "Portrait mode selected.\n"
+msgstr "Choix du format portrait.\n"
+
+#: ../filter_lp/filter_lp.c:1722
+#, c-format
+msgid "Portrait printable area: %.2fpsu x %.2fpsu\n"
+msgstr "Zone imprimable en portrait : %.2fpsu x %.2fpsu\n"
+
+#: ../ppad/ppad_media.c:268
+msgid "Preprinted Form Type: "
+msgstr "Type de formulaire pré-imprimé : "
+
+#: ../ppad/ppad_media.c:256
+#, c-format
+msgid "Preprinted Form Type: (%s) "
+msgstr "Type de formulaire pré-imprimé : (%s) "
+
+#: ../ppop/ppop_cmds_other.c:204
+msgid "Printer          Status\n"
+msgstr "Imprimante       État\n"
+
+#: ../ppad/ppad_printer.c:1933
+#, c-format
+msgid "Printer \"%s\" already has a bin called \"%s\".\n"
+msgstr "L'imprimante \"%s\" a déjà un bac appelé \"%s\".\n"
+
+#: ../ppop/ppop_cmds_other.c:1341
+#, c-format
+msgid "Printer \"%s\" does not exist.\n"
+msgstr "L'imprimante \"%s\" n'existe pas.\n"
+
+#: ../samba/ppr2samba.c:285
+#, c-format
+msgid ""
+"Printer \"%s\" has a \"ppr2samba-vserver:\" value that is not between 1 and "
+"%d."
+msgstr ""
+"L'imprimante \"%s\" a une valeur \"ppr2samba-vserver\" non comprise entre 1 "
+"et %d."
+
+#: ../samba/ppr2samba.c:265
+#, c-format
+msgid "Printer \"%s\" has an invalid \"ppr2samba-prototype:\" line."
+msgstr "L'imprimante \"%s\" a une ligne \"ppr2samba-prototype:\" invalide."
+
+#: ../samba/ppr2samba.c:260
+#, c-format
+msgid "Printer \"%s\" has an invalid \"ppr2samba:\" line."
+msgstr "L'imprimante \"%s\" a une ligne \"ppr2samba:\" invalide."
+
+#: ../ppad/ppad_filt.c:514
+#, c-format
+msgid "Printer \"%s\" has an invalid PPD file \"%s\".\n"
+msgstr "L'imprimante \"%s\" a un fichier PPD \"%s\" invalide.\n"
+
+#: ../ppad/ppad_filt.c:519
+#, c-format
+msgid "Printer \"%s\" has no PPD file assigned.\n"
+msgstr "L'imprimante \"%s\" n'a pas de fichier PPD attribué.\n"
+
+#: ../ppad/ppad_group.c:457
+#, c-format
+msgid "Printer \"%s\" is already a member of \"%s\".\n"
+msgstr "L'imprimante \"%s\" est déjà membre de \"%s\".\n"
+
+#: ../libppr_int/int_con_tcpip.c:155
+#, c-format
+msgid ""
+"Printer \"%s\" is not responding.\n"
+"(Aborted after connect() blocked for %d seconds.)"
+msgstr ""
+"L'imprimante \"%s\" ne répond pas.\n"
+"(Abandon après le blocage de connect() pendant %d secondes.)"
+
+#: ../ppop/ppop_cmds_other.c:100
+#, c-format
+msgid "Printer Status (PJL): %s"
+msgstr "État de l'imprimante (PJL) : %s"
+
+#: ../ppop/ppop_cmds_other.c:80
+#, c-format
+msgid "Printer Status: %s"
+msgstr "État de l'imprimante : %s"
+
+#: ../interfaces/lpr.c:448
+#, c-format
+msgid ""
+"Printer address \"%s\" is invalid, the correct syntax\n"
+"is \"printer@host\"."
+msgstr ""
+"L'adresse de l'imprimante \"%s\" est invalide, la syntaxe\n"
+"correcte est \"imprimante@hôte\"."
+
+#: ../interfaces/atalk_ali.c:737
+#, c-format
+msgid "Printer address \"%s\" is too long."
+msgstr "L'adresse de l'imprimante \"%s\" est trop longue."
+
+#: ../libppr_int/int_con_tcpip.c:187
+#, c-format
+msgid "Printer at \"%s\" has refused connection."
+msgstr "L'imprimante à \"%s\" a refusé la connexion."
+
+#: ../ppad/ppad_printer.c:1856
+msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
+msgstr ""
+"Le fichier de configuration de l'imprimante n'a pas de ligne \"PPDFile:\".\n"
+
+#: ../interfaces/atalk_ali.c:212
+#, c-format
+msgid "Printer name lookup failed, nbp_errno=%d (%s), errno=%d (%s)."
+msgstr ""
+"Échec de la recherche du nom de l'imprimante, nbp_errno=%d (%s), errno=%d "
+"(%s)."
+
+#: ../ppad/ppad_printer.c:613
+#, c-format
+msgid "Printer name: %s\n"
+msgstr "Nom de l'imprimante : %s\n"
+
+#: ../ppr/ppr_res.c:150
+#, c-format
+msgid "Procset \"%s\" has no version and revision numbers"
+msgstr "Le Procset \"%s\" n'a pas de numéro de version et de révision"
+
+#: ../ppr/ppr_simplify.c:208
+msgid "Ran off end of file after %ld bytes while searching for \"%%%%End\""
+msgstr ""
+"Dépassement de la fin de fichier après %ld octets pendant la recherche de "
+"\"%%%%End\""
+
+#: ../ppad/ppad_media.c:275
+msgid "Rank on a scale of 1 to 10, with 1 being entirely unsuitable.\n"
+msgstr "Classez entre 1 et 10, avec 1 ne convenant pas du tout.\n"
+
+#: ../ppad/ppad_media.c:247
+msgid ""
+"Recomended types are:  19HoleCerlox, 3Hole, 2Hole,\n"
+"\tColorTransparency, CorpLetterHead, CorpLogo,\n"
+"\tCustLetterHead, DeptLetterHead, Labels, Tabs\n"
+"\tTransparency, and UserLetterHead\n"
+"This field should be left blank for ordinary blank paper.\n"
+"Enter \"()\" to delete Type.\n"
+msgstr ""
+"Les types recommandés sont : 19HoleCerlox, 3Hole, 2Hole,\n"
+"\tColorTransparency, CorpLetterHead, CorpLogo,\n"
+"\tCustLetterHead, DeptLetterHead, Labels, Tabs\n"
+"\tTransparency et UserLetterHead\n"
+"Ce champ doit être laissé blanc pour du papier blanc ordinaire.\n"
+"Entrez \"()\" pour effacer le type.\n"
+
+#: ../ppr/ppr_infile.c:212
+msgid "Reich Text Format documents"
+msgstr "Documents RTF (Rich Text Format)"
+
+#: ../interfaces/lpr.c:157
+#, c-format
+msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of control file."
+msgstr ""
+"La file LPR/LPD distante \"%s\" nie la réception correcte du fichier de "
+"contrôle."
+
+#: ../interfaces/lpr.c:200 ../interfaces/lpr.c:291
+#, c-format
+msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of data file."
+msgstr ""
+"La file LPR/LPD distante \"%s\" nie la réception correcte du fichier de "
+"données."
+
+#: ../interfaces/lpr.c:181 ../interfaces/lpr.c:259 ../interfaces/lpr.c:330
+#, c-format
+msgid "Remote LPR/LPD queue \"%s\" does not have room for data file."
+msgstr ""
+"La file LPR/LPD distante \"%s\" n'a pas de place pour le fichier de données."
+
+#: ../libuprint/uprint_print_rfc1179.c:308
+#, c-format
+msgid "Remote LPR/LPD system \"%s\" denies correct receipt of control file."
+msgstr ""
+"Le système LPR/LPD distant \"%s\" nie la réception correcte du fichier de "
+"contrôle."
+
+#: ../libuprint/uprint_print_rfc1179.c:454
+#, c-format
+msgid "Remote LPR/LPD system \"%s\" denies correct receipt of data file."
+msgstr ""
+"Le système LPR/LPD distant \"%s\" nie la réception correcte du fichier de "
+"données."
+
+#: ../libuprint/uprint_print_rfc1179.c:425
+#, c-format
+msgid "Remote LPR/LPD system \"%s\" does not have room for data file."
+msgstr ""
+"Le système LPR/LPD distant \"%s\" n'a pas de place pour le fichier de "
+"données."
+
+#: ../libuprint/uprint_print_rfc1179.c:575
+#, c-format
+msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\" (%d)."
+msgstr ""
+"Le système LPR/LPD distant \"%s\" refuse d'accepter le travail pour \"%s\" "
+"(%d)."
+
+#: ../interfaces/lpr.c:583
+#, c-format
+msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."
+msgstr ""
+"Le système LPR/LPD distant \"%s\" refuse d'accepter le travail pour \"%s\"."
+
+#: ../interfaces/lpr.c:143 ../libuprint/uprint_print_rfc1179.c:286
+msgid "Remote LPR/LPD system does not have room for control file."
+msgstr ""
+"Le système LPR/LPD distant n'a pas de place pour le fichier de contrôle."
+
+#: ../lprsrv/lprsrv-test.c:167
+msgid "Remote User"
+msgstr "Utilisateur distant"
+
+#: ../libuprint/lpr_connect.c:242
+#, c-format
+msgid "Remote system \"%s\" has refused the connection."
+msgstr "Le système distant \"%s\" a refusé la connexion."
+
+#: ../libuprint/uprint-newconf.c:168
+#, c-format
+msgid "Removing symbolic link \"%s\".\n"
+msgstr "Effacement du lien symbolique \"%s\".\n"
+
+#: ../libuprint/uprint-newconf.c:113 ../libuprint/uprint-newconf.c:126
+#, c-format
+msgid "Renaming \"%s\" -> \"%s\".\n"
+msgstr "Renommage de \"%s\" -> \"%s\".\n"
+
+#: ../ppr/ppr_main.c:464
+#, c-format
+msgid "Request id: %s:%s-%d.%d(%s)\n"
+msgstr "Numéro de requête : %s:%s-%d.%d(%s)\n"
+
+#: ../ppr/ppr_media.c:397
+msgid "Requested medium is not listed in the media database"
+msgstr "Le support demandé n'est pas listé dans la base des supports"
+
+#: ../libuprint/lpr_failover.c:43
+#, c-format
+msgid "Resorting to backup server \"%s\"."
+msgstr "Recours au serveur de secours \"%s\"."
+
+#: ../ppr/ppr_res.c:397
+msgid "Resource \"%s\" declared Needed but no %%%%Include"
+msgstr ""
+"La ressource \"%s\" est reportée nécessaire mais il n'y a pas de %%%%Include"
+
+#: ../ppr/ppr_res.c:381
+#, c-format
+msgid "Resource \"%s\" declared Supplied but isn't included"
+msgstr "La ressource \"%s\" est reportée incluse mais ne l'est pas"
+
+#: ../ppr/ppr_res.c:368
+#, c-format
+msgid "Resource \"%s\" declared both Supplied and Needed"
+msgstr "La ressource \"%s\" est reportée à la fois incluse et nécessaire"
+
+#: ../ppr/ppr_res.c:453
+msgid "Resource \"%s\" has %%%%Include but never declared"
+msgstr "La ressource \"%s\" a un %%%%Include mais n'a jamais été déclarée"
+
+#: ../ppr/ppr_res.c:355
+msgid "Resource \"%s\" has both %%%%Include and %%%%Begin"
+msgstr "La ressource \"%s\" a à la fois %%%%Include et %%%%Begin"
+
+#: ../ppr/ppr_res.c:438
+msgid "Resource \"%s\" has no %%%%Begin or %%%%Include"
+msgstr "La ressource \"%s\" n'a ni %%%%Begin ni %%%%Include"
+
+#: ../ppr/ppr_res.c:467
+#, c-format
+msgid "Resource \"%s\" supplied but never declared"
+msgstr "La ressource \"%s\" est fournie mais n'a pas été déclarée"
+
+#: ../lprsrv/lprsrv-test.c:99
+#, c-format
+msgid "Reverse lookup failed for \"%s\" address \"%s\".\n"
+msgstr "La résolution inverse a echoué pour \"%s\" adresse \"%s\".\n"
+
+#: ../ppad/ppad_group.c:163
+#, c-format
+msgid "Rotate: %s\n"
+msgstr "Rotation : %s\n"
+
+#: ../ppr/ppr_infile.c:215
+msgid "SGML documents"
+msgstr "Documents SGML"
+
+#: ../interfaces/serial.c:490
+#, c-format
+msgid "Serial communication failed, errno=%d (%s)."
+msgstr "La communication série a échoué, errno=%d (%s)."
+
+#: ../ppad/ppad_printer.c:1722
+msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
+msgstr "Mettez l'ordre de sortie à \"Normal\", \"Reverse\" ou \"PPD\".\n"
+
+#: ../samba/ppr2samba.c:387
+#, c-format
+msgid "Sharing group \"%s\"\n"
+msgstr "Partage du groupe \"%s\"\n"
+
+#: ../samba/ppr2samba.c:226
+#, c-format
+msgid "Sharing printer \"%s\"\n"
+msgstr "Partage de l'imprimante \"%s\"\n"
+
+#: ../ppr/ppr_simplify.c:376
+#, c-format
+msgid "Space missing after keyword \"%.*s\""
+msgstr "Espace manquant après le mot-clé \"%.*s\""
+
+#: ../libuprint/lpr_connect.c:62
+msgid "Spaces and tabs are not allowed in LPR hostnames."
+msgstr ""
+"Les espaces et tabulations ne sont pas autorisées dans les noms d'hôtes LPR."
+
+#: ../libppr_int/int_con_tcpip.c:85
+#, c-format
+msgid ""
+"Spaces and tabs not allowed in TCP/IP a printer address.\"%s\" does not "
+"conform to this requirement."
+msgstr ""
+"Espaces et tabulations non permises dans l'adresse TCP/IP d'une imprimante. "
+"\"%s\" ne se conforme pas à cette obligation."
+
+#: ../lprsrv/lprsrv-test.c:167
+msgid "Spooler"
+msgstr "Gestionnaire de file"
+
+#: ../ppop/ppop.c:1060
+msgid "Spooler has shut down.\n"
+msgstr "Le gestionnaire de file s'est arrêté.\n"
+
+#: ../lprsrv/lprsrv.c:265
+msgid "Standalone mode code not present.\n"
+msgstr "Code pour le mode autonome non présent.\n"
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Status"
+msgstr "État"
+
+#: ../ppad/ppad_media.c:294
+msgid "Suitability for banners and trailers: "
+msgstr "Convenance pour les pages de garde avant et arrière : "
+
+#: ../ppad/ppad_media.c:284
+#, c-format
+msgid "Suitability for banners and trailers: (%d) "
+msgstr "Convenance pour les pages de garde avant et arrière : (%d) "
+
+#: ../ppr/ppr_infile.c:221
+msgid "Sun raster files"
+msgstr "Fichiers raster SUN"
+
+#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:293
+#, c-format
+msgid "Switches, such as %s, which take an argument must stand alone.\n"
+msgstr "Les options, comme %s, qui prennent un argument doivent être seules.\n"
+
+#: ../ppad/ppad_alias.c:81 ../ppad/ppad_group.c:172 ../ppad/ppad_printer.c:724
+msgid "Switchset: "
+msgstr "Ensemble d'options : "
+
+#: ../interfaces/atalk_ali.c:296
+#, c-format
+msgid "Syntax error in printer address \"%s\"."
+msgstr "Erreur de syntaxe dans l'adresse d'imprimante \"%s\"."
+
+#: ../ppop/ppop_cmds_other.c:808
+msgid "Syntax error.\n"
+msgstr "Erreur de syntaxe.\n"
+
+#: ../libppr_int/int_pe_tcpip.c:39
+#, c-format
+msgid "TCP/IP communication failed, errno=%d (%s)."
+msgstr "La communication TCP/IP a échoué, errno=%d (%s)."
+
+#: ../libppr_int/int_con_tcpip.c:115
+#, c-format
+msgid "TCP/IP interface can't determine IP address for \"%s\"."
+msgstr "L'interface TCP/IP ne peut pas déterminer l'adresse IP de \"%s\"."
+
+#: ../libppr_int/int_con_tcpip.c:92
+#, c-format
+msgid ""
+"TCP/IP printer address must be in form \"host:portnum\",\"%s\" does not "
+"conform to this requirement."
+msgstr ""
+"L'adresse TCP/IP de l'imprimante doit être de la forme \"hôte:numport\", "
+"\"%s\" ne se conforme pas à cette obligation."
+
+#: ../ppr/ppr_infile.c:224
+msgid "TIFF pictures"
+msgstr "Images TIFF"
+
+#: ../ppuser/ppuser.c:286
+msgid "TRUE"
+msgstr "VRAI"
+
+#: ../ppr/ppr_infile.c:198
+msgid "TeX DVI files"
+msgstr "Fichiers DVI TeX"
+
+#: ../ppr/ppr_infile.c:210
+msgid "TeX and LaTeX source"
+msgstr "Source TeX et LaTeX"
+
+#: ../ppr/ppr_infile.c:213
+msgid "TeXInfo documents"
+msgstr "Documents TeXInfo"
+
+#: ../samba/ppr2samba.c:566
+#, c-format
+msgid ""
+"The \"%s\" file is incompatible with this version\n"
+"  of ppr2samba.  Please replace it with \"%s\" and\n"
+"  merge in local changes."
+msgstr ""
+"Le fichier \"%s\" est incompatible avec cette version de\n"
+"  ppr2samba. Veuillez le remplacer par \"%s\" et\n"
+"  intégrez-y les modifications locales."
+
+#: ../ppr/ppr_main.c:1361
+#, c-format
+msgid "The %s option must be followed by \"yes\" or \"no\""
+msgstr "L'option %s doit être suivie de \"yes\" ou \"no\""
+
+#: ../ppr/ppr_main.c:1811
+#, c-format
+msgid "The %s option requires an argument"
+msgstr "L'option %s nécessite un paramètre"
+
+#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:289
+#, c-format
+msgid "The %s option requires an argument.\n"
+msgstr "L'option %s nécessite un paramètre.\n"
+
+#: ../ppr/ppr_main.c:1817
+#, c-format
+msgid "The %s switch does not take an argument"
+msgstr "L'option %s ne prend pas de paramètre"
+
+#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:297
+#, c-format
+msgid "The %s switch does not take an argument.\n"
+msgstr "L'option %s ne prend pas de paramètre.\n"
+
+#: ../ppr/ppr_main.c:1814
+#, c-format
+msgid "The %s switch takes an argument and so must stand alone"
+msgstr "L'option %s prend un paramètre et doit donc rester seule"
+
+#: ../ppad/ppad_printer.c:1444
+#, c-format
+msgid "The PPD file \"%s\" does not exist.\n"
+msgstr "Le fichier PPD \"%s\" n'existe pas.\n"
+
+#: ../interfaces/lpr.c:437
+#, c-format
+msgid ""
+"The PPR interface program \"%s\" does not support bidirectional\n"
+"communication.  Use the command \"ppad feedback %s false\" to\n"
+"correct this problem."
+msgstr ""
+"Le programme d'interface PPR \"%s\" ne supporte pas les communications\n"
+"bidirectionnelles. Utilisez la commande \"ppad feedback %s false\" pour\n"
+"corriger ce problème."
+
+#: ../libuprint/uprint_lprm.c:49
+#, c-format
+msgid "The agent name \"%s\" is too long."
+msgstr "Le nom de l'agent \"%s\" est trop long."
+
+#: ../ppad/ppad_alias.c:46 ../ppad/ppad_alias.c:201 ../ppad/ppad_conf.c:335
+#, c-format
+msgid "The alias \"%s\" does not exist.\n"
+msgstr "L'alias \"%s\" n'existe pas.\n"
+
+#: ../ppop/ppop.c:327
+#, c-format
+msgid "The alias \"%s:%s\" doesn't have a forwhat value.\n"
+msgstr "L'alias \"%s:%s\" n'a pas de valeur forwhat.\n"
+
+#: ../interfaces/parallel.c:293 ../interfaces/serial.c:536
+#, c-format
+msgid ""
+"The codes setting \"Binary\" is not compatible with the PPR interface\n"
+"program \"%s\"."
+msgstr ""
+"Le paramètre de jeux \"Binary\" n'est pas compatible avec le programme\n"
+"d'interface PPR \"%s\"."
+
+#: ../interfaces/parallel.c:77
+#, c-format
+msgid "The file \"%s\" is not a tty."
+msgstr "Le fichier \"%s\" n'est pas un tty."
+
+#: ../libuprint/uprint_uid.c:60
+#, c-format
+msgid "The file \"%s\" must not be owned by root."
+msgstr "Le fichier \"%s\" ne doit pas appartenir à root."
+
+#: ../ppad/ppad_conf.c:332 ../ppad/ppad_group.c:75 ../ppad/ppad_group.c:283
+#: ../ppad/ppad_group.c:602 ../ppad/ppad_group.c:651 ../ppad/ppad_group.c:686
+#, c-format
+msgid "The group \"%s\" does not exist.\n"
+msgstr "Le groupe \"%s\" n'existe pas.\n"
+
+#: ../ppad/ppad_group.c:605
+#, c-format
+msgid "The group \"%s\" does not have a member called \"%s\".\n"
+msgstr "Le groupe \"%s\" n'a pas de membre appelé \"%s\".\n"
+
+#: ../ppad/ppad_printer.c:1034
+#, c-format
+msgid "The interface \"%s\" does not exist.\n"
+msgstr "L'interface \"%s\" n'existe pas.\n"
+
+#: ../ppad/ppad_printer.c:1039
+#, c-format
+msgid "The interface \"%s\" not executable.\n"
+msgstr "L'interface \"%s\" n'est pas exécutable.\n"
+
+#: ../ppop/ppop_modify.c:268
+#, c-format
+msgid "The job property \"%s\" does not exist or is not writable.\n"
+msgstr ""
+"La propriété du travail \"%s\" n'existe pas ou on ne peut pas y écrire.\n"
+
+#: ../interfaces/lpr.c:428 ../interfaces/parallel.c:284
+#: ../interfaces/serial.c:527 ../interfaces/tcpip.c:91
+#, c-format
+msgid ""
+"The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
+"the PPR interface program \"%s\"."
+msgstr ""
+"Les méthodes de coupures de travaux \"signal\" et \"signal/pjl\" ne sont\n"
+"pas compatibles avec le programme d'interface PPR \"%s\"."
+
+#: ../ppad/ppad_printer.c:2818
+msgid "The limit must be 0 (unlimited) or a positive integer.\n"
+msgstr "La limite doit être 0 (illimitée) ou un entier positif.\n"
+
+#: ../ppad/ppad_printer.c:2670 ../ppad/ppad_printer.c:2706
+msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
+msgstr "La limite inférieure doit être 0 (illimitée) ou un entier positif.\n"
+
+#: ../ppad/ppad_alias.c:137
+#, c-format
+msgid "The name \"%s\" is not that of an existing group or printer.\n"
+msgstr ""
+"Le nom \"%s\" n'est pas celui d'un groupe ou d'une imprimante existants.\n"
+
+#: ../libuprint/uprint_lprm.c:42
+#, c-format
+msgid "The print queue name \"%s\" is too long for PPR."
+msgstr "Le nom de la file d'impression \"%s\" est trop long pour PPR."
+
+#: ../libuprint/uprint_lprm.c:238
+#, c-format
+msgid "The print queue name \"%s\" is too long."
+msgstr "Le nom de la file d'impression \"%s\" est trop long."
+
+#: ../ppad/ppad_conf.c:329 ../ppad/ppad_group.c:370 ../ppad/ppad_printer.c:369
+#: ../ppad/ppad_printer.c:1146 ../ppad/ppad_printer.c:1228
+#: ../ppad/ppad_printer.c:1286 ../ppad/ppad_printer.c:1365
+#: ../ppad/ppad_printer.c:1432 ../ppad/ppad_printer.c:1552
+#: ../ppad/ppad_printer.c:1609 ../ppad/ppad_printer.c:1836
+#: ../ppad/ppad_printer.c:1909 ../ppad/ppad_printer.c:2010
+#: ../ppad/ppad_printer.c:2149 ../ppad/ppad_printer.c:2197
+#: ../ppad/ppad_printer.c:2255 ../ppad/ppad_printer.c:2381
+#, c-format
+msgid "The printer \"%s\" does not exist.\n"
+msgstr "L'imprimante \"%s\" n'existe pas.\n"
+
+#: ../ppad/ppad_printer.c:2046
+#, c-format
+msgid "The printer \"%s\" does not have a bin called \"%s\".\n"
+msgstr "L'imprimante \"%s\" n'a pas de bac appelé \"%s\".\n"
+
+#: ../ppad/ppad_printer.c:2417
+#, c-format
+msgid ""
+"The printer \"%s\" has no \"PPDFile:\" line in its configuration file.\n"
+msgstr ""
+"L'imprimante \"%s\" n'a pas de ligne \"PPDFile:\" dans son fichier de "
+"configuration.\n"
+
+#: ../ppad/ppad_printer.c:1013
+msgid "The printer name begins with a disallowed character.\n"
+msgstr "Le nom de l'imprimante commence par un caractère interdit.\n"
+
+#: ../ppad/ppad_printer.c:1007
+msgid "The printer name contains a disallowed character.\n"
+msgstr "Le nom de l'imprimante contient un caractère interdit.\n"
+
+#: ../ppad/ppad_printer.c:1001
+msgid "The printer name is too long.\n"
+msgstr "Le nom de l'imprimante est trop long.\n"
+
+#: ../libuprint/uprint_lprm.c:56
+#, c-format
+msgid "The proxy class name \"%s\" is too long."
+msgstr "Le nom de la classe mandataire \"%s\" est trop long."
+
+#: ../lprsrv/lprsrv_cancel.c:82 ../lprsrv/lprsrv_list.c:78
+#, c-format
+msgid "The queue \"%s\" does not exist on the print server \"%s\".\n"
+msgstr "La file \"%s\" n'existe pas sur le serveur d'impression \"%s\".\n"
+
+#: ../libuprint/uprint_lprm.c:253
+#, c-format
+msgid "The queue id \"%s\" is too long."
+msgstr "L'identifiant de file \"%s\" est trop long."
+
+#: ../ppad/ppad_printer.c:2676 ../ppad/ppad_printer.c:2712
+msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
+msgstr "La limite supérieure doit être 0 (illimitée) ou un entier positif\n"
+
+#: ../ppuser/ppuser.c:245 ../ppuser/ppuser.c:289 ../ppuser/ppuser.c:319
+#: ../ppuser/ppuser.c:376
+#, c-format
+msgid "The user \"%s\" does not exist.\n"
+msgstr "L'utilisateur \"%s\" n'existe pas.\n"
+
+#: ../ppop/ppop_modify.c:199
+#, c-format
+msgid "The value \"%s\" is not boolean.\n"
+msgstr "La valeur \"%s\" n'est un booléen.\n"
+
+#: ../ppad/ppad_printer.c:1774 ../ppad/ppad_printer.c:1779
+#, c-format
+msgid "The value \"%s\" is not in the correct format for decimal currency."
+msgstr "La valeur \"%s\" n'a pas le format correct pour la monnaie."
+
+#: ../ppop/ppop_cmds_other.c:957
+msgid "There are no active jobs to cancel.\n"
+msgstr "Il n'y a pas de travail actif à annuler.\n"
+
+#: ../ppop/ppop_cmds_other.c:1429
+#, c-format
+msgid "There is no log for job \"%s\".\n"
+msgstr "Il n'y a pas de fichier de log pour le travail \"%s\".\n"
+
+#: ../ppop/ppop_cmds_other.c:54
+msgid "There were no jobs to cancel.\n"
+msgstr "Il n'y avait pas de travaux à annuler.\n"
+
+#: ../lprsrv/lprsrv-test.c:121
+msgid "This program is used to test an lprsrv.conf file.\n"
+msgstr "Ce programme est utilisé pour tester un fichier lprsrv.conf.\n"
+
+#: ../ppr/ppr_main.c:1888
+#, c-format
+msgid "This program must be setuid and owned by \"%s\""
+msgstr "Ce programme doit être setuid et appartenir à \"%s\""
+
+#: ../ppop/ppop.c:214
+msgid "Timeout waiting for response"
+msgstr "Délai expiré en attendant une réponse"
+
+#: ../libuprint/lpr_connect.c:237
+#, c-format
+msgid "Timeout while trying to connect to lpd server \"%s\"."
+msgstr "Délai expiré en essayant de se connecter au serveur lpd \"%s\"."
+
+#: ../libppr_int/int_con_tcpip.c:171
+msgid ""
+"Timeout while trying to connect to printer.(Connect() reported error "
+"ETIMEDOUT.)"
+msgstr ""
+"Délai expiré en essayant de se connecter à l'imprimante. (Connect() a "
+"renvoyé l'erreur ETIMEDOUT.)"
+
+#: ../libuprint/lpr_connect.c:326
+msgid "Timeout while waiting for response from print server."
+msgstr "Délai expiré en attendant une réponse du serveur d'impression."
+
+#: ../libppr/cs2enc.c:76
+#, c-format
+msgid "Too few fields in \"%s\" line %d"
+msgstr "Trop peu de champs dans \"%s\", ligne %d"
+
+#: ../ppr/ppr_main.c:1095
+msgid "Too many -F switches"
+msgstr "Trop d'options -F"
+
+#: ../ppad/ppad_group.c:635 ../ppad/ppad_printer.c:1829
+msgid "Too many parameters.\n"
+msgstr "Trop de paramètres.\n"
+
+#: ../ppr/ppr_infile.c:209
+msgid "Troff source files"
+msgstr "Fichiers sources Troff"
+
+#: ../ppad/ppad_group.c:163
+msgid "True"
+msgstr "Vrai"
+
+#: ../ppop/ppop.c:1037
+msgid "Try \"help\" or \"exit\"."
+msgstr "Essayez \"help\" ou \"exit\"."
+
+#: ../ppop/ppop.c:1088
+msgid "Try \"ppop help\" for help with subcommands.\n"
+msgstr "Essayez \"ppop help\" pour avoir de l'aide sur les sous-commandes.\n"
+
+#: ../ppop/ppop_cmds_other.c:1245
+msgid "Type"
+msgstr "Type"
+
+#: ../ppad/ppad.c:447 ../ppop/ppop.c:977
+msgid "Type \"help\" for command list, \"exit\" to quit."
+msgstr "Essayez \"help\" pour la liste des commandes, \"exit\" pour quitter."
+
+#: ../ppad/ppad_printer.c:168
+#, c-format
+msgid "Unable to create \"%s/%s\", errno=%d (%s).\n"
+msgstr "Impossible de créer \"%s/%s\", errno=%d (%s).\n"
+
+#: ../ppr/ppr_main.c:2345
+msgid "Unclosed resource or resources"
+msgstr "Ressource(s) non refermée(s)"
+
+#: ../ppr/ppr_simplify.c:299
+msgid "Unenclosed EPS file, applying badeps hack"
+msgstr "Fichier EPS non inclus, j'applique la bitouille badeps"
+
+#: ../ppr/ppr_simplify.c:309
+msgid ""
+"Unenclosed EPS file, try -H badeps\n"
+"\t(Expect additional semi-spurious warnings due to this problem.)"
+msgstr ""
+"Fichier EPS non inclus, essayez -H badeps\n"
+"\t(Attendez-vous à des avertissements à moitié faux à cause de ce problème.)"
+
+#: ../ppr/ppr_main.c:2358
+#, c-format
+msgid "Unexpected EOF in unclosed %s"
+msgstr "Fin de fichier inattendue dans %s non fermé"
+
+#: ../ppop/ppop.c:1254
+msgid "Unknown command, try \"ppop help\".\n"
+msgstr "Commande inconnue, essayez \"ppop help\".\n"
+
+#: ../libuprint/uprint_strerror.c:57
+msgid "Unknown error code"
+msgstr "Code d'erreur inconnu"
+
+#: ../ppr/ppr_main.c:1247
+#, c-format
+msgid "Unknown option -%c inserted by -I switch"
+msgstr "Option -%c inconnue, insérée par l'option -I"
+
+#: ../ppr/ppr_main.c:1242
+#, c-format
+msgid "Unknown option --%.*s inserted by -I switch"
+msgstr "Option --%.*s inconnue, insérée par l'option -I"
+
+#: ../lprsrv/lprsrv.c:258
+#, c-format
+msgid "Unknown port name: %s"
+msgstr "Nom de port inconnu : %s"
+
+#: ../ppad/ppad_media.c:70
+msgid "Unknown unit specifier.\n"
+msgstr "Spécificateur d'unité inconnu.\n"
+
+#: ../filter_lp/filter_lp.c:1414 ../filter_lp/filter_lp.c:1421
+#: ../filter_lp/filter_lp.c:1434 ../filter_lp/filter_lp.c:1471
+#: ../filter_lp/filter_lp.c:1478 ../filter_lp/filter_lp.c:1527
+#: ../filter_lp/filter_lp.c:1534 ../filter_lp/filter_lp.c:1539
+#: ../filter_lp/filter_lp.c:1546 ../filter_lp/filter_lp.c:1551
+#, c-format
+msgid "Unreasonable value for option \"%s=\"."
+msgstr "Valeur non raisonnable pour l'option \"%s=\"."
+
+#: ../ppr/ppr_main.c:1677
+#, c-format
+msgid "Unrecognized %s option: \"%s\""
+msgstr "Option %s non reconnue : \"%s\""
+
+#: ../ppr/ppr_main.c:1540 ../ppr/ppr_main.c:1665 ../ppr/ppr_main.c:1682
+#, c-format
+msgid "Unrecognized %s option: %s"
+msgstr "Option %s non reconnue : %s"
+
+#: ../ppr/ppr_infile.c:779
+#, c-format
+msgid "Unrecognized .ppr header line: %s %s"
+msgstr "en-tête .ppr non reconnue à la ligne : %s %s"
+
+#: ../ppr/ppr_simplify.c:233
+msgid "Unrecognized data type \"%s\" in \"%%%%BeginData:\""
+msgstr "Type de donnée \"%s\" non reconnu dans \"%%%%BeginData:\""
+
+#: ../filter_dotmatrix/main.c:655
+msgid "Unrecognized emulation."
+msgstr "Émulation non reconnue."
+
+#: ../ppr/ppr_main.c:1808
+#, c-format
+msgid "Unrecognized switch %s.  Try --help"
+msgstr "Bascule %s non reconnue. Essayez --help"
+
+#: ../lprsrv/lprsrv.c:284
+#, c-format
+msgid "Unrecognized switch: %s\n"
+msgstr "Bascule non reconnue : %s\n"
+
+#: ../libgu/getopt.c:199
+#, c-format
+msgid ""
+"Unrecognized switch: %s\n"
+"\n"
+msgstr ""
+"Option non reconnue : %s\n"
+"\n"
+
+#: ../libuprint/claim_remote.c:263
+#, c-format
+msgid "Unrecognized system \"%s\" %.2f in \"%s\" section \"[%s]\", line %d."
+msgstr ""
+"Système \"%s\" %.2f non reconnu dans \"%s\", section \"[%s]\", ligne %d."
+
+#: ../ppr/ppr_editps.c:205
+#, c-format
+msgid "Unrecognized type of identity proof \"%s\" at \"%s\" line %d"
+msgstr "Type de preuve d'identité \"%s\" non reconnu à \"%s\", ligne %d"
+
+#: ../ppr/ppr_main.c:1757 ../ppr/ppr_main.c:1768
+#, c-format
+msgid "Unrecognized value for %s option: %s"
+msgstr "Valeur non reconnue pour l'option %s : %s"
+
+#: ../lprsrv/lprsrv-test.c:120
+msgid ""
+"Usage:\n"
+"\tlprsrv-test hostname [user [user]]\n"
+"\n"
+msgstr ""
+"Utilisation :\n"
+"\tlprsrv-test nom-machine [utilisateur [utilisateur]]\n"
+"\n"
+
+#: ../ppuser/ppuser.c:189
+msgid ""
+"Usage:\n"
+"\tppuser add '<user name>' '<real name>' <authcode> <initial balance> "
+"<cutoff> <life>\n"
+msgstr ""
+"Utilisation :\n"
+"\tppuser add '<nom utilisateur>' '<nom réel>' <code_auth> <crédit de départ> "
+"<coupure> <durée de vie>\n"
+
+#: ../ppuser/ppuser.c:389
+msgid ""
+"Usage:\n"
+"\tppuser add '<user name>' '<real name>' <authcode> <initial balance> "
+"<cutoff> <life>\n"
+"\tppuser delete '<user name>'\n"
+"\tppuser show '<user name>'\n"
+"\tppuser authcode '<user name>' <authcode>\n"
+"\tppuser deposit '<user name>' amount\n"
+"\tppuser withdraw '<user name>' amount\n"
+"\tppuser charge '<user name>' amount\n"
+"\tppuser correction '<user name>' amount\n"
+msgstr ""
+"Utilisation :\n"
+"\tppuser add '<nom utilisateur>' '<nom réel>' <code_auth> <crédit de départ> "
+"<coupure> <durée de vie>\n"
+"\tppuser delete '<nom utilisateur>'\n"
+"\tppuser show '<nom utilisateur>'\n"
+"\tppuser authcode '<nom utilisateur>' <code_auth>\n"
+"\tppuser deposit '<nom utilisateur>' montant\n"
+"\tppuser withdraw '<nom utilisateur>' montant\n"
+"\tppuser charge '<nom utilisateur>' montant\n"
+"\tppuser correction '<nom utilisateur>' montant\n"
+
+#: ../ppuser/ppuser.c:238
+msgid ""
+"Usage:\n"
+"\tppuser delete '<user name>'\n"
+msgstr ""
+"Utilisation :\n"
+"\tppuser delete '<nom utilisateur>'\n"
+
+#: ../ppuser/ppuser.c:266
+msgid ""
+"Usage:\n"
+"\tppuser show '<user name>'\n"
+msgstr ""
+"Utilisation :\n"
+"\tppuser show '<nom utilisateur>'\n"
+
+#: ../ppuser/ppuser.c:345
+msgid ""
+"Usage:\n"
+"\tppuser {deposit,withdraw,charge,correction} '<user name>' <amount>\n"
+msgstr ""
+"Utilisation :\n"
+"\tppuser {deposit,withdraw,charge,correction} '<nom utilisateur> <montant>'\n"
+
+#: ../samba/ppr2samba.c:576
+#, c-format
+msgid "Usage: %s\n"
+msgstr "Utilisation : %s\n"
+
+#: ../ppop/ppop_cmds_other.c:1132
+msgid "Usage: ppop accept <destionation>\n"
+msgstr "Utilisation : ppop accept <destination>\n"
+
+#: ../ppop/ppop_cmds_other.c:1330
+msgid "Usage: ppop alerts _printer_\n"
+msgstr "Utilisation : ppop alerts _imprimante_\n"
+
+#: ../ppop/ppop_cmds_other.c:709
+msgid ""
+"Usage: ppop cancel {<job>, <destination>}\n"
+"\n"
+"This command cancels a job or all of your jobs queued for the\n"
+"specified destination.\n"
+msgstr ""
+"Utilisation : ppop cancel {<travail>, <destination>}\n"
+"\n"
+"Cette commande annule un travail ou tous vos travaux mis en queue pour la\n"
+"destination spécifiée.\n"
+
+#: ../ppop/ppop_cmds_other.c:934
+#, c-format
+msgid ""
+"Usage: ppop cancel-%sactive <destination> ...\n"
+"\n"
+"This command will delete all of the arrested jobs\n"
+"queued for the indicated destination or destinations.\n"
+msgstr ""
+"Utilisation : ppop cancel-%sactive <destination> ...\n"
+"\n"
+"Cette commande effacera tous les travaux arrêtés\n"
+"mis en file sur la ou les destinations indiquées.\n"
+
+#: ../ppop/ppop_cmds_other.c:855
+msgid ""
+"Usage: ppop clean <destination> ...\n"
+"\n"
+"This command will delete all of the arrested jobs\n"
+"queued for the indicated destination or destinations\n"
+msgstr ""
+"Utilisation : ppop clean <destination> ...\n"
+"\n"
+"Cette commande effacera tous les travaux arrêtés\n"
+"mis en file pour la ou les destinations indiquées\n"
+
+#: ../ppop/ppop_cmds_other.c:1180
+msgid ""
+"Usage: ppop dest[ination] {<destionation>, all}\n"
+"       ppop ldest {<destionation>, all}\n"
+"\tppop dest-comment-address {<destination>, all}\n"
+"\n"
+"\tThis command displays the status of a print destination.  A print\n"
+"\tdestination is a printer or a group of printers.  A destination\n"
+"\tmay be be set to either accept or reject print jobs sent to it.  If\n"
+"\ta print job is rejected, it is canceled and the user is so informed.\n"
+"\n"
+"\tThe \"ppop ldest\" form of this command also displays the comment\n"
+"\tattached to the printer or group.  The \"ppop dest-comment-address\n"
+"\tform displays the command and the interface and address.\n"
+msgstr ""
+"Utilisation : ppop dest[ination] {<destination>, all}\n"
+"              ppop ldest {<destination>, all}\n"
+"        ppop dest-comment-address {<destination>, all}\n"
+"\n"
+"\tCette commande affiche l'état d'une destination d'impression.\n"
+"\tUne destination d'impression est une imprimante ou un groupe\n"
+"\td'imprimantes. On peut faire accepter ou rejeter des travaux\n"
+"\td'impression envoyés à une destination. Si un travail\n"
+"\td'impression est rejeté, il est annulé et l'utilisateur en est\n"
+"\tinformé.\n"
+"\n"
+"\tLa forme \"ppop ldest\" de cette commande affiche aussi le\n"
+"\tcommentaire attaché à l'imprimante ou au groupe. La forme\n"
+"\t\"ppop dest-comment-address affiche la commande, l'interface et\n"
+"\tl'adresse.\n"
+
+#: ../ppop/ppop_cmds_listq.c:1119
+msgid ""
+"Usage: ppop details {all, <group>, <printer>, <job>}\n"
+"\n"
+"This command displays a detailed description of all jobs,\n"
+"the jobs queued for the indicated group, the jobs queued\n"
+"for the indicated printer, or the indicated job.\n"
+msgstr ""
+"Utilisation : ppop details {all, <groupe>, <imprimante>, <travail>}\n"
+"\n"
+"Cette commande affiche une description détaillée de tous les travaux,\n"
+"les travaux mis en file pour le groupe indiqué, les travaux mis en file\n"
+"pour l'imprimante indiquée, ou le travail indiqué.\n"
+
+#: ../ppop/ppop_cmds_other.c:582
+msgid ""
+"Usage: ppop halt <printer> ...\n"
+"\n"
+"This command stops the printer immediately.  If a job is printing,\n"
+"the job is returned to the queue for later printing.\n"
+msgstr ""
+"Utilisation : ppop halt <imprimante> ...\n"
+"\n"
+"Cette commande arrête l'imprimante immédiatement. Si un travail est\n"
+"en cours d'impression, le travail est remis dans la file pour une\n"
+"impression ultérieure.\n"
+
+#: ../ppop/ppop_cmds_other.c:1079
+msgid ""
+"Usage: ppop hold <job> ...\n"
+"\n"
+"This causes jobs to be placed in the held state.  A job\n"
+"which is held will not be printed until it is released.\n"
+msgstr ""
+"Utilisation : ppop hold <travail> ...\n"
+"\n"
+"Ceci place les travaux dans l'état retenu. Un travail retenu\n"
+"ne sera pas imprimé tant qu'il n'est pas relâché.\n"
+
+#: ../ppop/ppop_cmds_listq.c:557
+msgid ""
+"Usage: ppop list {all, <printer>, <group> , <job>} ...\n"
+"\n"
+"This command will print information about the specified jobs.\n"
+"Jobs may be specified by job id, by queue, or \"all\" may\n"
+"be specified.  Multiple specifications may be used with this\n"
+"command.\n"
+msgstr ""
+"Utilisation : ppop list {all, <imprimante>, <groupe>, <travail>} ...\n"
+"\n"
+"Cette commande affichera des informations sur les travaux spécifiés.\n"
+"On peut spécifier les travaux par numéro de travail, par file ou on peut\n"
+"mettre \"all\". Des spécifications multiples peuvent être utilisées\n"
+"avec cette commande.\n"
+
+#: ../ppop/ppop_cmds_other.c:1386
+msgid "Usage: ppop log <job>\n"
+msgstr "Utilisation : ppop log <travail>\n"
+
+#: ../ppop/ppop_cmds_listq.c:662
+msgid ""
+"Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
+"\n"
+"The \"ppop lpq\" subcommand prints a queue listing in a format\n"
+"similiar to that of the Berkeley Unix \"lpq\" command.\n"
+msgstr ""
+"Utilisation : ppop lpq {all, <imprimante>, <groupe>} [<utilisateur>...]\n"
+"                       [<numéro>...]\n"
+"\n"
+"La sous-commande \"ppop lpq\" affiche une liste de file dans un format\n"
+"similaire à celui de la commande Berkeley Unix \"lpq\".\n"
+
+#: ../ppop/ppop_cmds_other.c:406
+msgid "Usage: ppop media {<printer>, <group>, all}\n"
+msgstr "Utilisation : ppop media {<imprimante>, <groupe>, all}\n"
+
+#: ../ppop/ppop_cmds_other.c:364
+msgid "Usage: ppop message <printer>\n"
+msgstr "Utilisation : ppop message <imprimante>\n"
+
+#: ../ppop/ppop_modify.c:283
+msgid ""
+"Usage: ppop modify <jobname> <name>=<value> ...\n"
+"\n"
+"This command sets the properties of an existing job.\n"
+msgstr ""
+"Utilisation : ppop modify <nom travail> <nom>=<valeur> ...\n"
+"\n"
+"Cette commande positionne les propriétés d'un travail existant.\n"
+
+#: ../ppop/ppop_cmds_other.c:490
+msgid "Usage: ppop mount <printer> <bin> <medium>\n"
+msgstr "Utilisation : ppop mount <imprimante> <bac> <support>\n"
+
+#: ../ppop/ppop_cmds_other.c:985
+msgid ""
+"Usage: ppop move <job> <destination>\n"
+"       ppop move <old_destionation> <new_destination>\n"
+"\n"
+"This command moves a job or jobs to a different queue.\n"
+msgstr ""
+"Utilisation : ppop move <travail> <destination>\n"
+"              ppop move <ancienne_destination> <nouvelle_destination>\n"
+"\n"
+"Cette commande déplace un ou plusieurs travaux vers une file différente.\n"
+
+#: ../ppop/ppop_cmds_listq.c:1858
+msgid ""
+"Usage: ppop progress <job>\n"
+"\n"
+"This command shows the progress made printing the\n"
+"indicated job.\n"
+msgstr ""
+"Utilisation : ppop progress <travail>\n"
+"\n"
+"Cette commande montre l'avancement effectué pendant l'impression\n"
+"du travail indiqué.\n"
+
+#: ../ppop/ppop_cmds_other.c:766
+msgid ""
+"Usage: ppop purge <destination> ...\n"
+"\n"
+"This command cancels all jobs queued for a particular destination.\n"
+"Only an operator may use this command.  Extra arguments are\n"
+"interpreted as the names of extra destinations to purge.\n"
+msgstr ""
+"Utilisation : ppop purge <destination> ...\n"
+"\n"
+"Cette commande annule tous les travaux pour une destination particulière.\n"
+"Seul un opérateur peut utiliser cette commande. Les arguments\n"
+"supplémentaires sont interprétés comme les noms des destinations\n"
+"supplémentaires à purger.\n"
+
+#: ../ppop/ppop_cmds_other.c:1134
+msgid "Usage: ppop reject <destination>\n"
+msgstr "Utilisation : ppop reject <destination>\n"
+
+#: ../ppop/ppop_cmds_other.c:1085
+msgid ""
+"Usage: ppop release <job> ...\n"
+"\n"
+"This command releases previously held or arrested jobs.\n"
+msgstr ""
+"Utilisation : ppop release <travail> ...\n"
+"\n"
+"Cette commande relâche les travaux précédemment retenus ou arrêtés.\n"
+
+#: ../ppop/ppop_cmds_other.c:1032
+msgid ""
+"Usage: ppop rush <job> ...\n"
+"\n"
+"This command moves the specified jobs to the head of the queue.\n"
+msgstr ""
+"Utilisation : ppop rush <travail> ...\n"
+"\n"
+"Cette commande déplace les travaux spécifiés vers la tête de la file.\n"
+
+#: ../ppop/ppop_cmds_listq.c:510
+msgid ""
+"Usage: ppop short {<printer>, all}\n"
+"\n"
+"This command shows all the print jobs queue for\n"
+"a certain destination or for all destinations.\n"
+msgstr ""
+"Utilisation : ppop short {<imprimante>, all}\n"
+"\n"
+"Cette commande montre toutes les files de travaux d'impression\n"
+"pour une certaine destination ou pour toutes les destinations.\n"
+
+#: ../ppop/ppop_cmds_other.c:568
+msgid ""
+"Usage: ppop start <printer> ...\n"
+"\n"
+"This command starts a previously stopt printer.\n"
+msgstr ""
+"Utilisation : ppop start <imprimante> ...\n"
+"\n"
+"Cette commande démarre une imprimante précédemment arrêtée.\n"
+
+#: ../ppop/ppop_cmds_other.c:190
+msgid "Usage: ppop status {<printer>, <group>, all}\n"
+msgstr "Utilisation : ppop status {<imprimante>, <groupe>, all}\n"
+
+#: ../ppop/ppop_cmds_other.c:573
+msgid ""
+"Usage: ppop stop <printer> ...\n"
+"Usage: ppop wstop {printer}\n"
+"\n"
+"This command stops a printer from printing.  If a job is being\n"
+"printed when this command is issued, the printer does not\n"
+"actually stop until the job is done.\n"
+"\n"
+"The second form, \"ppop wstop\" does not return until the printer\n"
+"has actually stopt.\n"
+msgstr ""
+"Utilisation : ppop stop <imprimante> ...\n"
+"Utilisation : ppop wstop {imprimante}\n"
+"\n"
+"Cette commande arrête une imprimante. Si un travail est en cours\n"
+"d'impression quand cette commande est lancée, l'imprimante ne\n"
+"s'arrête en fait que lorsque le travail est terminé.\n"
+"\n"
+"La seconde forme, \"ppop wstop\", ne retourne pas avant que l'imprimante\n"
+"ne soit réellement arrêtée.\n"
+
+#: ../ppuser/ppuser.c:312
+msgid "Usage: ppuser authcode '<UserName>' <NewAuthCode>\n"
+msgstr "Utilisation : ppuser authcode '<NomUtilisateur>' <NouveauCodeAuth>\n"
+
+#: ../filter_lp/filter_lp.c:563
+msgid "User has forced landscape mode.\n"
+msgstr "L'utilisateur a forcé le mode paysage.\n"
+
+#: ../filter_lp/filter_lp.c:566
+msgid "User has forced portrait mode.\n"
+msgstr "L'utilisateur a forcé le mode portrait.\n"
+
+#: ../libuprint/uprint_lprm.c:134
+#, c-format
+msgid "Username \"%s\" is too long."
+msgstr "Le nom d'utilisateur \"%s\" est trop long."
+
+#: ../ppad/ppad_printer.c:755
+#, c-format
+msgid "Userparams: %s\n"
+msgstr "Userparams : %s\n"
+
+#: ../filter_dotmatrix/main.c:673
+msgid ""
+"Valid \"duplex=\" values are \"none\", \"undef\", \"tumble\", and "
+"\"notumble\""
+msgstr ""
+"Les valeurs valides pour \"duplex\" sont \"none\", \"undef\", \"tumble\", et "
+"\"notumble\""
+
+#: ../filter_lp/filter_lp.c:1520
+msgid ""
+"Valid \"duplex=\" values are \"none\", \"undef\", \"tumble\", and "
+"\"notumble\"."
+msgstr ""
+"Les valeurs valides pour \"duplex=\" sont \"none\", \"undef\", \"tumble\" et "
+"\"notumble\"."
+
+#: ../fontutils/ppr-indexfonts.c:420 ../lprsrv/lprsrv.c:158
+#: ../ppop/ppop.c:1073
+msgid "Valid switches:\n"
+msgstr "Bascules valides :\n"
+
+#: ../filter_lp/filter_lp.c:1572
+msgid ""
+"Valid values for orientation are \"portrait\", \"landscape\", and \"auto\"."
+msgstr ""
+"Les valeurs valides pour l'orientation sont \"portrait\", \"landscape\" et "
+"\"auto\"."
+
+#: ../filter_dotmatrix/main.c:691 ../filter_dotmatrix/main.c:701
+msgid "Value contains illegal characters."
+msgstr "La valeur contient des caractères interdits."
+
+#: ../libuprint/claim_remote.c:197 ../libuprint/claim_remote.c:211
+#: ../libuprint/claim_remote.c:225
+#, c-format
+msgid "Value for \"%s\" must be boolean in \"%s\" section \"[%s]\", line %d."
+msgstr ""
+"La valeur de \"%s\" doit être booléenne dans \"%s\", section \"[%s]\", ligne "
+"%d."
+
+#: ../filter_lp/filter_lp.c:1587
+#, c-format
+msgid "Value for dimension \"%s\" is invalid."
+msgstr "La valeur de la dimension \"%s\" est invalide."
+
+#: ../filter_lp/filter_lp.c:1407
+#, c-format
+msgid "Value for option \"%s=\" is invalid."
+msgstr "La valeur de l'option \"%s=\" est invalide."
+
+#: ../filter_lp/filter_lp.c:1394
+#, c-format
+msgid "Value for option \"%s=\" must be boolean."
+msgstr "La valeur de l'option \"%s=\" doit être un booléen."
+
+#: ../filter_dotmatrix/main.c:682
+msgid "Value is among those allowed."
+msgstr "La valeur fait partie de celles autorisées."
+
+#: ../ppad/ppad_printer.c:2741
+msgid "Value is not boolean.\n"
+msgstr "La valeur \"%s\" n'est un booléen.\n"
+
+#: ../filter_dotmatrix/main.c:720
+msgid "Value is unreasonable."
+msgstr "La valeur est déraisonnable."
+
+#: ../interfaces/parallel.c:177 ../interfaces/parallel.c:188
+msgid "Value must be boolean"
+msgstr "La valeur doit être un booléen"
+
+#: ../filter_dotmatrix/main.c:609 ../filter_dotmatrix/main.c:618
+#: ../filter_dotmatrix/main.c:798
+msgid "Value must be boolean."
+msgstr "La valeur doit être un booléen"
+
+#: ../libuprint/claim_remote.c:183
+#, c-format
+msgid "Value of \"%s\" too long in \"%s\" section \"[%s]\", line %d."
+msgstr "Valeur de \"%s\" trop longue dans \"%s\", section \"[%s]\", ligne %d."
+
+#: ../filter_lp/filter_lp.c:1453 ../filter_lp/filter_lp.c:1462
+#: ../filter_lp/filter_lp.c:1485 ../filter_lp/filter_lp.c:1495
+#, c-format
+msgid "Value of option \"%s=\" contains illegal characters."
+msgstr "La valeur de l'option \"%s=\" contient des caractères interdits."
+
+#: ../ppad/ppad_printer.c:2558
+#, c-format
+msgid "Value provided for \"%s\" is not among the possible values.\n"
+msgstr "La valeur fournie pour \"%s\" n'est pas parmi les valeurs possibles.\n"
+
+#: ../lprsrv/lprsrv-test.c:55 ../ppr/ppr_main.c:233
+msgid "WARNING: "
+msgstr "AVERTISSEMENT : "
+
+#: ../ppad/ppad_printer.c:2454
+#, c-format
+msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
+msgstr "AVERTISSEMENT : bloc UI \"%s\" non fermé dans le fichier PPD.\n"
+
+#: ../ppad/ppad_printer.c:2615
+#, c-format
+msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
+msgstr "AVERTISSEMENT : bloc UI non fermé dans le fichier PPD : \"%s\".\n"
+
+#: ../ppad/ppad_printer.c:2274
+msgid "WARNING: all but the last \"PPDFile:\" line ignored.\n"
+msgstr ""
+"Avertissement : toutes les lignes \"PPDFile:\" ignorées sauf la dernière.\n"
+
+#: ../ppad/ppad_printer.c:538
+#, c-format
+msgid "WARNING: invalid \"%s\" setting: %s\n"
+msgstr "AVERTISSEMENT : paramètre \"%s\" invalide : %s\n"
+
+#: ../ppad/ppad_printer.c:2517
+msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
+msgstr ""
+"AVERTISSEMENT : \"*OpenUI\" et \"*CloseUI\" non appariés\n"
+"dans le fichier PPD.\n"
+
+#: ../ppad/ppad_printer.c:2486
+#, c-format
+msgid "WARNING: spurious option found in UI section \"%s\".\n"
+msgstr "AVERTISSEMENT : fausse option trouvée dans la section UI \"%s\".\n"
+
+#: ../ppad/ppad_conf.c:91
+msgid "Waiting for lock to clear.\n"
+msgstr "En attente de libération du verrou.\n"
+
+#: ../samba/ppr2samba.c:107
+msgid "Warning: "
+msgstr "Avertissement : "
+
+#: ../filter_lp/filter_lp.c:1780
+msgid "Warning:  maxlines equals minlines, therefore page length is fixed.\n"
+msgstr ""
+"Attention : maxlines égale minlines, donc la longueur de page est fixée.\n"
+
+#: ../filter_lp/filter_lp.c:1775
+msgid ""
+"Warning:  maxwidth is less than lanscape_lentrigger,\n"
+"\t  files w/out FF will never be printed in landscape.\n"
+msgstr ""
+"Attention :  maxwidth est inférieur à landscape_lentrigger,\n"
+"\t     les fichier sans saut de page ne seront jamais imprimés en paysage.\n"
+
+#: ../filter_lp/filter_lp.c:1770
+msgid ""
+"Warning:  mincolumns is greater than landscape_lentrigger,\n"
+"\t  files w/out FF will always be printed in landscape.\n"
+msgstr ""
+"Attention :  mincolumns est supérieur à landscape_lentrigger,\n"
+"\t     les fichiers sans saut de page seront toujours imprimés en paysage.\n"
+
+#: ../ppad/ppad_filt.c:150
+#, c-format
+msgid ""
+"Warning: \"%s\" has no matching clause!  Some filters\n"
+"\tmay not work correctly.\n"
+msgstr ""
+"Avertissement : \"%s\" n'a pas de clause correspondante ! Certains filtres\n"
+"\tne fonctionneront pas correctement.\n"
+
+#: ../ppad/ppad_filt.c:496
+#, c-format
+msgid "Warning: Ignoring all but last \"PPDFile:\" line for %s.\n"
+msgstr ""
+"Avertissement : toutes les lignes \"PPDFile:\" ignorées sauf la dernière "
+"pour %s.\n"
+
+#: ../ppad/ppad_filt.c:114
+#, c-format
+msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
+msgstr ""
+"Avertissement : erreur de syntaxe dans \"%s\", ligne %d : le champ %d est "
+"vide\n"
+
+#: ../ppad/ppad_filt.c:106
+#, c-format
+msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
+msgstr ""
+"Avertissement : erreur de syntaxe dans \"%s\", ligne %d : trop peu de "
+"champs\n"
+
+#: ../ppad/ppad_media.c:215
+msgid "Weight (grams per square metre): "
+msgstr "Poids (grammes par mètre carré) : "
+
+#: ../ppad/ppad_media.c:367
+#, c-format
+msgid "Weight: %.1f grams per square metre\n"
+msgstr "Poids : %.1f grammes par mètre carré\n"
+
+#: ../ppad/ppad_media.c:207
+#, c-format
+msgid "Weight: (%.1f grams per square metre) "
+msgstr "Poids : (%.1f grammes par mètre carré) "
+
+#: ../ppad/ppad_media.c:145
+msgid "Width: "
+msgstr "Largeur : "
+
+#: ../ppad/ppad_media.c:359
+#, c-format
+msgid "Width: %.2f inches, %.1f points, %.1f centimetres\n"
+msgstr "Largeur : %.2f pouces, %.1f points, %.1f centimètres\n"
+
+#: ../ppad/ppad_media.c:123
+#, c-format
+msgid "Width: (%.2f in, %.1f pt, %.1f cm) "
+msgstr "Largeur : (%.2f in, %.1f pt, %.1f cm) "
+
+#: ../libuprint/uprint-newconf.c:174
+#, c-format
+msgid "Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"
+msgstr ""
+"Ne remettra pas \"%s\" dans \"%s\" car la cible n'est pas un lien "
+"symbolique.\n"
+
+#: ../ppr/ppr_infile.c:211
+msgid "WordPerfect documents"
+msgstr "Documents WordPerfect"
+
+#: ../libuprint/claim_remote.c:244
+#, c-format
+msgid ""
+"Wrong format for \"systemtype\" value in \"%s\" section \"[%s]\", line %d."
+msgstr ""
+"Format incorrect pour la valeur \"systemtype\" dans \"%s\", section "
+"\"[%s]\", ligne %d."
+
+#: ../ppr/ppr_infile.c:226
+msgid "X-Windows bitmaps"
+msgstr "Bitmaps X Window"
+
+#: ../ppr/ppr_infile.c:227
+msgid "X-Windows pixel maps"
+msgstr "Pixel maps X Window"
+
+#: ../ppr/ppr_infile.c:228
+msgid "X-Windows window dumps"
+msgstr "Copies d'écran X Window"
+
+#: ../ppop/ppop.c:607
+msgid ""
+"You are not allowed to perform the requested\n"
+"operation because you are not a PPR operator.\n"
+msgstr ""
+"Vous n'avez pas la permission d'effectuer l'opération\n"
+"demandée parce que vous n'êtes pas un opérateur PPR.\n"
+
+#: ../ppuser/ppuser.c:165
+msgid ""
+"You are not allowed to perform the requested operation because\n"
+"you are not a PPR user charge account administrator.\n"
+msgstr ""
+"Vous n'avez pas la permission d'effectuer l'opération demandée parce que\n"
+"vous n'êtes pas un administrateur de comptabilité PPR.\n"
+
+#: ../ppop/ppop.c:1183
+msgid "You aren't allowed to use the --su option.\n"
+msgstr "Vous n'avez pas le droit d'utiliser l'option --su.\n"
+
+#: ../ppad/ppad_printer.c:2002
+#, c-format
+msgid "You can't delete more than %d bins at a time.\n"
+msgstr "Vous ne pouvez pas effacer plus de %d bacs à la fois.\n"
+
+#: ../libuprint/uprint_lprm.c:267
+#, c-format
+msgid ""
+"You cannot delete jobs belonging to \"%s\" because\n"
+"you are not root."
+msgstr ""
+"Vous ne pouvez pas effacer des travaux appartenant à \"%s\" parce que\n"
+"vous n'êtes pas root."
+
+#: ../ppop/ppop_cmds_other.c:52
+msgid "You had no jobs to cancel.\n"
+msgstr "Vous n'aviez pas de travaux à annuler.\n"
+
+#: ../ppop/ppop_cmds_other.c:955
+msgid "You have no active jobs to cancel.\n"
+msgstr "Vous n'avez pas de travail actif à annuler.\n"
+
+#: ../libuprint/uprint_lprm.c:122
+#, c-format
+msgid ""
+"You may not delete jobs belonging to \"%s\" because\n"
+"they are not your's and you are not \"root\".\n"
+msgstr ""
+"Vous n'avez pas le droit d'effacer des travaux appartenant à \"%s\" parce "
+"que\n"
+"ce ne sont pas les vôtres et que vous n'êtes pas \"root\".\n"
+
+#: ../libuprint/uprint_lprm.c:117
+#, c-format
+msgid ""
+"You may not delete jobs belonging to \"%s@%s\" because\n"
+"they are not your's and you are not \"root@%s\".\n"
+msgstr ""
+"Vous n'avez pas le droit d'effacer des travaux appartenant à \"%s@%s\"\n"
+"parce que ce ne sont pas les vôtres et que vous n'êtes pas \"root@%s\".\n"
+
+#: ../ppop/ppop.c:742
+#, c-format
+msgid ""
+"You may not perform this operation because the job \"%s\"\n"
+"does not belong to the user \"%s\".\n"
+msgstr ""
+"Vous ne pouvez pas effectuer cette opération parce que le travail\n"
+"\"%s\" n'appartient pas à l'utilisateur \"%s\".\n"
+
+#: ../ppop/ppop.c:772
+#, c-format
+msgid ""
+"You may not perform this operation because the job \"%s\"\n"
+"was not submitted on behalf of \"%s\".\n"
+msgstr ""
+"Vous ne pouvez pas effectuer cette opération parce que le travail\n"
+"\"%s\" n'a pas été soumis au nom de \"%s\".\n"
+
+#: ../ppop/ppop_cmds_other.c:1098 ../ppop/ppop_cmds_other.c:1398
+msgid "You must indicate a specific job.\n"
+msgstr "Vous devez indiquer un travail spécifique.\n"
+
+#: ../ppad/ppad_group.c:807
+msgid ""
+"You must specify a group and a (possibly empty) list\n"
+"of PPR access control lists.\n"
+msgstr ""
+"Vous devez indiquer un groupe et une liste (peut-être vide) de listes de\n"
+"contrôle d'accès PPR.\n"
+
+#: ../ppad/ppad_group.c:783
+msgid ""
+"You must specify a group and a (possibly empty) list\n"
+"of file types.  These file types should be the same as\n"
+"those used with the \"ppr -T\" option.\n"
+msgstr ""
+"Vous devez indiquer un groupe et une liste (peut-être vide) de types\n"
+"de fichiers. Ces types de fichiers doivent être les mêmes que ceux\n"
+"utilisés avec l'option \"-T\" de ppr.\n"
+
+#: ../ppad/ppad_group.c:591
+msgid "You must specify a group and a printer or printers to remove from it.\n"
+msgstr ""
+"Vous devez indiquer un groupe et une ou plusieurs imprimantes duquel "
+"l'enlever.\n"
+
+#: ../ppad/ppad_group.c:629
+msgid "You must specify a group to delete.\n"
+msgstr "Vous devez indiquer un groupe à effacer.\n"
+
+#: ../ppad/ppad_group.c:328
+msgid ""
+"You must specify a new or existing group and one or more printers\n"
+"to add to it.\n"
+msgstr ""
+"Vous devez indiquer un groupe nouveau ou existant et une ou plusieurs\n"
+"imprimantes à y ajouter.\n"
+
+#: ../ppad/ppad_group.c:337
+msgid ""
+"You must specify a new or existing group and zero or more printers\n"
+"to be its members.\n"
+msgstr ""
+"Vous devez indiquer un groupe nouveau ou existant et zéro ou plusieurs\n"
+"imprimantes qui en seront membres.\n"
+
+#: ../ppad/ppad_printer.c:2765
+msgid ""
+"You must specify a printer and a (possibly empty) list\n"
+"of PPR access control lists.\n"
+msgstr ""
+"Vous devez indiquer une imprimante et une liste (peut-être vide) de listes\n"
+"de contrôle d'accès PPR.\n"
+
+#: ../ppad/ppad_printer.c:2327
+msgid ""
+"You must specify a printer and a (possibly empty) list\n"
+"of file types.  These file types should be the same as\n"
+"those used with the \"ppr -T\" option.\n"
+msgstr ""
+"Vous devez indiquer une imprimante et une liste (peut-être vide) de types\n"
+"de fichiers. Ces types de fichiers doivent être les mêmes que ceux utilisés\n"
+"avec l'option \"-T\" de ppr.\n"
+
+#: ../ppad/ppad_printer.c:1993
+msgid "You must specify a printer and a bin or bins to remove from it.\n"
+msgstr ""
+"Vous devez indiquer une imprimante et un ou plusieurs bacs de laquelle les "
+"enlever.\n"
+
+#: ../ppad/ppad_printer.c:2734
+msgid "You must specify a printer and a boolean value.\n"
+msgstr "Vous devez indiquer une imprimante et une valeur booléenne.\n"
+
+#: ../ppad/ppad_printer.c:1599
+msgid "You must specify a printer and a new alert frequency.\n"
+msgstr ""
+"Vous devez indiquer une imprimante et une nouvelle fréquence d'alerte.\n"
+
+#: ../ppad/ppad_printer.c:2086
+msgid "You must specify a printer to delete.\n"
+msgstr "Vous devez indiquer une imprimante à supprimer.\n"
+
+#: ../ppad/ppad_printer.c:993
+msgid ""
+"You must specify a printer, either new or existing,\n"
+"an interface, and an address for the interface\n"
+"to send the job to.\n"
+msgstr ""
+"Vous devez indiquer une imprimante, neuve ou existante,\n"
+"une interface, et une adresse pour l'interface\n"
+"à laquelle envoyer le travail.\n"
+
+#: ../ppad/ppad_printer.c:363
+msgid "You must specify a printer.\n"
+msgstr "Vous devez indiquer une imprimante.\n"
+
+#: ../ppad/ppad_alias.c:258
+msgid ""
+"You must specify an alias and a (possibly empty) list\n"
+"of file types.  These file types should be the same as\n"
+"those used with the \"ppr -T\" option.\n"
+msgstr ""
+"Vous devez indiquer un alias et une liste (peut-être vide) de types\n"
+"de fichiers. Ces types de fichiers doivent être les mêmes que ceux\n"
+"utilisés avec l'option \"-T\" de ppr.\n"
+
+#: ../ppad/ppad_printer.c:1903
+msgid "You must specify an existing printer and a new bin name or names.\n"
+msgstr ""
+"Vous devez indiquer une imprimante existante et un ou plusieurs nouveaux "
+"noms de bacs.\n"
+
+#: ../ppad/ppad_printer.c:157
+msgid ""
+"You must supply an alert frequency, such as \"7\", an alert method,\n"
+"such as \"mail\", and an alert address, such as \"alertreaders\".\n"
+msgstr ""
+"Vous devez indiquer une fréquence d'alerte, comme \"7\", une méthode\n"
+"d'alerte, comme \"mail\" et une adresse d'alerte, comme\n"
+"\"lecteurs-alertes\".\n"
+
+#: ../ppad/ppad_group.c:255
+msgid ""
+"You must supply the name of a group and\n"
+"a comment to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'un groupe et\n"
+"un commentaire auquel l'attacher.\n"
+
+#: ../ppad/ppad_group.c:276
+msgid "You must supply the name of a group and \"true\" or \"false\".\n"
+msgstr "Vous devez indiquer le nom d'un groupe et \"true\" ou \"false\".\n"
+
+#: ../ppad/ppad_group.c:707
+msgid "You must supply the name of a group and a set of switches.\n"
+msgstr "Vous devez indiquer le nom d'un groupe et un ensemble d'options.\n"
+
+#: ../ppad/ppad_group.c:69
+msgid "You must supply the name of a group to show.\n"
+msgstr "Vous devez indiquer le nom d'un groupe à montrer.\n"
+
+#: ../ppad/ppad_group.c:679 ../ppad/ppad_group.c:765
+msgid "You must supply the name of a group.\n"
+msgstr "Vous devez indiquer le nom d'un groupe.\n"
+
+#: ../ppad/ppad_alias.c:111
+msgid ""
+"You must supply the name of a new or existing alias and\n"
+"the name of the queue it is to be an alias for.\n"
+msgstr ""
+"Vous devez indiquer le nom d'un alias nouveau ou existant et\n"
+"le nom d'une file pour laquelle il sera l'alias.\n"
+
+#: ../ppad/ppad_printer.c:2218
+msgid "You must supply the name of a printer and a set of switches.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante et un ensemble d'options.\n"
+
+#: ../ppad/ppad_printer.c:1541
+msgid ""
+"You must supply the name of a printer, an alert frequency, such as \"7\",\n"
+"an alert method, such as \"mail\", and an alert address,\n"
+"such as \"alertreaders@domain.com\".\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante, une fréquence d'alerte, comme\n"
+"\"7\", une méthode d'alerte, comme \"mail\" et une adresse d'alerte,\n"
+"comme \"lecteurs-alertes@domaine.fr\".\n"
+
+#: ../ppad/ppad_printer.c:2190 ../ppad/ppad_printer.c:2249
+#: ../ppad/ppad_printer.c:2368
+msgid "You must supply the name of a printer.\n"
+msgstr "Vous devez indiquer le nom d'une imprimante.\n"
+
+#: ../ppad/ppad_printer.c:2788
+msgid ""
+"You must supply the name of a printer.  You may also supply a new\n"
+"quoted, space delimited list of name=value pairs.  If you don't\n"
+"supply such a list, any existing list will be deleted.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante. Vous pouvez aussi\n"
+"indiquer une nouvelle liste, entre apostrophes, de paires nom=valeur\n"
+"délimitées par des espaces. Si vous ne fournissez pas cette liste, toute\n"
+"liste existante sera effacée.\n"
+
+#: ../ppad/ppad_alias.c:236
+msgid "You must supply the name of an alias and a set of switches.\n"
+msgstr "Vous devez indiquer le nom d'un alias et un ensemble d'options.\n"
+
+#: ../ppad/ppad_alias.c:40
+msgid "You must supply the name of an alias to show.\n"
+msgstr "Vous devez indiquer le nom d'un alias à montrer.\n"
+
+#: ../ppad/ppad_alias.c:221
+msgid ""
+"You must supply the name of an existing alias and\n"
+"a comment to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'un alias existant et\n"
+"un commentaire auquel l'attacher.\n"
+
+#: ../ppad/ppad_alias.c:282
+msgid ""
+"You must supply the name of an existing alias, the name of an addon\n"
+"parameter.  A value for the paremeter is optional.  If you do not\n"
+"supply a value, the parameter will be unset.\n"
+msgstr ""
+"Vous devez indiquer le nom d'un alias existant, le nom d'un paramètre\n"
+"supplémentaire. La valeur du paramètre est optionnelle. Si vous ne\n"
+"donnez pas de valeur, le paramètre ne sera pas défini.\n"
+
+#: ../ppad/ppad_group.c:830
+msgid ""
+"You must supply the name of an existing group, the name of an addon\n"
+"parameter.  A value for the paremeter is optional.  If you do not\n"
+"supply a value, the parameter will be unset.\n"
+msgstr ""
+"Vous devez indiquer le nom d'un groupe existant, le nom d'un paramètre\n"
+"supplémentaire. La valeur du paramètre est optionnelle. Si vous ne\n"
+"donnez pas de valeur, le paramètre ne sera pas défini.\n"
+
+#: ../ppad/ppad_printer.c:1278
+msgid ""
+"You must supply the name of an existing printer\n"
+"and \"true\", \"false\", or \"default\".\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante\n"
+"et \"true\", \"false\" ou \"default\".\n"
+
+#: ../ppad/ppad_printer.c:910
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a comment to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et\n"
+"un commentaire à laquelle l'attacher.\n"
+
+#: ../ppad/ppad_printer.c:964
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a contact name to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et\n"
+"un nom de contact à laquelle l'attacher.\n"
+
+#: ../ppad/ppad_printer.c:946
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a department name to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et\n"
+"un nom de département à laquelle l'attacher.\n"
+
+#: ../ppad/ppad_printer.c:928
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a location name to attach to it.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et\n"
+"un nom d'emplacement à laquelle l'attacher.\n"
+
+#: ../ppad/ppad_printer.c:1709
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a new outputorder.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et\n"
+"un nouvel ordre de sortie.\n"
+
+#: ../ppad/ppad_printer.c:1422
+msgid "You must supply the name of an existing printer and a PPD file.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et un fichier PPD.\n"
+
+#: ../ppad/ppad_printer.c:1325
+msgid ""
+"You must supply the name of an existing printer and a codes setting.\n"
+"Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", "
+"\"TBCP\",\n"
+"\"UNKNOWN\", and \"default\".\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et un paramètrage de\n"
+"codes. Les paramètres de codes valides sont \"Clean7Bit\", \"Clean8Bit\",\n"
+"\"Binary\", \"TBCP\", \"UNKNOWN\" et \"default\".\n"
+
+#: ../ppad/ppad_printer.c:1184
+msgid ""
+"You must supply the name of an existing printer and a jobbreak mode "
+"setting.\n"
+"Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", "
+"\"signal/pjl\",\n"
+"\"save/restore\", \"newinterface\", and \"default\".\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et un paramètre de\n"
+"mode de coupure de travail. Les modes de coupures valides sont \"signal\",\n"
+"\"control-d\", \"pjl\", \"signal/pjl\", \"save/restore\", \"newinterface\"\n"
+"et \"default\".\n"
+
+#: ../ppad/ppad_printer.c:2811
+msgid ""
+"You must supply the name of an existing printer and the maximum number of\n"
+"seconds to allow per page.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et le nombre maximal\n"
+"de secondes à autoriser par page.\n"
+
+#: ../ppad/ppad_printer.c:2698
+msgid ""
+"You must supply the name of an existing printer and the minimum and maximum "
+"number\n"
+"of kilobytes of the documents it should be allowed to print.  To clear "
+"either limit,\n"
+"set it to 0.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et le nombre minimum\n"
+"et maximum de kilo-octets des documents qu'elle a le droit d'imprimer.\n"
+"Pour annuler l'une ou l'autre limite, mettez-là à 0.\n"
+
+#: ../ppad/ppad_printer.c:2662
+msgid ""
+"You must supply the name of an existing printer and the minimum and maximum "
+"number\n"
+"of pages of the documents it should be allowed to print.  To clear either "
+"limit,\n"
+"set it to 0.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante et le nombre minimum\n"
+"et maximum de pages des documents qu'elle a le droit d'imprimer. Pour "
+"annuler\n"
+"l'une ou l'autre limite, mettez-la à 0.\n"
+
+#: ../ppad/ppad_printer.c:1679
+msgid ""
+"You must supply the name of an existing printer, a new banner\n"
+"option, and a new trailer option.  Valid banner and trailer\n"
+"options are \"never\", \"no\", \"yes\", and \"always\".\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante, une nouvelle option\n"
+"de page de garde avant et une nouvelle option de page de garde arrière.  "
+"Les\n"
+"options de page de garde valides sont \"never\", \"no\", \"yes\", et "
+"\"always\".\n"
+
+#: ../ppad/ppad_printer.c:2838
+msgid ""
+"You must supply the name of an existing printer, the name of an addon\n"
+"parameter.  A value for the paremeter is optional.  If you do not\n"
+"supply a value, the parameter will be unset.\n"
+msgstr ""
+"Vous devez indiquer le nom d'une imprimante existante, le nom d'un "
+"paramètre\n"
+"supplémentaire. La valeur du paramètre est optionnelle. Si vous ne donnez "
+"pas\n"
+"de valeur, le paramètre ne sera pas défini.\n"
+
+#: ../ppad/ppad_printer.c:1823
+msgid "You must supply the name of an existing printer.\n"
+msgstr "Vous devez indiquer le nom d'une imprimante existante.\n"
+
+#: ../ppr/ppr_respond.c:113
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been lost because PPRD is not running."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été perdu parce que PPRD ne "
+"tourne pas."
+
+#: ../ppr/ppr_respond.c:134
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected because\n"
+"the ppr command line contains an error:\n"
+"%s."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"la ligne de commande de ppr contient une erreur :\n"
+"%s."
+
+#: ../ppr/ppr_respond.c:143
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected because\n"
+"you requested printing of only selected pages but the pages\n"
+"are not marked by DSC comments."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"vous avez demandé l'impression des pages sélectionnées mais les pages\n"
+"ne sont pas marquées de commentaires DSC."
+
+#: ../ppr/ppr_respond.c:119
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected because it requires\n"
+"a size and type of medium (paper) which is not available."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car il\n"
+"demande une taille et un type de support (papier) non disponible."
+
+#: ../ppr/ppr_respond.c:97
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected because no filter\n"
+"is available which can convert %s to PostScript."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"aucun filtre n'est disponible pour convertir %s en PostScript."
+
+#: ../ppr/ppr_respond.c:126
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected because the\n"
+"PJL header requests an unrecognized printer language \"%s\"."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"l'en-tête PJL nécessite un langage d'imprimante \"%s\" inconnu."
+
+#: ../ppr/ppr_respond.c:105
+#, c-format
+msgid ""
+"Your new print job for \"%s\" has been rejected by PPR because of a\n"
+"fatal error: %s."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté par PPR\n"
+"à cause d'une erreur fatale : %s."
+
+#: ../ppr/ppr_respond.c:67
+#, c-format
+msgid ""
+"Your new print job for \"%s\" was rejected because\n"
+"\"%s\" does not have a charge account."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"\"%s\" n'a pas de compte à imputer."
+
+#: ../ppr/ppr_respond.c:90
+#, c-format
+msgid ""
+"Your new print job for \"%s\" was rejected because\n"
+"it does not contain DSC page division information."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"il ne contient pas d'informations DSC de coupure de page."
+
+#: ../ppr/ppr_respond.c:75
+#, c-format
+msgid ""
+"Your new print job for \"%s\" was rejected because\n"
+"you did not enter %s's authorization code."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"vous n'avez pas entré le code d'autorisation de %s."
+
+#: ../ppr/ppr_respond.c:83
+#, c-format
+msgid ""
+"Your new print job for \"%s\" was rejected because\n"
+"your account is overdrawn."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car\n"
+"votre compte n'est plus approvisionné."
+
+#: ../ppr/ppr_respond.c:151
+#, c-format
+msgid ""
+"Your print job for \"%s\" has been rejected because the\n"
+"PPR access control lists do not grant \"%s\" access to\n"
+"that destination."
+msgstr ""
+"Votre nouveau travail d'impression pour \"%s\" a été rejeté car les listes\n"
+"de contrôle d'accès de PPR n'autorisent pas \"%s\" à accéder à cette\n"
+"destination."
+
+#: ../ppr/ppr_infile.c:649
+msgid "^D as EOF is spurious in a spooled environment"
+msgstr ""
+"^D comme marque de fin de fichier (EOF) est faux dans un environnement de "
+"file d'attente"
+
+#: ../ppop/ppop_cmds_other.c:1295
+msgid "accepting"
+msgstr "accepte"
+
+#: ../libuprint/uprint_strerror.c:34
+msgid "bad argument"
+msgstr "paramètre incorrect"
+
+#: ../libuprint/uprint_strerror.c:50
+msgid "bad function call order"
+msgstr "ordre d'appel de fonction incorrect"
+
+#: ../libgu/ini_section.c:368
+msgid "can't find key in section"
+msgstr "ne trouve pas la clé dans la section"
+
+#: ../libgu/ini_section.c:361
+msgid "can't find section"
+msgstr "ne trouve pas la section"
+
+#: ../lprsrv/lprsrv_standalone.c:73 ../ppr/ppr_outfile.c:117
+#: ../ppr/ppr_outfile.c:127 ../ppr/ppr_outfile.c:137
+#, c-format
+msgid "can't open \"%s\", errno=%d (%s)"
+msgstr "impossible d'ouvrir \"%s\", errno=%d (%s)"
+
+#: ../ppad/ppad_util.c:116
+msgid "can't open FIFO, pprd is probably not running"
+msgstr "impossible d'ouvrir le FIFO, pprd ne tourne probablement pas"
+
+#: ../ppop/ppop.c:167
+msgid "can't open FIFO, pprd is probably not running."
+msgstr "impossible d'ouvrir le FIFO, pprd ne tourne probablement pas."
+
+#: ../libgu/ini_section.c:354
+msgid "can't open config file"
+msgstr "impossible d'ouvrir le fichier de configuration"
+
+#: ../ppr/ppr_infile.c:2268
+#, c-format
+msgid "can't open input file \"%s\", %s"
+msgstr "impossible d'ouvrir le fichier d'entrée \"%s\", %s"
+
+#: ../ppr/ppr_main.c:517
+msgid "can't open printing charge database"
+msgstr "impossible d'ouvrir la base de données de comptabilité d'impressions"
+
+#: ../ppr/ppr_main.c:344
+#, c-format
+msgid "can't open queue file \"%s\", errno=%d (%s)"
+msgstr "impossible d'ouvrir le fichier de file \"%s\", errno=%d (%s)"
+
+#: ../ppop/ppop_cmds_other.c:255
+#, c-format
+msgid "canceling %s"
+msgstr "annulation de %s"
+
+#: ../libuprint/uprint_strerror.c:36
+msgid "child dumped core"
+msgstr "le fils a fait un core dump"
+
+#: ../libuprint/uprint_strerror.c:40
+msgid "child failed"
+msgstr "le fils a echoué"
+
+#: ../libuprint/uprint_strerror.c:37
+msgid "child killed"
+msgstr "le fils a été tué"
+
+#: ../ppr/ppr_media.c:433
+#, c-format
+msgid "default medium \"%s\" does not exist"
+msgstr "le support par défaut \"%s\" n'existe pas"
+
+#: ../ppr/ppr_infile.c:206
+msgid "dot matrix printer files"
+msgstr "fichiers d'imprimante matricielle"
+
+#: ../ppr/ppr_infile.c:193
+msgid "email messages"
+msgstr "messages électroniques"
+
+#: ../libuprint/uprint_strerror.c:51
+msgid "error in configuration file"
+msgstr "erreur dans le fichier de configuration"
+
+#: ../libuprint/uprint_strerror.c:39
+msgid "exec() failed"
+msgstr "exec() a echoué"
+
+#: ../ppop/ppop_cmds_other.c:273
+msgid "fault, no auto retry"
+msgstr "panne, pas de tentative automatique"
+
+#: ../ppop/ppop_cmds_other.c:271
+#, c-format
+msgid "fault, retry %d in %d seconds"
+msgstr "panne, tentative %d dans %d secondes"
+
+#: ../ppr/ppr_infile.c:192
+msgid "file employs Fortran carriage control"
+msgstr "le fichier utilise le contrôle de retour Fortran"
+
+#: ../ppr/ppr_infile.c:210
+msgid "file is TeX or LaTeX source"
+msgstr "le fichier est un source TeX ou LaTeX"
+
+#: ../ppr/ppr_infile.c:209
+msgid "file is Troff source"
+msgstr "le fichier est un source Troff"
+
+#: ../ppr/ppr_infile.c:220
+msgid "file is a GIF compressed picture"
+msgstr "le fichier est une image GIF compressée"
+
+#: ../ppr/ppr_infile.c:201
+msgid "file is a Mentor Graphics Plot Metafile"
+msgstr "le fichier est un méta-fichier Mentor Graphics Plot"
+
+#: ../ppr/ppr_infile.c:229
+msgid "file is a Portable aNy Map"
+msgstr "le fichier est un Portable aNy Map"
+
+#: ../ppr/ppr_infile.c:211
+msgid "file is a WordPerfect document"
+msgstr "le fichier est un document WordPerfect"
+
+#: ../ppr/ppr_infile.c:200
+msgid "file is an MS-Windows Enhanced Metafile"
+msgstr "le fichier est un MS-Windows Enhanced Metafile"
+
+#: ../ppr/ppr_infile.c:199
+msgid "file is an MS-Windows Metafile"
+msgstr "le fichier est un MS-Windows Metafile"
+
+#: ../ppr/ppr_infile.c:225
+msgid "file is an MS-Windows or OS/2 BMP"
+msgstr "le fichier est un BMP MS-Windows ou OS/2"
+
+#: ../ppr/ppr_infile.c:193
+msgid "file is an RFC-822 email message"
+msgstr "le fichier est un message électronique RFC-822"
+
+#: ../ppr/ppr_infile.c:226
+msgid "file is an X-Windows bit map"
+msgstr "le fichier est un bitmap X Window"
+
+#: ../ppr/ppr_infile.c:227
+msgid "file is an X-Windows pixel map"
+msgstr "le fichier est un pixel map X Window"
+
+#: ../ppr/ppr_infile.c:228
+msgid "file is an X-Windows window dump"
+msgstr "le fichier est une copie d'écran X Window"
+
+#: ../ppr/ppr_infile.c:216
+msgid "file is in Adobe Portable Document Format"
+msgstr "le fichier est au format PDF"
+
+#: ../ppr/ppr_infile.c:222
+msgid "file is in Berkeley plot library format"
+msgstr "le fichier est au format de la bibliothèque plot de Berkeley"
+
+#: ../ppr/ppr_infile.c:223
+msgid "file is in CIF graphics language"
+msgstr "le fichier est dans le langage graphique CIF"
+
+#: ../ppr/ppr_infile.c:231
+msgid "file is in FIG format"
+msgstr "le fichier est au format FIG"
+
+#: ../ppr/ppr_infile.c:214
+msgid "file is in HTML format"
+msgstr "le fichier est au format HTML"
+
+#: ../ppr/ppr_infile.c:219
+msgid "file is in JPEG File Interchange Format"
+msgstr "le fichier est au format JPEG"
+
+#: ../ppr/ppr_infile.c:230
+msgid "file is in Portable Network Graphics format"
+msgstr "le fichier est au format Portable Network Graphics"
+
+#: ../ppr/ppr_infile.c:212
+msgid "file is in Reich Text Format"
+msgstr "le fichier est en RTF"
+
+#: ../ppr/ppr_infile.c:215
+msgid "file is in SGML format (other than HTML)"
+msgstr "le fichier est au format SGML (autre que HTML)"
+
+#: ../ppr/ppr_infile.c:221
+msgid "file is in Sun raster format"
+msgstr "le fichier est au format raster Sun"
+
+#: ../ppr/ppr_infile.c:224
+msgid "file is in TIFF graphics format"
+msgstr "le fichier est au format graphique TIFF"
+
+#: ../ppr/ppr_infile.c:213
+msgid "file is in TeXInfo format"
+msgstr "le fichier est au format TeXInfo"
+
+#: ../ppr/ppr_infile.c:196
+msgid "file is old troff output"
+msgstr "le fichier est une sortie du vieux troff"
+
+#: ../ppr/ppr_infile.c:190
+msgid "file is plain text"
+msgstr "le fichier est du texte pur"
+
+#: ../libuprint/uprint_strerror.c:49
+msgid "file not found"
+msgstr "fichier non trouvé"
+
+#: ../ppr/ppr_infile.c:197
+msgid "file type is Ditroff (modern Troff) output"
+msgstr "le type de fichier est une sortie Ditroff (Troff moderne)"
+
+#: ../ppr/ppr_infile.c:204
+msgid "file type is HP PCL"
+msgstr "le type de fichier est HP PCL"
+
+#: ../ppr/ppr_infile.c:205
+msgid "file type is HP-GL/2"
+msgstr "le type de fichier est HP-GL/2"
+
+#: ../ppr/ppr_infile.c:189
+msgid "file type is Macintosh text"
+msgstr "le type de fichier est du texte Macintosh"
+
+#: ../ppr/ppr_infile.c:198
+msgid "file type is TeX DVI"
+msgstr "le type de fichier est TeX DVI"
+
+#: ../ppr/ppr_infile.c:206
+msgid "file type is generic dot matrix"
+msgstr "le type de fichier est imprimante matricielle générique"
+
+#: ../ppr/ppr_infile.c:235
+msgid "files of unrecognized format"
+msgstr "fichiers de format non reconnu"
+
+#: ../ppr/ppr_main.c:718
+#, c-format
+msgid "filter died on receipt of signal %d"
+msgstr "le filtre est mort à la réception du signal %d"
+
+#: ../ppr/ppr_main.c:716
+#, c-format
+msgid "filter died on receipt of signal %d, core dumped"
+msgstr "le filtre est mort à la réception du signal %d, a fait un core dump"
+
+#: ../ppr/ppr_main.c:709
+#, c-format
+msgid "filter failed, exit code = %d"
+msgstr "le filtre a echoué, code de sortie = %d"
+
+#: ../ppr/ppr_main.c:706
+msgid "filter failed, exit code = 242 (exec() failed?)"
+msgstr "le filtre a echoué, code de sortie = 242 (exec() a echoué ?)"
+
+#: ../ppr/ppr_main.c:2159
+msgid "filter options must take form keyword=value"
+msgstr "les options de filtres prennent la forme mot-clé=valeur"
+
+#: ../libuprint/uprint_strerror.c:35
+msgid "fork() failed"
+msgstr "fork() a echoué"
+
+#: ../ppr/ppr_infile.c:234
+msgid "fragmentary PostScript files"
+msgstr "fichiers PostScript en fragments"
+
+#: ../ppr/ppr_main.c:1864
+msgid "getpwuid() fails to find your account"
+msgstr "getpwuid() n'arrive pas à trouver votre compte"
+
+#: ../ppop/ppop_cmds_other.c:1294
+msgid "group"
+msgstr "groupe"
+
+#: ../ppop/ppop_cmds_other.c:267
+#, c-format
+msgid "halting (printing %s)"
+msgstr "en cours d'arrêt (impression de %s)"
+
+#: ../ppop/ppop_cmds_other.c:246
+msgid "idle"
+msgstr "inactive"
+
+#: ../ppr/ppr_infile.c:182
+msgid "input file is PostScript"
+msgstr "le fichier d'entrée est PostScript"
+
+#: ../ppr/ppr_infile.c:2091 ../ppr/ppr_infile.c:2198
+#, c-format
+msgid "input file read error, errno=%d (%s)"
+msgstr "erreur de lecture du fichier d'entrée, errno=%d (%s)"
+
+#: ../ppr/ppr_main.c:2333
+msgid "input file was truncated (no %%%%EOF)"
+msgstr "le fichier d'entrée a été tronqué (pas de %%%%EOF)"
+
+#: ../libuprint/uprint_strerror.c:47
+msgid "internal error"
+msgstr "erreur interne"
+
+#: ../ppr/ppr_main.c:1394
+#, c-format
+msgid "invalid %s option"
+msgstr "option %s invalide"
+
+#: ../ppr/ppr_main.c:2164
+msgid "last -o keyword has no value"
+msgstr "le dernier mot clé -o n'a pas de valeur"
+
+#: ../filter_lp/filter_lp.c:1755
+msgid "ldeflines is greater than maxlines"
+msgstr "ldeflines est supérieur à maxlines"
+
+#: ../filter_lp/filter_lp.c:1753
+msgid "ldeflines is less than minlines"
+msgstr "ldeflines est inférieur à minlines"
+
+#: ../ppr/ppr_main.c:285
+#, c-format
+msgid "line feed in %s%s"
+msgstr "saut de ligne dans %s%s"
+
+#: ../ppr/ppr_infile.c:188
+msgid "line printer files"
+msgstr "fichiers d'imprimante ligne"
+
+#: ../filter_lp/filter_lp.c:1761
+msgid "lmlm, lmrm, and current pagesize leave no space for text"
+msgstr ""
+"lmtm, lmbm et la taille de page courante ne laissent pas de place pour le "
+"texte"
+
+#: ../filter_lp/filter_lp.c:1763
+msgid "lmtm, lmbm, gutter, and current pagesize leave no space for text"
+msgstr ""
+"lmtm, lmbm, gutter et la taille de page courante ne laissent pas de place "
+"pour le texte"
+
+#: ../lprsrv/lprsrv_standalone.c:76
+msgid "lprsrv is already running in standalone mode"
+msgstr "lprsrv fonctionne déjà en mode autonome"
+
+#: ../libuprint/uprint_strerror.c:33
+msgid "malloc() failure"
+msgstr "échec de malloc()"
+
+#: ../filter_lp/filter_lp.c:1747
+msgid "maxlines is less than minlines"
+msgstr "maxlines est inférieur à minlines"
+
+#: ../libuprint/uprint-newconf.c:213
+msgid "must be run by root"
+msgstr "doit tourner en tant que root"
+
+#: ../lprsrv/lprsrv.c:227
+msgid "new lprsrv must run as root"
+msgstr "le nouveau lprsrv doit tourner en tant que root"
+
+#: ../ppad/ppad_printer.c:743 ../ppop/ppop_cmds_other.c:1296
+msgid "no"
+msgstr "non"
+
+#: ../libuprint/uprint_strerror.c:41
+msgid "no print destination specified"
+msgstr "aucune destination d'impression spécifiée"
+
+#: ../libuprint/uprint_strerror.c:42
+msgid "non-existent print destination specified"
+msgstr "destination d'impression spécifiée non existante"
+
+#: ../ppad/ppad_printer.c:663 ../ppad/ppad_printer.c:664
+msgid "none"
+msgstr "aucun"
+
+#: ../ppad/ppad_printer.c:677
+msgid "none\n"
+msgstr "aucun\n"
+
+#: ../libuprint/uprint_strerror.c:32
+msgid "not an error"
+msgstr "pas une erreur"
+
+#: ../ppr/ppr_main.c:2182
+msgid "only one file name allowed"
+msgstr "un seul nom de fichier autorisé"
+
+#: ../samba/ppr2samba.c:204 ../samba/ppr2samba.c:364
+#, c-format
+msgid "opendir(\"%s\") failed, errno=%d (%s)\n"
+msgstr "échec de opendir(\"%s\"), errno=%d (%s)\n"
+
+#: ../ppop/ppop_cmds_other.c:276
+#, c-format
+msgid "otherwise engaged or off-line, retry %d in %d seconds"
+msgstr "déjà en cours ou hors-ligne, tentative %d dans %d secondes"
+
+#: ../libuprint/uprint_strerror.c:46
+msgid "out of disk space"
+msgstr "plus d'espace disque"
+
+#: ../ppr/ppr_infile.c:188
+msgid "pass file thru line printer emulator"
+msgstr "passer les fichiers dans l'émulateur d'imprimante ligne"
+
+#: ../ppr/ppr_infile.c:191
+msgid "pass file thru pr"
+msgstr "passer les fichiers à pr"
+
+#: ../filter_lp/filter_lp.c:1751
+msgid "pdeflines is greater than maxlines"
+msgstr "pdeflines est supérieur à maxlines"
+
+#: ../filter_lp/filter_lp.c:1749
+msgid "pdeflines is less than minlines"
+msgstr "pdeflines est inférieur à minlines"
+
+#: ../libuprint/uprint_strerror.c:48
+msgid "permission denied"
+msgstr "autorisation refusée"
+
+#: ../filter_lp/filter_lp.c:1757
+msgid "pmlm, pmrm, gutter, and current pagesize leave no space for text"
+msgstr ""
+"pmlm, pmrm, gutter et la taille de page courante ne laissent pas de place "
+"pour le texte"
+
+#: ../filter_lp/filter_lp.c:1759
+msgid "pmtm, pmbm, and current pagesize leave no space for text"
+msgstr ""
+"pmlm, pmrm et la taille de page courante ne laissent pas de place pour le "
+"texte"
+
+#: ../ppop/ppop_cmds_other.c:1294
+msgid "printer"
+msgstr "imprimante"
+
+#: ../ppop/ppop_cmds_other.c:252
+#, c-format
+msgid "printing %s"
+msgstr "impression de %s"
+
+#: ../ppop/ppop_cmds_other.c:250
+#, c-format
+msgid "printing %s (retry %d)"
+msgstr "impression de %s (tentative %d)"
+
+#: ../ppr/ppr_nest.c:159
+#, c-format
+msgid "redundant Begin %s comment"
+msgstr "commentaire Begin %s redondant"
+
+#: ../ppop/ppop_cmds_other.c:1295
+msgid "rejecting"
+msgstr "rejette"
+
+#: ../ppr/ppr_main.c:462
+#, c-format
+msgid "request id is %s (1 file)\n"
+msgstr "le numéro demandé est %s (1 fichier)\n"
+
+#: ../interfaces/atalk_ali.c:822 ../interfaces/atalk_cap.c:546
+#: ../interfaces/lpr.c:538 ../interfaces/parallel.c:208
+#: ../interfaces/serial.c:433 ../interfaces/tcpip.c:204
+msgid "right here"
+msgstr "juste ici"
+
+#: ../ppop/ppop_cmds_other.c:258
+#, c-format
+msgid "seizing %s"
+msgstr "saisie de %s"
+
+#: ../ppr/ppr_main.c:2167
+msgid "spaces may not follow \"=\" in filter options"
+msgstr "pas d'espaces après \"=\" dans les options de filtres"
+
+#: ../ppr/ppr_main.c:2156
+msgid "spaces may not preceed \"=\" in filter options"
+msgstr "pas d'espaces avant \"=\" dans les options de filtres"
+
+#: ../ppr/ppr_infile.c:2362
+msgid "spurious leading ^D"
+msgstr "faux ^D en début"
+
+#: ../lprsrv/lprsrv_client_info.c:94
+msgid "stdin is not a TCP socket (Run from Inetd or use -s option.)"
+msgstr ""
+"stdin n'est pas une socket TCP (lancez à partir d'inetd ou utilisez l'option "
+"-s.)"
+
+#: ../ppop/ppop_cmds_other.c:261
+#, c-format
+msgid "stopping (printing %s)"
+msgstr "en cours d'arrêt (impression de %s)"
+
+#: ../ppop/ppop_cmds_other.c:264
+msgid "stopt"
+msgstr "arrêtée"
+
+#: ../libuprint/uprint_strerror.c:45
+msgid "temporary failure"
+msgstr "échec temporaire"
+
+#: ../ppr/ppr_infile.c:216
+msgid "the Adobe Portable Document Format"
+msgstr "le format PDF"
+
+#: ../lprsrv/lprsrv_standalone.c:113
+#, c-format
+msgid "there is already a server listening on TCP port %d"
+msgstr "il y a déjà un serveur qui écoute sur le port TCP %d"
+
+#: ../libuprint/uprint_strerror.c:43
+msgid "too many files"
+msgstr "trop de fichiers"
+
+#: ../libuprint/uprint_strerror.c:44
+msgid "unknown remote system"
+msgstr "système distant inconnu"
+
+#: ../ppr/ppr_infile.c:236
+msgid "unrecognized binary files"
+msgstr "fichiers binaires non reconnus"
+
+#: ../interfaces/atalk_ali.c:811 ../interfaces/atalk_cap.c:535
+#: ../interfaces/lpr.c:526 ../interfaces/parallel.c:196
+#: ../interfaces/serial.c:422 ../interfaces/tcpip.c:192
+msgid "unrecognized keyword"
+msgstr "mot-clé non reconnu"
+
+#: ../ppr/ppr_main.c:881
+msgid ""
+"usage: ppr [switches] [filename]\n"
+"\n"
+"\t-d <destname>              selects desired printer or group\n"
+"\t-I                         insert destination's switchset macro here\n"
+msgstr ""
+"utilisation : ppr [options] [nom de fichier]\n"
+"\n"
+"\t-d <nom de destination>    sélectionne l'imprimante ou le groupe désiré\n"
+"\t-I                         insèrez ici la macro d'options de la "
+"destination\n"
+
+#: ../ppr/ppr_infile.c:191
+msgid "using pr"
+msgstr "utilisation de pr"
+
+#: ../libgu/ini_section.c:380
+msgid "value is not in the correct format"
+msgstr "La valeur n'est pas dans le format correct"
+
+#: ../interfaces/tcpip.c:170
+msgid "value must be \"engaged\" or \"error\""
+msgstr "la valeur doit être \"engaged\" ou \"error\""
+
+#: ../interfaces/lpr.c:490
+msgid "value must be \"o\" or \"f\""
+msgstr "la valeur doit être \"o\" ou \"f\""
+
+#: ../interfaces/atalk_ali.c:755 ../interfaces/atalk_ali.c:804
+#: ../interfaces/lpr.c:478 ../interfaces/lpr.c:518
+msgid "value must be \"true\" or \"false\""
+msgstr "la valeur doit être \"true\" ou \"false\""
+
+#: ../interfaces/tcpip.c:117 ../interfaces/tcpip.c:153
+#: ../interfaces/tcpip.c:182
+msgid "value must be 0 or a positive integer"
+msgstr "la valeur doit être 0 ou un entier positif"
+
+#: ../interfaces/atalk_ali.c:775 ../interfaces/atalk_ali.c:785
+#: ../interfaces/atalk_cap.c:509 ../interfaces/atalk_cap.c:519
+#: ../interfaces/lpr.c:499 ../interfaces/lpr.c:508 ../interfaces/tcpip.c:129
+#: ../interfaces/tcpip.c:141
+msgid "value must be a positive integer"
+msgstr "la valeur doit être un entier positif"
+
+#: ../interfaces/atalk_ali.c:765 ../interfaces/atalk_cap.c:499
+msgid "value must be a positive integer or -1 (infinity)"
+msgstr "la valeur doit être un entier positif ou -1 (infini)"
+
+#: ../interfaces/atalk_ali.c:795 ../interfaces/atalk_cap.c:528
+msgid "value must be a positive integer or zero"
+msgstr "la valeur doit être un entier positif ou zéro"
+
+#: ../interfaces/atalk_cap.c:489
+msgid "value must be set to \"true\" or \"false\""
+msgstr "la valeur doit être positionnée à \"true\" ou \"false\""
+
+#: ../libuprint/uprint_strerror.c:38
+msgid "wait() failed"
+msgstr "wait() a echoué"
+
+#: ../ppop/ppop_cmds_other.c:279
+msgid "waiting for resource ration"
+msgstr "en attente d'un peu de ressources"
+
+#: ../ppad/ppad_printer.c:743 ../ppop/ppop_cmds_other.c:1296
+msgid "yes"
+msgstr "oui"

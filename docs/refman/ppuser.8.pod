@@ -1,0 +1,132 @@
+#
+# mouse:~ppr/src/docs/refman/ppuser.8.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 13 December 2000.
+#
+
+=head1 NAME
+
+ppuser - PPR user database management utility
+
+=head1 SYNOPSIS
+
+B<ppuser> [I<subcommand>] [I<parameters ... >]
+
+=head1 DESCRIPTION
+
+This program is used to manage PPR user charge accounts.  Ordinary users may
+run the B<ppuser show> subcommand.  All other subcommands require that the
+user be "root", "ppr", or be listed in F</etc/ppr/acl/ppuser.allow>.
+
+=over 4
+
+=item B<ppuser add> 'I<user name>' 'I<real name>' I<authcode> I<initialbalance> I<cutoff> I<life>
+
+Adds a user to the accounting database.  "I<User name>" is the name of the
+user as it will appear in "C<%%For:>" comments and R<ppr(1)> B<-f> switches.
+"I<Real name>" is the name "B<user name>" should be translated to
+before it is used in queue listings or banner pages.  (For example, if
+"I<user name>" is "jandrews", "I<real name>" might be "Joseph Andrews.
+When B<ppr> is invoked by a unix user, this field is ignored in favour of the
+F</etc/passwd> gecos field, but this field will eventually be used for jobs
+received from personal computers.)
+I<Authcode> is the password which will identify the user.
+IInitialbalance> is the user's starting balance.  I<Cutoff> is the
+balance below which printing privledges should be denied.  I<Life> is the
+lifetime of the account.  It is measured in days of inactivity.  Accounts
+are not deleted automatically, a separate program must be employed to
+compare the period of inactivity to the life parameter.  Such a program is
+not included in the current distribution.
+
+=item B<ppuser delete> 'I<user name>'
+
+delete the indicated user.
+
+=item B<ppuser show> 'I<user name>'
+
+show the indicated user's account information.
+
+=item B<ppuser authcode> 'I<user name>' I<authcode>
+
+set the indicated users authorization code (password) to \f2authcode\f1.
+
+=item B<ppuser deposit> 'I<user name>' I<amount>
+
+deposit money in amount I<amount> in the indicated user's account.
+
+=item B<ppuser withdraw> 'I<user name>' I<amount>
+
+withdraw the indicated amount I<amount> of money from the indicated
+account.  This command should be used when refunding unused money.
+
+=item B<ppuser charge> 'I<user name>' I<amount>
+
+assess a charge of I<amount> against the indicated account.  PPR does
+this automatically when a job is printed on a printer for which charges are
+made.
+
+=item B<ppuser correction> 'I<user name>' I<amount>
+
+make a correction to the indicated user's account.  If I<amount> is
+positive, the amount of money in the user's account will increase, if it is
+negative, the amount of money in the account will decrease.
+
+=back
+
+=head1 EXAMPLES
+
+To set up a new account for John Jones with an initial deposit of $10.00, a
+cutoff when he is overdrawn by more than $2.50 and to have his account
+disappear if it is unused for a year:
+
+C<$ /usr/lib/ppr/bin/ppuser add "John Jones" "John Jones" 10.00 -2.50 365>
+
+Or, if Mr. Jones will be entering an account-style name instead of his real
+name:
+
+C<$ /usr/lib/ppr/bin/ppuser add jjones "John Jones" 10.00 -2.50 365>
+
+To set his password to "secret":
+
+C<$ /usr/lib/ppr/bin/ppuser authcode "John Jones" secret>
+
+=head1 FILES
+
+The user account database is kept in the file "F</etc/ppr/charge_users.db>".
+
+If the file "F</var/spool/ppr/logs/ppuser>" exists and is writable
+by the user "ppr", then all B<ppuser> commands are logged there.
+
+=head1 DIAGNOSTICS
+
+Exit codes for ppuser are defined in the source code file
+"F<include/util_exits.h>".
+
+=head1 BUGS
+
+If you choose to compile PPR without GDBM, this program will be
+non-functional.
+
+=head1 SEE ALSO
+
+R<ppr(1)>, R<pprd(8)>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2000.
+It was first released to the public on 26 April 1995.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

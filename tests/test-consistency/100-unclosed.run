@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Last modified 3 September 1998.
+#
+
+$TESTBIN/clear_output
+
+# Send an error laced job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample1 || echo "ppr failed: $?"
+%!PS-Adobe-3.0
+%%Title: Unclosed Resource Test
+%%Pages: (atend)
+%%EndComments
+
+%%BeginProlog
+% prolog code
+%%EndProlog
+
+%%BeginSetup
+% setup code
+%%EndSetup
+
+%%Page: 1 1
+%%BeginResource: file regression_test_unclosed
+file contents
+%%BeginResource: file regression_test_closed
+file contents
+%%EndResource
+
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Page: 3 3
+showpage
+
+%%Trailer
+%%Pages: 3
+%%EOF
+EndOfSample1
+
+$TESTBIN/cat_output
+
+exit 0
+

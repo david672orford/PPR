@@ -1,0 +1,5 @@
+#! /bin/sed -f
+s/^\(%%BeginProcSet:\)/% \1/
+s/^\(%%EndProcSet\)$/% \1/
+s/^\(%%BeginFont:\)/% \1/
+s/^\(%%EndFont\)$/% \1/

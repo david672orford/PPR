@@ -1,0 +1,55 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Unclosed resource or resources
+WARNING: No "%%Trailer:" comment
+WARNING: No valid "%%Pages:" comment
+WARNING: Resource "file regression_test_unclosed" supplied but never declared
+WARNING: Resource "file regression_test_closed" supplied but never declared
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (Unclosed Resource Test)
+%%Pages: 1
+%%PageOrder: Ascend
+%%DocumentSuppliedResources: file regression_test_unclosed
+%%+ file regression_test_closed
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+% prolog code
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+% setup code
+%%EndSetup
+
+%%Page: 1 1
+%%BeginResource: file regression_test_unclosed
+file contents
+%%BeginResource: file regression_test_closed
+file contents
+%%EndResource
+
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Page: 3 3
+showpage
+
+%%Trailer
+%%Pages: 3
+%%EOF
+%%Trailer
+%%Trailer
+%%EOF
+% regtest interface done %

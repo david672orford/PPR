@@ -1,0 +1,41 @@
+<Sect1 id="viewing-queue">
+<Title>Viewing the Queue</Title>
+
+<Para>
+You may see what jobs are in the queue and what is happening to them by
+using the <Emphasis remap="bf">ppop list</Emphasis> command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppop list chipmunk
+Queue ID        For                  Time    Pgs Status
+----------------------------------------------------------------------------
+chipmunk-2715   John Smith           11:53AM 007 printing on chipmunk
+						 14%, page 1
+</Screen>
+
+</Para>
+
+<Para>
+The above command only listed the jobs queued for a particular printer. In
+order to show all jobs for all printers use this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppop list all
+Queue ID        For                  Time    Pgs Status
+----------------------------------------------------------------------------
+chipmunk-2715   John Smith           11:53AM 007 printing on chipmunk
+	                                         14%, page 1
+rat-2716        Pamela Andrews       11:55AM 007 printing on rat
+						 14%, page
+</Screen>
+
+</Para>
+
+</Sect1>
+

@@ -1,0 +1,11 @@
+/*
+** mouse:~ppr/src/www/prn_media.css
+** Last modified 15 January 2001.
+*/
+
+BODY { background-color: yellow; color: black }
+H1 { font-weight: bold; font-size: 14pt; }
+TH { text-align: left }
+P.buttons { text-align: right }
+
+/* end of file */

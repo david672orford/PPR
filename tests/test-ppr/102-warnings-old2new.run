@@ -1,0 +1,75 @@
+#! /bin/sh
+#
+# Test warnings for comments which are
+# obsolete in DSC 3.0.
+#
+# Last modified 9 August 1999.
+#
+
+$TESTBIN/clear_output
+
+# Send a job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -P TrustMe -w peeve --responder none --cache-store=uncached <<EndOfSample || echo "ppr failed: $?"
+%!PS-Adobe-3.0
+%%Pages: 2
+%%EndComments
+
+%%BeginProcSet:
+/inch {72 mul} def
+%%EndProcSet
+
+%%BeginFile:
+%%EndFile
+
+%%IncludeProcSet: Regression-Test-Non-Existent 1.0 15
+%%IncludeProcSet: (The Name)
+
+%%IncludeFile:
+%%IncludeFile: stuff.ps
+
+%%EndProlog
+
+%%BeginDocumentSetup
+%%BeginPaperSize: Letter
+letter
+%%EndPaperSize
+%%Feature: *PageSize Letter
+%%IncludeFont:
+%%IncludeFont: Ugly-Plain
+%%BeginFont:
+%%EndFont
+%%EndDocumentSetup
+
+%%Page: 1 2
+%%ExecuteFile: myfile.eps
+%%BeginFont:
+%!
+% Code here!
+%%EndFont
+%%BeginFont: Regression-Test-1
+%%EndFont
+showpage
+
+%%Page: 2 2
+%%BeginFile:
+%%BeginBinary:
+xdfasdfs
+%%EndBinary
+image
+%%EndFile
+%%BeginFile: my.ps
+%!
+% Wow!
+showpage
+%%EndFile
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample
+
+$TESTBIN/cat_output
+
+rm $VAR_SPOOL_PPR/cache/font/Regression-Test-1 2>/dev/null || echo "Bad font not cached, good!"
+
+exit 0

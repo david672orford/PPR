@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Test the handling of improperly inserted EPS documents.
+#
+# Last modified 12 September 1997.
+#
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <${TEST_BASENAME}-1.ps
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -H badeps <${TEST_BASENAME}-1.ps
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <${TEST_BASENAME}-2.ps
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -H badeps <${TEST_BASENAME}-2.ps
+$TESTBIN/cat_output
+
+exit 0

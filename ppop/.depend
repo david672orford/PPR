@@ -1,0 +1,8 @@
+ppop.$(OBJ): ppop.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ppop.h ../include/util_exits.h ../include/version.h
+
+ppop_cmds_listq.$(OBJ): ppop_cmds_listq.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ppop.h ../include/util_exits.h
+
+ppop_cmds_other.$(OBJ): ppop_cmds_other.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ppop.h ../include/util_exits.h
+
+ppop_modify.$(OBJ): ppop_modify.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ppop.h ../include/util_exits.h ../include/version.h
+

@@ -1,0 +1,32 @@
+#! /bin/sh
+#
+# Make sure PPD *Include works correctly.
+#
+
+$HOMEDIR/bin/ppad ppd regression-test1 `pwd`/test-pprdrv/includer.ppd
+echo "ppad: $?"
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes <<EndOfSample
+%!PS-Adobe 3.0
+
+%%EndProlog
+
+%%BeginSetup
+%%IncludeFeature: *InputSlot Upper
+%%IncludeFeature: *InputSlot Lower
+%%IncludeFeature: *InputSlot Middle
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0

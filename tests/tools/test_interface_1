@@ -1,0 +1,23 @@
+#! /bin/sh
+
+#
+# This test interface is used for regression testing.
+#
+
+# source the file which defines the exit codes
+. lib/interface.sh
+
+# give the parameters names
+PRINTER="$1"
+ADDRESS="$2"
+
+# copy the file
+cat - >$ADDRESS
+
+# Append a marker so that the test code will
+# know we are done:
+echo "% regtest interface done %" >>$ADDRESS
+
+# exit without error
+exit $EXIT_OK
+

@@ -1,0 +1,20 @@
+atalk_cap.$(OBJ): atalk_cap.c ../include/before_system.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+
+lpr.$(OBJ): lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/uprint.h
+
+atalk_ali.$(OBJ): atalk_ali.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/pap_proto.h
+
+serial.$(OBJ): serial.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+
+tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
+parallel.$(OBJ): parallel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
+
+clispool.$(OBJ): clispool.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+
+parallel_generic.$(OBJ): parallel_generic.c ../include/before_system.h ../include/gu.h ../include/global_defines.h parallel.h
+
+parallel_linux.$(OBJ): parallel_linux.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+
+throw.$(OBJ): throw.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+

@@ -1,0 +1,181 @@
+#! /bin/sh
+#
+# mouse:~ppr/src/fixup/fixup_conf.sh
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is"
+# without express or implied warranty.
+#
+# Last modified 1 November 2000.
+#
+
+#
+# The purpose of this shell script is to generate /etc/ppr/ppr.conf.sample.
+# On the initial install the sample will be later be copied to
+# /etc/ppr/ppr.conf.
+#
+
+CONFDIR="?"
+SHAREDIR="?"
+USER_PPR=?
+GROUP_PPR=?
+
+CONF="$CONFDIR/ppr.conf"
+SAMPLE="$CONF.sample"
+
+# Function to find a program in the specified $PATH style
+# search list.  The first argument is the program to find,
+# the second is the search list.
+findfile_test_basename_path_default ()
+    {
+    echo "  Searching for $2..." >&3
+    for i in `echo $3 | tr ':' ' '`
+	do
+	if [ `echo $i | cut -c1` = '/' ]
+	    then
+	    # echo "Trying $i/$2" >&3
+	    if [ $1 "$i/$2" ]
+		then
+		echo "    Found $i/$2." >&3
+		echo "$i/$2"
+		return
+		fi
+	    fi
+	done
+    echo "    Not found, using $4." >&3
+    echo "$4"
+    }
+
+# If the specified directory exists, print its name in
+# quotes with 2 leading spaces.
+if_dir_print ()
+    {
+    if [ -d "$1" ]
+        then
+	echo "  Found directory $1."
+        echo "  \"$1\"" >&5
+        fi
+    }
+
+# Direct file descriptor 3 to 1 so that we can print to stdout from
+# within backticks
+exec 3>&1
+
+# Open the output file on file descriptor 5.
+exec 5>$SAMPLE
+
+echo "Generating $SAMPLE ..."
+
+cat - >&5 <<===EndHere10===
+#
+# $SAMPLE
+# Created: `date`
+#
+
+===EndHere10===
+
+gs=`findfile_test_basename_path_default -x gs $PATH /usr/bin/gs`
+cat - >&5 <<===EndHere20===
+# Facts About Ghostscript
+[ghostscript]
+
+  # This is the Ghostscript interpreter you want PPR to use by default
+  # when sending jobs to non-PostScript printers.
+  gs = "$gs"
+
+===EndHere20===
+
+smbclient=`findfile_test_basename_path_default -x smbclient /usr/local/samba/bin:$PATH /usr/local/samba/bin/smbclient`
+smb_conf=`findfile_test_basename_path_default -f smb.conf /usr/local/samba/lib:/etc:/etc/samba /usr/local/samba/lib/smb.conf`
+cat - >&5 <<===EndHere30===
+# Facts About Samba
+[samba]
+
+  # Where is the smbclient program which should be used for sending popup
+  # messages and for sending print jobs to SMB servers?
+  smbclient = "$smbclient"
+
+  # Where is the smb.conf file that goes with that copy of smbclient?
+  smb.conf = "$smb_conf"
+
+===EndHere30===
+
+cat - >&5 <<===EndHere40===
+# What Country is this?
+[internationalization]
+
+  # What LANG environment value should the daemons be started with?
+  daemon lang = $LANG
+
+===EndHere40===
+
+cat - >&5 <<'===EndHere41==='
+  # Choose a default medium, "Letter" for the USA, A4 for
+  # most other places.  You must uncomment one of these.
+  default medium  = Letter, 612, 792, 75, white, ""
+  #default medium = A4, 595, 842, 75, white, ""
+
+  # Choose a money format for banner pages and ppuser output.
+  # The example here is for the USA.
+  #money = "%d.%02d", "-%d.%02d"		# Default generic: 1.25 -1.25
+  #money = "\$%d.%02d", "(\$%d.%02d)"		# USA: $1.25 ($1.25)
+  #money = "\$%d.%02d", "-\$%d.%02d"		# USA: $1.25 -$1.25
+
+  # Choose a format for dates printed on banner and trailer pages.
+  # This is in strftime() format.
+  #flag date format = "%d-%b-%Y, %I:%M%p"	# Default: 26-Jul-2000, 12:49pm
+  #flag date format = "%d-%b-%y, %I:%M%p"	# 26-Jul-00, 12:49pm
+  #flag date format = "%b %d, %Y, %I:%M%p"	# Jul 26, 2000, 12:49pm
+  #flag date format = "%B %d, %Y, %I:%M%p"	# July 26, 2000, 12:49pm
+
+===EndHere41===
+
+cat - >&5 <<===EndHere50===
+# Where are the Type 1 and TrueType fonts?  These directories will be
+# searched recursively.
+[fonts]
+  "$SHAREDIR/fonts"
+===EndHere50===
+
+# X11R6
+if_dir_print "/usr/X11R6/lib/X11/fonts"
+
+# Openwindows
+if_dir_print "/usr/openwin/lib/X11/fonts"
+
+# Ghostscript
+if_dir_print "/usr/local/share/ghostscript/fonts"
+if_dir_print "/usr/share/ghostscript/fonts"
+
+# RedHat Linux 6.0
+if_dir_print "/usr/share/fonts"
+
+# Adobe Acrobat Reader
+if_dir_print "/usr/local/Acrobat3/Fonts"
+if_dir_print "/usr/local/Acrobat4/Resource/Font"
+
+# teTeX 1.0 on RedHat 6.0
+if_dir_print "/usr/share/texmf/fonts/type1"
+if_dir_print "/usr/share/texmf/fonts/afm"
+
+echo >&5
+
+cat - >&5 <<===EndHere90===
+# end of file
+===EndHere90===
+
+echo
+
+chown $USER_PPR $SAMPLE
+chgrp $GROUP_PPR $SAMPLE
+
+echo "Done."
+echo
+
+exit 0
+

@@ -1,0 +1,360 @@
+#
+# mouse:~ppr/src/docs/refman/papsrv.8.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 13 December 2000.
+#
+
+=head1 NAME
+
+papsrv - Server which accepts Macintosh jobs and passes them to PPR
+papsrv_kill - Shuts down papsrv
+papsrv.conf - Macintosh printer server configuration file
+
+=head1 SYNOPSIS
+
+B<papsrv> [B<--help>] [B<--version>] [B<-f> I<configfile>] [B<-l> I<logfile>]
+[B<-p> I<pidfile>] [B<-X> I<AUFS_Security_directory>] [B<-z> I<default_zone>]
+
+=head1 DESCRIPTION
+
+This document describes PPR's PAP server which accepts print jobs from
+computers running MacOS.
+
+The programs B<papsrv> and B<papsrv_kill> reside in F</usr/lib/ppr/bin>.  The
+configuration file F<papsrv.conf> resides in F</etc/ppr>.
+
+If the B<--help> or B<--version> switch is used it will print brief usage
+information or PPR version information respectively.
+
+The B<-f>, B<-l>, and B<-p> switches set the names of the configuration,
+log, and PID files respectively.
+
+The B<-X> switch is used for CAP's AUFS security mode.
+
+The B<-z> switch can be used to specify a default zone.
+
+=head2 Starting the Server
+
+The server is started by running B<papsrv>.  B<Papsrv> is a
+setuid program owned by "ppr".  The first thing it does when it is invoked
+is to make sure that the real user who invoked it is "ppr" or "root".  If
+not, B<papsrv> prints an error message on stderr and exits immediately.  If
+the security requirements are met, then B<papsrv> automatically places
+itself in the background.
+
+=head2 Stopping the Server
+
+B<Papsrv> should never be killed with the command B<kill -9> or B<kill
+-KILL> except as a last resort as doing so could prevent it from shutting
+down properly and removing the AppleTalk names it placed on the network.  If
+this happens, it will be necessary to stop and restart the AppleTalk
+protocol stack before B<papsrv> can be restarted.  It is recomended that
+B<papsrv> be killed with SIGTERM.  This is the default action of the kill
+command is all known shells.  Several seconds may elapse between the time
+papsrv receives the TERM signal and the time it exits.  During this time
+B<papsrv> is removing the advertized names from the network.
+
+A good way to stop B<papsrv> is with the shell script
+B<papsrv_kill>.  This script reads the process id of
+B<papsrv> from the file F</var/spool/ppr/run/papsrv.pid> and kills B<papsrv> by
+sending it SIGTERM.  It then waits for B<papsrv> to shut down, then exits
+itself.  When B<papsrv_kill> is done it is safe to start a new B<papsrv>.
+
+=head2 Server Debugging
+
+If B<papsrv> receives SIGUSR1 it will begin logging queries and answers to
+the log file.  If it receives SIGUSR1 again it will also begin logging the
+PostScript code of the queries to the log file.  If it receives SIGUSR1 a
+third time it will stop loggin queries.
+
+=head2 Default Zone
+
+Most AppleTalk implementations only allow a node (computer) to adversize
+names in one zone.  Netatalk, however, allows each advertized name to be
+adversized in any accessible zone.  The B<-z> switch specifies a default
+zone for any names in square bracket lines in the configuration file which
+do not include a zone specification.  If the -B<z> switch is not used,
+B<papsrv> will attempt to read the default zone from the first line of the
+file F</etc/ppr/papsrv_default_zone.conf>.  If the B<-z> switch is not used
+and the file is not found, the default zone will be "*" which will allow
+Netatalk to decide what zone to put the name in.
+
+=head2 Optional Printer Equipment
+
+It is a good idea to run B<ppad ppdopts> on a printer before sharing it with
+B<papsrv>.  Some printers have optional equipment.  If optional equipment is
+available for your printer, B<ppad ppdopts> may ask you to indicate which
+options are installed.  It is a good idea to do this because the client may
+ask the server to indicate whether a particuliar piece of optional equipment
+is installed.  If you have not run B<ppad ppdopts>, B<papsrv> will indicate
+that it doesn't know whether any specific piece of optional equipment is
+installed.
+
+=head2 The File F<papsrv.conf>
+
+Each record in the configuration file represents an AppleTalk name which
+will appear in the Macintosh Chooser.  Each record consists of a sequence of
+lines seperated from the other records by one or more blank lines.  Lines
+begining with "#" or ";" are comments and do not count as blank lines.  (All
+comments must begin with a "#" or ";" in the first column, comments at the
+ends of lines are not allowed.) Each line of a record consists of a keyword
+followed by a colon, at least one space and a parameter.  Only the
+B<PPRname:> and B<PAPname:> lines are required except when the parameter
+to B<PPRname:> refers to a group whose members do not all use the same PPD
+file, in which case the B<PPDfile:> line is also required.
+
+=over 4
+
+=item B<PPRname:> I<destination>
+
+specifies the PPR I<destination> to which the print jobs should be sent.
+It is permissible for different records to have identical B<PPRname:> lines.
+This line must be the first line of the record.
+
+=item B<PAPname:> I<choosername>
+
+specifies the name which should appear in the chooser.  Generally this will
+be a simple name which may be up to 32 characters long and should not
+contain ":" or "@".  Embedded spaces are permitted.  For example:  "My
+Favorite Printer".
+
+By default, the name will be advertised with the type "LaserWriter".  If for
+some odd reason you wish the entity to have a different type, you may
+specify the type by appending a colon (":") and the type name to the simple name.
+For example:  "My Favorite Printer:SecretWriter".  A type designation is
+limited to 32 characters.
+
+If the AppleTalk implementation you are using permits advertising in
+multiple zones (Netatalk does), you may specify a zone by appending a
+comercial at sign ("@") and the zone name.  (If an entity type designation is
+also present, the at sign and the zone name should come after it.)  For
+example:  "My Favorite Printer@Computing Center" or "My Favorite
+Printer:SecretWriter@Computing Center".
+
+=item B<PPDfile:> I<filename>
+
+indicates the PPD files which should be used to answer queries about the
+printer.  If I<filename> does not begin with a slash it is relative to
+F</usr/share/ppr/PPDFiles>.  The B<PPDfile:> line is required for groups of printers
+whose members do not all use the same PPD file, it is I<forbidden> under
+all other circumstances.  If you think you should be allowed to specify a
+PPD file under all circumstances, keep reading, other lines can be used to
+accomplish everthing you could accomplish with a hacked PPD file.
+
+=item B<PPR parms => I<parm1> ... I<parmN>
+
+Specifies a list of extra parameters to be added at the end of
+the B<ppr> command line when B<ppr> is invoked to accept a print job.
+The parameters should be seperated by spaces.  Parameters with embedded
+spaces must be enclosed in
+single or double quotes.  Environment variable expansion and other shell
+features are not supported.  The backslash character has no special
+significance in the current implementation.
+
+=item B<Force AUFS Security => I<boolean>
+
+If I<boolean> is true, CAP AUFS security is enabled for this shared printer
+name even if the printer named in the B<PPRname:> line is not protected.
+This option may not be set to true unless an B<-X> switch is used when
+starting B<papsrv>.  For furthur information, see the discussion of the B<-X>
+switch in L<papsrv(8)>.
+
+=item B<AUFS Security Name => [B<DSC>, B<username>, B<realname>]
+
+This option determines the name that will appear in queue listings and to
+which printing will be charged when AUFS Security is used.  The possible
+settings are:
+
+=over 4
+
+=item B<DSC>
+
+Use the name that appears in the "%%For:" line in the PostScript.
+
+=item B<username>
+
+Use the Unix username.
+
+=item B<realname>
+
+Use the Unix gecos field.
+
+=back
+
+=item B<Product => (I<string>)
+
+specifies a product string to be used in answering product queries instead
+of the product string in the PPD file.  The parameter should be in the
+format of the "*Product:" line in a PPD file, in other words, the
+parentheses must be present for correct results. It is conceivable that you
+might wish to use this line to cause LaserWriter 8.x to select a special PPD
+file when its auto setup feature is invoked.
+
+=item B<TTRasterizer => I<string>
+
+overrides the "*TTRasterizer:" line in the PPD file for the purpose of
+answering queryies.  Legal values are "None", "Type42", and "Accept68K".
+This might be useful because so many PPD files were written before the
+"*TTRasterizer:" line was introduced in version 4.1 or the PPD file
+specification.
+
+=head2 Configuration File Lines of Doubtful Utility
+
+=item B<BinaryOK => I<boolean>
+
+Specifies an answer for the LaserWriter 8 query of the same name.  If a
+record does not have a B<BinaryOK:> line, then B<papsrv> will return the
+default answer which is supplied by LaserWriter 8 when it makes the query.
+(That default answer is false.)
+
+=item B<FaxSupport => I<string>
+
+Supplies an answer to the fax support feature query, overriding any
+"*FaxSupport:" line in the PPD file.  Currently the only
+official value for I<string> is "Base".  If the printer does not offer fax
+support, you should ommit this line.
+
+=item B<LanguageLevel => I<positive integer>
+
+Specifies a language level to be used in answers to language level queries.
+If present, this line overrides the language level specified in the
+printer's or group's PPD file.  At the time of this writing, the only
+reasonable values for this parameter are "1" and "2".
+
+=item B<PSVersion => I<string>
+
+Supplies a PostScript version string to use instead of the one in the PPD
+file when answering queries about the printer.  The I<string> should be in
+the format of the "*PSVersion:" line in a PPD file.  For example, "(52.3)
+400" (without the quotes).
+
+=item B<RamSize => I<number>
+
+Supplies an answer for the LaserWriter 8.x "ADORamSize" query.  For example, if
+the printer has 2 megabytes of memory, this parameter should be set to
+2097152, for 4 megabytes 4194304, etc.  It appears that LaserWriter 8.x
+simply displays this value in one of the setup screens and makes no furthur
+use of it.
+
+=item B<Resolution => I<string>
+
+Overrides the "*DefaultResolution:" line in the PPD file for purpose of
+answering queries.  The I<string> must be in the form "300dpi" or
+"1200x400dpi" (both without the quotes).
+
+=item B<QueryFontCache => I<boolean>
+
+This option controls how B<papsrv> answers resources queries from the client.
+If this option is B<true> (the default), then when asked if it has a certain font it will
+say "yes" if the font is in the font cache or listed in the printer's PPD file.
+If this option is B<false> then it will answer "yes" only if the font it listed
+in the printer's PPD file.
+
+If you include B<-H transparent> in B<PPR Parms => then you must set this
+option to B<false>.  This is necessary because in transparent mode
+PPR will not insert the fonts from the font cache.
+
+=head2 AUFS Security
+
+The B<-X> switch indicates the directory where CAP AUFS security files may
+be found.  If this feature is used, aufs should be started with an identical
+B<-X> switch.  The AUFS security feature requires a user to mount a file
+sharing volume on the server before he can print to certain print queues on
+the same server.  The mere presence of this switch does not enable CAP AUFS
+security for all printers.  If this switch is present, AUFS security is
+enabled for those printers which are "protected", that is, those for which
+there is a per-page printing charge (even if the charge is 0.00 dollars per
+page).  AUFS security is also enabled for any printer which has the line
+"ForceAUFSSecurity=YES" in its paragraph in F<papsrv.conf>.
+
+If AUFS security is turned on for a particular printer and a user attempts
+to print without having mounted a file sharing volume, papsrv detects this
+and tell the Macintosh that a PostScript error has occured.  In order for
+the user to see this message, the LaserWriter driver option for PostScript
+error reporting must be set correctly.  To do this with LaserWriter 8.x,
+choose print in any application, then press the "Options" button and then
+change "PostScript Errors:" to "Summarize on Screen".
+
+If AUFS security is to work correctly with B<papsrv>, CAP must not be compiled
+with the HIDE_AUFS_SECURITY option.  (With
+HIDE_AUFS_SECURITY enabled, only root can tell if a user has a volume
+mounted.  It is unclear to me how the option increases security anyway,
+except perhaps if the security directory is F</tmp>.)
+
+=head1 FILES
+
+The default configuration file is F</etc/ppr/papsrv.conf>.  The default may
+be overridden with the B<-f> switch.
+
+In addition to its own configuration file, B<papsrv> reads printer and group
+configuration files in F</etc/ppr/printers> and the PPD file for each printer.
+
+The default log file is F</var/spool/ppr/logs/papsrv>.  The default may
+be overriden by the B<-f> switch.
+
+The default PID file is F</var/spool/ppr/run/papsrv.pid>.  Into this file
+B<papsrv> writes its PID when it starts.  When it exits cleanly it deletes
+this file.  The default may be overriden with the B<-p> switch.
+
+If the B<-z> switch is ommited, B<papsrv> reads its default zone from the
+first line of F</etc/ppr/papsrv_default_zone.conf>.
+
+=head1 DIAGNOSTICS
+
+When B<papsrv> fails to work, the first place to look is in its log file.
+Major actions, such as starting up, adding names to the Macintosh network,
+and shutting down will
+be logged here.  If it B<papsrv> aborts for some reason,
+a message will be written to the log.  If you modify F<papsrv.conf>, you
+should look in the log file after restarting B<papsrv> to see if it
+detected any errors in the new configuration file.
+
+=head1 EXAMPLES
+
+To share a printer called "myprn", we might make an entry like this one:
+
+ [My Printer]
+ PPR name = myprn
+
+To create a second name for myprn which prints booklets, add this record to
+the papsrv configuration file:
+
+ [My Printer, Booklets]
+ PPRname = myprn
+ PPRparms = -s booklet
+
+Additional examples may be found in the document "Installing and Using PPR".
+
+=head1 BUGS
+
+It is not possible to add or remove Macintosh shared printers without
+editing the configuration file and restarting B<papsrv>.  While it is
+restarting, which with a long list of printers to share may take several
+minutes, all the printer shares are unusable.  One possible work-around is
+to run several B<papsrv> daemons, each with a different configuration, log,
+and PID files.  That is the purpose of the B<-f>, B<-l>, and B<-p> switches.
+
+=head1 SEE ALSO
+
+L<ppop>(1), L<ppr>(1), L<ppad>(8), L<pprd>(8)
+"PPR, a PostScript Print Spooler", "Installing and Using PPR".
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--1998.
+
+=head1 AUTHORS
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut
+

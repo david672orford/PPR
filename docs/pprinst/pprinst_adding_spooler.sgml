@@ -1,0 +1,623 @@
+<Sect2 id="adding-spooler">
+<Title>Adding Printers to the Spooler</Title>
+
+<Para>
+Printers may be added without stopping the PPR spooler.  A printer is added
+is you issue a command which sets the interface of a previously unknown
+printer.  An interface is a the program PPR uses to communicate with the
+printer.  A typical interface is the one called ``<Emphasis remap="bf">atalk</Emphasis>''.  The <Emphasis remap="bf">atalk</Emphasis>
+interface allows PPR to print on Apple LaserWriters and other printers which
+conform to Apple's Printer Access Protocol (PAP), such as many QMS and HP
+printers.
+</Para>
+
+<Sect3>
+<Title>Adding a Printer With an AppleTalk Interface</Title>
+
+<Para>
+In order to add an AppleTalk printer to PPR you must know its complete
+AppleTalk name.  The complete AppleTalk name has three parts.  The first is the
+printer's individual name, this is the name you see in the Macintosh Chooser.
+The second part is the AppleTalk type which is generally ``LaserWriter''.  The
+third part is the AppleTalk zone which you can also find in the Chooser.  We
+put all this information together as in the following command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface myprn atalk "Joe's Mac Printer:LaserWriter@CC Zone"
+</Screen>
+
+</Para>
+
+<Para>
+This command adds a printer called ``myprn''.  Its AppleTalk name, from the
+Chooser, is ``Joe's Mac Printer''.  The AppleTalk type is ``LaserWriter''.
+The zone is ``CC Zone''.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Hiding an AppleTalk Printer</Title>
+
+<Para>
+If you choose to hide an AppleTalk printer, PPR will change its AppleTalk
+type.  PPR will do this the first time it sends a job to the printer. The
+AppleTalk type will revert to ``LaserWriter'' every time the printer is turned
+off and back on again.  To have PPR change the type, just enter a string other
+than ``LaserWriter'' in the type part of the address.  When PPR tries to send a
+job to the printer, it will first attempt to find it using the type you
+specify; if that fails, PPR will try again using a type of ``LaserWriter''.  If
+the printer is found with a type of ``LaserWriter'', PPR will change the type
+to whatever you specified.  For example, if we wanted to hide a printer, we
+could enter its address using this command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface myprn atalk "Joe's Mac Printer:LaserShared@CC Zone"
+</Screen>
+
+</Para>
+
+<Para>
+The exact type name you use to hide a printer matters little unless you want
+another kind of spooler to be able to print to it at the same time.  In that
+case, you should use the same type name as that spooler will use.  The type
+``ATTShared'' is compatible with the NCR server for Macintosh Clients.  The
+name ``LaserShared'' is said to be used by certain Apple spoolers.  When the
+Windows NT spooler `captures' a printer it changes the type name of the
+printer to the computer name of the machine the NT spooler is running on.
+For example, if PPR is sharing a printer with an NT computer name ``ALICE''
+which has captured it, this would be the command to use:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface myprn atalk "Joe's Mac Printer:ALICE@CC Zone"
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Adding a TCP/IP Connected Printer</Title>
+
+<Para>
+The interface <Emphasis remap="bf">tcpip</Emphasis> can be used to print to some types of
+TCP/IP connected printers.  HP printers with JetDirect cards are an
+example.  To set up an HP 4M+ we might use this command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface my4m tcpip my4m.prn.trincoll.edu:9100
+</Screen>
+
+</Para>
+
+<Para>
+In this example, ``my4m'' is the name of the queue we are creating.
+``my4m.prn.trincoll.edu'' is the DNS name of the printer.  We could have
+used the IP address instead if we had wished.  The number ``9100'' is the port
+that the <Emphasis remap="bf">tcpip</Emphasis> interface should connect to.  (On a JetDirect card
+port ``9100'' accepts a data stream in the same format as the serial
+or parallel interface would want.)
+</Para>
+
+<Para>
+We can also use this interface to print to Extended Systems Pocket Print
+Servers.  In their default configuration, the correct port to connect
+to on these devices is also ``9100''.  However, since these devices
+connect to the printer through a unidirectional parallel port, they can
+only send data in one direction.  Therefore we must tell PPR not to expect
+to receive messages from the printer:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface qmsps410 tcpip qmsps410.prn.trincoll.edu:9100
+# ppad feedback qmsps410 false
+</Screen>
+
+</Para>
+
+<Para>
+The fact that no messages can be received from the printer also means that
+PostScript errors will not be detected.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Using a Printer Connected to a Parallel Port (Old Method)</Title>
+
+<Para>
+A simple interface for sending to a printer connected to the print server's
+parallel port is provided.  It is called ``<Emphasis remap="bf">simple</Emphasis>''.  When printing
+through a parallel port we must be sure that the user ``ppr'' has permission to
+write to the port.  This is one way you could set it up:
+</Para>
+
+<Para>
+
+<Screen>
+# chown ppr /dev/lp0
+# chmod 600 /dev/lp0
+# ppad interface nearprn simple /dev/lp0
+</Screen>
+
+</Para>
+
+<Para>
+This interface only supports unidirection data transmission, so PPR will not
+detect PostScript errors when printing through this interface.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Using a Printer Connected to a Parallel Port (New Method)</Title>
+
+<Para>
+PPR now has an interface program designed especially for parallel ports.
+It is called ``<Emphasis remap="bf">parallel</Emphasis>''.  When printing through a parallel port
+we must be sure that the user ``ppr'' has permission to write to the port.
+This is one way you could set it up:
+</Para>
+
+<Para>
+
+<Screen>
+# chown ppr /dev/lp0
+# chmod 600 /dev/lp0
+# ppad interface nearprn parallel /dev/lp0
+</Screen>
+
+</Para>
+
+<Para>
+If your printer and operating system support bidirectional parallel port
+operation, then you should inform PPR of the fact using a command like
+this one:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad feedback nearprn true
+</Screen>
+
+</Para>
+
+<Para>
+If you do this, then PPR will be able to detect PostScript errors.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Using a Printer Connected to a Serial Port</Title>
+
+<Para>
+PPR has an interface called <Emphasis remap="bf">serial</Emphasis> for sending jobs to printers
+connected to the print server's serial ports. As with the parallel interface,
+we must set the file permissions on the device file in the <Literal remap="tt">/dev/</Literal>
+directory so that the user ``ppr'' can write to the port.  You will also want
+to set the baud rate:
+</Para>
+
+<Para>
+
+<Screen>
+# chown ppr /dev/tty0
+# chmod 600 /dev/tty0
+# ppad interface nearprn serial /dev/tty0
+# ppad options nearprn 'speed=9600 bits=8 parity=none'
+</Screen>
+
+</Para>
+
+<Para>
+This may well be the most difficult interface to set up because of the lack of
+standards for connecting printers to RS-232 ports. To describe the RS-232
+interface, the construction of null modem cables, the use of breakout boxes for
+troubleshooting and the quirks of the serial driver in varous Unix variants
+would require a document much larger than this one and is a task to which the
+author of this document does not feel himself equal. Because of the the
+potential complexity of serial connexions, this interface has many options,
+only three of which have been hinted at here. The remainder of the options are
+described in the ppad(8) manual page.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Using Ghostscript with PPR</Title>
+
+<Para>
+Using Ghostscript, a freely available PostScript interpreter, it is possible
+to print PostScript jobs on non-PostScript printers. PPR supports this through
+three interfaces, <Emphasis remap="bf">gssimple</Emphasis>, <Emphasis remap="bf">gstcpip</Emphasis>, and <Emphasis remap="bf">gsatalk</Emphasis>.
+These interface scripts assume that you have installed Ghostscript as
+<Emphasis remap="bf">/usr/bin/gs</Emphasis>.  If you have not then you should set the <Emphasis remap="bf">gs=</Emphasis> option.
+</Para>
+
+<Para>
+PPR has been tested with the 3.12 through 5.01 versions of the Aladdin
+releases of Ghostscript.  It is not know if it will work with earlier
+versions.  Most of the fonts supplied with Ghostscript prior to version 4.0
+are of very poor quality.  If you possibly can you should replace them with
+better ones.  Some operating systems include a number of PostScript type 1
+fonts, possibly as part of X-Windows.  The Adobe Acrobat Reader for Unix
+includes a basic set of 14 fonts.  If you have replacement fonts you should
+either put them in one of Ghostscript's font directories and make entries
+for them in Ghostscript's Fontmap, or copy them to or place symbolic links
+to them in the directory <Literal remap="tt">/usr/ppr/cache/font</Literal>.  The <Emphasis remap="bf">gs*</Emphasis>
+interface scripts set Ghostscript's FONT&lowbar;PATH variable so that Ghostscript
+can find the fonts in this directory.  The name of each font file should be
+the same as the font's PostScript name.  Note that it is ok to put PFB
+format fonts in <Literal remap="tt">/usr/ppr/cache/font</Literal> since both PPR and Ghostscript
+can read that format.
+</Para>
+
+<Para>
+A number of PPD files are provided for use with Ghostscript.  These are all
+generated from one master file.  The master file contains sections to describe
+different output devices.  You should edit the makefile which generates these PPD
+files.  It is in the <Literal remap="tt">ppd/ghostscript</Literal> directory of the PPR source tree.  In
+this makefile you can select the list of fonts to be included.
+</Para>
+
+<Para>
+The interface <Emphasis remap="bf">gssimple</Emphasis> will process the job using Ghostscript and send
+the output to the printer through a parallel port.  In order to set PPR up to
+print to an HP DeskJet 500 connected to the parallel port of our print server
+we could use these commands:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface my_dj500 gssimple /dev/lp0
+# ppad options my_dj500 'device=djet500 gs=/usr/local/bin/gs'
+# ppad ppd my_dj500 'HP DeskJet 500 Ghostscript'
+</Screen>
+
+</Para>
+
+<Para>
+Notice that the <Emphasis remap="bf">gs=</Emphasis> option is used to tell PPR to use a Ghostscript executable
+other than <Literal remap="tt">/usr/bin/gs</Literal>.
+</Para>
+
+<Para>
+The interface <Emphasis remap="bf">gstcpip</Emphasis> will process the job with Ghostscript and
+send the result to the printer using TCP/IP.  For example, in order to use an
+HP III connected to an Extended Systems Pocket Print Server, we would set it
+up with commands like these:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface your_hpiii gstcpip hpiii.prn.trincoll.edu:9100
+# ppad options your_hpiii 'device=ljet3'
+# ppad ppd your_hpiii 'HP LaserJet III Ghostscript'
+</Screen>
+
+</Para>
+
+<Para>
+(Note: an HP III may require a memory upgrade before it can print full page
+Ghostscript output at 300DPI)
+</Para>
+
+<Para>
+Ghostscript must have the correct Ghostscript device driver for the printer
+compiled in.  You must use the <Emphasis remap="bf">driver=</Emphasis> option to indicate which of Ghostscript's output formats should be
+used.  For a complete list of options supported by the
+various Ghostscript interfaces, see the ppad(8) man page.
+</Para>
+
+<Para>
+The interface <Emphasis remap="bf">gsatalk</Emphasis> can be used to print on a printer with an
+AppleTalk interface.  For example:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface melab_colour gsatalk "M.E. Lab DeskJet 870C:DeskWriter@Acad MCEC"
+# ppad options melab_colour "device=cdj550"
+# ppad ppd melab_colour "HP DeskJet 550C Ghostscript"
+# ppad comment melab_colour "The HP DJ 870C in the ME lab"
+</Screen>
+
+</Para>
+
+<Para>
+Since Ghostscript doesn't have a driver specifically for the 870C, we used the
+option <Emphasis remap="bf">device=cdj550</Emphasis>.  Again, you must see to it that the driver ``cdj550''
+is compiled into your Ghostscript executable.
+</Para>
+
+<Para>
+It will help to consult the Ghostscript documentation when selecting a driver.
+The files <Literal remap="tt">devs.mak</Literal> and <Literal remap="tt">devices.txt</Literal> contain useful information.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Adding Printers With Other Connexion Methods</Title>
+
+<Para>
+To learn about the interfaces which support other means of connexion, refer
+to the ppad(8) man page.  The ppad(8) manual page also provides more details
+about the features of the interfaces described above.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Selecting a PPD File</Title>
+
+<Para>
+Once the printer has been added, you should indicate its PPD file.  Likely
+you will choose one of the files in <Literal remap="tt">/usr/ppr/PPDFiles</Literal>.  The files in
+this directory have descriptive names.  The PPD file name is set with the
+<Emphasis remap="bf">ppad ppd</Emphasis> command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad ppd myprn "QMS-PS 410"
+</Screen>
+
+</Para>
+
+<Para>
+Using the correct PPD file is very important since the wrong PPD file can
+prevent printer features such as multiple input trays and duplexing from
+working.  If you can not find a PPD file which is exactly right, try to find
+one that is close.  It is important not to use the PPD file for a level 2
+PostScript printer with a level 1 PostScript printer.  Also, the PPD file
+should define the bins which really exist on your printer and should have
+the correct code for selecting them.  Finally, it is best that the font list
+be correct.  A font list which leaves some fonts out is probably better than
+one which names fonts the printer does not have. Here are some common PPD
+file names:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term>``Apple LaserWriter II NT''</Term>
+<ListItem>
+<Para>
+Good substitute in a pinch for any printer which has only one bin.  It
+describes a level 1 PostScript printer with only one paper tray and 35
+built in fonts.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``Personal LaserWriter 320''</Term>
+<ListItem>
+<Para>
+A typical Level 2 printer with 35 fonts and one bin.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet IIISi PostScript''</Term>
+<ListItem>
+<Para>
+A typical 35 font level 1 printer with 2 paper trays.  This PPD file
+will work with a 4si too.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet 4Si 4SiMX PS 600dpi''</Term>
+<ListItem>
+<Para>
+Can't hurt to use the right one though.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet 4''</Term>
+<ListItem>
+<Para>
+Works with 4M, supplied by HP, has strange bin names.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet 4M DSC''</Term>
+<ListItem>
+<Para>
+David's, good bin names but every client must use this PPD file too or
+they won't be able to select bins.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet 4 Plus''</Term>
+<ListItem>
+<Para>
+Works with 4M Plus, supplied by HP, same strange bin names.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP LaserJet 4M Plus DSC''</Term>
+<ListItem>
+<Para>
+Same as above, but for HP 4M Plus.
+Again, each client will need a copy of this PPD file.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``QMS-PS 410''</Term>
+<ListItem>
+<Para>
+A typical Level 1 printer with 45 fonts and up to two bins.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``QMS-PS 810''</Term>
+<ListItem>
+<Para>
+A typical Level 1 printer with 35 fonts and one bin.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``QMS-PS 820''</Term>
+<ListItem>
+<Para>
+A typical Level 1 printer with 35 fonts and two bins
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>``HP DeskJet 550C PPD Ghostscript''</Term>
+<ListItem>
+<Para>
+A non-PostScript inkjet printer combined with Ghostscript.
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+<Para>
+If you choose either the ``HP LaserJet 4M DSC'' or ``HP LaserJet 4M Plus
+DSC'' PPD file you must equip your clients with copies of PPD file.  You
+may obtain these PPD files in distributions for Macintosh and MS-Windows
+(including Windows 95) from the place you got PPR.
+</Para>
+
+<Para>
+If you can not find anything that is close, the printer manufacturer you may be
+able to supply a suitable PPD file. Very often it can be found on the Macintosh
+or MS-Windows driver diskettes which come with the printer. If not, you may be
+able to obtain a suitable file from <Emphasis remap="bf">ftp://ftp.adobe.com/</Emphasis>.  If you are
+really determined, you can obtain the PostScript Printer Description File
+Format Specification from <Emphasis remap="bf">ftp://ftp.adobe.com/</Emphasis>.  This document
+together with a good printer manual will give you the information you need to
+write your own PPD file or to modify an existing one to work with your printer.
+Any new PPD files should be converted to Unix line termination (FTP will do
+this for you if you transfer them in ASCII mode).  The files already in
+<Literal remap="tt">/usr/ppr/PPDFiles</Literal> have names that are take from their <Emphasis remap="sf">*ModelName:</Emphasis>
+lines.  You might want ot adopt this practice.  You may put new PPD files in a
+directory other than <Literal remap="tt">/usr/ppr/PPDFiles</Literal>, as long as you specify the
+path in the <Emphasis remap="bf">ppad ppd</Emphasis> command.  PPD file names starting with ``/'' are used
+as is, others have ``<Literal remap="tt">/usr/ppr/PPDFiles/</Literal>'' prepended to them.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Adding a Comment</Title>
+
+<Para>
+It is recomended that you set the comment field in each printer's
+configuration. You set it like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad comment myprn 'My very own printer, but you may use it'
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Viewing the Configuration</Title>
+
+<Para>
+You may view a printer's configuration with the <Emphasis remap="bf">ppad show</Emphasis> command, like
+this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad show chipmunk
+Printer name: chipmunk
+Comment: David Chappell's printer
+Interface: atalk
+Address: "Mac Laser Printer :LaserWriter@MCEC"
+Options:
+JobBreak: signal (by default)
+Feedback: yes (by default)
+Codes: Binary (by default)
+Alert interval: 13 (send alert every 13 errors)
+Alert method: mail
+Alert address: David.Chappell@trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: none
+PPDFile: QMS-PS 800 II
+Bins:
+OutputOrder: ppd
+Default Filter Options: level=1 colour=False resolution=300 freevm=402509
+    mfmode=CanonCX
+Switchset:
+</Screen>
+
+</Para>
+
+<Para>
+Some of these configuration options have already been explained, all of them
+are described in the ppad(8) man page.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Deleting a Printer</Title>
+
+<Para>
+If a printer is no longer needed it may be deleted like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad delete myprn
+</Screen>
+
+</Para>
+
+</Sect3>
+
+</Sect2>
+

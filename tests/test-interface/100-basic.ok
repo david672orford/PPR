@@ -1,0 +1,36 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+ppr: 0
+PRINTER="regression-test1"
+ADDRESS="/tmp/regtest_interface_output"
+OPTIONS=""
+JOBBREAK=0
+FEEDBACK=0
+CODES=0
+QUEUEFILE=hhhh:regression-test1=nnnn.0(hhhh)
+ROUTING="My Routing Message"
+FORLINE="ppr"
+BARBARLANG=""
+%!
+%%For: (ppr)
+%%Routing: My Routing Message
+%%Pages: 0
+%%PageOrder: Special
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+% No DSC prolog, PPR will add code here ---v
+% ^--- End of non-DSC prolog
+% No DSC document setup, PPR will add code here ---v
+% jobname line removed
+% ^--- end of non-DSC document setup
+
+%%Trailer
+%%EOF
+% regtest interface done %

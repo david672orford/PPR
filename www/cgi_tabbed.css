@@ -1,0 +1,91 @@
+/*
+** mouse:~ppr/src/www/cgi_tabbed.css
+** Last modified 5 April 2001.
+*/
+
+BODY {	background: #C0C0C0;
+	color: black;
+	}
+
+/* Button for visible pane. */
+INPUT.tabactive {
+	font-size: 8pt;
+	font-weight: bold;
+	background: beige;
+	margin: 0; border-style: solid; border-color: black;
+	border-width: 1 1 1 1;
+	border-bottom-color: beige;
+	}
+
+/* Buttons for concealed panes. */
+INPUT.tabinactive {
+	font-size: 8pt;
+	font-weight: normal;
+	background: beige;
+	margin: 0; border-style: solid; border-color: black;
+	border-width: 1 1 1 1;
+	}
+
+/* Tables of this class form the background for tabbed dialog boxes. */
+TABLE.tabpage {
+	background: beige;
+	margin: 0;
+	border-style: solid;
+	border-color: black;
+	border-width: 0 1 1 1;
+	}
+
+TABLE.tabpage TD {
+	font-size: 10pt;
+	font-weight: normal;
+	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
+	height: 350px;			/* Mozilla 0.7 workaround */
+	}
+
+TABLE.tabpage P {
+	margin-top: 0pt;
+	margin-bottom: 5pt;
+	}
+
+/* Text input fields. */
+INPUT {
+	background: white;
+	font-weight: normal;
+	}
+
+/* Buttons that are supposed to look like buttons. */
+INPUT.buttons {
+	background: #b0b0b0;
+	}
+
+/* The bottons at the bottom with names like "Next". */
+P.buttons_bottom {
+	text-align: right;
+	}
+
+/* This is for error messages. */
+SPAN.alert { color: blue }
+
+/* This is for form field labels. */
+SPAN.label {
+	font-weight: bold;
+	}
+
+/* This is for value which should like like form text
+   fields but aren't.
+   */
+SPAN.value {
+	font-weight: normal;
+	background: white;
+	border-style: solid;
+	border-width: thin;
+	border-color: black;
+	padding: 0pt 2pt 0pt 2pt;
+	}
+
+TEXTAREA {
+	font-size: 10pt;
+	font-family: sans-serif;
+	}
+
+/* end of file */

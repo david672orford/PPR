@@ -1,0 +1,86 @@
+<sect1 id="start-restart">
+<title>Starting and Restarting the PPR Spooler</title>
+
+<para>
+When you have finished running the spooler install script, you are ready
+to start it for the first time.
+</para>
+
+<sect2>
+<title>The Hard Way</title>
+
+<para>
+You can start it manually with the following commands:
+
+<screen>
+# /usr/lib/ppr/bin/pprd
+# /usr/lib/ppr/bin/papsrv
+</screen>
+
+The first command starts the spooler daemon, the
+second starts the server for Macintosh clients. (Note that until you create a
+configuration file for <command/papsrv/, it will only run long enough to
+discover that the configuration file is missing.)  To stop the spooler, simply
+kill the processes.  To identify them, use <command/ps/. Here is how it
+would work with a System V style <command/ps/:
+
+<screen>
+# ps -u ppr
+   PID TTY     TIME COMD
+ 13492 ?       0:27 pprd
+ 13266 ?       0:01 papsrv
+# kill 13492
+# kill 13266
+</screen>
+
+And here is how it would work with a BSD style <command/ps/:
+
+<screen>
+# ps ax | grep ppr
+ 3892  p2 D    0:00 grep ppr
+   87  ?  S    0:11 /usr/ppr/bin/pprd
+   89  ?  S    0:00 /usr/ppr/bin/papsrv
+# kill 87
+# kill 89
+</screen>
+
+It is important to never kill <command/papsrv/ with the command <command/kill
+-9/ or <command/kill -KILL/ unless gentler means have already failed.  This is
+because, depending on which AppleTalk implementation you are using,
+<command/papsrv/ may have to call shutdown code to remove the advertised names
+from the AppleTalk network. If killed by SIGKILL, <command/papsrv/ will be
+unable to call the shutdown code and the names will remain.  You might then
+have to stop and restart the AppleTalk protocol stack to get rid of them. Until
+you get rid of them, you will be unable to restart <command/papsrv/ and any
+Macintosh clients which attempt to print to the now dead names will probably
+crash.
+</para>
+</sect2>
+
+<sect2><title>The Easier Way</title>
+<para>The above paragraphs describe how to start and stop the PPR server
+processes with simple Unix commands.  There are other, more automated ways to
+do it. For example, if your system uses a System V style <command/init/, you
+can stop all of the PPR daemons and once by finding the <filename/init.d/
+directory (which is in different places in different operating systems) and
+running the <command/ppr/ script which PPR installed there with the parameter
+<command/stop/.  In the example below we have a RedHat Linux system and are
+logged in as ``root''.  We start and then stop the PPR daemons:
+
+<screen>
+# /etc/rc.d/init.d/ppr start
+Starting PPR daemons: pprd papsrv
+# /etc/rc.d/init.d/ppr stop
+Stopping PPR daemons: pprd papsrv
+</screen>
+
+</para>
+
+<para>
+Section <xref linkend="papsrv-restart"> describes a shell script which provides an easy way
+to stop <command/papsrv/ without stopping <command/pprd/.
+</para>
+
+</sect2>
+
+</sect1>

@@ -1,0 +1,64 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+ppr: 0
+%!
+%%For: (ppr)
+%%Pages: 0
+%%PageOrder: Special
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex NotaFeature
+% PPR retained the following feature code despite fact that no such
+% feature is listed in the PPD file.  Use ppr's -K switch to change
+% this behavior.
+(I am not a duplex feature) print
+%%EndFeature
+%%EndSetup
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+ppr: 0
+%!
+%%For: (ppr)
+%%Pages: 0
+%%PageOrder: Special
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex NotaFeature
+% The code for this printer feature was removed by PPR because
+% there is no such feature listed in the PPD file.  Use ppr's -K
+% switch to change this behavior.
+% (I am not a duplex feature) print
+%%EndFeature
+%%EndSetup
+
+%%Trailer
+%%EOF
+% regtest interface done %

@@ -1,0 +1,104 @@
+#! /bin/sh
+
+#
+# This test interface is used for regression testing.
+#
+
+# source the file which defines the exit codes
+. lib/interface.sh
+
+# give the parameters names
+PRINTER="$1"
+ADDRESS="$2"
+OPTIONS="$3"
+JOBBREAK="$4"
+FEEDBACK="$5"
+CODES="$6"
+QUEUEFILE="$7"
+ROUTING="$8"
+FORLINE="$9"
+shift 1
+BARBARLANG="$9"
+
+# Redirect stdout to the file
+exec >$ADDRESS
+
+# Echo our parameters
+echo "PRINTER=\"$PRINTER\""
+echo "ADDRESS=\"$ADDRESS\""
+echo "OPTIONS=\"$OPTIONS\""
+echo "JOBBREAK=$JOBBREAK"
+echo "FEEDBACK=$FEEDBACK"
+echo "CODES=$CODES"
+echo "QUEUEFILE=$QUEUEFILE" | sed -e 's/=.*:/=hhhh:/' -e 's/-[0-9]*\./=nnnn./' -e 's/(.*)/(hhhh)/'
+echo "ROUTING=\"$ROUTING\""
+echo "FORLINE=\"$FORLINE\""
+echo "BARBARLANG=\"$BARBARLANG\""
+
+# Default options:
+pre_sleep=0
+post_sleep=0
+pre_error=0
+post_error=0
+pre_output=0
+post_output=0
+
+# Parse the options
+for opt in $OPTIONS
+    do
+    case $opt in
+	=* )
+	    name=`echo $opt | cut -d = -f 1`
+	    value=`echo $opt | cut -d = -f 2`
+	    $name=$value
+	    ;;
+	* )
+	    echo "Unrecognized option \"$opt\" ignored."
+	    ;;
+    esac
+    done
+
+# Sleep before accepting the job.
+sleep $pre_sleep
+
+# Return output before accepting the job.
+x=0
+while [ $x -lt $pre_output ]
+   do
+   echo "Now is the time for all good men to come to the aid of the party."
+   x=`expr $x + 1`
+   done
+
+# Report a PostScript error before accepting the job.
+if [ $pre_error -gt 0 ]
+   then
+   echo "%%[ Error: simulated; OffendingCommand: none ]%%"
+   fi
+
+# Send the PostScript job.
+cat -
+
+# Sleep after accepting the job.
+sleep $post_sleep
+
+# Return output after accepting the job.
+x=0
+while [ $x -lt $post_output ]
+   do
+   echo "Now is the time for all good men to come to the aid of the party."
+   x=`expr $x + 1`
+   done
+
+# Report a PostScript error after accepting the job.
+if [ $post_error -gt 0 ]
+   then
+   echo "%%[ Error: simulated; OffendingCommand: none ]%%"
+   fi
+
+# Append a marker so that the test code will
+# know we are done:
+echo "% regtest interface done %"
+
+# exit without error
+exit $EXIT_OK
+

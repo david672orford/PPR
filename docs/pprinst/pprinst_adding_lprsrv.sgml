@@ -1,0 +1,26 @@
+<sect2 id="adding-lprsrv">
+<title><application/PPR/'s LPD (RFC 1179) Server</title>
+
+<para>An LPD server, called <command/lprsrv/ is provided with PPR.  This server
+conforms to the remote printing protocol described in RFC 1179.  When this
+server receives a job for a PPR printer, it invokes <command/ppr/ and passes
+the file to it. If <application/PPR/'s LPD server receives a job for queue
+which is not defined in PPR, it passes the job to the system's normal print
+spooler.</para>
+
+<para><application/PPR/'s LPD server is relatively easy to set up since
+it simply shares all of your <application/PPR/ printers and all of the native
+spooling system's printers.
+</para>
+
+<para>Before using <application/PPR/'s LPD server, it is necessary
+to disable any LPD server you are currently using.
+</para>
+
+<para>Once any pre-existing LPD server is disabled, the <command/inetd/ configuration
+file may then be changed so that <command/inetd/ will call <command/lprsrv/
+whenever a print request comes in. The setup procedure is described in the
+lprsrv(8) man page.
+</para>
+
+</sect2>

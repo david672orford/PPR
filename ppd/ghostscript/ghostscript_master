@@ -1,0 +1,366 @@
+*PPD-Adobe: "4.2"
+*%
+#if 0
+*% ~ppr/src/ppd/ghostscript/ghostscript_master
+*% Copyright 1995--1999, Trinity College Computing Center.
+*% Written by David Chappell.
+*%
+*% Permission to use, copy, modify, and distribute this software and its
+*% documentation for any purpose and without fee is hereby granted, provided
+*% that the above copyright notice appear in all copies and that both that
+*% copyright notice and this permission notice appear in supporting
+*% documentation.  This software is provided "as is" without express or
+*% implied warranty.
+*%
+*% This Ghostscript PPD file is passed thru the C preprocessor which
+*% includes the correct lines for a certain printer.
+*%
+*% The symbols which determine what is included are:
+*%
+*%	FONTS_IBMCOURIER	for IBMCourier* family
+*%	FONTS_COURIER		for Courier* family
+*%	FONTS_TO13		for fonts in 13 font printers
+*%	FONTS_TO17		for fonts in 17 font printers
+*%	FONTS_TO35		for fonts in 35 font printers
+*%	FONTS_DINGBATS		for Zapf Dingbats
+*%	FONTS_GHOSTSCRIPT	for URW donated fonts
+*%
+*%	PRINTER_HPIII		HP LaserJet III with at least 1MB memory
+*%	PRINTER_HPDJ500		HP DeskJet 500, DeskWriter
+*%	PRINTER_DM24		24 pin dot matrix printers
+*%	PRINTER_HP550C		HP DeskJet 550C, 560C
+*%
+#else
+*% This file was generated from "~ppr/src/ppd/ghostscript.master"
+*% which was last revised 4 August 1999.
+*%
+#endif
+
+*% This tracks the PPR version:
+*FileVersion: "1.40"
+
+*FormatVersion: "4.2"
+*LanguageVersion: English
+
+*% This PPD file applies to these versions only if you add the fonts and
+*% Fontmap file from Ghostscript version 4.0 or later.
+#ifndef FONTS_GHOSTSCRIPT
+*PSVersion: "(2010.0) 312"
+*PSVersion: "(2010.0) 333"
+*PSVersion: "(2010.0) 351"
+#else
+*% *PSVersion: "(2010.0) 312"
+*% *PSVersion: "(2010.0) 333"
+*% *PSVersion: "(2010.0) 351"
+#endif
+
+*PSVersion: "(2010.0) 400"
+*PSVersion: "(2010.0) 403"
+*PSVersion: "(2010.0) 500"
+*PSVersion: "(2010.0) 510"
+*PSVersion: "(2010.0) 550"
+
+#ifdef PRINTER_HPIII
+*Product: "(HP LaserJet III Ghostscript)"
+*ModelName: "HP LaserJet III Ghostscript"
+*ShortNickName: "HP LaserJet III Ghostscript"
+*NickName: "HP LaserJet III Ghostscript"
+*PCFileName: "HPIIIGS.PPD"
+*DefaultResolution: 300dpi
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*Throughput: "6"
+*GhostscriptDriver: ljet3
+#endif
+
+#ifdef PRINTER_HPDJ500
+*Product: "(HP DeskJet 500 Ghostscript)"
+*ModelName: "HP DeskJet 500 Ghostscript"
+*ShortNickName: "HP DeskJet 500 Ghostscript"
+*NickName: "HP DeskJet 500 Ghostscript"
+*PCFileName: "HPDJ5GS.PPD"
+*DefaultResolution: 300dpi
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*Throughput: "4"
+*GhostscriptDriver: djet500
+#endif
+
+#ifdef PRINTER_DM24
+*Product: "(Dot Matrix 24 pin Ghostscript)"
+*ModelName: "Dot Matrix 24 pin Ghostscript"
+*ShortNickName: "Dot Matrix 24 pin Ghostscript"
+*NickName: "Dot Matrix 24 pin Ghostscript"
+*PCFileName: "DM24GS.PPD"
+*DefaultResolution: 360dpi
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*Throughput: "1"
+*GhostscriptDriver: necp6
+#endif
+
+#ifdef PRINTER_HPDJ550C
+*Product: "(HP DeskJet 550C Ghostscript)"
+*ModelName: "HP DeskJet 550C Ghostscript"
+*ShortNickName: "HP DeskJet 550C Ghostscript"
+*NickName: "HP DeskJet 550C Ghostscript"
+*PCFileName: "HPDJ5CGS.PPD"
+*DefaultResolution: 300dpi
+*ColorDevice: True
+*DefaultColorSpace: CMYK
+*Throughput: "8"
+*GhostscriptDriver: cdj550
+#endif
+
+*% This is also true:
+*Product: "(Aladin Ghostscript)"
+
+*% General Information and Defaults ===============
+*LanguageLevel: "2"
+*VariablePaperSize: False
+*FileSystem: True
+*TTRasterizer: None
+
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*Throughput: "3"
+
+*FreeVM: "1048576"
+*VMOption 512K/512K Free RAM: "524288"
+*VMOption 1Meg/1 MB Free RAM: "1048576"
+*VMOption 2Meg/2 MB Free RAM: "2097152"
+*VMOption 4Meg/4 MB Free RAM: "4194304"
+
+*OpenUI *InstalledMemory/Memory Configuration: PickOne
+*DefaultInstalledMemory: 1Meg
+*InstalledMemory 512K/512K Free RAM: ""
+*InstalledMemory 1Meg/1 MB Free RAM: ""
+*InstalledMemory 2Meg/2 MB Free RAM: ""
+*InstalledMemory 4Meg/4 MB Free RAM: ""
+*CloseUI: *InstalledMemory
+
+*OpenUI *PageSize: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: Letter
+*PageSize Letter: "statusdict /lettertray get exec"
+*PageSize Legal: "statusdict /legaltray get exec"
+*PageSize A4: "statusdict /a4tray get exec"
+*PageSize B5: "statusdict /b5tray get exec"
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 40 AnySetup *PageRegion
+*DefaultPageRegion: Letter
+*PageRegion Letter: "letter"
+*PageRegion Legal: "legal"
+*PageRegion A4: "a4"
+*PageRegion B5: "b5"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: Letter
+*ImageableArea Letter: "18 8 593 784"
+*ImageableArea Legal: "18 19 593 990"
+*ImageableArea A4: "18 18 577 824"
+*ImageableArea B5: "8 14 506 715"
+
+*DefaultPaperDimension: Letter
+*PaperDimension Letter: "612 792"
+*PaperDimension Legal: "612 1008"
+*PaperDimension A4: "595 842"
+*PaperDimension B5: "516 729"
+
+*RequiresPageRegion All: True
+*OpenUI *InputSlot: PickOne
+*OrderDependency: 20 AnySetup *InputSlot
+*DefaultInputSlot: Cassette
+*InputSlot Cassette: ""
+*CloseUI: *InputSlot
+
+*OpenUI *ManualFeed: Boolean
+*OrderDependency: 20 AnySetup *ManualFeed
+*DefaultManualFeed: False
+*ManualFeed True: "statusdict /manualfeed true put"
+*ManualFeed False: "statusdict /manualfeed false put"
+*CloseUI: *ManualFeed
+
+#if defined(PRINTER_HPDJ500) | defined(PRINTER_HPDJ550C)
+*DefaultOutputOrder: Reverse
+#else
+*DefaultOutputOrder: Forward
+#endif
+
+#ifdef PRINTER_HPDJ550C
+*OpenGroup: PrintQuality
+
+*OpenUI *BitsPerPixel/Color Rendering: PickOne
+*OrderDependency: 20 AnySetup *BitsPerPixel
+*DefaultBitsPerPixel: 24
+*BitsPerPixel 1/Grayscale Ghostscript Dithering: "<< /BitsPerPixel 1 >> setpagedevice"
+*BitsPerPixel 3/Ghostscript Dithering: "<< /BitsPerPixel 3 >> setpagedevice"
+*BitsPerPixel 8/Grayscale Floyd-Steinberg Dithering: "<< /BitsPerPixel 8 >> setpagedevice"
+*BitsPerPixel 16/Fast Floyd-Steinberg Dithering: "<< /BitsPerPixel 16 >> setpagedevice"
+*BitsPerPixel 24/Floyd-Steinberg Dithering: "<< /BitsPerPixel 24 >> setpagedevice"
+*BitsPerPixel 32/Floyd-Steinberg CMYK Dithering: "<< /BitsPerPixel 32 >> setpagedevice"
+*CloseUI: *BitsPerPixel
+
+*% Notice absence of *OrderDependency.  See PPD format spec. version 4.2, p. 54
+*% This means that this code may appear anywhere in the page description
+*% after the code fragments that do have an order dependency.  This code
+*% fulfils the requirement that it not alter any images drawn before it.
+*%
+*OpenUI *Gamma/Gamma Correction: PickOne
+*DefaultGamma: None
+*Gamma None/Dark: "{} dup dup dup setcolortransfer"
+*Gamma CMY3/Medium: "{0.333 exp} dup dup {} setcolortransfer"
+*Gamma CMY10/Light: "{0.1 exp} dup dup {} setcolortransfer"
+*% *Gamma CMYK3: "{0.333 exp} dup dup dup setcolortransfer"
+*% *Gamma CMYK10: "{0.1 exp} dup dup dup setcolortransfer"
+*CloseUI: *Gamma
+
+*% This is the amount of reduction in the cyan component.
+*% I must figure out if this means anything when
+*% using the Ghostscript cdj550C driver.
+*% The default means reduce cyan component to 4/5ths of normal.
+*%
+*OpenUI *BlackCorrect/Black Correction: PickOne
+*OrderDependency: 20 AnySetup *BlackCorrect
+*DefaultBlackCorrect: 4
+*BlackCorrect 0/No Cyan: "<< /BlackCorrect 0 >> setpagedevice"
+*BlackCorrect 1/Very Little Cyan: "<< /BlackCorrect 1 >> setpagedevice"
+*BlackCorrect 2/Even Less Cyan: "<< /BlackCorrect 2 >> setpagedevice"
+*BlackCorrect 3/Less Cyan: "<< /BlackCorrect 3 >> setpagedevice"
+*BlackCorrect 4/Normal: "<< /BlackCorrect 4 >> setpagedevice"
+*BlackCorrect 5/More Cyan: "<< /BlackCorrect 5 >> setpagedevice"
+*BlackCorrect 6/Even More Cyan: "<< /BlackCorrect 6 >> setpagedevice"
+*BlackCorrect 7/Almost Double Normal Cyan: "<< /BlackCorrect 7 >> setpagedevice"
+*BlackCorrect 8/Double Normal Cyan: "<< /BlackCorrect 8 >> setpagedevice"
+*BlackCorrect 9/More Than Double Normal Cyan: "<< /BlackCorrect 9 >> setpagedevice"
+*CloseUI: *BlackCorrect
+
+*OpenUI *Shingling/Printhead Overlap: PickOne
+*OrderDependency: 20 AnySetup *Shingling
+*DefaultShingling: None
+*Shingling None: "<< /Shingling 0 >> setpagedevice"
+*Shingling 50Percent/50 Percent: "<< /Shingling 1 >> setpagedevice"
+*Shingling 25Percent/25 Percent: "<< /Shingling 2 >> setpagedevice"
+*CloseUI: *Shingling
+
+*OpenUI *Depletion/Inteligent dot-removal: PickOne
+*OrderDependency: 20 AnySetup *Depletion
+*DefaultDepletion: None
+*Depletion None: "<< /Depletion 0 >> setpagedevice"
+*Depletion 25Percent/25 Percent: "<< /Depletion 1 >> setpagedevice"
+*Depletion 50Percent/50 Percent: "<< /Depletion 2 >> setpagedevice"
+*CloseUI: *Depletion
+
+*CloseGroup: PrintQuality
+#endif
+
+#ifdef FONTS_IBMCOURIER
+#ifndef COURIER_INCLUDED
+*DefaultFont: IBMCourier
+#endif
+*% PPR has the IBM versions of Courier with "IBM" prepended
+*% to their names in order to distinguish them from the
+*% Adobe versions.
+*Font IBMCourier: Standard "(001.003)" Standard Disk
+*Font IBMCourier-Bold: Standard "(001.003)" Standard Disk
+*Font IBMCourier-BoldOblique: Standard "(001.003)" Standard Disk
+*Font IBMCourier-Oblique: Standard "(001.003)" Standard Disk
+#endif
+
+#if defined(FONTS_COURIER) | defined(FONTS_TO13) | defined(FONTS_TO17) | defined(FONTS_TO35)
+#define COURIER_INCLUDED 1
+*DefaultFont: Courier
+*Font Courier: Standard "(001.005)" Standard Disk
+*Font Courier-Bold: Standard "(001.005)" Standard Disk
+*Font Courier-BoldOblique: Standard "(001.005)" Standard Disk
+*Font Courier-Oblique: Standard "(001.005)" Standard Disk
+#endif
+
+#if defined(FONTS_TO13) | defined(FONTS_TO35) | defined(FONTS_TO17)
+*% In the standard set, these fonts bring the total to 13.
+*Font Helvetica: Standard "(001.005)" Standard Disk
+*Font Helvetica-Bold: Standard "(001.005)" Standard Disk
+*Font Helvetica-BoldOblique: Standard "(001.005)" Standard Disk
+*Font Helvetica-Oblique: Standard "(001.005)" Standard Disk
+*Font Symbol: Special "(001.005)" Special Disk
+*Font Times-Bold: Standard "(001.005)" Standard Disk
+*Font Times-BoldItalic: Standard "(001.005)" Standard Disk
+*Font Times-Italic: Standard "(001.005)" Standard Disk
+*Font Times-Roman: Standard "(001.005)" Standard Disk
+#endif
+
+#if defined(FONTS_TO17) | defined(FONTS_TO35)
+*% In the standard set, these bring the count to 17
+*Font Helvetica-Narrow: Standard "(001.005)" Standard Disk
+*Font Helvetica-Narrow-Bold: Standard "(001.005)" Standard Disk
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.005)" Standard Disk
+*Font Helvetica-Narrow-Oblique: Standard "(001.005)" Standard Disk
+#endif
+
+#ifdef FONTS_TO35
+*% These make 35
+*Font AvantGarde-Book: Standard "(001.005)" Standard Disk
+*Font AvantGarde-BookOblique: Standard "(001.005)" Standard Disk
+*Font AvantGarde-Demi: Standard "(001.005)" Standard Disk
+*Font AvantGarde-DemiOblique: Standard "(001.005)" Standard Disk
+*Font Bookman-Demi: Standard "(001.005)" Standard Disk
+*Font Bookman-DemiItalic: Standard "(001.005)" Standard Disk
+*Font Bookman-Light: Standard "(001.005)" Standard Disk
+*Font Bookman-LightItalic: Standard "(001.005)" Standard Disk
+*Font NewCenturySchlbk-Bold: Standard "(001.005)" Standard Disk
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.005)" Standard Disk
+*Font NewCenturySchlbk-Italic: Standard "(001.005)" Standard Disk
+*Font NewCenturySchlbk-Roman: Standard "(001.005)" Standard Disk
+*Font Palatino-Bold: Standard "(001.005)" Standard Disk
+*Font Palatino-BoldItalic: Standard "(001.005)" Standard Disk
+*Font Palatino-Italic: Standard "(001.005)" Standard Disk
+*Font Palatino-Roman: Standard "(001.005)" Standard Disk
+*Font ZapfChancery-MediumItalic: Standard "(001.005)" Standard Disk
+#endif
+#if defined(FONTS_TO35) | defined(FONTS_DINGBATS)
+*% Part of 35 fonts, also part of Acrobat reader set.
+*Font ZapfDingbats: Special "(001.005)" Special Disk
+#endif
+
+#ifdef FONTS_GHOSTSCRIPT
+*% These are the URW fonts for which the fonts named above are aliases.
+*Font: URWBookmanL-DemiBold: Standard "(001.005)" Standard Disk
+*Font: URWBookmanL-DemiBoldItal: Standard "(001.005)" Standard Disk
+*Font: URWBookmanL-Ligh: Standard "(001.005)" Standard Disk
+*Font: URWBookmanL-LighItal: Standard "(001.005)" Standard Disk
+*Font: NimbusMonL-Regu: Standard "(001.005)" Standard Disk
+*Font: NimbusMonL-ReguObli: Standard "(001.005)" Standard Disk
+*Font: NimbusMonL-Bold: Standard "(001.005)" Standard Disk
+*Font: NimbusMonL-BoldObli: Standard "(001.005)" Standard Disk
+*Font: URWGothicL-Book: Standard "(001.005)" Standard Disk
+*Font: URWGothicL-BookObli: Standard "(001.005)" Standard Disk
+*Font: URWGothicL-Demi: Standard "(001.005)" Standard Disk
+*Font: URWGothicL-DemiObli: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-Regu: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-ReguItal: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-Bold: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-BoldItal: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-ReguCond: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-ReguCondItal: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-BoldCond: Standard "(001.005)" Standard Disk
+*Font: NimbusSanL-BoldCondItal: Standard "(001.005)" Standard Disk
+*Font: URWPalladioL-Roma: Standard "(001.005)" Standard Disk
+*Font: URWPalladioL-Ital: Standard "(001.005)" Standard Disk
+*Font: URWPalladioL-Bold: Standard "(001.005)" Standard Disk
+*Font: URWPalladioL-BoldItal: Standard "(001.005)" Standard Disk
+*Font: CenturySchL-Roma: Standard "(001.005)" Standard Disk
+*Font: CenturySchL-Ital: Standard "(001.005)" Standard Disk
+*Font: CenturySchL-Bold: Standard "(001.005)" Standard Disk
+*Font: CenturySchL-BoldItal: Standard "(001.005)" Standard Disk
+*Font: NimbusRomNo9L-Regu: Standard "(001.005)" Standard Disk
+*Font: NimbusRomNo9L-ReguItal: Standard "(001.005)" Standard Disk
+*Font: NimbusRomNo9L-Medi: Standard "(001.005)" Standard Disk
+*Font: NimbusRomNo9L-MediItal: Standard "(001.005)" Standard Disk
+*Font: StandardSymL: Special "(001.005)" Special Disk
+*Font: URWChanceryL-MediItal: Standard "(001.005)" Standard Disk
+*Font: Dingbats: Special "(001.005)" Special Disk
+#endif
+
+*% end of file

@@ -1,0 +1,39 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Unreasonable requirement "numcopies(0)" ignored
+WARNING: Requirement "punch(3)" missing from "%%Requirements:" comment
+WARNING: Requirement punch3 should be punch(3) in DSC >= 3.0
+ppr: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Pages: 2
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%+ punch(3)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%PageRequirements: punch(3)
+showpage
+
+%%Page: 2 2
+%%PageRequirements: punch(3)
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

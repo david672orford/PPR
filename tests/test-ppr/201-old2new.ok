@@ -1,0 +1,28 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!
+%%For: (PPR Spooling System)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>PPR Audio Commentary Server Tests</title>
+</head>
+<body>
+<h1>PPR Audio Commentary Server Tests</h1>
+
+<h2>Commentator Tests</h2>
+
+<form action="../cgi-bin/commentary_speach.cgi" method="GET">
+<dl>
+<dt>Printer:
+	<dd><input type="text" name="printer" value="test" size=16>
+
+<dt>Category:
+	<dd><select name="category">
+	<option value="1" selected>Printer Error
+	<option value="2">Printer Status
+	<option value="4">Printing Stalled
+	<option value="8">pprdrv Exited
+	</select>
+
+<dt>Message:
+	<dd><select name="cooked">
+	<option value="">---- Printer Status ----
+        <option>resetting printer
+	<option>initializing
+        <option>warming up
+        <option>idle
+        <option>busy
+	<option>printing test page
+	<option value="">---- Printer Errors ----
+        <option>off line
+	<option>paper low
+        <option>out of paper
+        <option>no paper tray
+        <option selected>paper jam
+	<option>cover open
+        <option>manual feed
+        <option>toner/ink is low
+	<option>toner/ink cartridge missing
+	<option value="">---- Printing Stalled ----
+	<option>may be stalled
+	<option>is probably stalled
+	<option>has been stalled for 5 minutes
+	<option>has been stalled for 10 minutes
+	<option>has been stalled for 101 minutes
+	<option>has been stalled for 300 minutes
+	<option>has been stalled for 15097 minutes
+	<option>has been stalled for 215097 minutes
+	<option>wasn't stalled
+	<option>is no longer stalled
+	<option>---- pprdrv Exited ----
+	<option>has printed a job
+	<option>printer error
+	<option>printer error, no retry
+	<option>interface core dump
+	<option>job error
+	<option>postscript error
+	<option>interface program killed
+	<option>printing halted
+	<option>otherwise engaged or off-line
+	<option>starved for system resources
+	<option>incapable of printing this job
+	<option>
+	</select>
+
+<dt>Severity:
+	<dd><select name="severity">
+	<option>1
+	<option>2
+	<option>3
+	<option>4
+	<option selected>5
+	<option>6
+	<option>7
+	<option>8
+	<option>9
+	<option>10
+        </select>
+
+<dt>Silly Sounds:
+	<dd><input type="checkbox" name="silly_sounds" value="1">
+
+<dt>Voice:
+	<dd><select name="voice">
+	<option selected>male1
+	<option>male1_44000
+	</select>
+
+</dl>
+
+<p><input type="submit" name="submit" value="Say It"></p>
+</form>
+
+</body>
+</html>

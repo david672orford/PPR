@@ -1,0 +1,35 @@
+#! /usr/bin/perl -w
+#
+# mouse:~ppr/src/editps/ADOBEPS4.DRV Version 4.24
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appears in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is"
+# without express or implied warranty.
+#
+# Last modified 15 June 2000.
+#
+
+=pod
+The Adobe 4.24 driver for Windows 95 sometimes emits a defective feature
+block just inside the end of the prolog (not the docsetup).  Here is an
+example:
+
+%%BeginFeature: *Copies 1
+ %%Empty Option
+ %%EndFeature
+
+=cut
+
+while(<STDIN>)
+    {
+    s/ %%EndFeature/%%EndFeature/;
+    print;
+    }
+
+exit 0;
+

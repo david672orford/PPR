@@ -1,0 +1,152 @@
+#!/bin/sh
+#
+# This test should provoke all the warnings in ppr_dscdoc.c
+# except the atend warnings.
+#
+# Last modified 12 September 1997.
+#
+
+$TESTBIN/clear_output
+
+# Send an error laced job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample1 || echo "ppr failed: $?"
+%!PS-Adobe-99.0
+%%Pages:
+%%Pages: 2 1
+%%PageOrder: Ascending
+%%PageOrder: NotLikely
+%%PageUnlikely: soupy
+%%ProofMode: (atend)
+%%LanguageLevel:
+%%LanguageLevel: 1
+%%LanguageLevel: one
+%%Title: Sample 1
+%%Creator: Tester
+%%Routing: To Test Framework
+%%Extensions: Money Wealth Fame
+%%Requirements: duplex punch(3)
+%%DocumentMedia: (atend)
+%%DocumentMedia: Plain 612 792 75 white ()
+%%Orientation:
+%%Orientation: Sideways
+%%Orientation: Portrait
+%%BeginProlog
+% Notice that this prolog butts up against the 
+% header comments.  Notice that it is also not
+% terminated.
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%Pages: (atend)
+%%Pages: 102
+%%PageUnlikier: gravy
+%%ProofMode: TrustMe
+%%For: my cat
+%%LanguageLevel: 1
+%%Title: in trailer anyway!
+%%Creator: wild test!
+%%Extensions: CMYK
+%%Requirements: duplex punch(3)
+%%Routing: Steal it!
+%%DocumentMedia: Plain 612 792 75 white ()
+%%EOF
+EndOfSample1
+
+$TESTBIN/cat_output
+
+# Clear for another one:
+$TESTBIN/clear_output
+
+# Send another error laced job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample2 || echo "ppr failed: $?"
+%!
+%%Title: sample 2
+%%Pages: 1
+%%EndComments
+%%BeginProlog
+% prolog
+
+%%BeginSetup
+% setup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample2
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+# Clear for another one:
+$TESTBIN/clear_output
+
+# Send a 3rd error laced job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample3
+%!
+%%Pages: 1
+%%Title: Sample 3
+%%EndComments
+
+%%BeginProlog
+% prolog
+%%EndProlog
+
+%%EndProlog
+
+%%BeginSetup
+% setup
+
+%%EndProlog
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample3
+
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+
+# Send a job thru the queue:
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample4 || echo "ppr failed: $?"
+%!PS-Adobe-3.0
+%%Title: sample 4
+%%Pages: 2
+%%Requirements: punch3 punch5
+%%DocumentPaperColors white
+%%DocumentPaperForms: Plain
+%%DocumentPaperSizes: letter
+%%DocumentPaperWeights: 75
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+%%EndSetup
+
+%%Page: 1 2
+%%PageRequirements: punch3
+%%PaperColor: white
+showpage
+
+%%Page: 2 2
+%%PageRequirements: punch(5)
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample4
+
+$TESTBIN/cat_output
+
+exit 0

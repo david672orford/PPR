@@ -1,0 +1,3 @@
+$figs{'pprdoc-printing1'} = '3';
+$figs{'pprdoc-printing2'} = '2';
+$figs{'pprdoc-enter'} = '1';

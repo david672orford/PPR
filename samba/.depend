@@ -1,0 +1,2 @@
+ppr2samba.$(OBJ): ppr2samba.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+

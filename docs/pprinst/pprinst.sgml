@@ -1,0 +1,69 @@
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!ENTITY section-installation SYSTEM "pprinst_installation.sgml">
+<!ENTITY section-start-restart SYSTEM "pprinst_start_restart.sgml">
+<!ENTITY section-adding-spooler SYSTEM "pprinst_adding_spooler.sgml">
+<!ENTITY section-adding-groups SYSTEM "pprinst_adding_groups.sgml">
+<!ENTITY section-adding-lmx SYSTEM "pprinst_adding_lmx.sgml">
+<!ENTITY section-adding-samba SYSTEM "pprinst_adding_samba.sgml">
+<!ENTITY section-adding-papsrv SYSTEM "pprinst_adding_papsrv.sgml">
+<!ENTITY section-adding-lprsrv SYSTEM "pprinst_adding_lprsrv.sgml">
+<!ENTITY section-adding-autobin SYSTEM "pprinst_adding_autobin.sgml">
+<!ENTITY section-job-submit SYSTEM "pprinst_job_submit.sgml">
+<!ENTITY section-user-notification SYSTEM "pprinst_user_notification.sgml">
+<!ENTITY section-viewing-queue SYSTEM "pprinst_viewing_queue.sgml">
+<!ENTITY section-canceling-jobs SYSTEM "pprinst_canceling_jobs.sgml">
+<!ENTITY section-operators-duties SYSTEM "pprinst_operators_duties.sgml">
+<!ENTITY section-backup SYSTEM "pprinst_backup.sgml">
+<!ENTITY section-removing SYSTEM "pprinst_removing.sgml">
+<!ENTITY section-replacing-printer SYSTEM "pprinst_replacing_printer.sgml">
+<!ENTITY section-legal SYSTEM "legal.sgml">
+]>
+
+<article>
+
+<articleinfo>
+  <title>Installing and Using PPR</title>
+  <author><firstname>David</firstname><surname>Chappell</surname></author>
+  <pubdate>7 May 2001</pubdate>
+  <copyright><year>1995--2001</year><holder>Trinity College Computing Center</holder></copyright>
+</articleinfo>
+
+<abstract>
+<para>
+This document tells how to install PPR version 1.44 and how to manage it.  It
+does not attempt to describe all of PPR's features or theory of operation.
+More information can be found in the <citetitle/PPR Reference Manual/
+and <citetitle/PPR, a Print Spooler for PostScript/.
+</para>
+</abstract>
+
+&section-installation;
+&section-start-restart;
+
+<Sect1 id="adding">
+<Title>Adding Printers</Title>
+<Para>
+This section has several parts.  This is because adding printers may be a
+multiple step process.  For example, you might add a printer to PPR, them make
+it a member of a PPR group, then tell Samba about it, then add it to the
+printers shared by PPR's AppleTalk print server.
+</Para>
+&section-adding-spooler;
+&section-adding-groups;
+&section-adding-lmx;
+&section-adding-samba;
+&section-adding-papsrv;
+&section-adding-lprsrv;
+&section-adding-autobin;
+</sect1>
+
+&section-job-submit;
+&section-user-notification;
+&section-viewing-queue;
+&section-canceling-jobs;
+&section-operators-duties;
+&section-backup;
+&section-removing;
+&section-replacing-printer;
+&section-legal;
+</article>

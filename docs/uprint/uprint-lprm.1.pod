@@ -1,0 +1,66 @@
+#
+# uprint-lprm.1.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 14 February 2000.
+#
+
+=head1 NAME
+
+uprint-lprm - Deletes print jobs
+
+=head1 SYNOPSIS
+
+B<uprint-lprm> [B<-P> I<queue>] [B<->] [B<job number>] [B<user>]
+
+=head1 DESCRIPTION
+
+This program is part of the PPR Uprint suite.  See the UPRINT(1) man page
+to learn about the Uprint suite.
+
+The program B<uprint-lprm> is used to delete print jobs.  On your system,
+the B<lprm> command may be an alias for B<uprint-lprm>.
+
+There are several ways to indicate which queue one wants to remove a job from.
+If the B<-P> switch is used, it overrides all other settings.  If the B<-P>
+switch is not used, then B<uprint-lprm> falls back on the PRINTER environment
+variable.  If the PRINTER environment variable is not defined, then it looks
+for a "uprint-lpr=" setting in the "[default destinations]" section of
+F<uprint.conf>.  If that too is not set, then B<uprint-lprm> assumes a queue
+name of "lp".
+
+There are three ways to specify which jobs within the selected queue should
+be deleted.
+
+If one or more job id numbers are specified, then the jobs with those id
+numbers will be deleted.
+
+If one or more user names are specified, then all jobs owned by those users
+will be deleted.  Since ordinary users may not delete other people's jobs,
+this option is only useful to the user "root".  (Note that PPR operators cannot
+delete other people's jobs with B<uprint-lprm> as they can with B<ppop>.)
+
+If the B<-> option is used, then all job belonging to the user who is running
+B<lprm> are deleted.  If the user "root" is the one running B<lprm>, then all
+jobs in the queue are deleted.
+
+Note that if the remote server is running PPR's B<lprsrv>, then the definition
+of "all jobs owned by this user" or "all jobs in the queue" may be limited
+to those jobs submitted from the network node on which B<lprm> is being run.
+However, the "proxy class=" setting in the F<lprsrv.conf> file can be used to
+expand this scope at least somewhat.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut
+

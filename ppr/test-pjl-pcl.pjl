@@ -1,0 +1,51 @@
+%-12345X@PJL COMMENT This is a test job
+@PJL SET RET = MED
+@PJL ENTER LANGUAGE = PCL
+total 974
+-rw-r--r--   1 ppr      ppr          1812 Mar  3 13:26 Makefile
+-rws--x--x   1 ppr      ppr        330042 Mar 19 13:51 ppr
+-rw-r--r--   1 ppr      ppr          2590 Feb  3 17:06 ppr_conffile.c
+-rw-r--r--   1 ppr      ppr          1752 Mar 19 11:55 ppr_conffile.o
+-rw-r--r--   1 ppr      ppr         39313 Mar  4 12:33 ppr_dscdoc.c
+-rw-r--r--   1 ppr      ppr         22528 Mar 19 11:55 ppr_dscdoc.o
+-rw-r--r--   1 ppr      ppr          6124 Feb 19 13:25 ppr_editps.c
+-rw-r--r--   1 ppr      ppr          3616 Mar 19 11:55 ppr_editps.o
+-rw-r--r--   1 ppr      ppr         71396 Mar 19 13:51 ppr_infile.c
+-rw-r--r--   1 ppr      ppr         71399 Mar 19 13:47 ppr_infile.c~
+-rw-r--r--   1 ppr      ppr         27752 Mar 19 13:51 ppr_infile.o
+-rw-r--r--   1 ppr      ppr         15894 Feb 19 13:25 ppr_mactt.c
+-rw-r--r--   1 ppr      ppr          6068 Mar 19 11:55 ppr_mactt.o
+-rw-r--r--   1 ppr      ppr         77651 Mar 19 12:28 ppr_main.c
+-rw-r--r--   1 ppr      ppr         77653 Mar 19 12:27 ppr_main.c~
+-rw-r--r--   1 ppr      ppr         37972 Mar 19 12:28 ppr_main.o
+-rw-r--r--   1 ppr      ppr         16078 Jan 26 11:55 ppr_media.c
+-rw-r--r--   1 ppr      ppr          6428 Mar 19 11:55 ppr_media.o
+-rw-r--r--   1 ppr      ppr          5714 Feb 19 13:07 ppr_nest.c
+-rw-r--r--   1 ppr      ppr          3112 Mar 19 11:55 ppr_nest.o
+-rw-r--r--   1 ppr      ppr          7647 Jul  7  1997 ppr_old2new.c
+-rw-r--r--   1 ppr      ppr          5104 Mar 19 11:55 ppr_old2new.o
+-rw-r--r--   1 ppr      ppr          3573 Feb  7  1996 ppr_outfile.c
+-rw-r--r--   1 ppr      ppr          2468 Mar 19 11:55 ppr_outfile.o
+-rw-r--r--   1 ppr      ppr         10488 Feb 20 14:23 ppr_rcache.c
+-rw-r--r--   1 ppr      ppr          4752 Mar 19 11:55 ppr_rcache.o
+-rw-r--r--   1 ppr      ppr          5923 Jul  3  1997 ppr_req.c
+-rw-r--r--   1 ppr      ppr          2932 Mar 19 11:55 ppr_req.o
+-rw-r--r--   1 ppr      ppr         17361 Oct  2 14:46 ppr_res.c
+-rw-r--r--   1 ppr      ppr          5136 Mar 19 11:55 ppr_res.o
+-rw-r--r--   1 ppr      ppr         11064 Mar 13 10:59 ppr_respond.c
+-rw-r--r--   1 ppr      ppr          6096 Mar 19 11:55 ppr_respond.o
+-rw-r--r--   1 ppr      ppr           962 Feb 19 17:28 ppr_selpgs.c
+-rw-r--r--   1 ppr      ppr           956 Mar 19 11:55 ppr_selpgs.o
+-rw-r--r--   1 ppr      ppr         13864 Mar  5 17:15 ppr_simplify.c
+-rw-r--r--   1 ppr      ppr          7116 Mar 19 11:55 ppr_simplify.o
+-rw-r--r--   1 ppr      ppr         14336 Feb 20 14:27 ppr_split.c
+-rw-r--r--   1 ppr      ppr          6944 Mar 19 11:55 ppr_split.o
+-rw-r--r--   1 ppr      ppr           971 Jan 20  1997 ppr_things.c
+-rw-r--r--   1 ppr      ppr          1004 Mar 19 11:55 ppr_things.o
+-rwxr-xr-x   1 ppr      ppr          4171 Mar 13 15:11 tbcp2bin
+-rw-r--r--   1 ppr      ppr          1521 Mar  4 12:47 tbcp2bin.c
+-rw-r--r--   1 ppr      ppr            16 Mar 13 10:59 test.html
+-rw-------   1 ppr      ppr          4096 Mar 19 13:56 test.pjl.swp
+-rw-r--r--   1 ppr      ppr           574 Mar  3 13:18 x.gz
+%-12345X
+

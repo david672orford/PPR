@@ -1,0 +1,95 @@
+<sect1 id="installation">
+<title>Installation</title>
+
+<!-- ===================================================================== -->
+<sect2>
+<title>Obtaining the PPR Source Code</title>
+
+<para>
+The <application/PPR/ source code may be obtained by anonymous FTP from
+<ulink url="ftp://ppr-dist.trincoll.edu/pub/ppr/">
+ftp://ppr-dist.trincoll.edu/pub/ppr/</ulink>.  If you prefer to use
+HTTP, the URL is <ulink url="http://ppr-dist.trincoll.edu/pub/ppr/">
+http://ppr-dist.trincoll.edu/pub/ppr/</ulink>.
+The file size is about 3 megabytes.
+</para>
+
+</sect2>
+
+<!-- ===================================================================== -->
+<sect2>
+<title>Unpacking, Compiling, and Installing PPR</title>
+
+<para>
+The <application/PPR/ source code comes as a tar archive compressed with
+gzip. To unpack it use this command:
+
+<screen>
+# gunzip -c ppr-src-1.44.tar.gz | tar xvf -
+</screen>
+
+This will uncompress and unpack the source code and deposit it in a directory
+called <filename/ppr-1.44/ which it will create in the current directory.
+</para>
+
+<para>
+Compiling and installing PPR consists of 4 basic steps:
+
+<orderedlist>
+<listitem><para>Running the <command/Configure/ script</para></listitem>
+<listitem><para>Running <command/make/</para></listitem>
+<listitem><para>Running <command/make install/</para></listitem>
+<listitem><para>Running the <command/fixup/ script</para></listitem>
+</orderedlist>
+
+These steps are described in detail in the file <filename/INSTALL.txt/ which
+may be found in the top level source code directory.
+</para>
+
+</sect2>
+
+<!-- ===================================================================== -->
+<sect2>
+<title>Setting a Default Alert Destination</title>
+
+<para>An operator can be informed by email when something goes wrong with a printer.
+For each printer, an operator's email address may be specified as well as an
+option which indicates how long the problem must persist before the operator is
+alerted.  As soon as you have installed the spooler you should set the default
+alert settings which will be applied to new printers.  You do it with a command
+like this one:
+
+<screen>
+# ppad new alerts 5 mail alertreaders@myorg.org
+</screen>
+
+After this command has been executed, then the configuration of each printer
+you add will be set so that on every fifth printer fault a notice will be
+mailed to <email/alertreaders@myorg.org/.
+</para>
+
+</sect2>
+
+<!-- ===================================================================== -->
+<sect2><title>Filter Setup</title>
+
+<para>
+The last thing the <command/fixup/ script does is run the script
+<command>/usr/lib/ppr/fixup/fixup_filters</command>.  The
+<command/fixup_filters/ script searches for certain programs which it will be
+able to use to convert files you may want printed to PostScript.  These
+programs include <application/Troff/, <application/TeX/, <application/DVIPS/,
+the <application/NetPBM/ utilities, and the <application/Adobe Acrobat Reader/.
+For those that are found in the current path, PPR generates small shell scripts
+in <filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
+scripts to automatically convert input files to PostScript.
+</para>
+
+<para>
+If you later add or remove programs which PPR uses or could use as filters,
+you should re-run <filename>fixup_filters</filename>.
+</para>
+
+</sect2>
+
+</sect1>

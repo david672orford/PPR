@@ -1,0 +1,44 @@
+#
+# mouse:~ppr/src/docs/refman/ppr-xgrant.1.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 13 December 2000.
+#
+
+=head1 NAME
+
+ppr-xgrant - Grant PPR spooler access to X display
+
+=head1 SYNOPSIS
+
+B<ppr-xgrant>
+
+=head1 DESCRIPTION
+
+The program B<ppr-xgrant> resides in F</usr/lib/ppr/bin>.
+
+The xwin responder will not work unless the user "ppr" has permission to pop
+up windows on your X-Windows display.  You could use the B<xhost> command to
+allow all processes on the computer to pop up windows, but on a multi-user
+system it is probably better to run B<ppr-xgrant> to copy the magic cookie
+from your F<.Xauthority> file to ppr's F<.Xauthority> file.  That way, an
+unnecessarily broad grant of access is avoided.
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--1998.  It was
+first released to the public on 26 April 1995.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

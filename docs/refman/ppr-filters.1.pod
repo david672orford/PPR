@@ -1,0 +1,729 @@
+#
+# ppr-filters.1.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 13 December 2000.
+#
+
+=head1 NAME
+
+ppr-filters - programs to convert file to PostScript
+
+=head1 DESCRIPTION
+
+This man page also describes the filters which PPR can invoke in order to
+convert the input file to PostScript.  A number of filters are supplied with
+PPR.  These include a line printer filter, a Fortran carriage control
+filter, and a dot matrix printer language filter.  Other filters are
+available if certain common Unix programs such as Troff, TeX, and NetPBM are
+available.
+
+The filters programs are stored in the directory F</usr/lib/ppr/filters>.  They have
+names consisting of "F<filter_>" followed by the PPR file type name as would
+be used with the B<-T> switch.  For example, the filter for files of type "dvi" is
+F</usr/lib/ppr/filters/filter_dvi>.  If the necessary filter does not exist, the job
+will be rejected.
+
+Some of PPR's filters are complete programs which come with PPR.  Others are
+simply shell scripts which use other programs to do the real work.  These
+other programs include TeX, Dvips, Troff, Groff, and PBMPlus.
+
+When PPR is installed, the B<fixup> script runs a subsidiary script called
+"F</usr/lib/ppr/fixup/fixup_filters>".  If it finds the necessary programs are found
+in the PATH, it will generate shell script filters for "tex", "dvi" "ditroff", 
+"cat4", "jpeg", "gif", "tiff", "plot"", "pdf", and other formats.  If, after 
+PPR is installed, you add programs which might be usable as filters, you should
+run F</usr/lib/ppr/fixup/fixup_filters> again.
+
+=head2 Available Filters
+
+These are the input file types which PPR can convert to PostScript.  They
+are listed according to the B<-T> switch which would be used to inform PPR
+that the input file is of that type.  Normally PPR will determine the 
+correct filter automatically.
+
+=over 4
+
+=item B<-T lp>
+
+indicates that input file is formated for a line printer or is unformatted
+ASCII text.  You might use B<-T lp> to print a listing of a PostScript program
+since otherwise, PPR would send it directly to the printer where it would be
+executed.
+
+This filter supports many B<-o> options.  These are described in the section
+which describes the B<-o> switch.
+
+The default value for the "charset=" option is "ISOLatin1".  The default for
+toe "fontfamily=" option is "fixed".
+
+This filter supports the B<gutter=> option which specifies an amount to be
+added to the margin on the side on which the paper will be bound.  The
+effect of the B<gutter=> option is influenced by the setting of the
+B<duplex=> option.  With B<duplex=undef>, the B<gutter=> option has no
+effect.  With B<duplex=none> the gutter is added to the left hand margin.
+With B<duplex=notumble> the gutter is added to one of the long edge margins,
+the left one on odd numbered pages, the right one on even numbered pages.
+With B<duplex=tumble> the gutter width is added to a short edge margin, the
+top one on odd numbered pages, the bottom one on even numbered pages.
+
+This filter supports the B<orientation=> option.  If no B<orientation=>
+option is used or B<orientation=auto> is used, then the orientation will be
+decided upon automatically.
+
+If the orientation is to be decided automatically, then the descision is
+based upon the parameters B<landscape_lentrigger> and
+B<landscape_asptrigger>.  These parameters are described in detail in the
+section for the B<-o> switch.
+
+=item B<-T lp_autolf>
+
+indicates that the input file is formated for a line printer that
+automatically performs a line feed on carriage return or is unformatted
+ASCII text that uses a single carriage return to indicate end of file.
+(This is the format of Macintosh text files.)  This is nearly the
+same filter as for B<-T lp> above and it supports the same options.
+
+=item B<-T fortran>
+
+indicates that the input file employs Fortran carriage control.  The only
+control code which actually does anything is "1".  This filter is a variant
+of B<-T lp> above and supports the same options.
+
+=item B<-T pr>
+
+indicates that the job should be passed through pr before being printed.
+After it is passed through pr it is passed through PPR's line printer
+emulator.  This instance of the B<-T> switch does not truly indicated the
+type of the input file, it is just a convenient way to get files formated
+and printed.
+
+It is assumed that the file you print is compatible with
+your system's version of B<pr>.  Your system's B<pr> may have trouble
+with files with non-Unix line termination.
+
+Normally, the file name or the string specified with
+the B<-C> switch (if present) will be used as the title.  You may override
+the title with the B<-o title=> option.
+
+The B<-o> option "B<width=>" specifies
+the value for B<pr>'s B<-w> switch and "B<length=>" specifies a value for
+B<pr>'s B<-l> option.  Since, after being processed by B<pr>, the file is
+passed through the "lp" filter, lines will be wrapped at the length
+specified by the B<-o width=> switch.
+
+All of the other "lp" filter options
+will work with this filter as well.
+
+=item B<-T text>
+
+indicates that the input file is plain text.  The way in which files of this
+type are printed is a system which may be made by the system administrator.
+When you first install PPR, F</usr/lib/ppr/filters/filter_text> is a link to
+F</usr/lib/ppr/filters/filter_lp>.  The system administrator may choose to
+substitute a script which invokes a different text-to-PostScript filters
+such as B<a2ps>.
+
+=item B<-T postscript>
+
+indicates that the input file is already in PostScript format and thus
+does not require filtering.  Since no filter is invoked, the filter options
+have no effect.
+
+=item B<-T pcl>
+
+indicates that the input file is in HP PCL format. The current distribution
+of PPR does not have a PCL to PostScript converter so this option will not
+work unless you provide one.  If you provide one, you should install it as
+F</usr/lib/ppr/filters/filter_pcl>.
+
+=item B<-T dotmatrix>
+
+indicates that a generic dot matrix printer filter should be applied to the
+input file.  This filter converts an Epson compatible printer
+language to PostScript.  This includes the commands of the Epson LX-80, Epson
+FX-850, and NEC Pinwriter 6.  The colour option of the Pinwriter 6 is
+emulated, colour output will be produced on colour PostScript printers.
+Partial support exists for the command sets of other printers but it has
+neither been completed nor tested.  The proportionally spaced font of the
+Epson FX-850 is emulated using Courier.
+
+This filter understands many of the common options such as "noisy=",
+"duplex=", and "charset=".  For a description of these options, see the
+description of the B<-o> switch.  The default value of the "charset" option
+is "CP437".  This filter also supports the following options which are
+unique to the dotmatrix filter:
+
+The B<-o "emulation="> option sets specific emulation modes to more closely
+emulate specific printers.  The recognized values are "B<epson>",
+"B<proprinter>", and "B<p6>".  The value "epson" means to interpret the
+commands as an Epson LX-80 or FX-850 would.  The value "proprinter" means to
+emulate an IBM proprinter, but it has not been well tested and may be
+incomplete.  The value B<p6> means to interpret the commands as an NEC
+Pinwriter 6 would and implies "B<pins=24>" as well.  The default is
+"B<emulation=epson>".
+
+The B<-o "pins="> option sets the emulator to mimic a 9 pin or a 24 pin
+printer.  If "B<pins=9>" or "B<pins=24>" is not used, a 9 pin dot matrix printer
+will be emulated unless 24 pin commands are seen on the first pass through
+the input file.  The motion commands are interpreted differently in 9 and 24
+pin mode.
+
+The B<-o "perfskip="> option sets the perforation skip in lines.  The
+default is 0.
+
+The B<-o "narrowcarriage="> option sets 8 inch line narrow carriage
+emulation to true or false.  When it is true, text printed at the left
+margin will be printed 0.25 inch from the left hand edge of the sheet.
+
+The B<-o "xshift="> option specifies an amount to shift the page image
+right.  The units are 72ths of an inch.
+
+The B<-o "yshift="> option specifies an amount to shift the page image down.
+The units are 72ths of an inch.
+
+=item B<-T troff>
+
+indicates that the input file is Troff source.  If you have Troff or Groff,
+F</usr/lib/ppr/fixup/fixup_filters> will build a filter in the form of a shell
+script which invokes one of them.
+
+The filter script supplied with PPR assumes that the document uses the
+B<man> macro package.  The filter does not have any options.  If you need
+more elaborate Troff processing, you should create your own, improved
+version of F</usr/lib/ppr/filters/filter_troff>.
+
+=item B<-T cat4>
+
+indicates that the input file is formated for a CAT/4 phototypesetter.  This
+is an old Troff output format.  No such filter is provided with PPR.
+If you write one, you should install it as F</usr/lib/ppr/filters/filter_cat4>.
+
+=item B<-T ditroff>
+
+indicates that the input file is in Ditroff (Device independent Troff)
+output format.  This is the format of the output file produced by modern
+versions of Troff as well as Groff.  If you have Groff's PostScript filter
+or Troff's dpost and postreverse, PPR will build a shell script called
+"F</usr/lib/ppr/filters/filter_ditroff>" to act as the filter.  This filter does not
+have any options.
+
+=item B<-T dvi>
+
+indicates that the input file is in TeX DVI format.  The
+F</usr/lib/ppr/fixup_filters> script will create the necessary filter
+script "/usr/lib/ppr/filters/filter_dvi" if it finds DVIPS.
+
+If the B<-o "noisy=yes"> option is used, this filter will allow DVIPS and
+MetaFont to print their running commentary output to stderr, otherwise, they
+run silently.
+
+By default, this filter automatically generates a config file for DVIPS.
+The automatically supplied B<-o> options "B<mfmode=>", "B<freevm=>", and
+"B<resolution=>" are used to generate the DVIPS configuration file.
+
+The B<-o "dvipsconfig="> option can override the automatic
+generation of a DVIPS configuration file.  The value
+of the option is passed to B<dvips> with B<dvips>'s B<-P> switch.
+
+=item B<-T tex>
+
+indicates that the input file is TeX or LaTeX source.  This option requires
+TeX, LaTeX, and Perl 4 or 5.
+
+If TeX or LaTeX fails, the log is printed instead of the document.  If the
+B<-o "noisy=yes"> option is used, this filter will allow TeX, LaTeX, DVIPS,
+and MetaFont to write their running commentary output to stderr, otherwise,
+they run silently.  Since this filter passes its output to the DVI filter,
+all the other options supported by the DVI filter are supported by this
+filter as well.
+
+=item B<-T wp>
+
+indicates that the input file is a WordPerfect document.  This will only
+work if F</usr/lib/ppr/filters/filter_wp> is present, executable, and is a suitable
+filter.  No such filter is supplied with PPR.
+
+=item B<-T texinfo>
+
+indicates that the input file is in GNU Texinfo format.  A filter script
+supplied with PPR will be installed if B<texi2dvi> is in the B<PATH> when
+F</usr/lib/ppr/fixup/fixup_filters> is run.  This filter has no options of its
+own, but it invokes the DVI filter, so the DVI filter's options may be used.
+
+=item B<-T rtf>
+
+indicates that the input file is in Rich Text Format.  No filter for this
+format is supplied.  If you write one you should install it as
+"F</usr/lib/ppr/filters/filter_rtf>".
+
+=item B<-T jpeg>
+
+indicates that the input file is a JPEG picture file.  If B<-o "colour=yes">
+or B<-o "colour=yes"> option is used with and the other picture format
+filters, the picture will not be converted to grayscale.  (The "colour="
+option is among the automatically generated default filter options, so you
+don't have to enter it on the command line unless you want to force the
+filter to generate grayscale output for a colour printer or colour output
+for a grayscale printer.)
+
+Most of the picture format filters are shell scripts which call the PBM
+utilities and the independent JPEG group's utilities.
+
+=item B<-T gif>
+
+indicates that the input file is a GIF picture file.  PPR's filter for this
+format uses the NetPBM utilities.
+
+=item B<-T tiff>
+
+indicates that the input file is a TIFF file.  PPR's filter for this format
+uses the NetPBM utilities.
+
+=item B<-T sunras>
+
+indicates that the input file is in Sun raster format.  PPR does not provide
+a filter for this format.
+
+=item B<-T plot>
+
+indicates that the input file is in the format of the output of the Berkeley
+plot library.  A sample filter in the form of a shell script is provided.
+It calls B<plot2ps>.
+
+=item B<-T CIF>
+
+indicates that the input file is in CalTech Intermediate Form graphics
+language.  No filter for this format is supplied.  If you write one, you
+should install it as "F</usr/lib/ppr/filters/filter_cif>".
+
+=item B<-T bmp>
+
+indicates that the input file is in Microsoft Windows BMP format.  A shell
+script which calls NetPBM utilities is provided.
+
+=item B<-T xbm>
+
+indicates that the file is an X-Windows bit map.  The filter is a shell
+script which calls NetPBM utilities.
+
+=item B<-T xpm>
+
+indicates that the input file is an X-Windows pixel map.  The filter is a
+shell script which calls NetPBM utilities.
+
+=item B<-T xwd>
+
+indicates that the input file is an X-Windows window dump.  The filter is a
+shell script which calls NetPBM utilities.
+
+=item B<-T pnm>
+
+indicates that the input file is a Portable Bit Map, Portable Gray Map, or
+Portable Pixel Map.  The filter is a shell script which calls NetPBM
+utilities.
+
+=item B<-T png>
+
+indicates that the file is in Portable Network Graphics format.  This is a
+new format and PPR does not have a filter for it yet.
+
+=back
+
+=head2 Filter Options
+
+Here is a complete list of the B<-o> options.  No filter supports all of these
+options.  (The filters which support each option are named in parentheses.)
+
+=over 4
+
+=item B<noisy=>I<boolean>
+
+instructs the filter to print debugging messages
+or to refrain.  Some filters (including lp, lp_autolf, fortran, pr,
+and dotmatrix) will indicated
+which options they do not understand from among those that appear after
+"noisy=yes".
+
+(Supported by:  lp, lp_autolf, fortran, pr, tex, texinfo, dvi, and dotmatrix at
+the very least)
+
+=item B<colour=>I<boolean>
+
+sets filters to produce colour or grayscale.  This option is provided
+automatically as a default filter option.
+
+(Supported by:  dotmatrix, all picture format filters)
+
+=item B<freevm=>I<positive_integer>
+
+indicates the printer's free virtual memory in bytes.  This option is
+automatically provided as a default filter option.
+
+(Supported by:  tex, texinfo, dvi)
+
+=item B<mfmode=>I<number>
+
+indicate the MetaFont mode to be used to generate fonts for this printer.
+This options is automatically provided as a default filter option.
+
+(Supported by:  tex, texinfo, dvi)
+
+=item B<level=>I<positive_integer>
+
+sets the PostScript LanguageLevel for generating code.  At the time of this
+writing, the correct value for all existing PostScript implementations is
+either 1 or 2.  This option is provided automatically as a default filter
+option.
+
+(Supported by:  dotmatrix, most if not all of the image format filters)
+
+=item B<dvipsconfig=>I<name>
+
+sets the argument for DVIPS's B<-P> switch, overriding the default which is
+to use an automatically generated configuration file.
+
+(Supported by:  dvi, tex, texinfo)
+
+=item B<resolution=>I<positive_integer>
+
+sets the resolution for code generation to I<positive_integer> DPI.
+This option is automatically provided as a default filter option.
+
+(Supported by:  tex, texinfo, dvi, most if not all of the image filters)
+
+=item B<title=>I<string>
+
+sets the title to print a the top of each page.  If this switch
+is absent, a default title (probably derived from the B<-C> switch
+or the input file name) will be used.
+
+(Supported by:  pr)
+
+=item B<width=>I<integer>
+
+sets the maximum width of the page in columns.
+
+(Supported by:  fortran, pr, lp, lp_autolf)
+
+=item B<length=>I<integer>
+
+sets the length of the page in lines.
+
+(Supported by:  pr)
+
+=item B<mincolumns=>I<integer>
+
+sets the minimum number of columns to be provided on the page.  Even if the
+document requires fewer columns than this, the type size will not be reduced
+beyond the point required to achieve the specified number of columns.  The
+default for this parameter is generally 70, but the default may vary from
+filter to filter.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<tabwidth=>I<integer>
+
+sets the number of columns between tab stops.  The default is 8.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<pdeflines=>I<integer>
+
+sets the number of portrait mode lines per page for files which do not
+contain form feeds.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<ldeflines=>I<integer>
+
+sets the number of landscape mode lines for files which do not contain form
+feeds.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<minlines=>I<integer>
+
+=item B<maxlines=>I<integer>
+
+these two parameters affect how many lines of vertical space is provided on the
+page.  If the shortest page in a document is shorter than minlines, pages
+are made minlines long, resulting in white space at the bottom of every page.
+If the longest page is longer than maxlines, all pages are made maxlines
+long, with the result that some pages are split into two or more pages.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<pmlm=>I<dimension>
+
+=item B<pmrm=>I<dimension>
+
+=item B<pmtm=>I<dimension>
+
+=item B<pmbm=>I<dimension>
+
+these set the minimum left, right, top, and bottom margins respectively for
+portrait mode.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<lmlm=>I<dimension>
+
+=item B<lmrm=>I<dimension>
+
+=item B<lmtm=>I<dimension>
+
+=item B<lmbm=>I<dimension>
+
+these set the minimum left, right, top, and bottom margins respectively for
+landscape mode.
+
+(Suported by:  lp, lp_autolf, pr, fortran)
+
+=item B<gutter=>I<dimension>
+
+The amount to be added to the margin on the binding edge of the paper.  In
+simplex mode this is the left hand side.  In duplex mode this is the left
+hand side of odd pages and the right hand side of even pages.  In duplex
+tumble mode this is the top side for odd pages, the bottom side for even
+pages.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<landscape_lentrigger=>I<positive_integer>
+
+=item B<landscape_asptrigger=>I<real>
+
+These options control when the line printer emulating filters switch from
+portrait to landscape mode.  If the page length is unknown (because the file
+contains no form-feeds), landscape mode is selected if the maximum line
+length exceeds B<landscape_lentrigger>.  If the page length can be determined,
+landscape mode is selected if the maximum line length divided by the page
+length exceeds the value of B<landscape_asptrigger>.
+
+The default values for B<landscape_lentrigger> and B<landscape_asptrigger>
+depend on the paper size, margins, gutter width, and other parameters such
+as B<char_height> and B<char_width>.  For letter size paper with margins of
+half an inch or so, B<landscape_lentrigger> is about 114 and
+B<landscape_asptrigger> is about 1.75.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<fontnormal=>I<fontname>
+
+=item B<fontbold>=I<fontname>
+
+The PostScript name of the font to be used for printing normal and bold
+text.  For example, "C<ppr -o 'fontnormal=Times-Roman fontbold=Times-Bold>".
+As a general rule only fixed width fonts will yield satisfactory results.
+
+If the font you want is listed in F</usr/share/ppr/lib/fonts.conf> it is easier to specify
+its family with the B<fontfamily=> option.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<fontfamily=>I<family>
+
+This option is used to select a different set of fonts.  The default value
+is "fixed".  Generally "fixed" means Courier.  You are limited to the font
+families which are listed in F<fonts.conf> for the character set you are using.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<charwidth=>I<real>
+
+=item B<charheight=>I<real>
+
+These options inform the filter of the size of the fonts selected.  These
+will normally only have to be used if the "fontnormal=" or "fontbold="
+options are used.  The dimensions are expressed as a decimal fraction of the
+point size.  For example, a typical setting for Courier is
+C<-o 'charwidth=0.6 charheight=1.0'>.
+
+(Supported by:  lp, lp_autolf, pr, fortran)
+
+=item B<charset=>I<name>
+
+sets the character set.  The options include "ASCII", "AdobeStandard",
+"ISOLatin1", "CP437", and "KOI8-R".  For a complete list see
+F</usr/share/ppr/lib/charsets.conf>.
+
+(Supported by:  dotmatrix, lp, lp_autolf, pr, fortran)
+
+=item B<pagesize=>I<pagesize_name>
+
+This sets the page size to be used.  Appropriate values will be inserted in
+the "C<%%DocumentMedia:>" comment in an attempt to select paper of the specified size.
+The size names are the same as those which appear in *PageSize lines in a
+printer's PPD file.  Typical values are "letter" and "a4".  This parameter
+is not case-sensitive.
+
+(Supported by:  lp, lp_autolf, pr, fortran, dotmatrix)
+
+=item B<orientation=>I<orientation>
+
+This sets the orientation of the lines on the printed page.  Valid settings
+are B<portrait>, B<landscape>, and B<auto>.  Filters which cannot
+automatically determine whether portrait or landscape is most appropriate
+should treat B<auto> as equivelent to either B<portrait> or B<landscape>.
+
+(SUpported by:  lp, lp_autolf, pr, fortran)
+
+=item B<duplex=>I<mode>
+
+This causes a filter to attempt to select the duplex mode.  Do not confuse
+this with the B<-R duplex:> series of switches which attempt to determine
+what duplex mode a document wants as well as setting default duplex modes.
+Duplex modes set with the B<-o duplex=> switch will override defaults set
+with the B<-R duplex:> switch.  Legal values for the B<-o duplex=> switch
+are:
+
+=over 4
+
+=item B<duplex=undef>
+
+Do not attempt to influence the duplex mode.
+
+=item B<duplex=none>
+
+Attempt to select simplex mode.
+
+=item B<duplex=tumble>
+
+Attempt to select tumble duplex mode.
+
+=item B<duplex=notumble>
+
+Attempt to select no tumble duplex mode.
+
+Duplex modes set with the B<duplex=> option will be overriden by duplex
+options set with the B<-F> switch.
+
+(Supported by:  lp, lp_autolf, pr, fortran, dotmatrix)
+
+=back
+
+=item B<mediatype=>I<type>
+
+This sets the media type field in the "C<%%DocumentMedia:>" comment.  By
+default this field is left empty.  Typical values for this field as
+suggested in the "PostScript Language Reference Manual, Second Edition",
+page 659 are "19HoleCerlox", "3Hole", "2Hole", "ColorTransparency",
+"CorpLetterHead", "CorpLogo", "CustLetterHead", "DeptLetterHead", "Labels",
+"Tabs", "Transparency", and "UserLetterHead".  The value of the mediatype=
+option should be considered case-sensitive.
+
+For example, to run a file through the Unix pr program and then print it on
+3 hole paper:
+
+	$ ppr -d chipmunk -T pr -o 'mediatype=3Hole' myfile.txt
+
+(Supported by:  lp, lp_autolf, pr, fortran, dotmatrix)
+
+=item B<mediaweight=>I<real>
+
+This sets the weight field in the "C<%%DocumentMedia:>" comment.  The value
+should be a real number.  The units are grams per square metre.  The default
+is 0 which means no specific weight is requested.
+
+(Supported by:  lp, lp_autolf, pr, fortran, dotmatrix)
+
+=item B<mediacolour=>I<colour_name>
+
+=item B<mediacolor=>I<colour_name>
+
+A filter may use this option to set the colour field in the
+"C<%%DocumentMedia:>" comment.  Typical values are "white", and "blue".
+
+(Supported by:  lp, lp_autolf, pr, fortran, dotmatrix)
+
+=item B<pins=9>
+
+=item B<pins=24>
+
+sets the Dotmatrix filter to emulate a 9 or 24 pin printer.
+
+(Supported by:  dotmatrix)
+
+=item B<emulation=>I<emulation_name>
+
+sets the make or model of printer to emulate.  The choices are "epson",
+"proprinter", and "p6".
+
+(Supported by:  dotmatrix)
+
+=item B<perfskip=>I<positive_integer>
+
+sets the number of lines to skip at the "perforation".
+
+(Supported by:  dotmatrix)
+
+=item B<narrowcarriage=>I<boolean>
+
+sets narrow carriage (8 inch) dotmatrix printer emulation.
+
+(Supported by:  dotmatrix)
+
+=item B<xshift=>I<integer>
+
+=item B<yshift=>I<integer>
+
+specify an amount to shift the page image to the right and up
+respectively.  The units are 72ths of an inch.
+
+(Supported by:  dotmatrix)
+
+=back
+
+=item B<--markup> <option>
+
+this option controls how markup language files are printed.  A markup language
+is a plain text file with special codes added.  Examples of markup langauges
+are Troff, TeX, HTML, SGML, and RTF.
+
+Basically, there are two ways of printing a marked-up file:  We can print it
+as is, or we can pass it through a formatter to produce a typeset document.
+The B<--markup> option controls which method is used.  The B<--markup> option
+has no effect if the input file is not contain marked-up text.
+
+The B<--markup> option can have the following values:
+
+=over 4
+
+=item B<--markup format>
+
+If a text file is marked-up, it is passed through a
+formatting filter to produce a typeset document.  If no formatting filter
+is available then the job will be rejected.
+
+=item B<--markup lp>
+
+Files which are marked-up are passed through the B<lp> filter.  (As if the
+B<-T lp> switch had been used.)
+
+=item B<--markup pr>
+
+A marked-up file is paginated with B<pr> and then passed through the
+B<lp> filter.  (As if the B<-T pr> option had been used.)
+
+=item B<--markup fallback-lp>
+
+This is the default.
+If an apropriate formatting filter is available it is used.  If not, the
+effect is the same as that of B<--markup lp>.
+
+=item B<--markup fallback-pr>
+
+If an apropriate formatting filter is available it is used.  If not, the
+effect is the same as that of B<--markup pr>.
+
+=back
+

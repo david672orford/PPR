@@ -1,0 +1,107 @@
+<Sect2 id="adding-groups">
+<Title>Making Groups of Printers</Title>
+
+<Para>
+You may wish to form groups of printers.  A group is assigned a name and
+member printers are specified.  Jobs may be submitted to the group and PPR will
+decide which printer the job will be printed on. It is simplest if all the
+member printers are of the the same make and model, but PPR can often smooth
+over the differences, especially when using automatic bin selection and
+reasonably good printer drivers such as LaserWriter 8.  A group is formed when
+the first member is assigned.  Members are assigned to a group like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group add ourgroup myprn
+# ppad group add ourgroup yourprn
+</Screen>
+
+</Para>
+
+<Para>
+Members may be removed from groups like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group remove ourgroup myprn
+</Screen>
+
+</Para>
+
+<Para>
+Removing all members from a group does not delete it. A group is deleted
+like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group delete ourgroup
+</Screen>
+
+</Para>
+
+<Para>
+Members may be added and removed even while jobs are being printed.  If a
+printer is removed while it is printing a job for that group, it will finish
+that job, but it will not print any more jobs for that group.  If a printer
+is added, it will be used as soon as it is idle and there is a job which
+needs a printer. If the group has no members, its jobs will not be printed
+until members are added.
+</Para>
+
+<Para>
+It is recomended that you set a group's comment
+field.  The comment field is set in this manner:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group comment ourgroup 'The printers we share'
+</Screen>
+
+</Para>
+
+<Para>
+Each group has a parameter called ``<Emphasis remap="bf">Rotate</Emphasis>''.  If <Emphasis remap="bf">Rotate</Emphasis> is
+<Emphasis remap="bf">false</Emphasis>, then when the time comes to print a job, PPR uses the first idle
+printer, starting with the first member of the group.  This will probably mean
+that the printers at the begining of the group's members list will get used
+more often.  If <Emphasis remap="bf">Rotate</Emphasis> is set to <Emphasis remap="bf">true</Emphasis>, PPR will try to use the
+printers in round-robin fashion.  <Emphasis remap="bf">Rotate</Emphasis> is <Emphasis remap="bf">true</Emphasis> by default, it may
+be set to false with a command like this one:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group rotate ourgroup false
+</Screen>
+
+</Para>
+
+<Para>
+The configuration of a group may be viewed with the <Emphasis remap="bf">ppad group show</Emphasis>
+command, like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad group show ourgroup
+Group name: ourgroup
+Comment: A printer at random
+Members: myprn, yourprn
+Rotate: True
+Default Filter Options:
+Switchset:
+</Screen>
+
+</Para>
+
+</Sect2>

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# This should be run by the user "ppr", so make the id output
+# part of the test:
+id | sed -e 's/[ \t]*groups=.*$//' -e 's/=[0-9]*(/=?(/g'
+
+# Set up a test print queue:
+$HOMEDIR/bin/ppad delete regression-test1 >/dev/null 2>&1
+$HOMEDIR/bin/ppad interface regression-test1 $TESTBIN/test_interface_1 $REGTEST_INTERFACE_OUTPUT
+echo "ppad: $?"
+$HOMEDIR/bin/ppad jobbreak regression-test1 none
+echo "ppad: $?"
+$HOMEDIR/bin/ppad ppd regression-test1 "HP LaserJet 4M Plus DSC"
+echo "ppad: $?"
+
+exit 0

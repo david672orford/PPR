@@ -1,0 +1,196 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Document uses DSC version 99.0 which is > 3.0
+WARNING: "%%Pages:" comment has no argument
+WARNING: 2nd argument to "%%Pages:" is deprecated in DSC >= 3.0
+WARNING: "%%PageOrder: Ascending" should be "%%PageOrder: Ascend"
+WARNING: Invalid "%%PageOrder:" argument "NotLikely"
+WARNING: Page level keyword "%%PageUnlikely: soupy" in header comments
+WARNING: Keyword "%%ProofMode:" can't take (atend)
+WARNING: "%%LanguageLevel:" comment has no argument
+WARNING: Invalid "%%LanguageLevel:" argument "one"
+WARNING: Language extension "Money" is unrecognized
+WARNING: Language extension "Wealth" is unrecognized
+WARNING: Language extension "Fame" is unrecognized
+WARNING: Keyword "%%DocumentMedia:" can't take (atend)
+WARNING: "%%Orientation:" comment has no argument
+WARNING: Invalid "%%Orientation:" argument "Sideways"
+WARNING: Header comments section is unterminated
+WARNING: No "%%EndProlog" before first "%%Page:", inserting one
+WARNING: Keyword "%%Pages:" declared (atend) in trailer
+WARNING: Ignoring "%%Pages:" in trailer because no "%%Pages: (atend)" in header
+WARNING: Page level keyword "%%PageUnlikier: gravy" in trailer
+WARNING: Keyword "%%ProofMode:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%For:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%LanguageLevel:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%Title:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%Creator:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%Extensions:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%Requirements:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%Routing:" is not allowed in trailer, ignoring
+WARNING: Keyword "%%DocumentMedia:" is not allowed in trailer, ignoring
+%!PS-Adobe-99.0
+%%PageUnlikely: soupy
+%%LanguageLevel: 1
+%%Extensions: Money Wealth Fame
+%%PageUnlikier: gravy
+%%DocumentMedia: Plain 612 792 75 white ()
+%%For: (PPR Spooling System)
+%%Creator: (Tester)
+%%Routing: To Test Framework
+%%Title: (Sample 1)
+%%Pages: 2
+%%PageOrder: Ascend
+%%Orientation: Portrait
+%%Requirements: duplex
+%%+ punch(3)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+%%BeginProlog
+% Notice that this prolog butts up against the 
+% header comments.  Notice that it is also not
+% terminated.
+
+%%EndProlog
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: No "%%EndProlog" before "%%BeginSetup", inserting one
+ppr: 0
+%!
+%%For: (PPR Spooling System)
+%%Title: (sample 2)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+%%BeginProlog
+% prolog
+
+%%EndProlog
+%%BeginSetup
+% jobname line removed
+% setup
+
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Extra "%%EndProlog"
+WARNING: Extra "%%EndProlog"
+%!
+%%For: (PPR Spooling System)
+%%Title: (Sample 3)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+% prolog
+%%EndProlog
+
+% jobname line removed
+%%EndProlog
+
+%%BeginSetup
+% setup
+
+%%EndProlog
+
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Requirement punch3 should be punch(3) in DSC >= 3.0
+WARNING: Requirement punch5 should be punch(5) in DSC >= 3.0
+WARNING: Obsolete "%%DocumentPaperColors white" comment ignored
+WARNING: Obsolete "%%DocumentPaperForms: Plain" comment ignored
+WARNING: Obsolete "%%DocumentPaperSizes: letter" comment ignored
+WARNING: Obsolete "%%DocumentPaperWeights: 75" comment ignored
+WARNING: Requirement punch3 should be punch(3) in DSC >= 3.0
+WARNING: Obsolete "%%PaperColor: white" comment ignored
+%!PS-Adobe-3.0
+%%DocumentPaperColors white
+%%DocumentPaperForms: Plain
+%%DocumentPaperSizes: letter
+%%DocumentPaperWeights: 75
+%%For: (PPR Spooling System)
+%%Title: (sample 4)
+%%Pages: 2
+%%PageOrder: Ascend
+%%Requirements: punch(3)
+%%+ punch(5)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+%%PaperColor: white
+%%PageRequirements: punch(3)
+showpage
+
+%%Page: 2 2
+%%PageRequirements: punch(5)
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

@@ -1,0 +1,48 @@
+#
+# pprfontindex.8.pod
+# Copyright 1995--1999, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is"
+# without express or implied warranty.
+#
+# Last revised 15 September 1999.
+#
+
+=head1 NAME
+
+B<pprfontindex> - Scan font directories and create PPR's font index
+
+=head1 SYNOPSIS
+
+B<pprfontindex>
+
+=head1 DESCRIPTION
+
+This program scans the directories listed in the [fonts] section of
+F</etc/ppr/ppr.conf>
+and builds an index of the fonts it finds in those directories.  Once fonts
+are in the index, PPR can download them when printing if the job contains
+DSC comments requesting font downloading.
+
+=head1 FILES
+
+The font database is stored in the file F</var/spool/ppr/fontindex.db>.
+
+=head1 SEE ALSO
+
+"PPR, a PostScript Print Spooler"
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--1999.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

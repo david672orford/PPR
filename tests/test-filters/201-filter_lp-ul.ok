@@ -1,0 +1,135 @@
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeResource: font Courier
+/ptsize 10.9 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 10.909 def
+/lm 36.00 def
+/tm 36.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+0 5 u
+6 8 u
+(David Chappell, hello)p
+ep
+
+%%Trailer
+%%Pages: 1
+%%EOF
+%!PS-Adobe-3.0
+%%Creator: PPR Line Printer Emulator
+%%DocumentData: Clean7Bit
+%%Pages: (atend)
+%%DocumentNeededResources: font Courier
+%%Orientation: Portrait
+%%Requirements:
+%%EndComments
+%%BeginProlog
+/d{bind def}bind def
+/sp{save
+ page 2 mod 1 eq{/y y gut_tb sub def}if}def
+/ep{restore showpage}def
+/n{/y y yspace sub def /m 0 def}d
+/nx{/y exch yspace mul neg y add def /m 0 def}d
+/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add
+    page 2 mod 1 eq{gut_lr add}if
+    y moveto}if
+ show}d
+/p{s n}d
+/i{/indent exch def}d
+/b{BFont setfont}d
+/r{RFont setfont}d
+/a{s BFont setfont}d
+/q{s RFont setfont}d
+/t{exch s ptsize mul width mul currentpoint 3 1 roll add exch moveto}d
+/A{4 t}d /B{5 t}d /C{6 t}d /D{7 t}d /E{8 t}d /F{9 t}d
+/G{10 t}d /H{11 t}d /I{12 t}d /J{13 t}d /K{14 t}d
+/L{15 t}d /M{16 t}d /N{17 t}d /O{18 t}d /P{19 t}d
+/Q{20 t}d /R{21 t}d /S{22 t}d /T{23 t}d /U{24 t}d
+/V{25 t}d /W{26 t}d /X{27 t}d /Y{28 t}d /Z{29 t}d
+/u{newpath exch ptsize mul width mul lm add page 2 mod 1 eq{gut_lr add}if y ptsize 0.25 mul sub moveto ptsize mul width mul 0 rlineto stroke}d
+%%EndProlog
+
+%%BeginSetup
+[ {
+%%IncludeFeature: *PageSize Letter
+} stopped {(*Pagesize Letter failed.\n)print} if cleartomark
+%%IncludeResource: font Courier
+/ptsize 10.9 def
+/RFont /Courier findfont ptsize scalefont def
+/width 0.60 def
+/yspace 10.909 def
+/lm 36.00 def
+/tm 36.00 def
+/gut_lr 0.00 def
+/gut_tb 0.00 def
+/ph 792.00 def
+/y ph tm sub ptsize 2 div sub def
+/m 0 def
+0 i
+r
+ptsize 35 div setlinewidth
+%%EndSetup
+
+%%Page: 1 1
+%%BeginPageSetup
+/page 1 def
+sp
+%%EndPageSetup
+(hello)p
+0 8 u
+ep
+
+%%Trailer
+%%Pages: 1
+%%EOF

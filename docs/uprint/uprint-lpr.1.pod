@@ -1,0 +1,292 @@
+#
+# uprint-lpr.1.pod
+# Copyright 1998, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 2 December 1998.
+#
+
+=head1 NAME
+
+uprint-lpr - selects spooler and submits print job
+
+=head1 SYNOPSIS
+
+B<uprint-lpr> I<switches> [I<filename1> [I<filename2>] ... ]
+
+=head1 DESCRIPTION
+
+This program is part of the PPR uprint suite.  See the UPRINT(1) man page
+for an explanation of what this means.
+
+This program is designed to accept all of the options accepted by the
+BSD B<lpr> program.  It also accepts some of the options accepted by
+enhanced versions of B<lpr> found on certain other Unix systems.
+Your system administrator may have choosen to replace F</usr/bin/lpr>
+with a link to this program.
+
+These are the option that B<uprint-lpr> accepts:
+
+=over 4
+
+=item B<-P> I<queuename>
+
+Use this option to select a print queue.  If this option is omited, then
+the queue name is read from the environment variable PRINTER.  If PRINTER
+is not defined then the queue name will be read from the "uprint-lpr=" entry
+in the "[default destinations] section of F<uprint.conf>.  If that too is
+missing then the queue be "lp".
+
+=item B<-m>
+
+Send email when the job is done.
+
+=item B<-#> I<n>
+
+Print the indicated number of copies.
+
+=back
+
+=head2 Input File Type Options
+
+=over 4
+
+=item B<-p>
+
+The files are plain ASCII text which should be passed through B<pr> before
+printing.
+
+=item B<-l>
+
+The files are in some sort of line printer format.  Control characters should
+be preserved and no attempt should be made to insert page breaks.
+
+=item B<-f>
+
+The files use FORTRAN carriage control.
+
+=item B<-c>
+
+The files are cifplot(1) output.
+
+=item B<-g>
+
+The files are plot(1) output.
+
+=item B<-d>
+
+The files are TeX DVI output.
+
+=item B<-n>
+
+The files are Ditroff (modern Troff) output.
+
+=item B<-t>
+
+The files are old Troff (CAT/4 typesetter format) output.
+
+=item B<-v>
+
+The files are raster images suitable for the "Benson Varian", whatever
+that is.
+
+=back
+
+=head2 Banner Page Options
+
+=over 4
+
+=item B<-h>
+
+Don't print a banner page.
+
+=item B<-C> I<string>
+
+Set the job classification to be printed on the banner page.  If this switch
+is ommited then the name of the computer from which the job origionated will
+be used instead.  (Exactly what a "job classifcation" is is unclear.)
+
+=item B<-J> I<string>
+
+Set the job name for queue listings and banner pages.
+
+=item B<-T> I<string>
+
+Select the title to appear in the running heads created by B<pr>.  (Obviously,
+or not so obviously, this switch only makes a difference in combination
+with the B<-p> switch.)
+
+=back
+
+=head2 Other Standard Options
+
+=over 4
+
+=item B<-r>
+
+Delete the job when printing is done.
+
+=item B<-s>
+
+Don't make a copy of the files, just make symbolic links to them.  If you use
+this then you probably shouldn't modify the files until printing is done.
+In many cases, Uprint will ignore this option and make its own copy of the
+files anyway.
+
+=item B<-1 I<fontname>>
+
+=item B<-2 I<fontname>>
+
+=item B<-3 I<fontname>>
+
+=item B<-4 I<fontname>>
+
+Select fonts to be mounted in Troff font positions 1 through 4.
+
+=item B<-i> I<n>
+
+Specifies a number of blanks as a left margin.  The default is supposedly 8.
+It is unclear when this switch is supposed to be effective.  It probably
+will have an effect when printing plain ASCII text (no file type switch)
+and when using the B<-p> switch.
+
+=item B<-w> I<n>
+
+This specifies the page width (in columns) for B<pr>.
+
+=item B<-U> I<user>
+
+Supposedly, this switch is used specify the owner of this job.  Only certain
+users can use it.  It is used by filters that requeue jobs.  At least that
+is what the BSD lpr(1) man page says.  Likely, this switch does not work
+correctly in B<uprint-lpr>.
+
+=back
+
+=head2 OSF/1 and Digital Unix Compatibility Options
+
+The B<lpr> program in OSF/1 and Digital Unix has additional options.
+B<Uprint-lpr> understands these additional options.
+
+=over 4
+
+=item B<-I> I<trayname>
+
+Specifies the input tray name.  Valid values depend on the queue.  For PPR
+queues this will be the tray name from the PPD file.  There will probably
+not be any warning if you select a non-existent tray.
+
+=item B<-K> I<duplexmode>
+
+This option selects double sided printing.  It can also be used to select
+printing modes which are useful when the printing will be done on one
+side but will be photocopied onto two sides.  Here are the options:
+
+The various duplex modes control three things.  On is how many sides of the
+page are used.  The other is, if both sides are used, how is the page flipped.
+The third thing is page layout.
+
+Page layout often changes according to how a document will be bound.
+When a document is going to be bound
+along one edge it is customary to make that margin a little wider.  If a
+document is printed on one side only and bound along the left hand edge,
+the extra space is added to the left margin.  If it is printed on two sides
+and bound on the left hand edge then the extra space is added to the left
+margin on odd numbered pages and to the right margin on even numbered pages.
+This extra space is sometimes called a gutter.  Also, if page numbers are
+printed and they are printed off center then when printing on two sides they
+are generall placed on the right on odd numbered pages and on the left on
+even numbered pages.
+
+=over 4
+
+=item<one_sided> or B<1> or B<one_sided_simplex>
+
+This is the default.  Page are printed on one side.  Where the spooler can
+adjust margins, it will put any "gutter" (extra space for the bound edge)
+on the left hand side.
+
+=item B<two_sided> or B<2> or B<two_sided_duplex>
+
+The document is printed on both sides of the paper.  This is probabaly
+the duplex option you want.  The pages are flipped over the long edge
+(generally the left edge, like most books).  If a gutter is used,
+it will alternate between the left and right margins.
+
+=item B<tumble> or B<two_sided_tumble>
+
+The document is printed on both sides of the paper.  The pages
+are flipped over the short edge (generally the top edge, like
+most calendars).  If a gutter is used, it will alternate between
+the top and buttom margins.
+
+=item B<one_sided_duplex>
+
+The document is printed on one side of the paper only, but if there
+is a gutter it alternates betwen the left and right margins.  The idea is
+that the finished pages can then be photocopied onto both sides.
+
+=item B<one_sided_tumble>
+
+This is like B<one_sided_duplex> but the gutter alternates between the top
+and bottom margins.
+
+=item B<two_sided_simplex>
+
+The document is printed on both sides of the paper (duplexed) but the
+gutter is always added to the left margin.  It is unclear why you might want
+to do this.  The option is probably present only for the sake of completeness.
+
+=back
+
+=item B<-O> I<orientation>
+
+This selects the orientation of the output.  The choices are "portrait"
+and "landscape".  In the case of a PPR queue this parameter will only make
+a difference if the input file must be converted to PostScript, and then
+only if the filter understands the "orientation=" option.
+
+=item B<-j>
+
+Print the jobid.
+
+=item B<-N> I<n>
+
+Print the pages N-Up.
+
+=item B<-o> I<n>
+
+=item B<-o> I<tray>
+
+This option specifies the output tray.  The Digital Unix lpr(1) man page says
+that the parameter should be a number, but for a PPR queue it should be an
+output tray name.  The output tray name should be one of the machine
+readable names mentioned in the PPD file.  If you select a non-existent
+output tray there will be no warning
+and the job will probably be sent to an output tray you did not intend.
+
+=item B<-x>
+
+Indicates that the file does not require filtering before printing.
+This option may not work when printing to PPR queues.
+
+=back
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=head1 BUGS
+
+Many options are simply passed to the remote spooler without any validity
+checking.  This means that incorrect options will often simply be ignored.
+
+=cut
+

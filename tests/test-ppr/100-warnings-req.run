@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# Try to prevoke some warnings related to requirements.
+#
+# Last modified 12 September 1997.
+#
+
+# Prevoke the warnings in ppr_req.c:
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none -R copies <<EndOfSample
+%!PS-Adobe-3.0
+%%Requirements: duplex numcopies(0)
+%%Pages: 2
+%%PageOrder: Ascend
+
+%%EndProlog
+
+%%Page: 1 1
+%%PageRequirements: punch(3)
+showpage
+
+%%Page: 2 2
+%%PageRequirements: punch3
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0

@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# This tests how it deals with a minimuly conforming DSC file
+# as defined in DSC 1.0.
+#
+# Last modified 12 September 1997.
+#
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 --responder none <<EndOfSample1
+%!PS-Adobe-
+%%Pages: 1
+
+%%EndProlog
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample1
+
+$TESTBIN/cat_output
+
+exit 0

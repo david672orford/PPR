@@ -1,0 +1,67 @@
+<Sect2 id="adding-samba">
+<Title>Adding PPR Printers to Samba</Title>
+
+<Para>
+If you are using the SMB server called ``Samba'' you can use it to share
+PPR printers.  It is recomended that you use Samba version 1.9.18 or later.
+For information about obtaining refer to:
+</Para>
+
+<Para>
+
+<Screen>
+http://samba.anu.edu.au/
+</Screen>
+
+</Para>
+
+<Para>
+To share PPR printers through Samba, you must add a few lines to
+Samba's configuration file.  Samba's configuration file is often called
+<Literal remap="tt">/usr/local/samba/lib/smb.conf</Literal>.
+</Para>
+
+<Para>
+Somewhere after the section called <Emphasis remap="bf">&lsqb;global]</Emphasis> you should add two lines
+which read:
+</Para>
+
+<Para>
+
+<Screen>
+include = /usr/ppr/lib/smb-protos.conf
+include = /etc/ppr/smb-include.conf
+</Screen>
+
+</Para>
+
+<Para>
+After you have modified <Literal remap="tt">smb.conf</Literal>, you should run
+<Emphasis remap="bf">/usr/ppr/bin/ppr2samba</Emphasis> which is a utility which creates the file
+<Literal remap="tt">/etc/ppr/smb-include.conf</Literal>.  This file will contain a Samba share
+definition section for each printer and group you have set up in PPR.
+You should re-run <Emphasis remap="bf">ppr2samba</Emphasis> after every time you create or delete a
+printer or group in PPR.
+</Para>
+
+<Para>
+To allow guest users to have meaningful names in the queue listing and to
+delete their jobs, you should add the Samba guest user to the access control
+file <Literal remap="tt">/etc/ppr/acl/pprprox.allow</Literal>.  All that is needed is a line with
+the user name on it.
+</Para>
+
+<Para>
+This procedure will share all PPR printers through Samba.  If you want to
+exclude certain printers you should refer to the ppr2samba(8) man page.
+</Para>
+
+<Para>
+You should also refer to the ppr2samba(8) man page if you want to set up
+special features for public access computers or if you want to set up Samba
+so it can offer printer drivers to Microsoft Windows 95 clients for
+automatic installation.
+</Para>
+
+</Sect2>
+

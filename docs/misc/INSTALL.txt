@@ -1,0 +1,479 @@
+============================================================================
+ mouse:~ppr/src/docs/misc/INSTALL.txt
+ mouse:~ppr/src/INSTALL.txt (symbolic link)
+ Last revised 20 April 2001
+============================================================================
+
+This document describes the steps required to compile and install PPR.  See
+README.txt to learn where the other documentation is.
+
+This document does not discuss installing PPR from an .rpm file.  The RPM
+version of PPR is still considered experimental.
+
+=============================================================================
+ Table of Contents
+=============================================================================
+
+* Requirements for Installing PPR
+* Programs for PostScript Filters
+* Notes for CAP
+* Notes for Netatalk
+* Notes X-Windows
+* Notes for RedHat Linux 4.x
+* Notes for DEC OSF/1
+* Notes for SGI IRIX 6.3
+* Notes for HP-UX 10.20
+* Notes for ULTRIX
+* Notes for MS-Windows NT 4.0 and UWIN 2.0
+* Notes for MS-Windows NT 4.0 and Cygwin
+* Simple Compiling Instructions
+* Upgrading to PPR 1.43 from previous versions
+
+=============================================================================
+ Requirements for Installing PPR
+=============================================================================
+
+1) The PPR source archive (ppr-1.44.tar.gz)
+
+2) Gunzip (to uncompress the source archive)
+
+3) Tar (to unpack the source archive)
+
+4) GCC version 2.5.8 or later or the native C compiler on
+   DEC OSF/1, Digital Unix 4.0, or IRIX 6.3.
+
+5) GNU dbm (GDBM) 1.5 or 1.7 and possibly other versions
+
+All of these items are probably already installed on Linux systems.  For
+other systems, you should check first.  The version of GCC may be
+determined with the command "gcc -v".
+
+It is possible to compile and use PPR even if you don't have GDBM, but
+the ppuser command and the printer accounting features associated with it
+won't work.
+
+While Perl is not absolutely required to use PPR, it is strongly recomended
+that you install Perl 5.005 or later.
+
+If you do not have Perl 4.036 or later, the following things will not work:
+
+* The TeX filter.  This means that you will have to run TeX source files
+  through TeX or LaTeX before sending them to be printed.  (But, the DVI
+  filter will still work.)
+
+* The "atalk" responder and its daemon "atalkmapd".  (Which hardly work
+  at all anyway.)
+
+* Automatic Windows 95 driver installation for Samba.
+
+If your Perl is older than 5.005, these additional things won't work:
+
+* The experimental World Wide Web interface.
+
+* The experimental ppr-panel GUI (which also requires Perl/Tk).
+
+* The audio commentator and responder.
+
+=============================================================================
+ Programs for PostScript Filters
+=============================================================================
+
+If the following software is present, more input filters will be available:
+
+* NetPBM
+
+* djpeg
+
+* Groff or Troff
+
+* TeX/LaTeX
+
+* Perl 4.0 patch level 36 or Perl 5.005 (Other versions not tested.)
+
+* DVIPS
+
+* plot2ps (Available from ftp://ppr-dist/pub/ppr/)
+
+* Transfig
+
+* GNU Texinfo
+
+* Uncompress
+
+* GZIP
+
+* HTMLDOC (Available from http://www.easysw.com/~mike/htmldoc/)
+
+* Xpdf
+
+* Adobe Acrobat Reader
+
+Most of these programs are a standard component of many Linux distributions.
+
+=============================================================================
+ Notes for CAP
+=============================================================================
+
+If you will be using PPR with CAP and you will be sharing more than about 10
+printers using papsrv, you must change two values in a CAP library header
+file and re-compile the CAP library.
+
+You should go to the directory "cap60/lib/cap" and edit the file "abpap.h".
+Change the values in the defines of NUMPAP and NUMSPAP from their normal
+values of 12 and 10 respectively to something higher such as 70 and 70.
+Once you have made the change you must re-compile and re-install the CAP
+library by running "make install".
+
+You must also copy a header file from a CAP source directory to
+"/usr/include/netat" (or wherever your CAP netat/ include directory is).  The
+file is the one you may have edited in the procedure described above,
+"cap60/lib/cap/abpap.h".
+
+=============================================================================
+ Notes for Netatalk
+=============================================================================
+
+In order to use Netatalk with PPR you must first obtain and install NATALI,
+the Netatalk AppleTalk Library Interface compatibility library.  This
+library, written by the author of PPR, may be obtained from the same place
+you got PPR.
+
+NATALI only works with Linux, though it is probably possible to port it to
+other operating systems without a lot of trouble.
+
+NOTE: be sure to read the README.txt file that comes with NATALI.  If you
+don't follow the directions, there will be an unresolved symbol when you try
+to link a program with NATALI and Netatalk.
+
+=============================================================================
+ Notes for RedHat Linux 4.x
+=============================================================================
+
+In 4.0 release, the file /usr/include/libintl.h contains an appearent bug.
+The line "#include <locale.h>" is enclosed by "#ifdef HAVE_LOCALE_H" and
+"#endif".  The condition should be removed.  It is not known if this problem
+is present in 4.1 or 4.2.
+
+If you want international messages support, then after you have run Configure
+and said "yes" to the appropriate option you must edit makeprogs/global.mk and
+change the line which says:
+
+INTLLIBS=#-lintl
+
+to
+
+INTLLIBS=-lintl
+
+Configure does not put the option -lintl in because the file /usr/lib/libintl.a
+is not present in RedHat 5.1 or 5.2.  Worse yet, if you upgrade a 4.x system
+to 5.1 the old file will be left in place.  Linking against the old file will
+result in executables that fail and dump core.
+
+=============================================================================
+ Notes for DEC OSF/1
+=============================================================================
+
+I believe these steps are not needed for PPR 1.40 or later.  If you have definite
+information on this point, write to <ppr-bugs@mail.trincoll.edu>.
+
+Installing PPR on DEC OSF/1 systems is straightforward.  The only
+required system modification is to insure that the System V STREAMS
+based modules are built into the kernel.
+
+You should find kernel configuration parameters in the file
+/sys/conf/HOSTNAME.  Examine the file and determine if the following
+lines are present.
+
+options		STREAMS
+options         FFM_FS
+options         PCKT
+
+If the above are present all the necessary components are already in place.
+Otherwise, you will need to rebuild the OS kernel using /usr/sbin/doconfig 
+as root.  In the doconfig script you will be asked to select kernel options.
+Be sure to include the following: System V Devices, STREAMS, and File on File
+Filesystem.  When doconfig finishes copy the new kernel to /vmunix and reboot.
+
+From this point on, you should be able to follow the usual PPR
+installation procedures.  When you run Configure, it will give you
+the option of using the C compiler that comes with the operating system.
+
+=============================================================================
+ Notes for SGI IRIX 6.3
+=============================================================================
+
+If you want to use lprsrv, then you must make lpsched stop binding to the lpd
+port.  To do this, add -nobsd to the line in /etc/init.d/lp that starts
+lpsched.
+
+=============================================================================
+ Notes for HP-UX 10.20
+=============================================================================
+
+When the xwin responder pops up an xterm with a message in it, you may find
+that the close button does not work.  This is apparently due to a bug in
+xterm.
+
+If this happens to you, you might want to install Tcl/Tk and the xmessage
+script described in the "X-Windows" section of this document.
+
+It is reported that CAP60 AppleTalk support works.
+
+=============================================================================
+ Notes for ULTRIX
+=============================================================================
+
+This port is still inmature, so there are still problems.
+
+The /bin/sh supplied with this system is very old.  It does not support
+shell functions.  Fortunately, a more modern shell is supplied as /bin/sh5.
+The Configure script uses shell functions.  So, to run it you must use
+the command "sh5 Configure" rather than "./Configure".
+
+This operating system may be missing the header files <sys/bitypes.h> and
+<sys/cdefs.h>.  If so, try the following:
+
+Link sys/bitypes.h to types.h and made a dummy sys/cdefs.h:
+  #define __BEGIN_DECLS
+  #define __P(x) x
+  #define __END_DECLS
+
+You may also notice that compiling with GCC is not an option.  If one does,
+seteuid() and setegid() don't work correctly.  (They don't work perfectly
+with the bundled compiler either, but they are better.)  Presumably there
+is a way to fix this.
+
+The bundled compiler may have trouble compiling the Flex generated PPD
+file lexers.  If it does, do "make veryclean" in the /pprdrv/ and /papsrv/
+directories.  After this is done, the lexer code will be re-generated with
+Lex.  Using Lex should be avoided because Lex generated lexers may not work
+correctly with *Include: in PPD files.
+
+=============================================================================
+ Notes for MS-Windows NT 4.0 and UWIN 2.0
+=============================================================================
+
+This port is new, so there are still problems.  These instructions are
+out-of-date.
+
+You will probably have to use the GUI tools to create the user "ppr".  Since
+NT does not allow a group with the same name, after running Configure, you
+will have to edit makeprogs/global.mk and change GROUP_PPR to something else
+and uncomment the line below its definition.
+
+=============================================================================
+ Notes for MS-Windows NT 4.0 and Cygwin
+=============================================================================
+
+This port is barely functional or non-functional.  You will probably have to
+make some adjustments to the section in sysdep.h or global.mk.  The install
+may also require some manual intervention.  This is not for the
+inexperienced user!
+
+=============================================================================
+ Notes X-Windows
+=============================================================================
+
+If your X-Windows distribution does not include xmessage, but you have Tcl/Tk,
+then you can install the xmessage clone from the misc/ directory.  You should
+probably put it in the /usr/bin/X11 directory.  This script is not a perfect
+clone but it is good enough for PPR's purposes
+
+=============================================================================
+ Simple Compiling Instructions
+=============================================================================
+
+1) Become root.
+
+2) Unpack the PPR source archive in a suitable place.
+   "/usr/local/src" is good.  You can do this with these commands:
+
+   mkdir /usr/local/src
+   cd /usr/local/src
+   gunzip -c ppr-1.44.tar.gz | tar -xvf -
+
+3) Change directory to "ppr-1.44" and run "./Configure".  Answer the questions.
+
+4) Run "make" and then "make install".
+
+5) Run fixup.  (Make install will tell you the full path.)
+
+If you have problems building PPR and want to delve into the Makefiles, you
+should probably read PORTING.txt first.
+
+============================================================================
+ Upgrading to PPR 1.44 from previous versions
+============================================================================
+
+This is a list of important changes you should be aware of when upgrading
+from a prevous version of PPR.  Previous versions include 1.43, 1.42, 1.41,
+1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.
+
+It is hard to keep track of what has changed.  If, when upgrading, you find
+things I have omitted, please write to <ppr-bugs@mail.trincoll.edu>.
+
+I have tried to list the changes from newest to oldest.  You can stop
+reading the information no longer applies to the version you are upgrading
+from.
+
+As much as possible, the fixup script tries to make upgrading painless,
+however some things might have to be fixed manually.  This section will at
+least give you some idea of what fixup will be doing.
+
+1) The defaults which the ./Configure script uses for the install
+directories changed with version 1.41.  Formerly PPR was installed in
+/usr/ppr, /etc/ppr, and /var/spool/ppr.  Now it is installed in
+/usr/lib/ppr, /usr/share/ppr, /etc/ppr, and /var/spool/ppr.  This change
+was made in order to conform to the File System Hierarcy Standard.
+
+If you are upgrading from an earlier version of PPR, you may wish to manually 
+enter the old directory locations.  Alternatively, you can rename /usr/ppr
+to /usr/ppr_old (so you won't later mistakenly look for something there) and
+then move /usr/ppr/speach (if you have it installed) to /usr/share/ppr/speach.
+You should also change the PPR home directory to /usr/lib/ppr and move anything
+else you put in /usr/ppr (such as PPD files, .k5login, .profile, etc.) into 
+either /usr/lib/ppr or /usr/share/ppr.
+
+2) The version 1.41 queue file format differs from all previous versions.
+Therefor, you should empty the queues before upgrading.
+
+3) Be aware that certain files formerly in /etc/ppr and /usr/ppr/globalconf
+have been moved to /usr/ppr/lib (which itself become /usr/lib/ppr/lib with
+version 1.42).  They all have the extension ".conf".  They were moved first
+to /usr/ppr/globalconf in version 1.32 and then to /usr/ppr/lib in version 
+1.40 because they are really a more a part of the PPR code than a user 
+configuration file.  If you have made changes to any of these files, you 
+should save them before upgrading since PPR will remove those in 
+/usr/ppr/globalconf.  Those in /etc/ppr will be renamed to include strings
+such as "pre-1.32" indicating in which PPR version they became obsolete.
+
+4) Starting with version 1.32, the file /etc/ppr/lw_messages.conf has been split
+into two files, which in version 1.40 are called /usr/ppr/lib/lw-messages.conf
+and /etc/ppr/lw-messages.conf.  Unknown messages are now appended to the one
+in /etc/ppr, the one in /usr/ppr/lib is never modified.
+
+5) If you have been using the UPRINT system in 1.31 (in which it existed in an
+early form) or one of the 1.32 beta releases then you may have some work to do.
+The names of the uprint programs have changed.  The names to which the standard
+spooler programs are renamed have also changed.  You should probably copy
+/etc/ppr/uprint.conf.sample to /etc/ppruprint.conf and manually rename things
+so that your file system matches your uprint.conf file.
+
+6) If you are upgrading from 1.30 then you need to know that the lprsrv program
+has changed.  The old program is preserved as olprsrv.  If you are in a
+hurry you can edit /etc/inetd.conf and change "lprsrv" to "olprsrv".  To
+install the new one, follow the directions in the lprsrv(8) man page
+for creating an entry in /etc/inetd.conf and then edit the lprsrv.conf
+file.
+
+7) As of PPR version 1.30, the PPD file "HP LJ III Ghostscript" is called "HP
+LaserJet III Ghostscript".  You are advised to delete the old one (which
+will not have been removed) and use "ppad ppd" to change printers to use the
+new one.
+
+8) If you are using Samba, you can still use the pseudo-printcap method of
+importing PPR printers, but it would be better to use the new method described
+in the ppr2samba(8) man page since it obviates the need to restart smbd
+after running ppr2samba.
+
+9) Because the name of the papsrv configuration file changed in version 1.30,
+if you start papsrv with commands in /etc/rc.local or /etc/rc.d/rc.local then
+you must change the test for the presence of the papsrv configuration file.
+Where it previously said:
+
+if [ -x /usr/ppr/bin/papsrv -a -r /etc/ppr/papsrv ]
+
+it should now say:
+
+if [ -x /usr/ppr/bin/papsrv -a -r /etc/ppr/papsrv.conf ]
+
+If your system uses System V style init scripts (not just a System V style
+init) then you don't have to do anything.  A new PPR start/stop script will
+be installed.
+
+10) Version 1.30 and later versions install a System V style init startup
+script for PPR on some systems for which earlier versions appended lines
+to rc.local.  If the fixup script installs an init script on your system and
+finds evidence of PPR startup code in rc.local it will alert you to that
+fact and recomend that you removed the startup code from rc.local.
+
+11) With version 1.30, the names of a few configuration files in /etc/ppr
+changed.  The fixup script will rename your old ones.  This chart describes
+the changes:
+
+Old Name	  New Name	  Old File Renamed To
+----------------------------------------------------
+papsrv		| papsrv.conf	| papsrv.conf
+fontsub		| fontsub.conf	| fontsub-pre-1.30.conf
+mfmodes		| mfmodes.conf	| mfmodes-pre-1.30.conf
+media		| media.db	| media-pre-1.30.db
+
+If you have made changes to any of the last three files you may want to
+put your own version back or merge your changes into the new one.  As
+explained above, in version 1.32, mfmodes.conf and fontsub.conf
+were moved to /usr/ppr/globalconf.  In version 1.40 they were moved
+to /usr/ppr/lib.
+
+12) The format of the mfmodes.conf file changed slightly with version 1.30.
+It now has a new field which is compared to *DefaultResolution.  When
+converting entries from the old format, insert a new fourth field with a
+value of "*".
+
+13) The default path for Ghostscript used by interface programs such as
+gssimple, gsatalk, and gstcpip is defined in /etc/ppr/ppr.conf.
+Prior to version 1.30 it was "/usr/local/bin/gs" and could not be changed.
+The default may be overridden with the "gs=" interface option.
+
+14) In version 1.30 the interface "parallel" was renamed to "simple".  This
+was to prepare for a new interface called "parallel" which appeared
+in version 1.32.  The interface "gs" was also renamed, to "gssimple".  This
+was in anticipation of an interface called "gsparallel" which also appeared
+in version 1.32 and is expected to marginalize gssimple.  If you have
+print queues which use the "gs" interface, you will have to switch them to
+the "gssimple" or "gsparallel" interface.
+
+15) Starting with version 1.20 PPR provides default filter options which are
+prepended to those supplied with the ppr -o switch.  The list of these
+options is stored in the printer or group configuration file.  Pre-1.20
+configuration files won't have "DefFiltOpts:" lines.  To generate them, run
+these commands:
+
+$ cd /etc/ppr/printers
+$ for i in *
+> do
+> ppad deffiltopts $i
+> done
+$ cd /etc/ppr/groups
+$ for i in *
+> do
+> ppad group deffiltopts $i
+> done
+
+This will generate a new "DefFiltOpts:" line in each printer and group
+configuration file.
+
+16) The names of the groups which are used to grant PPR privledges changed
+with version 1.20.  You should use the following information to rename you
+groups:
+
+    The privledge of using the ppr -f switch to appear to be somebody else
+    now belongs to the members of "pprprox".  Previously the members of
+    "ppr" could also do this.  (Do not delete the group "ppr".)
+
+    The privledge of making changes with ppop now belongs to the members
+    of the group "ppop" rather than "ppr".  (Do not delete the group
+    "ppr").
+
+    The privledge of making changes with ppad now belongs to the members
+    of the group "ppad" rather than "ppradmin".
+
+Note that the use of Unix groups to grant PPR privledges is considered
+obsolete.  The new way to do it is to list the privledged users in
+the file in /etc/ppr/acl.  So, you may just want to remove your
+administrators from the "ppr" group, delete the "ppradmin" group,
+and start using the /etc/ppr/acl files.
+
+============================================================================
+ End of instructions for compiling PPR
+============================================================================
+

@@ -1,0 +1,189 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Unenclosed EPS file, try -H badeps
+	(Expect additional semi-spurious warnings due to this problem.)
+WARNING: 56 characters follow EOF mark
+WARNING: No "%%Trailer:" comment
+WARNING: Missing "%%Page:" comments or incorrect "%%Pages:" comment
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (bad EPS inclusion test)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+/inch {72 mul} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+
+%%EndSetup
+
+%%Page: 1 1
+save
+%!PS-Adobe-3.0 EPSF-3.0
+%%Pages: 0
+
+newpath
+100 100 moveto
+100 0 rlineto
+stroke
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Unenclosed EPS file, applying badeps hack
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (bad EPS inclusion test)
+%%Pages: 2
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+/inch {72 mul} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+
+%%EndSetup
+
+%%Page: 1 1
+save
+%%BeginDocument:
+%!PS-Adobe-3.0 EPSF-3.0
+%%Pages: 0
+
+newpath
+100 100 moveto
+100 0 rlineto
+stroke
+
+%%EOF
+%%EndDocument
+restore
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (good EPS inclusion test)
+%%Pages: 2
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+/inch {72 mul} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+
+%%EndSetup
+
+%%Page: 1 1
+save
+%%BeginDocument: (A Line)
+%!PS-Adobe-3.0 EPSF-3.0
+%%Pages: 0
+
+newpath
+100 100 moveto
+100 0 rlineto
+stroke
+
+%%EOF
+%%EndDocument
+restore
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (good EPS inclusion test)
+%%Pages: 2
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+/inch {72 mul} def
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+
+%%EndSetup
+
+%%Page: 1 1
+save
+%%BeginDocument: (A Line)
+%!PS-Adobe-3.0 EPSF-3.0
+%%Pages: 0
+
+newpath
+100 100 moveto
+100 0 rlineto
+stroke
+
+%%EOF
+%%EndDocument
+restore
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

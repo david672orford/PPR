@@ -1,0 +1,41 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: ~ppr/src/dotmatrix/TrinColl-PPR-DotMatrix-G1-1-0
+%%Copyright: Copyright 1994, Trinity College Computing Center
+%%CreationDate: 18 November 1994
+%%Creator: David Chappell
+%%EndComments
+
+pprdotmatrix begin
+
+% Epson 8 pin graphic
+/graphic8{/len exch def /density exch def
+	save
+	/pstr len string def
+	currentpoint 8 add translate
+	-90 rotate
+	8 len true [bunit 72 div 0 0 density 72 div 0 0]
+	{currentfile pstr readhexstring pop}imagemask
+	restore}bd
+
+% Epson 9 pin graphic
+/graphic9{/len exch def /density exch def
+	save
+	/pstr len 2 mul string def
+	currentpoint 8 add translate
+	-90 rotate
+	9 len true [bunit 72 div 0 0 density 72 div 0 0]
+	{currentfile pstr readhexstring pop}imagemask
+	restore}bd
+
+% NEC 24 pin graphic
+/graphic24{/len exch def /density exch def
+	save
+	/pstr len string def
+	currentpoint 8 add translate
+	-90 rotate
+	24 len true [bunit 72 div 3 mul 0 0 density 72 div 0 0]
+	{currentfile pstr readhexstring pop}imagemask
+	restore}bd
+
+end % pprdotmatrix
+%%EOF

@@ -1,0 +1,75 @@
+<Sect2 id="adding-autobin">
+<Title>Automatic Bin Selection
+</Title>
+
+<Para>
+You must decide if you want to use PPR's automatic bin selection features on
+a certain printer.  If you do, you must specify the names of the bins on the
+printer and the type of paper in each bin.  If you do not tell PPR that the
+printer has bins, PPR will ignore the subject.  It will assume that
+the printer has the proper paper to print any job you throw at it.  If you tell
+PPR the name of each bin and the kind of paper, PPR will scrutenize each job
+and print it only when the required paper is mounted on one of the bins.
+</Para>
+
+<Para>
+The easiest way to tell PPR what bins the printer has is to instruct it to read the
+list from the PPD file.  The command to do this is:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad bins ppd myprn
+</Screen>
+
+</Para>
+
+<Para>
+When this is done, you can view the list you got with the command
+<Emphasis remap="bf">ppad show</Emphasis>:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad show myprn
+Printer name: myprn
+Comment: My very own printer
+Interface: atalk
+Address: Keep Out:LaserWriter@Clubhouse
+Options:
+JobBreak: signal/pjl
+Feedback: yes (by default)
+Codes: Binary (by default)
+Alert interval: 5 (send alert every 5 errors)
+Alert method: mail
+Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: none
+PPDFile: HP LaserJet 4M DSC
+Bins: Upper, Lower, MP, Envelope
+OutputOrder: ppd
+Default Filter Options: level=2 colour=False resolution=600 freevm=679680
+    mfmode=ljfour
+Switchset:
+</Screen>
+
+</Para>
+
+<Para>
+You can then delete any bin names which represent hardware options you have
+not chosen to install:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad bins delete myprn Envelope
+# ppad bins delete myprn Lower
+</Screen>
+
+</Para>
+
+</Sect2>
+

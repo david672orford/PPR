@@ -1,0 +1,12 @@
+#! /usr/bin/perl -w
+
+use Print::AFM;
+
+my $afm = Print::AFM::new("Times-Roman.afm");
+
+print "Family name: ", $afm->FamilyName, "\n";
+
+my $char = $afm->getchar("a");
+
+print "Width of \"a\": ", $char->width, "\n";
+

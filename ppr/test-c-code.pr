@@ -1,0 +1,528 @@
+
+
+Apr  8 14:18 1998   Page 1
+
+
+//============================================================================================
+//
+//	Christian T. Allen
+//	CPSC 304 (Graphical Software) - Professor Walde
+//	Diamond Project - 4/6/98
+//
+//	---------------------------------------------------------------------------
+//
+//	The purpose of this program is to set up an interface in which a user
+//	can interact with a rotating 8 sided diamond.  The diamond is represented
+//	much the same way the rotating cube was set up, with colors and normals
+//	assigned to each vertex.  Additional keyboard controls have been added.
+//
+//============================================================================================
+//=======================================MAIN PROGRAM=========================================
+
+#include <stdlib.h>
+#include <GL/glut.h>
+
+/*  -VERTICES	*/
+
+/*	The old vertices used for the cube:	*/
+
+/*	GLfloat vertices[][3] = {{-1.0,-1.0,-1.0},{1.0,-1.0,-1.0},
+	{1.0,1.0,-1.0}, {-1.0,1.0,-1.0}, {-1.0,-1.0,1.0},
+	{1.0,-1.0,1.0}, {1.0,1.0,1.0}, {-1.0,1.0,1.0}};
+*/
+
+/*	MODIFICATION:  new vertices defining the diamond shape:	*/
+
+	GLfloat vertices[][3] = {{0.0,1.0,0.0},{0.0,0.0,1.0},
+	{0.0,-1.0,0.0}, {1.0,0.0,0.0}, {0.0,0.0,-1.0},
+	{-1.0,0.0,0.0}};
+
+
+/*  -NORMALS	*/
+
+/*	The old normals used for the cube:	*/
+
+/*	GLfloat normals[][3] = {{-1.0,-1.0,-1.0},{1.0,-1.0,-1.0},
+	{1.0,1.0,-1.0}, {-1.0,1.0,-1.0}, {-1.0,-1.0,1.0},
+	{1.0,-1.0,1.0}, {1.0,1.0,1.0}, {-1.0,1.0,1.0}};
+*/
+	
+/*	MODIFICATION:  new set of normals (Origin is {0,0,0}; normals = vertices):	*/
+
+	GLfloat normals[][3] = {{0.0,1.0,0.0},{0.0,0.0,1.0},
+	{0.0,-1.0,0.0}, {1.0,0.0,0.0}, {0.0,0.0,-1.0},
+	{-1.0,0.0,0.0}};
+
+
+/*  -COLORS	*/
+
+/*	MODIFICATION:  Primary color set	*/
+
+	GLfloat color_set[][3] = {{1.0,0.0,1.0},{1.0,0.0,0.0},
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 2
+
+
+	{0.0,1.0,1.0}, {1.0,1.0,0.0}, {0.0,1.0,0.0},
+	{0.0,0.0,1.0}, {0.0,0.0,0.0}, {1.0,1.0,1.0}};
+
+
+/*	MODIFICATION:  A secondary and tertiary color set (used for color changes):	*/
+
+	GLfloat color_set2[][3] = {{0.0,0.0,0.0},{1.0,0.0,0.0},
+	{1.0,1.0,0.0}, {0.0,1.0,0.0}, {0.0,0.0,1.0},
+	{1.0,0.0,1.0}, {1.0,1.0,1.0}, {0.0,1.0,1.0}};
+
+	GLfloat color_set3[][3] = {{1.0,0.0,0.0},{0.0,1.0,0.0},
+	{0.0,0.0,1.0}, {0.0,1.0,0.0}, {0.0,1.0,0.0},
+	{0.0,1.0,0.0}, {1.0,1.0,1.0}, {0.0,1.0,1.0}};
+
+
+/*  -KEYBOARD FUNCTION VARIABLES	*/
+
+	GLfloat color_R = 0;				/* for changing amount of Red  */
+	GLfloat color_G = 0;				/* for changing amount of Green  */
+	GLfloat color_B = 0;				/* for changing amount of Blue  */
+
+	int cycle = 0;					/* for cycling through color sets  */
+
+	GLfloat extend = 1;				/* controls object size  */
+
+	GLfloat scale_X = 1.0;				/* controls scaling along X axis  */
+	GLfloat scale_Y = 1.0;				/* controls scaling along Y axis  */
+	GLfloat scale_Z = 1.0;				/* controls scaling along Z axis  */
+
+	GLfloat speed = 2.0;				/* controls speed of rotation  */
+
+
+/*  -OTHER GLOBAL VARIABLES	*/
+
+	int count1, count2;				/* used in For loops  */
+
+//============================================================================================
+
+//  -METHOD: myinit();
+//
+//	Initiates values for ambience, specularity, diffuseness, and the position of
+//	light 0.  Also includes values for characteristics of the material (just in case
+//	implementation of program changes).  These material values do not affect the diamond
+//	as its colors are already definied.
+
+//------------------------------------------------------------------------------------------
+
+void myinit()
+{
+    GLfloat mat_specular[]={1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_ambient[]={1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess={50.0};
+    GLfloat mat_diffuse[]={1.0,1.0,1.0, 1.0};
+    GLfloat light_ambient[]={0.75, 0.75, 0.75, 1.0};
+    GLfloat light_diffuse[]={0.25, 0.25, 0.25, 1.0};
+    GLfloat light_specular[]={1.0, 1.0, 1.0, 1.0};
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 3
+
+
+    GLfloat light_position[]={5, 5, 5, 1.0};
+
+/* set up ambient, diffuse, and specular components for light 0 */
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+/* define material proerties for front face of all polygons */
+
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    glMaterialf(GL_FRONT, GL_SHININESS, mat_shininess);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT);
+
+    glEnable(GL_SMOOTH); /*enable smooth shading */
+    glEnable(GL_LIGHTING); /* enable lighting */
+    glEnable(GL_LIGHT0);  /* enable light 0 */
+    glEnable(GL_DEPTH_TEST); /* enable z buffer */
+    glEnable(GL_COLOR_MATERIAL);
+
+    glClearColor (0.0, 0.0, 0.0, 1.0);
+    glColor3f (0.0, 0.0, 0.0);
+} // End myinit();
+
+//===========================================================================================
+
+//  -METHOD: polygon(a,b,c);
+
+//	Defines the way in which polygons are drawn and colored in in the final object.
+//	Takes three arguments rather than four because the diamond is made of triangles,
+//	not squares.
+
+//-----------------------------------------------------------------------------------------
+
+void polygon(int a, int b, int c)
+{
+
+/*	MODIFICATION:  RGB values are modified according to keyboard commands before
+			polygons are drawn.	*/
+
+	if ((color_set[a][0] + color_R <= 1) || (color_set[a][0] + color_R >= 0))
+		color_set[a][0] = color_set[a][0] + color_R;
+	if ((color_set[a][1] + color_G <= 1) || (color_set[a][1] + color_G >= 0))
+		color_set[a][1] = color_set[a][1] + color_G;
+	if ((color_set[a][2] + color_B <= 1) || (color_set[a][2] + color_B >= 0))
+		color_set[a][2] = color_set[a][2] + color_B;
+	if ((color_set[b][0] + color_R <= 1) || (color_set[b][0] + color_R >= 0))
+		color_set[b][0] = color_set[b][0] + color_R;
+	if ((color_set[b][1] + color_G <= 1) || (color_set[b][1] + color_G >= 0))
+		color_set[b][1] = color_set[b][1] + color_G;
+	if ((color_set[b][2] + color_B <= 1) || (color_set[b][2] + color_B >= 0))
+		color_set[b][2] = color_set[b][2] + color_B;
+	if ((color_set[c][0] + color_R <= 1) || (color_set[c][0] + color_R >= 0))
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 4
+
+
+		color_set[c][0] = color_set[c][0] + color_R;
+	if ((color_set[c][1] + color_G <= 1) || (color_set[c][1] + color_G >= 0))
+		color_set[c][1] = color_set[c][1] + color_G;
+	if ((color_set[c][2] + color_B <= 1) || (color_set[c][2] + color_B >= 0))
+		color_set[c][2] = color_set[c][2] + color_B;
+
+
+/*	MODIFICATION:  Each vertices x, y, and z component are multiplied by the extend
+			factor, manipulating overall size of object.	*/
+
+	vertices[a][0] = vertices[a][0] * extend;
+	vertices[a][1] = vertices[a][1] * extend;
+	vertices[a][2] = vertices[a][2] * extend;
+	vertices[b][0] = vertices[b][0] * extend;
+	vertices[b][1] = vertices[b][1] * extend;
+	vertices[b][2] = vertices[b][2] * extend;
+	vertices[c][0] = vertices[c][0] * extend;
+	vertices[c][1] = vertices[c][1] * extend;
+	vertices[c][2] = vertices[c][2] * extend;
+
+
+/*	Polygon is drawn from list of vertices	*/
+
+ 	glBegin(GL_POLYGON);
+		glColor3fv(color_set[a + cycle % 8]);  	/*  MODIFICATION: the cycle variable  */
+		glNormal3fv(normals[a]);	       	/*    allows the user to cycle        */
+		glVertex3fv(vertices[a]);		/*    through a variety of colors.    */
+		glColor3fv(color_set[b + cycle % 8]);
+		glNormal3fv(normals[b]);
+		glVertex3fv(vertices[b]);
+		glColor3fv(color_set[c + cycle % 8]);
+		glNormal3fv(normals[c]);
+		glVertex3fv(vertices[c]);
+	glEnd();
+}// End polygon(a,b,c);
+
+//============================================================================================
+
+//  -METHOD: diamond();
+
+//	Defines the faces of the object.
+
+//-----------------------------------------------------------------------------------------
+
+void diamond(void)
+{
+
+/* map vertices to faces */
+
+	polygon(0,5,4);
+	polygon(2,3,1);
+	polygon(0,4,3);
+	polygon(2,3,4);
+	polygon(2,5,4);
+	polygon(1,0,3);
+	polygon(1,5,2);
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 5
+
+
+	polygon(0,5,1);
+	extend = 1;	/*  MODIFICATION: extend factor is set back to 1	*/
+	color_R = 0;	/*  MODIFICATION: The change-in-red factor is set back to 0	*/
+	color_G = 0;	/*  MODIFICATION: The change-in-green factor is set back to 0	*/
+	color_B = 0;	/*  MODIFICATION: The change-in-blue factor is set back to 0	*/
+
+}// End diamond();
+
+//============================================================================================
+
+//  -METHOD: display();
+
+//	Method to display object.
+
+//---------------------------------------------------------------------------------------
+
+static GLfloat theta[] = {0.0,0.0,0.0};
+static GLint axis = 2;
+
+void display(void)
+{
+/* display callback, clear frame buffer and z buffer,
+   rotate cube and draw, swap buffers */
+
+ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	glRotatef(theta[0], 1.0, 0.0, 0.0);
+	glRotatef(theta[1], 0.0, 1.0, 0.0);
+	glRotatef(theta[2], 0.0, 0.0, 1.0);
+	glScalef(scale_X, scale_Y, scale_Z);	/* MODIFICATION: object can be scaled along each axis  */
+
+ diamond();
+
+ glFlush();
+	glutSwapBuffers();
+
+}// End of display();
+
+//===========================================================================================
+
+//  -METHOD spinObject();
+
+//	Spins object in space
+
+//----------------------------------------------------------------------------------------
+
+void spinObject()
+{
+
+/* Idle callback, spin cube 2 degrees about selected axis */
+
+	theta[axis] += speed;	/* MODIFICATION: controls speed of rotation  */
+	if( theta[axis] > 360.0 ) theta[axis] -= 360.0;
+	display();
+
+}// End spinObject();
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 6
+
+
+
+//===========================================================================================
+
+//  -MOUSE CONTROLS
+
+//---------------------------------------------------------------------------------------
+
+void mouse(int btn, int state, int x, int y)
+{
+
+/* mouse callback, selects an axis about which to rotate */
+
+	if(btn==GLUT_LEFT_BUTTON && state == GLUT_DOWN) axis = 0;
+	if(btn==GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) axis = 1;
+	if(btn==GLUT_RIGHT_BUTTON && state == GLUT_DOWN) axis = 2;
+}
+
+//==========================================================================================
+
+//  -KEYBOARD CONTROLS
+
+//	Controls:
+//		c/C			cycles through colors in the current color set
+//		r/R			adds/subtracts red to all vertices
+//		g/G			adds/subtracts green
+//		b/B			adds/subtracts blue
+//		2			switches to color set 2
+//		3			switches to color set 3
+//		e/E			enlarges/shrinks object
+//		f/F			speeds up rotation
+//		s/S			slows down rotation
+//		x/X			increases/decreases x values
+//		y/Y			increases/decreases y values
+//		z/Z			increases/decreases z values
+
+//----------------------------------------------------------------------------------------
+
+void keyboard(unsigned char key, int x, int y)
+{
+
+/* keyboard commands */
+
+	if((key == 'c') || (key == 'C')) cycle = cycle + 1;
+
+	if (key == 'r') color_R += 0.02;
+	if (key == 'R') color_R -= 0.02;
+	if (key == 'g') color_G += 0.02;
+	if (key == 'G') color_G -= 0.02;
+	if (key == 'b') color_B += 0.02;
+	if (key == 'B') color_B -= 0.02;
+
+	if (key == '2') {
+		for (count1 = 0; count1 < 8; count1++) {
+			for (count2 = 0; count2 < 3; count2++) {
+				color_set[count1][count2] = color_set2[count1][count2];
+			}
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 7
+
+
+		}
+	}
+
+	if (key == '3') {
+		for (count1 = 0; count1 < 8; count1++) {
+			for (count2 = 0; count2 < 3; count2++) {
+				color_set[count1][count2] = color_set3[count1][count2];
+			}
+		}
+	}
+
+	if (key == 'e') extend = extend + .01;
+	if (key == 'E') extend = extend - .01;
+
+	if ((key == 'f') || (key == 'F')) speed = speed + .1;
+	if ((key == 's') || (key == 'S')) speed = speed - .1;
+
+	if (key == 'x')  scale_X = scale_X + .1;
+	if (key == 'y')  scale_Y = scale_Y + .1;
+	if (key == 'z')  scale_Z = scale_Z + .1;
+
+	if (key == 'X') scale_X = scale_X - .1;
+	if (key == 'Y') scale_Y = scale_Y - .1;
+	if (key == 'Z') scale_Z = scale_Z - .1;
+}
+
+//===========================================================================================
+
+void myReshape(int w, int h)
+{
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    if (w <= h)
+        glOrtho(-2.0, 2.0, -2.0 * (GLfloat) h / (GLfloat) w,
+            2.0 * (GLfloat) h / (GLfloat) w, -10.0, 10.0);
+    else
+        glOrtho(-2.0 * (GLfloat) w / (GLfloat) h,
+            2.0 * (GLfloat) w / (GLfloat) h, -2.0, 2.0, -10.0, 10.0);
+    glMatrixMode(GL_MODELVIEW);
+}
+
+//=======================================MAIN================================================
+
+void main(int argc, char **argv)
+{
+    glutInit(&argc, argv);
+
+/* need both double buffering and z buffer */
+
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("diamond");
+    myinit();
+    glutReshapeFunc(myReshape);
+    glutDisplayFunc(display);
+
+
+
+
+
+
+
+Apr  8 14:18 1998   Page 8
+
+
+	   glutIdleFunc(spinObject);
+	   glutMouseFunc(mouse);
+	   glutKeyboardFunc(keyboard);
+	   glEnable(GL_DEPTH_TEST); /* Enable hidden--surface--removal */
+    glutMainLoop();
+}// End Main.
+
+//===========================================================================================
+//===========================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

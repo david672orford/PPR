@@ -1,0 +1,100 @@
+total 18067
+lrwxrwxrwx   1 root     root            9 Feb  4 01:46 Mail -> /bin/mail
+lrwxrwxrwx   1 root     root           37 Feb  4 01:48 MakeTeXMF -> ../lib/texmf/bin/i586-linux/MakeTeXMF
+lrwxrwxrwx   1 root     root           37 Feb  4 01:48 MakeTeXPK -> ../lib/texmf/bin/i586-linux/MakeTeXPK
+lrwxrwxrwx   1 root     root           38 Feb  4 01:48 MakeTeXTFM -> ../lib/texmf/bin/i586-linux/MakeTeXTFM
+lrwxrwxrwx   1 root     root           40 Feb  4 01:48 MakeTeXmkdir -> ../lib/texmf/bin/i586-linux/MakeTeXmkdir
+lrwxrwxrwx   1 root     root           40 Feb  4 01:48 MakeTeXnames -> ../lib/texmf/bin/i586-linux/MakeTeXnames
+lrwxrwxrwx   1 root     root           12 Feb  4 01:41 X11 -> ../X11R6/bin
+-rwxr-xr-x   1 root     root        65493 Sep  2  1996 Xconfigurator.pl
+-rwxr-xr-x   2 root     root        15540 Aug 26  1996 [
+-rwxr-xr-x   1 root     root        95319 Aug 19  1996 a2p
+-rwxr-xr-x   1 root     root        17972 Jul 28  1996 addftinfo
+-rwxr-xr-x   1 root     root         5836 Sep  2  1996 addr
+lrwxrwxrwx   1 root     root           35 Feb  4 01:49 afm2tfm -> ../lib/texmf/bin/i586-linux/afm2tfm
+-rwxr-xr-x   1 root     root         8429 Jul 28  1996 afmtodit
+lrwxrwxrwx   1 root     root           33 Feb  4 01:48 allcm -> ../lib/texmf/bin/i586-linux/allcm
+lrwxrwxrwx   1 root     root           33 Feb  4 01:48 alldc -> ../lib/texmf/bin/i586-linux/alldc
+lrwxrwxrwx   1 root     root           37 Feb  4 01:48 allneeded -> ../lib/texmf/bin/i586-linux/allneeded
+-rwxr-xr-x   1 root     bin         20240 Aug 26  1996 analyzer
+-rwxr-xr-x   1 root     root         3440 Sep  3  1996 anytopnm
+lrwxrwxrwx   1 root     root           37 Feb  4 01:48 append_db -> ../lib/texmf/bin/i586-linux/append_db
+-rwxr-xr-x   1 root     root         1689 Aug 20  1996 apropos
+-rwxr-xr-x   1 root     root        27984 Sep  2  1996 ar
+-rwxr-xr-x   1 root     root       150844 Sep  2  1996 as
+-rwxr-xr-x   1 root     root        51680 Aug 26  1996 as86
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 asciitopgm -> pgmmerge
+-rwsr-xr-x   1 root     daemon      17732 Aug  9  1996 at
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 atktopbm -> pbmmerge
+lrwxrwxrwx   1 root     root            2 Feb  4 01:42 atq -> at
+lrwxrwxrwx   1 root     root            2 Feb  4 01:42 atrm -> at
+-rwxr-xr-x   1 root     root         8744 Aug 12  1996 aumix
+lrwxrwxrwx   1 root     root           14 Feb  4 01:43 awk -> ../../bin/gawk
+-rwxr-xr-x   1 root     root         4540 Aug 26  1996 basename
+-rwxr-xr-x   1 root     root         2041 Sep  3  1996 bashbug
+lrwxrwxrwx   1 root     root            2 Feb  4 01:42 batch -> at
+-rwxr-xr-x   1 root     root           35 Aug 29  1996 bdftops
+lrwxrwxrwx   1 root     root           34 Feb  4 01:48 bibtex -> ../lib/texmf/bin/i586-linux/bibtex
+-rwxr-xr-x   1 root     root         3316 Sep  5  1996 biff
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 bioradtopgm -> pgmmerge
+-rwxr-xr-x   1 root     root        64684 Aug 27  1996 bison
+-rwxr-xr-x   1 root     root        73840 Aug 26  1996 bm2font
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 bmptoppm -> ppmmerge
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 brushtopbm -> pbmmerge
+lrwxrwxrwx   1 root     root            4 Feb  4 01:42 byacc -> yacc
+-rwxr-xr-x   2 root     root         6452 Sep  2  1996 c++
+-rwxr-xr-x   1 root     root        23532 Sep  2  1996 c++filt
+-rwxr-xr-x   1 root     root        22464 Jul 26  1996 c2lout
+-rwxr-xr-x   1 root     root        36272 Aug 19  1996 c2ph
+-rwxr-xr-x   1 root     root         8956 Sep  9  1996 cal
+-rwxr-xr-x   2 root     root        26464 Sep  4  1996 captoinfo
+lrwxrwxrwx   1 root     root            3 Feb  4 01:43 cc -> gcc
+-rwxr-xr-x   1 root     root        34800 Aug 12  1996 cdp
+lrwxrwxrwx   1 root     root           12 Feb  4 01:43 cdplay -> /usr/bin/cdp
+-rwxr-xr-x   1 root     root         7356 Sep  1  1996 chattr
+-rwsr-xr-x   1 root     root        10064 Sep  9  1996 chfn
+-rwxr-xr-x   1 root     root         1702 Sep  9  1996 chkdupexe
+-rwsr-xr-x   1 root     root         9612 Sep  9  1996 chsh
+-rwxr-xr-x   1 root     root         3436 Sep  3  1996 chvt
+-rwxr-xr-x   1 root     root        63688 Jul 28  1996 ci
+-rwxr-xr-x   1 root     root        24616 Aug 19  1996 cjpeg
+-rwxr-xr-x   1 root     root        14860 Aug  9  1996 cksum
+-rwxr-xr-x   1 root     root         3088 Sep  4  1996 clear
+-rwxr-xr-x   1 root     root         8224 Jul 28  1996 cmp
+lrwxrwxrwx   1 root     root            8 Feb  4 14:33 cmuwmtopbm -> pbmmerge
+-rwxr-xr-x   1 root     root        59428 Jul 28  1996 co
+-rwxr-xr-x   1 root     root         7612 Sep  9  1996 col
+-rwxr-xr-x   1 root     root         4616 Sep  9  1996 colcrt
+-rwxr-xr-x   1 root     root         3512 Sep  9  1996 colrm
+-rwxr-xr-x   1 root     root         6876 Sep  9  1996 column
+-rwxr-xr-x   1 root     root        15092 Aug  9  1996 comm
+-rwxr-xr-x   1 root     root        14860 Aug 14  1996 compress
+-rwxr-xr-x   1 root     root         6682 Aug 29  1996 control-panel
+-rwxr-xr-x   1 root     root        69924 Jul 28  1996 cproto
+-rwsr-xr-x   1 root     root        20036 Aug 22  1996 crontab
+-rwxr-xr-x   1 root     root        23824 Aug  9  1996 csplit
+-rwxr-xr-x   1 root     root        18056 Aug  9  1996 cut
+-rwxr-xr-x   1 root     root         7788 Sep  9  1996 cytune
+-rwxr-xr-x   1 root     root         6384 Sep  9  1996 ddate
+-rwxr-xr-x   1 root     root         3888 Sep  4  1996 dfplus
+-rwxr-xr-x   1 root     root        63200 Jul 28  1996 diff
+-rwxr-xr-x   1 root     root        14816 Jul 28  1996 diff3
+-rwxr-xr-x   1 root     root        71636 Sep  2  1996 dig
+-rwxr-xr-x   1 root     root        36792 Aug 19  1996 dir
+-rwxr-xr-x   1 root     root        20668 Aug 19  1996 dircolors
+-rwxr-xr-x   1 root     root         4304 Aug 26  1996 dirname
+-rwxr-xr-x   1 root     root         3772 Sep  3  1996 disalloc
+-rwxr-xr-x   1 root     root        21608 Aug 19  1996 djpeg
+-rwxr-xr-x   1 root     root        43552 Sep  2  1996 dnsquery
+-rwsr-xr-x   1 root     root       572612 Sep  9  1996 dos
+-rwxr-xr-x   1 root     root         4172 Sep  9  1996 dsplit
+-rwxr-xr-x   1 root     root        20340 Aug 19  1996 du
+-rwxr-xr-x   1 root     root        26292 Sep  3  1996 dumpkeys
+-rwxr-xr-x   1 root     root       278956 Sep  2  1996 dumpreg
+lrwxrwxrwx   1 root     root           35 Feb  4 01:48 dvi2fax -> ../lib/texmf/bin/i586-linux/dvi2fax
+lrwxrwxrwx   1 root     root           35 Feb  4 01:48 dvicopy -> ../lib/texmf/bin/i586-linux/dvicopy
+lrwxrwxrwx   1 root     root           33 Feb  4 01:48 dvihp -> ../lib/texmf/bin/i586-linux/dvihp
+lrwxrwxrwx   1 root     root           33 Feb  4 01:49 dvilj -> ../lib/texmf/bin/i586-linux/dvilj
+lrwxrwxrwx   1 root     root           35 Feb  4 01:49 dvilj2p -> ../lib/texmf/bin/i586-linux/dvilj2p
+lrwxrwxrwx   1 root     root           34 Feb  4 01:49 dvilj4 -> ../lib/texmf/bin/i586-linux/dvilj4
+lrwxrwxrwx   1 root     root           35 Feb  4 01:49 dvilj4l -> ../lib/texmf/bin/i586-linux/dvilj4l

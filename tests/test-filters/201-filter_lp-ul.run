@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Test lp filter underlining
+
+$HOMEDIR/filters/filter_lp "" "testprn" "" <${TEST_BASENAME}.in1 || echo "error: $?"
+
+$HOMEDIR/filters/filter_lp "" "testprn" "" <${TEST_BASENAME}.in2 || echo "error: $?"
+
+exit 0

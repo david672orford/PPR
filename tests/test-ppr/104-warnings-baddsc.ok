@@ -1,0 +1,38 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: Space missing after keyword "%%PageOrder:"
+WARNING: Continued DSC comment "VeryLongAndImprobableDSCCommentT..." overflows buffer
+WARNING: Space missing after keyword "%%Pages:"
+WARNING: Space missing after keyword "%%Page:"
+%!PS-Adobe-3.0
+%%VeryLongAndImprobableDSCCommentToTestWarnings: fred sam dick
+%%+ lucy susan
+%%For: (PPR Spooling System)
+%%Title: (atend test 1)
+%%Pages: 2
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %

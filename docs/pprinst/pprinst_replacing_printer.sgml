@@ -1,0 +1,257 @@
+<Sect1 id="replacing-printer">
+<Title>Replacing a Printer</Title>
+
+<Para>
+Printers are frequently replaced with newer models.  What should the PPR
+operator do when this happens?  One solution is to create a whole new queue for
+the new printer.  An alternative is to adjust the configuration of the existing
+queue so that it points to the new printer.  This latter method may minimize the
+disruption experienced by the users of the printer.
+</Para>
+
+<Sect2>
+<Title>Basic Queue Modifications</Title>
+
+<Para>
+In order to correctly modify a queue's configuration, it is necessary to
+understand its current configuration. The current configuration may be viewed
+with the <Emphasis remap="bf">ppad show</Emphasis> command, like this:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad show sea305
+Printer name: sea305
+Comment: QMS-PS 410 in Seabury Room 305
+Interface: serial
+Address: /dev/ttyS0
+Options: baud=9600 bits=8 parity=none
+JobBreak: control-d (by default)
+Feedback: yes (by default)
+Codes: Clean8Bit (by default)
+Alert interval: 7 (send alert every 7 errors)
+Alert method: mail
+Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: none
+PPDFile: QMS-PS 410
+Bins:
+OutputOrder: ppd
+Default Filter Options:
+Switchset:
+</Screen>
+
+</Para>
+
+<Para>
+Notice that the printer in this example is currently a QMS-PS 410 connected
+through a serial port.  We will replace it with an HP 4M connected over
+the AppleTalk network.  To do this, we must modify the settings of the
+``Interface'', ``Address'', ``Jobbreak'', ``PPD File'', and, if we want to
+do things right, ``Comment''.  First, we will set the new interface and
+address:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad interface sea305 atalk "Seabury Room 305:LaserShared@Seabury Zone"
+</Screen>
+
+</Para>
+
+<Para>
+Notice that the AppleTalk address is enclosed in quotes.  This is necessary
+because it contains spaces.  Also, notice that the device type portion of
+the AppleTalk address is ``LaserShared'' rather than ``LaserWriter''.  This
+causes PPR to `hide' the printer by automatically changing its device type
+from ``LaserWriter'' to ``Laser Shared''; if you don't want this to happen,
+use ``LaserWriter'' instead of ``LaserShared''.  Here is what the
+configuration looks like now:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad show sea305
+Printer name: sea305
+Comment: QMS-PS 410 in Seabury Room 305
+Interface: atalk
+Address: "Seabury Room 305:LaserShared@Seabury Zone"
+Options:
+JobBreak: signal (by default)
+Feedback: yes (by default)
+Codes: Binary (by default)
+Alert interval: 7 (send alert every 7 errors)
+Alert method: mail
+Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: none
+PPDFile: QMS-PS 410
+Bins:
+OutputOrder: ppd
+Default Filter Options:
+Switchset:
+</Screen>
+
+</Para>
+
+<Para>
+Notice that changing the interface from ``<Emphasis remap="bf">serial</Emphasis>'' to ``<Emphasis remap="bf">atalk</Emphasis>''
+automatically changed the <Emphasis remap="bf">jobbreak</Emphasis> setting from ``<Emphasis remap="bf">control-d</Emphasis>'' to
+``<Emphasis remap="bf">signal</Emphasis>'' which is the the default for the <Emphasis remap="bf">atalk</Emphasis> interface.  This
+is fine, but since the new printer is an HP 4M, we might want to use a
+Jobbreak setting of ``signal/pjl'' instead so that we can get nifty messages
+on the printer's display panel.  We can make the change with this command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad jobbreak sea305 signal/pjl
+</Screen>
+
+</Para>
+
+<Para>
+Next, we must change the PPD file:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad ppd sea305 "HP LaserJet 4M DSC"
+</Screen>
+
+</Para>
+
+<Para>
+Finally, any good system administrator will change the comment:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad comment sea305 "HP 4M in Seabury room 305"
+</Screen>
+
+</Para>
+
+<Para>
+If this printer had had bins defined for automatic bin selection, we would
+have had to alter the bin list to reflect the bins available on the new
+printer.  The easiest way to do this would be to execute the command:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad bins ppd sea305
+</Screen>
+
+</Para>
+
+<Para>
+This would add all possible bins for the new printer.  After doing this it
+would have been necessary to use <Emphasis remap="bf">ppad show sea305</Emphasis> to display the
+configuration and then use several commands along the lines of <Emphasis remap="bf">ppad bins
+delete sea305 Envelope</Emphasis> to delete optional bins that are not installed
+on the new printer and bins that were present on the old printer but are not
+present on the new.  Of course, once this is done, it is necessary to use
+the <Emphasis remap="bf">ppop mount</Emphasis> command to mount media on the new bins.  But, as we
+said, this print queue does not have bins defined, so we did not have to do
+any of this.  Here we display the final configuration:
+</Para>
+
+<Para>
+
+<Screen>
+# ppad show sea305
+Printer name: sea305
+Comment: HP 4M in Seabury room 305
+Interface: atalk
+Address: "Seabury Room 305:LaserShared@Seabury Zone"
+Options:
+JobBreak: signal/pjl
+Feedback: yes (by default)
+Codes: Binary (by default)
+Alert interval: 7 (send alert every 7 errors)
+Alert method: mail
+Alert address: alertreaders@mail.trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: none
+PPDFile: HP LaserJet 4M DSC
+Bins:
+OutputOrder: ppd
+Default Filter Options:
+Switchset:
+</Screen>
+
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Changes for the Macintosh Print Server</Title>
+
+<Para>
+The printer we are changing has an entry in <Literal remap="tt">/etc/ppr/papsrv.conf</Literal>
+that looks like this:
+</Para>
+
+<Para>
+
+<Screen>
+[Seabury Room 305]
+PPRname=sea305
+</Screen>
+
+</Para>
+
+<Para>
+Since this entry makes no mention of the make and model of the printer,
+there is nothing to change, however, when <Emphasis remap="bf">papsrv</Emphasis> starts it reads
+the printer's configuration and reads its PPD file.  It uses the information
+it takes from the PPD file to answer questions put to it by the Macintosh
+client.  Theirfore, until you restart <Emphasis remap="bf">papsrv</Emphasis>, LaserWriter 8's auto
+setup feature will continue to select the PPD file for the old printer.
+Also, if the font lists of the old and new printers differ, documents may
+print incorrectly.  To prevent this sort of problem, kill <Emphasis remap="bf">papsrv</Emphasis>
+and restart it as described in section <XRef LinkEnd="start-restart">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Changes for LAN Manager X</Title>
+
+<Para>
+If you are using NCR's LAN Manager for Unix, you will want to change the
+comment attached to the LAN Manager queue:
+</Para>
+
+<Para>
+
+<Screen>
+# net share sea305 "HP 4M in Seabury 305"
+# net print sea305 "HP 4M in Seabury 305"
+</Screen>
+
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Changes for Samba</Title>
+
+<Para>
+If you are using Samba, you should edit <Literal remap="tt">smb.conf</Literal> and change the printer's
+comment, unless you are also using <Emphasis remap="bf">ppr2samba</Emphasis>, in which case you can
+simply run <Emphasis remap="bf">ppr2samba</Emphasis>.
+</Para>
+
+</Sect2>
+
+</Sect1>
+

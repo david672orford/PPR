@@ -1,0 +1,4479 @@
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+
+<Article>
+
+<Articleinfo>
+	<Title>PPR, a Print Spooler for PostScript</Title>
+	<AUTHOR><FirstName>David</firstname><surname>Chappell</surname></AUTHOR>
+	<PubDate>7 May 2001</pubdate>
+	<copyright><year>1995--2001</year><holder>Trinity College Computing Center</holder></copyright>
+</articleinfo>
+
+<Abstract>
+<Para>
+This is one of the three parts of the documentation for PPR version 1.44.  The
+other parts are <Emphasis remap="it">Installing and Using PPR</Emphasis> and the PPR man pages.
+This part describes the construction and theory of operation of PPR.  It also
+describes some of the more advanced features which <Emphasis remap="it">Installing and
+Using PPR</Emphasis> ignores or gives scant attention.  While the man pages provide the
+definitive reference for the commands and programs, they do not attempt to
+explain in detail why and how one would use any particular command or feature.
+Nor do they discuss the internal workings of PPR.  These topics are what this
+document is meant to cover.
+Unfortunately, this document has never been finished.
+</Para>
+</Abstract>
+
+<Sect1>
+<Title>Introduction to PPR</Title>
+
+<Para>
+PPR is designed to operate printers which use page description languages
+compatible with the PostScript language defined by Adobe Systems.  It is
+true that a PostScript printer can generally be made to work with an
+ordinary print spooler.  Enhancements, generally in the form of special
+filters or interface programs, are available for both the System V LP
+spooler and the Berkeley LPR spooler. However, these are generally rather
+limited adaptations written to fulfill a pressing need, such as the need to
+print banner pages. In order to fully exploit the more sophisticated
+features of PostScript and the Adobe Document Structuring Convention, it
+seemed best to start from scratch, writing a print spooler designed with
+modern PostScript laser printers in mind.
+</Para>
+
+<Para>
+It is one of the goals of this project to produce a print spooler which can
+accept print jobs from many different types of computer systems
+simultaneously.  This includes logged-in Unix users, MS-DOS and MS-Windows
+users, Unix users on remote systems through the LPR/LPD protocol, and Apple
+Macintosh computers.
+</Para>
+
+<Para>
+The spooler is designed to provide services such as font and resource caching
+which should reduce the time a Macintosh computer requires to generate and
+transmit the print file.
+</Para>
+
+<Para>
+On MS-DOS systems it is not always possible to adapt application programs to
+generate PostScript directly.  For this reason, PPR has an automatic conversion
+system which attempts to determine the format of an incoming document and
+convert it to PostScript.  Filters are included to convert simple line printer
+files as file inteneded for popular dot matrix printers.
+</Para>
+
+<Para>
+PPR will read Adobe PostScript Printer Description (PPD) files in order to
+obtain information about the printers under its control.  PPR will replace
+specially marked code fragments in the document with the code fragments from
+the PPD file.  Apple's LaserWriter 8 driver properly marks the relevent code
+fragments.  If one uses Apple's LaserWriter driver version 8 or later it is
+possible for a document to print correctly even if it is printed on a different
+printer from that originally intended and the job uses special commands such as
+those for bin selection.  It is also possible for an application to request
+that PPR insert code fragments from the PPD file in order to invoke specific
+features of the printer, such as duplexing or legal size paper.
+</Para>
+
+<Para>
+PPR provides a mechanism whereby the operator specifies the size and type
+of paper in each of a printer's bins.  When printing, users will request the
+desired paper.  Print jobs will be held back until the operator changes the
+paper and indicates to the spooler that he has done so.  If a job is being
+held back for this reason, the names of the types of media required will be
+indicated in the queue listing.  When the document is printed, PPR will
+insert code to select the input tray which holds the desired medium.
+</Para>
+
+<Para>
+Where the printer and its interface support it, PPR will capture PostScript
+error messages resulting from the execution of a job and put them in a log
+file which may be printed on the banner or trailer page or later viewed by the
+user.  If a PostScript error occurs during the printing of a job, that job is
+held in the queue so that it may be examined to determine the reason for the
+failure.
+</Para>
+
+<Para>
+PPR can detect printer malfunctions and deal `intelligently' with
+them.  If problems persist, it will inform an operator.
+</Para>
+
+<Para>
+It is desireable that PPR be able to reliably identify the users on
+various computer systems, employing passwords when necessary, so that users
+can be made to pay for their use of the printers.  Unfortunately, the necessary
+client-side software is not always available.
+</Para>
+
+<Para>
+PPR can maintain a list of user accounts, each of which contains money. When
+PPR prints a job for a user on a printer which has a per page charge, PPR
+computes the number of sheets of paper used and deducts the corresponding
+amount of money from the user's account. The system administrator may set a
+credit limit for each user. When the credit limit is exceeded, PPR will refuse
+to accept more jobs for the user.
+</Para>
+
+<Para>
+PPR can convert a document for N-Up printing, thereby saving paper.  It
+can also convert many documents to signatures or booklets.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>A Brief Note On Terminology</Title>
+
+<Para>
+This document describes a complete system which accepts print jobs, places
+them in a queue, and prints them as soon as it becomes possible. This printing
+system is called ``PPR''.  Unix users submit jobs to this system by means of a
+program called ``<Emphasis remap="bf">ppr</Emphasis>''.  Unfortunately, in discussing this system it is
+possible to confuse the two.  This document attempts to ease that confusion by
+refering to the two in slightly different ways.  When the spooling system as a
+whole is meant, it is refered to simply as ``PPR'', in all upper case.  When
+the program users employ to submit jobs to PPR is meant, it is refered to as
+<Emphasis remap="bf">ppr</Emphasis> in all lower case and bold face.  Further, the program for submitting
+jobs will frequently be refered to as, ``the program <Emphasis remap="bf">ppr</Emphasis>''.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Core PPR Components and How They Work Together</Title>
+
+<Para>
+This section describes the subprograms which comprise the core of PPR and
+the r&ocirc;le of each.
+</Para>
+
+<Sect2>
+<Title>How Jobs Enter the Queue</Title>
+
+<Para>
+All jobs which enter the queue pass through the program called
+``<Emphasis remap="bf">ppr</Emphasis>''.  This is true even of those which pass first through the
+Macintosh print server, the LPR compatible server, or Samba.  (These additional
+server components will be described later.)  The program <Emphasis remap="bf">ppr</Emphasis> reads a
+PostScript file and splits it into 3 files.  These three files are placed in a
+spool directory and a fourth file, called the queue file, is created which
+describes the job and the options the user has selected.  Once all the files
+are ready, <Emphasis remap="bf">ppr</Emphasis> sends a message to the print daemon, which is called,
+``<Emphasis remap="bf">pprd</Emphasis>'', telling it that a new job is in the queue.  This process is
+illustrated in figure <XRef LinkEnd="pprdoc-enter">.
+</Para>
+
+<Para>
+
+<Figure id="pprdoc-enter">
+<Title>A job Enters the Queue</Title>
+<Graphic FileRef="pprdoc-enter">
+</Figure>
+
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>How Jobs are Printed</Title>
+
+<Para>
+When <Emphasis remap="bf">pprd</Emphasis> determines that the time has come to print a file on a printer,
+it invokes a program called <Emphasis remap="bf">pprdrv</Emphasis> which reads the 3 job files and
+reasembles them into a PostScript file.  While doing so it will consult
+information read from the printer configuration file and the queue file and
+a PostScript Printer Description (PPD) file.  It may also include fonts and
+other resources in the data stream.  This process is illustrated in figure <XRef LinkEnd="pprdoc-printing2">.  (The inclusion of fonts and other resources has been
+ommited from the figure for the sake of simplicity.)
+</Para>
+
+<Para>
+
+<Figure id="pprdoc-printing2">
+<Title>PPR Prints a Job</Title>
+
+<Graphic FileRef="pprdoc-printing2">
+
+</Figure>
+
+</Para>
+
+<Para>
+<Figure id="pprdoc-printing1">
+<Title>Multiple Instances of <Emphasis remap="bf">pprdrv</Emphasis> for Multiple Printers</Title>
+<Graphic FileRef="pprdoc-printing1">
+</Figure>
+</Para>
+
+<Para>
+The program <Emphasis remap="bf">pprdrv</Emphasis> sends the file to the printer by invoking an interface
+program.  It is the responsibility of the interface program to accept the print
+job on standard input, send it the printer, if possible receive any error
+messages, and pass them back to <Emphasis remap="bf">pprdrv</Emphasis> by writing them to stdout.
+</Para>
+
+<Para>
+Notice in figure <XRef LinkEnd="pprdoc-printing1"> that printing is taking place on
+``PRINTER 1'' and ``PRINTER 3''.
+</Para>
+
+<Para>
+``PRINTER 2'' is idle, so the processes necessary to print on it are shown
+with dotted line boxes, indicating that they do not exist at present.
+</Para>
+
+<Para>
+Once the job has been printed, the interfaces program exits, after which
+<Emphasis remap="bf">pprdrv</Emphasis> exits.  The main spooling daemon, <Emphasis remap="bf">pprd</Emphasis> detects this and
+removes the job from the queue and attempts to inform the user that the job is
+done.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Job Errors</Title>
+
+<Para>
+When exiting, <Emphasis remap="bf">pprdrv</Emphasis> will indicate to <Emphasis remap="bf">pprd</Emphasis> that printing was
+successful or that it was not.  If <Emphasis remap="bf">pprdrv</Emphasis> indicates that a problem occured
+which was caused by the particular job being printed, a PostScript error for
+instance, then the job is placed in the ``arrested'' state, the user who
+submitted it is informed, and <Emphasis remap="bf">pprd</Emphasis> looks for another job to print on that
+printer.  The ``arrested'' state is a special case of the ``held'' state.  An
+arrested job remains in that state until it is canceled or released.
+</Para>
+
+<Para>
+When a job is arrested, the user who submitted it is informed, however if
+the arrested job is subsequently deleted by an operator, the user will not
+be informed as he would be if a normal job of his were canceled.
+</Para>
+
+</Sect2>
+
+<Sect2 id="printer-errors">
+<Title>Printer Errors</Title>
+
+<Para>
+If <Emphasis remap="bf">pprdrv</Emphasis> indicates that the problem is with the printer, then the job
+is returned to the queue, the printer is placed in fault mode, and <Emphasis remap="bf">pprd</Emphasis>
+looks for another printer on which to print the job.  When <Emphasis remap="bf">pprdrv</Emphasis>
+discovers a problem with a printer, it indicates to <Emphasis remap="bf">pprd</Emphasis> whether or not it
+is a problem from which the printer is likely to recover without the
+intervention of the system operator.  Problems from which it is likely to
+recover on its own include those which are transient or which an ordinary user
+might correct, such as printer-turned-off and out-of-paper.  If the problem is
+one from which the printer may recover, then it is placed in fault-retry mode;
+if it is not expected to recover, it is placed in fault-no-retry mode.
+</Para>
+
+<Para>
+In fault-retry mode, <Emphasis remap="bf">pprd</Emphasis> tries to restart the printer at intervals.  The
+delay before the retry is 10 seconds the first time and increases by 10 seconds
+after each failure until the interval reaches about 10 minutes, at which point
+it does not continue to increase.  In fault-no-retry mode, the printer is not
+restarted until a system operator restarts it.  An operator may restart a
+printer with the command <Emphasis remap="bf">ppop start printer</Emphasis>.
+</Para>
+
+<Para>
+When <Emphasis remap="bf">pprdrv</Emphasis> detects a printer fault, it writes a description of it to a
+file in the <Literal remap="tt">alerts</Literal> directory, a file which is named after the
+printer.  At intervals, <Emphasis remap="bf">pprd</Emphasis> may send the contents of this file to a
+system operator.  The interval is defined in the printer configuration file.
+The interval is expressed as ``every <Emphasis remap="it">n</Emphasis> faults''.  If the interval is set
+to 1, the alerts log is sent after each printer fault; if the interval is set
+to 5, the alerts log is sent after every 5th printer fault.  If the interval is
+set to 0, the alerts are never sent.
+</Para>
+
+<Para>
+If the alert interval is negative, it is treated differently.  First of all,
+the absolute value is used as the alert interval.  Second, the alerts are
+only sent to the system operator once.  Third, a notice is sent to the
+system operator if the printer sucessfully prints a job after incurring at
+least abs(<Emphasis remap="it">n</Emphasis>) alerts.
+</Para>
+
+<Para>
+Each time a fault occurs, the alert message is appended to the alert log. The
+exception is that if the previous alert occured more than one hour previously,
+the alert log is truncated to zero length and a new one started.  Whether or
+not the alerts have been dispatched to an operator, the alert log may be read
+at any time with the command <Emphasis remap="bf">ppop alerts</Emphasis> <Emphasis remap="it">printer</Emphasis>.
+</Para>
+
+<Para>
+It is in the printer configuration file that the alert interval is specified,
+as well as the method by which alerts are to be dispatched and the address to
+send them to.  A typical alert dispatch method (indeed, the only one supported
+at this time) is ``mail''.  This means that the alerts are sent by electronic
+mail to the indicated address.  The alert parameters may be set with the
+<Emphasis remap="bf">ppad alerts</Emphasis> command.
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Printers and Groups of Printers</Title>
+
+<Para>
+When printing a document with PPR it is necessary to specify a set of one
+more more printer on which it may be printed.  If you specify the name of a
+printer, PPR will print the document on that printer if it determines that the
+printer has the necessary capabilities.  If you indicate a group of printers to
+print the document on, PPR will print the document on the first available
+printer with the necessary capabilities.  Both printers and groups are
+identified by name.  A printer or group name may be up to 16 characters long
+and may contain any printable characters except, slash (``/'').  It also must not
+begin with tilde (``&nbsp;'') or period (``.'').
+</Para>
+
+<Para>
+Each printer is described by a printer configuration file in the directory
+<Literal remap="tt">/etc/ppr/conf/printers</Literal>.  Each group is defined by a group
+configuration file in the directory <Literal remap="tt">/etc/ppr/conf/groups</Literal>.  The format
+of a printer configuration file is described in Appendix <XRef LinkEnd="printer-config"> and the format of
+a group configuation file is described in Appendix <XRef LinkEnd="group-config">.  The desired printer or
+group may be specified with the <Emphasis remap="bf">-d</Emphasis> switch to the <Emphasis remap="bf">ppr</Emphasis> command.  If the
+<Emphasis remap="bf">-d</Emphasis> switch is ommited, <Emphasis remap="bf">ppr</Emphasis> takes the printer or group name from the
+environment variable ``PPRDEST''.  If PPRDEST is not defined, <Emphasis remap="bf">ppr</Emphasis> attempts
+to send the job to a printer or group called ``default''.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Accepting Jobs From a Network</Title>
+
+<Para>
+Users on the machine running PPR can submit jobs simply by running the
+program <Emphasis remap="bf">ppr</Emphasis>.  But, when the user is on a remote machine connected by a
+network to the machine with the PPR spooler, things get a little more
+complicated.
+</Para>
+
+<Para>
+Accepting network jobs requires a daemon process which waits new connexions.
+When it receives a connexion, it must launch a server process.  The server
+process will accept the print job and run <Emphasis remap="bf">ppr</Emphasis> to submit it.
+</Para>
+
+<Para>
+Often, the user on the remote computer will not have an account on the computer
+that is running PPR.  Therefor, the server process must run <Emphasis remap="bf">ppr</Emphasis> under some
+system user ID.  This system ID may be ``ppr'' or any user listed in
+<Literal remap="tt">/etc/group</Literal> as a member of the group ``pprprox''.  The system user will
+invoke <Emphasis remap="bf">ppr</Emphasis> with switches such as <Emphasis remap="bf">-f</Emphasis>, <Emphasis remap="bf">-X</Emphasis>, and <Emphasis remap="bf">--charge-to</Emphasis>.
+These switches will indicate that the system user is submitting the job on
+behalf of a user on a remote machine.
+</Para>
+
+<Para>
+The <Emphasis remap="bf">-f</Emphasis> switch sets the name of the user who submitted the job.  This name
+will appear in queue listings and on banner and trailer pages.
+</Para>
+
+<Para>
+The <Emphasis remap="bf">-X</Emphasis> switch is used to provide a string which uniquely identifies the
+user on the remote machine.  Generally, this string will be the user's name on
+the remote machine, followed by an ``@'', followed by the network address of the
+remote machine.
+</Para>
+
+<Para>
+The <Emphasis remap="bf">--charge-to</Emphasis> switch is useful when using the charge accounts which can
+be set up with <Emphasis remap="bf">ppuser</Emphasis>.  If the argument of the <Emphasis remap="bf">-f</Emphasis> switch is the
+user's real name, the <Emphasis remap="bf">--charge-to</Emphasis> switch can be used to specify a more
+cryptic account name to which the cost of printing printing should be charged.
+</Para>
+
+<Sect2>
+<Title>Accepting Jobs From Macintoshes</Title>
+
+<Para>
+PPR provides a daemon called <Emphasis remap="bf">papsrv</Emphasis> which acts as a Macintosh print
+server.  It accepts connexions from Macintosh clients, answers queries using
+information in the PPD files, and accepts jobs.  Whenever <Emphasis remap="bf">papsrv</Emphasis> accepts a
+connexion from a Macintosh, it forks a copy of itself to service the connexion.
+When the child daemon receives a print job, it launches <Emphasis remap="bf">ppr</Emphasis> on the end of a
+pipe to process it.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Accepting Jobs Using the LPD Protocol</Title>
+
+<Para>
+PPR provides a daemon called <Emphasis remap="bf">lprsrv</Emphasis> which can be launched by the internet
+super daemon, Inetd.  The daemon <Emphasis remap="bf">lprsrv</Emphasis> implements the Berkeley LPD protocol.
+</Para>
+
+<Para>
+When a print job is received, <Emphasis remap="bf">lprsrv</Emphasis> checks to see if the destination
+specified matches the name of any PPR printer or group.  If it does, <Emphasis remap="bf">ppr</Emphasis> is
+invoked to accept the job.  If not, the job is fed to the system's default spooler
+through the <Emphasis remap="bf">lp</Emphasis> or <Emphasis remap="bf">lpr</Emphasis> command.  No configuration file is required for
+<Emphasis remap="bf">lprsrv</Emphasis>.  All PPR printers as well as all the printers belonging to the
+normal system spooler are automatically made available.
+</Para>
+
+<Para>
+However, unless inetd invokes <Emphasis remap="bf">lprsrv</Emphasis> with the <Emphasis remap="bf">-p</Emphasis> (permissive) switch, it
+will only accept jobs from machines listed in <Literal remap="tt">/etc/hosts.equiv</Literal> or
+<Literal remap="tt">/etc/hosts.lpd</Literal> which are also not listed in
+<Literal remap="tt">/etc/hosts.lpd&lowbar;deny</Literal>.  (It is also ok to list a whole domain in these
+files.  Any name begining with a period is interpreted as a domain name.)
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Accepting Jobs From a LAN Manager For Unix Server</Title>
+
+<Para>
+AT&amp;T's LAN Manager for Unix can invoke a print processor script when a
+job is received for a certain printer.  PPR provides a print processor script
+which submits the job using the <Emphasis remap="bf">ppr</Emphasis> command.  If the directory
+<Literal remap="tt">/var/opt/lanman/customs</Literal> exists when PPR is installed, then the script
+is installed as <Literal remap="tt">/var/opt/lanman/customs/ppr</Literal>.  While it is possible to
+prepare several versions of this script to invoke <Emphasis remap="bf">ppr</Emphasis> with various
+options, it will probably prove more convenient to use the <Emphasis remap="bf">ppad switchset</Emphasis>
+or <Emphasis remap="bf">ppad group switchset</Emphasis> command (depending on whether it is a printer of a
+group) to store the desired switches in the printer or group's configuration
+file.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Accepting Jobs From a Samba Server</Title>
+
+<Para>
+The free Unix file and print server Samba has a very flexible printing system.
+The print command for any given print queue can be specified in Samba's
+configuration file.  The Samba server sends jobs to PPR by writing the job to a
+temporary file and then invoking <Emphasis remap="bf">ppr</Emphasis>.  The <Emphasis remap="bf">-U</Emphasis> switch should be used to
+tell <Emphasis remap="bf">ppr</Emphasis> to delete the temporary file once it is done reading it.  It is
+advisable to append ``&amp;'' to the print command because for very large files
+which must be filtered, the client will time out before <Emphasis remap="bf">ppr</Emphasis> exits.  Sample
+Samba print commands are given in the man page ppr2samba(8).
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Identifying Users</Title>
+
+<Para>
+It is often necessary to identify the user who submitted a job.  In the case
+of
+a printer which is shared by may users, a banner page giving the user's name may
+be required.  It is also helpful in queue listings to identify the submitting
+user
+of each job.  When it is desired to restrict printing privledges or to charge
+for
+printing, passwords may be in order.
+</Para>
+
+<Para>
+Because PPR accepts print jobs from many different kinds of computer systems it
+employs several techniques for determining and verifying the identity of users.
+Basically, PPR has two user validation modes.  The first is called system
+validation mode.  In system validation mode, PPR assumes that since the user
+gained access to the system and managed to execute <Emphasis remap="bf">ppr</Emphasis> he must be
+authorized.  In system validation mode security efforts are concentrated on
+preventing the user from disguising his identity to avoid printing charges.  The
+other validation mode is authorization code validation mode.  In that mode, an
+authorization code (password) is embedded in the job as a PostScript comment or
+communicated using a special protocol.  Such a password scheme is advisable when
+the jobs are arriving over an unsecured channel, such as an AppleTalk or LAN
+Manager network.
+</Para>
+
+<Para>
+The means by which the user name is determined depends on the validation mode.
+In
+system validation mode, is the user name of the user who invoked <Emphasis remap="bf">ppr</Emphasis>,
+unless
+the user is ``ppr'', ``root'', or a member of the group ``pprprox''.  These are
+privledged users who may accept jobs over the network on behalf of remote users.
+</Para>
+
+<Para>
+When a privledged user is submitting a job on behalf of another, the name may
+be supplied with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-f</Emphasis> switch.  A privledged user may also use the
+<Emphasis remap="bf">-R for</Emphasis> switch to indicate that <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> lines in the
+input file are to be scanned for the user name.  Of course, if the privledged
+user employs none of these options then the job will be identified as belonging
+to the privledged user who submitted it.
+</Para>
+
+<Para>
+The name that the privledged user supplies with the <Emphasis remap="bf">-f</Emphasis> switch will often
+be a `real name' such as ``Joseph Andrews''.  If printer charge accounts use
+a shorter name such as ``jandrews'' then the <Emphasis remap="bf">--charge-to</Emphasis> option will be
+used to indicate that name.  In that case, the privledged user might invoke
+<Emphasis remap="bf">ppr</Emphasis> like this:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d thatprn -f "Joseph Andrews" --charge-to jandrews
+</Screen>
+
+</Para>
+
+<Para>
+There must also be some mechanism to make sure that a user can't delete another
+user's jobs.  For that reason it is necessary to unambiguously identify each
+remote user from which a privledged user accepts jobs.  The privledged user
+uses the <Emphasis remap="bf">-X</Emphasis> switch to inform <Emphasis remap="bf">ppr</Emphasis> of this identification.  So, the
+command above would become:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d thatprn -f "Joseph Andrews" --charge-to jandrews -X jandrews@somehost.someorg.org
+</Screen>
+
+</Para>
+
+<Para>
+This will allow PPR to subsequently distinguish between identically named users
+on different hosts without choking up the queue listings and banner pages with
+a level of detail which is generally unnecessary.  The <Emphasis remap="bf">-X</Emphasis> switch is often
+referred to as the ``proxy-for'' switch for reasons which I hope are obvious.
+</Para>
+
+<Para>
+In authorization code validation mode, the user name is the one specified in
+the PostScript <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line, or if the
+<Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line is absent, it is the name specified with the
+<Emphasis remap="bf">-f</Emphasis> switch.  If both are absent, it is the name of the user who invoked
+<Emphasis remap="bf">ppr</Emphasis>.  In authorization code validation mode, the document must contain a
+PostScript comment with the correct authorization code.  If it does not, the
+job will be canceled and the user will be informed.
+</Para>
+
+<Para>
+The use name and authorization code may be specified like this:
+</Para>
+
+<Para>
+
+<Screen>
+%%For: smith
+%TCHCTAuthCode: abr9yg
+</Screen>
+
+</Para>
+
+<Para>
+Authorization code validation mode is selected with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-a</Emphasis> switch.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Banner and Trailer Pages</Title>
+
+<Para>
+When many people will be using a printer it is sometimes desirable to
+identify each print job with an extra page on which appears the name of the
+person who sent it as well as other information such as the name of the
+application which generated it and a job title.  PPR is capable of printing
+banner pages as well as trailer pages.
+</Para>
+
+<Para>
+When a user submits a print job he may request or reject a banner page and
+request or reject a trailer page.  However PPR considers the user's request as
+a suggestion only, making its final descision based on the user's suggestion,
+and the configuration of the printer.
+</Para>
+
+<Para>
+If bins are defined for the printer, the suitability of the printer's mounted
+forms for printing banner pages is also a factor.  When printing a banner page,
+PPR will use the currently mounted medium with the highest suitability rating.
+If all mounted media have a suitability rating of 1, no banner or trailer pages
+can be printed.  If bins are defined for the printer and media is mounted, PPR
+will adjust the size, shape, and character size of the banner page to suit the
+medium (paper type) being used.
+</Para>
+
+<Para>
+If no bins are defined, the banner page will be formated for 8.5 by 11 inch paper
+(or whatever "default medium =" is set to in the &lsqb;internationalization] section
+if <Literal remap="tt">/etc/ppr.conf</Literal>), but no attempt will be made to
+select a specific input tray or to request a specific page size of the printer.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Printer Accounting</Title>
+
+<Sect2>
+<Title>Running Accounts</Title>
+
+<Para>
+&lsqb;This section has not been written yet.]
+</Para>
+
+</Sect2>
+
+<Sect2 id="printlog">
+<Title>Printer Use Logging</Title>
+
+<Para>
+PPR can keep a running log of jobs printed.  To enable this logging, create
+an empty file <Literal remap="tt">/var/spool/ppr/logs/printlog</Literal>.  One line will be appended
+to this file for each job which is successfully printed.
+</Para>
+
+<Para>
+Note:  prior to version 1.30, the printlog file format was different.  Two
+digits, representing the seconds were added to the time stamp (in the first
+field). Also, fields 5, 6, 7, and 9 were inserted between existing fields and
+field 11 was added at the end.  The contents of the old fields did not change,
+only the positions of some of them did.  Therefore, existing software will
+have to be modified to use the new field numbering.
+</Para>
+
+<Para>
+PPR releases since 1.30 have added new fields, so some of the fields at the end
+may not be present in log files created by old versions of PPR.  You should keep
+this in mind when writing software that parses this log file.
+</Para>
+
+<Para>
+A typical print log entry looks like this:
+
+<Screen>
+19961115131401,rotate-1375.0(mouse),chipmunk,"David Chappell",chappell,"",7,1,2,166,30.12,0.00,-1,80123,2
+</Screen>
+
+</Para>
+
+<para>
+The meanings of the fields in the above log line is as follows:
+
+<ItemizedList>
+
+<ListItem>
+<Para>
+The 1st field is the date and time at which the job was submitted.  In
+this case the date is November 15th, 1996.  The time is 1:14pm.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 2nd field is the job id.  This job was submitted to the group
+called ``rotate''.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 3rd field is the printer it was printed on.  This job was printed on
+the printer named ``chipmunk'' which is presumably a member of the group
+``rotate''.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 4th field is the name of the person who printed it.  This is the
+name as it appeared in the queue listing and on banner pages.  This is a
+quoted field.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 5th field is the name of the Unix user who invoked <Emphasis remap="bf">ppr</Emphasis> to
+submit the job.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 6th field is the argument to <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-X</Emphasis> switch, if it was
+used.  In this case it wasn't used, so the field contains a string of
+zero length.  This is a quoted field.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 7th field is the number of logical pages in the job.  This ought
+to be the number of <Emphasis remap="sf">&percnt;&percnt;Page:</Emphasis> comments in the PostScript
+file.  If the number of pages is unknown this field will contain the value -1.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 8th field is the number of sheets of paper used.  This job was
+printed 4-Up in duplex mode so only one sheet was used.  If 5 copies had
+been printed, this number would have been 5.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 9th field is the number of actual pages (sides) printed.  Since this
+job prints four reduced-size pages to an actual page, this field is 2.  If
+5 copies had been printed, this field would have contained a 10.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 10th field is the number of seconds which elapsed between the time
+the job was queued and the time printing was completed.  (To be more precise,
+the interval between when the program <Emphasis remap="bf">ppr</Emphasis> was invoked and the time
+<Emphasis remap="bf">pprdrv</Emphasis> wrote the log entry.)  This job was finished two minutes and 46
+seconds after it entered the queue.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 11th field is the number of seconds between the time <Emphasis remap="bf">pprdrv</Emphasis>
+started up and the time if wrote the log entry.  It is expressed in seconds
+and hundredths of a second.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 12th field shows the amount of money charged.  This is a fixed point number
+with two digits after the decimal point.  No monetary unit is indicated.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 13th field shows the number of sides the printer says it printed.
+This number will likely be obtained though HP PJL.  Note that at this time,
+the value in this field is not used to compute the charge in the 12th field.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 14th field reports the number of pages the printer claimed to have
+printed over its lifetime.  This field is -1 if the number was not retrieved.
+An attempt to retrieve it will only be made if the printer's configuration
+file contains a ``PageCountQuery:'' line which enables this feature and the
+<Emphasis remap="bf">feedback</Emphasis> setting is <Emphasis remap="bf">true</Emphasis>.  When this feature is enabled, the
+page count is fetched just after printing the banner page and just before
+printing the job itself.  If printing is sucessful, the resulting value will
+ultimately be logged in the 14th field.
+</Para>
+</ListItem>
+
+<ListItem>
+<Para>
+The 15th field is meaningful only if the value in the 14th field is
+not -1.  Once the job has been printed, but before a trailer page is printed,
+the page count query is repeated.  If the query is sucessful, then the
+difference between the before and after page counts is logged in this field.
+If the query is not performed or is not sucessful, then a -1 is loggged in
+this field.  See the discussion of the ``PageCountQuery:'' line in
+Appendix <XRef LinkEnd="printer-config">
+for a discussion of why the value logged in this field may not accurately
+reflect the number of pages printed.
+</Para>
+</ListItem>
+
+<listitem>
+<para>
+The 16th field is the size of the PostScript job in bytes.  If the input file
+was PostScript, then this is the size of the input file.  If the job had to be
+converted to PostScript, then this is the size of the PostScript output of the
+filter.
+</para>
+</listitem>
+
+<listitem>
+<para>
+The 17th field is the number of bytes that were sent to the printer in order to
+print this job.  This number may be significantly greater than the number in
+field 16.  For example, it may have been necessary to print multiple copies by
+sending the job several times or PPR may have inserted fonts into the job.
+</para>
+</listitem>
+
+<listitem>
+<para>
+The 18th field is the title of the job.  If the job had no title, then the name
+of the input file is used.  If there was no input file (such as if the job was
+read from stdin), then this field will be blank.  This is a quoted field.
+</para>
+</listitem>
+
+</ItemizedList>
+</Para>
+
+<Para>
+If left uncontrolled, the printlog file will grow indefinitely, so steps should
+be taken to truncate it regularly.
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>User Notification</Title>
+
+<Para>
+After a job has been printed, an attempt is made to inform the user.  The user
+is also informed if a job is rejected, arrested, or canceled.  The agent which
+performs the actual communication with the user is called a responder.  A
+responder is a small program, generally a shell script, found in the
+<Literal remap="tt">/usr/ppr/responders</Literal> directory.  No one responder will be appropriate
+under all circumstances.  For instance, different responders are used to send
+message to Unix shell users and Macintosh clients.
+</Para>
+
+<Para>
+The responder to use is chosen when <Emphasis remap="bf">ppr</Emphasis> is invoked.  It is chosen with the
+<Emphasis remap="bf">-r</Emphasis> switch. If no  <Emphasis remap="bf">-r</Emphasis> switch is used, the default responder <Emphasis remap="bf">write</Emphasis> is
+used.  If you wish to suppress user notification you should use the <Emphasis remap="bf">-m none</Emphasis>
+switch.
+</Para>
+
+<Para>
+Among its parameters the responder program is given an address to send the
+message to.  The correct format for the address depends on the responder.  For
+example, for the responder <Emphasis remap="bf">write</Emphasis> it is simply a Unix user name.  For the
+responder <Emphasis remap="bf">mail</Emphasis> is it an electronic mail address.  For the responder
+<Emphasis remap="bf">atalk</Emphasis> it is an AppleTalk network and node number seperated by a colon.
+The address should be specified with the <Emphasis remap="bf">-r</Emphasis> switch when <Emphasis remap="bf">ppr</Emphasis> is
+invoked. If the <Emphasis remap="bf">-r</Emphasis> switch is ommitted, the default address, the name of
+the user who is invoking ppr will be used.  This address is suitable for the
+default responder, <Emphasis remap="bf">write</Emphasis>.  A list of the supplied responders may be found
+in the ppr(1) man page in the section which describes the <Emphasis remap="bf">-m</Emphasis> switch.
+Instructions for writing a responder are found in Appendix <XRef LinkEnd="responders">.
+</Para>
+
+<Para>
+Additional responder options may be specified with <Emphasis remap="bf">ppr</Emphasis>'s
+<Emphasis remap="bf">--responder-options</Emphasis> switch.  These options are a space separated list of
+name=value pairs.  If no <Emphasis remap="bf">--responder-options</Emphasis> switch is used then the list
+will be empty.
+</Para>
+
+<Para>
+You can change the default responder, responder address, and responder options
+by setting the environment variables PPR&lowbar;RESPONDER, PPR&lowbar;RESPONDER&lowbar;ADDRESS, and
+PPR&lowbar;RESPONDER&lowbar;OPTIONS respectively.  For example, if you are using X-Windows,
+you might want to add the following lines to your <Literal remap="tt">.xsession</Literal> file:
+</Para>
+
+<Para>
+
+<Screen>
+# Authorize the PPR responder:
+/usr/ppr/bin/ppr-xgrant
+
+# Make the xwin responder the default:
+PPR_RESPONDER=xwin
+PPR_RESPONDER_ADDRESS=$DISPLAY
+export PPR_RESPONDER PPR_RESPONDER_ADDRESS
+</Screen>
+
+</Para>
+
+</Sect1>
+
+<Sect1 id="progress-reporting">
+<Title>Progress Reporting</Title>
+
+<Para>
+While a job is being printed, PPR queue listings will show how far along it
+is.  Up to three figures are reported.  The first is the percentage of the file
+which has been transmitted, the second is the number of the page which is
+currently being transmitted (an ordinal with the first page transmitted
+being one), the third is the number of pages which the printer reports it
+has deposited in the output bin.  (The number of pages in the output bin
+will only be reported if the jobbreak method is "pjl" or "signal/pjl".)
+</Para>
+
+<Para>
+The data which <Emphasis remap="bf">ppop</Emphasis> uses to make these reports is deposited in the job's
+queue file by <Emphasis remap="bf">pprdrv</Emphasis>.  It takes the form of a line that begins with
+``<Emphasis remap="sf">Progress:</Emphasis>'' which <Emphasis remap="bf">pprdrv</Emphasis> appends to the queue file.  This line has
+three numbers on it.  The first is the number of bytes written so far.  The
+second is the number of <Emphasis remap="sf">&percnt;&percnt;Pages:</Emphasis> comments written so far.
+The third number is the number of pages which the printer says it has dropt
+into the output tray.  All three numbers are padded with leading zeros so that
+as they increase their length does not change.
+</Para>
+
+<Para>
+If the job is not printed sucessfully the first time, provided the
+<Emphasis remap="sf">Progress:</Emphasis> line is still the last line in the file, <Emphasis remap="bf">pprdrv</Emphasis> does not
+append a new line on the second and subsequent attempts, rather it overwrites
+the old one.  If a queue file contains more than one <Emphasis remap="sf">Progress:</Emphasis> line, only
+the last one should be accepted as correct.  Multiple <Emphasis remap="sf">Progress:</Emphasis> lines will
+generally only be found if a <Emphasis remap="sf">Reason:</Emphasis>
+<FOOTNOTE>
+
+<Para>
+A <Emphasis remap="sf">Reason:</Emphasis> line is
+appended each time a job is arrested.
+</Para>
+
+</FOOTNOTE>
+ line was appended after a
+<Emphasis remap="sf">Progress:</Emphasis> line.
+</Para>
+
+<Para>
+The percentage of the file transmitted, as reported by <Emphasis remap="bf">ppop</Emphasis>, is obtained
+by dividing the number of bytes transmitted by the size of the origional
+PostScript file and multiplying the result by 100.  The origional PostScript
+file is the input file if it was PostScript or the output of the last filter in
+the filter pipeline.  In some cases the percentage indicated when the job is
+done is somewhat more or less than 100&percnt;. Causes such as the alteration
+of DSC comments, the changing of line termination, and the insertion of feature
+code will often make a difference of 1&percnt; to 5&percnt;.  The insertion of
+procedure set such as the one for N-Up printing or the downloading of fonts can
+result in a total transmission which is several times the size of the origional
+file.  Occasionally a job will be printed which has large unnecessary
+downloaded fonts.  If these are stript out the result will be that only a small
+amount, say 20&percnt; of the job will be transmitted.  If switches such as
+<Emphasis remap="bf">-s</Emphasis> or <Emphasis remap="bf">-p</Emphasis> are used to print only a portion of the job the total
+percentage printed will be reduced accordingly.  All of these circumstances are
+rare, however, so the total printed will almost always be within 5&percnt; of
+the origional file size.
+</Para>
+
+</Sect1>
+
+<Sect1 id="user-name-display">
+<Title>PJL and User Name Display</Title>
+
+<Para>
+If your printer and interface support it and you use a jobbreak method of
+<Emphasis remap="bf">pjl</Emphasis> or <Emphasis remap="bf">signal/pjl</Emphasis>, PPR will display the name of the user who
+submitted the job being printed on the printer's display panel.
+</Para>
+
+<Para>
+If you use PJL with a two-way communications channel to the printer, the printer
+will report back whenever it drops a page into the output tray.  These messages
+will be used to imcrease the detail of the progress information described in
+section <XRef LinkEnd="progress-reporting">.
+</Para>
+
+</Sect1>
+
+<Sect1 id="media-handling">
+<Title>Media Handling</Title>
+
+<Para>
+Modern laser printers very often have multiple input trays.  At the same
+time, version 3.0 of the Document Structuring Convention describes a
+method whereby the type of medium required for each page in a job may be
+specified.
+</Para>
+
+<Para>
+When a job enters the queue, PPR attempts to determine what media types are
+required to print it.  If the document contains comments which explicitly
+indicate this, that information is used.  If not, PPR assumes that only one
+type of medium is required and attempts to deduce what that is.  It starts
+with a default medium.  The default medium is defined by "default medium ="
+in the &lsqb;internationalization] section of <Literal remap="tt">/etc/ppr/ppr.conf</Literal>.  The
+default medium should be US Letter or A4.  PPR then looks for comments in the
+document setup section, such as <Emphasis remap="sf">&percnt;&percnt;PageSize:</Emphasis> comments and
+invokations of the features <Emphasis remap="sf">*MediaType</Emphasis>, <Emphasis remap="sf">*MediaColor</Emphasis>, and
+<Emphasis remap="sf">*MediaWeight</Emphasis>bf&#62; which would seem to indicate a different sort of medium.
+Each time one of these comments is encountered PPR revises it idea of what
+the required medium is like.
+</Para>
+
+<Para>
+Once the characteristics of all the requested media are determined, PPR
+attempts, for each one, to select a medium known to it that matches the
+requirements.  The list of known types is stored in the file
+<Literal remap="tt">/etc/ppr/media.db</Literal>.  For each required medium type, PPR makes
+multiple passes over the known media list, relaxing its standards each time
+until if finds a match.  If the proofmode is ``NotifyMe'' and PPR has to
+relax its standards more than a little, it will reject the job.  The list of
+known media types may be edited with the <Emphasis remap="bf">ppad media</Emphasis> commands.
+</Para>
+
+<Para>
+For each printer the operator has the option of describing what known media type
+is available in each bin or of forgoing automatic media handling entirely.  The
+<Emphasis remap="bf">ppad bins</Emphasis> series of commands tells PPR what input bins are available.  If the
+bin list is empty, PPR assumes that the printer can immediately print any job
+queued for it, regardless of what media are required.  If the bin list is not
+empty, PPR will not attempt to print a job until all the required media are
+mounted on one or more bins.  In the case of a group, the job will be started on
+the first member of the group which has the required media in place.
+</Para>
+
+<Para>
+The operator must indicate what type of medium is in each bin by using the
+<Emphasis remap="bf">ppop mount</Emphasis> command.  The media currently mounted on all the bins of a
+printer or of a group may be seen by using the <Emphasis remap="bf">ppop media</Emphasis> command.  If
+a job is not being printed because the required media are not mounted on any
+candidate printer, its queue status (as indicated by <Emphasis remap="bf">ppop list</Emphasis>) will be
+``waiting for media''.  A list of the required media will also be displayed.
+Media handling is closely related to but not the same as automatic bin
+selection which is described in section <XRef LinkEnd="automatic-bin-selection">.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Automatic Modification of Print Jobs</Title>
+
+<Para>
+The PPR spooler has the ability to modify the print job by inserting PostScript
+code to turn on special printer features such as duplex printing, or to select the
+bin which contains the required paper.  Features or this sort are described in
+this section.
+</Para>
+
+<Sect2>
+<Title>Inclusion of Feature Code</Title>
+
+<Para>
+When <Emphasis remap="bf">ppr</Emphasis> is invoked, the user may specify the names of printer features
+which should be invoked.  These features are specified with the <Emphasis remap="bf">-F</Emphasis> switch.
+The names are those used in the printer's PPD file.  These are the same names as
+appear in the PPD file.  Here is an example:  to print a file called
+``<Literal remap="tt">mydoc.test</Literal>'' on the printer ``myprn'' with duplex mode turned on, we would
+use this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.test
+</Screen>
+
+</Para>
+
+<Para>
+The code for the features selected by <Emphasis remap="bf">-F</Emphasis> switches is inserted in the
+Document Setup Section of DSC conforming documents.  For documents which do
+not conform, the code is inserted at the begining of the document.  The code
+to insert is taken directly from the printer's PPD file.
+</Para>
+
+<Para>
+When inserted, the code is enclosed in
+``<Literal remap="tt">&percnt;&percnt;Begin(End)Feature:</Literal>'' comments.  When the spooler inserts
+duplex code, it brackets the duplex code with code to save and restore the
+current transform matrix since for at least some printers, the duplex code
+given in the PPD file seems to execute "initmatrix".  The two extra lines of
+bracketing code generated by the spooler end with the comment
+``<Literal remap="tt">&percnt;PPR</Literal>''.  When the spooler inserts code requested with the <Emphasis remap="bf">-F</Emphasis>
+switch in a DSC conformant document, it inserts it at the top of the document
+setup section, right after the automatic bin selection code described in the
+next section, unless it is duplex code.  Duplex code is inserted at the very
+end of the document-setup section.  This is done to give it a better chance of
+overriding duplex setting code already in the document.
+</Para>
+
+</Sect2>
+
+<Sect2 id="automatic-bin-selection">
+<Title>Automatic Bin Selection</Title>
+
+<Para>
+Automatic bin selection is a feature which is closely related to media
+handling (see section <XRef LinkEnd="media-handling">), but it
+is not the same since it may be disabled for any given job even if media
+handling is being used.  Automatic bin selection will only work if media
+handling is also used, that is, if the bin list for the printer is not empty.
+</Para>
+
+<Para>
+If a print job requires only one type of medium and automatic bin selection
+is in effect, then the spooler will insert code in the job to select the
+paper tray which contains the required medium. (Does automatic bin selection
+work for jobs with multiple media types?  Maybe, but it has not been well
+tested.)
+</Para>
+
+<Para>
+Since many documents already contains code which influences input tray selection,
+automatic tray selection is not always successful.  This is the strategy used:  In
+the case of non-conforming documents, the code is inserted at the begining of the
+document.  This code will be overridden by any bin select code in the document.
+In the case of conforming documents, that is, those with a properly commented
+document setup section, the bin select code is inserted at the beginning of the
+document setup section.  The likelihood of this code's suceeding depends on
+whether the bin select code the document already contains is properly commented.
+For example, it works better with Apple's LaserWriter 8 than with earlier versions
+of the LaserWriter driver.  LaserWriter 8 encloses the code which selects paper
+source and size in standard comments.  These comments allow the spooler to modify
+this code.  This is how PPR modifies the code: It removes any <Emphasis remap="sf">*InputSlot</Emphasis> code
+and changes <Emphasis remap="sf">*PageSize</Emphasis> code to equivelent <Emphasis remap="sf">*PageRegion</Emphasis> code.  The spooler
+removes code by placing a percent sign and a space in front of each line,
+converting the code into comments.  It also changes the DSC comments it replaces
+into ordinary comments by placing a percent sign and space in front of each line.
+Thus, you can examine the spooler output and see what code it has replaced. (You
+can examine the spooler output by setting up a printer with the interface
+<Emphasis remap="bf">dummy</Emphasis>. If you wish to know what code is being sent to a real printer, set up
+the dummy printer with the same options, including PPD file, bins, and mounted
+media.)
+</Para>
+
+<Para>
+Combined with the automatic bin selection feature is the automatic autoswitch
+selection feature.  If the bin selected is named ``Upper'' or ``Lower'', and there
+is another bin named ``Lower'' or ``Upper'', the autoswitch selection feature
+comes into play.  If the bin with the opposite name has the same medium mounted,
+then the automatic tray switch feature is turned on using the code from the PPD
+file.  If the opposite bin has a different type of medium mounted, then the
+automatic tray switch feature is turned off using the code from the PPD file.  (The
+HP 4 series of printers do not seem to have a command to turn off the automatic
+tray switch feature. This should be regarded as a defect.)
+</Para>
+
+<Para>
+The automatic bin selection feature may be disabled by deleting all of the defined
+bins with the <Emphasis remap="bf">ppad bins delete</Emphasis> command.  It may be suppressed for the current
+job with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-B false</Emphasis> switch.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Multiple Copies</Title>
+
+<Para>
+The spooler can insert code to change the number of copies of a document
+which are printed.  You may ask to have this code inserted by using the <Emphasis remap="bf">-n</Emphasis>
+switch when invoking <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+<Para>
+If the document is DSC conforming, the code to
+select the number of copies is inserted at the end of the Document Setup
+Section.  If the document sets the number of copies, the code inserted by
+the spooler, coming later in the document, will override it.  Of course, if
+a job sets the number of copies after the end of the Document Setup
+Section, this technique will not work.  (A document which defines the number
+of copies outside the Document Setup Section breaks the rules of DSC
+conformance.)
+</Para>
+
+<Para>
+If a document does not have the DSC comments necessary to identify the Document
+Setup Section, the code is inserted at the top of the document.  This code takes a
+different form from that inserted in a Document Setup Section:  the code redefines
+<Emphasis remap="sf">showpage</Emphasis> as a procedure which sets the number of copies before executing the
+real showpage.
+</Para>
+
+<Para>
+If you invoke ppr with the <Emphasis remap="bf">-n collate</Emphasis> switch, then PPR will print collated
+copies.  It will do this by either sending the whole document multiple times,
+for non DSC conforming documents, or by sending only the pages multiple times,
+for DSC conforming documents.  The number of copies desired as well as collated
+copies may also be requested by means of a <Emphasis remap="sf">&percnt;&percnt;Requirements:</Emphasis>
+comment in the document header if the <Emphasis remap="bf">-R copies</Emphasis> switch was used when
+invoking <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>N-Up Printing</Title>
+
+<Para>
+PPR can insert code to cause several virtual pages to be printed on one physical
+page, possibly reducing the size of the pages in order to do so. This feature may
+be invoked with the <Emphasis remap="bf">-N</Emphasis> <Emphasis remap="it">n</Emphasis> switch where <Emphasis remap="it">n</Emphasis> indicates the number of
+virtual pages to be put on each side of the physical page.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Signature Printing</Title>
+
+<Para>
+A signiture is a booklet which is sewn or glued together with other signatures
+to make a book.  A signiture is printed in such a way that the sheets of paper on
+which it is printed may be stacked and folded in the center.  When they are thus
+folded and glued, stapled, or sewn at the fold, the pages will be in the correct
+order.  PPR can print a DSC conforming document as one or more signatures.  2-Up
+mode is used to accomplish this. The pages are re-ordered before they are sent to
+the printer.  It is necessary to send the pages to the printer out of sequence so
+that when the signatures are folded the pages will be in the correct order.
+Signiture printing is invoked with the <Emphasis remap="bf">-s</Emphasis> switch.  This switch takes an
+argument which is the number of sheets of paper which should be used to make each
+signiture.  This switch also turns on 2-Up mode and duplex mode. The number of
+pages which will fit in a signiture is the number of sheets multiplied by 4.
+</Para>
+
+<Para>
+Signiture printing works best with a duplex printer, however it is possible to
+print signatures without a duplex-capable printer.  The <Emphasis remap="bf">-s fronts</Emphasis> and <Emphasis remap="bf">-s
+backs</Emphasis> switches make this possible.  It will be necessary to submit the job once,
+with the <Emphasis remap="bf">-s fronts</Emphasis> switch (in addition to the <Emphasis remap="bf">-s</Emphasis> switch which specifies
+the number of sheets); take the paper from the output tray, turn it around, and
+put it back in the input tray, and submit the job again with the <Emphasis remap="bf">-s backs</Emphasis>
+switch.  This works, but it is tricky since you must first make sure no one else
+is using the printer, and figuring out which way to insert the paper the second
+time is not easy.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Booklet Printing</Title>
+
+<Para>
+Booklet printing is just like signiture printing, except PPR automatically
+selects the minimum number of signiture sheets needed to print the entire document
+in one booklet.  Booklet mode is invoked with the <Emphasis remap="bf">-s booklet</Emphasis> switch.  As with
+signiture mode, booklets can be printed on a simplex printer by passing the paper
+through twice the first time with the <Emphasis remap="bf">-s fronts</Emphasis> switch and the second time
+with the <Emphasis remap="bf">-s backs</Emphasis> switch.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Page Reversal</Title>
+
+<Para>
+PPR can often re-order the pages of a document so that they will stack in the
+proper order in a printer's face-up output tray.  In the case of duplex and N-Up
+printing, PPR will work back and forth through the document and will generate
+blank pages where necessary in order to achieve correctly stacked output.  The
+desired output order for a printer may be specified with the <Emphasis remap="bf">ppad outputorder</Emphasis>
+command.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Automatic Resource Downloading</Title>
+
+<Para>
+Whenever PPR prints a job which contains <Emphasis remap="sf">&percnt;&percnt;Include:</Emphasis>
+comments it attempts to insert the resources requested.  There are three
+sources of resources available to PPR.
+</Para>
+
+<Para>
+One source is the resource library in
+the directory <Literal remap="tt">/usr/ppr/cache</Literal>.  These several procedure sets used
+by PPR, a few vendor's procedure sets which are included because there are
+broken versions out there which we don't want corrupting the cache, and a
+few patched vendor procedure sets.
+</Para>
+
+<Para>
+The second source is the font index.
+&lsqb;This section has not been written yet.]
+</Para>
+
+<Para>
+The third source is the resource cache in <Literal remap="tt">/var/spool/ppr/cache</Literal>.
+Whenever PPR processes a job with an resource it does not have in the cache, it
+adds a copy of it to the cache.  The purpose of this is to reduce resource
+download time in the future.  LaserWriter 8 will generally refrain from
+downloading a font if the PPR Macintosh printer server <Emphasis remap="bf">papsrv</Emphasis> informs it that
+the font is already in the printer.  (Of course, it is in the printer, it is in
+the cache, but from the viewpoint of the Macintosh client it is the same thing.)
+Also, some PostScript drivers for Microsoft Windows allow the downloading of the
+procedure set to be turned off.  As long as one job has been printed with it
+turned on, the procedure set will be in the cache and if downloading is
+subsequently turned off, the MS-Windows driver will include a comment in each
+document telling where to re-insert the procedure set from the cache.
+</Para>
+
+<Sect3 id="truetype-download">
+<Title>TrueType Font Downloading</Title>
+
+<Para>
+&lsqb;This section has not been written yet.]
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Font Substitution</Title>
+
+<Para>
+Sometimes a font manufacturer changes the name of a font.  For example,
+MonoType's font ``MBembo'' became ``Bembo''.  At other times, fonts within the same
+family will differ only in width.  In that case, a reasonable substitute may be
+achieved by adjusting the width of the substitute font.
+</Para>
+
+<Para>
+If the required fonts are called out with DSC comments, then PPR can
+automatically substitutes fonts.  The file <Literal remap="tt">fontsub.conf</Literal> is consulted
+to help locate a suitable substitute font.
+</Para>
+
+<Para>
+The format of <Literal remap="tt">fontsub.conf</Literal>
+is described in Appendex <XRef LinkEnd="fontsub">.
+</Para>
+
+<Para>
+The substitution file will only be consulted if the ProofMode is
+``Substitute''.  The ProofMode is Substitute by default.  It can be changed
+by a ``&percnt;&percnt;ProofMode:'' line in the document comments or by
+<Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-P</Emphasis> switch.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1 id="interfaces1">
+<Title>Printer Interface Programs</Title>
+
+<Para>
+The <Emphasis remap="bf">pprdrv</Emphasis> communicates with the printer through an interface program.
+An interface program must read the PostScript code from stdin and send it to
+the printer.  If the interface receives messages from the printer it must copy
+them to stdout.
+</Para>
+
+<Para>
+An interface may also have a r&ocirc;le in indicating to the printer were
+one PostScript job begins and another ends.  For example, if a flag page is
+printed before the job it is necessary that the PostScript interpreter be reset
+after processing the code for the banner page and before processing the
+code for the job proper.  Otherwise, commands executed to print the banner page
+could have lingering effects which would prevent the job printing correctly.
+With flag pages printed after the job, the problem is even more severe. If an
+error occurs in the job, the PostScript interpreter will throw away the rest of
+the job, and since it has know way of knowing when the job ends and the banner
+page begins it will throw away the flag page too.  Even if the job prints
+correctly, if it leaves the device space transformed or standard commands
+redefined, the flag page may not print correctly.
+</Para>
+
+<Para>
+The method used to indicate job boundaries to the printer is known as the
+job break method.  The job break method for a printer may be set with the
+<Emphasis remap="bf">ppad jobbreak</Emphasis> command.  There are four basic catagories of job break
+methodes:
+</Para>
+
+<Para>
+There are two unsatisfactory jobbreak methods provided for testing
+purposes.  One is a job break method <Emphasis remap="bf">none</Emphasis>.  As its name implies, it does
+not attempt to indicate job boundaries.  It will seldom if ever prove
+satisfactory.  On a serial connexion, for example, the printer will be unable
+to distinguish sucessive jobs.  With some interfaces it may work because the
+very act of starting the interface indicates the start of a new job.  This may
+be true of interfaces which invoke Ghostscript or interfaces which make network
+connexions using certain protocols such as AppleTalk. However even in these
+cases, the job break method <Emphasis remap="bf">none</Emphasis> will cause problems if banner or trailer
+pages are printed or if PPR elects to print multiple copies of the job by
+sending the whole job multiple times.
+</Para>
+
+<Para>
+The other unsatisfactory method is called <Emphasis remap="bf">save/restore</Emphasis>.  This is
+only a slight improvement on <Emphasis remap="bf">none</Emphasis>.  When using the <Emphasis remap="bf">save/restore</Emphasis>
+job break method <Emphasis remap="bf">pprdrv</Emphasis> brackets each job with the PostScript commands
+<Emphasis remap="sf">save</Emphasis> and <Emphasis remap="sf">restore</Emphasis>.
+</Para>
+
+<Para>
+The job break methods in the second catagory employ the control character
+control-D (character code 4) to separate jobs.  If the method is
+<Emphasis remap="bf">control-d</Emphasis>, <Emphasis remap="bf">pprdrv</Emphasis> sends a control-D to terminate any old job which
+may be lingering in the printer and then sends the jobs one at a time, ending
+each job with a control-D.
+</Para>
+
+<Para>
+When a PostScript printer receives a control-D over a serial interface or,
+in the case of HP printers with JetDirect cards, over a TCP/IP interface, it
+finishes processing the job and then responds with a control-D.  Thus when all
+the jobs have been completed, the number of control D's received should equal
+the number sent.  A good printer interface program will count the number of
+control-D's it copies to the printer and will keep the connexion open until it
+receives an equal number.  Only by so doing can it know that the jobs have been
+completely processed and that it has received all of the messages (such as
+PostScript error notifications) that are coming.  If the communictions channel
+is in fact one-way it will never receive any control-D's and will wait forever.
+For this reason it is necessary to set the queue up corectly with the <Emphasis remap="bf">ppad
+feedback</Emphasis> command.  See the ppad(8) man page for further information on this
+topic.
+</Para>
+
+<Para>
+The job break method <Emphasis remap="bf">pjl</Emphasis> is the same as <Emphasis remap="bf">control-d</Emphasis> except that it adds HP
+PJL commands to display the user name on the printer's message panel and to turn
+on reporting of page completion (see sections <XRef LinkEnd="user-name-display"> and <XRef LinkEnd="progress-reporting">).
+</Para>
+
+<Para>
+Two more job break methods depend on the interface to indicate job breaks to
+the printer.  These are <Emphasis remap="bf">signal</Emphasis> and <Emphasis remap="bf">signal/pjl</Emphasis>.  Whenever a job
+break is required, <Emphasis remap="bf">pprdrv</Emphasis> finishes sending the current job to the
+interface and then sends the interace SIGUSR1.  When the interface receives
+SIGUSR1, it reads all it can from <Emphasis remap="bf">pprdrv</Emphasis>, sends it to the printer and then
+indicates the job break to the printer.  When the printer has acknowledged the
+job break, the interface will send SIGUSR1 to <Emphasis remap="bf">pprdrv</Emphasis>.  This method is
+implemented by the interface <Emphasis remap="bf">atalk</Emphasis> which indicates the division between
+jobs to the printer by means of a special feature of the AppleTalk Printer
+Access Protocol.
+</Para>
+
+<Para>
+The final job break method is <Emphasis remap="bf">newinterface</Emphasis>.  When using this method,
+<Emphasis remap="bf">pprdrv</Emphasis> runs the interface repeately, once for each actual print job or
+flag page.  This is useful when the very act of shutting down the interface and
+starting it up again resets the PostScript interpreter.  This is true for
+interfaces which invoke Ghostscript, such as <Emphasis remap="bf">gssimple</Emphasis>, <Emphasis remap="bf">gstcpip</Emphasis>, and
+<Emphasis remap="bf">gsatalk</Emphasis>.  This would also work for the <Emphasis remap="bf">atalk</Emphasis> interface, but the job
+break methods <Emphasis remap="bf">signal</Emphasis> and <Emphasis remap="bf">signal/pjl</Emphasis> are more efficient.
+</Para>
+
+<Para>
+Detailed technical specifications for a printer interface can be found in
+Appendix <XRef LinkEnd="interfaces2">.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Printer Fault Handling</Title>
+
+<Para>
+This topic has already been touched on in section <XRef LinkEnd="printer-errors">.  It is the responsibility of the interface program to
+connect to the printer, accept the data and send it to the printer.  If it cannot
+accomplish its job it will exit with a code which indicates the reason for the
+failure.  It will generally also append a diagnostic message to the printer's
+alert log.
+</Para>
+
+<Para>
+One of these codes is EXIT&lowbar;PRNERR.  This code indicates that an error has
+occured which prevents effective communication with the printer, but the error
+is of a sort that may clear up.  The first time such an error occurs, <Emphasis remap="bf">pprd</Emphasis>
+will wait for 10 seconds and then try printing again.  After each failure the
+delay time is increased by 10 seconds until it reaches 10 minutes after which
+point it does not continue to increase.  Errors of this sort may result in
+alert message being sent to an operator.
+</Para>
+
+<Para>
+Another code is EXIT&lowbar;PRNERR&lowbar;NORETRY.  This code is similiar to the one
+above, but it is used for conditions which are unlikely to be self correcting.
+An invalid printer address or interface option is an example of such an error.
+These errors too may result in an alert message being sent to an operator.
+</Para>
+
+<Para>
+A third code is EXIT&lowbar;SIGNAL.  An interface should terminate with this code
+if it catches the TERM signal.  When a printer is halted or a printing job is
+canceled, <Emphasis remap="bf">pprdrv</Emphasis> sends SIGTERM in order to kill the interface.  An
+interface is not required to have a handler for this signal since the default
+action is to die, but if the interface has any special shutdown action it must
+take, it should catch this signal and then exit with the code EXIT&lowbar;SIGNAL.
+</Para>
+
+<Para>
+A fourth code is EXIT&lowbar;ENGAGED.  An interface should exit with this code if
+has good reason to believe that the printer is present and turned on but is
+busy printing a job from another computer or is off-line.  When an interface
+exits with this code, <Emphasis remap="bf">pprd</Emphasis> delays for 60 seconds and then tries again.  No
+alert notice will be sent to the operator.
+</Para>
+
+</Sect1>
+
+<Sect1 id="commentators">
+<Title>Commentators</Title>
+
+<Para>
+A commentator is a file or external program which is fed information which
+allows it to keep up a running commentary on the activities of PPR as they
+relate to a certain printer.
+</Para>
+
+<Para>
+A commentator may be activated full-time for a certain printer.  In this case,
+it will send messages whenever a selected event occurs on a specific printer
+queue regardless of whose job is being printed.
+</Para>
+
+<Para>
+In contrast, a user can ask for commentary at the time he submits a job.  The
+commentary messages will only be sent while that job is printing and no matter
+which printer it is printed on.
+</Para>
+
+<Sect2>
+<Title>Activating a Full-Time Commentator</Title>
+
+<Para>
+A full-time commentator may be activated by editing a printer's configuration
+file and adding a line like this one:
+</Para>
+
+<Para>
+
+<Screen>
+Commentator: 5 audio yourpc.trincoll.edu:15009 "level=3 voice=male1"
+</Screen>
+
+</Para>
+
+<Para>
+or like this:
+</Para>
+
+<Para>
+
+<Screen>
+Commentator: 15 samba yourpc ""
+</Screen>
+
+</Para>
+
+<Para>
+In the first example, whenever something interesting happens (what is
+interesting is defined by the number 5) the program
+<Emphasis remap="bf">/usr/ppr/commentators/audio</Emphasis> is invoked.  In the second example, the
+number which descibes what the commentator wants to hear about is different.
+The commentator program is also different:  <Literal remap="tt">/usr/ppr/commentators/samba</Literal>
+will be invoked.  You may put as many <Emphasis remap="sf">Commentator:</Emphasis> lines in a printer
+configuration file as you wish.
+</Para>
+
+<Para>
+In these examples, the first parameter, (5 and 15 in the examples) is a
+bitmask which defines what we find interesting.  You should determine
+this value by adding together the values which stand for the types of
+events you are interested in.  The value 5 is formed by adding 1, for
+printer errors, and 4 for printer stalls.
+</Para>
+
+<Para>
+Here are the values which should be added together to form the first parameter:
+</Para>
+
+<Para>
+
+<ItemizedList>
+<ListItem>
+
+<Para>
+COM&lowbar;PRINTER&lowbar;ERROR 1
+Printer status messages when are prefixed with ``PrinterError: ''.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+COM&lowbar;PRINTER&lowbar;STATUS 2
+Other printer status messages.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+COM&lowbar;STALL 4
+Printer is accepting data too slowly.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+COM&lowbar;EXIT 8
+The printer driver program (<Emphasis remap="bf">pprdrv</Emphasis>) has exited due to some unuasual circumstance.
+
+</Para>
+</ListItem>
+
+</ItemizedList>
+
+</Para>
+
+<Para>
+Whenever an even occurs and all of its categories to which it belongs to
+are specified by the number in the first  field of the <Emphasis remap="sf">Commentator:</Emphasis>
+line, the commentator program specified in the second parameter is invoked.
+If no path is specified, the commentator program is assumed to reside in
+<Literal remap="tt">/usr/ppr/commentators</Literal>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Activating a Commentator for a Specific Job</Title>
+
+<Para>
+&lsqb;This section has not been written yet.]
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>How Commentator Programs Work</Title>
+
+<Para>
+The commentator program is invoked with the following arguments:
+</Para>
+
+<Para>
+
+<OrderedList>
+<ListItem>
+
+<Para>
+1) The address from the third field of the <Emphasis remap="sf">Commentator:</Emphasis> line.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+2) The commentator options (<Emphasis remap="sf">Commentator:</Emphasis> line field three).
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+3) The name of the printer.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+4) The category value for this event.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+5) A very brief text message describing the event.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+6 &#38; 7) An unprocessed or raw form of the information in the text
+message.  At times the raw data fields will contain information which
+is not preserved in the fifth argument.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+8) PPR's assessment of the serverity of the situation.  This
+assessment takes the form of a number between 1 and 10 with 1 being
+not at all serious and 10 being very serious (something that will
+probably require the attention of the system administrator.)
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+9) A longer text message describing the problem in complete sentences.
+This messages can be used by simple commentators instead of creating their
+own messages from the information provided by means of the arguments described
+above.
+
+</Para>
+</ListItem>
+
+</OrderedList>
+
+</Para>
+
+<Para>
+Thus, a commentator might be invoked like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/audio yourpc.trincoll.edu:15009 'level=3 voice=male1' yourprn 4 'stalled for 12 minutes' 'WRITE' '23'
+</Screen>
+
+</Para>
+
+<Para>
+when the printer has not been accepting data or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/audio yourpc.trincoll.edu:15009 'level=3 voice=male1' yourprn 4 'no longer stalled' 'WRITE' '-12'
+</Screen>
+
+</Para>
+
+<Para>
+when it begins accepting data again, or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 8 'has printed a job' 'EXIT_PRINTED' '' 1
+</Screen>
+
+</Para>
+
+<Para>
+whenever a job is printed, or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 8 'job error' 'EXIT_JOBERR' ''
+</Screen>
+
+</Para>
+
+<Para>
+if there is something wrong with a job, or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 8 'PostScript error' 'EXIT_JOBERR' ''
+</Screen>
+
+</Para>
+
+<Para>
+when the specific thing wrong with the job is a PostScript error, or like
+this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 8 'interface program killed' 'EXIT_SIGNAL'
+''
+</Screen>
+
+</Para>
+
+<Para>
+when somebody kills the interface program, or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 8 'printing halted' 'EXIT_SIGNAL' ''
+</Screen>
+
+</Para>
+
+<Para>
+when PPR killed the interface program itself, or like this:
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 1 'out of paper' 'Out of Paper' '0'
+</Screen>
+
+</Para>
+
+<Para>
+In this example, the first raw data field contains a message received from the
+printer.  The normal message field contains a standard version of this
+message.  (Believe it or not, printers don't all phrase these messages the
+same.)  The various forms are converted to standardized forms using the
+information in the file <Literal remap="tt">/etc/ppr/lw&lowbar;messages.conf</Literal>.
+</Para>
+
+<Para>
+
+<Screen>
+commentators/samba yourpc '' yourprn 1 '' 'Fatal error 1001' '0'
+</Screen>
+
+</Para>
+
+<Para>
+Notice that in this last example the field which ought to contain the message
+for the user is blank.  However, first raw data field contains the message
+exactly as it was received from the printer.  Apperenly, PPR did find a
+standard form of this message in its data files.
+</Para>
+
+<Para>
+Also notice that in the last two examples the second raw data field is blank.
+The second raw data field is currently blank for this type of message but in a
+future version of PPR will contain the translated version of this message from
+the printer's PPD file.  The language will be indicated by the first word of
+the message.
+</Para>
+
+<Para>
+If the program name in the printer configuration file is ``file'', the event is
+appended to the file which is named in the address field.  When the file is
+opened, the PPR home directory, (usually /usr/ppr) is the current directory.
+You can rely on this or you can begin your file name with a ``/''.  If the
+commentator program name is not ``file'' and does not begin with a ``/'', it is
+understood to be a program in the <Literal remap="tt">/usr/ppr/commentators</Literal> directory.  If
+you want to use a program in another directory, you must begin its name with a
+``/''.  Commentators should exit as soon as possible because <Emphasis remap="bf">pprdrv</Emphasis> will
+wait for up to 60 seconds for all the commentators it has launced to exit.  If
+necessary, commentators should place their work in the background or in a queue
+and then exit.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Samba Commentator</Title>
+
+<Para>
+This commentator uses Samba's <Emphasis remap="bf">smbclient</Emphasis> to send a popup message.  The
+address is the NetBIOS name of the machine to send the message to.  If you think
+<Emphasis remap="bf">smbclient</Emphasis> is going to have trouble determining the IP address, you can
+append a hyphen and the IP address.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The X-Windows Commentator</Title>
+
+<Para>
+This commentator uses <Emphasis remap="bf">xmessage</Emphasis> or <Emphasis remap="bf">xterm</Emphasis> to display a message.  The
+address is an X-Windows display name.  The user ``ppr'' must have permission to
+create windows on the display.  This can be granted with
+<Emphasis remap="bf">xhost</Emphasis>
+<FOOTNOTE>
+
+<Para>
+Part
+of X-Windows.  See xhost(1).
+</Para>
+
+</FOOTNOTE>
+ or <Emphasis remap="bf">ppr-xgrant</Emphasis>
+<FOOTNOTE>
+
+<Para>
+See the
+ppr-xgrant(1) man page for a description of the <Emphasis remap="bf">ppr-xgrant</Emphasis> command.
+</Para>
+
+</FOOTNOTE>
+.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Audio Commentator</Title>
+
+<Para>
+This is the most elaborate commentator by far.  It makes spoken
+announcements concerning the printer's condition.  To use the audio commentator
+you must have Perl 5.  You must also install the sound files.  To install the
+sound files, get <Literal remap="tt">ppr-speach-1.30.tar.gz</Literal> and unpack it in the PPR home
+directory (which is usually <Literal remap="tt">/usr/ppr</Literal>).  To set up the audio
+commentator you need a commentator line like this one:
+</Para>
+
+<Para>
+
+<Screen>
+Commentator: 13 audio /dev/xxx level=8
+</Screen>
+
+</Para>
+
+<Para>
+Or like this one:
+</Para>
+
+<Para>
+
+<Screen>
+Commentator: 13 audio smith.pc.myorg.org:15009 level=10
+</Screen>
+
+</Para>
+
+<Para>
+Both these lines This will cause events of certain types (indicated by the
+bitmask 13 or 31) to be reported using the audio commentator.  The commentator
+is also passed the option <Emphasis remap="sf">level=10</Emphasis> which it uses to furthur filter the
+events which have been selected by the bitmask.  A level of 10 will result in
+the reporting of all events, even the sucessful printing of a job.  Lower
+numbers will exclude mundane events.  Remember, the bitmask is formed by
+summing the desired catagories of messages.  The catagories are:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term>1</Term>
+<ListItem>
+<Para>
+printer errors, such as paper jams
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>2</Term>
+<ListItem>
+<Para>
+printer status messages such as off line
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>4</Term>
+<ListItem>
+<Para>
+notices that the printer isn't accepting data
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>8</Term>
+<ListItem>
+<Para>
+<Emphasis remap="bf">pprdrv</Emphasis> exited, returning a code which indicates an abnormal
+condition such as communications error or PostScript error or the job was
+canceled
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>16</Term>
+<ListItem>
+<Para>
+<Emphasis remap="bf">pprdrv</Emphasis> exited but for a rather booring reason, such as ``job was
+printed''
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+<Para>
+The address indicates the means of playing the sound file.  The current version
+of the audio commentator provides two ways to do this.  If the address begins
+with ``/'', as in the first example, then the sound is played on the local
+machine.  The code to accomplish this is in the file
+<Literal remap="tt">/usr/ppr/lib/play&lowbar;local.pl</Literal>.  This code is presently very redimentry
+and requires a program which will take the name of the file to be played as its
+argument.  As distributed, the program <Emphasis remap="bf">/usr/local/bin/play</Emphasis> is used and
+the address is ignored.  Because the address is ignored, the silly address
+``/dev/xxx'' is used in the example above.  Any help with improving this would
+be greatly appreciated.
+</Para>
+
+<Para>
+In the second example, the audio commentator is passed the address
+``smith.pc.myorg.org:15009''.  This indicates that the sound is to be played on
+the machine ``smith.pc.myorg.org'' and the program which will play the sound is
+listening for requests on TCP/IP port number 15009.  Playing the sound on a
+remote
+machine requires Samba and a MS-Windows 95 computer equiped with <Emphasis remap="bf">Tcl/Tk</Emphasis>
+and the script <Emphasis remap="bf">pprpopup.tcl</Emphasis> which may be found in the <Literal remap="tt">misc</Literal> directory
+of
+the PPR source code.  When the audio commentator wants the MS-Windows 95
+computer
+to play a sound file it places the file in a directory which is shared through
+Samba.  The audio commentator then opens a TCP/IP connexion to the remote
+computer.  The script <Emphasis remap="bf">pprpopup.tcl</Emphasis> will be listening on that port and will
+receive a request to play the audio file whose location is specified by a UNC
+path
+such as
+``&bsol;&bsol;mjagger.serve&bsol;pprclipr&bsol;smith-pc-myorg-org-15009-3001''.
+The <Emphasis remap="bf">pprpopup.tcl</Emphasis> script will launch a program to play the file and report
+back when it is done.  The audio commentator will then remove the temporary file
+and exit.  In order for this to work, you must edit your <Literal remap="tt">smb.conf</Literal> file and
+add a section to share PPR's client spooling directory.  Add the following
+lines:
+</Para>
+
+<Para>
+
+<Screen>
+[pprclipr]
+  comment = PPR client spooling directory
+  path = /var/spool/ppr/pprclipr
+  printable = no
+  writable = no
+  public = yes
+</Screen>
+
+</Para>
+
+<Para>
+You must also obtain <Emphasis remap="bf">Tcl/Tk</Emphasis> for MS-Windows
+(<Literal remap="tt">ftp://ppr-dist.trincoll.edu/pub/ppr/win41p1.exe</Literal>) an install it.  The
+script <Emphasis remap="bf">pprpopup.tcl</Emphasis> should be copied from the PPR source directory
+<Literal remap="tt">misc</Literal> to your MS-Windows machine.  You should then run the script.  The
+script <Emphasis remap="bf">pprpopup.tcl</Emphasis> uses the Netscape audio player to play the file.  This
+player is used because many people already have it installed and because the
+version for MS-Windows 95 can handle UNC paths with long filename components.
+The script can be easily modified to work with other audio players.  Information
+about other programs which can be used for this purpose would be greatly
+appreciated.  Whatever method of playing the sound you select, the easiest way
+to test the commentator is to set the bitmask to 31, the options to ``level=10''
+and print a job. You should hear something like, ``The printer emm cee ee cee
+underscore one has just printed a document.''
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Input Filters</Title>
+
+<Para>
+One of the most noteworthy features of PPR is its ability to determine the
+type of the input file and automatically convert it to PostScript if
+necessary.  The type of the input file is determined by two methods.  The first
+method is the most reliable.  The second is employed only if the first fails.
+</Para>
+
+<Para>
+The first method is to look for a ``magic number'' at the start of the
+file.  Many file format specifications dictate that files conforming to them
+always begin with certain signiture bytes.  Formats which specify a signiture
+or magic number include DSC conforming PostScript, JFIF, GIF, PNG, DVI,
+WordPerfect documents, PBM, XPM and others.
+</Para>
+
+<Para>
+If no recognized magic number is found, then the first 8192 bytes of the
+file are scanned and the number of times certain characters and constructs are
+found are counted.  The things counted include ASCII control characters,
+non-ASCII characters, HP escape sequences, Troff-style dot commands, TeX style
+backslash commands, and PostScript procedure definitions.  When these things
+have been counted, the totals are used to try to guess at the file format.
+</Para>
+
+<Para>
+If PPR ever fails to determine a file's format correctly or you wish to
+print a file in a format for which auto-detection is not available, you can
+override the auto-detection mechanism with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-T</Emphasis> switch
+<FOOTNOTE>
+
+<Para>
+See the
+ppr(1) man page for details.
+</Para>
+
+</FOOTNOTE>
+.
+</Para>
+
+<Para>
+Once the file format has been determined, unless it is PostScript, it is
+necessary to pass the file through a filter.  A PPR filter is a program which
+reads the file from its standard input and writes PostScript on its standard
+output.  It is the PostScript code emmited by the filter that PPR sends to the
+printer.
+</Para>
+
+<Para>
+A number of filters are supplied with PPR.  PPR also includes a number of
+shell and Perl scripts which work together with programs such as TeX, Troff,
+PBMPlus, and other programs often found on Unix systems to form filters.  If
+the supporting programs can not be found, the script filters will not be
+installed.
+</Para>
+
+<Para>
+PPR can automatically recognize a number of file types for which it does not
+have filters.  PPR determines whether it has a filter for a file of a certain
+type by looking in the <Literal remap="tt">/usr/ppr/filters</Literal> directory for a file with a name
+in the form <Literal remap="tt">filter&lowbar;</Literal><Emphasis remap="it">type</Emphasis>.  For instance, if the input file is of type
+<Emphasis remap="bf">fortran</Emphasis>, it will look for <Literal remap="tt">/usr/ppr/filters/filter&lowbar;fortran</Literal>.  You may
+write your own filters and install them in the <Literal remap="tt">/usr/ppr/lib</Literal>
+directory.  For explicit information on writing filters, see Appendix <XRef LinkEnd="filters">.
+</Para>
+
+<Para>
+Each filter recieves a list of filter options.  This option list is created by
+concatenating the default filter options with all of the filter options specified
+with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-o</Emphasis> switch.  Before invoking the filter, <Emphasis remap="bf">ppr</Emphasis> culls the
+option list.  It removes any option which is intended to apply only to a specific
+filter other than the one being used.  An option may be applied to a single filter
+by prefixing its name with the name of the filter and a hyphen.  For example, the
+option ``noisy=yes'' should apply to all filters and hence won't be culled but the
+option ``dvi-noisy=yes'' will be deleted by <Emphasis remap="bf">ppr</Emphasis> except when it is invoking
+the DVI filter.  A filter, such as the <Emphasis remap="bf">tex</Emphasis> filter, may invoke another filter
+such as the dvi filter to do part of its work.  The first filter will generally
+pass its options on to the second filter, however, since the filter list has
+already been culled, the DVI filter will receive options whose names begin with
+``tex-'' but will not receive options whose names begin with
+``dvi-''
+<FOOTNOTE>
+
+<Para>
+More on the handling of the option list can be found in Appendix
+<XRef LinkEnd="filters"> and in the ppr(1) man
+page in the section which describes the <Emphasis remap="bf">-o</Emphasis> switch.
+</Para>
+
+</FOOTNOTE>
+.
+</Para>
+
+<Para>
+What follows is a description of some of the filters supplied with PPR.
+<FOOTNOTE>
+
+<Para>
+A complete list of filters can be found in the ppr(1) man page in the
+section for the <Emphasis remap="bf">-T</Emphasis> switch.
+</Para>
+
+</FOOTNOTE>
+
+</Para>
+
+<Sect2>
+<Title>The Line Printer Emulator</Title>
+
+<Para>
+&lsqb;Not written yet.]
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Emphasis remap="bf">pr</Emphasis> Filter</Title>
+
+<Para>
+The <Emphasis remap="bf">pr</Emphasis> filter passes the input through the Unix <Emphasis remap="bf">pr</Emphasis> program and then
+through the Line Printer Emulator.  It supports the options <Emphasis remap="bf">width=</Emphasis> and
+<Emphasis remap="bf">length=</Emphasis> which are passed to <Emphasis remap="bf">pr</Emphasis> as the arguments to its <Emphasis remap="bf">-w</Emphasis> and
+<Emphasis remap="bf">-l</Emphasis> switches respectively.  Since the this filter invokes the Line Printer
+Emulator, it supports all the options of that filter too.
+</Para>
+
+<Para>
+This filter will never be invoked automatically since plain text files are
+normally processed by the Line Printer Emulator.  In order to employ this
+filter you must invoke <Emphasis remap="bf">ppr</Emphasis> with the switch <Emphasis remap="bf">-T pr</Emphasis>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Dot Matrix Printer Emulator</Title>
+
+<Para>
+&lsqb;Not written yet.]
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Fortran Filter</Title>
+
+<Para>
+This filter prints files encoded with fortran carriage control.  This filter
+supports the options <Emphasis remap="bf">width=</Emphasis> and <Emphasis remap="bf">length=</Emphasis> which specify the page width
+in columns and the page length in lines respectively.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Various Image File Filters</Title>
+
+<Para>
+Depending on which image file utilities your system has, filters may be
+available for various image file formats.  These filters are shell scripts
+which invoke programs such as the PBM utilities and the Independent JPEG
+Group's programs.  These filters will be installed and edited to fit your
+configuration if the required utilies are in the PATH when you invoke
+<Emphasis remap="bf">/usr/ppr/fixup/fixup&lowbar;filters</Emphasis>.  These filters support some options,
+but they are generally ones such as <Emphasis remap="bf">resolution=</Emphasis> and <Emphasis remap="bf">color=</Emphasis> which
+PPR supplies automatically as default filter options.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Hex Dump Filter</Title>
+
+<Para>
+This filter prints side-by-side hexadecimal and ASCII dump of the first few
+hundred bytes of the input file (as much as will fit on one page).  This filter
+will sometimes be used to print input files for which no filter is available.
+This filter will only be used if either the <Emphasis remap="bf">-e hexdump</Emphasis> switch was used
+when invoking <Emphasis remap="bf">ppr</Emphasis> or if it was not possible to inform the user of the
+problem by means of a message on stderr or by invoking a resonder
+<FOOTNOTE>
+
+<Para>
+See the
+section on the <Emphasis remap="bf">-e hexdump</Emphasis> in ppr(1).
+</Para>
+
+</FOOTNOTE>
+.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The TeX Source Filter</Title>
+
+<Para>
+This filter is written in Perl, so it will not be available if Perl was not
+installed last time you ran <Literal remap="tt">/usr/ppr/fixup&lowbar;filters</Literal>. This
+filter will read the input file and attempt to identify it as either Plain TeX
+or LaTeX.  It will then copy the file to a temporary directory and run TeX
+on it with either the Plain or LaTeX macros.  It will run TeX multiple
+times if it is necessary to get the cross references right.
+</Para>
+
+<Para>
+If running TeX results in a fatal error, TeX's output is passed through the
+Line Printer Emulator and becomes the output of the filter and hence what gets
+printed.  On the other hand, if TeX ran successfully, the DVI file is passed to
+the DVI filter.
+</Para>
+
+<Para>
+This filter has one option, <Emphasis remap="bf">noisy=</Emphasis>.  If <Emphasis remap="bf">noisy=</Emphasis> is set to <Emphasis remap="bf">true</Emphasis> then
+progress messages and the terminal output of TeX are printed on stderr.  The
+<Emphasis remap="bf">noisy=</Emphasis> option is also passed through to the DVI filter.  (This filter passes
+all of its options on the the DVI filter, the DVI filter will ignore those it does
+not understand.)  Remember, if you intend an option to apply only to this filter
+and the instance of the DVI filter which it invokes, you should prefix ``tex-'' to
+the option name even if you want the option to be passed through to the DVI
+filter.  For example, if you invoke <Emphasis remap="bf">ppr</Emphasis> with the option  <Emphasis remap="bf">-o 'noisy=false
+tex-noisy=true'</Emphasis> then the DVI filter will be quiet if you submit a DVI file but
+will print noisy messages if you submit a LaTeX file to <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Texinfo Filter</Title>
+
+<Para>
+This filter did not work (except possibly for the users ``ppr'' and ``root''
+in versions 1.00, 1.10, and 1.20 of PPR.  It been fixed for version 1.30.  This
+filter is a shell script which converts documents from the Texinfo format used
+by the GNU project to PostScript.  It first passes them through texi2dvi (which
+you must provide).  It then passes the resulting DVI file through the DVI
+filter.
+</Para>
+
+<Para>
+This filter supports the option <Emphasis remap="bf">noisy=</Emphasis>.  If one uses a command such as:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d aardvark -o noisy=yes
+</Screen>
+
+</Para>
+
+<Para>
+a running commentary will be printed as the file is converted.  This commentary
+includes whatever TeX sends to stdout.  The <Emphasis remap="bf">noisy=</Emphasis> option is also passed
+on to the DVI filter, so it produces lots of messages too, including the
+terminal output of DVIPS.
+</Para>
+
+</Sect2>
+
+<Sect2 id="dvi">
+<Title>The DVI Filter</Title>
+
+<Para>
+This filter is a shell script which converts TeX DVI files to PostScript. It
+uses the program DVIPS to do this.  Unfortunately DVIPS was not designed to use
+PPD files, rather it uses a printer configuration file format of its own.  The
+PPR DVI filter generates these configuration files automatically.  Once
+generated, a DVIPS configuration file is stored in
+<Literal remap="tt">/var/spool/ppr/dvips</Literal>.  The file's name contains the MetaFont mode, the
+resolution, and the amount of free memory in the printer.  These values will
+also appear in the appropriate places in the configuration file.  The DVI
+filter obtains these values from its options.  The options <Emphasis remap="bf">resolution=</Emphasis>,
+<Emphasis remap="bf">freevm=</Emphasis>, and <Emphasis remap="bf">mfmode=</Emphasis> are among the automatically supplied to augment
+any the user specifies by invoking <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-o</Emphasis> switch.  The
+automatically generated options are regenerated every time a printer's PPD file
+is changed.  The options are stored in the <Emphasis remap="sf">DefFiltOpts:</Emphasis> line in the printer's
+or group's configuration file.
+</Para>
+
+<Para>
+&lsqb;Not finished yet. Explain about /etc/ppr/mfmodes.conf here.]
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Printer Qualification</Title>
+
+<Para>
+Not all PostScript printers have the same capabilities.
+</Para>
+
+<Para>
+&lsqb;That is a good start, but not finished yet.]
+</Para>
+
+</Sect1>
+
+<APPENDIX>
+<Title>Appendix</Title>
+
+<Sect1>
+<Title>Directories and Files</Title>
+
+<Para>
+This section describes the directory structure found within PPR's home
+directory (<Literal remap="tt">/usr/ppr</Literal>), in its spooling directory,
+(<Literal remap="tt">/var/spool/ppr</Literal>) and in its configuration directory
+(<Literal remap="tt">/etc/ppr</Literal>).
+</Para>
+
+<Sect2>
+<Title>The <Literal remap="tt">/var/spool/ppr/queue</Literal> Directory</Title>
+
+<Para>
+The <Literal remap="tt">/var/spool/ppr/queue</Literal> directory contains one file for each print
+job currently in the queue.  Each file name is the same as the queue id of the
+job is describes.  These files are created by the program <Emphasis remap="bf">ppr</Emphasis> and removed
+by the print daemon <Emphasis remap="bf">pprd</Emphasis> when the job has been printed or is canceled.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/var/spool/ppr/jobs</Literal> Directory</Title>
+
+<Para>
+The <Literal remap="tt">/var/spool/ppr/jobs</Literal> directory contains three to five files for
+each job currently in the queue.
+</Para>
+
+<Para>
+The first part of each file name is the queue id of the job.  The file whose
+name ends in ``<Literal remap="tt">-comments</Literal>'' contains any header and trailer comment lines
+which have not been removed and represented by parameters in the file in the
+queue directory.
+</Para>
+
+<Para>
+The file whose name ends in ``<Literal remap="tt">-pages</Literal>'' contains the text of the document
+default section, if it exists, and a list of the pages in the document.  The
+record for each page includes the offset in the ``<Literal remap="tt">-text</Literal>'' file at which it
+begins and any page header and trailer comments for that page.
+</Para>
+
+<Para>
+The file whose name ends in ``<Literal remap="tt">-text</Literal>'' contains most of the text of the
+job.  If the <Emphasis remap="bf">-S true</Emphasis> switch was used when <Emphasis remap="bf">ppr</Emphasis> was invoked, then
+resources will be missing from this file, having been stript out and replaced
+by comments which will later be used to put them back.
+</Para>
+
+<Para>
+The files with names ending in ``<Literal remap="tt">-log</Literal>'' contain the print job logs.  If
+<Emphasis remap="bf">ppr</Emphasis> was invoked with the <Emphasis remap="bf">-w log</Emphasis> switch then any warnings will be in
+this file.  Any text received from the printer, including printer error
+messages, will also be in this file.  Messages which explain why the job was
+routed away from a particular printer will be in this file, but each line of
+such messages will begin with a "+".  Whenever a banner or trailer page is
+printed, the contents of the log file  is printed and the log file is deleted.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/var/spool/ppr/printers/alerts</Literal> Directory</Title>
+
+<Para>
+Each time a fault message is generated for a printer, it is appended to a
+file in this directory.  There is one file for each printer.  If the file is
+more than one hour old, the file is truncated to zero length before writing the
+new alert instead of appending.  This ensures that only recent messages will be
+sent to the operator.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/var/spool/ppr/printers/status</Literal> Directory</Title>
+
+<Para>
+This file may contain one file for each printer.  If present, the file
+contains the last status message received from the printer.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/var/spool/ppr/logs</Literal> Directory</Title>
+
+<Para>
+This directory contains log files.  Error messages may be written in these
+log files when PPR component fail.  If this directory contains the file
+<Literal remap="tt">printlog</Literal>, PPR will append a line for each file printed.  (See Appendix
+<XRef LinkEnd="printlog">.)
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/etc/ppr</Literal> Directory</Title>
+
+<Para>
+This directory contains a number of configuration files.  In also contains
+subdirectories which will be described in later sections.
+</Para>
+
+<Para>
+The file <Literal remap="tt">papsrv.conf</Literal> is descibed in the papsrv.conf(5) man page.
+</Para>
+
+<Para>
+The purpose of <Literal remap="tt">newprn.conf</Literal> is explained in Appendix <XRef LinkEnd="printer-config">.
+</Para>
+
+<Para>
+The file <Literal remap="tt">smb-include.conf</Literal> is a segment of Samba configuration file.  It
+is generated by the program <Emphasis remap="bf">ppr2samba</Emphasis>.  The file <Literal remap="tt">printcap</Literal> is also
+generated by <Emphasis remap="bf">ppr2samba</Emphasis> but it is obsolete and will be eliminated in a
+future release of PPR.
+</Para>
+
+<Para>
+The file <Literal remap="tt">charge&lowbar;users.db</Literal> is the user charge accounts database.  The
+program <Emphasis remap="bf">ppuser</Emphasis> can be used to read and modify this file.
+</Para>
+
+<Para>
+The documentation for the file <Literal remap="tt">lw-messages.conf</Literal> can be found in
+<Literal remap="tt">lw-messages.conf.sample</Literal>.
+</Para>
+
+<Para>
+The file <Literal remap="tt">media.db</Literal> is the list of known media types.  It is consulted
+by <Emphasis remap="bf">ppr</Emphasis> and <Emphasis remap="bf">pprdrv</Emphasis>.  It may be read and modified by the
+<Emphasis remap="bf">ppad media</Emphasis> series of commands.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/etc/ppr/printers</Literal> Directory</Title>
+
+<Para>
+There is one file in this directory for each printer.  Each file has the
+same name as the printer it describes.  The format of one of these files is
+described in Appendix <XRef LinkEnd="printer-config">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/etc/ppr/groups</Literal> Directory</Title>
+
+<Para>
+There is one file in this directory for each group.  Each file has the same
+name as the group it describes.  The format of these files is described in
+Appendix <XRef LinkEnd="group-config">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/etc/ppr/mounted</Literal> Directory</Title>
+
+<Para>
+This directory contains one file for each printer.  Each file contains a
+list of a printer's bins and the medium mounted on each bin.  This file is
+created by the main print daemon <Emphasis remap="bf">pprd</Emphasis>.  When <Emphasis remap="bf">pprd</Emphasis> starts up it looks
+in this directory to determine what media was mounted last time it was
+running.  It automatically re-mounts all those media.
+</Para>
+
+<Para>
+The program <Emphasis remap="bf">pprdrv</Emphasis> also uses this file in order to select bins for
+printing banner pages and to automatically select bins for print jobs according
+to their required media.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/interfaces</Literal> Directory</Title>
+
+<Para>
+Each file in this directory is a program which is responsible for making
+contact with any printer which has a particular kind of interface.  For
+instance, <Literal remap="tt">interfaces/atalk</Literal> is used to communicate with printers
+connected through Apple's Printer Access Protocol.  The requirements imposed on
+such an interface program are described in Appendix <XRef LinkEnd="interfaces2">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/responders</Literal> Directory</Title>
+
+<Para>
+Each file in the <Literal remap="tt">responders</Literal> directory is a program which can be used to
+attempt to send a message to the user who submitted the job.  A responder
+program is selected at the time the user invokes <Emphasis remap="bf">ppr</Emphasis>, by using the <Emphasis remap="bf">-m</Emphasis>
+switch.  The parameter for the <Emphasis remap="bf">-m</Emphasis> switch is the name of the program in the
+<Literal remap="tt">responders</Literal> directory which should be used.  If the <Emphasis remap="bf">-m</Emphasis> switch is not
+used, the default responder, <Emphasis remap="bf">write</Emphasis>, is used.  (You can change the default
+by setting the environment variable PPR&lowbar;RESPONDER.)  The manner in which a
+responder is invoked is described in Appendix <XRef LinkEnd="responders">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/filters</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/commentators</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/fonts</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/man</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/cgi-bin</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/www</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/cache</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/install</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/locale</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/speach</Literal> Directory</Title>
+<para>[This section hasn't been written yet.[</para>
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/bin</Literal> Directory</Title>
+
+<Para>
+This directory contains the program <Emphasis remap="bf">ppr</Emphasis> which submits jobs, various
+utility programs such as <Emphasis remap="bf">ppop</Emphasis> and <Emphasis remap="bf">ppad</Emphasis>, and the PPR daemons <Emphasis remap="bf">pprd</Emphasis>
+and <Emphasis remap="bf">papsrv</Emphasis>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/lib</Literal> Directory</Title>
+
+<Para>
+This directory contains <Emphasis remap="bf">pprdrv</Emphasis> and as well as other programs a user
+or administrator wouldn't normally execute directly.  It also contains
+some configuration files which even a system administrator wouldn't
+ordinarily modify.  These files would be modified by people who are creating
+new components for PPR.
+</Para>
+
+<Para>
+The documenation for the file file <Literal remap="tt">lw-messages.conf</Literal> is in the file
+itself.
+</Para>
+
+<Para>
+The file <Literal remap="tt">mfmodes.conf</Literal> is used by <Emphasis remap="bf">ppad</Emphasis> when determining the
+default filter options for a printer or group.  The format of this file
+is described in Section <XRef LinkEnd="dvi">.
+</Para>
+
+<Para>
+The file <Literal remap="tt">fontsub.conf</Literal> is used to find substitutes for missing fonts.
+It is described in Appendix <XRef LinkEnd="fontsub">.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The <Literal remap="tt">/usr/ppr/PPDFiles</Literal> Directory</Title>
+
+<Para>
+This is the default location for PPD files.  It contains a collection of PPD
+files for common printers.  Most of these were provided by the manufacturers or
+Adobe
+<FOOTNOTE>
+
+<Para>
+Adobe makes a large collection of PPD files available by anonymouse
+FTP.  See ftp://ftp.adobe.com/pub/adobe/ to find their latest PPD file
+library.
+</Para>
+
+</FOOTNOTE>
+ but a few are part of PPR.
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Configuration File Formats</Title>
+
+<Para>
+This section describes the format of certain configuration files.  Other
+configuration files are documented in man pages or in comments within the
+files themselves.
+</Para>
+
+<Sect2 id="printer-config">
+<Title>Format of a Printer Configuration File</Title>
+
+<Para>
+Each file in the directory <Literal remap="tt">/usr/ppr/conf/printers</Literal> represents one
+printer.  It is permissible to create and edit these files manually, however
+the command <Emphasis remap="bf">ppad</Emphasis> has been provided to do this automatically.
+</Para>
+
+<Para>
+A new printer configuration file is created by the <Emphasis remap="bf">ppad interface</Emphasis> command.
+The new configuration file is created by turning the arguments of the <Emphasis remap="bf">ppad
+interface</Emphasis> command into a <Emphasis remap="sf">Interface:</Emphasis> and an <Emphasis remap="sf">Address:</Emphasis> line and
+appending the file <Literal remap="tt">/etc/ppr/newprn.conf</Literal>.  The <Literal remap="tt">newprn.conf</Literal> file
+is created by the <Emphasis remap="bf">ppad new alerts</Emphasis> command.
+</Para>
+
+<Para>
+Any lines begining with ``;'' or ``&num;'' are comments.  Blank lines are
+ignored.  All other lines should begin with a keyword which is followed by one
+or more values.  Only the <Emphasis remap="sf">Bin:</Emphasis> and <Emphasis remap="sf">PPDOpt:</Emphasis> lines should occur more
+than once.  If any other line occurs multiple times, all but the last instance
+are ignored.
+</Para>
+
+<Para>
+Any line that begins with an unrecognized keyword is ignored.  This is so that
+you can add lines of your own which will be understood and acted on by other
+programs.  The program <Emphasis remap="bf">ppr2samba</Emphasis> works on this principle.
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Comment:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line contains a comment which describes the printer. The comment is
+displayed when the <Emphasis remap="bf">ppad show</Emphasis> command is used to display the printer
+configuration.  This line is optional.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Interface:</Emphasis> <Emphasis remap="it">interface&lowbar;path</Emphasis></Term>
+<ListItem>
+<Para>
+This line is required.  It gives the name of the program which the spooler
+should invoke in order to make contact with the printer.  If the path does not
+begin with a slash, then it refers to a subdirectory of the
+<Literal remap="tt">/usr/ppr/interfaces</Literal> directory.  Common values for this line are
+``atalk'', ``tcpip'', and ``serial''.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Address:</Emphasis> <Emphasis remap="it">address&lowbar;string</Emphasis></Term>
+<ListItem>
+<Para>
+The address string is passed to the interface program as its second parameter.
+The proper format for this string depends on the interface.  Reasonable values
+for use with the interfaces named in the above paragraph are ``Mac Laser
+Printer: LaserWriter@MYZONE'', ``smith.prn.myorg.org:9100'', and
+``/dev/ttys05''.  If the address contains leading or trailing spaces it should
+be enclosed in double quotes.  Technically, this line is not required, but the
+default address is the name of the printer which is unlikely to be useful.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Options:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The value <Emphasis remap="it">string</Emphasis> is passed to the
+interface as its third parameter.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PPDFile:</Emphasis> <Emphasis remap="it">filename</Emphasis></Term>
+<ListItem>
+<Para>
+This line specifies the path and name of an Adobe Post Script Printer
+Description file which describes the printer.  If the name does not begin with
+a slash, it referes to a file in the directory <Literal remap="tt">/usr/ppr/PPDFiles</Literal>.
+This line may not be required but it really ought to be present.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Alert:</Emphasis> <Emphasis remap="it">interval method address</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If it is present, then messages will be sent to the
+designated person when faults occur on the printer.
+</Para>
+<Para>
+The integer <Emphasis remap="it">interval</Emphasis> indicates how often these messages will be sent.
+For instance, if the value is 5, then a message will be sent for every 5th
+fault.
+</Para>
+<Para>
+The <Emphasis remap="it">method</Emphasis> parameter indicates the method by which the message should be
+sent.  Currently, this parameter is ignored.  Set it to ``mail''.
+</Para>
+<Para>
+The <Emphasis remap="it">address</Emphasis> indicates the person to whom the message should be sent.
+Since <Emphasis remap="sf">mail</Emphasis> is currently the only supported method, this should be a email
+address.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">FlagPages:</Emphasis> <Emphasis remap="it">integer integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The first integer refers to banner pages, the second
+to trailer pages.  Four different values are allowed.  They are <Emphasis remap="sf">0</Emphasis> for
+``never'', <Emphasis remap="sf">1</Emphasis> for ``preferably not'', <Emphasis remap="sf">2</Emphasis> for ``preferably yes'', and
+<Emphasis remap="sf">3</Emphasis> for ``always''.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Feedback:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  It indicates whether or not the connexion to the
+printer allows it to send messages back to the spooler.  There is a list of
+default values for all the interfaces supplied with PPR compiled into
+<Emphasis remap="bf">pprdrv</Emphasis>.  (This list is defined in <Literal remap="tt">include/interfaces.h</Literal>.)  If this
+line is not present and the interface is not in the list, it is assumed to be
+<Emphasis remap="bf">false</Emphasis>.  Any instances of this line which occur before the <Emphasis remap="sf">Interface:</Emphasis>
+line are ignored.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">JobBreak:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The integer is the code number of a job break method.
+This line is only necessary if a job break method other than the default for
+the interface is desired.  Default job break numbers for the interfaces which
+come with PPR are defined in the source file <Literal remap="tt">include/interfaces.h</Literal>.
+The meaning of the values in <Literal remap="tt">interfaces.h</Literal> can be understood by reading
+the <Emphasis remap="bf">ppad jobbreak</Emphasis> section of the ppad(8) man page.  Any instances of this
+line which occur before the <Emphasis remap="sf">Interface:</Emphasis> line are ignored.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Codes:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  It indicates the range of character codes which the
+interface can transmit to the printer.  The acceptable values are 1 for Clean7Bit,
+2 for Clean8Bit, 3 for Binary and 4 for Binary if TBCP is used.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">GrayOK:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  The default value is <Emphasis remap="sf">true</Emphasis>.  If this parameter is
+set to <Emphasis remap="sf">false</Emphasis>, the printer will refuse to print any job which does not have
+``<Emphasis remap="sf">color</Emphasis>'' in a <Emphasis remap="sf">&percnt;&percnt;Requirements:</Emphasis> line in its header.  A <Emphasis remap="sf">GrayOK:</Emphasis>
+line can be used to prevent black-and-white or grayscale jobs from begin
+printed on an expensive colour printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Charge:</Emphasis> <Emphasis remap="it">money</Emphasis> &lsqb;it/money/&rsqb;</Term>
+<ListItem>
+<Para>
+This line is optional.  If this line is present, then the printer becomes a
+protected printer.  Each parameter <Emphasis remap="it">money</Emphasis> should be a positive number with
+two decimal places.  If both are ``0.00'', then the printer is protected, but
+no actual charges are mode to the user's account.  The first number is the
+amount that should be charged for each sheet of paper printed on both sides.
+The second is the amount that should be charged for each sheet printed on only
+one side.  If the second number is missing it is assumed to be the same as the
+first.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">OutputOrder:</Emphasis> <Emphasis remap="it">direction</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If it is absent, it is assumed that direction is
+<Emphasis remap="sf">Normal</Emphasis>.  If direction is set to <Emphasis remap="sf">Reverse</Emphasis>, the spooler will cause the
+pages to be printed in reverse order, if possible.  The value of this line
+can be set with the command <Emphasis remap="bf">ppad outputorder printer Normal</Emphasis>, <Emphasis remap="bf">ppad
+outputorder printer Reverse</Emphasis>, or <Emphasis remap="bf">ppad outputorder printer ppd</Emphasis>.  The
+command <Emphasis remap="bf">ppad outputorder printer ppd</Emphasis> deletes any <Emphasis remap="sf">OutputOrder:</Emphasis>
+line which may exist.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Bin:</Emphasis> <Emphasis remap="it">binname</Emphasis></Term>
+<ListItem>
+<Para>
+The <Emphasis remap="it">binname</Emphasis> parameter is the bin name as it appears in a <Emphasis remap="sf">*InputSlot</Emphasis>
+line of the PPD file.  Common values are ``Upper'', ``Lower'', and
+``Cassette''.  If automatic bin selection and media handling are desired, there
+should be one <Emphasis remap="sf">Bin:</Emphasis> line for each installed bin.  Removing all the <Emphasis remap="sf">Bin:</Emphasis>
+lines disables automatic bin selection and media handling.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">DefFiltOpts:</Emphasis> <Emphasis remap="it">options</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains input filter options in the
+form of name-value pairs.  (If the user employs one or more <Emphasis remap="bf">-o</Emphasis> switchs
+when submitting a job with <Emphasis remap="bf">ppr</Emphasis>, then the argument of each <Emphasis remap="bf">-o</Emphasis> switch
+is appended to this list.  Thus, <Emphasis remap="bf">-o</Emphasis> switches can be used to override
+settings in this list.)  This line is automatically updated whenever the
+<Emphasis remap="bf">ppad ppd</Emphasis> command is used to select a new PPD file or the <Emphasis remap="bf">ppad ppdopts</Emphasis>
+command is used to change the PPD options.  An update may be forced at any time
+with the <Emphasis remap="bf">ppad deffiltopts</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Switchset:</Emphasis> <Emphasis remap="it">switch&lowbar;description</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a compressed description of
+the switch settings which were saved with the <Emphasis remap="bf">ppad switchset</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PassThru:</Emphasis> <Emphasis remap="it">type&lowbar;list</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a space separated list
+of file types which should be passed directly through to the printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PagesLimit:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present it indicates the maximum number of pages
+this printer is allowed to print in a single job.  Jobs with more pages
+than the number indicated are rejected.  If the job was submitted to a group,
+it may be printed on another member of the group.  If no printer will print it,
+then it is arrested.
+</Para>
+<Para>
+This line may be edited with the <Emphasis remap="bf">ppad pageslimit</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PageCountQuery:</Emphasis> <Emphasis remap="it">integer</Emphasis></Term>
+<ListItem>
+<Para>
+This line can be used to enable pair of queries which fetch the printers
+lifetime page count before and after the printing of the job (exclusive
+of banner and trailer pages).
+</Para>
+<Para>
+The information obtained through these queries can be logged.  See Section
+<XRef LinkEnd="printlog">.
+</Para>
+<Para>
+If this line is absent or the <Emphasis remap="it">integer</Emphasis> is 0, then this feature is disabled.
+</Para>
+<Para>
+If the value is 1, then then the PostScript code
+``statusdict /pagecount get exec =='' is used to get the page count.  No
+attempt is made to make sure that the print engine has come to a stop and the
+printer has updated the count before making the query.  On some printers this
+does not cause a problem because the page count is updated imediately.  On
+others it may be solved by using the <Emphasis remap="bf">pjl</Emphasis> or <Emphasis remap="bf">signal/pjl</Emphasis> jobbreak
+method which causes PPR to wait until all of the pages have hit the
+output bin before considering the job complete.
+</Para>
+<Para>
+In the future, additional values for this parameter may be defined.  These
+additional values will use different techniques to obtain the page count.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Commentator:</Emphasis> <Emphasis remap="it">number name address options</Emphasis></Term>
+<ListItem>
+<Para>
+A printer configuration file may have zero or more of these lines.  Their
+purpose is explained in Appendix <XRef LinkEnd="commentators">.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PPDOpt:</Emphasis> <Emphasis remap="it">option value</Emphasis> (<Emphasis remap="it">description</Emphasis>)</Term>
+<ListItem>
+<Para>
+A printer configuration file may have zero or more of these lines.  Each line
+describes the setting of the options listed in the PPD file.  These settings
+generally describe optional equipment which may be installed in or attatched to
+the printer such as additional paper trays or duplex attachements.  The
+<Emphasis remap="it">option</Emphasis> is the option name from the PPD file, without the translation
+string (the part which may follow a slash).  The <Emphasis remap="it">value</Emphasis> is one of the
+possible option values listed  in the PPD file, again without the translation
+string.  The description is formed by combining the translation strings for the
+option and the value.  (Option settings and the related terminology are
+explained in Adobe's PostScript Printer Description File Format
+Specification.)  These lines can be generated automatically with the <Emphasis remap="bf">ppad
+ppdopts</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ppr2samba:</Emphasis> <Emphasis remap="it">include</Emphasis> <Emphasis remap="it">prototype</Emphasis></Term>
+<ListItem>
+<Para>
+Used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ppr2samba-drivername:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">ms-driver-name:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Formerly used by <Emphasis remap="bf">ppr2samba</Emphasis>.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect2>
+
+<Sect2 id="group-config">
+<Title>Format of a Group Configuration File</Title>
+
+<Para>
+Each file in the <Literal remap="tt">/etc/ppr/groups</Literal> directory represents a group.  It
+is permissible to create and edit these files manually, however it is generally
+more convient to use the command <Emphasis remap="bf">ppad</Emphasis> to do it automatically.  The
+<Emphasis remap="sf">Printer:</Emphasis> line is the only one which should appear more than once.  If any
+other line occurs more than once, all but the last instance are ignored.  Lines
+with ``;'' or ``&num;'' in the first column are comments.  The remaining lines are
+of two types:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Comment:</Emphasis> <Emphasis remap="it">string</Emphasis></Term>
+<ListItem>
+<Para>
+This line contains a comment describing the group. This comment is displayed by
+the <Emphasis remap="bf">ppad group show</Emphasis> command.  This line is optional.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Printer:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+The <Emphasis remap="it">name</Emphasis> is the name a printer that should be a member of the group.
+There should be one line for each group member.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Rotate:</Emphasis> <Emphasis remap="it">boolean</Emphasis></Term>
+<ListItem>
+<Para>
+This value indicates if the spooler should attempt to distribute the load
+evenly among the printers.  If it is <Emphasis remap="sf">False</Emphasis>, the spooler will always take
+the first idle printer in the group.  If it is <Emphasis remap="sf">True</Emphasis>, the spooler will
+attempt to use each printer in turn.  The default is <Emphasis remap="sf">True</Emphasis>.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">DefFiltOpts:</Emphasis> <Emphasis remap="it">options</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains some name-value pairs to be
+prepended to any the user supplies with <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-o</Emphasis> switch. This line
+will be automatically updated by <Emphasis remap="bf">ppad</Emphasis> whenever a group member is added or
+deleted.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">Switchset:</Emphasis> <Emphasis remap="it">switch&lowbar;description</Emphasis></Term>
+<ListItem>
+<Para>
+If this line is present, it contains a compress representation if the switches
+saved with the <Emphasis remap="bf">ppad group switchset</Emphasis> command.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">PassThru:</Emphasis> <Emphasis remap="it">type&lowbar;list</Emphasis></Term>
+<ListItem>
+<Para>
+This line is optional.  If present, it contains a space separated list
+of file types which should be passed directly through to the printer.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">ms-driver-name:</Emphasis> <Emphasis remap="it">name</Emphasis></Term>
+<ListItem>
+<Para>
+Used by ppr2samba.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="sf">ppr2samba:</Emphasis> <Emphasis remap="it">include</Emphasis> <Emphasis remap="it">prototype</Emphasis></Term>
+<ListItem>
+<Para>
+Used by ppr2samba.  See the man page ppr2samba(8).
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1 id="interfaces2">
+<Title>Requirements for an Interface</Title>
+
+<Para>
+This appendix provides the information you will need to write a PPR printer
+interface program.  An interface is a program, possibly a shell script, which
+takes the text of the print job from standard input and sends it to the
+printer.  Errors, such as PostScript error messages, should be sent to stdout
+or stderr.
+</Para>
+
+<Sect2>
+<Title>The Parameters</Title>
+
+<Para>
+There are 10 parameters in all, but most interfaces ignore all but the first
+two or three.  There were 8 parameters in version 1.31.  In version 1.32
+there are 10.  The order of parameters 1-3 did not change but the
+order of parameters 4-9 did changed.
+</Para>
+
+<Para>
+The interface is invoked with the first parameter set to the name of the
+printer.  The interface should use this name when posting alerts using either
+the alert() function in libppr.a or lib/alert.
+</Para>
+
+<Para>
+The second parameter is set to the string following the <Emphasis remap="sf">Address:</Emphasis> keyword
+in the printer configuration file or to the printer name if there is no address
+line.  (That last feature is a holdover from very old versions of PPR. Printer
+configuration files created by <Emphasis remap="bf">ppad</Emphasis> always have <Emphasis remap="sf">Address:</Emphasis> lines.)
+</Para>
+
+<Para>
+The third parameter is set to the string following the <Emphasis remap="sf">Options:</Emphasis> keyword in
+the printer config uration file.  This will be zero or more space separated
+name=value pairs.
+</Para>
+
+<Para>
+The fourth parameter is the value from the printer configuration file's
+<Emphasis remap="sf">JobBreak:</Emphasis> line.  This value is a small integer.  The possible values are
+defined in <Literal remap="tt">include/interface.h</Literal>.
+</Para>
+
+<Para>
+The fifth is the value from the printer configuration file's <Emphasis remap="sf">Feedback:</Emphasis>
+line.  It is zero if the printer is incapable of sending data back to the
+computer running PPR over the communications line, non-zero if it is capable.
+The <Emphasis remap="sf">Feedback:</Emphasis> line is set with the <Emphasis remap="bf">ppad feedback</Emphasis> command.
+</Para>
+
+<Para>
+The sixth parameter is the value from the printer configuration file's
+<Emphasis remap="sf">Codes:</Emphasis> line.  The value is a small integer.  The possible values are defined
+in <Literal remap="tt">include/interface.h</Literal>.
+</Para>
+
+<Para>
+The seventh parameter is set to the name of the job.  (For example,
+``mouse:chipmunk-148.0(mouse)''.  This will not generally be used.  The
+<Emphasis remap="bf">lpr</Emphasis> interface passes this information on to the remote system.
+</Para>
+
+<Para>
+The eight parameter is set the the text of the &percnt;&percnt;Routing:
+comment in the print job.  If the &percnt;&percnt;Routing: comment is absent, then the
+fourth parameter is blank.  This parameter will generally be ignored.  If a fax
+interface is every written it will read the telephone number from this
+parameter.
+</Para>
+
+<Para>
+The ninth parameter is the text of the <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> comment in the
+print job.  (The <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line in the job as sent to the
+printer which is not necessarily the same as the <Emphasis remap="sf">&percnt;&percnt;For:</Emphasis> line
+in the input file.)  If this information is unavailable, the field is blank.
+The <Emphasis remap="bf">lpr</Emphasis> interface passes this on to the remote system.
+</Para>
+
+<Para>
+The tenth parameter indicates the type of the file on stdin, that is, the
+file which the interface program is going to transmit to the printer.  Normally
+this parameter is an empty string, which indicates that the file is in
+PostScript format.
+</Para>
+
+<Para>
+If passthru mode is in effect (see <Emphasis remap="bf">ppad passthru</Emphasis> and <Emphasis remap="bf">ppad group
+passthru</Emphasis>), that is if the file to be transmitted to the printer is not
+a PostScript file, then this parameter will be the name of the file type,
+such as ``pcl'' or ``pdf''.  (The file type names which appear in this
+parameter are the same names as are used with the <Emphasis remap="bf">ppr -T</Emphasis> switch.
+A non-empty tenth parameter <Emphasis>does not</Emphasis> necessarily indicate that
+a <Emphasis remap="bf">-T</Emphasis> switch was used.)
+</Para>
+
+<Para>
+Also, if transparent mode is in effect (see <Emphasis remap="bf">ppr -H transparent</Emphasis>), then
+this parameter will contain a space separated list of the filters which
+would be required (and may actually have been invoked) to convert the
+input file to PostScript.  Uncompression with <Emphasis remap="bf">uncompress</Emphasis>
+and <Emphasis remap="bf">gunzip</Emphasis> are indicated by the strings ``uncompress'' and ``gunzip''
+respectively.  Here are some examples:  if the input file is already PostScript,
+then this parameter will be empty.  If the file is PCL data, then this
+paramater will be ``pcl''.  If the file is <Emphasis remap="bf">gzip</Emphasis> compressed
+PostScript, then this parameter will be ``gunzip''.  If the file is
+<Emphasis remap="bf">gzip</Emphasis> compressed PCL, then this parameter will be ``gunzip pcl''.
+</Para>
+
+<Para>
+The various Ghostscript interfaces examine the value of this 10th parameter,
+and if it is not empty, remove Ghostscript from the pipeline.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>The Return Codes</Title>
+
+<Para>
+The exit codes which interface programs should use are defined in
+<Literal remap="tt">include/interface.h</Literal> and <Literal remap="tt">/lib/interface.sh</Literal>.
+</Para>
+
+<Para>
+If the interface prints the job successfully, it should return an exit code of
+<Emphasis remap="bf">EXIT&lowbar;PRINTED</Emphasis>.
+</Para>
+
+<Para>
+If there was a printer error, the interface should exit with code
+<Emphasis remap="bf">EXIT&lowbar;PRNERR</Emphasis> and the printer will be placed in fault-auto-retry mode.
+</Para>
+
+<Para>
+If the printer error was caused by a circumstance which will not disappear
+spontainiously, such as a syntactically invalid printer address, then the
+interface should return <Emphasis remap="bf">EXIT&lowbar;PRNERR&lowbar;NORETRY</Emphasis> and the printer will be placed
+in fault-no-auto-retry mode.
+</Para>
+
+<Para>
+If a PostScript error occured in the job and the interface detects it it should
+use the code <Emphasis remap="bf">EXIT&lowbar;JOBERR</Emphasis>.  Generally the interface will leave the job of detecting
+PostScript errors to <Emphasis remap="bf">pprdrv</Emphasis> which examines the messages received from the
+printer.
+</Para>
+
+<Para>
+If the interface program catches a signal such as SIGTERM, it should exit
+with code <Emphasis remap="bf">EXIT&lowbar;SIGNAL</Emphasis> at the end of the signal handler function.
+</Para>
+
+<Para>
+If no printer error occured but the printer was busy or off line, the
+interface should return <Emphasis remap="bf">EXIT&lowbar;ENGAGED</Emphasis>.
+</Para>
+
+<Para>
+The interface program should not return any value other than those defined
+above.  Any undefined value will be interpreted as a <Emphasis remap="bf">EXIT&lowbar;PRNERR</Emphasis>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Interpretation of the Fifth Parameter</Title>
+
+<Para>
+If the <Emphasis remap="it">jobbreak</Emphasis> value for the printer (the firth parameter) is
+<Emphasis remap="bf">JOBBREAK&lowbar;SIGNAL</Emphasis>, or  <Emphasis remap="bf">JOBBREAK&lowbar;SIGNAL&lowbar;PJL</Emphasis> then the interface should
+send its parent SIGUSR1 as soon as it has established its own SIGUSR1 handler.
+Thereafter, whenever it receives SIGUSR1, it should read all bytes currently
+available from the pipe, send them to the printer and then send the printer an
+end of job indication. When it receives an acknowleding end of job indication
+from the printer, it should send its parent SIGUSR1.  The interface <Emphasis remap="bf">atalk</Emphasis>
+does this.  This handshaking method is necessary because the PAP (AppleTalk
+Printer Access Protocol) end of file marker has no representation in the byte
+stream.  Instead it is sent by setting a special flag in the header of the
+packet.
+</Para>
+
+<Para>
+Other job break values do not require any special action on the part of
+the interface.  (Before version 1.40, interfaces took special action for
+the control-d and pjl methods.  This is no longer necessary.)
+</Para>
+
+<Para>
+It might be useful to have the interface test for jobbreak settings with which it
+is known to be incompatible.  It should only check for settings <Emphasis>known</Emphasis> to be
+incompatible.  It should not limit jobbreak settings to a list of those known to
+be compatible since other, compatible settings may be added in future versions of
+PPR.  The various possible jobbreak settings are briefly described in the ppad(8)
+man page under the section for the <Emphasis remap="bf">ppad jobbreak</Emphasis> command.  A more thorough
+discussion may be found in section <XRef LinkEnd="interfaces1">.  The code numbers for the various jobbreak values are defined in the
+include file <Literal remap="tt">include/interface.h</Literal> and in the shell script fragment
+<Literal remap="tt">/lib/interface.sh</Literal>.
+</Para>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1 id="responders">
+<Title>Requirements for a Responder</Title>
+
+<Para>
+A responder is a small program.  All responders are stored in the responders
+directory <Literal remap="tt">/usr/ppr/responders</Literal>.  The responder which will eventually be
+used to tell the user what happened to the job is selected when the job is
+submitted.  It is selected using <Emphasis remap="bf">ppr</Emphasis>'s <Emphasis remap="bf">-m</Emphasis>. switch.  The argument to
+the <Emphasis remap="bf">-m</Emphasis> switch is the name of the program in the responders directory which
+should be used.  A responder can be very simple.  Here is an example:
+</Para>
+
+<Para>
+
+<Screen>
+#!/bin/sh
+echo "Message for $1:\n$3" | write $2
+exit 0
+</Screen>
+
+</Para>
+
+<Para>
+The responder shown above is a stript down version of the responder <Emphasis remap="bf">write</Emphasis>.
+If the <Emphasis remap="bf">-m</Emphasis> switch is not used then the name of the responder will be read
+from the environment variable PPR&lowbar;RESPONDER.  If PPR&lowbar;RESPONDER is not defined
+then the responder <Emphasis remap="bf">write</Emphasis> will be used.
+</Para>
+
+<Para>
+A responder program is invoked with the name of the user as the first
+parameter.  It is the name just as it appears in queue listings and on banner
+pages.
+</Para>
+
+<Para>
+The address to which the message should be sent is the second parameter.  The
+address is specified at the time <Emphasis remap="bf">ppr</Emphasis> is invoked by using the <Emphasis remap="bf">-r</Emphasis>
+switch.  The proper format for the address depends on the responder.  If the
+<Emphasis remap="bf">-r</Emphasis> switch is absent then the value of the environment variable
+PPR&lowbar;RESPONDER&lowbar;ADDRESS is used.  If that too is absent then the name of the Unix
+user who invoked <Emphasis remap="bf">ppr</Emphasis> is used.  The value used in the absence of both
+<Emphasis remap="bf">-r</Emphasis> and PPR&lowbar;RESPONDER&lowbar;ADDRESS is appropriate since the default responder is
+a script which invokes the Unix program <Emphasis remap="bf">write</Emphasis>.
+</Para>
+
+<Para>
+The third parameter is the suggested message text.  The message text will
+contain embedded line feeds.  The length of the lines will depend on the
+responder.  The routine get&lowbar;responder&lowbar;width() in <Literal remap="tt">libppr/reswidth.c</Literal>
+determines what length to limit the lines to.  For most responders, this
+routine returns 0 which means to use a predetermined set of line breaks which
+generally results in lines less than 80 characters long.
+</Para>
+
+<Para>
+The fourth parameter is reserved for future use, at present it is an empty
+string.
+</Para>
+
+<Para>
+The fifth parameter is a space separated list of responder options.  Each of
+this options is a name=value pair.  Common options include <Emphasis remap="bf">printed=no</Emphasis> and
+<Emphasis remap="bf">timeout=60</Emphasis>.  The value of this option comes from the <Emphasis remap="bf">ppr</Emphasis>
+<Emphasis remap="bf">--responder-options</Emphasis> switch or from the environment variable
+PPR&lowbar;RESPONDER&lowbar;OPTIONS.  A responder should ignore any options it does not
+recognize.
+</Para>
+
+<Para>
+The sixth parameter is a code number which represents the approximate content
+of the message.  It is provided in case a responder wants to send different
+types of message by different methods or wishes to provide its own wording for
+one or more of the messages.  For example, it might want to send a popup
+message but then follow it up with email if the message indicated that the job
+was arrested.  The code numbers are defined in C include file
+<Literal remap="tt">include/respond.h</Literal>, the Bourne shell script include file
+<Literal remap="tt">lib/respond.sh</Literal>, and the Perl include file <Literal remap="tt">lib/respond.ph</Literal>.
+</Para>
+
+<Para>
+The seventh parameter contains the complete job id.  This is probably only
+useful if the responder is constructing its own messages since the default
+messages provided in the third parameter already mention the job id.  The job
+id is not provided in the normal form since that is rather difficult to parse.
+In stead, the elements are separated by spaces.  The elements are, in order,
+destination node, <Emphasis remap="it">destination name</Emphasis>, <Emphasis remap="it">queue id number</Emphasis>, <Emphasis remap="it">sub id
+number</Emphasis>, and <Emphasis remap="it">home node</Emphasis>.  For example, ``mouse chipmunk 1000 0 mouse''.
+This id would normally appear as ``mouse:chipmunk-1000.0(mouse)'' or more
+likely in abreviated form as ``chipmunk-1000''.
+</Para>
+
+<Para>
+The eight parameter is also necessary for constructing replacement messages.
+Some of the messages normally contain a blank space which is filled with a
+piece of text.  Normally this is the name of the printer which the job was
+printed on, but if the user database is being used and PPR refuses access the
+the printer, the piece of text is the name of the user who was refused access.
+At other times the piece of text will be an error message.
+</Para>
+
+<Para>
+The ninth parameter is the title of the job.  This title will be derived from a
+"&percnt;&percnt;Title:" line if present.  Failing that, the title will be the
+name of the file being printed.  If the file was received on stdin, this field
+will generally be blank.
+</Para>
+
+<Para>
+The tenth parameter is the time at which the job was submitted.  It is
+represented in Unix format (as a count of the seconds since 12:00am, January
+1, 1970).  The program <Emphasis remap="bf">lib/time&lowbar;elapsed</Emphasis> may be used to express this
+time in terms of how far in the past it is.
+</Para>
+
+<Para>
+The eleventh parameter will contain a short message which indicates the
+reason the job was arrested.  If the response code does not indicated that
+the job has been arrested, this string will be blank.
+</Para>
+
+<Para>
+The twelth parameter contains the number of pages printed.  If this is unknown,
+it is "?".  If the response code (the fourth parameter) has a value other than
+<Emphasis remap="bf">RESP&lowbar;FINISHED</Emphasis> then the contents of this field is undefined.
+</Para>
+
+<Para>
+When the responder is run, stdin with either be connected to <Literal remap="tt">/dev/null</Literal>
+or it will be connected to the job's log file.  This is so that the responder
+may send the job log back to the user.  Some of the supplied responders exploit
+this feature.
+</Para>
+
+<Para>
+When exiting, the responder should return a value of zero if the message was
+delivered.  It should also return a value of zero if the addresse was not
+found.  Non-zero exit values should be reserved for truly abnormal conditions
+such as insufficient system resources or syntactically invalid addresses.  If a
+responder does return a non-zero exit value, <Emphasis remap="bf">ppr</Emphasis> will print a notice to
+that effect on stderr or <Emphasis remap="bf">pprd</Emphasis> will put a notice in its log file, depending
+on which one invoked the responder.
+</Para>
+
+<Para>
+When the responder is invoked by <Emphasis remap="bf">pprd</Emphasis>, it will always have a real uid,
+effective uid and saved uid of ``ppr''.  When it is invoked by <Emphasis remap="bf">ppr</Emphasis> (due to
+the use of the <Emphasis remap="bf">-e</Emphasis> responder option) things will be different.  The program
+<Emphasis remap="bf">ppr</Emphasis> is setuid ``ppr'', so the effective and saved uids are ``ppr'' and the
+real uid is the id of the user who invoked it.  Just before executing the
+responder <Emphasis remap="bf">ppr</Emphasis> sets the effective user id equal to the real user id.  This
+last feature is not intended as a security measure, rather, the <Emphasis remap="bf">xwin</Emphasis>
+responder will not work if this is not done since the X library uses access()
+on the .Xauthority file before trying to open it which means that the
+.Xauthority file in the user's home directory must be readable under both the
+real and the effective uids.  This feature may be overridden by setting the
+setuid bit on the responder.  If this is done then the effective uid will remain
+``ppr''.
+</Para>
+
+</Sect1>
+
+<Sect1 id="filters">
+<Title>Requirements for an Input Filter</Title>
+
+<Para>
+If <Emphasis remap="bf">ppr</Emphasis> determines that the input file is not PostScript, it will seek
+to use a filter to convert it to PostScript.  This appendix provides the
+information you will need to write your own PPR input filters.
+</Para>
+
+<Para>
+The filters are found in the directory <Literal remap="tt">/usr/ppr/lib</Literal>.  Each of these
+files has a name that consists of ``filter&lowbar;'' followed by the PPR input type
+name.  For example, the filter for JPEG files is called
+``<Literal remap="tt">/usr/ppr/filters/filter&lowbar;jpeg</Literal>".
+</Para>
+
+<Para>
+A filter should read the file from STDIN and write PostScript code on STDOUT.
+If it must, it can write messages on STDERR.  STDIN is guaranteed to be
+seekable.  Messages sent to STDERR will go wherever STDERR was going when
+<Emphasis remap="bf">ppr</Emphasis> was invoked.
+</Para>
+
+<Para>
+The parameters are as follows:
+</Para>
+
+<Para>
+
+<OrderedList>
+<ListItem>
+
+<Para>
+The first parameter is the list of filter options.  These are expressed as a
+space seperated list of name-value pairs.  The name and value are joined by an
+equal sign.  The options list is formed by concatrnating the contents of the
+<Emphasis remap="sf">DefFiltOpts:</Emphasis> line in the printer or group configuration file with the
+contents of any <Emphasis remap="bf">-o</Emphasis> lines the user put on the <Emphasis remap="bf">ppr</Emphasis> command line.
+
+Before passing the option list to the filter, <Emphasis remap="bf">ppr</Emphasis> pre-processes it.  Any
+options whose names begin with a file type name and a hyphen will have the file
+type name and the hyphen removed if the file type name matches the filter being
+invoked, otherwise, such options are discarded.  The names of the parameters (the
+part to the left of the equals sign) are converted to lower case.  The values (the
+part to the right of the equals sign) are not.
+
+A responder should ignore any option it does not recognize.  If the same option
+appears more than once, the value from the last instance is the one that should be
+used.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The name of the printer or group to which the job was submitted.  This will
+generally be ignored.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The third is the job title.  This may be used by filters which format
+their input as pages with headers and footers.
+
+</Para>
+</ListItem>
+<ListItem>
+
+<Para>
+The directory which was current when <Emphasis remap="bf">ppr</Emphasis> was invoked.  This is used
+by the TeX, TeXinfo, and DVI filters when searching for include files.
+
+</Para>
+</ListItem>
+
+</OrderedList>
+
+</Para>
+
+<Para>
+When a filter is invoked, the environment variable IFS is set to a space and a
+tab, and the variable PATH is set to a value which is just adequate to find
+standard shell script helper programs such as test, sed, and grep.  On most
+systems, that value of PATH is ``/bin:/usr/bin''.
+</Para>
+
+<Para>
+Here is an example.  Suppose this line is in the printer's configuration file:
+</Para>
+
+<Para>
+
+<Screen>
+DefFiltOpts: level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX
+</Screen>
+
+</Para>
+
+<Para>
+and the user submits a JPEG (JFIF) file with this command:
+</Para>
+
+<Para>
+
+<Screen>
+$ ppr -d myprn -o noisy=no -o 'fortran-width=130 jpeg-noisy=yes' picture.jpg
+</Screen>
+
+</Para>
+
+<Para>
+The filter will be invoked like this:
+</Para>
+
+<Para>
+
+<Screen>
+filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX noisy=no noisy=yes' myprn 'picture.jpg' /home/me
+</Screen>
+
+</Para>
+
+<Para>
+A filter should interpret any options it recognizes and ignore any it does
+not.  If it finds two contradictory options, it should obey the last one.  In
+the example above, the option ``noisy=yes'' is the one that prevails.  The
+options ``freevm=1048576'' and ``mfmodes=CanonCX'' would be ignored simply
+because the JPEG filter has no code to use them.
+</Para>
+
+<Para>
+If the filter exits with a value other than 0, the job will not be discarded.
+A message may be informed by printing on stderr or invoking a responder, the
+exect behaviour being controled by the <Emphasis remap="bf">-e</Emphasis> switch.
+</Para>
+
+<Para>
+When a filter is executed, the real user id is that of the user who executed
+<Emphasis remap="bf">ppr</Emphasis>.  The effective user id and the saved user id's are ``ppr''.  The real
+group id is the same as it was when <Emphasis remap="bf">ppr</Emphasis> was executed.  The effective and
+saved group id's are ``ppop''.
+</Para>
+
+<Para>
+It is possible to determine precisely what filter is being executed with what
+arguments by running <Emphasis remap="bf">ppr</Emphasis> with the <Emphasis remap="bf">-G infile:filter</Emphasis> option.
+</Para>
+
+<Para>
+The filters supplied with PPR, together with their options are described in the
+ppr(1) man page, under the section for the <Emphasis remap="bf">-T</Emphasis> switch.
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>How Continuous Queue and Printer Status Display Works</Title>
+
+<Para>
+&lsqb;This section has not been written yet.]
+</Para>
+
+</Sect1>
+
+<Sect1>
+<Title>Notes on the Source Code</Title>
+
+<Para>
+Generally, there is one subdirectory for each major program.  Smaller
+components, such as responders are gathered together into directories.
+</Para>
+
+<Para>
+Since PPR, in addition to being a useful tool, is intended as an instructive
+example for writers of programs which must parse DSC comments, and because it
+makes it easier to maintain, the source code is copiously commented.  In the
+source code comments, the abbreviation "RBIIp" refers to a page in the Red Book
+(PostScript Langauge Reference Manual, Second Edition).  As far as possible
+functions from the ANSI C, Posix, and Berkley Sockets libraries have been used
+in preference to function from less widely supported libraries such as the
+System V or BSD libraries.
+</Para>
+
+<Para>
+The signal() function from the ANSI C library
+installs a signal handler.  In some implementations, such as System V, this is
+a one-shot signal handler which is removed just before it is called for the
+first time.  In other implementations, notably BSD, this signal handler remains
+installed and the signal is automatically blocked until the signal handler
+exits.
+</Para>
+
+<Para>
+For the purpose of setting up signal handlers, POSIX provides a function
+called sigaction().  Unfortunately, since one of its arguments is a structure,
+about 10 lines of code are needed to use it.  To simplify the source code,
+PPR has two functions, one called signal&lowbar;interupting() which works like BSD
+signal() and signal&lowbar;restarting() which works differs only in that it passes
+the option SA&lowbar;RESTART to sigaction().  SA&lowbar;RESTART requests that system calls
+interupted by the signal be restarted automatically.
+</Para>
+
+<Para>
+The PPR source code assumes that whenever it calls signal() it will be
+calling a version conforms to BSD semantics.  To make sure this holds true
+on all systems, global&lowbar;defines.h defines a macro
+which equates signal() with signal&lowbar;interupting().
+</Para>
+
+<Sect2>
+<Title>Important Header Files</Title>
+
+<Para>
+There are several header files containing parameters the user may wish to
+adjust before compiling the programs.  These are described below:
+</Para>
+
+<Sect3>
+<Title><Literal remap="tt">include/version.h</Literal></Title>
+
+<Para>
+This file defines the pre-processor macros VERSION, SHORT&lowbar;VERSION, and
+COPYRIGHT.  If you modify PPR you may want to note that fact in the VERSION
+macro.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/global.mk</Literal></Title>
+
+<Para>
+This file is included by all the make files.  The shell script <Emphasis remap="bf">Configure</Emphasis>
+generates this file.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/sysdep.h</Literal></Title>
+
+<Para>
+This file is included by <Literal remap="tt">include/global&lowbar;defines.h</Literal> (described
+below).  This file contains one section for each system to which PPR has
+been ported.  For each of these it defines some macros and possibly some
+function prototypes.  You should add a section to this file
+if you are trying to port PPR to a new system.  The macros which
+can be defined in this file are described in comments at its head.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/global&lowbar;defines.h</Literal></Title>
+
+<Para>
+An important part of this file is the list of definitions of files and
+directories.  Any file or directory names in this section which do not begin
+with a slash are relative to the directory defined as <Emphasis remap="sf">HOMEDIR</Emphasis>. There are
+other parameters below the file names, but these should be modified with care.
+Probably, you should only modify <Emphasis remap="sf">QUEUE&lowbar;SIZE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;DOCMEDIA</Emphasis>,
+<Emphasis remap="sf">MAX&lowbar;LINE</Emphasis>, <Emphasis remap="sf">MAX&lowbar;BINS</Emphasis>, <Emphasis remap="sf">MAX&lowbar;GROUPS</Emphasis>, and <Emphasis remap="sf">MAX&lowbar;PRINTERS</Emphasis>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">ppr/ppr.h</Literal></Title>
+
+<Para>
+Defined here is the maximum number of <Emphasis remap="bf">-F</Emphasis> switches for <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/pprd.h</Literal></Title>
+
+<Para>
+In this file are a few parameters related to retrying printer faults and to
+the priority system.  The present values should prove satisfactory.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">papsrv/papsrv.h</Literal></Title>
+
+<Para>
+One might wish to edit this file in order to change the maximum number of
+PAP server names which may be advertise.  Keep in mind that the number of PAP
+server names might also be limited by your AppleTalk protocol stack.  In CAP,
+the limit is defined in the CAP sources in the file
+<Literal remap="tt">cap60/lib/cap/abpap.h</Literal>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">filter&lowbar;lp/filter&lowbar;lp.h</Literal></Title>
+
+<Para>
+One may desire to edit this file in order to change the paper size, margins
+and typefaces used by the line printer emulator.  Only monospace fonts are
+likely to give good results.  It is also possible to change the trigger values
+for selecting landscape rather than portrait mode.  Any change to the trigger
+values should be tested very thoroughly to ensure that pleasing results are
+obtained with input files of various formats.  Starting with version 1.20 of
+PPR, the lp filter has options which can be used to change these parameters
+without re-compiling.  These values are specified by using the <Emphasis remap="bf">ppr</Emphasis> <Emphasis remap="bf">-o</Emphasis>
+switch when submitting a print job.  The <Emphasis remap="bf">ppad switchset</Emphasis> command can be
+useful here, especially when the jobs are arriving through <Emphasis remap="bf">lprsrv</Emphasis>.  It is
+still necessary to edit <Literal remap="tt">include/filter&lowbar;lp.h</Literal> and re-compile if you wish
+to change the system-wide defaults.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">include/interface.h</Literal></Title>
+
+<Para>
+This include file defines the exit codes which printer interfaces should
+use.  It also describes the possible values of the fifth parameter to a printer
+interface which are also are possible values for the printer configuration file
+<Emphasis remap="sf">JobBreak:</Emphasis> line.  Most of the definitions in this file are repeated in
+bourne shell script form in the file <Literal remap="tt">interfaces/interface.sh</Literal> which is
+installed as <Literal remap="tt">/usr/ppr/lib/interface.sh</Literal>.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title><Literal remap="tt">libppr/interfaces.c</Literal></Title>
+
+<Para>
+This file contains an array of structures which give the default values
+which should be use with each of the printer interface programs supplied with
+PPR when <Emphasis remap="sf">JobBreak:</Emphasis>, <Emphasis remap="sf">Feedback:</Emphasis>, or <Emphasis remap="sf">Codes:</Emphasis> lines are missing
+from printer configuration files.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+<Sect2>
+<Title>The PPR Library</Title>
+
+<Para>
+The PPR components use a library of common code.  Persons attempting to
+extend PPR by adding additional programs are encouraged to make use of the
+functions in this library.  This library is contained in a file <Literal remap="tt">libppr.a</Literal>
+which is created in the top level source directory.  Its source code is found
+in the <Literal remap="tt">libppr</Literal> directory.  The prototypes for PPR library functions are
+found in the file <Literal remap="tt">include/global defines.h</Literal> with a few in
+<Literal remap="tt">include/global&lowbar;structs.h</Literal>.
+</Para>
+
+<Sect3>
+<Title>daemon()</Title>
+
+<Para>
+This function is used by PPR programs which run in the background.  A PPR
+daemon process should call this function during initialization.  This function
+forks and the parent exits.  It also disassociates the process from the
+controling terminal and closes all open file descriptors including stdin,
+stdout, and stderr.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>myalloc(), myfree(), myrealloc(), mystrdup(), and mystrndup()</Title>
+
+<Para>
+The normal Unix memory allocation routines return a NULL pointer if they
+fail to allocate the requested memory.  Since it is very rare that a Unix
+system will refuse to allocate any reasonable amount of memory, programers
+often ignore the possiblity of malloc() and friends returning NULL.  Since a
+memory allocation failure is highly unlikely, PPR programs treat it as a fatal
+error, but, rather than test the return value of malloc() after each call, the
+calls are encapsulated in special functions which test the return value and
+abort the program if the allocation fails.
+</Para>
+
+<Para>
+A program calling these functions must provide a function called ``fatal()''.
+This function should print an error message and exit.  The first argument is
+the value to pass to exit(), the second is a printf() style format string for
+the error message.  Any remaining arguments are the values specified by the
+format string.  The caller should create a global integer variable called
+``lib&lowbar;memory&lowbar;fatal'' which contains the value these routines should pass as the
+first argument to fatal().
+</Para>
+
+<Para>
+The function myalloc() takes two arguments.  The first is the number of items
+to allocate, the second is the size of each in bytes.  This function will return
+a void pointer to the allocated memory.  The memory is not initialized.
+</Para>
+
+<Para>
+The function myfree() is used to free any memory allocated by the other
+functions.
+</Para>
+
+<Para>
+The function myrealloc() changes the size of a memory block.  The
+first argument is a pointer to the old block, the second is the desired new
+number of members, the third argument is the size of each member in bytes.  This
+function returns a pointer to a resized block, possibly at a different
+location.
+</Para>
+
+<Para>
+The function mystrdup() takes a string pointer as its sole argument
+and returns a pointer to a new copy of the string.
+</Para>
+
+<Para>
+The function mystrndup() takes a string pointer and a maximum length as its
+arguments.  It returns a pointer to a new string containing a copy of the
+string truncated to the maximum length.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>ppr&lowbar;sscanf()</Title>
+
+<Para>
+This function is similiar to sscanf().  It implements the following formats:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term>&percnt;d</Term>
+<ListItem>
+<Para>
+read an int.  The argument should be a pointer to an int.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;ld</Term>
+<ListItem>
+<Para>
+read a long int.  The argument should be a pointer to a long
+int.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;hd</Term>
+<ListItem>
+<Para>
+read a short int.  The argument should be a pointer to a short
+int.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;s</Term>
+<ListItem>
+<Para>
+read characters up to the next whitespace.  The argument should
+be a pointer to a char array with enough space to hold the string and the
+terminating NULL.  To prevent overruns, the size of the array may be specified
+by a decimal number between the ``&percnt;'' and the ``s'' or by a ``&num;''.
+If the length of the array is specified with a ``&num;'' then the actuall
+length is read from ppr&lowbar;sscanf()'s next argument (the one before the pointer to
+the char array).
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;S</Term>
+<ListItem>
+<Para>
+read characters up to the next whitespace, allocate memory, and
+store them in the allocated memory.  The argument should be a pointer to a char
+pointer which will be set to the address of the allocated memory.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;z</Term>
+<ListItem>
+<Para>
+read characters up to the end of the string.  The argument
+should be a char array.  To prevent overruns, the size of the char array may be
+specified in the same manner as for the &percnt;s format.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term>&percnt;Z</Term>
+<ListItem>
+<Para>
+read characters up to the end of the string, allocate storeage
+for them, and copy them into that storage.  The argument should be a pointer to
+a pointer to a char array.
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect3>
+
+<Sect3>
+<Title>ppr&lowbar;get&lowbar;nodename()</Title>
+
+<Para>
+This function should return the node name which other nodes will use when
+sending jobs to this node.  In the current implementation this is the system
+name truncated before the first period (if present) and furthur truncated to 16
+characters.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>fname&lowbar;sprintf()</Title>
+
+<Para>
+This is a special version of sprintf().  It will never write more than
+MAX&lowbar;PATH characters.  It only understands &percnt;s and &percnt;d.  On
+MS-Windows systems it will convert ``:'' to ``!'' because they are confused
+by colons in filenames.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+</Sect1>
+
+<Sect1>
+<Title>Protocol for Comunicating with <Emphasis remap="bf">pprd</Emphasis> and <Emphasis remap="bf">rpprd</Emphasis></Title>
+
+<Para>
+This section describes the protocol which use commands such as <Emphasis remap="bf">ppr</Emphasis>,
+<Emphasis remap="bf">ppop</Emphasis>, and <Emphasis remap="bf">ppad</Emphasis> use to communicate with <Emphasis remap="bf">pprd</Emphasis> and <Emphasis remap="bf">rpprd</Emphasis>.
+This information may assist those attempting to understand the source code.
+</Para>
+
+<Para>
+The main printing daemon, <Emphasis remap="bf">pprd</Emphasis> receives commands over a named pipe and
+acts on them.  The program <Emphasis remap="bf">ppr</Emphasis> uses one such command it sends to <Emphasis remap="bf">pprd</Emphasis>
+to tell it that a new jobs has been placed in the queue directories.  The
+program <Emphasis remap="bf">ppad</Emphasis> has two such commands which it uses to inform <Emphasis remap="bf">pprd</Emphasis> that
+a printer or group configuration file has been modified.  Finally, <Emphasis remap="bf">ppop</Emphasis>
+has many commands which it uses to control <Emphasis remap="bf">pprd</Emphasis> or to request information
+from it.
+</Para>
+
+<Para>
+The remote printing daemon, <Emphasis remap="bf">rpprd</Emphasis> will receive commands over a named pipe
+of its own.  These commands will be identical in format to those understood by
+<Emphasis remap="bf">pprd</Emphasis>.
+</Para>
+
+<Sect2>
+<Title>Accepting Jobs</Title>
+
+<Para>
+Once the job submission program <Emphasis remap="bf">ppr</Emphasis> has created the queue files it
+sends a command to <Emphasis remap="bf">pprd</Emphasis> or <Emphasis remap="bf">rpprd</Emphasis> telling it that the job is there and
+is ready for printing or transfer to the remote system.  This command takes the
+form:
+</Para>
+
+<Para>
+j <Emphasis remap="it">destination&lowbar;node destination&lowbar;queue id subid home&lowbar;node initial&lowbar;priority</Emphasis>
+</Para>
+
+<Para>
+The <Emphasis remap="it">destination&lowbar;node</Emphasis> is the node to which the job should be sent.  If the
+command is written to <Emphasis remap="bf">pprd</Emphasis>'s named pipe, this field must contain the node
+name of the local system.  The <Emphasis remap="it">destination&lowbar;queue</Emphasis> is the name of the print
+queue on the destination node.  The <Emphasis remap="it">id</Emphasis> and <Emphasis remap="it">subid</Emphasis> are the queue id and
+the job fragment number respectively.  The <Emphasis remap="it">subid</Emphasis> will most often be zero.
+The <Emphasis remap="it">home&lowbar;node</Emphasis> is the node name of the system on which the job origionated.
+Jobs submitted by the program <Emphasis remap="bf">ppr</Emphasis> to <Emphasis remap="bf">pprd</Emphasis> or <Emphasis remap="bf">rpprd</Emphasis> will always
+have the home node name of the local system, but jobs submitted to <Emphasis remap="bf">pprd</Emphasis> by
+<Emphasis remap="bf">rpprd</Emphasis> probably will not since it is one of <Emphasis remap="bf">rpprd</Emphasis>'s jobs to accept jobs
+from remote systems.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Re-loading Configuration Files</Title>
+
+<Para>
+Whenever a printer or group configuration files is modified or a new one
+created, <Emphasis remap="bf">pprd</Emphasis> must be directed to read it.  To inform <Emphasis remap="bf">pprd</Emphasis> that it
+must read a new or revised printer configuration file, a command line of this
+form is sent:
+</Para>
+
+<Para>
+
+<Screen>
+NP <Emphasis remap="it">printername</Emphasis>
+</Screen>
+
+</Para>
+
+<Para>
+To indicate that a group configuration file
+must be re-read or that a new group configuration file must be read for the
+first time:
+</Para>
+
+<Para>
+
+<Screen>
+NG <Emphasis remap="it">groupname</Emphasis>
+</Screen>
+
+</Para>
+
+<Para>
+There will be no acknowledgement of either command.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Yielding Information to <Emphasis remap="bf">ppop</Emphasis></Title>
+
+<Para>
+The utility <Emphasis remap="bf">ppop</Emphasis> must communicate with <Emphasis remap="bf">pprd</Emphasis> and <Emphasis remap="bf">rpprd</Emphasis> in
+order to list the queue, show the status of printers, mount forms, and do other
+tasks.  As work on <Emphasis remap="bf">rpprd</Emphasis> continue, descriptions of the necessary commands
+will be added to this document.
+</Para>
+
+</Sect2>
+
+<Sect2 id="fontsub">
+<Title>Font Substitution Configuration File</Title>
+
+<Para>
+This file resides in the directory <Literal remap="tt">/usr/ppr/lib</Literal>.  It is
+replaced whenever a new version of PPR is installed, so if you modify
+it you should keep a copy of your modifications elsewhere.
+</Para>
+
+<Para>
+The file contains a list of PostScript font names and possible substitute
+fonts.
+</Para>
+
+<Para>
+Any line that has ``<Literal remap="tt">&num;</Literal>'' or ``<Literal remap="tt">;</Literal>'' in the first column is a comment.
+Blank lines are ignored.  A font substitution record begins with the name of
+the font for which there are substitutes.  The name should start in column
+one and be on a line by
+itself.  The list of possible substitutes follows, one per line.  Each
+substitute font line should start with a space or tab.  You may list as many
+substitute fonts as you like.  The first substitute font to be found in the
+printer's PPD file, in the cache directories or in the index created with
+<Emphasis remap="bf">indexttf</Emphasis> will be used.
+</Para>
+
+<Para>
+Here is an example of four records which indicate that the IBM Courier fonts are
+suitable substitutes for the Adobe Courier fonts:
+</Para>
+
+<Para>
+
+<Screen>
+Courier
+IBMCourier
+Courier-Bold
+IBMCourier-Bold
+Courier-Oblique
+IBMCourier-Italic
+Courier-BoldOblique
+IBMCourier-BoldItalic
+</Screen>
+
+</Para>
+
+<Para>
+You have the option of specifying a PostScript transform matrix to be applied to
+the substitute font.  Generally this will be used to adjust the width.  The
+should appear on the substitute font line, after the substitute font name.  Here
+is an example:
+</Para>
+
+<Para>
+
+<Screen>
+Helvetica-Condensed
+Helvetica &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-Bold
+Helvetica-Bold &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-Oblique
+Helvetica-Oblique &lsqb;0.80 0 0 1 0 0]
+Helvetica-Condensed-BoldOblique
+Helvetica-BoldOblique &lsqb;0.80 0 0 1 0 0]
+</Screen>
+
+</Para>
+
+<Para>
+This approximates Helvetica Condensed by scaling Helvetica to 80&percnt; of
+its normal width.  The role of the other members of the matrix, refer to the
+PostScript language reference manual.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>MetaFont Modes Configuration File</Title>
+
+<Para>
+This file <Literal remap="tt">mfmodes.conf</Literal> is used by <Emphasis remap="bf">ppad</Emphasis> when setting the default
+filter options.  Specifically, the <Emphasis remap="bf">mfmode=</Emphasis> option is selected with the
+aid of this file.  The <Emphasis remap="bf">mfmode=</Emphasis> option is used by the
+DVI filter to select an appropriate MetaFont mode for a given printer.
+</Para>
+
+<Para>
+Before consulting this file, <Emphasis remap="bf">ppad</Emphasis> reads the printer's PPD file and extracts
+the values from the following lines:
+</Para>
+
+<Para>
+
+<Screen>
+*Product:
+*ModelName:
+*NickName:
+*DefaultResolution:
+</Screen>
+
+</Para>
+
+<Para>
+The extracted values are then compared to values on lines in the <Literal remap="tt">mfmodes.conf</Literal>
+file.  Each line in the <Literal remap="tt">mfmodes.conf</Literal> file has the following format:
+</Para>
+
+<Para>
+
+<Screen>
+<Emphasis remap="it">product</Emphasis>:<Emphasis remap="it">modelname</Emphasis>:<Emphasis remap="it">nickname</Emphasis>:<Emphasis remap="it">resolution</Emphasis>:<Emphasis remap="it">mfmode</Emphasis>
+</Screen>
+
+</Para>
+
+<Para>
+The file is read top to bottom until a match is found or the end is reached.
+The information from the PPD file is compared to the first four fields of each
+line.  A ``<Emphasis remap="sf">*</Emphasis>'' may be used as a wildcard in any or all of the first four fields.
+When a match is found, the value from the fifth field is used as the value for
+the default filter option <Emphasis remap="bf">mfmode=</Emphasis>.
+</Para>
+
+<Sect3>
+<Title>Identification by Product</Title>
+
+<Para>
+The <Emphasis remap="sf">*Product:</Emphasis> line from the PPD file generally identifies the manufacturer and
+model line of which the printer is a part.  Since all printers which use one
+product string generally use the same print mechanism, this parameter alone is
+usually enough to make selection of the correct MetaFont mode possible.  For
+this reason, most entries in the <Literal remap="tt">mfmodes.conf</Literal> file will have the <Emphasis remap="it">product</Emphasis>
+field filled in but the <Emphasis remap="it">modelname</Emphasis>, <Emphasis remap="it">nickname</Emphasis>, and <Emphasis remap="it">resolution</Emphasis> fields will
+all be ``<Emphasis remap="sf">*</Emphasis>''.
+</Para>
+
+<Para>
+For example, the following line:
+</Para>
+
+<Para>
+
+<Screen>
+LaserJet 4:*:*:*:ljfour
+</Screen>
+
+</Para>
+
+<Para>
+will match if the <Emphasis remap="sf">*Product:</Emphasis> line from the PPD file has a value of
+``<Emphasis remap="sf">(LaserJet 4)</Emphasis>''.  The fact that fields two through four contain astrisks indicates that any
+value is acceptable for product, modelname, and resolution.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by ModelName</Title>
+
+<Para>
+The GhostScript interpreter has a product string of ``Ghostscript''
+or ``Alladin GhostScript''.  Therefor, the printer must be identified by means of its PPD
+files <Emphasis remap="sf">*ModelName:</Emphasis> line.  Here are some reasonable configuration lines for
+printers driven by Ghostscript:
+</Para>
+
+<Para>
+
+<Screen>
+*:Dot Matrix 24 pin Ghostscript:*:*:NEChi
+*:HP LaserJet III Ghostscript:*:*:CanonCX
+*:HP DeskJet 500 Ghostscript:*:*:HPDeskJet
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by NickName</Title>
+
+<Para>
+In a PPD file obtained from Adobe or the printer's manufacture,
+the <Emphasis remap="sf">*NickName:</Emphasis> line is identical to the <Emphasis remap="sf">*ModelName:</Emphasis> line.
+You might change it if you make a special hacked-up copy of
+the PPD file for a particular printer.  For example, you might change it to
+``David's HP DeskJet 500 Ghostscript''.
+</Para>
+
+<Para>
+There are valid reasons for using a modified PPD file, but why changes to the
+PPD file should dictate a different MetaFont mode is hard to say.  (Changes to
+the ``*DefaultResolution:'' line are covered by the next section.)  Unless you
+know a good reason not to, you should always put a "*" in this field.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Identification by Resolution</Title>
+
+<Para>
+Generally, you can just put ``<Emphasis remap="sf">*</Emphasis>'' in the <Emphasis remap="it">resolution</Emphasis> field.  There
+are however two possible reasons for filling in the value from the PPD file's
+<Emphasis remap="sf">*DefaultResolution:</Emphasis> line.
+</Para>
+
+<Para>
+One is if the printer's resolution can be changed.  A change in resolution
+requires a change in the MetaFont mode.  You might have several different PPD
+files for the same make and model of printer, one for each resolution.  Here is
+a (fictitous) example:
+</Para>
+
+<Para>
+
+<Screen>
+*:HP LaserJet III Ghostscript:*:300dpi:CanonCX
+*:HP LaserJet III Ghostscript 150DPI:*:150dpi:ljlo
+</Screen>
+
+</Para>
+
+<Para>
+The other reason for putting a value other than ``<Emphasis remap="sf">*</Emphasis>'' in the
+<Emphasis remap="it">resolution</Emphasis> field
+is if the line is one at the end of the file which is intened to to be a best
+guess for printers which have not matched any of the lines above.  These are
+some reasonable last resort lines:
+</Para>
+
+<Para>
+
+<Screen>
+*:*:*:300dpi:CanonCX
+*:*:*:600dpi:ljfour
+*:*:*:360dpi:NEChi
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Selecting MetaFont Mode Names</Title>
+
+<Para>
+The MetaFont mode names in the <Literal remap="tt">mfmodes.conf</Literal> file that comes with PPR are
+taken from the <Literal remap="tt">modes.mf</Literal> file maintained by Karl Berry.  A recent version
+of his <Literal remap="tt">modes.mf</Literal> file is distributed with the PPR source code, in the
+<Literal remap="tt">misc</Literal> directory.  His file defines a number of aliases for each mode.  When
+adding entries to PPR's <Literal remap="tt">mfmodes.conf</Literal> file you should try not to use two
+different names that both refer to the same mode in <Literal remap="tt">modes.mf</Literal> because that
+would result in the generation of duplicate sets of identical pk font files.
+The <Literal remap="tt">mfmodes.conf</Literal> file supplied with PPR always uses the first alias from
+Karl Berry's <Literal remap="tt">modes.mf</Literal> file which may be abtained from
+<Emphasis remap="bf">ftp://ftp.tug.org/tex/modes.mf</Emphasis>.
+</Para>
+
+</Sect3>
+
+</Sect2>
+
+</Sect1>
+
+</appendix>
+
+</Article>

@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Test handling of documents which arrive with the pages
+# in reverse order.
+#
+# Last modified 12 September 1997.
+#
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 --responder none <${TEST_BASENAME}-1.ps
+$TESTBIN/cat_output
+
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 --responder none <${TEST_BASENAME}-2.ps
+$TESTBIN/cat_output
+
+exit 0

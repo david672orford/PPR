@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# In case a previous test didn't clean up after itself:
+$HOMEDIR/bin/ppad delete regression-test1 >/dev/null 2>&1
+
+echo "Creating printer..."
+$HOMEDIR/bin/ppad interface regression-test1 atalk "Imaginary Printer:LaserWriter@Imaginary Zone"
+echo "ppad: $?"
+echo
+
+echo "Setting alerts..."
+$HOMEDIR/bin/ppad alerts regression-test1 7 mail nobody@localhost
+echo "ppad: $?"
+echo
+
+$TESTBIN/dump_printer regression-test1
+
+exit 0

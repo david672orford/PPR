@@ -1,0 +1,36 @@
+%!PS-Adobe-3.0 Resource-Encoding
+%%Title: Microsoft Code Page 1250 Encoding
+/PPR-CP1250
+ 32 {/.notdef} repeat
+ /space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright
+ /parenleft /parenright /asterisk /plus /comma /minus /period /slash
+ /zero /one /two /three /four /five /six /seven
+ /eight /nine /colon /semicolon /less /equal /greater /question
+ /at /A /B /C /D /E /F /G
+ /H /I /J /K /L /M /N /O
+ /P /Q /R /S /T /U /V /W
+ /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+ /quoteleft /a /b /c /d /e /f /g
+ /h /i /j /k /l /m /n /o
+ /p /q /r /s /t /u /v /w
+ /x /y /z /braceleft /bar /braceright /tilde /.notdef
+ /.notdef /.notdef /quotesinglbase /.notdef /quotedblbase /ellipsis /dagger /daggerdbl
+ /.notdef /perthousand /Scaron /guilsinglleft /Sacute /Tcaron /Zcaron /Zacute
+ /.notdef /quoteleft /quoteright /quotedblleft /quotedblright /bullet /endash /emdash
+ /.notdef /trademark /scaron /guilsinglright /sacute /tcaron /zcaron /zacute
+ /space /caron /breve /Lslash /currency /Aogonek /brokenbar /section
+ /dieresis /copyright /Scedilla /guillemotleft /logicalnot /hyphen /registered /Zdotaccent
+ /degree /plusminus /ogonek /lslash /acute /mu /paragraph /bullet
+ /cedilla /aogonek /scedilla /guillemotright /Ydieresis /hungarumlaut /Lcaron /zdotaccent
+ /Racute /Aacute /Acircumflex /Abreve /Adieresis /Lacute /Cacute /Ccedilla
+ /Ccaron /Eacute /Eogonek /Edieresis /Ecaron /Iacute /Icircumflex /Dcaron
+ /Eth /Nacute /Ncaron /Oacute /Ocircumflex /Ohungarumlaut /Odieresis /multiply
+ /Rcaron /Uring /Uacute /Uhungarumlaut /Udieresis /Yacute /Tcedilla /germandbls
+ /racute /aacute /acircumflex /abreve /adieresis /lacute /cacute /ccedilla
+ /ccaron /eacute /eogonek /edieresis /ecaron /iacute /icircumflex /dcaron
+ /dbar /nacute /ncaron /oacute /ocircumflex /ohungarumlaut /odieresis /divide
+ /rcaron /uring /uacute /uhungarumlaut /udieresis /yacute /tcedilla /dotaccent
+256 array astore readonly
+/defineresource where {pop /Encoding defineresource pop} {def} ifelse
+%%EOF
+

@@ -1,0 +1,30 @@
+%!PS-Adobe-3.0 Resource-Encoding
+%%Title: ISOLatin1 for level 1 interpreters
+/ISOLatin1Encoding where	% already defined?
+  {pop}				% yes, pop dictionary
+  {				% no,
+  /ISOLatin1Encoding		% define it
+   StandardEncoding 0 45 getinterval aload pop
+   /minus
+   StandardEncoding 46 82 getinterval aload pop
+   16 {/.notdef} repeat
+   /dotlessi /grave /acute /circumflex /tilde /macron /breve /dotaccent
+   /dieresis /.notdef /ring /cedilla /.notdef /hungarumlaut /ogonek /caron
+   /space /exclamdown /cent /sterling /currency /yen /brokenbar /section
+   /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen
+   /registered /macron /degree /plusminus /twosuperior /threesuperior
+   /acute /mu /paragraph /periodcentered /cedilla /onesuperior /ordmasculine
+   /guillemotright /onequarter /onehalf /threequarters /questiondown
+   /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+   /Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex
+   /Idieresis /Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis
+   /multiply /Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn
+   /germandbls /agrave /aacute /acircumflex /atilde /adieresis /aring /ae
+   /ccedilla /egrave /eacute /ecircumflex /edieresis /igrave /iacute
+   /icircumflex /idieresis /eth /ntilde /ograve /oacute /ocircumflex /otilde
+   /odieresis /divide /oslash /ugrave /uacute /ucircumflex /udieresis /yacute
+   /thorn /ydieresis
+  256 array astore readonly def
+  } % if not defined
+  ifelse
+%%EOF

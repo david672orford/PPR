@@ -1,0 +1,101 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+WARNING: "%%BeginProcSet:" line has no arguments
+WARNING: "%%BeginFile:" line has no argument
+WARNING: Procset "The Name" has no version and revision numbers
+WARNING: "%%IncludeFile:" line has no argument
+WARNING: "%%BeginDocumentSetup" should be "%%BeginSetup"
+WARNING: "%%BeginPaperSize:" is discontinued in DSC versions >= 3.0
+WARNING: "%%Feature:" should be "%%IncludeFeature:" in DSC >= 3.0
+WARNING: "%%IncludeFont:" line has no argument
+WARNING: "%%BeginFont:" line has no argument
+WARNING: "%%EndDocumentSetup" should be "%%EndSetup"
+WARNING: "%%ExecuteFile:" should be "%%IncludeDocument:" in DSC >= 3.0
+WARNING: "%%BeginFont:" line has no argument
+WARNING: Dubious font "Regression-Test-1" downloaded in print job
+WARNING: "%%BeginFile:" line has no argument
+WARNING: "%%BeginBinary:" line has no argument
+WARNING: Resource "procset Regression-Test-Non-Existent 1 15" has %%Include but never declared
+WARNING: Resource "procset The Name 0 0" has %%Include but never declared
+WARNING: Resource "file stuff.ps" has %%Include but never declared
+WARNING: Resource "font Ugly-Plain" has %%Include but never declared
+WARNING: Resource "font Regression-Test-1" supplied but never declared
+WARNING: Resource "file my.ps" supplied but never declared
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Pages: 2
+%%PageOrder: Ascend
+%%DocumentNeededResources: procset Regression-Test-Non-Existent 1 15
+%%+ procset (The Name) 0 0
+%%+ file stuff.ps
+%%+ font Ugly-Plain
+%%DocumentSuppliedResources: font Regression-Test-1
+%%+ file my.ps
+%%ProofMode: TrustMe
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProcSet:
+/inch {72 mul} def
+%%EndProcSet
+
+%%BeginFile:
+%%EndFile
+
+%%IncludeResource: procset Regression-Test-Non-Existent 1 15
+%%IncludeResource: procset (The Name) 0 0
+
+%%IncludeFile:
+%%IncludeResource: file stuff.ps
+
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *PageSize Letter
+% letter
+<</DeferredMediaSelection true /PageSize [612 792] /ImagingBBox null>> setpagedevice
+%%EndFeature
+%%BeginFeature: *PageSize Letter
+<</DeferredMediaSelection true /PageSize [612 792] /ImagingBBox null>> setpagedevice
+%%EndFeature
+%%IncludeFont:
+%%IncludeResource: font Ugly-Plain
+%%BeginFont:
+%%EndFont
+%%EndSetup
+
+%%Page: 1 1
+%%IncludeDocument: myfile.eps
+%%BeginFont:
+%!
+% Code here!
+%%EndFont
+%%BeginResource: font Regression-Test-1
+%%EndResource
+showpage
+
+%%Page: 2 2
+%%BeginFile:
+%%BeginBinary:
+xdfasdfs
+%%EndData
+image
+%%EndFile
+%%BeginResource: file my.ps
+%!
+% Wow!
+showpage
+%%EndResource
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Bad font not cached, good!

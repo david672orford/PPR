@@ -1,0 +1,990 @@
+#
+# mouse:~ppr/src/docs/refman/ppad.8.pod
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 14 December 2000.
+#
+
+=head1 NAME
+
+ppad - PPR administrator's utility
+
+=head1 SYNOPSIS
+
+B<ppad> [B<--help>] [B<--version>] [B<-M>] [B<-d> I<debuglevel>] [I<subcommand>] [I<parameters> ...]
+
+=head1 DESCRIPTION
+
+B<Ppad> is the utility used to manage PPR, that is, to create and delete
+printers and groups, to set their parameters, and to define known types of
+media.
+
+The B<--version> switch prints the PPR version number.
+
+The B<--help> switch prints abreviated instructions for use and direction for
+obtaining additional help.
+
+The B<-d> option can be used to turn on messages which describe what B<ppad>
+is doing.  The default level is 0.  Using B<-d 1> will cause B<ppad> to tell
+what printer and group configuration files it is examining and editing.
+Higher levels display more information.  A level 2 and above B<ppad> will
+display information about what it learns from PPD files and
+F</usr/share/ppr/lib/mfmodes.conf>.  At level 3 and above it will display every mode
+line in F<mfmodes.conf> and every line read from or written to the
+printer or group configuration file.  Level 6 and above shows most of the
+lines in every PPD file that is read.
+
+Most operations performed by this command require PPR administrator
+privileges.  Only those operations which make no changes to the spooler
+configuration may be performed by non-privileged users.  This command
+defines a privileged user as the user "ppr", a user with a UID of 0 (root),
+a user listed in the file "F</etc/ppr/acl/ppad.allow>", or (for compatibility
+with previous versions of PPR) a user who is a member of the group "ppad".
+
+B<Ppad> has a number of subcommands.  Each subcommand has zero or more
+parameters.  The subcommands are described below.
+
+If the B<ppad> command is invoked without sub-command arguments it will enter
+interactive mode.  In interactive mode it reads commands from stdin and
+executes them.
+
+If the B<-M> switch is used, B<ppad> will adopt a terser style of output, more
+suitable to parsing by other programs.
+
+
+
+=head2 Printer Management Subcommands
+
+=over 4
+
+=item B<ppad show> I<printer>
+
+Displays the configuration of the indicated printer.  The option selections
+described by the output of this command may be changed using the commands
+described below.
+
+=item B<ppad comment> I<printer comment>
+
+Sets the comment field of the indicated printer.  Highly recommended!  This
+comment field is often displayed in user interfaces which allow the user
+to choose a printer.  You should set this field to something that will help
+the user to identify the printer.
+
+=item B<ppad location> I<printer location>
+
+This command can be used to attach a location description to the printer
+queue.  This information could be useful to field service personel who want
+to visit the printer.
+
+=item B<ppad department> I<printer department>
+
+This command can be used to indicate the department of your organization
+which uses the printer.  This information is for the edification of human
+operators and field service personel.
+
+=item B<ppad contact> I<printer contact>
+
+This command provides a way to specify the name and telephone number of a
+person that a human operator may want to contact when he notices a problem
+with the printer.  This should be a person who works near the printer.
+
+=item B<ppad interface> I<printer interface address>
+
+specifies the means by which PPR will send the jobs to the printer and the
+physical address of the printer.  If the print queue I<printer> does not
+already exist, it is created.  The I<interface> is the name of a program in
+F</usr/lib/ppr/interfaces> which can open a connection to the printer, perhaps
+over the network or over a serial cable.  The I<address> is a parameter
+which is passed to the interface program.  The precise meaning and format of
+the I<address> parameter depend on the interface program selected.  It might
+be the device name of a serial port, or the AppleTalk name of the printer.
+
+The interfaces supplied with the current distribution are
+B<simple>,
+B<serial>,
+B<parallel>,
+B<dummy>,
+B<atalk>,
+B<tcpip>,
+B<lpr>,
+B<clispool>,
+B<smb>,
+B<gssimple>,
+B<gsserial>,
+B<gsparallel>,
+B<gsatalk>.
+B<gstcpip>,
+B<gslpr>,
+and B<gssmb>.
+
+These interfaces are described in the B<ppad-interfaces(8)> manpage.
+
+=item B<ppad options> I<printer> I<options>
+
+sets the options string which will be passed to the interface program.  Most
+interface programs ignore this parameter.  The options string is a sequence of
+space separated I<name>=I<value> pairs.  The I<name>=I<value> pair recognized
+by each interface supplied with PPR are described in the B<ppad interface>
+section of this man page.
+
+Here is a sample "ppad options" command.  This one sets the options for a
+printer with a serial interface:
+
+C<$ ppad options myprn 'speed=19200 bits=7 parity=even'>
+
+The available options depend on which interface was selected.  See the
+appropriate section in the L<ppad_interfaces(8)> manpage to learn what
+options are available for any given interface.
+
+=item B<ppad jobbreak I<printer> {none, signal, signal/pjl, control-d, pjl, save/restore, newinterface, default}>>
+
+Specifies the method used to indicate the end of one job and the start of
+another to the interface program.  A printer considers a banner page
+and the print job proper to be two separate print jobs.  PPR knows
+reasonable default job break methods for the standard set of interfaces,
+but if you supply your own interface you may have to set this parameter.
+
+The possible settings are as follows:
+
+=over 4
+
+=item B<default>
+
+If you set this mode, then the actual jobbreak method is determined each
+time a job is printed by consulting PPR's internal table and the printer's
+PPD file.  You can use the B<ppad show> command to determine the actual
+jobbreak method decided on.
+
+=item B<control-d>
+
+In this mode a control-D character is sent at the start and end of the job
+in order to separate it from other jobs.  This is the default for many
+of the interfaces supplied with PPR.
+
+=item B<pjl>
+
+Send control-d's and HP PJL commands to indicate job breaks and to
+set the display message.  For many of the interfaces supplied with PPR
+this will be the default if the PPD file indicates that the printer
+supports PJL.
+
+=item B<signal>
+
+The default for the interface B<atalk>, this method uses a call and response
+protocol involving SIGUSR1.  This is the default for the B<atalk> interface
+if the PPD file does not indicate that the printer supports PJL.
+
+=item B<signal/pjl>
+
+This selects the SIGUSR1 protocol with the addition of certain HP PJL
+commands which do such things as set the printer display panel message to
+the name of the user.  This will be the default for the B<atalk> interface
+if the PPD file indicates that the printer supports PJL.
+
+=item B<newinterface>
+
+Launches a new copy of the interface program for each segment of the job.
+This is the default for the interfaces whose names start with "gs".  For them,
+it is also the only setting that makes sense.
+
+=item B<none>
+
+Do not indicate job breaks.  Doing this will make flag pages and multiple copies
+produced by certain methods very unreliable.  Do not use this except for
+testing.
+
+=item B<save/restore>
+
+Enclose each section of the job in save/restore.  This is only a little
+better than B<none>.  Don't use it.
+
+=back
+
+To return to the default job break method, set it to "default".
+
+=item B<ppad feedback> I<printer> {B<true>, B<False>, B<default>}
+
+Indicates whether the interface program is capable of returning messages
+from the printer.  Sometimes this is not possible, as in the case of a
+unidirectional interface.  PPR has default feedback settings for the
+standard set of interfaces.  To return to the default setting, set it
+to B<default>.
+
+=item B<ppad codes> I<printer> {B<Clean7Bit>, B<Clean8Bit>, B<Binary>, B<TBCP>, B<UNKNOWN>, B<default>}
+
+This setting indicates which subset of the 256 possible byte values the
+communications chanel will pass through to the printer's PostScript
+interpreter.
+
+For any given printer interface program and PPD file there is a default
+setting for B<ppad codes>.  To revert to the default setting for the
+interface and PPD file, set use the command B<ppad codes> I<printer> B<default>.
+
+The B<ppad codes> setting is new in PPR version 1.40.  Setting it to B<UNKNOWN>
+causes PPR to behave as it did in previous versions.  If the setting is
+anything other than B<UNKNOWN> then PPR will not attempt to print PostScript
+files which claim to require a more extensive byte value set.  For example, if
+a printer's codes setting is B<Clean8Bit> and the print job contains a
+DSC comment which says "%%DocumentData: Binary" then PPR will not attempt to
+print the job on that printer.  Hopefully the job was submitted to a group
+and some other member will have a less restrictive codes setting.
+
+Here are the possible settings:
+
+=over 4
+
+=item B<Clean7Bit>
+
+The PostScript code may contain only the characters 0x1B through 0x7E as well
+as the three charters 0x0A, 0x0D, and 0x09.  Whenever the last three
+appear they must represent line-feed, carriage-return, and tab respectively.
+
+=item B<Clean8Bit>
+
+The same as B<Clean7Bit> except that the characters 0x80 through 0xFF are
+also allowed.  This the the default for interfaces including B<serial>,
+B<parallel> and B<tcpip>.  These interfaces do not meet the requirements
+of B<Binary> because certain code values (such as control-D are used
+for control functions.
+
+=item B<Binary>
+
+Any byte value is passed through to the PostScript interpreter.  This seems
+to be true of all PostScript printers connected over AppleTalk.  It is also
+true of interfaces which run Ghostscript.
+
+=item B<TBCP>
+
+This setting informs PPR that any byte value may be passed through to the
+PostScript interpreter as long as control characters are encoded using the
+Tagged Binary Communications Protocol.  TBCP is useful when the
+communications chanel reserves certain byte values for control purpose.
+Often these include control-s, control-q, control-d, and control-t.  With
+TBCP it is possible to encode these control codes as two-byte escape sequences.
+In the printer, the encoding is undone just before the data is passed to
+the PostScript interpreter.
+
+=item B<UNKNOWN>
+
+Assume that nothing is known about the character code transmission
+capabilities of the communications channel.  If a printer's codes
+setting is set to this value than PPR will not turn a job away from
+that printer on the basis of the job's character codes usage.
+This was the behavior of PPR prior to version 1.40.
+
+=item B<default>
+
+The setting is determined each time a job is printed by consulting PPR's
+internal table and the printer's PPD file.  You can use the B<ppad show>
+command to see the resulting setting.  Different interface programs
+will have different defaults.  The default may also change according to
+whether the printer's PPD file indicates that the printer supports TBCP.
+
+=back
+
+=item B<ppad ppd> I<printer> I<filename>
+
+specifies the PPD file name for the printer.  If I<filename> does not begin
+with a slash, then it is relative to the directory F</usr/share/ppr/PPDFiles>.  If
+you create a printer queue with the B<ppad interface> command but do not set
+the PPD file, PPR will will use a default PPD file, however, it probably
+will not deal with bins properly, may print the pages in the wrong order,
+and may attempt to use fonts the printer does not possess and fail to
+recognized the presence of fonts it has.
+
+Using the "ppad ppd" command has the side effect of
+undoing any previous "ppad ppdopts" command.  Therefor, you should run "ppad
+ppdopts" after using "ppad ppd" to set the PPD file.
+
+=item B<ppad alerts> I<printer> I<frequency> I<method> I<address>
+
+This command specifies how PPR is to get printer error alert messages to an
+operator.  This parameter is set on a per-printer basis.  For the specified
+I<printer>, alerts are dispatched after every I<frequency> faults.
+They are dispatched by method I<method> for which the only currently
+defined value is "mail".  The message is mailed the the address
+I<address>.  When a new printer queue is created with the "ppad
+interface" command, a default alert setting is copied into its definition.
+This default setting is set with the "ppad new alerts" command.
+
+If the alert frequency is negative, it has special meaning.  The absolute
+value is used.  When that many alerts have been posted, a message is
+despatched by the method described above.  The posting of additional alerts
+do not result in more messages.  When and if the printer successfully prints
+a job, a message is sent indicating that the error has cleared up.
+
+=item B<ppad frequency> I<printer> I<frequency>
+
+Sets the alert I<frequency> for the specified I<printer> without
+changing any of the other alert parameters.
+
+=item B<ppad flags> I<printer> {B<never>, B<no>, B<yes>, B<always>} {B<never>, B<no>, B<yes>, B<always>}
+
+Indicates whether flag pages should be printed.  The first parameter after
+I<printer> is for banner pages, the second is for trailer pages.
+
+A setting of "never" means to not print the flag page even if the user
+requests it.  A setting of "no" means to not print the flag page unless the
+user specifically requests it.  A setting of "yes" means to print the
+flag page unless the user specifically requests that be suppressed.  A
+setting of "always" means to print the flag page even if the user tries to
+suppress it.
+
+=item B<ppad outputorder> I<printer> {B<Normal>, B<Reverse>, B<PPD>}
+
+Sets the order in which pages will be printed so as to achieve correct
+collation.  If your printer stacks printed pages face up, you might want to
+set outputorder to "Reverse".  If you set outputorder to "PPD", then the
+setting of the output order will be determined by information in the
+printer's PPD file.
+
+
+=item B<ppad bins ppd> I<printer>
+
+Sets the printer's list of bins to all the bins listed in its PPD file.  You
+might create a new print queue and set its bin list
+with these steps:  1) use B<ppad interface> to
+create the queue, 2) use B<ppad ppd> to set the PPD file, 3) use
+"ppad bins ppd" 4) use B<ppad show> to see what bin names were copied from
+the PPD file, 5) use B<ppad bins delete> to remove the names of bins that
+are not actually installed on the printer.
+
+In general, a job which requires a specific type of medium will not be
+printed until that medium is mounted on one or more bins.  (A medium is
+mounted using the B<ppop mount> command.)
+
+The first exception to this rule occurs when a printer has no bins in its
+bin list.  In this case, it will print any job immediately without regard
+to the job's media requirments.
+
+The second exception is the bin name "AutoSelect" which has a special status.
+Regardless of what medium is mounted on it, all jobs will be printed immediately
+even if the proper medium is not explicitly mounted.  Pages which require a
+medium which is not among those explicitly mounted will be directed to the
+AutoSelect bin.
+
+
+=item B<ppad bins add> I<printer> I<bin1> [I<bin2> ...]
+
+Adds the indicated bin names to the indicated I<printer>.
+
+
+=item B<ppad bins delete> I<printer> I<bin> [I<bin2> ...]
+
+Deletes the indicated names from the indicated I<printer>.
+
+
+=item B<ppad delete> I<printer>
+
+Deletes the indicated printer.
+
+
+=item B<ppad touch> I<printer>
+
+Sends a notification to B<pprd> which causes it to re-read the configuration
+file for the indicated printer.  If you edit or create a PPR printer
+configuration file by hand, you should use B<ppad touch> to tell B<pprd>
+that you have done so.
+
+For example, if you keep duplicate print servers and have set up a printers
+on one of them, you can then copy the configuration file to the second server
+and run B<ppad touch> to tell B<pprd> about the new printer.
+
+You can also use B<ppad touch> to duplicate a queue.  For example, if you have
+a printer called "lab_1", you might use these commands to create "lab_2":
+
+    $ cp /etc/ppr/printers/lab_1 /etc/ppr/printers/lab_2
+    $ ppad touch lab_2
+    $ ppad interface lab_2 tcpip lab_2.prn.myorg.org:9100
+
+Of course, there really should be a command to do this, but there isn't.
+
+
+=item B<ppad switchset> I<printer> I<switches>
+
+Stores the indicated B<ppr> I<switches> in the printer's configuration file.
+Whenever a job is sent to the I<printer>, the I<switches> will be parsed
+by B<ppr> before it parses the options on its command line.
+
+If the I<switches> are omited, then the switchset is deleted.
+
+Switchsets can be used to set defaults for a printer which the user can
+generally override with contradictory options on the B<ppr> command line.
+They are also handy when the user can't select the desired options directly,
+such as when the job is being submitted through Samba, B<lprsrv>, or B<papsrv>.
+
+Notice that if the job is submitted to a group of which this printer is a
+member, the printer's switchset will not be used, rather, the switchset from
+the group (if there are any) will be used.  Switchsets for groups are
+established with the B<ppad group switchset> command.
+
+Here are some examples.  If we have a printer "myprn" and want to make duplex
+the default we can do this:
+
+	$ ppad switchset myprn -F '*Duplex DuplexNoTumble'
+
+Now, if we use the command:
+
+	$ ppr -d myprn /etc/profile
+
+the file will be printed in duplex mode.  We will get the results we could
+get formerly by typing.
+
+	$ ppr -F '*Duplex DuplexNoTumble' -d myprn /etc/profile
+
+But suppose we want to print in simplex mode?  We can make a group that
+contains only "myprn" and give that group a different switchset:
+
+	$ ppad group add myprn_sim myprn
+	$ ppad group switchset -F '*Duplex None"
+
+Now, if we use the command:
+
+	$ ppr -d myprn_sim /etc/profile
+
+then the switchset from the group "myprn_sim" will be used.
+
+So you see, groups with one member can be used as printer aliases.  A set
+of B<ppr> options can then be assigned to each of these aliases.
+
+PPR version 1.40 introduces alaises.  An alias could be used in the above
+example instead of a single member group.  Switchsets for aliases are set
+with the B<ppad alias switchset> command.  However, while alias support in the
+PPR core is complete, B<ppr2samba> and B<papsrv> don't support them yet, so
+you should probably avoid them for now.
+
+It is possible to abuse the B<ppad switchset>, B<ppad group switchset>,
+and B<ppad alias switchset>
+commands.  In the most obvious case, one could include B<-d> option (presumably
+in attempt to redirect the print jobs to a different queue).
+Furtunately, B<ppr> will ignore it.
+
+Another option one should not include in a switchset is B<-m> (which sets the
+responder method).  Why?  Because the method by which PPR should send messages
+to the person who submitted the job depends very much on how the job arrived.
+For example, if the job was submitted by a Unix shell user on the server, then
+the B<write> command can be used to send a message to his terminal.  But if
+the user is Microsoft Windows user connecting through Samba, then the
+B<smbclient> program should be used to send messages.  For this reason, network
+servers such as Samba, B<lprsrv>, and B<papsrv> set the B<-m> and B<-r> options
+themselves thereby overriding any settings in the switchset.
+
+If you want to disable responder messages, don't put B<-r none> in the
+switchset.  Instead put an appropriate B<--responder-options> in the switchset.
+These option should work with whatever responder is selected.
+
+
+=item B<ppad passthru> I<printer> I<list>
+
+This command sets a list of file types which should be passed through to the
+printer without conversion to PostScript.  For example,
+
+	$ ppad passthru adshp4m pcl hpgl2
+
+will set the printer queue "adshp4m" so that it passes files in HP's PCL and
+HPGL2 printer languages directly through to the printer.
+
+The file type names are the same as those one would use with the
+B<ppr -T> switch.  (Except MIME type names, even though the B<-T>
+switch now supports some.)
+
+There is no need to use the B<ppr -T> switch in order for a passthru setting
+to be effective.  If PPR's automatic file type detection is working with
+your files, then using the B<ppr -T> switch is unnecessary and potentially
+confusing.
+
+Some have tried to create a `transparent' print queue by setting a passthru
+list which contains some type, say "pcl", and then setting a B<-T> option, say
+B<-T pcl> in the switchset.  They hope that through this queue they will be
+able to print files, of all the types which the printer can interpret, without
+PPR re-writing the files in any way.  They are supprised when PostScript files
+sent through this queue are interpreted as though they were PCL.  They have
+outsmarted themselves.  It does not do to lyingly tell PPR that a file is
+PCL, because PPR will, if possible, pass this information on to the printer
+and the printer will believe.  If one wants transparent mode, one
+should use the B<ppr -H transparent> option.
+
+Note that the passthru setting of a printer queue does not apply to jobs
+submitted to a group of which the printer is a member.  In that case, the
+passthru setting for the group applies.
+
+=item B<ppad deffiltopts> I<printer>
+
+Instructs ppad to re-read the printer's PPD file and generate a new
+"DefFiltOpts:" line.  Normally, this operation is invoked automatically
+whenever necessary.  You might want to use command if you have modified the
+PPD file, have manually changed the printer's "PPDFile:" line, or are
+upgrading from a version of PPR which did not automatically generate
+"DefFiltOpts:" lines.  (That is, from PPR version 1.10 or earlier.)
+
+The "DefFiltOpts:" line contains a list of default options which will be
+passed to filters which are invoked to convert other file formats to
+PostScript.  These default options are amoung the information displayed by
+the "ppad show" command.
+
+=item B<ppad ppdopts> I<printer>
+
+This command examines a printers PPD file and asks for information on the
+presence or absence of optional printer features.  Obviously, a PPD file
+should be selected with the "ppad ppd" command before this command is
+used.  The information which the user supplies is used to answer queries
+from Macintosh clients.  It is likely that this information will be used for
+other purposes in the future.  L<papsrv> will not pick up new information until
+it is restarted.  Running "ppad ppd" will undo "ppad ppdopts", leaving all
+of the feature information unspecified.
+
+=item B<ppad charge> I<printer> I<amount> [I<amount>]
+
+This command sets the per-sheet charge for a printer.  The parameter
+I<amount> is the amount of money to be charged per sheet.  The amount may
+be expresed in standard decimal currency notation.  For instance, "0.05"
+could represent 5 cents or 5 new pence sterling.
+
+If you wish to charge a different amount for a duplex sheet as opposed to a
+simplex sheet you may specify two amounts.  The first is the amount to charge
+for each sheet printed on both sides, the second is the amount to charge for
+each sheet printed on one side.  For instance, if you want to provide a small
+incentive to use duplex mode you can do this:
+
+C<$ ppad charge myprn 0.07 0.05>
+
+On the other hand, if you want to charge per side you can do this:
+
+C<$ ppad charge myprn 0.10 0.05>
+
+If a printer has a per-page charge, even if it is zero, it is considered a
+protected printer.  If a printer is protected, then only users who appear
+in the PPR accounts database may print on it.
+
+The per page charge may be removed from a printer by setting it to "none".
+
+
+=item B<ppad pageslimit> I<printer> I<number>
+
+This command has been removed as of PPR version 1.41.  It has been replaced
+with B<ppad limitpages>.
+
+
+=item B<ppad limitpages> I<printer> I<lower_number> I<upper_number>
+
+This command sets a lower and upper limit on the number of pages that may be
+printed on a printer.  Jobs with fewer or more than the specified number of
+pages will be turned away to other members of the printer's group.  If the job
+ was submitted to an individual printer or all members of the group reject it,
+the job will be arrested.
+
+Either the upper or lower limit or both may be removed by setting it to zero.
+
+In the current implementation, the number of PostScript page descriptions
+in the job is compared to the pages limits.  Future implementations will
+likely take multiple copies and n-up into account.
+
+
+=item B<ppad limitkilobytes> I<printer> I<lower_number> I<upper_number>
+
+This command sets a lower and an upper limit on the size of the files that this
+printer may print.  The sizes are expressed in kilobytes.  Any file the size
+of which is equal to or greater than the lower limit and less than or equal to
+the upper limit may be printed.  Jobs outside the limits will be turned away,
+hopefully to other members of the printer's group.  If the job was submitted
+to the printer directly, or if the other group members reject it too, the job
+will be arrested.
+
+Either the upper or lower limit or both may be removed by setting it to zero.
+
+
+=item B<ppad grayok> I<printer> I<boolean>
+
+This commands sets a parameter which determines whether or not this printer is
+allowed to print jobs which do not claim to require colour.
+
+The purpose of this parameter is to keep grayscale jobs off of an expensive
+colour printer.  If both a colour printer with "grayok" set to false and a
+grayscale printer are in the same group and jobs are submitted to the group,
+only the colour printer will be eligible for printing the jobs which declare
+themselves to be colour and only the grayscale printer will be eligible for
+printing those jobs which do not declare themselves to be colour.
+
+Unfortunately, very few printer drivers label colour jobs as colour jobs, so
+the value of this feature is presently doubtful.  On possible solution is to
+develop editps filters for each printer driver.  These filters would have to
+detect the commands or procedure sets associated with colour printing and
+add a "%%Requirements: color" line to the job's header comments.
+
+
+=item B<ppad pagetimelimit> I<printer> I<seconds>
+
+This option sets a limit on the number of seconds of printer time each page
+of a job may consume.  If a page takes longer than the specified number of
+seconds, then printing of the job is aborted and the job is placed in the
+"arrested" state.
+
+This limit will only be enforced if PPR can determine when the printer goes
+on-line or off-line and when it finishes each page.  Currently this is only
+possible with printers which implement HP's PJL, including the status reporting
+features.
+
+If the printer meets the above requirements, then PPR will run a "stopwatch"
+while it is printing a job.  This stopwatch will be reset every time the printer
+reports that it has completed a page.  The stopwatch will be stopped whenever
+the printer goes off-line and started again when the printer goes back on-line.
+If the stopwatch reaches the limit, then printing is aborted.
+
+If your printer supports this "stopwatch" feature, then you will be able to
+see the stopwatch in the B<ppop status> output.
+
+To remove this limit, set it to 0.
+
+
+=item B<ppad acls> I<printer> I<acl> ...
+
+This option sets a list of PPR access control lists for the indicated printer.
+A user must be in at least one of these ACLs in order to submit jobs directly
+to the printer.
+
+PPR ACLs are stored in files in B</etc/ppr/acl>.  The ACL system is still under
+development, so no furthur information is available at this time.
+
+
+=item B<ppad userparams I<printer> I<options>
+
+This can be used to set a list of name=value pairs of options.  These
+options are for the PostScript interpreter and are set with the PostScript
+setuserparams operator (on level 2 and higher interpreters) or by executing
+operators in statusdict (on level 1 interpreters).
+
+This is a new feature, so the list of allowed options has not yet been
+established.
+
+
+=item B<ppad addon> I<printer> I<name> I<string>
+
+The addon on parameter I<name> is set to the value I<value> in the printer's
+configuration file.  If I<value> is ommited, then the parameter is removed
+from the printers's configuration file.
+
+Addon parameters are used by programs which are not part of PPR's core services.
+For example, B<ppr2samba> uses the parameter "ppr2samba:" to tell whether
+it should share a given queue with Samba.  This command will set the parameter to
+exclude the printer "privateprn":
+
+	$ ppad addon privateprn ppr2samba 0
+
+Next time B<ppr2samba> is run, it will exclude this queue from the B<smb-include.conf>
+file that it generates.
+
+=back
+
+
+
+=head2 Group Management Subcommands
+
+These subcommands are used to create, modify and destroy printer groups.
+
+=over 4
+
+=item B<ppad group show> I<group>
+
+Shows the configuration of the indicated group.  The configuration is
+modified by the commands described below.
+
+
+=item B<ppad group comment> I<group> I<comment>
+
+Sets a group's comment field.  Highly recommended!
+
+
+=item B<ppad group rotate> I<group> {B<true>, B<false>}
+
+Sets the rotate option of the indicated I<group>.  If rotate is true,
+then PPR will attempt to evenly distribute the printing load; if rotate is
+false, it will use the printers at the start of the group list more heavily
+since printers at the end of the list will only be used when those at the
+head of the list are busy.  By default, rotate is true.
+
+
+=item B<ppad group members> I<group> I<printer> ...
+
+Sets the membership list of the group I<group> to the I<printer> list
+specified.  Any existing members are removed.  If the I<group> does
+not exist, it is created.
+
+
+=item B<ppad group add> I<group> I<printer> ...
+
+Adds the specified I<printer> list to members list of the indicated
+I<group>.  If I<group> does not exist, it is created.
+
+
+=item B<ppad group remove> I<group> I<printer> ...
+
+Removes the printers indicated by the I<printer> list from membership in the
+indicated I<group>.
+
+Even though all members may be deleted from a group, it will
+continue to exist and jobs may still be queued for it, they just won't
+print until it has some idle members again.
+
+
+=item B<ppad group delete I<group>>
+
+Deletes the indicated I<group>.  Any pending jobs will be deleted.
+
+
+=item B<ppad group touch I<groupname>>
+
+Sends B<pprd> a notification which causes it to re-read the configuration
+file for the indicated group.  See B<ppad touch> for an explanation of
+why this might be necessary.
+
+
+=item B<ppad group switchset> I<group> I<switches>
+
+Stores the indicated B<ppr> I<switches> in the group's configuration file.
+
+To remove a switchset, set it but ommit the I<switches>.
+
+Please see B<ppad switchset> for an explaination of printer and group
+switchsets.
+
+
+=item B<ppad group passthru> I<group> I<list>
+
+This command sets a list of files types which should be passed directly
+through to the printer when jobs are submitted to this group.  See the
+B<ppad passthru> command for examples.
+
+Notice that a printer might have a language such as PCL passed through to it
+when the job is submitted to one group of which it is a member but not when
+the job is submitted to another group of which it is also a member.  In
+fact, groups with only one member may be used as printer aliases, aliases
+with different passthru rules.
+
+
+=item B<ppad group acls> I<acl> ...
+
+This option sets a list of PPR access control lists for the indicated group.
+A user must be in at least one of these ACLs in order to submit jobs to the
+group.  When submitting jobs to a group, the ACLs of the group are what matter,
+the ACLs of the individual printers do not.
+
+See B<ppad acls> for more information about ACLs.
+
+
+=item B<ppad group deffiltopts> I<group>
+
+Instructs ppad to re-read all PPD files for all the member printers  and
+generate a new "DefFiltOpts:" line.  You might want to use this if you have
+modified the PPD file; have manually edited the group configuration file,
+changing the group membership; or have manually changed the "PPDFile:" line
+in one of the member printer configuration file; or are upgrading from a
+version of PPR which did not automatically generate "DefFiltOpts:"
+lines (version 1.10 or earlier).
+
+
+=item B<ppad group addon> I<name> I<value>
+
+The addon on parameter I<name> is set to the value I<value> in the groups's
+configuration file.  If I<value> is ommited, then the parameter is removed
+from the groups's configuration file.
+
+See B<ppad addon> for an explanation of this this command's purpose.
+
+=back
+
+
+
+=head2 Alias Management Subcommands
+
+The B<ppad alias> commands are used to create, edit, and delete aliases
+for queues.
+
+=over 4
+
+=item B<ppad alias forwhat> I<alias> I<queue>
+
+If the I<alias> does not exist, it is created as an alias for I<queue>.  If it
+does exist, it is changed to be an alias for I<queue>.
+
+
+=item B<ppad alias delete> I<alias>
+
+The I<alias> is deleted.
+
+
+=item B<ppad alias show> I<alias>
+
+The settings of the alias are displayed.
+
+
+=item B<ppad alias comment> I<alias> I<string>
+
+The descriptive comment for alias I<alias> is set to I<string>.
+
+
+=item B<ppad alias switchset> I<alias> I<list>
+
+The switchset of alias I<alias> is set to I<list>.  If list is ommited, then
+the switchset is deleted.
+
+For an explanation of the purposes of switchsets, see B<ppad switchset>.
+
+
+=item B<ppad alias passthru> I<alias> I<list>
+
+The list of file types to be passed through to the printer unfiltered is set
+to I<list>.  If I<list> is ommited, then the passthru list is deleted.
+
+
+=item B<ppad alias addon> I<name> I<value>
+
+The addon on parameter I<name> is set to the value I<value> in the alias's
+configuration file.  If I<value> is ommited, then the parameter is removed
+from the alias's configuration file.
+
+See B<ppad addon> for an explanation of this this command's purpose.
+
+=back
+
+
+
+=head2 Media Database Commands
+
+The B<ppad media> commands are used to manipulate the media database.  The
+media database is a list of media types such as "US letter size 20 lb.
+white paper".  Each of these types is assigned a name.  These names are
+used as arguments to the B<ppop mount> command and the B<ppr -D> switch.
+
+=over 4
+
+=item B<ppad media show> [I<name>]
+
+Display the characteristics of the medium whose name is specified.  If I<name>
+is omitted, you will be prompted for it.  If the special name B<all> is used
+then the entire database will be shown.
+
+=item B<ppad media put> [I<name> [I<width> [I<height> [I<weight> [I<colour> [I<type> [I<banner>]]]]]]]
+
+This command adds and entry to the media database or replaces an entry.  If
+not all of the parameters are supplied, you will be printed for those that
+are missing.  These are the parameters:
+
+=over 4
+
+=item I<name>
+
+The name of the medium description to add or replace.  Typical values are
+"letter", "a4", and "comm10".  When adding new media types, you may choose
+the names.
+
+=item I<width>
+
+=item I<height>
+
+The parameters give the dimensions of the medium.  These are floating point
+values.  You may append a unit separator such as "in", "cm", "mm", or "psu"
+PostScript Units).
+
+=item I<weight>
+
+This is the weight of the medium in grams per square meter.  If you don't know
+it, enter "0".
+
+=item I<colour>
+
+This indicates the colour of the medium.  It is ok to leave this blank.  These
+colour names are generally in lower case.
+
+=item I<type>
+
+This is a medium type code.  You may leave this blank.  If B<ppad> has to
+prompt you for a value, it will show a list of recomended values from
+the Adobe Document Structuring Convention version 3.0.  For plain paper this
+should be left blank
+
+=item I<banner>
+
+This parameter is a value between 1 and 10.  It indicate how suitable this
+medium is for printing banner pages.  When it comes time to print a banner
+page, the currently mounted medium with the highest banner value will be
+used.  Good quality plain paper is generally given a value of "7".  If
+a mounted medium has a banner value of 1 it will never be used to print
+banner pages, even if this means that the banner page can't be printed.
+
+=back
+
+=item B<ppad media delete> [I<name>]
+
+The specified medium is removed from the database.  If I<name> is omitted, you
+will be prompted for it.
+
+=item B<ppad media export>
+
+This command writes a Borne shell script to stdout.  This shell script consists
+of a series of B<ppad media put> commands which will re-create the current
+media database.
+
+=back
+
+
+
+=head2 Error Notice Commands
+
+=over 4
+
+=item B<ppad new alerts I<interval method address>>
+
+defines a default set of alert settings which will be copied into new
+printer definitions created with the "ppad interface" command.  See the
+"ppad alerts" command for an explanation of the meaning of the parameters.
+
+=item B<ppad remind>
+
+if any printers are in a fault state, this command sends a mail message, to
+the user "ppr", summarizing the problems.  You might want to invoke this
+command periodically from cron and put a list of people to receive the
+messages in F<~ppr/.forward>.  For instance, this command could be invoked at
+10 AM so that the system administrator could be reminded of any
+printers that are not working at the beginning of the work day and again at 4
+PM so that before he goes home he can fix any printer problems so that
+people who are working late will have working printers.
+
+=back
+
+
+
+=head1 DIAGNOSTICS
+
+Exit codes for B<ppad> are defined in the source code file
+F<include/util_exits.h>.
+
+
+
+=head1 SEE ALSO
+
+ppop(1), ppr(1), papsrv.conf(5), mfmodes.conf(5), papsrv(8), papsrv(8),
+lprsrv(8), ppuser(8) "PPR, a PostScript Print Spooler", "Installing and
+Using PPR".
+
+
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2000.
+It was first released to the public on 26 April 1995.
+
+
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford Connecticut.
+
+=cut

@@ -1,0 +1,48 @@
+#
+# uprint-lpq.1.pod
+# Copyright 1998, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 2 December 1998.
+#
+
+=head1 NAME
+
+uprint-lpq - Shows print jobs
+
+=head1 SYNOPSIS
+
+B<uprint-lpq> [B<-P> I<queue>] [B<-l>] [I<user>] [I<job number>] ...
+
+=head1 DESCRIPTION
+
+This program is part of the PPR uprint suite.  See the UPRINT(1) man page
+for an explaination of what this means.
+
+This program is used to view print queues.  The B<-P> switch can be used
+to specify the queue to be viewed.  If the B<-P> switch is not used then the
+queue specified by the environment variable PRINTER is shown.  If the PRINTER
+environment variable is not defined then the queue specified by the item
+"uprint-lpr=" in the "[default destinations]" section of F<uprint.conf> is
+displayed.  If that too is undefined then the queue called "lp" is shown
+(assuming it exists).
+
+If the B<-l> switch is used then a more verbose queue listing format is used.
+
+If user names or job numbers appear on the command lines then only jobs
+which are owned by one of those users or have one of the ids specified are
+shown.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut
+

@@ -1,0 +1,65 @@
+/*
+** mouse:~ppr/src/www/show_jobs.css
+** Last modified 5 April 2001.
+*/
+
+BODY {
+	background: lightblue;
+	color: black;
+	}
+
+/* This is for the control bar above the queue display. */
+DIV.menubar {
+	width: 100%;
+	padding: 2pt;
+	margin-top: 2pt;
+	margin-bottom: 2pt;
+	border-width: 1pt;
+	border-style: raised;
+	}
+
+DIV.queue {
+	overflow: scroll;
+	height: 80%;
+	}
+
+/* This is for the queue display table. */
+TABLE.queue {
+	width: 100%;
+	margin-top: 2pt;
+	margin-bottom: 2pt;
+	border-style: solid;
+	border-color: black;
+	}
+
+TABLE.queue THEAD TH {
+	font-size: 10pt;
+	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
+	font-weight: bold;
+	border-color: lightblue;
+	border-style: outset;
+	border-width: thin;
+	padding: 0pt 5pt 0pt 5pt;
+	}
+
+TABLE.queue TBODY TH, TD {
+	font-size: 10pt;
+	font-family: sans-serif;
+	font-weight: normal;
+	border-color: black;
+	border-style: none none dotted none;
+	border-width: 1px;
+	padding: 0pt 5pt 0pt 5pt;
+	}
+
+TABLE.queue TR.checked TD {
+	color: white;
+	background: steelblue;
+	}
+
+/* This style is for form buttons. */
+INPUT.buttons {
+	background: #a0a0a0;
+	}
+
+/* end of file */

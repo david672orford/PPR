@@ -1,0 +1,86 @@
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%For: (PPR Spooling System)
+%%Creator: (Frame 5.0)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%%DocumentData: Clean7Bit
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%   PROLOG GOES HERE
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%   ---BEGIN OF SETUP---
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+% %%IncludeFeature: *PageSize Letter
+%   ---END OF SETUP---
+%%EndSetup
+
+%%Page: 1 1
+% HERE IS PAGE 1 DATA
+%%EndPage: "1" 1
+
+%%Trailer
+%%EOF
+% regtest interface done %
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 612 792
+%%For: (PPR Spooling System)
+%%Creator: (Frame 5.0)
+%%Pages: 3
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%%DocumentData: Clean7Bit
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%   PROLOG GOES HERE
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%   ---BEGIN OF SETUP---
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+% %%IncludeFeature: *PageSize Letter
+%   ---END OF SETUP---
+%%EndSetup
+
+%%Page: 1 1
+% HERE IS PAGE 1 DATA
+%%EndPage: "1" 1
+
+%%Page: 2 2
+% PAGE TWO
+
+%%Page: 3 3
+% PAGE THREE
+
+%%Trailer
+%%EOF
+% regtest interface done %

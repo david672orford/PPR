@@ -1,0 +1,41 @@
+#! /usr/bin/perl
+#
+# mouse:~ppr/src/editps/MATLAB
+# Written by David Chappell.
+#
+# Last modified 6 August 1999.
+#
+
+#
+# This scripts edits MATLAB for Macintosh output to fix
+# the embedded document.
+#
+
+$/ = "\r";
+
+$line1 = <STDIN>;
+print $line1;
+
+while(<STDIN>)
+    {
+    if(/^%!PS-Adobe/)
+	{
+	print "%%BeginDocument:\r";
+	print;
+	while(<STDIN>)
+	    {
+	    print;
+	    if(/^%%EOF/)
+		{
+		print "%%EndDocument\r";
+		last;
+		}
+	    }
+	}
+    else
+	{
+	print;
+	}
+    }
+
+exit 0;

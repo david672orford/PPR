@@ -1,0 +1,9 @@
+#!/bin/sh
+
+$HOMEDIR/filters/filter_fortran "" "testprn" "This is the title" <${TEST_BASENAME}.in
+echo "Exit code is $?"
+
+exit 0
+
+
+

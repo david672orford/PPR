@@ -1,0 +1,51 @@
+#
+# uprint.conf.sample
+# Last modified 9 February 2000.
+#
+# This file defines the locations of the various programs which
+# comprise the LP and LPR spoolers.
+#
+
+# The normal locations for the programs on this system.
+[well known]
+  lp = /usr/bin/lp
+  lpstat = /usr/bin/lpstat
+  cancel = /usr/bin/cancel
+  lpr = /usr/bin/lpr
+  lpq = /usr/bin/lpq
+  lprm = /usr/bin/lprm
+
+# The locations we will move them to if we will be using the
+# uprint versions instead.
+[sidelined]
+  lp = /usr/bin/real-lp
+  lpstat = /usr/bin/real-lpstat
+  cancel = /usr/bin/real-cancel
+  lpr = /usr/bin/real-lpr
+  lpq = /usr/bin/real-lpq
+  lprm = /usr/bin/real-lprm
+
+# Information about the real lp programs (as opposed to the uprint look-alikes).
+[real lp]
+  # Should lp, lpstat, and cancel be renamed (if they exist) and be replaced
+  # with symbolic links to uprint-lp, uprint-lpstat, and uprint-cancel?
+  # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
+  # the lp programs to the new locations.
+  sidelined = no
+
+# Information about the real lpr programs (as opposed to the uprint look-alikes).
+[real lpr]
+  # Should lpr, lpq, lprm, and lpc be renamed (if they exist) and be replaced
+  # with symbolic links to uprint-lpr, uprint-lpq, uprint-lprm, and uprint-lpc?
+  # If you change this, you should run ~ppr/bin/uprint-newconf to actually move
+  # the lpr programs to the new locations.
+  sidelined = no
+
+# If a user doesn't supply a -d switch for uprint-lp or a -P switch for
+# uprint-lpr and friends, which queue should be assumed?
+[default destinations]
+  uprint-lp = lp
+  uprint-lpr = lp
+
+# end of file
+

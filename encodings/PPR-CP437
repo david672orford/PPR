@@ -1,0 +1,35 @@
+%!PS-Adobe-3.0 Resource-Encoding
+%%Title: Encoding for IBM-PC code page 437
+/PPR-CP437 [
+ /.notdef /SS000000 /SS010000 /heart /diamond /club /spade /bullet /SM570001
+ /SM750000 /SM750002 /male /female /musicalnote /musicalnotedbl /SM690000
+ /SM590000 /SM630000 /SM760000 /exclamdbl /paragraph /section /SM700000
+ /SM770000 /arrowup /arrowdown /arrowright /arrowleft /SA420000 /arrowboth
+ /SM600000 /SV040000 /space /exclam /quotedbl /numbersign /dollar /percent
+ /ampersand /quotesingle /parenleft /parenright /asterisk /plus /comma /hyphen
+ /period /slash /zero /one /two /three /four /five /six /seven /eight /nine
+ /colon /semicolon /less /equal /greater /question /at /A /B /C /D /E /F /G /H
+ /I /J /K /L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+ /bracketright /circumflex /underscore /grave /a /b /c /d /e /f /g /h /i /j /k
+ /l /m /n /o /p /q /r /s /t /u /v /w /x	/y /z /braceleft /bar /braceright
+ /tilde /SM790000 /Ccedilla /udieresis /eacute /acircumflex /adieresis /agrave
+ /aring /ccedilla /ecircumflex /edieresis /egrave /idieresis /icircumflex
+ /igrave /Adieresis /Aring /Eacute /ae /AE /ocircumflex /odieresis /ograve
+ /ucircumflex /ugrave /ydieresis /Odieresis /Udieresis /cent /sterling /yen
+ /Pts /florin /aacute /iacute /oacute /uacute /ntilde /Ntilde /ordfeminine
+ /ordmasculine /questiondown /SM680000 /logicalnot /onehalf /onequarter
+ /exclamdown /guillemotleft /guillemotright /SF140000 /SF150000 /SF160000
+ /SF110000 /SF090000 /SF190000 /SF200000 /SF210000 /SF220000 /SF230000
+ /SF240000 /SF250000 /SF260000 /SF270000 /SF280000 /SF030000 /SF020000
+ /SF070000 /SF060000 /SF080000 /SF100000 /SF050000 /SF360000 /SF370000
+ /SF380000 /SF390000 /SF400000 /SF410000 /SF420000 /SF430000 /SF440000
+ /SF450000 /SF460000 /SF470000 /SF480000 /SF490000 /SF500000 /SF510000
+ /SF520000 /SF530000 /SF540000 /SF040000 /SF010000 /SF610000 /SF570000
+ /SF580000 /SF590000 /SF600000 /alpha /germandbls /Gamma /pi /Sigma /sigma
+ /mu /tau /Phi /Theta /Omega /delta /infinity /phi /epsilon /intersection
+ /equivalence /plusminus /greaterequal /lessequal /SS260000 /SS270000
+ /divide /approxequal /degree /SD630000 /SP320000 /radical /nsuperior
+ /twosuperior /filledbox /space
+] readonly
+/defineresource where {pop /Encoding defineresource pop} {def} ifelse
+%%EOF

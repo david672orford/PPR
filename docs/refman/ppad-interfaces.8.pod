@@ -1,0 +1,527 @@
+#
+# ppad-interfaces.8.pod
+# Copyright 1995--2001, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 1 May 2001.
+#
+
+=head1 NAME
+
+ppad-interfaces - PPR Printer Interface Programs
+
+=head1 DESCRIPTION
+
+PPR uses interface programs to communicate with printers.  An interface is
+selecte with the B<ppad interface> command.  Its options are set with the
+B<ppad options> command.  Please see the L<ppad(8)> manpage for details.
+
+=head2 Available Interfaces
+
+These are the interfaces which are distributed with PPR:
+
+=over 4
+
+=item B<simple>
+
+The interface B<simple> is a shell script which sends the job to a Unix port.
+The address is the port name, such as F</dev/lp0>.  It has no provision for
+setting baud rate or other port options as the B<serial> interface does.  By
+default, this interface uses the jobbreak method B<control-d>, however, the
+method B<control-d/pjl> is also suitable if the printer understands the HP PJL.
+See the B<ppad jobbreak> section of this document.  PostScript errors will
+not be detected when using this interface.  If your printer is connected to
+the parallel port or the print spooling computer, you should probably use the
+newer B<parallel> interface instead of the B<simple> one.
+
+=item B<serial>
+
+The interface B<serial> sends the job to a serial port on the server.  The
+address is the port name, such as F</dev/ttyS00>.
+
+The options are "speed=xxxxx", "xonxoff=[yes,no]", "bits=[7,8],
+"parity=[even,odd,none]", and online=[dsr/cts,dsr,cts,none].
+
+The "speed=" option sets the baud rate.
+
+The "xonxoff=" option enables or disables XON/XOFF flow control.  It is
+enabled by default.  You should only disable XON/XOFF flow control if your
+serial port driver supports some other sort of flow control such as DTR/DSR
+or RTS/CTS flow control.
+
+The "rtscts=" option enables or disables RTS/CTS flow control (a form
+of hardware flow control).
+
+The "bits=" option sets the number of data bits.  The possible settings
+are 7 and 8.  Given a choice, you should choose eight bits.  If you choose
+7 bits, you should also use the B<ppad codes> command and choose the
+B<7BitClean> option.
+
+The "parity=" option sets the parity checking mode.  Many serial interfaces
+do not support parity checking with eight data bits so you will have to
+choose "none" in those cases.
+
+The "online=" option can be used to tell how the interface program can
+determine if the printer is on line.  The printer's on or off line state is
+determined by examining certain modem control lines.  If this option is
+used, immediately after opening the serial port the interface will check
+that the indicated modem controls lines are in a state indicating readiness.
+If they are not, the interface will exit and PPR will place the printer in
+the state "otherwise engaged or off-line" for 60 seconds before trying
+again.  For this feature to work, your printer must make at least one of its
+modem control lines go false when it is taken off-line and your null modem
+cable must feed this signal to one of the receiving modem control lines on
+the computer and you must indicate the correct receiving line as the value
+for the "online=" option.  Setting this up correctly may require the use of
+an RS-232 breakout box to determine if there is a line which goes false when
+the printer is offline.  The default is "online=dsr/cts" which will work in
+many cases.
+
+If the option "detect_hangups=" is "true", then the serial interface program will
+conclude that a printer fault has occured if the printer drops certain
+handshaking lines.  These lines may include CTS, DSR, and CD, but the
+exact semantics are appearently operating system dependent.  (Put
+another way, setting this option to true clears the POSIX CLOCAL hardware
+control flag.)  The default for this option is false.
+
+If the option "hangup_on_close=" is set to "true", then the DTR and RTS
+lines will be de-asserted.  (Put another way, setting this option to true
+sets the POSIX HUPCL hardware control flag.) The default for this option is
+true.
+
+The option "idle_status_interval=" will instruct the interface to send a
+control-T to the printer every so many seconds, though these transmissions
+will be delayed if there is data available to send.  The control-T's will
+cause some printers to send back status messages which will be displayed
+by B<ppop status>.  (They will be displayed on an indented line under the
+queue status).  If this option is set to 0, then no control-T's will be sent.
+
+Starting in PPR version 1.40, the default for this option is 15 if
+B<feedback> is B<true> and B<jobbreak> is B<control-d>, 0 otherwise.
+In previous versions, the default was always 0.
+
+The default options for the B<serial> interface are expressed by the string
+"speed=9600 xonxoff=yes rtscts=no bits=8 parity=none online=dsr/cts detect_hangups=false hangup_on_close=true idle_status_interval=0".
+
+By default, this interface uses the jobbreak method B<control-d>, however,
+the method B<pjl> is also suitable if the printer understands the HP PJL.
+See the B<ppad jobbreak> section of this document.
+
+=item B<parallel>
+
+This interface sends the print job to the parallel port specified in its
+address.
+
+The option "idle_status_interval=" will instruct the interface to send a
+control-T to the printer every so many seconds, though these transmissions
+will be delayed if there is data available to send.  The control-T's will
+cause some printers to send back status messages which will be displayed
+by B<ppop status>.  (They will be displayed on an indented line under the
+queue status).  If this option is set to 0, then no control-T's will be sent.
+
+Starting in PPR version 1.40, the default for this option is 15 if B<feedback>
+is B<true> and B<jobbreak> is B<control-d>, 0 otherwise.  In previous versions
+the B<parallel> interface didn't support the "idle_status_interval=" option.
+
+The option "reset_before=" controls whether the interface program toggles
+the parallel port's reset line before sending the job.  Hopefully, this will
+clear any previous, partially sent job out of the printer's buffer.  The
+default for this option is B<true>.
+
+The option "reset_on_cancel=" controls what the interface program does if
+it is terminated before printing is done.  This might happen if a user cancels
+a job while it is printing or if a system operator uses the B<ppop halt>
+command to stop the printer in the middle of a job.  If this option is
+B<true>, then when the interface program receives the order to shut down, it
+will attempt to reset the printer before exiting.  The default setting
+for this option is B<false>.  You might want to enable this option and
+disable "reset_before=" if that option causes problems.
+
+Currently, the "reset_before=" and "reset_on_cancel=" options only work
+on Linux systems.  On other platforms they do nothing.  It should be a simple
+matter to add support for other operating systems.
+
+If your printer, parallel port hardware, and operating system's parallel
+port driver support bidirectional communication, then you may use
+the B<ppad feedback> command to enable PostScript error detection.
+
+=item B<dummy>
+
+The interface B<dummy> is for testing purposes.  It is a shell script which
+copies the job to a file.  The address is the name of the file.
+
+This interface has an option "sleep=".  This tells the interface how many
+seconds to wait after printing the jobs before exiting.  This can be used to
+simulate the time requirements of printing on an actual printer.
+
+=item B<atalk>
+
+The interface B<atalk> sends the job to an AppleTalk printer using the
+Printer Access Protocol.  The address is the AppleTalk address of the
+printer in the form "I<name>:I<type>@I<zone>".  The I<name> is the name that
+appears in the chooser.  The I<type> is usually "LaserWriter" but it may be
+anything including "LaserJet 4M" and "LaserShared".  If the printer is not
+found using the indicated I<type>, then it is tried again with a type of
+"LaserWriter"; if it is found that time, PPR changes the printer's type to
+the Type originally specified.  This "hides" or "captures" the printer,
+preventing Macintosh user's from sending jobs to it directly.
+
+This interface has some options which may be set with the B<ppad options>
+command.  (None of these options are implemented yet in the CAP version of the
+interface.)
+
+Two of the options, "lookup_retries=" and "lookup_interval="
+control how many times the interface will atempt to look up the printer's
+AppleTalk name and how many seconds it will pause between attempts.  The
+default values are 8 and 1 respectively.
+
+The option "open_retries=" controls how many times the interface will
+attempt to open a connexion to the printer when the printer is busy.  These
+attempts are made a two second intervals.  The default is 10.  If
+open_retries is set to -1, then the interface will keep trying until it is
+connected.  Setting open_retries for infinite retries will prevent the
+spooler from correctly reporting that the printer is "otherwise engaged or
+off-line".
+
+The option "idle_status_interval=" is 0 by default.  If it is set to a
+positive value, expressing a number of seconds, then the interface will
+attempt the retrieve the most current printer status approximately that
+often.  (The timing is actually rather erratic.)
+
+The option "address_cache=" controls whether the interface caches the
+AppleTalk address of the printer.  This feature is on by default.  The address is
+cached at the end of each sucessful printing run.  At the start of a new
+run, if the address was cached less than 20 seconds ago it is used without
+doing another name lookup.  If the cached address is older than that then a
+message is sent to the address to confirm that it is still good and it is
+used if the response is positive.  The address cache is considered invalid if the
+interface or the address has changed.
+
+=item B<tcpip>
+
+The interface B<tcpip> opens a TCP/IP connection to a specific socket on a
+specific host and sends the data.  End of job is indicated with a
+control-d, just like on a serial interface.  Canon calls this the Universal
+Printing Protocol.  HP JetDirect cards and Extended Systems
+PockPrintServers will accept jobs sent in this manner.  Other printer
+Ethernet adapters may or may not support this protocol.  Those that
+don't will almost certainly work with the B<lpr> interface.
+
+The address format for the B<tcpip> interface is "host:port".  For
+example: "bigjohn.prn.trincoll.edu:9100".  Port 9100 is the default port
+for HP JetDirect cards and print servers which strive to imitate them.
+
+This interface currently supports all jobbreak methods except B<signal> and
+B<signal/pjl>.  (See the B<ppad jobbreak> section of this man page.)
+
+By default the B<ppad feedback> setting is set to "true" for this interface.
+A setting of "true" indicates that the network device supports bidirectional
+communication with the printer.
+HP printers with JetDirect cards support bidirectional communication.
+However, some external Ethernet adapters designed to be connected to the
+parallel port don't have bidirectional parallel ports themselves.  Thus,
+even if the printer has a bidirectional parallel port, bidirectional
+communication will be impossible.
+The manual that comes with the adapter may be able to tell you whether it
+has a bidirectional parallel port.  If not, experiment.  If jobs hang in the
+queue after they have been printed, then try setting the feedback parameter
+to "false".
+
+When using the B<tcpip> interface, PostScript errors will be detected only if
+the interface supports bidirectional communication.
+
+The interface B<tcpip> has many options.
+
+The option "connect_timeout=" controls how long the B<tcpip> interface will
+wait for the printer to respond to a connexion request.  The default is 20
+seconds.
+
+The option "refused=" tells the interface how to react if the printer
+refuses its connection attempt.  The possible values are "engaged" and
+"error".  The default is "engaged" which causes the interface to assume
+that the printer is off-line or busy and report it as such to the spooler.
+The value "error" causes the interface to append an error message to
+the printer's alerts log and report and report a printer fault to the spooler.
+
+The option "refused_retries=" tells the interface how many times it should
+retry a refused connexion before taking the action specified by the
+"refused=" option.  The retries occur at 2 second intervals.
+
+The option "sndbuf_size=" can be used to set the value of the socket option
+SO_SNDBUF.  If this option is ommited, the system default is accepted.
+
+The option "idle_status_interval=" will instruct the interface to send a
+control-T to the printer every so many seconds whenever the interface doesn't
+have anything else to send to the printer.  This will cause some printers to
+send back status messages which will be displayed by B<ppop status>.  (It will
+be displayed as an indented line under the queue status).  The default for this
+option is "15" if B<feedback> is B<true> and B<jobbreak> is B<control-d>, 0
+otherwise.
+
+Starting in PPR version 1.40, if B<feedback> is B<true> and B<jobbreak>
+is B<control-d>, then the default for this the "idle_status_interval=" option
+is 15, otherwise it is 0.  In previous versions of PPR, the default is always 0.
+
+This option is especially useful with HP printers with JetDirect network cards.
+These cards have TCP timeout which by default is 90 seconds.  If the card does
+not receive any characters for 90 seconds it will decide the sender has
+malfunctioned and hang up the connexion.  This is a problem because PPR will
+wait until the job is finished in case there are any PostScript error messages
+to receive.  If it takes more than 90 seconds for the printer to finish the
+job after it has received the last byte then it will hang up the network
+connexion, which PPR will interpret as a printer fault.  The result is that
+PPR will print the same job again and again.  The solution is to set an
+option of "idle_status_interval=30" or some other value significantly less
+them the timeout.  The control-T's will reset the JetDirect card's timeout.
+
+The option "snmp_status_interval=" will instruct the interface program to
+send SNMP printer status queries every so many seconds.  Unlike the
+control-T's sent by "idle_status_interval=", these queries will be sent
+constantly, without waiting for a lull in communications.  Since this is a
+new feature, the default for this option is 0 (which disables SNMP status 
+queries), but in a future version of PPR the default will be changed.
+
+The option "sleep=" is the number of seconds the interface delay between
+closing the connection and exiting.  Some TCP/IP printers may need a
+few seconds to recover after printing a job before they can accept a new
+connection.  Prior to PPR version 1.40, without the "sleep" option, if
+another job is printed immediately, the printer might refuse the connection,
+causing to queue to go into fault mode with a retry 10 seconds later.  Though
+this is not disastrous, the "sleep=" option was intended to prevent this.
+The default is "sleep=0".  Starting in PPR version 1.40 the B<tcpip>
+interface has retry code which should make the use of "sleep=" unnecessary.
+
+The options "write_size=", "control_d_handshake=", and "eof_timeout=" have
+been removed in version 1.40.  The last of these did not work anyway.
+
+=item B<lpr>
+
+The interface B<lpr> sends the job to another system using the Berkeley
+LPR/LPD protocol (described in RFC 1179).  The filter can be useful for
+forwarding jobs to other spoolers such as those on Unix systems or Windows NT
+(with the appropriate service installed).
+
+Most printers with Ethernet cards which claim to support TCP/IP support
+this protocol.  However, because this interface must copy the entire job to
+a temporary file before transmitting it to the printer, it is much better
+to use the B<tcpip> interface when the printer's network card supports its
+protocol.
+
+The address format for the B<lpr> interface is "printer@system".  For
+example: "pooh@sanders.trincoll.edu".  If you really
+want to, you can specify a port to connect to instead of the normal B<lpd>
+port.  Do it like this: "pooh@sanders.trincoll.edu:2000".
+
+If the remote system has a full spooler rather than an Ethernet device
+connected directly to a printer,
+jobs could disappear from PPR's queue long before they are printed.
+
+The B<lpr> interface supports all jobbreak methods except B<signal> and
+B<signal/pjl>.  The suitability of any given jobbreak method depends much on
+the remote system.  The default is B<control-d> which is suitable for simple
+devices such as Ethernet devices which attached directly to the printer.
+When sending to a real spooler it is sometimes necessary to choose a
+jobbreak method of B<newinterface> because the remote spooler objects to the
+control-d's in the data stream.  In such a case, the remote spooler will
+itself insert whatever control codes are necessary.
+
+PostScript errors will not be detected when using the B<lpr> interface because
+the protocol it implements has no provision for bidirectional communication.
+
+This interface has an option called "banner=".  This tells the remote
+printer whether or not to attach its own banner page to the job.  The default
+is "banner=no".  Certain types of remote systems have been known to refuse to
+print the job unless "banner=yes" is used.
+
+Another option is "lpr_typecode=".  This is the file type code which should
+be used when submitting the file.  The preferable code is "o" which means
+that the file is PostScript, however many B<lpd> implementations do not
+understand this code so "f" is the default.
+
+This interface also has the experimental options "chunk_size=", "exaggerated_size=",
+and "temp_first=".  No documentation is provided for these at this time.
+
+=item B<clispool>
+
+The interface B<clispool> (formerly called B<client>) sends the job to an
+MS-DOS LAN Manager client running spooling software.  This interface is
+compatible with the client spooling
+system found in ATE<amp>T's LAN Manager for Unix.  An ATE<amp>T client spooler
+consists a an MS-DOS computer running LAN Manager client software, the MS-DOS
+background spooler PRINT, and a program called CLISPOOL.  CLISPOOL advertises
+an NetBIOS name on the network.  This name consists of the NetBIOS machine name
+with ".P" appended.  The print server writes the print data to
+a temporary file in a LAN Manager accesable directory, opens a NetBIOS
+connexion to CLISPOOL, and sends a packet giving the LAN Manager path and
+name of the temporary file.  CLISPOOL then submits the file to PRINT and waits
+for it to finish.  When PRINT is done printing the file, CLISPOOL sends a
+response packet to the print server and close the connexion.
+
+The address to use with this interface is the NetBIOS name advertised
+by CLISPOOL, but without the trailing ".P".  There are no options.
+
+Though it will compile on System V Release 4.0 derived systems, this interface
+has not been tested in several years.
+
+PostScript errors will not be detected when using the B<clispool> interface
+because the protocol it implements does not support bidirectional
+communication with the printer.
+
+=item B<smb>
+
+The interface B<smb> uses Samba's B<smbclient> to send the job.
+
+This interface looks in F</etc/ppr/ppr.conf> to learn the location of
+the smbclient program.
+
+The address should be the UNC name of the print queue.  It should be in
+the format "\\B<server>\B<queue>".
+
+If access restrictions require it, you may use the options "smbuser="
+and "smbpassword=" to indicate the user name and password that the
+interface should use when logging on to the remote print server.  Note that
+anyone with access to the computer running PPR will be able to read
+the password.  Suggestions for a better scheme are welcome.
+
+In order for this interface to work correctly, Samba must be correctly
+configured.  If it does not work, try using B<smbclient> to connect to the
+printer server.
+
+PostScript errors will not be detected when using the B<smb> interface
+because the protocol it implements does not support bidirectional
+communication with the printer.
+
+=item B<gssimple>
+
+The interface B<gssimple> using Ghostscript to rasterize the file and send it
+to a printer directly connected to the server.  The address is the name of the
+port.
+
+The option parameter (described below under B<ppad options>) is used to set
+certain Ghostscript options.  The B<gssimple> interface has the following
+option values which can be set:
+
+The option "gs=" can be used to indicate the path of the Ghostscript
+interpreter that should be used.  For example:  "gs=/usr/local/bin/gs".
+If this option does not appear in a print queues options, then the default
+value path is used.  The default may be defined by putting a "gs=" line in
+the [ghostscript] section of F<ppr.conf>.  If a "gs=" line is not
+found there, then the default will be "/usr/local/bin/gs".
+
+The option "device=" sets the Ghostscript device name.  Common values are
+"device=ljet3", "device=djet500", "device=cdjet550".
+
+The option "uniprint=" can be used instead of the "device="
+option.  The "uniprint=" option chooses the "uniprint" device driver which was
+introduced in Ghostscript version 5.0.  The Uniprint driver is a Ghostscript
+printer driver with general facilities which may be configured to produce output
+for a wide variaty of printers.  A configuration file containing the necessary
+settings for a particular printer is called a minidriver.  These files are
+distributed with Ghostscript and have an extension of ".upp".  The value of
+the "uniprint=" option should be the minidriver name.  It is used to select a
+.upp file.  For example:  "uniprint=cdjet550".
+
+The option "resolution=" is passed as the argument to Ghostscript's B<-r>
+switch.  This option is seldom needed since the "device=" or "uniprint="
+option generally selects the correct resolution.
+
+Every instance of the option "gsopt=" specifies an argument to be appended to
+the Ghostscript command line.  For example, "gsopt=-sDepletion=1".  Obviously,
+one should consult the Ghostscript documentation to learn about such options.
+If you don't know why you might want to use the "gsopt=" option, don't worry
+about it, it is generally not necessary.
+
+Since PPR has bidirectional communication with Ghostscript, PostScript errors
+will be detected when using the B<gssimple> interface, even if the
+communications channel with the printer is unidirectional.  This applies
+to all of the other B<gs> interfaces as well.
+
+=item B<gsserial>
+
+This interface program uses Ghostscript to rasterize the file and then uses the
+B<serial> interface to send the raster data to the printer.  Since the
+raster data output is generally quite large and most serial interface
+hardware is quite slow, this interface program may not have any practical use.
+
+The printer address used with this interface should be in the same format as
+for the B<serial> interface.  This interface takes all of the options accepted
+by the B<gssimple> interface as well as all those accepted by the B<serial>
+interface.
+
+=item B<gsparallel>
+
+This interface program uses Ghostscript to rasterize the file and then uses
+the B<parallel> interface to send the raster data to the printer.
+
+The printer address used with this interface shoudl be in the same format as
+for the B<parallel> interface.  This interface takes all of the options
+accepted by the B<gssimple> interface as well as all those accepted by the
+B<parallel> interface.
+
+It is a good idea that either the option "reset_before=" be "true" or
+that "reset_on_cancel=" be "true", otherwise, if the user cancels a job part
+way through, the printer could be left with raster data for a partial page
+in its output buffer.  Such a situation almost always prevents the next
+document from being printed correctly.
+
+=item B<gsatalk>
+
+The interface B<gsatalk> is similar to the B<gssimple> interface described
+above, however, it uses the B<atalk> interface to send the Ghostscript output
+file to the printer.  The address is as described above for the B<atalk>
+interface.  This interface might be used with HP DeskWriters.
+
+If you use the B<ppad interface> command to change a printer's interface
+program, then ppad will delete any options set with B<ppad options>; it will
+also set the jobbreak and feedback parameters to the default for the new
+interface selected.  If you use the B<ppad interface> command to change the
+printer address, but not the interface program, then the aforementioned
+parameters are not modified.
+
+This interface takes all the options accepted by the B<gssimple> interface as
+well as all those accepted by the B<atalk> interface.
+
+=item B<gstcpip>
+
+The interface B<gstcpip> is similar to the B<gssimple> interface described
+above, however, it uses the B<tcpip> interface to send the Ghostscript output
+file to a remote TCP/IP print server.  The address is as described above for
+the B<tcpip> interface.
+
+This interface takes all the options accepted by the B<gssimple> interface as
+well as all those accepted by the B<tcpip> interface.
+
+=item B<gslpr>
+
+This interface program uses Ghostscript to rasterize the file and then uses the
+B<lpr> interface to send the raster data to the printer.
+
+Because the B<lpr> interface will store all the raster data in a temporary file
+before sending it to the printer, it is better to use the B<gstcpip> interface
+if your printer's network card supports the HP JetDirect protocol.
+
+The printer address used with this interface should be in the same format as
+for the B<lpr> interface.  This interface takes all of the options accepted
+by the B<gssimple> interface as well as all those accepted by the B<lpr>
+interface.
+
+=item B<gssmb>
+
+This interface program uses Ghostscript to rasterize the file and then uses the
+B<smb> interface to send the raster data to the printer.
+
+The printer address used with this interface should be in the same format as
+for the B<smb> interface.  This interface takes all of the options accepted
+by the B<gssimple> interface as well as all those accepted by the B<smb>
+interface.
+
+=back
+
+=cut

@@ -1,0 +1,119 @@
+<sect1 id="legal">
+<title>Sundry Notices</title>
+
+<sect2>
+<title>Copyright and Disclaimer</title>
+
+<para>Both the software and all the documentation are subject to the following
+copyright and license:</para>
+
+<para>Copyright 1995--2001, Trinity College Computing Center, Hartford
+Connecticut, U.S.A.  All rights reserved.</para>
+
+<para>Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software and documentation are provided ``as is'' without
+express or implied warranty.</para>
+
+</sect2>
+
+<sect2>
+<title>Trademark Acknowledgements</title>
+
+<para>Adobe and PostScript are trademarks of Adobe Systems Inc.</para>
+
+<para>AT&amp;T is a trademark of American Telephone and Telegraph
+Company.</para>
+
+<para>Unix is a registered trademark in the United States and other countries,
+exclusively licensed through X/Open Company, Ltd.</para>
+
+<para>LX-80 is a trademark of Epson America, Inc.  Epson is a registered
+trademark of Seiko Epson Corporation.</para>
+
+<para>IBM and Proprinter are trademarks of International Business Machines
+Corporation.</para>
+
+<para>Centronics is a registered trademark of Centronics Data Computer
+Corporation.</para>
+
+<para>Apple, Mac, Macintosh, LaserWriter, AppleTalk, and TrueType are
+trademarks of Apple Computer, Inc.</para>
+
+<para>Microsoft, LAN Manager, Microsoft Windows, Windows NT, Windows 95,
+and Windows 98 are trademarks of Microsoft Corporation.</para>
+
+<para>WordPerfect is a registered trademark of WordPerfect Corporation.</para>
+
+<para>Pinwriter is a trademark of NEC Corporation.</para>
+
+<para>QMS, QMS-PS, and QMS-PS 410 are registered trademarks of QMS, Inc.</para>
+
+<para>HP, HP-GL, HP PCL, LaserJet, JetDirect, DeskWriter, and JetSend are
+registered trademarks of Hewlett-Packard Company.</para>
+
+<para>GIF is a trademark of CompuServe incorporated, an H&amp;R Block
+Company.</para>
+
+<para>Sun, Sun Microsystems, Solaris, and SunOS are trademarks or registered
+trademarks of Sun Microsystems, Inc.</para>
+
+<para>References to the University of California at Berkeley are for purposes
+of identification only, no endorsement is implied.</para>
+
+<para>OSF, DEC, and Digital Unix are trademarks of Digital Equipment
+Corporation.</para>
+
+<para>TeX is a trademark of the American Mathematical Society.</para>
+
+<para>METAFONT is a trademark of Addison-Wesley Publishing Company.</para>
+
+<para>PocketPrintServer is a trademark of Extended Systems Incorporated.</para>
+
+<para>Xerox is a trademark of Xerox Corporation.</para>
+
+<para>Times is a trademark of Linotype AG and/or its subsidiaries.</para>
+
+<para>Monotype and Bembo are trademarks of the Monotype Corporation plc.</para>
+
+<para>Linux is a trademark of Linus Torvalds.</para>
+
+<para>Ethernet is a registered trademark of Xerox Corporation.</para>
+
+</sect2>
+
+<sect2>
+<title>Other Acknowledgements</title>
+
+<para>PPR's N-Up dictionary is derived from the work of Don Markuson which he
+has placed in the public domain.</para>
+
+<para>Some of PPR's TrueType to PostScrip type 3 font conversion code is
+derived from a program called ``ttf2ps'' which L. S. Ng posted to the Usenet
+news group ``comp.sources.postscript''.</para>
+
+<para>The PPR distribution includes PPD files owned by Adobe Systems, Apple
+Computer, and Hewlett Packard.</para>
+
+<para>The PPR distribution contains procedure sets extracted form the output of
+Adobe and Apple PostScript drivers.  PPR inserts this extracted code into jobs
+created by these drivers in order to correct cases in which the driver failed
+to include all of the necessary procedure sets.</para>
+
+<para>The PPR code includes Rich Salz's wildmat() function which he has
+placed in the public domain.</para>
+
+<para>PPR contains Alladin Enterprises' implementation of the MD5 algorithm
+described in RFC 1321.</para>
+
+<para>The PPR distribution includes the IBM Courier typeface under the terms of
+the ``IBM/MIT X Consortium Courier Typefont agreement''.</para>
+
+<para>The PPR distribution contains Patrick Powell's snprintf()
+implementation.</para>
+
+</sect2>
+
+</sect1>

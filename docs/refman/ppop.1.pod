@@ -1,0 +1,667 @@
+#
+# ppop.1.pod
+# Copyright 1995--2001, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last updated 7 May 2001.
+#
+
+=head1 NAME
+
+ppop - PPR operator's utility
+
+=head1 SYNOPSIS
+
+B<ppop> [I<switches>] [I<subcommand ... >] [I<arguments>]
+
+=head1 DESCRIPTION
+
+If the ppop command is invoked without sub-command arguments it will enter
+interactive mode.  In interactive mode it reads commands from stdin and
+executes them.
+
+=head2 Informative Switches
+
+The B<--version> switch prints the PPR version number.
+
+The B<--help> switch prints abbreviated instructions for use.  It will suggest that
+the user type "ppop help" for further instructions.
+
+=head2 Other Switches
+
+There are other switches which may be used when invoking B<ppop>, either
+with a subcommand on the command line or without one (for interactive mode).
+
+The B<-X> or B<--proxy-for> switch can be used to submit a proxy-for
+identification string.  Such a string is used when dealing with jobs which a
+Unix user has submited as proxy for other users.  This may be when a a network
+print server accepts jobs from remote clients.
+
+If an B<-X> switch was used when submitting the job and a subsequent
+B<ppop> command includes an B<-X> switch, the proxy-for strings must match.
+If they do not, permission to perform the operation will be denied.  A network
+print server such as Samba can use this to make sure a remote user can delete
+only the jobs he submitted.
+
+The B<ppop> command has some limited support for wildcards in principal
+strings.  For principal strings in the form "I<username>@I<hostname>", the
+I<username>, the I<hostname>, or both may be replaced with "*" which will
+match any user name or any host name.  For example,
+"C<ppop -X 'smith@*' cancel myprn>" will cancel all proxy jobs queued for
+"myprn" which were submitted on behalf of the user "smith" from any
+host.  The command "C<ppop -X '*@*' cancel myprn>" will cancel proxy jobs
+submitted on the behalf of any user from any host, but it will not
+delete any non-proxy jobs, nor will it delete proxy jobs with principal
+strings that do not contain an "@".  These wildcards are employed by
+B<lprsrv>.  Careful reading of the above rules will reveal that a remote
+B<lprm> can generally only be used to remove jobs submitted with a remote
+B<lpr>.
+
+The B<-M> switch should be used when another program will be parsing ppop's
+output.  The B<-M> switch simplifies the output format as follows:  Banner
+lines which give column names are suppressed.  In interactive mode, the B<ppop>
+banner is changed to a terse one, the prompt is suppressed, and after each
+command is executed a line in the form "C<*DONE\t%d\n>" is printed where C<%d>
+is the return code of the command.  For some subcommand which output text
+in columns, columns which would ordinarily be separated by a varying number of
+spaces may be separated by lone tabs.
+
+The B<--su> switch can be used by an operator to cause B<ppop> to behave as
+though it had been invoked by another user.  For example,
+C<ppop --su smith cancel chipmunk> will cancel all jobs belonging to user
+"smith" which are queued for "chipmunk".  Note that `becoming' another user
+in this manner is quite different than serving as a proxy for another user.
+A user maintains its own identity while serving as a proxy.
+
+The B<-A> switch can cause arrested jobs to be ommited from queue listings on the
+theory that they are unimportant.  It takes an integer as its argument.
+This integer is an interval in seconds.  Jobs which were arrested more than
+I<integer> seconds ago are ommited from queue listings.
+
+The B<--verbose> switch will cause some commands to display more detailed 
+information.  For example, the B<ppop status> command will display status
+information from LaserWriter messages, PJL messages, and SNMP separately.
+
+Most operations performed by the ppop command require PPR operator privileges.
+Only those operations which do not alter the spooler state (such as listing
+the queue) or only affect a user's own jobs may be performed by
+non-privileged users.  This command defines a privileged user as the
+user "ppr", a user with a UID of 0 (root), a user who is listed in
+the file "F</etc/ppr/acl/ppop.allow>", or (for compatibility with
+previous versions of PPR) a user who is a member of the group "ppop".
+
+=head2 Destination Commands
+
+=over 4
+
+=item B<ppop destination> {I<destination>, B<all>}
+=item B<ppop dest> {I<destination>, B<all>}
+
+displays information about the indicated Idestination>
+(printer or group).  This information includes whether it is a printer or a
+group, whether it is currently accepting jobs, and whether it is
+"protected".  If you specify "all" instead of a destination name, you will
+be shown the aforementioned information for all destinations.
+
+=item B<ppop destination-comment> {I<destination>, B<all>}
+=item B<ppop ldest> {I<destination>, B<all>}
+
+This command is identical to the B<ppop destination> command, except that
+this command also displays the comment which is attached to each printer or
+group.
+
+=item B<ppop destination-comment-address> {I<destination>, B<all>}
+
+This command is identical to the B<ppop destination-comment> command, except
+that this command also displays the interface program name and the interface
+address.  (Both are displayed in a single field with a space separating them.)
+
+=item B<ppop accept> I<destination>
+
+Instruct the indicated destination to begin accepting new print jobs.
+
+=item B<ppop reject> I<destination>
+
+Instructs the indicated destination to reject new print jobs.  Any jobs a
+user attempts to submit will be discarded and the user will be notified.
+Notice that setting a printer destination to "reject" does not prevent it
+from printing jobs for any group of which it happens to be a member, nor
+does setting a group to reject prevent its members from printing jobs
+explicitly sent to them or for other groups of which they happen to be
+members, nor
+does setting a printer or group to reject stop it from printing those
+jobs which have already been accepted.
+
+=back
+
+=head2 Job Commands
+
+=over 4
+
+=item B<ppop list> {I<destination-name>, B<all>}
+
+Display a somewhat detailed list of those jobs queued for the indicated
+destination or for all destinations.  If a single job name is specified,
+information is displayed for only that job.
+
+=item B<ppop short> {I<destination-name>, B<all>}
+
+Display a terser queue listing than that displayed by B<ppop list>.
+
+=item B<ppop details> {I<destination-name>, I<job-id>, B<all>}
+
+Display an extremely verbose queue listing.  This command is used for
+debugging PPR and for the World Wide Web interface.
+
+The output format of this command is likely to change in the future.
+
+=item B<ppop lpq> I<destination-name> [I<job#> ...] [I<username> ...]
+
+Display a queue listing in a format similar to Berkeley's B<lpq>.  If there
+are no jobs in the queue, "no entries" is displayed.  If there are jobs in
+the queue, the status of the printer indicated by I<destination-name> or
+each member of I<destination-name> if it is a group is displayed.  Then,
+a line is emmited describing each job queued for the destination.
+
+Additional parameters are interpreted as BSD style job numbers and as user
+names.  If such additional parameters appear, only jobs which match one or
+more of them will be displayed.  A job number will match any job for which
+it equals the numberic portion of the PPR job-id.  The way I<username>
+matching is done depends on whether the job is a proxy job.  If B<ppr>'s
+B<-X> switch was used when submitting it, the I<username> must match the
+portion of the jobs principal id before the first "@".  If it is not a proxy
+job, the I<username> must match the user identity as established by B<ppr>'s
+B<-f> switch and the PostScript "%%For:" comment.
+
+The B<ppop lpq> command is designed primarily for use with Samba and
+B<lprsrv>.
+
+=item B<ppop progress> I<job-id>
+
+This command is new and experimental.  It reports the amount of an indicated
+job which has been printed.  The output is terse because it is intended for
+use by GUI front ends.
+
+=item B<ppop qquery> {I<destination-name>, I<job_id>, B<all>} I<field1 ... fieldN>
+
+This command is new and experimental.  It is designed for use by programs
+such as GUI front ends which might wish to invoke ppop in order to get
+information about print queues.
+
+The first parameter is name name of the queue to be listed, the name of a
+job to be listed or "all".
+
+The output is a table.  The columns of the table are separated by tabs.  The
+second and subsequent parameters are the names of columns desired in the
+output.  These are the valid column names:
+
+=over 4
+
+=item destname
+
+This is the name of the printer or group to which the job was submitted.
+If the destination node is this node, it is ommited.
+
+=item jobname
+
+The PPR job id.  If the subid is zero it is ommited.  If the destination
+node is this node, it is ommited.  If the home node is this node it is
+ommited.  (In the current version of PPR, the last two conditions will
+always be true.)  A typical jobname will be "chipmunk-2001".
+
+=item fulljobname
+
+The PPR job id in long form.  A typical fulljobname will be
+"mouse:chipmunk-2001.0(mouse)".
+
+=item lpqfilename
+
+For jobs received through B<lprsrv>, the name of the origional input file, if known.
+If it is unknown, this field will contain the same string as the B<title>
+field.  This is the information that the B<ppop lpq> command displays in the
+"Files" column.
+
+=item for
+
+The DSC "%%For:" line data.  This is the submitter identification as it
+appears in normal queue listings.
+
+=item title
+
+The DSC "%%Title:" line data.
+
+=item status
+
+A string describing the job status.  Typical values are "printing", "waiting
+for printer", and "arrested".
+
+=item explain
+
+A string which gives furthur information about the job status.  If the job
+status is "waiting for media" then this field will contain a space delimited
+list of the required media.  If this job status is "arrested", this field
+may contain the reason.  If the job status is "printing", the explain field
+will contain "on I<printer>".  There may be other possible values.  This
+field should be displayed near the "status" field.
+
+=item copies
+
+The number of copies desired.  If the number of copies was not specified
+then this field will contain "1?".  The reflects the fact that the number of
+copies is probably 1 but there may be PostScript code which selects a
+different number of copies.
+
+=item copiescollate
+
+Either "true" or "false" to indicate whether multiple copies should be collated.
+
+=item pagefactor
+
+The number of page descriptions per sheet.  For duplex mode this will be 2.
+For 4-Up this will be 4.  For 4-Up and duplex it will be 8.
+
+=item routing
+
+The DSC routing string.  If there is not "%%Routing:" line in the PostScript
+file, this field will be blank.
+
+=item creator
+
+The DSC creator string.  If there is not "%%Creator:" line in the PostScript
+file, this field will be blank.
+
+=item nupn
+
+The number if page descriptions which will be printed on each side of the sheet.
+
+=item nupborders
+
+Either "true" or "false" to indicate whether borders will be printed
+around virtual pages when printing in N-Up mode.
+
+=item sigsheets
+
+The number of sheets per signiture when printing in signiture mode, 0 if not
+printing in signiture mode.
+
+=item sigpart
+
+The part of each signiture which should be printed.  The values are
+"Fronts", "Backs", and "Both".  This is specified at the time a job is
+submitted by using B<ppr>'s B<-s> switch.
+
+=item pageorder
+
+The DSC "%%PageOrder:" value.  The possible values are "Ascend", "Descend",
+and "Special".
+
+=item proofmode
+
+The DSC "%%ProofMode:" argument.  The values are "NotifyMe", "Substitute", and
+"TrustMe".  If no "%%ProofMode:" line appears in the PostScript file and
+B<ppr>'s B<-P> switch is not used then the value will be "Substitute".
+
+=item priority
+
+The current priority of the job.  This is a number between 0 and 39
+inclusive with lower numbers indicating higher priority.  A queued job's
+priority number will drop periodically.
+
+=item opriority
+
+The job's priority at the time it was submitted.  This is a number between 0
+and 39 inclusive with lower number indicating higher priority.  The default
+priority is 20, but other values may be specified with B<ppr>'s B<-q>
+switch.
+
+=item banner
+
+The submitter's stated preference as to banner pages.  The possible values
+are "Yes", "No", and "Unspecified".
+
+=item trailer
+
+The submitter's stated preference as to trailer pages.  The possible values
+are "Yes", "No", and "Unspecified".
+
+=item inputbytes
+
+The number of bytes in the input file if it was not PostScript.  If the
+input file was PostScript, this value will be 0.
+
+=item postscriptbytes
+
+The number of bytes in the input file if it was PostScript, or the number of
+bytes in the PostScript filter output if it was not.
+
+=item prolog
+
+Either "true" or "false" to indicate whether a DSC prolog section exists.
+
+=item docsetup
+
+Either "true" or "false" to indicate whether a DSC document setup section
+exists.
+
+=item script
+
+Either "true" or "false" to indicate whether DSC comments delineate at least
+one page description.
+
+=item orientation
+
+The orientation of the document, if known.  The values are "Portrait",
+"LandScape", and "Unknown".
+
+=item draft-notice
+
+The `draft' notice.  This is a message such as "Draft" or "Confidential"
+which is overlaid diagonally on the page.
+
+=item username
+
+The name of the unix user who invoked B<ppr>.
+
+=item userid
+
+The numberic unix id of the user who invoked B<ppr>.
+
+=item proxy-for
+
+The proxy for string.  When a user has submitted a job on behalf of another
+user, generally on a remote machine, this field will often contain a string
+identifying the user for whom the job was submitted.  (This is the value
+passed to the B<ppr> B<-X> or B<--proxy-for> switch.
+
+=item longsubtime
+
+The time the job was submitted.
+
+=item subtime
+
+The time the job was submitted in the abreviated format used by B<ppop
+list>.  For times less than 24 hours in the past, the hours and minutes are
+shown.  For jobs older than that, the day, month, and year are shown.
+
+=item pages
+
+The number of page descriptions in the document.  (This should not be
+confused with the number of printed sides or the number of sheets of paper
+that will be used.  The value in this field does not take into account the
+number of copies to be printed, duplex, or N-Up.)
+
+=item totalpages
+
+The number of page descriptions in the document multiplied by the number of
+pages.  (This field and the two that follow are provided for convenience.
+It is possible to derive their values from other fields.)
+
+=item totalsides
+
+The number of printed sides in all copies of this document.  (That is, totalpages
+divided by the N-Up factor and rounded up to the next whole number.)
+
+=item totalsheets
+
+The number of sheets of paper which will be used to print this job.  (That
+is, totalpages divided by the N-Up factor and furthur divided by two for
+duplex mode, the whole being rounded up to the next whole number.)
+
+=item filters
+
+A space-separated list of the filters that were run on the input file in order
+to produce PostScript.
+
+=item commentary
+
+This is a bitmap expressed as a binary number.  It indicates which categories
+of commentary messages should be sent to the user while this job is being
+printed.  See B<ppr --commenatary>.
+
+=item commentator
+
+This is the name of the commentator program which will be used.
+See B<ppr --commentator>.
+
+=item commentator-address
+
+This is the address which will be passed to the commentator program.
+See B<ppr --commentator-address>.
+
+=item commentator-options
+
+This is the space-separated list of options which will be passed to the
+commentator program.  See B<ppr --commentator-options>.
+
+=item responder
+
+This is the name of the responder program which will be used to tell the user
+what happens to this job.  See B<ppr --responder>,
+
+=item responder-address
+
+This is the address which will be passed to the responder program.  See
+B<ppr --responder-address>.
+
+=item responder-options
+
+This is the space-separated list of options which will be passed to the
+responder program.  See B<ppr --responder-options>.
+
+=back
+
+=item B<ppop move> {I<job-id>, I<destination-name>} I<new_destination-name>
+
+Move the indicated job or all jobs queued for the destination named in the
+first parameter to the destination indicated by the second parameter.  An
+ordinary user may move any job that belongs to him but may not move all jobs
+queued for a destionation.
+
+=item B<ppop hold> I<job-id> ...
+
+Place the indicated job in the "held" state.  If you hold a job which is
+currently being printed then printing will be stopt.  Prior to version 1.30
+it was not possible to hold a job that was being printed.
+
+=item B<ppop release> I<job-id> ...
+
+Change the state of the indicated job from "held" or "arrested" to a state
+which allows it to print.
+
+=item B<ppop cancel> {I<job-id>, I<destination-name>, all} ...
+
+This commadn cancels the indicated jobs or all jobs owned by the user
+who runs B<ppop> which are queued for the indicated destination or
+destinations.  An exception is that an operator may use the B<--su> switch
+to cancel all jobs queued by another user on the indicated destination or
+destinations.
+
+It is permissible to cancel a job
+which is currently printing.  Note that canceling all jobs queued for a
+group will not cancel jobs queued specifically for the individual printers
+which are members of that group.  (Prior to version 1.30, B<ppop cancel>
+I<destination-name> performed the action that is now performed by B<ppop
+purge> I<destination-name>.)
+
+=item B<ppop scancel> {I<job-id>, I<destination-name>, all} ...
+
+Just like B<ppop cancel> except it does not notify the owners of
+the canceled jobs
+
+=item B<ppop purge> {I<destination-name>, all} ...
+
+This command may be used by an operator to delete all jobs from the
+indicated queues or from all queues if the special destination name "all" is
+used.  Note that canceling all jobs queued for a group will not cancel jobs
+queued specifically for the individual printers which are members of that
+group.  (Prior to version 1.30, this function was performed by B<ppop
+cancel> I<destination-name>.)
+
+=item B<ppop spurge> {I<destination-name>, all} ...
+
+Just like B<ppop purge> except it does not notify the owners of the
+canceled jobs.
+
+=item B<ppop cancel-active> {I<destination-name>, all} ...
+
+Cancel any jobs queued for the indicated destination or destinations that are
+printing.
+
+=item B<ppop cancel-my-active> {I<destination-name>, all} ...
+
+Cancel any jobs queued for the indicated destination or destinations that
+are printing and are owned by the invoking user.  If a principal identification
+string is specified with the B<-X> or B<--proxy-for> switch, it must match the
+job too.
+
+=item B<ppop clean> {I<destination-name>, all} ...
+
+This cammand may be used by an operator to delete all arrested jobs in the
+indicated queue or queues.  The special queue name "all" may be used to
+delete all arrested jobs from all queues.
+
+=item B<ppop rush> I<job_name> ...
+
+Move the indicated job or jobs to the head of the queue.  This command will
+not interrupt any currently printing job, is simply moves each indicated job
+to the head of its queue so that it will be started as soon as a printer 
+queue's printer or one of a group's member printers becomes idle.
+
+=item B<ppop last> I<job_name> ...
+
+Move the indicated job or jobs to the tail of the queue.  Otherwise it works
+just as B<ppop rush> does.  In other words it will not interupt the job if
+it is already printing.
+
+=item B<ppop log> I<job_name>
+
+Display the log of the indicated job.  This log will include DSC comment
+warnings if the "B<-w log>" switch was used when B<ppr> was invoked and it will
+include any messages received from the printer while the jobs was being
+printed.  If a banner or trailer page is printed, the contents of the log
+are printed on it and the log is deleted.  The log is deleted when a job is
+removed from the queue.  Also, if a job is arrested because the printer is
+incapable of printing it, the log will contain messages indicating the
+precise reason.
+
+=item B<ppop modify> I<job_name> I<name>=I<value>
+
+This is a new command which can be used to modify existing jobs.  Because
+it is not yet finished, there is no documentation for it yet.
+
+=back
+
+=head2 Printer Commands
+
+=over 4
+
+=item B<ppop status> {I<destination-name>, B<all>}
+
+Display the status of the indicated printer, or, if I<destination-name> is a
+group, all printers in the indicated group, or, if "B<all>" is used, all
+printers known to PPR.
+
+=item B<ppop message> I<printer>
+
+This command is new and experimental.  It is designed for use by
+programs which might wish to read the last error message received from
+a printer.  This command will eventually be documented in an appendix of
+I<PPR, a PostScript Print Spooler>.
+
+=item B<ppop start> I<printer> ...
+
+Start a printer or printers which were previously stopt, are in an error
+state, or in the otherwise engaged state.
+
+=item B<ppop stop> I<printer> ...
+
+Stop the indicated printer or printers as soon as the current job (if any)
+is done printing.
+
+=item B<ppop wstop> I<printer>
+
+Stop the indicated printer as soon as the current job (if any) is done
+printing.  Does not return until the printer is stopped.  Good for use in
+shell scripts when the next operation (such as changing the mounted media)
+can not be done until the printer has stopt.
+
+=item B<ppop halt> I<printer> ...
+
+Stop the indicated printer or printers immediately, aborting printing of any
+jobs currently being printed.  A job whose printing is aborted is returned
+to the queue and will start again from the begining as soon as a printer
+becomes available.  This means that if the job was submitted to a group and another
+member of the group is idle, one of the idle printers will immediately begin
+printing it.
+
+=item B<ppop alerts> I<printer>
+
+Display the most recent alert messages concerning the indicated printer.
+By ``recent'' we mean that this log is cleared and started over when an
+alert is posted and the previous alert was posted more than one hour before.
+In such a case, the previous alert presumably was the result of another
+problem.
+
+=back
+
+=head2 Media Commands
+
+=over 4
+
+=item B<ppop media> {I<destination-name>, B<all>}
+
+Display the name of the media mounted on each input bin of the indicated
+printer, or, if I<destination-name> is a group, each member of the
+indicated group, or, if "all" is used, all printers on the system.
+
+=item B<ppop mount> I<printer> I<bin> I<medium>
+
+Mount the indicated I<medium> on the indicated I<bin> of the indicated 
+I<printer>.  All of the parameters are case sensitive.
+
+In general, a job which requires a specific type of medium will not be
+printed until that medium is mounted on one or more bins.
+
+The first exception to this rule occurs when a printer has no bins in its
+bin list.  In this case, it will print any job immediately without regard
+to the job's media requirments.
+
+The second exception is the bin name "AutoSelect" which has a special
+status.  Regardless of what medium is mounted on it, all jobs will be printed
+immediately even if the proper medium is not explicitly mounted.  Pages which
+require a media which is not among those explicitly mounted will be directed
+to the AutoSelect bin.
+
+In order to dismount a medium without mounting another, leave off the
+I<medium> parameter.  This is a reasonable thing to do if the bin will be
+left empty.
+
+=back
+
+=head1 DIAGNOSTICS
+
+Exit codes for ppop(1) are defined in the source file
+F<include/util_exits.h>.
+
+=head1 SEE ALSO
+
+L<ppr(1)>, L<pprd(8)>, L<ppad(8)>
+"PPR, a PostScript Print Spooler", "Installing and Using PPR".
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2000.
+It was first released to the public on 26 April 1995.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

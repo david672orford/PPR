@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+#
+# mouse:~ppr/editps/Windows_95_4.0
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 15 June 2000.
+#
+
+while(<STDIN>)
+    {
+    # comment out malformed feature comments
+    if(/^%%BeginFeature: (\s+) (\s+) (.*)$/)
+    	{
+	print "% ", $_;
+	while(<STDIN>)
+	    {
+	    if(/^%%EndFeature/)
+	    	{
+	    	print "% ", $_;
+	    	last;
+	    	}
+	    print;
+	    }
+	}
+
+    # insert newline before font comment
+    s/ %%IncludeFont:/\n%%IncludeFont:/g;
+
+    print;
+    }
+
+exit 0;
+

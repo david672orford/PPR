@@ -1,0 +1,55 @@
+%!PS-Adobe-3.0
+%%Creator: David Chappell
+%%Requirements: duplex staple
+%%EndComments
+
+% This job tests the requirement parsing.
+
+%%BeginProlog
+/p { show currentpoint exch pop 12 sub 72 exch moveto } bind def
+%%EndProlog
+
+%%BeginSetup
+/Courier findfont 10 scalefont setfont
+%%EndSetup
+
+%%Page: one 1
+%%PageRequirements: staple
+save
+%%EndPageSetup
+72 500 moveto
+(page one) show
+%%PageTrailer
+showpage restore
+
+%%Page: two 2
+%%PageRequirements: (atend)
+save
+%%IncludeFeature: *Duplex DuplexNoTumble
+%%EndPageSetup
+72 500 moveto
+(page two) show
+%%PageTrailer
+showpage restore
+%%PageRequirements: staple duplex
+
+%%Page: three 3
+%%PageRequirements: (atend)
+save
+%%IncludeFeature: *Duplex DuplexNoTumble
+%%EndPageSetup
+72 500 moveto
+(page three) show
+%%PageTrailer
+showpage restore
+%%PageRequirements: staple duplex
+
+%%Trailer
+%%DocumentFonts: Courier
+%%EOF
+
+
+
+
+
+

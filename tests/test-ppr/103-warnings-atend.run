@@ -1,0 +1,284 @@
+#!/bin/sh
+#
+# This tests the atend handling.
+#
+# Last modified 12 September 1997.
+#
+
+# Make sure a trailer comment doesn't work without atend.
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample1 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%PageOrder: Ascend
+%%Title: atend test 1
+
+%%EndProlog
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Trailer
+%%Pages: 2
+%%EOF
+EndOfSample1
+$TESTBIN/cat_output || echo "error!"
+
+# Make sure an overriden atend comment doesn't provoke a warning.
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample2 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%PageOrder: Ascend
+%%Title: atend test 2
+%%Pages: 3
+%%Pages: (atend)
+
+%%EndProlog
+
+%%Page: 1 1
+showpage
+
+%%Page: 2 2
+showpage
+
+%%Page: 3 3
+% new page
+showpage
+
+%%Trailer
+%%Pages: 2
+%%EOF
+EndOfSample2
+$TESTBIN/cat_output || echo "error!"
+
+# Make sure header comments are overridden:
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample3 || echo "ppr: $?"
+%!PS-Adobe-1.0
+%%Title: documentfonts override test
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%DocumentFonts: Times-Roman Courier Smith
+%%+ Helvetica Unlikely Ugly
+%%Pages: 1
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+100 200 moveto
+/Courier testfont
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample3
+$TESTBIN/cat_output || echo "error!"
+
+# Make sure trailer comments are overridden:
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample4 || echo "ppr: $?"
+%!PS-Adobe-1.0
+%%Title: documentfonts override test
+%%DocumentFonts: (atend)
+%%Pages: 1
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+100 200 moveto
+/Courier testfont
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%DocumentFonts: Times-Roman Courier Smith
+%%+ Helvetica Unlikely Ugly
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%EOF
+EndOfSample4
+$TESTBIN/cat_output || echo "error!"
+
+# Demonstrate that old and new resource syntaxes
+# add to one another in the header
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample5 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%Title: resource override test 5
+%%DocumentFonts: (atend)
+%%DocumentNeededResources: procset WontClear 0 0
+%%DocumentNeededProcSets: Smith 0 0
+%%+ Jones 0 0
+%%Pages: 1
+%%ProofMode: TrustMe
+
+%%IncludeResource: procset Smith 0 0
+%%IncludeProcSet: Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+%%IncludeFont: Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%EOF
+EndOfSample5
+$TESTBIN/cat_output || echo "error!"
+
+# Demonstrate that old and new resources syntaxes
+# add to one another in the trailer as no comment
+# appears twice.
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample6 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%Title: resource override test 6
+%%DocumentFonts: (atend)
+%%DocumentNeededResources: (atend)
+%%DocumentNeededProcSets: (atend)
+%%Pages: 1
+%%ProofMode: TrustMe
+
+%%IncludeResource: procset Smith 0 0
+%%IncludeProcSet: Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+%%IncludeFont: Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%DocumentNeededResources: procset WontClear 0 0
+%%DocumentNeededProcSets: Smith 0 0
+%%+ Jones 0 0
+%%EOF
+EndOfSample6
+$TESTBIN/cat_output || echo "error!"
+
+# Demonstrate that as soon as a comment appears twice
+# it begins overriding not only its own precise type
+# but also the alternative format.
+#
+# For header 
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample7 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%Title: resource override test 7
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%DocumentNeededResources: procset WontClearMe 0 0
+%%DocumentNeededProcSets: Smith 0 0
+%%+ Jones 0 0
+%%DocumentNeededProcSets: (Override Me) 0 0
+%%Pages: 1
+%%ProofMode: TrustMe
+
+%%IncludeResource: procset Smith 0 0
+%%IncludeProcSet: Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+%%IncludeFont: Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%EOF
+EndOfSample7
+$TESTBIN/cat_output || echo "error!"
+
+# Demonstrate that as soon as a comment appears twice
+# it begins overriding not only its own precise type
+# but also the alternative format.
+#
+# For trailer
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample8 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%Title: resource override test 8
+%%DocumentFonts: (atend)
+%%DocumentNeededResources: (atend)
+%%DocumentNeededProcSets: (atend)
+%%Pages: 1
+%%ProofMode: TrustMe
+
+%%IncludeResource: procset Smith 0 0
+%%IncludeProcSet: Jones 0 0
+
+/testfont {findfont 10 scalefont setfont} def
+%%EndProlog
+
+%%Page: 1 1
+%%IncludeFont: Courier
+100 200 moveto
+/Courier testfont
+%%IncludeResource: font Times-Roman
+100 100 moveto
+/Times-Roman testfont
+showpage
+
+%%Trailer
+%%DocumentFonts: Courier
+%%+ Times-Roman
+%%DocumentNeededResources: procset ClearMe 0 0
+%%DocumentNeededProcSets: (Override Me) 0 0
+%%DocumentNeededProcSets: Smith 0 0
+%%+ Jones 0 0
+%%EOF
+EndOfSample8
+$TESTBIN/cat_output || echo "error!"
+
+# Test warnings for unrecognized (atend) comments:
+$TESTBIN/clear_output
+$HOMEDIR/bin/ppr -d regression-test1 -w peeve -r none <<EndOfSample9 || echo "ppr: $?"
+%!PS-Adobe-3.0
+%%Title: unrecognized atend test
+%%Pages: (atend)
+%%BoundingBox: (atend)
+
+%%EndProlog
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%DocumentNeededResources:
+%%DocumentNeededProcSets:
+%%BoundingBox: (atend)
+%%BoundingBox: 0 0 100 100
+%%Pages: 1
+%%EOF
+EndOfSample9
+$TESTBIN/cat_output || echo "error!"
+
+exit 0

@@ -1,0 +1,226 @@
+*PPD-Adobe: "4.2"
+*%
+*% mouse.trincoll.edu:~ppr/src/ppd/trincoll/PPR Generic
+*% Copyright 1995, 1996, 1998, Trinity College Computing Center.
+*% Written by David Chappell.
+*%
+*% Permission to use, copy, modify, and distribute this software and its
+*% documentation for any purpose and without fee is hereby granted, provided
+*% that the above copyright notice appear in all copies and that both that
+*% copyright notice and this permission notice appear in supporting
+*% documentation.  This software is provided "as is" without express or
+*% implied warranty.
+*%
+*% Last modified 10 July 1998.
+*%
+
+*%
+*% This file describes a typical level 1 PostScript printer.  However,
+*% actual feature code is missing.  We rely on PPR to fill in the
+*% feature code needed by the printer used.
+*%
+*% Some of the `printer features' named in this file are really
+*% implemented by the spooler.  The spooler will see the attempt to
+*% invoke them and take appropriate action.
+*%
+*% This file can be used on a Macintosh to represent a typical group
+*% of disimiliar printers.  If the printers differ materially from
+*% the imaginary printer described here, then extra configuration
+*% lines may be put in the papsrv configuration file to override
+*% the PPD file dictated answers to various queries.
+*%
+*% This file can also be useful with the various Adobe PostScript
+*% drivers for MS-Windows 3.1 and MS-Windows 95.
+*%
+
+*FormatVersion: "4.2"
+*FileVersion: "1.40"
+*LanguageVersion: English
+
+*Product: "(PPR Generic)"
+*ModelName: "PPR Generic"
+*PCFileName: "PPRGENER.PPD"
+*ShortNickName: "PPR Generic"
+*NickName: "PPR Generic"
+
+*% The startjob password
+*Password: "()"
+
+*PSVersion: "(47.0) 1"
+*LanguageLevel: "1"
+*FreeVM: "400000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 300dpi
+*TTRasterizer: None
+
+*% Get those punched holes at the right place
+*LandscapeOrientation: Plus90
+
+*OpenUI *PageSize: PickOne
+*OrderDependency: 30 AnySetup *PageSize
+*DefaultPageSize: Letter
+*PageSize Letter: ""
+*PageSize Legal: ""
+*PageSize A4: ""
+*PageSize Executive: ""
+*PageSize Comm10: ""
+*PageSize Monarch: ""
+*PageSize DL: ""
+*PageSize C5: ""
+*PageSize B5: ""
+*PageSize HalfSheet: ""
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion:  PickOne
+*OrderDependency: 40 AnySetup *PageRegion
+*DefaultPageRegion: Letter
+*PageRegion Letter: ""
+*PageRegion Legal: ""
+*PageRegion A4: ""
+*PageRegion Executive: ""
+*PageRegion Comm10: ""
+*PageRegion Monarch: ""
+*PageRegion DL: ""
+*PageRegion C5: ""
+*PageRegion B5: ""
+*PageRegion HalfSheet: ""
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: Letter
+*ImageableArea Letter/US Letter : "18 19 593 774"
+*ImageableArea Legal/US Legal : "18 19 593 990"
+*ImageableArea A4/A4 : "13.44 12.06 581.76 829.74"
+*ImageableArea Executive/Executive : "13.32 12.06 508.68 744.06"
+*ImageableArea Comm10/Envelope Comm10 : "12.12 12.06 284.76 672.06 "
+*ImageableArea Monarch/Envelope Monarch : "12.72 12.06 266.16 528.06 "
+*ImageableArea DL/Envelope DL : "13.8 12.06 297.84 611.58 "
+*ImageableArea C5/Envelope C5 : "12.6 12.06 444.52 637.02 "
+*ImageableArea B5/Envelope ISO B5 : "13.2 12.06 485.52 696.54 "
+*ImageableArea HalfSheet/Half Sheet: "0 0 397 612 "
+
+*DefaultPaperDimension: Letter
+*PaperDimension Letter: "612 792"
+*PaperDimension Legal: "612 1008"
+*PaperDimension A4: "595 842"
+*PaperDimension Executive: "522 756"
+*PaperDimension Comm10: "297 684"
+*PaperDimension Monarch: "279 540"
+*PaperDimension DL: "312 624"
+*PaperDimension C5: "459 649"
+*PaperDimension B5: "499 708"
+*PaperDimension HalfSheet: "397 612"
+
+*% Allow user to select duplex on duplex printers.
+*OpenUI *Duplex: PickOne
+*OrderDependency: 50 AnySetup *Duplex
+*DefaultDuplex: None
+*Duplex DuplexTumble/Duplex Tumble: ""
+*Duplex DuplexNoTumble/Duplex No Tumble: ""
+*Duplex None: ""
+*CloseUI: *Duplex
+
+*% Few printers have code for these features, but PPR will notice
+*% the presence of these features and use them to select the proper
+*% media if no %%Media: comments are present.
+*OpenUI *MediaType/Paper Type: PickOne
+*OrderDependency: 10 AnySetup *MediaType
+*DefaultMediaType: Plain
+*MediaType Plain: ""
+*MediaType DeptLetterHead/Letterhead: ""
+*MediaType UserLetterHead/Other Letterhead: ""
+*MediaType 3Hole/3 Hole Punched: ""
+*CloseUI: *MediaType
+
+*% Another media characteristic for the spooler to implement.
+*OpenUI *MediaColor/Paper Color: PickOne
+*OrderDependency: 10 AnySetup *MediaColor
+*DefaultMediaColor: white
+*MediaColor white/White: ""
+*MediaColor gold/Gold: ""
+*MediaColor green/Green: ""
+*MediaColor orange/Orange: ""
+*MediaColor pink/Pink: ""
+*MediaColor purple/Purple: ""
+*MediaColor red/Red: ""
+*MediaColor yellow/Yellow: ""
+*MediaColor blue/Blue: ""
+*CloseUI: *MediaColor
+
+*% We have made up all these weights
+*OpenUI *MediaWeight/Paper Thickness: PickOne
+*OrderDependency: 10 AnySetup *MediaWeight
+*DefaultMediaWeight: 75
+*MediaWeight 75/Normal: ""
+*MediaWeight 300/Heavy: ""
+*CloseUI: *MediaWeight
+
+*% Another feature the spooler will probably have to implement itself.
+*OpenUI *Booklet/Booklet Making: PickOne
+*OrderDependency: 10 AnySetup *MediaType
+*DefaultBooklet: False
+*Booklet False/Off: ""
+*Booklet True/On: ""
+*CloseUI: *Booklet
+
+*% Yet another feature for the spooler.
+*OpenUI *Signature/Signature Printing: PickOne
+*DefaultSignature: False
+*Signature False/None: ""
+*Signature 4/4 Page (1 Sheet): ""
+*Signature 8/8 Page (2 Sheets): ""
+*Signature 12/12 Page (3 Sheets): ""
+*Signature 16/16 Page (4 Sheets): ""
+*Signature 20/20 Page (5 Sheets): ""
+*Signature 24/24 Page (6 Sheets): ""
+*Signature 28/28 Page (7 Sheets): ""
+*Signature 32/32 Page (8 Sheets): ""
+*Signature 36/36 Page (9 Sheets): ""
+*Signature 40/40 Page (10 Sheets): ""
+*CloseUI: *Signature
+
+*% Here is a typical set of fonts.
+*DefaultFont: Courier
+*% The 13 fonts
+*Font Courier: Standard "(002.004)" Standard ROM
+*Font Courier-Bold: Standard "(002.004)" Standard ROM
+*Font Courier-BoldOblique: Standard "(002.004)" Standard ROM
+*Font Courier-Oblique: Standard "(002.004)" Standard ROM
+*Font Helvetica: Standard "(001.006)" Standard ROM
+*Font Helvetica-Bold: Standard "(001.007)" Standard ROM
+*Font Helvetica-Oblique: Standard "(001.006)" Standard ROM
+*Font Helvetica-BoldOblique: Standard "(001.007)" Standard ROM
+*Font Times-Bold: Standard "(001.007)" Standard ROM
+*Font Times-BoldItalic: Standard "(001.009)" Standard ROM
+*Font Times-Italic: Standard "(001.007)" Standard ROM
+*Font Times-Roman: Standard "(001.007)" Standard ROM
+*Font ZapfChancery-MediumItalic: Standard "(001.007)" Standard ROM
+*Font ZapfDingbats: Special "(001.004)" Special ROM
+*Font Symbol: Special "(001.007)" Special ROM
+
+*% 4 more for 17 fonts
+*Font Helvetica-Narrow: Standard "(001.006)" Standard ROM
+*Font Helvetica-Narrow-Bold: Standard "(001.007)" Standard ROM
+*Font Helvetica-Narrow-BoldOblique: Standard "(001.007)" Standard ROM
+*Font Helvetica-Narrow-Oblique: Standard "(001.006)" Standard ROM
+
+*% 16 more for 35 fonts
+*Font AvantGarde-Book: Standard "(001.006)" Standard ROM
+*Font AvantGarde-BookOblique: Standard "(001.006)" Standard ROM
+*Font AvantGarde-Demi: Standard "(001.007)" Standard ROM
+*Font AvantGarde-DemiOblique: Standard "(001.007)" Standard ROM
+*Font Bookman-Demi: Standard "(001.003)" Standard ROM
+*Font Bookman-DemiItalic: Standard "(001.003)" Standard ROM
+*Font Bookman-Light: Standard "(001.003)" Standard ROM
+*Font Bookman-LightItalic: Standard "(001.003)" Standard ROM
+*Font NewCenturySchlbk-Bold: Standard "(001.009)" Standard ROM
+*Font NewCenturySchlbk-BoldItalic: Standard "(001.007)" Standard ROM
+*Font NewCenturySchlbk-Italic: Standard "(001.006)" Standard ROM
+*Font NewCenturySchlbk-Roman: Standard "(001.007)" Standard ROM
+*Font Palatino-Bold: Standard "(001.005)" Standard ROM
+*Font Palatino-BoldItalic: Standard "(001.005)" Standard ROM
+*Font Palatino-Italic: Standard "(001.005)" Standard ROM
+*Font Palatino-Roman: Standard "(001.005)" Standard ROM
+
+*% end of file

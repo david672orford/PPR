@@ -1,0 +1,54 @@
+#
+# mouse:~ppr/src/docs/Makefile
+# Copyright 1995--2001, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is"
+# without express or implied warranty.
+#
+# Last modified 20 April 2001.
+#
+
+# Pull in settings from Configure.
+include ../makeprogs/global.mk
+include ../include/version.mk
+include ./rules.mk
+
+#=== Inventory ==============================================================
+
+PROGS=ppdoc
+HTML=index.html
+
+SUBDIRS=refman uprint pprdoc pprinst pprhack misc
+
+#=== Build ==================================================================
+
+all: $(PROGS) $(HTML)
+	for i in $(SUBDIRS); do ( cd $$i; make ); done
+
+#=== Install ================================================================
+
+install: $(PROGS) $(HTML)
+	$(MAKE_NEW_DIR) $(DOCSDIR)
+	$(INSTALLDATA) $(DOCSDIR) $(HTML)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
+	for i in $(SUBDIRS); do ( cd $$i && make install ); done
+
+#=== Housekeeping ===========================================================
+
+depend:
+
+clean:
+	$(RMF) $(BACKUPS) $(PROGS)
+	for i in $(SUBDIRS); do ( cd $$i; make clean ); done
+
+veryclean:
+	$(RMF) $(BACKUPS) $(PROGS)
+	for i in $(SUBDIRS); do ( cd $$i; make veryclean ); done
+
+# end of file
+

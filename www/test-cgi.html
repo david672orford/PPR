@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>PPR CGI Test Page</title>
+</head>
+<body>
+
+<h1>PPR CGI Test Page</h1>
+
+<p>The results are at the bottom of this page.
+
+<h2>Primary Server Test 1</h2>
+<p>This is a simple POST.</p>
+<form action="../cgi-bin/test_cgi.cgi" method="post">
+<p>text1: <input type="text" name="text1" width=20></p>
+<p>text2: <input type="text" name="text2" width=20></p>
+<p><input type="submit" name="action" value="Submit"></p>
+</form>
+
+<h2>Primary Server Test 2</h2>
+<p>This is a POST with extra path info and query string.</p>
+<form action="../cgi-bin/test_cgi.cgi/mydir/mydoc.html?qs1=hi+there;qs2=hello+world" method="post">
+<p>text1: <input type="text" name="text1" width=20></p>
+<p>text2: <input type="text" name="text2" width=20></p>
+<p><input type="submit" name="action" value="Submit"></p>
+</form>
+
+<h2>Push Server Test</h2>
+<p>This tests the second server which the main one passes URLs begining with
+/push/ to.</p>
+<form action="/push/debug1" method="post">
+<p>text1: <input type="text" name="text1" width=20></p>
+<p>text2: <input type="text" name="text2" width=20></p>
+<p><input type="submit" name="action" value="Submit"></p>
+</form>
+
+</body>
+</html>

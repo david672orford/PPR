@@ -1,0 +1,37 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: Loosly based on the ReEncode routine from Adobe cookbook page 203
+%%EndComments
+
+/reencodedict 6 dict def
+
+reencodedict begin
+/FE /findencoding where {pop {findencoding} }
+			{ {load} } ifelse
+			def
+end
+
+/ReEncode
+    {
+    reencodedict begin
+
+    /newencname exch def
+    /newfontname exch def
+    /basefontname exch def
+
+    basefontname findfont
+    dup maxlength dict /newfontdict exch def
+        {
+        exch dup dup /FID ne exch /Encoding ne and
+            {exch newfontdict 3 1 roll put}
+            {pop pop}
+            ifelse
+        } forall
+
+    newfontdict /FontName newfontname put
+    newfontdict /Encoding newencname FE put
+    newfontname newfontdict definefont pop
+
+    end
+    } def
+
+%%EOF

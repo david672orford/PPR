@@ -1,0 +1,35 @@
+%!PS-Adobe-3.0
+%%Creator: David Chappell
+%%DocumentFonts: Courier
+%%+ Courier-Bold Times-Roman
+%%EndComments
+% This is meant to represent a fairly typical job.
+
+%%BeginProlog
+/s { show } def
+%%EndProlog
+
+%%BeginSetup
+
+%%IncludeFont: Times-Roman
+/Times-Roman findfont 10 scalefont setfont
+
+%%BeginFeature: *InputSlot Envelope
+he he               % bogus code
+%%EndFeature
+
+%%EndSetup
+
+%%Page: one 1
+save
+100 100 moveto
+(hello)s
+100 50 moveto
+%%IncludeResource: font Courier
+/Courier findfont 10 scalefont setfont
+(hello, in Courier)s
+showpage
+restore
+
+%%Trailer
+%%EOF

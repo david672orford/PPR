@@ -1,0 +1,81 @@
+<Sect1 id="user-notification">
+<Title>User Notification</Title>
+
+<Para>
+PPR is capable to notifying the user when the job is finished, is deleted
+before completion, or cannot be completed for some reason.  Since PPR can
+accept jobs from so many different sources, it needs to use many methods to
+send messages to users.  Each of the available methods is implemented by a
+small program called a responder.
+</Para>
+
+<Para>
+The <Emphasis remap="bf">ppr</Emphasis> <Emphasis remap="bf">-m</Emphasis> option selects the responder to be used to notify the user.  The option
+<Emphasis remap="bf">-r</Emphasis> sets the address to pass to the responder program.
+</Para>
+
+<Para>
+The default responder is called ``write''.  It writes a message to the users terminal if he is
+logged in or sends him an email messages if he is not.  The default notification address
+is the name of the user who ran <Emphasis remap="bf">ppr</Emphasis>.
+</Para>
+
+<Para>
+The default responder and address may be changed by setting the PPR&lowbar;RESPONDER
+and PPR&lowbar;RESPONDER&lowbar;ADDRESS environment variables respectively.
+</Para>
+
+<Sect2>
+<Title>Notifying X Windows Users</Title>
+
+<Para>
+X windows users may prefer to have a notification window pop up rather than have
+a message written so an xterm.  To enable this, put the following commands in
+<Literal remap="tt">.xsession</Literal> or some other appropriate X startup file:
+</Para>
+
+<Para>
+
+<Screen>
+/usr/ppr/bin/ppr-xgrant
+PPR_RESPONDER=xwin
+PPR_RESPONDER_ADDRESS=$DISPLAY
+export PPR_RESPONDER PPR_RESPONDER_ADDRESS
+</Screen>
+
+</Para>
+
+<Para>
+Naturally, these environment variables should be set before any X clients are started.  That
+means that these should be near the begining of <Literal remap="tt">.xsession</Literal>.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Notifying Samba Users</Title>
+
+<Para>
+There is a responder called ``samba'' which uses <Emphasis remap="bf">smbclient</Emphasis> to send a message to the user.
+If you set up Samba printing as described in this manual then the ``samba'' responder will be used
+automatically.
+</Para>
+
+<Para>
+If the user must have the message receiver running to receive the message.  In MS-Windows for
+Workgroups and MS-Windows 95 the message receiver is a program called ``winpopup''.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>Notifying <Emphasis remap="bf">Lprsrv</Emphasis> Users</Title>
+
+<Para>
+The RFC 1179 protocol has provision for notifying users by email.
+</Para>
+
+</Sect2>
+
+</Sect1>
+

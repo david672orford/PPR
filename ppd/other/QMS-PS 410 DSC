@@ -1,0 +1,67 @@
+*PPD-Adobe: "4.1"
+
+*%
+*% mouse:~ppr/src/ppd/trincoll/QMS-PS 410 DSC
+*% Copyright 1995--1999, Trinity College Computing Center.
+*% Written by David Chappell.
+*%
+*% Last modified 6 August 1999.
+*%
+
+*%
+*% This PPD file solves some now forgotten problem with bin selection
+*% on the QMS-PS 410.  I think maybe the problem was that the default
+*% bin setting didn't affect jobs which used PageSize commands.  When
+*% these commands are executed, the default tray is presumably the
+*% current tray.  The substitute PageSize commands below see if the
+*% current tray already has the requested medium size and if so, just
+*% affirms that size instead of using the broken tray command for
+*% that size.
+*%
+
+*FormatVersion: "4.1"
+*PCFileName: "Q410DSC.PPD"
+*ModelName: "QMS-PS 410 DSC"
+*NickName: "QMS-PS 410 DSC"
+*Product: "(QMS-PS 410 DSC)"
+
+*TTRasterizer: Accept68K
+
+*PageSize Letter: "statusdict /papersize get exec pop
+	/letter eq
+	{letter}
+	{statusdict /lettertray get exec}
+	ifelse"
+*End
+
+*PageSize Legal: "statusdict /papersize get exec pop
+	/legal eq
+	{legal}
+	{statusdict /legaltray get exec}
+	ifelse"
+*End
+
+*PageSize Executive: "statusdict /papersize get exec pop
+	/executive eq
+	{statusdict /executivepage get exec}
+	{statusdict /executivetray get exec}
+	ifelse"
+*End
+
+*PageSize A4: "statusdict /papersize get exec pop
+	/a4 eq
+	{a4}
+	{statusdict /a4tray get exec}
+	ifelse"
+*End
+
+*PageSize B5: "statusdict /papersize get exec pop
+	/b5 eq
+	{b5}
+	{statusdict /b5tray get exec}
+	ifelse"
+*End
+
+*Include: "QMS-PS 410"
+
+*% End of file

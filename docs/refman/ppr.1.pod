@@ -1,0 +1,1197 @@
+#
+# mouse:~ppr/src/docs/refman/ppr.1.pod
+# Copyright 1995--2001, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last modified 8 May 2001.
+#
+
+=head1 NAME
+
+ppr - submits a file to the PostScript print spooler
+
+=head1 SYNOPSIS
+
+B<ppr> [I<switches>] [I<filename>]
+
+=head1 DESCRIPTION
+
+This command is used to submit files to the PPR spooling system.  If
+I<filename> is omitted, the file is read from standard input.
+
+=head2 Informative Switches
+
+=over 4
+
+=item B<--version>
+
+print the PPR version information.
+
+=item B<--help>
+
+print help.
+
+=back
+
+=head2 Designating the Destination
+
+=over 4
+
+=item B<-d> I<destname>
+
+selects the printer or group of printers to print on.  See also
+the section "ENVIRONMENT".
+
+=item B<-I>
+
+This option is obsolete in PPR version 1.40 and later.  It was formerly used
+to insert the options from the queue's switchset at the point it appeared in
+the command line.  Starting in version 1.40 the switchset options are always
+parsed before the options on the command line.
+
+For instructions for setting switchset options, see the B<ppad switchset>
+and B<ppad group switchset> options.
+
+=back
+
+=head2 User Identification
+
+PPR attempts to keep track of which user submitted which job.  The name of
+the user will be printed on any banner pages that are printed.  It may also
+be displayed on a printer's display panel while the job is being printed.
+It may also be useful for printer accounting purposes as the user's name
+will appear in the print log if the print log is enabled.
+
+=over 4
+
+=item B<-f> I<string>
+
+specifies the name of the user for whom the job is to be printed.  This name
+will appear on banner pages and in queue listings.
+
+This switch only has an effect if the user who invokes B<ppr> is a
+privledged user or the B<-a> switch is used.  For this purpose a privleged
+user is defined as the user "ppr", a the user with the id 0 ("root"), or a
+user who is listed in "F</etc/ppr/acl/pprprox.allow>".  (For compatibility
+older versions of PPR, members of the group "pprprox" are also privleged users.)
+
+(If B<ppr> is invoked by a non-privledged user without the B<-a> switch,
+then the B<-f> switch is silently ignored and the name which will appear in
+queue listings and banner pages will be either the user name from
+F</etc/passwd> or the comment field from F</etc/passwd>.  See the B<-u>
+switch.)
+
+If the B<-R for> switch or the B<-a> switch is used then the first "%%For:"
+line in the document will override the B<-f> switch.
+
+Prior to version 1.30 of PPR, if the first character of the B<-f> switch
+argument was "-" then the B<-f> switch could be overridden by a "%%For:"
+line within the document.  This feature has been removed.  Use the B<-R for>
+or B<-a> switch to achieve a similiar result.
+
+=item B<-R for>
+
+=item B<-R ignore-for>
+
+A privledged user (as defined for the B<-f> switch) may use B<-R for> to
+instruct PPR to use the information in "%%For:" lines in the document to
+determine who the job is being printed for.  The information in the "%%For:"
+line will override any information specified by a B<-f> switch.
+
+=item B<-u> [I<yes>, I<no>]
+
+controls whether the username or the real name is used to identify jobs in
+the queue listings and on banner pages.  The default is B<-u no>, thus the
+real name is used.  The B<-u yes> option causes the Unix user name to be
+used instead.
+
+If this option is true (the default) when B<-a> is used, then the real name
+field from the B<ppuser> database will be used in queue listings.  For
+example, if the command is:
+
+	$ ppr -d aardvark -a
+
+and the document header contains the line "%%For: chappell" and the real
+name for the B<ppuser> account "chappell" is "David Chappell", then the cost
+of printing the job will be charged to "chappell" but "David Chappell" will
+appear in the queue listing and on the banner page.  On the other hand, if
+the command is:
+
+	$ ppr -d aardvark -a -u yes
+
+then the cost will be charged to "chappell" and "chappell" will appear in
+the queue listing and on the banner page.
+
+=item B<--charge-to> I<string>
+
+indicates the account to which the cost of printing the job should be
+charged.  The charge accounts are managed with the utility B<ppuser>.  If
+there is no charge for printing on the selected printer, then this switch
+will have no effect.
+
+If there is a charge and this switch is ommited, then the name of the
+account to charge to is taken from one of the following sources: the name of
+the Unix user who invoked B<ppr>, the value from a B<-f> switch, or the
+value from a "%%For:" line if the B<-R for> or B<-a> switch has caused it to
+be read.  Possibilities later in this list will override those earlier in
+the list.
+
+This switch is provided so that a full user name such as "David Chappell"
+may appear in the queue listing while the cost is charged to a terse user
+name such as "chappell".  If a terse user name will be appearing in the
+queue listing then this switch is unnecessary.  Below are two example
+command lines.  In the first the B<--charge-to> switch is used, in the
+second it is unnecessary because we have using the terse name in the queue
+listing.
+
+	$ ppr -d aardvark -f "David Chappell" --charge-to chappell
+
+	$ ppr -d aardvark -f chappell
+
+=item B<-X> I<string>
+
+=item B<--proxy-for> I<string>
+
+With this switch, you can provide a string which identifies a user
+(possibly on a remote machine) for which the submitting user is acting as
+proxy.  This string will be stored with the job.  You can later use the
+B<--proxy-for> switch with the same identifier string with B<ppop> when
+deleting or performing subsequent operations on the job.  If you supply a
+different string to  B<ppop>, it will refuse to carry out the operation.  This
+feature is mainly used by servers such as Samba and B<lprsrv> which accept jobs
+over the network.
+
+The I<string> usually takes the form I<user>@I<host>.
+
+It might be useful to explain that the English word "proxy" means a person
+who acts as the authorized representative of another.  The Unix user who
+runs B<ppr> in order to submit a job for another is acting as that one's proxy.
+The B<--proxy-for> option is used to record the identity of the user for whom
+the proxy is acting.
+
+=item B<-a>
+
+This switch turns on authcode mode.  In authcode mode, document "C<%%For:>"
+comments override the B<ppr> B<-f> switch.  Only in authcode mode can an
+ordinary user use the B<-f> switch or a "C<%%For:>" line in the document to
+specify a user name other than the one in F</etc/passwd> which cooresponds
+to his UID.  In authcode mode PPR uses the authcode (password) provided in a
+"%TCHCTAuthCode:" comment line to verify the identity of the user.
+
+=item B<-A>
+
+indicates that a privledged user (as defined for teh B<-f> switch) has
+pre-authorized the job.  This switch should be used in conjunction with the
+B<-f> switch or the B<--charge-to> switch.  Currently, the B<-A> switch is
+used only by B<papsrv>.  The switches B<-a> and B<-A> are mutually
+exclusive.
+
+=back
+
+=head2 Feedback to the User
+
+After PPR accepts a print job it attempt to keep the user who submitted it
+informed about its progress.  If something goes wrong as the job is being
+submitted, it may have the option of printing an error message on stderr.
+But, if messages to stderr will not reach the user some other method must be
+employed.  Also, once the job has been accepted, stderr can no longer be
+used.  The switches described in this section control how PPR sends messages
+to the submitting user.
+
+=over 4
+
+=item B<-m> I<method>
+
+=item B<--responder> I<method>
+
+Specifies the method which should be used to send responses to the user who
+submitted the job.  Typical values include "B<write>", "B<mail>",
+"B<samba>", and "B<none>".  The default is read from the environment
+variable PPR_RESPONDER if it is defined, otherwise the default is "B<write>".
+
+The value "B<write>" causes the message to be written to the user's terminal
+if he is logged in, and to be sent by mail is he is not.  The default
+address is usually appropriate.  If it is desired to send the message to a
+user other than the one who invoked ppr, the B<-r> switch may be used to
+specify a user name.
+
+The value "B<mail>" causes the notification to be sent by email.  The default
+address is the name of the user who invoked B<ppr>.  The address may be
+change by means of the B<-r> switch.
+
+The value "B<errmail>" causes a response to be sent by email, however
+the response if discarded if it mearly indicates that the job is done.
+This responder is simply the B<mail> responder with a default option of
+"printed=no".  This responder will be removed in a future version of PPR.
+
+The value "B<netsend>" is for use with LAN Manager X.  LAN Manager X is a
+port of OS/2 Lan Manager 2.0 to Unix.  LAN Manager's B<net send> command
+is used to send the message.  The name of the client to receive the message
+should be specified by means of the B<-r> switch.  The sample LAN Manager
+print processor B<customs.ppr> invokes B<ppr> with the options required for
+this responder.
+
+The value "B<samba>" causes the notification to be sent by means of the
+messaging facilities of the LAN Manager compatible Unix server Samba.
+The name of the client to receive the message should be specified with the
+B<-r> switch.  This responder accepts an option B<os=>.  The value should be
+obtained from Samba's %a.  For a discussion of setting Samba up to use PPR,
+see L<ppr2samba(8)>.
+
+The value "B<xwin>" causes the notification to be sent to an X-Windows
+display.  The display must be specified with the B<-r> switch.  This will
+not work if the user "ppr" can not open the display.  The B<ppr-xgrant>
+command, described in the B<ppr-xgrant> man page, can be used to grant the
+necessary permission.  This responder uses B<xmessage>, or in a pinch B<xterm>
+to display the message.  The message will look much neater if B<xmessage>
+is available.  This responder has an option "timeout=".  This
+parameter specifies that the message should disapear after the indicated
+number of seconds if the user does not dismiss it manually.  The "timeout="
+option will not work if B<xmessage> is not available and this responder is
+forced to use B<xterm>.  If your system doesn't have B<xmessage>, but you do
+have Tcl/Tk installed, consider installing the re-implementation of B<xmessage>
+which can be found in PPR F<misc/> source directory.
+
+The value "B<atalk>" causes the notification to be sent to a Macintosh
+program such as "Messages" which comes with CAP60 or "Broadcast".  (The
+first supported message receiver discovered on the Macintosh will be used.)
+In order for this responder to work, you must have CAP and the appropriate
+Unix programs to dispatch messages to Macintosh's.  The CAP60 distribution
+includes a program called "B<macto>" in the F<contrib/Messages> directory
+which will send messages to a Macintosh system extension called "Messages"
+which is also included with CAP60.  The configuration file
+F</etc/ppr/atalk.conf> indicates which Unix programs are available to send
+messages to Macintoshs.  It is also necessary to start the Appletalk Map
+Daemon F</usr/lib/ppr/bin/atalkmapd>.
+
+The value "B<pprpopup>" causes the notification to be sent to the PPR popup
+program for MS-Windows 95.  The PPR popup program is a Tcl/Tk script
+designed to be on a MS-Windows 95 machine in a public area such as a
+computer lab.  The PPR popup program is primarily part of a mechanism
+whereby users are required to enter their names each time they print.  When
+a job is received through Samba and the B<samba_submitter> program is used
+as the "print command", the B<samba_submitter> program attempts to open a
+connexion to the PPR popup program on the client and requests it to ask the
+user for his name.  If the transaction is sucessful, B<samba_submitter> will
+subsequently run B<ppr> with the B<-m pprpopup> switch.  Thus the PPR popup
+program will also be used to inform the user of what happened to his job.
+
+The value "B<audio>" causes a voice announcement to be made.  If the address
+is in the form "smith.pc.trincoll.edu:15009", then the announcement will be
+played through the Tcl/Tk script mentioned in the previous paragraph.  If
+the address begins with "/dev/" then it will be played through the indicated
+sound device on the local machine, assuming that the user "ppr" has write
+access to that device.  (Playing on a server audio device is accomplished by
+invoking an operating system specific audio-play command.  See the function
+speach_play_many_local() in F</usr/lib/ppr/lib/speach_play.pl> to add support for
+your operating system.)  The responder option "voice=" may be used to
+specify a set of audio files to build the message from.  The default is
+"voice=male1".  Currently, no alternate audio files exist, so this option has
+no practical effect.
+
+With the exception of the value "B<none>", the B<-m> parameter actually
+specifies the name of the program in F</usr/lib/ppr/responders/> which should
+be executed to notify the user.  A description of the operation of a
+responder program may be found in the document "PPR, a PostScript
+Print Spooler".
+
+=item B<-r> I<address>
+
+=item B<--responder-address> I<address>
+
+Specifies the address which is to be passed to the responder program.  The
+default value is read from the environment variable PPR_RESPONDER_ADDRESS if
+it is defined, otherwise the default is the name of the user who invoked
+B<ppr>, which is appropriate for the default responder which is B<write>.
+The exact correct format for this parameter depends, of course, on the
+responder that is being used.
+
+=item B<--responder-options> I<list>
+
+This switch specifies the list of options to be passed to the responder.
+The default value is read from the environment variable PPR_RESPONDER_OPTIONS
+if it defined, otherwise the default is an empty option list.
+
+These options are name=value pairs.  Not all options will be supported by
+all responders.  Responders will ignore options they do not understand.
+The reference section for the the B<-m> switch describes the options understood by each
+responder.
+
+If more than one B<--responder-options> switch is used, all of their
+arguments will be combined to form the final set of responder options.
+
+Common responder options include the following:
+
+=over 4
+
+=item printed=no
+
+This option instructs the responder to do nothing when the message is that
+the job has been printed.  This is supported by most of the responders.
+
+=item canceled=no
+
+This option instructs the responder to do nothing if the message indicates
+that the job was canceled.  This is supported by most of the responder.
+
+=item timeout=I<seconds>
+
+This option instructs the responder to remove its message after the
+indicated number of seconds.  Currently this is supported only by the xwin
+responder and then only when B<xmessage> is available.
+
+=back
+
+A responder will simply ignore options it does not understand.
+
+=item B<-e none>
+
+Don't user stderr or responder to report errors which occur at the
+time the job is submitted.  (Report errors only by means of the exit code of
+ppr(1).)
+
+=item B<-e stderr>
+
+Report errors on stderr if they occur at the time the job is submitted.
+This is the default.
+
+=item B<-e responder>
+
+Report job submission errors by responder if the responder is not set to
+"none".
+
+=item B<-e both>
+
+Report job submission errors with both stderr and responder.
+
+=item B<-e hexdump>
+
+Always try to force the banner page on and print a one page hex dump when
+no filter is available to convert the input file to PostScript.
+
+=item B<-e dishexdump> (being phased out)
+
+=item B<-e no-hexdump>
+
+Discourage the use of a hex dump as described above.  This is the default.
+Hex dump will be used only as a last resort, when B<-e none> has been used
+or B<-e responder> has been used and B<-m none> has been used as well.  In
+other words, it will only be used when there is no other way to report the
+problem.
+
+=item B<--commentary> I<integer>
+
+This is a temporary experimental option which will be removed in PPR 1.50 when 
+the commentary and responder systems are integrated.
+
+This option indicates that, while this job is being printed, commentary
+messages of the categories respresented by the I<integer> should be
+sent to the person who submitted the job.
+
+If this option is not specified, then the value is read from the environment
+variable PPR_COMMENTARY.  If that environment variable is not defined, then a
+value of 0 (which requests no commentary) is used.
+
+The I<integer> is the sum of certain numbers which designate the catagories
+of commentary desired.  See the section on commentators in "PPR, a Print Spooler
+For PostScript" for a list of the values.
+
+=item B<--commentator> I<method>
+
+This is a temporary experimental option which will be removed in PPR 1.50 when 
+the commentary and responder systems are integrated.
+
+This option indicates that the method I<method> should be used to send
+commentary messages to the user.  If this option is not specified, then the
+value is read from the environment variable PPR_COMMENTATOR.  If that variable
+is not defined, then the responder method is used.
+
+=item B<--commentator-address> I<address>
+
+This is a temporary experimental option which will be removed in PPR 1.50 when 
+the commentary and responder systems are integrated.
+
+This option indicates the address to which commentary messages should be sent.
+This address should be in a format suitable for the commentator method being used.
+If this option is not specified, then the value is read from the environment
+variable PPR_COMMENTATOR_ADDRESS.  If that variable is not defined, then the
+responder address is used.
+
+=item B<--commentator-options> I<list>
+
+This is a temporary experimental option which will be removed in PPR 1.50 when 
+the commentary and responder systems are integrated.
+
+This option is used to specify a space separated list of name=value pairs.  This
+list is passed the the commentator program.  The meaning of the name=value pairs
+depends entirely uppon the commentator program.
+
+If this option is not specified, then the value is read from the environment
+variable PPR_COMMENTATOR_OPTIONS.  If that value is not defined, then
+an empty option list is used.  (The responder options are I<not> used!)
+
+=back
+
+=head2 Banner and Trailer Pages
+
+PPR is capable of printing both banner and trailer pages.  Each print queue
+can either require, encourage, discourage, or prohibit banner and trailer
+pages.  The user who is submitting a job may express a preference.  The
+requirements of the queue and the user's expressed preference are used to
+make the descision.
+
+=over 4
+
+=item B<-b> [I<yes>, I<no>, I<dontcare>]
+
+Specifies the user's preference as to whether or not a banner page is
+printed.  The default is "B<dontcare>".
+
+The spooler will not always defer to the user.  For instance, banner pages can
+be required on certain printers and prohibited on others.  Such settings
+are made with the B<ppad flags> command.
+
+=item B<-t> [I<yes>, I<no>, I<dontcare>]
+
+This parameter indicates the user's preference as to trailer pages.  The
+default is B<dontcare>.  As with banner pages, this option is a statement
+of preference, not an order.  The spooler will ultimately make its own
+decision, possibly taking the user's stated preference into account.
+
+=back
+
+=head2 Diagnostic Messages
+
+PPR is capable of generating a number of messages which describe potential
+problems with the contents of a PostScript print job.
+
+=over 4
+
+=item B<-w> [I<log>, I<stderr>]
+
+indicates where warning messages about irregularities in the input file
+should be displayed.  By default, they are displayed on stderr, but if you
+use the switch B<-w log>, they are placed in the print job's log file and will
+appear on the banner page if one is printed.  A print job's log file may be
+displayed with the command B<ppop log> I<jobname>.
+
+=item B<-w> [I<severe>, I<peeve>, I<none>]
+
+sets the warning level.  Warnings indicate erroneous or suspicious features
+of the input file, especially its Document Structuring Convention comments.
+If the warning level is set to B<none>, no warnings are issued.  If
+it is set to B<peeve>, every possible warning is issued.  If it is set to
+B<severe> (the default), warnings are issued only when the error is one PPR
+probably cannot correct.
+
+=item B<-G> I<string>
+
+=item B<--gab> I<string>
+
+This switch will cause PPR to print out various helpful information as it
+runs.  It is primarily intended as an aid in tracking down problems.
+
+The currently recognized values for I<string> are:
+
+=over 4
+
+=item B<infile:autotype>
+
+display information about file auto type detection.
+
+=item B<infile:filter>
+
+display the name of of each filter that is run on the input file as well as
+the arguments which are passed to the filter.
+
+=item B<infile:editps>
+
+displays information about the action enabled by the B<-H editps> option.
+
+=item B<structure:nesting>
+
+displays information about nestable Document Structuring Convention structures
+such as procedure sets, files, and documents.
+
+=item B<structure:sections>
+
+causes B<ppr> to print a message as it enters each section of a Document
+Structuring Convention compliant document.
+
+=item B<media:matching>
+
+causes B<ppr> to print messages as it attemps to find matches for the
+document's media requirements in the media database.  The media database
+is manipulated with the B<ppad media> commands.
+
+=back
+
+=back
+
+=head2 Media and Bin Selection
+
+Under some circumstances, PPR can identify the media (type of paper) which a
+document requires and select the proper paper tray.
+
+=over 4
+
+=item B<-D> I<medianame>
+
+sets the default media.  The default media is used to print documents which
+do not specify what media they require.  This is really a default default
+since certain comments in the document may be used the modify the "default",
+resulting in the selection of a different media.  For example, if the
+B<-D letter> switch is used but a "C<%%BeginFeature: *PagesSize Legal>" comment
+appears in the document, then the media type "legal" will be selected
+because it is 8.5 by 14 inches but has all the other attributes of "letter".
+
+Also, notice that since the B<-D> switch sets a default, it will have
+no effect when the document contains a "%%Media:" line.  Some PPR filters
+will emmit "%%Media:" lines if they are used with the "mediatype=",
+"mediacolor=", or "mediaweight=" options.
+
+=item B<-B> I<boolean>
+
+B<-B true> enables and B<-B false> disables automatic bin selection.  By
+default, automatic bin selection is enabled.  Automatic bin selection will
+only work if bins are defined for the printer.  Bins are defined with the
+C<ppad bins> series of commands.
+
+=back
+
+=head2 Selecting Printer Features
+
+Most PostScript printers have special features or equipment which the user
+may wish to employ.  Two of the most common examples are extra input trays
+and duplex printing.
+
+The features available for a certain printer are described in its PostScript
+Printer Description (PPD) file.  In order for PPR to invoke printer features,
+it must have a copy of the correct PPD file and the PPD file must be selected
+using the "ppad ppd" command.
+
+=over 4
+
+=item B<-F> "I<feature name>"
+
+This switch inserts PostScript setup code for printer features.  Since
+feature names, such as "*PageSize A4" contain asterisks and spaces, they
+should be quoted to get them through the Unix shell.
+
+Begining with PPR version 1.40, a second syntax for feature names is accepted.
+In this syntax "*PageSize A4" would become "PageSize=A4".
+
+The code to invoke a feature is extracted from the PPD file for the printer
+on which the document is printed.  Since it is not possible, at the time the
+job is submitted, to know absolutely which printer it will be printed on, no
+error message will be generated if the PPD file for the printer does not
+contain the requested feature.
+
+If the printer's PPD file does not contain code for the requested feature,
+an "C<%%IncludeFeature:>" comment will be inserted instead, in the forlorn
+hope that some mysterious piece of software between PPR and the printer
+will be able to insert the code.
+
+There is an exception to the rule stated above.  If N-Up printing has been
+selected, PPR may attempt to synthesize missing feature code for selecting
+page sizes.  (In other words, it will use heuristics to generate plausable
+code.)  This is done because even if the printer can't accept a certain
+paper size and hence not have a command for it, the N-Up routines will be
+able to represent it by a rectangle on the physical page.
+
+A feature which is commonly selected with the B<-F> switch is duplexing:
+
+	$ ppr -d adshp4m -F '*Duplex DuplexNoTumble'
+
+Paper input trays are another example:
+
+	$ ppr -d adshp4m -F '*InputSlot Upper'
+
+=item B<-K true>
+
+If this option is selected, code between "C<%%BeginFeature:>" and
+"C<%%EndFeature>" comments is simply copied if replacement code is not found
+in the PPD file.  The exception is duplex code.  Any duplex code which is
+not defined in the PPD file is removed regardless of the setting of the
+B<-K> switch.
+
+=item B<-K false>
+
+Don't keep feature code not in PPD file.  This is the default.  It is
+generally assumed that if the feature is not described in the PPD file it
+does not exist in the printer in question.  That being so, attempting to
+invoke it could result in an error.
+
+=item B<-R duplex:softsimplex>
+
+These and the following options cause B<ppr> to look for comments in the file
+which may indicate the desired duplex mode.  "B<-R duplex:softsimplex>" is the
+default.  In this mode, B<ppr> reads the comments and alters its page
+counting if comments which indicate code which turns duplexing on are found,
+however it does not insert simplex invocation code if it finds no duplex
+comments.  Simplex is "soft" in this case in that a document which includes
+uncommented code to invoke duplex mode will go unnoticed and turn on duplex
+mode without PPR's knowledge.
+
+=item B<-R duplex:simplex>
+
+Reads duplex comments, if none found, force simplex mode.  If duplex
+"on" comments are found, PPR turns duplexing off itself anyway for good
+measure.
+
+=item B<-R duplex:duplex>
+
+Same as above, but duplexing (long edge duplexing) is the default.  PPR
+turns duplexing on itself so that is will be harder for to pretend to be
+printing in duplex while they are really printing in simplex.
+
+=item B<-R duplex:duplextumble>
+
+same as above, but tumble duplexing (short edge duplexing) is the default.
+
+=item B<-R ignore-duplex>
+
+Ignore the possibility of duplex mode.  Without this switch, PPR reads
+"C<%%BeginFeature: *Duplex>" comments in order to determine whether the
+document is printed in simplex or duplex mode.
+
+
+=back
+
+=head2 Number of Copies
+
+=over 4
+
+=item B<-n> I<integer>
+
+=item B<--copies> I<integer>
+
+Print the specified number of copies.  PPR may or may not use the printer's
+multple copies feature.
+
+=item B<-n collate>
+
+=item B<--copies collate>
+
+Using this option requires PPR to print collated copies, i.e.
+1,2,3,1,2,3,1,2,3 rather than 1,1,1,2,2,2,3,3,3.
+Note that for input files with certain characteristics PPR will print
+collated copies whether or not you use this option.
+
+=item B<-R copies>
+
+=item B<-R ignore-copies>
+
+Read any copy count which appears in a document "%%Requirements:" comment
+and print that many copies.  The default is B<-R ignore-copies>.
+
+=back
+
+
+
+=head2 Troublesome Jobs
+
+Some jobs have defects which can confuse PPR.  The features described in
+this section are useful in diagnosing and dealing with such problems.
+
+=over 4
+
+=item B<-H> I<hack_name>
+
+=item B<--hack> I<hack_name>
+
+This switch enables or disables certain features known as "hacks".  These
+hacks are generally of dubious value and can in certain cases be harmful.
+All but B<-H editps> are off by default.  Using the B<-H> switch with a
+hack name as its argument turns on the hack.  Using the B<-H> switch with
+"no-" immediatly followed by the hack name reverses an B<-H> switch earlier
+in the line which turned it on.
+
+Here are the hacks currently available hacks:
+
+=over 4
+
+=item B<keepinfile>
+
+This hack causes B<ppr> to store and keep a copy of the origional input file
+for as long as the job remains in the queue.  Normally B<ppr> stores only a
+highly processed version of the input file.  The purpose of this feature is
+to allow a troubleshooter to examine the origional input in cases where it
+would have otherwise been lost, such as a job received over a network
+connexion.  The file is stored in the F<jobs> directory along with the files
+which make up the processed job.  The file's name is the full job id with
+"-infile" appended to it.  Note that the input file is stored I<before> it
+has been run through any filters so the stored file may not be a PostScript
+file.
+
+=item B<transparent>
+
+This hack implies B<keepinfile>.  When this hack is enabled, rather than
+re-assembling the file from the processed queue files and sending it to the
+printer, PPR simply copies the saved input file to the printer.  Using this
+hack largely defeates the purpose of using PPR since none of the advanced
+features will work.  This hack is provided for testing purposes since a job
+which PPR mangles may print correctly with this hack.  However, since
+automatic input type conversion, protocol conversion, printer feature code
+insertion, and font downloading will by bypassed, using this hack with jobs
+which print correctly may cause them to print incorrectly or not at all.
+
+If you put the B<-H transparent> switch in a B<PPRParms:> line of an
+AppleTalk queue description in F<papsrv.conf> then you must use
+the line B<QueryFontCache: false> as well.  If you do not then the
+Macintosh client will generate code which requires font download
+services which are not provided in B<-H transparent> mode.
+
+=item B<badeps>
+
+When an Encapsulated PostScript file is included in a larger PostScript
+document, it should be bracketed by "C<%%BeginDocument:>" and
+"C<%%EndDocument>" comments.  Some programs which generate PostScript,
+including many which run under MacOS ommit these.  This is a serious offense
+since it results in DSC comments which substantially misrepresent the
+structure of the job.  PPR, acting on this false information may rearange
+the parts of the job incorrectly.  This hack tries to deal with this
+situation by relying on the fact that most EPS files end with the line
+"C<%%EOF>".  If however, the EPS file does not end with such a line, the use of
+this hack will probably make matters worse.
+
+=item B<editps>
+
+This hack comes into play when the input file is in PostScript format.  Some
+applications which generate PostScript make serious errors.  Sometimes these
+errors need to be corrected before PPR can correctly parse the file.  Using
+this hack instructs PPR to invoke an appropriate correction filter, if it
+has one.
+
+The file F</usr/lib/ppr/editps/editps.conf> contains the information PPR needs to
+select an editps filter.  The format of this file is still in a state of
+flux and is not yet documented.
+
+The option B<--editps-level> (described below) can modify the operation
+of the B<editps> hack.
+
+The B<editps> hack is the only one that is on by default.
+
+=back
+
+=item B<--editps-level> I<n>
+
+This option controls the degree of modification performed by the B<-H editps>
+option.  The number I<n> must be between 1 and 10 inclusive.  The default is 1.
+Each editps filter described in F<editps.conf> has a minimum level defined.  The
+filter will be considered usable only if the level set with B<--editps-level>
+is at least as high as the minimum level for the filter.
+
+The levels are roughly defined as follows:
+
+=over 4
+
+=item B<1>
+
+Only enough editing is done to ensure that any file which would print if simply
+transmitted unmodified to the printer will print through PPR.  This editing may
+include inserting a "%%PageOrder: Special" comment or the adjustment of the position
+of the "%%Trailer" comment but it will not do major editing.
+
+=item B<2>
+
+At this level, procedure definitions may be moved out of the script and into the
+prolog in order to achieve page indenpendence.
+
+=item B<5>
+
+At this level, the PostScript code will be subjected to close scrutiny in order
+to abtain information to place in additional DSC comments.  This might be done
+in order to identify jobs or portions of jobs that require a color printer.
+
+=item B<10>
+
+At this level, the filter has an intimate knowledge of the generated code and
+performs major modifications such as optimizing it for size or speed.
+
+=back
+
+=back
+
+
+=head2 Resource Handling
+
+PPR has a resource cache.  A PostScript resource is a section of PostScript
+code which forms a font, a procedure set, an encoding map or certain other
+objects of general utility.
+
+Some fonts and other resources come with PPR, with your operating system,
+and with other software.  Fonts should be listed in PPR's font index.
+PPR also comes with a static cache which is found in F</usr/share/ppr/cache>.
+
+PPR can also build up a dynamic cache of resources saved from previous jobs.
+This dynamic cache is stored in F</var/spool/ppr/cache>.
+When using B<papsrv> and LaserWriter 8.x, this can be used to reduce the time
+Macintosh clients spend transmitting fonts to PPR.  For this reason when
+B<papsrv> invokes B<ppr>, it sets certain options to enable caching behaviour.
+The options are B<--cache-store=uncached>, B<--strip-cache=true>, and
+B<--cache-priority=high>.
+
+=over 4
+
+=item B<--cache-store> [B<none>, B<unavailable>, B<uncached>]
+
+This directive controls which resources found in the submitted job are saved
+in the resource cache.  If it is set to B<uncached>, then all resources (or
+rather resources of all categories for which there is a cache directory in
+F</var/spool/ppr/cache>) which are not already in the cache are saved in
+the cache.  If it is set to I<unavailable> then the resource is saved only if
+it doesn't exist elsewhere such as in the font index.  If it is set to B<none>
+then no resources are added to the cache (with the minor exception of
+of those Macintosh dual mode fonts which are already partially cached).
+
+=item B<--strip-cache> [B<true>, B<false>]
+
+=item B<-S> [B<true>, B<false>]
+
+This option controls whether when the job is placed in the queue, PPR will
+strip out PostScript resources such as fonts and procedure sets and
+temporarily replace them with "C<%%IncludeResource:>" comments if identically
+named and version numbered resources are already in the cache or are being
+copied from the job into the cache.  Doing so can save disk space in the
+spool area.  The default value is B<false>.
+
+Enabling this feature could cause problems if various jobs give the same name
+to resources which are really different from one another.  For this reason,
+this feature is off by default.
+
+=item B<--strip-fontindex> [B<true>, B<false>]
+
+The default for this option is B<false>.  If this is option is set to I<true>
+and a font which is sent as part
+of the job is listed in the font index, then it is stripped out and later
+replaced with the one listed in the font index.
+
+=item B<--strip-printer> [B<true>, B<false>]
+
+The default for this option is B<false>.  If this option is set to B<true> and
+a resource, such as a font, which is sent as part of the job is already in the
+printer, it is stripped out just before the job is sent to the printer.
+
+=item B<--cache-priority> [B<auto>, B<low>, B<high>]
+
+This directive determines where PPR looks first when it is asked to insert
+a resource or when it replaces one it stripped out.  The default is B<auto>.
+If the setting is B<high> then the resource cache will be searched before
+the font index.  If it is B<low> then the resource cache will be searched
+after the font index.  If it is B<auto> then the priority will be set to
+B<low>,unless one or more resources were stripped out of the job with the
+expectation of restoring them from the cache, in which case it will be
+B<high>.
+
+=back
+
+=head2 Other Printer Languages
+
+Many PostScript printers also have interpreters for other printer
+languages.  PPR has the ability to spool jobs in non-PostScript langauges.
+However, most of the PPR options will have no effect on non-PostScript jobs.
+
+At present, PPR does not attempt to determine if the printer it is about
+to send a non-PostScript job to is capable of interpreting it.  A future
+version will consult the PPD file and turn the job away from printers which
+are not capable of interpreting its language.
+
+=over 4
+
+=item --passthru I<list>
+
+This experimental option has been removed.  See B<ppad passthru> and
+B<ppad group passthru> for the replacement.
+
+=back
+
+=head2 Miscelaineous
+
+=over 4
+
+=item B<-C> I<string>
+
+=item B<--title> I<string>
+
+These options both do the same thing.  They specify a default document title.
+The default title can be overridden by "C<%%Title:>" line in document, unless
+the option B<-R ignore-title> is also used.
+
+If this switch is ommited and a file name is specified on the B<ppr> command
+line (rather than reading from stdin), the file name will be the default
+title.  In cases where the filename is meaningless, such as when it is a
+temporary file created by Samba, it is advisable to use the option
+B<-C ""> or B<--title ""> to make the default a blank title.
+
+=item B<-R ignore-title>
+
+=item B<-R title>
+
+The option B<-R ignore-title> causes B<ppr> to ignore "C<%%Title:>" lines in
+the job.  This has the effect of making a title specified with B<--title> a
+firm title rather than a default title.  The default is B<-R title>.
+
+=item B<--lpq-filename>
+
+Specifies the name of the origional input file.  This switch is used by
+B<lprsrv> because otherwise B<ppr> would not know what the file's name was
+on the origionating node.
+
+=item B<-i> I<string>
+
+=item B<--routing> I<string>
+
+Specifies an routing instructions string.  This string will override any
+found on a "C<%%Routing:>" line.  The final routing instructions string will
+appear on the "C<%%Routing:>" line which is sent to the printer and on the
+banner page.  This string is free-form.  It is intended to contain
+instructions to help an operator send the print job to the person who
+printed it, but it may be used for other purposes as well.
+
+=item B<-R routing>
+
+This option instructs PPR to read "C<%%Routing:>" line from the job and, if
+one is found, use its value to replace the value set with B<-i> or
+its long form, B<--routing>.  This is the default behavior.
+
+=item B<-R ignore-routing>
+
+This option instructs PPR to ignore "C<%%Routing:>" lines in the job.  The
+routing instructions message set with B<-i> or its long form, B<--routing>,
+will be used.
+
+=item B<-q> I<integer>
+
+Sets the priority of the print job.  Default priority is 20, range is 0 (most
+urgent) to 39 (least urgent).
+
+=item B<--hold>
+
+Indicates that the job should be placed in the held state as soon as it
+enters the queue.  (This might be used if a printer were under the strict
+control of an operator and no jobs were to be printed until approved by the
+operator.  If the job were received through a network server such as
+B<lprsrv> or B<papsrv> then the use of this switch could be forced.)
+
+=item -Z true
+
+Silently discard jobs which do not end with "C<%%EOF>".  The absence of a
+C<%%EOF> comment may indicate that the job is truncated.  This can be used
+when accepting jobs from Macintosh computers.  If the user cancels printing
+before the entire job has been transmitted, this option would prevent it
+from being printed.  QuickDraw GX, however, ommits the C<%%EOF> comment, so
+using this option would cause all jobs prepared by QuickDraw GX to be
+discarded.
+
+=item B<-Z false>
+
+Don't discard jobs which do not end with "C<%%EOF>" (default).
+
+=item B<-U>
+
+This switch causes PPR to unlink (delete) the file which it prints as soon
+as the file has been copied to the queue.  Samba print commands should use
+this option.
+
+=back
+
+=head2 N-Up and other Special PPR Features
+
+=over 4
+
+=item B<-N> I<integer>
+
+Print pages N-Up.  The I<integer> specifies the number
+of virtual pages to put on each side of the physical page.
+
+=item B<-N noborders>
+
+Turns off N-Up borders.
+
+=item B<-O> I<string>
+
+Specifies a string to overlay diagonally in outline type across each page.
+Such a string might be "Draft" or "Confidential".
+
+=item B<-s> I<positive_integer>
+
+Set signature sheet count.  This turns on signature printing.  It
+also turns on 2-Up printing if N-Up is not on already.
+
+=item B<-s booklet>
+
+This switch instructs PPR to format the document as a single signature
+having the minimum number of sheets required.  This turns on signature
+printing.  It also turns on 2-Up printing if N-Up is not on already.
+
+=item B<-s both>
+
+=item B<-s fronts>
+
+=item B<-s backs>
+
+Indicate which part of each signature to print.  The default is "both" which
+works best with a duplex printer.  Using "fronts" and "backs" it is possible
+to print signatures on a simplex printer in two passes.
+
+=item B<-Y> I<string>
+
+This switch is for the new and still experimental job splitting feature.  If
+you wish to learn about it, please examine the comments at the head of the
+source file "ppr/ppr_split.c".
+
+=item B<--page-list> I<string>
+
+This switch can be used to specify a subset of the documents pages which
+should be printed.  It does not work.
+
+=back
+
+=head2 Input Filters
+
+If the input file is not a PostScript file, PPR can generaly detect this.
+Hopefully, PPR will have a filter at its disposal which it can use to
+convert the job to PostScript.  The switches described in this section
+control such filtering.
+
+=over 4
+
+=item B<-T> I<type>
+
+=item B<--file-type> I<type>
+
+The B<-T> option manually overrides PPR's automatic file type detection.  This
+may be necessary if for some reason the automatic detection system
+identifies a file incorrectly.
+
+Most of the possible input types are described in the L<ppr-filters(1)>
+manpage.  If you run the command B<ppr --help | grep -- -T> you will get
+a complete list of the supported input file types.
+
+With version 1.32, the B<-T> switch can also accept a MIME type as its argument.
+The MIME type will be automatically converted to the PPR type name.  The list
+of known MIME types is rather short.  There is presently no way to read the
+list of known MIME types except by examining the source code.
+
+=back
+
+=item B<-o> I<string>
+
+This switch specifies a set of options which will be passed to the input
+filter.  The I<string> is appended to the default filter options.  The
+string should take the form "option1=value option2=value".  If two name value
+pairs assign different values to the same name, the last one prevails.  That
+means that filter options specified with the B<-o> switch can override the
+default options.  If multiple B<-o> switches may be used, each instance
+simply adds additional options.
+
+Options which should apply to only one filter should have the filter name
+and a hyphen prepended.  For example:
+
+	$ ppr -d aardvark -o 'dvipsconfig=hp4 fortran-width=132 pr-width=80'
+
+This will pass the option "dvipsconfig=hp4" to all filters, pass "width=132"
+to the B<fortran> filter, and pass "width=80" to the B<pr> filter.
+
+The filters and the options they understand are listed in the
+L<ppr-filters(1)> manpage.
+
+=head2 Proofmode and Printer Validation
+
+=over 4
+
+=item B<-P notifyme>
+
+set ProofMode to "NotifyMe".  This and the other B<-P> switches override any
+"C<%%ProofMode:>" line in the document.  If the ProofMode is "NotifyMe", then
+PPR will arrest the job if all of the requirements which it places on the
+printer can not be met.  See "PostScript Language Reference
+Manual Second Edition," pages 664 and 665.
+
+=item B<-P substitute>
+
+set ProofMode to "Substitute".  With a ProofMode of "Substitute", PPR will
+substitute fonts and attempt to do without missing printer features such as
+duplexing.
+
+=item B<-P trustme>
+
+set ProofMode to "TrustMe".  With a ProofMode of "TrustMe", PPR will send
+the job to the printer even if some requirements or resources are missing.
+The assumption is that the document itself can compensate.
+
+=back
+
+=head2 Internal Features
+
+=over 4
+
+=item B<-Q> I<string>
+
+When B<papsrv> invokes B<ppr>, it uses this switch to indicate what answer it
+supplied when asked if the printer has a TrueType font rasterizer.  This
+value is used by B<ppr> to know whether a Macintosh will probably download
+type 1 or type 42 fonts.  This prediction is used when merging dual mode
+Macintosh fonts in the cache.  The argument I<string> may be any one of "None",
+"Type42", and "Accept68K".
+
+=back
+
+=head1 ENVIRONMENT
+
+If the B<-d> switch is not use, B<ppr> will consult the environment variable
+PPRDEST to determine the printer to print on.  If PPRDEST is not defined,
+then B<ppr> will look for the environement variable PRINTER.  If PRINTER
+is not defined either, B<ppr> will attempt to send the job to the
+destination "default".
+
+If the B<-m> switch is not used to choose a responder then the responder
+name will be read from the environment variable PPR_RESPONDER.  If
+PPR_RESPONDER is not defined, then "write" will be used.
+
+If the B<-r> switch is not used to specify a responder address then the
+responder address will be read from the variable PPR_RESPONDER_ADDRESS.  If
+PPR_RESPONDER_ADDRESS is undefined then the name of the user who invoked
+B<ppr> will be used.
+
+If the B<--responder-options> switch is not used then the responder options
+will be read from PPR_RESPONDER_OPTIONS.  If PPR_RESPONDER_OPTIONS is not
+defined then the option list will be empty.
+
+=head1 DIAGNOSTICS
+
+Exit codes for B<ppr> are defined in the source code file
+F<include/ppr_exits.h>.
+
+=head1 SEE ALSO
+
+L<ppop(1)>, L<papsrv.conf(5)>), L<lprsrv(8)>, L<papsrv(8)>, L<pprd(8)>,
+L<ppad(8)>, L<ppuser(8)> L<ppr2samba(8)>, "PPR, a PostScript Print Spooler",
+"Installing and Using PPR".
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2000.
+It was first released to the public on 26 April 1995.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=head1 BUGS
+
+PPR has trouble dealing with documents which are printed partially in duplex
+and partially in simplex.
+
+Currently, automatic bin selection can only select one media type per
+document.
+
+=cut

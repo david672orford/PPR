@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>PPR Release Steps</title>
+</head>
+<body>
+<h1>PPR Release Steps</h1>
+<p>These are the steps required to release a new version of ppr:
+<ol>
+
+<li>Make sure the version and date are correct in these places:
+	<ul>
+	<li>top level source directory name
+	<li>include/version.h
+	<li>include/version.mk
+	<li>History.txt
+	<li>docs/misc/docs_history.txt
+	<li>announce.txt
+	<li>ppr-X.XX.spec
+	</ul>
+
+<li>Upload to ftp://ppr-dist.trincoll.edu/pub/ppr/.
+
+<li>Update http//ppr.trincoll.edu/download.html.
+
+<li>Upload to ftp://upload.sourceforge.net/incoming/.
+
+<li>Create the release notes in announce.txt.  These will be a summary of the
+   changes recorded in History.txt.
+
+<li>Create a release on Sourceforge.
+
+<li>Send an announcement to ppr-list@mail.trincoll.edu.
+
+<li>Post an announcement on Freshmeat with abbreviated release notes.
+
+<li>Post news on Sourceforge with the same abbreviated release notes.
+
+<li>Take a deap breath.
+
+<ol>
+</body>
+</html>

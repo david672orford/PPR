@@ -1,0 +1,120 @@
+#
+# mouse:~ppr/src/.htaccess
+#
+# This .htaccess file helps the Apache web server to produce a browsable
+# source code tree.
+#
+# Last modified 29 June 2000.
+#
+
+# Turn on automatic indexing.
+Options Indexes
+
+# Prevent PUT, POST, etc.
+<LimitExcept GET>
+order mutual-failure
+deny from all
+</LimitExcept>
+
+# Disable index.html files.
+DirectoryIndex unlikely_to_exist.html
+
+# Display each directory's README.txt.  For some reason this has the side
+# effect of hiding it in the directory listing.
+HeaderName README.txt
+#ReadmeName README.txt
+
+# Select a more verbose index format.
+IndexOptions FancyIndexing NameWidth=32
+
+# Hide built files.  I wish there were a way to hide the binaries.
+IndexIgnore .htaccess *~ *.bak *.cgi *.o *.a *.mo
+
+# Prevent CGI execution
+RemoveHandler .cgi
+
+# Plain text files are ASCII English
+AddType text/plain .txt
+AddDescription "English text" .txt
+AddLanguage en .txt
+
+# Display HTML and other special types as source code.
+AddType text/plain .html
+AddDescription "WWW document" .html
+AddLanguage en .html
+AddType text/plain .css
+AddDescription "Cascading Style Sheet" .css
+AddType text/plain .js
+AddDescription "JavaScript source code" .js
+
+# Make sure source code is recognized as text/plain.
+AddType text/plain .sh
+AddDescription "Borne shell script" .sh
+AddType text/plain .csh
+AddDescription "C shell script" .csh
+AddType text/plain .conf
+AddDescription "Configuration file" .conf
+AddType text/plain .c
+AddDescription "C source code" .c
+AddType text/plain .h
+AddDescription "C include file" .h
+AddType text/plain .l
+AddDescription "Lex source code" .l
+AddType text/plain .y
+AddDescription "Yacc source code" .y
+AddType text/plain .java
+AddDescription "Java source code" .java
+AddType text/plain .perl
+AddDescription "Perl script" .perl
+AddType text/plain .pl
+AddDescription "Perl library" .pl
+AddType text/plain .pm
+AddDescription "Perl module" .pm
+AddType text/plain .ph
+AddDescription "Perl include file" .ph
+AddType text/plain .ps
+AddDescription "PostScript program" .ps
+AddType text/plain .fig
+AddDescription "FIG drawing" .fig
+AddType text/plain .xbm
+AddDescription "X-Windows bitmap" .xbm
+AddType text/plain .tcl
+AddDescription "Tcl script" .tcl
+AddType text/plain .mk
+AddDescription "Include file for <b>make</b>" .mk
+AddType text/plain .pod
+AddDescription "Perl-style document" .pod
+AddType text/plain .sgml
+AddDescription "SGML document" .sgml
+AddType text/plain .me
+AddDescription "Troff document" .me
+AddType text/plain .afm
+AddDescription "Adobe font metrics" .afm
+AddType text/plain .pfa
+AddDescription "Adobe font" .pfa
+AddType text/plain .pfb
+AddDescription "Adobe font" .pfb
+AddType text/plain .ppd
+AddDescription "PostScript printer description" .ppd
+AddType text/plain .pot
+AddDescription "Extracted messages" .pot
+AddType text/plain .pox
+AddDescription "Message translation work file" .pox
+AddType text/plain .po
+AddDescription "Message translations" .po
+AddType text/plain .run
+AddDescription "Test script" .run
+AddType text/plain .ok
+AddDescription "Test results (desired)" .ok
+AddType text/plain .out
+AddDescription "Test results (actual)" .out
+AddType text/plain .bat .BAT
+AddDescription "MS-DOS batch file" .bat .BAT
+
+# Add written descriptions for various file types
+AddDescription "Notes about this directory" README.txt
+AddDescription "Instructions for <b>make</b>" Makefile
+AddDescription "Image" .png
+AddDescription "Image" .jpg
+
+# end of file

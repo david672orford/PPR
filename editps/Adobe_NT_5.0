@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+#
+# mouse:~ppr/src/editps/Adobe_NT_5.0
+# Copyright 1995--2000, Trinity College Computing Center.
+# Written by David Chappell.
+#
+# Permission to use, copy, modify, and distribute this software and its
+# documentation for any purpose and without fee is hereby granted, provided
+# that the above copyright notice appear in all copies and that both that
+# copyright notice and this permission notice appear in supporting
+# documentation.  This software and documentation are provided "as is" without
+# express or implied warranty.
+#
+# Last revised 20 January 2000.
+#
+
+#
+# This filter fixes the output of the Adobe PostScript driver for
+# Microsoft Windows NT.  The 5.0 is the version number of the driver,
+# not the version number of NT.
+#
+# This driver fails to close one of its file resources.
+#
+# Keep in mind that this edit script must work whether the driver
+# is set to "optimize for speed" or to "optimize for portability".
+#
+
+$last_line = "";
+while(<STDIN>)
+    {
+    print;
+
+    if(/^%%BeginResource: file Pscript_T42Hdr 5.0 0\s*$/)
+	{
+	while(<STDIN>)
+	    {
+	    print;
+	    last if(/^bind d\s*$/);
+	    }
+	print "%%EndResource\n";
+	}
+    }
+
+exit 0;
+

@@ -1,0 +1,42 @@
+%!PS-Adobe-3.0
+%%Title: Slow Job Processing Test
+%%Creator: David Chappell
+%%CreationDate: 22 January 1998
+%%Pages: 0
+
+%
+% This print job is used to smoke out certain Atalk PAP
+% protocol errors.  Errors in the implementation of
+% tickle packets are an example.
+%
+
+/delay
+	{
+	% The current time plus 30 seconds
+	/stoptime usertime 30000 add def
+
+	% Wait until after stoptime
+	{ usertime stoptime gt {exit} if } loop
+	} def
+
+(start) = flush
+delay
+
+(30 seconds) = flush
+delay
+
+(1 minute) = flush
+delay
+
+(1 minute 30 seconds) = flush
+delay
+
+(2 minutes) = flush
+delay
+
+(2 minutes 30 seconds) = flush
+delay
+
+(3 minutes) = flush
+
+%%EOF

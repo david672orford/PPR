@@ -1,0 +1,50 @@
+#! /usr/bin/perl -w
+
+# This is supplied by do_tests:
+defined($ENV{REGTEST_INTERFACE_OUTPUT}) || die;
+
+# Wait for the output from the interface to appear.
+my $timeout = 10;
+while(1)
+    {
+    last if(open(OUT, "<$ENV{REGTEST_INTERFACE_OUTPUT}"));
+    if($timeout-- < 0)
+	{
+	print "Timeout waiting for output.\n";
+	exit(1);
+	}
+    sleep(1);
+    }
+
+# Copy the interface's output to stdout
+# while making certain modifications.
+while(1)
+    {
+    $_ = <OUT>;
+    if( ! defined($_) )		# if we are getting ahead of the
+	{			# interface, pause and try again.
+	sleep(1);
+	next;
+	}
+
+    # Replace this line because it differs
+    # from job to job.
+    if($_ =~ /jobname/i)
+	{ $_ = "% jobname line removed\n" }
+
+    # Removed the PPR version number from this line.
+    s/^(%TCHCTSpooler: PPR)-.*/$1-x.xx/;
+
+    # Copy line to stdout where it will be compared to
+    # the output of a previous run.
+    print;
+
+    # Look for the line the regtest interface
+    # uses as a marker when it is done.
+    last if($_ eq "% regtest interface done %\n");
+    }
+
+close(OUT);
+
+exit(0);
+

@@ -1,0 +1,29 @@
+%!PS-Adobe-3.0 Resource-Procset
+%%Title: ~ppr/src/dotmatrix/TrinColl-PPR-DotMatrix-Colour-1-0
+%%Copyright: Copyright 1994, Trinity College Computing Center
+%%CreationDate: 18 November 1994
+%%Creator: David Chappell
+%%EndComments
+
+pprdotmatrix begin
+
+% Set the colour
+/setrgbcolor where
+   {
+   /colour
+      {
+      [ {0 0 0}		% black
+	{1 0 0}		% magenta
+	{0 .5 1}	% cyan
+	{0 .0 1}	% violet
+	{1 1 0}		% yellow
+	{1 .5 .5}	% orange
+	{0 .5 0}	% green
+	{.5 .2 .2}	% brown
+      ] exch get exec setrgbcolor
+      }bd
+   }
+   { /colour{pop}bd }ifelse
+
+end % pprdotmatrix
+%%EOF

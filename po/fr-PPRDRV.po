@@ -1,0 +1,371 @@
+# PPR Utilities Messages in French
+# Copyright (C) 2001 Olivier Tharan
+# Olivier Tharan <olive@betty.minet.net>, 2001.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PPR 1.41\n"
+"POT-Creation-Date: 2000-12-30 00:43-0500\n"
+"PO-Revision-Date: 2001-01-02 12:00+GMT\n"
+"Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
+"Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: none\n"
+
+#: ../pprdrv/pprdrv_flag.c:313
+#, c-format
+msgid ""
+"%s: %s\n"
+"\twhile attempting to read \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+msgstr ""
+"%s : %s\n"
+"\tpendant la tentative de lecture de \"%s\"\n"
+"\t\t[%s]\n"
+"\t\t%s =\n"
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# msgid ""
+# msgstr ""
+# "POT-Creation-Date: 1999-02-22 17:51+0100\n"
+# "Content-Type: text/plain; charset=\n"
+# "Date: 1998-09-14 14:19:13+0000\n"
+# "From: Olivier Tharan <olive@mars.laria.u-picardie.fr>\n"
+# "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output "
+# "--default-domain=PPRDRV\n"
+# "Files: ../pprdrv/pprdrv.c ../pprdrv/pprdrv_buf.c ../pprdrv/pprdrv_capable.c "
+# "../pprdrv/pprdrv_commentary.c ../pprdrv/pprdrv_feedback.c "
+# "../pprdrv/pprdrv_flag.c ../pprdrv/pprdrv_interface.c "
+# "../pprdrv/pprdrv_lw_messages.c ../pprdrv/pprdrv_media.c "
+# "../pprdrv/pprdrv_notppd.c ../pprdrv/pprdrv_nup.c ../pprdrv/pprdrv_patch.c "
+# "../pprdrv/pprdrv_persistent.c ../pprdrv/pprdrv_ppd.c "
+# "../pprdrv/pprdrv_ppd_parse.c ../pprdrv/pprdrv_progress.c "
+# "../pprdrv/pprdrv_reason.c ../pprdrv/pprdrv_req.c ../pprdrv/pprdrv_res.c "
+# "../pprdrv/pprdrv_signature.c ../pprdrv/pprdrv_tt.c\n"
+#: ../pprdrv/pprdrv_capable.c:99
+#, c-format
+msgid "+Job turned away from printer \"%s\" for the following reason(s):\n"
+msgstr ""
+"+Travail éloigné de l'imprimante \"%s\" pour la (les) raison(s) suivante(s) "
+":\n"
+
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# msgid ""
+# msgstr ""
+# "POT-Creation-Date: 1999-02-22 17:51+0100\n"
+# "Content-Type: text/plain; charset=\n"
+# "Date: 1998-09-14 14:19:13+0000\n"
+# "From: Olivier Tharan <olive@mars.laria.u-picardie.fr>\n"
+# "Xgettext-Options: --keyword=_ --keyword=N_ --sort-output "
+# "--default-domain=PPRDRV\n"
+# "Files: ../pprdrv/pprdrv.c ../pprdrv/pprdrv_buf.c ../pprdrv/pprdrv_capable.c "
+# "../pprdrv/pprdrv_commentary.c ../pprdrv/pprdrv_feedback.c "
+# "../pprdrv/pprdrv_flag.c ../pprdrv/pprdrv_interface.c "
+# "../pprdrv/pprdrv_lw_messages.c ../pprdrv/pprdrv_media.c "
+# "../pprdrv/pprdrv_notppd.c ../pprdrv/pprdrv_nup.c ../pprdrv/pprdrv_patch.c "
+# "../pprdrv/pprdrv_persistent.c ../pprdrv/pprdrv_ppd.c "
+# "../pprdrv/pprdrv_ppd_parse.c ../pprdrv/pprdrv_progress.c "
+# "../pprdrv/pprdrv_reason.c ../pprdrv/pprdrv_req.c ../pprdrv/pprdrv_res.c "
+# "../pprdrv/pprdrv_signature.c ../pprdrv/pprdrv_tt.c\n"
+#: ../pprdrv/pprdrv_capable.c:128
+#, c-format
+msgid ""
+"+Printer \"%s\" may not print this job correctly for the following "
+"reason(s):\n"
+msgstr ""
+"+L'imprimante \"%s\" peut ne pas imprimer ce travail correctement pour la "
+"(les) raison(s) suivante(s) :\n"
+
+#: ../pprdrv/pprdrv_lw_messages.c:151
+#, c-format
+msgid "Bad raw message in \"%s\" line %d\n"
+msgstr "Message brut incorrect dans \"%s\", ligne %d\n"
+
+#: ../pprdrv/pprdrv_lw_messages.c:125
+#, c-format
+msgid "Bad section heading in \"%s\" line %d\n"
+msgstr "Mauvaise en-tête de section dans \"%s\", ligne %d\n"
+
+#: ../pprdrv/pprdrv_flag.c:606
+#, c-format
+msgid "Balance before printing this job: %s"
+msgstr "Crédit avant d'imprimer ce travail : %s"
+
+#: ../pprdrv/pprdrv_interface.c:202
+msgid "Bizaar interface program malfunction: SIGCHLD w/out signal or exit."
+msgstr ""
+"Fonctionnement étrange du programme d'interface : SIGCHLD sans signal ni "
+"exit."
+
+#: ../pprdrv/pprdrv_mactt.c:45 ../pprdrv/pprdrv_mactt.c:57
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no \"%.*s\"."
+msgstr "La fonte TT Mac \"%s\" en cache n'a pas de \"%.*s\"."
+
+#: ../pprdrv/pprdrv_mactt.c:134
+#, c-format
+msgid "Cached Mac TT font \"%s\" has no sfntdef section."
+msgstr "La fonte TT Mac \"%s\" en cache n'a pas de section sfntdef."
+
+#: ../pprdrv/pprdrv_capable.c:70 ../pprdrv/pprdrv_flag.c:242
+#: ../pprdrv/pprdrv_lw_messages.c:82
+#, c-format
+msgid "Can't open \"%s\", errno=%d (%s)"
+msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)"
+
+#: ../pprdrv/pprdrv_mactt.c:79
+#, c-format
+msgid "Can't open resource file \"%s\", errno=%d (%s)"
+msgstr "Impossible d'ouvrir le fichier de ressources \"%s\", errno=%d (%s)"
+
+#: ../pprdrv/pprdrv_capable.c:356
+#, c-format
+msgid "Can't substitute \"%s\" for \"%s\" because it has no Type1 section."
+msgstr ""
+"Impossible de substituer \"%s\" par \"%s\" car elle n'a pas de section Type1."
+
+#: ../pprdrv/pprdrv_capable.c:619
+msgid "Communications channel cannot pass required codes."
+msgstr "Le canal de communications ne peut pas passer les codes nécessaires."
+
+#: ../pprdrv/pprdrv_flag.c:581
+#, c-format
+msgid "Copies: %d"
+msgstr "Copies : %d"
+
+#: ../pprdrv/pprdrv_flag.c:552
+#, c-format
+msgid "Creator: %s"
+msgstr "Créateur : %s"
+
+#: ../pprdrv/pprdrv_flag.c:534
+#, c-format
+msgid "End of job %s"
+msgstr "Fin de travail %s"
+
+#: ../pprdrv/pprdrv_interface.c:335
+#, c-format
+msgid "Interface \"%s\" does not exist or is not executable, errno=%d (%s)."
+msgstr ""
+"L'interface \"%s\" n'existe pas ou n'est pas exécutable, errno=%d (%s)."
+
+#: ../pprdrv/pprdrv_interface.c:258
+msgid ""
+"Interface program malfunction: it quit before accepting\n"
+"\tall of the job but didn't return an error code."
+msgstr ""
+"Disfonctionnement du programme d'interface : il a terminé avant d'accepter\n"
+"\tla totalité du travail mais n'a pas renvoyé de code d'erreur."
+
+#: ../pprdrv/pprdrv_interface.c:214
+#, c-format
+msgid "Interface program malfunction: it returned invalid exit code %d,"
+msgstr ""
+"Disfonctionnement du programme d'interface : code de sortie retourné %d "
+"invalide,"
+
+#: ../pprdrv/pprdrv_interface.c:200
+#, c-format
+msgid "Interface stopped by signal \"%s\"."
+msgstr "Interface arrêtée par le signal \"%s\"."
+
+#: ../pprdrv/pprdrv.c:1173 ../pprdrv/pprdrv.c:1196 ../pprdrv/pprdrv.c:1247
+#: ../pprdrv/pprdrv.c:1284 ../pprdrv/pprdrv.c:1290 ../pprdrv/pprdrv.c:1295
+#: ../pprdrv/pprdrv.c:1300 ../pprdrv/pprdrv.c:1313
+#, c-format
+msgid "Invalid \"%s\" (%s line %d)."
+msgstr "\"%s\" invalide (%s, ligne %d)"
+
+#: ../pprdrv/pprdrv_flag.c:546
+#, c-format
+msgid "Job ID: %s"
+msgstr "ID du travail : %s"
+
+#: ../pprdrv/pprdrv_capable.c:631
+#, c-format
+msgid "Job has %d pages but allowed range for this printer is %d--%d."
+msgstr ""
+"Le travail a %d pages mais l'intervalle autorisé pour cette imprimante est "
+"%d--%d."
+
+#: ../pprdrv/pprdrv_capable.c:644
+#, c-format
+msgid "Job is %d kilobytes long but allowed range for this printer is %d--%d."
+msgstr ""
+"Le travail a une taille de %d kilooctets mais l'intervalle autorisé pour "
+"cette imprimante est %d--%d."
+
+#: ../pprdrv/pprdrv.c:1360
+#, c-format
+msgid "No \"Interface:\" line in %s"
+msgstr "Pas de ligne \"Interface:\" dans %s"
+
+#: ../pprdrv/pprdrv_pfb.c:49 ../pprdrv/pprdrv_pfb.c:59
+#: ../pprdrv/pprdrv_pfb.c:74 ../pprdrv/pprdrv_pfb.c:101
+#: ../pprdrv/pprdrv_pfb.c:106
+#, c-format
+msgid "PFB file \"%s\" is corrupt (defect type %d)"
+msgstr "Le fichier PFB \"%s\" est corrompu (défaut type %d)"
+
+#: ../pprdrv/pprdrv_pfb.c:86
+#, c-format
+msgid "PFB file \"%s\" is currupt (defect type %d)"
+msgstr "Le fichier PFB \"%s\" est corrompu (défaut type %d)"
+
+#: ../pprdrv/pprdrv_patch.c:125
+msgid "PPD file does not have *ExitServer code"
+msgstr "Le fichier PPD n'a pas de code *ExitServer"
+
+#: ../pprdrv/pprdrv_flag.c:574
+#, c-format
+msgid "Pages: %d"
+msgstr "Pages : %d"
+
+#: ../pprdrv/pprdrv_flag.c:567
+#, c-format
+msgid "Print Date: %s"
+msgstr "Date d'impression : %s"
+
+#: ../pprdrv/pprdrv_patch.c:95
+msgid "Printer did not respond correctly to *?PatchFile query."
+msgstr "L'imprimante n'a pas répondu correctement à la requête *?PatchFile."
+
+#: ../pprdrv/pprdrv_capable.c:548
+msgid "Printer does not have all required extensions."
+msgstr "L'imprimante ne possède pas toutes les extensions nécessaires."
+
+#: ../pprdrv/pprdrv_capable.c:562
+msgid "Printer is not permitted to print grayscale documents."
+msgstr ""
+"L'imprimante n'a pas le droit d'imprimer les documents en niveaux de gris"
+
+#: ../pprdrv/pprdrv_capable.c:534
+#, c-format
+msgid "Required language level (%d) exceeds printer's language level (%d)."
+msgstr ""
+"La version de langage requise (%d) dépasse la version de langage de "
+"l'imprimante (%d)."
+
+#: ../pprdrv/pprdrv_capable.c:519 ../pprdrv/pprdrv_capable.c:524
+#, c-format
+msgid "Requirement \"%s\" can't be met."
+msgstr "La demande \"%s\" ne peut pas être satisfaite."
+
+#: ../pprdrv/pprdrv_capable.c:411 ../pprdrv/pprdrv_capable.c:422
+#, c-format
+msgid "Resource \"%s %s %s %d\" not available."
+msgstr "Ressource \"%s %s %s %d\" non disponible."
+
+#: ../pprdrv/pprdrv_capable.c:413 ../pprdrv/pprdrv_capable.c:424
+#, c-format
+msgid "Resource \"%s %s\" not available."
+msgstr "Ressource \"%s %s\" non disponible."
+
+#: ../pprdrv/pprdrv_flag.c:549
+#, c-format
+msgid "Routing: %s"
+msgstr "Routage : %s"
+
+#: ../pprdrv/pprdrv_flag.c:575
+#, c-format
+msgid "Sheets: %d"
+msgstr "Feuilles : %d"
+
+#: ../pprdrv/pprdrv.c:1330
+#, c-format
+msgid "Syntax error in \"%s\" (%s line %d)."
+msgstr "Erreur de syntaxe dans \"%s\" (%s, ligne %d)."
+
+#: ../pprdrv/pprdrv_ppd.c:621
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", removing existing code."
+msgstr ""
+"Le fichier PPD ne contient pas de code pour la fonction de l'imprimante\n"
+"appelée \"%s %s\", j'enlève le code existant."
+
+#: ../pprdrv/pprdrv_ppd.c:673
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", retaining old code."
+msgstr ""
+"Le fichier PPD ne contient pas de code pour la fonction de l'imprimante\n"
+"appelée \"%s %s\", je retiens l'ancien code."
+
+#: ../pprdrv/pprdrv_ppd.c:498
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", skipping it."
+msgstr ""
+"Le fichier PPD ne contient pas de code pour la fonction de l'imprimante\n"
+"appelée \"%s %s\", je la passe."
+
+#: ../pprdrv/pprdrv_interface.c:190
+msgid ""
+"The interface performed a controlled shutdown because a non-spoolerprocess "
+"(possibly the OS kernel) sent it a signal."
+msgstr ""
+"L'interface a effectué un arrêt contrôlé parce qu'un processus différent du "
+"gestionnaire (peut-être le système d'exploitation) lui a envoyé un signal."
+
+#: ../pprdrv/pprdrv_patch.c:87
+msgid ""
+"Timeout expired while waiting for printer to respond to *?PatchFile query."
+msgstr ""
+"Le délai a expiré en attendant une réponse de l'imprimante à la requête "
+"*?PatchFile."
+
+#: ../pprdrv/pprdrv_pagecount.c:69
+msgid ""
+"Timeout expired while waiting for printer to respond to pagecount query."
+msgstr ""
+"Le délai a expiré en attendant une réponse de l'imprimante à une requête "
+"pagecount."
+
+#: ../pprdrv/pprdrv_flag.c:537 ../pprdrv/pprdrv_flag.c:555
+#, c-format
+msgid "Title: %s"
+msgstr "Titre : %s"
+
+#: ../pprdrv/pprdrv_lw_messages.c:158
+#, c-format
+msgid "Unrecognized data on \"%s\" line %d\n"
+msgstr "Données non reconnues sur \"%s\" à la ligne %d\n"
+
+#: ../pprdrv/pprdrv.c:1347
+#, c-format
+msgid "Unrecognized userparams variable \"%s\"."
+msgstr "Variable userparams \"%s\" non reconnue."
+
+#: ../pprdrv/pprdrv_flag.c:600
+#, c-format
+msgid "User \"%s\" is inexplicably absent from the charge account database."
+msgstr ""
+"L'utilisateur \"%s\" est absent de manière inexpliquée de la base de données "
+"de comptabilité."
+
+#: ../pprdrv/pprdrv.c:1342
+#, c-format
+msgid "Value of \"%s\" in \"%s\" must be boolean."
+msgstr "La valeur de \"%s\" dans \"%s\" doit être booléenne."
+
+#~ msgid ""
+#~ "Interface malfunction: it claims to have printed the\n"
+#~ "\tjob, but it exited before accepting all of the data."
+#~ msgstr ""
+#~ "Disfonctionnement de l'interface : elle dit avoir imprimé le travail\n"
+#~ "\tmais elle a quitté avant d'avoir accepté toutes les données."
+
+#~ msgid "Invalid \"%s\" (%s line %d"
+#~ msgstr "\"%s\" invalide (%s, ligne %d)"

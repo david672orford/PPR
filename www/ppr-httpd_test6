@@ -1,0 +1,5 @@
+GET /index.html HTTP/1.1
+Host: localhost
+If-Range: Mon, 07 Feb 2000 21:01:29 GMT
+Range: bytes=800-
+

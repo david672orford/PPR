@@ -1,0 +1,4 @@
+GET /cgi-bin/show_printlog.cgi HTTP/1.1
+Host: localhost
+If-Modified-Since: Mon, 07 Jul 2000 21:01:29 GMT
+

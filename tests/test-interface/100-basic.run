@@ -1,0 +1,17 @@
+#! /bin/sh
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -r none -u yes --routing 'My Routing Message' <<EndOfSample
+%!PS-Adobe 3.0
+%%Pages: 0
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0
+

@@ -1,0 +1,241 @@
+mouse:~ppr/src/docs/misc/docs_history.txt
+
+This file contains a history of changes to the PPR documentation which occured
+after the documentation was moved into the PPR source tree on 12 November 1998.
+
+
+1.40a4, 12 November 1998--12 November 1998
+
+* Moved documentation into the PPR source tree.
+
+* Changed docs Makefile so that it installs the Troff man pages and HTML
+  man pages and the HTML versions of the SGML documents in $(SHAREDIR)/man
+  and $(SHAREDIR)/htmldocs.
+
+* Moved fontsub.5.pod back into pprdoc.sgml.  This was done because the font
+  substitute file is not considered something that ordinary system
+  administrators are likely to modify.
+
+* Moved TODO.txt into this file.
+
+* Created fix_figures, a Perl script which fixes the output of sgml2html so
+  that figures work correctly as GIF files.
+
+
+1.40a5, 23 November 1998--18 February 1999.
+
+* Updated "Acknowledgements" section of pprinst.
+
+* Described new [default destinations] section of uprint.conf
+
+* Rewrote section of pprinst.sgml which discussed submitting jobs in order
+  to emphasize the use of switchsets as the perfered method of setting options.
+
+* Fixed pprinst.sgml to reflect ppad show changes.
+
+* Added --nocreate to ppr2samba(8).
+
+
+1.40a5, 18 February 1999
+
+* Added advice on setting inetd to allow many lprsrv connexions per minute.
+
+* Added another example of uprint-remote.conf wildcards.
+
+
+1.40a6, 7 April 1999--22 July 1999
+
+* Fixed unclosed subheadings.
+
+* Removed the lw-messages.conf.5.pod file because it was out of date and there
+  is more up-to-date documentation in the file itself.
+
+* Clarified the explaination of the BarBarLang parameter to an interface
+  program as explained in pprdoc.sgml.
+
+* Removed references to the Xerox job ticketing driver from ppr2samba.8.pod.
+
+* Changed documentation to reflect the change of the client interface's name
+  to clispool.  Also added a little more explaination of what it is for and
+  noted that it has not been tested recently.
+
+* Moved mfmodes.conf.5.pod into pprdoc.sgml.
+
+* Added documentation for new interfaces, including parallel which was somehow
+  omitted from the 1.32 documentation.
+
+* Documented the uniprint= parameter of the gs* interfaces.
+
+* Added preliminary documentation for ppr --cache-store, --strip-cache,
+  --strip-fontindex, --strip-printer, and --cache-priority.
+
+* Added documentation for --routing (previously only -i), -R routing,
+  and -R ignore-routing.
+
+* Described changes to ppr2samba.
+
+* Described "ppad pageslimit".
+
+* Removed the ppr(1) FILES section because it wasn't complete and didn't
+  seem very useful anyway.
+
+* Removed the ppad(8) FILES section.  It had pre-1.00 information!
+
+* Fixed some formatting problems in ppad.8.pod and added a section for
+  the "ppad alias" commands.
+
+
+1.40a7, 26 July 1999--10 August 1999
+
+* Updated -H editps and --strip-printer defaults.
+
+* Updated documentation to reflect changed file locations.
+
+
+1.40a8, 11 August 1999--15 December 1999
+
+* Described uprint-remote.conf failover.
+
+* Did work on ppr-fontindex.8.pod.
+
+* Added a brief mention of the new experimental lpr interface options.
+
+* Fixed some errors in index.html.
+
+* Fleshed out the "ppad alias" documentation a little.
+
+* Divided the documenation directory into multiple directories, both in the
+  source and in the web space.
+
+* Divided index.html into multiple index.html files in the various
+  documentation directories.
+
+* Started converting the man pages into a "Reference Manual".
+
+* Dropt UPRINT.1.man from the list of files installed as man pages since it
+  is not realy a man page at all.
+
+* Removed "PassThru types:" from the sample "ppad show" output and re-ordered
+  the lines the reflect changes to the command's actual output in
+  pprinst/pprinst.sgml.
+
+* Added descriptions of the "ppad addon", "ppad group addon",
+  and "ppad alias addon" commands.  Also added a reference to them to the
+  ppr2samba documentation.
+
+
+1.40b1, 15 December--26 January 2000
+
+* Added documentation for new "ppop qquery" fields and fixed documentation
+  for those that were renamed.
+
+* Added place-holder documenation for the new "ppop modify" command.
+
+* Documented "ppr --proxy-for".
+
+* Fixed "clean" target in docs/pprdoc/Makefile so it does not remove .gif
+  files.  That was a mistake.
+
+
+1.40b2, 26 January 2000--14 February 2000
+
+* Clarified the ppop --proxy-for documentation a little.
+
+* Clarified the uprint-lprm page.
+
+
+1.40, 15 February 2000--23 February 2000
+
+* Edited the "ppad switchset" and lprsrv documentation to talk about the
+  inadvisablility of putting "-m" in a switchset and to give a gimmer of
+  information about when lprsrv will override switchset options.
+
+
+1.41a1, 23 February 2000--18 July 2000
+
+* Clarified the "ppad flags" and "ppr -b" and "ppr -t" descriptions in the
+  reference manual.
+
+* Added reference to PPR_RESPONDER_OPTIONS to ppr --responder-options section
+  of ppr.1.pod.
+
+
+1.41b1, 18 July 2000--1 August 2000
+
+* Fixed pprdoc.sgml to reflect the fact that the default medium is no longer
+  a compile-time option but is now controled by ppr.conf.
+
+
+1.41b2, 20 September 2000--13 December 2000
+
+* Split this file into docs_history.txt and docs_todo.txt.
+
+* Brought misc/index.html up-to-date.
+
+* Renamed docs/misc/ppr-1.41.lsm to ppr.lsm.
+
+* Renamed docs/misc/po_README.txt to internationalization.txt and
+  misc_README.txt to misc_dir_contents.txt.
+
+* Documented new "ppad limitpages", and "ppad limitkilobytes", noted that
+  "ppad pageslimit" has been removed.
+
+* Documented new "ppr2samba-prototype:" line and cleaned up the ppr2samba(8)
+  man page.
+
+* Fixed all references to "/usr/ppr" in the man pages to refer to the new
+  locations.
+
+* refman/ppad.8.pod: removed references to setting lists to "none".
+
+
+1.41, 21 December 2000--8 January 2001
+
+* Minor changes for 1.41 release.
+
+
+1.42, 5 January 2001--30 January 2001
+
+* Removed docs/rfc/index.html, moving its links into docs/index.html.
+
+* Added links to specific Adobe Documents to docs/index.html.
+
+* Noted that "ppop mount" can now unmount bins.
+
+
+1.43, 1 February 2001--28 March 2001
+
+* Moved Uprint documentation from refman/ to uprint/.
+
+* Added RFCs for SNMP, MD5, and form-based upload.
+
+* Added links to the PPR home page and FAQ to index.html at the top level of
+  the documentation.
+
+
+1.44b1, 28 March 2001--7 May 2001
+
+* Added documentation for new "ppop last" command.
+
+* Removed RFCs 1155, 1157, and 1213 (all about SNMP) since they contain
+  little revelant information.  Added the draft of the Printer MIB.
+
+* Removed all RFCs from the distribution and replaced with links to
+  www.ietf.org.
+
+* Converted pprdoc/ and pprinst/ to Docbook.  Olivier Tharan assisted
+  with this.
+
+* Added documentation for the 16th, 17th, and 18th fields of printlog.
+
+* Fixed makefiles to format with Docubook tools.
+
+* Switched images from GIF to PNG.
+
+* Added PS and PDF versions of pprinst and pprdoc.
+
+
+1.44b1, 8 May 2001--8 May 2001
+
+* Noted that ppr --commentary and --commentator* are slated for removal in
+  PPR 1.50.

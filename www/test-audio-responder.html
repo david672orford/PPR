@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>PPR Audio Responder Server Tests</title>
+</head>
+<body>
+<h1>PPR Audio Responder Server Tests</h1>
+
+<h2>Commentator Tests</h2>
+
+<form action="../cgi-bin/responder_speach.cgi" method="GET">
+<dl>
+<dt>Job ID (split into 5 pieces):
+	<dd><input type="text" name="jobid" value="mynode rotate 1001 0 mynode" size=50>
+
+<dt>Submission date:
+	<dd><select name="time">
+	<option value="">Unknown
+	<option value=0>1 Jan 1970 00:00 GMT
+	<option value=900000000>Thu Jul  9 16:00:00 1998 GMT
+	<option value=961026401 selected>Wed Jun 14 23:46:41 2000 GMT
+	</select>
+
+<dt>Job Message:
+	<dd><select name="code">
+	<option value=0>Finished
+	<option value=1>Arrested
+	<option value=2>Canceled
+	<option value=3>Canceled while printing
+	<option value=4>Unknown destination
+	<option value=5>Destination rejecting jobs
+	<option value=6>No charge account
+	<option value=7>Incorrect password
+	<option value=8>Account overdrawn
+	<option value=9>Printer incapable of printing job
+	<option value=10>Group incapable of printing job
+	<option value=11>Not sufficiently conforming to DSC
+	<option value=12>No filter to convert to PostScript
+	<option value=13>Fatal ppr error
+	<option value=14>Spooler not running
+	<option value=15>-- Unused --
+	<option value=16>Requested medium not recognized
+	<option value=17>Unrecognized PJL language request
+	<option value=18>Error in ppr command line
+	<option value=19>Can't honour page list
+	<option value=20>ACL forbids
+	</select>
+
+<dt>Extra parameter:
+	<dd><input type="text" name="extra" value="chipmunk" size=16>
+
+<dt>Number of Pages:
+	<dd><select name="pages">
+	<option value="?">Unknown
+	<option value=10 selected>10
+	<option value=202>202
+	</select>
+
+<dt>Silly Sounds:
+	<dd><input type="checkbox" name="silly_sounds" value="1">
+
+<dt>Voice:
+	<dd><select name="voice">
+	<option selected>male1
+	<option>male1_44000
+	</select>
+
+</dl>
+
+<p><input type="submit" name="submit" value="Say It"></p>
+</form>
+
+</body>
+</html>
+

@@ -1,0 +1,283 @@
+<Sect2 id="adding-papsrv">
+<Title>Adding PPR Printers to the PPR AppleTalk Server</Title>
+
+<Para>
+The printers to be shared by the PPR AppleTalk server (<Emphasis remap="bf">papsrv</Emphasis>)
+are named in the configuration file <Literal remap="tt">/etc/ppr/papsrv.conf</Literal>.  A
+complete description of the format of this file can be found in the
+<Emphasis remap="bf">papsrv</Emphasis> man page.  In order to share a new printer on the AppleTalk
+network, you must edit the file and restart <Emphasis remap="bf">papsrv</Emphasis>.  The
+<Emphasis remap="bf">papsrv</Emphasis> configuration file has one record for each printer name
+it should advertise on the AppleTalk network.  Each record is a block of
+lines seperated from other records by a blank line.  Comment lines may be
+included as long as then have ``;'' or ``&num;'' in the first column.
+</Para>
+
+<Para>
+The <Emphasis remap="bf">papsrv</Emphasis> configuration file might look like this:
+</Para>
+
+<Para>
+
+<Screen>
+# Printers shared at this school
+[My Printer]
+PPRname=myprn
+
+[Your Printer]
+PPRname=yourprn
+</Screen>
+
+</Para>
+
+<Para>
+The <Emphasis remap="sf">PPRname=</Emphasis> line specifies the name of one of PPR's printers or groups.
+The line enclosed in square brackets indicates the name that <Emphasis remap="bf">papsrv</Emphasis>
+should cause to appear in the Macintosh Choosers.
+</Para>
+
+<Sect3 id="papsrv-restart">
+<Title>Restarting the AppleTalk Server
+</Title>
+
+<Para>
+After you add or delete an entry in <Literal remap="tt">/etc/ppr/papsrv.conf</Literal>, you must
+restart <Emphasis remap="bf">papsrv</Emphasis>.  The shell script <Emphasis remap="bf">/usr/ppr/bin/papsrv&lowbar;kill</Emphasis> will
+kill the old server for you.  Here are commands that will kill and restart the
+server:
+</Para>
+
+<Para>
+
+<Screen>
+# /usr/ppr/bin/papsrv_kill
+Killing papsrv, PID=4691.
+Waiting while papsrv shuts down...
+Waiting while papsrv shuts down...
+Shutdown complete.
+# /usr/ppr/bin/papsrv
+</Screen>
+
+</Para>
+
+<Para>
+If all goes well, the names in the square bracketed lines of <Literal remap="tt">papsrv.conf</Literal>
+should show up on the AppleTalk network.  If they do not, look in <Emphasis remap="bf">papsrv</Emphasis>'s
+log file which is <Literal remap="tt">/var/spool/ppr/logs/papsrv</Literal>.  There should be error
+messages there which will hopefully make the problem clear.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>The Default Zone</Title>
+
+<Para>
+Normally, the printer queues will show up in the default zone.  In fact,
+most AppleTalk implementations do not permit them to appear in any other
+zone.  Netatalk is an exception.  See the man page papsrv.conf(5) to learn
+about the extended syntax for specifying the zone a printer queue is to
+appear in.  Also, Netatalk does not provide a way to manualy specify a
+default zone, the default zone being determined automatically by consulting
+the AppleTalk routers.  If the default zone assigned in this manner is
+unacceptable you can create a file called
+``<Literal remap="tt">/etc/ppr/papsrv&lowbar;default&lowbar;zone.conf</Literal>'', this file should contain a
+single line which contains only the name of the desired default zone.
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>When You Must Specify a PPD File</Title>
+
+<Para>
+If the name which appears on a <Emphasis remap="sf">PPRname=</Emphasis> line is the name of a group and
+not all members of the group have the same PPD file in their individual
+configurations, then you must specify a PPD file for <Emphasis remap="bf">papsrv</Emphasis> to use when
+answering the Macintosh client's questions about the group.  You might want
+to choose the PPD file from the printer which has the largest set of
+features, but if one or more of the printers is a PostScript level 1 printer
+then you should choose a PPD file for a level 1 printer.  For example, if
+you had an HP 3si (a level 1 printer) and an HP 4m (a level 2 printer) you
+might tell <Emphasis remap="bf">papsrv</Emphasis> to use the PPD file for the HP 3si, like this:
+</Para>
+
+<Para>
+
+<Screen>
+[HP 3si and 4m]
+PPRname = hpgroup
+PPDfile = HP LaserJet 3Si PostScript
+</Screen>
+
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Specifying PPR Options</Title>
+
+<Para>
+If you would like <Emphasis remap="bf">papsrv</Emphasis> to include extra command line options when
+it invokes <Emphasis remap="bf">ppr</Emphasis> then you should include them in a <Emphasis remap="sf">PPRparms=</Emphasis>
+line.  For example, to prevent multiple copies, you could add a line to the example
+above:
+</Para>
+
+<Para>
+
+<Screen>
+[HP 3si and 4m]
+PPRname = hpgroup
+PPDfile = HP LaserJet 3Si PostScript
+PPRparms = -n 1
+</Screen>
+
+</Para>
+
+<Para>
+Some of the more commonly used command line options for <Emphasis remap="bf">ppr</Emphasis> are
+described in section <XRef LinkEnd="job-submit">.
+A complete description of <Emphasis remap="bf">ppr</Emphasis>'s command line options may be found
+in the man page ppr(1).  Here are some options which might be particuliarly
+useful in a <Emphasis remap="sf">PPRparms=</Emphasis> line:
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">-S false</Emphasis></Term>
+<ListItem>
+<Para>
+Normally, PPR strips out procedure set
+definitions, places them in the cache, and later copies them from the cache in
+order to reconstruct the document.  This saves disk space but can cause
+problems with print drivers with incorrectly name procedure sets such as
+certain HP versions of the Macintosh LaserWriter driver.  If you must use such
+a driver, you should put a <Emphasis remap="sf">PPRparms:</Emphasis> line in the <Emphasis remap="bf">papsrv</Emphasis>
+configuration file which includes the switch <Emphasis remap="bf">-S false</Emphasis>.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">-w peeve</Emphasis></Term>
+<ListItem>
+<Para>
+Normally, PPR generate a warning message only when it is
+unable to correct a problem with the document's structure.  These warnings will go
+into the job's log file and will be printed on a banner or trailer page if one is
+printed.  To enable more extensive warnings, put <Emphasis remap="bf">-w peeve</Emphasis> in the
+<Emphasis remap="sf">PPRparms:</Emphasis> line; to disable all warnings, use <Emphasis remap="bf">-w none</Emphasis>; the default is
+<Emphasis remap="bf">-w severe</Emphasis>.
+</Para>
+</listitem>
+</VarListEntry>
+
+<VarListEntry>
+<Term><Emphasis remap="bf">-Z true</Emphasis></Term>
+<ListItem>
+<Para>
+If this option is used, then jobs which do not end with a
+line which says ``<Emphasis remap="sf">&percnt;&percnt;EOF</Emphasis>'' will be discarded.  This might be a good idea
+because jobs which do not end with that line may have been truncated.  Prior to PPR
+version 1.30, <Emphasis remap="bf">papsrv</Emphasis> inserted this option automatically, but QuickDraw GX
+omits the <Emphasis remap="sf">&percnt;&percnt;EOF</Emphasis> line, so this option is no longer used automatically.
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
+
+</Sect3>
+
+<Sect3>
+<Title>Overriding the ``Product'' Name</Title>
+
+<Para>
+Another <Emphasis remap="bf">papsrv</Emphasis> configuration line which may prove useful is the
+<Emphasis remap="sf">Product=</Emphasis> line.  This specifies the string which will be returned to a Macintosh when it
+enquires as to the make and model of the printer.  LaserWriter 8 uses the answer to
+such a query to help it select a PPD file.  Normally the answer to the query is
+taken from the printer's PPD file (as defined with <Emphasis remap="bf">ppad ppd</Emphasis> or a <Emphasis remap="sf">PPDFile=</Emphasis>
+line) however you might want to instruct <Emphasis remap="bf">papsrv</Emphasis> to return a different answer
+so that the Macintosh will format the document using a different PPD file.
+</Para>
+
+<Para>
+Why would you want to do this?  You might do this if you wanted to use
+PPR's booklet making feature from a Macintosh.  If the Macintosh attempts
+to invoke a pseudo feature called "Booklet" then PPR will modify the document
+to turn it into a booklet.
+The PPD file ``PPR Generic'' which describes an imaginary printer with
+options for selecting media by colour, and making booklets.
+The PPD file ``PPR Generic Level 2'' describes an imaginary printer which
+supports PostScript Level 2 but is otherwise identical.
+</Para>
+
+<Para>
+To instruct the Macintosh computers to use one of these PPD files
+you could use a <Emphasis remap="bf">papsrv</Emphasis> configuration file entry like this one:
+</Para>
+
+<Para>
+
+<Screen>
+[My Printer]
+PPRname = myprn
+Product = (PPR Generic)
+</Screen>
+
+</Para>
+
+<Para>
+Notice that the parameter to the <Emphasis remap="sf">Product=</Emphasis> line is enclosed in
+parentheses.  (The PPD file ``PPR Generic'' is part of the PPR distribution.
+You can use FTP to transfer it from <Literal remap="tt">/usr/ppr/PPDFiles</Literal> to the folder
+``<Literal remap="tt">System Folder:Extensions:Printer Descriptions</Literal>'' of a Macintosh which has
+LaserWriter 8.)  Remember, for a more complete description of the format the of
+<Emphasis remap="bf">papsrv</Emphasis> configuration file refer to the man page papsrv.conf(5).
+</Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Transparent Mode</Title>
+
+<Para>
+A few users have reported that when they include certain EPS graphics,
+<Emphasis remap="bf">papsrv</Emphasis> and PPR fail to print the document.  Until this problem is
+tracked down, some have adopted a temporary solution.  This is to have
+<Emphasis remap="bf">papsrv</Emphasis> invoke PPR's transparent printing mode.
+</Para>
+
+<Para>
+You might create a special name on the network to which users can submit
+jobs which include the problematic EPS files.  In the example below, there
+is both a normal and a transparent mode entry for ``myprn''.
+</Para>
+
+<Para>
+
+<Screen>
+[My Printer]
+PPRname = myprn
+
+[My Printer, Raw]
+PPRname = myprn
+PPRparms = -H transparent
+Query Font Cache = no
+</Screen>
+
+</Para>
+
+<Para>
+The use of transparent mode is not encouraged when it is not necessary since
+advanced PPR features such as N-Up, page re-ordering, automatic
+bin selection, and font caching don't work in transparent mode.
+</Para>
+
+</Sect3>
+
+</Sect2>
+

@@ -1,0 +1,24 @@
+#! /usr/bin/perl -w
+#
+# mouse:~ppr/src/editps/LaserWriter_8_8.4
+# Written by David Chappell.
+# Last modified 9 August 1999.
+#
+
+$/ = "\r";
+
+while(<STDIN>)
+    {
+    # Convert to standard comments.
+    s/^%RBIBeginTrueTypeFont: \S+ (\S+)\r/%%BeginResource: font $1\r/;
+    s/^\n?%RBIEndTrueTypeFont\r/%%EndResource\r/;
+
+    # This driver uses both "%%IncludeResource: font" and "%%IncludeFont:".
+    next if(/^%%IncludeFont:/);
+
+    # Print what we have left.
+    print;
+    }
+
+exit 0;
+

@@ -1,0 +1,39 @@
+==============================================================================
+ mouse:~ppr/src/docs/misc/TODO.txt
+ mouse:~ppr/src/TODO.txt (symbolic link)
+ Last revised 28 March 2001
+==============================================================================
+
+* Make more extensive use of lmatch() and lmatchp() macros.
+
+* Add queue aliases support to ppr2samba, papsrv, and the WWW interface.
+
+* IPP server
+
+* IPP support in UPRINT
+
+* -F switch sorting
+
+* Make uprint-cancel and uprint-lpstat actually do something
+
+* Write uprint-lpc, uprint-lpadmin, uprint-accept, and uprint-reject
+
+* PPR node-to-node printing, queue display, and job canceling
+
+* Add responder option parsing in pprd.  (responder-widths.conf)
+
+* Increase any limit on the length of the interface options line
+
+* --dsc-charset and --arg-charset
+
+* Support banner page "news" messages
+
+* Convert build to autoconf
+
+* Support printing subsets of the document's pages
+
+* More tightly integrate Ghostscript
+
+==============================================================================
+ end of file
+==============================================================================

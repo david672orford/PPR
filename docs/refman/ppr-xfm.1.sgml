@@ -1,0 +1,142 @@
+<!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V2.4.1//EN" "/opt/texmf/gmat/sgml/Davenport/dtds/2.4.1/docbook.dtd">
+<!-- -->
+<!-- $Id$ -->
+<!-- -->
+<!-- $Log$ -->
+<!-- -->
+<!-- General reminders: -->
+
+<book>
+
+<chapter id="pod2docbook-ch-1"><title>ppr-xfm - Simple file manager interface for PPR
+
+</title>
+<chapter id="pod2docbook-ch-1"><title>NAME
+
+</title><para>
+ppr-xfm - Simple file manager interface for PPR
+
+
+</para>
+
+<sect1 id="pod2docbook-ch-1-sect-1"><title>SYNOPSIS
+
+</title><para>
+<emphasis>ppr-xfm</emphasis>  <emphasis>destination</emphasis> [<emphasis>file1 ... fileN</emphasis>]
+
+
+</para>
+
+</sect1>
+
+<sect1 id="pod2docbook-ch-1-sect-2"><title>DESCRIPTION
+
+</title><para>
+The shell script <emphasis>ppr-xfm</emphasis> and the <emphasis>ppr-xgrant</emphasis> program are designed to be used with the X-Windows file managers such as
+Xfm.
+
+
+</para>
+
+<para>
+To use <emphasis>ppr-xfm</emphasis> with Xfm, you should create one item in the Applications window for each
+printer. The icon ``printer.xpm'' is a good one to use. The ``Push action''
+should be ``exec /usr/ppr/bin/ppr-xfm <emphasis>destname</emphasis>''. The ``Drop action'' should be ``exec /usr/ppr/bin/ppr-xfm <emphasis>destname</emphasis> $*''.
+
+
+</para>
+
+<para>
+If you drop files into the icon in the Applications window, they will be
+printed. If you double click on the icon, a queue listing will be
+presented.
+
+
+</para>
+
+<para>
+When jobs are submitted through <emphasis>ppr-xfm</emphasis>, the responder ``xwin'' is used. The xwin responder will not work unless
+the user ``ppr'' has permission to pop up windows on your X-Windows
+display. In order to grant the permission, you should run the program
+<emphasis>/usr/ppr/bin/xpprgrant</emphasis> at the start of your X session.
+
+
+</para>
+
+<para>
+Some versions of Bash do not work with Xfm. If the files you drop into the
+printer icon are not printed, install the shell Ash (included as
+``/bin/sh'' in NetBSD and as ``/bin/ash'' in some Linux distributions) and
+start Xfm with the command
+
+
+</para>
+
+<para>
+<literal>SHELL=/bin/ash xfm &amp;</literal>
+
+
+
+
+</para>
+
+<para>
+These scripts could be useful even when you are not using a file manager.
+For instance, you could type the command:
+
+
+</para>
+
+<para>
+<literal>/usr/ppr/bin/ppr-xfm myprinter somefile &amp;</literal>
+
+
+
+
+</para>
+
+<para>
+to submit a file for printing. A window would pop up on your X display to
+inform you when the job is done.
+
+
+</para>
+
+</sect1>
+
+<sect1 id="pod2docbook-ch-1-sect-3"><title>SEE ALSO
+
+</title><para>
+/usr/doc/xfm-1.3/README (Linux Slackware), <literal>ppop(1),</literal>
+<literal>ppr(1)</literal> ``PPR, a PostScript Print Spooler''.
+
+
+</para>
+
+</sect1>
+
+<sect1 id="pod2docbook-ch-1-sect-4"><title>HISTORY
+
+</title><para>
+PPR was written at Trinity College during 1993--2000. It was first released
+to the public on 26 April 1995.
+
+
+</para>
+
+</sect1>
+
+<sect1 id="pod2docbook-ch-1-sect-5"><title>AUTHOR
+
+</title><para>
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+
+</para>
+
+</sect1>
+
+</chapter>
+
+
+</book>    <!-- End of the book -->
