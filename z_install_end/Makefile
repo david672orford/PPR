@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 14 March 2003.
 #
 
 include ../Makefile.conf
@@ -56,6 +56,7 @@ install: $(ALL)
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh
+	./install_alternatives.sh
 	$(HOMEDIR)/bin/ppr-index >/dev/null
 
 #=== Housekeeping ===========================================================
