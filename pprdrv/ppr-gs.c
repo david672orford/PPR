@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 April 2003.
+** Last modified 22 October 2003.
 */
 
 /*
@@ -49,6 +49,12 @@ const char myname[] = "ppr-gs";
 
 /*
 ** Where do we seek Ghostscript?
+**
+** We will look for them in what we consider order of decreasing
+** deliberateness of their installation.  In other words, PPR-GS is first,
+** Ghostscript at the default location when built from source
+** (/usr/local/bin) is next, and last is Ghostscript at the system location
+** (/usr/bin/gs).
 */
 const char *gs_exe_list[] = {
 		HOMEDIR"/../ppr-gs/bin/gs",				/* PPR Ghostscript distribution */
@@ -101,12 +107,8 @@ int main(int argc, char *argv[])
 	char *p;
 
 	/*
-	** First step is to find a copy of Ghostscript which we can use.  Using
-	** the list supplied above, we will look for them in what we consider
-	** order of decreasing deliberateness of their installation.  In other
-	** words, PPR-GS is first, Ghostscript at the default location when
-	** built from source (/usr/local/bin) is next, and last is Ghostscript
-	** at the system location (/usr/bin/gs).
+	** First step is to find a copy of Ghostscript which we can use.  We use
+	** list specified above.
 	*/
 	{
 	int i;
@@ -246,8 +248,20 @@ int main(int argc, char *argv[])
 	gs_args[di++] = "-q";
 	gs_args[di++] = "-dSAFER";
 
-	gs_args[di++] = outputfile ? outputfile : "-sOutputFile=| cat - >&3";
+	if(outputfile)
+		{
+		gs_args[di++] = outputfile;
+		}
+	else if(access("/dev/fd/3", W_OK) == 0)
+		{
+		gs_args[di++] = "-sOutputFile=/dev/fd/3";
+		}
+	else
+		{
+		gs_args[di++] = "-sOutputFile=| cat - >&3";
+		}
 
+	/* PostScript text will be read from stdin. */
 	gs_args[di++] = "-";
 
 	gs_args[di++] = NULL;

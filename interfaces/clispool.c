@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2003.
+** Last modified 23 October 2003.
 */
 
 /*
@@ -176,13 +176,18 @@ int main(int argc, char *argv[])
 
 	full_file_name[0] = '\0';	/* for fatal() */
 
-	chdir(HOMEDIR);				/* change to PPR's home directory */
+	if(argc >= 2 && strcmp(argv[1], "--probe") == 0)
+		{
+		fatal(EXIT_PRNERR_NORETRY_BAD_SETTINGS, "The interface program \"%s\" does not support probing.\n", argv[0]);
+		}
 
 	if(argc < 3)
 		fatal(EXIT_PRNERR_NORETRY_BAD_SETTINGS, "Interface invokation error: insufficient parameters.");
 
 	printer_name = argv[1];				/* assign the arguments */
 	printer_address = argv[2];			/* to global variables */
+
+	chdir(HOMEDIR);						/* change to PPR's home directory */
 
 	/* get the system name which we will use in building the */
 	/* local network name and in building the share area name */

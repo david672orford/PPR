@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_interfaces.sgml
-Last Modified: 22 Octoberber 2003
+Last Modified: 23 Octoberber 2003
 Last Proofread: never
 -->
 
@@ -32,15 +32,33 @@ calling the <function>alert()</function>.  It should do this to report
 invalid command line parameters or unexpected problems communicating with
 the printer.</para>
 
-<para>The interface program must return an exit codes in order to
-inform <command>pprdrv</command> of its success or failure.  If the code indicates failure, then
-<command>pprdrv</command> will adopt the exit code as its own.  If the code
-indicates success, then <command>pprdrv</command> will adopt it only if it
-too achieved success.</para>
+<para>The interface program must return an exit codes in order to inform
+<command>pprdrv</command> of its success or failure.  If the code indicates
+failure, then <command>pprdrv</command> will adopt the exit code as its own. 
+If the code indicates success, then <command>pprdrv</command> will adopt it
+only if it too achieved success.</para>
 
-<para>Some interfaces have a special probe mode.  In probe mode they don't connect to
+<figure id="interfaces1">
+<title>
+	A typical Printer Interface Program acts as an intermediary between
+	<command>pprdrv</command> and a PostScript printer.  It communicates
+	with the printer by using TCP/IP and SNMP.
+</title>
+<mediaobject>
+	<imageobject><imagedata fileref="pprhack_interfaces1.eps" format="eps"/></imageobject>
+	<imageobject><imagedata fileref="pprhack_interfaces1.png" format="png"/></imageobject>
+</mediaobject>
+</figure>
+
+<para>Some interface programs have a special probe mode.  In probe mode they don't connect to
 the printer, but instead use out-of-band means to extract identifying information from
-the printer.</para>
+the printer.  An interface program's probe mode is one of the ways the
+<command>ppad ppdq</command> and <command>ppad ppd query</command> commands
+attempt to identify the printer in order to recommend an appropriate PPD
+file.</para>
+
+<para>In the remainder of this sections, the way an interface program ought
+to work is explaned in more detail.</para>
 
 <sect2>
 <title>The Command Line Parameters</title>
@@ -227,8 +245,8 @@ input file through Ghostscript if this parameter was empty.  Since
 <command>pprdrv</command> now performs this function, these interface
 programs are are obsolete.  This parameter will probably be removed in a
 future version of <application>PPR</application>.  This only possible reason
-for preserving it is if someone can show that some printer comincation
-methods requires the file type to be communicated out-of-band.</para>
+for preserving it is if someone can show that some printer comuncation
+method requires the file type to be communicated out-of-band.</para>
 
 <para>The tenth parameter indicates the type of the file on stdin, that is,
 the file which the interface program is begin asked transmit to the printer. 
@@ -686,12 +704,46 @@ For example, many printers which accept jobs over TCP/IP also response to SNMP q
 Since these methods depend very much on the method of connecting to the printer, probes
 of this type, called out-of-band probes, are implemented in interface programs.</para>
 
-<para>Interface programs which support out-of-band probe will respond to the
-<option>--probe</option> and probe the printer rather than connecting to it with the
-intention of transmitting a print job.  The results of the probe are sent back
-to <command>pprdrv</command> as a series of <literal>PROBE:</literal> lines.
-
+<para>Interface programs which support out-of-band probe will recognize and
+act on <option>--probe</option>.  It will interrogate the printer in some
+way rather than connecting to it with the intention of transmitting a print
+job.  The results of the probe are sent back to <command>pprdrv</command> as
+a series of <literal>PROBE:</literal> lines.
 </para>
+
+<para>If the probe may take more than a few seconds, it is recommended that
+the interface immedately send a <literal>PROBE:</literal> line with no value
+in order to let <command>ppad</command> know that it supports probe mode. 
+Otherwise, <command>ppad</command> may conclude that the interface program
+doesn't implement <option>--probe</option> and give up too soon.</para>
+
+<para>If the interface is able to obtain information about the printer, it
+should report it by printing addional <literal>PROBE:</literal> lines. 
+These show be in the form <literal>PROBE:</literal>
+<replaceable>name</replaceable><literal>=</literal><replaceable>value</replaceable>. 
+The <replaceable>value</replaceable> should not be quoted, even if it
+contains spaces.  Currently defined names are listed below.  Since the probe
+feature is very new, this list is subject to change.</para>
+
+<variablelist>
+
+<varlistentry>
+	<term>product</term>
+	<listitem>
+		<para>The PostScript product name.  The value should be the
+		bare name without surounding partheses.</para>
+	</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>When running in probe mode, the interface program will be invoked with
+the printer name on the command line set to "-".  The
+<function>alert()</function> knows about this special name.  When it is
+asked to post an alert to the printer "-", it sends the alert to stderr
+instead.  The result is that the messages will be visible to the user of
+<command>ppad</command> rather than being hidden away in the alert
+log.</para>
 
 </sect2>
 

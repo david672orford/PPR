@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 October 2003.
+# Last modified 23 October 2003.
 #
 
 #
@@ -37,12 +37,25 @@
 # source the file which defines the exit codes
 . lib/interface.sh
 
+# Detect the --probe option.
+PROBE=0
+if [ "$1" == "--probe" ]
+	then
+	PROBE=1
+	fi
+
 # give the parameters names
 PRINTER="$1"
 ADDRESS="$2"
 OPTIONS="$3"
 JOBBREAK="$4"
 FEEDBACK="$5"
+
+if [ $PROBE -ne 0 ]
+	then
+	lib/alert $PRINTER TRUE "The interface program \"dummy\" does not support probing."
+	exit $EXIT_PRNERR_NORETRY_BAD_SETTINGS
+	fi
 
 # Parse the options.
 SLEEP=""

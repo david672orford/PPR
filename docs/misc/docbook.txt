@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/docbook.txt
-11 September 2003
+23 October 2003
 
 This file lists some of the Docbook tags used in the PPR documentation and the
 conventions for their use.  It is intended for quite reference while writing
@@ -200,8 +200,8 @@ These tags produce dictionary lists.
 <figure id="id_here">
 <title>title here</title>
 <mediaobject>
-	<imageobject><imagedata fileref="pprdoc-printing2.eps" format="eps"></imageobject>
-	<imageobject><imagedata fileref="pprdoc-printing2.png" format="png"></imageobject>
+	<imageobject><imagedata fileref="pprhack_somesection1.eps" format="eps"/></imageobject>
+	<imageobject><imagedata fileref="pprhack_somesection1.png" format="png"/></imageobject>
 </mediaobject>
 </figure>
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 23 October 2003.
 */
 
 /*
@@ -318,7 +318,10 @@ static void parse_options(int portfd, struct OPTIONS *options)
 
 	} /* end of parse_options() */
 
-static int do_probe(void)
+/*
+** Implementation of the --probe option.
+*/
+static int do_probe(const char address[])
 	{
 	fprintf(stderr, "probe not yet supported\n");
 	return EXIT_PRNERR;
@@ -355,7 +358,7 @@ int main(int argc, char *argv[])
 	/* If the --probe option was used, */
 	if(int_cmdline.probe)
 		{
-		int_exit(do_probe());
+		int_exit(do_probe(int_cmdline.address));
 		}
 
 	/* Check for unusable job break methods. */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 October 2003.
 */
 
 /*
@@ -484,6 +484,13 @@ int main(int argc, char *argv[])
 	/* Parse the command line and possibly substitute environment
 	   variables into the paramater structure for convienence. */
 	int_cmdline_set(argc, argv);
+
+	/* Check for --probe. */
+	if(int_cmdline.probe)
+		{
+		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
 	/* Parse the options string, searching for name=value pairs. */
 	{

@@ -538,7 +538,7 @@ int main(int argc, char *argv[])
 	/* There is no out-of-band path for probing printers over a serial line. */
 	if(int_cmdline.probe)
 		{
-		fprintf(stderr, _("The interface program \"%s\" doesn't support probing.\n"), int_cmdline.int_basename);
+		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
 	    int_exit(EXIT_PRNERR);
 		}
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 22 October 2003.
 #
 
 #
@@ -172,6 +172,7 @@ clean:
 		echo; \
 		done
 	$(RMF) $(BACKUPS)
+	$(RMF) root.sh
 	( cd include && $(RMF) $(BACKUPS) )
 	( cd nonppr_misc && $(RMF) $(BACKUPS) )
 	find . -name core -exec rm -f {} \; -print

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/writeqfile.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 Novemer 2002.
+** Last modified 22 October 2003.
 */
 
 #include "before_system.h"
@@ -94,9 +94,9 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
 	/* This big long line contains lots of information.  It will later be broken
 	   up into several lines. */
-	fprintf(Qfile, "Attr: %d %.1f %d %d %d %d %d %d %d %d %d %ld %ld %d %d\n",
+	fprintf(Qfile, "Attr: %d %s %d %d %d %d %d %d %d %d %d %ld %ld %d %d\n",
 				qentry->attr.langlevel,
-				qentry->attr.DSClevel,
+				gu_dtostr(qentry->attr.DSClevel),
 				qentry->attr.pages,
 				qentry->attr.pageorder,
 				qentry->attr.prolog,
@@ -113,8 +113,8 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 				);
 
 	/* These will replace "Attr:".  For now they are ignored. */
-	fprintf(Qfile, "Attr-DSC: %.1f %d %d %d %d\n",
-				qentry->attr.DSClevel,
+	fprintf(Qfile, "Attr-DSC: %s %d %d %d %d\n",
+				gu_dtostr(qentry->attr.DSClevel),
 				qentry->attr.prolog,
 				qentry->attr.docsetup,
 				qentry->attr.script,

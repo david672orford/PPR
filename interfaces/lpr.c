@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 23 October 2003.
 */
 
 /*
@@ -438,6 +438,13 @@ int main(int argc, char *argv[])
 	** into the structure called "int_cmdline".
 	*/
 	int_cmdline_set(argc, argv);
+
+	/* Check for --probe. */
+	if(int_cmdline.probe)
+		{
+		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
+	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
 	/* Check for unsuitable job break methods. */
 	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
