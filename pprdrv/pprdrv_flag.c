@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_flag.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 20 July 2001.
+** Last modified 18 April 2002.
 */
 
 /*
@@ -33,7 +33,6 @@
 #include "interface.h"
 #include "userdb.h"
 #include "version.h"
-
 
 /*
 ** Global variables for this module.
@@ -181,7 +180,7 @@ static int flag_page_vote(int printer_vote, int job_vote, int position)
 **
 ** It fills in the structure "flag" with information about the appropriate
 ** medium.  If the medium is known to be mounted in a specific bin, the
-** actual bin selection is done later using select_media().
+** actual bin selection is done later using select_medium().
 **
 ** The return values have the following meaning:
 **
@@ -195,7 +194,7 @@ static int flag_page_vote(int printer_vote, int job_vote, int position)
 **
 **	1	At least one bin contains a suitable medium.  The "flag"
 **		structure now contains a description of it.  Please
-**		call select_media() to select it.
+**		call select_medium() to select it.
 */
 static int select_flag_medium(void)
     {
@@ -452,7 +451,7 @@ static void print_flag_page_standard(int flag_type, int position, int mediumfoun
 	** value because it should always be TRUE.  In fact, I
 	** find it difficult to imagine how it could be FALSE.
 	*/
-	select_media(flag.medianame);
+	select_medium(flag.medianame);
 
 	/*
 	** Look thru the paper sizes, and if we find one

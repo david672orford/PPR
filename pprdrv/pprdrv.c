@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 13 November 2001.
+** Last modified 18 April 2002.
 */
 
 /*
@@ -598,14 +598,14 @@ static gu_boolean copy_setup(void)
     insert_noinclude_fonts();
 
     /*
-    ** If this document appears to require only one media and
+    ** If this document appears to require only one medium and
     ** ppr was invoked with the "-B true" switch (or no -B switch),
     ** then insert bin select code at the top of the document
     ** setup section.  If we insert such code, we will strip
     ** out any pre-existing code.
     */
     if(media_count == 1 && job.opts.binselect)
-	strip_binselects = select_media(media_xlate[0].pprname);
+	strip_binselects = select_medium(media_xlate[0].pprname);
 
     /*
     ** If we are printing signatures ourselves, then strip out any code
@@ -896,9 +896,9 @@ static void copy_a_page(int newnumber)
 	** function call will return FALSE.
 	*/
 	if(pagemedia[0] != '\0')
-	    strip_binselects = select_media_by_dsc_name(pagemedia);
+	    strip_binselects = select_medium_by_dsc_name(pagemedia);
 	else
-	    strip_binselects = select_media_by_dsc_name(default_pagemedia);
+	    strip_binselects = select_medium_by_dsc_name(default_pagemedia);
 	}
 
     /* Copy rest of page text from "-text" file. */
@@ -2234,7 +2234,7 @@ int main(int argc, char *argv[])
 	    set_jobname();
 	    insert_noinclude_fonts();
 	    if(media_count==1 && job.opts.binselect)
-		select_media(media_xlate[0].pprname);
+		select_medium(media_xlate[0].pprname);
 	    insert_features(qstream, 1);	/* insert most ppr -F switch things */
 	    invoke_N_Up();
 	    insert_features(qstream, 2);	/* insert ppr -F *Duplex switch thing */

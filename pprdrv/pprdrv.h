@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 20 July 2001.
+** Last revised 18 April 2002.
 */
 
 /*
@@ -207,8 +207,8 @@ int check_if_capable(FILE *qfile, int group_pass);
 
 /* pprdrv_media.c: */
 int load_mountedlist(void);
-int select_media(char *name);
-int select_media_by_dsc_name(char *name);
+int select_medium(const char name[]);
+int select_medium_by_dsc_name(const char name[]);
 void read_media_lines(FILE *q);
 extern struct Media_Xlate media_xlate[];
 extern int media_count;

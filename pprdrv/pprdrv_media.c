@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_media.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 January 2000.
+** Last modified 18 April 2002.
 */
 
 /*
@@ -85,32 +85,30 @@ int load_mountedlist(void)
     } /* end of load_mountedlist() */
 
 /*
-** Insert the appropriate bin select code to select the input
-** tray which contains the specified media.
+** Insert the appropriate bin select code to select the input tray which 
+** contains the specified medium.
 **
-** This code is called during banner page generation and
-** at the top of the Document Setup Section (if automatic
-** bin selection is on and the document is all to be printed
-** on one type of media).
+** This code is called during banner page generation and at the top of the 
+** Document Setup Section (if automatic bin selection is on and the document
+** is all to be printed on one type of media).  It may also be called by 
+** select_medium_by_dsc_name() which may be called during page setup.
 **
-** The media name specified is a valid name in the PPR media list,
-** not this jobs media list.  (Jobs assign their own names to
-** the media they specify.)
+** The media name specified is a valid name in the PPR media list, not this 
+** jobs media list.  (Jobs assign their own names to the media they specify.)
 **
-** If this function suceeds, it will return TRUE.  The code
-** which write the document setup section uses this return
-** value to decide if old bin select code should be stripped
-** out.
+** If this function suceeds, it will return TRUE.  The code which write the
+** document setup section uses this return value to decide if old bin select 
+** code should be stripped out.
 */
-int select_media(char *name)
+int select_medium(const char name[])
     {
     char pname[MAX_MEDIANAME];		/* padded version of media name */
     int bincount;
     int x;
     const char *fptr;			/* pointer to feature code */
     const char *tf;			/* set to "True" or "False" */
-    char abin[MAX_BINNAME+1];       /* ASCIIZ version of bin name */
-    int AutoSelect_exists=FALSE;    /* start by assuming there is no "AutoSelect" bin */
+    char abin[MAX_BINNAME+1];		/* ASCIIZ version of bin name */
+    int AutoSelect_exists=FALSE;	/* start by assuming there is no "AutoSelect" bin */
 
     ASCIIZ_to_padded(pname,name,sizeof(pname));
 
@@ -184,14 +182,14 @@ int select_media(char *name)
 	} /* end of if mounted media list available */
 
     return FALSE;	/* don't strip binselects */
-    } /* end of select_media() */
+    } /* end of select_medium() */
 
 /*
 ** This function is called at the start of each page to select the
 ** correct media for that page if automatic bin selection is on
 ** and the document contains more than one type of media.
 */
-int select_media_by_dsc_name(char *media)
+int select_medium_by_dsc_name(const char media[])
     {
     int x;
 
@@ -199,13 +197,13 @@ int select_media_by_dsc_name(char *media)
     	{
 	if( strcmp(media_xlate[x].dscname,media)==0)
 	    {
-	    select_media(media_xlate[x].pprname);
+	    select_medium(media_xlate[x].pprname);
 	    break;
 	    }
     	}
 
     return FALSE;
-    } /* end of select_media_by_dsc_name() */
+    } /* end of select_medium_by_dsc_name() */
 
 /*
 ** Read the "Media:" lines from the queue file.
