@@ -192,7 +192,7 @@ static char message_snmp_status[80] = {'\0'};
 static char message_job[80] = {'\0'};
 static char message_writemon_operation[20] = {'\0'};
 static int message_writemon_minutes = 0;
-static gu_boolean message_writemon_connecting = FALSE;
+static const char *message_writemon_connecting = NULL;
 static char message_pagemon[20];
 
 struct SNMP_STATUS status;		/* current device status */
@@ -373,7 +373,12 @@ static void ppop_status_write(void)
 		gu_snprintfcat(buffer, sizeof(buffer), "snmp-status: 0 %s\n", message_snmp_status);
 
 	if(message_writemon_operation[0] != '\0')
-		gu_snprintfcat(buffer, sizeof(buffer), "operation: %s %d\n", message_writemon_connecting ? "CONNECT" : message_writemon_operation, message_writemon_minutes);
+		{
+		gu_snprintfcat(buffer, sizeof(buffer), "operation: %s %d\n",
+				message_writemon_connecting ? message_writemon_connecting : message_writemon_operation,
+				message_writemon_minutes
+				);
+		}
 
 	if(message_pagemon[0] != '\0')
 		gu_snprintfcat(buffer, sizeof(buffer), "page: %s\n", message_pagemon);
@@ -534,7 +539,7 @@ void ppop_status_pagemon(const char string[])
 ** "%%[ PPR connected ]%%".	 (Some of the more advanced interface programs
 ** print these messages for our benefit.)
 */
-void ppop_status_connecting(gu_boolean connecting)
+void ppop_status_connecting(const char connecting[])
 	{
 	message_writemon_connecting = connecting;
 	ppop_status_write();

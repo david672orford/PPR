@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 1 November 2003.
 */
 
 /*===========================================================================
@@ -546,17 +546,17 @@ int feedback_reader(void)
 			*/
 			if(linelen == 27 && strncmp((char*)ptr, "%%[ PPR address lookup ]%%\n", linelen) == 0)
 				{
-				/* we don't do anything with this yet */
+				ppop_status_connecting("LOOKUP");
 				continue;
 				}
 			if(linelen == 23 && strncmp((char*)ptr, "%%[ PPR connecting ]%%\n", linelen) == 0)
 				{
-				ppop_status_connecting(TRUE);
+				ppop_status_connecting("CONNECT");
 				continue;
 				}
 			if(linelen == 22 && strncmp((char*)ptr, "%%[ PPR connected ]%%\n", linelen) == 0)
 				{
-				ppop_status_connecting(FALSE);
+				ppop_status_connecting(NULL);
 				continue;
 				}
 

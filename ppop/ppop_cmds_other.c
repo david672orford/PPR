@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2003.
+** Last modified 1 November 2003.
 */
 
 /*
@@ -314,6 +314,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 		if(gu_sscanf(p, "%#s %d", sizeof(operation), operation, &minutes) == 2)
 			{
+			if(strcmp(operation, "LOOKUP") == 0)
+				p = _("looking up address");
 			if(strcmp(operation, "CONNECT") == 0)
 				p = _("connecting");
 			else if(strcmp(operation, "WRITE") == 0)

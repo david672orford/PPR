@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 October 2003.
+# Last modified 1 November 2003.
 #
 
 #
@@ -207,6 +207,9 @@ if_dir_print "/usr/share/cups/model/C"
 
 # MacOS 10.x
 if_dir_print "/Library/Printers/PPDs/Contents/Resources/en.lproj"
+
+# PPR's Ghostscript distribution
+if_dir_print "/usr/share/ppr-gs/ppd"
 
 echo >&5
 

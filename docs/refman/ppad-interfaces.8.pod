@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2003.
+# Last modified 1 November 2003.
 #
 
 =head1 NAME
@@ -386,7 +386,10 @@ waiting for a lull in communications.  The default for this option is 0
 =item snmp_community=
 
 This option tell the interface what community name (password) to use when
-using SNMP to fetch the printer status.  The default value is "public".
+using SNMP to fetch the printer status.  This is also used when this interface
+program is running in probe mode.
+Probe mode is used by the B<ppad ppdq> and B<ppad ppd query> commands.
+The default value is "public".
 Almost all printers allow read-only access with the community name "public".
 
 =item appsocket_status_interval=
@@ -485,16 +488,23 @@ These are the B<lpr> interface's options:
 
 =item banner=
 
-This tells the remote printer whether or not to attach its own banner page
+With this option you can tell the remote printer whether or not you want it
+to attach its own banner page
 to the job.  The default is "banner=no".  Certain types of remote systems
 have been known to refuse to print the job unless "banner=yes" is used.
 
 =item lpr_typecode=
 
-This option specifies the file type code which should be used when
-submitting the file.  The preferable code is "o" which means that the file
+With this option you can specify the file type code to be used when
+submitting the job to the printer.  The preferable code is "o" which means that the file
 is PostScript, however many B<lpd> implementations do not understand this
 code so "f" is the default.
+
+=item smtp_community=
+
+See the description of this option in the section for the B<tcpip> interface.
+The only difference is that the B<lpr> interface program uses this
+value only when it is running in probe mode.
 
 =back
 

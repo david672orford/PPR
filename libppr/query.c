@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 October 2003.
+** Last modified 1 November 2003.
 */
 
 #include "before_system.h"
@@ -292,6 +292,11 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 				if(is_stderr)
 					{
 					fprintf(stderr, "    %s\n", line);
+					continue;
+					}
+				if(strcmp(line, "%%[ PPR address lookup ]%%") == 0)	/* so far, so good */
+					{
+					timeout = 30;									/* our confidence grows, extend the timeout */
 					continue;
 					}
 				if(strcmp(line, "%%[ PPR connecting ]%%") == 0)		/* so far, so good */

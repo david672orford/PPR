@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 1 November 2003.
 */
 
 /*
@@ -164,11 +164,14 @@ static void snmp_status(void *p)
 			{
 			if(strstr(gu_exception, "(noSuchName)"))
 				{
-				alert(int_cmdline.printer, TRUE,
-					_("This printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
-					  "firmware, if possible.  If not, you can turn off SNMP queries by adding the\n"
-					  "interface option \"snmp_status_interval=0\".\n")
-					);
+				if(strcmp(int_cmdline.printer, "-") != 0)
+					{
+					alert(int_cmdline.printer, TRUE,
+						_("This printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
+						"firmware, if possible.  If not, you can turn off SNMP queries by adding the\n"
+						"interface option \"snmp_status_interval=0\".\n")
+						);
+					}
 				}
 			else
 				{
@@ -299,85 +302,6 @@ static void appsocket_status_close(void *p)
 	}
 
 /*=========================================================================
-** Probe mode
-**
-** In probe mode we print lines starting with "PROBE:" to stdout.  These
-** lines may either be empty, to indicate that we are still alive, or
-** may contain a name=value pair describing something which we have
-** discovered about the printer.
-=========================================================================*/
-static int do_probe(unsigned long int ip_address, const char snmp_community[])
-	{
-	/* These definitions are from RFC 1155 and 1156. */
-	#define MIB			"1.3.6.1.2"
-	#define  MGMT		MIB".1"
-	#define   SYSTEM	MGMT".1"
-
-	struct {
-		const char *name;
-		const char *id;
-		} query_items[] =
-		{
-		{"sysDescr",		SYSTEM".1.0"},
-		{"hrDeviceDescr",	MGMT".25.3.2.1.3.1"},
-		{NULL, NULL}
-		};
-
-	/* Send an empty result line so that ppad will know we are alive and
-	   extend the timeout.
-	   */
-	printf("PROBE:\n");
-
-	gu_Try
-		{
-		struct gu_snmp *snmp_obj = gu_snmp_open(ip_address, snmp_community);
-
-		gu_Try
-			{
-			int i;
-			char *str;
-
-			for(i=0; query_items[i].name; i++)
-				{
-				gu_Try
-					{
-					gu_snmp_get(snmp_obj,
-						query_items[i].id, GU_SNMP_STR, &str,
-						NULL
-						);
-					printf("PROBE: SNMP %s=%s\n", query_items[i].name, str);
-					}
-				gu_Catch
-					{
-					if(strstr(gu_exception, "(noSuchName)"))
-						{
-						printf("SNMP %s not found\n", query_items[i].name);
-						}
-					else
-						{
-						gu_ReThrow();
-						}
-					}
-				}
-			}
-		gu_Final
-			{
-			gu_snmp_close(snmp_obj);
-			}
-		gu_Catch
-			{
-			gu_ReThrow();
-			}
-		}
-	gu_Catch
-		{
-		fprintf(stderr, "Probe failed: %s\n", gu_exception);
-		}
-
-	return EXIT_PRINTED;
-	}
-
-/*=========================================================================
 ** Tie it all together.
 =========================================================================*/
 int main(int argc, char *argv[])
@@ -388,8 +312,8 @@ int main(int argc, char *argv[])
 
 	options.connect.refused_retries = 5;
 	options.connect.refused_engaged = TRUE;
-	options.connect.sndbuf_size = 0;			/* size for SO_SNDBUF, 0 means don't set it
-*/	options.connect.timeout = 20;				/* connexion timeout in seconds */
+	options.connect.sndbuf_size = 0;			/* size for SO_SNDBUF, 0 means don't set it */
+	options.connect.timeout = 20;				/* connexion timeout in seconds */
 	options.idle_status_interval = 0;			/* frequency of ^T transmission */
 	options.snmp_status_interval = 0;
 	options.appsocket_status_interval = 0;
@@ -582,7 +506,7 @@ int main(int argc, char *argv[])
 	   */
 	if(int_cmdline.probe)
 		{
-		int_exit(do_probe(printer_address.sin_addr.s_addr, options.snmp_community));
+		int_exit(int_tcp_probe(&printer_address, options.snmp_community));
 		}
 
 	/* Within this block we connect, transfer the data, and close the connexion. */

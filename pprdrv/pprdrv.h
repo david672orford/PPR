@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 March 2003.
+** Last modified 1 November 2003.
 */
 
 /*
@@ -346,7 +346,7 @@ gu_boolean custom_hook(int code, int parameter);
 void ppop_status_init(void);
 void ppop_status_writemon(const char operation[], int minutes);
 void ppop_status_pagemon(const char string[]);
-void ppop_status_connecting(gu_boolean connecting);
+void ppop_status_connecting(const char connecting[]);
 void ppop_status_exit_hook(int retval);
 void ppop_status_shutdown(void);
 void handle_snmp_status(int device_status, int printer_status, unsigned int errorstate);

@@ -8872,16 +8872,17 @@ Internet Printing Protocol Work
 
 * libppr/int_cmdline.c: added detection of --probe option
 
-* interfaces/tcpip.c: added support for --probe; added "%%[ PPR address lookup ]%%"
+* interfaces/tcpip.c,lpr.c: added support for --probe; added "%%[ PPR address lookup ]%%"
   message so that "ppad ppdq" will extend its timeout.
 
-* interfaces/atalk_ali.c,atalk_cap.c,clispool.c,dummy.sh,lpr.c,pros.c,
+* interfaces/atalk_ali.c,atalk_cap.c,clispool.c,dummy.sh,pros.c,
   serial.c,simple.sh,smb.sh: added code to detect --probe and say it isn't
   supported.
 
 * interfaces/parallel.c,usblp.c: added skeleton of --probe support
 
-* pprdrv/pprdrv_feedback.c: added code to ignore "%%[ PPR address lookup ]%%".
+* pprdrv/pprdrv_feedback.c,pprdrv_ppop_status.c,ppop/ppop_cmds_other.c:
+  added support for "%%[ PPR address lookup ]%%".
 
 * interfaces/serial.c,parallel.c: added "%%[ PPR connecting ]%%" and "%%[ PPR connected ]%%".
 
@@ -8922,7 +8923,7 @@ Internet Printing Protocol Work
   was added to the library.
 
 * libgu/gu_strsep.c,gu_strsep2.c: fixed handling of last field to conform to
-  BSD.
+  BSD.  The last field needn't be terminated by a delimiter.
   
 
 +++++++++++++++++++++

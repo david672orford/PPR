@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 1 November 2003.
 */
 
 #include "before_system.h"
@@ -62,7 +62,34 @@ const char ppdindex_db[] = VAR_SPOOL_PPR"/ppdindex.db";
 ==========================================================================*/
 
 /*
- * Edit a string in place, decoding hexadecimal substrings.  QuotedValues with hexadecimal
+ * Take initial_segment and possibly subsequent lines readable with ppd_readline()
+ * (until one of them ends with a quote)
+ * and assemble them into a PCS.
+ */
+static void *ppd_finish_quoted_string(char *initial_segment)
+	{
+	char *p = initial_segment;
+	gu_boolean end_quote = FALSE;
+	int len;
+	void *text = gu_pcs_new();
+
+	do	{
+		len = strlen(p);
+		if(len > 0 && p[len-1] == '"')
+			{
+			p[len-1] = '\0';
+			end_quote = TRUE;
+			}
+		if(gu_pcs_length(&text) > 0)
+			gu_pcs_append_char(&text, '\n');
+		gu_pcs_append_cstr(&text, p);
+		} while(!end_quote && (p = ppd_readline()));
+	return text;
+	} /* end of ppd_finish_quoted_string() */
+
+/*
+ * Edit a string in place, decoding hexadecimal substrings.  The length of the
+ * resulting string (which will never be longer) is returned.  QuotedValues with hexadecimal
  * substrings are described in the "PostScript Printer File Format Specification"
  * version 4.0 on page 5.
  */
@@ -109,41 +136,37 @@ static int ppd_decode_QuotedValue(char *p)
 	return di;
 	} /* end of ppd_decode_QuotedValue() */
 
-/*
- * Take p and possibly subsequent lines (until one of them ends with a quote)
- * and assemble them into a PCS.
- */
-static void *ppd_finish_quoted_string(char *initial_segment)
+/*==========================================================================
+** functions which wrap the future library functions above in order
+** to accomodate this modules allocation scheme
+==========================================================================*/
+
+/* get the rest, decode it */
+static char *finish_decode(char *initial_segment)
 	{
-	char *p = initial_segment;
-	gu_boolean end_quote = FALSE;
-	int len;
-	void *text = gu_pcs_new();
+	void *pcs = ppd_finish_quoted_string(initial_segment);
+	char *p = gu_pcs_get_editable_cstr(&pcs);
+	gu_pcs_truncate(&pcs, ppd_decode_QuotedValue(p));
+	return gu_pcs_free_keep_cstr(&pcs);
+	}
 
-	do	{
-		len = strlen(p);
-		if(len > 0 && p[len-1] == '"')
-			{
-			p[len-1] = '\0';
-			end_quote = TRUE;
-			}
-		if(gu_pcs_length(&text) > 0)
-			gu_pcs_append_char(&text, '\n');
-		gu_pcs_append_cstr(&text, p);
-		} while(!end_quote && (p = ppd_readline()));
-
-	return gu_pcs_free_keep_cstr(&text);
-	} /* end of ppd_finish_quoted_string() */
+/* get the rest, decode it, register it in a c2lib pool */
+static char *finish_decode_pool(pool thepool, char *initial_segment)
+	{
+	char *p = finish_decode(initial_segment);
+	pool_register_malloc(thepool, p);
+	return p;
+	}
 
 /*==========================================================================
 ** This routine is called for each file found in the PPD
 ** directories.
 ==========================================================================*/
-static int do_file(FILE *indexfile, const char filename[])
+static int do_file(FILE *indexfile, const char filename[], const char base_filename[])
 	{
 	{
 	int ret;
-	printf("  %s", filename);
+	printf("  %s", base_filename);
 
 	if((ret = ppd_open(filename, stderr)) != EXIT_OK)
 		return ret;
@@ -163,6 +186,8 @@ static int do_file(FILE *indexfile, const char filename[])
 	char *DeviceID_MFG = NULL;
 	char *DeviceID_MDL = NULL;
 	char *pprPJLID = NULL;
+	char *pprSNMPsysDescr = NULL;
+	char *pprSNMPhrDeviceDescr = NULL;
 
 	/* we will choose these from those above */
 	char *vendor;
@@ -172,40 +197,43 @@ static int do_file(FILE *indexfile, const char filename[])
 		{
 		if(!Manufacturer && (p = lmatchp(pline, "*Manufacturer:")) && *p == '"')
 			{
-			Manufacturer = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(Manufacturer);
+			Manufacturer = finish_decode_pool(temp_pool, p + 1);
 			continue;
 			}
 		if(!ModelName && (p = lmatchp(pline, "*ModelName:")) && *p == '"')
 			{
-			ModelName = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(ModelName);
+			ModelName = finish_decode_pool(temp_pool, p + 1);
 			continue;
 			}
 		if(!NickName && (p = lmatchp(pline, "*NickName:")) && *p == '"')
 			{
-			NickName = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(NickName);
+			NickName = finish_decode_pool(temp_pool, p + 1);
 			continue;
 			}
 		/* ShortNickName is only valid if it comes before NickName. */
 		if(!ShortNickName && !NickName && (p = lmatchp(pline, "*ShortNickName:")) && *p == '"')
 			{
-			ShortNickName = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(ShortNickName);
+			ShortNickName = finish_decode_pool(temp_pool, p + 1);
 			continue;
 			}
+		/* For some reason this string is double quoted in PPD files.  The outer
+		 * quotes are ASCII double quote (PPD syntax) while the inner quotes
+		 * are parenthesis (PostScript syntax).
+		 */
 		if(!Product && (p = lmatchp(pline, "*Product:")) && *p == '"') 
 			{
-			p = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(p);
+			p = finish_decode(p + 1);
 			if(*p == '(' && p[strlen(p) - 1] == ')')
 				{
-				Product = gu_strndup(p + 1, strlen(p) - 2);
+				Product = pstrndup(temp_pool, p + 1, strlen(p) - 2);
 				}
 			gu_free(p);
 			continue;
 			}
+		/* Parsing *PSVersion is a little more complex because we want to 
+		 * extract the two values and add them to a list of the PostScript
+		 * version/revision pairs described by this PPD file.
+		 */
 		if((p = lmatchp(pline, "*PSVersion:")) && *p == '"')
 			{
 			/* this is wasteful */
@@ -261,8 +289,17 @@ static int do_file(FILE *indexfile, const char filename[])
 			}
 		if(pprPJLID && (p = lmatchp(pline, "*pprPJLID:")) && *p == '"')
 			{
-			pprPJLID = ppd_finish_quoted_string(p + 1);
-			ppd_decode_QuotedValue(pprPJLID);
+			pprPJLID = finish_decode_pool(temp_pool, p + 1);
+			continue;
+			}
+		if(pprSNMPsysDescr && (p = lmatchp(pline, "*pprSNMPsysDescr:")) && *p == '"')
+			{
+			pprSNMPsysDescr = finish_decode_pool(temp_pool, p + 1);
+			continue;
+			}
+		if(pprSNMPhrDeviceDescr && (p = lmatchp(pline, "*pprSNMPhrDeviceDescr:")) && *p == '"')
+			{
+			pprSNMPhrDeviceDescr = finish_decode_pool(temp_pool, p + 1);
 			continue;
 			}
 		}
@@ -324,15 +361,20 @@ static int do_file(FILE *indexfile, const char filename[])
 	/*
 	** OK, here goes.
 	*/
-	fprintf(indexfile, "%s:%s:%s:%s:%s:%s:%s:%s\n",
+	fprintf(indexfile, "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s\n",
 		description,
 		filename,
 		vendor ? vendor : "Other",
+		ModelName ? ModelName : "",
+		(NickName && (!ModelName || strcmp(NickName, ModelName) != 0)) ? NickName : "",
+		(ShortNickName && (!NickName || strcmp(ShortNickName, NickName) != 0)) ? ShortNickName : "",
 		Product ? Product : "",
 		pjoin(temp_pool, PSVersion, ","),	
 		DeviceID_MFG ? DeviceID_MFG : "",
 		DeviceID_MDL ? DeviceID_MDL : "",
-		pprPJLID ? pprPJLID : ""
+		pprPJLID ? pprPJLID : "",
+		pprSNMPsysDescr ? pprSNMPsysDescr : "",
+		pprSNMPhrDeviceDescr ? pprSNMPhrDeviceDescr : ""
 		);
 
 	delete_pool(temp_pool);
@@ -370,6 +412,10 @@ static int do_dir(FILE *indexfile, const char dirname[])
 		/* Skip hidden files and the "." and ".." directories. */
 		if(fileobj->d_name[0] == '.') continue;
 
+		/* Skip editor backups. */
+		if(rmatch(fileobj->d_name, "~"))
+			continue;
+
 		/* Build the full name of the file or directory. */
 		ppr_fnamef(filename, "%s/%s", dirname, fileobj->d_name);
 
@@ -379,14 +425,10 @@ static int do_dir(FILE *indexfile, const char dirname[])
 			return EXIT_INTERNAL;
 			}
 
-		/* Skip editor backups. */
-		if(strlen(filename) > 0 && filename[strlen(filename)-1] == '~')
-			continue;
-
 		/* Process regular files as PPD files. */
 		if(S_ISREG(statbuf.st_mode))
 			{
-			if((retval = do_file(indexfile, filename)) != EXIT_OK)
+			if((retval = do_file(indexfile, filename, fileobj->d_name)) != EXIT_OK)
 				break;
 			continue;
 			}

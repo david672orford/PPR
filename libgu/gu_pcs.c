@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 1 November 2003.
 */
 
 /*! \file
@@ -219,6 +219,17 @@ reference count greater than one (which means it should be copied on write).
 void gu_pcs_set_pcs(void **pcs, void **pcs2)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
+	
+	#if 1
+	printf("gu_pcs_set_pcs(pcs=%p{refcount=%d,length=%d}, pcs2=%p{refcount=%d,length=%d})\n",
+			pcs,
+				p->refcount,
+				p->length,
+			pcs2,
+				((struct PCS *)*pcs2)->refcount,
+				((struct PCS *)*pcs2)->length
+			);
+	#endif
 
 	if(p->refcount > 1)					/* if we share target, */
 		{
@@ -262,6 +273,8 @@ call gu_pcs_truncate() when you are done.
 char *gu_pcs_get_editable_cstr(void **pcs)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
+
+	/*gu_pcs_debug(pcs, "gu_pcs_get_editable_cstr");*/
 
 	if(p->refcount > 1)
 		{
@@ -331,7 +344,7 @@ void gu_pcs_append_char(void **pcs, int c)
 	p->storage[p->length] = c;
 	p->storage[new_length] = '\0';		/* keep it null terminated */
 	p->length = new_length;
-	}
+	} /* end of gu_pcs_append_char() */
 
 /** append C char[] to PCS
 
@@ -354,9 +367,9 @@ void gu_pcs_append_cstr(void **pcs, const char cstr[])
 
 	new_length = p->length + strlen(cstr);
 	gu_pcs_grow(pcs, new_length);
-	strcpy(p->storage + p->length, cstr);
+	memcpy(p->storage + p->length, cstr, new_length + 1);
 	p->length = new_length;
-	}
+	} /* end of gu_pcs_append_cstr() */
 
 /** append PCS to existing PCS
 
@@ -381,7 +394,7 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
 	p2 = (struct PCS *)*pcs2;
 	new_length = p->length + p2->length;
 	gu_pcs_grow(pcs, new_length);
-	memcpy(p->storage + p->length, p2->storage,p2->length + 1);
+	memcpy(p->storage + p->length, p2->storage, p2->length + 1);
 	p->length = new_length;
 	}
 

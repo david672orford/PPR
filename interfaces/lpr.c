@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 1 November 2003.
 */
 
 /*
@@ -88,6 +88,7 @@ struct OPTIONS
 	int chunk_size;
 	int exaggerated_size;
 	gu_boolean temp_first;
+	char *snmp_community;
 	} ;
 
 /*
@@ -439,40 +440,6 @@ int main(int argc, char *argv[])
 	*/
 	int_cmdline_set(argc, argv);
 
-	/* Check for --probe. */
-	if(int_cmdline.probe)
-		{
-		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	/* Check for unsuitable job break methods. */
-	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
-		{
-		alert(int_cmdline.printer, TRUE,
-				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
-				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	/* Check for an unsuitable feedback settting. */
-	if(int_cmdline.feedback)
-		{
-		alert(int_cmdline.printer, TRUE,
-			_("The PPR interface program \"%s\" is incapable of sending feedback."),
-			int_cmdline.int_basename
-			);
-		if(strcmp(int_cmdline.printer, "-") != 0)
-			{
-			alert(int_cmdline.printer, FALSE,
-				_("Use the command \"ppad feedback %s false\" to correct this problem."),
-				int_cmdline.int_basename,
-				int_cmdline.printer
-				);
-			}
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
 	/* Seperate the host and printer parts of the address. */
 	{
 	char *p = gu_strdup(int_cmdline.address);
@@ -492,6 +459,7 @@ int main(int argc, char *argv[])
 	options.chunk_size = 0;
 	options.exaggerated_size = 0;
 	options.temp_first = FALSE;
+	options.snmp_community = NULL;
 	{
 	struct OPTIONS_STATE o;
 	char name[32];
@@ -554,6 +522,12 @@ int main(int argc, char *argv[])
 				}
 			options.temp_first = x ? TRUE : FALSE;
 			}
+		else if(strcmp(name, "snmp_community") == 0)
+			{
+			if(options.snmp_community)
+				gu_free(options.snmp_community);
+			options.snmp_community = gu_strdup(value);
+			}
 		else
 			{
 			o.error = N_("unrecognized keyword");
@@ -572,6 +546,42 @@ int main(int argc, char *argv[])
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
+
+	/* Check for --probe. */
+	if(int_cmdline.probe)
+		{
+		struct sockaddr_in printer_address;
+		gu_write_string(1, "%%[ PPR address lookup ]%%\n");
+		int_tcp_parse_address(address_host, 0 /* port, doesn't matter*/, &printer_address);
+		int_exit(int_tcp_probe(&printer_address, options.snmp_community));
+		}
+
+	/* Check for unsuitable job break methods. */
+	if(int_cmdline.jobbreak == JOBBREAK_SIGNAL || int_cmdline.jobbreak == JOBBREAK_SIGNAL_PJL)
+		{
+		alert(int_cmdline.printer, TRUE,
+				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
+				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
+		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
+
+	/* Check for an unsuitable feedback settting. */
+	if(int_cmdline.feedback)
+		{
+		alert(int_cmdline.printer, TRUE,
+			_("The PPR interface program \"%s\" is incapable of sending feedback."),
+			int_cmdline.int_basename
+			);
+		if(strcmp(int_cmdline.printer, "-") != 0)	/* incorrect if not configured printer */
+			{
+			alert(int_cmdline.printer, FALSE,
+				_("Use the command \"ppad feedback %s false\" to correct this problem."),
+				int_cmdline.int_basename,
+				int_cmdline.printer
+				);
+			}
+		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		}
 
 	/*
 	** Some printers may timeout while we are copying the temporary file

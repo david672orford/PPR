@@ -32,6 +32,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <ctype.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -39,6 +40,10 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "ppad.h"
+
+#if 0
+#define DEBUG 1
+#endif
 
 /*
 ** Passing this stuff piece-by-piece to various functions was a drag.  Here 
@@ -49,13 +54,36 @@ struct THE_FACTS
 	char *product;					/* PostScript product string */
 	float version;					/* PostScript interpreter version */
 	int revision;					/* PostScript interpreter revision */
-	char *SNMP_sysDescr;			/* SNMP node description */
-	char *SNMP_hrDeviceDescr;		/* SNMP HP printer model */
-	char *pjl_id;					/* Response to "@PJL INFO ID" */
 	char *deviceid_manufacturer;	/* IEEE 1284 */
 	char *deviceid_model;			/* IEEE 1284 */
+	char *pjl_id;					/* Response to "@PJL INFO ID" */
+	char *SNMP_sysDescr;			/* SNMP node description */
+	char *SNMP_hrDeviceDescr;		/* SNMP HP printer model */
 	};
-	
+
+/*
+ * This function looks for a case-insenstive match in some initial segment of
+ * two strings.  If the match is long enough and it represents a sufficient
+ * percentage of the longer string, then it is a match.
+ */
+static gu_boolean very_fuzzy(char *a, char *b)
+	{
+	#ifdef DEBUG
+	printf("very_fuzzy(\"%s\", \"%s\")\n", a, b);
+	#endif
+	{
+	int alen = strlen(a);
+	int blen = strlen(b);
+	int shortest = alen < blen ? alen : blen;
+	int longest = alen > blen ? alen : blen; 
+	if(shortest < 8)
+		return FALSE;
+	if((longest / shortest) > 2)
+		return FALSE;
+	return (strncasecmp(a,b,shortest) == 0);
+	}
+	} /* end of very_fuzzy */
+
 /*
 ** List all PPD files which match the indicated criteria.
 */
@@ -69,11 +97,28 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 	char *f_description,
 		*f_filename,
 		*f_vendor,
+		*f_modelname,
+		*f_nickname,
+		*f_shortnickname,
 		*f_product,
 		*f_psversion,
-		*f_deviceid_mfg,
-		*f_deviceid_mdl,
-		*f_ppr_pjl_id;
+		*f_deviceid_manufacturer,
+		*f_deviceid_model,
+		*f_pjl_id,
+		*f_SNMP_sysDescr,
+		*f_SNMP_hrDeviceDescr;
+	struct {
+		char *name;
+		char **ptr;
+		char *beyond_vendor;
+		} names[] =
+		{
+		{"ModelName", &f_modelname, NULL},
+		{"NickName", &f_nickname, NULL},
+		{"ShortNickName", &f_shortnickname, NULL},
+		{"Product", &f_product, NULL},
+		{NULL, (char**)NULL}
+		};
 	int count = 0;
 
 	if(!(f = fopen(filename, "r")))
@@ -88,13 +133,19 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 		if(!(f_description = gu_strsep(&p,":"))
 				|| !(f_filename = gu_strsep(&p,":"))
 				|| !(f_vendor = gu_strsep(&p,":"))
+				|| !(f_modelname = gu_strsep(&p,":"))
+				|| !(f_nickname = gu_strsep(&p,":"))
+				|| !(f_shortnickname = gu_strsep(&p,":"))
 				|| !(f_product = gu_strsep(&p,":"))
 				|| !(f_psversion = gu_strsep(&p,":"))
-				|| !(f_deviceid_mfg = gu_strsep(&p,":"))
-				|| !(f_deviceid_mdl = gu_strsep(&p,":"))
-				|| !(f_ppr_pjl_id = gu_strsep(&p,":"))
+				|| !(f_deviceid_manufacturer = gu_strsep(&p,":"))
+				|| !(f_deviceid_model = gu_strsep(&p,":"))
+				|| !(f_pjl_id = gu_strsep(&p,":"))
+				|| !(f_SNMP_sysDescr = gu_strsep(&p,":"))
+				|| !(f_SNMP_hrDeviceDescr = gu_strsep(&p,":"))
 				)
 			{
+			/* parse failed, print a message if -M wasn't used */
 			if(!machine_readable)
 				{
 				char *p2;
@@ -110,14 +161,190 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 					line
 					);
 				}
+
+			/* skip the bad line */
 			continue;
 			}
+		
+		{
+		int i;
+		for(i=0; names[i].name; i++)
+			{
+			char *name = *(names[i].ptr);
+			names[i].beyond_vendor = NULL;
+			if(*f_vendor && strncasecmp(name, f_vendor, strlen(f_vendor)) == 0
+					&& isspace(name[strlen(f_vendor)]))
+				{
+				names[i].beyond_vendor = name + strlen(f_vendor);
+				names[i].beyond_vendor += strspn(names[i].beyond_vendor, " \t");
+				}
+			}
+		}
 
-		/*printf("Product: %s\n", f_product);*/
-		if(    (facts->product && strcmp(f_product, facts->product) == 0)
-			|| (facts->SNMP_hrDeviceDescr && strcmp(f_product, facts->SNMP_hrDeviceDescr) == 0)
-			
+		{
+		#define defined_and_match(a,b) (a && b && strcmp(a,b)==0)
+		#ifdef DEBUG
+		#define debug(a) printf("Match:\n\tDescription: \"%s\"\n\tMatched Field: %s\n\n", f_description, a);
+		#define debug2(a,b) printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s\n\n", f_description, a, b);
+		#define debug3(a,b) printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s (initial substring)\n\n", f_description, a, b);
+		#else
+		#define debug(a)
+		#define debug2(a,b)
+		#define debug3(a,b)
+		#endif
+		int matched = 0, fuzzy = 0;
+
+		/* Straight match: PostScript Product string */
+		if(defined_and_match(facts->product, f_product))
+			{
+			debug("Product")
+			matched++;
+			}
+
+		/* Staight match: IEEE 1284 ID strings */
+		if(defined_and_match(facts->deviceid_manufacturer, f_deviceid_manufacturer)
+			&& defined_and_match(facts->deviceid_model, f_deviceid_model)
 			)
+			{
+			debug("DeviceID MANUFACTURER and DeviceID MODEL")
+			matched++;
+			}
+
+		/* Straight match: PJL ID string */
+		if(defined_and_match(facts->pjl_id, f_pjl_id))
+			{
+			debug("PJL ID")
+			matched++;
+			}
+
+		/* Straight match: SNMP sysDescr */
+		if(defined_and_match(facts->SNMP_sysDescr, f_SNMP_sysDescr))
+			{
+			debug("SNMP sysDescr")
+			matched++;
+			}
+
+		/* Straight match: SNMP hrDeviceDescr */
+		if(defined_and_match(facts->SNMP_hrDeviceDescr, f_SNMP_hrDeviceDescr))
+			{
+			debug("SNMP hrDeviceDescr")
+			matched++;
+			}
+				
+		/* If we have the printer's SNMP_hrDeviceDescr, but this PPD file
+		 * doesn't say what it should be, try to guess what it should be
+		 * using other information in the PPD file.
+		 */
+		if(facts->SNMP_hrDeviceDescr && !*f_SNMP_hrDeviceDescr)
+			{
+			int i;
+			char *name;
+			for(i=0; names[i].name; i++)
+				{
+				if(!*(name = *(names[i].ptr)))		/* if empty string */
+					continue;
+				if(strcasecmp(name, facts->SNMP_hrDeviceDescr) == 0)
+					{
+					debug2("SNMP hrDeviceDescr", names[i].name)
+					matched++;
+					continue;
+					}
+				if(very_fuzzy(name, facts->SNMP_hrDeviceDescr))
+					{
+					debug3("SNMP hrDeviceDescr", names[i].name)
+					matched++; fuzzy++;
+					continue;
+					}
+				if((name = names[i].beyond_vendor))
+					{
+					if(strcasecmp(name, facts->SNMP_hrDeviceDescr) == 0)
+						{
+						debug2("PPD Vendor + SNMP hrDeviceDescr", names[i].name)
+						matched++;
+						continue;
+						}
+					if(very_fuzzy(name, facts->SNMP_hrDeviceDescr))
+						{
+						debug3("PPD Vendor + SNMP hrDeviceDescr", names[i].name)
+						matched++; fuzzy++;
+						continue;
+						}
+					}
+				}
+			} /* SNMP hrDeviceDescr fuzzy */
+
+		/* If we have the printer's PCL ID, but this PPD file doesn't say 
+		 * what it should be, try to guess.
+		 */ 
+		if(facts->pjl_id && !*f_pjl_id)
+			{
+			int i;
+			char *name;
+			for(i=0; names[i].name; i++)
+				{
+				if(!*(name = *(names[i].ptr)))
+					continue;
+				if(strcasecmp(name, facts->pjl_id) == 0)
+					{
+					debug2("PJL ID", names[i].name)
+					matched++;
+					continue;
+					}
+				if(very_fuzzy(name, facts->pjl_id ))
+					{
+					debug3("PJL ID", names[i].name)
+					matched++; fuzzy++;
+					continue;
+					}
+				if((name = names[i].beyond_vendor))
+					{
+					if(strcasecmp(name, facts->pjl_id) == 0)
+						{
+						debug2("PPD Vendor + PJL ID", names[i].name)
+						matched++;
+						continue;
+						}
+					if(very_fuzzy(name, facts->pjl_id))
+						{
+						debug3("PPD Vendor + PJL ID", names[i].name)
+						matched++; fuzzy++;
+						continue;
+						}
+					}
+				}
+			} /* PJL ID fuzzy */
+
+		/* If we have the IEEE 1284 device ID but the PPD file doesn't say
+		 * what it should be, go guess.
+		 */
+		if(facts->deviceid_manufacturer && facts->deviceid_model &&
+				(!*f_deviceid_manufacturer || !*f_deviceid_model))
+			{
+			int i;
+			char *name;
+			for(i=0; names[i].name; i++)
+				{
+				if(!(name = names[i].beyond_vendor))
+					continue;
+				if(strcasecmp(facts->deviceid_manufacturer, f_vendor) == 0)
+					{
+					if(strcasecmp(name, facts->deviceid_model) == 0)
+						{
+						debug2("DeviceID MANUFACTURER + DeviceID MODEL", names[i].name);
+						matched++;
+						continue;
+						}
+					if(very_fuzzy(name, facts->deviceid_model))
+						{
+						debug3("DeviceID MANUFACTURER + DeviceID MODEL", names[i].name);
+						matched++; fuzzy++;
+						continue;
+						}
+					}
+				}
+			} /* DeviceID fuzzy */
+		
+		if(matched > 0)
 			{
 			if(machine_readable)
 				{
@@ -128,15 +355,20 @@ static int ppd_choices(const char printer[], struct THE_FACTS *facts)
 				{
 				/* We wait to print this until we know that we have at least one match. */
 				if(count++ < 1)
-					printf("Run one of these commands to select the cooresponding PPD file:\n");
+					printf("Run one of these commands to select the corresponding PPD file:\n");
 
+				printf("    # %s\n", matched==fuzzy ? "fuzzy match" : "exact match");
 				p = (p = lmatchp(f_filename, PPDDIR"/")) ? p : f_filename;
 				printf("    ppad ppd %s \"%s\"\n", printer, p);
 				}
 			}
 		}
+		} /* while */
 
 	fclose(f);
+
+	if(count && !machine_readable)
+		printf("\n");
 
 	return count;
 	} /* end of ppd_choices() */
@@ -265,9 +497,13 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 	gu_Catch
 		{
 		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "\n");
 		return 0;
 		}
 
+	if(!machine_readable)
+		PUTS("\n");
+		
 	return retval;
 	} /* end of ppd_query_interface_probe() */
 
@@ -337,9 +573,13 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 	gu_Catch
 		{
 		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "\n");
 		return 0;
 		}
 
+	if(!machine_readable)
+		PUTS("\n");
+		
 	return retval;
 	} /* end of ppd_query_pjl() */
 
@@ -430,9 +670,13 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 	gu_Catch
 		{
 		fprintf(stderr, "Query failed: %s\n", gu_exception);
+		fprintf(stderr, "\n");
 		return 0;
 		}
 
+	if(!machine_readable)
+		PUTS("\n");
+		
 	return 1;
 	} /* end of ppd_query_postscript() */
 
@@ -442,8 +686,8 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 int ppd_query_core(const char printer[], struct QUERY *q)
     {
 	struct THE_FACTS facts;
-	int total_answers = 0;
 	int matches = 0;
+	gu_boolean testmode = FALSE;		/* will try all probe methods */
 
 	facts.SNMP_hrDeviceDescr = NULL;
 	facts.product = NULL;
@@ -453,25 +697,19 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	facts.deviceid_manufacturer = NULL;
 	facts.deviceid_model = NULL;
 
-	total_answers += ppd_query_interface_probe(printer, q, &facts);
-	if(!machine_readable)
-		PUTS("\n");
+	/* First we ask the interface program to do the job. */
+	if(ppd_query_interface_probe(printer, q, &facts) > 0)
+		matches += ppd_choices(printer, &facts);
 
-	total_answers += ppd_query_postscript(printer, q, &facts);
-	if(!machine_readable)
-		PUTS("\n");
+	/* Now we connect and try to send a PostScript query. */
+	if(matches < 1 || testmode)
+		if(ppd_query_postscript(printer, q, &facts) > 0)
+			matches += ppd_choices(printer, &facts);
 
-	if(total_answers < 1)
-		{
-		total_answers += ppd_query_pjl(printer, q, &facts);
-		if(!machine_readable)
-			PUTS("\n");
-		}
-
-	if(total_answers > 0)
-		{
-		matches = ppd_choices(printer, &facts);
-		}
+	/* Now we connect and try to send a PJL query. */
+	if(matches < 1 || testmode)
+		if(ppd_query_pjl(printer, q, &facts) > 0)
+			matches += ppd_choices(printer, &facts);
 
 	if(facts.SNMP_hrDeviceDescr)
 		gu_free(facts.SNMP_hrDeviceDescr);
@@ -487,7 +725,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	if(matches < 1)
 		{
 		if(!machine_readable)
-			printf("No PPD files matched.\n");
+			printf("No matching PPD files found.\n");
 		return EXIT_NOTFOUND;
 		}
 

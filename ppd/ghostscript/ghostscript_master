@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2002, Trinity College Computing Center.
+*% Copyright 1995--2003, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -19,9 +19,9 @@
 *%
 *%	FONTS_IBMCOURIER	for IBMCourier* family
 *%	FONTS_COURIER		for Courier* family
-*%	FONTS_TO13		for fonts in 13 font printers
-*%	FONTS_TO17		for fonts in 17 font printers
-*%	FONTS_TO35		for fonts in 35 font printers
+*%	FONTS_TO13			for fonts in 13 font printers
+*%	FONTS_TO17			for fonts in 17 font printers
+*%	FONTS_TO35			for fonts in 35 font printers
 *%	FONTS_DINGBATS		for Zapf Dingbats
 *%	FONTS_GHOSTSCRIPT	for URW donated fonts
 *%
@@ -33,13 +33,13 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 26 March 2002.
+*% which was last revised 1 November 2003.
 *%
 #endif
 
 *% This tracks the PPR version.  It will be the same as the last version of
 *% PPR in which this file was changed.
-*FileVersion: "1.44"
+*FileVersion: "1.53"
 
 *FormatVersion: "4.2"
 *LanguageVersion: English
@@ -65,7 +65,6 @@
 #ifdef PRINTER_HPIII
 *Product: "(HP LaserJet III Ghostscript)"
 *ModelName: "HP LaserJet III Ghostscript"
-*ShortNickName: "HP LaserJet III Ghostscript"
 *NickName: "HP LaserJet III Ghostscript"
 *PCFileName: "HPIIIGS.PPD"
 *DefaultResolution: 300dpi
@@ -78,7 +77,6 @@
 #ifdef PRINTER_HPDJ500
 *Product: "(HP DeskJet 500 Ghostscript)"
 *ModelName: "HP DeskJet 500 Ghostscript"
-*ShortNickName: "HP DeskJet 500 Ghostscript"
 *NickName: "HP DeskJet 500 Ghostscript"
 *PCFileName: "HPDJ5GS.PPD"
 *DefaultResolution: 300dpi
@@ -92,7 +90,6 @@
 *Manufacturer: "NEC"
 *Product: "(NEC Pinwriter 6 Ghostscript)"
 *ModelName: "NEC Pinwriter 6 Ghostscript"
-*ShortNickName: "NEC Pinwriter 6 Ghostscript"
 *NickName: "NEC Pinwriter 6 Ghostscript"
 *PCFileName: "DM24GS.PPD"
 *DefaultResolution: 360dpi
@@ -105,7 +102,6 @@
 #ifdef PRINTER_HPDJ550C
 *Product: "(HP DeskJet 550C Ghostscript)"
 *ModelName: "HP DeskJet 550C Ghostscript"
-*ShortNickName: "HP DeskJet 550C Ghostscript"
 *NickName: "HP DeskJet 550C Ghostscript"
 *PCFileName: "HPDJ5CGS.PPD"
 *DefaultResolution: 300dpi
@@ -118,7 +114,6 @@
 #ifdef PRINTER_EPSC62
 *Product: "(Epson Stylus C62 Ghostscript)"
 *ModelName: "Epson Stylus C62 Ghostscript"
-*ShortNickName: "Epson Stylus C62 Ghostscript"
 *NickName: "Epson Stylus C62 Ghostscript"
 *PCFileName: "EPSC62GS.PPD"
 *DefaultResolution: 360dpi

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 1 November 2003.
 */
 
 #ifndef LIBPPR_INT_H
@@ -77,6 +77,7 @@ struct TCP_CONNECT_OPTIONS
 int int_tcp_connect_option(const char name[], const char value[], struct OPTIONS_STATE *o, struct TCP_CONNECT_OPTIONS *options);
 void int_tcp_parse_address(const char address[], int default_port, struct sockaddr_in *printer_addr);
 int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_addr, struct TCP_CONNECT_OPTIONS *options, void (*status_function)(void *), void *status_obj);
+int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_community[]);
 #endif
 
 /*
