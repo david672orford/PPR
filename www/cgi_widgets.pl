@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 3 September 2003.
 #
 
 sub labeled_checkbox
@@ -109,6 +109,8 @@ sub help_button
 {
 my $helpdir = shift;
 my $topic = shift;
+
+$helpdir = "" if(!defined($helpdir));
 
 $ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
 my $basename = $1;

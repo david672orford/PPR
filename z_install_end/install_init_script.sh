@@ -147,17 +147,22 @@ then
 		fi
 
 	# Copy the init script into place.
-	cp ppr $INIT_BASE/init.d/ppr
+	diff ppr $INIT_BASE/init.d/ppr >/dev/null 2>&1
 	if [ $? -ne 0 ]
 		then
-		echo "===================================================="
-		echo "Please run again as root to update init script."
-		echo "===================================================="
-		exit 1
-		fi
 
-	# Mark the init script as a config file when building packages.
-	../makeprogs/installconf.sh root root 755 'config(noreplace)' $INIT_BASE/init.d/ppr
+		cp ppr $INIT_BASE/init.d/ppr
+		if [ $? -ne 0 ]
+			then
+			echo "===================================================="
+			echo "Please run again as root to update init script."
+			echo "===================================================="
+			exit 1
+			fi
+
+		# Mark the init script as a config file when building packages.
+		../makeprogs/installconf.sh root root 755 'config(noreplace)' $INIT_BASE/init.d/ppr
+		fi
 
 	# Adjust the symbolic links.  This step is skipt if we are building an RPM.
 	# The RPM %post script will run chkconfig.
@@ -181,14 +186,17 @@ then
 			done
 
 		# Avoid making changes if the required links are in place.
-		if [ "$temp" = " $existing" ]
+		if [ "$temp" = "$existing" ]
 		then
 			echo "    Links are already correct."
 		else
+			echo "    Links are out of date."
+
 			if [ -x /sbin/chkconfig ]
 			then
 				/sbin/chkconfig --add ppr
 			else
+				# Remove the old links.
 				for l in $existing
 					do
 					if [ -f $l ]
@@ -201,6 +209,7 @@ then
 							fi
 						fi
 					done
+				# Create the new links.
 				for f in $INIT_LIST
 					do
 					echo "    $INIT_BASE/$f"
@@ -228,8 +237,7 @@ then
 #
 # Or do the MacOS X thing.
 #
-else
-if [ -n "$StartupItems" ]
+elif [ -n "$StartupItems" ]
 	then
 	echo "  Installing MacOS X startup script..."
 	if [ -d $StartupItems/PPR ]
@@ -265,8 +273,7 @@ EndOfStartupParameters
 #
 # Otherwise, maybe we found a Berkeley style rc.local file.
 #
-else
-if [ -n "$RC_LOCAL" ]
+elif [ -n "$RC_LOCAL" ]
 then
 	if grep '[Ss]tart [Pp][Pp][Rr]' $RC_LOCAL >/dev/null
 	then
@@ -318,8 +325,6 @@ else
 	echo "Please press RETURN to continue."
 	read x
 	echo
-fi
-fi
 fi
 
 exit 0

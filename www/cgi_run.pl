@@ -25,12 +25,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 3 September 2003.
 #
 
 #===============================================================
 # Run a command.  The output is HTML escaped and sent to the
-# web browser.
+# web browser.  Since it sends output to the browser, you will
+# not want to run it in an onnext handler.
 #===============================================================
 sub run
 	{
@@ -98,6 +99,9 @@ sub run
 #	 print;
 #	 }
 # close(JOBS);
+#
+# Since no output is sent to the browser, this can be run from
+# inside an onnext handler.
 #===============================================================
 sub opencmd
 	{
@@ -135,7 +139,8 @@ sub opencmd
 
 #===============================================================
 # Run a command.  It it fails, call die with its output as the
-# error message.
+# error message.  Since this sends output to the web browser,
+# it should not be run from inside an onnext handler.
 #===============================================================
 sub run_or_die
 	{

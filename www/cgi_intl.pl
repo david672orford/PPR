@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2003.
+# Last modified 3 September 2003.
 #
 
 require "paths.ph";
@@ -54,6 +54,8 @@ my $int_on = 0;
 #
 sub cgi_intl_init
 	{
+	my $debug = 0;
+
 	if(defined(my $langs = $ENV{HTTP_ACCEPT_LANGUAGE}))
 		{
 		my @result = eval
@@ -63,7 +65,7 @@ sub cgi_intl_init
 			my @langs_available = grep(!/\./, readdir(LDIR));
 			closedir(LDIR) || die $!;
 			push(@langs_available, $UNTRANSLATED_LANGUAGE);
-			print STDERR "Available languages: ", join(", ", @langs_available), "\n";
+			print STDERR "Available languages: ", join(", ", @langs_available), "\n" if($debug >= 2);
 
 			# Create a list of the user's language preferences.	 Longer language
 			# ranges will be sorted to the end of the list in order to conform to
@@ -74,7 +76,7 @@ sub cgi_intl_init
 				{
 				if($language_range !~ /^([^;]+)(\s*;\s*q=([0-9\.]+))?\s*$/)
 					{
-					print STDERR "  Invalid language-range: $language_range\n";
+					print STDERR "  Invalid language-range: $language_range\n" if($debug >= 1);
 					next;
 					}
 				my $lang = $1;
@@ -83,7 +85,7 @@ sub cgi_intl_init
 				$x++;
 				}
 			@lang_q_list = sort(@lang_q_list);
-			print STDERR "  Sorted language-ranges: ", join(", ", @lang_q_list), "\n";
+			print STDERR "  Sorted language-ranges: ", join(", ", @lang_q_list), "\n" if($debug >= 2);
 
 			# Apply the sorted rankings to the languages available.
 			my %lang_q_hash = ();
@@ -94,14 +96,14 @@ sub cgi_intl_init
 				my($lang, $q, $tiebreaker) = split(/ /, $language_range);
 				if($lang eq "*")
 					{
-					print STDERR "    Default language q set to $q.\n";
+					print STDERR "    Default language q set to $q.\n" if($debug >= 2);
 					$default_q = $q;
 					next;
 					}
-				print STDERR "    Looking for matches for language range \"$lang\".\n";
+				print STDERR "    Looking for matches for language range \"$lang\".\n" if($debug >= 2);
 				foreach my $matching_lang (grep(/^$lang(-.*)?$/, @langs_available))
 					{
-					print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n";
+					print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n" if($debug >= 2);
 					$lang_q_hash{$matching_lang} = $q;
 					$lang_tiebreaker{$matching_lang} = $tiebreaker;
 					}
@@ -114,7 +116,7 @@ sub cgi_intl_init
 				{
 				if(!defined($lang_q_hash{$lang}))
 					{
-					print STDERR "    Language $lang gets default q of $default_q.\n";
+					print STDERR "    Language $lang gets default q of $default_q.\n" if($debug >= 2);
 					$lang_q_hash{$lang} = $default_q;
 					$lang_tiebreaker{$lang} = 1000;
 					}
@@ -127,14 +129,14 @@ sub cgi_intl_init
 			foreach my $lang (@langs_available)
 				{
 				my $q = $lang_q_hash{$lang};
-				print STDERR "  Language $lang ranks $q";
+				print STDERR "  Language $lang ranks $q" if($debug >= 2);
 
 				# If it has the highest quality ranking found so far,
 				# then choose this language.  But, a later language may
 				# displace this one.
 				if($q > $highest_q)
 					{
-					print STDERR ", best so far";
+					print STDERR ", best so far" if($debug >= 2);
 					$selected_lang = $lang;
 					$highest_q = $q;
 					$lowest_tiebreaker = $lang_tiebreaker{$lang};
@@ -148,33 +150,33 @@ sub cgi_intl_init
 					{
 					if($lang_tiebreaker{$lang} < $lowest_tiebreaker)
 						{
-						print STDERR ", tie broken favourably";
+						print STDERR ", tie broken favourably" if($debug >= 2);
 						$selected_lang = $lang;
 						$highest_q = $q;
 						$lowest_tiebreaker = $lang_tiebreaker{$lang};
 						}
 					else
 						{
-						print STDERR ", tie broken unfavourably";
+						print STDERR ", tie broken unfavourably" if($debug >= 2);
 						}
 					}
 
 				# Languages with a quality less than zero are not acceptable.
 				elsif($q < 0.0)
 					{
-					print STDERR ", not acceptable";
+					print STDERR ", not acceptable" if($debug >= 2);
 					}
 
 				# This language was acceptable, but it has already lost out
 				# to one with a higher quality value.
 				else
 					{
-					print STDERR ", also ran";
+					print STDERR ", also ran" if($debug >= 2);
 					}
-				print STDERR ".\n";
+				print STDERR ".\n" if($debug >= 2);
 				}
 
-			print STDERR "Selected language: ", defined($selected_lang) ? $selected_lang : "<default>", "\n";
+			print STDERR "Selected language: ", defined($selected_lang) ? $selected_lang : "<default>", "\n" if($debug >= 2);
 			if(defined($selected_lang) && $selected_lang ne $UNTRANSLATED_LANGUAGE)
 				{
 				# Pull in the Perl modules needed for translation.
@@ -235,9 +237,9 @@ sub _
 	my $text = shift;
 	if($int_on && $text ne "")
 		{
-		print STDERR "translating \"$text\"";
+		print STDERR "translating \"$text\"" if($debug >= 3);
 		$text = &gettext($text);
-		print STDERR " as \"$text\"\n";
+		print STDERR " as \"$text\"\n" if($debug >= 3);
 		}
 	return $text;
 	}
