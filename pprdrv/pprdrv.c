@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 April 2002.
+** Last modified 6 May 2002.
 */
 
 /*
@@ -1625,96 +1625,97 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
     {
     const char function[] = "printer_use_log";
     int printlogfd;
+    FILE *printlog;
 
-    if((printlogfd = open(PRINTLOG_PATH, O_WRONLY | O_APPEND)) >= 0)
+    if((printlogfd = open(PRINTLOG_PATH, O_WRONLY | O_APPEND)) < 0)
+    	return;
+
+
+    if(!(printlog = fdopen(printlogfd, "a")))
 	{
-	FILE *printlog;			/* For print log file. */
+	error("%s(): fdopen() failed", function);
+	close(printlogfd);
+	return;
+	}
 
-	if((printlog = fdopen(printlogfd, "a")) == (FILE*)NULL)
-	    {
-	    error("%s(): fdopen() failed", function);
-	    close(printlogfd);
-	    }
+    {
+    int sidecount;
+    int total_printed_sheets;
+    int total_printed_sides;
+    struct timeval time_now, time_elapsed;
+    time_t seconds_now; 		/* For time stamping the */
+    struct tm *time_detail;		/* print log file. */
+    char time_str[15];
+
+    int pages = pagemask_count(&job);
+    struct COMPUTED_CHARGE charge;
+
+    /*
+    ** Compute the number of printed sides.  Normally this is
+    ** straight-forward, but in signiture mode we must account
+    ** for "pages" that are left blank.
+    */
+    if(job.N_Up.sigsheets == 0)
+    	{
+    	sidecount = (pages + job.N_Up.N - 1) / job.N_Up.N;
+    	}
+    else
+    	{
+	if((job.N_Up.sigpart & SIG_BOTH) == SIG_BOTH)
+    	    sidecount = sheetcount * 2;			/* !!! */
 	else
-	    {
-	    int sidecount;
-	    int total_printed_sheets;
-	    int total_printed_sides;
+    	    sidecount = sheetcount;			/* !!! */
+	}
 
-	    struct timeval time_now, time_elapsed;
-	    time_t seconds_now; 		/* For time stamping the */
-	    struct tm *time_detail;		/* print log file. */
-	    char time_str[15];
+    /*
+    ** Compute the total number of sheets and the total number of printed sides
+    ** in all copies of this job.  Remember that if the number of copies desired
+    ** was not specified then job.opts.copies will be -1.  In this case
+    ** we will assume that the PostScript code of the job only prints one copy.
+    */
+    if(job.opts.copies > 1)			/* if multiple copies */
+	{
+	total_printed_sheets = sheetcount * job.opts.copies;	/* !!! */
+	total_printed_sides = sidecount * job.opts.copies;
+	}
+    else					/* 1 or unknown # of copies */
+	{
+	total_printed_sheets = sheetcount;			/* !!! */
+	total_printed_sides = sidecount;
+	}
 
-	    int pages = pagemask_count(&job);
-	    struct COMPUTED_CHARGE charge;
+    /*
+    ** Get the current time with microsecond resolution
+    ** and compute the difference between the current time
+    ** and the time that was recorded when we started.
+    */
+    gettimeofday(&time_now, (struct timezone *)NULL);
+    time_elapsed.tv_sec = time_now.tv_sec - start_time->tv_sec;
+    time_elapsed.tv_usec = time_now.tv_usec - start_time->tv_usec;
+    if(time_elapsed.tv_usec < 0) {time_elapsed.tv_usec += 1000000; time_elapsed.tv_sec--;}
 
-	    /*
-	    ** Compute the number of printed sides.  Normally this is
-	    ** straight-forward, but in signiture mode we must account
-	    ** for "pages" that are left blank.
-	    */
-	    if(job.N_Up.sigsheets == 0)
-	    	{
-	    	sidecount = (pages + job.N_Up.N - 1) / job.N_Up.N;
-	    	}
-	    else
-	    	{
-		if((job.N_Up.sigpart & SIG_BOTH) == SIG_BOTH)
-	    	    sidecount = sheetcount * 2;			/* !!! */
-		else
-	    	    sidecount = sheetcount;			/* !!! */
-		}
+    /* Convert the current time to a string of ASCII digits. */
+    seconds_now = /* time((time_t*)NULL) */ time_now.tv_sec;
+    time_detail = localtime(&seconds_now);
+    strftime(time_str, sizeof(time_str), "%Y%m%d%H%M%S", time_detail);
 
-	    /*
-	    ** Compute the total number of sheets and the total number of printed sides
-	    ** in all copies of this job.  Remember that if the number of copies desired
-	    ** was not specified then job.opts.copies will be -1.  In this case
-	    ** we will assume that the PostScript code of the job only prints one copy.
-	    */
-	    if(job.opts.copies > 1)		/* if multiple copies */
-		{
-		total_printed_sheets = sheetcount * job.opts.copies;	/* !!! */
-		total_printed_sides = sidecount * job.opts.copies;
-		}
-	    else				/* 1 or unknown # of copies */
-		{
-		total_printed_sheets = sheetcount;			/* !!! */
-		total_printed_sides = sidecount;
-		}
+    /* Compute the amount of money charged for this job. */
+    charge.total = 0;
+    if(printer.charge.per_duplex > 0 || printer.charge.per_simplex > 0)
+	{
+	compute_charge(&charge,
+		printer.charge.per_duplex,
+		printer.charge.per_simplex,
+		pages,
+		job.N_Up.N,
+		job.attr.pagefactor,
+		job.N_Up.sigsheets,
+		job.N_Up.sigpart,
+		job.opts.copies);
+	}
 
-	    /*
-	    ** Get the current time with microsecond resolution
-	    ** and compute the difference between the current time
-	    ** and the time that was recorded when we started.
-	    */
-	    gettimeofday(&time_now, (struct timezone *)NULL);
-	    time_elapsed.tv_sec = time_now.tv_sec - start_time->tv_sec;
-	    time_elapsed.tv_usec = time_now.tv_usec - start_time->tv_usec;
-	    if(time_elapsed.tv_usec < 0) {time_elapsed.tv_usec += 1000000; time_elapsed.tv_sec--;}
-
-	    /* Convert the current time to a string of ASCII digits. */
-	    seconds_now = /* time((time_t*)NULL) */ time_now.tv_sec;
-	    time_detail = localtime(&seconds_now);
-	    strftime(time_str, sizeof(time_str), "%Y%m%d%H%M%S", time_detail);
-
-	    /* Compute the amount of money charged for this job. */
-            charge.total = 0;
-            if(printer.charge.per_duplex > 0 || printer.charge.per_simplex > 0)
-		{
-		compute_charge(&charge,
-			printer.charge.per_duplex,
-			printer.charge.per_simplex,
-			pages,
-			job.N_Up.N,
-			job.attr.pagefactor,
-			job.N_Up.sigsheets,
-			job.N_Up.sigpart,
-			job.opts.copies);
-		}
-
-	    /* Print it all as a line. */
-	    fprintf(printlog, "%s,%s,%s,\"%s\",%s,\"%s\",%d,%d,%d,%ld,%ld.%02d,%d.%02d,%d,%d,%d,%ld,%ld,\"%s\"\n",
+    /* Print it all as a line. */
+    fprintf(printlog, "%s,%s,%s,\"%s\",%s,\"%s\",%d,%d,%d,%ld,%ld.%02d,%d.%02d,%d,%d,%d,%ld,%ld,\"%s\"\n",
 	    	time_str,
 	    	QueueFile,
 	    	printer.Name,
@@ -1734,11 +1735,10 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 		job.Title ? job.Title : job.lpqFileName ? job.lpqFileName : ""
 	    	);
 
-	    if(fclose(printlog) == EOF)
-	    	error("%s(): fclose() failed", function);
+    if(fclose(printlog) == EOF)
+    	error("%s(): fclose() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
-	    } /* fdopen() didn't fail */
-	}
+    }
     } /* end of printer_use_log() */
 
 /*

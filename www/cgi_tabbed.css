@@ -1,9 +1,10 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 24 April 2002.
+** Last modified 26 April 2002.
 */
 
-BODY {	background: #C0C0C0;
+BODY {
+	background: #C0C0C0;
 	color: black;
 	}
 
@@ -31,14 +32,15 @@ INPUT.tabinactive,BUTTON.tabinactive {
 	-moz-border-radius: 1mm 1mm 0mm 0mm;
 	}
 
-/* In Mozilla (at least up to 1.0rc1) these settings of <button>
-   are incompatible with <input type="button">. */
+/* In Mozilla (at least up to 1.0rc1) we have to set this attributes because
+   the default settings of <button> are different from those of 
+   <input type="button">. */
 BUTTON {
 	padding: 0pt 5pt 0pt 5pt;
 	vertical-align: sub;
 	}
 
-/* This is for the help button. */
+/* This is a span that looks like a button.  We use it for the [Help] button. */
 SPAN.button {
 	background: #b0b0b0;
 	border: 2px solid;
@@ -61,7 +63,10 @@ TABLE.tabpage {
 	border-width: 0px 1px 1px 1px;
 	}
 
+/* All of the text printed by the page procedure goes inside a table data
+   cell of this type. */
 TABLE.tabpage TD {
+	line-height: 12pt;
 	font-size: 10pt;
 	font-weight: normal;
 	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
@@ -111,25 +116,29 @@ TEXTAREA {
 	}
 
 /* A DIV and SPAN of class "section" are used to enclose controls
-   in a labeled box.
+   in a labeled box.  The SPAN goes inside the DIV.  The SPAN
+   holdes the label text.
    */
 DIV.section {
+	position: relative;		/* <-- necesary for parenthood */
 	border: thin solid black;
 	padding: 10pt;
-	margin-bottom: 10pt;
+	margin-bottom: 15pt;
 	}
-SPAN.section {
-	position: relative;
-	top: -1.5em;
-	right: 0pt;
+DIV.section SPAN.section_label {
+	position: absolute;
+	top: -9pt;
+	left: 10pt;
 	background: beige;
-	border-width: 0.5pt;
-	border-style: solid;
-	padding-left: 1ex;  
-	padding-right: 1ex; 
+	font-weight: bold;
+	border: thin solid black;
+	padding: 0ex 1ex 0ex 1ex;
 	}
 
-TABLE.section TD {
+/* This is the table that puts the PPD list on the left and the
+   summary of the PPD file on the right.
+   */
+TABLE.ppd TD {
 	padding-right: 10pt;
 	text-align: left;
 	vertical-align: top;

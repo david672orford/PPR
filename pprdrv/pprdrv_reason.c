@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 20 March 2002.
+** Last modified 6 May 2002.
 */
 
 /*
@@ -46,7 +46,7 @@ void give_reason(const char reason[])
     if(!(f = fopen(fname, "a")))
 	fatal(EXIT_PRNERR_NORETRY, "%s(): can't open queue file, errno=%d (%s)", function, errno, gu_strerror(errno) );
 
-    fprintf(f, "Reason: (%s)\n", reason);
+    fprintf(f, "Reason: %s\n", reason);
 
     fclose(f);
     } /* end of give_reason() */

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 April 2002.
+# Last modified 26 April 2002.
 #
 
 use lib "?";
@@ -65,7 +65,7 @@ $addprn_wizard_table = [
 		print "</p>\n";
 
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">", H_("Color Space Test Patterns"), "</span>\n";
+		print "<span class=\"section_label\">", H_("Color Space Test Patterns"), "</span>\n";
 			print "<p>\n";
 			labeled_boolean("test_grayscale", _("Grayscale"), cgi_data_move("test_grayscale", 0));
 			print "</p>\n";

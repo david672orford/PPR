@@ -10,9 +10,8 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 26 April 2002.
 */
-
 
 struct PATH_SET
     {
@@ -22,20 +21,6 @@ struct PATH_SET
     const char *lp;
     const char *lpstat;
     const char *cancel;
-    };
-
-enum LPR_FLAVORS
-    {
-    LPR_FLAVOR_BSD43,		/* BSD 4.3 */
-    LPR_FLAVOR_OSF,		/* DEC OSF, Digital Unix */
-    LPR_FLAVOR_LPRNG		/* LPRng */
-    };
-
-enum LP_FLAVORS
-    {
-    LP_FLAVOR_SYSVR4,		/* System V release 4.0 */
-    LP_FLAVOR_IRIX63,		/* IRIX 6.3 */
-    LP_FLAVOR_SOLARIS26		/* Solaris 2.6 */
     };
 
 struct UPRINT_CONF
@@ -49,13 +34,15 @@ struct UPRINT_CONF
     	gu_boolean sidelined;
 	const char *printers;
 	const char *classes;
-	enum LP_FLAVORS flavor;
+	const char *flavor;
+	float flavor_version;
     	} lp;
     struct
     	{
 	gu_boolean installed;
     	gu_boolean sidelined;
-	enum LPR_FLAVORS flavor;
+	const char *flavor;
+	float flavor_version;
     	} lpr;
 
     struct

@@ -1409,16 +1409,16 @@ HPwmCTM <</PageSize [HPwmShWidth HPwmShHeight] /ImagingBBox null>> setpagedevice
 *End
 *CloseUI: *HPPaperPolicy
 
-*%=== Scale Patterns =========================
-*OpenUI *HPScalePatterns/Scale Patterns: PickOne
-*OrderDependency: 70 AnySetup *HPScalePatterns
-*DefaultHPScalePatterns: Scale
-*HPScalePatterns Scale/On: "/GDIBWPatternDict 18 dict def
-/dtransform {GDIBWPatternDict /Width known {currentpagedevice /HWResolution get 0 get
-150 div mul exch currentpagedevice /HWResolution get 0 get 150 div mul exch dtransform}{dtransform}ifelse} bind def"
-*End
-*HPScalePatterns Off/Off: ""
-*CloseUI: *HPScalePatterns
+*% *%=== Scale Patterns =========================
+*% *OpenUI *HPScalePatterns/Scale Patterns: PickOne
+*% *OrderDependency: 70 AnySetup *HPScalePatterns
+*% *DefaultHPScalePatterns: Scale
+*% *HPScalePatterns Scale/On: "/GDIBWPatternDict 18 dict def
+*% /dtransform {GDIBWPatternDict /Width known {currentpagedevice /HWResolution get 0 get
+*% 150 div mul exch currentpagedevice /HWResolution get 0 get 150 div mul exch dtransform}{dtransform}ifelse} bind def"
+*% *End
+*% *HPScalePatterns Off/Off: ""
+*% *CloseUI: *HPScalePatterns
 
 *%=== Halftone Information =================
 *ScreenFreq:  "106.0"

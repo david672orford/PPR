@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 24 April 2002.
+# Last modified 26 April 2002.
 #
 
 use lib "?";
@@ -134,7 +134,7 @@ my $tabbed_table = [
 
 		print "<span class=\"label\">", H_("PPD file:"), "</span>\n";
 
-		print "<table class=\"section\"><tr><td>\n";
+		print "<table class=\"ppd\"><tr><td>\n";
 		
 		# Read the PPD File list (and unfortunately "." and "..") into
 		# the array @ppd_list.
@@ -194,7 +194,7 @@ my $tabbed_table = [
 		# Upper section: PPD RIP info.
 		{
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\"><input type=\"radio\" name=\"rip_which\" value=\"ppd\"";
+		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"ppd\"";
 		print " checked" if($rip_which eq "ppd");
 		print "> From PPD File</span>\n";
 
@@ -224,7 +224,7 @@ my $tabbed_table = [
 		# Lower section: Custom RIP Info
 		{
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\"><input type=\"radio\" name=\"rip_which\" value=\"custom\"";
+		print "<span class=\"section_label\"><input type=\"radio\" name=\"rip_which\" value=\"custom\"";
 		print " checked" if($rip_which eq "custom");
 		print "> Custom</span>\n";
 
@@ -382,7 +382,7 @@ my $tabbed_table = [
 	'tabname' => N_("Samba"),
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">";
+		print "<span class=\"section_label\">";
 		labeled_checkbox("addon ppr2samba", _("Share with Samba"), 1, cgi_data_move("addon ppr2samba", 1));
 		print "</span>\n";
 
@@ -422,7 +422,7 @@ my $tabbed_table = [
 	'tabname' => N_("PAP"),
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">";
+		print "<span class=\"section_label\">";
 		labeled_checkbox("addon ppr2samba", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon pprpapd", 0));
 		print "</span>\n";
 
@@ -441,7 +441,7 @@ my $tabbed_table = [
 	'tabname' => N_("Limits"),
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">", H_("Limits Enforced Before Printing"), "</span>\n";
+		print "<span class=\"section_label\">", H_("Limits Enforced Before Printing"), "</span>\n";
 
 		print '<p><span class="label">', H_("Limit Kilobytes"), "</span><br>\n";
 		labeled_entry("limitkilobytes_lower", _("Lower limit:"), cgi_data_move("limitkilobytes_lower", 0), 8);
@@ -460,7 +460,7 @@ my $tabbed_table = [
 		print "</div>\n";
 
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">", H_("Limits Enforced During Printing"), "</span>\n";
+		print "<span class=\"section_label\">", H_("Limits Enforced During Printing"), "</span>\n";
 
 		print "<p>";
 		labeled_entry("pagetimelimit", H_("Per-page time limit (in seconds):"), cgi_data_move("pagetimelimit", 0), 4);

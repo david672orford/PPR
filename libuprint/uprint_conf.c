@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 26 April 2002.
 */
 
 #include "before_system.h"
@@ -90,10 +90,11 @@ void uprint_read_conf(void)
     {
     FILE *f;				/* opened uprint.conf */
     struct PATH_SET *path_set = (struct PATH_SET *)NULL;
-    char line[256];			/* line from uprint.conf */
-    char line2[256];			/* line with spaces removed */
+    char *line = NULL;			/* line from uprint.conf */
+    int line_space = 80;
     enum STATE state = STATE_INIT;	/* initial parser state */
     char *p1, *p2;
+    char *name, *value;
     int linenum = 0;
 
     conf.well_known.lpr = 
@@ -109,11 +110,17 @@ void uprint_read_conf(void)
 	conf.sidelined.lpstat =
 	conf.sidelined.cancel = (const char *)NULL;
 
-    conf.lp.sidelined = conf.lpr.sidelined = FALSE;
-    conf.lp.installed = conf.lpr.installed = FALSE;
-
-    conf.default_destinations.lpr = NULL;
+    conf.lp.installed = FALSE;
+    conf.lp.sidelined = FALSE;
     conf.default_destinations.lp = NULL;
+    conf.lp.flavor = NULL;
+    conf.lp.flavor_version = 0.0;
+
+    conf.lpr.installed = FALSE;
+    conf.lpr.sidelined = FALSE;
+    conf.default_destinations.lpr = NULL;
+    conf.lpr.flavor = NULL;
+    conf.lpr.flavor_version = 0.0;
 
     if((f = fopen(UPRINTCONF, "r")) == (FILE*)NULL)
     	{
@@ -121,7 +128,7 @@ void uprint_read_conf(void)
 	return;
 	}
 
-    while(fgets(line, sizeof(line), f))
+    while((line = gu_getline(line, &line_space, f)))
 	{
 	linenum++;
 
@@ -169,46 +176,55 @@ void uprint_read_conf(void)
 	    }
 
 	/* Delete spaces: */
-	for(p1=line, p2=line2; *p1 && *p1 != '\n'; p1++)
+	for(name=p2=p1=line; *p1 && *p1 != '='; p1++)	/* remove spaces from name part */
 	    {
 	    if(! isspace(*p1))
-	    	*(p2++) = *p1;
+	    	*p2++ = *p1;
+	    }
+	*p2++ = '\0';					/* terminate name */
+	value = p2;					/* note start of value */
+	if(*p1 == '=')
+	    p1++;
+	p1 += strspn(p1, " \t");		/* eat space after equals sign */
+	while(*p1)				/* copy rest */
+	    {
+	    *p2++ = *p1++;
 	    }
 	*p2 = '\0';
 
 	/* If that reduce the line to nothing or revealed a comment, skip it. */
-	if(line2[0] == '\0' || line2[0] == '#' || line2[0] == ';')
+	if(line[0] == '\0' || line[0] == '#' || line[0] == ';')
 	    continue;
 
 	/* Act according to section. */
 	switch(state)
 	    {
 	    case STATE_INIT:
-	    	uprint_error_callback("Ignoring \"%s\" line %d: %s", UPRINTCONF, linenum, line2);
+	    	uprint_error_callback("Ignoring \"%s\" line %d: %s", UPRINTCONF, linenum, line);
 		continue;
 
 	    case STATE_WELL_KNOWN:
 	    case STATE_SIDELINED:
-		if(strncmp(line2, "lpr=", 4) == 0)
-		    path_set->lpr = uprint_strdup(line2 + 4);
-		else if(strncmp(line2, "lpq=", 4) == 0)
-		    path_set->lpq = uprint_strdup(line2 + 4);
-		else if(strncmp(line2, "lprm=", 5) == 0)
-		    path_set->lprm = uprint_strdup(line2 + 5);
-		else if(strncmp(line2, "lp=", 3) == 0)
-		    path_set->lp = uprint_strdup(line2 + 3);
-		else if(strncmp(line2, "lpstat=", 7) == 0)
-		    path_set->lpstat = uprint_strdup(line2 + 7);
-		else if(strncmp(line2, "cancel=", 7) == 0)
-		    path_set->cancel = uprint_strdup(line2 + 7);
+		if(strcmp(name, "lpr") == 0)
+		    path_set->lpr = uprint_strdup(value);
+		else if(strcmp(name, "lpq") == 0)
+		    path_set->lpq = uprint_strdup(value);
+		else if(strcmp(name, "lprm") == 0)
+		    path_set->lprm = uprint_strdup(value);
+		else if(strcmp(name, "lp") == 0)
+		    path_set->lp = uprint_strdup(value);
+		else if(strcmp(name, "lpstat") == 0)
+		    path_set->lpstat = uprint_strdup(value);
+		else if(strcmp(name, "cancel") == 0)
+		    path_set->cancel = uprint_strdup(value);
 		else
 		    break;
 		continue;
 
 	    case STATE_REAL_LPR:
-		if(strncmp(line2, "sidelined=", 10) == 0)
+		if(strcmp(name, "sidelined") == 0)
 		    {
-		    switch(gu_torf(line2 + 10))
+		    switch(gu_torf(value))
 		    	{
 			case ANSWER_UNKNOWN:
 			    uprint_error_callback("Invalid value for [lpr] sidelined");
@@ -221,9 +237,9 @@ void uprint_read_conf(void)
 			    break;
 		    	}
 		    }
-		else if(strncmp(line2, "installed=", 10) == 0)
+		else if(strcmp(name, "installed") == 0)
 		    {
-		    switch(gu_torf(line2 + 10))
+		    switch(gu_torf(value))
 		    	{
 			case ANSWER_UNKNOWN:
 			    uprint_error_callback("Invalid value for [lpr] installed");
@@ -236,14 +252,18 @@ void uprint_read_conf(void)
 			    break;
 		    	}
 		    }
+		else if(strcmp(line, "flavor") == 0)
+		    {
+
+		    }
 		else
 		    break;
 		continue;
 
 	    case STATE_REAL_LP:
-		if(strncmp(line2, "sidelined=", 10) == 0)
+		if(strcmp(name, "sidelined") == 0)
 		    {
-		    switch(gu_torf(line2 + 10))
+		    switch(gu_torf(value))
 		    	{
 			case ANSWER_UNKNOWN:
 			    uprint_error_callback("Invalid value for [lp] sidelined");
@@ -256,9 +276,9 @@ void uprint_read_conf(void)
 			    break;
 		    	}
 		    }
-		else if(strncmp(line2, "installed=", 10) == 0)
+		else if(strcmp(name, "installed") == 0)
 		    {
-		    switch(gu_torf(line2 + 10))
+		    switch(gu_torf(value))
 		    	{
 			case ANSWER_UNKNOWN:
 			    uprint_error_callback("Invalid value for [lp] installed");
@@ -280,19 +300,19 @@ void uprint_read_conf(void)
 		continue;
 
 	    case STATE_DEFAULT_DESTINATIONS:
-		if(strncmp(line2, "uprint-lp=", 10) == 0)
+		if(strcmp(name, "uprint-lp") == 0)
 		    {
-		    conf.default_destinations.lp = uprint_strdup(line2 + 10);
+		    conf.default_destinations.lp = uprint_strdup(value);
 		    }
-		else if(strncmp(line2, "uprint-lpr=", 11) == 0)
+		else if(strcmp(name, "uprint-lpr") == 0)
 		    {
-		    conf.default_destinations.lpr = uprint_strdup(line2 + 11);
+		    conf.default_destinations.lpr = uprint_strdup(value);
 		    }
 	    	continue;
 	    }
 
 	/* Unclaimed line: */
-	uprint_error_callback("Ignoring \"%s\" line %d: %s", UPRINTCONF, linenum, line2);
+	uprint_error_callback("Ignoring \"%s\" line %d: %s", UPRINTCONF, linenum, line);
 	}
 
     fclose(f);		/* close uprint.conf */
@@ -371,7 +391,7 @@ const char *uprint_default_destinations_lp(void)
 /*
 **
 */
-gu_boolean *uprint_lpr_installed(void)
+gu_boolean uprint_lpr_installed(void)
     {
     uprint_read_conf();
     return conf.lpr.installed;
@@ -380,10 +400,54 @@ gu_boolean *uprint_lpr_installed(void)
 /*
 **
 */
-gu_boolean *uprint_lp_installed(void)
+gu_boolean uprint_lp_installed(void)
     {
     uprint_read_conf();
     return conf.lp.installed;
+    }
+
+/*
+**
+*/
+const char *uprint_lpr_printcap(void)
+    {
+    return "/etc/printcap";
+    }
+
+/*
+**
+*/
+const char *uprint_lp_printers(void)
+    {
+    #ifdef LP_LIST_PRINTERS
+    return LP_LIST_PRINTERS;
+    #else
+    return "?";
+    #endif
+    }
+
+/*
+**
+*/
+const char *uprint_lp_classes(void)
+    {
+    #ifdef LP_LIST_CLASSES
+    return LP_LIST_CLASSES;
+    #else
+    return "?";
+    #endif
+    }
+
+/*
+**
+*/
+gu_boolean uprint_lp_printers_conf(void)
+    {
+    #ifdef PRINTERS_CONF
+    return TRUE;
+    #else
+    return FALSE;
+    #endif
     }
 
 /* end of file */

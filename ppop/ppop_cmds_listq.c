@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 25 February 2002.
+** Last modified 6 May 2002.
 */
 
 /*
@@ -145,6 +145,8 @@ static void job_status(const struct QEntry *qentry, const struct QFileEntry *qfi
 		    	for(x=0; x < reason_indent; x++) /* indent */
 			    PUTC(' ');
 
+			PUTC('(');
+
 			do  {
 			    if(*ptr == '|')		/* break at | but */
 			    	{			/* don't print the | */
@@ -154,7 +156,7 @@ static void job_status(const struct QEntry *qentry, const struct QFileEntry *qfi
 			    PUTC(*ptr);
 			    } while( *(ptr++) != ',' && *ptr );
 
-			PUTC('\n');
+			PUTS(")\n");
 			}
 		    break;	/* print only the first reason */
 		    } /* end of if this is a "Reason:" line */

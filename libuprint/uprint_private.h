@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 26 April 2002.
 */
 
 /* Do not turn this on when linking with lprsrv!  Such
@@ -146,8 +146,12 @@ const char *uprint_path_lpr(void);
 const char *uprint_path_lpq(void);
 const char *uprint_path_lprm(void);
 const char *uprint_path_lp(void);
-gu_boolean *uprint_lpr_installed(void);
-gu_boolean *uprint_lp_installed(void);
+gu_boolean uprint_lpr_installed(void);
+gu_boolean uprint_lp_installed(void);
+const char *uprint_lpr_printcap(void);
+const char *uprint_lp_printers(void);
+const char *uprint_lp_classes(void);
+gu_boolean uprint_lp_printers_conf(void);
 
 /* end of file */
 

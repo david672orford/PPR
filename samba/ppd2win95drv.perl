@@ -37,7 +37,7 @@ $DRVDIR_WIN40 = "$DRVDIR/$WIN40";
 $DRVDIR_WINPPD = "$DRVDIR/$WINPPD";
 
 # This file is read by Samba to get Windows 95 driver information.
-$PRINTERS_DEF = "$DRVDIR_WIN40/printers.def";
+$PRINTERS_DEF = "$DRVDIR/WIN40.def";
 
 # We use this when copying in new PPD files.
 $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
@@ -91,7 +91,6 @@ foreach my $dir ($DRVDIR_WIN40)
     while(defined($file = readdir(DIR)))
 	{
 	next if($file =~ /^\./);
-	next if($file eq "printers.def");
 
 	$upper = $file;
 	$upper =~ tr/[a-z]/[A-Z]/;

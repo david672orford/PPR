@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 12 March 2002.
+# Last revised 30 April 2002.
 #
 
 =head1 NAME
@@ -33,12 +33,11 @@ B<lprsrv-test> I<hostname> [I<username>] ...
 The B<--help> option prints a brief description of the options.
 The B<--version> option prints the PPR version information.
 
-B<lprsrv> is an RFC-1179 (Berkeley lpr/lpd) compatible print server.  It will
-accept print jobs over the network and hand them to the Uprint library for
-processing.  By means
-of the Uprint library, B<lprsrv> can deliver jobs to PPR, as well
-as the BSD and System V spoolers (if present).  It can also handle requests
-to list print queues and to delete jobs.
+B<lprsrv> is an RFC-1179 (Berkeley lpr/lpd) compatible print server.  It
+will accept print jobs over the network and hand them to the Uprint library
+for processing.  By means of the Uprint library, B<lprsrv> can deliver jobs
+to PPR, as well as the BSD and System V spoolers (if present).  It can also
+handle requests to list print queues and to delete jobs.
 
 PPR version 1.32 introduced a heavily reworked B<lprsrv>.  Most of the
 command line options were changed and the access control scheme was
@@ -52,7 +51,11 @@ B<lprsrv> to work.  See L<UPRINT(1)> for details.
 =head2 Disabling Other RFC 1179 Servers
 
 If you want to run B<lprsrv> on the standard port (and you almost certainly do),
-you must disable any RFC 1179 server already running on that port.
+you must disable any RFC 1179 server already running on that port.  This
+section contains instructions for disabling various RFC 1179 servers. 
+If your system's print server isn't covered in this section and you figure
+out how to disable it, please send the necessary instructions to
+ppr-bugs@trincoll.edu.
 
 =head3 Berkely LPD
 
@@ -87,7 +90,7 @@ don't have to reboot after making the change, run these commands:
  # /usr/lib/lpshut
  # /usr/lib/lpsched -nobsd
 
-=head SunOS 5.6 (Solaris 2.6)
+=head3 SunOS 5.6 (Solaris 2.6)
 
 If you are using SunOS 5.6 (Solaris 2.6) then you need only edit /etc/inetd.conf
 and remove the line which reads:
@@ -107,29 +110,98 @@ or, if your B<kill> command doesn't support the modern syntax:
 
 =head2 Setup With Inetd
 
-To have B<inetd> launch B<lprsrv> whenever a print request arrives,
-make sure a line like this is in F</etc/services>:
+If Inetd was installed on your system when you ran PPR's B<fixup> program
+during PPR installation, it will have added the necessary line to
+F</etc/services>.  (Remember, you ran /usr/lib/ppr/fixup/fixup as root right
+after you ran B<make install>.) The B<fixup> program will also have put an
+entry in F</etc/inetd.conf> but left it commented out.  In order to enable
+B<lprsrv>, go through this section and make sure the required lines are
+present and remove the comment character from in front of the line in
+F</etc/inetd.conf>.
+
+First, make sure a line like this is in F</etc/services>:
 
     printer		515/tcp		spooler
 
-Then put a line like this in F</etc/inetd.conf>:
+Then look in F</etc/inetd.conf>.  For basic versions of B<inetd>, such as
+those distributed with Solaris, the line should read something like:
 
     printer stream tcp nowait root /usr/lib/ppr/lib/lprsrv lprsrv
 
-Notice the above line is different from the one used with pre-1.32
-versions of B<lprsrv> or with B<olprsrv>.
+If Tcpwrappers was installed on your system when you ran B<fixup>, it will
+read:
 
-If you find that B<inetd> keeps temporarily disabling B<lprsrv> whenever
-it is heavily used, try using this line instead:
+    printer stream tcp nowait root /usr/local/sbin/tcpd lprsrv
 
-    printer stream tcp nowait.400 root /usr/lib/ppr/lib/lprsrv lprsrv
+On Linux systems with TCP wrappers it will read something like:
 
-This tells B<inetd> that it is normal for B<lprsrv> to receive up to
-400 connections per minute.  Some versions of B<inetd> may not support this
-option.  In that case you will have to run B<lprsrv> in standalone mode.
+    printer stream tcp nowait.400 root /usr/sbin/tcpd /usr/lib/ppr/lib/lprsrv
+
+If the line is already present, make sure there is no "#" in front of it. 
+
+The Linux version of Inetd allows us to specify how how many requests per
+minute the server should be allowed to receive.  In the Linux
+F</etc/inetd.conf> example above, the "400" specifies that the B<lprsrv>
+should be allowed to handle up to 400 connections per minute.  If more than
+400 requests are received during one minute, then B<inetd> will disable
+B<lprsrv> for a little while.
+
+Other versions of Inetd may not have any provision for changing the maximum
+allowed number of connections.  Often they will limit all servers to 60
+connections per minute.  If this is the case with you, you may want to run
+B<lprsrv> in standalone mode.
 
 Before your changes to F<inetd.conf> will take effect, B<inetd> must be
-instructed to reload F<inetd.conf>, as explained in the previous section.
+instructed to reload F<inetd.conf> by sending it the HUP signal.  If
+B<inetd> has the process id 123, then the command for reloading
+F<inetd.conf> is:
+
+    kill -HUP 123
+
+or, if your B<kill> command doesn't support the modern syntax:
+
+    kill -1 123
+
+
+=head2 Setup With Xinetd
+
+A comparatively new alternative to Inetd is Xinetd.  It is designed to be
+more flexible and to better manage the connection load.  Xinetd is used
+instead of Inetd in some Linux distributions such as Mandrake.  You can
+download the Xinetd source code from http://www.xinetd.org/.
+
+Xinetd uses a configuration file format that is different from that of
+Inetd.  Generally, the configuration file is F</etc/xinetd.conf> which
+contains an instruction to include configuration file fragments stored
+in F</etc/xinetd.d/>.  This setup makes it easy for package installers to
+add and remove Xinetd configuration information from the system.  All they
+have to do is add files to F</etc/xinetd.d> when installing the package and
+delete them when removing the package.
+
+If PPR's B<fixup> finds Xinetd installed on your system, it will use it
+instead of Inetd.  It will create a file called F</etc/xinetd.d/ppr> which
+will read in part:
+
+    # RFC 1179 (LPR/LPD) server
+    service printer
+    {
+        socket_type     = stream
+        wait            = no
+        user            = root
+        server          = /usr/lib/ppr/lib/lprsrv
+        cps             = 400 30
+        instances       = 50
+        disabled        = yes
+    }
+
+Notice the line that says "disabled = yes".  You must change this to
+"disabled = no" in order to enable B<lprsrv>.
+
+After you make a change to Xinetd's configuration, you must send it the USR2
+signal.  For example, if Xinetd's process id is 123:
+
+    kill -USR2 123
+
 
 =head2 Standalone Server Operation
 
@@ -176,33 +248,47 @@ runs B<lpstat>.  Some B<lpq> options are not supported for B<lp> queues.
 
 =head2 Access Control
 
-Access to queues through B<lprsrv> is controled by the
-file F</etc/ppr/lprsrv.conf>.  The only documentation currently
-available is in F</etc/ppr/lprsrv.conf.sample>.
+Access to queues through B<lprsrv> is controled by the file
+F</etc/ppr/lprsrv.conf>.  The only documentation currently available is in
+F</etc/ppr/lprsrv.conf.sample>.
 
 If you use an unmodified F<lprsrv.conf.sample> for F<lprsrv.conf>, then
 tranditional BSD-style access control will be in effect.  Under this style
-of access control, any computer listed in F</etc/hosts.equiv> or F</etc/hosts.lpd>
-will be allowed to submit jobs.
+of access control, any computer listed in F</etc/hosts.equiv> or
+F</etc/hosts.lpd> will be allowed to submit jobs.  The names listed in these
+files should be fully qualified names.
+
+Since B<lprsrv> uses its own code, it may not support all of the access
+control syntax described in L<hosts.equiv>.  In particular, "+" and "-" are
+not supported.  Domain wildcards such as ".trincoll.edu" are supported.  NIS
+netgroup support is available on some systems.
+
+If you would like to add support for additional access control syntax in
+F</etc/hosts.equiv> and F</etc/hosts.lpd>, you should modify the function
+authorized_file_check() in lprsrv/lprsrv_conf.c.  If you make improvements,
+please consider contributing them to the PPR project.
 
 
 =head2 Access Control Testing
 
-The program B<lprsrv-test> can be used to test the rules in F<lprsrv.conf>.
+The program B<lprsrv-test> can be used to test the rules in F</etc/ppr/lprsrv.conf>,
+F</etc/hosts.equiv>, and F</etc/hosts.lpd>.
 
 You can use it to find out what sort of access certain users on a certain
-host will have.  When you run it the first parameter should be a fully
-qualified hostname.  The second and subsequent parameters should be usernames.
+host will have.  When you run it the first parameter should be a
+hostname.  The second and subsequent parameters should be usernames.
 
-Since several sections of F<lprsrv.conf> may be combined to determine the
-access settings for a certain host, it can be difficult to determine exactly
-what access a particular host has.  B<lprsrv-test> solves this by printing
-a merged record in F<lprsrv.conf> format which shows the final settings which
-apply to the host you named on the command line.
+Since several sections of F</etc/ppr/lprsrv.conf> may be combined to
+determine the access settings for a certain host, it can be difficult to
+determine exactly what access a particular host has.  B<lprsrv-test> solves
+this by printing a merged record in F</etc/ppr/lprsrv.conf> format which
+shows the final settings which apply to the host you named on the command
+line.
 
 For each remote user you name on the command line, B<lprsrv-test> will print
 the name of the local user which will be used to execute spooler commands on
-the remote user's behalf.  The local user used may be different for each spooler.
+the remote user's behalf.  The local user used may be different for each
+spooler.
 
 
 =head2 Other Options
@@ -266,6 +352,25 @@ be able to suppress the banner page unless the B<lpadmin -o> option has
 been used to set a list of printer options which includes "nobanner".
 
 
+=head2 Client Configuration
+
+This section describes the commands needed to set up various print spoolers
+as clients of B<lprsrv>.  If you have information to add to this section,
+please send it to ppr-bugs@trincoll.edu.
+
+=head3 BSD lpr
+
+Add an entry similar to the following to F</etc/printcap>.
+
+    myprn|My Printer:\
+	:rp=somehost.mycoll.edu:rm=myprn:\
+	:sd=/var/spool/lpd/myprn:\
+	:mx#0:
+
+Then create the local spool directory.
+
+    mkdir /var/spool/lpd/myprn
+
 =head1 SEE ALSO
 
 See L<UPRINT(1)>.
@@ -273,7 +378,7 @@ See L<UPRINT(1)>.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2000.
+PPR was written at Trinity College during 1993--2002.
 
 =head1 AUTHORS
 

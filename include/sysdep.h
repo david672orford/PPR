@@ -108,10 +108,6 @@
 ** #define HAVE_LPR 1	Give lprsrv, fake_lp, fake_lpr, etc. the ability
 **			to send jobs off to BSD LPR.
 **
-** #define LPR_PRINTCAP "/etc/printcap"
-**			If HAVE_LPR is defined, you may define this to
-**			change the location or name of the printcap file.
-**
 ** #define LPR_EXTENSIONS_OSF 1
 **			Define this if your lpr has the DEC OSF extensions
 **			such as the -I, -j, -K, -N, -o, -O, and -x switches.
@@ -197,7 +193,6 @@
 #ifdef PASS2
 #define SENDMAIL_PATH "/usr/lib/sendmail"	/* mail program for alerting */
 #define SAFE_PATH "/bin:/usr/bin"		/* Secure path */
-#define LPR_PRINTCAP "/etc/printcap"
 #endif
 
 /*========================================================================

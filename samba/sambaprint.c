@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 May 2002.
+** Last modified 7 May 2002.
 */
 
 #include "before_system.h"
@@ -39,13 +39,17 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <pwd.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
-#include "tdb.h"
+#include "util_exits.h"
+#include <tdb.h>
+
+static const char myname[] = "sambaprint";
 
 static const char tdb_drivers_file[] = "/usr/local/samba/var/locks/ntdrivers.tdb";
 
@@ -86,8 +90,8 @@ static int drivers_import(void)
     /* Open the TDB database that contains NT driver information. */
     if(!(tdb_drivers = tdb_open((char*)tdb_drivers_file, 0, TDB_DEFAULT, O_RDWR|O_CREAT, 0600)))
 	{
-	fprintf(stderr, "Can't open \"%s\", errno=%d (%s)\n", tdb_drivers_file, errno, strerror(errno));
-	return 1;
+	fprintf(stderr, "%s: can't open \"%s\", errno=%d (%s)\n", myname, tdb_drivers_file, errno, strerror(errno));
+	return EXIT_INTERNAL;
 	}
 
     while((line = gu_getline(line, &line_available, stdin)))
@@ -106,7 +110,7 @@ static int drivers_import(void)
 		|| !(field_defaultdatatype = gu_strsep(&lineptr, ":"))
 	    )
 	    {
-	    fprintf(stderr, "Parse error on line %d.\n", linenum);
+	    fprintf(stderr, "%s: parse error on line %d.\n", myname, linenum);
 	    break;
 	    }
 	    	
@@ -182,14 +186,28 @@ static int drivers_import(void)
     if(line)
 	{
 	gu_free(line);
-	return 1;
+	return EXIT_INTERNAL;
 	}
 
-    return 0;
+    return EXIT_OK;
     }
 
 int main(int argc, char *argv[])
     {
+    {
+    struct passwd *pw;
+    if((pw = getpwuid(getuid())) == (struct passwd *)NULL)
+        {
+        fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)getuid(), errno, gu_strerror(errno));
+        return EXIT_INTERNAL;
+        }
+    if(strcmp(pw->pw_name, USER_PPR))
+    	{
+	fprintf(stderr, "%s: you are not %s\n", myname, USER_PPR);
+	return EXIT_DENIED;
+    	}
+    }
+
     /* Initialize international messages library. */
     #ifdef INTERNATIONAL
     setlocale(LC_MESSAGES, "");
@@ -207,7 +225,7 @@ int main(int argc, char *argv[])
     else
     	{
 	fprintf(stderr, "Bad usage.\n");
-	return 1;
+	return EXIT_SYNTAX;
     	}
     }
 

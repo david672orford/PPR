@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/claim_remote.c
-** Copyright 1995, 1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 12 August 1999.
+** Last modified 26 April 2002.
 */
 
 #include "before_system.h"
@@ -22,7 +22,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -233,12 +232,12 @@ gu_boolean printdest_claim_remote(const char *dest, struct REMOTEDEST *scratchpa
 
 	    else if(strcmp(name, "remotesystemtype") == 0)
 	    	{
-		char system[sizeof(line)];
+		char system[17];
 		float version;
 		int x;
 		gu_boolean match = FALSE;
 
-		if(sscanf(value, "%s %f", system, &version) != 2)
+		if(sscanf(value, "%16s %f", system, &version) != 2)
 		    {
 		    uprint_errno = UPE_BADCONFIG;
 		    uprint_error_callback(_("Wrong format for \"systemtype\" value in \"%s\" section \"[%s]\", line %d."), UPRINTREMOTECONF, dest, linenum);

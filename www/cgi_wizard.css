@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 12 April 2002.
+** Last modified 26 April 2002.
 */
 
 BODY { background: #e0e0e0 }
@@ -28,24 +28,23 @@ SPAN.alert { color: blue }
    in a labeled box.
    */
 DIV.section {
+	position: relative;		/* <-- necessary for parenthood */
 	border: thin solid black;
 	padding: 10pt;
-	margin-top: 2.0em;
 	margin-bottom: 10pt;
 	}
-SPAN.section {
-	position: relative;
-	top: -1.5em;
-	right: 0pt;
+SPAN.section_label {
+	position: absolute;
+	top: -9pt;
+	left: 10pt;
 	background: #e0e0e0;
-	border-width: 0.5pt;
-	border-style: solid;
-	padding-left: 1ex;  
-	padding-right: 1ex; 
-	margin-bottom: 0pt;
+	font-weight: bold;
+	border: thin solid black;
+	padding: 0ex 1ex 0ex 1ex;
 	}
 DIV.section P {
 	margin-top: 0pt;
 	margin-bottom: 0pt;
 	}
+
 /* end of file */

@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 1 May 2002.
+# Last modified 8 May 2002.
 #
 
 include ../makeprogs/global.mk
@@ -56,6 +56,7 @@ install: $(PROGS) smb-protos.conf WIN95CP.BAT
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
 	$(INSTALLCP) WIN95CP.BAT $(VAR_SPOOL_PPR)/drivers/WIN40/WIN95CP.BAT
 	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib sambaprint$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

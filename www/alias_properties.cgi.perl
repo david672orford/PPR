@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 19 April 2002.
+# Last modified 26 April 2002.
 #
 
 use lib "?";
@@ -100,7 +100,7 @@ my $tabbed_table = [
 	'tabname' => N_("Samba"),
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
-		print "<span class=\"section\">";
+		print "<span class=\"section_label\">";
 		labeled_checkbox("addon ppr2samba", _("Share with Samba (provided Samba is prepared)"), 1, cgi_data_move("addon ppr2samba", 1));
 		print "</span>\n";
 

@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2001, Trinity College Computing Center.
+*% Copyright 1995--2002, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -32,7 +32,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 28 August 2001.
+*% which was last revised 24 April 2002.
 *%
 #endif
 
@@ -110,7 +110,7 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*pprRIP: ppr-gs pcl -sDEVICE=cdj550
+*pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
 #endif
 
 *% ===== General Information =====

@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--24 April 2002.
+1.50a2, 27 February 2002--6 May 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7674,4 +7674,23 @@ line was being parsed twice.
 * www/cgi_tabbed.pl: added [Help].
 
 * www/prn_properties.html: added.
+
+* fixup/fixup_inetd.sh: removed spurious "disabled = yes" line from the
+  generated xinetd config file.  (The correct line "disable = yes" 
+  was already present.)
+
+* ppd/ghostscript/ghostscript_master: Added "-dBitsPerPixel=24" for
+  DeskJet 550C.
+
+* Fixed bug in the new internal resource table code in
+  pprdrv/pprdrv_capable.c which made it non-functional.
+
+* Fixed pprd/pprd_ppop.c:ppop_move() so that the pass number is reset when a 
+  job is moved.
+
+* Changed pprdrv so that "Reason:" lines don't have parentheses around them 
+  in the queue file and changed ppop to print them itself.
+
+* nonppr_vendors/hp_ppd/: commented out "*HPScalePatterns" since it breaks
+  the Adobe version of the MS-Windows PostScript driver.
 

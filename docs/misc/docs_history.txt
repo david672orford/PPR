@@ -272,7 +272,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   them with pprd --stop and papsrv --stop.
 
 
-1.50a1, 27 February 2002--7 March 2002.
+1.50a2, 27 February 2002--30 April 2002.
 
 * misc/release_steps.html: added CVS information and hyperlinked URLs.
 
@@ -284,4 +284,6 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
 * refman/ppr.1.pod: removed references to --commentator, --commentator-address,
   and --commentator-options.
 
-
+* refman/lprsrv.8.pod: Added section on Xinetd, updated Inetd section to
+  reflect the fact that fixup puts in a commented out config line which
+  may use TCPwrappers.

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_lprm.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 26 April 2002.
 */
 
 #include "before_system.h"
@@ -23,7 +23,7 @@
 #include "uprint.h"
 #include "uprint_private.h"
 
-int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class[], const char *queue, const char **arglist)
+static int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class[], const char *queue, const char **arglist)
     {
     int result_code = 0;
     char proxy_for[MAX_PRINCIPAL + 1];
@@ -219,7 +219,7 @@ int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class[], con
     return result_code;
     } /* end of uprint_lprm_ppr() */
 
-int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
+static int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
     int x;
@@ -291,7 +291,7 @@ int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], cons
     return retval;
     } /* end of uprint_lprm_lp() */
 
-int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
+static int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
     int x, item_length;

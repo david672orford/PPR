@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 15 January 2002.
+** Last modified 6 May 2002.
 */
 
 #include "before_system.h"
@@ -163,7 +163,7 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
     /* Here is where we observe the limit set by "ppad pagetimelimit".
        First we must test that there is a limit and that we have been getting
        valid information about the printer's on-line state and that the printer
-       is on-line (since the PageTimeLimit can't expire while the printer
+       is on-line (since the PageTimeLimit shouldn't expire while the printer
        is off-line). */
     if(printer.PageTimeLimit > 0 && online_online_valid && online_online)
     	{
@@ -195,7 +195,7 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
 	    gu_timeval_cpy(sleep_time, &time_of_expiration);
     	}
 
-    /* Turn it into a realative time. */
+    /* Turn the absolute wakeup time into a realative time. */
     gu_timeval_sub(sleep_time, &now_time);
 
     if(sleep_time->tv_sec < 0 || (sleep_time->tv_sec == 0 && sleep_time->tv_usec < 0))
@@ -358,8 +358,9 @@ void writemon_pagedrop(void)
 
 /*
 ** This function is intended to be called by the feedback reader (in
-** pprdrv_feedback.c) every time the printer's on-line/off-line state is known.
-** We must determine if this new state is different from the previous state.
+** pprdrv_feedback.c) every time the printer's on-line/off-line state becomes 
+** known.  We must determine if this new state is different from the previous 
+** state.
 */
 void writemon_online(gu_boolean online)
     {
@@ -370,12 +371,12 @@ void writemon_online(gu_boolean online)
 	{
 	char temp[32];
 
-        if(online)  		/* went from unknown or off-line to on-line */
+        if(online)  			/* went from unknown or off-line to on-line */
             {
             gettimeofday(&online_unaccumulated_start_time, NULL);
             snprintf(temp, sizeof(temp), "%d %d", (int)online_accumulator.tv_sec, (int)online_unaccumulated_start_time.tv_sec);
             }
-        else			/* went from unknown or on-line to off-line */
+        else				/* went from unknown or on-line to off-line */
             {
 	    if(online_online_valid)	/* went from on-line to off-line */
 		{
@@ -394,4 +395,3 @@ void writemon_online(gu_boolean online)
     }
 
 /* end of file */
-

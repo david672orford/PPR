@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_perms.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 20 February 2001.
+# Last modified 8 May 2002.
 #
 
 HOMEDIR="?"
@@ -42,7 +42,7 @@ echo "Done."
 echo
 
 #=============================================================================
-# Change a lot of file permisions
+# First do a blanket change.
 #=============================================================================
 
 echo "Changing the owner of all PPR files to \"$USER_PPR\"..."
@@ -61,6 +61,15 @@ set_user_group_mode $HOMEDIR
 set_user_group_mode $SHAREDIR
 set_user_group_mode $VAR_SPOOL_PPR
 
+echo "Done."
+echo
+
+#=============================================================================
+# Now go back and change things.
+#=============================================================================
+
+echo "Setting different permissions for certain failes..."
+
 # This is done so that the DVI filters work.
 chmod 775 $VAR_SPOOL_PPR/dvips
 
@@ -77,8 +86,8 @@ echo "Done."
 echo
 
 #=============================================================================
-# Make sure the programs which are supposed
-# to be setuid to ppr and setgid to ppop are.
+# Make sure the programs which are supposed to be setuid or setgid to ppr
+# or setuid to root are.
 #=============================================================================
 
 echo "Setting up setuid programs..."
@@ -90,6 +99,7 @@ chmod 6711 $HOMEDIR/bin/pprd \
 	$HOMEDIR/bin/ppuser \
 	$HOMEDIR/bin/ppr2samba
 
+# If papsrv exists (i.e., we have AppleTalk support),
 if [ -x $HOMEDIR/bin/papsrv ]
     then
     chmod 6711 $HOMEDIR/bin/papsrv
@@ -107,6 +117,10 @@ chmod 4711 $HOMEDIR/bin/ppr-xgrant
 # The uprint programs must be setuid root too.
 chown root $HOMEDIR/bin/uprint-*
 chmod 4711 $HOMEDIR/bin/uprint-*
+
+# The Samba printer drivers editor must be setuid root.
+chown root $HOMEDIR/lib/sambaprint
+chmod 4711 $HOMEDIR/lib/sambaprint
 
 echo "Done."
 echo

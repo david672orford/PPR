@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/fixup/fixup_inetd.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 26 November 2001.
+# Last modified 24 April 2002.
 #
 
 HOMEDIR="?"
@@ -112,7 +112,6 @@ service printer
 	server		= $HOMEDIR/lib/lprsrv
 	cps		= 400 30
 	instances	= 50
-	disabled	= yes
 }
 
 # WWW interface HTTP server
