@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--19 December 2001
+1.50a1, 1 August 2001--21 December 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7489,9 +7489,19 @@ line was being parsed twice.
 
 * Added nonppr_misc/md5/md5pure.tcl.
 
-* www/prn_properties.cgi.perl, grp_properties.cgi.perl: Added 
+* www/prn_properties.cgi.perl, grp_properties.cgi.perl: Added
   "Prototype Share:" to the [Samba] tab.
 
 * Changed -r option from net:node to net.node to match the Netatalk
   nbplkup output.
+
+* Changed libscript/pprpopup.pl to look up names in
+  $VAR_SPOOL_PPR/pprpopup.db/.
+
+* Added www/pprpopup_register.cgi.perl.
+
+* Added www/job_public.cgi.perl.
+
+* Added docs/pprpopup/.
+
 

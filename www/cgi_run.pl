@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 7 December 2001.
+# Last modified 20 December 2001.
 #
 
 #===============================================================
@@ -119,6 +119,27 @@ sub opencmd
     # copy of Perl will dump its buffers.
     exec("/bin/echo", "exec(\"" . join('", "', @_) . "\") failed: $!");
     die;
+    }
+
+#===============================================================
+# Run a command and die with its output if it fails.
+#===============================================================
+sub run_or_die
+    {
+    opencmd(RUN_OR_DIE, @_);
+    my $result = "";
+    while(my $line = <RUN_OR_DIE>)
+	{
+	$result .= $line;
+	}
+    if(! close(RUN_OR_DIE))
+	{
+	$result =~ s/&/&amp;/g;
+	$result =~ s/</&lt;/g;
+	$result =~ s/>/&gt;/g;
+	$result =~ s/$/<br>/gm;
+	die "$result\n";
+	}
     }
 
 #===============================================================

@@ -4,14 +4,14 @@
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 19 December 2001.
+# Last revised 21 December 2001.
 #
 
 set register_url "${ppr_root_url}cgi-bin/pprpopup_register.cgi"
-set help_url "${ppr_root_url}docs/"
+set help_url "${ppr_root_url}docs/pprpopup/"
 
 set about_text "PPR Popup 1.50a1
-19 December 2001
+21 December 2001
 Copyright 1995--2001, Trinity College Computing Center
 Written by David Chappell"
 
@@ -298,7 +298,8 @@ proc command_QUESTION {file jobname url width height} {
 	-vscrollmode dynamic \
 	-getcommand [itcl::code shared_urlfetch get] \
 	-postcommand [itcl::code shared_urlfetch post] \
-	-closecommand [itcl::code command_QUESTION_close $jobname]
+	-closecommand [itcl::code command_QUESTION_close $jobname] \
+	-titlecommand [itcl::code wm title $w]
     pack $w.browser -side top -anchor w -fill both -expand 1
     $w.browser import $url
 
@@ -327,24 +328,6 @@ proc command_JOB_REMOVE {file jobname} {
     }
 
 #
-# Macintosh supports speaking.
-#
-if {$tcl_platform(platform) == "macintosh"} {
-    package require Tclapplescript
-    proc command_SPEAK {file tosay} {
-	update idletasks
-	regsub -all {[^a-zA-Z0-9,.!:\(\)-]} $tosay " " cleaned_tosay
-	puts "cleaned_tosay: $cleaned_tosay"
-	AppleScript execute "say \"$cleaned_tosay\""
-	puts $file "+OK"
-	}
-    } else {
-    proc command_SPEAK {file tosay} {
-	puts $file "-ERR not implemented"
-	}
-    }
-
-#
 # This is the function which is called when a connexion
 # is made to this server.
 #
@@ -363,7 +346,8 @@ proc server_function {file cli_addr cli_port} \
 proc server_reader {file} {
     # Get the next line from the socket.
     if {[set line [gets $file]] == "" && [eof $file]} {
-	set line "EOF"
+	catch { close $file }
+	return
 	}
 
     puts "$file: $line"
@@ -401,22 +385,13 @@ proc server_reader {file} {
 		    }
 	    	}
 	    }
-	"SPEAK *" {
-	    regexp {^SPEAK (.+)$} $line junk tosay
-	    command_SPEAK $file $tosay
-	    }
-
-	EOF {
-	    catch { close $file }
-	    return
-	    }
 	QUIT {
             puts $file "+OK"
 	    close $file
 	    return
             }
 	* {
-            puts $file "-ERR Unknown command"
+            puts $file "-ERR Unknown command: $line"
             }
 	}
 
@@ -480,6 +455,13 @@ proc register_callback {token} {
 #========================================================================
 
 proc main {} {
+    global tcl_platform
+
+    # Set the monitor DPI to 90.
+    global system_dpi
+    set system_dpi [winfo pixels . 1i]
+    tk scaling 1.25
+
     # Create a URL fetching object which will be used for registration and for
     # fetching questions.
     urlfetch shared_urlfetch
@@ -493,14 +475,23 @@ proc main {} {
     menu .menubar -border 1 -relief groove
 
     .menubar add cascade -label "File" -menu [menu .menubar.file -tearoff 0 -border 1]
-    .menubar.file add command -label Quit -command { menu_file_quit }
+    .menubar.file add command -label "System Information" -command { menu_file_system_information }
+    .menubar.file add command -label "Quit" -command { menu_file_quit }
 
     .menubar add cascade -label "View" -menu [menu .menubar.view -tearoff 0 -border 1]
-    .menubar.view add check -variable menu_view_console_visibility -label "Tk Console" -command { menu_view_console $menu_view_console_visibility }
+    .menubar.view add check -variable menu_view_main_visibility -label "Main Window" -command { menu_view_main $menu_view_main_visibility }
+    .menubar.view add check -variable menu_view_tk_console_visibility -label "Tk Console" -command { menu_view_tk_console $menu_view_tk_console_visibility }
 
     .menubar add cascade -label "Help" -menu [menu .menubar.help -tearoff 0 -border 1]
     .menubar.help add command -label "Help Contents" -command { menu_help_contents }
     .menubar.help add command -label "About PPR Popup" -command { menu_help_about }
+
+    # Macintosh needs another toplevel to keep the menu in place.
+    # We will place it off the screen.
+    if {$tcl_platform(platform) == "macintosh"} {
+        toplevel .dummy -menu .menubar
+        wm geometry .dummy 25x25+2000+2000
+        }
 
     # Create the scrolling listbox with the outstanding jobs.
     frame .jobs -border 3
@@ -556,11 +547,65 @@ proc main {} {
     # Set the main window size, title, and visibility.
     wm geometry . 600x200
     wm title . "PPR Popup"
-    wm deiconify .
+    menu_view_main 0
+    }
+
+proc menu_file_system_information {} {
+    global system_dpi
+    global tcl_platform
+
+    set info ""
+
+    set tclversion [info tclversion]
+    set patchlevel [info patchlevel]
+    append info "Tcl Version: $tclversion patch level $patchlevel\n"
+
+    foreach name [array names tcl_platform] {
+	set value $tcl_platform($name)
+	append info "Platform $name: $value\n"
+	}
+
+    set screenheight [winfo screenheight .]
+    set screenwidth [winfo screenwidth .]
+    append info "Screen size: ${screenwidth}x${screenheight}\n"
+
+    set dpi [winfo pixels . 1i]
+    append info "OS screen resolution claim: $system_dpi DPI\n"
+    append info "Working screen resolution assumption: $dpi DPI\n"
+
+    iwidgets::dialog .si \
+    	-modality application \
+    	-title "System Information"
+    .si buttonconfigure OK -text "Dismiss"
+    .si hide "Cancel"
+    .si hide "Apply"
+    .si hide "Help"
+    set childsite [.si childsite]
+
+    label $childsite.label -justify left -text $info
+    pack $childsite.label -side left
+
+    frame $childsite.pad -width 10
+    pack $childsite.pad -side left
+
+    frame $childsite.dpi
+    pack $childsite.dpi -side left -padx 5 -pady 5
+    frame $childsite.dpi.square1 -width $system_dpi -height $system_dpi -background white
+    pack $childsite.dpi.square1 -side top -anchor w
+    label $childsite.dpi.label1 -text "1 inch at $system_dpi DPI"
+    pack $childsite.dpi.label1 -side top -anchor w
+    frame $childsite.dpi.pad -height 5
+    pack $childsite.dpi.pad -side top
+    frame $childsite.dpi.square2 -width $dpi -height $dpi -background white
+    pack $childsite.dpi.square2 -side top -anchor w
+    label $childsite.dpi.label2 -text "1 inch at $dpi DPI"
+    pack $childsite.dpi.label2 -side top -anchor w
+
+    .si activate
+    destroy .si
     }
 
 proc menu_file_quit {} {
-    puts "Quit!"
     iwidgets::messagedialog .quit_confirm \
             -modality application \
             -title "Confirmation" \
@@ -574,12 +619,34 @@ proc menu_file_quit {} {
         }
     }
 
-set menu_view_console_visibility 0
-proc menu_view_console {yes} {
+set menu_view_tk_console_visibility 0
+proc menu_view_tk_console {yes} {
     if {$yes} {
-	catch { console show }
+	if [catch { console show }] {
+	    alert "No Tk Console support on this platform."
+	    }
 	} else {
 	catch { console hide }
+	}
+    }
+
+set menu_view_main_visibility 0
+proc menu_view_main {yes} {
+    if {$yes} {
+	wm deiconify .
+	} else {
+	# Withdraw on MacOS and iconify on others.  If we try to iconify it
+	# on MacOS, it is reduced to a title bar (window shade up).
+	global tcl_platform
+	if {$tcl_platform(platform) == "macintosh"} {
+	    wm withdraw .
+	    } else {
+	    # Iconify it.  Since the user must deiconify it to interact with the
+	    # menu, we will set visibility back to true.
+	    wm iconify .
+	    global menu_view_main_visibility
+	    set menu_view_main_visibility 1
+	    }
 	}
     }
 
@@ -597,7 +664,8 @@ proc menu_help_contents {} {
 	-hscrollmode dynamic \
 	-vscrollmode dynamic \
 	-getcommand [itcl::code $w.urlfetch get] \
-	-postcommand [itcl::code $w.urlfetch post]
+	-postcommand [itcl::code $w.urlfetch post] \
+	-titlecommand [itcl::code wm title $w]
     pack $w.browser -side top -anchor w -fill both -expand 1
     $w.browser import $help_url
     }

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 December 2001.
+# Last modified 20 December 2001.
 #
 
 use lib "?";
@@ -40,12 +40,12 @@ my $client=cgi_data_move("client", "");
 my $pprpopup_address=cgi_data_move("pprpopup_address", "");
 my $magic_cookie=cgi_data_move("magic_cookie", "");
 
+$client =~ tr/A-Z/a-z/;
 $client =~ s/([^a-zA-Z0-9\@\.])/sprintf("%%%02X", ord $1)/ge;
 
 if($pprpopup_address =~ /^0\.0\.0\.0:(\d+)$/)
     {
     $pprpopup_address = "$ENV{REMOTE_ADDR}:$1";
-
     } 
 
 open(OUT, ">$dbdir/$client") || die $!;

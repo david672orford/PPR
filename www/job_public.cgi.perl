@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 19 December 2001.
+# Last modified 20 December 2001.
 #
 
 
@@ -19,7 +19,43 @@ use lib "?";
 use PPR;
 require "cgi_data.pl";
 require "cgi_intl.pl";
+require "cgi_digest.pl";
 
+sub validate_password
+    {
+    my $domain = shift;
+    my $username = shift;
+    my $password = shift;
+    
+    if($username eq "")
+    	{
+	return "You didn't enter your username.\n";
+    	}
+
+    $password =~ /^(\S+) (\S+)$/ || die;
+    my($nonce, $response) = ($1, $2);
+    my $H1 = digest_getpw($username);
+    my $correct_response = md5hex("$H1:$nonce");
+
+    if($response ne $correct_response)
+	{
+	return "Password is incorrect." 
+	}
+	
+    eval {
+	if(!digest_nonce_validate($domain, $nonce))
+	    {
+	    return "MD5 digest authentication nonce was too stale.  Please try again.";
+	    }
+	};
+    if($@)
+    	{
+	return $@;
+    	}
+
+    return undef;
+    }
+    
 # Initialize the internationalization libraries and determine the
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
@@ -33,6 +69,10 @@ my $title = cgi_data_peek("title", "");
 my $action = cgi_data_move("action", "");
 my $username = cgi_data_move("username", "");
 my $password = cgi_data_move("password", "");
+
+# Determine the protection domain for MD5 digestion authentication.
+my $protection_domain = "http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$ENV{SCRIPT_NAME}";
+$protection_domain =~ s/[^\/]+$//;
 
 print <<"Head";
 Content-Type: text/html;charset=$charset
@@ -49,18 +89,44 @@ Head
 
 eval {
 
-if($action eq "" || ($action eq "OK" && $username eq ""))
-{
-print "<p>", html(sprintf(
-_("You have submitted a print job entitled \"%s\".  You may either enter your
-username and password to print it or you may cancel it."), $title)),
-"</p>\n";
+    #
+    # [Cancel Job] pressed screen.
+    #
+    if($action eq "Cancel Job")
+	{
+	require "cgi_run.pl";
+	print "<p>The job has been canceled.</p>\n";
+	run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "cancel", $jobname);
+	print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+	}
 
-print <<"Login";
+    else
+	{
+	my $error = undef;
+	
+	# If [OK] pressed with a valid username and password pair,
+	if($action eq "OK" && !defined($error = validate_password($protection_domain, $username, $password)))
+	    {
+	    require "cgi_run.pl";
+	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "modify", $jobname, "for=$username", "question=");
+	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "release", $jobname);
+	    print "<p>Changed owner and released job.</p>\n";
+	    print "<p><input type=\"button\" value=\"Dismiss\" onclick=\"window.close()\"></p>\n";
+	    }
+
+	# Anything else pressed or bad username or password,
+	else
+	    {
+	    print "<p>", html(sprintf(
+		_("You have submitted a print job entitled \"%s\".  You may either enter your\n"
+		. "username and password to print it or you may cancel it."), $title)),
+		"</p>\n";
+
+	    print <<"Login";
 <p>
-Username: <input type="text" name="username" value="" size=16>
+Username: <input type="text" name="username" value=${\html_value($username)} size=16>
 <br>
-Password: <input type="password" name="password" value="" size=16 auth_md5="username printing 1234324:14314141afab">
+Password: <input type="password" name="password" value="" size=16 auth_md5="username $REALM ${\digest_nonce_create($protection_domain)}">
 </p>
 <p>
 <input type="submit" name="action" value="OK">
@@ -68,44 +134,20 @@ Password: <input type="password" name="password" value="" size=16 auth_md5="user
 </p>
 Login
 
-if($action ne "" && $username eq "")
-    {
-    print "<br><p><font color=\"red\" size=\"+2\">You didn't enter your username!</font></p>\n";
-    }
-}
+	    # If there is a password error, print it here.
+	    if(defined $error)
+		{
+		print "<br><p><font color=\"red\" size=\"+2\">", html($error), "</font></p>\n";
+		}
+	    }
+	}
 
-elsif($action eq "OK")
-{
-require "cgi_run.pl";
 
-print "Changing owner and releasing job:<br>\n";
-print "<pre>\n";
-run($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "modify", $jobname, "for=$username", "question=");
-run($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "release", $jobname);
-print "</pre>\n";
-print "<input type=\"button\" value=\"Close\" onclick=\"window.close()\">\n";
-}
-
-elsif($action eq "Cancel Job")
-{
-require "cgi_run.pl";
-print "Canceling job:<br>\n";
-print "<pre>\n";
-#run($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "scancel", $jobname);
-run($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "cancel", $jobname);
-print "</pre>\n";
-print "<input type=\"button\" value=\"Close\" onclick=\"window.close()\">\n";
-}
-
-else
-{
-die "Unrecognized action: $action\n";
-}
-
-}; if($@)
-    {
-    print "<p>Error: ", html($@), "</p>\n";
-    }
+    # Catch exceptions and print them on the browser.
+    }; if($@)
+	{
+	print "<p>Error: ", html($@), "</p>\n";
+	}
 
 cgi_write_data();
 
@@ -116,50 +158,3 @@ print <<"Tail";
 Tail
 
 exit 0;
-
-#==========================================================================
-# What follows is taken from ppr-httpd.perl, pretty much unmodified.
-
-$PWFILE = "$PPR::CONFDIR/htpasswd";
-$SECRET = "jlk5rvnsdf8923sdklf";
-$REALM = "printing";
-$MAX_NONCE_AGE = 600;
-
-# Hash a string using MD5 and return the hash in hexadecimal.
-sub md5hex
-    {
-    my $string = shift;
-    require "MD5pp.pm";
-    return unpack("H*", MD5pp::Digest($string));
-    }
-
-# This function generates the hashed part of the server nonce.
-sub digest_nonce_hash
-    {
-    my $nonce_time = shift;
-    my $domain = shift;
-    return md5hex("$nonce_time:$domain:$SECRET");
-    }
-
-# Find the user's entry (for the correct realm) in the private
-# password file.
-sub digest_getpw
-    {
-    my $sought_username = shift;
-    my $answer = undef;
-    open(PW, "<$PWFILE") || die "Can't open \"$PWFILE\", $!\n";
-    while(<PW>)
-	{
-	chomp;
-	my($username, $realm, $hash) = split(/:/);
-	if($username eq $sought_username && $realm eq $REALM)
-	    {
-	    $answer = $hash;
-	    last;
-	    }
-	}
-    close(PW) || die;
-    return $answer if(defined($answer));
-    die "User \"$sought_username\" not in \"$PWFILE\"\n";
-    }
-

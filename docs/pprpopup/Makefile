@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/Makefile
+# mouse:~ppr/src/docs/refman/Makefile
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -10,47 +10,35 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 21 December 2001.
+# Last modified 20 December 2001.
 #
 
 # Pull in settings from Configure.
-include ../makeprogs/global.mk
-include ../include/version.mk
-include ./rules.mk
+include ../../makeprogs/global.mk
+include ../../include/version.mk
+include ../rules.mk
 
 #=== Inventory ==============================================================
 
-PROGS=ppdoc
-HTML=index.html
-
-SUBDIRS=refman uprint pprdoc pprinst pprhack misc pprpopup
+ALL_HTML=index.html
 
 #=== Build ==================================================================
 
-all: $(PROGS) all-docs
-
-all-docs: $(HTML)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) all-docs ); done
+all-docs: 
 
 #=== Install ================================================================
 
-install: $(PROGS) $(HTML)
-	$(MAKE_NEW_DIR) $(DOCSDIR)
-	$(INSTALLDATA) $(DOCSDIR) $(HTML)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS)
-	for i in $(SUBDIRS); do ( cd $$i && $(MAKE) install ); done
+install: $(ALL_HTML)
+	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprpopup
+	../$(INSTALLDATA) $(DOCSDIR)/pprpopup $(ALL_HTML)
 
 #=== Housekeeping ===========================================================
 
-depend:
-
+# Remove just editor backups.
 clean:
-	$(RMF) $(BACKUPS) $(PROGS)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make clean ); done
+	$(RMF) $(BACKUPS)
 
-veryclean:
-	$(RMF) $(BACKUPS) $(PROGS)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make veryclean ); done
+# Remove anything that can be reconstructed.
+veryclean: clean
 
 # end of file
-

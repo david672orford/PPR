@@ -3,7 +3,7 @@
 ;
 ; See ppr2samba(8) for an explanation of this file.
 ;
-; Last revised 19 December 2001.
+; Last revised 20 December 2001.
 ;
 
 ;
@@ -64,7 +64,7 @@
 
 [pprproto_pprpopup2]
    copy = pprproto
-   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --question cgi-bin/job_public.cgi?jobname=%%JOBNAME%%;magic_cookie=%%MAGIC_COOKIE%% --hold -X %U@samba -f %U -U %s &
+   print command = %HOMEDIR%/bin/ppr -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@samba -f %U -U %s &
 
 ;
 ; This section is for the automatic installation of

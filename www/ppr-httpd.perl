@@ -11,13 +11,13 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 December 2001.
+# Last modified 20 December 2001.
 #
 
-# Filled in by installscript:
 use lib "?";
 require "paths.ph";
 require "cgi_time.pl";
+require "cgi_digest.pl";
 use Socket;
 
 # Suppress mistaken warnings about things defined in paths.ph.  Otherwise,
@@ -54,12 +54,6 @@ my $GET_FILEREAD_BUFSIZE = 16384;
 my $POST_REQUEST_BUFSIZE = 4096;
 my $POST_REQUEST_TIMEOUT = 600;
 my $POST_RESPONSE_BUFSIZE = 4096;
-
-# Temporary
-$PWFILE = "$CONFDIR/htpasswd";
-$SECRET = "jlkfjasdf8923sdklf";
-$REALM = "printing";
-$MAX_NONCE_AGE = 600;
 
 # One day expressed in seconds.
 $DAY = (24 * 60 * 60);
@@ -1362,6 +1356,27 @@ sub do_push
 
 #=========================================================================
 # MD5 Digest authentication as defined in RFC 2617
+#=========================================================================
+
+#
+# This routine returns the value for a "WWW-Authenticate:" header
+# which makes a Digest challenge.
+#
+sub auth_challenge
+    {
+    my $domain = shift;
+    my $stale = shift;
+    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
+
+    my $nonce = digest_nonce_create($domain);
+    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce\"";
+
+    if($stale)
+    	{ $challenge .= ",stale=true" }
+
+    return $challenge;
+    }
+
 #
 # This routine is fed the value from an "Authentication:" request header.
 #
@@ -1371,7 +1386,7 @@ sub do_push
 # "Authentication-Info:" line.
 #
 # If the credentials are not valid, it returns ("", "", 0, undef).
-#=========================================================================
+#
 sub auth_verify
     {
     my $request_method = shift;
@@ -1431,19 +1446,7 @@ sub auth_verify
         # The clients computation of the digest must match ours.
         ($parm{response} eq $correct_response) || die "Response is incorrect\n";
 
-        # Our nonces are a Unix time followed by a colon and a hash.
-        ($parm{nonce} =~ /^(\d+):([0-9a-f]+)$/) || die "Nonce format not recognized\n";
-        my($nonce_time, $nonce_hash) = ($1, $2);
-	#print STDERR "Nonce time: $nonce_time\n";
-	#print STDERR "Nonce hash: $nonce_hash\n";
-
-        my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-	#print STDERR "Correct nonce hash: $correct_nonce_hash\n";
-        ($nonce_hash eq $correct_nonce_hash) || die "nonce hash is incorrect.\n";
-
-        my $time_now = time();
-	#print STDERR "Time now: $time_now\n";
-        if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE))
+        if(!digest_nonce_validate($domain, $parm{nonce}))
             {
             print STDERR "Nonce is too stale.\n";
             return ("", "", 1, undef);
@@ -1519,76 +1522,6 @@ sub uri_compare
     return 1;
     }
 
-# Hash a string using MD5 and return the hash in hexadecimal.
-sub md5hex
-    {
-    my $string = shift;
-
-    #require "MD5.pm";
-    #my $md5 = new MD5;
-    #$md5->reset;
-    #$md5->add($string);
-    #return unpack("H*", $md5->digest());
-
-    require "MD5pp.pm";
-    return unpack("H*", MD5pp::Digest($string));
-    }
-
-# This function generates the hashed part of the server nonce.
-sub digest_nonce_hash
-    {
-    my $nonce_time = shift;
-    my $domain = shift;
-    #print STDERR "digest_nonce_hash(\$nonce_time=\"$nonce_time\", \$domain=\"$domain\")\n";
-    return md5hex("$nonce_time:$domain:$SECRET");
-    }
-
-#
-# This routine returns the value for a "WWW-Authenticate:" header
-# which makes a Digest challenge.
-#
-sub auth_challenge
-    {
-    my $domain = shift;
-    my $stale = shift;
-    #print STDERR "auth_challenge(\$domain=\"$domain\", \$stale=$stale)\n";
-
-    my $nonce_time = time();
-    my $nonce_hash = digest_nonce_hash($nonce_time, $domain);
-    my $challenge = "Digest realm=\"$REALM\",domain=\"$domain\",qop=\"auth\",nonce=\"$nonce_time:$nonce_hash\"";
-
-    if($stale)
-    	{ $challenge .= ",stale=true" }
-
-    return $challenge;
-    }
-
-# Find the user's entry (for the correct realm) in the private
-# password file.
-sub digest_getpw
-    {
-    my $sought_username = shift;
-    #print STDERR "digest_getpw(\"$sought_username\")\n";
-
-    my $answer = undef;
-
-    open(PW, "<$PWFILE") || die "Can't open \"$PWFILE\", $!\n";
-    while(<PW>)
-	{
-	chomp;
-	my($username, $realm, $hash) = split(/:/);
-	if($username eq $sought_username && $realm eq $REALM)
-	    {
-	    $answer = $hash;
-	    last;
-	    }
-	}
-    close(PW) || die;
-
-    return $answer if(defined($answer));
-    die "User \"$sought_username\" not in \"$PWFILE\"\n";
-    }
-
 #=========================================================================
 # Digest authentication through a cookie.
 #
@@ -1612,18 +1545,20 @@ sub auth_verify_cookie
 	die "No auth_md5 cookie\n" if(scalar @matching_cookies < 1);
 	my $cookie = pop @matching_cookies;
 	#print STDERR "\$cookie=\"$cookie\"\n";
-	die "Cookie syntax error\n" unless($cookie =~ /^auth_md5=([^:]+):(\d+):([0-9a-f]+):([0-9a-f]+)$/);
-	my($username, $nonce_time, $nonce_hash, $response) = ($1, $2, $3, $4);
+	die "Cookie syntax error\n" unless($cookie =~ /^auth_md5=(\S+) (\S+) (\S+)$/);
+	my($username, $nonce, $response) = ($1, $2, $3);
+
 	my $H1 = digest_getpw($username);
-	my $correct_response = md5hex("$H1:$nonce_time:$nonce_hash");
-	#print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n";
+	my $correct_response = md5hex("$H1:$nonce");
+	print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n";
 	die "Password is wrong\n" if($response ne $correct_response);
-        my $time_now = time();
-	#print STDERR "\$time_now=$time_now, \$nonce_time=$nonce_time\n";
-        die "Nonce is too stale\n" if($nonce_time > $time_now || $nonce_time < ($time_now - $MAX_NONCE_AGE));
+
+	if(!digest_nonce_validate($domain, $nonce))
+	    {
+	    die "Nonce is stale\n" 
+	    }
+
 	return ("Cookie", $username);
-        my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
-        ($nonce_hash eq $correct_nonce_hash) || die "nonce hash is incorrect.\n";
 	};
 
     if($@)

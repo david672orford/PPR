@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2001.
+# Last modified 20 December 2001.
 #
 
 include ../makeprogs/global.mk
@@ -81,7 +81,7 @@ CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
 
 LIBS=cgi_data.pl qquery_xlate.pl cgi_wizard.pl cgi_run.pl cgi_tabbed.pl cgi_error.pl \
 	cgi_membership.pl cgi_time.pl cgi_auth.pl cgi_intl.pl cgi_back.pl cgi_redirect.pl \
-	cgi_widgets.pl \
+	cgi_widgets.pl cgi_digest.pl \
 	docs_util.pl
 
 JAVASCRIPT=show_queues.js show_jobs.js md5.js

@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 18 December 2001.
+# Last modified 20 December 2001.
 #
 
 #
@@ -123,16 +123,6 @@ SEND->autoflush(1);
 print SEND ".\n";
 $result = <SEND>;
 print "MESSAGE failed: $result\n" if(/^-ERR/);
-
-# Speak the message if possible.
-if(1)
-    {
-    my $spoken_msg = $msg;
-    $spoken_msg =~ s/("[^"]+")/$1 (entitled $title)/;
-    print SEND "SPEAK $spoken_msg\n";
-    $result = <SEND>;
-    print "SPEAK failed: $result\n" if(/^-ERR/);
-    }
 
 # Close the connexion to pprpopup.
 close(SEND);

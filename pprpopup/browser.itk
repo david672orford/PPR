@@ -3,7 +3,7 @@
 # Copyright (c) 1996 DSC Technologies Corporation
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 14 December 2001.
+# Last modified 20 December 2001.
 #
 
 package require Itcl
@@ -366,16 +366,18 @@ itcl::class Browser::form_element_input_password {
   public method get_value {} {
     if {[string compare $name ""] != 0} {
       if {[string compare $auth_md5 ""] != 0} {
-	regexp {^([^ ]+) ([^ ]+) ([^ ]+)$} $auth_md5 junk username_field domain nonce
-        puts "  username_field=$username_field, domain=$domain, nonce=$nonce"
+	# MD5 mode
+	regexp {^([^ ]+) ([^ ]+) ([^ ]+)$} $auth_md5 junk username_field realm nonce
+        puts "  username_field=$username_field, realm=$realm, nonce=$nonce"
 	set username [$containing_form get_value_by_name $username_field]
 	puts "  username=$username"
-	set H1 [md5pure::md5 "$username:$domain:$value"]
+	set H1 [md5pure::md5 "$username:$realm:$value"]
 	puts "  H1=$H1"
 	set result [md5pure::md5 "$H1:$nonce"]
 	puts "  result=$result"
-	return [list $name $result]
+	return [list $name "$nonce $result"]
       	} else {
+	# Normal mode
         return [list $name $value]
         }
       }
@@ -596,6 +598,7 @@ itcl::class Browser {
   public variable closecommand
   public variable getcommand
   public variable postcommand
+  public variable titlecommand ""
 
   protected variable _forms
   protected variable _current_form
@@ -737,6 +740,11 @@ itcl::body Browser::import_callback {code message content_type data} {
 
   # Move to anchor
   to_anchor
+
+  # Set the window title.
+  if {$titlecommand != ""} {
+    $titlecommand $_title
+    }
   }
 
 itcl::body Browser::to_anchor {} {
