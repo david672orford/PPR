@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 6 April 2003.
 */
 
 /*===========================================================================
@@ -672,11 +672,11 @@ int feedback_reader(void)
 
 			/*
 			** Catch other signs that Ghostscript is having trouble with its 
-			** command line.  The second one is presently considered non-fatal
+			** command line.  This error is considered non-fatal
 			** (by Ghostscript), but we want to be prepared if it does bomb 
 			** out.
 			*/
-			if((ptr2 = lmatchp((char*)ptr, "Usage: gs ")) || (ptr2 = lmatchp((char*)ptr, "Unknown switch -")))
+			if((ptr2 = lmatchp((char*)ptr, "Unknown switch -")))
 				{
 				alert(printer.Name, TRUE, "Unrecognized option passed to Ghostscript RIP: %s", ptr2);
 				ghosterror = TRUE;
@@ -689,6 +689,16 @@ int feedback_reader(void)
 			if((ptr2 = lmatchp((char*)ptr, "RIP:")))
 				{
 				alert(printer.Name, TRUE, "RIP: %s", ptr2);
+				ghosterror = TRUE;
+				continue;
+				}
+
+			/*
+			** Catch messages from CUPS filters.
+			*/
+			if((ptr2 = lmatchp((char*)ptr, "ERROR:")))
+				{
+				alert(printer.Name, TRUE, "ERROR: %s", ptr2);
 				ghosterror = TRUE;
 				continue;
 				}

@@ -8561,6 +8561,14 @@ line was being parsed twice.
 * www/show_queues_nojs.cgi.perl: fixed test page menu item to pass the
   variable "name" in stead of "printer".
 
+* interfaces/usblp.c: changed the exit code for port open failures from
+  EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS to EXIT_PRNERR_NOT_RESPONDING since
+  the absence of the USB device file may indicate that the printer is
+  turned off.
+
+* pprdrv/pprdrv_feedback.c: added "ERROR:" and removed "Usage: gs " from the
+  list of massages that get passed to the printer log as possible RIP error
+  messages.
 
 
 

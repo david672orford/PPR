@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 6 April 2003.
 */
 
 /*
@@ -124,7 +124,7 @@ static int connect_usblp(void)
 			case ENOENT:		/* file not found */
 			case ENOTDIR:		/* path not found */
 				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				int_exit(EXIT_PRNERR_NOT_RESPONDING);
 			case ENXIO:
 				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
 				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
