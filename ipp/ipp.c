@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 August 2003.
+** Last modified 29 January 2004.
 */
 
 #include "before_system.h"
@@ -246,7 +246,20 @@ int main(int argc, char *argv[])
 	struct IPP *ipp;
 
 	gu_Try {
-		ipp = ipp_new();
+		char *p, *path_info;
+		int content_length;
+
+		/* Do basic input validation */
+		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
+			gu_Throw("REQUEST_METHOD is not POST");
+		if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
+			gu_Throw("CONTENT_TYPE is not application/ipp");
+		if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
+			gu_Throw("PATH_INFO is missing");
+		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
+			gu_Throw("CONTENT_LENGTH is missing or invalid");
+
+		ipp = ipp_new(path_info, content_length, 0, 1);
 		ipp_parse_request(ipp);
 
 		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");

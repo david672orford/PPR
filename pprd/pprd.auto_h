@@ -20,6 +20,7 @@ void destid_free(int destnode_id, int destid);
 const char *destid_to_name(int destnode_id, int destid);
 int destid_by_name(int destnode_id, const char name[]);
 gu_boolean destid_accepting(int destnode_id, int destid);
+void ipp_dispatch(const char command[]);
 void load_printers(void);
 void new_printer_config(char *printer);
 void load_groups(void);
@@ -32,8 +33,6 @@ void gu_throw(int exception_type, const char exception_function[], const char fo
 int open_fifo(void);
 void create_lock_file(void);
 void rename_old_log_file(void);
-void root_create_directories(uid_t euid, gid_t egid);
-void create_work_directories(void);
 void adjust_ids(void);
 void parse_command_line(int argc, char *argv[], int *option_foreground);
 void media_mounted_save(int prnid);

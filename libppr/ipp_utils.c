@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 29 January 2004.
 */
 
 /*! \file */
@@ -49,11 +49,14 @@ types can be read from the request and appended to the response using the
 member functions.
 
 */
-struct IPP *ipp_new(void)
+struct IPP *ipp_new(const char path_info[], int content_length, int in_fd, int out_fd)
 	{
 	struct IPP *p = gu_alloc(1, sizeof(struct IPP));
 
-	p->bytes_left = 0;
+	p->path_info = path_info;
+	p->bytes_left = content_length;
+	p->in_fd = in_fd;
+	p->out_fd = out_fd;
 
 	p->readbuf_i = 0;
 	p->readbuf_remaining = 0;
@@ -75,7 +78,7 @@ struct IPP *ipp_new(void)
 */
 static void ipp_readbuf_load(struct IPP *p)
 	{
-	if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
+	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		{
 		gu_Throw("Read failed");
 		}
@@ -96,7 +99,7 @@ static void ipp_writebuf_flush(struct IPP *p)
 
 	while(to_write > 0)
 		{
-		if((len = write(1, write_ptr, to_write)) == -1)
+		if((len = write(p->out_fd, write_ptr, to_write)) == -1)
 			gu_Throw("Write error");
 		to_write -= len;
 		write_ptr += len;
@@ -401,15 +404,6 @@ void ipp_parse_request(struct IPP *ipp)
 	ipp_attribute_t *ap = NULL, *ap_prev = NULL, **ap_resize = NULL;
 	int ap_i = 0;
 
-	/* Do basic input validation */
-	if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
-		gu_Throw("REQUEST_METHOD is not POST");
-	if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
-		gu_Throw("CONTENT_TYPE is not application/ipp");
-	if(!(ipp->path_info = getenv("PATH_INFO")) || strlen(ipp->path_info) < 1)
-		gu_Throw("PATH_INFO is missing");
-	if(!(p = getenv("CONTENT_LENGTH")) || (ipp->bytes_left = atoi(p)) < 0)
-		gu_Throw("CENTENT_LENGTH is missing or invalid");
 	if(ipp->bytes_left < 9)
 		gu_Throw("request is too short to be an IPP request");
 

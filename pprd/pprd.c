@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 29 January 2004.
 */
 
 /*
@@ -290,6 +290,10 @@ static void do_command(int FIFO)
 					new_printer_config(&ptr[3]);
 				else					/* 'G' */
 					new_group_config(&ptr[3]);
+				break;
+
+			case 'I':					/* Internet Printing Protocol */
+				ipp_dispatch(ptr);
 				break;
 
 			default:					/* anything else needs a reply to ppop */

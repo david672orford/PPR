@@ -1,4 +1,2 @@
-ipp.$(OBJ): ipp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ipp_constants.h ipp_utils.h
-
-ipp_utils.$(OBJ): ipp_utils.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ipp_constants.h ipp_utils.h
+ipp.$(OBJ): ipp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
 

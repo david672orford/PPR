@@ -9016,6 +9016,9 @@ Internet Printing Protocol Work
   for "ppad group addon" to be tagged as too many parameters (this was fixed 
   some time ago for "ppad addon".
 
+* ipp/: moved ipp_utils.h into ../include/, ipp_utils.c into ../libppr/, and
+  ipp_constants.h into ../include/.
+
 
 
 +++++++++++++++++++++

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 July 2003.
+** Last modified 29 January 2004.
 */
 
 /* This union holds any kind of IPP value. */
@@ -58,9 +58,11 @@ typedef struct ipp_attribute_s
 /* The IPP object. */
 struct IPP
 	{
-	char *path_info;
+	const char *path_info;
 
 	int bytes_left;
+	int in_fd;
+	int out_fd;
 	unsigned char readbuf[512];
 	int readbuf_i;
 	int readbuf_remaining;
@@ -82,7 +84,7 @@ struct IPP
 	};
 
 /* IPP object methods */
-struct IPP *ipp_new(void);
+struct IPP *ipp_new(const char path_info[], int content_length, int in_fd, int out_fd);
 void ipp_delete(struct IPP *p);
 int ipp_get_block(struct IPP *p, char **pptr);
 unsigned char ipp_get_byte(struct IPP *p);
