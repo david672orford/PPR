@@ -361,7 +361,7 @@ more information about RIPs and *pprRIP:.
 
 
 
-1.51, 15 February 2003--4 March 2003.
+1.51, 15 February 2003--5 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 

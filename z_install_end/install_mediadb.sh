@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/z_install_end/install_mediadb.sh
+# mouse:~ppr/src/ppad/insert_initial_media.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
 #
@@ -38,11 +38,10 @@
 
 . ../makeprogs/paths.sh
 
-echo "Creating base media database entries..."
-
-touch "$CONFDIR/media.db"
+touch "$RPM_BUILD_ROOT$CONFDIR/media.db"
 
 PATH="$HOMEDIR/bin:$PATH"
+export PATH
 
 # White paper in various sizes and weights:
 ppad media put "letter" "8.5 in" "11.0 in" 75.0 "white" "" 7
@@ -50,8 +49,8 @@ ppad media put "a4" "210 mm" "297 mm" 75.0 "white" "" 7
 ppad media put "master" "8.5 in" "11.0 in" 300.0 "white" "" 2
 ppad media put "legal" "8.5 in" "14 in" 75.0 "white" "" 5
 
-# Junk paper for banner pages:
-# Stupid colour field value may be important.  We don't want
+# Junk paper for banner pages
+# The colour field value "VARIES" is there for a reason.  We don't want
 # it every selected as a match for some real media requirement.
 ppad media put "banner" "612.0 psu" "792.0 psu" 0 "VARIES" "" 10
 
@@ -63,7 +62,7 @@ ppad media put "labels" "612.0 psu" "792.0 psu" 0.0 "white" "Labels" 1
 ppad media put "comm10" "297.0 psu" "684.0 psu" 0.0 "white" "Envelope" 1
 ppad media put "monarch" "540.0 psu" "279.0 psu" 0.0 "white" "Envelope" 1
 
-# normal paper of different colours
+# normal paper of various colours
 ppad media put "yellow" "612.0 psu" "792.0 psu" 75.0 "yellow" "" 5
 ppad media put "red" "612.0 psu" "792.0 psu" 75.0 "yellow" "" 5
 ppad media put "blue" "612.0 psu" "792.0 psu" 75.0 "yellow" "" 5

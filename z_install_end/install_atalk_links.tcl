@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
 #
@@ -49,7 +49,7 @@ puts "Searching for getzones..."
 foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
     puts "    Trying \"$file\"..."
     if [ file executable $file ] {
-	puts "\tFound, linking to $HOMEDIR/lib/getzones."
+	puts "  Found, linking to $HOMEDIR/lib/getzones."
 	exec ln -s $file "$RPM_BUILD_ROOT$HOMEDIR/lib/getzones"
 	break
 	}	

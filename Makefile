@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
 #
@@ -48,8 +48,8 @@ CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 
 # These are the subdirectories we will do make in:
 SUBDIRS=\
-	z_install_begin \
 	makeprogs \
+	z_install_begin \
 	libgu \
 	nonppr_tcl \
 	libppr \

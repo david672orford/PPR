@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/makeprogs/make_install_dirs.sh
+# mouse:~ppr/src/z_install_begin/install_create_dirs.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,15 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
-#
-# This script is called by the top level PPR Makefile to
-# create the directories necessary to build and install PPR.
+#=============================================================================
+# This script is called by the top level PPR Makefile to create the 
+# directories necessary to build and install PPR.
 #
 # Changes to this should be coordinated with ../fixup/fixup_perms.sh.
-#
+#=============================================================================
 
 # System configuration values:
 . ../makeprogs/paths.sh
@@ -130,6 +130,7 @@ directory $HOMEDIR/filters 755
 directory $HOMEDIR/interfaces 755
 directory $HOMEDIR/responders 755
 directory $HOMEDIR/commentators 755
+directory $HOMEDIR/browsers 755
 directory $HOMEDIR/fixup 755
 directory $HOMEDIR/editps 755
 
@@ -171,4 +172,3 @@ directory $HOMEDIR/cgi-bin 755
 directory $SHAREDIR/www 755
 
 exit 0
-

@@ -25,12 +25,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
-#CONFDIR="?"
-#USER_PPR=?
-#GROUP_PPR=?
 . ../makeprogs/paths.sh
 
 #===========================================================================
@@ -63,10 +60,10 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
     	then
 	echo "    $CONFDIR/$f.sample --> $CONFDIR/$f"
 	# Use Sed to copy it while removing the "Last modified" comment.
-    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
-    	chown $USER_PPR $CONFDIR/$f
-    	chgrp $GROUP_PPR $CONFDIR/$f
-	chmod 644 $CONFDIR/$f
+    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $RPM_BUILD_ROOT$CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
+    	chown $USER_PPR $RPM_BUILD_ROOT$CONFDIR/$f
+    	chgrp $GROUP_PPR $RPM_BUILD_ROOT$CONFDIR/$f
+	chmod 644 $RPM_BUILD_ROOT$CONFDIR/$f
 	else
 	echo "    exists"
     	fi

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,6 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=ppr-sync \
-	customs.ppr \
 	sgi_glp_hack \
 	ppd2macosdrv \
 	custom_hook_docutech \
@@ -64,7 +63,6 @@ install: $(PROGS)
 		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin sgi_glp_hack;\
 		fi
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib custom_hook_docutech xmessage
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/fixup customs.ppr
 
 #=== Housekeeping ===========================================================
 

@@ -26,15 +26,6 @@ transfer the files.  It is really just a hack and not a very good one at that.
 
 
 ========================
- customs.ppr
-========================
-
-This is a custom printer interface script for LAN Manager/X from AT&T.  It
-is installed in $HOMEDIR/install/.  Subsequently it may be copied into the
-LANMAN/X customs directory by fixup.sh.
-
-
-========================
  xmessage.tcl
 ========================
 

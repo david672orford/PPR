@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppop_status.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 December 2002.
+** Last modified 4 March 2003.
 */
 
 #include "before_system.h"
@@ -693,7 +693,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 ** This is called whenever a "@PJL USTATUS DEVICE" message
 ** is received from the printer.
 **
-** This function needs a translation file to convert it to
+** This function consults a translation file in order to convert it to
 ** something more readable.
 */
 void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[], int code2, const char message2[])
@@ -766,7 +766,7 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 	       */
 	    if(hrDeviceStatus == -1 && hrPrinterStatus == -1 && hrPrinterDetectedErrorState == -1)
 		{
-		error("PJL error: %d %s \"%s\"", code, details, message);
+		error("PJL error: %d \"%s\" \"%s\"", ustatus[i].code, details, ustatus[i].message);
 		}
             }
 	}

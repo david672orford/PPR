@@ -1,5 +1,6 @@
-#! /bin/sh
+#! ppr-tclsh
 #
+# mouse:~ppr/src/browsers/parallel.tcl
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,35 +26,31 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 5 March 2003.
 #
 
-HOMEDIR="?"
-VAR_SPOOL_PPR="?"
+set HOMEDIR "?"
 
-# This is a list of files which might be lists of installed packages.  The
-# file /var/lib/rpm/packages.rpm is for Red Hat Linux's RPM format, the file
-# /var/sadm/install/contents is for Solaris's package format, the file
-# /var/lib/dpkg/status is for Debian GNU/Linux
-PACKAGE_LISTS="/var/lib/rpm/packages.rpm /var/sadm/install/contents /var/lib/dpkg/status"
+# Name the command line parameters.
+set domain [lindex $argv 0]
+set node [lindex $argv 1]
 
-#
-# If any of the package lists has changed since the font index was
-# generated, rebuild the font index now.
-#
-for i in $PACKAGE_LISTS
-    do
-    if [ -f $i ]
-	then
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-indexfonts >$VAR_SPOOL_PPR/logs/ppr-indexfonts 2>&1
-	    fi
-	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/ppdindex.db $i
-	    then
-	    $HOMEDIR/bin/ppr-indexppds >$VAR_SPOOL_PPR/logs/ppr-indexppds 2>&1
-	    fi
-	fi
-    done
+# If we are run without a domain specified, then we are to print a list of 
+# the domains which the user may choose to browse.
+if { $domain == "" } {
+    exec $HOMEDIR/lib/getzones >@stdout 2>@stderr
+    exit 0
+    }
+
+set f [open "| $HOMEDIR/lib/nbp_lookup \"=:LaserWriter@$domain\"" "r"]
+while {[gets $f line] >= 0} {
+    #puts $line
+    if [regexp {^[^ ]+ [^ ]+ (([^:]+).+)$} $line junk address name] {
+	puts "\[$name\]"
+	puts "interface=atalk,\"$address\""
+	puts ""
+	}
+    }
+close $f
 
 exit 0

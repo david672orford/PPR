@@ -33,11 +33,9 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 FIXUP_PROGS=fixup \
-	fixup_accounts \
 	fixup_cron \
 	fixup_init \
 	fixup_links \
-	fixup_lmx \
 	fixup_obsolete \
 	fixup_perms \
 	fixup_inetd

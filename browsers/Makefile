@@ -25,33 +25,23 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 January 2003.
+# Last modified 4 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS=
-
-LIB_PROGS=
+BROWSERS=parallel atalk
 
 #=== Build ==================================================================
 
-all: $(BIN_PROGS) $(LIB_PROGS)
-
-OBJS=\
-	xxx.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-xxx$(DOTEXE): $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+all: $(BROWSERS)
 
 #=== Install ================================================================
 
-install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+install: $(BROWSERS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/browsers $(BROWSERS)
 
 #=== Housekeeping ===========================================================
 
@@ -61,7 +51,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BROWSERS)
 
 # end of file
 

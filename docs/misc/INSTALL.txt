@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/INSTALL.txt
  mouse:~ppr/src/INSTALL.txt (symbolic link)
- Last revised 7 February 2003.
+ Last revised 4 March 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -332,13 +332,7 @@ directory.
 ============================================================================
 
 This is a list of important changes you should be aware of when upgrading
-from a prevous version of PPR.  Previous versions include 1.44, 1.43, 1.42,
-1.41, 1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.  The most recent changes are 
-listed first.  You can stop reading when you see a mention of a version of 
-PPR that is older than the one you currently have installed.
-
-It is hard to keep track of what has changed.  If, when upgrading, you find
-things I have omitted, please write to <ppr-bugs@mail.trincoll.edu>.
+from a prevous version of PPR such as 1.4x.
 
 I have tried to list the changes from newest to oldest.  You can stop
 reading the information no longer applies to the version you are upgrading
@@ -384,142 +378,6 @@ either /usr/lib/ppr or /usr/share/ppr.
 
 *) The version 1.50 queue file format differs from all previous versions.
 Therefor, you should empty the queues before upgrading.
-
-*) Be aware that certain files formerly in /etc/ppr and /usr/ppr/globalconf
-have been moved to /usr/ppr/lib (which itself become /usr/lib/ppr/lib with
-version 1.42).  They all have the extension ".conf".  They were moved first
-to /usr/ppr/globalconf in version 1.32 and then to /usr/ppr/lib in version
-1.40 because they are really a more a part of the PPR code than a user
-configuration file.  If you have made changes to any of these files, you
-should save them before upgrading since PPR will remove those in
-/usr/ppr/globalconf.  Those in /etc/ppr will be renamed to include strings
-such as "pre-1.32" indicating in which PPR version they became obsolete.
-
-*) Starting with version 1.32, the file /etc/ppr/lw_messages.conf has been split
-into two files, which in version 1.40 are called /usr/ppr/lib/lw-messages.conf
-and /etc/ppr/lw-messages.conf.  Unknown messages are now appended to the one
-in /etc/ppr, the one in /usr/ppr/lib is never modified.
-
-*) If you have been using the UPRINT system in 1.31 (in which it existed in an
-early form) or one of the 1.32 beta releases then you may have some work to do.
-The names of the uprint programs have changed.  The names to which the standard
-spooler programs are renamed have also changed.  You should probably copy
-/etc/ppr/uprint.conf.sample to /etc/ppruprint.conf and manually rename things
-so that your file system matches your uprint.conf file.
-
-*) If you are upgrading from 1.30 then you need to know that the lprsrv program
-has changed.  The old program is preserved as olprsrv.  If you are in a
-hurry you can edit /etc/inetd.conf and change "lprsrv" to "olprsrv".  To
-install the new one, follow the directions in the lprsrv(8) man page
-for creating an entry in /etc/inetd.conf and then edit the lprsrv.conf
-file.
-
-*) As of PPR version 1.30, the PPD file "HP LJ III Ghostscript" is called "HP
-LaserJet III Ghostscript".  You are advised to delete the old one (which
-will not have been removed) and use "ppad ppd" to change printers to use the
-new one.
-
-*) If you are using Samba, you can still use the pseudo-printcap method of
-importing PPR printers, but it would be better to use the new method described
-in the ppr2samba(8) man page since it obviates the need to restart smbd
-after running ppr2samba.
-
-*) Because the name of the papsrv configuration file changed in version 1.30,
-if you start papsrv with commands in /etc/rc.local or /etc/rc.d/rc.local then
-you must change the test for the presence of the papsrv configuration file.
-Where it previously said:
-
-if [ -x /usr/ppr/bin/papsrv -a -r /etc/ppr/papsrv ]
-
-it should now say:
-
-if [ -x /usr/ppr/bin/papsrv -a -r /etc/ppr/papsrv.conf ]
-
-If your system uses System V style init scripts (not just a System V style
-init) then you don't have to do anything.  A new PPR start/stop script will
-be installed.
-
-*) Version 1.30 and later versions install a System V style init startup
-script for PPR on some systems for which earlier versions appended lines
-to rc.local.  If the fixup script installs an init script on your system and
-finds evidence of PPR startup code in rc.local it will alert you to that
-fact and recomend that you removed the startup code from rc.local.
-
-*) With version 1.30, the names of a few configuration files in /etc/ppr
-changed.  The fixup script will rename your old ones.  This chart describes
-the changes:
-
-Old Name	  New Name	  Old File Renamed To
-----------------------------------------------------
-papsrv		| papsrv.conf	| papsrv.conf
-fontsub		| fontsub.conf	| fontsub-pre-1.30.conf
-mfmodes		| mfmodes.conf	| mfmodes-pre-1.30.conf
-media		| media.db	| media-pre-1.30.db
-
-If you have made changes to any of the last three files you may want to
-put your own version back or merge your changes into the new one.  As
-explained above, in version 1.32, mfmodes.conf and fontsub.conf
-were moved to /usr/ppr/globalconf.  In version 1.40 they were moved
-to /usr/ppr/lib.
-
-*) The format of the mfmodes.conf file changed slightly with version 1.30.
-It now has a new field which is compared to *DefaultResolution.  When
-converting entries from the old format, insert a new fourth field with a
-value of "*".
-
-*) The default path for Ghostscript used by interface programs such as
-gssimple, gsatalk, and gstcpip is defined in /etc/ppr/ppr.conf.
-Prior to version 1.30 it was "/usr/local/bin/gs" and could not be changed.
-The default may be overridden with the "gs=" interface option.
-
-*) In version 1.30 the interface "parallel" was renamed to "simple".  This
-was to prepare for a new interface called "parallel" which appeared
-in version 1.32.  The interface "gs" was also renamed, to "gssimple".  This
-was in anticipation of an interface called "gsparallel" which also appeared
-in version 1.32 and is expected to marginalize gssimple.  If you have
-print queues which use the "gs" interface, you will have to switch them to
-the "gssimple" or "gsparallel" interface.
-
-*) Starting with version 1.20 PPR provides default filter options which are
-prepended to those supplied with the ppr -o switch.  The list of these
-options is stored in the printer or group configuration file.  Pre-1.20
-configuration files won't have "DefFiltOpts:" lines.  To generate them, run
-these commands:
-
-$ cd /etc/ppr/printers
-$ for i in *
-> do
-> ppad deffiltopts $i
-> done
-$ cd /etc/ppr/groups
-$ for i in *
-> do
-> ppad group deffiltopts $i
-> done
-
-This will generate a new "DefFiltOpts:" line in each printer and group
-configuration file.
-
-*) The names of the groups which are used to grant PPR privledges changed
-with version 1.20.  You should use the following information to rename you
-groups:
-
-    The privledge of using the ppr -f switch to appear to be somebody else
-    now belongs to the members of "pprprox".  Previously the members of
-    "ppr" could also do this.  (Do not delete the group "ppr".)
-
-    The privledge of making changes with ppop now belongs to the members
-    of the group "ppop" rather than "ppr".  (Do not delete the group
-    "ppr").
-
-    The privledge of making changes with ppad now belongs to the members
-    of the group "ppad" rather than "ppradmin".
-
-Note that the use of Unix groups to grant PPR privledges is considered
-obsolete.  The new way to do it is to list the privledged users in
-the file in /etc/ppr/acl.  So, you may just want to remove your
-administrators from the "ppr" group, delete the "ppradmin" group,
-and start using the /etc/ppr/acl files.
 
 ============================================================================
  End of instructions for compiling PPR

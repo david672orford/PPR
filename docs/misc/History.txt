@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--4 March 2003.
+1.51, 15 February 2003--5 March 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8358,3 +8358,26 @@ line was being parsed twice.
 * Did same as above for ppop.
 
 * po/ru-*.po: minor fixes and a few more messages
+
+* nonppr_misc/docbook-xml-4.2/: added
+
+* fixup/fixup_media.sh moved to ppad/insert_initial_media.sh; modified
+  ppad/ppad_media.c to heed  RPM_BUILD_ROOT when opening media.db if
+  UID = EUID.
+
+* init_and_cron/: cron_hourly.sh: added recognition of Debian GNU/Linux
+  package changes, added ppr-indexppds; ppr-clean.perl: added --debug and
+  --aggressive.
+
+* INSTALL.txt: removed information on upgrading from versions prior to 1.4x
+  since it is too much trouble to proofread it to see if it has been
+  superseeded by later changes.  Besides, I haven't heard of anybody
+  running a version older than 1.4x.
+
+* fixup/fixup_obsolete.sh: removed code to clean up from versions prior to 
+  1.4x.
+
+* Removed fixup/fixup_lmx.sh and misc/custom.ppr as they haven't been tested
+  in years and Google search doesn't clearly indicate that LanmanX is still in
+  use.
+

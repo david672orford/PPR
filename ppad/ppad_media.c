@@ -1,21 +1,36 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_media.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 11 September 1998.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 4 March 2003.
 */
 
 /*
-** Administration program for PostScript page printers.
-** Media management section.
+** This module is part of ppad(8), PPR's administration program for PostScript
+** page printers.  This module contains the media database management routines.
 */
 
 #include "before_system.h"
@@ -30,13 +45,12 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "util_exits.h"
 #include "ppad.h"
 
 /* globals */
-int inerror=0;      /* used by get_answer() */
+static int inerror = 0;		/* used by get_answer() */
 
 /*
 ** get an answer from the user or command line
@@ -74,11 +88,34 @@ static double ppad_convert_dimension(const char *string)
     return answer;
     } /* end of ppad_convert_dimension */
 
-/*============================================
-** media management
-============================================*/
+static FILE *open_database(const char mode[])
+    {
+    char fname_buffer[MAX_PPR_PATH];
+    char *fname = MEDIAFILE;
+    FILE *f;
 
-/* add or modify a media database record */
+    if(getenv("RPM_BUILD_ROOT"))
+	{
+	if(getuid() != geteuid())
+	    {
+	    fprintf(errors, X_("Warning: RPM_BUILD_ROOT ignored\n"));
+	    }
+	else
+	    {
+	    ppr_fnamef(fname_buffer, "%s/%s", getenv("RPM_BUILD_ROOT"), MEDIAFILE);
+	    fname = fname_buffer;
+	    }
+	}
+
+    if((f = fopen(fname, "r+b")) == (FILE*)NULL)
+	fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), fname, errno, gu_strerror(errno));
+
+    return f;
+    }
+
+/*
+** add or modify a media database record
+*/
 int media_put(const char *argv[])
     {
     FILE *ffile;
@@ -91,14 +128,12 @@ int media_put(const char *argv[])
     if( ! am_administrator() )
 	return EXIT_DENIED;
 
-    /* get the name of the media to be added or changed */
+    /* get the name of the medium to be added or changed */
     printf(_("Medium Name: "));
     get_answer(asciiz,sizeof(asciiz),argv,&index);
     ASCIIZ_to_padded(padded,asciiz,sizeof(padded));
 
-    /* open the file which contains the media definitions */
-    if((ffile = fopen(MEDIAFILE, "r+b")) == (FILE*)NULL)
-	fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+    ffile = open_database("r+b");
 
     /* look for the media name in the database */
     while(fread(&media,sizeof(struct Media),1,ffile) != 0)
@@ -334,11 +369,9 @@ int media_show(const char *argv[])
 	all = FALSE;
 	}
 
-    /* open the media database file */
-    if((ffile = fopen(MEDIAFILE, "rb")) == (FILE*)NULL)
-	fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+    ffile = open_database("rb");
 
-    while(1)
+    while(TRUE)
 	{
 	if(fread(&media,sizeof(struct Media),1,ffile) == 0)
 	    {
@@ -394,11 +427,9 @@ int media_delete(const char *argv[])
     get_answer(asciiz,sizeof(asciiz),argv,&index);
     ASCIIZ_to_padded(padded,asciiz,sizeof(padded));
 
-    /* open the media database file for read and write */
-    if((ffile = fopen(MEDIAFILE, "r+b")) == (FILE*)NULL)
-	fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+    ffile = open_database("r+b");
 
-    while(1)
+    while(TRUE)
 	{
 	if(fread(&media,sizeof(struct Media),1,ffile) == 0)
 	    {
@@ -436,9 +467,7 @@ int media_export(void)
     char colour[sizeof(media.colour)+1];
     char type[sizeof(media.type)+1];
 
-    /* open the media database file */
-    if((ffile = fopen(MEDIAFILE, "rb")) == (FILE*)NULL)
-	fatal(EXIT_INTERNAL, _("Can't open media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
+    ffile = open_database("rb");
 
     puts("#!/bin/sh");
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 21 February 2003.
+# Last modified 4 March 2003.
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
@@ -64,7 +64,7 @@ RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 %files -f z_install_end/installed_files_list
 %docdir /usr/share/ppr/man
 %docdir /usr/share/ppr/www/docs
-#%config /etc/ppr/media.db
+%config /etc/ppr/media.db
 
 #============================================================================
 # This removes the build directory after the install.
@@ -101,11 +101,30 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/chkconfig --del ppr
 rm /etc/rc.d/init.d/ppr
 
-# Remove resource cache.
+# Remove lots of removable junk.
+/usr/lib/ppr/bin/ppr-clean --aggressive
+
+# Remove the crontab.
+/usr/bin/crontab -u ppr -r
+
+# Remove the PPR entries from Inetd's config file.
+rm -f /etc/inetd.conf~
+mv /etc/inetd.conf /etc/inetd.conf~
+grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
+killall -HUP inetd
+
+# Do the same for Xinetd.
+if [ -f /etc/xinetd.d/ppr ]
+    then
+    rm -f /etc/xinetd.d/ppr
+    killall -HUP xinetd
+    fi
+
+# Remove resource cache files.
 rm -f /var/spool/ppr/cache/*/*
 
 # Remove boring log files.
-for l in pprd pprd.old pprdrv papsrv papd lprsrv ppr-indexfonts ppr-clean ppr-httpd uprint
+for l in pprd pprd.old pprdrv papsrv papd lprsrv ppr-indexfonts ppr-indexppds ppr-clean ppr-httpd uprint
     do
     rm -f /var/spool/ppr/logs/$l
     done
@@ -116,17 +135,6 @@ for t in pr ditroff troff dvi tex texinfo pdf html jpeg gif bmp pnm xbm xpm xwd 
     rm -f /usr/lib/ppr/filters/filter_$t
     done
 
-# Remove Samba spool files.
-rm -f /var/spool/ppr/sambaspool/*
-
-# Remove printer status stuff.
-rm -f /var/spool/ppr/printers/addr_cache/*
-rm -f /var/spool/ppr/printers/alerts/*
-rm -f /var/spool/ppr/printers/status/*
-
-# Remove client spooling stuff.
-rm -f /var/spool/ppr/pprclipr/*
-
 # Remove DVIPS config files.
 rm -f /var/spool/ppr/dvips/*
 
@@ -136,13 +144,13 @@ rm -f /var/spool/ppr/jobs/*
 
 # Remove the font index.
 rm -f /var/spool/ppr/fontindex.db
+rm -f /var/spool/ppr/ppdindex.db
 
 # Remove pprd's FIFO.
 rm -f /var/spool/ppr/PIPE
 
-# Remove the communication files.
-rm -f /var/spool/ppr/run/state_update
-rm -f /var/spool/ppr/run/state_update_pprdrv
+# Remove any linger run state files.
+rm -f /var/spool/ppr/run/*
 
 # Remove links in /usr/bin.
 rm -f /usr/bin/ppr \
@@ -175,25 +183,6 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
     	rm -f /etc/ppr/$f
     	fi
     done
-
-# Remove the generated sample configuration file.
-rm -f /etc/ppr/ppr.conf.sample
-
-# Remove the PPR entries from Inetd's config file.
-rm -f /etc/inetd.conf~
-mv /etc/inetd.conf /etc/inetd.conf~
-grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
-killall -HUP inetd
-
-# Do the same for Xinetd.
-if [ -f /etc/xinetd.c/ppr ]
-    then
-    rm -f /etc/xinetd.d/ppr
-    killall -HUP xinetd
-    fi
-
-# Remove the crontab.
-/usr/bin/crontab -u ppr -r
 
 # Remove the PPR users and groups.
 /usr/sbin/userdel ppr

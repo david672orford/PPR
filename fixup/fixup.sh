@@ -67,17 +67,11 @@ for dir in $HOMEDIR $SHAREDIR $CONFDIR $VAR_SPOOL_PPR
         fi
     done
 
-# Create the accounts and groups need by PPR.
-$HOMEDIR/fixup/fixup_accounts || exit 1
-
 # Set the ownership and access permissions on PPR files.
 $HOMEDIR/fixup/fixup_perms || exit 1
 
 # Remove files from older versions of PPR.
 $HOMEDIR/fixup/fixup_obsolete || exit 1
-
-# Setup up for AT&T LAN Manager for Unix.
-$HOMEDIR/fixup/fixup_lmx || exit 1
 
 # Create links in public bin directory.
 $HOMEDIR/fixup/fixup_links || exit 1
