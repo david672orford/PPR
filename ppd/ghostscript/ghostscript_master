@@ -33,7 +33,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 17 May 2004.
+*% which was last revised 30 September 2004.
 *%
 #endif
 
@@ -107,7 +107,9 @@
 *DefaultColorSpace: CMYK
 *Throughput: "8"
 *% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60
-*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
+*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=720hq2
+*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Photo,Quality=2880x720sw,Dither=Adaptive
+*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c60 -sIjsParams=ImageType=2,MediaType=Coated,Quality=2880x720sw,Dither=Adaptive
 #endif
 
 *% ===== General Information =====
