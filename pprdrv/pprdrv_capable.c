@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 February 2003.
+** Last modified 14 May 2003.
 */
 
 /*===========================================================================
@@ -296,7 +296,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 		*/
 		if((fnptr = find_cached_resource(d->type, d->name, d->version, d->revision, search_list, (int*)NULL, &features, NULL)))
 			{									/* If found, */
-			DODEBUG_RESOURCES(("resource %s %s is in cache file \%s\"", d->type, d->name, fnptr));
+			DODEBUG_RESOURCES(("resource %s %s is in cache file \"%s\"", d->type, d->name, fnptr));
 
 			if(features & FONT_TYPE_42)			/* if it has a type 42 section, */
 				{

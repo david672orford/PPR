@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 14 May 2003.
 #
 
 include ../Makefile.conf
@@ -119,7 +119,7 @@ OBJS=\
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT)
 ppr-push-httpd$(DOTEXE): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 
 $(Q_ICONS_LAST):
 	( cd q_icons; ./make_composit_figs.perl )

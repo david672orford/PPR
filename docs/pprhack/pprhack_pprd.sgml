@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_pprd.sgml
-Last Modified: 13 March 2003
+Last Modified: 14 May 2003
 Last Proofread: 13 March 2003
 -->
 
@@ -34,9 +34,9 @@ queue files it sends a command to <command>pprd</command> telling it that
 the job is there and is ready for printing or transfer to the remote system. 
 This command takes the form:
 
-<sourcecode>
+<programlisting>
 j <replaceable>destination_node destination_queue id subid home_node initial_priority</replaceable>
-</sourcecode>
+</programlisting>
 
 The <replaceable>destination_node</replaceable> is the node to which the job
 should be sent.  Since transmission to remote notes is not yet supported,
@@ -58,16 +58,16 @@ a new one created, <command>pprd</command> must be directed to read it.  To
 inform <command>pprd</command> that it must read a new or revised printer
 configuration file, a command line of this form is sent:
 
-<sourcecode>
+<programlisting>
 NP <replaceable>printername</replaceable>
-</sourcecode>
+</programlisting>
 
 To indicate that a group configuration file must be re-read or that a new
 group configuration file must be read for the first time:
 
-<sourcecode>
+<programlisting>
 NG <replaceable>groupname</replaceable>
-</sourcecode>
+</programlisting>
 
 Neither command is acknowledged by <command>pprd</command>.
 </para>

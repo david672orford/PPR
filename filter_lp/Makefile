@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 14 May 2003.
 #
 
 include ../Makefile.conf
@@ -39,7 +39,7 @@ PROGS=filter_lp$(DOTEXE)
 all: $(PROGS)
 
 filter_lp$(DOTEXE): filter_lp.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(CC) $(CFLAGS) -o filter_lp$(DOTEXT) filter_lp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o filter_lp$(DOTEXT) filter_lp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 #=== Install ================================================================
 

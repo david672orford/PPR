@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2003.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -156,7 +156,7 @@ static int copies_doc_countdown;		/* number of times to send document */
 static int copies_pages_countdown;		/* number of times to send pages */
 
 /* The "%%PageMedia:" from the document defaults section. */
-static char default_pagemedia[MAX_MEDIANAME+1] = {(char)NULL};
+static char default_pagemedia[MAX_MEDIANAME+1] = { '\0' };
 
 /* Array used to change page order. */
 struct PAGETABLE
@@ -908,7 +908,7 @@ static void copy_a_page(int newnumber)
 	#ifdef DEBUG_BINSELECT_INLINE
 	printer_printf("%% media_count=%d, job.opts.binselect=%d, pagemedia=\"%s\", default_pagemedia=\"%s\"\n",media_count,job.opts.binselect,pagemedia,default_pagemedia);
 	#endif
-	if(media_count > 1 && job.opts.binselect && (pagemedia[0] != (char)NULL || default_pagemedia[0] != (char)NULL))
+	if(media_count > 1 && job.opts.binselect && (pagemedia[0] != '\0' || default_pagemedia[0] != '\0'))
 		{
 		/*
 		** If we manage to select the media, strip_binselects will

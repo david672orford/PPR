@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -295,7 +295,7 @@ void clipcopy(char *dest, const char *source, int maxlen)
 	while(maxlen-- && *source)
 		*(dest++) = *(source++);
 
-	*dest = (char)NULL;
+	*dest = '\0';
 	} /* end of clipcopy() */
 
 /*
@@ -320,7 +320,7 @@ int lprsrv_getline(void)
 			}
 
 		while( line[len-1]=='\n' || line[len-1]=='\r' ) /* Remove the line */
-			line[--len]=(char)NULL;						/* terminator */
+			line[--len] = '\0';							/* terminator */
 
 		return TRUE;
 		}
@@ -432,7 +432,7 @@ int _authorized(const char *name, const char *file)
 		{
 		while(fgets(line,sizeof(line),f) != (char*)NULL)
 			{
-			line[strcspn(line," \t\n")] = (char)NULL;
+			line[strcspn(line," \t\n")] = '\0';
 
 			for(tmp=line; *tmp; tmp++)
 				*tmp = tolower(*tmp);
@@ -605,27 +605,27 @@ int receive_data_file(char *command, int tempfile)
 */
 void clear_control(struct CONTROL_FILE *control)
 		{
-		control->Host[0] = (char)NULL;
-		control->Person[0] = (char)NULL;
-		control->Class[0] = (char)NULL;
-		control->Jobname[0] = (char)NULL;
+		control->Host[0] = '\0';
+		control->Person[0] = '\0';
+		control->Class[0] = '\0';
+		control->Jobname[0] = '\0';
 		control->print_banner = FALSE;
-		control->Lbanner[0] = (char)NULL;
-		control->Mailto[0] = (char)NULL;
-		control->Title[0] = (char)NULL;
+		control->Lbanner[0] = '\0';
+		control->Mailto[0] = '\0';
+		control->Title[0] = '\0';
 		control->indent = 0;
 		control->width = 0;
 		control->files_count = 0;
 		control->files_unlinked = 0;
 		control->N_count = 0;
 		control->files_count = 0;
-		control->mailaddr[0] = (char)NULL;
-		control->principal[0] = (char)NULL;
-		control->LT_inputtray[0] = (char)NULL;
-		control->Kduplex[0] = (char)NULL;
+		control->mailaddr[0] = '\0';
+		control->principal[0] = '\0';
+		control->LT_inputtray[0] = '\0';
+		control->Kduplex[0] = '\0';
 		control->Gnup = 0;
-		control->GT_outputtray[0] = (char)NULL;
-		control->Oorientation[0] = (char)NULL;
+		control->GT_outputtray[0] = '\0';
+		control->Oorientation[0] = '\0';
 		} /* end of clear_control() */
 
 /*
@@ -635,7 +635,7 @@ void receive_control_file(char *command, struct CONTROL_FILE *control)
 	{
 	int size = atoi(command);	/* Read the size of the control file from command line */
 	#define MAX_NAME_CONSIDER 40
-	char last_file_name[MAX_NAME_CONSIDER+1] = {(char)NULL};
+	char last_file_name[MAX_NAME_CONSIDER+1] = {'\0'};
 
 	DODEBUG_GRITTY(("Control file is %d bytes long", size));
 
@@ -785,10 +785,10 @@ void receive_control_file(char *command, struct CONTROL_FILE *control)
 	**
 	** We will not necessarily use the the mail address.
 	*/
-	if( (control->Host[0] != (char)NULL)
+	if( (control->Host[0] != '\0')
 				&& (gethostbyname(control->Host) != (struct hostent*)NULL) )
 		{
-		if(control->Mailto[0] != (char)NULL )			/* If user has requested mail, */
+		if(control->Mailto[0] != '\0' )			/* If user has requested mail, */
 			strcpy(control->mailaddr, control->Mailto); /* use the name in the request. */
 		else											/* Otherwise, use the name */
 			strcpy(control->mailaddr, control->Person); /* of the job owner */
@@ -846,7 +846,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	args[x++] = printer;
 
 	/* If we know who we are printing this for, say so. */
-	if(control->Person[0] != (char)NULL)
+	if(control->Person[0] != '\0')
 		{
 		args[x++] = "-f";
 		args[x++] = control->Person;
@@ -857,7 +857,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	args[x++] = control->principal;
 
 	/* If we have a mail address, provide it */
-	if(control->mailaddr[0] != (char)NULL)
+	if(control->mailaddr[0] != '\0')
 		{
 		args[x++] = "-m";
 		args[x++] = "mail";
@@ -868,7 +868,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 		/* If the user didn't ask for mail, arrange to
 		   send it only if there is an error.
 		   */
-		if(control->Mailto[0] == (char)NULL)
+		if(control->Mailto[0] == '\0')
 			{
 			args[x++] = "--responder-options";
 			args[x++] = "printed=no";
@@ -888,7 +888,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	** (ppr's -C switch specifies the default job title.)
 	** This may be overridden in a moment if "lpr -p" was used.
 	*/
-	if(control->Jobname[0] != (char)NULL)
+	if(control->Jobname[0] != '\0')
 		{
 		args[x++] = "-C";
 		args[x++] = control->Jobname;
@@ -920,7 +920,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	** the -C switch.
 	*/
 	#ifndef LPRSRV_USE_LPR_STYLE_JOB_NAME
-	if(control->Jobname[0] == (char)NULL && control->files[file_index].type == 'p' && control->Title[0] != (char)NULL)
+	if(control->Jobname[0] == '\0' && control->files[file_index].type == 'p' && control->Title[0] != '\0')
 		{
 		args[x++] = "-C";
 		args[x++] = control->Title;
@@ -1223,7 +1223,7 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	** declare ourself to be representing somebody else./
 	** (See the lpr(1) man page.)
 	*/
-	if(control->Person[0] != (char)NULL)
+	if(control->Person[0] != '\0')
 		{
 		args[x++] = "-U";
 		args[x++] = control->Person;
@@ -1243,7 +1243,7 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	** If we know the jobname, try to pass
 	** it on to LPR.
 	*/
-	if(control->Jobname[0] != (char)NULL)
+	if(control->Jobname[0] != '\0')
 		{
 		args[x++] = "-J";
 		args[x++] = control->Jobname;
@@ -1252,14 +1252,14 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	/*
 	** Pass the class identifier string on to LPR.
 	*/
-	if(control->Class[0] != (char)NULL)
+	if(control->Class[0] != '\0')
 		{
 		args[x++] = "-C";
 		args[x++] = control->Class;
 		}
 
 	/* Pass on the title string. */
-	if(control->Title[0] != (char)NULL)
+	if(control->Title[0] != '\0')
 		{
 		args[x++] = "-T";
 		args[x++] = control->Title;
@@ -1428,7 +1428,7 @@ void build_argv_lp(const char *args[], char *printer, struct CONTROL_FILE *contr
 	** If we know the jobname, try to pass
 	** it on to LP.
 	*/
-	if(control->Jobname[0] != (char)NULL)
+	if(control->Jobname[0] != '\0')
 		{
 		args[x++] = "-t";
 		args[x++] = control->Jobname;
@@ -1824,7 +1824,7 @@ void show_jobs(char *command)
 	queue = command + 1;		/* name of queue */
 	list = queue;
 	list += strcspn(list, " ");
-	*(list++) = (char)NULL;		/* terminate name of queue */
+	*(list++) = '\0';		/* terminate name of queue */
 	list += strspn(list, " ");
 
 	x = 0;
@@ -1874,7 +1874,7 @@ void show_jobs(char *command)
 		{
 		item_ptr = &list[i];
 		item_length = strcspn(item_ptr, " ");
-		item_ptr[item_length] = (char)NULL;
+		item_ptr[item_length] = '\0';
 
 		if(x < (args_SIZE-1)) args[x++] = item_ptr;
 		}
@@ -1978,7 +1978,7 @@ static int remove_jobs_ppop_cancel(const char *queue, const char *agent, char *l
 		{
 		item_ptr = &list[x];
 		item_length = strcspn(item_ptr, " ");
-		item_ptr[item_length] = (char)NULL;
+		item_ptr[item_length] = '\0';
 
 		i = 1;			/* argv[] index */
 
@@ -2115,7 +2115,7 @@ static int remove_jobs_cancel(const char *queue, const char *agent, char *list)
 		{
 		item_ptr = &list[x];
 		item_length = strcspn(item_ptr, " ");
-		item_ptr[item_length] = (char)NULL;
+		item_ptr[item_length] = '\0';
 
 		if(strspn(item_ptr, "0123456789") == item_length)
 			{
@@ -2194,7 +2194,7 @@ static int remove_jobs_lprm(const char *queue, const char *agent, char *list)
 		if(y < 100)				/* only use it if there is room */
 			{
 			args[y++] = item_ptr;
-			item_ptr[item_length] = (char)NULL;
+			item_ptr[item_length] = '\0';
 			}
 		}
 
@@ -2221,16 +2221,16 @@ void remove_jobs(char *command)
 	command++;
 	queue = command;					/* first is queue to delete from */
 	command += strcspn(queue, " ");
-	*command = (char)NULL;
+	*command = '\0';
 
 	command++;							/* second is agent making request */
 	agent = command;
 	command += strcspn(command, " ");
-	*command = (char)NULL;
+	*command = '\0';
 
 	command++;
 	list = command;
-	command[strcspn(command, "\n")] = (char)NULL;
+	command[strcspn(command, "\n")] = '\0';
 
 	DODEBUG_LPRM(("remove_jobs(): queue=\"%s\", agent=\"%s\", list=\"%s\"", queue, agent, list));
 

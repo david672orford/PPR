@@ -8,7 +8,8 @@ Last Proofread:
 <title>Plugin Raster Image Processors</title>
 
 <para>
-If you want to supply your own RIP to use instead of B<ppr-gs>, you should
+If you want to supply your own RIP to use instead of
+<command>ppr-gs</command>, you should
 create a program and put it in <filename>/usr/lib/ppr/lib</filename>.  It
 should connect stdin, stdout, and stderr to the cooresponding file
 descriptors of the PostScript interpreter and should send the print date to

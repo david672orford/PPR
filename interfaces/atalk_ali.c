@@ -47,6 +47,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #ifdef INTERNATIONAL
+#include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 14 May 2003.
 */
 
 #include "before_system.h"
@@ -132,7 +132,7 @@ void *uprint_new(const char *fakername, int argc, const char *argv[])
 	u->pr_title = (const char *)NULL;
 
 	u->content_type_lp = (const char *)NULL;
-	u->content_type_lpr = (char)NULL;
+	u->content_type_lpr = '\0';
 	u->copies = -1;						/* unset as yet */
 	u->banner = FALSE;
 	u->nobanner = FALSE;

@@ -8584,6 +8584,7 @@ line was being parsed twice.
 * libppr/interfaces.c, ppad/ppad_group.c: fixed core dump errors when "ppad show"
   and "ppad group show" were used on empty printer and group configuration files.
   
+* Changed remaining (char)NULL to '\0'.
   
 
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -249,7 +249,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	while((line = ppd_readline()))
 		{
 		if(debug_level > 5)
-			printf("PPD: %s", line);
+			printf("PPD: %s\n", line);
 
 		/*
 		** If this is a "*LanguageLevel:" line and either there has
@@ -272,6 +272,10 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 			{
 			if(! resolution_conflict && gu_sscanf(p, "%S", &tempptr) == 1 )
 				{
+				/* skip wacko stuff */
+				if(!isdigit(*p))
+					continue;
+
 				/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
 				{
 				char *p;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -872,7 +872,7 @@ int main(int argc, char *argv[])
 					exit(EXIT_SYNTAX);
 					}
 
-				line[len] = (char)NULL;
+				line[len] = '\0';
 				default_zone = gu_strdup(line);
 				}
 

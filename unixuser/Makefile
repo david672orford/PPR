@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 14 May 2003.
 #
 
 include ../Makefile.conf
@@ -45,10 +45,10 @@ gettargetfile:
 	@echo "ppr-followme"
 
 ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(CC) $(CFLAGS) -o ppr-xgrant$(DOTEXE) ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o ppr-xgrant$(DOTEXE) ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 ppr-followme$(DOTEXE): ppr-followme.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(CC) $(CFLAGS) -o ppr-followme$(DOTEXE) ppr-followme.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o ppr-followme$(DOTEXE) ppr-followme.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 #=== Install ================================================================
 

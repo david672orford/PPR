@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 March 2003.
+** Last modified 14 May 2003.
 */
 
 #include "before_system.h"
@@ -48,7 +48,7 @@ char uprint_get_content_type_lpr(void *p)
 	struct UPRINT *upr = (struct UPRINT *)p;
 
 	/* If it was set directly, */
-	if(upr->content_type_lpr != (char)NULL)
+	if(upr->content_type_lpr != '\0')
 		return upr->content_type_lpr;
 
 	/* If we can convert an lp content type spec, */

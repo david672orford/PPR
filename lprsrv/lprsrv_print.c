@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 March 2003.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -267,7 +267,7 @@ static void handle_solaris_option(void *upr, const char *option)
 static void receive_control_file(int control_file_len, struct DATA_FILE data_files[], int *files_unlinked, void *upr)
 	{
 	#define MAX_NAME_CONSIDER 40
-	char last_file_name[MAX_NAME_CONSIDER+1] = {(char)NULL};
+	char last_file_name[MAX_NAME_CONSIDER+1] = {'\0'};
 	static char *control_buffer = (char *)NULL;
 	int control_buffer_len = 0;
 	int N_Count = 0;

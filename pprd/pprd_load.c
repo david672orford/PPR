@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_load.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 December 2002.
+** Last modified 14 May 2003.
 */
 
 /*
@@ -122,10 +122,10 @@ static void load_printer(struct Printer *printer, const char filename[])
 			x+=len;										/* move past word */
 			x+=strspn(&tempstr[x]," \t");				/* skip spaces */
 
-			len=strcspn(&tempstr[x]," \t\n");			/* get length */
+			len=strcspn(&tempstr[x]," \t\n");					/* get length */
 			printer->alert_address = (char*)gu_alloc(len+1,sizeof(char));
-			strncpy(printer->alert_address,&tempstr[x],len); /* copy */
-			printer->alert_address[len] = (char)NULL;	/* terminate */
+			strncpy(printer->alert_address,&tempstr[x],len); 	/* copy */
+			printer->alert_address[len] = '\0';					/* terminate */
 			}
 
 		/* For each "Bin:" line, add the bin to the list */

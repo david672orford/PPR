@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 April 2003.
+# Last modified 14 May 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -352,8 +352,8 @@ sub Show
 		push(@args, "-e", "responder");
 		push(@args, "--page-list" => "") if();
 		push(@args, "-n", $self->{copies});
-		push(@args, "--feature", "Duplex=$self->{duplex}") if($self->{duplex_longname} ne "");
-		push(@args, "--feature", "InputSlot=$self->{inputslot}") if($self->{inputslot_longname} ne "");
+		push(@args, "--feature", "Duplex=$self->{duplex}") if($self->{duplex} ne "");
+		push(@args, "--feature", "InputSlot=$self->{inputslot}") if($self->{inputslot} ne "");
 
 		}
 
