@@ -7258,7 +7258,7 @@ line was being parsed twice.
   BSD license.
 
 
-1.44, 5 June 2001--19 July 2001
+1.44, 5 June 2001--23 July 2001
 
 * moved misc/modes-3.3.mf to filters_misc/ and improved the documentation at
   the top of filters_misc/mfmodes.conf.
@@ -7315,4 +7315,16 @@ line was being parsed twice.
   N-Up support.  The keywords are "*pprN-Up" and "*pprN-UpBorders".
 
 * Renamed ppr_realloc() to gu_realloc().
+
+* pprdrv/pprdrv_rip.c (and other files) fixed a problem in rip_fault_check() 
+  which caused it to miss error messages from the RIP.  This require the 
+  addition of a parameter to several functions to tell them whether to 
+  attempt a flush before closing the RIP or the interface.  Without this
+  printer_flush() got called recursively since fault_check() is called
+  from printer_flush().
+
+* Changed order of targets in makeprogs/global.mk.unconfigured to put
+  "cant" first.  When it is included from the makefile in ppr-gs, just
+  catching "all" isn't enough since "all" has many dependencies in the
+  Ghostscript build process.
 
