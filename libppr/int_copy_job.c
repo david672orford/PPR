@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_copy_job.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 July 2004.
+** Last modified 13 January 2005.
 */
 
 #include "config.h"
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
@@ -202,7 +203,7 @@ void int_copy_job(int portfd,
 				alert(int_cmdline.printer, TRUE, "Driver for \"%s\" is defective.", int_cmdline.address);
 				runaway_plaint = TRUE;
 				}
-			/* int_exit(EXIT_PRNERR_NORETRY); */
+			/* exit(EXIT_PRNERR_NORETRY); */
 			sleep(1);
 			}
 			
@@ -277,7 +278,7 @@ void int_copy_job(int portfd,
 				|| (FD_ISSET(1, &wfds) && recv_state != COPYSTATE_WRITING))
 			{
 			alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-			int_exit(EXIT_PRNERR_NORETRY);
+			exit(EXIT_PRNERR_NORETRY);
 			}
 
 		/* If select() timed out, then it is either time to put a control-T 
@@ -292,7 +293,7 @@ void int_copy_job(int portfd,
 				if(xmit_state != COPYSTATE_READING)
 					{
 					alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-					int_exit(EXIT_PRNERR_NORETRY);
+					exit(EXIT_PRNERR_NORETRY);
 					}
 				xmit_ptr = "\24";
 				xmit_len = 1;
@@ -319,7 +320,7 @@ void int_copy_job(int portfd,
 				else
 					{
 					alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				}
 
@@ -407,7 +408,7 @@ void int_copy_job(int portfd,
 				else
 					{
 					alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				}
 
@@ -423,7 +424,7 @@ void int_copy_job(int portfd,
 		if(xmit_len < 0 || recv_len < 0)
 			{
 			alert(int_cmdline.printer, TRUE, "%s interface: line %d: assertion failed", int_cmdline.int_basename, __LINE__);
-			int_exit(EXIT_PRNERR_NORETRY);
+			exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/atalk_cap.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -135,7 +135,7 @@ int basic_open_printer(const char *address, int *wlen)
 		else
 			{
 			alert(int_cmdline.printer, TRUE, "atalk interface: PAPOpen() returned %d, %s", ret, &status.StatusStr[1]);
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		}
 
@@ -168,7 +168,7 @@ int basic_open_printer(const char *address, int *wlen)
 			** Tell pprdrv that the printer is otherwise
 			** engaged or off line.
 			*/
-			int_exit(EXIT_ENGAGED);
+			exit(EXIT_ENGAGED);
 			}
 
 		} while(ocomp > 0);
@@ -176,7 +176,7 @@ int basic_open_printer(const char *address, int *wlen)
 	if(ocomp < 0)		/* if ocomp indicates an error */
 		{
 		alert(int_cmdline.printer, TRUE, "atalk interface: PAPOpen() completion code: %d", ocomp);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/*
@@ -219,7 +219,7 @@ void hide_printer(int cno, const char type[], int typelen)
 	if((ret = PAPWrite(cno,buf,strlen(buf),TRUE,&wcomp)) < 0)
 		{
 		alert(int_cmdline.printer, TRUE, "atalk interface: hide_printer(): PAPWrite() failed while changing AppleTalk type, ret=%d", ret);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	do	{						/* Wait for the response, */
@@ -260,7 +260,7 @@ int open_printer(const char address[], int *wlen)
 				) )
 		{
 		alert(int_cmdline.printer, TRUE, "Syntax error in printer address.");
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	while(TRUE)			/* really, just a goto */
@@ -278,7 +278,7 @@ int open_printer(const char address[], int *wlen)
 		if((strncmp(&address[typeoffset],"LaserWriter",typelen)==0) || renamed || !is_laserwriter)
 			{
 			alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found.", address);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
+			exit(EXIT_PRNERR_NOT_RESPONDING);
 			}
 
 		/*
@@ -290,7 +290,7 @@ int open_printer(const char address[], int *wlen)
 			{
 			alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found,", address);
 			alert(int_cmdline.printer, FALSE, "nor is \"%s\".", unrenamed);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
+			exit(EXIT_PRNERR_NOT_RESPONDING);
 			}
 
 		/* now, send the code to the printer to hide it. */
@@ -333,7 +333,7 @@ int receive(int cno, int flag)
 	if(rcomp < 0)						/* If there was an error, */
 		{								/* then make it a printer alert. */
 		alert(int_cmdline.printer, TRUE, "atalk interface: PAPRead() completion error: %d", rcomp);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	#ifdef DEBUG
@@ -362,7 +362,7 @@ int receive(int cno, int flag)
 	if((paperr = PAPRead(cno,rbuf,&rlen,&eoj,&rcomp)) < 0)
 		{
 		alert(int_cmdline.printer, TRUE, "atalk interface: PAPRead() returned %d", paperr);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	DODEBUG(("receive() done"));
@@ -393,7 +393,7 @@ int copy_job(int cno, int wlen)
 			if(wcomp < 0)		/* If error, */
 				{
 				alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): PAPWrite() completion error: %d",wcomp);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 
 			/*
@@ -416,7 +416,7 @@ int copy_job(int cno, int wlen)
 				if(errno != EINTR)		/* If not interupted system call, */
 					{
 					alert(int_cmdline.printer, TRUE, "Pipe read error, errno=%d (%s)", errno, gu_strerror(errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 
 				if(sigalrm_caught)		/* If read() timed out, */
@@ -438,7 +438,7 @@ int copy_job(int cno, int wlen)
 			if(tolen != -1 && (paperr = PAPWrite(cno, tobuf, tolen, tolen == 0 ? TRUE : FALSE, &wcomp)) < 0)
 				{
 				alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): PAPWrite() returned %d", paperr);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			} /* end of if write done or error completing PAPwrite() */
 
@@ -489,7 +489,7 @@ int int_main(int argc, char *argv[])
 	if(int_cmdline.probe)
 		{
 		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	    exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Parse the options string, searching for name=value pairs. */
@@ -564,7 +564,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 

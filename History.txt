@@ -9522,6 +9522,20 @@ no final tarball was released.
 * makeprogs/scriptfixup.sh: removed (since all scripts have been converted to
   subst_tool).
 
+* libppr/int_exit.c: removed (it was for supporting the long-since removed gs* 
+  interfaces
+
+* libppr/int_cmdline.c: removed support for environment variables (also gs* 
+  support)
+
+* libgu/c2lib_*.c: fixed code to cast void* to char* before attempting arithmatic
+
+* libgu/gu_snprintf.c, nonppr_misc/snprintf/snprint.c: moved PPR-specific 
+  modifications out of snprintf.c and into gu_snprintf.c.  Previously, there
+  was a libgu/snprintf.c symbolic link to nonppr_misc/snprintf/snprintf.c.
+
+
+
 
 TODO
 

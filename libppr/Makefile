@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libppr/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 13 January 2005.
 #
 
 include ../Makefile.conf
@@ -35,7 +35,7 @@ include ../Makefile.conf
 LIBOBJS=\
 	int_main.$(OBJ) \
 	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
-	int_acache.$(OBJ) int_debug.$(OBJ) int_exit.$(OBJ) \
+	int_acache.$(OBJ) int_debug.$(OBJ) \
 	int_copy_job.$(OBJ) int_tcp_connect.$(OBJ) \
 	int_tcp_probe.$(OBJ) \
 	datestamp.$(OBJ) \

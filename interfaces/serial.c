@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 January 2005.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -142,7 +142,7 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 		if( ! (statbuf.st_mode & S_IFCHR) )
 			{
 			alert(int_cmdline.printer, TRUE, "The file \"%s\" is not a tty.");
-			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 			}
 		}
 
@@ -159,28 +159,28 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 			{
 			case EACCES:
 				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), printer_address);
-				int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+				exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 			case ENOENT:		/* file not found */
 			case ENOTDIR:		/* path not found */
 				alert(int_cmdline.printer, TRUE, "The port \"%s\" does not exist.", printer_address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case ENXIO:
 				alert(int_cmdline.printer, TRUE, "The device file \"%s\" exists, but the device doesn't.", printer_address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case EIO:
 				alert(int_cmdline.printer, TRUE, _("Hangup or other error while opening \"%s\"."), printer_address);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 			case ENFILE:
 				alert(int_cmdline.printer, TRUE, _("System open file table is full."));
-				int_exit(EXIT_STARVED);
+				exit(EXIT_STARVED);
 			#ifdef ENOSR
 			case ENOSR:
 				alert(int_cmdline.printer, TRUE, "System is out of STREAMS.");
-				int_exit(EXIT_STARVED);
+				exit(EXIT_STARVED);
 			#endif
 			default:
 				alert(int_cmdline.printer, TRUE, "Can't open \"%s\", %s.", printer_address, gu_strerror(errno));
-				int_exit(EXIT_PRNERR_NORETRY);
+				exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 
@@ -449,7 +449,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* We can't use control-T status updates if the job
@@ -463,7 +463,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
 				&& int_cmdline.codes != CODES_UNKNOWN)
 		{
 		alert(int_cmdline.printer, TRUE, _("%s interface: \"codes\" setting must be \"Clean7Bit\" if the option \"bits=7\" is set."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* If detect_hangups was set to true, clear CLOCAL: */
@@ -474,14 +474,14 @@ static void set_options(const char *printer_name, const char *printer_options, i
 	if(tcsetattr(portfd, TCSANOW, settings) == -1)
 		{
 		alert(int_cmdline.printer, TRUE, "%s interface: tcsetattr() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/* Make sure they were written correctly: */
 	if(tcgetattr(portfd, &readback) == -1)
 		{
 		alert(int_cmdline.printer, TRUE, "%s interface: tcgetattr() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/* This code doesn't work. */
@@ -489,7 +489,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
 	if(memcmp(settings, &readback, sizeof(struct termios)))
 		{
 		alert(int_cmdline.printer, TRUE, _("%s interface: serial port driver does not support selected options"), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY);
+		exit(EXIT_PRNERR_NORETRY);
 		}
 #endif
 	} /* end of set_options() */
@@ -508,7 +508,7 @@ static void printer_error(int error_number)
 			alert(int_cmdline.printer, TRUE, _("Serial communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
 			break;
 		}
-	int_exit(EXIT_PRNERR);
+	exit(EXIT_PRNERR);
 	}
 
 /*
@@ -542,7 +542,7 @@ int int_main(int argc, char *argv[])
 	if(int_cmdline.probe)
 		{
 		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
-	    int_exit(EXIT_PRNERR);
+	    exit(EXIT_PRNERR);
 		}
 
 	/* Check for unusable job break methods. */
@@ -551,7 +551,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
 				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Check for unusable codes settings. */
@@ -560,7 +560,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
 				"program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	gu_write_string(1, "%%[ PPR connecting ]%%\n");
@@ -612,7 +612,7 @@ int int_main(int argc, char *argv[])
 			{
 			DODEBUG(("offline"));
 			gu_write_string(1, "%%[ PrinterError: off line ]%%\n");
-			int_exit(EXIT_ENGAGED);
+			exit(EXIT_ENGAGED);
 			}
 		}
 	#endif
@@ -631,7 +631,7 @@ int int_main(int argc, char *argv[])
 	close(portfd);
 
 	DODEBUG(("sucessful completion"));
-	return EXIT_PRINTED;		/* needn't call int_exit() */
+	return EXIT_PRINTED;		/* needn't call exit() */
 	} /* end of main() */
 
 /* end of file */

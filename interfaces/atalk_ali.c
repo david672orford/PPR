@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/atalk_ali.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -130,7 +130,7 @@ static void sigusr1_handler(int signum)
 static void term_handler(int signum)
 	{
 	DODEBUG(("Killed by signal \"%s\".", gu_strsignal(signum)));
-	exit(EXIT_SIGNAL);			/* what about int_exit()? !!! */
+	exit(EXIT_SIGNAL);			/* what about exit()? !!! */
 	} /* end of term_handler() */
 
 /*
@@ -157,7 +157,7 @@ static void fatal_pap_error(int pap_error, int sys_error)
 			alert(int_cmdline.printer, TRUE, "atalk interface: PAP error, pap_error=%d (%s)", pap_error, pap_strerror(pap_error));
 			break;
 		}
-	int_exit(EXIT_PRNERR);
+	exit(EXIT_PRNERR);
 	} /* end of fatal_pap_error() */
 
 /*
@@ -231,12 +231,12 @@ static int basic_open_printer(at_entity_t *entity, at_nbptuple_t *addr, int *wle
 			{							/* (i.e. worse than `not found') */
 			alert(int_cmdline.printer, TRUE, _("Printer name lookup failed, nbp_errno=%d (%s), errno=%d (%s)."),
 				nbp_errno, nbp_strerror(nbp_errno), errno, gu_strerror(errno) );
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		if(ret > 1)						/* if multiple printers */
 			{
 			alert(int_cmdline.printer, TRUE, _("%d printers answer to the name \"%s\"."), ret, int_cmdline.printer);
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		DODEBUG(("basic_open_printer(): printer not found"));
@@ -259,7 +259,7 @@ static int basic_open_printer(at_entity_t *entity, at_nbptuple_t *addr, int *wle
 			*/
 			print_pap_status(status);
 
-			int_exit(EXIT_ENGAGED);		/* Use special exit code. */
+			exit(EXIT_ENGAGED);		/* Use special exit code. */
 			}
 		else							/* if other error, */
 			{							/* other errors, just print message. */
@@ -273,7 +273,7 @@ static int basic_open_printer(at_entity_t *entity, at_nbptuple_t *addr, int *wle
 				alert(int_cmdline.printer, TRUE, "atalk interface: pap_open() failed, pap_errno=%d (%s)",
 						pap_errno, pap_strerror(pap_errno));
 				}
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		}
 
@@ -314,7 +314,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 	if(nbp_parse_entity(&entity, atalk_name))
 		{
 		alert(int_cmdline.printer, TRUE, _("Syntax error in printer address \"%s\"."), atalk_name);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	if(address_status != ADDRESS_STATUS_UNKNOWN)
@@ -355,7 +355,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 		if( (entity.type.len==11 && strncmp(entity.type.str,"LaserWriter",11)==0) || renamed || !opt_is_laserwriter )
 			{
 			alert(int_cmdline.printer, TRUE, "Printer \"%s\" not found.", atalk_name);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
+			exit(EXIT_PRNERR_NOT_RESPONDING);
 			}
 
 		/* Save the type we looked for in "newtype". */
@@ -373,7 +373,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 			alert(int_cmdline.printer,FALSE,"nor is \"%.*s:LaserWriter@%.*s\".",
 				(int)entity.object.len,entity.object.str,
 				(int)entity.zone.len,entity.zone.str);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
+			exit(EXIT_PRNERR_NOT_RESPONDING);
 			}
 
 		/* Now, hide the printer. */
@@ -382,7 +382,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 			{
 			alert(int_cmdline.printer,TRUE,"atalk interface: pap_close(): failed, pap_errno=%d (%s), errno=%d (%s)",
 				pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		/* Say we renamed it and get ready for the next try. */
@@ -513,7 +513,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 				else							/* If other read() error, */
 					{							/* interface has failed. */
 					alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): read error, errno=%d (%s)", errno, gu_strerror(errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				}
 			else if(tosend == 0)				/* If end of file, */
@@ -530,7 +530,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 		if((lookret = pap_look(papfd)) == -1)
 			{
 			alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): pap_look() failed, pap_errno=%d (%s), errno=%d (%s)", pap_errno, pap_strerror(errno), errno, gu_strerror(errno) );
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		DODEBUG(("copy_job(): pap_look() returned %d (%s)", lookret, pap_look_string(lookret) ));
 
@@ -589,7 +589,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 			if(lookret == PAP_DISCONNECT)
 				fatal_pap_error(PAPHANGUP, 0);
 			alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): pap_look() returned %d (%s)", lookret, pap_look_string(lookret));
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		/*
@@ -634,7 +634,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 				if(errno != EINTR)
 					{
 					alert(int_cmdline.printer, TRUE, "atalk interface: copy_job(): select() failed, errno=%d (%s)", errno, gu_strerror(errno) );
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				DODEBUG(("copy_job(): select() interupted"));
 				}
@@ -747,7 +747,7 @@ int int_main(int argc, char *argv[])
 	if(int_cmdline.probe)
 		{
 		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	    exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Make sure all address components are no longer than
@@ -756,7 +756,7 @@ int int_main(int argc, char *argv[])
 	if(strlen(int_cmdline.address) > (32+1+32+1+32))
 		{
 		alert(int_cmdline.printer, TRUE, _("Printer address \"%s\" is too long."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Parse the options string, searching for name=value pairs. */
@@ -841,7 +841,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE, _("Option parsing error: %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 
@@ -936,7 +936,7 @@ int int_main(int argc, char *argv[])
 		{
 		alert(int_cmdline.printer, TRUE, "atalk interface: pap_close(): failed, pap_errno=%d (%s), errno=%d (%s)",
 				pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/*
@@ -953,7 +953,7 @@ int int_main(int argc, char *argv[])
 		}
 
 	/* We have done everything correctly.  We don't
-	   need to call int_exit() because it would do
+	   need to call exit() because it would do
 	   nothing but exit(). */
 	return EXIT_PRINTED;
 	} /* end of main() */

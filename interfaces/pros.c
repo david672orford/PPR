@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/pros.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 May 2004.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -228,7 +228,7 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 		if((selret = select(sockfd + 1, &rfds, &wfds, NULL, &timeout)) < 0)
 			{
 			alert(int_cmdline.printer, TRUE, "select() failed, errno=%d (%s)", errno, gu_strerror(errno));
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		/* If the printserver sent us something, */
@@ -239,12 +239,12 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 				if((ret = read(sockfd, recvbuf+recvbuf_len, sizeof(recvbuf)-recvbuf_len)) == -1)
 					{
 					alert(int_cmdline.printer, TRUE, "read() from socket failed, errno=%d (%s)", errno, gu_strerror(errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				if(ret == 0)
 					{
 					alert(int_cmdline.printer, TRUE, "unexpected zero length read from socket");
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					}
 				DODEBUG(("received %d bytes from print server", ret));
 				recvbuf_len += ret;
@@ -260,13 +260,13 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 			if((ret = write(sockfd, sendbuf, sendbuf_off)) == -1)
 				{
 				alert(int_cmdline.printer, TRUE, "write() to socket failed, errno=%d (%s)", errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			/* This is bad code. */
 			if(ret != sendbuf_off)
 				{
 				alert(int_cmdline.printer, TRUE, "write() to socket wrote %d of %d bytes", ret, sendbuf_off);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			sendbuf_off -= ret;
 			}
@@ -277,7 +277,7 @@ static void pros_copy_job(int sockfd, struct OPTIONS *options, const char printe
 			if((last_stdin_read = read(0, sendbuf+3, sizeof(sendbuf)-3)) == -1)
 				{
 				alert(int_cmdline.printer, TRUE, "read() from stdin failed, errno=%d (%s)", errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			if(last_stdin_read == 0)
 				{
@@ -364,11 +364,11 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 		if(code & PROSBIT_FATAL)				/* fatal error condition */
 			{
 			alert(int_cmdline.printer, TRUE, "Fatal PROS protocol error: %d (%.*s)", masked_code, len, data ? (char*)data : "");
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		else if(masked_code == PROSERR_POC)		/* printer occupied */
 			{
-			int_exit(EXIT_ENGAGED);
+			exit(EXIT_ENGAGED);
 			}
 		else if(masked_code == PROSMSG_JST)		/* printer willing to accept job */
 			{
@@ -461,7 +461,7 @@ int int_main(int argc, char *argv[])
 	if(int_cmdline.probe)
 		{
 		fprintf(stderr, _("The interface program \"%s\" does not support probing.\n"), int_cmdline.int_basename);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+	    exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Check for unusable job break methods. */
@@ -470,7 +470,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
 				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Parse the options string, searching for name=value pairs. */
@@ -521,7 +521,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 

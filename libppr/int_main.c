@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_main.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 January 2004.
+** Last modified 13 January 2005.
 */
 
 #include "config.h"
 #include <stdarg.h>
 #include <string.h>
+#include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "libppr_int.h"
@@ -53,9 +54,9 @@ int main(int argc, char *argv[])
 		alert(int_cmdline.printer, FALSE, "%s", gu_exception);
 
 		if(strstr(gu_exception, "alloc()") || strstr(gu_exception, "fork()"))
-			int_exit(EXIT_STARVED);
+			exit(EXIT_STARVED);
 		else
-			int_exit(EXIT_PRNERR_NORETRY);
+			exit(EXIT_PRNERR_NORETRY);
 		}
 	/* NOTREACHED */
 	return 255;

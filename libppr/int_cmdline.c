@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_cmdline.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 13 January 2005.
 */
 
 #include "config.h"
@@ -38,11 +38,6 @@
 
 struct INT_CMDLINE int_cmdline;
 
-/*
-** Notice that the opt_address and opt_options fields
-** may be overridden by an environment variable
-** whose name begins with "PPR_GS_INTERFACE_HACK_".
-*/
 void int_cmdline_set(int argc, char *argv[])
 	{
 	int_cmdline.probe = FALSE;
@@ -80,12 +75,10 @@ void int_cmdline_set(int argc, char *argv[])
 	int_cmdline.printer = argv[1];
 
 	/* Address of that printer in correct format for interface */
-	if((int_cmdline.address = getenv("PPR_GS_INTERFACE_HACK_ADDRESS")) == (char*)NULL)
-		int_cmdline.address = argv[2];
+	int_cmdline.address = argv[2];
 
-	/* Options in correct format for interface */
-	if((int_cmdline.options = getenv("PPR_GS_INTERFACE_HACK_OPTIONS")) == (char*)NULL)
-		int_cmdline.options = argc >= 4 ? argv[3] : "";
+	/* Interface options in correct format for interface */
+	int_cmdline.options = argc >= 4 ? argv[3] : "";
 
 	/* Jobbreak method being used */
 	if(argc >= 5)

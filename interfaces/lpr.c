@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/lpr.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell and Damian Ivereigh.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -151,7 +151,7 @@ static void do_control_file(int sockfd, const char *local_nodename, const char *
 	/* Tell the server we want to send the control file. */
 	snprintf(command, sizeof(command), "\002%d "CF_TEMPLATE"\n", (int)strlen(control_file), lpr_queueid, local_nodename);
 	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Check if response is favourable. */
 	if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
@@ -160,12 +160,12 @@ static void do_control_file(int sockfd, const char *local_nodename, const char *
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send control file.)"));
 		else					/* if remote end refuses, */
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD system does not have room for control file."));
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/* Send the control file, including the terminating zero byte. */
 	if(uprint_lpr_send_cmd(sockfd, control_file, strlen(control_file) + 1) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Check if response if favourable. */
 	if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
@@ -174,7 +174,7 @@ static void do_control_file(int sockfd, const char *local_nodename, const char *
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while sending control file.)"));
 		else					/* If remote end says no, */
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" denies correct receipt of control file."), int_cmdline.address);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 	} /* end of do_control_file() */
 
@@ -189,7 +189,7 @@ static void do_data_file(int sockfd, const char *local_nodename, const char *add
 	/* Tell the server we want to send the data file. */
 	snprintf(command, sizeof(command), "\003%d "DF_TEMPLATE"\n", temp_file_length, lpr_queueid, local_nodename);
 	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Make sure the response is favourable. */
 	if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
@@ -198,17 +198,17 @@ static void do_data_file(int sockfd, const char *local_nodename, const char *add
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send data file.)"));
 		else
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" does not have room for data file."), int_cmdline.address);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	/* Send the data file */
 	if(uprint_lpr_send_data_file(temp_file_fd, sockfd) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Send the zero byte */
 	command[0] = '\0';
 	if(uprint_lpr_send_cmd(sockfd, command, 1) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Make sure the server responds with a zero byte. */
 	if((result = uprint_lpr_response(sockfd, TIMEOUT_PRINT)))
@@ -217,7 +217,7 @@ static void do_data_file(int sockfd, const char *local_nodename, const char *add
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while sending data file.)"));
 		else
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" denies correct receipt of data file."), int_cmdline.address);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	} /* end of do_data_file() */
@@ -254,7 +254,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 			if((result = read(0, buffer + receive_count, chunk_size - receive_count)) < 0)
 				{
 				alert(int_cmdline.printer, TRUE, "read() on stdin failed, errno=%d (%s)", errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			DODEBUG(("read %d bytes", result));
 			if(result == 0)
@@ -267,7 +267,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 		/* Tell the server we want to send the data file. */
 		snprintf(command, sizeof(command), "\003%d "DF_TEMPLATE"\n", receive_count, lpr_queueid, local_nodename);
 		if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 
 		/* Make sure the response is favourable. */
 		if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
@@ -276,7 +276,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 				alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send data file.)"));
 			else
 				alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" does not have room for data file."), int_cmdline.address);
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		/* Send this chunk. */
@@ -289,7 +289,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 					alert(int_cmdline.printer, TRUE, "write() to lpd server failed, errno=%d (%s)", errno, gu_strerror(errno));
 				else
 					alert(int_cmdline.printer, TRUE, "write() to lpd server returned %d", result);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			DODEBUG(("write() accepted %d bytes", result));
 			}
@@ -298,7 +298,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 		DODEBUG(("sending zero byte"));
 		command[0] = '\0';
 		if(uprint_lpr_send_cmd(sockfd, command, 1) == -1)
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 
 		/* Make sure the server responds with a zero byte. */
 		DODEBUG(("waiting for reply"));
@@ -308,7 +308,7 @@ static void do_data_file_chunked(int sockfd, const char *local_nodename, const c
 				alert(int_cmdline.printer, FALSE, _("(Communication failure while sending data file.)"));
 			else
 				alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" denies correct receipt of data file."), int_cmdline.address);
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		DODEBUG(("got reply"));
 		} while(receive_count == chunk_size);
@@ -338,7 +338,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 	/* Tell the server we want to send the data file. */
 	snprintf(command, sizeof(command), "\003%d "DF_TEMPLATE"\n", exaggerated_size, lpr_queueid, local_nodename);
 	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 
 	/* Make sure the response is favourable. */
 	if((result = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)))
@@ -347,7 +347,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send data file.)"));
 		else
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD queue \"%s\" does not have room for data file."), int_cmdline.address);
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 
 	buffer = (char*)gu_alloc(chunk_size, sizeof(char));
@@ -363,7 +363,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 			if((result = read(0, buffer + receive_count, chunk_size - receive_count)) < 0)
 				{
 				alert(int_cmdline.printer, TRUE, "read() from stdin failed, errno=%d (%s)", errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			DODEBUG(("read %d bytes", result));
 			if(result == 0)
@@ -378,7 +378,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 		if(actual_size > exaggerated_size)
 			{
 			alert(int_cmdline.printer, TRUE, "Exaggerated size exceeded!");
-			int_exit(EXIT_JOBERR);
+			exit(EXIT_JOBERR);
 			}
 
 		/* Send this chunk. */
@@ -391,7 +391,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 					alert(int_cmdline.printer, TRUE, "write() to lpd server failed, errno=%d (%s)", errno, gu_strerror(errno));
 				else
 					alert(int_cmdline.printer, TRUE, "write() to lpd server returned %d", result);
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 				}
 			DODEBUG(("write() accepted %d bytes", result));
 			}
@@ -447,7 +447,7 @@ int int_main(int argc, char *argv[])
 		{
 		alert(int_cmdline.printer, TRUE, _("Printer address \"%s\" is invalid, the correct syntax\n"
 										"is \"printer@host\"."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 
@@ -543,7 +543,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 
@@ -553,7 +553,7 @@ int int_main(int argc, char *argv[])
 		struct sockaddr_in printer_address;
 		gu_write_string(1, "%%[ PPR address lookup ]%%\n");
 		int_tcp_parse_address(address_host, 0 /* port, doesn't matter*/, &printer_address);
-		int_exit(int_tcp_probe(&printer_address, options.snmp_community));
+		exit(int_tcp_probe(&printer_address, options.snmp_community));
 		}
 
 	/* Check for unsuitable job break methods. */
@@ -562,7 +562,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
 				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Check for an unsuitable feedback settting. */
@@ -580,7 +580,7 @@ int int_main(int argc, char *argv[])
 				int_cmdline.printer
 				);
 			}
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/*
@@ -591,7 +591,7 @@ int int_main(int argc, char *argv[])
 	if(options.temp_first)
 		{
 		if((temp_file_fd = uprint_file_stdin(&temp_file_length)) == -1)
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 		}
 
 	/* Tell pprdrv we will tell it when we have connected. */
@@ -601,12 +601,12 @@ int int_main(int argc, char *argv[])
 	if((sockfd = uprint_lpr_make_connection(address_host)) == -1)
 		{
 		if(uprint_errno == UPE_TEMPFAIL)
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 		if(uprint_errno == UPE_BADSYS)
-			int_exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
+			exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
 		if(uprint_errno == UPE_BADARG)
-			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		int_exit(EXIT_PRNERR_NORETRY);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY);
 		}
 
 	/* Tell pprdrv that the connexion has gone through. */
@@ -617,7 +617,7 @@ int int_main(int argc, char *argv[])
 	char command[80];
 	snprintf(command, sizeof(command), "\002%s\n", address_queue);
 	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 	}
 
 	/* Check if the response if favorable: */
@@ -626,22 +626,22 @@ int int_main(int argc, char *argv[])
 		if(result == -1)		/* elaborate on error message */
 			{
 			alert(int_cmdline.printer, FALSE, _("(Communication failure while negotiating to send job.)"));
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 		else					/* non-zero byte returned */
 			{
 			alert(int_cmdline.printer, TRUE, _("Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."), address_host, address_queue);
-			int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+			exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 			}
 		}
 
 	/* Get our nodename because we need it for the queue file. */
 	if((local_nodename = uprint_lpr_nodename()) == (char*)NULL)
-		int_exit(EXIT_PRNERR_NORETRY);
+		exit(EXIT_PRNERR_NORETRY);
 
 	/* Generate a queue id. */
 	if((lpr_queueid = uprint_lpr_nextid()) == -1)
-		int_exit(EXIT_PRNERR_NORETRY);
+		exit(EXIT_PRNERR_NORETRY);
 
 	/* Build the control file in memory and send it. */
 	do_control_file(sockfd, local_nodename, address_queue, lpr_queueid, &options);
@@ -662,7 +662,7 @@ int int_main(int argc, char *argv[])
 		if(!options.temp_first)
 			{
 			if((temp_file_fd = uprint_file_stdin(&temp_file_length)) == -1)
-				int_exit(EXIT_PRNERR);
+				exit(EXIT_PRNERR);
 			}
 		do_data_file(sockfd, local_nodename, address_queue, lpr_queueid, temp_file_fd, temp_file_length);
 		}
@@ -674,7 +674,7 @@ int int_main(int argc, char *argv[])
 	if(temp_file_fd != -1) close(temp_file_fd);
 
 	/* Tell pprdrv that we did our job correctly. */
-	int_exit(EXIT_PRINTED);
+	exit(EXIT_PRINTED);
 	} /* end of main() */
 
 /* end of file */

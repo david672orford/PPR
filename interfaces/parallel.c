@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 January 2005.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -88,7 +88,7 @@ static int open_parallel(void)
 		if( ! (statbuf.st_mode & S_IFCHR) )
 			{
 			alert(int_cmdline.printer, TRUE, _("The file \"%s\" is not a tty."), int_cmdline.address);
-			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 			}
 		}
 
@@ -113,28 +113,28 @@ static int open_parallel(void)
 		switch(errno)
 			{
 			case EBUSY:
-				int_exit(EXIT_ENGAGED);
+				exit(EXIT_ENGAGED);
 			case EACCES:
 				alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
+				exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
 			case ENOENT:		/* file not found */
 			case ENOTDIR:		/* path not found */
 				alert(int_cmdline.printer, TRUE, _("The port \"%s\" does not exist."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case ENXIO:
 				alert(int_cmdline.printer, TRUE, _("The device file \"%s\" exists, but the device doesn't."), int_cmdline.address);
-				int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+				exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
 			case ENFILE:
 				alert(int_cmdline.printer, TRUE, _("System open file table is full."));
-				int_exit(EXIT_STARVED);
+				exit(EXIT_STARVED);
 			#ifdef ENOSR
 			case ENOSR:
 				alert(int_cmdline.printer, TRUE, _("System is out of STREAMS."));
-				int_exit(EXIT_STARVED);
+				exit(EXIT_STARVED);
 			#endif
 			default:
 				alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
-				int_exit(EXIT_PRNERR_NORETRY);
+				exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 
@@ -150,7 +150,7 @@ static void printer_error(int error_number)
 	if(error_number == EINVAL && int_cmdline.feedback)
 		{
 		alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Maybe we tried to read data back from a one-way printer. 
@@ -158,11 +158,11 @@ static void printer_error(int error_number)
 	if(error_number == EIO && int_cmdline.feedback)
 		{
 		alert(int_cmdline.printer, TRUE, _("Printer on \"%s\" does not support 2-way communication."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-	int_exit(EXIT_PRNERR);
+	exit(EXIT_PRNERR);
 	}
 
 /*
@@ -309,7 +309,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 		alert(int_cmdline.printer, TRUE, "Option parsing error:	 %s", gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* We can't use control-T status updates if the job isn't PostScript. */
@@ -377,7 +377,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
 				"the PPR interface program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* Check for unusable codes settings. */
@@ -386,7 +386,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE,
 				_("The codes setting \"Binary\" is not compatible with the PPR interface\n"
 				"program \"%s\"."), int_cmdline.int_basename);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	gu_write_string(1, "%%[ PPR connecting ]%%\n");
@@ -403,7 +403,7 @@ int int_main(int argc, char *argv[])
 
 	/* Make sure the printer is ready. */
 	if(describe_status(parallel_port_status(portfd)))
-		int_exit(EXIT_ENGAGED);
+		exit(EXIT_ENGAGED);
 
 	/* Possibly do a reset. */
 	if(options.reset_before)
@@ -428,7 +428,7 @@ int int_main(int argc, char *argv[])
 	close(portfd);
 
 	DODEBUG(("sucessful completion"));
-	int_exit(EXIT_PRINTED);
+	exit(EXIT_PRINTED);
 	} /* end of main() */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 January 2005.
+** Last modified 13 January 2005.
 */
 
 /*
@@ -120,7 +120,7 @@ static void explain_error_in_context(int error_number)
 		default:
 			alert(int_cmdline.printer, TRUE, _("TCP/IP communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));			break;
 		}
-	int_exit(EXIT_PRNERR);
+	exit(EXIT_PRNERR);
 	}
 
 /*
@@ -131,7 +131,7 @@ static void do_shutdown(int fd)
 	if(shutdown(fd, SHUT_WR) < 0)
 		{
 		alert(int_cmdline.printer, TRUE, _("%s() failed, errno=%d (%s)"), "shutdown", errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR);
+		exit(EXIT_PRNERR);
 		}
 	}
 
@@ -354,7 +354,7 @@ int int_main(int argc, char *argv[])
 			  "the PPR interface program \"%s\"."),
 			int_cmdline.int_basename
 			);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	/* If feedback is on, and control-d handshaking is on, turn on the ^T stuff. */
@@ -480,7 +480,7 @@ int int_main(int argc, char *argv[])
 		alert(int_cmdline.printer, TRUE, _("Option parsing error:  %s"), gettext(o.error));
 		alert(int_cmdline.printer, FALSE, "%s", o.options);
 		alert(int_cmdline.printer, FALSE, "%*s^ %s", o.index, "", _("right here"));
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 	}
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/libppr/int_tcp_connect.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2004.
+** Last modified 13 January 2005.
 */
 
 #include "config.h"
@@ -154,7 +154,7 @@ void int_tcp_parse_address(const char address[], int default_port, struct sockad
 		{
 		alert(int_cmdline.printer, TRUE, _("Spaces and tabs not allowed in a TCP/IP printer address."
 								"\"%s\" does not conform to this requirement."), address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
 	if((ptr = strchr(address, ':')))
@@ -163,7 +163,7 @@ void int_tcp_parse_address(const char address[], int default_port, struct sockad
 			{
 			alert(int_cmdline.printer, TRUE,
 				_("TCP ports must be specified numberically.  The port \"%s\" is not a number."), ptr+1);
-			int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 			}
 		/* Put the port number in the structure. */
 		printer_addr->sin_port = htons(atoi(ptr+1));
@@ -189,7 +189,7 @@ void int_tcp_parse_address(const char address[], int default_port, struct sockad
 		if((hostinfo = gethostbyname(address)) == (struct hostent *)NULL)
 			{
 			alert(int_cmdline.printer, TRUE, _("TCP/IP interface can't determine IP address for \"%s\"."), address);
-			int_exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
+			exit(EXIT_PRNERR_NO_SUCH_ADDRESS);
 			}
 		printer_addr->sin_family = hostinfo->h_addrtype;
 		memcpy(&printer_addr->sin_addr, hostinfo->h_addr_list[0], hostinfo->h_length);
@@ -230,7 +230,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 		if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 			{
 			alert(int_cmdline.printer, TRUE, "%s interface: socket() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-			int_exit(EXIT_PRNERR);
+			exit(EXIT_PRNERR);
 			}
 
 		DODEBUG(("calling connect()"));
@@ -249,7 +249,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 				options->timeout
 				);
 			close(sockfd);
-			int_exit(EXIT_PRNERR_NOT_RESPONDING);
+			exit(EXIT_PRNERR_NOT_RESPONDING);
 			}
 
 		/* If connect() failed, */
@@ -264,7 +264,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 				case ETIMEDOUT:
 					alert(int_cmdline.printer, TRUE, _("Timeout while trying to connect to printer.\n"
 										"(Connect() reported error ETIMEDOUT.)"));
-					int_exit(EXIT_PRNERR_NOT_RESPONDING);
+					exit(EXIT_PRNERR_NOT_RESPONDING);
 					break;
 				case ECONNREFUSED:
 					if(try_count < options->refused_retries)
@@ -275,17 +275,17 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 					if(options->refused_engaged && status_function)
 						{
 						(*status_function)(status_obj);
-						int_exit(EXIT_ENGAGED);
+						exit(EXIT_ENGAGED);
 						}
 					else
 						{
 						alert(int_cmdline.printer, TRUE, _("Printer at \"%s\" has refused connection."), address);
-						int_exit(EXIT_PRNERR);
+						exit(EXIT_PRNERR);
 						}
 					break;
 				default:
 					alert(int_cmdline.printer, TRUE, "%s interface: connect() failed, errno=%d (%s)", int_cmdline.int_basename, saved_errno, gu_strerror(saved_errno));
-					int_exit(EXIT_PRNERR);
+					exit(EXIT_PRNERR);
 					break;
 				}
 			}
@@ -302,7 +302,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 	if(setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, (void*)&true_variable, sizeof(true_variable)) < 0)
 		{
 		alert(int_cmdline.printer, TRUE, "%s interface: setsockopt() failed for SO_KEEPALIVE, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-		int_exit(EXIT_PRNERR_NORETRY);
+		exit(EXIT_PRNERR_NORETRY);
 		}
 	}
 
@@ -316,7 +316,7 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 		if(setsockopt(sockfd, SOL_SOCKET, SO_SNDBUF, (void*)&options->sndbuf_size, sizeof(options->sndbuf_size) ) < 0)
 			{
 			alert(int_cmdline.printer, TRUE, "%s interface: setsockopt() failed SO_SNDBUF, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
-			int_exit(EXIT_PRNERR_NORETRY);
+			exit(EXIT_PRNERR_NORETRY);
 			}
 		}
 
