@@ -14,6 +14,8 @@ for link in `find . -type l`
 	do
 	contents=`readlink $link`
 
+	echo "# $contents --> $link"
+
 	# -h doesn't seem to work with some versions of bash.
 	#echo "if [ ! -h $link ]; then ln -sf $contents $link || exit 1; fi"
 	echo "if [ ! -f $link ]; then ln -sf $contents $link || exit 1; fi"

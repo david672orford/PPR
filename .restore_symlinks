@@ -1,38 +1,73 @@
 #! /bin/bash
+# ../../INSTALL.txt --> ./docs/misc/INSTALL.txt
 if [ ! -f ./docs/misc/INSTALL.txt ]; then ln -sf ../../INSTALL.txt ./docs/misc/INSTALL.txt || exit 1; fi
-if [ ! -f ./docs/misc/main_history.txt ]; then ln -sf ../../History.txt ./docs/misc/main_history.txt || exit 1; fi
+# ../../po/README.txt --> ./docs/misc/internationalization.txt
 if [ ! -f ./docs/misc/internationalization.txt ]; then ln -sf ../../po/README.txt ./docs/misc/internationalization.txt || exit 1; fi
+# ../../History.txt --> ./docs/misc/main_history.txt
+if [ ! -f ./docs/misc/main_history.txt ]; then ln -sf ../../History.txt ./docs/misc/main_history.txt || exit 1; fi
+# ../History.txt --> ./docs/misc/docs_history.txt
 if [ ! -f ./docs/misc/docs_history.txt ]; then ln -sf ../History.txt ./docs/misc/docs_history.txt || exit 1; fi
+# ../../misc/README.txt --> ./docs/misc/misc_dir_contents.txt
 if [ ! -f ./docs/misc/misc_dir_contents.txt ]; then ln -sf ../../misc/README.txt ./docs/misc/misc_dir_contents.txt || exit 1; fi
+# ../nonppr_misc/md5/gu_md5.h --> ./include/gu_md5.h
 if [ ! -f ./include/gu_md5.h ]; then ln -sf ../nonppr_misc/md5/gu_md5.h ./include/gu_md5.h || exit 1; fi
+# ../nonppr_misc/cexcept-1.0.0/cexcept.h --> ./include/cexcept.h
 if [ ! -f ./include/cexcept.h ]; then ln -sf ../nonppr_misc/cexcept-1.0.0/cexcept.h ./include/cexcept.h || exit 1; fi
+# ../nonppr_misc/pcre/pcre.h --> ./include/pcre.h
 if [ ! -f ./include/pcre.h ]; then ln -sf ../nonppr_misc/pcre/pcre.h ./include/pcre.h || exit 1; fi
+# ../nonppr_misc/c2lib/hash.h --> ./include/hash.h
 if [ ! -f ./include/hash.h ]; then ln -sf ../nonppr_misc/c2lib/hash.h ./include/hash.h || exit 1; fi
+# ../nonppr_misc/c2lib/matvec.h --> ./include/matvec.h
 if [ ! -f ./include/matvec.h ]; then ln -sf ../nonppr_misc/c2lib/matvec.h ./include/matvec.h || exit 1; fi
+# ../nonppr_misc/c2lib/pool.h --> ./include/pool.h
 if [ ! -f ./include/pool.h ]; then ln -sf ../nonppr_misc/c2lib/pool.h ./include/pool.h || exit 1; fi
+# ../nonppr_misc/c2lib/pre.h --> ./include/pre.h
 if [ ! -f ./include/pre.h ]; then ln -sf ../nonppr_misc/c2lib/pre.h ./include/pre.h || exit 1; fi
+# ../nonppr_misc/c2lib/pstring.h --> ./include/pstring.h
 if [ ! -f ./include/pstring.h ]; then ln -sf ../nonppr_misc/c2lib/pstring.h ./include/pstring.h || exit 1; fi
+# ../nonppr_misc/c2lib/tree.h --> ./include/tree.h
 if [ ! -f ./include/tree.h ]; then ln -sf ../nonppr_misc/c2lib/tree.h ./include/tree.h || exit 1; fi
+# ../nonppr_misc/c2lib/vector.h --> ./include/vector.h
 if [ ! -f ./include/vector.h ]; then ln -sf ../nonppr_misc/c2lib/vector.h ./include/vector.h || exit 1; fi
+# ../nonppr_misc/md5/gu_md5.c --> ./libgu/gu_md5.c
 if [ ! -f ./libgu/gu_md5.c ]; then ln -sf ../nonppr_misc/md5/gu_md5.c ./libgu/gu_md5.c || exit 1; fi
+# ../nonppr_misc/snprintf/snprintf.c --> ./libgu/snprintf.c
 if [ ! -f ./libgu/snprintf.c ]; then ln -sf ../nonppr_misc/snprintf/snprintf.c ./libgu/snprintf.c || exit 1; fi
+# ../nonppr_misc/wildmat/gu_wildmat.c --> ./libgu/gu_wildmat.c
 if [ ! -f ./libgu/gu_wildmat.c ]; then ln -sf ../nonppr_misc/wildmat/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1; fi
+# ../nonppr_misc/pcre/pcre.c --> ./libgu/pcre.c
 if [ ! -f ./libgu/pcre.c ]; then ln -sf ../nonppr_misc/pcre/pcre.c ./libgu/pcre.c || exit 1; fi
+# ../nonppr_misc/c2lib/hash.c --> ./libgu/c2lib_hash.c
 if [ ! -f ./libgu/c2lib_hash.c ]; then ln -sf ../nonppr_misc/c2lib/hash.c ./libgu/c2lib_hash.c || exit 1; fi
+# ../nonppr_misc/pcre/get.c --> ./libgu/pcre_get.c
 if [ ! -f ./libgu/pcre_get.c ]; then ln -sf ../nonppr_misc/pcre/get.c ./libgu/pcre_get.c || exit 1; fi
+# ../nonppr_misc/pcre/maketables.c --> ./libgu/pcre_maketables.c
 if [ ! -f ./libgu/pcre_maketables.c ]; then ln -sf ../nonppr_misc/pcre/maketables.c ./libgu/pcre_maketables.c || exit 1; fi
+# ../nonppr_misc/pcre/study.c --> ./libgu/pcre_study.c
 if [ ! -f ./libgu/pcre_study.c ]; then ln -sf ../nonppr_misc/pcre/study.c ./libgu/pcre_study.c || exit 1; fi
+# ../nonppr_misc/c2lib/matvec.c --> ./libgu/c2lib_matvec.c
 if [ ! -f ./libgu/c2lib_matvec.c ]; then ln -sf ../nonppr_misc/c2lib/matvec.c ./libgu/c2lib_matvec.c || exit 1; fi
+# ../nonppr_misc/c2lib/pool.c --> ./libgu/c2lib_pool.c
 if [ ! -f ./libgu/c2lib_pool.c ]; then ln -sf ../nonppr_misc/c2lib/pool.c ./libgu/c2lib_pool.c || exit 1; fi
+# ../nonppr_misc/c2lib/pre.c --> ./libgu/c2lib_pre.c
 if [ ! -f ./libgu/c2lib_pre.c ]; then ln -sf ../nonppr_misc/c2lib/pre.c ./libgu/c2lib_pre.c || exit 1; fi
+# ../nonppr_misc/c2lib/pstring.c --> ./libgu/c2lib_pstring.c
 if [ ! -f ./libgu/c2lib_pstring.c ]; then ln -sf ../nonppr_misc/c2lib/pstring.c ./libgu/c2lib_pstring.c || exit 1; fi
+# ../nonppr_misc/c2lib/tree.c --> ./libgu/c2lib_tree.c
 if [ ! -f ./libgu/c2lib_tree.c ]; then ln -sf ../nonppr_misc/c2lib/tree.c ./libgu/c2lib_tree.c || exit 1; fi
+# ../nonppr_misc/c2lib/vector.c --> ./libgu/c2lib_vector.c
 if [ ! -f ./libgu/c2lib_vector.c ]; then ln -sf ../nonppr_misc/c2lib/vector.c ./libgu/c2lib_vector.c || exit 1; fi
+# ../nonppr_misc/md5/MD5pp.pm --> ./libscript/MD5pp.pm
 if [ ! -f ./libscript/MD5pp.pm ]; then ln -sf ../nonppr_misc/md5/MD5pp.pm ./libscript/MD5pp.pm || exit 1; fi
+# ../nonppr_misc/ps_type3/ps_type3.c --> ./libttf/ps_type3.c
+if [ ! -f ./libttf/ps_type3.c ]; then ln -sf ../nonppr_misc/ps_type3/ps_type3.c ./libttf/ps_type3.c || exit 1; fi
+# ../nonppr_misc/squeeze/squeeze.c --> ./makeprogs/squeeze.c
 if [ ! -f ./makeprogs/squeeze.c ]; then ln -sf ../nonppr_misc/squeeze/squeeze.c ./makeprogs/squeeze.c || exit 1; fi
-if [ ! -f ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2 ]; then ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2 || exit 1; fi
-if [ ! -f ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1 ]; then ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl-1.60.1/docbook-xsl-1.60.1 || exit 1; fi
-if [ ! -f ./nonppr_misc/docbook-xml ]; then ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1; fi
+# docbook-xsl-1.60.1 --> ./nonppr_misc/docbook-xsl
 if [ ! -f ./nonppr_misc/docbook-xsl ]; then ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl || exit 1; fi
+# docbook-xml-4.2/ --> ./nonppr_misc/docbook-xml
+if [ ! -f ./nonppr_misc/docbook-xml ]; then ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1; fi
+# ../nonppr_misc/md5/md5pure.tcl --> ./pprpopup/md5pure.tcl
 if [ ! -f ./pprpopup/md5pure.tcl ]; then ln -sf ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1; fi
+# ../nonppr_misc/md5/md5.js --> ./www/md5.js
 if [ ! -f ./www/md5.js ]; then ln -sf ../nonppr_misc/md5/md5.js ./www/md5.js || exit 1; fi
