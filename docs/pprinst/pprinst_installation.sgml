@@ -25,21 +25,21 @@ The <application/PPR/ source code comes as a tar archive compressed with
 gzip. To unpack it use this command:
 
 <screen>
-# gunzip -c ppr-src-1.44.tar.gz | tar xvf -
+# gunzip -c ppr-src-1.50.tar.gz | tar xvf -
 </screen>
 
 This will uncompress and unpack the source code and deposit it in a directory
-called <filename/ppr-1.44/ which it will create in the current directory.
+called <filename>ppr-1.50</filename> which it will create in the current directory.
 </para>
 
 <para>
 Compiling and installing PPR consists of 4 basic steps:
 
 <orderedlist>
-<listitem><para>Running the <command/Configure/ script</para></listitem>
-<listitem><para>Running <command/make/</para></listitem>
-<listitem><para>Running <command/make install/</para></listitem>
-<listitem><para>Running the <command/fixup/ script</para></listitem>
+<listitem><para>Running the <command>Configure</command> script</para></listitem>
+<listitem><para>Running <command>make</command></para></listitem>
+<listitem><para>Running <command>make install</command></para></listitem>
+<listitem><para>Running the <command>fixup</command> script</para></listitem>
 </orderedlist>
 
 These steps are described in detail in the file <filename/INSTALL.txt/ which

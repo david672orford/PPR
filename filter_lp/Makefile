@@ -13,7 +13,7 @@
 # Last modified 30 June 2000.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 PROGS=filter_lp$(DOTEXE)
 

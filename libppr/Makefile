@@ -13,7 +13,7 @@
 # Last modified 17 May 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 LIBOBJS=\
 	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \

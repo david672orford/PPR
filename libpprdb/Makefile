@@ -13,7 +13,7 @@
 # Last modified 17 May 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 OBJS=$(USER_DBM)_dbauth.$(OBJ) $(USER_DBM)_dbtrans.$(OBJ) \
 	$(USER_DBM)_dbmod.$(OBJ) dbstrlower.$(OBJ)

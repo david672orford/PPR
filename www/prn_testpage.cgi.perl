@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 April 2002.
+# Last modified 31 July 2002.
 #
 
 use lib "?";
@@ -36,6 +36,20 @@ require "cgi_wizard.pl";
 require "cgi_widgets.pl";
 require "cgi_intl.pl";
 require "cgi_run.pl";
+
+# Where are the Ghostscript example PostScript files?
+$GS_EXAMPLES = "$SHAREDIR/../ppr-gs/examples";
+%IMAGES = (
+	"Ghostscript Golfer" => ["$GS_EXAMPLES/golfer.ps", 0.40],
+	"Ghostscript Tiger" => ["$GS_EXAMPLES/tiger.ps", 0.40]
+	);
+foreach my $i (keys %IMAGES)
+	{
+	if(! -f $IMAGES{$i}->{file})
+	    {
+	    undef $IMAGES{$i};
+	    }
+	}
 
 #===========================================
 # This is the table for this wizard:
@@ -54,14 +68,14 @@ $addprn_wizard_table = [
 		print "<p>\n";
 		my $default_pagesize = "Letter";
 		my $pagesize = cgi_data_move("pagesize", $default_pagesize);
-		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize, 
+		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize,
 			qw(Letter Legal A4));
 		print "</p>\n";
 
 		print "<p>\n";
 		my $default_image = "PPR Logo";
 		my $image = cgi_data_move("image", $default_image);
-		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", "Ghostscript Golfer", "Ghostscript Tiger"));
+		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", keys($IMAGES)));
 		print "</p>\n";
 
 		print "<div class=\"section\">\n";
@@ -95,13 +109,9 @@ $addprn_wizard_table = [
 		$options .= " --pagesize=$pagesize";
 
 		my $image = cgi_data_move("image", "");
-		if($image eq "Ghostscript Golfer")
+		if($IMAGES{$image})
 		    {
-		    $options .= " --eps-file=$SHAREDIR/gs/golfer.ps --eps-scale=0.40";
-		    }
-		elsif($image eq "Ghostscript Tiger")
-		    {
-		    $options .= " --eps-file=$SHAREDIR/gs/tiger.ps --eps-scale=0.40";
+		    $options .= " --eps-file=$IMAGES{$image}->{file} --eps-scale=$IMAGES{$image}->{scale}";
 		    }
 
 		if(cgi_data_move("test_grayscale", 0))

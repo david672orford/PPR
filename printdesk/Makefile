@@ -13,7 +13,7 @@
 # Last modified 22 September 2000.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 PROGS=ppr-panel
 

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 24 April 2002.
+** Last modified 31 July 2002.
 */
 
 #include "before_system.h"
@@ -21,40 +21,20 @@
 #include "global_structs.h"
 #include "version.h"
 
-const char myname[] = "gen_paths";
+const char myname[] = "ppr-config";
 
-int main(int argc, char *argv[])
+static void do_paths(char format[], char language[])
     {
-    const char *format = NULL;
-
-    if(argc < 2)
-    	{
-    	fprintf(stderr, "%s: bad usage\n", myname);
-    	return 1;
-    	}
-
-    if(strcmp(argv[1], "--mk") == 0)
-    	format = "%s=%s\n";
-    else if(strcmp(argv[1], "--sh") == 0)
-    	format = "%s=\"%s\"\n";
-    else if(strcmp(argv[1], "--ph") == 0 || strcmp(argv[1], "--pm") == 0)
-    	format = "$%s=\"%s\";\n";
-    else
-	{
-	fprintf(stderr, "%s: unknown option %s\n", myname, argv[1]);
-	return 1;
-	}
-
     printf("# This is NOT a configuration file!  Don't modify it!\n");
 
-    if(strcmp(argv[1], "--pm") == 0)
+    if(strcmp(language, "--pm") == 0)
     	printf("package PPR;\n");
 
     /*
     ** These appear in all but paths.mk.  They don't appear in
     ** paths.mk because they are already in global.mk.
     */
-    if(strcmp(argv[1], "--mk"))
+    if(strcmp(language, "--mk"))
     	{
 	printf(format, "USER_PPR", USER_PPR);
 	printf(format, "GROUP_PPR", GROUP_PPR);
@@ -108,14 +88,62 @@ int main(int argc, char *argv[])
     printf(format, "PACKAGE_PPRWWW", PACKAGE_PPRWWW);
 
     /* More stuff for PPR.pm. */
-    if(strcmp(argv[1], "--pm") == 0)
+    if(strcmp(language, "--pm") == 0)
 	{
 	printf("$SIZEOF_struct_Media=%d;\n", (int)sizeof(struct Media));
 	}
 
     /* Perl modules and libraries must end with something that evaluates to true. */
-    if(strcmp(argv[1], "--ph") == 0 || strcmp(argv[1], "--pm") == 0)
+    if(strcmp(language, "--ph") == 0 || strcmp(language, "--pm") == 0)
     	printf("1;\n");
+    }
+
+int main(int argc, char *argv[])
+    {
+    int i;
+
+    if(argc < 2)
+    	{
+    	fprintf(stderr,
+    		"Usage: %s [OPTIONS]\n"
+    		"Options:\n"
+		"\t--version\n"
+    		"\t--mk\n"
+    		"\t--sh\n"
+    		"\t--ph\n"
+    		"\t--pm\n"
+    		"\t--confdir\n"
+    		"\t--homedir\n"
+    		"\t--sharedir\n"
+    		"\t--var-spool-ppr\n",
+    		myname);
+    	return 1;
+    	}
+
+    for(i=1; i<argc; i++)
+	{
+	if(strcmp(argv[i], "--version") == 0)
+	    printf("%s\n", SHORT_VERSION);
+	else if(strcmp(argv[i], "--mk") == 0)
+	    do_paths("%s=%s\n", argv[i]);
+	else if(strcmp(argv[i], "--sh") == 0)
+	    do_paths("%s=\"%s\"\n", argv[i]);
+	else if(strcmp(argv[i], "--ph") == 0 || strcmp(argv[i], "--pm") == 0)
+	    do_paths("$%s=\"%s\";\n", argv[i]);
+	else if(strcmp(argv[i], "--confdir") == 0)
+	    printf("%s\n", CONFDIR);
+	else if(strcmp(argv[i], "--homedir") == 0)
+	    printf("%s\n", HOMEDIR);
+	else if(strcmp(argv[i], "--sharedir") == 0)
+	    printf("%s\n", SHAREDIR);
+	else if(strcmp(argv[i], "--var-spool-ppr") == 0)
+	    printf("%s\n", VAR_SPOOL_PPR);
+	else
+	    {
+	    fprintf(stderr, "%s: unknown option %s\n", myname, argv[i]);
+	    return 1;
+	    }
+	}
 
     return 0;
     }

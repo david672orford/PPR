@@ -13,7 +13,7 @@
 # Last modified 4 May 2001.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 PROGS=audio samba xwin pager write mail
 

@@ -13,7 +13,7 @@
 # Last modified 8 January 2001.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 include ../makeprogs/paths.mk
 
 LANGUAGES=fr ru

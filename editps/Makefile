@@ -13,7 +13,7 @@
 # Last modified 22 November 2000.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 EDITORS=Windows_NT_4.0 Windows_95_4.0 \
 	Adobe_NT_5.0 ADOBEPS4.DRV_Version_4.24 \

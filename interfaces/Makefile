@@ -13,7 +13,7 @@
 # Last modified 28 August 2001.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 PROGS=dummy simple parallel$(DOTEXE) serial$(DOTEXE) \
 	tcpip$(DOTEXE) lpr$(DOTEXE) smb

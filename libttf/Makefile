@@ -13,7 +13,7 @@
 # Last modified 10 November 1998.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 OBJS=ttf_object.$(OBJ) endian.$(OBJ) fixed.$(OBJ) loadtable.$(OBJ) \
 	loadname.$(OBJ) alloc.$(OBJ) \

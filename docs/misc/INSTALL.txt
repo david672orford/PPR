@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/INSTALL.txt
  mouse:~ppr/src/INSTALL.txt (symbolic link)
- Last revised 2 February 2002.
+ Last revised 31 July 2002.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -155,7 +155,7 @@ The line "#include <locale.h>" is enclosed by "#ifdef HAVE_LOCALE_H" and
 is present in 4.1 or 4.2.
 
 If you want international messages support, then after you have run Configure
-and said "yes" to the appropriate option you must edit makeprogs/global.mk and
+and said "yes" to the appropriate option you must edit Makefile.conf and
 change the line which says:
 
 INTLLIBS=#-lintl
@@ -189,7 +189,7 @@ options         FFM_FS
 options         PCKT
 
 If the above are present all the necessary components are already in place.
-Otherwise, you will need to rebuild the OS kernel using /usr/sbin/doconfig 
+Otherwise, you will need to rebuild the OS kernel using /usr/sbin/doconfig
 as root.  In the doconfig script you will be asked to select kernel options.
 Be sure to include the following: System V Devices, STREAMS, and File on File
 Filesystem.  When doconfig finishes copy the new kernel to /vmunix and reboot.
@@ -258,7 +258,7 @@ out-of-date.
 
 You will probably have to use the GUI tools to create the user "ppr".  Since
 NT does not allow a group with the same name, after running Configure, you
-will have to edit makeprogs/global.mk and change GROUP_PPR to something else
+will have to edit Makefile.conf and change GROUP_PPR to something else
 and uncomment the line below its definition.
 
 =============================================================================
@@ -266,7 +266,7 @@ and uncomment the line below its definition.
 =============================================================================
 
 This port is barely functional or non-functional.  You will probably have to
-make some adjustments to the section in sysdep.h or global.mk.  The install
+make some adjustments to the section in sysdep.h or Makefile.conf.  The install
 may also require some manual intervention.  This is not for the
 inexperienced user!
 
@@ -323,7 +323,7 @@ $ tar zcvf ../ppr-binary.tar.gz .
 ============================================================================
 
 This is a list of important changes you should be aware of when upgrading
-from a prevous version of PPR.  Previous versions include 1.44, 1.43, 1.42, 
+from a prevous version of PPR.  Previous versions include 1.44, 1.43, 1.42,
 1.41, 1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.
 
 It is hard to keep track of what has changed.  If, when upgrading, you find
@@ -343,12 +343,12 @@ directories changed with version 1.41.  Formerly PPR was installed in
 /usr/lib/ppr, /usr/share/ppr, /etc/ppr, and /var/spool/ppr.  This change
 was made in order to conform to the File System Hierarcy Standard.
 
-If you are upgrading from an earlier version of PPR, you may wish to manually 
+If you are upgrading from an earlier version of PPR, you may wish to manually
 enter the old directory locations.  Alternatively, you can rename /usr/ppr
 to /usr/ppr_old (so you won't later mistakenly look for something there) and
 then move /usr/ppr/speach (if you have it installed) to /usr/share/ppr/speach.
 You should also change the PPR home directory to /usr/lib/ppr and move anything
-else you put in /usr/ppr (such as PPD files, .k5login, .profile, etc.) into 
+else you put in /usr/ppr (such as PPD files, .k5login, .profile, etc.) into
 either /usr/lib/ppr or /usr/share/ppr.
 
 2) The version 1.50 queue file format differs from all previous versions.
@@ -357,10 +357,10 @@ Therefor, you should empty the queues before upgrading.
 3) Be aware that certain files formerly in /etc/ppr and /usr/ppr/globalconf
 have been moved to /usr/ppr/lib (which itself become /usr/lib/ppr/lib with
 version 1.42).  They all have the extension ".conf".  They were moved first
-to /usr/ppr/globalconf in version 1.32 and then to /usr/ppr/lib in version 
-1.40 because they are really a more a part of the PPR code than a user 
-configuration file.  If you have made changes to any of these files, you 
-should save them before upgrading since PPR will remove those in 
+to /usr/ppr/globalconf in version 1.32 and then to /usr/ppr/lib in version
+1.40 because they are really a more a part of the PPR code than a user
+configuration file.  If you have made changes to any of these files, you
+should save them before upgrading since PPR will remove those in
 /usr/ppr/globalconf.  Those in /etc/ppr will be renamed to include strings
 such as "pre-1.32" indicating in which PPR version they became obsolete.
 

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 26 November 2001.
+# Last modified 31 July 2002.
 #
 
 BINDIR="?"
@@ -22,7 +22,7 @@ HOMEDIR="?"
 #======================================================================
 
 echo "Creating symbolic links in \"$BINDIR\"..."
-for i in ppr ppop ppad ppuser ppdoc ppr-xgrant
+for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config
     do
     echo "    ln -s $HOMEDIR/bin/$i $BINDIR/$i"
     rm -f $BINDIR/$i

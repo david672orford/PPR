@@ -28,7 +28,7 @@
 # Last modified 1 May 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 #== Install Locations ========================================================
 

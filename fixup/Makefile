@@ -13,7 +13,7 @@
 # Last modified 8 May 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 FIXUP_PROGS=fixup \
 	fixup_accounts \

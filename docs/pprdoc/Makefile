@@ -15,7 +15,7 @@
 
 # Pull in settings from Configure, the PPR version number, and special rules
 # for building documentation.
-include ../../makeprogs/global.mk
+include ../../Makefile.conf
 include ../../include/version.mk
 include ../rules.mk
 

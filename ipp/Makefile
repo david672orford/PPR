@@ -13,7 +13,7 @@
 # Last modified 21 November 2000.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 CGI_PROGS=ipp$(DOTEXE)
 

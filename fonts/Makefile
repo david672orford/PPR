@@ -13,7 +13,7 @@
 # Last modified 22 November 2000.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 all:
 

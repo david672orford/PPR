@@ -14,7 +14,7 @@
 #
 
 # Pull in settings from Configure.
-include ../../makeprogs/global.mk
+include ../../Makefile.conf
 include ../../include/version.mk
 include ../rules.mk
 

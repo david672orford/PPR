@@ -28,7 +28,7 @@
 # Last modified 11 April 2002.
 #
 
-include ../../makeprogs/global.mk
+include ../../Makefile.conf
 
 #=== Inventory ==============================================================
 

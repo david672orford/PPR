@@ -4,7 +4,7 @@
 # Last modified 19 February 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 # In global.mk are defined the following values that are needed to build.
 # There are additional things needed for install.

@@ -13,7 +13,7 @@
 # Last modified 7 January 2002.
 #
 
-include ../makeprogs/global.mk
+include ../Makefile.conf
 
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
 BIN_PROGS=ppr-xfm
