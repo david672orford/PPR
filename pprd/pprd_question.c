@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 December 2001.
+** Last modified 11 December 2001.
 */
 
 #include "before_system.h"
@@ -35,6 +35,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -254,7 +255,14 @@ gu_boolean question_child_hook(pid_t pid, int wstat)
     /* Look for an active question with this PID. */
     for(x=0; x < MAX_ACTIVE_QUESTIONS; x++)
 	{
-	DODEBUG_QUESTIONS(("%s(): match at slot %d", function, x));
+	DODEBUG_QUESTIONS(("%s(): match at slot %d, job %s:%s-%d.%d(%s)",
+		function,
+		x,
+		nodeid_to_name(active_question[x].destnode_id),
+		destid_to_name(active_question[x].destnode_id, active_question[x].destid),
+		active_question[x].id,
+		active_question[x].subid,
+		nodeid_to_name(active_question[x].homenode_id) ));
 	if(active_question[x].pid == pid)
 	    {
 	    /* Find the queue entry it relates to. */
@@ -293,8 +301,10 @@ gu_boolean question_child_hook(pid_t pid, int wstat)
 		    break;
 		    }
 		}
+	    #ifdef DEBUG_QUESTIONS
 	    if(y == queue_entries)
-	    	fatal(0, "%s(): assertion failed: ran off end of queue", function);
+	    	debug("%s(): job no longer in queue", function);
+	    #endif
 
 	    active_question[x].pid = 0;
 	    active_questions--;

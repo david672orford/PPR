@@ -1,0 +1,6 @@
+#! /bin/sh
+#cat urlfetch.itk browser.itk browser_test.tcl \
+cat urlfetch.itk browser.itk pprpopup_main.tcl \
+	| sed -e 's/^source /#source /' \
+	>pprpopup.tcl
+

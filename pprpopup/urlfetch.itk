@@ -1,0 +1,63 @@
+#
+# urlfetch.itk
+# Copyright 1995--2001, Trinity College Computing Center.
+# Written by David Chappell.
+# Last modified 5 November 2001.
+#
+
+package require Tcl 8.3
+package require Tk 8.3
+package require http 2.2
+package require Itcl 3.1
+
+#-----------------------------------------------------------
+# This object manages the HTTP connections and may someday
+# include a cache.
+#-----------------------------------------------------------
+itcl::class urlfetch {
+  protected variable token_commands
+
+  public method get {url command} {
+    puts "url::get $url $command"
+    set token [::http::geturl $url -command [list $this callback]]
+    set token_commands($token) $command
+    }
+
+  public method post {url data command} {
+    puts "url::post $url $data $command"
+    set token [::http::geturl $url -query $data -command [list $this callback]]
+    set token_commands($token) $command
+    }
+
+  public method callback {token} {
+    if [ catch {
+	upvar #0 $token state
+
+	set code -1
+	set message "unknown"
+	switch -- $state(status) {
+	    ok {
+	      regexp {^HTTP/[0-9]+\.[0-9]+ ([0-9]+) (.*)$} $state(http) match code message
+	      }
+	    eof {
+	      set message "eof"
+	      }
+	    error {
+	      set $state(error)
+	      }
+	    }
+
+	set content_type "application/octet-stream"
+	array set meta $state(meta)
+	if [info exists meta(Content-Type)] {
+	  set content_type $meta(Content-Type)
+	  }
+
+	$token_commands($token) $code $message $content_type $state(body)
+
+	::http::cleanup $token
+	} result] { puts $result }
+    }
+  }
+
+# end of file

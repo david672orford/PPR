@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 7 December 2001.
+# Last modified 11 December 2001.
 #
 
 #
@@ -34,17 +34,16 @@ $question =~ s/%JOBNAME%/$jobname/g;
 # Open a connexion to pprpopup
 open_connexion(SEND, $response_address) || exit(2);
 
-# Send the message to open the web page.
+# Buffering would cause a lockup, so turn it off.
 SEND->autoflush(1);
-print SEND "HTML http://localhost:15010/$question 6i 2i\n";
 
-# Wait for a reply to our command.
-my $result = '';
-while(<SEND>)
-    {
-    $result .= $_;
-    last if(/^(\+OK)|(-ERR)/);
-    }
+# Add the job to the job queue.
+print SEND "JOB STATUS $jobname ?\n";
+$result = <SEND>;
+
+# Send the message to open the web page.
+print SEND "HTML http://localhost:15010/$question 6i 2i\n";
+$result = <SEND>;
 
 # Close the connexion to pprpopup.
 close(SEND);
