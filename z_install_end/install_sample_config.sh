@@ -41,10 +41,11 @@ echo "Creating missing ACL files..."
 for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
     do
     echo "  $CONFDIR/acl/$f"
-    if [ ! -f $CONFDIR/acl/$f ]
+    if [ ! -f $RPM_BUILD_ROOT$CONFDIR/acl/$f ]
     	then
 	echo "    creating"
-    	touch $CONFDIR/acl/$f
+    	touch $RPM_BUILD_ROOT$CONFDIR/acl/$f
+	chmod 644 $RPM_BUILD_ROOT$CONFDIR/acl/$f
 	else
 	echo "    exists"
     	fi
@@ -58,11 +59,11 @@ echo "Making missing configuration files from the samples..."
 for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
     do
     echo "  $f"
-    if [ ! -f $CONFDIR/$f -a -f $CONFDIR/$f.sample ]
+    if [ ! -f $RPM_BUILD_ROOT$CONFDIR/$f ]
     	then
 	echo "    $CONFDIR/$f.sample --> $CONFDIR/$f"
 	# Use Sed to copy it while removing the "Last modified" comment.
-    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $CONFDIR/$f.sample >$CONFDIR/$f
+    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $CONFDIR/$f.sample >$RPM_BUILD_ROOT$CONFDIR/$f
     	chown $USER_PPR $CONFDIR/$f
     	chgrp $GROUP_PPR $CONFDIR/$f
 	chmod 644 $CONFDIR/$f

@@ -45,7 +45,7 @@ GROUP_PPR=?
 
 # Derived things
 STORE="$HOMEDIR/fixup"
-FILTERS="$HOMEDIR/filters"
+FILTERS="$RPM_BUILD_ROOT$HOMEDIR/filters"
 PPR_TCLSH="$HOMEDIR/bin/ppr-tclsh";
 
 # Function to find a program in the $PATH list.
@@ -108,14 +108,14 @@ sedit ()
 	-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 	-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
 	-e "s@^#! *ppr-tclsh\\( *.*\\)\$@#! $PPR_TCLSH\\1@" \
-	$1 >$RPM_BUILD_ROOT$2 || exit 1 # infile, outfile
+	$1 >$2 || exit 1 # infile, outfile
 
     # Make it executable
-    chmod 755 $RPM_BUILD_ROOT$2 || exit 1
+    chmod 755 $2 || exit 1
 
     # This is so that if we are root, ppr will own the file.
-    chown $USER_PPR $RPM_BUILD_ROOT$2 || exit 1
-    chgrp $GROUP_PPR $RPM_BUILD_ROOT$2 || exit 1
+    chown $USER_PPR $2 || exit 1
+    chgrp $GROUP_PPR $2 || exit 1
     }
 
 # Print banner

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 21 February 2003.
 #
 
 =head1 NAME
@@ -52,11 +52,11 @@ simply shell scripts which use other programs to do the real work.  These
 other programs include TeX, Dvips, Troff, Groff, and PBMPlus.
 
 When PPR is installed, the B<fixup> script runs a subsidiary script called
-"F</usr/lib/ppr/fixup/fixup_filters>".  If it finds the necessary programs are found
+"F</usr/lib/ppr/bin/ppr-indexfilters>".  If it finds the necessary programs are found
 in the PATH, it will generate shell script filters for "tex", "dvi" "ditroff", 
 "cat4", "jpeg", "gif", "tiff", "plot"", "pdf", and other formats.  If, after 
 PPR is installed, you add programs which might be usable as filters, you should
-run F</usr/lib/ppr/fixup/fixup_filters> again.
+run F</usr/lib/ppr/bin/ppr-indexfilters> again.
 
 =head2 Available Filters
 
@@ -209,7 +209,7 @@ The units are 72ths of an inch.
 =item B<-T troff>
 
 indicates that the input file is Troff source.  If you have Troff or Groff,
-F</usr/lib/ppr/fixup/fixup_filters> will build a filter in the form of a shell
+F</usr/lib/ppr/bin/ppr-indexfilters> will build a filter in the form of a shell
 script which invokes one of them.
 
 The filter script supplied with PPR assumes that the document uses the
@@ -235,7 +235,7 @@ have any options.
 =item B<-T dvi>
 
 indicates that the input file is in TeX DVI format.  The
-F</usr/lib/ppr/fixup_filters> script will create the necessary filter
+F</usr/lib/ppr/bin/ppr-indexfilters> script will create the necessary filter
 script "/usr/lib/ppr/filters/filter_dvi" if it finds DVIPS.
 
 If the B<-o "noisy=yes"> option is used, this filter will allow DVIPS and
@@ -272,7 +272,7 @@ filter.  No such filter is supplied with PPR.
 
 indicates that the input file is in GNU Texinfo format.  A filter script
 supplied with PPR will be installed if B<texi2dvi> is in the B<PATH> when
-F</usr/lib/ppr/fixup/fixup_filters> is run.  This filter has no options of its
+F</usr/lib/ppr/bin/ppr-indexfilters> is run.  This filter has no options of its
 own, but it invokes the DVI filter, so the DVI filter's options may be used.
 
 =item B<-T rtf>

@@ -29,23 +29,32 @@
 # Last modified 21 February 2003.
 #
 
-source ../makeprogs/paths.tcl
-
-#======================================================================
+#
 # Find getzones and create a links to it where PPR programs will
 # look for it.
-#======================================================================
+#
+
+source ../makeprogs/paths.tcl
+
+if [info exists $env(RPM_BUILD_ROOT)] {
+    set RPM_BUILD_ROOT $env(RPM_BUILD_ROOT)
+    } else {
+    set RPM_BUILD_ROOT ""
+    }
+
+exec rm -f "$HOMEDIR/lib/getzones"
 
 puts "Searching for getzones..."
-exec rm -f "$HOMEDIR/lib/getzones"
+
 foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
     puts "    Trying \"$file\"..."
     if [ file executable $file ] {
 	puts "\tFound, linking to $HOMEDIR/lib/getzones."
-	exec ln -s $file "$HOMEDIR/lib/getzones"
+	exec ln -s $file "$RPM_BUILD_ROOT$HOMEDIR/lib/getzones"
 	break
 	}	
     }
+
 if {! [ file executable "$HOMEDIR/lib/getzones" ]} {
     puts "  No getzones found."
     }

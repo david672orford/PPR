@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 14 February 2003
+Last Modified: 21 February 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -85,21 +85,20 @@ mailed to <email>alertreaders@myorg.org</email>.
 <sect2 id="install-filter-setup">
 <title>Filter Setup</title>
 
-<para>The last thing the <command>fixup</command> script does is run the
-script <command>/usr/lib/ppr/fixup/fixup_filters</command>.  The
-<command>fixup_filters</command> script searches for certain programs which
-it will be able to use to convert files you may want printed to PostScript. 
-These programs include <application>Troff</application>,
-<application>TeX</application>, <application>DVIPS</application>, the
-<application>NetPBM</application> utilities, and the <application>Adobe
-Acrobat Reader</application>.  For those that are found in the current path,
-PPR generates small shell scripts in
-<filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
+<para> One of the last things <command>make install</command> does is run
+<command>ppr-indexfilters</command> The <command>ppr-indexfilters</command>
+command searches for certain programs which it will be able to use to
+convert files you may want printed to PostScript.  These programs include
+<application>Troff</application>, <application>TeX</application>,
+<application>DVIPS</application>, the <application>NetPBM</application>
+utilities, and the <application>Adobe Acrobat Reader</application>.  For
+those that are found in the current path, PPR generates small shell scripts
+in <filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
 scripts to automatically convert input files to PostScript.</para>
 
 <para>
 If you later add or remove programs which PPR uses or could use as filters,
-you should re-run <filename>fixup_filters</filename>.
+you should re-run <filename>ppr-indexfilters</filename>.
 </para>
 
 </sect2>

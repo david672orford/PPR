@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 January 2003.
+# Last modified 21 January 2003.
 #
 
 #
@@ -118,6 +118,7 @@ if(defined(my $document = cgi_data_move("document", undef)))
     {
     require "cgi_redirect.pl";
     cgi_redirect("http://$ENV{SERVER_NAME}:$ENV{SERVER_PORT}$ENV{SCRIPT_NAME}/MANPATH/$document");
+    exit(0);
     }
 
 # Initialize the internationalization libraries and determine the

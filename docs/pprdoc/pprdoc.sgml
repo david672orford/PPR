@@ -9,7 +9,7 @@
 		<FirstName>David</FirstName>
 		<Surname>Chappell</Surname>
 		</Author>
-	<PubDate>24 January 2003</PubDate>
+	<PubDate>21 February 2003</PubDate>
 	<Copyright>
 		<Year>1995--2003</Year>
 		<Holder>Trinity College Computing Center</Holder>
@@ -2176,7 +2176,7 @@ available for various image file formats.  These filters are shell scripts
 which invoke programs such as the PBM utilities and the Independent JPEG
 Group's programs.  These filters will be installed and edited to fit your
 configuration if the required utilies are in the PATH when you invoke
-<Filename>/usr/ppr/fixup/fixup_filters</Filename>.  These filters support some options,
+<command>ppr_indexfilters</command>.  These filters support some options,
 but they are generally ones such as <Option>resolution=</Option> and
 <Option>color=</Option> which
 <Application>PPR</Application> supplies automatically as default filter options.
@@ -2213,7 +2213,7 @@ section on the <Option>-e hexdump</Option> in ppr(1).
 
 <Para>This filter is written in Perl, so it will not be available if Perl
 was not installed last time you ran
-<Filename>/usr/ppr/fixup_filters</Filename>. This filter will read
+<command>ppr-indexfilters</command>. This filter will read
 the input file and attempt to identify it as either Plain TeX or LaTeX.  It
 will then copy the file to a temporary directory and run TeX on it with
 either the Plain or LaTeX macros.  It will run TeX multiple times if it is

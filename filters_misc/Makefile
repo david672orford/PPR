@@ -57,7 +57,7 @@ make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(
 
 #=== Install ================================================================
 
-install: $(PROGS) $(SCRIPTS_SH) $(SCRIPTS_PERL)
+install: $(BUILT) $(SCRIPTS_SH) $(SCRIPTS_PERL) $(SCRIPTS_TCL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/filters filter_hexdump$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 2755 $(HOMEDIR)/lib make_dvips_conf$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin ppr-indexfilters
