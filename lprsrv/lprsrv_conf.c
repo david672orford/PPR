@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 5 April 2004.
 */
 
 #include "before_system.h"
@@ -220,35 +220,23 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 
 		if(strcmp(name, "allow") == 0)
 			{
-			int answer = gu_torf(value);
-			if(answer == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&access->allow, value) == -1)
 				warning("Invalid value for \"%s =\" at \"%s\" line %d", "allow", LPRSRV_CONF, linenum);
-			else
-				access->allow = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "insecureports") == 0)
 			{
-			int answer = gu_torf(value);
-			if(answer == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&access->insecure_ports, value) == -1)
 				warning("Invalid value for \"%s =\" at \"%s\" line %d", "insecure ports", LPRSRV_CONF, linenum);
-			else
-				access->insecure_ports = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "pprbecomeuser") == 0)
 			{
-			int answer = gu_torf(value);
-			if(answer == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&access->ppr_become_user, value) == -1)
 				warning("Invalid value for \"%s =\" at \"%s\" line %d", "ppr become user", LPRSRV_CONF, linenum);
-			else
-				access->ppr_become_user = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "otherbecomeuser") == 0)
 			{
-			int answer = gu_torf(value);
-			if(answer == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&access->other_become_user, value) == -1)
 				warning("Invalid value for \"%s =\" at \"%s\" line %d", "other become user", LPRSRV_CONF, linenum);
-			else
-				access->other_become_user = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "pprrootas") == 0)
 			{
@@ -286,6 +274,11 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
 			gu_strlcpy(access->ppr_from_format, value, MAX_FROM_FORMAT);
 			}
+		else if(strcmp(name, "forcemail") == 0)
+			{
+			if(gu_torf_setBOOL(&access->force_mail, value) == -1)
+				warning("Invalid value for \"%s =\" at \"%s\" line %d", "force mail", LPRSRV_CONF, linenum);
+			}
 		else
 			{
 			warning("Unrecognized keyword in \"%s\" line %d", LPRSRV_CONF, linenum);
@@ -316,6 +309,7 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 	access->other_proxy_user[0] = '\0';
 	access->ppr_proxy_class[0] = '\0';
 	access->ppr_from_format[0] = '\0';
+	access->force_mail = FALSE;
 
 	/*
 	** Find the [global] section and the section and note their locations.

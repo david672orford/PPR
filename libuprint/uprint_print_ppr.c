@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 March 2004.
+** Last modified 5 April 2004.
 */
 
 #include "before_system.h"
@@ -189,7 +189,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	** How shall the user be notified?  This is difficult to answer since some
 	** of the methods don't make sense in a network environment.
 	*/
-	if(upr->ppr_responder)
+	if(upr->ppr_responder)				/* explicit request for particular PPR responder */
 		{
 		ppr_argv[i++] = "--responder";
 		ppr_argv[i++] = upr->ppr_responder;

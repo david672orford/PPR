@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 5 April 2004.
 */
 
 /*
@@ -808,6 +808,10 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 				/* Override email host. */
 				uprint_set_lpr_mailto_host(upr, fromhost);
 
+				/* Possibly pretend the client used lpr's -m switch. */
+				if(access_info->force_mail)
+					uprint_set_notify_email(upr, TRUE);
+
 				/* Fill uprint information and data_files
 				   information from the control file. */
 				receive_control_file(atoi(line+1), data_files, &files_to_unlink, upr);
@@ -826,12 +830,11 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 					break;
 					}
 
-				/* Open the temporary file if it is not already open.
-				   If we can't open it, say there is no room.
-				   Doing this will cause the remote end
-				   to try again later.  I don't know if this
-				   is a good idea or not.
-				   */
+				/* Open the temporary file if it is not already open.  If we 
+				 * can't open it, say there is no room.  Doing this will cause
+				 * the remote end to try again later.  I don't know if this
+				 * is a good idea or not.
+				 */
 				if(tempfile == -1 && (tempfile=open_tmp()) == -1)
 					{
 					DODEBUG_PRINT(("%s(): open_tmp() failed", function));

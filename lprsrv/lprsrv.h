@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 5 April 2004.
 */
 
 /*
@@ -89,6 +89,7 @@ struct ACCESS_INFO
 	char other_proxy_user[MAX_USERNAME+1];
 	char ppr_proxy_class[MAX_PROXY_CLASS+1];
 	char ppr_from_format[MAX_FROM_FORMAT+1];
+	gu_boolean force_mail;
 	} ;
 
 /* lprsrv.c: */
