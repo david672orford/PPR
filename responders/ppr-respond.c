@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/ppr-respond.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 December 2002.
+** Last modified 9 March 2003.
 */
 
 /*
@@ -450,6 +450,33 @@ int main(int argc, char *argv[])
     /* Convert some other stuff to strings. */
     snprintf(time_in_ascii, sizeof(time_in_ascii), "%ld", rinfo.Time);
     snprintf(numpages_in_ascii, sizeof(numpages_in_ascii), "%d", rinfo.pages_printed);
+
+    /* handle the followme meta responder */
+    if(strcmp(rinfo.responder, "followme") == 0)
+	{
+	char fname[MAX_PPR_PATH];
+	FILE *f;
+	ppr_fnamef(fname, "%s/followme.db/%s", VAR_SPOOL_PPR, rinfo.responder_address);
+	if((f = fopen(fname, "r")))
+	    {
+	    int line_available = 80;
+	    char *line = NULL;
+	    if((line = gu_getline(line, &line_available, f)))
+		{
+		char *responder = NULL, *responder_address = NULL;
+		if(gu_sscanf(line, "%S %S", &responder, &responder_address) == 2)
+		if(responder && responder_address)
+		    {
+		    gu_free(rinfo.responder);
+		    gu_free(rinfo.responder_address);
+		    rinfo.responder = responder;
+		    rinfo.responder_address = responder_address;
+		    }
+		gu_free(line);
+		}
+	    fclose(f);
+	    }
+	}
 
     /* Build path to responder. */
     ppr_fnamef(responder_fname, "%s/%s", RESPONDERDIR, rinfo.responder);

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 9 March 2003.
 #
 
 #=============================================================================
@@ -174,6 +174,7 @@ directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755
 directory $VAR_SPOOL_PPR/pprpopup.db 770	# <-- group can write
+directory $VAR_SPOOL_PPR/followme.db 770	# <-- group can write
 
 # Make the directories for web documentation and managment tools
 directory $HOMEDIR/cgi-bin 755

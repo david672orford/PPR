@@ -40,10 +40,6 @@ include Makefile.conf
 # We pull in this because we need SHORT_VERSION.
 include makeprogs/version.mk
 
-# Sourceforge CVS repository contact information.
-CVS_RSH=ssh
-CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
-
 #=== Inventory ==============================================================
 
 # These are the subdirectories we will do make in:
@@ -151,13 +147,6 @@ symlinks-restore:
 # This creates the file that the symbolic links are restored from.
 symlinks-save:
 	./makeprogs/save_symlinks.sh
-
-# CVS on Sourceforge.
-cvs-import: veryclean symlinks-save
-	cvs import ppr vendor start
-
-cvs-commit: symlinks-save
-	cvs commit
 
 #=== Housekeeping ===========================================================
 

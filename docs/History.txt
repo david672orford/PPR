@@ -360,7 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-1.51, 15 February 2003--7 March 2003.
+1.51, 15 February 2003--9 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -416,6 +416,12 @@ more information about RIPs and *pprRIP:.
   now longer than one screen.
 
 * Merged refman/ppr-index*.8.pod into ppr-index.8.pod.
+
+* misc/PORTING.txt: fixed to reflect the evolving build system.
+
+* refman/ppr.1.pod: removed description of atalk responder since it is being
+  removed.
+
 
 
 

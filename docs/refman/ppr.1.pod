@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 February 2003.
+# Last modified 9 March 2003.
 #
 
 =head1 NAME
@@ -273,18 +273,6 @@ option will not work if B<xmessage> is not available and this responder is
 forced to use B<xterm>.  If your system doesn't have B<xmessage>, but you do
 have Tcl/Tk installed, consider installing the re-implementation of B<xmessage>
 which can be found in PPR F<misc/> source directory.
-
-The value "B<atalk>" causes the notification to be sent to a Macintosh
-program such as "Messages" which comes with CAP60 or "Broadcast".  (The
-first supported message receiver discovered on the Macintosh will be used.)
-In order for this responder to work, you must have CAP and the appropriate
-Unix programs to dispatch messages to Macintosh's.  The CAP60 distribution
-includes a program called "B<macto>" in the F<contrib/Messages> directory
-which will send messages to a Macintosh system extension called "Messages"
-which is also included with CAP60.  The configuration file
-F</etc/ppr/atalk.conf> indicates which Unix programs are available to send
-messages to Macintoshs.  It is also necessary to start the Appletalk Map
-Daemon F</usr/lib/ppr/bin/atalkmapd>.
 
 The value "B<pprpopup>" causes the notification to be sent to the PPR popup
 program for MS-Windows 95.  The PPR popup program is a Tcl/Tk script

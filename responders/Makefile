@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/responders/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 August 2002.
+# Last modified 9 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-RESPONDERS=write netsend mail samba xwin atalk pprpopup audio
+RESPONDERS=write netsend mail samba xwin pprpopup audio
 
 LIBPROGS=ppr-respond$(DOTEXE)
 

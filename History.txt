@@ -8417,6 +8417,8 @@ line was being parsed twice.
   haven't been altered.  This means a parallel printer may be set up if
   one has ppad access but no root access.
 
+* Removed atalk responder (responders/atalk).
+
 
 TODO
 

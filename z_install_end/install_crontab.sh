@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 9 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -47,7 +47,7 @@ if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]
     then
     echo " OK"
     else
-    echo " Nope, we must be root, doing su..."
+    echo " Nope, guess we are root, doing su $USER_PPR..."
     su $USER_PPR -c $0    
     exit $?
     fi

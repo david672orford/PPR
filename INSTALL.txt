@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/INSTALL.txt
  mouse:~ppr/src/INSTALL.txt (symbolic link)
- Last revised 5 March 2003.
+ Last revised 9 March 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -307,7 +307,20 @@ clone but it is good enough for PPR's purposes
 4) Run "make install" as root.
 
 If you have problems building PPR and want to delve into the Makefiles, you
-should probably read PORTING.txt first.
+should probably read docs/misc/PORTING.txt first.
+
+============================================================================
+ Hacking Without Being Root
+============================================================================
+
+Note that if you start hacking PPR, you won't always need to run "make
+install" as root.  The first time it runs it will create a user called
+"ppr".  If you subsequently do "chmod -R ppr:ppr ppr-1.51" to set the
+ownership of the source directory, you can work in it as the user "ppr",
+make changes, and do "make install" as that user.  However if you edit a few
+specific things such as a setuid root program or the init script, "make
+install" will stop and tell you that it needs to be run as root (at least in
+that one directory).
 
 ============================================================================
  Making Binary Distributions

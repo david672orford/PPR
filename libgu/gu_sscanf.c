@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 9 March 2003.
 */
 
 /*! \file
@@ -109,16 +109,19 @@ This function is similiar to sscanf().  It implements the following formats:
 
 <dd>read a short int.  The argument should be a pointer to a short int.</dd>
 
+<dt>%u</dt>
+
+<dd>read an unsigned int</dd>
+
 <dt>%s</dt>
 
 <dd>Read characters up to the next whitespace.  The argument should be a
 pointer to a char array with enough space to hold the string and the
 terminating NULL.  To prevent overruns, the size of the array may be
 specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
-by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt
-> then the actuall length is
-read from ppr_sscanf()'s next argument (the one before the pointer to the
-char array).</dd>
+by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt>
+then the actuall length is read from ppr_sscanf()'s next argument (the one
+before the pointer to the char array).</dd>
 
 <dt>%S</dt>
 
@@ -137,6 +140,22 @@ specified in the same manner as for the %s format.</dd>
 <dd>Read characters up to the end of the string, allocate storeage
 for them, and copy them into that storage.  The argument should be a pointer to
 a pointer to a char array.</dd>
+
+<dt>%Q</dt>
+
+<dd>Read a quoted string and allocate storate for it.</dd>
+
+<dt>%A</dt>
+
+<dd>Read a quoted string, or if there isn't one, to the end of the line</dd>
+
+<dt>%t</dt>
+
+<dd>Get a time_t.</dd>
+
+<dt>%n</dt>
+
+<dd>Store the number of characters read so far.</dd>
 
 </dl>
 
