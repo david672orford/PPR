@@ -9437,10 +9437,14 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--17 December 2004
+1.54, 11 December 2004--23 December 2004
 
 * samba/ppd2win95drv.perl: removed
 
 * samba/ppd2windrv.perl: fixed to work with indexed PPD files.
+
+* www/ppr-passwd.c: fixed --delete
+
+
 
 

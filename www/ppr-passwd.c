@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 June 2004.
+** Last modified 23 December 2004.
 */
 
 /*
@@ -33,7 +33,7 @@
 ** for use with MD5 Digest HTTP authentication.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -252,7 +252,11 @@ int main(int argc, char *argv[])
 			{
 			found = TRUE;
 
-			if(!opt_delete)
+			if(opt_delete)
+				{
+				ret = 0;
+				}
+			else
 				{
 				/* Non-privileged users must prove that they know the old password. */
 				if(!privileged)

@@ -539,29 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
+1.53, 11 December 2004--19 December 2004.
 
-
-TODO
-
-* refman: describe editps.conf and editps system
-
-* pprhack: explain meaning of !!! in source code
-
-* uprint: describe uprint responder extensions to the lpr protocol
-
-* refman: describe pagesizes.conf
-
-* refman: describe pserrors.conf
-
-* refman: describe lwstatus.conf, pjlstatus.conf
-
-* pprhack: describe the "Userparams:" printer configuration line
-
-* pprhack: describe the "LimitPages:" printer configuration line
-
-* pprhack: describe the "LimitKilobytes:" printer configuration line
-
-* uprint: finish uprint-lpstat(1) manpage
-
-* refman: finish ppr-followme(1) manpage
+* refman/ppr2samba.8.pod: removed references to ppd2win95drv.
 
