@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,27 +10,35 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 22 November 2000.
+# Last modified 18 July 2001.
 #
 
 include ../makeprogs/global.mk
 
+#=== Inventory ==============================================================
+
+#=== Build ==================================================================
+
 all:
 	( cd ghostscript; $(MAKE) )
+	( cd generic; $(MAKE) )
 
-# Copy the files in each vendor's directory into the final
-# destination PPD files directory.
+#=== Install ================================================================
+
 install:
 	( cd ghostscript; $(MAKE) install )
-	$(INSTALLDATA) $(SHAREDIR)/PPDFiles generic/* other/*
+	$(INSTALLDATA) $(SHAREDIR)/PPDFiles other/*
+	( cd generic; $(MAKE) install )
 	$(INSTALLDATA) $(SHAREDIR)/lib pagesizes.conf
+
+#=== Housekeeping ===========================================================
 
 depend:
 
 clean:
 	$(RMF) $(BACKUPS)
 	( cd ghostscript; $(MAKE) clean )
-	( cd generic; $(RMF) $(BACKUPS) )
+	( cd generic; $(MAKE) clean )
 	( cd other; $(RMF) $(BACKUPS) )
 
 # end of file

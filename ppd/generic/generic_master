@@ -1,7 +1,7 @@
 *PPD-Adobe: "4.2"
 *%
-*% mouse.trincoll.edu:~ppr/src/ppd/trincoll/PPR Generic
-*% Copyright 1995, 1996, 1998, Trinity College Computing Center.
+*% mouse:~ppr/src/ppd/generic/ppr_generic
+*% Copyright 1995--2001, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -11,41 +11,41 @@
 *% documentation.  This software is provided "as is" without express or
 *% implied warranty.
 *%
-*% Last modified 10 July 1998.
+*% Last modified 18 July 2001.
 *%
 
 *%
-*% This file describes a typical level 1 PostScript printer.  However,
-*% actual feature code is missing.  We rely on PPR to fill in the
-*% feature code needed by the printer used.
+*% This file in its various versions describes typical PostScript printers.  
+*% This file is for use by clients that will be printing through the PPR
+*% spooler.  It is intended to free the clients from having to know about
+*% the precise features of the printer such as input bins.  This is reasonable
+*% in a lab environment where policy places such things outside the control of
+*% the users or where the lab managers want to be able to change the printers
+*% without modifying the clients.  These PPD files also might be used where
+*% users print to a pool of dissimiliar printers.  Finally, this file contains
+*% psydo printer features for selecting media by colour or type and for invoking
+*% the N-Up capabilities of PPR, including booklet and signature maing.
 *%
-*% Some of the `printer features' named in this file are really
-*% implemented by the spooler.  The spooler will see the attempt to
-*% invoke them and take appropriate action.
-*%
-*% This file can be used on a Macintosh to represent a typical group
-*% of disimiliar printers.  If the printers differ materially from
-*% the imaginary printer described here, then extra configuration
-*% lines may be put in the papsrv configuration file to override
-*% the PPD file dictated answers to various queries.
-*%
-*% This file can also be useful with the various Adobe PostScript
-*% drivers for MS-Windows 3.1 and MS-Windows 95.
+*% Note that actual PostScript code to invoke printer features is deliberately
+*% omitted.  We rely on PPR to later fill in any needed feature code just before
+*% sending the job to the selected printer.
 *%
 
 *FormatVersion: "4.2"
-*FileVersion: "1.40"
 *LanguageVersion: English
 
+*% This version number tracks the PPR version number.  Whenever the PPR Generic
+*% PPD files change, this version is updated to the version of the then current
+*% PPR.  Thus this version may be lower than the PPR version number but it
+*% will never be higher.
+*FileVersion: "1.44"
+
+#ifdef GENERIC_LEVEL1
 *Product: "(PPR Generic)"
 *ModelName: "PPR Generic"
 *PCFileName: "PPRGENER.PPD"
 *ShortNickName: "PPR Generic"
 *NickName: "PPR Generic"
-
-*% The startjob password
-*Password: "()"
-
 *PSVersion: "(47.0) 1"
 *LanguageLevel: "1"
 *FreeVM: "400000"
@@ -54,10 +54,53 @@
 *FileSystem: False
 *DefaultResolution: 300dpi
 *TTRasterizer: None
+#endif
 
-*% Get those punched holes at the right place
+#ifdef GENERIC_LEVEL2
+*Product: "(PPR Generic Level 2)"
+*ModelName: "PPR Generic Level 2"
+*PCFileName: "PPRGENE2.PPD"
+*ShortNickName: "PPR Generic Level 2"
+*NickName: "PPR Generic Level 2"
+*PSVersion: "(2000.0) 0"
+*LanguageLevel: "2"
+*FreeVM: "650000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 600dpi
+*TTRasterizer: None
+#endif
+
+#ifdef GENERIC_LEVEL2_TTF
+*Product: "(PPR Generic Level 2 TTF)"
+*ModelName: "PPR Generic Level 2 TTF"
+*PCFileName: "PPRGENE3.PPD"
+*ShortNickName: "PPR Generic Level 2 TTF"
+*NickName: "PPR Generic Level 2 TTF"
+*PSVersion: "(2013.0) 0"
+*LanguageLevel: "2"
+*FreeVM: "650000"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*DefaultResolution: 600dpi
+*TTRasterizer: Type42
+#endif
+
+*% The startjob password.  This is just a placeholder.
+*Password: "()"
+
+*% Users using pre-punched paper will likely expect landscape to be achived 
+*% by a 90 counter-clockwise rotation.
 *LandscapeOrientation: Plus90
 
+*%==========================================================================
+*% What page sizes are available on this printer?  Remove any you do not
+*% want your users to be able to pick.
+*%==========================================================================
+
+*% This is generally used to construct the GUI pick list.
 *OpenUI *PageSize: PickOne
 *OrderDependency: 30 AnySetup *PageSize
 *DefaultPageSize: Letter
@@ -73,6 +116,7 @@
 *PageSize HalfSheet: ""
 *CloseUI: *PageSize
 
+*% These are obscurely different from the above.
 *OpenUI *PageRegion:  PickOne
 *OrderDependency: 40 AnySetup *PageRegion
 *DefaultPageRegion: Letter
@@ -88,6 +132,8 @@
 *PageRegion HalfSheet: ""
 *CloseUI: *PageRegion
 
+*% This describes which portion of the above mentioned page sizes the printer
+*% is capable of placing marks on.
 *DefaultImageableArea: Letter
 *ImageableArea Letter/US Letter : "18 19 593 774"
 *ImageableArea Legal/US Legal : "18 19 593 990"
@@ -100,6 +146,7 @@
 *ImageableArea B5/Envelope ISO B5 : "13.2 12.06 485.52 696.54 "
 *ImageableArea HalfSheet/Half Sheet: "0 0 397 612 "
 
+*% This describes the physical dimensions of the paper for each page size above.
 *DefaultPaperDimension: Letter
 *PaperDimension Letter: "612 792"
 *PaperDimension Legal: "612 1008"
@@ -112,18 +159,28 @@
 *PaperDimension B5: "499 708"
 *PaperDimension HalfSheet: "397 612"
 
-*% Allow user to select duplex on duplex printers.
+*%==========================================================================
+*% Duplexing
+*%==========================================================================
+
+*% Allow user to select duplex on duplex printers.  Remove this only if none
+*% of your printers are duplex-capable.
 *OpenUI *Duplex: PickOne
 *OrderDependency: 50 AnySetup *Duplex
 *DefaultDuplex: None
-*Duplex DuplexTumble/Duplex Tumble: ""
-*Duplex DuplexNoTumble/Duplex No Tumble: ""
 *Duplex None: ""
+*Duplex DuplexNoTumble/Long-edge binding: ""
+*Duplex DuplexTumble/Short-edge binding: ""
 *CloseUI: *Duplex
 
-*% Few printers have code for these features, but PPR will notice
-*% the presence of these features and use them to select the proper
-*% media if no %%Media: comments are present.
+*%==========================================================================
+*% Media selection features
+*%
+*% Few printers have code for these features, but PPR will notice the 
+*% presence of these features and use them to select the proper medium 
+*% if no %%Media: comments are present.
+*%==========================================================================
+
 *OpenUI *MediaType/Paper Type: PickOne
 *OrderDependency: 10 AnySetup *MediaType
 *DefaultMediaType: Plain
@@ -133,7 +190,6 @@
 *MediaType 3Hole/3 Hole Punched: ""
 *CloseUI: *MediaType
 
-*% Another media characteristic for the spooler to implement.
 *OpenUI *MediaColor/Paper Color: PickOne
 *OrderDependency: 10 AnySetup *MediaColor
 *DefaultMediaColor: white
@@ -156,16 +212,42 @@
 *MediaWeight 300/Heavy: ""
 *CloseUI: *MediaWeight
 
-*% Another feature the spooler will probably have to implement itself.
+*%==========================================================================
+*% N-Up, booklet making, and book making
+*%
+*% PPR implements these itself.
+*%==========================================================================
+
+*% We need a way to invoke N-Up.  We have invented this.
+*OpenUI *N-Up/N-Up: PickOne
+*OrderDependency: 10 AnySetup *N-Up
+*DefaultN-Up: False
+*N-Up False/None: ""
+*N-Up 1/1: ""
+*N-Up 2/2: ""
+*N-Up 4/4: ""
+*N-Up 6/6: ""
+*N-Up 8/8: ""
+*N-Up 10/10: ""
+*N-Up 12/12: ""
+*N-Up 14/14: ""
+*N-Up 16/16: ""
+*CloseUI: *N-Up
+
+*% Re-order the pages and print in 2-up duplex so that they can be folded and 
+*% stapled or sewn into a little booklet.
 *OpenUI *Booklet/Booklet Making: PickOne
-*OrderDependency: 10 AnySetup *MediaType
+*OrderDependency: 10 AnySetup *Booklet
 *DefaultBooklet: False
 *Booklet False/Off: ""
 *Booklet True/On: ""
 *CloseUI: *Booklet
 
-*% Yet another feature for the spooler.
+*% Print the document as a series of little bookets, each with the indicated
+*% number of sheets.  Note that only "False" is defined in the PPD 
+*% specification.
 *OpenUI *Signature/Signature Printing: PickOne
+*OrderDependency: 10 AnySetup *Signature
 *DefaultSignature: False
 *Signature False/None: ""
 *Signature 4/4 Page (1 Sheet): ""
@@ -180,9 +262,12 @@
 *Signature 40/40 Page (10 Sheets): ""
 *CloseUI: *Signature
 
-*% Here is a typical set of fonts.
+*%==========================================================================
+*% This is a list of the available fonts.  We list the basic 35 which
+*% almost all PostScript printers have.
+*%==========================================================================
+
 *DefaultFont: Courier
-*% The 13 fonts
 *Font Courier: Standard "(002.004)" Standard ROM
 *Font Courier-Bold: Standard "(002.004)" Standard ROM
 *Font Courier-BoldOblique: Standard "(002.004)" Standard ROM
@@ -198,14 +283,10 @@
 *Font ZapfChancery-MediumItalic: Standard "(001.007)" Standard ROM
 *Font ZapfDingbats: Special "(001.004)" Special ROM
 *Font Symbol: Special "(001.007)" Special ROM
-
-*% 4 more for 17 fonts
 *Font Helvetica-Narrow: Standard "(001.006)" Standard ROM
 *Font Helvetica-Narrow-Bold: Standard "(001.007)" Standard ROM
 *Font Helvetica-Narrow-BoldOblique: Standard "(001.007)" Standard ROM
 *Font Helvetica-Narrow-Oblique: Standard "(001.006)" Standard ROM
-
-*% 16 more for 35 fonts
 *Font AvantGarde-Book: Standard "(001.006)" Standard ROM
 *Font AvantGarde-BookOblique: Standard "(001.006)" Standard ROM
 *Font AvantGarde-Demi: Standard "(001.007)" Standard ROM
