@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/writeqfile.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 October 2003.
+** Last modified 12 February 2004.
 */
 
 #include "before_system.h"
@@ -88,44 +88,30 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 		qentry->responder_address,
 		qentry->responder_options ? qentry->responder_options : "");
 
-	/* If the --commentatary switch was used, emmit a "Commentary:" line.
-	   */
+	/* If the --commentatary switch was used, emmit a "Commentary:" line. */
 	fprintf(Qfile, "Commentary: %d\n", qentry->commentary);
 
-	/* This big long line contains lots of information.  It will later be broken
-	   up into several lines. */
-	fprintf(Qfile, "Attr: %d %s %d %d %d %d %d %d %d %d %d %ld %ld %d %d\n",
-				qentry->attr.langlevel,
+	fprintf(Qfile, "Attr-DSC: %s %d %d %d\n",
 				gu_dtostr(qentry->attr.DSClevel),
-				qentry->attr.pages,
-				qentry->attr.pageorder,
+				qentry->attr.orientation,
+				qentry->attr.proofmode,
+		   (int)qentry->attr.docdata);
+	fprintf(Qfile, "Attr-DSC-Sections: %d %d %d\n",
 				qentry->attr.prolog,
 				qentry->attr.docsetup,
-				qentry->attr.script,
-				qentry->attr.extensions,
-				qentry->attr.pagefactor,
-				qentry->attr.orientation,		/* missing below */
-				qentry->attr.proofmode,			/* missing below */
-				qentry->attr.input_bytes,
-				qentry->attr.postscript_bytes,
-				qentry->attr.parts,				/* missing below */
-				(int)qentry->attr.docdata		/* missing below */
-				);
-
-	/* These will replace "Attr:".  For now they are ignored. */
-	fprintf(Qfile, "Attr-DSC: %s %d %d %d %d\n",
-				gu_dtostr(qentry->attr.DSClevel),
-				qentry->attr.prolog,
-				qentry->attr.docsetup,
-				qentry->attr.script,
-				qentry->attr.pageorder);
-	fprintf(Qfile, "Attr-Langlevel: %d %d\n",
+				qentry->attr.script);
+	fprintf(Qfile, "Attr-LangLevel: %d %d\n",
 				qentry->attr.langlevel,
 				qentry->attr.extensions);
-	fprintf(Qfile, "Attr-Pages: %d %d\n",
-				qentry->attr.pages, qentry->attr.pagefactor);
+	fprintf(Qfile, "Attr-Pages: %d %d %d\n",
+				qentry->attr.pages,
+				qentry->attr.pageorder,
+				qentry->attr.pagefactor);
 	fprintf(Qfile, "Attr-ByteCounts: %ld %ld\n",
-				qentry->attr.input_bytes, qentry->attr.postscript_bytes);
+				qentry->attr.input_bytes,
+				qentry->attr.postscript_bytes);
+	fprintf(Qfile, "Attr-Parts: %d\n",
+				qentry->attr.parts);
 
 	fprintf(Qfile, "Opts: %d %d %d %d %u\n",
 				qentry->opts.binselect,
@@ -159,6 +145,36 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 	if(qentry->ripopts)
 		fprintf(Qfile, "RIPopts: %s\n", qentry->ripopts);
 
+	fprintf(Qfile, "EndMisc\n");
+
+	/* see RFC 2911 4.3.6 */
+	fprintf(Qfile, "job-originating-user-name %s\n", qentry->username ? qentry->username : "?");
+
+	/* see RFC 2911 4.3.5 */
+	if(qentry->Title && qentry->Title[0] != '\0')
+		fprintf(Qfile, "job-name %s\n", qentry->Title);
+	else if(qentry->lpqFileName)
+		fprintf(Qfile, "job-name %s\n", qentry->lpqFileName);
+
+	/* see RFC 2911 4.3.17.1 (copies not included) */
+	if(qentry->PassThruPDL)
+		fprintf(Qfile, "job-k-octets %ld\n", (qentry->attr.input_bytes + 512) / 1024);
+	else
+		fprintf(Qfile, "job-k-octets %ld\n", (qentry->attr.postscript_bytes + 512) / 1024);
+
+	/* see RFC 2911 4.3.17.2 (we assume this means sides without copies) */
+	fprintf(Qfile, "job-impressions %d\n", 
+		(int)((qentry->attr.pages + qentry->N_Up.N - 1) / qentry->N_Up.N)
+		   );
+
+	/* see RFC 2911 4.3.17.3 (this means sheets without copies) */
+	fprintf(Qfile, "job-media-sheets %d\n",
+		(int)((qentry->attr.pages + qentry->attr.pagefactor - 1) / qentry->attr.pagefactor)
+			*
+		qentry->opts.copies
+		);
+
+	fprintf(Qfile, "EndIPP\n");
 	return 0;
 	}
 

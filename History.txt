@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--11 February 2004.
+1.53a1, 24 September 2003--12 February 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -9047,6 +9047,10 @@ Internet Printing Protocol Work
   ipp_constants.h into ../include/.
 
 * pprd/pprd_ipp.c: added and hooked up to FIFO message handler.
+
+* Changed queue file format to break up Attr line into multiple Attr- lines
+  and to add a section for IPP attributes.
+
 
 
 

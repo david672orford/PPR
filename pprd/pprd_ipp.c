@@ -59,51 +59,72 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-static void do_get_classes(struct IPP *ipp)
+/* IPP_GET_PRINTER_ATTRIBUTES */
+static void ipp_get_printer_attributes(struct IPP *ipp)
+    {
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
+	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
+	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
+    }
+
+/* IPP_GET_JOBS */
+static void ipp_get_jobs(struct IPP *ipp)
 	{
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "rotate");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
-	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	int i;
+
+	lock();
+
+	for(i=0; i < queue_entries; i++)
+		{
+		if(queue[i].destnode_id != nodeid_local())
+			continue;
+
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", destid_to_name(queue[i].destnode_id, queue[i].destid));
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", queue[i].id);
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", queue[i].id);
+#if 0
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", i + 100);
+#endif
+		ipp_add_end(ipp, IPP_TAG_JOB);
+		}
+
+	unlock();
 	}
 
-static void do_get_printers(struct IPP *ipp)
+/* CUPS_GET_PRINTERS */
+static void cups_get_printers(struct IPP *ipp)
 	{
 	int i;
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
-		const char *name = destid_to_name(nodeid_local(), i);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", name);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", printers[i].name);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", printers[i].name);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	unlock();
 	}
 	
-static void do_get_printer_attributes(struct IPP *ipp)
-    {
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
-	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
-
-	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
-    }
-
-static void do_get_jobs(struct IPP *ipp)
+/* CUPS_GET_CLASSES */
+static void cups_get_classes(struct IPP *ipp)
 	{
-	int i;
-	char *printer_uri = "http://localhost:15010/cgi-bin/ipp/test";
-
-	for(i=0; i < 10; i++)
+	int i, i2;
+	const char *members[MAX_GROUPSIZE];
+	lock();
+	for(i=0; i < group_count; i++)
 		{
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", i * 4);
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", printer_uri);
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", i + 100);
-		ipp_add_end(ipp, IPP_TAG_JOB);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", groups[i].name);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", groups[i].name);
+		for(i2=0; i2 < groups[i].members; i2++)
+			members[i2] = printers[groups[i].printers[i2]].name;
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
+	unlock();
 	}
 
 void ipp_dispatch(const char command[])
@@ -188,17 +209,17 @@ void ipp_dispatch(const char command[])
 		debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
 		switch(ipp->operation_id)
 			{
-			case CUPS_GET_CLASSES:
-				do_get_classes(ipp);
-				break;
-			case CUPS_GET_PRINTERS:
-				do_get_printers(ipp);
-				break;
 			case IPP_GET_PRINTER_ATTRIBUTES:
-				do_get_printer_attributes(ipp);
+				ipp_get_printer_attributes(ipp);
 				break;
 			case IPP_GET_JOBS:
-				do_get_jobs(ipp);
+				ipp_get_jobs(ipp);
+				break;
+			case CUPS_GET_CLASSES:
+				cups_get_classes(ipp);
+				break;
+			case CUPS_GET_PRINTERS:
+				cups_get_printers(ipp);
 				break;
 			default:
 				gu_Throw("unsupported operation");

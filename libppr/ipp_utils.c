@@ -299,7 +299,10 @@ void ipp_delete(struct IPP *p)
 
 	ipp_writebuf_flush(p);
 
-	/* This complicated code deletes all of the attributes. */
+	/* This complicated code deletes all of the attributes.  Should we
+	 * have used c2lib pools?  Maybe.  We did uncover some interesting
+	 * bugs though when we were writing this.
+	 */
 	{
 	ipp_attribute_t *attribs[] = {
 		p->request_attrs,
@@ -316,21 +319,26 @@ void ipp_delete(struct IPP *p)
 		while(at)
 			{
 			if(at->free_name)
-				gu_free(at->free_name);
-			switch(tag_simplify(at->value_tag))
+				gu_free(at->name);
+			if(at->free_values)
 				{
-				case IPP_TAG_END:
-					break;
-				case IPP_TAG_INTEGER:
-					break;
-				case IPP_TAG_STRING:
-					for(y=0; y < at->num_values; y++)
-						gu_free(at->values[y].string.text);
-					break;
-				default:
-					for(y=0; y < at->num_values; y++)
-						gu_free(at->values[y].unknown.data);
-					break;
+				switch(tag_simplify(at->value_tag))
+					{
+					case IPP_TAG_END:
+						break;
+					case IPP_TAG_INTEGER:
+						break;
+					case IPP_TAG_STRING:
+						for(y=0; y < at->num_values; y++)
+							{
+							gu_free(at->values[y].string.text);
+							}
+						break;
+					default:
+						for(y=0; y < at->num_values; y++)
+							gu_free(at->values[y].unknown.data);
+						break;
+					}
 				}
 			next_at = at->next;
 			gu_free(at);
@@ -428,7 +436,7 @@ static void send_subst_reply(struct IPP *p, gu_boolean header)
 		}
 
 	debug("done sending substitute reply");
-	}
+	} /* send_subst_reply() */
 
 /** fetch a block from the IPP request
 
@@ -441,8 +449,12 @@ int ipp_get_block(struct IPP *p, char **pptr)
 	{
 	int len = 0;
 	
-	if(p->readbuf_remaining < 1)
+	if(p->readbuf_remaining <= 0)
+		{
+		if(p->bytes_left <= 0)
+			return 0;
 		ipp_readbuf_load(p);
+		}
 
 	if(p->readbuf_remaining > 0)
 		{
@@ -655,7 +667,9 @@ void ipp_parse_request_body(struct IPP *ipp)
 				ap->next = NULL;					/* last in chain */
 				ap->group_tag = delimiter_tag;
 				ap->value_tag = value_tag;
-				ap->name = ap->free_name = name;
+				ap->name = name;
+				ap->free_name = TRUE;
+				ap->free_values = TRUE;
 				ap->num_values = 1;					/* only one value (for now) */
 
 				ap_i = 0;
@@ -737,6 +751,28 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 		else
 			{
 			ipp_put_ss(ipp, 0);
+			}
+
+		if(attr->value_tag == IPP_TAG_URI && rmatch(attr->name, "printer-uri"))
+			{
+			len = strlen(ipp->root) + strlen("/queues/") + strlen(p->string.text);
+			ipp_put_ss(ipp, len);
+			ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
+			ipp_put_bytes(ipp, "/queues/", strlen("/queues/"));
+			ipp_put_bytes(ipp, p->string.text, strlen(p->string.text));
+			continue;
+			}
+
+		if(attr->value_tag == IPP_TAG_URI && rmatch(attr->name, "job-uri"))
+			{
+			char temp[10];
+			gu_snprintf(temp, sizeof(temp), "%d", p->integer);
+			len = strlen(ipp->root) + strlen("/jobs/") + strlen(temp);
+			ipp_put_ss(ipp, len);
+			ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
+			ipp_put_bytes(ipp, "/jobs/", strlen("/jobs/"));
+			ipp_put_bytes(ipp, temp, strlen(temp));
+			continue;
 			}
 
 		switch(tag_simplify(attr->value_tag))
@@ -842,16 +878,17 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 /*
 ** add an attribute to the IPP response
 */
-static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[])
+static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[], int num_values)
 	{
 	ipp_attribute_t **ap1;
-	ipp_attribute_t	*ap = gu_alloc(1, sizeof(ipp_attribute_t));
-	ap->group_tag = 0;		/* consider this unused */
-	ap->value_tag = tag;
-	ap->name = name;
-	ap->free_name = NULL;
-	ap->num_values = 1;
+	ipp_attribute_t	*ap = gu_alloc(1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * (num_values - 1));
 	ap->next = NULL;
+	ap->group_tag = 0;				/* consider this unused */
+	ap->value_tag = tag;
+	ap->name = (char*)name;
+	ap->free_name = FALSE;			/* we are probably only borrowing the name */
+	ap->free_values = FALSE;		/* we are probably borrowing these too */
+	ap->num_values = num_values;
 
 	switch(group)
 		{
@@ -887,7 +924,7 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
 */
 void ipp_add_end(struct IPP *ipp, int group)
 	{
-	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL);
+	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL, 1);
 	}
 
 /** add an integer to the IPP response
@@ -895,23 +932,61 @@ void ipp_add_end(struct IPP *ipp, int group)
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value)
 	{
 	ipp_attribute_t *ap;
-	if(tag_simplify(tag) != IPP_TAG_INTEGER)
+	if(tag_simplify(tag) != IPP_TAG_INTEGER && tag != IPP_TAG_URI)
 		gu_Throw("ipp_add_integer(): %s is a %s", name, tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name);
+	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 	ap->values[0].integer = value;
 	}
 
 /** add a string to the IPP response
  *
- * This function keeps a pointer to name[] but copies value[].
+ * This function keeps a pointer to name[] and value[], so they had better not
+ * change!
 */
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[])
 	{
 	ipp_attribute_t *ap;
 	if(tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_string(): %s is a %s", name, tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name);
-	ap->values[0].string.text = gu_strdup(value);
+	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap->values[0].string.text = (char*)value;
+	}
+
+/** add a list of strings to the IPP response
+ *
+ * This function keeps a pointer to name[] and all of the values[], so they 
+ * had better not change!
+*/
+void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[])
+	{
+	ipp_attribute_t *ap;
+	int i;
+	if(tag_simplify(tag) != IPP_TAG_STRING)
+		gu_Throw("ipp_add_strings(): %s is a %s", name, tag_to_str(tag));
+	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
+	for(i=0; i<num_values; i++)
+		ap->values[i].string.text = (char*)values[i];
+	}
+
+/** add a formatted string to the IPP response
+*/
+void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
+	{
+	ipp_attribute_t *ap;
+	va_list va;
+	char *p;
+
+	if(tag_simplify(tag) != IPP_TAG_STRING)
+		gu_Throw("ipp_add_printf(): %s is a %s", name, tag_to_str(tag));
+
+	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+
+	va_start(va, value);
+	gu_vasprintf(&p, value, va);
+	ap->values[0].string.text = p;
+	va_end(va);
+
+	ap->free_values = TRUE;		/* copy belongs to object */
 	}
 
 /** add a boolean  to the IPP response 
@@ -921,7 +996,7 @@ void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_
 	ipp_attribute_t *ap;
 	if(tag != IPP_TAG_BOOLEAN)
 		gu_Throw("ipp_add_boolean(): %s is a %s", name, tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name);
+	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 	ap->values[0].boolean = value;
 	}
 

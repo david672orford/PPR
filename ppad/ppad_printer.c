@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 12 February 2004.
 */
 
 /*==============================================================
@@ -1516,7 +1516,7 @@ static void printer_codes_help(void)
 int printer_codes(const char *argv[])
 	{
 	const char *printer = argv[0];
-	enum CODES newcodes;
+	int newcodes;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;

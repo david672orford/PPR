@@ -60,7 +60,7 @@ prune_env.$(OBJ): prune_env.c ../include/before_system.h ../include/gu.h ../incl
 
 query.$(OBJ): query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
 
-queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h
+queueinfo.$(OBJ): queueinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h ../include/pool.h ../include/pstring.h ../include/vector.h ../include/hash.h
 
 quote.$(OBJ): quote.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
@@ -83,4 +83,10 @@ writeqfile.$(OBJ): writeqfile.c ../include/before_system.h ../include/gu.h ../in
 destinfo.$(OBJ): destinfo.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+
+int_tcp_probe.$(OBJ): int_tcp_probe.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+
+ipp_utils.$(OBJ): ipp_utils.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+
+int_main.$(OBJ): int_main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 

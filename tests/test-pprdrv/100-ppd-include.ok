@@ -1,5 +1,4 @@
-Warning: PPD file "/usr/lib/ppr/src/tests/test-pprdrv/includer.ppd" (for printer
-	"regression-test1") does not have a "*DefaultResolution:" line.
+Warning: no MetaFont mode found for printer "regression-test1".
 ppad: 0
 Queue ID        For                      Time      Pgs Status
 ----------------------------------------------------------------------------

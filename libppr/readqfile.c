@@ -62,7 +62,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	const char function[] = "read_struct_QFileEntry";
 	gu_boolean found_time = FALSE;
 	gu_boolean found_opts = FALSE;
-	gu_boolean found_attr = FALSE;
 	gu_boolean found_user = FALSE;
 	gu_boolean found_for = FALSE;
 	gu_boolean found_priority = FALSE;
@@ -73,6 +72,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 	char *line = NULL;
 	int line_available = 80;
+	char *p;
 	int retcode = 0;
 	int tempint;
 
@@ -131,50 +131,79 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				return -1;
 
 			case 'A':
-				if(strncmp(line, "Attr:", 5) == 0)
+				if((p = lmatchp(line, "Attr-DSC:")))
 					{
-					int tempint;
-					found_attr = TRUE;
-					if(gu_sscanf(line+5, " %d %f %d %d %d %d %d %d %d %d %d %ld %ld %d %d",
-							&job->attr.langlevel,
+					if(gu_sscanf(p, "%f %d %d %d",
 							&job->attr.DSClevel,
-							&job->attr.pages,
-							&job->attr.pageorder,
-							&job->attr.prolog,
-							&job->attr.docsetup,
-							&job->attr.script,
-							&job->attr.extensions,
-							&job->attr.pagefactor,
 							&job->attr.orientation,
 							&job->attr.proofmode,
-							&job->attr.input_bytes,
-							&job->attr.postscript_bytes,
-							&job->attr.parts,
-							&tempint
-							) != 15)
+							&job->attr.docdata
+							) != 4)
 						{
-						error("%s: bad \"%s\" line", function, "Attr:");
+						error("%s: bad \"%s\" line", function, "Attr-DSC:");
 						return -1;
 						}
-
-					switch(tempint)
-						{
-						case CODES_UNKNOWN:
-						case CODES_Clean7Bit:
-						case CODES_Clean8Bit:
-						case CODES_Binary:
-							job->attr.docdata = (enum CODES)tempint;
-							break;
-						default:
-							error("%s: bad value for attr.docdata", function);
-							return -1;
-							break;
-						}
-
 					continue;
-					} /* "Attr: " */
-				if(strncmp(line, "Attr-", 5) == 0)
+					}
+				if((p = lmatchp(line, "Attr-DSC-Sections:")))
 					{
+					if(gu_sscanf(p, "%d %d %d",
+							&job->attr.prolog,
+							&job->attr.docsetup,
+							&job->attr.script
+							) != 3)
+						{
+						error("%s: bad \"%s\" line", function, "Attr-DSC-Sections:");
+						return -1;
+						}
+					continue;
+					}
+				if((p = lmatchp(line, "Attr-LangLevel:")))
+					{
+					if(gu_sscanf(p, "%d %d",
+							&job->attr.langlevel,
+							&job->attr.extensions
+							) != 2)
+						{
+						error("%s: bad \"%s\" line", function, "Attr-LangLevel:");
+						return -1;
+						}
+					continue;
+					}
+				if((p = lmatchp(line, "Attr-Pages:")))
+					{
+					if(gu_sscanf(p, "%d %d %d",
+							&job->attr.pages,
+							&job->attr.pageorder,
+							&job->attr.pagefactor
+							) != 3)
+						{
+						error("%s: bad \"%s\" line", function, "Attr-Pages:");
+						return -1;
+						}
+					continue;
+					}
+				if((p = lmatchp(line, "Attr-ByteCounts:")))
+					{
+					if(gu_sscanf(p, "%ld %ld",
+							&job->attr.input_bytes,
+							&job->attr.postscript_bytes
+							) != 2)
+						{
+						error("%s: bad \"%s\" line", function, "Attr-ByteCounts:");
+						return -1;
+						}
+					continue;
+					}
+				if((p = lmatchp(line, "Attr-Parts:")))
+					{
+					if(gu_sscanf(p, "%d",
+							&job->attr.parts
+							) != 1)
+						{
+						error("%s: bad \"%s\" line", function, "Attr-Parts:");
+						return -1;
+						}
 					continue;
 					}
 				break;
@@ -187,24 +216,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				MATCH("Charge-To: ", _2("%Z", &job->charge_to), !=1, found_other)
 				MATCH("Creator: ", _2("%Z", &job->Creator), !=1, found_other)
 				MATCH("Commentary: ", _2("%d", &job->commentary), !=1, found_other)
-				{
-				int tempint;
-				if(gu_sscanf(line, "CachePriority: %d", &tempint) == 1)
-					{
-					switch(tempint)
-						{
-						case CACHE_PRIORITY_LOW:
-						case CACHE_PRIORITY_HIGH:
-							job->CachePriority = (enum CACHE_PRIORITY)tempint;
-							break;
-						default:
-							error("%s(): bad value for cache_priority", function);
-							return -1;
-							break;
-						}
-					continue;
-					}
-				}
+				MATCH("CachePriority: ", _2("%d", &job->CachePriority), !=1, found_other)
 				break;
 
 			case 'D':
@@ -291,8 +303,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		retcode = -1;
 		} /* end of loop */
 
-	if(line) gu_free(line);
-
 	if(! found_time)
 		{
 		error("%s: missing \"%s\" line", function, "Time: ");
@@ -302,12 +312,6 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	if(! found_opts)
 		{
 		error("%s: missing \"%s:\" line", function, "Opts: ");
-		retcode = -1;
-		}
-
-	if(! found_attr)
-		{
-		error("%s: missing \"%s\" line", function, "Attr: ");
 		retcode = -1;
 		}
 
@@ -346,6 +350,16 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		error("%s: missing \"Banners:\" line", function);
 		retcode = -1;
 		}
+
+	while((line = gu_getline(line, &line_available, qfile)))
+		{
+		if(strcmp(line, "EndIPP") == 0)
+			break;
+
+		}
+
+	if(line)
+		gu_free(line);
 
 	return retcode;
 	} /* end of read_struct_QFileEntry() */

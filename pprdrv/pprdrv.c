@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 12 February 2004.
 */
 
 /*
@@ -1171,7 +1171,6 @@ static void pprdrv_read_printer_conf(void)
 
 	float tf1, tf2;						/* temporary values for use with gu_sscanf() */
 	char *tptr;							/* temporary value for use with gu_sscanf() */
-	int tint;							/* temporary value for use with gu_sscanf() */
 	char scratch[10];					/* temporary storage for use with gu_sscanf() */
 	int count;							/* for gu_sscanf() return value */
 
@@ -1222,7 +1221,8 @@ static void pprdrv_read_printer_conf(void)
 		/* Read name of interface program. */
 		if(gu_sscanf(confline, "Interface: %S", &tptr) == 1)
 			{
-			if(printer.Interface) gu_free(printer.Interface);
+			if(printer.Interface)
+				gu_free(printer.Interface);
 			printer.Interface = tptr;
 			saw_feedback = saw_jobbreak = saw_codes = FALSE;
 			}
@@ -1234,7 +1234,8 @@ static void pprdrv_read_printer_conf(void)
 		*/
 		else if(gu_sscanf(confline, "Address: %A", &tptr) == 1)
 			{
-			if(printer.Address) gu_free(printer.Address);
+			if(printer.Address)
+				gu_free(printer.Address);
 			printer.Address = tptr;
 			}
 
@@ -1253,21 +1254,8 @@ static void pprdrv_read_printer_conf(void)
 			}
 
 		/* Read passable codes setting. */
-		else if(gu_sscanf(confline, "Codes: %d", &tint) == 1)
+		else if(gu_sscanf(confline, "Codes: %d", &printer.Codes) == 1)
 			{
-			switch(tint)
-				{
-				case CODES_UNKNOWN:
-				case CODES_Clean7Bit:
-				case CODES_Clean8Bit:
-				case CODES_Binary:
-				case CODES_TBCP:
-					printer.Codes = (enum CODES)tint;
-					break;
-				default:
-					fatal(EXIT_PRNERR_NORETRY, _("Invalid \"%s\" (%s line %d)."), "Codes:", cfname, linenum);
-					break;
-				}
 			saw_codes = TRUE;
 			}
 
@@ -1276,7 +1264,8 @@ static void pprdrv_read_printer_conf(void)
 		*/
 		else if(gu_sscanf(confline, "Options: %Z", &tptr) == 1)
 			{
-			if(printer.Options) gu_free(printer.Options);
+			if(printer.Options)
+				gu_free(printer.Options);
 			printer.Options = tptr;
 			}
 

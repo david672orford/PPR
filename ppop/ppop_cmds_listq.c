@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 November 2003.
+** Last modified 12 February 2004.
 */
 
 /*
@@ -714,25 +714,33 @@ static void ppop_lpq_banner_progress(const char *printer_job_destname, int print
 		int line_available = 80;
 		while((line = gu_getline(line, &line_available, f)))
 			{
-			if(sscanf(line, "Progress: %ld %*d %d", &bytes_sent, &pages_printed))
-				continue;
-
-			if(sscanf(line, "Attr: %*d %*f %d %*d %*d %*d %*d %*d %*d %*d %*d %ld %ld", &pages, &input_bytes, &postscript_bytes))
-				continue;
-
-			if(sscanf(line, "Opts: %*d %d", &copies))
-				continue;
-
-			if(sscanf(line, "N_Up: %d", &N))
-				continue;
-
-			if(strncmp(line, "PassThruPDL:", 11) == 0)
+			switch(*line)
 				{
-				barbar = TRUE;
-				continue;
+				case 'A':
+					if(sscanf(line, "Attr-ByteCounts: %ld %ld", &input_bytes, &postscript_bytes))
+						continue;
+					if(sscanf(line, "Attr-Pages: %d", &pages))
+						continue;
+					break;
+				case 'N':
+					if(sscanf(line, "N_Up: %d", &N))
+						continue;
+					break;
+				case 'O':
+					if(sscanf(line, "Opts: %*d %d", &copies))
+						continue;
+					break;
+				case 'P':
+					if(lmatch(line, "PassThruPDL:"))
+						{
+						barbar = TRUE;
+						continue;
+						}
+					if(sscanf(line, "Progress: %ld %*d %d", &bytes_sent, &pages_printed))
+						continue;
+					break;
 				}
 			}
-		if(line) gu_free(line);
 		}
 
 		if(copies == -1)
@@ -1616,7 +1624,8 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 			case 35:					/* totalsides */
 				{
 				int total = qfileentry->attr.pages;
-				if(qfileentry->opts.copies > 1) total *= qfileentry->opts.copies;
+				if(qfileentry->opts.copies > 1)
+					total *= qfileentry->opts.copies;
 				total = (total + qfileentry->N_Up.N - 1) / qfileentry->N_Up.N;
 				if(total >= 0)
 					printf("%d", total);
@@ -1627,7 +1636,8 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 			case 36:					/* totalsheets */
 				{
 				int total = qfileentry->attr.pages;
-				if(qfileentry->opts.copies > 1) total *= qfileentry->opts.copies;
+				if(qfileentry->opts.copies > 1)
+					total *= qfileentry->opts.copies;
 				total = (total + qfileentry->attr.pagefactor - 1) / qfileentry->attr.pagefactor;
 				if(total >= 0)
 					printf("%d", total);

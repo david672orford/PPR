@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/interfaces.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 12 February 2004.
 */
 
 #include "before_system.h"
@@ -45,8 +45,8 @@ struct INTERFACE_INFO {
 		char jobbreak;
 		char pjl_jobbreak;
 		gu_boolean feedback;
-		enum CODES codes;
-		enum CODES tbcp_codes;
+		int codes;
+		int tbcp_codes;
 		};
 
 struct INTERFACE_INFO interfaces[] = {
@@ -119,7 +119,7 @@ int interface_default_jobbreak(const char interface[], const struct PPD_PROTOCOL
 		return JOBBREAK_CONTROL_D;
 	}
 
-enum CODES interface_default_codes(const char interface[], const struct PPD_PROTOCOLS *prot)
+int interface_default_codes(const char interface[], const struct PPD_PROTOCOLS *prot)
 	{
 	const struct INTERFACE_INFO *i;
 

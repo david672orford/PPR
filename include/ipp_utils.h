@@ -50,8 +50,9 @@ typedef struct ipp_attribute_s
 	struct ipp_attribute_s *next;
 	int group_tag;
 	int value_tag;
-	const char *name;
-	char *free_name;
+	char *name;
+	gu_boolean free_name;
+	gu_boolean free_values;
 	int num_values;
 	ipp_value_t values[1];
 	} ipp_attribute_t;
@@ -119,6 +120,12 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
+void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[]);
+void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
+#ifdef __GNUC__
+__attribute__ (( format (printf, 5, 6) ))
+#endif
+;
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 

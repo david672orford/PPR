@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_capable.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 12 February 2004.
 */
 
 /*===========================================================================
@@ -183,11 +183,10 @@ static void end_of_incapable_log(void)
 /*===================================================================
 ** Here is the giant function which makes this module famous!
 **
-** Read the required resources and requirements from
-** the open queue file, and return -1 if they can not
-** all be met satisfactorily.
+** Read the required resources and requirements from the open queue
+** file, and return -1 if they can not all be met satisfactorily.
 **
-** Also, check some of the things stored in the "Attr:" line.
+** We check some other job attributes too.
 ===================================================================*/
 int check_if_capable(FILE *qfile, int group_pass)
 	{

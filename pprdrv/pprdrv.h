@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 12 February 2004.
 */
 
 /*
@@ -372,16 +372,16 @@ void log_close(void);
 ** the current job.
 */
 struct PPRDRV {
-		char *Name;								/* Name of printer */
+		char *Name;							/* Name of printer */
 
-		char *Interface;						/* Interface program */
-		char *Address;							/* Address for interface program */
-		char *Options;							/* Options for interface program */
-		gu_boolean Feedback;					/* true or false */
-		int Jobbreak;							/* enum of jobbreak methods */
-		enum CODES Codes;						/* Passable Codes */
+		char *Interface;					/* Interface program */
+		char *Address;						/* Address for interface program */
+		char *Options;						/* Options for interface program */
+		gu_boolean Feedback;				/* true or false */
+		int Jobbreak;						/* enum of jobbreak methods */
+		int Codes;							/* Passable Codes */
 
-		struct									/* Raster Image Processor (such as Ghostscript) */
+		struct								/* Raster Image Processor (such as Ghostscript) */
 			{
 			char *name;
 			char *output_language;
@@ -390,24 +390,24 @@ struct PPRDRV {
 			int options_count;
 			} RIP;
 
-		struct COMMENTATOR *Commentators;		/* the list of processes to tell about things */
+		struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */
 		gu_boolean do_banner;
 		gu_boolean do_trailer;
-		int OutputOrder;						/* 1 or -1 or 0 if unknown */
-		char *PPDFile;							/* name of description file */
-		gu_boolean type42_ok;					/* Can we use type42 fonts? */
-		gu_boolean GrayOK;						/* permission to print non-colour jobs? */
-		struct PPD_PROTOCOLS prot;				/* List of protocols such as TBCP and PJL PPD files says are supported */
-		int PageCountQuery;						/* Which method?  0 means don't. */
-		int PageTimeLimit;						/* max seconds to allow per page */
+		int OutputOrder;					/* 1 or -1 or 0 if unknown */
+		char *PPDFile;						/* name of description file */
+		gu_boolean type42_ok;				/* Can we use type42 fonts? */
+		gu_boolean GrayOK;					/* permission to print non-colour jobs? */
+		struct PPD_PROTOCOLS prot;			/* List of protocols such as TBCP and PJL PPD files says are supported */
+		int PageCountQuery;					/* Which method?  0 means don't. */
+		int PageTimeLimit;					/* max seconds to allow per page */
 
-		struct									/* Limit allowed page sizes for jobs. */
+		struct								/* Limit allowed page sizes for jobs. */
 			{
 			int lower;
 			int upper;
 			} limit_pages;
 
-		struct									/* Limit allowed sizes in kilobytes. */
+		struct								/* Limit allowed sizes in kilobytes. */
 			{
 			int lower;
 			int upper;
@@ -415,14 +415,14 @@ struct PPRDRV {
 
 		struct
 			{
-			int per_duplex;						/* duplexed sheet charge in cents */
-			int per_simplex;					/* simplex sheet sharge in cents */
+			int per_duplex;					/* duplexed sheet charge in cents */
+			int per_simplex;				/* simplex sheet sharge in cents */
 			} charge;
 
 		struct
 			{
-			int flags;							/* call for banner, trailer, header, etc. */
-			const char *path;					/* program to call */
+			int flags;						/* call for banner, trailer, header, etc. */
+			const char *path;				/* program to call */
 			} custom_hook;
 
 		struct

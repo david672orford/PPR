@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 12 February 2004.
 */
 
 /*
@@ -439,11 +439,10 @@ int write_queue_file(struct QFileEntry *qentry)
 	if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
 		fatal(PPREXIT_OTHERERR, _("can't open queue file \"%s\", errno=%d (%s)"), qfname, errno, gu_strerror(errno) );
 	if((Qfile = fdopen(fd, "w")) == (FILE*)NULL)
-		fatal(PPREXIT_OTHERERR, "%s(): fdopen() failed", function);
+		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fdopen", errno, gu_strerror(errno));
 
 	/* Use library code to write the body. */
 	write_struct_QFileEntry(Qfile, qentry);
-	fprintf(Qfile, "EndMisc\n");
 
 	/* Write an empty Addon section.  Job ticket information may be added later by ppop. */
 	fprintf(Qfile, "EndAddon\n");

@@ -450,7 +450,12 @@ struct PPD_PROTOCOLS
 	} ;
 
 /* Possible Codes values: */
-enum CODES { CODES_DEFAULT = -1, CODES_UNKNOWN = 0, CODES_Clean7Bit = 1, CODES_Clean8Bit = 2, CODES_Binary = 3, CODES_TBCP = 4 };
+#define CODES_DEFAULT -1
+#define CODES_UNKNOWN 0
+#define CODES_Clean7Bit 1
+#define CODES_Clean8Bit 2
+#define CODES_Binary 3
+#define CODES_TBCP 4
 
 /*
 ** This is for find_cached_resource().
@@ -511,7 +516,7 @@ gu_boolean user_acl_allows(const char user[], const char acl[]);
 void ppr_fnamef(char target[], const char pattern[], ...);
 gu_boolean interface_default_feedback(const char interface[], const struct PPD_PROTOCOLS *prot);
 int interface_default_jobbreak(const char interface[], const struct PPD_PROTOCOLS *prot);
-enum CODES interface_default_codes(const char interface[], const struct PPD_PROTOCOLS *prot);
+int interface_default_codes(const char interface[], const struct PPD_PROTOCOLS *prot);
 void valert(const char printername[], int dateflag, const char string[], va_list args);
 void alert(const char printername[], int dateflag, const char string[], ...);
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra);

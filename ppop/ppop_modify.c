@@ -123,6 +123,7 @@ static void write_changes(FILE *qf, const struct JOB *job)
 	FILE *nqf;					/* object of new queue file */
 	int i;
 
+	/* Create the new queue file. */
 	ppr_fnamef(nfname, "%s/.ppjob-%ld", QUEUEDIR, (long)getpid());
 	if(!(nqf = fopen(nfname, "w")))
 		{
@@ -131,12 +132,12 @@ static void write_changes(FILE *qf, const struct JOB *job)
 		}
 
 	write_struct_QFileEntry(nqf, &(job->qentry));
-	fprintf(nqf, "EndMisc\n");
 
 	for(i = 0; i < job->addon_count; i++)
 		fprintf(nqf, "%s: %s\n", job->addon[i].name, job->addon[i].value);
 	fprintf(nqf, "EndAddon\n");
 
+	/* Copy the rest of the old file to the new one. */
 	while((i = fgetc(qf)) != EOF)
 		{
 		fputc(i, nqf);
@@ -144,6 +145,7 @@ static void write_changes(FILE *qf, const struct JOB *job)
 
 	fclose(nqf);
 
+	/* Replace the old queue file with the new one. */
 	rename(nfname, job->qfname);
 	}
 

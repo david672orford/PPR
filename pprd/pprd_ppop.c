@@ -1063,12 +1063,18 @@ static void ppop_accept_reject(const char command[], int action)
 */
 static void ppop_dest_show_printer(FILE *outfile, int prnid)
 	{
-	fprintf(outfile,"%s 0 %d %d\n",printers[prnid].name,printers[prnid].accepting,printers[prnid].protect);
+	fprintf(outfile, "%s 0 %d %d\n",
+			printers[prnid].name,
+			printers[prnid].accepting,
+			printers[prnid].protect);
 	}
 
 static void ppop_dest_show_group(FILE *outfile, int groupnum)
 	{
-	fprintf(outfile,"%s 1 %d %d\n",groups[groupnum].name,groups[groupnum].accepting,groups[groupnum].protect);
+	fprintf(outfile, "%s 1 %d %d\n",
+			groups[groupnum].name,
+			groups[groupnum].accepting,
+			groups[groupnum].protect);
 	}
 
 static void ppop_dest(const char command[])

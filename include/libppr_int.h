@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 12 February 2004.
 */
 
 #ifndef LIBPPR_INT_H
@@ -50,7 +50,7 @@ struct INT_CMDLINE
 	const char *options;				/* example: "idle_status_interval=60 open_retries=5" */
 	int jobbreak;						/* example: 1 (signal) */
 	gu_boolean feedback;				/* example: 1 (True) */
-	enum CODES codes;					/* example: 3 (Binary) */
+	int codes;							/* example: 3 (Binary) */
 	const char *jobname;				/* example: "mouse:myprn-1001.0(mouse)" */
 	const char *routing;				/* example: "Call David Chappell at 2114 when ready" */
 	const char *forline;				/* example: "David Chappell" */

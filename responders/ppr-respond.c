@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/ppr-respond.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 12 February 2004.
 */
 
 /*
@@ -152,7 +152,7 @@ static int respond_get_info(struct RINFO *rinfo, int qffd, int charge_per_duplex
 				rinfo->Reason = gu_strndup(rinfo->Reason, strcspn(rinfo->Reason, ")"));
 				}
 			}
-		else if(sscanf(line, "Attr: %*s %*s %d %*s %*s %*s %*s %*s %d", &pages, &pagefactor) == 9)
+		else if(sscanf(line, "Attr-Pages: %d %*d %d", &pages, &pagefactor) == 3)
 			{}
 		else if(sscanf(line, "Opts: %*s %d", &copies) == 2)
 			{}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,17 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 12 February 2004.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
 
-enum CACHE_PRIORITY
-	{
-	CACHE_PRIORITY_AUTO = -1,
-	CACHE_PRIORITY_LOW = 0,
-	CACHE_PRIORITY_HIGH = 1
-	} ;
+#define CACHE_PRIORITY_AUTO -1
+#define CACHE_PRIORITY_LOW 0
+#define CACHE_PRIORITY_HIGH 1
 
 /*
 ** A record which describes a printer commentator which
@@ -98,16 +95,16 @@ struct QFileEntry
 		float DSClevel;					/* DSC comments version */
 		int pages;						/* number of pages, -1 means unknown */
 		int pageorder;					/* -1 (reverse), 0 (special), or 1 (normal) */
+		int pagefactor;					/* virtual pages per physical sheet */
 		gu_boolean prolog;				/* true if valid prolog section present */
 		gu_boolean docsetup;			/* true if valid document setup section present */
 		gu_boolean script;				/* delineated pages present */
-		int proofmode;			/* desired proofmode value */
-		int pagefactor;			/* virtual pages per physical sheet */
-		int orientation;		/* one of ORIENTATION_* */
-		long input_bytes;		/* Size of input file in bytes */
-		long postscript_bytes;	/* Size of input PostScript code in bytes */
-		int parts;				/* number of sub jobs job was divided into */
-		enum CODES docdata;		/* Clean7Bit, Clean8Bit, Binary */
+		int proofmode;					/* desired proofmode value */
+		int orientation;				/* one of ORIENTATION_* */
+		long input_bytes;				/* Size of input file in bytes */
+		long postscript_bytes;			/* Size of input PostScript code in bytes */
+		int parts;						/* number of sub jobs job was divided into */
+		int docdata;					/* Clean7Bit, Clean8Bit, Binary */
 		} attr;
 	struct {
 		gu_boolean binselect;			/* do automatic bin selection */
@@ -127,7 +124,7 @@ struct QFileEntry
 	const char *PassThruPDL;			/* "pcl", "hpgl2", etc., NULL for PostScript */
 	const char *Filters;				/* filter chain: "pcl", "gzip pcl", etc. */
 	const char *PJL;					/* HP PJL lines, newline separated */
-	enum CACHE_PRIORITY CachePriority;
+	int CachePriority;
 	gu_boolean StripPrinter;			/* Strip resources that printer has? */
 	struct {
 		char *mask;						/* which pages should be printed? */

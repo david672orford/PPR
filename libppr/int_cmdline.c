@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_cmdline.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2003.
+** Last modified 12 February 2004.
 */
 
 #include "before_system.h"
@@ -101,7 +101,7 @@ void int_cmdline_set(int argc, char *argv[])
 
 	/* What set of character codes has it been claimed we can pass? */
 	if(argc >= 7)
-		int_cmdline.codes = (enum CODES)atoi(argv[6]);	/* !!! */
+		int_cmdline.codes = atoi(argv[6]);
 	else
 		int_cmdline.codes = CODES_UNKNOWN;
 

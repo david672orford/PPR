@@ -74,132 +74,100 @@ static void do_print_job(struct IPP *ipp)
 	{
 	const char *printer;
 	pid_t pid;
-	int toppr_fds[2];
-	int jobid_fds[2];
+	int toppr_fds[2] = {-1, -1};
+	int jobid_fds[2] = {-1, -1};
+	int read_len, write_len;
+	char *p;
+	char jobid_buf[10];
+	int jobid;
 		
 	if(!(printer = printer_uri_basename(ipp)))
 		gu_Throw("no printer name");
 
-	if(pipe(toppr_fds) == -1)
-		gu_Throw("pipe() failed");
-
-	gu_Try
-		{
-		if(pipe(jobid_fds) == -1)
+	gu_Try {
+		if(pipe(toppr_fds) == -1)
 			gu_Throw("pipe() failed");
-		gu_Try
-			{
-			if((pid = fork()) == -1)
-				{
-				gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
-				}
-			}
-		gu_Catch
-			{
-			close(jobid_fds[0]);
-			close(jobid_fds[1]);
-			gu_ReThrow();
-			}
-		}
-	gu_Catch
-		{
-		close(toppr_fds[0]);
-		close(toppr_fds[1]);
-		gu_ReThrow();
-		}
-
-	if(pid == 0)		/* child */
-		{
-		char fd_str[10];
-
-		close(toppr_fds[1]);
-		close(jobid_fds[0]);
-		dup2(toppr_fds[0], 0);
-		close(toppr_fds[0]);
-		dup2(2, 1);
-
-		snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
-
-		execl(PPR_PATH, PPR_PATH, "-d", printer, "--print-id-to-fd", fd_str, NULL);
-
-		_exit(242);
-		}
-
-	/* parent */
-	{
-	int len, write_len;
-	char *ptr;
-	char buf[10];
-	int jobid;
-
-	close(toppr_fds[0]);
-	close(jobid_fds[1]);
 	
-	gu_Try
-		{
-		gu_Try
+		if(pipe(jobid_fds) == -1)
+			gu_Throw("pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	
+		if((pid = fork()) == -1)
+			gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	
+		if(pid == 0)		/* child */
 			{
-			/* Copy the job data to ppr. */
-			while((len = ipp_get_block(ipp, &ptr)) > 0)
-				{
-				debug("Got %d bytes", len);
-				while(len > 0)
-					{
-					if((write_len = write(toppr_fds[1], ptr, len)) < 0)
-						gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-					debug("Wrote %d bytes", write_len);
-					len -= write_len;
-					ptr += write_len;
-					}
-				}
-
-			debug("Done sending job data to ppr");
-			}
-		gu_Final
-			{
+			char fd_str[10];
+	
 			close(toppr_fds[1]);
-			}
-		gu_Catch
-			{
-			gu_ReThrow();
-			}
-
-		/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
-		if((len = read(jobid_fds[0], buf, sizeof(buf))) == -1)
-			gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
-		debug("read %d bytes as jobid", len);
+			close(jobid_fds[0]);
+			dup2(toppr_fds[0], 0);
+			close(toppr_fds[0]);
+			dup2(2, 1);
+			
+			snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
 	
-		buf[len < sizeof(buf) ? len : sizeof(buf) - 1] = '\0';
-		jobid = atoi(buf);
+			execl(PPR_PATH, PPR_PATH, "-d", printer, "--print-id-to-fd", fd_str, NULL);
+	
+			_exit(242);
+			}
+	
+		/* These are the child ends.  If we don't close them here, we won't know
+		 * when the child closes them.  We set them to -1 so that they won't
+		 * be closed again in the gu_Final clause.
+		 */
+		close(toppr_fds[0]);
+		toppr_fds[0] = -1;
+		close(jobid_fds[1]);
+		jobid_fds[1] = -1;
+	
+		/* Copy the job data to ppr. */
+		while((read_len = ipp_get_block(ipp, &p)) > 0)
+			{
+			debug("Got %d bytes", read_len);
+			while(read_len > 0)
+				{
+				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
+					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
+				debug("Wrote %d bytes", write_len);
+				read_len -= write_len;
+				p += write_len;
+				}
+			}
+	
+		debug("Done sending job data to ppr");
+
+		close(toppr_fds[1]);
+		toppr_fds[1] = -1;
+	
+		/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
+		if((read_len = read(jobid_fds[0], jobid_buf, sizeof(jobid_buf))) == -1)
+			gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		if(read_len <= 0)
+			gu_Throw("read %d bytes as jobid", read_len);
+		jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
+		jobid = atoi(jobid_buf);
 		debug("jobid is %d", jobid);
+		
+		/* Include the job id, both in numberic form and in URI form. */
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
+		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", printer_uri(ipp), jobid);
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
 		}
 	gu_Final
 		{
-		close(jobid_fds[0]);
+		if(toppr_fds[0] != -1)
+			close(toppr_fds[0]);
+		if(toppr_fds[1] != -1)
+			close(toppr_fds[1]);
+		if(jobid_fds[0] != -1)
+			close(jobid_fds[0]);
+		if(jobid_fds[1] != -1)
+			close(jobid_fds[1]);
 		}
 	gu_Catch
 		{
 		gu_ReThrow();
 		}
-		
-	if(jobid > 0)
-		{	
-		/* Include the job id, both in numberic form and in URI form. */
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
-		{
-		char *p;
-		gu_asprintf(&p, "%s/%d", printer_uri(ipp), jobid);
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", p);
-		}
-	
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
-		}
-	else
-		{
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
-		}
-
-	}
 	} /* end of do_print_job() */
 
 static volatile gu_boolean sigcaught;
@@ -315,9 +283,6 @@ int main(int argc, char *argv[])
 	struct IPP *ipp = NULL;
 	char *root = NULL;
 
-	/* Leave only the saved UID as "ppr". */
-	seteuid(getuid());
-	
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
 	setlocale(LC_ALL, "");
@@ -329,6 +294,16 @@ int main(int argc, char *argv[])
 		char *p, *path_info;
 		int content_length;
 
+		/*
+		** This program is setuid ppr.  It would be better if it inherited all 
+		** of its privledges from ppr-httpd (which runs as pprwww:ppr), but 
+		** pprd can't send it SIGUSR1 from pprd unless at least the saved UID 
+		** is ppr.  So it is setuid ppr, but we restore the EUID here so that
+		** it can't open the pprd FIFO if an ordinary user runs it.
+		*/
+		if(seteuid(getuid()) == -1)
+			gu_Throw("seteuid() failed");
+	
 		/* Do basic input validation */
 		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
 			gu_Throw("REQUEST_METHOD is not POST");
@@ -339,10 +314,10 @@ int main(int argc, char *argv[])
 		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
 			gu_Throw("CONTENT_LENGTH is missing or invalid");
 
-		gu_asprintf(&root, "http://%s:%s/%s",
+		gu_asprintf(&root, "http://%s:%s%s",
 			(p = getenv("SERVER_NAME")) ? p : "localhost",
 			(p = getenv("SERVER_PORT")) ? p : "15010",
-			(p = getenv("SCRIPT_NAME")) ? p : "ipp"
+			(p = getenv("SCRIPT_NAME")) ? p : "/cgi-bin/ipp"
 			);
 		
 		ipp = ipp_new(root, path_info, content_length, 0, 1);

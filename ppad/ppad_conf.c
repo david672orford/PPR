@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 11 February 2004.
 */
 
 /*
@@ -270,16 +270,22 @@ int confclose(void)
 			   modify the attributes in the split second
 			   between when we read them and when we move
 			   the new file into place. */
-			if(fstat(fileno(confin), &statbuf) < 0)
-				fatal(EXIT_INTERNAL, "%s(): %s() failed, errno=%d (%s)", function, "fstat", errno, gu_strerror(errno));
-			if(chmod(confout_name, statbuf.st_mode) < 0)
-				fatal(EXIT_INTERNAL, "%s(): %s() failed, errno=%d (%s)", function, "chmod", errno, gu_strerror(errno));
+			if(confin)
+				{
+				if(fstat(fileno(confin), &statbuf) < 0)
+					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fstat", errno, gu_strerror(errno));
+				if(fclose(confin) == EOF)
+					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fclose", errno, gu_strerror(errno));
+				if(chmod(confout_name, statbuf.st_mode) < 0)
+					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "chmod", errno, gu_strerror(errno));
+				}
 
-			/* Close the files and replace old with new. */
-			if(fclose(confin) == EOF || fclose(confout) == EOF)
-				fatal(EXIT_INTERNAL, "%s(): %s() failed, errno=%d (%s)", function, "fclose", errno, gu_strerror(errno));
+			if(fclose(confout) == EOF)
+				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fclose", errno, gu_strerror(errno));
+
+			/* Replace old with new. */
 			if(rename(confout_name, confin_name) < 0)
-				fatal(EXIT_INTERNAL, "%s(): %s() failed, errno=%d (%s)", function, "rename", errno, gu_strerror(errno));
+				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "rename", errno, gu_strerror(errno));
 
 			state = STATE_CLOSED;
 			}
