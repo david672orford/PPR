@@ -284,7 +284,7 @@ const char *uprint_set_from_format(void *p, const char *from_format)
 	return from_format;
 	}
 
-/* Set the user name to which email should be sent.	 Notice
+/* Set the user name to which email should be sent.  Notice
    that this does not request that email actually be sent.
    You must call uprint_set_notify_email() for that. */
 const char *uprint_set_lpr_mailto(void *p, const char *lpr_mailto)

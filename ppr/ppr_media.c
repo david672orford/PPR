@@ -207,7 +207,7 @@ void dump_page_media(void)
 **
 ** This function is called by write_media_lines() below.
 **
-** If this function failes, it returns -1.	If it suceeds, it increments the
+** If this function failes, it returns -1.  If it suceeds, it increments the
 ** number pointed to by match_count and returns 0.
 **
 ** This function must always leave the media file at its start.

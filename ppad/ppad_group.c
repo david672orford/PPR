@@ -456,7 +456,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 		do	{
 			/*
 			** If it is a printer line, make sure it is not the
-			** printer we think we are adding.	If it is not,
+			** printer we think we are adding.  If it is not,
 			** call deffiltopts_add_printer() so it can consider
 			** its PPD file.
 			*/
@@ -795,7 +795,7 @@ int group_passthru(const char *argv[])
 	if(!group)
 		{
 		fputs(_("You must specify a group and a (possibly empty) list\n"
-				"of file types.	 These file types should be the same as\n"
+				"of file types.  These file types should be the same as\n"
 				"those used with the \"ppr -T\" option.\n"), errors);
 		return EXIT_SYNTAX;
 		}
@@ -842,7 +842,7 @@ int group_addon(const char *argv[])
 	if(!group || !name || argv[3])
 		{
 		fputs(_("You must supply the name of an existing group, the name of an addon\n"
-				"parameter.	 A value for the paremeter is optional.	 If you do not\n"
+				"parameter.  A value for the paremeter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

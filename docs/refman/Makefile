@@ -108,6 +108,7 @@ install: install-troff install-html
 install-troff: $(ALL_TROFF)
 	for d in 1 5 8;\
 	  do \
+	  # Note that this removes the UPRINT man pages.
 	  ../$(MAKE_NEW_DIR) $(MANDIR)/man$$d; \
 	  for f in *.$$d.man;\
 	    do \

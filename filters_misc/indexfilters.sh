@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -59,13 +59,13 @@ findprog_prog ()
 			# echo "Trying $i/$1..." >&3
 			if [ -x "$i/$1" ]
 				then
-				echo "	Found $i/$1." >&3
+				echo "  Found $i/$1." >&3
 				echo "$i/$1"
 				return
 				fi
 			fi
 		done
-	echo "	Not found." >&3
+	echo "  Not found." >&3
 	}
 
 # Run a shell script thru Sed, changing the program paths
@@ -142,7 +142,7 @@ if [ "$1" != "" ]
 	fi
 
 echo "===================================================="
-echo "= Setting up filters								 ="
+echo "= Setting up filters                               ="
 echo "===================================================="
 
 # Direct file descriptor 3 to 1 so that we can print to stdout from
@@ -154,10 +154,10 @@ echo "Searching for dpost..."
 if [ -x /usr/lib/lp/postscript/dpost ]
 	then
 	DPOST="/usr/lib/lp/postscript/dpost"
-	echo "	Found $DPOST."
+	echo "  Found $DPOST."
 	else
 	DPOST=""
-	echo "	Not found."
+	echo "  Not found."
 	fi
 
 # look for postreverse
@@ -165,10 +165,10 @@ echo "Searching for postreverse..."
 if [ -x /usr/lib/lp/postscript/postreverse ]
 	then
 	POSTREVERSE="/usr/lib/lp/postscript/postreverse"
-	echo "	Found $POSTREVERSE."
+	echo "  Found $POSTREVERSE."
 	else
 	POSTREVERSE=""
-	echo "	Not found."
+	echo "  Not found."
 	fi
 
 # look for the postplot filter from system V lp
@@ -176,10 +176,10 @@ echo "Searching for postplot..."
 if [ -x /usr/lib/lp/postscript/postplot ]
 	then
 	POSTPLOT="/usr/lib/lp/postscript/postplot"
-	echo "	Found $POSTPLOT."
+	echo "  Found $POSTPLOT."
 	else
 	POSTPLOT=""
-	echo "	Not found."
+	echo "  Not found."
 	fi
 
 # Look for text converters

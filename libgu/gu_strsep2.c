@@ -20,7 +20,7 @@
 
 /*
 ** Like gu_strsep(), but is returns a double-quoted string as a single word.
-** A double quote may be escaped with a backslash.	There is also a 
+** A double quote may be escaped with a backslash.  There is also a 
 ** parameter "discard" which describes junk that we should swallow if it
 ** is outside the quotes.
 */

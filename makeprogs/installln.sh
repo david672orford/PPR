@@ -57,15 +57,15 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
 source="$1"
 target="$2"
 
-echo "	  \"$source\" --> \"$target\" (link)"
+echo "    \"$source\" --> \"$target\" (link)"
 
 if [ `basename $source` = $source ]
 	then
-	source_verify="$RPM_BUILD_ROOT`dirname $target`/$source"
+	source_verify="`dirname $target`/$source"
 	else
 	source_verify="$source"
 	fi
-if [ ! -f "$source_verify" ]
+if [ ! -f $source_verify -a ! -f "$RPM_BUILD_ROOT$source_verify" ]
 	then
 	echo "The source file \"$source_verify\" doesn't exist."
 	exit 1
@@ -76,11 +76,12 @@ if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 	rm -f "$RPM_BUILD_ROOT$target"
 	ln -s "$source" "$RPM_BUILD_ROOT$target"
 	if [ $? -ne 0 ]
-	then
-	echo "$0: can't create \"$target\" because not running as root."
-	exit 1
+		then
+		echo "$0: can't create \"$target\" because not running as root."
+		exit 1
+		fi
 	fi
-	fi
+ls -l $RPM_BUILD_ROOT$target
 chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 

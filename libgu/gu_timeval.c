@@ -37,7 +37,7 @@
 ==========================================================================*/
 
 /*
-** This utility function is used to compare times.	It returns 1 if t1 is
+** This utility function is used to compare times.  It returns 1 if t1 is
 ** greater than t2, zero if t1 is equal to t2, and -1 if t1 is less than
 ** t2.
 */

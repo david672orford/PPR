@@ -29,8 +29,8 @@
 */
 
 /*===========================================================================
-** This module handles data coming back from the interface.	 This will 
-** generally be messages sent by this printer.	These messages include 
+** This module handles data coming back from the interface.  This will 
+** generally be messages sent by this printer.  These messages include 
 ** notification of PostScript errors, printer status messages, and anything 
 ** the PostScript job writes to stdout.
 ===========================================================================*/
@@ -117,7 +117,7 @@ void feedback_setup(int fd)
 	} /* end of feedback_setup() */
 
 /* This function clears the variables that store the last
-   PJL USTATUS message.	 It is called from feedback_setup()
+   PJL USTATUS message.  It is called from feedback_setup()
    and at the start of each PJL USTATUS message. */
 static void pjl_ustatus_clear(void)
 	{
@@ -130,7 +130,7 @@ static void pjl_ustatus_clear(void)
 
 /*==========================================================================
 ** This function is called periodically to read messages coming back
-** from the printer over the pipe to the interface program.	 Sometimes
+** from the printer over the pipe to the interface program.  Sometimes
 ** the file descriptor will be in non-blocking mode.
 **
 ** This data will be output of the PostScript "print" command, PostScript
@@ -316,7 +316,7 @@ int feedback_reader(void)
 
 			/*
 			** Determine the length of the next line by
-			** scanning for the next line feed.	 The
+			** scanning for the next line feed.  The
 			** length computed includes the line feed.
 			*/
 			{
@@ -346,12 +346,12 @@ int feedback_reader(void)
 			#endif
 
 			/*
-			** Handle various @PJL job status messages.	 We will try
+			** Handle various @PJL job status messages.  We will try
 			** to `swallow' all those we can by executing an continue.
 			*/
 			if(pjl_state == PJL_USTATUS_PAGE)
 				{
-				/* We just received a page number.	If we are not printing a
+				/* We just received a page number.  If we are not printing a
 				   banner page right now, count this as one side of one sheet. */
 				if(doing_primary_job)
 					progress_pages_truly_printed(job.N_Up.N);
@@ -597,7 +597,7 @@ int feedback_reader(void)
 				} /* drop thru so that line will be entered in job log */
 
 			/*
-			** How about a Ghostscript style PostScript error message?	If 
+			** How about a Ghostscript style PostScript error message?  If 
 			** Ghostscript is run without -dSHORTERRORS, it uses its own
 			** error message format.
 			**
@@ -757,7 +757,7 @@ int feedback_reader(void)
 **
 ** If return_on_signal is TRUE, then if select() is interupted by
 ** a signal, we return right away even if the timeout hasn't
-** expired.	 This feature is used by signal_jobbreak().
+** expired.  This feature is used by signal_jobbreak().
 ===================================================================*/
 int feedback_wait(int timeout, gu_boolean return_on_signal)
 	{
@@ -817,7 +817,7 @@ int feedback_wait(int timeout, gu_boolean return_on_signal)
 ** is in use.
 **
 ** If we saw a PJL job start indication, wait for a PJL job
-** end indication.	If there was no evidence that PJL job
+** end indication.  If there was no evidence that PJL job
 ** start/stop indications are turned on, do nothing.
 ===================================================================*/
 void feedback_pjl_wait(void)
@@ -837,8 +837,8 @@ void feedback_pjl_wait(void)
 		int t = 0;
 
 		/*
-		** Be careful!	It may be that the first PJL message hasn't arrived
-		** yet.	 We wouldn't want to conclude that the jobs was done just
+		** Be careful!  It may be that the first PJL message hasn't arrived
+		** yet.  We wouldn't want to conclude that the jobs was done just
 		** because we weren't between the start and end messages.
 		*/
 		if(!pjl_seen)
@@ -860,7 +860,7 @@ void feedback_pjl_wait(void)
 
 		/*
 		** Notice that we do not continue to wait if a PostScript
-		** error has been reported.	 Under normal circumstances this
+		** error has been reported.  Under normal circumstances this
 		** is not strictly necessary, but under certain odd circumstances
 		** an HP4M+ with JetDirect has been known to interpret the
 		** Universal Exit Language sequence as a PostScript error.
@@ -899,7 +899,7 @@ void feedback_pjl_wait(void)
 			/*
 			** Update the progress indication.
 			**
-			** This code doesn't work.	For some reason the printer queues
+			** This code doesn't work.  For some reason the printer queues
 			** the message changes until the job is done!
 			**
 			** Though the message setting code is disabled, the skeleton

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 February 2003.
+# Last modified 5 April 2003.
 #
   
 require "cgi_data.pl";
@@ -45,7 +45,7 @@ sub docs_open
 	my $handle = shift;
 	my $path = shift;
 
-	defined($path) || die _("This script was invoked without any trailing path.	 In other words,\n"
+	defined($path) || die _("This script was invoked without any trailing path.  In other words,\n"
 						. "it should have been treated as if it were a subdirectory.\n");
 
 	# Clean up the path.  Note that PPR's own ppr-httpd already

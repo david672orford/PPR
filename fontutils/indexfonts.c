@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 March 2003.
+** Last modified 5 April 2003.
 */
 
 #include "before_system.h"
@@ -367,7 +367,7 @@ static int do_dir(FILE *indexfile, const char dirname[], int level)
 		{
 		if(errno == ENOENT)
 			{
-			printf("	-- Doesn't exist\n");
+			printf("    -- Doesn't exist\n");
 			return EXIT_OK;
 			}
 		fprintf(stderr, "%s: diropen(\"%s\") failed, errno=%d (%s)\n", myname, dirname, errno, gu_strerror(errno));
@@ -495,7 +495,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Warn */
-	fprintf(indexfile, "# This file format is a temporary hack.	 It will change.\n");
+	fprintf(indexfile, "# This file format is a temporary hack.  It will change.\n");
 
 	/* iterate over the nameless values */
 	for(i=0; section[i].name; i++)

@@ -67,7 +67,7 @@ typedef struct {
 
 /*
  * The token types are defined below.  In addition, there is a table
- * associating a precedence with each operator.	 The order of types
+ * associating a precedence with each operator.  The order of types
  * is important.  Consult the code before changing it.
  */
 
@@ -172,7 +172,7 @@ static char *operatorStrings[] = {
 /*
  * The following global variable is use to signal matherr that Tcl
  * is responsible for the arithmetic, so errors can be handled in a
- * fashion appropriate for Tcl.	 Zero means no Tcl math is in
+ * fashion appropriate for Tcl.  Zero means no Tcl math is in
  * progress;  non-zero means Tcl is doing math.
  */
 
@@ -284,7 +284,7 @@ static BuiltinFunc funcTable[] = {
  * Results:
  *		TCL_OK is returned under normal circumstances, and TCL_ERROR
  *		is returned if a floating-point overflow or underflow occurred
- *		while reading in a number.	The value at *valuePtr is modified
+ *		while reading in a number.  The value at *valuePtr is modified
  *		to hold a number, if possible.
  *
  * Side effects:
@@ -360,7 +360,7 @@ ExprParseString(interp, string, valuePtr)
 	}
 
 	/*
-	 * Not a valid number.	Save a string value (but don't do anything
+	 * Not a valid number.  Save a string value (but don't do anything
 	 * if it's already the value).
 	 */
 
@@ -389,7 +389,7 @@ ExprParseString(interp, string, valuePtr)
  *
  * Results:
  *		TCL_OK is returned unless an error occurred while doing lexical
- *		analysis or executing an embedded command.	In that case a
+ *		analysis or executing an embedded command.  In that case a
  *		standard Tcl error is returned, using interp->result to hold
  *		an error message.  In the event of a successful return, the token
  *		and field in infoPtr is updated to refer to the next symbol in
@@ -430,7 +430,7 @@ ExprLex(interp, infoPtr, valuePtr)
 	/*
 	 * First try to parse the token as an integer or floating-point number.
 	 * Don't want to check for a number if the first character is "+"
-	 * or "-".	If we do, we might treat a binary operator as unary by
+	 * or "-".  If we do, we might treat a binary operator as unary by
 	 * mistake, which will eventually cause a syntax error.
 	 */
 
@@ -664,7 +664,7 @@ ExprLex(interp, infoPtr, valuePtr)
  *
  * Results:
  *		Normally TCL_OK is returned.  The value of the expression is
- *		returned in *valuePtr.	If an error occurred, then interp->result
+ *		returned in *valuePtr.  If an error occurred, then interp->result
  *		contains an error message and TCL_ERROR is returned.
  *		InfoPtr->token will be left pointing to the token AFTER the
  *		expression, and infoPtr->expr will point to the character just
@@ -688,7 +688,7 @@ ExprGetValue(interp, infoPtr, prec, valuePtr)
 										 * with precedence <= this as the end
 										 * of the expression. */
 	Value *valuePtr;					/* Where to store the value of the
-										 * expression.	 Caller must have
+										 * expression.  Caller must have
 										 * initialized pv field. */
 {
 	Interp *iPtr = (Interp *) interp;
@@ -700,12 +700,12 @@ ExprGetValue(interp, infoPtr, prec, valuePtr)
 										 * for error messages. */
 	int gotOp;							/* Non-zero means already lexed the
 										 * operator (while picking up value
-										 * for unary operator).	 Don't lex
+										 * for unary operator).  Don't lex
 										 * again. */
 	int result;
 
 	/*
-	 * There are two phases to this procedure.	First, pick off an initial
+	 * There are two phases to this procedure.  First, pick off an initial
 	 * value.  Then, parse (binary operator, value) pairs until done.
 	 */
 
@@ -838,7 +838,7 @@ ExprGetValue(interp, infoPtr, prec, valuePtr)
 		/*
 		 * If we're doing an AND or OR and the first operand already
 		 * determines the result, don't execute anything in the
-		 * second operand:	just parse.	 Same style for ?: pairs.
+		 * second operand:	just parse.  Same style for ?: pairs.
 		 */
 
 		if ((operator == AND) || (operator == OR) || (operator == QUESTY)) {
@@ -919,7 +919,7 @@ ExprGetValue(interp, infoPtr, prec, valuePtr)
 		}
 
 		/*
-		 * At this point we've got two values and an operator.	Check
+		 * At this point we've got two values and an operator.  Check
 		 * to make sure that the particular data types are appropriate
 		 * for the particular operator, and perform type conversion
 		 * if necessary.
@@ -1303,11 +1303,11 @@ ExprMakeString(interp, valuePtr)
  *		procedures like Tcl_ExprInt, Tcl_ExprDouble, etc.
  *
  * Results:
- *		The result is a standard Tcl return value.	If an error
+ *		The result is a standard Tcl return value.  If an error
  *		occurs then an error message is left in interp->result.
  *		The value of the expression is returned in *valuePtr, in
  *		whatever form it ends up in (could be string or integer
- *		or double).	 Caller may need to convert result.	 Caller
+ *		or double).  Caller may need to convert result.  Caller
  *		is also responsible for freeing string memory in *valuePtr,
  *		if any was allocated.
  *
@@ -1383,7 +1383,7 @@ ExprTopLevel(interp, string, valuePtr)
  * Results:
  *		Each of the procedures below returns a standard Tcl result.
  *		If an error occurs then an error message is left in
- *		interp->result.	 Otherwise the value of the expression,
+ *		interp->result.  Otherwise the value of the expression,
  *		in the appropriate form, is stored at *resultPtr.  If
  *		the expression had a result that was incompatible with the
  *		desired form then an error is returned.
@@ -1482,9 +1482,9 @@ Tcl_ExprBoolean(interp, string, ptr)
  *		Evaluate an expression and return its value in string form.
  *
  * Results:
- *		A standard Tcl result.	If the result is TCL_OK, then the
+ *		A standard Tcl result.  If the result is TCL_OK, then the
  *		interpreter's result is set to the string value of the
- *		expression.	 If the result is TCL_OK, then interp->result
+ *		expression.  If the result is TCL_OK, then interp->result
  *		contains an error message.
  *
  * Side effects:
@@ -1588,7 +1588,7 @@ Tcl_CreateMathFunc(interp, name, numArgs, argTypes, proc, clientData)
  *
  * Results:
  *		TCL_OK is returned if all went well and the function's value
- *		was computed successfully.	If an error occurred, TCL_ERROR
+ *		was computed successfully.  If an error occurred, TCL_ERROR
  *		is returned and an error message is left in interp->result.
  *		After a successful return infoPtr has been updated to refer
  *		to the character just after the function call, the token is
@@ -1814,7 +1814,7 @@ TclExprFloatError(interp, value)
  *
  * Results:
  *		Each procedure returns TCL_OK if it succeeds and places result
- *		information at *resultPtr.	If it fails it returns TCL_ERROR
+ *		information at *resultPtr.  If it fails it returns TCL_ERROR
  *		and leaves an error message in interp->result.
  *
  * Side effects:

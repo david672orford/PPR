@@ -30,7 +30,7 @@
 
 /*
 ** This is parallel_generic.c with the functions filled in with
-** Linux-specific code.	 The necessary information was found
+** Linux-specific code.  The necessary information was found
 ** in the lp(4) man page.
 */
 
@@ -63,7 +63,7 @@ static void sigterm_handler(int sig)
 	}
 
 /*
-** This routine is called just after the port has been opened.	It should
+** This routine is called just after the port has been opened.  It should
 ** take interface options, as stored in the supplied structure, and
 ** use the supplied file descriptor to set up the driver accordingly.
 */
@@ -98,7 +98,7 @@ void parallel_port_reset(int fd)
 ** PARALLEL_PORT_BUSY
 **
 ** The raw parallel port signals should be returned.  Don't try
-** guess what they might mean.	That is done in parallel.c.
+** guess what they might mean.  That is done in parallel.c.
 */
 int parallel_port_status(int fd)
 	{

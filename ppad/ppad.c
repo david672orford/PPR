@@ -29,7 +29,7 @@
 */
 
 /*
-** Administration program for PostScript page printers.	 This program
+** Administration program for PostScript page printers.  This program
 ** edits the media database and edits printer and group configuration
 ** files.
 */
@@ -75,8 +75,8 @@ void fatal(int exitval, const char *message, ...)
 	} /* end of fatal() */
 
 /*
-** Is the user privileged?	In other words, is the user in the ppad
-** access control list?	 If the user identity has been changed
+** Is the user privileged?  In other words, is the user in the ppad
+** access control list?  If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
@@ -94,7 +94,7 @@ static gu_boolean privileged(void)
 		/* This breaks --su for user ppr! */
 		#if 0
 		/* This special exception comes into play when "make install"
-		   is done by a non-root user.	Basically, says that if
+		   is done by a non-root user.  Basically, says that if
 		   we are not running setuid, we will let the file system
 		   permissions take care of security.  This allows the
 		   "ppad media put" command to work during "make install".
@@ -117,7 +117,7 @@ static gu_boolean privileged(void)
 ** not to gain additional access.
 **
 ** Generally, this will be used by servers running under privileged
-** user identities.	 They will use this so as not to exceed the privledge
+** user identities.  They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
 static int su(const char username[])
@@ -484,7 +484,7 @@ static int interactive_mode(void)
 	while((ptr = ppr_get_command("ppad>", machine_readable)))
 		{
 		/*
-		** Break the string into white-space separated "words".	 A quoted string
+		** Break the string into white-space separated "words".  A quoted string
 		** will be treated as one word.
 		*/
 		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
@@ -522,7 +522,7 @@ static int interactive_mode(void)
 			break;
 
 		/*
-		** Call the dispatch() function to execute the command.	 If the
+		** Call the dispatch() function to execute the command.  If the
 		** command is not recognized, dispatch() will return -1.  In that
 		** case we print a helpful message and change the errorlevel to
 		** zero since -1 is not a valid exit code for a program.

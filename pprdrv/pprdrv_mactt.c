@@ -100,9 +100,9 @@ void send_font_mactt(const char filename[])
 
 		/*
 		** If the TrueDict compatibility BuildChar procedure comes next
-		** and we need it copy it.	 If we don't need it (if we will not be
+		** and we need it copy it.  If we don't need it (if we will not be
 		** printing any TrueType fonts or the printer has a built-in TT
-		** rasterizer), discard it.	 If we need it and it is absent,
+		** rasterizer), discard it.  If we need it and it is absent,
 		** insert one from `memory'.
 		*/
 		if( strcmp(tline,"%beginsfntBC\n") == 0 )

@@ -20,11 +20,11 @@
 ** types of media or colour can be sent to a different printer.
 **
 ** Currently the only feature implemented is the breaking of a large job
-** into several pieces.	 This is however still experimental.  All of the
+** into several pieces.  This is however still experimental.  All of the
 ** pieces inherit all of the resource and feature requirements of the
 ** originally job; which is incorrect behavior.
 **
-** The action of this module is controled by the -Y switch.	 The argument
+** The action of this module is controled by the -Y switch.  The argument
 ** to the -Y switch should be a space seperated list of name=value pairs
 ** Here are the acceptable arguments to the -Y switch:
 **
@@ -102,7 +102,7 @@ void Y_switch(const char *optarg)
 
 /*
 ** This function is called just before ppr_main.c calls
-** write_queue_file().	This function may split the job
+** write_queue_file().  This function may split the job
 ** and submit it to the spooler in pieces.
 **
 ** For each piece we must make a link to the .0-text file, and
@@ -451,7 +451,7 @@ void set_thing_bit(int bitoffset)
 	} /* end of setbit() */
 
 /*
-** write_queue_file() callback routine.	 This is how the subset
+** write_queue_file() callback routine.  This is how the subset
 ** of the things which should go into a fragments queue file is
 ** selected.
 **

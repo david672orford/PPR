@@ -49,7 +49,7 @@ from the format of Microsoft Windows .ini files.
 
 This function reads a specified section out of a configuration file.
 The section is parsed and stored in a memory block and a pointer to that
-block is returned.	Other functions may be used to extract name=value pairs
+block is returned.  Other functions may be used to extract name=value pairs
 from the memory block.
 
 If the configuration file cannot be opened or the requested section
@@ -208,7 +208,7 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 /** Deallocate INI section
 
 This function de-allocates the memory used by the return value of
-gu_ini_section_load().	Notice that if the pointer is NULL, this function
+gu_ini_section_load().  Notice that if the pointer is NULL, this function
 does nothing.
 
 */
@@ -429,7 +429,7 @@ const char *gu_ini_scan_list(const char file_name[], const char section_name[], 
 
 /** Get string value from INI file
 
-This returns a string value from the INI file.	If there is none,
+This returns a string value from the INI file.  If there is none,
 the default value is returned.
 
 */

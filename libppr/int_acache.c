@@ -53,7 +53,7 @@ void int_addrcache_save(const char printer[], const char interface[], const char
 	char *temp;
 	int towrite, written;
 
-	/* The name "-" indicates a printer with no queue yet.	We don't support
+	/* The name "-" indicates a printer with no queue yet.  We don't support
 	   caching under such circumstances. */
 	if(strcmp(printer, "-") == 0)
 		return;
@@ -92,8 +92,8 @@ char *int_addrcache_load(const char printer[], const char interface[], const cha
 	if(strcmp(printer, "-") == 0)
 		return NULL;
 
-	/* Try to open the cache file.	If we fail because it is not there,
-	   that is ok, we will create it later so we fail silently.	 For other
+	/* Try to open the cache file.  If we fail because it is not there,
+	   that is ok, we will create it later so we fail silently.  For other
 	   errors we put a warning in the printer's alert log. */
 	ppr_fnamef(fname, "%s/%s", ADDRESS_CACHE, printer);
 	if((fd = open(fname, O_RDONLY)) == -1)

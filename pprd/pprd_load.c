@@ -173,7 +173,7 @@ static void load_printer(struct Printer *printer, const char filename[])
 
 	/*
 	** If printer is protected, turn on ``other'' execute bit,
-	** otherwise, turn it off.	We do this for the convienence of ppr.
+	** otherwise, turn it off.  We do this for the convienence of ppr.
 	*/
 	if(printer->protect)
 		newmode = pstat.st_mode | S_IXOTH;
@@ -235,9 +235,9 @@ void load_printers(void)
 /*
 ** Load a new printer configuration file.
 **
-** This is called when ppad sends a command over the pipe.	It does this
+** This is called when ppad sends a command over the pipe.  It does this
 ** whenever the printer configuration changes in a way that might
-** interest us.	 You can also use "ppad touch" to send the command any
+** interest us.  You can also use "ppad touch" to send the command any
 ** time you want.
 **
 ** We must be careful to free any allocated memory blocks
@@ -450,7 +450,7 @@ static void load_group(struct Group *cl, const char filename[])
 
 	/*
 	** If group is protected, turn on user execute bit,
-	** otherwise, turn it off.	This bit is read by ppr.
+	** otherwise, turn it off.  This bit is read by ppr.
 	*/
 	if(cl->protect)
 		newmod = cstat.st_mode | S_IXOTH;
@@ -636,7 +636,7 @@ void initialize_queue(void)
 		queue_accept_queuefile(direntp->d_name, FALSE);
 		}
 
-	/* We are done.	 Close the queue directory. */
+	/* We are done.  Close the queue directory. */
 	closedir(dir);
 
 	DODEBUG_RECOVER(("%s(): done", function));

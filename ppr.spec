@@ -1,6 +1,8 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 27 March 2003.
+# Last modified 5 April 2003.
+#
+
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
@@ -44,7 +46,7 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 # non-interactively.
 # Note: We have to work %_target_cpu in here somewhere.  Right now
 # it configures for the CPU it runs on.
-./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext
+./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --with-tdb
 
 make
 
@@ -61,7 +63,7 @@ RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 #============================================================================
 # This tells RPM what files go in the cpio section of the binary .rpm file.
 #============================================================================
-%files -f z_install_end/installed_files_list
+%files -f z_install_begin/installed_files_list
 %docdir /usr/share/ppr/man
 %docdir /usr/share/ppr/www/docs
 

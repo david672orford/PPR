@@ -69,7 +69,7 @@ static struct
 	const char *to;
 	} osf_K_xlate[] =
 	{
-	/* These are the options in queue file format.	The fact that
+	/* These are the options in queue file format.  The fact that
 	   "one" and "two" are acceptable to lpr is undocumented. */
 	{"one", "one"},
 	{"two", "two"},
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 	uprint_set_immediate_copy(upr, TRUE);
 
 	/*
-	** Parse the switches.	Mostly, we will call uprint
+	** Parse the switches.  Mostly, we will call uprint
 	** member functions.
 	*/
 	while( (c=getopt(argc, argv, option_list)) != -1 )

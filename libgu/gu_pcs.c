@@ -32,7 +32,7 @@
 	\brief Perl Compatible Strings
 
 This module implements a string library.  This library is designed to make it
-easier to port Perl code to C.	The strings are stored in objects known
+easier to port Perl code to C.  The strings are stored in objects known
 as PCS (Perl Compatible String).
 
 PCS objects can contain strings with embedded NULLs, but such string cannot
@@ -72,7 +72,7 @@ void *gu_pcs_new(void)
 /** destroy a PCS object
 
 This function decrements the reference count of a PCS object and sets the
-pointer pointed to by pcs to NULL.	If the reference counter reaches zero,
+pointer pointed to by pcs to NULL.  If the reference counter reaches zero,
 then the object is freed.
 
 */
@@ -169,8 +169,8 @@ void *gu_pcs_new_cstr(const char cstr[])
 /** copy a char[] into an existing PCS
 
 This function copies the contents of a C string (a NULL terminated character
-array into the PCS object.	The function may have to allocate a new object
-and change the pointer pointed to by I<pcs> to point to the new object.	 A new
+array into the PCS object.  The function may have to allocate a new object
+and change the pointer pointed to by I<pcs> to point to the new object.  A new
 object will be allocated if the value has a reference count greater than one
 (which means it should be copied on write).
 
@@ -193,9 +193,9 @@ void gu_pcs_set_cstr(void **pcs, const char cstr[])
 
 /** copy a PCS into an existing PCS
 
-This function copies the contents of a PCS into the PCS object.	 The function
+This function copies the contents of a PCS into the PCS object.  The function
 may have to allocate a new object and change the pointer pointed to by I<pcs>
-to point to the new object.	 A new object will be allocated if the value has a
+to point to the new object.  A new object will be allocated if the value has a
 reference count greater than one (which means it should be copied on write).
 
 */
@@ -321,7 +321,7 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
 
 /** create a hash value from a PCS
 
-This function hashes a PCS.	 The hash function is attibuted to P. J Weinberger.
+This function hashes a PCS.  The hash function is attibuted to P. J Weinberger.
 
 */
 int gu_pcs_hash(void **pcs_key)

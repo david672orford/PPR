@@ -43,7 +43,7 @@ int gu_torf(const char *s)
 	} /* end of gu_torf() */
 
 /*
-** Set a gu_boolean to the answer.	If the answer is not
+** Set a gu_boolean to the answer.  If the answer is not
 ** true or false, don't change the gu_boolean and return -1.
 */
 int gu_torf_setBOOL(gu_boolean *b, const char *s)

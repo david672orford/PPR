@@ -29,7 +29,7 @@
 */
 
 /*
-** This module is for input file routines.	It examines the input file,
+** This module is for input file routines.  It examines the input file,
 ** converts it to PostScript if necessary, and sets up buffering routines.
 **
 ** If you wish to add a new input file type with filter, this
@@ -96,7 +96,7 @@ struct ANALYZE {
 
 /*
 ** Input file types.  Add to this list if you want to add a new input file
-** type with filter.  You must also add it to the table below.	If you want
+** type with filter.  You must also add it to the table below.  If you want
 ** auto-detect to work for your type, you must add code to analyze_input().
 */
 
@@ -180,7 +180,7 @@ struct FILTER
 ** a filter at all, there is special case code in get_input_file()
 ** that takes care of it.
 **
-** New input types must be added here.	It is also best to add auto-detect
+** New input types must be added here.  It is also best to add auto-detect
 ** code to analyze_input().
 */
 struct FILTER filters[]=
@@ -359,7 +359,7 @@ static void in_reset_buffering(void)
 ** read.  The in_ptr is reset to the start of the buffer.
 **
 ** The number of bytes read is added to the count of PostScript
-** input bytes.	 If it later turns out that the stuff we were
+** input bytes.  If it later turns out that the stuff we were
 ** reading wasn't PostScript we will reset this variable to zero.
 */
 static void in_load_buffer(void)
@@ -506,7 +506,7 @@ void in_getline(void)
 
 			/* Here we set flags which tell the code below when
 			   we are in a comment or a string so that it won't
-			   look for binary tokens.	We must also know when
+			   look for binary tokens.  We must also know when
 			   we are in an ASCII85 string and not consider "%"
 			   to be a comment marker if it is in a string or
 			   ASCII85 string.
@@ -652,7 +652,7 @@ void in_getline(void)
 	** Accept a lone control-D as EOF, but don't be nice about it.
 	**
 	** Of course, this might cause problems if we are receiving
-	** binary data.	 As a quick hack, we won't accept ^D as EOF
+	** binary data.  As a quick hack, we won't accept ^D as EOF
 	** if TBCP is being used.
 	*/
 	if(line[0] == 4 && line[1] == '\0' && in_type != IN_TYPE_POSTSCRIPT_TBCP)
@@ -695,7 +695,7 @@ void in_getline(void)
 ** the PostScript header comments.
 **
 ** The program PRNAUTH for MS-DOS is an example of a program
-** which may generate such headers.	 PRNAUTH was developed for
+** which may generate such headers.  PRNAUTH was developed for
 ** use with PPR.  These headers were invented by David Chappell.
 **
 ** There is a method to the capitalization of these keywords.
@@ -801,7 +801,7 @@ static void read_dot_header(void)
 ** language or one for which a filter is required, but none is
 ** available, the job will rejected.  If the langauge is unknown,
 ** it will sort of happen in this function, if the filter is missing,
-** the problem will not be discoved until we try to execute it.	 That
+** the problem will not be discoved until we try to execute it.  That
 ** happens well after this function is done.
 */
 static void check_for_PJL(void)
@@ -940,7 +940,7 @@ static void check_for_PJL(void)
 ** of the input file.  It is a state machine.
 **
 ** This routine is only called after an attempt to identify the
-** file by magic number has failed.	 The statistics gathered by
+** file by magic number has failed.  The statistics gathered by
 ** this routine are used to make educated guesses as to the
 ** type of the file's contents.
 */
@@ -1121,7 +1121,7 @@ static void count_things(struct ANALYZE *ccount)
 /*
 ** Determine what type of input we must deal with.
 **
-** First, we try to identify the file by magic number.	If that
+** First, we try to identify the file by magic number.  If that
 ** doesn't work, we call count_things() and try to make an
 ** educated guess based uppon the quantities of certain characters
 ** and constructs present.
@@ -1154,7 +1154,7 @@ static int analyze_input(int *skip_size)
 		}
 
 	/*
-	** Check for TBCP.	Since TBCP is supposed to _only_
+	** Check for TBCP.  Since TBCP is supposed to _only_
 	** work when a PostScript interpreter is active, we
 	** take the presence of TBCP as an indication that
 	** the file is a PostScript file.
@@ -1231,7 +1231,7 @@ static int analyze_input(int *skip_size)
 		return IN_TYPE_MGC;
 
 	/*
-	** Test for GIF files.	The signature is
+	** Test for GIF files.  The signature is
 	** "GIF87a" or "GIF89a".
 	*/
 	if( in_left > 6 && (strncmp((char*)in_ptr, "GIF87a", 6) == 0 || strncmp((char*)in_ptr, "GIF89a", 6) == 0) )
@@ -1271,7 +1271,7 @@ static int analyze_input(int *skip_size)
 		return IN_TYPE_XBM;
 
 	/*
-	** Most X-Windows bit maps do not have a signiture.	 Since they are
+	** Most X-Windows bit maps do not have a signiture.  Since they are
 	** valid C code we must be careful not to misidentify ordinary C code
 	** as an X bitmap.
 	*/
@@ -1379,8 +1379,8 @@ static int analyze_input(int *skip_size)
 		return IN_TYPE_PDF;
 
 	/*
-	** Test for plot format files.	This test will only work if
-	** the plot size is square.	 I don't know, this may always
+	** Test for plot format files.  This test will only work if
+	** the plot size is square.  I don't know, this may always
 	** be the case.
 	*/
 	if( in_left > 9 && in_ptr[0]=='s'
@@ -1446,7 +1446,7 @@ static int analyze_input(int *skip_size)
 
 	/*
 	** If we have gotten this far and there is an awful lot
-	** of non-ASCII stuff, assume it is binary.	 Had the file
+	** of non-ASCII stuff, assume it is binary.  Had the file
 	** contained a dot matrix printer graphic, it would have
 	** been caught by the clause above.
 	**
@@ -1534,7 +1534,7 @@ static int analyze_input(int *skip_size)
 
 /*
 ** Rewind in_handle, even if this means copying it to a
-** temporary file.	When this is called the first buffer
+** temporary file.  When this is called the first buffer
 ** of data is always still in memory.
 **
 ** The variable "skip" specifies the number of bytes at the
@@ -1549,7 +1549,7 @@ static void stubborn_rewind(void)
 	off_t skip;
 	struct stat statbuf;
 
-	/* Compute the size of header to skip.	In effect, skip = in_ptr - in_buffer. */
+	/* Compute the size of header to skip.  In effect, skip = in_ptr - in_buffer. */
 	skip = (qentry.attr.postscript_bytes - in_left);
 
 	/* Get information about the file. */
@@ -1577,7 +1577,7 @@ static void stubborn_rewind(void)
 		int retval;
 
 		/*
-		** Set the size (so far) of the unfiltered input file to skip.	We set
+		** Set the size (so far) of the unfiltered input file to skip.  We set
 		** it to skip instead of 0 because the code below adds the length of
 		** the part it copies which does not include the header whose size is
 		** indicated by skip.
@@ -1623,7 +1623,7 @@ static void stubborn_rewind(void)
 	} /* end of stubborn_rewind() */
 
 /*
-** Execute a filter on the input file.	Filters may be chained
+** Execute a filter on the input file.  Filters may be chained
 ** together by calling this function repeatedly.
 **
 ** It attaches the current in_handle to the stdin of the filter
@@ -1693,7 +1693,7 @@ static void exec_filter_argv(const char *filter_path, const char *arg_list[])
 		** Setting the real IDs would not seem to be necessary, but on Linux it
 		** results in the saved IDs being set too, which setting the effective
 		** IDs alone does not accomplish.  However Linux does set the saved
-		** IDs during execv().	This was verified by examining /proc/self/status.
+		** IDs during execv().  This was verified by examining /proc/self/status.
 		** So even though setting both isn't necessary on Linux, it does seem
 		** to be stronger medicine and so may get results on some other systems
 		** which might not implement saved IDs some sanely.
@@ -1749,7 +1749,7 @@ static void exec_filter(const char *filter_path, ...)
 
 /*
 ** This function executes a filter to convert the input file to
-** PostScript.	It is a complex front end for exec_filter_argv().
+** PostScript.  It is a complex front end for exec_filter_argv().
 **
 ** The arguments to this function are the name of the executable file,
 ** the name to be passed in argv[0], and the name to be passed as the
@@ -1853,8 +1853,8 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 	/*
 	** Merge the default filter options with those the user has
 	** provided.  Remove filter options which don't apply to this
-	** filter.	For those which contain this filter's prefix, chop
-	** off the prefix.	Convert keywords to lower case but not
+	** filter.  For those which contain this filter's prefix, chop
+	** off the prefix.  Convert keywords to lower case but not
 	** their arguments.
 	*/
 	for(i=0; (si = si_list[i]); i++)
@@ -1924,7 +1924,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 ** when the required filter is not available.
 **
 ** If the "-e hexdump" switch was not used try to use the responder to
-** tell the user that we are rejecting the job.	 If the "-e hexdump"
+** tell the user that we are rejecting the job.  If the "-e hexdump"
 ** switch WAS used or the responder fails, run the file thru the hexdump
 ** filter, put a message in the job's log file, and try to force a banner
 ** page.
@@ -1997,7 +1997,7 @@ static void no_filter(const char *file_type_str)
 /*
 ** If the block in the buffer is the first block of a
 ** compressed or gziped file, execute a filter to uncompress
-** it and return TRUE.	This is called from the function
+** it and return TRUE.  This is called from the function
 ** get_input_file(), below.
 */
 static const char *compressed(void)
@@ -2044,10 +2044,10 @@ static void run_appropriate_filter(const struct FILTER *f, const char *infile_na
 	char fpath[MAX_PPR_PATH];
 
 	/*
-	** Settle on a title string for the filter.	 Since
+	** Settle on a title string for the filter.  Since
 	** no DSC comments have been read yet, this will not
 	** be from a "%%Title:" comment, but it may have come
-	** from a -C (--title) switch.	Otherwise, it is
+	** from a -C (--title) switch.  Otherwise, it is
 	** probably the name of the input file.
 	*/
 	if(qentry.Title)					/* Try Title from command line. */
@@ -2078,7 +2078,7 @@ static void run_appropriate_filter(const struct FILTER *f, const char *infile_na
 	if(! f->markup || option_markup == MARKUP_FORMAT)
 		{
 		/*
-		** Some filters may not be present.	 Check and see
+		** Some filters may not be present.  Check and see
 		** if this filter is present.  If it isn't, print
 		** the excuse string.
 		*/
@@ -2148,9 +2148,9 @@ static void run_appropriate_filter(const struct FILTER *f, const char *infile_na
 	} /* end of run_appropriate_filter() */
 
 /*=====================================================================
-** This code is used by the hack "keepinfile".	It is called after
+** This code is used by the hack "keepinfile".  It is called after
 ** in_load_buffer() is called, so it must start by writing the data
-** in the input buffer.	 This routine is called after read_dot_header()
+** in the input buffer.  This routine is called after read_dot_header()
 ** but before check_for_PJL().
 =====================================================================*/
 static void save_infile(void)
@@ -2163,7 +2163,7 @@ static void save_infile(void)
 	/*
 	** Unless someone changes main(), this if will always be
 	** true.  We must assign the id now because we will be
-	** using it in the ppr_fnamef() below.	The code in main()
+	** using it in the ppr_fnamef() below.  The code in main()
 	** will see that we have assingned the id and will
 	** not do it again.
 	*/
@@ -2273,7 +2273,7 @@ static void do_passthru(const struct FILTER *f)
 		get_next_id(&qentry);
 
 	/* The input file will be copied into a "-barbar" file in the
-	   jobs directory.	Create the "-barbar" file.	We will use this
+	   jobs directory.  Create the "-barbar" file.  We will use this
 	   fname[] value again later. */
 	ppr_fnamef(fname, DATADIR"/%s:%s-%d.%d(%s)-barbar", qentry.destnode, qentry.destname,qentry.id, qentry.subid, qentry.homenode);
 	if((out_handle = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
@@ -2335,7 +2335,7 @@ static void do_passthru(const struct FILTER *f)
 	} /* end of do_passthru() */
 
 /*=====================================================================
-** This function is called from main().	 It opens the input file.  If
+** This function is called from main().  It opens the input file.  If
 ** the input file is not PostScript, it attaches a filter to it and
 ** prepares the file reading routines to read from the filter output.
 **
@@ -2388,7 +2388,7 @@ int infile_open(const char filename[])
 	/*
 	** Read any PPR user identification header.
 	** These headers are used when submitting non-PostScript
-	** files for printing.	The information in such a header
+	** files for printing.  The information in such a header
 	** is similiar to that in PostScript header comments.
 	** Such a header is generated by the PRNAUTH program.
 	** The whole thing is a hack.
@@ -2399,7 +2399,7 @@ int infile_open(const char filename[])
 	   then it is necessary to keep a copy of the input file.
 	   The routine save_infile() copies the contents of the
 	   input buffer and anything else it can read from the
-	   input file to a queue file ending in "-infile".	It then
+	   input file to a queue file ending in "-infile".  It then
 	   makes the new file the input file and calls in_load_buffer(). */
 	if( qentry.opts.hacks & (HACK_KEEPINFILE | HACK_TRANSPARENT) )
 		save_infile();
@@ -2567,7 +2567,7 @@ int infile_force_type(const char type[])
 ** This consists of the -T option which selects the filter and
 ** a brief description of the file type.  File types which can't
 ** be selected, such as IN_TYPE_UNRECOGNIZED are indicated by a NULL
-** pointer in the .name member.	 These are skipt.
+** pointer in the .name member.  These are skipt.
 */
 void minus_tee_help(FILE *outfile)
 	{

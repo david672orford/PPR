@@ -41,7 +41,7 @@
 
 /*! construct a filename using a printf()-style format string
 
-This is a special version of sprintf().	 It will never write more than
+This is a special version of sprintf().  It will never write more than
 MAX_PPR_PATH characters.  It only understands %s and %d.  On MS-Windows
 systems it will convert ":" to "!" because MS OSs are confused by colons in
 filenames.
@@ -123,7 +123,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 	*di = '\0';
 	va_end(va);
 
-	/* This is a hack for Cygnus Win32.	 It changes the colons
+	/* This is a hack for Cygnus Win32.  It changes the colons
 	   to exclaimation points because Win32 treats colons as
 	   the separator after the drive letter.  Since this hack makes
 	   the change when a queue file is created and when it is opened

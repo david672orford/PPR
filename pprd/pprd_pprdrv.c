@@ -34,7 +34,7 @@
 */
 
 /* This is for debugging.  Every time pprdrv is launched, strace will be launched
-   to trace it and put the output in this file.	 The file will be overwritten each
+   to trace it and put the output in this file.  The file will be overwritten each
    time.  This debugging code is not intended for production systems.
    */
 #if 0
@@ -193,7 +193,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 
 		/*
 		** We mustn't call fatal() here as it would remove the
-		** pprd lock file.	I am not even sure it is ok to
+		** pprd lock file.  I am not even sure it is ok to
 		** call error() and exit().
 		*/
 		error("%s(): Can't execute pprdrv, execl() failed, errno = %d (%s)", function, errno, gu_strerror(errno));
@@ -290,8 +290,8 @@ static void pprdrv_exited(int prnid, int wstat)
 	#endif
 
 	/*
-	** Act on pprdrv exit code.	 Note that we wait until the next switch to
-	** handle EXIT_PRNERR and EXIT_PRNERR_NORETRY.	Also note that in this
+	** Act on pprdrv exit code.  Note that we wait until the next switch to
+	** handle EXIT_PRNERR and EXIT_PRNERR_NORETRY.  Also note that in this
 	** switch we replace certain more specific exit codes with those codes.
 	*/
 	switch(estat)
@@ -397,7 +397,7 @@ static void pprdrv_exited(int prnid, int wstat)
 
 				/*
 				** If every never bit has been set, then arrest the job and
-				** inform the user.	 But, if that was the 1st pass, we give
+				** inform the user.  But, if that was the 1st pass, we give
 				** the job a second chance.
 				*/
 				if(queue[y].never == ((1 << groups[destid_local_to_gindex(printers[prnid].jobdestid)].members) - 1))
@@ -493,7 +493,7 @@ static void pprdrv_exited(int prnid, int wstat)
 
 	/*
 	** Here we go again.  This time we only pay attention to two generic
-	** error codes.	 More specific error codes have been converted by
+	** error codes.  More specific error codes have been converted by
 	** now.
 	*/
 	switch(estat)

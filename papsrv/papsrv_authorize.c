@@ -14,7 +14,7 @@
 */
 
 /*
-** This module contains support for CAP AUFS authorization.	 There is also
+** This module contains support for CAP AUFS authorization.  There is also
 ** skeletal support for the authentication described in Inside AppleTalk,
 ** Second Edition; which authentication is not yet implemented in MacOS.
 */
@@ -40,7 +40,7 @@
 **
 ** If a user is preauthorized it means that papsrv vouches for the user's
 ** authenticity and ppr(1) does not need to try to determine if the user
-** is authentic.  This is indicated by invoking ppr with the -A switch.	 This
+** is authentic.  This is indicated by invoking ppr with the -A switch.  This
 ** routine will use *preauthorized to set a flag to true if the -A switch
 ** should be used.
 **
@@ -59,7 +59,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	** This code looks for a "%%For:" line in the first buffer of the
 	** print job.  If one is found, it checks to see if that name is
 	** among those authorized to use the printer.  This is a pretty
-	** lame form of authorization.	If AUFS security is being used,
+	** lame form of authorization.  If AUFS security is being used,
 	** then this information will be put to better use further down
 	** in this function.
 	*/
@@ -92,7 +92,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	/* Soft buffer reset to undo the damage we did by reading lines. */
 	reset_buffer(FALSE);
 
-	/* This is the default.	 It will survive is AUFS security isn't being used
+	/* This is the default.  It will survive is AUFS security isn't being used
 	   or if AUFSSecurityUsername is set to "DSC". */
 	*username = dsc_username;
 
@@ -131,7 +131,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 		FILE *f;
 
 		/*
-		** Try to open the AUFS security file.	If it can't be found,
+		** Try to open the AUFS security file.  If it can't be found,
 		** say the user doesn't have a volume mounted.
 		*/
 		ppr_fnamef(aufs_security_file, "%s/net%d.%dnode%d", aufs_security_dir, net / 256, net % 256, node);
@@ -144,7 +144,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 			}
 
 		/*
-		** Try to read a line from the AUFS security file.	If we can't
+		** Try to read a line from the AUFS security file.  If we can't
 		** we will assume the file is empty which indicates that the user
 		** has no volumes mounted.
 		*/
@@ -242,7 +242,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	} /* end of preauthorize() */
 
 /*
-** Handle a "%%Login:" command.	 When this routine is called, the login
+** Handle a "%%Login:" command.  When this routine is called, the login
 ** request is in line[].  If the login request is acceptable, this routine
 ** should set the character pointer pointed to by username to point to a
 ** string containing the username, and set the integer pointed to by

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -60,12 +60,13 @@ while [ "$1" != "" ]
 		echo "$1 doesn't exist!"
 		exit 1
 		fi
-	echo "	chown $USER_PPR:$GROUP_PPR \"$1\""
+	echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
 	chown $USER_PPR "$RPM_BUILD_ROOT$1"
 	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1"
-	echo "	chmod 644 \"$1\""
+	echo "  chmod 644 \"$1\""
 	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
-	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
+	# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
+	echo "%$TYPE $1" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
 	shift
 	done

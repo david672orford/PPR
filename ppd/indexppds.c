@@ -312,7 +312,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Warn */
-	fprintf(indexfile, "# This file format is a temporary hack.	 Its format will change.\n");
+	fprintf(indexfile, "# This file format is a temporary hack.  Its format will change.\n");
 
 	/* iterate over the nameless values */
 	for(i=0; section[i].name; i++)

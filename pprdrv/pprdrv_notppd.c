@@ -30,7 +30,7 @@
 
 /*
 ** These functions emmit PostScript code fragments for things the PPD files
-** does not tell us how to do.	Some of the code in this module reads or
+** does not tell us how to do.  Some of the code in this module reads or
 ** creates NonPPDFeature comments as described in Adobe Technical Note #????.
 */
 

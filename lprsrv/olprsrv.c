@@ -34,7 +34,7 @@
 ** with PPR version 1.30.  It is provided because the lprsrv in PPR
 ** version 1.32 is a major rewrite.
 **
-** Notice that this server doesn't redefine libppr_throw().	 This
+** Notice that this server doesn't redefine libppr_throw().  This
 ** isn't worth fixing since this is retired code.  All it means
 ** is that some fatal error messages get written to stderr rather
 ** than the log file.
@@ -238,7 +238,7 @@ void uprint_error_callback(const char *format, ...)
 #endif
 
 /*
-** Run an external command.	 Return 0 if it runs an exits with
+** Run an external command.  Return 0 if it runs an exits with
 ** a status of zero, return -1 if it can't be run or exits
 ** with a non-zero status.
 */
@@ -286,7 +286,7 @@ int run(const char *file, const char *const argv[])
 	} /* end of run() */
 
 /*
-** Do a truncating string copy.	 The parameter maxlen
+** Do a truncating string copy.  The parameter maxlen
 ** specifies the maximun length to copy exclusive of the
 ** NULL which terminates the string.
 */
@@ -489,7 +489,7 @@ int authorized(const char *name)
 ** Read file data from stdin and write it to the
 ** temporary file.
 **
-** Return the number of bytes read.	 Return -1 if there
+** Return the number of bytes read.  Return -1 if there
 ** is an error.
 */
 int receive_data_file(char *command, int tempfile)
@@ -647,12 +647,12 @@ void receive_control_file(char *command, struct CONTROL_FILE *control)
 	** (That is, until we have gotten the numbers of bytes we have
 	** been told to expect to find in the control file.)
 	** We try to recognize control file lines and stash the information
-	** away in the structure called "control".	When it comes to the
+	** away in the structure called "control".  When it comes to the
 	** type of the file, we may write strings to "control.type"
 	** which will later be passed to ppr(1) with its -T switch.
 	** We will also at times write strings to "control.lp_type".
 	** This will be used if the jobs is eventually submitted to the
-	** system spooler.	If the system spooler is LP, "control.lp_type"
+	** system spooler.  If the system spooler is LP, "control.lp_type"
 	** is submitted as the argument to the -T switch, if the system
 	** spooler is LPR, the contents of "control.lp_type" is submited
 	** as the switch that it is.
@@ -883,7 +883,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 
 	/*
 	** If a job name was supplied for the banner page, pass it
-	** to ppr's -C switch.	If it isn't, pass along the file name.
+	** to ppr's -C switch.  If it isn't, pass along the file name.
 	**
 	** (ppr's -C switch specifies the default job title.)
 	** This may be overridden in a moment if "lpr -p" was used.
@@ -933,7 +933,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	switch(control->files[file_index].type)
 		{
 		/*
-		** Plain text file.	 Actually, the user probably has not
+		** Plain text file.  Actually, the user probably has not
 		** indicated the file type at all, so we will let PPR
 		** auto-detect the type.
 		*/
@@ -1084,7 +1084,7 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 		args[x++] = temp_outputtray;
 		}
 
-	/* DEC OSF Orientation.	 Many filters will ignore this. */
+	/* DEC OSF Orientation.  Many filters will ignore this. */
 	if(control->Oorientation[0])
 		{
 		char *ptr;
@@ -1097,8 +1097,8 @@ void build_argv_ppr(const char *args[], char *printer, struct CONTROL_FILE *cont
 		}
 
 	/*
-	** DEC OSF Duplex settings.	 Not all filters implement
-	** all of these modes.	We insert a filter option so that
+	** DEC OSF Duplex settings.  Not all filters implement
+	** all of these modes.  We insert a filter option so that
 	** the filter may know how to format the job.  We insert a
 	** -F switch, in the first three instances, so that the
 	** desired mode will be selected even if the filter does
@@ -1276,7 +1276,7 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 	switch(control->files[file_index].type)
 		{
 		/*
-		** Plain text file.	 Actually, the user probably has not
+		** Plain text file.  Actually, the user probably has not
 		** indicated the file type at all.
 		*/
 		case 'f':
@@ -1292,7 +1292,7 @@ void build_argv_lpr(const char *args[], char *printer, struct CONTROL_FILE *cont
 			break;
 
 		/*
-		** PostScript.	It seems that Lpr does not have
+		** PostScript.  It seems that Lpr does not have
 		** a switch for this type.
 		*/
 		case 'o':
@@ -1447,7 +1447,7 @@ void build_argv_lp(const char *args[], char *printer, struct CONTROL_FILE *contr
 	switch(control->files[file_index].type)
 		{
 		/*
-		** Plain text file.	 Actually, the user probably has not
+		** Plain text file.  Actually, the user probably has not
 		** indicated the file type at all.
 		*/
 		case 'f':
@@ -1760,7 +1760,7 @@ void take_job(char *command)
 
 				/* If couldn't open, say there is no room.
 				   Doing this will cause the remote end
-				   to try again later.	I don't know if this
+				   to try again later.  I don't know if this
 				   is a good idea or not. */
 				else
 					{
@@ -1906,7 +1906,7 @@ void show_jobs(char *command)
 **	  imply that a user on Node A may use ppr to submit a job and then use
 **	  lprm pointing at lprsrv on Node A to delete it.  All jobs received
 **	  thru lprsrv are considered to be in some sense remote jobs, even
-**	  if they are `loopback' jobs.	A job submitted thru ppr is a local job.
+**	  if they are `loopback' jobs.  A job submitted thru ppr is a local job.
 **	  Local jobs may only be deleted thru lprsrv under limited circumstances
 **	  described in the following rules.)
 **
@@ -2207,7 +2207,7 @@ static int remove_jobs_lprm(const char *queue, const char *agent, char *list)
 	} /* end of remove_jobs_lprm() */
 
 /*
-** Handler for the ^E command.	It does some preliminary parsing
+** Handler for the ^E command.  It does some preliminary parsing
 ** and then passes the work on to a spooler specific function
 ** defined above.
 */
@@ -2539,14 +2539,14 @@ int main(int argc,char *argv[])
 	struct gu_getopt_state getopt_state;
 
 	/*
-	** Change to ppr's home directory.	That way we know
+	** Change to ppr's home directory.  That way we know
 	** where our core dumps will go. :-)
 	*/
 	chdir(HOMEDIR);
 
 	/*
-	** Parse the command line options.	We use the parsing routine
-	** in libppr.a.	 All of the parsing state is kept in the
+	** Parse the command line options.  We use the parsing routine
+	** in libppr.a.  All of the parsing state is kept in the
 	** structure getopt_state.
 	*/
 	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);

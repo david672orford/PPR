@@ -29,7 +29,7 @@ static int lastspecial = 1;
 char buf[BUFLENGTH];
 
 /*
-** This next routine writes out a `special' character.	In this case,
+** This next routine writes out a `special' character.  In this case,
 ** we simply put it out, since any special character terminates the
 ** preceding token.
 */
@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 				ungetc(c, in);
 				if (b == buf)					/* if we didn't get anything, */
 					{
-					fprintf(stderr, "Oops!	Missed a case: %c.\n", c);
+					fprintf(stderr, "Oops!  Missed a case: %c.\n", c);
 					exit(1) ;
 					}
 				*b++ = '\0';

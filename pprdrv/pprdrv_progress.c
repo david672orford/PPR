@@ -30,7 +30,7 @@
 
 /*
 ** This module contains functions which write a "Progress:" line to the end of
-** the queue file.	The format of this line is:
+** the queue file.  The format of this line is:
 **
 ** Progress: xxxxxx yyyyyy zzzzzz
 **
@@ -106,7 +106,7 @@ void state_update_pprdrv_puts(const char line[])
 
 		/*
 		** Use fstat() to examine the "other execute" to see if
-		** another process has `rewound' the file.	If another process
+		** another process has `rewound' the file.  If another process
 		** has `rewound' the file, we can't use it any more.
 		** If all is well, the other process will have unlinked
 		** this one just after we opened it.  Of course it is possible
@@ -256,7 +256,7 @@ static void queuefile_progress_write(void)
 	} /* end of queuefile_progress_write() */
 
 /*
-** This routine is called just after each "%%Page:" comment is emitted.	 Thus,
+** This routine is called just after each "%%Page:" comment is emitted.  Thus,
 ** it reflects the number of page descriptions and not necessarily the
 ** number of physical pages.
 */
@@ -274,7 +274,7 @@ void progress_page_start_comment_sent(void)
 
 /*
 ** This is called each time we get an HP PJL message from the printer
-** indicating that a page has hit the output tray.	The argument
+** indicating that a page has hit the output tray.  The argument
 ** indicates the number of page descriptions on the page.
 */
 void progress_pages_truly_printed(int n)
@@ -309,7 +309,7 @@ void progress_bytes_sent(int n)
 
 /*
 ** This is called every time the printer's status file is updated.
-** The text[] is a status message from the printer.	 The status
+** The text[] is a status message from the printer.  The status
 ** file is used by the "ppop status" command to explain the specific
 ** reason for the printer status.
 */
@@ -322,8 +322,8 @@ void progress_new_status(const char text[])
 
 /*
 ** This is used to subtract bytes we are using to constantly update the 
-** printers LCD or LED display.	 This routine doesn't cause anything to 
-** be written to the queue file or the status update file.	It just changes 
+** printers LCD or LED display.  This routine doesn't cause anything to 
+** be written to the queue file or the status update file.  It just changes 
 ** the next value written.
 **
 ** (It should be noted that the LCD/LED update feature described above

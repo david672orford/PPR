@@ -17,7 +17,7 @@
 ** AT&T/Apple AppleTalk Library Interface module.
 **
 ** This works with the AppleTalk Network Program which
-** comes with StarLAN LAN Manager.	It also works with
+** comes with StarLAN LAN Manager.  It also works with
 ** Netatalk and David Chappell's Netatalk ALI compatibility
 ** library.
 */
@@ -211,7 +211,7 @@ void reset_buffer(int hard)		/* this resets the end of file stuff */
 ** Get a character from the client.
 **
 ** This is called by pap_getline() to read the first line received to see
-** if it is a query or a printjob.	If it is a query, getline() will be
+** if it is a query or a printjob.  If it is a query, getline() will be
 ** used to read the rest of the query, if it is a printjob, it will not.
 **
 ** This routine will return the character read, unless the PAP connextion
@@ -360,7 +360,7 @@ void add_name(int prnid)
 /*========================================================
 ** AppleTalk dependent part of printjob()
 **
-** Copy the job to ppr.	 We will not use the buffering
+** Copy the job to ppr.  We will not use the buffering
 ** routines to do this, though we will use the buffer
 ** and the buffering routine global variables.
 ========================================================*/
@@ -450,7 +450,7 @@ void appletalk_dependent_daemon_main_loop(void)
 			}
 
 		/*
-		** Something happened!	Find the file descriptor
+		** Something happened!  Find the file descriptor
 		** it happened on and act on it.
 		*/
 		for(x=0; x<name_count; x++)				/* try each file descriptor */

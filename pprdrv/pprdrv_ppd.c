@@ -358,10 +358,10 @@ void read_PPD_file(const char *ppd_file_name)
 	}
 	
 	/*
-	** If the printer configuration does not specify a PPD file, bail out.	A
+	** If the printer configuration does not specify a PPD file, bail out.  A
 	** printer configuration file is not absolutely required to specify a PPD
 	** file.  (Though the ppad command makes it pretty difficult not to.  You
-	** have to hand create or edit the printer configuration file.	Obviously,
+	** have to hand create or edit the printer configuration file.  Obviously,
 	** this code was inserted in the early days of PPR.)  If printer has no PPD file, then stop things right here before we
 	** get to fopen(), which might cause a core dump.
 	*/
@@ -733,7 +733,7 @@ const char *find_feature(const char *featuretype, const char *option)
 
 /*
 ** This is called by both include_feature() and begin_feature().  It
-** determines if we have to remove or change this feature.	A feature
+** determines if we have to remove or change this feature.  A feature
 ** is changed by replacing featuretype or option using the 
 ** pointers provided.  To remove a feature, set both to NULL.
 */
@@ -786,12 +786,12 @@ static void feature_change(const char **featuretype, const char **option)
 
 /*
 ** Insert the PostScript code for a given PPD-described feature, if the PPD
-** file contains such a description of it.	If not, insert an
+** file contains such a description of it.  If not, insert an
 ** "%%IncludeFeature:" comment so that a spooler furthur down the line can
 ** insert it if it has it.
 **
 ** The parameter featuretype[] might be "*Duplex" and option[] might
-** be "DuplexNoTumble".	 It is possible for option[] to be NULL.
+** be "DuplexNoTumble".  It is possible for option[] to be NULL.
 **
 ** This function is called whenever an ``%%IncludeFeature:'' comment
 ** is encountered in the input file.  It is also called by
@@ -944,7 +944,7 @@ void begin_feature(const char featuretype[], const char option[], FILE *infile)
 						"called \"%s %s\", retaining old code."), featuretype, option ? option : "");
 
 			printer_puts("% PPR retained the following feature code despite fact that no such\n"
-							 "% feature is listed in the PPD file.	Use ppr's -K switch to change\n"
+							 "% feature is listed in the PPD file.  Use ppr's -K switch to change\n"
 							 "% this behavior.\n");
 			keep = TRUE;
 			}
@@ -954,7 +954,7 @@ void begin_feature(const char featuretype[], const char option[], FILE *infile)
 				"called \"%s %s\", removing existing code."), featuretype, option ? option : "");
 
 			printer_putline("% The code for this printer feature was removed by PPR because\n"
-							"% there is no such feature listed in the PPD file.	 Use ppr's -K\n"
+							"% there is no such feature listed in the PPD file.  Use ppr's -K\n"
 							"% switch to change this behavior.");
 			}
 		}

@@ -27,7 +27,7 @@
 
 /*
 ** This function takes a character set name and finds a PostScript
-** encoding for it.	 It fills in the supplied structure with the
+** encoding for it.  It fills in the supplied structure with the
 ** name of that encoding and other information about it.
 */
 int charset_to_encoding(const char charset[], struct ENCODING_INFO *encinfo)

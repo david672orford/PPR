@@ -40,7 +40,7 @@ const char myname[] = "ppr-config";
 
 static void do_paths(char format[], char language[])
 	{
-	printf("# This is NOT a configuration file!	 Don't modify it!\n");
+	printf("# This is NOT a configuration file!  Don't modify it!\n");
 
 	if(strcmp(language, "--pm") == 0)
 		printf("package PPR;\n");

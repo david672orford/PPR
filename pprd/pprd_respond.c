@@ -62,7 +62,7 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 	int fd;
 	pid_t pid;									/* Process id of responder */
 
-	/* Format the job name as a string.	 This will be the 1st parameter. */
+	/* Format the job name as a string.  This will be the 1st parameter. */
 	snprintf(jobname, sizeof(jobname), "%s:%s-%d.%d(%s)", destnode, destname, id, subid, homenode);
 
 	/* Open the queue file before the fork since it may be deleted when we return. */

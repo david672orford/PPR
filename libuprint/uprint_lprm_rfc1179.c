@@ -38,10 +38,10 @@
 #include "uprint_private.h"
 
 /*
-** Handle an lprm style cancel request.	 The file names
+** Handle an lprm style cancel request.  The file names
 ** list is filled with a list of job numbers and
-** user names.	The queue has previously been specified
-** with uprint_set_dest().	  This function can be
+** user names.  The queue has previously been specified
+** with uprint_set_dest().  This function can be
 ** used from uprint-lprm or from an lpd emulator in order
 ** to process requests from across the network.
 */

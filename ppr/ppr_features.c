@@ -146,7 +146,7 @@ int option_features(const char destnode[], const char destname[])
 			p[len] = '\0';
 
 			printf(" %s%-28s  --feature %s=%s\n",
-				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "	 ",
+				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "    ",
 				translation,
 				ui,
 				p);

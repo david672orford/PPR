@@ -25,7 +25,7 @@
 
 /*
 ** Given the required information, this function will compute the cost
-** of printing the job.	 This function is complicated, that is why it
+** of printing the job.  This function is complicated, that is why it
 ** is now a function.  It is called from pprdrv when printing the banner
 ** page and when debiting the account and from pprd when invoking the
 ** responder.

@@ -90,7 +90,7 @@ int load_mountedlist(void)
 **
 ** This code is called during banner page generation and at the top of the 
 ** Document Setup Section (if automatic bin selection is on and the document
-** is all to be printed on one type of media).	It may also be called by 
+** is all to be printed on one type of media).  It may also be called by 
 ** select_medium_by_dsc_name() which may be called during page setup.
 **
 ** The media name specified is a valid name in the PPR media list, not this 

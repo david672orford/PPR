@@ -23,10 +23,10 @@
 ** We must use this because sscanf() does not recognize "1" or "42" as
 ** valid floating point numbers.
 **
-** The above doesn't seem very likely.	Maybe there is another reason.
+** The above doesn't seem very likely.  Maybe there is another reason.
 ** This function is similiar to strtod().  The difference is that this
 ** can only work on simply floating point values such as are used
-** in PostScript DSC comments.	It is not affected by locals, which
+** in PostScript DSC comments.  It is not affected by locals, which
 ** could be good under certain circumstances.
 */
 double gu_getdouble(const char *s)

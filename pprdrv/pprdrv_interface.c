@@ -70,7 +70,7 @@ static volatile gu_boolean sigusr1_caught;		/* for "signal" and "signal/pjl" job
 static gu_boolean interface_fault_check_disable;
 
 /*
-** This is called from the SIGCHLD handler.	 It checks pid to see it if is
+** This is called from the SIGCHLD handler.  It checks pid to see it if is
 ** the interface that has exited and if it has it stores the exit code
 ** in interface_wait_status and returns TRUE (so that the SIGCHLD handler
 ** won't go on asking subsystems if they own the child).
@@ -99,7 +99,7 @@ gu_boolean interface_sigchld_hook(pid_t pid, int wait_status)
 **
 ** If we are using the JobBreak method "signal" or "signal/pjl",
 ** the interface will send us this signal as soon as it has
-** set-up its SIGUSR1 handler.	It will also send us that signal
+** set-up its SIGUSR1 handler.  It will also send us that signal
 ** to acknowledge any USR1 signals we send it.
 */
 static void sigusr1_handler(int sig)
@@ -111,9 +111,9 @@ static void sigusr1_handler(int sig)
 	} /* end of sigusr1_handler() */
 
 /*
-** We call this no matter when the interface exits.	 In other words, it is
+** We call this no matter when the interface exits.  In other words, it is
 ** called from interface_fault_check() if it sees that interface_sigchld_hook()
-** has set interface_died and it is called from interface_close().	It is
+** has set interface_died and it is called from interface_close().  It is
 ** never called from a signal handler!
 **
 ** If this function finds that the interface didn't exit in a well-controlled
@@ -133,7 +133,7 @@ static void interface_exit_screen(void)
 		/*
 		** Since we did not send the signal, it is a fatal error,
 		** however we will not call fatal() because we must
-		** issue a rather complicated message.	We will make calls
+		** issue a rather complicated message.  We will make calls
 		** to alert(), and hooked_exit().
 		*/
 		alert(printer.Name, TRUE,
@@ -168,7 +168,7 @@ static void interface_exit_screen(void)
 		} /* end of if interface caught a signal */
 
 	/*
-	** It is possible that the interface did not exit.	I don't know
+	** It is possible that the interface did not exit.  I don't know
 	** why that might be, but it is possible.
 	*/
 	if(WIFSTOPPED(interface_wait_status))
@@ -183,8 +183,8 @@ static void interface_exit_screen(void)
 	** return strange exit codes when the system is starved for resources
 	** such as file descriptors.
 	**
-	** Oops!  There is one more exception!	Ghostscript will exit
-	** immediatly if a Postscript error occurs.	 We must be ready
+	** Oops!  There is one more exception!  Ghostscript will exit
+	** immediatly if a Postscript error occurs.  We must be ready
 	** for that.
 	*/
 	if(WEXITSTATUS(interface_wait_status) > EXIT_INTMAX)
@@ -224,7 +224,7 @@ void interface_fault_check(void)
 		DODEBUG_INTERFACE(("%s(): interface exit code is %d", function, WEXITSTATUS(interface_wait_status)));
 
 		/*
-		** Test for a very strange termination.	 Notice that normal
+		** Test for a very strange termination.  Notice that normal
 		** termination would have been caught by the clause above.
 		*/
 		if(WEXITSTATUS(interface_wait_status) == EXIT_PRINTED)
@@ -331,7 +331,7 @@ static void start_interface(const char *BarBarPDL)
 	/* duplicate this process */
 	if((intpid = fork()) < 0)
 		{
-		/* Fork failed.	 We don't want this information building up
+		/* Fork failed.  We don't want this information building up
 			   in the pprdrv log file, so we will not
 			   use fatal(). */
 		DODEBUG_INTERFACE(("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno)));
@@ -387,8 +387,8 @@ static void start_interface(const char *BarBarPDL)
 
 		/*
 		** Does it mean anything if we exit with EXIT_PRNERR_NORETRY?
-		** Yes it does!	 We _ARE_ the interface.  We can do anything
-		** an interface program can do!	 Hah!  Hah!	 Haah!
+		** Yes it does!  We _ARE_ the interface.  We can do anything
+		** an interface program can do!  Hah!  Hah!  Haah!
 		*/
 		fatal(EXIT_PRNERR_NORETRY, "%s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
@@ -411,7 +411,7 @@ static void start_interface(const char *BarBarPDL)
 
 	/*
 	** Make the two file descriptors which we use to communicate with the
-	** interface non-blocking.	We will be using select() to figure out
+	** interface non-blocking.  We will be using select() to figure out
 	** when they are ready.
 	*/
 	gu_nonblock(intstdin, TRUE);
@@ -495,7 +495,7 @@ int interface_close(gu_boolean flushit)
 	   stdout to us.  We kept this copy in case we have to interpose
 	   a RIP such as Ghostscript since we would want the RIP's error
 	   output to mingle with the output of the interface program
-	   (which is presumably messages from the printer).	 We must close it
+	   (which is presumably messages from the printer).  We must close it
 	   now before calling feedback_drain() since it would prevent it from
 	   detecting EOF from the read end of the pipe.
 	   */
@@ -567,7 +567,7 @@ void kill_interface(void)
 	} /* end of kill_interface() */
 
 /*
-** Routine to send SIGUSR1 job breaks.	This is only used with
+** Routine to send SIGUSR1 job breaks.  This is only used with
 ** interfaces which use the "signal" or "signal/pjl" jobbreak
 ** methods.
 */
@@ -679,7 +679,7 @@ static void printer_setup(const char *BarBarPDL, int iteration)
 	} /* end of printer_setup() */
 
 /*
-** Printer cleanup.	 Undo what we did or stuff like that.
+** Printer cleanup.  Undo what we did or stuff like that.
 ** We use the information from the "JobBreak: " line.
 */
 static void printer_cleanup(void)
@@ -809,7 +809,7 @@ void job_start(enum JOBTYPE jobtype)
 
 	/* If this is the main job and the main job is going to
 	   be in some PDL other than PostScript, then set BarBarPDL
-	   to the string which identifies that PDL.	 Or, if
+	   to the string which identifies that PDL.  Or, if
 	   neither of the above is true and we are doing the RIPing,
 	   then set the BarBarPDL to the name of the RIP's output
 	   format. */

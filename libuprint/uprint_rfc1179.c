@@ -30,7 +30,7 @@
 
 /*
 ** This module contains that portion of UPRINT that needs to run as root in 
-** order to open sockets with port numbers below 1024.	This file is
+** order to open sockets with port numbers below 1024.  This file is
 ** compiled to make the program uprint_rfc1179 which is setuid root.
 */
 
@@ -55,7 +55,7 @@
 /*
 ** TIMEOUT_HANDSHAKE is the time to wait on operations that
 ** should be completed immediately, such as stating the desired
-** queue name.	TIMEOUT_PRINT is the amount of time to wait for
+** queue name.  TIMEOUT_PRINT is the amount of time to wait for
 ** a response to the zero byte sent at the end of a data file.
 ** TIMEOUT_PRINT can be set separately because some printer
 ** Ethernet boards don't respond right away.
@@ -128,7 +128,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 
 	/*
 	** Make sure that the control file does not make false statements about either
-	** the username or the source node.	 Notice that will _will_ examine a final 
+	** the username or the source node.  Notice that will _will_ examine a final 
 	** unterminated line.
 	*/
 	{
@@ -444,7 +444,7 @@ int main(int argc, char *argv[])
 		return 1;
 		}
 
-	/* Be paranoid.	 If the real user isn't root, then the ability to setuid(0) should be gone. */
+	/* Be paranoid.  If the real user isn't root, then the ability to setuid(0) should be gone. */
 	if(real_uid != 0 && setuid(0) != -1)
 		{
 		uprint_error_callback("setuid(0) didn't fail");

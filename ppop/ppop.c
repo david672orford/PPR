@@ -29,7 +29,7 @@
 */
 
 /*
-** Operators utility for PostScript page printers.	It allows the queue
+** Operators utility for PostScript page printers.  It allows the queue
 ** to be viewed, jobs to be canceled, jobs to be held, printers to
 ** be started and stopped, and much more.
 */
@@ -108,7 +108,7 @@ void error(const char message[], ... )
 
 /*
 ** This is used in machine-readable output (which is often
-** tab-delimited).	This function replaces each tab with
+** tab-delimited).  This function replaces each tab with
 ** a single space.
 */
 void puts_detabbed(const char *string)
@@ -192,7 +192,7 @@ FILE *get_ready(const char nodename[])
 	sigprocmask(SIG_BLOCK, &set, &oset);
 
 	/* Before the command we must give the "address"
-	   to reply to.	 This address is our PID. */
+	   to reply to.  This address is our PID. */
 	fprintf(FIFO, "%ld ", (long int)pid);
 
 	return FIFO;
@@ -252,7 +252,7 @@ FILE *wait_for_pprd(int do_timeout)
 		}
 
 	/* Other execute indicates data which the caller should
-	   read using the returned file handle.	 Otherwise,
+	   read using the returned file handle.  Otherwise,
 	   print_reply() should be used.  */
 	return pprd_retcode == EXIT_OK_DATA ? reply_file : (FILE*)NULL ;
 	} /* end of wait_for_pprd() */
@@ -559,7 +559,7 @@ int parse_dest_name(struct Destname *dest, const char *destname)
 **==================================================================*/
 
 /*
-** Is the user privileged?	If the user identity has been changed
+** Is the user privileged?  If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
@@ -587,7 +587,7 @@ static gu_boolean privileged(void)
 ** not to gain additional access.
 **
 ** Generally, this will be used by servers running under privileged
-** user identities.	 They will use this so as not to exceed the privledge
+** user identities.  They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
 static int su(const char username[])
@@ -665,7 +665,7 @@ static gu_boolean proxy_for_match(const char job_proxy_for[], const char proxy_f
 
 /*
 ** This function return -1 (to indicate failure) if the indicated job
-** does not belong to the user and the user is not an operator.	 If -1
+** does not belong to the user and the user is not an operator.  If -1
 ** is returned, also prints an error message.
 **
 ** If the user is a proxy (the -X switch has been used) then the proxy
@@ -684,7 +684,7 @@ int job_permission_check(struct Jobname *job)
 	** If the user is an operator (as modified by the --su switch) and
 	** is not limiting his authority with the --proxy-for switch, then
 	** we can bail out right now because operators can manipulate any
-	** job.	 This will save us the time and trouble of opening the
+	** job.  This will save us the time and trouble of opening the
 	** queue file to figure out whose job it is.
 	*/
 	if(privileged() && !proxy_for && !magic_cookie)
@@ -772,7 +772,7 @@ int job_permission_check(struct Jobname *job)
 
 		/* If the command is a request by proxy, remote LPR users might be
 		   confused by the message above because they probably don't know
-		   anything about the proxy system.	 We will try to make things a
+		   anything about the proxy system.  We will try to make things a
 		   little clearer with this message.
 		   */
 		if(proxy_for)
@@ -844,8 +844,8 @@ int job_permission_check(struct Jobname *job)
 
 /*
 ** Return 0 if the job matches the current user id and proxy_for.
-** Return non-zero if it does not.	Notice that operator
-** privledge plays no part in this.	 Other than that, the
+** Return non-zero if it does not.  Notice that operator
+** privledge plays no part in this.  Other than that, the
 ** criteria should be the same as for job_permission_check().
 **
 ** The global variables uid and proxy_for are used by
@@ -1057,7 +1057,7 @@ static int interactive_mode(void)
 	while((ptr = ppr_get_command("ppop>", machine_readable)))
 		{
 		/*
-		** Break the string into white-space separated "words".	 A quoted string
+		** Break the string into white-space separated "words".  A quoted string
 		** will be treated as one word.
 		*/
 		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t\n", NULL)); x++)
@@ -1095,7 +1095,7 @@ static int interactive_mode(void)
 			break;
 
 		/*
-		** Call the dispatch() function to execute the command.	 If the
+		** Call the dispatch() function to execute the command.  If the
 		** command is not recognized, dispatch() will return -1.  In that
 		** case we print a helpful message and change the errorlevel to
 		** zero since -1 is not a valid exit code for a program.
@@ -1295,7 +1295,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, pipe_sighandler);
 
 	/*
-	** Install handler for SIGUSR1.	 PPRD will send
+	** Install handler for SIGUSR1.  PPRD will send
 	** us SIGUSR1 when the reply is ready.
 	*/
 	signal(SIGUSR1, user_sighandler);

@@ -105,7 +105,7 @@ static int open_tmp(void)
 ** Read file data from stdin and write it to the
 ** temporary file.
 **
-** Return the number of bytes read.	 Return -1 if there
+** Return the number of bytes read.  Return -1 if there
 ** is an error.
 */
 static ssize_t receive_data_file(size_t size_of_file, int tempfile)
@@ -278,7 +278,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 	/* Make sure we have a buffer big enough to store
 	   the complete text of the control file.  Notice
 	   that the buffer is always one byte bigger than
-	   control_buffer_len indicates it is.	This is to
+	   control_buffer_len indicates it is.  This is to
 	   leave room for a terminating NULL byte.
 	   */
 	if(control_buffer_len < control_file_len)
@@ -829,7 +829,7 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 				/* Open the temporary file if it is not already open.
 				   If we can't open it, say there is no room.
 				   Doing this will cause the remote end
-				   to try again later.	I don't know if this
+				   to try again later.  I don't know if this
 				   is a good idea or not.
 				   */
 				if(tempfile == -1 && (tempfile=open_tmp()) == -1)

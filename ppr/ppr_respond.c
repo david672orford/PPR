@@ -57,7 +57,7 @@
 
 /*
 ** This do-nothing signal handler is intalled before
-** launching the responder.	 If we left the normal
+** launching the responder.  If we left the normal
 ** SIGCHLD handler in place, it would report that
 ** a filter had failed.
 **
@@ -78,7 +78,7 @@ static void empty_reapchild(int sig)
 ** always be zero and qentry.homenode will always be the value returned
 ** from ppr_get_nodename().
 **
-** This function returns 0 if it succedest, -1 if it fails.	 The return
+** This function returns 0 if it succedest, -1 if it fails.  The return
 ** code is used by ppr_infile.c.  If there is no filter to convert the file
 ** to PostScript and calling this function returns -1, it will use the
 ** hexdump filter to report the error.

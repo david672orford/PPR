@@ -93,7 +93,7 @@ static char *gu_sscanf_strndup(const char *string, size_t len)
 
 /** safe sscanf()
 
-This function is similiar to sscanf().	It implements the following formats:
+This function is similiar to sscanf().  It implements the following formats:
 
 <dl>
 
@@ -115,7 +115,7 @@ This function is similiar to sscanf().	It implements the following formats:
 
 <dt>%s</dt>
 
-<dd>Read characters up to the next whitespace.	The argument should be a
+<dd>Read characters up to the next whitespace.  The argument should be a
 pointer to a char array with enough space to hold the string and the
 terminating NULL.  To prevent overruns, the size of the array may be
 specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
@@ -132,13 +132,13 @@ pointer which will be set to the address of the allocated memory.</dd>
 <dt>%z</dt>
 
 <dd>Read characters up to the end of the string.  The argument should be a
-char array.	 To prevent overruns, the size of the char array may be
+char array.  To prevent overruns, the size of the char array may be
 specified in the same manner as for the %s format.</dd>
 
 <dt>%Z</dt>
 
 <dd>Read characters up to the end of the string, allocate storeage
-for them, and copy them into that storage.	The argument should be a pointer to
+for them, and copy them into that storage.  The argument should be a pointer to
 a pointer to a char array.</dd>
 
 <dt>%Q</dt>
@@ -312,7 +312,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					break;
 				/*
 				 * Get the rest of the line as a string and
-				 * allocate storage for it.	 Notice that
+				 * allocate storage for it.  Notice that
 				 * we pay no attention to maxextlen.
 				 */
 				case 'Z':
@@ -349,7 +349,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					count++;
 					break;
 				/*
-				 * Get the rest of the line or a quoted string.	 If the
+				 * Get the rest of the line or a quoted string.  If the
 				 * line ends with whitespace, ommit it.
 				 */
 				case 'A':

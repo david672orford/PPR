@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -44,7 +44,7 @@ SAMPLE="ppr.conf.sample"
 # the second is the search list.
 findfile_test_basename_path_default ()
 	{
-	echo "	Searching for $2..." >&3
+	echo "  Searching for $2..." >&3
 	for i in `echo $3 | tr ':' ' '`
 		do
 		if [ `echo $i | cut -c1` = '/' ]
@@ -52,13 +52,13 @@ findfile_test_basename_path_default ()
 			# echo "Trying $i/$2" >&3
 			if [ $1 "$i/$2" ]
 				then
-				echo "	  Found $i/$2." >&3
+				echo "    Found $i/$2." >&3
 				echo "$i/$2"
 				return
 				fi
 			fi
 		done
-	echo "	  Not found, using $4." >&3
+	echo "    Not found, using $4." >&3
 	echo "$4"
 	}
 
@@ -68,8 +68,8 @@ if_dir_print ()
 	{
 	if [ -d "$1" ]
 		then
-		echo "	Found directory $1."
-		echo "	\"$1\"" >&5
+		echo "  Found directory $1."
+		echo "  \"$1\"" >&5
 		fi
 	}
 

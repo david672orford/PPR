@@ -14,7 +14,7 @@
 */
 
 /*
-** This module constains a very limited version of gu_fscanf().	 It can only scan
+** This module constains a very limited version of gu_fscanf().  It can only scan
 ** integers.
 */
 

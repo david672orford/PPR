@@ -70,7 +70,7 @@ int open_fifo(void)
 
 #ifdef HAVE_MKFIFO
 	/*
-	** This is the normal code.	 It creates and opens a POSIX FIFO.
+	** This is the normal code.  It creates and opens a POSIX FIFO.
 	*/
 	{
 	int wfd;
@@ -96,7 +96,7 @@ int open_fifo(void)
 
 #else
 	/*
-	** This is the substitute code for broken systems.	It creates an ordinary
+	** This is the substitute code for broken systems.  It creates an ordinary
 	** file which will grow without bounds.
 	*/
 	if((rfd = open(FIFO_NAME, O_RDONLY | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
@@ -145,7 +145,7 @@ void rename_old_log_file(void)
 
 /*
 ** This funtions makes sure that all of the user IDs are "ppr" and all
-** the group IDs are "ppr".	 For this to work, pprd must be setuid "ppr"
+** the group IDs are "ppr".  For this to work, pprd must be setuid "ppr"
 ** and setgid "ppr".  (Though of course it will also work if run by
 ** with as ppr:ppr.)
 **

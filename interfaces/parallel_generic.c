@@ -40,8 +40,8 @@
 ** specific module has not been written.
 **
 ** If your operating system does not yet have its own module, then you should
-** use this file as a basis to create one.	Note that the os-specific module 
-** is selected by the PARALLEL= line in Makefile.conf.	For example, if it says
+** use this file as a basis to create one.  Note that the os-specific module 
+** is selected by the PARALLEL= line in Makefile.conf.  For example, if it says
 ** "PARALLEL=linux", then interface_linux.c will be used.
 */
 
@@ -51,7 +51,7 @@
 #include "parallel.h"
 
 /*
-** This routine is called just after the port has been opened.	It should
+** This routine is called just after the port has been opened.  It should
 ** take interface options, as stored in the supplied structure, and
 ** use the supplied file descriptor to set up the driver accordingly.
 */
@@ -79,7 +79,7 @@ void parallel_port_reset(int fd)
 ** PARALLEL_PORT_BUSY
 **
 ** The raw parallel port signals should be returned.  Don't try
-** guess what they might mean.	That is done in parallel.c.
+** guess what they might mean.  That is done in parallel.c.
 */
 int parallel_port_status(int fd)
 	{

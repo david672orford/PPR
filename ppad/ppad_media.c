@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 5 April 2003.
 */
 
 /*
@@ -96,7 +96,7 @@ static FILE *open_database(const char mode[])
 
 	if(getenv("RPM_BUILD_ROOT"))
 		{
-		if(getuid() != geteuid())
+		if(getuid() != geteuid() && getuid() != 0)
 			{
 			fprintf(errors, X_("Warning: RPM_BUILD_ROOT ignored\n"));
 			}

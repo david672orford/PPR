@@ -25,7 +25,7 @@
 
 /*
 ** The purpose of this module is to detect when the printer
-** is stalled.	A printer may become stalled if it is out
+** is stalled.  A printer may become stalled if it is out
 ** of paper, if the PostScript code is taking a very long time
 ** to execute, or if the PostScript code is in an infinite loop.
 */
@@ -95,9 +95,9 @@ void writemon_start(const char operation[])
 ** The actual stall messages are dispatched from inside this routine.
 **
 ** The argument sleep_time is a timeval structure that should be 
-** filled in with the amount of time select() should sleep.	 This
+** filled in with the amount of time select() should sleep.  This
 ** routine gets to decide how long (based upon its need to issue
-** stall warnings.	However, if timeout is greater than zero, then
+** stall warnings.  However, if timeout is greater than zero, then
 ** the sleep time will never take us more than timeout seconds from
 ** the time when writemon_start() was called.
 **
@@ -327,7 +327,7 @@ static void writemon_stalled(const struct timeval *time_stalled)
 
 /*
 ** Compute the severity of a stall message according to how long the printer
-** was stalled.	 This formula yields a value of 5 after 15 minutes and 10 after
+** was stalled.  This formula yields a value of 5 after 15 minutes and 10 after
 ** 30 minutes.
 */
 static int compute_severity(int minutes)

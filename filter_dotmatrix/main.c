@@ -68,7 +68,7 @@ int encoding = ENCODING_CP437;
 
 /*
 ** These constants describe the horizontal and vertical spacing units.
-** They are set for 9 pin printers.	 If 24 pin printer emulation is
+** They are set for 9 pin printers.  If 24 pin printer emulation is
 ** selected, then they are both changed to 360.
 */
 int HORIZONTAL_UNITS = 240;
@@ -107,7 +107,7 @@ int page_length;
 ** These describe the number of points to shift the page upward
 ** and to the right.  These shifts are added to any that are
 ** already in effect.  There will be a 0.25 inch right shift in
-** 8in lines are selected.	There is normally a -12/72 downward shift
+** 8in lines are selected.  There is normally a -12/72 downward shift
 ** to bring the first baseline below the stop of the page.
 */
 int xshift = 0;
@@ -127,7 +127,7 @@ int xpos, ypos;
 
 /*
 ** These variables keep track of where the PostScript code thinks we are.
-** These variables are used by achieve_position().	There is a reason
+** These variables are used by achieve_position().  There is a reason
 ** postscript_xpos is a double, I just don't remember precisely what it is.
 ** It has something to do with rounding errors in justified text.
 */
@@ -187,7 +187,7 @@ int tabs_vertical[8][16];
 int tabs_horizontal[32];
 int vertical_tab_channel;
 
-/* Margins.	 All are expressed in terms of *_UNITS. */
+/* Margins.  All are expressed in terms of *_UNITS. */
 int left_margin;
 int right_margin;
 int perforation_skip;

@@ -81,7 +81,7 @@ void do_request_lpq(char *command)
 	** Use the UPRINT routine to run an appropriate command.
 	** If uprint_lpq() returns -1 then the reason is in uprint_errno.
 	** Unless the error is UPE_UNDEST, it will already have called
-	** uprint_error_callback().	 If uprint_lpq() runs a command that
+	** uprint_error_callback().  If uprint_lpq() runs a command that
 	** fails, it will return the (positive) exit code of that
 	** command.
 	*/
@@ -94,7 +94,7 @@ void do_request_lpq(char *command)
 		else
 			{
 			printf(_("Could not get a queue listing due to a problem with the print server\n"
-				"called \"%s\".	 Please ask the print server's\n"
+				"called \"%s\".  Please ask the print server's\n"
 				"system administrator to examine the log file \"%s\"\n"
 				"to learn the details.\n"), this_node(), LPRSRV_LOGFILE);
 			}

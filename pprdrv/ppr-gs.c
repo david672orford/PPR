@@ -80,7 +80,7 @@ const char *ijs_bin_list[] = {
 		};
 		
 /*===========================================================================
-** Here we go.	We must either find the necessary components and exec 
+** Here we go.  We must either find the necessary components and exec 
 ** Ghostscript or print an error message on stderr in a format that pprdrv 
 ** will recognize and exit with a value of 1.  Error messages begining with 
 ** either of these two phrases will be recognized as indicative of a RIP 
@@ -130,10 +130,10 @@ int main(int argc, char *argv[])
 	** supplied in the printer configuration or PPD file (and which were
 	** passed to us on our command line.)  The extra space allocated
 	** in the array is for "-q -dSAFER -sOutputFile='...' -" and the NULL
-	** which terminates the array.	These will be added later.
+	** which terminates the array.  These will be added later.
 	**
 	** Note that there are some option that we intercept and don't pass
-	** thru to Ghostscript.	 These are in name=value form.	At the moment
+	** thru to Ghostscript.  These are in name=value form.  At the moment
 	** these all specify output post-processing of some kind.
 	*/
 	gs_args = gu_alloc(argc + 10, sizeof(const char *));

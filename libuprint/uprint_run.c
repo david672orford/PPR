@@ -46,7 +46,7 @@
 ** return the command's exit code.
 **
 ** If uid is not -1, then the child sets its user id to the
-** indicated value.	 The same goes for gid.
+** indicated value.  The same goes for gid.
 */
 int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv[])
 	{
@@ -82,7 +82,7 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 			{
 			/* lprsrv calls this with gid != -1.  Setting euid to root 
 			   will allow us to select the chosen group (and later a 
-			   user) ID even if it is not root or USER_PPR.	 The 
+			   user) ID even if it is not root or USER_PPR.  The 
 			   uprint-* programs call this function with gid == -1,
 			   so they don't execute this alarming looking call.
 			   */

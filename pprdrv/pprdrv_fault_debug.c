@@ -133,7 +133,7 @@ void hooked_exit(int rval, const char *explain)
 ** test mode, to either the printer's or the job's log file.  It then calls
 ** hooked_exit().
 **
-** Not all fatal errors pass through this function.	 In some cases, alert()
+** Not all fatal errors pass through this function.  In some cases, alert()
 ** is called and then hooked_exit().  Doing it that way can produce
 ** prettyer messages.  Theirfor this function is used for reporting the most
 ** unlikely faults.
@@ -167,7 +167,7 @@ void fatal(int rval, const char string[], ...)
 
 /*
 ** This stript-down version of fatal() is safe to call
-** from within signal handlers.	 It does a lot less.
+** from within signal handlers.  It does a lot less.
 */
 void signal_fatal(int rval, const char format[], ...)
 	{
@@ -189,7 +189,7 @@ void signal_fatal(int rval, const char format[], ...)
 
 /*
 ** This routine is generally used only for unusual error
-** conditions, internal errors.	 It is not used to report
+** conditions, internal errors.  It is not used to report
 ** routine conditions such as printer faults.  It is used
 ** for debug messages which we still want to see when
 ** debugging is not compiled in.

@@ -15,7 +15,7 @@
 
 /*
 ** Dummies for functions to make a printing charge to
-** a user's database entry.	 Also, make a deposit or
+** a user's database entry.  Also, make a deposit or
 ** a correction.
 */
 

@@ -21,7 +21,7 @@
 extern char line[];
 extern int line_len;
 
-/* Our globals.	 The caller refers to tokens[] */
+/* Our globals.  The caller refers to tokens[] */
 static char tokenized_line[MAX_TOKENIZED+2];	/* room for line broken into tokens */
 char *tokens[MAX_TOKENS+1];						/* array of ptrs to tokens */
 int tokens_count;

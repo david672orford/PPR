@@ -59,7 +59,8 @@ rm PAPD.po
 
 echo "PPRWWW.pot"
 ./perl_to_pseudo_c.perl ../www/*.perl ../www/*.pl \
-	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ --sort-output --language=c -
+	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ --sort-output --language=c - \
+	2>&1 | grep -v "unterminated "
 ./sort_by_file.perl <PPRWWW.po >PPRWWW.pot
 rm PPRWWW.po
 

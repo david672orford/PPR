@@ -205,7 +205,7 @@ int conf_vprintf(const char format_str[], va_list va)
 **
 ** Notice that if the file was open for modification, we use
 ** rename() to put the new version in place.  POSIX guarantees
-** that rename() is atomic.	 We used to unlink() to old file
+** that rename() is atomic.  We used to unlink() to old file
 ** first but this is a bad idea because there is a brief
 ** window when no configuration file exists.  The result was
 ** that a series of ppad commands executed from a script
@@ -305,8 +305,8 @@ int confabort(void)
 /*
 ** This function takes care of a common case.  In this case
 ** we look for the first line which begins with a certain
-** keyword.	 We replace that line with a line with the
-** specified value.	 We then delete any remaining lines with
+** keyword.  We replace that line with a line with the
+** specified value.  We then delete any remaining lines with
 ** the same keyword.  If there weren't any lines at all with
 ** the specified keyword, then we put it at the end of the file.
 ** If value is NULL, then this function serves to delete the

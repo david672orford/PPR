@@ -41,7 +41,7 @@
 #include "pprdrv.h"
 
 /*
-** This function decodes PJL printer status codes.	It is passed the code
+** This function decodes PJL printer status codes.  It is passed the code
 ** and the message from the printer's control panel.  The latter is used
 ** for debugging purposes.	(Since it is internationalized by the printer,
 ** it is not machine readable.)

@@ -65,7 +65,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
 	/* It is permissible to use --title "" to make the title an empty string 
 	   and thereby prevent a temporary file name from becoming the title by 
-	   default.	 That is why we must test for an empty title string.
+	   default.  That is why we must test for an empty title string.
 	   */
 	if(qentry->Title && qentry->Title[0] != '\0')
 		fprintf(Qfile, "Title: %s\n", qentry->Title);
@@ -92,7 +92,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 	   */
 	fprintf(Qfile, "Commentary: %d\n", qentry->commentary);
 
-	/* This big long line contains lots of information.	 It will later be broken
+	/* This big long line contains lots of information.  It will later be broken
 	   up into several lines. */
 	fprintf(Qfile, "Attr: %d %.1f %d %d %d %d %d %d %d %d %d %ld %ld %d %d\n",
 				qentry->attr.langlevel,
@@ -112,7 +112,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 				(int)qentry->attr.docdata		/* missing below */
 				);
 
-	/* These will replace "Attr:".	For now they are ignored. */
+	/* These will replace "Attr:".  For now they are ignored. */
 	fprintf(Qfile, "Attr-DSC: %.1f %d %d %d %d\n",
 				qentry->attr.DSClevel,
 				qentry->attr.prolog,

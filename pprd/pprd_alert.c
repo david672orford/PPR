@@ -56,7 +56,7 @@ void alert_printer_failed(char *prn, int frequency, char *method, char *address,
 
 	/*
 	** Send them only if it is the proper time, that is, if in
-	** no-retry-fault mode or every frequency retries.	If
+	** no-retry-fault mode or every frequency retries.  If
 	** frequency is negative, alert only once at the prescribed point.
 	*/
 	if( n == 0													/* no retry */

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_intl.pl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 November 2002.
+# Last modified 5 April 2003.
 #
 
 require "paths.ph";
@@ -74,7 +74,7 @@ sub cgi_intl_init
 				{
 				if($language_range !~ /^([^;]+)(\s*;\s*q=([0-9\.]+))?\s*$/)
 					{
-					print STDERR "	Invalid language-range: $language_range\n";
+					print STDERR "  Invalid language-range: $language_range\n";
 					next;
 					}
 				my $lang = $1;
@@ -83,7 +83,7 @@ sub cgi_intl_init
 				$x++;
 				}
 			@lang_q_list = sort(@lang_q_list);
-			print STDERR "	Sorted language-ranges: ", join(", ", @lang_q_list), "\n";
+			print STDERR "  Sorted language-ranges: ", join(", ", @lang_q_list), "\n";
 
 			# Apply the sorted rankings to the languages available.
 			my %lang_q_hash = ();
@@ -94,14 +94,14 @@ sub cgi_intl_init
 				my($lang, $q, $tiebreaker) = split(/ /, $language_range);
 				if($lang eq "*")
 					{
-					print STDERR "	  Default language q set to $q.\n";
+					print STDERR "    Default language q set to $q.\n";
 					$default_q = $q;
 					next;
 					}
-				print STDERR "	  Looking for matches for language range \"$lang\".\n";
+				print STDERR "    Looking for matches for language range \"$lang\".\n";
 				foreach my $matching_lang (grep(/^$lang(-.*)?$/, @langs_available))
 					{
-					print STDERR "		It matches language \"$matching_lang\", assigning q=$q.\n";
+					print STDERR "      It matches language \"$matching_lang\", assigning q=$q.\n";
 					$lang_q_hash{$matching_lang} = $q;
 					$lang_tiebreaker{$matching_lang} = $tiebreaker;
 					}
@@ -114,7 +114,7 @@ sub cgi_intl_init
 				{
 				if(!defined($lang_q_hash{$lang}))
 					{
-					print STDERR "	  Language $lang gets default q of $default_q.\n";
+					print STDERR "    Language $lang gets default q of $default_q.\n";
 					$lang_q_hash{$lang} = $default_q;
 					$lang_tiebreaker{$lang} = 1000;
 					}
@@ -127,7 +127,7 @@ sub cgi_intl_init
 			foreach my $lang (@langs_available)
 				{
 				my $q = $lang_q_hash{$lang};
-				print STDERR "	Language $lang ranks $q";
+				print STDERR "  Language $lang ranks $q";
 
 				# If it has the highest quality ranking found so far,
 				# then choose this language.  But, a later language may

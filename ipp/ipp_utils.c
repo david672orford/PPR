@@ -43,7 +43,7 @@
 /** create IPP request handling object
 
 This function creates an IPP service object.  The IPP request will be read 
-from stdin and the response will be sent to stdout.	 IPP data of various
+from stdin and the response will be sent to stdout.  IPP data of various
 types can be read from the request and appended to the response using the
 member functions.
 

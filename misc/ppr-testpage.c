@@ -189,7 +189,7 @@ static gu_boolean eps_get_bbox(const char filename[], struct BBOX *bbox)
 
 /*
 ** Include an EPS file (with a bounding box determined by eps_get_bbox()).
-** The EPS file is wrapped with the code suggested in RBII p. 726.	However,
+** The EPS file is wrapped with the code suggested in RBII p. 726.  However,
 ** the Red Book ommits mention of the need to clip.
 **
 ** The parameters are the name of the file, its bounding box, the X and Y
@@ -228,7 +228,7 @@ userdict begin
 	/* Make an adjustment to account for EPS files which don't have (0,0) as their origin. */
 	printf("%d neg %d neg translate\n", bbox->llx, bbox->lly);
 
-	/* Clip to the EPS file's claimed bounding box.	 If we don't do this,
+	/* Clip to the EPS file's claimed bounding box.  If we don't do this,
 	   the Ghostscript tiger will paint everthing gray. */
 	printf("newpath %d %d moveto %d %d lineto %d %d lineto %d %d lineto closepath clip\n",
 		bbox->llx, bbox->lly,

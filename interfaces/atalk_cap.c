@@ -53,7 +53,7 @@ sigset_t sigset_sigusr1;
 /* a forward reference */
 int receive(int cno, int flag);
 
-/* Retry variables.	 There is as yet no code to consult these values. */
+/* Retry variables.  There is as yet no code to consult these values. */
 int open_retries = 10;					/* number of times to retry pap_open() */
 int lookup_retries = 8;					/* number of times to retry NBP lookup */
 int lookup_interval = 1;				/* interval between retries */
@@ -61,7 +61,7 @@ int is_laserwriter = TRUE;				/* Is this a LaserWriter compatible PostScript pri
 int idle_status_interval;
 
 /*
-** Handler for SIGUSR1.	 We will receive SIGUSR1 from pprdrv when pprdrv
+** Handler for SIGUSR1.  We will receive SIGUSR1 from pprdrv when pprdrv
 ** wants us to send a EOJ indication over the AppleTalk connexion.
 */
 void sigusr1_handler(int signum)
@@ -256,7 +256,7 @@ int open_printer(const char address[], int *wlen)
 
 		/*
 		** If we were looking for a printer of type "LaserWriter", there is
-		** nothing more we can do.	Also, if we have renamed a printer
+		** nothing more we can do.  Also, if we have renamed a printer
 		** and it has not re-appeared yet, there is no point in trying
 		** to rename it again.
 		*/
@@ -267,7 +267,7 @@ int open_printer(const char address[], int *wlen)
 			}
 
 		/*
-		** Previously we were looking for a hidden printer.	 We didn't
+		** Previously we were looking for a hidden printer.  We didn't
 		** find it, so now try with the type changed to "LaserWriter".
 		*/
 		snprintf(unrenamed, sizeof(unrenamed), "%.*s:LaserWriter@%s", namelen, address, &address[zoneoffset]);

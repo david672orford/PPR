@@ -46,7 +46,7 @@
 /*
 ** TIMEOUT_HANDSHAKE is the time to wait on operations that
 ** should be completed immediately, such as stating the desired
-** queue name.	TIMEOUT_PRINT is the amount of time to wait for
+** queue name.  TIMEOUT_PRINT is the amount of time to wait for
 ** a response to the zero byte sent at the end of a data file.
 ** TIMEOUT_PRINT can be set separately because some printer
 ** Ethernet boards don't respond right away.
@@ -299,7 +299,7 @@ static char *create_control_file(void *p, struct REMOTEDEST *scratchpad, const c
 			}
 
 		/* This emmits lines which specify the type of the file and the name that it should
-		   have in the queue directory.	 This is repeated to produce multiple copies.
+		   have in the queue directory.  This is repeated to produce multiple copies.
 		   */
 		for(copy = 0; copy < copies; copy++)
 			{
@@ -415,7 +415,7 @@ int uprint_print_rfc1179(void *p, struct REMOTEDEST *scratchpad)
 		return -1;
 		}
 
-	/* Generate a queue id.	 Notice that the effective
+	/* Generate a queue id.  Notice that the effective
 	   user is "ppr" (or more precisely, the owner of
 	   /etc/ppr/uprint.conf) when we call this. */
 	if((lpr_queueid = uprint_lpr_nextid()) == -1)

@@ -40,7 +40,7 @@ static const enum RES_SEARCH add_resource_search_list[] =
 
 /*
 ** include_resource() is called whenever an "%%IncludResource:" comment is
-** encountered.	 If the resource in question is in the printer, do
+** encountered.  If the resource in question is in the printer, do
 ** not include it, just send the comment to the printer; if the
 ** resource is in our cache, insert it, bracketed by "%%Begin(End)Resource:"
 ** comments; if it is not in the printer and not in the cache, then
@@ -316,7 +316,7 @@ void begin_resource(FILE *infile)
 ** it into the prolog.
 **
 ** This will also insert non-font resources for which fixinclude
-** is set.	An example would be a procset which was declared needed
+** is set.  An example would be a procset which was declared needed
 ** but for which no "%%IncludeResource: procset" line appeared.
 */
 void insert_extra_prolog_resources(void)
@@ -371,7 +371,7 @@ void write_resource_comments(void)
 
 	/*
 	** Enumerate the resources which we hope somebody else,
-	** such as the printer, will supply for us.	 This will
+	** such as the printer, will supply for us.  This will
 	** normally be a list of fonts.
 	*/
 	for(started=FALSE,x=0; x < drvres_count; x++)
@@ -490,7 +490,7 @@ int add_resource(const char type[], const char name[], double version, int revis
 	int features;
 
 	/*
-	** See if the resource is already in the document.	If it is, make
+	** See if the resource is already in the document.  If it is, make
 	** sure it is loaded in the prolog or docsetup section.
 	*/
 	for(x=0; x < drvres_count; x++)

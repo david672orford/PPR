@@ -1,5 +1,5 @@
 #
-# UPRINT.1.pod
+# mouse:~ppr/src/docs/uprint/UPRINT.1.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 February 2003.
+# Last modified 5 April 2003.
 #
 
 =head1 NAME
@@ -36,7 +36,7 @@ uprint-newconf - Adjust filenames and links to conform to uprint.conf
 
 =head1 SYNOPSIS
 
-B<uprint-newconf> [B<--remove>] [B<--force>] [B<--help>] [B<--version]
+B<uprint-newconf> [B<--remove>] [B<--force>] [B<--help>] [B<--version>]
 
 =head1 DESCRIPTION
 
@@ -220,9 +220,14 @@ The Uprint B<lpstat> is still rather limited.
 
 =head1 SEE ALSO
 
-The Uprint library is used by the programs described in L<uprint-lp(1)>,
-L<uprint-lpstat(1)>, L<uprint-cancel(1)>, L<uprint-lpr(1)>, L<uprint-lpq(1)>,
-L<uprint-lprm(1)>, and L<lprsrv(8)>.
+The Uprint library is used by the programs described in 
+L<uprint-lp.1>,
+L<uprint-lpstat.1>,
+L<uprint-cancel.1>,
+L<uprint-lpr.1>,
+L<uprint-lpq.1>,
+L<uprint-lprm.1>,
+and L<lprsrv.8>.
 
 The Uprint programs use or replace the programs descibed in B<lp(1)>,
 L<lpstat(1)>, L<cancel(1)>, L<lpr(1)>, L<lpq(1)>, and L<lprm(1)>.

@@ -37,7 +37,7 @@
 =head1 gu_pch
 
 This module implements a hash table library.  This library is designed to make it
-easier to port Perl code to C.	The hash tables are stored in objects known
+easier to port Perl code to C.  The hash tables are stored in objects known
 as PCH (Perl Compatible Hash).
 
 PCH objects can contain PCS (Perl Compatible String) objects.
@@ -63,7 +63,7 @@ struct PCH {
 
 This function creates a new PCH (Perl compatible hash) object and returns a
 void pointer which should be passed to other gu_pch_*() functions in order
-to use it.	It takes a single integer argument which is the number of
+to use it.  It takes a single integer argument which is the number of
 hash that the new hash should have.
 
 =cut
@@ -128,7 +128,7 @@ void gu_pch_debug(void **pch, const char name[])
 		printf("  buckets[%d]\n", x);
 		while(bucket)
 			{
-			printf("	{%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
+			printf("    {%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
 			bucket = bucket->next;
 			}
 		}

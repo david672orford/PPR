@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		struct IPP *ipp;
 		int version_major, version_minor;
 		int operation_id, request_id;
-		int tag, delimiter_tag = 0, value_tag, name_length;
+		int tag, delimiter_tag = 0, value_tag, name_length, value_length;
 		char *name;
 
 		/* Do basic input validation */
@@ -89,9 +89,14 @@ int main(int argc, char *argv[])
 			else if(tag >= 0x10 && tag <= 0xff)
 				{
 				value_tag = tag;
+
 				name_length = ipp_get_ss(ipp);
 				name = ipp_get_bytes(ipp, name_length);
 				debug("0x%.2x 0x%.2x name[%d]=\"%s\"", delimiter_tag, value_tag, name_length, name);
+
+				value_length = ipp_get_ss(ipp);
+				ipp_get_bytes(ipp, value_length);
+				debug("    value[%d]", value_length);
 				}
 			else
 				{

@@ -25,11 +25,11 @@
 const char myname[] = "ppr_conf_query";
 
 /*
-** This program is used to query ppr.conf.	It can either return a specific list
+** This program is used to query ppr.conf.  It can either return a specific list
 ** member from a specific key in a specific section or it can dump an entire section.
 **
 ** When reading this code, it is important to know that the gu_ini_*() functions
-** in libppr are vary tolerant of receiving NULL pointers.	When they do they
+** in libppr are vary tolerant of receiving NULL pointers.  When they do they
 ** just report failure.
 **
 ** In the form which retrieves a specific value rather than an entire section,

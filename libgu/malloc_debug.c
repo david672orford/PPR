@@ -45,7 +45,7 @@ void gu_alloc_checkpoint_put(int n) { gu_alloc_blocks_saved = gu_alloc_blocks - 
 /*
 ** This is called to assert that gu_alloc_blocks differs
 ** from the figure saved by gu_alloc_checkpoint by a
-** certain amount.	This is called by a macro called
+** certain amount.  This is called by a macro called
 ** gu_alloc_assert().  A positive amount is increase, a negative
 ** amount is decrease.
 */

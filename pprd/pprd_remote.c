@@ -51,7 +51,7 @@ void remote_job(struct QEntry *qentry)
 	}
 
 /*
-** This is called from reapchild().	 It should return TRUE if the pid is that
+** This is called from reapchild().  It should return TRUE if the pid is that
 ** of a pprd_xmit process.
 */
 gu_boolean remote_child_hook(pid_t pid, int wstat)

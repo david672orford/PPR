@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2003.
+# Last modified 5 April 2003.
 #
 
 include ../Makefile.conf
@@ -50,7 +50,7 @@ install: $(ALL)
 	touch $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
 	chown $(USER_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
 	chgrp $(GROUP_PPR) $(RPM_BUILD_ROOT)$(CONFDIR)/media.db
-	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
+	$(RPM_BUILD_ROOT)$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
 	./install_atalk_links.tcl
 	./install_crontab.sh
 	./install_bin_links.sh

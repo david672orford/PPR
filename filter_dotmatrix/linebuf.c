@@ -16,7 +16,7 @@
 /*
 ** This code has nothing to do with reading lines from the input file.
 ** It implements an Epson line buffer which holds the current line of
-** output until it is complete.	 Characters which enter the line buffer
+** output until it is complete.  Characters which enter the line buffer
 ** may not actually get printed if the line buffer is canceled or if
 ** backspace is used to erase them.
 */
@@ -141,7 +141,7 @@ void buffer_add(int c)
 	} /* end of buffer_add() */
 
 /*
-** Empty the print buffer.	By "empty" we mean to emmit PostScript
+** Empty the print buffer.  By "empty" we mean to emmit PostScript
 ** code which represents the contents and then to clear it, not
 ** to simply throw the contents away.
 **

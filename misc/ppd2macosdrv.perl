@@ -102,7 +102,7 @@ foreach $file (keys %ppd_files)
 			close($inlevel) || die;
 			last if($inlevel eq 'IN0');
 			print OUT "*% end of include\r\n";
-			print "		   End of include file.\n" if($opt_verbose);
+			print "        End of include file.\n" if($opt_verbose);
 			$inlevel =~ /^IN([0-9]+)$/;
 			$inlevel = $1 - 1;
 			$inlevel = "IN$inlevel";
@@ -127,7 +127,7 @@ foreach $file (keys %ppd_files)
 				$include_file_name = "$basepath/$include_file_name"
 				}
 
-			print "	   Including \"$include_file_name\"...\n" if($opt_verbose);
+			print "    Including \"$include_file_name\"...\n" if($opt_verbose);
 			$inlevel++;
 			open($inlevel, "<$include_file_name") ||
 				die "Can't open include file \"$include_file_name\", $!\n";
@@ -151,7 +151,7 @@ foreach $file (keys %ppd_files)
 		next;
 		}
 
-	print "	   \"$macos_name\"\n" if($opt_verbose);
+	print "    \"$macos_name\"\n" if($opt_verbose);
 
 	# Encode slashes for Netatalk and CAP.
 	$macos_name =~ s/\//:2F/g;

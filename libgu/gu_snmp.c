@@ -368,8 +368,8 @@ int gu_snmp_get(struct gu_snmp *p, int *error_code, ...)
 			#endif
 			}
 
-			/* Now the fun starts.	We will attempt to parse the response as
-			   an SNMP packet.	If we fail at any point we will start the next
+			/* Now the fun starts.  We will attempt to parse the response as
+			   an SNMP packet.  If we fail at any point we will start the next
 			   iteration.
 			   */
 			{

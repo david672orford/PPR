@@ -100,7 +100,7 @@ my $refresh_interval = cgi_data_peek("refresh_interval", 60);
 my $action = cgi_data_move("action", undef);
 
 # Was the form automatically submitted because someone changed the
-# "Move To" select?	 If so, then the action is "Move".
+# "Move To" select?  If so, then the action is "Move".
 my $move_to = cgi_data_move("move_to", "");
 $action = "Move" if($move_to ne "");
 

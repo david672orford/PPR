@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 April 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -65,7 +65,7 @@ while [ "$1" != "" ]
 	shift
 	name=`basename "$file"`
 	dest="$DESTDIR/$name"
-	echo "	  \"$file\" --> \"$RPM_BUILD_ROOT$dest\""
+	echo "    \"$file\" --> \"$RPM_BUILD_ROOT$dest\""
 
 	# If this file is to be owned by root, try very hard to to replace
 	# it unless is has really changed.	We do this so that make install
@@ -75,7 +75,7 @@ while [ "$1" != "" ]
 	strip $file 2>/dev/null
 	if diff $file "$RPM_BUILD_ROOT$dest" >/dev/null 2>&1
 		then
-		echo "		  (skipping copy because root ownership and unchanged)"
+		echo "        (skipping copy because root ownership and unchanged)"
 		continue
 		fi
 	fi

@@ -203,7 +203,7 @@ int resource(int reftype, const char *restype, int first)
 
 /*
 ** This is called whenever a new resource comment is found in the
-** trailer section which supersedes a previous one.	 It clears
+** trailer section which supersedes a previous one.  It clears
 ** the indicated flag on all resources of the indicated type.
 ** If the type is specified as a NULL pointer, it clears the
 ** indicated flag on all resources.
@@ -310,12 +310,12 @@ void dump_page_resources(void)
 	} /* end of dump_page_resources() */
 
 /*
-** This routine is called after the entire document has been read.	It
+** This routine is called after the entire document has been read.  It
 ** examines those elements of the things[] array which represent
 ** resources, looking for inconsistencies.
 **
 ** If the resource references are inconsistent, emmit warnings and try
-** to take a guess.	 If comments like "%%DocumentFonts:" appear, try
+** to take a guess.  If comments like "%%DocumentFonts:" appear, try
 ** to determine if they mean the resources are included or required.
 */
 void rationalize_resources(void)

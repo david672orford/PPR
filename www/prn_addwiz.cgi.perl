@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 February 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -175,8 +175,8 @@ $addprn_wizard_table = [
 				closedir(I);
 
 				print "<p>", H_("Please select an interface program.  PPR uses an interface\n"
-						. "program to communicate with the printer.	 There is an\n"
-						. "interface program for each communication method.	 The\n"
+						. "program to communicate with the printer.  There is an\n"
+						. "interface program for each communication method.  The\n"
 						. "interfaces whose names begin with \"gs\" pass PostScript jobs\n"
 						. "through Ghostscript before sending them to the printer."), "</p>\n";
 
@@ -266,7 +266,7 @@ $addprn_wizard_table = [
 				print "</p>\n";
 
 				print "<p>", H_("When you press the [Next] button, the selected zone will\n"
-						. "be searched.	 This will take about 10 seconds."), "</p>\n";
+						. "be searched.  This will take about 10 seconds."), "</p>\n";
 				},
 		'onnext' => sub {
 				if($data{'int_atalk_zone'} eq '')
@@ -343,7 +343,7 @@ $addprn_wizard_table = [
 		'dopage' => sub {
 				print "<p>", H_("It is necessary to know the IP address of the printer,\n"
 								. "or preferably a DNS name which represents that address.\n"
-								. "An example of a DNS name is \"myprn.prn.myorg.org\".	 An example\n"
+								. "An example of a DNS name is \"myprn.prn.myorg.org\".  An example\n"
 								. "of an IP address is \"157.252.200.22\"."), "</p>\n";
 
 				print "<p>", H_("DNS Name or IP Address:"), " ";
@@ -450,8 +450,8 @@ $addprn_wizard_table = [
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
 				print "<p>", html(sprintf(_("No special help is available for the interface called\n"
-						. "\"%s\".	Therefore, we present the generic\n"
-						. "interface configuration form below.	You may have to refer to the\n"
+						. "\"%s\".  Therefore, we present the generic\n"
+						. "interface configuration form below.  You may have to refer to the\n"
 						. "ppad(1) man page to determine the correct format\n"
 						. "for the values of the fields below."), $data{interface})), "</p>\n";
 
@@ -564,9 +564,9 @@ $addprn_wizard_table = [
 		'title' => N_("Add a Printer"),
 		'picture' => "wiz-newprn.jpg",
 		'dopage' => sub {
-				print "<p>", H_("The printer must have a name.	The name may be up\n"
+				print "<p>", H_("The printer must have a name.  The name may be up\n"
 						. "to 16 characters long.  Control codes, tildes, and spaces\n"
-						. "are not allowed.	 Also, the first character may not be\n"
+						. "are not allowed.  Also, the first character may not be\n"
 						. "a period or a hyphen."), "</p>\n";
 
 				my $name = cgi_data_move("name", "");
@@ -597,7 +597,7 @@ $addprn_wizard_table = [
 		'dopage' => sub {
 				print "<p>", html(sprintf(_("While short printer names are convenient in certain contexts,\n"
 						. "it is sometimes helpful to have a longer, more informative\n"
-						. "description.	 Please supply a longer description for\n"
+						. "description.  Please supply a longer description for\n"
 						. "\"%s\" below."), $data{name})), "</p>\n";
 
 				my $comment= cgi_data_move("comment", "");

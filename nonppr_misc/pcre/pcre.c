@@ -3240,17 +3240,17 @@ while (code < code_end)
 	case OP_TYPEQUERY:
 	case OP_TYPEMINQUERY:
 	if (*code >= OP_TYPESTAR)
-	  printf("	  %s", OP_names[code[1]]);
-	else if (isprint(c = code[1])) printf("	   %c", c);
-	  else printf("	   \\x%02x", c);
+	  printf("    %s", OP_names[code[1]]);
+	else if (isprint(c = code[1])) printf("    %c", c);
+	  else printf("    \\x%02x", c);
 	printf("%s", OP_names[*code++]);
 	break;
 
 	case OP_EXACT:
 	case OP_UPTO:
 	case OP_MINUPTO:
-	if (isprint(c = code[3])) printf("	  %c{", c);
-	  else printf("	   \\x%02x{", c);
+	if (isprint(c = code[3])) printf("    %c{", c);
+	  else printf("    \\x%02x{", c);
 	if (*code != OP_EXACT) printf("0,");
 	printf("%d}", (code[1] << 8) + code[2]);
 	if (*code == OP_MINUPTO) printf("?");
@@ -3260,7 +3260,7 @@ while (code < code_end)
 	case OP_TYPEEXACT:
 	case OP_TYPEUPTO:
 	case OP_TYPEMINUPTO:
-	printf("	%s{", OP_names[code[3]]);
+	printf("    %s{", OP_names[code[3]]);
 	if (*code != OP_TYPEEXACT) printf(",");
 	printf("%d}", (code[1] << 8) + code[2]);
 	if (*code == OP_TYPEMINUPTO) printf("?");
@@ -3268,8 +3268,8 @@ while (code < code_end)
 	break;
 
 	case OP_NOT:
-	if (isprint(c = *(++code))) printf("	[^%c]", c);
-	  else printf("	   [^\\x%02x]", c);
+	if (isprint(c = *(++code))) printf("    [^%c]", c);
+	  else printf("    [^\\x%02x]", c);
 	break;
 
 	case OP_NOTSTAR:
@@ -3278,16 +3278,16 @@ while (code < code_end)
 	case OP_NOTMINPLUS:
 	case OP_NOTQUERY:
 	case OP_NOTMINQUERY:
-	if (isprint(c = code[1])) printf("	  [^%c]", c);
-	  else printf("	   [^\\x%02x]", c);
+	if (isprint(c = code[1])) printf("    [^%c]", c);
+	  else printf("    [^\\x%02x]", c);
 	printf("%s", OP_names[*code++]);
 	break;
 
 	case OP_NOTEXACT:
 	case OP_NOTUPTO:
 	case OP_NOTMINUPTO:
-	if (isprint(c = code[3])) printf("	  [^%c]{", c);
-	  else printf("	   [^\\x%02x]{", c);
+	if (isprint(c = code[3])) printf("    [^%c]{", c);
+	  else printf("    [^\\x%02x]{", c);
 	if (*code != OP_NOTEXACT) printf(",");
 	printf("%d}", (code[1] << 8) + code[2]);
 	if (*code == OP_NOTMINUPTO) printf("?");
@@ -3295,7 +3295,7 @@ while (code < code_end)
 	break;
 
 	case OP_REF:
-	printf("	\\%d", (code[1] << 8) | code[2]);
+	printf("    \\%d", (code[1] << 8) | code[2]);
 	code += 3;
 	goto CLASS_REF_REPEAT;
 
@@ -3303,7 +3303,7 @@ while (code < code_end)
 	  {
 	  int i, min, max;
 	  code++;
-	  printf("	  [");
+	  printf("    [");
 
 	  for (i = 0; i < 256; i++)
 		{
@@ -3358,7 +3358,7 @@ while (code < code_end)
 	/* Anything else is just a one-node item */
 
 	default:
-	printf("	%s", OP_names[*code]);
+	printf("    %s", OP_names[*code]);
 	break;
 	}
 

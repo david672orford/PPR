@@ -70,7 +70,7 @@ int printdest_claim_bsd(const char destname[])
 			int line_len = 80;
 			char *p, *fnbp;
 
-			/* Loop through the lines.	The gu_getline() function can 
+			/* Loop through the lines.  The gu_getline() function can 
 			   handle lines of any length and will strip trailing whitespace.
 			   */
 			while((line = gu_getline(line, &line_len, f)))
@@ -78,7 +78,7 @@ int printdest_claim_bsd(const char destname[])
 				if(!line[0])			/* empty or whitespace-only lines */
 					continue;
 
-				/* Make a pointer to the first non-blank character.	 This is to 
+				/* Make a pointer to the first non-blank character.  This is to 
 				   deal with a RedHat printconf-0.2 bug.  (It puts a single 
 				   space in front of the first line of each printer configuration
 				   that it generates.)

@@ -92,7 +92,7 @@ static int do_tail(gu_boolean (*callback)(char *p, void *extra), FILE **fd, cons
 	} /* end of do_tail() */
 
 /*
-** This function never returns.	 It just keeps monitoring the status files and
+** This function never returns.  It just keeps monitoring the status files and
 ** feeding lines to the callback routine.  The callback routine should return
 ** TRUE for lines it acts on, FALSE for those it ignores.  If more than
 ** timeout seconds pass without the callback routine returning TRUE (perhaps

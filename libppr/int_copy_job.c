@@ -82,7 +82,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
 ** use of select() and non-blocking file descriptors.  He says that write()
 ** and possible even read() can fail with errno set to EAGAIN even if select()
-** has stated that the file descriptor is open for writing.	 In a private e-mail 
+** has stated that the file descriptor is open for writing.  In a private e-mail 
 ** to PPR's author, he cited three of the possible reasons:
 **
 ** >a) select can't tell how big the next write is going to be
@@ -118,7 +118,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** Most man pages for select(2) do a pretty poor job of describing its 
 ** behavior and say almost nothing about proper use.  The vagueness of the 
 ** origional 4.2BSD man page is probably why various implementations of 
-** select() display subtle differences in behavior.	 Some of these differences
+** select() display subtle differences in behavior.  Some of these differences
 ** are described in the Linux select(2) man page and by W. Richard Stevens in
 ** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
 ** 399-400.
@@ -144,7 +144,7 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
 	/*
-	** Set the printer port to O_NONBLOCK.	This is important because we don't
+	** Set the printer port to O_NONBLOCK.  This is important because we don't
 	** want to block if it can't accept BUFFER_SIZE bytes.
 	**
 	** We could set stdin and stdout to O_NONBLOCK too, but they are much less

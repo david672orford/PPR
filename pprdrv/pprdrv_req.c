@@ -29,7 +29,7 @@
 */
 
 /*
-** This module contains functions for PostScript Requirements.	Additional
+** This module contains functions for PostScript Requirements.  Additional
 ** requirements code is contained in the module pprdrv_capable.c.
 */
 
@@ -50,7 +50,7 @@ void write_requirement_comments(void)
 	int i;
 
 	/*
-	** Copy requirements from the original PostScript file.	 Note that "collate"
+	** Copy requirements from the original PostScript file.  Note that "collate"
 	** and "numcopies(X)" have already been filtered out.
 	*/
 	for(i=0; i < drvreq_count; i++)

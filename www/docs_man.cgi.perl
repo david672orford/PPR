@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 January 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -196,7 +196,7 @@ eval {
 
 	if(defined $path)
 		{
-		print "<p>Help the PPR project!	 If you have documentation\n";
+		print "<p>Help the PPR project!  If you have documentation\n";
 		print "for any untranslated macros below, send it to \n";
 		print "<a href=\"mailto:ppr-bugs@mail.trincoll.edu\">ppr-bugs\@mail.trincoll.edu</a>.</p>\n";
 

@@ -114,7 +114,7 @@ static const char *reversed_for(void)
 	} /* end of reverse_for() */
 
 /*
-** Print a formatted line to the interface.	 This is used
+** Print a formatted line to the interface.  This is used
 ** when printing the banner page text.
 */
 static void pslinef(const char *string, ... )
@@ -199,7 +199,7 @@ static int flag_page_vote(int printer_vote, int job_vote, int position)
 ** This routine decided which medium will be used for the flag pages.
 **
 ** It fills in the structure "flag" with information about the appropriate
-** medium.	If the medium is known to be mounted in a specific bin, the
+** medium.  If the medium is known to be mounted in a specific bin, the
 ** actual bin selection is done later using select_medium().
 **
 ** The return values have the following meaning:
@@ -213,7 +213,7 @@ static int flag_page_vote(int printer_vote, int job_vote, int position)
 **				as described in /etc/ppr/ppr.conf.
 **
 **		1		At least one bin contains a suitable medium.  The "flag"
-**				structure now contains a description of it.	 Please
+**				structure now contains a description of it.  Please
 **				call select_medium() to select it.
 */
 static int select_flag_medium(void)
@@ -250,7 +250,7 @@ static int select_flag_medium(void)
 		for(x=0; x < MAX_BINS; x++)
 			media[x].flag_suitability = 0;
 
-		/* Open the PPR media description database.	 This database maps the
+		/* Open the PPR media description database.  This database maps the
 		   media names used with "ppop media mount" to media descriptions.
 		   These descriptions include a ranking of the medium's suitability
 		   for use as a banner page.  1 means totally unsuitable (probably
@@ -281,7 +281,7 @@ static int select_flag_medium(void)
 		** on each bin in order to find the most suitable.
 		**
 		** The variable y is used to keep track of the highest suitability
-		** rating found so far.	 It is y initialy set to 1 because a medium
+		** rating found so far.  It is y initialy set to 1 because a medium
 		** with a suitability rating of one is not usable for banner pages.
 		*/
 		for(x=0,y=1; x < bincount; x++)			/* find the most suitable of */
@@ -467,8 +467,8 @@ static int print_flag_page_standard(int flag_type, int position, int skiplines, 
 		int x;
 
 		/*
-		** Select the correct bin.	We will ignore the return
-		** value because it should always be TRUE.	In fact, I
+		** Select the correct bin.  We will ignore the return
+		** value because it should always be TRUE.  In fact, I
 		** find it difficult to imagine how it could be FALSE.
 		*/
 		select_medium(flag.medianame);
@@ -490,7 +490,7 @@ static int print_flag_page_standard(int flag_type, int position, int skiplines, 
 		} /* end of if(mediumfound == 1) */
 
 	/*
-	** Theoretically, we insert the font here.	The origional code was:
+	** Theoretically, we insert the font here.  The origional code was:
 	** _include_resource("font","Courier",0.0,0);
 	** however, it won't work anymore since _include_resource() can now
 	** only include resources which are pre-declared.  We really want
@@ -500,7 +500,7 @@ static int print_flag_page_standard(int flag_type, int position, int skiplines, 
 	printer_puts("/Courier /Courier /ISOLatin1Encoding ReEncode\n");
 
 	/*
-	** Scale the font to two sizes.	 Large is for the user name,
+	** Scale the font to two sizes.  Large is for the user name,
 	** small is for the other messages.
 	*/
 	printer_printf("/LargeFont /Courier findfont %d scalefont def\n", flag.large_size);
@@ -719,13 +719,13 @@ int print_flag_page(int flag_type, int position, int skiplines)
 			return 0;
 		}
 
-	/* Give a custom flag page program a chance to run.	 If it declines,
+	/* Give a custom flag page program a chance to run.  If it declines,
 	   print our own flag page. */
 	if(custom_hook((flag_type > 0) ? CUSTOM_HOOK_BANNER : CUSTOM_HOOK_TRAILER, position))
 		return 0;
 
 	{
-	/* Look for a suitable medium.	If select_flag_medium() indicates
+	/* Look for a suitable medium.  If select_flag_medium() indicates
 	   that bins exist but none of them have suitable media mounted,
 	   abort flag printing now. */
 	int mediumfound;

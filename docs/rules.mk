@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 5 April 2003.
 #
 
 # Where do we install the documentation?
@@ -55,7 +55,7 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 # Rule to convert POD to HTML using Perl's pod2html
 #============================================================================
 .pod.html:
-	$(POD2HTML) --podpath=. --libpods=$(LIBPODS) $*.pod >$*.html
+	$(POD2HTML) --podpath=.:../refman:../uprint --libpods=$(LIBPODS) $*.pod >$*.html
 
 #============================================================================
 # Rule to convert POD to Nroff format using Perl's pod2man

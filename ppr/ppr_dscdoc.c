@@ -96,7 +96,7 @@ static int found_DocumentSuppliedProcSets = 0;
 
 /*
 ** This routine is called when at least one argument is
-** required for a keyword.	It issues a warning and
+** required for a keyword.  It issues a warning and
 ** returns non-zero if the argument is missing.
 */
 static int trap_noarg(const char *keyword, const char *argument)
@@ -124,7 +124,7 @@ static int trap_nolist(const char *keyword, const char *argument)
 /*
 ** This function is called to check for an argument of "(atend)".  If
 ** it is found and the trailer parameter is FALSE, the flag is set.
-** If trailer is TRUE, a warning is issued.	 If atend is present, the
+** If trailer is TRUE, a warning is issued.  If atend is present, the
 ** return value is non-zero whether or not a warning is waranted.
 ** trap_noarg() or trap_nolist() should be called before this function.
 */
@@ -250,7 +250,7 @@ void do_dsc_Routing(const char *routingstr)
 	} /* end of do_dsc_Routing */
 
 /*
-** This is called from ppr_infile.c and by header_trailer() below.	It checks
+** This is called from ppr_infile.c and by header_trailer() below.  It checks
 ** to see if the "%%For:" header line has been seen yet and if it hasn't, it
 ** makes a copy of the value and stores it.
 */
@@ -731,7 +731,7 @@ static int header_trailer(gu_boolean trailer)
 		} /* end of switch */
 
 	/* Remove unrecognized (atend) comments, presuming that
-	   the matching comment will be in the trailer.	 Since we
+	   the matching comment will be in the trailer.  Since we
 	   copy both header and trailer comments into the -comments
 	   file and they all end up in the header comments section,
 	   we have no use for (atend) comments. */
@@ -746,8 +746,8 @@ static int header_trailer(gu_boolean trailer)
 	} /* end of header_trailer() */
 
 /*
-** Handle page level comments.	Return zero if we want it copied into
-** he -pages or -text file.	 If we return -1 it is understood that we
+** Handle page level comments.  Return zero if we want it copied into
+** he -pages or -text file.  If we return -1 it is understood that we
 ** made our own use of it and don't want it copied to the output file.
 */
 static int pagelevel(void)
@@ -807,7 +807,7 @@ static int pagelevel(void)
 
 /*
 ** This routine is called by read_prolog() whenever a "%%BeginFeature:"
-** or "%%IncludeFeature:" line is seen.	 This allows us to gather
+** or "%%IncludeFeature:" line is seen.  This allows us to gather
 ** information about the characteristics of the desired medium, if
 ** feature code selects it, even if there is no "%%Media:" comment.
 ** It also enables us to implement certain non-existent printer
@@ -934,7 +934,7 @@ static void feature_spy(void)
 
 /*
 ** This routine too is called from read_prolog(), but this one is called 
-** whenever a "%%BeginNonPPDFeature:" line is seen.	 For example:
+** whenever a "%%BeginNonPPDFeature:" line is seen.  For example:
 **
 ** %%BeginNonPPDFeature: NumCopies 10
 **
@@ -970,7 +970,7 @@ static void feature_spy_nonppd(void)
 /*
 ** Read the header comments.
 ** The comments will be put into the comments file and into the Thing
-** structures.	We must return with a line in the line buffer.
+** structures.  We must return with a line in the line buffer.
 **
 ** Most of the comment work will be done by header_trailer().
 */
@@ -1083,7 +1083,7 @@ static void read_defaults(void)
 /*
 ** Read the prolog and document setup section into the -text file.
 ** At the proper place, digress to read the document defaults
-** into the "-pages" file.	When this funtion is called, there
+** into the "-pages" file.  When this funtion is called, there
 ** is already a line in the input buffer.
 **
 ** We will stop when we hit the begining of the
@@ -1106,7 +1106,7 @@ gu_boolean read_prolog(void)
 	/*
 	** Because we can't be sure that we are in the prolog until and
 	** unless we see a "%%BeginProlog", we will not call
-	** outermost_start(OUTERMOST_PROLOG) here.	It might be that
+	** outermost_start(OUTERMOST_PROLOG) here.  It might be that
 	** we will have to read the document defaults section before
 	** we get to the prolog.
 	*/

@@ -48,7 +48,7 @@
 This function provides a simple way to run a command and wait for it to
 complete.  This is useful for commands which need to run some other command
 to do a part of the work.  It isn't hard to write such code, but with proper
-testing of status returned by wait() it can get a little long.	Also,
+testing of status returned by wait() it can get a little long.  Also,
 centralizing it in this function will allow us to use spawn() in the future.
 
 */

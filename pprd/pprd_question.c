@@ -152,7 +152,7 @@ static int question_launch(struct QEntry *job)
 	} /* end of question_launch() */
 
 /*
-** Find a question waiting to be asked.	 We only go so far as we need to
+** Find a question waiting to be asked.  We only go so far as we need to
 ** to find all of the outstanding questions.  Since outstanding_questions
 ** isn't adjusted when a job with an outstanding question is deleted,
 ** we compute a new one as we go.
@@ -212,7 +212,7 @@ static void question_look_for_work(void)
 
 /*
 ** This is called whenever a job with an outstanding question is inserted
-** into the queue.	We try to launch a questioner processor right away,
+** into the queue.  We try to launch a questioner processor right away,
 ** but if we can't we increment the count of the number of questions that
 ** would like to be asked.
 */
@@ -229,7 +229,7 @@ void question_job(struct QEntry *job)
 	} /* end of question_job() */
 
 /*
-** This is called from reapchild().	 We get to claim our children.
+** This is called from reapchild().  We get to claim our children.
 */
 gu_boolean question_child_hook(pid_t pid, int wstat)
 	{

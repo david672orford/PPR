@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 5 April 2003.
 #
 
 # The makefile has to feed us this information since ../makeprogs/paths.sh
@@ -49,35 +49,35 @@ echo "Checking for group $GROUP_PPR..."
 group_ppr_gid=`./getgrnam $GROUP_PPR`
 if [ $group_ppr_gid -ne -1 ]
 	then
-	echo "	  already exists, good."
+	echo "    already exists, good."
 
 	else
-	echo "	  adding..."
+	echo "    adding..."
 
 	if [ $my_uid -ne 0 ]
-	then
-	echo "Can't create group $GROUP_PPR because not running as root."
-	exit 1
-	fi
+		then
+		echo "Can't create group $GROUP_PPR because not running as root."
+		exit 1
+		fi
 
 	if [ -x /usr/sbin/groupadd ]
 		then
 		/usr/sbin/groupadd $GROUP_PPR
-	else
-	if [ -x /usr/sbin/pw ]
-	then
-	/usr/sbin/pw groupadd $GROUP_PPR
-	else
-	if [ -x /usr/bin/niload ]
-	then
-	echo "$GROUP_PPR:*:100:" | niload group .
-	else
-	echo "Oops, this script doesn't contain instructions for adding groups on this system."
-		echo "Please add the group \"$GROUP_PPR\" and then run fixup again."
-		exit 1
-	fi
-	fi
-	fi
+		else
+		if [ -x /usr/sbin/pw ]
+			then
+			/usr/sbin/pw groupadd $GROUP_PPR
+			else
+			if [ -x /usr/bin/niload ]
+				then
+				echo "$GROUP_PPR:*:100:" | niload group .
+				else
+				echo "Oops, this script doesn't contain instructions for adding groups on this system."
+				echo "Please add the group \"$GROUP_PPR\" and then run fixup again."
+				exit 1
+				fi
+			fi
+		fi
 
 	group_ppr_gid=`./getgrnam $GROUP_PPR`
 	if [ $group_ppr_gid -lt 1 ]
@@ -107,11 +107,11 @@ for user in $USER_PPR $USER_PPRWWW
 	user_ppr_uid=`./getpwnam $user`
 	if [ $user_ppr_uid -ne -1 ]
 		then
-		echo "	  already exists, good."
+		echo "    already exists, good."
 
 		# doesn't exist
 		else
-		echo "	  adding..."
+		echo "    adding..."
 
 	if [ $my_uid -ne 0 ]
 		then
@@ -120,24 +120,24 @@ for user in $USER_PPR $USER_PPRWWW
 		fi
 
 	# System V release 4
-		if [ -x /usr/sbin/passmgmt ]
-			then
-			/usr/sbin/passmgmt -a -h $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
-			exitval=$?
+	if [ -x /usr/sbin/passmgmt ]
+		then
+		/usr/sbin/passmgmt -a -h $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+		exitval=$?
 
 	# Linux
-		else
-		if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
-			then
-			/usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $sup $user
-			exitval=$?
+	else
+	if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
+		then
+		/usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $sup $user
+		exitval=$?
 
 	# OSF?
 	else
-		if [ -x /usr/sbin/useradd ]
-			then
-			/usr/sbin/useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
-			exitval=$?
+	if [ -x /usr/sbin/useradd ]
+		then
+		/usr/sbin/useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
+		exitval=$?
 
 	# FreeBSD
 	else
@@ -161,7 +161,7 @@ for user in $USER_PPR $USER_PPRWWW
 
 	else				# no user passmgmt or useradd
 	echo
-	echo "Oops!	 This script does not contains instructions for adding accounts on"
+	echo "Oops!  This script does not contains instructions for adding accounts on"
 	echo "this system, please add an account called \"$user\" and run make install"
 	echo "again.  The account should have a primary group ID of $group_ppr_gid."
 	exit 1
@@ -189,14 +189,14 @@ echo "user_ppr_uid=$user_ppr_uid group_ppr_gid=$group_ppr_gid"
 
 if [ $my_uid != 0 -a $my_uid != $user_ppr_uid ]
 	then
-	echo "You aren't root or $USER_PPR.	 You won't be able to install PPR"
-	ehco "with the correct file ownership.	Aborting."
+	echo "You aren't root or $USER_PPR.  You won't be able to install PPR"
+	echo "with the correct file ownership.  Aborting."
 	fi
 
 if [ $my_uid != 0 -a $my_gid != $group_ppr_gid ]
 	then
-	echo "Your primary group isn't $GROUP_PPR.	You won't be able to install PPR"
-	ehco "with the correct file ownership.	Aborting."
+	echo "Your primary group isn't $GROUP_PPR.  You won't be able to install PPR"
+	echo "with the correct file ownership.  Aborting."
 	fi
 
 exit 0

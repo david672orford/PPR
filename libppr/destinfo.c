@@ -80,7 +80,7 @@ const char *dest_ppdfile(const char destnode[], const char destname[])
 			}
 		}
 		
-	/* At this point we should have a printer name.	 We will open the 
+	/* At this point we should have a printer name.  We will open the 
 	   configuration file and extract the PPD file name.
 	   */
 	ppr_fnamef(fname, "%s/%s", PRCONF, destname);

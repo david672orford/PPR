@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	user = pw->pw_name;
 
 	/*
-	** Parse the switches.	Mostly, we will call uprint
+	** Parse the switches.  Mostly, we will call uprint
 	** member functions.
 	*/
 	while((c = getopt(argc, argv, option_list)) != -1)

@@ -240,7 +240,7 @@ void print_switchset(char *switchset)
 	} /* end of print_switchset() */
 
 /*
-** Print some text.	 Wrap the text to 80 columns.  Indent subsequent
+** Print some text.  Wrap the text to 80 columns.  Indent subsequent
 ** lines by 4 spaces.  Understand that start_column is the column
 ** the cursor is when this is called.  (0 is the left hand column.)
 */

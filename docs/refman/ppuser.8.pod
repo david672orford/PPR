@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 5 April 2003.
 #
 
 =head1 NAME
@@ -47,7 +47,7 @@ user be "root", "ppr", or be listed in F</etc/ppr/acl/ppuser.allow>.
 =item B<ppuser add> 'I<user name>' 'I<real name>' I<authcode> I<initialbalance> I<cutoff> I<life>
 
 Adds a user to the accounting database.  "I<User name>" is the name of the
-user as it will appear in "C<%%For:>" comments and L<ppr(1)> B<-f> switches.
+user as it will appear in "C<%%For:>" comments and L<ppr.1/ppr> B<-f> switches.
 "I<Real name>" is the name "B<user name>" should be translated to before it
 is used in queue listings or banner pages.  (For example, if "I<user name>"
 is "jandrews", "I<real name>" might be "Joseph Andrews. When B<ppr> is
@@ -132,7 +132,7 @@ non-functional.
 
 =head1 SEE ALSO
 
-L<ppr(1)>, L<pprd(8)>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
+L<ppr.1>, L<pprd.8>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
 
 =head1 HISTORY
 

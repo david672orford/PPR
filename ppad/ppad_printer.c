@@ -1630,7 +1630,7 @@ int printer_ppd(const char *argv[])
 	/* Get ready to collect information for a "DefFiltOpts:" line. */
 	deffiltopts_open();
 
-	/* Consider the printer's PPD file.	 If this fails, stop. */
+	/* Consider the printer's PPD file.  If this fails, stop. */
 	if((retval = deffiltopts_add_ppd(printer, ppdname, (char*)NULL)) != EXIT_OK)
 		{
 		confabort();
@@ -1854,7 +1854,7 @@ int printer_flags(const char *argv[])
 	if(! printer || ! argv[1] || ! argv[2])
 		{
 		fputs(_("You must supply the name of an existing printer, a new banner\n"
-				"option, and a new trailer option.	Valid banner and trailer\n"
+				"option, and a new trailer option.  Valid banner and trailer\n"
 				"options are \"never\", \"no\", \"yes\", and \"always\".\n"), errors);
 		return EXIT_SYNTAX;
 		}
@@ -1922,9 +1922,9 @@ int printer_charge(const char *argv[])
 	if(! printer || ! argv[1])
 		{
 		fputs(_("Insufficient parameters.  You must supply the name of a printer\n"
-				"and an amount to change per sheet.	 If you wish, you may specify\n"
+				"and an amount to change per sheet.  If you wish, you may specify\n"
 				"an amount to charge per duplex sheet and then an amount to charge\n"
-				"per simplex sheet.	 If you specify only one amount, it will apply\n"
+				"per simplex sheet.  If you specify only one amount, it will apply\n"
 				"to both.  To remove a printer charge, set the charge to \"none\".\n"
 				"In contrast, setting the charge to \"0.00\" will mean that only users\n"
 				"with charge accounts may print, even though they will not be charged\n"
@@ -2269,7 +2269,7 @@ int printer_delete(const char *argv[])
 	ppop2("purge", printer);			/* cancel all existing jobs */
 
 	/* Remove the printer from membership in each */
-	/* and every group.	  Rather laborious, don't */
+	/* and every group.  Rather laborious, don't */
 	/* you think? */
 	if((dir = opendir(GRCONF)) == (DIR*)NULL)
 		{
@@ -2502,7 +2502,7 @@ int printer_passthru(const char *argv[])
 	if(!printer)
 		{
 		fputs(_("You must specify a printer and a (possibly empty) list\n"
-				"of file types.	 These file types should be the same as\n"
+				"of file types.  These file types should be the same as\n"
 				"those used with the \"ppr -T\" option.\n"), errors);
 		return EXIT_SYNTAX;
 		}
@@ -2959,8 +2959,8 @@ int printer_userparams(const char *argv[])
 
 	if(!printer)
 		{
-		fputs(_("You must supply the name of a printer.	 You may also supply a new\n"
-				"quoted, space delimited list of name=value pairs.	If you don't\n"
+		fputs(_("You must supply the name of a printer.  You may also supply a new\n"
+				"quoted, space delimited list of name=value pairs.  If you don't\n"
 				"supply such a list, any existing list will be deleted.\n"), errors);
 		}
 
@@ -3010,7 +3010,7 @@ int printer_addon(const char *argv[])
 	if(!printer || !name || (value && argv[3]))
 		{
 		fputs(_("You must supply the name of an existing printer, the name of an addon\n"
-				"parameter.	 A value for the paremeter is optional.	 If you do not\n"
+				"parameter.  A value for the paremeter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

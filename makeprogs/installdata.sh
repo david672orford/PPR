@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 April 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -63,7 +63,7 @@ while [ "$1" != "" ]
 	if [ "$name" != "CVS" ]
 	then
 	dest="$DESTDIR/$name"
-	echo "	  \"$1\" --> \"$dest\""
+	echo "    \"$1\" --> \"$dest\""
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
 	cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
 	chown $USER_PPR "$RPM_BUILD_ROOT$dest"

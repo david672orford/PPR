@@ -29,7 +29,7 @@
 */
 
 /*===========================================================================
-** Determine if the printer is capable of printing the job.	 If the printer 
+** Determine if the printer is capable of printing the job.  If the printer 
 ** is not capable, then message are added to the job log and the job will be
 ** turned away from this printer.
 **
@@ -85,7 +85,7 @@ static struct INTERNAL_RESOURCES
 
 /*===========================================================================
 ** These functions are used by check_if_capable() to add messages to the
-** job's log file.	These functions call the job log functions in 
+** job's log file.  These functions call the job log functions in 
 ** pprdrv_log.c to do the actual logging.  These functions just provide 
 ** a way to add extra lines that mark off the start of a report on 
 ** the incapabability of a printer.
@@ -255,7 +255,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 		DODEBUG_RESOURCES(("Need resource %s %s", d->type, d->name));
 
 		/*
-		** If it is a font, set a flag.	 If it is a font,
+		** If it is a font, set a flag.  If it is a font,
 		** try to find it in the printer's PPD file.
 		*/
 		font = FALSE;
@@ -494,7 +494,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 
 		/*
 		** In this switch, if the requirement is unrecognized or
-		** is satisfied, execute continue.	If we allow execution
+		** is satisfied, execute continue.  If we allow execution
 		** to drop out of the bottom of this loop, it is understood
 		** that the requirement in question has not been met.
 		*/
@@ -551,7 +551,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 		/*
 		** If the ProofMode is NotifyMe, then the unsatisified requirement
 		** or requirements is a reason we can't print this
-		** job.	 If this is pass 1 on a group, that is a reason
+		** job.  If this is pass 1 on a group, that is a reason
 		** we can't print it yet.
 		*/
 		if(job.attr.proofmode == PROOFMODE_NOTIFYME || group_pass == 1)

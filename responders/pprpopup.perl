@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/responders/pprpopup.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 November 2002.
+# Last modified 5 April 2003.
 #
 
 #
@@ -116,7 +116,7 @@ if($pages > 0)
   else
 	 { print SEND "\nIt is $pages pages long." }
   if($charge ne '')
-	 { print SEND "	 You have been charged $charge." }
+	 { print SEND "  You have been charged $charge." }
   print SEND "\n";
   }
 

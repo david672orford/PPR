@@ -488,7 +488,7 @@ int main(int argc, char *argv[])
 	** renounce them now.  This program should be setuid "ppr" and setgid "ppr".
 	**
 	** We use fputs() and exit() here because fatal() would put the
-	** message into the log file which is not where we want it.	 Besides,
+	** message into the log file which is not where we want it.  Besides,
 	** it could create a log file with wrong permissions.
 	*/
 	{
@@ -613,7 +613,7 @@ int main(int argc, char *argv[])
 	unlink(log_file_name);
 
 	/* Stash our PID in a file so that it is easier to find the daemon
-	   to shut it down.	 This file also serves as a lock file. */
+	   to shut it down.  This file also serves as a lock file. */
 	{
 	FILE *f;
 

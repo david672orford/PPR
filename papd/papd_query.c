@@ -131,7 +131,7 @@ static void eat_query(int sesfd)
 
 /*
 ** If we can't answer a query, we call this routine after
-** calling eat_query().	 This routine will return the default
+** calling eat_query().  This routine will return the default
 ** answer which at that point will be in line[].
 */
 static void return_default(int sesfd)
@@ -286,8 +286,8 @@ static void font_query(int sesfd, struct QUEUE_CONFIG *qc)
 ** Resource query.
 **
 ** This is similiar to font_query(), the diffence being that the
-** resource type is the 1st parameter.	I am not sure if this code
-** is correct.	Should the name of a procedure set be returned
+** resource type is the 1st parameter.  I am not sure if this code
+** is correct.  Should the name of a procedure set be returned
 ** with a leading slash, for instance?
 */
 static void resource_query(int sesfd, struct QUEUE_CONFIG *qc)
@@ -593,7 +593,7 @@ static void generic_query(int sesfd, struct QUEUE_CONFIG *qc)
 
 /*
 ** Read a query job from the client and answer it to the
-** best of our ability.	 This is called just after the line
+** best of our ability.  This is called just after the line
 ** "%!PS-Adobe-x.x Query" is received.
 */
 void answer_query(int sesfd, struct QUEUE_CONFIG *qc)

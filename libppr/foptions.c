@@ -25,19 +25,19 @@
 
 
 /*
-** This routine complements those in options.c.	 It is used
+** This routine complements those in options.c.  It is used
 ** when parsing filter options.
 **
 ** When a filter option error is detected, this routine is used
 ** to, print up to 70 characters of the
 ** error in context with a caret underneath to show exactly
-** where the error is.	Then print the error message under that.
+** where the error is.  Then print the error message under that.
 **
 ** We adopt some elaborate methods because a filter options
 ** string will very often exceed the terminal line width.
 ** We print the segement which options_get_one() has
 ** indicated by setting options_error_context_index.  If that
-** index is not zero we print "... " first.	 If the part of
+** index is not zero we print "... " first.  If the part of
 ** the string after the point indicated by the index is longer than
 ** 70 characters we print just the first 70 and append " ...".
 */

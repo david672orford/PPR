@@ -84,7 +84,7 @@ int uprint_lpr_make_connection(const char address[])
 	/*
 	** If the address specifies the number of a port to use, use that,
 	** otherwise, find out which port we should connect
-	** to by looking in the /etc/services database.	 It
+	** to by looking in the /etc/services database.  It
 	** we don't find it, we will use the value 515.
 	*/
 	{
@@ -309,7 +309,7 @@ int uprint_lpr_send_cmd(int fd, const char text[], int length)
 
 /*
 ** Fetch a 1 byte result code from the RFC-1179 server and return it.
-** If an error occurs, uprint_errno is set and -1 is returned.	This
+** If an error occurs, uprint_errno is set and -1 is returned.  This
 ** routine leaves the printing of error messages up to the caller.
 **
 ** Note: in the RFC-1179 protocol, a result byte of 0 indicates sucess.

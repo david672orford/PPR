@@ -39,7 +39,7 @@
 
 This function takes a string with ANSI C string escape
 sequences in it and replaces the escape sequences with
-the values they represent.	The length of the resulting
+the values they represent.  The length of the resulting
 string is returned.
 
 */

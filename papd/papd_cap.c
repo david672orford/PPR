@@ -255,7 +255,7 @@ void at_close_reply(int sesfd)
 /*==============================================================
 ** Put a name on the network and return the file descriptor.
 **
-** If this function fails it should return -1.	The caller
+** If this function fails it should return -1.  The caller
 ** will not notice this, so other routines in this module
 ** should recognized the -1 as a dummy file descriptor number
 ** which indicates a dead entry.
@@ -270,7 +270,7 @@ int at_add_name(const char papname[])
 	/*
 	** Since at_add_name() will be the first function in this module to be 
 	** called, we will initialize the AppleTalk the first time it is
-	** called.	This saves us the bother of having a separate module
+	** called.  This saves us the bother of having a separate module
 	** initialization function.
 	*/
 	if( ! appletalk_started )
@@ -309,7 +309,7 @@ int at_add_name(const char papname[])
 	} /* at_add_name() */
 
 /*
-** Cleanup routine.	 This is called by the daemon if it
+** Cleanup routine.  This is called by the daemon if it
 ** is killed or exits due to a fatal error.
 */
 void at_remove_name(const char papname[], int fd)
@@ -324,7 +324,7 @@ void at_remove_name(const char papname[], int fd)
 /*===========================================================================
 ** AppleTalk-implementation-dependent part of printjob()
 **
-** Copy the job to ppr.	 We will not use the buffering routines to do this, 
+** Copy the job to ppr.  We will not use the buffering routines to do this, 
 ** though we will use the buffer and the buffering routine global variables.
 ===========================================================================*/
 
@@ -361,7 +361,7 @@ int at_printjob_copy(int sesfd, int pipe)
 	} /* end of at_printjob_copy() */
 
 /*=======================================================================
-** This called repeatedly from the daemon's main loop.	It accepts
+** This called repeatedly from the daemon's main loop.  It accepts
 ** incoming connections.
 =======================================================================*/
 
@@ -427,7 +427,7 @@ void at_service(struct ADV *adv)
 
 				/*
 				** In CAP we must make a seperate call in order to find the address of 
-				** the client.	This address will be handed on to connexion_callback().
+				** the client.  This address will be handed on to connexion_callback().
 				** It eventually finds its way into the ppr -r switch.
 				*/
 				PAPGetNetworkInfo(sesfd, &remote);

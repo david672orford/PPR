@@ -42,13 +42,13 @@
 /** determine name of this node
 
 This function returns the nodename which identifies this PPR node.
-All jobs coming from this node will be stamped with this name.	Other
-nodes will use this name to send jobs to this node.	 In the current
+All jobs coming from this node will be stamped with this name.  Other
+nodes will use this name to send jobs to this node.  In the current
 implementation this is the system name truncated before the first period (if
 present) and furthur truncated to 16 characters.
 
 Notice that this routine is call frequently.  It should determine
-the node name only the first time it is called.	 It should save
+the node name only the first time it is called.  It should save
 that name and returned the saved name on subsequent calls.
 
 */

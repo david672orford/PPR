@@ -260,7 +260,7 @@ static void job_status(const struct QEntry *qentry, const struct QFileEntry *qfi
 
 /*
 ** There are two possible flag pages, so we
-** need to execute this code twice.	 Theirfor
+** need to execute this code twice.  Theirfor
 ** it is a subroutine.
 */
 static const char *describe_flag_page_setting(int setting)
@@ -356,7 +356,7 @@ static const char *describe_orientation(int orientation)
 **		The second argument is the pprd queue structure.
 **		The Third argument is a structure containing the information
 **		from the queue file.
-**		The third argument is the handle of the response file.	This
+**		The third argument is the handle of the response file.  This
 **		is provided so that (*item)() may pass it to job_status().
 **		The fourth argument is the handle of the queue file which
 **		should be passed to job_status().
@@ -574,7 +574,7 @@ static void ppop_list_help(void)
 	fputs(_("Usage: ppop list {all, <printer>, <group> , <job>} ...\n\n"
 		"This command will print information about the specified jobs.\n"
 		"Jobs may be specified by job id, by queue, or \"all\" may\n"
-		"be specified.	Multiple specifications may be used with this\n"
+		"be specified.  Multiple specifications may be used with this\n"
 		"command.\n"), errors);
 	}
 
@@ -684,7 +684,7 @@ static void ppop_lpq_help(void)
 
 /*
 ** ppop_lpq_banner() calls this to print the progress of
-** the job a printer is working on.	 This routine writes
+** the job a printer is working on.  This routine writes
 ** to stdout.  It prints a line fragment of either the form:
 **
 ** " (0% sent)"
@@ -1005,7 +1005,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		}
 
 	/*
-	** Select a string for the LPQ filename field.	We would prefer the
+	** Select a string for the LPQ filename field.  We would prefer the
 	** actual file name but will accept the title.
 	**
 	** Change spaces in the file name to underscores because some programs
@@ -1907,7 +1907,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	int total_pages;
 
 	/* We have been passed a handle to the part of the queue file that
-	   hasn't been parsed yet.	We will read it to find the last
+	   hasn't been parsed yet.  We will read it to find the last
 	   "Progress:" line. */
 	{
 	char *line = NULL;
@@ -1922,7 +1922,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	/* Format the job name. */
 	jobname = remote_jobid(qfileentry->destnode,qfileentry->destname,qentry->id,qentry->subid,qfileentry->homenode);
 
-	/* Compute the percentage of progress.	We do this by figuring out
+	/* Compute the percentage of progress.  We do this by figuring out
 	   how many bytes have to be sent and the comparing it to the
 	   number that have been sent. */
 	bytes_total =

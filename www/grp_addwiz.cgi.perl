@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 February 2003.
+# Last modified 5 April 2003.
 #
 
 use lib "?";
@@ -61,7 +61,7 @@ my $addgrp_wizard_table = [
 
 				print "<p>", H_("The group must have a name.  The name may be up\n"
 						. "to 16 characters long.  Control codes, tildes, and spaces\n"
-						. "are not allowed.	 Also, the first character may not be\n"
+						. "are not allowed.  Also, the first character may not be\n"
 						. "a period or a hyphen."), "</p>\n";
 
 				print "<p><span class=\"label\">", H_("Group Name:"), "</span><br>\n";
@@ -128,7 +128,7 @@ my $addgrp_wizard_table = [
 		'dopage' => sub {
 				print "<p>", html(sprintf(_("While short group names are convenient in certain contexts,\n"
 						. "it is sometimes helpful to have a longer, more informative\n"
-						. "description.	 Please supply a longer description for\n"
+						. "description.  Please supply a longer description for\n"
 						. "\"%s\" below."), $data{name})), "\n";
 				print "</p>\n";
 

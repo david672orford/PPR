@@ -105,7 +105,7 @@ static int printer_start(int prnid, struct QEntry *job)
 ** Nothing really bad will happen if this routine is called while the
 ** printer is not idle, but doing so will waste time.
 **
-** This routine checks `never' and `notnow' for itself.	 Doing so is
+** This routine checks `never' and `notnow' for itself.  Doing so is
 ** not necessary but the code was accidentally written and probably
 ** makes things minutely faster, so it was left in.
 */
@@ -140,7 +140,7 @@ void printer_look_for_work(int prnid)
 				)
 			{
 			/* Try to start the printer.  If the return value is 0 (success)
-			   or -1 (failure), then stop.	If it is -2 (job unsuitable),
+			   or -1 (failure), then stop.  If it is -2 (job unsuitable),
 			   keep looking.
 			   */
 			if(printer_start(prnid, &queue[x]) != -2)
@@ -158,7 +158,7 @@ void printer_look_for_work(int prnid)
 
 /*
 ** Figure out what printers might be able to start this job and try each
-** of them in turn.	 We let printer_start() determine if the printers are
+** of them in turn.  We let printer_start() determine if the printers are
 ** idle and if `notnow' or `never' bits are set.  (Which would indicate that
 ** printers either don't have the required forms or are intrinsically
 ** unsuitable for the job.)
@@ -217,7 +217,7 @@ void printer_try_start_suitable_4_this_job(struct QEntry *job)
 	} /* end of printer_try_start_suitable_4_this_job() */
 
 /*
-** Change the status of a printer.	This is done in a function so that we
+** Change the status of a printer.  This is done in a function so that we
 ** can keep track of the previous status, inform queue display programs 
 ** of the change, and set the proper execute bits on the printer's
 ** configuration file so that the new status will stick across

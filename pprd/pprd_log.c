@@ -80,7 +80,7 @@ void fatal(int exitval, const char message[], ... )
 	** been passed the magic exit value ERROR_COREDUMP, then try to
 	** dump core.  We do two kill()s because for some mysterious
 	** reason SunOS 5.5.1 cron launches processes which can't
-	** receive SIGQUIT.	 Possibly it is because they don't
+	** receive SIGQUIT.  Possibly it is because they don't
 	** have a terminal.
 	*/
 	if(exitval == ERROR_DUMPCORE)

@@ -730,7 +730,7 @@ int main(int argc, char *argv[])
 	** renounce them now.  This program should be setuid "ppr" and setgid "ppop".
 	**
 	** We use fputs() and exit() here because fatal() would put the
-	** message into the log file which is not where we want it.	 Besides,
+	** message into the log file which is not where we want it.  Besides,
 	** it could create a log file with wrong permissions.
 	*/
 	{

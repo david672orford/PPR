@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 5 April 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -62,7 +62,7 @@ file_ok ()
 		then
 		case $2 in
 			-w )
-				echo "	  (But not writable by you, lets hope we don't need to.)"
+				echo "    (But not writable by you, lets hope we don't need to.)"
 				;;
 			-x )
 				echo "Warning: The file \"$1\" is not executable."
@@ -115,17 +115,17 @@ add_service ()
 #==========================================================================
 add_inetd ()
 	{
-	if grep "^[#		]*$1[	]" $INETD_CONF >/dev/null
+	if grep "^[# 	]*$1[ 	]" $INETD_CONF >/dev/null
 		then
-		echo "	  Service \"$1\" is already in $INETD_CONF, good."
+		echo "    Service \"$1\" is already in $INETD_CONF, good."
 		else
 		if [ ! -w $INETD_CONF ]
 			then
-			echo "	We have to write to \"$INETD_CONF\", please rerun as root."
+			echo "  We have to write to \"$INETD_CONF\", please rerun as root."
 			exit 1
 			fi
 
-		echo "	  Adding service \"$1\" to $INETD_CONF."
+		echo "    Adding service \"$1\" to $INETD_CONF."
 		if [ "$inetd_type" = "extended" ]
 			then
 			i=$2
@@ -195,9 +195,9 @@ if [ -f /usr/sbin/xinetd -a -d /etc/xinetd.d ]
 	echo " found, assuming it is what you are using..."
 	if [ -f $XINETD_PPR ]
 		then
-		echo "	$XINETD_PPR already exists, good."
+		echo "  $XINETD_PPR already exists, good."
 		else
-		echo "	Creating $XINETD_PPR..."
+		echo "  Creating $XINETD_PPR..."
 		xinetd_config $XINETD_PPR
 		fi
 	exit 0

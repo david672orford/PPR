@@ -41,7 +41,7 @@
 #include "uprint.h"
 
 /*
-** Handler for the ^E command.	It does some preliminary parsing
+** Handler for the ^E command.  It does some preliminary parsing
 ** and then passes the work on to a spooler specific function
 ** defined above.
 */
@@ -87,7 +87,7 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 	** Use the UPRINT routine to run an appropriate command.
 	** If uprint_lprm() returns -1 then the reason is in uprint_errno.
 	** Unless the error is UPE_UNDEST, it will already have called
-	** uprint_error_callback().	 If uprint_lprm() runs a command that
+	** uprint_error_callback().  If uprint_lprm() runs a command that
 	** fails, it will return the (positive) exit code of that
 	** command.
 	*/
@@ -104,7 +104,7 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 		else
 			{
 			printf(_("Could not delete the job or jobs due to a problem with the print server\n"
-				"called \"%s\".	 Please ask the print server's\n"
+				"called \"%s\".  Please ask the print server's\n"
 				"system administrator to examine the log file \"%s\"\n"
 				"to learn the details.\n"), this_node(), LPRSRV_LOGFILE);
 			}

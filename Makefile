@@ -115,6 +115,7 @@ install: symlinks-restore
 		echo "    running $(MAKE) install in $$i"; \
 		echo "==========================================="; \
 		( cd $$i && $(MAKE) install ) || exit 1; \
+	ls -l $(RPM_BUILD_ROOT)/usr/share/ppr/man/man8; \
 		echo; \
 		done
 

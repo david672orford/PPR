@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 		{
 		linenum++;
 
-		/* Locate the three fields.	 Each line looks like this:
+		/* Locate the three fields.  Each line looks like this:
 				david:printing:c2e93b4cf3b62bdfd5b4680c2a1b8460
 		*/
 		if(!(f1 = gu_strsep(&p,":")) || !(f2 = gu_strsep(&p,":")) || !(f3 = gu_strsep(&p, ":")))

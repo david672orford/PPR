@@ -48,7 +48,7 @@
 ** It is here because both lprsrv and lprsrv-test are linked
 ** with this module and this module requires clipcopy().
 **
-** Do a truncating string copy.	 The parameter maxlen
+** Do a truncating string copy.  The parameter maxlen
 ** specifies the maximum length to copy exclusive of the
 ** NULL which terminates the string.
 */
@@ -112,7 +112,7 @@ static gu_boolean node_pattern_match(const char node[], const char pattern[])
 	}
 
 /*
-** This function used used by authorized().	 This function checks to see
+** This function used used by authorized().  This function checks to see
 ** if the indicated node or a domain which encompasses it is named
 ** in the indicated file.  This is used for files such as hosts.lpd
 ** and hosts.equiv.
@@ -302,7 +302,7 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 
 /*
 ** This function loads the access settings for the indicated host into
-** the supplied structure.	It does this by reading the entire file and
+** the supplied structure.  It does this by reading the entire file and
 ** noting the position of the [global], [traditional], and [other] sections
 ** and the section whose name is the longest match for the hostname.  It then
 ** calls get_access_settings_read_section() to read the values from the

@@ -34,8 +34,8 @@
 
 /*=========================================================================
 ** Code to keep track of what sort of nested structure we are inside
-** of now.	A nested structure is one which can contain a complete
-** valid DSC documente.	 Within a nested structure we ignore things
+** of now.  A nested structure is one which can contain a complete
+** valid DSC documente.  Within a nested structure we ignore things
 ** such as "%%EOF".
 =========================================================================*/
 
@@ -163,7 +163,7 @@ void outermost_start(int sectioncode)
 /*
 ** This function is called to mark the end of a section of the outermost
 ** document.  It will get upset if we end a section that we did not begin.
-** If this happens it is a bug in PPR.	We make one exception:	the
+** If this happens it is a bug in PPR.  We make one exception:	the
 ** prolog may ommit "%%BeginProlog".
 */
 void outermost_end(int sectioncode)

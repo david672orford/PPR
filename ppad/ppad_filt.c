@@ -30,7 +30,7 @@
 
 /*
 ** This file contains the code which generates default filter options
-** ("DefFiltOpts:") line for a printer or group configuration file.	 It does 
+** ("DefFiltOpts:") line for a printer or group configuration file.  It does 
 ** this by examining all of the PPD files (only one for a printer) and
 ** by trying to find a matching mode in mfmodes.conf.  The result will look 
 ** something like this:
@@ -167,7 +167,7 @@ static char *get_mfmode(const char *product, const char *modelname, const char *
 
 	if(!answer)
 		{
-		fprintf(errors, _("Warning: \"%s\" has no matching clause!	Some filters\n"
+		fprintf(errors, _("Warning: \"%s\" has no matching clause!  Some filters\n"
 						"\tmay not work correctly.\n"), filename);
 		}
 
@@ -202,7 +202,7 @@ void deffiltopts_open(void)
 ** Read a PPD file and contribute its contents to
 ** the information we will use to supply a "DefFiltOpts:" line.
 **
-** Various PPAD sub-commands call this.	 They call it when they
+** Various PPAD sub-commands call this.  They call it when they
 ** copy the "PPDFile:" line.
 */
 int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const char *InstalledMemory)
@@ -441,7 +441,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	** If we have not yet determined that not all the devices use the same 
 	** mfmode then see if this one uses the same mfmode as the others.
 	**
-	** Notice that we skip this step if get_mfmode() fails.	 There might be 
+	** Notice that we skip this step if get_mfmode() fails.  There might be 
 	** a better way to handle such a failure.
 	**
 	** Also notice that we don't even try if we didn't find a 

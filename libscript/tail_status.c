@@ -33,7 +33,7 @@
 ** It works like the tail(1) command.  That is, it watches special PPR
 ** log files.  Actually, these files don't grow continually, but the
 ** PPR library function tail_status() takes care of all of those messy
-** details.	 C programs that want to do the same thing naturaly call
+** details.  C programs that want to do the same thing naturaly call
 ** tail_status() themselves and don't use this wrapper.
 */
 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
 	tail_status(TRUE, TRUE, print_function, 60, (void*)NULL);
 
-	/* I don't think we ever actually reach this line.	Violence (such
+	/* I don't think we ever actually reach this line.  Violence (such
 	   as SIGTERM or SIGPIPE) is the only incentive to leave off that 
 	   we understand.
 	   */

@@ -14,7 +14,7 @@
 */
 
 /*
-** Routines to read the PAPSRV configuration file.	The PAPSRV
+** Routines to read the PAPSRV configuration file.  The PAPSRV
 ** configuration file is described in the man page papsrv.conf(5).
 */
 

@@ -37,7 +37,7 @@
 **		<http://www.lprng.com/LPRng-HOWTO-Multipart/socketapi.htm>
 **		<http://www.lprng.com/LPRng-HOWTO-Multipart/appsocket.htm>
 **
-** JetDirect cards appear to conform to SocketAPI.	The author of this code
+** JetDirect cards appear to conform to SocketAPI.  The author of this code
 ** (David Chappell) doesn't have a printer that implements AppSocket, but
 ** from a reading of the above documents he believes that this the following
 ** options will set a queue to speak AppSocket instead of SocketAPI:
@@ -107,7 +107,7 @@ struct OPTIONS
 
 /*
 ** This is the SIGALRM handler which detects if the alarm goes off before the
-** remote system responds to connect().	 Notice that it does nothing but set 
+** remote system responds to connect().  Notice that it does nothing but set 
 ** a flag.
 */
 static volatile int sigalrm_caught = FALSE;
@@ -171,7 +171,7 @@ static void parse_address(const char address[], struct sockaddr_in *printer_addr
 
 	/*
 	** Now that inet_addr() and gethostbyname() have had a chance to
-	** examine it, put the address back the way it was.	 That way it
+	** examine it, put the address back the way it was.  That way it
 	** will look ok in alert messages.
 	*/
 	*ptr = ':';
@@ -198,7 +198,7 @@ static int open_connexion(const char address[], struct sockaddr_in *printer_addr
 	*/
 	for(try_count=0; TRUE; try_count++)
 		{
-		/* Create a socket.	 We do this every time because Linux
+		/* Create a socket.  We do this every time because Linux
 		   won't let us try again. */
 		if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 			{
@@ -747,7 +747,7 @@ int main(int argc, char *argv[])
 	sockfd = open_connexion(int_cmdline.address, &printer_address, &options, status_function, status_obj);
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
-	/* Disable SIGPIPE.	 We will catch the error on write(). */
+	/* Disable SIGPIPE.  We will catch the error on write(). */
 	signal_interupting(SIGPIPE, SIG_IGN);
 
 	/* Copy stdin to the printer. */
@@ -771,7 +771,7 @@ int main(int argc, char *argv[])
 	** Pocket print servers have been known to reject a new
 	** connection for a few seconds after closing the previous one.
 	** If more than one job is in the queue at one time, this can result
-	** in every other print attempt producing a fault.	This
+	** in every other print attempt producing a fault.  This
 	** problem is minor and can go unnoticed, but we will have
 	** an option to sleep for a specified number of seconds
 	** after closing the connection.

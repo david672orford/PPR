@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.51
-10 March 2003
+5 April 2003
 Copyright 1995--2003, Trinity College Computing Center
 Written by David Chappell"
 
@@ -375,7 +375,7 @@ proc command_QUESTION {file jobname url width height} {
 		}
 
 	if [info exists open_windows($jobname)] {
-		#puts "	 Already exists"
+		#puts "  Already exists"
 		window_reopen $open_windows($jobname)
 		puts $file "+OK already exists"
 		return
@@ -598,9 +598,9 @@ proc register_callback {token} {
 	upvar #0 $token state
 	#puts "Registration with <$state(url)> finished:"
 	regexp {^HTTP/[0-9]+\.[0-9]+ ([0-9]+)} $state(http) junk ncode
-	#puts "	   State: $state(status)"
-	#puts "	   Ncode: $ncode"
-	#puts "	   Size: $state(totalsize)"
+	#puts "    State: $state(status)"
+	#puts "    Ncode: $ncode"
+	#puts "    Size: $state(totalsize)"
 
 	# Test the status for errors.
 	if {[string compare $state(status) "ok"] == 0 && $ncode == 200} {

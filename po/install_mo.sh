@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -74,7 +74,7 @@ if [ ! -d "$full_instdir/$lang/LC_MESSAGES" ]
 	fi
 echo "%dir \"$instdir/$lang/LC_MESSAGES\"" >>$fileslist
 
-echo -n "	 "
+echo -n "    "
 for potfile in *.pot
 	do
 	division=`basename $potfile .pot`

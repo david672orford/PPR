@@ -161,7 +161,7 @@ gu_boolean printdest_claim_remote(const char dest[], struct REMOTEDEST *scratchp
 				break;
 
 			/* Lines will be in the form "name=value".
-			   Extract name and value.	We will
+			   Extract name and value.  We will
 			   eliminate spaces before the name, within
 			   the name, before and after the "=", and
 			   at the end of the line. */

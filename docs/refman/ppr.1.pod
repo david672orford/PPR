@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 March 2003.
+# Last modified 5 April 2003.
 #
 
 =head1 NAME
@@ -270,12 +270,12 @@ messaging facilities of the LAN Manager compatible Unix server known as
 Samba.  (See L<http://www.samba.org/>.)  The name of the client to receive
 the message should be specified with the B<-r> switch.  This responder
 accepts an option B<os=>.  The value should be obtained from Samba's %a. 
-For instructions for setting Samba up to use PPR, see L<ppr2samba(8)>.
+For instructions for setting Samba up to use PPR, see L<ppr2samba.8>.
 
 The method B<xwin> causes the notification to be sent to an X-Windows
 display.  The display must be specified with the B<-r> switch.  This method
 will not work if the user "ppr" is not allowed to connct to the X display. 
-The B<ppr-xgrant> command (see L<ppr-xgrant>) can be used to grant the
+The B<ppr-xgrant> command (see L<ppr-xgrant.1>) can be used to grant the
 necessary permission.  This responder uses L<xmessage(1)>, L<wish(1)> or in
 a pinch L<xterm(1)> to display the message.  The message will look much
 neater if B<xmessage> or B<wish> is available.  This responder has an option
@@ -1190,9 +1190,9 @@ The B<-T> option manually overrides PPR's automatic file type detection.  This
 may be necessary if for some reason the automatic detection system
 identifies a file incorrectly.
 
-Most of the possible input types are described in the L<ppr-filters(1)>
-manpage.  If you run the command B<ppr --help | grep -- -T> you will get
-a complete list of the supported input file types.
+Most of the possible input types are described in L<ppr-filters.1>.  If you
+run the command B<ppr --help | grep -- -T> you will get a complete list of
+the supported input file types.
 
 With version 1.32, the B<-T> switch can also accept a MIME type as its argument.
 The MIME type will be automatically converted to the PPR type name.  The list
@@ -1241,7 +1241,7 @@ default, and user-supplied options and then show the final set of options
 passed to the filter.
 
 The filters supplied with PPR and the options they understand are listed in
-the L<ppr-filters(1)> manpage.
+L<ppr-filters.1>.
 
 =item B<--markup> <option>
 

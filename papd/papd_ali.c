@@ -32,7 +32,7 @@
 ** AT&T/Apple AppleTalk Library Interface (ALI) module.
 **
 ** This works with the AppleTalk Network Program which comes with StarLAN LAN 
-** Manager.	 It also works with Netatalk and David Chappell's Netatalk ALI 
+** Manager.  It also works with Netatalk and David Chappell's Netatalk ALI 
 ** compatibility library.
 **
 ** The names of all exported functions in this module begin with "at_".
@@ -214,7 +214,7 @@ void at_reset_buffer(void)		/* this resets the end of file stuff */
 ** Get a character from the client.
 **
 ** This is called by pap_getline() to read the first line received to see
-** if it is a query or a printjob.	If it is a query, getline() will be
+** if it is a query or a printjob.  If it is a query, getline() will be
 ** used to read the rest of the query, if it is a printjob, it will not.
 **
 ** This routine will return the character read, unless the PAP connextion
@@ -333,7 +333,7 @@ int at_getc(int sesfd)
 /*==============================================================
 ** Put a name on the network and return the file descriptor.
 **
-** If this function fails it should return -1.	The caller
+** If this function fails it should return -1.  The caller
 ** will not notice this, so other routines in this module
 ** should recognized the -1 as a dummy file descriptor number
 ** which indicates a dead entry.
@@ -402,7 +402,7 @@ void at_remove_name(const char papname[], int fd)
 /*===========================================================================
 ** AppleTalk-implementation-dependent part of printjob()
 **
-** Copy the job to ppr.	 We will not use the buffering routines to do this, 
+** Copy the job to ppr.  We will not use the buffering routines to do this, 
 ** though we will use the buffer and the buffering routine global variables.
 ===========================================================================*/
 int at_printjob_copy(int sesfd, int pipe)
@@ -490,7 +490,7 @@ void at_service(struct ADV *adv)
 		}
 
 	/*
-	** Something happened!	Find the file descriptor
+	** Something happened!  Find the file descriptor
 	** it happened on and act on it.
 	*/
 	for(x=0; adv[x].adv_type != ADV_LAST; x++)

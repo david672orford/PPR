@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2003.
+** Last modified 5 April 2003.
 */
 
 /*
@@ -174,7 +174,7 @@ static void hide_printer(int fd, const char newtype[])
 	DODEBUG(("hiding printer, newtype=\"%s\"",newtype));
 
 	/*
-	** Code to change the printer type.	 This code seems to
+	** Code to change the printer type.  This code seems to
 	** temporarily change the type of all LaserWriter compatible
 	** printers.  Notice that it does not get the exitserver code
 	** or exitserver password from the PPD file.  This could
@@ -330,7 +330,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 	/*
 	** We will pass at most twice thru three times thru this loop.
 	**
-	** Pass 1: Try to open the printer with the name as given.	Stop
+	** Pass 1: Try to open the printer with the name as given.  Stop
 	**		   here if the entity type is "LaserWriter" or the interface
 	**		   option opt_is_laserwriter is FALSE.
 	** Pass 2: Try to open as type "LaserWriter" and rename
@@ -441,7 +441,7 @@ int receive(int papfd, int flag)
 ** end of the pipe.
 **
 ** Notice that the select() code differs slightly depending on
-** whether _NATALI_PAP is defined.	It will by defined if
+** whether _NATALI_PAP is defined.  It will by defined if
 ** David Chappell's AppleTalk Library Interface compatiblity
 ** library for Netatalk is being used in stead of the AT&T
 ** implementation.
@@ -493,7 +493,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 		** We know that the send buffer is empty when tosend equals -1.
 		**
 		** If there is no data available now, read() will return -1, setting
-		** errno to EAGAIN.	 If the other end has closed the pipe, read()
+		** errno to EAGAIN.  If the other end has closed the pipe, read()
 		** will return 0.
 		*/
 		if(tosend == -1)
@@ -691,8 +691,8 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 								if( (idle_hack_count++ * opt_idle_status_interval) > IDLE_HACK_TIMEOUT )
 									{
 									DODEBUG(("Printer idle time has exceeded %d seconds,", IDLE_HACK_TIMEOUT));
-									DODEBUG(("	  exiting despite printer status:"));
-									DODEBUG(("	  \"%.*s\"", (int)status[0], &status[1]));
+									DODEBUG(("    exiting dispite printer status:"));
+									DODEBUG(("    \"%.*s\"", (int)status[0], &status[1]));
 									server_eoj = 1;		/* so outer loop will stop */
 									break;				/* break out of inner loop */
 									}

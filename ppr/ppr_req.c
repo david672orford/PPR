@@ -125,7 +125,7 @@ void requirement(int reftype, const char req_name[])
 
 /*
 ** Delete a requirement we don't need after all.  This deletes all 
-** requirements of the specified type.	In other words, calling
+** requirements of the specified type.  In other words, calling
 **
 ** delete_requirement("duplex");
 **

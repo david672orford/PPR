@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last revised 6 March 2003.
+# Last modified 5 April 2003.
 #
 
 =head1 NAME
@@ -156,7 +156,7 @@ printer with a serial interface:
 C<$ ppad options myprn 'speed=19200 bits=7 parity=even'>
 
 The available options depend on which interface was selected.  See the
-appropriate section in the L<ppad-interfaces(8)> manpage to learn what
+appropriate section in L<ppad-interfaces.8> to learn what
 options are available for any given interface.
 
 The options can be removed either by specifying an empty string or omitting the options
@@ -497,7 +497,8 @@ If the I<switches> are omited, then the switchset is deleted.
 Switchsets can be used to set defaults for a printer which the user can
 generally override with contradictory options on the B<ppr> command line.
 They are also handy when the user can't select the desired options directly,
-such as when the job is being submitted through Samba, B<lprsrv>, or B<papsrv>.
+such as when the job is being submitted through Samba, L<lprsrv.8/lprsrv>, or
+L<papsrv.8/lprsrv>.
 
 Notice that if the job is submitted to a group of which this printer is a
 member, the printer's switchset will not be used, rather, the switchset from
@@ -545,15 +546,16 @@ commands.  In the most obvious case, one could include B<-d> option (presumably
 in attempt to redirect the print jobs to a different queue).
 Furtunately, B<ppr> will ignore it.
 
-Another option one should not include in a switchset is B<-m> (which sets the
-responder method).  Why?  Because the method by which PPR should send messages
-to the person who submitted the job depends very much on how the job arrived.
-For example, if the job was submitted by a Unix shell user on the server, then
-the B<write> command can be used to send a message to his terminal.  But if
-the user is Microsoft Windows user connecting through Samba, then the
-B<smbclient> program should be used to send messages.  For this reason, network
-servers such as Samba, B<lprsrv>, and B<papsrv> set the B<-m> and B<-r> options
-themselves thereby overriding any settings in the switchset.
+Another option one should not include in a switchset is B<-m> (which sets
+the responder method).  Why?  Because the method by which PPR should send
+messages to the person who submitted the job depends very much on how the
+job arrived. For example, if the job was submitted by a Unix shell user on
+the server, then the B<write> command can be used to send a message to his
+terminal.  But if the user is Microsoft Windows user connecting through
+Samba, then the B<smbclient> program should be used to send messages.  For
+this reason, network servers such as Samba, L<lprsrv.8/lprsrv>, and
+B<papsrv.8/papsrv> set the B<-m> and B<-r> options themselves thereby
+overriding any settings in the switchset.
 
 If you want to disable responder messages, don't put B<-r none> in the
 switchset.  Instead put an appropriate B<--responder-options> in the switchset.
@@ -612,12 +614,13 @@ the "ppad show" command.
 
 This command examines a printers PPD file and asks for information on the
 presence or absence of optional printer features.  Obviously, a PPD file
-should be selected with the "ppad ppd" command before this command is
-used.  The information which the user supplies is used to answer queries
-from Macintosh clients.  It is likely that this information will be used for
-other purposes in the future.  L<papsrv(8)> will not pick up new information until
-it is restarted.  Running "ppad ppd" will undo "ppad ppdopts", leaving all
-of the feature information unspecified.
+should be selected with the "ppad ppd" command before this command is used. 
+The information which the administrator supplies in answer to these
+questions is used to answer queries from Macintosh clients.  It is likely
+that this information will be used for other purposes in the future. 
+L<papsrv.8> will not pick up new information until it is restarted.  Running
+"ppad ppd" will undo "ppad ppdopts", leaving all of the feature information
+unspecified.
 
 =item B<ppad charge> I<printer> I<amount> [I<amount>]
 
@@ -1054,9 +1057,8 @@ F<include/util_exits.h>.
 
 =head1 SEE ALSO
 
-ppop(1), ppr(1), papsrv.conf(5), mfmodes.conf(5), papsrv(8),
-lprsrv(8), ppuser(8) "PPR, a PostScript Print Spooler", "Installing and
-Using PPR".
+L<ppr.1>, L<ppop.1>, L<papsrv.8>, L<lprsrv.8>, "PPR, a PostScript Print
+Spooler", "Installing and Using PPR".
 
 
 

@@ -249,7 +249,7 @@ static void set_options(const char *printer_name, const char *printer_options, i
 
 	/* Set defaults.  If changeable, default for online is DSR and CTS
 	   must be asserted.  We don't normaly opt to detect hangups (which
-	   I believe means loss of CD).	 We don't normally send ^T's. */
+	   I believe means loss of CD).  We don't normally send ^T's. */
 	#ifdef TIOCMGET
 	options->online = TIOCM_DSR | TIOCM_CTS;
 	#endif

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/job_public.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2002.
+# Last modified 5 April 2003.
 #
 
 
@@ -66,7 +66,7 @@ sub validate_password
 
 		if(!digest_nonce_validate($domain, $nonce))
 			{
-			die "MD5 digest authentication nonce was too stale.	 Please try again.";
+			die "MD5 digest authentication nonce was too stale.  Please try again.";
 			}
 		};
 	if($@)
@@ -141,7 +141,7 @@ eval {
 		else
 			{
 			print "<p>", html(sprintf(
-				_("You have submitted a print job entitled \"%s\".	You may either enter your\n"
+				_("You have submitted a print job entitled \"%s\".  You may either enter your\n"
 				. "username and password to print it or you may cancel it."), $title)),
 				"</p>\n";
 

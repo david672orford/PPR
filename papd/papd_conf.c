@@ -151,7 +151,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		}
 
 	/*
-	** If we found a PAP name, we take action.	If this queue had used to 
+	** If we found a PAP name, we take action.  If this queue had used to 
 	** have a PAP name, that is ok because conf_load() will notice that 
 	** we didn't switch the adv_type back to ADV_ACTIVE and will
 	** get rid of it.
@@ -253,8 +253,8 @@ struct ADV *conf_load(struct ADV *adv)
 		
 	/*
 	** Mark all of the active advertised names with a special temporary 
-	** status.	Any which are still present in the config file will
-	** get changed back to ADV_ACTIVE.	Those which aren't changed back
+	** status.  Any which are still present in the config file will
+	** get changed back to ADV_ACTIVE.  Those which aren't changed back
 	** will be deleted from the network later.
 	*/
 	for(i = 0; adv[i].adv_type != ADV_LAST; i++)
@@ -302,7 +302,7 @@ struct ADV *conf_load(struct ADV *adv)
 		/*
 		** This Linux code sets up monitoring of the configuration directories.
 		** This code will only be complied if we are using a suffiently new 
-		** version of GNU libc.	 The fcntl() call will fail on kernels
+		** version of GNU libc.  The fcntl() call will fail on kernels
 		** earlier than 2.4.19.
 		*/
 		#ifdef F_NOTIFY

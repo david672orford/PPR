@@ -124,7 +124,7 @@ static int drivers_import(void)
 			break;
 			}
 
-		/* Create the TDB key.	Note that the Samba code converts this to the Unix
+		/* Create the TDB key.  Note that the Samba code converts this to the Unix
 		   codepage but we don't. */
 		snprintf(keytext, sizeof(keytext), "DRIVERS/%s/%d/%s", architecture, atoi(field_cversion), field_drivername);
 

@@ -253,7 +253,7 @@ Tcl_FirstHashEntry(Tcl_HashTable *tablePtr, Tcl_HashSearch *searchPtr)
 Tcl_HashEntry *
 Tcl_NextHashEntry(register Tcl_HashSearch *searchPtr)
 										/* Place to store information about
-										 * progress through the table.	Must
+										 * progress through the table.  Must
 										 * have been initialized by calling
 										 * Tcl_FirstHashEntry. */
 {
@@ -282,7 +282,7 @@ Tcl_NextHashEntry(register Tcl_HashSearch *searchPtr)
  *
  * Results:
  *		The return value is a malloc-ed string containing information
- *		about tablePtr.	 It is the caller's responsibility to free
+ *		about tablePtr.  It is the caller's responsibility to free
  *		this string.
  *
  * Side effects:
@@ -381,7 +381,7 @@ HashString(register char *string)
 	 *
 	 * 1. Multiplying by 10 is perfect for keys that are decimal strings,
 	 *	  and multiplying by 9 is just about as good.
-	 * 2. Times-9 is (shift-left-3) plus (old).	 This means that each
+	 * 2. Times-9 is (shift-left-3) plus (old).  This means that each
 	 *	  character's bits hang around in the low-order bits of the
 	 *	  hash value for ever, plus they spread fairly rapidly up to
 	 *	  the high-order bits to fill out the hash value.  This seems
@@ -453,13 +453,13 @@ StringFind(Tcl_HashTable *tablePtr, char *key)
  * StringCreate --
  *
  *		Given a hash table with string keys, and a string key, find
- *		the entry with a matching key.	If there is no matching entry,
+ *		the entry with a matching key.  If there is no matching entry,
  *		then create a new entry that does match.
  *
  * Results:
  *		The return value is a pointer to the matching entry.  If this
  *		is a newly-created entry, then *newPtr will be set to a non-zero
- *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		value;	otherwise *newPtr will be set to 0.  If this is a new
  *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
@@ -500,7 +500,7 @@ StringCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
 	}
 
 	/*
-	 * Entry not found.	 Add a new one to the bucket.
+	 * Entry not found.  Add a new one to the bucket.
 	 */
 
 	*newPtr = 1;
@@ -572,13 +572,13 @@ OneWordFind(Tcl_HashTable *tablePtr, register char *key)
  * OneWordCreate --
  *
  *		Given a hash table with one-word keys, and a one-word key, find
- *		the entry with a matching key.	If there is no matching entry,
+ *		the entry with a matching key.  If there is no matching entry,
  *		then create a new entry that does match.
  *
  * Results:
  *		The return value is a pointer to the matching entry.  If this
  *		is a newly-created entry, then *newPtr will be set to a non-zero
- *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		value;	otherwise *newPtr will be set to 0.  If this is a new
  *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
@@ -613,7 +613,7 @@ OneWordCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
 	}
 
 	/*
-	 * Entry not found.	 Add a new one to the bucket.
+	 * Entry not found.  Add a new one to the bucket.
 	 */
 
 	*newPtr = 1;
@@ -696,13 +696,13 @@ ArrayFind(Tcl_HashTable *tablePtr, char *key)
  * ArrayCreate --
  *
  *		Given a hash table with one-word keys, and a one-word key, find
- *		the entry with a matching key.	If there is no matching entry,
+ *		the entry with a matching key.  If there is no matching entry,
  *		then create a new entry that does match.
  *
  * Results:
  *		The return value is a pointer to the matching entry.  If this
  *		is a newly-created entry, then *newPtr will be set to a non-zero
- *		value;	otherwise *newPtr will be set to 0.	 If this is a new
+ *		value;	otherwise *newPtr will be set to 0.  If this is a new
  *		entry the value stored in the entry will initially be 0.
  *
  * Side effects:
@@ -749,7 +749,7 @@ ArrayCreate(Tcl_HashTable *tablePtr, register char *key, int *newPtr)
 	}
 
 	/*
-	 * Entry not found.	 Add a new one to the bucket.
+	 * Entry not found.  Add a new one to the bucket.
 	 */
 
 	*newPtr = 1;
@@ -842,7 +842,7 @@ BogusCreate(Tcl_HashTable *tablePtr, char *key, int *newPtr)
  * RebuildTable --
  *
  *		This procedure is invoked when the ratio of entries to hash
- *		buckets becomes too large.	It creates a new table with a
+ *		buckets becomes too large.  It creates a new table with a
  *		larger bucket array and moves all of the entries into the
  *		new table.
  *

@@ -15,10 +15,10 @@
 
 /*
 ** The purpose of the functions in this module is to search for PostScript
-** resources in the resource cache.	 This cache has two parts.	The first
-** one is the "permanent cache".  This is located in /usr/share/ppr/cache.	Files
+** resources in the resource cache.  This cache has two parts.  The first
+** one is the "permanent cache".  This is located in /usr/share/ppr/cache.  Files
 ** must be deliverately placed in the cache.  The second is the "automatic
-** cache".	Files are placed in this cache automatically when they are found
+** cache".  Files are placed in this cache automatically when they are found
 ** in incoming print jobs.
 */
 

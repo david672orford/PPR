@@ -21,7 +21,7 @@
 /*
  * The following variable holds the name of a user-specific startup script
  * to source if the application is being run nteractively (e.g. "~/.tclshrc").
- * Set by Tcl_AppInit.	NULL means don't source anything ever.
+ * Set by Tcl_AppInit.  NULL means don't source anything ever.
  */
 
 char *tcl_RcFileName = NULL;
@@ -218,9 +218,9 @@ Tcl_CreateInterp()
 
 	/*
 	 * The code below causes SIGPIPE (broken pipe) errors to
-	 * be ignored.	This is needed so that Tcl processes don't
+	 * be ignored.  This is needed so that Tcl processes don't
 	 * die if they create child processes (e.g. using "exec" or
-	 * "open") that terminate prematurely.	The signal handler
+	 * "open") that terminate prematurely.  The signal handler
 	 * is only set up when the first interpreter is created; 
 	 * after this the application can override the handler with
 	 * a different one of its own, if it wants.
@@ -508,7 +508,7 @@ Tcl_DeleteInterp(interp)
  * Side effects:
  *		If a command named cmdName already exists for interp, it is
  *		deleted.  In the future, when cmdName is seen as the name of
- *		a command by Tcl_Eval, proc will be called.	 When the command
+ *		a command by Tcl_Eval, proc will be called.  When the command
  *		is deleted from the table, deleteProc will be called.  See the
  *		manual entry for details on the calling sequence.
  *
@@ -579,7 +579,7 @@ Tcl_CreateCommand(interp, cmdName, proc, clientData, deleteProc)
  * Results:
  *		If cmdName exists in interp, then the information at *infoPtr
  *		is stored with the command in place of the current information
- *		and 1 is returned.	If the command doesn't exist then 0 is
+ *		and 1 is returned.  If the command doesn't exist then 0 is
  *		returned.
  *
  * Side effects:
@@ -729,17 +729,17 @@ Tcl_DeleteCommand(interp, cmdName)
 	cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
 
 	/*
-	 * The code here is tricky.	 We can't delete the hash table entry
+	 * The code here is tricky.  We can't delete the hash table entry
 	 * before invoking the deletion callback because there are cases
 	 * where the deletion callback needs to invoke the command (e.g.
 	 * object systems such as OTcl).  However, this means that the
-	 * callback could try to delete or rename the command.	The deleted
+	 * callback could try to delete or rename the command.  The deleted
 	 * flag allows us to detect these cases and skip nested deletes.
 	 */
 
 	if (cmdPtr->deleted) {
 		/*
-		 * Another deletion is already in progress.	 Remove the hash
+		 * Another deletion is already in progress.  Remove the hash
 		 * table entry now, but don't invoke a callback or free the
 		 * command structure.
 		 */
@@ -777,7 +777,7 @@ Tcl_DeleteCommand(interp, cmdName)
  * Results:
  *		The return value is one of the return codes defined in tcl.hd
  *		(such as TCL_OK), and interp->result contains a string value
- *		to supplement the return code.	The value of interp->result
+ *		to supplement the return code.  The value of interp->result
  *		will persist only until the next call to Tcl_Eval:	copy it or
  *		lose it! *TermPtr is filled in with the character just after
  *		the last one that was part of the command (usually a NULL
@@ -889,7 +889,7 @@ Tcl_Eval(interp, cmd)
 
 	/*
 	 * There can be many sub-commands (separated by semi-colons or
-	 * newlines) in one command string.	 This outer loop iterates over
+	 * newlines) in one command string.  This outer loop iterates over
 	 * individual commands.
 	 */
 
@@ -923,7 +923,7 @@ Tcl_Eval(interp, cmd)
 
 		/*
 		 * Parse the words of the command, generating the argc and
-		 * argv for the command procedure.	May have to call
+		 * argv for the command procedure.  May have to call
 		 * TclParseWords several times, expanding the argv array
 		 * between calls.
 		 */
@@ -953,7 +953,7 @@ Tcl_Eval(interp, cmd)
 			}
 
 			/*
-			 * Careful!	 Buffer space may have gotten reallocated while
+			 * Careful!  Buffer space may have gotten reallocated while
 			 * parsing words.  If this happened, be sure to update all
 			 * of the older argv pointers to refer to the new space.
 			 */
@@ -1009,7 +1009,7 @@ Tcl_Eval(interp, cmd)
 		}
 
 		/*
-		 * Find the procedure to execute this command.	If there isn't
+		 * Find the procedure to execute this command.  If there isn't
 		 * one, then see if there is a command "unknown".  If so,
 		 * invoke it instead, passing it the words of the original
 		 * command as arguments.
@@ -1054,7 +1054,7 @@ Tcl_Eval(interp, cmd)
 		}
 
 		/*
-		 * At long last, invoke the command procedure.	Reset the
+		 * At long last, invoke the command procedure.  Reset the
 		 * result to its default empty value first (it could have
 		 * gotten changed by earlier commands in the same command
 		 * string).
@@ -1119,7 +1119,7 @@ Tcl_Eval(interp, cmd)
 			/*
 			 * Someone tried to delete the interpreter, but it couldn't
 			 * actually be deleted because commands were in the middle of
-			 * being evaluated.	 Delete the interpreter now.  Also, return
+			 * being evaluated.  Delete the interpreter now.  Also, return
 			 * immediately:	 we can't execute the remaining code in the
 			 * procedure because it accesses fields of the dead interpreter.
 			 */
@@ -1193,7 +1193,7 @@ Tcl_Eval(interp, cmd)
  *
  * Side effects:
  *		From now on, proc will be called just before a command procedure
- *		is called to execute a Tcl command.	 Calls to proc will have the
+ *		is called to execute a Tcl command.  Calls to proc will have the
  *		following form:
  *
  *		void

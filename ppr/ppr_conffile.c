@@ -14,12 +14,12 @@
 */
 
 /*
-** Find and parse the group or printer configuration file.	The first
+** Find and parse the group or printer configuration file.  The first
 ** time this is called we will cache the information so that we
 ** do not have to perform expensive disk accesses to get other
 ** lines from the file.
 **
-** This module now has support for aliases.	 An alias can override the
+** This module now has support for aliases.  An alias can override the
 ** passthru and switchset of the thing it points to but not the default
 ** filter options or ACL list.
 */
@@ -94,7 +94,7 @@ static void cache_info(void)
 			}
 
 		/*
-		** If a file was found, use it.	 Here is not the place
+		** If a file was found, use it.  Here is not the place
 		** to worry about groups and printers which do not exist.
 		*/
 		if(f)
@@ -139,7 +139,7 @@ const char *extract_switchset(void)
 	} /* end of extract_switchset() */
 
 /*
-** Extract the "DefFileOpts:" line.	 If we find none, we will return
+** Extract the "DefFileOpts:" line.  If we find none, we will return
 ** a NULL pointer.
 */
 const char *extract_deffiltopts(void)
@@ -172,7 +172,7 @@ const char *extract_forwhat(void)
 	}
 
 /*
-** Extract the "ACLs: line.	 If there is none, we will return a NULL pointer.
+** Extract the "ACLs: line.  If there is none, we will return a NULL pointer.
 */
 const char *extract_acls(void)
 	{

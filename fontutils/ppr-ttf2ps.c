@@ -30,7 +30,7 @@
 
 /** \file
 
-This is a demonstration program for the libttf library.	 It does not
+This is a demonstration program for the libttf library.  It does not
 actually depend on any other part of PPR such as libppr or global_defines.h. 
 Neither is it internationalized.  This was all done deliberately, to make it
 easier to understand.

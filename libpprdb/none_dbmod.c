@@ -24,7 +24,7 @@
 #include "userdb.h"
 
 /*
-** Add a user to the database.	Return non-zero if
+** Add a user to the database.  Return non-zero if
 ** the operation fails for any reason.
 */
 enum USERDB_RESULT db_add_user(const char *username, struct userdb *user)
@@ -34,7 +34,7 @@ enum USERDB_RESULT db_add_user(const char *username, struct userdb *user)
 	} /* end of db_add_user() */
 
 /*
-** Delete a user from the database.	 Return non-zero if
+** Delete a user from the database.  Return non-zero if
 ** the operation fails for any reason.
 */
 enum USERDB_RESULT db_delete_user(const char *username)

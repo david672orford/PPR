@@ -46,7 +46,7 @@
 #include "commentary.h"
 
 /*
-** This module contains functions for writing a printer's status file.	The
+** This module contains functions for writing a printer's status file.  The
 ** printer status file is read by "ppop status".
 **
 ** This module keeps track of the printer's status and dispatches
@@ -83,7 +83,7 @@ struct SNMP_STATUS {
 /*===================================================================
 ** We catagorize printer error conditions according the the numbers
 ** used to represent them in the Printer MIB's variable
-** hrPrinterDetectedErrorState.	 Here we define a structure to keep
+** hrPrinterDetectedErrorState.  Here we define a structure to keep
 ** track of one bit.  We will use an array of these structures.
 ===================================================================*/
 
@@ -116,7 +116,7 @@ struct SNMP_BIT {
 /*
 ** Experience shows that printers sometimes report overlapping conditions.
 ** We use this table when sending commentary messages to eliminate milder
-** forms of more serious conditions which are present.	For example, it is
+** forms of more serious conditions which are present.  For example, it is
 ** silly to report "paper low" when we are also reporting "paper out".
 **
 ** It will no doubt be necessary to expand this table.
@@ -318,7 +318,7 @@ static void ppop_status_write(void)
 	if(message_exit != EXIT_PRINTED)
 		gu_snprintfcat(buffer, sizeof(buffer), "exit: %d\n", message_exit);
 
-	/* The combined SNMP-style status.	This includes status in other formats 
+	/* The combined SNMP-style status.  This includes status in other formats 
 	   converted to SNMP format.  The member status.start is the time in
 	   Unix format when we received this information.  It will be zero if we
 	   haven't.
@@ -389,7 +389,7 @@ static void ppop_status_write(void)
 		}
 	else
 		{
-		/* If the status file isn't open yet, open it now.	We don't close it,
+		/* If the status file isn't open yet, open it now.  We don't close it,
 		   it gets closed when we exit. */
 		if(statfile == -1)
 			{
@@ -424,7 +424,7 @@ static void dispatch_commentary(void)
 	/*
 	** This is where we handle status.start.  The functions that record the status in
 	** this structure don't bother to sett status.start, they just set status.last_news
-	** to the current time.	 Here we see if the status has changed and set it to
+	** to the current time.  Here we see if the status has changed and set it to
 	** the current time (from last_news) if it is different from what it was the last
 	** time we were called.
 	*/
@@ -541,7 +541,7 @@ void ppop_status_connecting(gu_boolean connecting)
 	}
 
 /*
-** This is called when pprdrv is almost ready to exit.	The only thing it
+** This is called when pprdrv is almost ready to exit.  The only thing it
 ** does afterward is call comentator_wait() and ppop_status_shutdown().
 **
 ** The parameter is the value which will be passed to exit().  We use it to
@@ -651,7 +651,7 @@ void handle_lw_status(const char pstatus[], const char job[])
 		int value1, value2, value3;
 		const char *details;
 
-		/* Now we look it up in a dictionary of LW status messages.	 We are trying
+		/* Now we look it up in a dictionary of LW status messages.  We are trying
 		   to integrate it into the SNMP way of describing printer condition.
 		   */
 		if((unrecognized = translate_lw_message(pstatus, &value1, &value2, &value3, &details)) != 0)
@@ -680,9 +680,9 @@ void handle_lw_status(const char pstatus[], const char job[])
 				}
 			}
 
-		/* This is for "ppop --verbose status".	 It will be described as
-		   "Raw LW Status".	 The number in front of it will be 1 if we didn't
-		   understand its meaning.	That will prompt ppop to display it
+		/* This is for "ppop --verbose status".  It will be described as
+		   "Raw LW Status".  The number in front of it will be 1 if we didn't
+		   understand its meaning.  That will prompt ppop to display it
 		   even if --verbose wasn't used.
 		   */
 		ppop_status.lw_status.important = unrecognized;
@@ -726,16 +726,16 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 
 	/*
 	** A PJL USTATUS message can have up to two codes, each of which has a
-	** message.	 Since the messages are localized (according to the printer's
+	** message.  Since the messages are localized (according to the printer's
 	** control-panel language setting), the messages are used only for
 	** debugging.
 	**
-	** The codes themselves are looked up in pjl-messages.conf.	 We use the
+	** The codes themselves are looked up in pjl-messages.conf.  We use the
 	** translate_pjl_messages() function to do this.  It returns a category
 	** (0 printer status, 1 printer error, 2 PJL error) and a numberic code.
 	** For printer status the code is the SNMP status number.  For printer
 	** errors it is the SNMP hrDetectedErrorState bit value to which the message
-	** cooresponds.	 For PJL errors the returned code has no meaning.
+	** cooresponds.  For PJL errors the returned code has no meaning.
 	*/
 	for(i=0 ; i<2; i++)
 		{
@@ -853,7 +853,7 @@ void handle_snmp_status(int device_status, int printer_status, unsigned int erro
 	/* for "ppop --verbose status". */
 	snprintf(message_snmp_status, sizeof(message_snmp_status), "%d %d", device_status, printer_status);
 
-	/* These are easy.	We just save them. */
+	/* These are easy.  We just save them. */
 	status.hrDeviceStatus = device_status;
 	status.hrPrinterStatus = printer_status;
 

@@ -42,7 +42,7 @@ outdated ()
 	rm -f "$1" || exit 1
 	if [ "$2" != "" ]
 	  then
-	  echo "	(Linking to $2 for backward compatibility.)"
+	  echo "    (Linking to $2 for backward compatibility.)"
 	  ln -s "$2" "$1" || exit 1
 	  fi
   fi

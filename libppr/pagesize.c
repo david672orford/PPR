@@ -28,7 +28,7 @@
 ** Return -1 if we fail to find a match, return 0 if we find one.
 **
 ** This routine is meant to interpret the arguments to the
-** DSC comments which contain page size names.	This is usesful
+** DSC comments which contain page size names.  This is usesful
 ** for deducing the media requirements of documents which do
 ** not contain "%%Media:" comments but do have "%%PageSize:"
 ** comments.
@@ -37,7 +37,7 @@
 ** their "pagesize=" options.
 **
 ** The "keyword" is the name to look up.  The "corrected_keyword" is the page
-** size name converted to standard form and capitalization.	 All of the
+** size name converted to standard form and capitalization.  All of the
 ** others are pointers to things that should be set if they aren't
 ** NULL pointers.
 */

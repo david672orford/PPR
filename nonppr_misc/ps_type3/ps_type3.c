@@ -64,7 +64,7 @@ static double intest(int co, int ci);
 /*
 ** This routine is used to break the character
 ** procedure up into a number of smaller
-** procedures.	This is necessary so as not to
+** procedures.  This is necessary so as not to
 ** overflow the stack on certain level 1 interpreters.
 **
 ** Prepare to push another item onto the stack,

@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 		return 1;
 
 	/*
-	** Create a uprint object.	Notice that we pass the argument
-	** list to the constructor.	 If uprint_print() executes
+	** Create a uprint object.  Notice that we pass the argument
+	** list to the constructor.  If uprint_print() executes
 	** /usr/bin/lp, it will pass it the origional arguments
 	** rather than an reconstructed set.
 	*/
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 	}
 
 	/*
-	** Parse the switches.	Mostly, we will call uprint
+	** Parse the switches.  Mostly, we will call uprint
 	** member functions.
 	*/
 	while((c = getopt(argc, argv, option_list)) != -1)

@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 		return EXIT_OK;
 		}
 
-	/* Look up the hostname using DNS.	If this fails
+	/* Look up the hostname using DNS.  If this fails
 	   it will print a message so we need only exit. */
 	if(! (hostname = fully_qualify_hostname(argv[1])))
 		return EXIT_NOTFOUND;

@@ -94,7 +94,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	job->commentary = 0;
 
 	/* More pointer defaults which we set to NULL to show they haven't 
-	   been read (yet).	 This order is the same as in readqfile.c so 
+	   been read (yet).  This order is the same as in readqfile.c so 
 	   as to make it easier to compare the lists. */
 	job->username = (char*)NULL;
 	job->proxy_for = (char*)NULL;				/* optional */

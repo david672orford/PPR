@@ -76,7 +76,7 @@ void patchfile(void)
 			printer_putline("%%EOF");
 			printer_flush();
 
-			/* Wait for the reply.	Allow up to 120 seconds because
+			/* Wait for the reply.  Allow up to 120 seconds because
 			   we don't want to give up before the interface gives
 			   up its connection attempt. */
 			writemon_start("QUERY");

@@ -172,7 +172,7 @@ static struct {const char *name; unsigned int bit;} gab_table[]=
 =========================================================================*/
 
 /*
-** This should get called for _all_ abnormal terminations.	We figure
+** This should get called for _all_ abnormal terminations.  We figure
 ** out the cause from the exit code and print an error message
 ** on stderr or run a responder or both.
 */
@@ -481,7 +481,7 @@ int write_queue_file(struct QFileEntry *qentry)
 	} /* end of write_queue_file() */
 
 /*
-** Open the FIFO to pprd or rpprd.	This FIFO will be used to tell
+** Open the FIFO to pprd or rpprd.  This FIFO will be used to tell
 ** the daemon that the job has been placed in the queue.
 */
 static FILE *open_fifo(const char name[])
@@ -491,7 +491,7 @@ static FILE *open_fifo(const char name[])
 
 	/*
 	** Try to open the FIFO.  If we fail it is probably because
-	** pprd is not running.	 In that case, errno will be set to
+	** pprd is not running.  In that case, errno will be set to
 	** ENOENT or ENXIO (depending on whether the spooler has
 	** ever been run).
 	*/
@@ -511,8 +511,8 @@ static FILE *open_fifo(const char name[])
 	** invoked without file descriptors 0 thru 2 already open.
 	** It is popularly supposed that the operating system
 	** connects these to stdin, stdout, and stderr, but actually
-	** the shell does this.	 Some daemons may invoke ppr without
-	** opening something on these file descriptors.	 If this
+	** the shell does this.  Some daemons may invoke ppr without
+	** opening something on these file descriptors.  If this
 	** happens, we must move the fifo up and open /dev/null
 	** on descriptors 0 thru 2.
 	*/
@@ -559,7 +559,7 @@ void submit_job(struct QFileEntry *qe, int subid)
 /*
 ** Code to check if there is a charge (money) for printing to the selected
 ** destination and thus the user needs to be specially authorized to submit
-** jobs to this destination.  If so, check if he is authorized.	 If
+** jobs to this destination.  If so, check if he is authorized.  If
 ** authorization is required but has not been obtained, it is a fatal error
 ** and this routine never returns.
 **
@@ -575,7 +575,7 @@ static void authorization_charge(void)
 		/*
 		** Figure out which account we must charge this to.
 		** If the --charge-to switch was used that is the
-		** answer.	If not and the For was set by the -f switch
+		** answer.  If not and the For was set by the -f switch
 		** or a "%%For:" line with -R for then use that.  If that
 		** doesn't work, use the Unix username.
 		*/
@@ -816,7 +816,7 @@ static void reapchild(int signum)
 **
 ** The result of this routine determines whether the user is allowed
 ** to override his user name on headers with a new name in the
-** "-f" switch or "%%For:" header line.	 It also determines whether
+** "-f" switch or "%%For:" header line.  It also determines whether
 ** a user can use the "-A" switch.
 **
 ** The first time this routine is called, it will cache the answer.
@@ -857,7 +857,7 @@ void become_user(void)
 ** Become the PPR owner again.
 **
 ** We do the EGID before the EUID in the hope of bypassing
-** bugs in ULTRIX.	This is not well understood.
+** bugs in ULTRIX.  This is not well understood.
 */
 void unbecome_user(void)
 	{
@@ -873,7 +873,7 @@ void unbecome_user(void)
 --------------------------------------------------------------------*/
 
 /*
-** This string lists the single character switches.	 If the letter is followed
+** This string lists the single character switches.  If the letter is followed
 ** by a ":" then the switch requires an argument.  So far the following
 ** letters have been used:
 ** aAbBCdDefFGHIKmNnoOPqQrRsStTUvwYXZ
@@ -1175,7 +1175,7 @@ static int flag_option(const char *optstr)
 ** to the document setup section of the job.
 **
 ** This is called from parse_feature_option() which is called during command
-** line parsing for each -F switch.	 It is also called towards the end of
+** line parsing for each -F switch.  It is also called towards the end of
 ** job processing as part of the handling of the -R duplex:* option.
 */
 static void mark_feature_for_insertion(const char name[])
@@ -1355,7 +1355,7 @@ static void parse_switchset(const char *switchset)
 	} /* parse_switchset */
 
 /*
-** Parse a destination queue specification.	 This gets called if the
+** Parse a destination queue specification.  This gets called if the
 ** -d switch is used.  It is also called in the absence of a -d switch
 ** to process the queue name taken from an environment variable
 ** or the default queue name.  So, it is always called at least once.
@@ -1412,7 +1412,7 @@ int parse_hack_option(const char name[])
 
 /*
 ** These are the action routines which are called to process the
-** options which ppr_getopt() isolates.	 There are 2 passes made
+** options which ppr_getopt() isolates.  There are 2 passes made
 ** over the option list.  The purpose of the first pass is to find
 ** the -d switch so that the correct switchset may be processed
 ** before pass 2 begins.
@@ -1423,7 +1423,7 @@ int parse_hack_option(const char name[])
 ** For long options, these routines are fed the short option character
 ** which cooresponds to the long option.  If a long option does not
 ** have a short form, then optchar is a code number.  These code
-** numbers should all be greater than 255.	We have chosen to make
+** numbers should all be greater than 255.  We have chosen to make
 ** them 1000 and greater.
 */
 static void doopt_pass1(int optchar, const char *optarg, const char *true_option)
@@ -1958,7 +1958,7 @@ int main(int argc, char *argv[])
 	set_ppr_env();
 
 	/* Since this is a setuid and setgid program, the effective
-	   IDs will be those of the ppr user and group.	 The real ones
+	   IDs will be those of the ppr user and group.  The real ones
 	   will be those of the user.  We memorize all of these so that
 	   we can switch to the PPR's IDs to open files in PPR's
 	   directories and to the user's IDs to open the file to be
@@ -2002,7 +2002,7 @@ int main(int argc, char *argv[])
 	/*
 	** Remember what directory we started in.  Some of the input filters
 	** need to know this.  This operation is complicated because of
-	** the poor design of the POSIX getcwd() function.	It can't even tell
+	** the poor design of the POSIX getcwd() function.  It can't even tell
 	** us how large a buffer it needs!
 	**
 	** Notice that we must adopt the user identity while doing this as
@@ -2092,13 +2092,13 @@ int main(int argc, char *argv[])
 	** Since a responder address may not be specified with the -r switch, we 
 	** will look for a default value in the environment variable
 	** PPR_RESPONDER_ADDRESS.  If no such variable exists, we must use the user
-	** name which the user logged in with.	The login user name is the proper
+	** name which the user logged in with.  The login user name is the proper
 	** address for the default responder "followme" (which is a meta-responder
-	** which by default delegates to the responder called "write").	 Notice
+	** which by default delegates to the responder called "write").  Notice
 	** that if the user used su to become a different user after loging in, the
 	** current user id will differ from the current user id.  In order for the
 	** responder to use the "write" command sucessfully, we must determine the
-	** login name.	That is why we try the environment variables "USER" and 
+	** login name.  That is why we try the environment variables "USER" and 
 	** "LOGNAME" before resorting to the current user id.
 	*/
 	if(!(qentry.responder_address = getenv("PPR_RESPONDER_ADDRESS")))
@@ -2190,7 +2190,7 @@ int main(int argc, char *argv[])
 	** messages which refer to the job id will look right.)
 	**
 	** After that we see if the destination node has been
-	** set.	 If it hasn't been, then it is this node.
+	** set.  If it hasn't been, then it is this node.
 	*/
 	if(!qentry.destname)
 		{
@@ -2220,7 +2220,7 @@ int main(int argc, char *argv[])
 	/*
 	** Now that we know the destination, we can pull in
 	** the switchset.  Notice that we do this before the
-	** main command line parsing pass.	This is so that
+	** main command line parsing pass.  This is so that
 	** settings on the command line can override settings
 	** from the switchset.
 	*/
@@ -2322,9 +2322,9 @@ int main(int argc, char *argv[])
 
 	/*
 	** If no --title switch was used but a file name was used, make the file
-	** name the default title.	The default title may be overridden by a
+	** name the default title.  The default title may be overridden by a
 	** "%%Title:" line.	 (Note that if the input is stdin, real_filename will
-	** be NULL.	 Also, qentry.lpqFileName will be non-NULL only if the
+	** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the
 	** --lpq-filename switch has been used.)
 	*/
 	if(!qentry.Title)
@@ -2383,7 +2383,7 @@ int main(int argc, char *argv[])
 		}
 
 	/*
-	** We are about to start creating queue files.	We must
+	** We are about to start creating queue files.  We must
 	** assign a queue id now.
 	**
 	** It is possible that get_input_file() will have been
@@ -2431,13 +2431,13 @@ int main(int argc, char *argv[])
 		fatal(PPREXIT_OTHERERR, "%s(): assertion failed at %s line %d: line[]=\"%s\"", function, __FILE__, __LINE__, line);
 
 	/*
-	** Eat up any characters that are left.	 There might be characters
-	** left because we stopt at an "%%EOF".	 Or, in_getline() (defined
+	** Eat up any characters that are left.  There might be characters
+	** left because we stopt at an "%%EOF".  Or, in_getline() (defined
 	** in ppr_infile.c) may have detected an end of file marker such as
 	** an HP UEL which might be followed by junk characters.
 	**
 	** If there are fewer than 50 characters it is probably something
-	** like PJL code, so we only express anoyance.	If there are
+	** like PJL code, so we only express anoyance.  If there are
 	** more than that, it looks serious so it merits a severe warning.
 	*/
 	for(x = 0; in_getc() != EOF; x++);
@@ -2631,7 +2631,7 @@ int main(int argc, char *argv[])
 	** What to do when the "%%Pages:" comment indicates more pages than
 	** there are "%%Page:" comments is more troublesome.  The program
 	** pslpr will make this mistake when extracting selected pages from
-	** a document.	The current solution is to use the count of "%%Page:"
+	** a document.  The current solution is to use the count of "%%Page:"
 	** comments.
 	*/
 	if(pagenumber > 0)
@@ -2698,7 +2698,7 @@ int main(int argc, char *argv[])
 
 	/*
 	** Make sure the access control lists permit the user to send jobs to this
-	** printer.	 If not, then this function too will not return.
+	** printer.  If not, then this function too will not return.
 	*/
 	authorization_acl();
 
@@ -2738,7 +2738,7 @@ int main(int argc, char *argv[])
 	else
 		{
 		/*
-		** Create and fill the queue file.	It is sad that this
+		** Create and fill the queue file.  It is sad that this
 		** is the only place we check for disk full.
 		**
 		** Note that fatal() file_cleanup(), so the queue file should be

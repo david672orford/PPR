@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 January 2002. 
+** Last modified 6 April 2003.
 */
 
 /*
@@ -62,7 +77,7 @@ gu_boolean auto_lf = FALSE;
 
 /*
 ** Here we find the vital statistics of the medium on which we will
-** be printing.	 The width and height are in PostScript Units and
+** be printing.  The width and height are in PostScript Units and
 ** represent the width and height before any rotation for landscape.
 **
 ** PageSize is the string which can be used in
@@ -190,7 +205,7 @@ int TAB_WIDTH = DEFAULT_TAB_WIDTH;
 ** on the required character set.
 **
 ** Also, the character width for these fonts as a fraction of the
-** height.	The default value is 0.60.
+** height.  The default value is 0.60.
 */
 char *font_family = "fixed";
 struct FONT_INFO font_normal;
@@ -239,8 +254,8 @@ void error(const char message[], ... )
 	} /* end of fatal() */
 
 /*
-** This function reads a line from standard input.	The line is
-** stored in line, its attributes in line_attr.	 The length is
+** This function reads a line from standard input.  The line is
+** stored in line, its attributes in line_attr.  The length is
 ** returned.  On EOF, -1 is returned.  For form-feeds, 0 is
 ** returned in formfeed is TRUE.  If auto_lf is TRUE then
 ** CR is considered to be CRLF.
@@ -738,8 +753,8 @@ static void our_procset(void)
 
 	/* show */
 	fputs("/s{m 0 eq{/m 1 def lm indent ptsize width mul mul add\n"
-		"	 page 2 mod 1 eq{gut_lr add}if\n"	/* possibly add gutter width */
-		"	 y moveto}if\n"
+		"        page 2 mod 1 eq{gut_lr add}if\n"	/* possibly add gutter width */
+		"        y moveto}if\n"
 		" show}d\n",stdout);
 
 	/* show and newline */
@@ -1372,7 +1387,7 @@ int main(int argc, char *argv[])
 	}
 
 	/*
-	** Process the options.	 The options, of course, are a
+	** Process the options.  The options, of course, are a
 	** series of name=value pairs.
 	*/
 	if(argc >= 2)
@@ -1659,9 +1674,9 @@ int main(int argc, char *argv[])
 
 		/*
 		** The printable width in portrait mode is the page width minus
-		** the left and right margins.	If we know that we are
+		** the left and right margins.  If we know that we are
 		** printing in simplex, the gutter is added to the left
-		** margin.	If we are printing in duplex mode with long
+		** margin.  If we are printing in duplex mode with long
 		** edge binding (no tumble) then it is added alternately
 		** to the left and right margin.
 		*/

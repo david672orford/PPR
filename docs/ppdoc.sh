@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 5 April 2003.
 #
 
 SHAREDIR="?"
@@ -50,7 +50,7 @@ for s in 1 5 8
 	echo "Section $s"
 	for f in $SHAREDIR/man/man$s/*.[1-8]
 	do
-	echo "	 " `basename $f | sed -e 's/\.[^\.]*$//'`
+	echo "   " `basename $f | sed -e 's/\.[^\.]*$//'`
 	done
 	done
 

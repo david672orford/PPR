@@ -35,7 +35,7 @@
 ** the printer name is "-" then the alert message is sent to stderr.
 **
 ** There is probably no longer any good reason for it, but these routines
-** avoid the use of stdio.	They format the message in a fixed length
+** avoid the use of stdio.  They format the message in a fixed length
 ** buffer, so there is a limit on how long the alert message can be.
 */
 

@@ -163,7 +163,7 @@ struct DT
 
 /*
 ** This macro is used to return a void pointer to certain offset within a
-** struct JOB.	We define it as a macro because some complilers don't
+** struct JOB.  We define it as a macro because some complilers don't
 ** implement this for void.
 */
 #if 0
@@ -330,7 +330,7 @@ int ppop_modify(char *argv[])
 	if(read_struct_QFileEntry(qf, &job.qentry) == -1)
 		return EXIT_INTERNAL;
 
-	/* Read in the extensions section.	This section will contain things that
+	/* Read in the extensions section.  This section will contain things that
 	   the PPR core doesn't care about such as job tickets. */
 	read_addon(qf, &job);
 

@@ -315,7 +315,7 @@ static void media_update_notnow2(int destid, int prnbit, int prnid)
 	} /* end of media_update_notnow2() */
 
 /*
-** Compute the `notnow' bitmask for a job.	The notnow bitmask indicates
+** Compute the `notnow' bitmask for a job.  The notnow bitmask indicates
 ** which printers in the group currently have the required media mounted.
 **
 ** This can operate on a structure which is not in the queue yet, so it need
@@ -368,7 +368,7 @@ void media_set_notnow_for_job(struct QEntry *nj, gu_boolean inqueue)
 
 /*
 ** Check to see if a particular printer has the proper media
-** mounted to print a certain job.	Return TRUE if it has.
+** mounted to print a certain job.  Return TRUE if it has.
 */
 static gu_boolean hasmedia(int prnid, struct QEntry *job)
 	{
@@ -405,7 +405,7 @@ static gu_boolean hasmedia(int prnid, struct QEntry *job)
 	} /* end of hasmedia() */
 
 /*
-** Get the stopt mask for a queue.	The stopt mask tells which
+** Get the stopt mask for a queue.  The stopt mask tells which
 ** member printers of a group are stopt.  For a printer queue
 ** it is 1 if the printer is stopt, 0 if it isn't.
 */
@@ -441,7 +441,7 @@ static int stoptmask(int destid)
 ** values that is appropriate.
 **
 ** The caller should call this from a section of code bracketed by
-** lock() and unlock().	 For this reason, the routine does not call them.
+** lock() and unlock().  For this reason, the routine does not call them.
 **
 ** The inqueue parameter is TRUE if the job is already in the queue.  If it
 ** is, we must call queue_p_job_new_status().

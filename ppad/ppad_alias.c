@@ -269,7 +269,7 @@ int alias_passthru(const char *argv[])
 	if(!alias)
 		{
 		fputs(_("You must specify an alias and a (possibly empty) list\n"
-				"of file types.	 These file types should be the same as\n"
+				"of file types.  These file types should be the same as\n"
 				"those used with the \"ppr -T\" option.\n"), errors);
 		return EXIT_SYNTAX;
 		}
@@ -293,7 +293,7 @@ int alias_addon(const char *argv[])
 	if(!alias || !name || (value && argv[3]))
 		{
 		fputs(_("You must supply the name of an existing alias, the name of an addon\n"
-				"parameter.	 A value for the paremeter is optional.	 If you do not\n"
+				"parameter.  A value for the paremeter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), errors);
 		return EXIT_SYNTAX;
 		}

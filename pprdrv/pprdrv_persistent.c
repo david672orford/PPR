@@ -43,7 +43,7 @@ void persistent_download_now(void)
 /*
 ** This is called after the print job is done to give
 ** the persistent download machinery a chance to write
-** an updated statistics file.	Presumably this file
+** an updated statistics file.  Presumably this file
 ** will keep track of what is currently downloaded
 ** and how frequently various resources have been used
 ** (in order to help decide whether they should be made

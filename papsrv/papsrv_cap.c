@@ -311,7 +311,7 @@ void add_name(int prnid)
 /*
 ** AppleTalk dependent part of printjob()
 **
-** Copy the job to ppr.	 We will not use the buffering
+** Copy the job to ppr.  We will not use the buffering
 ** routines to do this, though we will use the buffer
 ** and the buffering routine global variables.
 */
@@ -435,7 +435,7 @@ void appletalk_dependent_daemon_main_loop(void)
 				/*
 				** In CAP we must make a seperate call in order
 				** to find the address of the client.  This address
-				** is passed to child_main_loop().	It eventually finds
+				** is passed to child_main_loop().  It eventually finds
 				** its way into the ppr -r switch.
 				*/
 				PAPGetNetworkInfo(sesfd, &remote);
@@ -466,7 +466,7 @@ void appletalk_dependent_daemon_main_loop(void)
 	} /* end of appletalk_dependent_main_loop() */
 
 /*
-** Cleanup routine.	 This is called by the daemon if it
+** Cleanup routine.  This is called by the daemon if it
 ** is killed or exits due to a fatal error.
 */
 void appletalk_dependent_cleanup(void)

@@ -44,7 +44,7 @@ void options_start(const char *s, struct OPTIONS_STATE *o)
 	} /* end of options_start() */
 
 /*
-** Get the next name and value.	 Return 1 if we are sucessfull,
+** Get the next name and value.  Return 1 if we are sucessfull,
 ** zero if we are at the end of the string, and -1 if there is an
 ** error.
 **

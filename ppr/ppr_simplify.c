@@ -14,7 +14,7 @@
 */
 
 /*
-** The line input routines for ppr are arranged in a hierarcy.	The higher
+** The line input routines for ppr are arranged in a hierarcy.  The higher
 ** level versions hide more of the unpleasant looking lines and take care
 ** of copying resources to cache files when necessary as well as possibly
 ** stripping out resources which we think we can later restore from the cache.
@@ -50,7 +50,7 @@ static gu_boolean continuation_buffer_overflow;
 
 /*
 ** Routine to copy an unrecognized comment in line[] to
-** the output file.	 If the comment line is an expanded
+** the output file.  If the comment line is an expanded
 ** continuation line, compress it again.  This routine is
 ** called from ppr_dscdoc.c but is in here because it
 ** must `unsimplify' the comment.
@@ -81,7 +81,7 @@ void copy_comment(FILE *out)
 ** This function is called with a "%%BeginData:" line
 ** in line[].  When it returns, the "%%BeginData:" will
 ** have been copied to the output, possibly along with
-** other lines.	 There will be a fresh line in the buffer.
+** other lines.  There will be a fresh line in the buffer.
 ** Hopefully, this fresh line will be an "%%EndData" line.
 */
 static void copy_data(void)
@@ -134,7 +134,7 @@ static void copy_data(void)
 
 		/*
 		** If the "%%BeginData:" comment was correct, then the corresponding
-		** "%%EndData" comment should be on the next line.	This code isn't
+		** "%%EndData" comment should be on the next line.  This code isn't
 		** precisely correct because it won't notice trailing garbage, but
 		** that shouldn't be a problem.
 		*/
@@ -240,7 +240,7 @@ static void copy_data(void)
 /*
 ** This function is called by getline_simplify().
 ** It is broken out to make the logic easier to follow.
-** It is called whenever a %%+ comment is encountered.	It
+** It is called whenever a %%+ comment is encountered.  It
 ** tries to replace the "%%+" with a keyword saved from the
 ** last %%[A-Z] comment.  This function returns TRUE if it suceeds.
 */
@@ -508,7 +508,7 @@ static void getline_simplify(void)
 /*
 ** This function gets the next line of input, though %%Begin(End)Data
 ** and that which is between them are never returned because they are
-** silently copied thru by getline_simplify().	This is the only
+** silently copied thru by getline_simplify().  This is the only
 ** function which calls getline_simplify().
 */
 void getline_simplify_cache(void)

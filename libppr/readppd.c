@@ -31,7 +31,7 @@
 /*+ \file
 
 This module contains functions for opening and reading lines from PPD
-files.	Includes are handled automatically.
+files.  Includes are handled automatically.
 
 */
 
@@ -102,7 +102,7 @@ static int _ppd_open(const char *name)
 			int dirlen, buflen;
 
 			/* Get the offset of the last "/" in the previous path.
-			   This should never fail.	If it does it is an
+			   This should never fail.  If it does it is an
 			   internal error. */
 			if(!(dirend = strrchr(fname[nest-1], '/')))
 				{
@@ -148,13 +148,13 @@ static int _ppd_open(const char *name)
 /** Open the indicated PPD file.
 
 This function opens the indicated PPD file and sets up internal structures so that it can
-be read by calling ppd_readline().	If we can't open it, print an error
+be read by calling ppd_readline().  If we can't open it, print an error
 message and return an appropriate exit code.
 
 This routine is called from ppd_open() and from ppd_readline()
 whenever an "*Include:" line is encountered.
 
-The errors parameter is a stdio file object to write error messages to.	 If it is NULL,
+The errors parameter is a stdio file object to write error messages to.  If it is NULL,
 none will be written.
 
 On success, EXIT_OK is returned.
@@ -166,7 +166,7 @@ int ppd_open(const char *name, FILE *errors)
 	int retval;
 
 	/*
-	** These functions use static storage.	Only one instance
+	** These functions use static storage.  Only one instance
 	** is allowed at a time.
 	*/
 	if(line)

@@ -15,15 +15,15 @@
 
 /*
 ** The routines in this module handle the placing of Macintosh dual-mode
-** fonts in the cache.	These routines are called from ppr_rcache.c.
+** fonts in the cache.  These routines are called from ppr_rcache.c.
 **
 ** A Macintosh dual-mode font is a TrueType font which has been converted to
-** PostScript.	A Macintosh computer converts a TrueType font to PostScript
+** PostScript.  A Macintosh computer converts a TrueType font to PostScript
 ** either by generating a type 42 font (a TrueType font encapsulated in a
 ** PostScript program) or a type 1 font which approximates the origional
 ** TrueType font.  Versions of the Macintosh LaserWriter driver prior to 8.0
 ** always generated a font which contained both types of font with code to
-** execute only the one which was appropriate for the printer.	LaserWriter 8.x
+** execute only the one which was appropriate for the printer.  LaserWriter 8.x
 ** downloads only one version in order to save time.
 **
 ** If one type of font is received it is placed in the cache, and this module
@@ -96,7 +96,7 @@ gu_boolean truetype_more_needed(int current_features)
 ** being placed in the cache.  Note that if an attempt is made to print
 ** a file containing a font which is defective in this way, the document
 ** will not be printed or will not print correctly (depending on the ProofMode)
-** unless ppr is invoked with -S false switch.	This is because if the
+** unless ppr is invoked with -S false switch.  This is because if the
 ** font is stripped out and also discarded from the cache, it has been lost,
 ** there will be no way to include it in the document.
 */
@@ -235,7 +235,7 @@ void truetype_merge_fonts(char *fontname, char *oldfont, char *newfont)
 	** a mode which indicates that it is a Macintosh TrueType
 	** font converted to PostScript, it had better have at least
 	** one "%begin" line before EOF.  If it does not, the cache
-	** is corrupt.	This should never happen, so we make it a
+	** is corrupt.  This should never happen, so we make it a
 	** fatal error.
 	*/
 	while(TRUE)
@@ -325,7 +325,7 @@ void truetype_merge_fonts(char *fontname, char *oldfont, char *newfont)
 	**
 	** If neither font has it, generate one from `memory'.
 	**
-	** The "sfntBC" section is used by the 68K TrueType rasterizer.	 The
+	** The "sfntBC" section is used by the 68K TrueType rasterizer.  The
 	** macintosh will only download it if the answer to the "*TTRasterizer"
 	** query is "Accept68K".
 	*/
@@ -362,7 +362,7 @@ void truetype_merge_fonts(char *fontname, char *oldfont, char *newfont)
 
 	/*
 	** If the first file has a "sfntsdef" section, copy it and discard the
-	** same section from the second file if it has it too.	Otherwise,
+	** same section from the second file if it has it too.  Otherwise,
 	** copy from the second font.
 	*/
 	if( strcmp(f1line,"%beginsfntdef\n") == 0 )

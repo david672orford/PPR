@@ -46,7 +46,7 @@ ALL_TROFF=UPRINT.1.man uprint-remote.conf.5.man \
 	uprint-lpr.1.man uprint-lpq.1.man uprint-lprm.1.man
 
 # List of PODs for cross references
-LIBPODS=UPRINT.1,uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpstat.1,uprint-remote.conf.5
+LIBPODS=UPRINT.1,uprint-cancel.1,uprint-lp.1,uprint-lpq.1,uprint-lpr.1,uprint-lprm.1,uprint-lpstat.1,uprint-remote.conf.5,lprsrv.8
 
 #=== Build ==================================================================
 

@@ -53,7 +53,7 @@
 #include "uprint.h"
 
 /*
-** This function returns the name of this computer.	 This is used in some
+** This function returns the name of this computer.  This is used in some
 ** error messages sent to the client.
 */
 const char *this_node(void)
@@ -213,7 +213,7 @@ int main(int argc,char *argv[])
 	#endif
 
 	/*
-	** Change to ppr's home directory.	That way we know
+	** Change to ppr's home directory.  That way we know
 	** where our core dumps will go. :-)
 	*/
 	chdir(HOMEDIR);
@@ -259,8 +259,8 @@ int main(int argc,char *argv[])
 	}
 
 	/*
-	** Parse the command line options.	We use the parsing routine
-	** in libppr.a.	 All of the parsing state is kept in the
+	** Parse the command line options.  We use the parsing routine
+	** in libppr.a.  All of the parsing state is kept in the
 	** structure getopt_state.
 	*/
 	{

@@ -36,7 +36,7 @@ ppad-interfaces - PPR Printer Interface Programs
 
 PPR uses interface programs to communicate with printers.  An interface is
 selecte with the B<ppad interface> command.  Its options are set with the
-B<ppad options> command.  Please see the L<ppad(8)> manpage for details.
+B<ppad options> command.  Please see the L<ppad.8> manpage for details.
 
 These are the interfaces which are distributed with PPR:
 

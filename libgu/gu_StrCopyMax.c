@@ -18,7 +18,7 @@
 #include "gu.h"
 
 /*
-** This function was inspired by Trio.	Trio's version has assertions,
+** This function was inspired by Trio.  Trio's version has assertions,
 ** we don't have them yet.
 */
 char *gu_StrCopyMax(char *target, size_t max, const char *source)

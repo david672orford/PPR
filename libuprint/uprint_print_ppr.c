@@ -131,7 +131,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	ppr_argv[i++] = "-d";
 	ppr_argv[i++] = upr->dest;
 
-	/* Use the switchset macro.	 We use this early on
+	/* Use the switchset macro.  We use this early on
 	   so that explicit options can override options
 	   set in the switchset. */
 	/* ppr_argv[i++] = "-I"; */			/* -I is obsolete */
@@ -166,7 +166,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 		ppr_argv[i++] = p;
 		}
 
-	/* Whom should we notify?  Build an email address.	The field upr->lpr_mailto
+	/* Whom should we notify?  Build an email address.  The field upr->lpr_mailto
 	   will have been filled in only if the job came from lprsrv and the user chose
 	   to be notified.	(I.E., a M line in the queue file.)	 Since there are times
 	   when we notify the user even when he hasn't asked to be, we will fall back on
@@ -186,7 +186,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	}
 
 	/*
-	** How shall the user be notified?	This is difficult to answer since some
+	** How shall the user be notified?  This is difficult to answer since some
 	** of the methods don't make sense in a network environment.
 	*/
 	if(upr->ppr_responder)
@@ -234,7 +234,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	ppr_argv[i++] = "-e";
 	ppr_argv[i++] = "responder";
 
-	/* Is this a proxy job?	 If so, use the -X switch to
+	/* Is this a proxy job?  If so, use the -X switch to
 	   identify the party we are acting for. */
 	if(upr->proxy_class)
 		{
@@ -333,7 +333,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 		ppr_argv[i++] = upr->str_outputtray;
 		}
 
-	/* DEC OSF Orientation.	 Many PPR filters will ignore this. */
+	/* DEC OSF Orientation.  Many PPR filters will ignore this. */
 	if(upr->osf_O_orientation)
 		{
 		char *ptr;
@@ -344,8 +344,8 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 		}
 
 	/*
-	** DEC OSF Duplex settings.	 Not all filters implement
-	** all of these modes.	We insert a filter option so that
+	** DEC OSF Duplex settings.  Not all filters implement
+	** all of these modes.  We insert a filter option so that
 	** the filter may know how to format the job.  We insert a
 	** -F switch, in the first three instances, so that the
 	** desired mode will be selected even if the filter does

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 5 April 2003.
 #
 
 #===============================================================
@@ -211,7 +211,7 @@ sub run_print
 		# too long, start a new indented line.
 		if($total_length > 4 && ($total_length + 1 + length($arg)) >= 70)
 			{
-			print " \\\n	";
+			print " \\\n    ";
 			$total_length = 4;
 			}
 		# Otherwise, just print a space to separate it from 

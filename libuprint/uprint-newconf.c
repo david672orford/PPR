@@ -82,11 +82,11 @@ static void fatal(int exitcode, const char *format, ...)
 
 /*
 ** This function creates a link in a mainstream directory
-** such as "/usr/bin".	The link points to a uprint substitute
+** such as "/usr/bin".  The link points to a uprint substitute
 ** for a standard Unix program.
 **
 ** The standard Unix program is renamed first to the name
-** specified by the parameter "sidelined".	If the sidelined
+** specified by the parameter "sidelined".  If the sidelined
 ** name already exists, then it is renamed too.
 */
 static void install_mainstream_link(const char linkname[], const char linkto[], const char sidelinename[])
@@ -158,12 +158,12 @@ static void install_mainstream_link(const char linkname[], const char linkto[], 
 		{
 		if(errno != ENOENT)
 			fatal(1, "Can't stat \"%s\", errno=%d (%s)", sidelinename, errno, gu_strerror(errno));
-		printf(_("	(Note: \"%s\" does not exist.)\n"), sidelinename);
+		printf(_("  (Note: \"%s\" does not exist.)\n"), sidelinename);
 		}
 	else
 		{
 		if(! S_ISREG(statbuf.st_mode) || ! (S_IXUSR & statbuf.st_mode))
-			printf(_("	(Warning: \"%s\" is not executable.)\n"), sidelinename);
+			printf(_("  (Warning: \"%s\" is not executable.)\n"), sidelinename);
 		}
 	}
 
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 	#if 0
 	if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
 		{
-		fprintf(stderr, _("This system uses /etc/alternatives.	Using uprint-newconf\n"
+		fprintf(stderr, _("This system uses /etc/alternatives.  Using uprint-newconf\n"
 						"is not advised and it will not run without --force or --remove.\n"));
 		return 1;
 		}

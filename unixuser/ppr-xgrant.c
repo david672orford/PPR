@@ -29,7 +29,7 @@
 */
 
 /*
-** This program should get setuid and setgid "ppr".	 It reads the invoking 
+** This program should get setuid and setgid "ppr".  It reads the invoking 
 ** user's .Xauthority file and the DISPLAY environment variable and grants
 ** PPR permission to connect X clients to that display.
 */
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 	** We have to make sure xauth will be able to read the Xauthority file.
 	** If this program is invoked as the result of "su -", then xauth will
 	** keep trying to open an Xauthority file which it probably doesn't have
-	** permission to open.	After about 10 seconds it will timeout,
+	** permission to open.  After about 10 seconds it will timeout,
 	** but it is still anoying.
 	*/
 	{
@@ -139,8 +139,8 @@ int main(int argc, char *argv[])
 		}
 
 	/*
-	** This is the first child process.	 In this one we will run xauth to add to
-	** ppr's .Xauthority file.	We must specify the path to the .Xauthority
+	** This is the first child process.  In this one we will run xauth to add to
+	** ppr's .Xauthority file.  We must specify the path to the .Xauthority
 	** file since the default (which is determined using the HOME environment
 	** variable) is not suitable.
 	*/

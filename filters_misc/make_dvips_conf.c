@@ -14,7 +14,7 @@
 */
 
 /*
-** This program is called from the DVI filter (dvi.sh).	 Its purpose is to take the MetaFont
+** This program is called from the DVI filter (dvi.sh).  Its purpose is to take the MetaFont
 ** mode, resolution, and available memory specified on the command line and generate a
 ** DVIPS configuration file.  This program is setuid ppr and creates the file in a PPR
 ** directory set asside for that purpose.

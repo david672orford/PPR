@@ -40,11 +40,11 @@
 
 /** read lines of unlimited length from a file efficiently
 
-This function is used to read configuration file lines.	 It avoids
-the problem of buffers that are too small.	The parameter "line"
-points to a buffer in gu_alloc()ed memory.	On the first call this
-may be a NULL pointer.	If it is too small, a new, longer one will
-be obtained and "space_available" will be updated.	The new buffer
+This function is used to read configuration file lines.  It avoids
+the problem of buffers that are too small.  The parameter "line"
+points to a buffer in gu_alloc()ed memory.  On the first call this
+may be a NULL pointer.  If it is too small, a new, longer one will
+be obtained and "space_available" will be updated.  The new buffer
 is returned.  The caller should initialy set "line_available" to
 a little bigger than the LIKELY line length.  Notice that on EOF
 the line is automatically freed.  If you don't read until EOF you

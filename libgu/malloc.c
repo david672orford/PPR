@@ -34,10 +34,10 @@
 This file contains the routines which PPR uses to allocate and free memory.
 
 The normal Unix memory allocation routines return a NULL pointer if they
-fail to allocate the requested memory.	Since it is very rare that a Unix
+fail to allocate the requested memory.  Since it is very rare that a Unix
 system will refuse to allocate any reasonable amount of memory, programers
 are often emboldened to ignore the possiblity of malloc() and friends
-returning NULL.	 We don't ignore such a possibility, but since a memory
+returning NULL.  We don't ignore such a possibility, but since a memory
 allocation failure is highly unlikely, PPR programs treats it as a fatal
 error, but, rather than test the return value of malloc() after each call,
 the calls are encapsulated in special functions which test the return value
@@ -72,7 +72,7 @@ int gu_alloc_blocks = 0;
 
 The function gu_alloc() takes two arguments.  The first is the number of items
 to allocate, the second is the size of each in bytes.  This function will return
-a void pointer to the allocated memory.	 The memory is not initialized.
+a void pointer to the allocated memory.  The memory is not initialized.
 
 */
 void *gu_alloc(size_t number, size_t size)
@@ -114,7 +114,7 @@ char *gu_strdup(const char *string)
 /** duplicate the initial segment of a string
 
 The function gu_strndup() takes a string pointer and a maximum length as its
-arguments.	It returns a pointer to a new string containing a copy of the
+arguments.  It returns a pointer to a new string containing a copy of the
 string truncated to the maximum length.
 
 */
@@ -158,7 +158,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 
 The function gu_realloc() changes the size of a memory block.  The
 first argument is a pointer to the old block, the second is the desired new
-number of members, the third argument is the size of each member in bytes.	This
+number of members, the third argument is the size of each member in bytes.  This
 function returns a pointer to a resized block, possibly at a different
 location.
 

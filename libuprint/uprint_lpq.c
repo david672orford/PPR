@@ -40,7 +40,7 @@
 /*
 ** Handle an lpq style queue request.  The file names
 ** list is filled with a list of job numbers and
-** user names.	This function is used by uprint-lpq
+** user names.  This function is used by uprint-lpq
 ** to process local requests and from the new lprsrv in order
 ** to process requests from across the network.
 **
@@ -113,7 +113,7 @@ int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int
 
 		/* Certain very old versions of lpstat can't parse
 		   options arranged according to POSIX rules, with
-		   a space between option and argument.	 The 32
+		   a space between option and argument.  The 32
 		   character limit is chosen arbitrarily. */
 		#ifdef LP_LPSTAT_BROKEN
 		snprintf(temp, sizeof(temp), "-o%s", queue);

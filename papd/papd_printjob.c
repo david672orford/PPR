@@ -52,7 +52,7 @@ static jmp_buf printjob_env;
 ** Accept a print job and send it to ppr.
 **
 ** This is called from connexion_callback() which it turn is called
-** from at_service_loop().	It launches ppr and then calls 
+** from at_service_loop().  It launches ppr and then calls 
 ** at_printjob_copy() to copy the printjob from the AppleTalk PAP socket
 ** to the pipe connected to ppr.
 ===========================================================================*/

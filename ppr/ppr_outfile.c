@@ -35,7 +35,7 @@
 
 /*
 ** Return the next id number.  The string "file" is the full path and
-** name of the file to use.	 The file is locked, the last id is read,
+** name of the file to use.  The file is locked, the last id is read,
 ** and incremented making the new id, and the new id is written back
 ** to the file, the file is closed, and the new id is returned.
 */

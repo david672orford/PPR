@@ -88,7 +88,7 @@ void child_unblock_all(void)
 
 /*
 ** We calls this from the child side of fork() because pprd has no stdin,
-** stdout, or stderr handles open.	It directs the child's stdin to /dev/null
+** stdout, or stderr handles open.  It directs the child's stdin to /dev/null
 ** and stdout and stderr to the pprd log file.
 */
 void child_stdin_stdout_stderr(const char input_file[], const char output_file[])
@@ -145,7 +145,7 @@ void unlock(void)
 static volatile gu_boolean sigchld_caught = FALSE;
 static struct timeval select_tv;
 
-/* This is the signal hanlder.	It does nothing but set variables. */
+/* This is the signal hanlder.  It does nothing but set variables. */
 void sigchld_handler(int signum)
 	{
 	/* The select() loop tests for this. */
@@ -220,7 +220,7 @@ static void sigterm_handler(int sig)
 	}
 
 /*=======================================================================
-** Timer tick routine.	This is called every TICK_INTERVAL seconds.
+** Timer tick routine.  This is called every TICK_INTERVAL seconds.
 =======================================================================*/
 static void tick(void)
 	{

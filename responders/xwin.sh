@@ -154,7 +154,7 @@ It is $pages_printed pages long."
 
 	if [ -n "$charge" ]
 		then 
-		message="${message}	 You have been charged $charge."
+		message="${message}  You have been charged $charge."
 		fi
 
 	message="${message}

@@ -31,12 +31,12 @@
 /*
 ** I wrote this ultra simple hexdump program after suffering years of 
 ** frustration with the fact that Unix's hexdump prints in a wacko 
-** format.	I have never been able to get it to output bytes in the 
-** style of the old MS-DOS hex editors.	 I have been making do with
+** format.  I have never been able to get it to output bytes in the 
+** style of the old MS-DOS hex editors.  I have been making do with
 ** Xv's hexdump feature, which is fine for X-Windows.  But sometimes one 
 ** simply wants a hexdump one can easily print out and study.  I finally
 ** broke down and wrote this one.  It is basically a hacked down
-** version of ../filters_misc/filter_hexdump.c.	 The output format 
+** version of ../filters_misc/filter_hexdump.c.  The output format 
 ** has been changed to match that of Xv.
 */
 

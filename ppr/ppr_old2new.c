@@ -85,7 +85,7 @@ static void fixcommentf(const char format[], ...)
 ** without the help of this routine because they often require complex
 ** handling in the resource code.
 **
-** This is called from getline_simplify().	It is necessary for tokenize()
+** This is called from getline_simplify().  It is necessary for tokenize()
 ** to be called before calling this function.  If this function alters
 ** the line it will call tokenize() again to update the tokens list.
 */

@@ -8,7 +8,7 @@
 **
 ** * Redistributions of source code must retain the above copyright notice,
 ** this list of conditions and the following disclaimer.
-** 
+**
 ** * Redistributions in binary form must reproduce the above copyright
 ** notice, this list of conditions and the following disclaimer in the
 ** documentation and/or other materials provided with the distribution.
@@ -16,16 +16,16 @@
 ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 ** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 5 April 2003.
 */
 
 /*
@@ -178,7 +178,7 @@ static void write_smb_conf_record(const char name[], const char comment[], const
 	fprintf(f, "[%s]\n", name);
 	fprintf(f, "  comment = %s\n", comment ? comment : "");
 	fprintf(f, "  printer = %s\n", name);
-	if(drivername) fprintf(f, "	 printer driver = %s\n", drivername);
+	if(drivername) fprintf(f, "  printer driver = %s\n", drivername);
 	fprintf(f, "  copy = %s\n", proto ? proto : "pprproto");
 	fprintf(f, "  browseable = yes\n\n");
 	} /* end of write_smb_conf_record() */
@@ -259,13 +259,13 @@ static void do_printers(int *total, int *exported)
 				{
 				if(comment) gu_free(comment);
 				comment = p;
-				if(debug) printf("	comment = %s\n", comment);
+				if(debug) printf("  comment = %s\n", comment);
 				}
 			else if(gu_sscanf(line, "PPDFile: %A", &p) == 1)
 				{
 				if(ppd) gu_free(ppd);
 				ppd = p;
-				if(debug) printf("	ppd = %s\n", ppd);
+				if(debug) printf("  ppd = %s\n", ppd);
 				}
 			else if(strncmp(line, "ppr2samba:", 10) == 0)
 				{
@@ -288,7 +288,7 @@ static void do_printers(int *total, int *exported)
 				{
 				if(drivername) gu_free(drivername);
 				drivername = p;
-				if(debug) printf("	drivername = %s\n", drivername);
+				if(debug) printf("  drivername = %s\n", drivername);
 				}
 			else if(strncmp(line, "ppr2samba-vserver:", 18) == 0)
 				{
@@ -331,7 +331,7 @@ static void do_printers(int *total, int *exported)
 						drivername = &ppdline[strcspn(ppdline, ":")];
 						drivername = &drivername[strspn(drivername, ": \t\"")];
 						drivername = gu_strndup(drivername, strcspn(drivername, "\""));
-						if(debug) printf("	drivername %s = %s\n", _("(from PPD file)"), drivername);
+						if(debug) printf("  drivername %s = %s\n", _("(from PPD file)"), drivername);
 						}
 					}
 				/* no need to close PPD file */
@@ -415,7 +415,7 @@ static void do_groups(int *total, int *exported)
 				{
 				if(comment) gu_free(comment);
 				comment = p;
-				if(debug) printf("	comment = %s\n", comment);
+				if(debug) printf("  comment = %s\n", comment);
 				}
 			else if(strncmp(line, "Printer:", 8) == 0)
 				{
@@ -455,7 +455,7 @@ static void do_groups(int *total, int *exported)
 				if(drivername && deallocate_drivername) gu_free(drivername);
 				drivername = p;
 				deallocate_drivername = TRUE;
-				if(debug) printf("	drivername = %s\n", drivername);
+				if(debug) printf("  drivername = %s\n", drivername);
 				}
 			else if(strncmp(line, "ppr2samba:", 10) == 0)
 				{
@@ -482,7 +482,7 @@ static void do_groups(int *total, int *exported)
 
 		/* If the driver name was not specified with a "ppr2samba-drivername:"
 		   line, we must check each of the printers and hope they all have
-		   the same drivername.	 Of course, if the first member doesn't
+		   the same drivername.  Of course, if the first member doesn't
 		   have a drivername set, then there is no sense even trying.
 		   Furthur, if any subsequent member does not have a driver name
 		   set or has a different driver name set, then we have failed.
@@ -503,26 +503,26 @@ static void do_groups(int *total, int *exported)
 					if(debug)
 						{
 						if(!ptr)
-							printf(_("	  Member \"%s\" has no driver name, oh well!\n"), printers[p].printer);
+							printf(_("    Member \"%s\" has no driver name, oh well!\n"), printers[p].printer);
 						else
-							printf(_("	  Member \"%s\" has \"%s\", oh well!\n"), printers[p].printer, ptr);
+							printf(_("    Member \"%s\" has \"%s\", oh well!\n"), printers[p].printer, ptr);
 						}
 					drivername = (char*)NULL;
 					break;
 					}
 				else
 					{
-					if(debug) printf(_("	Member \"%s\" has \"%s\", ok so far\n"), printers[p].printer, ptr);
+					if(debug) printf(_("    Member \"%s\" has \"%s\", ok so far\n"), printers[p].printer, ptr);
 					drivername = ptr;
 					}
 				}
-			if(debug && drivername) printf(_("	drivername = %s\n"), drivername);
+			if(debug && drivername) printf(_("  drivername = %s\n"), drivername);
 			}
 
 		if(debug)
 			{
-			if(!comment) printf(_("	 No comment found\n"));
-			if(!drivername) printf(_("	drivername couldn't be determined\n"));
+			if(!comment) printf(_("  No comment found\n"));
+			if(!drivername) printf(_("  drivername couldn't be determined\n"));
 			}
 
 		/* Emmit one printcap record and one smb.conf record. */

@@ -76,8 +76,8 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 	** the user on whose behalf the proxy is requesting the deletions.
 	**
 	** This string is composed of 2 parts separated by a "@" sign.
-	** the first part is the user name.	 It will be "*" if the
-	** user name is "root".	 The second part is the proxy class
+	** the first part is the user name.  It will be "*" if the
+	** user name is "root".  The second part is the proxy class
 	** which is generally either the client's canonical host name
 	** or the clients domain.
 	*/
@@ -125,7 +125,7 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 				{
 				uprint_errno = UPE_DENIED;
 
-				/* We write the stdout here because lpr would.	Thus, we do it for consistency. */
+				/* We write the stdout here because lpr would.  Thus, we do it for consistency. */
 				if(proxy_class)
 					{
 					printf(_("You may not delete jobs belonging to \"%s@%s\" because\n"
@@ -342,12 +342,12 @@ static int uprint_lprm_lpr(uid_t uid, gid_t gid, const char agent[], const char 
 	} /* end of uprint_lprm_lpr() */
 
 /*
-** Handle an lprm style cancel request.	 The file names
+** Handle an lprm style cancel request.  The file names
 ** list is filled with a list of job numbers and
 ** user names.
 **
 ** The 1st argument "agent" is the user requesting the deletion
-** (The term "agent" is from RFC-1179).	 The second (proxy_class) is
+** (The term "agent" is from RFC-1179).  The second (proxy_class) is
 ** the host from which the request comes.  This should be NULL
 ** if it is the local host whose users are allowed to submit jobs
 ** directly as the corresponding local users.

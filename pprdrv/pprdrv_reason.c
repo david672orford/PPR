@@ -31,7 +31,7 @@
 /*===========================================================================
 ** The primary work of this module is to append a "Reason:" line to the
 ** job's queue file when it is arrested.  In some places the code calls
-** give_reason() directly.	However pprdrv_feedback.c calls 
+** give_reason() directly.  However pprdrv_feedback.c calls 
 ** describe_postscript_error() which calls give_reason() itself.
 ===========================================================================*/
 
@@ -72,8 +72,8 @@ void give_reason(const char reason[])
 	} /* end of give_reason() */
 
 /*
-** This routine is passed information about a PostScript error.	 It looks up 
-** the error in a list in a file and hopefully finds a description.	 In 
+** This routine is passed information about a PostScript error.  It looks up 
+** the error in a list in a file and hopefully finds a description.  In 
 ** addition to the name of the failed PostScript command and the PostScript 
 ** error message it receives the string from the "%%Creator:" line in the 
 ** document.  Since this often indicates the program or printer driver that

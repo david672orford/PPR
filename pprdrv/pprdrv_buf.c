@@ -175,7 +175,7 @@ int printer_flush(void)
 				}
 
 			/* If we can't write because the pipe is broken, that means that
-			   the interface (or possible a RIP) died.	Wait 10 seconds to
+			   the interface (or possible a RIP) died.  Wait 10 seconds to
 			   allow time for SIGCHLD to be received.  When it is,
 			   fault_check() will process the last of the output from the
 			   interface or RIP and terminate pprdrv. */

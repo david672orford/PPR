@@ -14,7 +14,7 @@
 */
 
 /*
-** This modules has is used for TrueType font support.	It has one function
+** This modules has is used for TrueType font support.  It has one function
 ** which can be called to make a best effort to make sure a TrueType 
 ** rasterizer is present.  The other function converts a Microsoft Windows
 ** .TTF file to either a Type 3 or a Type 42 PostScript font.
@@ -115,7 +115,7 @@ void send_font_tt(const char filename[])
 	/*
 	** These words are inserted before the "%!" signiture so
 	** that if this output file is every fed to PPR as input,
-	** PPR will not cache the font.	 This is important because
+	** PPR will not cache the font.  This is important because
 	** if the font were cached, PPR would lose its ability to
 	** generate the font in a format acceptable to a particular
 	** printer.

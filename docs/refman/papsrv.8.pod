@@ -25,14 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 5 April 2003.
 #
 
 =head1 NAME
 
 papsrv - Server which accepts Macintosh jobs and passes them to PPR
-
-papsrv_kill - Shuts down papsrv
 
 papsrv.conf - Macintosh printer server configuration file
 
@@ -46,10 +44,11 @@ B<papsrv> B<--stop>
 =head1 DESCRIPTION
 
 This document describes PPR's PAP server which accepts print jobs from
-computers running MacOS.
+computers running MacOS.  The server sends these jobs on to the PPR spooler
+using the L<ppr.1> command.
 
-The programs B<papsrv> and B<papsrv_kill> reside in F</usr/lib/ppr/bin>.  The
-configuration file F<papsrv.conf> resides in F</etc/ppr>.
+The program B<papsrv> resides in F</usr/lib/ppr/bin>.  The configuration
+file F<papsrv.conf> resides in F</etc/ppr>.
 
 If the B<--help> or B<--version> switch is used it will print brief usage
 information or PPR version information respectively.
@@ -229,7 +228,11 @@ This might be useful because so many PPD files were written before the
 "*TTRasterizer:" line was introduced in version 4.1 or the PPD file
 specification.
 
+=back
+
 =head2 Configuration File Lines of Doubtful Utility
+
+=over 4
 
 =item B<BinaryOK => I<boolean>
 
@@ -284,6 +287,8 @@ in the printer's PPD file.
 If you include B<-H transparent> in B<PPR Parms => then you must set this
 option to B<false>.  This is necessary because in transparent mode
 PPR will not insert the fonts from the font cache.
+
+=back
 
 =head2 AUFS Security
 
@@ -366,10 +371,7 @@ and PID files.  That is the purpose of the B<-f>, B<-l>, and B<-p> switches.
 
 =head1 SEE ALSO
 
-L<ppop(1)>,
-L<ppr(1)>,
-L<ppad(8)>,
-L<pprd(8)>,
+L<ppr.1>,
 "PPR, a PostScript Print Spooler",
 "Installing and Using PPR".
 

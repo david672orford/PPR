@@ -31,7 +31,7 @@
 
 =pod
 
-The script ppr-web-control may instruct the browser to load this script from
+The script ppr-web may instruct the browser to load this script from
 localhost.	This script in turn will load the page that the users really
 wants to see.  Why, you ask, not just load the desired page in the first
 place?	Because we want to load that page without those user interface

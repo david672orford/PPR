@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -47,7 +47,7 @@ $opt_all_removable = 0;
 sub remove
 	{
 	$file = shift;
-	print "	   remove(\"$file\")\n" if($opt_debug);
+	print "    remove(\"$file\")\n" if($opt_debug);
 	if(!unlink($file))
 		{ print "Can't remove \"$file\", $!\n" }
 	}
@@ -56,7 +56,7 @@ sub remove_if_old
 	{
 	$file = shift;
 	$reference_age = shift;
-	print "	 remove_if_old(\"$file\", $reference_age)\n" if($opt_debug);
+	print "  remove_if_old(\"$file\", $reference_age)\n" if($opt_debug);
 	unlink($file) if(-M $file > $reference_age);
 	}
 
@@ -218,7 +218,7 @@ while(defined($file = readdir(DIR)))
 		my $full_path = "$VAR_SPOOL_PPR/jobs/$file";
 		if(-M $full_path > 0.5 && ! -f "$VAR_SPOOL_PPR/queue/$1")
 			{
-			print "	 remove(\"$full_path\")\n";
+			print "  remove(\"$full_path\")\n";
 			remove($full_path);
 			}
 		}

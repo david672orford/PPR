@@ -73,7 +73,7 @@ int destid_local_by_printer(const char name[])
 	} /* end of destid_local_by_printer() */
 
 /*
-** Return the destid which matches the specified local group name.	If the
+** Return the destid which matches the specified local group name.  If the
 ** group does not exist, return -1.
 */
 static int destid_local_by_group(const char name[])
@@ -90,7 +90,7 @@ static int destid_local_by_group(const char name[])
 	} /* end of destid_local_by_group() */
 
 /*
-** This is the one we normally use.	 If there is both a group and a printer
+** This is the one we normally use.  If there is both a group and a printer
 ** with the name we are looking for, this one returns the ID of the group.
 ** If neither a group nor a printer is found, return -1.
 */
@@ -108,7 +108,7 @@ int destid_local_by_name(const char name[])
 	} /* end of destid_local_by_name() */
 
 /*
-** This one is rarely used.	 If there are a printer and a group
+** This one is rarely used.  If there are a printer and a group
 ** with the same name, it will return the printer's destid.
 */
 int destid_local_by_name_reversed(char *name)
@@ -230,7 +230,7 @@ int destid_assign(int destnode_id, const char name[])
 	}
 
 /*
-** Free a dynamically allocated destination id.	 Local destination IDs are
+** Free a dynamically allocated destination id.  Local destination IDs are
 ** not dynamically allocated, so in such a case there is nothing to do.
 */
 void destid_free(int destnode_id, int destid)

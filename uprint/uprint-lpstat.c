@@ -79,7 +79,7 @@ static void lpstat_a(const char list[])
 	{
 	/*
 	** Chug through the uprint-remote.conf file and print dummy lines for the
-	** queues.	We don't have real acceptance times, so we print a fake time.
+	** queues.  We don't have real acceptance times, so we print a fake time.
 	*/
 	{
 	FILE *f;
@@ -366,7 +366,7 @@ static void lpstat_p(const char list[], gu_boolean option_l, gu_boolean option_D
 	{
 	/*
 	** Chug through the uprint-remote.conf file and print dummy lines for the
-	** queues.	We don't have real acceptance times, so we print a fake time.
+	** queues.  We don't have real acceptance times, so we print a fake time.
 	*/
 	{
 	FILE *f;
@@ -431,7 +431,7 @@ static void lpstat_R()
 /*
 ** This is a list of the options in the format required by getopt().
 ** We use the getopt() from the C library rather than PPR's because
-** we want to preserve the local system semantics.	Is this a wise
+** we want to preserve the local system semantics.  Is this a wise
 ** decision?  I don't know.
 **
 ** Notice that lpstat breaks the POSIX parsing rule that an option
@@ -481,7 +481,7 @@ int main(int argc, char *argv[])
 		return 1;
 
 	/*
-	** Parse the switches.	Note that we don't actually _do_ anything yet.
+	** Parse the switches.  Note that we don't actually _do_ anything yet.
 	** We want to make sure we understand the whole line.  If we don't
 	** bail out or (if we have real-lpstat), exec() real-lpstat.
 	*/

@@ -206,7 +206,7 @@ static void help_usage(FILE *outfile)
 	{
 	fprintf(outfile, _("Usage: %s [switches]\n"), myname);
 
-	fprintf(outfile, _("	   %s [responder [address [\"options\"]]]\n"), myname);
+	fprintf(outfile, _("       %s [responder [address [\"options\"]]]\n"), myname);
 
 	fputc('\n', outfile);
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2003.
+# Last modified 5 April 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -35,7 +35,7 @@
 # Part 1, figure out what we have
 #========================================================================
 
-echo "	Studying Init script system..."
+echo "  Studying Init script system..."
 
 # Figure out if we have a System V init and what directories it uses:
 INIT_BASE=""
@@ -44,7 +44,7 @@ for i in /etc/rc.d /etc /sbin
 	if [ -d $i/init.d ]
 	then
 	INIT_BASE=$i
-	echo "	  System V style init scripts found in \"$INIT_BASE\"."
+	echo "    System V style init scripts found in \"$INIT_BASE\"."
 	break
 	fi
 	done
@@ -107,7 +107,7 @@ for i in /etc/rc.local /etc/rc.d/rc.local
 	do
 	if [ -f $i ]
 		then
-	echo "	  BSD-style rc.local found at \"$i\"."
+	echo "    BSD-style rc.local found at \"$i\"."
 		RC_LOCAL=$i
 		fi
 	done
@@ -120,7 +120,7 @@ for i in /System/Library/StartupItems
 	do 
 	if [ -d $i ]
 	then
-	echo "	  MacOS StartupItems found at \"$i\"."
+	echo "    MacOS StartupItems found at \"$i\"."
 		StartupItems=$i
 	fi
 	done
@@ -136,12 +136,13 @@ for i in /System/Library/StartupItems
 #
 if [ -n "$INIT_BASE" ]
 then
-	echo "	Installing the System V style start and stop scripts..."
+	echo "  Installing the System V style start and stop scripts..."
 
 	# This if for when we are building an RPM.
-	if [ ! -d $RPM_BUILD_ROOT$INIT_BASE ]
+	if [ ! -d $RPM_BUILD_ROOT$INIT_BASE/init.d ]
 		then
-		mkdir -p $RPM_BUILD_ROOT$INIT_BASE
+		echo "    Creating $RPM_BUILD_ROOT$INIT_BASE..."
+		mkdir -p $RPM_BUILD_ROOT$INIT_BASE/init.d
 		fi
 
 	# Install the principal script if it isn't already installed.
@@ -169,7 +170,7 @@ then
 		#echo "$existing"
 		if [ "$temp" = " $existing" ]
 			then
-			echo "	  Links are already correct."
+			echo "    Links are already correct."
 			else
 			if [ -x /sbin/chkconfig ]
 				then
@@ -189,7 +190,7 @@ then
 					done
 				for f in $INIT_LIST
 					do
-					echo "	  $INIT_BASE/$f"
+					echo "    $INIT_BASE/$f"
 					rm -f $INIT_BASE/$f
 					ln -s ../init.d/ppr $INIT_BASE/$f
 					done
@@ -206,7 +207,7 @@ then
 		then
 		echo
 		echo "There are currently lines in $RC_LOCAL which start"
-		echo "PPR.	You should remove these so that PPR does not get"
+		echo "PPR.  You should remove these so that PPR does not get"
 		echo "started twice."
 		echo
 		echo "Please press RETURN to continue."
@@ -220,26 +221,26 @@ then
 else
 if [ -n "$StartupItems" ]
 	then
-	echo "	Installing MacOS X startup script..."
+	echo "  Installing MacOS X startup script..."
 	if [ -d $StartupItems/PPR ]
 	then
-	echo "	  Directory $StartupItems/PPR already exists, good."
+	echo "    Directory $StartupItems/PPR already exists, good."
 	else
-	echo "	  Creating directory $StartupItems/PPR..."
+	echo "    Creating directory $StartupItems/PPR..."
 	mkdir $StartupItems/PPR
 	fi
 	if diff ppr $StartupItems/PPR/PPR >/dev/null 2>&1
 	then
-	echo "	  Startup script already installed, good."
+	echo "    Startup script already installed, good."
 	else
-	echo "	  Installing startup script..."
+	echo "    Installing startup script..."
 	cp ppr $StartupItems/PPR/PPR || exit 1
 	fi
 	if [ -f $StartupItems/PPR/StartupParameters.plist ]
 	then
-	echo "	  $StartupItems/PPR/StartupParameters.plist already exists, good."
+	echo "    $StartupItems/PPR/StartupParameters.plist already exists, good."
 	else
-	echo "	  Creating $StartupItems/PPR/StartupParameters.plist..."
+	echo "    Creating $StartupItems/PPR/StartupParameters.plist..."
 	cat - >$StartupItems/PPR/StartupParameters.plist <<"EndOfStartupParameters"
 {
   Description	  = "PPR Print Spooler";
@@ -273,7 +274,7 @@ if [ -n "$RC_LOCAL" ]
 	echo
 
 	else
-	echo "	Appending PPR startup commands to $RC_LOCAL"
+	echo "  Appending PPR startup commands to $RC_LOCAL"
 	{
 	echo
 	echo "# ==== Start PPR ===="
@@ -305,7 +306,7 @@ if [ -n "$RC_LOCAL" ]
 	echo
 	echo "Since your system doesn't seem to use a System V style Init nor do you have"
 	echo "have an rc.local file, you must find your own means to start PPR when the"
-	echo "system boots.	 Specifically, you must arrange for root or $USER_PPR to run"
+	echo "system boots.  Specifically, you must arrange for root or $USER_PPR to run"
 	echo "$HOMEDIR/bin/pprd and possibly $HOMEDIR/bin/papsrv."
 	echo
 	echo "Please press RETURN to continue."

@@ -112,7 +112,7 @@ static void ppop_list(const char command[])
 
 	/*
 	** Convert the destination (printer or group) name into an id
-	** number.	The destination "all" is converted into the wildcard
+	** number.  The destination "all" is converted into the wildcard
 	** id number -1.
 	*/
 	if(strcmp(destname, "all") == 0 || strcmp(destname, "any") == 0)
@@ -296,7 +296,7 @@ static void ppop_status(const char command[])
 
 	/*
 	** Make sure that the request is for the status of
-	** a local printer.	 Status requests for remote
+	** a local printer.  Status requests for remote
 	** printers should be sent to the remote pprd.
 	*/
 	if( strcmp(destnode, ppr_get_nodename()) )
@@ -551,7 +551,7 @@ static void ppop_hold_release(const char command[], int action)
 		return;
 		}
 
-	/* Note that these may return NODEID_NOTFOUND.	That is fine
+	/* Note that these may return NODEID_NOTFOUND.  That is fine
 	   since it won't match anything.
 	   */
 	destnode_id = nodeid_by_name(destnode);
@@ -701,8 +701,8 @@ static void ppop_hold_release(const char command[], int action)
 ** ppop purge
 **
 ** This command is used to cancel a job or all jobs queued for a
-** destination.	 If all jobs are to be canceled, then the id
-** will be -1.	If the subid was not specified, it will be -1
+** destination.  If all jobs are to be canceled, then the id
+** will be -1.  If the subid was not specified, it will be -1
 ** and all subjobs will be canceled.
 */
 static void ppop_cancel_purge(const char command[])
@@ -1023,7 +1023,7 @@ static void ppop_accept_reject(const char command[], int action)
 
 	/*
 	** If there is both a printer and a group with the specified
-	** name, we will operate on the group.	This is probably the
+	** name, we will operate on the group.  This is probably the
 	** best thing to do because ppr(1) will attempt to submit to
 	** the group, not the printer.
 	*/
@@ -1528,7 +1528,7 @@ void ppop_dispatch(const char command[])
 		}
 
 	/*
-	** Create a communications file to receive the message to ppop.	 We have
+	** Create a communications file to receive the message to ppop.  We have
 	** to be careful because this will be in the /tmp directory and a bad
 	** guy could have put a symbolic link there so that we will overwrite
 	** some file.  Notice that this only prevents the overwrite, ppop

@@ -67,8 +67,8 @@ char uprint_get_content_type_lpr(void *p)
 	} /* end of uprint_get_content_type_lpr() */
 
 /*
-** Build the argument list for lpr.	 The list of file names
-** is not included.	 The return value is the number of
+** Build the argument list for lpr.  The list of file names
+** is not included.  The return value is the number of
 ** argument list entries used.
 */
 int uprint_print_argv_bsd(void *p, const char **lpr_argv, int argv_size)

@@ -57,7 +57,7 @@
 /*
 ** TIMEOUT_HANDSHAKE is the time to wait on operations that
 ** should be completed immediately, such as stating the desired
-** queue name.	TIMEOUT_PRINT is the amount of time to wait for
+** queue name.  TIMEOUT_PRINT is the amount of time to wait for
 ** a response to the zero byte sent at the end of a data file.
 ** TIMEOUT_PRINT can be set separately because some printer
 ** Ethernet boards don't respond right away.
@@ -207,11 +207,11 @@ static void do_data_file(int sockfd, const char *local_nodename, const char *add
 	} /* end of do_data_file() */
 
 /*
-** This function sends the data file in chunks.	 It reads blocks from
+** This function sends the data file in chunks.  It reads blocks from
 ** stdin and sends each as the data file.  It just keeps repeating
-** the same data file name.	 This will almost certainly not work
+** the same data file name.  This will almost certainly not work
 ** if the receiving end is a spooler, but it seems to work on HP
-** JetDirect cards.	 This is probably because they don't interpret
+** JetDirect cards.  This is probably because they don't interpret
 ** the protocol on a very deep level.
 */
 static void do_data_file_chunked(int sockfd, const char *local_nodename, const char *address_queue, int lpr_queueid, int chunk_size)
@@ -415,7 +415,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE_INTERFACES);
 	#endif
 
-	/* Disable SIGPIPE.	 We will catch the error on write(). */
+	/* Disable SIGPIPE.  We will catch the error on write(). */
 	signal_interupting(SIGPIPE, SIG_IGN);
 
 	/*
@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 		{
 		alert(int_cmdline.printer, TRUE,
 				_("The PPR interface program \"%s\" does not support bidirectional\n"
-				"communication.	 Use the command \"ppad feedback %s false\" to\n"
+				"communication.  Use the command \"ppad feedback %s false\" to\n"
 				"correct this problem."), int_cmdline.int_basename, int_cmdline.printer);
 		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}

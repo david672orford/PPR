@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 5 April 2003.
 #
 
 #
@@ -67,10 +67,10 @@ rm -f "$RPM_BUILD_ROOT$target"
 
 if [ $squeeze != 0 ]
 	then
-	echo "	  \"$source\" --> \"$target\" (squeezing)"
+	echo "    \"$source\" --> \"$target\" (squeezing)"
 	`dirname $0`/squeeze "$source" "$RPM_BUILD_ROOT$target" || exit 1
 	else
-	echo "	  \"$source\" --> \"$target\""
+	echo "    \"$source\" --> \"$target\""
 	cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
 	chown $USER_PPR "$RPM_BUILD_ROOT$target"
 	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target"

@@ -217,7 +217,7 @@ void run_standalone(int server_port)
 
 	/*
 	** Duplicate this process and close the origional one
-	** so that the shell will stop waiting.	 Also, disassociate
+	** so that the shell will stop waiting.  Also, disassociate
 	** from the controlling terminal and close all file descriptors.
 	*/
 	gu_daemon(PPR_UMASK);

@@ -201,7 +201,7 @@ int pagemask_get_bit(const struct QFileEntry *job, int page)
 	} /* end of pagemask_get_bit() */
 
 /*
-** Return the number of bits that are set.	This will be the
+** Return the number of bits that are set.  This will be the
 ** number of pages that will be printed (per copy of course).
 */
 int pagemask_count(const struct QFileEntry *job)

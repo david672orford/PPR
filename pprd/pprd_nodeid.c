@@ -46,8 +46,8 @@ static int table_size = 0;
 /*
 ** When a node name is fed to this function, it searches nodes[]
 ** for a matching entry.  If none is found, one is created with a
-** reference count of one.	If one is found, the reference count
-** is incremented.	The index of the table entry, new or existing,
+** reference count of one.  If one is found, the reference count
+** is incremented.  The index of the table entry, new or existing,
 ** is returned.
 */
 int nodeid_assign(const char nodename[])
@@ -106,7 +106,7 @@ int nodeid_assign(const char nodename[])
 
 /*
 ** The reference count of the indicated table entry
-** is decremented.	If the decrement operation reduces
+** is decremented.  If the decrement operation reduces
 ** the reference count to zero, the storage occupied
 ** by the name is freed.
 */

@@ -81,7 +81,7 @@ static gu_boolean do_audio1_callback(char *line, void *extra)
 		}
 
 	/* This is not really a while() loop!  It is an if() with the
-	   oportunity to use break to drop out.	 Look at the end. */
+	   oportunity to use break to drop out.  Look at the end. */
 	printer = cooked = raw1 = raw2 = NULL;
 	while(gu_sscanf(line, "COMMENTARY %S %d %Q %Q %Q %s", &printer, &category, &cooked, &raw1, &raw2, &severity) == 6)
 		{
@@ -96,7 +96,7 @@ static gu_boolean do_audio1_callback(char *line, void *extra)
 			break;
 
 		/* If this event didn't occur on a printer the user wants to hear
-		   about, skip it.	Notice that if the user selects no printers,
+		   about, skip it.  Notice that if the user selects no printers,
 		   then events are shown for all of them! */
 		if(settings->printers_count > 0)
 			{
@@ -120,7 +120,7 @@ static gu_boolean do_audio1_callback(char *line, void *extra)
 			printf("Printing on %s ended with result \"%s\".\n", printer, cooked);
 		printf("<br>\n");
 
-		/* URL encode the messages.	 This is not correct. */
+		/* URL encode the messages.  This is not correct. */
 		len = strlen(cooked);
 		for(x=0; x < len; x++) if(cooked[x] == ' ') cooked[x] = '+';
 		len = strlen(raw1);
@@ -250,9 +250,9 @@ static void do_audio1(const char request_method[], char *content[], int content_
 										settings.silly_sounds ? "yes" : "no");
 
 		/* Print a comma separated list of the printers for which we will
-		   make announcements.	If the list is empty, we will make announcements
+		   make announcements.  If the list is empty, we will make announcements
 		   for all printers, since to make announcements for no printers
-		   would be pointless.	Also, on servers with a lot of printeres
+		   would be pointless.  Also, on servers with a lot of printeres
 		   it is a drag to check all those boxes. */
 		if(settings.printers_count > 0)
 			{
@@ -295,7 +295,7 @@ static void do_audio1(const char request_method[], char *content[], int content_
 
 	fflush(stdout);
 
-	/* This is not expected to return.	It reads lines from the status
+	/* This is not expected to return.  It reads lines from the status
 	   files and calls our callback function. */
 	tail_status(FALSE, TRUE, do_audio1_callback, 5, (void*)&settings);
 	} /* end of do_audio1() */
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-	/* We can cancel the alarm now.	 From now on we will rely
+	/* We can cancel the alarm now.  From now on we will rely
 	   on SIGPIPE to tell us when to die. */
 	alarm(0);
 

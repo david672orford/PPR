@@ -97,7 +97,7 @@ static int rip_exit_screen(void)
 		else if(WTERMSIG(rip_wait_status) == SIGPIPE)
 			{
 			alert(printer.Name, TRUE,
-				_("The RIP (Ghostscript) died due to a broken pipe.	 Presumably that pipe led to\n"
+				_("The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led to\n"
 				"a post-processing filter which died.  Look in the RIP options to find out what\n"
 				"post-processing filter is being used."));
 			hooked_exit(EXIT_PRNERR, "RIP broken pipe");
@@ -124,8 +124,8 @@ static int rip_exit_screen(void)
 	} /* end of rip_exit_screen() */
 
 /*
-** This is called from pprdrv.c:fault_check().	It is supposed to check if
-** the RIP is still alive.	If the RIP is dead, this function should
+** This is called from pprdrv.c:fault_check().  It is supposed to check if
+** the RIP is still alive.  If the RIP is dead, this function should
 ** call fatal().
 */
 void rip_fault_check(void)
@@ -161,7 +161,7 @@ void rip_fault_check(void)
 	} /* end of rip_fault_check() */
 
 /*
-** This is called from job_start().	 It interposes a Raster Image Processor
+** This is called from job_start().  It interposes a Raster Image Processor
 ** such as Ghostscript between pprdrv and the interface program.  It also
 ** connects stdout and stderr of the RIP to the write end of the pipe
 ** leading back to pprdrv.
@@ -186,13 +186,13 @@ int rip_start(int printdata_handle, int stdout_handle)
 	if(!rip_exe)
 		{
 		/* If the rip name ends in "/gs", assume it is just plain, unwrapped 
-		   Ghostscript.	 Note that this means that if you want to use unwrapped
+		   Ghostscript.  Note that this means that if you want to use unwrapped
 		   Ghostscript, you have to specify the path.  For example:
 
 				$ ppad myprn rip /usr/bin/gs -sDEVICE=hpjet
 
 		   Note that a RIP name specified in a PPD file is not allowed to
-		   contain slashes.	 This is to make sure that people don't write
+		   contain slashes.  This is to make sure that people don't write
 		   PPD files that apply only to their own computers!
 
 		   */

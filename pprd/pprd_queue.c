@@ -54,7 +54,7 @@ static struct exception_context the_exception_context[1];
 
 /*================================================================
 ** Insert a job into the queue structure.  If for some reason we
-** can't, we are allowed to return a NULL pointer.	The rank1 and
+** can't, we are allowed to return a NULL pointer.  The rank1 and
 ** rank2 parameters will be set to its position in the "all" queue
 ** and the individual queue in which it is placed, respectively.
 ================================================================*/
@@ -105,7 +105,7 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
 	for(x=0; x < queue_entries; x++)	/* Find or make a space in the queue array. */
 		{
 		/*
-		** Lower priority number mean more urgent jobs.	 If we have found
+		** Lower priority number mean more urgent jobs.  If we have found
 		** a job with a higher priority number than the job we are inserting,
 		** move all the jobs from here on one slot furthur toward the end
 		** of the queue and break out of the loop.
@@ -276,7 +276,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 				break;
 				}
 
-			/* Write the new line.	If the job is printing, substitute 0 for the actual printer index. */
+			/* Write the new line.  If the job is printing, substitute 0 for the actual printer index. */
 			snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", job->status >= 0 ? 0 : (job->status * -1), job->flags);
 
 			to_write_size = strlen(buf);
@@ -464,7 +464,7 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
 /*===========================================================================
 ** Receive a new job into the queue.
 **
-** The job is entered in the queue.	 If it is for this node, then the
+** The job is entered in the queue.  If it is for this node, then the
 ** pprd_printer.c module is informed of its arrival, otherwise the
 ** pprd_remote.c module is informed.
 **
@@ -501,8 +501,8 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		newent.homenode_id = nodeid_assign(ptr_homenode);
 
 		Try {
-			/* Convert the destination queue name to a queue id number.	 If the queue
-			   does not exist, inform the user.	 The exception handler will delete the
+			/* Convert the destination queue name to a queue id number.  If the queue
+			   does not exist, inform the user.  The exception handler will delete the
 			   job files.
 			   */
 			if((newent.destid = destid_assign(newent.destnode_id, ptr_destname)) == -1)
@@ -545,7 +545,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				lock();
 
 				/* Set the bitmask which shows which printers have the form.
-				   This may change the printer status too.	For remote jobs,
+				   This may change the printer status too.  For remote jobs,
 				   this is defered until it reaches to target system. */
 				if(nodeid_is_local_node(newent.destnode_id))
 					media_set_notnow_for_job(&newent, FALSE);
@@ -602,7 +602,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 	} /* end of queue_accept_queuefile() */
 
 /*============================================================
-** This handles the j command from ppr.	 The j command is
+** This handles the j command from ppr.  The j command is
 ** used to inform pprd that a new job has been placed in
 ** the queue.
 ============================================================*/

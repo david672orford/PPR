@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 November 2002.
+** Last modified 6 April 2003.
 */
 
 /*
@@ -167,7 +167,7 @@ static const char *snmp_errorstate(int bit)
 	} /* end of snmp_errorstate() */
 
 /*
-** Translate an exit code into a fault type decription.	 If the exit code
+** Translate an exit code into a fault type decription.  If the exit code
 ** does not indicate a fault, return NULL.
 */
 static const char *fault_translate(int code)
@@ -489,7 +489,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 /*===================================================================
 ** ppop status {printer}
 **
-** Display the status of printers.	We will send the "s" command
+** Display the status of printers.  We will send the "s" command
 ** over the FIFO to pprd.
 ===================================================================*/
 int ppop_status(char *argv[])
@@ -957,7 +957,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 **
 ** The function ppop_cancel_byuser() may be called by ppop_cancel().
 ** It does the work for ppop cancel in cases where the argument is only
-** a destination name.	It is used to cancel all of a user's own
+** a destination name.  It is used to cancel all of a user's own
 ** jobs.  It uses custom_list() from ppop_cmds_listq.c to determine
 ** which jobs belong to this user.
 ========================================================================*/
@@ -1087,7 +1087,7 @@ int ppop_purge(char *argv[], int inform)
 		{
 		fputs(_("Usage: ppop purge <destination> ...\n\n"
 				"This command cancels all jobs queued for a particular destination.\n"
-				"Only an operator may use this command.	 Extra arguments are\n"
+				"Only an operator may use this command.  Extra arguments are\n"
 				"interpreted as the names of extra destinations to purge.\n"), errors);
 
 		return EXIT_SYNTAX;
@@ -1305,7 +1305,7 @@ int ppop_move(char *argv[])
 	if(! argv[0] || ! argv[1])
 		{
 		fputs(_("Usage: ppop move <job> <destination>\n"
-			  "		  ppop move <old_destionation> <new_destination>\n\n"
+			  "     ppop move <old_destionation> <new_destination>\n\n"
 			  "This command moves a job or jobs to a different queue.\n"), errors);
 		return EXIT_SYNTAX;
 		}
@@ -1514,12 +1514,12 @@ int ppop_destination(char *argv[], int info_level)
 	if(!argv[0])
 		{
 		fputs(_("Usage: ppop dest[ination] {<destionation>, all}\n"
-				"		ppop ldest {<destionation>, all}\n"
-				"		ppop dest-comment-address {<destination>, all}\n"
+				"       ppop ldest {<destionation>, all}\n"
+				"       ppop dest-comment-address {<destination>, all}\n"
 				"\n"
-				"\tThis command displays the status of a print destination.	 A print\n"
-				"\tdestination is a printer or a group of printers.	 A destination\n"
-				"\tmay be be set to either accept or reject print jobs sent to it.	If\n"
+				"\tThis command displays the status of a print destination.  A print\n"
+				"\tdestination is a printer or a group of printers.  A destination\n"
+				"\tmay be be set to either accept or reject print jobs sent to it.  If\n"
 				"\ta print job is rejected, it is canceled and the user is so informed.\n"
 				"\n"
 				"\tThe \"ppop ldest\" form of this command also displays the comment\n"
@@ -1653,7 +1653,7 @@ int ppop_destination(char *argv[], int info_level)
 	DIR *dir;
 	struct dirent *direntp;
 	int len;
-	
+
 	if(!(dir = opendir(ALIASCONF)))
 		fatal(EXIT_INTERNAL, "%s(): opendir(\"%s\") failed, errno=%d (%s)", function, ALIASCONF, errno, gu_strerror(errno));
 
@@ -1675,14 +1675,14 @@ int ppop_destination(char *argv[], int info_level)
 				machine_readable ? "alias" : _("alias"),
 				"?",			/* accepting */
 				"?",			/* charge */
-				"comment",		
+				"comment",
 				"",				/* interface */
 				""				/* address */
 				);
 			}
 		}
 
-	closedir(dir); 
+	closedir(dir);
 	}
 
 	return EXIT_OK;

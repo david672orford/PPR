@@ -174,7 +174,7 @@ static void printer_error(int error_number)
 static int describe_status(int s)
 	{
 	/*
-	** If no fault buts set, the printer is now busy printing our job.	We 
+	** If no fault buts set, the printer is now busy printing our job.  We 
 	** should tell pprdrv about this because otherwise it will think
 	** that any error conditions which we described earlier are still
 	** present.
@@ -197,7 +197,7 @@ static int describe_status(int s)
 		}
 	/*
 	** If we get this far, print a Laserwriter-style message for each fault
-	** that is present.	 In the past we would have picked only the most
+	** that is present.  In the past we would have picked only the most
 	** 'important' one, since later ones would replace earlier ones in 
 	** the "ppop status" output, but pprdrv can deal with such things now.
 	** it will integrate them all into an SNMP-printer-MIB-style status.

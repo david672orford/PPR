@@ -63,10 +63,10 @@
 ** Global variables.
 ====================================================*/
 
-/* Have we caught SIGTERM?	If it is every set to true, then we shut down. */
+/* Have we caught SIGTERM?  If it is every set to true, then we shut down. */
 volatile gu_boolean sigterm_caught = FALSE;
 
-/* Has one of our timeouts expired?	 No need to initialize this. */
+/* Has one of our timeouts expired?  No need to initialize this. */
 volatile gu_boolean sigalrm_caught;
 
 /* Are we running with the --test switch? */
@@ -122,7 +122,7 @@ int strip_signature = FALSE;	/* TRUE when begin_feature() should strip signature
 ** that when the latter has the value 0, the former has the value 1.
 **
 ** print_direction is 1 if we will send the pages in ascending order,
-** -1 if we will send them in descending order.	 If the PageOrder
+** -1 if we will send them in descending order.  If the PageOrder
 ** is "Special", print_direction will be the same as current_job_direction.
 */
 int current_job_direction;		/* 1 if input is forward, -1 if input is backwards */
@@ -364,7 +364,7 @@ static void copy_header(void)
 
 	/*
 	** If the number of pages is not unspecified, then print it as a DSC
-	** comment.	 If the number of copies is 1 or copies_pages_countdown starts
+	** comment.  If the number of copies is 1 or copies_pages_countdown starts
 	** at 1, then the complicated formula below is reduced to "pages".
 	*/
 	if(job.attr.pages != -1)
@@ -458,7 +458,7 @@ static void copy_header(void)
 /*
 ** Copy the document defaults section from the start of the
 ** "-pages" file.  This will be the first instance of reading
-** from the "-pages" file.	If there are no defaults, we will
+** from the "-pages" file.  If there are no defaults, we will
 ** rewind the file.
 */
 static void copy_defaults(void)
@@ -589,8 +589,8 @@ static gu_boolean copy_prolog(void)
 	} /* end of copy_prolog() */
 
 /*
-** Copy the Document Setup section.	 Return FALSE if we hit the %%Trailer
-** comment or end of file.	Return TRUE if we hit and copy "%%EndSetup".
+** Copy the Document Setup section.  Return FALSE if we hit the %%Trailer
+** comment or end of file.  Return TRUE if we hit and copy "%%EndSetup".
 */
 static gu_boolean copy_setup(void)
 	{
@@ -652,7 +652,7 @@ static gu_boolean copy_setup(void)
 	/*
 	** If we are using N-Up, insert the N-Up invokation.  This has been
 	** placed after the auto bin select because the N-Up package makes
-	** itself at home on the currently selected media.	This is after
+	** itself at home on the currently selected media.  This is after
 	** insert_noinclude_fonts() so that the `Draft' notice font is
 	** downloaded before N-Up is invoked.
 	*/
@@ -715,10 +715,10 @@ static gu_boolean copy_setup(void)
 		} while(dgetline(text));
 
 	/*
-	** This assertion looks ok, but it is not a good idea.	Some highly
+	** This assertion looks ok, but it is not a good idea.  Some highly
 	** defective PostScript files contain unclosed resources in the setup
-	** section.	 This will cause the code above to speed right past
-	** the "%%Trailer" line (as it should).	 Since ppr doesn't always fix
+	** section.  This will cause the code above to speed right past
+	** the "%%Trailer" line (as it should).  Since ppr doesn't always fix
 	** them (even with editps turned on) and they will still print, though
 	** without the benefit of features that are dependent on usable "%%Page:"
 	** comments, we shouldn't throw an assertion failure here.
@@ -836,7 +836,7 @@ static int make_pagetable(void)
 			index++;
 			}
 
-		/* Move ahead to the next page in the -pages file.	This
+		/* Move ahead to the next page in the -pages file.  This
 		   involves reading up to the next blank line. */
 		while(TRUE)
 			{
@@ -913,7 +913,7 @@ static void copy_a_page(int newnumber)
 		/*
 		** If we manage to select the media, strip_binselects will
 		** be set to TRUE to that the old bin select code will be
-		** removed.	 If this printer does not have bins defined, this
+		** removed.  If this printer does not have bins defined, this
 		** function call will return FALSE.
 		*/
 		if(pagemedia[0] != '\0')
@@ -1040,7 +1040,7 @@ static void copy_pages(void)
 				** is a straightforward operation.
 				**
 				** The number we compute is the logical page number
-				** with pages numbered from 0.	If the pages appear
+				** with pages numbered from 0.  If the pages appear
 				** backwards in the file 0 will be the last page
 				** in the file.
 				*/
@@ -1228,8 +1228,8 @@ static void pprdrv_read_printer_conf(void)
 			}
 
 		/*
-		** Read address to use with interface.	An address may contain
-		** embedded spaces.	 It may also be quoted to allow leading
+		** Read address to use with interface.  An address may contain
+		** embedded spaces.  It may also be quoted to allow leading
 		** or trailing spaces.
 		*/
 		else if(gu_sscanf(confline, "Address: %A", &tptr) == 1)
@@ -1272,7 +1272,7 @@ static void pprdrv_read_printer_conf(void)
 			}
 
 		/*
-		** Read options to use with interface.	Take the whole rest of the line.
+		** Read options to use with interface.  Take the whole rest of the line.
 		*/
 		else if(gu_sscanf(confline, "Options: %Z", &tptr) == 1)
 			{
@@ -1459,7 +1459,7 @@ static void pprdrv_read_printer_conf(void)
 	DODEBUG_PPD(("after reading PPD: printer.prot.PJL=%s, printer.prot.TBCP=%s", printer.prot.PJL ? "TRUE" : "FALSE", printer.prot.TBCP ? "TRUE" : "FALSE"));
 
 	/* If these things weren't set in the printer's configuration file,
-	   then set them to the default values.	 The default values depend
+	   then set them to the default values.  The default values depend
 	   on which interface is being used and what the PPD files has
 	   to say. */
 	if(! saw_feedback)
@@ -1538,7 +1538,7 @@ static void pprdrv_read_printer_conf(void)
 
 /*
 ** Choose the method by which we will print multiple copies.
-** This routine will always return.	 It is called once by main().
+** This routine will always return.  It is called once by main().
 **
 ** copies_auto					-- number of copies we should ask the printer to make
 ** copies_auto_collate			-- should the printer collate?
@@ -1587,7 +1587,7 @@ static void select_copies_method(void)
 	} /* end of select_copies_method() */
 
 /*
-** Compute things about pages.	This is called once from main().
+** Compute things about pages.  This is called once from main().
 ** This routine will only exit if there is an internal error.
 */
 static void page_computations(void)
@@ -1600,11 +1600,11 @@ static void page_computations(void)
 	** job.N_Up.sigsheets is the number of pieces of paper in each
 	** signiture.
 	**
-	** job.attr.pages is the number of "%%Page:" comments in the file.	However
+	** job.attr.pages is the number of "%%Page:" comments in the file.  However
 	** pages contains the number of those pages we are going to print.
 	**
 	** job.attr.pagefactor is the number of "%%Page:" comments per
-	** piece of paper.	It is the N-Up factor times 1 for simplex
+	** piece of paper.  It is the N-Up factor times 1 for simplex
 	** or 2 for duplex.
 	*/
 	if(job.N_Up.sigsheets == 0)			/* if not signature printing, */
@@ -1620,7 +1620,7 @@ static void page_computations(void)
 				(job.N_Up.N * 2 * job.N_Up.sigsheets);
 
 		/* Now that we know the number of signitures, compute the number of
-		   sheets.	 The clause (job.N_Up.N * 2)/job.attr.pagefactor) doubles
+		   sheets.  The clause (job.N_Up.N * 2)/job.attr.pagefactor) doubles
 		   the number of sheets if duplex mode is off. */
 		sheetcount = signature_count * job.N_Up.sigsheets * ((job.N_Up.N * 2)/job.attr.pagefactor);
 		}
@@ -1653,7 +1653,7 @@ static void page_computations(void)
 
 /*
 ** If we suceeded in printing the document and a printlog
-** file exists, put an entry in it.	  This routine
+** file exists, put an entry in it.  This routine
 ** is called once by main().
 */
 static void printer_use_log(struct timeval *start_time, int pagecount_start, int pagecount_change)
@@ -1686,7 +1686,7 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 	struct COMPUTED_CHARGE charge;
 
 	/*
-	** Compute the number of printed sides.	 Normally this is
+	** Compute the number of printed sides.  Normally this is
 	** straight-forward, but in signiture mode we must account
 	** for "pages" that are left blank.
 	*/
@@ -1821,7 +1821,7 @@ static void sigchld_handler(int sig)
 
 	/*
 	** In this loop we retrieve process exit status until there
-	** are no more children whose exit status is available.	 When
+	** are no more children whose exit status is available.  When
 	** there are no more, we return.  If the child is the interface,
 	** we drop out of the loop and let the code below handle it.
 	**
@@ -1868,7 +1868,7 @@ static void sigchld_handler(int sig)
 **
 ** While this handler is named for SIGTERM, it is also installed as the handler
 ** for a number of other signals that can be reasonably interpreted as
-** terminate requests.	Look in main() to see which signals.
+** terminate requests.  Look in main() to see which signals.
 */
 static void sigterm_handler(int sig)
 	{
@@ -1884,7 +1884,7 @@ static void sigterm_handler(int sig)
 	** the cancel operation will take a noticable period of time.
 	**
 	** We have to be ready to restart sleep() because SIGCHLD might
-	** interupt it.	 We may get SIGCHLD a lot because commentators may be
+	** interupt it.  We may get SIGCHLD a lot because commentators may be
 	** chattering.
 	*/
 	#ifdef DEBUG_DIE_DELAY
@@ -2049,7 +2049,7 @@ int main(int argc, char *argv[])
 	ppop_status_init();
 
 	/*
-	** Open the queue file.	 We will keep it open until it is
+	** Open the queue file.  We will keep it open until it is
 	** close automatically when we exit.
 	*/
 	DODEBUG_MAIN(("main(): reading queue file"));
@@ -2079,7 +2079,7 @@ int main(int argc, char *argv[])
 		}
 
 	/*
-	** Parse the queue file name into the structure "job".	Without
+	** Parse the queue file name into the structure "job".  Without
 	** regular expressions the parsing is a little tricky, so we
 	** share the function parse_qfname() with pprd.
 	*/
@@ -2306,7 +2306,7 @@ int main(int argc, char *argv[])
 		** If we are printing multiple copies by sending the
 		** whole document again and again, then send end of
 		** file to the printer and rewind those files and
-		** go back and do it again.	 This clause is not
+		** go back and do it again.  This clause is not
 		** ``true'' on the last copy.
 		*/
 		if(copies_doc_countdown)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 5 April 2003.
 */
 
 #include "before_system.h"
@@ -52,7 +52,7 @@
 /*
 ** This module is the guts of the PPR commentator mechanism.  Commentators
 ** are programs which are used to send messages to someone about how
-** pprdrv is progressing with printing the job.	 They talk about things
+** pprdrv is progressing with printing the job.  They talk about things
 ** like the printer failing to accept data or having its cover open.
 **
 ** The function commentary() is called whenever something happens which might
@@ -67,13 +67,13 @@
 ** Commentator: flags name address "options"
 **
 ** The flags field indicates what types of messages should be reported
-** using this commentator.	The name indicates which commentator to use.
+** using this commentator.  The name indicates which commentator to use.
 ** If it is "file", the information is written to the file indicated by
-** the "address" field.	 If the commentator name is not "file", it is the
+** the "address" field.  If the commentator name is not "file", it is the
 ** name of a program in ~ppr/commentators which should be executed.
 **
-** We do not wait here for the commentator to exit.	 Instead, pprdrv waits
-** for all its children to exit before it exits itself.	 This is done
+** We do not wait here for the commentator to exit.  Instead, pprdrv waits
+** for all its children to exit before it exits itself.  This is done
 ** by calling commentator_wait().
 */
 
@@ -269,7 +269,7 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 		if(duration > 1)
 			{
 			gu_snprintfcat(canned_message, sizeof(canned_message),
-				_("	 This condition has persisted for %d minutes."),
+				_("  This condition has persisted for %d minutes."),
 				duration);
 			}
 		}
@@ -323,8 +323,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	** Here is where we handle the ppr --commentary option.
 	**
 	** Notice that the "file" commentator won't work.  We consider it bad to
-	** allow users to write to files of their choosing!	 We also don't allow
-	** commentator names which contain slashes.	 This is to limit users to
+	** allow users to write to files of their choosing!  We also don't allow
+	** commentator names which contain slashes.  This is to limit users to
 	** the commentators in the commentators/ directory.
 	*/
 	DODEBUG_COMMENTARY(("%s(): job.commentary = %d", function, job.commentary));
@@ -447,7 +447,7 @@ static void empty_handler(int sig)
 ** Wait for any remaining commentators (actually, any remaining
 ** child processes) to exit.  If they don't exit within 60 seconds,
 ** send SIGHUP to our entire process group (pprdrv and all its
-** children).	Feel free to disable this code if you don't like it.
+** children).  Feel free to disable this code if you don't like it.
 **
 ** This function is called just before pprdrv exits.  It is called at
 ** the end of main() and from commentator_wait().  Among other things,

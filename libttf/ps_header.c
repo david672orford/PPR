@@ -18,7 +18,7 @@
 
 /*
 ** Write a string to the PostScript output with non-printables
-** and quotes and backslashes escaped.	Notice that we are
+** and quotes and backslashes escaped.  Notice that we are
 ** careful to treat the characters as unsigned.
 */
 static void ttf_PS_string(struct TTFONT *font, const char *string)

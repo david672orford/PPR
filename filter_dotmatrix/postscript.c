@@ -42,7 +42,7 @@ static char *font_oblique;
 static char *font_boldoblique;
 
 /*
-** The name of the PostScript encoding to use.	If
+** The name of the PostScript encoding to use.  If
 ** "StandardEncoding" is ok, this variable will
 ** be set to a NULL.
 */
@@ -80,7 +80,7 @@ void top_of_document(void)
 		font_boldoblique="Courier-BoldOblique";
 
 	/*
-	** Select the encoding we will use.	 Don't use a special
+	** Select the encoding we will use.  Don't use a special
 	** encoding unless it will actually be useful.
 	*/
 	if(encoding != ENCODING_STANDARD && (uses_nonascii_normal || uses_nonascii_bold
@@ -165,7 +165,7 @@ void top_of_document(void)
 	fputc('\n', stdout);
 
 	/*
-	** If level 2 PostScript required, say so.	Level 2 features
+	** If level 2 PostScript required, say so.  Level 2 features
 	** are only required if we have generated compressed graphics.
 	*/
 	printf("%%%%LanguageLevel: %d\n",(level2 && uses_graphics) ? 2 : 1);

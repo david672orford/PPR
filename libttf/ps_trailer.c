@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/libttf/ps_trailer.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 1998.
+** Last modified 5 April 2003.
 */
 
 #include "libttf_before_system.h"
@@ -60,7 +75,7 @@ void ttf_PS_trailer(struct TTFONT *font, int target_type)
 		   is unknown, leave "true" on the stack. */
 		(*font->puts)(	"systemdict/resourcestatus known\n"
 						" {42 /FontType resourcestatus\n"
-						"	{pop pop false}{true}ifelse}\n"
+						"    {pop pop false}{true}ifelse}\n"
 						" {true}ifelse\n");
 
 		/* If true, execute code to produce an error message if
@@ -87,11 +102,11 @@ void ttf_PS_trailer(struct TTFONT *font, int target_type)
 		/*
 		** This BuildGlyph procedure will look the name up in the
 		** CharStrings array, and then check to see if what it gets
-		** is a procedure.	If it is, it executes it, otherwise, it
+		** is a procedure.  If it is, it executes it, otherwise, it
 		** lets the TrueType rasterizer loose on it.
 		**
 		** When this proceedure is executed the stack contains
-		** the font dictionary and the character name.	We
+		** the font dictionary and the character name.  We
 		** exchange arguments and move the dictionary to the
 		** dictionary stack.
 		*/
@@ -101,26 +116,26 @@ void ttf_PS_trailer(struct TTFONT *font, int target_type)
 		/* Put two copies of CharStrings on the stack and consume
 		   one testing to see if the charname is defined in it,
 		   leave the answer on the stack. */
-		(*font->puts)("	 CharStrings dup 2 index known\n");
+		(*font->puts)("  CharStrings dup 2 index known\n");
 				/* stack: charname CharStrings bool */
 
 		/* Exchange the CharStrings dictionary and the charname,
 		   but if the answer was false, replace the character name
 		   with ".notdef". */
-		(*font->puts)("	   {exch}{exch pop /.notdef}ifelse\n");
+		(*font->puts)("    {exch}{exch pop /.notdef}ifelse\n");
 				/* stack: CharStrings charname */
 
 		/* Get the value from the CharStrings dictionary and see
 		   if it is executable. */
-		(*font->puts)("	 get dup xcheck\n");			/* stack: CharStrings_entry */
+		(*font->puts)("  get dup xcheck\n");			/* stack: CharStrings_entry */
 
 		/* If is a procedure, Execute according to RBIIp 277-278. */
-		(*font->puts)("	   {currentdict systemdict begin begin exec end end}\n");
+		(*font->puts)("    {currentdict systemdict begin begin exec end end}\n");
 
 		/* Is a TrueType character index, let the rasterizer at it. */
-		(*font->puts)("	   {TrueDict begin /bander load cvlit exch TrueState render end}\n");
+		(*font->puts)("    {TrueDict begin /bander load cvlit exch TrueState render end}\n");
 
-		(*font->puts)("	   ifelse\n");
+		(*font->puts)("    ifelse\n");
 
 		/* Pop the font's dictionary off the stack. */
 		(*font->puts)(" end}bind def\n");

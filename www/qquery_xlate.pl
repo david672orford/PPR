@@ -1,16 +1,31 @@
 #
 # mouse:~ppr/src/www/qquery_xlate.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 May 2001.
+# Last modified 5 April 2003.
 #
 
 require 'cgi_intl.pl';
@@ -48,7 +63,7 @@ require 'cgi_intl.pl';
 'pagefactor' =>			[N_('Page Factor'),		N_("PostScript Page Descriptions Per Sheet")],
 'nupn' =>				[N_('N-Up'),			N_("Number of Logical Pages Per Physical Page")],
 'nupborders' =>			[N_('Borders?'),		N_("Print Borders Around Logical Pages in N-Up Mode?")],
-'sigsheets' =>			[N_('Sig. Sheets'),		N_("How Many Sheets Per Signiture?	(For Booklet Printing.)")],
+'sigsheets' =>			[N_('Sig. Sheets'),		N_("How Many Sheets Per Signiture?  (For Booklet Printing.)")],
 'sigpart' =>			[N_('Sig. Part'),		N_("The Fronts, the Backs, or Both")],
 'totalpages' =>			[N_('Total Pages'),		N_("Total Page Descriptions for All Copies")],
 'totalsides' =>			[N_('Total Sides'),		N_("Total Medium Sides to be Marked (after N-Up)")],
