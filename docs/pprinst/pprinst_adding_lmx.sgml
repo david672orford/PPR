@@ -1,11 +1,11 @@
 <Sect2 id="adding-lmx">
 <Title>Adding PPR Printers to LAN Manager For Unix</Title>
 
-<Para>
-If you are using NCR's LAN Manager for Unix, sometimes refered to as
-LANMAN/X, you can set it up to feed jobs to PPR.  A printer is added to LAN
-Manager with the <Emphasis remap="bf">net share</Emphasis> command.  LAN Manager can use PPR by means
-of something called a ``print processor script'':
+<Para> If you are using NCR's <ProductName>LAN Manager for
+Unix</ProductName>, sometimes refered to as LANMAN/X, you can set it up to
+feed jobs to PPR.  A printer is added to LAN Manager with the <Command>net
+share</Command> command.  <ProductName>LAN Manager for Unix</ProductName>
+can use PPR by means of something called a ``print processor script'':
 </Para>
 
 <Para>
@@ -18,10 +18,10 @@ of something called a ``print processor script'':
 </Para>
 
 <Para>
-These commands create a LAN Manager printer called ``myprn'' (the same name
+These commands create a LAN Manager printer called <Literal>myprn</Literal> (the same name
 as we gave the printer in PPR).  The processor indicated as ``ppr'' is the
-script <Literal remap="tt">/var/opt/lanman/customs/ppr</Literal> which is installed by the PPR
-<Emphasis remap="bf">fixup</Emphasis> script.  A group of printers may be added to LAN Manager in the
+script <Filename>/var/opt/lanman/customs/ppr</Filename> which is installed by the PPR
+<Command>fixup</Command> script.  A group of printers may be added to LAN Manager in the
 same way:
 </Para>
 
@@ -36,8 +36,9 @@ same way:
 
 <Para>
 You could create your own versions of the print processor script to invoke the
-program <Emphasis remap="bf">ppr</Emphasis> with differents sets of options.  However, it
-will generally be more convenient to set options with the <Emphasis remap="bf">ppad switchset</Emphasis>
+program <Command>ppr</Command> with differents sets of options.  However, it
+will generally be more convenient to set options with the <Command>ppad
+switchset</Command>
 command as described in section <XRef LinkEnd="switchsets">.
 </Para>
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2002.
+** Last modified 15 January 2003.
 */
 
 #include "before_system.h"
@@ -38,6 +38,7 @@ struct QI {
     void *name;
     void *comment;
     void *ppdfile;
+    gu_boolean transparent_mode;
 
     };
 
@@ -50,6 +51,14 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
     qip->name = gu_pcs_new();
     qip->comment = gu_pcs_new();
     qip->ppdfile = gu_pcs_new();
+    qip->transparent_mode = FALSE;
+
+    if(qit == QUEUEINFO_ALIAS)
+	{
+
+	}
+
+
 
     return (void *)qip;
     }

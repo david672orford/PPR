@@ -15,7 +15,7 @@ disruption experienced by the users of the printer.
 <Para>
 In order to correctly modify a queue's configuration, it is necessary to
 understand its current configuration. The current configuration may be viewed
-with the <Emphasis remap="bf">ppad show</Emphasis> command, like this:
+with the <Command>ppad show</Command> command, like this:
 </Para>
 
 <Para>
@@ -97,14 +97,14 @@ Switchset:
 
 </Para>
 
-<Para>
-Notice that changing the interface from ``<Emphasis remap="bf">serial</Emphasis>'' to ``<Emphasis remap="bf">atalk</Emphasis>''
-automatically changed the <Emphasis remap="bf">jobbreak</Emphasis> setting from ``<Emphasis remap="bf">control-d</Emphasis>'' to
-``<Emphasis remap="bf">signal</Emphasis>'' which is the the default for the <Emphasis remap="bf">atalk</Emphasis> interface.  This
-is fine, but since the new printer is an HP 4M, we might want to use a
-Jobbreak setting of ``signal/pjl'' instead so that we can get nifty messages
-on the printer's display panel.  We can make the change with this command:
-</Para>
+<Para> Notice that changing the interface from <Literal>serial</Literal> to
+<Literal>atalk</Literal> automatically changed the <Option>jobbreak</Option>
+setting from <Literal>control-d</Literal> to <Literal>signal</Literal> which
+is the the default for the <Literal>atalk</Literal> interface.  This is
+fine, but since the new printer is an <ProductName>HP 4M</ProductName>, we
+might want to use a Jobbreak setting of <Literal>signal/pjl</Literal>
+instead so that we can get nifty messages on the printer's display panel.
+We can make the change with this command: </Para>
 
 <Para>
 
@@ -154,12 +154,12 @@ printer.  The easiest way to do this would be to execute the command:
 
 <Para>
 This would add all possible bins for the new printer.  After doing this it
-would have been necessary to use <Emphasis remap="bf">ppad show sea305</Emphasis> to display the
-configuration and then use several commands along the lines of <Emphasis remap="bf">ppad bins
-delete sea305 Envelope</Emphasis> to delete optional bins that are not installed
+would have been necessary to use <Command>ppad show sea305</Command> to display the
+configuration and then use several commands along the lines of <Command>ppad bins
+delete sea305 Envelope</Command> to delete optional bins that are not installed
 on the new printer and bins that were present on the old printer but are not
 present on the new.  Of course, once this is done, it is necessary to use
-the <Emphasis remap="bf">ppop mount</Emphasis> command to mount media on the new bins.  But, as we
+the <Command>ppop mount</Command> command to mount media on the new bins.  But, as we
 said, this print queue does not have bins defined, so we did not have to do
 any of this.  Here we display the final configuration:
 </Para>
@@ -196,7 +196,7 @@ Switchset:
 <Title>Changes for the Macintosh Print Server</Title>
 
 <Para>
-The printer we are changing has an entry in <Literal remap="tt">/etc/ppr/papsrv.conf</Literal>
+The printer we are changing has an entry in <Filename>/etc/ppr/papsrv.conf</Filename>
 that looks like this:
 </Para>
 
@@ -209,17 +209,17 @@ PPRname=sea305
 
 </Para>
 
-<Para>
-Since this entry makes no mention of the make and model of the printer,
-there is nothing to change, however, when <Emphasis remap="bf">papsrv</Emphasis> starts it reads
-the printer's configuration and reads its PPD file.  It uses the information
-it takes from the PPD file to answer questions put to it by the Macintosh
-client.  Theirfore, until you restart <Emphasis remap="bf">papsrv</Emphasis>, LaserWriter 8's auto
+<Para> Since this entry makes no mention of the make and model of the
+printer, there is nothing to change, however, when <Command>papsrv</Command>
+starts it reads the printer's configuration and reads its PPD file.  It uses
+the information it takes from the PPD file to answer questions put to it by
+the Macintosh client.  Theirfore, until you restart
+<Command>papsrv</Command>, <Application>LaserWriter 8</Application>'s auto
 setup feature will continue to select the PPD file for the old printer.
 Also, if the font lists of the old and new printers differ, documents may
-print incorrectly.  To prevent this sort of problem, kill <Emphasis remap="bf">papsrv</Emphasis>
-and restart it as described in section <XRef LinkEnd="start-restart">.
-</Para>
+print incorrectly.  To prevent this sort of problem, kill
+<Command>papsrv</Command> and restart it as described in section <XRef
+LinkEnd="start-restart">. </Para>
 
 </Sect2>
 
@@ -246,9 +246,9 @@ comment attached to the LAN Manager queue:
 <Title>Changes for Samba</Title>
 
 <Para>
-If you are using Samba, you should edit <Literal remap="tt">smb.conf</Literal> and change the printer's
-comment, unless you are also using <Emphasis remap="bf">ppr2samba</Emphasis>, in which case you can
-simply run <Emphasis remap="bf">ppr2samba</Emphasis>.
+If you are using Samba, you should edit <Filename>smb.conf</Filename> and change the printer's
+comment, unless you are also using <Command>ppr2samba</Command>, in which case you can
+simply run <Command>ppr2samba</Command>.
 </Para>
 
 </Sect2>

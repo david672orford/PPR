@@ -145,7 +145,7 @@ struct OPTION
 
 struct QUEUE_CONFIG
     {
-    const char *PPDfile;	/* name of Adobe PPD file */
+    void *queueinfo;
     const char **fontlist;	/* list of fonts in this printer */
     int fontcount;
     int LanguageLevel;          /* 1 or 2, 1 is default */
@@ -200,6 +200,6 @@ void sigusr1_handler(int sig);
 
 /* routines in papd_conf.c */
 struct ADV *conf_load(struct ADV *old_config);
-void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
+int conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
 
 /* end of file */

@@ -1,28 +1,46 @@
 #
 # mouse:~ppr/src/docs/refman/papsrv.8.pod
-# Copyright 1995--2002, Trinity College Computing Center.
-# Written by David Chappell
+# Copyright 1995--2003, Trinity College Computing Center.
+# Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 27 February 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 15 January 2003.
 #
 
 =head1 NAME
 
 papsrv - Server which accepts Macintosh jobs and passes them to PPR
+
 papsrv_kill - Shuts down papsrv
+
 papsrv.conf - Macintosh printer server configuration file
 
 =head1 SYNOPSIS
 
 B<papsrv> [B<--help>] [B<--version>] [B<-f> I<configfile>] [B<-l> I<logfile>]
 [B<-p> I<pidfile>] [B<-X> I<AUFS_Security_directory>] [B<-z> I<default_zone>]
+
 B<papsrv> B<--stop>
 
 =head1 DESCRIPTION
@@ -61,7 +79,7 @@ this happens, it will be necessary to stop and restart the AppleTalk
 protocol stack before B<papsrv> can be restarted.  It is recomended that
 B<papsrv> be killed with SIGTERM.  This is the default action of the kill
 command is all known shells.  Several seconds may elapse between the time
-papsrv receives the TERM signal and the time it exits.  During this time
+B<papsrv> receives the TERM signal and the time it exits.  During this time
 B<papsrv> is removing the advertized names from the network.
 
 A good way to stop B<papsrv> is to run it with the B<--stop> option.  When
@@ -109,19 +127,19 @@ begining with "#" or ";" are comments and do not count as blank lines.  (All
 comments must begin with a "#" or ";" in the first column, comments at the
 ends of lines are not allowed.) Each line of a record consists of a keyword
 followed by a colon, at least one space and a parameter.  Only the
-B<PPRname:> and B<PAPname:> lines are required except when the parameter
-to B<PPRname:> refers to a group whose members do not all use the same PPD
-file, in which case the B<PPDfile:> line is also required.
+B<PPRname => and B<PAPname => lines are required except when the parameter
+to B<PPRname => refers to a group whose members do not all use the same PPD
+file, in which case the B<PPDfile => line is also required.
 
 =over 4
 
-=item B<PPRname:> I<destination>
+=item B<PPRname => I<destination>
 
 specifies the PPR I<destination> to which the print jobs should be sent.
-It is permissible for different records to have identical B<PPRname:> lines.
+It is permissible for different records to have identical B<PPRname => lines.
 This line must be the first line of the record.
 
-=item B<PAPname:> I<choosername>
+=item B<PAPname => I<choosername>
 
 specifies the name which should appear in the chooser.  Generally this will
 be a simple name which may be up to 32 characters long and should not
@@ -141,11 +159,11 @@ also present, the at sign and the zone name should come after it.)  For
 example:  "My Favorite Printer@Computing Center" or "My Favorite
 Printer:SecretWriter@Computing Center".
 
-=item B<PPDfile:> I<filename>
+=item B<PPDfile => I<filename>
 
 indicates the PPD files which should be used to answer queries about the
 printer.  If I<filename> does not begin with a slash it is relative to
-F</usr/share/ppr/PPDFiles>.  The B<PPDfile:> line is required for groups of printers
+F</usr/share/ppr/PPDFiles>.  The B<PPDfile => line is required for groups of printers
 whose members do not all use the same PPD file, it is I<forbidden> under
 all other circumstances.  If you think you should be allowed to specify a
 PPD file under all circumstances, keep reading, other lines can be used to
@@ -216,7 +234,7 @@ specification.
 =item B<BinaryOK => I<boolean>
 
 Specifies an answer for the LaserWriter 8 query of the same name.  If a
-record does not have a B<BinaryOK:> line, then B<papsrv> will return the
+record does not have a B<BinaryOK => line, then B<papsrv> will return the
 default answer which is supplied by LaserWriter 8 when it makes the query.
 (That default answer is false.)
 
@@ -316,10 +334,9 @@ first line of F</etc/ppr/papsrv_default_zone.conf>.
 
 When B<papsrv> fails to work, the first place to look is in its log file.
 Major actions, such as starting up, adding names to the Macintosh network,
-and shutting down will
-be logged here.  If it B<papsrv> aborts for some reason,
-a message will be written to the log.  If you modify F<papsrv.conf>, you
-should look in the log file after restarting B<papsrv> to see if it
+and shutting down will be logged here.  If it B<papsrv> aborts for some
+reason, a message will be written to the log.  If you modify F<papsrv.conf>,
+you should look in the log file after restarting B<papsrv> to see if it
 detected any errors in the new configuration file.
 
 =head1 EXAMPLES
@@ -330,7 +347,7 @@ To share a printer called "myprn", we might make an entry like this one:
  PPR name = myprn
 
 To create a second name for myprn which prints booklets, add this record to
-the papsrv configuration file:
+the B<papsrv> configuration file:
 
  [My Printer, Booklets]
  PPRname = myprn
@@ -358,7 +375,8 @@ L<pprd(8)>,
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2001.
+PPR was written at Trinity College during 1993--2003.
+It was first released to the public on 26 April 1995.
 
 =head1 AUTHORS
 

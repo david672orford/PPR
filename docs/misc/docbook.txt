@@ -1,0 +1,237 @@
+mouse:~ppr/src/docs/misc/docbook.txt
+15 January 2003
+
+This file lists some of the Docbook tags used in the PPR documentation and the
+conventions for their use.  It is intended for quite reference while writing
+PPR documentation.
+
+==============================================================================
+ Document Header
+==============================================================================
+
+<Article>
+
+This tag encloses whole documents.
+
+<ArticleInfo>
+	<title>My Document</title>
+	<author><firstname>David</firstname><surname>Chappell</surname></author>
+	<pubdate>15 January 2003</pubdate>
+	<Copyright>
+		<year>1995--2003</year>
+		<holder>Trinity College Computing Center</holder>
+	</Copyright>
+</ArticleInfo>
+
+These tags contain article header information.
+
+<Abstract>
+
+This tag contains one or more paragraphs which summarize the article comments.
+
+==============================================================================
+ Document Sections
+==============================================================================
+
+<Sect1 id="XXX">
+<Sect2 id="XXX">
+<Sect3 id="XXX">
+
+These tags delineate chapters and subheadings.
+
+<Title>
+
+This tag encloses the title of a section.  It should come immediately after
+the opening section tag.
+
+<Para>
+
+This tag encloses each paragraph.
+
+<Footnote>
+	<Para>
+	</Para>
+</Footnote>
+
+These tags make a footnote.
+
+==============================================================================
+ Computer Objects
+==============================================================================
+
+<Command>
+
+This tag encloses the name of an executable command or the text that a user
+enters in order to execute it.
+
+<Option>
+
+An option for a command.
+
+<Replaceable>
+
+Text which can or should be replaced by the user.
+
+<Application>
+
+This tag encloses the name of an computer program (as opposed to the command
+that launches it.  For example: jobs are submitted to
+<Application>PPR</Application> using the <Command>ppr</Command> command.
+
+<EnVar>
+
+This tag encloses the name of an environment variable.
+
+<ErrorCode>
+
+A numberic or symbolic error code.  For example,
+<ErrorCode>EINTR</ErrorCode>.
+
+<ErrorName>
+
+A text description of an error code, for example, <ErrorName>Access
+Denied</ErrorName>.
+
+<ErrorClass>
+
+A category of error such as <ErrorClass>fatal</ErrorClass>.
+
+<Screen>
+
+This tag encloses block-formatted code samples.
+
+<Filename>
+
+This tag encloses a file name.
+
+<Filename class="HeaderFile">
+
+This tag encloses the name of a C header file.
+
+<Filename class="Directory">
+
+This tag encloses the name of a directory.
+
+<Filename class="SymLink">
+
+This tag encloses the name of a symbolic link.
+
+<Hardware>
+
+A physical part of a computer system, for instance <Hardware>Parallel Port
+1</Hardware>.
+
+<SystemItem class="OSname">
+
+The name of an operating system.
+
+<SystemItem class="SystemName">
+
+The name of a computer system.
+
+<Prompt>
+
+A command-line-interface prompt for user input.
+
+<GUILabel>
+
+The label place where the user may enter data in a GUI interface.
+
+<ComputerOutput>
+
+An inline bit of computer program output.
+
+<UserInput>
+
+An inline bit of text that a user is expected to enter into a computer
+program.
+
+<Literal>
+
+Some piece of text data taken from a computer system, such as part of a
+configuration file.
+
+==============================================================================
+ Lists
+==============================================================================
+
+<VariableList>
+	<VarListEntry>
+		<Term>the</Term>
+		<ListItem>
+			<Para>
+			A definite article.
+			</Para>
+		</ListItem>
+	</VarListEntry>
+</VariableList>
+		
+These tags produce dictionary lists.
+
+==============================================================================
+ Imported Images and Figures
+==============================================================================
+
+<Figure id="links_target">
+	<Title>Figure Title</Title>
+	<Graphic FileRef="filename_without_extension">
+</Figure>
+
+<ScreenShot>
+	<ScreenInfo>640x480x256</ScreenInfo>
+	<Graphic FileRed="screenshot.gif">
+</ScreenShot>
+
+This displays a screenshot image.  The contents of <ScreenInfo> are not
+displayed.
+
+==============================================================================
+ Source Code
+==============================================================================
+
+<FuncSynopsis>
+	<FuncPrototype>
+		<FuncDef>int <Function>printf</Function></FuncDef>
+		<ParamDef>
+			<Parameter>char *format</Parameter>
+			<Parameter>...</Parameter>
+		</ParamDef>
+	</FuncPrototype>
+</FuncSynopsis>
+
+These tags are used to mark C function prototypes.
+
+<VarName>
+
+The name of a variable.
+
+==============================================================================
+ Hyperlinks
+==============================================================================
+
+<XRef LinkEnd="target_id">
+
+This tag inserts the name of the target section.  If the output format
+supports hyperlinks, then the section name is hyperlinked to the section
+to which it refers.
+
+<ULink URL="XXXXX">
+
+A hyperlink with a URL.  It does not generate the linked text.
+
+==============================================================================
+ Other
+==============================================================================
+
+<Email>
+
+An e-mail address.
+
+<ProductName>
+
+The name of a commercial product such as a printer.
+
+<CiteTitle>
+
+Citation of another book.
+

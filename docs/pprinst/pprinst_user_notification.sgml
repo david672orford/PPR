@@ -9,15 +9,14 @@ send messages to users.  Each of the available methods is implemented by a
 small program called a responder.
 </Para>
 
-<Para>
-The <Emphasis remap="bf">ppr</Emphasis> <Emphasis remap="bf">-m</Emphasis> option selects the responder to be used to notify the user.  The option
-<Emphasis remap="bf">-r</Emphasis> sets the address to pass to the responder program.
-</Para>
+<Para> The <Command>ppr</Command> <Option>-m</Option> option selects the
+responder to be used to notify the user.  The option <Option>-r</Option>
+sets the address to pass to the responder program. </Para>
 
 <Para>
 The default responder is called ``write''.  It writes a message to the users terminal if he is
 logged in or sends him an email messages if he is not.  The default notification address
-is the name of the user who ran <Emphasis remap="bf">ppr</Emphasis>.
+is the name of the user who ran <Command>ppr</Command>.
 </Para>
 
 <Para>
@@ -31,7 +30,7 @@ and PPR&lowbar;RESPONDER&lowbar;ADDRESS environment variables respectively.
 <Para>
 X windows users may prefer to have a notification window pop up rather than have
 a message written so an xterm.  To enable this, put the following commands in
-<Literal remap="tt">.xsession</Literal> or some other appropriate X startup file:
+<Filename>.xsession</Filename> or some other appropriate X startup file:
 </Para>
 
 <Para>
@@ -47,7 +46,8 @@ export PPR_RESPONDER PPR_RESPONDER_ADDRESS
 
 <Para>
 Naturally, these environment variables should be set before any X clients are started.  That
-means that these should be near the begining of <Literal remap="tt">.xsession</Literal>.
+means that these should be near the begining of
+<Filename>.xsession</Filename>.
 </Para>
 
 </Sect2>
@@ -56,7 +56,7 @@ means that these should be near the begining of <Literal remap="tt">.xsession</L
 <Title>Notifying Samba Users</Title>
 
 <Para>
-There is a responder called ``samba'' which uses <Emphasis remap="bf">smbclient</Emphasis> to send a message to the user.
+There is a responder called ``samba'' which uses <Command>smbclient</Command> to send a message to the user.
 If you set up Samba printing as described in this manual then the ``samba'' responder will be used
 automatically.
 </Para>
@@ -69,7 +69,7 @@ Workgroups and MS-Windows 95 the message receiver is a program called ``winpopup
 </Sect2>
 
 <Sect2>
-<Title>Notifying <Emphasis remap="bf">Lprsrv</Emphasis> Users</Title>
+<Title>Notifying <Command>lprsrv</Command> Users
 
 <Para>
 The RFC 1179 protocol has provision for notifying users by email.

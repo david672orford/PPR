@@ -5,8 +5,10 @@
 Printers may be added without stopping the PPR spooler.  A printer is added
 is you issue a command which sets the interface of a previously unknown
 printer.  An interface is a the program PPR uses to communicate with the
-printer.  A typical interface is the one called ``<Emphasis remap="bf">atalk</Emphasis>''.  The <Emphasis remap="bf">atalk</Emphasis>
-interface allows PPR to print on Apple LaserWriters and other printers which
+printer.  A typical interface is the one called <Literal>atalk</Literal>.  The
+<Literal>atalk</Literal>
+interface allows <Application>PPR</Application> to print on <ProductName>Apple
+LaserWriters</ProductName> and other printers which
 conform to Apple's Printer Access Protocol (PAP), such as many QMS and HP
 printers.
 </Para>
@@ -89,9 +91,10 @@ which has captured it, this would be the command to use:
 <Title>Adding a TCP/IP Connected Printer</Title>
 
 <Para>
-The interface <Emphasis remap="bf">tcpip</Emphasis> can be used to print to some types of
-TCP/IP connected printers.  HP printers with JetDirect cards are an
-example.  To set up an HP 4M+ we might use this command:
+The interface <Literal>tcpip</Literal> can be used to print to some types of
+TCP/IP connected printers.  HP printers with
+<ProductName>JetDirect</ProductName> cards are an
+example.  To set up an <ProductName>HP 4M+</ProductName> we might use this command:
 </Para>
 
 <Para>
@@ -106,7 +109,7 @@ example.  To set up an HP 4M+ we might use this command:
 In this example, ``my4m'' is the name of the queue we are creating.
 ``my4m.prn.trincoll.edu'' is the DNS name of the printer.  We could have
 used the IP address instead if we had wished.  The number ``9100'' is the port
-that the <Emphasis remap="bf">tcpip</Emphasis> interface should connect to.  (On a JetDirect card
+that the <Literal>tcpip</Literal> interface should connect to.  (On a JetDirect card
 port ``9100'' accepts a data stream in the same format as the serial
 or parallel interface would want.)
 </Para>
@@ -141,8 +144,9 @@ PostScript errors will not be detected.
 
 <Para>
 A simple interface for sending to a printer connected to the print server's
-parallel port is provided.  It is called ``<Emphasis remap="bf">simple</Emphasis>''.  When printing
-through a parallel port we must be sure that the user ``ppr'' has permission to
+parallel port is provided.  It is called <Literal>simple</Literal>.  When
+printing through a parallel port we must be sure that the user
+<Literal>ppr</Literal> has permission to
 write to the port.  This is one way you could set it up:
 </Para>
 
@@ -166,12 +170,11 @@ detect PostScript errors when printing through this interface.
 <Sect3>
 <Title>Using a Printer Connected to a Parallel Port (New Method)</Title>
 
-<Para>
-PPR now has an interface program designed especially for parallel ports.
-It is called ``<Emphasis remap="bf">parallel</Emphasis>''.  When printing through a parallel port
-we must be sure that the user ``ppr'' has permission to write to the port.
-This is one way you could set it up:
-</Para>
+<Para> PPR now has an interface program designed especially for parallel
+ports. It is called <Literal>parallel</Literal>.  When printing through a
+<Hardware>parallel port</Hardware> we must be sure that the user
+<Literal>ppr</Literal> has permission to write to the port. This is one way
+you could set it up: </Para>
 
 <Para>
 
@@ -206,13 +209,12 @@ If you do this, then PPR will be able to detect PostScript errors.
 <Sect3>
 <Title>Using a Printer Connected to a Serial Port</Title>
 
-<Para>
-PPR has an interface called <Emphasis remap="bf">serial</Emphasis> for sending jobs to printers
-connected to the print server's serial ports. As with the parallel interface,
-we must set the file permissions on the device file in the <Literal remap="tt">/dev/</Literal>
-directory so that the user ``ppr'' can write to the port.  You will also want
-to set the baud rate:
-</Para>
+<Para> PPR has an interface called <Literal>serial</Literal> for sending
+jobs to printers connected to the print server's serial ports. As with the
+parallel interface, we must set the file permissions on the device file in
+the <Filename class="Directory">/dev/</Filename> directory so that the user
+<Literal>ppr</Literal> can write to the port.  You will also want to set the
+baud rate: </Para>
 
 <Para>
 
@@ -255,9 +257,10 @@ about the features of the interfaces described above.
 
 <Para>
 Once the printer has been added, you should indicate its PPD file.  Likely
-you will choose one of the files in <Literal remap="tt">/usr/ppr/PPDFiles</Literal>.  The files in
+you will choose one of the files in <Filename
+class="Directory">/usr/ppr/PPDFiles/</Filename>.  The files in
 this directory have descriptive names.  The PPD file name is set with the
-<Emphasis remap="bf">ppad ppd</Emphasis> command:
+<Command>ppad ppd</Command> command:
 </Para>
 
 <Para>
@@ -400,18 +403,23 @@ may obtain these PPD files in distributions for Macintosh and MS-Windows
 If you can not find anything that is close, the printer manufacturer you may be
 able to supply a suitable PPD file. Very often it can be found on the Macintosh
 or MS-Windows driver diskettes which come with the printer. If not, you may be
-able to obtain a suitable file from <Emphasis remap="bf">ftp://ftp.adobe.com/</Emphasis>.  If you are
+able to obtain a suitable file from <ULink
+URL="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  If you are
 really determined, you can obtain the PostScript Printer Description File
-Format Specification from <Emphasis remap="bf">ftp://ftp.adobe.com/</Emphasis>.  This document
+Format Specification from <ULink
+URL="ftp://ftp.adobe.com/">ftp://ftp.adobe.com/</ULink>.  This document
 together with a good printer manual will give you the information you need to
 write your own PPD file or to modify an existing one to work with your printer.
 Any new PPD files should be converted to Unix line termination (FTP will do
 this for you if you transfer them in ASCII mode).  The files already in
-<Literal remap="tt">/usr/ppr/PPDFiles</Literal> have names that are take from their <Emphasis remap="sf">*ModelName:</Emphasis>
-lines.  You might want ot adopt this practice.  You may put new PPD files in a
-directory other than <Literal remap="tt">/usr/ppr/PPDFiles</Literal>, as long as you specify the
-path in the <Emphasis remap="bf">ppad ppd</Emphasis> command.  PPD file names starting with ``/'' are used
-as is, others have ``<Literal remap="tt">/usr/ppr/PPDFiles/</Literal>'' prepended to them.
+<Filename class="Directory">/usr/ppr/PPDFiles/</Filename> have names that are take from their
+<Literal>*ModelName:</Literal>
+lines.  You might want to adopt this practice.  You may put new PPD files in a
+directory other than <Filename
+class="Directory">/usr/ppr/PPDFiles/</Filename>, as long as you specify the
+path in the <Command>ppad ppd</Command> command.  PPD file names starting with
+<Filename>/</Filename> are used
+as is, others have <Filename class="Directory">/usr/ppr/PPDFiles/</Filename> prepended to them.
 </Para>
 
 </Sect3>
@@ -473,7 +481,7 @@ A non-PostScript inkjet printer combined with Ghostscript.
 <Title>Viewing the Configuration</Title>
 
 <Para>
-You may view a printer's configuration with the <Emphasis remap="bf">ppad show</Emphasis> command, like
+You may view a printer's configuration with the <Command>ppad show</Command> command, like
 this:
 </Para>
 

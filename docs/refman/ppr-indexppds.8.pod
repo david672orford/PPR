@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/refman/ppr-indexfonts.8.pod
+# mouse:~ppr/src/docs/refman/ppr-indexppds.8.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,22 +30,22 @@
 
 =head1 NAME
 
-B<ppr-indexfonts> - Scan font directories and create PPR's font index
+B<ppr-indexppds> - Scan font directories and create PPR's font index
 
 =head1 SYNOPSIS
 
-B<ppr-indexfonts>
+B<ppr-indexppds>
 
 =head1 DESCRIPTION
 
-This program scans the directories listed in the [fonts] section of
-F</etc/ppr/ppr.conf> and builds an index of the fonts it finds in those
-directories.  Once fonts are in the index, PPR can download them when
-printing if the job contains DSC comments requesting font downloading.
+This program scans the directories listed in the [ppds] section of
+F</etc/ppr/ppr.conf> and builds an index of the PPD files it finds in those
+directories.  The web interface refers to this index when displaying the
+list of available PPD files.
 
 =head1 FILES
 
-The font database is stored in the file F</var/spool/ppr/fontindex.db>.
+The PPD file database is stored in the file F</var/spool/ppr/ppdindex.db>.
 
 =head1 SEE ALSO
 

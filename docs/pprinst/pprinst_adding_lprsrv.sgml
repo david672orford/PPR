@@ -1,30 +1,25 @@
 <sect2 id="adding-lprsrv">
 <title><application>PPR</application>'s LPD (RFC 1179) Server</title>
 
-<para>
-An LPD server, called <command>lprsrv</command> is provided with PPR.  This server
-conforms to the remote printing protocol described in RFC 1179.  When this
-server receives a job for a PPR printer, it invokes <command>ppr</command> and passes
-the file to it. If <application>PPR</application>'s LPD server receives a job for queue
-which is not defined in PPR, it passes the job to the system's normal print
-spooler.
-</para>
+<para> An LPD server, called <command>lprsrv</command> is provided with PPR. 
+This server conforms to the remote printing protocol described in RFC 1179. 
+When this server receives a job for a PPR printer, it invokes
+<command>ppr</command> and passes the file to it.  If
+<application>PPR</application>'s LPD server receives a job for queue which
+is not defined in PPR, it passes the job to the system's normal print
+spooler. </para>
 
-<para><application>PPR</application>'s LPD server is relatively easy to set up since
-it simply shares all of your <application>PPR</application> printers and all of the native
-spooling system's printers.
-</para>
+<para><application>PPR</application>'s LPD server is relatively easy to set
+up since it simply shares all of your <application>PPR</application>
+printers and all of the native spooling system's printers. </para>
 
-<para>Before using <application>PPR</application>'s LPD server, it is necessary
-to disable any LPD server you are currently using.
-</para>
+<para>Before using <application>PPR</application>'s LPD server, it is
+necessary to disable any LPD server you are currently using. </para>
 
 <para>Once any pre-existing LPD server is disabled, the
-<command>inetd</command> configuration
-file may then be changed so that <command>inetd</command> will call
-<command>lprsrv</command>
-whenever a print request comes in. The setup procedure is described in the
-lprsrv(8) man page.
-</para>
+<command>inetd</command> configuration file may then be changed so that
+<command>inetd</command> will call <command>lprsrv</command> whenever a
+print request comes in. The setup procedure is described in the lprsrv(8)
+man page. </para>
 
 </sect2>

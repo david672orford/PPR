@@ -68,7 +68,10 @@ static struct DIRS dirs[] = {
 */
 static const char *default_zone(void)
     {
-    return gu_ini_query(PPR_CONF, "papd", "defaultzone", 0, "*");
+    static const char *dz = NULL;
+    if(!dz)
+    	dz = gu_ini_query(PPR_CONF, "papd", "defaultzone", 0, "*");
+    return dz;
     }
 
 /*
@@ -342,9 +345,11 @@ struct ADV *conf_load(struct ADV *adv)
 /*
 **
 */
-void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *qc)
+int conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *qc)
     {
-    qc->PPDfile = NULL;
+    if(!(qc->queueinfo = queueinfo_new(adv->queue_type, adv->PPRname)))
+    	return -1;
+
     qc->fontlist = (const char**)NULL;
     qc->fontcount = 0;
     qc->LanguageLevel = 1;
@@ -361,6 +366,8 @@ void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *qc)
     qc->TTRasterizer = NULL;
     qc->options = NULL;
     qc->query_font_cache = TRUE;
+
+    return 0;
     }
 
 /* end of file */

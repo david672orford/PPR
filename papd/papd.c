@@ -339,11 +339,13 @@ static void reapchild(int signum)
 =========================================================================*/
 void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
     {
+    const char function[] = "connexion_callback";
     char *cptr;
     struct QUEUE_CONFIG queue_config;
 
     /* Load more queue configuration information so we can answer queries. */
-    conf_load_queue_config(this_adv, &queue_config);
+    if(conf_load_queue_config(this_adv, &queue_config) == -1)
+	fatal(1, "%s(): can't load queue \"%s\"", function, this_adv->PPRname);
 
     /* We don't want to use our parent's SIGCHLD handler. */
     signal_restarting(SIGCHLD, printjob_reapchild);
@@ -383,6 +385,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	    DODEBUG_LOOP(("print job processing complete"));
 	    }
 	}
+
     DODEBUG_LOOP(("child daemon done"));
     } /* end of connexion_callback() */
 

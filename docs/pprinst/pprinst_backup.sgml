@@ -1,18 +1,29 @@
 <Sect1 id="backup">
 <Title>Backing Up PPR's Data</Title>
 
-<Para>
-PPR stores temporary data (print jobs, client printing transfer files and
-such) in <Literal remap="tt">/var/spool/ppr</Literal>.  In <Literal remap="tt">/usr/ppr</Literal>, most of the
-directories contain only static data.  The configuration is stored in the
-directory tree starting at <Literal remap="tt">/etc/ppr</Literal>.  PPR continually adds files to
-<Literal remap="tt">/var/spool/ppr/cache</Literal>, but these will be replaced automatically, so it
-is not essential that they be backed up.  No files are added to
-<Literal remap="tt">/usr/ppr/cache</Literal>.  PPR also writes into <Literal remap="tt">/var/spool/ppr/logs</Literal> and
-<Literal remap="tt">/var/spool/ppr/printers/alerts</Literal> but these are throw away files.  The PPR
-spooling system can be adequately rebuilt by installing PPR from scratch and then
-restoring <Literal remap="tt">/etc/ppr</Literal>.
-</Para>
+<Para><Application>PPR</Application> stores its configuration entirely in
+<Filename class="Directory">/etc/ppr/</Filename>.  The PPR spooling system
+can be adequately rebuilt by installing PPR from scratch and then restoring
+<Filename class="Directory">/etc/ppr/</Filename>. </Para>
+
+<Para>The directories 
+<Filename class="Directory">/usr/lib/ppr/</Filename>, and <Filename
+class="Directory">/usr/share/ppr/</Filename> 
+contain only static data.</Para>
+
+<Para>PPR stores temporary data (print jobs, client printing transfer files
+and such) in <Filename class="Directory">/var/spool/ppr</Filename>. PPR
+continually adds files to <Filename
+class="Directory">/var/spool/ppr/cache</Filename>, but these will be
+replaced automatically, so it is not essential that they be backed up.  No
+files are added to <Filename
+class="Directory">/usr/lib/ppr/cache</Filename>.  PPR also writes into
+<Filename class="Directory">/var/spool/ppr/logs/</Filename> and the
+subdirectories of <Filename
+class="Directory">/var/spool/ppr/printers/</Filename> but these are throw
+away files.  A possible exception is
+<Filename>/var/spool/ppr/logs/printlog</Filename> which you will want to
+back up if it is important to you.</Para>
 
 </Sect1>
 

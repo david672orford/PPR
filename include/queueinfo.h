@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/queueinfo.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,18 +25,10 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 July 2001.
+** Last modified 15 January 2003.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
-
-struct QUEUEINFO
-    {
-    const char *name;
-    enum QUEUEINFO_TYPE type;
-    
-    };
-
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
 void queueinfo_delete(void *p);
 

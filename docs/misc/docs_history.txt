@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--10 January 2003.
+1.50b1, 8 November 2002--15 January 2003.
 
 * Removed completed items from TODO.txt.
 
@@ -310,5 +310,11 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr-interfaces.8.pod: added usblp, put headings on options,
   removed gs* interfaces.
+
+* refman/ppr-indexppd.8.pod: added
+
+* refman/ppr-hexdump.1.pod: added
+
+* refman/papd.8.pod: added
 
 

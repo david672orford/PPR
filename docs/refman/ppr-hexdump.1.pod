@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/refman/ppr-indexfonts.8.pod
+# mouse:~ppr/src/docs/refman/ppr-hexdump.1.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,22 +30,17 @@
 
 =head1 NAME
 
-B<ppr-indexfonts> - Scan font directories and create PPR's font index
+B<ppr-hexdump> - Print a hexadecimal dump of stdin on stdout
 
 =head1 SYNOPSIS
 
-B<ppr-indexfonts>
+B<ppr-hexdump>
 
 =head1 DESCRIPTION
 
-This program scans the directories listed in the [fonts] section of
-F</etc/ppr/ppr.conf> and builds an index of the fonts it finds in those
-directories.  Once fonts are in the index, PPR can download them when
-printing if the job contains DSC comments requesting font downloading.
-
-=head1 FILES
-
-The font database is stored in the file F</var/spool/ppr/fontindex.db>.
+This program reads stdin and prints a hex dump to stdout.  This hex dump is
+in the traditional MS-DOS style.  PPR provides this program as a tool for
+examining files with non-printable characters such as PCL files.
 
 =head1 SEE ALSO
 

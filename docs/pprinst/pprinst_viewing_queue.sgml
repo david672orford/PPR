@@ -3,7 +3,7 @@
 
 <Para>
 You may see what jobs are in the queue and what is happening to them by
-using the <Emphasis remap="bf">ppop list</Emphasis> command:
+using the <Command>ppop list</Command> command:
 </Para>
 
 <Para>

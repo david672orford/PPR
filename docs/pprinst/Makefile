@@ -27,6 +27,25 @@ BUILT=pprinst.html pprinst.ps pprinst.pdf
 
 all-docs: $(BUILT)
 
+pprinst.sgml: pprinst_adding_autobin.sgml \
+		pprinst_adding_groups.sgml \
+		pprinst_adding_lmx.sgml \
+		pprinst_adding_lprsrv.sgml \
+		pprinst_adding_papsrv.sgml \
+		pprinst_adding_samba.sgml \
+		pprinst_adding_spooler.sgml \
+		pprinst_backup.sgml \
+		pprinst_canceling_jobs.sgml \
+		pprinst_installation.sgml \
+		pprinst_job_submit.sgml \
+		pprinst_operators_duties.sgml \
+		pprinst_removing.sgml \
+		pprinst_replacing_printer.sgml \
+		pprinst_start_restart.sgml \
+		pprinst_user_notification.sgml \
+		pprinst_viewing_queue.sgml
+	touch pprinst.sgml
+
 #=== Install ================================================================
 
 install: all-docs

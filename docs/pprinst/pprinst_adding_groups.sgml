@@ -68,13 +68,16 @@ field.  The comment field is set in this manner:
 </Para>
 
 <Para>
-Each group has a parameter called ``<Emphasis remap="bf">Rotate</Emphasis>''.  If <Emphasis remap="bf">Rotate</Emphasis> is
-<Emphasis remap="bf">false</Emphasis>, then when the time comes to print a job, PPR uses the first idle
+Each group has a parameter called <Option>Rotate</Option>.  If
+<Option>Rotate</Option> is
+<Literal>false</Literal>, then when the time comes to print a job,
+<Application>PPR</Application> uses the first idle
 printer, starting with the first member of the group.  This will probably mean
 that the printers at the begining of the group's members list will get used
-more often.  If <Emphasis remap="bf">Rotate</Emphasis> is set to <Emphasis remap="bf">true</Emphasis>, PPR will try to use the
-printers in round-robin fashion.  <Emphasis remap="bf">Rotate</Emphasis> is <Emphasis remap="bf">true</Emphasis> by default, it may
-be set to false with a command like this one:
+more often.  If <Option>Rotate</Option> is set to <Literal>true</Literal>, PPR will try to use the
+printers in round-robin fashion.  <Option>Rotate</Option> is
+<Literal>true</Literal> by default, it may
+be set to <Literal>false</Literal> with a command like this one:
 </Para>
 
 <Para>
@@ -86,7 +89,8 @@ be set to false with a command like this one:
 </Para>
 
 <Para>
-The configuration of a group may be viewed with the <Emphasis remap="bf">ppad group show</Emphasis>
+The configuration of a group may be viewed with the <Command>ppad group
+show</Command>
 command, like this:
 </Para>
 

@@ -22,20 +22,34 @@
 <article>
 
 <articleinfo>
-  <title>Installing and Using PPR</title>
-  <author><firstname>David</firstname><surname>Chappell</surname></author>
-  <pubdate>5 November 2002</pubdate>
-  <copyright><year>1995--2002</year><holder>Trinity College Computing Center</holder></copyright>
+	<title>Installing and Using PPR</title>
+	<author>
+		<firstname>David</firstname>
+		<surname>Chappell</surname>
+	</author>
+	<pubdate>15 January 2003</pubdate>
+	<copyright>
+		<year>1995--2003</year>
+		<holder>Trinity College Computing Center</holder>
+	</copyright>
 </articleinfo>
 
 <abstract>
+
 <para>
-This document tells how to install PPR version 1.50 and how to manage it.  It
-does not attempt to describe all of PPR's features or theory of operation.
-More information can be found in the <citetitle>PPR Reference
-Manual</citetitle>
-and <citetitle>PPR, a Print Spooler for PostScript</citetitle>.
+
+This document is inteded to help you to get PPR up and running as quicly as
+possible.  It does not attempt to describe all of PPR's features or theory
+of operation.  More information can be found in
+
+<ULink URL="../pprdoc/pprdoc.html"><CiteTitle>PPR, a Print Spooler for PostScript</CiteTitle></ULink>,
+
+the <ULink URL="../refman/"><CiteTitle>PPR Reference Manual</CiteTitle></ULink>, 
+
+and the <ULink URL="../pprhack/pprhack.html"><CiteTitle>PPR Hackers Guide</CiteTitle></ULink>.
+
 </para>
+
 </abstract>
 
 &section-installation;

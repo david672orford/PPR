@@ -1,16 +1,31 @@
 #
 # mouse:~ppr/src/docs/refman/ppuser.8.pod
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 13 December 2000.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 15 January 2003.
 #
 
 =head1 NAME
@@ -32,20 +47,19 @@ user be "root", "ppr", or be listed in F</etc/ppr/acl/ppuser.allow>.
 =item B<ppuser add> 'I<user name>' 'I<real name>' I<authcode> I<initialbalance> I<cutoff> I<life>
 
 Adds a user to the accounting database.  "I<User name>" is the name of the
-user as it will appear in "C<%%For:>" comments and R<ppr(1)> B<-f> switches.
-"I<Real name>" is the name "B<user name>" should be translated to
-before it is used in queue listings or banner pages.  (For example, if
-"I<user name>" is "jandrews", "I<real name>" might be "Joseph Andrews.
-When B<ppr> is invoked by a unix user, this field is ignored in favour of the
+user as it will appear in "C<%%For:>" comments and L<ppr(1)> B<-f> switches.
+"I<Real name>" is the name "B<user name>" should be translated to before it
+is used in queue listings or banner pages.  (For example, if "I<user name>"
+is "jandrews", "I<real name>" might be "Joseph Andrews. When B<ppr> is
+invoked by a unix user, this field is ignored in favour of the
 F</etc/passwd> gecos field, but this field will eventually be used for jobs
-received from personal computers.)
-I<Authcode> is the password which will identify the user.
-IInitialbalance> is the user's starting balance.  I<Cutoff> is the
-balance below which printing privledges should be denied.  I<Life> is the
-lifetime of the account.  It is measured in days of inactivity.  Accounts
-are not deleted automatically, a separate program must be employed to
-compare the period of inactivity to the life parameter.  Such a program is
-not included in the current distribution.
+received from personal computers.) I<Authcode> is the password which will
+identify the user. IInitialbalance> is the user's starting balance. 
+I<Cutoff> is the balance below which printing privledges should be denied. 
+I<Life> is the lifetime of the account.  It is measured in days of
+inactivity.  Accounts are not deleted automatically, a separate program must
+be employed to compare the period of inactivity to the life parameter.  Such
+a program is not included in the current distribution.
 
 =item B<ppuser delete> 'I<user name>'
 
@@ -103,8 +117,8 @@ C<$ /usr/lib/ppr/bin/ppuser authcode "John Jones" secret>
 
 The user account database is kept in the file "F</etc/ppr/charge_users.db>".
 
-If the file "F</var/spool/ppr/logs/ppuser>" exists and is writable
-by the user "ppr", then all B<ppuser> commands are logged there.
+If the file "F</var/spool/ppr/logs/ppuser>" exists and is writable by the
+user "ppr", then all B<ppuser> commands are logged there.
 
 =head1 DIAGNOSTICS
 
@@ -118,11 +132,11 @@ non-functional.
 
 =head1 SEE ALSO
 
-R<ppr(1)>, R<pprd(8)>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
+L<ppr(1)>, L<pprd(8)>, "PPR, a PostScript Print Spooler", "Installing and Using PPR".
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2000.
+PPR was written at Trinity College during 1993--2003.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

@@ -1,28 +1,20 @@
 <Sect2 id="adding-samba">
 <Title>Adding PPR Printers to Samba</Title>
 
-<Para>
-If you are using the SMB server called ``Samba'' you can use it to share
-PPR printers.  It is recomended that you use Samba version 1.9.18 or later.
-For information about obtaining refer to:
-</Para>
-
-<Para>
-
-<Screen>
-http://samba.anu.edu.au/
-</Screen>
-
-</Para>
+<Para> If you are using the SMB server called
+<Application>Samba</Application> you can use it to share PPR printers.  It
+is recomended that you use Samba version 1.9.18 or later.  For information
+about obtaining refer to <ULink
+URL="http://www.samba.org/">http://www.samba.org/</ULink>.</Para>
 
 <Para>
 To share PPR printers through Samba, you must add a few lines to
 Samba's configuration file.  Samba's configuration file is often called
-<Literal remap="tt">/usr/local/samba/lib/smb.conf</Literal>.
+<Filename>/usr/local/samba/lib/smb.conf</Filename>.
 </Para>
 
 <Para>
-Somewhere after the section called <Emphasis remap="bf">&lsqb;global]</Emphasis> you should add two lines
+Somewhere after the section called <Literal>&lsqb;global]</Literal> you should add two lines
 which read:
 </Para>
 
@@ -36,18 +28,19 @@ include = /etc/ppr/smb-include.conf
 </Para>
 
 <Para>
-After you have modified <Literal remap="tt">smb.conf</Literal>, you should run
-<Emphasis remap="bf">/usr/ppr/bin/ppr2samba</Emphasis> which is a utility which creates the file
-<Literal remap="tt">/etc/ppr/smb-include.conf</Literal>.  This file will contain a Samba share
+After you have modified <Filename>smb.conf</Filename>, you should run
+<Command>ppr2samba</Command> which is a utility which creates the file
+<Filename>/etc/ppr/smb-include.conf</Filename>.  This file will contain a
+<Application>Samba</Application> share
 definition section for each printer and group you have set up in PPR.
-You should re-run <Emphasis remap="bf">ppr2samba</Emphasis> after every time you create or delete a
+You should re-run <Command>ppr2samba</Command> after every time you create or delete a
 printer or group in PPR.
 </Para>
 
 <Para>
 To allow guest users to have meaningful names in the queue listing and to
 delete their jobs, you should add the Samba guest user to the access control
-file <Literal remap="tt">/etc/ppr/acl/pprprox.allow</Literal>.  All that is needed is a line with
+file <Filename>/etc/ppr/acl/pprprox.allow</Filename>.  All that is needed is a line with
 the user name on it.
 </Para>
 

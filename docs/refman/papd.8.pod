@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/docs/refman/ppr-indexfonts.8.pod
+# mouse:~ppr/src/docs/refman/papd.8.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -30,22 +30,52 @@
 
 =head1 NAME
 
-B<ppr-indexfonts> - Scan font directories and create PPR's font index
+B<papd> - New AppleTalk Printer Access Protocol Server
 
 =head1 SYNOPSIS
 
-B<ppr-indexfonts>
+B<papd> [--help] [--version] [--foreground] [--stop] [--reload]
 
 =head1 DESCRIPTION
 
-This program scans the directories listed in the [fonts] section of
-F</etc/ppr/ppr.conf> and builds an index of the fonts it finds in those
-directories.  Once fonts are in the index, PPR can download them when
-printing if the job contains DSC comments requesting font downloading.
+This program is PPR's new and unfinished AppleTalk Printer Access Protocol
+(PAP) server.  The options are as follows:
+
+=over 4
+
+=item B<--help>
+
+Print a short summary of the options.
+
+=item B<--version>
+
+Print the PPR version number and revision date.
+
+=item B<--foreground>
+
+Run as a server, but don't attempt to run in the background.  Output which
+would ordinarily go to the log file will go to stderr instead.
+
+=item B<--stop>
+
+Stop any previously started instance of B<papd> which may be running as a
+server.
+
+=item B<--reload>
+
+Re-examine the alias, group, and printer configuration files and unadvertise
+names which are no longer called for and advertise any new ones.  On Linux
+2.4.19 and later this will happen automatically.
+
+=back
 
 =head1 FILES
 
-The font database is stored in the file F</var/spool/ppr/fontindex.db>.
+This program reads the [papd] section in F</etc/ppr/ppr.conf>.  It also
+reads the alias, group, and printer configuration files in
+F</etc/ppr/aliases>, F</etc/ppr/groups>, and F</etc/ppr/printers>
+respectively.  The daemon's PID is stored in F</var/spool/ppr/run/papd.pid>. 
+Its actions are logged in F</var/spool/ppr/logs/papd>.
 
 =head1 SEE ALSO
 
@@ -54,6 +84,7 @@ The font database is stored in the file F</var/spool/ppr/fontindex.db>.
 =head1 HISTORY
 
 PPR was written at Trinity College during 1993--2003.
+It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR
 

@@ -27,7 +27,7 @@ list from the PPD file.  The command to do this is:
 
 <Para>
 When this is done, you can view the list you got with the command
-<Emphasis remap="bf">ppad show</Emphasis>:
+<Command>ppad show</Command>:
 </Para>
 
 <Para>
