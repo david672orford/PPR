@@ -62,7 +62,12 @@ echo "%dir \"$instdir/$lang/LC_MESSAGES\"" >>$fileslist
 echo -n "    "
 for potfile in *.pot
     do
-    division=`echo $potfile | cut -d. -f1`
+    division=`basename $potfile .pot`
+    if [ "$division" = "*" ]
+	then
+	echo "No .pot files!"
+	exit 1
+	fi
     if [ -f "$lang-$division.po" ]
         then
         echo -n " $division"

@@ -100,7 +100,11 @@ HTML_GUI=robots.txt \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
-HTML_HELP=prn_properties.en.html
+HTML_HELP_EN=prn_properties.en.html
+
+HTML_HELP_RU=prn_properties.ru.html
+
+HTML_HELP=$(HTML_HELP_EN) $(HTML_HELP_RU)
 
 STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 	prn_control.css prn_media.css

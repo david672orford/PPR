@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 August 2002.
+# Last modified 16 August 2002.
 #
 
 use lib "?";
@@ -626,9 +626,16 @@ sub do_get
     # Long list of exceptions:
     if($full_path =~ /\.html?$/i)
 	{
-	$mime_type = "text/html;charset=iso-8859-1";
+	if($full_path =~ /\.ru\.html?$/i)
+	    {
+	    $mime_type = "text/html;charset=KOI8-R";
+	    }
+	else
+	    {	    
+	    $mime_type = "text/html;charset=iso-8859-1";
+	    }
 	}
-    if($full_path =~ /\.txt$/i)
+    elsif($full_path =~ /\.txt$/i)
     	{
     	$mime_type = "text/plain";
     	}

@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--16 August 2002.
+1.50a2, 27 February 2002--17 August 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7776,7 +7776,7 @@ line was being parsed twice.
   related to the radio button and the "PPD" and "Custom" areas.  This work
   included adding "rip_ppd" and "rip_which" to the "ppad -M show" output.
 
-* Added ppr --features (though it presently only works for printers, not 
+* Added ppr --features (though it presently only works for printers, not
   for groups).
 
 * Added support for "*cupsFilter:" in PPD files to "ppad show" and to
@@ -7805,7 +7805,7 @@ the very start.
   semantics, asprintf(), and vasprintf().
 
 * pprdrv/pprdrv_feedback.c, pprdrv_rip.c: changed Ghostscript error message
-  parsing code to identify error messages associated with the RIP's 
+  parsing code to identify error messages associated with the RIP's
   configuration and distinguish them from PostScript errors caused by errors
   in the job.
 
@@ -7817,4 +7817,20 @@ the very start.
 
 * libppr/int_copy_job.c: added handling of EAGAIN from read() and write() in
   order to accomodate the nonblocking behavior of OSF1.
+
+* po/: Added rule to Makefile to build .pot, fixed install_mo.sh so that it
+  will notice if all of the .pot files are missing (they are not in the CVS
+  repository), added move_pox_to_po.sh, updated README.txt.
+
+* www/: Added code to various programs to snap the window size to the size of
+  the document.
+
+* www/show_jobs.cgi.perl: enhanced "?controls=" option to limit the list of
+  controls which will be shown.  The control bars are completely removed if
+  it is empty.  This is for the Docutech users who are confused by some
+  of the controls.
+
+* www/: moved prn_properties.html to prn_properties.en.html, added dummy
+  prn_properties.ru.html, changed ppr-httpd to use "KOI8-R" as the charset
+  for .ru.html files.
 

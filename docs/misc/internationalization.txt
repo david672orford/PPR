@@ -1,11 +1,14 @@
 =============================================================================
  mouse:~ppr/docs/misc/internationalization.txt
  mouse:~ppr/src/po/README.txt (symbolic link)
- Last revised 30 October 2001.
+ Last revised 16 August 2002.
 =============================================================================
 
 The po/ directory in the PPR distribution contains language translation files
-for PPR.  So far we have a partial translation into French.  If you are going
+for PPR.  PPR uses GNU Gettext to display program messages in languages other
+than English.
+
+So far we have a partial translation into French.  If you are going
 to make a new translation, please write to "David.Chappell@mail.trincoll.edu"
 to make sure a translation isn't already in progress.  I would be happy to
 include more contributed translation files in future versions of PPR.
@@ -43,19 +46,23 @@ This list is used to generate a series of .pot files.
  Adding Translations for a New Language
 =============================================================================
 
-To start a new translation, you should first run extract.sh to make sure
-your .pot files are up to date.
+To start a new translation, you should first run extract_to_pot.sh to make
+sure your .pot files are up to date.
 
 You should then run merge_to_pox.sh.  The single argument should be the
 abbreviation for your language, for example, "fr" (French) or "ru"
 (Russian).  Since, if you are starting a new translation, there are no
 existing translation files (.po files) to merge, merge_to_pox.sh will simply
-copy the .pot files to .pox files.
+copy the .pot files to .pox files.  The .pox extension indicates that this
+is the copy of the translation file that you are working on.
 
 You should then edit the .pox files, filling in the empty translation strings.
-Once your are done editing, change the extensions of the .pox files to ".po".
 
-Once that is done, edit the Makefile and add the abreviation for the new
+Once your are done editing, change the extensions of the .pox files to ".po".
+The script move_pox_to_po.sh will do this for you if you run it with the
+language abbrebiation on the command line.
+
+Once that is done, edit the Makefile and add the abbreviation for the new
 language to the "LANGUAGES=" list.  Then, run "make install" to install your
 new translations.
 
@@ -65,6 +72,14 @@ language.  If messages from pprd and the other daemons are to be translated,
 then it will have to be started with LANG= set.  The System V style Init script
 for PPR will start the daemon with LANG= set if it finds a setting for
 "daemon lang =" in the [internationalization] section of ppr.conf.
+
+If you later want to update your translation, follow the same steps as for a
+new translation.  The merge_to_pox.sh script will read in each of your .po
+files and the cooresponding .pox file.  It will remove translations that are
+no longer needed and add template entries for new translations which you must
+write.  It may attempt to guess at the correct translation using fuzzy matching
+with other translation strings.  It will mark such entries with the comment
+",fuzzy".
 
 =============================================================================
  Updating Translations for an Existing Language
