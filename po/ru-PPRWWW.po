@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-11-22 14:52-0500\n"
+"POT-Creation-Date: 2002-12-05 08:45-0500\n"
 "PO-Revision-Date: 2002-11-05 16:52-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -26,7 +26,8 @@ msgstr "PPR Создаие Alias"
 msgid ""
 "This program will guide you through the process of\n"
 "creating an alias for a printer or a group of printers."
-msgstr "Это программа помогает создать alias для принтера\n"
+msgstr ""
+"Это программа помогает создать alias для принтера\n"
 "или для групы принтеров."
 
 #: ../www/alias_addwiz.cgi.perl:46
@@ -51,17 +52,17 @@ msgid "The alias \"%s\" already exists!"
 msgstr "Alias \"%s\" уже существует!"
 
 #: ../www/alias_addwiz.cgi.perl:62 ../www/alias_addwiz.cgi.perl:130
-#: ../www/cgi_tabbed.pl:316 ../www/cgi_wizard.pl:283
-#: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
+#: ../www/cliconf.cgi.perl:66 ../www/grp_addwiz.cgi.perl:62
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:144
 #: ../www/prn_addwiz.cgi.perl:631 ../www/prn_testpage.cgi.perl:95
-#: ../www/show_jobs.cgi.perl:557
+#: ../www/show_jobs.cgi.perl:557 ../www/cgi_tabbed.pl:316
+#: ../www/cgi_wizard.pl:283
 msgid "_Cancel"
 msgstr "Отменять"
 
-#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:283
-#: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
-#: ../www/prn_addwiz.cgi.perl:144
+#: ../www/alias_addwiz.cgi.perl:62 ../www/cliconf.cgi.perl:66
+#: ../www/grp_addwiz.cgi.perl:62 ../www/prn_addwiz.cgi.perl:144
+#: ../www/cgi_wizard.pl:283
 msgid "_Next"
 msgstr "На Следеющую"
 
@@ -105,14 +106,14 @@ msgid "You must supply a description!"
 msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
+#: ../www/prn_addwiz.cgi.perl:631 ../www/cgi_wizard.pl:283
+msgid "_Back"
+msgstr "Обротно"
+
+#: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
 #: ../www/prn_addwiz.cgi.perl:631
 msgid "_Finish"
 msgstr "Закончить"
-
-#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:283
-#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:631
-msgid "_Back"
-msgstr "Обротно"
 
 #: ../www/alias_addwiz.cgi.perl:137
 msgid "Save the Alias"
@@ -122,12 +123,12 @@ msgstr "Сохранние Alias"
 msgid "Saving new alias:"
 msgstr "Сохранаем новый alias:"
 
-#: ../www/alias_addwiz.cgi.perl:155 ../www/cgi_tabbed.pl:307
-#: ../www/cliconf.cgi.perl:88 ../www/cliconf.cgi.perl:171
-#: ../www/delete_queue.cgi.perl:135 ../www/grp_addwiz.cgi.perl:153
-#: ../www/prn_addwiz.cgi.perl:665 ../www/prn_control.cgi.perl:435
-#: ../www/prn_media.cgi.perl:197 ../www/prn_testpage.cgi.perl:134
-#: ../www/show_queues.cgi.perl:257
+#: ../www/alias_addwiz.cgi.perl:155 ../www/cliconf.cgi.perl:89
+#: ../www/cliconf.cgi.perl:172 ../www/delete_queue.cgi.perl:135
+#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:665
+#: ../www/prn_control.cgi.perl:425 ../www/prn_media.cgi.perl:197
+#: ../www/prn_testpage.cgi.perl:134 ../www/show_queues.cgi.perl:252
+#: ../www/cgi_tabbed.pl:307
 msgid "_Close"
 msgstr "Закрыть"
 
@@ -137,8 +138,7 @@ msgid "Comment"
 msgstr "Описевание"
 
 #: ../www/alias_properties.cgi.perl:38 ../www/grp_properties.cgi.perl:38
-#: ../www/prn_control.cgi.perl:275 ../www/prn_control.cgi.perl:306
-#: ../www/prn_properties.cgi.perl:40
+#: ../www/prn_control.cgi.perl:297 ../www/prn_properties.cgi.perl:40
 msgid "Comment:"
 msgstr "Онисевание:"
 
@@ -282,33 +282,29 @@ msgstr ""
 msgid "KDE Shortcut"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:63
-msgid "PPD File"
-msgstr ""
-
-#: ../www/cliconf.cgi.perl:69
+#: ../www/cliconf.cgi.perl:70
 msgid "You must make a choice."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:81
+#: ../www/cliconf.cgi.perl:82
 msgid "Downloadable KDE Icon"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:84
+#: ../www/cliconf.cgi.perl:85
 msgid ""
 "Click on the button below to download the KDE shortcut.\n"
 "You will probably want to save it in your Desktop folder."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:86 ../www/cliconf.cgi.perl:165
+#: ../www/cliconf.cgi.perl:87 ../www/cliconf.cgi.perl:166
 msgid "_Download"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:96
+#: ../www/cliconf.cgi.perl:97
 msgid "Create Client Script: Choose a Spooler"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:105
+#: ../www/cliconf.cgi.perl:106
 #, c-format
 msgid ""
 "You have chosen to create a script which you can download and run\n"
@@ -316,52 +312,52 @@ msgid ""
 "queue \"%s\"."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:109
+#: ../www/cliconf.cgi.perl:110
 msgid "Please indicate which print spooler you are using:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:110
+#: ../www/cliconf.cgi.perl:111
 msgid "BSD lpd"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:111
+#: ../www/cliconf.cgi.perl:112
 msgid "LPR Next Generation"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:118
+#: ../www/cliconf.cgi.perl:119
 msgid "You must choose a spooler!"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:128
+#: ../www/cliconf.cgi.perl:129
 msgid "Create Client Script: Local Name"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:136
+#: ../www/cliconf.cgi.perl:137
 #, c-format
 msgid "Please choose a local name for %s:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:140
+#: ../www/cliconf.cgi.perl:141
 msgid "Please provide a description of this queue:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:147
+#: ../www/cliconf.cgi.perl:148
 msgid "The local name must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:151
+#: ../www/cliconf.cgi.perl:152
 msgid "The description must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:160
+#: ../www/cliconf.cgi.perl:161
 msgid "Create Client Script: Download"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:164
+#: ../www/cliconf.cgi.perl:165
 msgid "Click on the button below to download the install script."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:166
+#: ../www/cliconf.cgi.perl:167
 msgid "This script must be run as root.  The command to run it is:"
 msgstr ""
 
@@ -554,11 +550,11 @@ msgid "Assign Group Members"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:79
-msgid "Non-Members:"
+msgid "Members:"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:97 ../www/grp_properties.cgi.perl:79
-msgid "Members:"
+msgid "Non-Members:"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:101
@@ -592,13 +588,13 @@ msgstr ""
 
 #: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:81
 #: ../www/prn_properties.cgi.perl:471 ../www/prn_properties.cgi.perl:595
-msgid "yes"
-msgstr "да"
+msgid "no"
+msgstr "нет"
 
 #: ../www/grp_properties.cgi.perl:146 ../www/prn_properties.cgi.perl:81
 #: ../www/prn_properties.cgi.perl:471 ../www/prn_properties.cgi.perl:595
-msgid "no"
-msgstr "нет"
+msgid "yes"
+msgstr "да"
 
 #: ../www/grp_properties.cgi.perl:266
 #, c-format
@@ -610,7 +606,7 @@ msgstr ""
 msgid "Log for Job \"%s\""
 msgstr ""
 
-#: ../www/job_log.cgi.perl:86 ../www/show_log.cgi.perl:84
+#: ../www/job_log.cgi.perl:86 ../www/show_log.cgi.perl:101
 #, c-format
 msgid "Can't read log file: %s"
 msgstr ""
@@ -820,10 +816,6 @@ msgstr ""
 
 #: ../www/ppd_select.pl:141
 msgid "TrueType Rasterizer"
-msgstr ""
-
-#: ../www/ppd_select.pl:142 ../www/prn_properties.cgi.perl:191
-msgid "RIP"
 msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:47
@@ -1127,141 +1119,141 @@ msgstr ""
 msgid "Saving new printer:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:38
+#: ../www/prn_control.cgi.perl:57
 msgid "fault"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:40
+#: ../www/prn_control.cgi.perl:59
 msgid "fault, no auto retry"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:46
+#: ../www/prn_control.cgi.perl:65
 msgid "offline"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:48
+#: ../www/prn_control.cgi.perl:67
 msgid "otherwise engaged or offline"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:53
+#: ../www/prn_control.cgi.perl:72
 msgid "idle"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:58
+#: ../www/prn_control.cgi.perl:77
 msgid "stopt"
 msgstr "остановлен"
 
-#: ../www/prn_control.cgi.perl:111
+#: ../www/prn_control.cgi.perl:130
 #, c-format
 msgid "Status of Printer \"%s\""
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:167
+#: ../www/prn_control.cgi.perl:186
 #, c-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:274 ../www/prn_control.cgi.perl:305
+#: ../www/prn_control.cgi.perl:296
 msgid "Name:"
 msgstr "Название:"
 
-#: ../www/prn_control.cgi.perl:277 ../www/prn_control.cgi.perl:310
+#: ../www/prn_control.cgi.perl:301
 msgid "Status:"
 msgstr "Состояние:"
 
-#: ../www/prn_control.cgi.perl:278 ../www/prn_control.cgi.perl:311
+#: ../www/prn_control.cgi.perl:302
 msgid "Retry:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:279 ../www/prn_control.cgi.perl:312
+#: ../www/prn_control.cgi.perl:303
 msgid "Countdown:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:281 ../www/prn_control.cgi.perl:316
+#: ../www/prn_control.cgi.perl:307
 msgid "Operation:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:282 ../www/prn_control.cgi.perl:317
+#: ../www/prn_control.cgi.perl:308
 msgid "Page clock:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:284 ../www/prn_control.cgi.perl:321
+#: ../www/prn_control.cgi.perl:312
 msgid "Printer status:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:286 ../www/prn_control.cgi.perl:325
+#: ../www/prn_control.cgi.perl:316
 msgid "Current job:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:287 ../www/prn_control.cgi.perl:326
+#: ../www/prn_control.cgi.perl:317
 msgid "For:"
 msgstr "Для Кого:"
 
-#: ../www/prn_control.cgi.perl:289 ../www/prn_control.cgi.perl:330
+#: ../www/prn_control.cgi.perl:321
 msgid "Total bytes:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:290 ../www/prn_control.cgi.perl:331
+#: ../www/prn_control.cgi.perl:322
 msgid "Bytes sent:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:291 ../www/prn_control.cgi.perl:332
+#: ../www/prn_control.cgi.perl:323
 msgid "Percent sent:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:293 ../www/prn_control.cgi.perl:336
+#: ../www/prn_control.cgi.perl:327
 msgid "Total pages:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:294 ../www/prn_control.cgi.perl:337
+#: ../www/prn_control.cgi.perl:328
 msgid "Pages started:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:295 ../www/prn_control.cgi.perl:338
+#: ../www/prn_control.cgi.perl:329
 msgid "Pages completed:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:358 ../www/show_printlog.cgi.perl:157
+#: ../www/prn_control.cgi.perl:348 ../www/show_printlog.cgi.perl:157
 msgid "Bytes Sent"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:358
+#: ../www/prn_control.cgi.perl:348
 msgid "Bytes Unsent"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:389
+#: ../www/prn_control.cgi.perl:379
 msgid "Pages Completed"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:390
+#: ../www/prn_control.cgi.perl:380
 msgid "Pages Started"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:391
+#: ../www/prn_control.cgi.perl:381
 msgid "Pages Unstarted"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:406
+#: ../www/prn_control.cgi.perl:396
 msgid "Alert Messages:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:420
+#: ../www/prn_control.cgi.perl:410
 msgid "_Start"
 msgstr "Запускать"
 
-#: ../www/prn_control.cgi.perl:422
+#: ../www/prn_control.cgi.perl:412
 msgid "Sto_p"
 msgstr "Остановить"
 
-#: ../www/prn_control.cgi.perl:424
+#: ../www/prn_control.cgi.perl:414
 msgid "_Halt"
 msgstr "Остановить Сразу"
 
-#: ../www/prn_control.cgi.perl:426
+#: ../www/prn_control.cgi.perl:416
 msgid "_Media"
 msgstr "Среды"
 
-#: ../www/prn_control.cgi.perl:430
+#: ../www/prn_control.cgi.perl:420
 msgid "_Refresh"
 msgstr "Обновить"
 
@@ -1381,6 +1373,10 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:182
 msgid "No PPD file is selected!"
+msgstr ""
+
+#: ../www/prn_properties.cgi.perl:191 ../www/ppd_select.pl:142
+msgid "RIP"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:214
@@ -1913,7 +1909,7 @@ msgstr ""
 msgid "_Log"
 msgstr ""
 
-#: ../www/show_log.cgi.perl:46
+#: ../www/show_log.cgi.perl:61
 #, c-format
 msgid "PPR log \"%s\""
 msgstr ""
@@ -1945,19 +1941,7 @@ msgid "Can't open log file \"%s\", %s\n"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Printer"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
-msgid "Time"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
 msgid "For"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:155
-msgid "Proxy For"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
@@ -1965,11 +1949,19 @@ msgid "Job ID"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:155
-msgid "Unix User"
+msgid "Printer"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:156
-msgid "Printing Time"
+#: ../www/show_printlog.cgi.perl:155
+msgid "Proxy For"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:155
+msgid "Time"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:155
+msgid "Unix User"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
@@ -1977,7 +1969,7 @@ msgid "Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
-msgid "Total Sheets"
+msgid "Printing Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
@@ -1985,15 +1977,15 @@ msgid "Queued Time"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:156
+msgid "Total Sheets"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:156
 msgid "Total Sides"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
-msgid "Start Pages"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:157
-msgid "PJL Pages"
+msgid "Charge"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
@@ -2001,11 +1993,15 @@ msgid "Increment"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
+msgid "PJL Pages"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
 msgid "PS Bytes"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:157
-msgid "Charge"
+msgid "Start Pages"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:158
@@ -2054,52 +2050,52 @@ msgstr "Частота Обновлении:"
 msgid "Refresh the page right now."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:248
-msgid "Use this if your browser doesn't support Digest authentication."
-msgstr ""
-
-#: ../www/show_queues.cgi.perl:249
+#: ../www/show_queues.cgi.perl:247
 msgid "Cookie Login"
 msgstr "Вход печеньем"
 
-#: ../www/show_queues.cgi.perl:256
+#: ../www/show_queues.cgi.perl:247
+msgid "Use this if your browser doesn't support Digest authentication."
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:251
 msgid "Close this window."
 msgstr "Закрить это окно."
 
-#: ../www/show_queues.cgi.perl:273
+#: ../www/show_queues.cgi.perl:268
 msgid "Click here to open a window which will show all queued jobs."
 msgstr "Снимите здесь открить окно покозающое всю очереди."
 
-#: ../www/show_queues.cgi.perl:276
+#: ../www/show_queues.cgi.perl:271
 msgid "Show All Queues"
 msgstr "Показывать Всем Очередям"
 
-#: ../www/show_queues.cgi.perl:284
+#: ../www/show_queues.cgi.perl:279
 msgid ""
 "Click here and you will be guided through the process of adding a new "
 "printer."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:287
+#: ../www/show_queues.cgi.perl:282
 msgid "Add New Printer"
 msgstr "Добавлять Новый Принтер"
 
-#: ../www/show_queues.cgi.perl:295
+#: ../www/show_queues.cgi.perl:290
 msgid ""
 "Click here and you will be guided through the process of adding a new group "
 "of printers."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:298
+#: ../www/show_queues.cgi.perl:293
 msgid "Add New Group"
 msgstr "Добавлять Новую Группу"
 
-#: ../www/show_queues.cgi.perl:306
+#: ../www/show_queues.cgi.perl:301
 msgid ""
 "Click here and you will be guided through the process of adding a new alias."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:309
+#: ../www/show_queues.cgi.perl:304
 msgid "Add New Alias"
 msgstr ""
 
@@ -2159,11 +2155,7 @@ msgid "Inventory of Packages Which PPR can Use"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
-msgid "Source Download"
-msgstr ""
-
-#: ../www/test_components.cgi.perl:149
-msgid "Debian Package Name"
+msgid "Component"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
@@ -2171,13 +2163,17 @@ msgid "Critical?"
 msgstr "Важно?"
 
 #: ../www/test_components.cgi.perl:149
+msgid "Debian Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
 msgid "Present?"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
-msgid "Component"
+msgid "Redhat Package Name"
 msgstr ""
 
 #: ../www/test_components.cgi.perl:149
-msgid "Redhat Package Name"
+msgid "Source Download"
 msgstr ""

@@ -8047,3 +8047,5 @@ line was being parsed twice.
 
 * ppr/ppr_main.c: added severe warning for zero length input file.
 
+* po/joe-ru: added
+

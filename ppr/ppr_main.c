@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 4 December 2002.
+** Last revised 5 December 2002.
 */
 
 /*
@@ -2357,7 +2357,7 @@ int main(int argc, char *argv[])
     */
     if(infile_open(real_filename))	/* If input file is of zero length, */
 	{				/* we have nothing to do. */
-	warning(WARNING_SEVERE, "Input file is empty, doing nothing");
+	warning(WARNING_SEVERE, _("Input file is empty, nothing to print"));
 	goto zero_length_file;		
 	}
 
