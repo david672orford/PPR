@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 22 April 2002.
+# Last modified 24 April 2002.
 #
 
 use lib "?";
@@ -159,22 +159,22 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 #=========================================
 #
 #=========================================
-{
-'tabname' => 'Blank1',
-'dopage' => sub {
-	print "<p>Not yet implemented.\n";
-	}
-},
+#{
+#'tabname' => 'Blank1',
+#'dopage' => sub {
+#	print "<p>Not yet implemented.\n";
+#	}
+#},
 
 #=========================================
 #
 #=========================================
-{
-'tabname' => 'Blank2',
-'dopage' => sub {
-	print "<p>Not yet implemented.\n";
-	}
-},
+#{
+#'tabname' => 'Blank2',
+#'dopage' => sub {
+#	print "<p>Not yet implemented.\n";
+#	}
+#},
 
 #=========================================
 # The "ppop log" output

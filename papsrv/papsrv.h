@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 June 2001.
+** Last modified 24 April 2002.
 */
 
 /*
@@ -36,7 +36,7 @@
 #define MAX_REMOTE_QUANTUM 1 			/* don't increase this, Mac client can't take it! */
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
-#define DEBUG 1
+/* #define DEBUG 1 */
 
 #ifdef DEBUG
 #define DEBUG_STARTUP 1			/* reading config, adding names and such */

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 12 April 2002.
+# Last modified 24 April 2002.
 #
 
 sub labeled_checkbox
@@ -57,6 +57,7 @@ sub labeled_entry
 sub labeled_blank
     {
     my($label, $value, $size) = @_;
+    print '<span class="label">', html($label), "</span> ";
     print "<span class=\"value\">", html($value);
     $size -= length($value);
     while($size-- > 0)

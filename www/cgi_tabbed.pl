@@ -230,11 +230,13 @@ else
 my $cellpadding = undef;
 my $align = undef;
 my $valign = undef;
+my $help = undef;
 if($bottom ne "Save")
     {
     $cellpadding = $tabbed_table->[$page]->{cellpadding};
     $align = $tabbed_table->[$page]->{align};
     $valign = $tabbed_table->[$page]->{valign};
+    $help = $tabbed_table->[$page]->{help};
     }
 $cellpadding = $DEFAULT_cellpadding if(!defined($cellpadding));
 $align = $DEFAULT_align if(!defined($align));
@@ -299,6 +301,18 @@ if($bottom eq 'Save')
     }
 else
     {
+    if(defined $help)
+	{
+	$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
+	my $helpfile = "../help/$1.html";
+	print <<"helpLink";
+<span class="button">
+<a href="$helpfile#$help" target="_blank"
+	onclick="window.open('$helpfile#$help','_blank','width=600,height=400,resizable,scrollbars');return false;">
+	Help</a>
+</span>
+helpLink
+	}
     isubmit("tab_bottom", "Cancel", N_("_Cancel"), "class=\"buttons\" onclick=\"self.close()\"");
     isubmit("tab_bottom", "Save", N_("_Save"), "class=\"buttons\"");
     }

@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>Printer Properties Help</title>
+<style>
+H2 {
+	font-family: sans-serif;
+	font-size: 8pt;
+	font-weight: normal;
+	background: beige;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #000000 black beige #000000;
+	-moz-border-radius: 1mm 1mm 0mm 0mm;
+	padding: 1mm;
+	width: 2cm;
+	}
+</style>
+</head>
+<body>
+<h1>Printer Properties Help</h1>
+
+<a name="comment">
+<h2>Comment</h2>
+
+<p>Use this tab to enter information describing the printer.  This
+information is for human consumption.</p>
+
+<p>The <b>Comment</b> is displayed by <tt>ppop destionation-comment</tt>.  It
+also will be the comment for Samba shares.</p>
+
+<p>The <b>Location</b> is the physical location of the printer.  A building
+name or street address and room number would be good.  This information is
+helps when dispatching repairmen.</p>
+
+<p>The <b>Department</b> field can be used to indicate the department that
+uses the printer.</p>
+
+<p>The <b>Contact</b> field is for the name and telephone number or e-mail
+address of a user of the printer.  The should be someone who works near the
+printer.  When diagnosing problems, the system administrator may want to
+call this person and suggest he clear paper jams or ask if the printer is
+turned on.</p>
+
+<a name="ppd">
+<h2>PPD</h2>
+
+<p>A PPD file is a PostScript Printer Description.  In gives information
+about how a specific PostScript printer differs from other PostScript
+printers.  This information includes the list of available fonts, the list
+of input trays, whether the printer can print in duplex, and the like.</p>
+
+On the left you will see a list of the PPD files which are to be found in
+<tt>/usr/share/ppr/PPDFiles</tt> on the print server.  The current PPD file
+appears twice, once at its alphabetical location and once at the top of the
+list.</p>
+
+<p>If you do not find a PPD file that exactly matches you printer, you might
+choose a PPD file for a similar model or an older model from the same
+manufacturer.  Of course, it the best thing to do is the obtain the correct
+PPD file and put it on the server.  Be sure you convert the line ending to
+Unix style before you put it on the server.</p>
+
+<p>On the right there is a table which gives a brief summary of the
+information in the PPD file at the top of the list.</p>
+
+
+
+</body>
+</html>

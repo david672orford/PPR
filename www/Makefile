@@ -56,6 +56,9 @@ WWWDIR_GUI=$(WWWDIR)/html
 # Last Queue Icon to be build.
 Q_ICONS_LAST=q_icons/11110.png
 
+# Where to HTML help files go?
+HELPDIR=$(WWWDIR)/help
+
 #== Inventory ================================================================
 
 # These programs go into PPR's bin directory.
@@ -96,6 +99,8 @@ HTML_GUI=robots.txt \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
+HTML_HELP=prn_properties.html
+
 STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 	prn_control.css prn_media.css
 
@@ -134,10 +139,12 @@ install-styles: $(STYLES)
 	$(MAKE_NEW_DIR) $(STYLE_DIR)
 	$(INSTALLDATA) $(STYLE_DIR) $(STYLES)
 
-install-html: $(HTML_TOP) $(HTML_GUI)
+install-html: $(HTML_TOP) $(HTML_GUI) $(HTML_HELP)
 	$(INSTALLDATA) $(WWWDIR) $(HTML_TOP)
 	$(MAKE_NEW_DIR) $(WWWDIR_GUI)
 	$(INSTALLDATA) $(WWWDIR_GUI) $(HTML_GUI)
+	$(MAKE_NEW_DIR) $(HELPDIR)
+	$(INSTALLDATA) $(HELPDIR) $(HTML_HELP)
 
 install-images: images_subdir $(Q_ICONS_LAST)
 	$(MAKE_NEW_DIR) $(IMAGES_DIR)

@@ -31,6 +31,7 @@ my $tabbed_table = [
 	#====================================================
 	{
 	'tabname' => N_("Comment"),
+	'help' => "comment",
 	'dopage' => sub {
 
 		print "<p>";
@@ -127,6 +128,7 @@ my $tabbed_table = [
 	#====================================================
 	{
 	'tabname' => N_("PPD"),
+	'help' => "ppd",
 	'dopage' => sub {
 		my $checked_ppd = cgi_data_move('ppd', undef);
 

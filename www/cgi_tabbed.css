@@ -38,6 +38,20 @@ BUTTON {
 	vertical-align: sub;
 	}
 
+/* This is for the help button. */
+SPAN.button {
+	background: #b0b0b0;
+	border: 2px solid;
+	border-color: #f0f0f0 #808080 #808080 #f0f0f0;
+	padding: 3px 2mm 3px 2mm;
+	margin: 1mm;
+	}
+SPAN.button A {
+	text-decoration: none;
+	font-family: sans-serif;
+	color: black;
+	}
+
 /* Tables of this class form the background for tabbed dialog boxes. */
 TABLE.tabpage {
 	background: beige;
@@ -82,11 +96,13 @@ SPAN.label {
    */
 SPAN.value {
 	font-weight: normal;
+	font-size: 12pt;
+	font-family: sans-serif;
 	background: white;
 	border-style: solid;
 	border-width: thin;
 	border-color: black;
-	padding: 0pt 2pt 0pt 2pt;
+	padding: 1pt 2pt 1pt 2pt;
 	}
 
 TEXTAREA {

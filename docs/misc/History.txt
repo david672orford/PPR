@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--23 April 2002.
+1.50a2, 27 February 2002--24 April 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7667,4 +7667,11 @@ line was being parsed twice.
 
 * makeprogs/make_install_dirs.sh, fixup/fixup_perms.sh: changed permissions
   of $VAR_SPOOL_PPR/pprpopup.db to 770.
+
+* www/cgi_membership.pl, www/cgi_tabbed.pl, www/prn_media.cgi.perl: improved 
+  appearance in Mozilla.
+
+* www/cgi_tabbed.pl: added [Help].
+
+* www/prn_properties.html: added.
 
