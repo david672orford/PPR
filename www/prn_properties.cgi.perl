@@ -200,7 +200,7 @@ my $tabbed_table = [
 		print " checked" if($rip_which eq "PPD");
 		print "> From PPD File</span>\n";
 
-		my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", "");
+		my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", ""));
 		if($rip_list[0] eq "")
 		    {
 		    print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
@@ -918,6 +918,15 @@ foreach my $i (qw(options jobbreak feedback codes))
     	{ run(@PPAD, $i, $name, $data{$i}) }
     }
 
+# If the RIP has changed,
+if($data{rip} ne $data{_rip} || $data{rip_which} ne $data{_rip_which})
+    {
+    if($data{rip} eq "CONFIG")
+    	{ run(@PPAD, "rip", $name, split(/\t/, $data{rip}, 100)) }
+    else
+    	{ run(@PPAD, "rip", $name) }
+    }
+
 # Do single value stuff.
 foreach my $i (qw(comment location department contact ppd outputorder userparams pagetimelimit grayok))
     {
@@ -933,11 +942,11 @@ foreach my $i (qw (flags charge alerts passthru limitkilobytes limitpages ppdopt
     }
 
 # Do the tab separated list value stuff.
-foreach my $i (qw (rip))
-    {
-    if($data{$i} ne $data{"_$i"})
-    	{ run(@PPAD, $i, $name, split(/\t/, $data{$i}, 100)) }
-    }
+#foreach my $i ()
+#    {
+#    if($data{$i} ne $data{"_$i"})
+#    	{ run(@PPAD, $i, $name, split(/\t/, $data{$i}, 100)) }
+#    }
 
 # Setting bins needs a special command.
 if($data{bins} ne $data{"_bins"})

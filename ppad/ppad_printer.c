@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 April 2002.
+** Last modified 2 August 2002.
 */
 
 /*
@@ -334,7 +334,9 @@ int printer_show(const char *argv[])
     char *rip_name = NULL;
     char *rip_output_language = NULL;
     char *rip_options = NULL;
-    gu_boolean rip_from_ppd = FALSE;
+    char *rip_ppd_name = NULL;
+    char *rip_ppd_output_language = NULL;
+    char *rip_ppd_options = NULL;
     char *PPDFile = (char*)NULL;
     char *bins[MAX_BINS];
     int outputorder = 0;		/* unknown outputorder */
@@ -613,13 +615,19 @@ int printer_show(const char *argv[])
 		char *f1, *f2, *f3;
 		if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
 		    {
-		    if(!rip_name)		/* if not already read (possibly from printer config), */
+		    if(!rip_ppd_name)		/* if this is the first one, */
 		    	{
-			rip_from_ppd = TRUE;
-			rip_name = gu_strdup(f1);
-			rip_output_language = gu_strdup(f2);
+			rip_ppd_name = gu_strdup(f1);
+			rip_ppd_output_language = gu_strdup(f2);
 			if((f3 = gu_strsep(&p, "\n")))
-			    rip_options = gu_strdup(f3);
+			    rip_ppd_options = gu_strdup(f3);
+
+			if(!rip_name)
+		    	    {
+			    rip_name = rip_ppd_name;
+			    rip_output_language = rip_ppd_output_language;
+			    rip_options = rip_ppd_options;
+			    }
 			}
 		    }
 		else
@@ -675,7 +683,7 @@ int printer_show(const char *argv[])
 	/* RIP */
 	if(rip_name)
 	    {
-	    printf(rip_from_ppd ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
+	    printf(rip_name==rip_ppd_name ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
 		rip_name,
 		rip_output_language ? rip_output_language : "?",
 		rip_options ? rip_options : "");
@@ -831,6 +839,12 @@ int printer_show(const char *argv[])
 		rip_name ? rip_name : "",
 		rip_output_language ? rip_output_language : "",
 		rip_options ? rip_options : "");
+	printf("rip_ppd\t%s\t%s\t%s\n",
+		rip_ppd_name ? rip_ppd_name : "",
+		rip_ppd_output_language ? rip_ppd_output_language : "",
+		rip_ppd_options ? rip_ppd_options : "");
+	printf("rip_which\t%s\n",
+		rip_name==rip_ppd_name ? "PPD" : "CONFIG");
 
 	/* Alerts */
 	printf("alerts\t%d %s %s\n",
@@ -936,9 +950,15 @@ int printer_show(const char *argv[])
     if(interface) gu_free(interface);
     if(address) gu_free(address);
     if(options) gu_free(options);
-    if(rip_name) gu_free(rip_name);
-    if(rip_output_language) gu_free(rip_output_language);
-    if(rip_options) gu_free(rip_options);
+    if(rip_name != rip_ppd_name)
+	{
+	if(rip_name) gu_free(rip_name);
+	if(rip_output_language) gu_free(rip_output_language);
+	if(rip_options) gu_free(rip_options);
+	}
+    if(rip_ppd_name) gu_free(rip_ppd_name);
+    if(rip_ppd_output_language) gu_free(rip_ppd_output_language);
+    if(rip_ppd_options) gu_free(rip_ppd_options);
     if(PPDFile) gu_free(PPDFile);
     if(alerts_method) gu_free(alerts_method);
     if(alerts_address) gu_free(alerts_address);
