@@ -49,7 +49,7 @@
    create mode = 0700
    path = %VAR_SPOOL_PPR%/sambaspool
 
-   printer driver location = \\%L\PPRPRNT$
+   printer driver location = \\%L\PPRPRNT$\WIN40
    printer driver file = %VAR_SPOOL_PPR%/drivers/WIN40.def
 
    ; Minimum space in kilobytes which must be free in sambaspool/ before

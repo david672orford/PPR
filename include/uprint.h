@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 April 2002.
+** Last modified 7 May 2002.
 */
 
 /* Maximum lengths of control file fields. */
@@ -196,6 +196,8 @@ int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue,
 /* uprint_conf.c: */
 const char *uprint_default_destinations_lpr(void);
 const char *uprint_default_destinations_lp(void);
+const char *uprint_path_lpr(void);
+const char *uprint_path_lp(void);
 const char *uprint_path_lpstat(void);
 const char *uprint_path_cancel(void);
 

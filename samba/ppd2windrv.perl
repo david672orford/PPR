@@ -367,14 +367,9 @@ foreach $file (keys %ppd_files)
 
     if(scalar @filelist > 0)
 	{
-	foreach (@filelist)
-	    {
-	    s#/#\\#g;
-	    $_ = "$WIN40\\$_";
-	    }
 	my $driverpath = $filelist[0];
 	my $helpfile = $filelist[1];
-	print DEF "$nickname:$driverpath:$WINPPD\\$mswin_name:$helpfile:PostScript Language Monitor:RAW:WINPPD\\$mswin_name,", join(",", @filelist), "\n";
+	print DEF "$nickname:$driverpath:..\\$WINPPD\\$mswin_name:$helpfile:PostScript Language Monitor:RAW:..\\WINPPD\\$mswin_name,", join(",", @filelist), "\n";
 	}
     }
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_print.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 November 2000.
+** Last modified 7 May 2002.
 */
 
 /*
@@ -206,7 +206,7 @@ static ssize_t receive_data_file(size_t size_of_file, int tempfile)
 /*
 ** Interpret a PPR option from the control file.
 */
-void handle_ppr_option(void *upr, const char *option)
+static void handle_ppr_option(void *upr, const char *option)
     {
     if(strncmp(option, "--responder ", 12) == 0)
 	uprint_set_ppr_responder(upr, option+12);
@@ -219,7 +219,7 @@ void handle_ppr_option(void *upr, const char *option)
 /*
 ** Interpret a Solaris option from the control file.
 */
-void handle_solaris_option(void *upr, const char *option)
+static void handle_solaris_option(void *upr, const char *option)
     {
     switch(option[0])
     	{
@@ -713,21 +713,17 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 	prog = PPR_PATH;
 	}
 
-    #ifdef HAVE_LPR
     else if(printdest_claim_lpr(printer))
 	{
 	spooler = 2;
 	prog = uprint_path_lpr();
 	}
-    #endif
 
-    #ifdef HAVE_LP
     else if(printdest_claim_lp(printer))
 	{
 	spooler = 3;
 	prog = uprint_path_lp();
 	}
-    #endif
 
     /* If queue not found, */
     else
