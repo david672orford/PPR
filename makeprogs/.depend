@@ -2,3 +2,5 @@ ppr-config.$(OBJ): ppr-config.c ../include/before_system.h ../include/gu.h ../in
 
 squeeze.$(OBJ): squeeze.c
 
+readlink.$(OBJ): readlink.c
+

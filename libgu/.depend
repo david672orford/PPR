@@ -72,3 +72,5 @@ snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
 
 gu_wildmat.$(OBJ): gu_wildmat.c
 
+gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+

@@ -1,0 +1,4 @@
+getservbyname.$(OBJ): getservbyname.c
+
+puts.$(OBJ): puts.c
+

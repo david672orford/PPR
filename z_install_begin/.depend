@@ -1,0 +1,6 @@
+getgrnam.$(OBJ): getgrnam.c
+
+getpwnam.$(OBJ): getpwnam.c
+
+id.$(OBJ): id.c
+

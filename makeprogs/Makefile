@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 11 March 2003.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 TARGETS=ppr-config$(DOTEXE) paths.mk paths.sh paths.ph PPR.pm paths.tcl \
-	squeeze$(DOTEXE)
+	squeeze$(DOTEXE) readlink$(DOTEXE)
 
 #=== Build ==================================================================
 

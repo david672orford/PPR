@@ -1,6 +1,6 @@
 pprd.$(OBJ): pprd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/interface.h
 
-pprd_alert.$(OBJ): pprd_alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h
+pprd_alert.$(OBJ): pprd_alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
 pprd_destid.$(OBJ): pprd_destid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
 

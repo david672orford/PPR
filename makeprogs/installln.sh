@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 11 March 2003.
 #
 
 #
@@ -36,7 +36,11 @@
 # as the ppr user if it has previously been done as root.
 #
 
-. `dirname $0`/paths.sh
+MYDIR=`dirname $0`
+
+. $MYDIR/paths.sh
+
+READLINK=$MYDIR/readlink
 
 if [ -z "$1" -o -z "$2" ]
   then
@@ -60,7 +64,7 @@ if [ ! -f "$RPM_BUILD_ROOT$source" ]
   fi
 
 echo "    \"$source\" --> \"$target\" (link)"
-if [ "`readlink $RPM_BUILD_ROOT$target`" != "$source" ]
+if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
     then
     rm -f "$RPM_BUILD_ROOT$target"
     ln -s "$RPM_BUILD_ROOT$source" "$RPM_BUILD_ROOT$target"
@@ -73,7 +77,7 @@ if [ "`readlink $RPM_BUILD_ROOT$target`" != "$source" ]
 chown $USER_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$target" 2>/dev/null
 
-echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
+echo "\"$target\"" >>$MYDIR/../z_install_begin/installed_files_list
 
 exit 0
 

@@ -1,12 +1,6 @@
-getgrnam.$(OBJ): getgrnam.c
-
 alert.$(OBJ): alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
 file_outdated.$(OBJ): file_outdated.c
-
-getpwnam.$(OBJ): getpwnam.c
-
-getservbyname.$(OBJ): getservbyname.c
 
 mkstemp.$(OBJ): mkstemp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 

@@ -62,7 +62,9 @@ pprdrv_userparams.$(OBJ): pprdrv_userparams.c ../include/before_system.h ../incl
 
 pprdrv_writemon.$(OBJ): pprdrv_writemon.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/commentary.h
 
-pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h pprdrv_ppd.h
+pprdrv_ppd_parse.$(OBJ): pprdrv_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h pprdrv_ppd.h
 
 ppr-gs.$(OBJ): ppr-gs.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+pprdrv_log.$(OBJ): pprdrv_log.c ../include/before_system.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 

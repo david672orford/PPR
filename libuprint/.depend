@@ -1,6 +1,4 @@
-claim_lp.$(OBJ): claim_lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-claim_lpr.$(OBJ): claim_lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+claim_bsd.$(OBJ): claim_bsd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 claim_ppr.$(OBJ): claim_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
@@ -12,15 +10,13 @@ lpr_failover.$(OBJ): lpr_failover.c ../include/before_system.h ../include/gu.h .
 
 lpr_sendfile.$(OBJ): lpr_sendfile.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/uprint.h uprint_private.h
 
-uprint-newconf.$(OBJ): uprint-newconf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h
+uprint-newconf.$(OBJ): uprint-newconf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/uprint.h uprint_conf.h ../include/version.h
 
-uprint.$(OBJ): uprint.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+uprint_obj.$(OBJ): uprint_obj.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_argv_lp.$(OBJ): uprint_argv_lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+uprint_print_bsd.$(OBJ): uprint_print_bsd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_argv_lpr.$(OBJ): uprint_argv_lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_argv_ppr.$(OBJ): uprint_argv_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+uprint_print_ppr.$(OBJ): uprint_print_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
 uprint_conf.$(OBJ): uprint_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_conf.h uprint_private.h
 
@@ -44,13 +40,13 @@ uprint_strerror.$(OBJ): uprint_strerror.c ../include/before_system.h ../include/
 
 uprint_sysv.$(OBJ): uprint_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
 
-uprint_type_lp.$(OBJ): uprint_type_lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_type_lpr.$(OBJ): uprint_type_lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_type_ppr.$(OBJ): uprint_type_ppr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
-
-uprint_uid.$(OBJ): uprint_uid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
 uprint_xlate.$(OBJ): uprint_xlate.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+claim_sysv.$(OBJ): claim_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+uprint_print_sysv.$(OBJ): uprint_print_sysv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+uprint_run_rfc1179.$(OBJ): uprint_run_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h uprint_private.h
+
+uprint_rfc1179.$(OBJ): uprint_rfc1179.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 

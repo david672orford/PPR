@@ -1,14 +1,14 @@
 papsrv.$(OBJ): papsrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h ../include/ppr_exits.h ../include/util_exits.h ../include/version.h
 
-papsrv_ali.$(OBJ): papsrv_ali.c ../include/before_system.h
+papsrv_ali.$(OBJ): papsrv_ali.c ../include/before_system.h ../include/pap_proto.h ../include/gu.h ../include/global_defines.h papsrv.h
 
 papsrv_authorize.$(OBJ): papsrv_authorize.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papsrv.h
 
-papsrv_cap.$(OBJ): papsrv_cap.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
+papsrv_cap.$(OBJ): papsrv_cap.c ../include/before_system.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h papsrv.h
 
 papsrv_conf.$(OBJ): papsrv_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
 
 papsrv_query.$(OBJ): papsrv_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
 
-papsrv_ppd_parse.$(OBJ): papsrv_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+papsrv_ppd_parse.$(OBJ): papsrv_ppd_parse.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papsrv.h
 

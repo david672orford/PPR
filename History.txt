@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--10 March 2003.
+1.51, 15 February 2003--11 March 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8442,6 +8442,8 @@ line was being parsed twice.
 * lprsrv/olprsrv.c,lprsrv_print.c: same ID business, plus added missing
   paranoid attempt to setuid(0) (which is what caught the above problem).
 
+* makeprogs/readlink.c: added and changed installln.sh to use instead of
+  (probably nonexistent) system version.
 
 
 
