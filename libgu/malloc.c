@@ -45,7 +45,7 @@ and abort the program if the allocation fails.
 
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>

@@ -34,7 +34,7 @@
 ** uses libuprint to send the job to the correct spooler.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

@@ -32,7 +32,7 @@
 ** This file is a line printer emulation filter for PPR.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <unistd.h>
 #include <memory.h>

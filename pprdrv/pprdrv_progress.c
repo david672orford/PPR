@@ -39,7 +39,7 @@
 ** the printer has confirmed printing.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>

@@ -13,7 +13,7 @@
 ** Last modified 19 July 2001.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

@@ -36,7 +36,7 @@
 ** to perform any such pleasant task.)
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <signal.h>

@@ -34,7 +34,7 @@
 ** Routines which implement other user commands.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -585,11 +585,11 @@ int ppop_status(char *argv[])
 				case PRNSTATUS_STOPPING:
 					printf(_("stopping (printing %s)"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
 					break;
-				case PRNSTATUS_STOPT:
-					PUTS(_("stopt"));
-					break;
 				case PRNSTATUS_HALTING:
 					printf(_("halting (printing %s)"), remote_jobid(printer_nodename,job_destname,job_id,job_subid,job_homenode));
+					break;
+				case PRNSTATUS_STOPT:
+					PUTS(_("stopt"));
 					break;
 				case PRNSTATUS_FAULT:
 					if(next_retry)

@@ -1,22 +1,22 @@
-atalk_ali.$(OBJ): atalk_ali.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/pap_proto.h
+atalk_ali.$(OBJ): atalk_ali.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/pap_proto.h
 
-atalk_cap.$(OBJ): atalk_cap.c ../include/before_system.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+atalk_cap.$(OBJ): atalk_cap.c ../include/config.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-clispool.$(OBJ): clispool.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+clispool.$(OBJ): clispool.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
-lpr.$(OBJ): lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/uprint.h
+lpr.$(OBJ): lpr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/uprint.h
 
-parallel.$(OBJ): parallel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
+parallel.$(OBJ): parallel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
 
-parallel_generic.$(OBJ): parallel_generic.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+parallel_generic.$(OBJ): parallel_generic.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
 
-parallel_linux.$(OBJ): parallel_linux.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+parallel_linux.$(OBJ): parallel_linux.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
 
-pros.$(OBJ): pros.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+serial.$(OBJ): serial.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-serial.$(OBJ): serial.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+tcpip.$(OBJ): tcpip.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-tcpip.$(OBJ): tcpip.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+pros.$(OBJ): pros.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-usb.$(OBJ): usb.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+usb.$(OBJ): usb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 

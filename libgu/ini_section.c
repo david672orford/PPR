@@ -35,7 +35,7 @@ from the format of Microsoft Windows .ini files.
 
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

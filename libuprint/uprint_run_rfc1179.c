@@ -28,7 +28,7 @@
 ** Last modified 5 August 2003.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>

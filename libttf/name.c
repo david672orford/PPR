@@ -13,7 +13,7 @@
 ** Last modified 10 November 1998.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include "libttf_private.h"
 

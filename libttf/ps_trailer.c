@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libttf/ps_trailer.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,10 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2003.
+** Last modified 13 December 2004.
 */
 
-#include "libttf_before_system.h"
+#include "config.h"
 #include "libttf_private.h"
 
 /*

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 December 2004.
+** Last modified 13 December 2004.
 */
 
 /*
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 			p = line + 7;
 			if((p2 = strchr(p, '\n')))
 				{
-				*p2 = NULL;
+				*p2 = '\0';
 				if((value = getenv(p)) && *value)
 					{
 					if(strspn(value, "-.0123456789") == strlen(value))	/* if numberic */

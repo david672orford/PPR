@@ -28,7 +28,7 @@
 ** Last modified 17 January 2002.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include "gu.h"
 

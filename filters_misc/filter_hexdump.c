@@ -39,7 +39,7 @@
 ** parameter position is normally used for the job title.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>

@@ -17,7 +17,7 @@
 ** This module contains routines used for creating the queue files.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>

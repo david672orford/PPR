@@ -17,7 +17,7 @@
 ** Code for including and striping out resources.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/stat.h>
 #include <string.h>

@@ -1,2 +1,2 @@
-ppr-testpage.$(OBJ): ppr-testpage.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+ppr-testpage.$(OBJ): ppr-testpage.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 

@@ -18,7 +18,7 @@
 ** media selection.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <errno.h>
 #include <string.h>
 #include "gu.h"

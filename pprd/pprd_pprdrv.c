@@ -41,7 +41,7 @@
 #define STRACE_OUTPUT LOGDIR"/pprdrv_strace"
 #endif
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>

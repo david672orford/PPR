@@ -37,7 +37,7 @@
 ** This module has much in common with ../libppr/queueinfo.c.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include "gu.h"

@@ -33,7 +33,7 @@
 ** for use with MD5 Digest HTTP authentication.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>

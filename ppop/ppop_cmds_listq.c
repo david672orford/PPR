@@ -34,7 +34,7 @@
 ** "ppop lpq" and "ppop qquery".
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <time.h>
 #include <ctype.h>

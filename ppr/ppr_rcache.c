@@ -23,7 +23,7 @@
 ** re-inserted from the cache.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>

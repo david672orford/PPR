@@ -2,79 +2,71 @@ gu_md5.$(OBJ): gu_md5.c ../include/gu_md5.h
 
 cloexec.$(OBJ): cloexec.c ../include/gu.h
 
-daemon.$(OBJ): daemon.c ../include/before_system.h ../include/gu.h
+daemon.$(OBJ): daemon.c ../include/config.h ../include/gu.h
 
-disk_space.$(OBJ): disk_space.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+disk_space.$(OBJ): disk_space.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 getline.$(OBJ): getline.c ../include/gu.h
 
-getopt.$(OBJ): getopt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+getopt.$(OBJ): getopt.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-gu_dtostr.$(OBJ): gu_dtostr.c ../include/before_system.h ../include/gu.h
-
-gu_exceptions.$(OBJ): gu_exceptions.c ../include/before_system.h ../include/gu.h
-
-gu_fscanf.$(OBJ): gu_fscanf.c ../include/before_system.h ../include/gu.h
-
-gu_getdouble.$(OBJ): gu_getdouble.c ../include/before_system.h ../include/gu.h
-
-gu_mkstemp.$(OBJ): gu_mkstemp.c ../include/before_system.h ../include/gu.h
-
-gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
-
-gu_pcs.$(OBJ): gu_pcs.c ../include/before_system.h ../include/gu.h
-
-gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_snmp.$(OBJ): gu_snmp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_snprintfcat.$(OBJ): gu_snprintfcat.c ../include/before_system.h ../include/gu.h
-
-gu_sscanf.$(OBJ): gu_sscanf.c ../include/before_system.h ../include/gu.h
-
-gu_strcasecmp.$(OBJ): gu_strcasecmp.c ../include/before_system.h ../include/gu.h
-
-gu_strerror.$(OBJ): gu_strerror.c ../include/gu.h
-
-gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h ../nonppr_misc/openbsd/strlcat.c
-
-gu_strlcpy.$(OBJ): gu_strlcpy.c ../include/gu.h ../nonppr_misc/openbsd/strlcpy.c
-
-gu_strsep.$(OBJ): gu_strsep.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_strsep2.$(OBJ): gu_strsep2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
-
-gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
-
-ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-lock_exclusive.$(OBJ): lock_exclusive.c ../include/gu.h
-
-malloc.$(OBJ): malloc.c ../include/before_system.h ../include/gu.h
-
-malloc_debug.$(OBJ): malloc_debug.c ../include/before_system.h ../include/gu.h
-
-padded.$(OBJ): padded.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-signal1.$(OBJ): signal1.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-signal2.$(OBJ): signal2.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-torf.$(OBJ): torf.c ../include/before_system.h ../include/gu.h
-
-wordwrap.$(OBJ): wordwrap.c ../include/before_system.h ../include/gu.h
-
-snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h ../include/config.h
+snprintf.$(OBJ): snprintf.c ../include/config.h ../include/gu.h ../include/config.h
 
 gu_wildmat.$(OBJ): gu_wildmat.c
 
+gu_dtostr.$(OBJ): gu_dtostr.c ../include/config.h ../include/gu.h
+
+gu_fscanf.$(OBJ): gu_fscanf.c ../include/config.h ../include/gu.h
+
+gu_getdouble.$(OBJ): gu_getdouble.c ../include/config.h ../include/gu.h
+
+gu_mkstemp.$(OBJ): gu_mkstemp.c ../include/config.h ../include/gu.h
+
+gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
+
 pcre.$(OBJ): pcre.c ../nonppr_misc/pcre/internal.h ../nonppr_misc/pcre/chartables.c
+
+gu_pcs.$(OBJ): gu_pcs.c ../include/config.h ../include/gu.h
+
+gu_snmp.$(OBJ): gu_snmp.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_snprintfcat.$(OBJ): gu_snprintfcat.c ../include/config.h ../include/gu.h
+
+gu_sscanf.$(OBJ): gu_sscanf.c ../include/config.h ../include/gu.h
+
+gu_strcasecmp.$(OBJ): gu_strcasecmp.c ../include/config.h ../include/gu.h
+
+gu_strerror.$(OBJ): gu_strerror.c ../include/gu.h
+
+gu_strsep.$(OBJ): gu_strsep.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_strsep2.$(OBJ): gu_strsep2.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_strsignal.$(OBJ): gu_strsignal.c ../include/config.h ../include/gu.h
 
 c2lib_hash.$(OBJ): c2lib_hash.c ../nonppr_misc/c2lib/config.h
 
+gu_timeval.$(OBJ): gu_timeval.c ../include/config.h ../include/gu.h
+
 pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
+
+ini_section.$(OBJ): ini_section.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+lock_exclusive.$(OBJ): lock_exclusive.c ../include/gu.h
+
+malloc.$(OBJ): malloc.c ../include/config.h ../include/gu.h
+
+malloc_debug.$(OBJ): malloc_debug.c ../include/config.h ../include/gu.h
+
+padded.$(OBJ): padded.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+signal1.$(OBJ): signal1.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+signal2.$(OBJ): signal2.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+torf.$(OBJ): torf.c ../include/config.h ../include/gu.h
+
+wordwrap.$(OBJ): wordwrap.c ../include/config.h ../include/gu.h
 
 pcre_maketables.$(OBJ): pcre_maketables.c ../nonppr_misc/pcre/internal.h
 
@@ -90,7 +82,15 @@ c2lib_tree.$(OBJ): c2lib_tree.c ../nonppr_misc/c2lib/config.h ../include/tree.h
 
 c2lib_vector.$(OBJ): c2lib_vector.c ../nonppr_misc/c2lib/config.h
 
-gu_psprintf.$(OBJ): gu_psprintf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+gu_run.$(OBJ): gu_run.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-gu_isdigit.$(OBJ): gu_isdigit.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+gu_exceptions.$(OBJ): gu_exceptions.c ../include/config.h ../include/gu.h
+
+gu_psprintf.$(OBJ): gu_psprintf.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_isdigit.$(OBJ): gu_isdigit.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h ../nonppr_misc/openbsd/strlcat.c
+
+gu_strlcpy.$(OBJ): gu_strlcpy.c ../include/gu.h ../nonppr_misc/openbsd/strlcpy.c
 

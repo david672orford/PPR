@@ -33,7 +33,7 @@
 ** requirements code is contained in the module pprdrv_capable.c.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include "gu.h"

@@ -32,7 +32,7 @@
 ** PPR's interface to AT&T LANMAN style client spooled printers.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <tiuser.h>
 #include <fcntl.h>
 #include <sys/utsname.h>		/* for uname */

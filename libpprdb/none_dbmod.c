@@ -17,7 +17,7 @@
 ** Dummies for functions to make modifications to the user database.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 

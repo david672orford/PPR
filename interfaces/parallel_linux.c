@@ -34,7 +34,7 @@
 ** in the lp(4) man page.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <linux/lp.h>

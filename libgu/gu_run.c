@@ -30,7 +30,7 @@
 
 /** \file */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>

@@ -32,7 +32,7 @@
 ** This is the operator's user account manipulation program.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>

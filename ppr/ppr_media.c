@@ -21,7 +21,7 @@
 ** lists of the required media into the queue file.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <memory.h>				/* NT with Hippix needs this */

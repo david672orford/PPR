@@ -34,7 +34,7 @@
 ** routines load the queue, media lists, printers, or groups.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>

@@ -32,7 +32,7 @@
 ** PPR interface to drive a serial printer.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>

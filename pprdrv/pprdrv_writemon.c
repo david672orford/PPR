@@ -13,7 +13,7 @@
 ** Last modified 10 May 2002.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <unistd.h>
 #include <string.h>

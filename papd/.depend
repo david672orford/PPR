@@ -1,16 +1,16 @@
-papd.$(OBJ): papd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papd.h ../include/ppr_exits.h ../include/util_exits.h ../include/version.h
+papd.$(OBJ): papd.c ../include/config.h ../include/gu.h ../include/global_defines.h papd.h ../include/ppr_exits.h ../include/util_exits.h ../include/version.h
 
-papd_ali.$(OBJ): papd_ali.c ../include/before_system.h ../include/pap_proto.h ../include/gu.h ../include/global_defines.h papd.h
+papd_ali.$(OBJ): papd_ali.c ../include/config.h ../include/pap_proto.h ../include/gu.h ../include/global_defines.h papd.h
 
-papd_cap.$(OBJ): papd_cap.c ../include/before_system.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h papd.h
+papd_cap.$(OBJ): papd_cap.c ../include/config.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h papd.h
 
-papd_conf.$(OBJ): papd_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papd.h
+papd_conf.$(OBJ): papd_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h papd.h
 
-papd_printjob.$(OBJ): papd_printjob.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ppr_exits.h papd.h
+papd_printjob.$(OBJ): papd_printjob.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ppr_exits.h papd.h
 
-papd_query.$(OBJ): papd_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h papd.h
+papd_query.$(OBJ): papd_query.c ../include/config.h ../include/gu.h ../include/global_defines.h papd.h
 
-papd_login_aufs.$(OBJ): papd_login_aufs.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h
+papd_login_rbi.$(OBJ): papd_login_rbi.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h ../include/version.h
 
-papd_login_rbi.$(OBJ): papd_login_rbi.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h ../include/version.h
+papd_login_aufs.$(OBJ): papd_login_aufs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h papd.h
 

@@ -32,7 +32,7 @@
 ** This module contains functions for dispatching jobs to remote PPR spoolers.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"

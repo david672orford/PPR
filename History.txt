@@ -9462,6 +9462,9 @@ no final tarball was released.
 
 * z_install_end/ppr.sh: removed references to papsrv and uprint-newconf.
 
+* moved all include/sysdep.h stuff into Configure, include/global_defines.h,
+  include/gu.h, config.h.in; replaced references to before_system.h with
+  config.h.
 
 
 TODO

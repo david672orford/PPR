@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 December 2004.
+# Last modified 13 December 2004.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -638,8 +638,8 @@ then
 
 echo
 echo "Do you want support for translation of messages to non-English languages?"
-echo "This option requires the GNU Gettext package.  Currently, only a partial"
-echo "French translation is provided.  If you would like to contribute translations"
+echo "This option requires the GNU Gettext package.  The number of available"
+echo "translations is still small.  If you would like to contribute translations"
 echo "into additional languages, compile with this option on and read"
 echo "po/README.txt for instructions."
 echo
@@ -966,78 +966,134 @@ export MANDIR=$(SHAREDIR)/man
 # Directory for the CGI programs for the WWW interface.
 export CGI_BIN=$(HOMEDIR)/cgi-bin
 
-# Various configuration directories:
-export PRCONF $(CONFDIR)/printers				# printer configuration files
-export GRCONF $(CONFDIR)/groups					# group configuration files
-export ALIASCONF $(CONFDIR)/aliases				# queue alias configuration files
-export ACLDIR $(CONFDIR)/acl					# Access Control Lists
-export MOUNTEDDIR $(CONFDIR)/mounted			# directory for media mounted files
+#----------------------------------------
+# Various configuration directories
+#----------------------------------------
+# printer configuration files
+export PRCONF=$(CONFDIR)/printers
+# group configuration files
+export GRCONF=$(CONFDIR)/groups
+# queue alias configuration files
+export ALIASCONF=$(CONFDIR)/aliases
+# Access Control Lists
+export ACLDIR=$(CONFDIR)/acl
+# directory for media mounted files
+export MOUNTEDDIR=$(CONFDIR)/mounted
 
+#----------------------------------------
 # Subdirectories
-export RUNDIR $(VAR_SPOOL_PPR)/run
-export VAR_PRINTERS $(VAR_SPOOL_PPR)/printers
+#----------------------------------------
+export RUNDIR=$(VAR_SPOOL_PPR)/run
+export VAR_PRINTERS=$(VAR_SPOOL_PPR)/printers
 
-# The main PPR configuration file.
-export PPR_CONF $(CONFDIR)/ppr.conf
+#----------------------------------------
+# Various configuration files
+#----------------------------------------
+# main PPR configuration file
+export PPR_CONF=$(CONFDIR)/ppr.conf
+# users database file name
+export DBNAME=$(CONFDIR)/charge_users.db
+# media definitions
+export MEDIAFILE=$(CONFDIR)/media.db
+# new printer configuration lines
+export NEWPRN_CONFIG=$(CONFDIR)/newprn.conf
+# for libuprint.a
+export UPRINTCONF=$(CONFDIR)/uprint.conf
+# list of remote printers
+export UPRINTREMOTECONF=$(CONFDIR)/uprint-remote.conf
 
-# Various configuration files:
-export DBNAME $(CONFDIR)/charge_users.db						# users database file name
-export MEDIAFILE $(CONFDIR)/media.db							# media definitions
-export NEWPRN_CONFIG $(CONFDIR)/newprn.conf						# new printer configuration lines
-export UPRINTCONF $(CONFDIR)/uprint.conf						# for libuprint.a
-export UPRINTREMOTECONF $(CONFDIR)/uprint-remote.conf			# list of remote printers
+#----------------------------------------
+# Configuration files that aren't meant
+# to be changed:
+#----------------------------------------
+# MetaFont modes for various printers
+export MFMODES=$(SHAREDIR)/lib/mfmodes.conf
+# font substitution database
+export FONTSUB=$(SHAREDIR)/lib/fontsub.conf
+# LaserWriter errors file
+export LW_MESSAGES_CONF=$(SHAREDIR)/lib/lw-messages.conf
+# PJL USTATUS DEVICE errors file
+export PJL_MESSAGES_CONF=$(SHAREDIR)/lib/pjl-messages.conf
+# for ppr -H editps
+export EDITPSCONF=$(HOMEDIR)/editps/editps.conf
+# map characters set to PostScript encodings
+export CHARSETSCONF=$(SHAREDIR)/lib/charsets.conf
+# list of fonts and the PostScript encodings they support
+export FONTSCONF=$(SHAREDIR)/lib/fonts.conf
+# additional PostScript *PageSize names
+export PAGESIZES_CONF=$(SHAREDIR)/lib/pagesizes.conf
+# additional PostScript error explainations
+export PSERRORS_CONF=$(SHAREDIR)/lib/pserrors.conf
 
-# Configuration files that aren't meant to be changed:
-export MFMODES $(SHAREDIR)/lib/mfmodes.conf						# MetaFont modes for various printers
-export FONTSUB $(SHAREDIR)/lib/fontsub.conf						# font substitution database
-export LW_MESSAGES_CONF $(SHAREDIR)/lib/lw-messages.conf		# LaserWriter errors file
-export PJL_MESSAGES_CONF $(SHAREDIR)/lib/pjl-messages.conf		# PJL USTATUS DEVICE errors file
-export EDITPSCONF $(HOMEDIR)/editps/editps.conf					# for ppr -H editps
-export CHARSETSCONF $(SHAREDIR)/lib/charsets.conf				# map characters set to PostScript encodings
-export FONTSCONF $(SHAREDIR)/lib/fonts.conf						# list of fonts and the PostScript encodings they support
-export PAGESIZES_CONF $(SHAREDIR)/lib/pagesizes.conf			# additional PostScript *PageSize names
-export PSERRORS_CONF $(SHAREDIR)/lib/pserrors.conf				# additional PostScript error explainations
-
+#----------------------------------------
 # Special files used by the spooler:
-export NEXTIDFILE $(RUNDIR)/lastid_ppr			# file with previous queue id number
-export FIFO_NAME $(VAR_SPOOL_PPR)/PIPE			# name of pipe between ppr & pprd
-export PPRD_LOCKFILE $(RUNDIR)/pprd.pid			# created and locked by pprd
+#----------------------------------------
+# file with previous queue id number
+export NEXTIDFILE=$(RUNDIR)/lastid_ppr
+# name of pipe between ppr & pprd
+export FIFO_NAME=$(VAR_SPOOL_PPR)/PIPE
+# created and locked by pprd
+export PPRD_LOCKFILE=$(RUNDIR)/pprd.pid
 
+#----------------------------------------
 # Directories where the spooler and friends find components:
-export FILTDIR $(HOMEDIR)/filters				# directory for input filter programs
-export INTDIR $(HOMEDIR)/interfaces				# directory for interface programs
-export COMDIR $(HOMEDIR)/commentators			# directory for commentator programs
-export RESPONDERDIR $(HOMEDIR)/responders		# responder programs
-export PPDDIR $(SHAREDIR)/PPDFiles				# our PPD file library (must be absolute)
-export STATIC_CACHEDIR $(SHAREDIR)/cache		# pre-loaded cache files
+#----------------------------------------
+# directory for input filter programs
+export FILTDIR=$(HOMEDIR)/filters
+# directory for interface programs
+export INTDIR=$(HOMEDIR)/interfaces
+# directory for commentator programs
+export COMDIR=$(HOMEDIR)/commentators
+# responder programs
+export RESPONDERDIR=$(HOMEDIR)/responders
+# our PPD file library (must be absolute)
+export PPDDIR=$(SHAREDIR)/PPDFiles
+# pre-loaded cache files
+export STATIC_CACHEDIR=$(SHAREDIR)/cache
 
-# Directories where the spooler writes stuff:
-export QUEUEDIR $(VAR_SPOOL_PPR)/queue			# queue directory
-export DATADIR $(VAR_SPOOL_PPR)/jobs			# job data directory
-export ALERTDIR $(VAR_PRINTERS)/alerts			# directory for printer alert files
-export STATUSDIR $(VAR_PRINTERS)/status			# directory for printer status files
-export LOGDIR $(VAR_SPOOL_PPR)/logs				# directory for log files
-export CACHEDIR $(VAR_SPOOL_PPR)/cache			# directory for automatically cached files
-export ADDRESS_CACHE $(VAR_PRINTERS)/addr_cache # directory for cache of printer addresses
-export FONT_INDEX $(VAR_SPOOL_PPR)/fontindex.db
-export PPD_INDEX $(VAR_SPOOL_PPR)/ppdindex.db
+#----------------------------------------
+# Directories where the spooler writes
+# stuff
+#----------------------------------------
+# queue directory
+export QUEUEDIR=$(VAR_SPOOL_PPR)/queue
+# job data directory
+export DATADIR=$(VAR_SPOOL_PPR)/jobs
+# directory for printer alert files
+export ALERTDIR=$(VAR_PRINTERS)/alerts
+# directory for printer status files
+export STATUSDIR=$(VAR_PRINTERS)/status
+# directory for log files
+export LOGDIR=$(VAR_SPOOL_PPR)/logs
+# directory for automatically cached files
+export CACHEDIR=$(VAR_SPOOL_PPR)/cache
+# directory for cache of printer addresses
+export ADDRESS_CACHE=$(VAR_PRINTERS)/addr_cache
+export FONT_INDEX=$(VAR_SPOOL_PPR)/fontindex.db
+export PPD_INDEX=$(VAR_SPOOL_PPR)/ppdindex.db
 
-# The spooler state files for GUI interface:
-export STATE_UPDATE_FILE $(RUNDIR)/state_update
-export STATE_UPDATE_PPRDRV_FILE $(RUNDIR)/state_update_pprdrv
+#----------------------------------------
+# Spooler state files for GUI interface
+#----------------------------------------
+export STATE_UPDATE_FILE=$(RUNDIR)/state_update
+export STATE_UPDATE_PPRDRV_FILE=$(RUNDIR)/state_update_pprdrv
 
-# If this file exists, it will be filled with a log of all jobs printed:
-export PRINTLOG_PATH $(LOGDIR)/printlog
+#----------------------------------------
+# If this file exists, it will be filled
+# with a log of all jobs printed.
+#----------------------------------------
+export PRINTLOG_PATH=$(LOGDIR)/printlog
 
-# Paths to invoke various PPR components:
-export PPRDRV_PATH $(HOMEDIR)/lib/pprdrv
-export PPAD_PATH $(HOMEDIR)/bin/ppad
-export PPOP_PATH $(HOMEDIR)/bin/ppop
-export PPR_PATH $(HOMEDIR)/bin/ppr
-export TBCP2BIN_PATH $(HOMEDIR)/lib/tbcp2bin
-export PPR2SAMBA_PATH $(HOMEDIR)/bin/ppr2samba
-export TAIL_STATUS_PATH $(HOMEDIR)/lib/tail_status
-export PPJOB_PATH $(HOMEDIR)/bin/ppjob
+#----------------------------------------
+# Paths to invoke various PPR components
+#----------------------------------------
+export PPRDRV_PATH=$(HOMEDIR)/lib/pprdrv
+export PPAD_PATH=$(HOMEDIR)/bin/ppad
+export PPOP_PATH=$(HOMEDIR)/bin/ppop
+export PPR_PATH=$(HOMEDIR)/bin/ppr
+export TBCP2BIN_PATH=$(HOMEDIR)/lib/tbcp2bin
+export PPR2SAMBA_PATH=$(HOMEDIR)/bin/ppr2samba
+export TAIL_STATUS_PATH=$(HOMEDIR)/lib/tail_status
 
 ===EndOfHere16===
 
@@ -1141,21 +1197,82 @@ if [ -n "$HAVE_ZLIB" ]
 echo >&3
 
 cat >&3 <<'===EndOfHere52==='
-# Wrap several options together into one
-MISC_OPTS=$(ZLIBOPTS)
-
 # Backup files to delete
 BACKUPS=*~ *.bak *.bck
 
-# Here are some defaults for the system dependent section:
+#----------------------------------------------------------
+# Here are some defaults for the system dependent section
+# Some of them are probably overridden below, so don't
+# change them here.
+#----------------------------------------------------------
 MV=mv
 RMF=rm -f
 CHMOD=chmod
+
+# Defines a nice, secure path for filters, interfaces, responders, and other
+# children of ppr and pprd.
+export SAFE_PATH=/usr/local/bin:/bin:/usr/bin
+
+export HAVE_STRSIGNAL=1
+export HAVE_SNPRINTF=1
+export HAVE_VSNPRINTF=1
+export HAVE_STATVFS=
+export HAVE_STATFS=
+export HAVE_SYS_VFS_H=
+export HAVE_TERMIOS_H=1
+export HAVE_FORK=1
+export HAVE_PUTENV=1
+export HAVE_MKFIFO=1
+export HAVE_INNETGROUP=1
+export HAVE_SETREUID=1
+export HAVE_SETREGID=1
+export HAVE_SETSID=1
+export HAVE_DIFFTIME=1
+export HAVE_MEMMOVE=1
+export HAVE_SETEUID=1
+export HAVE_SETREUID=1
+export HAVE_SETRESUID=
+export HAVE_SETEGID=1
+export HAVE_SETREGID=1
+export HAVE_SETRESGID=
+export HAVE_UNSETENV=
+export HAVE_MKSTEMP=
+export HAVE_INITGROUPS=
+
+# Don't set this.  The code has not yet been upgraded to POSIX spawn().
+export HAVE_SPAWN=
+
+# Define this if TIOCM_CTS, TIOCM_DSR, and TIOCM_CAR (values for the TIOCMGET
+# ioctl) are defined in sys/modem.h.
+export HAVE_SYS_MODEM_H=
+
+# Resolver library functions such as gethostbyname()
+# use h_errno to return error code.
+export HAVE_H_ERRNO=
+
+# Define this if ppop and ppad should do a stty to set the backspace to 
+# control-h when entering interactive mode.
+export SET_BACKSPACE=
+
+# Define this if bind() can't assign a reserved port number unless the socket
+# was opened by root.  This is a Solaris bug.
+export BIND_ACCESS_BUG=
+
+# This should be defined if unlink()ing an open file is not allowed or causes 
+# bad things to happen.  Though common in Unix implementations, the ability to
+# remove all names for an open file is not a POSIX requirement.  (This option 
+# is not fully implemented.)
+export LATE_UNLINK=
+
+# Set this if the setuid and setgid bits are ignored.  At the moment, this 
+# causes ppr and pprd to omit some startup tests.
+export BROKEN_SETUID_BIT=
 
 ===EndOfHere52===
 
 #========================================================================
 echo "  Selecting a system dependent section..."
+echo "    Emitting section for $DESCRIPTION..."
 
 cat >&3 <<===EndofHere6===
 #============================================================
@@ -1168,8 +1285,16 @@ cat >&3 <<===EndofHere6===
 #============================================================
 if [ $SYSTEM = "ATTWGS" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSYSATTWGS===
+# AT&T System V Release 4.0 for the AT&T WGS series of 386/486 microcomputers.
+# This is the origional platform for PPR.
+# This port has not been tested recently.
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+SET_BACKSPACE=1
+HAVE_STATVFS=1
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1179,7 +1304,7 @@ LIBEXT=a
 LIBCMD=ar -sq
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1198,8 +1323,14 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS5===
+# SunOS 5.0 thru 5.5.1 (Solaris 2.0 thru 5.5.1)
+# See below for SunOS 5.6 and later.
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATVFS=1
+BIND_ACCESS_BUG=1
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1209,7 +1340,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
@@ -1224,8 +1355,11 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS_5_6" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS56===
+# SunOS 5.6 thru 5.7 (Solaris 2.6 thru 7)
+HAVE_STATVFS=1
+BIND_ACCESS_BUG=1
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1235,7 +1369,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
@@ -1250,8 +1384,11 @@ fi
 #============================================================
 if [ $SYSTEM = "NETBSD" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndNETBSD===
+HAVE_STATFS=1
+HAVE_INITGROUPS=1
+HAVE_SETSID=
+
 MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
@@ -1261,7 +1398,36 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndNETBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "FREEBSD" ]
+then
+cat >&3 <<===EndNETBSD===
+HAVE_STRSIGNAL=
+HAVE_STATFS=1
+HAVE_INITGROUPS=1
+
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1276,8 +1442,15 @@ fi
 #============================================================
 if [ $SYSTEM = "LINUX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndLINUX===
+# Linux for i386 is the principal development platform.
+HAVE_STATFS=1
+HAVE_SYS_VFS_H=1
+HAVE_UNSETENV=1
+HAVE_H_ERRNO=1
+HAVE_MKSTEMP=1
+HAVE_INITGROUPS=1
+
 MAKE=make
 MAKEFLAGS=--no-print-directory
 STRIP=strip
@@ -1290,19 +1463,19 @@ RANLIB=touch
 # GCC and Glibc
 CC=gcc
 #CC=g++ -fno-exceptions
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 
 # GCC with Diet libc wrapper
 #CC=diet gcc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 #LD=diet gcc
 #LDFLAGS=
 
 # GCC with UClibc wrapper
 #CC=i386-uclibc-cc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include \$(MISC_OPTS)
+#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include
 #LD=i386-uclibc-cc
 #LDFLAGS=
 
@@ -1327,8 +1500,16 @@ fi
 #============================================================
 if [ $SYSTEM = "SUNOS4" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndSUNOS4===
+# SunOS 4.1.3_U1
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATFS=1
+HAVE_SYS_VFS_H=1
+HAVE_DIFFTIME=
+HAVE_MEMMOVE=
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1338,7 +1519,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1353,8 +1534,13 @@ fi
 #============================================================
 if [ $SYSTEM = "OSF1" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndOSF1==='
+# OSF/1 3.2 or Digital Unix 4.0 for DEC Alpha
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATVFS=1
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1369,7 +1555,7 @@ then
 echo "CC=`pwd`/makeprogs/fixed_cc_osf.sh" >&3
 # Note: don't put spaces after -I below!
 cat >&3 <<'===EndOSF2==='
-CFLAGS=$CFLAGS -I/usr/local/include -I../include $(MISC_OPTS)
+CFLAGS=$CFLAGS -I/usr/local/include -I../include
 LD=cc
 LDFLAGS=
 CPP=/lib/cpp
@@ -1377,7 +1563,7 @@ CPP=/lib/cpp
 else
 cat >&3 <<===EndOSF3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1395,8 +1581,13 @@ fi
 #============================================================
 if [ $SYSTEM = "IRIX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<'===EndIRIX==='
+# SGI IRIX 6.3
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATVFS=1
+
 MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
@@ -1413,7 +1604,7 @@ cat >&3 <<===EndIRIX2===
 # We use the full path in case /usr/local/bin/cc
 # is a link to GCC.
 CC=/usr/bin/cc
-CFLAGS=$CFLAGS -I /usr/local/include -L /usr/local/lib -I ../include \$(MISC_OPTS)
+CFLAGS=$CFLAGS -I /usr/local/include -L /usr/local/lib -I ../include
 LD=/usr/bin/cc
 LDFLAGS=-L/usr/freeware/lib32
 # /lib/cpp doesn't handle #elif correctly so we
@@ -1425,7 +1616,7 @@ CPP=/usr/bin/cc -E
 else
 cat >&3 <<===EndIRIX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/freeware/lib32
 CPP=gcc -E -P -xc-header
@@ -1444,12 +1635,14 @@ fi
 #============================================================
 if [ $SYSTEM = "CYGWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndCYGWIN===
-.SUFFIXES: .exe
-
-.c.exe:
-	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
+# MS-Windows 95 or NT with Cygwin 1.1
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_MKFIFO=
+HAVE_INNETGROUP=
+BROKEN_SETUID_BIT=1
+SAFE_PATH=/bin:/usr/bin:/winnt/system32:/winnt
 
 MAKE=make
 MAKEFLAGS=--no-print-directory
@@ -1460,7 +1653,7 @@ LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include 
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1468,6 +1661,11 @@ SOCKLIBS=
 LEX=flex
 LEX_LIB=-lfl
 PARALLEL=generic
+
+.SUFFIXES: .exe
+
+.c.exe:
+	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
 ===EndCYGWIN===
 fi
 
@@ -1475,12 +1673,9 @@ fi
 #============================================================
 if [ $SYSTEM = "UWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
-cat >&3 <<===EndUWIN1===
-.SUFFIXES: .exe
-
-.c.exe:
-	\$(CC) \$(CFLAGS) -o \$*.exe \$*.c
+cat >&3 <<'===EndUWIN1==='
+# MS-Windows 95/NT with AT&T UWIN 2.9
+HAVE_STRSIGNAL=
 
 MAKE=make
 MAKEFLAGS=
@@ -1494,29 +1689,34 @@ RANLIB=touch
 
 if [ "$NATIVE_CC" = "yes" ]
 then
-cat >&3 <<===EndUWIN2===
+cat >&3 <<'===EndUWIN2==='
 CC=cc
-CFLAGS=-I ../include \$(MISC_OPTS)
+CFLAGS=-I ../include
 LD=cc
 LDFLAGS=
 CPP=/lib/cpp
 ===EndUWIN2===
 
 else
-cat >&3 <<===EndUWIN3===
+cat >&3 <<'===EndUWIN3==='
 CC=gcc
-CFLAGS=-I ../include \$(MISC_OPTS)
+CFLAGS=-I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
 ===EndUWIN3===
 fi
 
-cat >&3 <<===EndUWIN4===
+cat >&3 <<'===EndUWIN4==='
 SOCKLIBS=
 LEX=lex
 LEX_LIB=-ll
 PARALLEL=generic
+
+.SUFFIXES: .exe
+
+.c.exe:
+	$(CC) $(CFLAGS) -o $*.exe $*.c
 ===EndUWIN4===
 fi
 
@@ -1524,8 +1724,20 @@ fi
 #============================================================
 if [ $SYSTEM = "HPUX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndHPUX1===
+# HP-UX 10.x
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATVFS=1
+HAVE_SYS_MODEM_H=1
+HAVE_SETEUID=
+HAVE_SETREUID=
+HAVE_SETRESUID=1
+HAVE_SETEGID=
+HAVE_SETREGID=
+HAVE_SETRESGID=1
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1538,9 +1750,9 @@ RANLIB=touch
 
 if [ "$NATIVE_CC" = "yes" ]
 then
-cat >&3 <<===EndHPUX2===
+cat >&3 <<'===EndHPUX2==='
 CC=/usr/bin/cc
-CFLAGS=-Ae -O -I../include $(MISC_OPTS)
+CFLAGS=-Ae -O -I../include
 LD=/usr/bin/cc
 LDFLAGS=-ldld
 CPP=/usr/bin/cc -E
@@ -1549,7 +1761,7 @@ CPP=/usr/bin/cc -E
 else
 cat >&3 <<===EndHPUX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-ldld
 CPP=gcc -E -P -xc-header
@@ -1568,8 +1780,12 @@ fi
 #============================================================
 if [ $SYSTEM = "ULTRIX" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndULTRIX1===
+# DEC ULTRIX 4.4 (RISC DECstation, similiar to OSF1, but older)
+HAVE_STRSIGNAL=
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+
 MAKE=s5make
 MAKEFLAGS=
 STRIP=strip
@@ -1583,9 +1799,9 @@ RANLIB=touch
 if [ "$NATIVE_CC" = "yes" ]
 then
 echo "CC=`pwd`/makeprogs/fixed_cc_osf.sh" >&3
-cat >&3 <<===EndULTRIX2===
+cat >&3 <<'===EndULTRIX2==='
 CC=cc
-CFLAGS=-YPOSIX -O -I../include $(MISC_OPTS)
+CFLAGS=-YPOSIX -O -I../include
 LD=cc
 LDFLAGS=
 CPP=/lib/cpp
@@ -1594,7 +1810,7 @@ CPP=/lib/cpp
 else
 cat >&3 <<===EndULTRIX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1617,8 +1833,12 @@ fi
 #============================================================
 if [ $SYSTEM = "DARWIN" ]
 then
-echo "    Emitting section for $DESCRIPTION"
 cat >&3 <<===EndDarwin===
+# Darwin (MacOS 10.x)
+HAVE_STRSIGNAL=
+HAVE_UNSETENV=1
+SAFE_PATH=/sw/bin:/usr/bin:/bin
+
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
@@ -1628,7 +1848,7 @@ LIBEXT=a
 LIBCMD=ar -cr
 RANLIB=ranlib
 CC=cc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -I /usr/local/include \$(MISC_OPTS)
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -I /usr/local/include
 LD=cc
 LDFLAGS=
 CPP=cpp

@@ -28,7 +28,7 @@
 ** Last modified 16 March 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <fcntl.h>

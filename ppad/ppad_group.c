@@ -33,7 +33,7 @@
 ** for those sub-commands which manipulate groups of printers.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>

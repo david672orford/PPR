@@ -1,4 +1,4 @@
-main.$(OBJ): main.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+main.$(OBJ): main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 
-module.$(OBJ): module.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+module.$(OBJ): module.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

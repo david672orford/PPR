@@ -33,7 +33,7 @@
 ** at Trinity College.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>

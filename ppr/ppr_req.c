@@ -32,7 +32,7 @@
 ** DSC Requirement comment handling routines.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>

@@ -32,7 +32,7 @@
 	\brief become a daemon
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <signal.h>
 #include <unistd.h>
 #include <limits.h>

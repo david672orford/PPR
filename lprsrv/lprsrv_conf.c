@@ -25,17 +25,17 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2004.
+** Last modified 13 December 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 #include <pwd.h>
-#ifdef HAVE_NETGROUP
+#ifdef HAVE_INNETGROUP
 #include <netdb.h>
 #endif
 #include "gu.h"
@@ -51,7 +51,7 @@ static gu_boolean authorized_file_check(const char name[], const char file[]);
 */
 static gu_boolean netgroup_matched(const char node[], const char netgroup[])
 	{
-	#ifdef HAVE_NETGROUP
+	#ifdef HAVE_INNETGROUP
 	if(innetgr(netgroup, node, NULL, NULL))
 		return TRUE;
 	else

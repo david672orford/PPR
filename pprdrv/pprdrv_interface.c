@@ -44,7 +44,7 @@
 **		interface_close()						called by rip_fault_check() only
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>

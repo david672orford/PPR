@@ -1,16 +1,16 @@
-alert.$(OBJ): alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+alert.$(OBJ): alert.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
 file_outdated.$(OBJ): file_outdated.c
 
-mkstemp.$(OBJ): mkstemp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+mkstemp.$(OBJ): mkstemp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ppr_conf_query.$(OBJ): ppr_conf_query.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+ppr_conf_query.$(OBJ): ppr_conf_query.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 rewind_stdin.$(OBJ): rewind_stdin.c
 
 signal_sh.$(OBJ): signal_sh.c
 
-tail_status.$(OBJ): tail_status.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/version.h
+tail_status.$(OBJ): tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
 
 time_elapsed.$(OBJ): time_elapsed.c
 

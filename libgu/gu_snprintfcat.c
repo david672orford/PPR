@@ -13,7 +13,7 @@
 ** Last modified 10 August 2002.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdarg.h>
 #include <string.h>
 #include "gu.h"

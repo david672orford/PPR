@@ -1,4 +1,4 @@
-filter_hexdump.$(OBJ): filter_hexdump.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+filter_hexdump.$(OBJ): filter_hexdump.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-make_dvips_conf.$(OBJ): make_dvips_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+make_dvips_conf.$(OBJ): make_dvips_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

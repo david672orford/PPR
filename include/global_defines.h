@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 11 December 2004.
+** This file was last modified 12 December 2004.
 */
 
 /*
@@ -34,11 +34,6 @@
 ** should be the first include file.  It is the header file for the whole
 ** project.
 */
-
-#ifndef _INC_BEFORE_SYSTEM
-#warning Failed to include "before_system.h"
-#include "before_system.h"
-#endif
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -142,19 +137,11 @@
 #define STATE_UPDATE_MAXLINES 1000
 #define STATE_UPDATE_PPRDRV_MAXBYTES 30000
 
-/*=========================================================================
-** End of values which an end user might want to change.
-=========================================================================*/
-
 /*=======================================================================
 ** System Dependent Stuff
 ** The system differences are handled in a separate file which
 ** is included here.
 =======================================================================*/
-
-#define PASS2
-#include "sysdep.h"
-#undef PASS2
 
 /* A signed number of at least 16 bits: */
 #ifndef SHORT_INT
@@ -166,6 +153,52 @@ typedef short int SHORT_INT;
 #undef signal
 #define signal(a,b) signal_interupting(a,b)
 
+#ifndef S_ISLNK
+#define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
+#endif
+
+/* uClibc and dietlibc don't support NIS.  We have to put this in global_defines.h
+   no uClibc headers have been read in config.h */
+#ifdef __UCLIBC__
+#undef HAVE_INNETGRP
+#endif
+#ifdef __dietlibc__
+#undef HAVE_INNETGRP
+#endif
+
+#ifndef WCOREDUMP
+#define WCOREDUMP(stat) ((stat)&0200)
+#endif
+
+#ifndef HAVE_SETSID
+#define setsid() setpgrp(0, getpid())
+#endif
+
+#ifndef HAVE_DIFFTIME
+#define difftime(t1,t0) ((double)((t1)-(t0)))
+#endif
+
+#ifndef HAVE_MEMMOVE
+#define memmove(ARG1,ARG2,LENGTH) bcopy(ARG1,ARG2,LENGTH)
+#endif
+
+#ifdef HAVE_SETRESUID
+#ifndef HAVE_SETEUID
+#define seteuid(x)     setresuid(-1,(x),-1)
+#endif
+#ifndef HAVE_SETREUID
+#define setreuid(x,y)  setresuid((x),(y),-1)
+#endif
+#endif
+
+#ifdef HAVE_SETRESGID
+#ifndef HAVE_SETEGID
+#define setegid(x)     setresgid(-1,(x),-1)
+#endif
+#ifndef HAVE_SETREGID
+#define setregid(x,y)  setresgid((x),(y),-1)
+#endif
+#endif
 
 /*=======================================================================
 ** Internationalization Macros

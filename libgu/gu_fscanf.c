@@ -33,7 +33,7 @@
 ** integers.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>

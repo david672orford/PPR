@@ -28,7 +28,7 @@
 ** Last modified 23 January 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 
 /* number of blocks at last gu_alloc_checkpoint() */

@@ -35,7 +35,7 @@
 ** questions.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <string.h>
 #include <ctype.h>

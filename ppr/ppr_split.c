@@ -46,7 +46,7 @@
 ** -Y 'segments=x'		;break the job into the indicated number of segments
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

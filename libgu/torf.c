@@ -32,7 +32,7 @@
     \brief Parse boolean values
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 
 /** Parse a boolean value

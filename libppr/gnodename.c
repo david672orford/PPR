@@ -32,7 +32,7 @@
 	\brief determine name of this network node
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <sys/utsname.h>
 #include <errno.h>

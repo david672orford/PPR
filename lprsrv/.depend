@@ -1,16 +1,16 @@
-lprsrv-test.$(OBJ): lprsrv-test.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h
+lprsrv-test.$(OBJ): lprsrv-test.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h
 
-lprsrv.$(OBJ): lprsrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h ../include/version.h ../include/uprint.h
+lprsrv.$(OBJ): lprsrv.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/util_exits.h ../include/version.h ../include/uprint.h
 
-lprsrv_cancel.$(OBJ): lprsrv_cancel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+lprsrv_cancel.$(OBJ): lprsrv_cancel.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
-lprsrv_client_info.$(OBJ): lprsrv_client_info.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+lprsrv_client_info.$(OBJ): lprsrv_client_info.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
-lprsrv_conf.$(OBJ): lprsrv_conf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+lprsrv_conf.$(OBJ): lprsrv_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
-lprsrv_list.$(OBJ): lprsrv_list.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+lprsrv_list.$(OBJ): lprsrv_list.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
-lprsrv_print.$(OBJ): lprsrv_print.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
+lprsrv_print.$(OBJ): lprsrv_print.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h ../include/uprint.h
 
-lprsrv_standalone.$(OBJ): lprsrv_standalone.c ../include/before_system.h ../include/gu.h ../include/global_defines.h lprsrv.h
+lprsrv_standalone.$(OBJ): lprsrv_standalone.c ../include/config.h ../include/gu.h ../include/global_defines.h lprsrv.h
 

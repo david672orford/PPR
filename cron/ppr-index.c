@@ -28,7 +28,7 @@
 ** Last modified 9 December 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #ifdef INTERNATIONAL

@@ -13,7 +13,7 @@
 ** Last modified 12 April 2001.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <signal.h>				/* for pprd.auto_h */
 #include <unistd.h>

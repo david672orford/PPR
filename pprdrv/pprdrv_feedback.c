@@ -35,7 +35,7 @@
 ** the PostScript job writes to stdout.
 ===========================================================================*/
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>

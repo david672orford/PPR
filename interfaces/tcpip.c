@@ -52,7 +52,7 @@
 ** snmp_status_interval=15 will be selected.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <ctype.h>
 #include <time.h>

@@ -33,7 +33,7 @@
 ** Protocol (PAP).
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>

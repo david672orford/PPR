@@ -33,7 +33,7 @@
 ** using the Berkeley LPR protocol.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

@@ -33,7 +33,7 @@
 ** the Columbia AppleTalk Program (CAP).
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <netat/appletalk.h>
 #include <netat/abpap.h>				/* <-- not installed by default */

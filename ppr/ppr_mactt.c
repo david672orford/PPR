@@ -43,7 +43,7 @@
 ** necessary portions of a Macintosh dual-mode font.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>

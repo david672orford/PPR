@@ -32,7 +32,7 @@
 ** Make modifications to the user database.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>

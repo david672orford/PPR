@@ -32,7 +32,7 @@
 ** CAP AppleTalk-implementation-dependent module for papd.
 ============================================================================*/
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <netat/appletalk.h>
 #include "cap_proto.h"			/* <-- prototypes CAP does not provide */

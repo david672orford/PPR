@@ -39,7 +39,7 @@
 ** It should not use any global variables.
 ============================================================================*/
 
-#include "before_system.h"
+#include "config.h"
 #include <signal.h>
 #include <unistd.h>
 #include <string.h>

@@ -1,12 +1,14 @@
-uprint-cancel.$(OBJ): uprint-cancel.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-lpc.$(OBJ): uprint-lpc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
-uprint-lp.$(OBJ): uprint-lp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-cancel.$(OBJ): uprint-cancel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
-uprint-lpq.$(OBJ): uprint-lpq.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-lp.$(OBJ): uprint-lp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
-uprint-lpr.$(OBJ): uprint-lpr.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-lpq.$(OBJ): uprint-lpq.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
-uprint-lprm.$(OBJ): uprint-lprm.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-lpr.$(OBJ): uprint-lpr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 
-uprint-lpstat.$(OBJ): uprint-lpstat.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+uprint-lprm.$(OBJ): uprint-lprm.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
+
+uprint-lpstat.$(OBJ): uprint-lpstat.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
 

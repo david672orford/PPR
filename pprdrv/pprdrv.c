@@ -34,7 +34,7 @@
 ** program.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>

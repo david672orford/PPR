@@ -36,7 +36,7 @@
  * may be required for access to printer ports.
  */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>

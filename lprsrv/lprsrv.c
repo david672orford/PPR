@@ -33,7 +33,7 @@
 ** There is also partial support for passing jobs to LPR.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>

@@ -39,7 +39,7 @@
 ** Programmer's Reference, NCR publication number D2-0678-A, November 1991.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <unistd.h>
 #include <string.h>

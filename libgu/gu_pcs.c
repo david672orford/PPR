@@ -40,7 +40,7 @@ be converted to C strings because C strings can't contain embedded NULLs.
 
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include "gu.h"

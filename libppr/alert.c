@@ -39,7 +39,7 @@
 ** buffer, so there is a limit on how long the alert message can be.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>

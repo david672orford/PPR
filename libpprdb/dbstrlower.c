@@ -18,7 +18,7 @@
 ** lower case.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <ctype.h>

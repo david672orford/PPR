@@ -18,7 +18,7 @@
 ** interfaces which can't call alert() directly.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include "gu.h"
 #include "global_defines.h"

@@ -33,7 +33,7 @@
 ** loading queue files into the array, and changing the status of jobs.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>

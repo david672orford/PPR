@@ -1,36 +1,36 @@
-pprd.$(OBJ): pprd.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/interface.h
+pprd.$(OBJ): pprd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/interface.h
 
-pprd_alert.$(OBJ): pprd_alert.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+pprd_alert.$(OBJ): pprd_alert.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
-pprd_destid.$(OBJ): pprd_destid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
+pprd_destid.$(OBJ): pprd_destid.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
 
-pprd_ipp.$(OBJ): pprd_ipp.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/pprd.h pprd.auto_h
+pprd_load.$(OBJ): pprd_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
 
-pprd_load.$(OBJ): pprd_load.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
+pprd_log.$(OBJ): pprd_log.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
-pprd_log.$(OBJ): pprd_log.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+pprd_mainsup.$(OBJ): pprd_mainsup.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h ../include/version.h
 
-pprd_mainsup.$(OBJ): pprd_mainsup.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h ../include/version.h
+pprd_media.$(OBJ): pprd_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
 
-pprd_media.$(OBJ): pprd_media.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
+pprd_nodeid.$(OBJ): pprd_nodeid.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
 
-pprd_nodeid.$(OBJ): pprd_nodeid.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
+pprd_ppop.$(OBJ): pprd_ppop.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h ../include/util_exits.h
 
-pprd_ppop.$(OBJ): pprd_ppop.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h ../include/util_exits.h
+pprd_pprdrv.$(OBJ): pprd_pprdrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h ../include/interface.h ../include/respond.h
 
-pprd_pprdrv.$(OBJ): pprd_pprdrv.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h ../include/interface.h ../include/respond.h
+pprd_printer.$(OBJ): pprd_printer.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
 
-pprd_printer.$(OBJ): pprd_printer.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h pprd.auto_h
+pprd_question.$(OBJ): pprd_question.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
-pprd_question.$(OBJ): pprd_question.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+pprd_queue.$(OBJ): pprd_queue.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h
 
-pprd_queue.$(OBJ): pprd_queue.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h ../include/respond.h
+pprd_remind.$(OBJ): pprd_remind.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
-pprd_remind.$(OBJ): pprd_remind.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+pprd_remote.$(OBJ): pprd_remote.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
 
-pprd_remote.$(OBJ): pprd_remote.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/pprd.h ./pprd.auto_h
+pprd_respond.$(OBJ): pprd_respond.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
 
-pprd_respond.$(OBJ): pprd_respond.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h ./pprd.auto_h
+pprd_state.$(OBJ): pprd_state.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
 
-pprd_state.$(OBJ): pprd_state.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/pprd.h pprd.auto_h
+pprd_ipp.$(OBJ): pprd_ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/pprd.h pprd.auto_h
 

@@ -28,7 +28,7 @@
 ** Last modified 14 November 2003.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <ctype.h>
 #ifndef HAVE_TERMIOS_H

@@ -38,7 +38,7 @@ of the input string, and %S which reads a word and allocates storage for it.
 
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <ctype.h>
 #include <string.h>
 #include "gu.h"

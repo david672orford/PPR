@@ -32,7 +32,7 @@
 ** This module contains header and trailer page generation code.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>

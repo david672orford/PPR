@@ -33,7 +33,7 @@
 ** the pipe to the interface.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/time.h>
 #include <sys/types.h>
 #include <stdlib.h>

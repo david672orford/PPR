@@ -33,7 +33,7 @@
 ** file or open it for reading by the caller.
 ===========================================================================*/
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>

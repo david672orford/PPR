@@ -35,7 +35,7 @@
 ** it currently contains explicit support only for Linux.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>

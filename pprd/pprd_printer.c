@@ -19,7 +19,7 @@
 ** this module calls pprdrv_start().
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <signal.h>
 #include "gu.h"
 #include "global_defines.h"

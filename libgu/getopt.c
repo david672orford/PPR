@@ -18,7 +18,7 @@
 ** can handle both POSIX-style switches and GNU-style long switches.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>

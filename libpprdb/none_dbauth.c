@@ -19,7 +19,7 @@
 ** in the account.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 

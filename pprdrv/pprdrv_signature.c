@@ -18,7 +18,7 @@
 ** If this position should be skipt on this pass, return -1.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"

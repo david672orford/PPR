@@ -50,7 +50,7 @@
 ** be replaced with a system of named parameters.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>

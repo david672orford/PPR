@@ -25,14 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 13 December 2004.
 */
 
 /*! \file
 	\brief construct filenames
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -122,17 +122,6 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 
 	*di = '\0';
 	va_end(va);
-
-	/* This is a hack for Cygnus Win32.  It changes the colons
-	   to exclaimation points because Win32 treats colons as
-	   the separator after the drive letter.  Since this hack makes
-	   the change when a queue file is created and when it is opened
-	   later, the system still works.
-	   */
-	#ifdef COLON_FILENAME_BUG
-	for(di=target; *di; di++)
-		if(*di == ':') *di = '!';
-	#endif
 	}
 
 /* end of file */

@@ -43,7 +43,7 @@
 **											   --> in_getc();
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <ctype.h>
 #include <string.h>
 #ifdef INTERNATIONAL

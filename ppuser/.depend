@@ -1,2 +1,2 @@
-ppuser.$(OBJ): ppuser.c ../include/before_system.h ../include/gu.h ../include/global_defines.h ../include/userdb.h ../include/util_exits.h
+ppuser.$(OBJ): ppuser.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h ../include/util_exits.h
 

@@ -28,7 +28,7 @@
 ** Last modified 7 April 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>

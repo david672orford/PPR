@@ -36,7 +36,7 @@
 ** information which ignores these issues.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>

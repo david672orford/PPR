@@ -18,7 +18,7 @@
 ** in the output stream and to turn N-Up on and off.
 */
 
-#include "before_system.h"
+#include "config.h"
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif

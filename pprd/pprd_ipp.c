@@ -39,7 +39,7 @@
  * we send SIGUSR1 to the ipp CGI to tell it that the response is ready.
  */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <errno.h>
 #include <sys/types.h>

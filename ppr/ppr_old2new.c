@@ -18,7 +18,7 @@
 ** format DSC comments (pre-3.0) to new format (3.0) comments.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>

@@ -37,7 +37,7 @@
 
 /* #define DEBUG 1 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

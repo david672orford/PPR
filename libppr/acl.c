@@ -32,7 +32,7 @@
 	\brief access control lists
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <grp.h>

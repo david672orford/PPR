@@ -29,7 +29,7 @@
 ** Last modified 3 May 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <stdlib.h>
 #include "gu.h"

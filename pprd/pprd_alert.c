@@ -19,7 +19,7 @@
 ** whenever a printer finishes a job (even if the job is arrested).
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>

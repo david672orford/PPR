@@ -33,7 +33,7 @@
 ** page printers.  This module contains the media database management routines.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <unistd.h>
 #include <string.h>
 #include <memory.h>

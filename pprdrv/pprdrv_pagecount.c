@@ -13,7 +13,7 @@
 ** Last modified 11 November 1999.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>

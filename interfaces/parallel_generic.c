@@ -45,7 +45,7 @@
 ** "PARALLEL=linux", then interface_linux.c will be used.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"

@@ -17,7 +17,7 @@
 ** This	 routine is used for log file data stamps.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <time.h>
 #include "gu.h"
 #include "global_defines.h"

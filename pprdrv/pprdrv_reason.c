@@ -35,7 +35,7 @@
 ** describe_postscript_error() which calls give_reason() itself.
 ===========================================================================*/
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>

@@ -22,7 +22,7 @@
 ** in incoming print jobs.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <sys/stat.h>
 #include <errno.h>

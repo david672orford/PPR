@@ -33,7 +33,7 @@
 ** and generates a file for Samba to include from smb.conf.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <errno.h>
 #include <dirent.h>

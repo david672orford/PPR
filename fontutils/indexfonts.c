@@ -28,7 +28,7 @@
 ** Last modified 5 November 2003.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

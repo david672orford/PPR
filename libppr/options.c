@@ -34,7 +34,7 @@
 ** is in the file foptions.c.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include <ctype.h>
 #ifdef INTERNATIONAL

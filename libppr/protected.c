@@ -19,7 +19,7 @@
 ** is defined, even if that charge is 0.00 monetary units.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/stat.h>
 #include <string.h>
 #include "gu.h"

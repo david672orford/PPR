@@ -32,7 +32,7 @@
 ** This module contains support for CAP AUFS authorization.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

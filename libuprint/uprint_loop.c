@@ -13,7 +13,7 @@
 ** Last modified 14 February 2000.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>

@@ -17,7 +17,7 @@
 ** Determine the amount of free disk space available to non-superusers.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <sys/types.h>
 #ifdef HAVE_STATVFS
 #include <sys/statvfs.h>

@@ -10,9 +10,7 @@
 #define PPR
 #ifdef PPR
 
-#define PASS1 1
-#include "sysdep.h"
-#undef PASS1
+#include "config.h"
 
 /* PPR doesn't use autoconf (yet). */
 #define NO_CONFIG_H

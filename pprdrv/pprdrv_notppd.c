@@ -34,7 +34,7 @@
 ** creates NonPPDFeature comments as described in Adobe Technical Note #????.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"

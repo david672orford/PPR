@@ -37,7 +37,7 @@
 ** tail_status() themselves and don't use this wrapper.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include "gu.h"
 #include "global_defines.h"

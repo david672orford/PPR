@@ -13,7 +13,7 @@
 ** Last modified 13 March 2002.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>

@@ -28,7 +28,7 @@
 ** Last modified 29 May 2004.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"

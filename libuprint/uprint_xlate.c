@@ -28,7 +28,7 @@
 ** Last modified 18 November 2003.
 */
 
-#include "before_system.h"
+#include "config.h"
 #include "gu.h"
 #include "uprint.h"
 #include "uprint_private.h"
