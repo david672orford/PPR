@@ -20,13 +20,13 @@ set -e
 case "$1" in
     configure)
 		if ! getent passwd ppr > /dev/null ; then
-			echo 'Adding system-user for exim (v4)' 1>&2
+			echo 'Adding system-user ppr' 1>&2
 			adduser --system --group --home /usr/lib/ppr --no-create-home \
 				--disabled-login --force-badname ppr > /dev/null
 			fi
 		if ! getent passwd pprwww > /dev/null ; then
-			echo 'Adding system-user for exim (v4)' 1>&2
-			adduser --system --group --home /usr/lib/ppr --no-create-home \
+			echo 'Adding system-user pprwww' 1>&2
+			adduser --system --ingroup ppr --home /usr/lib/ppr --no-create-home \
 				--disabled-login --force-badname pprwww > /dev/null
 			fi
 										
