@@ -8451,6 +8451,8 @@ line was being parsed twice.
   and skip blank lines.  Did a quick sweep of programs that use these 
   functions, made a few minor adjustments.  Everything looks ok.
 
+* pprpopup/ppr-popup: fixed to not throw error if ~/.ppr/pprpopup doesn't
+  exist yet.
 
 
 

@@ -1,7 +1,7 @@
 #! /usr/bin/env wish
 #
 # mouse:~ppr/src/pprpopup/ppr-popup
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 August 2002.
+# Last modified 12 March 2003.
 #
 
 package require Tcl 8.3
@@ -80,9 +80,14 @@ switch -glob -- $tcl_platform(platform) {
     * {
 	proc config_load {} {
 		global env
-		set f [open "$env(HOME)/.ppr/pprpopup" r]
-		set config [read $f]
-		close $f
+		set filename "$env(HOME)/.ppr/pprpopup"
+		if [ file exists $filename ] {
+			set f [open $filename r]
+			set config [read $f]
+			close $f
+		} else {
+			set config ""
+		}
 		return $config
 		}
 	proc config_save {config} {

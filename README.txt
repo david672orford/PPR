@@ -1,7 +1,7 @@
 ============================================================================
- mouse:~ppr/src/docs/misc/README.txt
- mouse:~ppr/src/README.txt (symbolic link)
- Last revised 7 March 2003.
+ mouse:~ppr/src/README.txt
+ mouse:~ppr/src/docs/misc/README.txt (symbolic link)
+ Last revised 11 March 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for

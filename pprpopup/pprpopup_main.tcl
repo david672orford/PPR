@@ -1,7 +1,7 @@
 #! /usr/bin/wish
 #
 # mouse:~ppr/src/pprpopup/pprpopup_main.tcl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@ Written by David Chappell"
 set help_contents_file "docs/pprpopup/"
 
 # This is the port that this server should listen on.  It would be nice
-# to get rid of this.
+# to get rid of this and have the port assigned dynamically, but Tcl
+# doesn't seem to support creating a server port without binding
+# it to a specific address.
 set server_port 15009
 
 # This is the seed for the token which the server must present for access.
@@ -45,7 +47,7 @@ if {[catch {set ppr_magic_cookie_seed [random_load]} errormsg]} {
     set ppr_magic_cookie_seed ""
     }
 
-# This is how often we re-register (in seconds).
+# This is how frequently we re-register (in seconds).
 set registration_interval 600
 
 # Set options in order to make the Macintosh version look more
@@ -122,7 +124,12 @@ if {$tcl_platform(platform) == "macintosh"} {
     set menu_accel_modifier "Alt"
     }
 
+#
 # Different operating systems need different id getting functions.
+# The ID is a piece of information that will be present in their print
+# jobs  that can be used to correlate specific jobs with specific
+# computers running PPR Popup.
+#
 switch -exact -- $tcl_platform(platform) {
     macintosh {
 	proc get_client_id {} {
