@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 September 2001.
+** Last modified 19 April 2002.
 */
 
 /*
@@ -613,11 +613,14 @@ int printer_show(const char *argv[])
 		char *f1, *f2, *f3;
 		if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
 		    {
-		    rip_from_ppd = TRUE;
-		    rip_name = gu_strdup(f1);
-		    rip_output_language = gu_strdup(f2);
-		    if((f3 = gu_strsep(&p, "\n")))
-			rip_options = gu_strdup(f3);
+		    if(!rip_name)		/* if not already read (possibly from printer config), */
+		    	{
+			rip_from_ppd = TRUE;
+			rip_name = gu_strdup(f1);
+			rip_output_language = gu_strdup(f2);
+			if((f3 = gu_strsep(&p, "\n")))
+			    rip_options = gu_strdup(f3);
+			}
 		    }
 		else
 		    {
