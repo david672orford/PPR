@@ -25,7 +25,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 15 December 2004.
+*% which was last revised 16 December 2004.
 *%
 #endif
 
@@ -255,19 +255,15 @@
 
 *OpenGroup: PrintQuality
 
-*OpenUI *Cluster: PickOne
-*OrderDependency 20 AnySetup *Cluster
-*Cluster Photo: "<< /ImageType (2) /MediaType (Coated) /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
-*CloseUI *Cluster
+*OpenUI *PrintoutMode: PickOne
+*OrderDependency 20 AnySetup *PrintoutMode
+*DefaultPrintoutMode: None
+*PrintoutMode: None: ""
+*PrintoutMode Photo: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 720] /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
+*PrintoutMode Photo2: "<< /ImageType (2) /MediaType (Coated) /HWResolution [1440 1440] /Quality (1440x1440hq2) /Dither (Adaptive) >> setpagedevice"
+*CloseUI: *PrintoutMode
 
-*OpenUI *Quality/Quality: PickOne
-*OrderDependency 20 AnySetup *Quality
-*DefaultQuality: 360dpi
-*Quality 360dpi:       "<< /Quality (360dpi) >> setpagedevice"
-*Quality 1440x1440hq2: "<< /Quality (1440x1440hq2) >> setpagedevice"
-*CloseUI: *Quality
-
-*OpenUI *MediaType: PickOne
+*OpenUI *MediaType/Media Type: PickOne
 *OrderDependency 10 AnySetup *MediaType
 *DefaultMediaType: Plain
 *MediaType Plain/Plain Paper: "<< /MediaType (Plain) >> setpagedevice"
@@ -288,19 +284,6 @@
 *MediaType Other: "<< /MediaType (Other) >> setpagedevice"
 *CloseUI: *MediaType
 
-*OpenUI *StpQuality/Print Quality: PickOne
-*OrderDependency: 5 AnySetup *StpQuality
-*DefaultStpQuality: Standard
-*StpQuality None/Manual Control: ""
-*StpQuality FastEconomy/Fast Economy: "<< /HWResolution [360 120] >> setpagedevice"
-*StpQuality Economy/Economy: "<< /HWResolution [360 240] >>setpagedevice"
-*StpQuality Draft/Draft: "<< /HWResolution [360 360] >> setpagedevice"
-*StpQuality Standard/Standard: "<< /HWResolution [720 360] >> setpagedevice"
-*StpQuality High/High: "<< /HWResolution [720 720] >> setpagedevice"
-*StpQuality Photo/Photo: "<< /HWResolution [1440 720] >> setpagedevice"
-*StpQuality Best/Best: "<< /HWResolution [2880 1440] >> setpagedevice"
-*CloseUI: *StpQuality
-
 *OpenUI *StpImageType/Image Type: PickOne
 *OrderDependency: 5 AnySetup *StpImageType
 *DefaultStpImageType: TextGraphics
@@ -316,16 +299,23 @@
 *OrderDependency: 20 AnySetup *Resolution
 *DefaultResolution: None
 *Resolution None/Automatic: ""
-*Resolution 360x120sw/360 x 120 DPI Economy:	"<</HWResolution[360 120]/cupsCompression 0>>setpagedevice"
-*Resolution 360x240sw/360 x 240 DPI Draft:	"<</HWResolution[360 240]/cupsCompression 1>>setpagedevice"
-*Resolution 360sw/360 DPI:	"<</HWResolution[360 360]/cupsCompression 2>>setpagedevice"
-*Resolution 720x360sw/720 x 360 DPI:	"<</HWResolution[720 360]/cupsCompression 3>>setpagedevice"
-*Resolution 720sw/720 DPI:	"<</HWResolution[720 720]/cupsCompression 4>>setpagedevice"
-*Resolution 1440x720sw/1440 x 720 DPI:	"<</HWResolution[1440 720]/cupsCompression 5>>setpagedevice"
-*Resolution 2880x720sw/2880 x 720 DPI:	"<</HWResolution[2880 720]/cupsCompression 6>>setpagedevice"
-*Resolution 1440x1440sw/1440 x 1440 DPI:	"<</HWResolution[1440 1440]/cupsCompression 7>>setpagedevice"
-*Resolution 2880x1440sw/2880 x 1440 DPI:	"<</HWResolution[2880 1440]/cupsCompression 8>>setpagedevice"
+*Resolution 360x120sw/360 x 120 DPI Economy: "<</HWResolution[360 120]>>setpagedevice"
+*Resolution 360x240sw/360 x 240 DPI Draft: "<</HWResolution[360 240]>>setpagedevice"
+*Resolution 360sw/360 DPI: "<</HWResolution[360 360]>>setpagedevice"
+*Resolution 720x360sw/720 x 360 DPI: "<</HWResolution[720 360]>>setpagedevice"
+*Resolution 720sw/720 DPI: "<</HWResolution[720 720]>>setpagedevice"
+*Resolution 1440x720sw/1440 x 720 DPI: "<</HWResolution[1440 720]>>setpagedevice"
+*Resolution 2880x720sw/2880 x 720 DPI: "<</HWResolution[2880 720]>>setpagedevice"
+*Resolution 1440x1440sw/1440 x 1440 DPI: "<</HWResolution[1440 1440]>>setpagedevice"
+*Resolution 2880x1440sw/2880 x 1440 DPI: "<</HWResolution[2880 1440]>>setpagedevice"
 *CloseUI: *Resolution
+
+*OpenUI *Quality/Quality: PickOne
+*OrderDependency 20 AnySetup *Quality
+*DefaultQuality: 360dpi
+*Quality 360dpi:       "<< /Quality (360dpi) >> setpagedevice"
+*Quality 1440x1440hq2: "<< /Quality (1440x1440hq2) >> setpagedevice"
+*CloseUI: *Quality
 
 *CloseGroup: PrintQuality
 

@@ -530,13 +530,16 @@ more information about RIPs and *pprRIP:.
 * uprint/uprint-lpc.8.pod: added
 
 
-1.53, 5 October 2004--13 December 2004.
+1.53, 5 October 2004--11 December 2004.
 
 * misc/ppr.lsm: removed
 
 * refman/ppr.1.pod: description if -R duplex:* clarified
 
 * ../INSTALL.txt: added section about CVS build requirements
+
+
+2.00a1, 11 December 2004--16 December 2004
 
 * refman/: removed references to papsrv.
 
