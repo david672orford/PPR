@@ -1474,7 +1474,7 @@ int printer_rip(const char *argv[])
 	return EXIT_SYNTAX;
 	}
 
-    if(argv[4])
+    if(argv[3] && argv[4])
     	{
 	fputs(_("Too many parameters.  Did you forget to quote the list of options?\n"), errors);
 	return EXIT_SYNTAX;
