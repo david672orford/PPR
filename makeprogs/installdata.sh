@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -61,15 +61,20 @@ while [ "$1" != "" ]
 	do
 	name=`basename "$1"`
 	if [ "$name" != "CVS" ]
-	then
-	dest="$DESTDIR/$name"
-	echo "    \"$1\" --> \"$dest\""
-	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
-	cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
-	chown $USER_PPR "$RPM_BUILD_ROOT$dest"
-	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dest"
-	chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1
-	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
+		then
+		dest="$DESTDIR/$name"
+
+		echo "    \"$1\" --> \"$dest\""
+		rm -f "$RPM_BUILD_ROOT$dest" || exit 1
+		cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
+
+		# This may fail during RPM build.  We don't care.
+		chown $USER_PPR "$RPM_BUILD_ROOT$dest" \
+			&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dest" 2>/dev/null
+
+		chmod 444 "$RPM_BUILD_ROOT$dest" || exit 1
+
+		echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 	fi
 	shift
 	done

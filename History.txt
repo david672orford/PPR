@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--1 August 2003.
+1.52, 24 July 2003--2 August 2003.
 
 Bug Fixes
 
@@ -8642,12 +8642,20 @@ Bug Fixes
   come away with the impression that the bad font had halted the indexing
   process.
 
+* z_install_begin/, makeprogs/, z_install_end/: fixed sundry build problems
+  which broke RPM building.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
 
 * libgu/gu_exceptions.c: added.  This is intended to eventually replace
   cexcept.h and libppr_exception().
+
+Misc. Removed Material
+
+* nonppr_misc/c2lib/mathvec.[ch]: Removed since we will not be doing 3D
+  graphics.
 
 Misc. Enhancements
 

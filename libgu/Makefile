@@ -75,7 +75,6 @@ LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	pcre_maketables.$(OBJ) \
 	pcre_study.$(OBJ) \
 	c2lib_hash.$(OBJ) \
-	c2lib_matvec.$(OBJ) \
  	c2lib_pool.$(OBJ) \
 	c2lib_pre.$(OBJ) \
 	c2lib_pstring.$(OBJ) \

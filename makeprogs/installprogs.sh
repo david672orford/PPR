@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 July 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -99,8 +99,7 @@ while [ "$1" != "" ]
 	# to leave the command to be executed by root later.
 	#
 	chown $USER "$RPM_BUILD_ROOT$dest" \
-		&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" \
-		&& chmod $MODE "$RPM_BUILD_ROOT$dest"
+		&& chgrp $GROUP "$RPM_BUILD_ROOT$dest"
 	if [ $? -ne 0 ]
 		then
 		if [ -f $MYDIR/../root.sh ]
@@ -117,6 +116,7 @@ while [ "$1" != "" ]
 			exit 1
 			fi
 		fi
+	chmod $MODE "$RPM_BUILD_ROOT$dest" || exit 1
 
 	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -54,20 +54,24 @@ if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
 while [ "$1" != "" ]
 	do
 	if [ "$name" != "CVS" ]
-	then
-	if [ ! -f "$RPM_BUILD_ROOT$1" ]
 		then
-		echo "$1 doesn't exist!"
-		exit 1
+		if [ ! -f "$RPM_BUILD_ROOT$1" ]
+			then
+			echo "$1 doesn't exist!"
+			exit 1
+			fi
+
+		# This may fail during RPM build.
+		echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
+		chown $USER_PPR "$RPM_BUILD_ROOT$1" \
+			&& chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1" 2>/dev/null
+
+		echo "  chmod 644 \"$1\""
+		chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
+
+		# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
+		echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 		fi
-	echo "  chown $USER_PPR:$GROUP_PPR \"$1\""
-	chown $USER_PPR "$RPM_BUILD_ROOT$1"
-	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$1"
-	echo "  chmod 644 \"$1\""
-	chmod 644 "$RPM_BUILD_ROOT$1" || exit 1
-	# Mustn't use quote marks around the file name, rpmbuild doesn't like it!
-	echo "%$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
-	fi
 	shift
 	done
 

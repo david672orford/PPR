@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 29 July 2003.
+# Last modified 2 August 2003.
 #
 
 #
@@ -39,15 +39,12 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 #============================================================================
 # This configures and builds the source.  The current directory is already
 # the root of the source code.
-#============================================================================
-%build
-
-# Use the new, experimental configure script since it can mostly run
-# non-interactively.
+#
 # Note: We have to work %_target_cpu in here somewhere.  Right now
 # it configures for the CPU it runs on.
+#============================================================================
+%build
 ./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --with-tdb
-
 make
 
 #============================================================================
@@ -58,6 +55,7 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
+touch root.sh
 RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 
 #============================================================================
@@ -75,6 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 
 #============================================================================
 # This is run before unpacking the cpio archive from the binary .rpm file.
+# This is similiar to what make install in z_install_begin/ does.
 #============================================================================
 %pre
 
@@ -85,17 +84,31 @@ rm -rf $RPM_BUILD_ROOT
 
 #============================================================================
 # This is run after unpacking the cpio archive from the binary .rpm file.
+# This is similiar to what make install in z_install_end/ does.
 #============================================================================
 %post
 
+# Any files in the PPR directories which aren't owned by root must be
+# supposed to be owned by the user ppr.  Make it so.
 find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -group 0 | xargs chown ppr:ppr
 
+# Initialize the binary media database.
 /usr/lib/ppr/bin/ppad media import /etc/ppr/media.sample >/dev/null
 
+# Install crontab.
+/usr/bin/crontab -u ppr - <<END
+3 10,16 * * 1-5 /usr/lib/ppr/bin/ppad remind
+5 4 * * * /usr/lib/ppr/lib/cron_daily
+17 * * * * /usr/lib/ppr/lib/cron_hourly
+END
+
+# Index fonts, PPD files, etc.
 /usr/lib/ppr/bin/ppr-index >/dev/null
 
+# Setup init scripts to start PPR daemons at boot.
 /sbin/chkconfig --add ppr
 
+# Start PPR daemons.
 /etc/rc.d/init.d/ppr start
 
 #============================================================================

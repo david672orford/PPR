@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 2 August 2003.
 #
 
 #=============================================================================
@@ -81,16 +81,18 @@ directory ()
 	echo "%dir \"$dir\"">>$fileslist
 	}
 
-# Create the top-level PPR directories.
+# Create the top-level PPR directories.  Note that we won't be able to change
+# owner and group if we are building an RPM package as a user other than
+# root or $USER_PPR.
 for dir in $CONFDIR $HOMEDIR $SHAREDIR $VAR_SPOOL_PPR
 	do
 	if [ ! -d $RPM_BUILD_ROOT$dir ]
 		then
 		mkdir -p $RPM_BUILD_ROOT$dir
 		fi
-	chown $USER_PPR $RPM_BUILD_ROOT$dir || exit 1
-	chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir || exit 1
-	chmod 755 $RPM_BUILD_ROOT$dir
+	chown $USER_PPR $RPM_BUILD_ROOT$dir #|| exit 1
+	chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir #|| exit 1
+	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	done 
 
 # We have to be more careful with this one since it is probably the 
@@ -101,7 +103,7 @@ if [ ! -d $RPM_BUILD_ROOT$TEMPDIR ]
 	mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
 	chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
 	chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
-	chmod 755 $RPM_BUILD_ROOT$dir
+	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
 	fi
 
 echo "%dir \"$HOMEDIR\"">>$fileslist
