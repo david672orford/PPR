@@ -295,7 +295,7 @@ after the documentation was moved into the PPR source tree on 12 November 1998.
   locations.
 
 
-1.50b1, 8 November 2002--16 December 2002.
+1.50b1, 8 November 2002--10 January 2003.
 
 * Removed completed items from TODO.txt.
 
@@ -307,4 +307,8 @@ more information about RIPs and *pprRIP:.
 * refman/ppop.1.pod: improved description of "ppop status" output.
 
 * pprhack/pprhack.sgml: split into multiple files.
+
+* refman/ppr-interfaces.8.pod: added usblp, put headings on options,
+  removed gs* interfaces.
+
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 January 2003.
+** Last modified 10 January 2003.
 */
 
 #include "before_system.h"
@@ -64,8 +64,6 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** printer to stdout.  It uses select() to allow it to copy in both directions
 ** simultaniously.
 **
-** The argument portfd must be a non-blocking file descriptor.
-**
 ** If the argument idle_status_interval is non-zero, then int_copy_job() will 
 ** send a control-T to the printer if the send buffer is empty and nothing has
 ** been sent for idle_status_interval seconds or more.
@@ -77,9 +75,9 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** to is called with the printer file descriptor as its lone argument once the
 ** last data block has been written.
 **
-** If the argument snmp_function is not a NULL pointert, then the function it
-** points to is called every snmp_status_interval seconds.  It is passed the 
-** pointer snmp_address.
+** If the argument status_function is not a NULL pointer, then the function it
+** points to is called every status_interval seconds.  It is passed the 
+** pointer status_address.
 **
 ** Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
 ** use of select() and non-blocking file descriptors.  He says that write()
@@ -125,7 +123,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
 ** 399-400.
 */
-void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*snmp_function)(void * snmp_address), void *snmp_address, int snmp_status_interval)
+void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*send_eoj_funct)(int fd), void (*status_function)(void * status_address), void *status_address, int status_interval)
     {
     char xmit_buffer[BUFFER_SIZE];	/* data going to printer */
     char *xmit_ptr = xmit_buffer;
@@ -140,20 +138,30 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     int last_stdin_read = 1;		/* how many bytes from stdin last time? */
     int selret;
     time_t time_next_control_t = 0;	/* time of next schedualed control-T (if not postponed) */
-    time_t time_next_snmp = 0;		/* time of next schedualed SNMP query */
+    time_t time_next_status = 0;	/* time of next schedualed status function call */
     struct timeval *timeout, timeout_workspace;
 
     DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
-    /* Set the printer port to O_NONBLOCK.  This is important because we don't
-       want to block if it can't accept BUFFER_SIZE bytes. */
+    /*
+    ** Set the printer port to O_NONBLOCK.  This is important because we don't
+    ** want to block if it can't accept BUFFER_SIZE bytes.
+    **
+    ** We could set stdin and stdout to O_NONBLOCK too, but they are much less
+    ** likely to block for an appreciatable period of time and we aren't
+    ** such if the code that prints %%[ ... ]%% messages can deal with a
+    ** non-blocking stdout.
+    */
     gu_nonblock(portfd, TRUE);
 
-    /* Initialize these to the current time to avoid premature triggering. */
+    /*
+    ** Initialize these timers to their first-fire times.  If we didn't, they
+    ** would fire as soon as we enter the loop.
+    */
     if(idle_status_interval > 0)
 	time_next_control_t = (time(NULL) + idle_status_interval);
-    if(snmp_status_interval > 0)
-        time_next_snmp = (time(NULL) + snmp_status_interval);
+    if(status_interval > 0)
+        time_next_status = (time(NULL) + status_interval);
 
     /*
     ** Copy stdin to the printer and from the printer to stdout.  Continue
@@ -206,9 +214,9 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	/* If we don't have data to write and have not already queued a 
 	   control-T, determine how long select() can block without 
 	   violating the idle_status_interval setting. */
-	if(time_next_control_t > 0 || time_next_snmp > 0)
+	if(time_next_control_t > 0 || time_next_status > 0)
 	    {
-	    time_t next_schedualed = time_next_control_t > 0 && (time_next_control_t < time_next_snmp || time_next_snmp <= 0) ? time_next_control_t : time_next_snmp;
+	    time_t next_schedualed = time_next_control_t > 0 && (time_next_control_t < time_next_status || time_next_status <= 0) ? time_next_control_t : time_next_status;
 	    next_schedualed -= time(NULL);
 	    DODEBUG(("remaining time before next schedualed action: %ld", (long)next_schedualed));
 	    if(next_schedualed < 0)
@@ -261,10 +269,10 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 		xmit_state = COPYSTATE_WRITING;
 		time_next_control_t = 0;		/* don't schedual another yet */
 		}
-	    if(time_next_snmp > 0 && time_now >= time_next_snmp)
+	    if(time_next_status > 0 && time_now >= time_next_status)
 		{
-		(*snmp_function)(snmp_address);
-		time_next_snmp = (time_now + snmp_status_interval);
+		(*status_function)(status_address);
+		time_next_status = (time_now + status_interval);
 		}
 	    continue;
 	    }

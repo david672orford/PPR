@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/interfaces/parallel.c
+** mouse:~ppr/src/interfaces/usblp.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -29,7 +29,7 @@
 */
 
 /*
-** PPR interface to drive a parallel printer.
+** PPR interface to drive a USB printer.
 */
 
 #include "before_system.h"
@@ -53,11 +53,10 @@
 #include "global_defines.h"
 #include "interface.h"
 #include "libppr_int.h"
-#include "parallel.h"
 
 /*
 ** Here we possible enable debugging.  The debuging output goes to
-** the file "/var/spool/ppr/logs/interface_parallel".
+** the file "/var/spool/ppr/logs/interface_usblp".
 */
 #if 0
 #define DEBUG 1
@@ -67,16 +66,21 @@
 #define DODEBUG(a)
 #endif
 
+struct OPTIONS {
+	int idle_status_interval;
+	int status_interval;
+	} ;
+
 /*
 ** Open the printer port.
 */
-static int open_parallel(void)
+static int connect_usblp(void)
     {
     struct stat statbuf;		/* buffer for stat on the port */
     int portfd;
     int open_flags;
 
-    DODEBUG(("open_parallel()"));
+    DODEBUG(("connect_parallel()"));
 
     /*
     ** Make sure the address we were given is a tty.
@@ -127,11 +131,6 @@ static int open_parallel(void)
 	    case ENFILE:
 	    	alert(int_cmdline.printer, TRUE, _("System open file table is full."));
 	    	int_exit(EXIT_STARVED);
-	    #ifdef ENOSR
-	    case ENOSR:
-	    	alert(int_cmdline.printer, TRUE, _("System is out of STREAMS."));
-	    	int_exit(EXIT_STARVED);
-	    #endif
 	    default:
 	    	alert(int_cmdline.printer, TRUE, _("Can't open \"%s\", errno=%d (%s)."), int_cmdline.address, errno, gu_strerror(errno));
 		int_exit(EXIT_PRNERR_NORETRY);
@@ -139,69 +138,15 @@ static int open_parallel(void)
     	}
 
     return portfd;
-    } /* end of open_parallel() */
+    } /* end of connect_parallel() */
 
 /*
 ** Explain why reading from or writing to the printer port failed.
 */
 static void printer_error(int error_number)
     {
-    /* Maybe we tried to read data back from a one-way port. */
-    if(error_number == EINVAL && int_cmdline.feedback)
-	{
-	alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-	}
-
-    /* Maybe we tried to read data back from a one-way printer. 
-       This error code was observed 2.4.18 with an HP DeskJet 500. */
-    if(error_number == EIO && int_cmdline.feedback)
-	{
-	alert(int_cmdline.printer, TRUE, _("Printer on \"%s\" does not support 2-way communication."), int_cmdline.address);
-	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-	}
-
     alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
     int_exit(EXIT_PRNERR);
-    }
-
-/*
-** This routine prints a LaserWriter-style description of the
-** error state returned by parallel_port_status().
-**
-** We print as many as apply since pprdrv can now deal with 
-** all of this information.
-**
-** If no error conditions are indicated, we say that the printer 
-** is busy.  That should prompt pprdrv to clear any previously
-** reported error conditions.
-*/
-static void describe_status(int s)
-    {
-    if(s == 0)
-	{
-	fputs("%%[ status: busy ]%%\n", stdout);
-	}
-    else if(s & PARALLEL_PORT_BUSY
-    		&& 
-    		(  s & PARALLEL_PORT_OFFLINE
-    		|| s & PARALLEL_PORT_PAPEROUT
-    		|| s & PARALLEL_PORT_FAULT
-    		   )
-    		)
-	{
-	fputs("%%[ PrinterError: printer disconnected or powered down ]%%\n", stderr);
-	}
-    else
-	{
-	if(s & PARALLEL_PORT_OFFLINE)
-            fputs("%%[ PrinterError: off line ]%%\n", stdout);
-	if(s & PARALLEL_PORT_PAPEROUT)
-            fputs("%%[ PrinterError: out of paper ]%%\n", stdout);
-	if(s & PARALLEL_PORT_FAULT)
-            fputs("%%[ PrinterError: miscellaneous error ]%%\n", stdout);
-	}
-    fflush(stdout);
     }
 
 /*
@@ -210,7 +155,6 @@ static void describe_status(int s)
 */
 static void status_function(void *p)
     {
-    describe_status(parallel_port_status(*(int*)p));
     }
 
 /*
@@ -225,9 +169,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 
     /* Set default values. */
     options->idle_status_interval = 0;
-    options->status_interval = 15;
-    options->reset_before = TRUE;
-    options->reset_on_cancel = FALSE;
+    options->status_interval = 0;
 
     /* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
     if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
@@ -257,28 +199,6 @@ static void parse_options(int portfd, struct OPTIONS *options)
 		break;
 	    	}
 	    }
-	else if(strcmp(name, "reset_before") == 0)
-	    {
-	    int answer;
-	    if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
-	    	{
-		o.error = N_("Value must be boolean");
-		retval = -1;
-		break;
-	    	}
-	    options->reset_before = answer ? TRUE : FALSE;
-            }
-	else if(strcmp(name, "reset_on_cancel") == 0)
-	    {
-	    int answer;
-	    if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
-	    	{
-		o.error = N_("Value must be boolean");
-		retval = -1;
-		break;
-	    	}
-	    options->reset_on_cancel = answer ? TRUE : FALSE;
-            }
 	else
 	    {
 	    o.error = N_("unrecognized keyword");
@@ -341,6 +261,7 @@ int main(int argc, char *argv[])
     	}
 
     /* Check for unusable codes settings. */
+    /* !!! Is the true for USB ??? */
     if(int_cmdline.codes == CODES_Binary)
     	{
 	alert(int_cmdline.printer, TRUE,
@@ -350,28 +271,11 @@ int main(int argc, char *argv[])
     	}
 
     /* Open the printer port and esablish default settings: */
-    portfd = open_parallel();
+    portfd = connect_usblp();
 
     /* Parse printer_options and set struct OPTIONS and
        printer port apropriately: */
     parse_options(portfd, &options);
-
-    /* Setup the options using OS-specific code. */
-    parallel_port_setup(portfd, &options);
-
-    /* Make sure the printer is ready. */
-    {
-    int s;
-    if((s = parallel_port_status(portfd)) & ~PARALLEL_PORT_BUSY)
-	{
-	describe_status(s);
-    	int_exit(EXIT_ENGAGED);
-    	}
-    }
-
-    /* Possibly do a reset. */
-    if(options.reset_before)
-    	parallel_port_reset(portfd);
 
     /* Read the job data from stdin and send it to portfd. */
     int_copy_job(portfd,
@@ -382,8 +286,6 @@ int main(int argc, char *argv[])
 	(void*)&portfd,
 	options.status_interval);
 
-    DODEBUG(("closing port"));
-    parallel_port_cleanup(portfd);
     close(portfd);
 
     DODEBUG(("sucessful completion"));

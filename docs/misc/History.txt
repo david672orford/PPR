@@ -8069,8 +8069,28 @@ line was being parsed twice.
   stdout is a pipe and if the write size is less than PIPE_BUF but bigger
   than the available space, write() may decline it even though select()
   says the descriptor is ready for writing.  Added check for EAGAIN to
-  read from stdin (just to be paranoid).
+  read from stdin (just to be paranoid).  Added code to set stdin and
+  stdout to non-blocking mode.
 
 * www/cgi_tabbed.pl, cgi_wizard.pl, show_jobs.cgi.perl: Added alt="" to spacer
   images.
+
+* README.txt: brought up to date.
+
+* interfaces/parallel.c,parallel_linux.c: added status_interval=. 
+  Unfortunately its seems that the Linux parallel port driver doesn't
+  support non-blocking IO.  Also added code to attempt to detect
+  if the printer is powered down by watching the busy line.  Added
+  case to interpret EIO as an attempt to read from a unidirectional 
+  printer.  (EINVAL was already interpreted as an attempt to read from
+  a unidirectional port.)  Removed EIO explaination "Hangup or other
+  error while trying to opening "X"" as it seemed to make no sense
+  for parallel ports.  Renamed int_connect_parallel() to open_parallel().
+  Marked open_parallel() error messages for i18n.
+
+* interfaces/serial.c: Marked open_port() messages for i18n.
+
+* interfaces/usblp.c: added.
+
+
 

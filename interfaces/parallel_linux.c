@@ -1,16 +1,37 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel_linux.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 18 June 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 10 January 2003.
+*/
+
+/*
+** This is parallel_generic.c with the functions filled in with
+** Linux-specific code.  The necessary information was found
+** in the lp(4) man page.
 */
 
 #include "before_system.h"
@@ -18,11 +39,12 @@
 #include <sys/ioctl.h>
 #include <linux/lp.h>
 #include <unistd.h>
-#ifndef LP_SELECD
+#ifndef LP_PSELECD
 #warning "Your linux/lp.h file is buggy, compensating!"
-#define LP_POUTPA	0x20
-#define LP_PSELECD	0x10
 #define LP_PERRORP	0x08
+#define LP_PSELECD	0x10
+#define LP_POUTPA	0x20
+#define LP_PBUSY	0x80
 #endif
 #include "gu.h"
 #include "global_defines.h"
@@ -47,17 +69,6 @@ static void sigterm_handler(int sig)
 */
 void parallel_port_setup(int fd, const struct OPTIONS *options)
     {
-    /*
-       Oddly, setting it to 0 is supposed to turn this option on.
-       My examination of the Linux 2.1.128 code suggests this is
-       wrong.
-
-       The careful feature requires out-of-paper, online, no-error to
-       be favourable
-       before sending a character.  It is obsolete in Linux 2.2.x.
-    */
-    /*ioctl(fd, LPCAREFUL, 1);*/
-
     if(options->reset_on_cancel)
     	{
 	printer_fd = fd;
@@ -79,7 +90,15 @@ void parallel_port_reset(int fd)
 ** This routine reports on the state of the ONLINE, PAPEROUT
 ** and FAULT lines in the parallel cable.  It should return
 ** an integer which is the total of all the PARALLEL_PORT_*
-** value that apply.
+** value that apply:
+**
+** PARALLEL_PORT_OFFLINE
+** PARALLEL_PORT_PAPEROUT
+** PARALLEL_PORT_FAULT
+** PARALLEL_PORT_BUSY
+**
+** The raw parallel port signals should be returned.  Don't try
+** guess what they might mean.  That is done in parallel.c.
 */
 int parallel_port_status(int fd)
     {
@@ -93,6 +112,8 @@ int parallel_port_status(int fd)
     	status |= PARALLEL_PORT_PAPEROUT;
     if(!(raw_status & LP_PERRORP))		/* error input, active low */
     	status |= PARALLEL_PORT_FAULT;
+    if(!(raw_status & LP_PBUSY))		/* helps to detect turned off printers */
+	status |= PARALLEL_PORT_BUSY;
 
     return status;
     }
@@ -108,4 +129,3 @@ void parallel_port_cleanup(int fd)
     }
 
 /* end of file */
-

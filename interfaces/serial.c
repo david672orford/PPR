@@ -143,14 +143,8 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 	switch(errno)
 	    {
 	    case EACCES:
-	    	alert(int_cmdline.printer, TRUE, "Access to port \"%s\" is denied.", printer_address);
+	    	alert(int_cmdline.printer, TRUE, _("Access to port \"%s\" is denied."), printer_address);
 		int_exit(EXIT_PRNERR_NORETRY_ACCESS_DENIED);
-	    case EIO:
-	    	alert(int_cmdline.printer, TRUE, "Hangup or other error while opening \"%s\".", printer_address);
-		int_exit(EXIT_PRNERR);
-	    case ENFILE:
-	    	alert(int_cmdline.printer, TRUE, "System open file table is full.");
-	    	int_exit(EXIT_STARVED);
 	    case ENOENT:	/* file not found */
 	    case ENOTDIR:	/* path not found */
 	    	alert(int_cmdline.printer, TRUE, "The port \"%s\" does not exist.", printer_address);
@@ -158,6 +152,12 @@ static int open_port(const char *printer_name, const char *printer_address, stru
 	    case ENXIO:
 	    	alert(int_cmdline.printer, TRUE, "The device file \"%s\" exists, but the device doesn't.", printer_address);
 		int_exit(EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS);
+	    case EIO:
+	    	alert(int_cmdline.printer, TRUE, _("Hangup or other error while opening \"%s\"."), printer_address);
+		int_exit(EXIT_PRNERR);
+	    case ENFILE:
+	    	alert(int_cmdline.printer, TRUE, _("System open file table is full."));
+	    	int_exit(EXIT_STARVED);
 	    #ifdef ENOSR
 	    case ENOSR:
 	    	alert(int_cmdline.printer, TRUE, "System is out of STREAMS.");

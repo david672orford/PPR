@@ -72,6 +72,14 @@ void parallel_port_reset(int fd)
 ** and FAULT lines in the parallel cable.  It should return
 ** an integer which is the total of all the PARALLEL_PORT_*
 ** value that apply.
+**
+** PARALLEL_PORT_OFFLINE
+** PARALLEL_PORT_PAPEROUT
+** PARALLEL_PORT_FAULT
+** PARALLEL_PORT_BUSY
+**
+** The raw parallel port signals should be returned.  Don't try
+** guess what they might mean.  That is done in parallel.c.
 */
 int parallel_port_status(int fd)
     {
