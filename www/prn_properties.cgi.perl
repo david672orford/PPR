@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 26 April 2002.
+# Last modified 31 July 2002.
 #
 
 use lib "?";
@@ -231,7 +231,7 @@ my $tabbed_table = [
 		print "<p>";
 		labeled_select("rip_name", _("Raster Image Processor:"),
 			"", cgi_data_move("rip_name", undef),
-			"", "gs", "ppr-gs");
+			"", "gs", "ppr-gs", "ppr-gs-cups");
 
 		print "<p>";
 		labeled_select("rip_output_language", _("Output Language:"),
