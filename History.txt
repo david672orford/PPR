@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--23 July 2003.
+1.51, 15 February 2003--24 July 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8280,7 +8280,7 @@ line was being parsed twice.
 * papsrv/papsrv-kill.sh: removed, added to fixup/fixup_obsolete.sh.
 
 * pprd/: removed code to create /var/spool/ppr directories on startup.  It
-  wasn't being maintained (because it was forgotton).  It would be better
+  wasn't being maintained (because it was forgotten).  It would be better
   combined with fixup_perms.sh or with the Init script.  Interestingly,
   this code was the source of a longstanding problem with the mode of the
   log directory mysteriously changing from 775 to 755.
@@ -8441,7 +8441,7 @@ line was being parsed twice.
 * lprsrv/olprsrv.c,lprsrv_print.c: same ID business, plus added missing
   paranoid attempt to setuid(0) (which is what caught the above problem).
 
-* makeprogs/readlink.c: added and changed installln.sh to use instead of
+* makeprogs/readlink.c: added and changed installln.sh to use it instead of
   (probably nonexistent) system version.
 
 * z_install_end/install_bin_links.sh: added ppr-panel.
@@ -8487,8 +8487,7 @@ line was being parsed twice.
 * libppr/destinfo.c: added code to handle aliases and to return the PPD file
   for the first printer in the case of groups.
 
-* added tests/test-pprdrv/300-custom-hook.* and
-  tests/tools/test_custom_hook.
+* added tests/test-pprdrv/300-custom-hook.* and tests/tools/test_custom_hook.
 
 * pprdrv/pprdrv_ppop_status.c: fixed erronious display of PJL CODE2=0 as
   important.
@@ -8572,7 +8571,7 @@ line was being parsed twice.
 
 * www/: minor style fixes for buttons.
 
-* ppad/ppad_printer.c: changed human-readable ppad show output to better group 
+* ppad/ppad_printer.c: changed human-readable "ppad show" output to better group 
   things by category and to indent second and subsequent lines of logical
   groups.
 
@@ -8604,6 +8603,17 @@ line was being parsed twice.
   when lpr or lp is invoked from Acroread 5.0 for Linux.  The reason is
   unclear.
 
+* ppop/ppop_cmds_other.c: changed "ppop status" to suppress the display of
+  the basic SNMP-style status (such as "operational, idle") if the queue
+  is idle (since in such a case the current status of the actual printer
+  is unknown).
+
+* pprd/pprd_respond.c: changed jobname fed to responder to short format.
+
+* pprdrv/pprdrv_ppop_status.c:handle_ustatus_device(): added code to clear
+  SNMP-style fault bits when the code isn't repeated in the next PJL USTATUS
+  message.
+
 
 
 +++++++++++++++++++++
@@ -8620,7 +8630,7 @@ TODO
 
 * Create Debian package
 
-* Add queue aliases support to ppr2samba.
+* Add queue aliases support to ppr2samba (or added PPR support to Samba)
 
 * Finish support for automatic driver download in Samba 2.2.x.
 
@@ -8652,11 +8662,4 @@ TODO
 
 * Decide how pprd should handle the matter of the hostname changing due
   to dial-up networking.
-
-* ppop/ppop_cmds_other.c: changed "ppop status" to suppress the display of
-  the basic SNMP-style status (such as "operational, idle") if the queue
-  is idle (since in such a case the current status of the actual printer
-  is unknown).
-
-* pprd/pprd_respond.c: changed jobname fed to responder to short format.
 

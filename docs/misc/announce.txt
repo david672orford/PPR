@@ -1,14 +1,14 @@
-14 February 2003
+24 July 2003
 
 This is announce.txt from:
 
-ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50.tar.gz
-http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.50.tar.gz
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.51.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.51.tar.gz
 
 
 ==========================================================================
 
-Version 1.50 of PPR has been released.
+Version 1.51 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -24,88 +24,63 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 
 ==========================================================================
- New in this Release (Since 1.44)
+ New in this Release (Since 1.50)
 ==========================================================================
 
-* Greatly improved Ghostscript integration.  This includes automatic 
-  configuration to invoke Ghostscript when appropriate PPD files (supplied
-  with PPR or CUPS) are used.  The printer interface wrapper programs with
-  names begining with "gs" are now obsolete.  (This code existed in 1.44
-  in experimental form, but with this release it is brought to usable form.)
-  See "Installing and Using PPR" and the "ppad rip" command in the ppad(8)
-  manpage for details.
+* Reduced use of setUID programs, especially of setUID root programs.
 
-* Marked many more program messages for internationalization.
+* Reimplemented ppr-passwd so it no longer depends on Apache's htpasswd.
 
-* Created additional error codes which the printer interface programs can
-  use to provide a machine-readable, internationalizable characterization
-  of a printer fault (in addition to the human readable messages they have
-  always logged to the printer alerts file.  This new information is reported 
-  by "ppop status" when it shows that a printer is in a fault state.  These
-  include messages for access denied, printer not responding, printer doesn't
-  exist, and bad interface setttings.  If an interface program exists with
-  one of the old, non-specific fault codes, ppop status will now suggest
-  that the user use ppop alerts to examine the alerts log.
+* Simplified the build process, eliminating the "fixup" step.
 
-* Refined the improved reporting of SNMP-style printer status in the
-  "ppop status" output which was introduced in version 1.44.
+* Fixed bug which prevented the printing of banner pages for jobs without 
+  job log files.
 
-* Rewrote confusing error messages to make them more inteligible.
+* Added code so that the Manualfeedtimeout and JobTimeout values set with
+  "ppad userparams" take effect on level 2 PostScript printers too. 
 
-* Vastly improved the PPR Popup program for computer lab printing.  PPR Popup
-  now works on Macintosh computers.
+* Added ppr-index command as the front end for index generation.  The separate
+  commands, such as ppr-indexfonts, and ppr-indexppds have become backend 
+  programs that are run by ppr-index.
 
-* Fixed bugs which sometimes caused N-Up printing to fail.
+* Added support for a "meta responder".  When using a meta responder, the
+  user uses the ppr-followme command to register a responder method and
+  address which can be used to contact him.  The ppr-followme command can be
+  used to change this registration at any time.  This greatly simplifies
+  things for X-Windows users since they no longer have to set environment
+  variables such as PPR_RESPONDER in their windowing systme startup scripts.
+  All they need to do is run ppr-responder and since the meta responder is
+  the default, their print job message will get to them.  See the
+  ppr-followme(1) manpage and the -m switch section in the ppr(1) manpage for
+  details.
 
-* Added --stop option to pprd and papsrv.  This simplifies the shutdown
-  procedure as described in "Installing and Using PPR".  It also eliminates
-  the need for a separate papsrv_kill script.
+* Made the new Configure script the default one.  The old one is still
+  available as Configure_old.
 
-* Fixed a problem which on rare ocasions would caused a job to silently fail
-  to make it into the queue until next time pprd was restarted.
+* Added support for gzip compressed PPD files.
 
-* Fixed numberous bugs, including bugs which caused spooler crashes,
-  needlessly unprintable job, queue hangs, and other unpleasantness.
+* Improved ppr-panel (a Perl/Tk interface to PPR).  These improvements
+  include the addition of a print dialog so that it can be used as a drag-
+  and-drop target for printing files in desktop environments such as KDE.
 
-* Filled in the gaps and smoothed the rough edges off of the web interface
-  which was introduced in version 1.44.  With this release, the web
-  interface status changes from experimental to stable.  The web interface
-  now includes a wizard to help with configuring Unix clients to print to
-  a PPR server.
+* Converted the tab stops in the source code from every 8 columns to every
+  4 columns.
 
-* Added support for the AppSocket TCP printing protocol to the tcpip
-  interface program (in addition to the existing support for SocketAPI).
+* Added "socketapi", "appsocket", and "jetdirect" as aliases for the tcpip
+  interface.  Some of them have different default options.
 
-* PPR now recognizes and properly handles multiple copies requests from the 
-  Adobe PostScript driver for Microsoft Windows.
+* Added "pros" interface for Axis print servers (this may still need
+  debugging).
 
-* Made filters automatically aware of ppr command line options such as 
-  -F "*Duplex=DuplexNoTumble".  Users should find this behavior much more 
-  intuitive.
+* Changed human-readable "ppad show" output to better group things by
+  category and to indent second and subsequent lines of logical groups.
 
-* Added a cut-down version of the Tcl 7.3 interpreter.  In the future
-  gettext support will be added and Borne shell scripts will gradually
-  be replaced with Tcl scripts.
+* More web interface fixes to suppress spurious Perl 5.8.0 warnings.
 
-* Added support for printing ranges of pages rather than the whole document.
+* Corrected sorting of AppleTalk names in the added printer wizard.
 
-* Fixed incompatibilities with Perl 5.6 and 5.8.
-
-* Added a --features option to the ppr command.  This prints a list of the
-  printer features which may be controled with the -F (--feature) option.
-  So far this works only for individual printers and not for groups.
-
-* Added preliminary support for Samba 2.2.x driver download.  Unfortunately,
-  this is still not easy to set up.
-
-* UPRINT now understands the slightly odd /etc/printcap files generated by
-  system management tools in RedHat Linux.
-
-* Added an experimental new configure script called Configure_new.
-
-* Added a program called ppr-web-control which selects the best web browser
-  for its purpose and opens the PPR Control Panel (part of the web
-  interface).
+* Refined the reporting of printer status by "ppad status", especially for
+  status derived from PJL USTATUS messages.
 
 
 ==========================================================================

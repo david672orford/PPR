@@ -1,0 +1,216 @@
+#! /bin/sh
+#
+# Make sure PPD *Include works correctly.
+#
+
+$HOMEDIR/bin/ppad ppd regression-test1 "HP LaserJet 4000 Series"
+echo "ppad: $?"
+
+$TESTBIN/clear_output
+
+$HOMEDIR/bin/ppr -d regression-test1 -m none -u yes <<EndOfSample
+%!PS-Adobe-3.0
+%%LanguageLevel: 2
+
+%%BeginSetup
+% These should become %%IncludeResource: font
+%%IncludeFont: AvantGarde-Book
+%%IncludeFont: AvantGarde-BookOblique
+%%IncludeFont: AvantGarde-Demi
+%%IncludeFont: AvantGarde-DemiOblique
+%%IncludeFont: Bookman-Demi
+%%IncludeFont: Bookman-DemiItalic
+%%IncludeFont: Bookman-Light
+%%IncludeFont: Bookman-LightItalic
+%%IncludeFont: Courier
+%%IncludeFont: Courier-Bold
+%%IncludeFont: Courier-BoldOblique
+%%IncludeFont: Courier-Oblique
+%%IncludeFont: Helvetica
+%%IncludeFont: Helvetica-Bold
+%%IncludeFont: Helvetica-BoldOblique
+%%IncludeFont: Helvetica-Narrow
+%%IncludeFont: Helvetica-Narrow-Bold
+%%IncludeFont: Helvetica-Narrow-BoldOblique
+%%IncludeFont: Helvetica-Narrow-Oblique
+%%IncludeFont: Helvetica-Oblique
+%%IncludeFont: NewCenturySchlbk-Bold
+%%IncludeFont: NewCenturySchlbk-BoldItalic
+%%IncludeFont: NewCenturySchlbk-Italic
+%%IncludeFont: NewCenturySchlbk-Roman
+%%IncludeFont: Palatino-Bold
+%%IncludeFont: Palatino-BoldItalic
+%%IncludeFont: Palatino-Italic
+%%IncludeFont: Palatino-Roman
+%%IncludeFont: Symbol
+%%IncludeFont: Times-Bold
+%%IncludeFont: Times-BoldItalic
+%%IncludeFont: Times-Italic
+%%IncludeFont: Times-Roman
+%%IncludeFont: ZapfChancery-MediumItalic
+%%IncludeFont: ZapfDingbats
+%%EndSetup
+
+%%Page: 1 1
+
+%%IncludeFeature: *FileVersion
+
+%%IncludeFeature: *FormatVersion
+
+%%IncludeFeature: *PCFileName
+
+%%IncludeFeature: *ModelName
+
+%%IncludeFeature: *ShortNickName
+
+%%IncludeFeature: *NickName
+
+%%IncludeFeature: *Product
+
+%%IncludeFeature: *Manufacturer
+
+%%IncludeFeature: *PSVersion
+
+%%IncludeFeature: *LanguageLevel
+
+%%IncludeFeature: *Throughput
+
+%%IncludeFeature: *SuggestedJobTimeout
+
+%%IncludeFeature: *SuggestedWaitTimeout
+
+% This one should be empty
+%%IncludeFeature: *MediaType None
+
+%%IncludeFeature: *MediaType Plain
+
+%%IncludeFeature: *MediaType Letterhead
+
+%%IncludeFeature: *Collate True
+
+%%IncludeFeature: *Collate False
+
+%%IncludeFeature: *Smoothing True
+
+%%IncludeFeature: *Smoothing False
+
+%%IncludeFeature: *JCLBegin
+
+%%IncludeFeature: *JCLToPSInterpreter
+
+%%IncludeFeature: *JCLEnd
+
+%%IncludeFeature: *JCLResolution 300dpi
+
+%%IncludeFeature: *JCLResolution 600dpi
+
+%%IncludeFeature: *JCLEconomode False
+
+%%IncludeFeature: *JCLEconomode True
+
+%%IncludeFeature: *Option1 True
+
+%%IncludeFeature: *Option1 False
+
+%%IncludeFeature: *InstalledMemory 4MB
+
+%%IncludeFeature: *InstalledMemory 8MB
+
+%%IncludeFeature: *FreeVM
+
+%%IncludeFeature: *VMOption 4MB
+
+%%IncludeFeature: *VMOption 8MB
+
+%%IncludeFeature: *PageSize Letter
+
+%%IncludeFeature: *PageSize Legal
+
+%%IncludeFeature: *PageSize A4
+
+%%IncludeFeature: *PageRegion Letter
+
+%%IncludeFeature: *PageRegion Legal
+
+%%IncludeFeature: *PageRegion A4
+
+%%IncludeFeature: *ImageableArea Letter
+
+%%IncludeFeature: *ImageableArea Legal
+
+%%IncludeFeature: *ImageableArea A4
+
+%%IncludeFeature: *PaperDimension Letter
+
+%%IncludeFeature: *PaperDimension Legal
+
+%%IncludeFeature: *PaperDimension A4
+
+%%IncludeFeature: *MaxMediaWidth
+
+%%IncludeFeature: *MaxMediaHeight
+
+%%IncludeFeature: *CustomPageSize True
+
+%%IncludeFeature: *InputSlot Upper
+
+%%IncludeFeature: *InputSlot Middle
+
+%%IncludeFeature: *InputSlot Lower
+
+%%IncludeFeature: *ScreenFreq
+
+%%IncludeFeature: *ScreenAngle
+
+%%IncludeFeature: *ResScreenFreq 300dpi
+
+%%IncludeFeature: *ResScreenAngle 300dpi
+
+%%IncludeFeature: *ResScreenFreq 600dpi
+
+%%IncludeFeature: *ResScreenAngle 600dpi
+
+%%IncludeFeature: *ResScreenFreq 1200dpi
+
+%%IncludeFeature: *ResScreenAngle 1200dpi
+
+%%IncludeFeature: *ScreenProc HPEnhanced
+
+%%IncludeFeature: *ScreenProc Dot
+
+%%IncludeFeature: *ScreenProc Line
+
+%%IncludeFeature: *ScreenProc Ellipse
+
+%%IncludeFeature: *Transfer Null
+
+%%IncludeFeature: *Transfer Null.Inverse
+
+%%IncludeFeature: *Duplex None
+
+%%IncludeFeature: *Duplex DuplexNoTumble
+
+%%IncludeFeature: *Duplex DuplexTumble
+
+%%IncludeFeature: *?Duplex
+
+%%IncludeFeature: *Password
+
+%%IncludeFeature: *ExitServer
+
+%%IncludeFeature: *Reset
+
+% ============ These shouldn't work =============
+%%IncludeFeature: *Message
+%%IncludeFeature: *Status
+%%IncludeFeature: *PrinterError
+%%IncludeFeature: *Source
+
+%%EOF
+EndOfSample
+
+echo "ppr: $?"
+
+$TESTBIN/cat_output
+
+exit 0

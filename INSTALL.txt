@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 12 March 2003.
+ Last revised 24 July 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -53,9 +53,9 @@ version of PPR is still considered experimental.
 7) TDB <http://sourceforge.net/projects/tdb/>
    (Which may be obtained from <http://sourceforge.net/projects/tdb/>.)
 
-With the exception of the last, all of these items are probably already
-installed on Linux systems.  For other systems, you should check first.  The
-version of GCC may be determined with the command "gcc -v".
+With the exception of TDB, all of these items are probably already installed
+on Linux systems.  For other systems, you should check first.  The version
+of GCC may be determined with the command "gcc -v".
 
 While Perl is not absolutely required to use PPR, it is strongly recomended
 that you install Perl 5.005 or later. If you do not have Perl, the following
@@ -284,6 +284,18 @@ If your X-Windows distribution does not include xmessage, but you have Tcl/Tk,
 then you can install the xmessage clone from the misc/ directory.  You should
 probably put it in the /usr/bin/X11 directory.  This script is not a perfect
 clone but it is good enough for PPR's purposes
+
+=============================================================================
+ Notes for MacOS X
+=============================================================================
+
+The MacOS port is preliminary.  In particular, the code in
+z_install_begin/install_create_accounts.sh that creates the accounts ppr and
+pprwww assigns them the ids 100 and 101 respectively.  It does not check to
+see if these ids are already in use.  A patch to fix this would be welcome.
+
+There is no AppleTalk support on MacOS X.  If anyone knows how to link to
+the AppleTalk libraries, that would be very helpful.
 
 =============================================================================
  Simple Compiling Instructions

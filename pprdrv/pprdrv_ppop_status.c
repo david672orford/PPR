@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 March 2003.
+** Last modified 23 July 2003.
 */
 
 #include "before_system.h"
@@ -721,7 +721,6 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 		{code2, message2, FALSE}
 		};
 	
-
 	DODEBUG_FEEDBACK(("%s(online=%d, code=%d, message[]=\"%s\", code2=%d, message2[]=\"%s\")", function, (int)online, code, message, code2, message2));
 
 	/*
@@ -731,18 +730,14 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 	** debugging.
 	**
 	** The codes themselves are looked up in pjl-messages.conf.  We use the
-	** translate_pjl_messages() function to do this.  It returns a category
-	** (0 printer status, 1 printer error, 2 PJL error) and a numberic code.
-	** For printer status the code is the SNMP status number.  For printer
-	** errors it is the SNMP hrDetectedErrorState bit value to which the message
-	** cooresponds.  For PJL errors the returned code has no meaning.
+	** translate_pjl_messages() function to do this.
 	*/
 	for(i=0 ; i<2; i++)
 		{
 		int hrDeviceStatus, hrPrinterStatus, hrPrinterDetectedErrorState;
 		const char *details;
 
-		/* The code will be zero if the printer didn't send one. */
+		/* The code will be zero if the printer didn't send one, so do nothing. */
 		if(ustatus[i].code == 0)
 			{
 			ustatus[i].understood = TRUE;
@@ -787,17 +782,6 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 			}
 		}
 
-	/* Copy this into the record as raw PJL status information. */
-	ppop_status.pjl_status.online = online;
-
-	ppop_status.pjl_status.important = !ustatus[0].understood;
-	ppop_status.pjl_status.code = ustatus[0].code;
-	gu_StrCopyMax(ppop_status.pjl_status.message, sizeof(ppop_status.pjl_status.message), ustatus[0].message);
-
-	ppop_status.pjl_status.important2 = !ustatus[1].understood;
-	ppop_status.pjl_status.code2 = ustatus[1].code;
-	gu_StrCopyMax(ppop_status.pjl_status.message2, sizeof(ppop_status.pjl_status.message2), ustatus[1].message);
-
 	/*
 	** Use the "ONLINE=" from the PJL message to set the hrPrinterDetectedErrorState
 	** bit for "offline" (DES_offline, bit 6).
@@ -817,13 +801,52 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 		snmp_bits[DES_offline].last_news = time_now;	/* update record of when last known to be offline */
 		}
 
-	/* Flush the changes to ppop. */
+    /*
+    ** Clear any hrPrinterDetectedErrorState bits that weren't re-asserted in this message.
+    ** Things such as "paper low" have been observed to appear as code2 with code2
+    ** disappearing when the condition is gone.
+    */
+    for(i=0; i < SNMP_BITS; i++)
+    	{
+		if(snmp_bits[i].start > 0 && snmp_bits[i].last_news < time_now)
+			{
+			snmp_bits[i].start = 0;
+			snmp_bits[i].last_news = 0;
+			}
+    	}
+
+	/*
+	** Copy this into the record as raw PJL status information.  Note that this
+	** block of code must come _after_ the loop that translates PJL codes to
+	** SNMP codes since it sets the .important member for codes that weren't
+	** recognized in the loop.
+	*/
+	ppop_status.pjl_status.online = online;
+
+	ppop_status.pjl_status.important = !ustatus[0].understood;
+	ppop_status.pjl_status.code = ustatus[0].code;
+	gu_StrCopyMax(ppop_status.pjl_status.message, sizeof(ppop_status.pjl_status.message), ustatus[0].message);
+
+	ppop_status.pjl_status.important2 = !ustatus[1].understood;
+	ppop_status.pjl_status.code2 = ustatus[1].code;
+	gu_StrCopyMax(ppop_status.pjl_status.message2, sizeof(ppop_status.pjl_status.message2), ustatus[1].message);
+
+	/*
+	** Flush the changes to a place where "ppop status" can find them.
+	*/
 	ppop_status_write();
 
-	/* Does this call for hrPrinterDetectedErrorState commentary? */
+	/*
+	** Does the current state call for hrPrinterDetectedErrorState commentary?
+	** If so, this does it.
+	*/
 	dispatch_commentary();
 
-	/* Let writemon know about online state so it can start or stop clocks. */
+	/*
+	** Let writemon know about online state so it can start or stop clocks such
+	** as the "page clock" and the clock that detects unexplained stalls in
+	** data transmission.
+	*/
 	writemon_online(online == PJL_ONLINE_TRUE);
 	} /* end of handle_ustatus_device() */
 
