@@ -75,10 +75,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
-	/* Trap loops: */
-	if(uprint_loop_check(myname) == -1)
-		return 1;
-
 	/*
 	** Create a uprint object.  Notice that we pass the argument
 	** list to the constructor.  If uprint_print() executes

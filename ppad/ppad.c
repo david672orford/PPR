@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 1 April 2005.
 */
 
 /*
@@ -218,7 +218,7 @@ static void help_printer(FILE *out)
 		NULL
     	};
 
-	fputs(_("Printer Managment:\n"), out);
+	fputs(_("Printer Management:\n"), out);
 	for(i = 0; command_list[i]; i++)
 		{
 		const char *p = gettext(command_list[i]);

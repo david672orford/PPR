@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -150,8 +150,8 @@ void alert_printer_failed(char *prn, int frequency, char *method, char *address,
 				fputc('\n', sendmail);
 
 				/* Append the alerts file as the body. */
-				ppr_fnamef(fname, "%s/%s", ALERTDIR, prn);		  /* open */
-				if((logfile = fopen(fname, "r")) != (FILE*)NULL)
+				ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, prn);		  /* open */
+				if((logfile = fopen(fname, "r")))
 					{
 					while((c = fgetc(logfile)) != -1)
 						fputc(c, sendmail);

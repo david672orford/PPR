@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 2 April 2005.
 #
 
 #
@@ -49,31 +49,30 @@
 # Standard directories
 LIBDIR="?"
 TEMPDIR="?"
-VAR_SPOOL_PPR="?"
+PRINTERS_CACHEDIR="?"
 
 # Path of dvips.  Setup_filters modifies this line.
 DVIPS="?"
-
-# We will use this temporary file for divps's error output
-TEMPFILE=`$LIBDIR/mkstemp $TEMPDIR/ppr-dvi-XXXXXX`
-
-# Directory in which to create configuration files
-DVIPS_CONFDIR="$VAR_SPOOL_PPR/dvips"
-
-# Add this to the path to be searched
-TEXCONFIG="$DVIPS_CONFDIR:"
-export TEXCONFIG
-
-# Expand the path to include the place where MakeTeXPK
-# is likely to be:
-PATH=$PATH:`dirname $DVIPS`
-export PATH
 
 # Assign names to the parameters
 OPTIONS="$1"
 PRINTER="$2"
 TITLE="$3"
 INVOKEDIR="$4"
+
+# Expand the path to include the place where MakeTeXPK
+# is likely to be:
+PATH=$PATH:`dirname $DVIPS`
+export PATH
+
+# We will use this temporary file for divps's error output
+TEMPFILE=`$LIBDIR/mkstemp $TEMPDIR/ppr-dvi-XXXXXX`
+
+# Directory in which to create configuration files
+DVIPS_CONFDIR="$PRINTERS_CACHEDIR/$PRINTER"
+
+# Add this to the path to be searched
+export TEXCONFIG="$DVIPS_CONFDIR:"
 
 # Variables into which to read parameters
 DVIPS_CONFIG=""
@@ -114,7 +113,7 @@ if [ -z "$DVIPS_CONFIG" ]
 	if [ -n "$NOISY" ]; then echo "Generating \"$DVIPS_CONFDIR/config.$DVIPS_CONFIG\"" >&2; fi
 	if [ ! -f "$DVIPS_CONFDIR/config.$DVIPS_CONFIG" ]
 		then
-		lib/make_dvips_conf $MFMODE $RESOLUTION $FREEVM
+		./make_dvips_conf $PRINTER $MFMODE $RESOLUTION $FREEVM
 		fi
 	fi
 	fi
@@ -127,10 +126,10 @@ if [ -n "$DVIPS_CONFIG" ]
 
 # Run dvips, catching the error output in a file
 cd $INVOKEDIR			# <-- for included files
-if [ -z "$NOISY" ]	# if not noisy
+if [ -z "$NOISY" ]		# if not noisy
 	then
 	$DVIPS $DVIPS_CONFIG -f -R 2>$TEMPFILE	 | grep -v '^Got a new papersize$'
-	else		# if noisy
+	else				# if noisy
 	echo "Command: $DVIPS $DVIPS_CONFIG -f -R" >&2
 	$DVIPS $DVIPS_CONFIG -f -R		 | grep -v '^Got a new papersize$'
 	fi

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 1 April 2005.
 */
 
 /*
@@ -380,12 +380,12 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 	*/
 	if(len > MAX_DESTNAME)
 		{
-		fprintf(errors, _("Destination name \"%*s\" is too long.\n"), (int)len, ptr);
+		fprintf(errors, _("Destination (printer or group) name \"%*s\" is too long.\n"), (int)len, ptr);
 		return -1;
 		}
 	if(len == 0)
 		{
-		fprintf(errors, _("Destination name is empty.\n"));
+		fprintf(errors, _("Destination (printer or group) name is empty.\n"));
 		return -1;
 		}
 

@@ -2305,6 +2305,28 @@ int printer_bins_delete(const char *argv[])
 	} /* end of printer_bins_delete() */
 
 /*
+ * This function clears a directory of files (one level only)
+ * and then removes it.
+ */
+static void remove_directory(const char dirname[])
+	{
+	DIR *dir;
+	struct dirent *dent;
+	char fname[MAX_PPR_PATH];
+
+	if((dir = opendir(dirname)))
+		{
+		while((dent = readdir(dir)))
+			{
+			ppr_fnamef(fname, "%s/%s", dirname, dent->d_name);
+			unlink(fname);
+			}
+		closedir(dir);
+		rmdir(dirname);
+		}
+	}
+
+/*
 ** Delete a printer configuration file and inform the spooler
 ** that we have deleted it so it can do so too.
 */
@@ -2336,13 +2358,13 @@ int printer_delete(const char *argv[])
 	 * and every group.  Rather laborious, don't 
 	 * you think?
 	 */
-	if((dir = opendir(GRCONF)) == (DIR*)NULL)
+	if((dir = opendir(GRCONF)))
 		{
 		fprintf(errors, "%s(): opendir() failed\n", function);
 		return EXIT_INTERNAL;
 		}
 
-	while((direntp = readdir(dir)) != (struct dirent*)NULL)
+	while((direntp = readdir(dir)))
 		{
 		if( direntp->d_name[0] == '.' )			/* skip . and .. */
 			continue;							/* and temporary files */
@@ -2384,7 +2406,7 @@ int printer_delete(const char *argv[])
 
 	/* Remove the printer configuration file. */
 	ppr_fnamef(fname, "%s/%s", PRCONF, printer);
-	if(unlink(fname))
+	if(unlink(fname) == -1)
 		{
 		if(errno==ENOENT)
 			{
@@ -2397,24 +2419,17 @@ int printer_delete(const char *argv[])
 			return EXIT_INTERNAL;
 			}
 		}
-	else				/* It worked, now remove the mounted file, */
-		{				/* alert log, and status file. */
-		ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, printer);
-		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s", ALERTDIR, printer);
-		unlink(fname);
+	/* The printer was deleted.  Now remove the alerts, status, mounted, etc. files. */
+	ppr_fnamef(fname, "%s/%s", PRINTERS_STATEDIR, printer);
+	remove_directory(fname);
+	ppr_fnamef(fname, "%s/%s", PRINTERS_CACHEDIR, printer);
+	remove_directory(fname);
 
-		ppr_fnamef(fname, "%s/%s", STATUSDIR, printer);
-		unlink(fname);
+	/* Send a printer-touch command to pprd. */
+	reread_printer(printer);
 
-		ppr_fnamef(fname, "%s/%s", ADDRESS_CACHE, printer);
-		unlink(fname);
-
-		reread_printer(printer);
-
-		return EXIT_OK;
-		}
+	return EXIT_OK;
 	} /* end of printer_delete() */
 
 /*

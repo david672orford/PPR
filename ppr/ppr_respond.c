@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 1 April 2005.
 */
 
 /*
@@ -124,12 +124,12 @@ int respond(int response_code, const char extra[])
 		*/
 		if(setreuid(ppr_uid, ppr_uid) == -1)
 			{
-			fprintf(stderr, _("%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
+			fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"), function, "setreuid", (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
 			exit(241);
 			}		
 		if(setregid(ppr_gid, ppr_gid) == -1)
 			{
-			fprintf(stderr, _("%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"), function, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
+			fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"), function, "setregid", (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
 			exit(241);
 			}		
 
@@ -164,7 +164,7 @@ int respond(int response_code, const char extra[])
 		{
 		if(wret == -1 && errno != EINTR)
 			{
-			fprintf(stderr, _("%s(): wait() failed, errno=%d (%s)\n"), function, errno, gu_strerror(errno) );
+			fprintf(stderr, _("%s(): %s() failed, errno=%d (%s)\n"), function, "wait", errno, gu_strerror(errno) );
 			return -1;
 			}
 		}

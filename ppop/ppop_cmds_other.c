@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 March 2005.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -249,7 +249,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			else if(strcmp(operation, "RIP_CLOSE") == 0)
 				p = _("waiting for RIP to finish");
 			else if(strcmp(operation, "COM_WAIT") == 0)
-				p = _("waiting for commentators to finish");
+				p = _("waiting for responders to finish");
 			else
 				p = operation;
 			}
@@ -607,7 +607,7 @@ int ppop_message(char *argv[])
 	if(parse_dest_name(&destname, argv[0]))
 		return EXIT_SYNTAX;
 
-	ppr_fnamef(fname, "%s/%s", STATUSDIR, destname.destname);
+	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destname.destname);
 	if((statfile = fopen(fname, "r")))
 		{
 		char *line = NULL; int line_len = 40;
@@ -1641,7 +1641,7 @@ int ppop_alerts(char *argv[])
 		}
 
 	/* Try to open the alerts file. */
-	ppr_fnamef(fname, "%s/%s", ALERTDIR, prn.destname);
+	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, prn.destname);
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
 		if(errno == ENOENT)

@@ -44,10 +44,8 @@ sub speach_play_many_local
 	(-w $address) || die "Can't write to device \"$address\"";
 
 	# Temporary file to hold output.
-	my $temp_au = $address;
-	$temp_au =~ s#^/dev/##;				# don't make it too complicated!
-	$temp_au =~ s/[^a-z0-9]/_/ig;			# slashes and colons would be poision
-	$temp_au = "$PPR::TEMPDIR/ppr-${temp_au}-$$.au";
+	my $temp_au  = `$PPR::LIBDIR/mkstemp "$PPR::TEMPDIR/ppr-speach_play-XXXXXX"`;
+	chomp $temp_au;
 
 	# Open a temporary file to hold it and concatenate the sounds files into it.
 	open(OUT, ">$temp_au") || die "Can't open \"$temp_au\" for write: $!";
@@ -63,7 +61,7 @@ sub speach_play_many_local
 	# RedHat Linux with Sox:
 	if(-x "/usr/bin/play")
 		{
-		system("/usr/bin/play $temp_au");
+		system("/usr/bin/play", "-d", $address, $temp_au);
 		}
 
 	# Solaris:
@@ -84,7 +82,7 @@ sub speach_play_many_local
 		die "No local audio play program found!";
 		}
 
-	unlink($temp_au) || die;
+	unlink($temp_au) || die "Can't delete $temp_au: $!";
 	}
 
 1;

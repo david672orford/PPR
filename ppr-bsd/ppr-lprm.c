@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 1 April 2005.
 */
 
 #include "config.h"
@@ -73,10 +73,6 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif
-
-	/* Trap loops: */
-	if(uprint_loop_check(myname) == -1)
-		return 1;
 
 	/* We need this to look up the user name, plus we 
 	   behave differently if running as root. */

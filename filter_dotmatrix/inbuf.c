@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 1 April 2005.
 */
 
 #include "filter_dotmatrix.h"
@@ -51,7 +51,7 @@ int input(void)
 			return EOF;
 
 		if((bytes_left = read(0,inbuf,sizeof(inbuf))) == -1)
-			gu_Throw(_("%s(): read() failed, errno=%d (%s)"), "input", errno, gu_strerror(errno));
+			gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), "input", "read", errno, gu_strerror(errno));
 
 		if(bytes_left < (int)sizeof(inbuf))
 			eof = TRUE;

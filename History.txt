@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--31 March 2005
+2.00a1, 11 December 2004--2 April 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9684,4 +9684,17 @@ no final tarball was released.
 * tests/test-ppr/400-infile-header*: removed since the features tested
   has been removed.
 
+* libuprint/uprint_loop.c: removed
+
+* libscript/speach_play.pl: added $address to SOX player; changed temporary 
+  file name creation code from a PID based approach to use PPR's mkstemp 
+  program.
+
+* cron/ppr-clean.perl: fixed regexps for $TEMPDIR/ppr-* and $TEMPDIR/uprint-*.
+
+* moved /etc/ppr/mounted/$PRINTER to /var/lib/ppr/printers/$PRINTER/mounted
+  moved /var/spool/ppr/printers/alerts/$PRINTER to /var/cache/ppr/printers/$PRINTER/alerts
+  moved /var/spool/ppr/printers/status/$PRINTER to /var/cache/ppr/printers/$PRINTER/status
+  moved /var/spool/ppr/printers/addr_cache/$PRINTER to /var/cache/ppr/printers/$PRINTER/address
+  moved /var/spool/ppr/dvips/config.$MODE to /var/cache/ppr/printers/$PRINTER/config.$MODE
 

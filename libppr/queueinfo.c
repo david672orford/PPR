@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 December 2004.
+** Last modified 2 April 2005.
 */
 
 /*+ \file
@@ -1384,7 +1384,7 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	char result_line[256];
-	char *retval;
+	char *retval = NULL;		/* nix spurious warning */
 	const char *sp;
 	int i;
 	

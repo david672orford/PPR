@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 2 April 2005.
 */
 
 /** \file
@@ -245,7 +245,7 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 	char fname[MAX_PPR_PATH];
 	FILE *statusfile;
 
-	ppr_fnamef(fname, "%s/%s", STATUSDIR, destid_to_name(prnid) );
+	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destid_to_name(prnid));
 	if((statusfile = fopen(fname, "r")))
 		{
 		char message[MAX_STATUS_MESSAGE+1];

@@ -72,10 +72,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
-	/* Trap loops: */
-	if(uprint_loop_check(myname) == -1)
-		return 1;
-
 	/*
 	** Parse the switches.  Mostly, we will call uprint
 	** member functions.

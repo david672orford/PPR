@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2005.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -51,6 +51,9 @@
 #define LIBDIR "@LIBDIR@"
 #define SHAREDIR "@SHAREDIR@"
 #define CONFDIR "@CONFDIR@"
+#define CACHEDIR "@CACHEDIR@"
+#define STATEDIR "@STATEDIR@"
+#define RUNDIR "@RUNDIR@"
 #define VAR_SPOOL_PPR "@VAR_SPOOL_PPR@"
 #define TEMPDIR "@TEMPDIR@"
 
@@ -60,14 +63,13 @@
 #define SAFE_PATH "@SAFE_PATH@"
 
 /* Derived settings from Makefile.conf */
+#define BINDIR "@BINDIR@"
 #define PRCONF "@PRCONF@"
 #define GRCONF "@GRCONF@"
 #define ALIASCONF "@ALIASCONF@"
 #define ACLDIR "@ACLDIR@"
-#define MOUNTEDDIR "@MOUNTEDDIR@"
-#define RUNDIR "@RUNDIR@"
-#define VAR_PRINTERS "@VAR_PRINTERS@"
-#define BINDIR "@BINDIR@"
+#define PRINTERS_CACHEDIR "@PRINTERS_CACHEDIR@"
+#define PRINTERS_STATEDIR "@PRINTERS_STATEDIR@"
 #define PPR_CONF "@PPR_CONF@"
 #define DBNAME "@DBNAME@"
 #define MEDIAFILE "@MEDIAFILE@"
@@ -93,11 +95,7 @@
 #define RESOURCEDIR "@RESOURCEDIR@"
 #define QUEUEDIR "@QUEUEDIR@"
 #define DATADIR "@DATADIR@"
-#define ALERTDIR "@ALERTDIR@"
-#define STATUSDIR "@STATUSDIR@"
 #define LOGDIR "@LOGDIR@"
-#define CACHEDIR "@CACHEDIR@"
-#define ADDRESS_CACHE "@ADDRESS_CACHE@"
 #define FONT_INDEX "@FONT_INDEX@"
 #define PPD_INDEX "@PPD_INDEX@"
 #define STATE_UPDATE_FILE "@STATE_UPDATE_FILE@"

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_progress.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2003.
+** Last modified 1 April 2005.
 */
 
 /*
@@ -209,7 +209,7 @@ static void queuefile_progress_write(void)
 		/* Open the file for read and write. */
 		ppr_fnamef(qfname, "%s/%s", QUEUEDIR, QueueFile);
 		if((handle = open(qfname, O_RDWR)) == -1)
-			fatal(EXIT_PRNERR_NORETRY, _("%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"), function, qfname, errno, gu_strerror(errno));
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): open(\"%s\", %s) failed, errno=%d (%s)"), function, qfname, "O_RDWR", errno, gu_strerror(errno));
 		gu_set_cloexec(handle);
 
 		/* Seek to a spot 31 bytes from the end. */
@@ -218,7 +218,7 @@ static void queuefile_progress_write(void)
 
 		/* Read what will be "Progress: " if this was done before. */
 		if((retval = read(handle, buffer, 10)) == -1)
-			fatal(EXIT_PRNERR_NORETRY, _("%s(): read() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): %s() failed, errno=%d (%s)"), function, "read", errno, gu_strerror(errno));
 		else if(retval != 10)
 			fatal(EXIT_PRNERR_NORETRY, _("%s(): read() read %d bytes instead of %d"), function, retval, 10);
 
@@ -226,7 +226,7 @@ static void queuefile_progress_write(void)
 		if(memcmp(buffer, "Progress: ", 10) != 0)
 			{
 			if((spot = lseek(handle, (off_t)0, SEEK_END)) < 0)
-				fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"), function, handle, errno, gu_strerror(errno));
+				fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"), function, handle, 0, errno, gu_strerror(errno));
 			}
 		}
 
@@ -248,7 +248,7 @@ static void queuefile_progress_write(void)
 			continue;
 
 		if(retval == -1)
-			fatal(EXIT_PRNERR_NORETRY, _("%s(): write() failed, errno=%d (%s)"), function, errno, gu_strerror(errno) );
+			fatal(EXIT_PRNERR_NORETRY, _("%s(): %s() failed, errno=%d (%s)"), function, "write", errno, gu_strerror(errno) );
 		else
 			fatal(EXIT_PRNERR, _("%s(): write() wrote %d bytes instead of %d"), function, retval, len);
 		}

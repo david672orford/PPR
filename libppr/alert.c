@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/alert.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2003.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -75,7 +75,7 @@ void valert(const char printer[], int dateflag, const char string[], va_list arg
 		char fname[MAX_PPR_PATH];
 		struct stat statbuf;
 
-		ppr_fnamef(fname, "%s/%s", ALERTDIR, printer);
+		ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, printer);
 
 		/* If can't stat() the alert log or it is older than one hour, truncate it. */
 		if( stat(fname, &statbuf) != 0 || (difftime(now, statbuf.st_mtime) > 3600) )

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2005.
+# Last modified 1 April 2005.
 #
 
 include ../Makefile.conf
@@ -45,7 +45,6 @@ LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
 	uprint_lpq.$(OBJ) uprint_lpq_rfc1179.$(OBJ) \
 	uprint_lprm.$(OBJ) uprint_lprm_rfc1179.$(OBJ) \
 	uprint_run.$(OBJ) uprint_run_rfc1179.$(OBJ) \
-	uprint_loop.$(OBJ) \
 	uprint_strerror.$(OBJ) \
 
 LIBS=../libuprint.$(LIBEXT)

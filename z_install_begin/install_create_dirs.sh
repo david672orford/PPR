@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2005.
+# Last modified 2 April 2005.
 #
 
 #=============================================================================
@@ -75,7 +75,8 @@ directory $CONFDIR 755
 directory $LIBDIR 755
 directory $SHAREDIR 755
 directory $VAR_SPOOL_PPR 755
-directory $VAR_LIB_PPR 755
+directory $CACHEDIR 755
+directory $STATEDIR 755
 directory $RUNDIR 755
 directory $LOGDIR 775 		#group write
 
@@ -97,8 +98,9 @@ if [ ! -d $TEMPDIR ]
 directory $PRCONF 755
 directory $GRCONF 755
 directory $ALIASCONF 755
-directory $MOUNTEDDIR 755
 directory $ACLDIR 755
+directory $PRINTERS_STATEDIR 755
+directory $PRINTERS_CACHEDIR 755
 
 # Make the directories for the resource store.  Notice
 # that we do not make a directory for fonts since they
@@ -126,12 +128,7 @@ directory $SHAREDIR/locale 755
 # Make the directories in the spool area.
 directory $VAR_SPOOL_PPR/queue 700
 directory $VAR_SPOOL_PPR/jobs 700
-directory $VAR_SPOOL_PPR/printers 755
-directory $VAR_SPOOL_PPR/printers/alerts 755
-directory $VAR_SPOOL_PPR/printers/status 755
-directory $VAR_SPOOL_PPR/printers/addr_cache 755
-directory $VAR_SPOOL_PPR/logs 775		# <-- group can write
-directory $VAR_SPOOL_PPR/dvips 755
+directory $VAR_SPOOL_PPR/logs 775				# <-- group can write
 directory $VAR_SPOOL_PPR/drivers 755
 directory $VAR_SPOOL_PPR/drivers/W32X86 755		# MS-Windows 95/98
 directory $VAR_SPOOL_PPR/drivers/WIN40 755		# MS-Windows NT 4.0
@@ -139,7 +136,6 @@ directory $VAR_SPOOL_PPR/drivers/WINPPD 755		# PPD files in MS-DOS text format
 directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755
-directory $VAR_SPOOL_PPR/pprpopup.db 770		# <-- group can write
 directory $VAR_SPOOL_PPR/followme.db 770		# <-- group can write
 
 # Make the directories for web documentation and managment tools

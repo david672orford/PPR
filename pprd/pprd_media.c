@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 2 April 2005.
 */
 
 #include "config.h"
@@ -62,7 +62,7 @@ void media_mounted_save(int prnid)
 	int x;
 	struct Printer *p;
 
-	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(prnid));
+	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_STATEDIR, destid_to_name(prnid));
 	if((sf = fopen(fname, "w")) == (FILE*)NULL)
 		fatal(ERROR_DIE, "%s(): can't open \"%s\"", function, fname);
 
@@ -96,7 +96,7 @@ void media_mounted_recover(int prnid)
 	debug("media_mounted_recover(%d): \"%s\"", prnid, destid_to_name(prnid));
 	#endif
 
-	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, destid_to_name(prnid));
+	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_STATEDIR, destid_to_name(prnid));
 	if((rf = fopen(fname, "r")) == (FILE*)NULL)
 		return;				/* missing file means nothing mounted */
 

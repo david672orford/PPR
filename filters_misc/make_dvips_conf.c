@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/filters_misc/make_dvips_conf.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2001.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -46,14 +61,14 @@ int main(int argc, char *argv[])
 	const char *MediaColor;						/* probably "white" */
 	const char *MediaType;						/* probably "" */
 
-	if(argc != 4)
+	if(argc != 5)
 		{
 		fprintf(stderr, "%s: wrong number of parameters\n", myname);
 		fprintf(stderr, "Usage:\n\tmake_dvips_conf <mfmode> <resolution> <bytes_free>\n");
 		return 1;
 		}
 
-	if(strchr(argv[1], '/') || strchr(argv[2], '/') || strchr(argv[3], '/'))
+	if(strchr(argv[1], '/') || strchr(argv[2], '/') || strchr(argv[3], '/') || strchr(argv[4], '/'))
 		{
 		fprintf(stderr, "%s: slash in parameter!\n", myname);
 		return 1;
@@ -85,7 +100,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	ppr_fnamef(fname, "%s/dvips/config.%s-%s-%s", VAR_SPOOL_PPR, argv[1], argv[2], argv[3]);
+	ppr_fnamef(fname, "%s/%s/config.%s-%s-%s", PRINTERS_CACHEDIR, argv[1], argv[2], argv[3], argv[4]);
 
 	if(!(f = fopen(fname, "w")))
 		{
@@ -98,62 +113,67 @@ int main(int argc, char *argv[])
 	time_t seconds_now;
 	time(&seconds_now);
 	strftime(datebuffer, sizeof(datebuffer), "%x %X", localtime(&seconds_now));
-	fprintf(f, "%%\n"
-				"%% This is an automatically generated DVIPS config file.\n"
-				"%% It was generated at %s.\n"
-				"%%\n"
-				"\n",
-				datebuffer);
+	fprintf(f,
+		"%%\n"
+		"%% This is an automatically generated DVIPS config file.\n"
+		"%% It was generated at %s.\n"
+		"%%\n"
+		"\n",
+		datebuffer
+		);
 	}
 
 	fprintf(f,
-				"%% MetaFont mode\n"
-				"M %s\n"
-				"\n"
-				"%% Selected resolution\n"
-				"D %s\n"
-				"\n"
-				"%% Memory available\n"
-				"m %s\n"
-				"\n"
-				"%% Printer offset\n"
-				"O 0pt,0pt\n"
-				"\n"
-				"%% Don't compress the bitmaps\n"
-				"%% Z0\n"
-				"\n"
-				"%% Don't remove comments in included files\n"
-				"K0\n"
-				"\n"
-				"@\n"
-				"\n",
-				argv[1], argv[2], argv[3]);
+		"%% MetaFont mode\n"
+		"M %s\n"
+		"\n"
+		"%% Selected resolution\n"
+		"D %s\n"
+		"\n"
+		"%% Memory available\n"
+		"m %s\n"
+		"\n"
+		"%% Printer offset\n"
+		"O 0pt,0pt\n"
+		"\n"
+		"%% Don't compress the bitmaps\n"
+		"%% Z0\n"
+		"\n"
+		"%% Don't remove comments in included files\n"
+		"K0\n"
+		"\n"
+		"@\n"
+		"\n",
+		argv[2], argv[3], argv[4]
+		);
 				
-		fprintf(f,
-				"@ %s %.1fbp %.1fbp\n"
-				"@+ %%%%IncludeFeature: *PageSize %s\n"
-				"\n",
-				PageSize, phys_pu_width, phys_pu_height, PageSize);
+	fprintf(f,
+		"@ %s %.1fbp %.1fbp\n"
+		"@+ %%%%IncludeFeature: *PageSize %s\n"
+		"\n",
+		PageSize, phys_pu_width, phys_pu_height, PageSize
+		);
 				
 
-		fprintf(f,
-				"@ letter 8.5in 11in\n"
-				"@+ %%%%IncludeFeature: *PageSize Letter\n"
-				"\n"
-				"@ a4 210mm 297mm\n"
-				"@+ %%%%IncludeFeature: *PageSize A4\n"
-				"\n"
-				"@ a3 297mm 420mm\n"
-				"@+ %%%%IncludeFeature: *PageSize A3\n"
-				"\n"
-				"@ legal 8.5in 14in\n"
-				"@+ %%%%IncludeFeature: *PageSize Legal\n"
-				"\n"
-				"@ ledger 17in 11in\n"
-				"@+ %%%%IncludeFeature: *PageSize Ledger\n"
-				"\n"
-				"@ tabloid 11in 17in\n"
-				"@+ %%%%IncludeFeature: *PageSize Tabloid\n");
+	fprintf(f,
+		"@ letter 8.5in 11in\n"
+		"@+ %%%%IncludeFeature: *PageSize Letter\n"
+		"\n"
+		"@ a4 210mm 297mm\n"
+		"@+ %%%%IncludeFeature: *PageSize A4\n"
+		"\n"
+		"@ a3 297mm 420mm\n"
+		"@+ %%%%IncludeFeature: *PageSize A3\n"
+		"\n"
+		"@ legal 8.5in 14in\n"
+		"@+ %%%%IncludeFeature: *PageSize Legal\n"
+		"\n"
+		"@ ledger 17in 11in\n"
+		"@+ %%%%IncludeFeature: *PageSize Ledger\n"
+		"\n"
+		"@ tabloid 11in 17in\n"
+		"@+ %%%%IncludeFeature: *PageSize Tabloid\n"
+		);
 
 	chmod(fname, 0664);
 

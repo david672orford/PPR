@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 2 April 2005.
 #
 
 #
@@ -38,7 +38,7 @@
 # System configuration information:
 LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
-VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
+PRINTERS_CACHEDIR="@PRINTERS_CACHEDIR@"
 TEMPDIR="@TEMPDIR@"
 USER_PPR=@USER_PPR@
 GROUP_PPR=@GROUP_PPR@
@@ -111,7 +111,7 @@ sedit ()
 		-e "s#^\\(\$*\\)LIBDIR=\"[^\"]*\"#\\1LIBDIR=\"$LIBDIR\"#" \
 		-e "s#^\\(\$*\\)FILTDIR=\"[^\"]*\"#\\1FILTDIR=\"$FILTDIR\"#" \
 		-e "s#^\\(\$*\\)CONFDIR=\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
-		-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
+		-e "s#^\\(\$*\\)PRINTERS_CACHEDIR=\"[^\"]*\"#\\1PRINTERS_CACHEDIR=\"$PRINTERS_CACHEDIR\"#" \
 		-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
 		$1 >$2 || exit 1 # infile, outfile
 

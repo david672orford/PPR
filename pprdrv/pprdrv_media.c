@@ -69,7 +69,7 @@ int load_mountedlist(void)
 	if(mountedlist_loaded++)			/* if list already loaded, */
 		return bincount;				/* don't load it again */
 
-	ppr_fnamef(fname, "%s/%s", MOUNTEDDIR, printer.Name);
+	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_STATEDIR, printer.Name);
 	if((mountfile = fopen(fname, "r")) != (FILE*)NULL )
 		{
 		bincount=fread(mounted,sizeof(struct MOUNTED),MAX_BINS,mountfile);

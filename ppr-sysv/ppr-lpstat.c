@@ -476,10 +476,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
-	/* Trap loops: */
-	if(uprint_loop_check(myname) == -1)
-		return 1;
-
 	/*
 	** Parse the switches.  Note that we don't actually _do_ anything yet.
 	** We want to make sure we understand the whole line.  If we don't

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 2 April 2005.
 */
 
 /*
@@ -43,6 +43,9 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <stdlib.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
@@ -54,7 +57,7 @@
 ** This routine is called with a pointer to a printer array entry
 ** and the name of the printer.
 */
-static void load_printer(struct Printer *printer, const char filename[])
+static void load_printer(struct Printer *printer, const char prnname[])
 	{
 	const char function[] = "load_printer";
 	FILE *prncf;
@@ -66,12 +69,12 @@ static void load_printer(struct Printer *printer, const char filename[])
 
 	{
 	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/%s", PRCONF, filename);
+	ppr_fnamef(fname, "%s/%s", PRCONF, prnname);
 	if((prncf = fopen(fname,"r")) == (FILE*)NULL)
 		fatal(0, "%s(): can't open printer config file \"%s\", errno=%d.", function, fname, errno);
 	}
 
-	strcpy(printer->name, filename);			/* store the printer name */
+	strcpy(printer->name, prnname);			/* store the printer name */
 
 	printer->alert_interval = 0;				/* no alerts */
 	printer->alert_method = (char*)NULL;		/* (At least not until we */
@@ -185,6 +188,17 @@ static void load_printer(struct Printer *printer, const char filename[])
 
 	/* Close that configuration file! */
 	fclose(prncf);
+
+	/* Create the directories this printers state and cache information. */
+	{
+	char fname[MAX_PPR_PATH];
+	ppr_fnamef(fname, "%s/%s", PRINTERS_CACHEDIR, prnname);
+	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
+		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
+	ppr_fnamef(fname, "%s/%s", PRINTERS_STATEDIR, prnname);
+	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
+		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
+	}
 	} /* end of load_printer() */
 
 /*
@@ -235,8 +249,8 @@ void load_printers(void)
 /*
 ** Load a new printer configuration file.
 **
-** This is called when ppad sends a command over the pipe.  It does this
-** whenever the printer configuration changes in a way that might
+** This is called when ppad sends a printer-touch command over the pipe.  It 
+** does this whenever the printer configuration changes in a way that might
 ** interest us.  You can also use "ppad touch" to send the command any
 ** time you want.
 **

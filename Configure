@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2005.
+# Last modified 2 April 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -897,6 +897,12 @@ export CONFDIR=$CONFDIR
 # Directory for spool files.
 export VAR_SPOOL_PPR=$VAR_SPOOL_PPR
 
+# Directory for replacable cache files
+export CACHEDIR=/var/cache/ppr
+
+# Directory for spooler state
+export STATEDIR=/var/lib/ppr
+
 # Directory for PID files and such.
 export RUNDIR=$RUNDIR
 
@@ -936,14 +942,13 @@ export GRCONF=$(CONFDIR)/groups
 export ALIASCONF=$(CONFDIR)/aliases
 # Access Control Lists
 export ACLDIR=$(CONFDIR)/acl
-# directory for media mounted files
-export MOUNTEDDIR=$(CONFDIR)/mounted
 
 #----------------------------------------
 # Subdirectories
 #----------------------------------------
-export VAR_PRINTERS=$(VAR_SPOOL_PPR)/printers
 export BINDIR=$(LIBDIR)/bin
+export PRINTERS_CACHEDIR=$(CACHEDIR)/printers
+export PRINTERS_STATEDIR=$(STATEDIR)/printers
 
 #----------------------------------------
 # Various configuration files
@@ -1012,20 +1017,17 @@ export RESOURCEDIR=$(SHAREDIR)/resources
 # Directories where the spooler writes
 # stuff
 #----------------------------------------
+
 # queue directory
 export QUEUEDIR=$(VAR_SPOOL_PPR)/queue
+
 # job data directory
 export DATADIR=$(VAR_SPOOL_PPR)/jobs
-# directory for printer alert files
-export ALERTDIR=$(VAR_PRINTERS)/alerts
-# directory for printer status files
-export STATUSDIR=$(VAR_PRINTERS)/status
+
 # directory for log files
 export LOGDIR=$(VAR_SPOOL_PPR)/logs
-# directory for automatically cached files
-export CACHEDIR=$(VAR_SPOOL_PPR)/cache
-# directory for cache of printer addresses
-export ADDRESS_CACHE=$(VAR_PRINTERS)/addr_cache
+
+# Indexes for quick lookup 
 export FONT_INDEX=$(VAR_SPOOL_PPR)/fontindex.db
 export PPD_INDEX=$(VAR_SPOOL_PPR)/ppdindex.db
 
