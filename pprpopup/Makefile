@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2002.
+# Last modified 27 August 2002.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,8 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 BUILT_PROGS=pprpopup.tcl
-PROGS=pprpopup_loader.tcl pprpopup.tcl
+UNBUILD_PROGS=ppr-popup
+PROGS=$(BUILT_PROGS) $(UNBUILT_PROGS)
 IMAGES=splashscreen.tid icon_frown.tid icon_stopsign.tid
 
 #=== Build ==================================================================
@@ -57,7 +58,8 @@ images: $(IMAGES)
 
 install: $(PROGS)
 	$(MAKE_NEW_DIR) $(SHAREDIR)/www/clientsoft
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(SHAREDIR)/www/clientsoft $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(SHAREDIR)/www/clientsoft pprpopup.tcl
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-popup
 
 #=== Housekeeping ===========================================================
 

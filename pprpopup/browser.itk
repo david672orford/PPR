@@ -1,8 +1,6 @@
 #
 # browser.itk
 # Copyright 1995--2002, Trinity College Computing Center.
-# Portions Copyright (c) 1996 DSC Technologies Corporation
-#	(Note: check to see if this is still true.)
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,6 +27,30 @@
 #
 # Last modified 16 January 2002.
 #
+
+#-----------------------------------------------------------------------
+# Portions Copyright (c) 1996 DSC Technologies Corporation
+# ======================================================================
+# Permission to use, copy, modify, distribute and license this software
+# and its documentation for any purpose, and without fee or written
+# agreement with DSC, is hereby granted, provided that the above copyright
+# notice appears in all copies and that both the copyright notice and
+# warranty disclaimer below appear in supporting documentation, and that
+# the names of DSC Technologies Corporation or DSC Communications
+# Corporation not be used in advertising or publicity pertaining to the
+# software without specific, written prior permission.
+#
+# DSC DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+# ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, AND NON-
+# INFRINGEMENT. THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, AND THE
+# AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO PROVIDE MAINTENANCE,
+# SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. IN NO EVENT SHALL
+# DSC BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+# ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION,
+# ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+# SOFTWARE.
+# ======================================================================
 
 package require Itcl
 package require Itk
@@ -861,6 +883,7 @@ itcl::body Browser::write {html} {
     set continuerendering 1
     while {$continuerendering} {
 
+# start of DSC code
 	# While there is still HTML to render,
 	while {[set len [string length $html]]} {
 
@@ -916,6 +939,7 @@ itcl::body Browser::write {html} {
 
     # Make the text widget read-only again.
     $itk_component(text) config -state disabled
+# end DSC code
 }
 
 #------------------------------------------------------------------
@@ -941,6 +965,7 @@ itcl::body Browser::_append_text {text} {
 	return
 	}
 
+# start of DSC code
     # If not in <pre></pre>, then convert each instance of whitespace
     # to a single space.
     if !$_pre {
@@ -957,6 +982,7 @@ itcl::body Browser::_append_text {text} {
        regsub -nocase -all "&quot;" $text "\"" text
        regsub -nocase -all "&nbsp;" $text " " text
     }
+# end of DSC code
 
     # If we are between <title></title> tags, then just stash the data.
     if {$_intitle} {
@@ -1002,6 +1028,7 @@ itcl::body Browser::_entity_img {{args {}}} {
 
   _parse_fields ar $args
 
+# start of DSC code
   # This frame will hold the button that holds the image.
   set imgframe $_hottext.img[incr _counter]
 
@@ -1083,6 +1110,7 @@ itcl::body Browser::_entity_img {{args {}}} {
       bind $win <1> [itcl::code $itk_option(-linkcommand) $href]
       }
     }
+# end of DSC code
 
   #
   # Start the image loading.

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-08-08 20:05-0400\n"
+"POT-Creation-Date: 2002-08-25 18:00-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -338,21 +338,21 @@ msgstr ""
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:563
+#: ../pprdrv/pprdrv_ppd.c:567
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:686
+#: ../pprdrv/pprdrv_ppd.c:690
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", removing existing code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:738
+#: ../pprdrv/pprdrv_ppd.c:742
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
@@ -362,24 +362,33 @@ msgstr ""
 #: ../pprdrv/pprdrv_rip.c:90
 #, c-format
 msgid ""
-"The RIP (Ghostscript) malfunctioned while printing the job\n"
+"The RIP (Ghostscript) malfunctioned (caught SIGSEGV) while printing the job\n"
 "%s.  Presumably it can print other jobs that don't\n"
 "trigger the bug, so the spooler will arrest the job and move on."
 msgstr ""
 
 #: ../pprdrv/pprdrv_rip.c:100
+msgid ""
+"The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led "
+"to\n"
+"a post-processing filter which died.  Look in the RIP options to find out "
+"what\n"
+"post-processing filter is being used."
+msgstr ""
+
+#: ../pprdrv/pprdrv_rip.c:108
 #, c-format
 msgid ""
 "The RIP (Ghostscript) was killed by signal %d (%s).\n"
-"Perhaps a system operator did it or perhaps the system\n"
+"Perhaps a system operator did this or perhaps the system\n"
 "is shutting down."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:112
+#: ../pprdrv/pprdrv_rip.c:120
 #, c-format
 msgid "RIP stopped by signal \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:114
+#: ../pprdrv/pprdrv_rip.c:122
 msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
 msgstr ""

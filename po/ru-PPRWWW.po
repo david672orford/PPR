@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-08-08 20:05-0400\n"
+"POT-Creation-Date: 2002-08-25 18:00-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -55,11 +55,11 @@ msgid "_Next"
 msgstr "На Следеющую"
 
 #: ../www/alias_addwiz.cgi.perl:62 ../www/alias_addwiz.cgi.perl:130
-#: ../www/cgi_tabbed.pl:315 ../www/cgi_wizard.pl:277
+#: ../www/cgi_tabbed.pl:308 ../www/cgi_wizard.pl:277
 #: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:144
 #: ../www/prn_addwiz.cgi.perl:643 ../www/prn_testpage.cgi.perl:95
-#: ../www/show_jobs.cgi.perl:483
+#: ../www/show_jobs.cgi.perl:500
 msgid "_Cancel"
 msgstr "Отменять"
 
@@ -99,15 +99,15 @@ msgstr ""
 msgid "You must supply a description!"
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:277
-#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:643
-msgid "_Back"
-msgstr "Обротно"
-
 #: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
 #: ../www/prn_addwiz.cgi.perl:643
 msgid "_Finish"
 msgstr ""
+
+#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:277
+#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:643
+msgid "_Back"
+msgstr "Обротно"
 
 #: ../www/alias_addwiz.cgi.perl:137
 msgid "Save the Alias"
@@ -247,7 +247,7 @@ msgstr "<<Дополнителный"
 msgid "More>>"
 msgstr "Дополнительный>>"
 
-#: ../www/cgi_tabbed.pl:316
+#: ../www/cgi_tabbed.pl:309
 msgid "_Save"
 msgstr "Сохроить"
 
@@ -353,12 +353,12 @@ msgid "Silly Sounds:"
 msgstr ""
 
 #: ../www/commentary_select.cgi.perl:109 ../www/delete_queue.cgi.perl:91
-#: ../www/test_components.cgi.perl:108 ../www/test_components.cgi.perl:109
+#: ../www/test_components.cgi.perl:162 ../www/test_components.cgi.perl:163
 msgid "Yes"
 msgstr "Да"
 
 #: ../www/commentary_select.cgi.perl:110 ../www/delete_queue.cgi.perl:92
-#: ../www/test_components.cgi.perl:108 ../www/test_components.cgi.perl:109
+#: ../www/test_components.cgi.perl:162 ../www/test_components.cgi.perl:163
 msgid "No"
 msgstr "Нет"
 
@@ -437,7 +437,7 @@ msgstr ""
 msgid "Can't Display File"
 msgstr ""
 
-#: ../www/docs_info.cgi.perl:511 ../www/docs_info.cgi.perl:516
+#: ../www/docs_info.cgi.perl:514 ../www/docs_info.cgi.perl:519
 msgid "Error: "
 msgstr ""
 
@@ -711,6 +711,7 @@ msgid "Login"
 msgstr ""
 
 #: ../www/login_cookie.cgi.perl:87 ../www/login_cookie.cgi.perl:141
+#: ../www/show_jobs.cgi.perl:263
 msgid "Close"
 msgstr "Закрыть"
 
@@ -1171,12 +1172,12 @@ msgstr ""
 msgid "Pages completed:"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:358
-msgid "Bytes Unsent"
+#: ../www/prn_control.cgi.perl:358 ../www/show_printlog.cgi.perl:157
+msgid "Bytes Sent"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:358 ../www/show_printlog.cgi.perl:153
-msgid "Bytes Sent"
+#: ../www/prn_control.cgi.perl:358
+msgid "Bytes Unsent"
 msgstr ""
 
 #: ../www/prn_control.cgi.perl:389
@@ -1528,7 +1529,7 @@ msgid ""
 "set!"
 msgstr ""
 
-#: ../www/prn_properties.cgi.perl:1043
+#: ../www/prn_properties.cgi.perl:1050
 #, c-format
 msgid "PPR: Printer Properties: %s"
 msgstr ""
@@ -1733,59 +1734,67 @@ msgstr ""
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:138
+#: ../www/show_jobs.cgi.perl:147
 msgid "Queue Display Settings"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:178
+#: ../www/show_jobs.cgi.perl:187
 msgid "Refresh Interval (in seconds):"
 msgstr "Частота Обновления (в секонах):"
 
-#: ../www/show_jobs.cgi.perl:227
+#: ../www/show_jobs.cgi.perl:239
 #, c-format
 msgid "Jobs Queued for \"%s\" on \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:309
+#: ../www/show_jobs.cgi.perl:261
+msgid "Settings"
+msgstr ""
+
+#: ../www/show_jobs.cgi.perl:262 ../www/show_queues.cgi.perl:244
+msgid "Refresh"
+msgstr "Обновить"
+
+#: ../www/show_jobs.cgi.perl:325
 #, c-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:317
+#: ../www/show_jobs.cgi.perl:333
 msgid "You must select a destination queue before pressing [Move]."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:341
+#: ../www/show_jobs.cgi.perl:357
 #, c-format
 msgid "[%s] failed for the following reason:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:408
+#: ../www/show_jobs.cgi.perl:424
 #, c-format
 msgid "Job \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:461
+#: ../www/show_jobs.cgi.perl:478
 msgid "Job Actions:"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:484
+#: ../www/show_jobs.cgi.perl:501
 msgid "R_ush"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:485
+#: ../www/show_jobs.cgi.perl:502
 msgid "_Hold"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:486
+#: ../www/show_jobs.cgi.perl:503
 msgid "_Release"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:487
+#: ../www/show_jobs.cgi.perl:504
 msgid "_Modify"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:488
+#: ../www/show_jobs.cgi.perl:505
 msgid "_Log"
 msgstr ""
 
@@ -1808,83 +1817,83 @@ msgstr ""
 msgid "PPR Print Log"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:85
+#: ../www/show_printlog.cgi.perl:89
 #, c-format
 msgid ""
 "Print job logging is disabled.  To enable it, create the file \"%s\"\n"
 "and make sure the user \"%s\" can write to it.\n"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:90
+#: ../www/show_printlog.cgi.perl:94
 #, c-format
 msgid "Can't open log file \"%s\", %s\n"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:151
-msgid "For"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:151
+#: ../www/show_printlog.cgi.perl:155
 msgid "Job ID"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:151
-msgid "Time"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:151
+#: ../www/show_printlog.cgi.perl:155
 msgid "Unix User"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:151
-msgid "Printer"
+#: ../www/show_printlog.cgi.perl:155
+msgid "Time"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:151
+#: ../www/show_printlog.cgi.perl:155
 msgid "Proxy For"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:152
-msgid "Queued Time"
+#: ../www/show_printlog.cgi.perl:155
+msgid "For"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:152
-msgid "Printing Time"
+#: ../www/show_printlog.cgi.perl:155
+msgid "Printer"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:152
-msgid "Total Sides"
-msgstr ""
-
-#: ../www/show_printlog.cgi.perl:152
+#: ../www/show_printlog.cgi.perl:156
 msgid "Total Sheets"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:152
+#: ../www/show_printlog.cgi.perl:156
 msgid "Pages"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:153
-msgid "Start Pages"
+#: ../www/show_printlog.cgi.perl:156
+msgid "Total Sides"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:153
-msgid "PJL Pages"
+#: ../www/show_printlog.cgi.perl:156
+msgid "Queued Time"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:153
+#: ../www/show_printlog.cgi.perl:156
+msgid "Printing Time"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
 msgid "Increment"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:153
+#: ../www/show_printlog.cgi.perl:157
 msgid "Charge"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:153
+#: ../www/show_printlog.cgi.perl:157
+msgid "PJL Pages"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:157
 msgid "PS Bytes"
 msgstr ""
 
-#: ../www/show_printlog.cgi.perl:154
+#: ../www/show_printlog.cgi.perl:157
+msgid "Start Pages"
+msgstr ""
+
+#: ../www/show_printlog.cgi.perl:158
 msgid "Title or Filename"
 msgstr ""
 
@@ -1978,10 +1987,6 @@ msgid "Refresh Interval:"
 msgstr "Частота Обновлении:"
 
 #: ../www/show_queues.cgi.perl:244
-msgid "Refresh"
-msgstr "Обновить"
-
-#: ../www/show_queues.cgi.perl:244
 msgid "Refresh the page right now."
 msgstr ""
 
@@ -2049,38 +2054,66 @@ msgstr ""
 msgid "Alias \"%s\""
 msgstr ""
 
-#: ../www/test_components.cgi.perl:58
+#: ../www/test_components.cgi.perl:25
 msgid "Perl 5.005 or later"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:59
+#: ../www/test_components.cgi.perl:32
 msgid "PPR sound files"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:60
+#: ../www/test_components.cgi.perl:39
 msgid "Perl GNU Gettext module"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:60
-msgid "liblocale-gettext-perl"
+#: ../www/test_components.cgi.perl:46
+msgid "NetPBM image converters"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:66
-msgid "Are Required Packages Present?"
+#: ../www/test_components.cgi.perl:52
+msgid "PPR-GS Ghostscript distribution"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:93
-msgid "Debian Package Name"
+#: ../www/test_components.cgi.perl:58
+msgid "Groff"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:93
+#: ../www/test_components.cgi.perl:64
+msgid "HTMLDOC"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:70
+msgid "Acroread"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:76
+msgid "JPEG utilities"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:123
+msgid "Inventory of Packages Which PPR can Use"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
 msgid "Critical?"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:93
+#: ../www/test_components.cgi.perl:149
+msgid "Source Download"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
+msgid "Redhat Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
+msgid "Debian Package Name"
+msgstr ""
+
+#: ../www/test_components.cgi.perl:149
 msgid "Present?"
 msgstr ""
 
-#: ../www/test_components.cgi.perl:93
+#: ../www/test_components.cgi.perl:149
 msgid "Component"
 msgstr ""

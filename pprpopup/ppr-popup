@@ -1,10 +1,32 @@
-#! /usr/local/bin/wish8.4
-#! /usr/bin/wish
+#! /usr/bin/env wish
 #
-# pprpopup_loader.tcl
+# mouse:~ppr/src/pprpopup/ppr-popup
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 10 May 2002.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 27 August 2002.
 #
 
 package require Tcl 8.3
@@ -246,9 +268,9 @@ n+9nn7eCnx6on6fCny7on/+pkAJaoDSQAAA7
     update
 
     # Load the configuration.
-    puts "*** Loading configuration..."
+    #puts "*** Loading configuration..."
     if {[catch { set config [config_load] } errormsg]} {
-	puts "***    $errormsg"
+	display_error "Problem while loading configuration:\n$errormsg"
 	set config ""
 	}
 
@@ -300,15 +322,15 @@ n+9nn7eCnx6on6fCny7on/+pkAJaoDSQAAA7
     # Define the callback procedure that gets called once the HTTP
     # request is finished.
     proc loaded_callback {token} {
-	puts "***  Done."
+	#puts "***  Done."
 
 	# Check to see if the GET suceeded.
 	upvar #0 $token state
 	#set code [::http::ncode $token]
 	regexp {^HTTP/[0-9]+\.[0-9]+ ([0-9]+)} $state(http) junk ncode
-	puts "*** State: $state(status)"
-	puts "*** Ncode: $ncode"
-	puts "*** Size: $state(totalsize)"
+	#puts "*** State: $state(status)"
+	#puts "*** Ncode: $ncode"
+	#puts "*** Size: $state(totalsize)"
 	if {[string compare $state(status) "ok"] != 0} {
 	    display_error "Failed to load program from HTTP server:\n$state(status)\n$state(error)"
 	    exit 0
@@ -319,7 +341,7 @@ n+9nn7eCnx6on6fCny7on/+pkAJaoDSQAAA7
 	    }
 
 	# Execute the code in the global namespace.
-	puts "*** Executing downloaded code..."
+	#puts "*** Executing downloaded code..."
 	if [catch { namespace eval :: $state(body) }] {
 	    global errorInfo
 	    display_error "Program Execution Failed:\n\n$errorInfo"
@@ -337,16 +359,16 @@ n+9nn7eCnx6on6fCny7on/+pkAJaoDSQAAA7
     proc splash_remove {} {
 	variable splash_image
 
-	puts "*** Removing splash screen..."
+	#puts "*** Removing splash screen..."
 	destroy .splash
 
-	puts "*** Freeing splash image..."
+	#puts "*** Freeing splash image..."
 	image delete $splash_image
 
-	puts "*** Removing loader namespace..."
+	#puts "*** Removing loader namespace..."
 	namespace delete ::pprpopup_loader
 
-	puts "***   Done."
+	#puts "***   Done."
 	}
 
     # We will call this 10% done.
@@ -355,7 +377,7 @@ n+9nn7eCnx6on6fCny7on/+pkAJaoDSQAAA7
 
     # Start the HTTP transaction.
     set code_url "${ppr_root_url}clientsoft/pprpopup.tcl"
-    puts "*** Connecting..."
+    #puts "*** Connecting..."
     if [catch {
 		set token [::http::geturl $code_url \
 			-progress [namespace code scale_callback] \

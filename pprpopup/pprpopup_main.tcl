@@ -1,6 +1,6 @@
 #! /usr/bin/wish
 #
-# pprpopup_main.tcl
+# mouse:~ppr/src/pprpopup/pprpopup_main.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -28,7 +28,7 @@
 #
 
 set about_text "PPR Popup 1.50a2
-10 May 2002
+27 August 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -346,7 +346,7 @@ proc command_MESSAGE_datarecv {file w} {
 #
 proc command_QUESTION_close {jobname} {
     global open_windows
-    puts "Window manager request to close window $open_windows($jobname) for $jobname."
+    #puts "Window manager request to close window $open_windows($jobname) for $jobname."
 
     destroy $open_windows($jobname)
     unset open_windows($jobname)
@@ -362,7 +362,7 @@ proc command_QUESTION {file jobname url width height} {
 	}
 
     if [info exists open_windows($jobname)] {
-    	puts "  Already exists"
+    	#puts "  Already exists"
 	window_reopen $open_windows($jobname)
 	puts $file "+OK already exists"
     	return
@@ -418,7 +418,7 @@ proc command_JOB_REMOVE {file jobname} {
 #
 proc server_function {file cli_addr cli_port} \
   {
-  puts "$file: Connection from $cli_addr:$cli_port"
+  #puts "$file: Connection from $cli_addr:$cli_port"
   fconfigure $file -blocking false
   fileevent $file readable [list server_reader $file]
   activate
@@ -436,7 +436,7 @@ proc server_reader {file} {
 	return
 	}
 
-    puts "$file: $line"
+    #puts "$file: $line"
 
     # Act on the command received
     switch -glob -- $line {
@@ -512,7 +512,7 @@ proc command_COOKIE {file try_cookie} {
 	}
 
     set authenticated_clients($file) 1
-    puts "$file: +OK"
+    #puts "$file: +OK"
     puts $file "+OK"
     }
 
@@ -528,6 +528,7 @@ proc server_authcheck {file} {
 	return 1
 	} else {
 	puts "-ERR must issue sucessful COOKIE command first"
+	puts $file "-ERR must issue sucessful COOKIE command first"
 	return 0
 	}
     }
@@ -559,14 +560,14 @@ proc register_with_server {register_url} {
     global magic_cookie
     global client_id
 
-    puts "Registering with server at <$register_url>..."
+    #puts "Registering with server at <$register_url>..."
 
     set sockname [fconfigure $server_socket -sockname]
     set ip [lindex $sockname 0]
     set port [lindex $sockname 2]
     set pprpopup_address "$ip:$port"
 
-    puts "client_id=$client_id, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
+    #puts "client_id=$client_id, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
     set data [eval ::http::formatQuery [list client $client_id pprpopup_address $pprpopup_address magic_cookie $magic_cookie]]
 
     if [catch {::http::geturl $register_url -query $data -command [namespace code register_callback]} errormsg] {
@@ -582,11 +583,11 @@ proc register_callback {token} {
 
     # Get the result codes for the POST.
     upvar #0 $token state
-    puts "Registration with <$state(url)> finished:"
+    #puts "Registration with <$state(url)> finished:"
     regexp {^HTTP/[0-9]+\.[0-9]+ ([0-9]+)} $state(http) junk ncode
-    puts "    State: $state(status)"
-    puts "    Ncode: $ncode"
-    puts "    Size: $state(totalsize)"
+    #puts "    State: $state(status)"
+    #puts "    Ncode: $ncode"
+    #puts "    Size: $state(totalsize)"
 
     # Test the status for errors.
     if {[string compare $state(status) "ok"] == 0 && $ncode == 200} {
@@ -601,10 +602,10 @@ proc register_callback {token} {
 	# Describe the error.
 	if {[string compare $state(status) "ok"] != 0} {
 	    # Transaction didn't complete.
-	    alert "POST failed while registering with PPR server:\n$state(url)\n$state(status)\n$state(error)"
+	    alert "PPR Popup was unable to register with the print server for the reason indicate below.\n\nPOST to <$state(url)> failed:\n$state(status)\n\n$state(error)"
 	    } else {
 	    # Transaction completed but result was unsatisfactory.
-	    alert "POST failed while registering with the PPR server:\n$state(url)\n$state(http)"
+	    alert "PPR Popup was unable to register with the print server for the reason indicated below.\n\nPOST to <$state(url)> failed:\n$state(http)\n\n$state(body)"
 	    }
 
 	# Re-schedual for 30 seconds (30,000 milliseconds) in the future.
@@ -620,7 +621,7 @@ proc do_register {} {
     global registration_interval
     global registration_status
 
-    puts "do_register"
+    #puts "do_register"
 
     # We only get the client ID once and cache the result.
     # This reduces AppleScript timeout problems on Macintoshes.
@@ -637,14 +638,14 @@ proc do_register {} {
     # then time some code and use the noise.  I assume we are measuring
     # schedualer noise, but I have no idea how random it is.
     if {[string length $ppr_magic_cookie_seed] < 64} {
-	puts -nonewline "Looking for more entropy."
+	#puts -nonewline "Looking for more entropy."
 	for {set x 0} {[string length $ppr_magic_cookie_seed] < 64} {incr x} {
-	    puts -nonewline "."
+	    #puts -nonewline "."
 	    set time_output [time { catch { open "_not_a_real_file_name_$x" } }]
 	    regexp {^([0-9]+)} $time_output count
 	    append ppr_magic_cookie_seed [expr $count % 10]
 	    }
-	puts ""
+	#puts ""
 	}
 
     # Reduce the seed to an MD5 hash, hash it with the current time to make
@@ -668,7 +669,7 @@ proc do_register {} {
     # Start the registration process for each server.
     foreach url $ppr_server_list {
         set url "${url}cgi-bin/pprpopup_register.cgi"
-	puts "$url"
+	#puts "$url"
 
 	# Make sure we have a status entry for this URL.
 	if {![info exists registration_status($url)]} {
@@ -789,7 +790,7 @@ proc main {} {
 	-dblclickcommand {
 		global open_windows
 		set url [.questions.list getcurselection]
-		puts "\$url = $url"
+		#puts "\$url = $url"
 		if {[info exists open_windows($url)]} {
 		    window_reopen $open_windows($url)
 		    }
@@ -820,7 +821,7 @@ proc main {} {
     wm title . "PPR Popup"
     menu_view_main 0
 
-    puts "Saving configuration..."
+    #puts "Saving configuration..."
     if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\n"} errormsg]} {
 	puts "Failed to save configuration:\n$errormsg"
 	#alert "Failed to save configuration:\n$errormsg"
