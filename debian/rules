@@ -12,8 +12,6 @@
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-
-
 CFLAGS = -Wall -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -28,8 +26,6 @@ endif
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
-
 	./Configure
 	touch configure-stamp
 

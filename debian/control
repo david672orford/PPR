@@ -8,7 +8,7 @@ Standards-Version: 3.6.0
 Package: ppr
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
+Description: A print spooler for PostScript
  <insert long description, indented with spaces>
 
 Package: ppr-doc
