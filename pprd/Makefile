@@ -68,7 +68,6 @@ pprd.auto_h:
 
 install: $(PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin pprd
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin pprd-kill
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib pprd-question
 
 #=== Housekeeping ===========================================================
