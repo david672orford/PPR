@@ -8095,3 +8095,7 @@ line was being parsed twice.
 * www/prn_addwiz.cgi.perl, libppr/interfaces.c: added entries for usblp
   interface program.
 
+* ppr-papd/: renamed everything from ppr-papd to papd.  This violations my
+  convention, but the name was really annoying me.
+
+

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd_printjob.c
+** mouse:~ppr/src/papd/papd_printjob.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -43,7 +43,7 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "ppr_exits.h"
-#include "ppr-papd.h"
+#include "papd.h"
 
 static pid_t ppr_pid = (pid_t)0;
 static jmp_buf printjob_env;
@@ -201,7 +201,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	    }
 
 	/*
-	** Parent only from here on.  Parent clone of ppr-papd daemon, child is ppr.)
+	** Parent only from here on.  Parent clone of papd daemon, child is ppr.)
 	*/
 	close(pipefds[0]);          /* we don't need read end */
 
@@ -269,21 +269,21 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 		at_reply(sesfd, "%%[ Error: bad ppr invokation syntax ]%%\n");
 		break;
 	    default:
-		at_reply(sesfd, "%%[ Error: fatal error, see ppr-papd log ]%%\n");
+		at_reply(sesfd, "%%[ Error: fatal error, see papd log ]%%\n");
 		break;
 	    }
 	}
     else if(WCOREDUMP(wstat))		/* If core dump created, */
 	{
-	at_reply(sesfd, "%%[ Error: ppr-papd: ppr dumped core ]%%\n");
+	at_reply(sesfd, "%%[ Error: papd: ppr dumped core ]%%\n");
 	}
     else if(WIFSIGNALED(wstat))		/* If child caught a signal, */
 	{
-	at_reply(sesfd, "%%[ Error: ppr-papd: ppr killed ]%%\n");
+	at_reply(sesfd, "%%[ Error: papd: ppr killed ]%%\n");
 	}
     else				/* Other return from wait(), such as stopped, */
 	{
-	at_reply(sesfd, "%%[ Error: ppr-papd: unexpected return from wait() ]%%\n");
+	at_reply(sesfd, "%%[ Error: papd: unexpected return from wait() ]%%\n");
 	}
 
     /*

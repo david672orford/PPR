@@ -1,5 +1,5 @@
 #
-# mouse:~src/ppr/ppr-papd/Makefile
+# mouse:~src/ppr/papd/Makefile
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS=ppr-papd$(DOTEXE)
+BIN_PROGS=papd$(DOTEXE)
 
 #=== Build ==================================================================
 
@@ -45,22 +45,22 @@ all: $(ALL_ATALK)
 all-atalk: $(BIN_PROGS)
 
 # This is the server.
-OBJS1=ppr-papd.$(OBJ) \
-	ppr-papd_$(ATALKTYPE).$(OBJ) \
-	ppr-papd_conf.$(OBJ) \
-	ppr-papd_query.$(OBJ) \
-	ppr-papd_printjob.$(OBJ) \
+OBJS1=papd.$(OBJ) \
+	papd_$(ATALKTYPE).$(OBJ) \
+	papd_conf.$(OBJ) \
+	papd_query.$(OBJ) \
+	papd_printjob.$(OBJ) \
 	../libppr.$(LIBEXT) \
 	../libgu.$(LIBEXT) \
 	../libpprdb.$(LIBEXT)
-ppr-papd$(DOTEXE): $(OBJS1)
+papd$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(LIB_LEX) $(ATALKLIBS) $(DBLIBS)
-	$(CHMOD) 6755 ppr-papd$(DOTEXE)
+	$(CHMOD) 6755 papd$(DOTEXE)
 
 # This one module might need extra flags to find the AppleTalk library 
 # include files.
-ppr-papd_$(ATALKTYPE).$(OBJ): ppr-papd_$(ATALKTYPE).c
-	$(CC) $(ATALKFLAGS) $(CFLAGS) -c ppr-papd_$(ATALKTYPE).c
+papd_$(ATALKTYPE).$(OBJ): papd_$(ATALKTYPE).c
+	$(CC) $(ATALKFLAGS) $(CFLAGS) -c papd_$(ATALKTYPE).c
 
 #=== Install ================================================================
 
@@ -70,7 +70,7 @@ install: $(INSTALL_ATALK)
 
 # List if things to install if we have AppleTalk.
 install-atalk: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin ppr-papd
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin papd
 
 #=== Housekeeping ===========================================================
 

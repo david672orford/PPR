@@ -92,7 +92,7 @@ SUBDIRS=\
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".
-SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests ppr-papd
+SUBDIRS_CLEAN_ONLY=filter_pcl ipp tests papd
 
 #=== Build ==================================================================
 

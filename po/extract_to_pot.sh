@@ -51,6 +51,12 @@ xgettext --default-domain=PAPSRV --keyword=_ --keyword=N_ --sort-output \
 ./sort_by_file.perl <PAPSRV.po >PAPSRV.pot
 rm PAPSRV.po
 
+echo "PAPD.pot"
+xgettext --default-domain=PAPD --keyword=_ --keyword=N_ --sort-output \
+	../papd/papd*.c
+./sort_by_file.perl <PAPD.po >PAPD.pot
+rm PAPD.po
+
 echo "PPRWWW.pot"
 ./perl_to_pseudo_c.perl ../www/*.perl ../www/*.pl \
 	| xgettext --default-domain=PPRWWW --keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ --sort-output --language=c -

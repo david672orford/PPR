@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd_conf.c
+** mouse:~ppr/src/papd/papd_conf.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -40,7 +40,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-#include "ppr-papd.h"
+#include "papd.h"
 
 /*============================================================================
 ** The code in this module opens each alias, group, and printer config file 
@@ -68,7 +68,7 @@ static struct DIRS dirs[] = {
 */
 static const char *default_zone(void)
     {
-    return gu_ini_query(PPR_CONF, "ppr-papd", "defaultzone", 0, "*");
+    return gu_ini_query(PPR_CONF, "papd", "defaultzone", 0, "*");
     }
 
 /*
@@ -82,7 +82,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
     char *p;
     char *papname = NULL;
 
-    DODEBUG_STARTUP(("%s(adv=%p, qtype=%d, qname[]=\"%s\", f=%p)", function, adv, (int)qtype, qname, f));
+    /* DODEBUG_STARTUP(("%s(adv=%p, qtype=%d, qname[]=\"%s\", f=%p)", function, adv, (int)qtype, qname, f)); */
 
     /*
     ** Search the configuration file for a line the specifies an AppleTalk name
@@ -90,7 +90,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
     */
     while((line = gu_getline(line, &line_available, f)))
 	{
-	if((p = lmatchp(line, "ppr-papd papname:")))
+	if((p = lmatchp(line, "papd papname:")))
 	    {
 	    if(papname)
 	    	gu_free(papname);
@@ -299,7 +299,8 @@ struct ADV *conf_load(struct ADV *adv)
 	/*
 	** This Linux code sets up monitoring of the configuration directories.
 	** This code will only be complied if we are using a suffiently new 
-	** version of GNU libc.  It requires a 2.4.x kernel to work.
+	** version of GNU libc.  The fcntl() call will fail on kernels
+	** earlier than 2.4.19.
 	*/
 	#ifdef F_NOTIFY
 	{

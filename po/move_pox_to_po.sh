@@ -6,7 +6,7 @@ if [ "$1" = "" ]
     exit 1
     fi
 
-for i in PPR PPRD PPRDRV PPRWWW PAPSRV
+for i in PPR PPRD PPRDRV PPRWWW PAPSRV PAPD
     do
     mv $1-$i.pox $1-$i.po
     done

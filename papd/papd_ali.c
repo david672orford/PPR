@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd_ali.c
+** mouse:~ppr/src/papd/papd_ali.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -53,7 +53,7 @@
 #include "pap_proto.h"		/* prototypes missing from AT&T ALI include files */
 #include "gu.h"			/* generally useful functions */
 #include "global_defines.h"	/* PPR global include file */
-#include "ppr-papd.h"		/* prototypes for this program */
+#include "papd.h"		/* prototypes for this program */
 
 /*========================================================================
 ** Output buffer routines.

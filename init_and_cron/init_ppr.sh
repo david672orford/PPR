@@ -1,17 +1,32 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/init_and_cron/init_ppr.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 13 February 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 14 February 2001.
 #
 
 #
@@ -70,6 +85,13 @@ case "$1" in
 	# This is the spooler daemon.
 	$HOMEDIR/bin/pprd && $NECHO -n "pprd "
 
+	# This is the new AppleTalk server daemon.
+	if [ -x $HOMEDIR/bin/papd ]
+	    then
+	    $HOMEDIR/bin/papd
+	    fi
+
+	# This is the AppleTalk server daemon.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
 	    then
 	    $HOMEDIR/bin/papsrv && $NECHO -n "papsrv "
@@ -97,6 +119,11 @@ case "$1" in
 	    then
 	    kill `cat $RUNDIR/pprd.pid` && $NECHO -n "pprd "
 	    rm -f $RUNDIR/pprd.pid
+	    fi
+	if [ -r $RUNDIR/papd.pid ]
+	    then
+	    kill `cat $RUNDIR/papd.pid` && $NECHO -n "papd "
+	    rm -f $RUNDIR/papd.pid
 	    fi
 	if [ -r $RUNDIR/papsrv.pid ]
 	    then

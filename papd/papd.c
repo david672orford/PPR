@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd.c
+** mouse:~ppr/src/papd/papd.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2003.
+** Last modified 14 January 2003.
 */
 
 /*
@@ -51,12 +51,12 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-#include "ppr-papd.h"
+#include "papd.h"
 #include "ppr_exits.h"
 #include "util_exits.h"
 #include "version.h"
 
-const char myname[] = "ppr-papd";
+const char myname[] = "papd";
 
 /* Globals related to the input line buffer. */
 char line[257];
@@ -106,7 +106,7 @@ static void log(const char category[], const char atfunction[], const char forma
 ** This is compiled in even if debugging per-say is
 ** not compiled in because we always make some calls
 ** to put some very basic messages in the log file
-** and becuase ppr-papd_query.c uses this when query_trace
+** and becuase papd_query.c uses this when query_trace
 ** is non-zero.
 */
 void debug(const char string[], ... )
@@ -197,7 +197,7 @@ char *debug_string(char *s)
 
 /*
 ** This is the handler for the signals that are likely to be used to terminate
-** ppr-papd.  This routine is left in place for the children as it should
+** papd.  This routine is left in place for the children as it should
 ** do no harm.
 **
 ** The first time such a signal is caught, this routine calls fatal(). If more 
@@ -305,18 +305,18 @@ static void reapchild(int signum)
 
 	if(WCOREDUMP(wstat))
 	    {
-	    debug("Child ppr-papd (pid=%i) dumped core",pid);
+	    debug("Child papd (pid=%i) dumped core",pid);
 	    }
 	else if(WIFSIGNALED(wstat))
 	    {
-	    debug("Child ppr-papd (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
+	    debug("Child papd (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
 	    }
 	else if(WIFEXITED(wstat))
 	    {
 	    #ifndef DEBUG_REAPCHILD
 	    if(WEXITSTATUS(wstat))
 	    #endif
-	    debug("Child ppr-papd (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
+	    debug("Child papd (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
 	    }
 	else
 	    {
@@ -328,7 +328,7 @@ static void reapchild(int signum)
 
 /*=========================================================================
 ** This is the main loop function for the child processes which handle
-** client connexions.  (The daemon ppr-papd forks off a child every time 
+** client connexions.  (The daemon papd forks off a child every time 
 ** it accepts a connection.)  This function answers queries and dispatches 
 ** print jobs until the client closes the connection.
 **
@@ -476,8 +476,8 @@ int main(int argc, char *argv[])
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
     setlocale(LC_MESSAGES, "");
-    bindtextdomain(PACKAGE_PPR_PAPD, LOCALEDIR);
-    textdomain(PACKAGE_PPR_PAPD);
+    bindtextdomain(PACKAGE_PAPD, LOCALEDIR);
+    textdomain(PACKAGE_PAPD);
     #endif
 
     /*
@@ -506,9 +506,9 @@ int main(int argc, char *argv[])
 	}
     else			/* not root */
 	{
-	if(uid != euid)		/* if user id is not same as owner of ppr-papd, */
+	if(uid != euid)		/* if user id is not same as owner of papd, */
 	    {
-	    fputs("Only \"ppr\" or \"root\" may start ppr-papd.\n", stderr);
+	    fputs("Only \"ppr\" or \"root\" may start papd.\n", stderr);
 	    exit(EXIT_DENIED);
 	    }
 	}

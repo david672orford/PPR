@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd_cap.c
+** mouse:~ppr/src/papd/papd_cap.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -29,7 +29,7 @@
 */
 
 /*============================================================================
-** CAP AppleTalk-implementation-dependent module for ppr-papd.
+** CAP AppleTalk-implementation-dependent module for papd.
 ============================================================================*/
 
 #include "before_system.h"
@@ -44,7 +44,7 @@
 #include <errno.h>
 #include "gu.h"
 #include "global_defines.h"
-#include "ppr-papd.h"
+#include "papd.h"
 
 /* The status of the spooler: */
 PAPStatusRec status;

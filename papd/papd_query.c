@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ppr-papd/ppr-papd_query.c
+** mouse:~ppr/src/papd/papd_query.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
-#include "ppr-papd.h"
+#include "papd.h"
 
 /*
 ** This module has two kinds of debugging in it.  The first kind
@@ -52,7 +52,7 @@
 ** the variable "query_trace" is non-zero.
 **
 ** The variable "query_trace" can be cycled thru its meaningful
-** values by sending SIGUSR1 to ppr-papd.
+** values by sending SIGUSR1 to papd.
 **
 ** Should we print minimal query debugging information?
 ** (This variable can have the values 0 (no debugging),
@@ -142,7 +142,7 @@ static void return_default(int sesfd)
 
     if((ptr = strchr(line,':')) == (char*)NULL)
 	{
-	fatal(0, "ppr-papd_query.c: return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)",line);
+	fatal(0, "papd_query.c: return_default(): invalid %%%%?Endxxxxxx: yyy\n(%s)",line);
 	}
 
     ptr++;

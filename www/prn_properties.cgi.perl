@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_properties.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 December 2002.
+# Last modified 14 January 2003.
 #
 
 use lib "?";
@@ -446,14 +446,14 @@ my $tabbed_table = [
 	},
 
 	#====================================================
-	# PAP
+	# AppleTalk
 	#====================================================
 	{
-	'tabname' => N_("PAP"),
+	'tabname' => N_("AppleTalk"),
 	'dopage' => sub {
 		print "<div class=\"section\">\n";
 		print "<span class=\"section_label\">";
-		labeled_checkbox("addon ppr2samba", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon pprpapd", 0));
+		labeled_checkbox("addon pprpapd", _("Share with AppleTalk PAP"), 0, cgi_data_move("addon pprpapd", 0));
 		print "</span>\n";
 
 		print "<p>";

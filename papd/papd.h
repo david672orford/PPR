@@ -25,13 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2003.
+** Last modified 14 January 2003.
 */
 
 #include "queueinfo.h"
 
-#define PIDFILE RUNDIR"/ppr-papd.pid"
-#define LOGFILE LOGDIR"/ppr-papd"
+#define PIDFILE RUNDIR"/papd.pid"
+#define LOGFILE LOGDIR"/papd"
 
 /* These two timeouts aren't implemented. */
 #define READ_TIMEOUT 60*60*1000			/* 1 hour in milliseconds */
@@ -167,7 +167,7 @@ struct QUEUE_CONFIG
 extern char line[];             /* input line */
 extern int children;		/* count of children */
 
-/* routines in ppr-papd.c */
+/* routines in papd.c */
 void fatal(int exitvalue, const char string[], ...);
 void debug(const char string[], ...);
 char *debug_string(char *s);
@@ -177,7 +177,7 @@ void postscript_stdin_flushfile(int sesfd);
 void sigpipe_handler(int signum);
 void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node);
 
-/* routines in ppr-papd_ali.c and ppr-papd_cap.c */
+/* routines in papd_ali.c and papd_cap.c */
 void at_service(struct ADV *adv);
 int  at_printjob_copy(int sesfd, int pipe);
 int  at_getc(int sesfd);
@@ -188,17 +188,17 @@ void at_close_reply(int sesfd);
 int  at_add_name(const char papname[]);
 void at_remove_name(const char papname[], int fd);
 
-/* routines in ppr-papd_printjob.c */
+/* routines in papd_printjob.c */
 void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[]);
 void printjob_abort(void);
 void printjob_reapchild(int sig);
 void printjob_sigpipe(int sig);
 
-/* routines in ppr-papd_query.c */
+/* routines in papd_query.c */
 void answer_query(int sesfd, struct QUEUE_CONFIG *qc);
 void sigusr1_handler(int sig);
 
-/* routines in ppr-papd_conf.c */
+/* routines in papd_conf.c */
 struct ADV *conf_load(struct ADV *old_config);
 void conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
 
