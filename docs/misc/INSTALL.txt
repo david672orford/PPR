@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/INSTALL.txt
  mouse:~ppr/src/INSTALL.txt (symbolic link)
- Last revised 5 November 2002.
+ Last revised 7 February 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -35,44 +35,50 @@ version of PPR is still considered experimental.
 
 1) The PPR source archive (ppr-1.50.tar.gz)
 
-2) Gunzip (to uncompress the source archive)
+2) Gzip (to uncompress the source archive)
+   (Gzip may be obtained from <http://www.gzip.org/>.)
 
 3) Tar (to unpack the source archive)
 
-4) GCC version 2.5.8 or later or the native C compiler on
-   DEC OSF/1, Digital Unix 4.0, or IRIX 6.3.
+4) GCC version 2.5.8 or later or the native C compiler on certain systems (the
+   Configure script will tell you if you have this option.
+   <GCC may be obtained from <http://gcc.gnu.org/>.)
 
-5) GNU dbm (GDBM) 1.5 or 1.7 and possibly other versions
+5) Perl 5.005 or later
+   (Which may be obtained form <http://www.cpan.org/>.)
 
-All of these items are probably already installed on Linux systems.  For
-other systems, you should check first.  The version of GCC may be
-determined with the command "gcc -v".
+6) GNU dbm (GDBM)
+   (Which may be obtained from <http://www.gnu.org/directory/gdbm.html>.)
 
-It is possible to compile and use PPR even if you don't have GDBM, but
-the ppuser command and the printer accounting features associated with it
-won't work.
+7) TDB <http://sourceforge.net/projects/tdb/>
+   (Which may be obtained from <http://sourceforge.net/projects/tdb/>.)
+
+With the exception of the last, all of these items are probably already
+installed on Linux systems.  For other systems, you should check first.  The
+version of GCC may be determined with the command "gcc -v".
 
 While Perl is not absolutely required to use PPR, it is strongly recomended
-that you install Perl 5.005 or later.
-
-If you do not have Perl 4.036 or later, the following things will not work:
+that you install Perl 5.005 or later. If you do not have Perl, the following
+things will not work:
 
 * The TeX filter.  This means that you will have to run TeX source files
   through TeX or LaTeX before sending them to be printed.  (But, the DVI
   filter will still work.)
 
-* The "atalk" responder and its daemon "atalkmapd".  (Which hardly work
-  at all anyway.)
+* Automatic Microsoft Windows driver installation for Samba.
 
-* Automatic Windows 95 driver installation for Samba.
+* The World Wide Web interface.
 
-If your Perl is older than 5.005, these additional things won't work:
-
-* The experimental World Wide Web interface.
-
-* The experimental ppr-panel GUI (which also requires Perl/Tk).
+* The ppr-panel GUI (which also requires Perl/Tk).
 
 * The audio commentator and responder.
+
+It is possible to compile and use PPR even if you don't have GDBM, but
+the ppuser command and the printer accounting features associated with it
+won't work.
+
+It is possible to compile and use PPR without TDB, but automatic Microsoft
+Windows driver download for Samba won't work.
 
 =============================================================================
  Programs for PostScript Filters
@@ -88,7 +94,7 @@ If the following software is present, more input filters will be available:
 
 * TeX/LaTeX
 
-* Perl 4.0 patch level 36 or Perl 5.005 (Other versions not tested.)
+* Perl
 
 * DVIPS
 
@@ -318,13 +324,18 @@ $ make RPM_BUILD_ROOT=/tmp/ppr-binary install
 $ cd /tmp/ppr-binary
 $ tar zcvf ../ppr-binary.tar.gz .
 
+An RPM spec file (called ppr.spec) can be found in the top-level source
+directory.
+
 ============================================================================
  Upgrading to PPR 1.50 from previous versions
 ============================================================================
 
 This is a list of important changes you should be aware of when upgrading
 from a prevous version of PPR.  Previous versions include 1.44, 1.43, 1.42,
-1.41, 1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.
+1.41, 1.40, 1.32, 1.31, 1.20, 1.10, and 1.00.  The most recent changes are 
+listed first.  You can stop reading when you see a mention of a version of 
+PPR that is older than the one you currently have installed.
 
 It is hard to keep track of what has changed.  If, when upgrading, you find
 things I have omitted, please write to <ppr-bugs@mail.trincoll.edu>.
@@ -344,12 +355,12 @@ versions.  You should empty the queues before upgrading.
 the top level directory and is called "Makefile.conf".  Previously it was
 makeprogs/global.mk.
 
-*) The gs* interface programs are being phased in in favour of a new
+*) The gs* printer interface programs are being phased in in favour of a new
 mechanism in which pprdrv takes care of running Ghostscript.  The PPD files
 supplied with PPR with names ending in "Ghostscript" invoke this new
 mechanism even if you are still using a gs* interface.  (The gs* interface
 will see that it is not being fed PostScript and will refrain from invoking
-Ghostscript itself.)  It is recomended that you stop using the gs*
+Ghostscript itself.) It is recomended that you stop using the gs*
 interfaces.
 
 *) The version 1.50 uprint.conf file format contains settings which indicate 

@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 January 2003.
+# Last modified 7 February 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -417,10 +417,15 @@ if [ -z "$XWINBINDIR" ]; then XWINBINDIR="/usr/bin/X11"; fi
 echo
 
 #
-# Ask about gdbm:
+# Ask about GDBM:
 #
 echo
-echo "Do you have the GNU database library (GDBM)?"
+echo "PPR can use GNU dbm (GDBM).  You can obtain GDBM from"
+echo "<http://www.gnu.org/directory/gdbm.html>.  Please note"
+echo "that PPR binaries linked with GDBM must be distributed in accord"
+echo "with the terms of the GPL."
+echo
+echo "Do you have GDBM?"
 echo
 echo "(If you say no, the user database will not work.  See the"
 echo "ppuser(8) man page for information about this feature."
@@ -456,10 +461,15 @@ if [ "$USE_GDBM" = "yes" ]
 echo
 
 #
-# Ask about gdbm:
+# Ask about TDB:
 #
 echo
-echo "Do you have Samba's Trivial DataBase library (TDB)?"
+echo "PPR can use the Trivial Database Library (TDB).  TDB is a library"
+echo "used internaly by Samba.  You can obtain it in library form from"
+echo "<http://sourceforge.net/projects/tdb/>.  Please note that PPR linked"
+echo "with TDB must be distributed in accord with the terms of the GPL."
+echo
+echo "Do you have TDB?"
 echo
 echo "(If you say no, then automatic Samba client printer driver download"
 echo "will not work."

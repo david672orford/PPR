@@ -1,6 +1,7 @@
 ============================================================================
- mouse:~ppr/src/README.txt
- Last revised 10 January 2003.
+ mouse:~ppr/src/docs/misc/README.txt
+ mouse:~ppr/src/README.txt (symbolic link)
+ Last revised 7 February 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -106,7 +107,7 @@ The source code is divided into directories as follows:
 		No actual fonts, just font data, actual fonts are in
 		nonppr_vendors/.
 	ppd/
-		PPD files under PPR license, vendor-supplied PPD files are
+		PPD files under PPR license.  Vendor-supplied PPD files are
 		in nonppr_vendors/.
 	misc/
 		Odds and ends that are mostly small, experimental,

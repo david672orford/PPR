@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2003.
+** Last modified 13 February 2003.
 */
 
 /*
@@ -453,8 +453,8 @@ static void pprdrv_exited(int prnid, int wstat)
 		    {
 		    alert(printers[prnid].name, TRUE,
 		    	_("Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
-		    	  "by signal 0) may indicate that dynamic linking failed due to a problem with\n"
-		    	  "the shared library search path.")
+		    	  "by signal 0) is nonsense but may indicate that dynamic linking failed due to a\n"
+		    	  "problem with the shared library search path.")
 		    	  );
 		    }
 		else

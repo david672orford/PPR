@@ -7948,7 +7948,7 @@ line was being parsed twice.
 * Added regression test test-ppr/401-duplex.
 
 * libuprint/uprint.conf.sample: reordered lines; libuprint/uprint_conf.c:
-  added error message for unrecognized sections and added missing code to 
+  added error message for unrecognized sections and added missing code to
   ignore flavor= lines in [real lp].
 
 * ppr/ppr_nest.c: error message improvement for unmatched section begin/end
@@ -7972,10 +7972,10 @@ line was being parsed twice.
 
 * Fixed "ppad help" description of "ppad rip".
 
-* pprdrv/pprdrv.c:pprdrv_read_printer_conf(): fixed to allow empty option 
+* pprdrv/pprdrv.c:pprdrv_read_printer_conf(): fixed to allow empty option
   list.
 
-* www/ppr-web-control.tcl, window_open.cgi.perl: fleshed out adding opening 
+* www/ppr-web-control.tcl, window_open.cgi.perl: fleshed out adding opening
   of Mozilla using $HOME/.ppr/ppr-web-control.html so that browser write
   privlege can be granted and we can open without an intermediate window;
   Added support for Konqueror, Links, W3m, and Lynx; renamed to ppr-web.tcl.
@@ -7991,7 +7991,7 @@ line was being parsed twice.
   "View".
 
 * ppr/ppr_respond.c: switch the seteuid()/setegid() code from setting them
-  to the user's to setting them to PPR's.  Set the real IDs too.  This 
+  to the user's to setting them to PPR's.  Set the real IDs too.  This
   fixes the xwin and pprpopup responder when launched by ppr (rather than
   pprd).
 
@@ -8021,9 +8021,9 @@ line was being parsed twice.
 * www/show_queues.cgi.perl: set width of table cells holding things such as
   "Add New Printer" to 150 to encourage them to wrap their labels.
 
-* pprdrv/pprdrv_ppop_status.c, pprdrv/pprdrv_commentary.c, 
+* pprdrv/pprdrv_ppop_status.c, pprdrv/pprdrv_commentary.c,
   ppop/ppop_cmds_other.c: refinements to how unrecognized status messages
-  are handled.  They are now displayed by ppop even without --verbose. 
+  are handled.  They are now displayed by ppop even without --verbose.
   Changed order of lines in status file so that standardized status will
   be at the top.
 
@@ -8031,7 +8031,7 @@ line was being parsed twice.
   turned-off code to use form fields to format the information.
 
 * ppop/ppop_cmds_other.c: changed "ppop status" output: changed "unconfirmed
-  for X minutes" to "as of X minutes ago" and suppessed "for X minutes" when 
+  for X minutes" to "as of X minutes ago" and suppessed "for X minutes" when
   "as of" is displayed.  These two changes shorting the messages
   considerably while still providing a useful amount of information.  Using
   the --verbose switch gets you everything.
@@ -8057,7 +8057,7 @@ line was being parsed twice.
   a good idea because Mandrake Linux 9.0 still has a broken symbolic link
   to a Fontmap file from an old version of Ghostscript.
 
-* fixup/fixup_inetd.sh: removed spurious "disabled =" line from generated 
+* fixup/fixup_inetd.sh: removed spurious "disabled =" line from generated
   xinetd.d/ppr file.
 
 * www/prn_properties.cgi.perl: fixed custom RIP saving.
@@ -8077,11 +8077,11 @@ line was being parsed twice.
 
 * README.txt: brought up to date.
 
-* interfaces/parallel.c,parallel_linux.c: added status_interval=. 
+* interfaces/parallel.c,parallel_linux.c: added status_interval=.
   Unfortunately its seems that the Linux parallel port driver doesn't
   support non-blocking IO.  Also added code to attempt to detect
   if the printer is powered down by watching the busy line.  Added
-  case to interpret EIO as an attempt to read from a unidirectional 
+  case to interpret EIO as an attempt to read from a unidirectional
   printer.  (EINVAL was already interpreted as an attempt to read from
   a unidirectional port.)  Removed EIO explaination "Hangup or other
   error while trying to opening "X"" as it seemed to make no sense
@@ -8107,9 +8107,9 @@ line was being parsed twice.
 
 * fixup/fixup_conf.sh: added code to generate [papd] section.
 
-* nonppr_misc/misc/: moved gu_wildmat.* to nonppr_misc/wildmat/, moved 
-  snprintf.c to nonppr_misc/snprintf/, deleted modes-3.3.mf, moved 
-  squeeze.c to nonppr_misc/squeeze/squeeze.c, moved ps_type3.c to 
+* nonppr_misc/misc/: moved gu_wildmat.* to nonppr_misc/wildmat/, moved
+  snprintf.c to nonppr_misc/snprintf/, deleted modes-3.3.mf, moved
+  squeeze.c to nonppr_misc/squeeze/squeeze.c, moved ps_type3.c to
   nonppr_misc/ps_type3/ps_type3.c.
 
 * filters_typeset/pod/: removed it since it was never completed and Pod:XML
@@ -8130,9 +8130,9 @@ line was being parsed twice.
 * Configure, Configure_new, lib*/Makefile, nonppr_tcl/Makefile: added
   explicit call to ranlib (though for most platforms RANLIB=touch).
 
-* www/q_icons/[0-2]*.png, www/images/*.png, *.eps: added to CVS (marked as 
-  binary).  I did this so we will know if switching conversion tools produces 
-  different results (as it has in the past, generally better) and because a 
+* www/q_icons/[0-2]*.png, www/images/*.png, *.eps: added to CVS (marked as
+  binary).  I did this so we will know if switching conversion tools produces
+  different results (as it has in the past, generally better) and because a
   lot of people don't have the tools needed to build them.
 
 * fixup/fixup_conf.sh: fixed messed up [papd] section code.
@@ -8145,10 +8145,10 @@ line was being parsed twice.
   Solaris 2.8 doesn't seem to have it!
 
 * makeprogs/ppr_make_depend.perl: changed to ommit dependencies for
-  non-existent include files rather than assume they will be in ../include. 
+  non-existent include files rather than assume they will be in ../include.
   This change was necessary because snprintf.c conditionally includes
   config.h and I didn't want to change it as it is not my code and I want to
-  keep it easy to keep up-to-date with the latest version.  Generating a 
+  keep it easy to keep up-to-date with the latest version.  Generating a
   dependency spec. for a non-existent file doesn't do any good anyway.
 
 * www/ppr-httpd.perl: added "Accept-Ranges: bytes" to the response headers
@@ -8159,16 +8159,26 @@ line was being parsed twice.
 * pprd/pprd_pprdrv.c: added code to post an alert suggesting that
   suggests a dynamic linking problem if pprdrv dies "killed by signal 0".
 
+* libppr/alert.c:alert(): expanded formatting buffer from 256 to 512 bytes.
+
 * pprdrv/pprdrv_log.c: added
 
 * pprdrv/pprdrv_capable.c, pprdrv_feedback.c: replace job log handling code
   with calls to functions in pprdrv_log.c.
 
-* pprdrv/pprdrv_reason.c: added code to log the name of the printer and the
-  probable reason to the job log.
+* pprdrv/pprdrv_reason.c: added code send an information block which states
+  that a PostScript error has occured, what printer the job was printing on,
+  and the probable reason for the PostScript error.  This block will appear
+  just before the PostScript error message in the job log.
 
-* libuprint/uprint_rfc1179.c: added (but won't be used until the next
-  version.
+* Configure, Configure_new: change the messages before the GDBM and TDB
+  questions to more clearly indicate that the copy of TDB in Samba can't
+  be used, to provide download URLs for GDBM and TDB, and to remind the
+  user that GDBM and TDB are licensed under the GPL.
+
+* libuprint/uprint_rfc1179.c: added (but won't use until the next
+  PPR minor release).
 
 * ppop/README.txt: added
+
 

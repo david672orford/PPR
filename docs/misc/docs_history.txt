@@ -332,7 +332,7 @@ more information about RIPs and *pprRIP:.
   seems to have overprint problems.
 
 
-1.50, 22 January 2003--12 February 2003.
+1.50, 22 January 2003--13 February 2003.
 
 * misc/PORTING.txt: changed references to makeprogs/global.mk to
   Makefile.conf.
@@ -347,6 +347,9 @@ more information about RIPs and *pprRIP:.
 * ppdoc.sh: added section headings to no-arguments help output.
 
 * index.html: added link to Mozilla prefetching documentation.
+
+* misc/INSTALL.txt: added download URLs for Gzip, GCC, Perl, GDBM, and TDB.
+  Did general cleanup.
 
 * refman/ppr-config.8.pod: added
 

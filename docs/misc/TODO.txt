@@ -1,36 +1,48 @@
 ==============================================================================
  mouse:~ppr/src/docs/misc/TODO.txt
  mouse:~ppr/src/TODO.txt (symbolic link)
- Last revised 17 November 2002
+ Last revised 31 January 2003
 ==============================================================================
 
-* Make more extensive use of lmatch() and lmatchp() macros.
+* Finish ppr-papd (a replacement for papsrv).
 
-* Finish converting papsrv to ppr-papd.
+* Evaluate libieee1284 at http://sourceforge.net/projects/libieee1284/.
 
-* Add queue aliases support to ppr2samba, and ppr-papd.
+* Add queue aliases support to ppr2samba.
 
-* IPP server
+* Add support for Samba's new MS-Windows driver download to ppr2samba.
 
-* IPP support in UPRINT
-
-* -F switch sorting
+* IPP support in UPRINT so that jobs can be sent to CUPS queues.  This
+  should probably be done with libcups which is LGPL.  
 
 * Make uprint-cancel and uprint-lpstat actually do something
 
 * Write uprint-lpc, uprint-lpadmin, uprint-accept, and uprint-reject
 
-* PPR node-to-node printing, queue display, and job canceling
+* Change responder interface to use name=value pairs on the command line. 
 
-* Add responder option parsing in pprd.  (responder-widths.conf)
+* Change commentators to support the new status handling code and merge them
+  with responders.
 
-* Increase any limit on the length of the interface options line
+* Increase any limit on the length of the printer interface options line.
 
-* --dsc-charset and --arg-charset
+* Write an IPP server.
 
-* Support banner page "news" messages
+* Implement -F switch sorting in pprdrv.
 
-* Convert build to autoconf
+* Replace the PPD parsing code in pprdrv and implement installable options
+  handling.
+
+* Implement PPR node-to-node printing, queue display, and job canceling.
+
+* Add --dsc-charset to ppr.
+
+* Add code to convert command line options to utf-8 and provide mechanism for 
+  their translation.
+
+* Support banner page "news" messages.
+
+* Convert build to autoconf (maybe).
 
 ==============================================================================
  end of file
