@@ -59,65 +59,59 @@ void error(const char *message, ... )
 
 static void do_header(void)
 	{
-	printf("\
-%%!PS-Adobe-3.0
-%%%%Title: PPR Test Page
-%%%%Pages: 1
-%%%%DocumentNeededResources: font Helvetica
-%%%%EndComments
-
-");
+	printf(
+		"%%!PS-Adobe-3.0\n"
+		"%%%%Title: PPR Test Page\n"
+		"%%%%Pages: 1\n"
+		"%%%%DocumentNeededResources: font Helvetica\n"
+		"%%%%EndComments\n"
+		);
 	}
 
 static void do_prolog(void)
 	{
-	printf("\
-%%%%BeginProlog
-%%%%EndProlog
-
-");
+	printf(
+		"%%%%BeginProlog\n"
+		"%%%%EndProlog\n"
+		);
 	}
 
 static void do_setup(const char page_size[])
 	{
-	printf("\
-%%%%BeginSetup
-%%%%IncludeResource: font Helvetica
-/Helvetica findfont 10 scalefont setfont
-%%%%IncludeFeature: *PageSize %s
-10 dict begin
-%%%%EndSetup
-
-", page_size);
+	printf(
+		"%%%%BeginSetup\n"
+		"%%%%IncludeResource: font Helvetica\n"
+		"/Helvetica findfont 10 scalefont setfont\n"
+		"%%%%IncludeFeature: *PageSize %s\n"
+		"10 dict begin\n"
+		"%%%%EndSetup\n"
+		, page_size);
 	}
 
 static void do_startpage(int num)
 	{
-	printf("\
-%%%%Page: %d %d
-save
-
-", num, num);
+	printf(
+		"%%%%Page: %d %d\n"
+		"save\n"
+		, num, num);
 	}
 
 static void do_endpage(void)
 	{
-	printf("\
-%% End of page
-restore
-showpage
-
-");
+	printf(
+		"%% End of page\n"
+		"restore\n"
+		"showpage\n"
+		);
 	}
 
 static void do_trailer(void)
 	{
-	printf("\
-
-%%%%Trailer
-end
-%%%%EOF
-");
+	printf(
+		"%%%%Trailer\n"
+		"end\n"
+		"%%%%EOF\n"
+		);
 	}
 
 /*========================================================================
@@ -209,14 +203,14 @@ static gu_boolean eps_insert(const char filename[], struct BBOX *bbox, double x,
 		}
 
 	/* Here is the Red Book code to save the current state. */
-	printf("\
-%% Start of EPS setup
-/b4_Inc_state save def
-/dict_count countdictstack def
-/op_count count 1 sub def
-userdict begin
-/showpage {} def
-");
+	printf(
+		"%% Start of EPS setup\n"
+		"/b4_Inc_state save def\n"
+		"/dict_count countdictstack def\n"
+		"/op_count count 1 sub def\n"
+		"userdict begin\n"
+		"/showpage {} def\n"
+		);
 
 	/* Establish a coordinate system with its origin at the lower left corner
 	   of the box we want the EPS file to appear in. */
@@ -246,16 +240,15 @@ userdict begin
 		printf("%s\n", line);
 		}
 
-	printf("\
-%%%%EndDocument
-
-%% Start of EPS cleanup
-count op_count sub {pop} repeat
-countdictstack dict_count sub {end} repeat
-b4_Inc_state restore
-%% End of EPS cleanup
-
-");
+	printf(
+		"%%%%EndDocument\n"
+		"\n"
+		"%% Start of EPS cleanup\n"
+		"count op_count sub {pop} repeat\n"
+		"countdictstack dict_count sub {end} repeat\n"
+		"b4_Inc_state restore\n"
+		"%% End of EPS cleanup\n"
+		);
 
 	fclose(eps);
 	return TRUE;
@@ -267,17 +260,16 @@ b4_Inc_state restore
 
 static void test_graybar(int x, int y, int width, int height, const char setproc[], const char towhite[])
 	{
-	printf("\
-%% grayscale bar
-save
-/x %d def
-/y %d def
-/width_each %d def
-/height %d def
-/temp 10 string def
-/setproc { %s } def
-/towhite { %s } def
-",
+	printf(
+		"%% grayscale bar\n"
+		"save\n"
+		"/x %d def\n"
+		"/y %d def\n"
+		"/width_each %d def\n"
+		"/height %d def\n"
+		"/temp 10 string def\n"
+		"/setproc { %s } def\n"
+		"/towhite { %s } def\n",
 		x,
 		y,
 		width / 11,
@@ -285,39 +277,38 @@ save
 		setproc,
 		towhite);
 
-	printf("\
-0 setlinewidth
-0 1 10 {
-	/i exch def
-	newpath
-	x i width_each mul add y moveto		%% bottom left
-		0 height rlineto				%% to top left
-		width_each 0 rlineto			%% to top right
-		0 height neg rlineto			%% to bottom right
-		closepath						%% back to bottom left
-		gsave
-		  i 10 div setproc
-		  fill
-		  grestore
-		stroke
-	i 10 mul temp cvs length			%% multiply by 10 to get percentage
-	  temp exch
-	  2 copy (%%) putinterval			%% add percent sign
-	  0 exch 1 add getinterval			%% reduce to string
-	  /str exch def
-	  x									%% base x
-		i width_each mul add			%% plus offset to start of block
-		width_each 2 div add			%% plus half a block
-		str stringwidth pop 2 div sub	%% plus half the string width
-	  y 5 add moveto
-		gsave
-		i towhite { 1.0 setgray } if
-		str show
-		grestore
-	} for
-restore
-
-");
+	printf(
+		"0 setlinewidth\n"
+		"0 1 10 {\n"
+		"	/i exch def\n"
+		"	newpath\n"
+		"	x i width_each mul add y moveto		%% bottom left\n"
+		"		0 height rlineto				%% to top left\n"
+		"		width_each 0 rlineto			%% to top right\n"
+		"		0 height neg rlineto			%% to bottom right\n"
+		"		closepath						%% back to bottom left\n"
+		"		gsave\n"
+		"		  i 10 div setproc\n"
+		"		  fill\n"
+		"		  grestore\n"
+		"		stroke\n"
+		"	i 10 mul temp cvs length			%% multiply by 10 to get percentage\n"
+		"	  temp exch\n"
+		"	  2 copy (%%) putinterval			%% add percent sign\n"
+		"	  0 exch 1 add getinterval			%% reduce to string\n"
+		"	  /str exch def\n"
+		"	  x									%% base x\n"
+		"		i width_each mul add			%% plus offset to start of block\n"
+		"		width_each 2 div add			%% plus half a block\n"
+		"		str stringwidth pop 2 div sub	%% plus half the string width\n"
+		"	  y 5 add moveto\n"
+		"		gsave\n"
+		"		i towhite { 1.0 setgray } if\n"
+		"		str show\n"
+		"		grestore\n"
+		"	} for\n"
+		"restore\n"
+		);
 
 	}
 
@@ -545,13 +536,14 @@ int main(int argc, char *argv[])
 	/* Print the product name. */
 	x = eps_margin;
 	y = eps_margin;
-	printf("\
-%d %d moveto
-statusdict begin
-  (Product: ) show product show
-  (	  Version: ) show version 10 string cvs show
-  (	  Revision: ) show revision 10 string cvs show
-end\n", x, y);
+	printf(
+		"%d %d moveto\n"
+		"statusdict begin\n"
+		"  (Product: ) show product show\n"
+		"  (	  Version: ) show version 10 string cvs show\n"
+		"  (	  Revision: ) show revision 10 string cvs show\n"
+		"end\n"
+		, x, y);
 
 	do_endpage();
 

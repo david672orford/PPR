@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/ppr-push-httpd.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 21 May 2003.
 */
 
 #include "before_system.h"
@@ -277,18 +277,18 @@ static void do_audio1(const char request_method[], char *content[], int content_
 	/* Browser sound playing method 2 requires an Active X plugin. */
 	if(settings.method == 2)
 		{
-		printf("<OBJECT ID=\"MediaPlayer1\" width=300 height=70
-						classid=\"CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95\"
-						CODEBASE=\"http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=6,4,5,715\"
-						standby=\"Loading Microsoft® Windows® Media Player components...\"
-						type=\"application/x-oleobject\">
-				<PARAM NAME=\"AutoStart\" VALUE=\"true\">
-				<PARAM NAME=\"animationatStart\" VALUE=\"False\">
-				<PARAM NAME=\"ShowControls\" VALUE=\"True\">
-				<PARAM NAME=\"ShowStatusBar\" VALUE=\"True\">
-				Player object missing!
-				</OBJECT>
-				");
+		printf(	"<OBJECT ID=\"MediaPlayer1\" width=300 height=70\n"
+				"		classid=\"CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95\"\n"
+				"		CODEBASE=\"http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=6,4,5,715\"\n"
+				"		standby=\"Loading Microsoft® Windows® Media Player components...\"\n"
+				"		type=\"application/x-oleobject\">\n"
+				"<PARAM NAME=\"AutoStart\" VALUE=\"true\">\n"
+				"<PARAM NAME=\"animationatStart\" VALUE=\"False\">\n"
+				"<PARAM NAME=\"ShowControls\" VALUE=\"True\">\n"
+				"<PARAM NAME=\"ShowStatusBar\" VALUE=\"True\">\n"
+				"Player object missing!\n"
+				"</OBJECT>\n"
+				"\n");
 		}
 
 	printf("<hr>\n");

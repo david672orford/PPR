@@ -25,10 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 21 May 2003.
 #
 
 include ../Makefile.conf
+
+#=== Inventory ==============================================================
 
 LIBOBJS=\
 	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
@@ -58,21 +60,27 @@ LIBOBJS=\
 
 TARGETS=../libppr.$(LIBEXT)
 
+#=== Build ==================================================================
+
 all: $(TARGETS)
-
-install: all
-
-include .depend
 
 # This build rule for this module is listed explicitly because of the
 # -D option on in the cc command.
 ali_str.$(OBJ): ali_str.c
-	$(CC) $(CFLAGS) -DATALKTYPE_$(ATALKTYPE) -c ali_str.c
+	$(CC) $(CFLAGS) $(ATALKFLAGS) -DATALKTYPE_$(ATALKTYPE) -c ali_str.c
 
 ../libppr.$(LIBEXT): $(LIBOBJS)
 	$(RMF) ../libppr.$(LIBEXT)
 	$(LIBCMD) ../libppr.$(LIBEXT) $(LIBOBJS)
 	$(RANLIB) ../libppr.$(LIBEXT)
+
+#=== Install ================================================================
+
+install: all
+
+#=== Housekeeping ===========================================================
+
+include .depend
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

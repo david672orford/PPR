@@ -50,11 +50,10 @@ TCL_LIBRARY = $(HOMEDIR)/lib
 #
 # If you don't have them enabled, then you can't run the regression tests. 
 #
-MATH_FLAGS =
-#MATH_LIBS = -lieee -lm
-MATH_LIBS = -lm
-#MATH_FLAGS = -DTCL_NO_MATH
-#MATH_LIBS =
+#MATH_FLAGS =
+#MATH_LIBS = -lm
+MATH_FLAGS = -DTCL_NO_MATH
+MATH_LIBS =
 
 #
 # To enable memory debugging reverse the comment characters on the following

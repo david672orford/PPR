@@ -30,7 +30,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 21 May 2003.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -1228,14 +1228,24 @@ LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 
+# GCC and Glibc
 CC=gcc
-#CC=diet
 #CC=g++ -fno-exceptions
 CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
-
 LD=gcc
-#LD=diet
 LDFLAGS=
+
+# GCC with Diet libc wrapper
+#CC=diet
+#CFLAGS=$GCC_CFLAGS -I ../include \$(MISC_OPTS)
+#LD=diet
+#LDFLAGS=
+
+# GCC with UClibc wrapper
+#CC=i386-uclibc-cc
+#CFLAGS=$GCC_CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include \$(MISC_OPTS)
+#LD=i386-uclibc-cc
+#LDFLAGS=
 
 CPP=gcc -E -P -xc-header
 SOCKLIBS=

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 March 2003.
+** Last modified 21 May 2003.
 */
 
 /*
@@ -339,6 +339,12 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 
 #undef SENDMAIL_PATH
 #define SENDMAIL_PATH "/usr/sbin/sendmail"
+
+/* uClibc doesn't support NIS.  We have to put this in pass 2 because
+   no uClibc headers have been read during pass 1. */
+#ifdef __UCLIBC__
+#undef HAVE_NETGROUP
+#endif
 
 #endif /* PASS2 */
 #endif /* PPR_LINUX */

@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--14 May 2003.
+1.51, 15 February 2003--5 June 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8232,7 +8232,7 @@ line was being parsed twice.
 
 # www/cgi_run.pl: fixed run() and opencmd() so that they don't use die if
   exec fails.  This was bad because the die was often caught.  The result
-  was that both parent and child tried to issue the second half of the
+  was that _both_ parent and child tried to issue the second half of the
   HTML page.  The copy from the child was received by the parent, HTML
   escaped, and displayed as command output!  Suppressed program path in
   run() output.  Suppressed Perl 5.8.0 warning about tainted arguments
@@ -8248,8 +8248,7 @@ line was being parsed twice.
 
 * libuprint/: reorganized code and renamed many files and a few functions.
   Some of the renaming went thusly: lpr->bsd, lp->sysv.  This was done
-  in most cases where the reference was not to a command but to a spooler.
-  [More description coming as work progresses.]
+  in most places where the reference was not to a command but to a spooler.
 
 * uprint/: removed all setuid root and calls to setuid business in
   libuprint.  Made uprint-lpr and uprint-lp setuid ppr so that they can get
@@ -8261,8 +8260,8 @@ line was being parsed twice.
   stead of setuid root.
 
 * fixup/fixup_perms.sh: changed to no longer make uprint-* and ppr-xgrant
-  setuid root.  Made code neater by creating another for loops which steps
-  through a list of files that all need the same settings.
+  setuid root.  Made code neater by creating another for loop which steps
+  through a list of files that all need the same ownership and mode.
 
 * lprsrv/olprsrv.c: fixed to work with libuprint changes and to always
   compile support for all supported spoolers.
@@ -8385,8 +8384,8 @@ line was being parsed twice.
   re-implement id because old versions aren't as nice as GNU id and don't
   support -u, -g, and -n.
 
-* www/ppr-web.tcl: added -d option to specify the queue though its use is
-  still optional.
+* www/ppr-web.tcl: added -d option for use when specifying the queue, though 
+  its use is still optional, i.e., the old syntax still works.
 
 * www/cliconf.cgi.perl: added -d option to ppr-web command in generated KDE
   icons.
@@ -8504,14 +8503,15 @@ line was being parsed twice.
 
 * pprdrv/pprdrv_progress.c: code cleanup.
 
-* pprdrv/pprdrv_commentary.c: added PEXIT state_update_pprdrv message.
+* pprdrv/pprdrv_commentary.c: added PEXIT message to those written into
+  $VAR_SPOOL_PPR/run/state_update_pprdrv.
 
 * printdesk/PPRstateupdate.pm: added suport for PEXIT.  Fixed inline POD
   documentation.
 
 * printdesk/PPRprnstatus.pm: fixed to use PEXIT to clear the progress since
   other means where unreliable, especially those that relied on the timing
-  of the arrival of messages from pprd relative to the timeing of messages
+  of the arrival of messages from pprd relative to the timing of messages
   from pprdrv.
 
 * printdesk/ppr-panel.perl: added -d for selecting queue; added print dialog
@@ -8584,8 +8584,18 @@ line was being parsed twice.
 * libppr/interfaces.c, ppad/ppad_group.c: fixed core dump errors when "ppad show"
   and "ppad group show" were used on empty printer and group configuration files.
   
-* Changed remaining (char)NULL to '\0'.
+* Changed remaining (char)NULL to '\0'.  This was part of an attempt to
+  compile PPR with TCC.  TCC doesn't like some of the c2lib code.
   
+* libscript/PPOP.pm: added blind detainting of values passed to --su and 
+  --proxy-for.  The problem was that Perl considers the value of REMOTE_USER to be
+  user input (which it isn't).  I could have fixed this at the point at which the 
+  value is derived from REMOTE_USER, but I don't see any danger to passing tainted
+  values to these ppop command line options.  Nor can I imagine any instance in which
+  a server would accept unverified data as a user identity.
+  
+
+
 
 
 +++++++++++++++++++++
