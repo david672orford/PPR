@@ -10,14 +10,14 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 15 January 2001.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
 #include <stdio.h>
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "pprd.auto_h"

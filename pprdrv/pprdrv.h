@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 10 May 2001.
+** Last revised 20 July 2001.
 */
 
 /*
@@ -19,7 +19,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 1
+#if 0
 #define DEBUG 1				/* include function debug() */
 #define DEBUG_MAIN 1			/* main() */
 #define DEBUG_INTERFACE 1		/* show opening, closing, etc. */
@@ -155,6 +155,7 @@ __attribute__ (( format (printf, 1, 2) ))
 enum JOBTYPE {JOBTYPE_QUERY, JOBTYPE_FLAG, JOBTYPE_THEJOB, JOBTYPE_THEJOB_TRANSPARENT, JOBTYPE_THEJOB_BARBAR};
 void interface_fault_check(void);
 void kill_interface(void);
+int interface_close(gu_boolean flushit);
 extern int intstdin;
 extern int intstdout;
 gu_boolean interface_sigchld_hook(pid_t pid, int wait_status);
@@ -165,7 +166,7 @@ int job_nomore(void);
 /* pprdrv_rip.c: */
 void rip_fault_check(void);
 int rip_start(int printdata_handle, int stdout_handle);
-int rip_stop(int printdata_handle2);
+int rip_stop(int printdata_handle2, gu_boolean flushit);
 void rip_cancel(void);
 gu_boolean rip_sigchld_hook(pid_t pid, int wait_status);
 
@@ -353,9 +354,10 @@ struct PPRDRV {
 	struct					/* Raster Image Processor (such as Ghostscript) */
 	    {
 	    char *name;
-	    char *driver;
-	    char *driver_output_language;
-	    char *options;
+	    char *output_language;
+	    char *options_storage;
+	    const char **options;
+	    int options_count;
 	    } RIP;
 
 	struct COMMENTATOR *Commentators;	/* the list of processes to tell about things */

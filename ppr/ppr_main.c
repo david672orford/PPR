@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 1 June 2001.
+** Last revised 19 July 2001.
 */
 
 /*
@@ -101,6 +101,7 @@ int read_duplex = TRUE;			/* TRUE if we should guess duplex */
 int read_duplex_enforce = FALSE;	/* TRUE if we should insert duplex code after determination */
 int current_duplex = DUPLEX_NONE;	/* set when we read duplex */
 int read_signature = TRUE;		/* TRUE if we should implement signature features */
+int read_nup = TRUE;
 int read_For = FALSE;			/* Pay attention to "%%For:" lines? */
 int read_ProofMode = TRUE;
 int read_Title = TRUE;
@@ -1899,9 +1900,9 @@ int main(int argc, char *argv[])
 	if(errno != ERANGE)
 	    fatal(PPREXIT_OTHERERR, "getcwd() failed, errno=%d (%s)", errno, gu_strerror(errno));
 	len *= 2;
-	starting_directory = (char*)ppr_realloc(starting_directory, len, sizeof(char));
+	starting_directory = (char*)gu_realloc(starting_directory, len, sizeof(char));
 	}
-    starting_directory = (char*)ppr_realloc(starting_directory, strlen(starting_directory) + 1, sizeof(char));
+    starting_directory = (char*)gu_realloc(starting_directory, strlen(starting_directory) + 1, sizeof(char));
     }
     unbecome_user();
 
@@ -2195,9 +2196,9 @@ int main(int argc, char *argv[])
 
     /*
     ** If no --title switch was used but a file name was used, make the file
-    ** name the default title.  The default title may be overridden by a 
-    ** "%%Title:" line.  (Note that if the input is stdin, real_filename will 
-    ** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the 
+    ** name the default title.  The default title may be overridden by a
+    ** "%%Title:" line.  (Note that if the input is stdin, real_filename will
+    ** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the
     ** --lpq-filename switch has been used.)
     */
     if(!qentry.Title)
@@ -2205,7 +2206,7 @@ int main(int argc, char *argv[])
     	    qentry.Title = real_filename;
 
     /*
-    ** If we don't have at least a provisional For, then use either the Unix 
+    ** If we don't have at least a provisional For, then use either the Unix
     ** user name or the comment field from /etc/passwd.
     **
     ** The variable default_For is used by authorization()

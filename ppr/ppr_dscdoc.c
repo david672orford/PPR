@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_dscdoc.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 30 December 2000.
+** Last modified 18 July 2001.
 */
 
 /*
@@ -27,7 +27,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 #include "ppr_infile.h"
@@ -840,6 +839,24 @@ static void feature_spy(void)
 		    guess_media.weight=gu_getdouble(tokens[2]);
 		    }
 		break;
+
+	    case 'N':
+	    	if(read_nup && strcmp(tokens[1], "*pprN-Up") == 0)
+		    {
+		    int temp = atoi(tokens[2]);
+		    if(temp >= 1 || temp <= 16)
+		    	{
+			qentry.N_Up.N = temp;
+		    	}
+		    }
+		else if(read_nup && strcmp(tokens[1], "*pprN-UpBorders") == 0)
+		    {
+		    if(strcmp(tokens[2], "False") == 0)
+		    	qentry.N_Up.borders = FALSE;
+		    else if(strcmp(tokens[2], "True") == 0)
+		    	qentry.N_Up.borders = TRUE;
+		    }
+	    	break;
 
 	    case 'P':
 		/*

@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 19 July 2001.
 */
 
 #ifndef _GU_H
@@ -67,7 +67,7 @@ typedef int gu_boolean;
 
 /* Actual allocation functions */
 void *gu_alloc(size_t number, size_t size);
-void *ppr_realloc(void *ptr, size_t number, size_t size);
+void *gu_realloc(void *ptr, size_t number, size_t size);
 char *gu_strdup(const char *string);
 char *gu_strndup(const char *string, size_t len);
 char *gu_restrdup(char *ptr, size_t *number, const char *string);

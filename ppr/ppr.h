@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 16 June 2000.
+** Last modified 18 July 2001.
 */
 
 /*
@@ -144,6 +144,7 @@ extern gid_t setgid_gid;
 extern int read_copies;			/* TRUE if should auto copies */
 extern int read_duplex;			/* TRUE for auto duplex */
 extern int read_signature;		/* TRUE for auto signature */
+extern int read_nup;			/* TRUE for auto N-Up */
 extern int read_For;			/* TRUE to heed "%%For:" */
 extern int read_Title;
 extern int read_ProofMode;		/* TRUE to heed "%%ProofMode:" */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv_authorize.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 29 December 2000.
+** Last modified 21 June 2001.
 */
 
 /*
@@ -26,7 +26,6 @@
 #include <pwd.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "userdb.h"
 #include "papsrv.h"
 
@@ -36,10 +35,10 @@
 ** "%%Login:" command set preauthorized to TRUE.
 **
 ** This routine does nothing if the printer is not protected.  If the printer
-** is protected or the option "ForceAUFSSecurity" is TRUE, this routine 
+** is protected or the option "ForceAUFSSecurity" is TRUE, this routine
 ** attempts to determine if the user is who he says he is.
 **
-** If a user is preauthorized it means that papsrv vouches for the user's 
+** If a user is preauthorized it means that papsrv vouches for the user's
 ** authenticity and ppr(1) does not need to try to determine if the user
 ** is authentic.  This is indicated by invoking ppr with the -A switch.  This
 ** routine will use *preauthorized to set a flag to true if the -A switch
@@ -48,9 +47,11 @@
 ** If the user isn't in the user database, or can't be authorized
 ** for some other reason, this routine emulates a PostScript error.
 */
-void preauthorize(int sesfd, int prnid, int net, int node, char **username, int *preauthorized)
+void preauthorize(int sesfd, int prnid, int net, int node, const char **username, int *preauthorized)
     {
     const char *dsc_username = (char*)NULL;	/* Name read from "For:" line */
+    char aufs_username[17];
+    struct passwd *pw;
 
     DODEBUG_AUTHORIZE(("preauthorize(sesfd=%d, prnid=%d, net=%d, node=%d, *preauthorized)", sesfd, prnid, net, node));
 
@@ -69,7 +70,8 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
     ** print job.  If one is found, it checks to see if that name is
     ** among those authorized to use the printer.  This is a pretty
     ** lame form of authorization.  If AUFS security is being used,
-    ** then this information will be put to better use.
+    ** then this information will be put to better use further down
+    ** in this function.
     */
     onebuffer = TRUE;			/* don't go beyond one buffer */
 
@@ -95,64 +97,67 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
 	    } /* end of if this is the "%%For:" line */
 	} /* end of line reading loop */
 
-    reset_buffer(FALSE);		/* soft buffer reset */
+    /* Soft buffer reset to undo the damage we did by reading lines. */
+    reset_buffer(FALSE);
 
     /*
-    ** If no user name was found, do nothing.  We will let ppr
-    ** worry about it when we fail to invoke it with the -A switch.
+    ** We will insist on a "%%For:" line even though we might not need
+    ** it because to do so is simpler and probably won't cause any
+    ** problems.
     */
-    if(dsc_username == (char*)NULL)
+    if(!dsc_username)
 	{
-	DODEBUG_AUTHORIZE(("No \"%%%%For:\" found"));
-	return;
+	reply(sesfd, MSG_NOFOR);
+	postscript_stdin_flushfile(sesfd);
+	exit(5);
 	}
 
-    /*
-    ** If this is a protected destination or the configuration file
-    ** option "ForceAUFSSecurity:" is TRUE, check the AUFS security file
-    ** for the client network and node to make sure the user has an AUFS
-    ** session with a user name which corresponds with the "For:" line.
-    */
-    if((adv[prnid].isprotected || adv[prnid].ForceAUFSSecurity || adv[prnid].AUFSSecurityName != AUFSSECURITYNAME_DSC) && aufs_security_dir != (char*)NULL)
-	{
-	char aufs_security_file[MAX_PPR_PATH];
-	FILE *f;
-	char aufs_username[10];
-	struct passwd *pw;
+    /* This is the default.  It will survive is AUFS security isn't being used
+       or if AUFSSecurityUsername is set to "DSC". */
+    *username = dsc_username;
 
-	/* Construct the name of the AUFS security file. */
-	ppr_fnamef(aufs_security_file, "%s/net%d.%dnode%d", aufs_security_dir, net / 256, net % 256, node);
+    /*
+    ** If AUFS security is available, use it.
+    */
+    if(aufs_security_dir)
+    	{
+	/*
+	** Get the logged in username from the AUFS security file.
+	*/
+	{
+	FILE *f;
 
 	/*
 	** Try to open the AUFS security file.  If it can't be found,
 	** say the user doesn't have a volume mounted.
 	*/
+	{
+	char aufs_security_file[MAX_PPR_PATH];
+	ppr_fnamef(aufs_security_file, "%s/net%d.%dnode%d", aufs_security_dir, net / 256, net % 256, node);
 	if((f = fopen(aufs_security_file, "r")) == (FILE*)NULL)
 	    {
 	    DODEBUG_AUTHORIZE(("AUFS security file \"%s\" not found", aufs_security_file));
-	    if(!adv[prnid].ForceAUFSSecurity && !adv[prnid].isprotected)
-	    	return;
-	    reply(sesfd,MSG_NOVOL);	/* ``bad password'' */
+	    reply(sesfd, MSG_NOVOL);	/* "volume not mounted" */
 	    postscript_stdin_flushfile(sesfd);
 	    exit(5);
 	    }
+	}
 
 	/*
 	** Try to read a line from the AUFS security file.  If we can't
 	** we will assume the file is empty which indicates that the user
 	** has no volumes mounted.
 	*/
-	if(fgets(aufs_username, sizeof(aufs_username), f) == (char*)NULL)
+	if(!fgets(aufs_username, sizeof(aufs_username), f))
 	    {
 	    DODEBUG_AUTHORIZE(("AUFS security file \"%s\" is empty", aufs_security_file));
-	    if(!adv[prnid].ForceAUFSSecurity && !adv[prnid].isprotected)
-	    	return;
-	    reply(sesfd,MSG_NOVOL);
+	    reply(sesfd, MSG_NOVOL);
 	    postscript_stdin_flushfile(sesfd);
 	    exit(5);
 	    }
 
-	fclose(f);			/* we got what we went after */
+	fclose(f);
+        }
 
 	/* Remove any trailing line-feed */
 	aufs_username[strcspn(aufs_username,"\n")] = '\0';
@@ -160,29 +165,27 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
 	DODEBUG_AUTHORIZE(("aufs_username[] = \"%s\"", aufs_username));
 
 	/*
-	** We will probably need the password entry.
+	** We get the password entry because we may need to refer to the user
+	** by his real name as opposed to his username.
 	*/
-	if( (pw=getpwnam(aufs_username)) == (struct passwd *)NULL )
-	    {					/* if user don't exist, */
-	    DODEBUG_AUTHORIZE(("AUFS security file user \"%s\" doesn't exist in /etc/passwd",aufs_username));
-	    if(!adv[prnid].ForceAUFSSecurity && !adv[prnid].isprotected)
-	    	return;
+	if(!(pw = getpwnam(aufs_username)))	/* if the user doesn't exist, */
+	    {
+	    DODEBUG_AUTHORIZE(("User \"%s\" (from the AUFS security file) doesn't exist in /etc/passwd", aufs_username));
 	    reply(sesfd, MSG_NOCHARGEACCT);	/* you aren't authorized */
 	    postscript_stdin_flushfile(sesfd);
 	    exit(5);
 	    }
 
 	/*
-	** If they don't match immediately, try using the password database
-	** to convert the aufs_username to the real name.
+	** If we are supposed to charge to the DSC "%%For:" name and it
+	** is equal to neither the aufs_username nor its cooresponding
+	** gecos entry, reject the job.
 	*/
-	if(strcmp(dsc_username, aufs_username) != 0)
+	if(adv[prnid].AUFSSecurityName == AUFSSECURITYNAME_DSC)
 	    {
-	    if(strcmp(dsc_username, pw->pw_gecos) != 0)
-		{				/* if no match, */
-		if(!adv[prnid].ForceAUFSSecurity && !adv[prnid].isprotected)
-		    return;
-		reply(sesfd, MSG_NOVOL);	/* say volume not mounted  */
+	    if(strcmp(dsc_username, aufs_username) != 0 && strcmp(dsc_username, pw->pw_gecos) != 0)
+		{					/* if no match, */
+		reply(sesfd, MSG_NOVOL);		/* say volume not mounted  */
 		postscript_stdin_flushfile(sesfd);
 		exit(5);
 		}
@@ -200,26 +203,23 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
 	    case AUFSSECURITYNAME_REALNAME:
 		*username = gu_strdup(pw->pw_gecos);
 		break;
-	    default:
-	    	break;
 	    }
 
 	} /* end of if AUFS Security should be used */
 
     /*
-    ** If this is a ``protected destination'', that is, one for which
-    ** there is a per page charge (even if that charge is 0 cents per
-    ** page), then make sure the user is in the PPR authorization
-    ** database and is not too much overdrawn.
+    ** If this is a ``protected destination'', that is, one for which there is
+    ** a per page charge (even if that charge is 0 cents per page), then make
+    ** sure the user is in the PPR authorization database and is not too much
+    ** overdrawn.
     **
     ** Most of this is handled by the db_auth() function in libpprdb.a.
     */
     if(adv[prnid].isprotected)
 	{
 	struct userdb user; 			/* for reading user database */
-	const char *charge_user = *username ? *username : dsc_username;
 
-	switch(db_auth(&user, charge_user))	/* look it up */
+	switch(db_auth(&user, *username))	/* look it up */
 	    {
 	    case USER_OK:			/* user is authorized */
 		*preauthorized = TRUE;		/* set flag */
@@ -234,6 +234,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
 		reply(sesfd, MSG_DBERR);
 		break;
 	    }
+
 	postscript_stdin_flushfile(sesfd);	/* emulate "stdin flushfile" */
 	exit(5);
 	}
@@ -249,7 +250,7 @@ void preauthorize(int sesfd, int prnid, int net, int node, char **username, int 
 ** for 2 seconds and then terminate the server.  (See Inside AppleTalk,
 ** second edition, page 14-14.)
 */
-void login_request(int sesfd, int destid, char **username, int *preauthorized)
+void login_request(int sesfd, int destid, const char **username, int *preauthorized)
     {
     DODEBUG_AUTHORIZE(("login_request(), line=\"%s\"", line));
 

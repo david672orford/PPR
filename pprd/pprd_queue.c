@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 December 2000.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -25,7 +25,6 @@
 #include <unistd.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"
@@ -119,7 +118,7 @@ struct QEntry *queue_enqueue_job(struct QEntry *newentry, int *rank1, int *rank2
 	    {
 	    DODEBUG_NEWJOB(("%s(): expanding %d entry queue to %d entries", function, queue_size, queue_size+QUEUE_SIZE_GROWBY));
 	    queue_size += QUEUE_SIZE_GROWBY;
-	    queue = (struct QEntry *)ppr_realloc(queue, queue_size, sizeof(struct QEntry));
+	    queue = (struct QEntry *)gu_realloc(queue, queue_size, sizeof(struct QEntry));
 	    }
 	else
 	    {

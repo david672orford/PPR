@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
@@ -157,7 +157,7 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 	if(list_used == list_avail)
 	    {
 	    list_avail += 15;
-	    list = (struct GU_INI_ENTRY *)ppr_realloc(list, list_avail, sizeof(struct GU_INI_ENTRY));
+	    list = (struct GU_INI_ENTRY *)gu_realloc(list, list_avail, sizeof(struct GU_INI_ENTRY));
 	    }
 	list[list_used].name = name;
 	list[list_used].values = first_value;
@@ -174,7 +174,7 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
     /* Adjust the list to the proper size and terminate it. */
     list_used++;
     if(list_used != list_avail)
-    	list = (struct GU_INI_ENTRY *)ppr_realloc(list, list_used, sizeof(struct GU_INI_ENTRY));
+    	list = (struct GU_INI_ENTRY *)gu_realloc(list, list_used, sizeof(struct GU_INI_ENTRY));
     list_used--;
     list[list_used].name = NULL;
 

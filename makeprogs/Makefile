@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 9 February 2001.
+# Last modified 21 June 2001.
 #
 
 include ../makeprogs/global.mk
@@ -41,6 +41,8 @@ paths.sh: gen_paths$(DOTEXE)
 depend:
 	$(PPR_MAKE_DEPEND) ../include
 
+# Remove backup files, targets, and replace paths.mk with an empty file 
+# so that we can run "make clean".
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(TARGETS)
 	$(RMF) installed_files_list

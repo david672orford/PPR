@@ -1,4 +1,4 @@
-15 November 1999
+20 June 2001.
 
 This directory contains printer interface programs.  A printer interface
 program is launched by pprdrv.  Its job is to communicate with the printers.
@@ -12,8 +12,7 @@ How the interface communicates with the printer is entirely up to it.  You will
 notice that a different interface program is provided for each communication
 method.
 
-In the directory ../libpprint/ you will find a library of functions useful to
-interfaces.
+In the directory ../libppr/int_*.c you will find functions useful to interfaces.
 
 The interface program receives a number of command line options.  These include
 a printer address and an options list.  The syntax of these two parameters

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 20 June 2001.
 */
 
 /*
@@ -82,7 +82,7 @@ static int int_connect_parallel(void)
     ** Set the open flags according to whether we are doing
     ** feedback or not.
     */
-    open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY;
+    open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY | O_EXCL;
 
     /*
     ** Open the port.  If the error EBUSY occurs, we will retry up to

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/papsrv.8.pod
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 13 December 2000.
+# Last modified 21 June 2001.
 #
 
 =head1 NAME
@@ -163,10 +163,10 @@ significance in the current implementation.
 =item B<Force AUFS Security => I<boolean>
 
 If I<boolean> is true, CAP AUFS security is enabled for this shared printer
-name even if the printer named in the B<PPRname:> line is not protected.
+name even if the printer named in the B<PPRname => line is not protected.
 This option may not be set to true unless an B<-X> switch is used when
 starting B<papsrv>.  For furthur information, see the discussion of the B<-X>
-switch in L<papsrv(8)>.
+switch.
 
 =item B<AUFS Security Name => [B<DSC>, B<username>, B<realname>]
 
@@ -178,7 +178,9 @@ settings are:
 
 =item B<DSC>
 
-Use the name that appears in the "%%For:" line in the PostScript.
+Use the name that appears in the "%%For:" line in the PostScript.  It must be either the
+username or the gecos field.  This is a poor choice if users can edit their gecos fields
+since they could charge their jobs to other people.
 
 =item B<username>
 
@@ -186,7 +188,8 @@ Use the Unix username.
 
 =item B<realname>
 
-Use the Unix gecos field.
+Use the Unix gecos field.  This is a poor choice if users can edit their gecos fields 
+since they could charge their jobs to other people.
 
 =back
 
@@ -277,18 +280,18 @@ page).  AUFS security is also enabled for any printer which has the line
 "ForceAUFSSecurity=YES" in its paragraph in F<papsrv.conf>.
 
 If AUFS security is turned on for a particular printer and a user attempts
-to print without having mounted a file sharing volume, papsrv detects this
-and tell the Macintosh that a PostScript error has occured.  In order for
+to print without having mounted a file sharing volume, B<papsrv> detects this
+and tells the Macintosh that a PostScript error has occured.  In order for
 the user to see this message, the LaserWriter driver option for PostScript
 error reporting must be set correctly.  To do this with LaserWriter 8.x,
-choose print in any application, then press the "Options" button and then
+choose File/Print in any application, then press the "Options" button and then
 change "PostScript Errors:" to "Summarize on Screen".
 
 If AUFS security is to work correctly with B<papsrv>, CAP must not be compiled
-with the HIDE_AUFS_SECURITY option.  (With
-HIDE_AUFS_SECURITY enabled, only root can tell if a user has a volume
-mounted.  It is unclear to me how the option increases security anyway,
-except perhaps if the security directory is F</tmp>.)
+without the HIDE_AUFS_SECURITY option.  (With HIDE_AUFS_SECURITY enabled, only
+root can tell if a user has a volume mounted.  It is unclear to me how the 
+option increases security anyway, except perhaps if the security directory
+were F</tmp>.)
 
 =head1 FILES
 

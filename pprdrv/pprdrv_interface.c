@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 May 2001.
+** Last modified 20 July 2001.
 */
 
 /*
@@ -26,6 +26,7 @@
 **	interface_sigchld_hook()		called by sigchld_handler() only
 **	interface_fault_check()			called by fault_check() only
 **	kill_interface()			called by hooked_exit() only
+**	interface_close()			called by rip_fault_check() only
 */
 
 #include "before_system.h"
@@ -97,7 +98,7 @@ static void sigusr1_handler(int sig)
 /*
 ** We call this no matter when the interface exits.  In other words, it is
 ** called from interface_fault_check() if it sees that interface_sigchld_hook()
-** has set interface_died and it is called from close_interface().  It is
+** has set interface_died and it is called from interface_close().  It is
 ** never called from a signal handler!
 **
 ** If this function finds that the interface didn't exit in a well-controlled
@@ -255,7 +256,7 @@ static void start_interface(const char *BarBarPDL)
 
     DODEBUG_INTERFACE(("%s(\"%s\")", function, BarBarPDL ? BarBarPDL : ""));
 
-    /* Clear a flag which is set by close_interface(). */
+    /* Clear a flag which is set by interface_close(). */
     interface_fault_check_disable = FALSE;
 
     /* Install our signal handlers. */
@@ -457,15 +458,16 @@ static void start_interface(const char *BarBarPDL)
 ** If the interface called exit(), we will return the code,
 ** otherwise, we return the code it should have returned.
 */
-static int close_interface(void)
+int interface_close(gu_boolean flushit)
     {
-    const char function[] = "close_interface";
+    const char function[] = "interface_close";
     int exit_code;
 
     DODEBUG_INTERFACE(("%s()", function));
 
     /* Flush out the last of the printer data. */
-    printer_flush();
+    if(flushit)
+	printer_flush();
 
     /* If we are running in test mode there is nothing more to do. */
     if(test_mode)
@@ -515,7 +517,7 @@ static int close_interface(void)
 
     DODEBUG_INTERFACE(("%s(): returning %d", function, exit_code));
     return exit_code;
-    } /* end of close_interface() */
+    } /* end of interface_close() */
 
 /*
 ** If the interface has been launched, kill it.
@@ -802,8 +804,8 @@ void job_start(enum JOBTYPE jobtype)
 	    BarBarPDL = job.Filters;
 	    break;
 	default:
-	    if(printer.RIP.driver_output_language)
-	    	BarBarPDL = printer.RIP.driver_output_language;
+	    if(printer.RIP.output_language)
+	    	BarBarPDL = printer.RIP.output_language;
 	    else
 		BarBarPDL = NULL;
 	    break;
@@ -828,7 +830,7 @@ void job_start(enum JOBTYPE jobtype)
     	}
     else if(printer.Jobbreak == JOBBREAK_NEWINTERFACE)
     	{
-	close_interface();          /* Error code ignored. */
+	interface_close(TRUE);          /* Error code ignored. */
 	start_interface(BarBarPDL);
 	}
 
@@ -870,7 +872,7 @@ void job_end(void)
 	if(start_jobtype != JOBTYPE_THEJOB_BARBAR && printer.RIP.name)
 	    {
 	    /* Shut down the RIP and switch our file intstdin descriptor back. */
-	    intstdin = rip_stop(intstdin);
+	    intstdin = rip_stop(intstdin, TRUE);
 
 	    /* Turn O_NONBLOCK back on because that is the way we like it. */
 	    gu_nonblock(intstdin, TRUE);
@@ -889,7 +891,7 @@ int job_nomore(void)
     {
     int ret;
     DODEBUG_INTERFACE(("job_nomore()"));
-    ret = close_interface();
+    ret = interface_close(TRUE);
     intstdin = -1;
     DODEBUG_INTERFACE(("job_nomore(): done"));
     return ret;

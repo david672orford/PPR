@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_things.c
-** Copyright 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,13 +10,12 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 September 1998.
+** Last modified 19 July 2001.
 */
 
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "ppr.h"
 
@@ -30,9 +29,8 @@ void things_space_check(void)
     if( (things_space - thing_count) < 1 )
     	{
 	things_space += 100;
-	things = (struct Thing *)ppr_realloc(things, things_space, sizeof(struct Thing));
+	things = (struct Thing *)gu_realloc(things, things_space, sizeof(struct Thing));
     	}
     } /* end of things_space_check() */
 
 /* end of file */
-

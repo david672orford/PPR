@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 11 May 2001.
+** Last modified 21 June 2001.
 */
 
 /*
@@ -852,7 +852,8 @@ static void ppop_lpq_banner(void)
 
 	while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
 	    {
-	    print_aux_status(line, printer_status, "; ");
+	    /* print_aux_status(line, printer_status, "; "); */
+	    print_aux_status(line, printer_status, "\n\t");
 	    }
 
 	PUTC('\n');

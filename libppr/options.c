@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 5 June 2001.
+** Last modified 19 June 2001.
 */
 
 /*
@@ -131,8 +131,7 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
     	    }
 
 	/* Copy the value and NULL terminate it. */
-	gu_StrCopyMax(value, valuelen, ptr);
-	value[valuelen] = '\0';
+	gu_StrCopyMax(value, valuelen + 1, ptr);
 	}
     else
 	{

@@ -5866,7 +5866,7 @@ line was being parsed twice.
 * Added PPD files:  "HP LaserJet 4050 N", "Kyocera 1700+" (with German
   translation strings), "Lexmark Optra Color 1200",
   and "Lexmark Optra S xxx5 Series".  For now we will pretend the problem of
-  PPD files in multiple languages doen't exist.
+  PPD files in multiple languages doesn't exist.
 
 * Removed samba/xerox_ticket_submitter.perl and salvaged some of the code to
   make misc/custom_hook_docutech.perl.
@@ -7160,9 +7160,9 @@ line was being parsed twice.
   schedualed when there was still data in the transmit buffer.  (An
   assertion check caught this.)
 
-* Added libgu/gu_fscanf.c, an very limited implementation of fscanf() that can 
-  only understands %d, literals, and whitespace, and changed ppr/ppr_outfile.c 
-  and ppop/*.c to use it.  (This was done because dietlibc doesn't provide 
+* Added libgu/gu_fscanf.c, an very limited implementation of fscanf() that can
+  only understands %d, literals, and whitespace, and changed ppr/ppr_outfile.c
+  and ppop/*.c to use it.  (This was done because dietlibc doesn't provide
   an fscanf().)
 
 * pprd/pprd_pprdrv.c:pprdrv_exit(): Cleaned up code, revised messages,
@@ -7236,7 +7236,7 @@ line was being parsed twice.
 * libuprint/*: Removed use of the "ppr -C" switch in favour of the newer
   form "ppr --title".
 
-* libuprint/uprint_argv_ppr.c: changed to put quotes around the argument 
+* libuprint/uprint_argv_ppr.c: changed to put quotes around the argument
   to "-o title=".  This will need more work to handle embedded quotes.
 
 * ppr/ppr_main.c, ppr_infile.c: fixed to handle quoted filter option values.
@@ -7246,11 +7246,11 @@ line was being parsed twice.
 * Removed vendors/ppd_hp/"HP LaserJet 4050 N", and "HP LaserJet 4050 Series"
   since they both have the same ModelName and there have been reports that
   they result in the production of bad PostScript and because the "HP
-  LaserJet 4000 Series" PPD file probably works for these printers as well.  
-  Added code to remove them to fixup/fixup_obsolete.sh but left it commented 
+  LaserJet 4000 Series" PPD file probably works for these printers as well.
+  Added code to remove them to fixup/fixup_obsolete.sh but left it commented
   out until more is known.
 
-* Changed the statement of the PPR license to be exactly the same as the 
+* Changed the statement of the PPR license to be exactly the same as the
   new BSD license (the one with the advertising restriction removed).  Of
   course, the references to "the regents" have been changed to "copyrigh
   holders".  The previous statement was the same in substances.  I have done
@@ -7258,7 +7258,7 @@ line was being parsed twice.
   BSD license.
 
 
-1.44, 5 June 2001--18 June 2001
+1.44, 5 June 2001--31 July 2001
 
 * moved misc/modes-3.3.mf to filters_misc/ and improved the documentation at
   the top of filters_misc/mfmodes.conf.
@@ -7266,4 +7266,73 @@ line was being parsed twice.
 * re-organized nonppr/ a little.
 
 * Added makeprogs/save_symlinks.sh and changed top-level Makefile to use it.
+
+* Converted source tree into a CVS sandbox.
+
+* makeprogs/installdata.sh: added clause to skip things named "CVS".
+
+* Fixed NULL pointer problem in "ppad rip".
+
+* Changed pprdrv/pprdrv_rip.c:rip_start() to use a fixed path of
+  HOMEDIR/lib/ppr-gs for Ghostscript if the RIP name is "ppr-gs".  This 
+  is for a future special Ghostscript distribution for use with PPR.
+
+* Added O_EXCL to the open() calls for the port in the interfaces/parallel.c
+  and serial.c as recomended in the CUPS programmer's manual.
+
+* ppop/ppop_cmds_listq.c:ppop_lpq_banner(): changed separator for the new
+  printer status messages from "; " to "\n\t".  This is because Samba has
+  a 100 byte line length limit in its parsing code.  Who knows what it will
+  make of the new messages.
+
+* Uncommented the fixup_obsolete code to remove the "HP LaserJet 4050 N"
+  (where that name came from is a mystery), added updated "HP LaserJet 4050
+  Series" and "HP LaserJet 4000 Series" PPD file form HP (off of
+  Sourceforge).
+
+* Removed TrinColl-PPR-dmm-nup-3-5 and moved TrinColl-PPR-dmm-nup-3-6 back
+  into procsets.  Future versions will be under the PPR license rather
+  than public domain.
+
+* Fixed Configure so that is won't identify RedHat's "2.96" GCC as an old
+  one with the strength-reduce bug just because it only has a two part
+  version number.
+
+* Configure: fixed typo that caused the FREEBSD system-dependent section
+  of makeprogs/global.mk to be omitted.
+
+* Numberous small fixes for problems in the make rules, failure to create
+  destination directories, failure to use the make program specified
+  in include/global.mk, etc.  It now compiles on Solaris 8; FreeBSD 4.3R;
+  and Debian 2.2 i386, Alpha, Sparc, and PowerPC.  (This testing was done
+  on the Sourceforge.net compile farm.)
+
+* ppd/generic/: Replaced the two separately maintained PPR Generic PPD files 
+  with three built from a common file using the C pre-processor.
+
+* ppr/: added ability to read *N-Up features to turn on PPR's internal
+  N-Up support.  The keywords are "*pprN-Up" and "*pprN-UpBorders".
+
+* Renamed ppr_realloc() to gu_realloc().
+
+* pprdrv/pprdrv_rip.c (and other files) fixed a problem in rip_fault_check() 
+  which caused it to miss error messages from the RIP.  This require the 
+  addition of a parameter to several functions to tell them whether to 
+  attempt a flush before closing the RIP or the interface.  Without this
+  printer_flush() got called recursively since fault_check() is called
+  from printer_flush().
+
+* Changed order of targets in makeprogs/global.mk.unconfigured to put
+  "cant" first.  When it is included from the makefile in ppr-gs, just
+  catching "all" isn't enough since "all" has many dependencies in the
+  Ghostscript build process.
+
+* fixup/fixup_inetd.sh: fixed to to recognize if the service line is already
+  in /etc/inetd.conf but commented out.
+
+* Changed samba/smb-protos.conf to use "%U@samba" instead of "%m@samba" for
+  the -X argument.
+
+* Fixed ppop/ppop.c:job_permission_check() to return 'OK' if the queue file
+  does not exist.  This brings the code back in line with the comments.
 

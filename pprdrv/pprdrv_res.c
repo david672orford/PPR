@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_res.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2001, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 September 2000.
+** Last modified 19 July 2001.
 */
 
 /*
@@ -27,7 +27,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "interface.h"
 #include "pprdrv.h"
@@ -445,7 +444,7 @@ struct DRVRES *add_drvres(int needed, int fixinclude, const char type[], const c
     if(drvres_count == drvres_space)
 	{
 	drvres_space += 100;
-	drvres = (struct DRVRES *)ppr_realloc(drvres, drvres_space, sizeof(struct DRVRES));
+	drvres = (struct DRVRES *)gu_realloc(drvres, drvres_space, sizeof(struct DRVRES));
 	}
 
     /* Take the next drvres[] record position. */

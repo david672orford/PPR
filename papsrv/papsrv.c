@@ -189,7 +189,7 @@ char *debug_string(char *s)
 ** If more signals are received before the server exits,
 ** they have no effect.
 */
-void termination_handler(int sig)
+static void termination_handler(int sig)
     {
     static int count = 0;
 
@@ -215,9 +215,9 @@ char *pap_getline(int sesfd)
 	{
 	c = cli_getc(sesfd);	/* get the next character */
 
-	if( (c=='\r') || (c=='\n') || (c==-1) )
-	    {				/* If carriage return or line feed or end of file, */
-	    line[x] = (char)NULL;	/* terminate the line and stop reading. */
+	if(c=='\r' || c=='\n' || c==-1)
+	    {			/* If carriage return or line feed or end of file, */
+	    line[x] = '\0';	/* terminate the line and stop reading. */
 	    break;
 	    }
 
@@ -226,7 +226,7 @@ char *pap_getline(int sesfd)
 
     line_len = x;		/* Store the final length. */
 
-    if( (c == -1) && (x == 0) )	/* If end of file and line was empty */
+    if(c == -1 && x == 0)	/* If end of file and line was empty */
 	return (char*)NULL;	/* return NULL pointer. */
 
     if(x == 255)		/* If line overflow, eat up extra characters. */
@@ -261,7 +261,7 @@ void postscript_stdin_flushfile(int sesfd)
 ** This is called from child_main_loop() which it turn is called
 ** from appletalk_dependent_main_loop().
 ===========================================================================*/
-void printjob(int sesfd, int prnid, int net, int node, char *username, int preauthorized)
+void printjob(int sesfd, int prnid, int net, int node, const char username[], int preauthorized)
     {
     int pipefds[2];		/* a set of file descriptors for pipe to ppr */
     int wstat;			/* wait status */
@@ -520,7 +520,7 @@ void sigpipe_handler(int sig)
 ** Note child termination.
 ** This handler is used only by the main daemon.
 ===========================================================*/
-void reapchild(int signum)
+static void reapchild(int signum)
     {
     pid_t pid;
     int wstat;
@@ -566,7 +566,7 @@ void reapchild(int signum)
 void child_main_loop(int sesfd, int prnid, int net, int node)
     {
     char *cptr;
-    char *username = (char*)NULL;
+    const char *username = (const char*)NULL;
     int preauthorized = FALSE;	/* can we vouch for the user? */
 
     while(TRUE)			/* will loop until we break out */
@@ -611,7 +611,7 @@ void child_main_loop(int sesfd, int prnid, int net, int node)
 /*=====================================================================
 ** Turn query tracing on or off.
 =====================================================================*/
-void sigusr1_handler(int sig)
+static void sigusr1_handler(int sig)
     {
     if(++query_trace > 2) query_trace = 0;
 
@@ -638,7 +638,7 @@ static const struct gu_getopt_opt option_words[] =
 	{(char*)NULL, 0, FALSE}
 	} ;
 
-void help(FILE *out)
+static void help(FILE *out)
     {
     fputs("Usage: papsrv [-f conffile] [-l logfile] [-p pidfile] [-X] [-z zone]\n", out);
     }

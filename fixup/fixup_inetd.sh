@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 May 2001.
+# Last modified 24 July 2001.
 #
 
 HOMEDIR="?"
@@ -170,7 +170,7 @@ echo "    Inetd is $inetd_type."
 #	pprcom stream tcp nowait nobody /usr/sbin/tcpd /usr/ppr/lib/ppr-commentary-httpd
 add_inetd ()
     {
-    if grep "^$1[ 	]" $INETD_CONF >/dev/null
+    if grep "^[# 	]*$1[ 	]" $INETD_CONF >/dev/null
     	then
     	echo "  Service \"$1\" is already in $INETD_CONF, good."
     	else
