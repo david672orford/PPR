@@ -9374,8 +9374,6 @@ Internet Printing Protocol Work
   incorrectly typed passwords as soon as possible so that they are less likely
   to be swapped out.
 
-* include/global_structs.h: again set default for -H editps to on.
-
 * editps/Windows_XP: added
 
 

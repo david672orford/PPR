@@ -144,7 +144,7 @@ struct QFileEntry
 #define HACK_TRANSPARENT 2
 #define HACK_BADEPS 4
 #define HACK_EDITPS 8
-#define HACK_DEFAULT_HACKS HAC_EDITPS	/* documented in ppr(1) */
+#define HACK_DEFAULT_HACKS 0	/* documented in ppr(1) */
 
 /* "%%ProofMode:" values. */
 #define PROOFMODE_NOTIFYME -1
