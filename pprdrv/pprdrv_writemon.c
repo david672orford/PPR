@@ -10,12 +10,13 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 4 May 2001.
+** Last modified 18 June 2001.
 */
 
 #include "before_system.h"
 #include <sys/time.h>
 #include <unistd.h>
+#include <string.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "pprdrv.h"

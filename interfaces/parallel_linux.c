@@ -10,13 +10,14 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 10 May 2001.
+** Last modified 18 June 2001.
 */
 
 #include "before_system.h"
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <linux/lp.h>
+#include <unistd.h>
 #ifndef LP_SELECD
 #warning "Your linux/lp.h file is buggy, compensating!"
 #define LP_POUTPA	0x20
