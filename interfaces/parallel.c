@@ -154,7 +154,7 @@ static void printer_error(int error_number)
 		}
 
 	/* Maybe we tried to read data back from a one-way printer. 
-	   This error code was observed 2.4.18 with an HP DeskJet 500. */
+	   This error code was observed in Linux 2.4.18 with an HP DeskJet 500. */
 	if(error_number == EIO && int_cmdline.feedback)
 		{
 		alert(int_cmdline.printer, TRUE, _("Printer on \"%s\" does not support 2-way communication."), int_cmdline.address);
