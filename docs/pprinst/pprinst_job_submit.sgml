@@ -1,14 +1,14 @@
 <!--
 Filename: pprinst_job_submit.sgml
-Last Modified: 11 September 2003
+Last Modified: 24 September 2003
 Last Proofread:
 -->
 
 <sect1 id="job-submit">
 <title>Submitting Jobs to PPR</title>
 
-<para>All jobs enter <application>PPR</application>'s queue through the
-program <command>ppr</command>. The LANMAN/X print processor script invokes
+<para>All jobs enter <application>PPR</application>'s queue through the program
+<command>ppr</command>. The LANMAN/X print processor script invokes
 <command>ppr</command> as do the Macintosh print server,
 <command>papsrv</command>, <ulink
 url="http://www.samba.org"><application>Samba</application></ulink> and the
@@ -16,54 +16,37 @@ LPR/LPD compatible server <command>lprsrv</command>.</para>
 
 <para>Unix users invoke <command>ppr</command> (the program, not the spooler
 system) directly. To make this easier, <filename class="SymLink">/usr/bin/ppr
-</filename> is a symbolic link to
-<filename>/usr/ppr/bin/ppr</filename>.  For a complete description of
-<command>ppr</command>'s options, see the <ulink
-url="../refman/ppr.1.html">ppr(1) man page</ulink>.  A description of some
-of the more important ones follows.</para>
+</filename> is a symbolic link to <filename>/usr/ppr/bin/ppr</filename>. For a
+complete description of <command>ppr</command>'s options, see the <ulink
+url="../refman/ppr.1.html">ppr(1) man page</ulink>. A description of some of
+the more important ones follows.</para>
 
 <sect2>
 <title>Simple Examples</title>
 
-<para>
-When invoking <command>ppr</command>, the <option>-d</option> switch may be used to specify the
+<para>When invoking <command>ppr</command>, the <option>-d</option> switch may be used to specify the
 destination, that is, a printer or group of printers.  For example:
-</para>
-
-<para>
-
 <screen>
 $ ppr -d myprn report1.ps
 </screen>
-
 </para>
 
-<para>
-If <command>ppr</command> is invoked without specifying the name of a file to print,
+<para>If <command>ppr</command> is invoked without specifying the name of a file to print,
 it reads the file from stdin.  For example, we can print a document using PPR
 on a remote system using this command:
-</para>
-
-<para>
-
 <screen>
 $ cat report1.ps | rsh cberry 'ppr -d hisprn'
 </screen>
-
 </para>
 
 <para>The first thing <command>ppr</command> does is analyze the input file
 to determine whether it is PostScript or not, and if not, what it is.  If it
 is not PostScript, <command>ppr</command> will attempt to convert it to
 PostScript before it is placed in the queue.  For example, ASCII text files
-can be printed:</para>
-
-<para>
-
+can be printed:
 <screen>
 $ ls -l /usr/bin | ppr -d myprn
 </screen>
-
 </para>
 
 </sect2>
@@ -71,45 +54,33 @@ $ ls -l /usr/bin | ppr -d myprn
 <sect2>
 <title>Choosing Options</title>
 
-<para>
-When submitting a job, you may want to specify additional options.  These
+<para>When submitting a job, you may want to specify additional options. These
 options can do things such as select multiple copies, invoke printer features
-such as duplex, or select paper trays.
-</para>
+such as duplex, or select paper trays.</para>
 
-<para>
-When submitting the job from the Unix shell, you just add the options to the
-<command>ppr</command> command line.  When the job arrives through a network server such
-as Samba, <command>papsrv</command>, or <command>lprsrv</command> it is more difficult to select options.
-</para>
+<para>When submitting the job from the Unix shell, you just add the options to
+the <command>ppr</command> command line. When the job arrives through a network
+server such as Samba, <command>papsrv</command>, or <command>lprsrv</command>
+it is more difficult to select options.</para>
 
-<para>
-The easiest thing to do in this latter case is to set a switchset.  A switchset
-is a set of options associated with a queue.  This feature is described later in
-this section.  The switchset method has the advantage that a switchset established
-in this way applied
-to all jobs no matter how they arrive.  This consistency can prevent confusion.
-</para>
+<para>The easiest thing to do in this latter case is to set a switchset. A
+switchset is a set of options associated with a queue. This feature is
+described later in this section. The switchset method has the advantage that a
+switchset established in this way applied to all jobs no matter how they
+arrive. This consistency can prevent confusion.</para>
 
-<para>
-With some network servers there are additional ways to specify options which apply only
-to jobs submitted through it.  These methods will be described later in this section.
-</para>
+<para>With some network servers there are additional ways to specify options
+which apply only to jobs submitted through it. These methods will be described
+later in this section.</para>
 
 <sect3>
 <title>Duplex Options</title>
 
-<para>
-The available duplexing options are many and somewhat confusing.  Let us
+<para>The available duplexing options are many and somewhat confusing. Let us
 start with a simple one:
-</para>
-
-<para>
-
 <screen>
 $ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.ps
 </screen>
-
 </para>
 
 <para> This instructs PPR to extract the code from the <literal>*Duplex
@@ -117,101 +88,79 @@ DuplexNoTumble</literal> line in the PPD file and insert it in the document
 setup section of <filename>mydoc.ps</filename>.  Code inserted in this way
 will override pre-existing duplex code in most cases. </para>
 
-<para>
-Suppose though that you wish to allow users to continue to select the duplex
+<para>Suppose though that you wish to allow users to continue to select the duplex
 mode, perhaps by using the Macintosh driver LaserWriter 8 with an appropriate
 PPD file, but you wish to make duplex printing the default.  On some printers
 you can use the front panel to select duplex, but PPR wouldn't know you had
 done this, it would believe the printer was operating in simplex mode, thus
 its printer accounting sheet counts would be thrown off.  Therefore, it would
 be better to invoke <command>ppr</command> like this:
-</para>
-
-<para>
-
 <screen>
 $ ppr -d myprn -R duplex:duplex mydoc.ps
 </screen>
-
 </para>
 
-<para> The option <option>-R duplex:duplex</option> instructs PPR to take
+<para>The option <option>-R duplex:duplex</option> instructs PPR to take
 note of comments within the PostScript which indicate which duplex mode is
 being invoked. The second occurence of the word <literal>duplex</literal>,
 after the colon, means to invoke ordinary duplex mode if no such comments
-are found. </para>
+are found.</para>
 
 </sect3>
 
 <sect3>
 <title>Multiple Copy Options</title>
 
-<para>
-PPR is capable of printing multiple copies of a job. It is also capable of
-printing collated copies.  The number of copies may be selected when <command>ppr</command> is
-invoked:
-</para>
-
-<para>
-
+<para>PPR is capable of printing multiple copies of a job. It is also capable
+of printing collated copies. The number of copies may be selected when
+<command>ppr</command> is invoked:
 <screen>
 $ ppr -d myprn -n 3 mydoc.ps
 </screen>
-
 </para>
 
-<para> This prints 3 copies of the file <filename>mydoc.ps</filename>.  By
+<para>This prints 3 copies of the file <filename>mydoc.ps</filename>.  By
 default, PPR prints uncollated copies, that is, 3 copies of page 1, 3 copies
 of page 2, etc.  In contrast, when printing collated copies, it prints 1
 copy of page one, 1 copy of page 2, on to the end of the document and then
 repeats until it has printed the required number of copies.  We can print
-collated copies with this command: </para>
-
-<para>
-
+collated copies with this command:
 <screen>
 $ ppr -d myprn -n 3 -n collate mydoc.ps
 </screen>
-
 </para>
 
-<para>
-When there is no charge for printing pages on a particular printer, if you do not
-use an <option>-n</option> switch, PPR does not attempt to influence the number of copies to be
-printed.  This means that if the document contains code to invoke multiple copy
-features of the printer, PPR may not be able to correctly determine the number of
-pages printed.  Thus, the number of sheets quoted on the banner page and in the
-print log could be wrong.  This changes if you have specified an amount of money to
-be charged for each page which is printed on the printer that is being used.  If
-you have specified an amount, even $0.00, then the number of copies is
-forced to 1 if you do not specify it.
-</para>
+<para>When there is no charge for printing pages on a particular printer, if
+you do not use an <option>-n</option> switch, PPR does not attempt to influence
+the number of copies to be printed. This means that if the document contains
+code to invoke multiple copy features of the printer, PPR may not be able to
+correctly determine the number of pages printed. Thus, the number of sheets
+quoted on the banner page and in the print log could be wrong. This changes if
+you have specified an amount of money to be charged for each page which is
+printed on the printer that is being used. If you have specified an amount,
+even $0.00, then the number of copies is forced to 1 if you do not specify
+it.</para>
 
-<para> You may wish to allow the number of copies desired to be specified in
+<para>You may wish to allow the number of copies desired to be specified in
 the document.  If you invoke <command>ppr</command> with the <option>-R
 copies</option> option, PPR will read any
 <literal>%%Requirement:</literal> comments which specify the
 number of copies or collating mode and obey them.  You might use this
-command: </para>
-
-<para>
-
+command:
 <screen>
 $ ppr -d myprn -n 1 -n collate -R copies mydoc.ps
 </screen>
-
 </para>
 
-<para>
-This command tells PPR to read the copies count in
-<filename>mydoc.ps</filename>, collate the
-copies even if <filename>mydoc.ps</filename> does not request it, and to print 1 copy unless
-<filename>mydoc.ps</filename> contains a comment which specifies a different number of copies.
-However, if there is no charge for printing on this printer and the <option>-n
-1</option>
-switch were absent and <filename>mydoc.ps</filename> contained the PostScript code but not the
-comments for multiple copies it would achieve multiple copies on the sly.
-</para>
+<para>This command tells PPR to read the copies count in
+<filename>mydoc.ps</filename>, collate the copies even if
+<filename>mydoc.ps</filename> does not request it, and to print 1 copy unless
+<filename>mydoc.ps</filename> contains a comment which specifies a different
+number of copies. However, if there is no charge for printing on this printer
+and the <option>-n 1</option> switch were absent and
+<filename>mydoc.ps</filename> contained the PostScript code but not the
+comments for multiple copies it would achieve multiple copies on the
+sly.</para>
 
 </sect3>
 
@@ -219,65 +168,43 @@ comments for multiple copies it would achieve multiple copies on the sly.
 <title>Using Option Switchsets
 </title>
 
-<para>
-It is sometimes desirable to choose a set of options to be applied to all jobs
-entering a certain queue.
-</para>
+<para>It is sometimes desirable to choose a set of options to be applied to all jobs
+entering a certain queue.</para>
 
-<para>
-To set these options, use the <command>ppad switchset</command> command for a printer
-queue and the <command>ppad group switchset</command> command for a group queue.
-</para>
+<para>To set these options, use the <command>ppad switchset</command> command for a printer
+queue and the <command>ppad group switchset</command> command for a group queue.</para>
 
-<para>
-For example, imagine that we have
-a printer called <literal>mcec_1</literal>.  We want to create two queues for it called
-<literal>mcec_sim</literal> and <literal>mcec_dup</literal>.  We want
-<literal>mcec_sim</literal> to print in simplex
-mode by default and <literal>mcec_dup</literal> to print in duplex mode by default.  First
-we create the groups <literal>mcec_sim</literal> and <literal>mcec
-dup</literal> each of which contains
-the lone member <literal>mcec_1</literal>:
-</para>
-
-<para>
-
+<para>For example, imagine that we have a printer called
+<literal>mcec_1</literal>. We want to create two queues for it called
+<literal>mcec_sim</literal> and <literal>mcec_dup</literal>. We want
+<literal>mcec_sim</literal> to print in simplex mode by default and
+<literal>mcec_dup</literal> to print in duplex mode by default. First we create
+the groups <literal>mcec_sim</literal> and <literal>mcec dup</literal> each of
+which contains the lone member <literal>mcec_1</literal>:
 <screen>
 # ppad group add mcec_sim mcec_1
 # ppad group add mcec_dup mcec_1
 </screen>
-
 </para>
 
 <para>
 Now, jobs sent to either group will go to the same printer, but we will give
 each group a different set of options:
-</para>
-
-<para>
-
 <screen>
 # ppad group switchset mcec_sim -R duplex:simplex
 # ppad group switchset mcec_dup -R duplex:duplex
 </screen>
-
 </para>
 
-<para> Now, when a job is submitted to <literal>mcec_sim</literal> or
+<para>Now, when a job is submitted to <literal>mcec_sim</literal> or
 <literal>mcec_dup</literal>, the the option <option>-R duplex:simplex</option> or
-<option>-R duplex:duplex</option> to be inserted. </para>
+<option>-R duplex:duplex</option> to be inserted.</para>
 
-<para>
-A switchset may be deleted by setting it to nothing.  This command deletes
+<para>A switchset may be deleted by setting it to nothing.  This command deletes
 the switchset for the printer <literal>chipmunk</literal>:
-</para>
-
-<para>
-
 <screen>
 # ppad switchset chipmunk
 </screen>
-
 </para>
 
 </sect3>
@@ -286,96 +213,74 @@ the switchset for the printer <literal>chipmunk</literal>:
 <title>Options for Jobs from Macintoshs
 </title>
 
-<para> If we are printing from a Macintosh, the job will enter the print
+<para>If we are printing from a Macintosh, the job will enter the print
 server through <command>papsrv</command>.  If we wanted to make duplex
 printing the default, we could place the <option>-R duplex:duplex</option>
 option in the <filename>papsrv.conf</filename>. We could make an entry such
-as this one: </para>
-
-<para>
-
-<screen>
+as this one:<screen>
 [My Printer]
 PPRname=myprn
 PPRparms=-R duplex:duplex
 </screen>
-
 </para>
 
-<para>
-In like manner, if we wanted to make tumble duplexing the default, we could
+<para>In like manner, if we wanted to make tumble duplexing the default, we could
 create an entry like this one:
-</para>
-
-<para>
-
 <screen>
 [My Printer]
 PPRname=myprn
 PPRparms=-R duplex:duplextumble
 </screen>
-
 </para>
 
-<para>
-However, as noted earlier, it may be better to use a switchset since a switchset
-will apply to all submission methods.
-</para>
+<para>However, as noted earlier, it may be better to use a switchset since a
+switchset will apply to all submission methods.</para>
 
 </sect3>
 
 <sect3>
 <title>Options for Jobs Received through Samba</title>
 
-<para>
-Since Samba allows the administrator to choose any desired print command
-when creating a queue in <filename>smb.conf</filename>, it is possible to give a queue
-a special <command>ppr</command> command which includes the desired options.
-</para>
+<para>Since Samba allows the administrator to choose any desired print command
+when creating a queue in <filename>smb.conf</filename>, it is possible to give
+a queue a special <command>ppr</command> command which includes the desired
+options.</para>
 
-<para>
-However, this becomes clumsy if one is using <command>ppr2samba</command> to generate
-a <filename>smb-include.conf</filename> file to include in
-<filename>smb.conf</filename>, so this method
-is not recomended.  Use a switchset instead.
-</para>
+<para>However, this becomes clumsy if one is using <command>ppr2samba</command>
+to generate a <filename>smb-include.conf</filename> file to include in
+<filename>smb.conf</filename>, so this method is not recomended. Use a
+switchset instead.</para>
 
 </sect3>
 
 <sect3>
 <title>Options for Jobs Received through <command>lprsrv</command></title>
 
-<para>
-There is no way to specify <command>ppr</command> command line options in any of the
+<para>There is no way to specify <command>ppr</command> command line options in any of the
 <command>lprsrv</command> configuration files, so you must use switchsets to force the
-use of options.
-</para>
+use of options.</para>
 
-<para>
-However, certain options, such as the number of copies, can be selected by the
+<para>However, certain options, such as the number of copies, can be selected by the
 client and passed to <command>lprsrv</command> using the RFC 1179 protocol.  Some operating
 systems, such as OSF and SunOS/Solaris extend the protocol to allow for furthur
 options.  When <command>lprsrv</command> receives these options it attempts to convert them
-into appropriate <command>ppr</command> command line options.
-</para>
+into appropriate <command>ppr</command> command line options.</para>
 
 </sect3>
 
 </sect2>
 
-<sect2>
+<sect2 id="job-submit-panel">
 <title>Submitting Jobs Through Uprint</title>
 
-<para> If you have Unix users, they are probably accustomed to submitting
+<para>If you have Unix users, they are probably accustomed to submitting
 jobs with <command>lpr</command> or <command>lp</command>.  You may also
 find that while some of your applications allow you to specify the command
 to be used for printing, others insist on using <command>lpr</command> or
 <command>lp</command>.  In these cases, you might want to try
-<application>PPR</application>'s <application>Uprint</application> system.
-</para>
+<application>PPR</application>'s <application>Uprint</application> system.</para>
 
-<para>
-Uprint is a set of programs which mimic <command>lp</command>,
+<para>Uprint is a set of programs which mimic <command>lp</command>,
 <command>lpr</command>, <command>lpq</command>,
 and <command>lprm</command>.  You can rename the versions of these
 programs that came with your system
@@ -384,17 +289,22 @@ and replace them with the <application>Uprint</application> substitutes.  When a
 program is used, if the requested print queue is one that belongs to the
 system spooler, the renamed origional program will be invoked.  If however
 the requested queue is a PPR queue, an appropriate command for <command>ppr</command>
-or <command>ppop</command> will be created and run.
-</para>
+or <command>ppop</command> will be created and run.</para>
 
-<para>
-For instructions for setting up Uprint, see the UPRINT(8) man page.
-</para>
+<para>For instructions for setting up Uprint, see the UPRINT(8) man page.</para>
 
 </sect2>
 
 <sect2>
 <title>Submitting Jobs Using the Perl/Tk Interface</title>
+
+<para>Of course, looking up all of the options for the <command>ppr</command>
+can be tedious, especially if you want to invoke several features
+simulaniously. If you are using X-Windows, is an easier way (or will be when it
+is finished). This easier way is the <command>ppr-panel</command> command. If
+<command>ppr-panel</command> is invoked with a filename on the command line, it
+will display a print dialog box, as seen in figure <xref
+linkend="perltk-submit"/>.</para>
 
 <figure id="perltk-submit">
 <title>Submitting a Job Using the Perl/Tk Interface</title>
@@ -403,6 +313,15 @@ For instructions for setting up Uprint, see the UPRINT(8) man page.
 	<graphic fileref="perltk_submit.png" format="png"/>
 </screenshot>
 </figure>
+
+<para>Notice the drop-down list by which one can select a destination print
+queue.  If one wished to have a particular print queue already selected when
+the dialog box opens, one could use the <option>-d</option> option, like this:
+<screen>
+$ ppr -d myprn myfile.ps
+</screen>
+</para>
+
 
 </sect2>
 

@@ -8256,7 +8256,7 @@ line was being parsed twice.
 * www/docs_man.cgi.perl, docs_utils.pl: added manpage directory.
 
 * libuprint/: reorganized code and renamed many files and a few functions.
-  Some of the renaming went thusly: lpr->bsd, lp->sysv.  This was done
+  Some of the renaming went thus: lpr->bsd, lp->sysv.  This was done
   in most cases where the reference was not to a command but to a spooler.
   [More description coming as work progresses.]
 

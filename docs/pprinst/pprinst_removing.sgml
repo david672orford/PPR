@@ -1,18 +1,100 @@
+<!--
+Filename: pprinst_user_interfaces.sgml
+Last Modified: 18 September 2003
+Last Proofread: 18 September 2003
+-->
+
 <sect1 id="removing">
 <title>Removing PPR</title>
 
-<para>
-The entire PPR spooling system, including any printer and group
-configuration files may be removed with the command:
+<para>Removing <application>PPR</application> is not difficult but if you
+aren't careful you may leave some of its hooks in the operating system.  In
+this section we describe the commands needed to remove
+<application>PPR</application> neatly.  These commands are similar to those
+used in the RPM pacakage.  The commands you will use vary a bit from
+operating system to operating system.  In this section we will present
+typical commands.</para>
+
+<para>First you should stop the spooler.  Any easy way to do this is to use
+the Init script, like this:
+<screen>
+# /etc/init.d/ppr stop
+</screen>
 </para>
 
-<para>
-
+<para>Next you should remove <application>PPR</application>'s init scripts. 
+These commands will work on most systems:
 <screen>
-# /usr/ppr/fixup/remove_ppr
+# rm /etc/rc?.d/[SK][0-9][0-9]ppr
+# rm /etc/init.d/ppr
 </screen>
+Of course, you may have to adjust them if your systems Init scripts are in
+differnt places.
+</para>
 
+<para> and its Inetd or
+Xinetd configuration.  For Xinetd, just delete the file, like this:
+<screen>
+# rm /etc/xinetd.d/ppr
+</screen>
+For Inetd you will have to edit <filename>/etc/inetd.conf</filename> to
+remove the lines for the <application>PPR</application> web-browser
+interface and lpr/lpd server.  Don't forget to send SIGHUP to Inetd or
+Xinetd when you are done.  While you are at it, you might as well remove
+your access rules from <filename>/etc/hosts.allow</filename>.
+</para>
+
+<para>Next you should unhook <application>PPR's</application> UPRINT system,
+putting the real versions of commands such as <command>lpr</command> and
+<command>lpq</command> back where they were:
+<screen>
+# /usr/lib/ppr/bin/uprint-newconf --remove
+Restoring original spooler program names:
+
+Files for lp should be in their normal locations.
+Removing symbolic link "/usr/bin/lp".
+Moving "/usr/bin/real-lp" back to "/usr/bin/lp".
+Removing symbolic link "/usr/bin/cancel".
+Moving "/usr/bin/real-cancel" back to "/usr/bin/cancel".
+Removing symbolic link "/usr/bin/lpstat".
+Moving "/usr/bin/real-lpstat" back to "/usr/bin/lpstat".
+
+Files for lpr should be in their normal locations.
+Removing symbolic link "/usr/bin/lpr".
+Moving "/usr/bin/real-lpr" back to "/usr/bin/lpr".
+Removing symbolic link "/usr/bin/lprm".
+Moving "/usr/bin/real-lprm" back to "/usr/bin/lprm".
+Removing symbolic link "/usr/bin/lpq".
+Moving "/usr/bin/real-lpq" back to "/usr/bin/lpq".
+
+Done.
+</screen>
+</para>
+
+<para>Next you should remove <application>PPR's</application> crontab file:
+<screen>
+# crontab -u ppr -r
+</screen>
+</para>
+
+<para>Next you can remove all of <application>PPR's</application> files
+(including configuration files) with these commands:
+<screen>
+# rm -r /usr/lib/ppr
+# rm -r /usr/share/ppr
+# rm -r /var/spool/ppr
+# rm -r /etc/ppr
+</screen>
+</para>
+
+<para>Finally you should remove the users <literal>ppr</literal> and
+<literal>pprwww</literal> and the group <literal>ppr</literal>.  Here are
+the commands for Solaris or a typical Linux system:
+<screen>
+# /usr/sbin/userdel ppr
+# /usr/sbin/userdel pprwww
+# /usr/sbin/groupdel ppr
+</screen>
 </para>
 
 </sect1>
-

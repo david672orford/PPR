@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 August 2003.
+** Last modified 23 September 2003.
 */
 
 /*
@@ -1665,10 +1665,10 @@ int ppop_destination(char *argv[], int info_level)
 
 		/* Skip Emacs style backup files. */
 		len = strlen(direntp->d_name);
-		if( len > 0 && direntp->d_name[len-1]=='~' )
+		if(len > 0 && direntp->d_name[len-1] == '~')
 			continue;
 
-		if(strcmp(destination.destname, "all") == 0 && strcmp(destination.destname, direntp->d_name) == 0)
+		if(strcmp(destination.destname, "all") == 0 || strcmp(destination.destname, direntp->d_name) == 0)
 			{
 			printf(format,
 				direntp->d_name,

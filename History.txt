@@ -8247,7 +8247,7 @@ line was being parsed twice.
 * www/docs_man.cgi.perl, docs_utils.pl: added manpage directory.
 
 * libuprint/: reorganized code and renamed many files and a few functions.
-  Some of the renaming went thusly: lpr->bsd, lp->sysv.  This was done
+  Some of the renaming went thus: lpr->bsd, lp->sysv.  This was done
   in most places where the reference was not to a command but to a spooler.
 
 * uprint/: removed all setuid root and calls to setuid business in
@@ -8615,7 +8615,7 @@ line was being parsed twice.
   message.
 
 
-1.52, 24 July 2003--13 September 2003.
+1.52, 24 July 2003--24 September 2003.
 
 Bug Fixes
 
@@ -8730,6 +8730,9 @@ Bug Fixes
   Fixed so that setting left or right margin forces current position
   inside the new margin.  Fixed so that setting page skip forces current
   position inside top margin.  See below for enhancements.
+
+* ppop/ppop_cmds_other.c:ppop_dest(): fixed incorrect test which prevented
+  the aliases from being displayed.
 
 Misc. Added Material
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 August 2003.
+** Last modified 18 September 2003.
 */
 
 #include "before_system.h"
@@ -303,7 +303,11 @@ int main(int argc, char *argv[])
 		}
 	#endif
 
-	printf(_("Adjusting file system to conform to %s:\n"), UPRINTCONF);
+	if(opt_remove)
+		printf(_("Restoring original spooler program names:\n"));
+	else		
+		printf(_("Adjusting spooler program names to conform to %s:\n"), UPRINTCONF);
+
 	printf("\n");
 
 	uprint_read_conf();

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 August 2003.
+# Last modified 23 September 2003.
 #
 
 =head1 NAME
@@ -148,6 +148,8 @@ sub launch
 
   if( ! $ppop_launched )
     {
+	my $pid;
+
     # I don't remember what this is for.  Perhaps it has something to do
     # with an obscure bug in Perl.  It looks like it flushes stdout.
     my $saved_buffer_mode = $|;
@@ -156,7 +158,7 @@ sub launch
 
     defined($PPR::PPOP_PATH) || croak;
 
-    # Build the basic command line.
+    # Build the basic command line.  The -M option turns on machine-readable mode.
     my @COMMAND = ($PPR::PPOP_PATH, "-M");
 
     # If the su() method was used, add the --su option.  Notice that we detaint the value
@@ -185,11 +187,11 @@ sub launch
 	{
 	local($ENV{PATH});
 	delete $ENV{PATH};
-    my $pid = open3($wtr, $rdr, "", @COMMAND);
+    $pid = open3($wtr, $rdr, "", @COMMAND);
     }
 
     # Set the file handle to ppop to flush on each print.  If we don't
-    # do this, then communication will get locked as both parties
+    # do this, then communication will get locked up as both parties
     # wait for messages that will never come.
     $wtr->autoflush(1);
 

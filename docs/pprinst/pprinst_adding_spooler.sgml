@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 11 September 2003
+Last Modified: 19 September 2003
 Last Proofread: 14 February 2003
 -->
 
@@ -8,31 +8,40 @@ Last Proofread: 14 February 2003
 <title>Adding Printers to the Spooler</title>
 
 <para>Printers may be added without stopping the
-<application>PPR</application> spooler.  A new printer queue is created
-using the command <command>ppad interface</command>.  This command sets the
-interface program and address for a printer queue.  An interface is a the
-program which <application>PPR</application> uses to communicate with the
-printer.  A good example is the one called <literal>atalk</literal>.  The
-<literal>atalk</literal> interface allows <application>PPR</application> to
-print on <productname>Apple LaserWriters</productname> and other printers
-which implement Apple's Printer Access Protocol (PAP), such as many QMS and
-HP printers.</para>
+<application>PPR</application> spooler. A new printer queue is created
+using the command <command>ppad interface</command>. This command sets
+the interface program and address for a printer queue. An interface is
+a the program which <application>PPR</application> uses to communicate
+with the printer. A good example is the one called
+<literal>atalk</literal>. The <literal>atalk</literal> interface
+allows <application>PPR</application> to print on <productname>Apple
+LaserWriters</productname> and other printers which implement Apple's
+Printer Access Protocol (PAP), such as many QMS and HP
+printers.</para>
 
-<para>Interface may sometimes require the settings of options in addition to
-the address.  In the sections below, a few of the more often required
-options will be mentioned, but you may later wish to have a look at the <ulink
-url="../refman/ppad-interfaces.8.html">ppad-interfaces(8) manpage</ulink>
-which is the definitive reference for interface programs and their options.
-It also describes additional interface programs which are not mentioned
-here.</para>
+<para>Interface may sometimes require the settings of options in
+addition to the address. In the sections below, a few of the more
+often required options will be mentioned, but you may later wish to
+have a look at the <ulink
+url="../refman/ppad-interfaces.8.html">ppad-interfaces(8)
+manpage</ulink> which is the definitive reference for interface
+programs and their options. It also describes additional interface
+programs which are not mentioned here.</para>
 
-<para>In the sections below we will discuss some of the more popular interface programs and explain how
-to use them.  You will be directed to use the <command>ppad</command> to create a new printer queue,
-choose an interface, and set other options.  However, you may find it easier to use the web interface.
-<application>PPR</application>'s web interface provides an add printer wizard which will present you with a
-series of questions and then compose and execute the necessary <command>ppad</command> commands.  An early
-screen of the Add Printer Wizard is shown in figure <xref linkend="web-prn-addwiz"/>.  To reach
-the Add Printer Wizard, go to the PPR Web Control Panel and click on the icon labeled "Add a Printer".</para>
+<para>In the sections below we will discuss some of the more popular
+interface programs and explain how to use them. We will show you how
+to use the <command>ppad</command> to create a new printer queue,
+choose an interface, and set other options.</para>
+
+<para>However, you may find it easier to use the web interface.
+<application>PPR</application>'s web interface provides an add printer
+wizard which will present you with a series of questions and then
+compose and execute the necessary <command>ppad</command> commands. It
+will even show you the commands it executes in case you are curious or
+wish to incorporate them into a script. An early screen of the Add
+Printer Wizard is shown in figure <xref linkend="web-prn-addwiz"/>. To
+reach the Add Printer Wizard, go to the PPR Web Control Panel and
+click on the icon labeled "Add a Printer".</para>
 
 <figure id="web-prn-addwiz">
 <title>Choosing the Interface in the Add Printer Wizard</title>
@@ -655,13 +664,13 @@ card, we could set it up with these commands:
 That really is all there is to it.
 </para>
 
-<para>We absolutely must mention the Foomatic project.  Foomatic is an effort
-to catalog as many printers and Ghostscript drivers as possible in an XML
-database.  This database is used to generate PPD file which, when used
-together with a special Perl script that invokes Ghostscript, can support a
-huge list of printers.  Instructions for using Foomatic with PPR can be
-found at <ulink
-url="http://www.linuxprinting.org/ppr-doc.html">http://www.linuxprinting.org/ppr-doc.html</ulink>.</para>
+<para>We absolutely must mention the Foomatic project. Foomatic is an effort to
+catalog as many printers and Ghostscript drivers as possible in an XML
+database. This database is used to generate PPD file which, when used together
+with a special Perl script that invokes Ghostscript, can support a huge list of
+printers. Instructions for using Foomatic with PPR can be found at <ulink
+url="http://www.linuxprinting.org/ppr-doc.html">
+http://www.linuxprinting.org/ppr-doc.html</ulink>.</para>
 
 <para>Your final option for <application>Ghostscript</application> RIP
 support is to choose a generic PPD file such as <filename>HP LaserJet 4M
@@ -692,47 +701,42 @@ this:
 <screen>
 # ppad show chipmunk
 Printer name: chipmunk
-Comment: David Chappell's printer
+  Comment: David Chappell's printer
 Interface: atalk
-Address: "Mac Laser Printer :LaserWriter@MCEC"
-Options:
-JobBreak: signal (by default)
-Feedback: yes (by default)
-Codes: Binary (by default)
-Alert interval: 13 (send alert every 13 errors)
-Alert method: mail
-Alert address: David.Chappell@trincoll.edu
-Flags: no no (banners discouraged, trailers discouraged)
-Charge: none
+  Address: "Mac Laser Printer :LaserWriter@MCEC"
+  Options:
+  JobBreak: signal (by default)
+  Feedback: yes (by default)
+  Codes: Binary (by default)
 PPDFile: QMS-PS 800 II
-Bins:
-OutputOrder: ppd
-Default Filter Options: level=1 colour=False resolution=300 freevm=402509
+  Default Filter Options: level=1 colour=False resolution=300 freevm=402509
     mfmode=CanonCX
+  Bins:
+  OutputOrder: ppd
+Alert interval: 13 (send alert every 13 errors)
+  Alert method: mail
+  Alert address: David.Chappell@trincoll.edu
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
 Switchset:
 </screen>
 
 </para>
 
-<para>
-Some of these configuration options which you see in the <command>ppad
+<para>Some of these configuration options which you see in the <command>ppad
 show</command> output have already been explained, all of them
 are described in the <ulink url="../refman/ppad.8.html">ppad(8)
-manpage</ulink>.
-</para>
+manpage</ulink>.</para>
 
 </sect3>
 
 <sect3>
 <title>Deleting a Printer</title>
 
-<para>
-If a printer queue is no longer needed it may be deleted like this:
-
+<para>If a printer queue is no longer needed it may be deleted like this:
 <screen>
 # ppad delete myprn
 </screen>
-
 </para>
 
 </sect3>

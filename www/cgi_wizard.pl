@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 September 2003.
+# Last modified 18 September 2003.
 #
 
 use 5.004;
@@ -275,12 +275,15 @@ print <<"EndOfText2";
 <td colspan=3 height=80>
 EndOfText2
 
-# If there is error text, put it here in red.
+# If there is error text, put it here in red.  I tried not to use a table for
+# the alignment, but couldn't get it to work.
 if(defined($error))
 	{
 print <<"EndOfText4";
-<img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32>
-<span class="alert">${\&html($error)}</span>
+<table><tr valign="bottom">
+<td><img alt="!" src="$options->{wiz_imgdir}exclaim.png" height=64 width=32></td>
+<td><span class="alert">${\&html($error)}</span></td>
+</tr></table>
 EndOfText4
 	}
 

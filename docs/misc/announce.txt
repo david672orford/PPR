@@ -1,4 +1,4 @@
-25 July 2003
+24 September 2003
 
 This is announce.txt from:
 
@@ -46,8 +46,13 @@ by sending them to "ppr-list@mail.trincoll.edu".
 * Partial rewrite of "Installing and Using PPR" to include information about
   the web-browser and Perl/Tk interfaces.
 
+* Fixed the dotmatrix printer emulator.
+
+* Added many new Russian messages (thought he quality is likely poor).
+
+
 ==========================================================================
- New in this Release (Since 1.50)
+ New in version 1.51 (Since 1.50)
 ==========================================================================
 
 * Reduced use of setUID programs, especially of setUID root programs.

@@ -1,7 +1,7 @@
 <!--
 Filename: pprinst_user_interfaces.sgml
-Last Modified: 12 September 2003
-Last Proofread:
+Last Modified: 19 September 2003
+Last Proofread: never
 -->
 
 <sect1 id="cmdline-and-web">
@@ -119,7 +119,7 @@ this for you, like this:
 
 </para>
 
-<para>All authenticated users have the same level of access that they would
+<para>All authenticated users have the same level of access as they would
 have at the command line.  This means that they can do things to their own
 jobs, but everthing else, such as the spooler configuration, is read-only
 for them.  A user can be granted a greater level of access by adding him to

@@ -6,7 +6,7 @@
 ** them with gu_snprintf() and gu_vsnprintf(), etc.
 */
 
-/* Material added for PPR is marked marked thusly. */
+/* Material added for PPR is marked marked thus: */
 #define PPR
 #ifdef PPR
 
